@@ -27,7 +27,9 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "ActiveDOMObject.h"
 #include "EventTarget.h"
+#include "MessagePort.h"
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 

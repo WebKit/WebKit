@@ -29,6 +29,8 @@
 #include "Document.h"
 
 #include "AXObjectCache.h"
+#include "AppHighlightListData.h"
+#include "AppHighlightStorage.h"
 #include "Attr.h"
 #include "BeforeUnloadEvent.h"
 #include "CDATASection.h"
@@ -2784,6 +2786,13 @@ HighlightRegister& Document::appHighlightRegister()
     if (!m_appHighlightRegister)
         m_appHighlightRegister = HighlightRegister::create();
     return *m_appHighlightRegister;
+}
+
+AppHighlightStorage& Document::appHighlightStorage()
+{
+    if (!m_appHighlightStorage)
+        m_appHighlightStorage = makeUnique<AppHighlightStorage>(*this);
+    return *m_appHighlightStorage;
 }
 
 void Document::collectRangeDataFromRegister(Vector<WeakPtr<HighlightRangeData>>& rangesData, const HighlightRegister& highlightRegister)

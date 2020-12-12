@@ -94,6 +94,7 @@ class InputCursor;
 namespace WebCore {
 
 class AXObjectCache;
+class AppHighlightStorage;
 class Attr;
 class CDATASection;
 class CSSCustomPropertyValue;
@@ -1580,6 +1581,9 @@ public:
     WEBCORE_EXPORT HighlightRegister& appHighlightRegister();
     void updateHighlightPositions();
 
+    AppHighlightStorage& appHighlightStorage();
+    AppHighlightStorage* appHighlightStorageIfExists() const { return m_appHighlightStorage.get(); };
+
     bool allowsContentJavaScript() const;
 
     LazyLoadImageObserver& lazyLoadImageObserver();
@@ -1938,6 +1942,8 @@ private:
         
     RefPtr<HighlightRegister> m_highlightRegister;
     RefPtr<HighlightRegister> m_appHighlightRegister;
+
+    std::unique_ptr<AppHighlightStorage> m_appHighlightStorage;
 
     Timer m_visualUpdatesSuppressionTimer;
 
