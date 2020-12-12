@@ -161,6 +161,12 @@ unsigned TextUtil::findNextBreakablePosition(LazyLineBreakIterator& lineBreakIte
     return nextBreakablePositionIgnoringNBSPWithoutShortcut(lineBreakIterator, startPosition);
 }
 
+bool TextUtil::shouldPreserveSpacesAndTabs(const Box& layoutBox)
+{
+    auto whitespace = layoutBox.style().whiteSpace();
+    return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces;
+}
+
 }
 }
 #endif

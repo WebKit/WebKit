@@ -472,13 +472,13 @@ Line::Run::Run(const InlineTextItem& inlineTextItem, InlineLayoutUnit logicalLef
     , m_layoutBox(&inlineTextItem.layoutBox())
     , m_logicalLeft(logicalLeft)
     , m_logicalWidth(logicalWidth)
-    , m_shouldPreserveWhitespace(inlineTextItem.isWhitespace() && InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem))
+    , m_whitespaceIsExpansionOpportunity(!TextUtil::shouldPreserveSpacesAndTabs(inlineTextItem.layoutBox()))
     , m_trailingWhitespaceType(trailingWhitespaceType(inlineTextItem))
     , m_textContent({ inlineTextItem.start(), m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length(), inlineTextItem.inlineTextBox().content() })
 {
     if (m_trailingWhitespaceType != TrailingWhitespace::None) {
         m_trailingWhitespaceWidth = logicalWidth;
-        if (!m_shouldPreserveWhitespace)
+        if (m_whitespaceIsExpansionOpportunity)
             m_expansionOpportunityCount = 1;
     }
 }
@@ -500,7 +500,7 @@ void Line::Run::expand(const InlineTextItem& inlineTextItem, InlineLayoutUnit lo
         return;
     }
     m_trailingWhitespaceWidth += logicalWidth;
-    if (!InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem))
+    if (m_whitespaceIsExpansionOpportunity)
         ++m_expansionOpportunityCount;
     setExpansionBehavior(DefaultExpansion);
     m_textContent->expand(m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length());
@@ -542,7 +542,7 @@ void Line::Run::visuallyCollapseTrailingWhitespace()
     m_trailingWhitespaceWidth = { };
     m_trailingWhitespaceType = TrailingWhitespace::None;
 
-    if (!m_shouldPreserveWhitespace) {
+    if (m_whitespaceIsExpansionOpportunity) {
         ASSERT(m_expansionOpportunityCount);
         m_expansionOpportunityCount--;
     }

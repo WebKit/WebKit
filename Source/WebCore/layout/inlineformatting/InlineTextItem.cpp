@@ -160,8 +160,7 @@ bool InlineTextItem::isEmptyContent() const
 bool InlineTextItem::shouldPreserveSpacesAndTabs(const InlineTextItem& inlineTextItem)
 {
     ASSERT(inlineTextItem.isWhitespace());
-    auto whitespace = inlineTextItem.style().whiteSpace();
-    return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces;
+    return TextUtil::shouldPreserveSpacesAndTabs(inlineTextItem.layoutBox());
 }
 
 }
