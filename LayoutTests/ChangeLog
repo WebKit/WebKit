@@ -1,3 +1,21 @@
+2020-12-13  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Offset the content logical left by the word-spacing value
+        https://bugs.webkit.org/show_bug.cgi?id=219706
+
+        Reviewed by Antti Koivisto.
+
+        Now we've got dedicated runs for these content.
+        -and the word-space-extra-expected.txt change is an actual (though not visual) progression.
+
+        * platform/mac/css1/text_properties/word_spacing-expected.txt:
+        * platform/mac/fast/css/word-space-extra-expected.txt:
+        * platform/mac/fast/text/atsui-negative-spacing-features-expected.txt:
+        * platform/mac/fast/text/atsui-spacing-features-expected.txt:
+        * platform/mac/fast/text/basic/004-expected.txt:
+        * platform/mac/fast/text/word-space-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-word-spacing-expected.txt:
+
 2020-12-12  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed test gardening. Remove test entries referencing bug209859.

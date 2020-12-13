@@ -47,11 +47,8 @@ InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, unsigned 
 {
     RELEASE_ASSERT(from >= inlineTextItem.start());
     RELEASE_ASSERT(to <= inlineTextItem.end());
-    if (inlineTextItem.isWhitespace() && !InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem)) {
-        // Fast path for non-preserved whitespace.
-        auto& font = inlineTextItem.style().fontCascade();
-        return font.spaceWidth() + font.wordSpacing();
-    }
+    if (inlineTextItem.isWhitespace() && !InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem))
+        return inlineTextItem.style().fontCascade().spaceWidth();
     return TextUtil::width(inlineTextItem.inlineTextBox(), from, to, contentLogicalLeft);
 }
 

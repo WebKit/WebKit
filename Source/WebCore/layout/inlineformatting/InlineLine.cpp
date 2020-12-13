@@ -268,19 +268,33 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
     if (willCollapseCompletely())
         return;
 
-    auto inlineTextItemNeedsNewRun = true;
-    if (!m_runs.isEmpty()) {
+    auto needsNewRun = [&] {
+        if (m_runs.isEmpty())
+            return true;
         auto& lastRun = m_runs.last();
-        inlineTextItemNeedsNewRun = lastRun.hasCollapsedTrailingWhitespace() || !lastRun.isText() || &lastRun.layoutBox() != &inlineTextItem.layoutBox();
-        if (!inlineTextItemNeedsNewRun)
-            lastRun.expand(inlineTextItem, logicalWidth);
+        if (&lastRun.layoutBox() != &inlineTextItem.layoutBox())
+            return true;
+        if (!lastRun.isText())
+            return true;
+        if (lastRun.hasCollapsedTrailingWhitespace())
+            return true;
+        if (inlineTextItem.isWordSeparator() && style.fontCascade().wordSpacing())
+            return true;
+        return false;
+    }();
+    auto oldContentLogicalWidth = contentLogicalWidth();
+    if (needsNewRun) {
+        // Note, negative words spacing may cause glyph overlap.
+        auto runLogicalLeft = contentLogicalRight() + (inlineTextItem.isWordSeparator() ? style.fontCascade().wordSpacing() : 0.0f);
+        m_runs.append({ inlineTextItem, runLogicalLeft, logicalWidth });
+        m_contentLogicalWidth = std::max(oldContentLogicalWidth, runLogicalLeft + logicalWidth);
+    } else {
+        m_runs.last().expand(inlineTextItem, logicalWidth);
+        m_contentLogicalWidth += logicalWidth;
     }
-    if (inlineTextItemNeedsNewRun)
-        m_runs.append({ inlineTextItem, contentLogicalRight(), logicalWidth });
-    m_contentLogicalWidth += logicalWidth;
     // Set the trailing trimmable content.
     if (inlineTextItem.isWhitespace() && !InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem)) {
-        m_trimmableTrailingContent.addFullyTrimmableContent(m_runs.size() - 1, logicalWidth);
+        m_trimmableTrailingContent.addFullyTrimmableContent(m_runs.size() - 1, contentLogicalWidth() - oldContentLogicalWidth);
         // If we ever trim this content, we need to know if the line visibility state needs to be recomputed.
         if (m_trimmableTrailingContent.isEmpty())
             m_isConsideredEmptyBeforeTrimmableTrailingContent = isConsideredEmpty();
