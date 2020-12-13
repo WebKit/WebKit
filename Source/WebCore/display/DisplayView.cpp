@@ -73,9 +73,9 @@ void View::prepareForDisplay()
         return;
 
     auto treeBuilder = TreeBuilder { deviceScaleFactor() };
-    auto displayTree = treeBuilder.build(*layoutState);
+    m_displayTree = treeBuilder.build(*layoutState);
 
-    m_layerController.prepareForDisplay(WTFMove(displayTree));
+    m_layerController.prepareForDisplay(*m_displayTree);
 }
 
 void View::flushLayers()

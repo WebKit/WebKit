@@ -47,7 +47,7 @@ public:
     explicit LayerController(View&);
     ~LayerController();
     
-    void prepareForDisplay(std::unique_ptr<Display::Tree>&&);
+    void prepareForDisplay(Tree&);
     void flushLayers();
 
     void setIsInWindow(bool);
@@ -90,8 +90,6 @@ private:
     RefPtr<GraphicsLayer> m_rootLayer;
     RefPtr<GraphicsLayer> m_contentHostLayer;
     RefPtr<GraphicsLayer> m_contentLayer;
-
-    std::unique_ptr<Display::Tree> m_displayTree;
 };
 
 } // namespace Display

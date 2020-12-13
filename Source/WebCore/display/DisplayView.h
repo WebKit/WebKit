@@ -50,7 +50,9 @@ class View {
 public:
     explicit View(FrameView&);
     ~View();
-    
+
+    const Tree* tree() const { return m_displayTree.get(); }
+
     void prepareForDisplay();
     void flushLayers();
     
@@ -67,6 +69,7 @@ private:
 
     FrameView& m_frameView;
     LayerController m_layerController;
+    std::unique_ptr<Display::Tree> m_displayTree;
 };
 
 } // namespace Display

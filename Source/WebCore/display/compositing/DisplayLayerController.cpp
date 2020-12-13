@@ -60,7 +60,7 @@ void LayerController::RootLayerClient::paintContents(const GraphicsLayer* layer,
 {
     ASSERT_UNUSED(layer, layer == m_layerController.contentLayer());
 
-    if (auto* displayTree = m_layerController.m_displayTree.get()) {
+    if (auto* displayTree = m_layerController.view().tree()) {
         PaintingContext paintingContext { context, deviceScaleFactor() };
         CSSPainter::paintTree(*displayTree, paintingContext, enclosingIntRect(dirtyRect));
     }
@@ -79,12 +79,9 @@ LayerController::LayerController(View& view)
 
 LayerController::~LayerController() = default;
 
-void LayerController::prepareForDisplay(std::unique_ptr<Display::Tree>&& displayTree)
+void LayerController::prepareForDisplay(Tree& displayTree)
 {
-    ASSERT(displayTree);
-    m_displayTree = WTFMove(displayTree);
-
-    auto viewSize = m_displayTree->rootBox().absoluteBorderBoxRect().size();
+    auto viewSize = displayTree.rootBox().absoluteBorderBoxRect().size();
     // FIXME: Do overflow etc.
     auto contentSize = viewSize;
 
