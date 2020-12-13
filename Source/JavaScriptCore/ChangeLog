@@ -1,3 +1,13 @@
+2020-12-13  Samuel Thibault  <samuel.thibault@ens-lyon.org>
+
+        [JSC] Set s_maxPathLength fallback when OS does not have a PATH_MAX limitation
+        https://bugs.webkit.org/show_bug.cgi?id=219571
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/ConfigFile.h:
+        (ConfigFile::s_maxPathLength): Fallback to 4095 when PATH_MAX is not defined.
+
 2020-12-11  Tadeu Zagallo  <tzagallo@apple.com>
 
         REGRESSION (r270665): testapi failing on JSC bots
