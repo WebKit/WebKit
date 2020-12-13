@@ -967,6 +967,7 @@ WebAuthenticationModernEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(IOS)" : true
       default: false
     WebCore:
       default: false

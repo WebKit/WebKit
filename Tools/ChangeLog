@@ -1,3 +1,16 @@
+2020-12-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn][iOS] Turn on modern WebAuthn for default browsers
+        https://bugs.webkit.org/show_bug.cgi?id=219823
+        <rdar://problem/72250436>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::WebCore::webAuthenticationModernExperimentalFeature):
+        (TestWebKitAPI::TEST):
+        Turn modern WebAuthn off for old tests.
+
 2020-12-11  Tim Horton  <timothy_horton@apple.com>
 
         Trackpad and Mouse scroll events on iPad only fire "pointermove" -- not "wheel"

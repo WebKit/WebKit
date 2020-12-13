@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "DefaultWebBrowserChecks.h"
 #include "FrameInfoData.h"
 #include "WebAuthenticatorCoordinatorProxyMessages.h"
 #include "WebAuthnConnectionToWebProcess.h"
@@ -46,6 +47,15 @@
 namespace WebKit {
 using namespace WebCore;
 
+namespace {
+static bool isWebBrowser()
+{
+    if (auto* connection = WebProcess::singleton().parentProcessConnection())
+        return isParentProcessAFullWebBrowser(connection->getAuditToken());
+    return false;
+}
+}
+
 WebAuthenticatorCoordinator::WebAuthenticatorCoordinator(WebPage& webPage)
     : m_webPage(webPage)
 {
@@ -62,6 +72,9 @@ void WebAuthenticatorCoordinator::makeCredential(const Frame& frame, const Secur
         m_webPage.addConsoleMessage(webFrame->frameID(), MessageSource::Other, MessageLevel::Warning, "User gesture is not detected. To use the platform authenticator, call 'navigator.credentials.create' within user activated events."_s);
 
     if (!RuntimeEnabledFeatures::sharedFeatures().webAuthenticationModernEnabled()) {
+        if (!isWebBrowser())
+            return;
+
         m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::MakeCredential(webFrame->frameID(), webFrame->info(), hash, options, processingUserGesture), WTFMove(handler));
         return;
     }
@@ -80,6 +93,9 @@ void WebAuthenticatorCoordinator::getAssertion(const Frame& frame, const Securit
         m_webPage.addConsoleMessage(webFrame->frameID(), MessageSource::Other, MessageLevel::Warning, "User gesture is not detected. To use the platform authenticator, call 'navigator.credentials.get' within user activated events."_s);
 
     if (!RuntimeEnabledFeatures::sharedFeatures().webAuthenticationModernEnabled()) {
+        if (!isWebBrowser())
+            return;
+
         m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::GetAssertion(webFrame->frameID(), webFrame->info(), hash, options, processingUserGesture), WTFMove(handler));
         return;
     }
@@ -90,6 +106,9 @@ void WebAuthenticatorCoordinator::getAssertion(const Frame& frame, const Securit
 void WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&& handler)
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().webAuthenticationModernEnabled()) {
+        if (!isWebBrowser())
+            return;
+
         m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::IsUserVerifyingPlatformAuthenticatorAvailable(), WTFMove(handler));
         return;
     }

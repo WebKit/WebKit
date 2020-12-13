@@ -1,3 +1,27 @@
+2020-12-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn][iOS] Turn on modern WebAuthn for default browsers
+        https://bugs.webkit.org/show_bug.cgi?id=219823
+        <rdar://problem/72250436>
+
+        Reviewed by Brent Fulgham.
+
+        Covered by manual tests.
+
+        This patch turns on modern WebAuthn on iOS by default. In addition to that,
+        it turns on WebAuthn for all default browsers.
+
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+        (WebKit::WebCore::isWebBrowser):
+        (WebKit::WebAuthenticatorCoordinator::makeCredential):
+        (WebKit::WebAuthenticatorCoordinator::getAssertion):
+        (WebKit::WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable):
+        For apps that turn on WebAuthn by overriding the experimental feature settings, return silently.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences)
+        Does the meat.
+
 2020-12-12  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK4] Web view is incorrectly scaled on hidpi

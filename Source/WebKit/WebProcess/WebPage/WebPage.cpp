@@ -267,6 +267,7 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include "DefaultWebBrowserChecks.h"
 #include "InsertTextOptions.h"
 #include "PDFPlugin.h"
 #include "PlaybackSessionManager.h"
@@ -3835,6 +3836,13 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #endif
 
     m_page->setTextInteractionEnabled(store.getBoolValueForKey(WebPreferencesKey::textInteractionEnabledKey()));
+
+#if ENABLE(WEB_AUTHN) && PLATFORM(IOS)
+    if (auto* connection = WebProcess::singleton().parentProcessConnection()) {
+        if (isParentProcessAFullWebBrowser(connection->getAuditToken()))
+            settings.setWebAuthenticationEnabled(true);
+    }
+#endif
 }
 
 #if ENABLE(DATA_DETECTION)
