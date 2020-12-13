@@ -1,5 +1,17 @@
 2020-12-12  Diego Pino Garcia  <dpino@igalia.com>
 
+        [WPE] Unreviewed test gardening. Remove test entries referencing bug209859.
+
+        The bug was keeping tracking of several WebXR tests. The bug is
+        closed and all the tests referencing that bug are marked as passing.
+        WebXR feature is only enabled in WPE, all other ports skipping WebXR
+        tests. In conclusion, these entries in test expectations are no longer
+        necessary.
+
+        * platform/wpe/TestExpectations:
+
+2020-12-12  Diego Pino Garcia  <dpino@igalia.com>
+
         [WPE] Unreviewed test gardening. Add WPE baseline after r270582.
 
         * platform/wpe/imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_hoverable_pointers-expected.txt: Added.
