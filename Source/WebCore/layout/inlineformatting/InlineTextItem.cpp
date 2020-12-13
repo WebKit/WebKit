@@ -40,7 +40,7 @@ static_assert(sizeof(InlineItem) == sizeof(InlineTextItem), "");
 
 static inline bool isWhitespaceCharacter(UChar character, bool preserveNewline)
 {
-    return character == ' ' || character == '\t' || (character == '\n' && !preserveNewline);
+    return character == space || character == tabCharacter || (character == newlineCharacter && !preserveNewline);
 }
 
 static unsigned moveToNextNonWhitespacePosition(const StringView& textContent, unsigned startPosition, bool preserveNewline)
@@ -73,6 +73,7 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
 
     auto& style = inlineTextBox.style();
     auto& font = style.fontCascade();
+    auto whitespaceContentIsTreatedAsSingleSpace = !TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox);
     LazyLineBreakIterator lineBreakIterator(text);
     unsigned currentPosition = 0;
 
@@ -96,18 +97,23 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
 
         if (isWhitespaceCharacter(text[currentPosition], style.preserveNewline())) {
             auto appendWhitespaceItem = [&] (auto startPosition, auto itemLength) {
-                auto simpleSingleWhitespaceContent = inlineTextBox.canUseSimplifiedContentMeasuring() && (itemLength == 1 || style.collapseWhiteSpace());
+                auto simpleSingleWhitespaceContent = inlineTextBox.canUseSimplifiedContentMeasuring() && (itemLength == 1 || whitespaceContentIsTreatedAsSingleSpace);
                 auto width = simpleSingleWhitespaceContent ? makeOptional(InlineLayoutUnit { font.spaceWidth() }) : inlineItemWidth(startPosition, itemLength);
-                auto isWordSeparator = true;
-                if (itemLength == 1) {
-                    // FIXME: Check if the collapsible content (multiple whitespace) is not always a word separator.
-                    isWordSeparator = text[startPosition] == space
-                        || text[startPosition] == noBreakSpace
-                        || text[startPosition] == ethiopicWordspace
-                        || text[startPosition] == aegeanWordSeparatorLine
-                        || text[startPosition] == aegeanWordSeparatorDot
-                        || text[startPosition] == ugariticWordDivider;
-                }
+                auto isWordSeparator = [&] {
+                    if (whitespaceContentIsTreatedAsSingleSpace)
+                        return true;
+                    if (itemLength != 1) {
+                        // FIXME: Add support for cases where the whitespace content contains different type of characters (e.g  "\t  \t  \t").
+                        return false;
+                    }
+                    auto whitespaceCharacter = text[startPosition];
+                    return whitespaceCharacter == space
+                        || whitespaceCharacter == noBreakSpace
+                        || whitespaceCharacter == ethiopicWordspace
+                        || whitespaceCharacter == aegeanWordSeparatorLine
+                        || whitespaceCharacter == aegeanWordSeparatorDot
+                        || whitespaceCharacter == ugariticWordDivider;
+                }();
                 inlineContent.append(InlineTextItem::createWhitespaceItem(inlineTextBox, startPosition, itemLength, isWordSeparator, width));
             };
 
