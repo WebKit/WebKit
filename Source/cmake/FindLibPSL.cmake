@@ -70,18 +70,18 @@ find_library(LibPSL_LIBRARY
 
 if (LibPSL_INCLUDE_DIR AND NOT LibPSL_VERSION)
     if (EXISTS "${LibPSL_INCLUDE_DIR}/libpsl.h")
-        file(READ "${LibPSL_INCLUDE_DIR}/libpsl.h" LIBPSL_VERSION_CONTENT)
+        file(READ "${LibPSL_INCLUDE_DIR}/libpsl.h" LibPSL_VERSION_CONTENT)
 
-        string(REGEX MATCH "#define +PSL_VERSION_MAJOR +([0-9]+)" _dummy "${LIBPSL_VERSION_CONTENT}")
-        set(LIBPSL_VERSION_MAJOR "${CMAKE_MATCH_1}")
+        string(REGEX MATCH "#define +PSL_VERSION_MAJOR +([0-9]+)" _dummy "${LibPSL_VERSION_CONTENT}")
+        set(LibPSL_VERSION_MAJOR "${CMAKE_MATCH_1}")
 
-        string(REGEX MATCH "#define +PSL_VERSION_MINOR +([0-9]+)" _dummy "${LIBPSL_VERSION_CONTENT}")
-        set(LIBPSL_VERSION_MINOR "${CMAKE_MATCH_1}")
+        string(REGEX MATCH "#define +PSL_VERSION_MINOR +([0-9]+)" _dummy "${LibPSL_VERSION_CONTENT}")
+        set(LibPSL_VERSION_MINOR "${CMAKE_MATCH_1}")
 
-        string(REGEX MATCH "#define +PSL_VERSION_PATCH +([0-9]+)" _dummy "${LIBPSL_VERSION_CONTENT}")
-        set(LIBPSL_VERSION_PATCH "${CMAKE_MATCH_1}")
+        string(REGEX MATCH "#define +PSL_VERSION_PATCH +([0-9]+)" _dummy "${LibPSL_VERSION_CONTENT}")
+        set(LibPSL_VERSION_PATCH "${CMAKE_MATCH_1}")
 
-        set(LIBPSL_VERSION "${LIBPSL_VERSION_MAJOR}.${LIBPSL_VERSION_MINOR}.${LIBPSL_VERSION_PATCH}")
+        set(LibPSL_VERSION "${LibPSL_VERSION_MAJOR}.${LibPSL_VERSION_MINOR}.${LibPSL_VERSION_PATCH}")
     endif ()
 endif ()
 
@@ -101,7 +101,7 @@ if (LibPSL_LIBRARY AND NOT TARGET LibPSL::LibPSL)
     )
 endif ()
 
-mark_as_advanced(LibPSL_INCLUDE_DIR LIBPSL_LIBRARIES)
+mark_as_advanced(LibPSL_INCLUDE_DIR LibPSL_LIBRARY)
 
 if (LibPSL_FOUND)
     set(LibPSL_LIBRARIES ${LibPSL_LIBRARY})
