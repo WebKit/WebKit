@@ -1,3 +1,9 @@
+2020-12-12  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed test gardening. Remove tests passing after r270741.
+
+        * platform/wpe/TestExpectations:
+
 2020-12-12  Frank Olivier  <frankolivier@apple.com>
 
         Implement WebVTT VTTCue region attribute

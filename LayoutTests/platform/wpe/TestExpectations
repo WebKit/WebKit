@@ -37,6 +37,7 @@ imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-display/run-in/quotes-applies-to-011.xht [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/boundary-shaping/boundary-shaping-004.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/boundary-shaping/boundary-shaping-005.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-manual-013.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-end-003.html [ Pass ]
@@ -71,6 +72,8 @@ imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-014.htm
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-015.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-016.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-017.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-tab-005.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-tab-006.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-before-br-001.html [ Pass ]
 
 imported/w3c/web-platform-tests/fetch/http-cache/basic-auth-cache-test.html [ Pass ]
@@ -168,7 +171,11 @@ imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-conten
 # Passing since r261992.
 fast/scrolling/rtl-scrollbars-animation-property.html [ Pass ]
 
-webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/normal-flow-overconstrained-vrl-004.xht [ Pass ]
+# Passing since r268821.
+imported/w3c/web-platform-tests/css/css-writing-modes/baseline-with-orthogonal-flow-001.html [ Pass ]
+
+# Passing since r266083.
+imported/w3c/web-platform-tests/css/css-content/quotes-033.html [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Triaged Expectations
@@ -193,9 +200,6 @@ webkit.org/b/213829 css3/calc/background-position-parsing.html [ ImageOnlyFailur
 
 # Flexbox layout
 webkit.org/b/215502 fast/flexbox/image-percent-max-height.html [ Failure Pass ImageOnlyFailure ]
-
-# Layouting
-webkit.org/b/218689 imported/blink/fast/forms/textarea-placeholder-visibility-3.html [ ImageOnlyFailure ]
 
 # Link target
 webkit.org/b/218553 http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-in-new-window.html [ Timeout ]
@@ -573,6 +577,7 @@ webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/inline
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-height-vlr-003.xht [ ImageOnlyFailure ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-height-vlr-005.xht [ ImageOnlyFailure ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/normal-flow-overconstrained-vrl-002.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/normal-flow-overconstrained-vrl-004.xht [ ImageOnlyFailure Pass ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/overconstrained-rel-pos-ltr-top-bottom-vrl-002.xht [ ImageOnlyFailure Pass ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/overconstrained-rel-pos-rtl-left-right-vrl-008.xht [ ImageOnlyFailure Pass ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/sizing-orthog-vlr-in-htb-020.xht [ ImageOnlyFailure ]
@@ -630,15 +635,12 @@ webkit.org/b/213235 imported/w3c/web-platform-tests/html/semantics/scripting-1/t
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/font-language-override-01.html [ Pass ]
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/font-language-override-03.html [ ImageOnlyFailure ]
 
-webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/baseline-with-orthogonal-flow-001.html  [ ImageOnlyFailure ]
-
 webkit.org/b/217369 fast/canvas/fill-text-with-font-features.html [ ImageOnlyFailure ]
 
 webkit.org/b/217370 fast/events/setDragImage-element-non-nullable.html [ Failure ]
 
 # ENABLE_GAMEPAD not enabled.
 webkit.org/b/213131 gamepad [ Skip ]
-webkit.org/b/213131 imported/w3c/web-platform-tests/dom/events/Event-timestamp-high-resolution.html [ Failure ]
 webkit.org/b/213131 http/tests/misc/gamepads-insecure.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -895,12 +897,7 @@ webkit.org/b/207711 [ Debug ] http/tests/workers/service/serviceworkerclients-ma
 
 webkit.org/b/208000 http/tests/inspector/network/contentextensions/blocked-websocket-crash.html [ Timeout ]
 
-webkit.org/b/208921 fast/events/touch/basic-single-touch-events.html [ Timeout ]
-webkit.org/b/208921 fast/events/touch/multi-touch-inside-iframes.html [ Timeout ]
-
 webkit.org/b/208932 scrollbars/scroll-rtl-or-bt-layer.html [ Timeout Pass ]
-
-webkit.org/b/210385 fast/mediastream/getUserMedia-default.html [ Crash Slow ]
 
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints1.html [ Timeout Crash ]
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints2.html [ Timeout ]
@@ -1318,8 +1315,6 @@ webkit.org/b/188659 fast/masking/clip-path-selection.html [ Failure ]
 webkit.org/b/188660 fast/loader/local-CSS-from-local.html [ Failure ]
 webkit.org/b/188660 fast/loader/local-JavaScript-from-local.html [ Failure ]
 webkit.org/b/188660 fast/loader/local-image-from-local.html [ Failure ]
-
-webkit.org/b/209720 fast/writing-mode/vertical-baseline-alignment.html [ Failure ]
 
 webkit.org/b/179113 fast/inline/padding-ellipsis-right.html [ ImageOnlyFailure ]
 
