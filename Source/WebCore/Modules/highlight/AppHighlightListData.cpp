@@ -39,48 +39,6 @@
 
 namespace WebCore {
 
-static unsigned computePathIndex(const Node& node)
-{
-    String nodeName = node.nodeName();
-    unsigned index = 0;
-    for (auto* previousSibling = node.previousSibling(); previousSibling; previousSibling = previousSibling->previousSibling()) {
-        if (previousSibling->nodeName() == nodeName)
-            index++;
-    }
-    return index;
-}
-
-static AppHighlightRangeData::NodePathComponent createNodePathComponent(const Node& node)
-{
-    return {
-        is<Element>(node) ? downcast<Element>(node).getIdAttribute().string() : nullString(),
-        node.nodeName(),
-        is<CharacterData>(node) ? downcast<CharacterData>(node).data() : nullString(),
-        computePathIndex(node)
-    };
-}
-
-static AppHighlightRangeData::NodePath makeNodePath(RefPtr<Node>&& node)
-{
-    AppHighlightRangeData::NodePath components;
-    auto body = node->document().body();
-    for (auto ancestor = node; ancestor && ancestor != body; ancestor = ancestor->parentNode())
-        components.append(createNodePathComponent(*ancestor));
-    components.reverse();
-    return { components };
-}
-
-static AppHighlightRangeData createAppHiglightRangeData(const StaticRange& range)
-{
-    return {
-        plainText(range),
-        makeNodePath(&range.startContainer()),
-        range.startOffset(),
-        makeNodePath(&range.endContainer()),
-        range.endOffset()
-    };
-}
-
 AppHighlightListData AppHighlightListData::create(const SharedBuffer& buffer)
 {
     auto decoder = buffer.decoder();

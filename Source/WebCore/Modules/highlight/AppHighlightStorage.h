@@ -35,6 +35,9 @@
 namespace WebCore {
 
 class AppHighlightListData;
+class AppHighlightRangeData;
+class Document;
+class SharedBuffer;
 
 class AppHighlightStorage : RefCounted<AppHighlightStorage> {
     WTF_MAKE_FAST_ALLOCATED;
