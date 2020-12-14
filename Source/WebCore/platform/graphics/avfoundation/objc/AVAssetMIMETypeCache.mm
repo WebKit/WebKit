@@ -82,9 +82,6 @@ bool AVAssetMIMETypeCache::isUnsupportedContainerType(const String& type)
         return true;
 
     // Reject types we know AVFoundation does not support that sites commonly ask about.
-    if (lowerCaseType == "video/webm" || lowerCaseType == "audio/webm" || lowerCaseType == "video/x-webm")
-        return true;
-
     if (lowerCaseType == "video/x-flv")
         return true;
 

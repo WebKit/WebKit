@@ -276,6 +276,19 @@ bool defaultWebXREnabled()
 
 #endif // ENABLE(WEBXR)
 
+#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+
+bool defaultWebMFormatReaderEnabled()
+{
+#if HAVE(SYSTEM_FEATURE_FLAGS)
+    return isFeatureFlagEnabled("webm_format_reader");
+#endif
+
+    return false;
+}
+
+#endif
+
 #if ENABLE(VP9)
 
 bool defaultVP8DecoderEnabled()

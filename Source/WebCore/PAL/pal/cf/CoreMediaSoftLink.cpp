@@ -200,6 +200,9 @@ SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, kCMTimeIndefinite, CMT
 
 #if PLATFORM(MAC)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, CMAudioDeviceClockCreate, OSStatus, (CFAllocatorRef allocator, CFStringRef deviceUID, CMClockRef *clockOut), (allocator, deviceUID, clockOut), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, CMBaseObjectGetDerivedStorage, void*, (CMBaseObjectRef baseObject), (baseObject), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, CMBaseObjectGetVTable, const CMBaseVTable*, (CMBaseObjectRef baseObject), (baseObject), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreMedia, CMDerivedObjectCreate, OSStatus, (CFAllocatorRef allocator, const CMBaseVTable* vTable, CMBaseClassID classID, CMBaseObjectRef* baseObject), (allocator, vTable, classID, baseObject), PAL_EXPORT)
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(WIN)

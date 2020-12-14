@@ -99,6 +99,10 @@ bool defaultIncrementalPDFEnabled();
 bool defaultWebXREnabled();
 #endif
 
+#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+bool defaultWebMFormatReaderEnabled();
+#endif
+
 #if ENABLE(VP9)
 bool defaultVP8DecoderEnabled();
 bool defaultVP9DecoderEnabled();

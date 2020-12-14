@@ -428,4 +428,42 @@ RetainPtr<CMSampleBufferRef> MediaSampleAVFObjC::cloneSampleBufferAndSetAsDispla
     return adoptCF(newSampleBuffer);
 }
 
+static CFStringRef byteRangeOffsetAttachmentKey()
+{
+    static CFStringRef key = CFSTR("WebKitMediaSampleByteRangeOffset");
+    return key;
+}
+
+Optional<MediaSample::ByteRange> MediaSampleAVFObjC::byteRange() const
+{
+    return byteRangeForAttachment(byteRangeOffsetAttachmentKey());
+}
+
+void MediaSampleAVFObjC::setByteRangeOffset(size_t byteOffset)
+{
+    int64_t checkedOffset = CheckedInt64(byteOffset).unsafeGet();
+    auto offsetNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &checkedOffset));
+    PAL::CMSetAttachment(m_sample.get(), byteRangeOffsetAttachmentKey(), offsetNumber.get(), kCMAttachmentMode_ShouldPropagate);
+}
+
+Optional<MediaSample::ByteRange> MediaSampleAVFObjC::byteRangeForAttachment(CFStringRef key) const
+{
+    auto byteOffsetCF = dynamic_cf_cast<CFNumberRef>(PAL::CMGetAttachment(m_sample.get(), key, nullptr));
+    if (!byteOffsetCF)
+        return WTF::nullopt;
+
+    int64_t byteOffset = 0;
+    if (!CFNumberGetValue(byteOffsetCF, kCFNumberSInt64Type, &byteOffset))
+        return WTF::nullopt;
+
+    CMItemCount sizeArrayEntries = 0;
+    PAL::CMSampleBufferGetSampleSizeArray(m_sample.get(), 0, nullptr, &sizeArrayEntries);
+    if (sizeArrayEntries != 1)
+        return WTF::nullopt;
+
+    size_t singleSizeEntry = 0;
+    PAL::CMSampleBufferGetSampleSizeArray(m_sample.get(), 1, &singleSizeEntry, nullptr);
+    return { { CheckedSize(byteOffset).unsafeGet(), singleSizeEntry } };
+}
+
 }

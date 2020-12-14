@@ -1,3 +1,135 @@
+2020-12-14  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r270758. rdar://problem/72303521
+
+    Source/ThirdParty/libwebrtc:
+    [Mac] Create a MediaToolbox format reader plug-in for WebM
+    https://bugs.webkit.org/show_bug.cgi?id=218908
+    <rdar://problem/71373264>
+    
+    Reviewed by Eric Carlson.
+    
+    * Source/webrtc/sdk/WebKit/CMBaseObjectSPI.h:
+    
+    Source/WebCore:
+    [Mac] Create a MediaToolbox format reader plug-in for WebM
+    https://bugs.webkit.org/show_bug.cgi?id=218908
+    <rdar://problem/71373264>
+    
+    Reviewed by Eric Carlson.
+    
+    Updated expected results for existing tests.
+    
+    For contiguous samples, teach MediaSample to remember their position and size in the
+    underlying byte stream. Added a runtime feature flag. Registered the format reader plug-in
+    at runtime.
+    
+    * page/RuntimeEnabledFeatures.h:
+    * platform/MediaSample.h:
+    * platform/graphics/avfoundation/objc/AVAssetMIMETypeCache.mm:
+    * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm:
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+    * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.h:
+    * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+    * platform/graphics/cocoa/SourceBufferParser.cpp:
+    * platform/graphics/cocoa/SourceBufferParser.h:
+    * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+    * platform/graphics/cocoa/SourceBufferParserWebM.h:
+    * platform/graphics/gstreamer/MediaSampleGStreamer.h:
+    * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+    * platform/network/mac/WebCoreURLResponse.mm:
+    
+    Source/WebCore/PAL:
+    [Mac] Create a MediaToolbox format reader plug-in for WebM
+    https://bugs.webkit.org/show_bug.cgi?id=218908
+    <rdar://problem/71373264>
+    
+    Reviewed by Eric Carlson.
+    
+    * pal/cf/CoreMediaSoftLink.cpp:
+    * pal/cf/CoreMediaSoftLink.h:
+    * pal/cocoa/MediaToolboxSoftLink.cpp:
+    * pal/cocoa/MediaToolboxSoftLink.h:
+    * pal/spi/cf/CoreMediaSPI.h:
+    * pal/spi/cocoa/MediaToolboxSPI.h:
+    
+    Source/WebKit:
+    [Mac] Create a MediaToolbox format reader plug-in for WebM
+    https://bugs.webkit.org/show_bug.cgi?id=218908
+    <rdar://problem/71373264>
+    
+    Reviewed by Eric Carlson.
+    
+    Implemented a MTPluginFormatReader for WebM containers. The format reader is responsible
+    for parsing a WebM byte stream (using SourceBufferParserWebM) into audio, video, and text
+    tracks. MediaToolbox can then create cursors to step through the tracks' samples in decode
+    or presentation order and access each sample's metadata (e.g., format description,
+    duration, key-frame status) and location in the byte stream.
+    
+    * FeatureFlags/WebKit.plist:
+    * MediaFormatReaderPlugIn/Info.plist:
+    * MediaFormatReaderPlugIn/MediaFormatReaderPlugIn.cpp:
+    * Shared/API/c/mac/WKFormatReader.cpp: Added.
+    * Shared/API/c/mac/WKFormatReader.h: Added.
+    * Shared/WebPreferencesDefaultValues.cpp:
+    * Shared/WebPreferencesDefaultValues.h:
+    * Shared/mac/MediaFormatReader/CoreMediaWrapped.cpp: Added.
+    * Shared/mac/MediaFormatReader/CoreMediaWrapped.h: Added.
+    * Shared/mac/MediaFormatReader/FormatReader.cpp: Added.
+    * Shared/mac/MediaFormatReader/FormatReader.h: Added.
+    * Shared/mac/MediaFormatReader/MediaFormatReader.cpp: Added.
+    * Shared/mac/MediaFormatReader/MediaFormatReader.h: Added.
+    * Shared/mac/MediaFormatReader/SampleCursor.cpp: Added.
+    * Shared/mac/MediaFormatReader/SampleCursor.h: Added.
+    * Shared/mac/MediaFormatReader/TrackReader.cpp: Added.
+    * Shared/mac/MediaFormatReader/TrackReader.h: Added.
+    * SourcesCocoa.txt:
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    Source/WTF:
+    [Mac] Register the format reader plug-in for WebM content types
+    https://bugs.webkit.org/show_bug.cgi?id=218908
+    <rdar://problem/71373264>
+    
+    Reviewed by Eric Carlson.
+    
+    * Scripts/Preferences/WebPreferencesExperimental.yaml: Added an experimental web
+    preference.
+    
+    Tools:
+    [Mac] Create a MediaToolbox format reader plug-in for WebM
+    https://bugs.webkit.org/show_bug.cgi?id=218908
+    <rdar://problem/71373264>
+    
+    Reviewed by Eric Carlson.
+    
+    * TestWebKitAPI/Tests/WebCore/SampleMap.cpp:
+    
+    LayoutTests:
+    [Mac] Create a MediaToolbox format reader plug-in for WebM
+    https://bugs.webkit.org/show_bug.cgi?id=218908
+    <rdar://problem/71373264>
+    
+    Reviewed by Eric Carlson.
+    
+    * platform/mac-catalina/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType-expected.txt:
+    * platform/mac-catalina/media/media-can-play-webm-expected.txt:
+    * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType-expected.txt:
+    * platform/mac-wk2/media/media-can-play-webm-expected.txt:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@270758 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-12-13  Andy Estes  <aestes@apple.com>
+
+            [Mac] Create a MediaToolbox format reader plug-in for WebM
+            https://bugs.webkit.org/show_bug.cgi?id=218908
+            <rdar://problem/71373264>
+
+            Reviewed by Eric Carlson.
+
+            * Source/webrtc/sdk/WebKit/CMBaseObjectSPI.h:
+
 2020-12-11  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Add Experimental VP8 support

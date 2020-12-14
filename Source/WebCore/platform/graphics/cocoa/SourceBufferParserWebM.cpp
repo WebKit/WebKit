@@ -450,8 +450,28 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
     if (!isWebmParserAvailable())
         return MediaPlayerEnums::SupportsType::IsNotSupported;
 
-    if (!WTF::equalIgnoringASCIICase(type.containerType(), "audio/webm")
-        && !WTF::equalIgnoringASCIICase(type.containerType(), "video/webm"))
+    bool isAudioContainerType = WTF::equalIgnoringASCIICase(type.containerType(), "audio/webm");
+    bool isVideoContainerType = WTF::equalIgnoringASCIICase(type.containerType(), "video/webm");
+    if (!isAudioContainerType && !isVideoContainerType)
+        return MediaPlayerEnums::SupportsType::IsNotSupported;
+    
+    bool isAnyAudioCodecAvailable = false;
+#if ENABLE(VORBIS)
+    isAnyAudioCodecAvailable |= isVorbisDecoderAvailable();
+#endif
+#if ENABLE(OPUS)
+    isAnyAudioCodecAvailable |= isOpusDecoderAvailable();
+#endif
+
+    if (isAudioContainerType && !isAnyAudioCodecAvailable)
+        return MediaPlayerEnums::SupportsType::IsNotSupported;
+
+    bool isAnyCodecAvailable = isAnyAudioCodecAvailable;
+#if ENABLE(VP9)
+    isAnyCodecAvailable |= isVP9DecoderAvailable();
+#endif
+
+    if (!isAnyCodecAvailable)
         return MediaPlayerEnums::SupportsType::IsNotSupported;
 
     String codecsParameter = type.parameter(ContentType::codecsParameter());
@@ -459,6 +479,9 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
         return MediaPlayerEnums::SupportsType::MayBeSupported;
 
     auto splitResults = StringView(codecsParameter).split(',');
+    if (splitResults.begin() == splitResults.end())
+        return MediaPlayerEnums::SupportsType::MayBeSupported;
+
     for (auto split : splitResults) {
 #if ENABLE(VP9)
         if (split.startsWith("vp09") || split.startsWith("vp08") || equal(split, "vp8") || equal(split, "vp9")) {
@@ -929,13 +952,15 @@ webm::Status SourceBufferParserWebM::OnFrame(const FrameMetadata& metadata, Read
     return trackData->consumeFrameData(*reader, metadata, bytesRemaining, CMTimeMake(block->timecode + m_currentTimecode, m_timescale), block->num_frames);
 }
 
-void SourceBufferParserWebM::provideMediaData(RetainPtr<CMSampleBufferRef> sampleBuffer, uint64_t trackID)
+void SourceBufferParserWebM::provideMediaData(RetainPtr<CMSampleBufferRef> sampleBuffer, uint64_t trackID, Optional<size_t> byteRangeOffset)
 {
-    callOnMainThread([this, protectedThis = makeRef(*this), sampleBuffer = WTFMove(sampleBuffer), trackID] () mutable {
+    callOnMainThread([this, protectedThis = makeRef(*this), sampleBuffer = WTFMove(sampleBuffer), trackID, byteRangeOffset] () mutable {
         if (!m_didProvideMediaDataCallback)
             return;
 
         auto mediaSample = MediaSampleAVFObjC::create(sampleBuffer.get(), trackID);
+        if (byteRangeOffset)
+            mediaSample->setByteRangeOffset(*byteRangeOffset);
         m_didProvideMediaDataCallback(WTFMove(mediaSample), trackID, emptyString());
     });
 }
@@ -987,7 +1012,7 @@ webm::Status SourceBufferParserWebM::VideoTrackData::consumeFrameData(webm::Read
             return status;
     }
 
-    createSampleBuffer(presentationTime, sampleCount);
+    createSampleBuffer(presentationTime, sampleCount, metadata);
 #else
     UNUSED_PARAM(metadata);
     UNUSED_PARAM(presentationTime);
@@ -997,7 +1022,7 @@ webm::Status SourceBufferParserWebM::VideoTrackData::consumeFrameData(webm::Read
     return Skip(&reader, bytesRemaining);
 }
 
-void SourceBufferParserWebM::VideoTrackData::createSampleBuffer(const CMTime& presentationTime, int sampleCount)
+void SourceBufferParserWebM::VideoTrackData::createSampleBuffer(const CMTime& presentationTime, int sampleCount, const webm::FrameMetadata& metadata)
 {
 #if ENABLE(VP9)
     uint8_t* blockBufferData = nullptr;
@@ -1076,10 +1101,11 @@ void SourceBufferParserWebM::VideoTrackData::createSampleBuffer(const CMTime& pr
     }
 
     auto trackID = track.track_uid.value();
-    parser().provideMediaData(sampleBuffer.leakRef(), trackID);
+    parser().provideMediaData(sampleBuffer.leakRef(), trackID, metadata.position);
 #else
     UNUSED_PARAM(presentationTime);
     UNUSED_PARAM(sampleCount);
+    UNUSED_PARAM(metadata);
 #endif // ENABLE(VP9)
 }
 
@@ -1139,12 +1165,12 @@ webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Read
     m_packetDescriptions.append({ static_cast<int64_t>(packetDataOffset), 0, static_cast<UInt32>(metadata.size) });
     auto sampleDuration = CMTimeGetSeconds(CMTimeSubtract(presentationTime, m_samplePresentationTime)) + CMTimeGetSeconds(m_packetDuration) * sampleCount;
     if (sampleDuration >= m_minimumSampleDuration)
-        createSampleBuffer();
+        createSampleBuffer(metadata.position);
 
     return Skip(&reader, bytesRemaining);
 }
 
-void SourceBufferParserWebM::AudioTrackData::createSampleBuffer()
+void SourceBufferParserWebM::AudioTrackData::createSampleBuffer(Optional<size_t> latestByteRangeOffset)
 {
     if (m_packetDescriptions.isEmpty())
         return;
@@ -1177,7 +1203,7 @@ void SourceBufferParserWebM::AudioTrackData::createSampleBuffer()
     m_packetDescriptions.clear();
 
     auto trackID = track().track_uid.value();
-    parser().provideMediaData(sampleBuffer.leakRef(), trackID);
+    parser().provideMediaData(sampleBuffer.leakRef(), trackID, latestByteRangeOffset);
 }
 
 void SourceBufferParserWebM::flushPendingAudioBuffers()

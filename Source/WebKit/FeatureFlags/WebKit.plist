@@ -77,6 +77,11 @@
         <key>Enabled</key>
         <false/>
     </dict>
+    <key>webm_format_reader</key>
+    <dict>
+        <key>Enabled</key>
+        <false/>
+    </dict>
     <key>webm_parser</key>
     <dict>
         <key>Enabled</key>

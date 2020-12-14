@@ -30,8 +30,10 @@
 #include "MediaPlayerEnums.h"
 #include "SourceBufferPrivateClient.h"
 #include <JavaScriptCore/Uint8Array.h>
+#include <pal/spi/cocoa/MediaToolboxSPI.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Variant.h>
 
 namespace WTF {
 class Logger;
@@ -61,6 +63,9 @@ public:
 
     class Segment {
     public:
+#if HAVE(MT_PLUGIN_FORMAT_READER)
+        Segment(RetainPtr<MTPluginByteSourceRef>&&);
+#endif
         Segment(Vector<uint8_t>&&);
         Segment(Segment&&) = default;
         Vector<uint8_t> takeVector();
@@ -69,7 +74,12 @@ public:
         size_t read(size_t position, size_t, uint8_t* destination) const;
 
     private:
-        Vector<unsigned char> m_segment;
+        Variant<
+#if HAVE(MT_PLUGIN_FORMAT_READER)
+            RetainPtr<MTPluginByteSourceRef>,
+#endif
+            Vector<uint8_t>
+        > m_segment;
     };
 
     virtual void appendData(Segment&&, AppendFlags = AppendFlags::None) = 0;
@@ -78,6 +88,7 @@ public:
     virtual bool shouldProvideMediadataForTrackID(uint64_t) = 0;
     virtual void resetParserState() = 0;
     virtual void invalidate() = 0;
+    virtual void setMinimumAudioSampleDuration(float);
 #if !RELEASE_LOG_DISABLED
     virtual void setLogger(const WTF::Logger&, const void* logIdentifier) = 0;
 #endif

@@ -43,6 +43,10 @@ enum {
     kCMBaseObject_ProtocolVersion_1 = 1
 };
 
+enum {
+    kCMBaseObjectError_ValueNotAvailable = -12783,
+};
+
 typedef struct OpaqueCMBaseObject *CMBaseObjectRef;
 typedef struct OpaqueCMBaseClass *CMBaseClassID;
 typedef struct OpaqueCMBaseProtocol *CMBaseProtocolID;
@@ -103,7 +107,8 @@ typedef struct {
 #pragma pack(pop)
 
 CM_EXPORT OSStatus CMDerivedObjectCreate(CFAllocatorRef, const CMBaseVTable*, CMBaseClassID, CMBaseObjectRef*);
-CM_EXPORT void *CMBaseObjectGetDerivedStorage(CMBaseObjectRef);
+CM_EXPORT void* CMBaseObjectGetDerivedStorage(CMBaseObjectRef);
+CM_EXPORT const CMBaseVTable* CMBaseObjectGetVTable(CMBaseObjectRef);
 
 #ifdef __cplusplus
 } // extern "C"
