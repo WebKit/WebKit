@@ -244,6 +244,11 @@ public:
     void setIncrementalPDFLoadingEnabled(bool isEnabled) { m_incrementalPDFLoadingEnabled = isEnabled; }
     bool incrementalPDFLoadingEnabled() const { return m_incrementalPDFLoadingEnabled; }
 #endif
+    
+#if HAVE(MT_PLUGIN_FORMAT_READER)
+    void setWebMFormatReaderEnabled(bool isEnabled) { m_webMFormatReaderEnabled = isEnabled; }
+    bool webMFormatReaderEnabled() const { return m_webMFormatReaderEnabled; }
+#endif
 
 #if ENABLE(MEDIA_SOURCE)
     void setWebMParserEnabled(bool isEnabled) { m_webMParserEnabled = isEnabled; }
@@ -385,6 +390,10 @@ private:
 
 #if HAVE(INCREMENTAL_PDF_APIS)
     bool m_incrementalPDFLoadingEnabled { false };
+#endif
+
+#if HAVE(MT_PLUGIN_FORMAT_READER)
+    bool m_webMFormatReaderEnabled { false };
 #endif
 
 #if ENABLE(MEDIA_SOURCE)

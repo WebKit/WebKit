@@ -996,6 +996,16 @@ WebGPUEnabled:
     WebKit:
       default: WebKit::defaultWebGPUEnabled()
 
+WebMFormatReaderEnabled:
+  type: bool
+  webcoreBinding: RuntimeEnabledFeatures
+  humanReadableName: "WebM format reader"
+  humanReadableDescription: "Enable MediaToolbox format reader plug-in for WebM"
+  condition: ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+  defaultValue:
+    WebKit:
+      default: WebKit::defaultWebMFormatReaderEnabled()
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 WebMParserEnabled:
   type: bool

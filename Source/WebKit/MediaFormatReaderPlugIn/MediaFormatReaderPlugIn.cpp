@@ -23,18 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#include <WebKit/WKFormatReader.h>
 
-#if HAVE(MT_PLUGIN_FORMAT_READER)
+extern "C" WK_EXPORT OSStatus CreateMediaFormatReaderInstance(MTPluginByteSourceRef, CFAllocatorRef, CFDictionaryRef, MTPluginFormatReaderRef*);
 
-#include <pal/spi/cocoa/MediaToolboxSPI.h>
-
-extern "C" WTF_EXPORT_DECLARATION OSStatus CreateMediaFormatReaderInstance(MTPluginByteSourceRef, CFAllocatorRef, CFDictionaryRef, MTPluginFormatReaderRef*);
-
-OSStatus CreateMediaFormatReaderInstance(MTPluginByteSourceRef, CFAllocatorRef, CFDictionaryRef, MTPluginFormatReaderRef* formatReader)
+OSStatus CreateMediaFormatReaderInstance(MTPluginByteSourceRef byteSource, CFAllocatorRef allocator, CFDictionaryRef, MTPluginFormatReaderRef* formatReader)
 {
-    *formatReader = nullptr;
-    return kMTPluginFormatReaderError_InternalFailure;
+    OSStatus status = WKFormatReaderCreate(allocator, formatReader);
+    if (status != noErr)
+        return status;
+    return WKFormatReaderStartOnMainThread(*formatReader, byteSource);
 }
-
-#endif // HAVE(MT_PLUGIN_FORMAT_READER)

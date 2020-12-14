@@ -35,6 +35,8 @@
 
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 typedef struct _GstSample GstSample;
+typedef struct OpaqueMTPluginByteSource *MTPluginByteSourceRef;
+typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
 
 namespace WebCore {
 
@@ -46,11 +48,13 @@ struct PlatformSample {
         MockSampleBoxType,
         CMSampleBufferType,
         GStreamerSampleType,
+        ByteRangeSampleType,
     } type;
     union {
         MockSampleBox* mockSampleBox;
         CMSampleBufferRef cmSampleBuffer;
         GstSample* gstSample;
+        std::pair<MTPluginByteSourceRef, CMFormatDescriptionRef> byteRangeSample;
     } sample;
 };
 
@@ -82,6 +86,12 @@ public:
     };
     virtual SampleFlags flags() const = 0;
     virtual PlatformSample platformSample() = 0;
+
+    struct ByteRange {
+        size_t byteOffset { 0 };
+        size_t byteLength { 0 };
+    };
+    virtual Optional<ByteRange> byteRange() const = 0;
 
     enum class VideoRotation {
         None = 0,

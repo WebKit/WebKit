@@ -1,3 +1,16 @@
+2020-12-13  Andy Estes  <aestes@apple.com>
+
+        [Mac] Create a MediaToolbox format reader plug-in for WebM
+        https://bugs.webkit.org/show_bug.cgi?id=218908
+        <rdar://problem/71373264>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-catalina/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType-expected.txt:
+        * platform/mac-catalina/media/media-can-play-webm-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType-expected.txt:
+        * platform/mac-wk2/media/media-can-play-webm-expected.txt:
+
 2020-12-13  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed test gardening. Gardened several flaky failures happening in WPE Release Test bot.

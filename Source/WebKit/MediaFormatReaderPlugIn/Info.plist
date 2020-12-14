@@ -50,6 +50,8 @@
 				<integer>0</integer>
 				<key>MTMaxDirectoryDescents</key>
 				<integer>0</integer>
+				<key>MTSupportsPlayableHorizonQueries</key>
+				<true/>
 				<key>MTUTTypeArray</key>
 				<array>
 					<string>org.webmproject.webm</string>

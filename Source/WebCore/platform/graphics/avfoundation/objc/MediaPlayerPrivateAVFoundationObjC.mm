@@ -55,9 +55,12 @@
 #import "OutOfBandTextTrackPrivateAVF.h"
 #import "PixelBufferConformerCV.h"
 #import "PlatformTimeRanges.h"
+#import "RuntimeApplicationChecks.h"
+#import "RuntimeEnabledFeatures.h"
 #import "SecurityOrigin.h"
 #import "SerializedPlatformDataCueMac.h"
 #import "SharedBuffer.h"
+#import "SourceBufferParserWebM.h"
 #import "TextEncoding.h"
 #import "TextTrackRepresentation.h"
 #import "VideoLayerManagerObjC.h"
@@ -87,6 +90,7 @@
 #import <objc/runtime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/avfoundation/OutputContext.h>
+#import <pal/cocoa/MediaToolboxSoftLink.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
@@ -1662,6 +1666,20 @@ static bool keySystemIsSupported(const String& keySystem)
 }
 #endif
 
+#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+static void ensureFormatReaderIsRegistered()
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        // Like we do for other media formats, allow the format reader to run in the WebContent or GPU process
+        // (which is already appropriately sandboxed) rather than in a separate MediaToolbox XPC service.
+        RELEASE_ASSERT(isInGPUProcess() || isInWebProcess());
+        MTRegisterPluginFormatReaderBundleDirectory((__bridge CFURLRef)NSBundle.mainBundle.builtInPlugInsURL);
+        MTPluginFormatReaderDisableSandboxing();
+    });
+}
+#endif
+
 MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsTypeAndCodecs(const MediaEngineSupportParameters& parameters)
 {
 #if ENABLE(MEDIA_SOURCE)
@@ -1671,6 +1689,19 @@ MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsTypeAndCod
 #if ENABLE(MEDIA_STREAM)
     if (parameters.isMediaStream)
         return MediaPlayer::SupportsType::IsNotSupported;
+#endif
+
+#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+    if (RuntimeEnabledFeatures::sharedFeatures().webMFormatReaderEnabled()) {
+        auto supported = SourceBufferParserWebM::isContentTypeSupported(parameters.type);
+        if (supported != MediaPlayer::SupportsType::IsNotSupported) {
+            ensureFormatReaderIsRegistered();
+            if (supported == MediaPlayer::SupportsType::MayBeSupported)
+                return supported;
+            if (contentTypeMeetsHardwareDecodeRequirements(parameters.type, parameters.contentTypesRequiringHardwareSupport))
+                return MediaPlayer::SupportsType::IsSupported;
+        }
+    }
 #endif
 
     auto supported = AVAssetMIMETypeCache::singleton().canDecodeType(parameters.type.raw());

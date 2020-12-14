@@ -27,6 +27,10 @@
 
 #include <CoreMedia/CoreMedia.h>
 
+#if PLATFORM(MAC)
+#include <webrtc/sdk/WebKit/CMBaseObjectSPI.h>
+#endif
+
 #if PLATFORM(COCOA)
 
 #if USE(APPLE_INTERNAL_SDK)

@@ -1,3 +1,14 @@
+2020-12-13  Andy Estes  <aestes@apple.com>
+
+        [Mac] Register the format reader plug-in for WebM content types
+        https://bugs.webkit.org/show_bug.cgi?id=218908
+        <rdar://problem/71373264>
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml: Added an experimental web
+        preference.
+
 2020-12-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r270661.

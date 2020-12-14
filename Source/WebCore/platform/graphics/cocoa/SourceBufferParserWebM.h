@@ -31,6 +31,7 @@
 #include <CoreAudio/CoreAudioTypes.h>
 #include <CoreMedia/CMTime.h>
 #include <common/vp9_header_parser.h>
+#include <pal/spi/cf/CoreMediaSPI.h>
 #include <webm/callback.h>
 #include <webm/status.h>
 #include <wtf/Box.h>
@@ -82,7 +83,7 @@ public:
 
     void setLogger(const WTF::Logger&, const void* identifier) final;
 
-    void provideMediaData(RetainPtr<CMSampleBufferRef>, uint64_t);
+    void provideMediaData(RetainPtr<CMSampleBufferRef>, uint64_t, Optional<size_t> byteRangeOffset);
 
     enum class ErrorCode : int32_t {
         SourceBufferParserWebMErrorCodeStart = 2000,
@@ -175,7 +176,7 @@ public:
         webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const CMTime&, int) final;
         
     private:
-        void createSampleBuffer(const CMTime&, int);
+        void createSampleBuffer(const CMTime&, int, const webm::FrameMetadata&);
         const char* logClassName() const { return "VideoTrackData"; }
 
 #if ENABLE(VP9)
@@ -199,7 +200,7 @@ public:
         }
 
         webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const CMTime&, int) final;
-        void createSampleBuffer();
+        void createSampleBuffer(Optional<size_t> latestByteRangeOffset = WTF::nullopt);
 
     private:
         const char* logClassName() const { return "AudioTrackData"; }

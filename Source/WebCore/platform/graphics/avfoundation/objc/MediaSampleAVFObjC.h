@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class MediaSampleAVFObjC : public MediaSample {
+class WEBCORE_EXPORT MediaSampleAVFObjC : public MediaSample {
 public:
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, uint64_t trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, AtomString trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
@@ -56,6 +56,7 @@ public:
 
     SampleFlags flags() const override;
     PlatformSample platformSample() override;
+    Optional<ByteRange> byteRange() const override;
     void dump(PrintStream&) const override;
     void offsetTimestampsBy(const MediaTime&) override;
     void setTimestamps(const MediaTime&, const MediaTime&) override;
@@ -71,6 +72,8 @@ public:
 
     bool isHomogeneous() const;
     Vector<Ref<MediaSampleAVFObjC>> divideIntoHomogeneousSamples();
+
+    void setByteRangeOffset(size_t);
 
 protected:
     MediaSampleAVFObjC(RetainPtr<CMSampleBufferRef>&& sample)
@@ -97,6 +100,8 @@ protected:
         , m_mirrored(mirrored)
     {
     }
+
+    Optional<MediaSample::ByteRange> byteRangeForAttachment(CFStringRef key) const;
 
     virtual ~MediaSampleAVFObjC() = default;
     RetainPtr<CMSampleBufferRef> m_sample;

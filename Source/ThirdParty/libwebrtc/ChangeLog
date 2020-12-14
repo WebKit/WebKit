@@ -1,3 +1,13 @@
+2020-12-13  Andy Estes  <aestes@apple.com>
+
+        [Mac] Create a MediaToolbox format reader plug-in for WebM
+        https://bugs.webkit.org/show_bug.cgi?id=218908
+        <rdar://problem/71373264>
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/sdk/WebKit/CMBaseObjectSPI.h:
+
 2020-12-11  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Add Experimental VP8 support
