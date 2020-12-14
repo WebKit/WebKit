@@ -1,3 +1,18 @@
+2020-12-14  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Move some of the work from JSLock to VMEntryScope
+        https://bugs.webkit.org/show_bug.cgi?id=219830
+
+        Reviewed by Mark Lam.
+
+        Add a unique ID to threads. This uid is used in JSLock to avoid unnecessary work when the
+        same thread that last acquired the lock is reacquiring it.
+
+        * wtf/Threading.cpp:
+        * wtf/Threading.h:
+        (WTF::Thread::uid const):
+        (WTF::Thread::Thread):
+
 2020-12-13  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Introduce vmEntryCustomAccessor and vmEntryHostFunction for JITCage

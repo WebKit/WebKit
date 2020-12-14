@@ -1,3 +1,52 @@
+2020-12-14  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Move some of the work from JSLock to VMEntryScope
+        https://bugs.webkit.org/show_bug.cgi?id=219830
+
+        Reviewed by Mark Lam.
+
+        We move several things from JSLock to VMEntryScope that could only be observed after we entered the VM:
+        - WasmThreads: only used when tiering up wasm, so VMEntryScope would have executed
+        - registerThreadForMachExceptionHandling: The mach exception handlers are used for:
+            - sigill crash analyzer: only relevant after we enter the vm
+            - wasm fault signal handler: same, we must be executing wasm and therefore VMEntryScope will have executed.
+            - VMTraps: only handles faults in JIT code
+        - firePrimitiveGigacageEnabledIfNecessary: Only watched by the JITs
+
+        This gives is a ~10% improvement on APIBench (score change from ~36.3 to ~39.9), but as it turns out the most expensive
+        call is adding the current thread to the heap as this requires acquiring two locks. We can't  move this to VMEntryScope
+        since it's possible to use the API and GC without ever entering the VM, which would result in the current thread's stack
+        not being scanned. Instead, we just remember the last thread that acquired the lock and skip the call if we're seeing the
+        same thread again. This greatly amortizes the cost and gives us another ~10%:
+
+        CURRENT_API:        Baseline   Change
+        ----------------------------------------
+        RichardsMostlyC:      62ms      32ms
+        RichardsMostlyObjC:  303ms     264ms
+        RichardsMostlySwift: 296ms     261ms
+        RichardsSomeC:        76ms      49ms
+        RichardsSomeObjC:    156ms     150ms
+        RichardsSomeSwift:   200ms     197ms
+
+        UPCOMING_API:       Baseline   Change
+        ----------------------------------------
+        RichardsMostlyC:      19ms      19ms
+        RichardsMostlyObjC:  282ms     260ms
+        RichardsMostlySwift: 282ms     264ms
+        RichardsSomeC:        79ms      46ms
+        RichardsSomeObjC:    156ms     149ms
+        RichardsSomeSwift:   195ms     195ms
+        ----------------------------------------
+        Score:             36.2211   43.3368
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::didAcquireLock):
+        (JSC::JSLock::willReleaseLock):
+        * runtime/JSLock.h:
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::VMEntryScope):
+        (JSC::VMEntryScope::~VMEntryScope):
+
 2020-12-14  Robin Morisset  <rmorisset@apple.com>
 
         Minor cleanup of BigInts

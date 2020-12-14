@@ -92,6 +92,7 @@ enum class ThreadType : uint8_t {
 };
 
 class Thread : public ThreadSafeRefCounted<Thread> {
+    static std::atomic<uint32_t> s_uid;
 public:
     friend class ThreadGroup;
     friend WTF_EXPORT_PRIVATE void initialize();
@@ -110,6 +111,8 @@ public:
     WTF_EXPORT_PRIVATE static Lock& allThreadsMutex();
 
     WTF_EXPORT_PRIVATE unsigned numberOfThreadGroups();
+
+    uint32_t uid() const { return m_uid; }
 
 #if OS(WINDOWS)
     // Returns ThreadIdentifier directly. It is useful if the user only cares about identity
@@ -328,6 +331,7 @@ protected:
     StackBounds m_stack { StackBounds::emptyBounds() };
     HashMap<ThreadGroup*, std::weak_ptr<ThreadGroup>> m_threadGroupMap;
     PlatformThreadHandle m_handle;
+    uint32_t m_uid;
 #if OS(WINDOWS)
     ThreadIdentifier m_id { 0 };
 #elif OS(DARWIN)
@@ -362,6 +366,7 @@ inline Thread::Thread()
     , m_isDestroyedOnce(false)
     , m_isCompilationThread(false)
     , m_gcThreadType(static_cast<unsigned>(GCThreadType::None))
+    , m_uid(++s_uid)
 {
 }
 

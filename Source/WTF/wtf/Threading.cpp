@@ -64,6 +64,8 @@ static Optional<size_t> stackSize(ThreadType threadType)
 #endif
 }
 
+std::atomic<uint32_t> Thread::s_uid { 0 };
+
 struct Thread::NewThreadContext : public ThreadSafeRefCounted<NewThreadContext> {
 public:
     NewThreadContext(const char* name, Function<void()>&& entryPoint, Ref<Thread>&& thread)

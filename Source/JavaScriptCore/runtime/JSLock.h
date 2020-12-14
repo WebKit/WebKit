@@ -145,10 +145,11 @@ private:
     // different thread, and an optional is vulnerable to races.
     // See https://bugs.webkit.org/show_bug.cgi?id=169042#c6
     bool m_hasOwnerThread { false };
+    bool m_shouldReleaseHeapAccess;
     RefPtr<Thread> m_ownerThread;
     intptr_t m_lockCount;
     unsigned m_lockDropDepth;
-    bool m_shouldReleaseHeapAccess;
+    uint32_t m_lastOwnerThread { 0 };
     VM* m_vm;
     AtomStringTable* m_entryAtomStringTable; 
 };

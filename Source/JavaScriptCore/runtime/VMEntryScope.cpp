@@ -29,6 +29,8 @@
 #include "Options.h"
 #include "SamplingProfiler.h"
 #include "VM.h"
+#include "WasmCapabilities.h"
+#include "WasmMachineThreads.h"
 #include "Watchdog.h"
 #include <wtf/SystemTracing.h>
 
@@ -41,6 +43,17 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
     if (!vm.entryScope) {
         vm.entryScope = this;
 
+#if ENABLE(WEBASSEMBLY)
+        if (Wasm::isSupported())
+            Wasm::startTrackingCurrentThread();
+#endif
+
+#if HAVE(MACH_EXCEPTIONS)
+        registerThreadForMachExceptionHandling(Thread::current());
+#endif
+
+        vm.firePrimitiveGigacageEnabledIfNecessary();
+
         // Reset the date cache between JS invocations to force the VM to
         // observe time zone changes.
         // FIXME: We should clear it only when we know the timezone has been changed.
@@ -51,10 +64,13 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
             vm.watchdog()->enteredVM();
 
 #if ENABLE(SAMPLING_PROFILER)
-        if (SamplingProfiler* samplingProfiler = vm.samplingProfiler())
-            samplingProfiler->noticeVMEntry();
+        {
+            SamplingProfiler* samplingProfiler = vm.samplingProfiler();
+            if (UNLIKELY(samplingProfiler))
+                samplingProfiler->noticeVMEntry();
+        }
 #endif
-        if (Options::useTracePoints())
+        if (UNLIKELY(Options::useTracePoints()))
             tracePoint(VMEntryScopeStart);
     }
 
