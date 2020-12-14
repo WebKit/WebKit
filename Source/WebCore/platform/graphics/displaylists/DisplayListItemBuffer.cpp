@@ -909,5 +909,11 @@ void ItemBuffer::didAppendData(size_t numberOfBytes, DidChangeItemBuffer didChan
         m_writingClient->didAppendData(m_writableBuffer, numberOfBytes, didChangeItemBuffer);
 }
 
+void ItemBuffer::prepareToAppend(ItemBufferHandle&& handle)
+{
+    m_writtenNumberOfBytes = 0;
+    m_readOnlyBuffers.append(std::exchange(m_writableBuffer, WTFMove(handle)));
+}
+
 } // namespace DisplayList
 } // namespace WebCore

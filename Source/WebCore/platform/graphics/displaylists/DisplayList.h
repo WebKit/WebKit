@@ -79,6 +79,7 @@ public:
 
     WEBCORE_EXPORT void setItemBufferClient(ItemBufferReadingClient*);
     WEBCORE_EXPORT void setItemBufferClient(ItemBufferWritingClient*);
+    WEBCORE_EXPORT void prepareToAppend(ItemBufferHandle&&);
 
 #if !defined(NDEBUG) || !LOG_DISABLED
     WTF::CString description() const;

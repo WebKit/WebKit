@@ -1,3 +1,79 @@
+2020-12-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        GPU process sometimes hangs during MotionMark Focus when enabling GPU Process for DOM
+        https://bugs.webkit.org/show_bug.cgi?id=219839
+        <rdar://problem/71562635>
+
+        Reviewed by Tim Horton.
+
+        Fixes an indefinite hang in the GPU process that may occur as a result of this very specific corner case in
+        concurrent display list processing:
+
+        [1] Let p and q represent two item buffers, and let A and B represent two remote image buffers whose drawing
+            contexts will be destinations for display list playback in the GPU process. Suppose p has k remaining bytes
+            where k >= 32, and A's writable buffer is mapped to a region closest to the end of p. In practice, when this
+            hang reproduces, k is a relatively small number (typically 32-40 bytes).
+
+        [2] Additionally, suppose that the GPU process is not reading from q (i.e. q's `unreadBytes()` count is 0), and
+            that the GPU process has created a corresponding RemoteImageBuffer for A, but *not* a corresponding
+            RemoteImageBuffer for B.
+
+        [3] We now append a MetaCommandChangeDestinationImageBuffer item to change destinations from A to B, such that
+            p now has (k - 16) remaining bytes. In preparation for appending new items for B's display list, the logic
+            in `RemoteRenderingBackendProxy::willAppendItem` clears B's writable buffer, with the intention that B will
+            turn around and call out to the client layer for a new writable buffer again once it notices that it has no
+            writable buffer.
+
+        [4] If we then immediately try to append an item to B that is larger than (k - 32) bytes,
+            `RemoteRenderingBackendProxy::findReusableDisplayListHandle` will see that the most recently used item
+            buffer p has insufficient space, and will instead return item buffer q. We end up appending the new item to
+            item buffer q.
+
+        [5] In the GPU process, we finish processing all available item data in p. When we encounter the destination
+            buffer change item, we set `m_pendingWakeupInfo` before going to sleep, due to the fact that the GPU process
+            has not learned about image buffer B yet (see the last part of step [2]).
+
+        [6] Later, in the GPU process, when we create a RemoteImageBuffer for B, we see that we have a
+            `m_pendingWakeupInfo` with destination image buffer B, so we resume display list processing. However, we're
+            unable to resume where we stopped, since B's display list (in the web process) immediately appended to q
+            instead of p, skipping MetaCommandChangeItemBuffer in the process. This manifests as an indefinite hang
+            inside `RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists`, since we expect p to
+            have a nonzero `unreadBytes()` count.
+
+        [7] Now that the GPU process is in a broken state, the web process follows shortly -- in the Focus subtest of
+            MotionMark, this manifests as a web process crash soon after the GPU process begins to hang, because
+            `RemoteImageBufferProxy::ensureBackendCreated()` times out and returns null, and we subsequently dereference
+            null in `RemoteLayerBackingStore::encode()` after failing to ensure the image buffer backend.
+
+        To fix this, we target step [3]. Rather than clear B's writable buffer and expect it to append its new items to
+        p, we simply hand it p's item handle -- in this case, a handle with (k - 16) available bytes -- and set its
+        writable buffer before we try to append. In this scenario, doing this ensures that if we are about to append an
+        item that is larger than (k - 32) bytes, we will first leave a 16-byte MetaCommandChangeItemBuffer item inside p
+        before moving on to q. This eventually ensures that when the GPU process resumes display list processing after
+        creating a RemoteImageBuffer for B, it will see 16 unread bytes in p and then immediately continue reading data
+        from item buffer q.
+
+        Finally, note that in this scenario, p is always guaranteed to contain at least 16 available bytes after step
+        [3] (in other words, k >= 32). This is because all calls to append an item of size n bytes to an item buffer
+        check that there is a minimum (n + 16) bytes remaining (via logic in `ItemBuffer::swapWritableBufferIfNeeded`),
+        such that it is, by design, always possible to append a `MetaCommandChangeItemBuffer` item if necessary. As
+        such, it is safe to return the most recently used item buffer's handle in step [4].
+
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::clearDisplayList):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::willAppendItem):
+
+        Call into `prepareToAppendDisplayListItems` instead of `clearDisplayList` when switching destination image
+        buffers. See problem diagnosis above for more detail.
+
+        (WebKit::RemoteRenderingBackendProxy::mostRecentlyUsedDisplayListHandle):
+
+        Pull logic to retrieve the most recently used display list handle out into a separate helper method.
+
+        (WebKit::RemoteRenderingBackendProxy::findReusableDisplayListHandle):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+
 2020-12-14  Sihui Liu  <sihui_liu@apple.com>
 
         WebProcessProxy::destroySpeechRecognitionServer should check if identifier exists before removing MessageReceiver

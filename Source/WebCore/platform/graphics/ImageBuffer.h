@@ -39,6 +39,7 @@ namespace WebCore {
 namespace DisplayList {
 class DisplayList;
 class DrawingContext;
+struct ItemBufferHandle;
 }
 
 class ImageBuffer : public RefCounted<ImageBuffer>, public CanMakeWeakPtr<ImageBuffer> {
@@ -82,7 +83,7 @@ public:
     virtual void didFlush(DisplayList::FlushIdentifier) { }
 
     virtual void changeDestinationImageBuffer(RenderingResourceIdentifier) { }
-    virtual void clearDisplayList() { }
+    virtual void prepareToAppendDisplayListItems(DisplayList::ItemBufferHandle&&) { }
 
     virtual IntSize logicalSize() const = 0;
     virtual float resolutionScale() const = 0;

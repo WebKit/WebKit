@@ -213,7 +213,12 @@ protected:
             clearDisplayList();
     }
 
-    void clearDisplayList() final
+    void prepareToAppendDisplayListItems(WebCore::DisplayList::ItemBufferHandle&& handle) final
+    {
+        m_drawingContext.displayList().prepareToAppend(WTFMove(handle));
+    }
+
+    void clearDisplayList()
     {
         m_drawingContext.displayList().clear();
     }

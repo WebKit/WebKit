@@ -206,8 +206,18 @@ void RemoteRenderingBackendProxy::willAppendItem(RenderingResourceIdentifier new
             ASSERT_NOT_REACHED();
     }
 
-    if (auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(newDestinationIdentifier))
-        imageBuffer->clearDisplayList();
+    auto handle = mostRecentlyUsedDisplayListHandle();
+    if (UNLIKELY(!handle))
+        return;
+
+    auto newDestination = m_remoteResourceCacheProxy.cachedImageBuffer(newDestinationIdentifier);
+    if (UNLIKELY(!newDestination)) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    handle->moveWritableOffsetToStartIfPossible();
+    newDestination->prepareToAppendDisplayListItems(handle->createHandle());
 }
 
 void RemoteRenderingBackendProxy::sendWakeupMessage(const GPUProcessWakeupMessageArguments& arguments)
@@ -253,21 +263,28 @@ void RemoteRenderingBackendProxy::didAppendData(const DisplayList::ItemBufferHan
     }};
 }
 
-RefPtr<DisplayListWriterHandle> RemoteRenderingBackendProxy::findReusableDisplayListHandle(size_t capacity)
+RefPtr<DisplayListWriterHandle> RemoteRenderingBackendProxy::mostRecentlyUsedDisplayListHandle()
 {
     if (UNLIKELY(m_identifiersOfReusableHandles.isEmpty()))
         return nullptr;
 
-    auto mostRecentlyUsedIdentifier = m_identifiersOfReusableHandles.first();
-    auto handle = makeRefPtr(m_sharedDisplayListHandles.get(mostRecentlyUsedIdentifier));
-    handle->moveWritableOffsetToStartIfPossible();
-    if (handle->availableCapacity() >= capacity)
-        return handle;
+    return m_sharedDisplayListHandles.get(m_identifiersOfReusableHandles.first());
+}
+
+RefPtr<DisplayListWriterHandle> RemoteRenderingBackendProxy::findReusableDisplayListHandle(size_t capacity)
+{
+    auto mostRecentlyUsedHandle = mostRecentlyUsedDisplayListHandle();
+    if (UNLIKELY(!mostRecentlyUsedHandle))
+        return nullptr;
+
+    mostRecentlyUsedHandle->moveWritableOffsetToStartIfPossible();
+    if (mostRecentlyUsedHandle->availableCapacity() >= capacity)
+        return mostRecentlyUsedHandle;
 
     m_identifiersOfReusableHandles.append(m_identifiersOfReusableHandles.takeFirst());
 
     auto leastRecentlyUsedIdentifier = m_identifiersOfReusableHandles.first();
-    if (leastRecentlyUsedIdentifier != mostRecentlyUsedIdentifier) {
+    if (leastRecentlyUsedIdentifier != mostRecentlyUsedHandle->identifier()) {
         auto handle = makeRefPtr(m_sharedDisplayListHandles.get(leastRecentlyUsedIdentifier));
         if (handle->moveWritableOffsetToStartIfPossible() && handle->availableCapacity() >= capacity)
             return handle;

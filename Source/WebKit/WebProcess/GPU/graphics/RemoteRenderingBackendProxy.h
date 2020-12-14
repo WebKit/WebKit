@@ -107,6 +107,7 @@ private:
     void didCreateImageBufferBackend(ImageBufferBackendHandle, WebCore::RenderingResourceIdentifier);
     void didFlush(WebCore::DisplayList::FlushIdentifier, WebCore::RenderingResourceIdentifier);
 
+    RefPtr<DisplayListWriterHandle> mostRecentlyUsedDisplayListHandle();
     RefPtr<DisplayListWriterHandle> findReusableDisplayListHandle(size_t capacity);
 
     void sendWakeupMessage(const GPUProcessWakeupMessageArguments&);

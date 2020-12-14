@@ -169,6 +169,11 @@ void DisplayList::setItemBufferClient(ItemBufferWritingClient* client)
     itemBuffer().setClient(client);
 }
 
+void DisplayList::prepareToAppend(ItemBufferHandle&& handle)
+{
+    itemBuffer().prepareToAppend(WTFMove(handle));
+}
+
 void DisplayList::forEachItemBuffer(Function<void(const ItemBufferHandle&)>&& mapFunction) const
 {
     if (m_items)

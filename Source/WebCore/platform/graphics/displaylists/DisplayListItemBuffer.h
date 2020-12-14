@@ -170,6 +170,7 @@ public:
 
     void setClient(ItemBufferWritingClient* client) { m_writingClient = client; }
     void setClient(ItemBufferReadingClient* client) { m_readingClient = client; }
+    void prepareToAppend(ItemBufferHandle&&);
 
 private:
     const ItemBufferHandles& readOnlyBuffers() const { return m_readOnlyBuffers; }
