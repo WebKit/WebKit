@@ -1,3 +1,29 @@
+2020-12-14  Kate Cheney  <katherine_cheney@apple.com>
+
+        CrashTracer: com.apple.WebKit.Networking at WebKit: WTF::Detail::CallableWrapper<WebKit::PrivateClickMeasurementManager::firePendingAttributionRequests()
+        https://bugs.webkit.org/show_bug.cgi?id=219860
+        <rdar://problem/72254207>
+
+        Reviewed by Alex Christensen.
+
+        No new tests, this should fix a crash.
+
+        m_networkSession is a weakPtr. We should check that the object it
+        references exists before trying to use it.
+
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::storeUnattributed):
+        (WebKit::PrivateClickMeasurementManager::attribute):
+        (WebKit::PrivateClickMeasurementManager::clearSentAttributions):
+        (WebKit::PrivateClickMeasurementManager::updateTimerLastFired):
+        (WebKit::PrivateClickMeasurementManager::firePendingAttributionRequests):
+        (WebKit::PrivateClickMeasurementManager::clear):
+        (WebKit::PrivateClickMeasurementManager::clearForRegistrableDomain):
+        (WebKit::PrivateClickMeasurementManager::clearExpired):
+        (WebKit::PrivateClickMeasurementManager::toString const):
+        (WebKit::PrivateClickMeasurementManager::markAllUnattributedAsExpiredForTesting):
+        (WebKit::PrivateClickMeasurementManager::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+
 2020-12-14  Tim Horton  <timothy_horton@apple.com>
 
         Adopt symbol image API instead of SPI in WKPDFHUDView
