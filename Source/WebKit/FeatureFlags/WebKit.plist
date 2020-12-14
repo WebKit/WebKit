@@ -80,7 +80,7 @@
     <key>webm_format_reader</key>
     <dict>
         <key>Enabled</key>
-        <false/>
+        <true/>
     </dict>
     <key>webm_parser</key>
     <dict>
