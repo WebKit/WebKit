@@ -1,3 +1,10 @@
+2020-12-14  Andy Estes  <aestes@apple.com>
+
+        Unreviewed test gardening after r270758.
+
+        * platform/mac-catalina/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback-expected.txt: Added.
+
 2020-12-14  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Implement ::file-selector-button pseudo-element.
