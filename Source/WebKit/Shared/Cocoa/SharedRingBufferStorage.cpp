@@ -34,8 +34,8 @@ void SharedRingBufferStorage::setStorage(RefPtr<SharedMemory>&& storage)
 {
     ASSERT(storage || !m_readOnly);
     m_storage = WTFMove(storage);
-    if (m_client)
-        m_client->storageChanged(m_storage.get());
+    if (m_storageChangedHandler)
+        m_storageChangedHandler(m_storage.get());
 }
 
 void SharedRingBufferStorage::setReadOnly(bool readOnly)

@@ -46,7 +46,7 @@ std::unique_ptr<WebCore::AudioMediaStreamTrackRenderer> AudioMediaStreamTrackRen
 AudioMediaStreamTrackRenderer::AudioMediaStreamTrackRenderer(Ref<IPC::Connection>&& connection)
     : m_connection(WTFMove(connection))
     , m_identifier(AudioMediaStreamTrackRendererIdentifier::generate())
-    , m_ringBuffer(makeUnique<WebCore::CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(this)))
+    , m_ringBuffer(makeUnique<WebCore::CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(std::bind(&AudioMediaStreamTrackRenderer::storageChanged, this, std::placeholders::_1))))
 {
     m_connection->send(Messages::RemoteAudioMediaStreamTrackRendererManager::CreateRenderer { m_identifier }, 0);
 }

@@ -30,23 +30,18 @@
 #include <wtf/Atomics.h>
 #include "SharedMemory.h"
 #include <WebCore/CARingBuffer.h>
+#include <wtf/Function.h>
 
 namespace WebKit {
 
 class SharedRingBufferStorage : public WebCore::CARingBufferStorage {
 public:
-    class Client {
-    public:
-        virtual ~Client() = default;
-        virtual void storageChanged(SharedMemory*) = 0;
-    };
-
-    SharedRingBufferStorage(Client* client)
-        : m_client(client)
+    SharedRingBufferStorage(Function<void(SharedMemory*)>&& storageChangedHandler = nullptr)
+        : m_storageChangedHandler(WTFMove(storageChangedHandler))
     {
     }
 
-    void invalidate() { m_client = nullptr; }
+    void invalidate() { m_storageChangedHandler = nullptr; }
 
     RefPtr<SharedMemory> storage() const { return m_storage; }
     void setStorage(RefPtr<SharedMemory>&&);
@@ -74,7 +69,7 @@ private:
 
     FrameBounds* sharedFrameBounds();
 
-    Client* m_client;
+    Function<void(SharedMemory*)> m_storageChangedHandler;
     RefPtr<SharedMemory> m_storage;
     bool m_readOnly { false };
     uint64_t m_startFrame { 0 };

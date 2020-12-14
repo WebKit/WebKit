@@ -42,7 +42,6 @@ class CARingBuffer;
 namespace WebKit {
 
 class RemoteAudioSourceProviderProxy : public ThreadSafeRefCounted<RemoteAudioSourceProviderProxy>
-    , public SharedRingBufferStorage::Client
     , public WebCore::AudioSourceProviderClient {
 public:
     static Ref<RemoteAudioSourceProviderProxy> create(WebCore::MediaPlayerIdentifier, Ref<IPC::Connection>&&, WebCore::AudioSourceProviderAVFObjC&);
@@ -54,8 +53,7 @@ public:
 private:
     RemoteAudioSourceProviderProxy(WebCore::MediaPlayerIdentifier, Ref<IPC::Connection>&&);
 
-    // SharedRingBufferStorage::Client
-    void storageChanged(SharedMemory*) final;
+    void storageChanged(SharedMemory*);
 
     // AudioSourceProviderClient
     void setFormat(size_t numberOfChannels, float sampleRate) final { }

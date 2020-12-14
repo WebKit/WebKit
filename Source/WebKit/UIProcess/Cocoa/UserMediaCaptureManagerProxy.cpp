@@ -52,15 +52,14 @@ using namespace WebCore;
 class UserMediaCaptureManagerProxy::SourceProxy
     : private RealtimeMediaSource::Observer
     , private RealtimeMediaSource::AudioSampleObserver
-    , private RealtimeMediaSource::VideoSampleObserver
-    , public SharedRingBufferStorage::Client {
+    , private RealtimeMediaSource::VideoSampleObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     SourceProxy(RealtimeMediaSourceIdentifier id, Ref<IPC::Connection>&& connection, Ref<RealtimeMediaSource>&& source)
         : m_id(id)
         , m_connection(WTFMove(connection))
         , m_source(WTFMove(source))
-        , m_ringBuffer(makeUniqueRef<SharedRingBufferStorage>(makeUniqueRef<SharedRingBufferStorage>(this)))
+        , m_ringBuffer(makeUniqueRef<SharedRingBufferStorage>(std::bind(&SourceProxy::storageChanged, this, std::placeholders::_1)))
     {
         m_source->addObserver(*this);
         switch (m_source->type()) {
@@ -195,7 +194,8 @@ private:
         return m_rotationSession->rotate(sample, rotation, ImageRotationSessionVT::IsCGImageCompatible::No);
     }
 
-    void storageChanged(SharedMemory* storage) final {
+    void storageChanged(SharedMemory* storage)
+    {
         SharedMemory::Handle handle;
         if (storage)
             storage->createHandle(handle, SharedMemory::Protection::ReadOnly);

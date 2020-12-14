@@ -57,7 +57,7 @@ static RefPtr<Logger>& nullLogger()
 RemoteAudioMediaStreamTrackRenderer::RemoteAudioMediaStreamTrackRenderer(RemoteAudioMediaStreamTrackRendererManager& manager)
     : m_manager(manager)
     , m_renderer(WebCore::AudioMediaStreamTrackRenderer::create())
-    , m_ringBuffer(makeUniqueRef<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(nullptr)))
+    , m_ringBuffer(makeUniqueRef<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>()))
 {
     ASSERT(m_renderer);
 

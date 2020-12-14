@@ -38,7 +38,7 @@ class Connection;
 
 namespace WebKit {
 
-class AudioMediaStreamTrackRenderer final : public WebCore::AudioMediaStreamTrackRenderer, public SharedRingBufferStorage::Client {
+class AudioMediaStreamTrackRenderer final : public WebCore::AudioMediaStreamTrackRenderer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<WebCore::AudioMediaStreamTrackRenderer> create();
@@ -49,7 +49,6 @@ public:
 private:
     explicit AudioMediaStreamTrackRenderer(Ref<IPC::Connection>&&);
 
-    // SharedRingBufferStorage::Client
     void storageChanged(SharedMemory*);
 
     // WebCore::AudioMediaStreamTrackRenderer

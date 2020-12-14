@@ -1,3 +1,55 @@
+2020-12-14  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] Crash in SharedRingBufferStorage::setStorage() under GuardMalloc
+        https://bugs.webkit.org/show_bug.cgi?id=219867
+
+        Reviewed by Darin Adler.
+
+        SharedRingBufferStorage was holding a raw pointer to its client and we would sometimes
+        crash when dereferencing this client in SharedRingBufferStorage::setStorage() because
+        the client is not guaranteed to be alive.
+
+        To address the issue, I replace the SharedRingBufferStorage::Client with a lambda so
+        that the client can protect itself in the lambda if needed. In particular,
+        RemoteAudioSourceProviderProxy now protects itself in the lambda since the lifetime
+        of the CARingBuffer is not tied to the lifetime of RemoteAudioSourceProviderProxy.
+
+        * GPUProcess/media/RemoteAudioDestinationManager.cpp:
+        (WebKit::RemoteAudioDestination::RemoteAudioDestination):
+        * GPUProcess/media/RemoteAudioSourceProviderProxy.cpp:
+        (WebKit::RemoteAudioSourceProviderProxy::createRingBuffer):
+        * GPUProcess/media/RemoteAudioSourceProviderProxy.h:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.cpp:
+        (WebKit::RemoteAudioMediaStreamTrackRenderer::RemoteAudioMediaStreamTrackRenderer):
+        * GPUProcess/webrtc/RemoteMediaRecorder.cpp:
+        (WebKit::RemoteMediaRecorder::RemoteMediaRecorder):
+        * Shared/Cocoa/SharedRingBufferStorage.cpp:
+        (WebKit::SharedRingBufferStorage::setStorage):
+        * Shared/Cocoa/SharedRingBufferStorage.h:
+        (WebKit::SharedRingBufferStorage::SharedRingBufferStorage):
+        (WebKit::SharedRingBufferStorage::invalidate):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::SourceProxy):
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::storageChanged):
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.cpp:
+        (WebKit::m_ringBuffer):
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::RemoteAudioDestinationProxy):
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.h:
+        * WebProcess/GPU/media/RemoteAudioSourceProviderManager.cpp:
+        (WebKit::RemoteAudioSourceProviderManager::RemoteAudio::RemoteAudio):
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRenderer.cpp:
+        (WebKit::AudioMediaStreamTrackRenderer::AudioMediaStreamTrackRenderer):
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRenderer.h:
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        (WebKit::MediaRecorderPrivate::startRecording):
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.h:
+        * WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.cpp:
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::Source::Source):
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::Source::storageChanged):
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+        (WebKit::RemoteCaptureSampleManager::RemoteAudio::RemoteAudio):
+
 2020-12-14  Kate Cheney  <katherine_cheney@apple.com>
 
         CrashTracer: com.apple.WebKit.Networking at WebKit: WTF::Detail::CallableWrapper<WebKit::PrivateClickMeasurementManager::firePendingAttributionRequests()

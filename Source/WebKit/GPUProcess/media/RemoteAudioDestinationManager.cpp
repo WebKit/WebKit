@@ -119,7 +119,7 @@ private:
         , m_id(identifier)
 #if PLATFORM(COCOA)
         , m_audioOutputUnitAdaptor(*this)
-        , m_ringBuffer(makeUniqueRef<WebCore::CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(nullptr)))
+        , m_ringBuffer(makeUniqueRef<WebCore::CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>()))
 #endif
     {
 #if PLATFORM(COCOA)

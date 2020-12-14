@@ -56,7 +56,7 @@ RemoteMediaRecorder::RemoteMediaRecorder(GPUConnectionToWebProcess& gpuConnectio
     , m_writer(WTFMove(writer))
 {
     if (recordAudio)
-        m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(nullptr));
+        m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>());
 }
 
 RemoteMediaRecorder::~RemoteMediaRecorder()

@@ -116,7 +116,7 @@ void RemoteAudioSourceProviderManager::audioSamplesAvailable(MediaPlayerIdentifi
 
 RemoteAudioSourceProviderManager::RemoteAudio::RemoteAudio(Ref<RemoteAudioSourceProvider>&& provider)
     : m_provider(WTFMove(provider))
-    , m_ringBuffer(makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(nullptr)))
+    , m_ringBuffer(makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>()))
 {
 }
 

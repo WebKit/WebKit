@@ -47,7 +47,7 @@ SpeechRecognitionRemoteRealtimeMediaSource::SpeechRecognitionRemoteRealtimeMedia
     , m_identifier(identifier)
     , m_manager(makeWeakPtr(manager))
 #if PLATFORM(COCOA)
-    , m_ringBuffer(makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(nullptr)))
+    , m_ringBuffer(makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>()))
 #endif
 {
     m_manager->addSource(*this, captureDevice);

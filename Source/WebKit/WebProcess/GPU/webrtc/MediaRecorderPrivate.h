@@ -46,7 +46,6 @@ namespace WebKit {
 
 class MediaRecorderPrivate final
     : public WebCore::MediaRecorderPrivate
-    , public SharedRingBufferStorage::Client
     , public CanMakeWeakPtr<MediaRecorderPrivate> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -64,7 +63,6 @@ private:
     void pauseRecording(CompletionHandler<void()>&&) final;
     void resumeRecording(CompletionHandler<void()>&&) final;
 
-    // SharedRingBufferStorage::Client
     void storageChanged(SharedMemory*);
 
     MediaRecorderIdentifier m_identifier;

@@ -54,7 +54,6 @@ class SharedRingBufferFrameBounds;
 class RemoteAudioDestinationProxy
 #if PLATFORM(COCOA)
     : public WebCore::AudioDestinationCocoa
-    , public SharedRingBufferStorage::Client
 #else
     : public WebCore::AudioDestination
 #endif
@@ -95,7 +94,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    void storageChanged(SharedMemory*) final;
+    void storageChanged(SharedMemory*);
 #endif
 
     // IPC::MessageReceiver

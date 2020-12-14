@@ -113,7 +113,7 @@ void RemoteCaptureSampleManager::audioSamplesAvailable(WebCore::RealtimeMediaSou
 
 RemoteCaptureSampleManager::RemoteAudio::RemoteAudio(Ref<RemoteRealtimeMediaSource>&& source)
     : m_source(WTFMove(source))
-    , m_ringBuffer(makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(nullptr)))
+    , m_ringBuffer(makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>()))
 {
 }
 

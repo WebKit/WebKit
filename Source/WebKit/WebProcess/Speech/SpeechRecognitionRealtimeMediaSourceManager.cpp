@@ -54,9 +54,6 @@ using namespace WebCore;
 class SpeechRecognitionRealtimeMediaSourceManager::Source
     : private RealtimeMediaSource::Observer
     , private RealtimeMediaSource::AudioSampleObserver
-#if PLATFORM(COCOA)
-    , public SharedRingBufferStorage::Client
-#endif
 {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -65,7 +62,7 @@ public:
         , m_source(WTFMove(source))
         , m_connection(WTFMove(connection))
 #if PLATFORM(COCOA)
-        , m_ringBuffer(makeUniqueRef<SharedRingBufferStorage>(makeUniqueRef<SharedRingBufferStorage>(this)))
+        , m_ringBuffer(makeUniqueRef<SharedRingBufferStorage>(std::bind(&Source::storageChanged, this, std::placeholders::_1)))
 #endif
     {
         m_source->addObserver(*this);
@@ -132,7 +129,7 @@ private:
 
 #if PLATFORM(COCOA)
 
-    void storageChanged(SharedMemory* storage) final
+    void storageChanged(SharedMemory* storage)
     {
         SharedMemory::Handle handle;
         if (storage)
