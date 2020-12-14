@@ -38,9 +38,9 @@ class AudioIOCallback;
 class MockAudioDestinationCocoa final : public AudioDestinationCocoa {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<AudioDestination> create(AudioIOCallback& callback, float sampleRate)
+    static UniqueRef<AudioDestination> create(AudioIOCallback& callback, float sampleRate)
     {
-        return adoptRef(*new MockAudioDestinationCocoa(callback, sampleRate));
+        return makeUniqueRef<MockAudioDestinationCocoa>(callback, sampleRate);
     }
 
     WEBCORE_EXPORT MockAudioDestinationCocoa(AudioIOCallback&, float sampleRate);

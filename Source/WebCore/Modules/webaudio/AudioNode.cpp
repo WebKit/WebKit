@@ -646,6 +646,11 @@ void AudioNode::ref()
 
 void AudioNode::deref()
 {
+    if (!isMainThread()) {
+        callOnMainThread(std::bind(&AudioNode::deref, this));
+        return;
+    }
+
     ASSERT(!context().isAudioThread());
 
     {

@@ -64,7 +64,7 @@ private:
     unsigned maxChannelCount() const final;
     bool isPlaying() final;
 
-    RefPtr<AudioDestination> m_destination;
+    std::unique_ptr<AudioDestination> m_destination;
     bool m_wasDestinationStarted { false };
     String m_inputDeviceId;
     unsigned m_numberOfInputChannels { 0 };

@@ -1,3 +1,12 @@
+2020-12-14  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] Crash under AudioDestinationCocoa::setIsPlaying(bool)
+        https://bugs.webkit.org/show_bug.cgi?id=219809
+
+        Reviewed by Eric Carlson.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+
 2020-12-09  Cathie Chen  <cathiechen@igalia.com>
 
         Support overscroll-behavior parsing

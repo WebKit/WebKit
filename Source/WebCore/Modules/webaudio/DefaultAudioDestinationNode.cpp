@@ -54,7 +54,7 @@ DefaultAudioDestinationNode::DefaultAudioDestinationNode(BaseAudioContext& conte
 
 DefaultAudioDestinationNode::~DefaultAudioDestinationNode()
 {
-    uninitialize();
+    ASSERT(!isInitialized());
 }
 
 void DefaultAudioDestinationNode::initialize()
@@ -77,7 +77,6 @@ void DefaultAudioDestinationNode::uninitialize()
     ALWAYS_LOG(LOGIDENTIFIER);
     m_wasDestinationStarted = false;
     m_destination->stop();
-    m_destination = nullptr;
     m_numberOfInputChannels = 0;
 
     AudioNode::uninitialize();
@@ -86,7 +85,7 @@ void DefaultAudioDestinationNode::uninitialize()
 void DefaultAudioDestinationNode::createDestination()
 {
     ALWAYS_LOG(LOGIDENTIFIER, "contextSampleRate = ", m_sampleRate, ", hardwareSampleRate = ", AudioDestination::hardwareSampleRate());
-    m_destination = platformStrategies()->mediaStrategy().createAudioDestination(*this, m_inputDeviceId, m_numberOfInputChannels, channelCount(), m_sampleRate);
+    m_destination = platformStrategies()->mediaStrategy().createAudioDestination(*this, m_inputDeviceId, m_numberOfInputChannels, channelCount(), m_sampleRate).moveToUniquePtr();
 }
 
 void DefaultAudioDestinationNode::enableInput(const String& inputDeviceId)

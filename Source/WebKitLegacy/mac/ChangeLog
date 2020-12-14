@@ -1,3 +1,12 @@
+2020-12-14  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] Crash under AudioDestinationCocoa::setIsPlaying(bool)
+        https://bugs.webkit.org/show_bug.cgi?id=219809
+
+        Reviewed by Eric Carlson.
+
+        * WebCoreSupport/WebPlatformStrategies.mm:
+
 2020-12-11  Darin Adler  <darin@apple.com>
 
         [Cocoa] REGRESSION (r270315): WebKitLegacy builds fail with "unifdef" error message

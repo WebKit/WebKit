@@ -40,7 +40,7 @@ class AudioBus;
 class MultiChannelResampler;
 class PushPullFIFO;
 
-using CreateAudioDestinationCocoaOverride = Ref<AudioDestination>(*)(AudioIOCallback&, float sampleRate);
+using CreateAudioDestinationCocoaOverride = UniqueRef<AudioDestination>(*)(AudioIOCallback&, float sampleRate);
 
 // An AudioDestination using CoreAudio's default output AudioUnit
 class AudioDestinationCocoa : public AudioDestination, public AudioUnitRenderer {
@@ -64,7 +64,7 @@ protected:
     WEBCORE_EXPORT void getAudioStreamBasicDescription(AudioStreamBasicDescription&);
 
 private:
-    friend Ref<AudioDestination> AudioDestination::create(AudioIOCallback&, const String&, unsigned, unsigned, float);
+    friend UniqueRef<AudioDestination> AudioDestination::create(AudioIOCallback&, const String&, unsigned, unsigned, float);
 
     void start(Function<void(Function<void()>&&)>&&, CompletionHandler<void(bool)>&&) override;
     void stop(CompletionHandler<void(bool)>&&) override;
@@ -72,7 +72,6 @@ private:
     void renderOnRenderingThead(size_t framesToRender);
 
     AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;
-    AudioIOCallback& m_callback;
 
     // To pass the data from FIFO to the audio device callback.
     Ref<AudioBus> m_outputBus;

@@ -41,7 +41,7 @@ constexpr size_t fifoSize = 96 * AudioUtilities::renderQuantumSize;
 
 CreateAudioDestinationCocoaOverride AudioDestinationCocoa::createOverride = nullptr;
 
-Ref<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const String&, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
+UniqueRef<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const String&, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
 {
     // FIXME: make use of inputDeviceId as appropriate.
 
@@ -55,8 +55,7 @@ Ref<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const 
     if (AudioDestinationCocoa::createOverride)
         return AudioDestinationCocoa::createOverride(callback, sampleRate);
 
-    auto destination = adoptRef(*new AudioDestinationCocoa(callback, numberOfOutputChannels, sampleRate));
-    return destination;
+    return makeUniqueRef<AudioDestinationCocoa>(callback, numberOfOutputChannels, sampleRate);
 }
 
 float AudioDestination::hardwareSampleRate()
@@ -70,8 +69,8 @@ unsigned long AudioDestination::maxChannelCount()
 }
 
 AudioDestinationCocoa::AudioDestinationCocoa(AudioIOCallback& callback, unsigned numberOfOutputChannels, float sampleRate, bool configureAudioOutputUnit)
-    : m_audioOutputUnitAdaptor(*this)
-    , m_callback(callback)
+    : AudioDestination(callback)
+    , m_audioOutputUnitAdaptor(*this)
     , m_outputBus(AudioBus::create(numberOfOutputChannels, AudioUtilities::renderQuantumSize, false).releaseNonNull())
     , m_renderBus(AudioBus::create(numberOfOutputChannels, AudioUtilities::renderQuantumSize).releaseNonNull())
     , m_fifo(makeUniqueRef<PushPullFIFO>(numberOfOutputChannels, fifoSize))

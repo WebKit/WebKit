@@ -52,7 +52,7 @@ AudioDestinationNode::AudioDestinationNode(BaseAudioContext& context, float samp
 
 AudioDestinationNode::~AudioDestinationNode()
 {
-    uninitialize();
+    ASSERT(!isInitialized());
 }
 
 void AudioDestinationNode::render(AudioBus*, AudioBus* destinationBus, size_t numberOfFrames, const AudioIOPosition& outputPosition)

@@ -55,7 +55,7 @@ OfflineAudioDestinationNode::OfflineAudioDestinationNode(BaseAudioContext& conte
 
 OfflineAudioDestinationNode::~OfflineAudioDestinationNode()
 {
-    uninitialize();
+    ASSERT(!isInitialized());
 }
 
 unsigned OfflineAudioDestinationNode::maxChannelCount() const

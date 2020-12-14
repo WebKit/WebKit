@@ -74,6 +74,9 @@ public:
     virtual void isPlayingDidChange() = 0;
 
     virtual ~AudioIOCallback() = default;
+
+    virtual void refAudioCallback() = 0;
+    virtual void derefAudioCallback() = 0;
 };
 
 } // WebCore
