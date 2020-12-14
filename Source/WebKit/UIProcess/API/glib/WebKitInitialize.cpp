@@ -28,6 +28,7 @@
 
 #include <JavaScriptCore/RemoteInspectorServer.h>
 #include <WebKit/Shared/WebKit2Initialize.h>
+#include <mutex>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {

@@ -1,3 +1,12 @@
+2020-12-14  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [GLIB] Missing header for std::once_flag in WebKitInitialize.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=219865
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/glib/WebKitInitialize.cpp:
+
 2020-12-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         GPU process sometimes hangs during MotionMark Focus when enabling GPU Process for DOM
