@@ -276,7 +276,7 @@ struct StackAccessData {
 };
 
 struct CallDOMGetterData {
-    FunctionPtr<OperationPtrTag> customAccessorGetter;
+    FunctionPtr<CustomAccessorPtrTag> customAccessorGetter;
     const DOMJIT::GetterSetter* domJIT { nullptr };
     DOMJIT::CallDOMGetterSnippet* snippet { nullptr };
     unsigned identifierNumber { 0 };

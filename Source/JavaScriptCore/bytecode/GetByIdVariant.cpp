@@ -38,7 +38,7 @@ GetByIdVariant::GetByIdVariant(
     const ObjectPropertyConditionSet& conditionSet,
     std::unique_ptr<CallLinkStatus> callLinkStatus,
     JSFunction* intrinsicFunction,
-    FunctionPtr<OperationPtrTag> customAccessorGetter,
+    FunctionPtr<CustomAccessorPtrTag> customAccessorGetter,
     std::unique_ptr<DOMAttributeAnnotation> domAttribute)
     : m_structureSet(structureSet)
     , m_conditionSet(conditionSet)

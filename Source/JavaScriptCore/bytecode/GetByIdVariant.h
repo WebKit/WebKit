@@ -50,7 +50,7 @@ public:
         const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(),
         std::unique_ptr<CallLinkStatus> = nullptr,
         JSFunction* = nullptr,
-        FunctionPtr<OperationPtrTag> customAccessorGetter = nullptr,
+        FunctionPtr<CustomAccessorPtrTag> customAccessorGetter = nullptr,
         std::unique_ptr<DOMAttributeAnnotation> = nullptr);
 
     ~GetByIdVariant();
@@ -70,7 +70,7 @@ public:
     CallLinkStatus* callLinkStatus() const { return m_callLinkStatus.get(); }
     JSFunction* intrinsicFunction() const { return m_intrinsicFunction; }
     Intrinsic intrinsic() const { return m_intrinsicFunction ? m_intrinsicFunction->intrinsic() : NoIntrinsic; }
-    FunctionPtr<OperationPtrTag> customAccessorGetter() const { return m_customAccessorGetter; }
+    FunctionPtr<CustomAccessorPtrTag> customAccessorGetter() const { return m_customAccessorGetter; }
     DOMAttributeAnnotation* domAttribute() const { return m_domAttribute.get(); }
 
     bool isPropertyUnset() const { return offset() == invalidOffset; }
@@ -107,7 +107,7 @@ private:
     PropertyOffset m_offset;
     std::unique_ptr<CallLinkStatus> m_callLinkStatus;
     JSFunction* m_intrinsicFunction;
-    FunctionPtr<OperationPtrTag> m_customAccessorGetter;
+    FunctionPtr<CustomAccessorPtrTag> m_customAccessorGetter;
     std::unique_ptr<DOMAttributeAnnotation> m_domAttribute;
     CacheableIdentifier m_identifier;
 };

@@ -31,8 +31,6 @@
 namespace WebKit {
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
-extern const uintptr_t startOfHostFunctionsInWebKit __asm("section$start$__DATA_CONST$__jsc_host");
-extern const uintptr_t endOfHostFunctionsInWebKit __asm("section$end$__DATA_CONST$__jsc_host");
 extern const uintptr_t startOfJITOperationsInWebKit __asm("section$start$__DATA_CONST$__jsc_ops");
 extern const uintptr_t endOfJITOperationsInWebKit __asm("section$end$__DATA_CONST$__jsc_ops");
 #endif
@@ -42,7 +40,7 @@ void populateJITOperations()
 #if ENABLE(JIT_OPERATION_VALIDATION)
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
-        JSC::JITOperationList::populatePointersInEmbedder(&startOfHostFunctionsInWebKit, &endOfHostFunctionsInWebKit, &startOfJITOperationsInWebKit, &endOfJITOperationsInWebKit);
+        JSC::JITOperationList::populatePointersInEmbedder(&startOfJITOperationsInWebKit, &endOfJITOperationsInWebKit);
     });
 #endif
 }

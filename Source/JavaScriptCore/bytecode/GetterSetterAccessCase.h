@@ -55,19 +55,19 @@ public:
 
     static std::unique_ptr<AccessCase> create(
         VM&, JSCell* owner, AccessType, CacheableIdentifier, PropertyOffset, Structure*,
-        const ObjectPropertyConditionSet&, bool viaProxy, WatchpointSet* additionalSet, FunctionPtr<OperationPtrTag> customGetter,
+        const ObjectPropertyConditionSet&, bool viaProxy, WatchpointSet* additionalSet, FunctionPtr<CustomAccessorPtrTag> customGetter,
         JSObject* customSlotBase, Optional<DOMAttributeAnnotation>, std::unique_ptr<PolyProtoAccessChain>);
 
     static std::unique_ptr<AccessCase> create(VM&, JSCell* owner, AccessType, Structure*, CacheableIdentifier, PropertyOffset,
         const ObjectPropertyConditionSet&, std::unique_ptr<PolyProtoAccessChain>, bool viaProxy = false,
-        FunctionPtr<OperationPtrTag> customSetter = nullptr, JSObject* customSlotBase = nullptr);
+        FunctionPtr<CustomAccessorPtrTag> customSetter = nullptr, JSObject* customSlotBase = nullptr);
 
     void dumpImpl(PrintStream&, CommaPrinter&) const final;
     std::unique_ptr<AccessCase> clone() const final;
 
     ~GetterSetterAccessCase() final;
 
-    FunctionPtr<OperationPtrTag> customAccessor() const { return m_customAccessor; }
+    FunctionPtr<CustomAccessorPtrTag> customAccessor() const { return m_customAccessor; }
 
 private:
     GetterSetterAccessCase(VM&, JSCell*, AccessType, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, bool viaProxy, WatchpointSet* additionalSet, JSObject* customSlotBase, std::unique_ptr<PolyProtoAccessChain>);
@@ -76,7 +76,7 @@ private:
 
     WriteBarrier<JSObject> m_customSlotBase;
     CallLinkInfo* m_callLinkInfo { nullptr };
-    FunctionPtr<OperationPtrTag> m_customAccessor;
+    FunctionPtr<CustomAccessorPtrTag> m_customAccessor;
     Optional<DOMAttributeAnnotation> m_domAttribute;
 };
 

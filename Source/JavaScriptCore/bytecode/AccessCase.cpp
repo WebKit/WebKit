@@ -39,6 +39,7 @@
 #include "JSCInlines.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
+#include "LLIntThunks.h"
 #include "LinkBuffer.h"
 #include "ModuleNamespaceAccessCase.h"
 #include "PolymorphicAccess.h"
@@ -1722,21 +1723,43 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             // must keep it alive.
             if (m_type == CustomValueGetter || m_type == CustomAccessorGetter) {
                 RELEASE_ASSERT(m_identifier);
-                jit.setupArguments<PropertySlot::GetValueFunc>(
-                    CCallHelpers::TrustedImmPtr(globalObject),
-                    CCallHelpers::CellValue(baseForCustom),
-                    CCallHelpers::TrustedImmPtr(uid()));
+                if (Options::useJITCage()) {
+                    jit.setupArguments<PropertySlot::GetValueFuncWithPtr>(
+                        CCallHelpers::TrustedImmPtr(globalObject),
+                        CCallHelpers::CellValue(baseForCustom),
+                        CCallHelpers::TrustedImmPtr(uid()),
+                        CCallHelpers::TrustedImmPtr(this->as<GetterSetterAccessCase>().m_customAccessor.executableAddress()));
+                } else {
+                    jit.setupArguments<PropertySlot::GetValueFunc>(
+                        CCallHelpers::TrustedImmPtr(globalObject),
+                        CCallHelpers::CellValue(baseForCustom),
+                        CCallHelpers::TrustedImmPtr(uid()));
+                }
             } else {
-                jit.setupArguments<PutPropertySlot::PutValueFunc>(
-                    CCallHelpers::TrustedImmPtr(globalObject),
-                    CCallHelpers::CellValue(baseForCustom),
-                    valueRegs);
+                if (Options::useJITCage()) {
+                    jit.setupArguments<PutPropertySlot::PutValueFuncWithPtr>(
+                        CCallHelpers::TrustedImmPtr(globalObject),
+                        CCallHelpers::CellValue(baseForCustom),
+                        valueRegs,
+                        CCallHelpers::TrustedImmPtr(this->as<GetterSetterAccessCase>().m_customAccessor.executableAddress()));
+                } else {
+                    jit.setupArguments<PutPropertySlot::PutValueFunc>(
+                        CCallHelpers::TrustedImmPtr(globalObject),
+                        CCallHelpers::CellValue(baseForCustom),
+                        valueRegs);
+                }
             }
             jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
 
-            operationCall = jit.call(OperationPtrTag);
+            if (Options::useJITCage())
+                operationCall = jit.call(OperationPtrTag);
+            else
+                operationCall = jit.call(CustomAccessorPtrTag);
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                linkBuffer.link(operationCall, this->as<GetterSetterAccessCase>().m_customAccessor);
+                if (Options::useJITCage())
+                    linkBuffer.link(operationCall, FunctionPtr<OperationPtrTag>(vmEntryCustomAccessor));
+                else
+                    linkBuffer.link(operationCall, this->as<GetterSetterAccessCase>().m_customAccessor);
             });
 
             if (m_type == CustomValueGetter || m_type == CustomAccessorGetter)

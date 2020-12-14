@@ -49,17 +49,7 @@ public:
     static void populatePointersInJavaScriptCore();
     static void populatePointersInJavaScriptCoreForLLInt();
 
-    JS_EXPORT_PRIVATE static void populatePointersInEmbedder(const uintptr_t* beginHost, const uintptr_t* endHost, const uintptr_t* beginOperations, const uintptr_t* endOperations);
-
-    // FIXME: Currently, assertIsHostFunction and assertIsJITOperation are the same.
-    // We will make them work in a subsequent patch.
-    template<typename T> static void assertIsHostFunction(T function)
-    {
-        UNUSED_PARAM(function);
-#if ENABLE(JIT_OPERATION_VALIDATION)
-        ASSERT(function, !Options::useJIT() || JITOperationList::instance().map(bitwise_cast<void*>(function)));
-#endif
-    }
+    JS_EXPORT_PRIVATE static void populatePointersInEmbedder(const uintptr_t* beginOperations, const uintptr_t* endOperations);
 
     template<typename T> static void assertIsJITOperation(T function)
     {

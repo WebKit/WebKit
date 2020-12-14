@@ -29,6 +29,7 @@
 #include "JITOperations.h"
 #include "JITThunks.h"
 #include "JSBoundFunction.h"
+#include "LLIntThunks.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "SpecializedThunkJIT.h"
 #include <wtf/InlineASM.h>
@@ -291,11 +292,25 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
         auto hasExecutable = jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::argumentGPR2, CCallHelpers::TrustedImm32(JSFunction::rareDataTag));
         jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR2, FunctionRareData::offsetOfExecutable() - JSFunction::rareDataTag), GPRInfo::argumentGPR2);
         hasExecutable.link(&jit);
-        jit.call(CCallHelpers::Address(GPRInfo::argumentGPR2, executableOffsetToFunction), HostFunctionPtrTag);
+        if (Options::useJITCage()) {
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR2, executableOffsetToFunction), GPRInfo::argumentGPR2);
+            auto operationCall = jit.call(OperationPtrTag);
+            jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                linkBuffer.link(operationCall, FunctionPtr<OperationPtrTag>(vmEntryHostFunction));
+            });
+        } else
+            jit.call(CCallHelpers::Address(GPRInfo::argumentGPR2, executableOffsetToFunction), HostFunctionPtrTag);
     } else {
         ASSERT(thunkFunctionType == ThunkFunctionType::InternalFunction);
         jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR2, InternalFunction::offsetOfGlobalObject()), GPRInfo::argumentGPR0);
-        jit.call(CCallHelpers::Address(GPRInfo::argumentGPR2, InternalFunction::offsetOfNativeFunctionFor(kind)), HostFunctionPtrTag);
+        if (Options::useJITCage()) {
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR2, InternalFunction::offsetOfNativeFunctionFor(kind)), GPRInfo::argumentGPR2);
+            auto operationCall = jit.call(OperationPtrTag);
+            jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                linkBuffer.link(operationCall, FunctionPtr<OperationPtrTag>(vmEntryHostFunction));
+            });
+        } else
+            jit.call(CCallHelpers::Address(GPRInfo::argumentGPR2, InternalFunction::offsetOfNativeFunctionFor(kind)), HostFunctionPtrTag);
     }
 
 #if CPU(X86_64) && OS(WINDOWS)

@@ -1,3 +1,67 @@
+2020-12-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Introduce vmEntryCustomAccessor and vmEntryHostFunction for JITCage
+        https://bugs.webkit.org/show_bug.cgi?id=219847
+
+        Reviewed by Mark Lam.
+
+        Instead of registering all host-functions and custom accessors with OperationPtrTag or HostFunctionPtrTag,
+        this patch introduces a trampoline which invokes them with special ptr-tag to reduce memory usage of JITOperationList.
+
+        When invoking custom accessor, we pass that pointer as a forth argument, and call vmEntryCustomAccessor.
+        And vmEntryCustomAccessor jumps to the passed argument with special ptr tag. And we register vmEntryCustomAccessor as an operation.
+        For host-functions, we pass that pointer as a third argument.
+
+        * assembler/JITOperationList.cpp:
+        (JSC::addPointers):
+        (JSC::JITOperationList::populatePointersInJavaScriptCore):
+        (JSC::JITOperationList::populatePointersInJavaScriptCoreForLLInt):
+        (JSC::JITOperationList::populatePointersInEmbedder):
+        * assembler/JITOperationList.h:
+        (JSC::JITOperationList::assertIsHostFunction): Deleted.
+        * b3/testb3_1.cpp:
+        (main):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/GetByIdVariant.cpp:
+        (JSC::GetByIdVariant::GetByIdVariant):
+        * bytecode/GetByIdVariant.h:
+        (JSC::GetByIdVariant::customAccessorGetter const):
+        * bytecode/GetByStatus.cpp:
+        (JSC::GetByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/GetterSetterAccessCase.cpp:
+        (JSC::GetterSetterAccessCase::create):
+        * bytecode/GetterSetterAccessCase.h:
+        * dfg/DFGNode.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCallDOMGetter):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOMGetter):
+        * jit/JITOperations.h:
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetBy):
+        (JSC::tryCachePutByID):
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+        * jsc.cpp:
+        (jscmain):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        * llint/LLIntThunks.cpp:
+        * llint/LLIntThunks.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/Gate.h:
+        * runtime/JSCPtrTag.h:
+        (JSC::tagJSCCodePtrImpl):
+        (JSC::untagJSCCodePtrImpl):
+        * runtime/NativeFunction.h:
+        * runtime/PropertySlot.h:
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::customSetter const):
+        * runtime/VM.cpp:
+        (JSC::VM::getHostFunction):
+
 2020-12-14  Youenn Fablet  <youenn@apple.com>
 
         Pass an isolated copy of Settings to workers and worklets.

@@ -38,13 +38,14 @@ typedef int64_t EncodedJSValue;
 extern "C" {
     EncodedJSValue vmEntryToJavaScript(void*, VM*, ProtoCallFrame*);
     EncodedJSValue vmEntryToNative(void*, VM*, ProtoCallFrame*);
+    EncodedJSValue vmEntryCustomAccessor(CPURegister, CPURegister, CPURegister, CPURegister);
+    EncodedJSValue vmEntryHostFunction(JSGlobalObject*, CallFrame*, void*);
 }
 
 #if ENABLE(JIT_CAGE)
 extern "C" {
     void jitCagePtrGateAfter(void);
     void vmEntryToJavaScriptGateAfter(void);
-    void vmEntryToNativeGateAfter(void);
 
     void llint_function_for_call_arity_checkUntagGateAfter(void);
     void llint_function_for_call_arity_checkTagGateAfter(void);

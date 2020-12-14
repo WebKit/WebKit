@@ -85,6 +85,7 @@
 #include "JSLexicalEnvironment.h"
 #include "JSMapIterator.h"
 #include "JSSetIterator.h"
+#include "LLIntThunks.h"
 #include "OperandsInlines.h"
 #include "ProbeContext.h"
 #include "RegExpObject.h"
@@ -14502,9 +14503,14 @@ private:
             // https://bugs.webkit.org/show_bug.cgi?id=203204
             JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
             m_out.storePtr(m_callFrame, m_out.absolute(&vm().topCallFrame));
-            setJSValue(
-                vmCall(Int64, bitwise_cast<CustomGetterSetter::CustomGetter>(m_node->callDOMGetterData()->customAccessorGetter.retaggedExecutableAddress<CFunctionPtrTag>()),
-                    weakPointer(globalObject), lowCell(m_node->child1()), m_out.constIntPtr(m_graph.identifiers()[m_node->callDOMGetterData()->identifierNumber])));
+            if (Options::useJITCage()) {
+                setJSValue(
+                    vmCall(Int64, vmEntryCustomAccessor, weakPointer(globalObject), lowCell(m_node->child1()), m_out.constIntPtr(m_graph.identifiers()[m_node->callDOMGetterData()->identifierNumber]), m_out.constIntPtr(m_node->callDOMGetterData()->customAccessorGetter.executableAddress())));
+            } else {
+                setJSValue(
+                    vmCall(Int64, bitwise_cast<CustomGetterSetter::CustomGetter>(m_node->callDOMGetterData()->customAccessorGetter.retaggedExecutableAddress<CFunctionPtrTag>()),
+                        weakPointer(globalObject), lowCell(m_node->child1()), m_out.constIntPtr(m_graph.identifiers()[m_node->callDOMGetterData()->identifierNumber])));
+            }
             return;
         }
 

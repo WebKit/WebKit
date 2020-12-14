@@ -38,7 +38,8 @@ class PutPropertySlot {
 public:
     enum Type : uint8_t { Uncachable, ExistingProperty, NewProperty, SetterProperty, CustomValue, CustomAccessor };
     enum Context { UnknownContext, PutById, PutByIdEval };
-    typedef bool (*PutValueFunc)(JSGlobalObject*, EncodedJSValue thisObject, EncodedJSValue value);
+    using PutValueFunc = bool (*)(JSGlobalObject*, EncodedJSValue thisObject, EncodedJSValue value);
+    using PutValueFuncWithPtr = bool (*)(JSGlobalObject*, EncodedJSValue thisObject, EncodedJSValue value, void*);
 
     PutPropertySlot(JSValue thisValue, bool isStrictMode = false, Context context = UnknownContext, bool isInitialization = false)
         : m_base(nullptr)
@@ -97,7 +98,7 @@ public:
         m_isStrictMode = value;
     }
 
-    FunctionPtr<PutValuePtrTag> customSetter() const
+    FunctionPtr<CustomAccessorPtrTag> customSetter() const
     {
         ASSERT(isCacheableCustom());
         return m_putFunction;
@@ -137,7 +138,7 @@ private:
     Type m_type;
     uint8_t m_context;
     CacheabilityType m_cacheability;
-    FunctionPtr<PutValuePtrTag> m_putFunction;
+    FunctionPtr<CustomAccessorPtrTag> m_putFunction;
 };
 
 } // namespace JSC

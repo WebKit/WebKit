@@ -56,7 +56,6 @@ extern "C" void wasm_entry(void*, void*, void*);
 
 #if ENABLE(JIT_CAGE)
 extern "C" void vmEntryToJavaScriptTrampoline(void);
-extern "C" void vmEntryToNativeTrampoline(void);
 extern "C" void tailCallJSEntryTrampoline(void);
 extern "C" void tailCallJSEntrySlowPathTrampoline(void);
 extern "C" void exceptionHandlerTrampoline(void);
@@ -147,14 +146,6 @@ void initialize()
         else
             codeRef.construct(MacroAssemblerCodeRef<NativeToJITGatePtrTag>::createSelfManagedCodeRef(MacroAssemblerCodePtr<NativeToJITGatePtrTag>::createFromExecutableAddress(retagCodePtr<void*, CFunctionPtrTag, NativeToJITGatePtrTag>(&vmEntryToJavaScriptTrampoline))));
         g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::vmEntryToJavaScript)] = codeRef.get().code().executableAddress();
-    }
-    {
-        static LazyNeverDestroyed<MacroAssemblerCodeRef<NativeToJITGatePtrTag>> codeRef;
-        if (Options::useJIT())
-            codeRef.construct(createJSGateThunk(retagCodePtr<void*, CFunctionPtrTag, OperationPtrTag>(vmEntryToNativeGateAfter), HostFunctionPtrTag, "vmEntryToNative"));
-        else
-            codeRef.construct(MacroAssemblerCodeRef<NativeToJITGatePtrTag>::createSelfManagedCodeRef(MacroAssemblerCodePtr<NativeToJITGatePtrTag>::createFromExecutableAddress(retagCodePtr<void*, CFunctionPtrTag, NativeToJITGatePtrTag>(&vmEntryToNativeTrampoline))));
-        g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::vmEntryToNative)] = codeRef.get().code().executableAddress();
     }
     {
         static LazyNeverDestroyed<MacroAssemblerCodeRef<NativeToJITGatePtrTag>> codeRef;

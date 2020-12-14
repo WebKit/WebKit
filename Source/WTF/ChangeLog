@@ -1,3 +1,12 @@
+2020-12-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Introduce vmEntryCustomAccessor and vmEntryHostFunction for JITCage
+        https://bugs.webkit.org/show_bug.cgi?id=219847
+
+        Reviewed by Mark Lam.
+
+        * wtf/PlatformCallingConventions.h:
+
 2020-12-14  Youenn Fablet  <youenn@apple.com>
 
         Pass an isolated copy of Settings to workers and worklets.

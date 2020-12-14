@@ -43,7 +43,6 @@ using PtrTag = WTF::PtrTag;
     /* Callee:Native Caller:None */ \
     v(DOMJITFunctionPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::None) \
     v(DisassemblyPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::None) \
-    v(PutValuePtrTag, PtrTagCalleeType::Native, PtrTagCallerType::None) \
     /* Callee:JIT Caller:None */ \
     v(B3CompilationPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::None) \
     v(ExecutableMemoryPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::None) \
@@ -54,6 +53,8 @@ using PtrTag = WTF::PtrTag;
     v(YarrMatchOnly16BitPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::None) \
     /* Callee:Native Caller:Native */ \
     v(BytecodePtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
+    v(CustomAccessorPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
+    v(HostFunctionPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
     v(JITProbePtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
     v(JITProbeExecutorPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
     v(JITProbeStackInitializationFunctionPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
@@ -62,7 +63,6 @@ using PtrTag = WTF::PtrTag;
     v(YarrEntryPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::Native) \
     v(CSSSelectorPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::Native) \
     /* Callee:Native Caller:JIT */ \
-    v(HostFunctionPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::JIT) \
     v(OperationPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::JIT) \
     /* Callee:JIT Caller:JIT */ \
     v(ExceptionHandlerPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::JIT) \
@@ -124,11 +124,8 @@ ALWAYS_INLINE static PtrType tagJSCCodePtrImpl(PtrType ptr)
 {
     static_assert(callerType == PtrTagCallerType::JIT);
     if constexpr (calleeType == PtrTagCalleeType::Native) {
-        static_assert(tag == OperationPtrTag || tag == HostFunctionPtrTag);
-        if constexpr (tag == OperationPtrTag)
-            JITOperationList::instance().assertIsJITOperation(ptr);
-        else if constexpr (tag == HostFunctionPtrTag)
-            JITOperationList::instance().assertIsHostFunction(ptr);
+        static_assert(tag == OperationPtrTag);
+        JITOperationList::instance().assertIsJITOperation(ptr);
 #if ENABLE(JIT_CAGE)
         if (Options::useJITCage())
             return bitwise_cast<PtrType>(JITOperationList::instance().map(bitwise_cast<void*>(ptr)));
@@ -145,11 +142,8 @@ ALWAYS_INLINE static PtrType untagJSCCodePtrImpl(PtrType ptr)
 {
     static_assert(callerType == PtrTagCallerType::JIT);
     if constexpr (calleeType == PtrTagCalleeType::Native) {
-        static_assert(tag == OperationPtrTag || tag == HostFunctionPtrTag);
-        if constexpr (tag == OperationPtrTag)
-            JITOperationList::instance().assertIsJITOperation(ptr);
-        else if constexpr (tag == HostFunctionPtrTag)
-            JITOperationList::instance().assertIsHostFunction(ptr);
+        static_assert(tag == OperationPtrTag);
+        JITOperationList::instance().assertIsJITOperation(ptr);
 #if ENABLE(JIT_CAGE)
         if (Options::useJITCage()) {
             RELEASE_ASSERT(bitwise_cast<PtrType>(JITOperationList::instance().map(bitwise_cast<void*>(ptr))) == ptr);

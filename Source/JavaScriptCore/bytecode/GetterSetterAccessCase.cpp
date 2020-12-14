@@ -49,7 +49,7 @@ GetterSetterAccessCase::GetterSetterAccessCase(VM& vm, JSCell* owner, AccessType
 
 std::unique_ptr<AccessCase> GetterSetterAccessCase::create(
     VM& vm, JSCell* owner, AccessType type, CacheableIdentifier identifier, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet,
-    bool viaProxy, WatchpointSet* additionalSet, FunctionPtr<OperationPtrTag> customGetter, JSObject* customSlotBase,
+    bool viaProxy, WatchpointSet* additionalSet, FunctionPtr<CustomAccessorPtrTag> customGetter, JSObject* customSlotBase,
     Optional<DOMAttributeAnnotation> domAttribute, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain)
 {
     switch (type) {
@@ -63,17 +63,17 @@ std::unique_ptr<AccessCase> GetterSetterAccessCase::create(
 
     std::unique_ptr<GetterSetterAccessCase> result(new GetterSetterAccessCase(vm, owner, type, identifier, offset, structure, conditionSet, viaProxy, additionalSet, customSlotBase, WTFMove(prototypeAccessChain)));
     result->m_domAttribute = domAttribute;
-    result->m_customAccessor = customGetter ? FunctionPtr<OperationPtrTag>(customGetter) : nullptr;
+    result->m_customAccessor = customGetter ? FunctionPtr<CustomAccessorPtrTag>(customGetter) : nullptr;
     return result;
 }
 
 std::unique_ptr<AccessCase> GetterSetterAccessCase::create(VM& vm, JSCell* owner, AccessType type, Structure* structure, CacheableIdentifier identifier, PropertyOffset offset,
     const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain, bool viaProxy, 
-    FunctionPtr<OperationPtrTag> customSetter, JSObject* customSlotBase)
+    FunctionPtr<CustomAccessorPtrTag> customSetter, JSObject* customSlotBase)
 {
     ASSERT(type == Setter || type == CustomValueSetter || type == CustomAccessorSetter);
     std::unique_ptr<GetterSetterAccessCase> result(new GetterSetterAccessCase(vm, owner, type, identifier, offset, structure, conditionSet, viaProxy, nullptr, customSlotBase, WTFMove(prototypeAccessChain)));
-    result->m_customAccessor = customSetter ? FunctionPtr<OperationPtrTag>(customSetter) : nullptr;
+    result->m_customAccessor = customSetter ? FunctionPtr<CustomAccessorPtrTag>(customSetter) : nullptr;
     return result;
 }
 

@@ -255,6 +255,7 @@ const ArithProfileNumberNumber = constexpr (BinaryArithProfile::observedNumberNu
 # Pointer Tags
 const AddressDiversified = 1
 const BytecodePtrTag = constexpr BytecodePtrTag
+const CustomAccessorPtrTag = constexpr CustomAccessorPtrTag
 const JSEntryPtrTag = constexpr JSEntryPtrTag
 const HostFunctionPtrTag = constexpr HostFunctionPtrTag
 const JSEntrySlowPathPtrTag = constexpr JSEntrySlowPathPtrTag
@@ -1611,6 +1612,16 @@ if ARM64 or ARM64E
 end
     functionEpilogue()
     ret
+
+# a0, a1, a2 are used. a3 contains function address.
+global _vmEntryCustomAccessor
+_vmEntryCustomAccessor:
+    jmp a3, CustomAccessorPtrTag
+
+# a0 and a1 are used. a2 contains function address.
+global _vmEntryHostFunction
+_vmEntryHostFunction:
+    jmp a2, HostFunctionPtrTag
 
 # unsigned vmEntryToCSSJIT(uintptr_t, uintptr_t, uintptr_t, const void* codePtr);
 if ARM64 or ARM64E

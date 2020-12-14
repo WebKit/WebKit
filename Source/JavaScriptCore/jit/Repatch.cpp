@@ -410,7 +410,7 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
 
                     newCase = GetterSetterAccessCase::create(
                         vm, codeBlock, type, propertyName, offset, structure, conditionSet, loadTargetFromProxy,
-                        slot.watchpointSet(), slot.isCacheableCustom() ? FunctionPtr<OperationPtrTag>(slot.customGetter()) : nullptr,
+                        slot.watchpointSet(), slot.isCacheableCustom() ? FunctionPtr<CustomAccessorPtrTag>(slot.customGetter()) : nullptr,
                         slot.isCacheableCustom() && slot.slotBase() != baseValue ? slot.slotBase() : nullptr,
                         domAttribute, WTFMove(prototypeAccessChain));
                 }
@@ -746,7 +746,7 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
 
                 newCase = GetterSetterAccessCase::create(
                     vm, codeBlock, slot.isCustomAccessor() ? AccessCase::CustomAccessorSetter : AccessCase::CustomValueSetter, oldStructure, propertyName,
-                    invalidOffset, conditionSet, WTFMove(prototypeAccessChain), isProxy, slot.customSetter().retagged<OperationPtrTag>(), slot.base() != baseValue ? slot.base() : nullptr);
+                    invalidOffset, conditionSet, WTFMove(prototypeAccessChain), isProxy, slot.customSetter().retagged<CustomAccessorPtrTag>(), slot.base() != baseValue ? slot.base() : nullptr);
             } else {
                 ASSERT(slot.isCacheableSetter());
                 ObjectPropertyConditionSet conditionSet;

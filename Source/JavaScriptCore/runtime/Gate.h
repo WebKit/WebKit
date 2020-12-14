@@ -43,7 +43,6 @@ namespace JSC {
     v(llint_function_for_construct_arity_checkUntag, NoPtrTag) \
     v(llint_function_for_construct_arity_checkTag, NoPtrTag) \
     v(vmEntryToJavaScript, JSEntryPtrTag) \
-    v(vmEntryToNative, HostFunctionPtrTag) \
 
 #define JSC_JS_GATE_OPCODES(v) \
     v(op_call, JSEntryPtrTag) \

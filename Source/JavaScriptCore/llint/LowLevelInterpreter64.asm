@@ -336,19 +336,8 @@ macro makeHostFunctionCall(entry, protoCallFrame, temp1, temp2)
         subp 32, sp
         call temp1, HostFunctionPtrTag
         addp 32, sp
-    elsif ARM64E
-        move temp1, t3
-        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::vmEntryToNative) * PtrSize, a2
-        jmp [a2], NativeToJITGatePtrTag # HostFunctionPtrTag
-        global _vmEntryToNativeTrampoline
-        _vmEntryToNativeTrampoline:
-        call t3, HostFunctionPtrTag
     else
         call temp1, HostFunctionPtrTag
-    end
-    if ARM64E
-        global _vmEntryToNativeGateAfter
-        _vmEntryToNativeGateAfter:
     end
 end
 

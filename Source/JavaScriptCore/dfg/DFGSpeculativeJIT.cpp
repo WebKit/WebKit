@@ -58,6 +58,7 @@
 #include "JSMapIterator.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSSetIterator.h"
+#include "LLIntThunks.h"
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
 #include "TypeProfilerLog.h"
@@ -10104,7 +10105,7 @@ void SpeculativeJIT::compileCallDOMGetter(Node* node)
 {
     DOMJIT::CallDOMGetterSnippet* snippet = node->callDOMGetterData()->snippet;
     if (!snippet) {
-        FunctionPtr<OperationPtrTag> getter = node->callDOMGetterData()->customAccessorGetter;
+        FunctionPtr<CustomAccessorPtrTag> getter = node->callDOMGetterData()->customAccessorGetter;
         SpeculateCellOperand base(this, node->child1());
         JSValueRegsTemporary result(this);
 
@@ -10112,10 +10113,17 @@ void SpeculativeJIT::compileCallDOMGetter(Node* node)
         GPRReg baseGPR = base.gpr();
 
         flushRegisters();
-        m_jit.setupArguments<J_JITOperation_GJI>(TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), CCallHelpers::CellValue(baseGPR), identifierUID(node->callDOMGetterData()->identifierNumber));
+        if (Options::useJITCage())
+            m_jit.setupArguments<J_JITOperation_GJIP>(TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), CCallHelpers::CellValue(baseGPR), identifierUID(node->callDOMGetterData()->identifierNumber), getter.executableAddress());
+        else
+            m_jit.setupArguments<J_JITOperation_GJI>(TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), CCallHelpers::CellValue(baseGPR), identifierUID(node->callDOMGetterData()->identifierNumber));
+
         m_jit.storePtr(GPRInfo::callFrameRegister, &vm().topCallFrame);
         m_jit.emitStoreCodeOrigin(m_currentNode->origin.semantic);
-        m_jit.appendCall(getter.retagged<CFunctionPtrTag>());
+        if (Options::useJITCage())
+            m_jit.appendCall(vmEntryCustomAccessor);
+        else
+            m_jit.appendCall(getter.retagged<CFunctionPtrTag>());
         m_jit.setupResults(resultRegs);
 
         m_jit.exceptionCheck();

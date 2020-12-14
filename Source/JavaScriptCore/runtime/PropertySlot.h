@@ -122,6 +122,7 @@ public:
     }
 
     using GetValueFunc = EncodedJSValue(JIT_OPERATION_ATTRIBUTES*)(JSGlobalObject*, EncodedJSValue thisValue, PropertyName);
+    using GetValueFuncWithPtr = EncodedJSValue(JIT_OPERATION_ATTRIBUTES*)(JSGlobalObject*, EncodedJSValue thisValue, PropertyName, void*);
 
     JSValue getValue(JSGlobalObject*, PropertyName) const;
     JSValue getValue(JSGlobalObject*, uint64_t propertyName) const;

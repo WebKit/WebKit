@@ -133,6 +133,7 @@ using P_JITOperation_VmStZB = char*(JIT_OPERATION_ATTRIBUTES *)(VM*, Structure*,
 using P_JITOperation_GStZB = char*(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, Structure*, int32_t, Butterfly*);
 using J_JITOperation_GJ = EncodedJSValue(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, EncodedJSValue);
 using J_JITOperation_GJI = EncodedJSValue(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, EncodedJSValue, UniquedStringImpl*);
+using J_JITOperation_GJIP = EncodedJSValue(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, EncodedJSValue, UniquedStringImpl*, void*);
 using V_JITOperation_GSsiJJC = void(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue, uintptr_t);
 using C_JITOperation_TT = uintptr_t(JIT_OPERATION_ATTRIBUTES *)(StringImpl*, StringImpl*);
 using C_JITOperation_B_GJssJss = uintptr_t(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, JSString*, JSString*);

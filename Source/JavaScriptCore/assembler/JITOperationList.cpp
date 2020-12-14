@@ -39,8 +39,6 @@ namespace JSC {
 LazyNeverDestroyed<JITOperationList> jitOperationList;
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
-extern const uintptr_t startOfHostFunctionsInJSC __asm("section$start$__DATA_CONST$__jsc_host");
-extern const uintptr_t endOfHostFunctionsInJSC __asm("section$end$__DATA_CONST$__jsc_host");
 extern const uintptr_t startOfJITOperationsInJSC __asm("section$start$__DATA_CONST$__jsc_ops");
 extern const uintptr_t endOfJITOperationsInJSC __asm("section$end$__DATA_CONST$__jsc_ops");
 #endif
@@ -51,7 +49,7 @@ void JITOperationList::initialize()
 }
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
-static SUPPRESS_ASAN ALWAYS_INLINE void addPointers(HashMap<void*, void*>& map, const uintptr_t* beginHost, const uintptr_t* endHost, const uintptr_t* beginOperations, const uintptr_t* endOperations)
+static SUPPRESS_ASAN ALWAYS_INLINE void addPointers(HashMap<void*, void*>& map, const uintptr_t* beginOperations, const uintptr_t* endOperations)
 {
 #if ENABLE(JIT_CAGE)
     if (Options::useJITCage()) {
@@ -60,11 +58,6 @@ static SUPPRESS_ASAN ALWAYS_INLINE void addPointers(HashMap<void*, void*>& map, 
     }
 #endif
     if constexpr (ASSERT_ENABLED) {
-        for (const uintptr_t* current = beginHost; current != endHost; ++current) {
-            void* codePtr = removeCodePtrTag(bitwise_cast<void*>(*current));
-            if (codePtr)
-                map.add(codePtr, WTF::tagNativeCodePtrImpl<HostFunctionPtrTag>(codePtr));
-        }
         for (const uintptr_t* current = beginOperations; current != endOperations; ++current) {
             void* codePtr = removeCodePtrTag(bitwise_cast<void*>(*current));
             if (codePtr)
@@ -80,7 +73,7 @@ void JITOperationList::populatePointersInJavaScriptCore()
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
         if (Options::useJIT())
-            addPointers(jitOperationList->m_validatedOperations, &startOfHostFunctionsInJSC, &endOfHostFunctionsInJSC, &startOfJITOperationsInJSC, &endOfJITOperationsInJSC);
+            addPointers(jitOperationList->m_validatedOperations, &startOfJITOperationsInJSC, &endOfJITOperationsInJSC);
     });
 #endif
 }
@@ -128,22 +121,20 @@ void JITOperationList::populatePointersInJavaScriptCoreForLLInt()
             JSC_WASM_GATE_OPCODES(LLINT_RETURN_LOCATION)
         };
         if (Options::useJIT())
-            addPointers(jitOperationList->m_validatedOperations, nullptr, nullptr, operations, operations + WTF_ARRAY_LENGTH(operations));
+            addPointers(jitOperationList->m_validatedOperations, operations, operations + WTF_ARRAY_LENGTH(operations));
 #undef LLINT_RETURN_LOCATION
     });
 #endif
 }
 
 
-void JITOperationList::populatePointersInEmbedder(const uintptr_t* beginHost, const uintptr_t* endHost, const uintptr_t* beginOperations, const uintptr_t* endOperations)
+void JITOperationList::populatePointersInEmbedder(const uintptr_t* beginOperations, const uintptr_t* endOperations)
 {
-    UNUSED_PARAM(beginHost);
-    UNUSED_PARAM(endHost);
     UNUSED_PARAM(beginOperations);
     UNUSED_PARAM(endOperations);
 #if ENABLE(JIT_OPERATION_VALIDATION)
     if (Options::useJIT())
-        addPointers(jitOperationList->m_validatedOperations, beginHost, endHost, beginOperations, endOperations);
+        addPointers(jitOperationList->m_validatedOperations, beginOperations, endOperations);
 #endif
 }
 

@@ -42,12 +42,7 @@
 #define JSC_HOST_CALL_ATTRIBUTES
 #endif
 
-#if ENABLE(JIT_OPERATION_VALIDATION)
-#define JSC_ANNOTATE_HOST_FUNCTION(functionId, function) \
-    constexpr auto functionId __attribute__((used, section("__DATA_CONST,__jsc_host"))) = function;
-#else
 #define JSC_ANNOTATE_HOST_FUNCTION(functionId, function)
-#endif
 
 #define JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionName, attributes, parameters) \
     JSC_ANNOTATE_HOST_FUNCTION(_JITTarget_##functionName, static_cast<JSC::EncodedJSValue(*)parameters>(functionName)); \
@@ -96,6 +91,9 @@
 #define JSC_ANNOTATE_JIT_OPERATION(functionId, function)
 #endif
 
+
+#define JSC_DEFINE_JIT_OPERATION_WITHOUT_VARIABLE(functionName, returnType, parameters) \
+    returnType JIT_OPERATION_ATTRIBUTES functionName parameters
 #define JSC_DEFINE_JIT_OPERATION_WITH_ATTRIBUTES(functionName, attributes, returnType, parameters) \
     JSC_ANNOTATE_JIT_OPERATION(_JITTarget_##functionName, static_cast<returnType(*)parameters>(functionName)); \
     attributes returnType JIT_OPERATION_ATTRIBUTES functionName parameters
@@ -108,5 +106,5 @@
 
 #define JSC_DECLARE_CUSTOM_GETTER(functionName) JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(functionName, JSC::EncodedJSValue, (JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::PropertyName))
 #define JSC_DECLARE_CUSTOM_SETTER(functionName) JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(functionName, bool, (JSC::JSGlobalObject*, JSC::EncodedJSValue, JSC::EncodedJSValue))
-#define JSC_DEFINE_CUSTOM_GETTER(functionName, parameters) JSC_DEFINE_JIT_OPERATION(functionName, JSC::EncodedJSValue, parameters)
-#define JSC_DEFINE_CUSTOM_SETTER(functionName, parameters) JSC_DEFINE_JIT_OPERATION(functionName, bool, parameters)
+#define JSC_DEFINE_CUSTOM_GETTER(functionName, parameters) JSC_DEFINE_JIT_OPERATION_WITHOUT_VARIABLE(functionName, JSC::EncodedJSValue, parameters)
+#define JSC_DEFINE_CUSTOM_SETTER(functionName, parameters) JSC_DEFINE_JIT_OPERATION_WITHOUT_VARIABLE(functionName, bool, parameters)

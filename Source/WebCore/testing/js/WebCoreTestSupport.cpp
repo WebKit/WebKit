@@ -242,8 +242,6 @@ void setAdditionalSupportedImageTypesForTesting(const WTF::String& imageTypes)
 #endif
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
-extern const uintptr_t startOfHostFunctionsInWebCoreTestSupport __asm("section$start$__DATA_CONST$__jsc_host");
-extern const uintptr_t endOfHostFunctionsInWebCoreTestSupport __asm("section$end$__DATA_CONST$__jsc_host");
 extern const uintptr_t startOfJITOperationsInWebCoreTestSupport __asm("section$start$__DATA_CONST$__jsc_ops");
 extern const uintptr_t endOfJITOperationsInWebCoreTestSupport __asm("section$end$__DATA_CONST$__jsc_ops");
 #endif
@@ -253,7 +251,7 @@ void populateJITOperations()
 #if ENABLE(JIT_OPERATION_VALIDATION)
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
-        JSC::JITOperationList::populatePointersInEmbedder(&startOfHostFunctionsInWebCoreTestSupport, &endOfHostFunctionsInWebCoreTestSupport, &startOfJITOperationsInWebCoreTestSupport, &endOfJITOperationsInWebCoreTestSupport);
+        JSC::JITOperationList::populatePointersInEmbedder(&startOfJITOperationsInWebCoreTestSupport, &endOfJITOperationsInWebCoreTestSupport);
     });
 #endif
 }
