@@ -39,7 +39,10 @@ class WebIOSEventFactory {
 public:
     static WebKit::WebKeyboardEvent createWebKeyboardEvent(::WebEvent *, bool handledByInputMethod);
     static WebKit::WebMouseEvent createWebMouseEvent(::WebEvent *);
+
+#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
     static WebKit::WebWheelEvent createWebWheelEvent(UIScrollEvent *, UIView *contentView);
+#endif
 
     static UIKeyModifierFlags toUIKeyModifierFlags(OptionSet<WebKit::WebEvent::Modifier>);
 };
