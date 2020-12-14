@@ -82,17 +82,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)download:(WKDownload *)download didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential * _Nullable))completionHandler;
 
-/* @abstract Invoked when the download has received and written data to the destination.
- @param download The download that has written data.
- @param bytesWritten The number of bytes written.
- @param totalBytesWritten The total number of bytes written.
- @param totalBytesExpectedToWrite The total number of bytes expected to be written.
- @discussion If this download was the result of resuming a previous download, then
- totalBytesWritten will be bytesWritten plus the number of bytes that had already been downloaded.
- If the total number of bytes is unknown, totalBytesExpectedToWrite will be -1.
- */
-- (void)download:(WKDownload *)download didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite;
-
 /* @abstract Invoked when the download has finished successfully.
  @param download The download that finished.
  */

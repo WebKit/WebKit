@@ -29,7 +29,6 @@ enum class DownloadCallback : uint8_t {
     WillRedirect,
     AuthenticationChallenge,
     DecideDestination,
-    DidWriteData,
     DidFinish,
     DidFailWithError,
     NavigationActionBecameDownload,
@@ -43,7 +42,6 @@ enum class DownloadCallback : uint8_t {
 @property (nonatomic, copy) void (^willPerformHTTPRedirection)(WKDownload *, NSHTTPURLResponse *, NSURLRequest *, void (^)(WKDownloadRedirectPolicy));
 @property (nonatomic, copy) void (^didReceiveAuthenticationChallenge)(WKDownload *, NSURLAuthenticationChallenge *, void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential*));
 @property (nonatomic, copy) void (^decideDestinationUsingResponse)(WKDownload *, NSURLResponse *, NSString *, void (^)(NSURL *));
-@property (nonatomic, copy) void (^didWriteData)(WKDownload *, int64_t, int64_t, int64_t);
 @property (nonatomic, copy) void (^downloadDidFinish)(WKDownload *);
 @property (nonatomic, copy) void (^didFailWithError)(WKDownload *, NSError *, NSData *);
 

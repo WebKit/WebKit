@@ -1,3 +1,17 @@
+2020-12-14  Alex Christensen  <achristensen@webkit.org>
+
+        Remove WKDownloadDelegate.didWriteData
+        https://bugs.webkit.org/show_bug.cgi?id=219820
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (-[DownloadObserver observeValueForKeyPath:ofObject:change:context:]):
+        (TestWebKitAPI::mutateFile):
+        * TestWebKitAPI/cocoa/TestDownloadDelegate.h:
+        * TestWebKitAPI/cocoa/TestDownloadDelegate.mm:
+        (-[TestDownloadDelegate download:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:]): Deleted.
+
 2020-12-14  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Load mock repository data from json file

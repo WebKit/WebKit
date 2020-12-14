@@ -42,7 +42,6 @@ public:
         : m_delegate(delegate)
         , m_respondsToWillPerformHTTPRedirection([delegate respondsToSelector:@selector(download:willPerformHTTPRedirection:newRequest:decisionHandler:)])
         , m_respondsToDidReceiveAuthenticationChallenge([delegate respondsToSelector:@selector(download:didReceiveAuthenticationChallenge:completionHandler:)])
-        , m_respondsToDidWriteData([delegate respondsToSelector:@selector(download:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:)])
         , m_respondsToDidFinish([m_delegate respondsToSelector:@selector(downloadDidFinish:)])
         , m_respondsToDidFailWithError([delegate respondsToSelector:@selector(download:didFailWithError:resumeData:)])
     {
@@ -140,16 +139,11 @@ private:
         }).get()];
     }
 
-    void didReceiveData(WebKit::DownloadProxy& download, uint64_t bytesWritten, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite) final
+    void didReceiveData(WebKit::DownloadProxy& download, uint64_t, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite) final
     {
         NSProgress *progress = wrapper(download).progress;
-        progress.completedUnitCount = totalBytesWritten;
         progress.totalUnitCount = totalBytesExpectedToWrite;
-
-        if (!m_delegate || !m_respondsToDidWriteData)
-            return;
-
-        [m_delegate download:wrapper(download) didWriteData:bytesWritten totalBytesWritten:totalBytesWritten totalBytesExpectedToWrite:totalBytesExpectedToWrite];
+        progress.completedUnitCount = totalBytesWritten;
     }
 
     void didFinish(WebKit::DownloadProxy& download) final
@@ -180,7 +174,6 @@ private:
 
     bool m_respondsToWillPerformHTTPRedirection : 1;
     bool m_respondsToDidReceiveAuthenticationChallenge : 1;
-    bool m_respondsToDidWriteData : 1;
     bool m_respondsToDidFinish : 1;
     bool m_respondsToDidFailWithError : 1;
 };
@@ -225,7 +218,8 @@ private:
 {
     NSProgress* downloadProgress = _download->progress();
     if (!downloadProgress) {
-        downloadProgress = [NSProgress progressWithTotalUnitCount:100];
+        constexpr auto indeterminateUnitCount = -1;
+        downloadProgress = [NSProgress progressWithTotalUnitCount:indeterminateUnitCount];
 
         downloadProgress.kind = NSProgressKindFile;
         downloadProgress.fileOperationKind = NSProgressFileOperationKindDownloading;

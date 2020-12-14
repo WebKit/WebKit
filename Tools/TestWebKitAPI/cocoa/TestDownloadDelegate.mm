@@ -48,16 +48,6 @@
     _decideDestinationUsingResponse(download, response, suggestedFilename, completionHandler);
 }
 
-- (void)download:(WKDownload *)download didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
-{
-    // didWriteData is called a nondeterministic number of times, so only record once in a series.
-    if (_callbackRecord.isEmpty() || _callbackRecord.last() != DownloadCallback::DidWriteData)
-        _callbackRecord.append(DownloadCallback::DidWriteData);
-
-    if (_didWriteData)
-        _didWriteData(download, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);
-}
-
 - (void)download:(WKDownload *)download didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential*))completionHandler
 {
     _callbackRecord.append(DownloadCallback::AuthenticationChallenge);
