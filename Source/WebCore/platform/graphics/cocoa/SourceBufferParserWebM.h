@@ -61,7 +61,6 @@ public:
     class StreamingVectorReader;
 
     static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&);
-    static RefPtr<SourceBufferParserWebM> create(const ContentType&);
 
     SourceBufferParserWebM();
     ~SourceBufferParserWebM();

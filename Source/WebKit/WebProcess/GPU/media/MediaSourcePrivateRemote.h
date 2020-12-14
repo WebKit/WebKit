@@ -62,7 +62,7 @@ public:
     virtual ~MediaSourcePrivateRemote();
 
     // MediaSourcePrivate overrides
-    AddStatus addSourceBuffer(const WebCore::ContentType&, RefPtr<WebCore::SourceBufferPrivate>&) final;
+    AddStatus addSourceBuffer(const WebCore::ContentType&, bool webMParserEnabled, RefPtr<WebCore::SourceBufferPrivate>&) final;
     void durationChanged(const MediaTime&) final;
     void markEndOfStream(EndOfStreamStatus) final;
     void unmarkEndOfStream() final;

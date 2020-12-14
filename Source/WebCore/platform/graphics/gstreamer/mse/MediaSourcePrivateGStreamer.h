@@ -58,7 +58,7 @@ public:
     static void open(MediaSourcePrivateClient&, MediaPlayerPrivateGStreamerMSE&);
     virtual ~MediaSourcePrivateGStreamer();
 
-    AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) override;
+    AddStatus addSourceBuffer(const ContentType&, bool, RefPtr<SourceBufferPrivate>&) override;
     void removeSourceBuffer(SourceBufferPrivate*);
 
     void durationChanged(const MediaTime&) override;

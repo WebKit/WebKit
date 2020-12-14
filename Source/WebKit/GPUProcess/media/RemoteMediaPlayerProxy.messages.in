@@ -28,7 +28,7 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 
     Load(URL url, Optional<WebKit::SandboxExtension::Handle> sandboxExtension, WebCore::ContentType contentType, String keySystem) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration) Async
 #if ENABLE(MEDIA_SOURCE)
-    LoadMediaSource(URL url, WebCore::ContentType contentType, WebKit::RemoteMediaSourceIdentifier mediaSourceIdentifier) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration) Async
+    LoadMediaSource(URL url, WebCore::ContentType contentType, bool webMParserEnabled, WebKit::RemoteMediaSourceIdentifier mediaSourceIdentifier) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration) Async
 #endif
     CancelLoad()
 

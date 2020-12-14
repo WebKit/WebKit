@@ -41,9 +41,10 @@ namespace WebKit {
 
 using namespace WebCore;
 
-RemoteMediaSourceProxy::RemoteMediaSourceProxy(GPUConnectionToWebProcess& connectionToWebProcess, RemoteMediaSourceIdentifier identifier, RemoteMediaPlayerProxy& remoteMediaPlayerProxy)
+RemoteMediaSourceProxy::RemoteMediaSourceProxy(GPUConnectionToWebProcess& connectionToWebProcess, RemoteMediaSourceIdentifier identifier, bool webMParserEnabled, RemoteMediaPlayerProxy& remoteMediaPlayerProxy)
     : m_connectionToWebProcess(connectionToWebProcess)
     , m_identifier(identifier)
+    , m_webMParserEnabled(webMParserEnabled)
     , m_remoteMediaPlayerProxy(makeWeakPtr(remoteMediaPlayerProxy))
 {
     m_connectionToWebProcess.messageReceiverMap().addMessageReceiver(Messages::RemoteMediaSourceProxy::messageReceiverName(), m_identifier.toUInt64(), *this);
@@ -99,7 +100,7 @@ void RemoteMediaSourceProxy::addSourceBuffer(const WebCore::ContentType& content
         return;
 
     RefPtr<SourceBufferPrivate> sourceBufferPrivate;
-    MediaSourcePrivate::AddStatus status = m_private->addSourceBuffer(contentType, sourceBufferPrivate);
+    MediaSourcePrivate::AddStatus status = m_private->addSourceBuffer(contentType, m_webMParserEnabled, sourceBufferPrivate);
 
     Optional<RemoteSourceBufferIdentifier> remoteSourceIdentifier;
     if (status == MediaSourcePrivate::AddStatus::Ok) {

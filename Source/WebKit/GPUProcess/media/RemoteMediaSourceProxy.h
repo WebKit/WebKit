@@ -57,7 +57,7 @@ class RemoteMediaSourceProxy final
     , private IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RemoteMediaSourceProxy(GPUConnectionToWebProcess&, RemoteMediaSourceIdentifier, RemoteMediaPlayerProxy&);
+    RemoteMediaSourceProxy(GPUConnectionToWebProcess&, RemoteMediaSourceIdentifier, bool webMParserEnabled, RemoteMediaPlayerProxy&);
     virtual ~RemoteMediaSourceProxy();
 
     // MediaSourcePrivateClient overrides
@@ -87,6 +87,7 @@ private:
 
     GPUConnectionToWebProcess& m_connectionToWebProcess;
     RemoteMediaSourceIdentifier m_identifier;
+    bool m_webMParserEnabled { false };
     RefPtr<WebCore::MediaSourcePrivate> m_private;
     WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;
 

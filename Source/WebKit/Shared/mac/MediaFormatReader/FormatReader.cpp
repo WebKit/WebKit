@@ -87,7 +87,7 @@ void FormatReader::parseByteSource(RetainPtr<MTPluginByteSourceRef>&& byteSource
     ASSERT(isMainThread());
 
     static NeverDestroyed<ContentType> contentType("video/webm"_s);
-    auto parser = SourceBufferParser::create(contentType);
+    auto parser = SourceBufferParser::create(contentType, true);
     if (!parser) {
         m_parseTracksStatus = kMTPluginFormatReaderError_AllocationFailure;
         return;

@@ -1,3 +1,30 @@
+2020-12-14  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process][MSE] WebM source buffer parser is not enabled
+        https://bugs.webkit.org/show_bug.cgi?id=219857
+
+        Reviewed by Eric Carlson.
+
+        Share the value of `RuntimeEnabledFeatures::sharedFeatures().webMParserEnabled()`
+        with the GPU process (`RemoteMediaSourceProxy`) when `MediaPlayerPrivateRemote`
+        tries to load a media source.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::loadMediaSource):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * GPUProcess/media/RemoteMediaSourceProxy.cpp:
+        (WebKit::RemoteMediaSourceProxy::RemoteMediaSourceProxy):
+        (WebKit::RemoteMediaSourceProxy::addSourceBuffer):
+        * GPUProcess/media/RemoteMediaSourceProxy.h:
+        * Shared/mac/MediaFormatReader/FormatReader.cpp:
+        (WebKit::FormatReader::parseByteSource):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::load):
+        * WebProcess/GPU/media/MediaSourcePrivateRemote.cpp:
+        (WebKit::MediaSourcePrivateRemote::addSourceBuffer):
+        * WebProcess/GPU/media/MediaSourcePrivateRemote.h:
+
 2020-12-14  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess] Crash in SharedRingBufferStorage::setStorage() under GuardMalloc

@@ -62,7 +62,7 @@ MockMediaSourcePrivate::~MockMediaSourcePrivate()
         buffer->clearMediaSource();
 }
 
-MediaSourcePrivate::AddStatus MockMediaSourcePrivate::addSourceBuffer(const ContentType& contentType, RefPtr<SourceBufferPrivate>& outPrivate)
+MediaSourcePrivate::AddStatus MockMediaSourcePrivate::addSourceBuffer(const ContentType& contentType, bool, RefPtr<SourceBufferPrivate>& outPrivate)
 {
     MediaEngineSupportParameters parameters;
     parameters.isMediaSource = true;

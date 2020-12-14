@@ -83,7 +83,7 @@ MediaSourcePrivateRemote::~MediaSourcePrivateRemote()
         (*it)->clearMediaSource();
 }
 
-MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const ContentType& contentType, RefPtr<SourceBufferPrivate>& outPrivate)
+MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const ContentType& contentType, bool, RefPtr<SourceBufferPrivate>& outPrivate)
 {
     DEBUG_LOG(LOGIDENTIFIER, contentType);
 

@@ -47,6 +47,7 @@
 #include <WebCore/PlatformLayer.h>
 #include <WebCore/PlatformTimeRanges.h>
 #include <WebCore/ResourceError.h>
+#include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/TextTrackRepresentation.h>
 #include <WebCore/VideoLayerManager.h>
 #include <wtf/HashMap.h>
@@ -639,7 +640,7 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
 {
     if (m_remoteEngineIdentifier == MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE) {
         auto identifier = RemoteMediaSourceIdentifier::generate();
-        connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::LoadMediaSource(url, contentType, identifier), [weakThis = makeWeakPtr(*this)](auto&& configuration) {
+        connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::LoadMediaSource(url, contentType, RuntimeEnabledFeatures::sharedFeatures().webMParserEnabled(), identifier), [weakThis = makeWeakPtr(*this)](auto&& configuration) {
             if (weakThis)
                 weakThis->m_configuration = WTFMove(configuration);
         }, m_id);

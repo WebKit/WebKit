@@ -35,7 +35,6 @@
 #include "MediaDescription.h"
 #include "MediaSampleAVFObjC.h"
 #include "NotImplemented.h"
-#include "RuntimeEnabledFeatures.h"
 #include "SharedBuffer.h"
 #include "VP9UtilitiesCocoa.h"
 #include "VideoTrackPrivateWebM.h"
@@ -252,7 +251,7 @@ constexpr CMVideoCodecType kCMVideoCodecType_VP9 { 'vp09' };
 
 static bool isWebmParserAvailable()
 {
-    return !!webm::swap && RuntimeEnabledFeatures::sharedFeatures().webMParserEnabled();
+    return !!webm::swap;
 }
 
 using namespace webm;
@@ -528,13 +527,6 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
 
     return MediaPlayerEnums::SupportsType::IsNotSupported;
 #endif // ENABLE(VP9) || ENABLE(VORBIS) || ENABLE(OPUS)
-}
-
-RefPtr<SourceBufferParserWebM> SourceBufferParserWebM::create(const ContentType& type)
-{
-    if (isContentTypeSupported(type) != MediaPlayerEnums::SupportsType::IsNotSupported)
-        return adoptRef(new SourceBufferParserWebM());
-    return nullptr;
 }
 
 SourceBufferParserWebM::SourceBufferParserWebM()

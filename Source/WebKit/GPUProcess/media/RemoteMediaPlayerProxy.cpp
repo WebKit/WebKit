@@ -134,9 +134,9 @@ void RemoteMediaPlayerProxy::load(URL&& url, Optional<SandboxExtension::Handle>&
 }
 
 #if ENABLE(MEDIA_SOURCE)
-void RemoteMediaPlayerProxy::loadMediaSource(URL&& url, const WebCore::ContentType& contentType, RemoteMediaSourceIdentifier mediaSourceIdentifier, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&& completionHandler)
+void RemoteMediaPlayerProxy::loadMediaSource(URL&& url, const WebCore::ContentType& contentType, bool webMParserEnabled, RemoteMediaSourceIdentifier mediaSourceIdentifier, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&& completionHandler)
 {
-    m_mediaSourceProxy = adoptRef(*new RemoteMediaSourceProxy(m_manager.gpuConnectionToWebProcess(), mediaSourceIdentifier, *this));
+    m_mediaSourceProxy = adoptRef(*new RemoteMediaSourceProxy(m_manager.gpuConnectionToWebProcess(), mediaSourceIdentifier, webMParserEnabled, *this));
     m_player->load(url, contentType, m_mediaSourceProxy.get());
 
     RemoteMediaPlayerConfiguration configuration;
