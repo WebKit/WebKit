@@ -33,12 +33,12 @@
 
 namespace WebKit {
 
-template<typename> struct FigTraits;
+template<typename> struct CoreMediaTraits;
 
 #define DECLARE_CORE_MEDIA_TRAITS(ClassName) \
 namespace WebKit { \
 class ClassName; \
-template<> struct FigTraits<ClassName> { \
+template<> struct CoreMediaTraits<ClassName> { \
     using Class = MTPlugin##ClassName##Class; \
     using Ref = MTPlugin##ClassName##Ref; \
     using VTable = MTPlugin##ClassName##VTable; \
@@ -50,7 +50,7 @@ class CoreMediaWrapped {
     WTF_FORBID_HEAP_ALLOCATION;
     WTF_MAKE_NONCOPYABLE(CoreMediaWrapped);
 public:
-    using WrapperRef = typename FigTraits<Wrapped>::Ref;
+    using WrapperRef = typename CoreMediaTraits<Wrapped>::Ref;
 
     void ref() { CFRetain(m_leakedWrapper); }
     void deref() { CFRelease(m_leakedWrapper); }
@@ -58,7 +58,7 @@ public:
     virtual ~CoreMediaWrapped() { m_leakedWrapper = nullptr; }
 
 protected:
-    using WrapperClass = typename FigTraits<Wrapped>::Class;
+    using WrapperClass = typename CoreMediaTraits<Wrapped>::Class;
 
     static Wrapped* unwrap(WrapperRef);
 
@@ -87,7 +87,7 @@ protected:
     virtual OSStatus copyProperty(CFStringRef, CFAllocatorRef, void* copiedValue) = 0;
 
 private:
-    using WrapperVTable = typename FigTraits<Wrapped>::VTable;
+    using WrapperVTable = typename CoreMediaTraits<Wrapped>::VTable;
 
     template<size_t> static constexpr CMBaseClass wrapperClass();
     static const WrapperVTable& vTable();
