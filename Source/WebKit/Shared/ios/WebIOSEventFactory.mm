@@ -131,6 +131,7 @@ WebKit::WebMouseEvent WebIOSEventFactory::createWebMouseEvent(::WebEvent *event)
     return WebKit::WebMouseEvent(type, button, buttons, position, position, deltaX, deltaY, deltaZ, clickCount, OptionSet<WebKit::WebEvent::Modifier> { }, WallTime::fromRawSeconds(timestamp));
 }
 
+#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
 static WebKit::WebWheelEvent::Phase toWebPhase(UIScrollPhase phase)
 {
     switch (phase) {
@@ -152,7 +153,6 @@ static WebKit::WebWheelEvent::Phase toWebPhase(UIScrollPhase phase)
     }
 }
 
-#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
 WebKit::WebWheelEvent WebIOSEventFactory::createWebWheelEvent(UIScrollEvent *event, UIView *contentView)
 {
     WebCore::IntPoint scrollLocation = WebCore::roundedIntPoint([event locationInView:contentView]);
