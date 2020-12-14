@@ -1,3 +1,24 @@
+2020-12-13  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed test gardening. Update baselines after r270749.
+
+        * platform/wpe/css1/text_properties/word_spacing-expected.png: Added.
+        * platform/wpe/css1/text_properties/word_spacing-expected.txt:
+        * platform/wpe/fast/css/word-space-extra-expected.png: Added.
+        * platform/wpe/fast/css/word-space-extra-expected.txt:
+        * platform/wpe/fast/text/atsui-negative-spacing-features-expected.png: Added.
+        * platform/wpe/fast/text/atsui-negative-spacing-features-expected.txt:
+        * platform/wpe/fast/text/atsui-spacing-features-expected.png: Added.
+        * platform/wpe/fast/text/atsui-spacing-features-expected.txt:
+        * platform/wpe/fast/text/basic/004-expected.png: Added.
+        * platform/wpe/fast/text/basic/004-expected.txt:
+        * platform/wpe/fast/text/basic/005-expected.png: Added.
+        * platform/wpe/fast/text/basic/005-expected.txt:
+        * platform/wpe/fast/text/word-space-expected.png: Added.
+        * platform/wpe/fast/text/word-space-expected.txt:
+        * platform/wpe/svg/custom/svg-fonts-word-spacing-expected.png: Added.
+        * platform/wpe/svg/custom/svg-fonts-word-spacing-expected.txt:
+
 2020-12-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening
