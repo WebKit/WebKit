@@ -173,6 +173,7 @@ imported/w3c/web-platform-tests/css/css-values/ch-unit-010.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-values/ch-unit-012.html [ Pass ]
 
 # Test passing since added in r258661.
+imported/w3c/web-platform-tests/css/css-writing-modes/baseline-with-orthogonal-flow-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-007.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-008.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-001.html [ Pass ]
@@ -365,6 +366,8 @@ webkit.org/b/218931 fast/events/wheel/wheel-event-listeners-on-window-left-activ
 webkit.org/b/218931 fast/events/wheel/wheel-event-listeners-on-window-made-passive.html [ Timeout ]
 webkit.org/b/218931 fast/events/wheel/wheel-event-in-passive-region-non-cancelable.html [ Timeout ]
 webkit.org/b/218931 fast/events/wheel/wheel-events-become-non-cancelable.html [ Timeout ]
+
+webkit.org/b/219547 fast/events/wheel/wheelevent-in-text-node.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Events-related bugs
@@ -655,6 +658,7 @@ webkit.org/b/168501 pageoverlay/overlay-remove-reinsert-view.html [ Failure ]
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/116960 perf/adding-radio-buttons.html [ Failure Pass ]
+webkit.org/b/119040 perf/nested-combined-selectors.html [ Failure Pass ]
 webkit.org/b/126523 perf/accessibility-title-ui-element.html [ Failure Pass ]
 webkit.org/b/188101 perf/append-text-nodes-without-renderers.html [ Failure Pass ]
 webkit.org/b/211837 perf/rel-list-remove.html [ Failure Pass ]
@@ -702,6 +706,8 @@ webkit.org/b/213921 fast/visual-viewport/scroll-event-fired-during-scroll-alone.
 #////////////////////////////////////////////////////////////////////////////////////////
 # SOUP and Networking-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/208369 http/tests/workers/service/basic-timeout.https.html [ Failure Timeout Pass ]
 
 webkit.org/b/215638 http/tests/websocket/tests/hybi/invalid-continuation.html [ Failure ]
 webkit.org/b/215638 http/tests/websocket/tests/hybi/stop-on-resume-in-error-handler.html [ Failure ]
@@ -878,6 +884,7 @@ webkit.org/b/211942 webgl/1.0.3/conformance/more/functions/copyTexImage2DBadArgs
 
 webkit.org/b/169917 fast/canvas/webgl/unprefixed-anisotropic-extension.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit.html [ Failure ]
+webkit.org/b/169917 webgl/many-contexts.html [ Timeout Pass ]
 
 webkit.org/b/211887 [ Debug ] fast/canvas/webgl/tex-sub-image-2d-bad-args.html [ Crash ]
 webkit.org/b/211887 [ Debug ] webgl/1.0.3/conformance/textures/tex-sub-image-2d-bad-args.html [ Crash ]

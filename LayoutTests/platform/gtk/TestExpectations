@@ -31,11 +31,8 @@ imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-b.xht [ Pass ]
 imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-multiple-boxes-c.xht [ Pass ]
 imported/w3c/web-platform-tests/css/css-color/t425-hsla-onscreen-multiple-boxes-c.xht [ Pass ]
 
-
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-02.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-coords.html [ Pass ]
-
-
 
 # Some Apple ports don't support RTL scrollbars.
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ Pass ]
@@ -50,8 +47,6 @@ fast/scrolling/rtl-scrollbars-text-selection.html [ Pass ]
 webkit.org/b/155132 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Pass ]
 
 webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ Pass ]
-
-
 
 webkit.org/b/211564 imported/w3c/web-platform-tests/fetch/http-cache/basic-auth-cache-test.html [ ImageOnlyFailure Pass ]
 
@@ -119,8 +114,6 @@ imported/w3c/web-platform-tests/css/css-ui/outline-019.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-018.html [ Pass ]
 
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https.html [ Pass ]
-
-webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/baseline-with-orthogonal-flow-001.html  [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See below where to put expected failures.
@@ -228,7 +221,6 @@ webkit.org/b/219547 fast/events/wheel/wheel-event-destroys-frame.html [ Timeout 
 webkit.org/b/219547 fast/events/wheel/wheel-event-destroys-overflow.html [ Timeout ]
 webkit.org/b/219547 fast/events/wheel/wheel-event-outside-body.html [ Timeout ]
 webkit.org/b/219547 fast/events/wheel/wheelevent-basic.html [ Timeout ]
-webkit.org/b/219547 fast/events/wheel/wheelevent-in-text-node.html [ Timeout ]
 webkit.org/b/219547 fast/events/wheel/wheelevent-mousewheel-interaction.html [ Timeout ]
 webkit.org/b/186670 webkit.org/b/219547 fast/scrolling/iframe-scrollable-after-back.html [ Timeout Pass Failure ]
 webkit.org/b/219547 fast/scrolling/overflow-scrollable-after-back.html [ Timeout ]
@@ -629,7 +621,6 @@ webkit.org/b/169917 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bve
 webkit.org/b/169917 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-ivec2.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-vec2.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/glsl/misc/shader-varying-packing-restrictions.html [ Slow ]
-webkit.org/b/169917 webgl/many-contexts.html [ Pass Timeout ]
 # WebGL crashes
 webkit.org/b/169917 fast/canvas/webgl/webgl-draw-buffers.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/extensions/webgl-draw-buffers.html [ Failure ]
@@ -1257,7 +1248,6 @@ webkit.org/b/114735 svg/filters/filter-hidden-content.svg [ Failure Pass ]
 
 webkit.org/b/116961 perf/show-hide-table-rows.html [ Failure Pass ]
 
-webkit.org/b/119040 perf/nested-combined-selectors.html [ Failure Pass ]
 
 # These tests started to time out (or time out more often) since the FTL merge
 webkit.org/b/119253 [ Debug ] js/dfg-osr-entry-hoisted-clobbered-structure-check.html [ Timeout Pass ]
@@ -1573,7 +1563,6 @@ webkit.org/b/208321 media/muted-video-is-playing-audio.html [ Timeout Pass Crash
 
 webkit.org/b/208327 http/wpt/service-workers/navigation-redirect-main-frame.https.html [ Timeout Pass ]
 
-webkit.org/b/208369 http/tests/workers/service/basic-timeout.https.html [ Failure Pass Timeout ]
 
 webkit.org/b/208426 fast/dom/Window/window-resize-and-move-arguments.html [ Failure Pass ]
 

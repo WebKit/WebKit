@@ -143,9 +143,6 @@ imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-conten
 # Passing since r261992.
 fast/scrolling/rtl-scrollbars-animation-property.html [ Pass ]
 
-# Passing since r268821.
-imported/w3c/web-platform-tests/css/css-writing-modes/baseline-with-orthogonal-flow-001.html [ Pass ]
-
 # Passing since r266083.
 imported/w3c/web-platform-tests/css/css-content/quotes-033.html [ Pass ]
 
@@ -1175,7 +1172,6 @@ webkit.org/b/173419 fast/events/wheel/wheel-event-destroys-frame.html [ Timeout 
 webkit.org/b/173419 fast/events/wheel/wheel-event-destroys-overflow.html [ Timeout Pass ]
 webkit.org/b/173419 fast/events/wheel/wheelevent-basic.html [ Failure Timeout ]
 webkit.org/b/173419 fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure ]
-webkit.org/b/173419 fast/events/wheel/wheelevent-in-text-node.html [ Timeout ]
 webkit.org/b/173419 fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/wheelevent-mousewheel-interaction.html [ Timeout Pass ]
 
@@ -1463,7 +1459,7 @@ webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-space.xht [ ImageOnlyFailure ]
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-contain.xht [ ImageOnlyFailure ]
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html [ ImageOnlyFailure ]
-webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-011.html [ ImageOnlyFailure ]
+webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-011.html [ ImageOnlyFailure Pass ]
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-001.html [ ImageOnlyFailure ]
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-002.html [ ImageOnlyFailure ]
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-rtl-001.html [ ImageOnlyFailure ]

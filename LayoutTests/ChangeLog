@@ -1,5 +1,13 @@
 2020-12-13  Diego Pino Garcia  <dpino@igalia.com>
 
+        [WPE] Unreviewed test gardening. Gardened several flaky failures happening in WPE Release Test bot.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
+2020-12-13  Diego Pino Garcia  <dpino@igalia.com>
+
         [WPE] Unreviewed test gardening. Update baselines after r270749.
 
         * platform/wpe/css1/text_properties/word_spacing-expected.png: Added.
