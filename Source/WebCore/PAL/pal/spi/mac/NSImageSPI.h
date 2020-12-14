@@ -37,20 +37,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSImage ()
 + (instancetype)imageWithImageRep:(NSImageRep *)imageRep;
-- (instancetype)_imageWithConfiguration:(NSDictionary *)configuration;
 - (void)lockFocusWithRect:(NSRect)rect context:(nullable NSGraphicsContext *)context hints:(nullable NSDictionary *)hints flipped:(BOOL)flipped;
 @end
 
 @interface NSImage (NSSystemSymbols)
 + (nullable NSImage *)_imageWithSystemSymbolName:(NSString *) symbolName;
 @end
-
-WTF_EXTERN_C_BEGIN
-
-extern const NSString *NSImageAlternateCriterionFont;
-extern const NSString *NSImageAlternateCriterionSymbolScale;
-
-WTF_EXTERN_C_END
 
 NS_ASSUME_NONNULL_END
 

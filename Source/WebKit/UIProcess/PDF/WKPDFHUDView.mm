@@ -336,11 +336,7 @@ static NSArray<NSString *> *controlArray()
     if (!iconImage)
         return nil;
 
-    // This was introduced in rdar://problem/59118412
-    iconImage = [iconImage _imageWithConfiguration:@{
-        NSImageAlternateCriterionFont:[NSFont preferredFontForTextStyle:NSFontTextStyleTitle2 options:@{ }],
-        NSImageAlternateCriterionSymbolScale:@(NSImageSymbolScaleLarge)
-    }];
+    iconImage = [iconImage imageWithSymbolConfiguration:[NSImageSymbolConfiguration configurationWithTextStyle:NSFontTextStyleTitle2 scale:NSImageSymbolScaleLarge]];
         
     NSRect iconImageRect = NSMakeRect(0, 0, [iconImage size].width * layerImageScale * _deviceScaleFactor, [iconImage size].height * layerImageScale * _deviceScaleFactor);
     NSImageRep *iconImageRep = [iconImage bestRepresentationForRect:iconImageRect context:nil hints:nil];
