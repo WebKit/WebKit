@@ -2048,6 +2048,7 @@ JSBigInt::ImplResult JSBigInt::rightShiftByAbsolute(JSGlobalObject* globalObject
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (!bitsShift) {
+        result->setDigit(resultLength - 1, 0);
         for (unsigned i = digitalShift; i < length; i++)
             result->setDigit(i - digitalShift, x.digit(i));
     } else {
