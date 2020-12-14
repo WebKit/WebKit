@@ -277,6 +277,7 @@ PASS parseThenSerializeRule('::-webkit-search-decoration { }') is '::-webkit-sea
 PASS parseThenSerializeRule('::-webkit-search-results-button { }') is '::-webkit-search-results-button { }'
 PASS parseThenSerializeRule('::-webkit-search-results-decoration { }') is '::-webkit-search-results-decoration { }'
 PASS parseThenSerializeRule('::-webkit-slider-thumb { }') is '::-webkit-slider-thumb { }'
+PASS parseThenSerializeRule('::file-selector-button { }') is '::file-selector-button { }'
 
 PASS parseThenSerializeRule('a::-webkit-slider-thumb { }') is 'a::-webkit-slider-thumb { }'
 PASS parseThenSerializeRule('a ::-webkit-slider-thumb { }') is 'a ::-webkit-slider-thumb { }'

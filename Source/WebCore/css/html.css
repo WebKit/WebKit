@@ -791,14 +791,14 @@ input:matches([type="button"], [type="submit"], [type="reset"]) {
     white-space: pre;
 }
 
-input[type="file"]::-webkit-file-upload-button {
+input[type="file"]::file-selector-button {
     -webkit-appearance: push-button;
     white-space: nowrap;
     margin: 0;
     font-size: inherit;
 }
 
-input:matches([type="button"], [type="submit"], [type="reset"]), input[type="file"]::-webkit-file-upload-button, button {
+input:matches([type="button"], [type="submit"], [type="reset"]), input[type="file"]::file-selector-button, button {
     align-items: flex-start;
     text-align: center;
     cursor: default;
@@ -817,7 +817,7 @@ input:matches([type="button"], [type="submit"], [type="reset"]), input[type="fil
     box-sizing: border-box;
 }
 
-input:matches([type="button"], [type="submit"], [type="reset"]):active, input[type="file"]::-webkit-file-upload-button:active, button:active {
+input:matches([type="button"], [type="submit"], [type="reset"]):active, input[type="file"]::file-selector-button:active, button:active {
     color: ActiveButtonText;
 }
 
@@ -870,19 +870,19 @@ input[readonly], textarea[readonly] {
 #endif
 
 input:matches([type="button"], [type="submit"], [type="reset"]):disabled,
-input[type="file"]:disabled::-webkit-file-upload-button, button:disabled,
+input[type="file"]:disabled::file-selector-button, button:disabled,
 select:disabled, keygen:disabled, optgroup:disabled, option:disabled,
 select[disabled]>option {
     color: GrayText;
 }
 
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-input:matches([type="button"], [type="submit"], [type="reset"]):active, input[type="file"]:active::-webkit-file-upload-button, button:active {
+input:matches([type="button"], [type="submit"], [type="reset"]):active, input[type="file"]:active::file-selector-button, button:active {
     border-style: inset;
 }
 
 input:matches([type="button"], [type="submit"], [type="reset"]):active:disabled,
-input[type="file"]:active:disabled::-webkit-file-upload-button, button:active:disabled {
+input[type="file"]:active:disabled::file-selector-button, button:active:disabled {
     border-style: outset;
 }
 #endif
@@ -1219,7 +1219,7 @@ input:focus, textarea:focus, keygen:focus, select:focus {
 #endif
 
 input:matches([type="button"], [type="checkbox"], [type="file"], [type="hidden"], [type="image"], [type="radio"], [type="reset"], [type="search"], [type="submit"]):focus,
-input[type="file"]:focus::-webkit-file-upload-button {
+input[type="file"]:focus::file-selector-button {
     outline-offset: 0;
 }
 

@@ -700,6 +700,8 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoElementWebKitCustomLegacyPrefixed:
                 if (cs->value() == "placeholder")
                     builder.appendLiteral("::-webkit-input-placeholder");
+                if (cs->value() == "file-selector-button")
+                    builder.appendLiteral("::-webkit-file-upload-button");
                 break;
 #if ENABLE(VIDEO)
             case CSSSelector::PseudoElementCue: {

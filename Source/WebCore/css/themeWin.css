@@ -101,7 +101,7 @@ input::-webkit-outer-spin-button {
     margin: 0;
 }
 
-input[type="button"], input[type="submit"], input[type="reset"], input[type="file"]::-webkit-file-upload-button, button {
+input[type="button"], input[type="submit"], input[type="reset"], input[type="file"]::file-selector-button, button {
     padding: 1px 6px;
 }
 

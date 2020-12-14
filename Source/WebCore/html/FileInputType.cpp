@@ -93,9 +93,9 @@ Ref<UploadButtonElement> UploadButtonElement::createInternal(Document& document,
 {
     auto button = adoptRef(*new UploadButtonElement(document));
     static MainThreadNeverDestroyed<const AtomString> buttonName("button", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> webkitFileUploadButtonName("-webkit-file-upload-button", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> fileSelectorButtonName("file-selector-button", AtomString::ConstructFromLiteral);
     button->setType(buttonName);
-    button->setPseudo(webkitFileUploadButtonName);
+    button->setPseudo(fileSelectorButtonName);
     button->setValue(value);
     return button;
 }

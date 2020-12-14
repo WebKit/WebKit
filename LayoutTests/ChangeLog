@@ -1,3 +1,18 @@
+2020-12-14  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Implement ::file-selector-button pseudo-element.
+        https://bugs.webkit.org/show_bug.cgi?id=219836
+
+        Reviewed by Simon Fraser.
+
+        There are WPTs for this, but WebKit's importer doesn't handle
+        <link rel="mismatch"> which is used by these. Instead, I adapted UA
+        sheets to use the standard selector so we should get coverage, and
+        extended the existing tests for -webkit-file-upload-button.
+
+        * fast/css/css-selector-text-expected.txt:
+        * fast/css/css-selector-text.html: Tweak test to cover new pseudo.
+
 2020-12-14  Sihui Liu  <sihui_liu@apple.com>
 
         Implement recognizer for SpeechRecognition

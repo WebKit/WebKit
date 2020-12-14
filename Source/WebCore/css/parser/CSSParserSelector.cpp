@@ -63,11 +63,14 @@ std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoElementSelector
     if (pseudoType != CSSSelector::PseudoElementWebKitCustomLegacyPrefixed)
         name = pseudoTypeString.convertToASCIILowercase();
     else {
-        ASSERT_WITH_MESSAGE(equalLettersIgnoringASCIICase(pseudoTypeString, "-webkit-input-placeholder"), "-webkit-input-placeholder is the only LegacyPrefix pseudo type.");
         if (equalLettersIgnoringASCIICase(pseudoTypeString, "-webkit-input-placeholder"))
             name = AtomString("placeholder", AtomString::ConstructFromLiteral);
-        else
+        else if (equalLettersIgnoringASCIICase(pseudoTypeString, "-webkit-file-upload-button"))
+            name = AtomString("file-selector-button", AtomString::ConstructFromLiteral);
+        else {
+            ASSERT_NOT_REACHED();
             name = pseudoTypeString.convertToASCIILowercase();
+        }
     }
     selector->m_selector->setValue(name);
     return selector;
