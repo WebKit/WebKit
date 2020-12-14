@@ -48,6 +48,10 @@ async function doSFrameTest(codec, shouldClose)
         while (receiverCounter === internals.sframeCounter(receiver.transform) && ++counter < 100)
             await new Promise(resolve => setTimeout(resolve, 50));
         assert_not_equals(internals.sframeCounter(receiver.transform), receiverCounter, "receiver");
+
+        counter = 0;
+        while (senderCounter === internals.sframeCounter(sender.transform) && ++counter < 100)
+            await new Promise(resolve => setTimeout(resolve, 50));
         assert_not_equals(internals.sframeCounter(sender.transform), senderCounter, "sender");
     }
     if (shouldClose) {

@@ -1,3 +1,14 @@
+2020-12-14  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTests/webrtc/video-sframe.html is flaky on bots
+        https://bugs.webkit.org/show_bug.cgi?id=219849
+
+        Reviewed by Alex Christensen.
+
+        * webrtc/video-sframe.html:
+        Receiver counter might increment very quickly in background thread before the sender counter is also incremented.
+        Add a wait loop for sender counter as well.
+
 2020-12-14  Andy Estes  <aestes@apple.com>
 
         Unreviewed test gardening after r270758.
