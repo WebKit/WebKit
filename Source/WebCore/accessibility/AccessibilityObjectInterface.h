@@ -1466,7 +1466,10 @@ public:
     virtual String speechHintAttributeValue() const = 0;
     virtual String descriptionAttributeValue() const = 0;
     virtual String helpTextAttributeValue() const = 0;
+    // This should be the visible text that's actually on the screen if possible.
+    // If there's alternative text, that can override the title.
     virtual String titleAttributeValue() const = 0;
+
     virtual bool hasApplePDFAnnotationAttribute() const = 0;
 #endif
 

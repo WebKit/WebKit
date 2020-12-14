@@ -52,7 +52,7 @@ public:
 
     void setObjectID(AXID id) override { m_id = id; }
     AXID objectID() const override { return m_id; }
-    void init() override { }
+    void init() override;
 
     void attachPlatformWrapper(AccessibilityObjectWrapper*);
     bool isDetached() const override;
@@ -338,7 +338,7 @@ private:
     bool hasARIAValueNow() const override { return boolAttributeValue(AXPropertyName::HasARIAValueNow); }
     String tagName() const override { return stringAttributeValue(AXPropertyName::TagName); }
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) override;
-    void updateChildrenIfNecessary() override { }
+    void updateChildrenIfNecessary() override;
     bool isDetachedFromParent() override;
     bool supportsLiveRegion(bool = true) const override { return boolAttributeValue(AXPropertyName::SupportsLiveRegion); }
     bool isInsideLiveRegion(bool = true) const override { return boolAttributeValue(AXPropertyName::IsInsideLiveRegion); }
@@ -400,29 +400,29 @@ private:
     VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const override;
     Optional<SimpleRange> rangeForPlainTextRange(const PlainTextRange&) const override;
     String stringForRange(const SimpleRange&) const override;
-    IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const override { return IntRect(); }
+    IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const override;
     IntRect boundsForRange(const SimpleRange&) const override;
-    int lengthForVisiblePositionRange(const VisiblePositionRange&) const override { return 0; }
-    VisiblePosition visiblePositionForBounds(const IntRect&, AccessibilityVisiblePositionForBounds) const override { return VisiblePosition(); }
-    VisiblePosition visiblePositionForPoint(const IntPoint&) const override { return VisiblePosition(); }
-    VisiblePosition nextVisiblePosition(const VisiblePosition&) const override { return VisiblePosition(); }
-    VisiblePosition previousVisiblePosition(const VisiblePosition&) const override { return VisiblePosition(); }
-    VisiblePosition nextWordEnd(const VisiblePosition&) const override { return VisiblePosition(); }
-    VisiblePosition previousWordStart(const VisiblePosition&) const override { return VisiblePosition(); }
-    VisiblePosition nextLineEndPosition(const VisiblePosition&) const override { return VisiblePosition(); }
-    VisiblePosition previousLineStartPosition(const VisiblePosition&) const override { return VisiblePosition(); }
-    VisiblePosition nextSentenceEndPosition(const VisiblePosition&) const override { return VisiblePosition(); }
-    VisiblePosition previousSentenceStartPosition(const VisiblePosition&) const override { return VisiblePosition(); }
-    VisiblePosition nextParagraphEndPosition(const VisiblePosition&) const override { return VisiblePosition(); }
-    VisiblePosition previousParagraphStartPosition(const VisiblePosition&) const override { return VisiblePosition(); }
+    int lengthForVisiblePositionRange(const VisiblePositionRange&) const override;
+    VisiblePosition visiblePositionForBounds(const IntRect&, AccessibilityVisiblePositionForBounds) const override;
+    VisiblePosition visiblePositionForPoint(const IntPoint&) const override;
+    VisiblePosition nextVisiblePosition(const VisiblePosition&) const override;
+    VisiblePosition previousVisiblePosition(const VisiblePosition&) const override;
+    VisiblePosition nextWordEnd(const VisiblePosition&) const override;
+    VisiblePosition previousWordStart(const VisiblePosition&) const override;
+    VisiblePosition nextLineEndPosition(const VisiblePosition&) const override;
+    VisiblePosition previousLineStartPosition(const VisiblePosition&) const override;
+    VisiblePosition nextSentenceEndPosition(const VisiblePosition&) const override;
+    VisiblePosition previousSentenceStartPosition(const VisiblePosition&) const override;
+    VisiblePosition nextParagraphEndPosition(const VisiblePosition&) const override;
+    VisiblePosition previousParagraphStartPosition(const VisiblePosition&) const override;
     VisiblePosition visiblePositionForIndex(unsigned, bool lastIndexOK) const override;
-    VisiblePosition visiblePositionForIndex(int) const override { return VisiblePosition(); }
-    int indexForVisiblePosition(const VisiblePosition&) const override { return 0; }
-    AXCoreObject* accessibilityObjectForPosition(const VisiblePosition&) const override { return nullptr; }
+    VisiblePosition visiblePositionForIndex(int) const override;
+    int indexForVisiblePosition(const VisiblePosition&) const override;
+    AXCoreObject* accessibilityObjectForPosition(const VisiblePosition&) const override;
     int lineForPosition(const VisiblePosition&) const override;
-    PlainTextRange plainTextRangeForVisiblePositionRange(const VisiblePositionRange&) const override { return PlainTextRange(); }
-    int index(const VisiblePosition&) const override { return 0; }
-    void lineBreaks(Vector<int>&) const override { }
+    PlainTextRange plainTextRangeForVisiblePositionRange(const VisiblePositionRange&) const override;
+    int index(const VisiblePosition&) const override;
+    void lineBreaks(Vector<int>&) const override;
 
     // Attribute setters.
     void setARIAGrabbed(bool) override;
@@ -439,8 +439,7 @@ private:
 #endif
     void setPreventKeyboardDOMEventDispatch(bool) override;
 
-    // TODO: Functions
-    String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override { return String(); }
+    String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override;
     Optional<SimpleRange> misspellingRange(const SimpleRange&, AccessibilitySearchDirection) const override;
     FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const override;
     void increment() override;

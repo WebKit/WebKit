@@ -60,6 +60,11 @@ AXIsolatedObject::~AXIsolatedObject()
     ASSERT(!wrapper());
 }
 
+void AXIsolatedObject::init()
+{
+    ASSERT_NOT_REACHED();
+}
+
 void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot)
 {
     setProperty(AXPropertyName::ARIALandmarkRoleDescription, object.ariaLandmarkRoleDescription().isolatedCopy());
@@ -505,6 +510,13 @@ const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool
             m_children.uncheckedAppend(child);
     }
     return m_children;
+}
+
+void AXIsolatedObject::updateChildrenIfNecessary()
+{
+    // FIXME: this is a no-op for isolated objects and should be removed from
+    // the public interface. It is used in the mac implementation of
+    // [WebAccessibilityObjectWrapper accessibilityHitTest].
 }
 
 void AXIsolatedObject::setSelectedChildren(const AccessibilityChildrenVector& selectedChildren)
@@ -960,6 +972,127 @@ IntRect AXIsolatedObject::boundsForRange(const SimpleRange& range) const
     return axObject ? axObject->boundsForRange(range) : IntRect();
 }
 
+IntRect AXIsolatedObject::boundsForVisiblePositionRange(const VisiblePositionRange&) const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+int AXIsolatedObject::lengthForVisiblePositionRange(const VisiblePositionRange&) const
+{
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+VisiblePosition AXIsolatedObject::visiblePositionForBounds(const IntRect&, AccessibilityVisiblePositionForBounds) const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+VisiblePosition AXIsolatedObject::visiblePositionForPoint(const IntPoint& point) const
+{
+    ASSERT(isMainThread());
+    auto* axObject = associatedAXObject();
+    return axObject ? axObject->visiblePositionForPoint(point) : VisiblePosition();
+}
+
+VisiblePosition AXIsolatedObject::nextVisiblePosition(const VisiblePosition&) const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+VisiblePosition AXIsolatedObject::previousVisiblePosition(const VisiblePosition&) const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+VisiblePosition AXIsolatedObject::nextWordEnd(const VisiblePosition&) const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+VisiblePosition AXIsolatedObject::previousWordStart(const VisiblePosition&) const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+VisiblePosition AXIsolatedObject::nextLineEndPosition(const VisiblePosition&) const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+VisiblePosition AXIsolatedObject::previousLineStartPosition(const VisiblePosition&) const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+VisiblePosition AXIsolatedObject::nextSentenceEndPosition(const VisiblePosition&) const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+VisiblePosition AXIsolatedObject::previousSentenceStartPosition(const VisiblePosition&) const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+VisiblePosition AXIsolatedObject::nextParagraphEndPosition(const VisiblePosition&) const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+VisiblePosition AXIsolatedObject::previousParagraphStartPosition(const VisiblePosition&) const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+VisiblePosition AXIsolatedObject::visiblePositionForIndex(int index) const
+{
+    ASSERT(isMainThread());
+    auto* axObject = associatedAXObject();
+    return axObject ? axObject->visiblePositionForIndex(index) : VisiblePosition();
+}
+
+int AXIsolatedObject::indexForVisiblePosition(const VisiblePosition&) const
+{
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+AXCoreObject* AXIsolatedObject::accessibilityObjectForPosition(const VisiblePosition&) const
+{
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+PlainTextRange AXIsolatedObject::plainTextRangeForVisiblePositionRange(const VisiblePositionRange&) const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+int AXIsolatedObject::index(const VisiblePosition&) const
+{
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+void AXIsolatedObject::lineBreaks(Vector<int>&) const
+{
+    ASSERT_NOT_REACHED();
+}
+
 Vector<SimpleRange> AXIsolatedObject::findTextRanges(const AccessibilitySearchTextCriteria& criteria) const
 {
     return Accessibility::retrieveValueFromMainThread<Vector<SimpleRange>>([&criteria, this] () -> Vector<SimpleRange> {
@@ -986,6 +1119,12 @@ void AXIsolatedObject::findMatchingObjects(AccessibilitySearchCriteria* criteria
 
     criteria->anchorObject = this;
     Accessibility::findMatchingObjects(*criteria, results);
+}
+
+String AXIsolatedObject::textUnderElement(AccessibilityTextUnderElementMode) const
+{
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 Optional<SimpleRange> AXIsolatedObject::misspellingRange(const SimpleRange& range, AccessibilitySearchDirection direction) const

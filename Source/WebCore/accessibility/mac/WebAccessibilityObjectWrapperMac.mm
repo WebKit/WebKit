@@ -2324,15 +2324,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
                 return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityTitleAttribute];
         }
 
-        // Meter elements should communicate their content via AXValueDescription.
-        if (backingObject->isMeter())
-            return [NSString string];
-
-        // Summary element should use its text node as AXTitle.
-        if (backingObject->isSummary())
-            return backingObject->textUnderElement();
-
-        return [self baseAccessibilityTitle];
+        return backingObject->titleAttributeValue();
     }
 
     if ([attributeName isEqualToString: NSAccessibilityDescriptionAttribute]) {
@@ -2985,7 +2977,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return nil;
 
     backingObject->updateChildrenIfNecessary();
-    AXCoreObject* axObject = backingObject->accessibilityHitTest(IntPoint(point));
+    auto* axObject = backingObject->accessibilityHitTest(IntPoint(point));
 
     if (axObject) {
         if (axObject->isAttachment() && [axObject->wrapper() attachmentView])
@@ -4008,13 +4000,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             if (!backingObject)
                 return nil;
 
-            auto* cache = backingObject->axObjectCache();
-            if (!cache)
-                return nil;
-
-            CharacterOffset characterOffset = cache->characterOffsetForPoint(webCorePoint, backingObject);
-
-            return (id)textMarkerForCharacterOffset(cache, characterOffset);
+            return (id)textMarkerForVisiblePosition(backingObject->axObjectCache(), backingObject->visiblePositionForPoint(webCorePoint));
         });
     }
 

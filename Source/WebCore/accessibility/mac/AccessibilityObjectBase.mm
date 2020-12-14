@@ -147,6 +147,14 @@ String AccessibilityObject::titleAttributeValue() const
     if (roleValue() == AccessibilityRole::StaticText)
         return String();
 
+    // Meter elements should communicate their content via AXValueDescription.
+    if (isMeter())
+        return { };
+
+    // Summary element should use its text node as AXTitle.
+    if (isSummary())
+        return textUnderElement();
+
     // A file upload button presents a challenge because it has button text and a value, but the
     // API doesn't support this paradigm.
     // The compromise is to return the button type in the role description and the value of the file path in the title

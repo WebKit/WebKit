@@ -339,13 +339,6 @@ NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVect
     return nil;
 }
 
-// This should be the "visible" text that's actually on the screen if possible.
-// If there's alternative text, that can override the title.
-- (NSString *)baseAccessibilityTitle
-{
-    return self.axBackingObject->titleAttributeValue();
-}
-
 - (WebCore::AXCoreObject*)axBackingObject
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
