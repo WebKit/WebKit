@@ -53,7 +53,8 @@ static WorkletParameters generateWorkletParameters(AudioWorklet& worklet)
         jsRuntimeFlags,
         worklet.audioContext() ? worklet.audioContext()->sampleRate() : 0.0f,
         worklet.identifier(),
-        document->settingsValues()
+        document->settingsValues(),
+        worklet.audioContext() ? !worklet.audioContext()->isOfflineContext() : false
     };
 }
 

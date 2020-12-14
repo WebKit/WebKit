@@ -47,13 +47,7 @@ public:
         Serial,
         Concurrent
     };
-    enum class QOS {
-        UserInteractive,
-        UserInitiated,
-        Default,
-        Utility,
-        Background
-    };
+    using QOS = Thread::QOS;
 
     WTF_EXPORT_PRIVATE static Ref<WorkQueue> create(const char* name, Type = Type::Serial, QOS = QOS::Default);
     ~WorkQueue() final;

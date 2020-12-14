@@ -214,13 +214,33 @@ static void* wtfThreadEntryPoint(void* context)
     return nullptr;
 }
 
-bool Thread::establishHandle(NewThreadContext* context, Optional<size_t> stackSize)
+#if HAVE(QOS_CLASSES)
+dispatch_qos_class_t Thread::dispatchQOSClass(QOS qos)
+{
+    switch (qos) {
+    case QOS::UserInteractive:
+        return adjustedQOSClass(QOS_CLASS_USER_INTERACTIVE);
+    case QOS::UserInitiated:
+        return adjustedQOSClass(QOS_CLASS_USER_INITIATED);
+    case QOS::Default:
+        return adjustedQOSClass(QOS_CLASS_DEFAULT);
+    case QOS::Utility:
+        return adjustedQOSClass(QOS_CLASS_UTILITY);
+    case QOS::Background:
+        return adjustedQOSClass(QOS_CLASS_BACKGROUND);
+    }
+}
+#endif
+
+bool Thread::establishHandle(NewThreadContext* context, Optional<size_t> stackSize, QOS qos)
 {
     pthread_t threadHandle;
     pthread_attr_t attr;
     pthread_attr_init(&attr);
 #if HAVE(QOS_CLASSES)
-    pthread_attr_set_qos_class_np(&attr, adjustedQOSClass(QOS_CLASS_USER_INITIATED), 0);
+    pthread_attr_set_qos_class_np(&attr, dispatchQOSClass(qos), 0);
+#else
+    UNUSED_PARAM(qos);
 #endif
     if (stackSize)
         pthread_attr_setstacksize(&attr, stackSize.value());

@@ -1,3 +1,13 @@
+2020-12-14  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] Bump QoS to UserInteractive for real-time audio rendering thread
+        https://bugs.webkit.org/show_bug.cgi?id=219873
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::RemoteAudioDestinationProxy):
+
 2020-12-14  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process][MSE] WebM source buffer parser is not enabled

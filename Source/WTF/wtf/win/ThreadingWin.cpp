@@ -153,7 +153,7 @@ static unsigned __stdcall wtfThreadEntryPoint(void* data)
     return 0;
 }
 
-bool Thread::establishHandle(NewThreadContext* data, Optional<size_t> stackSize)
+bool Thread::establishHandle(NewThreadContext* data, Optional<size_t> stackSize, QOS)
 {
     unsigned threadIdentifier = 0;
     unsigned initFlag = stackSize ? STACK_SIZE_PARAM_IS_A_RESERVATION : 0;

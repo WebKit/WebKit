@@ -37,6 +37,7 @@ struct WorkletParameters {
     float sampleRate;
     String identifier;
     Settings::Values settingsValues;
+    bool isAudioContextRealTime;
 
     WorkletParameters isolatedCopy() const
     {
@@ -45,7 +46,8 @@ struct WorkletParameters {
             jsRuntimeFlags,
             sampleRate,
             identifier.isolatedCopy(),
-            settingsValues.isolatedCopy()
+            settingsValues.isolatedCopy(),
+            isAudioContextRealTime
         };
     }
 };

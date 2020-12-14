@@ -66,7 +66,7 @@ Ref<Thread> AudioWorkletThread::createThread()
 {
     return Thread::create("WebCore: AudioWorklet", [this] {
         workerOrWorkletThread();
-    }, ThreadType::Audio);
+    }, ThreadType::Audio, m_parameters.isAudioContextRealTime ? Thread::QOS::UserInteractive : Thread::QOS::Default);
 }
 
 AudioWorkletGlobalScope* AudioWorkletThread::globalScope() const

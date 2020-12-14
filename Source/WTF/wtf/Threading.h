@@ -56,6 +56,10 @@
 #include <array>
 #endif
 
+#if HAVE(QOS_CLASSES)
+#include <dispatch/dispatch.h>
+#endif
+
 namespace WTF {
 
 class AbstractLocker;
@@ -99,9 +103,21 @@ public:
 
     WTF_EXPORT_PRIVATE ~Thread();
 
+    enum class QOS {
+        UserInteractive,
+        UserInitiated,
+        Default,
+        Utility,
+        Background
+    };
+
+#if HAVE(QOS_CLASSES)
+    static dispatch_qos_class_t dispatchQOSClass(QOS);
+#endif
+
     // Returns nullptr if thread creation failed.
     // The thread name must be a literal since on some platforms it's passed in to the thread.
-    WTF_EXPORT_PRIVATE static Ref<Thread> create(const char* threadName, Function<void()>&&, ThreadType threadType = ThreadType::Unknown);
+    WTF_EXPORT_PRIVATE static Ref<Thread> create(const char* threadName, Function<void()>&&, ThreadType = ThreadType::Unknown, QOS = QOS::UserInitiated);
 
     // Returns Thread object.
     static Thread& current();
@@ -174,7 +190,6 @@ public:
 
 #if HAVE(QOS_CLASSES)
     WTF_EXPORT_PRIVATE static void setGlobalMaxQOSClass(qos_class_t);
-    WTF_EXPORT_PRIVATE static qos_class_t adjustedQOSClass(qos_class_t);
 #endif
 
     // Called in the thread during initialization.
@@ -251,7 +266,7 @@ protected:
     void initializeInThread();
 
     // Internal platform-specific Thread establishment implementation.
-    bool establishHandle(NewThreadContext*, Optional<size_t>);
+    bool establishHandle(NewThreadContext*, Optional<size_t> stackSize, QOS);
 
 #if USE(PTHREADS)
     void establishPlatformSpecificHandle(PlatformThreadHandle);
@@ -261,6 +276,10 @@ protected:
 
 #if USE(PTHREADS) && !OS(DARWIN)
     static void signalHandlerSuspendResume(int, siginfo_t*, void* ucontext);
+#endif
+
+#if HAVE(QOS_CLASSES)
+    static qos_class_t adjustedQOSClass(qos_class_t);
 #endif
 
     static const char* normalizeThreadName(const char* threadName);
