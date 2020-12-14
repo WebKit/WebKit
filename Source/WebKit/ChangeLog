@@ -1,3 +1,14 @@
+2020-12-14  Sihui Liu  <sihui_liu@apple.com>
+
+        WebProcessProxy::destroySpeechRecognitionServer should check if identifier exists before removing MessageReceiver
+        https://bugs.webkit.org/show_bug.cgi?id=219815
+        <rdar://problem/71369164>
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::destroySpeechRecognitionServer):
+
 2020-12-14  Chris Dumez  <cdumez@apple.com>
 
         Drop duplicate call to makeUniqueRef() in RemoteAudioSourceProviderProxy::createRingBuffer()
