@@ -21,7 +21,6 @@
 #pragma once
 
 #include "CSSParserContext.h"
-#include "CachePolicy.h"
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -42,6 +41,8 @@ class SecurityOrigin;
 class StyleRuleBase;
 class StyleRuleImport;
 class StyleRuleNamespace;
+
+enum class CachePolicy : uint8_t;
 
 class StyleSheetContents final : public RefCounted<StyleSheetContents>, public CanMakeWeakPtr<StyleSheetContents> {
 public:

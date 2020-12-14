@@ -31,7 +31,6 @@
 
 #pragma once
 
-#include "CachePolicy.h"
 #include "FrameIdentifier.h"
 #include "FrameLoaderStateMachine.h"
 #include "FrameLoaderTypes.h"
@@ -58,7 +57,6 @@
 namespace WebCore {
 
 class Archive;
-class CachedFrame;
 class CachedFrameBase;
 class CachedPage;
 class CachedResource;
@@ -76,7 +74,6 @@ class HistoryItem;
 class NavigationAction;
 class NetworkingContext;
 class Node;
-class Page;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
@@ -84,6 +81,7 @@ class SerializedScriptValue;
 class SharedBuffer;
 class SubstituteData;
 
+enum class CachePolicy : uint8_t;
 enum class NewLoadInProgress : bool;
 enum class NavigationPolicyDecision : uint8_t;
 enum class ShouldTreatAsContinuingLoad : bool;

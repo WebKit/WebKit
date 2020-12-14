@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "CachePolicy.h"
 #include "CachedResource.h"
 #include "CachedResourceHandle.h"
 #include "CachedResourceRequest.h"
@@ -63,6 +62,7 @@ class Settings;
 template <typename T>
 using ResourceErrorOr = Expected<T, ResourceError>;
 
+enum class CachePolicy : uint8_t;
 enum class ImageLoading : uint8_t { Immediate, DeferredUntilVisible };
 
 // The CachedResourceLoader provides a per-context interface to the MemoryCache

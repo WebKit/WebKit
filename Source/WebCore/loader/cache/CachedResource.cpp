@@ -24,6 +24,7 @@
 #include "config.h"
 #include "CachedResource.h"
 
+#include "CachePolicy.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceHandle.h"
@@ -265,8 +266,8 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         const String& lastModified = resourceToRevalidate->response().httpHeaderField(HTTPHeaderName::LastModified);
         const String& eTag = resourceToRevalidate->response().httpHeaderField(HTTPHeaderName::ETag);
         if (!lastModified.isEmpty() || !eTag.isEmpty()) {
-            ASSERT(cachedResourceLoader.cachePolicy(type(), url()) != CachePolicyReload);
-            if (cachedResourceLoader.cachePolicy(type(), url()) == CachePolicyRevalidate)
+            ASSERT(cachedResourceLoader.cachePolicy(type(), url()) != CachePolicy::Reload);
+            if (cachedResourceLoader.cachePolicy(type(), url()) == CachePolicy::Revalidate)
                 m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
             if (!lastModified.isEmpty())
                 m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::IfModifiedSince, lastModified);
@@ -844,13 +845,13 @@ bool CachedResource::canUseCacheValidator() const
 CachedResource::RevalidationDecision CachedResource::makeRevalidationDecision(CachePolicy cachePolicy) const
 {    
     switch (cachePolicy) {
-    case CachePolicyHistoryBuffer:
+    case CachePolicy::HistoryBuffer:
         return RevalidationDecision::No;
 
-    case CachePolicyReload:
+    case CachePolicy::Reload:
         return RevalidationDecision::YesDueToCachePolicy;
 
-    case CachePolicyRevalidate:
+    case CachePolicy::Revalidate:
         if (m_response.cacheControlContainsImmutable() && m_response.url().protocolIs("https")) {
             if (isExpired())
                 return RevalidationDecision::YesDueToExpired;
@@ -858,7 +859,7 @@ CachedResource::RevalidationDecision CachedResource::makeRevalidationDecision(Ca
         }
         return RevalidationDecision::YesDueToCachePolicy;
 
-    case CachePolicyVerify:
+    case CachePolicy::Verify:
         if (m_response.cacheControlContainsNoCache())
             return RevalidationDecision::YesDueToNoCache;
         // FIXME: Cache-Control:no-store should prevent storing, not reuse.

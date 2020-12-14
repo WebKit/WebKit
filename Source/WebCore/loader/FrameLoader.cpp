@@ -40,6 +40,7 @@
 #include "BackForwardCache.h"
 #include "BackForwardController.h"
 #include "BeforeUnloadEvent.h"
+#include "CachePolicy.h"
 #include "CachedPage.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
@@ -2410,45 +2411,45 @@ CachePolicy FrameLoader::subresourceCachePolicy(const URL& url) const
 {
     if (Page* page = m_frame.page()) {
         if (page->isResourceCachingDisabledByWebInspector())
-            return CachePolicyReload;
+            return CachePolicy::Reload;
     }
 
     if (m_isComplete)
-        return CachePolicyVerify;
+        return CachePolicy::Verify;
 
     if (m_loadType == FrameLoadType::ReloadFromOrigin)
-        return CachePolicyReload;
+        return CachePolicy::Reload;
 
     if (Frame* parentFrame = m_frame.tree().parent()) {
         CachePolicy parentCachePolicy = parentFrame->loader().subresourceCachePolicy(url);
-        if (parentCachePolicy != CachePolicyVerify)
+        if (parentCachePolicy != CachePolicy::Verify)
             return parentCachePolicy;
     }
     
     switch (m_loadType) {
     case FrameLoadType::Reload:
-        return CachePolicyRevalidate;
+        return CachePolicy::Revalidate;
     case FrameLoadType::Back:
     case FrameLoadType::Forward:
     case FrameLoadType::IndexedBackForward:
-        return CachePolicyHistoryBuffer;
+        return CachePolicy::HistoryBuffer;
     case FrameLoadType::ReloadFromOrigin:
         ASSERT_NOT_REACHED(); // Already handled above.
-        return CachePolicyReload;
+        return CachePolicy::Reload;
     case FrameLoadType::RedirectWithLockedBackForwardList:
     case FrameLoadType::Replace:
     case FrameLoadType::Same:
     case FrameLoadType::Standard:
-        return CachePolicyVerify;
+        return CachePolicy::Verify;
     case FrameLoadType::ReloadExpiredOnly:
         // We know about expiration for HTTP and data. Do a normal reload otherwise.
         if (!url.protocolIsInHTTPFamily() && !url.protocolIsData())
-            return CachePolicyReload;
-        return CachePolicyVerify;
+            return CachePolicy::Reload;
+        return CachePolicy::Verify;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
-    return CachePolicyVerify;
+    return CachePolicy::Verify;
 }
 
 void FrameLoader::dispatchDidFailProvisionalLoad(DocumentLoader& provisionalDocumentLoader, const ResourceError& error)

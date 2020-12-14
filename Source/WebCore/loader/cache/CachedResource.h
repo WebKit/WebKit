@@ -22,7 +22,6 @@
 
 #pragma once
 
-#include "CachePolicy.h"
 #include "CacheValidation.h"
 #include "FrameLoaderTypes.h"
 #include "ResourceError.h"
@@ -53,6 +52,8 @@ class SecurityOrigin;
 class SharedBuffer;
 class SubresourceLoader;
 class TextResourceDecoder;
+
+enum class CachePolicy : uint8_t;
 
 // A resource that is held in the cache. Classes who want to use this object should derive
 // from CachedResourceClient, to get the function calls in case the requested data has arrived.

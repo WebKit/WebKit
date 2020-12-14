@@ -27,11 +27,11 @@
 
 namespace WebCore {
 
-enum CachePolicy {
-    CachePolicyVerify,
-    CachePolicyRevalidate,
-    CachePolicyReload,
-    CachePolicyHistoryBuffer
+enum class CachePolicy : uint8_t {
+    Verify,
+    Revalidate,
+    Reload,
+    HistoryBuffer
 };
 
 } // namespace WebCore

@@ -24,6 +24,7 @@
 #include "CSSImportRule.h"
 #include "CSSParser.h"
 #include "CSSStyleSheet.h"
+#include "CachePolicy.h"
 #include "CachedCSSStyleSheet.h"
 #include "ContentRuleListResults.h"
 #include "Document.h"
