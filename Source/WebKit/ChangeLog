@@ -1,3 +1,40 @@
+2020-12-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Web process crashes during MotionMark Images when GPU Process for DOM is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=219838
+
+        Reviewed by Simon Fraser.
+
+        It's possible to return prematurely with a null backend when waiting for image buffer backend creation under
+        `RemoteImageBufferProxy::ensureBackendCreated()`. Consider the following scenario (where WEB and GPU denote
+        events that occur in the web and GPU processes, respectively):
+
+        1. (WEB) RemoteImageBufferProxy A is created in the web process.
+        2. (GPU) RemoteImageBuffer A is created in the GPU process, along with an image buffer backend for A.
+        3. (WEB) RemoteImageBufferProxy B is created in the web process.
+        4. (GPU) RemoteImageBuffer B is created in the GPU process, along with an image buffer backend for B.
+        5. (WEB) Something calls `RemoteImageBufferProxy::ensureBackendCreated()` on B.
+        6. (WEB) We receive the `RemoteRenderingBackendProxy::DidCreateImageBufferBackend` message for A.
+
+        B subsequently finishes waiting for backend creation because it incorrectly believes that its backend has been
+        initialized, and we end up crashing downstream in `RemoteLayerBackingStore::encode()` because
+        `ensureBackendCreated()` for B returned null.
+
+        To fix this, we adopt a similar strategy to what we use in `waitForDidFlushWithTimeout()`, and repeatedly call
+        `waitForDidCreateImageBufferBackend()` until the backend has been created (allowing for an arbitrary number of
+        IPC timeouts or failures). Since this counter is only incremented upon timeout (or any other kind of IPC
+        communication failure), we'll simply receive `RemoteRenderingBackendProxy::DidCreateImageBufferBackend` messages
+        until we confirm (in the web process) that the current image buffer's backend has been initialized.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::waitForDidCreateImageBufferBackend):
+
+        Drive-by fix: clarify this code by returning an enum to indicate whether or not we successfully received a
+        backend creation IPC response from the GPU process, instead of just returning a bool.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+
 2020-12-14  Sihui Liu  <sihui_liu@apple.com>
 
         Implement recognizer for SpeechRecognition

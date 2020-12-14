@@ -129,8 +129,15 @@ protected:
 
     WebCore::ImageBufferBackend* ensureBackendCreated() const override
     {
-        if (!m_backend && m_remoteRenderingBackendProxy)
-            m_remoteRenderingBackendProxy->waitForDidCreateImageBufferBackend();
+        if (!m_remoteRenderingBackendProxy)
+            return m_backend.get();
+
+        static constexpr unsigned maximumTimeoutOrFailureCount = 3;
+        unsigned numberOfTimeoutsOrFailures = 0;
+        while (!m_backend && numberOfTimeoutsOrFailures < maximumTimeoutOrFailureCount) {
+            if (m_remoteRenderingBackendProxy->waitForDidCreateImageBufferBackend() == RemoteRenderingBackendProxy::DidReceiveBackendCreationResult::TimeoutOrIPCFailure)
+                ++numberOfTimeoutsOrFailures;
+        }
         return m_backend.get();
     }
 

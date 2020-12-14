@@ -87,7 +87,11 @@ public:
     void deleteAllFonts();
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
 
-    bool waitForDidCreateImageBufferBackend();
+    enum class DidReceiveBackendCreationResult : bool {
+        ReceivedAnyResponse,
+        TimeoutOrIPCFailure
+    };
+    DidReceiveBackendCreationResult waitForDidCreateImageBufferBackend();
     bool waitForDidFlush();
 
 private:
