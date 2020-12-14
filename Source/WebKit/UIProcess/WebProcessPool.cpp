@@ -2023,8 +2023,11 @@ void WebProcessPool::setUseSeparateServiceWorkerProcess(bool useSeparateServiceW
     WEBPROCESSPOOL_RELEASE_LOG_STATIC(ServiceWorker, "setUseSeparateServiceWorkerProcess: (useSeparateServiceWorkerProcess=%d)", useSeparateServiceWorkerProcess);
 
     s_useSeparateServiceWorkerProcess = useSeparateServiceWorkerProcess;
-    for (auto* processPool : WebProcessPool::allProcessPools())
-        processPool->terminateServiceWorkers();
+    auto processPools = WTF::map(WebProcessPool::allProcessPools(), [](auto* pool) { return makeWeakPtr(pool); });
+    for (auto& processPool : processPools) {
+        if (processPool)
+            processPool->terminateServiceWorkers();
+    }
 }
 
 #if ENABLE(SERVICE_WORKER)
