@@ -34,6 +34,11 @@
 
 DECLARE_CORE_MEDIA_TRAITS(SampleCursor);
 
+// FIXME: Remove this once kMTPluginSampleCursor_ClassVersion_4 is available in SDKs.
+#if defined(HAVE_MT_PLUGIN_SAMPLE_CURSOR_PLAYABLE_HORIZON)
+#undef HAVE_MT_PLUGIN_SAMPLE_CURSOR_PLAYABLE_HORIZON
+#endif
+
 namespace WebCore {
 class MediaSample;
 };
