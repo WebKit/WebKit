@@ -36,22 +36,21 @@
 
 namespace WebKit {
 
+
+SpeechRecognitionServer::SpeechRecognitionServer(Ref<IPC::Connection>&& connection, SpeechRecognitionServerIdentifier identifier, SpeechRecognitionPermissionChecker&& permissionChecker, SpeechRecognitionCheckIfmockSpeechRecognitionEnabled&& checkIfEnabled
 #if ENABLE(MEDIA_STREAM)
-SpeechRecognitionServer::SpeechRecognitionServer(Ref<IPC::Connection>&& connection, SpeechRecognitionServerIdentifier identifier, SpeechRecognitionPermissionChecker&& permissionChecker, RealtimeMediaSourceCreateFunction&& function)
-    : m_connection(WTFMove(connection))
-    , m_identifier(identifier)
-    , m_permissionChecker(WTFMove(permissionChecker))
-    , m_realtimeMediaSourceCreateFunction(WTFMove(function))
-{
-}
-#else
-SpeechRecognitionServer::SpeechRecognitionServer(Ref<IPC::Connection>&& connection, SpeechRecognitionServerIdentifier identifier, SpeechRecognitionPermissionChecker&& permissionChecker)
-    : m_connection(WTFMove(connection))
-    , m_identifier(identifier)
-    , m_permissionChecker(WTFMove(permissionChecker))
-{
-}
+    , RealtimeMediaSourceCreateFunction&& function
 #endif
+    )
+    : m_connection(WTFMove(connection))
+    , m_identifier(identifier)
+    , m_permissionChecker(WTFMove(permissionChecker))
+    , m_checkIfmockSpeechRecognitionEnabled(WTFMove(checkIfEnabled))
+#if ENABLE(MEDIA_STREAM)
+    , m_realtimeMediaSourceCreateFunction(WTFMove(function))
+#endif
+{
+}
 
 void SpeechRecognitionServer::start(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&& origin)
 {
@@ -80,11 +79,11 @@ void SpeechRecognitionServer::requestPermissionForRequest(WebCore::SpeechRecogni
             return;
         }
 
-        handleRequest(identifier);
+        handleRequest(*weakRequest);
     });
 }
 
-void SpeechRecognitionServer::handleRequest(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier)
+void SpeechRecognitionServer::handleRequest(WebCore::SpeechRecognitionRequest& request)
 {
     if (!m_recognizer) {
         m_recognizer = makeUnique<WebCore::SpeechRecognizer>([this, weakThis = makeWeakPtr(this)](auto& update) {
@@ -95,16 +94,29 @@ void SpeechRecognitionServer::handleRequest(WebCore::SpeechRecognitionConnection
             if (!m_requests.contains(clientIdentifier))
                 return;
 
-            auto type = update.type();
-            if (type == WebCore::SpeechRecognitionUpdateType::Error || type == WebCore::SpeechRecognitionUpdateType::End)
-                m_requests.remove(clientIdentifier);
-
             sendUpdate(update);
+
+            auto type = update.type();
+            if (type != WebCore::SpeechRecognitionUpdateType::Error && type != WebCore::SpeechRecognitionUpdateType::End)
+                return;
+
+            if (m_isResetting)
+                return;
+            m_isResetting = true;
+
+            m_recognizer->reset();
+            m_requests.remove(clientIdentifier);
+            m_isResetting = false;
         });
     }
-    
-    m_recognizer->reset();
 
+    if (auto currentClientIdentifier = m_recognizer->currentClientIdentifier()) {
+        auto error = WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::Aborted, "Another request is started"_s };
+        sendUpdate(*currentClientIdentifier, WebCore::SpeechRecognitionUpdateType::Error, error);
+        m_recognizer->reset();
+    }
+
+    auto clientIdentifier = request.clientIdentifier();
 #if ENABLE(MEDIA_STREAM)
     auto sourceOrError = m_realtimeMediaSourceCreateFunction();
     if (!sourceOrError) {
@@ -112,10 +124,12 @@ void SpeechRecognitionServer::handleRequest(WebCore::SpeechRecognitionConnection
         sendUpdate(WebCore::SpeechRecognitionUpdate::createError(clientIdentifier, WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::AudioCapture, sourceOrError.errorMessage }));
         return;
     }
-    m_recognizer->start(clientIdentifier, sourceOrError.source());
+
+    bool mockDeviceCapturesEnabled = m_checkIfmockSpeechRecognitionEnabled();
+    m_recognizer->start(clientIdentifier, sourceOrError.source(), mockDeviceCapturesEnabled, request.lang(), request.continuous(), request.interimResults(), request.maxAlternatives());
 #else
     m_requests.remove(clientIdentifier);
-    sendUpdate(clientIdentifier, WebCore::SpeechRecognitionUpdateType::Error, WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::AudioCapture, "Audio capture is not implemented"});
+    sendUpdate(clientIdentifier, WebCore::SpeechRecognitionUpdateType::Error, WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::AudioCapture, "Audio capture is not implemented"_s });
 #endif
 }
 
@@ -135,7 +149,7 @@ void SpeechRecognitionServer::abort(WebCore::SpeechRecognitionConnectionClientId
 {
     MESSAGE_CHECK(clientIdentifier);
     if (m_recognizer && m_recognizer->currentClientIdentifier() == clientIdentifier) {
-        m_recognizer->stop(WebCore::SpeechRecognizer::ShouldGenerateFinalResult::No);
+        m_recognizer->abort();
         return;
     }
 
@@ -148,7 +162,7 @@ void SpeechRecognitionServer::invalidate(WebCore::SpeechRecognitionConnectionCli
     MESSAGE_CHECK(clientIdentifier);
     if (m_requests.remove(clientIdentifier)) {
         if (m_recognizer && m_recognizer->currentClientIdentifier() == clientIdentifier)
-            m_recognizer->stop();
+            m_recognizer->abort();
     }
 }
 

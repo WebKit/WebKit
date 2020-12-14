@@ -1,3 +1,21 @@
+2020-12-14  Sihui Liu  <sihui_liu@apple.com>
+
+        Implement recognizer for SpeechRecognition
+        https://bugs.webkit.org/show_bug.cgi?id=219459
+        <rdar://problem/71914465>
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/SpeechRecognitionServer.cpp:
+        (WebKit::SpeechRecognitionServer::SpeechRecognitionServer):
+        (WebKit::SpeechRecognitionServer::requestPermissionForRequest):
+        (WebKit::SpeechRecognitionServer::handleRequest):
+        (WebKit::SpeechRecognitionServer::abort):
+        (WebKit::SpeechRecognitionServer::invalidate):
+        * UIProcess/SpeechRecognitionServer.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createSpeechRecognitionServer):
+
 2020-12-14  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess] Crash under AudioDestinationCocoa::setIsPlaying(bool)

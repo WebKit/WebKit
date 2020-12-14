@@ -144,6 +144,9 @@
 		63C7EDC721AFAE04006A7B99 /* NSProgressSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 63E369F921AFA83F001C14BC /* NSProgressSPI.h */; };
 		7A36D0F9223AD9AB00B0522E /* CommonCryptoSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A36D0F8223AD9AB00B0522E /* CommonCryptoSPI.h */; };
 		7A3A6A8020CADB4700317AAE /* NSImageSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A3A6A7F20CADB4600317AAE /* NSImageSPI.h */; };
+		93B38EBE25821CB600198E63 /* SpeechSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B38EBD25821CB600198E63 /* SpeechSoftLink.h */; };
+		93B38EC025821CD800198E63 /* SpeechSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93B38EBF25821CD700198E63 /* SpeechSoftLink.mm */; };
+		93B38EC225821D2200198E63 /* SpeechSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B38EC125821D2200198E63 /* SpeechSPI.h */; };
 		93DB7D3724626BCD004BD8A3 /* NSTextInputContextSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 93DB7D3624626BCC004BD8A3 /* NSTextInputContextSPI.h */; };
 		93DB7D3A24626F86004BD8A3 /* NSUndoManagerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 93DB7D3924626F86004BD8A3 /* NSUndoManagerSPI.h */; };
 		A10265891F56747A00B4C844 /* HIToolboxSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A10265881F56747A00B4C844 /* HIToolboxSPI.h */; };
@@ -340,6 +343,9 @@
 		63E369F921AFA83F001C14BC /* NSProgressSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSProgressSPI.h; sourceTree = "<group>"; };
 		7A36D0F8223AD9AB00B0522E /* CommonCryptoSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonCryptoSPI.h; sourceTree = "<group>"; };
 		7A3A6A7F20CADB4600317AAE /* NSImageSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSImageSPI.h; sourceTree = "<group>"; };
+		93B38EBD25821CB600198E63 /* SpeechSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechSoftLink.h; sourceTree = "<group>"; };
+		93B38EBF25821CD700198E63 /* SpeechSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SpeechSoftLink.mm; sourceTree = "<group>"; };
+		93B38EC125821D2200198E63 /* SpeechSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechSPI.h; sourceTree = "<group>"; };
 		93DB7D3624626BCC004BD8A3 /* NSTextInputContextSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSTextInputContextSPI.h; sourceTree = "<group>"; };
 		93DB7D3924626F86004BD8A3 /* NSUndoManagerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSUndoManagerSPI.h; sourceTree = "<group>"; };
 		93E5909C1F93BF1E0067F8CF /* UnencodableHandling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnencodableHandling.h; sourceTree = "<group>"; };
@@ -511,6 +517,7 @@
 				442956CC218A72DE0080DB54 /* RevealSPI.h */,
 				570AB8F020AE2E8D00B8BE87 /* SecKeyProxySPI.h */,
 				0C2DA13C1F3BEB4900DBC317 /* ServersSPI.h */,
+				93B38EC125821D2200198E63 /* SpeechSPI.h */,
 				0C2DA12B1F3BEB4900DBC317 /* URLFormattingSPI.h */,
 				0C2DA13D1F3BEB4900DBC317 /* WebFilterEvaluatorSPI.h */,
 			);
@@ -682,6 +689,8 @@
 				31647FAE251759DB0010F8FB /* OpenGLSoftLinkCocoa.mm */,
 				A1F63C9D21A4DBF7006FB43B /* PassKitSoftLink.h */,
 				A1F63C9E21A4DBF7006FB43B /* PassKitSoftLink.mm */,
+				93B38EBD25821CB600198E63 /* SpeechSoftLink.h */,
+				93B38EBF25821CD700198E63 /* SpeechSoftLink.mm */,
 				07611DB4243FA5BE00D80704 /* UsageTrackingSoftLink.h */,
 				07611DB5243FA5BF00D80704 /* UsageTrackingSoftLink.mm */,
 			);
@@ -907,6 +916,8 @@
 				A3AB6E561F3D1DDB009C14B1 /* SleepDisabler.h in Headers */,
 				A3AB6E611F3D1E39009C14B1 /* SleepDisablerCocoa.h in Headers */,
 				A3788E981F05B6CE00679425 /* Sound.h in Headers */,
+				93B38EBE25821CB600198E63 /* SpeechSoftLink.h in Headers */,
+				93B38EC225821D2200198E63 /* SpeechSPI.h in Headers */,
 				A1175B491F6AFF8E00C4B9F0 /* SpeechSynthesisSPI.h in Headers */,
 				0C5AF9211F43A4C7002EAC02 /* SQLite3SPI.h in Headers */,
 				31308B1420A21705003FB929 /* SystemPreviewSPI.h in Headers */,
@@ -1037,6 +1048,7 @@
 				A3AB6E601F3D1E39009C14B1 /* SleepDisablerCocoa.cpp in Sources */,
 				A3788E9C1F05B78200679425 /* Sound.cpp in Sources */,
 				A3788E9E1F05B78E00679425 /* SoundMac.mm in Sources */,
+				93B38EC025821CD800198E63 /* SpeechSoftLink.mm in Sources */,
 				A3AB6E571F3D1DDB009C14B1 /* SystemSleepListener.cpp in Sources */,
 				A3AB6E651F3D217F009C14B1 /* SystemSleepListenerMac.mm in Sources */,
 				2E1342CD215AA10A007199D2 /* UIKitSoftLink.mm in Sources */,

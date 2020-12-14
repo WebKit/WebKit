@@ -1,3 +1,18 @@
+2020-12-14  Sihui Liu  <sihui_liu@apple.com>
+
+        Implement recognizer for SpeechRecognition
+        https://bugs.webkit.org/show_bug.cgi?id=219459
+        <rdar://problem/71914465>
+
+        Reviewed by Youenn Fablet.
+
+        Add soft linking to Speech framework and SPI.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/cocoa/SpeechSoftLink.h: Added.
+        * pal/cocoa/SpeechSoftLink.mm: Added.
+        * pal/spi/cocoa/SpeechSPI.h: Added.
+
 2020-12-13  Andy Estes  <aestes@apple.com>
 
         [Mac] Create a MediaToolbox format reader plug-in for WebM

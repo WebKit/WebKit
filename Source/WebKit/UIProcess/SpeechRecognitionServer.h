@@ -47,15 +47,16 @@ enum class SpeechRecognitionPermissionDecision : bool;
 
 using SpeechRecognitionServerIdentifier = WebCore::PageIdentifier;
 using SpeechRecognitionPermissionChecker = Function<void(const WebCore::ClientOrigin&, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&&)>;
+using SpeechRecognitionCheckIfmockSpeechRecognitionEnabled = Function<bool()>;
 
 class SpeechRecognitionServer : public CanMakeWeakPtr<SpeechRecognitionServer>, public IPC::MessageReceiver, private IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
 #if ENABLE(MEDIA_STREAM)
     using RealtimeMediaSourceCreateFunction = Function<WebCore::CaptureSourceOrError()>;
-    SpeechRecognitionServer(Ref<IPC::Connection>&&, SpeechRecognitionServerIdentifier, SpeechRecognitionPermissionChecker&&, RealtimeMediaSourceCreateFunction&&);
+    SpeechRecognitionServer(Ref<IPC::Connection>&&, SpeechRecognitionServerIdentifier, SpeechRecognitionPermissionChecker&&, SpeechRecognitionCheckIfmockSpeechRecognitionEnabled&&, RealtimeMediaSourceCreateFunction&&);
 #else
-    SpeechRecognitionServer(Ref<IPC::Connection>&&, SpeechRecognitionServerIdentifier, SpeechRecognitionPermissionChecker&&);
+    SpeechRecognitionServer(Ref<IPC::Connection>&&, SpeechRecognitionServerIdentifier, SpeechRecognitionPermissionChecker&&, SpeechRecognitionCheckIfmockSpeechRecognitionEnabled&&);
 #endif
 
     void start(WebCore::SpeechRecognitionConnectionClientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&&);
@@ -65,7 +66,7 @@ public:
 
 private:
     void requestPermissionForRequest(WebCore::SpeechRecognitionRequest&);
-    void handleRequest(WebCore::SpeechRecognitionConnectionClientIdentifier);
+    void handleRequest(WebCore::SpeechRecognitionRequest&);
     void sendUpdate(WebCore::SpeechRecognitionConnectionClientIdentifier, WebCore::SpeechRecognitionUpdateType, Optional<WebCore::SpeechRecognitionError> = WTF::nullopt, Optional<Vector<WebCore::SpeechRecognitionResultData>> = WTF::nullopt);
     void sendUpdate(const WebCore::SpeechRecognitionUpdate&);
 
@@ -81,6 +82,8 @@ private:
     HashMap<WebCore::SpeechRecognitionConnectionClientIdentifier, std::unique_ptr<WebCore::SpeechRecognitionRequest>> m_requests;
     SpeechRecognitionPermissionChecker m_permissionChecker;
     std::unique_ptr<WebCore::SpeechRecognizer> m_recognizer;
+    SpeechRecognitionCheckIfmockSpeechRecognitionEnabled m_checkIfmockSpeechRecognitionEnabled;
+    bool m_isResetting { false };
 
 #if ENABLE(MEDIA_STREAM)
     RealtimeMediaSourceCreateFunction m_realtimeMediaSourceCreateFunction;

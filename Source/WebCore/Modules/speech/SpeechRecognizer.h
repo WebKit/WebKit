@@ -28,6 +28,11 @@
 #include "SpeechRecognitionCaptureSource.h"
 #include "SpeechRecognitionConnectionClientIdentifier.h"
 
+#if HAVE(SPEECHRECOGNIZER)
+#include <wtf/RetainPtr.h>
+OBJC_CLASS WebSpeechRecognizerTask;
+#endif
+
 namespace WebCore {
 
 class SpeechRecognitionUpdate;
@@ -40,11 +45,11 @@ public:
     WEBCORE_EXPORT ~SpeechRecognizer() = default;
 
 #if ENABLE(MEDIA_STREAM)
-    WEBCORE_EXPORT void start(SpeechRecognitionConnectionClientIdentifier, Ref<RealtimeMediaSource>&&);
+    WEBCORE_EXPORT void start(SpeechRecognitionConnectionClientIdentifier, Ref<RealtimeMediaSource>&&, bool mockSpeechRecognitionEnabled, const String& localeIdentifier, bool continuous, bool interimResults, uint64_t maxAlternatives);
 #endif
     WEBCORE_EXPORT void reset();
-    enum class ShouldGenerateFinalResult { No, Yes };
-    WEBCORE_EXPORT void stop(ShouldGenerateFinalResult = ShouldGenerateFinalResult::Yes);
+    WEBCORE_EXPORT void abort();
+    WEBCORE_EXPORT void stop();
 
     Optional<SpeechRecognitionConnectionClientIdentifier> currentClientIdentifier() const { return m_clientIdentifier; }
 
@@ -52,12 +57,22 @@ private:
     void stopInternal();
 
 #if ENABLE(MEDIA_STREAM)
-    void setSource(Ref<RealtimeMediaSource>&&);
+    void startCapture(Ref<RealtimeMediaSource>&&);
 #endif
+    void stopCapture();
+    void dataCaptured(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t sampleCount);
+    bool startRecognition(bool mockSpeechRecognitionEnabled, SpeechRecognitionConnectionClientIdentifier, const String& localeIdentifier, bool continuous, bool interimResults, uint64_t alternatives);
+    void abortRecognition();
+    void stopRecognition();
+    void resetRecognition();
 
     Optional<SpeechRecognitionConnectionClientIdentifier> m_clientIdentifier;
     DelegateCallback m_delegateCallback;
     std::unique_ptr<SpeechRecognitionCaptureSource> m_source;
+
+#if HAVE(SPEECHRECOGNIZER)
+    RetainPtr<WebSpeechRecognizerTask> m_task;
+#endif
 };
 
 } // namespace WebCore

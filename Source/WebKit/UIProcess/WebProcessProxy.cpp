@@ -1722,20 +1722,27 @@ void WebProcessProxy::createSpeechRecognitionServer(SpeechRecognitionServerIdent
 
     ASSERT(!m_speechRecognitionServerMap.contains(identifier));
     auto& speechRecognitionServer = m_speechRecognitionServerMap.add(identifier, nullptr).iterator->value;
-    speechRecognitionServer = makeUnique<SpeechRecognitionServer>(makeRef(*connection()), identifier, [weakPage = makeWeakPtr(targetPage)](auto& origin, auto&& completionHandler) mutable {
+    auto permissionChecker = [weakPage = makeWeakPtr(targetPage)](auto& origin, auto&& completionHandler) mutable {
         if (!weakPage) {
             completionHandler(SpeechRecognitionPermissionDecision::Deny);
             return;
         }
 
         weakPage->requestSpeechRecognitionPermission(origin, WTFMove(completionHandler));
-    }
+    };
+    auto checkIfMockCaptureDevicesEnabled = [weakPage = makeWeakPtr(targetPage)]() {
+        return weakPage && weakPage->preferences().mockCaptureDevicesEnabled();
+    };
+
 #if ENABLE(MEDIA_STREAM)
-    , [weakPage = makeWeakPtr(targetPage)]() {
+    auto createRealtimeMediaSource = [weakPage = makeWeakPtr(targetPage)]() {
         return weakPage ? weakPage->createRealtimeMediaSourceForSpeechRecognition() : CaptureSourceOrError { "Page is invalid" };
-    }
+    };
+    speechRecognitionServer = makeUnique<SpeechRecognitionServer>(makeRef(*connection()), identifier, WTFMove(permissionChecker), WTFMove(checkIfMockCaptureDevicesEnabled), WTFMove(createRealtimeMediaSource));
+#else
+    speechRecognitionServer = makeUnique<SpeechRecognitionServer>(makeRef(*connection()), identifier, WTFMove(permissionChecker), WTFMove(checkIfMockCaptureDevicesEnabled));
 #endif
-    );
+
     addMessageReceiver(Messages::SpeechRecognitionServer::messageReceiverName(), identifier, *speechRecognitionServer);
 }
 

@@ -1,3 +1,16 @@
+2020-12-14  Sihui Liu  <sihui_liu@apple.com>
+
+        Implement recognizer for SpeechRecognition
+        https://bugs.webkit.org/show_bug.cgi?id=219459
+        <rdar://problem/71914465>
+
+        Reviewed by Youenn Fablet.
+
+        * fast/speechrecognition/ios/restart-recognition-after-stop-expected.txt: Added.
+        * fast/speechrecognition/ios/restart-recognition-after-stop.html: Added.
+        * fast/speechrecognition/ios/start-recognition-then-stop-expected.txt: Added.
+        * fast/speechrecognition/ios/start-recognition-then-stop.html: Added.
+
 2020-12-14  Andy Estes  <aestes@apple.com>
 
         Unreviewed test gardening.

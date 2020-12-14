@@ -27,10 +27,10 @@
 #include "SpeechRecognizer.h"
 
 #include "SpeechRecognitionUpdate.h"
+#include <wtf/MediaTime.h>
 
 #if PLATFORM(COCOA)
 #include "MediaUtilities.h"
-#include <pal/avfoundation/MediaTimeAVFoundation.h>
 #endif
 
 namespace WebCore {
@@ -45,42 +45,47 @@ void SpeechRecognizer::reset()
     if (!m_clientIdentifier)
         return;
 
-    if (m_source)
-        m_source = nullptr;
-
-    auto error = SpeechRecognitionError { SpeechRecognitionErrorType::Aborted, "Another request is started" };
-    m_delegateCallback(SpeechRecognitionUpdate::createError(*m_clientIdentifier, error));
-
+    stopCapture();
+    resetRecognition();
     m_clientIdentifier = WTF::nullopt;
+}
+
+void SpeechRecognizer::abort()
+{
+    ASSERT(m_clientIdentifier);
+    stopCapture();
+    abortRecognition();
+}
+
+void SpeechRecognizer::stop()
+{
+    ASSERT(m_clientIdentifier);
+    stopCapture();
+    stopRecognition();
 }
 
 #if ENABLE(MEDIA_STREAM)
 
-void SpeechRecognizer::start(SpeechRecognitionConnectionClientIdentifier identifier, Ref<RealtimeMediaSource>&& source)
+void SpeechRecognizer::start(SpeechRecognitionConnectionClientIdentifier clientIdentifier, Ref<RealtimeMediaSource>&& source, bool mockSpeechRecognitionEnabled, const String& localeIdentifier, bool continuous, bool interimResults, uint64_t maxAlternatives)
 {
-    ASSERT(!m_source);
-
-    m_clientIdentifier = identifier;
+    ASSERT(!m_clientIdentifier);
+    m_clientIdentifier = clientIdentifier;
     m_delegateCallback(SpeechRecognitionUpdate::create(*m_clientIdentifier, SpeechRecognitionUpdateType::Start));
 
-    setSource(WTFMove(source));
+    if (!startRecognition(mockSpeechRecognitionEnabled, clientIdentifier, localeIdentifier, continuous, interimResults, maxAlternatives)) {
+        auto error = WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::ServiceNotAllowed, "Failed to start recognition"_s };
+        m_delegateCallback(WebCore::SpeechRecognitionUpdate::createError(clientIdentifier, WTFMove(error)));
+        return;
+    }
+
+    startCapture(WTFMove(source));
 }
 
-void SpeechRecognizer::setSource(Ref<RealtimeMediaSource>&& source)
+void SpeechRecognizer::startCapture(Ref<RealtimeMediaSource>&& source)
 {
     auto dataCallback = [weakThis = makeWeakPtr(this)](const auto& time, const auto& data, const auto& description, auto sampleCount) {
-        if (!weakThis)
-            return;
-
-#if PLATFORM(COCOA)
-        auto buffer = createAudioSampleBuffer(data, description, PAL::toCMTime(time), sampleCount);
-        UNUSED_PARAM(buffer);
-#else
-        UNUSED_PARAM(time);
-        UNUSED_PARAM(data);
-        UNUSED_PARAM(description);
-        UNUSED_PARAM(sampleCount);
-#endif
+        if (weakThis)
+            weakThis->dataCaptured(time, data, description, sampleCount);
     };
 
     auto stateUpdateCallback = [this, weakThis = makeWeakPtr(this)](const auto& update) {
@@ -89,9 +94,6 @@ void SpeechRecognizer::setSource(Ref<RealtimeMediaSource>&& source)
 
         ASSERT(m_clientIdentifier && m_clientIdentifier.value() == update.clientIdentifier());
         m_delegateCallback(update);
-
-        if (update.type() == SpeechRecognitionUpdateType::Error)
-            m_source = nullptr;
     };
 
     m_source = makeUnique<SpeechRecognitionCaptureSource>(*m_clientIdentifier, WTFMove(dataCallback), WTFMove(stateUpdateCallback), WTFMove(source));
@@ -99,24 +101,7 @@ void SpeechRecognizer::setSource(Ref<RealtimeMediaSource>&& source)
 
 #endif
 
-void SpeechRecognizer::stop(ShouldGenerateFinalResult shouldGenerateFinalResult)
-{
-    if (!m_clientIdentifier)
-        return;
-
-    stopInternal();
-
-    if (shouldGenerateFinalResult == ShouldGenerateFinalResult::Yes) {
-        // TODO: generate real result when speech recognition backend is implemented.
-        Vector<SpeechRecognitionResultData> resultDatas;
-        m_delegateCallback(SpeechRecognitionUpdate::createResult(*m_clientIdentifier, resultDatas));
-    }
-
-    m_delegateCallback(SpeechRecognitionUpdate::create(*m_clientIdentifier, SpeechRecognitionUpdateType::End));
-    m_clientIdentifier = WTF::nullopt;
-}
-
-void SpeechRecognizer::stopInternal()
+void SpeechRecognizer::stopCapture()
 {
     if (!m_source)
         return;
@@ -124,5 +109,32 @@ void SpeechRecognizer::stopInternal()
     m_source = nullptr;
     m_delegateCallback(SpeechRecognitionUpdate::create(*m_clientIdentifier, SpeechRecognitionUpdateType::AudioEnd));
 }
+
+#if !HAVE(SPEECHRECOGNIZER)
+
+void SpeechRecognizer::dataCaptured(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t)
+{
+}
+
+bool SpeechRecognizer::startRecognition(bool, SpeechRecognitionConnectionClientIdentifier, const String&, bool, bool, uint64_t)
+{
+    return true;
+}
+
+void SpeechRecognizer::abortRecognition()
+{
+    m_delegateCallback(SpeechRecognitionUpdate::create(*m_clientIdentifier, SpeechRecognitionUpdateType::End));
+}
+
+void SpeechRecognizer::stopRecognition()
+{
+    m_delegateCallback(SpeechRecognitionUpdate::create(*m_clientIdentifier, SpeechRecognitionUpdateType::End));
+}
+
+void SpeechRecognizer::resetRecognition()
+{
+}
+
+#endif
 
 } // namespace WebCore

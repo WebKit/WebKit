@@ -92,6 +92,9 @@ Modules/async-clipboard/mac/ClipboardImageReaderMac.mm
 Modules/mediastream/RTCRtpSFrameTransformerCocoa.cpp
 Modules/plugins/QuickTimePluginReplacement.mm
 Modules/plugins/YouTubePluginReplacement.cpp
+Modules/speech/cocoa/SpeechRecognizerCocoa.mm
+Modules/speech/cocoa/WebSpeechRecognizerTask.mm
+Modules/speech/cocoa/WebSpeechRecognizerTaskMock.mm
 Modules/webdatabase/cocoa/DatabaseManagerCocoa.mm
 accessibility/ios/AXObjectCacheIOS.mm
 accessibility/ios/AccessibilityObjectIOS.mm
