@@ -1,3 +1,12 @@
+2020-12-13  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the watchOS build after r270712
+        <rdar://problem/72265227>
+
+        * Shared/ios/WebIOSEventFactory.h:
+        * Shared/ios/WebIOSEventFactory.mm:
+        (WebIOSEventFactory::createWebWheelEvent):
+
 2020-12-12  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn][iOS] Turn on modern WebAuthn for default browsers
