@@ -5434,10 +5434,10 @@ void Document::suspend(ReasonForSuspension reason)
     m_didDispatchViewportPropertiesChanged = false;
 #endif
 
-    ASSERT(page());
-    page()->lockAllOverlayScrollbarsToHidden(true);
+    if (auto* page = this->page())
+        page->lockAllOverlayScrollbarsToHidden(true);
 
-    if (RenderView* view = renderView()) {
+    if (auto* view = renderView()) {
         if (view->usesCompositing())
             view->compositor().cancelCompositingLayerUpdate();
     }
@@ -5477,8 +5477,8 @@ void Document::resume(ReasonForSuspension reason)
     if (renderView())
         renderView()->setIsInWindow(true);
 
-    ASSERT(page());
-    page()->lockAllOverlayScrollbarsToHidden(false);
+    if (auto* page = this->page())
+        page->lockAllOverlayScrollbarsToHidden(false);
 
     ASSERT(m_frame);
 
