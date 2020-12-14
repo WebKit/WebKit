@@ -59,7 +59,7 @@ UniqueRef<CARingBuffer> RemoteAudioSourceProviderProxy::createRingBuffer(const C
 {
     m_ringBufferDescription = description;
     m_ringBufferCapacity = capacity;
-    auto ringBuffer = makeUniqueRef<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(makeUniqueRef<SharedRingBufferStorage>(this)));
+    auto ringBuffer = makeUniqueRef<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(this));
     ringBuffer->allocate(description, capacity);
     return ringBuffer;
 }
