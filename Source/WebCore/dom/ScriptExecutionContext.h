@@ -31,6 +31,7 @@
 #include "DOMTimer.h"
 #include "SecurityContext.h"
 #include "ServiceWorkerTypes.h"
+#include "Settings.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/HandleTypes.h>
 #include <wtf/CrossThreadTask.h>
@@ -102,6 +103,8 @@ public:
     virtual String userAgent(const URL&) const = 0;
 
     virtual ReferrerPolicy referrerPolicy() const = 0;
+
+    virtual const Settings::Values& settingsValues() const = 0;
 
     virtual void disableEval(const String& errorMessage) = 0;
     virtual void disableWebAssembly(const String& errorMessage) = 0;

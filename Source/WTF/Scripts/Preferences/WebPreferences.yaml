@@ -600,7 +600,7 @@ DefaultTextEncodingName:
     WebKit:
       default: WebCore::defaultTextEncodingNameForSystemLanguage()
     WebCore:
-      default:
+      default: '{ }'
 
 DeferredCSSParserEnabled:
   type: bool

@@ -89,7 +89,7 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const St
 
     SocketProvider* socketProvider = document.socketProvider();
 
-    WorkerParameters params = { scriptURL, name, identifier, userAgent, isOnline, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, timeOrigin, referrerPolicy, document.settings().requestAnimationFrameEnabled(), document.settings().acceleratedCompositingEnabled(), document.settings().webGLEnabled() };
+    WorkerParameters params = { scriptURL, name, identifier, userAgent, isOnline, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, timeOrigin, referrerPolicy, document.settingsValues() };
     auto thread = DedicatedWorkerThread::create(params, sourceCode, *this, *this, *this, startMode, document.topOrigin(), proxy, socketProvider, runtimeFlags);
 
     workerThreadCreated(thread.get());

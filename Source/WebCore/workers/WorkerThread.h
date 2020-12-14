@@ -63,9 +63,7 @@ public:
     bool shouldBypassMainWorldContentSecurityPolicy;
     MonotonicTime timeOrigin;
     ReferrerPolicy referrerPolicy;
-    bool requestAnimationFrameEnabled;
-    bool acceleratedCompositingEnabled;
-    bool webGLEnabled;
+    Settings::Values settingsValues;
 
     WorkerParameters isolatedCopy() const;
 };

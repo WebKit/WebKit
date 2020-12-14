@@ -94,6 +94,8 @@ private:
     void refScriptExecutionContext() final { ref(); };
     void derefScriptExecutionContext() final { deref(); };
 
+    const Settings::Values& settingsValues() const final { return m_settingsValues; }
+
     class EmptyEventLoop final : public EventLoop {
     public:
         static Ref<EmptyEventLoop> create(JSC::VM& vm)
@@ -104,7 +106,7 @@ private:
         MicrotaskQueue& microtaskQueue() final { return m_queue; };
 
     private:
-        EmptyEventLoop(JSC::VM& vm)
+        explicit EmptyEventLoop(JSC::VM& vm)
             : m_queue(MicrotaskQueue(vm))
         {
         }
@@ -120,6 +122,7 @@ private:
     URL m_url;
     Ref<EmptyEventLoop> m_eventLoop;
     std::unique_ptr<EventLoopTaskGroup> m_eventLoopTaskGroup;
+    Settings::Values m_settingsValues;
 };
 
 } // namespace WebCore

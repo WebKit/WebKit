@@ -624,6 +624,8 @@ public:
     void resumeActiveDOMObjects(ReasonForSuspension) final;
     void stopActiveDOMObjects() final;
 
+    const Settings::Values& settingsValues() const final { return settings().values(); }
+
     void suspendDeviceMotionAndOrientationUpdates();
     void resumeDeviceMotionAndOrientationUpdates();
 

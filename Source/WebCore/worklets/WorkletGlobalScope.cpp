@@ -54,6 +54,7 @@ WorkletGlobalScope::WorkletGlobalScope(WorkerOrWorkletThread& thread, const Work
     , m_topOrigin(SecurityOrigin::createUnique())
     , m_url(parameters.windowURL)
     , m_jsRuntimeFlags(parameters.jsRuntimeFlags)
+    , m_settingsValues(parameters.settingsValues)
 {
     ++gNumberOfWorkletGlobalScopes;
 
@@ -68,6 +69,7 @@ WorkletGlobalScope::WorkletGlobalScope(Document& document, Ref<JSC::VM>&& vm, Sc
     , m_url(code.url())
     , m_jsRuntimeFlags(document.settings().javaScriptRuntimeFlags())
     , m_code(WTFMove(code))
+    , m_settingsValues(document.settingsValues().isolatedCopy())
 {
     ++gNumberOfWorkletGlobalScopes;
 

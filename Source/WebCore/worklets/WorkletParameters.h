@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Settings.h"
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <wtf/URL.h>
 
@@ -35,6 +36,7 @@ struct WorkletParameters {
     JSC::RuntimeFlags jsRuntimeFlags;
     float sampleRate;
     String identifier;
+    Settings::Values settingsValues;
 
     WorkletParameters isolatedCopy() const
     {
@@ -42,7 +44,8 @@ struct WorkletParameters {
             windowURL.isolatedCopy(),
             jsRuntimeFlags,
             sampleRate,
-            identifier.isolatedCopy()
+            identifier.isolatedCopy(),
+            settingsValues.isolatedCopy()
         };
     }
 };

@@ -123,6 +123,7 @@ private:
 #endif
     URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final;
     String userAgent(const URL&) const final;
+    const Settings::Values& settingsValues() const final { return m_settingsValues; }
 
     struct ScriptFetchJob {
         URL moduleURL;
@@ -146,6 +147,7 @@ private:
     RefPtr<WorkerScriptLoader> m_scriptLoader;
     Deque<ScriptFetchJob> m_scriptFetchJobs;
     HashSet<URL> m_evaluatedModules;
+    Settings::Values m_settingsValues;
 };
 
 } // namespace WebCore

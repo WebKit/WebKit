@@ -1,3 +1,13 @@
+2020-12-14  Youenn Fablet  <youenn@apple.com>
+
+        Pass an isolated copy of Settings to workers and worklets.
+        https://bugs.webkit.org/show_bug.cgi?id=219688
+
+        Reviewed by Sam Weinig.
+
+        * runtime/RuntimeFlags.h:
+        (JSC::RuntimeFlags::isolatedCopy const):
+
 2020-12-13  Samuel Thibault  <samuel.thibault@ens-lyon.org>
 
         [JSC] Set s_maxPathLength fallback when OS does not have a PATH_MAX limitation

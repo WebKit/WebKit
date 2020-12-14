@@ -55,9 +55,7 @@ WorkerParameters WorkerParameters::isolatedCopy() const
         shouldBypassMainWorldContentSecurityPolicy,
         timeOrigin,
         referrerPolicy,
-        requestAnimationFrameEnabled,
-        acceleratedCompositingEnabled,
-        webGLEnabled,
+        settingsValues.isolatedCopy()
     };
 }
 

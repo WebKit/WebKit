@@ -1,3 +1,14 @@
+2020-12-14  Youenn Fablet  <youenn@apple.com>
+
+        Pass an isolated copy of Settings to workers and worklets.
+        https://bugs.webkit.org/show_bug.cgi?id=219688
+
+        Reviewed by Sam Weinig.
+
+        Add missing default values.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+
 2020-12-13  Andy Estes  <aestes@apple.com>
 
         [Mac] Register the format reader plug-in for WebM content types

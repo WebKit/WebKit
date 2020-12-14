@@ -73,9 +73,7 @@ WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParamete
     , m_socketProvider(socketProvider)
     , m_performance(Performance::create(this, params.timeOrigin))
     , m_referrerPolicy(params.referrerPolicy)
-    , m_requestAnimationFrameEnabled(params.requestAnimationFrameEnabled)
-    , m_acceleratedCompositingEnabled(params.acceleratedCompositingEnabled)
-    , m_webGLEnabled(params.webGLEnabled)
+    , m_settingsValues(params.settingsValues)
 {
 #if !ENABLE(INDEXED_DATABASE)
     UNUSED_PARAM(connectionProxy);

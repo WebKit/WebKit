@@ -90,6 +90,8 @@ public:
         );
     }
 
+    RuntimeFlags isolatedCopy() const { return RuntimeFlags(m_flags); }
+
 private:
     unsigned m_flags;
 };

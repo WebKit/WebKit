@@ -102,7 +102,7 @@ DefaultVideoPosterURL:
   type: String
   defaultValue:
     WebCore:
-      default:
+      default: '{ }'
 
 DisableScreenSizeOverride:
   type: bool
@@ -304,7 +304,7 @@ JavaScriptRuntimeFlags:
   refinedType: JSC::RuntimeFlags
   defaultValue:
     WebCore:
-      default:
+      default: '{ }'
 
 LangAttributeAwareFormControlUIEnabled:
   type: bool
@@ -324,7 +324,7 @@ LocalStorageDatabasePath:
   type: String
   defaultValue:
     WebCore:
-      default:
+      default: '{ }'
 
 MaximumAccelerated2dCanvasSize:
   type: uint32_t
@@ -353,13 +353,13 @@ MediaDeviceIdentifierStorageDirectory:
   condition: ENABLE(MEDIA_STREAM)
   defaultValue:
     WebCore:
-      default:
+      default: '{ }'
 
 MediaKeysStorageDirectory:
   type: String
   defaultValue:
     WebCore:
-      default:
+      default: '{ }'
 
 MediaTypeOverride:
   type: String
@@ -579,7 +579,7 @@ UserStyleSheetLocation:
   webcoreOnChange: userStyleSheetLocationChanged
   defaultValue:
     WebCore:
-      default:
+      default: '{ }'
 
 ValidationMessageTimerMagnification:
   comment: >-
