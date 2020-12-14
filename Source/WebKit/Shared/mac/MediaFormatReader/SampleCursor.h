@@ -34,10 +34,6 @@
 
 DECLARE_CORE_MEDIA_TRAITS(SampleCursor);
 
-#if defined(HAVE_MT_PLUGIN_SAMPLE_CURSOR_PLAYABLE_HORIZON)
-#undef HAVE_MT_PLUGIN_SAMPLE_CURSOR_PLAYABLE_HORIZON
-#endif
-
 namespace WebCore {
 class MediaSample;
 };
