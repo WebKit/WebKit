@@ -1,5 +1,27 @@
 2020-12-14  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r270779. rdar://problem/72304155
+
+    Fix build.
+    
+    * src/gpu_info_util/SystemInfo_apple.mm:
+    (angle::GetSystemInfo):
+    ##if should be #if
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@270779 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-12-14  Alex Christensen  <achristensen@webkit.org>
+
+            Fix build.
+
+            * src/gpu_info_util/SystemInfo_apple.mm:
+            (angle::GetSystemInfo):
+            ##if should be #if
+
+2020-12-14  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r270777. rdar://problem/72304155
 
     Build fix for Mac Catalyst. Remove code that was accidentally
