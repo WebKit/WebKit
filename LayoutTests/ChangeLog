@@ -1,3 +1,15 @@
+2020-12-14  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSSION(270435) [GStreamer] Many media source tests failing and timing out
+        https://bugs.webkit.org/show_bug.cgi?id=219565
+
+        Reviewed by Philippe Normand.
+
+        Revert the gardened expectations and garden remaining failures.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-12-13  Andy Estes  <aestes@apple.com>
 
         [Mac] Create a MediaToolbox format reader plug-in for WebM

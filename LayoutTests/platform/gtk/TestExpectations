@@ -401,56 +401,31 @@ webkit.org/b/61661 editing/pasteboard/drag-drop-list.html [ Failure ]
 # MSE failures
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/URL-createObjectURL-revoke.html [ Failure ]
 
-# Timing out after r270435.
-webkit.org/b/219565 http/tests/media/media-source/mediasource-play-then-seek-back-with-remote-control.html [ Skip ]
-webkit.org/b/219565 imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html [ Skip ]
-webkit.org/b/219565 imported/w3c/web-platform-tests/media-source/mediasource-append-buffer.html [ Skip ]
-webkit.org/b/219565 imported/w3c/web-platform-tests/media-source/mediasource-avtracks.html [ Skip ]
-webkit.org/b/219565 imported/w3c/web-platform-tests/media-source/mediasource-buffered.html [ Skip ]
-webkit.org/b/219565 imported/w3c/web-platform-tests/media-source/mediasource-changetype.html [ Skip ]
-webkit.org/b/219565 imported/w3c/web-platform-tests/media-source/mediasource-duration.html [ Skip ]
-webkit.org/b/219565 imported/w3c/web-platform-tests/media-source/mediasource-endofstream.html [ Skip ]
-webkit.org/b/219565 imported/w3c/web-platform-tests/media-source/mediasource-errors.html [ Skip ]
-webkit.org/b/219565 imported/w3c/web-platform-tests/media-source/mediasource-removesourcebuffer.html [ Skip ]
-webkit.org/b/219565 imported/w3c/web-platform-tests/media-source/mediasource-duration-boundaryconditions.html [ Skip ]
-webkit.org/b/219565 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames.html [ Skip ]
-webkit.org/b/219565 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framesize.html [ Skip ]
-webkit.org/b/219565 imported/w3c/web-platform-tests/media-source/mediasource-replay.html [ Skip ]
-webkit.org/b/219565 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Skip ]
-webkit.org/b/219565 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Skip ]
-webkit.org/b/219565 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames-after-reappend.html [ Skip ]
-webkit.org/b/219565 media/encrypted-media/clearKey/clearKey-cenc-audio-playback-mse.html [ Skip ]
-webkit.org/b/219565 media/encrypted-media/clearKey/clearKey-cenc-video-playback-mse.html [ Skip ]
-webkit.org/b/219565 media/encrypted-media/clearKey/clearKey-message-cenc-event-mse.html [ Skip ]
-webkit.org/b/219565 media/encrypted-media/clearKey/clearKey-webm-video-playback-mse.html [ Skip ]
 
-# REGRESSION(r270435). Uncomment failures below after bug is fixed.
 # See also bug #175578.
-# webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html [ Failure ]
-# webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-append-buffer.html [ Failure ]
-# webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-avtracks.html [ Failure ]
-# webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-buffered.html [ Failure ]
-# webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-changetype.html [ Failure Crash ]
+webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html [ Failure ]
+webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-append-buffer.html [ Failure ]
+webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-avtracks.html [ Failure ]
+webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-buffered.html [ Failure ]
+webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-changetype.html [ Failure Crash ]
 
 # Crash is webkit.org/b/176020.
-# webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-duration.html [ Failure ]
+webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-duration.html [ Failure ]
 
 # Crash in bug #176019.
-# webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-endofstream.html [ Failure ]
-# webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-errors.html [ Failure ]
-# webkit.org/b/210486 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames-after-reappend.html [ Failure Crash Pass ]
+webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-endofstream.html [ Failure ]
+webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-errors.html [ Failure ]
+webkit.org/b/210486 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames-after-reappend.html [ Failure Crash Pass ]
 
 # Known issues that were fixed by the WebKitMediaSrc rework that is now reverted.
-# webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Failure ]
-# webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-replay.html [ Failure Crash ]
-# webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framesize.html [ Pass Failure ]
+webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Failure ]
+webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-replay.html [ Failure Crash ]
+webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framesize.html [ Pass Failure ]
 
-# webkit.org/b/176020 imported/w3c/web-platform-tests/media-source/mediasource-removesourcebuffer.html [ Crash Pass ]
-# webkit.org/b/180803 imported/w3c/web-platform-tests/media-source/mediasource-duration-boundaryconditions.html [ Failure ]
-# webkit.org/b/197711 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames.html [ Pass Failure ]
-# webkit.org/b/205110 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Failure Crash Pass ]
-#
-# End of REGRESSION(r270435).
+webkit.org/b/176020 imported/w3c/web-platform-tests/media-source/mediasource-removesourcebuffer.html [ Crash Pass ]
+webkit.org/b/180803 imported/w3c/web-platform-tests/media-source/mediasource-duration-boundaryconditions.html [ Failure ]
+webkit.org/b/197711 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames.html [ Pass Failure ]
+webkit.org/b/205110 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Failure Crash Pass ]
 
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-preload.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-trackdefaultlist.html [ Failure ]

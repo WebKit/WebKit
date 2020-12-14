@@ -528,7 +528,7 @@ void AppendPipeline::didReceiveInitializationSegment()
         break;
     }
 
-    m_sourceBufferPrivate.didReceiveInitializationSegment(initializationSegment);
+    m_sourceBufferPrivate.didReceiveInitializationSegment(WTFMove(initializationSegment), []() { });
 }
 
 AtomString AppendPipeline::trackId()

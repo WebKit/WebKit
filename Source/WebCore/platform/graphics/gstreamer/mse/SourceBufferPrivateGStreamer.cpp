@@ -181,14 +181,14 @@ void SourceBufferPrivateGStreamer::notifyClientWhenReadyForMoreSamples(const Ato
     m_trackId = trackId;
 }
 
-void SourceBufferPrivateGStreamer::didReceiveInitializationSegment(const SourceBufferPrivateClient::InitializationSegment& initializationSegment)
+void SourceBufferPrivateGStreamer::didReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&& initializationSegment, CompletionHandler<void()>&& completionHandler)
 {
-    didReceiveInitializationSegment(initializationSegment);
+    SourceBufferPrivate::didReceiveInitializationSegment(WTFMove(initializationSegment), WTFMove(completionHandler));
 }
 
 void SourceBufferPrivateGStreamer::didReceiveSample(MediaSample& sample)
 {
-    didReceiveSample(sample);
+    SourceBufferPrivate::didReceiveSample(sample);
 }
 
 void SourceBufferPrivateGStreamer::didReceiveAllPendingSamples()
