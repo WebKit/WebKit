@@ -1,3 +1,11 @@
+2020-12-14  Alex Christensen  <achristensen@webkit.org>
+
+        Fix build.
+
+        * src/gpu_info_util/SystemInfo_apple.mm:
+        (angle::GetSystemInfo):
+        ##if should be #if
+
 2020-12-14  Dean Jackson  <dino@apple.com>
 
         Build fix for Mac Catalyst. Remove code that was accidentally

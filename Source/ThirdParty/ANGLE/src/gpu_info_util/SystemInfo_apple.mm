@@ -19,7 +19,7 @@ namespace angle
 
 bool GetSystemInfo(SystemInfo *info)
 {
-#    #if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
+#    if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
     return GetSystemInfo_mac(info);
 #    else
     return GetSystemInfo_ios(info);
