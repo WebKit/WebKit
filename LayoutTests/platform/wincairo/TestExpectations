@@ -445,6 +445,16 @@ canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]
 # Windows recognizes .mjs files as JavaScript, this will just work.
 js/dom/modules/import-mjs-module.html [ Failure ]
 
+# Need async scrolling
+webkit.org/b/219842 fast/events/wheel/first-wheel-event-cancelable.html [ Skip ]
+webkit.org/b/219842 fast/events/wheel/platform-wheelevent-in-scrolling-div.html [ Skip ]
+webkit.org/b/219842 fast/events/wheel/wheel-event-in-passive-region-non-cancelable.html [ Skip ]
+webkit.org/b/219842 fast/events/wheel/wheel-event-listeners-on-body-made-passive.html [ Skip ]
+webkit.org/b/219842 fast/events/wheel/wheel-event-listeners-on-document-made-passive.html [ Skip ]
+webkit.org/b/219842 fast/events/wheel/wheel-event-listeners-on-window-left-active.html [ Skip ]
+webkit.org/b/219842 fast/events/wheel/wheel-event-listeners-on-window-made-passive.html [ Skip ]
+webkit.org/b/219842 fast/events/wheel/wheel-events-become-non-cancelable.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # These areas are not implemented well on WinCairo
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -1212,9 +1222,8 @@ http/tests/webarchive [ Skip ]
 http/tests/webgl [ Skip ]
 http/tests/webrtc [ Skip ]
 
-http/tests/websocket/tests/hybi/contentextensions [ Failure ]
-http/tests/websocket/tests/hybi/contentextensions/block-cookies.php [ Pass Failure ]
-http/tests/websocket/tests/hybi/contentextensions/block-cookies-worker.php [ Pass Failure ]
+http/tests/websocket/tests/hybi/contentextensions [ Skip ]
+
 http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]
 http/tests/websocket/tests/hybi/frame-lengths.html [ Pass Timeout ]
 http/tests/websocket/tests/hybi/httponly-cookie.pl [ Pass Failure ]

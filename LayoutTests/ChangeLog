@@ -1,3 +1,18 @@
+2020-12-13  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/css1/text_properties/word_spacing-expected.txt:
+        * platform/wincairo/css3/filters/backdrop/blur-input-bounds-expected.txt: Added.
+        * platform/wincairo/fast/css/word-space-extra-expected.txt:
+        * platform/wincairo/fast/text/atsui-negative-spacing-features-expected.txt:
+        * platform/wincairo/fast/text/atsui-spacing-features-expected.txt:
+        * platform/wincairo/fast/text/basic/004-expected.txt:
+        * platform/wincairo/fast/text/basic/005-expected.txt:
+        * platform/wincairo/fast/text/word-space-expected.txt:
+
 2020-12-13  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Offset the content logical left by the word-spacing value

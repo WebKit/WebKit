@@ -21,10 +21,12 @@ layer at (0,0) size 800x600
           text run at (0,0) width 246: "The next 7 lines should all look the same."
       RenderBlock (floating) {DIV} at (0,92) size 81x26 [border: (3px solid #000000)]
         RenderText {#text} at (3,3) size 75x19
-          text run at (3,3) width 75: "A B"
+          text run at (3,3) width 11: "A"
+          text run at (64,3) width 14: " B"
       RenderBlock (floating) {DIV} at (0,118) size 81x26 [border: (3px solid #000000)]
         RenderText {#text} at (3,3) size 75x19
-          text run at (3,3) width 75: "A B"
+          text run at (3,3) width 11: "A"
+          text run at (64,3) width 14: " B"
       RenderBlock (floating) {DIV} at (0,144) size 81x26 [border: (3px solid #000000)]
         RenderInline {SPAN} at (0,0) size 11x19
           RenderText {#text} at (3,3) size 11x19

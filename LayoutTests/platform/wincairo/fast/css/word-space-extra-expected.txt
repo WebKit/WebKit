@@ -8,8 +8,11 @@ layer at (0,0) size 785x2575
           text run at (0,0) width 138: "word-spacing"
       RenderBlock (floating) {PRE} at (0,59) size 1004x184
         RenderBlock {H3} at (0,15) size 1004x18
-          RenderText {#text} at (0,0) size 144x17
-            text run at (0,0) width 144: "In a floated pre"
+          RenderText {#text} at (0,0) size 204x17
+            text run at (0,0) width 18: "In"
+            text run at (38,0) width 18: " a"
+            text run at (76,0) width 72: " floated"
+            text run at (168,0) width 36: " pre"
         RenderBlock (anonymous) at (0,47) size 1004x136
           RenderText {#text} at (0,0) size 260x33
             text run at (0,0) width 0: " "
@@ -148,8 +151,11 @@ layer at (0,0) size 785x2575
         RenderBR {BR} at (1004,0) size 0x19
       RenderBlock {PRE} at (0,270) size 769x168
         RenderBlock {H3} at (0,0) size 769x17
-          RenderText {#text} at (0,0) size 180x17
-            text run at (0,0) width 180: "In an un-floated pre"
+          RenderText {#text} at (0,0) size 240x17
+            text run at (0,0) width 18: "In"
+            text run at (38,0) width 27: " an"
+            text run at (85,0) width 99: " un-floated"
+            text run at (204,0) width 36: " pre"
         RenderBlock (anonymous) at (0,32) size 769x136
           RenderText {#text} at (0,0) size 260x33
             text run at (0,0) width 0: " "
@@ -290,7 +296,9 @@ layer at (0,0) size 785x2575
       RenderBlock (anonymous) at (0,456) size 769x24
         RenderBlock {H3} at (0,0) size 769x23
           RenderText {#text} at (0,0) size 115x22
-            text run at (0,0) width 115: "In a span"
+            text run at (0,0) width 17: "In"
+            text run at (37,0) width 15: " a"
+            text run at (72,0) width 43: " span"
       RenderBlock (anonymous) at (0,497) size 769x301
         RenderInline {SPAN} at (0,0) size 762x259
           RenderText {#text} at (0,0) size 174x19
@@ -895,8 +903,11 @@ layer at (0,0) size 785x2575
           text run at (0,0) width 131: "both-spacing"
       RenderBlock (floating) {PRE} at (0,1728) size 1469x183
         RenderBlock {H3} at (0,15) size 1469x18
-          RenderText {#text} at (0,0) size 224x17
-            text run at (0,0) width 224: "In a floated pre"
+          RenderText {#text} at (0,0) size 284x17
+            text run at (0,0) width 28: "In"
+            text run at (48,0) width 28: " a"
+            text run at (96,0) width 112: " floated"
+            text run at (228,0) width 56: " pre"
         RenderBlock (anonymous) at (0,47) size 1469x136
           RenderText {#text} at (0,0) size 543x33
             text run at (0,0) width 0: " "
@@ -1035,8 +1046,11 @@ layer at (0,0) size 785x2575
         RenderBR {BR} at (1469,0) size 0x19
       RenderBlock {PRE} at (0,1938) size 769x168
         RenderBlock {H3} at (0,0) size 769x17
-          RenderText {#text} at (0,0) size 280x17
-            text run at (0,0) width 280: "In an un-floated pre"
+          RenderText {#text} at (0,0) size 340x17
+            text run at (0,0) width 28: "In"
+            text run at (48,0) width 42: " an"
+            text run at (110,0) width 154: " un-floated"
+            text run at (284,0) width 56: " pre"
         RenderBlock (anonymous) at (0,32) size 769x136
           RenderText {#text} at (0,0) size 543x33
             text run at (0,0) width 0: " "
@@ -1178,7 +1192,9 @@ layer at (0,0) size 785x2575
       RenderBlock (anonymous) at (0,2157) size 769x24
         RenderBlock {H3} at (0,0) size 769x23
           RenderText {#text} at (0,0) size 160x22
-            text run at (0,0) width 160: "In a span"
+            text run at (0,0) width 27: "In"
+            text run at (47,0) width 25: " a"
+            text run at (92,0) width 68: " span"
       RenderBlock (anonymous) at (0,2199) size 769x361
         RenderInline {SPAN} at (0,0) size 760x359
           RenderText {#text} at (0,0) size 419x19
