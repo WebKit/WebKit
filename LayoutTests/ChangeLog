@@ -1,3 +1,9 @@
+2020-12-14  Andy Estes  <aestes@apple.com>
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/media/media-can-play-webm-expected.txt:
+
 2020-12-14  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSSION(270435) [GStreamer] Many media source tests failing and timing out
