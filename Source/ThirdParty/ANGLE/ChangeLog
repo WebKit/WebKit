@@ -1,3 +1,11 @@
+2020-12-14  Dean Jackson  <dino@apple.com>
+
+        Build fix for Mac Catalyst. Remove code that was accidentally
+        included in the previous commit.
+
+        * src/gpu_info_util/SystemInfo_apple.mm:
+        (angle::GetSystemInfo):
+
 2020-12-12  Kyle Piddington  <kpiddington@apple.com>
 
         Improved Metal backend for ANGLE, with direct GLSL to Metal compiler translation
