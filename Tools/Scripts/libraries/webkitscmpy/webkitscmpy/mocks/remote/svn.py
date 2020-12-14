@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import os
 import re
 import xmltodict
@@ -34,7 +35,7 @@ class Svn(mocks.Requests):
     top = None
     REVISION_REQUEST_RE = re.compile(r'svn/rvr/(?P<revision>\d+)(/(?P<category>\S+))?$')
 
-    def __init__(self, remote='svn.example.org/repository/webkit'):
+    def __init__(self, remote='svn.example.org/repository/webkit', datafile=None):
         if not scmremote.Svn.is_webserver('https://{}'.format(remote)):
             raise ValueError('"{}" is not a valid Svn remote'.format(remote))
 
@@ -45,88 +46,10 @@ class Svn(mocks.Requests):
         self._cache_contents = None
         self.patches.append(scmremote.Svn('http://{}'.format(self.remote))._cache_lock())
 
-        # Provide a reasonable set of commits to test against
-        contributor = Contributor(name='Jonathan Bedard', emails=['jbedard@apple.com'])
-        self.commits = {
-            'trunk': [
-                Commit(
-                    identifier='1@trunk',
-                    revision=1,
-                    author=contributor,
-                    timestamp=1601660100,
-                    message='1st commit\n',
-                ), Commit(
-                    identifier='2@trunk',
-                    revision=2,
-                    author=contributor,
-                    timestamp=1601661100,
-                    message='2nd commit\n',
-                ), Commit(
-                    identifier='3@trunk',
-                    revision=4,
-                    author=contributor,
-                    timestamp=1601663100,
-                    message='4th commit\n',
-                ), Commit(
-                    identifier='4@trunk',
-                    revision=6,
-                    author=contributor,
-                    timestamp=1601665100,
-                    message='6th commit\n',
-                ),
-            ], 'branch-a': [
-                Commit(
-                    identifier='2.1@branch-a',
-                    revision=3,
-                    author=contributor,
-                    timestamp=1601662100,
-                    message='3rd commit\n',
-                ), Commit(
-                    identifier='2.2@branch-a',
-                    revision=7,
-                    author=contributor,
-                    timestamp=1601666100,
-                    message='7th commit\n',
-                ),
-            ],
-        }
-        self.commits['branch-b'] = [
-            self.commits['branch-a'][0], Commit(
-                identifier='2.2@branch-b',
-                revision=5,
-                author=contributor,
-                timestamp=1601664100,
-                message='5th commit\n',
-            ), Commit(
-                identifier='2.3@branch-b',
-                revision=8,
-                author=contributor,
-                timestamp=1601667100,
-                message='8th commit\n',
-            ),
-        ]
-
-        self.commits['tags/tag-1'] = [
-            self.commits['branch-a'][0],
-            self.commits['branch-a'][1], Commit(
-                identifier='2.3@tags/tag-1',
-                revision=9,
-                author=contributor,
-                timestamp=1601668100,
-                message='9th commit\n',
-            ),
-        ]
-        self.commits['tags/tag-2'] = [
-            self.commits['branch-b'][0],
-            self.commits['branch-b'][1],
-            self.commits['branch-b'][2], Commit(
-                identifier='2.4@tags/tag-2',
-                revision=10,
-                author=contributor,
-                timestamp=1601669100,
-                message='10th commit\n',
-            ),
-        ]
+        with open(datafile or os.path.join(os.path.dirname(os.path.dirname(__file__)), 'svn-repo.json')) as file:
+            self.commits = json.load(file)
+        for key, commits in self.commits.items():
+            self.commits[key] = [Commit(**kwargs) for kwargs in commits]
 
     def __enter__(self):
         super(Svn, self).__enter__()

@@ -54,10 +54,10 @@ class TestLocalSvn(unittest.TestCase):
             self.assertEqual(local.Svn(self.path).remote(), repo.remote)
 
     def test_branches(self):
-        with mocks.local.Svn(self.path, branches=('branch-1', 'branch-2')):
+        with mocks.local.Svn(self.path):
             self.assertEqual(
                 local.Svn(self.path).branches,
-                ['trunk', 'branch-1', 'branch-2', 'branch-a', 'branch-b'],
+                ['trunk', 'branch-a', 'branch-b'],
             )
 
     def test_tags(self):

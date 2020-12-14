@@ -186,7 +186,9 @@ Hash: 1abe25b443e9
         self.assertEqual(captured.stdout.getvalue(), '2.3@tags/tag-1 | r9 | 9th commit\n')
 
     def test_tag_git(self):
-        with mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime, OutputCapture() as captured:
+        with mocks.local.Git(self.path, git_svn=True) as mock, mocks.local.Svn(), MockTime, OutputCapture() as captured:
+            mock.tags['tag-1'] = mock.commits['branch-a'][-1]
+
             self.assertEqual(0, program.main(
                 args=('find', 'tag-1', '-q'),
                 path=self.path,

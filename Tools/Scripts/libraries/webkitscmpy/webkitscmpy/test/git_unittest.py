@@ -63,7 +63,10 @@ class TestGit(unittest.TestCase):
             )
 
     def test_tags(self):
-        with mocks.local.Git(self.path):
+        with mocks.local.Git(self.path) as mock:
+            mock.tags['tag-1'] = mock.commits['branch-a'][-1]
+            mock.tags['tag-2'] = mock.commits['branch-b'][-1]
+
             self.assertEqual(
                 local.Git(self.path).tags,
                 ['tag-1', 'tag-2'],
@@ -220,6 +223,8 @@ class TestGit(unittest.TestCase):
     def test_tag(self):
         for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
             with mock:
+                mock.tags['tag-1'] = mock.commits['branch-a'][-1]
+
                 self.assertEqual(
                     '621652add7fc416099bd2063366cc38ff61afe36',
                     local.Git(self.path).commit(tag='tag-1').hash,
@@ -228,6 +233,8 @@ class TestGit(unittest.TestCase):
     def test_checkout(self):
         for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
             with mock:
+                mock.tags['tag-1'] = mock.commits['branch-a'][-1]
+
                 repository = local.Git(self.path)
                 self.assertEqual('bae5d1e90999d4f916a8a15810ccfa43f37a2fd6', repository.commit().hash)
                 self.assertEqual('3cd32e352410565bb543821fbf856a6d3caad1c4', repository.checkout('3cd32e3524').hash)

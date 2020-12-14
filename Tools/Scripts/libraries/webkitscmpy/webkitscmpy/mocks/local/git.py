@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import os
 import re
 
@@ -31,7 +32,7 @@ from webkitscmpy import local, Commit, Contributor
 class Git(mocks.Subprocess):
 
     def __init__(
-        self, path='/.invalid-git',
+        self, path='/.invalid-git', datafile=None,
         remote=None, branches=None, tags=None,
         detached=None, default_branch='main',
         git_svn=False,
@@ -49,78 +50,16 @@ class Git(mocks.Subprocess):
         except (OSError, AssertionError):
             self.executable = '/usr/bin/git'
 
-        # Provide a reasonable set of commits to test against
-        contributor = Contributor(name='Jonathan Bedard', emails=['jbedard@apple.com'])
-        self.commits = {
-            default_branch: [
-                Commit(
-                    identifier='1@{}'.format(default_branch),
-                    hash='9b8311f25a77ba14923d9d5a6532103f54abefcb',
-                    revision=1 if git_svn else None,
-                    author=contributor,
-                    timestamp=1601660000,
-                    message='1st commit\n',
-                ), Commit(
-                    identifier='2@{}'.format(default_branch),
-                    hash='fff83bb2d9171b4d9196e977eb0508fd57e7a08d',
-                    revision=2 if git_svn else None,
-                    author=contributor,
-                    timestamp=1601661000,
-                    message='2nd commit\n',
-                ), Commit(
-                    identifier='3@{}'.format(default_branch),
-                    hash='1abe25b443e985f93b90d830e4a7e3731336af4d',
-                    revision=4 if git_svn else None,
-                    author=contributor,
-                    timestamp=1601663000,
-                    message='4th commit\n',
-                ), Commit(
-                    identifier='4@{}'.format(default_branch),
-                    hash='bae5d1e90999d4f916a8a15810ccfa43f37a2fd6',
-                    revision=6 if git_svn else None,
-                    author=contributor,
-                    timestamp=1601665000,
-                    message='6th commit\n',
-                ),
-            ], 'branch-a': [
-                Commit(
-                    identifier='2.1@branch-a',
-                    hash='a30ce8494bf1ac2807a69844f726be4a9843ca55',
-                    revision=3 if git_svn else None,
-                    author=contributor,
-                    timestamp=1601662000,
-                    message='3rd commit\n',
-                ), Commit(
-                    identifier='2.2@branch-a',
-                    hash='621652add7fc416099bd2063366cc38ff61afe36',
-                    revision=7 if git_svn else None,
-                    author=contributor,
-                    timestamp=1601666000,
-                    message='7th commit\n',
-                ),
-            ],
-        }
-        self.commits['branch-b'] = [
-            self.commits['branch-a'][0], Commit(
-                identifier='2.2@branch-b',
-                hash='3cd32e352410565bb543821fbf856a6d3caad1c4',
-                revision=5 if git_svn else None,
-                author=contributor,
-                timestamp=1601664000,
-                message='5th commit\n',
-            ), Commit(
-                identifier='2.3@branch-b',
-                hash='790725a6d79e28db2ecdde29548d2262c0bd059d',
-                revision=8 if git_svn else None,
-                author=contributor,
-                timestamp=1601667000,
-                message='8th commit\n',
-            ),
-        ]
-        self.head = self.commits[self.default_branch][3]
+        with open(datafile or os.path.join(os.path.dirname(os.path.dirname(__file__)), 'git-repo.json')) as file:
+            self.commits = json.load(file)
+        for key, commits in self.commits.items():
+            self.commits[key] = [Commit(**kwargs) for kwargs in commits]
+            if not git_svn:
+                for commit in self.commits[key]:
+                    commit.revision = None
 
-        self.tags['tag-1'] = self.commits['branch-a'][-1]
-        self.tags['tag-2'] = self.commits['branch-b'][-1]
+        self.head = self.commits[self.default_branch][-1]
+        self.tags = {}
 
         if git_svn:
             git_svn_routes = [
