@@ -1,3 +1,18 @@
+2020-12-14  Antoine Quint  <graouts@webkit.org>
+
+        Simplify transform blending for simple cases
+        https://bugs.webkit.org/show_bug.cgi?id=219863
+
+        Reviewed by Simon Fraser.
+
+        Rebaseline some WPT test outputs, resulting in round numbers for animated transform output, including a few new PASS results.
+
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-computed-value-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/transform-matrix-composition-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-iteration-composite-operation-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animation/commitStyles-expected.txt:
+
 2020-12-12  Frank Olivier  <frankolivier@apple.com>
 
         Implement WebVTT VTTCue region attribute

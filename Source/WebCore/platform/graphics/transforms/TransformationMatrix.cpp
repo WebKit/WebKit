@@ -949,6 +949,9 @@ TransformationMatrix& TransformationMatrix::rotate3d(double x, double y, double 
 
 TransformationMatrix& TransformationMatrix::rotate(double angle)
 {
+    if (!std::fmod(angle, 360))
+        return *this;
+
     angle = deg2rad(angle);
     double sinZ = sin(angle);
     double cosZ = cos(angle);
@@ -1665,6 +1668,14 @@ void TransformationMatrix::blend4(const TransformationMatrix& from, double progr
 
 void TransformationMatrix::blend(const TransformationMatrix& from, double progress)
 {
+    if (!progress) {
+        *this = from;
+        return;
+    }
+
+    if (progress == 1)
+        return;
+
     if (from.isIdentity() && isIdentity())
         return;
 

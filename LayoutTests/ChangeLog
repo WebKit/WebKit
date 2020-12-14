@@ -1,3 +1,15 @@
+2020-12-14  Antoine Quint  <graouts@webkit.org>
+
+        Simplify transform blending for simple cases
+        https://bugs.webkit.org/show_bug.cgi?id=219863
+
+        Reviewed by Simon Fraser.
+
+        Rebaselining test output where -0 values are now +0.
+
+        * compositing/backing/animate-into-view-expected.txt:
+        * compositing/backing/animate-into-view-with-descendant-expected.txt:
+
 2020-12-14  Youenn Fablet  <youenn@apple.com>
 
         LayoutTests/webrtc/video-sframe.html is flaky on bots
