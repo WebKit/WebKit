@@ -1,3 +1,13 @@
+2020-12-15  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r259137): Clip-path rendering regression when element contains transformed child
+        https://bugs.webkit.org/show_bug.cgi?id=219829
+
+        Reviewed by Said Abou-Hallawa.
+
+        * css3/masking/clip-path-overflow-hidden-bounds-expected.html: Added.
+        * css3/masking/clip-path-overflow-hidden-bounds.html: Added.
+
 2020-12-15  Devin Rousso  <drousso@apple.com>
 
         Toggling pointer-events on body does not re-enable scrolling on child

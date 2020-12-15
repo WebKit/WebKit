@@ -4504,24 +4504,24 @@ Path RenderLayer::computeClipPath(const LayoutSize& offsetFromRoot, LayoutRect& 
     return Path();
 }
 
-bool RenderLayer::setupClipPath(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, const LayoutSize& offsetFromRoot, Optional<LayoutRect>& rootRelativeBounds)
+bool RenderLayer::setupClipPath(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, const LayoutSize& offsetFromRoot)
 {
     if (!renderer().hasClipPath() || context.paintingDisabled() || paintingInfo.paintDirtyRect.isEmpty())
         return false;
 
-    if (!rootRelativeBounds)
-        rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, offsetFromRoot, { });
-
     // SVG elements get clipped in SVG code.
     if (is<RenderSVGRoot>(renderer()))
         return false;
+
+    // It's not clear that this geometry is correct: https://github.com/w3c/csswg-drafts/issues/5786
+    auto rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, offsetFromRoot, { UseLocalClipRectIfPossible });
 
     auto& style = renderer().style();
     LayoutSize paintingOffsetFromRoot = LayoutSize(snapSizeToDevicePixel(offsetFromRoot + paintingInfo.subpixelOffset, LayoutPoint(), renderer().document().deviceScaleFactor()));
     ASSERT(style.clipPath());
     if (is<ShapeClipPathOperation>(*style.clipPath()) || (is<BoxClipPathOperation>(*style.clipPath()) && is<RenderBox>(renderer()))) {
         WindRule windRule;
-        Path path = computeClipPath(paintingOffsetFromRoot, rootRelativeBounds.value(), windRule);
+        Path path = computeClipPath(paintingOffsetFromRoot, rootRelativeBounds, windRule);
         context.save();
         context.clipPath(path, windRule);
         return true;
@@ -4532,7 +4532,7 @@ bool RenderLayer::setupClipPath(GraphicsContext& context, const LayerPaintingInf
         Element* element = renderer().document().getElementById(referenceClipPathOperation->fragment());
         if (element && element->renderer() && is<RenderSVGResourceClipper>(element->renderer())) {
             context.save();
-            auto referenceBox = snapRectToDevicePixels(rootRelativeBounds.value(), renderer().document().deviceScaleFactor());
+            auto referenceBox = snapRectToDevicePixels(rootRelativeBounds, renderer().document().deviceScaleFactor());
             auto offset = referenceBox.location();
             context.translate(offset);
             FloatRect svgReferenceBox { {}, referenceBox.size() };
@@ -4562,7 +4562,7 @@ RenderLayerFilters* RenderLayer::filtersForPainting(GraphicsContext& context, Op
     return nullptr;
 }
 
-GraphicsContext* RenderLayer::setupFilters(GraphicsContext& destinationContext, LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags, const LayoutSize& offsetFromRoot, Optional<LayoutRect>& rootRelativeBounds)
+GraphicsContext* RenderLayer::setupFilters(GraphicsContext& destinationContext, LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags, const LayoutSize& offsetFromRoot)
 {
     auto* paintingFilters = filtersForPainting(destinationContext, paintFlags);
     if (!paintingFilters)
@@ -4571,10 +4571,9 @@ GraphicsContext* RenderLayer::setupFilters(GraphicsContext& destinationContext, 
     LayoutRect filterRepaintRect = paintingFilters->dirtySourceRect();
     filterRepaintRect.move(offsetFromRoot);
 
-    if (!rootRelativeBounds)
-        rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, offsetFromRoot, { });
+    auto rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, offsetFromRoot, { });
 
-    GraphicsContext* filterContext = paintingFilters->beginFilterEffect(destinationContext, enclosingIntRect(rootRelativeBounds.value()), enclosingIntRect(paintingInfo.paintDirtyRect), enclosingIntRect(filterRepaintRect));
+    GraphicsContext* filterContext = paintingFilters->beginFilterEffect(destinationContext, enclosingIntRect(rootRelativeBounds), enclosingIntRect(paintingInfo.paintDirtyRect), enclosingIntRect(filterRepaintRect));
     if (!filterContext)
         return nullptr;
 
@@ -4644,7 +4643,6 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     updateLayerListsIfNeeded();
 
     LayoutSize offsetFromRoot = offsetFromAncestor(paintingInfo.rootLayer);
-    Optional<LayoutRect> rootRelativeBounds;
 
     // FIXME: We shouldn't have to disable subpixel quantization for overflow clips or subframes once we scroll those
     // things on the scrolling thread.
@@ -4658,7 +4656,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
     bool hasClipPath = false;
     if (shouldApplyClipPath(paintingInfo.paintBehavior, localPaintFlags))
-        hasClipPath = setupClipPath(context, paintingInfo, columnAwareOffsetFromRoot, rootRelativeBounds);
+        hasClipPath = setupClipPath(context, paintingInfo, columnAwareOffsetFromRoot);
 
     bool selectionAndBackgroundsOnly = paintingInfo.paintBehavior.contains(PaintBehavior::SelectionAndBackgroundsOnly);
     bool selectionOnly = paintingInfo.paintBehavior.contains(PaintBehavior::SelectionOnly);
@@ -4697,7 +4695,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
     { // Scope for filter-related state changes.
         LayerPaintingInfo localPaintingInfo(paintingInfo);
-        GraphicsContext* filterContext = setupFilters(context, localPaintingInfo, paintFlags, columnAwareOffsetFromRoot, rootRelativeBounds);
+        GraphicsContext* filterContext = setupFilters(context, localPaintingInfo, paintFlags, columnAwareOffsetFromRoot);
         if (filterContext && haveTransparency) {
             // If we have a filter and transparency, we have to eagerly start a transparency layer here, rather than risk a child layer lazily starts one with the wrong context.
             beginTransparencyLayers(context, localPaintingInfo, paintingInfo.paintDirtyRect);

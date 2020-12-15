@@ -419,7 +419,7 @@ void ContentChangeObserver::elementDidBecomeHidden(const Element& element)
     // Candidate element is no longer visible.
     if (!m_visibilityCandidateList.remove(element))
         return;
-    ASSERT(hasVisibleChangeState());
+//    ASSERT(hasVisibleChangeState());
     if (m_visibilityCandidateList.computesEmpty())
         setHasIndeterminateState();
 }
