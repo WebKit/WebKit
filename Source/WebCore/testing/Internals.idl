@@ -771,8 +771,9 @@ enum TreeType {
     undefined setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection userInterfaceLayoutDirection);
     undefined setBaseWritingDirection(BaseWritingDirection direction);
 
+    boolean userPrefersContrast();
     boolean userPrefersReducedMotion();
-    
+
     undefined reportBacktrace();
 
     [Conditional=POINTER_LOCK] boolean pageHasPendingPointerLock();

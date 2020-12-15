@@ -37,6 +37,8 @@ fast/media/mq-inverted-colors-live-update.html [ Pass ]
 fast/media/mq-inverted-colors-live-update-in-subframes.html [ Pass ]
 fast/media/mq-monochrome-live-update.html [ Pass ]
 fast/media/mq-prefers-reduced-motion-live-update.html [ Pass ]
+fast/media/mq-prefers-contrast.html [ Pass ]
+fast/media/mq-prefers-contrast-live-update.html [ Pass ]
 
 fast/repaint/placeholder-after-caps-lock-hidden.html [ Pass ]
 

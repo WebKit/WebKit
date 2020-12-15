@@ -745,6 +745,7 @@ public:
     enum class UserInterfaceLayoutDirection : uint8_t { LTR, RTL };
     void setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection);
 
+    bool userPrefersContrast() const;
     bool userPrefersReducedMotion() const;
 
     void reportBacktrace();

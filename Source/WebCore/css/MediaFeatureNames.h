@@ -77,6 +77,7 @@
     macro(monochrome, "monochrome") \
     macro(orientation, "orientation") \
     macro(pointer, "pointer") \
+    macro(prefersContrast, "prefers-contrast") \
     macro(prefersDarkInterface, "prefers-dark-interface") \
     macro(prefersReducedMotion, "prefers-reduced-motion") \
     macro(resolution, "resolution") \

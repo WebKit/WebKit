@@ -58,6 +58,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_pdfImageCachingPolicy(settings.pdfImageCachingPolicy())
     , m_forcedColorsAreInvertedAccessibilityValue(settings.forcedColorsAreInvertedAccessibilityValue())
     , m_forcedDisplayIsMonochromeAccessibilityValue(settings.forcedDisplayIsMonochromeAccessibilityValue())
+    , m_forcedPrefersContrastAccessibilityValue(settings.forcedPrefersContrastAccessibilityValue())
     , m_forcedPrefersReducedMotionAccessibilityValue(settings.forcedPrefersReducedMotionAccessibilityValue())
     , m_fontLoadTimingOverride(settings.fontLoadTimingOverride())
     , m_frameFlattening(settings.frameFlattening())
@@ -116,6 +117,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setPdfImageCachingPolicy(m_pdfImageCachingPolicy);
     settings.setForcedColorsAreInvertedAccessibilityValue(m_forcedColorsAreInvertedAccessibilityValue);
     settings.setForcedDisplayIsMonochromeAccessibilityValue(m_forcedDisplayIsMonochromeAccessibilityValue);
+    settings.setForcedPrefersContrastAccessibilityValue(m_forcedPrefersContrastAccessibilityValue);
     settings.setForcedPrefersReducedMotionAccessibilityValue(m_forcedPrefersReducedMotionAccessibilityValue);
     settings.setFontLoadTimingOverride(m_fontLoadTimingOverride);
     settings.setFrameFlattening(m_frameFlattening);
@@ -393,6 +395,16 @@ InternalSettings::ForcedAccessibilityValue InternalSettings::forcedDisplayIsMono
 void InternalSettings::setForcedDisplayIsMonochromeAccessibilityValue(InternalSettings::ForcedAccessibilityValue value)
 {
     settings().setForcedDisplayIsMonochromeAccessibilityValue(value);
+}
+
+InternalSettings::ForcedAccessibilityValue InternalSettings::forcedPrefersContrastAccessibilityValue() const
+{
+    return settings().forcedPrefersContrastAccessibilityValue();
+}
+
+void InternalSettings::setForcedPrefersContrastAccessibilityValue(InternalSettings::ForcedAccessibilityValue value)
+{
+    settings().setForcedPrefersContrastAccessibilityValue(value);
 }
 
 InternalSettings::ForcedAccessibilityValue InternalSettings::forcedPrefersReducedMotionAccessibilityValue() const

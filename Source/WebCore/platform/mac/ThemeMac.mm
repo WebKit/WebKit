@@ -971,6 +971,11 @@ bool ThemeMac::userPrefersReducedMotion() const
     return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldReduceMotion];
 }
 
+bool ThemeMac::userPrefersContrast() const
+{
+    return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldIncreaseContrast];
+}
+
 #if HAVE(LARGE_CONTROL_SIZE)
 
 bool ThemeMac::supportsLargeFormControls()

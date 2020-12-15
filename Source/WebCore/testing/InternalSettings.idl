@@ -60,6 +60,7 @@ enum UserInterfaceDirectionPolicy { "Content", "System" };
     [MayThrowException] undefined setSystemLayoutDirection(SystemLayoutDirection direction);
     attribute ForcedAccessibilityValue forcedColorsAreInvertedAccessibilityValue;
     attribute ForcedAccessibilityValue forcedDisplayIsMonochromeAccessibilityValue;
+    attribute ForcedAccessibilityValue forcedPrefersContrastAccessibilityValue;
     attribute ForcedAccessibilityValue forcedPrefersReducedMotionAccessibilityValue;
     attribute ForcedAccessibilityValue forcedSupportsHighDynamicRangeValue;
 

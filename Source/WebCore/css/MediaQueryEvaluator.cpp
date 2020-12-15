@@ -83,7 +83,8 @@ static bool isAccessibilitySettingsDependent(const AtomString& mediaFeature)
         || mediaFeature == MediaFeatureNames::maxMonochrome
         || mediaFeature == MediaFeatureNames::minMonochrome
         || mediaFeature == MediaFeatureNames::monochrome
-        || mediaFeature == MediaFeatureNames::prefersReducedMotion;
+        || mediaFeature == MediaFeatureNames::prefersReducedMotion
+        || mediaFeature == MediaFeatureNames::prefersContrast;
 }
 
 static bool isViewportDependent(const AtomString& mediaFeature)
@@ -819,6 +820,30 @@ static bool prefersColorSchemeEvaluate(CSSValue* value, const CSSToLengthConvers
     }
 }
 #endif
+
+static bool prefersContrastEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
+{
+    bool userPrefersContrast = false;
+
+    switch (frame.settings().forcedPrefersContrastAccessibilityValue()) {
+    case ForcedAccessibilityValue::On:
+        userPrefersContrast = true;
+        break;
+    case ForcedAccessibilityValue::Off:
+        break;
+    case ForcedAccessibilityValue::System:
+#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+        userPrefersContrast = Theme::singleton().userPrefersContrast();
+#endif
+        break;
+    }
+
+    if (!value)
+        return userPrefersContrast;
+
+    // Apple platforms: less and forced are ignored and only "more" is mapped to the user's preference.
+    return downcast<CSSPrimitiveValue>(*value).valueID() == (userPrefersContrast ? CSSValueMore : CSSValueNoPreference);
+}
 
 static bool prefersReducedMotionEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
 {

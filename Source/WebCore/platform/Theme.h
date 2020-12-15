@@ -77,6 +77,7 @@ public:
 
     virtual void drawNamedImage(const String&, GraphicsContext&, const FloatRect&) const;
 
+    virtual bool userPrefersContrast() const;
     virtual bool userPrefersReducedMotion() const;
 
 protected:

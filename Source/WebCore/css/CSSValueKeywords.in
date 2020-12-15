@@ -1414,6 +1414,12 @@ prefers
 reduce
 no-preference
 
+// prefers-contrast
+forced
+more
+less
+// no-preference
+
 #if defined(ENABLE_DARK_MODE_CSS) && ENABLE_DARK_MODE_CSS
 // prefers-color-scheme
 light

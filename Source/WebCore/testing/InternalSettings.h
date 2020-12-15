@@ -82,6 +82,8 @@ public:
     void setForcedColorsAreInvertedAccessibilityValue(ForcedAccessibilityValue);
     ForcedAccessibilityValue forcedDisplayIsMonochromeAccessibilityValue() const;
     void setForcedDisplayIsMonochromeAccessibilityValue(ForcedAccessibilityValue);
+    ForcedAccessibilityValue forcedPrefersContrastAccessibilityValue() const;
+    void setForcedPrefersContrastAccessibilityValue(ForcedAccessibilityValue);
     ForcedAccessibilityValue forcedPrefersReducedMotionAccessibilityValue() const;
     void setForcedPrefersReducedMotionAccessibilityValue(ForcedAccessibilityValue);
     ForcedAccessibilityValue forcedSupportsHighDynamicRangeValue() const;
@@ -152,6 +154,7 @@ private:
         WebCore::PDFImageCachingPolicy m_pdfImageCachingPolicy;
         WebCore::ForcedAccessibilityValue m_forcedColorsAreInvertedAccessibilityValue;
         WebCore::ForcedAccessibilityValue m_forcedDisplayIsMonochromeAccessibilityValue;
+        WebCore::ForcedAccessibilityValue m_forcedPrefersContrastAccessibilityValue;
         WebCore::ForcedAccessibilityValue m_forcedPrefersReducedMotionAccessibilityValue;
         WebCore::FontLoadTimingOverride m_fontLoadTimingOverride;
         WebCore::FrameFlattening m_frameFlattening;

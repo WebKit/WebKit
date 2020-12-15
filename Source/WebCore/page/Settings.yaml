@@ -185,6 +185,13 @@ ForcePendingWebGLPolicy:
     WebCore:
       default: false
 
+ForcedPrefersContrastAccessibilityValue:
+  type: uint32_t
+  refinedType: ForcedAccessibilityValue
+  defaultValue:
+    WebCore:
+      default: ForcedAccessibilityValue::System
+
 ForcedColorsAreInvertedAccessibilityValue:
   type: uint32_t
   refinedType: ForcedAccessibilityValue

@@ -66,6 +66,7 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, _UIKitGetTextEffectsCatalog, CUICatalo
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, UIAccessibilityIsGrayscaleEnabled, BOOL, (void), ())
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, UIAccessibilityIsInvertColorsEnabled, BOOL, (void), ())
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, UIAccessibilityIsReduceMotionEnabled, BOOL, (void), ())
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, UIAccessibilityDarkerSystemColorsEnabled, BOOL, (void), ())
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, UIAccessibilityPostNotification, void, (UIAccessibilityNotifications n, id argument), (n, argument))
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, UIGraphicsGetCurrentContext, CGContextRef, (void), ())
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, UIGraphicsPopContext, void, (void), ())

@@ -56,6 +56,7 @@ static inline bool featureWithValidIdent(const AtomString& mediaFeature, const C
 #if ENABLE(DARK_MODE_CSS)
     || (mediaFeature == MediaFeatureNames::prefersColorScheme)
 #endif
+    || mediaFeature == MediaFeatureNames::prefersContrast
     || mediaFeature == MediaFeatureNames::prefersReducedMotion
     || (mediaFeature == MediaFeatureNames::prefersDarkInterface && (context.useSystemAppearance || isUASheetBehavior(context.mode)))
     || mediaFeature == MediaFeatureNames::dynamicRange;
@@ -165,6 +166,7 @@ static inline bool isFeatureValidWithoutValue(const AtomString& mediaFeature, co
         || mediaFeature == MediaFeatureNames::animation
         || mediaFeature == MediaFeatureNames::invertedColors
         || mediaFeature == MediaFeatureNames::pointer
+        || mediaFeature == MediaFeatureNames::prefersContrast
         || mediaFeature == MediaFeatureNames::prefersReducedMotion
         || (mediaFeature == MediaFeatureNames::prefersDarkInterface && (context.useSystemAppearance || isUASheetBehavior(context.mode)))
 #if ENABLE(DARK_MODE_CSS)

@@ -53,6 +53,15 @@ String Internals::userVisibleString(const DOMURL& url)
     return WTF::userVisibleString(url.href());
 }
 
+bool Internals::userPrefersContrast() const
+{
+#if PLATFORM(IOS_FAMILY)
+    return PAL::softLink_UIKit_UIAccessibilityDarkerSystemColorsEnabled();
+#else
+    return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldIncreaseContrast];
+#endif
+}
+
 bool Internals::userPrefersReducedMotion() const
 {
 #if PLATFORM(IOS_FAMILY)
