@@ -31,6 +31,7 @@ recognition.onresult = (event) => {
     hasReceivedResult = true;
 
     debug("Received result event");
+    shouldBe("event.resultIndex", "0");
     shouldBe("event.results.length", "1");
     shouldBeTrue("event.results.item(0).isFinal");
     shouldBe("event.results.item(0).length", "1");

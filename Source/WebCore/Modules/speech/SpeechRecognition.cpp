@@ -148,22 +148,21 @@ void SpeechRecognition::didReceiveResult(Vector<SpeechRecognitionResultData>&& r
     allResults.reserveCapacity(m_finalResults.size() + resultDatas.size());
     allResults.appendVector(m_finalResults);
 
-    auto nonFinalResultIndex = allResults.size();
+    auto firstChangedIndex = allResults.size();
     for (auto resultData : resultDatas) {
         auto alternatives = WTF::map(resultData.alternatives, [](auto& alternativeData) {
             return SpeechRecognitionAlternative::create(WTFMove(alternativeData.transcript), alternativeData.confidence);
         });
 
         auto newResult = SpeechRecognitionResult::create(WTFMove(alternatives), resultData.isFinal);
-        if (resultData.isFinal) {
+        if (resultData.isFinal)
             m_finalResults.append(newResult);
-            ++nonFinalResultIndex;
-        }
+
         allResults.append(WTFMove(newResult));
     }
 
     auto resultList = SpeechRecognitionResultList::create(WTFMove(allResults));
-    queueTaskToDispatchEvent(*this, TaskSource::Speech, SpeechRecognitionEvent::create(eventNames().resultEvent, nonFinalResultIndex, WTFMove(resultList)));
+    queueTaskToDispatchEvent(*this, TaskSource::Speech, SpeechRecognitionEvent::create(eventNames().resultEvent, firstChangedIndex, WTFMove(resultList)));
 }
 
 void SpeechRecognition::didError(const SpeechRecognitionError& error)

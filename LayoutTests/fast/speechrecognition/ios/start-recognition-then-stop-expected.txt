@@ -9,6 +9,7 @@ Received start event
 Received audiostart event
 Received speechstart event
 Received result event
+PASS event.resultIndex is 0
 PASS event.results.length is 1
 PASS event.results.item(0).isFinal is true
 PASS event.results.item(0).length is 1

@@ -1,3 +1,13 @@
+2020-12-15  Sihui Liu  <sihui_liu@apple.com>
+
+        resultIndex of SpeechRecognitionEvent should be the first index that has change
+        https://bugs.webkit.org/show_bug.cgi?id=219876
+
+        Reviewed by Youenn Fablet.
+
+        * fast/speechrecognition/ios/start-recognition-then-stop-expected.txt:
+        * fast/speechrecognition/ios/start-recognition-then-stop.html:
+
 2020-12-15  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION: apple.com sign-in page footer does not wrap, "Site Map" option renders offscreen.
