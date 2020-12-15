@@ -184,13 +184,12 @@ LineBreaker::Result LineBreaker::tryWrappingInlineContent(const RunList& candida
             if (!wrappedTextContent->trailingRunIndex && wrappedTextContent->contentOverflows) {
                 // We tried to split the content but the available space can't even accommodate the first character.
                 // 1. Push the content over to the next line when we've got content on the line already.
-                // 2. Keep the first character on the empty line (or keep the whole run if it has only one character).
+                // 2. Keep the first character on the empty line (or keep the whole run if it has only one character/completely empty).
                 if (!lineStatus.lineIsEmpty)
                     return { Result::Action::Push, IsEndOfLine::Yes, { } };
                 auto firstTextRunIndex = *candidateContent.firstTextRunIndex();
                 auto& inlineTextItem = downcast<InlineTextItem>(runs[firstTextRunIndex].inlineItem);
-                ASSERT(inlineTextItem.length());
-                if (inlineTextItem.length() == 1)
+                if (inlineTextItem.length() <= 1)
                     return Result { Result::Action::Keep, IsEndOfLine::Yes };
                 auto firstCharacterWidth = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + 1);
                 auto firstCharacterRun = PartialRun { 1, firstCharacterWidth, false };
@@ -304,6 +303,10 @@ Optional<LineBreaker::PartialRun> LineBreaker::tryBreakingTextRun(const Run& ove
 
     auto breakRule = wordBreakBehavior(style);
     if (breakRule == WordBreakRule::AtArbitraryPosition) {
+        if (!inlineTextItem.length()) {
+            // Empty text runs may be breakable based on style, but in practice we can't really split them any further.
+            return PartialRun { };
+        }
         if (findLastBreakablePosition) {
             // When the run can be split at arbitrary position,
             // let's just return the entire run when it is intended to fit on the line.
