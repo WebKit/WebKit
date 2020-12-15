@@ -31,6 +31,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -51,9 +52,9 @@ public:
     static const Seconds& maximumIntervalForUserGestureForwardingForFetch();
     WEBCORE_EXPORT static void setMaximumIntervalForUserGestureForwardingForFetchForTesting(Seconds);
 
-    static Ref<UserGestureToken> create(ProcessingUserGestureState state, UserGestureType gestureType)
+    static Ref<UserGestureToken> create(ProcessingUserGestureState state, UserGestureType gestureType, Document* document = nullptr)
     {
-        return adoptRef(*new UserGestureToken(state, gestureType));
+        return adoptRef(*new UserGestureToken(state, gestureType, document));
     }
 
     WEBCORE_EXPORT ~UserGestureToken();
@@ -101,16 +102,15 @@ public:
 
     MonotonicTime startTime() const { return m_startTime; }
 
+    bool isValidForDocument(Document&) const;
+
 private:
-    UserGestureToken(ProcessingUserGestureState state, UserGestureType gestureType)
-        : m_state(state)
-        , m_gestureType(gestureType)
-    {
-    }
+    UserGestureToken(ProcessingUserGestureState, UserGestureType, Document*);
 
     ProcessingUserGestureState m_state = NotProcessingUserGesture;
     Vector<WTF::Function<void (UserGestureToken&)>> m_destructionObservers;
     UserGestureType m_gestureType;
+    WeakHashSet<Document> m_documentsImpactedByUserGesture;
     DOMPasteAccessPolicy m_domPasteAccessPolicy { DOMPasteAccessPolicy::NotRequestedYet };
     GestureScope m_scope { GestureScope::All };
     MonotonicTime m_startTime { MonotonicTime::now() };
@@ -123,7 +123,7 @@ class UserGestureIndicator {
 public:
     WEBCORE_EXPORT static RefPtr<UserGestureToken> currentUserGesture();
 
-    WEBCORE_EXPORT static bool processingUserGesture();
+    WEBCORE_EXPORT static bool processingUserGesture(Document* = nullptr);
     WEBCORE_EXPORT static bool processingUserGestureForMedia();
 
     // If a document is provided, its last known user gesture timestamp is updated.
