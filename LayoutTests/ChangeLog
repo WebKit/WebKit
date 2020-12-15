@@ -1,3 +1,30 @@
+2020-12-15  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r269320, r269341, r269502, and r269576.
+        https://bugs.webkit.org/show_bug.cgi?id=219915
+
+        ICU C++ internal API causes trouble
+
+        Reverted changesets:
+
+        "REGRESSION (r254038): Simple.com money transfer UI is very
+        laggy (multiple seconds per keypress)"
+        https://bugs.webkit.org/show_bug.cgi?id=218348
+        https://trac.webkit.org/changeset/269320
+
+        "[JSC] Obtain default timezone ID from cached icu::TimeZone"
+        https://bugs.webkit.org/show_bug.cgi?id=218531
+        https://trac.webkit.org/changeset/269341
+
+        "toLocaleDateString() resolves incorrect date for some old
+        dates"
+        https://bugs.webkit.org/show_bug.cgi?id=161623
+        https://trac.webkit.org/changeset/269502
+
+        "[JSC] Add TimeZone range cache over ICU TimeZone API"
+        https://bugs.webkit.org/show_bug.cgi?id=218681
+        https://trac.webkit.org/changeset/269576
+
 2020-12-15  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process][MSE] Enable media-source layout tests

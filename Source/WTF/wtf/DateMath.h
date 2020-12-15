@@ -59,7 +59,12 @@ enum TimeType {
 struct LocalTimeOffset {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    LocalTimeOffset() = default;
+    LocalTimeOffset()
+        : isDST(false)
+        , offset(0)
+    {
+    }
+
     LocalTimeOffset(bool isDST, int offset)
         : isDST(isDST)
         , offset(offset)
@@ -76,8 +81,8 @@ struct LocalTimeOffset {
         return isDST != other.isDST || offset != other.offset;
     }
 
-    bool isDST { false };
-    int offset { 0 };
+    bool isDST;
+    int offset;
 };
 
 void initializeDates();

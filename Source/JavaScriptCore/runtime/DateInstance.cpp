@@ -52,33 +52,33 @@ String DateInstance::toStringName(const JSObject*, JSGlobalObject*)
     return "Date"_s;
 }
 
-const GregorianDateTime* DateInstance::calculateGregorianDateTime(DateCache& cache) const
+const GregorianDateTime* DateInstance::calculateGregorianDateTime(VM::DateCache& cache) const
 {
     double milli = internalNumber();
     if (std::isnan(milli))
         return nullptr;
 
     if (!m_data)
-        m_data = cache.cachedDateInstanceData(milli);
+        m_data = cache.dateInstanceCache.add(milli);
 
     if (m_data->m_gregorianDateTimeCachedForMS != milli) {
-        cache.msToGregorianDateTime(milli, WTF::LocalTime, m_data->m_cachedGregorianDateTime);
+        msToGregorianDateTime(cache, milli, WTF::LocalTime, m_data->m_cachedGregorianDateTime);
         m_data->m_gregorianDateTimeCachedForMS = milli;
     }
     return &m_data->m_cachedGregorianDateTime;
 }
 
-const GregorianDateTime* DateInstance::calculateGregorianDateTimeUTC(DateCache& cache) const
+const GregorianDateTime* DateInstance::calculateGregorianDateTimeUTC(VM::DateCache& cache) const
 {
     double milli = internalNumber();
     if (std::isnan(milli))
         return nullptr;
 
     if (!m_data)
-        m_data = cache.cachedDateInstanceData(milli);
+        m_data = cache.dateInstanceCache.add(milli);
 
     if (m_data->m_gregorianDateTimeUTCCachedForMS != milli) {
-        cache.msToGregorianDateTime(milli, WTF::UTCTime, m_data->m_cachedGregorianDateTimeUTC);
+        msToGregorianDateTime(cache, milli, WTF::UTCTime, m_data->m_cachedGregorianDateTimeUTC);
         m_data->m_gregorianDateTimeUTCCachedForMS = milli;
     }
     return &m_data->m_cachedGregorianDateTimeUTC;

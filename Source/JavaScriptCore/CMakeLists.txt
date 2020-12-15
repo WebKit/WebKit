@@ -932,7 +932,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSCell.h
     runtime/JSCellInlines.h
     runtime/JSDataView.h
-    runtime/JSDateMath.h
     runtime/JSDestructibleObject.h
     runtime/JSDestructibleObjectHeapCellType.h
     runtime/JSExportMacros.h

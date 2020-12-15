@@ -696,7 +696,7 @@ static EncodedJSValue setNewValueFromTimeArgs(JSGlobalObject* globalObject, Call
         return JSValue::encode(jsNaN());
     } 
 
-    double newUTCDate = cache.gregorianDateTimeToMS(gregorianDateTime, ms, inputTimeType);
+    double newUTCDate = gregorianDateTimeToMS(cache, gregorianDateTime, ms, inputTimeType);
     double result = timeClip(newUTCDate);
     thisDateObj->setInternalNumber(result);
     return JSValue::encode(jsNumber(result));
@@ -723,7 +723,7 @@ static EncodedJSValue setNewValueFromDateArgs(JSGlobalObject* globalObject, Call
 
     GregorianDateTime gregorianDateTime; 
     if (numArgsToUse == 3 && std::isnan(milli)) 
-        cache.msToGregorianDateTime(0, WTF::UTCTime, gregorianDateTime);
+        msToGregorianDateTime(cache, 0, WTF::UTCTime, gregorianDateTime);
     else { 
         ms = milli - floor(milli / msPerSecond) * msPerSecond; 
         const GregorianDateTime* other = inputTimeType == WTF::UTCTime
@@ -741,7 +741,7 @@ static EncodedJSValue setNewValueFromDateArgs(JSGlobalObject* globalObject, Call
         return JSValue::encode(jsNaN());
     } 
 
-    double newUTCDate = cache.gregorianDateTimeToMS(gregorianDateTime, ms, inputTimeType);
+    double newUTCDate = gregorianDateTimeToMS(cache, gregorianDateTime, ms, inputTimeType);
     double result = timeClip(newUTCDate);
     thisDateObj->setInternalNumber(result);
     return JSValue::encode(jsNumber(result));
@@ -840,7 +840,7 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetYear, (JSGlobalObject* globalObject, Ca
     if (std::isnan(milli))
         // Based on ECMA 262 B.2.5 (setYear)
         // the time must be reset to +0 if it is NaN.
-        cache.msToGregorianDateTime(0, WTF::UTCTime, gregorianDateTime);
+        msToGregorianDateTime(cache, 0, WTF::UTCTime, gregorianDateTime);
     else {
         double secs = floor(milli / msPerSecond);
         ms = milli - secs * msPerSecond;
@@ -856,7 +856,7 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetYear, (JSGlobalObject* globalObject, Ca
     }
 
     gregorianDateTime.setYear(toInt32((year >= 0 && year <= 99) ? (year + 1900) : year));
-    double timeInMilliseconds = cache.gregorianDateTimeToMS(gregorianDateTime, ms, WTF::LocalTime);
+    double timeInMilliseconds = gregorianDateTimeToMS(cache, gregorianDateTime, ms, WTF::LocalTime);
     double result = timeClip(timeInMilliseconds);
     thisDateObj->setInternalNumber(result);
     return JSValue::encode(jsNumber(result));
