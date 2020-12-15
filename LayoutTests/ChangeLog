@@ -1,5 +1,64 @@
 2020-12-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r270373. rdar://problem/72298666
+
+    iframe with `sandbox=allow-top-navigation-by-user-activation` can navigate top frame when the user interacts with an iframe from another origin
+    https://bugs.webkit.org/show_bug.cgi?id=219413
+    <rdar://problem/64887657>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Source/WebCore:
+    
+    An iframe with `sandbox=allow-top-navigation-by-user-activation` can navigate the top frame when the user
+    interacts with an frame from another origin. This is not strict enough and does not match the behavior of
+    Chrome.
+    
+    In Chrome, the user activation is only valid for the purpose of navigation if the user interacted with either:
+    - The iframe triggering the navigation
+    - A descendant iframe of the iframe triggering the navigation
+    - A frame from the same origin as the iframe triggering the navigation
+    
+    This patch aligns our behavior with Chrome's.
+    
+    Test: http/tests/security/block-top-level-navigations-by-sandboxed-iframe-with-propagated-user-gesture.html
+    
+    * dom/Document.cpp:
+    (WebCore::Document::canNavigateInternal):
+    * dom/UserGestureIndicator.cpp:
+    (WebCore::UserGestureToken::UserGestureToken):
+    (WebCore::UserGestureToken::isValidForDocument const):
+    (WebCore::UserGestureIndicator::processingUserGesture):
+    * dom/UserGestureIndicator.h:
+    (WebCore::UserGestureToken::create):
+    
+    LayoutTests:
+    
+    Add layout test coverage.
+    
+    * http/tests/security/block-top-level-navigations-by-sandboxed-iframe-with-propagated-user-gesture-expected.txt: Added.
+    * http/tests/security/block-top-level-navigations-by-sandboxed-iframe-with-propagated-user-gesture.html: Added.
+    * http/tests/security/resources/navigate-top-level-frame-to-failure-page-via-message-handler.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@270373 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-12-02  Chris Dumez  <cdumez@apple.com>
+
+            iframe with `sandbox=allow-top-navigation-by-user-activation` can navigate top frame when the user interacts with an iframe from another origin
+            https://bugs.webkit.org/show_bug.cgi?id=219413
+            <rdar://problem/64887657>
+
+            Reviewed by Geoffrey Garen.
+
+            Add layout test coverage.
+
+            * http/tests/security/block-top-level-navigations-by-sandboxed-iframe-with-propagated-user-gesture-expected.txt: Added.
+            * http/tests/security/block-top-level-navigations-by-sandboxed-iframe-with-propagated-user-gesture.html: Added.
+            * http/tests/security/resources/navigate-top-level-frame-to-failure-page-via-message-handler.html: Added.
+
+2020-12-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r270367. rdar://problem/72298753
 
     Block suspicious top level navigations by iframes even if sandbox=allow-top-navigation is specified
