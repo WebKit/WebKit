@@ -1,3 +1,16 @@
+2020-12-14  Alex Christensen  <achristensen@webkit.org>
+
+        Get more informatiton from assertion when uidna_openUTS46 fails
+        https://bugs.webkit.org/show_bug.cgi?id=219881
+
+        Reviewed by Alexey Proskuryakov.
+
+        <rdar://problem/66988046> shows that this fails sometimes.
+        Updating the assertion should let me know more information.
+
+        * wtf/URLParser.cpp:
+        (WTF::URLParser::internationalDomainNameTranscoder):
+
 2020-12-14  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess] Bump QoS to UserInteractive for real-time audio rendering thread

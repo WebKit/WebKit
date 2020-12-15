@@ -2860,7 +2860,8 @@ const UIDNA& URLParser::internationalDomainNameTranscoder()
     std::call_once(onceFlag, [] {
         UErrorCode error = U_ZERO_ERROR;
         encoder = uidna_openUTS46(UIDNA_CHECK_BIDI | UIDNA_CHECK_CONTEXTJ | UIDNA_NONTRANSITIONAL_TO_UNICODE | UIDNA_NONTRANSITIONAL_TO_ASCII, &error);
-        RELEASE_ASSERT(U_SUCCESS(error));
+        if (UNLIKELY(U_FAILURE(error)))
+            CRASH_WITH_INFO(error);
         RELEASE_ASSERT(encoder);
     });
     return *encoder;
