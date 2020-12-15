@@ -23,7 +23,6 @@
 
 #include "ActiveDOMObject.h"
 #include "DOMIsoSubspaces.h"
-#include "Document.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
@@ -42,7 +41,6 @@
 #include "JSTestDefaultToJSONInheritFinal.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptExecutionContext.h"
-#include "Settings.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/HeapAnalyzer.h>
 #include <JavaScriptCore/JSArray.h>
@@ -232,7 +230,7 @@ static inline EncodedJSValue jsTestDefaultToJSONInheritPrototypeFunction_toJSONB
     if (RuntimeEnabledFeatures::sharedFeatures().testRuntimeEnabledEnabled()) {
         result->putDirect(vm, Identifier::fromString(vm, "longAttribute"), toJS<IDLLong>(*lexicalGlobalObject, throwScope, impl.longAttribute()));
     }
-    if (downcast<Document>(jsCast<JSDOMGlobalObject*>(castedThis->globalObject())->scriptExecutionContext())->settings().testSettingEnabled()) {
+    if (jsCast<JSDOMGlobalObject*>(castedThis->globalObject())->scriptExecutionContext()->settingsValues().testSettingEnabled) {
         result->putDirect(vm, Identifier::fromString(vm, "enabledBySettingsAttribute"), toJS<IDLUnsignedShort>(*lexicalGlobalObject, throwScope, impl.enabledBySettingsAttribute()));
     }
 #if ENABLE(TEST_CONDITIONAL)

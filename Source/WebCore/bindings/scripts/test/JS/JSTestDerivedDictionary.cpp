@@ -21,14 +21,13 @@
 #include "config.h"
 #include "JSTestDerivedDictionary.h"
 
-#include "Document.h"
 #include "JSDOMConvertBoolean.h"
 #include "JSDOMConvertCallbacks.h"
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMGlobalObject.h"
 #include "JSVoidCallback.h"
-#include "Settings.h"
+#include "ScriptExecutionContext.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ObjectConstructor.h>
 
@@ -210,7 +209,7 @@ JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, J
         auto partialStringMemberValue = toJS<IDLDOMString>(lexicalGlobalObject, IDLDOMString::extractValueFromNullable(dictionary.partialStringMember));
         result->putDirect(vm, JSC::Identifier::fromString(vm, "partialStringMember"), partialStringMemberValue);
     }
-    if (downcast<Document>(jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext())->settings().testSettingEnabled()) {
+    if (jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext()->settingsValues().testSettingEnabled) {
         if (!IDLDOMString::isNullValue(dictionary.partialStringMemberWithEnabledBySetting)) {
             auto partialStringMemberWithEnabledBySettingValue = toJS<IDLDOMString>(lexicalGlobalObject, IDLDOMString::extractValueFromNullable(dictionary.partialStringMemberWithEnabledBySetting));
             result->putDirect(vm, JSC::Identifier::fromString(vm, "partialStringMemberWithEnabledBySetting"), partialStringMemberWithEnabledBySettingValue);

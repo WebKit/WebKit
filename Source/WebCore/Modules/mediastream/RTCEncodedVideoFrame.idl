@@ -27,6 +27,7 @@ enum RTCEncodedVideoFrameType { "empty", "key", "delta" };
 
 [
     Conditional=WEB_RTC,
+    EnabledBySetting=WebRTCInsertableStreams,
     Exposed=DedicatedWorker,
     ImplementationLacksVTable,
 ] interface RTCEncodedVideoFrame {

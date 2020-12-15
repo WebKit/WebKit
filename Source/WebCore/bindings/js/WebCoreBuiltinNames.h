@@ -215,6 +215,8 @@ namespace WebCore {
     macro(RTCDTMFToneChangeEvent) \
     macro(RTCDataChannel) \
     macro(RTCDataChannelEvent) \
+    macro(RTCEncodedAudioFrame) \
+    macro(RTCEncodedVideoFrame) \
     macro(RTCIceCandidate) \
     macro(RTCIceTransport) \
     macro(RTCPeerConnection) \
@@ -222,6 +224,8 @@ namespace WebCore {
     macro(RTCPeerConnectionIceErrorEvent) \
     macro(RTCRtpReceiver) \
     macro(RTCRtpScriptTransform) \
+    macro(RTCRtpScriptTransformer) \
+    macro(RTCRtpScriptTransformerContext) \
     macro(RTCRtpSender) \
     macro(RTCRtpTransceiver) \
     macro(RTCRtpTransform) \

@@ -23,7 +23,6 @@
 
 #include "ActiveDOMObject.h"
 #include "DOMIsoSubspaces.h"
-#include "Document.h"
 #include "EventNames.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
@@ -45,7 +44,6 @@
 #include "JSTestException.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptExecutionContext.h"
-#include "Settings.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/FunctionPrototype.h>
 #include <JavaScriptCore/HeapAnalyzer.h>
@@ -201,7 +199,7 @@ void JSTestDefaultToJSONPrototype::finishCreation(VM& vm)
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settings().testSettingEnabled()) {
+    if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSettingEnabled) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("enabledBySettingsAttribute"), strlen("enabledBySettingsAttribute"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -751,7 +749,7 @@ static inline EncodedJSValue jsTestDefaultToJSONPrototypeFunction_toJSONBody(JSG
     if (RuntimeEnabledFeatures::sharedFeatures().testRuntimeEnabledEnabled()) {
         result->putDirect(vm, Identifier::fromString(vm, "longAttribute"), toJS<IDLLong>(*lexicalGlobalObject, throwScope, impl.longAttribute()));
     }
-    if (downcast<Document>(jsCast<JSDOMGlobalObject*>(castedThis->globalObject())->scriptExecutionContext())->settings().testSettingEnabled()) {
+    if (jsCast<JSDOMGlobalObject*>(castedThis->globalObject())->scriptExecutionContext()->settingsValues().testSettingEnabled) {
         result->putDirect(vm, Identifier::fromString(vm, "enabledBySettingsAttribute"), toJS<IDLUnsignedShort>(*lexicalGlobalObject, throwScope, impl.enabledBySettingsAttribute()));
     }
 #if ENABLE(TEST_CONDITIONAL)

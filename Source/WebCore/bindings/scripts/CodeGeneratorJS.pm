@@ -4070,14 +4070,11 @@ sub GenerateRuntimeEnableConditionalString
     if ($context->extendedAttributes->{EnabledBySetting}) {
         assert("Must specify value for EnabledBySetting.") if $context->extendedAttributes->{EnabledBySetting} eq "VALUE_IS_MISSING";
 
-        AddToImplIncludes("Document.h");
-        AddToImplIncludes("Settings.h");
-
-        assert("EnabledBySetting can only be used by interfaces only exposed to the Window") if $interface->extendedAttributes->{Exposed} && $interface->extendedAttributes->{Exposed} ne "Window";
+        AddToImplIncludes("ScriptExecutionContext.h");
 
         my @flags = split(/&/, $context->extendedAttributes->{EnabledBySetting});
         foreach my $flag (@flags) {
-            push(@conjuncts, "downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->settings()." . ToMethodName($flag) . "Enabled()");
+            push(@conjuncts, "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->settingsValues()." . ToMethodName($flag) . "Enabled");
         }
     }
 
@@ -4085,13 +4082,12 @@ sub GenerateRuntimeEnableConditionalString
         assert("Must specify value for SettingsConditionallyReadWrite.") if $context->extendedAttributes->{SettingsConditionallyReadWrite} eq "VALUE_IS_MISSING";
 
         AddToImplIncludes("Document.h");
-        AddToImplIncludes("Settings.h");
 
         assert("SettingsConditionallyReadWrite can only be used by interfaces only exposed to the Window") if $interface->extendedAttributes->{Exposed} && $interface->extendedAttributes->{Exposed} ne "Window";
 
         my @flags = split(/&/, $context->extendedAttributes->{SettingsConditionallyReadWrite});
         foreach my $flag (@flags) {
-            push(@conjuncts, "downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->settings()." . ToMethodName($flag) . "Enabled()");
+            push(@conjuncts, "downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->settingsValues()." . ToMethodName($flag) . "Enabled");
         }
     }
 

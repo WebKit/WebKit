@@ -25,6 +25,7 @@
 
 [
     Conditional=WEB_RTC,
+    EnabledBySetting=WebRTCInsertableStreams,
     Exposed=DedicatedWorker,
     ImplementationLacksVTable,
 ] interface RTCEncodedAudioFrame {
