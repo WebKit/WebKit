@@ -1,3 +1,17 @@
+2020-12-15  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] REGRESSION: Event handler region is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=219515
+        <rdar://problem/71955706>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/scrolling/mac/event-region-is-leaking-out-expected.txt: Added.
+        * fast/scrolling/mac/event-region-is-leaking-out.html: Added.
+        progressions:
+        * tiled-drawing/scrolling/non-fast-region/wheel-handler-in-overflow-scroll-expected.txt:
+        * tiled-drawing/scrolling/non-fast-region/wheel-handler-region-basic-expected.txt:
+
 2020-12-15  Sihui Liu  <sihui_liu@apple.com>
 
         resultIndex of SpeechRecognitionEvent should be the first index that has change

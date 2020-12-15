@@ -417,8 +417,10 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
             continue;
 
         if (paintInfo.eventRegionContext) {
-            if (style.pointerEvents() != PointerEvents::None)
+            if (style.pointerEvents() != PointerEvents::None) {
+                visualOverflowRect.moveBy(paintOffset);
                 paintInfo.eventRegionContext->unite(enclosingIntRect(visualOverflowRect), style);
+            }
             continue;
         }
 
