@@ -203,10 +203,8 @@ void BaseAudioContext::clear()
     auto protectedThis = makeRef(*this);
 
     // We have to release our reference to the destination node before the context will ever be deleted since the destination node holds a reference to the context.
-    if (m_destinationNode) {
-        m_destinationNode->uninitialize();
+    if (m_destinationNode)
         m_destinationNode = nullptr;
-    }
 
     // Audio thread is dead. Nobody will schedule node deletion action. Let's do it ourselves.
     do {

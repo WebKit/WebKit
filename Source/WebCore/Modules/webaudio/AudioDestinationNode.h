@@ -62,13 +62,9 @@ public:
     virtual void restartRendering() { }
 
     virtual bool isPlaying() { return false; }
+    void isPlayingDidChange() override;
     bool isPlayingAudio() const { return m_isEffectivelyPlayingAudio; }
     void setMuted(bool muted) { m_muted = muted; }
-
-    // AudioIOCallback.
-    void refAudioCallback() final { ref(); }
-    void derefAudioCallback() final { deref(); }
-    void isPlayingDidChange() override;
 
 protected:
     double tailTime() const override { return 0; }

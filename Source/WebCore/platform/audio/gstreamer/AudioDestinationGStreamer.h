@@ -45,6 +45,7 @@ public:
     gboolean handleMessage(GstMessage*);
 
 private:
+    AudioIOCallback& m_callback;
     RefPtr<AudioBus> m_renderBus;
 
     float m_sampleRate;

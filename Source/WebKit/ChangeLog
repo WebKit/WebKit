@@ -1,3 +1,16 @@
+2020-12-14  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r270768.
+
+        Still crashes in debug in a different location
+
+        Reverted changeset:
+
+        "[GPUProcess] Crash under
+        AudioDestinationCocoa::setIsPlaying(bool)"
+        https://bugs.webkit.org/show_bug.cgi?id=219809
+        https://trac.webkit.org/changeset/270768
+
 2020-12-14  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process][MSE] Fix crashes in a debug build

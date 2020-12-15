@@ -39,7 +39,7 @@ public:
 
 private:
 #if ENABLE(WEB_AUDIO)
-    UniqueRef<WebCore::AudioDestination> createAudioDestination(WebCore::AudioIOCallback&,
+    Ref<WebCore::AudioDestination> createAudioDestination(WebCore::AudioIOCallback&,
         const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate) override;
 #endif
 #if PLATFORM(COCOA)

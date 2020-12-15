@@ -32,7 +32,6 @@
 #include "WebKitWebAudioSourceGStreamer.h"
 #include <gst/audio/gstaudiobasesink.h>
 #include <gst/gst.h>
-#include <wtf/UniqueRef.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
@@ -94,7 +93,7 @@ static void autoAudioSinkChildAddedCallback(GstChildProxy*, GObject* object, gch
         g_object_set(GST_AUDIO_BASE_SINK(object), "buffer-time", static_cast<gint64>(100000), nullptr);
 }
 
-UniqueRef<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const String&, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
+Ref<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const String&, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
 {
     initializeDebugCategory();
     // FIXME: make use of inputDeviceId as appropriate.
@@ -103,7 +102,7 @@ UniqueRef<AudioDestination> AudioDestination::create(AudioIOCallback& callback, 
     if (numberOfInputChannels)
         WTFLogAlways("AudioDestination::create(%u, %u, %f) - unhandled input channels", numberOfInputChannels, numberOfOutputChannels, sampleRate);
 
-    return makeUniqueRef<AudioDestinationGStreamer>(callback, numberOfOutputChannels, sampleRate);
+    return adoptRef(*new AudioDestinationGStreamer(callback, numberOfOutputChannels, sampleRate));
 }
 
 float AudioDestination::hardwareSampleRate()
@@ -117,7 +116,7 @@ unsigned long AudioDestination::maxChannelCount()
 }
 
 AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, unsigned long numberOfOutputChannels, float sampleRate)
-    : AudioDestination(callback)
+    : m_callback(callback)
     , m_renderBus(AudioBus::create(numberOfOutputChannels, AudioUtilities::renderQuantumSize, false))
     , m_sampleRate(sampleRate)
 {

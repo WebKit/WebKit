@@ -29,7 +29,6 @@
 #ifndef AudioDestination_h
 #define AudioDestination_h
 
-#include "AudioIOCallback.h"
 #include <memory>
 #include <wtf/CompletionHandler.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -37,25 +36,24 @@
 
 namespace WebCore {
 
+class AudioIOCallback;
+
 // AudioDestination is an abstraction for audio hardware I/O.
 // The audio hardware periodically calls the AudioIOCallback render() method asking it to render/output the next render quantum of audio.
 // It optionally will pass in local/live audio input when it calls render().
 
-class AudioDestination {
+class AudioDestination : public ThreadSafeRefCounted<AudioDestination> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     // Pass in (numberOfInputChannels > 0) if live/local audio input is desired.
     // Port-specific device identification information for live/local input streams can be passed in the inputDeviceId.
-    WEBCORE_EXPORT static UniqueRef<AudioDestination> create(AudioIOCallback&, const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate);
+    WEBCORE_EXPORT static Ref<AudioDestination> create(AudioIOCallback&, const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate);
 
     virtual ~AudioDestination() = default;
 
     virtual void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&& = [](bool) { }) = 0;
     virtual void stop(CompletionHandler<void(bool)>&& = [](bool) { }) = 0;
     virtual bool isPlaying() = 0;
-
-    void ref() { m_callback.refAudioCallback(); }
-    void deref() { m_callback.derefAudioCallback(); }
 
     // Sample-rate conversion may happen in AudioDestination to the hardware sample-rate
     virtual float sampleRate() const = 0;
@@ -70,14 +68,6 @@ public:
     // be a value: 1 <= numberOfOutputChannels <= maxChannelCount(),
     // or if maxChannelCount() equals 0, then numberOfOutputChannels must be 2.
     static unsigned long maxChannelCount();
-
-protected:
-    explicit AudioDestination(AudioIOCallback& callback)
-        : m_callback(callback)
-    {
-    }
-
-    AudioIOCallback& m_callback;
 };
 
 } // namespace WebCore
