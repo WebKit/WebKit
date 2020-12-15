@@ -1,5 +1,38 @@
 2020-12-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r270449. rdar://problem/72298505
+
+    Add safety checks to xsltParamArrayFromParameterMap()
+    <https://webkit.org/b/219407>
+    <rdar://problem/71853069>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    * xml/XSLTProcessorLibxslt.cpp:
+    (WebCore::xsltParamArrayFromParameterMap):
+    
+    Source/WTF:
+    
+    * wtf/PlatformHave.h:
+    (HAVE_LIBXSLT_FIX_FOR_RADAR_71864140): Add.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@270449 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-12-04  David Kilzer  <ddkilzer@apple.com>
+
+            Add safety checks to xsltParamArrayFromParameterMap()
+            <https://webkit.org/b/219407>
+            <rdar://problem/71853069>
+
+            Reviewed by Darin Adler.
+
+            * xml/XSLTProcessorLibxslt.cpp:
+            (WebCore::xsltParamArrayFromParameterMap):
+
+2020-12-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r270373. rdar://problem/72298666
 
     iframe with `sandbox=allow-top-navigation-by-user-activation` can navigate top frame when the user interacts with an iframe from another origin

@@ -1,7 +1,7 @@
 /*
  * This file is part of the XSL implementation.
  *
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple, Inc. All rights reserved.
+ * Copyright (C) 2004-2020 Apple, Inc. All rights reserved.
  * Copyright (C) 2005, 2006 Alexey Proskuryakov <ap@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -48,6 +48,7 @@
 #include <libxslt/xslt.h>
 #include <libxslt/xsltutils.h>
 #include <wtf/Assertions.h>
+#include <wtf/CheckedArithmetic.h>
 
 #if OS(DARWIN) && !PLATFORM(GTK)
 #include "SoftLinkLibxslt.h"
@@ -223,14 +224,19 @@ static const char** xsltParamArrayFromParameterMap(XSLTProcessor::ParameterMap& 
     if (parameters.isEmpty())
         return 0;
 
-    const char** parameterArray = (const char**)fastMalloc(((parameters.size() * 2) + 1) * sizeof(char*));
+    auto size = (((Checked<size_t>(parameters.size()) * 2U) + 1U) * sizeof(char*)).unsafeGet();
+    auto** parameterArray = static_cast<const char**>(fastMalloc(size));
 
-    unsigned index = 0;
+    size_t index = 0;
     for (auto& parameter : parameters) {
         parameterArray[index++] = fastStrDup(parameter.key.utf8().data());
         parameterArray[index++] = fastStrDup(parameter.value.utf8().data());
     }
     parameterArray[index] = nullptr;
+
+#if !PLATFORM(WIN) && !HAVE(LIBXSLT_FIX_FOR_RADAR_71864140)
+    RELEASE_ASSERT(index <= std::numeric_limits<int>::max());
+#endif
 
     return parameterArray;
 }
