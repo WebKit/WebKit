@@ -104,6 +104,11 @@
     completionHandler(value);
 }
 
+- (void)takeDictionary:(NSDictionary *)value completionHandler:(void (^)(NSDictionary *value))completionHandler
+{
+    completionHandler(value);
+}
+
 - (void)doNotCallCompletionHandler:(void (^)())completionHandler
 {
 }
