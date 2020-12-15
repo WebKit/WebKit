@@ -24,6 +24,7 @@
 #if ENABLE(WEB_AUDIO) && USE(GSTREAMER)
 
 #include "AudioBus.h"
+#include "AudioDestination.h"
 #include "AudioIOCallback.h"
 #include "AudioUtilities.h"
 #include "GStreamerCommon.h"
@@ -58,7 +59,7 @@ static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src",
 struct _WebKitWebAudioSrcPrivate {
     gfloat sampleRate;
     AudioBus* bus;
-    AudioIOCallback* provider;
+    AudioDestination* provider;
     guint framesToPull;
     guint bufferSize;
 
@@ -260,7 +261,7 @@ static void webKitWebAudioSrcSetProperty(GObject* object, guint propertyId, cons
         priv->bus = static_cast<AudioBus*>(g_value_get_pointer(value));
         break;
     case PROP_PROVIDER:
-        priv->provider = static_cast<AudioIOCallback*>(g_value_get_pointer(value));
+        priv->provider = static_cast<AudioDestination*>(g_value_get_pointer(value));
         break;
     case PROP_FRAMES:
         priv->framesToPull = g_value_get_uint(value);
@@ -351,12 +352,12 @@ static Optional<Vector<GRefPtr<GstBuffer>>> webKitWebAudioSrcAllocateBuffersAndR
         LockHolder holder(priv->dispatchMutex);
         (*priv->dispatchToRenderThreadCallback)([src, outputTimestamp]() mutable {
             auto* priv = src->priv;
-            priv->provider->render(nullptr, priv->bus, priv->framesToPull, outputTimestamp);
+            priv->provider->callRenderCallback(nullptr, priv->bus, priv->framesToPull, outputTimestamp);
             priv->dispatchCondition.notifyOne();
         });
         priv->dispatchCondition.wait(priv->dispatchMutex);
     } else
-        priv->provider->render(nullptr, priv->bus, priv->framesToPull, outputTimestamp);
+        priv->provider->callRenderCallback(nullptr, priv->bus, priv->framesToPull, outputTimestamp);
 
     return makeOptional(channelBufferList);
 }

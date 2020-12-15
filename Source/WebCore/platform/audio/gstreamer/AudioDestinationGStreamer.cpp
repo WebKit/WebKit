@@ -116,7 +116,7 @@ unsigned long AudioDestination::maxChannelCount()
 }
 
 AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, unsigned long numberOfOutputChannels, float sampleRate)
-    : m_callback(callback)
+    : AudioDestination(callback)
     , m_renderBus(AudioBus::create(numberOfOutputChannels, AudioUtilities::renderQuantumSize, false))
     , m_sampleRate(sampleRate)
 {
@@ -127,7 +127,7 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
     g_signal_connect(bus.get(), "message", G_CALLBACK(messageCallback), this);
 
     m_src = reinterpret_cast<GstElement*>(g_object_new(WEBKIT_TYPE_WEB_AUDIO_SRC, "rate", sampleRate,
-        "bus", m_renderBus.get(), "provider", &m_callback, "frames", AudioUtilities::renderQuantumSize, nullptr));
+        "bus", m_renderBus.get(), "provider", this, "frames", AudioUtilities::renderQuantumSize, nullptr));
 
     GRefPtr<GstElement> audioSink = createPlatformAudioSink();
     m_audioSinkAvailable = audioSink;

@@ -1,3 +1,14 @@
+2020-12-15  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] Crash under AudioDestinationCocoa::setIsPlaying(bool)
+        https://bugs.webkit.org/show_bug.cgi?id=219809
+        <rdar://problem/72298420>
+
+        Reviewed by Youenn Fablet.
+
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::RemoteAudioDestinationProxy):
+
 2020-12-15  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Add sandbox parameter for message filter entitlement status

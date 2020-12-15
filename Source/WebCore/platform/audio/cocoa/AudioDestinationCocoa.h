@@ -28,7 +28,6 @@
 #if ENABLE(WEB_AUDIO)
 
 #include "AudioDestination.h"
-#include "AudioIOCallback.h"
 #include "AudioOutputUnitAdaptor.h"
 #include <AudioUnit/AudioUnit.h>
 #include <wtf/RefPtr.h>
@@ -72,7 +71,6 @@ private:
     void renderOnRenderingThead(size_t framesToRender);
 
     AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;
-    AudioIOCallback& m_callback;
 
     // To pass the data from FIFO to the audio device callback.
     Ref<AudioBus> m_outputBus;

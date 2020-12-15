@@ -75,18 +75,39 @@ void DefaultAudioDestinationNode::uninitialize()
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_wasDestinationStarted = false;
-    m_destination->stop();
-    m_destination = nullptr;
+    clearDestination();
     m_numberOfInputChannels = 0;
 
     AudioNode::uninitialize();
 }
 
+void DefaultAudioDestinationNode::clearDestination()
+{
+    ASSERT(m_destination);
+    if (m_wasDestinationStarted) {
+        m_destination->stop();
+        m_wasDestinationStarted = false;
+    }
+    m_destination->clearCallback();
+    m_destination = nullptr;
+}
+
 void DefaultAudioDestinationNode::createDestination()
 {
     ALWAYS_LOG(LOGIDENTIFIER, "contextSampleRate = ", m_sampleRate, ", hardwareSampleRate = ", AudioDestination::hardwareSampleRate());
+    ASSERT(!m_destination);
     m_destination = platformStrategies()->mediaStrategy().createAudioDestination(*this, m_inputDeviceId, m_numberOfInputChannels, channelCount(), m_sampleRate);
+}
+
+void DefaultAudioDestinationNode::recreateDestination()
+{
+    bool wasDestinationStarted = m_wasDestinationStarted;
+    clearDestination();
+    createDestination();
+    if (wasDestinationStarted) {
+        m_wasDestinationStarted = true;
+        m_destination->start(dispatchToRenderThreadFunction());
+    }
 }
 
 void DefaultAudioDestinationNode::enableInput(const String& inputDeviceId)
@@ -98,12 +119,8 @@ void DefaultAudioDestinationNode::enableInput(const String& inputDeviceId)
         m_numberOfInputChannels = EnabledInputChannels;
         m_inputDeviceId = inputDeviceId;
 
-        if (isInitialized()) {
-            // Re-create destination.
-            m_destination->stop();
-            createDestination();
-            m_destination->start(dispatchToRenderThreadFunction());
-        }
+        if (isInitialized())
+            recreateDestination();
     }
 }
 
@@ -202,14 +219,8 @@ ExceptionOr<void> DefaultAudioDestinationNode::setChannelCount(unsigned channelC
     if (result.hasException())
         return result;
 
-    if (this->channelCount() != oldChannelCount && isInitialized()) {
-        // Re-create destination.
-        if (m_wasDestinationStarted)
-            m_destination->stop();
-        createDestination();
-        if (m_wasDestinationStarted)
-            m_destination->start(dispatchToRenderThreadFunction());
-    }
+    if (this->channelCount() != oldChannelCount && isInitialized())
+        recreateDestination();
 
     return { };
 }

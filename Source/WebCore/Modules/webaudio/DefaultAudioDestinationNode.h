@@ -45,8 +45,11 @@ public:
     void startRendering(CompletionHandler<void(Optional<Exception>&&)>&&) final;
 
 private:
-    explicit DefaultAudioDestinationNode(BaseAudioContext&, Optional<float>);
+    DefaultAudioDestinationNode(BaseAudioContext&, Optional<float>);
+
     void createDestination();
+    void clearDestination();
+    void recreateDestination();
 
     Function<void(Function<void()>&&)> dispatchToRenderThreadFunction();
 

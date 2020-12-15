@@ -70,8 +70,8 @@ unsigned long AudioDestination::maxChannelCount()
 }
 
 AudioDestinationCocoa::AudioDestinationCocoa(AudioIOCallback& callback, unsigned numberOfOutputChannels, float sampleRate, bool configureAudioOutputUnit)
-    : m_audioOutputUnitAdaptor(*this)
-    , m_callback(callback)
+    : AudioDestination(callback)
+    , m_audioOutputUnitAdaptor(*this)
     , m_outputBus(AudioBus::create(numberOfOutputChannels, AudioUtilities::renderQuantumSize, false).releaseNonNull())
     , m_renderBus(AudioBus::create(numberOfOutputChannels, AudioUtilities::renderQuantumSize).releaseNonNull())
     , m_fifo(makeUniqueRef<PushPullFIFO>(numberOfOutputChannels, fifoSize))
@@ -85,7 +85,7 @@ AudioDestinationCocoa::AudioDestinationCocoa(AudioIOCallback& callback, unsigned
         double scaleFactor = static_cast<double>(sampleRate) / hardwareSampleRate;
         m_resampler = makeUnique<MultiChannelResampler>(scaleFactor, numberOfOutputChannels, AudioUtilities::renderQuantumSize, [this](AudioBus* bus, size_t framesToProcess) {
             ASSERT_UNUSED(framesToProcess, framesToProcess == AudioUtilities::renderQuantumSize);
-            m_callback.render(0, bus, AudioUtilities::renderQuantumSize, m_outputTimestamp);
+            callRenderCallback(nullptr, bus, AudioUtilities::renderQuantumSize, m_outputTimestamp);
         });
     }
 }
@@ -139,12 +139,20 @@ void AudioDestinationCocoa::stop(CompletionHandler<void(bool)>&& completionHandl
 
 void AudioDestinationCocoa::setIsPlaying(bool isPlaying)
 {
-    auto locker = holdLock(m_isPlayingLock);
-    if (m_isPlaying == isPlaying)
-        return;
+    ASSERT(isMainThread());
+    {
+        auto locker = holdLock(m_isPlayingLock);
+        if (m_isPlaying == isPlaying)
+            return;
 
-    m_isPlaying = isPlaying;
-    m_callback.isPlayingDidChange();
+        m_isPlaying = isPlaying;
+    }
+
+    {
+        auto locker = holdLock(m_callbackLock);
+        if (m_callback)
+            m_callback->isPlayingDidChange();
+    }
 }
 
 void AudioDestinationCocoa::getAudioStreamBasicDescription(AudioStreamBasicDescription& streamFormat)
@@ -219,7 +227,7 @@ void AudioDestinationCocoa::renderOnRenderingThead(size_t framesToRender)
         if (m_resampler)
             m_resampler->process(m_renderBus.ptr(), AudioUtilities::renderQuantumSize);
         else
-            m_callback.render(0, m_renderBus.ptr(), AudioUtilities::renderQuantumSize, m_outputTimestamp);
+            callRenderCallback(nullptr, m_renderBus.ptr(), AudioUtilities::renderQuantumSize, m_outputTimestamp);
 
         auto locker = holdLock(m_fifoLock);
         m_fifo->push(m_renderBus.ptr());

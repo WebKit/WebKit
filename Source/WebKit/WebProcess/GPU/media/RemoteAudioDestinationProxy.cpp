@@ -60,7 +60,8 @@ RemoteAudioDestinationProxy::RemoteAudioDestinationProxy(AudioIOCallback& callba
     , m_numberOfFrames(hardwareSampleRate() * ringBufferSizeInSecond)
     , m_ringBuffer(makeUnique<WebCore::CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(std::bind(&RemoteAudioDestinationProxy::storageChanged, this, std::placeholders::_1))))
 #else
-    : m_numberOfOutputChannels(numberOfOutputChannels)
+    : WebCore::AudioDestination(callback)
+    , m_numberOfOutputChannels(numberOfOutputChannels)
 #endif
     , m_inputDeviceId(inputDeviceId)
     , m_numberOfInputChannels(numberOfInputChannels)
