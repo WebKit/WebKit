@@ -1167,6 +1167,9 @@ bool RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline(const RenderStyle
 
 bool RenderStyle::changeRequiresRecompositeLayer(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>&) const
 {
+    if (m_inheritedFlags.pointerEvents != other.m_inheritedFlags.pointerEvents)
+        return true;
+
     if (m_rareNonInheritedData.ptr() != other.m_rareNonInheritedData.ptr()) {
         if (m_rareNonInheritedData->transformStyle3D != other.m_rareNonInheritedData->transformStyle3D
             || m_rareNonInheritedData->backfaceVisibility != other.m_rareNonInheritedData->backfaceVisibility
