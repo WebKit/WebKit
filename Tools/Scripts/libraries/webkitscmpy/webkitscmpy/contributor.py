@@ -46,13 +46,38 @@ class Contributor(object):
             return result
 
     class Mapping(defaultdict):
+        @classmethod
+        def load(cls, file):
+            result = cls()
+            contents = json.load(file)
+            for contributor in contents.get('contributors', []):
+                result.add(Contributor(**contributor))
+            for alias, name in contents.get('mapping', {}).items():
+                contributor = result.get(name)
+                if contributor:
+                    result[alias] = contributor
+            return result
+
         def __init__(self):
             super(Contributor.Mapping, self).__init__(lambda: None)
+
+        def save(self, file):
+            mapping = {}
+            contributors = []
+            for alias, contributor in self.items():
+                contributors.append(Contributor.Encoder().default(contributor))
+                if alias != contributor.name and alias not in contributor.emails:
+                    mapping[alias] = contributor.name
+
+            json.dump(dict(
+                mapping=mapping,
+                contributors=contributors,
+            ), file)
 
         def add(self, contributor):
             if not isinstance(contributor, Contributor):
                 raise ValueError("'{}' is not a Contributor object".format(type(contributor)))
-            return self.create(name=contributor.name, *contributor.emails)
+            return self.create(contributor.name, *contributor.emails)
 
         def create(self, name=None, *emails):
             emails = [email for email in emails or []]

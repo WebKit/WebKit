@@ -23,7 +23,7 @@
 import json
 import unittest
 
-from webkitcorepy import string_utils
+from webkitcorepy import string_utils, StringIO
 from webkitscmpy import Contributor
 
 
@@ -158,3 +158,18 @@ class TestContributor(unittest.TestCase):
         mapping.create('Fujii Hironori', 'Hironori.Fujii@sony.com')
         self.assertEqual(mapping['Hironori.Fujii@sony.com'].name, 'Fujii Hironori')
         self.assertEqual(mapping['hironori.fujii@sony.com'].name, 'Fujii Hironori')
+
+    def test_saving(self):
+        mapping_a = Contributor.Mapping()
+        mapping_a.create('Jonathan Bedard', 'jbedard@apple.com')
+        mapping_a.create('Stephanie Lewis', 'slewis@apple.com')
+        mapping_a['JonWBedard'] = mapping_a['jbedard@apple.com']
+
+        file = StringIO()
+        mapping_a.save(file)
+        file.seek(0)
+
+        mapping_b = Contributor.Mapping.load(file)
+        self.assertEqual(mapping_a['jbedard@apple.com'], mapping_b['jbedard@apple.com'])
+        self.assertEqual(mapping_a['jbedard@apple.com'], mapping_b['JonWBedard'])
+        self.assertEqual(mapping_a['slewis@apple.com'], mapping_b['slewis@apple.com'])

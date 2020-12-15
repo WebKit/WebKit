@@ -1,5 +1,27 @@
 2020-12-15  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitscmpy] Save contributors to json file
+        https://bugs.webkit.org/show_bug.cgi?id=219908
+        <rdar://problem/72351153>
+
+        Reviewed by Dewei Zhu.
+
+        The motivation for this change is not to replace contributors.json (although that could
+        eventually be the case), instead, the motivation for this change is to pass contributors
+        to `git filter-branch` subprocesses.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Increment version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/contributor.py:
+        (Contributor.Mapping):
+        (Contributor.Mapping.load): Load contributor mapping from a json file.
+        (Contributor.Mapping.save): Save contributor mapping to a json file.
+        (Contributor.Mapping.add):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/contributor_unittest.py:
+        (TestContributor):
+        (TestContributor.test_saving):
+
+2020-12-15  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitscmpy] Contributor emails with capitalizations should be searchable as lowercase
         https://bugs.webkit.org/show_bug.cgi?id=219892
         <rdar://problem/72341870>
