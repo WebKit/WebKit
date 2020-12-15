@@ -54,6 +54,8 @@
   cmd: runWebAssemblyReferenceSpecTest :normal
 - path: wasm/references-spec-tests/table_init.wast.js
   cmd: runWebAssemblyReferenceSpecTest :normal
+- path: wasm/references-spec-tests/select.wast.js
+  cmd: runWebAssemblyReferenceSpecTest :normal
 
 - path: wasm/multi-value-spec-tests/block.wast.js
   cmd: runWebAssemblySpecTest :normal

@@ -150,6 +150,12 @@ private:
     };
     PartialResult WARN_UNUSED_RETURN parseTableCopyImmediates(TableCopyImmediates&);
 
+    struct AnnotatedSelectImmediates {
+        unsigned sizeOfAnnotationVector;
+        Type targetType;
+    };
+    PartialResult WARN_UNUSED_RETURN parseAnnotatedSelectImmediates(AnnotatedSelectImmediates&);
+
 #define WASM_TRY_ADD_TO_CONTEXT(add_expression) WASM_FAIL_IF_HELPER_FAILS(m_context.add_expression)
 
     template <typename ...Args>
@@ -547,6 +553,22 @@ auto FunctionParser<Context>::parseTableCopyImmediates(TableCopyImmediates& resu
 }
 
 template<typename Context>
+auto FunctionParser<Context>::parseAnnotatedSelectImmediates(AnnotatedSelectImmediates& result) -> PartialResult
+{
+    uint32_t sizeOfAnnotationVector;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(sizeOfAnnotationVector), "select can't parse the size of annotation vector");
+    WASM_PARSER_FAIL_IF(sizeOfAnnotationVector != 1, "select invalid result arity for");
+
+    Type targetType;
+    WASM_PARSER_FAIL_IF(!parseValueType(targetType), "select can't parse annotations");
+
+    result.sizeOfAnnotationVector = sizeOfAnnotationVector;
+    result.targetType = targetType;
+
+    return { };
+}
+
+template<typename Context>
 auto FunctionParser<Context>::checkBranchTarget(const ControlType& target) -> PartialResult
 {
     if (!target.branchTargetArity())
@@ -593,6 +615,9 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
         WASM_TRY_POP_EXPRESSION_STACK_INTO(zero, "select zero");
         WASM_TRY_POP_EXPRESSION_STACK_INTO(nonZero, "select non-zero");
 
+        if (Options::useWebAssemblyReferences())
+            WASM_PARSER_FAIL_IF(isRefType(nonZero.type()) || isRefType(nonZero.type()), "can't use ref-types with unannotated select");
+
         WASM_VALIDATOR_FAIL_IF(condition.type() != I32, "select condition must be i32, got ", condition.type());
         WASM_VALIDATOR_FAIL_IF(nonZero.type() != zero.type(), "select result types must match, got ", nonZero.type(), " and ", zero.type());
 
@@ -600,6 +625,31 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
         WASM_TRY_ADD_TO_CONTEXT(addSelect(condition, nonZero, zero, result));
 
         m_expressionStack.constructAndAppend(zero.type(), result);
+        return { };
+    }
+
+    case AnnotatedSelect: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+
+        AnnotatedSelectImmediates immediates;
+        WASM_FAIL_IF_HELPER_FAILS(parseAnnotatedSelectImmediates(immediates));
+
+        TypedExpression condition;
+        TypedExpression zero;
+        TypedExpression nonZero;
+
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(condition, "select condition");
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(zero, "select zero");
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(nonZero, "select non-zero");
+
+        WASM_VALIDATOR_FAIL_IF(condition.type() != I32, "select condition must be i32, got ", condition.type());
+        WASM_VALIDATOR_FAIL_IF(nonZero.type() != immediates.targetType, "select result types must match, got ", nonZero.type(), " and ", immediates.targetType);
+        WASM_VALIDATOR_FAIL_IF(zero.type() != immediates.targetType, "select result types must match, got ", zero.type(), " and ", immediates.targetType);
+
+        ExpressionType result;
+        WASM_TRY_ADD_TO_CONTEXT(addSelect(condition, nonZero, zero, result));
+
+        m_expressionStack.constructAndAppend(immediates.targetType, result);
         return { };
     }
 
@@ -1340,6 +1390,14 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             break;
         }
 
+        return { };
+    }
+
+    case AnnotatedSelect: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+
+        AnnotatedSelectImmediates immediates;
+        WASM_FAIL_IF_HELPER_FAILS(parseAnnotatedSelectImmediates(immediates));
         return { };
     }
 

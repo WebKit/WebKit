@@ -1248,7 +1248,7 @@ def runWebAssemblyEmscripten(mode)
     end
 end
 
-def runWebAssemblySpecTest(mode)
+def runWebAssemblySpecTestBase(mode, specHarnessPath, *optionalTestSpecificOptions)
     case mode
     when :skip
         return
@@ -1260,44 +1260,27 @@ def runWebAssemblySpecTest(mode)
     modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
     prepareExtraRelativeFiles(modules.map { |f| "../../" + f }, $collection)
 
-    harness = Dir[WASMTESTS_PATH + "spec-harness/" + "*.js"].map { |f| File.basename(f) }
-    prepareExtraRelativeFiles(harness.map { |f| "../../spec-harness/" + f }, $collection)
+    harness = Dir[WASMTESTS_PATH + (specHarnessPath + "/") + "*.js"].map { |f| File.basename(f) }
+    prepareExtraRelativeFiles(harness.map { |f| ("../../" + specHarnessPath + "/") + f }, $collection)
 
-    runWithOutputHandler("default-wasm", noisyOutputHandler, "../spec-harness.js", *FTL_OPTIONS)
+    specHarnessJsPath = "../" + specHarnessPath + ".js"
+    runWithOutputHandler("default-wasm", noisyOutputHandler, specHarnessJsPath, *(FTL_OPTIONS + optionalTestSpecificOptions))
     if $mode != "quick"
-      runWithOutputHandler("wasm-no-cjit-yes-tls-context", noisyOutputHandler, "../spec-harness.js",  "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
-      runWithOutputHandler("wasm-eager-jettison", noisyOutputHandler, "../spec-harness.js", "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", *FTL_OPTIONS)
-      runWithOutputHandler("wasm-no-tls-context", noisyOutputHandler, "../spec-harness.js", "--useFastTLSForWasmContext=false", *FTL_OPTIONS)
-      runWithOutputHandler("wasm-b3", noisyOutputHandler, "../spec-harness.js", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *FTL_OPTIONS)
-      runWithOutputHandler("wasm-air", noisyOutputHandler, "../spec-harness.js", "--useWasmLLInt=false", "--useRandomizingExecutableIslandAllocation=true", *FTL_OPTIONS)
-      runWithOutputHandler("wasm-collect-continuously", noisyOutputHandler, "../spec-harness.js", "--collectContinuously=true", *FTL_OPTIONS) if shouldCollectContinuously?
+      runWithOutputHandler("wasm-no-cjit-yes-tls-context", noisyOutputHandler, specHarnessJsPath,  "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+      runWithOutputHandler("wasm-eager-jettison", noisyOutputHandler, specHarnessJsPath, "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
+      runWithOutputHandler("wasm-no-tls-context", noisyOutputHandler, specHarnessJsPath, "--useFastTLSForWasmContext=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+      runWithOutputHandler("wasm-b3", noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+      runWithOutputHandler("wasm-air", noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=false", "--useRandomizingExecutableIslandAllocation=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
+      runWithOutputHandler("wasm-collect-continuously", noisyOutputHandler, specHarnessJsPath, "--collectContinuously=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
     end
 end
 
+def runWebAssemblySpecTest(mode)
+    runWebAssemblySpecTestBase(mode, "spec-harness")
+end
+
 def runWebAssemblyReferenceSpecTest(mode)
-    case mode
-    when :skip
-        return
-    end
-    return if !$jitTests
-    return if !$isFTLPlatform
-    prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
-
-    modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
-    prepareExtraRelativeFiles(modules.map { |f| "../../" + f }, $collection)
-
-    harness = Dir[WASMTESTS_PATH + "spec-harness/" + "*.js"].map { |f| File.basename(f) }
-    prepareExtraRelativeFiles(harness.map { |f| "../../spec-harness/" + f }, $collection)
-
-    runWithOutputHandler("default-wasm", noisyOutputHandler, "../spec-harness.js", "--useWebAssemblyReferences=true", *FTL_OPTIONS)
-    if $mode != "quick"
-      runWithOutputHandler("wasm-no-cjit-yes-tls-context", noisyOutputHandler, "../spec-harness.js", "--useWebAssemblyReferences=true", "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
-      runWithOutputHandler("wasm-eager-jettison", noisyOutputHandler, "../spec-harness.js", "--useWebAssemblyReferences=true", "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", *FTL_OPTIONS)
-      runWithOutputHandler("wasm-no-tls-context", noisyOutputHandler, "../spec-harness.js", "--useWebAssemblyReferences=true", "--useFastTLSForWasmContext=false", *FTL_OPTIONS)
-      runWithOutputHandler("wasm-b3", noisyOutputHandler, "../spec-harness.js", "--useWebAssemblyReferences=true", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *FTL_OPTIONS)
-      runWithOutputHandler("wasm-air", noisyOutputHandler, "../spec-harness.js", "--useWebAssemblyReferences=true", "--useWasmLLInt=false", "--useRandomizingExecutableIslandAllocation=true", *FTL_OPTIONS)
-      runWithOutputHandler("wasm-collect-continuously", noisyOutputHandler, "../spec-harness.js", "--useWebAssemblyReferences=true", "--collectContinuously=true", *FTL_OPTIONS) if shouldCollectContinuously?
-    end
+    runWebAssemblySpecTestBase(mode, "ref-spec-harness", "--useWebAssemblyReferences=true")
 end
 
 def runWebAssemblyLowExecutableMemory(*optionalTestSpecificOptions)

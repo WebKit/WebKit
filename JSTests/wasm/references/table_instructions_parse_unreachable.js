@@ -222,6 +222,37 @@ function invalidTableCopyUnreachable() {
   "WebAssembly.Module doesn't validate: table index 10 is invalid, limit is 2, in function at index 2 (evaluating 'new WebAssembly.Module(buffer)')");
 }
 
+function validAnnotatedSelectUnreachable() {
+  /*
+  (module
+    (table $t 10 externref)
+    (func (export "run")
+      (return)
+      (drop
+        (select (result externref) (ref.null extern) (ref.null extern) (i32.const 1)))
+    )
+  )
+  */
+  let instance = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x04\x01\x60\x00\x00\x03\x02\x01\x00\x04\x04\x01\x6f\x00\x0a\x07\x07\x01\x03\x72\x75\x6e\x00\x00\x0a\x0f\x01\x0d\x00\x0f\xd0\x6f\xd0\x6f\x41\x01\x1c\x01\x6f\x1a\x0b"));
+  instance.exports.run();
+}
+
+function invalidAnnotatedSelectUnreachable() {
+  /*
+  (module
+    (table $t 10 externref)
+    (func (export "run")
+      (return)
+      (drop
+        (select (result (size = 2) externref) (ref.null extern) (ref.null extern) (i32.const 1)))
+    )
+  )
+  */
+  assert.throws(() => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x04\x01\x60\x00\x00\x03\x02\x01\x00\x04\x04\x01\x6f\x00\x0a\x07\x07\x01\x03\x72\x75\x6e\x00\x00\x0a\x0f\x01\x0d\x00\x0f\xd0\x6f\xd0\x6f\x41\x01\x1c\x02\x6f\x1a\x0b"),
+  WebAssembly.CompileError,
+  "WebAssembly.Module doesn't parse at byte 10: select invalid result arity for, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')");
+}
+
 validTableInitUnreachable();
 invalidTableInitUnreachable();
 
@@ -239,3 +270,6 @@ invalidTableFillUnreachable();
 
 validTableCopyUnreachable();
 invalidTableCopyUnreachable();
+
+validAnnotatedSelectUnreachable();
+invalidAnnotatedSelectUnreachable();
