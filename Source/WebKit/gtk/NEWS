@@ -1,4 +1,15 @@
 ================
+WebKitGTK 2.30.4
+================
+
+What's new in WebKitGTK 2.30.4?
+
+  - Fix text data sent with WebSockets when using libsoup < 2.68.
+  - Fix the rendering on Raspberry Pi 3 using the proprietary video driver.
+  - Fix clipping of descedant layers of a mask layer.
+  - Fix the build with ICU 68.1.
+
+================
 WebKitGTK 2.30.3
 ================
 
