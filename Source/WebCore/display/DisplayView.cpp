@@ -34,6 +34,7 @@
 #include "FrameView.h"
 #include "LayoutContainerBox.h"
 #include "Page.h"
+#include "RuntimeEnabledFeatures.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -70,6 +71,10 @@ void View::prepareForDisplay()
 {
     auto* layoutState = this->layoutState();
     if (!layoutState)
+        return;
+
+    // Workaround for webkit.org/b/219369
+    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
         return;
 
     auto treeBuilder = TreeBuilder { deviceScaleFactor() };
