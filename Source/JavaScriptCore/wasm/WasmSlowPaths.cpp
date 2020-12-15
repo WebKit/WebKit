@@ -379,6 +379,17 @@ WASM_SLOW_PATH_DECL(grow_memory)
     WASM_RETURN(Wasm::operationGrowMemory(callFrame, instance, delta));
 }
 
+WASM_SLOW_PATH_DECL(memory_fill)
+{
+    auto instruction = pc->as<WasmMemoryFill, WasmOpcodeTraits>();
+    uint32_t dstAddress = READ(instruction.m_dstAddress).unboxedUInt32();
+    uint32_t targetValue = READ(instruction.m_targetValue).unboxedUInt32();
+    uint32_t count = READ(instruction.m_count).unboxedUInt32();
+    if (!Wasm::operationWasmMemoryFill(instance, dstAddress, targetValue, count))
+        WASM_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
+    WASM_END();
+}
+
 inline SlowPathReturnType doWasmCall(Wasm::Instance* instance, unsigned functionIndex)
 {
     uint32_t importFunctionCount = instance->module().moduleInformation().importFunctionCount();

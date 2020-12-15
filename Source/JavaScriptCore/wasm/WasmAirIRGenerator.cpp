@@ -280,6 +280,7 @@ public:
     PartialResult WARN_UNUSED_RETURN store(StoreOpType, ExpressionType pointer, ExpressionType value, uint32_t offset);
     PartialResult WARN_UNUSED_RETURN addGrowMemory(ExpressionType delta, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addCurrentMemory(ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addMemoryFill(ExpressionType dstAddress, ExpressionType targetValue, ExpressionType count);
 
     // Atomics
     PartialResult WARN_UNUSED_RETURN atomicLoad(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType& result, uint32_t offset);
@@ -1270,6 +1271,31 @@ auto AirIRGenerator::addCurrentMemory(ExpressionType& result) -> PartialResult
     append(Move, Arg::imm(16), temp2);
     addShift(Type::I32, Urshift64, temp1, temp2, result);
     append(Move32, result, result);
+
+    return { };
+}
+
+auto AirIRGenerator::addMemoryFill(ExpressionType dstAddress, ExpressionType targetValue, ExpressionType count) -> PartialResult
+{
+    ASSERT(dstAddress.tmp());
+    ASSERT(dstAddress.type() == Type::I32);
+
+    ASSERT(targetValue.tmp());
+    ASSERT(targetValue.type() == Type::I32);
+
+    ASSERT(count.tmp());
+    ASSERT(count.type() == Type::I32);
+
+    auto result = tmpForType(Type::I32);
+    emitCCall(
+        &operationWasmMemoryFill, result, instanceValue(),
+        dstAddress, targetValue, count);
+
+    emitCheck([&] {
+        return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::Zero), result, result);
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::OutOfBoundsTableAccess);
+    });
 
     return { };
 }

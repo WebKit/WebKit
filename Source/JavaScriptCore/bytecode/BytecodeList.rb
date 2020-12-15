@@ -1675,6 +1675,13 @@ op :grow_memory,
         delta: VirtualRegister
     }
 
+op :memory_fill,
+    args: {
+        dstAddress: VirtualRegister,
+        targetValue: VirtualRegister,
+        count: VirtualRegister,
+    }
+
 op :select,
     args: {
         dst: VirtualRegister,

@@ -63,6 +63,7 @@ namespace JSC {
         ALWAYS_INLINE JSObject* object() const;
         ALWAYS_INLINE JSScope* scope() const;
         int32_t unboxedInt32() const;
+        uint32_t unboxedUInt32() const;
         int32_t asanUnsafeUnboxedInt32() const;
         int64_t unboxedInt52() const;
         int64_t asanUnsafeUnboxedInt52() const;
@@ -140,6 +141,11 @@ namespace JSC {
     ALWAYS_INLINE int32_t Register::unboxedInt32() const
     {
         return payload();
+    }
+
+    ALWAYS_INLINE uint32_t Register::unboxedUInt32() const
+    {
+        return static_cast<uint32_t>(unboxedInt32());
     }
 
     SUPPRESS_ASAN ALWAYS_INLINE int32_t Register::asanUnsafeUnboxedInt32() const

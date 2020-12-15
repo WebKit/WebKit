@@ -1,5 +1,40 @@
 2020-12-15  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
+        [WASM-References] Add support for memory.fill
+        https://bugs.webkit.org/show_bug.cgi?id=219848
+
+        Reviewed by Yusuke Suzuki.
+
+        Add support for memory.fill from ref-types spec.
+        memory.fill sets all bytes in a memory region to a given byte:
+        https://webassembly.github.io/reference-types/core/syntax/instructions.html#memory-instructions.
+
+        * bytecode/BytecodeList.rb:
+        * llint/WebAssembly.asm:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addMemoryFill):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addMemoryFill):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseMemoryFillImmediate):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::addMemoryFill):
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::Memory::fill):
+        (JSC::Wasm::Memory::doMemoryFill):
+        * wasm/WasmMemory.h:
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/WasmOperations.h:
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::WASM_SLOW_PATH_DECL):
+        * wasm/WasmSlowPaths.h:
+        * wasm/wasm.json:
+
+2020-12-15  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
         [WASM-References] Add support for type annotated select
         https://bugs.webkit.org/show_bug.cgi?id=219595
 

@@ -156,6 +156,8 @@ private:
     };
     PartialResult WARN_UNUSED_RETURN parseAnnotatedSelectImmediates(AnnotatedSelectImmediates&);
 
+    PartialResult WARN_UNUSED_RETURN parseMemoryFillImmediate();
+
 #define WASM_TRY_ADD_TO_CONTEXT(add_expression) WASM_FAIL_IF_HELPER_FAILS(m_context.add_expression)
 
     template <typename ...Args>
@@ -564,7 +566,15 @@ auto FunctionParser<Context>::parseAnnotatedSelectImmediates(AnnotatedSelectImme
 
     result.sizeOfAnnotationVector = sizeOfAnnotationVector;
     result.targetType = targetType;
+    return { };
+}
 
+template<typename Context>
+auto FunctionParser<Context>::parseMemoryFillImmediate() -> PartialResult
+{
+    uint8_t auxiliaryByte;
+    WASM_PARSER_FAIL_IF(!parseUInt8(auxiliaryByte), "can't parse auxiliary byte");
+    WASM_PARSER_FAIL_IF(!!auxiliaryByte, "auxiliary byte for memory.fill should be zero, but got ", auxiliaryByte);
     return { };
 }
 
@@ -815,6 +825,26 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_VALIDATOR_FAIL_IF(I32 != length.type(), "table.copy length to type ", length.type(), " expected ", I32);
 
             WASM_TRY_ADD_TO_CONTEXT(addTableCopy(immediates.dstTableIndex, immediates.srcTableIndex, dstOffset, srcOffset, length));
+            break;
+        }
+        case ExtTableOpType::MemoryFill: {
+            WASM_FAIL_IF_HELPER_FAILS(parseMemoryFillImmediate());
+
+            WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "memory must be present");
+
+            TypedExpression dstAddress;
+            TypedExpression targetValue;
+            TypedExpression count;
+
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(count, "memory.fill");
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(targetValue, "memory.fill");
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(dstAddress, "memory.fill");
+
+            WASM_VALIDATOR_FAIL_IF(I32 != dstAddress.type(), "memory.fill dstAddress to type ", dstAddress.type(), " expected ", I32);
+            WASM_VALIDATOR_FAIL_IF(I32 != targetValue.type(), "memory.fill targetValue to type ", targetValue.type(), " expected ", I32);
+            WASM_VALIDATOR_FAIL_IF(I32 != count.type(), "memory.fill size to type ", count.type(), " expected ", I32);
+
+            WASM_TRY_ADD_TO_CONTEXT(addMemoryFill(dstAddress, targetValue, count));
             break;
         }
         default:
@@ -1383,6 +1413,10 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         case ExtTableOpType::TableCopy: {
             TableCopyImmediates immediates;
             WASM_FAIL_IF_HELPER_FAILS(parseTableCopyImmediates(immediates));
+            return { };
+        }
+        case ExtTableOpType::MemoryFill: {
+            WASM_FAIL_IF_HELPER_FAILS(parseMemoryFillImmediate());
             return { };
         }
         default:

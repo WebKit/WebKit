@@ -253,6 +253,35 @@ function invalidAnnotatedSelectUnreachable() {
   "WebAssembly.Module doesn't parse at byte 10: select invalid result arity for, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')");
 }
 
+function validMemoryFillUnreachable() {
+  /*
+  (module
+    (memory $mem0 1)
+    (func (export "run")
+      (return)
+      (memory.fill (i32.const 0) (i32.const 11) (i32.const 3))
+    )
+  )
+  */
+  let instance = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x04\x01\x60\x00\x00\x03\x02\x01\x00\x05\x03\x01\x00\x01\x07\x07\x01\x03\x72\x75\x6e\x00\x00\x0a\x0e\x01\x0c\x00\x0f\x41\x00\x41\x0b\x41\x03\xfc\x0b\x00\x0b"));
+  instance.exports.run();
+}
+
+function invalidMemoryFillUnreachable() {
+  /*
+  (module
+    (memory $mem0 1)
+    (func (export "run")
+      (return)
+      (memory.fill (unused = 1) (i32.const 0) (i32.const 11) (i32.const 3))
+    )
+  )
+  */
+  assert.throws(() => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x04\x01\x60\x00\x00\x03\x02\x01\x00\x05\x03\x01\x00\x01\x07\x07\x01\x03\x72\x75\x6e\x00\x00\x0a\x0e\x01\x0c\x00\x0f\x41\x00\x41\x0b\x41\x03\xfc\x0b\x01\x0b"),
+  WebAssembly.CompileError,
+  "WebAssembly.Module doesn't parse at byte 11: auxiliary byte for memory.fill should be zero, but got 1, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')");
+}
+
 validTableInitUnreachable();
 invalidTableInitUnreachable();
 
@@ -273,3 +302,6 @@ invalidTableCopyUnreachable();
 
 validAnnotatedSelectUnreachable();
 invalidAnnotatedSelectUnreachable();
+
+validMemoryFillUnreachable();
+invalidMemoryFillUnreachable();

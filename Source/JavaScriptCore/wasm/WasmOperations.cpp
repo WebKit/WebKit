@@ -638,6 +638,11 @@ JSC_DEFINE_JIT_OPERATION(operationGrowMemory, int32_t, (void* callFrame, Instanc
     return grown.value().pageCount();
 }
 
+JSC_DEFINE_JIT_OPERATION(operationWasmMemoryFill, bool, (Instance* instance, uint32_t dstAddress, uint32_t targetValue, uint32_t count))
+{
+    return instance->memory()->fill(dstAddress, static_cast<uint8_t>(targetValue), count);
+}
+
 JSC_DEFINE_JIT_OPERATION(operationGetWasmTableElement, EncodedJSValue, (Instance* instance, unsigned tableIndex, int32_t signedIndex))
 {
     ASSERT(tableIndex < instance->module().moduleInformation().tableCount());

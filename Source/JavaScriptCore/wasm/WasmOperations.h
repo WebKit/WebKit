@@ -61,6 +61,7 @@ JSC_DECLARE_JIT_OPERATION(operationWasmWriteBarrierSlowPath, void, (JSCell*, VM*
 JSC_DECLARE_JIT_OPERATION(operationPopcount32, uint32_t, (int32_t));
 JSC_DECLARE_JIT_OPERATION(operationPopcount64, uint64_t, (int64_t));
 JSC_DECLARE_JIT_OPERATION(operationGrowMemory, int32_t, (void*, Instance*, int32_t));
+JSC_DECLARE_JIT_OPERATION(operationWasmMemoryFill, bool, (Instance*, uint32_t dstAddress, uint32_t targetValue, uint32_t count));
 
 JSC_DECLARE_JIT_OPERATION(operationGetWasmTableElement, EncodedJSValue, (Instance*, unsigned, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationSetWasmTableElement, bool, (Instance*, unsigned, int32_t, EncodedJSValue encValue));

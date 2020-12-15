@@ -211,6 +211,7 @@ public:
     PartialResult WARN_UNUSED_RETURN store(StoreOpType, ExpressionType pointer, ExpressionType value, uint32_t offset);
     PartialResult WARN_UNUSED_RETURN addGrowMemory(ExpressionType delta, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addCurrentMemory(ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addMemoryFill(ExpressionType dstAddress, ExpressionType targetValue, ExpressionType count);
 
     // Atomics
     PartialResult WARN_UNUSED_RETURN atomicLoad(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType& result, uint32_t offset);
@@ -1184,6 +1185,12 @@ auto LLIntGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result)
     result = push();
     WasmGrowMemory::emit(this, result, delta);
 
+    return { };
+}
+
+auto LLIntGenerator::addMemoryFill(ExpressionType dstAddress, ExpressionType targetValue, ExpressionType count) -> PartialResult
+{
+    WasmMemoryFill::emit(this, dstAddress, targetValue, count);
     return { };
 }
 

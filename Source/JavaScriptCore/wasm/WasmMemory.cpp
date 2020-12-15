@@ -30,6 +30,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "Options.h"
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/DataLog.h>
 #include <wtf/Gigacage.h>
 #include <wtf/Lock.h>
@@ -615,6 +616,18 @@ Expected<PageCount, Memory::GrowFailReason> Memory::grow(PageCount delta)
 
     RELEASE_ASSERT_NOT_REACHED();
     return oldPageCount;
+}
+
+bool Memory::fill(uint32_t offset, uint8_t targetValue, uint32_t count)
+{
+    if (sumOverflows<uint32_t>(offset, count))
+        return false;
+
+    if (offset + count > m_handle->size())
+        return false;
+
+    memset(reinterpret_cast<uint8_t*>(memory()) + offset, targetValue, count);
+    return true;
 }
 
 void Memory::registerInstance(Instance* instance)
