@@ -300,6 +300,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/mediastream/RTCOfferOptions.idl \
     $(WebCore)/Modules/mediastream/RTCPeerConnection.idl \
     $(WebCore)/Modules/mediastream/RTCPeerConnectionIceEvent.idl \
+    $(WebCore)/Modules/mediastream/RTCPeerConnectionIceErrorEvent.idl \
     $(WebCore)/Modules/mediastream/RTCPeerConnectionState.idl \
     $(WebCore)/Modules/mediastream/RTCPriorityType.idl \
     $(WebCore)/Modules/mediastream/RTCRtpCapabilities.idl \

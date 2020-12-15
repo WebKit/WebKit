@@ -1438,6 +1438,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCOfferOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCOfferOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCPeerConnection.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCPeerConnection.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCPeerConnectionIceErrorEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCPeerConnectionIceErrorEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCPeerConnectionIceEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCPeerConnectionIceEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCPeerConnectionState.cpp

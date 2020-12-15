@@ -370,6 +370,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCOfferAnswerOptions.idl
     Modules/mediastream/RTCOfferOptions.idl
     Modules/mediastream/RTCPeerConnection.idl
+    Modules/mediastream/RTCPeerConnectionIceErrorEvent.idl
     Modules/mediastream/RTCPeerConnectionIceEvent.idl
     Modules/mediastream/RTCPeerConnectionState.idl
     Modules/mediastream/RTCPriorityType.idl

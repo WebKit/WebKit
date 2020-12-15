@@ -51,6 +51,7 @@
 #include "RTCController.h"
 #include "RTCDataChannel.h"
 #include "RTCIceCandidate.h"
+#include "RTCPeerConnectionIceErrorEvent.h"
 #include "RTCPeerConnectionIceEvent.h"
 #include "RTCSessionDescription.h"
 #include "Settings.h"
@@ -279,7 +280,7 @@ void RTCPeerConnection::queuedAddIceCandidate(RTCIceCandidate* rtcCandidate, DOM
 }
 
 // Implementation of https://w3c.github.io/webrtc-pc/#set-pc-configuration
-static inline ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> iceServersFromConfiguration(RTCConfiguration& newConfiguration, const RTCConfiguration* existingConfiguration, bool isLocalDescriptionSet)
+ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> RTCPeerConnection::iceServersFromConfiguration(RTCConfiguration& newConfiguration, const RTCConfiguration* existingConfiguration, bool isLocalDescriptionSet)
 {
     if (existingConfiguration && newConfiguration.bundlePolicy != existingConfiguration->bundlePolicy)
         return Exception { InvalidModificationError, "BundlePolicy does not match existing policy" };
@@ -301,8 +302,13 @@ static inline ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> ice
                 urls = WTFMove(vector);
             });
 
-            urls.removeAllMatching([](auto& url) {
-                return URL { URL { }, url }.path().endsWithIgnoringASCIICase(".local");
+            urls.removeAllMatching([&](auto& urlString) {
+                URL url { URL { }, urlString };
+                if (url.path().endsWithIgnoringASCIICase(".local") || !portAllowed(url)) {
+                    queueTaskToDispatchEvent(*this, TaskSource::MediaElement, RTCPeerConnectionIceErrorEvent::create(Event::CanBubble::No, Event::IsCancelable::No, { }, { }, WTFMove(urlString), 701, "URL is not allowed"_s));
+                    return true;
+                }
+                return false;
             });
 
             auto serverURLs = WTF::map(urls, [](auto& url) -> URL {

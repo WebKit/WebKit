@@ -1,5 +1,62 @@
 2020-12-15  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r270101. rdar://problem/72298523
+
+    Add support for RTCPeerConnection.onicecandidateerror event
+    https://bugs.webkit.org/show_bug.cgi?id=169644
+    
+    Reviewed by Alex Christensen.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/webrtc/idlharness.https.window-expected.txt:
+    
+    Source/WebCore:
+    
+    Expose RTCPeerConnection.onicecandidateerror and use it for wrong STUN/TURN server URLs.
+    For that matter, add RTCPeerConnectionIceErrorEvent as per spec with a slight change to the init directory to keep the same terminology between event and init dictionary.
+    
+    Covered by updated webrtc/stun-server-filtering.html test.
+    
+    * CMakeLists.txt:
+    * DerivedSources-input.xcfilelist:
+    * DerivedSources-output.xcfilelist:
+    * DerivedSources.make:
+    * Modules/mediastream/RTCPeerConnection.cpp:
+    (WebCore::RTCPeerConnection::iceServersFromConfiguration):
+    (WebCore::iceServersFromConfiguration): Deleted.
+    * Modules/mediastream/RTCPeerConnection.h:
+    * Modules/mediastream/RTCPeerConnection.idl:
+    * Modules/mediastream/RTCPeerConnectionIceErrorEvent.cpp: Added.
+    (WebCore::RTCPeerConnectionIceErrorEvent::create):
+    (WebCore::RTCPeerConnectionIceErrorEvent::RTCPeerConnectionIceErrorEvent):
+    (WebCore::RTCPeerConnectionIceErrorEvent::eventInterface const):
+    * Modules/mediastream/RTCPeerConnectionIceErrorEvent.h: Added.
+    * Modules/mediastream/RTCPeerConnectionIceErrorEvent.idl: Added.
+    * Sources.txt:
+    * WebCore.xcodeproj/project.pbxproj:
+    * bindings/js/WebCoreBuiltinNames.h:
+    * dom/EventNames.h:
+    * dom/EventNames.in:
+    
+    LayoutTests:
+    
+    * webrtc/rtcpeerconnection-error-messages-expected.txt:
+    * webrtc/stun-server-filtering.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@270101 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-11-20  Youenn Fablet  <youenn@apple.com>
+
+            Add support for RTCPeerConnection.onicecandidateerror event
+            https://bugs.webkit.org/show_bug.cgi?id=169644
+
+            Reviewed by Alex Christensen.
+
+            * web-platform-tests/webrtc/idlharness.https.window-expected.txt:
+
+2020-12-15  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r269436. rdar://problem/72298523
 
     Consider blocking ports 5060 and 5061
