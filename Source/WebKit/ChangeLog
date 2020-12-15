@@ -1,3 +1,15 @@
+2020-12-15  Ryan Hostetler  <rhost@apple.com>
+
+        "make clean" fails on EmptyDSTROOT target
+        https://bugs.webkit.org/show_bug.cgi?id=219870
+        rdar://72309233
+
+        Reviewed by Alexey Proskuryakov.
+
+        make clean can't find PROJECT_NAME for EmptyDSTROOT.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-12-15  Andy Estes  <aestes@apple.com>
 
         [Mac] Numerous webgl tests time out with WebM format reader enabled
