@@ -1308,6 +1308,7 @@
         (machtrap-number MSC_host_self_trap)
         (machtrap-number MSC_mach_generate_activity_id)
         (machtrap-number MSC_mach_msg_trap)
+        (machtrap-number MSC_mach_msg_overwrite_trap)
         (machtrap-number MSC_mach_reply_port)
         (machtrap-number MSC_mach_timebase_info_trap)
         (machtrap-number MSC_mach_voucher_extract_attr_recipe_trap)

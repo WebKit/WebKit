@@ -1660,6 +1660,7 @@
         MSC_host_self_trap
         MSC_mach_generate_activity_id
         MSC_mach_msg_trap
+        MSC_mach_msg_overwrite_trap
         MSC_mach_reply_port
         MSC_mach_voucher_extract_attr_recipe_trap
         MSC_mk_timer_arm
