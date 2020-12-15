@@ -56,8 +56,8 @@
     var UTC_JAN_1_2005 = TIME_2000 + TimeInYear(2000)+TimeInYear(2001)+
     TimeInYear(2002)+TimeInYear(2003)+TimeInYear(2004);
 
-    addTestCase( TIME_YEAR_0 );
 /*
+    addTestCase( TIME_YEAR_0 );
     addTestCase( TIME_1970 );
     addTestCase( TIME_1900 );
     addTestCase( TIME_2000 );

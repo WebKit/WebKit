@@ -480,7 +480,7 @@
 - path: ChakraCore/test/Conversions/bug1.js
   cmd: runChakra :pass, "NoException", "", []
 - path: ChakraCore/test/Date/DateCtr.js
-  cmd: runChakra :baseline, "NoException", "DateCtr.baseline", []
+  cmd: runChakra :baseline, "NoException", "DateCtr.baseline-jsc", []
 - path: ChakraCore/test/Date/DateParse.js
   # JSC accepts different Date parsing syntax.
   cmd: runChakra :skip, "NoException", "DateParse_es5.baseline", []

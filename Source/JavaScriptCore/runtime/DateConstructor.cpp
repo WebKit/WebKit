@@ -94,7 +94,7 @@ static double millisecondsFromComponents(JSGlobalObject* globalObject, const Arg
     t.setMinute(JSC::toInt32(doubleArguments[4]));
     t.setSecond(JSC::toInt32(doubleArguments[5]));
     t.setIsDST(-1);
-    return gregorianDateTimeToMS(vm.dateCache, t, doubleArguments[6], timeType);
+    return vm.dateCache.gregorianDateTimeToMS(t, doubleArguments[6], timeType);
 }
 
 // ECMA 15.9.3
@@ -118,7 +118,7 @@ JSObject* constructDate(JSGlobalObject* globalObject, JSValue newTarget, const A
             if (primitive.isString()) {
                 String primitiveString = asString(primitive)->value(globalObject);
                 RETURN_IF_EXCEPTION(scope, nullptr);
-                value = parseDate(globalObject, vm, primitiveString);
+                value = vm.dateCache.parseDate(globalObject, vm, primitiveString);
                 RETURN_IF_EXCEPTION(scope, nullptr);
             } else
                 value = primitive.toNumber(globalObject);
@@ -146,7 +146,7 @@ JSC_DEFINE_HOST_FUNCTION(callDate, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
     GregorianDateTime ts;
-    msToGregorianDateTime(vm.dateCache, WallTime::now().secondsSinceEpoch().milliseconds(), WTF::LocalTime, ts);
+    vm.dateCache.msToGregorianDateTime(WallTime::now().secondsSinceEpoch().milliseconds(), WTF::LocalTime, ts);
     return JSValue::encode(jsNontrivialString(vm, formatDateTime(ts, DateTimeFormatDateAndTime, false)));
 }
 
@@ -156,7 +156,7 @@ JSC_DEFINE_HOST_FUNCTION(dateParse, (JSGlobalObject* globalObject, CallFrame* ca
     auto scope = DECLARE_THROW_SCOPE(vm);
     String dateStr = callFrame->argument(0).toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsNumber(parseDate(globalObject, vm, dateStr))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsNumber(vm.dateCache.parseDate(globalObject, vm, dateStr))));
 }
 
 JSValue dateNowImpl()

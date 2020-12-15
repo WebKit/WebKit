@@ -11,7 +11,7 @@ if ((new Date(2014, 8, 1)).toString().match("PDT")) {
     testCases.push(["(new Date('Mar 09 2014 03:00:00')).getHours()", "3"]);
     testCases.push(["(new Date('Mar 09 2014 03:00:00')).getTimezoneOffset()", "420"]);
     testCases.push(["(new Date('Nov 02 2014 01:00:00')).getHours()", "1"]);
-    testCases.push(["(new Date('Nov 02 2014 01:00:00')).getTimezoneOffset()", "480"]);
+    testCases.push(["(new Date('Nov 02 2014 01:00:00')).getTimezoneOffset()", "420"]);
 }
 
 var errors = [];

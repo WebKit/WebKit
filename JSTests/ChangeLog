@@ -1,5 +1,19 @@
 2020-12-15  Commit Queue  <commit-queue@webkit.org>
 
+        Unreviewed, reverting r270860.
+        https://bugs.webkit.org/show_bug.cgi?id=219918
+
+        We workaround it differently, so this revert is not necessary
+
+        Reverted changeset:
+
+        "Unreviewed, reverting r269320, r269341, r269502, and
+        r269576."
+        https://bugs.webkit.org/show_bug.cgi?id=219915
+        https://trac.webkit.org/changeset/270860
+
+2020-12-15  Commit Queue  <commit-queue@webkit.org>
+
         Unreviewed, reverting r269320, r269341, r269502, and r269576.
         https://bugs.webkit.org/show_bug.cgi?id=219915
 
