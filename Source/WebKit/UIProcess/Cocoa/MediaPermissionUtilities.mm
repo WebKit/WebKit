@@ -133,7 +133,7 @@ static NSString *alertMessageText(MediaPermissionReason reason, OptionSet<MediaP
             return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your camera and microphone?", @"Message for user media prompt"), visibleDomain(origin.host())];
         if (types.contains(MediaPermissionType::Audio))
             return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your microphone?", @"Message for user microphone access prompt"), visibleDomain(origin.host())];
-        if (types.contains(MediaPermissionType::Audio))
+        if (types.contains(MediaPermissionType::Video))
             return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your camera?", @"Message for user camera access prompt"), visibleDomain(origin.host())];
         return nil;
     case MediaPermissionReason::SpeechRecognition:

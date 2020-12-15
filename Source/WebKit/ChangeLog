@@ -1,3 +1,15 @@
+2020-12-15  Youenn Fablet  <youenn@apple.com>
+
+        Fix alertMessageText regression from https://trac.webkit.org/changeset/269918
+        https://bugs.webkit.org/show_bug.cgi?id=219891
+
+        Reviewed by Eric Carlson.
+
+        alertMessageText was checking twice for audio while it should check once for audio and once for video.
+
+        * UIProcess/Cocoa/MediaPermissionUtilities.mm:
+        (WebKit::alertMessageText):
+
 2020-12-15  Ryan Hostetler  <rhost@apple.com>
 
         "make clean" fails on EmptyDSTROOT target
