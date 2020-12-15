@@ -149,10 +149,10 @@ String ImageDecoderGStreamer::uti() const
     return { };
 }
 
-ImageOrientation ImageDecoderGStreamer::frameOrientationAtIndex(size_t) const
+ImageDecoder::FrameMetadata ImageDecoderGStreamer::frameMetadataAtIndex(size_t) const
 {
     notImplemented();
-    return ImageOrientation::None;
+    return { };
 }
 
 Seconds ImageDecoderGStreamer::frameDurationAtIndex(size_t index) const

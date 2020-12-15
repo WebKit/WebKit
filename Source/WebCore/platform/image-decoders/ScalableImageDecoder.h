@@ -149,8 +149,7 @@ public:
     void setIgnoreGammaAndColorProfile(bool flag) { m_ignoreGammaAndColorProfile = flag; }
     bool ignoresGammaAndColorProfile() const { return m_ignoreGammaAndColorProfile; }
 
-    ImageOrientation frameOrientationAtIndex(size_t) const override { return m_orientation; }
-    Optional<IntSize> frameDensityCorrectedSizeAtIndex(size_t) const override { return m_densityCorrectedSize; }
+    ImageDecoder::FrameMetadata frameMetadataAtIndex(size_t) const override { return { m_orientation, m_densityCorrectedSize }; }
 
     bool frameAllowSubsamplingAtIndex(size_t) const override { return false; }
 

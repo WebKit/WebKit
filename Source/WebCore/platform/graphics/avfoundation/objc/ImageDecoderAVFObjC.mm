@@ -513,9 +513,9 @@ bool ImageDecoderAVFObjC::frameIsCompleteAtIndex(size_t index) const
     return sampleIsComplete(*sampleData);
 }
 
-ImageOrientation ImageDecoderAVFObjC::frameOrientationAtIndex(size_t) const
+ImageDecoder::FrameMetadata ImageDecoderAVFObjC::frameMetadataAtIndex(size_t) const
 {
-    return ImageOrientation::None;
+    return { };
 }
 
 Seconds ImageDecoderAVFObjC::frameDurationAtIndex(size_t index) const

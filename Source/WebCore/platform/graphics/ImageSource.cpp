@@ -271,8 +271,9 @@ void ImageSource::cacheMetadataAtIndex(size_t index, SubsamplingLevel subsamplin
     } else
         frame.m_size = m_decoder->frameSizeAtIndex(index, subsamplingLevel);
 
-    frame.m_orientation = m_decoder->frameOrientationAtIndex(index);
-    frame.m_densityCorrectedSize = m_decoder->frameDensityCorrectedSizeAtIndex(index);
+    auto metadata = m_decoder->frameMetadataAtIndex(index);
+    frame.m_orientation = metadata.orientation;
+    frame.m_densityCorrectedSize = metadata.densityCorrectedSize;
     frame.m_hasAlpha = m_decoder->frameHasAlphaAtIndex(index);
 
     if (repetitionCount())

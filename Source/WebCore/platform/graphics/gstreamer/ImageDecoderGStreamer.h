@@ -60,7 +60,7 @@ public:
 
     IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const final { return size(); }
     bool frameIsCompleteAtIndex(size_t index) const final { return sampleAtIndex(index); }
-    ImageOrientation frameOrientationAtIndex(size_t) const final;
+    ImageDecoder::FrameMetadata frameMetadataAtIndex(size_t) const final;
 
     Seconds frameDurationAtIndex(size_t) const final;
     bool frameHasAlphaAtIndex(size_t) const final;

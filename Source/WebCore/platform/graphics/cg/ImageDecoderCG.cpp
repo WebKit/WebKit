@@ -174,6 +174,20 @@ static ImageOrientation orientationFromProperties(CFDictionaryRef imagePropertie
     return ImageOrientation::fromEXIFValue(exifValue);
 }
 
+static bool mayHaveDensityCorrectedSize(CFDictionaryRef imageProperties)
+{
+    ASSERT(imageProperties);
+    auto resolutionXProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyDPIWidth);
+    auto resolutionYProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyDPIHeight);
+    if (!resolutionXProperty || !resolutionYProperty)
+        return false;
+
+    float resolutionX, resolutionY;
+    return CFNumberGetValue(resolutionXProperty, kCFNumberFloat32Type, &resolutionX)
+        && CFNumberGetValue(resolutionYProperty, kCFNumberFloat32Type, &resolutionY)
+        && (resolutionX != ImageResolution::DefaultResolution || resolutionY != ImageResolution::DefaultResolution);
+}
+
 static Optional<IntSize> densityCorrectedSizeFromProperties(CFDictionaryRef imageProperties)
 {
     ASSERT(imageProperties);
@@ -414,22 +428,21 @@ bool ImageDecoderCG::frameIsCompleteAtIndex(size_t index) const
     return CGImageSourceGetStatusAtIndex(m_nativeDecoder.get(), index) == kCGImageStatusComplete;
 }
 
-ImageOrientation ImageDecoderCG::frameOrientationAtIndex(size_t index) const
+ImageDecoder::FrameMetadata ImageDecoderCG::frameMetadataAtIndex(size_t index) const
 {
     RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceOptions().get()));
     if (!properties)
-        return ImageOrientation::None;
+        return { };
     
-    return orientationFromProperties(properties.get());
-}
+    auto orientation = orientationFromProperties(properties.get());
+    if (!mayHaveDensityCorrectedSize(properties.get()))
+        return { orientation, WTF::nullopt };
 
-Optional<IntSize> ImageDecoderCG::frameDensityCorrectedSizeAtIndex(size_t index) const
-{
-    auto properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, createImageSourceMetadataOptions().get()));
-    if (!properties)
-        return WTF::nullopt;
+    auto propertiesWithMetadata = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, createImageSourceMetadataOptions().get()));
+    if (!propertiesWithMetadata)
+        return { orientation, WTF::nullopt };
     
-    return densityCorrectedSizeFromProperties(properties.get());
+    return { orientation, densityCorrectedSizeFromProperties(propertiesWithMetadata.get()) };
 }
 
 Seconds ImageDecoderCG::frameDurationAtIndex(size_t index) const

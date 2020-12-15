@@ -155,29 +155,28 @@ bool ImageDecoderDirect2D::frameIsCompleteAtIndex(size_t index) const
     HRESULT hr = m_nativeDecoder->GetFrame(index, &frame);
     return SUCCEEDED(hr);
 }
-
-ImageOrientation ImageDecoderDirect2D::frameOrientationAtIndex(size_t index) const
+ImageDecoder::FrameMetadata ImageDecoderDirect2D::frameMetadataAtIndex(size_t) const final;
 {
     if (!m_nativeDecoder)
-        return ImageOrientation::None;
+        return { };
 
     COMPtr<IWICBitmapFrameDecode> frame;
     HRESULT hr = m_nativeDecoder->GetFrame(index, &frame);
     if (!SUCCEEDED(hr))
-        return ImageOrientation::None;
+        return { };
 
     COMPtr<IWICMetadataQueryReader> metadata;
     hr = frame->GetMetadataQueryReader(&metadata);
     if (!SUCCEEDED(hr))
-        return ImageOrientation::None;
+        return { };
 
     PROPVARIANT value;
     PropVariantInit(&value);
     hr = metadata->GetMetadataByName(L"System.Photo.Orientation", &value);
     if (SUCCEEDED(hr))
-        return ImageOrientation(static_cast<ImageOrientation::Orientation>(value.uiVal));
+        return { ImageOrientation(static_cast<ImageOrientation::Orientation>(value.uiVal)), WTF::nullopt };
 
-    return ImageOrientation::None;
+    return { };
 }
 
 Seconds ImageDecoderDirect2D::frameDurationAtIndex(size_t index) const

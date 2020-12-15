@@ -50,6 +50,12 @@ public:
         Image,
         Video,
     };
+
+    struct FrameMetadata {
+        ImageOrientation orientation;
+        Optional<IntSize> densityCorrectedSize;
+    };
+
     static bool supportsMediaType(MediaType);
 
     virtual size_t bytesDecodedToDetermineProperties() const = 0;
@@ -66,8 +72,7 @@ public:
 
     virtual IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const = 0;
     virtual bool frameIsCompleteAtIndex(size_t) const = 0;
-    virtual ImageOrientation frameOrientationAtIndex(size_t) const = 0;
-    virtual Optional<IntSize> frameDensityCorrectedSizeAtIndex(size_t) const { return WTF::nullopt; }
+    virtual FrameMetadata frameMetadataAtIndex(size_t) const = 0;
 
     virtual Seconds frameDurationAtIndex(size_t) const = 0;
     virtual bool frameHasAlphaAtIndex(size_t) const = 0;
