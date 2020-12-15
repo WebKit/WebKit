@@ -98,8 +98,29 @@ void WebPreferences::removePage(WebPageProxy& webPageProxy)
 
 void WebPreferences::update()
 {
+    if (m_updateBatchCount) {
+        m_needUpdateAfterBatch = true;
+        return;
+    }
+        
     for (auto& webPageProxy : m_pages)
         webPageProxy->preferencesDidChange();
+}
+
+void WebPreferences::startBatchingUpdates()
+{
+    if (!m_updateBatchCount)
+        m_needUpdateAfterBatch = false;
+
+    ++m_updateBatchCount;
+}
+
+void WebPreferences::endBatchingUpdates()
+{
+    ASSERT(m_updateBatchCount > 0);
+    --m_updateBatchCount;
+    if (!m_updateBatchCount && m_needUpdateAfterBatch)
+        update();
 }
 
 void WebPreferences::setBoolValueForKey(const String& key, bool value)

@@ -89,6 +89,26 @@ private:
 
     void update();
 
+    class UpdateBatch {
+    public:
+        explicit UpdateBatch(WebPreferences& preferences)
+            : m_preferences(preferences)
+        {
+            m_preferences.startBatchingUpdates();
+        }
+        
+        ~UpdateBatch()
+        {
+            m_preferences.endBatchingUpdates();
+        }
+        
+    private:
+        WebPreferences& m_preferences;
+    };
+
+    void startBatchingUpdates();
+    void endBatchingUpdates();
+
     void updateStringValueForKey(const String& key, const String& value);
     void updateBoolValueForKey(const String& key, bool value);
     void updateBoolValueForInternalDebugFeatureKey(const String& key, bool value);
@@ -119,6 +139,8 @@ private:
     WebPreferencesStore m_store;
 
     HashSet<WebPageProxy*> m_pages;
+    unsigned m_updateBatchCount { 0 };
+    bool m_needUpdateAfterBatch { false };
 };
 
 } // namespace WebKit

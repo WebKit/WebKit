@@ -113,6 +113,7 @@ void WebPreferences::setInternalDebugFeatureEnabledForKey(const String& key, boo
 
 void WebPreferences::resetAllInternalDebugFeatures()
 {
+    UpdateBatch batch(*this);
 <%- for @pref in @exposedInternalFeatures do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
