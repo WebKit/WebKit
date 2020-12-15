@@ -240,7 +240,7 @@ void TextCodecICU::createICUConverter() const
     UErrorCode error = U_ZERO_ERROR;
     m_converter = ICUConverterPtr { ucnv_open(m_canonicalConverterName, &error), ucnv_close };
     if (m_converter)
-        ucnv_setFallback(m_converter.get(), TRUE);
+        ucnv_setFallback(m_converter.get(), true);
 }
 
 int TextCodecICU::decodeToBuffer(UChar* target, UChar* targetLimit, const char*& source, const char* sourceLimit, int32_t* offsets, bool flush, UErrorCode& error)
