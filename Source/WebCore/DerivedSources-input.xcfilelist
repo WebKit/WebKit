@@ -200,6 +200,7 @@ $(PROJECT_DIR)/Modules/mediastream/RTCOfferAnswerOptions.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCOfferOptions.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCPeerConnection.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCPeerConnection.js
+$(PROJECT_DIR)/Modules/mediastream/RTCPeerConnectionIceErrorEvent.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCPeerConnectionIceEvent.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCPeerConnectionInternals.js
 $(PROJECT_DIR)/Modules/mediastream/RTCPeerConnectionState.idl

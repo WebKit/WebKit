@@ -1115,6 +1115,7 @@
 		419ACF921F97E7DA009F1A83 /* ServiceWorkerFetch.h in Headers */ = {isa = PBXBuildFile; fileRef = 419ACF8E1F97E7D5009F1A83 /* ServiceWorkerFetch.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		419BC2DF1685329900D64D6D /* VisitedLinkState.h in Headers */ = {isa = PBXBuildFile; fileRef = 419BC2DD1685329900D64D6D /* VisitedLinkState.h */; };
 		419BE7591BC7F42B00E1C85B /* WebCoreBuiltinNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 419BE7521BC7F3DB00E1C85B /* WebCoreBuiltinNames.h */; };
+		419E6EC92566D278002B5010 /* RTCPeerConnectionIceErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 419E6EC72566D214002B5010 /* RTCPeerConnectionIceErrorEvent.h */; };
 		41A0829C22935F3D008426E0 /* FeaturePolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A0829922932EF4008426E0 /* FeaturePolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41A1B01C1E54239B007F3769 /* JSDOMGuardedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A1B01A1E542396007F3769 /* JSDOMGuardedObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41A3D58F101C152D00316D07 /* DedicatedWorkerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A3D58D101C152D00316D07 /* DedicatedWorkerThread.h */; };
@@ -7601,6 +7602,9 @@
 		419BC2DC1685329900D64D6D /* VisitedLinkState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkState.cpp; sourceTree = "<group>"; };
 		419BC2DD1685329900D64D6D /* VisitedLinkState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkState.h; sourceTree = "<group>"; };
 		419BE7521BC7F3DB00E1C85B /* WebCoreBuiltinNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreBuiltinNames.h; sourceTree = "<group>"; };
+		419E6EC42566D211002B5010 /* RTCPeerConnectionIceErrorEvent.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RTCPeerConnectionIceErrorEvent.idl; sourceTree = "<group>"; };
+		419E6EC62566D213002B5010 /* RTCPeerConnectionIceErrorEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RTCPeerConnectionIceErrorEvent.cpp; sourceTree = "<group>"; };
+		419E6EC72566D214002B5010 /* RTCPeerConnectionIceErrorEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTCPeerConnectionIceErrorEvent.h; sourceTree = "<group>"; };
 		419FAFAD1ABABCD5005B3572 /* ReadableStreamBYOBReader.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadableStreamBYOBReader.idl; sourceTree = "<group>"; };
 		419FAFAD1ABABCD5005B828B /* ReadableStreamDefaultReader.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadableStreamDefaultReader.idl; sourceTree = "<group>"; };
 		41A023ED1A39DB7900F722CF /* ReadableStream.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadableStream.idl; sourceTree = "<group>"; };
@@ -16680,6 +16684,9 @@
 				07221B7817CEC32700848E51 /* RTCPeerConnection.h */,
 				07221B7917CEC32700848E51 /* RTCPeerConnection.idl */,
 				5E2C43541BCEE30D0001E2BC /* RTCPeerConnection.js */,
+				419E6EC62566D213002B5010 /* RTCPeerConnectionIceErrorEvent.cpp */,
+				419E6EC72566D214002B5010 /* RTCPeerConnectionIceErrorEvent.h */,
+				419E6EC42566D211002B5010 /* RTCPeerConnectionIceErrorEvent.idl */,
 				07221B7417CEC32700848E51 /* RTCPeerConnectionIceEvent.cpp */,
 				07221B7517CEC32700848E51 /* RTCPeerConnectionIceEvent.h */,
 				07221B7617CEC32700848E51 /* RTCPeerConnectionIceEvent.idl */,
@@ -33323,6 +33330,7 @@
 				078E092517D14D1C00420AA1 /* RTCPeerConnection.h in Headers */,
 				5E2C437B1BCF9A570001E2BC /* RTCPeerConnectionBuiltins.h in Headers */,
 				078E094217D16E1C00420AA1 /* RTCPeerConnectionHandlerClient.h in Headers */,
+				419E6EC92566D278002B5010 /* RTCPeerConnectionIceErrorEvent.h in Headers */,
 				078E092417D14D1C00420AA1 /* RTCPeerConnectionIceEvent.h in Headers */,
 				5E2C437C1BCF9A840001E2BC /* RTCPeerConnectionInternalsBuiltins.h in Headers */,
 				412DE4B8219285C00075F3A7 /* RTCRtpCapabilities.h in Headers */,

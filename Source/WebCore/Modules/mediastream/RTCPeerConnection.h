@@ -217,6 +217,8 @@ private:
 
     ExceptionOr<Vector<MediaEndpointConfiguration::CertificatePEM>> certificatesFromConfiguration(const RTCConfiguration&);
 
+    ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> iceServersFromConfiguration(RTCConfiguration& newConfiguration, const RTCConfiguration* existingConfiguration, bool isLocalDescriptionSet);
+
     bool m_isStopped { false };
     RTCSignalingState m_signalingState { RTCSignalingState::Stable };
     RTCIceGatheringState m_iceGatheringState { RTCIceGatheringState::New };
