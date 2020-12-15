@@ -256,7 +256,6 @@ webkit.org/b/215299 [ Release ] imported/w3c/web-platform-tests/css/css-logical/
 
 # The MediaStream implementation is still not completed
 webkit.org/b/79203 fast/mediastream/mock-media-source-webaudio.html [ Pass Timeout ]
-webkit.org/b/79203 fast/mediastream/getUserMedia-webaudio.html [ Pass Timeout ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-track-stop.html [ Timeout Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Pass Timeout ]
 # Crash is webkit.org/b/184292
@@ -685,9 +684,6 @@ webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/abort/serviceworke
 webkit.org/b/175419 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Pass Failure Timeout ]
 
 webkit.org/b/139489 http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Failure Pass ]
-
-webkit.org/b/179761 workers/wasm-hashset-many-2.html [ Pass Timeout Crash ]
-webkit.org/b/188056 workers/wasm-hashset-many.html [ Timeout Pass Crash ]
 
 webkit.org/b/179898 svg/animations/svglengthlist-animation-3.html [ Pass Failure ]
 

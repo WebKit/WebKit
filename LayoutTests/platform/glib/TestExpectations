@@ -695,6 +695,10 @@ webkit.org/b/213921 fast/visual-viewport/scroll-event-fired-during-scroll-alone.
 # SOUP and Networking-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+# The tests are crashing, timing out and passing. Mark as Skip for now.
+webkit.org/b/177940 workers/wasm-hashset-many-2.html [ Skip ]
+webkit.org/b/177940 workers/wasm-hashset-many.html [ Skip ]
+
 webkit.org/b/208369 http/tests/workers/service/basic-timeout.https.html [ Failure Timeout Pass ]
 
 webkit.org/b/215638 http/tests/websocket/tests/hybi/invalid-continuation.html [ Failure ]
@@ -858,6 +862,8 @@ webkit.org/b/218099 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 
 # ChannelMergeNode Harness timeout
 webkit.org/b/219603 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-channelmergernode-interface/active-processing.https.html [ Failure Pass ]
+
+webkit.org/b/219885 fast/mediastream/getUserMedia-webaudio.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebAudio-related bugs
@@ -1459,6 +1465,9 @@ webkit.org/b/217363 js/throw-large-string-oom.html [ Pass Crash Timeout ]
 
 # Fails when built with GCC but passes with Clang
 webkit.org/b/218220 editing/execCommand/switch-list-type-with-orphaned-li.html [ Pass Failure ]
+
+# Console log lines may appear in a different order so we silence them.
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-network-error.sub.html [ DumpJSConsoleLogInStdErr ]
 
 # Common failures between GTK and WPE.
 
