@@ -469,6 +469,7 @@ namespace WebCore {
     macro(webkitIndexedDB) \
     macro(webkitOfflineAudioContext) \
     macro(webkitOscillatorNode) \
+    macro(webkitSpeechRecognition) \
     macro(whenSignalAborted) \
     macro(window) \
     macro(writable) \

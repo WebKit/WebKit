@@ -1,3 +1,16 @@
+2020-12-15  Sihui Liu  <sihui_liu@apple.com>
+
+        Add webkit- prefix to SpeechRecognition
+        https://bugs.webkit.org/show_bug.cgi?id=219869
+
+        Reviewed by Geoffrey Garen.
+
+        Update test expectations as SpeechRecognition becomes not available.
+
+        * web-platform-tests/speech-api/SpeechRecognition-basics.https-expected.txt:
+        * web-platform-tests/speech-api/historical-expected.txt:
+        * web-platform-tests/speech-api/idlharness.window-expected.txt:
+
 2020-12-15  Antoine Quint  <graouts@webkit.org>
 
         [Web Animations] Implied keyframes should not account for animations on siblings

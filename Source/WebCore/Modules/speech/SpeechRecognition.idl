@@ -26,6 +26,7 @@
 [
     ActiveDOMObject,
     EnabledBySetting=SpeechRecognition,
+    InterfaceName=webkitSpeechRecognition,
     Exposed=Window
 ] interface SpeechRecognition : EventTarget {
     [CallWith=Document] constructor();

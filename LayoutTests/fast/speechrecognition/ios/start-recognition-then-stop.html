@@ -10,7 +10,7 @@ if (window.testRunner) {
 }
 
 var hasReceivedResult = false;
-shouldNotThrow("recognition = new SpeechRecognition()");
+shouldNotThrow("recognition = new webkitSpeechRecognition()");
 recognition.continuous = true;
 
 recognition.onstart = (event) => {

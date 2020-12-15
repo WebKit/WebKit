@@ -9,7 +9,7 @@ if (window.testRunner) {
     jsTestIsAsync = true;
 }
 
-shouldNotThrow("recognition = new SpeechRecognition();");
+shouldNotThrow("recognition = new webkitSpeechRecognition();");
 receivedStart = false;
 recognition.onstart = (event) => {
     receivedStart = true;
@@ -24,7 +24,7 @@ recognition.onerror = (event) => {
 }
 
 shouldNotThrow("recognition.start()");
-shouldNotThrow("secondRecognition = new SpeechRecognition();");
+shouldNotThrow("secondRecognition = new webkitSpeechRecognition();");
 shouldNotThrow("secondRecognition.start()");
 
 </script>

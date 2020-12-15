@@ -4,7 +4,7 @@
 <script>
 
 function startRecognition() {
-    recognition = new SpeechRecognition();
+    recognition = new webkitSpeechRecognition();
     parent.removeFrame();
     recognition.start();
 }

@@ -6,7 +6,7 @@ function start()
 {
     stop();
 
-    speechRecognition = new SpeechRecognition();
+    speechRecognition = new webkitSpeechRecognition();
     speechRecognition.onerror = (event) => {
         window.webkit.messageHandlers.testHandler.postMessage("Error: " + event.error + " - " +  event.message);
     }

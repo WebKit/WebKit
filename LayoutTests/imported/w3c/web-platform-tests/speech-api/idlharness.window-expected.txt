@@ -11,52 +11,52 @@ PASS Window includes WindowOrWorkerGlobalScope: member names are unique
 PASS Window includes AnimationFrameProvider: member names are unique
 PASS Window includes WindowSessionStorage: member names are unique
 PASS Window includes WindowLocalStorage: member names are unique
-PASS SpeechRecognition interface: existence and properties of interface object
-PASS SpeechRecognition interface object length
-PASS SpeechRecognition interface object name
-PASS SpeechRecognition interface: existence and properties of interface prototype object
-PASS SpeechRecognition interface: existence and properties of interface prototype object's "constructor" property
-PASS SpeechRecognition interface: existence and properties of interface prototype object's @@unscopables property
-FAIL SpeechRecognition interface: attribute grammars assert_true: The prototype object must have a property "grammars" expected true got false
-PASS SpeechRecognition interface: attribute lang
-PASS SpeechRecognition interface: attribute continuous
-PASS SpeechRecognition interface: attribute interimResults
-PASS SpeechRecognition interface: attribute maxAlternatives
-PASS SpeechRecognition interface: operation start()
-PASS SpeechRecognition interface: operation stop()
-PASS SpeechRecognition interface: operation abort()
-PASS SpeechRecognition interface: attribute onaudiostart
-PASS SpeechRecognition interface: attribute onsoundstart
-PASS SpeechRecognition interface: attribute onspeechstart
-PASS SpeechRecognition interface: attribute onspeechend
-PASS SpeechRecognition interface: attribute onsoundend
-PASS SpeechRecognition interface: attribute onaudioend
-PASS SpeechRecognition interface: attribute onresult
-PASS SpeechRecognition interface: attribute onnomatch
-PASS SpeechRecognition interface: attribute onerror
-PASS SpeechRecognition interface: attribute onstart
-PASS SpeechRecognition interface: attribute onend
-PASS SpeechRecognition must be primary interface of new SpeechRecognition()
-PASS Stringification of new SpeechRecognition()
-FAIL SpeechRecognition interface: new SpeechRecognition() must inherit property "grammars" with the proper type assert_inherits: property "grammars" not found in prototype chain
-PASS SpeechRecognition interface: new SpeechRecognition() must inherit property "lang" with the proper type
-PASS SpeechRecognition interface: new SpeechRecognition() must inherit property "continuous" with the proper type
-PASS SpeechRecognition interface: new SpeechRecognition() must inherit property "interimResults" with the proper type
-PASS SpeechRecognition interface: new SpeechRecognition() must inherit property "maxAlternatives" with the proper type
-PASS SpeechRecognition interface: new SpeechRecognition() must inherit property "start()" with the proper type
-PASS SpeechRecognition interface: new SpeechRecognition() must inherit property "stop()" with the proper type
-PASS SpeechRecognition interface: new SpeechRecognition() must inherit property "abort()" with the proper type
-PASS SpeechRecognition interface: new SpeechRecognition() must inherit property "onaudiostart" with the proper type
-PASS SpeechRecognition interface: new SpeechRecognition() must inherit property "onsoundstart" with the proper type
-PASS SpeechRecognition interface: new SpeechRecognition() must inherit property "onspeechstart" with the proper type
-PASS SpeechRecognition interface: new SpeechRecognition() must inherit property "onspeechend" with the proper type
-PASS SpeechRecognition interface: new SpeechRecognition() must inherit property "onsoundend" with the proper type
-PASS SpeechRecognition interface: new SpeechRecognition() must inherit property "onaudioend" with the proper type
-PASS SpeechRecognition interface: new SpeechRecognition() must inherit property "onresult" with the proper type
-PASS SpeechRecognition interface: new SpeechRecognition() must inherit property "onnomatch" with the proper type
-PASS SpeechRecognition interface: new SpeechRecognition() must inherit property "onerror" with the proper type
-PASS SpeechRecognition interface: new SpeechRecognition() must inherit property "onstart" with the proper type
-PASS SpeechRecognition interface: new SpeechRecognition() must inherit property "onend" with the proper type
+FAIL SpeechRecognition interface: existence and properties of interface object assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface object length assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface object name assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface: existence and properties of interface prototype object assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface: attribute grammars assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface: attribute lang assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface: attribute continuous assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface: attribute interimResults assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface: attribute maxAlternatives assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface: operation start() assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface: operation stop() assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface: operation abort() assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface: attribute onaudiostart assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface: attribute onsoundstart assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface: attribute onspeechstart assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface: attribute onspeechend assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface: attribute onsoundend assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface: attribute onaudioend assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface: attribute onresult assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface: attribute onnomatch assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface: attribute onerror assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface: attribute onstart assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition interface: attribute onend assert_own_property: self does not have own property "SpeechRecognition" expected property "SpeechRecognition" missing
+FAIL SpeechRecognition must be primary interface of new SpeechRecognition() assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: SpeechRecognition"
+FAIL Stringification of new SpeechRecognition() assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: SpeechRecognition"
+FAIL SpeechRecognition interface: new SpeechRecognition() must inherit property "grammars" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: SpeechRecognition"
+FAIL SpeechRecognition interface: new SpeechRecognition() must inherit property "lang" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: SpeechRecognition"
+FAIL SpeechRecognition interface: new SpeechRecognition() must inherit property "continuous" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: SpeechRecognition"
+FAIL SpeechRecognition interface: new SpeechRecognition() must inherit property "interimResults" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: SpeechRecognition"
+FAIL SpeechRecognition interface: new SpeechRecognition() must inherit property "maxAlternatives" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: SpeechRecognition"
+FAIL SpeechRecognition interface: new SpeechRecognition() must inherit property "start()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: SpeechRecognition"
+FAIL SpeechRecognition interface: new SpeechRecognition() must inherit property "stop()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: SpeechRecognition"
+FAIL SpeechRecognition interface: new SpeechRecognition() must inherit property "abort()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: SpeechRecognition"
+FAIL SpeechRecognition interface: new SpeechRecognition() must inherit property "onaudiostart" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: SpeechRecognition"
+FAIL SpeechRecognition interface: new SpeechRecognition() must inherit property "onsoundstart" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: SpeechRecognition"
+FAIL SpeechRecognition interface: new SpeechRecognition() must inherit property "onspeechstart" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: SpeechRecognition"
+FAIL SpeechRecognition interface: new SpeechRecognition() must inherit property "onspeechend" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: SpeechRecognition"
+FAIL SpeechRecognition interface: new SpeechRecognition() must inherit property "onsoundend" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: SpeechRecognition"
+FAIL SpeechRecognition interface: new SpeechRecognition() must inherit property "onaudioend" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: SpeechRecognition"
+FAIL SpeechRecognition interface: new SpeechRecognition() must inherit property "onresult" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: SpeechRecognition"
+FAIL SpeechRecognition interface: new SpeechRecognition() must inherit property "onnomatch" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: SpeechRecognition"
+FAIL SpeechRecognition interface: new SpeechRecognition() must inherit property "onerror" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: SpeechRecognition"
+FAIL SpeechRecognition interface: new SpeechRecognition() must inherit property "onstart" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: SpeechRecognition"
+FAIL SpeechRecognition interface: new SpeechRecognition() must inherit property "onend" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: SpeechRecognition"
 PASS SpeechRecognitionErrorEvent interface: existence and properties of interface object
 PASS SpeechRecognitionErrorEvent interface object length
 PASS SpeechRecognitionErrorEvent interface object name

@@ -9,7 +9,7 @@ if (window.testRunner) {
     jsTestIsAsync = true;
 }
 
-shouldNotThrow("recognition = new SpeechRecognition();");
+shouldNotThrow("recognition = new webkitSpeechRecognition();");
 recognition.onstart = (event) => {
     debug("Received start event");
 }

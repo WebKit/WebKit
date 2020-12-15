@@ -5,7 +5,7 @@
 <script>
 description("Verify that starting a started recognition throws exception.");
 
-shouldNotThrow("recognition = new SpeechRecognition();");
+shouldNotThrow("recognition = new webkitSpeechRecognition();");
 shouldNotThrow("recognition.start()");
 shouldThrow("recognition.start()");
 

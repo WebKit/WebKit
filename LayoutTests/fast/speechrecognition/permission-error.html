@@ -10,7 +10,7 @@ if (window.testRunner) {
     testRunner.setIsSpeechRecognitionPermissionGranted(false);
 }
 
-shouldNotThrow("recognition = new SpeechRecognition()");
+shouldNotThrow("recognition = new webkitSpeechRecognition()");
 shouldNotThrow("recognition.start()");
 recognition.onerror = (event) => {
     shouldBeEqualToString("event.error", "not-allowed");
