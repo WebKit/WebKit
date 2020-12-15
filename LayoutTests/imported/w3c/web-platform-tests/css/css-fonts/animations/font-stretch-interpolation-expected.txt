@@ -50,12 +50,12 @@ PASS CSS Animations: property <font-stretch> from neutral to [200%] at (0.6) sho
 PASS CSS Animations: property <font-stretch> from neutral to [200%] at (1) should be [200%]
 PASS CSS Animations: property <font-stretch> from neutral to [200%] at (1.5) should be [250%]
 FAIL Web Animations: property <font-stretch> from neutral to [200%] at (-2) should be [0%] assert_equals: expected "normal " but got "- 100 % "
-FAIL Web Animations: property <font-stretch> from neutral to [200%] at (-0.25) should be [75%] assert_equals: expected "condensed " but got "- 175 % "
-FAIL Web Animations: property <font-stretch> from neutral to [200%] at (0) should be [100%] assert_equals: expected "normal " but got "- 175 % "
-FAIL Web Animations: property <font-stretch> from neutral to [200%] at (0.3) should be [130%] assert_equals: expected "130 % " but got "- 62.5 % "
-FAIL Web Animations: property <font-stretch> from neutral to [200%] at (0.6) should be [160%] assert_equals: expected "160 % " but got "95 % "
+PASS Web Animations: property <font-stretch> from neutral to [200%] at (-0.25) should be [75%]
+PASS Web Animations: property <font-stretch> from neutral to [200%] at (0) should be [100%]
+PASS Web Animations: property <font-stretch> from neutral to [200%] at (0.3) should be [130%]
+PASS Web Animations: property <font-stretch> from neutral to [200%] at (0.6) should be [160%]
 PASS Web Animations: property <font-stretch> from neutral to [200%] at (1) should be [200%]
-FAIL Web Animations: property <font-stretch> from neutral to [200%] at (1.5) should be [250%] assert_equals: expected "250 % " but got "ultra - expanded "
+PASS Web Animations: property <font-stretch> from neutral to [200%] at (1.5) should be [250%]
 FAIL CSS Transitions: property <font-stretch> from [initial] to [inherit] at (-2) should be [0%] assert_equals: expected "normal " but got "- 100 % "
 PASS CSS Transitions: property <font-stretch> from [initial] to [inherit] at (-0.25) should be [75%]
 PASS CSS Transitions: property <font-stretch> from [initial] to [inherit] at (0) should be [100%]

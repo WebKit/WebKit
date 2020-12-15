@@ -1,3 +1,74 @@
+2020-12-15  Antoine Quint  <graouts@webkit.org>
+
+        [Web Animations] Implied keyframes should not account for animations on siblings
+        https://bugs.webkit.org/show_bug.cgi?id=188050
+        <rdar://problem/71330806>
+
+        Reviewed by Antti Koivisto.
+
+        Record 212 new PASS results thanks to no longer using shared style from a sibling when animating
+        elements with implied keyframes.
+
+        * web-platform-tests/css/css-align/animation/column-gap-interpolation-expected.txt:
+        * web-platform-tests/css/css-align/animation/row-gap-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/background-color-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/background-image-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/background-position-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/background-position-origin-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/background-position-x-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/background-position-y-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/background-size-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-color-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-outset-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-slice-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-width-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-radius-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-width-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/box-shadow-interpolation-expected.txt:
+        * web-platform-tests/css/css-box/animation/margin-interpolation-expected.txt:
+        * web-platform-tests/css/css-box/animation/padding-interpolation-expected.txt:
+        * web-platform-tests/css/css-color/animation/color-interpolation-expected.txt:
+        * web-platform-tests/css/css-color/animation/opacity-interpolation-expected.txt:
+        * web-platform-tests/css/css-flexbox/animation/flex-basis-interpolation-expected.txt:
+        * web-platform-tests/css/css-flexbox/animation/flex-grow-interpolation-expected.txt:
+        * web-platform-tests/css/css-flexbox/animation/flex-shrink-interpolation-expected.txt:
+        * web-platform-tests/css/css-flexbox/animation/order-interpolation-expected.txt:
+        * web-platform-tests/css/css-fonts/animations/font-size-interpolation-001-expected.txt:
+        * web-platform-tests/css/css-fonts/animations/font-stretch-interpolation-expected.txt:
+        * web-platform-tests/css/css-fonts/animations/font-variation-settings-interpolation-expected.txt:
+        * web-platform-tests/css/css-lists/animations/list-style-image-interpolation-expected.txt:
+        * web-platform-tests/css/css-multicol/animation/column-count-interpolation-expected.txt:
+        * web-platform-tests/css/css-multicol/animation/column-rule-color-interpolation-expected.txt:
+        * web-platform-tests/css/css-multicol/animation/column-width-interpolation-expected.txt:
+        * web-platform-tests/css/css-position/animations/bottom-interpolation-expected.txt:
+        * web-platform-tests/css/css-position/animations/left-interpolation-expected.txt:
+        * web-platform-tests/css/css-position/animations/right-interpolation-expected.txt:
+        * web-platform-tests/css/css-position/animations/top-interpolation-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-image-threshold-interpolation-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-margin-interpolation-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-outside-interpolation-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/height-interpolation-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/max-height-interpolation-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/max-width-interpolation-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/min-height-interpolation-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/min-width-interpolation-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/width-interpolation-expected.txt:
+        * web-platform-tests/css/css-text/animations/letter-spacing-interpolation-expected.txt:
+        * web-platform-tests/css/css-text/animations/text-indent-interpolation-expected.txt:
+        * web-platform-tests/css/css-text/animations/word-spacing-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/perspective-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/rotate-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/scale-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-006-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/transform-origin-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/translate-interpolation-expected.txt:
+        * web-platform-tests/css/css-transitions/animations/text-shadow-interpolation-expected.txt:
+        * web-platform-tests/css/css-transitions/animations/z-index-interpolation-expected.txt:
+        * web-platform-tests/css/css-ui/animation/caret-color-interpolation-expected.txt:
+        * web-platform-tests/css/css-ui/animation/outline-color-interpolation-expected.txt:
+        * web-platform-tests/css/css-ui/animation/outline-offset-interpolation-expected.txt:
+        * web-platform-tests/css/css-ui/animation/outline-width-interpolation-expected.txt:
+
 2020-12-14  Antoine Quint  <graouts@webkit.org>
 
         Simplify transform blending for simple cases

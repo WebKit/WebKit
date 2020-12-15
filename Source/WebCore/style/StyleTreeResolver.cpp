@@ -127,8 +127,10 @@ void TreeResolver::popScope()
     return m_scopeStack.removeLast();
 }
 
-std::unique_ptr<RenderStyle> TreeResolver::styleForElement(Element& element, const RenderStyle& inheritedStyle)
+std::unique_ptr<RenderStyle> TreeResolver::styleForStyleable(const Styleable& styleable, const RenderStyle& inheritedStyle)
 {
+    auto& element = styleable.element;
+
     if (element.hasCustomStyleResolveCallbacks()) {
         RenderStyle* shadowHostStyle = scope().shadowRoot ? m_update->elementStyle(*scope().shadowRoot->host()) : nullptr;
         if (auto customStyle = element.resolveCustomStyle(inheritedStyle, shadowHostStyle)) {
@@ -139,7 +141,7 @@ std::unique_ptr<RenderStyle> TreeResolver::styleForElement(Element& element, con
         }
     }
 
-    if (auto style = scope().sharingResolver.resolve(element, *m_update))
+    if (auto style = scope().sharingResolver.resolve(styleable, *m_update))
         return style;
 
     auto elementStyle = scope().resolver.styleForElement(element, &inheritedStyle, parentBoxStyle(), RuleMatchingBehavior::MatchAllRules, &scope().selectorFilter);
@@ -206,7 +208,8 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
     if (!element.rendererIsEverNeeded())
         return { };
 
-    auto newStyle = styleForElement(element, parent().style);
+    Styleable styleable { element, PseudoId::None };
+    auto newStyle = styleForStyleable(styleable, parent().style);
 
     if (!affectsRenderedSubtree(element, *newStyle))
         return { };
@@ -218,7 +221,7 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
         m_document.setHasNodesWithNonFinalStyle();
     }
 
-    auto update = createAnimatedElementUpdate(WTFMove(newStyle), { element, PseudoId::None }, parent().change);
+    auto update = createAnimatedElementUpdate(WTFMove(newStyle), styleable, parent().change);
     auto descendantsToResolve = computeDescendantsToResolve(update.change, element.styleValidity(), parent().descendantsToResolve);
 
     if (&element == m_document.documentElement()) {

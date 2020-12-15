@@ -21,12 +21,12 @@ PASS CSS Animations: property <background-position-y> from neutral to [80px] at 
 PASS CSS Animations: property <background-position-y> from neutral to [80px] at (1) should be [80px]
 PASS CSS Animations: property <background-position-y> from neutral to [80px] at (1.25) should be [90px]
 PASS Web Animations: property <background-position-y> from neutral to [80px] at (-0.25) should be [30px]
-FAIL Web Animations: property <background-position-y> from neutral to [80px] at (0) should be [40px] assert_equals: expected "40px " but got "30px "
-FAIL Web Animations: property <background-position-y> from neutral to [80px] at (0.25) should be [50px] assert_equals: expected "50px " but got "42.5px "
-FAIL Web Animations: property <background-position-y> from neutral to [80px] at (0.5) should be [60px] assert_equals: expected "60px " but got "61.25px "
-FAIL Web Animations: property <background-position-y> from neutral to [80px] at (0.75) should be [70px] assert_equals: expected "70px " but got "75.31px "
+PASS Web Animations: property <background-position-y> from neutral to [80px] at (0) should be [40px]
+PASS Web Animations: property <background-position-y> from neutral to [80px] at (0.25) should be [50px]
+PASS Web Animations: property <background-position-y> from neutral to [80px] at (0.5) should be [60px]
+PASS Web Animations: property <background-position-y> from neutral to [80px] at (0.75) should be [70px]
 PASS Web Animations: property <background-position-y> from neutral to [80px] at (1) should be [80px]
-FAIL Web Animations: property <background-position-y> from neutral to [80px] at (1.25) should be [90px] assert_equals: expected "90px " but got "80px "
+PASS Web Animations: property <background-position-y> from neutral to [80px] at (1.25) should be [90px]
 PASS CSS Transitions: property <background-position-y> from [initial] to [bottom] at (-0.25) should be [-25%]
 PASS CSS Transitions: property <background-position-y> from [initial] to [bottom] at (0) should be [0%]
 PASS CSS Transitions: property <background-position-y> from [initial] to [bottom] at (0.25) should be [25%]

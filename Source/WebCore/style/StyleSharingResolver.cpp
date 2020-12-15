@@ -72,11 +72,11 @@ static inline bool elementHasDirectionAuto(const Element& element)
     return is<HTMLElement>(element) && downcast<HTMLElement>(element).hasDirectionAuto();
 }
 
-std::unique_ptr<RenderStyle> SharingResolver::resolve(const Element& searchElement, const Update& update)
+std::unique_ptr<RenderStyle> SharingResolver::resolve(const Styleable& searchStyleable, const Update& update)
 {
-    if (!is<StyledElement>(searchElement))
+    if (!is<StyledElement>(searchStyleable.element))
         return nullptr;
-    auto& element = downcast<StyledElement>(searchElement);
+    auto& element = downcast<StyledElement>(searchStyleable.element);
     if (!element.parentElement())
         return nullptr;
     auto& parentElement = *element.parentElement();
@@ -101,6 +101,10 @@ std::unique_ptr<RenderStyle> SharingResolver::resolve(const Element& searchEleme
         return nullptr;
     if (element.shadowRoot() && !element.shadowRoot()->styleScope().resolver().ruleSets().authorStyle().hostPseudoClassRules().isEmpty())
         return nullptr;
+    if (auto* keyframeEffectStack = searchStyleable.keyframeEffectStack()) {
+        if (keyframeEffectStack->hasEffectWithImplicitKeyframes())
+            return nullptr;
+    }
 
     Context context {
         update,

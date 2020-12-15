@@ -170,6 +170,7 @@ public:
     bool isRunningAcceleratedTransformRelatedAnimation() const;
 
     bool requiresPseudoElement() const;
+    bool hasImplicitKeyframes() const;
 
 private:
     KeyframeEffect(Element*, PseudoId);

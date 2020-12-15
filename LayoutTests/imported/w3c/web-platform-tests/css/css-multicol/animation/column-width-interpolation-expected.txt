@@ -24,13 +24,13 @@ PASS CSS Animations: property <column-width> from neutral to [20px] at (0.6) sho
 PASS CSS Animations: property <column-width> from neutral to [20px] at (1) should be [20px]
 PASS CSS Animations: property <column-width> from neutral to [20px] at (1.5) should be [25px]
 FAIL Web Animations: property <column-width> from neutral to [20px] at (-20) should be [1em] assert_equals: expected "0px " but got "- 190px "
-FAIL Web Animations: property <column-width> from neutral to [20px] at (-1) should be [1em] assert_equals: expected "0px " but got "- 400px "
-FAIL Web Animations: property <column-width> from neutral to [20px] at (-0.3) should be [7px] assert_equals: expected "7px " but got "- 526px "
-FAIL Web Animations: property <column-width> from neutral to [20px] at (0) should be [10px] assert_equals: expected "10px " but got "- 526px "
-FAIL Web Animations: property <column-width> from neutral to [20px] at (0.3) should be [13px] assert_equals: expected "13px " but got "- 362.2px "
-FAIL Web Animations: property <column-width> from neutral to [20px] at (0.6) should be [16px] assert_equals: expected "16px " but got "- 132.88px "
+PASS Web Animations: property <column-width> from neutral to [20px] at (-1) should be [1em]
+PASS Web Animations: property <column-width> from neutral to [20px] at (-0.3) should be [7px]
+PASS Web Animations: property <column-width> from neutral to [20px] at (0) should be [10px]
+PASS Web Animations: property <column-width> from neutral to [20px] at (0.3) should be [13px]
+PASS Web Animations: property <column-width> from neutral to [20px] at (0.6) should be [16px]
 PASS Web Animations: property <column-width> from neutral to [20px] at (1) should be [20px]
-FAIL Web Animations: property <column-width> from neutral to [20px] at (1.5) should be [25px] assert_equals: expected "25px " but got "20px "
+PASS Web Animations: property <column-width> from neutral to [20px] at (1.5) should be [25px]
 FAIL CSS Transitions: property <column-width> from [initial] to [20px] at (-0.3) should be [20px] assert_equals: expected "20px " but got "- 6px "
 FAIL CSS Transitions: property <column-width> from [initial] to [20px] at (0) should be [20px] assert_equals: expected "20px " but got "0px "
 FAIL CSS Transitions: property <column-width> from [initial] to [20px] at (0.3) should be [20px] assert_equals: expected "20px " but got "6px "

@@ -18,11 +18,11 @@ PASS CSS Animations: property <font-variation-settings> from neutral to ["test" 
 PASS CSS Animations: property <font-variation-settings> from neutral to ["test" 20] at (1) should be ['test' 20]
 PASS CSS Animations: property <font-variation-settings> from neutral to ["test" 20] at (1.5) should be ['test' 25]
 PASS Web Animations: property <font-variation-settings> from neutral to ["test" 20] at (-0.5) should be ['test' 5]
-FAIL Web Animations: property <font-variation-settings> from neutral to ["test" 20] at (0) should be ['test' 10] assert_array_equals: expected property 0 to be "\"test\" 10" but got "\"test\" 5" (expected array ["\"test\" 10"] got ["\"test\" 5"])
-FAIL Web Animations: property <font-variation-settings> from neutral to ["test" 20] at (0.3) should be ['test' 13] assert_array_equals: expected property 0 to be "\"test\" 13" but got "\"test\" 9.5" (expected array ["\"test\" 13"] got ["\"test\" 9.5"])
-FAIL Web Animations: property <font-variation-settings> from neutral to ["test" 20] at (0.7) should be ['test' 17] assert_array_equals: expected property 0 to be "\"test\" 17" but got "\"test\" 16.85" (expected array ["\"test\" 17"] got ["\"test\" 16.85"])
+PASS Web Animations: property <font-variation-settings> from neutral to ["test" 20] at (0) should be ['test' 10]
+PASS Web Animations: property <font-variation-settings> from neutral to ["test" 20] at (0.3) should be ['test' 13]
+PASS Web Animations: property <font-variation-settings> from neutral to ["test" 20] at (0.7) should be ['test' 17]
 PASS Web Animations: property <font-variation-settings> from neutral to ["test" 20] at (1) should be ['test' 20]
-FAIL Web Animations: property <font-variation-settings> from neutral to ["test" 20] at (1.5) should be ['test' 25] assert_array_equals: expected property 0 to be "\"test\" 25" but got "\"test\" 20" (expected array ["\"test\" 25"] got ["\"test\" 20"])
+PASS Web Animations: property <font-variation-settings> from neutral to ["test" 20] at (1.5) should be ['test' 25]
 FAIL CSS Transitions: property <font-variation-settings> from [initial] to ['test' 50] at (-0.3) should be ['test' 50] assert_equals: expected "\" test \" 50 " but got "\" test \" 24 "
 FAIL CSS Transitions: property <font-variation-settings> from [initial] to ['test' 50] at (0) should be ['test' 50] assert_equals: expected "\" test \" 50 " but got "\" test \" 30 "
 FAIL CSS Transitions: property <font-variation-settings> from [initial] to ['test' 50] at (0.3) should be ['test' 50] assert_equals: expected "\" test \" 50 " but got "\" test \" 36 "

@@ -55,7 +55,7 @@ public:
     std::unique_ptr<Update> resolve();
 
 private:
-    std::unique_ptr<RenderStyle> styleForElement(Element&, const RenderStyle& inheritedStyle);
+    std::unique_ptr<RenderStyle> styleForStyleable(const Styleable&, const RenderStyle& inheritedStyle);
 
     void resolveComposedTree();
 

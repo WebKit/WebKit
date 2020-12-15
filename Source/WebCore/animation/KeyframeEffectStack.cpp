@@ -68,6 +68,15 @@ bool KeyframeEffectStack::requiresPseudoElement() const
     return false;
 }
 
+bool KeyframeEffectStack::hasEffectWithImplicitKeyframes() const
+{
+    for (auto& effect : m_effects) {
+        if (effect->hasImplicitKeyframes())
+            return true;
+    }
+    return false;
+}
+
 bool KeyframeEffectStack::isCurrentlyAffectingProperty(CSSPropertyID property) const
 {
     for (auto& effect : m_effects) {

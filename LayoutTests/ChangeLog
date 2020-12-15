@@ -1,3 +1,19 @@
+2020-12-15  Antoine Quint  <graouts@webkit.org>
+
+        [Web Animations] Implied keyframes should not account for animations on siblings
+        https://bugs.webkit.org/show_bug.cgi?id=188050
+        <rdar://problem/71330806>
+
+        Reviewed by Antti Koivisto.
+
+        Record new PASS results thanks to no longer using shared style from a sibling when animating
+        elements with implied keyframes.
+
+        * platform/ios/compositing/backing/animate-into-view-expected.txt
+        * platform/ios/compositing/backing/animate-into-view-with-descendant-expected.txt
+        * platform/ios/imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-width-interpolation-expected.txt
+        * platform/mac-wk1/imported/w3c/web-platform-tests/css/css-color/animation/opacity-interpolation-expected.txt
+
 2020-12-14  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Gardened several flaky failures.

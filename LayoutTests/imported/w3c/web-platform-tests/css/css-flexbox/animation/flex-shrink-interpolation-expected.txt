@@ -18,11 +18,11 @@ PASS CSS Animations: property <flex-shrink> from neutral to [2] at (0.6) should 
 PASS CSS Animations: property <flex-shrink> from neutral to [2] at (1) should be [2]
 PASS CSS Animations: property <flex-shrink> from neutral to [2] at (1.5) should be [2.25]
 PASS Web Animations: property <flex-shrink> from neutral to [2] at (-0.3) should be [1.35]
-FAIL Web Animations: property <flex-shrink> from neutral to [2] at (0) should be [1.5] assert_equals: expected "1.5 " but got "1.35 "
-FAIL Web Animations: property <flex-shrink> from neutral to [2] at (0.3) should be [1.65] assert_equals: expected "1.65 " but got "1.55 "
-FAIL Web Animations: property <flex-shrink> from neutral to [2] at (0.6) should be [1.8] assert_equals: expected "1.8 " but got "1.82 "
+PASS Web Animations: property <flex-shrink> from neutral to [2] at (0) should be [1.5]
+PASS Web Animations: property <flex-shrink> from neutral to [2] at (0.3) should be [1.65]
+PASS Web Animations: property <flex-shrink> from neutral to [2] at (0.6) should be [1.8]
 PASS Web Animations: property <flex-shrink> from neutral to [2] at (1) should be [2]
-FAIL Web Animations: property <flex-shrink> from neutral to [2] at (1.5) should be [2.25] assert_equals: expected "2.25 " but got "2 "
+PASS Web Animations: property <flex-shrink> from neutral to [2] at (1.5) should be [2.25]
 PASS CSS Transitions: property <flex-shrink> from [initial] to [2] at (-0.3) should be [0.7]
 PASS CSS Transitions: property <flex-shrink> from [initial] to [2] at (0) should be [1]
 PASS CSS Transitions: property <flex-shrink> from [initial] to [2] at (0.3) should be [1.3]

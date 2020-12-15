@@ -1351,6 +1351,23 @@ void KeyframeEffect::computeSomeKeyframesUseStepsTimingFunction()
     }
 }
 
+bool KeyframeEffect::hasImplicitKeyframes() const
+{
+    auto numberOfKeyframes = m_parsedKeyframes.size();
+
+    // If we have no keyframes, then there cannot be any implicit keyframes.
+    if (!numberOfKeyframes)
+        return false;
+
+    // If we have a single keyframe, then there has to be at least one implicit keyframe.
+    if (numberOfKeyframes == 1)
+        return true;
+
+    // If we have two or more keyframes, then we have implicit keyframes if the first and last
+    // keyframes don't have 0 and 1 respectively as their computed offset.
+    return m_parsedKeyframes[0].computedOffset || m_parsedKeyframes[numberOfKeyframes - 1].computedOffset != 1;
+}
+
 void KeyframeEffect::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle)
 {
     if (!renderer() || !animation())

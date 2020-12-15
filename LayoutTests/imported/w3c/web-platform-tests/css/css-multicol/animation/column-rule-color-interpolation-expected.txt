@@ -18,11 +18,11 @@ PASS CSS Animations: property <column-rule-color> from neutral to [rgb(70, 170, 
 PASS CSS Animations: property <column-rule-color> from neutral to [rgb(70, 170, 70)] at (1) should be [rgb(70, 170, 70)]
 PASS CSS Animations: property <column-rule-color> from neutral to [rgb(70, 170, 70)] at (1.5) should be [rgb(20, 220, 70)]
 PASS Web Animations: property <column-rule-color> from neutral to [rgb(70, 170, 70)] at (-0.5) should be [rgb(220, 20, 70)]
-FAIL Web Animations: property <column-rule-color> from neutral to [rgb(70, 170, 70)] at (0) should be [rgb(170, 70, 70)] assert_equals: expected "rgb ( 170 , 70 , 70 ) " but got "rgb ( 220 , 20 , 70 ) "
-FAIL Web Animations: property <column-rule-color> from neutral to [rgb(70, 170, 70)] at (0.3) should be [rgb(140, 100, 70)] assert_equals: expected "rgb ( 140 , 100 , 70 ) " but got "rgb ( 175 , 65 , 70 ) "
-FAIL Web Animations: property <column-rule-color> from neutral to [rgb(70, 170, 70)] at (0.6) should be [rgb(110, 130, 70)] assert_equals: expected "rgb ( 110 , 130 , 70 ) " but got "rgb ( 112 , 128 , 70 ) "
+PASS Web Animations: property <column-rule-color> from neutral to [rgb(70, 170, 70)] at (0) should be [rgb(170, 70, 70)]
+PASS Web Animations: property <column-rule-color> from neutral to [rgb(70, 170, 70)] at (0.3) should be [rgb(140, 100, 70)]
+PASS Web Animations: property <column-rule-color> from neutral to [rgb(70, 170, 70)] at (0.6) should be [rgb(110, 130, 70)]
 PASS Web Animations: property <column-rule-color> from neutral to [rgb(70, 170, 70)] at (1) should be [rgb(70, 170, 70)]
-FAIL Web Animations: property <column-rule-color> from neutral to [rgb(70, 170, 70)] at (1.5) should be [rgb(20, 220, 70)] assert_equals: expected "rgb ( 20 , 220 , 70 ) " but got "rgb ( 70 , 170 , 70 ) "
+PASS Web Animations: property <column-rule-color> from neutral to [rgb(70, 170, 70)] at (1.5) should be [rgb(20, 220, 70)]
 PASS CSS Transitions: property <column-rule-color> from [initial] to [rgb(70, 70, 170)] at (-0.5) should be [rgb(70, 220, 20)]
 PASS CSS Transitions: property <column-rule-color> from [initial] to [rgb(70, 70, 170)] at (0) should be [rgb(70, 170, 70)]
 PASS CSS Transitions: property <column-rule-color> from [initial] to [rgb(70, 70, 170)] at (0.3) should be [rgb(70, 140, 100)]

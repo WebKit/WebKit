@@ -18,11 +18,11 @@ PASS CSS Animations: property <min-height> from neutral to [20px] at (0.6) shoul
 PASS CSS Animations: property <min-height> from neutral to [20px] at (1) should be [20px]
 PASS CSS Animations: property <min-height> from neutral to [20px] at (1.5) should be [25px]
 PASS Web Animations: property <min-height> from neutral to [20px] at (-0.5) should be [5px]
-FAIL Web Animations: property <min-height> from neutral to [20px] at (0) should be [10px] assert_equals: expected "10px " but got "5px "
-FAIL Web Animations: property <min-height> from neutral to [20px] at (0.3) should be [13px] assert_equals: expected "13px " but got "9.5px "
-FAIL Web Animations: property <min-height> from neutral to [20px] at (0.6) should be [16px] assert_equals: expected "16px " but got "15.8px "
+PASS Web Animations: property <min-height> from neutral to [20px] at (0) should be [10px]
+PASS Web Animations: property <min-height> from neutral to [20px] at (0.3) should be [13px]
+PASS Web Animations: property <min-height> from neutral to [20px] at (0.6) should be [16px]
 PASS Web Animations: property <min-height> from neutral to [20px] at (1) should be [20px]
-FAIL Web Animations: property <min-height> from neutral to [20px] at (1.5) should be [25px] assert_equals: expected "25px " but got "20px "
+PASS Web Animations: property <min-height> from neutral to [20px] at (1.5) should be [25px]
 PASS CSS Transitions: property <min-height> from [initial] to [20px] at (-0.3) should be [20px]
 PASS CSS Transitions: property <min-height> from [initial] to [20px] at (0) should be [20px]
 PASS CSS Transitions: property <min-height> from [initial] to [20px] at (0.3) should be [20px]

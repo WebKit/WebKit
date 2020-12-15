@@ -51,6 +51,7 @@ public:
     bool isCurrentlyAffectingProperty(CSSPropertyID) const;
     bool requiresPseudoElement() const;
     OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, const RenderStyle& previousLastStyleChangeEventStyle);
+    bool hasEffectWithImplicitKeyframes() const;
 
 private:
     void ensureEffectsAreSorted();

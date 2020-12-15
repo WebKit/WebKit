@@ -25,12 +25,12 @@ PASS CSS Animations: property <perspective> from neutral to [20px] at (1) should
 PASS CSS Animations: property <perspective> from neutral to [20px] at (1.5) should be [25px]
 PASS Web Animations: property <perspective> from neutral to [20px] at (-20) should be [none]
 PASS Web Animations: property <perspective> from neutral to [20px] at (-1) should be [none]
-FAIL Web Animations: property <perspective> from neutral to [20px] at (-0.3) should be [7px] assert_equals: expected "7px " but got "none "
-FAIL Web Animations: property <perspective> from neutral to [20px] at (0) should be [10px] assert_equals: expected "10px " but got "none "
-FAIL Web Animations: property <perspective> from neutral to [20px] at (0.3) should be [13px] assert_equals: expected "13px " but got "none "
-FAIL Web Animations: property <perspective> from neutral to [20px] at (0.6) should be [16px] assert_equals: expected "16px " but got "none "
+PASS Web Animations: property <perspective> from neutral to [20px] at (-0.3) should be [7px]
+PASS Web Animations: property <perspective> from neutral to [20px] at (0) should be [10px]
+PASS Web Animations: property <perspective> from neutral to [20px] at (0.3) should be [13px]
+PASS Web Animations: property <perspective> from neutral to [20px] at (0.6) should be [16px]
 PASS Web Animations: property <perspective> from neutral to [20px] at (1) should be [20px]
-FAIL Web Animations: property <perspective> from neutral to [20px] at (1.5) should be [25px] assert_equals: expected "25px " but got "20px "
+PASS Web Animations: property <perspective> from neutral to [20px] at (1.5) should be [25px]
 FAIL CSS Transitions: property <perspective> from [initial] to [20px] at (-0.3) should be [20px] assert_equals: expected "20px " but got "none "
 FAIL CSS Transitions: property <perspective> from [initial] to [20px] at (0) should be [20px] assert_equals: expected "20px " but got "none "
 FAIL CSS Transitions: property <perspective> from [initial] to [20px] at (0.3) should be [20px] assert_equals: expected "20px " but got "6px "
