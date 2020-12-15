@@ -1521,10 +1521,6 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
         [self doAfterPositionInformationUpdate:[assistant = WeakObjCPtr<WKActionSheetAssistant>(_actionSheetAssistant.get())] (WebKit::InteractionInformationAtPosition information) {
             [assistant interactionDidStartWithPositionInformation:information];
         } forRequest:positionInformationRequest];
-
-#if ENABLE(IMAGE_EXTRACTION)
-        [self _cancelImageExtractionIfNeededAfterTouchAt:_lastInteractionLocation];
-#endif
     }
 
 #if ENABLE(TOUCH_EVENTS)
@@ -2568,6 +2564,8 @@ static Class tapAndAHalfRecognizerClass()
 #if ENABLE(IMAGE_EXTRACTION)
     if ([self _imageExtractionShouldPreventTextInteractionAtPoint:point])
         return NO;
+
+    [self _cancelImageExtraction];
 #endif
 
     if (_inspectorNodeSearchEnabled)
@@ -2618,6 +2616,8 @@ static Class tapAndAHalfRecognizerClass()
 #if ENABLE(IMAGE_EXTRACTION)
     if ([self _imageExtractionShouldPreventTextInteractionAtPoint:point])
         return NO;
+
+    [self _cancelImageExtraction];
 #endif
 
     if (!self.isFocusingElement) {
@@ -2787,6 +2787,10 @@ static Class tapAndAHalfRecognizerClass()
     _potentialTapInProgress = YES;
     _isTapHighlightIDValid = YES;
     _isExpectingFastSingleTapCommit = !_doubleTapGestureRecognizer.get().enabled;
+
+#if ENABLE(IMAGE_EXTRACTION)
+    [self _cancelImageExtractionIfNeededAfterTouchAt:gestureRecognizer.location];
+#endif
 }
 
 static void cancelPotentialTapIfNecessary(WKContentView* contentView)
@@ -8170,7 +8174,9 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
         if (!strongSelf)
             return;
 
+        auto dragOrigin = [session locationInView:strongSelf.get()];
 #if ENABLE(IMAGE_EXTRACTION)
+        [strongSelf _cancelImageExtractionIfNeededAfterTouchAt:dragOrigin];
         if (strongSelf->_imageExtractionState == WebKit::ImageExtractionState::Active) {
             RELEASE_LOG(DragAndDrop, "Drag session failed: %p (deferring to active image extraction)", session.get());
             completion();
@@ -8179,10 +8185,8 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 #endif
 
         strongSelf->_dragDropInteractionState.prepareForDragSession(session.get(), completion.get());
-
-        auto dragOrigin = WebCore::roundedIntPoint([session locationInView:strongSelf.get()]);
-        strongSelf->_page->requestDragStart(dragOrigin, WebCore::roundedIntPoint([strongSelf convertPoint:dragOrigin toView:[strongSelf window]]), [strongSelf _allowedDragSourceActions]);
-        RELEASE_LOG(DragAndDrop, "Drag session requested: %p at origin: {%d, %d}", session.get(), dragOrigin.x(), dragOrigin.y());
+        strongSelf->_page->requestDragStart(WebCore::roundedIntPoint(dragOrigin), WebCore::roundedIntPoint([strongSelf convertPoint:dragOrigin toView:[strongSelf window]]), [strongSelf _allowedDragSourceActions]);
+        RELEASE_LOG(DragAndDrop, "Drag session requested: %p at origin: {%.0f, %.0f}", session.get(), dragOrigin.x, dragOrigin.y);
     };
 
 #if ENABLE(IMAGE_EXTRACTION)
@@ -9544,7 +9548,9 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         if (!strongSelf)
             return;
 
+        auto position = [interaction locationInView:strongSelf.get()];
 #if ENABLE(IMAGE_EXTRACTION)
+        [strongSelf _cancelImageExtractionIfNeededAfterTouchAt:position];
         if (strongSelf->_imageExtractionState == WebKit::ImageExtractionState::Active) {
             completion(nil);
             return;
@@ -9557,7 +9563,6 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         if (NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:webkitShowLinkPreviewsPreferenceKey])
             strongSelf->_showLinkPreviews = value.boolValue;
 
-        const auto position = [interaction locationInView:strongSelf.get()];
         WebKit::InteractionInformationRequest request { WebCore::roundedIntPoint(position) };
         request.includeSnapshot = true;
         request.includeLinkIndicator = true;

@@ -1,3 +1,27 @@
+2020-12-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Image extraction interaction should remain active while scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=219895
+        <rdar://problem/72344814>
+
+        Reviewed by Devin Rousso.
+
+        Make our image extraction interaction behave more like the rest of the system by making it persist until
+        explicitly dismissed via tap gesture (or any other competing interaction, such as text interactions, drag
+        interactions and context menu interactions, as long as the interaction location is outside of the active image
+        extraction interaction).
+
+        We currently just dismiss any active image extraction upon starting a new touch, which prevents scrolling from
+        working as expected with image extraction. See radar for more details.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _webTouchEventsRecognized:]):
+        (-[WKContentView hasSelectablePositionAtPoint:]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+        (-[WKContentView _singleTapIdentified:]):
+        (-[WKContentView _dragInteraction:prepareForSession:completion:]):
+        (-[WKContentView _contextMenuInteraction:configurationForMenuAtLocation:completion:]):
+
 2020-12-15  Kate Cheney  <katherine_cheney@apple.com>
 
         CrashTracer: com.apple.WebKit.Networking at WebKit: WTF::Detail::CallableWrapper<WebKit::PrivateClickMeasurementManager::firePendingAttributionRequests()
