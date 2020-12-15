@@ -343,6 +343,7 @@ void TextureMapperLayer::computeOverlapRegions(ComputeOverlapRegionData& data, c
         resolveOverlaps(viewportBoundingRect, data.overlapRegion, data.nonOverlapRegion);
         break;
     case ComputeOverlapRegionMode::Union:
+    case ComputeOverlapRegionMode::Mask:
         data.overlapRegion.unite(viewportBoundingRect);
         break;
     }
@@ -353,7 +354,7 @@ void TextureMapperLayer::computeOverlapRegions(ComputeOverlapRegionData& data, c
         computeOverlapRegions(data, newReplicaTransform, false);
     }
 
-    if (!m_state.masksToBounds) {
+    if (!m_state.masksToBounds && data.mode != ComputeOverlapRegionMode::Mask) {
         for (auto* child : m_children)
             child->computeOverlapRegions(data, accumulatedReplicaTransform);
     }
@@ -363,9 +364,13 @@ void TextureMapperLayer::paintUsingOverlapRegions(const TextureMapperPaintOption
 {
     Region overlapRegion;
     Region nonOverlapRegion;
-    bool needsUnion = hasFilters() || m_state.maskLayer || (m_state.replicaLayer && m_state.replicaLayer->m_state.maskLayer);
+    auto mode = ComputeOverlapRegionMode::Intersection;
+    if (m_state.maskLayer)
+        mode = ComputeOverlapRegionMode::Mask;
+    else if (hasFilters() || (m_state.replicaLayer && m_state.replicaLayer->m_state.maskLayer))
+        mode = ComputeOverlapRegionMode::Union;
     ComputeOverlapRegionData data {
-        needsUnion ? ComputeOverlapRegionMode::Union : ComputeOverlapRegionMode::Intersection,
+        mode,
         options.textureMapper.clipBounds(),
         overlapRegion,
         nonOverlapRegion

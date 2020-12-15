@@ -1,3 +1,25 @@
+2020-12-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [TextureMapper] REGRESION(r269570): mask layer doesn't clip descendent layers
+        https://bugs.webkit.org/show_bug.cgi?id=219136
+        <rdar://problem/71742605>
+
+        Reviewed by Carlos Garcia Campos.
+
+        computeOverlapRegions shouldn't include the descendent layer
+        region for layers with a mask layer. Add a new mode Mask to
+        ComputeOverlapRegionMode which is like Union mode but doesn't
+        include descendent layers.
+
+        Test: compositing/masks/clip-path-composited-descendent-2.html
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::computeOverlapRegions): Skip
+        children for the Mask mode.
+        (WebCore::TextureMapperLayer::paintUsingOverlapRegions): Use
+        ComputeOverlapRegionMode::Mask for a layer with mask layer.
+        * platform/graphics/texmap/TextureMapperLayer.h (ComputeOverlapRegionMode): Added Mask.
+
 2020-11-03  Stephan Szabo  <stephan.szabo@sony.com>
 
         [WinCairo/PlayStation] ICU 68.1 no longer exposes FALSE and TRUE macros by default
