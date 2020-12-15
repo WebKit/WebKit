@@ -1,3 +1,12 @@
+2020-12-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION: [macOS] http/tests/inspector/network/resource-response-service-worker.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=219625
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Mark test as flaky.
+
 2020-12-15  Truitt Savell  <tsavell@apple.com>
 
         [ Mac ] imported/w3c/web-platform-tests/server-timing/service_worker_idl.html is flaky failing
