@@ -160,8 +160,10 @@ void SourceBufferPrivateRemote::seekToTime(const MediaTime& mediaTime)
 
 void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&& segmentInfo, CompletionHandler<void()>&& completionHandler)
 {
-    if (!m_client || !m_mediaPlayerPrivate)
+    if (!m_client || !m_mediaPlayerPrivate) {
+        completionHandler();
         return;
+    }
 
     SourceBufferPrivateClient::InitializationSegment segment;
     segment.duration = segmentInfo.duration;

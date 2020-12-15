@@ -416,7 +416,8 @@ MediaTime SourceBuffer::highestPresentationTimestamp() const
 
 void SourceBuffer::readyStateChanged()
 {
-    m_private->updateBufferedFromTrackBuffers(m_source->isEnded());
+    if (!isRemoved())
+        m_private->updateBufferedFromTrackBuffers(m_source->isEnded());
 }
 
 void SourceBuffer::removedFromMediaSource()
@@ -647,15 +648,19 @@ VideoTrackList& SourceBuffer::videoTracks()
 
 AudioTrackList& SourceBuffer::audioTracks()
 {
-    if (!m_audioTracks)
+    if (!m_audioTracks) {
+        ASSERT(!isRemoved());
         m_audioTracks = AudioTrackList::create(makeWeakPtr(m_source->mediaElement()), scriptExecutionContext());
+    }
     return *m_audioTracks;
 }
 
 TextTrackList& SourceBuffer::textTracks()
 {
-    if (!m_textTracks)
+    if (!m_textTracks) {
+        ASSERT(!isRemoved());
         m_textTracks = TextTrackList::create(makeWeakPtr(m_source->mediaElement()), scriptExecutionContext());
+    }
     return *m_textTracks;
 }
 
@@ -994,7 +999,7 @@ void SourceBuffer::appendError(bool decodeError)
     scheduleEvent(eventNames().updateendEvent);
 
     // 5. If decode error is true, then run the end of stream algorithm with the error parameter set to "decode".
-    if (decodeError)
+    if (decodeError && !isRemoved())
         m_source->streamEndedWithError(MediaSource::EndOfStreamError::Decode);
 }
 
@@ -1122,7 +1127,7 @@ void SourceBuffer::textTrackKindChanged(TextTrack& track)
 
 void SourceBuffer::trySignalAllSamplesEnqueued()
 {
-    if (!m_source->isEnded())
+    if (isRemoved() || !m_source->isEnded())
         return;
 
     DEBUG_LOG(LOGIDENTIFIER, "Try to enqueue all samples");
@@ -1136,7 +1141,8 @@ void SourceBuffer::sourceBufferPrivateDidParseSample(double frameDuration)
 
 void SourceBuffer::sourceBufferPrivateDurationChanged(const MediaTime& duration)
 {
-    m_source->setDurationInternal(duration);
+    if (!isRemoved())
+        m_source->setDurationInternal(duration);
 }
 
 void SourceBuffer::sourceBufferPrivateDidDropSample()
@@ -1147,7 +1153,8 @@ void SourceBuffer::sourceBufferPrivateDidDropSample()
 
 void SourceBuffer::sourceBufferPrivateStreamEndedWithDecodeError()
 {
-    m_source->streamEndedWithError(MediaSource::EndOfStreamError::Decode);
+    if (!isRemoved())
+        m_source->streamEndedWithError(MediaSource::EndOfStreamError::Decode);
 }
 
 void SourceBuffer::monitorBufferingRate()

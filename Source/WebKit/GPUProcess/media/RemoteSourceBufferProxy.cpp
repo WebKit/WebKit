@@ -65,8 +65,10 @@ RemoteSourceBufferProxy::~RemoteSourceBufferProxy()
 
 void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&& segment, CompletionHandler<void()>&& completionHandler)
 {
-    if (!m_remoteMediaPlayerProxy)
+    if (!m_remoteMediaPlayerProxy) {
+        completionHandler();
         return;
+    }
 
     InitializationSegmentInfo segmentInfo;
     segmentInfo.duration = segment.duration;

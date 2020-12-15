@@ -606,7 +606,7 @@ void SourceBufferPrivateAVFObjC::abort()
         m_abortSemaphore = nullptr;
     }
 
-    m_parser->invalidate();
+    m_parser->resetParserState();
 
     dispatch_group_wait(m_isAppendingGroup.get(), DISPATCH_TIME_FOREVER);
 }
