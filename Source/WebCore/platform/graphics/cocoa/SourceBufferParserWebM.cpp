@@ -529,9 +529,24 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
 #endif // ENABLE(VP9) || ENABLE(VORBIS) || ENABLE(OPUS)
 }
 
+RefPtr<SourceBufferParserWebM> SourceBufferParserWebM::create(const ContentType& type)
+{
+    if (isContentTypeSupported(type) != MediaPlayerEnums::SupportsType::IsNotSupported)
+        return adoptRef(new SourceBufferParserWebM());
+    return nullptr;
+}
+
+static SourceBufferParserWebM::CallOnClientThreadCallback callOnMainThreadCallback()
+{
+    return [](Function<void()>&& function) {
+        callOnMainThread(WTFMove(function));
+    };
+}
+
 SourceBufferParserWebM::SourceBufferParserWebM()
     : m_reader(WTF::makeUniqueRef<StreamingVectorReader>())
     , m_initializationSegmentIsHandledSemaphore(Box<BinarySemaphore>::create())
+    , m_callOnClientThreadCallback(callOnMainThreadCallback())
 {
     if (isWebmParserAvailable())
         m_parser = WTF::makeUniqueWithoutFastMallocCheck<WebmParser>();
@@ -585,7 +600,7 @@ void SourceBufferParserWebM::appendData(Segment&& segment, AppendFlags appendFla
     }
 
     ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "status.code(", m_status.code, ")");
-    callOnMainThread([this, protectedThis = makeRef(*this), code = m_status.code] {
+    m_callOnClientThreadCallback([this, protectedThis = makeRef(*this), code = m_status.code] {
         if (m_didEncounterErrorDuringParsingCallback)
             m_didEncounterErrorDuringParsingCallback(code);
     });
@@ -766,7 +781,7 @@ Status SourceBufferParserWebM::OnClusterBegin(const ElementMetadata& metadata, c
         return Status(Status::kNotEnoughMemory);
 
     if (m_initializationSegmentEncountered && m_didParseInitializationDataCallback) {
-        callOnMainThread([this, protectedThis = makeRef(*this), initializationSegment = WTFMove(*m_initializationSegment)]() mutable {
+        m_callOnClientThreadCallback([this, protectedThis = makeRef(*this), initializationSegment = WTFMove(*m_initializationSegment)]() mutable {
             m_didParseInitializationDataCallback(WTFMove(initializationSegment), [this, protectedThis = makeRef(*this)] {
                 m_initializationSegmentIsHandledSemaphore->signal();
             });
@@ -946,7 +961,7 @@ webm::Status SourceBufferParserWebM::OnFrame(const FrameMetadata& metadata, Read
 
 void SourceBufferParserWebM::provideMediaData(RetainPtr<CMSampleBufferRef> sampleBuffer, uint64_t trackID, Optional<size_t> byteRangeOffset)
 {
-    callOnMainThread([this, protectedThis = makeRef(*this), sampleBuffer = WTFMove(sampleBuffer), trackID, byteRangeOffset] () mutable {
+    m_callOnClientThreadCallback([this, protectedThis = makeRef(*this), sampleBuffer = WTFMove(sampleBuffer), trackID, byteRangeOffset] () mutable {
         if (!m_didProvideMediaDataCallback)
             return;
 
@@ -1209,6 +1224,12 @@ void SourceBufferParserWebM::flushPendingAudioBuffers()
 void SourceBufferParserWebM::setMinimumAudioSampleDuration(float duration)
 {
     m_minimumAudioSampleDuration = duration;
+}
+
+void SourceBufferParserWebM::setCallOnClientThreadCallback(CallOnClientThreadCallback&& callback)
+{
+    ASSERT(callback);
+    m_callOnClientThreadCallback = WTFMove(callback);
 }
 
 const HashSet<String>& SourceBufferParserWebM::supportedVideoCodecs()

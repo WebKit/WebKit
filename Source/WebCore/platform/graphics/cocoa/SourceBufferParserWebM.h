@@ -61,6 +61,7 @@ public:
     class StreamingVectorReader;
 
     static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&);
+    static RefPtr<SourceBufferParserWebM> create(const ContentType&);
 
     SourceBufferParserWebM();
     ~SourceBufferParserWebM();
@@ -79,6 +80,9 @@ public:
 
     void flushPendingAudioBuffers();
     void setMinimumAudioSampleDuration(float);
+    
+    using CallOnClientThreadCallback = WTF::Function<void(WTF::Function<void()>&&)>;
+    void setCallOnClientThreadCallback(CallOnClientThreadCallback&&);
 
     void setLogger(const WTF::Logger&, const void* identifier) final;
 
@@ -260,6 +264,7 @@ private:
     float m_minimumAudioSampleDuration { 2 };
 
     Box<BinarySemaphore> m_initializationSegmentIsHandledSemaphore;
+    CallOnClientThreadCallback m_callOnClientThreadCallback;
 
     RefPtr<const WTF::Logger> m_logger;
     const void* m_logIdentifier { nullptr };

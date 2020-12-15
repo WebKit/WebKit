@@ -33,7 +33,7 @@
 #include <WebCore/ContentType.h>
 #include <WebCore/InbandTextTrackPrivate.h>
 #include <WebCore/MediaSample.h>
-#include <WebCore/SourceBufferParser.h>
+#include <WebCore/SourceBufferParserWebM.h>
 #include <WebCore/VideoTrackPrivate.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <wtf/WorkQueue.h>
@@ -70,7 +70,11 @@ FormatReader::FormatReader(Allocator&& allocator)
 
 void FormatReader::startOnMainThread(MTPluginByteSourceRef byteSource)
 {
-    ASSERT(!isMainThread());
+    if (isMainThread()) {
+        parseByteSource(WTFMove(byteSource));
+        return;
+    }
+
     callOnMainThread([this, protectedThis = makeRef(*this), byteSource = retainPtr(byteSource)]() mutable {
         parseByteSource(WTFMove(byteSource));
     });
@@ -78,7 +82,7 @@ void FormatReader::startOnMainThread(MTPluginByteSourceRef byteSource)
 
 static WorkQueue& readerQueue()
 {
-    static auto& queue = WorkQueue::create("WebKit FormatReader Queue", WorkQueue::Type::Concurrent).leakRef();
+    static auto& queue = WorkQueue::create("WebKit::FormatReader Queue", WorkQueue::Type::Concurrent).leakRef();
     return queue;
 }
 
@@ -87,7 +91,7 @@ void FormatReader::parseByteSource(RetainPtr<MTPluginByteSourceRef>&& byteSource
     ASSERT(isMainThread());
 
     static NeverDestroyed<ContentType> contentType("video/webm"_s);
-    auto parser = SourceBufferParser::create(contentType, true);
+    auto parser = SourceBufferParserWebM::create(contentType);
     if (!parser) {
         m_parseTracksStatus = kMTPluginFormatReaderError_AllocationFailure;
         return;
@@ -96,12 +100,9 @@ void FormatReader::parseByteSource(RetainPtr<MTPluginByteSourceRef>&& byteSource
     // Set a minimum audio sample duration of 0 so the parser creates indivisible samples with byte source ranges.
     parser->setMinimumAudioSampleDuration(0);
 
-    auto locker = holdLock(m_parseTracksLock);
-
-    m_byteSource = WTFMove(byteSource);
-    m_parseTracksStatus = WTF::nullopt;
-    m_duration = MediaTime::invalidTime();
-    m_trackReaders.clear();
+    parser->setCallOnClientThreadCallback([](Function<void()>&& function) {
+        TrackReader::storageQueue().dispatch(WTFMove(function));
+    });
 
     parser->setDidParseInitializationDataCallback([this, protectedThis = makeRef(*this)](SourceBufferParser::InitializationSegment&& initializationSegment, CompletionHandler<void()>&& completionHandler) {
         didParseTracks(WTFMove(initializationSegment), noErr);
@@ -116,9 +117,15 @@ void FormatReader::parseByteSource(RetainPtr<MTPluginByteSourceRef>&& byteSource
         didProvideMediaData(WTFMove(mediaSample), trackID, mediaType);
     });
 
+    auto locker = holdLock(m_parseTracksLock);
+    m_byteSource = WTFMove(byteSource);
+    m_parseTracksStatus = WTF::nullopt;
+    m_duration = MediaTime::invalidTime();
+    m_trackReaders.clear();
+
     readerQueue().dispatch([this, protectedThis = makeRef(*this), byteSource = m_byteSource, parser = parser.releaseNonNull()]() mutable {
         parser->appendData(WTFMove(byteSource));
-        callOnMainThread([this, protectedThis = makeRef(*this), parser = WTFMove(parser)]() mutable {
+        TrackReader::storageQueue().dispatch([this, protectedThis = makeRef(*this), parser = WTFMove(parser)]() mutable {
             finishParsing(WTFMove(parser));
         });
     });
@@ -126,7 +133,7 @@ void FormatReader::parseByteSource(RetainPtr<MTPluginByteSourceRef>&& byteSource
 
 void FormatReader::didParseTracks(SourceBufferPrivateClient::InitializationSegment&& segment, uint64_t errorCode)
 {
-    ASSERT(isMainThread());
+    ASSERT(!isMainThread());
 
     auto locker = holdLock(m_parseTracksLock);
     ASSERT(!m_parseTracksStatus);
@@ -162,7 +169,7 @@ void FormatReader::didParseTracks(SourceBufferPrivateClient::InitializationSegme
 
 void FormatReader::didProvideMediaData(Ref<MediaSample>&& mediaSample, uint64_t trackID, const String&)
 {
-    ASSERT(isMainThread());
+    ASSERT(!isMainThread());
 
     auto locker = holdLock(m_parseTracksLock);
     auto trackIndex = m_trackReaders.findMatching([&](auto& track) {
@@ -175,7 +182,7 @@ void FormatReader::didProvideMediaData(Ref<MediaSample>&& mediaSample, uint64_t 
 
 void FormatReader::finishParsing(Ref<SourceBufferParser>&& parser)
 {
-    ASSERT(isMainThread());
+    ASSERT(!isMainThread());
 
     auto locker = holdLock(m_parseTracksLock);
     ASSERT(m_parseTracksStatus.hasValue());
@@ -208,8 +215,6 @@ OSStatus FormatReader::copyProperty(CFStringRef key, CFAllocatorRef allocator, v
 
 OSStatus FormatReader::copyTrackArray(CFArrayRef* trackArrayCopy)
 {
-    ASSERT(!isMainThread());
-
     auto locker = holdLock(m_parseTracksLock);
     m_parseTracksCondition.wait(m_parseTracksLock, [&] {
         return m_parseTracksStatus.hasValue();

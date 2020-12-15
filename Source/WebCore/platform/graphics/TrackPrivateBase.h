@@ -63,6 +63,7 @@ public:
     virtual AtomString language() const { return emptyAtom(); }
 
     virtual int trackIndex() const { return 0; }
+    virtual Optional<uint64_t> trackUID() const;
 
     virtual MediaTime startTimeVariance() const { return MediaTime::zeroTime(); }
 

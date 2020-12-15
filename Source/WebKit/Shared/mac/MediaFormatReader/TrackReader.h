@@ -33,6 +33,10 @@
 
 DECLARE_CORE_MEDIA_TRAITS(TrackReader);
 
+namespace WTF {
+class WorkQueue;
+}
+
 namespace WebCore {
 class AudioTrackPrivate;
 class InbandTextTrackPrivate;
@@ -55,6 +59,8 @@ public:
     static RefPtr<TrackReader> create(Allocator&&, const FormatReader&, const WebCore::AudioTrackPrivate*);
     static RefPtr<TrackReader> create(Allocator&&, const FormatReader&, const WebCore::InbandTextTrackPrivate*);
 
+    static WTF::WorkQueue& storageQueue();
+
     uint64_t trackID() const { return m_trackID; }
     void addSample(Ref<WebCore::MediaSample>&&, MTPluginByteSourceRef);
     void waitForSample(Function<bool(WebCore::SampleMap&, bool)>&&) const;
@@ -67,7 +73,7 @@ public:
 private:
     using CoreMediaWrapped<TrackReader>::unwrap;
 
-    TrackReader(Allocator&&, const FormatReader&, const WebCore::TrackPrivateBase&, CMMediaType);
+    TrackReader(Allocator&&, const FormatReader&, CMMediaType, uint64_t);
 
     // CMBaseClass
     String debugDescription() const final { return "WebKit::TrackReader"_s; }
@@ -82,7 +88,7 @@ private:
 
     struct SampleStorage {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        ~SampleStorage() { ASSERT(isMainThread()); }
+        ~SampleStorage() { ASSERT(!isMainThread()); }
         WebCore::SampleMap sampleMap;
         bool hasAllSamples { false };
     };

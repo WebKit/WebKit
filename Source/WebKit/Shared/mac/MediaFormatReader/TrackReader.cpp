@@ -92,6 +92,7 @@ MediaSampleByteRange::MediaSampleByteRange(MediaSample& sample, MTPluginByteSour
     , m_byteRange(sample.byteRange())
     , m_byteSource(byteSource)
 {
+    ASSERT(!isMainThread());
     auto platformSample = sample.platformSample();
     switch (platformSample.type) {
     case PlatformSample::CMSampleBufferType:
@@ -139,36 +140,41 @@ RefPtr<TrackReader> TrackReader::create(Allocator&& allocator, const FormatReade
 {
     if (!track)
         return nullptr;
-    return adoptRef(new (allocator) TrackReader(WTFMove(allocator), formatReader, *track, kCMMediaType_Video));
+    return adoptRef(new (allocator) TrackReader(WTFMove(allocator), formatReader, kCMMediaType_Video, *track->trackUID()));
 }
 
 RefPtr<TrackReader> TrackReader::create(Allocator&& allocator, const FormatReader& formatReader, const AudioTrackPrivate* track)
 {
     if (!track)
         return nullptr;
-    return adoptRef(new (allocator) TrackReader(WTFMove(allocator), formatReader, *track, kCMMediaType_Audio));
+    return adoptRef(new (allocator) TrackReader(WTFMove(allocator), formatReader, kCMMediaType_Audio, *track->trackUID()));
 }
 
 RefPtr<TrackReader> TrackReader::create(Allocator&& allocator, const FormatReader& formatReader, const InbandTextTrackPrivate* track)
 {
     if (!track)
         return nullptr;
-    return adoptRef(new (allocator) TrackReader(WTFMove(allocator), formatReader, *track, kCMMediaType_Text));
+    return adoptRef(new (allocator) TrackReader(WTFMove(allocator), formatReader, kCMMediaType_Text, *track->trackUID()));
 }
 
-TrackReader::TrackReader(Allocator&& allocator, const FormatReader& formatReader, const TrackPrivateBase& track, CMMediaType mediaType)
+WorkQueue& TrackReader::storageQueue()
+{
+    static auto& queue = WorkQueue::create("WebKit::TrackReader Storage Queue", WorkQueue::Type::Serial).leakRef();
+    return queue;
+}
+
+TrackReader::TrackReader(Allocator&& allocator, const FormatReader& formatReader, CMMediaType mediaType, uint64_t trackID)
     : CoreMediaWrapped(WTFMove(allocator))
-    , m_trackID(track.id().string().toUInt64())
+    , m_trackID(trackID)
     , m_mediaType(mediaType)
     , m_duration(formatReader.duration())
 {
-    ASSERT(isMainThread());
-    ASSERT(m_trackID > 0);
+    ASSERT(!isMainThread());
 }
 
 void TrackReader::addSample(Ref<MediaSample>&& sample, MTPluginByteSourceRef byteSource)
 {
-    ASSERT(isMainThread());
+    ASSERT(!isMainThread());
     auto locker = holdLock(m_sampleStorageLock);
     if (!m_sampleStorage)
         m_sampleStorage = makeUnique<SampleStorage>();
@@ -187,7 +193,6 @@ void TrackReader::addSample(Ref<MediaSample>&& sample, MTPluginByteSourceRef byt
 
 void TrackReader::waitForSample(Function<bool(SampleMap&, bool)>&& predicate) const
 {
-    ASSERT(!isMainThread());
     auto locker = holdLock(m_sampleStorageLock);
     if (!m_sampleStorage)
         m_sampleStorage = makeUnique<SampleStorage>();
@@ -198,7 +203,7 @@ void TrackReader::waitForSample(Function<bool(SampleMap&, bool)>&& predicate) co
 
 void TrackReader::finishParsing()
 {
-    ASSERT(isMainThread());
+    ASSERT(!isMainThread());
     auto locker = holdLock(m_sampleStorageLock);
     if (!m_sampleStorage)
         m_sampleStorage = makeUnique<SampleStorage>();
@@ -243,7 +248,7 @@ OSStatus TrackReader::copyProperty(CFStringRef key, CFAllocatorRef allocator, vo
 void TrackReader::finalize()
 {
     auto locker = holdLock(m_sampleStorageLock);
-    callOnMainThread([sampleStorage = std::exchange(m_sampleStorage, nullptr)] { });
+    storageQueue().dispatch([sampleStorage = std::exchange(m_sampleStorage, nullptr)] { });
     CoreMediaWrapped<TrackReader>::finalize();
 }
 

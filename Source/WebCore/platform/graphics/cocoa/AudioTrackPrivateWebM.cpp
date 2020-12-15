@@ -44,9 +44,18 @@ AudioTrackPrivateWebM::AudioTrackPrivateWebM(webm::TrackEntry&& trackEntry)
 
 AtomString AudioTrackPrivateWebM::id() const
 {
-    if (m_trackID.isNull())
-        m_trackID = m_track.track_uid.is_present() ? AtomString::number(m_track.track_uid.value()) : emptyAtom();
+    if (m_trackID.isNull()) {
+        auto uid = trackUID();
+        m_trackID = uid ? AtomString::number(*uid) : emptyAtom();
+    }
     return m_trackID;
+}
+
+Optional<uint64_t> AudioTrackPrivateWebM::trackUID() const
+{
+    if (m_track.track_uid.is_present())
+        return m_track.track_uid.value();
+    return WTF::nullopt;
 }
 
 AtomString AudioTrackPrivateWebM::label() const
