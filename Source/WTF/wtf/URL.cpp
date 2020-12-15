@@ -917,6 +917,8 @@ bool portAllowed(const URL& url)
         3659, // apple-sasl / PasswordServer [Apple addition]
         4045, // lockd
         4190, // ManageSieve [Apple addition]
+        5060, // SIP
+        5061, // SIPS
         6000, // X11
         6665, // Alternate IRC [Apple addition]
         6666, // Alternate IRC [Apple addition]

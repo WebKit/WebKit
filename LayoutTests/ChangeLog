@@ -1,3 +1,49 @@
+2020-12-15  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r269436. rdar://problem/72298523
+
+    Consider blocking ports 5060 and 5061
+    https://bugs.webkit.org/show_bug.cgi?id=218557
+    <rdar://problem/71031479>
+    
+    Reviewed by Alex Christensen.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/fetch/api/request/request-bad-port.any-expected.txt: Added.
+    * web-platform-tests/fetch/api/request/request-bad-port.any.html: Added.
+    * web-platform-tests/fetch/api/request/request-bad-port.any.js: Added.
+    (BLOCKED_PORTS_LIST.map):
+    * web-platform-tests/fetch/api/request/request-bad-port.any.worker-expected.txt: Added.
+    * web-platform-tests/fetch/api/request/request-bad-port.any.worker.html: Added.
+    * web-platform-tests/fetch/api/request/request-bad-port.html: Removed.
+    * web-platform-tests/tools/wptserve/wptserve/utils.py:
+    (is_bad_port):
+    * web-platform-tests/websockets/Create-blocked-port.any-expected.txt:
+    * web-platform-tests/websockets/Create-blocked-port.any.js:
+    * web-platform-tests/websockets/Create-blocked-port.any.worker-expected.txt:
+    
+    Source/WTF:
+    
+    * wtf/URL.cpp:
+    (WTF::portAllowed):
+    
+    LayoutTests:
+    
+    * TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@269436 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-11-05  Youenn Fablet  <youenn@apple.com>
+
+            Consider blocking ports 5060 and 5061
+            https://bugs.webkit.org/show_bug.cgi?id=218557
+            <rdar://problem/71031479>
+
+            Reviewed by Alex Christensen.
+
+            * TestExpectations:
+
 2020-12-14  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r270373. rdar://problem/72298666
