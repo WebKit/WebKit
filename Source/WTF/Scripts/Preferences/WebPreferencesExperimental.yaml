@@ -788,6 +788,7 @@ SpeechRecognitionEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "HAVE(SPEECHRECOGNIZER) && ENABLE(MEDIA_STREAM)": true
       default: false
     WebCore:
       default: false
