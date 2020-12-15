@@ -80,21 +80,37 @@ ScrollAnimator::~ScrollAnimator()
 #endif
 }
 
-bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
+bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier, ScrollBehavior behavior)
 {
-    return scrollWithoutAnimation(orientation, granularity, step, multiplier);
+#if ENABLE(CSS_SCROLL_SNAP)
+    if (behavior != ScrollBehavior::DoDirectionalSnapping)
+        return scrollWithoutAnimation(orientation, step, multiplier);
+
+    FloatSize scrollOrigin = toFloatSize(m_scrollableArea.scrollOrigin());
+    FloatPoint newPosition = positionFromStep(orientation, step, multiplier);
+    auto newOffset = ScrollableArea::scrollOffsetFromPosition(newPosition, scrollOrigin);
+    auto currentOffset = ScrollableArea::scrollOffsetFromPosition(this->currentPosition(), scrollOrigin);
+    if (orientation == HorizontalScrollbar) {
+        newOffset.setX(m_scrollController.adjustScrollDestinationForDirectionalSnapping(ScrollEventAxis::Horizontal, newOffset.x(), multiplier, currentOffset.x()));
+        newPosition = ScrollableArea::scrollPositionFromOffset(newOffset, scrollOrigin);
+        return scroll(HorizontalScrollbar, granularity, newPosition.x() - this->currentPosition().x(), 1.0);
+    }
+
+    newOffset.setY(m_scrollController.adjustScrollDestinationForDirectionalSnapping(ScrollEventAxis::Vertical, newPosition.y(), multiplier, currentOffset.y()));
+    newPosition = ScrollableArea::scrollPositionFromOffset(newOffset, scrollOrigin);
+    return scroll(VerticalScrollbar, granularity, newPosition.y() - this->currentPosition().y(), 1.0);
+#else
+    UNUSED_PARAM(granularity);
+    UNUSED_PARAM(behavior);
+    return scrollWithoutAnimation(orientation, step, multiplier);
+#endif
 }
 
-bool ScrollAnimator::scrollWithoutAnimation(ScrollbarOrientation orientation, ScrollGranularity, float step, float multiplier)
+bool ScrollAnimator::scrollWithoutAnimation(ScrollbarOrientation orientation, float step, float multiplier)
 {
     FloatPoint currentPosition = this->currentPosition();
-    FloatSize delta;
-    if (orientation == HorizontalScrollbar)
-        delta.setWidth(step * multiplier);
-    else
-        delta.setHeight(step * multiplier);
-
-    FloatPoint newPosition = FloatPoint(currentPosition + delta).constrainedBetween(m_scrollableArea.minimumScrollPosition(), m_scrollableArea.maximumScrollPosition());
+    FloatPoint newPosition = positionFromStep(orientation, step, multiplier);
+    newPosition = newPosition.constrainedBetween(m_scrollableArea.minimumScrollPosition(), m_scrollableArea.maximumScrollPosition());
     if (currentPosition == newPosition)
         return false;
 
@@ -118,6 +134,16 @@ void ScrollAnimator::scrollToOffsetWithoutAnimation(const FloatPoint& offset, Sc
     m_currentPosition = newPosition;
     notifyPositionChanged(delta);
     updateActiveScrollSnapIndexForOffset();
+}
+
+FloatPoint ScrollAnimator::positionFromStep(ScrollbarOrientation orientation, float step, float multiplier)
+{
+    FloatSize delta;
+    if (orientation == HorizontalScrollbar)
+        delta.setWidth(step * multiplier);
+    else
+        delta.setHeight(step * multiplier);
+    return this->currentPosition() + delta;
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
@@ -182,7 +208,7 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
                     deltaY = -deltaY;
             }
             if (e.hasPreciseScrollingDeltas())
-                scrollWithoutAnimation(VerticalScrollbar, granularity, verticalScrollbar->pixelStep(), -deltaY);
+                scrollWithoutAnimation(VerticalScrollbar, verticalScrollbar->pixelStep(), -deltaY);
             else
                 scroll(VerticalScrollbar, granularity, verticalScrollbar->pixelStep(), -deltaY);
         }
@@ -195,7 +221,7 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
                     deltaX = -deltaX;
             }
             if (e.hasPreciseScrollingDeltas())
-                scrollWithoutAnimation(HorizontalScrollbar, granularity, horizontalScrollbar->pixelStep(), -deltaX);
+                scrollWithoutAnimation(HorizontalScrollbar, horizontalScrollbar->pixelStep(), -deltaX);
             else
                 scroll(HorizontalScrollbar, granularity, horizontalScrollbar->pixelStep(), -deltaX);
         }
@@ -271,6 +297,10 @@ FloatSize ScrollAnimator::viewportSize() const
     return m_scrollableArea.visibleSize();
 }
 
+float ScrollAnimator::pageScaleFactor() const
+{
+    return m_scrollableArea.pageScaleFactor();
+}
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)

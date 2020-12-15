@@ -100,7 +100,7 @@ static void indicesOfNearestSnapOffsets(LayoutType offset, const Vector<LayoutTy
 }
 
 template <typename LayoutType>
-LayoutType closestSnapOffset(const Vector<LayoutType>& snapOffsets, const Vector<ScrollOffsetRange<LayoutType>>& snapOffsetRanges, LayoutType scrollDestination, float velocity, unsigned& activeSnapIndex)
+static LayoutType closestSnapOffset(const Vector<LayoutType>& snapOffsets, const Vector<ScrollOffsetRange<LayoutType>>& snapOffsetRanges, LayoutType scrollDestination, float velocity, unsigned& activeSnapIndex, Optional<LayoutType> originalPositionForDirectionalSnapping)
 {
     ASSERT(snapOffsets.size());
     activeSnapIndex = 0;
@@ -132,32 +132,43 @@ LayoutType closestSnapOffset(const Vector<LayoutType>& snapOffsets, const Vector
     }
 
     // Non-zero velocity indicates a flick gesture. Even if another snap point is closer, we should choose the one in the direction of the flick gesture
-    // as long as a scroll snap offset range does not lie between the scroll destination and the targeted snap offset.
+    // as long as a scroll snap offset range does not lie between the scroll destination and the targeted snap offset. If we are doing directional
+    // snapping, we should never snap to a point that was on the other side of the original position in the opposite direction of this scroll.
+    // This allows directional scrolling to escape snap points.
     if (velocity < 0) {
-        if (lowerSnapOffsetRangeIndex != invalidSnapOffsetIndex && lowerSnapPosition < snapOffsetRanges[lowerSnapOffsetRangeIndex].end) {
+        if (lowerSnapOffsetRangeIndex == invalidSnapOffsetIndex || lowerSnapPosition >= snapOffsetRanges[lowerSnapOffsetRangeIndex].end) {
+            activeSnapIndex = lowerIndex;
+            return lowerSnapPosition;
+        }
+
+        if (!originalPositionForDirectionalSnapping.hasValue() || *originalPositionForDirectionalSnapping > upperSnapPosition) {
             activeSnapIndex = upperIndex;
             return upperSnapPosition;
         }
-        activeSnapIndex = lowerIndex;
-        return lowerSnapPosition;
+    } else {
+        if (upperSnapOffsetRangeIndex == invalidSnapOffsetIndex || snapOffsetRanges[upperSnapOffsetRangeIndex].start >= upperSnapPosition) {
+            activeSnapIndex = upperIndex;
+            return upperSnapPosition;
+        }
+
+        if (!originalPositionForDirectionalSnapping.hasValue() || *originalPositionForDirectionalSnapping < lowerSnapPosition) {
+            activeSnapIndex = lowerIndex;
+            return lowerSnapPosition;
+        }
     }
 
-    if (upperSnapOffsetRangeIndex != invalidSnapOffsetIndex && snapOffsetRanges[upperSnapOffsetRangeIndex].start < upperSnapPosition) {
-        activeSnapIndex = lowerIndex;
-        return lowerSnapPosition;
-    }
-    activeSnapIndex = upperIndex;
-    return upperSnapPosition;
+    activeSnapIndex = invalidSnapOffsetIndex;
+    return scrollDestination;
 }
 
-LayoutUnit closestSnapOffset(const Vector<LayoutUnit>& snapOffsets, const Vector<ScrollOffsetRange<LayoutUnit>>& snapOffsetRanges, LayoutUnit scrollDestination, float velocity, unsigned& activeSnapIndex)
+LayoutUnit closestSnapOffset(const Vector<LayoutUnit>& snapOffsets, const Vector<ScrollOffsetRange<LayoutUnit>>& snapOffsetRanges, LayoutUnit scrollDestination, float velocity, unsigned& activeSnapIndex, Optional<LayoutUnit> originalPositionForDirectionalSnapping)
 {
-    return closestSnapOffset<LayoutUnit>(snapOffsets, snapOffsetRanges, scrollDestination, velocity, activeSnapIndex);
+    return closestSnapOffset<LayoutUnit>(snapOffsets, snapOffsetRanges, scrollDestination, velocity, activeSnapIndex, originalPositionForDirectionalSnapping);
 }
 
-float closestSnapOffset(const Vector<float>& snapOffsets, const Vector<ScrollOffsetRange<float>>& snapOffsetRanges, float scrollDestination, float velocity, unsigned& activeSnapIndex)
+float closestSnapOffset(const Vector<float>& snapOffsets, const Vector<ScrollOffsetRange<float>>& snapOffsetRanges, float scrollDestination, float velocity, unsigned& activeSnapIndex, Optional<float> originalPositionForDirectionalSnapping)
 {
-    return closestSnapOffset<float>(snapOffsets, snapOffsetRanges, scrollDestination, velocity, activeSnapIndex);
+    return closestSnapOffset<float>(snapOffsets, snapOffsetRanges, scrollDestination, velocity, activeSnapIndex, originalPositionForDirectionalSnapping);
 }
 
 enum class InsetOrOutset {

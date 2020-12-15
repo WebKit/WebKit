@@ -108,10 +108,7 @@ public:
     virtual void willStartScrollSnapAnimation() { }
     virtual void didStopScrollSnapAnimation() { }
 
-    virtual float pageScaleFactor() const
-    {
-        return 1.0f;
-    }
+    virtual float pageScaleFactor() const = 0;
 
     virtual unsigned activeScrollOffsetIndex(ScrollEventAxis) const
     {
@@ -167,9 +164,8 @@ public:
     void setScrollSnapIndexDidChange(bool state) { m_activeScrollSnapIndexDidChange = state; }
     unsigned activeScrollSnapIndexForAxis(ScrollEventAxis) const;
     void updateScrollSnapState(const ScrollableArea&);
-
     void updateGestureInProgressState(const PlatformWheelEvent&);
-
+    float adjustScrollDestinationForDirectionalSnapping(ScrollEventAxis, float destination, float velocity, float originalPosition);
 #if PLATFORM(MAC)
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&);
 #endif

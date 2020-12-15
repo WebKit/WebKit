@@ -5532,6 +5532,11 @@ void FrameView::didFinishProhibitingScrollingWhenChangingContentSize()
     }
 }
 
+float FrameView::pageScaleFactor() const
+{
+    return frame().frameScaleFactor();
+}
+
 } // namespace WebCore
 
 #undef PAGE_ID

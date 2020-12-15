@@ -355,6 +355,11 @@ public:
     
     virtual String debugDescription() const = 0;
 
+    virtual float pageScaleFactor() const
+    {
+        return 1.0f;
+    }
+
 protected:
     WEBCORE_EXPORT ScrollableArea();
     WEBCORE_EXPORT virtual ~ScrollableArea();

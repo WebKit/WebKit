@@ -140,7 +140,7 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
         multiplier = -multiplier;
 
     step = adjustScrollStepForFixedContent(step, orientation, granularity);
-    return scrollAnimator().scroll(orientation, granularity, step, multiplier);
+    return scrollAnimator().scroll(orientation, granularity, step, multiplier, ScrollAnimator::ScrollBehavior::DoDirectionalSnapping);
 }
 
 void ScrollableArea::scrollToOffsetWithAnimation(const FloatPoint& offset, ScrollClamping)

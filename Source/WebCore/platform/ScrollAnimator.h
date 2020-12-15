@@ -67,12 +67,17 @@ public:
     explicit ScrollAnimator(ScrollableArea&);
     virtual ~ScrollAnimator();
 
+    enum ScrollBehavior {
+        Default,
+        DoDirectionalSnapping,
+    };
+
     // Computes a scroll destination for the given parameters.  Returns false if
     // already at the destination.  Otherwise, starts scrolling towards the
     // destination and returns true.  Scrolling may be immediate or animated.
     // The base class implementation always scrolls immediately, never animates.
-    virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);
-    bool scrollWithoutAnimation(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);
+    virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier, ScrollBehavior = ScrollBehavior::Default);
+    bool scrollWithoutAnimation(ScrollbarOrientation, float step, float multiplier);
 
     void scrollToOffset(const FloatPoint&);
     virtual void scrollToOffsetWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
@@ -133,11 +138,6 @@ public:
 
     void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&& testMonitor) { m_wheelEventTestMonitor = testMonitor; }
 
-#if (ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)) && PLATFORM(MAC)
-    void deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const override;
-    void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const override;
-#endif
-
 #if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
     std::unique_ptr<ScrollControllerTimer> createTimer(Function<void()>&&) final;
 #endif
@@ -147,17 +147,27 @@ public:
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&);
 #endif
     void updateScrollSnapState();
-    FloatPoint scrollOffset() const override;
-    void immediateScrollOnAxis(ScrollEventAxis, float delta) override;
     bool activeScrollSnapIndexDidChange() const;
     unsigned activeScrollSnapIndexForAxis(ScrollEventAxis) const;
+#endif
+
+    // ScrollControllerClient.
+#if ENABLE(CSS_SCROLL_SNAP)
+    FloatPoint scrollOffset() const override;
+    void immediateScrollOnAxis(ScrollEventAxis, float delta) override;
+    float pageScaleFactor() const override;
     LayoutSize scrollExtent() const override;
     FloatSize viewportSize() const override;
+#endif
+#if (ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)) && PLATFORM(MAC)
+    void deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const override;
+    void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const override;
 #endif
 
 protected:
     virtual void notifyPositionChanged(const FloatSize& delta);
     void updateActiveScrollSnapIndexForOffset();
+    FloatPoint positionFromStep(ScrollbarOrientation, float step, float multiplier);
 
     ScrollableArea& m_scrollableArea;
     RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;

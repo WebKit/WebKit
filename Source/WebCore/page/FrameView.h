@@ -848,6 +848,9 @@ private:
 
     void didFinishProhibitingScrollingWhenChangingContentSize() final;
 
+    // ScrollableArea.
+    float pageScaleFactor() const override;
+
     static MonotonicTime sCurrentPaintTimeStamp; // used for detecting decoded resource thrash in the cache
 
     const Ref<Frame> m_frame;

@@ -779,24 +779,24 @@ static bool rubberBandingEnabledForSystem()
 }
 #endif
 
-bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
+bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier, ScrollBehavior behavior)
 {
     m_haveScrolledSincePageLoad = true;
 
     if (!scrollAnimationEnabledForSystem() || !m_scrollableArea.scrollAnimatorEnabled())
-        return ScrollAnimator::scroll(orientation, granularity, step, multiplier);
+        return ScrollAnimator::scroll(orientation, granularity, step, multiplier, behavior);
 
     if (granularity == ScrollByPixel)
-        return ScrollAnimator::scroll(orientation, granularity, step, multiplier);
+        return ScrollAnimator::scroll(orientation, granularity, step, multiplier, behavior);
+
+    // This method doesn't do directional snapping, but our base class does. It will call into
+    // ScrollAnimatorMac::scroll again with the snapped positions and ScrollBehavior::Default.
+    if (behavior == ScrollBehavior::DoDirectionalSnapping)
+        return ScrollAnimator::scroll(orientation, granularity, step, multiplier, behavior);
 
     FloatPoint currentPosition = this->currentPosition();
-    FloatSize delta;
-    if (orientation == HorizontalScrollbar)
-        delta.setWidth(step * multiplier);
-    else
-        delta.setHeight(step * multiplier);
-
-    FloatPoint newPosition = FloatPoint(currentPosition + delta).constrainedBetween(m_scrollableArea.minimumScrollPosition(), m_scrollableArea.maximumScrollPosition());
+    FloatPoint newPosition = positionFromStep(orientation, step, multiplier);
+    newPosition = newPosition.constrainedBetween(m_scrollableArea.minimumScrollPosition(), m_scrollableArea.maximumScrollPosition());
     if (currentPosition == newPosition)
         return false;
 

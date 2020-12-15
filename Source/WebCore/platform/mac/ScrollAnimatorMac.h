@@ -79,7 +79,7 @@ private:
     Timer m_sendContentAreaScrolledTimer;
     FloatSize m_contentAreaScrolledTimerScrollDelta;
 
-    bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier) override;
+    bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier, ScrollBehavior) override;
     void scrollToOffsetWithoutAnimation(const FloatPoint&, ScrollClamping) override;
 
 #if ENABLE(RUBBER_BANDING)

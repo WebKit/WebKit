@@ -905,6 +905,22 @@ void ScrollController::setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis
     setActiveScrollSnapIndexForAxis(axis, activeIndex);
 }
 
+float ScrollController::adjustScrollDestinationForDirectionalSnapping(ScrollEventAxis axis, float destination, float velocity, float originalPosition)
+{
+    if (!usesScrollSnap())
+        return destination;
+
+    ScrollSnapAnimatorState& snapState = *m_scrollSnapState;
+    auto snapOffsets = snapState.snapOffsetsForAxis(axis);
+    if (!snapOffsets.size())
+        return destination;
+
+    unsigned snapIndex;
+    LayoutUnit offset = closestSnapOffset(snapState.snapOffsetsForAxis(axis), snapState.snapOffsetRangesForAxis(axis), LayoutUnit(destination / m_client.pageScaleFactor()), velocity, snapIndex, LayoutUnit(originalPosition / m_client.pageScaleFactor()));
+    return offset * m_client.pageScaleFactor();
+}
+
+
 void ScrollController::setActiveScrollSnapIndicesForOffset(ScrollOffset offset)
 {
     if (!usesScrollSnap())
