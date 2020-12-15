@@ -152,3 +152,9 @@ class TestContributor(unittest.TestCase):
         contributor_b = Contributor(**dictionary)
 
         self.assertEqual(contributor_a, contributor_b)
+
+    def test_upper_case_email(self):
+        mapping = Contributor.Mapping()
+        mapping.create('Fujii Hironori', 'Hironori.Fujii@sony.com')
+        self.assertEqual(mapping['Hironori.Fujii@sony.com'].name, 'Fujii Hironori')
+        self.assertEqual(mapping['hironori.fujii@sony.com'].name, 'Fujii Hironori')

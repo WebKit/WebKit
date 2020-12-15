@@ -77,6 +77,7 @@ class Contributor(object):
             self[contributor.name] = contributor
             for email in contributor.emails or []:
                 self[email] = contributor
+                self[email.lower()] = contributor
             return contributor
 
 
