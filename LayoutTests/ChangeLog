@@ -1,3 +1,9 @@
+2020-12-14  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Update baseline after r270801.
+
+        * platform/glib/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-computed-value-expected.txt:
+
 2020-12-14  Antoine Quint  <graouts@webkit.org>
 
         Simplify transform blending for simple cases
