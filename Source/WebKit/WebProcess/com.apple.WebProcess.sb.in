@@ -1644,10 +1644,15 @@
         )
     )
 )
+#endif // HAVE(SANDBOX_MESSAGE_FILTERING)
+
 
 ;; FIXME: This is just for logging. Remove when the GPU process is enabled by default.
 ;; These should only be accessed through an iokit-extension, so log if they are not.
-(allow iokit-open (with report) (with telemetry-backtrace)
+(allow iokit-open (with report)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+    (with telemetry-backtrace)
+#endif
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-registry-entry-class
@@ -1659,7 +1664,10 @@
 
 ;; FIXME: Data indicates this is only needed on ARM64. This logging will confirm.
 ;; Remove when the GPU process is enabled by default
-(allow iokit-open (with report) (with telemetry-backtrace)
+(allow iokit-open (with report)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+    (with telemetry-backtrace)
+#endif
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-user-client-class
@@ -1667,8 +1675,6 @@
         )
     )
 )
-
-#endif // HAVE(SANDBOX_MESSAGE_FILTERING)
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
 (when (defined? 'darwin-notification-post)
