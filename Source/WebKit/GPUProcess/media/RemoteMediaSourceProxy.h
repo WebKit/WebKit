@@ -82,8 +82,10 @@ private:
     void addSourceBuffer(const WebCore::ContentType&, AddSourceBufferCallback&&);
     void durationChanged(const MediaTime&);
     void setReadyState(WebCore::MediaPlayerEnums::ReadyState);
+    void setIsSeeking(bool);
     void waitForSeekCompleted();
     void seekCompleted();
+    void setTimeFudgeFactor(const MediaTime&);
 
     GPUConnectionToWebProcess& m_connectionToWebProcess;
     RemoteMediaSourceIdentifier m_identifier;

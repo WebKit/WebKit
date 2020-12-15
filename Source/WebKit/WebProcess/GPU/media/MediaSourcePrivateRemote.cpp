@@ -139,6 +139,12 @@ void MediaSourcePrivateRemote::setReadyState(MediaPlayer::ReadyState readyState)
     m_gpuProcessConnection.connection().send(Messages::RemoteMediaSourceProxy::SetReadyState(readyState), m_identifier);
 }
 
+void MediaSourcePrivateRemote::setIsSeeking(bool isSeeking)
+{
+    MediaSourcePrivate::setIsSeeking(isSeeking);
+    m_gpuProcessConnection.connection().send(Messages::RemoteMediaSourceProxy::SetIsSeeking(isSeeking), m_identifier);
+}
+
 void MediaSourcePrivateRemote::waitForSeekCompleted()
 {
     m_gpuProcessConnection.connection().send(Messages::RemoteMediaSourceProxy::WaitForSeekCompleted(), m_identifier);
@@ -147,6 +153,12 @@ void MediaSourcePrivateRemote::waitForSeekCompleted()
 void MediaSourcePrivateRemote::seekCompleted()
 {
     m_gpuProcessConnection.connection().send(Messages::RemoteMediaSourceProxy::SeekCompleted(), m_identifier);
+}
+
+void MediaSourcePrivateRemote::setTimeFudgeFactor(const MediaTime& fudgeFactor)
+{
+    MediaSourcePrivate::setTimeFudgeFactor(fudgeFactor);
+    m_gpuProcessConnection.connection().send(Messages::RemoteMediaSourceProxy::SetTimeFudgeFactor(fudgeFactor), m_identifier);
 }
 
 void MediaSourcePrivateRemote::seekToTime(const MediaTime& time)

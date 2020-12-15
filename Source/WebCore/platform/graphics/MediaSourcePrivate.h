@@ -64,12 +64,13 @@ public:
     virtual MediaPlayer::ReadyState readyState() const = 0;
     virtual void setReadyState(MediaPlayer::ReadyState) = 0;
 
+    virtual void setIsSeeking(bool isSeeking) { m_isSeeking = isSeeking; }
     virtual void waitForSeekCompleted() = 0;
     virtual void seekCompleted() = 0;
 
-    void setTimeFudgeFactor(const MediaTime& fudgeFactor) { m_timeFudgeFactor = fudgeFactor; }
+    virtual void setTimeFudgeFactor(const MediaTime& fudgeFactor) { m_timeFudgeFactor = fudgeFactor; }
+
     MediaTime timeFudgeFactor() const { return m_timeFudgeFactor; }
-    void setIsSeeking(bool flag) { m_isSeeking = flag; }
     bool isSeeking() const { return m_isSeeking; }
 
 private:

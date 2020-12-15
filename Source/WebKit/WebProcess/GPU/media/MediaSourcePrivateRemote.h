@@ -69,8 +69,10 @@ public:
     bool isEnded() const final;
     WebCore::MediaPlayer::ReadyState readyState() const final;
     void setReadyState(WebCore::MediaPlayer::ReadyState) final;
+    void setIsSeeking(bool) final;
     void waitForSeekCompleted() final;
     void seekCompleted() final;
+    void setTimeFudgeFactor(const MediaTime&) final;
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }

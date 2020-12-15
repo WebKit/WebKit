@@ -129,6 +129,12 @@ void RemoteMediaSourceProxy::setReadyState(WebCore::MediaPlayerEnums::ReadyState
         m_private->setReadyState(readyState);
 }
 
+void RemoteMediaSourceProxy::setIsSeeking(bool isSeeking)
+{
+    if (m_private)
+        m_private->setIsSeeking(isSeeking);
+}
+
 void RemoteMediaSourceProxy::waitForSeekCompleted()
 {
     if (m_private)
@@ -139,6 +145,12 @@ void RemoteMediaSourceProxy::seekCompleted()
 {
     if (m_private)
         m_private->seekCompleted();
+}
+
+void RemoteMediaSourceProxy::setTimeFudgeFactor(const MediaTime& fudgeFactor)
+{
+    if (m_private)
+        m_private->setTimeFudgeFactor(fudgeFactor);
 }
 
 } // namespace WebKit
