@@ -39,7 +39,9 @@ public:
     ~AXLogger();
     static void log(const String&);
     static void log(RefPtr<AXCoreObject>);
+    static void log(const Vector<RefPtr<AXCoreObject>>&);
     static void log(const std::pair<RefPtr<AXCoreObject>, AXObjectCache::AXNotification>&);
+    static void log(const AccessibilitySearchCriteria&);
     static void log(AccessibilityObjectInclusion);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     static void log(AXIsolatedTree&);

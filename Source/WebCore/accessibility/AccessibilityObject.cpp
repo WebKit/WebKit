@@ -493,51 +493,6 @@ void AccessibilityObject::addChild(AXCoreObject* child)
     insertChild(child, m_children.size());
 }
     
-static void appendChildrenToArray(AXCoreObject* object, bool isForward, AXCoreObject* startObject, AccessibilityObject::AccessibilityChildrenVector& results)
-{
-    // A table's children includes elements whose own children are also the table's children (due to the way the Mac exposes tables).
-    // The rows from the table should be queried, since those are direct descendants of the table, and they contain content.
-    const auto& searchChildren = object->isTable() && object->isExposable() ? object->rows() : object->children();
-
-    size_t childrenSize = searchChildren.size();
-
-    size_t startIndex = isForward ? childrenSize : 0;
-    size_t endIndex = isForward ? 0 : childrenSize;
-
-    // If the startObject is ignored, we should use an accessible sibling as a start element instead.
-    if (startObject && startObject->accessibilityIsIgnored() && startObject->isDescendantOfObject(object)) {
-        AXCoreObject* parentObject = startObject->parentObject();
-        // Go up the parent chain to find the highest ancestor that's also being ignored.
-        while (parentObject && parentObject->accessibilityIsIgnored()) {
-            if (parentObject == object)
-                break;
-            startObject = parentObject;
-            parentObject = parentObject->parentObject();
-        }
-        // Get the un-ignored sibling based on the search direction, and update the searchPosition.
-        while (startObject && startObject->accessibilityIsIgnored())
-            startObject = isForward ? startObject->previousSibling() : startObject->nextSibling();
-    }
-    
-    size_t searchPosition = startObject ? searchChildren.find(startObject) : WTF::notFound;
-    
-    if (searchPosition != WTF::notFound) {
-        if (isForward)
-            endIndex = searchPosition + 1;
-        else
-            endIndex = searchPosition;
-    }
-
-    // This is broken into two statements so that it's easier read.
-    if (isForward) {
-        for (size_t i = startIndex; i > endIndex; i--)
-            appendAccessibilityObject(searchChildren.at(i - 1).get(), results);
-    } else {
-        for (size_t i = startIndex; i < endIndex; i++)
-            appendAccessibilityObject(searchChildren.at(i).get(), results);
-    }
-}
-
 void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* criteria, AccessibilityChildrenVector& results)
 {
     ASSERT(criteria);
@@ -3792,8 +3747,56 @@ static bool objectMatchesSearchCriteriaWithResultLimit(AXCoreObject* object, Acc
     return false;
 }
 
+static void appendChildrenToArray(AXCoreObject* object, bool isForward, AXCoreObject* startObject, AccessibilityObject::AccessibilityChildrenVector& results)
+{
+    // A table's children includes elements whose own children are also the table's children (due to the way the Mac exposes tables).
+    // The rows from the table should be queried, since those are direct descendants of the table, and they contain content.
+    const auto& searchChildren = object->isTable() && object->isExposable() ? object->rows() : object->children();
+
+    size_t childrenSize = searchChildren.size();
+
+    size_t startIndex = isForward ? childrenSize : 0;
+    size_t endIndex = isForward ? 0 : childrenSize;
+
+    // If the startObject is ignored, we should use an accessible sibling as a start element instead.
+    if (startObject && startObject->accessibilityIsIgnored() && startObject->isDescendantOfObject(object)) {
+        AXCoreObject* parentObject = startObject->parentObject();
+        // Go up the parent chain to find the highest ancestor that's also being ignored.
+        while (parentObject && parentObject->accessibilityIsIgnored()) {
+            if (parentObject == object)
+                break;
+            startObject = parentObject;
+            parentObject = parentObject->parentObject();
+        }
+        // Get the un-ignored sibling based on the search direction, and update the searchPosition.
+        while (startObject && startObject->accessibilityIsIgnored())
+            startObject = isForward ? startObject->previousSibling() : startObject->nextSibling();
+    }
+
+    size_t searchPosition = startObject ? searchChildren.find(startObject) : WTF::notFound;
+
+    if (searchPosition != WTF::notFound) {
+        if (isForward)
+            endIndex = searchPosition + 1;
+        else
+            endIndex = searchPosition;
+    }
+
+    // This is broken into two statements so that it's easier read.
+    if (isForward) {
+        for (size_t i = startIndex; i > endIndex; i--)
+            appendAccessibilityObject(searchChildren.at(i - 1).get(), results);
+    } else {
+        for (size_t i = startIndex; i < endIndex; i++)
+            appendAccessibilityObject(searchChildren.at(i).get(), results);
+    }
+}
+
 void findMatchingObjects(AccessibilitySearchCriteria const& criteria, AXCoreObject::AccessibilityChildrenVector& results)
 {
+    AXTRACE("Accessibility::findMatchingObjects");
+    AXLOG(criteria);
+
     // This search algorithm only searches the elements before/after the starting object.
     // It does this by stepping up the parent chain and at each level doing a DFS.
 
@@ -3842,6 +3845,8 @@ void findMatchingObjects(AccessibilitySearchCriteria const& criteria, AXCoreObje
 
         previousObject = startObject;
     }
+
+    AXLOG(results);
 }
 
 } // namespace Accessibility
