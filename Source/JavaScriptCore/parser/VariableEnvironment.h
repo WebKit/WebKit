@@ -419,4 +419,26 @@ private:
     HashMap<CompactTDZEnvironmentKey, unsigned> m_map;
 };
 
+class TDZEnvironmentLink : public RefCounted<TDZEnvironmentLink> {
+    TDZEnvironmentLink(CompactTDZEnvironmentMap::Handle handle, RefPtr<TDZEnvironmentLink> parent)
+        : m_handle(WTFMove(handle))
+        , m_parent(WTFMove(parent))
+    { }
+
+public:
+    static RefPtr<TDZEnvironmentLink> create(CompactTDZEnvironmentMap::Handle handle, RefPtr<TDZEnvironmentLink> parent)
+    {
+        return adoptRef(new TDZEnvironmentLink(WTFMove(handle), WTFMove(parent)));
+    }
+
+    bool contains(UniquedStringImpl* impl) const { return m_handle.environment().toTDZEnvironment().contains(impl); }
+    TDZEnvironmentLink* parent() { return m_parent.get(); }
+
+private:
+    friend class CachedTDZEnvironmentLink;
+
+    CompactTDZEnvironmentMap::Handle m_handle;
+    RefPtr<TDZEnvironmentLink> m_parent;
+};
+
 } // namespace JSC

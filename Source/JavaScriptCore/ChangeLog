@@ -1,3 +1,52 @@
+2020-12-15  Saam Barati  <sbarati@apple.com>
+
+        Switch to using a linked list for the TDZ environment instead of a Vector
+        https://bugs.webkit.org/show_bug.cgi?id=219909
+        <rdar://71441753>
+
+        Reviewed by Tadeu Zagallo.
+
+        Before, we'd represent the TDZ stack in terms of a Vector. While the entries
+        in the Vector were reference counted, the spine of the Vector itself would
+        match the length of the TDZ scope stack. It turns out this spine itself can
+        use non-trivial amounts of memory. We are seeing about a 0.5% regression from
+        this inside RAMification. This change makes it so that we now use a tree-like
+        data structure for scope stack entries. The data structure is a tree with only
+        parent pointers. Any field that used to be a vector of entries is now a
+        pointer to a node in this tree. So any pointer into this tree will have a
+        linked-list window into the tree, where the linked-list represents the same
+        data as the previous vector-as-stack data structure.
+        
+        Initial testing shows this might be up to a 0.5% progression on RAMification.
+
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createExecutable):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::popLexicalScopeInternal):
+        (JSC::BytecodeGenerator::needsTDZCheck):
+        (JSC::BytecodeGenerator::liftTDZCheckIfPossible):
+        (JSC::BytecodeGenerator::pushTDZVariables):
+        (JSC::BytecodeGenerator::getVariablesUnderTDZ):
+        (JSC::BytecodeGenerator::preserveTDZStack):
+        (JSC::BytecodeGenerator::restoreTDZStack):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::generate):
+        * parser/VariableEnvironment.h:
+        (JSC::TDZEnvironmentLink::TDZEnvironmentLink):
+        (JSC::TDZEnvironmentLink::create):
+        (JSC::TDZEnvironmentLink::contains const):
+        (JSC::TDZEnvironmentLink::parent):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedTDZEnvironmentLink::encode):
+        (JSC::CachedTDZEnvironmentLink::decode const):
+        * runtime/CodeCache.cpp:
+        (JSC::generateUnlinkedCodeBlockImpl):
+        (JSC::CodeCache::getUnlinkedGlobalFunctionExecutable):
+
 2020-12-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r270860.

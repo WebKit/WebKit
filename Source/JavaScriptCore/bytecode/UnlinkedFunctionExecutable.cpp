@@ -82,7 +82,7 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
     return result;
 }
 
-UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM& vm, Structure* structure, const SourceCode& parentSource, FunctionMetadataNode* node, UnlinkedFunctionKind kind, ConstructAbility constructAbility, JSParserScriptMode scriptMode, Optional<Vector<CompactTDZEnvironmentMap::Handle>> parentScopeTDZVariables, DerivedContextType derivedContextType, NeedsClassFieldInitializer needsClassFieldInitializer, bool isBuiltinDefaultClassConstructor)
+UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM& vm, Structure* structure, const SourceCode& parentSource, FunctionMetadataNode* node, UnlinkedFunctionKind kind, ConstructAbility constructAbility, JSParserScriptMode scriptMode, RefPtr<TDZEnvironmentLink> parentScopeTDZVariables, DerivedContextType derivedContextType, NeedsClassFieldInitializer needsClassFieldInitializer, bool isBuiltinDefaultClassConstructor)
     : Base(vm, structure)
     , m_firstLineOffset(node->firstLine() - parentSource.firstLine().oneBasedInt())
     , m_isInStrictContext(node->isInStrictContext())
@@ -127,7 +127,7 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM& vm, Structure* struct
     if (!node->classSource().isNull())
         setClassSource(node->classSource());
     if (parentScopeTDZVariables)
-        ensureRareData().m_parentScopeTDZVariables = WTFMove(*parentScopeTDZVariables);
+        ensureRareData().m_parentScopeTDZVariables = WTFMove(parentScopeTDZVariables);
 }
 
 UnlinkedFunctionExecutable::~UnlinkedFunctionExecutable()

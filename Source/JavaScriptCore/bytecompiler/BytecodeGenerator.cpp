@@ -289,7 +289,7 @@ ParserError BytecodeGenerator::generate()
     return ParserError(ParserError::ErrorNone);
 }
 
-BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedProgramCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const CachedTDZStack& parentScopeTDZVariables, ECMAMode ecmaMode)
+BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedProgramCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, ECMAMode ecmaMode)
     : BytecodeGeneratorBase(makeUnique<UnlinkedCodeBlockGenerator>(vm, codeBlock), CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters())
     , m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(programNode)
@@ -304,7 +304,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
     , m_needsToUpdateArrowFunctionContext(programNode->usesArrowFunction() || programNode->usesEval())
     , m_ecmaMode(ecmaMode)
 {
-    ASSERT_UNUSED(parentScopeTDZVariables, !parentScopeTDZVariables.size());
+    ASSERT_UNUSED(parentScopeTDZVariables, !parentScopeTDZVariables);
 
     m_codeBlock->setNumParameters(1); // Allocate space for "this"
 
@@ -336,7 +336,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
     }
 }
 
-BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, UnlinkedFunctionCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const CachedTDZStack& parentScopeTDZVariables, ECMAMode ecmaMode)
+BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, UnlinkedFunctionCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, ECMAMode ecmaMode)
     : BytecodeGeneratorBase(makeUnique<UnlinkedCodeBlockGenerator>(vm, codeBlock), CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters())
     , m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(functionNode)
@@ -363,8 +363,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     functionSymbolTable->setUsesNonStrictEval(m_usesNonStrictEval);
     int symbolTableConstantIndex = 0;
 
-    m_parentScopeTDZStackSize = parentScopeTDZVariables.size();
-    m_cachedVariablesUnderTDZ = parentScopeTDZVariables;
+    m_cachedParentTDZ = parentScopeTDZVariables;
 
     FunctionParameters& parameters = *functionNode->parameters(); 
     // http://www.ecma-international.org/ecma-262/6.0/index.html#sec-functiondeclarationinstantiation
@@ -839,7 +838,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     pushLexicalScope(m_scopeNode, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, shouldInitializeBlockScopedFunctions);
 }
 
-BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const CachedTDZStack& parentScopeTDZVariables, ECMAMode ecmaMode)
+BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, ECMAMode ecmaMode)
     : BytecodeGeneratorBase(makeUnique<UnlinkedCodeBlockGenerator>(vm, codeBlock), CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters())
     , m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(evalNode)
@@ -857,8 +856,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
 {
     m_codeBlock->setNumParameters(1);
 
-    m_parentScopeTDZStackSize = parentScopeTDZVariables.size();
-    m_cachedVariablesUnderTDZ = parentScopeTDZVariables;
+    m_cachedParentTDZ = parentScopeTDZVariables;
 
     emitEnter();
 
@@ -903,7 +901,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     pushLexicalScope(m_scopeNode, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, shouldInitializeBlockScopedFunctions);
 }
 
-BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNode, UnlinkedModuleProgramCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const CachedTDZStack& parentScopeTDZVariables, ECMAMode ecmaMode)
+BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNode, UnlinkedModuleProgramCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, ECMAMode ecmaMode)
     : BytecodeGeneratorBase(makeUnique<UnlinkedCodeBlockGenerator>(vm, codeBlock), CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters())
     , m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(moduleProgramNode)
@@ -918,7 +916,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
     , m_needsToUpdateArrowFunctionContext(moduleProgramNode->usesArrowFunction() || moduleProgramNode->usesEval())
     , m_ecmaMode(ecmaMode)
 {
-    ASSERT_UNUSED(parentScopeTDZVariables, !parentScopeTDZVariables.size());
+    ASSERT_UNUSED(parentScopeTDZVariables, !parentScopeTDZVariables);
 
     SymbolTable* moduleEnvironmentSymbolTable = SymbolTable::create(m_vm);
     moduleEnvironmentSymbolTable->setUsesNonStrictEval(m_usesNonStrictEval);
@@ -2168,7 +2166,6 @@ void BytecodeGenerator::popLexicalScopeInternal(VariableEnvironment& environment
     }
 
     m_TDZStack.removeLast();
-    m_cachedVariablesUnderTDZ.removeLast();
 }
 
 void BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration(VariableEnvironmentNode* node, RegisterID* loopSymbolTable)
@@ -2850,17 +2847,20 @@ void BytecodeGenerator::emitTDZCheck(RegisterID* target)
 bool BytecodeGenerator::needsTDZCheck(const Variable& variable)
 {
     for (unsigned i = m_TDZStack.size(); i--;) {
-        auto iter = m_TDZStack[i].find(variable.ident().impl());
-        if (iter == m_TDZStack[i].end())
+        auto iter = m_TDZStack[i].first.find(variable.ident().impl());
+        if (iter == m_TDZStack[i].first.end())
             continue;
         return iter->value != TDZNecessityLevel::NotNeeded;
     }
 
-    for (unsigned i = m_parentScopeTDZStackSize; i--;) {
-        if (m_cachedVariablesUnderTDZ[i].environment().toTDZEnvironment().contains(variable.ident().impl()))
-            return true;
+    {
+        TDZEnvironmentLink* environment = m_cachedParentTDZ.get();
+        while (environment) {
+            if (environment->contains(variable.ident().impl()))
+                return true;
+            environment = environment->parent();
+        }
     }
-
     return false;
 }
 
@@ -2881,8 +2881,8 @@ void BytecodeGenerator::liftTDZCheckIfPossible(const Variable& variable)
 {
     RefPtr<UniquedStringImpl> identifier(variable.ident().impl());
     for (unsigned i = m_TDZStack.size(); i--;) {
-        auto iter = m_TDZStack[i].find(identifier);
-        if (iter != m_TDZStack[i].end()) {
+        auto iter = m_TDZStack[i].first.find(identifier);
+        if (iter != m_TDZStack[i].first.end()) {
             if (iter->value == TDZNecessityLevel::Optimize)
                 iter->value = TDZNecessityLevel::NotNeeded;
             break;
@@ -2908,56 +2908,57 @@ void BytecodeGenerator::pushTDZVariables(const VariableEnvironment& environment,
     for (const auto& entry : environment)
         map.add(entry.key, entry.value.isFunction() ? TDZNecessityLevel::NotNeeded : level);
 
-    m_TDZStack.append(WTFMove(map));
-    m_cachedVariablesUnderTDZ.append({ });
+    m_TDZStack.append(TDZStackEntry { WTFMove(map), nullptr });
 }
 
-Optional<BytecodeGenerator::CachedTDZStack> BytecodeGenerator::getVariablesUnderTDZ()
+RefPtr<TDZEnvironmentLink> BytecodeGenerator::getVariablesUnderTDZ()
 {
+    RefPtr<TDZEnvironmentLink> parent = m_cachedParentTDZ;
+    if (!m_TDZStack.size())
+        return parent;
+
     auto assertCacheIsCoherent = [&] {
 #if ASSERT_ENABLED
-        for (size_t i = 0; i < m_cachedVariablesUnderTDZ.size(); ++i)
-            ASSERT(!!m_cachedVariablesUnderTDZ[i]);
+        TDZEnvironmentLink* parent = m_cachedParentTDZ.get();
+        for (auto& entry : m_TDZStack) {
+            ASSERT(entry.second);
+            ASSERT(entry.second->parent() == parent);
+            parent = entry.second.get();
+        }
 #endif
     };
 
-    RELEASE_ASSERT(m_TDZStack.size() + m_parentScopeTDZStackSize == m_cachedVariablesUnderTDZ.size());
-
-    if (m_cachedVariablesUnderTDZ.isEmpty())
-        return WTF::nullopt;
-
-    if (m_cachedVariablesUnderTDZ.last()) {
+    if (m_TDZStack.last().second) {
         assertCacheIsCoherent();
-        return m_cachedVariablesUnderTDZ;
+        return m_TDZStack.last().second;
     }
 
-    for (size_t i = m_TDZStack.size(); i--;) {
-        if (m_cachedVariablesUnderTDZ[i + m_parentScopeTDZStackSize])
-            break;
-
-        auto& map = m_TDZStack[i];
-        TDZEnvironment environment;
-        for (auto& entry : map) {
-            if (entry.value != TDZNecessityLevel::NotNeeded)
-                environment.add(entry.key.get());
+    for (auto& entry : m_TDZStack) {
+        if (!entry.second) {
+            auto& map = entry.first;
+            TDZEnvironment environment;
+            for (auto& entry : map) {
+                if (entry.value != TDZNecessityLevel::NotNeeded)
+                    environment.add(entry.key.get());
+            }
+            entry.second = TDZEnvironmentLink::create(m_vm.m_compactVariableMap->get(environment), parent);
         }
-        m_cachedVariablesUnderTDZ[i + m_parentScopeTDZStackSize] = m_vm.m_compactVariableMap->get(environment);
+        parent = entry.second;
     }
 
     assertCacheIsCoherent();
-    return m_cachedVariablesUnderTDZ;
+
+    return parent;
 }
 
 void BytecodeGenerator::preserveTDZStack(BytecodeGenerator::PreservedTDZStack& preservedStack)
 {
     preservedStack.m_preservedTDZStack = m_TDZStack;
-    preservedStack.m_cachedTDZStack = m_cachedVariablesUnderTDZ;
 }
 
 void BytecodeGenerator::restoreTDZStack(const BytecodeGenerator::PreservedTDZStack& preservedStack)
 {
     m_TDZStack = preservedStack.m_preservedTDZStack;
-    m_cachedVariablesUnderTDZ = preservedStack.m_cachedTDZStack;
 }
 
 RegisterID* BytecodeGenerator::emitNewObject(RegisterID* dst)

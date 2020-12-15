@@ -1763,6 +1763,26 @@ private:
     int m_startColumn;
 };
 
+class CachedTDZEnvironmentLink : public CachedObject<TDZEnvironmentLink> {
+public:
+    void encode(Encoder& encoder, const TDZEnvironmentLink& environment)
+    {
+        m_handle.encode(encoder, environment.m_handle);
+        m_parent.encode(encoder, environment.m_parent);
+    }
+
+    TDZEnvironmentLink* decode(Decoder& decoder) const
+    {
+        CompactTDZEnvironmentMap::Handle handle = m_handle.decode(decoder);
+        RefPtr<TDZEnvironmentLink> parent = m_parent.decode(decoder);
+        return new TDZEnvironmentLink(WTFMove(handle), WTFMove(parent));
+    }
+
+private:
+    CachedCompactTDZEnvironmentMapHandle m_handle;
+    CachedRefPtr<CachedTDZEnvironmentLink> m_parent;
+};
+
 class CachedFunctionExecutableRareData : public CachedObject<UnlinkedFunctionExecutable::RareData> {
 public:
     void encode(Encoder& encoder, const UnlinkedFunctionExecutable::RareData& rareData)
@@ -1781,7 +1801,7 @@ public:
 
 private:
     CachedSourceCodeWithoutProvider m_classSource;
-    CachedVector<CachedCompactTDZEnvironmentMapHandle> m_parentScopeTDZVariables;
+    CachedRefPtr<CachedTDZEnvironmentLink> m_parentScopeTDZVariables;
 };
 
 class CachedFunctionExecutable : public CachedObject<UnlinkedFunctionExecutable> {

@@ -407,12 +407,11 @@ namespace JSC {
 
     public:
         typedef DeclarationStacks::FunctionStack FunctionStack;
-        using CachedTDZStack = Vector<CompactTDZEnvironmentMap::Handle>;
 
-        BytecodeGenerator(VM&, ProgramNode*, UnlinkedProgramCodeBlock*, OptionSet<CodeGenerationMode>, const CachedTDZStack&, ECMAMode);
-        BytecodeGenerator(VM&, FunctionNode*, UnlinkedFunctionCodeBlock*, OptionSet<CodeGenerationMode>, const CachedTDZStack&, ECMAMode);
-        BytecodeGenerator(VM&, EvalNode*, UnlinkedEvalCodeBlock*, OptionSet<CodeGenerationMode>, const CachedTDZStack&, ECMAMode);
-        BytecodeGenerator(VM&, ModuleProgramNode*, UnlinkedModuleProgramCodeBlock*, OptionSet<CodeGenerationMode>, const CachedTDZStack&, ECMAMode);
+        BytecodeGenerator(VM&, ProgramNode*, UnlinkedProgramCodeBlock*, OptionSet<CodeGenerationMode>, const RefPtr<TDZEnvironmentLink>&, ECMAMode);
+        BytecodeGenerator(VM&, FunctionNode*, UnlinkedFunctionCodeBlock*, OptionSet<CodeGenerationMode>, const RefPtr<TDZEnvironmentLink>&, ECMAMode);
+        BytecodeGenerator(VM&, EvalNode*, UnlinkedEvalCodeBlock*, OptionSet<CodeGenerationMode>, const RefPtr<TDZEnvironmentLink>&, ECMAMode);
+        BytecodeGenerator(VM&, ModuleProgramNode*, UnlinkedModuleProgramCodeBlock*, OptionSet<CodeGenerationMode>, const RefPtr<TDZEnvironmentLink>&, ECMAMode);
 
         ~BytecodeGenerator();
         
@@ -432,7 +431,7 @@ namespace JSC {
         NeedsClassFieldInitializer needsClassFieldInitializer() const { return m_codeBlock->needsClassFieldInitializer(); }
 
         template<typename Node, typename UnlinkedCodeBlock>
-        static ParserError generate(VM& vm, Node* node, const SourceCode& sourceCode, UnlinkedCodeBlock* unlinkedCodeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const CachedTDZStack& parentScopeTDZVariables, ECMAMode ecmaMode)
+        static ParserError generate(VM& vm, Node* node, const SourceCode& sourceCode, UnlinkedCodeBlock* unlinkedCodeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, ECMAMode ecmaMode)
         {
             MonotonicTime before;
             if (UNLIKELY(Options::reportBytecodeCompileTimes()))
@@ -1198,7 +1197,7 @@ namespace JSC {
             return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, scriptMode(), WTFMove(optionalVariablesUnderTDZ), newDerivedContextType, needsClassFieldInitializer);
         }
 
-        Optional<CachedTDZStack> getVariablesUnderTDZ();
+        RefPtr<TDZEnvironmentLink> getVariablesUnderTDZ();
 
         RegisterID* emitConstructVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall);
         template<typename CallOp>
@@ -1229,10 +1228,11 @@ namespace JSC {
 
         RegisterID* emitThrowExpressionTooDeepException();
 
+        using TDZStackEntry = std::pair<TDZMap, RefPtr<TDZEnvironmentLink>>;
+
         class PreservedTDZStack {
         private:
-            Vector<TDZMap> m_preservedTDZStack;
-            CachedTDZStack m_cachedTDZStack;
+            Vector<TDZStackEntry> m_preservedTDZStack;
             friend class BytecodeGenerator;
         };
 
@@ -1264,9 +1264,8 @@ namespace JSC {
         };
         Vector<LexicalScopeStackEntry> m_lexicalScopeStack;
 
-        size_t m_parentScopeTDZStackSize { 0 };
-        Vector<TDZMap> m_TDZStack;
-        CachedTDZStack m_cachedVariablesUnderTDZ;
+        RefPtr<TDZEnvironmentLink> m_cachedParentTDZ;
+        Vector<TDZStackEntry> m_TDZStack;
         Optional<size_t> m_varScopeLexicalScopeStackIndex;
         void pushTDZVariables(const VariableEnvironment&, TDZCheckOptimization, TDZRequirement);
 

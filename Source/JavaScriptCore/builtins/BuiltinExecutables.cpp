@@ -251,7 +251,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
         }
     }
 
-    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(vm, source, &metadata, kind, constructAbility, JSParserScriptMode::Classic, WTF::nullopt, DerivedContextType::None, needsClassFieldInitializer, isBuiltinDefaultClassConstructor);
+    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(vm, source, &metadata, kind, constructAbility, JSParserScriptMode::Classic, nullptr, DerivedContextType::None, needsClassFieldInitializer, isBuiltinDefaultClassConstructor);
     return functionExecutable;
 }
 
