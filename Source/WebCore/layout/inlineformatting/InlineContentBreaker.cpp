@@ -87,16 +87,6 @@ static inline Optional<size_t> firstTextRunIndex(const InlineContentBreaker::Con
     return { };
 }
 
-static inline Optional<size_t> lastContentRunIndex(const InlineContentBreaker::ContinuousContent& continuousContent)
-{
-    auto& runs = continuousContent.runs();
-    for (auto index = runs.size(); index--;) {
-        if (runs[index].inlineItem.isText() || runs[index].inlineItem.isBox())
-            return index;
-    }
-    return { };
-}
-
 static inline bool isWrappingAllowed(const RenderStyle& style)
 {
     // Do not try to wrap overflown 'pre' and 'no-wrap' content to next line.
@@ -113,14 +103,6 @@ static inline Optional<size_t> lastWrapOpportunityIndex(const InlineContentBreak
     ASSERT(!runList.isEmpty());
     auto lastItemIndex = runList.size() - 1;
     return isWrappingAllowed(runList[lastItemIndex].inlineItem.style()) ? makeOptional(lastItemIndex) : WTF::nullopt;
-}
-
-bool InlineContentBreaker::isContentWrappingAllowed(const ContinuousContent& continuousContent) const
-{
-    // Use the last inline item with content (where we would be wrapping) to decide if content wrapping is allowed.
-    auto& continuousRuns = continuousContent.runs();
-    auto runIndex = lastContentRunIndex(continuousContent).valueOr(continuousRuns.size() - 1);
-    return isWrappingAllowed(continuousRuns[runIndex].inlineItem.style());
 }
 
 bool InlineContentBreaker::shouldKeepEndOfLineWhitespace(const ContinuousContent& continuousContent) const
@@ -235,8 +217,34 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
         ASSERT(!m_hasWrapOpportunityAtPreviousPosition);
         return { Result::Action::Keep, IsEndOfLine::No };
     }
-    // Now either wrap here or at an earlier position, or not wrap at all.
-    if (isContentWrappingAllowed(continuousContent))
+    // Now either wrap this content over to the next line or revert back to an earlier wrapping opportunity, or not wrap at all.
+    auto shouldWrapThisContentToNextLine = [&] {
+        // The individual runs in this continuous content don't break, let's check if we are allowed to wrap this content to next line (e.g. pre would prevent us from wrapping).
+        auto& runs = continuousContent.runs();
+        auto& lastInlineItem = runs.last().inlineItem;
+        // Parent style drives the wrapping behavior here.
+        // e.g. <div style="white-space: nowrap">some text<div style="display: inline-block; white-space: pre-wrap"></div></div>.
+        // While the inline-block has pre-wrap which allows wrapping, the content lives in a nowrap context.
+        if (lastInlineItem.isBox() || lastInlineItem.isInlineBoxStart() || lastInlineItem.isInlineBoxStart())
+            return isWrappingAllowed(lastInlineItem.layoutBox().parent().style());
+        if (lastInlineItem.isText()) {
+            if (runs.size() == 1) {
+                // Fast path for the most common case of an individual text item.
+                return isWrappingAllowed(lastInlineItem.layoutBox().style());
+            }
+            for (auto& run : WTF::makeReversedRange(runs)) {
+                auto& inlineItem = run.inlineItem;
+                if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxStart())
+                    return isWrappingAllowed(inlineItem.layoutBox().parent().style());
+                ASSERT(!inlineItem.isBox());
+            }
+            // This must be a set of individual text runs. We could just check the last item.
+            return isWrappingAllowed(lastInlineItem.layoutBox().style());
+        }
+        ASSERT_NOT_REACHED();
+        return true;
+    };
+    if (shouldWrapThisContentToNextLine())
         return { Result::Action::Wrap, IsEndOfLine::Yes };
     if (m_hasWrapOpportunityAtPreviousPosition)
         return { Result::Action::RevertToLastWrapOpportunity, IsEndOfLine::Yes };

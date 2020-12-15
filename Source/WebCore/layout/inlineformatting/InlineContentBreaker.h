@@ -128,7 +128,6 @@ private:
     };
     WordBreakRule wordBreakBehavior(const RenderStyle&) const;
     bool shouldKeepEndOfLineWhitespace(const ContinuousContent&) const;
-    bool isContentWrappingAllowed(const ContinuousContent&) const;
 
     bool n_hyphenationIsDisabled { false };
     bool m_hasWrapOpportunityAtPreviousPosition { false };
