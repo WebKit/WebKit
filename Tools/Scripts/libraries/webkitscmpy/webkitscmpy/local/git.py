@@ -31,7 +31,6 @@ from webkitscmpy import Commit, Contributor, log
 
 class Git(Scm):
     GIT_COMMIT = re.compile(r'commit (?P<hash>[0-9a-f]+)')
-    GIT_SVN_REVISION = re.compile(r'git-svn-id: \S+:\/\/.+@(?P<revision>\d+) .+-.+-.+-.+')
 
     @classmethod
     @decorators.Memoize()

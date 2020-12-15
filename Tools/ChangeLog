@@ -1,3 +1,62 @@
+2020-12-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Support remote GitHub repository
+        https://bugs.webkit.org/show_bug.cgi?id=219602
+        <rdar://problem/72050026>
+
+        Reviewed by Stephanie Lewis.
+
+        Services often need to interact with the WebKit repository without actually downloading the
+        repository. In particular, it is useful to be able to retrieve commits and their identifiers.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git): Move GIT_SVN_REVISION regex to base class.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/__init__.py: Add GitHub class.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/git_hub.py: Added.
+        (GitHub): Mock request router for a limited subset of GitHub's API.
+        (GitHub.__init__):
+        (GitHub.commit): Return a commit object given a reference.
+        (GitHub._api_response):
+        (GitHub._list_refs_response):
+        (GitHub._commit_response):
+        (GitHub._compare_response):
+        (GitHub._branches_for_request):
+        (GitHub._parents_of_request):
+        (GitHub.request): Return a response object for the specified request.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/__init__.py: Add GitHub class.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py: Added.
+        (GitHub): Repository object representing a GitHub remote.
+        (GitHub.is_webserver): True if the provided URL is a GitHub webserver.
+        (GitHub.__init__): Verify the provided URL and split it into it's composite parts.
+        (GitHub.is_git): Return True.
+        (GitHub.request): Make an API request, combining pagination into a single request.
+        (GitHub._count_for_ref): Scrape the GitHub UI to find the number of parent commits for a specified
+        branch or commit.
+        (GitHub._difference): Compute the number of commits a specified reference is ahead of another.
+        (GitHub._branches_for): Scrape the GitHub UI to determine what branches a commit is on.
+        (GitHub.default_branch): Query GitHub to determine the default branch for a specified commit.
+        (GitHub.branches): Return all branches for a repository.
+        (GitHub.tags): Return all tags for a repository.
+        (GitHub.commit): Return a commit object given a revision, branch, identifier or tag.
+        (GitHub.find): Use git to match branches and tags to a hash instead of trying to do it ourselves.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/scm.py:
+        (Scm.from_url): Add GitHub to the set of candidate remote repositories.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/scm_base.py:
+        (ScmBase): Move GIT_SVN_REVISION regex to base class.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGitHub):
+        (TestGitHub.test_detection):
+        (TestGitHub.test_branches):
+        (TestGitHub.test_tags):
+        (TestGitHub.test_scm_type):
+        (TestGitHub.test_commit_revision):
+        (TestGitHub.test_commit_from_branch):
+        (TestGitHub.test_identifier):
+        (TestGitHub.test_non_cannonical_identifiers):
+        (TestGitHub.test_tag):
+        (TestGitHub.test_no_log):
+
 2020-12-15  Sihui Liu  <sihui_liu@apple.com>
 
         Add webkit- prefix to SpeechRecognition

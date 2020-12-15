@@ -37,6 +37,7 @@ class ScmBase(object):
     # the following idioms seem common enough to be shared.
     DEV_BRANCHES = re.compile(r'.*[(eng)(dev)(bug)]/.+')
     PROD_BRANCHES = re.compile(r'\S+-[\d+\.]+-branch')
+    GIT_SVN_REVISION = re.compile(r'git-svn-id: \S+:\/\/.+@(?P<revision>\d+) .+-.+-.+-.+')
 
     def __init__(self, dev_branches=None, prod_branches=None, contributors=None):
         self.dev_branches = dev_branches or self.DEV_BRANCHES

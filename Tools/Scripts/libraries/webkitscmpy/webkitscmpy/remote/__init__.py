@@ -22,3 +22,4 @@
 
 from webkitscmpy.remote.scm import Scm
 from webkitscmpy.remote.svn import Svn
+from webkitscmpy.remote.git_hub import GitHub
