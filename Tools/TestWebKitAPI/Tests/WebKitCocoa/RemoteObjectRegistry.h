@@ -48,6 +48,7 @@
 - (void)takeLongLong:(long long)value completionHandler:(void (^)(long long value))completionHandler;
 - (void)takeUnsignedLong:(unsigned long)value completionHandler:(void (^)(unsigned long value))completionHandler;
 - (void)takeLong:(long)value completionHandler:(void (^)(long value))completionHandler;
+- (void)takeDictionary:(NSDictionary *)value completionHandler:(void (^)(NSDictionary *value))completionHandler;
 - (void)doNotCallCompletionHandler:(void (^)())completionHandler;
 - (void)sendRequest:(NSURLRequest *)request response:(NSURLResponse *)response challenge:(NSURLAuthenticationChallenge *)challenge error:(NSError *)error completionHandler:(void (^)(NSURLRequest *, NSURLResponse *, NSURLAuthenticationChallenge *, NSError *))completionHandler;
 - (void)callUIProcessMethodWithReplyBlock;

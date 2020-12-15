@@ -31,10 +31,12 @@
 #import "APIDictionary.h"
 #import "APINumber.h"
 #import "APIString.h"
+#import "Logging.h"
 #import "NSInvocationSPI.h"
 #import "_WKRemoteObjectInterfaceInternal.h"
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Scope.h>
 #import <wtf/SetForScope.h>
 #import <wtf/text/CString.h>
 
@@ -61,6 +63,7 @@ static RefPtr<API::Dictionary> createEncodedObject(WKRemoteObjectEncoder *, id);
     API::Array* _objectStream;
 
     API::Dictionary* _currentDictionary;
+    RetainPtr<NSMutableSet> _objectsBeingEncoded; // Used to detect cycles.
 }
 
 - (id)init
@@ -70,6 +73,7 @@ static RefPtr<API::Dictionary> createEncodedObject(WKRemoteObjectEncoder *, id);
 
     _rootDictionary = API::Dictionary::create();
     _currentDictionary = _rootDictionary.get();
+    _objectsBeingEncoded = adoptNS([[NSMutableSet alloc] init]);
 
     return self;
 }
@@ -304,6 +308,22 @@ static void encodeObject(WKRemoteObjectEncoder *encoder, id object)
     Class objectClass = [object classForCoder];
     if (!objectClass)
         [NSException raise:NSInvalidArgumentException format:@"-classForCoder returned nil for %@", object];
+
+    if ([encoder->_objectsBeingEncoded containsObject:object]) {
+        RELEASE_LOG_FAULT(IPC, "WKRemoteObjectCode::encodeObject: Object of type '%{private}s' contains a cycle", class_getName(object_getClass(object)));
+        @try {
+            // Try to encode a newly initialized object instead.
+            id newObject = [[[[object class] alloc] init] autorelease];
+            object = newObject;
+        } @catch (NSException *e) {
+            [NSException raise:NSInvalidArgumentException format:@"Object of type '%s' contains a cycle", class_getName(object_getClass(object))];
+        }
+    }
+
+    [encoder->_objectsBeingEncoded addObject:object];
+    auto exitScope = makeScopeExit([encoder, object] {
+        [encoder->_objectsBeingEncoded removeObject:object];
+    });
 
     encoder->_currentDictionary->set(classNameKey, API::String::create(class_getName(objectClass)));
 
