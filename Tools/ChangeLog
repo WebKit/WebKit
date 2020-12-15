@@ -1,3 +1,15 @@
+2020-12-14  Andy Estes  <aestes@apple.com>
+
+        [Mac] MediaFormatReader.bundle fails to load in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=219879
+
+        Reviewed by Eric Carlson.
+
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WTR::InjectedBundle::platformInitialize): Tell CoreMedia to allow unsigned format reader
+        plug-ins when running in WebKitTestRunner. This resolves test timeouts under
+        LayoutTests/webgl/2.0.0/.
+
 2020-12-14  Alex Christensen  <achristensen@webkit.org>
 
         Remove WKDownloadDelegate.didWriteData
