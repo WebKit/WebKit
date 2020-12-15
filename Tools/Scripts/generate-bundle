@@ -333,12 +333,13 @@ class BundleCreator(object):
         else:
                 _log.warning('patchelf not found. Not modifying rpath')
 
-        if shutil.which('strip'):
-            strip_command = ['strip', '--strip-unneeded', os.path.join(destination_dir, os.path.basename(orig_file))]
-            if subprocess.call(strip_command) != 0:
-                _log.warning('The strip command returned non-zero status')
-        else:
-            _log.warning('strip not found. Not stripping object')
+        if self._should_strip_objects:
+            if shutil.which('strip'):
+                strip_command = ['strip', '--strip-unneeded', os.path.join(destination_dir, os.path.basename(orig_file))]
+                if subprocess.call(strip_command) != 0:
+                    _log.warning('The strip command returned non-zero status')
+            else:
+                _log.warning('strip not found. Not stripping object')
 
     def _remove_tempdir(self):
         if not self._tmpdir:
