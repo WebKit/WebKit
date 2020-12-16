@@ -1,3 +1,17 @@
+2020-12-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix stale assertions
+        https://bugs.webkit.org/show_bug.cgi?id=219847
+
+        After r270764, HostFunctionPtrTag and CustomAccessorPtrTag are categorized as Native ones.
+        However, in non-JIT-caged environment, still they are used as JIT ones. Then, we are getting
+        stale assertions. Several other tags are showing similar things for non JIT environments etc.
+        Add `Options::useJITCage()` check since this caller/callee type is only valid in JIT Cage environment.
+
+        * assembler/MacroAssemblerARM64E.h:
+        (JSC::MacroAssemblerARM64E::call):
+        (JSC::MacroAssemblerARM64E::farJump):
+
 2020-12-15  Saam Barati  <sbarati@apple.com>
 
         destinationFor should check for FTLJIT, not DFGJIT twice

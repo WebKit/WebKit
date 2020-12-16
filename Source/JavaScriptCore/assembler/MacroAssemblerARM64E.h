@@ -152,7 +152,7 @@ public:
     ALWAYS_INLINE Call call(PtrTag tag)
     {
         ASSERT(tag != CFunctionPtrTag && tag != NoPtrTag);
-        ASSERT(callerType(tag) == PtrTagCallerType::JIT);
+        ASSERT(!Options::useJITCage() || callerType(tag) == PtrTagCallerType::JIT);
         move(TrustedImm64(tag), ARM64Registers::lr);
         if (calleeType(tag) == PtrTagCalleeType::JIT)
             return callTrustedPtr<CallSignatureType::JITCall>(ARM64Registers::lr);
@@ -182,7 +182,7 @@ public:
     ALWAYS_INLINE Call call(RegisterID targetGPR, PtrTag tag)
     {
         ASSERT(tag != CFunctionPtrTag && tag != NoPtrTag);
-        ASSERT(callerType(tag) == PtrTagCallerType::JIT);
+        ASSERT(!Options::useJITCage() || callerType(tag) == PtrTagCallerType::JIT);
         move(TrustedImm64(tag), ARM64Registers::lr);
         if (calleeType(tag) == PtrTagCalleeType::JIT)
             return callRegister<CallSignatureType::JITCall>(targetGPR, ARM64Registers::lr);
@@ -197,7 +197,7 @@ public:
     ALWAYS_INLINE Call call(Address address, PtrTag tag)
     {
         ASSERT(tag != CFunctionPtrTag && tag != NoPtrTag);
-        ASSERT(callerType(tag) == PtrTagCallerType::JIT);
+        ASSERT(!Options::useJITCage() || callerType(tag) == PtrTagCallerType::JIT);
         load64(address, getCachedDataTempRegisterIDAndInvalidate());
         return call(dataTempRegister, tag);
     }
@@ -234,7 +234,7 @@ public:
     void farJump(RegisterID targetGPR, PtrTag tag)
     {
         ASSERT(tag != CFunctionPtrTag && tag != NoPtrTag);
-        ASSERT(callerType(tag) == PtrTagCallerType::JIT);
+        ASSERT(!Options::useJITCage() || callerType(tag) == PtrTagCallerType::JIT);
 
         ASSERT(tag != CFunctionPtrTag);
         RegisterID diversityGPR = getCachedDataTempRegisterIDAndInvalidate();
@@ -248,7 +248,7 @@ public:
     void farJump(TrustedImmPtr target, PtrTag tag)
     {
         ASSERT(tag != CFunctionPtrTag && tag != NoPtrTag);
-        ASSERT(callerType(tag) == PtrTagCallerType::JIT);
+        ASSERT(!Options::useJITCage() || callerType(tag) == PtrTagCallerType::JIT);
         RegisterID targetGPR = getCachedDataTempRegisterIDAndInvalidate();
         RegisterID diversityGPR = getCachedMemoryTempRegisterIDAndInvalidate();
         move(target, targetGPR);
@@ -293,7 +293,7 @@ public:
     void farJump(Address address, PtrTag tag)
     {
         ASSERT(tag != CFunctionPtrTag && tag != NoPtrTag);
-        ASSERT(callerType(tag) == PtrTagCallerType::JIT);
+        ASSERT(!Options::useJITCage() || callerType(tag) == PtrTagCallerType::JIT);
         RegisterID targetGPR = getCachedDataTempRegisterIDAndInvalidate();
         RegisterID diversityGPR = getCachedMemoryTempRegisterIDAndInvalidate();
         load64(address, targetGPR);
@@ -307,7 +307,7 @@ public:
     void farJump(BaseIndex address, PtrTag tag)
     {
         ASSERT(tag != CFunctionPtrTag && tag != NoPtrTag);
-        ASSERT(callerType(tag) == PtrTagCallerType::JIT);
+        ASSERT(!Options::useJITCage() || callerType(tag) == PtrTagCallerType::JIT);
         RegisterID targetGPR = getCachedDataTempRegisterIDAndInvalidate();
         RegisterID diversityGPR = getCachedMemoryTempRegisterIDAndInvalidate();
         load64(address, targetGPR);
@@ -321,7 +321,7 @@ public:
     void farJump(AbsoluteAddress address, PtrTag tag)
     {
         ASSERT(tag != CFunctionPtrTag && tag != NoPtrTag);
-        ASSERT(callerType(tag) == PtrTagCallerType::JIT);
+        ASSERT(!Options::useJITCage() || callerType(tag) == PtrTagCallerType::JIT);
         RegisterID targetGPR = getCachedDataTempRegisterIDAndInvalidate();
         RegisterID diversityGPR = getCachedMemoryTempRegisterIDAndInvalidate();
         move(TrustedImmPtr(address.m_ptr), targetGPR);
