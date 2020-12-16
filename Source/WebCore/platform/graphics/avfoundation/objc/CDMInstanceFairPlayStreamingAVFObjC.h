@@ -194,7 +194,7 @@ private:
     void nextRequest();
     AVContentKeyRequest* lastKeyRequest() const;
 
-    bool keyRequestHasInsufficientProtectionForDisplayID(AVContentKeyRequest *, PlatformDisplayID) const;
+    Optional<CDMKeyStatus> protectionStatusForDisplayID(AVContentKeyRequest *, Optional<PlatformDisplayID>) const;
 
 #if !RELEASE_LOG_DISABLED
     WTF::Logger* loggerPtr() const { return m_logger.get(); };
