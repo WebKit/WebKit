@@ -345,7 +345,16 @@ void UIDelegate::UIClient::runJavaScriptPrompt(WebPageProxy& page, const WTF::St
     }).get()];
 }
 
-void UIDelegate::UIClient::requestStorageAccessConfirm(WebPageProxy&, WebFrameProxy*, const WebCore::RegistrableDomain& requestingDomain, const WebCore::RegistrableDomain& currentDomain, CompletionHandler<void(bool)>&& completionHandler)
+static String buildListForStorageAccessPrompt(const WebCore::RegistrableDomain subDomainOne, const WebCore::RegistrableDomain subDomainTwo)
+{
+    StringBuilder builder;
+    builder.append(subDomainOne.string());
+    builder.append(String([NSString stringWithFormat:@"“ and “"]));
+    builder.append(subDomainTwo.string());
+    return builder.toString();
+}
+
+void UIDelegate::UIClient::requestStorageAccessConfirm(WebPageProxy& webPageProxy, WebFrameProxy*, const WebCore::RegistrableDomain& requestingDomain, const WebCore::RegistrableDomain& currentDomain, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto delegate = m_uiDelegate.m_delegate.get();
     if (!delegate) {
@@ -353,15 +362,22 @@ void UIDelegate::UIClient::requestStorageAccessConfirm(WebPageProxy&, WebFramePr
         return;
     }
     
+    String requestingString;
+    // Some sites have quirks where multiple login domains require storage access.
+    if (auto additionalLoginDomain = WebCore::NetworkStorageSession::findAdditionalLoginDomain(currentDomain, requestingDomain))
+        requestingString = buildListForStorageAccessPrompt(requestingDomain, *additionalLoginDomain);
+    else
+        requestingString = requestingDomain.string();
+
     if (!m_uiDelegate.m_delegateMethods.webViewRequestStorageAccessPanelUnderFirstPartyCompletionHandler) {
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-        presentStorageAccessAlert(m_uiDelegate.m_webView, requestingDomain, currentDomain, WTFMove(completionHandler));
+        presentStorageAccessAlert(m_uiDelegate.m_webView, requestingString, currentDomain, WTFMove(completionHandler));
 #endif
         return;
     }
 
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestStorageAccessPanelForDomain:underCurrentDomain:completionHandler:));
-    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView requestStorageAccessPanelForDomain:requestingDomain.string() underCurrentDomain:currentDomain.string() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (BOOL result) mutable {
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView requestStorageAccessPanelForDomain:requestingString underCurrentDomain:currentDomain.string() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (BOOL result) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         completionHandler(result);

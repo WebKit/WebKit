@@ -87,7 +87,7 @@ private:
     WebCore::Timer m_notificationTimer;
 
     HashSet<WebCore::RegistrableDomain> m_domainsWithUserInteraction;
-    HashMap<TopFrameDomain, SubFrameDomain> m_domainsWithCrossPageStorageAccess;
+    HashMap<TopFrameDomain, HashSet<SubFrameDomain>> m_domainsWithCrossPageStorageAccess;
 #if !RELEASE_LOG_DISABLED
     uint64_t m_loggingCounter { 0 };
     static bool shouldLogUserInteraction;

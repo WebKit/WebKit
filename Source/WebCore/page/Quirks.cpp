@@ -983,6 +983,25 @@ bool Quirks::isMicrosoftTeamsRedirectURL(const URL& url)
 {
     return url.host() == "teams.microsoft.com"_s && url.query().toString().contains("Retried+3+times+without+success");
 }
+
+static bool isPlaystationLoginElement(const Element& element)
+{
+    if (!element.hasClass())
+        return false;
+
+    auto& classNames = element.classNames();
+    return classNames.contains("web-toolbar__signin-button") || classNames.contains("sb-signin-button");
+}
+
+bool Quirks::hasStorageAccessForAllLoginDomains(const HashSet<RegistrableDomain>& loginDomains, const RegistrableDomain& topFrameDomain)
+{
+    for (auto& loginDomain : loginDomains) {
+        if (!ResourceLoadObserver::shared().hasCrossPageStorageAccess(loginDomain, topFrameDomain))
+            return false;
+    }
+    return true;
+}
+
 #endif
 
 Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& element, const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget) const
@@ -1060,11 +1079,35 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
         // FIXME(218779): Remove this quirk once microsoft.com completes their login flow redesign.
         if (isMicrosoftDomain(domain) && isMicrosoftLoginElement(element)) {
             auto firstPartyDomain = NetworkStorageSession::mapToTopDomain(RegistrableDomain::uncheckedCreateFromHost(m_document->topDocument().securityOrigin().host()));
-            if (auto loginDomain = NetworkStorageSession::loginDomainForFirstParty(firstPartyDomain)) {
-                if (!ResourceLoadObserver::shared().hasCrossPageStorageAccess(*loginDomain, firstPartyDomain)) {
-                    DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*m_document, WTFMove(*loginDomain), [firstPartyDomain, loginDomain, &element, platformEvent, eventType, detail, relatedTarget](StorageAccessWasGranted storageAccessGranted) mutable {
+            if (auto loginDomains = NetworkStorageSession::loginDomainsForFirstParty(firstPartyDomain)) {
+                if (!hasStorageAccessForAllLoginDomains(*loginDomains, firstPartyDomain)) {
+                    auto loginDomain = RegistrableDomain(*loginDomains.value().begin().get());
+                    DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*m_document, WTFMove(loginDomain), [firstPartyDomain, loginDomain, &element, platformEvent, eventType, detail, relatedTarget](StorageAccessWasGranted storageAccessGranted) mutable {
                         if (storageAccessGranted == StorageAccessWasGranted::Yes) {
-                            ResourceLoadObserver::shared().setDomainsWithCrossPageStorageAccess({{ firstPartyDomain, *loginDomain }}, [&element, platformEvent, eventType, detail, relatedTarget] {
+                            ResourceLoadObserver::shared().setDomainsWithCrossPageStorageAccess({{ firstPartyDomain, loginDomain }}, [&element, platformEvent, eventType, detail, relatedTarget] {
+                                element.dispatchMouseEvent(platformEvent, eventType, detail, relatedTarget);
+                            });
+                        }
+                    });
+                    return Quirks::StorageAccessResult::ShouldCancelEvent;
+                }
+            }
+            return Quirks::StorageAccessResult::ShouldNotCancelEvent;
+        }
+
+        // Sony Network Entertainment login case.
+        // FIXME(218760): Remove this quirk once playstation.com completes their login flow redesign.
+        static NeverDestroyed<RegistrableDomain> playStationDomain = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("playstation.com"_s);
+        if (domain == playStationDomain && isPlaystationLoginElement(element)) {
+            auto firstPartyDomain = RegistrableDomain(m_document->topDocument().url());
+            if (auto loginDomains = NetworkStorageSession::loginDomainsForFirstParty(firstPartyDomain)) {
+                if (!hasStorageAccessForAllLoginDomains(*loginDomains, firstPartyDomain)) {
+                    // Send only one login domain to avoid changing existing Storage Access code, which can only handle a single domain.
+                    // We will match Sony login domains up when prompting the user and storing the domains.
+                    auto loginDomain = RegistrableDomain(*loginDomains.value().begin().get());
+                    DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*m_document, WTFMove(loginDomain), [firstPartyDomain, loginDomain, &element, platformEvent, eventType, detail, relatedTarget](StorageAccessWasGranted storageAccessGranted) mutable {
+                        if (storageAccessGranted == StorageAccessWasGranted::Yes) {
+                            ResourceLoadObserver::shared().setDomainsWithCrossPageStorageAccess({{ firstPartyDomain, loginDomain }}, [&element, platformEvent, eventType, detail, relatedTarget] {
                                 element.dispatchMouseEvent(platformEvent, eventType, detail, relatedTarget);
                             });
                         }

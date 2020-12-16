@@ -215,11 +215,13 @@ public:
     WEBCORE_EXPORT void resetCrossSiteLoadsWithLinkDecorationForTesting();
     WEBCORE_EXPORT void setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode);
 
-    WEBCORE_EXPORT static HashMap<RegistrableDomain, RegistrableDomain>& storageAccessQuirks();
+    WEBCORE_EXPORT static HashMap<RegistrableDomain, HashSet<RegistrableDomain>>& storageAccessQuirks();
     WEBCORE_EXPORT static bool canRequestStorageAccessForLoginPurposesWithoutPriorUserInteraction(const SubResourceDomain&, const TopFrameDomain&);
-    WEBCORE_EXPORT static Optional<RegistrableDomain> loginDomainForFirstParty(const RegistrableDomain&);
+    WEBCORE_EXPORT static Optional<HashSet<RegistrableDomain>> loginDomainsForFirstParty(const RegistrableDomain&);
     WEBCORE_EXPORT static bool loginDomainMatchesRequestingDomain(const TopFrameDomain&, const SubResourceDomain&);
     WEBCORE_EXPORT static RegistrableDomain mapToTopDomain(const RegistrableDomain&);
+    WEBCORE_EXPORT static Optional<RegistrableDomain> findAdditionalLoginDomain(const TopFrameDomain&, const SubResourceDomain&);
+
 #endif
     
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -279,7 +281,7 @@ private:
     HashSet<RegistrableDomain> m_registrableDomainsWithUserInteractionAsFirstParty;
     HashMap<PageIdentifier, HashMap<FrameIdentifier, RegistrableDomain>> m_framesGrantedStorageAccess;
     HashMap<PageIdentifier, HashMap<RegistrableDomain, RegistrableDomain>> m_pagesGrantedStorageAccess;
-    HashMap<TopFrameDomain, SubResourceDomain> m_pairsGrantedCrossPageStorageAccess;
+    HashMap<TopFrameDomain, HashSet<SubResourceDomain>> m_pairsGrantedCrossPageStorageAccess;
     Optional<Seconds> m_cacheMaxAgeCapForPrevalentResources { };
     Optional<Seconds> m_ageCapForClientSideCookies { };
     Optional<Seconds> m_ageCapForClientSideCookiesShort { };

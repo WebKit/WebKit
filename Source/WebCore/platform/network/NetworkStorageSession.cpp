@@ -218,7 +218,14 @@ void NetworkStorageSession::setDomainsWithCrossPageStorageAccess(const HashMap<T
 
 void NetworkStorageSession::grantCrossPageStorageAccess(const TopFrameDomain& topFrameDomain, const SubResourceDomain& resourceDomain)
 {
-    m_pairsGrantedCrossPageStorageAccess.add(topFrameDomain, resourceDomain);
+    m_pairsGrantedCrossPageStorageAccess.ensure(topFrameDomain, [] { return HashSet<RegistrableDomain> { };
+        }).iterator->value.add(resourceDomain);
+
+    // Some sites have quirks where multiple login domains require storage access.
+    if (auto additionalLoginDomain = findAdditionalLoginDomain(topFrameDomain, resourceDomain)) {
+        m_pairsGrantedCrossPageStorageAccess.ensure(topFrameDomain, [] { return HashSet<RegistrableDomain> { };
+            }).iterator->value.add(*additionalLoginDomain);
+    }
 }
 
 bool NetworkStorageSession::hasStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<FrameIdentifier> frameID, PageIdentifier pageID) const
@@ -241,7 +248,7 @@ bool NetworkStorageSession::hasStorageAccess(const RegistrableDomain& resourceDo
         }
 
         auto it = m_pairsGrantedCrossPageStorageAccess.find(firstPartyDomain);
-        if (it != m_pairsGrantedCrossPageStorageAccess.end() && it->value == resourceDomain)
+        if (it != m_pairsGrantedCrossPageStorageAccess.end() && it->value.contains(resourceDomain))
             return true;
     }
 
@@ -374,12 +381,15 @@ Optional<Seconds> NetworkStorageSession::clientSideCookieCap(const RegistrableDo
     return m_ageCapForClientSideCookies;
 }
 
-HashMap<RegistrableDomain, RegistrableDomain>& NetworkStorageSession::storageAccessQuirks()
+HashMap<RegistrableDomain, HashSet<RegistrableDomain>>& NetworkStorageSession::storageAccessQuirks()
 {
-    static NeverDestroyed<HashMap<RegistrableDomain, RegistrableDomain>> map = [] {
-        HashMap<RegistrableDomain, RegistrableDomain> map;
+    static NeverDestroyed<HashMap<RegistrableDomain, HashSet<RegistrableDomain>>> map = [] {
+        HashMap<RegistrableDomain, HashSet<RegistrableDomain>> map;
         map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoft.com"),
-            RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoftonline.com"_s));
+            HashSet { RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoftonline.com"_s) });
+        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("playstation.com"), HashSet {
+            RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sonyentertainmentnetwork.com"_s),
+            RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sony.com"_s) });
         return map;
     }();
     return map.get();
@@ -387,8 +397,8 @@ HashMap<RegistrableDomain, RegistrableDomain>& NetworkStorageSession::storageAcc
 
 bool NetworkStorageSession::loginDomainMatchesRequestingDomain(const TopFrameDomain& topFrameDomain, const SubResourceDomain& resourceDomain)
 {
-    auto loginDomain = WebCore::NetworkStorageSession::loginDomainForFirstParty(topFrameDomain);
-    return loginDomain && resourceDomain == loginDomain;
+    auto loginDomains = WebCore::NetworkStorageSession::loginDomainsForFirstParty(topFrameDomain);
+    return loginDomains && loginDomains.value().contains(resourceDomain);
 }
 
 bool NetworkStorageSession::canRequestStorageAccessForLoginPurposesWithoutPriorUserInteraction(const SubResourceDomain& resourceDomain, const TopFrameDomain& topFrameDomain)
@@ -396,11 +406,22 @@ bool NetworkStorageSession::canRequestStorageAccessForLoginPurposesWithoutPriorU
     return loginDomainMatchesRequestingDomain(topFrameDomain, resourceDomain);
 }
 
-Optional<RegistrableDomain> NetworkStorageSession::loginDomainForFirstParty(const RegistrableDomain& topFrameDomain)
+Optional<HashSet<RegistrableDomain>> NetworkStorageSession::loginDomainsForFirstParty(const RegistrableDomain& topFrameDomain)
 {
     auto it = storageAccessQuirks().find(topFrameDomain);
     if (it != storageAccessQuirks().end())
         return it->value;
+    return WTF::nullopt;
+}
+
+Optional<RegistrableDomain> NetworkStorageSession::findAdditionalLoginDomain(const TopFrameDomain& topDomain, const SubResourceDomain& subDomain)
+{
+    if (subDomain.string() == "sony.com"_s && topDomain.string() == "playstation.com"_s)
+        return RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sonyentertainmentnetwork.com"_s);
+
+    if (subDomain.string() == "sonyentertainmentnetwork.com"_s && topDomain.string() == "playstation.com"_s)
+        return RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sony.com"_s);
+
     return WTF::nullopt;
 }
 

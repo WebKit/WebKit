@@ -804,8 +804,8 @@ void DocumentLoader::responseReceived(CachedResource& resource, const ResourceRe
         auto& document = *m_frame->document();
         if (Quirks::isMicrosoftTeamsRedirectURL(response.url())) {
             auto firstPartyDomain = RegistrableDomain(response.url());
-            if (auto loginDomain = NetworkStorageSession::loginDomainForFirstParty(firstPartyDomain)) {
-                if (!ResourceLoadObserver::shared().hasCrossPageStorageAccess(*loginDomain, firstPartyDomain)) {
+            if (auto loginDomains = NetworkStorageSession::loginDomainsForFirstParty(firstPartyDomain)) {
+                if (!Quirks::hasStorageAccessForAllLoginDomains(*loginDomains, firstPartyDomain)) {
                     m_frame->navigationScheduler().scheduleRedirect(document, 0, microsoftTeamsRedirectURL());
                     return;
                 }

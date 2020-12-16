@@ -423,16 +423,23 @@ bool WebResourceLoadObserver::hasCrossPageStorageAccess(const SubFrameDomain& su
     auto it = m_domainsWithCrossPageStorageAccess.find(topDomain);
 
     if (it != m_domainsWithCrossPageStorageAccess.end())
-        return it->value == subDomain;
+        return it->value.contains(subDomain);
 
     return false;
 }
 
 void WebResourceLoadObserver::setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, SubFrameDomain>&& domains, CompletionHandler<void()>&& completionHandler)
 {
-    for (auto& topDomain : domains.keys())
-        m_domainsWithCrossPageStorageAccess.add(topDomain, domains.get(topDomain));
+    for (auto& topDomain : domains.keys()) {
+        m_domainsWithCrossPageStorageAccess.ensure(topDomain, [] { return HashSet<RegistrableDomain> { };
+            }).iterator->value.add(domains.get(topDomain));
 
+        // Some sites have quirks where multiple login domains require storage access.
+        if (auto additionalLoginDomain = WebCore::NetworkStorageSession::findAdditionalLoginDomain(topDomain, domains.get(topDomain))) {
+            m_domainsWithCrossPageStorageAccess.ensure(topDomain, [] { return HashSet<RegistrableDomain> { };
+                }).iterator->value.add(*additionalLoginDomain);
+        }
+    }
     completionHandler();
 }
 

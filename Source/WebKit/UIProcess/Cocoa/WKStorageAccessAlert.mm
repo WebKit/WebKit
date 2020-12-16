@@ -30,18 +30,19 @@
 
 #import "WKWebViewInternal.h"
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/RegistrableDomain.h>
 #import <wtf/BlockPtr.h>
 
 namespace WebKit {
 
-void presentStorageAccessAlert(WKWebView *webView, const WebCore::RegistrableDomain& requesting, const WebCore::RegistrableDomain& current, CompletionHandler<void(bool)>&& completionHandler)
+void presentStorageAccessAlert(WKWebView *webView, const String& requesting, const WebCore::RegistrableDomain& current, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto completionBlock = makeBlockPtr([completionHandler = WTFMove(completionHandler)](bool shouldAllow) mutable {
         completionHandler(shouldAllow);
     });
 
-    auto requestingDomain = requesting.string().createCFString();
+    auto requestingDomain = requesting.createCFString();
     auto currentDomain = current.string().createCFString();
 
 #if PLATFORM(MAC)

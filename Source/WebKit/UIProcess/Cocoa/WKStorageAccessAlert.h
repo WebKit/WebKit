@@ -41,7 +41,7 @@ class RegistrableDomain;
 
 namespace WebKit {
 
-void presentStorageAccessAlert(WKWebView *, const WebCore::RegistrableDomain& requestingDomain, const WebCore::RegistrableDomain& currentDomain, CompletionHandler<void(bool)>&&);
+void presentStorageAccessAlert(WKWebView *, const String& requestingString, const WebCore::RegistrableDomain& currentDomain, CompletionHandler<void(bool)>&&);
 
 }
 

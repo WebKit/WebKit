@@ -1,3 +1,39 @@
+2020-12-16  Kate Cheney  <katherine_cheney@apple.com>
+
+        Still can't login to my.playstation.com
+        https://bugs.webkit.org/show_bug.cgi?id=219900
+        <rdar://problem/72062985>
+
+        Reviewed by John Wilander.
+
+        Adapted from an original patch by John Wilander.
+
+        This is a temporary quirk to assist a high-traffic website while they
+        complete the large task of migrating away from login flows that
+        require third party cookies. This quirk will be removed when the site
+        is updated.
+
+        Create a quirk to call the Storage Access API on behalf of Sony.
+
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::buildList):
+        (WebKit::UIDelegate::UIClient::requestStorageAccessConfirm):
+        * UIProcess/Cocoa/WKStorageAccessAlert.mm:
+        (WebKit::presentStorageAccessAlert):
+        Prompt for multiple domains if site-specific quirks are enabled and
+        either Sony login domain is being requested.
+
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp:
+        (WebKit::WebResourceLoadObserver::hasCrossPageStorageAccess const):
+        (WebKit::WebResourceLoadObserver::setDomainsWithCrossPageStorageAccess):
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::addDomainWithPageLevelStorageAccess):
+        Store both Sony login domains as having page level storage access if
+        quirks are enabled and the domain passed is one of the Sony login
+        domains. In this case we know that both login domains were prompted
+        for.
+
 2020-12-16  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess] Avoid doing an IPC per rendering quantum when using WebAudio

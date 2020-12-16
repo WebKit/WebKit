@@ -124,6 +124,7 @@ public:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     static bool isMicrosoftTeamsRedirectURL(const URL&);
+    static bool hasStorageAccessForAllLoginDomains(const HashSet<RegistrableDomain>&, const RegistrableDomain&);
 #endif
 
 private:
