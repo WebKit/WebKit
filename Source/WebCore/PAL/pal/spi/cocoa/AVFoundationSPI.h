@@ -208,6 +208,19 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:(NSArray<NSNumber *> *)displays;
 NS_ASSUME_NONNULL_END
 @end
+
+#if HAVE(AVCONTENTKEYREQUEST_PENDING_PROTECTION_STATUS)
+typedef NS_ENUM(NSInteger, AVExternalContentProtectionStatus) {
+    AVExternalContentProtectionStatusPending      = 0,
+    AVExternalContentProtectionStatusSufficient   = 1,
+    AVExternalContentProtectionStatusInsufficient = 2,
+};
+
+@interface AVContentKeyRequest (AVContentKeyRequest_PendingProtectionStatus)
+- (AVExternalContentProtectionStatus)externalContentProtectionStatus;
+@end
+#endif
+
 #endif // HAVE(AVCONTENTKEYSESSION)
 
 #if ENABLE(MEDIA_SOURCE) && !USE(APPLE_INTERNAL_SDK)

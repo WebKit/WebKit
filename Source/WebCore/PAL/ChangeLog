@@ -1,3 +1,42 @@
+2020-12-16  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r270872. rdar://problem/72396884
+
+    [Cocoa] Adopt -externalContentProtectionStatus
+    https://bugs.webkit.org/show_bug.cgi?id=219911
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Adopt a new AVContentKeyRequest API which provides a "pending" status (in addition to usable/unusable).
+    
+    * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.h:
+    * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+    (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::keyStatuses const):
+    (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::protectionStatusForDisplayID const):
+    (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::keyRequestHasInsufficientProtectionForDisplayID const): Deleted.
+    
+    Source/WebCore/PAL:
+    
+    * pal/spi/cocoa/AVFoundationSPI.h:
+    
+    Source/WTF:
+    
+    * wtf/PlatformHave.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@270872 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-12-15  Jer Noble  <jer.noble@apple.com>
+
+            [Cocoa] Adopt -externalContentProtectionStatus
+            https://bugs.webkit.org/show_bug.cgi?id=219911
+
+            Reviewed by Eric Carlson.
+
+            * pal/spi/cocoa/AVFoundationSPI.h:
+
 2020-12-14  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r270758. rdar://problem/72303521

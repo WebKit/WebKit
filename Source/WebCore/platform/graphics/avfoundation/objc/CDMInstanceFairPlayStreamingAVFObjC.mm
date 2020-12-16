@@ -1397,13 +1397,8 @@ CDMInstanceSession::KeyStatusVector CDMInstanceSessionFairPlayStreamingAVFObjC::
             if (oneRequest.get().error.code == SecurityLevelError)
                 status = CDMKeyStatus::OutputRestricted;
 
-            // Only use the non-request-specific "outputObscuredDueToInsufficientExternalProtection" status if
-            // AVContentKeyRequests do not support the finer grained "-willOutputBeObscured..." API.
-            if (m_outputObscured && ![oneRequest respondsToSelector:@selector(willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:)])
-                status = CDMKeyStatus::OutputRestricted;
-
-            if (displayID && keyRequestHasInsufficientProtectionForDisplayID(oneRequest.get(), *displayID))
-                status = CDMKeyStatus::OutputRestricted;
+            if (auto protectionStatus = protectionStatusForDisplayID(oneRequest.get(), *displayID))
+                status = *protectionStatus;
 
             for (auto& keyID : keyIDs)
                 keyStatuses.append({ WTFMove(keyID), status });
@@ -1434,14 +1429,17 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::externalProtectionStatusDidChan
     updateProtectionStatusForDisplayID(m_client->displayID());
 }
 
-bool CDMInstanceSessionFairPlayStreamingAVFObjC::keyRequestHasInsufficientProtectionForDisplayID(AVContentKeyRequest *request, PlatformDisplayID displayID) const
+Optional<CDMKeyStatus> CDMInstanceSessionFairPlayStreamingAVFObjC::protectionStatusForDisplayID(AVContentKeyRequest *request, Optional<PlatformDisplayID> displayID) const
 {
-    // willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays will always return "YES" prior to
-    // receiving a response.
-    if (request.status != AVContentKeyRequestStatusReceivedResponse && request.status != AVContentKeyRequestStatusRenewed) {
-        ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "request has insufficient status ", (int)request.status);
-        return false;
+#if HAVE(AVCONTENTKEYREQUEST_PENDING_PROTECTION_STATUS)
+    if ([request respondsToSelector:@selector(externalContentProtectionStatus)]) {
+        switch ([request externalContentProtectionStatus]) {
+        case AVExternalContentProtectionStatusPending: return CDMKeyStatus::StatusPending;
+        case AVExternalContentProtectionStatusSufficient: return CDMKeyStatus::Usable;
+        case AVExternalContentProtectionStatusInsufficient: return CDMKeyStatus::OutputRestricted;
+        }
     }
+#endif
 
     // FIXME: AVFoundation requires a connection to the WindowServer in order to query the HDCP status of individual
     // displays. Passing in an empty NSArray will cause AVFoundation to fall back to a "minimum supported HDCP level"
@@ -1450,11 +1448,25 @@ bool CDMInstanceSessionFairPlayStreamingAVFObjC::keyRequestHasInsufficientProtec
     // WebProcess.
     UNUSED_PARAM(displayID);
     if ([request respondsToSelector:@selector(willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:)]) {
+
+        // willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays will always return "YES" prior to
+        // receiving a response.
+        if (request.status != AVContentKeyRequestStatusReceivedResponse && request.status != AVContentKeyRequestStatusRenewed) {
+            ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "request has insufficient status ", (int)request.status);
+            return WTF::nullopt;
+        }
+
         auto obscured = [request willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:@[ ]];
         ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "request { ", keyIDsForRequest(request), " } willOutputBeObscured...forDisplays:[ nil ] = ", obscured ? "true" : "false");
-        return obscured;
+        return obscured ? CDMKeyStatus::OutputRestricted : CDMKeyStatus::Usable;
     }
-    return false;
+
+    // Only use the non-request-specific "outputObscuredDueToInsufficientExternalProtection" status if
+    // AVContentKeyRequests do not support the finer grained "-willOutputBeObscured..." API.
+    if (m_outputObscured)
+        return CDMKeyStatus::OutputRestricted;
+
+    return WTF::nullopt;
 };
 
 
