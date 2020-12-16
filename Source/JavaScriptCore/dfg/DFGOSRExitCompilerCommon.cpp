@@ -284,6 +284,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
             jit.addPtr(AssemblyHelpers::TrustedImm32(sizeof(CallerFrameAndPC)), GPRInfo::callFrameRegister, GPRInfo::regT2);
             jit.untagPtr(GPRInfo::regT2, GPRInfo::regT3);
             jit.addPtr(AssemblyHelpers::TrustedImm32(inlineCallFrame->returnPCOffset() + sizeof(void*)), GPRInfo::callFrameRegister, GPRInfo::regT2);
+            jit.validateUntaggedPtr(GPRInfo::regT3, GPRInfo::nonArgGPR0);
             jit.tagPtr(GPRInfo::regT2, GPRInfo::regT3);
 #endif
             jit.storePtr(GPRInfo::regT3, AssemblyHelpers::addressForByteOffset(inlineCallFrame->returnPCOffset()));
