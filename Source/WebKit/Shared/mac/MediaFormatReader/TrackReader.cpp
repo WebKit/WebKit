@@ -50,9 +50,9 @@ using namespace WebCore;
 
 class MediaSampleByteRange final : public MediaSampleAVFObjC {
 public:
-    static Ref<MediaSampleByteRange> create(MediaSample& sample, MTPluginByteSourceRef byteSource)
+    static Ref<MediaSampleByteRange> create(MediaSample& sample, MTPluginByteSourceRef byteSource, uint64_t trackID)
     {
-        return adoptRef(*new MediaSampleByteRange(sample, byteSource));
+        return adoptRef(*new MediaSampleByteRange(sample, byteSource, trackID));
     }
 
     MediaTime presentationTime() const final { return m_presentationTime; }
@@ -63,12 +63,13 @@ public:
     SampleFlags flags() const final { return m_flags; }
     Optional<ByteRange> byteRange() const final { return m_byteRange; }
 
+    AtomString trackID() const final;
     PlatformSample platformSample() final;
     void offsetTimestampsBy(const MediaTime&) final;
     void setTimestamps(const MediaTime&, const MediaTime&) final;
 
 private:
-    MediaSampleByteRange(MediaSample&, MTPluginByteSourceRef);
+    MediaSampleByteRange(MediaSample&, MTPluginByteSourceRef, uint64_t trackID);
 
     MediaTime m_presentationTime;
     MediaTime m_decodeTime;
@@ -76,19 +77,21 @@ private:
     size_t m_sizeInBytes;
     FloatSize m_presentationSize;
     SampleFlags m_flags;
+    uint64_t m_trackID;
     Optional<ByteRange> m_byteRange;
     RetainPtr<MTPluginByteSourceRef> m_byteSource;
     RetainPtr<CMFormatDescriptionRef> m_formatDescription;
 };
 
-MediaSampleByteRange::MediaSampleByteRange(MediaSample& sample, MTPluginByteSourceRef byteSource)
-    : MediaSampleAVFObjC(nullptr, sample.trackID())
+MediaSampleByteRange::MediaSampleByteRange(MediaSample& sample, MTPluginByteSourceRef byteSource, uint64_t trackID)
+    : MediaSampleAVFObjC(nullptr)
     , m_presentationTime(sample.presentationTime())
     , m_decodeTime(sample.decodeTime())
     , m_duration(sample.duration())
     , m_sizeInBytes(sample.sizeInBytes())
     , m_presentationSize(sample.presentationSize())
     , m_flags(sample.flags())
+    , m_trackID(trackID)
     , m_byteRange(sample.byteRange())
     , m_byteSource(byteSource)
 {
@@ -105,6 +108,11 @@ MediaSampleByteRange::MediaSampleByteRange(MediaSample& sample, MTPluginByteSour
         ASSERT_NOT_REACHED();
         break;
     }
+}
+
+AtomString MediaSampleByteRange::trackID() const
+{
+    return AtomString::number(m_trackID);
 }
 
 PlatformSample MediaSampleByteRange::platformSample()
@@ -180,7 +188,7 @@ void TrackReader::addSample(Ref<MediaSample>&& sample, MTPluginByteSourceRef byt
         m_sampleStorage = makeUnique<SampleStorage>();
 
     ASSERT(!sample->isDivisable() && sample->byteRange());
-    auto sampleToAdd = MediaSampleByteRange::create(sample.get(), byteSource);
+    auto sampleToAdd = MediaSampleByteRange::create(sample.get(), byteSource, m_trackID);
 
     // FIXME: Even though WebM muxer guidelines say this must not happen, some video tracks have two
     // consecutive frames with the same presentation time. SampleMap will not store the second frame
@@ -248,7 +256,9 @@ OSStatus TrackReader::copyProperty(CFStringRef key, CFAllocatorRef allocator, vo
 void TrackReader::finalize()
 {
     auto locker = holdLock(m_sampleStorageLock);
-    storageQueue().dispatch([sampleStorage = std::exchange(m_sampleStorage, nullptr)] { });
+    storageQueue().dispatch([sampleStorage = std::exchange(m_sampleStorage, nullptr)]() mutable {
+        sampleStorage = nullptr;
+    });
     CoreMediaWrapped<TrackReader>::finalize();
 }
 

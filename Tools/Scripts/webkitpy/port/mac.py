@@ -295,6 +295,9 @@ class MacPort(DarwinPort):
         # FIXME: Remove this after <rdar://problem/52897406> is fixed.
         logging_patterns.append((re.compile('VPA info:.*\n'), ''))
 
+        # FIXME: Find where this is coming from and file a bug to have it removed (then remove this line).
+        logging_patterns.append((re.compile('VP9 Info:.*\n'), ''))
+
         return logging_patterns
 
     def stderr_patterns_to_strip(self):
