@@ -385,8 +385,6 @@ void ElementRuleCollector::matchUserRules()
 void ElementRuleCollector::matchUARules()
 {
     // First we match rules from the user agent sheet.
-    if (UserAgentStyle::simpleDefaultStyleSheet)
-        m_result.isCacheable = false;
     auto* userAgentStyleSheet = m_isPrintStyle
         ? UserAgentStyle::defaultPrintStyle : UserAgentStyle::defaultStyle;
     matchUARules(*userAgentStyleSheet);

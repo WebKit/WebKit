@@ -38,7 +38,6 @@ public:
     static RuleSet* defaultPrintStyle;
     static unsigned defaultStyleVersion;
 
-    static StyleSheetContents* simpleDefaultStyleSheet;
     static StyleSheetContents* defaultStyleSheet;
     static StyleSheetContents* quirksStyleSheet;
     static StyleSheetContents* dialogStyleSheet;
@@ -60,12 +59,10 @@ public:
 
     static StyleSheetContents* mediaQueryStyleSheet;
 
-    static void initDefaultStyle(const Element*);
+    static void initDefaultStyleSheet();
     static void ensureDefaultStyleSheetsForElement(const Element&);
-    static void loadFullDefaultStyle();
 
 private:
-    static void loadSimpleDefaultStyle();
     static void addToDefaultStyle(StyleSheetContents&);
 };
 

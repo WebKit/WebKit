@@ -67,7 +67,6 @@ RuleSet* UserAgentStyle::defaultQuirksStyle;
 RuleSet* UserAgentStyle::defaultPrintStyle;
 unsigned UserAgentStyle::defaultStyleVersion;
 
-StyleSheetContents* UserAgentStyle::simpleDefaultStyleSheet;
 StyleSheetContents* UserAgentStyle::defaultStyleSheet;
 StyleSheetContents* UserAgentStyle::quirksStyleSheet;
 StyleSheetContents* UserAgentStyle::dialogStyleSheet;
@@ -87,29 +86,6 @@ StyleSheetContents* UserAgentStyle::colorInputStyleSheet;
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
 StyleSheetContents* UserAgentStyle::formControlsIOSStyleSheet;
 #endif
-
-#if PLATFORM(IOS_FAMILY)
-#define DEFAULT_OUTLINE_WIDTH "3px"
-#else
-#define DEFAULT_OUTLINE_WIDTH "5px"
-#endif
-
-#if HAVE(OS_DARK_MODE_SUPPORT)
-#define CSS_DARK_MODE_ADDITION "html{color:text}"
-#else
-#define CSS_DARK_MODE_ADDITION ""
-#endif
-
-// FIXME: It would be nice to use some mechanism that guarantees this is in sync with the real UA stylesheet.
-static const char simpleUserAgentStyleSheet[] = "html,body,div{display:block}" CSS_DARK_MODE_ADDITION "head{display:none}body{margin:8px}div:focus,span:focus,a:focus{outline:auto " DEFAULT_OUTLINE_WIDTH " -webkit-focus-ring-color}a:any-link{color:-webkit-link;text-decoration:underline}a:any-link:active{color:-webkit-activelink}";
-
-static inline bool elementCanUseSimpleDefaultStyle(const Element& element)
-{
-    return is<HTMLHtmlElement>(element) || is<HTMLHeadElement>(element)
-        || is<HTMLBodyElement>(element) || is<HTMLDivElement>(element)
-        || is<HTMLSpanElement>(element) || is<HTMLBRElement>(element)
-        || is<HTMLAnchorElement>(element);
-}
 
 static const MediaQueryEvaluator& screenEval()
 {
@@ -135,16 +111,6 @@ static StyleSheetContents* parseUASheet(const char* characters, unsigned size)
     return parseUASheet(String(characters, size));
 }
 
-void UserAgentStyle::initDefaultStyle(const Element* root)
-{
-    if (!defaultStyle) {
-        if (!root || elementCanUseSimpleDefaultStyle(*root))
-            loadSimpleDefaultStyle();
-        else
-            loadFullDefaultStyle();
-    }
-}
-
 void UserAgentStyle::addToDefaultStyle(StyleSheetContents& sheet)
 {
     defaultStyle->addRulesFromSheet(sheet, screenEval());
@@ -167,24 +133,14 @@ void UserAgentStyle::addToDefaultStyle(StyleSheetContents& sheet)
     ++defaultStyleVersion;
 }
 
-void UserAgentStyle::loadFullDefaultStyle()
+void UserAgentStyle::initDefaultStyleSheet()
 {
-    if (defaultStyle && !simpleDefaultStyleSheet)
+    if (defaultStyle)
         return;
-    
-    if (simpleDefaultStyleSheet) {
-        ASSERT(defaultStyle);
-        ASSERT(defaultPrintStyle == defaultStyle);
-        defaultStyle->deref();
-        simpleDefaultStyleSheet->deref();
-        simpleDefaultStyleSheet = nullptr;
-    } else {
-        ASSERT(!defaultStyle);
-        defaultQuirksStyle = &RuleSet::create().leakRef();
-    }
 
     defaultStyle = &RuleSet::create().leakRef();
     defaultPrintStyle = &RuleSet::create().leakRef();
+    defaultQuirksStyle = &RuleSet::create().leakRef();
     mediaQueryStyleSheet = &StyleSheetContents::create(CSSParserContext(UASheetMode)).leakRef();
 
     // Strict-mode rules.
@@ -196,31 +152,12 @@ void UserAgentStyle::loadFullDefaultStyle()
     String quirksRules = String(quirksUserAgentStyleSheet, sizeof(quirksUserAgentStyleSheet)) + RenderTheme::singleton().extraQuirksStyleSheet();
     quirksStyleSheet = parseUASheet(quirksRules);
     defaultQuirksStyle->addRulesFromSheet(*quirksStyleSheet, screenEval());
-}
 
-void UserAgentStyle::loadSimpleDefaultStyle()
-{
-    ASSERT(!defaultStyle);
-    ASSERT(!simpleDefaultStyleSheet);
-
-    defaultStyle = &RuleSet::create().leakRef();
-    // There are no media-specific rules in the simple default style.
-    defaultPrintStyle = defaultStyle;
-    defaultQuirksStyle = &RuleSet::create().leakRef();
-
-    simpleDefaultStyleSheet = parseUASheet(simpleUserAgentStyleSheet, strlen(simpleUserAgentStyleSheet));
-    defaultStyle->addRulesFromSheet(*simpleDefaultStyleSheet, screenEval());
     ++defaultStyleVersion;
-    // No need to initialize quirks sheet yet as there are no quirk rules for elements allowed in simple default style.
 }
 
 void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
 {
-    if (simpleDefaultStyleSheet && !elementCanUseSimpleDefaultStyle(element)) {
-        loadFullDefaultStyle();
-        ++defaultStyleVersion;
-    }
-
     if (is<HTMLElement>(element)) {
         if (is<HTMLObjectElement>(element) || is<HTMLEmbedElement>(element)) {
             if (!plugInsStyleSheet && element.document().page()) {

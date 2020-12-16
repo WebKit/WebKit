@@ -1316,6 +1316,3 @@ fast/layoutformattingcontext/block-only/min-max-and-preferred-width-simple.html 
 webkit.org/b/217054 fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html [ Skip ]
 webkit.org/b/219322 fast/layoutformattingcontext/table-simple-border-collapse.html [ ImageOnlyFailure ]
 webkit.org/b/219322 fast/layoutformattingcontext/table-simple-border-collapse2.html [ ImageOnlyFailure ]
-
-webkit.org/b/218995 fast/lists/001.html [ Skip ]
-webkit.org/b/218995 fast/lists/001-vertical.html [ Skip ]

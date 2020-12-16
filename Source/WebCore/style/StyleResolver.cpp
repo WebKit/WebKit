@@ -89,9 +89,7 @@ Resolver::Resolver(Document& document)
     , m_document(document)
     , m_matchAuthorAndUserStyles(m_document.settings().authorAndUserStylesEnabled())
 {
-    Element* root = m_document.documentElement();
-
-    UserAgentStyle::initDefaultStyle(root);
+    UserAgentStyle::initDefaultStyleSheet();
 
     // construct document root element default style. this is needed
     // to evaluate media queries that contain relative constraints, like "screen and (max-width: 10em)"
@@ -105,8 +103,8 @@ Resolver::Resolver(Document& document)
     else
         m_mediaQueryEvaluator = MediaQueryEvaluator { };
 
-    if (root) {
-        m_rootDefaultStyle = styleForElement(*root, m_document.renderStyle(), nullptr, RuleMatchingBehavior::MatchOnlyUserAgentRules).renderStyle;
+    if (auto* documentElement = m_document.documentElement()) {
+        m_rootDefaultStyle = styleForElement(*documentElement, m_document.renderStyle(), nullptr, RuleMatchingBehavior::MatchOnlyUserAgentRules).renderStyle;
         // Turn off assertion against font lookups during style resolver initialization. We may need root style font for media queries.
         m_document.fontSelector().incrementIsComputingRootStyleFont();
         m_rootDefaultStyle->fontCascade().update(&m_document.fontSelector());

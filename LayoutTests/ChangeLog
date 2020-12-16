@@ -1,3 +1,13 @@
+2020-12-16  Antti Koivisto  <antti@apple.com>
+
+        Remove simpleUserAgentStyleSheet (to fix flaky fast/lists/001.html and fast/lists/001-vertical.html)
+        https://bugs.webkit.org/show_bug.cgi?id=218995
+        <rdar://problem/71452387>
+
+        Reviewed by Antoine Quint.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-12-16  Youenn Fablet  <youenn@apple.com>
 
         Remove ILBC audio codec as WebRTC audio codec

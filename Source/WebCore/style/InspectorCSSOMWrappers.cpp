@@ -104,7 +104,6 @@ void InspectorCSSOMWrappers::maybeCollectFromStyleSheets(const Vector<RefPtr<CSS
 void InspectorCSSOMWrappers::collectDocumentWrappers(ExtensionStyleSheets& extensionStyleSheets)
 {
     if (m_styleRuleToCSSOMWrapperMap.isEmpty()) {
-        collectFromStyleSheetContents(UserAgentStyle::simpleDefaultStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::defaultStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::quirksStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::dialogStyleSheet);

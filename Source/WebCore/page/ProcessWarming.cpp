@@ -72,7 +72,7 @@ void ProcessWarming::prewarmGlobally()
     Settings::create(nullptr);
     
     // Prewarms user agent stylesheet.
-    Style::UserAgentStyle::loadFullDefaultStyle();
+    Style::UserAgentStyle::initDefaultStyleSheet();
     
     // Prewarms JS VM.
     commonVM();
