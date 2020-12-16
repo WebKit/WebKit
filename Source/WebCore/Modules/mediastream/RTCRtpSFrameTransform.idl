@@ -44,7 +44,7 @@ dictionary RTCRtpSFrameTransformOptions {
     Conditional=WEB_RTC,
     EnabledBySetting=WebRTCInsertableStreams,
     ExportMacro=WEBCORE_EXPORT,
-    Exposed=Window,
+    Exposed=(Window,DedicatedWorker),
     InterfaceName=SFrameTransform,
     JSGenerateToNativeObject,
 ] interface RTCRtpSFrameTransform {
