@@ -164,6 +164,8 @@ public:
     // Default highlighting color for app highlights.
     Color appHighlightColor(OptionSet<StyleColor::Options>) const;
 
+    Color datePlaceholderTextColor(const Color& textColor, const Color& backgroundColor) const;
+
     virtual Color disabledTextColor(const Color& textColor, const Color& backgroundColor) const;
 
     WEBCORE_EXPORT Color focusRingColor(OptionSet<StyleColor::Options>) const;

@@ -35,7 +35,6 @@
 #include "PlatformLocale.h"
 #include "RenderBlock.h"
 #include "RenderStyle.h"
-#include "StyleResolver.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -61,13 +60,9 @@ DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document& document, Fie
 {
 }
 
-Optional<Style::ElementStyle> DateTimeNumericFieldElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
+void DateTimeNumericFieldElement::adjustMinWidth(RenderStyle& style) const
 {
-    auto elementStyle = resolveStyle(&parentStyle);
-    if (!elementStyle.renderStyle)
-        return WTF::nullopt;
-
-    auto& font = elementStyle.renderStyle->fontCascade();
+    auto& font = style.fontCascade();
 
     unsigned length = 2;
     if (m_range.maximum > 999)
@@ -80,11 +75,10 @@ Optional<Style::ElementStyle> DateTimeNumericFieldElement::resolveCustomStyle(co
     float width = 0;
     for (char c = '0'; c <= '9'; ++c) {
         auto numberString = locale.convertToLocalizedNumber(makeString(pad(c, length, makeString(c))));
-        width = std::max(width, font.width(RenderBlock::constructTextRun(numberString, *elementStyle.renderStyle)));
+        width = std::max(width, font.width(RenderBlock::constructTextRun(numberString, style)));
     }
 
-    elementStyle.renderStyle->setMinWidth({ width, Fixed });
-    return elementStyle;
+    style.setMinWidth({ width, Fixed });
 }
 
 int DateTimeNumericFieldElement::maximum() const
@@ -115,8 +109,6 @@ void DateTimeNumericFieldElement::initialize(const AtomString& pseudo)
 
 void DateTimeNumericFieldElement::setEmptyValue(EventBehavior eventBehavior)
 {
-    DateTimeFieldElement::setEmptyValue(eventBehavior);
-
     m_value = 0;
     m_hasValue = false;
     m_typeAheadBuffer.clear();
@@ -125,8 +117,6 @@ void DateTimeNumericFieldElement::setEmptyValue(EventBehavior eventBehavior)
 
 void DateTimeNumericFieldElement::setValueAsInteger(int value, EventBehavior eventBehavior)
 {
-    DateTimeFieldElement::setValueAsInteger(value, eventBehavior);
-
     m_value = m_range.clampValue(value);
     m_hasValue = true;
     updateVisibleValue(eventBehavior);

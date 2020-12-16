@@ -1428,6 +1428,20 @@ Color RenderTheme::disabledTextColor(const Color& textColor, const Color& backgr
     return disabledColor;
 }
 
+// Value chosen to return dark gray for both white on black and black on white.
+constexpr float datePlaceholderColorLightnessAdjustmentFactor = 0.66f;
+
+Color RenderTheme::datePlaceholderTextColor(const Color& textColor, const Color& backgroundColor) const
+{
+    auto hsla = toHSLA(textColor.toSRGBALossy<float>());
+    if (textColor.luminance() < backgroundColor.luminance())
+        hsla.lightness += datePlaceholderColorLightnessAdjustmentFactor * (1.0f - hsla.lightness);
+    else
+        hsla.lightness *= datePlaceholderColorLightnessAdjustmentFactor;
+
+    return toSRGBA(hsla);
+}
+
 void RenderTheme::setCustomFocusRingColor(const Color& color)
 {
     customFocusRingColor() = color;

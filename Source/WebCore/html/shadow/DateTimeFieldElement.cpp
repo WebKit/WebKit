@@ -30,13 +30,15 @@
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
 #include "CSSPropertyNames.h"
-#include "CSSValueKeywords.h"
 #include "DateComponents.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
 #include "PlatformLocale.h"
+#include "RenderStyle.h"
+#include "RenderTheme.h"
+#include "StyleResolver.h"
 #include "Text.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/WTFString.h>
@@ -59,6 +61,24 @@ DateTimeFieldElement::DateTimeFieldElement(Document& document, FieldOwner& field
 void DateTimeFieldElement::initialize(const AtomString& pseudo)
 {
     setPseudo(pseudo);
+}
+
+Optional<Style::ElementStyle> DateTimeFieldElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle)
+{
+    auto elementStyle = resolveStyle(&parentStyle);
+    if (!elementStyle.renderStyle)
+        return WTF::nullopt;
+
+    auto& style = *elementStyle.renderStyle;
+    adjustMinWidth(style);
+
+    if (!hasValue() && shadowHostStyle) {
+        auto textColor = shadowHostStyle->visitedDependentColorWithColorFilter(CSSPropertyColor);
+        auto backgroundColor = shadowHostStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+        style.setColor(RenderTheme::singleton().datePlaceholderTextColor(textColor, backgroundColor));
+    }
+
+    return elementStyle;
 }
 
 void DateTimeFieldElement::defaultEventHandler(Event& event)
@@ -158,17 +178,6 @@ Locale& DateTimeFieldElement::localeForOwner() const
 AtomString DateTimeFieldElement::localeIdentifier() const
 {
     return m_fieldOwner ? m_fieldOwner->localeIdentifier() : nullAtom();
-}
-
-void DateTimeFieldElement::setEmptyValue(EventBehavior)
-{
-    setInlineStyleProperty(CSSPropertyColor, CSSValueDarkgray);
-}
-
-void DateTimeFieldElement::setValueAsInteger(int, EventBehavior)
-{
-    if (!hasValue())
-        removeInlineStyleProperty(CSSPropertyColor);
 }
 
 String DateTimeFieldElement::visibleValue() const

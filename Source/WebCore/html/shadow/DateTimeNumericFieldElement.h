@@ -62,9 +62,8 @@ protected:
     int valueAsInteger() const final;
 
 private:
-    Optional<Style::ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) final;
-
     // DateTimeFieldElement functions:
+    void adjustMinWidth(RenderStyle&) const final;
     String value() const final;
     String placeholderValue() const final;
     void handleKeyboardEvent(KeyboardEvent&) final;

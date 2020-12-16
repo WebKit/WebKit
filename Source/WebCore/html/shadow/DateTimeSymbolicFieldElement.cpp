@@ -32,7 +32,6 @@
 #include "FontCascade.h"
 #include "RenderBlock.h"
 #include "RenderStyle.h"
-#include "StyleResolver.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextBreakIterator.h>
@@ -50,20 +49,15 @@ DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement(Document& document, F
     ASSERT(!m_symbols.isEmpty());
 }
 
-Optional<Style::ElementStyle> DateTimeSymbolicFieldElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
+void DateTimeSymbolicFieldElement::adjustMinWidth(RenderStyle& style) const
 {
-    auto elementStyle = resolveStyle(&parentStyle);
-    if (!elementStyle.renderStyle)
-        return WTF::nullopt;
-
-    auto& font = elementStyle.renderStyle->fontCascade();
+    auto& font = style.fontCascade();
 
     float width = 0;
     for (auto& symbol : m_symbols)
-        width = std::max(width, font.width(RenderBlock::constructTextRun(symbol, *elementStyle.renderStyle)));
+        width = std::max(width, font.width(RenderBlock::constructTextRun(symbol, style)));
 
-    elementStyle.renderStyle->setMinWidth({ width, Fixed });
-    return elementStyle;
+    style.setMinWidth({ width, Fixed });
 }
 
 bool DateTimeSymbolicFieldElement::hasValue() const
@@ -78,16 +72,12 @@ void DateTimeSymbolicFieldElement::initialize(const AtomString& pseudo)
 
 void DateTimeSymbolicFieldElement::setEmptyValue(EventBehavior eventBehavior)
 {
-    DateTimeFieldElement::setEmptyValue(eventBehavior);
-
     m_selectedIndex = invalidIndex;
     updateVisibleValue(eventBehavior);
 }
 
 void DateTimeSymbolicFieldElement::setValueAsInteger(int newSelectedIndex, EventBehavior eventBehavior)
 {
-    DateTimeFieldElement::setValueAsInteger(newSelectedIndex, eventBehavior);
-
     m_selectedIndex = std::max(0, std::min(newSelectedIndex, static_cast<int>(m_symbols.size() - 1)));
     updateVisibleValue(eventBehavior);
 }

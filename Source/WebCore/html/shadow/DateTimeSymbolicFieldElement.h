@@ -47,9 +47,8 @@ protected:
 private:
     static constexpr int invalidIndex = -1;
 
-    Optional<Style::ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) final;
-
     // DateTimeFieldElement functions:
+    void adjustMinWidth(RenderStyle&) const final;
     void stepDown() final;
     void stepUp() final;
     String value() const final;

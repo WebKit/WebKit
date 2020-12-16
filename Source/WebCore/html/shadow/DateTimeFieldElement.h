@@ -36,6 +36,8 @@
 namespace WebCore {
 
 class DateComponents;
+class RenderStyle;
+
 struct DateTimeFieldsState;
 
 class DateTimeFieldElement : public HTMLDivElement {
@@ -61,12 +63,11 @@ public:
 
     String visibleValue() const;
 
-    virtual void setEmptyValue(EventBehavior = DispatchNoEvent);
-    virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent);
-
     virtual bool hasValue() const = 0;
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) = 0;
+    virtual void setEmptyValue(EventBehavior = DispatchNoEvent) = 0;
     virtual void setValueAsDate(const DateComponents&) = 0;
+    virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) = 0;
     virtual void stepDown() = 0;
     virtual void stepUp() = 0;
     virtual String value() const = 0;
@@ -78,11 +79,14 @@ protected:
     Locale& localeForOwner() const;
     AtomString localeIdentifier() const;
     void updateVisibleValue(EventBehavior);
+    virtual void adjustMinWidth(RenderStyle&) const = 0;
     virtual int valueAsInteger() const = 0;
     virtual void handleKeyboardEvent(KeyboardEvent&) = 0;
     virtual void handleBlurEvent(Event&);
 
 private:
+    Optional<Style::ElementStyle> resolveCustomStyle(const RenderStyle&, const RenderStyle*) final;
+
     bool supportsFocus() const override;
 
     void defaultKeyboardEventHandler(KeyboardEvent&);
