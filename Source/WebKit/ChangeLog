@@ -1,3 +1,25 @@
+2020-12-16  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION [iOS] Flaky GPU Process crash under -[RTCVideoEncoderH264 destroyCompressionSession]
+        https://bugs.webkit.org/show_bug.cgi?id=219899
+        <rdar://problem/72347652>
+
+        Reviewed by Alex Christensen.
+
+        We can no longer get the connection when needed as we are now operating in a background thread.
+        For that reason, capture the IPC connection in the lambda to make sure we have a valid IPC connection.
+        Remove LibWebRTCCodecsProxy when being closed instead of when being destroyed as well.
+
+        Covered by existing tests.
+
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        (WebKit::LibWebRTCCodecsProxy::~LibWebRTCCodecsProxy):
+        (WebKit::LibWebRTCCodecsProxy::close):
+        (WebKit::LibWebRTCCodecsProxy::createH264Decoder):
+        (WebKit::LibWebRTCCodecsProxy::createH265Decoder):
+        (WebKit::LibWebRTCCodecsProxy::createVP9Decoder):
+        (WebKit::LibWebRTCCodecsProxy::createEncoder):
+
 2020-12-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Suppress the image extraction interaction while editing text
