@@ -161,7 +161,9 @@ Optional<LayoutUnit> FormattingContext::Geometry::computedWidthValue(const Box& 
 Optional<LayoutUnit> FormattingContext::Geometry::computedWidth(const Box& layoutBox, LayoutUnit containingBlockWidth)
 {
     if (auto computedWidth = computedWidthValue(layoutBox, WidthType::Normal, containingBlockWidth)) {
-        if (layoutBox.style().boxSizing() == BoxSizing::ContentBox)
+        auto& style = layoutBox.style();
+        // Non-quantitative values such as auto and min-content are not influenced by the box-sizing property.
+        if (style.boxSizing() == BoxSizing::ContentBox || style.width().isIntrinsicOrAuto())
             return computedWidth;
         auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
         return *computedWidth - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().valueOr(0));
