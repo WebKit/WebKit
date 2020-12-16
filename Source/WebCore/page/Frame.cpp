@@ -190,7 +190,13 @@ Ref<Frame> Frame::create(Page* page, HTMLFrameOwnerElement* ownerElement, Unique
 Frame::~Frame()
 {
     setView(nullptr);
-    loader().cancelAndClear();
+    navigationScheduler().cancel();
+
+    if (!loader().isComplete())
+        loader().closeURL();
+
+    loader().clear(document(), false);
+    script().updatePlatformScriptObjects();
 
     // FIXME: We should not be doing all this work inside the destructor
 

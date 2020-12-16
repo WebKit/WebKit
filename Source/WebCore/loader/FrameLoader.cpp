@@ -623,18 +623,6 @@ void FrameLoader::didExplicitOpen()
     m_frame.navigationScheduler().cancel();
 }
 
-
-void FrameLoader::cancelAndClear()
-{
-    m_frame.navigationScheduler().cancel();
-
-    if (!m_isComplete)
-        closeURL();
-
-    clear(m_frame.document(), false);
-    m_frame.script().updatePlatformScriptObjects();
-}
-
 static inline bool shouldClearWindowName(const Frame& frame, const Document& newDocument)
 {
     if (!frame.isMainFrame())
