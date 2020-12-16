@@ -1,4 +1,15 @@
 =================
+WPE WebKit 2.30.4
+=================
+
+What's new in WPE WebKit 2.30.4?
+
+  - Fix text data sent with WebSocket when using libsoup older than 2.68.
+  - Fix rendering on the Raspberry Pi 3 using the proprietary GPU driver.
+  - Fix clipping of descendant layers of a mask layer.
+  - Fix the build with ICU 68.1.
+
+=================
 WPE WebKit 2.30.3
 =================
 
