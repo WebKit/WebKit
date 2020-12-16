@@ -1,3 +1,21 @@
+2020-12-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Calls to setFixedLayoutSize() should not be inside ENABLE(TEXT_AUTOSIZING)
+        https://bugs.webkit.org/show_bug.cgi?id=219932
+
+        Reviewed by Wenson Hsieh.
+
+        We always want to call setFixedLayoutSize(), whether or not ENABLE(TEXT_AUTOSIZING) is defined.
+        
+        For code simplicity, make resetTextAutosizing() an empty function when ENABLE(TEXT_AUTOSIZING)
+        is not defined.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        (WebKit::WebPage::resetTextAutosizing):
+        (WebKit::WebPage::viewportConfigurationChanged):
+
 2020-12-16  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Add sandbox parameter for message filter entitlement status

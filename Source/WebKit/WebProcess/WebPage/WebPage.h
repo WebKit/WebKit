@@ -1435,9 +1435,9 @@ private:
 
 #if ENABLE(TEXT_AUTOSIZING)
     void textAutoSizingAdjustmentTimerFired();
-    void resetTextAutosizing();
     void resetIdempotentTextAutosizingIfNeeded(double previousInitialScale);
 #endif
+    void resetTextAutosizing();
 
 #if ENABLE(VIEWPORT_RESIZING)
     void shrinkToFitContent(ZoomToInitialScale = ZoomToInitialScale::No);
