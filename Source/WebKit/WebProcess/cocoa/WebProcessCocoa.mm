@@ -92,7 +92,6 @@
 #import <wtf/FileSystem.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/SoftLinking.h>
-#import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -671,9 +670,6 @@ void WebProcess::initializeSandbox(const AuxiliaryProcessInitializationParameter
     auto webKitBundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit"];
 
     sandboxParameters.setOverrideSandboxProfilePath(makeString(String([webKitBundle resourcePath]), "/com.apple.WebProcess.sb"));
-
-    auto hasMessageFilterEntitlement = WTF::processHasEntitlement("com.apple.private.security.message-filter");
-    sandboxParameters.addParameter("ENABLE_SANDBOX_MESSAGE_FILTER", hasMessageFilterEntitlement ? "YES" : "NO");
 
     AuxiliaryProcess::initializeSandbox(parameters, sandboxParameters);
 #endif

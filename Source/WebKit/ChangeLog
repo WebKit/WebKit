@@ -1,3 +1,17 @@
+2020-12-15  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r270829.
+        https://bugs.webkit.org/show_bug.cgi?id=219935
+
+        Introduced crash
+
+        Reverted changeset:
+
+        "[macOS] Add sandbox parameter for message filter entitlement
+        status"
+        https://bugs.webkit.org/show_bug.cgi?id=219852
+        https://trac.webkit.org/changeset/270829
+
 2020-12-15  Andy Estes  <aestes@apple.com>
 
         [Mac] Numerous webgl tests continue to time out with the WebM format reader enabled
