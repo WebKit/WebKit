@@ -1,3 +1,14 @@
+2020-12-16  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Include remote directories when packaging
+        https://bugs.webkit.org/show_bug.cgi?id=219927
+        <rdar://problem/72362529>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Include remote directories.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version.
+
 2020-12-15  Andy Estes  <aestes@apple.com>
 
         [Mac] Numerous webgl tests continue to time out with the WebM format reader enabled
