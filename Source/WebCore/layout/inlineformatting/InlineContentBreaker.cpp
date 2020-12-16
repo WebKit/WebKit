@@ -225,7 +225,7 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
         // Parent style drives the wrapping behavior here.
         // e.g. <div style="white-space: nowrap">some text<div style="display: inline-block; white-space: pre-wrap"></div></div>.
         // While the inline-block has pre-wrap which allows wrapping, the content lives in a nowrap context.
-        if (lastInlineItem.isBox() || lastInlineItem.isInlineBoxStart() || lastInlineItem.isInlineBoxStart())
+        if (lastInlineItem.isBox() || lastInlineItem.isInlineBoxStart() || lastInlineItem.isInlineBoxEnd())
             return isWrappingAllowed(lastInlineItem.layoutBox().parent().style());
         if (lastInlineItem.isText()) {
             if (runs.size() == 1) {
