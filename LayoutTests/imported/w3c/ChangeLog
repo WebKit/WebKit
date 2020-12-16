@@ -1,3 +1,15 @@
+2020-12-16  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r270806): [iOS] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-distance-clamping.html is frequently failing
+        https://bugs.webkit.org/show_bug.cgi?id=219897
+        <rdar://problem/72346130>
+
+        Reviewed by Alex Christensen.
+
+        Merge https://github.com/web-platform-tests/wpt/pull/26926 to address test flakiness.
+
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-distance-clamping.html:
+
 2020-12-15  Sihui Liu  <sihui_liu@apple.com>
 
         Add webkit- prefix to SpeechRecognition
