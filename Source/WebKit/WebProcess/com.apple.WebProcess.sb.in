@@ -952,7 +952,7 @@
 )
 
 ;; <rdar://problem/60088861>
-(if (equal? (param "CPU") "arm64")
+(when (equal? (param "CPU") "arm64")
     (allow iokit-open
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
         (with telemetry-backtrace)
@@ -1694,6 +1694,7 @@
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-registry-entry-class
+            "AppleAVDUserClient"
             "AppleIntelMEUserClient"
             "AppleSNBFBUserClient"
         )
