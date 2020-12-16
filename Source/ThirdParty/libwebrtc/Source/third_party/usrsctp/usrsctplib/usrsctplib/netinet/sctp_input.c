@@ -1594,6 +1594,11 @@ sctp_process_cookie_existing(struct mbuf *m, int iphlen, int offset,
 {
 	struct sctp_association *asoc;
 	struct sctp_init_chunk *init_cp, init_buf;
+	struct sctp_asconf_addr *aparam, *naparam;
+	struct sctp_asconf_ack *aack, *naack;
+	struct sctp_tmit_chunk *chk, *nchk;
+	struct sctp_stream_reset_list *strrst, *nstrrst;
+	struct sctp_queued_to_read *sq, *nsq;
 	struct sctp_init_ack_chunk *initack_cp, initack_buf;
 	struct sctp_nets *net;
 	struct mbuf *op_err;
@@ -1893,7 +1898,6 @@ sctp_process_cookie_existing(struct mbuf *m, int iphlen, int offset,
 			 * kick us so it COULD still take a timeout
 			 * to move these.. but it can't hurt to mark them.
 			 */
-			struct sctp_tmit_chunk *chk;
 		        TAILQ_FOREACH(chk, &stcb->asoc.sent_queue, sctp_next) {
 				if (chk->sent < SCTP_DATAGRAM_RESEND) {
 					chk->sent = SCTP_DATAGRAM_RESEND;
@@ -2087,6 +2091,58 @@ sctp_process_cookie_existing(struct mbuf *m, int iphlen, int offset,
 			stcb->asoc.strmout[i].next_mid_unordered = 0;
 			stcb->asoc.strmout[i].last_msg_incomplete = 0;
 		}
+
+ 		TAILQ_FOREACH_SAFE(strrst, &asoc->resetHead, next_resp, nstrrst) {
+ 			TAILQ_REMOVE(&asoc->resetHead, strrst, next_resp);
+ 			SCTP_FREE(strrst, SCTP_M_STRESET);
+ 		}
+ 		TAILQ_FOREACH_SAFE(sq, &asoc->pending_reply_queue, next, nsq) {
+ 			TAILQ_REMOVE(&asoc->pending_reply_queue, sq, next);
+ 			if (sq->data) {
+ 				sctp_m_freem(sq->data);
+ 				sq->data = NULL;
+ 			}
+ 			sctp_free_remote_addr(sq->whoFrom);
+ 			sq->whoFrom = NULL;
+ 			sq->stcb = NULL;
+ 			sctp_free_a_readq(stcb, sq);
+ 		}
+ 		TAILQ_FOREACH_SAFE(chk, &asoc->control_send_queue, sctp_next, nchk) {
+ 			TAILQ_REMOVE(&asoc->control_send_queue, chk, sctp_next);
+ 			if (chk->data) {
+ 				sctp_m_freem(chk->data);
+ 				chk->data = NULL;
+ 			}
+ 			if (chk->holds_key_ref)
+ 				sctp_auth_key_release(stcb, chk->auth_keyid, SCTP_SO_LOCKED);
+ 			sctp_free_remote_addr(chk->whoTo);
+ 			SCTP_ZONE_FREE(SCTP_BASE_INFO(ipi_zone_chunk), chk);
+ 			SCTP_DECR_CHK_COUNT();
+ 		}
+ 		TAILQ_FOREACH_SAFE(chk, &asoc->asconf_send_queue, sctp_next, nchk) {
+ 			TAILQ_REMOVE(&asoc->asconf_send_queue, chk, sctp_next);
+ 			if (chk->data) {
+ 				sctp_m_freem(chk->data);
+ 				chk->data = NULL;
+ 			}
+ 			if (chk->holds_key_ref)
+ 				sctp_auth_key_release(stcb, chk->auth_keyid, SCTP_SO_LOCKED);
+ 			sctp_free_remote_addr(chk->whoTo);
+ 			SCTP_ZONE_FREE(SCTP_BASE_INFO(ipi_zone_chunk), chk);
+ 			SCTP_DECR_CHK_COUNT();
+ 		}
+ 		TAILQ_FOREACH_SAFE(aparam, &asoc->asconf_queue, next, naparam) {
+ 			TAILQ_REMOVE(&asoc->asconf_queue, aparam, next);
+ 			SCTP_FREE(aparam,SCTP_M_ASC_ADDR);
+ 		}
+ 		TAILQ_FOREACH_SAFE(aack, &asoc->asconf_ack_sent, next, naack) {
+ 			TAILQ_REMOVE(&asoc->asconf_ack_sent, aack, next);
+ 			if (aack->data != NULL) {
+ 				sctp_m_freem(aack->data);
+ 			}
+ 			SCTP_ZONE_FREE(SCTP_BASE_INFO(ipi_zone_asconf_ack), aack);
+ 		}
+
 		/* process the INIT-ACK info (my info) */
 		asoc->my_vtag = ntohl(initack_cp->init.initiate_tag);
 		asoc->my_rwnd = ntohl(initack_cp->init.a_rwnd);
