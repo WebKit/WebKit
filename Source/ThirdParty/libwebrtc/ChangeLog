@@ -1,5 +1,16 @@
 2020-12-16  Youenn Fablet  <youenn@apple.com>
 
+        Cherry-pick usrsctp 7dab23aa0d8db86fedd222a308067439b03fad0f
+        https://bugs.webkit.org/show_bug.cgi?id=219936
+        <rdar://problem/72304588>
+
+        Reviewed by Alex Christensen.
+
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.c:
+        (sctp_process_cookie_existing):
+
+2020-12-16  Youenn Fablet  <youenn@apple.com>
+
         Remove ILBC audio codec as WebRTC audio codec
         https://bugs.webkit.org/show_bug.cgi?id=219912
         <rdar://problem/72302868>

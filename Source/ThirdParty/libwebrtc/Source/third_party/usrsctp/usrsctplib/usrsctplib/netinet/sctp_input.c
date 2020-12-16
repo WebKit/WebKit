@@ -1881,7 +1881,9 @@ sctp_process_cookie_existing(struct mbuf *m, int iphlen, int offset,
 					 NULL);
 		}
 		asoc->my_rwnd = ntohl(initack_cp->init.a_rwnd);
-		asoc->pre_open_streams = ntohs(initack_cp->init.num_outbound_streams);
+		if (asoc->pre_open_streams < asoc->streamoutcnt) {
+			asoc->pre_open_streams = asoc->streamoutcnt;
+		}
 
 		if (ntohl(init_cp->init.initiate_tag) != asoc->peer_vtag) {
 			/* Ok the peer probably discarded our
@@ -2036,8 +2038,9 @@ sctp_process_cookie_existing(struct mbuf *m, int iphlen, int offset,
 			/* move to OPEN state, if not in SHUTDOWN_SENT */
 			SCTP_SET_STATE(stcb, SCTP_STATE_OPEN);
 		}
-		asoc->pre_open_streams =
-			ntohs(initack_cp->init.num_outbound_streams);
+		if (asoc->pre_open_streams < asoc->streamoutcnt) {
+			asoc->pre_open_streams = asoc->streamoutcnt;
+		}
 		asoc->init_seq_number = ntohl(initack_cp->init.initial_tsn);
 		asoc->sending_seq = asoc->asconf_seq_out = asoc->str_reset_seq_out = asoc->init_seq_number;
 		asoc->asconf_seq_out_acked = asoc->asconf_seq_out - 1;
@@ -2310,7 +2313,6 @@ sctp_process_cookie_new(struct mbuf *m, int iphlen, int offset,
 	/* process the INIT-ACK info (my info) */
 	asoc->my_vtag = ntohl(initack_cp->init.initiate_tag);
 	asoc->my_rwnd = ntohl(initack_cp->init.a_rwnd);
-	asoc->pre_open_streams = ntohs(initack_cp->init.num_outbound_streams);
 	asoc->init_seq_number = ntohl(initack_cp->init.initial_tsn);
 	asoc->sending_seq = asoc->asconf_seq_out = asoc->str_reset_seq_out = asoc->init_seq_number;
 	asoc->asconf_seq_out_acked = asoc->asconf_seq_out - 1;
