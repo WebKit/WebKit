@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2018 Apple Inc. All rights reserved.
@@ -131,7 +131,7 @@ class ClassLayoutBase(object):
         return '\n'.join(self.as_string_list(colorize))
 
     def dump(self, colorize=True):
-        print self.as_string(colorize)
+        print(self.as_string(colorize))
 
 
 class ClassLayout(ClassLayoutBase):
@@ -387,11 +387,11 @@ class LLDBDebuggerInstance:
 
         self.target = self.debugger.CreateTargetWithFileAndArch(str(self.binary_path), architecture)
         if not self.target:
-            print "Failed to make target for " + self.binary_path
+            print("Failed to make target for " + self.binary_path)
 
         self.module = self.target.GetModuleAtIndex(0)
         if not self.module:
-            print "Failed to get first module in " + self.binary_path
+            print("Failed to get first module in " + self.binary_path)
 
     def __del__(self):
         if lldb:
@@ -399,7 +399,7 @@ class LLDBDebuggerInstance:
 
     def _get_first_file_architecture(self):
         p = re.compile('shared library +(\w+)$')
-        file_result = subprocess.check_output(["file", self.binary_path]).split('\n')
+        file_result = subprocess.check_output(["file", self.binary_path], encoding='UTF-8').split('\n')
         arches = []
         for line in file_result:
             match = p.search(line)
@@ -417,5 +417,5 @@ class LLDBDebuggerInstance:
             # There can be more that one type with a given name, but for now just return the first one.
             return ClassLayout(self.target, types.GetTypeAtIndex(0))
 
-        print 'error: no type matches "%s" in "%s"' % (classname, self.module.file)
+        print('error: no type matches "%s" in "%s"' % (classname, self.module.file))
         return None

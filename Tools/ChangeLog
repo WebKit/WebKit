@@ -1,3 +1,23 @@
+2020-12-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use python3 in Tools/Scripts/dump-class-layout
+        https://bugs.webkit.org/show_bug.cgi?id=219945
+
+        Reviewed by Simon Fraser.
+
+        Newer LLDB python module only contains python3 version. So Tools/Scripts/dump-class-layout does not work.
+        This patch makes Tools/Scripts/dump-class-layout working with python3.
+
+        * Scripts/dump-class-layout:
+        (webkit_build_dir): Deleted.
+        (main): Deleted.
+        (main.or): Deleted.
+        * lldb/lldb_dump_class_layout.py:
+        (ClassLayoutBase.dump):
+        (LLDBDebuggerInstance.__init__):
+        (LLDBDebuggerInstance._get_first_file_architecture):
+        (LLDBDebuggerInstance.layout_for_classname):
+
 2020-12-16  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Include remote directories when packaging
