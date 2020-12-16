@@ -223,20 +223,22 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
         gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     } else
         gl::FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, drawingBufferTextureTarget(), m_texture, 0);
-#elif PLATFORM(GTK)
-    gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, m_texture);
-    gl::TexImage2D(GL_TEXTURE_RECTANGLE_ANGLE, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
-    gl::FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE_ANGLE, m_texture, 0);
-    if (m_compositorTexture) {
-        gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, m_compositorTexture);
-        gl::TexImage2D(GL_TEXTURE_RECTANGLE_ANGLE, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
-        gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, 0);
-        gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, m_intermediateTexture);
-        gl::TexImage2D(GL_TEXTURE_RECTANGLE_ANGLE, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
-        gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, 0);
-    }
 #else
-#error FIXME: Port to non-Cocoa platforms.
+    GLenum textureTarget = drawingBufferTextureTarget();
+    GLuint internalColorFormat = textureTarget == GL_TEXTURE_2D ? colorFormat : m_internalColorFormat;
+    gl::BindTexture(textureTarget, m_texture);
+    gl::TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
+    gl::FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureTarget, m_texture, 0);
+#if USE(COORDINATED_GRAPHICS)
+    if (m_compositorTexture) {
+        gl::BindTexture(textureTarget, m_compositorTexture);
+        gl::TexImage2D(textureTarget, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
+        gl::BindTexture(textureTarget, 0);
+        gl::BindTexture(textureTarget, m_intermediateTexture);
+        gl::TexImage2D(textureTarget, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
+        gl::BindTexture(textureTarget, 0);
+    }
+#endif
 #endif // PLATFORM(COCOA)
 
     attachDepthAndStencilBufferIfNeeded(internalDepthStencilFormat, width, height);
@@ -1070,12 +1072,16 @@ void GraphicsContextGLOpenGL::compileShader(PlatformGLObject shader)
     if (!makeContextCurrent())
         return;
 
+#if !PLATFORM(WIN)
     // We need the ANGLE_texture_rectangle extension to support IOSurface
     // backbuffers, but we don't want it exposed to WebGL user shaders.
     // Temporarily disable it during shader compilation.
     gl::Disable(GL_TEXTURE_RECTANGLE_ANGLE);
+#endif
     gl::CompileShader(shader);
+#if !PLATFORM(WIN)
     gl::Enable(GL_TEXTURE_RECTANGLE_ANGLE);
+#endif
 }
 
 void GraphicsContextGLOpenGL::compileShaderDirect(PlatformGLObject shader)

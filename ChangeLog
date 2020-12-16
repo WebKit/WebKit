@@ -1,3 +1,12 @@
+2020-12-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Enable USE_ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=219421
+
+        Reviewed by Don Olmstead.
+
+        * Source/cmake/OptionsWinCairo.cmake:
+
 2020-12-13  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Version of LibPSL not reported

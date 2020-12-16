@@ -2131,30 +2131,26 @@ performance-api/paint-timing/paint-timing-with-worker.html [ Failure ]
 performance-api/paint-timing/performance-observer-first-contentful-paint.html [ Timeout ]
 storage/indexeddb/storage-limit-with-indices.html [ Failure ]
 webgl/1.0.3/conformance/canvas/drawingbuffer-test.html [ Skip ] # Timeout
-webgl/1.0.3/conformance/context/context-lost-restored.html [ Failure ]
 webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure ]
+webgl/1.0.3/conformance/extensions/oes-element-index-uint.html [ Failure ]
 webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Skip ] # Timeout
-webgl/1.0.3/conformance/extensions/oes-texture-float.html [ Failure ]
 webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-video.html [ Skip ] # Timeout
-webgl/1.0.3/conformance/extensions/oes-texture-half-float.html [ Failure ]
-webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit.html [ Failure ]
+webgl/1.0.3/conformance/glsl/bugs/array-of-struct-with-int-first-position.html [ Skip ] # This test makes DumpRenderTree process unable to exit
 webgl/1.0.3/conformance/glsl/bugs/long-expressions-should-not-crash.html [ Skip ] # Timeout
-webgl/1.0.3/conformance/more/functions/copyTexImage2DBadArgs.html [ Skip ] # Timeout
+webgl/1.0.3/conformance/misc/uninitialized-test.html [ Failure ]
 webgl/1.0.3/conformance/more/functions/readPixelsBadArgs.html [ Failure ]
 webgl/1.0.3/conformance/more/functions/texImage2DHTML.html [ Failure ]
 webgl/1.0.3/conformance/more/functions/texSubImage2DHTML.html [ Failure ]
-webgl/1.0.3/conformance/more/functions/texSubImage2DHTMLBadArgs.html [ Skip ] # Crash
-webgl/1.0.3/conformance/renderbuffers/feedback-loop.html [ Failure ]
+webgl/1.0.3/conformance/programs/program-test.html [ Failure ]
 webgl/1.0.3/conformance/renderbuffers/framebuffer-object-attachment.html [ Failure ]
-webgl/1.0.3/conformance/rendering/point-no-attributes.html [ Failure ]
+webgl/1.0.3/conformance/renderbuffers/framebuffer-state-restoration.html [ Failure ]
+webgl/1.0.3/conformance/renderbuffers/renderbuffer-initialization.html [ Failure ]
 webgl/1.0.3/conformance/textures/default-texture.html [ Failure ]
 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Skip ] # Timeout
 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Skip ] # Timeout
 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Skip ] # Timeout
 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Skip ] # Timeout
-webgl/1.0.3/conformance/textures/tex-sub-image-2d-bad-args.html [ Skip ] # Crash
-webgl/1.0.3/conformance/textures/texture-copying-feedback-loops.html [ Failure ]
+webgl/1.0.3/conformance/textures/texture-attachment-formats.html [ Failure ]
+webgl/1.0.3/conformance/textures/texture-mips.html [ Failure ]
 webgl/1.0.3/conformance/textures/texture-upload-size.html [ Skip ] # Timeout
-webgl/conformance/extensions/ext-texture-compression-rgtc.html [ Failure ]
-webgl/conformance/extensions/s3tc-and-rgtc.html [ Failure ]
 webgl/webgl-vertex-array-object-defined.html [ Failure ]

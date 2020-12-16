@@ -102,11 +102,13 @@ public:
     CALayer* platformLayer() const final { return reinterpret_cast<CALayer*>(m_webGLLayer.get()); }
     PlatformGraphicsContextGLDisplay platformDisplay() const { return m_displayObj; }
     PlatformGraphicsContextGLConfig platformConfig() const { return m_configObj; }
-    static GCGLenum drawingBufferTextureTarget();
     static GCGLenum drawingBufferTextureTargetQuery();
     static GCGLint EGLDrawingBufferTextureTarget();
 #else
     PlatformLayer* platformLayer() const final;
+#endif
+#if USE(ANGLE)
+    static GCGLenum drawingBufferTextureTarget();
 #endif
 
 #if PLATFORM(IOS_FAMILY)

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011, 2012, 2017 Igalia S.L.
+ * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -22,6 +23,8 @@
 
 #if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA)
 
+#include "ANGLEContext.h"
+#include "ANGLEHeaders.h"
 #include "BitmapTextureGL.h"
 #include "GLContext.h"
 #include "TextureMapperGLHeaders.h"
@@ -34,9 +37,11 @@ TextureMapperGCGLPlatformLayer::TextureMapperGCGLPlatformLayer(GraphicsContextGL
     : m_context(context)
 {
     switch (destination) {
-    case GraphicsContextGLOpenGL::Destination::Offscreen:
-        m_glContext = GLContext::createOffscreenContext(&PlatformDisplay::sharedDisplayForCompositing());
+    case GraphicsContextGLOpenGL::Destination::Offscreen: {
+        auto sharingContext = PlatformDisplay::sharedDisplayForCompositing().sharingGLContext()->platformContext();
+        m_glContext = ANGLEContext::createContext(sharingContext, context.contextAttributes().isWebGL2);
         break;
+    }
     case GraphicsContextGLOpenGL::Destination::DirectlyToHostWindow:
         ASSERT_NOT_REACHED();
         break;
@@ -101,13 +106,12 @@ void TextureMapperGCGLPlatformLayer::paintToTextureMapper(TextureMapper& texture
     ASSERT(m_context.m_state.boundReadFBO == m_context.m_state.boundDrawFBO);
     if (attrs.antialias && m_context.m_state.boundDrawFBO == m_context.m_multisampleFBO) {
         GLContext* previousActiveContext = GLContext::current();
-        if (previousActiveContext != m_glContext.get())
-            m_context.makeContextCurrent();
+        m_context.makeContextCurrent();
 
         m_context.resolveMultisamplingIfNecessary();
-        ::glBindFramebuffer(GraphicsContextGLOpenGL::FRAMEBUFFER, m_context.m_state.boundDrawFBO);
+        gl::BindFramebuffer(GL_FRAMEBUFFER, m_context.m_state.boundDrawFBO);
 
-        if (previousActiveContext && previousActiveContext != m_glContext.get())
+        if (previousActiveContext)
             previousActiveContext->makeContextCurrent();
     }
 

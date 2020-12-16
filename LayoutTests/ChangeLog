@@ -1,3 +1,12 @@
+2020-12-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Enable USE_ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=219421
+
+        Reviewed by Don Olmstead.
+
+        * platform/wincairo/TestExpectations:
+
 2020-12-16  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Update list heuristics to include linked lists inside navigation containers

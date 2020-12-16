@@ -2,6 +2,7 @@
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -113,6 +114,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     : GraphicsContextGL(attributes, destination, sharedContext)
 {
     ASSERT_UNUSED(sharedContext, !sharedContext);
+    m_isForWebGL2 = attributes.isWebGL2;
 #if USE(NICOSIA)
     m_nicosiaLayer = WTF::makeUnique<Nicosia::GCGLANGLELayer>(*this, destination);
 #else
@@ -125,14 +127,15 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     attributes = contextAttributes(); // They may have changed during validation.
 
     if (destination == Destination::Offscreen) {
+        GLenum textureTarget = drawingBufferTextureTarget();
         // Create a texture to render into.
         gl::GenTextures(1, &m_texture);
-        gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, m_texture);
-        gl::TexParameterf(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        gl::TexParameterf(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        gl::TexParameteri(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        gl::TexParameteri(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, 0);
+        gl::BindTexture(textureTarget, m_texture);
+        gl::TexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        gl::TexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        gl::TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        gl::BindTexture(textureTarget, 0);
 
         // Create an FBO.
         gl::GenFramebuffers(1, &m_fbo);
@@ -140,20 +143,20 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
 
 #if USE(COORDINATED_GRAPHICS)
         gl::GenTextures(1, &m_compositorTexture);
-        gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, m_compositorTexture);
-        gl::TexParameterf(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        gl::TexParameterf(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        gl::TexParameteri(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        gl::TexParameteri(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        gl::BindTexture(texureType, m_compositorTexture);
+        gl::TexParameterf(texureType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        gl::TexParameterf(texureType, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        gl::TexParameteri(texureType, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        gl::TexParameteri(texureType, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
         gl::GenTextures(1, &m_intermediateTexture);
-        gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, m_intermediateTexture);
-        gl::TexParameterf(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        gl::TexParameterf(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        gl::TexParameteri(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        gl::TexParameteri(GL_TEXTURE_RECTANGLE_ANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        gl::BindTexture(texureType, m_intermediateTexture);
+        gl::TexParameterf(texureType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        gl::TexParameterf(texureType, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        gl::TexParameteri(texureType, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        gl::TexParameteri(texureType, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-        gl::BindTexture(GL_TEXTURE_RECTANGLE_ANGLE, 0);
+        gl::BindTexture(texureType, 0);
 #endif
 
         // Create a multisample FBO.
@@ -412,7 +415,9 @@ void GraphicsContextGLOpenGL::checkGPUStatus()
 
 bool GraphicsContextGLOpenGL::isGLES2Compliant() const
 {
-#if USE(OPENGL_ES)
+#if USE(ANGLE)
+    return m_isForWebGL2;
+#elif USE(OPENGL_ES)
     return true;
 #else
     return false;
@@ -427,6 +432,17 @@ PlatformLayer* GraphicsContextGLOpenGL::platformLayer() const
     return m_texmapLayer.get();
 #endif
 }
+
+#if USE(ANGLE)
+GCGLenum GraphicsContextGLOpenGL::drawingBufferTextureTarget()
+{
+#if PLATFORM(WIN)
+    return GL_TEXTURE_2D;
+#else
+    return GL_TEXTURE_RECTANGLE_ANGLE;
+#endif
+}
+#endif
 
 #if PLATFORM(GTK) && !USE(ANGLE)
 ExtensionsGL& GraphicsContextGLOpenGL::getExtensions()

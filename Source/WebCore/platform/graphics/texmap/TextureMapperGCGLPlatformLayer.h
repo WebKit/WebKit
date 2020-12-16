@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-class GLContext;
+class ANGLEContext;
 class TextureMapperPlatformLayerProxy;
 
 class TextureMapperGCGLPlatformLayer : public PlatformLayer {
@@ -49,7 +49,7 @@ public:
 
 private:
     GraphicsContextGLOpenGL& m_context;
-    std::unique_ptr<GLContext> m_glContext;
+    std::unique_ptr<ANGLEContext> m_glContext;
 
 #if USE(COORDINATED_GRAPHICS)
     RefPtr<TextureMapperPlatformLayerProxy> m_platformLayerProxy;
