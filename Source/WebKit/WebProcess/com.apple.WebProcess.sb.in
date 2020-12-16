@@ -120,13 +120,15 @@
         (iokit-connection "IOAccelerator")
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
-        (apply-message-filter
-            (allow
-                iokit-async-external-method
-                iokit-external-method
-            )
-            (allow (with telemetry)
-                iokit-external-trap
+        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+            (apply-message-filter
+                (allow
+                    iokit-async-external-method
+                    iokit-external-method
+                )
+                (allow (with telemetry)
+                    iokit-external-trap
+                )
             )
         )
 #endif
@@ -135,11 +137,13 @@
         (iokit-registry-entry-class "IOAccelerationUserClient")
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
-        (apply-message-filter
-            (allow (with telemetry)
-                iokit-async-external-method
-                iokit-external-trap
-                iokit-external-method
+        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+            (apply-message-filter
+                (allow (with telemetry)
+                    iokit-async-external-method
+                    iokit-external-trap
+                    iokit-external-method
+                )
             )
         )
 #endif
@@ -148,13 +152,15 @@
         (iokit-registry-entry-class "IOSurfaceRootUserClient")
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
-        (apply-message-filter
-            (allow
-                iokit-async-external-method
-                iokit-external-method
-            )
-            (allow (with telemetry)
-                iokit-external-trap
+        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+            (apply-message-filter
+                (allow
+                    iokit-async-external-method
+                    iokit-external-method
+                )
+                (allow (with telemetry)
+                    iokit-external-trap
+                )
             )
         )
 #endif
@@ -163,11 +169,13 @@
         (iokit-registry-entry-class "IOSurfaceSendRight")
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
-        (apply-message-filter
-            (allow (with telemetry)
-                iokit-async-external-method
-                iokit-external-trap
-                iokit-external-method
+        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+            (apply-message-filter
+                (allow (with telemetry)
+                    iokit-async-external-method
+                    iokit-external-trap
+                    iokit-external-method
+                )
             )
         )
 #endif
@@ -186,18 +194,20 @@
         )
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
-        (apply-message-filter
-            (allow
-                iokit-external-method
-            )
-            (allow (with telemetry)
-                iokit-async-external-method
-                iokit-external-trap
+        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+            (apply-message-filter
+                (allow
+                    iokit-external-method
+                )
+                (allow (with telemetry)
+                    iokit-async-external-method
+                    iokit-external-trap
+                )
             )
         )
 #endif
     )
-    
+
     ;; This is needed for Encrypted Media on some hardware (MacMini8,1 for example)
     (allow iokit-open
         (require-all
@@ -206,13 +216,15 @@
         )
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
-        (apply-message-filter
-            (allow
-                iokit-external-method
-            )
-            (allow (with telemetry)
-                iokit-async-external-method
-                iokit-external-trap
+        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+            (apply-message-filter
+                (allow
+                    iokit-external-method
+                )
+                (allow (with telemetry)
+                    iokit-async-external-method
+                    iokit-external-trap
+                )
             )
         )
 #endif
@@ -223,11 +235,13 @@
         (iokit-registry-entry-class "AGPMClient")
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
-        (apply-message-filter
-            (allow (with telemetry)
-                iokit-async-external-method
-                iokit-external-trap
-                iokit-external-method
+        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+            (apply-message-filter
+                (allow (with telemetry)
+                    iokit-async-external-method
+                    iokit-external-trap
+                    iokit-external-method
+                )
             )
         )
 #endif
@@ -236,13 +250,15 @@
         (iokit-registry-entry-class "AppleGraphicsControlClient")
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
-        (apply-message-filter
-            (allow
-                iokit-async-external-method
-                iokit-external-method
-            )
-            (allow (with telemetry)
-                iokit-external-trap
+        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+            (apply-message-filter
+                (allow
+                    iokit-async-external-method
+                    iokit-external-method
+                )
+                (allow (with telemetry)
+                    iokit-external-trap
+                )
             )
         )
 #endif
@@ -251,11 +267,13 @@
         (iokit-registry-entry-class "AppleGraphicsPolicyClient")
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
-        (apply-message-filter
-            (allow (with telemetry)
-                iokit-async-external-method
-                iokit-external-trap
-                iokit-external-method
+        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+            (apply-message-filter
+                (allow (with telemetry)
+                    iokit-async-external-method
+                    iokit-external-trap
+                    iokit-external-method
+                )
             )
         )
 #endif
@@ -265,11 +283,13 @@
         (iokit-registry-entry-class "AppleMGPUPowerControlClient")
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
-        (apply-message-filter
-            (allow (with telemetry)
-                iokit-async-external-method
-                iokit-external-trap
-                iokit-external-method
+        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+            (apply-message-filter
+                (allow (with telemetry)
+                    iokit-async-external-method
+                    iokit-external-trap
+                    iokit-external-method
+                )
             )
         )
 #endif
@@ -852,11 +872,13 @@
     (iokit-user-client-class "AppleUpstreamUserClient")
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
     (with telemetry-backtrace)
-    (apply-message-filter
-        (allow (with telemetry)
-            iokit-async-external-method
-            iokit-external-trap
-            iokit-external-method
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (apply-message-filter
+            (allow (with telemetry)
+                iokit-async-external-method
+                iokit-external-trap
+                iokit-external-method
+            )
         )
     )
 #endif
@@ -869,11 +891,13 @@
     )
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
     (with telemetry-backtrace)
-    (apply-message-filter
-        (allow (with telemetry)
-            iokit-async-external-method
-            iokit-external-trap
-            iokit-external-method
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (apply-message-filter
+            (allow (with telemetry)
+                iokit-async-external-method
+                iokit-external-trap
+                iokit-external-method
+            )
         )
     )
 #endif
@@ -883,11 +907,13 @@
     (iokit-user-client-class "AudioAUUC") ;; <rdar://problem/10427451> && <rdar://problem/10808817>
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
     (with telemetry-backtrace)
-    (apply-message-filter
-        (allow (with telemetry)
-            iokit-async-external-method
-            iokit-external-trap
-            iokit-external-method
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (apply-message-filter
+            (allow (with telemetry)
+                iokit-async-external-method
+                iokit-external-trap
+                iokit-external-method
+            )
         )
     )
 #endif
@@ -897,11 +923,13 @@
     (iokit-user-client-class "IOAudioControlUserClient")
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
     (with telemetry-backtrace)
-    (apply-message-filter
-        (allow (with telemetry)
-            iokit-async-external-method
-            iokit-external-trap
-            iokit-external-method
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (apply-message-filter
+            (allow (with telemetry)
+                iokit-async-external-method
+                iokit-external-trap
+                iokit-external-method
+            )
         )
     )
 #endif
@@ -911,11 +939,13 @@
     (iokit-user-client-class "IOAudioEngineUserClient")
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
     (with telemetry-backtrace)
-    (apply-message-filter
-        (allow (with telemetry)
-            iokit-async-external-method
-            iokit-external-trap
-            iokit-external-method
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (apply-message-filter
+            (allow (with telemetry)
+                iokit-async-external-method
+                iokit-external-trap
+                iokit-external-method
+            )
         )
     )
 #endif
@@ -1234,11 +1264,13 @@
         (iokit-user-client-class "IOUSBDeviceUserClientV2")
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
-        (apply-message-filter
-            (allow (with telemetry)
-                iokit-async-external-method
-                iokit-external-trap
-                iokit-external-method
+        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+            (apply-message-filter
+                (allow (with telemetry)
+                    iokit-async-external-method
+                    iokit-external-trap
+                    iokit-external-method
+                )
             )
         )
 #endif
@@ -1247,11 +1279,13 @@
         (iokit-user-client-class "IOUSBInterfaceUserClientV2")
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
         (with telemetry-backtrace)
-        (apply-message-filter
-            (allow (with telemetry)
-                iokit-async-external-method
-                iokit-external-trap
-                iokit-external-method
+        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+            (apply-message-filter
+                (allow (with telemetry)
+                    iokit-async-external-method
+                    iokit-external-trap
+                    iokit-external-method
+                )
             )
         )
 #endif
@@ -1516,7 +1550,7 @@
 #endif
 
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
-(when (defined? 'mach-bootstrap)
+(if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-bootstrap))
     (allow mach-bootstrap
         (apply-message-filter
             (deny xpc-message-send (with telemetry))
@@ -1533,7 +1567,7 @@
     )
 )
 
-(when (defined? 'mach-kernel-endpoint)
+(if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-kernel-endpoint))
     (allow mach-kernel-endpoint
         (apply-message-filter
             (deny mach-message-send (with telemetry))
@@ -1601,8 +1635,11 @@
     )
 )
 
-(when (defined? 'syscall-mach)
+(if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
     (deny syscall-mach (with telemetry))
+)
+    
+(if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
     (allow syscall-mach (machtrap-number
         MSC__kernelrpc_mach_port_allocate_trap
         MSC__kernelrpc_mach_port_construct_trap

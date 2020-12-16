@@ -1,3 +1,18 @@
+2020-12-16  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Add sandbox parameter for message filter entitlement status
+        https://bugs.webkit.org/show_bug.cgi?id=219852
+        <rdar://problem/72145560>
+
+        Reviewed by Brent Fulgham.
+
+        Add sandbox parameter to determine whether the WebContent process has message filter entitlement.
+        This parameter will be used in the sandbox to enable message filtering.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::initializeSandbox):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-12-16  Youenn Fablet  <youenn@apple.com>
 
         Make sure WebKit WebSocketChannel handle suspend/resume correctly
