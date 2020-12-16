@@ -1,3 +1,12 @@
+2020-12-15  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [CMake][WPE] Add LibWPE before WPEBackend-FDO for qtwpe_INCLUDE_DIRECTORIES
+        https://bugs.webkit.org/show_bug.cgi?id=219920
+
+        Reviewed by Michael Catanzaro.
+
+        * PlatformWPE.cmake:
+
 2020-12-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r270829.
