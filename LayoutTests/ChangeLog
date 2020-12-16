@@ -1,3 +1,13 @@
+2020-12-15  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION: [macOS] http/tests/inspector/network/resource-response-service-worker.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=219625
+
+        Ignore an internal inspector error like I did in r270137
+
+        * http/tests/inspector/network/resource-response-service-worker.html:
+        * platform/mac/TestExpectations:
+
 2020-12-15  Sihui Liu  <sihui_liu@apple.com>
 
         Add webkit- prefix to SpeechRecognition

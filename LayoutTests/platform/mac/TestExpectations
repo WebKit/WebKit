@@ -2256,6 +2256,3 @@ webkit.org/b/219555 inspector/animation/effectChanged.html [ Pass Timeout ]
 webkit.org/b/219225 http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html [ Pass Failure ]
 
 webkit.org/b/219907 imported/w3c/web-platform-tests/server-timing/service_worker_idl.html [ Pass Failure ]
-
-webkit.org/b/219625 http/tests/inspector/network/resource-response-service-worker.html [ Pass Failure ]
-

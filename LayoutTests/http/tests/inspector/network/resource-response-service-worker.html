@@ -37,6 +37,7 @@ async function triggerServiceWorkerLoad(url) {
 
 function test()
 {
+    WI.reportInternalError = (e) => { };
     let suite = InspectorTest.createAsyncSuite("Resource.ResponseSource.ServiceWorker");
 
     function addTestCase({name, description, setup, expression, statusCode, responseSource}) {
