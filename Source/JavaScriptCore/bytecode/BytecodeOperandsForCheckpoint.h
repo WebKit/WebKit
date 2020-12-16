@@ -100,7 +100,7 @@ Operand destinationFor(const Bytecode& bytecode, unsigned checkpointIndex, JITTy
     } else if constexpr (Bytecode::opcodeID == op_iterator_next) {
         switch (checkpointIndex) {
         case OpIteratorNext::computeNext: {
-            if (type == JITType::DFGJIT || type == JITType::DFGJIT)
+            if (type == JITType::DFGJIT || type == JITType::FTLJIT)
                 return Operand::tmp(OpIteratorNext::nextResult);
             return bytecode.m_value; // We reuse value as a temp because its either not used in subsequent bytecodes or written as the temp object .
         }

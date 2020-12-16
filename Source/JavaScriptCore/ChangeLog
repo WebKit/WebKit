@@ -1,3 +1,17 @@
+2020-12-15  Saam Barati  <sbarati@apple.com>
+
+        destinationFor should check for FTLJIT, not DFGJIT twice
+        https://bugs.webkit.org/show_bug.cgi?id=219929
+
+        Reviewed by Mark Lam.
+
+        The code was checking for DFGJIT twice instead of checking for FTLJIT.
+        This doesn't fix any actual bugs, since nobody passes in FTLJIT to this
+        function. But if we ever do in the future, it would have revealed this bug.
+
+        * bytecode/BytecodeOperandsForCheckpoint.h:
+        (JSC::destinationFor):
+
 2020-12-15  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Non-enumerable property fails to shadow inherited enumerable property from for-in
