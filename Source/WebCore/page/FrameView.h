@@ -147,7 +147,6 @@ public:
     WEBCORE_EXPORT void setCustomFixedPositionLayoutRect(const IntRect&);
     bool updateFixedPositionLayoutRect();
 
-    IntSize customSizeForResizeEvent() const { return m_customSizeForResizeEvent; }
     WEBCORE_EXPORT void setCustomSizeForResizeEvent(IntSize);
 
     WEBCORE_EXPORT void setScrollVelocity(const VelocityData&);
@@ -908,10 +907,9 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     bool m_useCustomFixedPositionLayoutRect { false };
-    bool m_useCustomSizeForResizeEvent { false };
 
     IntRect m_customFixedPositionLayoutRect;
-    IntSize m_customSizeForResizeEvent;
+    Optional<IntSize> m_customSizeForResizeEvent;
 #endif
 
     Optional<OverrideViewportSize> m_overrideViewportSize;

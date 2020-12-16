@@ -3366,8 +3366,8 @@ void FrameView::performPostLayoutTasks()
 IntSize FrameView::sizeForResizeEvent() const
 {
 #if PLATFORM(IOS_FAMILY)
-    if (m_useCustomSizeForResizeEvent)
-        return m_customSizeForResizeEvent;
+    if (m_customSizeForResizeEvent)
+        return *m_customSizeForResizeEvent;
 #endif
     if (useFixedLayout() && !fixedLayoutSize().isEmpty() && delegatesScrolling())
         return fixedLayoutSize();
@@ -5201,7 +5201,6 @@ bool FrameView::updateFixedPositionLayoutRect()
 
 void FrameView::setCustomSizeForResizeEvent(IntSize customSize)
 {
-    m_useCustomSizeForResizeEvent = true;
     m_customSizeForResizeEvent = customSize;
     sendResizeEventIfNeeded();
 }
