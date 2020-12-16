@@ -1,5 +1,16 @@
 2020-12-16  Youenn Fablet  <youenn@apple.com>
 
+        Remove ILBC audio codec as WebRTC audio codec
+        https://bugs.webkit.org/show_bug.cgi?id=219912
+        <rdar://problem/72302868>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/audio-capabilities-expected.txt: Added.
+        * webrtc/audio-capabilities.html: Added.
+
+2020-12-16  Youenn Fablet  <youenn@apple.com>
+
         Expose SFrameTransform to DedicatedWorker
         https://bugs.webkit.org/show_bug.cgi?id=219890
 

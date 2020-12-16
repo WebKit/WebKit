@@ -1,0 +1,4 @@
+
+PASS Check ILBC is not supported as encoder
+PASS Check ILBC is not supported as decoder
+
