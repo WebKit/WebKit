@@ -29,7 +29,6 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO)
 
 #include "GPUConnectionToWebProcess.h"
-#include "RemoteAudioDestinationProxyMessages.h"
 #include <WebCore/AudioUtilities.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/threads/BinarySemaphore.h>
@@ -79,7 +78,7 @@ public:
             return;
         }
 
-        auto memory = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
+        auto memory = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadWrite);
         storage().setStorage(WTFMove(memory));
         storage().setReadOnly(true);
         m_ringBuffer->allocate(description, numberOfFrames);
@@ -114,9 +113,8 @@ public:
     bool isPlaying() const { return m_isPlaying; }
 
 private:
-    RemoteAudioDestination(GPUConnectionToWebProcess& connection, RemoteAudioDestinationIdentifier identifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate)
-        : m_connection(connection)
-        , m_id(identifier)
+    RemoteAudioDestination(GPUConnectionToWebProcess&, RemoteAudioDestinationIdentifier identifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate)
+        : m_id(identifier)
 #if PLATFORM(COCOA)
         , m_audioOutputUnitAdaptor(*this)
         , m_ringBuffer(makeUniqueRef<WebCore::CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>()))
@@ -147,13 +145,10 @@ private:
             status = noErr;
         }
 
-        m_connection.connection().send(Messages::RemoteAudioDestinationProxy::RequestBuffer(sampleTime, hostTime, numberOfFrames), m_id.toUInt64());
-
         return status;
     }
 #endif
 
-    GPUConnectionToWebProcess& m_connection;
     RemoteAudioDestinationIdentifier m_id;
 
     RefPtr<RemoteAudioDestination> m_protectThisDuringGracefulShutdown;

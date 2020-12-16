@@ -57,8 +57,7 @@ class RemoteAudioDestinationProxy
 #else
     : public WebCore::AudioDestination
 #endif
-    , public GPUProcessConnection::Client
-    , public IPC::Connection::ThreadMessageReceiver {
+    , public GPUProcessConnection::Client {
     WTF_MAKE_NONCOPYABLE(RemoteAudioDestinationProxy);
 public:
     using AudioIOCallback = WebCore::AudioIOCallback;
@@ -70,15 +69,15 @@ public:
     RemoteAudioDestinationProxy(AudioIOCallback&, const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate);
     ~RemoteAudioDestinationProxy();
 
-    void didReceiveMessageFromGPUProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
-
-#if PLATFORM(COCOA)
-    void requestBuffer(double sampleTime, uint64_t hostTime, uint64_t numberOfFrames);
-#endif
-
 private:
     void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&&) final;
     void stop(CompletionHandler<void(bool)>&&) final;
+
+    void startRenderingThread();
+    void stopRenderingThreadIfNecessary();
+    void startRendering(CompletionHandler<void()>&&);
+    void stopRenderingIfNecessary(CompletionHandler<void()>&& = [] { });
+    void renderQuantum();
 
     void connectToGPUProcess();
 
@@ -97,14 +96,6 @@ private:
     void storageChanged(SharedMemory*);
 #endif
 
-    // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-
-    // IPC::Connection::ThreadMessageReceiver
-    void dispatchToThread(Function<void()>&&) final;
-    void refMessageReceiver() final { WebCore::AudioDestination::ref(); }
-    void derefMessageReceiver() final { WebCore::AudioDestination::deref(); }
-
     RemoteAudioDestinationIdentifier m_destinationID;
 
 #if PLATFORM(COCOA)
@@ -121,7 +112,9 @@ private:
 
     Function<void(Function<void()>&&)> m_dispatchToRenderThread;
     RefPtr<Thread> m_renderThread;
-    CrossThreadQueue<Function<void()>> m_threadTaskQueue;
+
+    std::unique_ptr<RunLoop::Timer<RemoteAudioDestinationProxy>> m_renderingTimer;
+    float m_sampleRate { 0 };
 };
 
 } // namespace WebKit

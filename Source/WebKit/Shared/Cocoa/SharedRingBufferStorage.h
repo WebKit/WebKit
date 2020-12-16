@@ -59,15 +59,18 @@ public:
     uint64_t currentEndFrame() const final { return m_endFrame; }
     void updateFrameBounds() final;
     void flush() final;
+    void setLastReadFrame(uint64_t) final;
+    uint64_t lastReadFrame() const final;
 
 private:
     static constexpr unsigned boundsBufferSize { 32 };
     struct FrameBounds {
         std::pair<uint64_t, uint64_t> boundsBuffer[boundsBufferSize];
         Atomic<unsigned> boundsBufferIndex { 0 };
+        Atomic<uint64_t> lastReadFrame { 0 };
     };
 
-    FrameBounds* sharedFrameBounds();
+    FrameBounds* sharedFrameBounds() const;
 
     Function<void(SharedMemory*)> m_storageChangedHandler;
     RefPtr<SharedMemory> m_storage;

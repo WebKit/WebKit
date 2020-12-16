@@ -43,7 +43,7 @@ namespace WebCore {
 // The audio hardware periodically calls the AudioIOCallback render() method asking it to render/output the next render quantum of audio.
 // It optionally will pass in local/live audio input when it calls render().
 
-class AudioDestination : public ThreadSafeRefCounted<AudioDestination> {
+class AudioDestination : public ThreadSafeRefCounted<AudioDestination, WTF::DestructionThread::Main> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     // Pass in (numberOfInputChannels > 0) if live/local audio input is desired.

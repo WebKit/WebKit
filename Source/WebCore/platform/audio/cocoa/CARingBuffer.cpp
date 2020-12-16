@@ -181,6 +181,7 @@ void CARingBufferStorageVector::flush()
         timeBounds.m_updateCounter = 0;
     }
     m_timeBoundsQueuePtr = 0;
+    m_lastReadFrame = 0;
 }
 
 CARingBuffer::Error CARingBuffer::store(const AudioBufferList* list, size_t framesToWrite, uint64_t startFrame)
@@ -269,6 +270,11 @@ void CARingBuffer::getCurrentFrameBoundsWithoutUpdate(uint64_t& startFrame, uint
     m_buffers->getCurrentFrameBounds(startFrame, endFrame);
 }
 
+uint64_t CARingBuffer::lastReadFrame() const
+{
+    return m_buffers->lastReadFrame();
+}
+
 void CARingBufferStorageVector::getCurrentFrameBounds(uint64_t& startFrame, uint64_t& endFrame)
 {
     uint32_t curPtr = m_timeBoundsQueuePtr.load();
@@ -277,6 +283,16 @@ void CARingBufferStorageVector::getCurrentFrameBounds(uint64_t& startFrame, uint
 
     startFrame = bounds.m_startFrame;
     endFrame = bounds.m_endFrame;
+}
+
+void CARingBufferStorageVector::setLastReadFrame(uint64_t lastReadFrame)
+{
+    m_lastReadFrame.store(lastReadFrame, std::memory_order_release);
+}
+
+uint64_t CARingBufferStorageVector::lastReadFrame() const
+{
+    return m_lastReadFrame.load(std::memory_order_acquire);
 }
 
 void CARingBuffer::clipTimeBounds(uint64_t& startRead, uint64_t& endRead)
@@ -325,6 +341,8 @@ void CARingBuffer::updateFrameBounds()
 
 bool CARingBuffer::fetchIfHasEnoughData(AudioBufferList* list, size_t frameCount, uint64_t startFrame, FetchMode mode)
 {
+    m_buffers->setLastReadFrame(startFrame + frameCount);
+
     // When the RingBuffer is backed by shared memory, getCurrentFrameBounds() makes sure we pull frame bounds from shared memory before fetching.
     uint64_t start, end;
     getCurrentFrameBounds(start, end);
@@ -337,6 +355,8 @@ bool CARingBuffer::fetchIfHasEnoughData(AudioBufferList* list, size_t frameCount
 
 void CARingBuffer::fetch(AudioBufferList* list, size_t frameCount, uint64_t startRead, FetchMode mode)
 {
+    m_buffers->setLastReadFrame(startRead + frameCount);
+
     // When the RingBuffer is backed by shared memory, make sure we pull frame bounds from shared memory before fetching.
     updateFrameBounds();
     fetchInternal(list, frameCount, startRead, mode);

@@ -51,6 +51,8 @@ public:
     virtual uint64_t currentStartFrame() const = 0;
     virtual uint64_t currentEndFrame() const = 0;
     virtual void flush() = 0;
+    virtual void setLastReadFrame(uint64_t) = 0;
+    virtual uint64_t lastReadFrame() const = 0;
 };
 
 class CARingBufferStorageVector final : public CARingBufferStorage {
@@ -64,9 +66,11 @@ private:
     void* data() final { return m_buffer.data(); }
     void getCurrentFrameBounds(uint64_t& startTime, uint64_t& endTime) final;
     void setCurrentFrameBounds(uint64_t startFrame, uint64_t endFrame) final;
-    uint64_t currentStartFrame() const;
-    uint64_t currentEndFrame() const;
+    uint64_t currentStartFrame() const final;
+    uint64_t currentEndFrame() const final;
     void flush() final;
+    void setLastReadFrame(uint64_t) final;
+    uint64_t lastReadFrame() const final;
 
     struct TimeBounds {
         TimeBounds()
@@ -84,6 +88,7 @@ private:
     Vector<TimeBounds> m_timeBoundsQueue;
     Lock m_currentFrameBoundsLock;
     std::atomic<int32_t> m_timeBoundsQueuePtr { 0 };
+    std::atomic<uint64_t> m_lastReadFrame { 0 };
 };
 
 class CARingBuffer {
@@ -112,6 +117,9 @@ public:
     WEBCORE_EXPORT void flush();
 
     WEBCORE_EXPORT void getCurrentFrameBounds(uint64_t& startFrame, uint64_t& endFrame);
+
+    // Note that this will only return useful values if the reader has read-write access to the storage.
+    WEBCORE_EXPORT uint64_t lastReadFrame() const;
 
     uint32_t channelCount() const { return m_channelCount; }
     CARingBufferStorage& storage() { return m_buffers; }

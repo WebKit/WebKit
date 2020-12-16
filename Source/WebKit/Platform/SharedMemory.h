@@ -142,6 +142,10 @@ public:
     HANDLE handle() const { return m_handle; }
 #endif
 
+#if PLATFORM(COCOA)
+    Protection protection() const { return m_protection; }
+#endif
+
     // Return the system page size in bytes.
     static unsigned systemPageSize();
 

@@ -59,7 +59,7 @@ void SharedRingBufferStorage::deallocate()
         setStorage(nullptr);
 }
 
-auto SharedRingBufferStorage::sharedFrameBounds() -> FrameBounds*
+auto SharedRingBufferStorage::sharedFrameBounds() const -> FrameBounds*
 {
     return m_storage ? reinterpret_cast<FrameBounds*>(m_storage->data()) : nullptr;
 }
@@ -104,6 +104,20 @@ void SharedRingBufferStorage::updateFrameBounds()
     auto pair = sharedBounds->boundsBuffer[sharedBounds->boundsBufferIndex.load(std::memory_order_acquire)];
     m_startFrame = pair.first;
     m_endFrame = pair.second;
+}
+
+void SharedRingBufferStorage::setLastReadFrame(uint64_t lastReadFrame)
+{
+    if (!m_storage || m_storage->protection() != SharedMemory::Protection::ReadWrite)
+        return;
+
+    sharedFrameBounds()->lastReadFrame.store(lastReadFrame, std::memory_order_release);
+}
+
+uint64_t SharedRingBufferStorage::lastReadFrame() const
+{
+    auto* sharedBounds = sharedFrameBounds();
+    return sharedBounds ? sharedBounds->lastReadFrame.load(std::memory_order_acquire) : 0;
 }
 
 void SharedRingBufferStorage::flush()

@@ -1,3 +1,58 @@
+2020-12-16  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] Avoid doing an IPC per rendering quantum when using WebAudio
+        https://bugs.webkit.org/show_bug.cgi?id=219818
+
+        Reviewed by Geoff Garen.
+
+        Previously, the GPUProcess was sending an IPC to the WebProcess to request to rendering
+        of each quantum, which was very inefficient and a big regression compared to when we
+        do not use a GPUProcess.
+
+        To address the issue, we now start a rendering timer on the WebProcess side when rendering
+        starts, so that the WebProcess renders each quantum as needed, without needing an IPC from
+        the GPUProcess. Whenever a quantum is rendered, the WebProcess adds it to the RingBuffer
+        it shares with the GPUProcess.
+
+        To make sure that the WebProcess' writer keeps up with the GPUProcess' reader and that it
+        does not stray too far ahead, the writer keeps track of the last frame that the reader
+        attempted to read. It uses this information to try and stay a few rendering quantums ahead
+        of the GPUProcess, to avoid missed frames.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/media/RemoteAudioDestinationManager.cpp:
+        (WebKit::RemoteAudioDestination::audioSamplesStorageChanged):
+        (WebKit::RemoteAudioDestination::RemoteAudioDestination):
+        (WebKit::RemoteAudioDestination::render):
+        * Platform/SharedMemory.h:
+        (WebKit::SharedMemory::protection const):
+        * Shared/Cocoa/SharedRingBufferStorage.cpp:
+        (WebKit::SharedRingBufferStorage::sharedFrameBounds const):
+        (WebKit::SharedRingBufferStorage::setCurrentFrameBounds):
+        (WebKit::SharedRingBufferStorage::setLastReadFrame):
+        (WebKit::SharedRingBufferStorage::lastReadFrame const):
+        * Shared/Cocoa/SharedRingBufferStorage.h:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::RemoteAudioDestinationProxy):
+        (WebKit::RemoteAudioDestinationProxy::startRenderingThread):
+        (WebKit::RemoteAudioDestinationProxy::stopRenderingThreadIfNecessary):
+        (WebKit::RemoteAudioDestinationProxy::connectToGPUProcess):
+        (WebKit::RemoteAudioDestinationProxy::~RemoteAudioDestinationProxy):
+        (WebKit::RemoteAudioDestinationProxy::start):
+        (WebKit::RemoteAudioDestinationProxy::startRendering):
+        (WebKit::RemoteAudioDestinationProxy::stop):
+        (WebKit::RemoteAudioDestinationProxy::stopRenderingIfNecessary):
+        (WebKit::RemoteAudioDestinationProxy::renderQuantum):
+        (WebKit::RemoteAudioDestinationProxy::storageChanged):
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.h:
+        (WebKit::RemoteAudioDestinationProxy::stopRenderingIfNecessary):
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.messages.in: Removed.
+
 2020-12-16  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION [iOS] Flaky GPU Process crash under -[RTCVideoEncoderH264 destroyCompressionSession]

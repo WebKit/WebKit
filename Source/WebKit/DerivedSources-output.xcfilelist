@@ -138,10 +138,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioDestinationManagerMessag
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioDestinationManagerMessages.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioDestinationManagerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioDestinationManagerMessagesReplies.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioDestinationProxyMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioDestinationProxyMessages.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioDestinationProxyMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioDestinationProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioMediaStreamTrackRendererManagerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioMediaStreamTrackRendererManagerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioMediaStreamTrackRendererManagerMessagesReplies.h
