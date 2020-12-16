@@ -49,7 +49,7 @@ inline void emitPointerValidation(CCallHelpers& jit, GPRReg pointerGPR, TagType 
     isNonZero.link(&jit);
     jit.pushToSave(pointerGPR);
     jit.untagPtr(tag, pointerGPR);
-    jit.load8(pointerGPR, pointerGPR);
+    jit.validateUntaggedPtr(pointerGPR, pointerGPR);
     jit.popToRestore(pointerGPR);
 }
 
@@ -394,6 +394,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM& vm)
     jit.loadPtr(JSInterfaceJIT::Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()), GPRInfo::regT3);
     jit.addPtr(JSInterfaceJIT::TrustedImm32(sizeof(CallerFrameAndPC)), GPRInfo::callFrameRegister, extraTemp);
     jit.untagPtr(extraTemp, GPRInfo::regT3);
+    jit.validateUntaggedPtr(GPRInfo::regT3, extraTemp);
     PtrTag tempReturnPCTag = static_cast<PtrTag>(random());
     jit.move(JSInterfaceJIT::TrustedImmPtr(tempReturnPCTag), extraTemp);
     jit.tagPtr(extraTemp, GPRInfo::regT3);
@@ -450,6 +451,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM& vm)
     jit.loadPtr(JSInterfaceJIT::Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()), GPRInfo::regT3);
     jit.move(JSInterfaceJIT::TrustedImmPtr(tempReturnPCTag), extraTemp);
     jit.untagPtr(extraTemp, GPRInfo::regT3);
+    jit.validateUntaggedPtr(GPRInfo::regT3, extraTemp);
     jit.addPtr(JSInterfaceJIT::TrustedImm32(sizeof(CallerFrameAndPC)), GPRInfo::callFrameRegister, extraTemp);
     jit.tagPtr(extraTemp, GPRInfo::regT3);
     jit.storePtr(GPRInfo::regT3, JSInterfaceJIT::Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()));
