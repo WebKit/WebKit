@@ -100,6 +100,7 @@
 #import <wtf/OSObjectPtr.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/spi/darwin/OSVariantSPI.h>
 #import <wtf/text/CString.h>
 #import <wtf/threads/BinarySemaphore.h>
 
@@ -1680,6 +1681,25 @@ static void ensureFormatReaderIsRegistered()
 }
 #endif
 
+#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+static bool isFormatReaderAvailable()
+{
+    if (!RuntimeEnabledFeatures::sharedFeatures().webMFormatReaderEnabled())
+        return false;
+
+#if !USE(APPLE_INTERNAL_SDK)
+    // FIXME (rdar://72320419): If WebKit was built with ad-hoc code-signing,
+    // CoreMedia will only load the format reader plug-in when a user default
+    // is set on Apple internal OSs. That means we cannot currently support WebM
+    // in public SDK builds on customer OSs.
+    if (!os_variant_allows_internal_security_policies("com.apple.WebKit"))
+        return false;
+#endif
+
+    return true;
+}
+#endif
+
 MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsTypeAndCodecs(const MediaEngineSupportParameters& parameters)
 {
 #if ENABLE(MEDIA_SOURCE)
@@ -1692,7 +1712,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsTypeAndCod
 #endif
 
 #if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
-    if (RuntimeEnabledFeatures::sharedFeatures().webMFormatReaderEnabled()) {
+    if (isFormatReaderAvailable()) {
         auto supported = SourceBufferParserWebM::isContentTypeSupported(parameters.type);
         if (supported != MediaPlayer::SupportsType::IsNotSupported) {
             ensureFormatReaderIsRegistered();
