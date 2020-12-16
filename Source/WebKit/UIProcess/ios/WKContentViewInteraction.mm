@@ -1292,6 +1292,12 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
         return NO;
 
     _isEditable = isEditable;
+
+#if ENABLE(IMAGE_EXTRACTION)
+    if (self._imageExtractionEnabled && (!_isBlurringFocusedElement || !_isChangingFocus))
+        _suppressImageExtractionToken = isEditable ? makeUnique<WebKit::SuppressInteractionToken>(self, _imageExtractionInteraction.get()) : nullptr;
+#endif
+
     return YES;
 }
 
@@ -4381,6 +4387,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [self _setDoubleTapGesturesEnabled:NO];
     [_twoFingerDoubleTapGestureRecognizer _wk_cancel];
 #if ENABLE(IMAGE_EXTRACTION)
+    _suppressImageExtractionToken = nullptr;
     [self _cancelImageExtraction];
 #endif
 }
