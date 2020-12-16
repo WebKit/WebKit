@@ -17,6 +17,8 @@ PASS: ul w/ bullet content on ::before -> list.
 PASS: ul w/ bullet content on inline ::before -> list.
 PASS: ol w/ counter content on ::before -> list.
 PASS: ol w/ counter content on inline ::before -> list.
+PASS: ul list in a navigation role -> list.
+PASS: ol list in a nav element -> list.
 PASS: ul w/ background image (NOT A LIST) -> .
 PASS: ul w/ background on ::before (NOT A LIST) -> .
 PASS: ul w/o explicit role and displayed inline, which defaults to no markers (NOT A LIST) -> .
