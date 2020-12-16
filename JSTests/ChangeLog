@@ -1,3 +1,15 @@
+2020-12-15  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Non-enumerable property fails to shadow inherited enumerable property from for-in
+        https://bugs.webkit.org/show_bug.cgi?id=38970
+
+        Reviewed by Keith Miller.
+
+        * stress/arguments-bizarre-behaviour-disable-enumerability.js:
+        * stress/for-in-redefine-enumerable.js: Added.
+        * stress/for-in-shadow-non-enumerable.js: Added.
+        * test262/expectations.yaml: Mark 4 test cases as passing.
+
 2020-12-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Suppress noise from JSTests/stress/lars-sab-workers.js

@@ -84,6 +84,16 @@ this.globalStaticFunction2 = function() { return 20; }
 shouldBe("globalStaticFunction2();", 20);
 shouldBe("this.globalStaticFunction2();", 20);
 
+var globalStaticValue2Descriptor = Object.getOwnPropertyDescriptor(this, "globalStaticValue2");
+shouldBe('typeof globalStaticValue2Descriptor', "object");
+shouldBe('globalStaticValue2Descriptor.writable', false);
+shouldBe('globalStaticValue2Descriptor.enumerable', false);
+
+var globalStaticFunction3Descriptor = Object.getOwnPropertyDescriptor(this, "globalStaticFunction3");
+shouldBe('typeof globalStaticFunction3Descriptor', "object");
+shouldBe('globalStaticFunction3Descriptor.writable', false);
+shouldBe('globalStaticFunction3Descriptor.enumerable', false);
+
 function iAmNotAStaticFunction() { return 10; }
 shouldBe("iAmNotAStaticFunction();", 10);
 this.iAmNotAStaticFunction = function() { return 20; }
@@ -134,12 +144,12 @@ var alwaysOneDescriptor = Object.getOwnPropertyDescriptor(MyObject, "alwaysOne")
 shouldBe('typeof alwaysOneDescriptor', "object");
 shouldBe('alwaysOneDescriptor.value', MyObject.alwaysOne);
 shouldBe('alwaysOneDescriptor.configurable', true);
-shouldBe('alwaysOneDescriptor.enumerable', false); // Actually it is.
+shouldBe('alwaysOneDescriptor.enumerable', true);
 var cantFindDescriptor = Object.getOwnPropertyDescriptor(MyObject, "cantFind");
 shouldBe('typeof cantFindDescriptor', "object");
 shouldBe('cantFindDescriptor.value', MyObject.cantFind);
 shouldBe('cantFindDescriptor.configurable', true);
-shouldBe('cantFindDescriptor.enumerable', false);
+shouldBe('cantFindDescriptor.enumerable', true);
 try {
     // If getOwnPropertyDescriptor() returned an access descriptor, this wouldn't throw.
     Object.getOwnPropertyDescriptor(MyObject, "throwOnGet");
@@ -150,7 +160,7 @@ var myPropertyNameDescriptor = Object.getOwnPropertyDescriptor(MyObject, "myProp
 shouldBe('typeof myPropertyNameDescriptor', "object");
 shouldBe('myPropertyNameDescriptor.value', MyObject.myPropertyName);
 shouldBe('myPropertyNameDescriptor.configurable', true);
-shouldBe('myPropertyNameDescriptor.enumerable', false); // Actually it is.
+shouldBe('myPropertyNameDescriptor.enumerable', true);
 try {
     // if getOwnPropertyDescriptor() returned an access descriptor, this wouldn't throw.
     Object.getOwnPropertyDescriptor(MyObject, "hasPropertyLie");
@@ -237,23 +247,23 @@ var baseDupDescriptor = Object.getOwnPropertyDescriptor(derived, "baseDup");
 shouldBe('typeof baseDupDescriptor', "object");
 shouldBe('baseDupDescriptor.value', derived.baseDup);
 shouldBe('baseDupDescriptor.configurable', true);
-shouldBe('baseDupDescriptor.enumerable', false);
+shouldBe('baseDupDescriptor.enumerable', true);
 var baseOnlyDescriptor = Object.getOwnPropertyDescriptor(derived, "baseOnly");
 shouldBe('typeof baseOnlyDescriptor', "object");
 shouldBe('baseOnlyDescriptor.value', derived.baseOnly);
 shouldBe('baseOnlyDescriptor.configurable', true);
-shouldBe('baseOnlyDescriptor.enumerable', false);
+shouldBe('baseOnlyDescriptor.enumerable', true);
 shouldBe('Object.getOwnPropertyDescriptor(derived, "protoOnly")', undefined);
 var protoDupDescriptor = Object.getOwnPropertyDescriptor(derived, "protoDup");
 shouldBe('typeof protoDupDescriptor', "object");
 shouldBe('protoDupDescriptor.value', derived.protoDup);
 shouldBe('protoDupDescriptor.configurable', true);
-shouldBe('protoDupDescriptor.enumerable', false);
+shouldBe('protoDupDescriptor.enumerable', true);
 var derivedOnlyDescriptor = Object.getOwnPropertyDescriptor(derived, "derivedOnly");
 shouldBe('typeof derivedOnlyDescriptor', "object");
 shouldBe('derivedOnlyDescriptor.value', derived.derivedOnly);
 shouldBe('derivedOnlyDescriptor.configurable', true);
-shouldBe('derivedOnlyDescriptor.enumerable', false);
+shouldBe('derivedOnlyDescriptor.enumerable', true);
 
 shouldBe("undefined instanceof MyObject", false);
 EvilExceptionObject.hasInstance = function f() { return f(); };

@@ -1151,9 +1151,9 @@ void JIT::emit_op_has_structure_propertyImpl(const Instruction* currentInstructi
     emitStoreBool(dst, regT0);
 }
 
-void JIT::emit_op_has_structure_property(const Instruction* currentInstruction)
+void JIT::emit_op_has_enumerable_structure_property(const Instruction* currentInstruction)
 {
-    emit_op_has_structure_propertyImpl<OpHasStructureProperty>(currentInstruction);
+    emit_op_has_structure_propertyImpl<OpHasEnumerableStructureProperty>(currentInstruction);
 }
 
 void JIT::emit_op_has_own_structure_property(const Instruction* currentInstruction)
@@ -1193,9 +1193,9 @@ void JIT::privateCompileHasIndexedProperty(ByValInfo* byValInfo, ReturnAddressPt
     MacroAssembler::repatchCall(CodeLocationCall<NoPtrTag>(MacroAssemblerCodePtr<NoPtrTag>(returnAddress)), FunctionPtr<OperationPtrTag>(operationHasIndexedPropertyGeneric));
 }
 
-void JIT::emit_op_has_indexed_property(const Instruction* currentInstruction)
+void JIT::emit_op_has_enumerable_indexed_property(const Instruction* currentInstruction)
 {
-    auto bytecode = currentInstruction->as<OpHasIndexedProperty>();
+    auto bytecode = currentInstruction->as<OpHasEnumerableIndexedProperty>();
     auto& metadata = bytecode.metadata(m_codeBlock);
     VirtualRegister dst = bytecode.m_dst;
     VirtualRegister base = bytecode.m_base;
@@ -1240,11 +1240,11 @@ void JIT::emit_op_has_indexed_property(const Instruction* currentInstruction)
     m_byValCompilationInfo.append(ByValCompilationInfo(byValInfo, m_bytecodeIndex, PatchableJump(), badType, mode, profile, done, nextHotPath));
 }
 
-void JIT::emitSlow_op_has_indexed_property(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_has_enumerable_indexed_property(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCases(iter);
 
-    auto bytecode = currentInstruction->as<OpHasIndexedProperty>();
+    auto bytecode = currentInstruction->as<OpHasEnumerableIndexedProperty>();
     VirtualRegister dst = bytecode.m_dst;
     VirtualRegister base = bytecode.m_base;
     VirtualRegister property = bytecode.m_property;

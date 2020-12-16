@@ -1858,16 +1858,10 @@ test/language/statements/for-await-of/ticks-with-async-iter-resolved-promise-and
 test/language/statements/for-await-of/ticks-with-sync-iter-resolved-promise-and-constructor-lookup.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [pre, tick 1, constructor, constructor, tick 2, tick 3, loop, tick 4, constructor] and [pre, constructor, constructor, tick 1, tick 2, loop, constructor, tick 3, tick 4, post] to have the same contents. Ticks and constructor lookups'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [pre, tick 1, constructor, constructor, tick 2, tick 3, loop, tick 4, constructor] and [pre, constructor, constructor, tick 1, tick 2, loop, constructor, tick 3, tick 4, post] to have the same contents. Ticks and constructor lookups'
-test/language/statements/for-in/12.6.4-2.js:
-  default: 'Test262Error: accessedProp Expected SameValue(«true», «false») to be true'
-  strict mode: 'Test262Error: accessedProp Expected SameValue(«true», «false») to be true'
 test/language/statements/for-in/head-lhs-let.js:
   default: "SyntaxError: Cannot use the keyword 'in' as a lexical variable name."
 test/language/statements/for-in/identifier-let-allowed-as-lefthandside-expression-not-strict.js:
   default: "SyntaxError: Cannot use the keyword 'in' as a lexical variable name."
-test/language/statements/for-in/order-enumerable-shadowed.js:
-  default: 'Test262Error: Expected [p1, p2] and [p1] to have the same contents. '
-  strict mode: 'Test262Error: Expected [p1, p2] and [p1] to have the same contents. '
 test/language/statements/for-in/scope-body-lex-open.js:
   default: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'

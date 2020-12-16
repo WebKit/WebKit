@@ -498,10 +498,11 @@ namespace JSC { namespace DFG {
     macro(GetEnumerableLength, NodeMustGenerate | NodeResultJS) \
     /* Must generate because of Proxies on the prototype chain */ \
     macro(HasIndexedProperty, NodeMustGenerate | NodeResultBoolean | NodeHasVarArgs) \
-    macro(HasStructureProperty, NodeResultBoolean) \
+    macro(HasEnumerableIndexedProperty, NodeMustGenerate | NodeResultBoolean | NodeHasVarArgs) \
+    macro(HasEnumerableStructureProperty, NodeResultBoolean) \
+    macro(HasEnumerableProperty, NodeResultBoolean) \
     macro(HasOwnStructureProperty, NodeResultBoolean | NodeMustGenerate) \
     macro(InStructureProperty, NodeMustGenerate | NodeResultBoolean) \
-    macro(HasGenericProperty, NodeResultBoolean) \
     macro(GetDirectPname, NodeMustGenerate | NodeHasVarArgs | NodeResultJS) \
     macro(GetPropertyEnumerator, NodeMustGenerate | NodeResultJS) \
     macro(GetEnumeratorStructurePname, NodeMustGenerate | NodeResultJS) \

@@ -162,6 +162,9 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, JSGlobalObje
     RefPtr<OpaqueJSString> propertyNameRef;
     
     if (StringImpl* name = propertyName.uid()) {
+        // FIXME: Set ReadOnly conditionally, based on setProperty presence in class inheritance chain.
+        // https://bugs.webkit.org/show_bug.cgi?id=219924
+        unsigned attributes = static_cast<unsigned>(PropertyAttribute::ReadOnly);
         for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
             // optional optimization to bypass getProperty in cases when we only need to know if the property exists
             if (JSObjectHasPropertyCallback hasProperty = jsClass->hasProperty) {
@@ -169,7 +172,7 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, JSGlobalObje
                     propertyNameRef = OpaqueJSString::tryCreate(name);
                 JSLock::DropAllLocks dropAllLocks(globalObject);
                 if (hasProperty(ctx, thisRef, propertyNameRef.get())) {
-                    slot.setCustom(thisObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, getCallbackGetter());
+                    slot.setCustom(thisObject, attributes, getCallbackGetter());
                     return true;
                 }
             } else if (JSObjectGetPropertyCallback getProperty = jsClass->getProperty) {
@@ -183,29 +186,31 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, JSGlobalObje
                 }
                 if (exception) {
                     throwException(globalObject, scope, toJS(globalObject, exception));
-                    slot.setValue(thisObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, jsUndefined());
+                    slot.setValue(thisObject, attributes, jsUndefined());
                     return true;
                 }
                 if (value) {
-                    slot.setValue(thisObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, toJS(globalObject, value));
+                    slot.setValue(thisObject, attributes, toJS(globalObject, value));
                     return true;
                 }
             }
             
             if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(globalObject)) {
-                if (staticValues->contains(name)) {
+                if (StaticValueEntry* entry = staticValues->get(name)) {
+                    // FIXME: getStaticValue() performs the same loop & checks just to acquire `entry`.
+                    // https://bugs.webkit.org/show_bug.cgi?id=219925
                     JSValue value = thisObject->getStaticValue(globalObject, propertyName);
                     RETURN_IF_EXCEPTION(scope, false);
                     if (value) {
-                        slot.setValue(thisObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, value);
+                        slot.setValue(thisObject, entry->attributes, value);
                         return true;
                     }
                 }
             }
             
             if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(globalObject)) {
-                if (staticFunctions->contains(name)) {
-                    slot.setCustom(thisObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, getStaticFunctionGetter());
+                if (StaticFunctionEntry* entry = staticFunctions->get(name)) {
+                    slot.setCustom(thisObject, entry->attributes, getStaticFunctionGetter());
                     return true;
                 }
             }

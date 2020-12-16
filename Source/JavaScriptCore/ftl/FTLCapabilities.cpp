@@ -280,11 +280,12 @@ inline CapabilityLevel canCompile(Node* node)
     case DoubleConstant:
     case Int52Constant:
     case BooleanToNumber:
-    case HasGenericProperty:
-    case HasStructureProperty:
+    case HasIndexedProperty:
+    case HasEnumerableIndexedProperty:
+    case HasEnumerableStructureProperty:
+    case HasEnumerableProperty:
     case HasOwnStructureProperty:
     case InStructureProperty:
-    case HasIndexedProperty:
     case GetDirectPname:
     case GetEnumerableLength:
     case GetIndexedPropertyStorage:

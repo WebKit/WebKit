@@ -1040,23 +1040,23 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_get_enumerable_length)
     RETURN(jsNumber(enumerator->indexedLength()));
 }
 
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_has_indexed_property)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_has_enumerable_indexed_property)
 {
     BEGIN();
-    auto bytecode = pc->as<OpHasIndexedProperty>();
+    auto bytecode = pc->as<OpHasEnumerableIndexedProperty>();
     auto& metadata = bytecode.metadata(codeBlock);
     JSObject* base = GET_C(bytecode.m_base).jsValue().toObject(globalObject);
     CHECK_EXCEPTION();
     JSValue property = GET(bytecode.m_property).jsValue();
     metadata.m_arrayProfile.observeStructure(base->structure(vm));
     ASSERT(property.isUInt32AsAnyInt());
-    RETURN(jsBoolean(base->hasPropertyGeneric(globalObject, property.asUInt32AsAnyInt(), PropertySlot::InternalMethodType::GetOwnProperty)));
+    RETURN(jsBoolean(base->hasEnumerableProperty(globalObject, property.asUInt32AsAnyInt())));
 }
 
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_has_structure_property)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_has_enumerable_structure_property)
 {
     BEGIN();
-    auto bytecode = pc->as<OpHasStructureProperty>();
+    auto bytecode = pc->as<OpHasEnumerableStructureProperty>();
     JSObject* base = GET_C(bytecode.m_base).jsValue().toObject(globalObject);
     CHECK_EXCEPTION();
     JSValue property = GET(bytecode.m_property).jsValue();
@@ -1069,7 +1069,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_has_structure_property)
     JSString* string = asString(property);
     auto propertyName = string->toIdentifier(globalObject);
     CHECK_EXCEPTION();
-    RETURN(jsBoolean(base->hasPropertyGeneric(globalObject, propertyName, PropertySlot::InternalMethodType::GetOwnProperty)));
+    RETURN(jsBoolean(base->hasEnumerableProperty(globalObject, propertyName)));
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_has_own_structure_property)
@@ -1108,10 +1108,10 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_in_structure_property)
     RETURN(jsBoolean(CommonSlowPaths::opInByVal(globalObject, base, asString(property))));
 }
 
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_has_generic_property)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_has_enumerable_property)
 {
     BEGIN();
-    auto bytecode = pc->as<OpHasGenericProperty>();
+    auto bytecode = pc->as<OpHasEnumerableProperty>();
     JSObject* base = GET_C(bytecode.m_base).jsValue().toObject(globalObject);
     CHECK_EXCEPTION();
     JSValue property = GET(bytecode.m_property).jsValue();
@@ -1119,7 +1119,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_has_generic_property)
     JSString* string = asString(property);
     auto propertyName = string->toIdentifier(globalObject);
     CHECK_EXCEPTION();
-    RETURN(jsBoolean(base->hasPropertyGeneric(globalObject, propertyName, PropertySlot::InternalMethodType::GetOwnProperty)));
+    RETURN(jsBoolean(base->hasEnumerableProperty(globalObject, propertyName)));
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_get_direct_pname)

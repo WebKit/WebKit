@@ -164,6 +164,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case ArrayPop:
         case ArrayIndexOf:
         case HasIndexedProperty:
+        case HasEnumerableIndexedProperty:
         case AtomicsAdd:
         case AtomicsAnd:
         case AtomicsCompareExchange:
@@ -348,7 +349,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
     }
 
-    case HasIndexedProperty: {
+    case HasIndexedProperty:
+    case HasEnumerableIndexedProperty: {
         read(JSObject_butterfly);
         ArrayMode mode = node->arrayMode();
         switch (mode.type()) {
@@ -705,8 +707,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ResolveScopeForHoistingFuncDeclInEval:
     case ResolveScope:
     case ToObject:
-    case HasGenericProperty:
-    case HasStructureProperty:
+    case HasEnumerableStructureProperty:
+    case HasEnumerableProperty:
     case HasOwnStructureProperty:
     case InStructureProperty:
     case GetPropertyEnumerator:

@@ -4365,21 +4365,21 @@ RegisterID* BytecodeGenerator::emitGetEnumerableLength(RegisterID* dst, Register
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitHasGenericProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName)
+RegisterID* BytecodeGenerator::emitHasEnumerableIndexedProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName)
 {
-    OpHasGenericProperty::emit(this, dst, base, propertyName);
+    OpHasEnumerableIndexedProperty::emit(this, dst, base, propertyName);
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitHasIndexedProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName)
+RegisterID* BytecodeGenerator::emitHasEnumerableStructureProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName, RegisterID* enumerator)
 {
-    OpHasIndexedProperty::emit(this, dst, base, propertyName);
+    OpHasEnumerableStructureProperty::emit(this, dst, base, propertyName, enumerator);
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitHasStructureProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName, RegisterID* enumerator)
+RegisterID* BytecodeGenerator::emitHasEnumerableProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName)
 {
-    OpHasStructureProperty::emit(this, dst, base, propertyName, enumerator);
+    OpHasEnumerableProperty::emit(this, dst, base, propertyName);
     return dst;
 }
 

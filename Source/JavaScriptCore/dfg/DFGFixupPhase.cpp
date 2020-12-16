@@ -2204,11 +2204,11 @@ private:
             fixEdge<CellUse>(node->child1());
             break;
         }
-        case HasGenericProperty: {
+        case HasEnumerableProperty: {
             fixEdge<CellUse>(node->child2());
             break;
         }
-        case HasStructureProperty: {
+        case HasEnumerableStructureProperty: {
             fixEdge<StringUse>(node->child2());
             fixEdge<KnownCellUse>(node->child3());
             break;
@@ -2220,7 +2220,8 @@ private:
             fixEdge<KnownCellUse>(node->child3());
             break;
         }
-        case HasIndexedProperty: {
+        case HasIndexedProperty:
+        case HasEnumerableIndexedProperty: {
             node->setArrayMode(
                 node->arrayMode().refine(
                     m_graph, node,
@@ -3988,7 +3989,6 @@ private:
                 m_graph.varArgChild(node, 0)->prediction(),
                 m_graph.varArgChild(node, 1)->prediction(),
                 SpecNone));
-        node->setInternalMethodType(PropertySlot::InternalMethodType::HasProperty);
 
         blessArrayOperation(m_graph.varArgChild(node, 0), m_graph.varArgChild(node, 1), m_graph.varArgChild(node, 2));
         auto arrayMode = node->arrayMode();

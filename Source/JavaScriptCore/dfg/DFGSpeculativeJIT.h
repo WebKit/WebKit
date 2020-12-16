@@ -1446,13 +1446,13 @@ public:
     void compileThrow(Node*);
     void compileThrowStaticError(Node*);
     void compileGetEnumerableLength(Node*);
-    void compileHasGenericProperty(Node*);
+    void compileHasEnumerableStructureProperty(Node*);
+    void compileHasEnumerableProperty(Node*);
     void compileToIndexString(Node*);
     void compilePutByIdFlush(Node*);
     void compilePutById(Node*);
     void compilePutByIdDirect(Node*);
     void compilePutByIdWithThis(Node*);
-    void compileHasStructureProperty(Node*);
     template <typename Function>
     void compileHasOwnStructurePropertyImpl(Node*, Function);
     void compileHasOwnStructureProperty(Node*);
@@ -1488,7 +1488,7 @@ public:
     void compileCallNumberConstructor(Node*);
     void compileLogShadowChickenPrologue(Node*);
     void compileLogShadowChickenTail(Node*);
-    void compileHasIndexedProperty(Node*);
+    void compileHasIndexedProperty(Node*, S_JITOperation_GCZ);
     void compileExtractCatchLocal(Node*);
     void compileClearCatchLocals(Node*);
     void compileProfileType(Node*);

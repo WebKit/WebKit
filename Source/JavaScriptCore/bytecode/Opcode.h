@@ -126,7 +126,7 @@ static constexpr unsigned bitWidthForMaxOpcodeLength = WTF::getMSBSetConstexpr(m
     macro(OpRshift) \
 
 #define FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(macro) \
-    macro(OpHasIndexedProperty) \
+    macro(OpHasEnumerableIndexedProperty) \
     macro(OpCallVarargs) \
     macro(OpTailCallVarargs) \
     macro(OpTailCallForwardArguments) \

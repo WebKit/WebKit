@@ -3962,7 +3962,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
         RefPtr<RegisterID> result = generator.emitEqualityOp<OpLess>(generator.newTemporary(), i.get(), length.get());
         generator.emitJumpIfFalse(result.get(), loopEnd.get());
-        generator.emitHasIndexedProperty(result.get(), base.get(), i.get());
+        generator.emitHasEnumerableIndexedProperty(result.get(), base.get(), i.get());
         generator.emitJumpIfFalse(result.get(), *scope->continueTarget());
 
         generator.emitToIndexString(propertyName.get(), i.get());
@@ -4003,7 +4003,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
         RefPtr<RegisterID> result = generator.emitIsNull(generator.newTemporary(), propertyName.get());
         generator.emitJumpIfTrue(result.get(), loopEnd.get());
-        generator.emitHasStructureProperty(result.get(), base.get(), propertyName.get(), enumerator.get());
+        generator.emitHasEnumerableStructureProperty(result.get(), base.get(), propertyName.get(), enumerator.get());
         generator.emitJumpIfFalse(result.get(), *scope->continueTarget());
 
         this->emitLoopHeader(generator, propertyName.get());
@@ -4045,7 +4045,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         RefPtr<RegisterID> result = generator.emitIsNull(generator.newTemporary(), propertyName.get());
         generator.emitJumpIfTrue(result.get(), loopEnd.get());
 
-        generator.emitHasGenericProperty(result.get(), base.get(), propertyName.get());
+        generator.emitHasEnumerableProperty(result.get(), base.get(), propertyName.get());
         generator.emitJumpIfFalse(result.get(), *scope->continueTarget());
 
         this->emitLoopHeader(generator, propertyName.get());

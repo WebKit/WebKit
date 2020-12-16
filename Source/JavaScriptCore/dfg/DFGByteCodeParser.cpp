@@ -8139,19 +8139,19 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_get_enumerable_length);
         }
 
-        case op_has_generic_property: {
-            auto bytecode = currentInstruction->as<OpHasGenericProperty>();
-            set(bytecode.m_dst, addToGraph(HasGenericProperty, get(bytecode.m_base), get(bytecode.m_property)));
-            NEXT_OPCODE(op_has_generic_property);
-        }
-
-        case op_has_structure_property: {
-            auto bytecode = currentInstruction->as<OpHasStructureProperty>();
-            set(bytecode.m_dst, addToGraph(HasStructureProperty,
+        case op_has_enumerable_structure_property: {
+            auto bytecode = currentInstruction->as<OpHasEnumerableStructureProperty>();
+            set(bytecode.m_dst, addToGraph(HasEnumerableStructureProperty,
                 get(bytecode.m_base),
                 get(bytecode.m_property),
                 get(bytecode.m_enumerator)));
-            NEXT_OPCODE(op_has_structure_property);
+            NEXT_OPCODE(op_has_enumerable_structure_property);
+        }
+
+        case op_has_enumerable_property: {
+            auto bytecode = currentInstruction->as<OpHasEnumerableProperty>();
+            set(bytecode.m_dst, addToGraph(HasEnumerableProperty, get(bytecode.m_base), get(bytecode.m_property)));
+            NEXT_OPCODE(op_has_enumerable_property);
         }
 
         case op_has_own_structure_property: {
@@ -8172,18 +8172,18 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_in_structure_property);
         }
 
-        case op_has_indexed_property: {
-            auto bytecode = currentInstruction->as<OpHasIndexedProperty>();
+        case op_has_enumerable_indexed_property: {
+            auto bytecode = currentInstruction->as<OpHasEnumerableIndexedProperty>();
             Node* base = get(bytecode.m_base);
             ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).m_arrayProfile, Array::Read);
             Node* property = get(bytecode.m_property);
             addVarArgChild(base);
             addVarArgChild(property);
             addVarArgChild(nullptr);
-            Node* hasIterableProperty = addToGraph(Node::VarArg, HasIndexedProperty, OpInfo(arrayMode.asWord()), OpInfo(static_cast<uint32_t>(PropertySlot::InternalMethodType::GetOwnProperty)));
+            Node* hasIterableProperty = addToGraph(Node::VarArg, HasEnumerableIndexedProperty, OpInfo(arrayMode.asWord()));
             m_exitOK = false; // HasIndexedProperty must be treated as if it clobbers exit state, since FixupPhase may make it generic.
             set(bytecode.m_dst, hasIterableProperty);
-            NEXT_OPCODE(op_has_indexed_property);
+            NEXT_OPCODE(op_has_enumerable_indexed_property);
         }
 
         case op_get_direct_pname: {

@@ -3041,8 +3041,8 @@ macro hasStructurePropertyImpl(size, get, dispatch, return, slowPathCall)
     dispatch()
 end
 
-llintOpWithReturn(op_has_structure_property, OpHasStructureProperty, macro (size, get, dispatch, return)
-    hasStructurePropertyImpl(size, get, dispatch,  return, _slow_path_has_structure_property)
+llintOpWithReturn(op_has_enumerable_structure_property, OpHasEnumerableStructureProperty, macro (size, get, dispatch, return)
+    hasStructurePropertyImpl(size, get, dispatch,  return, _slow_path_has_enumerable_structure_property)
 end)
 
 llintOpWithReturn(op_has_own_structure_property, OpHasOwnStructureProperty, macro (size, get, dispatch, return)

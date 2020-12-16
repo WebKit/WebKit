@@ -1212,11 +1212,12 @@ private:
             setPrediction(SpecInt32Only);
             break;
         }
-        case HasGenericProperty:
-        case HasStructureProperty:
         case HasOwnStructureProperty:
         case InStructureProperty:
-        case HasIndexedProperty: {
+        case HasIndexedProperty:
+        case HasEnumerableIndexedProperty:
+        case HasEnumerableStructureProperty:
+        case HasEnumerableProperty: {
             setPrediction(SpecBoolean);
             break;
         }

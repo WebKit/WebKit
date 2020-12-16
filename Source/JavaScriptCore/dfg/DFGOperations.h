@@ -99,10 +99,11 @@ JSC_DECLARE_JIT_OPERATION(operationCallNumberConstructor, EncodedJSValue, (JSGlo
 JSC_DECLARE_JIT_OPERATION(operationGetByValWithThis, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationGetPrototypeOf, EncodedJSValue, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationGetPrototypeOfObject, EncodedJSValue, (JSGlobalObject*, JSObject*));
-JSC_DECLARE_JIT_OPERATION(operationHasGenericProperty, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationHasIndexedProperty, size_t, (JSGlobalObject*, JSCell*, int32_t));
+JSC_DECLARE_JIT_OPERATION(operationHasEnumerableIndexedProperty, size_t, (JSGlobalObject*, JSCell*, int32_t));
+JSC_DECLARE_JIT_OPERATION(operationHasEnumerableProperty, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationHasOwnStructureProperty, EncodedJSValue, (JSGlobalObject*, JSCell*, JSString*));
 JSC_DECLARE_JIT_OPERATION(operationInStructureProperty, EncodedJSValue, (JSGlobalObject*, JSCell*, JSString*));
-JSC_DECLARE_JIT_OPERATION(operationHasIndexedPropertyByInt, size_t, (JSGlobalObject*, JSCell*, int32_t, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationGetPropertyEnumerator, JSCell*, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationGetPropertyEnumeratorCell, JSCell*, (JSGlobalObject*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationToIndexString, JSCell*, (JSGlobalObject*, int32_t));

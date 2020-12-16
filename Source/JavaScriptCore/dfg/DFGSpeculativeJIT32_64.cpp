@@ -4073,12 +4073,12 @@ void SpeculativeJIT::compile(Node* node)
         compileGetEnumerableLength(node);
         break;
     }
-    case HasGenericProperty: {
-        compileHasGenericProperty(node);
+    case HasEnumerableStructureProperty: {
+        compileHasEnumerableStructureProperty(node);
         break;
     }
-    case HasStructureProperty: {
-        compileHasStructureProperty(node);
+    case HasEnumerableProperty: {
+        compileHasEnumerableProperty(node);
         break;
     }
     case HasOwnStructureProperty: {
@@ -4090,7 +4090,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
     case HasIndexedProperty: {
-        compileHasIndexedProperty(node);
+        compileHasIndexedProperty(node, operationHasIndexedProperty);
+        break;
+    }
+    case HasEnumerableIndexedProperty: {
+        compileHasIndexedProperty(node, operationHasEnumerableIndexedProperty);
         break;
     }
     case GetDirectPname: {

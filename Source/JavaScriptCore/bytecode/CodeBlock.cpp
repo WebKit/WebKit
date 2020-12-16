@@ -503,7 +503,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         OpcodeID opcodeID = instruction->opcodeID();
         m_bytecodeCost += opcodeLengths[opcodeID];
         switch (opcodeID) {
-        LINK(OpHasIndexedProperty)
+        LINK(OpHasEnumerableIndexedProperty)
 
         LINK(OpCallVarargs, profile)
         LINK(OpTailCallVarargs, profile)

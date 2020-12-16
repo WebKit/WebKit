@@ -292,6 +292,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case BooleanToNumber:
     case FiatInt52:
     case HasIndexedProperty:
+    case HasEnumerableIndexedProperty:
     case GetEnumeratorStructurePname:
     case GetEnumeratorGenericPname:
     case ToIndexString:
@@ -628,8 +629,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case MultiPutByOffset:
     case MultiDeleteByOffset:
     case GetEnumerableLength:
-    case HasGenericProperty:
-    case HasStructureProperty:
+    case HasEnumerableStructureProperty:
+    case HasEnumerableProperty:
     case HasOwnStructureProperty:
     case InStructureProperty:
     case GetDirectPname:

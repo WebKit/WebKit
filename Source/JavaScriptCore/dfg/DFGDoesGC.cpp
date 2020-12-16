@@ -295,10 +295,11 @@ bool doesGC(Graph& graph, Node* node)
     case GetDirectPname:
     case GetDynamicVar:
     case GetMapBucket:
-    case HasGenericProperty:
     case HasIndexedProperty:
+    case HasEnumerableIndexedProperty:
+    case HasEnumerableStructureProperty:
+    case HasEnumerableProperty:
     case HasOwnProperty:
-    case HasStructureProperty:
     case HasOwnStructureProperty:
     case InStructureProperty:
     case InById:

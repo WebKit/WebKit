@@ -12838,7 +12838,7 @@ void SpeculativeJIT::compileGetEnumerableLength(Node* node)
     strictInt32Result(resultGPR, node);
 }
 
-void SpeculativeJIT::compileHasGenericProperty(Node* node)
+void SpeculativeJIT::compileHasEnumerableProperty(Node* node)
 {
     JSValueOperand base(this, node->child1());
     SpeculateCellOperand property(this, node->child2());
@@ -12849,7 +12849,7 @@ void SpeculativeJIT::compileHasGenericProperty(Node* node)
     flushRegisters();
     JSValueRegsFlushedCallResult result(this);
     JSValueRegs resultRegs = result.regs();
-    callOperation(operationHasGenericProperty, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseRegs, propertyGPR);
+    callOperation(operationHasEnumerableProperty, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseRegs, propertyGPR);
     m_jit.exceptionCheck();
     blessedBooleanResult(resultRegs.payloadGPR(), node);
 }
@@ -12989,7 +12989,7 @@ void SpeculativeJIT::compileMatchStructure(Node* node)
     blessedBooleanResult(tempGPR, node);
 }
 
-void SpeculativeJIT::compileHasStructureProperty(Node* node)
+void SpeculativeJIT::compileHasEnumerableStructureProperty(Node* node)
 {
     JSValueOperand base(this, node->child1());
     SpeculateCellOperand property(this, node->child2());
@@ -13011,7 +13011,7 @@ void SpeculativeJIT::compileHasStructureProperty(Node* node)
 
     moveTrueTo(resultRegs.payloadGPR());
 
-    addSlowPathGenerator(slowPathCall(wrongStructure, this, operationHasGenericProperty, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseRegs, propertyGPR));
+    addSlowPathGenerator(slowPathCall(wrongStructure, this, operationHasEnumerableProperty, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseRegs, propertyGPR));
     blessedBooleanResult(resultRegs.payloadGPR(), node);
 }
 
@@ -14267,7 +14267,7 @@ void SpeculativeJIT::compileAllocateNewArrayWithSize(JSGlobalObject* globalObjec
         sizeGPR, storageGPR));
 }
 
-void SpeculativeJIT::compileHasIndexedProperty(Node* node)
+void SpeculativeJIT::compileHasIndexedProperty(Node* node, S_JITOperation_GCZ slowPathOperation)
 {
     SpeculateCellOperand base(this, m_graph.varArgChild(node, 0));
     SpeculateStrictInt32Operand index(this, m_graph.varArgChild(node, 1));
@@ -14383,7 +14383,7 @@ void SpeculativeJIT::compileHasIndexedProperty(Node* node)
     }
     }
 
-    addSlowPathGenerator(slowPathCall(slowCases, this, operationHasIndexedPropertyByInt, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, indexGPR, static_cast<int32_t>(node->internalMethodType())));
+    addSlowPathGenerator(slowPathCall(slowCases, this, slowPathOperation, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, indexGPR));
 
     unblessedBooleanResult(resultGPR, node);
 }

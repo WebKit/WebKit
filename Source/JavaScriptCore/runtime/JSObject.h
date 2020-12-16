@@ -655,8 +655,8 @@ public:
     JS_EXPORT_PRIVATE bool hasProperty(JSGlobalObject*, PropertyName) const;
     JS_EXPORT_PRIVATE bool hasProperty(JSGlobalObject*, unsigned propertyName) const;
     bool hasProperty(JSGlobalObject*, uint64_t propertyName) const;
-    bool hasPropertyGeneric(JSGlobalObject*, PropertyName, PropertySlot::InternalMethodType) const;
-    bool hasPropertyGeneric(JSGlobalObject*, unsigned propertyName, PropertySlot::InternalMethodType) const;
+    bool hasEnumerableProperty(JSGlobalObject*, PropertyName) const;
+    bool hasEnumerableProperty(JSGlobalObject*, unsigned propertyName) const;
     bool hasOwnProperty(JSGlobalObject*, PropertyName, PropertySlot&) const;
     bool hasOwnProperty(JSGlobalObject*, PropertyName) const;
     bool hasOwnProperty(JSGlobalObject*, unsigned) const;

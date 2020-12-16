@@ -286,6 +286,7 @@ function runTest()
     shouldBeTrue("objCObjectOfClass('NSArray') instanceof Array");
 
     shouldBe("concatenateArray(objCArrayOfString())", "'onetwothree'");
+    shouldBeTrue("objCArrayOfString().every((_, i, arr) => arr.propertyIsEnumerable(i))");
 
     shouldBe("let arr = objCArrayOfString(); arr.length", "3");
     shouldThrow("let arr = objCArrayOfString(); arr.length = 0");

@@ -2258,7 +2258,7 @@ JSC_DEFINE_JIT_OPERATION(operationEnsureArrayStorage, char*, (VM* vmPointer, JSC
     return result;
 }
 
-JSC_DEFINE_JIT_OPERATION(operationHasGenericProperty, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue encodedBaseValue, JSCell* property))
+JSC_DEFINE_JIT_OPERATION(operationHasEnumerableProperty, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue encodedBaseValue, JSCell* property))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2275,7 +2275,7 @@ JSC_DEFINE_JIT_OPERATION(operationHasGenericProperty, EncodedJSValue, (JSGlobalO
         return JSValue::encode(JSValue());
     auto propertyName = asString(property)->toIdentifier(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(base->hasPropertyGeneric(globalObject, propertyName, PropertySlot::InternalMethodType::GetOwnProperty))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(base->hasEnumerableProperty(globalObject, propertyName))));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationInStructureProperty, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* base, JSString* property))
@@ -2300,7 +2300,7 @@ JSC_DEFINE_JIT_OPERATION(operationHasOwnStructureProperty, EncodedJSValue, (JSGl
     return JSValue::encode(jsBoolean(objectPrototypeHasOwnProperty(globalObject, base, propertyName)));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationHasIndexedPropertyByInt, size_t, (JSGlobalObject* globalObject, JSCell* baseCell, int32_t subscript, int32_t internalMethodType))
+JSC_DEFINE_JIT_OPERATION(operationHasIndexedProperty, size_t, (JSGlobalObject* globalObject, JSCell* baseCell, int32_t subscript))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2308,9 +2308,22 @@ JSC_DEFINE_JIT_OPERATION(operationHasIndexedPropertyByInt, size_t, (JSGlobalObje
     JSObject* object = baseCell->toObject(globalObject);
     if (UNLIKELY(subscript < 0)) {
         // Go the slowest way possible because negative indices don't use indexed storage.
-        return object->hasPropertyGeneric(globalObject, Identifier::from(vm, subscript), static_cast<PropertySlot::InternalMethodType>(internalMethodType));
+        return object->hasProperty(globalObject, Identifier::from(vm, subscript));
     }
-    return object->hasPropertyGeneric(globalObject, subscript, static_cast<PropertySlot::InternalMethodType>(internalMethodType));
+    return object->hasProperty(globalObject, static_cast<unsigned>(subscript));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationHasEnumerableIndexedProperty, size_t, (JSGlobalObject* globalObject, JSCell* baseCell, int32_t subscript))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    JSObject* object = baseCell->toObject(globalObject);
+    if (UNLIKELY(subscript < 0)) {
+        // Go the slowest way possible because negative indices don't use indexed storage.
+        return object->hasEnumerableProperty(globalObject, Identifier::from(vm, subscript));
+    }
+    return object->hasEnumerableProperty(globalObject, subscript);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationGetPropertyEnumerator, JSCell*, (JSGlobalObject* globalObject, EncodedJSValue encodedBase))

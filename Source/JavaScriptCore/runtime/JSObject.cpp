@@ -1987,16 +1987,17 @@ void JSObject::putDirectNonIndexAccessorWithoutTransition(VM& vm, PropertyName p
     structure->setHasGetterSetterPropertiesWithProtoCheck(propertyName == vm.propertyNames->underscoreProto);
 }
 
-// HasProperty(O, P) from Section 7.3.10 of the spec.
-// http://www.ecma-international.org/ecma-262/6.0/index.html#sec-hasproperty
+// https://tc39.es/ecma262/#sec-hasproperty
 bool JSObject::hasProperty(JSGlobalObject* globalObject, PropertyName propertyName) const
 {
-    return hasPropertyGeneric(globalObject, propertyName, PropertySlot::InternalMethodType::HasProperty);
+    PropertySlot slot(this, PropertySlot::InternalMethodType::HasProperty);
+    return const_cast<JSObject*>(this)->getPropertySlot(globalObject, propertyName, slot);
 }
 
 bool JSObject::hasProperty(JSGlobalObject* globalObject, unsigned propertyName) const
 {
-    return hasPropertyGeneric(globalObject, propertyName, PropertySlot::InternalMethodType::HasProperty);
+    PropertySlot slot(this, PropertySlot::InternalMethodType::HasProperty);
+    return const_cast<JSObject*>(this)->getPropertySlot(globalObject, propertyName, slot);
 }
 
 bool JSObject::hasProperty(JSGlobalObject* globalObject, uint64_t propertyName) const
@@ -2007,16 +2008,24 @@ bool JSObject::hasProperty(JSGlobalObject* globalObject, uint64_t propertyName) 
     return hasProperty(globalObject, Identifier::from(globalObject->vm(), propertyName));
 }
 
-bool JSObject::hasPropertyGeneric(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot::InternalMethodType internalMethodType) const
+bool JSObject::hasEnumerableProperty(JSGlobalObject* globalObject, PropertyName propertyName) const
 {
-    PropertySlot slot(this, internalMethodType);
-    return const_cast<JSObject*>(this)->getPropertySlot(globalObject, propertyName, slot);
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
+    bool hasProperty = const_cast<JSObject*>(this)->getPropertySlot(globalObject, propertyName, slot);
+    RETURN_IF_EXCEPTION(scope, false);
+    return hasProperty && !(slot.attributes() & PropertyAttribute::DontEnum);
 }
 
-bool JSObject::hasPropertyGeneric(JSGlobalObject* globalObject, unsigned propertyName, PropertySlot::InternalMethodType internalMethodType) const
+bool JSObject::hasEnumerableProperty(JSGlobalObject* globalObject, unsigned propertyName) const
 {
-    PropertySlot slot(this, internalMethodType);
-    return const_cast<JSObject*>(this)->getPropertySlot(globalObject, propertyName, slot);
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
+    bool hasProperty = const_cast<JSObject*>(this)->getPropertySlot(globalObject, propertyName, slot);
+    RETURN_IF_EXCEPTION(scope, false);
+    return hasProperty && !(slot.attributes() & PropertyAttribute::DontEnum);
 }
 
 // ECMA 8.6.2.5
@@ -2371,6 +2380,8 @@ JSC_DEFINE_HOST_FUNCTION(objectPrivateFuncInstanceOf, (JSGlobalObject* globalObj
     return JSValue::encode(jsBoolean(JSObject::defaultHasInstance(globalObject, value, proto)));
 }
 
+// FIXME: Assert that properties returned by getOwnPropertyNames() are reported enumerable by getOwnPropertySlot().
+// https://bugs.webkit.org/show_bug.cgi?id=219926
 void JSObject::getPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     VM& vm = globalObject->vm();

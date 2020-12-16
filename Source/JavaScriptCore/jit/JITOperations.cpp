@@ -2445,7 +2445,7 @@ JSC_DEFINE_JIT_OPERATION(operationHasIndexedPropertyDefault, EncodedJSValue, (JS
 
     if (!CommonSlowPaths::canAccessArgumentIndexQuickly(*object, index))
         byValInfo->arrayProfile->setOutOfBounds();
-    return JSValue::encode(jsBoolean(object->hasPropertyGeneric(globalObject, index, PropertySlot::InternalMethodType::GetOwnProperty)));
+    return JSValue::encode(jsBoolean(object->hasEnumerableProperty(globalObject, index)));
 }
     
 JSC_DEFINE_JIT_OPERATION(operationHasIndexedPropertyGeneric, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ByValInfo* byValInfo))
@@ -2466,7 +2466,7 @@ JSC_DEFINE_JIT_OPERATION(operationHasIndexedPropertyGeneric, EncodedJSValue, (JS
 
     if (!CommonSlowPaths::canAccessArgumentIndexQuickly(*object, index))
         byValInfo->arrayProfile->setOutOfBounds();
-    return JSValue::encode(jsBoolean(object->hasPropertyGeneric(globalObject, index, PropertySlot::InternalMethodType::GetOwnProperty)));
+    return JSValue::encode(jsBoolean(object->hasEnumerableProperty(globalObject, index)));
 }
     
 static bool deleteById(JSGlobalObject* globalObject, VM& vm, DeletePropertySlot& slot, JSValue base, const Identifier& ident, ECMAMode ecmaMode)

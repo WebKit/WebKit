@@ -1500,13 +1500,16 @@ private:
             compileStoreBarrier();
             break;
         case HasIndexedProperty:
-            compileHasIndexedProperty();
+            compileHasIndexedProperty(operationHasIndexedProperty);
             break;
-        case HasGenericProperty:
-            compileHasGenericProperty();
+        case HasEnumerableIndexedProperty:
+            compileHasIndexedProperty(operationHasEnumerableIndexedProperty);
             break;
-        case HasStructureProperty:
-            compileHasStructureProperty();
+        case HasEnumerableStructureProperty:
+            compileHasEnumerableStructureProperty();
+            break;
+        case HasEnumerableProperty:
+            compileHasEnumerableProperty();
             break;
         case HasOwnStructureProperty:
             compileHasOwnStructureProperty();
@@ -12492,7 +12495,7 @@ private:
         emitStoreBarrier(lowCell(m_node->child1()), m_node->op() == FencedStoreBarrier);
     }
     
-    void compileHasIndexedProperty()
+    void compileHasIndexedProperty(S_JITOperation_GCZ slowPathOperation)
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         LValue base = lowCell(m_graph.varArgChild(m_node, 0));
@@ -12503,7 +12506,6 @@ private:
         case Array::Int32:
         case Array::Contiguous: {
             LValue storage = lowStorage(m_graph.varArgChild(m_node, 2));
-            LValue internalMethodType = m_out.constInt32(static_cast<int32_t>(m_node->internalMethodType()));
 
             IndexedAbstractHeap& heap = mode.type() == Array::Int32 ?
                 m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
@@ -12534,7 +12536,7 @@ private:
 
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(
-                m_out.notZero64(vmCall(Int64, operationHasIndexedPropertyByInt, weakPointer(globalObject), base, index, internalMethodType)));
+                m_out.notZero64(vmCall(Int64, slowPathOperation, weakPointer(globalObject), base, index)));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -12543,7 +12545,6 @@ private:
         }
         case Array::Double: {
             LValue storage = lowStorage(m_graph.varArgChild(m_node, 2));
-            LValue internalMethodType = m_out.constInt32(static_cast<int32_t>(m_node->internalMethodType()));
             
             IndexedAbstractHeap& heap = m_heaps.indexedDoubleProperties;
             
@@ -12573,7 +12574,7 @@ private:
             
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(
-                m_out.notZero64(vmCall(Int64, operationHasIndexedPropertyByInt, weakPointer(globalObject), base, index, internalMethodType)));
+                m_out.notZero64(vmCall(Int64, slowPathOperation, weakPointer(globalObject), base, index)));
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);
@@ -12583,7 +12584,6 @@ private:
 
         case Array::ArrayStorage: {
             LValue storage = lowStorage(m_graph.varArgChild(m_node, 2));
-            LValue internalMethodType = m_out.constInt32(static_cast<int32_t>(m_node->internalMethodType()));
 
             LBasicBlock slowCase = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
@@ -12611,7 +12611,7 @@ private:
 
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(
-                m_out.notZero64(vmCall(Int64, operationHasIndexedPropertyByInt, weakPointer(globalObject), base, index, internalMethodType)));
+                m_out.notZero64(vmCall(Int64, slowPathOperation, weakPointer(globalObject), base, index)));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -12620,19 +12620,18 @@ private:
         }
 
         default: {
-            LValue internalMethodType = m_out.constInt32(static_cast<int32_t>(m_node->internalMethodType()));
-            setBoolean(m_out.notZero64(vmCall(Int64, operationHasIndexedPropertyByInt, weakPointer(globalObject), base, index, internalMethodType)));
+            setBoolean(m_out.notZero64(vmCall(Int64, slowPathOperation, weakPointer(globalObject), base, index)));
             break;
         }
         }
     }
 
-    void compileHasGenericProperty()
+    void compileHasEnumerableProperty()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         LValue base = lowJSValue(m_node->child1());
         LValue property = lowCell(m_node->child2());
-        setJSValue(vmCall(Int64, operationHasGenericProperty, weakPointer(globalObject), base, property));
+        setJSValue(vmCall(Int64, operationHasEnumerableProperty, weakPointer(globalObject), base, property));
     }
 
     template <typename SlowPathCall>
@@ -12672,9 +12671,9 @@ private:
         setBoolean(m_out.phi(Int32, correctStructureResult, slowPathResult));
     }
 
-    void compileHasStructureProperty()
+    void compileHasEnumerableStructureProperty()
     {
-        compileHasStructurePropertyImpl(lowJSValue(m_node->child1()), operationHasGenericProperty);
+        compileHasStructurePropertyImpl(lowJSValue(m_node->child1()), operationHasEnumerableProperty);
     }
 
     void compileHasOwnStructureProperty()

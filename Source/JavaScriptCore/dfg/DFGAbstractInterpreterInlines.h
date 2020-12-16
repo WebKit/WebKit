@@ -4155,19 +4155,20 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setNonCellTypeForNode(node, SpecInt32Only);
         break;
     }
-    case HasGenericProperty: {
+    case HasEnumerableProperty: {
         setNonCellTypeForNode(node, SpecBoolean);
         clobberWorld();
         break;
     }
     case InStructureProperty:
     case HasOwnStructureProperty:
-    case HasStructureProperty: {
+    case HasEnumerableStructureProperty: {
         setNonCellTypeForNode(node, SpecBoolean);
         clobberWorld();
         break;
     }
-    case HasIndexedProperty: {
+    case HasIndexedProperty:
+    case HasEnumerableIndexedProperty: {
         ArrayMode mode = node->arrayMode();
         switch (mode.type()) {
         case Array::Int32:

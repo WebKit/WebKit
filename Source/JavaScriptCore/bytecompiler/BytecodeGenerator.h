@@ -902,10 +902,10 @@ namespace JSC {
         void emitEnter();
         void emitCheckTraps();
 
-        RegisterID* emitHasIndexedProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName);
-        RegisterID* emitHasStructureProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName, RegisterID* enumerator);
+        RegisterID* emitHasEnumerableIndexedProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName);
+        RegisterID* emitHasEnumerableStructureProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName, RegisterID* enumerator);
+        RegisterID* emitHasEnumerableProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName);
         RegisterID* emitHasOwnStructureProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName, RegisterID* enumerator);
-        RegisterID* emitHasGenericProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName);
         RegisterID* emitGetPropertyEnumerator(RegisterID* dst, RegisterID* base);
         RegisterID* emitGetEnumerableLength(RegisterID* dst, RegisterID* base);
         RegisterID* emitGetStructurePropertyEnumerator(RegisterID* dst, RegisterID* base, RegisterID* length);

@@ -18,7 +18,7 @@ var array = [];
 for (var s in result[2])
     array.push(s);
 
-if (array.join(",") != "0")
+if (array.join(",") != "")
     throw new Error();
 
 if (Object.keys(result[2]).join(",") != "0")

@@ -1017,12 +1017,14 @@ static JSValueRef functionGC(JSContextRef context, JSObjectRef function, JSObjec
 
 static JSStaticValue globalObject_staticValues[] = {
     { "globalStaticValue", globalObject_get, globalObject_set, kJSPropertyAttributeNone },
+    { "globalStaticValue2", globalObject_get, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontEnum },
     { 0, 0, 0, 0 }
 };
 
 static JSStaticFunction globalObject_staticFunctions[] = {
     { "globalStaticFunction", globalObject_call, kJSPropertyAttributeNone },
     { "globalStaticFunction2", globalObject_call, kJSPropertyAttributeNone },
+    { "globalStaticFunction3", globalObject_call, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontEnum },
     { "gc", functionGC, kJSPropertyAttributeNone },
     { 0, 0, 0 }
 };

@@ -1,3 +1,142 @@
+2020-12-15  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Non-enumerable property fails to shadow inherited enumerable property from for-in
+        https://bugs.webkit.org/show_bug.cgi?id=38970
+
+        Reviewed by Keith Miller.
+
+        While for/in was initially specified with notion of "shadowing", it wasn't clarified
+        until ES5 that [[Enumerable]] attributes are ignored when determining if a property
+        has already been processed. Recently, for/in spec was expanded [1] to pin down common
+        case enumeration as it's currently implemented by V8 and SpiderMonkey.
+
+        Since keeping track of DontEnum properties is a massive slowdown for uncached runs
+        (with any data structure used), this patch simply adds [[Enumerable]] check to
+        has_{indexed,structure,generic}_property bytecode ops and does renaming chores.
+
+        Common code is now shared between HasIndexedProperty (emitted for `0 in arr`) and
+        HasEnumerableIndexedProperty DFG nodes via passing different slow path ops rather
+        than having OpInfo with PropertySlot::InternalMethodType, which is a nice refactor.
+
+        While this change aligns common case for/in enumeration with the spec and other
+        engines, it also introduces a few observable discrepancies from V8 and SpiderMonkey,
+        which are permitted by the spec [2]:
+        a) properties that have been redefined as DontEnum within loop body are skipped,
+           which matches the spec [3] and seems like expected behavior;
+        b) "shadowing" is broken if a DontEnum property of already visited object is
+           added / deleted / redefined within loop body, which (pretty much) never happens.
+
+        This patch introduces a new invariant: all properties getOwn*PropertyNames() returns
+        in DontEnumPropertiesMode::Exclude should be reported as [[Enumerable]] by
+        getOwnPropertySlot(). JSCallbackObject and RuntimeArray are fixed to follow it.
+
+        for/in and Object.keys microbenchmarks are neutral. This change does not affect
+        JSPropertyNameEnumerator caching, nor fast paths of its bytecodes.
+
+        [1]: https://github.com/tc39/ecma262/pull/1791
+        [2]: https://tc39.es/ecma262/#sec-enumerate-object-properties (last paragraph)
+        [3]: https://tc39.es/ecma262/#sec-%foriniteratorprototype%.next (step 7.b.iii)
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::getOwnPropertySlot):
+        * API/tests/testapi.c:
+        * API/tests/testapiScripts/testapi.js:
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.cpp:
+        (JSC::computeUsesForBytecodeIndexImpl):
+        (JSC::computeDefsForBytecodeIndexImpl):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitHasEnumerableIndexedProperty):
+        (JSC::BytecodeGenerator::emitHasEnumerableStructureProperty):
+        (JSC::BytecodeGenerator::emitHasEnumerableProperty):
+        (JSC::BytecodeGenerator::emitHasGenericProperty): Deleted.
+        (JSC::BytecodeGenerator::emitHasIndexedProperty): Deleted.
+        (JSC::BytecodeGenerator::emitHasStructureProperty): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ForInNode::emitBytecode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::convertToHasIndexedProperty):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasArrayMode):
+        (JSC::DFG::Node::hasInternalMethodType const): Deleted.
+        (JSC::DFG::Node::internalMethodType const): Deleted.
+        (JSC::DFG::Node::setInternalMethodType): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSSALoweringPhase.cpp:
+        (JSC::DFG::SSALoweringPhase::handleNode):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileHasEnumerableProperty):
+        (JSC::DFG::SpeculativeJIT::compileHasEnumerableStructureProperty):
+        (JSC::DFG::SpeculativeJIT::compileHasIndexedProperty):
+        (JSC::DFG::SpeculativeJIT::compileHasGenericProperty): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileHasStructureProperty): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasIndexedProperty):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasEnumerableProperty):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasEnumerableStructureProperty):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasGenericProperty): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasStructureProperty): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_has_enumerable_structure_property):
+        (JSC::JIT::emit_op_has_enumerable_indexed_property):
+        (JSC::JIT::emitSlow_op_has_enumerable_indexed_property):
+        (JSC::JIT::emit_op_has_structure_property): Deleted.
+        (JSC::JIT::emit_op_has_indexed_property): Deleted.
+        (JSC::JIT::emitSlow_op_has_indexed_property): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_has_enumerable_structure_property):
+        (JSC::JIT::emit_op_has_enumerable_indexed_property):
+        (JSC::JIT::emitSlow_op_has_enumerable_indexed_property):
+        (JSC::JIT::emit_op_has_structure_property): Deleted.
+        (JSC::JIT::emit_op_has_indexed_property): Deleted.
+        (JSC::JIT::emitSlow_op_has_indexed_property): Deleted.
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jit/JITOperations.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::JSC_DEFINE_COMMON_SLOW_PATH):
+        * runtime/CommonSlowPaths.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::hasProperty const):
+        (JSC::JSObject::hasEnumerableProperty const):
+        (JSC::JSObject::hasPropertyGeneric const): Deleted.
+        * runtime/JSObject.h:
+
 2020-12-15  Saam Barati  <sbarati@apple.com>
 
         Switch to using a linked list for the TDZ environment instead of a Vector

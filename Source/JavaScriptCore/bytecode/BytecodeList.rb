@@ -1125,7 +1125,7 @@ op :get_enumerable_length,
         base: VirtualRegister,
     }
 
-op :has_indexed_property,
+op :has_enumerable_indexed_property,
     args: {
         dst: VirtualRegister,
         base: VirtualRegister,
@@ -1135,7 +1135,7 @@ op :has_indexed_property,
         arrayProfile: ArrayProfile,
     }
 
-op :has_structure_property,
+op :has_enumerable_structure_property,
     args: {
         dst: VirtualRegister,
         base: VirtualRegister,
@@ -1159,7 +1159,7 @@ op :in_structure_property,
         enumerator: VirtualRegister,
     }
 
-op :has_generic_property,
+op :has_enumerable_property,
     args: {
         dst: VirtualRegister,
         base: VirtualRegister,
