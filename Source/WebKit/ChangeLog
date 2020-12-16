@@ -1,3 +1,14 @@
+2020-12-16  Youenn Fablet  <youenn@apple.com>
+
+        Make sure WebKit WebSocketChannel handle suspend/resume correctly
+        https://bugs.webkit.org/show_bug.cgi?id=219910
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::fail):
+        Make sure fail triggers close event if page resumes.
+
 2020-12-15  Pablo Saavedra  <psaavedra@igalia.com>
 
         [CMake][WPE] Add LibWPE before WPEBackend-FDO for qtwpe_INCLUDE_DIRECTORIES

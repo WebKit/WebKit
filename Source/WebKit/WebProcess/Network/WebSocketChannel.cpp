@@ -220,8 +220,11 @@ void WebSocketChannel::fail(const String& reason)
     if (m_client)
         m_client->didReceiveMessageError();
 
-    if (!m_isClosing)
-        MessageSender::send(Messages::NetworkSocketChannel::Close { 0, reason });
+    if (m_isClosing)
+        return;
+
+    MessageSender::send(Messages::NetworkSocketChannel::Close { 0, reason });
+    didClose(WebCore::WebSocketChannel::CloseEventCodeAbnormalClosure, { });
 }
 
 void WebSocketChannel::disconnect()
