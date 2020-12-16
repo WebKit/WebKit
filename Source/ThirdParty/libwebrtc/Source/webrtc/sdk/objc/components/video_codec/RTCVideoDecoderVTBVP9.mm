@@ -41,12 +41,66 @@
 #import "helpers/scoped_cftyperef.h"
 
 #include "modules/video_coding/include/video_error_codes.h"
+#include "modules/video_coding/utility/vp9_uncompressed_header_parser.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/time_utils.h"
 
 extern const CFStringRef kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms;
-#define VPCodecConfigurationContentsSize 12
+
+static uint8_t convertSubsampling(webrtc::vp9::YuvSubsampling value)
+{
+    switch (value) {
+    case webrtc::vp9::YuvSubsampling::k444:
+        return 3;
+    case webrtc::vp9::YuvSubsampling::k440:
+        return 1;
+    case webrtc::vp9::YuvSubsampling::k422:
+        return 2;
+    case webrtc::vp9::YuvSubsampling::k420:
+        return 1;
+    }
+}
+
+rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> computeInputFormat(const uint8_t* data, size_t size, int32_t width, int32_t height)
+{
+  constexpr size_t VPCodecConfigurationContentsSize = 12;
+
+  auto result = webrtc::vp9::ParseIntraFrameInfo(data, size);
+
+  if (!result)
+      return { };
+  auto chromaSubsampling = convertSubsampling(result->sub_sampling);
+  uint8_t bitDepthChromaAndRange = (0xF & (uint8_t)result->bit_detph) << 4 | (0x7 & chromaSubsampling) << 1 | (0x1 & (uint8_t)result->color_range);
+
+  uint8_t record[VPCodecConfigurationContentsSize];
+  memset((void*)record, 0, VPCodecConfigurationContentsSize);
+  // Version and flags (4 bytes)
+  record[0] = 1;
+  // profile
+  record[4] = result->profile;
+  // level
+  record[5] = 10;
+  // bitDepthChromaAndRange
+  record[6] = bitDepthChromaAndRange;
+  // colourPrimaries
+  record[7] = 2; // Unspecified.
+  // transferCharacteristics
+  record[8] = 2; // Unspecified.
+  // matrixCoefficients
+  record[9] = 2; // Unspecified.
+
+  auto cfData = rtc::ScopedCF(CFDataCreate(kCFAllocatorDefault, record, VPCodecConfigurationContentsSize));
+  auto configurationDict = @{ @"vpcC": (__bridge NSData *)cfData.get() };
+  auto extensions = @{ (__bridge NSString *)kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms: configurationDict };
+
+  CMVideoFormatDescriptionRef formatDescription = nullptr;
+  // Use kCMVideoCodecType_VP9 once added to CMFormatDescription.h
+  if (noErr != CMVideoFormatDescriptionCreate(kCFAllocatorDefault, 'vp09', width, height, (__bridge CFDictionaryRef)extensions, &formatDescription))
+      return { };
+
+  return rtc::ScopedCF(formatDescription);
+}
 
 // Struct that we pass to the decoder per frame to decode. We receive it again
 // in the decoder callback.
@@ -117,6 +171,15 @@ void vp9DecompressionOutputCallback(void *decoderRef,
   OSStatus _error;
   int32_t _width;
   int32_t _height;
+  bool _shouldCheckFormat;
+}
+
+- (instancetype)init {
+  self = [super init];
+  if (self) {
+    _shouldCheckFormat = true;
+  }
+  return self;
 }
 
 - (void)dealloc {
@@ -142,6 +205,7 @@ void vp9DecompressionOutputCallback(void *decoderRef,
 - (void)setWidth:(uint16_t)width height:(uint16_t)height {
   _width = width;
   _height = height;
+  _shouldCheckFormat = true;
 }
 
 - (NSInteger)decodeData:(const uint8_t *)data
@@ -154,30 +218,19 @@ void vp9DecompressionOutputCallback(void *decoderRef,
     return WEBRTC_VIDEO_CODEC_ERROR;
   }
 
-  uint8_t record[VPCodecConfigurationContentsSize];
-  // FIXME: Initialize properly the vpcC decoding configuration.
-  memset((void*)record, 0, VPCodecConfigurationContentsSize);
-  auto configurationDict = @{
-    @"vpcC": (__bridge NSData *)CFDataCreate(kCFAllocatorDefault, record, VPCodecConfigurationContentsSize)
-  };
-  auto extensions = @{
-    (__bridge NSString *)kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms: configurationDict
-  };
-
-  CMVideoFormatDescriptionRef formatDescription = nullptr;
-  // Use kCMVideoCodecType_VP9 once added to CMFormatDescription.h
-  if (noErr != CMVideoFormatDescriptionCreate(kCFAllocatorDefault, 'vp09', _width, _height, (__bridge CFDictionaryRef)extensions, &formatDescription))
-    return WEBRTC_VIDEO_CODEC_ERROR;
-
-  rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> inputFormat = rtc::ScopedCF(formatDescription);
-  if (inputFormat) {
-    // Check if the video format has changed, and reinitialize decoder if
-    // needed.
-    if (!CMFormatDescriptionEqual(inputFormat.get(), _videoFormat)) {
-      [self setVideoFormat:inputFormat.get()];
-      int resetDecompressionSessionError = [self resetDecompressionSession];
-      if (resetDecompressionSessionError != WEBRTC_VIDEO_CODEC_OK) {
-        return resetDecompressionSessionError;
+  if (_shouldCheckFormat || !_videoFormat) {
+    auto inputFormat = computeInputFormat(data, size, _width, _height);
+    if (inputFormat) {
+      _shouldCheckFormat = false;
+      // Check if the video format has changed, and reinitialize decoder if
+      // needed.
+      if (!CMFormatDescriptionEqual(inputFormat.get(), _videoFormat)) {
+        [self setVideoFormat:inputFormat.get()];
+        int resetDecompressionSessionError = [self resetDecompressionSession];
+        if (resetDecompressionSessionError != WEBRTC_VIDEO_CODEC_OK) {
+          [self setVideoFormat:nullptr];
+          return resetDecompressionSessionError;
+        }
       }
     }
   }
