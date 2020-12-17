@@ -85,6 +85,8 @@ private:
     const RefPtr<StyleSheetContents> m_styleSheet;
     bool m_failedParsing { false };
     bool m_disallowPseudoElements { false };
+    bool m_resistDefaultNamespace { false };
+    bool m_ignoreDefaultNamespace { false };
 };
 
 

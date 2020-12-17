@@ -32,6 +32,7 @@
 
 #include <memory>
 #include <wtf/OptionSet.h>
+#include <wtf/SetForScope.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -324,6 +325,12 @@ static bool isSimpleSelectorValidAfterPseudoElement(const CSSParserSelector& sim
     return isPseudoClassValidAfterPseudoElement(pseudo, compoundPseudoElement);
 }
 
+static bool atEndIgnoringWhitespace(CSSParserTokenRange range)
+{
+    range.consumeWhitespace();
+    return range.atEnd();
+}
+
 std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeCompoundSelector(CSSParserTokenRange& range)
 {
     std::unique_ptr<CSSParserSelector> compoundSelector;
@@ -331,7 +338,8 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeCompoundSelector(CS
     AtomString namespacePrefix;
     AtomString elementName;
     CSSSelector::PseudoElementType compoundPseudoElement = CSSSelector::PseudoElementUnknown;
-    if (!consumeName(range, elementName, namespacePrefix)) {
+    const bool hasName = consumeName(range, elementName, namespacePrefix);
+    if (!hasName) {
         compoundSelector = consumeSimpleSelector(range);
         if (!compoundSelector)
             return nullptr;
@@ -356,6 +364,14 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeCompoundSelector(CS
             compoundSelector = WTFMove(simpleSelector);
     }
 
+
+    // While inside a nested selector like :is(), the default namespace shall be ignored when [1]:
+    // * The compound selector represents the subject [2], and
+    // * The compound selector does not contain a type/universal selector.
+    //
+    // [1] https://drafts.csswg.org/selectors/#matches
+    // [2] https://drafts.csswg.org/selectors/#selector-subject
+    SetForScope<bool> ignoreDefaultNamespace(m_ignoreDefaultNamespace, m_resistDefaultNamespace && !hasName && atEndIgnoringWhitespace(range));
     if (!compoundSelector) {
         AtomString namespaceURI = determineNamespace(namespacePrefix);
         if (namespaceURI.isNull()) {
@@ -598,6 +614,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
     if (selector->match() == CSSSelector::PseudoClass) {
         switch (selector->pseudoClassType()) {
         case CSSSelector::PseudoClassNot: {
+            SetForScope<bool> resistDefaultNamespace(m_resistDefaultNamespace, true);
             DisallowPseudoElementsScope scope(*this);
             auto selectorList = makeUnique<CSSSelectorList>();
             *selectorList = consumeComplexSelectorList(block);
@@ -646,6 +663,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
         case CSSSelector::PseudoClassIs:
         case CSSSelector::PseudoClassMatches:
         case CSSSelector::PseudoClassWhere: {
+            SetForScope<bool> resistDefaultNamespace(m_resistDefaultNamespace, true);
             DisallowPseudoElementsScope scope(*this);
             auto selectorList = makeUnique<CSSSelectorList>();
             *selectorList = consumeComplexForgivingSelectorList(block);
@@ -897,7 +915,7 @@ static bool consumeANPlusB(CSSParserTokenRange& range, std::pair<int, int>& resu
 
 const AtomString& CSSSelectorParser::defaultNamespace() const
 {
-    if (!m_styleSheet)
+    if (!m_styleSheet || m_ignoreDefaultNamespace)
         return starAtom();
     return m_styleSheet->defaultNamespace();
 }
