@@ -1,3 +1,26 @@
+2020-12-17  Alex Christensen  <achristensen@webkit.org>
+
+        Fix "Open with Preview" menu item in PDF context menus on Big Sur
+        https://bugs.webkit.org/show_bug.cgi?id=219986
+        <rdar://problem/72406073>
+
+        Reviewed by Geoffrey Garen.
+
+        In r266654 I removed the ability for the web process to open a PDF in Preview on Big Sur.
+        I overlooked the fact that context menus also allow you to open a PDF in Preview,
+        which this fixes by having the UI process initiate the Preview opening if the user clicks on
+        the context menu item with the correct index.
+
+        * Shared/mac/PDFContextMenu.h:
+        (WebKit::PDFContextMenu::encode const):
+        (WebKit::PDFContextMenu::decode):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::showPDFContextMenu):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::handleContextMenuEvent):
+
 2020-12-17  Kate Cheney  <katherine_cheney@apple.com>
 
         Followup patch: Still can't login to my.playstation.com

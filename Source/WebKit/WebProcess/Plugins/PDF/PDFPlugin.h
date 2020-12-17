@@ -427,9 +427,7 @@ private:
 #endif
 
 #endif // HAVE(INCREMENTAL_PDF_APIS)
-#if ENABLE(UI_PROCESS_PDF_HUD)
     PDFPluginIdentifier m_identifier;
-#endif
 };
 
 } // namespace WebKit

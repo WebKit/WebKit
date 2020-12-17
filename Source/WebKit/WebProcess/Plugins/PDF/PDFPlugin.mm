@@ -606,9 +606,7 @@ inline PDFPlugin::PDFPlugin(WebFrame& frame)
     , m_streamLoaderClient(adoptRef(*new PDFPluginStreamLoaderClient(*this)))
     , m_incrementalPDFLoadingEnabled(WebCore::RuntimeEnabledFeatures::sharedFeatures().incrementalPDFLoadingEnabled())
 #endif
-#if ENABLE(UI_PROCESS_PDF_HUD)
     , m_identifier(PDFPluginIdentifier::generate())
-#endif
 {
 #if ENABLE(UI_PROCESS_PDF_HUD)
     [m_pdfLayerController setDisplaysPDFHUDController:NO];
@@ -2318,19 +2316,22 @@ bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
     if (!nsMenu)
         return false;
     
+    Optional<int> openInPreviewIndex;
     Vector<PDFContextMenuItem> items;
     auto itemCount = [nsMenu numberOfItems];
     for (int i = 0; i < itemCount; i++) {
         auto item = [nsMenu itemAtIndex:i];
         if ([item submenu])
             continue;
+        if ([NSStringFromSelector(item.action) isEqualToString:@"openWithPreview"])
+            openInPreviewIndex = i;
         PDFContextMenuItem menuItem { String([item title]), !![item isEnabled], !![item isSeparatorItem], static_cast<int>([item state]), !![item action], i };
         items.append(WTFMove(menuItem));
     }
-    PDFContextMenu contextMenu { point, WTFMove(items) };
+    PDFContextMenu contextMenu { point, WTFMove(items), WTFMove(openInPreviewIndex) };
 
     Optional<int> selectedIndex = -1;
-    webPage->sendSync(Messages::WebPageProxy::ShowPDFContextMenu(contextMenu), Messages::WebPageProxy::ShowPDFContextMenu::Reply(selectedIndex));
+    webPage->sendSync(Messages::WebPageProxy::ShowPDFContextMenu(contextMenu, m_identifier), Messages::WebPageProxy::ShowPDFContextMenu::Reply(selectedIndex));
 
     if (selectedIndex && *selectedIndex >= 0 && *selectedIndex < itemCount)
         [nsMenu performActionForItemAtIndex:*selectedIndex];

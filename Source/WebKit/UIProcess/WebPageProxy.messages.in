@@ -440,7 +440,7 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(PDFKIT_PLUGIN)
-    ShowPDFContextMenu(struct WebKit::PDFContextMenu contextMenu) -> (Optional<int32_t> selectedItem) Synchronous
+    ShowPDFContextMenu(struct WebKit::PDFContextMenu contextMenu, WebKit::PDFPluginIdentifier identifier) -> (Optional<int32_t> selectedItem) Synchronous
 #endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

@@ -29,9 +29,7 @@
 
 namespace WebKit {
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
 enum PDFPluginIdentifierType { };
 using PDFPluginIdentifier = ObjectIdentifier<PDFPluginIdentifierType>;
-#endif
 
 }

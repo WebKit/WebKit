@@ -78,12 +78,13 @@ struct PDFContextMenuItem {
 };
 
 struct PDFContextMenu {
-    WebCore::IntPoint m_point;
-    Vector<PDFContextMenuItem> m_items;
+    WebCore::IntPoint point;
+    Vector<PDFContextMenuItem> items;
+    Optional<int> openInPreviewIndex;
     
     template<class Encoder> void encode(Encoder& encoder) const
     {
-        encoder << m_point << m_items;
+        encoder << point << items << openInPreviewIndex;
     }
     
     template<class Decoder> static Optional<PDFContextMenu> decode(Decoder& decoder)
@@ -97,8 +98,17 @@ struct PDFContextMenu {
         decoder >> items;
         if (!items)
             return WTF::nullopt;
-        
-        return { { WTFMove(*point), WTFMove(*items) } };
+
+        Optional<Optional<int>> openInPreviewIndex;
+        decoder >> openInPreviewIndex;
+        if (!openInPreviewIndex)
+            return WTF::nullopt;
+
+        return {{
+            WTFMove(*point),
+            WTFMove(*items),
+            WTFMove(*openInPreviewIndex)
+        }};
     }
 
 };

@@ -1334,7 +1334,7 @@ public:
 #endif
 
 #if ENABLE(PDFKIT_PLUGIN)
-    void showPDFContextMenu(const WebKit::PDFContextMenu&, CompletionHandler<void(Optional<int32_t>&&)>&&);
+    void showPDFContextMenu(const WebKit::PDFContextMenu&, PDFPluginIdentifier, CompletionHandler<void(Optional<int32_t>&&)>&&);
 #endif
     WebCore::IntRect visibleScrollerThumbRect() const { return m_visibleScrollerThumbRect; }
 

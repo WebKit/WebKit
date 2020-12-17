@@ -540,16 +540,16 @@ void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(FrameInfoData
 #endif
 
 #if ENABLE(PDFKIT_PLUGIN)
-void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu, CompletionHandler<void(Optional<int32_t>&&)>&& completionHandler)
+void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu, PDFPluginIdentifier identifier, CompletionHandler<void(Optional<int32_t>&&)>&& completionHandler)
 {
-    if (!contextMenu.m_items.size())
+    if (!contextMenu.items.size())
         return completionHandler(WTF::nullopt);
     
     RetainPtr<WKPDFMenuTarget> menuTarget = adoptNS([[WKPDFMenuTarget alloc] init]);
     RetainPtr<NSMenu> nsMenu = adoptNS([[NSMenu alloc] init]);
     [nsMenu setAllowsContextMenuPlugIns:false];
-    for (unsigned i = 0; i < contextMenu.m_items.size(); i++) {
-        auto& item = contextMenu.m_items[i];
+    for (unsigned i = 0; i < contextMenu.items.size(); i++) {
+        auto& item = contextMenu.items[i];
         
         if (item.separator) {
             [nsMenu insertItem:[NSMenuItem separatorItem] atIndex:i];
@@ -569,14 +569,22 @@ void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu,
     }
     NSWindow *window = pageClient().platformWindow();
     auto windowNumber = [window windowNumber];
-    auto location = [window convertRectFromScreen: { contextMenu.m_point, NSZeroSize }].origin;
+    auto location = [window convertRectFromScreen: { contextMenu.point, NSZeroSize }].origin;
     NSEvent* event = [NSEvent mouseEventWithType:NSEventTypeRightMouseDown location:location modifierFlags:0 timestamp:0 windowNumber:windowNumber context:0 eventNumber:0 clickCount:1 pressure:1];
 
     auto view = [pageClient().platformWindow() contentView];
     [NSMenu popUpContextMenu:nsMenu.get() withEvent:event forView:view];
 
-    if (auto selectedMenuItem = [menuTarget selectedMenuItem])
-        return completionHandler([selectedMenuItem tag]);
+    if (auto selectedMenuItem = [menuTarget selectedMenuItem]) {
+        NSInteger tag = selectedMenuItem.tag;
+#if ENABLE(UI_PROCESS_PDF_HUD)
+        if (contextMenu.openInPreviewIndex && *contextMenu.openInPreviewIndex == tag)
+            pdfOpenWithPreview(identifier);
+#else
+        UNUSED_PARAM(identifier);
+#endif
+        return completionHandler(tag);
+    }
     completionHandler(WTF::nullopt);
 }
 #endif
