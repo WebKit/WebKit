@@ -1,3 +1,13 @@
+2020-12-17  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Move service workers failures to GLIB.
+
+        Some of flaky failures have been passing consistently for the last
+        4000 revisions, so they're actually removed from test expectations.
+
+        * platform/glib/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-12-16  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Gardened several flaky failures.
