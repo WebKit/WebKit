@@ -1,3 +1,7 @@
+2020-12-16  Russell Epstein  <repstein@apple.com>
+
+        Revert r270664. rdar://problem/72408033
+
 2020-12-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Update test262

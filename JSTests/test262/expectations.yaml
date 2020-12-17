@@ -886,6 +886,16 @@ test/intl402/Locale/likely-subtags.js:
 test/intl402/Locale/prototype/minimize/removing-likely-subtags-first-adds-likely-subtags.js:
   default: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
   strict mode: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
+test/language/arguments-object/mapped/nonconfigurable-nonenumerable-nonwritable-descriptors-set-by-arguments.js:
+  default: 'Test262Error: Expected obj[0] to have enumerable:false.'
+test/language/arguments-object/mapped/nonconfigurable-nonenumerable-nonwritable-descriptors-set-by-param.js:
+  default: 'Test262Error: Expected obj[0] to have enumerable:false.'
+test/language/arguments-object/mapped/nonconfigurable-nonwritable-descriptors-define-property-consecutive.js:
+  default: 'Test262Error: Expected obj[0] to have configurable:false.'
+test/language/arguments-object/mapped/nonconfigurable-nonwritable-descriptors-set-by-arguments.js:
+  default: 'Test262Error: Expected obj[0] to have configurable:false.'
+test/language/arguments-object/mapped/nonconfigurable-nonwritable-descriptors-set-by-param.js:
+  default: 'Test262Error: Expected obj[0] to have configurable:false.'
 test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-async-generator.js:
