@@ -979,6 +979,9 @@ webkit.org/b/212818 http/tests/websocket/tests/hybi/send-object-tostring-check.h
 
 webkit.org/b/215912 http/tests/websocket/tests/hybi/handshake-fail-by-no-cr.html [ Failure ]
 
+webkit.org/b/219973 http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe.html [ Failure ]
+webkit.org/b/219973 http/tests/security/mixedContent/websocket/insecure-websocket-in-main-frame.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebSocket-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1436,6 +1439,7 @@ webkit.org/b/136224 fast/speechrecognition [ Skip ]
 
 # No plans to support Sframes for a while
 http/wpt/webrtc/sframe-transform.html [ Skip ]
+http/wpt/webrtc/sframe-transform-in-worker.html [ Skip ]
 webrtc/audio-sframe.html [ Skip ]
 webrtc/video-sframe.html [ Skip ]
 

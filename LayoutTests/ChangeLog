@@ -1,5 +1,14 @@
 2020-12-16  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Unreviewed test gardening. Update several baselines of tests failing and update expectations.
+
+        * platform/glib/http/tests/websocket/tests/hybi/close-code-and-reason-expected.txt: Update after r270882.
+        * platform/glib/http/tests/websocket/tests/hybi/workers/close-code-and-reason-expected.txt: Update after r270882.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-color/animation/opacity-interpolation-expected.txt: Update after r270837.
+        * platform/gtk/TestExpectations:
+
+2020-12-16  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Unreviewed test gardening. Add baseline after r270823.
 
         * platform/gtk/fast/media/mq-prefers-contrast-forced-value-expected.html: Added.
