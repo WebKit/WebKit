@@ -31,8 +31,6 @@
 
 namespace WTF {
 
-class MachSendRight;
-
 class MachSemaphore {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(MachSemaphore);
