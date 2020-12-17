@@ -1,3 +1,7 @@
+2020-12-16  Russell Epstein  <repstein@apple.com>
+
+        Revert r270665. rdar://problem/72408033
+
 2020-12-11  Geoffrey Garen  <ggaren@apple.com>
 
         Eliminate 'async time' in StyleBench
