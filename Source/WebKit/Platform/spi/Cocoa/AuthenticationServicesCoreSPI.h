@@ -27,16 +27,17 @@
 
 #if HAVE(ASC_AUTH_UI)
 
-#if USE(APPLE_INTERNAL_SDK)
-
-// FIXME(219767): Remove ASCAppleIDCredential.h.
-#import <AuthenticationServicesCore/ASCAppleIDCredential.h>
-#import <AuthenticationServicesCore/ASCAuthorizationPresentationContext.h>
-#import <AuthenticationServicesCore/ASCAuthorizationPresenter.h>
-#import <AuthenticationServicesCore/ASCPlatformPublicKeyCredentialLoginChoice.h>
-#import <AuthenticationServicesCore/ASCSecurityKeyPublicKeyCredentialLoginChoice.h>
-
-#else
+// FIXME<rdar://problem/72406585>: Uncomment the headers after the SDK becomes stable.
+//#if USE(APPLE_INTERNAL_SDK)
+//
+//// FIXME(219767): Remove ASCAppleIDCredential.h.
+//#import <AuthenticationServicesCore/ASCAppleIDCredential.h>
+//#import <AuthenticationServicesCore/ASCAuthorizationPresentationContext.h>
+//#import <AuthenticationServicesCore/ASCAuthorizationPresenter.h>
+//#import <AuthenticationServicesCore/ASCPlatformPublicKeyCredentialLoginChoice.h>
+//#import <AuthenticationServicesCore/ASCSecurityKeyPublicKeyCredentialLoginChoice.h>
+//
+//#else
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -159,6 +160,6 @@ typedef NS_ENUM(NSInteger, ASCSecurityKeyPublicKeyCredentialLoginChoiceKind) {
 
 NS_ASSUME_NONNULL_END
 
-#endif // USE(APPLE_INTERNAL_SDK)
+//#endif // USE(APPLE_INTERNAL_SDK)
 
 #endif // HAVE(ASC_AUTH_UI)
