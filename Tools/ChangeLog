@@ -1,5 +1,22 @@
 2020-12-17  Jonathan Bedard  <jbedard@apple.com>
 
+        [run-webkit-tests] Replace FailureNotTested with FailureNoOutput
+        https://bugs.webkit.org/show_bug.cgi?id=219994
+        <rdar://problem/72440201>
+
+        Reviewed by Geoffrey Garen.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._compare_text): Replace FailureNotTest with FailureNoOutput.
+        * Scripts/webkitpy/layout_tests/models/test_failures.py:
+        (determine_result_type): Replace FailureNotTest with FailureNoOutput.
+        (FailureNoOutput): Renamed from FailureNotTested.
+        (FailureNotTested): Renamed to FailureNoOutput.
+        * Scripts/webkitpy/layout_tests/models/test_failures_unittest.py:
+        (TestFailuresTest.test_all_failure_classes): Replace FailureNotTest with FailureNoOutput.
+
+2020-12-17  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitscmpy] Capture Mock process logging during tests 
         https://bugs.webkit.org/show_bug.cgi?id=219989
         <rdar://problem/72435662>

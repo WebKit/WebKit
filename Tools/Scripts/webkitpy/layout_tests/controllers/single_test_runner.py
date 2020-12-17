@@ -243,7 +243,7 @@ class SingleTestRunner(object):
         elif actual_text and not expected_text:
             failures.append(test_failures.FailureMissingResult())
         elif not actual_text and expected_text:
-            failures.append(test_failures.FailureNotTested())
+            failures.append(test_failures.FailureNoOutput())
         return failures
 
     def _compare_audio(self, expected_audio, actual_audio):

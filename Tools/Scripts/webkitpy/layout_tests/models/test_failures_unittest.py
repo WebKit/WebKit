@@ -64,7 +64,7 @@ class TestFailuresTest(unittest.TestCase):
             FailureTimeout,
             FailureCrash,
             FailureMissingResult,
-            FailureNotTested,
+            FailureNoOutput,
             FailureTextMismatch,
             FailureMissingImageHash,
             FailureMissingImage,
