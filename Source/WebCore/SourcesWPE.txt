@@ -73,13 +73,6 @@ platform/graphics/egl/GLContextEGLLibWPE.cpp
 
 platform/graphics/libwpe/PlatformDisplayLibWPE.cpp
 
-platform/graphics/opengl/ExtensionsGLOpenGLCommon.cpp
-platform/graphics/opengl/ExtensionsGLOpenGLES.cpp @no-unify
-platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp
-platform/graphics/opengl/GraphicsContextGLOpenGLES.cpp
-platform/graphics/opengl/GraphicsContextGLOpenGLPrivate.cpp
-platform/graphics/opengl/TemporaryOpenGLSetting.cpp
-
 platform/graphics/opentype/OpenTypeVerticalData.cpp
 
 platform/libwpe/PasteboardLibWPE.cpp

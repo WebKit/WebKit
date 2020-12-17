@@ -42,13 +42,6 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/libwpe/PlatformDisplayLibWPE.cpp
 
-    platform/graphics/opengl/ExtensionsGLOpenGLCommon.cpp
-    platform/graphics/opengl/ExtensionsGLOpenGLES.cpp
-    platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp
-    platform/graphics/opengl/GraphicsContextGLOpenGLES.cpp
-    platform/graphics/opengl/GraphicsContextGLOpenGLPrivate.cpp
-    platform/graphics/opengl/TemporaryOpenGLSetting.cpp
-
     platform/libwpe/PasteboardLibWPE.cpp
     platform/libwpe/PlatformKeyboardEventLibWPE.cpp
     platform/libwpe/PlatformPasteboardLibWPE.cpp

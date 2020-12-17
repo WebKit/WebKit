@@ -1623,10 +1623,41 @@ list(APPEND WebCore_IDL_FILES
 
 if (ENABLE_WEBGL)
     list(APPEND WebCore_SOURCES
-        platform/graphics/ANGLEWebKitBridge.cpp
         platform/graphics/FormatConverter.cpp
-        platform/graphics/opengl/GraphicsContextGLOpenGL.cpp
     )
+
+    if (USE_ANGLE_WEBGL)
+        list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
+            ${WEBCORE_DIR}/platform/graphics/angle
+        )
+        list(APPEND WebCore_SOURCES
+            platform/graphics/angle/ExtensionsGLANGLE.cpp
+            platform/graphics/angle/GraphicsContextGLANGLE.cpp
+            platform/graphics/angle/TemporaryANGLESetting.cpp
+        )
+    else ()
+        list(APPEND WebCore_SOURCES
+            platform/graphics/ANGLEWebKitBridge.cpp
+
+            platform/graphics/opengl/ExtensionsGLOpenGLCommon.cpp
+            platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp
+            platform/graphics/opengl/TemporaryOpenGLSetting.cpp
+        )
+
+        if (USE_OPENGL_ES)
+            list(APPEND WebCore_SOURCES
+                platform/graphics/opengl/ExtensionsGLOpenGLES.cpp
+                platform/graphics/opengl/GraphicsContextGLOpenGLES.cpp
+            )
+        endif ()
+
+        if (USE_OPENGL)
+            list(APPEND WebCore_SOURCES
+                platform/graphics/opengl/ExtensionsGLOpenGL.cpp
+                platform/graphics/opengl/GraphicsContextGLOpenGLBase.cpp
+            )
+        endif ()
+    endif ()
 
     list(APPEND WebCore_LIBRARIES ANGLEFramework)
     list(APPEND WebCoreTestSupport_LIBRARIES ANGLEFramework)

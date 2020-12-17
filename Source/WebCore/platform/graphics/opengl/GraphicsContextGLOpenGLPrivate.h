@@ -19,6 +19,8 @@
 
 #pragma once
 
+#if PLATFORM(WIN) && USE(CA)
+
 #include "GLContext.h"
 #include "GraphicsContextGLOpenGL.h"
 
@@ -39,3 +41,5 @@ private:
 };
 
 }
+
+#endif

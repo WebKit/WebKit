@@ -31,7 +31,7 @@
 
 #if ENABLE(WEBGL) && USE(TEXTURE_MAPPER)
 
-#include "GraphicsContextGLOpenGLPrivate.h"
+#include "GLContext.h"
 #include "TextureMapperGCGLPlatformLayer.h"
 #include <ANGLE/ShaderLang.h>
 #include <wtf/Deque.h>

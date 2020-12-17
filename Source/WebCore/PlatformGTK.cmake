@@ -44,12 +44,6 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/text/gtk"
 )
 
-if (USE_ANGLE_WEBGL)
-    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
-        "${WEBCORE_DIR}/platform/graphics/angle"
-    )
-endif ()
-
 if (USE_WPE_RENDERER)
     list(APPEND WebCore_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/graphics/libwpe"
@@ -124,34 +118,6 @@ if (USE_OPENGL)
     list(APPEND WebCore_SOURCES
         platform/graphics/OpenGLShims.cpp
     )
-endif ()
-
-if (USE_ANGLE_WEBGL)
-    list(APPEND WebCore_SOURCES
-        platform/graphics/angle/ExtensionsGLANGLE.cpp
-        platform/graphics/angle/GraphicsContextGLANGLE.cpp
-        platform/graphics/angle/TemporaryANGLESetting.cpp
-    )
-else ()
-    list(APPEND WebCore_SOURCES
-        platform/graphics/opengl/ExtensionsGLOpenGLCommon.cpp
-        platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp
-        platform/graphics/opengl/TemporaryOpenGLSetting.cpp
-    )
-
-    if (USE_OPENGL_ES)
-        list(APPEND WebCore_SOURCES
-            platform/graphics/opengl/ExtensionsGLOpenGLES.cpp
-            platform/graphics/opengl/GraphicsContextGLOpenGLES.cpp
-        )
-    endif ()
-
-    if (USE_OPENGL)
-        list(APPEND WebCore_SOURCES
-            platform/graphics/opengl/ExtensionsGLOpenGL.cpp
-            platform/graphics/opengl/GraphicsContextGLOpenGLBase.cpp
-        )
-    endif ()
 endif ()
 
 if (ENABLE_WAYLAND_TARGET)

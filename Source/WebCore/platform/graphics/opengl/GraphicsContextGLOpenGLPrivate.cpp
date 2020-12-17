@@ -19,22 +19,13 @@
 
 #include "config.h"
 
-#if ENABLE(WEBGL)
+#if ENABLE(WEBGL) && PLATFORM(WIN) && USE(CA)
 #include "GraphicsContextGLOpenGLPrivate.h"
 
 #include "HostWindow.h"
-#include <wtf/StdLibExtras.h>
-
-
-#if USE(LIBEPOXY)
-#include <epoxy/gl.h>
-#elif USE(OPENGL_ES)
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
-#else
-#include "OpenGLShims.h"
-#endif
-
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -64,4 +55,4 @@ PlatformGraphicsContextGL GraphicsContextGLOpenGLPrivate::platformContext()
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL)
+#endif // ENABLE(WEBGL) && PLATFORM(WIN) && USE(CA)
