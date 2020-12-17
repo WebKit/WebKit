@@ -24,7 +24,13 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO)
 
 messages -> RemoteAudioDestinationManager NotRefCounted {
+#if PLATFORM(COCOA)
+    CreateAudioDestination(String inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate) -> (WebKit::RemoteAudioDestinationIdentifier identifier, MachSendRight renderSemaphoreSendRight) Synchronous
+#endif
+#if !PLATFORM(COCOA)
     CreateAudioDestination(String inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate) -> (WebKit::RemoteAudioDestinationIdentifier identifier) Synchronous
+#endif
+
     DeleteAudioDestination(WebKit::RemoteAudioDestinationIdentifier identifier) -> () Async
 
     StartAudioDestination(WebKit::RemoteAudioDestinationIdentifier identifier) -> (bool isPlaying) Async

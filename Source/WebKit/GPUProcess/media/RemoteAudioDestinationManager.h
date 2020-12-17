@@ -38,6 +38,10 @@
 namespace WebCore {
 class CAAudioStreamDescription;
 }
+
+namespace WTF {
+class MachSendRight;
+}
 #endif
 
 namespace WebKit {
@@ -59,7 +63,12 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
-    void createAudioDestination(const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, CompletionHandler<void(RemoteAudioDestinationIdentifier)>&&);
+#if PLATFORM(COCOA)
+    using CreationCompletionHandler = CompletionHandler<void(RemoteAudioDestinationIdentifier, WTF::MachSendRight)>;
+#else
+    using CreationCompletionHandler = CompletionHandler<void(RemoteAudioDestinationIdentifier)>;
+#endif
+    void createAudioDestination(const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, CreationCompletionHandler&&);
     void deleteAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void()>&&);
     void startAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void(bool)>&&);
     void stopAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void(bool)>&&);

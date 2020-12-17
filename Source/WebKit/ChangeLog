@@ -1,3 +1,48 @@
+2020-12-17  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] Replace WebAudio rendering timer with a cross-process semaphore
+        https://bugs.webkit.org/show_bug.cgi?id=219964
+
+        Reviewed by Geoff Garen.
+
+        r270907 replaced the per-rendering quantum IPC from the GPUProcess to the
+        WebProcess with a very high-frequency timer in the WebProcess to trigger
+        the rendering. While this works, this seemed a bit fragile and it also
+        adds some latency to avoid missed frames.
+
+        In this patch, I am replacing the high-frequency timer introduced in r270907
+        with a cross-process semaphore. When the WebProcess asks the GPU process
+        to create an audio device, the GPUProcess sends it back a MachSendRight
+        to the "rendering" semaphore. The WebProcess then starts a high-priority
+        AudioThread which waits this semaphore to be signaled to render a quantum.
+        Whenever render() gets called on the GPUProcess side, the GPUProcess
+        simply signals the "rendering" semaphore, causing the WebProcess to do
+        the rendering of a quantum. As was the case before, the WebProcess stores
+        rendered buffers into the RingBuffer it shares with the GPUProcess and
+        the GPUProcess fetches from the RingBuffer as needed.
+
+        * GPUProcess/media/RemoteAudioDestinationManager.cpp:
+        (WebKit::RemoteAudioDestination::createRenderSemaphoreSendRight):
+        (WebKit::RemoteAudioDestination::audioSamplesStorageChanged):
+        (WebKit::RemoteAudioDestination::render):
+        (WebKit::RemoteAudioDestinationManager::createAudioDestination):
+        * GPUProcess/media/RemoteAudioDestinationManager.h:
+        * GPUProcess/media/RemoteAudioDestinationManager.messages.in:
+        * Shared/Cocoa/SharedRingBufferStorage.cpp:
+        * Shared/Cocoa/SharedRingBufferStorage.h:
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::RemoteAudioDestinationProxy):
+        (WebKit::RemoteAudioDestinationProxy::startRenderingThread):
+        (WebKit::RemoteAudioDestinationProxy::stopRenderingThread):
+        (WebKit::RemoteAudioDestinationProxy::connectToGPUProcess):
+        (WebKit::RemoteAudioDestinationProxy::~RemoteAudioDestinationProxy):
+        (WebKit::RemoteAudioDestinationProxy::start):
+        (WebKit::RemoteAudioDestinationProxy::stop):
+        (WebKit::RemoteAudioDestinationProxy::renderQuantum):
+        (WebKit::RemoteAudioDestinationProxy::storageChanged):
+        (WebKit::RemoteAudioDestinationProxy::gpuProcessConnectionDidClose):
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.h:
+
 2020-12-17  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: REGRESSION(r266467): viewing a WebSocket created before Web Inspector was opened doesn't show any message frames

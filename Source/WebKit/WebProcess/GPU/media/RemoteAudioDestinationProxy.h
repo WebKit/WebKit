@@ -47,6 +47,12 @@ class CARingBuffer;
 class WebAudioBufferList;
 }
 
+namespace WTF {
+#if PLATFORM(COCOA)
+class MachSemaphore;
+#endif
+}
+
 namespace WebKit {
 
 class SharedRingBufferFrameBounds;
@@ -74,9 +80,7 @@ private:
     void stop(CompletionHandler<void(bool)>&&) final;
 
     void startRenderingThread();
-    void stopRenderingThreadIfNecessary();
-    void startRendering(CompletionHandler<void()>&&);
-    void stopRenderingIfNecessary(CompletionHandler<void()>&& = [] { });
+    void stopRenderingThread();
     void renderQuantum();
 
     void connectToGPUProcess();
@@ -101,8 +105,10 @@ private:
 #if PLATFORM(COCOA)
     uint64_t m_numberOfFrames { 0 };
     std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
+    std::unique_ptr<WTF::MachSemaphore> m_renderSemaphore;
     std::unique_ptr<WebCore::WebAudioBufferList> m_audioBufferList;
     uint64_t m_currentFrame { 0 };
+    float m_sampleRate;
 #else
     unsigned m_numberOfOutputChannels;
 #endif
@@ -112,9 +118,7 @@ private:
 
     Function<void(Function<void()>&&)> m_dispatchToRenderThread;
     RefPtr<Thread> m_renderThread;
-
-    std::unique_ptr<RunLoop::Timer<RemoteAudioDestinationProxy>> m_renderingTimer;
-    float m_sampleRate { 0 };
+    std::atomic<bool> m_shouldStopThread { false };
 };
 
 } // namespace WebKit
