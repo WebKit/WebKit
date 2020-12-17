@@ -1,3 +1,20 @@
+2020-12-17  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Correct mock `git log` call in standard git repositories
+        https://bugs.webkit.org/show_bug.cgi?id=219992
+        <rdar://problem/72436380>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py: git_svn flag should only
+        control the final line of the message, not the existence of the entire message.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/find_unittest.py:
+        (TestFind.test_basic_git):
+        (TestFind.test_identifier_git):
+        (TestFind.test_identifier_git_svn):
+        (TestFind.test_hash):
+
 2020-12-17  Sam Sneddon  <gsnedders@apple.com>
 
         Stop parsing reftest.list files
