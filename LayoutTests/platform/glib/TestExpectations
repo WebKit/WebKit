@@ -698,6 +698,7 @@ webkit.org/b/213921 fast/visual-viewport/scroll-event-fired-during-scroll-alone.
 # The tests are crashing, timing out and passing. Mark as Skip for now.
 webkit.org/b/177940 workers/wasm-hashset-many-2.html [ Skip ]
 webkit.org/b/177940 workers/wasm-hashset-many.html [ Skip ]
+webkit.org/b/177940 workers/wasm-hashset.html [ Skip ]
 
 webkit.org/b/208369 http/tests/workers/service/basic-timeout.https.html [ Failure Timeout Pass ]
 
@@ -1814,15 +1815,18 @@ webkit.org/b/200302 accessibility/media-with-aria-label.html [ Failure ]
 webkit.org/b/201259 http/wpt/beacon/cors/crossorigin-arraybufferview-no-preflight.html [ Failure ]
 webkit.org/b/201268 accessibility/insert-newline.html [ Timeout ]
 webkit.org/b/201272 http/tests/websocket/tests/hybi/bad-handshake-crash.html [ Timeout ]
-webkit.org/b/201981 http/wpt/resource-timing/rt-resources-per-worker.html [ Failure Pass ]
-webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html [ Failure Pass ]
-webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/resource-timing.sub.https.html [ Failure Pass ]
 webkit.org/b/201982 fast/images/exif-orientation-border-image.html [ ImageOnlyFailure ]
 webkit.org/b/202225 accessibility/misspelling-range.html [ Failure ]
 webkit.org/b/202239 http/tests/cookies/cookie-with-multiple-level-path.html [ Pass Failure ]
 webkit.org/b/202745 fast/css/invalidation-errors-2.html [ Failure ]
 webkit.org/b/202745 fast/css/invalidation-errors.html [ Failure ]
 webkit.org/b/203240 css3/shapes/shape-outside/shape-image/shape-image-025.html [ Pass ImageOnlyFailure ]
+
+# Service worker tests flaky or failing.
+webkit.org/b/201981 http/wpt/resource-timing/rt-resources-per-worker.html [ Failure Pass ]
+webkit.org/b/201981 http/wpt/service-workers/mac/throttleable.https.html [ Failure Pass ]
+webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html [ Failure Pass ]
+webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/resource-timing.sub.https.html [ Failure Pass ]
 
 # Bug in iOS, probably will require a baseline once it's fixed.
 webkit.org/b/203416 imported/w3c/web-platform-tests/css/css-transitions/properties-value-auto-001.html [ Failure ]

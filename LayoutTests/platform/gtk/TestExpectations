@@ -1876,6 +1876,8 @@ webkit.org/b/211566 http/tests/resourceLoadStatistics/exemptDomains/app-bound-do
 
 webkit.org/b/211569 media/video-presentation-mode.html [ Skip ]
 
+webkit.org/b/219979 gamepad/gamepad-polling-access.html [ Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////

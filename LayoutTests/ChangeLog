@@ -1,5 +1,13 @@
 2020-12-16  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Unreviewed test gardening. Gardened several flaky failures.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
+2020-12-16  Diego Pino Garcia  <dpino@igalia.com>
+
         [WPE] Unreviewed test gardening. fast/text/simple-line-wordspacing.html is an image failure.
 
         * platform/wpe/TestExpectations:
