@@ -219,12 +219,15 @@ gboolean AudioDestinationGStreamer::handleMessage(GstMessage* message)
 
 void AudioDestinationGStreamer::start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&& completionHandler)
 {
+    webkitWebAudioSourceSetDispatchToRenderThreadCallback(WEBKIT_WEB_AUDIO_SRC(m_src.get()), WTFMove(dispatchToRenderThread));
+    startRendering(WTFMove(completionHandler));
+}
+
+void AudioDestinationGStreamer::startRendering(CompletionHandler<void(bool)>&& completionHandler)
+{
     ASSERT(m_audioSinkAvailable);
     bool success = false;
     if (m_audioSinkAvailable) {
-        if (dispatchToRenderThread)
-            webkitWebAudioSourceSetDispatchToRenderThreadCallback(WEBKIT_WEB_AUDIO_SRC(m_src.get()), WTFMove(dispatchToRenderThread));
-
         GST_DEBUG("Starting");
         if (gst_element_set_state(m_pipeline.get(), GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
             g_warning("Error: Failed to set pipeline to playing");
@@ -241,6 +244,11 @@ void AudioDestinationGStreamer::start(Function<void(Function<void()>&&)>&& dispa
 }
 
 void AudioDestinationGStreamer::stop(CompletionHandler<void(bool)>&& completionHandler)
+{
+    stopRendering(WTFMove(completionHandler));
+}
+
+void AudioDestinationGStreamer::stopRendering(CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(m_audioSinkAvailable);
     bool success = false;

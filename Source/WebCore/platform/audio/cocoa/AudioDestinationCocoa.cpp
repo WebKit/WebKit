@@ -104,8 +104,18 @@ unsigned AudioDestinationCocoa::framesPerBuffer() const
 
 void AudioDestinationCocoa::start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&& completionHandler)
 {
+    ASSERT(isMainThread());
     LOG(Media, "AudioDestinationCocoa::start");
-    m_dispatchToRenderThread = WTFMove(dispatchToRenderThread);
+    {
+        auto locker = holdLock(m_dispatchToRenderThreadLock);
+        m_dispatchToRenderThread = WTFMove(dispatchToRenderThread);
+    }
+    startRendering(WTFMove(completionHandler));
+}
+
+void AudioDestinationCocoa::startRendering(CompletionHandler<void(bool)>&& completionHandler)
+{
+    ASSERT(isMainThread());
     auto success = m_audioOutputUnitAdaptor.start() == noErr;
     if (success)
         setIsPlaying(true);
@@ -117,24 +127,25 @@ void AudioDestinationCocoa::start(Function<void(Function<void()>&&)>&& dispatchT
 
 void AudioDestinationCocoa::stop(CompletionHandler<void(bool)>&& completionHandler)
 {
+    ASSERT(isMainThread());
     LOG(Media, "AudioDestinationCocoa::stop");
+    stopRendering(WTFMove(completionHandler));
+    {
+        auto locker = holdLock(m_dispatchToRenderThreadLock);
+        m_dispatchToRenderThread = nullptr;
+    }
+}
+
+void AudioDestinationCocoa::stopRendering(CompletionHandler<void(bool)>&& completionHandler)
+{
+    ASSERT(isMainThread());
     auto success = m_audioOutputUnitAdaptor.stop() == noErr;
-    auto dispatchToRenderThread = std::exchange(m_dispatchToRenderThread, nullptr);
     if (success)
         setIsPlaying(false);
 
-    auto callCompletionHandlerOnMainThread = [completionHandler = WTFMove(completionHandler), success]() mutable {
-        callOnMainThread([completionHandler = WTFMove(completionHandler), success]() mutable {
-            completionHandler(success);
-        });
-    };
-
-    if (dispatchToRenderThread) {
-        // Do a round-trip to the worklet thread to make sure we call the completion handler after
-        // the last rendering quantum has been processed by the worklet thread.
-        dispatchToRenderThread(WTFMove(callCompletionHandlerOnMainThread));
-    } else
-        callCompletionHandlerOnMainThread();
+    callOnMainThread([completionHandler = WTFMove(completionHandler), success]() mutable {
+        completionHandler(success);
+    });
 }
 
 void AudioDestinationCocoa::setIsPlaying(bool isPlaying)
@@ -187,6 +198,8 @@ bool AudioDestinationCocoa::hasEnoughFrames(UInt32 numberOfFrames) const
 // Pulls on our provider to get rendered audio stream.
 OSStatus AudioDestinationCocoa::render(double sampleTime, uint64_t hostTime, UInt32 numberOfFrames, AudioBufferList* ioData)
 {
+    ASSERT(!isMainThread());
+
     if (!hasEnoughFrames(numberOfFrames))
         return noErr;
 
@@ -208,14 +221,15 @@ OSStatus AudioDestinationCocoa::render(double sampleTime, uint64_t hostTime, UIn
     }
 
     // When there is a AudioWorklet, we do rendering on the AudioWorkletThread.
-    if (m_dispatchToRenderThread) {
-        m_dispatchToRenderThread([this, protectedThis = makeRef(*this), framesToRender]() mutable {
-            auto locker = tryHoldLock(m_isPlayingLock);
-            if (locker && m_isPlaying)
-                renderOnRenderingThead(framesToRender);
-        });
-    } else
-        renderOnRenderingThead(framesToRender);
+    auto locker = tryHoldLock(m_dispatchToRenderThreadLock);
+    if (!locker || !m_dispatchToRenderThread)
+        return -1;
+
+    m_dispatchToRenderThread([this, protectedThis = makeRef(*this), framesToRender]() mutable {
+        auto locker = tryHoldLock(m_isPlayingLock);
+        if (locker && m_isPlaying)
+            renderOnRenderingThead(framesToRender);
+    });
 
     return noErr;
 }

@@ -34,14 +34,18 @@ public:
     AudioDestinationGStreamer(AudioIOCallback&, unsigned long numberOfOutputChannels, float sampleRate);
     virtual ~AudioDestinationGStreamer();
 
-    void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&&) override;
-    void stop(CompletionHandler<void(bool)>&&) override;
+    WEBCORE_EXPORT void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&&) final;
+    WEBCORE_EXPORT void stop(CompletionHandler<void(bool)>&&) final;
 
     bool isPlaying() override { return m_isPlaying; }
     float sampleRate() const override { return m_sampleRate; }
     unsigned framesPerBuffer() const final;
 
     gboolean handleMessage(GstMessage*);
+
+protected:
+    virtual void startRendering(CompletionHandler<void(bool)>&&);
+    virtual void stopRendering(CompletionHandler<void(bool)>&&);
 
 private:
     RefPtr<AudioBus> m_renderBus;

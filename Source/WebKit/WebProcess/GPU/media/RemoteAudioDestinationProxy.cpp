@@ -63,7 +63,7 @@ RemoteAudioDestinationProxy::RemoteAudioDestinationProxy(AudioIOCallback& callba
     , m_ringBuffer(makeUnique<WebCore::CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(std::bind(&RemoteAudioDestinationProxy::storageChanged, this, std::placeholders::_1))))
     , m_sampleRate(hardwareSampleRate())
 #else
-    : WebCore::AudioDestination(callback)
+    : WebCore::AudioDestinationGStreamer(callback, numberOfOutputChannels, sampleRate)
     , m_numberOfOutputChannels(numberOfOutputChannels)
 #endif
     , m_inputDeviceId(inputDeviceId)
@@ -83,13 +83,7 @@ void RemoteAudioDestinationProxy::startRenderingThread()
             if (m_shouldStopThread)
                 break;
 
-            if (m_dispatchToRenderThread) {
-                // If there is an AudioWorklet active, we need to render the quantum on the AudioWorkletThread.
-                m_dispatchToRenderThread([this, protectedThis = makeRef(*this)] {
-                    renderQuantum();
-                });
-            } else
-                renderQuantum();
+            renderQuantum();
         } while (!m_shouldStopThread);
     };
     m_renderThread = Thread::create("RemoteAudioDestinationProxy render thread", WTFMove(offThreadRendering), ThreadType::Audio, Thread::QOS::UserInteractive);
@@ -158,31 +152,19 @@ RemoteAudioDestinationProxy::~RemoteAudioDestinationProxy()
     stopRenderingThread();
 }
 
-void RemoteAudioDestinationProxy::start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteAudioDestinationProxy::startRendering(CompletionHandler<void(bool)>&& completionHandler)
 {
-    WebProcess::singleton().ensureGPUProcessConnection().connection().sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StartAudioDestination(m_destinationID), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler), dispatchToRenderThread = WTFMove(dispatchToRenderThread)](bool isPlaying) mutable {
-        m_dispatchToRenderThread = WTFMove(dispatchToRenderThread);
+    WebProcess::singleton().ensureGPUProcessConnection().connection().sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StartAudioDestination(m_destinationID), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
         setIsPlaying(isPlaying);
         completionHandler(isPlaying);
     });
 }
 
-void RemoteAudioDestinationProxy::stop(CompletionHandler<void(bool)>&& completionHandler)
+void RemoteAudioDestinationProxy::stopRendering(CompletionHandler<void(bool)>&& completionHandler)
 {
     WebProcess::singleton().ensureGPUProcessConnection().connection().sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StopAudioDestination(m_destinationID), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
         setIsPlaying(isPlaying);
-        auto callCompletionHandler = [completionHandler = WTFMove(completionHandler), isPlaying]() mutable {
-            completionHandler(!isPlaying);
-        };
-        auto dispatchToRenderThread = std::exchange(m_dispatchToRenderThread, nullptr);
-        if (dispatchToRenderThread) {
-            // Do a round-trip to the worklet thread to make sure we call the completion handler after
-            // the last rendering quantum has been processed by the worklet thread.
-            dispatchToRenderThread([callCompletionHandler = WTFMove(callCompletionHandler)]() mutable {
-                callOnMainThread(WTFMove(callCompletionHandler));
-            });
-        } else
-            callCompletionHandler();
+        completionHandler(!isPlaying);
     });
 }
 
@@ -231,7 +213,7 @@ void RemoteAudioDestinationProxy::gpuProcessConnectionDidClose(GPUProcessConnect
     connectToGPUProcess();
 
     if (isPlaying())
-        start(std::exchange(m_dispatchToRenderThread, nullptr), [](bool) { });
+        startRendering([](bool) { });
 }
 
 } // namespace WebKit

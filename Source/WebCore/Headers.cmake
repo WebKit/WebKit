@@ -1117,6 +1117,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/audio/PlatformMediaSessionManager.h
     platform/audio/PushPullFIFO.h
 
+    platform/audio/gstreamer/AudioDestinationGStreamer.h
+
     platform/encryptedmedia/CDMEncryptionScheme.h
     platform/encryptedmedia/CDMFactory.h
     platform/encryptedmedia/CDMInstance.h

@@ -39,7 +39,7 @@
 #include "SharedRingBufferStorage.h"
 #include <WebCore/AudioDestinationCocoa.h>
 #else
-#include <WebCore/AudioDestination.h>
+#include <WebCore/AudioDestinationGStreamer.h>
 #endif
 
 namespace WebCore {
@@ -57,11 +57,11 @@ namespace WebKit {
 
 class SharedRingBufferFrameBounds;
 
-class RemoteAudioDestinationProxy
+class RemoteAudioDestinationProxy final
 #if PLATFORM(COCOA)
     : public WebCore::AudioDestinationCocoa
 #else
-    : public WebCore::AudioDestination
+    : public WebCore::AudioDestinationGStreamer
 #endif
     , public GPUProcessConnection::Client {
     WTF_MAKE_NONCOPYABLE(RemoteAudioDestinationProxy);
@@ -76,8 +76,8 @@ public:
     ~RemoteAudioDestinationProxy();
 
 private:
-    void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&&) final;
-    void stop(CompletionHandler<void(bool)>&&) final;
+    void startRendering(CompletionHandler<void(bool)>&&) final;
+    void stopRendering(CompletionHandler<void(bool)>&&) final;
 
     void startRenderingThread();
     void stopRenderingThread();
@@ -92,7 +92,6 @@ private:
     bool isPlaying() final { return false; }
     void setIsPlaying(bool) { }
     float sampleRate() const final { return 0; }
-    unsigned framesPerBuffer() const final { return 0; }
     unsigned numberOfOutputChannels() const { return m_numberOfOutputChannels; }
 #endif
 
@@ -116,7 +115,6 @@ private:
     String m_inputDeviceId;
     unsigned m_numberOfInputChannels;
 
-    Function<void(Function<void()>&&)> m_dispatchToRenderThread;
     RefPtr<Thread> m_renderThread;
     std::atomic<bool> m_shouldStopThread { false };
 };

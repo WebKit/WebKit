@@ -65,8 +65,11 @@ protected:
 private:
     friend Ref<AudioDestination> AudioDestination::create(AudioIOCallback&, const String&, unsigned, unsigned, float);
 
-    void start(Function<void(Function<void()>&&)>&&, CompletionHandler<void(bool)>&&) override;
-    void stop(CompletionHandler<void(bool)>&&) override;
+    WEBCORE_EXPORT void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&&) final;
+    WEBCORE_EXPORT void stop(CompletionHandler<void(bool)>&&) final;
+
+    virtual void startRendering(CompletionHandler<void(bool)>&&);
+    virtual void stopRendering(CompletionHandler<void(bool)>&&);
 
     void renderOnRenderingThead(size_t framesToRender);
 
@@ -86,6 +89,7 @@ private:
     std::unique_ptr<MultiChannelResampler> m_resampler;
     AudioIOPosition m_outputTimestamp;
 
+    Lock m_dispatchToRenderThreadLock;
     Function<void(Function<void()>&&)> m_dispatchToRenderThread;
 
     float m_contextSampleRate;

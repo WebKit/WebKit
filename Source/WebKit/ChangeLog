@@ -1,3 +1,25 @@
+2020-12-17  Chris Dumez  <cdumez@apple.com>
+
+        [WebAudio] Simplify code related to dispatchToRenderThread
+        https://bugs.webkit.org/show_bug.cgi?id=219990
+
+        Reviewed by Geoffrey Garen.
+
+        Simplify code related to dispatchToRenderThread in WebAudio:
+        1. AudioDestination::start() now always gets called with a non-null dispatchToRenderThread lambda.
+           In the case where there is no AudioWorkletThread to dispatch to, the lambda simply calls its
+           task synchronously.
+        2. For Cocoa ports, make it so that only AudioDestinationCocoa needs to worry about the
+           dispatchToRenderThread lambda. The dispatchToRenderThread lambda is no longer exposed to
+           subclasses such as MockAudioDestinationCocoa & RemoteAudioDestinationProxy.
+
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::startRenderingThread):
+        (WebKit::RemoteAudioDestinationProxy::startRendering):
+        (WebKit::RemoteAudioDestinationProxy::stopRendering):
+        (WebKit::RemoteAudioDestinationProxy::gpuProcessConnectionDidClose):
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.h:
+
 2020-12-17  Alex Christensen  <achristensen@webkit.org>
 
         Fix "Open with Preview" menu item in PDF context menus on Big Sur
