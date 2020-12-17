@@ -35,7 +35,6 @@
 #include "FrameLoaderStateMachine.h"
 #include "FrameLoaderTypes.h"
 #include "LayoutMilestone.h"
-#include "MixedContentChecker.h"
 #include "PageIdentifier.h"
 #include "PrivateClickMeasurement.h"
 #include "ReferrerPolicy.h"
@@ -117,7 +116,6 @@ public:
     class SubframeLoader;
     SubframeLoader& subframeLoader() { return *m_subframeLoader; }
     const SubframeLoader& subframeLoader() const { return *m_subframeLoader; }
-    MixedContentChecker& mixedContentChecker() const { return m_mixedContentChecker; }
 
     void setupForReplace();
 
@@ -436,7 +434,6 @@ private:
     mutable ResourceLoadNotifier m_notifier;
     const std::unique_ptr<SubframeLoader> m_subframeLoader;
     mutable FrameLoaderStateMachine m_stateMachine;
-    mutable MixedContentChecker m_mixedContentChecker;
 
     class FrameProgressTracker;
     std::unique_ptr<FrameProgressTracker> m_progressTracker;

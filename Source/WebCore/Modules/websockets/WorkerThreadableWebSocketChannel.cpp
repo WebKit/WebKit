@@ -34,7 +34,7 @@
 #include "Blob.h"
 #include "Document.h"
 #include "Frame.h"
-#include "FrameLoader.h"
+#include "MixedContentChecker.h"
 #include "ScriptExecutionContext.h"
 #include "SocketProvider.h"
 #include "ThreadableWebSocketChannelClientWrapper.h"
@@ -410,8 +410,8 @@ void WorkerThreadableWebSocketChannel::Bridge::connect(const URL& url, const Str
         auto& document = downcast<Document>(context);
         
         // FIXME: make this mixed content check equivalent to the document mixed content check currently in WebSocket::connect()
-        if (document.frame()) {
-            Optional<String> errorString = document.frame()->loader().mixedContentChecker().checkForMixedContentInFrameTree(url);
+        if (auto* frame = document.frame()) {
+            Optional<String> errorString = MixedContentChecker::checkForMixedContentInFrameTree(*frame, url);
             if (errorString) {
                 peer->fail(errorString.value());
                 return;

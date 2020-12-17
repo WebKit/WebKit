@@ -41,11 +41,11 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
-#include "FrameLoader.h"
 #include "InspectorInstrumentation.h"
 #include "LegacySchemeRegistry.h"
 #include "LoadTiming.h"
 #include "LoaderStrategy.h"
+#include "MixedContentChecker.h"
 #include "Performance.h"
 #include "PlatformStrategies.h"
 #include "ProgressTracker.h"
@@ -590,10 +590,10 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     ResourceError error;
     ResourceResponse response;
     unsigned long identifier = std::numeric_limits<unsigned long>::max();
-    if (m_document.frame()) {
-        auto& frameLoader = m_document.frame()->loader();
-        if (!frameLoader.mixedContentChecker().canRunInsecureContent(m_document.securityOrigin(), requestURL))
+    if (auto* frame = m_document.frame()) {
+        if (!MixedContentChecker::canRunInsecureContent(*frame, m_document.securityOrigin(), requestURL))
             return;
+        auto& frameLoader = frame->loader();
         identifier = frameLoader.loadResourceSynchronously(request, m_options.clientCredentialPolicy, m_options, *m_originalHeaders, error, response, data);
     }
 

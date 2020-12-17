@@ -38,13 +38,13 @@
 #include "DiagnosticLoggingKeys.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
-#include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLFrameElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "MIMETypeRegistry.h"
+#include "MixedContentChecker.h"
 #include "NavigationScheduler.h"
 #include "Page.h"
 #include "PluginData.h"
@@ -140,7 +140,7 @@ bool FrameLoader::SubframeLoader::pluginIsLoadable(const URL& url, const String&
             return false;
         }
 
-        if (!m_frame.loader().mixedContentChecker().canRunInsecureContent(document->securityOrigin(), url))
+        if (!MixedContentChecker::canRunInsecureContent(m_frame, document->securityOrigin(), url))
             return false;
     }
 

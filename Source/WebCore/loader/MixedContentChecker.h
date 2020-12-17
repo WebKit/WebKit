@@ -47,26 +47,17 @@ public:
         ActiveCanWarn,
     };
 
-    MixedContentChecker(Frame&);
-
     enum class AlwaysDisplayInNonStrictMode {
         No,
         Yes,
     };
 
-    bool canDisplayInsecureContent(SecurityOrigin&, ContentType, const URL&, AlwaysDisplayInNonStrictMode = AlwaysDisplayInNonStrictMode::No) const;
-    bool canRunInsecureContent(SecurityOrigin&, const URL&) const;
-    void checkFormForMixedContent(SecurityOrigin&, const URL&) const;
-    static bool isMixedContent(SecurityOrigin&, const URL&);
-    Optional<String> checkForMixedContentInFrameTree(const URL&);
-
-private:
     // FIXME: This should probably have a separate client from FrameLoader.
-    FrameLoaderClient& client() const;
-
-    void logWarning(bool allowed, const String& action, const URL&) const;
-
-    Frame& m_frame;
+    static bool canDisplayInsecureContent(Frame&, SecurityOrigin&, ContentType, const URL&, AlwaysDisplayInNonStrictMode = AlwaysDisplayInNonStrictMode::No);
+    static bool canRunInsecureContent(Frame&, SecurityOrigin&, const URL&);
+    static void checkFormForMixedContent(Frame&, SecurityOrigin&, const URL&);
+    static bool isMixedContent(SecurityOrigin&, const URL&);
+    static Optional<String> checkForMixedContentInFrameTree(const Frame&, const URL&);
 };
 
 } // namespace WebCore

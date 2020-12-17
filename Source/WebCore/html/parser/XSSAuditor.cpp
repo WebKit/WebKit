@@ -38,6 +38,7 @@
 #include "HTMLNames.h"
 #include "HTMLParamElement.h"
 #include "HTMLParserIdioms.h"
+#include "MixedContentChecker.h"
 #include "SVGNames.h"
 #include "Settings.h"
 #include "TextResourceDecoder.h"
