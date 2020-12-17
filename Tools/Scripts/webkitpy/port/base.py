@@ -130,7 +130,6 @@ class Port(object):
         if not hasattr(options, 'configuration') or not options.configuration:
             self.set_option_default('configuration', self.default_configuration())
         self._test_configuration = None
-        self._reftest_list = {}
         self._results_directory = None
         self._root_was_set = hasattr(options, 'root') and options.root
         self._jhbuild_wrapper = []
@@ -494,38 +493,11 @@ class Port(object):
         text = string_utils.decode(self._filesystem.read_binary_file(baseline_path), target_type=str)
         return text.replace("\r\n", "\n")
 
-    def _get_reftest_list(self, test_name):
-        dirname = self._filesystem.join(self.layout_tests_dir(), self._filesystem.dirname(test_name))
-        if dirname not in self._reftest_list:
-            self._reftest_list[dirname] = Port._parse_reftest_list(self._filesystem, dirname)
-        return self._reftest_list[dirname]
-
-    @staticmethod
-    def _parse_reftest_list(filesystem, test_dirpath):
-        reftest_list_path = filesystem.join(test_dirpath, 'reftest.list')
-        if not filesystem.isfile(reftest_list_path):
-            return None
-        reftest_list_file = filesystem.read_text_file(reftest_list_path)
-
-        parsed_list = {}
-        for line in reftest_list_file.split('\n'):
-            line = re.sub('#.+$', '', line)
-            split_line = line.split()
-            if len(split_line) < 3:
-                continue
-            expectation_type, test_file, ref_file = split_line
-            parsed_list.setdefault(filesystem.join(test_dirpath, test_file), []).append((expectation_type, filesystem.join(test_dirpath, ref_file)))
-        return parsed_list
-
     def reference_files(self, test_name, device_type=None):
         """Return a list of expectation (== or !=) and filename pairs"""
 
         if self.get_option('treat_ref_tests_as_pixel_tests'):
             return []
-
-        result = self._get_reftest_list(test_name)
-        if result:
-            return result.get(self._filesystem.join(self.layout_tests_dir(), test_name), [])
 
         result = []
         suffixes = []

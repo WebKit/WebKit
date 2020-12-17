@@ -1,3 +1,33 @@
+2020-12-17  Sam Sneddon  <gsnedders@apple.com>
+
+        Stop parsing reftest.list files
+        https://bugs.webkit.org/show_bug.cgi?id=203783
+
+        Reviewed by Jonathan Bedard.
+
+        This has only been used by the webkitpy integration tests in recent years. Needless to say,
+        this is Not Useful.
+
+        We do still have one reftest.list file,
+        media/track/opera/track/webvtt/rendering/reftest/reftest.list, but as this is in a reftest
+        directory we don't run any of the tests in it (and never have). See the above bug for more
+        detail about that history.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RebaselineTest.assertBaselines): docstring fix
+        (RunTest.test_reftest_should_not_use_naming_convention_if_not_listed_in_reftestlist): Deleted.
+        (EndToEndTest): Deleted.
+        (EndToEndTest.test_reftest_with_two_notrefs): Deleted.
+        * Scripts/webkitpy/port/base.py:
+        (Port.__init__): remove Port._reftest_list
+        (Port.reference_files): don't use reftest.list as source of truth
+        (Port._get_reftest_list): Deleted.
+        (Port._parse_reftest_list): Deleted.
+        * Scripts/webkitpy/port/base_unittest.py:
+        (PortTest.test_parse_reftest_list): Deleted.
+        * Scripts/webkitpy/port/test.py:
+        (unit_test_list): remove tests used to test reftest.list
+
 2020-12-17  Jonathan Bedard  <jbedard@apple.com>
 
         [run-webkit-tests] Replace FailureNotTested with FailureNoOutput

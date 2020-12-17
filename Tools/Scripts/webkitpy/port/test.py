@@ -101,15 +101,16 @@ class TestList(object):
     def __getitem__(self, item):
         return self.tests[item]
 
+
 #
 # These numbers may need to be updated whenever we add or delete tests.
 #
-TOTAL_TESTS = 77
+TOTAL_TESTS = 69
 TOTAL_SKIPS = 9
-TOTAL_RETRIES = 15
+TOTAL_RETRIES = 11
 
-UNEXPECTED_PASSES = 7
-UNEXPECTED_FAILURES = 18
+UNEXPECTED_PASSES = 6
+UNEXPECTED_FAILURES = 14
 
 
 def unit_test_list():
@@ -233,24 +234,6 @@ layer at (0,0) size 800x34
     tests.add('failures/unexpected/reftest-nopixel.html', actual_checksum=None, actual_image=None, is_reftest=True)
     tests.add('failures/unexpected/reftest-nopixel-expected.html', actual_checksum=None, actual_image=None, is_reftest=True)
     # FIXME: Add a reftest which crashes.
-    tests.add('reftests/foo/test.html')
-    tests.add('reftests/foo/test-ref.html')
-
-    tests.add('reftests/foo/multiple-match-success.html', actual_checksum='abc', actual_image='abc')
-    tests.add('reftests/foo/multiple-match-failure.html', actual_checksum='abc', actual_image='abc')
-    tests.add('reftests/foo/multiple-mismatch-success.html', actual_checksum='abc', actual_image='abc')
-    tests.add('reftests/foo/multiple-mismatch-failure.html', actual_checksum='abc', actual_image='abc')
-    tests.add('reftests/foo/multiple-both-success.html', actual_checksum='abc', actual_image='abc')
-    tests.add('reftests/foo/multiple-both-failure.html', actual_checksum='abc', actual_image='abc')
-
-    tests.add('reftests/foo/matching-ref.html', actual_checksum='abc', actual_image='abc')
-    tests.add('reftests/foo/mismatching-ref.html', actual_checksum='def', actual_image='def')
-    tests.add('reftests/foo/second-mismatching-ref.html', actual_checksum='ghi', actual_image='ghi')
-
-    # The following files shouldn't be treated as reftests
-    tests.add_reftest('reftests/foo/unlistedtest.html', 'reftests/foo/unlistedtest-expected.html', same_image=True)
-    tests.add('reftests/foo/reference/bar/common.html')
-    tests.add('reftests/foo/reftest/bar/shared.html')
 
     tests.add('websocket/tests/passes/text.html')
 
@@ -318,26 +301,6 @@ Bug(test) failures/expected/keyboard.html [ WontFix ]
 Bug(test) failures/expected/exception.html [ WontFix ]
 Bug(test) failures/unexpected/pass.html [ Failure ]
 Bug(test) passes/skipped/skip.html [ Skip ]
-""")
-
-    filesystem.maybe_make_directory(LAYOUT_TEST_DIR + '/reftests/foo')
-    filesystem.write_text_file(LAYOUT_TEST_DIR + '/reftests/foo/reftest.list', """
-== test.html test-ref.html
-
-== multiple-match-success.html mismatching-ref.html
-== multiple-match-success.html matching-ref.html
-== multiple-match-failure.html mismatching-ref.html
-== multiple-match-failure.html second-mismatching-ref.html
-!= multiple-mismatch-success.html mismatching-ref.html
-!= multiple-mismatch-success.html second-mismatching-ref.html
-!= multiple-mismatch-failure.html mismatching-ref.html
-!= multiple-mismatch-failure.html matching-ref.html
-== multiple-both-success.html matching-ref.html
-== multiple-both-success.html mismatching-ref.html
-!= multiple-both-success.html second-mismatching-ref.html
-== multiple-both-failure.html matching-ref.html
-!= multiple-both-failure.html second-mismatching-ref.html
-!= multiple-both-failure.html matching-ref.html
 """)
 
     # FIXME: This test was only being ignored because of missing a leading '/'.

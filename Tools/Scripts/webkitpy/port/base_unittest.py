@@ -289,26 +289,6 @@ class PortTest(unittest.TestCase):
         self.assertFalse(Port.is_reference_html_file(filesystem, '', 'foo-expected.php'))
         self.assertFalse(Port.is_reference_html_file(filesystem, '', 'foo-expected.mht'))
 
-    def test_parse_reftest_list(self):
-        port = self.make_port(with_tests=True)
-        port.host.filesystem.write_text_file(
-            'bar/reftest.list',
-            "\n".join([
-                "== test.html test-ref.html",
-                "",
-                "# some comment",
-                "!= test-2.html test-notref.html # more comments",
-                "== test-3.html test-ref.html",
-                "== test-3.html test-ref2.html",
-                "!= test-3.html test-notref.html",
-            ]),
-        )
-
-        reftest_list = Port._parse_reftest_list(port.host.filesystem, 'bar')
-        self.assertEqual(reftest_list, {'bar/test.html': [('==', 'bar/test-ref.html')],
-            'bar/test-2.html': [('!=', 'bar/test-notref.html')],
-            'bar/test-3.html': [('==', 'bar/test-ref.html'), ('==', 'bar/test-ref2.html'), ('!=', 'bar/test-notref.html')]})
-
     def test_reference_files(self):
         port = self.make_port(with_tests=True)
         self.assertEqual(port.reference_files('passes/svgreftest.svg'), [('==', port.layout_tests_dir() + '/passes/svgreftest-expected.svg')])

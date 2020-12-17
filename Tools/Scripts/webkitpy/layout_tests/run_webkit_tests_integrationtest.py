@@ -807,70 +807,6 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         tests_run = get_test_results(['passes/mismatch.html'])
         self.assertEqual(tests_run[0].references, ['passes/mismatch-expected-mismatch.html'])
 
-    def test_reftest_should_not_use_naming_convention_if_not_listed_in_reftestlist(self):
-        host = MockHost()
-        _, err, _ = logging_run(['--no-show-results', 'reftests/foo/'], tests_included=True, host=host)
-        expected_dictionary = {
-            'version': 4,
-            'fixable': 5,
-            'skipped': 0,
-            'num_passes': 3,
-            'num_flaky': 0,
-            'num_missing': 1,
-            'num_regressions': 4,
-            'uses_expectations_file': True,
-            'interrupted': False,
-            'layout_tests_dir': '/test.checkout/LayoutTests',
-            'has_pretty_patch': False,
-            'pixel_tests_enabled': True,
-            'other_crashes': {},
-            'date': '10:27AM on December 13, 2019',
-            'tests': {
-                'reftests': {
-                    'foo': {
-                        'multiple-both-failure.html': {
-                            'reftest_type': ['!=', '=='],
-                            'report': 'REGRESSION',
-                            'expected': 'PASS',
-                            'actual': 'IMAGE',
-                        }, 'multiple-match-failure.html': {
-                            'reftest_type': ['=='],
-                            'report': 'REGRESSION',
-                            'expected': 'PASS',
-                            'actual': 'IMAGE',
-                            'image_diff_percent': 1,
-                        }, 'multiple-mismatch-failure.html': {
-                            'reftest_type': ['!='],
-                            'report': 'REGRESSION',
-                            'expected': 'PASS',
-                            'actual': 'IMAGE',
-                        }, 'test.html': {
-                            'reftest_type': ['=='],
-                            'report': 'REGRESSION',
-                            'expected': 'PASS',
-                            'actual': 'IMAGE',
-                            'image_diff_percent': None,
-                        }, 'unlistedtest.html': {
-                            'report': 'MISSING',
-                            'expected': 'PASS',
-                            'actual': 'MISSING',
-                            'is_missing_text': True,
-                            'is_missing_image': True,
-                        },
-                    },
-                },
-            },
-        }
-        actual_dictionary = json.loads(host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')[len('ADD_RESULTS('):-2])
-
-        self.assertEqual(
-            expected_dictionary['tests']['reftests']['foo']['unlistedtest.html'],
-            actual_dictionary['tests']['reftests']['foo']['unlistedtest.html'],
-        )
-        self.assertEqual(expected_dictionary['num_regressions'], actual_dictionary['num_regressions'])
-        self.assertEqual(expected_dictionary['num_flaky'], actual_dictionary['num_flaky'])
-        self.assertEqual(expected_dictionary['num_missing'], actual_dictionary['num_missing'])
-
     def test_additional_platform_directory(self):
         self.assertTrue(passing_run(['--additional-platform-directory', '/tmp/foo']))
         self.assertTrue(passing_run(['--additional-platform-directory', '/tmp/../foo']))
@@ -1044,36 +980,9 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertEqual(3, len(by_type[DeviceType.from_string('iPad (5th generation)')]))
 
 
-class EndToEndTest(unittest.TestCase):
-    def test_reftest_with_two_notrefs(self):
-        # Test that we update expectations in place. If the expectation
-        # is missing, update the expected generic location.
-        host = MockHost()
-        _, _, _ = logging_run(['--no-show-results', 'reftests/foo/'], tests_included=True, host=host)
-        file_list = host.filesystem.written_files.keys()
-
-        json_string = host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')
-        json = parse_full_results(json_string)
-        self.assertTrue("multiple-match-success.html" not in json["tests"]["reftests"]["foo"])
-        self.assertTrue("multiple-mismatch-success.html" not in json["tests"]["reftests"]["foo"])
-        self.assertTrue("multiple-both-success.html" not in json["tests"]["reftests"]["foo"])
-        self.assertEqual(
-            json["tests"]["reftests"]["foo"]["multiple-match-failure.html"],
-            {"expected": "PASS", "actual": "IMAGE", "reftest_type": ["=="], "image_diff_percent": 1, "report": "REGRESSION"},
-        )
-        self.assertEqual(
-            json["tests"]["reftests"]["foo"]["multiple-mismatch-failure.html"],
-            {"expected": "PASS", "actual": "IMAGE", "reftest_type": ["!="], "report": "REGRESSION"},
-        )
-        self.assertEqual(
-            json["tests"]["reftests"]["foo"]["multiple-both-failure.html"],
-            {"expected": "PASS", "actual": "IMAGE", "reftest_type": sorted(["==", "!="]), "report": "REGRESSION"},
-        )
-
-
 class RebaselineTest(unittest.TestCase, StreamTestingMixin):
     def assertBaselines(self, file_list, file, extensions, err):
-        "assert that the file_list contains the baselines."""
+        """assert that the file_list contains the baselines."""
         for ext in extensions:
             baseline = file + "-expected" + ext
             baseline_msg = 'Writing new expected result "%s"\n' % baseline
