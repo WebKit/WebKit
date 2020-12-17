@@ -1,3 +1,19 @@
+2020-12-17  Said Abou-Hallawa  <said@apple.com>
+
+        [MotionMark] Increase the warm-up time for each sub-test from 100ms to 1000ms
+        https://bugs.webkit.org/show_bug.cgi?id=219984
+
+        Reviewed by Jon Lee.
+
+        Ensure the warm-up time is enough for the system to finish any initialization
+        work which may be triggered by the sub-test before starting the sampling.
+        This should prevent bi-modality in the score of the sub-tests since the
+        initial frame rate is crucial in deciding how much the complexity can grow.
+
+        * MotionMark/developer.html:
+        * MotionMark/resources/runner/motionmark.js:
+        (this.clear):
+
 2020-12-14  Antti Koivisto  <antti@apple.com>
 
         Add inline-block line layout microbench
