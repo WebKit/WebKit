@@ -9,4 +9,8 @@ PASS: Resource URL should be "ws://127.0.0.1:8880/websocket/tests/hybi/inspector
 PASS: Resource should have request headers.
 PASS: Resource should have response headers.
 Resource readyState should be Symbol(open).
+PASS: Frame data should be 'Hello World!'
+PASS: Frame outgoing should be 'true'
+PASS: Frame data should be 'Hello World!'
+PASS: Frame outgoing should be 'false'
 

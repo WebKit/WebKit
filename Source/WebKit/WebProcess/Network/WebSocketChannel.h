@@ -97,6 +97,7 @@ private:
     template<typename T> void sendMessage(T&&, size_t byteLength);
     void enqueueTask(Function<void()>&&);
 
+    unsigned long progressIdentifier() const final { return m_inspector.progressIdentifier(); }
     bool hasCreatedHandshake() const final { return !m_url.isNull(); }
     bool isConnected() const final { return !m_handshakeResponse.isNull(); }
     WebCore::ResourceRequest clientHandshakeRequest(const CookieGetter&) const final { return m_handshakeRequest; }

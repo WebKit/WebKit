@@ -159,8 +159,10 @@ private:
     WEBCORE_EXPORT WorkerThreadableWebSocketChannel(WorkerGlobalScope&, WebSocketChannelClient&, const String& taskMode, SocketProvider&);
 
     class WorkerGlobalScopeDidInitializeTask;
-
+    
+    unsigned long progressIdentifier() const final { return 0; }
     // FIXME: <https://webkit.org/b/168475> Web Inspector: Correctly display iframe's and worker's WebSockets
+    // Dummy implementation of inspector related APIs.
     bool hasCreatedHandshake() const final { return false; }
     bool isConnected() const final { return false; }
     ResourceRequest clientHandshakeRequest(const CookieGetter&) const final { return m_handshakeRequest; }

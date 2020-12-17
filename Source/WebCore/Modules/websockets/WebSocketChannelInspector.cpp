@@ -95,4 +95,9 @@ void WebSocketChannelInspector::didReceiveWebSocketFrameError(Document* document
     InspectorInstrumentation::didReceiveWebSocketFrameError(document, m_progressIdentifier, errorMessage);
 }
 
+unsigned long WebSocketChannelInspector::progressIdentifier() const
+{
+    return m_progressIdentifier;
+}
+
 } // namespace WebCore

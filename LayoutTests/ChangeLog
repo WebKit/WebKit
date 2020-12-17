@@ -1,3 +1,16 @@
+2020-12-17  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: REGRESSION(r266467): viewing a WebSocket created before Web Inspector was opened doesn't show any message frames
+        https://bugs.webkit.org/show_bug.cgi?id=219510
+
+        Reviewed by Youenn Fablet.
+
+        Updated test to check that sent and received frames are correctly associated with WebSockets that were open
+        before the Web Inspector was opened.
+
+        * http/tests/websocket/tests/hybi/inspector/before-load-expected.txt:
+        * http/tests/websocket/tests/hybi/inspector/before-load.html:
+
 2020-12-17  Truitt Savell  <tsavell@apple.com>
 
         Rebase fast/css/text-overflow-input.html

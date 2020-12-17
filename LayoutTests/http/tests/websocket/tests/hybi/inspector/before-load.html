@@ -8,8 +8,8 @@ function load()
     testRunner.waitUntilDone();
 
     const url = "ws://127.0.0.1:8880/websocket/tests/hybi/inspector/echo";
-    let webSocket = new WebSocket(url);
-    webSocket.addEventListener("open", (event) => {
+    window.testWebSocket = new WebSocket(url);
+    window.testWebSocket.addEventListener("open", (event) => {
         // Only run the tests once the websocket has connected.
         runTest();
     });
@@ -60,7 +60,34 @@ function test()
             InspectorTest.expectThat(!isEmptyObject(webSocketResource.responseHeaders), "Resource should have response headers.");
             InspectorTest.log(`Resource readyState should be ${String(webSocketResource.readyState)}.`);
 
-            resolve();
+            let expectedFrames = [
+                {
+                    data: "Hello World!",
+                    isOutgoing: true,
+                },
+                {
+                    data: "Hello World!",
+                    isOutgoing: false,
+                },
+            ];
+
+            let handleFrameAdded = (event) => {
+                let frame = event.data;
+                let expectedFrame = expectedFrames[webSocketResource.frames.length - 1];
+                if (!expectedFrame)
+                    return;
+
+                InspectorTest.expectEqual(frame.data, expectedFrame.data, `Frame data should be '${expectedFrame.data}'`);
+                InspectorTest.expectEqual(frame.isOutgoing, expectedFrame.isOutgoing, `Frame outgoing should be '${expectedFrame.isOutgoing}'`);
+
+                if (webSocketResource.frames.length == expectedFrames.length) {
+                    webSocketResource.removeEventListener(WI.WebSocketResource.Event.FrameAdded, handleFrameAdded);
+                    resolve();
+                }
+            };
+            webSocketResource.addEventListener(WI.WebSocketResource.Event.FrameAdded, handleFrameAdded);
+
+            InspectorTest.evaluateInPage("window.testWebSocket.send(\"Hello World!\")");
         }
     });
 

@@ -80,6 +80,7 @@ public:
     virtual void suspend() = 0;
     virtual void resume() = 0;
 
+    virtual unsigned long progressIdentifier() const = 0;
     virtual bool hasCreatedHandshake() const = 0;
     virtual bool isConnected() const = 0;
     using CookieGetter = Function<String(const URL&)>;

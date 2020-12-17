@@ -1,3 +1,15 @@
+2020-12-17  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: REGRESSION(r266467): viewing a WebSocket created before Web Inspector was opened doesn't show any message frames
+        https://bugs.webkit.org/show_bug.cgi?id=219510
+
+        Reviewed by Youenn Fablet.
+
+        Restored functionality prior to r266467 so that the `progressIdentifier` (previously `channelIdentifier`) is
+        available from `WebSocketChannel`.
+
+        * WebProcess/Network/WebSocketChannel.h:
+
 2020-12-17  Rob Buis  <rbuis@igalia.com>
 
         Make FontCascade::CodePath an enum class
