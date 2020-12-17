@@ -1,3 +1,9 @@
+2020-12-16  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Add baseline after r270823.
+
+        * platform/gtk/fast/media/mq-prefers-contrast-forced-value-expected.html: Added.
+
 2020-12-16  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process][MSE] Add an IPC message BufferedSamplesForTrackId for testing purposes
