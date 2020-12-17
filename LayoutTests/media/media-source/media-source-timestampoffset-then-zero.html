@@ -40,7 +40,7 @@
         run('sourceBuffer.appendBuffer(makeSimpleAudio(0, 20, 0))');
         await waitFor(sourceBuffer, 'updateend');
 
-        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 1);
         consoleWrite("After first append:");
         bufferedSamples.forEach(consoleWrite);
 
@@ -48,7 +48,7 @@
         run('sourceBuffer.appendBuffer(makeSimpleAudio(0, 20, 1))');
         await waitFor(sourceBuffer, 'updateend');
 
-        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 1);
         consoleWrite("After second append:");
         bufferedSamples.forEach(consoleWrite);
 

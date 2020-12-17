@@ -1,3 +1,33 @@
+2020-12-16  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process][MSE] Add an IPC message BufferedSamplesForTrackId for testing purposes
+        https://bugs.webkit.org/show_bug.cgi?id=219956
+
+        Reviewed by Eric Carlson.
+
+        The tests using internals.bufferedSamplesForTrackID() need to be updated since the function
+        is asynchronous now.
+
+        * gpu-process/TestExpectations:
+        * media/media-source/media-source-append-acb-no-frame-lost.html:
+        * media/media-source/media-source-append-acb-tolerance.html:
+        * media/media-source/media-source-append-overlapping-dts.html:
+        * media/media-source/media-source-append-presentation-durations.html:
+        * media/media-source/media-source-append-twice-overlapping-sync-frame.html:
+        * media/media-source/media-source-append-variable-frame-lengths-with-matching-durations.html:
+        * media/media-source/media-source-dropped-iframe.html:
+        * media/media-source/media-source-overlapping-append.html:
+        * media/media-source/media-source-overlapping-decodetime.html:
+        * media/media-source/media-source-range-end-frame-not-removed.html:
+        * media/media-source/media-source-range-start-frame-replaced.html:
+        * media/media-source/media-source-remove-b-frame.html:
+        * media/media-source/media-source-samples-out-of-order.html:
+        * media/media-source/media-source-samples-resolution-change.html:
+        * media/media-source/media-source-sequence-timestamps.html:
+        * media/media-source/media-source-timeoffset.html:
+        * media/media-source/media-source-timestampoffset-rounding-error.html:
+        * media/media-source/media-source-timestampoffset-then-zero.html:
+
 2020-12-16  Truitt Savell  <tsavell@apple.com>
 
         Remove LayoutTests/platform/mac-bigsur-wk1

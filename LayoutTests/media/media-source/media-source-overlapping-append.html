@@ -45,9 +45,9 @@
         run('sourceBuffer.appendBuffer(samples)');
     }
 
-    function loadMoreOrderedSamples()
+    async function loadMoreOrderedSamples()
     {
-        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 1);
         testExpected("bufferedSamples.length", 6);
         bufferedSamples.forEach(consoleWrite);
 
@@ -63,9 +63,9 @@
         run('sourceBuffer.appendBuffer(samples)');
     }
 
-    function loadUnorderedSamples()
+    async function loadUnorderedSamples()
     {
-        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 1);
         testExpected("bufferedSamples.length", 6);
         bufferedSamples.forEach(consoleWrite);
 
@@ -81,9 +81,9 @@
         run('sourceBuffer.appendBuffer(samples)');
     }
 
-     function samplesAdded()
+    async function samplesAdded()
     {
-        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 1);
         testExpected("bufferedSamples.length", 6);
         bufferedSamples.forEach(consoleWrite);
 

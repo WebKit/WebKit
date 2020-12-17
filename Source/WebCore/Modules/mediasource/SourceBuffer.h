@@ -201,7 +201,7 @@ private:
     void rangeRemoval(const MediaTime&, const MediaTime&);
 
     friend class Internals;
-    WEBCORE_EXPORT Vector<String> bufferedSamplesForTrackID(const AtomString&);
+    WEBCORE_EXPORT void bufferedSamplesForTrackId(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&);
     WEBCORE_EXPORT Vector<String> enqueuedSamplesForTrackID(const AtomString&);
     WEBCORE_EXPORT MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&);
     WEBCORE_EXPORT void setMaximumQueueDepthForTrackID(const AtomString&, uint64_t);

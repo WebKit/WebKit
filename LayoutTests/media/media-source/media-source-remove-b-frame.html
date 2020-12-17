@@ -55,7 +55,8 @@
         consoleWrite("The frame with presentation time [1, 2) should have been deleted from the buffered samples and " +
             "a reenqueue must have happened. That frame should not have been enqueued.");
         consoleWrite("Buffered:");
-        internals.bufferedSamplesForTrackID(sourceBuffer, 1).forEach(consoleWrite);
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 1);
+        bufferedSamples.forEach(consoleWrite);
         consoleWrite("Enqueued:");
         internals.enqueuedSamplesForTrackID(sourceBuffer, 1).forEach(consoleWrite);
 

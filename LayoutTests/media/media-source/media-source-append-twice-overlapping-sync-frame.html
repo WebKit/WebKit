@@ -47,7 +47,7 @@
         run('sourceBuffer.appendBuffer(sampleRun(2))');
         await waitFor(sourceBuffer, 'updateend');
 
-        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 1);
         consoleWrite(bufferedSamples.join("<br/>"));
 
         endTest();

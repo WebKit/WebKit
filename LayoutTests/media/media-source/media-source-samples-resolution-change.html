@@ -64,7 +64,7 @@
         consoleWrite("Replaced first 3 seconds with 480x360");
 
         const trackId = sourceBuffer.videoTracks.item(0).id;
-        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, trackId);
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, trackId);
         consoleWrite(bufferedSamples.map(simplifySampleDescription).join("<br>"));
 
         endTest();

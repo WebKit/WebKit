@@ -158,6 +158,13 @@ void SourceBufferPrivateRemote::seekToTime(const MediaTime& mediaTime)
     m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::SeekToTime(mediaTime), m_remoteSourceBufferIdentifier);
 }
 
+void SourceBufferPrivateRemote::bufferedSamplesForTrackId(const AtomString& trackId, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+{
+    m_gpuProcessConnection.connection().sendWithAsyncReply(Messages::RemoteSourceBufferProxy::BufferedSamplesForTrackId(m_trackIdentifierMap.get(trackId)), [completionHandler = WTFMove(completionHandler)](auto&& samples) mutable {
+        completionHandler(WTFMove(samples));
+    }, m_remoteSourceBufferIdentifier);
+}
+
 void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&& segmentInfo, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_client || !m_mediaPlayerPrivate) {

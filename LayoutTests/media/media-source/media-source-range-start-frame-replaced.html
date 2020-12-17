@@ -51,9 +51,9 @@
         run('sourceBuffer.appendBuffer(samples)');
     }
 
-    function samplesAdded()
+    async function samplesAdded()
     {
-        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 1);
         bufferedSamples.forEach(consoleWrite);
 
         testExpected("sourceBuffer.buffered.length", 1);

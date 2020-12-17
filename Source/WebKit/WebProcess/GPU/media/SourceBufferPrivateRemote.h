@@ -89,6 +89,9 @@ private:
 
     bool isActive() const final { return m_isActive; }
 
+    // Internals Utility methods
+    void bufferedSamplesForTrackId(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&) final;
+
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&&, CompletionHandler<void()>&&);
     void sourceBufferPrivateStreamEndedWithDecodeError();

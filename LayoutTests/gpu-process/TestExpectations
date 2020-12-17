@@ -200,7 +200,6 @@ inspector/layers/layers-compositing-reasons.html [ Skip ]
 
 media/controls [ Skip ]
 
-media/media-source/media-source-samples-resolution-change.html [ Failure ]
 media/media-source/media-source-trackid-change.html [ Failure ]
 media/media-source/media-source-webm-init-inside-segment.html [ Failure ]
 media/media-source/media-source-resize.html [ Timeout ]

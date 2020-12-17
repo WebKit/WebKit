@@ -50,7 +50,8 @@
         await waitFor(sourceBuffer, 'updateend');
 
         consoleWrite("Buffered:");
-        internals.bufferedSamplesForTrackID(sourceBuffer, 1).forEach(consoleWrite);
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 1);
+        bufferedSamples.forEach(consoleWrite);
         consoleWrite("Enqueued:");
         internals.enqueuedSamplesForTrackID(sourceBuffer, 1).forEach(consoleWrite);
 

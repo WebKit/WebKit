@@ -94,6 +94,7 @@ private:
     void reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize);
     void trySignalAllSamplesInTrackEnqueued();
     void seekToTime(const MediaTime&);
+    void bufferedSamplesForTrackId(TrackPrivateRemoteIdentifier, CompletionHandler<void(Vector<String>&&)>&&);
 
     GPUConnectionToWebProcess& m_connectionToWebProcess;
     RemoteSourceBufferIdentifier m_identifier;

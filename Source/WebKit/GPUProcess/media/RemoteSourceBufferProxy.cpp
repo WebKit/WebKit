@@ -217,6 +217,13 @@ void RemoteSourceBufferProxy::seekToTime(const MediaTime& mediaTime)
     m_sourceBufferPrivate->seekToTime(mediaTime);
 }
 
+void RemoteSourceBufferProxy::bufferedSamplesForTrackId(TrackPrivateRemoteIdentifier trackPrivateRemoteIdentifier, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+{
+    ASSERT(m_trackIds.contains(trackPrivateRemoteIdentifier));
+    ASSERT(m_mediaDescriptions.contains(trackPrivateRemoteIdentifier));
+    m_sourceBufferPrivate->bufferedSamplesForTrackId(m_trackIds.get(trackPrivateRemoteIdentifier), WTFMove(completionHandler));
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)

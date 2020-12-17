@@ -1218,9 +1218,9 @@ void SourceBuffer::reportExtraMemoryAllocated(uint64_t extraMemory)
     scriptExecutionContext()->vm().heap.deprecatedReportExtraMemory(extraMemoryCostDelta);
 }
 
-Vector<String> SourceBuffer::bufferedSamplesForTrackID(const AtomString& trackID)
+void SourceBuffer::bufferedSamplesForTrackId(const AtomString& trackID, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
-    return m_private->bufferedSamplesForTrackID(trackID);
+    m_private->bufferedSamplesForTrackId(trackID, WTFMove(completionHandler));
 }
 
 Vector<String> SourceBuffer::enqueuedSamplesForTrackID(const AtomString& trackID)

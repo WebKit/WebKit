@@ -657,7 +657,8 @@ public:
 
 #if ENABLE(MEDIA_SOURCE)
     WEBCORE_TESTSUPPORT_EXPORT void initializeMockMediaSource();
-    Vector<String> bufferedSamplesForTrackID(SourceBuffer&, const AtomString&);
+    using BufferedSamplesPromise = DOMPromiseDeferred<IDLSequence<IDLDOMString>>;
+    void bufferedSamplesForTrackId(SourceBuffer&, const AtomString&, BufferedSamplesPromise&&);
     Vector<String> enqueuedSamplesForTrackID(SourceBuffer&, const AtomString&);
     double minimumUpcomingPresentationTimeForTrackID(SourceBuffer&, const AtomString&);
     void setShouldGenerateTimestamps(SourceBuffer&, bool);

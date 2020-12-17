@@ -4067,9 +4067,11 @@ void Internals::initializeMockMediaSource()
     MediaPlayerFactorySupport::callRegisterMediaEngine(MockMediaPlayerMediaSource::registerMediaEngine);
 }
 
-Vector<String> Internals::bufferedSamplesForTrackID(SourceBuffer& buffer, const AtomString& trackID)
+void Internals::bufferedSamplesForTrackId(SourceBuffer& buffer, const AtomString& trackId, BufferedSamplesPromise&& promise)
 {
-    return buffer.bufferedSamplesForTrackID(trackID);
+    buffer.bufferedSamplesForTrackId(trackId, [promise = WTFMove(promise)](auto&& samples) mutable {
+        promise.resolve(WTFMove(samples));
+    });
 }
 
 Vector<String> Internals::enqueuedSamplesForTrackID(SourceBuffer& buffer, const AtomString& trackID)

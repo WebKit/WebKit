@@ -64,7 +64,7 @@
         run('sourceBuffer.appendBuffer(impreciseSampleRun(5, 10))');
         await waitFor(sourceBuffer, 'updateend');
 
-        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 1);
         enqueuedSamples = internals.enqueuedSamplesForTrackID(sourceBuffer, 1);
 
         // 30 samples were appended in total. All of them should have ended up in buffered samples and in the decode queue.

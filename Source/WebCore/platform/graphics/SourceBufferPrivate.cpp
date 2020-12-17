@@ -201,18 +201,18 @@ void SourceBufferPrivate::clearTrackBuffers()
     }
 }
 
-Vector<String> SourceBufferPrivate::bufferedSamplesForTrackID(const AtomString& trackID)
+void SourceBufferPrivate::bufferedSamplesForTrackId(const AtomString& trackId, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
-    auto it = m_trackBufferMap.find(trackID);
+    auto it = m_trackBufferMap.find(trackId);
     if (it == m_trackBufferMap.end())
-        return { };
+        completionHandler({ });
 
     auto& trackBuffer = it->value;
     Vector<String> sampleDescriptions;
     for (auto& pair : trackBuffer.samples.decodeOrder())
         sampleDescriptions.append(toString(*pair.second));
 
-    return sampleDescriptions;
+    completionHandler(WTFMove(sampleDescriptions));
 }
 
 MediaTime SourceBufferPrivate::fastSeekTimeForMediaTime(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)

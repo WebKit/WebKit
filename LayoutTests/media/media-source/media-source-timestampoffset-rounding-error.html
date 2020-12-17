@@ -41,21 +41,21 @@
         run('sourceBuffer.appendBuffer(makeVideo(0, 6))');
         await waitFor(sourceBuffer, 'updateend');
 
-        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 1);
         enqueuedSamples = internals.enqueuedSamplesForTrackID(sourceBuffer, 1);
 
         run("sourceBuffer.timestampOffset = 1");
         run('sourceBuffer.appendBuffer(makeVideo(1, 6))');
         await waitFor(sourceBuffer, 'updateend');
 
-        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 1);
         enqueuedSamples = internals.enqueuedSamplesForTrackID(sourceBuffer, 1);
 
         run("sourceBuffer.timestampOffset = 1.5");
         run('sourceBuffer.appendBuffer(makeVideo(2, 5))');
         await waitFor(sourceBuffer, 'updateend');
 
-        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 1);
         enqueuedSamples = internals.enqueuedSamplesForTrackID(sourceBuffer, 1);
 
         consoleWrite("Buffered:");
