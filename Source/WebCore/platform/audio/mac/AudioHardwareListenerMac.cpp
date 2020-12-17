@@ -59,7 +59,7 @@ static AudioHardwareActivityType isAudioHardwareProcessRunning()
         return AudioHardwareActivityType::IsInactive;
 }
 
-static bool currentDeviceSupportsLowPowerBufferSize()
+static AudioHardwareListener::BufferSizeRange currentDeviceSupportedBufferSizes()
 {
     AudioDeviceID deviceID = kAudioDeviceUnknown;
     UInt32 descriptorSize = sizeof(deviceID);
@@ -69,23 +69,23 @@ static bool currentDeviceSupportsLowPowerBufferSize()
         kAudioObjectPropertyElementMaster };
 
     if (AudioObjectGetPropertyData(kAudioObjectSystemObject, &defaultOutputDeviceDescriptor, 0, 0, &descriptorSize, (void*)&deviceID))
-        return false;
+        return { };
 
-    UInt32 transportType = kAudioDeviceTransportTypeUnknown;
-    descriptorSize = sizeof(transportType);
-    AudioObjectPropertyAddress tranportTypeDescriptor = {
-        kAudioDevicePropertyTransportType,
+    AudioValueRange bufferSizes;
+    descriptorSize = sizeof(bufferSizes);
+
+    AudioObjectPropertyAddress bufferSizeDescriptor = {
+        kAudioDevicePropertyBufferFrameSizeRange,
         kAudioObjectPropertyScopeGlobal,
         kAudioObjectPropertyElementMaster,
     };
 
-    if (AudioObjectGetPropertyData(deviceID, &tranportTypeDescriptor, 0, 0, &descriptorSize, &transportType))
-        return false;
+    if (AudioObjectGetPropertyData(deviceID, &bufferSizeDescriptor, 0, 0, &descriptorSize, &bufferSizes))
+        return { };
 
-    // Only allow low-power buffer size when using built-in output device, many external devices perform
-    // poorly with a large output buffer.
-    return kAudioDeviceTransportTypeBuiltIn == transportType;
+    return { static_cast<size_t>(bufferSizes.mMinimum), static_cast<size_t>(bufferSizes.mMaximum) };
 }
+
 
 static const AudioObjectPropertyAddress& processIsRunningPropertyDescriptor()
 {
@@ -123,7 +123,7 @@ AudioHardwareListenerMac::AudioHardwareListenerMac(Client& client)
     : AudioHardwareListener(client)
 {
     setHardwareActivity(isAudioHardwareProcessRunning());
-    setOutputDeviceSupportsLowPowerMode(currentDeviceSupportsLowPowerBufferSize());
+    setSupportedBufferSizes(currentDeviceSupportedBufferSizes());
 
     auto weakThis = makeWeakPtr(*this);
     m_block = Block_copy(^(UInt32 count, const AudioObjectPropertyAddress properties[]) {
@@ -172,7 +172,7 @@ void AudioHardwareListenerMac::processIsRunningChanged()
 
 void AudioHardwareListenerMac::outputDeviceChanged()
 {
-    setOutputDeviceSupportsLowPowerMode(currentDeviceSupportsLowPowerBufferSize());
+    setSupportedBufferSizes(currentDeviceSupportedBufferSizes());
     m_client.audioOutputDeviceChanged();
 }
 

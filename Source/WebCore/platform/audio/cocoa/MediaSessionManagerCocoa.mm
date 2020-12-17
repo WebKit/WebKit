@@ -109,8 +109,8 @@ void MediaSessionManagerCocoa::updateSessionState()
         AudioSession::sharedSession().setPreferredBufferSize(AudioSession::sharedSession().sampleRate() / 50);
     else if ((videoAudioCount || audioCount) && DeprecatedGlobalSettings::lowPowerVideoAudioBufferSizeEnabled()) {
         size_t bufferSize;
-        if (m_audioHardwareListener && m_audioHardwareListener->outputDeviceSupportsLowPowerMode())
-            bufferSize = kLowPowerVideoBufferSize;
+        if (m_audioHardwareListener && m_audioHardwareListener->supportedBufferSizes())
+            bufferSize = m_audioHardwareListener->supportedBufferSizes().nearest(kLowPowerVideoBufferSize);
         else
             bufferSize = AudioUtilities::renderQuantumSize;
 
