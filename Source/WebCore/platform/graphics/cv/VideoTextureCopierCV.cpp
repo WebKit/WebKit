@@ -199,7 +199,7 @@ static PixelRange pixelRangeFromPixelFormat(OSType pixelFormat)
     case kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange:
     case kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange:
     case kCVPixelFormatType_444YpCbCr10BiPlanarVideoRange:
-#if HAVE(CV_AGX_420_PIXEL_FORMAT_TYPES)
+#if HAVE(COREVIDEO_COMPRESSED_PIXEL_FORMAT_TYPES)
     case kCVPixelFormatType_AGX_420YpCbCr8BiPlanarVideoRange:
 #endif
         return PixelRange::Video;
@@ -210,7 +210,7 @@ static PixelRange pixelRangeFromPixelFormat(OSType pixelFormat)
     case kCVPixelFormatType_420YpCbCr10BiPlanarFullRange:
     case kCVPixelFormatType_422YpCbCr10BiPlanarFullRange:
     case kCVPixelFormatType_444YpCbCr10BiPlanarFullRange:
-#if HAVE(CV_AGX_420_PIXEL_FORMAT_TYPES)
+#if HAVE(COREVIDEO_COMPRESSED_PIXEL_FORMAT_TYPES)
     case kCVPixelFormatType_AGX_420YpCbCr8BiPlanarFullRange:
 #endif
         return PixelRange::Full;
@@ -820,7 +820,7 @@ bool VideoTextureCopierCV::copyImageToPlatformTexture(CVPixelBufferRef image, si
     OSType pixelFormat = CVPixelBufferGetPixelFormatType(image);
     if (pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
         && pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarFullRange
-#if HAVE(CV_AGX_420_PIXEL_FORMAT_TYPES)
+#if HAVE(COREVIDEO_COMPRESSED_PIXEL_FORMAT_TYPES)
         && pixelFormat != kCVPixelFormatType_AGX_420YpCbCr8BiPlanarVideoRange
         && pixelFormat != kCVPixelFormatType_AGX_420YpCbCr8BiPlanarFullRange
 #endif
