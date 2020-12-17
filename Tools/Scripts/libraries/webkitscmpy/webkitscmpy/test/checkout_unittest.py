@@ -31,7 +31,7 @@ class TestCheckout(unittest.TestCase):
     path = '/mock/repository'
 
     def test_checkout_git(self):
-        with mocks.local.Git(self.path), mocks.local.Svn(), MockTime, OutputCapture():
+        with OutputCapture(), mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
             self.assertEqual('bae5d1e90999d4f916a8a15810ccfa43f37a2fd6', local.Git(self.path).commit().hash)
 
             self.assertEqual(0, program.main(
@@ -42,7 +42,7 @@ class TestCheckout(unittest.TestCase):
             self.assertEqual('fff83bb2d9171b4d9196e977eb0508fd57e7a08d', local.Git(self.path).commit().hash)
 
     def test_checkout_git_svn(self):
-        with mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime, OutputCapture():
+        with OutputCapture(), mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime:
             self.assertEqual('bae5d1e90999d4f916a8a15810ccfa43f37a2fd6', local.Git(self.path).commit().hash)
 
             self.assertEqual(0, program.main(
@@ -53,7 +53,7 @@ class TestCheckout(unittest.TestCase):
             self.assertEqual('621652add7fc416099bd2063366cc38ff61afe36', local.Git(self.path).commit().hash)
 
     def test_checkout_svn(self):
-        with mocks.local.Git(), mocks.local.Svn(self.path), MockTime, OutputCapture():
+        with OutputCapture(), mocks.local.Git(), mocks.local.Svn(self.path), MockTime:
             self.assertEqual(6, local.Svn(self.path).commit().revision)
 
             self.assertEqual(0, program.main(
@@ -64,7 +64,7 @@ class TestCheckout(unittest.TestCase):
             self.assertEqual(4, local.Svn(self.path).commit().revision)
 
     def test_checkout_remote(self):
-        with mocks.remote.Svn(), OutputCapture():
+        with OutputCapture(), mocks.remote.Svn():
             self.assertEqual(1, program.main(
                 args=('-C', 'https://svn.webkit.org/repository/webkit', 'checkout', '3@trunk'),
                 path=self.path,

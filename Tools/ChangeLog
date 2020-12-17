@@ -1,5 +1,25 @@
 2020-12-17  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitscmpy] Capture Mock process logging during tests 
+        https://bugs.webkit.org/show_bug.cgi?id=219989
+        <rdar://problem/72435662>
+
+        Reviewed by Dewei Zhu.
+
+        When declaring two mock local repositories, we need to ensure that logs are captured when
+        Instantiating the second repository so that "Mock process # send signal 9" is not logged
+        to the user's terminal.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/checkout_unittest.py:
+        (TestCheckout):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/find_unittest.py:
+        (TestFind):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGit):
+
+2020-12-17  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitscmpy] Remove branches argument from mock Git
         https://bugs.webkit.org/show_bug.cgi?id=219988
         <rdar://problem/72434657>

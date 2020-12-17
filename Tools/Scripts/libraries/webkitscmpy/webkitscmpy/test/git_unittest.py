@@ -24,7 +24,7 @@ import os
 import unittest
 
 from datetime import datetime
-from webkitcorepy import LoggerCapture
+from webkitcorepy import LoggerCapture, OutputCapture
 from webkitcorepy.mocks import Time as MockTime
 from webkitscmpy import local, mocks, remote
 
@@ -33,7 +33,7 @@ class TestGit(unittest.TestCase):
     path = '/mock/repository'
 
     def test_detection(self):
-        with mocks.local.Git(self.path), mocks.local.Svn():
+        with OutputCapture(), mocks.local.Git(self.path), mocks.local.Svn():
             detect = local.Scm.from_path(self.path)
             self.assertEqual(detect.executable, local.Git.executable)
 

@@ -33,7 +33,7 @@ class TestFind(unittest.TestCase):
     path = '/mock/repository'
 
     def test_basic_git(self):
-        with mocks.local.Git(self.path), mocks.local.Svn(), MockTime, OutputCapture() as captured:
+        with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
             self.assertEqual(0, program.main(
                 args=('find', 'HEAD', '-q'),
                 path=self.path,
@@ -41,7 +41,7 @@ class TestFind(unittest.TestCase):
         self.assertEqual(captured.stdout.getvalue(), '4@main | bae5d1e90999\n')
 
     def test_basic_git_svn(self):
-        with mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime, OutputCapture() as captured:
+        with OutputCapture() as captured, mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime:
             self.assertEqual(0, program.main(
                 args=('find', 'HEAD', '-q'),
                 path=self.path,
@@ -49,7 +49,7 @@ class TestFind(unittest.TestCase):
         self.assertEqual(captured.stdout.getvalue(), '4@main | bae5d1e90999, r6 | 6th commit\n')
 
     def test_basic_svn(self):
-        with mocks.local.Git(), mocks.local.Svn(self.path), MockTime, OutputCapture() as captured:
+        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path), MockTime:
             self.assertEqual(0, program.main(
                 args=('find', 'HEAD', '-q'),
                 path=self.path,
@@ -57,7 +57,7 @@ class TestFind(unittest.TestCase):
         self.assertEqual(captured.stdout.getvalue(), '4@trunk | r6 | 6th commit\n')
 
     def test_basic_svn_remote(self):
-        with mocks.remote.Svn(), OutputCapture() as captured:
+        with OutputCapture() as captured, mocks.remote.Svn():
             self.assertEqual(0, program.main(
                 args=('-C', 'https://svn.example.org/repository/webkit', 'find', 'HEAD', '-q'),
                 path=self.path,
@@ -65,7 +65,7 @@ class TestFind(unittest.TestCase):
         self.assertEqual(captured.stdout.getvalue(), '4@trunk | r6 | 6th commit\n')
 
     def test_branch_tilde(self):
-        with mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime, OutputCapture() as captured:
+        with OutputCapture() as captured, mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime:
             self.assertEqual(0, program.main(
                 args=('find', 'branch-a~1', '-q'),
                 path=self.path,
@@ -73,7 +73,7 @@ class TestFind(unittest.TestCase):
         self.assertEqual(captured.stdout.getvalue(), '2.1@branch-a | a30ce8494bf1, r3 | 3rd commit\n')
 
     def test_identifier_git(self):
-        with mocks.local.Git(self.path), mocks.local.Svn(), MockTime, OutputCapture() as captured:
+        with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
             self.assertEqual(0, program.main(
                 args=('find', '2@main', '-q'),
                 path=self.path,
@@ -81,7 +81,7 @@ class TestFind(unittest.TestCase):
         self.assertEqual(captured.stdout.getvalue(), '2@main | fff83bb2d917\n')
 
     def test_identifier_git_svn(self):
-        with mocks.local.Git(self.path), mocks.local.Svn(), MockTime, OutputCapture() as captured:
+        with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
             self.assertEqual(0, program.main(
                 args=('find', '2@main', '-q'),
                 path=self.path,
@@ -89,7 +89,7 @@ class TestFind(unittest.TestCase):
         self.assertEqual(captured.stdout.getvalue(), '2@main | fff83bb2d917\n')
 
     def test_identifier_svn(self):
-        with mocks.local.Git(), mocks.local.Svn(self.path), MockTime, OutputCapture() as captured:
+        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path), MockTime:
             self.assertEqual(0, program.main(
                 args=('find', '2@trunk', '-q'),
                 path=self.path,
@@ -97,7 +97,7 @@ class TestFind(unittest.TestCase):
         self.assertEqual(captured.stdout.getvalue(), '2@trunk | r2 | 2nd commit\n')
 
     def test_hash(self):
-        with mocks.local.Git(self.path), mocks.local.Svn(), MockTime, OutputCapture() as captured:
+        with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
             self.assertEqual(0, program.main(
                 args=('find', '3cd32e352410', '-q'),
                 path=self.path,
@@ -105,7 +105,7 @@ class TestFind(unittest.TestCase):
         self.assertEqual(captured.stdout.getvalue(), '2.2@branch-b | 3cd32e352410\n')
 
     def test_revision_svn(self):
-        with mocks.local.Git(), mocks.local.Svn(self.path), MockTime, OutputCapture() as captured:
+        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path), MockTime:
             self.assertEqual(0, program.main(
                 args=('find', 'r5', '-q'),
                 path=self.path,
@@ -113,7 +113,7 @@ class TestFind(unittest.TestCase):
         self.assertEqual(captured.stdout.getvalue(), '2.2@branch-b | r5 | 5th commit\n')
 
     def test_revision_git_svn(self):
-        with mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime, OutputCapture() as captured:
+        with OutputCapture() as captured, mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime:
             self.assertEqual(0, program.main(
                 args=('find', 'r5', '-q'),
                 path=self.path,
@@ -121,7 +121,7 @@ class TestFind(unittest.TestCase):
         self.assertEqual(captured.stdout.getvalue(), '2.2@branch-b | 3cd32e352410, r5 | 5th commit\n')
 
     def test_standard(self):
-        with mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime, OutputCapture() as captured:
+        with OutputCapture() as captured, mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime:
             self.assertEqual(0, program.main(
                 args=('find', '3@main'),
                 path=self.path,
@@ -138,7 +138,7 @@ Hash: 1abe25b443e9
         )
 
     def test_verbose(self):
-        with mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime, OutputCapture() as captured:
+        with OutputCapture() as captured, mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime:
             self.assertEqual(0, program.main(
                 args=('find', '3@main', '-v'),
                 path=self.path,
@@ -157,7 +157,7 @@ Hash: 1abe25b443e9
         )
 
     def test_json(self):
-        with mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime, OutputCapture() as captured:
+        with OutputCapture() as captured, mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime:
             self.assertEqual(0, program.main(
                 args=('find', '3@main', '--json'),
                 path=self.path,
@@ -178,7 +178,7 @@ Hash: 1abe25b443e9
             ))
 
     def test_tag_svn(self):
-        with mocks.local.Git(), mocks.local.Svn(self.path), MockTime, OutputCapture() as captured:
+        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path), MockTime:
             self.assertEqual(0, program.main(
                 args=('find', 'tag-1', '-q'),
                 path=self.path,
@@ -186,7 +186,7 @@ Hash: 1abe25b443e9
         self.assertEqual(captured.stdout.getvalue(), '2.3@tags/tag-1 | r9 | 9th commit\n')
 
     def test_tag_git(self):
-        with mocks.local.Git(self.path, git_svn=True) as mock, mocks.local.Svn(), MockTime, OutputCapture() as captured:
+        with OutputCapture() as captured, mocks.local.Git(self.path, git_svn=True) as mock, mocks.local.Svn(), MockTime:
             mock.tags['tag-1'] = mock.commits['branch-a'][-1]
 
             self.assertEqual(0, program.main(
@@ -196,7 +196,7 @@ Hash: 1abe25b443e9
         self.assertEqual(captured.stdout.getvalue(), '2.2@branch-a | 621652add7fc, r7 | 7th commit\n')
 
     def test_no_log_svn(self):
-        with mocks.local.Git(), mocks.local.Svn(self.path), MockTime, OutputCapture() as captured:
+        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path), MockTime:
             self.assertEqual(0, program.main(
                 args=('find', 'trunk', '--no-log', '-q'),
                 path=self.path,
@@ -204,7 +204,7 @@ Hash: 1abe25b443e9
         self.assertEqual(captured.stdout.getvalue(), '4@trunk | r6\n')
 
     def test_no_log_git(self):
-        with mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime, OutputCapture() as captured:
+        with OutputCapture() as captured, mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime:
             self.assertEqual(0, program.main(
                 args=('find', 'main', '--no-log', '-q'),
                 path=self.path,
@@ -212,7 +212,7 @@ Hash: 1abe25b443e9
         self.assertEqual(captured.stdout.getvalue(), '4@main | bae5d1e90999, r6\n')
 
     def test_timezone_svn(self):
-        with mocks.local.Git(), mocks.local.Svn(self.path, utc_offset='-0600'), MockTime, OutputCapture() as captured:
+        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path, utc_offset='-0600'), MockTime:
             self.assertEqual(0, program.main(
                 args=('find', '3@trunk'),
                 path=self.path,
