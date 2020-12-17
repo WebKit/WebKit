@@ -1,3 +1,16 @@
+2020-12-17  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Update WPT test suite
+        https://bugs.webkit.org/show_bug.cgi?id=219958
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * TestExpectations: Mark failures associated with the relevant bugs.
+          Two focus-visible tests are skipped, as the only test they have is failing with different messages
+          in each platform because the outline color varies.
+        * platform/ios/TestExpectations: Skip 2 tests that don't work in iOS.
+        * tests-options.json:
+
 2020-12-17  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Move service workers failures to GLIB.

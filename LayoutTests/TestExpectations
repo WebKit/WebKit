@@ -1227,13 +1227,22 @@ webkit.org/b/187800 imported/w3c/web-platform-tests/custom-elements/Document-cre
 webkit.org/b/187800 imported/w3c/web-platform-tests/custom-elements/parser/parser-uses-create-an-element-for-a-token-svg.svg [ Skip ]
 
 # selectors
-webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-ltr-001.html [ ImageOnlyFailure ]
-webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-rtl-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-172a.xml [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-172b.xml [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-173a.xml [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-173b.xml [ ImageOnlyFailure ]
+webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-002.html [ Skip ]
+webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-012.html [ Skip ]
+webkit.org/b/219950 imported/w3c/web-platform-tests/css/selectors/is-default-ns-002.html [ ImageOnlyFailure ]
 webkit.org/b/217904 imported/w3c/web-platform-tests/css/selectors/is-where-visited.html [ ImageOnlyFailure ]
+webkit.org/b/219950 imported/w3c/web-platform-tests/css/selectors/not-default-ns-002.html [ ImageOnlyFailure ]
+webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-change-001.html [ ImageOnlyFailure ]
+webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-change-002.html [ ImageOnlyFailure ]
+webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-change-003.html [ ImageOnlyFailure ]
+webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-change-004.html [ ImageOnlyFailure ]
+webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-ltr-001.html [ ImageOnlyFailure ]
+webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-rtl-001.html [ ImageOnlyFailure ]
+webkit.org/b/64861 imported/w3c/web-platform-tests/css/selectors/selectors-dir-selector-white-space-001.html [ ImageOnlyFailure ]
 
 # ref for this is under a directory that is not yet imported
 webkit.org/b/209735 imported/w3c/web-platform-tests/css/selectors/root-siblings.htm [ Skip ]

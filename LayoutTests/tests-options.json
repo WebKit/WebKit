@@ -692,6 +692,9 @@
     "imported/w3c/web-platform-tests/css/cssom/idlharness.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/selectors/focus-visible-002.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements.html": [
         "slow"
     ],

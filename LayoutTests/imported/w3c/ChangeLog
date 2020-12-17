@@ -1,3 +1,67 @@
+2020-12-17  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Update WPT test suite
+        https://bugs.webkit.org/show_bug.cgi?id=219958
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * web-platform-tests/css/selectors/focus-visible-001-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-001.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-002-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-002.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-003-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-003.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-004-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-004.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-012-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-012.html: Added.
+        * web-platform-tests/css/selectors/hover-002-expected.txt: Added.
+        * web-platform-tests/css/selectors/hover-002.html: Added.
+        * web-platform-tests/css/selectors/invalidation/not-001-expected.txt: Added.
+        * web-platform-tests/css/selectors/invalidation/not-001.html: Added.
+        * web-platform-tests/css/selectors/invalidation/not-002-expected.txt: Added.
+        * web-platform-tests/css/selectors/invalidation/not-002.html: Added.
+        * web-platform-tests/css/selectors/invalidation/w3c-import.log:
+        * web-platform-tests/css/selectors/is-default-ns-001-expected.html: Added.
+        * web-platform-tests/css/selectors/is-default-ns-001.html: Added.
+        * web-platform-tests/css/selectors/is-default-ns-002-expected.html: Added.
+        * web-platform-tests/css/selectors/is-default-ns-002.html: Added.
+        * web-platform-tests/css/selectors/is-default-ns-003-expected.html: Added.
+        * web-platform-tests/css/selectors/is-default-ns-003.html: Added.
+        * web-platform-tests/css/selectors/is-specificity-shadow-expected.txt: Added.
+        * web-platform-tests/css/selectors/is-specificity-shadow.html: Added.
+        * web-platform-tests/css/selectors/not-complex-expected.txt: Added.
+        * web-platform-tests/css/selectors/not-complex.html: Added.
+        * web-platform-tests/css/selectors/not-default-ns-001-expected.html: Added.
+        * web-platform-tests/css/selectors/not-default-ns-001.html: Added.
+        * web-platform-tests/css/selectors/not-default-ns-002-expected.html: Added.
+        * web-platform-tests/css/selectors/not-default-ns-002.html: Added.
+        * web-platform-tests/css/selectors/not-default-ns-003-expected.html: Added.
+        * web-platform-tests/css/selectors/not-default-ns-003.html: Added.
+        * web-platform-tests/css/selectors/not-specificity-expected.txt: Added.
+        * web-platform-tests/css/selectors/not-specificity.html: Added.
+        * web-platform-tests/css/selectors/parsing/parse-not-expected.txt:
+        * web-platform-tests/css/selectors/parsing/parse-not.html:
+        * web-platform-tests/css/selectors/selectors-dir-selector-auto-expected.txt: Added.
+        * web-platform-tests/css/selectors/selectors-dir-selector-auto.html: Added.
+        * web-platform-tests/css/selectors/selectors-dir-selector-change-001-expected.html: Added.
+        * web-platform-tests/css/selectors/selectors-dir-selector-change-001.html: Added.
+        * web-platform-tests/css/selectors/selectors-dir-selector-change-002-expected.xht: Added.
+        * web-platform-tests/css/selectors/selectors-dir-selector-change-002.html: Added.
+        * web-platform-tests/css/selectors/selectors-dir-selector-change-003-expected.html: Added.
+        * web-platform-tests/css/selectors/selectors-dir-selector-change-003.html: Added.
+        * web-platform-tests/css/selectors/selectors-dir-selector-change-004-expected.html: Added.
+        * web-platform-tests/css/selectors/selectors-dir-selector-change-004.html: Added.
+        * web-platform-tests/css/selectors/selectors-dir-selector-ltr-002-expected.xht: Added.
+        * web-platform-tests/css/selectors/selectors-dir-selector-ltr-002.html: Added.
+        * web-platform-tests/css/selectors/selectors-dir-selector-ltr-003-expected.xht: Added.
+        * web-platform-tests/css/selectors/selectors-dir-selector-ltr-003.html: Added.
+        * web-platform-tests/css/selectors/selectors-dir-selector-querySelector-expected.txt: Added.
+        * web-platform-tests/css/selectors/selectors-dir-selector-querySelector.html: Added.
+        * web-platform-tests/css/selectors/selectors-dir-selector-white-space-001-expected.html: Added.
+        * web-platform-tests/css/selectors/selectors-dir-selector-white-space-001.html: Added.
+        * web-platform-tests/css/selectors/w3c-import.log:
+
 2020-12-16  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r270806): [iOS] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-distance-clamping.html is frequently failing
