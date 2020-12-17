@@ -41,7 +41,9 @@ class RegistrableDomain;
 
 namespace WebKit {
 
-void presentStorageAccessAlert(WKWebView *, const String& requestingString, const WebCore::RegistrableDomain& currentDomain, CompletionHandler<void(bool)>&&);
+void presentStorageAccessAlert(WKWebView *, const WebCore::RegistrableDomain& requestingDomain, const WebCore::RegistrableDomain& currentDomain, CompletionHandler<void(bool)>&&);
+void presentStorageAccessAlertQuirk(WKWebView *, const WebCore::RegistrableDomain& firstRequestingDomain, const WebCore::RegistrableDomain& secondRequestingDomain, const WebCore::RegistrableDomain& current, CompletionHandler<void(bool)>&&);
+void displayStorageAccessAlert(WKWebView *, NSString *, NSString *, CompletionHandler<void(bool)>&&);
 
 }
 

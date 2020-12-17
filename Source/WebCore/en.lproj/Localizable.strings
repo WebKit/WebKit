@@ -127,6 +127,9 @@
 /* Message for requesting cross-site cookie and website data access. */
 "Allow “%@” to use cookies and website data while browsing “%@”?" = "Allow “%@” to use cookies and website data while browsing “%@”?";
 
+/* Message for requesting cross-site cookie and website data access for multiple third party domains. */
+"Allow “%@” and “%@” to use cookies and website data while browsing “%@”?" = "Allow “%@” and “%@” to use cookies and website data while browsing “%@”?";
+
 /* Message for user media prompt */
 "Allow “%@” to use your camera and microphone?" = "Allow “%@” to use your camera and microphone?";
 
@@ -318,6 +321,9 @@
 
 /* Message for requesting cross-site cookie and website data access. */
 "Do you want to allow “%@” to use cookies and website data while browsing “%@”?" = "Do you want to allow “%@” to use cookies and website data while browsing “%@”?";
+
+/* Message for requesting cross-site cookie and website data access for multiple third party domains. */
+"Do you want to allow “%@” and “%@” to use cookies and website data while browsing “%@”?" = "Do you want to allow “%@” and “%@” to use cookies and website data while browsing “%@”?";
 
 /* Button title in Storage Access API prompt */
 "Don't Allow (cross-site cookie and website data access)" = "Don't Allow";
@@ -918,6 +924,9 @@
 
 /* Informative text for requesting cross-site cookie and website data access. */
 "This will allow “%@” to track your activity." = "This will allow “%@” to track your activity.";
+
+/* Informative text for requesting cross-site cookie and website data access. */
+"This will allow “%@” and “%@” to track your activity." = "This will allow “%@” and “%@” to track your activity.";
 
 /* Undo action name */
 "Tighten Kerning (Undo action name)" = "Tighten Kerning";

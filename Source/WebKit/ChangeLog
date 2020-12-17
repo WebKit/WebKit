@@ -1,3 +1,25 @@
+2020-12-17  Kate Cheney  <katherine_cheney@apple.com>
+
+        Followup patch: Still can't login to my.playstation.com
+        https://bugs.webkit.org/show_bug.cgi?id=219900
+        <rdar://problem/72062985>
+
+        Reviewed by Darin Adler.
+
+        Using curly quotes when constructing the Storage Access prompt message
+        may create issues with localizable strings. We should make a separate
+        localizable string for this quirk case and remove it when Sony
+        migrates away from third party cookies in their login flow.
+
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::requestStorageAccessConfirm):
+        (WebKit::buildListForStorageAccessPrompt): Deleted.
+        * UIProcess/Cocoa/WKStorageAccessAlert.h:
+        * UIProcess/Cocoa/WKStorageAccessAlert.mm:
+        (WebKit::presentStorageAccessAlert):
+        (WebKit::presentStorageAccessAlertQuirk):
+        (WebKit::displayStorageAccessAlert):
+
 2020-12-17  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] WebM format reader doesn't work with a url in a <source> element

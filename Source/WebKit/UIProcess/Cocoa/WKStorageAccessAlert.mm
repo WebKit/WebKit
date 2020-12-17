@@ -36,13 +36,9 @@
 
 namespace WebKit {
 
-void presentStorageAccessAlert(WKWebView *webView, const String& requesting, const WebCore::RegistrableDomain& current, CompletionHandler<void(bool)>&& completionHandler)
+void presentStorageAccessAlert(WKWebView *webView, const WebCore::RegistrableDomain& requesting, const WebCore::RegistrableDomain& current, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto completionBlock = makeBlockPtr([completionHandler = WTFMove(completionHandler)](bool shouldAllow) mutable {
-        completionHandler(shouldAllow);
-    });
-
-    auto requestingDomain = requesting.createCFString();
+    auto requestingDomain = requesting.string().createCFString();
     auto currentDomain = current.string().createCFString();
 
 #if PLATFORM(MAC)
@@ -52,6 +48,33 @@ void presentStorageAccessAlert(WKWebView *webView, const String& requesting, con
 #endif
 
     NSString *informativeText = [NSString stringWithFormat:WEB_UI_NSSTRING(@"This will allow “%@” to track your activity.", @"Informative text for requesting cross-site cookie and website data access."), requestingDomain.get()];
+
+    displayStorageAccessAlert(webView, alertTitle, informativeText, WTFMove(completionHandler));
+}
+
+void presentStorageAccessAlertQuirk(WKWebView *webView, const WebCore::RegistrableDomain& firstRequesting, const WebCore::RegistrableDomain& secondRequesting, const WebCore::RegistrableDomain& current, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto firstRequestingDomain = firstRequesting.string().createCFString();
+    auto secondRequestingDomain = secondRequesting.string().createCFString();
+    auto currentDomain = current.string().createCFString();
+
+#if PLATFORM(MAC)
+    NSString *alertTitle = [NSString stringWithFormat:WEB_UI_NSSTRING(@"Do you want to allow “%@” and “%@” to use cookies and website data while browsing “%@”?", @"Message for requesting cross-site cookie and website data access."), firstRequestingDomain.get(), secondRequestingDomain.get(), currentDomain.get()];
+#else
+    NSString *alertTitle = [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” and “%@” to use cookies and website data while browsing “%@”?", @"Message for requesting cross-site cookie and website data access."), firstRequestingDomain.get(), secondRequestingDomain.get(), currentDomain.get()];
+#endif
+
+    NSString *informativeText = [NSString stringWithFormat:WEB_UI_NSSTRING(@"This will allow “%@” and “%@” to track your activity.", @"Informative text for requesting cross-site cookie and website data access."), firstRequestingDomain.get(), secondRequestingDomain.get()];
+    
+    displayStorageAccessAlert(webView, alertTitle, informativeText, WTFMove(completionHandler));
+}
+
+void displayStorageAccessAlert(WKWebView *webView, NSString *alertTitle, NSString *informativeText, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto completionBlock = makeBlockPtr([completionHandler = WTFMove(completionHandler)](bool shouldAllow) mutable {
+        completionHandler(shouldAllow);
+    });
+
     NSString *allowButtonString = WEB_UI_STRING_KEY(@"Allow", "Allow (cross-site cookie and website data access)", @"Button title in Storage Access API prompt");
     NSString *doNotAllowButtonString = WEB_UI_STRING_KEY(@"Don't Allow", "Don't Allow (cross-site cookie and website data access)", @"Button title in Storage Access API prompt");
 
