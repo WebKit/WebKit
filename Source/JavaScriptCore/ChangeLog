@@ -1,3 +1,17 @@
+2020-12-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Not using JITCage trampoline for non JITCage JSC
+        https://bugs.webkit.org/show_bug.cgi?id=219974
+
+        Reviewed by Tadeu Zagallo.
+
+        We avoid using JITCage trampoline in YarrJIT if JSC is not using JITCage.
+
+        * llint/LowLevelInterpreter.asm:
+        * yarr/YarrJIT.cpp:
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::YarrCodeBlock::execute):
+
 2020-12-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Accept arbitrary module namespace identifier names

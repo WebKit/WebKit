@@ -1600,13 +1600,13 @@ else
 end
     doVMEntry(makeHostFunctionCall)
 
-if ARM64 or ARM64E
+if ARM64E
     global _vmEntryToYarrJITAfter
 end
 global _vmEntryToYarrJIT
 _vmEntryToYarrJIT:
     functionPrologue()
-if ARM64 or ARM64E
+if ARM64E
     jmp t5, YarrEntryPtrTag
     _vmEntryToYarrJITAfter:
 end
