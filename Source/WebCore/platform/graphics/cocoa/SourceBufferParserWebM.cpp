@@ -478,9 +478,7 @@ static bool canLoadFormatReader()
 {
 #if !HAVE(MT_PLUGIN_FORMAT_READER)
     return false;
-#endif
-
-#if USE(APPLE_INTERNAL_SDK)
+#elif USE(APPLE_INTERNAL_SDK)
     return true;
 #else
     // FIXME (rdar://72320419): If WebKit was built with ad-hoc code-signing,
