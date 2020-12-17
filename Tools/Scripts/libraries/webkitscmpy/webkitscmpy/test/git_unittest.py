@@ -56,10 +56,10 @@ class TestGit(unittest.TestCase):
             self.assertEqual(local.Git(self.path).remote(), repo.remote)
 
     def test_branches(self):
-        with mocks.local.Git(self.path, branches=('remotes/origin/branch-3',)):
+        with mocks.local.Git(self.path):
             self.assertEqual(
                 local.Git(self.path).branches,
-                ['branch-3', 'branch-a', 'branch-b', 'main'],
+                ['branch-a', 'branch-b', 'main'],
             )
 
     def test_tags(self):

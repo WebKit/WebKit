@@ -33,7 +33,7 @@ class Git(mocks.Subprocess):
 
     def __init__(
         self, path='/.invalid-git', datafile=None,
-        remote=None, branches=None, tags=None,
+        remote=None, tags=None,
         detached=None, default_branch='main',
         git_svn=False,
     ):
@@ -42,7 +42,6 @@ class Git(mocks.Subprocess):
         self.remote = remote or 'git@example.org:/mock/{}'.format(os.path.basename(path))
         self.detached = detached or False
 
-        self.branches = branches or []
         self.tags = tags or {}
 
         try:
@@ -156,7 +155,7 @@ nothing to commit, working tree clean
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
-                    stdout='\n'.join(sorted(['* ' + self.branch] + list(({default_branch} | set(self.commits.keys()) | set(self.branches)) - {self.branch}))) +
+                    stdout='\n'.join(sorted(['* ' + self.branch] + list(({default_branch} | set(self.commits.keys())) - {self.branch}))) +
                            '\nremotes/origin/HEAD -> origin/{}\n'.format(default_branch),
                 ),
             ), mocks.Subprocess.Route(
@@ -312,5 +311,5 @@ nothing to commit, working tree clean
         commit = self.find(something)
         if commit:
             self.head = commit
-            self.detached = something not in self.branches
+            self.detached = something not in self.commits.keys()
         return True if commit else False
