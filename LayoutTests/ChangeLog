@@ -1,5 +1,11 @@
 2020-12-16  Diego Pino Garcia  <dpino@igalia.com>
 
+        [WPE] Unreviewed test gardening. fast/text/simple-line-wordspacing.html is an image failure.
+
+        * platform/wpe/TestExpectations:
+
+2020-12-16  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Unreviewed test gardening. Update several baselines of tests failing and update expectations.
 
         * platform/glib/http/tests/websocket/tests/hybi/close-code-and-reason-expected.txt: Update after r270882.

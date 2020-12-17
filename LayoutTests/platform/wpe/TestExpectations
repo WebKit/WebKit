@@ -615,6 +615,9 @@ webkit.org/b/213131 http/tests/misc/gamepads-insecure.html [ Skip ]
 webkit.org/b/212897 imported/w3c/web-platform-tests/webxr/idlharness.https.window.html [ Failure ]
 webkit.org/b/215637 imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame.https.html [ Failure Pass ]
 
+# LFC/IFC.
+webkit.org/b/219976 fast/text/simple-line-wordspacing.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
