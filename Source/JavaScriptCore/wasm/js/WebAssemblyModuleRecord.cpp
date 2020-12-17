@@ -567,15 +567,17 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
         }
     };
 
-    auto forEachSegment = [&] (auto fn) {
+    auto forEachActiveDataSegment = [&] (auto fn) {
         auto wasmMemory = m_instance->instance().memory();
         uint8_t* memory = reinterpret_cast<uint8_t*>(wasmMemory->memory());
         uint64_t sizeInBytes = wasmMemory->size();
 
         for (const Wasm::Segment::Ptr& segment : data) {
-            uint32_t offset = segment->offset.isGlobalImport()
-                ? static_cast<uint32_t>(m_instance->instance().loadI32Global(segment->offset.globalImportIndex()))
-                : segment->offset.constValue();
+            if (!segment->isActive())
+                continue;
+            uint32_t offset = segment->offsetIfActive->isGlobalImport()
+                ? static_cast<uint32_t>(m_instance->instance().loadI32Global(segment->offsetIfActive->globalImportIndex()))
+                : segment->offsetIfActive->constValue();
 
             fn(memory, sizeInBytes, segment, offset);
 
@@ -595,7 +597,7 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
         return exception.value();
 
     // Validation of all segment ranges comes before all Table and Memory initialization.
-    forEachSegment([&] (uint8_t*, uint64_t sizeInBytes, const Wasm::Segment::Ptr& segment, uint32_t offset) {
+    forEachActiveDataSegment([&] (uint8_t*, uint64_t sizeInBytes, const Wasm::Segment::Ptr& segment, uint32_t offset) {
         if (UNLIKELY(sizeInBytes < segment->sizeInBytes))
             exception = dataSegmentFail(globalObject, vm, scope, sizeInBytes, segment->sizeInBytes, offset, ", segment is too big"_s);
         else if (UNLIKELY(offset > sizeInBytes - segment->sizeInBytes))
@@ -652,7 +654,7 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
 
     ASSERT(!exception);
 
-    forEachSegment([&] (uint8_t* memory, uint64_t, const Wasm::Segment::Ptr& segment, uint32_t offset) {
+    forEachActiveDataSegment([&] (uint8_t* memory, uint64_t, const Wasm::Segment::Ptr& segment, uint32_t offset) {
         // Empty segments are valid, but only if memory isn't present, which would be undefined behavior in memcpy.
         if (segment->sizeInBytes) {
             RELEASE_ASSERT(memory);

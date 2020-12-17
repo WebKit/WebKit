@@ -91,6 +91,10 @@ public:
 
     void elemDrop(uint32_t elementIndex);
 
+    bool memoryInit(uint32_t dstAddress, uint32_t srcAddress, uint32_t length, uint32_t dataSegmentIndex);
+
+    void dataDrop(uint32_t dataSegmentIndex);
+
     void* cachedMemory() const { return m_cachedMemory.getMayBeNull(cachedBoundsCheckingSize()); }
     size_t cachedBoundsCheckingSize() const { return m_cachedBoundsCheckingSize; }
 
@@ -231,6 +235,7 @@ private:
     unsigned m_numImportFunctions { 0 };
     HashMap<uint32_t, Ref<Global>, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_linkedGlobals;
     BitVector m_passiveElements;
+    BitVector m_passiveDataSegments;
 };
 
 } } // namespace JSC::Wasm

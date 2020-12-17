@@ -282,6 +282,110 @@ function invalidMemoryFillUnreachable() {
   "WebAssembly.Module doesn't parse at byte 11: auxiliary byte for memory.fill should be zero, but got 1, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')");
 }
 
+function validMemoryCopyUnreachable() {
+  /*
+  (module
+    (memory $mem0 1)
+    (func (export "run")
+      (return)
+      (memory.copy (i32.const 3) (i32.const 0) (i32.const 1))
+    )
+  )
+  */
+  let instance = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x04\x01\x60\x00\x00\x03\x02\x01\x00\x05\x03\x01\x00\x01\x07\x07\x01\x03\x72\x75\x6e\x00\x00\x0a\x0f\x01\x0d\x00\x0f\x41\x03\x41\x00\x41\x01\xfc\x0a\x00\x00\x0b"));
+  instance.exports.run();
+}
+
+function invalidMemoryCopyUnreachable() {
+  /*
+  (module
+    (memory $mem0 1)
+    (func (export "run")
+      (return)
+      (memory.copy (unsued_1 = 1) (i32.const 3) (i32.const 0) (i32.const 1))
+    )
+  )
+  */
+  assert.throws(() => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x04\x01\x60\x00\x00\x03\x02\x01\x00\x05\x03\x01\x00\x01\x07\x07\x01\x03\x72\x75\x6e\x00\x00\x0a\x0f\x01\x0d\x00\x0f\x41\x03\x41\x00\x41\x01\xfc\x0a\x01\x00\x0b"),
+  WebAssembly.CompileError,
+  "WebAssembly.Module doesn't parse at byte 11: auxiliary byte for memory.copy should be zero, but got 1, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')");
+
+  /*
+  (module
+    (memory $mem0 1)
+    (func (export "run")
+      (return)
+      (memory.copy (unsued_1 = 0, unused_2 = 1) (i32.const 3) (i32.const 0) (i32.const 1))
+    )
+  )
+  */
+  assert.throws(() => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x04\x01\x60\x00\x00\x03\x02\x01\x00\x05\x03\x01\x00\x01\x07\x07\x01\x03\x72\x75\x6e\x00\x00\x0a\x0f\x01\x0d\x00\x0f\x41\x03\x41\x00\x41\x01\xfc\x0a\x00\x01\x0b"),
+  WebAssembly.CompileError,
+  "WebAssembly.Module doesn't parse at byte 12: auxiliary byte for memory.copy should be zero, but got 1, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')");
+}
+
+function validMemoryInitUnreachable() {
+  /*
+  (module
+    (memory $mem0 1)
+    (data $data0 "\02\03\05\07")
+    (func (export "run")
+      (return)
+      (memory.init $data0 (i32.const 4) (i32.const 0) (i32.const 4))
+    )
+  )
+  */
+  let instance = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x04\x01\x60\x00\x00\x03\x02\x01\x00\x05\x03\x01\x00\x01\x07\x07\x01\x03\x72\x75\x6e\x00\x00\x0c\x01\x01\x0a\x0f\x01\x0d\x00\x0f\x41\x04\x41\x00\x41\x04\xfc\x08\x00\x00\x0b\x0b\x07\x01\x01\x04\x02\x03\x05\x07"));
+  instance.exports.run();
+}
+
+function invalidMemoryInitUnreachable() {
+  /*
+  (module
+    (memory $mem0 1)
+    (data $data0 "\02\03\05\07")
+    (func (export "run")
+      (return)
+      (memory.init 10 (i32.const 4) (i32.const 0) (i32.const 4))
+    )
+  )
+  */
+  assert.throws(() => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x04\x01\x60\x00\x00\x03\x02\x01\x00\x05\x03\x01\x00\x01\x07\x07\x01\x03\x72\x75\x6e\x00\x00\x0c\x01\x01\x0a\x0f\x01\x0d\x00\x0f\x41\x04\x41\x00\x41\x04\xfc\x08\x0a\x00\x0b\x0b\x07\x01\x01\x04\x02\x03\x05\x07"),
+  WebAssembly.CompileError,
+  "WebAssembly.Module doesn't validate: data segment index 10 is invalid, limit is 1, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')");
+}
+
+function validDataDropUnreachable() {
+  /*
+  (module
+    (memory 1)
+    (data $data0 "\37")
+    (func (export "run")
+      (return)
+      (data.drop $data0)
+    )
+  )
+  */
+  let instance = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x04\x01\x60\x00\x00\x03\x02\x01\x00\x05\x03\x01\x00\x01\x07\x07\x01\x03\x72\x75\x6e\x00\x00\x0c\x01\x01\x0a\x08\x01\x06\x00\x0f\xfc\x09\x00\x0b\x0b\x04\x01\x01\x01\x37"));
+  instance.exports.run();
+}
+
+function invalidDataDropUnreachable() {
+  /*
+  (module
+    (memory 1)
+    (data $data0 "\37")
+    (func (export "run")
+      (return)
+      (data.drop 10)
+    )
+  )
+  */
+  assert.throws(() => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x04\x01\x60\x00\x00\x03\x02\x01\x00\x05\x03\x01\x00\x01\x07\x07\x01\x03\x72\x75\x6e\x00\x00\x0c\x01\x01\x0a\x08\x01\x06\x00\x0f\xfc\x09\x0a\x0b\x0b\x04\x01\x01\x01\x37"),
+  WebAssembly.CompileError,
+  "WebAssembly.Module doesn't validate: data segment index 10 is invalid, limit is 1, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')");
+}
+
 validTableInitUnreachable();
 invalidTableInitUnreachable();
 
@@ -305,3 +409,12 @@ invalidAnnotatedSelectUnreachable();
 
 validMemoryFillUnreachable();
 invalidMemoryFillUnreachable();
+
+validMemoryCopyUnreachable();
+invalidMemoryCopyUnreachable();
+
+validMemoryInitUnreachable();
+invalidMemoryInitUnreachable();
+
+validDataDropUnreachable();
+invalidDataDropUnreachable();

@@ -55,6 +55,7 @@ Instance::Instance(Context* context, Ref<Module>&& module, EntryFrame** pointerT
     , m_storeTopCallFrame(WTFMove(storeTopCallFrame))
     , m_numImportFunctions(m_module->moduleInformation().importFunctionCount())
     , m_passiveElements(m_module->moduleInformation().elementCount())
+    , m_passiveDataSegments(m_module->moduleInformation().dataSegmentsCount())
 {
     for (unsigned i = 0; i < m_numImportFunctions; ++i)
         new (importFunctionInfo(i)) ImportFunctionInfo();
@@ -74,6 +75,12 @@ Instance::Instance(Context* context, Ref<Module>&& module, EntryFrame** pointerT
         const auto& element = m_module->moduleInformation().elements[elementIndex];
         if (element.isPassive())
             m_passiveElements.quickSet(elementIndex);
+    }
+
+    for (unsigned dataSegmentIndex = 0; dataSegmentIndex < m_module->moduleInformation().dataSegmentsCount(); ++dataSegmentIndex) {
+        const auto& dataSegment = m_module->moduleInformation().data[dataSegmentIndex];
+        if (dataSegment->isPassive())
+            m_passiveDataSegments.quickSet(dataSegmentIndex);
     }
 }
 
@@ -163,6 +170,29 @@ void Instance::tableCopy(uint32_t dstOffset, uint32_t srcOffset, uint32_t length
 void Instance::elemDrop(uint32_t elementIndex)
 {
     m_passiveElements.quickClear(elementIndex);
+}
+
+bool Instance::memoryInit(uint32_t dstAddress, uint32_t srcAddress, uint32_t length, uint32_t dataSegmentIndex)
+{
+    RELEASE_ASSERT(dataSegmentIndex < module().moduleInformation().dataSegmentsCount());
+
+    if (sumOverflows<uint32_t>(srcAddress, length))
+        return false;
+
+    const Segment::Ptr& segment = module().moduleInformation().data[dataSegmentIndex];
+    const uint32_t segmentSizeInBytes = m_passiveDataSegments.quickGet(dataSegmentIndex) ? segment->sizeInBytes : 0U;
+    if (srcAddress + length > segmentSizeInBytes)
+        return false;
+
+    const uint8_t* segmentData = !length ? nullptr : &segment->byte(srcAddress);
+
+    ASSERT(memory());
+    return memory()->init(dstAddress, segmentData, length);
+}
+
+void Instance::dataDrop(uint32_t dataSegmentIndex)
+{
+    m_passiveDataSegments.quickClear(dataSegmentIndex);
 }
 
 const Element* Instance::elementAt(unsigned index) const

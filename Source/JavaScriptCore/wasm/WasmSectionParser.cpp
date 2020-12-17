@@ -393,7 +393,7 @@ auto SectionParser::parseElement() -> PartialResult
             WASM_FAIL_IF_HELPER_FAILS(validateElementTableIdx(tableIndex));
 
             Optional<I32InitExpr> initExpr;
-            WASM_FAIL_IF_HELPER_FAILS(parseI32InitExpr(initExpr));
+            WASM_FAIL_IF_HELPER_FAILS(parseI32InitExprForElementSection(initExpr));
 
             uint32_t indexCount;
             WASM_FAIL_IF_HELPER_FAILS(parseIndexCountForElementSection(indexCount, elementNum));
@@ -427,7 +427,7 @@ auto SectionParser::parseElement() -> PartialResult
             WASM_FAIL_IF_HELPER_FAILS(validateElementTableIdx(tableIndex));
 
             Optional<I32InitExpr> initExpr;
-            WASM_FAIL_IF_HELPER_FAILS(parseI32InitExpr(initExpr));
+            WASM_FAIL_IF_HELPER_FAILS(parseI32InitExprForElementSection(initExpr));
 
             uint8_t elementKind;
             WASM_FAIL_IF_HELPER_FAILS(parseElementKind(elementKind));
@@ -464,7 +464,7 @@ auto SectionParser::parseElement() -> PartialResult
             WASM_FAIL_IF_HELPER_FAILS(validateElementTableIdx(tableIndex));
 
             Optional<I32InitExpr> initExpr;
-            WASM_FAIL_IF_HELPER_FAILS(parseI32InitExpr(initExpr));
+            WASM_FAIL_IF_HELPER_FAILS(parseI32InitExprForElementSection(initExpr));
 
             uint32_t indexCount;
             WASM_FAIL_IF_HELPER_FAILS(parseIndexCountForElementSection(indexCount, elementNum));
@@ -501,7 +501,7 @@ auto SectionParser::parseElement() -> PartialResult
             WASM_FAIL_IF_HELPER_FAILS(validateElementTableIdx(tableIndex));
 
             Optional<I32InitExpr> initExpr;
-            WASM_FAIL_IF_HELPER_FAILS(parseI32InitExpr(initExpr));
+            WASM_FAIL_IF_HELPER_FAILS(parseI32InitExprForElementSection(initExpr));
 
             Type refType;
             WASM_PARSER_FAIL_IF(!parseRefType(refType), "can't parse reftype in elem section");
@@ -637,16 +637,21 @@ auto SectionParser::validateElementTableIdx(uint32_t tableIndex) -> PartialResul
     return { };
 }
 
-auto SectionParser::parseI32InitExpr(Optional<I32InitExpr>& initExpr) -> PartialResult
+auto SectionParser::parseI32InitExpr(Optional<I32InitExpr>& initExpr, ASCIILiteral failMessage) -> PartialResult
 {
     uint8_t initOpcode;
     uint64_t initExprBits;
     Type initExprType;
     WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, initExprBits, initExprType));
-    WASM_PARSER_FAIL_IF(initExprType != I32, "Element init_expr must produce an i32");
+    WASM_PARSER_FAIL_IF(initExprType != I32, failMessage);
     initExpr = makeI32InitExpr(initOpcode, initExprBits);
 
     return { };
+}
+
+auto SectionParser::parseI32InitExprForElementSection(Optional<I32InitExpr>& initExpr) -> PartialResult
+{
+    return parseI32InitExpr(initExpr, "Element init_expr must produce an i32"_s);
 }
 
 auto SectionParser::parseElementKind(uint8_t& resultElementKind) -> PartialResult
@@ -709,6 +714,11 @@ auto SectionParser::parseElementSegmentVectorOfIndexes(Vector<uint32_t>& result,
     return { };
 }
 
+auto SectionParser::parseI32InitExprForDataSection(Optional<I32InitExpr>& initExpr) -> PartialResult
+{
+    return parseI32InitExpr(initExpr, "Data init_expr must produce an i32"_s);
+}
+
 auto SectionParser::parseGlobalType(GlobalInformation& global) -> PartialResult
 {
     uint8_t mutability;
@@ -727,28 +737,91 @@ auto SectionParser::parseData() -> PartialResult
     WASM_PARSER_FAIL_IF(!m_info->data.tryReserveCapacity(segmentCount), "can't allocate enough memory for Data section's ", segmentCount, " segments");
 
     for (uint32_t segmentNumber = 0; segmentNumber < segmentCount; ++segmentNumber) {
-        uint32_t memoryIndex;
-        uint64_t initExprBits;
-        uint8_t initOpcode;
-        uint32_t dataByteLength;
+        uint32_t memoryIndex = UINT32_MAX;
+        uint8_t dataFlag = UINT8_MAX;
 
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(memoryIndex), "can't get ", segmentNumber, "th Data segment's index");
-        WASM_PARSER_FAIL_IF(memoryIndex >= m_info->memoryCount(), segmentNumber, "th Data segment has index ", memoryIndex, " which exceeds the number of Memories ", m_info->memoryCount());
-        Type initExprType;
-        WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, initExprBits, initExprType));
-        WASM_PARSER_FAIL_IF(initExprType != I32, segmentNumber, "th Data segment's init_expr must produce an i32");
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(dataByteLength), "can't get ", segmentNumber, "th Data segment's data byte length");
-        WASM_PARSER_FAIL_IF(dataByteLength > maxModuleSize, segmentNumber, "th Data segment's data byte length is too big ", dataByteLength, " maximum ", maxModuleSize);
+        if (Options::useWebAssemblyReferences()) {
+            WASM_PARSER_FAIL_IF(!parseUInt8(dataFlag), "can't get ", segmentNumber, "th Data segment's flag");
+            memoryIndex = 0U;
+        } else
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(memoryIndex), "can't get ", segmentNumber, "th Data segment's index");
 
-        Segment* segment = Segment::create(makeI32InitExpr(initOpcode, initExprBits), dataByteLength);
-        WASM_PARSER_FAIL_IF(!segment, "can't allocate enough memory for ", segmentNumber, "th Data segment of size ", dataByteLength);
-        m_info->data.uncheckedAppend(Segment::adoptPtr(segment));
-        for (uint32_t dataByte = 0; dataByte < dataByteLength; ++dataByte) {
-            uint8_t byte;
-            WASM_PARSER_FAIL_IF(!parseUInt8(byte), "can't get ", dataByte, "th data byte from ", segmentNumber, "th Data segment");
-            segment->byte(dataByte) = byte;
+        if (!Options::useWebAssemblyReferences() || !dataFlag) {
+            WASM_PARSER_FAIL_IF(memoryIndex >= m_info->memoryCount(), segmentNumber, "th Data segment has index ", memoryIndex, " which exceeds the number of Memories ", m_info->memoryCount());
+
+            Optional<I32InitExpr> initExpr;
+            WASM_FAIL_IF_HELPER_FAILS(parseI32InitExprForDataSection(initExpr));
+
+            uint32_t dataByteLength;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(dataByteLength), "can't get ", segmentNumber, "th Data segment's data byte length");
+            WASM_PARSER_FAIL_IF(dataByteLength > maxModuleSize, segmentNumber, "th Data segment's data byte length is too big ", dataByteLength, " maximum ", maxModuleSize);
+
+            auto segment = Segment::create(*initExpr, dataByteLength, Segment::Kind::Active);
+            WASM_PARSER_FAIL_IF(!segment, "can't allocate enough memory for ", segmentNumber, "th Data segment of size ", dataByteLength);
+            for (uint32_t dataByte = 0; dataByte < dataByteLength; ++dataByte) {
+                uint8_t byte;
+                WASM_PARSER_FAIL_IF(!parseUInt8(byte), "can't get ", dataByte, "th data byte from ", segmentNumber, "th Data segment");
+                segment->byte(dataByte) = byte;
+            }
+            m_info->data.uncheckedAppend(WTFMove(segment));
+            continue;
         }
+
+        ASSERT(Options::useWebAssemblyReferences());
+
+        if (dataFlag == 0x01) {
+            uint32_t dataByteLength;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(dataByteLength), "can't get ", segmentNumber, "th Data segment's data byte length");
+            WASM_PARSER_FAIL_IF(dataByteLength > maxModuleSize, segmentNumber, "th Data segment's data byte length is too big ", dataByteLength, " maximum ", maxModuleSize);
+
+            auto segment = Segment::create(WTF::nullopt, dataByteLength, Segment::Kind::Passive);
+            WASM_PARSER_FAIL_IF(!segment, "can't allocate enough memory for ", segmentNumber, "th Data segment of size ", dataByteLength);
+            for (uint32_t dataByte = 0; dataByte < dataByteLength; ++dataByte) {
+                uint8_t byte;
+                WASM_PARSER_FAIL_IF(!parseUInt8(byte), "can't get ", dataByte, "th data byte from ", segmentNumber, "th Data segment");
+                segment->byte(dataByte) = byte;
+            }
+            m_info->data.uncheckedAppend(WTFMove(segment));
+            continue;
+
+        }
+
+        if (dataFlag == 0x02) {
+            uint32_t memoryIndex;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(memoryIndex), "can't get ", segmentNumber, "th Data segment's index");
+            WASM_PARSER_FAIL_IF(memoryIndex >= m_info->memoryCount(), segmentNumber, "th Data segment has index ", memoryIndex, " which exceeds the number of Memories ", m_info->memoryCount());
+
+            Optional<I32InitExpr> initExpr;
+            WASM_FAIL_IF_HELPER_FAILS(parseI32InitExprForDataSection(initExpr));
+
+            uint32_t dataByteLength;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(dataByteLength), "can't get ", segmentNumber, "th Data segment's data byte length");
+            WASM_PARSER_FAIL_IF(dataByteLength > maxModuleSize, segmentNumber, "th Data segment's data byte length is too big ", dataByteLength, " maximum ", maxModuleSize);
+
+            auto segment = Segment::create(*initExpr, dataByteLength, Segment::Kind::Active);
+            WASM_PARSER_FAIL_IF(!segment, "can't allocate enough memory for ", segmentNumber, "th Data segment of size ", dataByteLength);
+            for (uint32_t dataByte = 0; dataByte < dataByteLength; ++dataByte) {
+                uint8_t byte;
+                WASM_PARSER_FAIL_IF(!parseUInt8(byte), "can't get ", dataByte, "th data byte from ", segmentNumber, "th Data segment");
+                segment->byte(dataByte) = byte;
+            }
+            m_info->data.uncheckedAppend(WTFMove(segment));
+            continue;
+        }
+
+        WASM_PARSER_FAIL_IF(true, "unknown ", segmentNumber, "th Data segment's flag");
     }
+
+    return { };
+}
+
+auto SectionParser::parseDataCount() -> PartialResult
+{
+    WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
+    uint32_t numberOfDataSegments;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(numberOfDataSegments), "can't get Data Count section's count");
+
+    m_info->numberOfDataSegments = numberOfDataSegments;
     return { };
 }
 

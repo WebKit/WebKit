@@ -137,6 +137,7 @@ private:
 
     PartialResult WARN_UNUSED_RETURN parseTableIndex(unsigned&);
     PartialResult WARN_UNUSED_RETURN parseElementIndex(unsigned&);
+    PartialResult WARN_UNUSED_RETURN parseDataSegmentIndex(unsigned&);
 
     struct TableInitImmediates {
         unsigned elementIndex;
@@ -157,6 +158,13 @@ private:
     PartialResult WARN_UNUSED_RETURN parseAnnotatedSelectImmediates(AnnotatedSelectImmediates&);
 
     PartialResult WARN_UNUSED_RETURN parseMemoryFillImmediate();
+    PartialResult WARN_UNUSED_RETURN parseMemoryCopyImmediates();
+
+    struct MemoryInitImmediates {
+        unsigned dataSegmentIndex;
+        unsigned unused;
+    };
+    PartialResult WARN_UNUSED_RETURN parseMemoryInitImmediates(MemoryInitImmediates&);
 
 #define WASM_TRY_ADD_TO_CONTEXT(add_expression) WASM_FAIL_IF_HELPER_FAILS(m_context.add_expression)
 
@@ -523,6 +531,16 @@ auto FunctionParser<Context>::parseElementIndex(unsigned& result) -> PartialResu
 }
 
 template<typename Context>
+auto FunctionParser<Context>::parseDataSegmentIndex(unsigned& result) -> PartialResult
+{
+    unsigned dataSegmentIndex;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(dataSegmentIndex), "can't parse data segment index");
+    WASM_VALIDATOR_FAIL_IF(dataSegmentIndex >= m_info.dataSegmentsCount(), "data segment index ", dataSegmentIndex, " is invalid, limit is ", m_info.dataSegmentsCount());
+    result = dataSegmentIndex;
+    return { };
+}
+
+template<typename Context>
 auto FunctionParser<Context>::parseTableInitImmediates(TableInitImmediates& result) -> PartialResult
 {
     unsigned elementIndex;
@@ -575,6 +593,34 @@ auto FunctionParser<Context>::parseMemoryFillImmediate() -> PartialResult
     uint8_t auxiliaryByte;
     WASM_PARSER_FAIL_IF(!parseUInt8(auxiliaryByte), "can't parse auxiliary byte");
     WASM_PARSER_FAIL_IF(!!auxiliaryByte, "auxiliary byte for memory.fill should be zero, but got ", auxiliaryByte);
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::parseMemoryCopyImmediates() -> PartialResult
+{
+    uint8_t firstAuxiliaryByte;
+    WASM_PARSER_FAIL_IF(!parseUInt8(firstAuxiliaryByte), "can't parse auxiliary byte");
+    WASM_PARSER_FAIL_IF(!!firstAuxiliaryByte, "auxiliary byte for memory.copy should be zero, but got ", firstAuxiliaryByte);
+
+    uint8_t secondAuxiliaryByte;
+    WASM_PARSER_FAIL_IF(!parseUInt8(secondAuxiliaryByte), "can't parse auxiliary byte");
+    WASM_PARSER_FAIL_IF(!!secondAuxiliaryByte, "auxiliary byte for memory.copy should be zero, but got ", secondAuxiliaryByte);
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::parseMemoryInitImmediates(MemoryInitImmediates& result) -> PartialResult
+{
+    unsigned dataSegmentIndex;
+    WASM_FAIL_IF_HELPER_FAILS(parseDataSegmentIndex(dataSegmentIndex));
+
+    unsigned unused;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't parse unused");
+    WASM_PARSER_FAIL_IF(!!unused, "memory.init invalid unsued byte");
+
+    result.unused = unused;
+    result.dataSegmentIndex = dataSegmentIndex;
     return { };
 }
 
@@ -845,6 +891,51 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_VALIDATOR_FAIL_IF(I32 != count.type(), "memory.fill size to type ", count.type(), " expected ", I32);
 
             WASM_TRY_ADD_TO_CONTEXT(addMemoryFill(dstAddress, targetValue, count));
+            break;
+        }
+        case ExtTableOpType::MemoryCopy: {
+            WASM_FAIL_IF_HELPER_FAILS(parseMemoryCopyImmediates());
+
+            WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "memory must be present");
+
+            TypedExpression dstAddress;
+            TypedExpression srcAddress;
+            TypedExpression count;
+
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(count, "memory.copy");
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(srcAddress, "memory.copy");
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(dstAddress, "memory.copy");
+
+            WASM_VALIDATOR_FAIL_IF(I32 != dstAddress.type(), "memory.copy dstAddress to type ", dstAddress.type(), " expected ", I32);
+            WASM_VALIDATOR_FAIL_IF(I32 != srcAddress.type(), "memory.copy targetValue to type ", srcAddress.type(), " expected ", I32);
+            WASM_VALIDATOR_FAIL_IF(I32 != count.type(), "memory.copy size to type ", count.type(), " expected ", I32);
+
+            WASM_TRY_ADD_TO_CONTEXT(addMemoryCopy(dstAddress, srcAddress, count));
+            break;
+        }
+        case ExtTableOpType::MemoryInit: {
+            MemoryInitImmediates immediates;
+            WASM_FAIL_IF_HELPER_FAILS(parseMemoryInitImmediates(immediates));
+
+            TypedExpression dstAddress;
+            TypedExpression srcAddress;
+            TypedExpression length;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(length, "memory.init");
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(srcAddress, "memory.init");
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(dstAddress, "memory.init");
+
+            WASM_VALIDATOR_FAIL_IF(I32 != dstAddress.type(), "memory.init dst address to type ", dstAddress.type(), " expected ", I32);
+            WASM_VALIDATOR_FAIL_IF(I32 != srcAddress.type(), "memory.init src address to type ", srcAddress.type(), " expected ", I32);
+            WASM_VALIDATOR_FAIL_IF(I32 != length.type(), "memory.init length to type ", length.type(), " expected ", I32);
+
+            WASM_TRY_ADD_TO_CONTEXT(addMemoryInit(immediates.dataSegmentIndex, dstAddress, srcAddress, length));
+            break;
+        }
+        case ExtTableOpType::DataDrop: {
+            unsigned dataSegmentIndex;
+            WASM_FAIL_IF_HELPER_FAILS(parseDataSegmentIndex(dataSegmentIndex));
+
+            WASM_TRY_ADD_TO_CONTEXT(addDataDrop(dataSegmentIndex));
             break;
         }
         default:
@@ -1417,6 +1508,20 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         }
         case ExtTableOpType::MemoryFill: {
             WASM_FAIL_IF_HELPER_FAILS(parseMemoryFillImmediate());
+            return { };
+        }
+        case ExtTableOpType::MemoryCopy: {
+            WASM_FAIL_IF_HELPER_FAILS(parseMemoryCopyImmediates());
+            return { };
+        }
+        case ExtTableOpType::MemoryInit: {
+            MemoryInitImmediates immediates;
+            WASM_FAIL_IF_HELPER_FAILS(parseMemoryInitImmediates(immediates));
+            return { };
+        }
+        case ExtTableOpType::DataDrop: {
+            unsigned dataSegmentIndex;
+            WASM_FAIL_IF_HELPER_FAILS(parseDataSegmentIndex(dataSegmentIndex));
             return { };
         }
         default:

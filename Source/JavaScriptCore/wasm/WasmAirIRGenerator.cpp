@@ -281,6 +281,9 @@ public:
     PartialResult WARN_UNUSED_RETURN addGrowMemory(ExpressionType delta, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addCurrentMemory(ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addMemoryFill(ExpressionType dstAddress, ExpressionType targetValue, ExpressionType count);
+    PartialResult WARN_UNUSED_RETURN addMemoryCopy(ExpressionType dstAddress, ExpressionType srcAddress, ExpressionType count);
+    PartialResult WARN_UNUSED_RETURN addMemoryInit(unsigned, ExpressionType dstAddress, ExpressionType srcAddress, ExpressionType length);
+    PartialResult WARN_UNUSED_RETURN addDataDrop(unsigned);
 
     // Atomics
     PartialResult WARN_UNUSED_RETURN atomicLoad(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType& result, uint32_t offset);
@@ -1297,6 +1300,63 @@ auto AirIRGenerator::addMemoryFill(ExpressionType dstAddress, ExpressionType tar
         this->emitThrowException(jit, ExceptionType::OutOfBoundsTableAccess);
     });
 
+    return { };
+}
+
+auto AirIRGenerator::addMemoryCopy(ExpressionType dstAddress, ExpressionType srcAddress, ExpressionType count) -> PartialResult
+{
+    ASSERT(dstAddress.tmp());
+    ASSERT(dstAddress.type() == Type::I32);
+
+    ASSERT(srcAddress.tmp());
+    ASSERT(srcAddress.type() == Type::I32);
+
+    ASSERT(count.tmp());
+    ASSERT(count.type() == Type::I32);
+
+    auto result = tmpForType(Type::I32);
+    emitCCall(
+        &operationWasmMemoryCopy, result, instanceValue(),
+        dstAddress, srcAddress, count);
+
+    emitCheck([&] {
+        return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::Zero), result, result);
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::OutOfBoundsTableAccess);
+    });
+
+    return { };
+}
+
+auto AirIRGenerator::addMemoryInit(unsigned dataSegmentIndex, ExpressionType dstAddress, ExpressionType srcAddress, ExpressionType length) -> PartialResult
+{
+    ASSERT(dstAddress.tmp());
+    ASSERT(dstAddress.type() == Type::I32);
+
+    ASSERT(srcAddress.tmp());
+    ASSERT(srcAddress.type() == Type::I32);
+
+    ASSERT(length.tmp());
+    ASSERT(length.type() == Type::I32);
+
+    auto result = tmpForType(Type::I32);
+    emitCCall(
+        &operationWasmMemoryInit, result, instanceValue(),
+        addConstant(Type::I32, dataSegmentIndex),
+        dstAddress, srcAddress, length);
+
+    emitCheck([&] {
+        return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::Zero), result, result);
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::OutOfBoundsTableAccess);
+    });
+
+    return { };
+}
+
+auto AirIRGenerator::addDataDrop(unsigned dataSegmentIndex) -> PartialResult
+{
+    emitCCall(&operationWasmDataDrop, TypedTmp(), instanceValue(), addConstant(Type::I32, dataSegmentIndex));
     return { };
 }
 

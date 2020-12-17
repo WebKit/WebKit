@@ -390,6 +390,37 @@ WASM_SLOW_PATH_DECL(memory_fill)
     WASM_END();
 }
 
+WASM_SLOW_PATH_DECL(memory_copy)
+{
+    auto instruction = pc->as<WasmMemoryCopy, WasmOpcodeTraits>();
+    uint32_t dstAddress = READ(instruction.m_dstAddress).unboxedUInt32();
+    uint32_t srcAddress = READ(instruction.m_srcAddress).unboxedUInt32();
+    uint32_t count = READ(instruction.m_count).unboxedUInt32();
+    if (!Wasm::operationWasmMemoryCopy(instance, dstAddress, srcAddress, count))
+        WASM_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
+    WASM_END();
+}
+
+WASM_SLOW_PATH_DECL(memory_init)
+{
+    auto instruction = pc->as<WasmMemoryInit, WasmOpcodeTraits>();
+    uint32_t dstAddress = READ(instruction.m_dstAddress).unboxedUInt32();
+    uint32_t srcAddress = READ(instruction.m_srcAddress).unboxedUInt32();
+    uint32_t length = READ(instruction.m_length).unboxedUInt32();
+    if (!Wasm::operationWasmMemoryInit(instance, instruction.m_dataSegmentIndex, dstAddress, srcAddress, length))
+        WASM_THROW(Wasm::ExceptionType::OutOfBoundsMemoryAccess);
+    WASM_END();
+}
+
+WASM_SLOW_PATH_DECL(data_drop)
+{
+    UNUSED_PARAM(callFrame);
+
+    auto instruction = pc->as<WasmDataDrop, WasmOpcodeTraits>();
+    Wasm::operationWasmDataDrop(instance, instruction.m_dataSegmentIndex);
+    WASM_END();
+}
+
 inline SlowPathReturnType doWasmCall(Wasm::Instance* instance, unsigned functionIndex)
 {
     uint32_t importFunctionCount = instance->module().moduleInformation().importFunctionCount();

@@ -34,30 +34,27 @@
 
 namespace JSC { namespace Wasm {
 
-Segment* Segment::create(I32InitExpr offset, uint32_t sizeInBytes)
+Segment::Ptr Segment::create(Optional<I32InitExpr> offset, uint32_t sizeInBytes, Kind kind)
 {
     Checked<uint32_t, RecordOverflow> totalBytesChecked = sizeInBytes;
     totalBytesChecked += sizeof(Segment);
     uint32_t totalBytes;
     if (totalBytesChecked.safeGet(totalBytes) == CheckedState::DidOverflow)
-        return nullptr;
+        return Ptr(nullptr, &Segment::destroy);
     auto allocated = tryFastCalloc(totalBytes, 1);
     Segment* segment;
     if (!allocated.getValue(segment))
-        return nullptr;
-    segment->offset = offset;
+        return Ptr(nullptr, &Segment::destroy);
+    ASSERT(kind == Kind::Passive || !!offset);
+    segment->kind = kind;
+    segment->offsetIfActive = WTFMove(offset);
     segment->sizeInBytes = sizeInBytes;
-    return segment;
+    return Ptr(segment, &Segment::destroy);
 }
 
 void Segment::destroy(Segment *segment)
 {
     fastFree(segment);
-}
-
-Segment::Ptr Segment::adoptPtr(Segment* segment)
-{
-    return Ptr(segment, &Segment::destroy);
 }
 
 String makeString(const Name& characters)

@@ -1682,6 +1682,26 @@ op :memory_fill,
         count: VirtualRegister,
     }
 
+op :memory_copy,
+    args: {
+        dstAddress: VirtualRegister,
+        srcAddress: VirtualRegister,
+        count: VirtualRegister,
+    }
+
+op :memory_init,
+    args: {
+        dstAddress: VirtualRegister,
+        srcAddress: VirtualRegister,
+        length: VirtualRegister,
+        dataSegmentIndex: unsigned,
+    }
+
+op :data_drop,
+    args: {
+        dataSegmentIndex: unsigned,
+    }
+
 op :select,
     args: {
         dst: VirtualRegister,

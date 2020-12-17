@@ -58,6 +58,10 @@
   cmd: runWebAssemblyReferenceSpecTest :normal
 - path: wasm/references-spec-tests/memory_fill.wast.js
   cmd: runWebAssemblyReferenceSpecTest :normal
+- path: wasm/references-spec-tests/memory_copy.wast.js
+  cmd: runWebAssemblyReferenceSpecTest :normal
+- path: wasm/references-spec-tests/memory_init.wast.js
+  cmd: runWebAssemblyReferenceSpecTest :normal
 
 - path: wasm/multi-value-spec-tests/block.wast.js
   cmd: runWebAssemblySpecTest :normal

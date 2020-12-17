@@ -630,6 +630,40 @@ bool Memory::fill(uint32_t offset, uint8_t targetValue, uint32_t count)
     return true;
 }
 
+bool Memory::copy(uint32_t dstAddress, uint32_t srcAddress, uint32_t count)
+{
+    if (sumOverflows<uint32_t>(dstAddress, count) || sumOverflows<uint32_t>(srcAddress, count))
+        return false;
+
+    const uint32_t lastDstAddress = dstAddress + count;
+    const uint32_t lastSrcAddress = srcAddress + count;
+
+    if (lastDstAddress > size() || lastSrcAddress > size())
+        return false;
+
+    if (!count)
+        return true;
+
+    uint8_t* base = reinterpret_cast<uint8_t*>(memory());
+    memcpy(base + dstAddress, base + srcAddress, count);
+    return true;
+}
+
+bool Memory::init(uint32_t offset, const uint8_t* data, uint32_t length)
+{
+    if (sumOverflows<uint32_t>(offset, length))
+        return false;
+
+    if (offset + length > m_handle->size())
+        return false;
+
+    if (!length)
+        return true;
+
+    memcpy(reinterpret_cast<uint8_t*>(memory()) + offset, data, length);
+    return true;
+}
+
 void Memory::registerInstance(Instance* instance)
 {
     size_t count = m_instances.size();

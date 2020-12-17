@@ -643,6 +643,11 @@ JSC_DEFINE_JIT_OPERATION(operationWasmMemoryFill, bool, (Instance* instance, uin
     return instance->memory()->fill(dstAddress, static_cast<uint8_t>(targetValue), count);
 }
 
+JSC_DEFINE_JIT_OPERATION(operationWasmMemoryCopy, bool, (Instance* instance, uint32_t dstAddress, uint32_t srcAddress, uint32_t count))
+{
+    return instance->memory()->copy(dstAddress, srcAddress, count);
+}
+
 JSC_DEFINE_JIT_OPERATION(operationGetWasmTableElement, EncodedJSValue, (Instance* instance, unsigned tableIndex, int32_t signedIndex))
 {
     ASSERT(tableIndex < instance->module().moduleInformation().tableCount());
@@ -893,6 +898,18 @@ JSC_DEFINE_JIT_OPERATION(operationMemoryAtomicNotify, int32_t, (Instance* instan
     if (countValue >= 0)
         count = static_cast<unsigned>(countValue);
     return ParkingLot::unparkCount(pointer, count);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmMemoryInit, bool, (Instance* instance, unsigned dataSegmentIndex, uint32_t dstAddress, uint32_t srcAddress, uint32_t length))
+{
+    ASSERT(dataSegmentIndex < instance->module().moduleInformation().dataSegmentsCount());
+    return instance->memoryInit(dstAddress, srcAddress, length, dataSegmentIndex);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmDataDrop, void, (Instance* instance, unsigned dataSegmentIndex))
+{
+    ASSERT(dataSegmentIndex < instance->module().moduleInformation().dataSegmentsCount());
+    instance->dataDrop(dataSegmentIndex);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmToJSException, void*, (CallFrame* callFrame, Wasm::ExceptionType type, Instance* wasmInstance))

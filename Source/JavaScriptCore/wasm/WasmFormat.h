@@ -211,18 +211,28 @@ private:
 
 struct Segment {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+    enum class Kind : uint8_t {
+        Active,
+        Passive,
+    };
+
+    Kind kind;
     uint32_t sizeInBytes;
-    I32InitExpr offset;
+    Optional<I32InitExpr> offsetIfActive;
     // Bytes are allocated at the end.
     uint8_t& byte(uint32_t pos)
     {
         ASSERT(pos < sizeInBytes);
         return *reinterpret_cast<uint8_t*>(reinterpret_cast<char*>(this) + sizeof(Segment) + pos);
     }
-    static Segment* create(I32InitExpr, uint32_t);
+
     static void destroy(Segment*);
     typedef std::unique_ptr<Segment, decltype(&Segment::destroy)> Ptr;
-    static Ptr adoptPtr(Segment*);
+    static Segment::Ptr create(Optional<I32InitExpr>, uint32_t, Kind);
+
+    bool isActive() const { return kind == Kind::Active; }
+    bool isPassive() const { return kind == Kind::Passive; }
 };
 
 struct Element {

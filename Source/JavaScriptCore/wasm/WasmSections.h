@@ -34,17 +34,18 @@ IGNORE_RETURN_TYPE_WARNINGS_BEGIN
 namespace JSC { namespace Wasm {
 
 #define FOR_EACH_KNOWN_WASM_SECTION(macro) \
-    macro(Type,     1, "Function signature declarations") \
-    macro(Import,   2, "Import declarations") \
-    macro(Function, 3, "Function declarations") \
-    macro(Table,    4, "Indirect function table and other tables") \
-    macro(Memory,   5, "Memory attributes") \
-    macro(Global,   6, "Global declarations") \
-    macro(Export,   7, "Exports") \
-    macro(Start,    8, "Start function declaration") \
-    macro(Element,  9, "Elements section") \
-    macro(Code,    10, "Function bodies (code)") \
-    macro(Data,    11, "Data segments")
+    macro(Type,       1, "Function signature declarations") \
+    macro(Import,     2, "Import declarations") \
+    macro(Function,   3, "Function declarations") \
+    macro(Table,      4, "Indirect function table and other tables") \
+    macro(Memory,     5, "Memory attributes") \
+    macro(Global,     6, "Global declarations") \
+    macro(Export,     7, "Exports") \
+    macro(Start,      8, "Start function declaration") \
+    macro(Element,    9, "Elements section") \
+    macro(Code,      10, "Function bodies (code)") \
+    macro(Data,      11, "Data segments") \
+    macro(DataCount, 12, "Data count")
 
 enum class Section : uint8_t {
     // It's important that Begin is less than every other section number and that Custom is greater.
@@ -87,6 +88,8 @@ inline bool decodeSection(uint8_t sectionByte, Section& section)
 inline bool validateOrder(Section previousKnown, Section next)
 {
     ASSERT(isKnownSection(previousKnown) || previousKnown == Section::Begin);
+    if (previousKnown == Section::DataCount && next == Section::Code)
+        return true;
     return static_cast<uint8_t>(previousKnown) < static_cast<uint8_t>(next);
 }
 

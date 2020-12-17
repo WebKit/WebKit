@@ -1,3 +1,92 @@
+2020-12-17  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-References] Add support for memory.copy, memory.init and data.drop
+        https://bugs.webkit.org/show_bug.cgi?id=219943
+
+        Reviewed by Yusuke Suzuki.
+
+        Add support for memory.copy [dstAddress, srcAddress, length] -> []
+        that copies one  memory segment to another memory segment.
+        The memory.copy calls C memcpy function to utilize all possible optimization for copy.
+        This instruction speedup copying data segments in wasm because without it we need to use a lot
+        load/store instructions with loops in wasm.
+
+        Add support for memory.init data_segment_index [dstAddress, srcAddress, length] -> []
+        that copies data from a passive data segment into a memory segment.
+        This instruction is the same as memory.copy but for read-only data segments.
+        It also utilize C memcpy under the hood.
+
+        Add support for data.drop data_segment_index [] -> []
+        that resize given data segment to zero.
+        Data.drop makes redundant data segment and prevents usage of it in the next.
+        BTW, it is just a hint for the host runtime so we don't have to change data segment.
+
+        Add support for Data count section.
+        This section just stores the number of data segments.
+        We need this to validate memory.init instruction's data index because
+        Code section comes before Data section.
+
+        These instructions are needed to support reference types proposal and bulk proposal.
+
+        * bytecode/BytecodeList.rb:
+        * llint/WebAssembly.asm:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addMemoryCopy):
+        (JSC::Wasm::AirIRGenerator::addMemoryInit):
+        (JSC::Wasm::AirIRGenerator::addDataDrop):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addMemoryInit):
+        (JSC::Wasm::B3IRGenerator::addMemoryCopy):
+        (JSC::Wasm::B3IRGenerator::addDataDrop):
+        * wasm/WasmFormat.cpp:
+        (JSC::Wasm::Segment::create):
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::Segment::isActive const):
+        (JSC::Wasm::Segment::isPassive const):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseDataSegmentIndex):
+        (JSC::Wasm::FunctionParser<Context>::parseMemoryCopyImmediates):
+        (JSC::Wasm::FunctionParser<Context>::parseMemoryInitImmediates):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        * wasm/WasmInstance.cpp:
+        (JSC::Wasm::Instance::Instance):
+        (JSC::Wasm::Instance::memoryInit):
+        (JSC::Wasm::Instance::dataDrop):
+        * wasm/WasmInstance.h:
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::addMemoryInit):
+        (JSC::Wasm::LLIntGenerator::addDataDrop):
+        (JSC::Wasm::LLIntGenerator::addMemoryCopy):
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::Memory::copy):
+        (JSC::Wasm::Memory::init):
+        * wasm/WasmMemory.h:
+        * wasm/WasmModuleInformation.h:
+        (JSC::Wasm::ModuleInformation::dataSegmentsCount const):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/WasmOperations.h:
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseElement):
+        (JSC::Wasm::SectionParser::parseI32InitExpr):
+        (JSC::Wasm::SectionParser::parseI32InitExprForElementSection):
+        (JSC::Wasm::SectionParser::parseI32InitExprForDataSection):
+        (JSC::Wasm::SectionParser::parseDataSegmentCoreSpec):
+        (JSC::Wasm::SectionParser::parseDataSegmentReferenceTypesSpec):
+        (JSC::Wasm::SectionParser::parseGlobalType):
+        (JSC::Wasm::SectionParser::parseData):
+        (JSC::Wasm::SectionParser::parseDataCount):
+        * wasm/WasmSectionParser.h:
+        * wasm/WasmSections.h:
+        (JSC::Wasm::validateOrder):
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::WASM_SLOW_PATH_DECL):
+        * wasm/WasmSlowPaths.h:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::evaluate):
+        * wasm/wasm.json:
+
 2020-12-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Not using JITCage trampoline for non JITCage JSC
