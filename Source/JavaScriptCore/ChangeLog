@@ -1,3 +1,7 @@
+2020-12-16  Russell Epstein  <repstein@apple.com>
+
+        Revert r270719. rdar://problem/72408033
+
 2020-12-11  Tadeu Zagallo  <tzagallo@apple.com>
 
         REGRESSION (r270665): testapi failing on JSC bots
