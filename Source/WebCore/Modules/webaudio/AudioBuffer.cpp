@@ -169,6 +169,15 @@ RefPtr<Float32Array> AudioBuffer::channelData(unsigned channelIndex)
     return m_channels[channelIndex].copyRef();
 }
 
+float* AudioBuffer::rawChannelData(unsigned channelIndex)
+{
+    if (channelIndex >= m_channels.size())
+        return nullptr;
+    if (hasDetachedChannelBuffer())
+        return nullptr;
+    return m_channels[channelIndex]->data();
+}
+
 ExceptionOr<void> AudioBuffer::copyFromChannel(Ref<Float32Array>&& destination, unsigned channelNumber, unsigned bufferOffset)
 {
     if (destination->isShared())

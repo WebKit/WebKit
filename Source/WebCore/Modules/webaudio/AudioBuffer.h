@@ -65,6 +65,7 @@ public:
 
     // Native channel data access.
     RefPtr<Float32Array> channelData(unsigned channelIndex);
+    float* rawChannelData(unsigned channelIndex);
     void zero();
 
     // Because an AudioBuffer has a JavaScript wrapper, which will be garbage collected, it may take a while for this object to be deleted.
