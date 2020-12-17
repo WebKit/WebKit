@@ -34,7 +34,7 @@
 namespace WebCore {
 namespace Layout {
 
-LineBox::InlineLevelBox::InlineLevelBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize,  Type type)
+LineBox::InlineLevelBox::InlineLevelBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize, Type type)
     : m_layoutBox(makeWeakPtr(layoutBox))
     , m_logicalRect({ }, logicalLeft, logicalSize.width(), logicalSize.height())
     , m_type(type)
@@ -77,10 +77,11 @@ bool LineBox::InlineLevelBox::hasLineBoxRelativeAlignment() const
     return verticalAlignment == VerticalAlign::Top || verticalAlignment == VerticalAlign::Bottom;
 }
 
-LineBox::LineBox(const InlineLayoutPoint& logicalTopleft, InlineLayoutUnit contentLogicalWidth, IsLineConsideredEmpty isLineConsideredEmpty)
+LineBox::LineBox(const InlineLayoutPoint& logicalTopleft, InlineLayoutUnit contentLogicalWidth, IsLineConsideredEmpty isLineConsideredEmpty, size_t numberOfRuns)
     : m_logicalRect(logicalTopleft, InlineLayoutSize { contentLogicalWidth, { } })
     , m_isConsideredEmpty(isLineConsideredEmpty == IsLineConsideredEmpty::Yes)
 {
+    m_nonRootInlineLevelBoxList.reserveCapacity(numberOfRuns);
 }
 
 void LineBox::addRootInlineBox(std::unique_ptr<InlineLevelBox>&& rootInlineBox)

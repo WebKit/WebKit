@@ -420,6 +420,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     auto constructLineRuns = [&] {
         auto lineIndex = formattingState.lines().size();
         // Create the inline runs on the current line. This is mostly text and atomic inline runs.
+        formattingState.lineRuns().reserveCapacity(lineContent.runs.size());
         for (auto& lineRun : lineContent.runs) {
             // FIXME: We should not need to construct a line run for <br>.
             auto& layoutBox = lineRun.layoutBox();
