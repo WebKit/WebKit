@@ -3414,16 +3414,23 @@ template <class TreeBuilder> typename TreeBuilder::ImportSpecifier Parser<LexerT
         // ImportSpecifier :
         // ImportedBinding
         // IdentifierName as ImportedBinding
+        // ModuleExportName as ImportedBinding
         // e.g.
         //     A
         //     A as B
-        ASSERT(matchIdentifierOrKeyword());
-        localNameToken = m_token;
+        ASSERT(matchIdentifierOrKeyword() || match(STRING));
+        bool isModuleExportName = match(STRING);
         localName = m_token.m_data.ident;
         importedName = localName;
+        localNameToken = m_token;
+        if (isModuleExportName)
+            failIfTrue(hasUnpairedSurrogate(localName->string()), "Expected a well-formed-unicode string for the module export name");
         next();
 
-        if (matchContextualKeyword(m_vm.propertyNames->as)) {
+        bool useAs = matchContextualKeyword(m_vm.propertyNames->as);
+        if (isModuleExportName)
+            failIfFalse(useAs, "Expected 'as' after the module export name string");
+        if (useAs) {
             next();
             failIfFalse(matchSpecIdentifier(), "Expected a variable name for the import declaration");
             localNameToken = m_token;
@@ -3502,7 +3509,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseImportDeclara
             next();
 
             while (!match(CLOSEBRACE)) {
-                failIfFalse(matchIdentifierOrKeyword(), "Expected an imported name for the import declaration");
+                failIfFalse(matchIdentifierOrKeyword() || match(STRING), "Expected an imported name or a module export name string for the import declaration");
                 auto specifier = parseImportClauseItem(context, ImportSpecifierType::NamedImport);
                 failIfFalse(specifier, "Cannot parse the named import");
                 context.appendImportSpecifier(specifierList, specifier);
@@ -3528,24 +3535,35 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseImportDeclara
 }
 
 template <typename LexerType>
-template <class TreeBuilder> typename TreeBuilder::ExportSpecifier Parser<LexerType>::parseExportSpecifier(TreeBuilder& context, Vector<std::pair<const Identifier*, const Identifier*>>& maybeExportedLocalNames, bool& hasKeywordForLocalBindings)
+template <class TreeBuilder> typename TreeBuilder::ExportSpecifier Parser<LexerType>::parseExportSpecifier(TreeBuilder& context, Vector<std::pair<const Identifier*, const Identifier*>>& maybeExportedLocalNames, bool& hasKeywordForLocalBindings, bool& hasReferencedModuleExportNames)
 {
     // ExportSpecifier :
     // IdentifierName
     // IdentifierName as IdentifierName
+    // IdentifierName as ModuleExportName
+    // ModuleExportName
+    // ModuleExportName as IdentifierName
+    // ModuleExportName as ModuleExportName
     // http://www.ecma-international.org/ecma-262/6.0/#sec-exports
-    ASSERT(matchIdentifierOrKeyword());
+    ASSERT(matchIdentifierOrKeyword() || match(STRING));
     JSTokenLocation specifierLocation(tokenLocation());
-    if (m_token.m_type & KeywordTokenFlag)
-        hasKeywordForLocalBindings = true;
     const Identifier* localName = m_token.m_data.ident;
     const Identifier* exportedName = localName;
+    if (match(STRING)) {
+        hasReferencedModuleExportNames = true;
+        failIfTrue(hasUnpairedSurrogate(exportedName->string()), "Expected a well-formed-unicode string for the module export name");
+    } else {
+        if (m_token.m_type & KeywordTokenFlag)
+            hasKeywordForLocalBindings = true;
+    }
     next();
 
     if (matchContextualKeyword(m_vm.propertyNames->as)) {
         next();
-        failIfFalse(matchIdentifierOrKeyword(), "Expected an exported name for the export declaration");
+        failIfFalse(matchIdentifierOrKeyword() || match(STRING), "Expected an exported name or a module export name string for the export declaration");
         exportedName = m_token.m_data.ident;
+        if (match(STRING))
+            failIfTrue(hasUnpairedSurrogate(exportedName->string()), "Expected a well-formed-unicode string for the module export name");
         next();
     }
 
@@ -3566,6 +3584,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
     case TIMES: {
         // export * FromClause ;
         // export * as IdentifierName FromClause ;
+        // export * as ModuleExportName FromClause ;
         next();
 
         const Identifier* exportedName = nullptr;
@@ -3573,8 +3592,10 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
         if (matchContextualKeyword(m_vm.propertyNames->as)) {
             next();
             specifierLocation = JSTokenLocation(tokenLocation());
-            failIfFalse(matchIdentifierOrKeyword(), "Expected an exported name for the export declaration");
+            failIfFalse(matchIdentifierOrKeyword() || match(STRING), "Expected an exported name or a module export name string for the export declaration");
             exportedName = m_token.m_data.ident;
+            if (match(STRING))
+                failIfTrue(hasUnpairedSurrogate(exportedName->string()), "Expected a well-formed-unicode string for the module export name");
             next();
         }
 
@@ -3703,9 +3724,10 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
         Vector<std::pair<const Identifier*, const Identifier*>> maybeExportedLocalNames;
 
         bool hasKeywordForLocalBindings = false;
+        bool hasReferencedModuleExportNames = false;
         while (!match(CLOSEBRACE)) {
-            failIfFalse(matchIdentifierOrKeyword(), "Expected a variable name for the export declaration");
-            auto specifier = parseExportSpecifier(context, maybeExportedLocalNames, hasKeywordForLocalBindings);
+            failIfFalse(matchIdentifierOrKeyword() || match(STRING), "Expected a variable name or a module export name string for the export declaration");
+            auto specifier = parseExportSpecifier(context, maybeExportedLocalNames, hasKeywordForLocalBindings, hasReferencedModuleExportNames);
             failIfFalse(specifier, "Cannot parse the named export");
             context.appendExportSpecifier(specifierList, specifier);
             if (!consume(COMMA))
@@ -3718,7 +3740,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
             next();
             moduleName = parseModuleName(context);
             failIfFalse(moduleName, "Cannot parse the 'from' clause");
-        }
+        } else
+            semanticFailIfTrue(hasReferencedModuleExportNames, "Cannot use module export names if they reference variable names in the current module");
         failIfFalse(autoSemiColon(), "Expected a ';' following a targeted export declaration");
 
         if (!moduleName) {

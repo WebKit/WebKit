@@ -1087,9 +1087,22 @@ inline bool equalIgnoringNullity(StringView a, StringView b)
 
 WTF_EXPORT_PRIVATE int codePointCompare(StringView, StringView);
 
+inline bool hasUnpairedSurrogate(StringView string)
+{
+    // Fast path for 8-bit strings; they can't have any surrogates.
+    if (string.is8Bit())
+        return false;
+    for (auto codePoint : string.codePoints()) {
+        if (U_IS_SURROGATE(codePoint))
+            return true;
+    }
+    return false;
+}
+
 } // namespace WTF
 
 using WTF::append;
 using WTF::equal;
 using WTF::StringView;
 using WTF::StringViewWithUnderlyingString;
+using WTF::hasUnpairedSurrogate;

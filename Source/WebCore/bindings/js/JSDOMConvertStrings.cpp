@@ -62,18 +62,6 @@ String valueToByteString(JSGlobalObject& lexicalGlobalObject, JSValue value)
     return stringToByteString(lexicalGlobalObject, scope, WTFMove(string));
 }
 
-static inline bool hasUnpairedSurrogate(StringView string)
-{
-    // Fast path for 8-bit strings; they can't have any surrogates.
-    if (string.is8Bit())
-        return false;
-    for (auto codePoint : string.codePoints()) {
-        if (U_IS_SURROGATE(codePoint))
-            return true;
-    }
-    return false;
-}
-
 static inline String stringToUSVString(String&& string)
 {
     // Fast path for the case where there are no unpaired surrogates.

@@ -19,7 +19,6 @@ skip:
     - regexp-lookbehind
     - legacy-regexp
 
-    - arbitrary-module-namespace-names
     - class-methods-private
     - class-static-methods-private
     - cleanupSome
