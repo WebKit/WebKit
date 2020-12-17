@@ -98,7 +98,7 @@ static Optional<LayoutSize> accumulatedOffsetForInFlowPositionedContinuation(con
 
 static bool canUseSimplifiedTextMeasuring(const StringView& content, const FontCascade& font, bool whitespaceIsCollapsed)
 {
-    if (font.codePath(TextRun(content)) == FontCascade::Complex)
+    if (font.codePath(TextRun(content)) == FontCascade::CodePath::Complex)
         return false;
 
     if (font.wordSpacing() || font.letterSpacing())

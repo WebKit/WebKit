@@ -49,7 +49,7 @@ public:
     static bool isNeeded(RenderText& text, const FontCascade& font)
     {
         TextRun run = RenderBlock::constructTextRun(text, text.style());
-        return font.codePath(run) == FontCascade::Complex;
+        return font.codePath(run) == FontCascade::CodePath::Complex;
     }
 
     TextLayout(RenderText& text, const FontCascade& font, float xPos)

@@ -498,7 +498,7 @@ static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBoxModelObjec
         } else {
             WebCore::TextRun run(String(textRenderer.text()));
             run.setCharacterScanForCodePath(false);
-            if (style.fontCascade().codePath(run) != FontCascade::Simple)
+            if (style.fontCascade().codePath(run) != FontCascade::CodePath::Simple)
                 SET_REASON_AND_RETURN_IF_NEEDED(FlowHasComplexFontCodePath, reasons, includeReasons);
         }
 

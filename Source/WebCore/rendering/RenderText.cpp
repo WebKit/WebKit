@@ -1432,7 +1432,7 @@ bool RenderText::computeCanUseSimplifiedTextMeasuring() const
     // Additional check on the font codepath.
     TextRun run(m_text);
     run.setCharacterScanForCodePath(false);
-    if (font.codePath(run) != FontCascade::Simple)
+    if (font.codePath(run) != FontCascade::CodePath::Simple)
         return false;
 
     auto whitespaceIsCollapsed = style().collapseWhiteSpace();
@@ -1763,7 +1763,7 @@ bool RenderText::computeCanUseSimpleFontCodePath() const
 {
     if (m_isAllASCII || text().is8Bit())
         return true;
-    return FontCascade::characterRangeCodePath(text().characters16(), length()) == FontCascade::Simple;
+    return FontCascade::characterRangeCodePath(text().characters16(), length()) == FontCascade::CodePath::Simple;
 }
 
 void RenderText::momentarilyRevealLastTypedCharacter(unsigned offsetAfterLastTypedCharacter)

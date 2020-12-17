@@ -100,7 +100,7 @@ void SVGTextMetricsBuilder::initializeMeasurementWithTextRenderer(RenderSVGInlin
 
     const FontCascade& scaledFont = text.scaledFont();
     m_run = SVGTextMetrics::constructTextRun(text);
-    m_isComplexText = scaledFont.codePath(m_run) == FontCascade::Complex;
+    m_isComplexText = scaledFont.codePath(m_run) == FontCascade::CodePath::Complex;
 
     if (m_isComplexText)
         m_simpleWidthIterator = nullptr;

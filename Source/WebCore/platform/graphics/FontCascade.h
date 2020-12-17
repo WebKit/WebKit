@@ -34,12 +34,6 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/unicode/CharacterNames.h>
 
-// "X11/X.h" defines Complex to 0 and conflicts
-// with Complex value in CodePath enum.
-#ifdef Complex
-#undef Complex
-#endif
-
 namespace WebCore {
 
 class GraphicsContext;
@@ -189,9 +183,9 @@ public:
 
     static bool isSubpixelAntialiasingAvailable();
 
-    enum CodePath { Auto, Simple, Complex, SimpleWithGlyphOverflow };
+    enum class CodePath : uint8_t { Auto, Simple, Complex, SimpleWithGlyphOverflow };
     CodePath codePath(const TextRun&, Optional<unsigned> from = WTF::nullopt, Optional<unsigned> to = WTF::nullopt) const;
-    static CodePath characterRangeCodePath(const LChar*, unsigned) { return Simple; }
+    static CodePath characterRangeCodePath(const LChar*, unsigned) { return CodePath::Simple; }
     static CodePath characterRangeCodePath(const UChar*, unsigned len);
 
     bool primaryFontIsSystemFont() const;

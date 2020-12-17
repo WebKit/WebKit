@@ -1,3 +1,15 @@
+2020-12-17  Rob Buis  <rbuis@igalia.com>
+
+        Make FontCascade::CodePath an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=219947
+
+        Reviewed by Alex Christensen.
+
+        Adapt to enum class change.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setAlwaysUsesComplexTextCodePath):
+
 2020-12-16  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process][MSE] Add an IPC message BufferedSamplesForTrackId for testing purposes

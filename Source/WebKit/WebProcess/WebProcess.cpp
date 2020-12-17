@@ -655,7 +655,7 @@ void WebProcess::setDefaultRequestTimeoutInterval(double timeoutInterval)
 
 void WebProcess::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
 {
-    WebCore::FontCascade::setCodePath(alwaysUseComplexText ? WebCore::FontCascade::Complex : WebCore::FontCascade::Auto);
+    WebCore::FontCascade::setCodePath(alwaysUseComplexText ? WebCore::FontCascade::CodePath::Complex : WebCore::FontCascade::CodePath::Auto);
 }
 
 void WebProcess::setShouldUseFontSmoothing(bool useFontSmoothing)
