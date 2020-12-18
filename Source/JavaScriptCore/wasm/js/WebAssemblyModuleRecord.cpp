@@ -537,7 +537,6 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     Wasm::Module& module = m_instance->instance().module();
-    Wasm::CodeBlock* codeBlock = m_instance->instance().codeBlock();
     const Wasm::ModuleInformation& moduleInformation = module.moduleInformation();
 
     const Vector<Wasm::Segment::Ptr>& data = moduleInformation.data;
@@ -608,48 +607,7 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
         return exception.value();
 
     forEachActiveElement([&] (const Wasm::Element& element, uint32_t tableIndex, uint32_t startElementIndex) {
-        for (uint32_t i = 0; i < element.functionIndices.size(); ++i) {
-
-            const uint32_t elementIndex = startElementIndex + i;
-            const uint32_t functionIndex = element.functionIndices[i];
-            if (Wasm::Element::isNullFuncIndex(functionIndex)) {
-                m_instance->table(tableIndex)->clear(elementIndex);
-                continue;
-            }
-
-            // FIXME: This essentially means we're exporting an import.
-            // We need a story here. We need to create a WebAssemblyFunction
-            // for the import.
-            // https://bugs.webkit.org/show_bug.cgi?id=165510
-            Wasm::SignatureIndex signatureIndex = module.signatureIndexFromFunctionIndexSpace(functionIndex);
-            if (functionIndex < codeBlock->functionImportCount()) {
-                JSObject* functionImport = m_instance->instance().importFunction<WriteBarrier<JSObject>>(functionIndex)->get();
-                if (isWebAssemblyHostFunction(vm, functionImport)) {
-                    WebAssemblyFunction* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(vm, functionImport);
-                    // If we ever import a WebAssemblyWrapperFunction, we set the import as the unwrapped value.
-                    // Because a WebAssemblyWrapperFunction can never wrap another WebAssemblyWrapperFunction,
-                    // the only type this could be is WebAssemblyFunction.
-                    RELEASE_ASSERT(wasmFunction);
-                    m_instance->table(tableIndex)->set(elementIndex, wasmFunction);
-                    continue;
-                }
-
-                m_instance->table(tableIndex)->set(elementIndex,
-                    WebAssemblyWrapperFunction::create(vm, globalObject, globalObject->webAssemblyWrapperFunctionStructure(), functionImport, functionIndex, m_instance.get(), signatureIndex));
-                continue;
-            }
-
-            Wasm::Callee& embedderEntrypointCallee = codeBlock->embedderEntrypointCalleeFromFunctionIndexSpace(functionIndex);
-            Wasm::WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = codeBlock->entrypointLoadLocationFromFunctionIndexSpace(functionIndex);
-            const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
-            // FIXME: Say we export local function "foo" at function index 0.
-            // What if we also set it to the table an Element w/ index 0.
-            // Does (new Instance(...)).exports.foo === table.get(0)?
-            // https://bugs.webkit.org/show_bug.cgi?id=165825
-            WebAssemblyFunction* function = WebAssemblyFunction::create(
-                vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), String(), m_instance.get(), embedderEntrypointCallee, entrypointLoadLocation, signatureIndex);
-            m_instance->table(tableIndex)->set(elementIndex, function);
-        }
+        m_instance->instance().initElementSegment(tableIndex, element, startElementIndex, 0U, element.length());
     });
 
     ASSERT(!exception);
