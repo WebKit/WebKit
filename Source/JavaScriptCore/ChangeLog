@@ -1,3 +1,13 @@
+2020-12-18  Mark Lam  <mark.lam@apple.com>
+
+        Build fix after r270988.
+        https://bugs.webkit.org/show_bug.cgi?id=220021
+        <rdar://problem/72474809>
+
+        Not reviewed.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2020-12-18  Saam Barati  <sbarati@apple.com>
 
         CachedRefPtr should adoptRef before calling ref to appease RefCounted's debug assertions

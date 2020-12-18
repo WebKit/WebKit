@@ -303,7 +303,7 @@
 		0F33FCFC1C1625BE00323F67 /* B3Dominators.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F33FCFA1C1625BE00323F67 /* B3Dominators.h */; };
 		0F34B14A16D42013001CDA5A /* DFGUseKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F34B14816D4200E001CDA5A /* DFGUseKind.h */; };
 		0F37308D1C0BD29100052BFA /* B3PhiChildren.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F37308B1C0BD29100052BFA /* B3PhiChildren.h */; };
-		0F37308F1C0CD68500052BFA /* DisallowMacroScratchRegisterUsage.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F37308E1C0CD68500052BFA /* DisallowMacroScratchRegisterUsage.h */; };
+		0F37308F1C0CD68500052BFA /* DisallowMacroScratchRegisterUsage.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F37308E1C0CD68500052BFA /* DisallowMacroScratchRegisterUsage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F3730911C0CD70C00052BFA /* AllowMacroScratchRegisterUsage.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3730901C0CD70C00052BFA /* AllowMacroScratchRegisterUsage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F3730931C0D67EE00052BFA /* AirUseCounts.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3730921C0D67EE00052BFA /* AirUseCounts.h */; };
 		0F38B01217CF078300B144D3 /* LLIntEntrypoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F38B01017CF077F00B144D3 /* LLIntEntrypoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
