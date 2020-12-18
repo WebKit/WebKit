@@ -42,6 +42,8 @@
 
 namespace WebCore {
 
+#if ENABLE(APP_HIGHLIGHTS)
+
 static RefPtr<Node> findNodeByPathIndex(const Node& parent, unsigned pathIndex, const String& nodeName)
 {
     if (!is<ContainerNode>(parent))
@@ -247,5 +249,7 @@ Vector<AppHighlightRangeData> AppHighlightStorage::restoreAppHighlights(Ref<Shar
     }
     return unrestoredRanges;
 }
+
+#endif
 
 } // namespace WebCore

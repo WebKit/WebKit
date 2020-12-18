@@ -509,11 +509,13 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagMediaPlayPause;
     case WebCore::ContextMenuItemTagMediaMute:
         return kWKContextMenuItemTagMediaMute;
-#if PLATFORM(COCOA)
+#if ENABLE(APP_HIGHLIGHTS)
     case WebCore::ContextMenuItemTagAddHighlightToCurrentGroup:
         return kWKContextMenuItemTagAddHighlightToCurrentGroup;
     case WebCore::ContextMenuItemTagAddHighlightToNewGroup:
         return kWKContextMenuItemTagAddHighlightToNewGroup;
+#endif
+#if PLATFORM(COCOA)
     case WebCore::ContextMenuItemTagCorrectSpellingAutomatically:
         return kWKContextMenuItemTagCorrectSpellingAutomatically;
     case WebCore::ContextMenuItemTagSubstitutionsMenu:
@@ -707,11 +709,13 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagMediaPlayPause;
     case kWKContextMenuItemTagMediaMute:
         return WebCore::ContextMenuItemTagMediaMute;
-#if PLATFORM(COCOA)
+#if ENABLE(APP_HIGHLIGHT)
     case kWKContextMenuItemTagAddHighlightToCurrentGroup:
         return WebCore::ContextMenuItemTagAddHighlightToCurrentGroup;
     case kWKContextMenuItemTagAddHighlightToNewGroup:
         return WebCore::ContextMenuItemTagAddHighlightToNewGroup;
+#endif
+#if PLATFORM(COCOA)
     case kWKContextMenuItemTagCorrectSpellingAutomatically:
         return WebCore::ContextMenuItemTagCorrectSpellingAutomatically;
     case kWKContextMenuItemTagSubstitutionsMenu:

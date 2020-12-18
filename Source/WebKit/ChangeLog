@@ -1,3 +1,20 @@
+2020-12-18  Megan Gardner  <megan_gardner@apple.com>
+
+        Gate all of the code associated with app highlights
+        https://bugs.webkit.org/show_bug.cgi?id=220003
+        <rdar://problem/72451893>
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toImpl):
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultAppHighlightsEnabled):
+        * Shared/WebPreferencesDefaultValues.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::menuItemIdentifier):
+
 2020-12-18  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Stop leaking an XPC boost message to XPC services

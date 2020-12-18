@@ -44,10 +44,10 @@ public:
     void setFromMapLike(String&&, Ref<Highlight>&&);
     void clear();
     bool remove(const String&);
-
+#if ENABLE(APP_HIGHLIGHTS)
     WEBCORE_EXPORT void addAppHighlight(Ref<StaticRange>&&);
     static ASCIILiteral appHighlightKey();
-    
+#endif
     const HashMap<String, Ref<Highlight>>& map() const { return m_map; }
     
 private:

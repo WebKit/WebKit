@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+#if ENABLE(APP_HIGHLIGHTS)
+
 class AppHighlightListData;
 class AppHighlightRangeData;
 class Document;
@@ -50,5 +52,7 @@ public:
 private:
     WeakPtr<Document> m_document;
 };
+
+#endif
 
 } // namespace WebCore

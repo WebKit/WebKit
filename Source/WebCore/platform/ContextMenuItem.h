@@ -118,9 +118,11 @@ enum ContextMenuAction {
     ContextMenuItemTagTextDirectionDefault,
     ContextMenuItemTagTextDirectionLeftToRight,
     ContextMenuItemTagTextDirectionRightToLeft,
-#if PLATFORM(COCOA)
+#if ENABLE(APP_HIGHLIGHTS)
     ContextMenuItemTagAddHighlightToCurrentGroup,
     ContextMenuItemTagAddHighlightToNewGroup,
+#endif
+#if PLATFORM(COCOA)
     ContextMenuItemTagCorrectSpellingAutomatically,
     ContextMenuItemTagSubstitutionsMenu,
     ContextMenuItemTagShowSubstitutions,

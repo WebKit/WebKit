@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+#if ENABLE(APP_HIGHLIGHTS)
+
 class SharedBuffer;
 
 class AppHighlightRangeData {
@@ -233,5 +235,7 @@ template<class Decoder> Optional<AppHighlightListData> AppHighlightListData::dec
 
     return {{ WTFMove(*annotationRanges) }};
 }
+
+#endif
 
 } // namespace WebCore

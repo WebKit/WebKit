@@ -161,8 +161,10 @@ public:
     // Highlighting color for search matches.
     Color textSearchHighlightColor(OptionSet<StyleColor::Options>) const;
 
+#if ENABLE(APP_HIGHLIGHTS)
     // Default highlighting color for app highlights.
     Color appHighlightColor(OptionSet<StyleColor::Options>) const;
+#endif
 
     Color datePlaceholderTextColor(const Color& textColor, const Color& backgroundColor) const;
 

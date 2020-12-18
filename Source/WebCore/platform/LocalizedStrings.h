@@ -49,6 +49,8 @@ namespace WebCore {
 
 #if PLATFORM(COCOA)
     String copyImageUnknownFileLabel();
+#endif
+#if ENABLE(APP_HIGHLIGHTS)
     WEBCORE_EXPORT String contextMenuItemTagAddHighlightToCurrentGroup();
     WEBCORE_EXPORT String contextMenuItemTagAddHighlightToNewGroup();
 #endif

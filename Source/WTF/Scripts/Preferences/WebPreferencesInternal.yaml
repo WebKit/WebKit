@@ -54,7 +54,8 @@ AlwaysZoomOnDoubleTap:
 AppHighlightsEnabled:
   type: bool
   humanReadableName: "App Highlights"
-  humanReadableDescription: "Enable persistant highlights for apps"
+  humanReadableDescription: "Enable persistent highlights for apps"
+  condition: ENABLE(APP_HIGHLIGHTS)
   exposed: [ WebKit ]
   defaultValue:
     WebKitLegacy:

@@ -29,8 +29,6 @@
 #include "Document.h"
 
 #include "AXObjectCache.h"
-#include "AppHighlightListData.h"
-#include "AppHighlightStorage.h"
 #include "Attr.h"
 #include "BeforeUnloadEvent.h"
 #include "CDATASection.h"
@@ -261,6 +259,11 @@
 #include <wtf/UUID.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/TextStream.h>
+
+#if ENABLE(APP_HIGHLIGHTS)
+#include "AppHighlightListData.h"
+#include "AppHighlightStorage.h"
+#endif
 
 #if ENABLE(DEVICE_ORIENTATION)
 #include "DeviceMotionEvent.h"
@@ -796,10 +799,10 @@ void Document::commonTeardown()
     
     if (m_highlightRegister)
         m_highlightRegister->clear();
-
+#if ENABLE(APP_HIGHLIGHTS)
     if (m_appHighlightRegister)
         m_appHighlightRegister->clear();
-
+#endif
     m_pendingScrollEventTargetList = nullptr;
 
     if (m_timelinesController)
@@ -2780,7 +2783,7 @@ HighlightRegister& Document::highlightRegister()
         m_highlightRegister = HighlightRegister::create();
     return *m_highlightRegister;
 }
-
+#if ENABLE(APP_HIGHLIGHTS)
 HighlightRegister& Document::appHighlightRegister()
 {
     if (!m_appHighlightRegister)
@@ -2794,7 +2797,7 @@ AppHighlightStorage& Document::appHighlightStorage()
         m_appHighlightStorage = makeUnique<AppHighlightStorage>(*this);
     return *m_appHighlightStorage;
 }
-
+#endif
 void Document::collectRangeDataFromRegister(Vector<WeakPtr<HighlightRangeData>>& rangesData, const HighlightRegister& highlightRegister)
 {
     for (auto& highlight : highlightRegister.map()) {
@@ -2813,8 +2816,10 @@ void Document::updateHighlightPositions()
     Vector<WeakPtr<HighlightRangeData>> rangesData;
     if (m_highlightRegister)
         collectRangeDataFromRegister(rangesData, *m_highlightRegister.get());
+#if ENABLE(APP_HIGHLIGHTS)
     if (m_appHighlightRegister)
         collectRangeDataFromRegister(rangesData, *m_appHighlightRegister.get());
+#endif
 
     for (auto& weakRangeData : rangesData) {
         if (auto* rangeData = weakRangeData.get()) {

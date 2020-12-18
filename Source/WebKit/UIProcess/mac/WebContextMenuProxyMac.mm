@@ -417,13 +417,13 @@ static NSString *menuItemIdentifier(const WebCore::ContextMenuAction action)
 
     case ContextMenuItemTagLookUpInDictionary:
         return _WKMenuItemIdentifierLookUp;
-            
+#if ENABLE(APP_HIGHLIGHTS)
     case ContextMenuItemTagAddHighlightToCurrentGroup:
         return _WKMenuItemIdentifierAddHighlightToCurrentGroup;
         
     case ContextMenuItemTagAddHighlightToNewGroup:
         return _WKMenuItemIdentifierAddHighlightToNewGroup;
-
+#endif
     case ContextMenuItemTagOpenFrameInNewWindow:
         return _WKMenuItemIdentifierOpenFrameInNewWindow;
 

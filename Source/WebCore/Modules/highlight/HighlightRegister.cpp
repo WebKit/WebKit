@@ -52,7 +52,7 @@ bool HighlightRegister::remove(const String& key)
 {
     return m_map.remove(key);
 }
-
+#if ENABLE(APP_HIGHLIGHTS)
 ASCIILiteral HighlightRegister::appHighlightKey()
 {
     return "appHighlightKey"_s;
@@ -65,5 +65,5 @@ void HighlightRegister::addAppHighlight(Ref<StaticRange>&& value)
     else
         setFromMapLike(appHighlightKey(), Highlight::create(WTFMove(value)));
 }
-
+#endif
 }

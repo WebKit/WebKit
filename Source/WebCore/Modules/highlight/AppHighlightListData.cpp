@@ -39,6 +39,8 @@
 
 namespace WebCore {
 
+#if ENABLE(APP_HIGHLIGHTS)
+
 AppHighlightListData AppHighlightListData::create(const SharedBuffer& buffer)
 {
     auto decoder = buffer.decoder();
@@ -53,5 +55,7 @@ Ref<SharedBuffer> AppHighlightListData::toData() const
     encoder << *this;
     return SharedBuffer::create(encoder.buffer(), encoder.bufferSize());
 }
+
+#endif
 
 } // namespace WebCore

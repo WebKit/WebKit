@@ -1579,12 +1579,14 @@ public:
 
     HighlightRegister* highlightRegisterIfExists() { return m_highlightRegister.get(); }
     HighlightRegister& highlightRegister();
+        void updateHighlightPositions();
+#if ENABLE(APP_HIGHLIGHTS)
     HighlightRegister* appHighlightRegisterIfExists() { return m_appHighlightRegister.get(); }
     WEBCORE_EXPORT HighlightRegister& appHighlightRegister();
-    void updateHighlightPositions();
 
     AppHighlightStorage& appHighlightStorage();
     AppHighlightStorage* appHighlightStorageIfExists() const { return m_appHighlightStorage.get(); };
+#endif
 
     bool allowsContentJavaScript() const;
 
@@ -1943,9 +1945,10 @@ private:
 #endif
         
     RefPtr<HighlightRegister> m_highlightRegister;
+#if ENABLE(APP_HIGHLIGHTS)
     RefPtr<HighlightRegister> m_appHighlightRegister;
-
     std::unique_ptr<AppHighlightStorage> m_appHighlightStorage;
+#endif
 
     Timer m_visualUpdatesSuppressionTimer;
 
