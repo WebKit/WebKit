@@ -274,6 +274,7 @@ static CaptureDevice toCaptureDevice(const MockMediaDevice& device)
 {
     auto captureDevice = device.captureDevice();
     captureDevice.setEnabled(true);
+    captureDevice.setIsMockDevice(true);
     return captureDevice;
 }
 

@@ -44,14 +44,16 @@ void SpeechRecognitionRemoteRealtimeMediaSourceManager::addSource(SpeechRecognit
     ASSERT(!m_sources.contains(identifier));
     m_sources.add(identifier, makeWeakPtr(source));
 
-#if ENABLE(SANDBOX_EXTENSIONS) && USE(APPLE_INTERNAL_SDK)
-    if (!m_hasGrantedSandboxExtensions) {
-        SandboxExtension::Handle handleForTCCD;
-        SandboxExtension::createHandleForMachLookup("com.apple.tccd"_s, m_connection->getAuditToken(), handleForTCCD);
-        SandboxExtension::Handle handleForMicrophone;
-        SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone"_s, handleForMicrophone);
-        send(Messages::SpeechRecognitionRealtimeMediaSourceManager::GrantSandboxExtensions(handleForTCCD, handleForMicrophone));
-        m_hasGrantedSandboxExtensions = true;
+#if ENABLE(SANDBOX_EXTENSIONS)
+    if (!captureDevice.isMockDevice()) {
+        m_sourcesNeedingSandboxExtension.add(identifier);
+        if (m_sourcesNeedingSandboxExtension.size() == 1) {
+            SandboxExtension::Handle handleForTCCD;
+            SandboxExtension::createHandleForMachLookup("com.apple.tccd"_s, m_connection->getAuditToken(), handleForTCCD);
+            SandboxExtension::Handle handleForMicrophone;
+            SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone"_s, handleForMicrophone);
+            send(Messages::SpeechRecognitionRealtimeMediaSourceManager::GrantSandboxExtensions(handleForTCCD, handleForMicrophone));
+        }
     }
 #endif
 
@@ -64,10 +66,10 @@ void SpeechRecognitionRemoteRealtimeMediaSourceManager::removeSource(SpeechRecog
     ASSERT(m_sources.get(identifier) == &source);
     m_sources.remove(identifier);
 
-#if ENABLE(SANDBOX_EXTENSIONS) && USE(APPLE_INTERNAL_SDK)
-    if (m_sources.isEmpty() && m_hasGrantedSandboxExtensions) {
-        send(Messages::SpeechRecognitionRealtimeMediaSourceManager::RevokeSandboxExtensions());
-        m_hasGrantedSandboxExtensions = false;
+#if ENABLE(SANDBOX_EXTENSIONS)
+    if (m_sourcesNeedingSandboxExtension.remove(identifier)) {
+        if (m_sourcesNeedingSandboxExtension.isEmpty())
+            send(Messages::SpeechRecognitionRealtimeMediaSourceManager::RevokeSandboxExtensions());
     }
 #endif
 

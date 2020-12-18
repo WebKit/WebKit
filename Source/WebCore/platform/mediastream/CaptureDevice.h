@@ -66,6 +66,9 @@ public:
     bool isDefault() const { return m_default; }
     void setIsDefault(bool isDefault) { m_default = isDefault; }
 
+    bool isMockDevice() const { return m_isMockDevice; }
+    void setIsMockDevice(bool isMockDevice) { m_isMockDevice = isMockDevice; }
+
     explicit operator bool() const { return m_type != DeviceType::Unknown; }
 
 #if ENABLE(MEDIA_STREAM)
@@ -78,6 +81,7 @@ public:
         encoder << m_enabled;
         encoder << m_default;
         encoder << m_type;
+        encoder << m_isMockDevice;
     }
 
     template <class Decoder>
@@ -113,9 +117,15 @@ public:
         if (!type)
             return WTF::nullopt;
 
+        Optional<bool> isMockDevice;
+        decoder >> isMockDevice;
+        if (!isMockDevice)
+            return WTF::nullopt;
+
         Optional<CaptureDevice> device = {{ WTFMove(*persistentId), WTFMove(*type), WTFMove(*label), WTFMove(*groupId) }};
         device->setEnabled(*enabled);
         device->setIsDefault(*isDefault);
+        device->setIsMockDevice(*isMockDevice);
         return device;
     }
 #endif
@@ -127,6 +137,7 @@ private:
     String m_groupId;
     bool m_enabled { false };
     bool m_default { false };
+    bool m_isMockDevice { false };
 };
 
 } // namespace WebCore

@@ -37,7 +37,7 @@
 namespace WebKit {
 
 
-SpeechRecognitionServer::SpeechRecognitionServer(Ref<IPC::Connection>&& connection, SpeechRecognitionServerIdentifier identifier, SpeechRecognitionPermissionChecker&& permissionChecker, SpeechRecognitionCheckIfmockSpeechRecognitionEnabled&& checkIfEnabled
+SpeechRecognitionServer::SpeechRecognitionServer(Ref<IPC::Connection>&& connection, SpeechRecognitionServerIdentifier identifier, SpeechRecognitionPermissionChecker&& permissionChecker, SpeechRecognitionCheckIfMockSpeechRecognitionEnabled&& checkIfEnabled
 #if ENABLE(MEDIA_STREAM)
     , RealtimeMediaSourceCreateFunction&& function
 #endif
@@ -45,7 +45,7 @@ SpeechRecognitionServer::SpeechRecognitionServer(Ref<IPC::Connection>&& connecti
     : m_connection(WTFMove(connection))
     , m_identifier(identifier)
     , m_permissionChecker(WTFMove(permissionChecker))
-    , m_checkIfmockSpeechRecognitionEnabled(WTFMove(checkIfEnabled))
+    , m_checkIfMockSpeechRecognitionEnabled(WTFMove(checkIfEnabled))
 #if ENABLE(MEDIA_STREAM)
     , m_realtimeMediaSourceCreateFunction(WTFMove(function))
 #endif
@@ -125,7 +125,7 @@ void SpeechRecognitionServer::handleRequest(WebCore::SpeechRecognitionRequest& r
         return;
     }
 
-    bool mockDeviceCapturesEnabled = m_checkIfmockSpeechRecognitionEnabled();
+    bool mockDeviceCapturesEnabled = m_checkIfMockSpeechRecognitionEnabled();
     m_recognizer->start(clientIdentifier, sourceOrError.source(), mockDeviceCapturesEnabled, request.lang(), request.continuous(), request.interimResults(), request.maxAlternatives());
 #else
     m_requests.remove(clientIdentifier);

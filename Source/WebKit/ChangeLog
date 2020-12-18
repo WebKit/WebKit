@@ -1,3 +1,23 @@
+2020-12-18  Sihui Liu  <sihui_liu@apple.com>
+
+        SpeechRecognitionRemoteRealtimeMediaSourceManager should not issue sandbox extension for mocked devices
+        https://bugs.webkit.org/show_bug.cgi?id=219972
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/SpeechRecognitionPermissionManager.cpp:
+        (WebKit::SpeechRecognitionPermissionManager::startProcessingRequest): We need to sync the preference not only
+        on when mockCaptureDevicesEnabled is set, but also when it is unset.
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.cpp:
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSourceManager::addSource): Grant sandbox extensions to web process
+        when the first source that uses a real device is created.
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSourceManager::removeSource): Revoke sandbox extensions from web 
+        process when the last source that uses a real device is delete.
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.h:
+        * UIProcess/SpeechRecognitionServer.cpp: Correct a typo.
+        (WebKit::SpeechRecognitionServer::SpeechRecognitionServer):
+        * UIProcess/SpeechRecognitionServer.h: Correct a typo
+
 2020-12-18  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r270938): ASSERTION FAILED: !m_renderThread in WebKit::RemoteAudioDestinationProxy::startRenderingThread

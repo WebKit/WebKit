@@ -103,8 +103,8 @@ void SpeechRecognitionPermissionManager::startProcessingRequest()
     m_microphoneCheck = computeMicrophoneAccess();
     m_speechRecognitionServiceCheck = computeSpeechRecognitionServiceAccess();
 
+    m_page.syncIfMockDevicesEnabledChanged();
     if (m_page.preferences().mockCaptureDevicesEnabled()) {
-        m_page.syncIfMockDevicesEnabledChanged();
         m_microphoneCheck = CheckResult::Granted;
         m_speechRecognitionServiceCheck = CheckResult::Granted;
     }

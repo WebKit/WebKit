@@ -47,16 +47,16 @@ enum class SpeechRecognitionPermissionDecision : bool;
 
 using SpeechRecognitionServerIdentifier = WebCore::PageIdentifier;
 using SpeechRecognitionPermissionChecker = Function<void(const WebCore::ClientOrigin&, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&&)>;
-using SpeechRecognitionCheckIfmockSpeechRecognitionEnabled = Function<bool()>;
+using SpeechRecognitionCheckIfMockSpeechRecognitionEnabled = Function<bool()>;
 
 class SpeechRecognitionServer : public CanMakeWeakPtr<SpeechRecognitionServer>, public IPC::MessageReceiver, private IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
 #if ENABLE(MEDIA_STREAM)
     using RealtimeMediaSourceCreateFunction = Function<WebCore::CaptureSourceOrError()>;
-    SpeechRecognitionServer(Ref<IPC::Connection>&&, SpeechRecognitionServerIdentifier, SpeechRecognitionPermissionChecker&&, SpeechRecognitionCheckIfmockSpeechRecognitionEnabled&&, RealtimeMediaSourceCreateFunction&&);
+    SpeechRecognitionServer(Ref<IPC::Connection>&&, SpeechRecognitionServerIdentifier, SpeechRecognitionPermissionChecker&&, SpeechRecognitionCheckIfMockSpeechRecognitionEnabled&&, RealtimeMediaSourceCreateFunction&&);
 #else
-    SpeechRecognitionServer(Ref<IPC::Connection>&&, SpeechRecognitionServerIdentifier, SpeechRecognitionPermissionChecker&&, SpeechRecognitionCheckIfmockSpeechRecognitionEnabled&&);
+    SpeechRecognitionServer(Ref<IPC::Connection>&&, SpeechRecognitionServerIdentifier, SpeechRecognitionPermissionChecker&&, SpeechRecognitionCheckIfMockSpeechRecognitionEnabled&&);
 #endif
 
     void start(WebCore::SpeechRecognitionConnectionClientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&&);
@@ -82,7 +82,7 @@ private:
     HashMap<WebCore::SpeechRecognitionConnectionClientIdentifier, std::unique_ptr<WebCore::SpeechRecognitionRequest>> m_requests;
     SpeechRecognitionPermissionChecker m_permissionChecker;
     std::unique_ptr<WebCore::SpeechRecognizer> m_recognizer;
-    SpeechRecognitionCheckIfmockSpeechRecognitionEnabled m_checkIfmockSpeechRecognitionEnabled;
+    SpeechRecognitionCheckIfMockSpeechRecognitionEnabled m_checkIfMockSpeechRecognitionEnabled;
     bool m_isResetting { false };
 
 #if ENABLE(MEDIA_STREAM)
