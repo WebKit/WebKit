@@ -1,3 +1,18 @@
+2020-12-18  Mark Lam  <mark.lam@apple.com>
+
+        Fix MacroAssemblerARM64E::validateUntaggedPtr() to account for TBI.
+        https://bugs.webkit.org/show_bug.cgi?id=220021
+        <rdar://problem/72474809>
+
+        Reviewed by Saam Barati.
+
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/DisallowMacroScratchRegisterUsage.h:
+        - templatized the DisallowMacroScratchRegisterUsage class so that we can #include
+          it in MacroAssembler implementations.
+        * assembler/MacroAssemblerARM64E.h:
+        (JSC::MacroAssemblerARM64E::validateUntaggedPtr):
+
 2020-12-17  Mark Lam  <mark.lam@apple.com>
 
         Add tagging to JIT probe's return address.

@@ -46,9 +46,11 @@ namespace JSC {
 #if ENABLE(ASSEMBLER)
 
 class AllowMacroScratchRegisterUsage;
-class DisallowMacroScratchRegisterUsage;
 class LinkBuffer;
 class Watchpoint;
+
+template<typename T> class DisallowMacroScratchRegisterUsage;
+
 namespace DFG {
 struct OSRExit;
 }
@@ -1107,7 +1109,7 @@ protected:
 
     friend class AllowMacroScratchRegisterUsage;
     friend class AllowMacroScratchRegisterUsageIf;
-    friend class DisallowMacroScratchRegisterUsage;
+    template<typename T> friend class DisallowMacroScratchRegisterUsage;
     unsigned m_tempRegistersValidBits;
     bool m_allowScratchRegister { true };
 

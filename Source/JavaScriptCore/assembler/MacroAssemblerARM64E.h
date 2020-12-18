@@ -27,6 +27,8 @@
 
 #if ENABLE(ASSEMBLER) && CPU(ARM64E)
 
+#include "DisallowMacroScratchRegisterUsage.h"
+
 // We need to include this before MacroAssemblerARM64.h because MacroAssemblerARM64
 // will be defined in terms of ARM64EAssembler for ARM64E.
 #include "ARM64EAssembler.h"
@@ -83,7 +85,12 @@ public:
     {
         if (scratch == InvalidGPR)
             scratch = getCachedDataTempRegisterIDAndInvalidate();
-        load8(Address(target), scratch);
+
+        DisallowMacroScratchRegisterUsage disallowScope(*this);
+        rshift64(target, TrustedImm32(8), scratch);
+        and64(TrustedImm64(0xff000000000000), scratch, scratch);
+        or64(target, scratch, scratch);
+        load8(Address(scratch), scratch);
     }
 
     ALWAYS_INLINE void untagPtr(RegisterID tag, RegisterID target)
