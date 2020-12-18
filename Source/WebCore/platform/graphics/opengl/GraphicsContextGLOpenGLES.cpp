@@ -32,6 +32,7 @@
 #if ENABLE(WEBGL) && USE(OPENGL_ES)
 
 #include "ExtensionsGLOpenGLES.h"
+#include "ImageData.h"
 #include "IntRect.h"
 #include "IntSize.h"
 #include "NotImplemented.h"
