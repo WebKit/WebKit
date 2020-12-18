@@ -39,6 +39,10 @@ public:
     explicit WebGLLayerSwapChain(WebGLLayer* layer)  : m_layer(layer) { };
     ~WebGLLayerSwapChain() override = default;
     void present(Buffer) override;
+    const Buffer& displayBuffer() const override
+    {
+        return m_displayBuffer;
+    }
     Buffer recycleBuffer() override
     {
         if (m_spareBuffer.surface) {

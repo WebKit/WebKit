@@ -121,6 +121,11 @@ void RemoteGraphicsContextGLProxy::paintRenderingResultsToCanvas(ImageBuffer*)
     notImplemented();
 }
 
+void RemoteGraphicsContextGLProxy::paintCompositedResultsToCanvas(ImageBuffer*)
+{
+    notImplemented();
+}
+
 RefPtr<ImageData> RemoteGraphicsContextGLProxy::paintRenderingResultsToImageData()
 {
     notImplemented();

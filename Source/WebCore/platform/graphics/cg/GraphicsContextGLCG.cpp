@@ -505,36 +505,35 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
     return true;
 }
 
-static void releaseImageData(void*, const void* data, size_t)
+static void releaseImageData(void* imageData, const void*, size_t)
 {
-    fastFree(const_cast<void*>(data));
+    reinterpret_cast<ImageData*>(imageData)->deref();
 }
 
-void GraphicsContextGLOpenGL::paintToCanvas(const unsigned char* imagePixels, const IntSize& imageSize, const IntSize& canvasSize, GraphicsContext& context)
+void GraphicsContextGLOpenGL::paintToCanvas(Ref<ImageData>&& imageData, const IntSize& canvasSize, GraphicsContext& context)
 {
-    if (!imagePixels || imageSize.isEmpty() || canvasSize.isEmpty())
+    ASSERT(!imageData->size().isEmpty());
+    if (canvasSize.isEmpty())
         return;
+    auto attrs = contextAttributes();
+    // Input is GL_RGBA == kCGBitmapByteOrder32Big | kCGImageAlpha*Last.
+    // GL_BGRA would be kCGBitmapByteOrder32Little | kCGImageAlpha*First.
+    CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Big;
+    if (!attrs.alpha)
+        bitmapInfo |= kCGImageAlphaNoneSkipLast;
+    else if (attrs.premultipliedAlpha)
+        bitmapInfo |= kCGImageAlphaPremultipliedLast;
+    else
+        bitmapInfo |= kCGImageAlphaLast;
+
+    auto imageSize = imageData->size();
     int rowBytes = imageSize.width() * 4;
-    RetainPtr<CGDataProviderRef> dataProvider;
-
-    if (context.isAcceleratedContext()) {
-        unsigned char* copiedPixels;
-
-        if (!tryFastCalloc(imageSize.height(), rowBytes).getValue(copiedPixels))
-            return;
-
-        memcpy(copiedPixels, imagePixels, rowBytes * imageSize.height());
-
         size_t dataSize = rowBytes * imageSize.height();
-        verifyImageBufferIsBigEnough(copiedPixels, dataSize);
-        dataProvider = adoptCF(CGDataProviderCreateWithData(0, copiedPixels, dataSize, releaseImageData));
-    } else {
-        size_t dataSize = rowBytes * imageSize.height();
+    uint8_t* imagePixels = imageData->data()->data();
         verifyImageBufferIsBigEnough(imagePixels, dataSize);
-        dataProvider = adoptCF(CGDataProviderCreateWithData(0, imagePixels, dataSize, 0));
-    }
+    RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateWithData(&imageData.leakRef(), imagePixels, dataSize, releaseImageData));
 
-    auto image = NativeImage::create(adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, rowBytes, sRGBColorSpaceRef(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host,
+    auto image = NativeImage::create(adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, rowBytes, sRGBColorSpaceRef(), bitmapInfo,
         dataProvider.get(), 0, false, kCGRenderingIntentDefault)));
 
     // CSS styling may cause the canvas's content to be resized on

@@ -50,8 +50,6 @@ public:
     }
 
     virtual void reshape(int width, int height) = 0;
-    virtual void markLayerComposited() = 0;
-
 protected:
     explicit GPUBasedCanvasRenderingContext(CanvasBase&);
 

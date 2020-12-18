@@ -99,11 +99,6 @@ GCGLbitfield RemoteGraphicsContextGLProxyBase::getBuffersToAutoClear() const
     return m_buffersToAutoClear;
 }
 
-bool RemoteGraphicsContextGLProxyBase::paintCompositedResultsToCanvas(ImageBuffer*)
-{
-    return false;
-}
-
 void RemoteGraphicsContextGLProxyBase::enablePreserveDrawingBuffer()
 {
     // Redeclared for export reasons.

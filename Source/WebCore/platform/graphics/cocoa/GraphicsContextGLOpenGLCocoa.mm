@@ -730,6 +730,37 @@ void GraphicsContextGLOpenGL::prepareForDisplay()
     markLayerComposited();
 }
 
+RefPtr<ImageData> GraphicsContextGLOpenGL::readCompositedResults()
+{
+    auto& displayBuffer = m_swapChain->displayBuffer();
+    if (!displayBuffer.surface || !displayBuffer.handle)
+        return nullptr;
+    if (displayBuffer.surface->size() != getInternalFramebufferSize())
+        return nullptr;
+    // Note: We are using GL to read the IOSurface. At the time of writing, there are no convinient
+    // functions to convert the IOSurface pixel data to ImageData. The image data ends up being
+    // drawn to a ImageBuffer, but at the time there's no functions to construct a NativeImage
+    // out of an IOSurface in such a way that drawing the NativeImage would be guaranteed leave
+    // the IOSurface be unrefenced after the draw call finishes.
+    ScopedTexture texture;
+    GCGLenum textureTarget = drawingBufferTextureTarget();
+    ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQuery(), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
+    gl::BindTexture(textureTarget, texture);
+    if (!EGL_BindTexImage(m_displayObj, displayBuffer.handle, EGL_BACK_BUFFER))
+        return nullptr;
+    gl::TexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    ScopedFramebuffer fbo;
+    ScopedRestoreReadFramebufferBinding fboBinding(m_isForWebGL2, m_state.boundReadFBO, fbo);
+    gl::FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureTarget, texture, 0);
+    ASSERT(gl::CheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
+
+    auto result = readPixelsForPaintResults();
+
+    EGLBoolean releaseOk = EGL_ReleaseTexImage(m_displayObj, displayBuffer.handle, EGL_BACK_BUFFER);
+    ASSERT_UNUSED(releaseOk, releaseOk);
+    return result;
+}
+
 }
 
 #endif // ENABLE(WEBGL)

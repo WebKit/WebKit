@@ -31,6 +31,8 @@
 #if ENABLE(WEBGL)
 
 #include "ExtensionsGL.h"
+#include "ImageBuffer.h"
+#include "ImageData.h"
 #include <wtf/UniqueArray.h>
 
 namespace WebCore {
@@ -191,6 +193,50 @@ void GraphicsContextGLOpenGL::simulateContextChanged()
 
 void GraphicsContextGLOpenGL::prepareForDisplay()
 {
+}
+#endif
+
+void GraphicsContextGLOpenGL::paintRenderingResultsToCanvas(ImageBuffer* imageBuffer)
+{
+    if (!makeContextCurrent())
+        return;
+    if (getInternalFramebufferSize().isEmpty())
+        return;
+    auto imageData = readRenderingResults();
+    if (!imageData)
+        return;
+    paintToCanvas(imageData.releaseNonNull(), imageBuffer->backendSize(), imageBuffer->context());
+}
+
+void GraphicsContextGLOpenGL::paintCompositedResultsToCanvas(ImageBuffer* imageBuffer)
+{
+    if (!makeContextCurrent())
+        return;
+    if (getInternalFramebufferSize().isEmpty())
+        return;
+    auto imageData = readCompositedResults();
+    if (!imageData)
+        return;
+    paintToCanvas(imageData.releaseNonNull(), imageBuffer->backendSize(), imageBuffer->context());
+}
+
+RefPtr<ImageData> GraphicsContextGLOpenGL::paintRenderingResultsToImageData()
+{
+    if (!makeContextCurrent())
+        return nullptr;
+    if (getInternalFramebufferSize().isEmpty())
+        return nullptr;
+    // Reading premultiplied alpha would involve unpremultiplying, which is
+    // lossy.
+    if (contextAttributes().premultipliedAlpha)
+        return nullptr;
+    return readRenderingResults();
+}
+
+#if !PLATFORM(COCOA)
+RefPtr<ImageData> GraphicsContextGLOpenGL::readCompositedResults()
+{
+    return nullptr;
 }
 #endif
 

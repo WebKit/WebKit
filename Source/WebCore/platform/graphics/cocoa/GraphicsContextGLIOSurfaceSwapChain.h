@@ -63,6 +63,10 @@ public:
     // Prepares the target for display with a contents buffer.
     virtual void present(Buffer) = 0;
 
+    // Returns the most recent presented display buffer. The reference is valid until
+    // next present, recycleBuffer or detachClient call.
+    virtual const Buffer& displayBuffer() const = 0;
+
     // Detaches the client and returns the current contents buffer metadata handle.
     // The if multiple buffers have been submitted, recycleBuffer must have been called before calling
     // this.

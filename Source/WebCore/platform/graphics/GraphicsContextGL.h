@@ -1292,7 +1292,7 @@ public:
     // the context.
     virtual void paintRenderingResultsToCanvas(ImageBuffer*) = 0;
     virtual RefPtr<ImageData> paintRenderingResultsToImageData() = 0;
-    virtual bool paintCompositedResultsToCanvas(ImageBuffer*) = 0;
+    virtual void paintCompositedResultsToCanvas(ImageBuffer*) = 0;
 
     // FIXME: this should be removed. The layer should be marked composited by
     // preparing for display, so that canvas image buffer and the layer agree

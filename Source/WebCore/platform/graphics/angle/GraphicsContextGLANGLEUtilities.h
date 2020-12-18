@@ -36,9 +36,9 @@ namespace WebCore {
 class ScopedRestoreTextureBinding {
     WTF_MAKE_NONCOPYABLE(ScopedRestoreTextureBinding);
 public:
-    ScopedRestoreTextureBinding(GCGLenum bindingPointQuery, GCGLenum bindingPoint, bool condition = true)
+    ScopedRestoreTextureBinding(GLenum bindingPointQuery, GLenum bindingPoint, bool condition = true)
     {
-        ASSERT(bindingPoint != static_cast<GCGLenum>(0u));
+        ASSERT(bindingPoint != static_cast<GLenum>(0u));
         if (condition) {
             m_bindingPoint = bindingPoint;
             gl::GetIntegerv(bindingPointQuery, reinterpret_cast<GLint*>(&m_bindingValue));
@@ -54,6 +54,153 @@ public:
 private:
     GLenum m_bindingPoint { 0 };
     GLuint m_bindingValue { 0u };
+};
+
+
+class ScopedBufferBinding {
+    WTF_MAKE_NONCOPYABLE(ScopedBufferBinding);
+public:
+    ScopedBufferBinding(GLenum bindingPoint, GLuint bindingValue, bool condition = true)
+    {
+        if (!condition)
+            return;
+        gl::GetIntegerv(query(bindingPoint), reinterpret_cast<GLint*>(&m_bindingValue));
+        if (bindingValue == m_bindingValue)
+            return;
+        m_bindingPoint = bindingPoint;
+        gl::BindBuffer(m_bindingPoint, bindingValue);
+    }
+
+    ~ScopedBufferBinding()
+    {
+        if (m_bindingPoint)
+            gl::BindBuffer(m_bindingPoint, m_bindingValue);
+    }
+
+private:
+    static constexpr GLenum query(GLenum bindingPoint)
+    {
+        if (bindingPoint == GL_PIXEL_PACK_BUFFER)
+            return GL_PIXEL_PACK_BUFFER_BINDING;
+        ASSERT(bindingPoint == GL_PIXEL_UNPACK_BUFFER);
+        return GL_PIXEL_UNPACK_BUFFER_BINDING;
+    }
+    GLint m_bindingPoint { 0 };
+    GLuint m_bindingValue { 0u };
+};
+class ScopedRestoreReadFramebufferBinding {
+    WTF_MAKE_NONCOPYABLE(ScopedRestoreReadFramebufferBinding);
+public:
+    ScopedRestoreReadFramebufferBinding(bool isForWebGL2, GLuint restoreValue)
+        : m_framebufferTarget(isForWebGL2 ? GL_READ_FRAMEBUFFER : GL_FRAMEBUFFER)
+        , m_bindingValue(restoreValue)
+    {
+    }
+    ScopedRestoreReadFramebufferBinding(bool isForWebGL2, GLuint restoreValue, GLuint value)
+        : m_framebufferTarget(isForWebGL2 ? GL_READ_FRAMEBUFFER : GL_FRAMEBUFFER)
+        , m_bindingValue(restoreValue)
+    {
+        bindFramebuffer(value);
+    }
+    void markBindingChanged()
+    {
+        m_bindingChanged = true;
+    }
+    void bindFramebuffer(GLuint bindingValue)
+    {
+        if (!m_bindingChanged && m_bindingValue == bindingValue)
+            return;
+        gl::BindFramebuffer(m_framebufferTarget, bindingValue);
+        m_bindingChanged = m_bindingValue != bindingValue;
+    }
+    ~ScopedRestoreReadFramebufferBinding()
+    {
+        if (m_bindingChanged)
+            gl::BindFramebuffer(m_framebufferTarget, m_bindingValue);
+    }
+private:
+    const GLenum m_framebufferTarget;
+    GLuint m_bindingValue { 0u };
+    bool m_bindingChanged { false };
+};
+
+class ScopedPixelStorageMode {
+    WTF_MAKE_NONCOPYABLE(ScopedPixelStorageMode);
+public:
+    explicit ScopedPixelStorageMode(GLenum name, bool condition = true)
+        : m_name(condition ? name : 0)
+    {
+        if (m_name)
+            gl::GetIntegerv(m_name, &m_originalValue);
+    }
+    ScopedPixelStorageMode(GLenum name, GLint value, bool condition = true)
+        : m_name(condition ? name : 0)
+    {
+        if (m_name) {
+            gl::GetIntegerv(m_name, &m_originalValue);
+            pixelStore(value);
+        }
+    }
+    ~ScopedPixelStorageMode()
+    {
+        if (m_name && m_valueChanged)
+            gl::PixelStorei(m_name, m_originalValue);
+    }
+    void pixelStore(GLint value)
+    {
+        ASSERT(m_name);
+        if (!m_valueChanged && m_originalValue == value)
+            return;
+        gl::PixelStorei(m_name, value);
+        m_valueChanged = m_originalValue != value;
+    }
+    operator GLint() const
+    {
+        ASSERT(m_name && !m_valueChanged);
+        return m_originalValue;
+    }
+private:
+    const GLenum m_name;
+    bool m_valueChanged { false };
+    GLint m_originalValue { 0 };
+};
+
+class ScopedTexture {
+    WTF_MAKE_NONCOPYABLE(ScopedTexture);
+public:
+    ScopedTexture()
+    {
+        gl::GenTextures(1, &m_object);
+    }
+    ~ScopedTexture()
+    {
+        gl::DeleteTextures(1, &m_object);
+    }
+    operator GLuint() const
+    {
+        return m_object;
+    }
+private:
+    GLuint m_object { 0u };
+};
+
+class ScopedFramebuffer {
+    WTF_MAKE_NONCOPYABLE(ScopedFramebuffer);
+public:
+    ScopedFramebuffer()
+    {
+        gl::GenFramebuffers(1, &m_object);
+    }
+    ~ScopedFramebuffer()
+    {
+        gl::DeleteFramebuffers(1, &m_object);
+    }
+    operator GLuint() const
+    {
+        return m_object;
+    }
+private:
+    GLuint m_object { 0 };
 };
 
 }

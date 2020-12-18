@@ -48,6 +48,7 @@ public:
     // GraphicsContextGLIOSurfaceSwapChain overrides.
     Buffer recycleBuffer() final;
     void present(Buffer) final;
+    const Buffer& displayBuffer() const final;
     void* detachClient() final;
 private:
     GraphicsContextGLIOSurfaceSwapChain::Buffer m_displayBuffer;
@@ -74,6 +75,11 @@ void RemoteGraphicsContextGLCocoa::present(Buffer buffer)
 {
     ASSERT(!m_displayBuffer.surface);
     m_displayBuffer = WTFMove(buffer);
+}
+
+const GraphicsContextGLIOSurfaceSwapChain::Buffer& RemoteGraphicsContextGLCocoa::displayBuffer() const
+{
+    return m_displayBuffer;
 }
 
 void* RemoteGraphicsContextGLCocoa::detachClient()

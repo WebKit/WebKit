@@ -71,6 +71,9 @@ public:
     virtual bool isOffscreen2d() const { return false; }
     virtual bool isPaint() const { return false; }
 
+    // Called before paintRenderingResultsToCanvas if paintRenderingResultsToCanvas is
+    // used for compositing purposes.
+    virtual void prepareForDisplayWithPaint() { }
     virtual void paintRenderingResultsToCanvas() {}
     virtual PlatformLayer* platformLayer() const { return 0; }
 

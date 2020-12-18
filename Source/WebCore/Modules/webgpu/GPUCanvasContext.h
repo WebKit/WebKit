@@ -53,13 +53,15 @@ private:
     bool isWebGPU() const final { return true; }
     PlatformLayer* platformLayer() const final;
     void reshape(int width, int height) final;
-    void markLayerComposited() final;
+    void prepareForDisplayWithPaint() final;
+    void paintRenderingResultsToCanvas() final;
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final { return "GPUCanvasContext"; }
     // FIXME: Stubs.
     void stop() final { }
 
+    bool m_isDisplayingWithPaint { false };
     RefPtr<WebGPUSwapChain> m_swapChain;
 };
 

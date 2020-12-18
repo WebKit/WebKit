@@ -137,64 +137,6 @@ void GraphicsContextGLOpenGL::validateDepthStencil(const char* packedDepthStenci
     }
 }
 
-void GraphicsContextGLOpenGL::paintRenderingResultsToCanvas(ImageBuffer* imageBuffer)
-{
-    Checked<int, RecordOverflow> rowBytes = Checked<int, RecordOverflow>(m_currentWidth) * 4;
-    if (rowBytes.hasOverflowed())
-        return;
-
-    Checked<int, RecordOverflow> totalBytesChecked = rowBytes * m_currentHeight;
-    if (totalBytesChecked.hasOverflowed())
-        return;
-    int totalBytes = totalBytesChecked.unsafeGet();
-
-    auto pixels = makeUniqueArray<unsigned char>(totalBytes);
-    if (!pixels)
-        return;
-
-    readRenderingResults(pixels.get(), totalBytes);
-
-    if (!contextAttributes().premultipliedAlpha) {
-        for (int i = 0; i < totalBytes; i += 4) {
-            // Premultiply alpha.
-            pixels[i + 0] = std::min(255, pixels[i + 0] * pixels[i + 3] / 255);
-            pixels[i + 1] = std::min(255, pixels[i + 1] * pixels[i + 3] / 255);
-            pixels[i + 2] = std::min(255, pixels[i + 2] * pixels[i + 3] / 255);
-        }
-    }
-
-    paintToCanvas(pixels.get(), IntSize(m_currentWidth, m_currentHeight), imageBuffer->backendSize(), imageBuffer->context());
-}
-
-bool GraphicsContextGLOpenGL::paintCompositedResultsToCanvas(ImageBuffer*)
-{
-    // Not needed at the moment, so return that nothing was done.
-    return false;
-}
-
-RefPtr<ImageData> GraphicsContextGLOpenGL::paintRenderingResultsToImageData()
-{
-    // Reading premultiplied alpha would involve unpremultiplying, which is
-    // lossy.
-    if (contextAttributes().premultipliedAlpha)
-        return nullptr;
-
-    auto imageData = ImageData::create(IntSize(m_currentWidth, m_currentHeight));
-    unsigned char* pixels = imageData->data()->data();
-    Checked<int, RecordOverflow> totalBytesChecked = 4 * Checked<int, RecordOverflow>(m_currentWidth) * Checked<int, RecordOverflow>(m_currentHeight);
-    if (totalBytesChecked.hasOverflowed())
-        return imageData;
-    int totalBytes = totalBytesChecked.unsafeGet();
-
-    readRenderingResults(pixels, totalBytes);
-
-    // Convert to RGBA.
-    for (int i = 0; i < totalBytes; i += 4)
-        std::swap(pixels[i], pixels[i + 2]);
-
-    return imageData;
-}
-
 void GraphicsContextGLOpenGL::prepareTexture()
 {
     if (m_layerComposited)
@@ -236,15 +178,8 @@ void GraphicsContextGLOpenGL::prepareTexture()
     ::glFlush();
 }
 
-void GraphicsContextGLOpenGL::readRenderingResults(unsigned char *pixels, int pixelsSize)
+RefPtr<ImageData> GraphicsContextGLOpenGL::readRenderingResults()
 {
-    if (pixelsSize < m_currentWidth * m_currentHeight * 4)
-        return;
-
-    if (!makeContextCurrent())
-        return;
-
-
     bool mustRestoreFBO = false;
     if (contextAttributes().antialias) {
         resolveMultisamplingIfNecessary();
@@ -257,22 +192,10 @@ void GraphicsContextGLOpenGL::readRenderingResults(unsigned char *pixels, int pi
             ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_fbo);
         }
     }
-
-    GLint packAlignment = 4;
-    bool mustRestorePackAlignment = false;
-    ::glGetIntegerv(GL_PACK_ALIGNMENT, &packAlignment);
-    if (packAlignment > 4) {
-        ::glPixelStorei(GL_PACK_ALIGNMENT, 4);
-        mustRestorePackAlignment = true;
-    }
-
-    readPixelsAndConvertToBGRAIfNecessary(0, 0, m_currentWidth, m_currentHeight, pixels);
-
-    if (mustRestorePackAlignment)
-        ::glPixelStorei(GL_PACK_ALIGNMENT, packAlignment);
-
+    auto result = readPixelsForPaintResults();
     if (mustRestoreFBO)
         ::glBindFramebufferEXT(GraphicsContextGL::FRAMEBUFFER, m_state.boundDrawFBO);
+    return result;
 }
 
 void GraphicsContextGLOpenGL::reshape(int width, int height)

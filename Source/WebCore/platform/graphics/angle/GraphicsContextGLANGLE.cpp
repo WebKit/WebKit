@@ -31,6 +31,7 @@
 
 #include "ANGLEHeaders.h"
 #include "ExtensionsGLANGLE.h"
+#include "GraphicsContextGLANGLEUtilities.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "IntRect.h"
@@ -46,9 +47,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
-#if USE(ACCELERATE)
-#include <Accelerate/Accelerate.h>
-#endif
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 #include "GraphicsContextGLCVANGLE.h"
@@ -64,30 +62,6 @@ static const char* packedDepthStencilExtensionName = "GL_OES_packed_depth_stenci
 
 namespace {
 
-class ScopedResetBufferBinding {
-    WTF_MAKE_NONCOPYABLE(ScopedResetBufferBinding);
-public:
-    ScopedResetBufferBinding(bool shouldDoWork, GLenum bindingPointQuery, GLenum bindingPoint)
-        : m_bindingPointQuery(bindingPointQuery)
-        , m_bindingPoint(bindingPoint)
-    {
-        if (shouldDoWork)
-            gl::GetIntegerv(m_bindingPointQuery, &m_bindingValue);
-        if (m_bindingValue)
-            gl::BindBuffer(m_bindingPoint, 0);
-    }
-
-    ~ScopedResetBufferBinding()
-    {
-        if (m_bindingValue)
-            gl::BindBuffer(m_bindingPoint, m_bindingValue);
-    }
-
-private:
-    GLint m_bindingPointQuery { 0 };
-    GLint m_bindingPoint { 0 };
-    GLint m_bindingValue { 0 };
-};
 
 } // namespace anonymous
 
@@ -102,36 +76,29 @@ static void wipeAlphaChannelFromPixels(int width, int height, unsigned char* pix
 }
 #endif
 
-void GraphicsContextGLOpenGL::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels)
+RefPtr<ImageData> GraphicsContextGLOpenGL::readPixelsForPaintResults()
 {
-    // NVIDIA drivers have a bug where calling readPixels in BGRA can return the wrong values for the alpha channel when the alpha is off for the context.
-    gl::ReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-#if USE(ACCELERATE)
-    vImage_Buffer src;
-    src.height = height;
-    src.width = width;
-    src.rowBytes = width * 4;
-    src.data = pixels;
+    auto imageData = ImageData::create(getInternalFramebufferSize());
+    if (!imageData)
+        return nullptr;
+    ScopedPixelStorageMode packAlignment(GL_PACK_ALIGNMENT);
+    if (packAlignment > 4)
+        packAlignment.pixelStore(4);
+    ScopedPixelStorageMode packRowLength(GL_PACK_ROW_LENGTH, 0, m_isForWebGL2);
+    ScopedPixelStorageMode packSkipRows(GL_PACK_SKIP_ROWS, 0, m_isForWebGL2);
+    ScopedPixelStorageMode packSkipPixels(GL_PACK_SKIP_PIXELS, 0, m_isForWebGL2);
+    ScopedBufferBinding scopedPixelPackBufferReset(GL_PIXEL_PACK_BUFFER, 0, m_isForWebGL2);
 
-    vImage_Buffer dest;
-    dest.height = height;
-    dest.width = width;
-    dest.rowBytes = width * 4;
-    dest.data = pixels;
-
-    // Swap pixel channels from RGBA to BGRA.
-    const uint8_t map[4] = { 2, 1, 0, 3 };
-    vImagePermuteChannels_ARGB8888(&src, &dest, map, kvImageNoFlags);
-#else
-    int totalBytes = width * height * 4;
-    for (int i = 0; i < totalBytes; i += 4)
-        std::swap(pixels[i], pixels[i + 2]);
-#endif
-
+    gl::ReadnPixelsRobustANGLE(0, 0, imageData->width(), imageData->height(), GL_RGBA, GL_UNSIGNED_BYTE, imageData->data()->byteLength(), nullptr, nullptr, nullptr, imageData->data()->data());
+    // FIXME: Rendering to GL_RGB textures with a IOSurface bound to the texture image leaves
+    // the alpha in the IOSurface in incorrect state. Also ANGLE gl::ReadPixels will in some
+    // cases expose the non-255 values.
+    // https://bugs.webkit.org/show_bug.cgi?id=215804
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
     if (!contextAttributes().alpha)
-        wipeAlphaChannelFromPixels(width, height, pixels);
+        wipeAlphaChannelFromPixels(imageData->width(), imageData->height(), imageData->data()->data());
 #endif
+    return imageData;
 }
 
 void GraphicsContextGLOpenGL::validateAttributes()
@@ -512,64 +479,6 @@ void GraphicsContextGLOpenGL::validateDepthStencil(const char* packedDepthStenci
     }
 }
 
-void GraphicsContextGLOpenGL::paintRenderingResultsToCanvas(ImageBuffer* imageBuffer)
-{
-    Checked<int, RecordOverflow> rowBytes = Checked<int, RecordOverflow>(m_currentWidth) * 4;
-    if (rowBytes.hasOverflowed())
-        return;
-
-    Checked<int, RecordOverflow> totalBytesChecked = rowBytes * m_currentHeight;
-    if (totalBytesChecked.hasOverflowed())
-        return;
-    int totalBytes = totalBytesChecked.unsafeGet();
-
-    auto pixels = makeUniqueArray<unsigned char>(totalBytes);
-    if (!pixels)
-        return;
-
-    readRenderingResults(pixels.get(), totalBytes);
-
-    if (!contextAttributes().premultipliedAlpha) {
-        for (int i = 0; i < totalBytes; i += 4) {
-            // Premultiply alpha.
-            pixels[i + 0] = std::min(255, pixels[i + 0] * pixels[i + 3] / 255);
-            pixels[i + 1] = std::min(255, pixels[i + 1] * pixels[i + 3] / 255);
-            pixels[i + 2] = std::min(255, pixels[i + 2] * pixels[i + 3] / 255);
-        }
-    }
-
-    paintToCanvas(pixels.get(), IntSize(m_currentWidth, m_currentHeight), imageBuffer->backendSize(), imageBuffer->context());
-}
-
-bool GraphicsContextGLOpenGL::paintCompositedResultsToCanvas(ImageBuffer*)
-{
-    // Not needed at the moment, so return that nothing was done.
-    return false;
-}
-
-RefPtr<ImageData> GraphicsContextGLOpenGL::paintRenderingResultsToImageData()
-{
-    // Reading premultiplied alpha would involve unpremultiplying, which is
-    // lossy.
-    if (contextAttributes().premultipliedAlpha)
-        return nullptr;
-
-    auto imageData = ImageData::create(IntSize(m_currentWidth, m_currentHeight));
-    unsigned char* pixels = imageData->data()->data();
-    Checked<int, RecordOverflow> totalBytesChecked = 4 * Checked<int, RecordOverflow>(m_currentWidth) * Checked<int, RecordOverflow>(m_currentHeight);
-    if (totalBytesChecked.hasOverflowed())
-        return imageData;
-    int totalBytes = totalBytesChecked.unsafeGet();
-
-    readRenderingResults(pixels, totalBytes);
-
-    // Convert to RGBA.
-    for (int i = 0; i < totalBytes; i += 4)
-        std::swap(pixels[i], pixels[i + 2]);
-
-    return imageData;
-}
-
 void GraphicsContextGLOpenGL::prepareTexture()
 {
     if (m_layerComposited)
@@ -622,65 +531,15 @@ void GraphicsContextGLOpenGL::prepareTextureImpl()
 #endif
 }
 
-void GraphicsContextGLOpenGL::readRenderingResults(unsigned char *pixels, int pixelsSize)
+RefPtr<ImageData> GraphicsContextGLOpenGL::readRenderingResults()
 {
-    if (pixelsSize < m_currentWidth * m_currentHeight * 4)
-        return;
-
-    if (!makeContextCurrent())
-        return;
-
-
-    GCGLenum framebufferTarget = m_isForWebGL2 ? GraphicsContextGL::READ_FRAMEBUFFER : GraphicsContextGL::FRAMEBUFFER;
-
-    bool mustRestoreFBO = false;
+    ScopedRestoreReadFramebufferBinding fboBinding(m_isForWebGL2, m_state.boundReadFBO);
     if (contextAttributes().antialias) {
         resolveMultisamplingIfNecessary();
-        gl::BindFramebuffer(framebufferTarget, m_fbo);
-        mustRestoreFBO = true;
-    } else {
-        if (m_state.boundReadFBO != m_fbo) {
-            mustRestoreFBO = true;
-            gl::BindFramebuffer(framebufferTarget, m_fbo);
-        }
+        fboBinding.markBindingChanged();
     }
-
-    GLint packAlignment = 4;
-    bool mustRestorePackAlignment = false;
-    gl::GetIntegerv(GL_PACK_ALIGNMENT, &packAlignment);
-    if (packAlignment > 4) {
-        gl::PixelStorei(GL_PACK_ALIGNMENT, 4);
-        mustRestorePackAlignment = true;
-    }
-    GLint packRowLength = 0;
-    GLint packSkipRows = 0;
-    GLint packSkipPixels = 0;
-    ScopedResetBufferBinding scopedPixelPackBufferReset(m_isForWebGL2, GL_PIXEL_PACK_BUFFER_BINDING, GL_PIXEL_PACK_BUFFER);
-    if (m_isForWebGL2) {
-        gl::GetIntegerv(GL_PACK_ROW_LENGTH, &packRowLength);
-        if (packRowLength > 0)
-            gl::PixelStorei(GL_PACK_ROW_LENGTH, 0);
-        gl::GetIntegerv(GL_PACK_SKIP_ROWS, &packSkipRows);
-        if (packSkipRows > 0)
-            gl::PixelStorei(GL_PACK_SKIP_ROWS, 0);
-        gl::GetIntegerv(GL_PACK_SKIP_PIXELS, &packSkipPixels);
-        if (packSkipPixels > 0)
-            gl::PixelStorei(GL_PACK_SKIP_PIXELS, 0);
-    }
-
-    readPixelsAndConvertToBGRAIfNecessary(0, 0, m_currentWidth, m_currentHeight, pixels);
-
-    if (mustRestorePackAlignment)
-        gl::PixelStorei(GL_PACK_ALIGNMENT, packAlignment);
-    if (packRowLength > 0)
-        gl::PixelStorei(GL_PACK_ROW_LENGTH, packRowLength);
-    if (packSkipRows > 0)
-        gl::PixelStorei(GL_PACK_SKIP_ROWS, packSkipRows);
-    if (packSkipPixels > 0)
-        gl::PixelStorei(GL_PACK_SKIP_PIXELS, packSkipPixels);
-
-    if (mustRestoreFBO)
-        gl::BindFramebuffer(framebufferTarget, m_state.boundReadFBO);
+    fboBinding.bindFramebuffer(m_fbo);
+    return readPixelsForPaintResults();
 }
 
 void GraphicsContextGLOpenGL::reshape(int width, int height)
@@ -706,7 +565,7 @@ void GraphicsContextGLOpenGL::reshape(int width, int height)
 
     TemporaryANGLESetting scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
     TemporaryANGLESetting scopedDither(GL_DITHER, GL_FALSE);
-    ScopedResetBufferBinding scopedPixelUnpackBufferReset(m_isForWebGL2, GL_PIXEL_UNPACK_BUFFER_BINDING, GL_PIXEL_UNPACK_BUFFER);
+    ScopedBufferBinding scopedPixelUnpackBufferReset(GL_PIXEL_UNPACK_BUFFER, 0, m_isForWebGL2);
 
     bool mustRestoreFBO = reshapeFBOs(IntSize(width, height));
     auto attrs = contextAttributes();

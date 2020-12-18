@@ -67,7 +67,6 @@ public:
     bool layerComposited() const final;
     void setBuffersToAutoClear(GCGLbitfield) final;
     GCGLbitfield getBuffersToAutoClear() const final;
-    bool paintCompositedResultsToCanvas(ImageBuffer*) final;
     void markLayerComposited() final;
     void enablePreserveDrawingBuffer() final;
 

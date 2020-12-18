@@ -384,8 +384,8 @@ public:
 
     void reshape(int width, int height) override;
 
-    void markLayerComposited() final;
-    void paintRenderingResultsToCanvas() override;
+    void prepareForDisplayWithPaint() final;
+    void paintRenderingResultsToCanvas() final;
     RefPtr<ImageData> paintRenderingResultsToImageData();
 
     void removeSharedObject(WebGLSharedObject&);
@@ -668,6 +668,7 @@ protected:
     bool isContextLostOrPending();
 
     bool m_compositingResultsNeedUpdating { false };
+    bool m_isDisplayingWithPaint { false };
 
     // Enabled extension objects.
     // FIXME: Move some of these to WebGLRenderingContext, the ones not needed for WebGL2

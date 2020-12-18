@@ -115,8 +115,6 @@ public:
     Image* copiedImage() const final;
     void clearCopiedImage() const final;
     RefPtr<ImageData> getImageData();
-    void makePresentationCopy();
-    void clearPresentationCopy();
 
     SecurityOrigin* securityOrigin() const final;
 
@@ -199,7 +197,6 @@ private:
 
     bool m_isSnapshotting { false };
 
-    mutable RefPtr<Image> m_presentedImage;
     mutable RefPtr<Image> m_copiedImage; // FIXME: This is temporary for platforms that have to copy the image buffer to render (and for CSSCanvasValue).
 };
 
@@ -216,4 +213,3 @@ private:
     static bool checkTagName(const WebCore::EventTarget& target) { return is<WebCore::Node>(target) && checkTagName(downcast<WebCore::Node>(target)); }
 };
 }
-

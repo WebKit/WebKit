@@ -71,6 +71,7 @@ public:
     void simulateContextChanged() final;
     void paintRenderingResultsToCanvas(WebCore::ImageBuffer*) final;
     RefPtr<WebCore::ImageData> paintRenderingResultsToImageData() final;
+    void paintCompositedResultsToCanvas(WebCore::ImageBuffer*) final;
 
     // Functions with a generated implementation. This list is used by generate-gpup-webgl script.
     void setFailNextGPUStatusCheck() final;

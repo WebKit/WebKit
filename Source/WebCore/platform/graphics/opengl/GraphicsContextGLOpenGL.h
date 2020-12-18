@@ -430,9 +430,6 @@ public:
     void getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, GCGLSpan<GCGLint> params) final;
 
     // Helper methods.
-
-    void paintToCanvas(const unsigned char* imagePixels, const IntSize& imageSize, const IntSize& canvasSize, GraphicsContext&);
-
     void markContextChanged() final;
     void markLayerComposited() final;
     bool layerComposited() const final;
@@ -452,7 +449,7 @@ public:
 
     void paintRenderingResultsToCanvas(ImageBuffer*) final;
     RefPtr<ImageData> paintRenderingResultsToImageData() final;
-    bool paintCompositedResultsToCanvas(ImageBuffer*) final;
+    void paintCompositedResultsToCanvas(ImageBuffer*) final;
 
 #if USE(OPENGL) && ENABLE(WEBGL2)
     void primitiveRestartIndex(GCGLuint);
@@ -532,10 +529,11 @@ private:
     // Did the most recent drawing operation leave the GPU in an acceptable state?
     void checkGPUStatus();
 
-    // Read rendering results into a pixel array with the same format as the
-    // backbuffer.
-    void readRenderingResults(unsigned char* pixels, int pixelsSize);
-    void readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels);
+
+    RefPtr<ImageData> readRenderingResults();
+    RefPtr<ImageData> readCompositedResults();
+    RefPtr<ImageData> readPixelsForPaintResults();
+    void paintToCanvas(Ref<ImageData>&&, const IntSize& canvasSize, GraphicsContext&);
 
     bool reshapeFBOs(const IntSize&);
     void prepareTextureImpl();

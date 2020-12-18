@@ -642,20 +642,17 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
 
         if (m_context) {
             shouldPaint = paintsIntoCanvasBuffer() || document().printing() || m_isSnapshotting;
-            if (shouldPaint)
+            if (shouldPaint) {
+                m_context->prepareForDisplayWithPaint();
                 m_context->paintRenderingResultsToCanvas();
+            }
         }
 
         if (shouldPaint) {
             if (hasCreatedImageBuffer()) {
-                if (m_presentedImage)
-                    context.drawImage(*m_presentedImage, snappedIntRect(r), renderer()->imageOrientation());
-                else if (ImageBuffer* imageBuffer = buffer())
+                if (ImageBuffer* imageBuffer = buffer())
                     context.drawImageBuffer(*imageBuffer, snappedIntRect(r));
             }
-
-            if (isGPUBased())
-                downcast<GPUBasedCanvasRenderingContext>(*m_context).markLayerComposited();
         }
     }
 
@@ -666,19 +663,6 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
 bool HTMLCanvasElement::isGPUBased() const
 {
     return m_context && m_context->isGPUBased();
-}
-
-void HTMLCanvasElement::makePresentationCopy()
-{
-    if (!m_presentedImage) {
-        // The buffer contains the last presented data, so save a copy of it.
-        m_presentedImage = buffer()->copyImage(CopyBackingStore, PreserveResolution::Yes);
-    }
-}
-
-void HTMLCanvasElement::clearPresentationCopy()
-{
-    m_presentedImage = nullptr;
 }
 
 void HTMLCanvasElement::setSurfaceSize(const IntSize& size)

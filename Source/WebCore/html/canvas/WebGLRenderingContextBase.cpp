@@ -1199,11 +1199,10 @@ void WebGLRenderingContextBase::restoreStateAfterClear()
     m_context->depthMask(m_depthMask);
 }
 
-void WebGLRenderingContextBase::markLayerComposited()
+
+void WebGLRenderingContextBase::prepareForDisplayWithPaint()
 {
-    if (isContextLostOrPending())
-        return;
-    m_context->markLayerComposited();
+    m_isDisplayingWithPaint = true;
 }
 
 void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
@@ -1211,18 +1210,17 @@ void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
     if (isContextLostOrPending())
         return;
 
-    if (auto* canvas = htmlCanvas()) {
-        if (canvas->document().printing() || (canvas->isSnapshotting() && canvas->document().page()->isVisible()))
-            canvas->clearPresentationCopy();
-
-        // Until the canvas is written to by the application, the clear that
-        // happened after it was composited should be ignored by the compositor.
-        if (m_context->layerComposited() && !m_attributes.preserveDrawingBuffer) {
-            m_context->paintRenderingResultsToCanvas(canvas->buffer());
-
-            canvas->makePresentationCopy();
-        } else
-            canvas->clearPresentationCopy();
+    if (m_isDisplayingWithPaint) {
+        bool canvasContainsDisplayBuffer = !m_markedCanvasDirty;
+        prepareForDisplay();
+        m_isDisplayingWithPaint = false;
+        if (!canvasContainsDisplayBuffer) {
+            auto& base = canvasBase();
+            base.clearCopiedImage();
+            m_markedCanvasDirty = false;
+            m_context->paintCompositedResultsToCanvas(base.buffer());
+        }
+        return;
     }
 
     clearIfComposited(ClearCallerOther);
