@@ -1,3 +1,16 @@
+2020-12-17  Mark Lam  <mark.lam@apple.com>
+
+        Add tagging to JIT probe's return address.
+        https://bugs.webkit.org/show_bug.cgi?id=220008
+        rdar://71279530
+
+        Reviewed by Keith Miller and Robin Morisset.
+
+        * assembler/MacroAssemblerARM64.cpp:
+        * assembler/testmasm.cpp:
+        (JSC::testProbeModifiesProgramCounter):
+        * runtime/JSCPtrTag.h:
+
 2020-12-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [CSSJIT] Do not use trampoline if JITCage is disabled

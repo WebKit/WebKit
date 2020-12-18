@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,6 +57,7 @@ using PtrTag = WTF::PtrTag;
     v(HostFunctionPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
     v(JITProbePtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
     v(JITProbeExecutorPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
+    v(JITProbePCPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
     v(JITProbeStackInitializationFunctionPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
     /* Callee:JIT Caller:Native */ \
     v(NativeToJITGatePtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::Native) \
