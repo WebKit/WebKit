@@ -1,3 +1,12 @@
+2020-12-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION(iOS 14): http/tests/cache-storage/page-cache-domcache-pending-promise.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=217408
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations: Add DumpJSConsoleLogInStdErr since it was errantly removed in r268078.
+
 2020-12-18  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process][MSE] SourceBufferPrivateRemote needs to override some track buffer related functions of SourceBufferPrivate
