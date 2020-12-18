@@ -416,7 +416,11 @@ LayoutUnit RootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
     if (newPageLogicalTop == pageLogicalTop)
         return result;
     
-    // Put ourselves at the top of the next page to force a snap onto the new grid established by that page.
+    auto pageLogicalHeight = blockFlow().pageLogicalHeightForOffset(lineBoxBottom() + result);
+    // Put ourselves at the top of the next page to force a snap onto the new grid established by that page unless
+    // the line is taller than the page. In such cases let's just leave the line overflow. 
+    if (pageLogicalHeight < lineBoxBottom() + result)
+        return result;
     return lineSnapAdjustment(newPageLogicalTop - (blockOffset + lineBoxTop()));
 }
 
