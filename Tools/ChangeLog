@@ -1,3 +1,25 @@
+2020-12-17  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION: [ BigSur ] 3 PictureInPicture related API tests timing out
+        https://bugs.webkit.org/show_bug.cgi?id=219999
+
+        Reviewed by Eric Carlson.
+
+        Not a fix for the timeout itself, but a change which will allow us to see the Util::run() statement which
+        is timing out. Rather than just get a generic TIMEOUT result with no clue to the cause, a Util::run() statement
+        which takes longer than the specified amount of time will generate an ASSERT() error with the line number
+        which caused the timeout.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ExitFullscreenOnEnterPiP.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ExitPiPOnSuspendVideoElement.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewCloseAllMediaPresentations.mm:
+        (TEST):
+        * TestWebKitAPI/Utilities.h:
+        * TestWebKitAPI/cocoa/UtilitiesCocoa.mm:
+        (TestWebKitAPI::Util::runFor):
+
 2020-12-17  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r270638) decidePolicyForNewWindowAction should have non-null request

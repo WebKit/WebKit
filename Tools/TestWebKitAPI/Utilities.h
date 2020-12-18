@@ -31,6 +31,10 @@ namespace Util {
 // Runs a platform runloop until the 'done' flag is true.
 void run(bool* done);
 
+// Runs a platform runloop until the 'done' flag is true, or until the amount of seconds has passed.
+// Returns true if exiting due to the 'done' flag becoming true, or false if exiting due to a timeout.
+bool runFor(bool* done, double seconds);
+
 // Runs a platform runloop `count` number of spins.
 void spinRunLoop(uint64_t count = 1);
 

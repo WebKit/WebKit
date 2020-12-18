@@ -111,25 +111,25 @@ TEST(ExitFullscreenOnEnterPiP, ElementFullscreen)
 
     didEnterFullscreen = false;
     [webView evaluateJavaScript:@"document.getElementById('enter-element-fullscreen').click()" completionHandler: nil];
-    TestWebKitAPI::Util::run(&didEnterFullscreen);
+    ASSERT_TRUE(TestWebKitAPI::Util::runFor(&didEnterFullscreen, 10));
     ASSERT_TRUE(didEnterFullscreen);
 
     // Make the video the "main content" by playing with a user gesture.
     __block bool didBeginPlaying = false;
     [webView performAfterReceivingMessage:@"playing" action:^{ didBeginPlaying = true; }];
     [webView evaluateJavaScript:@"document.getElementById('play').click()" completionHandler:nil];
-    TestWebKitAPI::Util::run(&didBeginPlaying);
+    ASSERT_TRUE(TestWebKitAPI::Util::runFor(&didBeginPlaying, 10));
 
     didEnterPiP = false;
     didExitFullscreen = false;
     [webView evaluateJavaScript:@"document.getElementById('enter-pip').click()" completionHandler: nil];
-    TestWebKitAPI::Util::run(&didEnterPiP);
-    TestWebKitAPI::Util::run(&didExitFullscreen);
+    ASSERT_TRUE(TestWebKitAPI::Util::runFor(&didEnterPiP, 10));
+    ASSERT_TRUE(TestWebKitAPI::Util::runFor(&didExitFullscreen, 10));
 
     sleep(1_s); // Wait for PIPAgent to launch, or it won't call -pipDidClose: callback.
 
     [webView evaluateJavaScript:@"document.getElementById('exit-pip').click()" completionHandler: nil];
-    TestWebKitAPI::Util::run(&didExitPiP);
+    ASSERT_TRUE(TestWebKitAPI::Util::runFor(&didExitPiP, 10));
 }
 
 } // namespace TestWebKitAPI

@@ -35,6 +35,17 @@ void run(bool* done)
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
 }
 
+bool runFor(bool* done, double seconds)
+{
+    auto timeoutDate = [NSDate dateWithTimeIntervalSinceNow:seconds];
+    while (!*done) {
+        if ([timeoutDate compare:[NSDate date]] != NSOrderedDescending)
+            return false;
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
+    }
+    return true;
+}
+
 void spinRunLoop(uint64_t count)
 {
     for (uint64_t i = 0; i < count; ++i)

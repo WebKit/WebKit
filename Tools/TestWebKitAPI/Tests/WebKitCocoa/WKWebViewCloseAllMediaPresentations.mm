@@ -52,7 +52,7 @@ TEST(WKWebViewCloseAllMediaPresentations, PictureInPicture)
     [webView performAfterReceivingMessage:@"presentationmodechanged" action:^{ presentationModeChanged = true; }];
 
     [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.querySelector('video').webkitSetPresentationMode('picture-in-picture')"];
-    TestWebKitAPI::Util::run(&presentationModeChanged);
+    ASSERT(TestWebKitAPI::Util::runFor(&presentationModeChanged, 10));
     do {
         if (![webView stringByEvaluatingJavaScript:@"window.internals.isChangingPresentationMode(document.querySelector('video'))"].boolValue)
             break;
@@ -65,7 +65,7 @@ TEST(WKWebViewCloseAllMediaPresentations, PictureInPicture)
 
     [webView _closeAllMediaPresentations];
 
-    TestWebKitAPI::Util::run(&presentationModeChanged);
+    ASSERT(TestWebKitAPI::Util::runFor(&presentationModeChanged, 10));
 
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"document.querySelector('video').webkitPresentationMode"].UTF8String, "inline");
 }
