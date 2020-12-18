@@ -143,6 +143,16 @@ void SourceBufferPrivateRemote::addTrackBuffer(const AtomString& trackId, RefPtr
     m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::AddTrackBuffer(m_trackIdentifierMap.get(trackId)), m_remoteSourceBufferIdentifier);
 }
 
+void SourceBufferPrivateRemote::resetTrackBuffers()
+{
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::ResetTrackBuffers(), m_remoteSourceBufferIdentifier);
+}
+
+void SourceBufferPrivateRemote::clearTrackBuffers()
+{
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::ClearTrackBuffers(), m_remoteSourceBufferIdentifier);
+}
+
 void SourceBufferPrivateRemote::reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize)
 {
     m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::ReenqueueMediaIfNeeded(currentMediaTime, pendingAppendDataCapacity, maximumBufferSize), m_remoteSourceBufferIdentifier);
@@ -153,9 +163,46 @@ void SourceBufferPrivateRemote::trySignalAllSamplesInTrackEnqueued()
     m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::TrySignalAllSamplesInTrackEnqueued(), m_remoteSourceBufferIdentifier);
 }
 
+void SourceBufferPrivateRemote::resetTimestampOffsetInTrackBuffers()
+{
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::ResetTimestampOffsetInTrackBuffers(), m_remoteSourceBufferIdentifier);
+}
+
+void SourceBufferPrivateRemote::setTimestampOffset(const MediaTime& timestampOffset)
+{
+    SourceBufferPrivate::setTimestampOffset(timestampOffset);
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::SetTimestampOffset(timestampOffset), m_remoteSourceBufferIdentifier);
+}
+
+void SourceBufferPrivateRemote::setAppendWindowStart(const MediaTime& appendWindowStart)
+{
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::SetAppendWindowStart(appendWindowStart), m_remoteSourceBufferIdentifier);
+}
+
+void SourceBufferPrivateRemote::setAppendWindowEnd(const MediaTime& appendWindowEnd)
+{
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::SetAppendWindowEnd(appendWindowEnd), m_remoteSourceBufferIdentifier);
+}
+
 void SourceBufferPrivateRemote::seekToTime(const MediaTime& mediaTime)
 {
     m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::SeekToTime(mediaTime), m_remoteSourceBufferIdentifier);
+}
+
+void SourceBufferPrivateRemote::updateTrackIds(Vector<std::pair<AtomString, AtomString>>&& trackIdPairs)
+{
+    Vector<std::pair<TrackPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier>> identifierPairs;
+
+    for (auto& trackIdPair : trackIdPairs) {
+        ASSERT(m_trackIdentifierMap.contains(trackIdPair.first));
+        ASSERT(m_trackIdentifierMap.contains(trackIdPair.second));
+
+        auto oldIdentifier = m_trackIdentifierMap.take(trackIdPair.first);
+        auto newIdentifier = m_trackIdentifierMap.get(trackIdPair.second);
+        identifierPairs.append(std::make_pair(oldIdentifier, newIdentifier));
+    }
+
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::UpdateTrackIds(identifierPairs), m_remoteSourceBufferIdentifier);
 }
 
 void SourceBufferPrivateRemote::bufferedSamplesForTrackId(const AtomString& trackId, CompletionHandler<void(Vector<String>&&)>&& completionHandler)

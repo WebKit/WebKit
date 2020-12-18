@@ -77,29 +77,29 @@ public:
 
     virtual void reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize);
     virtual void addTrackBuffer(const AtomString& trackId, RefPtr<MediaDescription>&&);
+    virtual void resetTrackBuffers();
+    virtual void clearTrackBuffers();
     virtual void trySignalAllSamplesInTrackEnqueued();
     WEBCORE_EXPORT virtual void updateBufferedFromTrackBuffers(bool sourceIsEnded);
     WEBCORE_EXPORT virtual void evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded);
+    virtual void resetTimestampOffsetInTrackBuffers();
+    virtual void setTimestampOffset(const MediaTime& timestampOffset) { m_timestampOffset = timestampOffset; }
+    virtual void setAppendWindowStart(const MediaTime& appendWindowStart) { m_appendWindowStart = appendWindowStart;}
+    virtual void setAppendWindowEnd(const MediaTime& appendWindowEnd) { m_appendWindowEnd = appendWindowEnd; }
     virtual void seekToTime(const MediaTime&);
+    virtual void updateTrackIds(Vector<std::pair<AtomString, AtomString>>&& trackIdPairs);
 
     void setClient(SourceBufferPrivateClient* client) { m_client = client; }
     void setIsAttached(bool flag) { m_isAttached = flag; }
+
     bool hasAudio() const { return m_hasAudio; }
     bool hasVideo() const { return m_hasVideo; }
-    void setAppendWindowStart(const MediaTime& appendWindowStart) { m_appendWindowStart = appendWindowStart;}
-    void setAppendWindowEnd(const MediaTime& appendWindowEnd) { m_appendWindowEnd = appendWindowEnd; }
     bool bufferFull() const { return m_bufferFull; }
 
-    void setBufferedDirty(bool);
-    void resetTrackBuffers();
-    void clearTrackBuffers();
-    void resetTimestampOffsetInTrackBuffers();
     MediaTime timestampOffset() const { return m_timestampOffset; }
-    void setTimestampOffset(const MediaTime& timestampOffset) { m_timestampOffset = timestampOffset; }
     MediaTime highestPresentationTimestamp() const;
     void startChangingType() { m_pendingInitializationSegmentForChangeType = true; }
     void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, bool isEnded);
-    void updateTrackIds(Vector<std::pair<AtomString, AtomString>>&& trackIdPairs);
     void setAllTrackBuffersNeedRandomAccess();
     void setShouldGenerateTimestamps(bool flag) { m_shouldGenerateTimestamps = flag; }
     void setMode(SourceBufferAppendMode mode) { m_appendMode = mode; }
@@ -172,6 +172,7 @@ private:
     bool validateInitializationSegment(const SourceBufferPrivateClient::InitializationSegment&);
     void provideMediaData(TrackBuffer&, const AtomString& trackID);
     void setBufferedRanges(const PlatformTimeRanges&);
+    void setBufferedDirty(bool);
 
     bool m_isAttached { false };
     bool m_hasAudio { false };

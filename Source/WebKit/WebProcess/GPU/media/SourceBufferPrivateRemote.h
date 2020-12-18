@@ -82,10 +82,17 @@ private:
     bool canSwitchToType(const WebCore::ContentType&) final;
     void reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize) final;
     void addTrackBuffer(const AtomString& trackId, RefPtr<WebCore::MediaDescription>&&) final;
+    void resetTrackBuffers() final;
+    void clearTrackBuffers() final;
     void trySignalAllSamplesInTrackEnqueued() final;
     void updateBufferedFromTrackBuffers(bool sourceIsEnded) final;
     void evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded) final;
+    void resetTimestampOffsetInTrackBuffers() final;
+    void setTimestampOffset(const MediaTime&) final;
+    void setAppendWindowStart(const MediaTime&) final;
+    void setAppendWindowEnd(const MediaTime&) final;
     void seekToTime(const MediaTime&) final;
+    void updateTrackIds(Vector<std::pair<AtomString, AtomString>>&&) final;
 
     bool isActive() const final { return m_isActive; }
 

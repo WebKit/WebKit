@@ -91,9 +91,16 @@ private:
     void updateBufferedFromTrackBuffers(bool sourceIsEnded);
     void evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded);
     void addTrackBuffer(TrackPrivateRemoteIdentifier);
+    void resetTrackBuffers();
+    void clearTrackBuffers();
     void reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize);
     void trySignalAllSamplesInTrackEnqueued();
+    void resetTimestampOffsetInTrackBuffers();
+    void setTimestampOffset(const MediaTime&);
+    void setAppendWindowStart(const MediaTime&);
+    void setAppendWindowEnd(const MediaTime&);
     void seekToTime(const MediaTime&);
+    void updateTrackIds(Vector<std::pair<TrackPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier>>&&);
     void bufferedSamplesForTrackId(TrackPrivateRemoteIdentifier, CompletionHandler<void(Vector<String>&&)>&&);
 
     GPUConnectionToWebProcess& m_connectionToWebProcess;

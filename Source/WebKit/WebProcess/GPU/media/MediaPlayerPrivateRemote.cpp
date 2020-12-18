@@ -470,6 +470,11 @@ void MediaPlayerPrivateRemote::addRemoteAudioTrack(TrackPrivateRemoteIdentifier 
     if (!addResult.isNewEntry)
         return;
 
+#if ENABLE(MEDIA_SOURCE)
+    if (m_mediaSourcePrivate)
+        return;
+#endif
+
     m_player->addAudioTrack(addResult.iterator->value);
 }
 
@@ -500,6 +505,11 @@ void MediaPlayerPrivateRemote::addRemoteTextTrack(TrackPrivateRemoteIdentifier i
 
     if (!addResult.isNewEntry)
         return;
+
+#if ENABLE(MEDIA_SOURCE)
+    if (m_mediaSourcePrivate)
+        return;
+#endif
 
     m_player->addTextTrack(addResult.iterator->value);
 }
@@ -613,6 +623,11 @@ void MediaPlayerPrivateRemote::addRemoteVideoTrack(TrackPrivateRemoteIdentifier 
 
     if (!addResult.isNewEntry)
         return;
+
+#if ENABLE(MEDIA_SOURCE)
+    if (m_mediaSourcePrivate)
+        return;
+#endif
 
     m_player->addVideoTrack(addResult.iterator->value);
 }

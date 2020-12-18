@@ -202,6 +202,16 @@ void RemoteSourceBufferProxy::addTrackBuffer(TrackPrivateRemoteIdentifier trackP
     m_sourceBufferPrivate->addTrackBuffer(m_trackIds.get(trackPrivateRemoteIdentifier), m_mediaDescriptions.get(trackPrivateRemoteIdentifier));
 }
 
+void RemoteSourceBufferProxy::resetTrackBuffers()
+{
+    m_sourceBufferPrivate->resetTrackBuffers();
+}
+
+void RemoteSourceBufferProxy::clearTrackBuffers()
+{
+    m_sourceBufferPrivate->clearTrackBuffers();
+}
+
 void RemoteSourceBufferProxy::reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize)
 {
     m_sourceBufferPrivate->reenqueueMediaIfNeeded(currentMediaTime, pendingAppendDataCapacity, maximumBufferSize);
@@ -212,9 +222,46 @@ void RemoteSourceBufferProxy::trySignalAllSamplesInTrackEnqueued()
     m_sourceBufferPrivate->trySignalAllSamplesInTrackEnqueued();
 }
 
+void RemoteSourceBufferProxy::resetTimestampOffsetInTrackBuffers()
+{
+    m_sourceBufferPrivate->resetTimestampOffsetInTrackBuffers();
+}
+
+void RemoteSourceBufferProxy::setTimestampOffset(const MediaTime& timestampOffset)
+{
+    m_sourceBufferPrivate->setTimestampOffset(timestampOffset);
+}
+
+void RemoteSourceBufferProxy::setAppendWindowStart(const MediaTime& appendWindowStart)
+{
+    m_sourceBufferPrivate->setAppendWindowStart(appendWindowStart);
+}
+
+void RemoteSourceBufferProxy::setAppendWindowEnd(const MediaTime& appendWindowEnd)
+{
+    m_sourceBufferPrivate->setAppendWindowEnd(appendWindowEnd);
+}
+
 void RemoteSourceBufferProxy::seekToTime(const MediaTime& mediaTime)
 {
     m_sourceBufferPrivate->seekToTime(mediaTime);
+}
+
+void RemoteSourceBufferProxy::updateTrackIds(Vector<std::pair<TrackPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier>>&& identifierPairs)
+{
+    Vector<std::pair<AtomString, AtomString>> trackIdPairs;
+
+    for (auto& identifierPair : identifierPairs) {
+        ASSERT(m_trackIds.contains(identifierPair.first));
+        ASSERT(m_trackIds.contains(identifierPair.second));
+
+        auto oldId = m_trackIds.take(identifierPair.first);
+        auto newId = m_trackIds.get(identifierPair.second);
+        trackIdPairs.append(std::make_pair(oldId, newId));
+    }
+
+    if (!trackIdPairs.isEmpty())
+        m_sourceBufferPrivate->updateTrackIds(WTFMove(trackIdPairs));
 }
 
 void RemoteSourceBufferProxy::bufferedSamplesForTrackId(TrackPrivateRemoteIdentifier trackPrivateRemoteIdentifier, CompletionHandler<void(Vector<String>&&)>&& completionHandler)

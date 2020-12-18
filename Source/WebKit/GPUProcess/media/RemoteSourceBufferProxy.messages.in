@@ -34,11 +34,18 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     SetReadyState(WebCore::MediaPlayer::ReadyState state)
     UpdateBufferedFromTrackBuffers(bool sourceIsEnded)
     EvictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, MediaTime currentTime, MediaTime duration, bool isEnded)
-    AddTrackBuffer(WebKit::TrackPrivateRemoteIdentifier trackId)
+    AddTrackBuffer(WebKit::TrackPrivateRemoteIdentifier remoteIdentifier)
+    ResetTrackBuffers()
+    ClearTrackBuffers()
     ReenqueueMediaIfNeeded(MediaTime currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize)
     TrySignalAllSamplesInTrackEnqueued()
+    ResetTimestampOffsetInTrackBuffers()
+    SetTimestampOffset(MediaTime timestampOffset)
+    SetAppendWindowStart(MediaTime appendWindowStart)
+    SetAppendWindowEnd(MediaTime appendWindowEnd)
     SeekToTime(MediaTime mediaTime)
-    BufferedSamplesForTrackId(WebKit::TrackPrivateRemoteIdentifier trackId) -> (Vector<String> samples) Async
+    UpdateTrackIds(Vector<std::pair<WebKit::TrackPrivateRemoteIdentifier, WebKit::TrackPrivateRemoteIdentifier>> identifierPairs)
+    BufferedSamplesForTrackId(WebKit::TrackPrivateRemoteIdentifier remoteIdentifier) -> (Vector<String> samples) Async
 }
 
 #endif

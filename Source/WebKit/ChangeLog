@@ -1,3 +1,40 @@
+2020-12-18  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process][MSE] SourceBufferPrivateRemote needs to override some track buffer related functions of SourceBufferPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=219998
+
+        Reviewed by Jer Noble.
+
+        Implement some track buffer related functions of `SourceBufferPrivateRemote` with new IPC messages.
+
+        * GPUProcess/media/RemoteSourceBufferProxy.cpp:
+        (WebKit::RemoteSourceBufferProxy::resetTrackBuffers):
+        (WebKit::RemoteSourceBufferProxy::clearTrackBuffers):
+        (WebKit::RemoteSourceBufferProxy::resetTimestampOffsetInTrackBuffers):
+        (WebKit::RemoteSourceBufferProxy::setTimestampOffset):
+        (WebKit::RemoteSourceBufferProxy::setAppendWindowStart):
+        (WebKit::RemoteSourceBufferProxy::setAppendWindowEnd):
+        (WebKit::RemoteSourceBufferProxy::updateTrackIds):
+        * GPUProcess/media/RemoteSourceBufferProxy.h:
+        * GPUProcess/media/RemoteSourceBufferProxy.messages.in:
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::addRemoteAudioTrack):
+        (WebKit::MediaPlayerPrivateRemote::addRemoteTextTrack):
+        (WebKit::MediaPlayerPrivateRemote::addRemoteVideoTrack):
+        `MediaSource` manages the track information for the MSE media player, so we should not call
+        `MediaPlayer::addAudioTrack()`, `MediaPlayer::addTextTrack()` and `MediaPlayer::addVideoTrack()`.
+
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.cpp:
+        (WebKit::SourceBufferPrivateRemote::resetTrackBuffers):
+        (WebKit::SourceBufferPrivateRemote::clearTrackBuffers):
+        (WebKit::SourceBufferPrivateRemote::resetTimestampOffsetInTrackBuffers):
+        (WebKit::SourceBufferPrivateRemote::setTimestampOffset):
+        (WebKit::SourceBufferPrivateRemote::setAppendWindowStart):
+        (WebKit::SourceBufferPrivateRemote::setAppendWindowEnd):
+        (WebKit::SourceBufferPrivateRemote::updateTrackIds):
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.h:
+
 2020-12-18  Sihui Liu  <sihui_liu@apple.com>
 
         SpeechRecognitionRemoteRealtimeMediaSourceManager should not issue sandbox extension for mocked devices

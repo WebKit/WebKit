@@ -1,3 +1,12 @@
+2020-12-18  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process][MSE] SourceBufferPrivateRemote needs to override some track buffer related functions of SourceBufferPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=219998
+
+        Reviewed by Jer Noble.
+
+        * gpu-process/TestExpectations:
+
 2020-12-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         [Mojave] webanimations/accelerated-transform-related-animation-property-order.html is failing

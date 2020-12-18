@@ -200,8 +200,6 @@ inspector/layers/layers-compositing-reasons.html [ Skip ]
 
 media/controls [ Skip ]
 
-media/media-source/media-source-trackid-change.html [ Failure ]
-media/media-source/media-source-webm-init-inside-segment.html [ Failure ]
 media/media-source/media-source-resize.html [ Timeout ]
 media/media-source/media-source-webm.html [ Timeout ]
 
@@ -379,11 +377,8 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-elemen
 imported/w3c/web-platform-tests/mediacapture-fromelement/idlharness.html [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-streams [ Skip ]
-imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html [ Failure ]
-imported/w3c/web-platform-tests/media-source/mediasource-avtracks.html [ Failure ]
 imported/w3c/web-platform-tests/media-source/mediasource-buffered.html [ Failure ]
 imported/w3c/web-platform-tests/media-source/mediasource-changetype.html [ Failure ]
-imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-bitrate.html [ Failure ]
 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Failure ]
 imported/w3c/web-platform-tests/media-source/mediasource-duration-boundaryconditions.html [ Failure ]
 imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Failure ]
