@@ -28,6 +28,7 @@
 #if PLATFORM(MAC)
 
 #import "PlatformUtilities.h"
+#import "PlatformWebView.h"
 #import "TestProtocol.h"
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -256,6 +257,29 @@ TEST(WebKit, DecidePolicyForNavigationActionOpenNewWindowAndDeallocSourceWebView
     newWebView = nullptr;
     action = nullptr;
 }
+
+#if WK_HAVE_C_SPI
+TEST(WebKit, DecidePolicyForNewWindowAction)
+{
+    auto context = adoptWK(WKContextCreateWithConfiguration(nullptr));
+
+    TestWebKitAPI::PlatformWebView webView(context.get());
+
+    WKPagePolicyClientV1 policyClient;
+    memset(&policyClient, 0, sizeof(policyClient));
+    policyClient.base.version = 1;
+    policyClient.decidePolicyForNewWindowAction = [] (WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKStringRef frameName, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo) {
+        EXPECT_TRUE(WKStringIsEqualToUTF8CString(adoptWK(WKURLCopyString(adoptWK(WKURLRequestCopyURL(request)).get())).get(), "https://webkit.org/"));
+        WKFramePolicyListenerIgnore(listener);
+        decidedPolicy = true;
+    };
+    WKPageSetPagePolicyClient(webView.page(), &policyClient.base);
+
+    WKPageLoadHTMLString(webView.page(), adoptWK(WKStringCreateWithUTF8CString("<body onload='anchorTag.click()'><a href='https://webkit.org/' id='anchorTag' target=_blank>link</a></body>")).get(), nullptr);
+
+    TestWebKitAPI::Util::run(&decidedPolicy);
+}
+#endif // WK_HAVE_C_SPI
 
 TEST(WebKit, DecidePolicyForNavigationActionForTargetedHyperlink)
 {
