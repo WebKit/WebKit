@@ -1317,3 +1317,6 @@ webkit.org/b/217054 fast/layoutformattingcontext/horizontal-sizing-with-trailing
 webkit.org/b/219322 fast/layoutformattingcontext/table-simple-border-collapse.html [ ImageOnlyFailure ]
 webkit.org/b/219322 fast/layoutformattingcontext/table-simple-border-collapse2.html [ ImageOnlyFailure ]
 webkit.org/b/219687 fast/layoutformattingcontext/max-content-and-box-sizing-simple.html [ Skip ]
+
+webkit.org/b/220018 webanimations/accelerated-transform-related-animation-property-order.html [ ImageOnlyFailure ]
+

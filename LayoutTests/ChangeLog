@@ -1,3 +1,12 @@
+2020-12-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [Mojave] webanimations/accelerated-transform-related-animation-property-order.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=220018
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Mark test as failing.
+
 2020-12-17  Truitt Savell  <tsavell@apple.com>
 
         [ Big Sur ] imported/w3c/web-platform-tests/fetch/content-type/script.window.html is failing
