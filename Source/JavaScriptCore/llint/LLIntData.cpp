@@ -62,7 +62,7 @@ extern "C" void exceptionHandlerTrampoline(void);
 extern "C" void returnFromLLIntTrampoline(void);
 #endif
 
-#if ENABLE(CSS_SELECTOR_JIT) && CPU(ARM64)
+#if ENABLE(CSS_SELECTOR_JIT) && CPU(ARM64E)
 extern "C" void vmEntryToCSSJITAfter(void);
 JSC_ANNOTATE_JIT_OPERATION(_JITTarget_vmEntryToCSSJITAfter, vmEntryToCSSJITAfter);
 #endif

@@ -1624,7 +1624,7 @@ _vmEntryHostFunction:
     jmp a2, HostFunctionPtrTag
 
 # unsigned vmEntryToCSSJIT(uintptr_t, uintptr_t, uintptr_t, const void* codePtr);
-if ARM64 or ARM64E
+if ARM64E
 emit ".globl _vmEntryToCSSJIT"
 emit "_vmEntryToCSSJIT:"
     functionPrologue()

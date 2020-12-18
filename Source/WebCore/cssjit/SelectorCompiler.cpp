@@ -1447,6 +1447,8 @@ inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::MacroAssemb
         generateSelectorChecker();
         break;
     case FunctionType::CannotMatchAnything:
+        if (!JSC::Options::useJITCage())
+            m_assembler.tagReturnAddress();
         m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
         generateReturn();
         break;
@@ -1949,11 +1951,13 @@ inline void SelectorCodeGenerator::generateEpilogue(StackAllocator& stackAllocat
 
 inline void SelectorCodeGenerator::generateReturn()
 {
-#if CPU(ARM64)
-    m_assembler.farJump(Assembler::TrustedImmPtr(retagCodePtr<void*, CFunctionPtrTag, JSC::OperationPtrTag>(&vmEntryToCSSJITAfter)), JSC::OperationPtrTag);
-#else
-    m_assembler.ret();
+#if CPU(ARM64E)
+    if (JSC::Options::useJITCage()) {
+        m_assembler.farJump(Assembler::TrustedImmPtr(retagCodePtr<void*, CFunctionPtrTag, JSC::OperationPtrTag>(&vmEntryToCSSJITAfter)), JSC::OperationPtrTag);
+        return;
+    }
 #endif
+    m_assembler.ret();
 }
 
 static bool isAdjacentRelation(FragmentRelation relation)
@@ -1968,6 +1972,8 @@ static bool shouldMarkStyleIsAffectedByPreviousSibling(const SelectorFragment& f
 
 void SelectorCodeGenerator::generateSelectorChecker()
 {
+    if (!JSC::Options::useJITCage())
+        m_assembler.tagReturnAddress();
     pushMacroAssemblerRegisters();
     StackAllocator earlyFailureStack = m_stackAllocator;
 
