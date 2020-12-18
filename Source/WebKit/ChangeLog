@@ -1,3 +1,21 @@
+2020-12-18  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r270938): ASSERTION FAILED: !m_renderThread in WebKit::RemoteAudioDestinationProxy::startRenderingThread
+        https://bugs.webkit.org/show_bug.cgi?id=220017
+        <rdar://problem/72470176>
+
+        Reviewed by Darin Adler.
+
+        In case of a GPU process crash, we call stopRenderingThread() and then connectToGPUProcess() which
+        calls startRenderingThread(). We were hitting an assertion in startRenderingThread() making sure
+        that m_renderThread is null because stopRenderingThread() was failing to set it to null after
+        stopping the thread.
+
+        No new tests, covered by existing failing API test.
+
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::stopRenderingThread):
+
 2020-12-18  Megan Gardner  <megan_gardner@apple.com>
 
         Gate all of the code associated with app highlights

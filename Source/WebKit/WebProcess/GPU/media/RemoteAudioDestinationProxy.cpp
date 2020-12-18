@@ -101,6 +101,7 @@ void RemoteAudioDestinationProxy::stopRenderingThread()
     if (m_renderSemaphore)
         m_renderSemaphore->signal();
     m_renderThread->waitForCompletion();
+    m_renderThread = nullptr;
 #endif
 }
 
