@@ -1,3 +1,18 @@
+2020-12-17  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r270638) decidePolicyForNewWindowAction should have non-null request
+        https://bugs.webkit.org/show_bug.cgi?id=220001
+        <rdar://72436824>
+
+        Reviewed by Tim Horton.
+
+        A ResourceRequest was used after being moved in the super old C SPI that we need to remove,
+        but to keep our client functioning correctly until they do we copy the ResourceRequest instead of moving it.
+        Covered by an API test.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+
 2020-12-17  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess] https://www.waveplayer.info/createmediaelementsource-test/ demo is flaky
