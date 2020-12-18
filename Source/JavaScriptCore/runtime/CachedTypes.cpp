@@ -557,8 +557,9 @@ public:
                 WTF::DefaultRefDerefTraits<Source>::derefIfNotNull(decodedPtr);
             });
         }
-        WTF::DefaultRefDerefTraits<Source>::refIfNotNull(decodedPtr);
-        return adoptRef(decodedPtr);
+        auto result = adoptRef<Source, PtrTraits>(decodedPtr);
+        result->ref();
+        return result;
     }
 
     void decode(Decoder& decoder, RefPtr<Source, PtrTraits>& src) const
