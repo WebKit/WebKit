@@ -74,18 +74,7 @@ void RemoteMediaRecorder::audioSamplesStorageChanged(const SharedMemory::IPCHand
 
     m_description = description;
 
-    if (ipcHandle.handle.isNull()) {
-        m_ringBuffer->deallocate();
-        storage().setReadOnly(false);
-        storage().setStorage(nullptr);
-        return;
-    }
-
-    auto memory = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
-    storage().setStorage(WTFMove(memory));
-    storage().setReadOnly(true);
-
-    m_ringBuffer->allocate(m_description, numberOfFrames);
+    storage().updateReadOnlyStorage(*m_ringBuffer, ipcHandle.handle, description, numberOfFrames);
     m_audioBufferList = makeUnique<WebAudioBufferList>(m_description);
 }
 

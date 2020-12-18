@@ -124,23 +124,8 @@ void RemoteAudioSourceProviderManager::RemoteAudio::setStorage(const SharedMemor
 {
     m_description = description;
 
-    RefPtr<SharedMemory> memory;
-    if (!handle.isNull()) {
-        memory = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
-        RELEASE_LOG_ERROR_IF(!memory, Media, "Unable to create shared memory for audio provider %llu", m_provider->identifier().toUInt64());
-    }
-
     auto& storage = static_cast<SharedRingBufferStorage&>(m_ringBuffer->storage());
-    if (!memory) {
-        m_ringBuffer->deallocate();
-        storage.setReadOnly(false);
-        storage.setStorage(nullptr);
-        return;
-    }
-
-    storage.setStorage(memory.releaseNonNull());
-    storage.setReadOnly(true);
-    m_ringBuffer->allocate(description, numberOfFrames);
+    storage.updateReadOnlyStorage(*m_ringBuffer, handle, description, numberOfFrames);
     m_buffer = makeUnique<WebAudioBufferList>(description, numberOfFrames);
 }
 

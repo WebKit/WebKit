@@ -61,7 +61,7 @@ RemoteAudioDestinationProxy::RemoteAudioDestinationProxy(AudioIOCallback& callba
 #if PLATFORM(COCOA)
     : WebCore::AudioDestinationCocoa(callback, numberOfOutputChannels, sampleRate, false)
     , m_numberOfFrames(hardwareSampleRate() * ringBufferSizeInSecond)
-    , m_ringBuffer(makeUnique<WebCore::CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(std::bind(&RemoteAudioDestinationProxy::storageChanged, this, std::placeholders::_1))))
+    , m_ringBuffer(makeUnique<WebCore::CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(std::bind(&RemoteAudioDestinationProxy::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))))
     , m_sampleRate(hardwareSampleRate())
 #else
     : WebCore::AudioDestinationGStreamer(callback, numberOfOutputChannels, sampleRate)
@@ -182,7 +182,7 @@ void RemoteAudioDestinationProxy::renderQuantum()
 }
 
 #if PLATFORM(COCOA)
-void RemoteAudioDestinationProxy::storageChanged(SharedMemory* storage)
+void RemoteAudioDestinationProxy::storageChanged(SharedMemory* storage, const WebCore::CAAudioStreamDescription& format, size_t frameCount)
 {
     SharedMemory::Handle handle;
     if (storage)
@@ -195,11 +195,7 @@ void RemoteAudioDestinationProxy::storageChanged(SharedMemory* storage)
     uint64_t dataSize = 0;
 #endif
 
-    AudioStreamBasicDescription streamFormat;
-    getAudioStreamBasicDescription(streamFormat);
-    WebCore::CAAudioStreamDescription description(streamFormat);
-
-    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioDestinationManager::AudioSamplesStorageChanged { m_destinationID, SharedMemory::IPCHandle { WTFMove(handle), dataSize }, streamFormat, m_numberOfFrames }, 0);
+    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioDestinationManager::AudioSamplesStorageChanged { m_destinationID, SharedMemory::IPCHandle { WTFMove(handle), dataSize }, format, frameCount }, 0);
 }
 #endif
 

@@ -72,19 +72,7 @@ public:
 
     void audioSamplesStorageChanged(const SharedMemory::IPCHandle& ipcHandle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
     {
-        m_description = description;
-
-        if (ipcHandle.handle.isNull()) {
-            m_ringBuffer->deallocate();
-            storage().setReadOnly(false);
-            storage().setStorage(nullptr);
-            return;
-        }
-
-        auto memory = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
-        storage().setStorage(WTFMove(memory));
-        storage().setReadOnly(true);
-        m_ringBuffer->allocate(description, numberOfFrames);
+        storage().updateReadOnlyStorage(m_ringBuffer.get(), ipcHandle.handle, description, numberOfFrames);
     }
 #endif
 
@@ -164,7 +152,6 @@ private:
 #if PLATFORM(COCOA)
     WebCore::AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;
 
-    WebCore::CAAudioStreamDescription m_description;
     UniqueRef<WebCore::CARingBuffer> m_ringBuffer;
     MachSemaphore m_renderSemaphore;
     uint64_t m_startFrame { 0 };

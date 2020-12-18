@@ -63,7 +63,7 @@ public:
 
     using AudioCallback = Function<void(uint64_t startFrame, uint64_t numberOfFrames)>;
     WEBCORE_EXPORT void setAudioCallback(AudioCallback&&);
-    using RingBufferCreationCallback = Function<UniqueRef<CARingBuffer>(const CAAudioStreamDescription&, size_t)>;
+    using RingBufferCreationCallback = Function<UniqueRef<CARingBuffer>()>;
     WEBCORE_EXPORT void setRingBufferCreationCallback(RingBufferCreationCallback&&);
 
 private:
@@ -111,7 +111,7 @@ private:
     class TapStorage;
     RefPtr<TapStorage> m_tapStorage;
     AudioCallback m_audioCallback;
-    RingBufferCreationCallback m_ringBufferCallback;
+    RingBufferCreationCallback m_ringBufferCreationCallback;
 };
 
 }

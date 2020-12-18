@@ -59,7 +59,7 @@ public:
         : m_id(id)
         , m_connection(WTFMove(connection))
         , m_source(WTFMove(source))
-        , m_ringBuffer(makeUniqueRef<SharedRingBufferStorage>(std::bind(&SourceProxy::storageChanged, this, std::placeholders::_1)))
+        , m_ringBuffer(makeUniqueRef<SharedRingBufferStorage>(std::bind(&SourceProxy::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)))
     {
         m_source->addObserver(*this);
         switch (m_source->type()) {
@@ -194,7 +194,7 @@ private:
         return m_rotationSession->rotate(sample, rotation, ImageRotationSessionVT::IsCGImageCompatible::No);
     }
 
-    void storageChanged(SharedMemory* storage)
+    void storageChanged(SharedMemory* storage, const WebCore::CAAudioStreamDescription& format, size_t frameCount)
     {
         SharedMemory::Handle handle;
         if (storage)
@@ -206,7 +206,7 @@ private:
 #else
         uint64_t dataSize = 0;
 #endif
-        m_connection->send(Messages::RemoteCaptureSampleManager::AudioStorageChanged(m_id, SharedMemory::IPCHandle { WTFMove(handle),  dataSize }, m_description, m_numberOfFrames), 0);
+        m_connection->send(Messages::RemoteCaptureSampleManager::AudioStorageChanged(m_id, SharedMemory::IPCHandle { WTFMove(handle),  dataSize }, format, frameCount), 0);
     }
 
     bool preventSourceFromStopping()

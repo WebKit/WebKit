@@ -28,35 +28,46 @@
 
 #if USE(MEDIATOOLBOX)
 
+#include <WebCore/CARingBuffer.h>
+
 namespace WebKit {
 
-void SharedRingBufferStorage::setStorage(RefPtr<SharedMemory>&& storage)
+void SharedRingBufferStorage::setStorage(RefPtr<SharedMemory>&& storage, const CAAudioStreamDescription& format, size_t frameCount)
 {
     ASSERT(storage || !m_readOnly);
     m_storage = WTFMove(storage);
     if (m_storageChangedHandler)
-        m_storageChangedHandler(m_storage.get());
+        m_storageChangedHandler(m_storage.get(), format, frameCount);
 }
 
-void SharedRingBufferStorage::setReadOnly(bool readOnly)
+void SharedRingBufferStorage::updateReadOnlyStorage(WebCore::CARingBuffer& ringBuffer, const SharedMemory::Handle& handle, const CAAudioStreamDescription& format, size_t frameCount)
 {
-    ASSERT(m_storage || !readOnly);
-    m_readOnly = readOnly;
+    if (handle.isNull()) {
+        ringBuffer.deallocate();
+        m_readOnly = false;
+        m_storage = nullptr;
+        return;
+    }
+
+    auto memory = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
+    m_storage = WTFMove(memory);
+    m_readOnly = true;
+    ringBuffer.allocate(format, frameCount);
 }
 
-void SharedRingBufferStorage::allocate(size_t byteCount)
+void SharedRingBufferStorage::allocate(size_t byteCount, const CAAudioStreamDescription& format, size_t frameCount)
 {
     if (!m_readOnly) {
         auto sharedMemory = SharedMemory::allocate(byteCount + sizeof(FrameBounds));
         new (NotNull, sharedMemory->data()) FrameBounds;
-        setStorage(WTFMove(sharedMemory));
+        setStorage(WTFMove(sharedMemory), format, frameCount);
     }
 }
 
 void SharedRingBufferStorage::deallocate()
 {
     if (!m_readOnly)
-        setStorage(nullptr);
+        setStorage(nullptr, { }, 0);
 }
 
 auto SharedRingBufferStorage::sharedFrameBounds() const -> FrameBounds*

@@ -47,22 +47,19 @@ public:
     static Ref<RemoteAudioSourceProviderProxy> create(WebCore::MediaPlayerIdentifier, Ref<IPC::Connection>&&, WebCore::AudioSourceProviderAVFObjC&);
     ~RemoteAudioSourceProviderProxy();
 
-    UniqueRef<WebCore::CARingBuffer> createRingBuffer(const WebCore::CAAudioStreamDescription&, size_t);
+    UniqueRef<WebCore::CARingBuffer> createRingBuffer();
     void newAudioSamples(uint64_t startFrame, uint64_t endFrame);
 
 private:
     RemoteAudioSourceProviderProxy(WebCore::MediaPlayerIdentifier, Ref<IPC::Connection>&&);
 
-    void storageChanged(SharedMemory*);
+    void storageChanged(SharedMemory*, const WebCore::CAAudioStreamDescription& format, size_t frameCount);
 
     // AudioSourceProviderClient
     void setFormat(size_t numberOfChannels, float sampleRate) final { }
 
     WebCore::MediaPlayerIdentifier m_identifier;
     Ref<IPC::Connection> m_connection;
-
-    WebCore::CAAudioStreamDescription m_ringBufferDescription;
-    size_t m_ringBufferCapacity { 0 };
 };
 
 } // namespace WebKit

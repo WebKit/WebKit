@@ -71,7 +71,7 @@ void CARingBuffer::allocate(const CAAudioStreamDescription& format, size_t frame
     m_frameCountMask = frameCount - 1;
     m_capacityBytes = m_bytesPerFrame * frameCount;
 
-    m_buffers->allocate(m_capacityBytes * m_channelCount);
+    m_buffers->allocate(m_capacityBytes * m_channelCount, format, frameCount);
 
     m_pointers.resize(m_channelCount);
     Byte* channelData = static_cast<Byte*>(m_buffers->data());

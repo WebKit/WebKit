@@ -105,18 +105,7 @@ void RemoteAudioMediaStreamTrackRenderer::audioSamplesStorageChanged(const Share
     MESSAGE_CHECK(WebAudioBufferList::isSupportedDescription(description, numberOfFrames));
     m_description = description;
 
-    if (ipcHandle.handle.isNull()) {
-        m_ringBuffer->deallocate();
-        storage().setReadOnly(false);
-        storage().setStorage(nullptr);
-        return;
-    }
-
-    auto memory = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
-    storage().setStorage(WTFMove(memory));
-    storage().setReadOnly(true);
-
-    m_ringBuffer->allocate(description, numberOfFrames);
+    storage().updateReadOnlyStorage(m_ringBuffer.get(), ipcHandle.handle, description, numberOfFrames);
 
     m_audioBufferList = makeUnique<WebAudioBufferList>(m_description);
 }

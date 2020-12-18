@@ -80,6 +80,7 @@ RefPtr<AudioSourceProviderAVFObjC> AudioSourceProviderAVFObjC::create(AVPlayerIt
 
 AudioSourceProviderAVFObjC::AudioSourceProviderAVFObjC(AVPlayerItem *item)
     : m_avPlayerItem(item)
+    , m_ringBufferCreationCallback([] { return makeUniqueRef<CARingBuffer>(); })
 {
 }
 
@@ -338,12 +339,9 @@ void AudioSourceProviderAVFObjC::prepare(CMItemCount maxFrames, const AudioStrea
     size_t capacity = std::max(static_cast<size_t>(2 * maxFrames), static_cast<size_t>(kRingBufferDuration * sampleRate));
 
     CAAudioStreamDescription description { *processingFormat };
-    if (m_ringBufferCallback)
-        m_ringBuffer = m_ringBufferCallback(description, capacity).moveToUniquePtr();
-    else {
-        m_ringBuffer = makeUnique<CARingBuffer>();
-        m_ringBuffer->allocate(description, capacity);
-    }
+    if (!m_ringBuffer)
+        m_ringBuffer = m_ringBufferCreationCallback().moveToUniquePtr();
+    m_ringBuffer->allocate(description, capacity);
 
     // AudioBufferList is a variable-length struct, so create on the heap with a generic new() operator
     // with a custom size, and initialize the struct manually.
@@ -438,7 +436,7 @@ void AudioSourceProviderAVFObjC::setAudioCallback(AudioCallback&& callback)
 void AudioSourceProviderAVFObjC::setRingBufferCreationCallback(RingBufferCreationCallback&& callback)
 {
     ASSERT(!m_avAudioMix);
-    m_ringBufferCallback = WTFMove(callback);
+    m_ringBufferCreationCallback = WTFMove(callback);
 }
 
 }

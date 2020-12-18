@@ -120,25 +120,8 @@ RemoteCaptureSampleManager::RemoteAudio::RemoteAudio(Ref<RemoteRealtimeMediaSour
 void RemoteCaptureSampleManager::RemoteAudio::setStorage(const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
 {
     m_description = description;
-
-    RefPtr<SharedMemory> memory;
-    if (!handle.isNull()) {
-        memory = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
-        RELEASE_LOG_ERROR_IF(!memory, WebRTC, "Unable to create shared memory for audio source %llu", m_source->identifier().toUInt64());
-    }
-
     auto& storage = static_cast<SharedRingBufferStorage&>(m_ringBuffer->storage());
-    if (!memory) {
-        m_ringBuffer->deallocate();
-        storage.setReadOnly(false);
-        storage.setStorage(nullptr);
-        return;
-    }
-
-    storage.setStorage(memory.releaseNonNull());
-    storage.setReadOnly(true);
-    m_ringBuffer->allocate(description, numberOfFrames);
-    m_buffer = makeUnique<WebAudioBufferList>(description, numberOfFrames);
+    storage.updateReadOnlyStorage(*m_ringBuffer, handle, description, numberOfFrames);
 }
 
 void RemoteCaptureSampleManager::RemoteAudio::audioSamplesAvailable(MediaTime time, uint64_t numberOfFrames)

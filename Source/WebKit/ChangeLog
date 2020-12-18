@@ -1,5 +1,94 @@
 2020-12-17  Chris Dumez  <cdumez@apple.com>
 
+        [GPUProcess] https://www.waveplayer.info/createmediaelementsource-test/ demo is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=219951
+
+        Reviewed by Geoff Garen.
+
+        The issue was with the following line in AudioSourceProviderAVFObjC::prepare:
+        `m_ringBuffer = m_ringBufferCallback(description, capacity).moveToUniquePtr();`
+
+        In the case where m_ringBuffer was non-null before the assignment, we would have
+        2 RingBuffers that would coexist for a very small period of time. When the new
+        one was created, we would send an IPC to the remote process with the shared
+        memory handle of the new RingBuffer. However, very shortly after, the old
+        ring buffer would get destroyed, causing us to send another IPC to the remote
+        process with a null handle (since the shared memory associated with the old
+        ring buffer is getting destroyed). As a result, of this ordering issue, the
+        remote process would end up with a RingBuffer with a null shared memory handle
+        and no audio would be rendered.
+
+        We could have addressed the issue like so:
+        ```
+        m_ringBuffer = nullptr;
+        m_ringBuffer = m_ringBufferCallback(description, capacity).moveToUniquePtr();
+        ```
+        However, this would be super fragile. Instead, I have made the following changes:
+        1. If there is already a ringBuffer, reuse it instead of reconstructing it.
+           Calling allocate() with the new parameters on the existing ring buffer is
+           sufficient in this case.
+        2. Because of 1, the ring buffer creation callback no longer needs to call
+           CARingBuffer::allocate().
+
+        I also made the following changes to make the code simpler and to reduce code
+        duplication:
+        - The storage change handler passed to SharedRingBufferStorage is now given
+          as parameter the CAAudioStreamDescription & frameCount. What the handler
+          always does is send an IPC to the remote process to tell it that the
+          storage changed and in all cases, it needs to provide these 2 parameters
+          as well. This is because the remote process will need to call
+          CARingBuffer::allocate(), which requires those 2 parameters. This
+          simplifies our code in some cases since we no longer need a mechanism
+          to retrieve those 2 parameters from inside the storage change handler.
+        - The logic of the StorageChange IPC recipient to update its ringbuffer
+          with the new shared memory handle is complicated and was duplicated
+          in a LOT of places. To address this, I introduced a new
+          SharedRingBufferStorage::updateReadOnlyStorage() function which does
+          exactly what we need.
+
+        * GPUProcess/media/RemoteAudioDestinationManager.cpp:
+        (WebKit::RemoteAudioDestination::audioSamplesStorageChanged):
+        * GPUProcess/media/RemoteAudioSourceProviderProxy.cpp:
+        (WebKit::RemoteAudioSourceProviderProxy::create):
+        (WebKit::RemoteAudioSourceProviderProxy::createRingBuffer):
+        (WebKit::RemoteAudioSourceProviderProxy::storageChanged):
+        * GPUProcess/media/RemoteAudioSourceProviderProxy.h:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.cpp:
+        (WebKit::RemoteAudioMediaStreamTrackRenderer::audioSamplesStorageChanged):
+        * GPUProcess/webrtc/RemoteMediaRecorder.cpp:
+        (WebKit::RemoteMediaRecorder::audioSamplesStorageChanged):
+        * Shared/Cocoa/SharedRingBufferStorage.cpp:
+        (WebKit::SharedRingBufferStorage::setStorage):
+        (WebKit::SharedRingBufferStorage::updateReadOnlyStorage):
+        (WebKit::SharedRingBufferStorage::allocate):
+        (WebKit::SharedRingBufferStorage::deallocate):
+        * Shared/Cocoa/SharedRingBufferStorage.h:
+        (WebKit::SharedRingBufferStorage::SharedRingBufferStorage):
+        (WebKit::SharedRingBufferStorage::storage const):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::SourceProxy):
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::storageChanged):
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.cpp:
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSource::setStorage):
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::RemoteAudioDestinationProxy):
+        (WebKit::RemoteAudioDestinationProxy::storageChanged):
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.h:
+        * WebProcess/GPU/media/RemoteAudioSourceProviderManager.cpp:
+        (WebKit::RemoteAudioSourceProviderManager::RemoteAudio::setStorage):
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRenderer.cpp:
+        (WebKit::AudioMediaStreamTrackRenderer::AudioMediaStreamTrackRenderer):
+        (WebKit::AudioMediaStreamTrackRenderer::storageChanged):
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRenderer.h:
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        (WebKit::MediaRecorderPrivate::startRecording):
+        (WebKit::MediaRecorderPrivate::storageChanged):
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.h:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+        (WebKit::RemoteCaptureSampleManager::RemoteAudio::setStorage):
+
+2020-12-17  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed build fix after r270938.
 
         Add missing include.

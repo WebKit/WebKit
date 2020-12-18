@@ -49,7 +49,7 @@ public:
 private:
     explicit AudioMediaStreamTrackRenderer(Ref<IPC::Connection>&&);
 
-    void storageChanged(SharedMemory*);
+    void storageChanged(SharedMemory*, const WebCore::CAAudioStreamDescription& format, size_t frameCount);
 
     // WebCore::AudioMediaStreamTrackRenderer
     void start() final;

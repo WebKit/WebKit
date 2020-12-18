@@ -96,7 +96,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    void storageChanged(SharedMemory*);
+    void storageChanged(SharedMemory*, const WebCore::CAAudioStreamDescription& format, size_t frameCount);
 #endif
 
     RemoteAudioDestinationIdentifier m_destinationID;

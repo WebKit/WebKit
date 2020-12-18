@@ -59,7 +59,7 @@ void MediaRecorderPrivate::startRecording(StartRecordingCallback&& callback)
 
     auto selectedTracks = MediaRecorderPrivate::selectTracks(m_stream);
     if (selectedTracks.audioTrack)
-        m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(std::bind(&MediaRecorderPrivate::storageChanged, this, std::placeholders::_1)));
+        m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(std::bind(&MediaRecorderPrivate::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
 
     m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { m_identifier, !!selectedTracks.audioTrack, !!selectedTracks.videoTrack, m_options }, [this, weakThis = makeWeakPtr(this), audioTrack = makeRefPtr(selectedTracks.audioTrack), videoTrack = makeRefPtr(selectedTracks.videoTrack), callback = WTFMove(callback)](auto&& exception, String&& mimeType, unsigned audioBitRate, unsigned videoBitRate) mutable {
         if (!weakThis) {
@@ -107,7 +107,7 @@ void MediaRecorderPrivate::audioSamplesAvailable(const MediaTime& time, const Pl
     m_connection->send(Messages::RemoteMediaRecorder::AudioSamplesAvailable { time, numberOfFrames }, m_identifier);
 }
 
-void MediaRecorderPrivate::storageChanged(SharedMemory* storage)
+void MediaRecorderPrivate::storageChanged(SharedMemory* storage, const WebCore::CAAudioStreamDescription& format, size_t frameCount)
 {
     SharedMemory::Handle handle;
     if (storage)
@@ -119,7 +119,7 @@ void MediaRecorderPrivate::storageChanged(SharedMemory* storage)
 #else
     uint64_t dataSize = 0;
 #endif
-    m_connection->send(Messages::RemoteMediaRecorder::AudioSamplesStorageChanged { SharedMemory::IPCHandle { WTFMove(handle), dataSize }, m_description, static_cast<uint64_t>(m_numberOfFrames) }, m_identifier);
+    m_connection->send(Messages::RemoteMediaRecorder::AudioSamplesStorageChanged { SharedMemory::IPCHandle { WTFMove(handle), dataSize }, format, frameCount }, m_identifier);
 }
 
 void MediaRecorderPrivate::fetchData(CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&, const String& mimeType, double)>&& completionHandler)

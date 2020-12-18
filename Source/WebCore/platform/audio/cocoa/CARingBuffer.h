@@ -42,7 +42,7 @@ class CARingBufferStorage {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~CARingBufferStorage() = default;
-    virtual void allocate(size_t) = 0;
+    virtual void allocate(size_t, const CAAudioStreamDescription& format, size_t frameCount) = 0;
     virtual void deallocate() = 0;
     virtual void* data() = 0;
     virtual void getCurrentFrameBounds(uint64_t& startTime, uint64_t& endTime) = 0;
@@ -59,7 +59,7 @@ public:
     ~CARingBufferStorageVector() = default;
 
 private:
-    void allocate(size_t byteCount) final { m_buffer.grow(byteCount); }
+    void allocate(size_t byteCount, const CAAudioStreamDescription&, size_t) final { m_buffer.grow(byteCount); }
     void deallocate() final { m_buffer.clear(); }
     void* data() final { return m_buffer.data(); }
     void getCurrentFrameBounds(uint64_t& startTime, uint64_t& endTime) final;
@@ -98,7 +98,7 @@ public:
         TooMuch, // fetch start time is earlier than buffer start time and fetch end time is later than buffer end time
     };
 
-    WEBCORE_EXPORT void allocate(const CAAudioStreamDescription&, size_t);
+    WEBCORE_EXPORT void allocate(const CAAudioStreamDescription&, size_t frameCount);
     WEBCORE_EXPORT void deallocate();
 
     WEBCORE_EXPORT Error store(const AudioBufferList*, size_t frameCount, uint64_t startFrame);

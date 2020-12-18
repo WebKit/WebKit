@@ -37,8 +37,8 @@ Ref<RemoteAudioSourceProviderProxy> RemoteAudioSourceProviderProxy::create(WebCo
 {
     auto remoteProvider = adoptRef(*new RemoteAudioSourceProviderProxy(identifier, WTFMove(connection)));
 
-    localProvider.setRingBufferCreationCallback([remoteProvider](auto description, auto capacity) {
-        return remoteProvider->createRingBuffer(description, capacity);
+    localProvider.setRingBufferCreationCallback([remoteProvider]() {
+        return remoteProvider->createRingBuffer();
     });
     localProvider.setAudioCallback([remoteProvider](auto startFrame, auto numberOfFrames) {
         remoteProvider->newAudioSamples(startFrame, numberOfFrames);
@@ -55,15 +55,11 @@ RemoteAudioSourceProviderProxy::RemoteAudioSourceProviderProxy(WebCore::MediaPla
 
 RemoteAudioSourceProviderProxy::~RemoteAudioSourceProviderProxy() = default;
 
-UniqueRef<CARingBuffer> RemoteAudioSourceProviderProxy::createRingBuffer(const CAAudioStreamDescription& description, size_t capacity)
+UniqueRef<CARingBuffer> RemoteAudioSourceProviderProxy::createRingBuffer()
 {
-    m_ringBufferDescription = description;
-    m_ringBufferCapacity = capacity;
-    auto ringBuffer = makeUniqueRef<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>([protectedThis = makeRef(*this)](SharedMemory* memory) mutable {
-        protectedThis->storageChanged(memory);
+    return makeUniqueRef<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>([protectedThis = makeRef(*this)](SharedMemory* memory, const CAAudioStreamDescription& format, size_t frameCount) mutable {
+        protectedThis->storageChanged(memory, format, frameCount);
     }));
-    ringBuffer->allocate(description, capacity);
-    return ringBuffer;
 }
 
 void RemoteAudioSourceProviderProxy::newAudioSamples(uint64_t startFrame, uint64_t numberOfFrames)
@@ -71,7 +67,7 @@ void RemoteAudioSourceProviderProxy::newAudioSamples(uint64_t startFrame, uint64
     m_connection->send(Messages::RemoteAudioSourceProviderManager::AudioSamplesAvailable { m_identifier, startFrame, numberOfFrames }, 0);
 }
 
-void RemoteAudioSourceProviderProxy::storageChanged(SharedMemory* memory)
+void RemoteAudioSourceProviderProxy::storageChanged(SharedMemory* memory, const CAAudioStreamDescription& format, size_t frameCount)
 {
     SharedMemory::Handle handle;
     if (memory)
@@ -83,7 +79,7 @@ void RemoteAudioSourceProviderProxy::storageChanged(SharedMemory* memory)
 #else
     uint64_t dataSize = 0;
 #endif
-    m_connection->send(Messages::RemoteAudioSourceProviderManager::AudioStorageChanged { m_identifier, SharedMemory::IPCHandle { WTFMove(handle),  dataSize }, m_ringBufferDescription, m_ringBufferCapacity }, 0);
+    m_connection->send(Messages::RemoteAudioSourceProviderManager::AudioStorageChanged { m_identifier, SharedMemory::IPCHandle { WTFMove(handle),  dataSize }, format, frameCount }, 0);
 }
 
 } // namespace WebKit

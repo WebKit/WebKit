@@ -63,7 +63,7 @@ private:
     void pauseRecording(CompletionHandler<void()>&&) final;
     void resumeRecording(CompletionHandler<void()>&&) final;
 
-    void storageChanged(SharedMemory*);
+    void storageChanged(SharedMemory*, const WebCore::CAAudioStreamDescription& format, size_t frameCount);
 
     MediaRecorderIdentifier m_identifier;
     Ref<WebCore::MediaStreamPrivate> m_stream;
