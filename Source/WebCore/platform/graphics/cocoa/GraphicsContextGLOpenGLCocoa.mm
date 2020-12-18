@@ -99,7 +99,7 @@ static EGLDisplay InitializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
 
     if (attrs.useMetal) {
         displayAttributes.append(EGL_PLATFORM_ANGLE_TYPE_ANGLE);
-        displayAttributes.append(0x3489); // Will be EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE.
+        displayAttributes.append(EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE);
     }
 
     displayAttributes.append(EGL_NONE);
