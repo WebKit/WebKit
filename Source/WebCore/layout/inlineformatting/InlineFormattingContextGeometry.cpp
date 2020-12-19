@@ -47,7 +47,7 @@ public:
 private:
     void setVerticalGeometryForInlineBox(LineBox::InlineLevelBox&) const;
     void constructInlineLevelBoxes(LineBox&, const Line::RunList&);
-    void computeLineBoxHeightAndalignInlineLevelBoxesVertically(LineBox&);
+    void computeLineBoxHeightAndAlignInlineLevelBoxesVertically(LineBox&);
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     const Box& rootBox() const { return formattingContext().root(); }
@@ -58,6 +58,7 @@ private:
 
 private:
     const InlineFormattingContext& m_inlineFormattingContext;
+    bool m_inlineLevelBoxesNeedVerticalAlignment { false };
 };
 
 struct HangingTrailingWhitespaceContent {
@@ -148,6 +149,8 @@ static Optional<InlineLayoutUnit> horizontalAlignmentOffset(const Line::RunList&
 
 LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingContext)
     : m_inlineFormattingContext(inlineFormattingContext)
+    // FIXME: line-height should not require complex alignment in simple cases.
+    , m_inlineLevelBoxesNeedVerticalAlignment(!rootBox().style().lineHeight().isNegative() || !inlineFormattingContext.layoutState().inNoQuirksMode())
 {
 }
 
@@ -162,7 +165,8 @@ LineBox LineBoxBuilder::build(const LineBuilder::LineContent& lineContent)
     if (auto horizontalAlignmentOffset = Layout::horizontalAlignmentOffset(runs, rootBox().style().textAlign(), lineLogicalWidth, contentLogicalWidth, lineContent.isLastLineWithInlineContent))
         lineBox.setHorizontalAlignmentOffset(*horizontalAlignmentOffset);
     constructInlineLevelBoxes(lineBox, runs);
-    computeLineBoxHeightAndalignInlineLevelBoxesVertically(lineBox);
+    if (m_inlineLevelBoxesNeedVerticalAlignment)
+        computeLineBoxHeightAndAlignInlineLevelBoxesVertically(lineBox);
     return lineBox;
 }
 
@@ -203,6 +207,8 @@ void LineBoxBuilder::setVerticalGeometryForInlineBox(LineBox::InlineLevelBox& in
 void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::RunList& runs)
 {
     auto horizontalAligmentOffset = lineBox.horizontalAlignmentOffset().valueOr(InlineLayoutUnit { });
+    // Empty root inline boxes require special collapsing.
+    m_inlineLevelBoxesNeedVerticalAlignment = m_inlineLevelBoxesNeedVerticalAlignment || runs.isEmpty();
 
     auto createRootInlineBox = [&] {
         auto rootInlineBox = LineBox::InlineLevelBox::createRootInlineBox(rootBox(), horizontalAligmentOffset, lineBox.logicalWidth());
@@ -212,6 +218,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         if (isInitiallyConsideredNonEmpty)
             rootInlineBox->setIsNonEmpty();
         setVerticalGeometryForInlineBox(*rootInlineBox);
+        m_inlineLevelBoxesNeedVerticalAlignment = m_inlineLevelBoxesNeedVerticalAlignment || rootInlineBox->baseline() != rootInlineBox->layoutBounds().ascent;
         lineBox.addRootInlineBox(WTFMove(rootInlineBox));
     };
     createRootInlineBox();
@@ -251,7 +258,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         }
     };
     createWrappedInlineBoxes();
-
+    auto& rootInlineBox = lineBox.rootInlineBox();
     for (auto& run : runs) {
         auto& layoutBox = run.layoutBox();
         auto logicalLeft = horizontalAligmentOffset + run.logicalLeft();
@@ -275,34 +282,68 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
             // level box contributes 0px to the line box height, it should not be considered empty.
             if (marginBoxHeight || inlineLevelBoxGeometry.marginBefore() || inlineLevelBoxGeometry.marginAfter())
                 atomicInlineLevelBox->setIsNonEmpty();
+            // Let's estimate the logical top so that we can avoid running the alignment on simple inline boxes.
+            auto alignInlineBoxIfEligible = [&] {
+                if (m_inlineLevelBoxesNeedVerticalAlignment)
+                    return;
+                // Baseline aligned, non-stretchy direct children are considered to be simple for now.
+                auto isConsideredSimple = &layoutBox.parent() == &rootBox()
+                    && layoutBox.style().verticalAlign() == VerticalAlign::Baseline
+                    && !inlineLevelBoxGeometry.marginBefore()
+                    && !inlineLevelBoxGeometry.marginAfter()
+                    && marginBoxHeight <= rootInlineBox.baseline();
+                if (!isConsideredSimple) {
+                    m_inlineLevelBoxesNeedVerticalAlignment = true;
+                    return;
+                }
+                atomicInlineLevelBox->setLogicalTop(rootInlineBox.baseline() - ascent);
+            };
+            alignInlineBoxIfEligible();
             lineBox.addInlineLevelBox(WTFMove(atomicInlineLevelBox));
-        } else if (run.isInlineBoxStart()) {
+            continue;
+        }
+        // FIXME: Add support for simple inline boxes too.
+        m_inlineLevelBoxesNeedVerticalAlignment = true;
+        if (run.isInlineBoxStart()) {
             auto initialLogicalWidth = lineBox.logicalWidth() - run.logicalLeft();
             ASSERT(initialLogicalWidth >= 0);
             auto inlineBox = LineBox::InlineLevelBox::createInlineBox(layoutBox, logicalLeft, initialLogicalWidth);
             setVerticalGeometryForInlineBox(*inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
-        } else if (run.isInlineBoxEnd()) {
+            continue;
+        }
+        if (run.isInlineBoxEnd()) {
             // Adjust the logical width when the inline level container closes on this line.
             auto& inlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox);
             ASSERT(inlineBox.isInlineBox());
             inlineBox.setLogicalWidth(run.logicalRight() - inlineBox.logicalLeft());
-        } else if (run.isText() || run.isSoftLineBreak()) {
+            continue;
+        }
+        if (run.isText() || run.isSoftLineBreak()) {
             // FIXME: Adjust non-empty inline box height when glyphs from the non-primary font stretch the box.
             lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent()).setIsNonEmpty();
-        } else if (run.isHardLineBreak()) {
+            continue;
+        }
+        if (run.isHardLineBreak()) {
             auto lineBreakBox = LineBox::InlineLevelBox::createLineBreakBox(layoutBox, logicalLeft);
             setVerticalGeometryForInlineBox(*lineBreakBox);
             lineBreakBox->setIsNonEmpty();
             lineBox.addInlineLevelBox(WTFMove(lineBreakBox));
-        } else if (run.isWordBreakOpportunity())
+            continue;
+        }
+        if (run.isWordBreakOpportunity()) {
             lineBox.addInlineLevelBox(LineBox::InlineLevelBox::createGenericInlineLevelBox(layoutBox, logicalLeft));
-        else
-            ASSERT_NOT_REACHED();
+            continue;
+        }
+        ASSERT_NOT_REACHED();
+    }
+    if (!m_inlineLevelBoxesNeedVerticalAlignment) {
+        rootInlineBox.setLogicalTop({ });
+        lineBox.setLogicalHeight(rootInlineBox.layoutBounds().height());
     }
 }
 
-void LineBoxBuilder::computeLineBoxHeightAndalignInlineLevelBoxesVertically(LineBox& lineBox)
+void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(LineBox& lineBox)
 {
     // This function (partially) implements:
     // 2.2. Layout Within Line Boxes
