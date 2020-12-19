@@ -1,3 +1,36 @@
+2020-12-18  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r270983. rdar://problem/72484021
+
+    Crash in DOMSelection::getRangeAt()
+    https://bugs.webkit.org/show_bug.cgi?id=219804
+    
+    Patch by Julian Gonzalez <julian_a_gonzalez@apple.com> on 2020-12-18
+    Reviewed by Darin Adler.
+    
+    Add a check in HTMLTextFormControlElement::setSelectionRange()
+    that ensures we do not try to move the frame's selection
+    if the HTMLTextFormControlElement is no longer connected.
+    
+    * html/HTMLTextFormControlElement.cpp:
+    (WebCore::HTMLTextFormControlElement::setSelectionRange):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@270983 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-12-18  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+            Crash in DOMSelection::getRangeAt()
+            https://bugs.webkit.org/show_bug.cgi?id=219804
+
+            Reviewed by Darin Adler.
+
+            Add a check in HTMLTextFormControlElement::setSelectionRange()
+            that ensures we do not try to move the frame's selection
+            if the HTMLTextFormControlElement is no longer connected.
+
+            * html/HTMLTextFormControlElement.cpp:
+            (WebCore::HTMLTextFormControlElement::setSelectionRange):
+
 2020-12-16  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r269900. rdar://problem/72298580
