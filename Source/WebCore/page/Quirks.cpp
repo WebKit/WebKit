@@ -29,6 +29,7 @@
 #include "Attr.h"
 #include "DOMTokenList.h"
 #include "DOMWindow.h"
+#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "DocumentStorageAccess.h"
@@ -1006,6 +1007,9 @@ bool Quirks::hasStorageAccessForAllLoginDomains(const HashSet<RegistrableDomain>
 
 Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& element, const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget) const
 {
+    if (!DeprecatedGlobalSettings::resourceLoadStatisticsEnabled())
+        return Quirks::StorageAccessResult::ShouldNotCancelEvent;
+
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (!needsQuirks())
         return Quirks::StorageAccessResult::ShouldNotCancelEvent;
