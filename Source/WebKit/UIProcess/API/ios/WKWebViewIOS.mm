@@ -1607,6 +1607,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         return;
     }
 
+    if (scrollEvent.phase == UIScrollPhaseBegan) {
+        _currentScrollGestureState = WTF::nullopt;
+        _wheelEventCountInCurrentScrollGesture = 0;
+    }
+
     WebCore::IntPoint scrollLocation = WebCore::roundedIntPoint([scrollEvent locationInView:_contentView.get()]);
     auto eventListeners = WebKit::eventListenerTypesAtPoint(_contentView.get(), scrollLocation);
     bool hasWheelHandlers = eventListeners.contains(WebCore::EventListenerRegionType::Wheel);
@@ -1615,15 +1620,29 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         return;
     }
 
-    bool isFirstEventInGesture = scrollEvent.phase == UIScrollPhaseBegan;
-    if (isFirstEventInGesture)
-        _currentScrollGestureState = WTF::nullopt;
+    // Scroll events with zero delta are not dispatched to the page, so cannot be
+    // cancelled, so we can short-circuit them here.
+    // We make an exception for end-phase events, similar to the logic in
+    // EventHandler::handleWheelEventInAppropriateEnclosingBox.
+    CGVector deltaVector = [scrollEvent _adjustedAcceleratedDeltaInView:_contentView.get()];
+    if (!deltaVector.dx && !deltaVector.dy && scrollEvent.phase != UIScrollPhaseEnded)  {
+        completion(NO);
+        return;
+    }
 
     bool hasActiveWheelHandlers = eventListeners.contains(WebCore::EventListenerRegionType::NonPassiveWheel);
     bool isCancelable = hasActiveWheelHandlers && (!_currentScrollGestureState || _currentScrollGestureState == WebCore::WheelScrollGestureState::Blocking);
-    auto event = WebIOSEventFactory::createWebWheelEvent(scrollEvent, _contentView.get());
 
-    _page->dispatchWheelEventWithoutScrolling(event, [weakSelf = WeakObjCPtr<WKWebView>(self), strongCompletion = makeBlockPtr(completion), isCancelable, isFirstEventInGesture](bool handled) {
+    Optional<WebKit::WebWheelEvent::Phase> overridePhase;
+    // The first event with non-zero delta in a given gesture should be considered the
+    // "Began" event in the WebCore sense (e.g. for deciding cancelability). Note that
+    // this may not be a UIScrollPhaseBegin event, nor even necessarily the first UIScrollPhaseChanged event.
+    if (!_wheelEventCountInCurrentScrollGesture)
+        overridePhase = WebKit::WebWheelEvent::PhaseBegan;
+    auto event = WebIOSEventFactory::createWebWheelEvent(scrollEvent, _contentView.get(), overridePhase);
+
+    _wheelEventCountInCurrentScrollGesture++;
+    _page->dispatchWheelEventWithoutScrolling(event, [weakSelf = WeakObjCPtr<WKWebView>(self), strongCompletion = makeBlockPtr(completion), isCancelable](bool handled) {
         auto strongSelf = weakSelf.get();
         if (!strongSelf) {
             strongCompletion(NO);
@@ -1631,7 +1650,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         }
 
         if (isCancelable) {
-            if (isFirstEventInGesture)
+            if (!strongSelf->_currentScrollGestureState)
                 strongSelf->_currentScrollGestureState = handled ? WebCore::WheelScrollGestureState::Blocking : WebCore::WheelScrollGestureState::NonBlocking;
             strongCompletion(handled);
         }

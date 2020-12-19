@@ -234,6 +234,7 @@ class ViewGestureController;
     BOOL _visibleContentRectUpdateScheduledFromScrollViewInStableState;
 
     Optional<WebCore::WheelScrollGestureState> _currentScrollGestureState;
+    uint64_t _wheelEventCountInCurrentScrollGesture;
 
     _WKDragInteractionPolicy _dragInteractionPolicy;
 

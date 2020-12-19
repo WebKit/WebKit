@@ -1,3 +1,41 @@
+2020-12-18  Tim Horton  <timothy_horton@apple.com>
+
+        iOS wheel events don't work on many websites
+        https://bugs.webkit.org/show_bug.cgi?id=220034
+
+        Reviewed by Simon Fraser.
+
+        * Shared/ios/WebIOSEventFactory.h:
+        * Shared/ios/WebIOSEventFactory.mm:
+        (WebIOSEventFactory::createWebWheelEvent):
+        It turns out that many sites look at the legacy mousewheel event properties,
+        so compute wheelTicks in the same way that we do on macOS.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _scrollView:asynchronouslyHandleScrollEvent:completion:]):
+        If the UI process sends a wheel event with delta=0,0 to the Web Content
+        process, it will not be sent to the page, and thus not handled.
+        If this is the first event, it will prevent future events from
+        being cancelable.
+
+        Instead, synthetically defer the "Begin" phase to the first event in a
+        given gesture that has non-zero deltas, and just short-circuit any
+        zero-delta events entirely.
+
+        This way, WebCore can continue with its existing only-the-first-event-is-cancelable
+        logic, and we are assured that the first event that WebCore sees is also
+        the first event that the page sees, and is a Begin-phase event.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::dispatchWheelEventWithoutScrolling):
+        wheelScrollGestureState isn't reset to nullopt until we send the
+        Begin-phase event to EventHandler, so we must make an exception for
+        the Begin-phase event, and explicitly make it cancelable. Otherwise,
+        the state of the previous gesture leaks into the new gesture. Existing
+        API tests caught this, I just apparently failed to run them after
+        adopting the shared wheelScrollGestureState().
+
 2020-12-18  Brady Eidson  <beidson@apple.com>
 
         Fix some issues with PDFs as <object>.

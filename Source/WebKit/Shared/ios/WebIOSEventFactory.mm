@@ -31,6 +31,7 @@
 #import "UIKitSPI.h"
 #import <WebCore/KeyEventCodesIOS.h>
 #import <WebCore/PlatformEventFactoryIOS.h>
+#import <WebCore/Scrollbar.h>
 
 UIKeyModifierFlags WebIOSEventFactory::toUIKeyModifierFlags(OptionSet<WebKit::WebEvent::Modifier> modifiers)
 {
@@ -153,21 +154,23 @@ static WebKit::WebWheelEvent::Phase toWebPhase(UIScrollPhase phase)
     }
 }
 
-WebKit::WebWheelEvent WebIOSEventFactory::createWebWheelEvent(UIScrollEvent *event, UIView *contentView)
+WebKit::WebWheelEvent WebIOSEventFactory::createWebWheelEvent(UIScrollEvent *event, UIView *contentView, Optional<WebKit::WebWheelEvent::Phase> overridePhase)
 {
     WebCore::IntPoint scrollLocation = WebCore::roundedIntPoint([event locationInView:contentView]);
     CGVector deltaVector = [event _adjustedAcceleratedDeltaInView:contentView];
     WebCore::FloatSize delta(deltaVector.dx, deltaVector.dy);
+    WebCore::FloatSize wheelTicks = delta;
+    wheelTicks.scale(1. / static_cast<float>(WebCore::Scrollbar::pixelsPerLineStep()));
 
     return {
         WebKit::WebEvent::Wheel,
         scrollLocation,
         scrollLocation,
         delta,
-        { } /* wheelTicks */,
+        wheelTicks,
         WebKit::WebWheelEvent::Granularity::ScrollByPixelWheelEvent,
         false,
-        toWebPhase(event.phase),
+        overridePhase.valueOr(toWebPhase(event.phase)),
         WebKit::WebWheelEvent::PhaseNone,
         true,
         1,

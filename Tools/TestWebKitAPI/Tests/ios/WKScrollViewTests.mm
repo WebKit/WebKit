@@ -152,6 +152,7 @@ TEST(WKScrollViewTests, AsynchronousWheelEventHandling)
     EXPECT_FALSE(wasHandled);
     EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.lastWheelEvent.cancelable"] intValue]);
     EXPECT_EQ(-10, [[webView objectByEvaluatingJavaScript:@"window.lastWheelEvent.deltaY"] intValue]);
+    EXPECT_EQ(30, [[webView objectByEvaluatingJavaScript:@"window.lastWheelEvent.wheelDeltaY"] intValue]);
     synchronouslyHandleScrollEvent(UIScrollPhaseChanged, CGPointMake(100, 100), CGVectorMake(0, 10));
     EXPECT_FALSE(wasHandled);
     synchronouslyHandleScrollEvent(UIScrollPhaseEnded, CGPointMake(100, 100), CGVectorMake(0, 0));
@@ -187,6 +188,24 @@ TEST(WKScrollViewTests, AsynchronousWheelEventHandling)
     synchronouslyHandleScrollEvent(UIScrollPhaseMayBegin, CGPointMake(100, 100), CGVectorMake(0, 0));
     EXPECT_FALSE(wasHandled);
     synchronouslyHandleScrollEvent(UIScrollPhaseBegan, CGPointMake(100, 100), CGVectorMake(0, 10));
+    EXPECT_TRUE(wasHandled);
+    synchronouslyHandleScrollEvent(UIScrollPhaseChanged, CGPointMake(100, 100), CGVectorMake(0, 10));
+    EXPECT_TRUE(wasHandled);
+    [webView stringByEvaluatingJavaScript:@"window.preventDefaultOnScrollEvents = false;"];
+    synchronouslyHandleScrollEvent(UIScrollPhaseChanged, CGPointMake(100, 100), CGVectorMake(0, 10));
+    EXPECT_FALSE(wasHandled);
+    synchronouslyHandleScrollEvent(UIScrollPhaseEnded, CGPointMake(100, 100), CGVectorMake(0, 0));
+    EXPECT_FALSE(wasHandled);
+
+    // preventDefault() on the first event with non-zero deltas, and some subsequent events.
+    // In this case, the begin event has zero delta, and is not dispatched to the page, so the
+    // first non-zero scroll event is actually the first preventable one.
+    [webView stringByEvaluatingJavaScript:@"window.preventDefaultOnScrollEvents = true;"];
+    synchronouslyHandleScrollEvent(UIScrollPhaseMayBegin, CGPointMake(100, 100), CGVectorMake(0, 0));
+    EXPECT_FALSE(wasHandled);
+    synchronouslyHandleScrollEvent(UIScrollPhaseBegan, CGPointMake(100, 100), CGVectorMake(0, 0));
+    EXPECT_FALSE(wasHandled);
+    synchronouslyHandleScrollEvent(UIScrollPhaseChanged, CGPointMake(100, 100), CGVectorMake(0, 10));
     EXPECT_TRUE(wasHandled);
     synchronouslyHandleScrollEvent(UIScrollPhaseChanged, CGPointMake(100, 100), CGVectorMake(0, 10));
     EXPECT_TRUE(wasHandled);

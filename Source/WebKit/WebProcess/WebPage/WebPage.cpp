@@ -2898,7 +2898,7 @@ void WebPage::dispatchWheelEventWithoutScrolling(const WebWheelEvent& wheelEvent
 {
 #if ENABLE(KINETIC_SCROLLING)
     auto gestureState = m_page->mainFrame().eventHandler().wheelScrollGestureState();
-    bool isCancelable = !gestureState || gestureState == WheelScrollGestureState::Blocking;
+    bool isCancelable = !gestureState || gestureState == WheelScrollGestureState::Blocking || wheelEvent.phase() == WebWheelEvent::PhaseBegan;
 #else
     bool isCancelable = true;
 #endif
