@@ -197,6 +197,21 @@ static WKProcessPool *sharedProcessPool;
     _processPool->registerURLSchemeAsCanDisplayOnlyIfCanRequest(scheme);
 }
 
+- (void)_registerURLSchemeAsSecure:(NSString *)scheme
+{
+    _processPool->registerURLSchemeAsSecure(scheme);
+}
+
+- (void)_registerURLSchemeAsBypassingContentSecurityPolicy:(NSString *)scheme
+{
+    _processPool->registerURLSchemeAsBypassingContentSecurityPolicy(scheme);
+}
+
+- (void)_setDomainRelaxationForbiddenForURLScheme:(NSString *)scheme
+{
+    _processPool->setDomainRelaxationForbiddenForURLScheme(scheme);
+}
+
 - (void)_setCanHandleHTTPSServerTrustEvaluation:(BOOL)value
 {
 }
