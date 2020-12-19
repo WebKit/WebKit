@@ -1,3 +1,16 @@
+2020-12-19  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r270575): [iOS] Correct GPU Process sandbox syntax error
+        https://bugs.webkit.org/show_bug.cgi?id=220041
+        <rdar://problem/72508138>
+
+        Unreviewed build fix after r270575.
+
+        A closing parentheses was omitted when the 'play-audio' rule was changed to
+        remove its last rule.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+
 2020-12-18  Tim Horton  <timothy_horton@apple.com>
 
         iOS wheel events don't work on many websites
