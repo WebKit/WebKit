@@ -95,7 +95,7 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                     case Fixed:
                         // ignore width=0
                         if (cellLogicalWidth.isPositive() && !columnLayout.logicalWidth.isPercentOrCalculated()) {
-                            float logicalWidth = cell->adjustBorderBoxLogicalWidthForBoxSizing(cellLogicalWidth.value());
+                            float logicalWidth = cell->adjustBorderBoxLogicalWidthForBoxSizing(cellLogicalWidth);
                             if (columnLayout.logicalWidth.isFixed()) {
                                 // Nav/IE weirdness
                                 if ((logicalWidth > columnLayout.logicalWidth.value()) 

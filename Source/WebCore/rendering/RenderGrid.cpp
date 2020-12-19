@@ -466,7 +466,7 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
             if (maxSize.isPercentOrCalculated())
                 containingBlockAvailableSize = isRowAxis ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(ExcludeMarginBorderPadding);
             LayoutUnit maxSizeValue = valueForLength(maxSize, containingBlockAvailableSize.valueOr(LayoutUnit()));
-            availableMaxSize = isRowAxis ? adjustContentBoxLogicalWidthForBoxSizing(maxSizeValue) : adjustContentBoxLogicalHeightForBoxSizing(maxSizeValue);
+            availableMaxSize = isRowAxis ? adjustContentBoxLogicalWidthForBoxSizing(maxSizeValue, maxSize.type()) : adjustContentBoxLogicalHeightForBoxSizing(maxSizeValue);
         }
 
         const Length& minSize = isRowAxis ? style().logicalMinWidth() : style().logicalMinHeight();
@@ -478,7 +478,7 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
             if (!containingBlockAvailableSize && minSize.isPercentOrCalculated())
                 containingBlockAvailableSize = isRowAxis ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(ExcludeMarginBorderPadding);
             LayoutUnit minSizeValue = valueForLength(minSize, containingBlockAvailableSize.valueOr(LayoutUnit()));
-            availableMinSize = isRowAxis ? adjustContentBoxLogicalWidthForBoxSizing(minSizeValue) : adjustContentBoxLogicalHeightForBoxSizing(minSizeValue);
+            availableMinSize = isRowAxis ? adjustContentBoxLogicalWidthForBoxSizing(minSizeValue, minSize.type()) : adjustContentBoxLogicalHeightForBoxSizing(minSizeValue);
             if (!maxSize.isSpecified())
                 needsToFulfillMinimumSize = true;
         }
