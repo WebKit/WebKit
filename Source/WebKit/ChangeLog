@@ -1,3 +1,17 @@
+2020-12-18  Brady Eidson  <beidson@apple.com>
+
+        Fix some issues with PDFs as <object>.
+        https://bugs.webkit.org/show_bug.cgi?id=220024
+
+        Reviewed by Tim Horton.
+
+        No new tests (Unable to write automated tests)
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::dataProviderGetBytesAtPositionCallback):
+        (WebKit::PDFPlugin::getResourceBytesAtPosition): Set the correct URL.
+        (WebKit::PDFPlugin::ByteRangeRequest::completeWithAccumulatedData): Try harder to catch mismatches in delivered bytes vs expected bytes.
+
 2020-12-18  Jeff Miller  <jeffm@apple.com>
 
         WKProcessPool enhancements for URL schemes
