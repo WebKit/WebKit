@@ -1,3 +1,22 @@
+2020-12-18  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: clean up _WKRemoteWebInspectorViewController
+        https://bugs.webkit.org/show_bug.cgi?id=219963
+
+        Reviewed by Devin Rousso.
+
+        Remove deprecated and unused debuggableType-based SPI to load the frontend.
+
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.h:
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewControllerPrivate.h:
+        Promote the _WKInspectorDebuggableInfo-based SPI to the main header.
+        Fix availability annotations. This class has never worked on iOS.
+        Add TBA annotations for things added since the Big Sur SDK was finalized.
+
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm:
+        (legacyDebuggableTypeToModernDebuggableType): Deleted.
+        (-[_WKRemoteWebInspectorViewController loadForDebuggableType:backendCommandsURL:]): Deleted.
+
 2020-12-18  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process][MSE] SourceBufferPrivateRemote needs to override some track buffer related functions of SourceBufferPrivate

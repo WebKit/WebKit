@@ -115,38 +115,6 @@ private:
     return m_remoteInspectorProxy->webView();
 }
 
-static _WKInspectorDebuggableType legacyDebuggableTypeToModernDebuggableType(WKRemoteWebInspectorDebuggableType debuggableType)
-{
-    switch (debuggableType) {
-    case WKRemoteWebInspectorDebuggableTypeITML:
-        return _WKInspectorDebuggableTypeITML;
-    case WKRemoteWebInspectorDebuggableTypeJavaScript:
-        return _WKInspectorDebuggableTypeJavaScript;
-    case WKRemoteWebInspectorDebuggableTypePage:
-        return _WKInspectorDebuggableTypePage;
-    case WKRemoteWebInspectorDebuggableTypeServiceWorker:
-        return _WKInspectorDebuggableTypeServiceWorker;
-    case WKRemoteWebInspectorDebuggableTypeWebPage:
-        return _WKInspectorDebuggableTypeWebPage;
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    case WKRemoteWebInspectorDebuggableTypeWeb:
-        return _WKInspectorDebuggableTypeWebPage;
-ALLOW_DEPRECATED_DECLARATIONS_END
-    }
-}
-
-// FIXME: remove this variant when all callers have moved off of it.
-- (void)loadForDebuggableType:(WKRemoteWebInspectorDebuggableType)debuggableType backendCommandsURL:(NSURL *)backendCommandsURL
-{
-    _WKInspectorDebuggableInfo *debuggableInfo = [_WKInspectorDebuggableInfo new];
-    debuggableInfo.debuggableType = legacyDebuggableTypeToModernDebuggableType(debuggableType);
-    debuggableInfo.targetPlatformName = @"macOS";
-    debuggableInfo.targetBuildVersion = @"Unknown";
-    debuggableInfo.targetProductVersion = @"Unknown";
-    debuggableInfo.targetIsSimulator = NO;
-    [self loadForDebuggable:debuggableInfo backendCommandsURL:backendCommandsURL];
-}
-
 - (void)loadForDebuggable:(_WKInspectorDebuggableInfo *)debuggableInfo backendCommandsURL:(NSURL *)backendCommandsURL
 {
     m_remoteInspectorProxy->load(static_cast<API::DebuggableInfo&>([debuggableInfo _apiObject]), backendCommandsURL.absoluteString);

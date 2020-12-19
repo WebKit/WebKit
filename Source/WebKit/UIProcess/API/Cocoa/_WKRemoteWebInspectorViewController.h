@@ -30,31 +30,23 @@
 
 @class WKWebView;
 @class _WKInspectorConfiguration;
+@class _WKInspectorDebuggableInfo;
 
 @protocol _WKRemoteWebInspectorViewControllerDelegate;
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSInteger, WKRemoteWebInspectorDebuggableType) {
-    WKRemoteWebInspectorDebuggableTypeITML WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
-    WKRemoteWebInspectorDebuggableTypeJavaScript,
-    WKRemoteWebInspectorDebuggableTypeServiceWorker WK_API_AVAILABLE(macos(10.13.4), ios(11.3)),
-    WKRemoteWebInspectorDebuggableTypeWeb WK_API_DEPRECATED("Split into Page and WebPage", macos(10.12.3, WK_MAC_TBA), ios(10.3, WK_IOS_TBA)),
-    WKRemoteWebInspectorDebuggableTypePage WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
-    WKRemoteWebInspectorDebuggableTypeWebPage WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
-} WK_API_AVAILABLE(macos(10.12.3), ios(10.3));
-
-WK_CLASS_AVAILABLE(macos(10.12.3), ios(10.3))
+WK_CLASS_AVAILABLE(macos(10.12.3))
 @interface _WKRemoteWebInspectorViewController : NSObject <_WKInspectorExtensionHost>
 
 @property (nonatomic, assign) id <_WKRemoteWebInspectorViewControllerDelegate> delegate;
 
 @property (nonatomic, readonly, retain) NSWindow *window;
 @property (nonatomic, readonly, retain) WKWebView *webView;
-@property (nonatomic, readonly, copy) _WKInspectorConfiguration *configuration;
+@property (nonatomic, readonly, copy) _WKInspectorConfiguration *configuration WK_API_AVAILABLE(macos(WK_MAC_TBA));
 
-- (instancetype)initWithConfiguration:(_WKInspectorConfiguration *)configuration;
-- (void)loadForDebuggableType:(WKRemoteWebInspectorDebuggableType)debuggableType backendCommandsURL:(NSURL *)backendCommandsURL;
+- (instancetype)initWithConfiguration:(_WKInspectorConfiguration *)configuration WK_API_AVAILABLE(macos(WK_MAC_TBA));
+- (void)loadForDebuggable:(_WKInspectorDebuggableInfo *)debuggableInfo backendCommandsURL:(NSURL *)backendCommandsURL WK_API_AVAILABLE(macos(WK_MAC_TBA));
 - (void)close;
 - (void)show;
 
