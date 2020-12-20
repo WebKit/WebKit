@@ -1072,7 +1072,7 @@ RefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* pluginE
     String frameURLString = frame->coreFrame()->loader().documentLoader()->responseURL().string();
     String pageURLString = m_page->mainFrame().loader().documentLoader()->responseURL().string();
 
-    bool allowOnlyApplicationPlugins = !frame->coreFrame()->loader().arePluginsEnabled();
+    bool allowOnlyApplicationPlugins = !frame->coreFrame()->arePluginsEnabled();
 
     uint64_t pluginProcessToken;
     uint32_t pluginLoadPolicy;
@@ -5437,7 +5437,7 @@ bool WebPage::canPluginHandleResponse(const ResourceResponse& response)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     uint32_t pluginLoadPolicy;
-    bool allowOnlyApplicationPlugins = !m_mainFrame->coreFrame()->loader().arePluginsEnabled();
+    bool allowOnlyApplicationPlugins = !m_mainFrame->coreFrame()->arePluginsEnabled();
 
     uint64_t pluginProcessToken;
     String newMIMEType;
@@ -5974,7 +5974,7 @@ bool WebPage::canShowMIMEType(const String& mimeType, const Function<bool(const 
     if (!mimeType.isNull() && m_mimeTypesWithCustomContentProviders.contains(mimeType))
         return true;
 
-    if (corePage()->mainFrame().loader().arePluginsEnabled() && pluginsSupport(mimeType, PluginData::AllPlugins))
+    if (corePage()->mainFrame().arePluginsEnabled() && pluginsSupport(mimeType, PluginData::AllPlugins))
         return true;
 
     // We can use application plugins even if plugins aren't enabled.

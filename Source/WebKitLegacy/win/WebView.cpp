@@ -2974,7 +2974,7 @@ HRESULT WebView::canShowMIMEType(_In_ BSTR mimeType, _Out_ BOOL* canShow)
 bool WebView::canShowMIMEType(const String& mimeType)
 {
     Frame* coreFrame = core(m_mainFrame);
-    bool arePluginsEnabled = coreFrame && coreFrame->loader().arePluginsEnabled();
+    bool arePluginsEnabled = coreFrame && coreFrame->arePluginsEnabled();
 
     bool canShow = MIMETypeRegistry::isSupportedImageMIMEType(mimeType)
         || MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType)

@@ -78,7 +78,7 @@ Vector<PluginInfo> WebPluginInfoProvider::pluginInfo(Page& page, Optional<Vector
     if (m_cachedSupportedPluginIdentifiers)
         supportedPluginIdentifiers = *m_cachedSupportedPluginIdentifiers;
 
-    return page.mainFrame().loader().arePluginsEnabled() ? m_cachedPlugins : m_cachedApplicationPlugins;
+    return page.mainFrame().arePluginsEnabled() ? m_cachedPlugins : m_cachedApplicationPlugins;
 #else
     UNUSED_PARAM(page);
     UNUSED_PARAM(supportedPluginIdentifiers);
@@ -121,7 +121,7 @@ void WebPluginInfoProvider::populatePluginCache(const WebCore::Page&)
         // Application plugins are not affected by enablePlugins setting, so we always need to scan plugins to get them.
         bool shouldScanPlugins = true;
 #else
-        bool shouldScanPlugins = page.mainFrame().loader().arePluginsEnabled();
+        bool shouldScanPlugins = page.mainFrame().arePluginsEnabled();
 #endif
         if (shouldScanPlugins) {
             HangDetectionDisabler hangDetectionDisabler;

@@ -1,3 +1,22 @@
+2020-12-19  Rob Buis  <rbuis@igalia.com>
+
+        Move FrameLoader::arePluginsEnabled to Frame
+        https://bugs.webkit.org/show_bug.cgi?id=220022
+
+        Reviewed by Sam Weinig.
+
+        Adapt to API change.
+
+        * WebProcess/Plugins/WebPluginInfoProvider.cpp:
+        (WebKit::WebPluginInfoProvider::pluginInfo):
+        (WebKit::WebPluginInfoProvider::populatePluginCache):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::objectContentType):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        (WebKit::WebPage::canPluginHandleResponse):
+        (WebKit::WebPage::canShowMIMEType const):
+
 2020-12-19  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r270575): [iOS] Correct GPU Process sandbox syntax error

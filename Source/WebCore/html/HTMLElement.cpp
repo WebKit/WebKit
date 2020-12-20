@@ -783,7 +783,7 @@ bool HTMLElement::rendererIsEverNeeded()
             return false;
     } else if (hasTagName(noembedTag)) {
         RefPtr<Frame> frame = document().frame();
-        if (frame && frame->loader().arePluginsEnabled())
+        if (frame && frame->arePluginsEnabled())
             return false;
     }
     return StyledElement::rendererIsEverNeeded();
