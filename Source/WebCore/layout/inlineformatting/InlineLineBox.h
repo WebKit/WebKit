@@ -139,6 +139,7 @@ public:
 
     Optional<InlineLayoutUnit> horizontalAlignmentOffset() const { return m_horizontalAlignmentOffset; }
     bool isConsideredEmpty() const { return m_isConsideredEmpty; }
+    bool hasInlineBox() const { return m_hasInlineBox; }
 
     const InlineLevelBox& inlineLevelBoxForLayoutBox(const Box& layoutBox) const { return *m_inlineLevelBoxRectMap.get(&layoutBox); }
 
@@ -171,6 +172,7 @@ private:
     InlineRect m_logicalRect;
     Optional<InlineLayoutUnit> m_horizontalAlignmentOffset;
     bool m_isConsideredEmpty { true };
+    bool m_hasInlineBox { false };
 
     std::unique_ptr<InlineLevelBox> m_rootInlineBox;
     InlineLevelBoxList m_nonRootInlineLevelBoxList;

@@ -92,6 +92,7 @@ void LineBox::addRootInlineBox(std::unique_ptr<InlineLevelBox>&& rootInlineBox)
 
 void LineBox::addInlineLevelBox(std::unique_ptr<InlineLevelBox>&& inlineLevelBox)
 {
+    m_hasInlineBox = m_hasInlineBox || inlineLevelBox->isInlineBox();
     m_inlineLevelBoxRectMap.set(&inlineLevelBox->layoutBox(), inlineLevelBox.get());
     m_nonRootInlineLevelBoxList.append(WTFMove(inlineLevelBox));
 }
