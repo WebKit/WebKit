@@ -342,7 +342,7 @@ void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
 
     WebDocumentLoader* documentLoader = static_cast<WebDocumentLoader*>(m_frame->coreFrame()->loader().provisionalDocumentLoader());
     if (!documentLoader) {
-        WEBFRAMELOADERCLIENT_RELEASE_LOG_FAULT(Loading, "dispatchDidReceiveServerRedirectForProvisionalLoad: Called with no provisional DocumentLoader (frameState=%i, stateForDebugging=%i)", m_frame->coreFrame()->loader().state(), m_frame->coreFrame()->loader().stateMachine().stateForDebugging());
+        WEBFRAMELOADERCLIENT_RELEASE_LOG_FAULT(Loading, "dispatchDidReceiveServerRedirectForProvisionalLoad: Called with no provisional DocumentLoader (frameState=%hhu, stateForDebugging=%i)", m_frame->coreFrame()->loader().state(), m_frame->coreFrame()->loader().stateMachine().stateForDebugging());
         return;
     }
 

@@ -317,7 +317,7 @@ RefPtr<Frame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerElement& o
     // FIXME: In this case the Frame will have finished loading before 
     // it's being added to the child list. It would be a good idea to
     // create the child first, then invoke the loader separately.
-    if (frame->loader().state() == FrameStateComplete && !frame->loader().policyDocumentLoader())
+    if (frame->loader().state() == FrameState::Complete && !frame->loader().policyDocumentLoader())
         frame->loader().checkCompleted();
 
     if (!frame->tree().parent())

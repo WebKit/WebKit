@@ -77,11 +77,11 @@ WKFrameLoadState WKBundleFrameGetFrameLoadState(WKBundleFrameRef frameRef)
         return kWKFrameLoadStateFinished;
 
     switch (coreFrame->loader().state()) {
-    case WebCore::FrameStateProvisional:
+    case WebCore::FrameState::Provisional:
         return kWKFrameLoadStateProvisional;
-    case WebCore::FrameStateCommittedPage:
+    case WebCore::FrameState::CommittedPage:
         return kWKFrameLoadStateCommitted;
-    case WebCore::FrameStateComplete:
+    case WebCore::FrameState::Complete:
         return kWKFrameLoadStateFinished;
     }
 

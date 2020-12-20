@@ -3946,7 +3946,7 @@ void FrameView::updateScrollableAreaSet()
 
 bool FrameView::shouldSuspendScrollAnimations() const
 {
-    return frame().loader().state() != FrameStateComplete;
+    return frame().loader().state() != FrameState::Complete;
 }
 
 void FrameView::scrollbarStyleChanged(ScrollbarStyle newStyle, bool forceUpdate)

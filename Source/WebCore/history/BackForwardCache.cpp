@@ -80,7 +80,7 @@ static bool canCacheFrame(Frame& frame, DiagnosticLoggingClient& diagnosticLoggi
 
     // Prevent page caching if a subframe is still in provisional load stage.
     // We only do this check for subframes because the main frame is reused when navigating to a new page.
-    if (!frame.isMainFrame() && frameLoader.state() == FrameStateProvisional) {
+    if (!frame.isMainFrame() && frameLoader.state() == FrameState::Provisional) {
         PCLOG("   -Frame is in provisional load stage");
         logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::provisionalLoadKey());
         return false;
@@ -420,7 +420,7 @@ static void firePageHideEventRecursively(Frame& frame)
     // https://html.spec.whatwg.org/multipage/browsers.html#unload-a-document
     IgnoreOpensDuringUnloadCountIncrementer ignoreOpensDuringUnloadCountIncrementer(document);
 
-    frame.loader().stopLoading(UnloadEventPolicyUnloadAndPageHide);
+    frame.loader().stopLoading(UnloadEventPolicy::UnloadAndPageHide);
 
     for (RefPtr<Frame> child = frame.tree().firstChild(); child; child = child->tree().nextSibling())
         firePageHideEventRecursively(*child);

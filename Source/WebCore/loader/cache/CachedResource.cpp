@@ -244,7 +244,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
     FrameLoader& frameLoader = frame.loader();
     if (m_options.securityCheck == SecurityCheckPolicy::DoSecurityCheck && !m_options.keepAlive && !shouldUsePingLoad(type())) {
         while (true) {
-            if (frameLoader.state() == FrameStateProvisional)
+            if (frameLoader.state() == FrameState::Provisional)
                 RELEASE_LOG_IF_ALLOWED_WITH_FRAME("load: Failed security check -- state is provisional", frame);
             else if (!frameLoader.activeDocumentLoader())
                 RELEASE_LOG_IF_ALLOWED_WITH_FRAME("load: Failed security check -- not active document", frame);

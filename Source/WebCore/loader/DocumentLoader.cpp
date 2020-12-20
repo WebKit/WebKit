@@ -320,7 +320,7 @@ void DocumentLoader::stopLoading()
         Document* doc = m_frame->document();
         
         if (loading || doc->parsing())
-            m_frame->loader().stopLoading(UnloadEventPolicyNone);
+            m_frame->loader().stopLoading(UnloadEventPolicy::None);
     }
 
     for (auto callbackIdentifier : m_iconLoaders.values())
@@ -1464,7 +1464,7 @@ bool DocumentLoader::isLoadingInAPISense() const
 {
     // Once a frame has loaded, we no longer need to consider subresources,
     // but we still need to consider subframes.
-    if (frameLoader()->state() != FrameStateComplete) {
+    if (frameLoader()->state() != FrameState::Complete) {
         if (m_frame->settings().needsIsLoadingInAPISenseQuirk() && !m_subresourceLoaders.isEmpty())
             return true;
 
