@@ -1,3 +1,35 @@
+2020-12-19  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r271004. rdar://problem/72508138
+
+    REGRESSION(r270575): [iOS] Correct GPU Process sandbox syntax error
+    https://bugs.webkit.org/show_bug.cgi?id=220041
+    <rdar://problem/72508138>
+    
+    Unreviewed build fix after r270575.
+    
+    A closing parentheses was omitted when the 'play-audio' rule was changed to
+    remove its last rule.
+    
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271004 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-12-19  Brent Fulgham  <bfulgham@apple.com>
+
+            REGRESSION(r270575): [iOS] Correct GPU Process sandbox syntax error
+            https://bugs.webkit.org/show_bug.cgi?id=220041
+            <rdar://problem/72508138>
+
+            Unreviewed build fix after r270575.
+
+            A closing parentheses was omitted when the 'play-audio' rule was changed to
+            remove its last rule.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+
 2020-12-18  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r270962. rdar://problem/72472070
