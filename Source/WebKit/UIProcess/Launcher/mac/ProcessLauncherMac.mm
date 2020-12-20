@@ -26,7 +26,6 @@
 #import "config.h"
 #import "ProcessLauncher.h"
 
-#import "WebPreferencesDefaultValues.h"
 #import <crt_externs.h>
 #import <mach-o/dyld.h>
 #import <mach/mach_error.h>
@@ -75,15 +74,9 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
 static bool shouldLeakBoost(const ProcessLauncher::LaunchOptions& launchOptions)
 {
 #if PLATFORM(IOS_FAMILY)
+    // On iOS, leak a boost onto all child processes
     UNUSED_PARAM(launchOptions);
-#if HAVE(RUNNINGBOARD_WEBKIT_PRIORITY_SUPPORT)
-    // On iOS, we don't need to leak a boost message when RunningBoard process assertions give us the
-    // right priorities.
-    static const bool runningBoardHandlesPriorities = isFeatureFlagEnabled("RB_full_manage_WK_jetsam"_s);
-    return !runningBoardHandlesPriorities;
-#else
     return true;
-#endif // HAVE(RUNNINGBOARD_WEBKIT_PRIORITY_SUPPORT)
 #else
     // On Mac, leak a boost onto the NetworkProcess, GPUProcess, and WebAuthnProcess.
 #if ENABLE(GPU_PROCESS)

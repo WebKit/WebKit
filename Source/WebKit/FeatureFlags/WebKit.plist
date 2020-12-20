@@ -87,10 +87,5 @@
         <key>Enabled</key>
         <true/>
     </dict>
-    <key>RB_full_manage_WK_jetsam</key>
-    <dict>
-        <key>Enabled</key>
-        <true/>
-    </dict>
 </dict>
 </plist>
