@@ -33,7 +33,7 @@ namespace WebCore {
 
 void PlatformDisplayWin::initializeEGLDisplay()
 {
-    EGLint attributs[] = {
+    EGLint attributes[] = {
         // Disable debug layers that makes some tests fail because
         // ANGLE fills uninitialized buffers with
         // kDebugColorInitClearValue in debug builds.
@@ -41,7 +41,7 @@ void PlatformDisplayWin::initializeEGLDisplay()
         EGL_FALSE,
         EGL_NONE,
     };
-    m_eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, attributs);
+    m_eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, attributes);
 
     PlatformDisplay::initializeEGLDisplay();
 }
