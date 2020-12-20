@@ -194,11 +194,10 @@ const BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, Optio
 
         }
 
-        if (*escapeReason == EscapeReason::NeedsGeometryFromEstablishedFormattingContext) {
-            // This is the case when a formatting root collects geometry information from the established
-            // formatting context to be able to determine width/height.
-            // e.g <div>text content</div>. The <div> is a formatting root of the IFC.
-            // In order to compute the height of the <div>, we need to look inside the IFC and gather geometry information.
+        if (*escapeReason == EscapeReason::TableQuirkNeedsGeometryFromEstablishedFormattingContext) {
+            // This is the case when the table formatting root collects geometry information from the cell's
+            // formatting context to be able to determine width/height. see shouldIgnoreChildContentVerticalMargin
+            ASSERT(root().establishesTableFormattingContext());
             return &layoutBox.formattingContextRoot().formattingContextRoot() == &root();
         }
 

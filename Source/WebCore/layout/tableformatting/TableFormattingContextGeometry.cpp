@@ -47,8 +47,8 @@ LayoutUnit TableFormattingContext::Geometry::cellHeigh(const ContainerBox& cellB
         auto formattingContext = this->formattingContext();
         auto& firstInFlowChild = *cellBox.firstInFlowChild();
         auto& lastInFlowChild = *cellBox.lastInFlowChild();
-        auto& firstInFlowChildGeometry = formattingContext.geometryForBox(firstInFlowChild, EscapeReason::NeedsGeometryFromEstablishedFormattingContext);
-        auto& lastInFlowChildGeometry = formattingContext.geometryForBox(lastInFlowChild, EscapeReason::NeedsGeometryFromEstablishedFormattingContext);
+        auto& firstInFlowChildGeometry = formattingContext.geometryForBox(firstInFlowChild, EscapeReason::TableQuirkNeedsGeometryFromEstablishedFormattingContext);
+        auto& lastInFlowChildGeometry = formattingContext.geometryForBox(lastInFlowChild, EscapeReason::TableQuirkNeedsGeometryFromEstablishedFormattingContext);
 
         auto top = firstInFlowChild.style().hasMarginBeforeQuirk() ? BoxGeometry::borderBoxRect(firstInFlowChildGeometry).top() : BoxGeometry::marginBoxRect(firstInFlowChildGeometry).top();
         auto bottom = lastInFlowChild.style().hasMarginAfterQuirk() ? BoxGeometry::borderBoxRect(lastInFlowChildGeometry).bottom() : BoxGeometry::marginBoxRect(lastInFlowChildGeometry).bottom();

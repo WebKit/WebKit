@@ -65,6 +65,14 @@ void TableFormattingContext::layoutInFlowContent(InvalidationState&, const Const
     setUsedGeometryForSections(constraints);
 }
 
+LayoutUnit TableFormattingContext::usedContentHeight() const
+{
+    // Table has to have some section content, at least one <tbody>.
+    auto top = BoxGeometry::marginBoxRect(geometryForBox(*root().firstInFlowChild())).top();
+    auto bottom = BoxGeometry::marginBoxRect(geometryForBox(*root().lastInFlowChild())).bottom();
+    return bottom - top;
+}
+
 void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizontalSpace)
 {
     auto& grid = formattingState().tableGrid();

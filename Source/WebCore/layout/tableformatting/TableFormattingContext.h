@@ -44,6 +44,7 @@ class TableFormattingContext final : public FormattingContext {
 public:
     TableFormattingContext(const ContainerBox& formattingContextRoot, TableFormattingState&);
     void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) override;
+    LayoutUnit usedContentHeight() const override;
 
     static UniqueRef<TableGrid> ensureTableGrid(const ContainerBox& tableBox);
 

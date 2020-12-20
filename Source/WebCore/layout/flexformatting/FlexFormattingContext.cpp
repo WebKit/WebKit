@@ -52,6 +52,12 @@ void FlexFormattingContext::layoutInFlowContent(InvalidationState&, const Constr
     sizeAndPlaceFlexItems(constraints);
 }
 
+LayoutUnit FlexFormattingContext::usedContentHeight() const
+{
+    auto& lines = formattingState().lines();
+    return LayoutUnit { lines.last().bottom() - lines.first().top() };
+}
+
 FormattingContext::IntrinsicWidthConstraints FlexFormattingContext::computedIntrinsicWidthConstraints()
 {
     return { };

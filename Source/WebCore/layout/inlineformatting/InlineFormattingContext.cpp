@@ -141,6 +141,29 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root() << ")");
 }
 
+LayoutUnit InlineFormattingContext::usedContentHeight() const
+{
+    // 10.6.7 'Auto' heights for block formatting context roots
+
+    // If it only has inline-level children, the height is the distance between the top of the topmost line box and the bottom of the bottommost line box.
+
+    // In addition, if the element has any floating descendants whose bottom margin edge is below the element's bottom content edge,
+    // then the height is increased to include those edges. Only floats that participate in this block formatting context are taken
+    // into account, e.g., floats inside absolutely positioned descendants or other floats are not.
+    auto& lines = formattingState().lines();
+    // Even empty containers generate one line.
+    ASSERT(!lines.isEmpty());
+    auto top = LayoutUnit { lines.first().lineBoxLogicalRect().top() };
+    auto bottom = LayoutUnit { lines.last().lineBoxLogicalRect().bottom() + formattingState().clearGapAfterLastLine() };
+
+    auto floatingContext = FloatingContext { *this, formattingState().floatingState() };
+    if (auto floatBottom = floatingContext.bottom()) {
+        bottom = std::max(*floatBottom, bottom);
+        top = std::min(*floatingContext.top(), top);
+    }
+    return bottom - top;
+}
+
 void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::InlineItemRange needsLayoutRange, const ConstraintsForInFlowContent& constraints)
 {
     InlineLayoutUnit lineLogicalTop = constraints.vertical.logicalTop;

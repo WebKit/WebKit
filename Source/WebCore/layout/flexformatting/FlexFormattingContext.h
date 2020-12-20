@@ -42,6 +42,7 @@ class FlexFormattingContext final : public FormattingContext {
 public:
     FlexFormattingContext(const ContainerBox& formattingContextRoot, FlexFormattingState&);
     void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) override;
+    LayoutUnit usedContentHeight() const override;
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
 

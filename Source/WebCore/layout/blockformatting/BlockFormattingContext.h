@@ -49,6 +49,7 @@ public:
     BlockFormattingContext(const ContainerBox& formattingContextRoot, BlockFormattingState&);
 
     void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) override;
+    LayoutUnit usedContentHeight() const override;
 
 protected:
     struct ConstraintsPair {

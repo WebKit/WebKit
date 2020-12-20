@@ -45,6 +45,7 @@ class InlineFormattingContext final : public FormattingContext {
 public:
     InlineFormattingContext(const ContainerBox& formattingContextRoot, InlineFormattingState&);
     void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) override;
+    LayoutUnit usedContentHeight() const override;
 
     class Quirks : public FormattingContext::Quirks {
     public:

@@ -175,60 +175,9 @@ LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(co
 {
     ASSERT(formattingContextRoot.establishesFormattingContext());
     ASSERT(isHeightAuto(formattingContextRoot) || formattingContextRoot.establishesTableFormattingContext() || formattingContextRoot.isTableCell());
-
-    // 10.6.7 'Auto' heights for block formatting context roots
-
-    // If it only has inline-level children, the height is the distance between the top of the topmost line box and the bottom of the bottommost line box.
-    // If it has block-level children, the height is the distance between the top margin-edge of the topmost block-level
-    // child box and the bottom margin-edge of the bottommost block-level child box.
-
-    // In addition, if the element has any floating descendants whose bottom margin edge is below the element's bottom content edge,
-    // then the height is increased to include those edges. Only floats that participate in this block formatting context are taken
-    // into account, e.g., floats inside absolutely positioned descendants or other floats are not.
     if (!formattingContextRoot.hasInFlowOrFloatingChild())
         return { };
-
-    auto& layoutState = this->layoutState();
-    auto& formattingContext = this->formattingContext();
-    auto& boxGeometry = formattingContext.geometryForBox(formattingContextRoot);
-    auto borderAndPaddingTop = boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0);
-    auto top = borderAndPaddingTop;
-    auto bottom = borderAndPaddingTop;
-    if (formattingContextRoot.establishesInlineFormattingContext()) {
-        auto& inlineFormattingState = layoutState.establishedInlineFormattingState(formattingContextRoot);
-        auto& lines = inlineFormattingState.lines();
-        // Even empty containers generate one line.
-        ASSERT(!lines.isEmpty());
-        top = lines.first().lineBoxLogicalRect().top();
-        bottom = lines.last().lineBoxLogicalRect().bottom() + inlineFormattingState.clearGapAfterLastLine();
-    } else if (formattingContextRoot.establishesFlexFormattingContext()) {
-        auto& lines = layoutState.establishedFlexFormattingState(formattingContextRoot).lines();
-        ASSERT(!lines.isEmpty());
-        // FIXME: Move flex over to layout geometry.
-        top = lines.first().top();
-        bottom = lines.last().bottom();
-    } else if (formattingContextRoot.establishesBlockFormattingContext() || formattingContextRoot.establishesTableFormattingContext()) {
-        if (formattingContextRoot.hasInFlowChild()) {
-            auto& firstBoxGeometry = formattingContext.geometryForBox(*formattingContextRoot.firstInFlowChild(), EscapeReason::NeedsGeometryFromEstablishedFormattingContext);
-            auto& lastBoxGeometry = formattingContext.geometryForBox(*formattingContextRoot.lastInFlowChild(), EscapeReason::NeedsGeometryFromEstablishedFormattingContext);
-            top = BoxGeometry::marginBoxRect(firstBoxGeometry).top();
-            bottom = BoxGeometry::marginBoxRect(lastBoxGeometry).bottom();
-        }
-    } else
-        ASSERT_NOT_REACHED();
-
-    auto floatingContext = FloatingContext { formattingContext, layoutState.establishedFormattingState(formattingContextRoot).floatingState() };
-    auto floatBottom = floatingContext.bottom();
-    if (floatBottom) {
-        bottom = std::max(*floatBottom, bottom);
-        auto floatTop = floatingContext.top();
-        ASSERT(floatTop);
-        top = std::min(*floatTop, top);
-    }
-    auto computedHeight = bottom - top;
-
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height] -> content height for formatting context root -> height(" << computedHeight << "px) layoutBox("<< &formattingContextRoot << ")");
-    return computedHeight;
+    return LayoutContext::createFormattingContext(formattingContextRoot, const_cast<LayoutState&>(layoutState()))->usedContentHeight();
 }
 
 Optional<LayoutUnit> FormattingContext::Geometry::computedValue(const Length& geometryProperty, LayoutUnit containingBlockWidth) const

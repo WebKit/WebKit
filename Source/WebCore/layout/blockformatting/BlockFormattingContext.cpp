@@ -174,6 +174,32 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> block formatting context -> formatting root(" << &root() << ")");
 }
 
+LayoutUnit BlockFormattingContext::usedContentHeight() const
+{
+    // 10.6.7 'Auto' heights for block formatting context roots
+
+    // If it has block-level children, the height is the distance between the top margin-edge of the topmost block-level
+    // child box and the bottom margin-edge of the bottommost block-level child box.
+
+    // In addition, if the element has any floating descendants whose bottom margin edge is below the element's bottom content edge,
+    // then the height is increased to include those edges. Only floats that participate in this block formatting context are taken
+    // into account, e.g., floats inside absolutely positioned descendants or other floats are not.
+    auto top = Optional<LayoutUnit> { };
+    auto bottom = Optional<LayoutUnit> { };
+    if (root().hasInFlowChild()) {
+        top = BoxGeometry::marginBoxRect(geometryForBox(*root().firstInFlowChild())).top();
+        bottom = BoxGeometry::marginBoxRect(geometryForBox(*root().lastInFlowChild())).bottom();
+    }
+
+    auto floatingContext = FloatingContext { *this, formattingState().floatingState() };
+    if (auto floatTop = floatingContext.top()) {
+        top = std::min(*floatTop, top.valueOr(*floatTop));
+        auto floatBottom = *floatingContext.bottom();
+        bottom = std::max(floatBottom, bottom.valueOr(floatBottom));
+    }
+    return *bottom - *top;
+}
+
 Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(const FloatingContext& floatingContext, const Box& layoutBox, const ConstraintsPair& constraintsPair)
 {
     // Normally the available width for an in-flow block level box is the width of the containing block's content box.

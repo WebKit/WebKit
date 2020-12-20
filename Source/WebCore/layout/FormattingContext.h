@@ -87,6 +87,7 @@ public:
         LayoutUnit maximum;
     };
     virtual IntrinsicWidthConstraints computedIntrinsicWidthConstraints() = 0;
+    virtual LayoutUnit usedContentHeight() const = 0;
 
     bool isBlockFormattingContext() const { return root().establishesBlockFormattingContext(); }
     bool isInlineFormattingContext() const { return root().establishesInlineFormattingContext(); }
@@ -95,7 +96,7 @@ public:
     bool isFlexFormattingContext() const { return root().establishesFlexFormattingContext(); }
 
     enum class EscapeReason {
-        NeedsGeometryFromEstablishedFormattingContext,
+        TableQuirkNeedsGeometryFromEstablishedFormattingContext,
         OutOfFlowBoxNeedsInFlowGeometry,
         FloatBoxIsAlwaysRelativeToFloatStateRoot,
         FindFixedHeightAncestorQuirk,
