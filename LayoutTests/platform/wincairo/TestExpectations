@@ -2137,20 +2137,16 @@ webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Skip ] # 
 webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-video.html [ Skip ] # Timeout
 webgl/1.0.3/conformance/glsl/bugs/array-of-struct-with-int-first-position.html [ Skip ] # This test makes DumpRenderTree process unable to exit
 webgl/1.0.3/conformance/glsl/bugs/long-expressions-should-not-crash.html [ Skip ] # Timeout
-webgl/1.0.3/conformance/misc/uninitialized-test.html [ Failure ]
 webgl/1.0.3/conformance/more/functions/readPixelsBadArgs.html [ Failure ]
 webgl/1.0.3/conformance/more/functions/texImage2DHTML.html [ Failure ]
 webgl/1.0.3/conformance/more/functions/texSubImage2DHTML.html [ Failure ]
 webgl/1.0.3/conformance/programs/program-test.html [ Failure ]
 webgl/1.0.3/conformance/renderbuffers/framebuffer-object-attachment.html [ Failure ]
-webgl/1.0.3/conformance/renderbuffers/framebuffer-state-restoration.html [ Failure ]
-webgl/1.0.3/conformance/renderbuffers/renderbuffer-initialization.html [ Failure ]
 webgl/1.0.3/conformance/textures/default-texture.html [ Failure ]
 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Skip ] # Timeout
 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Skip ] # Timeout
 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Skip ] # Timeout
 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Skip ] # Timeout
-webgl/1.0.3/conformance/textures/texture-attachment-formats.html [ Failure ]
-webgl/1.0.3/conformance/textures/texture-mips.html [ Failure ]
+webgl/1.0.3/conformance/textures/texture-mips.html [ Pass Failure ]
 webgl/1.0.3/conformance/textures/texture-upload-size.html [ Skip ] # Timeout
 webgl/webgl-vertex-array-object-defined.html [ Failure ]

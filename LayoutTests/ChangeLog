@@ -1,3 +1,12 @@
+2020-12-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][WebGL] webgl/1.0.3/conformance/misc/uninitialized-test.html is failing only for Debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=220000
+
+        Reviewed by Kenneth Russell.
+
+        * platform/wincairo/TestExpectations:
+
 2020-12-19  Zalan Bujtas  <zalan@apple.com>
 
         width: max-content with box-sizing: border-box should leave space for padding (Twitter date hover overflow)

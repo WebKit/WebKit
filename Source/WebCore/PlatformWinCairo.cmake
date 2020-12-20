@@ -30,6 +30,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/GraphicsContextCairoWin.cpp
     platform/graphics/win/ImageCairoWin.cpp
     platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp
+    platform/graphics/win/PlatformDisplayWin.cpp
     platform/graphics/win/SimpleFontDataCairoWin.cpp
 
     platform/network/win/CurlSSLHandleWin.cpp

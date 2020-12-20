@@ -48,6 +48,8 @@ private:
     }
 
     Type type() const override { return PlatformDisplay::Type::Windows; }
+
+    void initializeEGLDisplay() final;
 };
 
 } // namespace WebCore
