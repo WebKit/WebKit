@@ -157,7 +157,6 @@ void InlineContentBuilder::build(const Layout::InlineFormattingState& inlineForm
     auto lineLevelVisualAdjustmentsForRuns = computeLineLevelVisualAdjustmentsForRuns(inlineFormattingState);
     createDisplayLineRuns(inlineFormattingState, inlineContent, lineLevelVisualAdjustmentsForRuns);
     createDisplayLines(inlineFormattingState, inlineContent, lineLevelVisualAdjustmentsForRuns);
-    createDisplayInlineBoxes(inlineFormattingState, inlineContent);
 }
 
 InlineContentBuilder::LineLevelVisualAdjustmentsForRunsList InlineContentBuilder::computeLineLevelVisualAdjustmentsForRuns(const Layout::InlineFormattingState& inlineFormattingState) const
@@ -346,32 +345,6 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
             enclosingTopAndBottom.bottom = roundToInt(enclosingTopAndBottom.bottom);
         }
         inlineContent.lines.append({ firstRunIndex, runCount, adjustedLineBoxRect, enclosingTopAndBottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.contentLogicalLeftOffset(), line.contentLogicalWidth() });
-    }
-}
-
-void InlineContentBuilder::createDisplayInlineBoxes(const Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent) const
-{
-    auto& lines = inlineFormattingState.lines();
-    auto& lineBoxes = inlineFormattingState.lineBoxes();
-    for (size_t lineIndex = 0; lineIndex < lineBoxes.size(); ++lineIndex) {
-        auto& lineBox = lineBoxes[lineIndex];
-        auto& line = lines[lineIndex];
-
-        auto& lineBoxLogicalRect = line.lineBoxLogicalRect();
-
-        for (auto& inlineLevelBox : lineBox.inlineLevelBoxList()) {
-            if (!inlineLevelBox->isInlineBox() || inlineLevelBox->isRootInlineBox())
-                continue;
-            auto& layoutBox = inlineLevelBox->layoutBox();
-            auto& geometry = m_layoutState.geometryForBox(layoutBox);
-            auto inlineLevelBoxLogicalRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox, geometry);
-            // inlineLevelBoxLogicalRect encloses the margin box, but we need border box for the display line.
-            inlineLevelBoxLogicalRect.expandVertically(-std::max(0_lu, geometry.marginBefore() + geometry.marginAfter()));
-            inlineLevelBoxLogicalRect.moveVertically(std::max(0_lu, geometry.marginBefore()));
-            inlineLevelBoxLogicalRect.moveBy(lineBoxLogicalRect.topLeft());
-
-            inlineContent.inlineBoxes.append({ layoutBox, lineIndex, inlineLevelBoxLogicalRect });
-        }
     }
 }
 

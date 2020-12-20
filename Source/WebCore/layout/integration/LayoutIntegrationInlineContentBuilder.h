@@ -55,7 +55,6 @@ private:
     LineLevelVisualAdjustmentsForRunsList computeLineLevelVisualAdjustmentsForRuns(const Layout::InlineFormattingState&) const;
     void createDisplayLineRuns(const Layout::InlineFormattingState&, InlineContent&, const LineLevelVisualAdjustmentsForRunsList&) const;
     void createDisplayLines(const Layout::InlineFormattingState&, InlineContent&, const LineLevelVisualAdjustmentsForRunsList&) const;
-    void createDisplayInlineBoxes(const Layout::InlineFormattingState&, InlineContent&) const;
 
     const Layout::LayoutState& m_layoutState;
     const RenderBlockFlow& m_blockFlow;
