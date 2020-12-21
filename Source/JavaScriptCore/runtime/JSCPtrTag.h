@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,7 @@ using PtrTag = WTF::PtrTag;
     v(JITProbePtrTag) \
     v(JITProbeTrampolinePtrTag) \
     v(JITProbeExecutorPtrTag) \
+    v(JITProbePCPtrTag) \
     v(JITProbeStackInitializationFunctionPtrTag) \
     v(JITThunkPtrTag) \
     v(JITStubRoutinePtrTag) \

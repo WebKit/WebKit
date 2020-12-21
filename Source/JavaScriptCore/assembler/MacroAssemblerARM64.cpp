@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -299,8 +299,10 @@ static_assert(LR_RESTORATION_SIZE == sizeof(LRRestorationRecord), "LR_RESTORATIO
 static_assert(!(sizeof(LRRestorationRecord) & 0xf), "LRRestorationRecord must be 16-byte aligned");
 
 #if CPU(ARM64E)
+#define JIT_PROBE_PC_PTR_TAG 0xeeac
 #define JIT_PROBE_EXECUTOR_PTR_TAG 0x28de
 #define JIT_PROBE_STACK_INITIALIZATION_FUNCTION_PTR_TAG 0x315c
+static_assert(JIT_PROBE_PC_PTR_TAG == JITProbePCPtrTag);
 static_assert(JIT_PROBE_EXECUTOR_PTR_TAG == JITProbeExecutorPtrTag);
 static_assert(JIT_PROBE_STACK_INITIALIZATION_FUNCTION_PTR_TAG == JITProbeStackInitializationFunctionPtrTag);
 #endif
@@ -359,9 +361,12 @@ asm (
     "stp       x6, x29, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X28_OFFSET) "]" "\n"
     "stp       x7, x26, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_LR_OFFSET) "]" "\n" // Save values lr and sp (original sp value computed into x26 above).
 
-    "str       x30, [sp, #" STRINGIZE_VALUE_OF(SAVED_PROBE_RETURN_PC_OFFSET) "]" "\n" // Save a duplicate copy of return pc (in lr).
-
     "add       x30, x30, #" STRINGIZE_VALUE_OF(2 * GPREG_SIZE) "\n" // The PC after the probe is at 2 instructions past the return point.
+#if CPU(ARM64E)
+    "movz      x27, #" STRINGIZE_VALUE_OF(JIT_PROBE_PC_PTR_TAG) "\n"
+    "pacib     x30, x27" "\n"
+#endif
+    "str       x30, [sp, #" STRINGIZE_VALUE_OF(SAVED_PROBE_RETURN_PC_OFFSET) "]" "\n" // Save a duplicate copy of return pc (in lr).
     "str       x30, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n"
 
     "stp       x0, x1, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_NZCV_OFFSET) "]" "\n" // Store nzcv and fpsr (preloaded into x0 and x1 above).
@@ -495,7 +500,6 @@ asm (
     "ldr       x30, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n" // preload the target sp.
     "ldr       x27, [sp, #" STRINGIZE_VALUE_OF(SAVED_PROBE_RETURN_PC_OFFSET) "]" "\n"
     "ldr       x28, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n"
-    "add       x27, x27, #" STRINGIZE_VALUE_OF(2 * GPREG_SIZE) "\n"
     "cmp       x27, x28" "\n"
     "bne     " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineEnd) "\n"
 
@@ -508,6 +512,19 @@ asm (
     "str       x27, [x30, #" STRINGIZE_VALUE_OF(LR_RESTORATION_LR_OFFSET) "]" "\n"
      // 3. Force the return ramp to return to the probe return site.
     "ldr       x27, [sp, #" STRINGIZE_VALUE_OF(SAVED_PROBE_RETURN_PC_OFFSET) "]" "\n"
+#if CPU(ARM64E)
+    "movz      x28, #" STRINGIZE_VALUE_OF(JIT_PROBE_PC_PTR_TAG) "\n"
+    "autib     x27, x28" "\n"
+    "lsr       x28, x27, #8" "\n"
+    "and       x28, x28, #0xff000000000000" "\n"
+    "orr       x28, x28, x27" "\n"
+    "ldrb      w28, [x28]" "\n"
+#endif
+    "sub       x27, x27, #" STRINGIZE_VALUE_OF(2 * GPREG_SIZE) "\n" // The return point PC is at 2 instructions before the end of the probe.
+#if CPU(ARM64E)
+    "movz      x28, #" STRINGIZE_VALUE_OF(JIT_PROBE_PC_PTR_TAG) "\n"
+    "pacib     x27, x28" "\n"
+#endif
     "str       x27, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n"
 
     LOCAL_LABEL_STRING(ctiMasmProbeTrampolineEnd) ":" "\n"
@@ -519,8 +536,18 @@ asm (
     "stp       x27, x28, [x30, #" STRINGIZE_VALUE_OF(OUT_NZCV_OFFSET) "]" "\n"
     "ldp       x27, x28, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X27_OFFSET) "]" "\n"
     "stp       x27, x28, [x30, #" STRINGIZE_VALUE_OF(OUT_X27_OFFSET) "]" "\n"
-    "ldr       x27, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_FP_OFFSET) "]" "\n"
     "ldr       x28, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n" // Set up the outgoing record so that we'll jump to the new PC.
+#if CPU(ARM64E)
+    "movz      x27, #" STRINGIZE_VALUE_OF(JIT_PROBE_PC_PTR_TAG) "\n"
+    "autib     x28, x27" "\n"
+    "lsr       x27, x28, #8" "\n"
+    "and       x27, x27, #0xff000000000000" "\n"
+    "orr       x27, x27, x28" "\n"
+    "ldrb      w27, [x27]" "\n"
+    "add       x27, x30, #48" "\n" // Compute sp at return point.
+    "pacib     x28, x27" "\n"
+#endif
+    "ldr       x27, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_FP_OFFSET) "]" "\n"
     "stp       x27, x28, [x30, #" STRINGIZE_VALUE_OF(OUT_FP_OFFSET) "]" "\n"
     "mov       sp, x30" "\n"
 
@@ -530,7 +557,11 @@ asm (
     "msr       fpsr, x28" "\n"
     "ldp       x27, x28, [sp], #" STRINGIZE_VALUE_OF(2 * GPREG_SIZE) "\n"
     "ldp       x29, x30, [sp], #" STRINGIZE_VALUE_OF(2 * GPREG_SIZE) "\n"
+#if CPU(ARM64E)
+    "retab" "\n"
+#else
     "ret" "\n"
+#endif
 );
 #endif // COMPILER(GCC_COMPATIBLE)
 
