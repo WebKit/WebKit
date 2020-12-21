@@ -1408,6 +1408,9 @@ void Structure::dump(PrintStream& out) const
     else if (transitionWatchpointIsLikelyToBeFired())
         out.print(", Shady leaf");
     
+    if (transitionWatchpointSet().isBeingWatched())
+        out.print(" (Watched)");
+
     out.print("]");
 }
 

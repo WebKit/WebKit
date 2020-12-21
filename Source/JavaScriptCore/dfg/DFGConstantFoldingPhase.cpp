@@ -1427,6 +1427,12 @@ private:
                 if (!condition.structureEnsuresValidity(structure))
                     return;
 
+                if (variant.kind() == PutByIdVariant::Replace) {
+                    auto* watchpoints = structure->propertyReplacementWatchpointSet(condition.offset());
+                    if (!watchpoints || watchpoints->isStillValid())
+                        return;
+                }
+
                 m_insertionSet.insertNode(
                     indexInBlock, SpecNone, CheckStructure, node->origin,
                     OpInfo(m_graph.addStructureSet(structure)),
