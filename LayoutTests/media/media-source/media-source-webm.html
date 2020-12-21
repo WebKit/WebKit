@@ -43,6 +43,7 @@
 
             run('source.duration = loader.duration()');
             run('sourceBuffer = source.addSourceBuffer(loader.type())');
+            const resized = resizePromise(video, 320, 240);
             run('sourceBuffer.appendBuffer(loader.initSegment())');
 
             await waitFor(sourceBuffer, 'update');
@@ -50,7 +51,7 @@
             consoleWrite('Append a media segment.')
             run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
 
-            await resizePromise(video, 320, 240);
+            await resized;
             endTest();
         } catch (e) {
             failTest(`Caught exception: "${e}"`);

@@ -1173,7 +1173,6 @@ Bug(WPE) css3/zoom-coords.xhtml [ Failure ]
 transitions/svg-text-shadow-transition.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-valid.html [ Timeout ]
-webkit.org/b/214636 media/media-source/media-source-webm.html [ Timeout Crash ]
 
 webkit.org/b/177871 http/wpt/resource-timing/rt-shared-resource-in-workers.html [ Failure ]
 

@@ -1,3 +1,29 @@
+2020-12-21  Alicia Boya García  <aboya@igalia.com>
+
+        media-source-webm.html: Handle frame size in HAVE_METADATA
+        https://bugs.webkit.org/show_bug.cgi?id=220046
+
+        Reviewed by Eric Carlson.
+
+        The current version of media-source-webm.html assumes that a `resize`
+        event happens after the first media segment is appended.
+
+        This is not necessarily true. In fact, an initialization segment
+        should cause a transition to HAVE_METADATA, and that per spec implies
+        the size of the video is known.
+
+        In practice, some implementations don't report this until a media
+        segment has arrived.
+
+        Because of the way the current code is written, an implementation
+        emitting `resize` on HAVE_METADATA would timeout the test. This patch
+        fixes that, accomodating both cases.
+
+        * media/media-source/media-source-webm.html:
+        * media/media-source/media-source-webm-expected.txt:
+        * platform/glib/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-12-20  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][WebGL] webgl/1.0.3/conformance/misc/uninitialized-test.html is failing only for Debug builds
