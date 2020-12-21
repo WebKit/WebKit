@@ -1,3 +1,15 @@
+2020-12-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the lldb WebCoreColorProvider
+        https://bugs.webkit.org/show_bug.cgi?id=220049
+
+        Reviewed by Sam Weinig.
+
+        Fix the lldb color provider after Color internals where shifted around.
+
+        * lldb/lldb_webkit.py:
+        (WebCoreColorProvider.to_string):
+
 2020-12-18  Tim Horton  <timothy_horton@apple.com>
 
         iOS wheel events don't work on many websites

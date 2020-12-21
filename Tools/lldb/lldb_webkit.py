@@ -495,10 +495,10 @@ class WebCoreColorProvider:
             return 'invalid'
 
         color = rgba_and_flags >> 32
-        red = (color >> 16) & 0xFF
-        green = (color >> 8) & 0xFF
-        blue = color & 0xFF
-        alpha = ((color >> 24) & 0xFF) / 255.0
+        red = (color >> 24) & 0xFF
+        green = (color >> 16) & 0xFF
+        blue = (color >> 8) & 0xFF
+        alpha = (color & 0xFF) / 255.0
 
         semantic = ' semantic' if self._is_semantic(rgba_and_flags) else ""
 
