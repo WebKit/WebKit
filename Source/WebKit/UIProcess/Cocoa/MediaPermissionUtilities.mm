@@ -38,14 +38,8 @@
 #import <wtf/URLHelpers.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
-#if HAVE(SPEECHRECOGNIZER)
-#import <Speech/Speech.h>
-
-SOFT_LINK_FRAMEWORK(Speech)
-SOFT_LINK_CLASS(Speech, SFSpeechRecognizer)
-#endif
-
 #import <pal/cocoa/AVFoundationSoftLink.h>
+#import <pal/cocoa/SpeechSoftLink.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(TCC)
 SOFT_LINK(TCC, TCCAccessPreflight, TCCAccessPreflightResult, (CFStringRef service, CFDictionaryRef options), (service, options))
@@ -254,17 +248,23 @@ void requestSpeechRecognitionAccess(CompletionHandler<void(bool authorized)>&& c
         }
         completionHandler(authorized);
     });
-    [getSFSpeechRecognizerClass() requestAuthorization:decisionHandler.get()];
+    [PAL::getSFSpeechRecognizerClass() requestAuthorization:decisionHandler.get()];
 }
 
 MediaPermissionResult checkSpeechRecognitionServiceAccess()
 {
-    auto authorizationStatus = [getSFSpeechRecognizerClass() authorizationStatus];
+    auto authorizationStatus = [PAL::getSFSpeechRecognizerClass() authorizationStatus];
     if (authorizationStatus == SFSpeechRecognizerAuthorizationStatusDenied || authorizationStatus == SFSpeechRecognizerAuthorizationStatusRestricted)
         return MediaPermissionResult::Denied;
     if (authorizationStatus == SFSpeechRecognizerAuthorizationStatusAuthorized)
         return MediaPermissionResult::Granted;
     return MediaPermissionResult::Unknown;
+}
+
+bool checkSpeechRecognitionServiceAvailability(const String& localeIdentifier)
+{
+    auto recognizer = localeIdentifier.isEmpty() ? adoptNS([PAL::allocSFSpeechRecognizerInstance() init]) : adoptNS([PAL::allocSFSpeechRecognizerInstance() initWithLocale:[NSLocale localeWithLocaleIdentifier:localeIdentifier]]);
+    return recognizer && [recognizer isAvailable];
 }
 
 #endif // HAVE(SPEECHRECOGNIZER)

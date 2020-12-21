@@ -10343,12 +10343,12 @@ void WebPageProxy::dispatchActivityStateUpdateForTesting()
     });
 }
 
-void WebPageProxy::requestSpeechRecognitionPermission(const WebCore::ClientOrigin& clientOrigin, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&& completionHandler)
+void WebPageProxy::requestSpeechRecognitionPermission(const String& lang, const WebCore::ClientOrigin& clientOrigin, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&& completionHandler)
 {
     if (!m_speechRecognitionPermissionManager)
         m_speechRecognitionPermissionManager = makeUnique<SpeechRecognitionPermissionManager>(*this);
 
-    m_speechRecognitionPermissionManager->request(clientOrigin, WTFMove(completionHandler));
+    m_speechRecognitionPermissionManager->request(lang, clientOrigin, WTFMove(completionHandler));
 }
 
 void WebPageProxy::requestSpeechRecognitionPermissionByDefaultAction(const WebCore::SecurityOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)

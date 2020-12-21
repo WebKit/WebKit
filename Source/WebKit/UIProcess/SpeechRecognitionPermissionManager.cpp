@@ -75,9 +75,9 @@ SpeechRecognitionPermissionManager::~SpeechRecognitionPermissionManager()
         request->complete(SpeechRecognitionPermissionDecision::Deny);
 }
     
-void SpeechRecognitionPermissionManager::request(const WebCore::ClientOrigin& origin, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&& completiontHandler)
+void SpeechRecognitionPermissionManager::request(const String& lang, const WebCore::ClientOrigin& origin, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&& completiontHandler)
 {
-    m_requests.append(SpeechRecognitionPermissionRequest::create(origin, WTFMove(completiontHandler)));
+    m_requests.append(SpeechRecognitionPermissionRequest::create(lang, origin, WTFMove(completiontHandler)));
     if (m_requests.size() == 1)
         startNextRequest();
 }
@@ -104,9 +104,24 @@ void SpeechRecognitionPermissionManager::startProcessingRequest()
     m_speechRecognitionServiceCheck = computeSpeechRecognitionServiceAccess();
 
     m_page.syncIfMockDevicesEnabledChanged();
-    if (m_page.preferences().mockCaptureDevicesEnabled()) {
+    bool mockCaptureDevicesEnabled = m_page.preferences().mockCaptureDevicesEnabled();
+    if (mockCaptureDevicesEnabled) {
         m_microphoneCheck = CheckResult::Granted;
         m_speechRecognitionServiceCheck = CheckResult::Granted;
+    }
+
+#if HAVE(SPEECHRECOGNIZER)
+    if (!mockCaptureDevicesEnabled && m_speechRecognitionServiceCheck != CheckResult::Denied) {
+        // Speech recognition service can be unavailable when user does not enable dictation in system settings.
+        // Let's avoid prompting user in that case.
+        if (!checkSpeechRecognitionServiceAvailability(m_requests.first()->lang()))
+            m_speechRecognitionServiceCheck = CheckResult::Denied;
+    }
+#endif
+
+    if (m_microphoneCheck == CheckResult::Denied || m_speechRecognitionServiceCheck == CheckResult::Denied) {
+        completeCurrentRequest(SpeechRecognitionPermissionDecision::Deny);
+        return;
     }
 
     // We currently don't allow third-party access.
@@ -118,7 +133,7 @@ void SpeechRecognitionPermissionManager::startProcessingRequest()
             m_userPermissionCheck = CheckResult::Denied;
     }
 
-    if (m_microphoneCheck == CheckResult::Denied || m_speechRecognitionServiceCheck == CheckResult::Denied || m_userPermissionCheck == CheckResult::Denied) {
+    if (m_userPermissionCheck == CheckResult::Denied) {
         completeCurrentRequest(SpeechRecognitionPermissionDecision::Deny);
         return;
     }

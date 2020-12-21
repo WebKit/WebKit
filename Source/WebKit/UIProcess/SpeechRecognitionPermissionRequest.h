@@ -35,9 +35,9 @@ enum class SpeechRecognitionPermissionDecision : bool { Deny, Grant };
 
 class SpeechRecognitionPermissionRequest : public RefCounted<SpeechRecognitionPermissionRequest> {
 public:
-    static Ref<SpeechRecognitionPermissionRequest> create(const WebCore::ClientOrigin& origin, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&& completionHandler)
+    static Ref<SpeechRecognitionPermissionRequest> create(const String& lang, const WebCore::ClientOrigin& origin, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&& completionHandler)
     {
-        return adoptRef(*new SpeechRecognitionPermissionRequest(origin, WTFMove(completionHandler)));
+        return adoptRef(*new SpeechRecognitionPermissionRequest(lang, origin, WTFMove(completionHandler)));
     }
 
     void complete(SpeechRecognitionPermissionDecision decision)
@@ -47,13 +47,16 @@ public:
     }
 
     const WebCore::ClientOrigin& origin() const { return m_origin; }
+    const String& lang() const { return m_lang; }
 
 private:
-    SpeechRecognitionPermissionRequest(const WebCore::ClientOrigin& origin, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&& completionHandler)
-        : m_origin(origin)
+    SpeechRecognitionPermissionRequest(const String& lang, const WebCore::ClientOrigin& origin, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&& completionHandler)
+        : m_lang(lang)
+        , m_origin(origin)
         , m_completionHandler(WTFMove(completionHandler))
     { }
 
+    String m_lang;
     WebCore::ClientOrigin m_origin;
     CompletionHandler<void(SpeechRecognitionPermissionDecision)> m_completionHandler;
 };

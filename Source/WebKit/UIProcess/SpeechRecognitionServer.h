@@ -46,7 +46,7 @@ class WebProcessProxy;
 enum class SpeechRecognitionPermissionDecision : bool;
 
 using SpeechRecognitionServerIdentifier = WebCore::PageIdentifier;
-using SpeechRecognitionPermissionChecker = Function<void(const WebCore::ClientOrigin&, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&&)>;
+using SpeechRecognitionPermissionChecker = Function<void(const String&, const WebCore::ClientOrigin&, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&&)>;
 using SpeechRecognitionCheckIfMockSpeechRecognitionEnabled = Function<bool()>;
 
 class SpeechRecognitionServer : public CanMakeWeakPtr<SpeechRecognitionServer>, public IPC::MessageReceiver, private IPC::MessageSender {

@@ -36,7 +36,6 @@
 
 namespace WebKit {
 
-
 SpeechRecognitionServer::SpeechRecognitionServer(Ref<IPC::Connection>&& connection, SpeechRecognitionServerIdentifier identifier, SpeechRecognitionPermissionChecker&& permissionChecker, SpeechRecognitionCheckIfMockSpeechRecognitionEnabled&& checkIfEnabled
 #if ENABLE(MEDIA_STREAM)
     , RealtimeMediaSourceCreateFunction&& function
@@ -64,7 +63,7 @@ void SpeechRecognitionServer::start(WebCore::SpeechRecognitionConnectionClientId
 
 void SpeechRecognitionServer::requestPermissionForRequest(WebCore::SpeechRecognitionRequest& request)
 {
-    m_permissionChecker(request.clientOrigin(), [this, weakThis = makeWeakPtr(this), weakRequest = makeWeakPtr(request)](SpeechRecognitionPermissionDecision decision) mutable {
+    m_permissionChecker(request.lang(), request.clientOrigin(), [this, weakThis = makeWeakPtr(this), weakRequest = makeWeakPtr(request)](auto decision) mutable {
         if (!weakThis)
             return;
 

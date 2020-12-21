@@ -68,6 +68,7 @@ MediaPermissionResult checkAVCaptureAccessForType(MediaPermissionType);
 #if HAVE(SPEECHRECOGNIZER)
 void requestSpeechRecognitionAccess(CompletionHandler<void(bool authorized)>&&);
 MediaPermissionResult checkSpeechRecognitionServiceAccess();
+bool checkSpeechRecognitionServiceAvailability(const String& localeIdentifier);
 #endif
 
 } // namespace WebKit
