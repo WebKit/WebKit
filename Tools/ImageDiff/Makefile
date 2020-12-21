@@ -1,14 +1,16 @@
 SCRIPTS_PATH = ../Scripts
 
-ifneq (,$(findstring iphone,$(SDKROOT)))
+TO_LOWER = $(shell echo $(1) | tr [:upper:] [:lower:])
+
+ifneq (,$(findstring iphone,$(call TO_LOWER,$(notdir $(SDKROOT)))))
 	OVERRIDE_SDKROOT = default
 	OVERRIDE_ARCHS = default
 endif
-ifneq (,$(findstring watch,$(SDKROOT)))
+ifneq (,$(findstring watch,$(call TO_LOWER,$(notdir $(SDKROOT)))))
 	OVERRIDE_SDKROOT = default
 	OVERRIDE_ARCHS = default
 endif
-ifneq (,$(findstring tv,$(SDKROOT)))
+ifneq (,$(findstring tv,$(call TO_LOWER,$(notdir $(SDKROOT)))))
 	OVERRIDE_SDKROOT = default
 	OVERRIDE_ARCHS = default
 endif

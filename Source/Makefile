@@ -1,7 +1,9 @@
 WEBINSPECTORUI_MODULE =
 
+TO_LOWER = $(shell echo $(1) | tr [:upper:] [:lower:])
+
 ifneq (,$(SDKROOT))
-	ifneq (,$(findstring macosx,$(SDKROOT)))
+	ifneq (,$(findstring macosx,$(call TO_LOWER,$(notdir $(SDKROOT)))))
 		WEBINSPECTORUI_MODULE = WebInspectorUI
 	endif
 else

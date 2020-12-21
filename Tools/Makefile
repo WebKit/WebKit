@@ -1,14 +1,16 @@
 MODULES = DumpRenderTree WebKitTestRunner MiniBrowser ../Source/ThirdParty/gtest/xcode TestWebKitAPI
 
+TO_LOWER = $(shell echo $(1) | tr [:upper:] [:lower:])
+
 ifneq (,$(SDKROOT))
-	ifeq (,$(findstring macosx,$(SDKROOT)))
+	ifeq (,$(findstring macosx,$(call TO_LOWER,$(notdir $(SDKROOT)))))
 		# Embedded OS
 		MODULES = DumpRenderTree WebKitTestRunner ../Source/ThirdParty/gtest/xcode TestWebKitAPI
 	endif
-	ifneq (,$(findstring macosx,$(SDKROOT)))
+	ifneq (,$(findstring macosx,$(call TO_LOWER,$(notdir $(SDKROOT)))))
 		MODULES += lldb/lldbWebKitTester
 	endif
-	ifneq (,$(findstring iphone,$(SDKROOT)))
+	ifneq (,$(findstring iphone,$(call TO_LOWER,$(notdir $(SDKROOT)))))
 		MODULES += MobileMiniBrowser
 	endif
 endif

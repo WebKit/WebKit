@@ -1,17 +1,19 @@
 LIBWEBRTC_MODULE = 
 
+TO_LOWER = $(shell echo $(1) | tr [:upper:] [:lower:])
+
 ifeq (iosmac,$(SDK_VARIANT))
 	DISABLE_LIBWEBRTC = 1
 endif
 
 ifneq (,$(SDKROOT))
-	ifneq (,$(findstring iphone,$(SDKROOT)))
+	ifneq (,$(findstring iphone,$(call TO_LOWER,$(notdir $(SDKROOT)))))
 		LIBWEBRTC_MODULE = libwebrtc
 	endif
-	ifneq (,$(findstring macosx,$(SDKROOT)))
+	ifneq (,$(findstring macosx,$(call TO_LOWER,$(notdir $(SDKROOT)))))
 		LIBWEBRTC_MODULE = libwebrtc
 	endif
-	ifneq (,$(findstring watch,$(SDKROOT)))
+	ifneq (,$(findstring watch,$(call TO_LOWER,$(notdir $(SDKROOT)))))
 		LIBWEBRTC_MODULE = libwebrtc
 	endif
 else
