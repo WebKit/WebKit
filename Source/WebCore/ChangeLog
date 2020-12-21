@@ -1,3 +1,35 @@
+2020-12-21  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r270580. rdar://problem/72552978
+
+    Multicolumn children becoming in-flow elements should be inserted into the multicolumn flow
+    https://bugs.webkit.org/show_bug.cgi?id=218503
+    
+    Reviewed by Zalan Bujtas.
+    
+    Out of flow children of a multicolumn container are not really part of the multicolumn flow. Making them in-flow (i.e. setting "position: static;")
+    should trigger the code that inserts them into the MultiColumnFlowThread object of the multicolumn container. RenderTreeBuilder was handling this
+    in-flow <-> out-of-flow changes just for the cases in which the inline status of an element was affecting the parent.
+    
+    * rendering/RenderMultiColumnFlow.cpp:
+    (WebCore::RenderMultiColumnFlow::normalizeTreeAfterStyleChange): Insert renderer in the multicolumn flow thread whenever it becames in flow.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@270580 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-12-02  Sergio Villar Senin  <svillar@igalia.com>
+
+            Multicolumn children becoming in-flow elements should be inserted into the multicolumn flow
+            https://bugs.webkit.org/show_bug.cgi?id=218503
+
+            Reviewed by Zalan Bujtas.
+
+            Out of flow children of a multicolumn container are not really part of the multicolumn flow. Making them in-flow (i.e. setting "position: static;")
+            should trigger the code that inserts them into the MultiColumnFlowThread object of the multicolumn container. RenderTreeBuilder was handling this
+            in-flow <-> out-of-flow changes just for the cases in which the inline status of an element was affecting the parent.
+
+            * rendering/RenderMultiColumnFlow.cpp:
+            (WebCore::RenderMultiColumnFlow::normalizeTreeAfterStyleChange): Insert renderer in the multicolumn flow thread whenever it becames in flow.
+
 2020-12-18  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r270983. rdar://problem/72484021
