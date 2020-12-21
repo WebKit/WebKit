@@ -57,7 +57,7 @@ static RefPtr<Logger>& nullLogger()
 RemoteAudioMediaStreamTrackRenderer::RemoteAudioMediaStreamTrackRenderer(RemoteAudioMediaStreamTrackRendererManager& manager)
     : m_manager(manager)
     , m_renderer(WebCore::AudioMediaStreamTrackRenderer::create())
-    , m_ringBuffer(makeUniqueRef<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>()))
+    , m_ringBuffer(makeUniqueRef<CARingBuffer>())
 {
     ASSERT(m_renderer);
 
@@ -73,11 +73,6 @@ RemoteAudioMediaStreamTrackRenderer::RemoteAudioMediaStreamTrackRenderer(RemoteA
 RemoteAudioMediaStreamTrackRenderer::~RemoteAudioMediaStreamTrackRenderer()
 {
     m_renderer->clear();
-}
-
-SharedRingBufferStorage& RemoteAudioMediaStreamTrackRenderer::storage()
-{
-    return static_cast<SharedRingBufferStorage&>(m_ringBuffer->storage());
 }
 
 void RemoteAudioMediaStreamTrackRenderer::start()
@@ -105,8 +100,7 @@ void RemoteAudioMediaStreamTrackRenderer::audioSamplesStorageChanged(const Share
     MESSAGE_CHECK(WebAudioBufferList::isSupportedDescription(description, numberOfFrames));
     m_description = description;
 
-    storage().updateReadOnlyStorage(m_ringBuffer.get(), ipcHandle.handle, description, numberOfFrames);
-
+    m_ringBuffer = makeUniqueRef<CARingBuffer>(makeUniqueRef<ReadOnlySharedRingBufferStorage>(ipcHandle.handle), description, numberOfFrames);
     m_audioBufferList = makeUnique<WebAudioBufferList>(m_description);
 }
 

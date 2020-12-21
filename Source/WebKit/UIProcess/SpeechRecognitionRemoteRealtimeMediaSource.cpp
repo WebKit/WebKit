@@ -47,7 +47,7 @@ SpeechRecognitionRemoteRealtimeMediaSource::SpeechRecognitionRemoteRealtimeMedia
     , m_identifier(identifier)
     , m_manager(makeWeakPtr(manager))
 #if PLATFORM(COCOA)
-    , m_ringBuffer(makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>()))
+    , m_ringBuffer(makeUnique<CARingBuffer>())
 #endif
 {
     m_manager->addSource(*this, captureDevice);
@@ -77,8 +77,7 @@ void SpeechRecognitionRemoteRealtimeMediaSource::setStorage(const SharedMemory::
 {
     m_description = description;
 
-    auto& storage = static_cast<SharedRingBufferStorage&>(m_ringBuffer->storage());
-    storage.updateReadOnlyStorage(*m_ringBuffer, handle, description, numberOfFrames);
+    m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<ReadOnlySharedRingBufferStorage>(handle), description, numberOfFrames);
     m_buffer = makeUnique<WebAudioBufferList>(description, numberOfFrames);
 }
 

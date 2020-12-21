@@ -61,8 +61,6 @@ private:
     void audioSamplesStorageChanged(const SharedMemory::IPCHandle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
     void audioSamplesAvailable(MediaTime, uint64_t numberOfFrames);
 
-    SharedRingBufferStorage& storage();
-
     RemoteAudioMediaStreamTrackRendererManager& m_manager;
     std::unique_ptr<WebCore::AudioMediaStreamTrackRenderer> m_renderer;
     WebCore::CAAudioStreamDescription m_description;

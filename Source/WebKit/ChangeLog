@@ -1,3 +1,54 @@
+2020-12-21  Chris Dumez  <cdumez@apple.com>
+
+        Simplify CARingBuffer usage with SharedMemory storage
+        https://bugs.webkit.org/show_bug.cgi?id=220047
+
+        Reviewed by Geoff Garen.
+
+        Simplify CARingBuffer usage with SharedMemory storage:
+        1. There are now 2 storage types:
+           - ReadOnlySharedRingBufferStorage: Used by the reader
+           - SharedRingBufferStorage: Used by the writer
+           One type inherits the other. This allows the API to be a bit
+           clearer and we can drop the m_readyOnly flag.
+        2. Drop SharedRingBufferStorage::updateReadOnlyStorage() function. Instead, the reader
+           can now construct a new ReadOnlySharedRingBufferStorage directly of the SharedMemory
+           handle and pass it to the CARingBuffer constructor.
+
+        * GPUProcess/media/RemoteAudioDestinationManager.cpp:
+        (WebKit::RemoteAudioDestination::audioSamplesStorageChanged):
+        (WebKit::RemoteAudioDestination::RemoteAudioDestination):
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.cpp:
+        (WebKit::RemoteAudioMediaStreamTrackRenderer::RemoteAudioMediaStreamTrackRenderer):
+        (WebKit::RemoteAudioMediaStreamTrackRenderer::audioSamplesStorageChanged):
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.h:
+        * GPUProcess/webrtc/RemoteMediaRecorder.cpp:
+        (WebKit::RemoteMediaRecorder::RemoteMediaRecorder):
+        (WebKit::RemoteMediaRecorder::audioSamplesStorageChanged):
+        * GPUProcess/webrtc/RemoteMediaRecorder.h:
+        * Shared/Cocoa/SharedRingBufferStorage.cpp:
+        (WebKit::ReadOnlySharedRingBufferStorage::ReadOnlySharedRingBufferStorage):
+        (WebKit::ReadOnlySharedRingBufferStorage::data):
+        (WebKit::ReadOnlySharedRingBufferStorage::sharedFrameBounds const):
+        (WebKit::ReadOnlySharedRingBufferStorage::getCurrentFrameBounds):
+        (WebKit::ReadOnlySharedRingBufferStorage::flush):
+        (WebKit::ReadOnlySharedRingBufferStorage::updateFrameBounds):
+        (WebKit::SharedRingBufferStorage::setStorage):
+        (WebKit::SharedRingBufferStorage::allocate):
+        (WebKit::SharedRingBufferStorage::deallocate):
+        (WebKit::SharedRingBufferStorage::setCurrentFrameBounds):
+        * Shared/Cocoa/SharedRingBufferStorage.h:
+        (WebKit::ReadOnlySharedRingBufferStorage::storage const):
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.cpp:
+        (WebKit::m_ringBuffer):
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSource::setStorage):
+        * WebProcess/GPU/media/RemoteAudioSourceProviderManager.cpp:
+        (WebKit::RemoteAudioSourceProviderManager::RemoteAudio::RemoteAudio):
+        (WebKit::RemoteAudioSourceProviderManager::RemoteAudio::setStorage):
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+        (WebKit::RemoteCaptureSampleManager::RemoteAudio::RemoteAudio):
+        (WebKit::RemoteCaptureSampleManager::RemoteAudio::setStorage):
+
 2020-12-21  Alex Christensen  <achristensen@webkit.org>
 
         Retain IPC::Connection when using it when making a NetworkDataTask

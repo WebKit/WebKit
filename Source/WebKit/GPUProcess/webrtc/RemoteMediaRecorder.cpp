@@ -56,16 +56,11 @@ RemoteMediaRecorder::RemoteMediaRecorder(GPUConnectionToWebProcess& gpuConnectio
     , m_writer(WTFMove(writer))
 {
     if (recordAudio)
-        m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>());
+        m_ringBuffer = makeUnique<CARingBuffer>();
 }
 
 RemoteMediaRecorder::~RemoteMediaRecorder()
 {
-}
-
-SharedRingBufferStorage& RemoteMediaRecorder::storage()
-{
-    return static_cast<SharedRingBufferStorage&>(m_ringBuffer->storage());
 }
 
 void RemoteMediaRecorder::audioSamplesStorageChanged(const SharedMemory::IPCHandle& ipcHandle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
@@ -74,7 +69,7 @@ void RemoteMediaRecorder::audioSamplesStorageChanged(const SharedMemory::IPCHand
 
     m_description = description;
 
-    storage().updateReadOnlyStorage(*m_ringBuffer, ipcHandle.handle, description, numberOfFrames);
+    m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<ReadOnlySharedRingBufferStorage>(ipcHandle.handle), description, numberOfFrames);
     m_audioBufferList = makeUnique<WebAudioBufferList>(m_description);
 }
 

@@ -113,15 +113,14 @@ void RemoteCaptureSampleManager::audioSamplesAvailable(WebCore::RealtimeMediaSou
 
 RemoteCaptureSampleManager::RemoteAudio::RemoteAudio(Ref<RemoteRealtimeMediaSource>&& source)
     : m_source(WTFMove(source))
-    , m_ringBuffer(makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>()))
+    , m_ringBuffer(makeUnique<CARingBuffer>())
 {
 }
 
 void RemoteCaptureSampleManager::RemoteAudio::setStorage(const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
 {
     m_description = description;
-    auto& storage = static_cast<SharedRingBufferStorage&>(m_ringBuffer->storage());
-    storage.updateReadOnlyStorage(*m_ringBuffer, handle, description, numberOfFrames);
+    m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<ReadOnlySharedRingBufferStorage>(handle), description, numberOfFrames);
 }
 
 void RemoteCaptureSampleManager::RemoteAudio::audioSamplesAvailable(MediaTime time, uint64_t numberOfFrames)

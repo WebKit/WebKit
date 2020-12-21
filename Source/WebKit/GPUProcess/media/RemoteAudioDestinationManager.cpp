@@ -72,7 +72,7 @@ public:
 
     void audioSamplesStorageChanged(const SharedMemory::IPCHandle& ipcHandle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
     {
-        storage().updateReadOnlyStorage(m_ringBuffer.get(), ipcHandle.handle, description, numberOfFrames);
+        m_ringBuffer = makeUniqueRef<WebCore::CARingBuffer>(makeUniqueRef<ReadOnlySharedRingBufferStorage>(ipcHandle.handle), description, numberOfFrames);
     }
 #endif
 
@@ -108,7 +108,7 @@ private:
         : m_id(identifier)
 #if PLATFORM(COCOA)
         , m_audioOutputUnitAdaptor(*this)
-        , m_ringBuffer(makeUniqueRef<WebCore::CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>()))
+        , m_ringBuffer(makeUniqueRef<WebCore::CARingBuffer>())
 #endif
     {
 #if PLATFORM(COCOA)
@@ -117,11 +117,6 @@ private:
     }
 
 #if PLATFORM(COCOA)
-    SharedRingBufferStorage& storage()
-    {
-        return static_cast<SharedRingBufferStorage&>(m_ringBuffer->storage());
-    }
-
     OSStatus render(double sampleTime, uint64_t hostTime, UInt32 numberOfFrames, AudioBufferList* ioData)
     {
         ASSERT(!isMainThread());

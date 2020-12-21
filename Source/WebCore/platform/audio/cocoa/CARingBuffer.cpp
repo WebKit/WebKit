@@ -58,6 +58,12 @@ CARingBuffer::CARingBuffer(UniqueRef<CARingBufferStorage>&& storage)
 {
 }
 
+CARingBuffer::CARingBuffer(UniqueRef<CARingBufferStorage>&& storage, const CAAudioStreamDescription& format, size_t frameCount)
+    : m_buffers(WTFMove(storage))
+{
+    allocate(format, frameCount);
+}
+
 void CARingBuffer::allocate(const CAAudioStreamDescription& format, size_t frameCount)
 {
     m_description = format;

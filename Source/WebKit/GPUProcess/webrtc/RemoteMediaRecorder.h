@@ -77,8 +77,6 @@ private:
     void pause(CompletionHandler<void()>&&);
     void resume(CompletionHandler<void()>&&);
 
-    SharedRingBufferStorage& storage();
-
     GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
     MediaRecorderIdentifier m_identifier;
     Ref<WebCore::MediaRecorderPrivateWriter> m_writer;
