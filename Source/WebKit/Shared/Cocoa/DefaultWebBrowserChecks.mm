@@ -213,7 +213,8 @@ bool hasProhibitedUsageStrings()
 bool isParentProcessAFullWebBrowser(Optional<audit_token_t> auditToken)
 {
     ASSERT(isInWebKitChildProcess());
-    RELEASE_ASSERT(auditToken);
+    if (!auditToken)
+        return false;
 
     static bool fullWebBrowser;
 

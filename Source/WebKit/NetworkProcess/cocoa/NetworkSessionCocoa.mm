@@ -1355,7 +1355,7 @@ void NetworkSessionCocoa::initializeEphemeralStatelessSession(NavigatingToAppBou
 SessionWrapper& NetworkSessionCocoa::sessionWrapperForTask(const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
     auto shouldBeConsideredAppBound = isNavigatingToAppBoundDomain ? *isNavigatingToAppBoundDomain : NavigatingToAppBoundDomain::Yes;
-    if (auto* connection = networkProcess().parentProcessConnection()) {
+    if (RefPtr<IPC::Connection> connection = networkProcess().parentProcessConnection()) {
         if (isParentProcessAFullWebBrowser(connection->getAuditToken()))
             shouldBeConsideredAppBound = NavigatingToAppBoundDomain::No;
     }
