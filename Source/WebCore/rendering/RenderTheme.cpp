@@ -1404,7 +1404,7 @@ Color RenderTheme::tapHighlightColor()
 #endif
 
 // Value chosen by observation. This can be tweaked.
-constexpr float minColorContrastValue = 1.1f;
+constexpr float minColorContrastValue = 1.195f;
 
 // For transparent or translucent background color, use lightening.
 constexpr float minDisabledColorAlphaValue = 0.5f;
