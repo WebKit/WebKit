@@ -289,6 +289,7 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineFormattingS
     auto& bidiRuns = bidiResolver.runs();
     if (bidiRuns.runCount() == 1) {
         // Fast path for cases when there's no bidi boundary.
+        inlineContent.runs.reserveCapacity(inlineFormattingState.lineRuns().size());
         for (auto& lineRun : inlineFormattingState.lineRuns()) {
             if (auto& text = lineRun.text())
                 createDisplayTextRunForRange(lineRun, text->start(), text->end());
@@ -305,6 +306,7 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
     auto& lineBoxes = inlineFormattingState.lineBoxes();
     auto& runs = inlineContent.runs;
     size_t runIndex = 0;
+    inlineContent.lines.reserveCapacity(lines.size());
     for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
         auto& line = lines[lineIndex];
         auto& lineBoxLogicalRect = line.lineBoxLogicalRect();

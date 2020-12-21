@@ -50,8 +50,8 @@ struct InlineContent : public RefCounted<InlineContent> {
     static Ref<InlineContent> create(const LineLayout& lineLayout) { return adoptRef(*new InlineContent(lineLayout)); }
     ~InlineContent();
 
-    using Runs = Vector<Run, 4>;
-    using Lines = Vector<Line, 4>;
+    using Runs = Vector<Run>;
+    using Lines = Vector<Line>;
 
     Runs runs;
     Lines lines;
