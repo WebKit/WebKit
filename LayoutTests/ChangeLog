@@ -1,3 +1,11 @@
+2020-12-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, rebaseline tests for Windows.
+
+        * platform/win/http/tests/xmlhttprequest/methods-async-expected.txt: Added.
+        * platform/win/http/tests/xmlhttprequest/methods-expected.txt: Added.
+        * platform/win/http/tests/xmlhttprequest/workers/methods-async-expected.txt: Added.
+
 2020-12-21  Aditya Keerthi  <akeerthi@apple.com>
 
         REGRESSION (r262729): Poor contrast for specific color/background combinations on disabled input fields
