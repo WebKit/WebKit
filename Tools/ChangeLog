@@ -1,3 +1,13 @@
+2020-12-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MiniBrowser] Update built-in User-Agent strings (December 2020)
+        https://bugs.webkit.org/show_bug.cgi?id=220048
+
+        Reviewed by Alex Christensen.
+
+        * MiniBrowser/win/BrowserWindow.cpp:
+        (BrowserWindow::setUserAgent):
+
 2020-12-20  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the lldb WebCoreColorProvider
