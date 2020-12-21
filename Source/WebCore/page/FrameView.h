@@ -779,7 +779,7 @@ private:
     void willRemoveScrollbar(Scrollbar*, ScrollbarOrientation) final;
 
     IntSize sizeForResizeEvent() const;
-    void sendResizeEventIfNeeded();
+    void scheduleResizeEventIfNeeded();
     
     RefPtr<Element> rootElementForCustomScrollbarPartStyle(PseudoId) const;
 

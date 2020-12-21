@@ -4140,12 +4140,12 @@ void Document::runResizeSteps()
 {
     // FIXME: The order of dispatching is not specified: https://github.com/WICG/visual-viewport/issues/65.
     if (m_needsDOMWindowResizeEvent) {
-        LOG_WITH_STREAM(Events, stream << "Document" << this << "sending resize events to window");
+        LOG_WITH_STREAM(Events, stream << "Document " << this << " sending resize events to window");
         m_needsDOMWindowResizeEvent = false;
         dispatchWindowEvent(Event::create(eventNames().resizeEvent, Event::CanBubble::No, Event::IsCancelable::No));
     }
     if (m_needsVisualViewportResizeEvent) {
-        LOG_WITH_STREAM(Events, stream << "Document" << this << "sending resize events to visualViewport");
+        LOG_WITH_STREAM(Events, stream << "Document " << this << " sending resize events to visualViewport");
         m_needsVisualViewportResizeEvent = false;
         if (auto* window = domWindow())
             window->visualViewport().dispatchEvent(Event::create(eventNames().resizeEvent, Event::CanBubble::No, Event::IsCancelable::No));
@@ -4179,7 +4179,7 @@ void Document::runScrollSteps()
 {
     // FIXME: The order of dispatching is not specified: https://github.com/WICG/visual-viewport/issues/66.
     if (m_pendingScrollEventTargetList && !m_pendingScrollEventTargetList->targets.isEmpty()) {
-        LOG_WITH_STREAM(Events, stream << "Document" << this << "sending scroll events to pending scroll event targets");
+        LOG_WITH_STREAM(Events, stream << "Document " << this << " sending scroll events to pending scroll event targets");
         auto currentTargets = WTFMove(m_pendingScrollEventTargetList->targets);
         for (auto& target : currentTargets) {
             auto bubbles = target->isDocumentNode() ? Event::CanBubble::Yes : Event::CanBubble::No;
@@ -4187,7 +4187,7 @@ void Document::runScrollSteps()
         }
     }
     if (m_needsVisualViewportScrollEvent) {
-        LOG_WITH_STREAM(Events, stream << "Document" << this << "sending scroll events to visualViewport");
+        LOG_WITH_STREAM(Events, stream << "Document " << this << " sending scroll events to visualViewport");
         m_needsVisualViewportScrollEvent = false;
         if (auto* window = domWindow())
             window->visualViewport().dispatchEvent(Event::create(eventNames().scrollEvent, Event::CanBubble::No, Event::IsCancelable::No));

@@ -3352,7 +3352,7 @@ void FrameView::performPostLayoutTasks()
 
     scrollToAnchor();
 
-    sendResizeEventIfNeeded();
+    scheduleResizeEventIfNeeded();
     
     updateLayoutViewport();
     viewportContentsChanged();
@@ -3374,7 +3374,7 @@ IntSize FrameView::sizeForResizeEvent() const
     return visibleContentRectIncludingScrollbars().size();
 }
 
-void FrameView::sendResizeEventIfNeeded()
+void FrameView::scheduleResizeEventIfNeeded()
 {
     if (layoutContext().isInRenderTreeLayout() || needsLayout())
         return;
@@ -3411,11 +3411,11 @@ void FrameView::sendResizeEventIfNeeded()
 
     auto* document = frame().document();
     if (document->quirks().shouldSilenceWindowResizeEvents()) {
-        FRAMEVIEW_RELEASE_LOG_IF_ALLOWED(Events, "sendResizeEventIfNeeded: Not firing resize events because they are temporarily disabled for this page");
+        FRAMEVIEW_RELEASE_LOG_IF_ALLOWED(Events, "scheduleResizeEventIfNeeded: Not firing resize events because they are temporarily disabled for this page");
         return;
     }
 
-    LOG_WITH_STREAM(Events, stream << "FrameView" << this << "sendResizeEventIfNeeded scheduling resize event for document" << document << ", size " << currentSize);
+    LOG_WITH_STREAM(Events, stream << "FrameView " << this << " scheduleResizeEventIfNeeded scheduling resize event for document" << document << ", size " << currentSize);
     document->setNeedsDOMWindowResizeEvent();
 
     bool isMainFrame = frame().isMainFrame();
@@ -5202,7 +5202,7 @@ bool FrameView::updateFixedPositionLayoutRect()
 void FrameView::setCustomSizeForResizeEvent(IntSize customSize)
 {
     m_customSizeForResizeEvent = customSize;
-    sendResizeEventIfNeeded();
+    scheduleResizeEventIfNeeded();
 }
 
 void FrameView::setScrollVelocity(const VelocityData& velocityData)
