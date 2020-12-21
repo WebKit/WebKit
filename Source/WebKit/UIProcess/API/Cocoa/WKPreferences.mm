@@ -100,7 +100,8 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
     self.tabFocusesLinks = [coder decodeBoolForKey:@"tabFocusesLinks"];
 #endif
-    self.textInteractionEnabled = [coder decodeBoolForKey:@"textInteractionEnabled"];
+    if ([coder containsValueForKey:@"textInteractionEnabled"])
+        self.textInteractionEnabled = [coder decodeBoolForKey:@"textInteractionEnabled"];
 
     return self;
 }
