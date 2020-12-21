@@ -81,3 +81,29 @@ function testInvalidSize(description, propName) {
     }
     assert(threw);
 }
+
+{
+    const args = {minimum: 5};
+    let minimum = false;
+    const proxy = new Proxy(args, {
+        get(target, prop, receiver) {
+            if (prop === "minimum") {
+                minimum = true;
+            }
+            return Reflect.get(...arguments);
+        }
+    })
+    const mem = new WebAssembly.Memory(proxy);
+    assert(mem.buffer.byteLength === 5 * pageSize);
+    assert(minimum);
+
+    let threw = false;
+    try {
+        new WebAssembly.Memory({minimum: 5, initial: 5});
+    } catch (e) {
+        assert(e instanceof TypeError);
+        assert(e.message === "WebAssembly.Memory 'initial' and 'minimum' options are specified at the same time");
+        threw = true;
+    }
+    assert(threw);
+}

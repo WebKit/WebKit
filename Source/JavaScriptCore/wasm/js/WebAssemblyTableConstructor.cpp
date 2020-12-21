@@ -81,6 +81,15 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
     Identifier initialIdent = Identifier::fromString(vm, "initial");
     JSValue initialSizeValue = memoryDescriptor->get(globalObject, initialIdent);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    Identifier minimumIdent = Identifier::fromString(vm, "minimum");
+    JSValue minSizeValue = memoryDescriptor->get(globalObject, minimumIdent);
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    if (!initialSizeValue.isUndefined() && !minSizeValue.isUndefined())
+        return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table 'initial' and 'minimum' options are specified at the same time");
+
+    if (!minSizeValue.isUndefined())
+        initialSizeValue = minSizeValue;
+
     uint32_t initial = toNonWrappingUint32(globalObject, initialSizeValue);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 

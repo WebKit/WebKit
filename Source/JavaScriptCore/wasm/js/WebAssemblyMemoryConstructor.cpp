@@ -68,8 +68,18 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyMemory, (JSGlobalObject* globalOb
     Wasm::PageCount initialPageCount;
     {
         Identifier initial = Identifier::fromString(vm, "initial");
-        JSValue minSizeValue = memoryDescriptor->get(globalObject, initial);
+        JSValue initSizeValue = memoryDescriptor->get(globalObject, initial);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+        Identifier minimum = Identifier::fromString(vm, "minimum");
+        JSValue minSizeValue = memoryDescriptor->get(globalObject, minimum);
+        RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+        if (!minSizeValue.isUndefined() && !initSizeValue.isUndefined()) {
+            // Error because both specified.
+            return throwVMTypeError(globalObject, throwScope, "WebAssembly.Memory 'initial' and 'minimum' options are specified at the same time");
+        }
+        if (!initSizeValue.isUndefined())
+            minSizeValue = initSizeValue;
+
         uint32_t size = toNonWrappingUint32(globalObject, minSizeValue);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         if (!Wasm::PageCount::isValid(size))
