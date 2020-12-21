@@ -56,6 +56,7 @@
 #import "PixelBufferConformerCV.h"
 #import "PlatformTimeRanges.h"
 #import "RuntimeApplicationChecks.h"
+#import "RuntimeEnabledFeatures.h"
 #import "SecurityOrigin.h"
 #import "SerializedPlatformDataCueMac.h"
 #import "SharedBuffer.h"
@@ -99,6 +100,7 @@
 #import <wtf/OSObjectPtr.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/spi/darwin/OSVariantSPI.h>
 #import <wtf/text/CString.h>
 #import <wtf/threads/BinarySemaphore.h>
 
@@ -266,20 +268,6 @@ static dispatch_queue_t globalPullDelegateQueue()
         globalQueue = dispatch_queue_create("WebCoreAVFPullDelegate queue", DISPATCH_QUEUE_SERIAL);
     });
     return globalQueue;
-}
-
-static void registerFormatReaderIfNecessary()
-{
-#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        // Like we do for other media formats, allow the format reader to run in the WebContent or GPU process
-        // (which is already appropriately sandboxed) rather than in a separate MediaToolbox XPC service.
-        RELEASE_ASSERT(isInGPUProcess() || isInWebProcess());
-        MTRegisterPluginFormatReaderBundleDirectory((__bridge CFURLRef)NSBundle.mainBundle.builtInPlugInsURL);
-        MTPluginFormatReaderDisableSandboxing();
-    });
-#endif
 }
 
 class MediaPlayerPrivateAVFoundationObjC::Factory final : public MediaPlayerFactory {
@@ -804,19 +792,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url)
 
 }
 
-static bool willUseWebMFormatReaderForType(const String& type)
-{
-#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
-    if (!SourceBufferParserWebM::isWebMFormatReaderAvailable())
-        return false;
-    
-    return equalIgnoringASCIICase(type, "video/webm") || equalIgnoringASCIICase(type, "audio/webm");
-#else
-    UNUSED_PARAM(type);
-    return false;
-#endif
-}
-
 void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, RetainPtr<NSMutableDictionary> options)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -858,11 +833,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
 #endif
 
     auto type = player()->contentMIMEType();
-
-    // Don't advertise WebM MIME types or the format reader won't be loaded until rdar://72405127 is fixed.
-    auto willUseWebMFormatReader = willUseWebMFormatReaderForType(type);
-
-    if (PAL::canLoad_AVFoundation_AVURLAssetOutOfBandMIMETypeKey() && !type.isEmpty() && !player()->contentMIMETypeWasInferredFromExtension() && !willUseWebMFormatReader) {
+    if (PAL::canLoad_AVFoundation_AVURLAssetOutOfBandMIMETypeKey() && !type.isEmpty() && !player()->contentMIMETypeWasInferredFromExtension()) {
         auto codecs = player()->contentTypeCodecs();
         if (!codecs.isEmpty()) {
             NSString *typeString = [NSString stringWithFormat:@"%@; codecs=\"%@\"", (NSString *)type, (NSString *)codecs];
@@ -904,9 +875,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
         else
             [options setObject:@NO forKey:AVURLAssetUsesNoPersistentCacheKey];
     }
-
-    if (willUseWebMFormatReader)
-        registerFormatReaderIfNecessary();
 
     NSURL *cocoaURL = canonicalURL(url);
     m_avAsset = adoptNS([PAL::allocAVURLAssetInstance() initWithURL:cocoaURL options:options.get()]);
@@ -1699,6 +1667,39 @@ static bool keySystemIsSupported(const String& keySystem)
 }
 #endif
 
+#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+static void ensureFormatReaderIsRegistered()
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        // Like we do for other media formats, allow the format reader to run in the WebContent or GPU process
+        // (which is already appropriately sandboxed) rather than in a separate MediaToolbox XPC service.
+        RELEASE_ASSERT(isInGPUProcess() || isInWebProcess());
+        MTRegisterPluginFormatReaderBundleDirectory((__bridge CFURLRef)NSBundle.mainBundle.builtInPlugInsURL);
+        MTPluginFormatReaderDisableSandboxing();
+    });
+}
+#endif
+
+#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+static bool isFormatReaderAvailable()
+{
+    if (!RuntimeEnabledFeatures::sharedFeatures().webMFormatReaderEnabled())
+        return false;
+
+#if !USE(APPLE_INTERNAL_SDK)
+    // FIXME (rdar://72320419): If WebKit was built with ad-hoc code-signing,
+    // CoreMedia will only load the format reader plug-in when a user default
+    // is set on Apple internal OSs. That means we cannot currently support WebM
+    // in public SDK builds on customer OSs.
+    if (!os_variant_allows_internal_security_policies("com.apple.WebKit"))
+        return false;
+#endif
+
+    return true;
+}
+#endif
+
 MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsTypeAndCodecs(const MediaEngineSupportParameters& parameters)
 {
 #if ENABLE(MEDIA_SOURCE)
@@ -1708,6 +1709,19 @@ MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsTypeAndCod
 #if ENABLE(MEDIA_STREAM)
     if (parameters.isMediaStream)
         return MediaPlayer::SupportsType::IsNotSupported;
+#endif
+
+#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+    if (isFormatReaderAvailable()) {
+        auto supported = SourceBufferParserWebM::isContentTypeSupported(parameters.type);
+        if (supported != MediaPlayer::SupportsType::IsNotSupported) {
+            ensureFormatReaderIsRegistered();
+            if (supported == MediaPlayer::SupportsType::MayBeSupported)
+                return supported;
+            if (contentTypeMeetsHardwareDecodeRequirements(parameters.type, parameters.contentTypesRequiringHardwareSupport))
+                return MediaPlayer::SupportsType::IsSupported;
+        }
+    }
 #endif
 
     auto supported = AVAssetMIMETypeCache::singleton().canDecodeType(parameters.type.raw());

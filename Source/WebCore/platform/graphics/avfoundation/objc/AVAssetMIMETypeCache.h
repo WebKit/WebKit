@@ -45,8 +45,6 @@ public:
     bool isUnsupportedContainerType(const String&) final;
 
     void addSupportedTypes(const Vector<String>&);
-    
-    void setWebMFormatReaderEnabled(bool);
 
 private:
     friend NeverDestroyed<AVAssetMIMETypeCache>;

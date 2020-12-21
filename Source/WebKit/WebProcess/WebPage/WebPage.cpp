@@ -341,10 +341,6 @@
 #endif
 #endif
 
-#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
-#include <WebCore/AVAssetMIMETypeCache.h>
-#endif
-
 namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
@@ -3846,10 +3842,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
         if (isParentProcessAFullWebBrowser(connection->getAuditToken()))
             settings.setWebAuthenticationEnabled(true);
     }
-#endif
-
-#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
-    AVAssetMIMETypeCache::singleton().setWebMFormatReaderEnabled(RuntimeEnabledFeatures::sharedFeatures().webMFormatReaderEnabled());
 #endif
 }
 

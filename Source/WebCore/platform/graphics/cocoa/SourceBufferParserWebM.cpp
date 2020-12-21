@@ -48,7 +48,6 @@
 #include <wtf/StdList.h>
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/darwin/WeakLinking.h>
-#include <wtf/spi/darwin/OSVariantSPI.h>
 
 #include "CoreVideoSoftLink.h"
 #include "VideoToolboxSoftLink.h"
@@ -444,66 +443,14 @@ private:
     webm::TrackEntry m_track;
 };
 
-bool SourceBufferParserWebM::m_formatReaderEnabled;
-
-void SourceBufferParserWebM::setWebMFormatReaderEnabled(bool enabled)
-{
-#if HAVE(MT_PLUGIN_FORMAT_READER)
-    m_formatReaderEnabled = enabled;
-#else
-    UNUSED_PARAM(enabled);
-#endif
-}
-
-const HashSet<String, ASCIICaseInsensitiveHash>& SourceBufferParserWebM::webmMIMETypes()
-{
-    static auto types = makeNeverDestroyed([] {
-
-        HashSet<String, ASCIICaseInsensitiveHash> types;
-
-#if ENABLE(VP9)
-        types.add("video/webm");
-#endif
-#if ENABLE(VORBIS) || ENABLE(OPUS)
-        types.add("audio/webm");
-#endif
-
-        return types;
-    }());
-
-    return types;
-}
-
-static bool canLoadFormatReader()
-{
-#if !HAVE(MT_PLUGIN_FORMAT_READER)
-    return false;
-#elif USE(APPLE_INTERNAL_SDK)
-    return true;
-#else
-    // FIXME (rdar://72320419): If WebKit was built with ad-hoc code-signing,
-    // CoreMedia will only load the format reader plug-in when a user default
-    // is set on Apple internal OSs. That means we cannot currently support WebM
-    // in public SDK builds on customer OSs.
-    static bool allowsInternalSecurityPolicies = os_variant_allows_internal_security_policies("com.apple.WebKit");
-    return allowsInternalSecurityPolicies;
-#endif // !USE(APPLE_INTERNAL_SDK)
-}
-
-bool SourceBufferParserWebM::isWebMFormatReaderAvailable()
-{
-    return m_formatReaderEnabled && canLoadFormatReader() && isWebmParserAvailable();
-}
-
 MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(const ContentType& type)
 {
 #if ENABLE(VP9) || ENABLE(VORBIS) || ENABLE(OPUS)
     if (!isWebmParserAvailable())
         return MediaPlayerEnums::SupportsType::IsNotSupported;
 
-    auto containerType = type.containerType();
-    bool isAudioContainerType = WTF::equalIgnoringASCIICase(containerType, "audio/webm");
-    bool isVideoContainerType = WTF::equalIgnoringASCIICase(containerType, "video/webm");
+    bool isAudioContainerType = WTF::equalIgnoringASCIICase(type.containerType(), "audio/webm");
+    bool isVideoContainerType = WTF::equalIgnoringASCIICase(type.containerType(), "video/webm");
     if (!isAudioContainerType && !isVideoContainerType)
         return MediaPlayerEnums::SupportsType::IsNotSupported;
     
@@ -526,18 +473,22 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
     if (!isAnyCodecAvailable)
         return MediaPlayerEnums::SupportsType::IsNotSupported;
 
-    auto codecs = type.codecs();
-    if (codecs.isEmpty())
+    String codecsParameter = type.parameter(ContentType::codecsParameter());
+    if (!codecsParameter)
         return MediaPlayerEnums::SupportsType::MayBeSupported;
 
-    for (auto& codec : codecs) {
+    auto splitResults = StringView(codecsParameter).split(',');
+    if (splitResults.begin() == splitResults.end())
+        return MediaPlayerEnums::SupportsType::MayBeSupported;
+
+    for (auto split : splitResults) {
 #if ENABLE(VP9)
-        if (codec.startsWith("vp09") || codec.startsWith("vp08") || equal(codec, "vp8") || equal(codec, "vp9")) {
+        if (split.startsWith("vp09") || split.startsWith("vp08") || equal(split, "vp8") || equal(split, "vp9")) {
 
             if (!isVP9DecoderAvailable())
                 return MediaPlayerEnums::SupportsType::IsNotSupported;
 
-            auto codecParameters = parseVPCodecParameters(codec);
+            auto codecParameters = parseVPCodecParameters(split);
             if (!codecParameters)
                 return MediaPlayerEnums::SupportsType::IsNotSupported;
 
@@ -549,7 +500,7 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
 #endif // ENABLE(VP9)
 
 #if ENABLE(VORBIS)
-        if (codec == "vorbis") {
+        if (split == "vorbis") {
             if (!isVorbisDecoderAvailable())
                 return MediaPlayerEnums::SupportsType::IsNotSupported;
 
@@ -558,7 +509,7 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
 #endif // ENABLE(VORBIS)
 
 #if ENABLE(OPUS)
-        if (codec == "opus") {
+        if (split == "opus") {
             if (!isOpusDecoderAvailable())
                 return MediaPlayerEnums::SupportsType::IsNotSupported;
 

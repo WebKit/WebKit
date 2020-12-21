@@ -1,3 +1,21 @@
+2020-12-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r270939 and r270952.
+
+        Caused layout test timeouts on internal bots
+
+        Reverted changesets:
+
+        "[Cocoa] WebM format reader doesn't work with a url in a
+        <source> element"
+        https://bugs.webkit.org/show_bug.cgi?id=219961
+        https://trac.webkit.org/changeset/270939
+
+        "[Cocoa] WebM format reader doesn't work with a url in a
+        <source> element"
+        https://bugs.webkit.org/show_bug.cgi?id=219961
+        https://trac.webkit.org/changeset/270952
+
 2020-12-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Many websites crash under toDataURL() when enabling GPU process for DOM
