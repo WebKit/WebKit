@@ -567,17 +567,17 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
     auto& parent = *renderer.parent();
 
     bool wasFloating = oldStyle.isFloating();
-    bool wasOufOfFlowPositioned = oldStyle.hasOutOfFlowPosition();
+    bool wasOutOfFlowPositioned = oldStyle.hasOutOfFlowPosition();
     bool isFloating = renderer.style().isFloating();
     bool isOutOfFlowPositioned = renderer.style().hasOutOfFlowPosition();
     bool startsAffectingParent = false;
     bool noLongerAffectsParent = false;
 
     if (is<RenderBlock>(parent))
-        noLongerAffectsParent = (!wasFloating && isFloating) || (!wasOufOfFlowPositioned && isOutOfFlowPositioned);
+        noLongerAffectsParent = (!wasFloating && isFloating) || (!wasOutOfFlowPositioned && isOutOfFlowPositioned);
 
     if (is<RenderBlockFlow>(parent) || is<RenderInline>(parent)) {
-        startsAffectingParent = (wasFloating || wasOufOfFlowPositioned) && !isFloating && !isOutOfFlowPositioned;
+        startsAffectingParent = (wasFloating || wasOutOfFlowPositioned) && !isFloating && !isOutOfFlowPositioned;
         ASSERT(!startsAffectingParent || !noLongerAffectsParent);
     }
 
@@ -602,6 +602,13 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
             if (isFloating && renderer.previousSibling() && renderer.previousSibling()->isAnonymousBlock())
                 move(downcast<RenderBoxModelObject>(parent), downcast<RenderBoxModelObject>(*renderer.previousSibling()), renderer, RenderTreeBuilder::NormalizeAfterInsertion::No);
         }
+    }
+
+    // Out of flow children of RenderMultiColumnFlow are not really part of the multicolumn flow. We need to ensure that changes in positioning like this
+    // trigger insertions into the multicolumn flow.
+    if (auto* enclosingFragmentedFlow = parent.enclosingFragmentedFlow(); is<RenderMultiColumnFlow>(enclosingFragmentedFlow) && wasOutOfFlowPositioned && !isOutOfFlowPositioned) {
+        multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*enclosingFragmentedFlow), renderer);
+        renderer.initializeFragmentedFlowStateOnInsertion();
     }
 }
 
