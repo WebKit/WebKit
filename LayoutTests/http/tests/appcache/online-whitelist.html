@@ -1,6 +1,6 @@
-<html manifest="resources/online-whitelist.manifest">
+<html manifest="resources/online-allowlist.manifest">
 <body>
-<p>Test online whitelist functionality. Should say PASS:</p>
+<p>Test online allowlist functionality. Should say PASS:</p>
 
 <div id="result"></div>
 <script>
@@ -43,22 +43,22 @@ function load(url)
 
 function test()
 {
-    if (load("resources/online-whitelist.php?cached") != load("resources/online-whitelist.php?cached")) {
-        log("FAIL: Explicit entry didn't override online whitelist.");
+    if (load("resources/online-allowlist.php?cached") != load("resources/online-allowlist.php?cached")) {
+        log("FAIL: Explicit entry didn't override online allowlist.");
         hadError = true;
     }
 
-    if (load("resources/online-whitelist.php?uncached") == load("resources/online-whitelist.php?uncached")) {
-        log("FAIL: Online whitelist resource wasn't reloaded from network.");
+    if (load("resources/online-allowlist.php?uncached") == load("resources/online-allowlist.php?uncached")) {
+        log("FAIL: Online allowlist resource wasn't reloaded from network.");
         hadError = true;
     }
 
-    if (load("resources/online-whitelist.php?uncachedxxx") == load("resources/online-whitelist.php?uncachedxxx")) {
-        log("FAIL: Online whitelist resource wasn't reloaded from network (prefix matching).");
+    if (load("resources/online-allowlist.php?uncachedxxx") == load("resources/online-allowlist.php?uncachedxxx")) {
+        log("FAIL: Online allowlist resource wasn't reloaded from network (prefix matching).");
         hadError = true;
     }
 
-    if (canLoad("resources/online-whitelist.php?foobar")) {
+    if (canLoad("resources/online-allowlist.php?foobar")) {
         log("FAIL: Uncached resource was successfully loaded.");
         hadError = true;
     }

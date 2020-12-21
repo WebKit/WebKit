@@ -44,9 +44,9 @@
 
     // Test getAllResponseHeaders()
     if (!xhr.getAllResponseHeaders().match("foobar"))
-        log("PASS: Non-whitelisted headers not passed to getAllResponseHeaders().");
+        log("PASS: Non-allowlisted headers not passed to getAllResponseHeaders().");
     else
-        log("FAIL: Non-whitelisted headers passed to getAllResponseHeaders().");
+        log("FAIL: Non-allowlisted headers passed to getAllResponseHeaders().");
 </script>
 </body>
 </html>

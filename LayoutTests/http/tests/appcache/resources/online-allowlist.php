@@ -1,8 +1,8 @@
 <?php
 require_once '../../resources/portabilityLayer.php';
 
-# This script may only be used by appcache/online-whitelist.html test, since it uses global data.
-$tmpFile = sys_get_temp_dir() . "/" . "appcache_online-whitelist_state";
+# This script may only be used by appcache/online-allowlist.html test, since it uses global data.
+$tmpFile = sys_get_temp_dir() . "/" . "appcache_online-allowlist_state";
 
 function stepCounter($file)
 {

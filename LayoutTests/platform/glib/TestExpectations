@@ -1508,7 +1508,7 @@ Bug(GLIB) http/tests/contentextensions/media-filtered.html [ Failure ]
 Bug(GLIB) http/tests/contentextensions/subresource-redirect-blocked.html [ Failure ]
 Bug(GLIB) http/tests/contentextensions/text-track-blocked.html [ Failure ]
 Bug(GLIB) http/tests/contentextensions/top-url.html [ Failure ]
-Bug(GLIB) http/tests/contentextensions/whitelist.html [ Failure ]
+Bug(GLIB) http/tests/contentextensions/allowlist.html [ Failure ]
 
 # TODO: Relocate to corresponding section.
 

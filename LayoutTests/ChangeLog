@@ -1,3 +1,88 @@
+2020-12-21  Beth Dakin  <bdakin@apple.com>
+
+        Remove non-inclusive language from layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=220063
+
+        Reviewed by Geoffrey Garen.
+
+        This patch removes many instances of non-inclusive language from the layout tests.
+
+        * fast/canvas/webgl/oes-element-index-uint.html:
+        * fast/canvas/webgl/oes-vertex-array-object.html:
+        * fast/encoding/idn-security.html:
+        * fast/images/image-formats-support-expected.txt:
+        * fast/images/image-formats-support.html:
+        * fast/text/arabic-blacklisted-expected.html: Removed.
+        * fast/text/arabic-blacklisted.html: Removed.
+        * fast/text/arabic-blocked-fonts-expected.html: Copied from fast/text/arabic-blacklisted-expected.html.
+        * fast/text/arabic-blocked-fonts.html: Copied from fast/text/arabic-blacklisted.html.
+        * http/tests/appcache/online-whitelist-expected.txt:
+        * http/tests/appcache/online-whitelist.html:
+        * http/tests/appcache/resources/allowlist-wildcard.manifest: Copied from http/tests/appcache/resources/whitelist-wildcard.manifest.
+        * http/tests/appcache/resources/online-allowlist.manifest: Copied from http/tests/appcache/resources/online-whitelist.manifest.
+        * http/tests/appcache/resources/online-allowlist.php: Copied from http/tests/appcache/resources/online-whitelist.php.
+        * http/tests/appcache/resources/online-whitelist.manifest: Removed.
+        * http/tests/appcache/resources/online-whitelist.php: Removed.
+        * http/tests/appcache/resources/whitelist-wildcard.manifest: Removed.
+        * http/tests/appcache/whitelist-wildcard-expected.txt:
+        * http/tests/appcache/whitelist-wildcard.html:
+        * http/tests/misc/char-encoding-bocu-1-blacklisted-expected.txt: Removed.
+        * http/tests/misc/char-encoding-bocu-1-blacklisted.html: Removed.
+        * http/tests/misc/char-encoding-bocu-1-blocklisted-expected.txt: Added.
+        * http/tests/misc/char-encoding-bocu-1-blocklisted.html: Copied from http/tests/misc/char-encoding-bocu-1-blacklisted.html.
+        * http/tests/misc/char-encoding-scsu-blacklisted-expected.txt: Removed.
+        * http/tests/misc/char-encoding-scsu-blacklisted.html: Removed.
+        * http/tests/misc/char-encoding-scsu-blocklisted-expected.txt: Added.
+        * http/tests/misc/char-encoding-scsu-blocklisted.html: Copied from http/tests/misc/char-encoding-scsu-blacklisted.html.
+        * http/tests/security/contentSecurityPolicy/1.1/stylenonce-allowed-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/stylenonce-allowed.html:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-paths-01-expected.txt:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-paths-01.html:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-paths-02-expected.txt:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-paths-02.html:
+        * http/tests/security/cross-frame-access-enumeration-expected.txt:
+        * http/tests/security/cross-frame-access-enumeration.html:
+        * http/tests/security/isolatedWorld/cross-origin-xhr-expected.txt:
+        * http/tests/security/isolatedWorld/cross-origin-xhr.html:
+        * http/tests/security/local-image-from-remote-allow-list-expected.txt:
+        * http/tests/security/local-image-from-remote-allow-list.html:
+        * http/tests/xmlhttprequest/access-control-basic-allow-list-response-headers-expected.txt:
+        * http/tests/xmlhttprequest/access-control-basic-allow-list-response-headers.html:
+        * http/tests/xmlhttprequest/access-control-basic-get-fail-non-simple.html:
+        * http/tests/xmlhttprequest/access-control-basic-non-simple-deny-cached.html:
+        * http/tests/xmlhttprequest/origin-allow-list-all-expected.txt:
+        * http/tests/xmlhttprequest/origin-allow-list-all.html:
+        * http/tests/xmlhttprequest/origin-allow-list-exact-match-expected.txt:
+        * http/tests/xmlhttprequest/origin-allow-list-exact-match.html:
+        * http/tests/xmlhttprequest/origin-allow-list-https-expected.txt:
+        * http/tests/xmlhttprequest/origin-allow-list-https.html:
+        * http/tests/xmlhttprequest/origin-allow-list-ip-addresses-expected.txt:
+        * http/tests/xmlhttprequest/origin-allow-list-ip-addresses-with-subdomains.html:
+        * http/tests/xmlhttprequest/origin-allow-list-ip-addresses.html:
+        * http/tests/xmlhttprequest/origin-allow-list-removal-expected.txt:
+        * http/tests/xmlhttprequest/origin-allow-list-removal.html:
+        * http/tests/xmlhttprequest/origin-allow-list-subdomains-expected.txt:
+        * http/tests/xmlhttprequest/origin-allow-list-subdomains.html:
+        * http/tests/xmlhttprequest/resources/origin-allowlisting-ip-address-test.html: Copied from http/tests/xmlhttprequest/resources/origin-whitelisting-ip-address-test.html.
+        * http/tests/xmlhttprequest/resources/origin-whitelisting-ip-address-test.html: Removed.
+        * http/tests/xmlhttprequest/workers/resources/access-control-basic-get-fail-non-simple.js:
+        (start):
+        * inspector/timeline/line-column.html:
+        * js/promises-tests/resources/mocha.js:
+        * media/track/captions-webvtt/allowlist.vtt: Copied from media/track/captions-webvtt/whitelist.vtt.
+        * media/track/captions-webvtt/whitelist.vtt: Removed.
+        * media/track/track-css-property-allowlist-expected.txt: Added.
+        * media/track/track-css-property-allowlist.html: Copied from media/track/track-css-property-whitelist.html.
+        * media/track/track-css-property-whitelist-expected.txt: Removed.
+        * media/track/track-css-property-whitelist.html: Removed.
+        * platform/glib/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wpe/security/block-test-expected.txt:
+        * security/block-test-expected.txt:
+        * security/block-test.html:
+
 2020-12-21  Jessica Tallon  <jtallon@igalia.com>
 
         [JSC] Fix expectation for WASM JS-type reflection WPTs

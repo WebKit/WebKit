@@ -1,4 +1,4 @@
-<p>Tests the special case of whitelisting all origins.</p>
+<p>Tests the special case of allowlisting all origins.</p>
 
 <pre id="console"></pre>
 <script>
@@ -43,7 +43,7 @@ function testIPAddress()
 {
     var iframe = document.createElement("iframe");
     document.body.appendChild(iframe);
-    iframe.src = "http://localhost:8000/xmlhttprequest/resources/origin-whitelisting-ip-address-test.html";
+    iframe.src = "http://localhost:8000/xmlhttprequest/resources/origin-allowlisting-ip-address-test.html";
     window.addEventListener("message", function(e) {
         if (e.data == "DONE")
             testRunner.notifyDone();

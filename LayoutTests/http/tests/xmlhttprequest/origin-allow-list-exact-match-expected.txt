@@ -1,4 +1,4 @@
-Tests the behavior of whitelisting origins using exact matching.
+Tests the behavior of allowlisting origins using exact matching.
 
 Testing: http://localhost:8000/xmlhttprequest/resources/get.txt (sync)
 PASS: PASS

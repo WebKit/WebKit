@@ -5,5 +5,5 @@ PASS: Response header expires allowed.
 PASS: Response header last-modified allowed.
 PASS: Response header pragma allowed.
 PASS: Response header x-webkit denied.
-PASS: Non-whitelisted headers not passed to getAllResponseHeaders().
+PASS: Non-allowlisted headers not passed to getAllResponseHeaders().
 

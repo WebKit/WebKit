@@ -9,13 +9,13 @@ PASS: Cross frame access by getting the property names of the window object was 
 PASS: Cross frame access by enumerating the Location object was denied.
 PASS: Cross frame access by getting the keys of the Location object was denied.
 PASS: Cross frame access by getting the property names of the Location object was denied.
-PASS: areArraysEqual(Object.getOwnPropertyNames(b_win).sort(), whitelistedWindowIndices.concat(whitelistedWindowPropNames).sort()) should be 'true' and is.
-PASS: areArraysEqual(indexedWindowProps, whitelistedWindowIndices) should be 'true' and is.
-PASS: areArraysEqual(stringWindowProps.sort(), whitelistedWindowPropNames) should be 'true' and is.
-PASS: areArraysEqual(symbolWindowProps, whitelistedSymbols) should be 'true' and is.
-PASS: areArraysEqual(Object.getOwnPropertyNames(b_win.location).sort(), whitelistedLocationPropNames.sort()) should be 'true' and is.
-PASS: areArraysEqual(stringLocationProps.sort(), whitelistedLocationPropNames) should be 'true' and is.
-PASS: areArraysEqual(symbolLocationProps, whitelistedSymbols) should be 'true' and is.
+PASS: areArraysEqual(Object.getOwnPropertyNames(b_win).sort(), allowlistedWindowIndices.concat(allowlistedWindowPropNames).sort()) should be 'true' and is.
+PASS: areArraysEqual(indexedWindowProps, allowlistedWindowIndices) should be 'true' and is.
+PASS: areArraysEqual(stringWindowProps.sort(), allowlistedWindowPropNames) should be 'true' and is.
+PASS: areArraysEqual(symbolWindowProps, allowlistedSymbols) should be 'true' and is.
+PASS: areArraysEqual(Object.getOwnPropertyNames(b_win.location).sort(), allowlistedLocationPropNames.sort()) should be 'true' and is.
+PASS: areArraysEqual(stringLocationProps.sort(), allowlistedLocationPropNames) should be 'true' and is.
+PASS: areArraysEqual(symbolLocationProps, allowlistedSymbols) should be 'true' and is.
 PASS: successfullyParsed should be 'true' and is.
 
 TEST COMPLETE

@@ -115,7 +115,7 @@ var isOlderICU = testIDNEncode(0x3002) == ".";
 testIDNCharacter(".".charCodeAt(0), "allowed");
 testIDNCharacter("/".charCodeAt(0), "allowed");
 
-/* Allowed Characters - one character for each script in the default IDN whitelist*/
+/* Allowed Characters - one character for each script in the default IDN allowlist*/
 testIDNCharacter(0x0061, "allowed");
 testIDNCharacter(0x0633, "allowed");
 testIDNCharacter(0x0561, "allowed");
@@ -158,7 +158,7 @@ testIDNCharacter(0x205F, "%20");
 testIDNCharacter(0x3000, "%20");
 
 /* Disallow these characters.  Some of these are known lookalike characters for dot and slash.  
-   A lot of these are from Mozilla's blacklist: http://kb.mozillazine.org/Network.IDN.blacklist_chars
+   A lot of these are from Mozilla's blocklist: http://kb.mozillazine.org/Network.IDN.blacklist_chars
 */
 testIDNCharacter(0x00BC, "disallowed");
 testIDNCharacter(0x00BD, "disallowed");

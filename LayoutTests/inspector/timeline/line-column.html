@@ -41,10 +41,10 @@ function test()
     InspectorProtocol.sendCommand("Timeline.enable");
 
     // To avoid flakiness print only events that we always expect.
-    const eventWhitelist = new Set(["RenderingFrame", "ConsoleProfile", "EventDispatch", "FunctionCall"]);
+    const eventAllowlist = new Set(["RenderingFrame", "ConsoleProfile", "EventDispatch", "FunctionCall"]);
     function replacer(key, value) {
         if (key === "children" && this.startTime)
-            return value.filter(e => eventWhitelist.has(e.type));
+            return value.filter(e => eventAllowlist.has(e.type));
         if (key === "startTime" || key === "endTime" || key === "scriptId" || key === "frameId")
             return "<filtered>";
         if (key === "url" || key === "scriptName")

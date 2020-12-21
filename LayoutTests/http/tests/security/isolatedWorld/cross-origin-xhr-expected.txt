@@ -12,9 +12,9 @@ XHR from isolated world with unchanged security origin
 XHR completed with status 0
 XHR from isolated world with same security origin as XHR target
 XHR completed with status 200
-XHR from isolated world with security origin that is whitelisted for XHR target
+XHR from isolated world with security origin that is allowlisted for XHR target
 XHR completed with status 200
-XHR from main world is not affected by the isolated world origin or whitelist
+XHR from main world is not affected by the isolated world origin or allowlist
 XHR completed with status 0
 PASS successfullyParsed is true
 

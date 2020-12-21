@@ -4298,7 +4298,7 @@ Runnable.prototype.resetTimeout = function(){
 };
 
 /**
- * Whitelist these globals for this test run
+ * Allowlist these globals for this test run
  *
  * @api private
  */

@@ -1,4 +1,4 @@
-Tests the special case of whitelisting all origins.
+Tests the special case of allowlisting all origins.
 
 Testing: http://localhost:8000/xmlhttprequest/resources/get.txt (sync)
 PASS: PASS

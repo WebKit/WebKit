@@ -403,7 +403,7 @@ Bug(GTK) fast/text/font-weights-zh.html [ WontFix ]
 fast/text/hidpi-text-selection-gap-between-words.html [ Skip ]
 
 # This test relies on iOS-specific font fallback.
-fast/text/arabic-blacklisted.html [ Pass ImageOnlyFailure ]
+fast/text/arabic-blocked-fonts.html [ Pass ImageOnlyFailure ]
 
 # the test that uses these methods is Cocoa-specific, see webkit.org/b/152247
 fast/forms/attributed-strings.html [ Failure ]

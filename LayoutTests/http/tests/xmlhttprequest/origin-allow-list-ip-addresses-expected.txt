@@ -1,4 +1,4 @@
-Tests origin whitelisting with IP addresses.
+Tests origin allowlisting with IP addresses.
 
 Testing: http://127.0.0.1:8000/xmlhttprequest/resources/get.txt (sync)
 PASS: PASS

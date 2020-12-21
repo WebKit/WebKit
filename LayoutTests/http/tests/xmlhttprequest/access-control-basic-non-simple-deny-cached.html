@@ -40,7 +40,7 @@ if (window.testRunner)
 
     try {
         xhr.send("FAIL: PUT data received");
-        log("FAIL: Exception not thrown. Cross-domain access was allowed, even though content type was not on white list.");
+        log("FAIL: Exception not thrown. Cross-domain access was allowed, even though content type was not on allow list.");
         log(xhr.responseText);
     } catch(e) {
         log("PASS: Exception thrown. Cross-domain access is not allowed in 'send'. [" + e.message + "].");

@@ -86,27 +86,27 @@
             log("PASS: Cross frame access by getting the property names of the Location object was denied.");
 
             // Window.
-            whitelistedWindowIndices = ['0', '1', '2'];
-            whitelistedWindowPropNames = ['blur', 'close', 'closed', 'focus', 'frames', 'length', 'location', 'opener', 'parent', 'postMessage', 'self', 'then', 'top', 'window'];
-            whitelistedSymbols = [Symbol.toStringTag, Symbol.hasInstance, Symbol.isConcatSpreadable];
-            shouldBeTrue("areArraysEqual(Object.getOwnPropertyNames(b_win).sort(), whitelistedWindowIndices.concat(whitelistedWindowPropNames).sort())");
+            allowlistedWindowIndices = ['0', '1', '2'];
+            allowlistedWindowPropNames = ['blur', 'close', 'closed', 'focus', 'frames', 'length', 'location', 'opener', 'parent', 'postMessage', 'self', 'then', 'top', 'window'];
+            allowlistedSymbols = [Symbol.toStringTag, Symbol.hasInstance, Symbol.isConcatSpreadable];
+            shouldBeTrue("areArraysEqual(Object.getOwnPropertyNames(b_win).sort(), allowlistedWindowIndices.concat(allowlistedWindowPropNames).sort())");
             allWindowProps = Reflect.ownKeys(b_win);
-            indexedWindowProps = allWindowProps.slice(0, whitelistedWindowIndices.length);
-            stringWindowProps = allWindowProps.slice(whitelistedWindowIndices.length, -1 * whitelistedSymbols.length);
-            symbolWindowProps = allWindowProps.slice(-1 * whitelistedSymbols.length);
-            shouldBeTrue("areArraysEqual(indexedWindowProps, whitelistedWindowIndices)"); // Reflect.ownKeys should start with the indices exposed on the cross-origin window.
-            shouldBeTrue("areArraysEqual(stringWindowProps.sort(), whitelistedWindowPropNames)"); // Reflect.ownKeys should continue with the cross-origin window properties for a cross-origin Window.
-            shouldBeTrue("areArraysEqual(symbolWindowProps, whitelistedSymbols)"); // Reflect.ownKeys should end with the cross-origin symbols for a cross-origin Window.
+            indexedWindowProps = allWindowProps.slice(0, allowlistedWindowIndices.length);
+            stringWindowProps = allWindowProps.slice(allowlistedWindowIndices.length, -1 * allowlistedSymbols.length);
+            symbolWindowProps = allWindowProps.slice(-1 * allowlistedSymbols.length);
+            shouldBeTrue("areArraysEqual(indexedWindowProps, allowlistedWindowIndices)"); // Reflect.ownKeys should start with the indices exposed on the cross-origin window.
+            shouldBeTrue("areArraysEqual(stringWindowProps.sort(), allowlistedWindowPropNames)"); // Reflect.ownKeys should continue with the cross-origin window properties for a cross-origin Window.
+            shouldBeTrue("areArraysEqual(symbolWindowProps, allowlistedSymbols)"); // Reflect.ownKeys should end with the cross-origin symbols for a cross-origin Window.
 
             // Location.
-            whitelistedLocationPropNames = ['href', 'replace', 'then'];
+            allowlistedLocationPropNames = ['href', 'replace', 'then'];
             allLocationProps = Reflect.ownKeys(b_win.location);
-            stringLocationProps = allLocationProps.slice(0, -1 * whitelistedSymbols.length);
-            symbolLocationProps = allLocationProps.slice(-1 * whitelistedSymbols.length);
+            stringLocationProps = allLocationProps.slice(0, -1 * allowlistedSymbols.length);
+            symbolLocationProps = allLocationProps.slice(-1 * allowlistedSymbols.length);
 
-            shouldBeTrue("areArraysEqual(Object.getOwnPropertyNames(b_win.location).sort(), whitelistedLocationPropNames.sort())");
-            shouldBeTrue("areArraysEqual(stringLocationProps.sort(), whitelistedLocationPropNames)"); // Reflect.ownKeys should start with the cross-origin window properties for a cross-origin Location.
-            shouldBeTrue("areArraysEqual(symbolLocationProps, whitelistedSymbols)"); // Reflect.ownKeys should end with the cross-origin symbols for a cross-origin Location.
+            shouldBeTrue("areArraysEqual(Object.getOwnPropertyNames(b_win.location).sort(), allowlistedLocationPropNames.sort())");
+            shouldBeTrue("areArraysEqual(stringLocationProps.sort(), allowlistedLocationPropNames)"); // Reflect.ownKeys should start with the cross-origin window properties for a cross-origin Location.
+            shouldBeTrue("areArraysEqual(symbolLocationProps, allowlistedSymbols)"); // Reflect.ownKeys should end with the cross-origin symbols for a cross-origin Location.
         }
     </script>
 </head>

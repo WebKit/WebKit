@@ -2081,8 +2081,8 @@ webkit.org/b/209692 [ BigSur+ ] fast/text/text-security-disc-bullet-pua.html [ I
 # <rdar://problem/64170117> REGRESSION(20A296a-20A301a): fast/text/arabic-zwj-and-zwnj.html is a constant failure
 [ BigSur+ ] fast/text/arabic-zwj-and-zwnj.html [ Pass ImageOnlyFailure ]
 
-# <rdar://problem/64166412> REGRESSION(20A296a-20A301a): fast/text/arabic-blacklisted.html is a constant failure
-[ BigSur+ ] fast/text/arabic-blacklisted.html [ Pass ImageOnlyFailure ]
+# <rdar://problem/64166412> REGRESSION(20A296a-20A301a): fast/text/arabic-blocked-fonts.html is a constant failure
+[ BigSur+ ] fast/text/arabic-blocked-fonts.html [ Pass ImageOnlyFailure ]
 
 # <rdar://problem/64546452> mathml/opentype/munderover-stretch-width.html is flaky failing.
 [ BigSur+ ] mathml/opentype/munderover-stretch-width.html [ Pass Failure ]

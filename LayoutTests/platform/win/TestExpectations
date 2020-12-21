@@ -1086,7 +1086,7 @@ media/track/track-css-matching-default.html [ Skip ] # Timeout
 media/track/track-css-matching.html [ Skip ] # Timeout
 media/track/track-css-matching-lang.html [ Skip ] # Timeout
 media/track/track-css-matching-timestamps.html [ Skip ] # Timeout
-media/track/track-css-property-whitelist.html [ Skip ] # Timeout
+media/track/track-css-property-allowlist.html [ Skip ] # Timeout
 media/track/track-css-user-override.html [ Skip ] # Timeout
 media/track/track-cue-nothing-to-render.html [ Skip ] # Timeout
 media/track/track-cue-rendering.html [ Skip ] # Timeout
@@ -3131,7 +3131,7 @@ webkit.org/b/137096 svg/text/text-altglyph-01-b.svg [ Failure ]
 webkit.org/b/137093 svg/custom/glyph-selection-lang-attribute.svg [ Failure ]
 
 # This test relies on iOS-specific font fallback.
-fast/text/arabic-blacklisted.html [ Pass ImageOnlyFailure ]
+fast/text/arabic-blocked-fonts.html [ Pass ImageOnlyFailure ]
 
 # dumpPolicyDelegateCallbacks is not supported in DumpRenderTree
 fast/loader/iframe-src-invalid-url.html [ Skip ]

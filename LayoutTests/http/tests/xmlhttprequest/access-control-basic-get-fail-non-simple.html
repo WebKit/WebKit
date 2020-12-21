@@ -20,7 +20,7 @@ if (window.testRunner)
         return;
     }
 
-    // Non-whitelisted method
+    // Non-allowlisted method
     xhr.setRequestHeader("x-webkit", "foobar");
 
     // This is going to fail because the cgi script is not prepared for an OPTIONS request. 
