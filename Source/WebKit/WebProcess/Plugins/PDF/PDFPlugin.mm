@@ -772,7 +772,7 @@ static size_t dataProviderGetBytesAtPositionCallback(void* info, void* buffer, o
 
     RunLoop::main().dispatch([plugin = WTFMove(plugin), position, count, buffer, &dataSemaphore, &bytesProvided] {
         plugin->getResourceBytesAtPosition(count, position, [count, buffer, &dataSemaphore, &bytesProvided](const uint8_t* bytes, size_t bytesCount) {
-            ASSERT_UNUSED(count, bytesCount <= count);
+            RELEASE_ASSERT(bytesCount <= count);
             memcpy(buffer, bytes, bytesCount);
             bytesProvided = bytesCount;
             dataSemaphore.signal();
@@ -959,6 +959,7 @@ void PDFPlugin::getResourceBytesAtPosition(size_t count, off_t position, Complet
         return;
 
     auto resourceRequest = documentLoader->request();
+    resourceRequest.setURL(m_sourceURL);
     resourceRequest.setHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes="_s, position, "-"_s, position + count - 1));
     resourceRequest.setCachePolicy(ResourceRequestCachePolicy::DoNotUseAnyCache);
 
@@ -1039,7 +1040,13 @@ void PDFPlugin::ByteRangeRequest::completeWithAccumulatedData(PDFPlugin& plugin)
     plugin.pdfLog(makeString("Completing range request ", identifier()," (", m_count," bytes at ", m_position,") with ", m_accumulatedData.size()," bytes from the network"));
 #endif
 
-    m_completionHandler(m_accumulatedData.data(), m_accumulatedData.size());
+    auto completionSize = m_accumulatedData.size();
+    if (completionSize > m_count) {
+        RELEASE_LOG_ERROR(IncrementalPDF, "PDF byte range request got more bytes back from the server than requested. This is likely due to a misconfigured server. Capping result at the requested number of bytes.");
+        completionSize = m_count;
+    }
+
+    m_completionHandler(m_accumulatedData.data(), completionSize);
 
     // Fold this data into the main data buffer so that if something in its range is requested again (which happens quite often)
     // we do not need to hit the network layer again.
