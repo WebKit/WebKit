@@ -1,3 +1,36 @@
+2020-12-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Many websites crash under toDataURL() when enabling GPU process for DOM
+        https://bugs.webkit.org/show_bug.cgi?id=220051
+        <rdar://problem/72412509>
+
+        Reviewed by Simon Fraser.
+
+        Three methods of canvas readback (`toDataURL`, `toData`, and `toBGRAData`) currently cause the web content
+        process to crash when enabling GPU process for DOM rendering. This is because we attempt to call into the
+        respective methods on the image buffer backend following r270342, which unconditionally fire release assertions.
+
+        Instead of using the proxy image buffer backend object in the web process, we need to communicate with the
+        platform `RemoteImageBuffer` in the GPU process. To do this, we add some plumbing through
+        `RemoteRenderingBackendProxy` and `RemoteRenderingBackend`, and override the `toDataURL`, `toData`, and
+        `toBGRAData` methods on `RemoteImageBufferProxy` in the web process to request data from the remote rendering
+        backend instead.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::getDataURLForImageBuffer):
+        (WebKit::RemoteRenderingBackend::getDataForImageBuffer):
+        (WebKit::RemoteRenderingBackend::getBGRADataForImageBuffer):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * Scripts/webkit/messages.py:
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::getImageData):
+        (WebKit::RemoteRenderingBackendProxy::getDataURLForImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::getDataForImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::getBGRADataForImageBuffer):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+
 2020-12-21  Kate Cheney  <katherine_cheney@apple.com>
 
         Missing textInteractionEnabled key in WKPreferences initWithCoder looks like a false value.

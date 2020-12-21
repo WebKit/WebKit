@@ -278,6 +278,30 @@ void RemoteRenderingBackend::getImageData(AlphaPremultiplication outputFormat, I
     completionHandler(IPC::ImageDataReference(WTFMove(imageData)));
 }
 
+void RemoteRenderingBackend::getDataURLForImageBuffer(const String& mimeType, Optional<double> quality, WebCore::PreserveResolution preserveResolution, WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(String&&)>&& completionHandler)
+{
+    String urlString;
+    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier))
+        urlString = imageBuffer->toDataURL(mimeType, quality, preserveResolution);
+    completionHandler(WTFMove(urlString));
+}
+
+void RemoteRenderingBackend::getDataForImageBuffer(const String& mimeType, Optional<double> quality, WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<uint8_t>&&)>&& completionHandler)
+{
+    Vector<uint8_t> data;
+    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier))
+        data = imageBuffer->toData(mimeType, quality);
+    completionHandler(WTFMove(data));
+}
+
+void RemoteRenderingBackend::getBGRADataForImageBuffer(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<uint8_t>&&)>&& completionHandler)
+{
+    Vector<uint8_t> data;
+    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier))
+        data = imageBuffer->toBGRAData();
+    completionHandler(WTFMove(data));
+}
+
 void RemoteRenderingBackend::cacheNativeImage(const ShareableBitmap::Handle& handle, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     auto bitmap = ShareableBitmap::create(handle);

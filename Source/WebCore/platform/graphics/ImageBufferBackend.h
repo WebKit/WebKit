@@ -181,4 +181,12 @@ template<> struct EnumTraits<WebCore::PixelFormat> {
     >;
 };
 
+template<> struct EnumTraits<WebCore::PreserveResolution> {
+    using values = EnumValues<
+    WebCore::PreserveResolution,
+    WebCore::PreserveResolution::No,
+    WebCore::PreserveResolution::Yes
+    >;
+};
+
 } // namespace WTF

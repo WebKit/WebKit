@@ -146,9 +146,38 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
 
 RefPtr<ImageData> RemoteRenderingBackendProxy::getImageData(AlphaPremultiplication outputFormat, const IntRect& srcRect, RenderingResourceIdentifier renderingResourceIdentifier)
 {
+    sendDeferredWakeupMessageIfNeeded();
+
     IPC::ImageDataReference imageDataReference;
     sendSync(Messages::RemoteRenderingBackend::GetImageData(outputFormat, srcRect, renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetImageData::Reply(imageDataReference), m_renderingBackendIdentifier, 1_s);
     return imageDataReference.buffer();
+}
+
+String RemoteRenderingBackendProxy::getDataURLForImageBuffer(const String& mimeType, Optional<double> quality, PreserveResolution preserveResolution, RenderingResourceIdentifier renderingResourceIdentifier)
+{
+    sendDeferredWakeupMessageIfNeeded();
+
+    String urlString;
+    sendSync(Messages::RemoteRenderingBackend::GetDataURLForImageBuffer(mimeType, quality, preserveResolution, renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetDataURLForImageBuffer::Reply(urlString), m_renderingBackendIdentifier, 1_s);
+    return urlString;
+}
+
+Vector<uint8_t> RemoteRenderingBackendProxy::getDataForImageBuffer(const String& mimeType, Optional<double> quality, RenderingResourceIdentifier renderingResourceIdentifier)
+{
+    sendDeferredWakeupMessageIfNeeded();
+
+    Vector<uint8_t> data;
+    sendSync(Messages::RemoteRenderingBackend::GetDataForImageBuffer(mimeType, quality, renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetDataForImageBuffer::Reply(data), m_renderingBackendIdentifier, 1_s);
+    return data;
+}
+
+Vector<uint8_t> RemoteRenderingBackendProxy::getBGRADataForImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
+{
+    sendDeferredWakeupMessageIfNeeded();
+
+    Vector<uint8_t> data;
+    sendSync(Messages::RemoteRenderingBackend::GetBGRADataForImageBuffer(renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetBGRADataForImageBuffer::Reply(data), m_renderingBackendIdentifier, 1_s);
+    return data;
 }
 
 void RemoteRenderingBackendProxy::cacheNativeImage(const ShareableBitmap::Handle& handle, RenderingResourceIdentifier renderingResourceIdentifier)

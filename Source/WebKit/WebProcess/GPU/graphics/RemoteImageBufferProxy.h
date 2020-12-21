@@ -146,8 +146,31 @@ protected:
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return nullptr;
 
-        m_remoteRenderingBackendProxy->sendDeferredWakeupMessageIfNeeded();
         return m_remoteRenderingBackendProxy->getImageData(outputFormat, srcRect, m_renderingResourceIdentifier);
+    }
+
+    String toDataURL(const String& mimeType, Optional<double> quality, WebCore::PreserveResolution preserveResolution) const override
+    {
+        if (UNLIKELY(!m_remoteRenderingBackendProxy))
+            return { };
+
+        return m_remoteRenderingBackendProxy->getDataURLForImageBuffer(mimeType, quality, preserveResolution, m_renderingResourceIdentifier);
+    }
+
+    Vector<uint8_t> toData(const String& mimeType, Optional<double> quality = WTF::nullopt) const override
+    {
+        if (UNLIKELY(!m_remoteRenderingBackendProxy))
+            return { };
+
+        return m_remoteRenderingBackendProxy->getDataForImageBuffer(mimeType, quality, m_renderingResourceIdentifier);
+    }
+
+    Vector<uint8_t> toBGRAData() const override
+    {
+        if (UNLIKELY(!m_remoteRenderingBackendProxy))
+            return { };
+
+        return m_remoteRenderingBackendProxy->getBGRADataForImageBuffer(m_renderingResourceIdentifier);
     }
 
     void putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData& imageData, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint = { }, WebCore::AlphaPremultiplication destFormat = WebCore::AlphaPremultiplication::Premultiplied) override
