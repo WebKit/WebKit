@@ -2123,7 +2123,7 @@ void testProbeModifiesProgramCounter()
         // Write expected values into the registers.
         jit.probe([&] (Probe::Context& context) {
             probeCallCount++;
-            context.cpu.pc() = untagCodePtr(continuation.code().executableAddress(), JSEntryPtrTag);
+            context.cpu.pc() = retagCodePtr(continuation.code().executableAddress(), JSEntryPtrTag, JITProbePCPtrTag);
         });
 
         jit.breakpoint(); // We should never get here.
