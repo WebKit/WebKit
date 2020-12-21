@@ -94,7 +94,6 @@ private:
     void resetTrackBuffers();
     void clearTrackBuffers();
     void reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize);
-    void trySignalAllSamplesInTrackEnqueued();
     void resetTimestampOffsetInTrackBuffers();
     void setTimestampOffset(const MediaTime&);
     void setAppendWindowStart(const MediaTime&);

@@ -158,11 +158,6 @@ void SourceBufferPrivateRemote::reenqueueMediaIfNeeded(const MediaTime& currentM
     m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::ReenqueueMediaIfNeeded(currentMediaTime, pendingAppendDataCapacity, maximumBufferSize), m_remoteSourceBufferIdentifier);
 }
 
-void SourceBufferPrivateRemote::trySignalAllSamplesInTrackEnqueued()
-{
-    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::TrySignalAllSamplesInTrackEnqueued(), m_remoteSourceBufferIdentifier);
-}
-
 void SourceBufferPrivateRemote::resetTimestampOffsetInTrackBuffers()
 {
     m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::ResetTimestampOffsetInTrackBuffers(), m_remoteSourceBufferIdentifier);

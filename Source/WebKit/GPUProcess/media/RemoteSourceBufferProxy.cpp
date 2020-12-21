@@ -217,11 +217,6 @@ void RemoteSourceBufferProxy::reenqueueMediaIfNeeded(const MediaTime& currentMed
     m_sourceBufferPrivate->reenqueueMediaIfNeeded(currentMediaTime, pendingAppendDataCapacity, maximumBufferSize);
 }
 
-void RemoteSourceBufferProxy::trySignalAllSamplesInTrackEnqueued()
-{
-    m_sourceBufferPrivate->trySignalAllSamplesInTrackEnqueued();
-}
-
 void RemoteSourceBufferProxy::resetTimestampOffsetInTrackBuffers()
 {
     m_sourceBufferPrivate->resetTimestampOffsetInTrackBuffers();

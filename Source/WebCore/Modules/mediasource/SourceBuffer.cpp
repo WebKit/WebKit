@@ -1125,15 +1125,6 @@ void SourceBuffer::textTrackKindChanged(TextTrack& track)
         m_source->mediaElement()->textTrackKindChanged(track);
 }
 
-void SourceBuffer::trySignalAllSamplesEnqueued()
-{
-    if (isRemoved() || !m_source->isEnded())
-        return;
-
-    DEBUG_LOG(LOGIDENTIFIER, "Try to enqueue all samples");
-    m_private->trySignalAllSamplesInTrackEnqueued();
-}
-
 void SourceBuffer::sourceBufferPrivateDidParseSample(double frameDuration)
 {
     m_bufferedSinceLastMonitor += frameDuration;
@@ -1311,6 +1302,11 @@ bool SourceBuffer::isBufferedDirty() const
 void SourceBuffer::setBufferedDirty(bool flag)
 {
     m_bufferedDirty = flag;
+}
+
+void SourceBuffer::setMediaSourceEnded(bool isEnded)
+{
+    m_private->setMediaSourceEnded(isEnded);
 }
 
 #if !RELEASE_LOG_DISABLED

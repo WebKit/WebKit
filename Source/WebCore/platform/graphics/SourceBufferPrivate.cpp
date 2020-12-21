@@ -277,11 +277,28 @@ void SourceBufferPrivate::updateMinimumUpcomingPresentationTime(TrackBuffer& tra
     setMinimumUpcomingPresentationTime(trackID, trackBuffer.minimumEnqueuedPresentationTime);
 }
 
-void SourceBufferPrivate::trySignalAllSamplesInTrackEnqueued()
+void SourceBufferPrivate::setMediaSourceEnded(bool isEnded)
 {
-    for (const AtomString& trackID : m_trackBufferMap.keys()) {
-        if (m_trackBufferMap.get(trackID).decodeQueue.empty())
-            allSamplesInTrackEnqueued(trackID);
+    if (m_isMediaSourceEnded == isEnded)
+        return;
+
+    m_isMediaSourceEnded = isEnded;
+
+    if (m_isMediaSourceEnded) {
+        for (auto& trackBufferPair : m_trackBufferMap) {
+            TrackBuffer& trackBuffer = trackBufferPair.value;
+            const AtomString& trackID = trackBufferPair.key;
+
+            trySignalAllSamplesInTrackEnqueued(trackBuffer, trackID);
+        }
+    }
+}
+
+void SourceBufferPrivate::trySignalAllSamplesInTrackEnqueued(TrackBuffer& trackBuffer, const AtomString& trackID)
+{
+    if (m_isMediaSourceEnded && trackBuffer.decodeQueue.empty()) {
+        DEBUG_LOG(LOGIDENTIFIER, "All samples in track \"", trackID, "\" enqueued.");
+        allSamplesInTrackEnqueued(trackID);
     }
 }
 
@@ -347,7 +364,7 @@ void SourceBufferPrivate::provideMediaData(TrackBuffer& trackBuffer, const AtomS
     DEBUG_LOG(LOGIDENTIFIER, "enqueued ", enqueuedSamples, " samples, ", static_cast<uint64_t>(trackBuffer.decodeQueue.size()), " remaining");
 #endif
 
-    allSamplesInTrackEnqueued(trackID);
+    trySignalAllSamplesInTrackEnqueued(trackBuffer, trackID);
 }
 
 void SourceBufferPrivate::reenqueueMediaForTime(TrackBuffer& trackBuffer, const AtomString& trackID, const MediaTime& time)

@@ -1,3 +1,14 @@
+2020-12-21  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE] Fix allSamplesInTrackEnqueued() handling
+        https://bugs.webkit.org/show_bug.cgi?id=220055
+
+        Reviewed by Philippe Normand.
+
+        Adjusted test expectations.
+
+        * platform/glib/TestExpectations:
+
 2020-12-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, rebaseline tests for Windows.

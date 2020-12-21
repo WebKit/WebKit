@@ -38,7 +38,6 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     ResetTrackBuffers()
     ClearTrackBuffers()
     ReenqueueMediaIfNeeded(MediaTime currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize)
-    TrySignalAllSamplesInTrackEnqueued()
     ResetTimestampOffsetInTrackBuffers()
     SetTimestampOffset(MediaTime timestampOffset)
     SetAppendWindowStart(MediaTime appendWindowStart)

@@ -127,7 +127,7 @@ public:
     MediaTime highestPresentationTimestamp() const;
     void readyStateChanged();
 
-    void trySignalAllSamplesEnqueued();
+    void setMediaSourceEnded(bool isEnded);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }

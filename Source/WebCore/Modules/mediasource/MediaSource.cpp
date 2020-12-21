@@ -627,7 +627,7 @@ void MediaSource::streamEndedWithError(Optional<EndOfStreamError> error)
 
         // 2. Notify the media element that it now has all of the media data.
         for (auto& sourceBuffer : *m_sourceBuffers)
-            sourceBuffer->trySignalAllSamplesEnqueued();
+            sourceBuffer->setMediaSourceEnded(true);
         m_private->markEndOfStream(MediaSourcePrivate::EosNoError);
     } else if (error == EndOfStreamError::Network) {
         m_private->markEndOfStream(MediaSourcePrivate::EosNetworkError);
@@ -1029,6 +1029,8 @@ void MediaSource::openIfInEndedState()
 
     setReadyState(ReadyState::Open);
     m_private->unmarkEndOfStream();
+    for (auto& sourceBuffer : *m_sourceBuffers)
+        sourceBuffer->setMediaSourceEnded(false);
 }
 
 bool MediaSource::virtualHasPendingActivity() const

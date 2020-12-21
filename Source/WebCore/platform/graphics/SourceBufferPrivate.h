@@ -79,7 +79,6 @@ public:
     virtual void addTrackBuffer(const AtomString& trackId, RefPtr<MediaDescription>&&);
     virtual void resetTrackBuffers();
     virtual void clearTrackBuffers();
-    virtual void trySignalAllSamplesInTrackEnqueued();
     WEBCORE_EXPORT virtual void updateBufferedFromTrackBuffers(bool sourceIsEnded);
     WEBCORE_EXPORT virtual void evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded);
     virtual void resetTimestampOffsetInTrackBuffers();
@@ -106,6 +105,7 @@ public:
     void setGroupStartTimestamp(const MediaTime& mediaTime) { m_groupStartTimestamp = mediaTime; }
     void setGroupStartTimestampToEndTimestamp() { m_groupStartTimestamp = m_groupEndTimestamp; }
     uint64_t totalTrackBufferSizeInBytes() const;
+    void setMediaSourceEnded(bool isEnded);
 
     struct TrackBuffer {
         MediaTime lastDecodeTimestamp;
@@ -173,6 +173,7 @@ private:
     void provideMediaData(TrackBuffer&, const AtomString& trackID);
     void setBufferedRanges(const PlatformTimeRanges&);
     void setBufferedDirty(bool);
+    void trySignalAllSamplesInTrackEnqueued(TrackBuffer&, const AtomString& trackID);
 
     bool m_isAttached { false };
     bool m_hasAudio { false };
@@ -194,6 +195,7 @@ private:
     MediaTime m_groupEndTimestamp { MediaTime::zeroTime() };
 
     bool m_bufferFull { false };
+    bool m_isMediaSourceEnded { false };
     RefPtr<TimeRanges> m_buffered;
 };
 

@@ -84,7 +84,6 @@ private:
     void addTrackBuffer(const AtomString& trackId, RefPtr<WebCore::MediaDescription>&&) final;
     void resetTrackBuffers() final;
     void clearTrackBuffers() final;
-    void trySignalAllSamplesInTrackEnqueued() final;
     void updateBufferedFromTrackBuffers(bool sourceIsEnded) final;
     void evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded) final;
     void resetTimestampOffsetInTrackBuffers() final;
