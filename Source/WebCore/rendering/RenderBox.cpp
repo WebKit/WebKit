@@ -3715,6 +3715,8 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthType, Length lo
     auto originalLogicalWidthType = logicalWidth.type();
     if (widthType == MinSize && logicalWidth.isAuto())
         logicalWidth = Length(0, Fixed);
+    else if (widthType == MainOrPreferredSize && logicalWidth.isAuto() && shouldComputeLogicalWidthFromAspectRatio())
+        logicalWidth = Length(computeLogicalWidthFromAspectRatio(), Fixed);
     else if (logicalWidth.isIntrinsic())
         logicalWidth = Length(computeIntrinsicLogicalWidthUsing(logicalWidth, containerLogicalWidth, bordersPlusPadding) - bordersPlusPadding, Fixed);
 
@@ -3726,7 +3728,7 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthType, Length lo
 
     const LayoutUnit containerRelativeLogicalWidth = containingBlockLogicalWidthForPositioned(containerBlock, nullptr, false);
 
-    bool logicalWidthIsAuto = logicalWidth.isIntrinsicOrAuto();
+    bool logicalWidthIsAuto = logicalWidth.isIntrinsicOrAuto() && !shouldComputeLogicalWidthFromAspectRatio();
     bool logicalLeftIsAuto = logicalLeft.isAuto();
     bool logicalRightIsAuto = logicalRight.isAuto();
     LayoutUnit& marginLogicalLeftValue = style().isLeftToRightDirection() ? computedValues.m_margins.m_start : computedValues.m_margins.m_end;
@@ -4063,7 +4065,8 @@ void RenderBox::computePositionedLogicalHeightUsing(SizeType heightType, Length 
 
     LayoutUnit logicalTopValue;
 
-    bool logicalHeightIsAuto = logicalHeightLength.isAuto();
+    bool fromAspectRatio = heightType == MainOrPreferredSize && shouldComputeLogicalHeightFromAspectRatio();
+    bool logicalHeightIsAuto = logicalHeightLength.isAuto() && !fromAspectRatio;
     bool logicalTopIsAuto = logicalTop.isAuto();
     bool logicalBottomIsAuto = logicalBottom.isAuto();
 
@@ -4075,7 +4078,10 @@ void RenderBox::computePositionedLogicalHeightUsing(SizeType heightType, Length 
     } else {
         if (logicalHeightLength.isIntrinsic())
             resolvedLogicalHeight = computeIntrinsicLogicalContentHeightUsing(logicalHeightLength, contentLogicalHeight, bordersPlusPadding).value();
-        else
+        else if (fromAspectRatio) {
+            resolvedLogicalHeight = blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), style().logicalAspectRatio() , style().boxSizing(), logicalWidth());
+            resolvedLogicalHeight = std::max(LayoutUnit(), resolvedLogicalHeight - bordersPlusPadding);
+        } else
             resolvedLogicalHeight = adjustContentBoxLogicalHeightForBoxSizing(valueForLength(logicalHeightLength, containerLogicalHeight));
     }
 
@@ -4997,8 +5003,44 @@ bool RenderBox::shouldComputeLogicalHeightFromAspectRatio() const
     if (!style().hasAspectRatio())
         return false;
 
+    if (shouldComputeLogicalWidthFromAspectRatioAndInsets())
+        return false;
+
     auto h = style().logicalHeight();
     return h.isAuto() || (!isOutOfFlowPositioned() && h.isPercentOrCalculated() && percentageLogicalHeightIsResolvable());
+}
+
+bool RenderBox::shouldComputeLogicalWidthFromAspectRatio() const
+{
+    if (!style().hasAspectRatio())
+        return false;
+
+    if (!shouldComputeLogicalWidthFromAspectRatioAndInsets() && !style().logicalHeight().isFixed() && !style().logicalHeight().isPercentOrCalculated())
+        return false;
+
+    return true;
+}
+
+bool RenderBox::shouldComputeLogicalWidthFromAspectRatioAndInsets() const
+{
+    if (!isOutOfFlowPositioned())
+        return false;
+    // FIXME: see if this can become a helper on RenderStyle.
+    if (style().width().isAuto() && style().height().isAuto() && !style().top().isAuto() && !style().bottom().isAuto() && (style().left().isAuto() || style().right().isAuto()))
+        return true;
+    return false;
+}
+
+LayoutUnit RenderBox::computeLogicalWidthFromAspectRatio(RenderFragmentContainer* fragment) const
+{
+    ASSERT(shouldComputeLogicalWidthFromAspectRatio());
+    auto computedValues = computeLogicalHeight(logicalHeight(), logicalTop());
+    LayoutUnit logicalHeightforAspectRatio = computedValues.m_extent;
+
+    auto logicalWidth = inlineSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), style().logicalAspectRatio(), style().boxSizing(), logicalHeightforAspectRatio);
+
+    LayoutUnit containerWidthInInlineDirection = std::max<LayoutUnit>(0, containingBlockLogicalWidthForContentInFragment(fragment));
+    return constrainLogicalWidthInFragmentByMinMax(logicalWidth, containerWidthInInlineDirection, *containingBlock(), fragment);
 }
 
 bool RenderBox::hasRelativeDimensions() const

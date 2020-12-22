@@ -745,6 +745,9 @@ private:
     void applyTopLeftLocationOffsetWithFlipping(LayoutPoint&) const;
 
     bool shouldComputeLogicalHeightFromAspectRatio() const;
+    bool shouldComputeLogicalWidthFromAspectRatio() const;
+    bool shouldComputeLogicalWidthFromAspectRatioAndInsets() const;
+    LayoutUnit computeLogicalWidthFromAspectRatio(RenderFragmentContainer* = nullptr) const;
 
 private:
     // The width/height of the contents + borders + padding.  The x/y location is relative to our container (which is not always our parent).
