@@ -300,6 +300,11 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
     if (candidateElement.shadowRoot() && !candidateElement.shadowRoot()->styleScope().resolver().ruleSets().authorStyle().hostPseudoClassRules().isEmpty())
         return false;
 
+#if ENABLE(WHEEL_EVENT_REGIONS)
+    if (candidateElement.hasEventListeners() || element.hasEventListeners())
+        return false;
+#endif
+
 #if ENABLE(FULLSCREEN_API)
     if (&candidateElement == m_document.fullscreenManager().currentFullscreenElement() || &element == m_document.fullscreenManager().currentFullscreenElement())
         return false;
