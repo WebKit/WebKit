@@ -118,10 +118,15 @@ InlineRect LineBox::logicalMarginRectForInlineLevelBox(const Box& layoutBox, con
 {
     auto logicalRect = [&] {
         auto* inlineBox = &inlineLevelBoxForLayoutBox(layoutBox);
-        if (inlineBox->hasLineBoxRelativeAlignment())
-            return inlineBox->logicalRect();
-
         auto inlineBoxLogicalRect = inlineBox->logicalRect();
+        if (inlineBox->hasLineBoxRelativeAlignment())
+            return inlineBoxLogicalRect;
+
+        if (&layoutBox.parent() == &m_rootInlineBox->layoutBox()) {
+            inlineBoxLogicalRect.moveVertically(m_rootInlineBox->logicalTop());
+            return inlineBoxLogicalRect;
+        }
+
         auto inlineBoxAbsolutelogicalTop = inlineBoxLogicalRect.top();
         while (inlineBox != m_rootInlineBox.get() && !inlineBox->hasLineBoxRelativeAlignment()) {
             inlineBox = &inlineLevelBoxForLayoutBox(inlineBox->layoutBox().parent());
