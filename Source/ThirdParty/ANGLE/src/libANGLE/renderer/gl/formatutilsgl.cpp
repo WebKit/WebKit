@@ -495,16 +495,18 @@ static GLenum GetNativeInternalFormat(const FunctionsGL *functions,
             result = GL_RGBA8;
         }
 
-        if (features.rgba4IsNotSupportedForColorRendering.enabled &&
-            internalFormat.sizedInternalFormat == GL_RGBA4)
+        if (internalFormat.sizedInternalFormat == GL_RGBA4 &&
+            (features.rgba4IsNotSupportedForColorRendering.enabled ||
+             features.promotePackedFormatsTo8BitPerChannel.enabled))
         {
             // Use an 8-bit format instead
             result = GL_RGBA8;
         }
 
         if (internalFormat.sizedInternalFormat == GL_RGB565 &&
-            !functions->isAtLeastGL(gl::Version(4, 1)) &&
-            !functions->hasGLExtension("GL_ARB_ES2_compatibility"))
+            ((!functions->isAtLeastGL(gl::Version(4, 1)) &&
+              !functions->hasGLExtension("GL_ARB_ES2_compatibility")) ||
+             features.promotePackedFormatsTo8BitPerChannel.enabled))
         {
             // GL_RGB565 is required for basic ES2 functionality but was not added to desktop GL
             // until 4.1.
