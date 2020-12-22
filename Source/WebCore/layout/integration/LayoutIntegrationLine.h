@@ -35,16 +35,12 @@ namespace LayoutIntegration {
 class Line {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    struct EnclosingTopAndBottom {
-        // This values encloses the root inline box and any other inline level box's border box.
-        float top { 0 };
-        float bottom { 0 };
-    };
-    Line(size_t firstRunIndex, size_t runCount, const FloatRect& lineBoxRect, EnclosingTopAndBottom enclosingTopAndBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, float contentLeftOffset, float contentWidth)
+    Line(size_t firstRunIndex, size_t runCount, const FloatRect& lineBoxRect, float enclosingContentTop, float enclosingContentBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, float contentLeftOffset, float contentWidth)
         : m_firstRunIndex(firstRunIndex)
         , m_runCount(runCount)
         , m_lineBoxRect(lineBoxRect)
-        , m_enclosingTopAndBottom(enclosingTopAndBottom)
+        , m_enclosingContentTop(enclosingContentTop)
+        , m_enclosingContentBottom(enclosingContentBottom)
         , m_scrollableOverflow(scrollableOverflow)
         , m_inkOverflow(inkOverflow)
         , m_baseline(baseline)
@@ -61,8 +57,8 @@ public:
     float lineBoxLeft() const { return m_lineBoxRect.x(); }
     float lineBoxRight() const { return m_lineBoxRect.maxX(); }
 
-    float enclosingContentTop() const { return m_enclosingTopAndBottom.top; }
-    float enclosingContentBottom() const { return m_enclosingTopAndBottom.bottom; }
+    float enclosingContentTop() const { return m_enclosingContentTop; }
+    float enclosingContentBottom() const { return m_enclosingContentBottom; }
 
     const FloatRect& scrollableOverflow() const { return m_scrollableOverflow; }
     const FloatRect& inkOverflow() const { return m_inkOverflow; }
@@ -80,7 +76,8 @@ private:
     // Enclosing top and bottom includes all inline level boxes (border box) vertically.
     // While the line box usually enclose them as well, its vertical geometry is based on
     // the layout bounds of the inline level boxes which may be different when line-height is present.
-    EnclosingTopAndBottom m_enclosingTopAndBottom;
+    float m_enclosingContentTop { 0 };
+    float m_enclosingContentBottom { 0 };
     FloatRect m_scrollableOverflow;
     FloatRect m_inkOverflow;
     float m_baseline { 0 };

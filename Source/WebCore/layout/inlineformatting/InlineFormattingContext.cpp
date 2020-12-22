@@ -438,6 +438,8 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     const auto& lineBox = formattingState.lineBoxes().last();
     auto lineIndex = formattingState.lines().size();
     auto& lineBoxLogicalRect = lineBox.logicalRect();
+    auto rootInlineBoxLogicalRect = lineBox.logicalRectForRootInlineBox();
+    auto enclosingTopAndBottom = InlineLineGeometry::EnclosingTopAndBottom { lineBoxLogicalRect.top() + rootInlineBoxLogicalRect.top(), lineBoxLogicalRect.top() + rootInlineBoxLogicalRect.bottom() };
     HashSet<const Box*> inlineBoxStartSet;
     HashSet<const Box*> inlineBoxEndSet;
 
@@ -470,18 +472,26 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
                 auto logicalMarginRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox, boxGeometry);
                 formattingState.addLineRun({ lineIndex, layoutBox, logicalMarginRect, lineRun.expansion(), { } });
 
-                auto borderBoxLogicalTopLeft = lineBoxLogicalRect.topLeft();
-                borderBoxLogicalTopLeft.move(logicalMarginRect.left() + boxGeometry.marginStart(), logicalMarginRect.top() + boxGeometry.marginBefore());
+                auto borderBoxLogicalTopLeft = logicalMarginRect.topLeft();
+                borderBoxLogicalTopLeft.move(std::max(0_lu, boxGeometry.marginStart()), std::max(0_lu, boxGeometry.marginBefore()));
+                // Note that inline boxes are relative to the line and their top position can be negative.
+                borderBoxLogicalTopLeft.moveBy(lineBoxLogicalRect.topLeft());
                 if (layoutBox.isInFlowPositioned())
                     borderBoxLogicalTopLeft += geometry.inFlowPositionedPositionOffset(layoutBox, horizontalConstraints);
                 // Atomic inline boxes are all set. Their margin/border/content box geometries are already computed. We just have to position them here.
                 boxGeometry.setLogicalTopLeft(toLayoutPoint(borderBoxLogicalTopLeft));
+
+                auto borderBoxTop = borderBoxLogicalTopLeft.y();
+                auto borderBoxBottom = borderBoxTop + boxGeometry.borderBoxHeight();
+                enclosingTopAndBottom.top = std::min(enclosingTopAndBottom.top, borderBoxTop);
+                enclosingTopAndBottom.bottom = std::max(enclosingTopAndBottom.bottom, borderBoxBottom);
                 continue;
             }
             if (lineRun.isInlineBoxStart()) {
                 auto& boxGeometry = formattingState.boxGeometry(layoutBox);
                 formattingState.addLineRun({ lineIndex, layoutBox, lineBox.logicalMarginRectForInlineLevelBox(layoutBox, boxGeometry), lineRun.expansion(), { } });
                 inlineBoxStartSet.add(&layoutBox);
+                // FIXME: Add enclosing top and bottom support.
                 continue;
             }
             if (lineRun.isInlineBoxEnd()) {
@@ -540,7 +550,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     updateBoxGeometryForInlineBoxes();
 
     auto constructLineGeometry = [&] {
-        formattingState.addLine({ lineBoxLogicalRect, lineBox.alignmentBaseline(), lineBox.horizontalAlignmentOffset().valueOr(InlineLayoutUnit { }), lineContent.contentLogicalWidth });
+        formattingState.addLine({ lineBoxLogicalRect, enclosingTopAndBottom, lineBox.alignmentBaseline(), lineBox.horizontalAlignmentOffset().valueOr(InlineLayoutUnit { }), lineContent.contentLogicalWidth });
     };
     constructLineGeometry();
 

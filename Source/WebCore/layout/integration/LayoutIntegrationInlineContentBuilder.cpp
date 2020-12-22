@@ -242,7 +242,7 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineFormattingS
 
         auto& style = layoutBox.style();
         auto text = lineRun.text();
-        auto adjustedContentToRenderer = [&] {
+        auto adjustedContentToRender = [&] {
             auto originalContent = text->content().substring(text->start(), text->length());
             if (text->needsHyphen())
                 return makeString(originalContent, style.hyphenString());
@@ -280,7 +280,7 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineFormattingS
         };
         RELEASE_ASSERT(startOffset >= text->start() && startOffset < text->end());
         RELEASE_ASSERT(endOffset > text->start() && endOffset <= text->end());
-        auto textContent = Run::TextContent { startOffset, endOffset - startOffset, text->content(), adjustedContentToRenderer(), text->needsHyphen() };
+        auto textContent = Run::TextContent { startOffset, endOffset - startOffset, text->content(), adjustedContentToRender(), text->needsHyphen() };
         auto expansion = Run::Expansion { lineRun.expansion().behavior, lineRun.expansion().horizontalExpansion };
         auto displayRun = Run { lineIndex, layoutBox, runRect, computedInkOverflow(runRect), expansion, textContent };
         inlineContent.runs.append(displayRun);
@@ -303,7 +303,6 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineFormattingS
 void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent, const LineLevelVisualAdjustmentsForRunsList& lineLevelVisualAdjustmentsForRuns) const
 {
     auto& lines = inlineFormattingState.lines();
-    auto& lineBoxes = inlineFormattingState.lineBoxes();
     auto& runs = inlineContent.runs;
     size_t runIndex = 0;
     inlineContent.lines.reserveCapacity(lines.size());
@@ -318,35 +317,14 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
         while (runIndex < runs.size() && runs[runIndex].lineIndex() == lineIndex)
             lineInkOverflowRect.unite(runs[runIndex++].inkOverflow());
         auto runCount = runIndex - firstRunIndex;
-        auto enclosingTopAndBottom = [&] {
-            // Let's (vertically)enclose all the inline level boxes.
-            // This mostly matches 'line box rect', unless line-height triggers line box overflow (not to be confused with ink or scroll overflow).
-            auto enclosingTop = Optional<float> { };
-            auto enclosingBottom = Optional<float> { };
-            auto& lineBox = lineBoxes[lineIndex];
-            for (auto& inlineLevelBox : lineBox.inlineLevelBoxList()) {
-                auto& layoutBox = inlineLevelBox->layoutBox();
-                auto& geometry = m_layoutState.geometryForBox(layoutBox);
-                auto inlineLevelBoxLogicalRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox, geometry);
-                // inlineLevelBoxLogicalRect encloses the margin box, but we need border box for the display line.
-                inlineLevelBoxLogicalRect.expandVertically(-std::max(0_lu, geometry.marginBefore() + geometry.marginAfter()));
-                inlineLevelBoxLogicalRect.moveVertically(std::max(0_lu, geometry.marginBefore()));
-
-                enclosingTop = std::min(enclosingTop.valueOr(inlineLevelBoxLogicalRect.top()), inlineLevelBoxLogicalRect.top());
-                enclosingBottom = std::max(enclosingBottom.valueOr(inlineLevelBoxLogicalRect.bottom()), inlineLevelBoxLogicalRect.bottom());
-            }
-            // There's always at least one inline level box, the root inline box.
-            ASSERT(enclosingBottom && enclosingTop);
-            // inline boxes are relative to the line, let's make them relative to the root's content box.
-            return Line::EnclosingTopAndBottom { lineBoxLogicalRect.top() + *enclosingTop, lineBoxLogicalRect.top() + *enclosingBottom };
-        }();
         auto adjustedLineBoxRect = FloatRect { lineBoxLogicalRect };
+        auto enclosingTopAndBottom = line.enclosingTopAndBottom();
         if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition) {
             adjustedLineBoxRect.setY(roundToInt(adjustedLineBoxRect.y()));
             enclosingTopAndBottom.top = roundToInt(enclosingTopAndBottom.top);
             enclosingTopAndBottom.bottom = roundToInt(enclosingTopAndBottom.bottom);
         }
-        inlineContent.lines.append({ firstRunIndex, runCount, adjustedLineBoxRect, enclosingTopAndBottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.contentLogicalLeftOffset(), line.contentLogicalWidth() });
+        inlineContent.lines.append({ firstRunIndex, runCount, adjustedLineBoxRect, enclosingTopAndBottom.top, enclosingTopAndBottom.bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.contentLogicalLeftOffset(), line.contentLogicalWidth() });
     }
 }
 

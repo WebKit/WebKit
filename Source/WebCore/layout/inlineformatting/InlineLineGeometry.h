@@ -35,9 +35,16 @@ namespace Layout {
 class InlineLineGeometry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InlineLineGeometry(const InlineRect& lineBoxLogicalRect, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit contentLogicalLeftOffset, InlineLayoutUnit contentLogicalWidth);
+    struct EnclosingTopAndBottom {
+        // This values encloses the root inline box and any other inline level box's border box.
+        float top { 0 };
+        float bottom { 0 };
+    };
+    InlineLineGeometry(const InlineRect& lineBoxLogicalRect, EnclosingTopAndBottom, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit contentLogicalLeftOffset, InlineLayoutUnit contentLogicalWidth);
 
     const InlineRect& lineBoxLogicalRect() const { return m_lineBoxLogicalRect; }
+
+    EnclosingTopAndBottom enclosingTopAndBottom() const { return m_enclosingTopAndBottom; }
 
     InlineLayoutUnit baseline() const { return m_aligmentBaseline; }
 
@@ -47,14 +54,20 @@ public:
     void moveVertically(InlineLayoutUnit offset) { m_lineBoxLogicalRect.moveVertically(offset); }
 
 private:
+    // This is line box geometry (see https://www.w3.org/TR/css-inline-3/#line-box).
     InlineRect m_lineBoxLogicalRect;
+    // Enclosing top and bottom includes all inline level boxes (border box) vertically.
+    // While the line box usually enclose them as well, its vertical geometry is based on
+    // the layout bounds of the inline level boxes which may be different when line-height is present.
+    EnclosingTopAndBottom m_enclosingTopAndBottom;
     InlineLayoutUnit m_aligmentBaseline { 0 };
     InlineLayoutUnit m_contentLogicalLeftOffset { 0 };
     InlineLayoutUnit m_contentLogicalWidth { 0 };
 };
 
-inline InlineLineGeometry::InlineLineGeometry(const InlineRect& lineBoxLogicalRect, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit contentLogicalLeftOffset, InlineLayoutUnit contentLogicalWidth)
+inline InlineLineGeometry::InlineLineGeometry(const InlineRect& lineBoxLogicalRect, EnclosingTopAndBottom enclosingTopAndBottom, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit contentLogicalLeftOffset, InlineLayoutUnit contentLogicalWidth)
     : m_lineBoxLogicalRect(lineBoxLogicalRect)
+    , m_enclosingTopAndBottom(enclosingTopAndBottom)
     , m_aligmentBaseline(aligmentBaseline)
     , m_contentLogicalLeftOffset(contentLogicalLeftOffset)
     , m_contentLogicalWidth(contentLogicalWidth)
