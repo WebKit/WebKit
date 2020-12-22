@@ -92,10 +92,10 @@ function setupTests(gl) {
     // does not get passed down to glUniform so when setting the uniform 'big[3]' they
     // overwrite memory.
     //
-    // If the driver crashes, yea. We found a bug. We can blacklist the driver.
+    // If the driver crashes, yea. We found a bug. We can block the driver.
     // Otherwise we try various combinations so that setting 'little[0]' first
     // and then setting all elements of 'big' we hope it will overwrite 'little[0]'
-    // which will show the bug and again we can blacklist the driver.
+    // which will show the bug and again we can block the driver.
     //
     // We don't know how the driver will order, in memory, the various uniforms
     // or for that matter we don't even know if they will be contiguous in memory

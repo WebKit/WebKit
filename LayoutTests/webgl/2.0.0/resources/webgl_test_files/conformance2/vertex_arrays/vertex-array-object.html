@@ -333,7 +333,7 @@ function runDrawTests() {
         gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
         return pixels;
     };
-    function testPixel(blackList, whiteList) {
+    function testPixel(blockList, allowList) {
         function testList(list, expected) {
             for (var n = 0; n < list.length; n++) {
                 var l = list[n];
@@ -346,21 +346,21 @@ function runDrawTests() {
             }
             return true;
         }
-        return testList(blackList, 0) && testList(whiteList, 255);
+        return testList(blockList, 0) && testList(allowList, 255);
     };
     function verifyDraw(drawNumber, s) {
         wtu.clearAndDrawUnitQuad(gl);
-        var blackList = [];
-        var whiteList = [];
+        var blockList = [];
+        var allowList = [];
         var points = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0];
         for (var n = 0; n < points.length; n++) {
             if (points[n] <= s) {
-                blackList.push(points[n]);
+                blockList.push(points[n]);
             } else {
-                whiteList.push(points[n]);
+                allowList.push(points[n]);
             }
         }
-        if (testPixel(blackList, whiteList)) {
+        if (testPixel(blockList, allowList)) {
             testPassed("Draw " + drawNumber + " passed pixel test");
         } else {
             testFailed("Draw " + drawNumber + " failed pixel test");
