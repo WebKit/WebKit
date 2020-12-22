@@ -554,7 +554,6 @@ void RenderBlock::endAndCommitUpdateScrollInfoAfterLayoutTransaction()
     for (auto* block : blocksToUpdate) {
         ASSERT(block->hasOverflowClip());
         block->layer()->updateScrollInfoAfterLayout();
-        block->clearLayoutOverflow();
     }
 }
 

@@ -1,3 +1,13 @@
+2020-12-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Layout overflow is computed incorrectly inside flexbox (breaks sticky positioning)
+        https://bugs.webkit.org/show_bug.cgi?id=220075
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/flexbox/preserve-layout-overflow-expected.txt: Added.
+        * fast/flexbox/preserve-layout-overflow.html: Added.
+
 2020-12-21  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=220078
