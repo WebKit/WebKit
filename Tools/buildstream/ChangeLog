@@ -1,3 +1,15 @@
+2020-12-22  Lauro Moura  <lmoura@igalia.com>
+
+        [Flapak SDK] Allow setting custom SDK repository locations and other small fixes
+        https://bugs.webkit.org/show_bug.cgi?id=219884
+
+        Reviewed by Philippe Normand.
+
+        - Allow inheriting the RSYNC info from envvar for local testing.
+        - Add a 'dry-push-repo' command to be able to perform push-repo dry-runs.
+
+        * Makefile:
+
 2020-12-14  Lauro Moura  <lmoura@igalia.com>
 
         [Flatpak SDK] Update GTK4 to 3.99.5

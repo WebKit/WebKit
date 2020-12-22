@@ -468,9 +468,16 @@ class WebkitFlatpak:
         if os.environ.get('CCACHE_PREFIX') == 'icecc':
             self.use_icecream = True
 
-        verbose = os.environ.get('WEBKIT_SDK_VERBOSE')
-        if verbose is not None:
+        verbose = os.environ.get('WEBKIT_FLATPAK_SDK_VERBOSE')
+        if (not self.verbose) and (verbose is not None):
             self.verbose = verbose != '0'
+
+        configure_logging(logging.DEBUG if self.verbose else logging.INFO)
+
+        if self.user_repo:
+            if not os.path.exists(self.user_repo):
+                _log.error('User repo at %s is not accessible\n' % self.user_repo)
+                sys.exit(1)
 
         return self
 
@@ -539,8 +546,6 @@ class WebkitFlatpak:
             os.makedirs(self.flatpak_build_path)
         except OSError as e:
             pass
-
-        configure_logging(logging.DEBUG if self.verbose else logging.INFO)
         _log.debug("Using flatpak user dir: %s" % self.flatpak_build_path)
 
         self.platform = self.platform.upper()

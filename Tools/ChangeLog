@@ -1,3 +1,19 @@
+2020-12-22  Lauro Moura  <lmoura@igalia.com>
+
+        [Flapak SDK] Allow setting custom SDK repository locations and other small fixes
+        https://bugs.webkit.org/show_bug.cgi?id=219884
+
+        Reviewed by Philippe Normand.
+
+        - Update envvar to match the WEBKIT_FLATPAK prefix
+        - Give precedence to the verbose flag instead of envvar
+        - Enable logging earlier to be used in the parse step
+        - Error out if the user provides an user repo that is not accessible.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.load_from_args):
+        (WebkitFlatpak.clean_args):
+
 2020-12-21  Simon Fraser  <simon.fraser@apple.com>
 
         [macOS MiniBrowser] Add menu items to reset all experimental and internal debug features to defaults
