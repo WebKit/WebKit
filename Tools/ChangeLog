@@ -1,3 +1,18 @@
+2020-12-21  Simon Fraser  <simon.fraser@apple.com>
+
+        [macOS MiniBrowser] Add menu items to reset all experimental and internal debug features to defaults
+        https://bugs.webkit.org/show_bug.cgi?id=220060
+
+        Reviewed by Wenson Hsieh.
+
+        Add menu items at the bottom of the "Experimental" and "Internal Debug" feature submenus
+        to reset all the features to their default values.
+
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _populateMenu]):
+        (-[SettingsController resetAllExperimentalFeatures:]):
+        (-[SettingsController resetAllInternalDebugFeatures:]):
+
 2020-12-21  Ryan Hostetler  <rhost@apple.com>
 
         $(findstring iphone,$(SDKROOT)) fails when SDKROOT is not lowercase

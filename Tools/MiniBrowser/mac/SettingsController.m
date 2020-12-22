@@ -218,6 +218,12 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         [experimentalFeaturesMenu addItem:[item autorelease]];
     }
 
+    [experimentalFeaturesMenu addItem:[NSMenuItem separatorItem]];
+    NSMenuItem *resetExperimentalFeaturesToDefaultsItem = [[NSMenuItem alloc] initWithTitle:@"Reset All to Defaults" action:@selector(resetAllExperimentalFeatures:) keyEquivalent:@""];
+    [resetExperimentalFeaturesToDefaultsItem setTarget:self];
+    [experimentalFeaturesMenu addItem:resetExperimentalFeaturesToDefaultsItem];
+    [resetExperimentalFeaturesToDefaultsItem release];
+
     [_menu addItem:experimentalFeaturesSubmenuItem];
     [experimentalFeaturesSubmenuItem release];
     [experimentalFeaturesMenu release];
@@ -237,6 +243,12 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         [item setTarget:self];
         [internalDebugFeaturesMenu addItem:[item autorelease]];
     }
+
+    [internalDebugFeaturesMenu addItem:[NSMenuItem separatorItem]];
+    NSMenuItem *resetInternalFeaturesToDefaultsItem = [[NSMenuItem alloc] initWithTitle:@"Reset All to Defaults" action:@selector(resetAllInternalDebugFeatures:) keyEquivalent:@""];
+    [resetInternalFeaturesToDefaultsItem setTarget:self];
+    [internalDebugFeaturesMenu addItem:resetInternalFeaturesToDefaultsItem];
+    [resetInternalFeaturesToDefaultsItem release];
 
     [_menu addItem:internalDebugFeaturesSubmenuItem];
     [internalDebugFeaturesSubmenuItem release];
@@ -752,6 +764,28 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     [preferences _setEnabled:!currentlyEnabled forInternalDebugFeature:feature];
 
     [[NSUserDefaults standardUserDefaults] setBool:!currentlyEnabled forKey:feature.key];
+}
+
+- (void)resetAllExperimentalFeatures:(id)sender
+{
+    WKPreferences *preferences = [[NSApplication sharedApplication] browserAppDelegate].defaultPreferences;
+    NSArray<_WKExperimentalFeature *> *experimentalFeatures = [WKPreferences _experimentalFeatures];
+
+    for (_WKExperimentalFeature *feature in experimentalFeatures) {
+        [preferences _setEnabled:feature.defaultValue forExperimentalFeature:feature];
+        [[NSUserDefaults standardUserDefaults] setBool:feature.defaultValue forKey:feature.key];
+    }
+}
+
+- (void)resetAllInternalDebugFeatures:(id)sender
+{
+    WKPreferences *preferences = [[NSApplication sharedApplication] browserAppDelegate].defaultPreferences;
+    NSArray<_WKInternalDebugFeature *> *internalDebugFeatures = [WKPreferences _internalDebugFeatures];
+
+    for (_WKInternalDebugFeature *feature in internalDebugFeatures) {
+        [preferences _setEnabled:feature.defaultValue forInternalDebugFeature:feature];
+        [[NSUserDefaults standardUserDefaults] setBool:feature.defaultValue forKey:feature.key];
+    }
 }
 
 - (BOOL)debugOverlayVisible:(NSMenuItem *)menuItem
