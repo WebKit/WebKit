@@ -390,6 +390,8 @@ HashMap<RegistrableDomain, HashSet<RegistrableDomain>>& NetworkStorageSession::s
         map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("playstation.com"), HashSet {
             RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sonyentertainmentnetwork.com"_s),
             RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sony.com"_s) });
+        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("bbc.co.uk"), HashSet {
+            RegistrableDomain::uncheckedCreateFromRegistrableDomainString("radioplayer.co.uk"_s) });
         return map;
     }();
     return map.get();
@@ -397,16 +399,16 @@ HashMap<RegistrableDomain, HashSet<RegistrableDomain>>& NetworkStorageSession::s
 
 bool NetworkStorageSession::loginDomainMatchesRequestingDomain(const TopFrameDomain& topFrameDomain, const SubResourceDomain& resourceDomain)
 {
-    auto loginDomains = WebCore::NetworkStorageSession::loginDomainsForFirstParty(topFrameDomain);
+    auto loginDomains = WebCore::NetworkStorageSession::subResourceDomainsInNeedOfStorageAccessForFirstParty(topFrameDomain);
     return loginDomains && loginDomains.value().contains(resourceDomain);
 }
 
-bool NetworkStorageSession::canRequestStorageAccessForLoginPurposesWithoutPriorUserInteraction(const SubResourceDomain& resourceDomain, const TopFrameDomain& topFrameDomain)
+bool NetworkStorageSession::canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(const SubResourceDomain& resourceDomain, const TopFrameDomain& topFrameDomain)
 {
     return loginDomainMatchesRequestingDomain(topFrameDomain, resourceDomain);
 }
 
-Optional<HashSet<RegistrableDomain>> NetworkStorageSession::loginDomainsForFirstParty(const RegistrableDomain& topFrameDomain)
+Optional<HashSet<RegistrableDomain>> NetworkStorageSession::subResourceDomainsInNeedOfStorageAccessForFirstParty(const RegistrableDomain& topFrameDomain)
 {
     auto it = storageAccessQuirks().find(topFrameDomain);
     if (it != storageAccessQuirks().end())

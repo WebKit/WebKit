@@ -125,6 +125,8 @@ public:
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     static bool isMicrosoftTeamsRedirectURL(const URL&);
     static bool hasStorageAccessForAllLoginDomains(const HashSet<RegistrableDomain>&, const RegistrableDomain&);
+    static const String& BBCRadioPlayerURLString();
+    WEBCORE_EXPORT static const String& staticRadioPlayerURLString();
 #endif
 
 private:

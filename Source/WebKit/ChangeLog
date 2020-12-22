@@ -1,3 +1,36 @@
+2020-12-22  Kate Cheney  <katherine_cheney@apple.com>
+
+        Cannot see 'Add to my stations' button in BBC World service Radio
+        https://bugs.webkit.org/show_bug.cgi?id=219949
+        <rdar://problem/60319532>
+
+        Reviewed by Alex Christensen.
+
+        This is a temporary quirk to assist a high-traffic website while they
+        complete the large task of migrating away from site compatibility using
+        third party cookies. This quirk will be removed when the site is
+        updated.
+
+        Create a quirk that will call the Storage Access API on behalf of
+        BBC for radioplayer.co.uk under bbc.co.uk. When the user clicks to open
+        the radio player pop-up, storage access is requested. If the user grants
+        permission, then we open the pop-up to static.radioplayer.co.uk to get
+        first party status, then immediately redirect to the radio player page.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grantStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::cookieAccess):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccessEphemeral):
+        Change wording now that quirks are not only being used for login
+        flows.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::createNewPage):
+        Mark the quirk-initiated pop-up as user-initiated so it doesn't get
+        blocked.
+
 2020-12-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, fix the build with recent SDKs.

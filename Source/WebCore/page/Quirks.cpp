@@ -1003,6 +1003,33 @@ bool Quirks::hasStorageAccessForAllLoginDomains(const HashSet<RegistrableDomain>
     return true;
 }
 
+const String& Quirks::BBCRadioPlayerURLString()
+{
+    static NeverDestroyed<String> BBCRadioPlayerURLString = "https://www.bbc.co.uk/sounds/player/bbc_world_service"_s;
+    return BBCRadioPlayerURLString;
+}
+
+const String& Quirks::staticRadioPlayerURLString()
+{
+    static NeverDestroyed<String> staticRadioPlayerURLString = "https://static.radioplayer.co.uk/"_s;
+    return staticRadioPlayerURLString;
+}
+
+static bool isBBCDomain(const RegistrableDomain& domain)
+{
+    static NeverDestroyed<RegistrableDomain> BBCDomain = RegistrableDomain(URL(URL(), Quirks::BBCRadioPlayerURLString()));
+    return domain == BBCDomain;
+}
+
+static bool isBBCPopUpPlayerElement(const Element& element)
+{
+    auto* parentElement = element.parentElement();
+    if (!element.parentElement() || !element.parentElement()->hasClass() || !parentElement->parentElement() || !parentElement->parentElement()->hasClass())
+        return false;
+
+    return element.parentElement()->classNames().contains("p_audioButton_buttonInner") && parentElement->parentElement()->classNames().contains("hidden");
+}
+
 #endif
 
 Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& element, const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget) const
@@ -1041,6 +1068,8 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
     static NeverDestroyed<UserScript> kinjaLoginUserScript { "function triggerLoginForm() { let elements = document.getElementsByClassName('js_header-userbutton'); if (elements && elements[0]) { elements[0].click(); clearInterval(interval); } } let interval = setInterval(triggerLoginForm, 200);", URL(aboutBlankURL()), Vector<String>(), Vector<String>(), UserScriptInjectionTime::DocumentEnd, UserContentInjectedFrames::InjectInTopFrameOnly, WaitForNotificationBeforeInjecting::Yes };
 
     if (eventType == "click") {
+        if (!m_document)
+            return Quirks::StorageAccessResult::ShouldNotCancelEvent;
 
         // Embedded YouTube case.
         if (element.hasClass() && domain == youTubeDomain && !m_document->isTopDocument() && ResourceLoadObserver::shared().hasHadUserInteraction(youTubeDomain)) {
@@ -1083,7 +1112,7 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
         // FIXME(218779): Remove this quirk once microsoft.com completes their login flow redesign.
         if (isMicrosoftDomain(domain) && isMicrosoftLoginElement(element)) {
             auto firstPartyDomain = NetworkStorageSession::mapToTopDomain(RegistrableDomain::uncheckedCreateFromHost(m_document->topDocument().securityOrigin().host()));
-            if (auto loginDomains = NetworkStorageSession::loginDomainsForFirstParty(firstPartyDomain)) {
+            if (auto loginDomains = NetworkStorageSession::subResourceDomainsInNeedOfStorageAccessForFirstParty(firstPartyDomain)) {
                 if (!hasStorageAccessForAllLoginDomains(*loginDomains, firstPartyDomain)) {
                     auto loginDomain = RegistrableDomain(*loginDomains.value().begin().get());
                     DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*m_document, WTFMove(loginDomain), [firstPartyDomain, loginDomain, &element, platformEvent, eventType, detail, relatedTarget](StorageAccessWasGranted storageAccessGranted) mutable {
@@ -1104,7 +1133,7 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
         static NeverDestroyed<RegistrableDomain> playStationDomain = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("playstation.com"_s);
         if (domain == playStationDomain && isPlaystationLoginElement(element)) {
             auto firstPartyDomain = RegistrableDomain(m_document->topDocument().url());
-            if (auto loginDomains = NetworkStorageSession::loginDomainsForFirstParty(firstPartyDomain)) {
+            if (auto loginDomains = NetworkStorageSession::subResourceDomainsInNeedOfStorageAccessForFirstParty(firstPartyDomain)) {
                 if (!hasStorageAccessForAllLoginDomains(*loginDomains, firstPartyDomain)) {
                     // Send only one login domain to avoid changing existing Storage Access code, which can only handle a single domain.
                     // We will match Sony login domains up when prompting the user and storing the domains.
@@ -1120,6 +1149,44 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
                 }
             }
             return Quirks::StorageAccessResult::ShouldNotCancelEvent;
+        }
+
+        static NeverDestroyed<String> BBCRadioPlayerPopUpWindowFeatureString = "featurestring width=400,height=730"_s;
+        static NeverDestroyed<UserScript> BBCUserScript { "function triggerRedirect() { document.location.href = \"https://www.bbc.co.uk/sounds/player/bbc_world_service\"; } window.addEventListener('load', function () { triggerRedirect(); })", URL(aboutBlankURL()), Vector<String>(), Vector<String>(), UserScriptInjectionTime::DocumentEnd, UserContentInjectedFrames::InjectInTopFrameOnly, WaitForNotificationBeforeInjecting::Yes };
+
+        // BBC RadioPlayer case.
+        if (isBBCDomain(domain) && isBBCPopUpPlayerElement(element)) {
+            auto firstPartyDomain = RegistrableDomain(m_document->topDocument().url());
+            auto subResourceDomainsInNeedOfStorageAccess = NetworkStorageSession::subResourceDomainsInNeedOfStorageAccessForFirstParty(firstPartyDomain);
+            if (!subResourceDomainsInNeedOfStorageAccess)
+                return Quirks::StorageAccessResult::ShouldNotCancelEvent;
+
+            if (hasStorageAccessForAllLoginDomains(*subResourceDomainsInNeedOfStorageAccess, firstPartyDomain))
+                return Quirks::StorageAccessResult::ShouldNotCancelEvent;
+
+            auto subResourceDomain = RegistrableDomain(*subResourceDomainsInNeedOfStorageAccess.value().begin().get());
+            DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*m_document, WTFMove(subResourceDomain), [document = m_document, firstPartyDomain, subResourceDomain](StorageAccessWasGranted storageAccessGranted) mutable {
+                if (storageAccessGranted == StorageAccessWasGranted::No)
+                    return;
+
+                ResourceLoadObserver::shared().setDomainsWithCrossPageStorageAccess({{ firstPartyDomain, subResourceDomain }}, [document = WTFMove(document)] {
+                    auto domWindow = document->domWindow();
+                    if (domWindow) {
+                        ExceptionOr<RefPtr<WindowProxy>> proxyOrException = domWindow->open(*domWindow, *domWindow, staticRadioPlayerURLString(), emptyString(), BBCRadioPlayerPopUpWindowFeatureString);
+                        if (proxyOrException.hasException())
+                            return;
+                        auto proxy = proxyOrException.releaseReturnValue();
+                        auto* abstractFrame = proxy->frame();
+                        if (is<Frame>(*abstractFrame)) {
+                            auto& frame = downcast<Frame>(*abstractFrame);
+                            auto world = ScriptController::createWorld("bbcRadioPlayerWorld", ScriptController::WorldType::User);
+                            frame.addUserScriptAwaitingNotification(world.get(), BBCUserScript);
+                            return;
+                        }
+                    }
+                });
+            });
+            return Quirks::StorageAccessResult::ShouldCancelEvent;
         }
     }
 #else

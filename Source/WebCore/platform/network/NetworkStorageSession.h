@@ -216,8 +216,8 @@ public:
     WEBCORE_EXPORT void setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode);
 
     WEBCORE_EXPORT static HashMap<RegistrableDomain, HashSet<RegistrableDomain>>& storageAccessQuirks();
-    WEBCORE_EXPORT static bool canRequestStorageAccessForLoginPurposesWithoutPriorUserInteraction(const SubResourceDomain&, const TopFrameDomain&);
-    WEBCORE_EXPORT static Optional<HashSet<RegistrableDomain>> loginDomainsForFirstParty(const RegistrableDomain&);
+    WEBCORE_EXPORT static bool canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(const SubResourceDomain&, const TopFrameDomain&);
+    WEBCORE_EXPORT static Optional<HashSet<RegistrableDomain>> subResourceDomainsInNeedOfStorageAccessForFirstParty(const RegistrableDomain&);
     WEBCORE_EXPORT static bool loginDomainMatchesRequestingDomain(const TopFrameDomain&, const SubResourceDomain&);
     WEBCORE_EXPORT static RegistrableDomain mapToTopDomain(const RegistrableDomain&);
     WEBCORE_EXPORT static Optional<RegistrableDomain> findAdditionalLoginDomain(const TopFrameDomain&, const SubResourceDomain&);
