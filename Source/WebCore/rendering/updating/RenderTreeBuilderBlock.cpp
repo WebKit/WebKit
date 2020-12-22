@@ -243,8 +243,6 @@ void RenderTreeBuilder::Block::attachIgnoringContinuation(RenderBlock& parent, R
         }
     }
 
-    parent.invalidateLineLayoutPath();
-
     m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
 
     if (madeBoxesNonInline && is<RenderBlock>(parent.parent()) && parent.isAnonymousBlock())
@@ -291,8 +289,6 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, Re
     auto prev = makeWeakPtr(oldChild.previousSibling());
     auto next = makeWeakPtr(oldChild.nextSibling());
     bool canMergeAnonymousBlocks = canMergeContiguousAnonymousBlocks(oldChild, prev.get(), next.get());
-
-    parent.invalidateLineLayoutPath();
 
     auto takenChild = m_builder.detachFromRenderElement(parent, oldChild);
 

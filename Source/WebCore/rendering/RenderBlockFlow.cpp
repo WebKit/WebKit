@@ -456,6 +456,16 @@ bool RenderBlockFlow::willCreateColumns(Optional<unsigned> desiredColumnCount) c
     return false;
 }
 
+void RenderBlockFlow::setChildrenInline(bool value)
+{
+    if (childrenInline() && !value) {
+        setLineLayoutPath(UndeterminedPath);
+        m_lineLayout = WTF::Monostate();
+    }
+
+    RenderBlock::setChildrenInline(value);
+}
+
 void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight)
 {
     ASSERT(needsLayout());

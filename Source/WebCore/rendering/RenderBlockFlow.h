@@ -340,6 +340,8 @@ public:
     RootInlineBox* firstRootBox() const { return complexLineLayout() ? complexLineLayout()->firstRootBox() : nullptr; }
     RootInlineBox* lastRootBox() const { return complexLineLayout() ? complexLineLayout()->lastRootBox() : nullptr; }
 
+    void setChildrenInline(bool) final;
+
     bool hasLines() const;
     void invalidateLineLayoutPath() final;
 

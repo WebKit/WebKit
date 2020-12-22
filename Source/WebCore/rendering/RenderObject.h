@@ -284,7 +284,7 @@ public:
     bool everHadLayout() const { return m_bitfields.everHadLayout(); }
 
     bool childrenInline() const { return m_bitfields.childrenInline(); }
-    void setChildrenInline(bool b) { m_bitfields.setChildrenInline(b); }
+    virtual void setChildrenInline(bool b) { m_bitfields.setChildrenInline(b); }
     
     enum FragmentedFlowState {
         NotInsideFragmentedFlow = 0,
