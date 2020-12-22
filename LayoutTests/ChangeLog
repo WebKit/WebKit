@@ -1,5 +1,19 @@
 2020-12-22  Beth Dakin  <bdakin@apple.com>
 
+        Remove non-inclusive language from tests in http/tests/xmlhttprequest
+        https://bugs.webkit.org/show_bug.cgi?id=220096
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/xmlhttprequest/access-control-basic-allow-list-request-headers.html:
+        * http/tests/xmlhttprequest/access-control-basic-allow-list-response-headers.html:
+        * http/tests/xmlhttprequest/resources/access-control-basic-allowlist-request-headers.cgi: Copied from http/tests/xmlhttprequest/resources/access-control-basic-whitelist-request-headers.cgi.
+        * http/tests/xmlhttprequest/resources/access-control-basic-allowlist-response-headers.cgi: Copied from http/tests/xmlhttprequest/resources/access-control-basic-whitelist-response-headers.cgi.
+        * http/tests/xmlhttprequest/resources/access-control-basic-whitelist-request-headers.cgi: Removed.
+        * http/tests/xmlhttprequest/resources/access-control-basic-whitelist-response-headers.cgi: Removed.
+
+2020-12-22  Beth Dakin  <bdakin@apple.com>
+
         Remove non-inclusive language from tests in http/tests/contentextensions/
         https://bugs.webkit.org/show_bug.cgi?id=220094
 
