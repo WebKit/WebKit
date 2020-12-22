@@ -289,7 +289,7 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineFormattingS
     auto& bidiRuns = bidiResolver.runs();
     if (bidiRuns.runCount() == 1) {
         // Fast path for cases when there's no bidi boundary.
-        inlineContent.runs.reserveCapacity(inlineFormattingState.lineRuns().size());
+        inlineContent.runs.reserveInitialCapacity(inlineFormattingState.lineRuns().size());
         for (auto& lineRun : inlineFormattingState.lineRuns()) {
             if (auto& text = lineRun.text())
                 createDisplayTextRunForRange(lineRun, text->start(), text->end());
@@ -305,7 +305,7 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
     auto& lines = inlineFormattingState.lines();
     auto& runs = inlineContent.runs;
     size_t runIndex = 0;
-    inlineContent.lines.reserveCapacity(lines.size());
+    inlineContent.lines.reserveInitialCapacity(lines.size());
     for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
         auto& line = lines[lineIndex];
         auto& lineBoxLogicalRect = line.lineBoxLogicalRect();
@@ -316,7 +316,6 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
         auto lineInkOverflowRect = scrollableOverflowRect;
         while (runIndex < runs.size() && runs[runIndex].lineIndex() == lineIndex)
             lineInkOverflowRect.unite(runs[runIndex++].inkOverflow());
-        auto runCount = runIndex - firstRunIndex;
         auto adjustedLineBoxRect = FloatRect { lineBoxLogicalRect };
         auto enclosingTopAndBottom = line.enclosingTopAndBottom();
         if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition) {
@@ -324,6 +323,7 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
             enclosingTopAndBottom.top = roundToInt(enclosingTopAndBottom.top);
             enclosingTopAndBottom.bottom = roundToInt(enclosingTopAndBottom.bottom);
         }
+        auto runCount = runIndex - firstRunIndex;
         inlineContent.lines.append({ firstRunIndex, runCount, adjustedLineBoxRect, enclosingTopAndBottom.top, enclosingTopAndBottom.bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.contentLogicalLeftOffset(), line.contentLogicalWidth() });
     }
 }

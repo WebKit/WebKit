@@ -166,15 +166,17 @@ LayoutUnit InlineFormattingContext::usedContentHeight() const
 
 void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::InlineItemRange needsLayoutRange, const ConstraintsForInFlowContent& constraints)
 {
+    auto& formattingState = this->formattingState();
+    formattingState.lineRuns().reserveInitialCapacity(formattingState.inlineItems().size());
     InlineLayoutUnit lineLogicalTop = constraints.vertical.logicalTop;
     struct PreviousLine {
         LineBuilder::InlineItemRange range;
         size_t overflowContentLength { 0 };
     };
     Optional<PreviousLine> previousLine;
-    auto& floatingState = formattingState().floatingState();
+    auto& floatingState = formattingState.floatingState();
     auto floatingContext = FloatingContext { *this, floatingState };
-    auto isFirstLine = formattingState().lines().isEmpty();
+    auto isFirstLine = formattingState.lines().isEmpty();
 
     auto lineBuilder = LineBuilder { *this, floatingState, constraints.horizontal, inlineItems };
     while (!needsLayoutRange.isEmpty()) {
@@ -192,7 +194,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
             lineLogicalTop = geometry().logicalTopForNextLine(lineContent, lineLogicalRect.bottom(), floatingContext);
             if (lineContent.isLastLineWithInlineContent) {
                 // The final content height of this inline formatting context should include the cleared floats as well.
-                formattingState().setClearGapAfterLastLine(lineLogicalTop - lineLogicalRect.bottom());
+                formattingState.setClearGapAfterLastLine(lineLogicalTop - lineLogicalRect.bottom());
             }
             // When the trailing content is partial, we need to reuse the last InlineTextItem.
             auto lastInlineItemNeedsPartialLayout = lineContent.partialTrailingContentLength;
@@ -445,7 +447,6 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
 
     auto constructLineRunsAndUpdateBoxGeometry = [&] {
         // Create the inline runs on the current line. This is mostly text and atomic inline runs.
-        formattingState.lineRuns().reserveCapacity(lineContent.runs.size());
         for (auto& lineRun : lineContent.runs) {
             // FIXME: We should not need to construct a line run for <br>.
             auto& layoutBox = lineRun.layoutBox();

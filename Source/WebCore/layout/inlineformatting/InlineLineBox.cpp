@@ -81,7 +81,8 @@ LineBox::LineBox(const InlineLayoutPoint& logicalTopleft, InlineLayoutUnit conte
     : m_logicalRect(logicalTopleft, InlineLayoutSize { contentLogicalWidth, { } })
     , m_isConsideredEmpty(isLineConsideredEmpty == IsLineConsideredEmpty::Yes)
 {
-    m_nonRootInlineLevelBoxList.reserveCapacity(numberOfRuns);
+    m_nonRootInlineLevelBoxList.reserveInitialCapacity(numberOfRuns);
+    m_inlineLevelBoxRectMap.reserveInitialCapacity(numberOfRuns);
 }
 
 void LineBox::addRootInlineBox(std::unique_ptr<InlineLevelBox>&& rootInlineBox)
