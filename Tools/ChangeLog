@@ -1,3 +1,14 @@
+2020-12-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, fix the build with recent SDKs.
+
+        * MiniBrowser/mac/ExtensionManagerWindowController.m:
+        (-[ExtensionManagerWindowController add:]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:]):
+        (-[WK2BrowserWindowController saveAsPDF:]):
+        (-[WK2BrowserWindowController saveAsWebArchive:]):
+
 2020-12-22  Lauro Moura  <lmoura@igalia.com>
 
         [Flapak SDK] Allow setting custom SDK repository locations and other small fixes

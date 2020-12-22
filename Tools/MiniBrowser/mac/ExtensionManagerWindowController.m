@@ -69,7 +69,10 @@
 - (IBAction)add:(id)sender
 {
     NSOpenPanel *openPanel = [[NSOpenPanel openPanel] retain];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     openPanel.allowedFileTypes = @[ @"public.json" ];
+#pragma clang diagnostic pop
     
     [openPanel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result)
     {

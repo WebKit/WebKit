@@ -560,14 +560,18 @@ static TextStream& operator<<(TextStream& ts, FeatureToAnimate feature)
     UNUSED_PARAM(scrollerImp);
 
     if (!_scrollbar)
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return [NSAppearance currentAppearance];
+        ALLOW_DEPRECATED_DECLARATIONS_END
 
     // Keep this in sync with FrameView::paintScrollCorner.
     // The base system does not support dark Aqua, so we might get a null result.
     bool useDarkAppearance = _scrollbar->scrollableArea().useDarkAppearanceForScrollbars();
     if (auto *appearance = [NSAppearance appearanceNamed:useDarkAppearance ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua])
         return appearance;
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return [NSAppearance currentAppearance];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 #endif
 
@@ -932,7 +936,9 @@ void ScrollAnimatorMac::contentAreaWillPaint() const
     if ([m_scrollerImpPair overlayScrollerStateIsLocked])
         return;
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [m_scrollerImpPair contentAreaWillDraw];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 void ScrollAnimatorMac::mouseEnteredContentArea()

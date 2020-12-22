@@ -1397,7 +1397,9 @@ bool RenderThemeMac::paintProgressBar(const RenderObject& renderObject, const Pa
         ASSERT_NOT_REACHED();
         return nullptr;
     };
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[NSAppearance currentAppearance] _drawInRect:NSMakeRect(0, 0, inflatedRect.width(), inflatedRect.height()) context:cgContext options:@{
+    ALLOW_DEPRECATED_DECLARATIONS_END
         (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)(isIndeterminate ? kCUIWidgetProgressIndeterminateBar : kCUIWidgetProgressBar),
         (__bridge NSString *)kCUIValueKey: @(isIndeterminate ? 1 : std::min(nextafter(1.0, -1), renderProgress.position())),
         (__bridge NSString *)kCUISizeKey: (__bridge NSString *)coreUISizeForProgressBarSize(controlSize),
@@ -2649,7 +2651,9 @@ static void paintAttachmentIcon(const RenderAttachment& attachment, GraphicsCont
 static std::pair<RefPtr<Image>, float> createAttachmentPlaceholderImage(float deviceScaleFactor, const AttachmentLayout& layout)
 {
 #if HAVE(ALTERNATE_ICONS)
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto image = [NSImage _imageWithSystemSymbolName:@"arrow.down.circle"];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     auto imageSize = FloatSize([image size]);
     auto imageSizeScales = deviceScaleFactor * layout.iconRect.size() / imageSize;
     imageSize.scale(std::min(imageSizeScales.width(), imageSizeScales.height()));

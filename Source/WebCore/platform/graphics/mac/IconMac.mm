@@ -74,7 +74,9 @@ RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
 
 RefPtr<Icon> Icon::createIconForFileExtension(const String& fileExtension)
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSImage *image = [[NSWorkspace sharedWorkspace] iconForFileType:[@"." stringByAppendingString:fileExtension]];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     if (!image)
         return nullptr;
 
@@ -83,7 +85,9 @@ RefPtr<Icon> Icon::createIconForFileExtension(const String& fileExtension)
 
 RefPtr<Icon> Icon::createIconForUTI(const String& UTI)
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSImage *image = [[NSWorkspace sharedWorkspace] iconForFileType:UTI];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     if (!image)
         return nullptr;
 

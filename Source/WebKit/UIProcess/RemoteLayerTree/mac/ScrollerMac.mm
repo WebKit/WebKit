@@ -201,12 +201,16 @@ enum class FeatureToAnimate {
     UNUSED_PARAM(scrollerImp);
 
     if (!_scroller)
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return [NSAppearance currentAppearance];
+        ALLOW_DEPRECATED_DECLARATIONS_END
 
     // The base system does not support dark Aqua, so we might get a null result.
     if (auto *appearance = [NSAppearance appearanceNamed:_scroller->pair().useDarkAppearance() ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua])
         return appearance;
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return [NSAppearance currentAppearance];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 #endif
 

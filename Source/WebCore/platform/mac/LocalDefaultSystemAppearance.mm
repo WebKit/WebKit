@@ -34,10 +34,14 @@ namespace WebCore {
 LocalDefaultSystemAppearance::LocalDefaultSystemAppearance(bool useDarkAppearance)
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     m_savedSystemAppearance = [NSAppearance currentAppearance];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     m_usingDarkAppearance = useDarkAppearance;
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [NSAppearance setCurrentAppearance:[NSAppearance appearanceNamed:m_usingDarkAppearance ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua]];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     UNUSED_PARAM(useDarkAppearance);
 #endif
@@ -46,7 +50,9 @@ LocalDefaultSystemAppearance::LocalDefaultSystemAppearance(bool useDarkAppearanc
 LocalDefaultSystemAppearance::~LocalDefaultSystemAppearance()
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [NSAppearance setCurrentAppearance:m_savedSystemAppearance.get()];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 

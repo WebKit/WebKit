@@ -332,7 +332,9 @@ static NSArray<NSString *> *controlArray()
     if (iconImage)
         return iconImage;
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     iconImage = [NSImage _imageWithSystemSymbolName:control];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     if (!iconImage)
         return nil;
 

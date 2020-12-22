@@ -149,7 +149,9 @@ RetainPtr<NSImage> createDragImageIconForCachedImageFilename(const String& filen
         extension = @"";
     }
     
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return [[NSWorkspace sharedWorkspace] iconForFileType:extension];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 const CGFloat linkImagePadding = 10;
