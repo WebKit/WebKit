@@ -87,6 +87,7 @@ public:
     void setEnabled(bool);
 
     bool muted() const;
+    bool mutedForBindings() const;
 
     enum class State { Live, Ended };
     State readyState() const;
@@ -201,6 +202,7 @@ private:
     MediaTrackConstraints m_constraints;
     std::unique_ptr<DOMPromiseDeferred<void>> m_promise;
 
+    bool m_muted { false };
     bool m_ended { false };
     const bool m_isCaptureTrack { false };
 };

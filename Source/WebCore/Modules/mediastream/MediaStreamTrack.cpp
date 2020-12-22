@@ -80,6 +80,7 @@ Ref<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext& context, 
 MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStreamTrackPrivate>&& privateTrack)
     : ActiveDOMObject(&context)
     , m_private(WTFMove(privateTrack))
+    , m_muted(m_private->muted())
     , m_isCaptureTrack(m_private->isCaptureTrack())
 {
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -194,6 +195,11 @@ void MediaStreamTrack::setEnabled(bool enabled)
 bool MediaStreamTrack::muted() const
 {
     return m_private->muted();
+}
+
+bool MediaStreamTrack::mutedForBindings() const
+{
+    return m_muted;
 }
 
 auto MediaStreamTrack::readyState() const -> State
@@ -562,9 +568,12 @@ void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
     if (scriptExecutionContext()->activeDOMObjectsAreStopped() || m_ended)
         return;
 
-    AtomString eventType = muted() ? eventNames().muteEvent : eventNames().unmuteEvent;
-    queueTaskToDispatchEvent(*this, TaskSource::Networking, Event::create(eventType, Event::CanBubble::No, Event::IsCancelable::No));
-
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, muted = m_private->muted()] {
+        if (!scriptExecutionContext() || scriptExecutionContext()->activeDOMObjectsAreStopped())
+            return;
+        m_muted = muted;
+        dispatchEvent(Event::create(muted ? eventNames().muteEvent : eventNames().unmuteEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    });
     configureTrackRendering();
 }
 

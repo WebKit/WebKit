@@ -29,36 +29,48 @@
                 })
 
                 .then(() => {
-                    test(() => {
+                    promise_test(async () => {
                         if (window.internals)
                             window.internals.setPageVisibility(false);
+                        if (!audioTrack.muted)
+                            await new Promise(resolve => audioTrack.onmute = resolve);
                         assert_true(audioTrack.muted, "audio track is muted");
+                        if (!videoTrack.muted)
+                            await new Promise(resolve => videoTrack.onmute = resolve);
                         assert_true(videoTrack.muted, "video track is muted");
                     }, "Hide page, video and audio should be muted");
                 })
 
                 .then(() => {
-                    test(() => {
+                    promise_test(async () => {
                         if (window.internals)
                             window.internals.setPageVisibility(true);
+                        if (audioTrack.muted)
+                            await new Promise(resolve => audioTrack.onunmute = resolve);
                         assert_false(audioTrack.muted, "audio track is active");
+                        if (videoTrack.muted)
+                            await new Promise(resolve => videoTrack.onunmute = resolve);
                         assert_false(videoTrack.muted, "video track is active");
                     }, "Show page, video and audio should be unmuted");
                 })
 
                 .then(() => {
-                    test(() => {
+                    promise_test(async () => {
                         if (window.internals) {
                             window.internals.setPageVisibility(false);
                             window.internals.setPageMuted("capturedevices");
                         }
+                        if (!audioTrack.muted)
+                            await new Promise(resolve => audioTrack.onmute = resolve);
                         assert_true(audioTrack.muted, "audio track is muted");
+                        if (!videoTrack.muted)
+                            await new Promise(resolve => videoTrack.onmute = resolve);
                         assert_true(videoTrack.muted, "video track is muted");
                     }, "Hide and mute page, video and audio should be muted");
                 })
 
                 .then(() => {
-                    test(() => {
+                    promise_test(async () => {
                         if (window.internals)
                             window.internals.setPageVisibility(true);
                         assert_true(audioTrack.muted, "audio track is muted");
