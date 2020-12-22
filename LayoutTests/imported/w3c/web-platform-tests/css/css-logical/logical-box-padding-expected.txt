@@ -43,4 +43,12 @@ FAIL Test that logical padding-* properties share computed values with their phy
 FAIL Test that padding-* shorthands set the computed value of both logical and physical longhands, with 'writing-mode: sideways-lr; direction: rtl; '. assert_equals: shorthand properties on one declaration, writing mode properties on another, 'writing-mode: sideways-lr; direction: rtl; ', padding-top expected "1px" but got "0px"
 FAIL Test that padding-* properties honor order of appearance when both logical and physical associates are declared, with 'writing-mode: sideways-lr; direction: rtl; '. assert_equals: 'padding-inline-start' last on single declaration, 'writing-mode: sideways-lr; direction: rtl; ', padding-block-start expected "1px" but got "3px"
 FAIL Test that padding-* properties honor selector specificty when both logical and physical associates are declared, with 'writing-mode: sideways-lr; direction: rtl; '. assert_equals: 'padding-inline-start', two declarations, 'writing-mode: sideways-lr; direction: rtl; ', padding-block-start expected "1px" but got "3px"
+PASS Test that logical padding-* properties share computed values with their physical associates, with '-webkit-writing-mode: horizontal-bt; direction: ltr; '.
+PASS Test that padding-* shorthands set the computed value of both logical and physical longhands, with '-webkit-writing-mode: horizontal-bt; direction: ltr; '.
+PASS Test that padding-* properties honor order of appearance when both logical and physical associates are declared, with '-webkit-writing-mode: horizontal-bt; direction: ltr; '.
+PASS Test that padding-* properties honor selector specificty when both logical and physical associates are declared, with '-webkit-writing-mode: horizontal-bt; direction: ltr; '.
+PASS Test that logical padding-* properties share computed values with their physical associates, with '-webkit-writing-mode: horizontal-bt; direction: rtl; '.
+PASS Test that padding-* shorthands set the computed value of both logical and physical longhands, with '-webkit-writing-mode: horizontal-bt; direction: rtl; '.
+PASS Test that padding-* properties honor order of appearance when both logical and physical associates are declared, with '-webkit-writing-mode: horizontal-bt; direction: rtl; '.
+PASS Test that padding-* properties honor selector specificty when both logical and physical associates are declared, with '-webkit-writing-mode: horizontal-bt; direction: rtl; '.
 

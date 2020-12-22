@@ -43,4 +43,12 @@ FAIL Test that logical inset-* properties share computed values with their physi
 FAIL Test that inset-* shorthands set the computed value of both logical and physical longhands, with 'writing-mode: sideways-lr; direction: rtl; '. assert_equals: shorthand properties on one declaration, writing mode properties on another, 'writing-mode: sideways-lr; direction: rtl; ', top expected "1px" but got "0px"
 FAIL Test that inset-* properties honor order of appearance when both logical and physical associates are declared, with 'writing-mode: sideways-lr; direction: rtl; '. assert_equals: 'inset-inline-start' last on single declaration, 'writing-mode: sideways-lr; direction: rtl; ', inset-block-start expected "1px" but got "3px"
 FAIL Test that inset-* properties honor selector specificty when both logical and physical associates are declared, with 'writing-mode: sideways-lr; direction: rtl; '. assert_equals: 'inset-inline-start', two declarations, 'writing-mode: sideways-lr; direction: rtl; ', inset-block-start expected "1px" but got "3px"
+PASS Test that logical inset-* properties share computed values with their physical associates, with '-webkit-writing-mode: horizontal-bt; direction: ltr; '.
+PASS Test that inset-* shorthands set the computed value of both logical and physical longhands, with '-webkit-writing-mode: horizontal-bt; direction: ltr; '.
+PASS Test that inset-* properties honor order of appearance when both logical and physical associates are declared, with '-webkit-writing-mode: horizontal-bt; direction: ltr; '.
+PASS Test that inset-* properties honor selector specificty when both logical and physical associates are declared, with '-webkit-writing-mode: horizontal-bt; direction: ltr; '.
+PASS Test that logical inset-* properties share computed values with their physical associates, with '-webkit-writing-mode: horizontal-bt; direction: rtl; '.
+PASS Test that inset-* shorthands set the computed value of both logical and physical longhands, with '-webkit-writing-mode: horizontal-bt; direction: rtl; '.
+PASS Test that inset-* properties honor order of appearance when both logical and physical associates are declared, with '-webkit-writing-mode: horizontal-bt; direction: rtl; '.
+PASS Test that inset-* properties honor selector specificty when both logical and physical associates are declared, with '-webkit-writing-mode: horizontal-bt; direction: rtl; '.
 

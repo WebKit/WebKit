@@ -1,3 +1,22 @@
+2020-12-22  Ziran Sun  <zsun@igalia.com>
+
+        Add test for logical properties in webkit non-standard '-webkit-writing-mode: horizontal-bt' mode
+        https://bugs.webkit.org/show_bug.cgi?id=220015
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * web-platform-tests/css/css-logical/logical-box-border-color-expected.txt:
+        * web-platform-tests/css/css-logical/logical-box-border-radius-expected.txt:
+        * web-platform-tests/css/css-logical/logical-box-border-shorthands-expected.txt:
+        * web-platform-tests/css/css-logical/logical-box-border-style-expected.txt:
+        * web-platform-tests/css/css-logical/logical-box-border-width-expected.txt:
+        * web-platform-tests/css/css-logical/logical-box-inset-expected.txt:
+        * web-platform-tests/css/css-logical/logical-box-margin-expected.txt:
+        * web-platform-tests/css/css-logical/logical-box-padding-expected.txt:
+        * web-platform-tests/css/css-logical/logical-box-size-expected.txt:
+        * web-platform-tests/css/css-logical/resources/test-shared.js:
+        (CSS.supports):
+
 2020-12-17  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors] Update WPT test suite
