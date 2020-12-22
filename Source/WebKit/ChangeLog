@@ -1,3 +1,19 @@
+2020-12-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (iOS 14): Bad access crash in ShareableBitmap::makeCGImageCopy() under assignLegacyDataForContextMenuInteraction()
+        https://bugs.webkit.org/show_bug.cgi?id=219843
+        <rdar://problem/72537059>
+
+        Reviewed by Geoffrey Garen.
+
+        Apply a speculative fix for the crash by making the UI process robust in the case where the requested position
+        information has the `isImage` flag set, but no native image. Additionally, keep the existing debug assertions by
+        moving them outside of their current if statements.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView assignLegacyDataForContextMenuInteraction]):
+        (-[WKContentView continueContextMenuInteraction:]):
+
 2020-12-21  Chris Dumez  <cdumez@apple.com>
 
         Simplify CARingBuffer usage with SharedMemory storage

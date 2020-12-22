@@ -9466,6 +9466,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
     auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:_positionInformation userInfo:nil]);
 
+    ASSERT_IMPLIES(_positionInformation.isImage, _positionInformation.image);
     if (_positionInformation.isLink) {
         _longPressCanClick = NO;
 
@@ -9504,10 +9505,9 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
         _contextMenuLegacyMenu = menuFromLegacyPreviewOrDefaultActions(previewViewController, defaultActionsFromAssistant, elementInfo);
 
-    } else if (_positionInformation.isImage) {
+    } else if (_positionInformation.isImage && _positionInformation.image) {
         NSURL *nsURL = (NSURL *)url;
         RetainPtr<NSDictionary> imageInfo;
-        ASSERT(_positionInformation.image);
         auto cgImage = _positionInformation.image->makeCGImageCopy();
         auto uiImage = adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
 
@@ -9667,7 +9667,6 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 #endif
 
     auto completionBlock = makeBlockPtr([continueWithContextMenuConfiguration = makeBlockPtr(continueWithContextMenuConfiguration), linkURL = WTFMove(linkURL), weakSelf = WeakObjCPtr<WKContentView>(self)] (UIContextMenuConfiguration *configurationFromWKUIDelegate) mutable {
-
         auto strongSelf = weakSelf.get();
         if (!strongSelf) {
             continueWithContextMenuConfiguration(nil);
@@ -9681,8 +9680,8 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
             return;
         }
 
-        if (strongSelf->_positionInformation.isImage && !strongSelf->_positionInformation.isLink) {
-            ASSERT(strongSelf->_positionInformation.image);
+        ASSERT_IMPLIES(strongSelf->_positionInformation.isImage, strongSelf->_positionInformation.image);
+        if (strongSelf->_positionInformation.isImage && strongSelf->_positionInformation.image && !strongSelf->_positionInformation.isLink) {
             auto cgImage = strongSelf->_positionInformation.image->makeCGImageCopy();
 
             strongSelf->_contextMenuActionProviderDelegateNeedsOverride = NO;
