@@ -12,7 +12,7 @@
             "type": "ignore-previous-rules"
         },
         "trigger": {
-            "url-filter": ".*whitelist"
+            "url-filter": ".allowlist"
         }
     }
 ]

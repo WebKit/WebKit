@@ -9,7 +9,7 @@ CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:800
 CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/filters-with-quantifiers-combined.html from loading a resource from http://localhost:8000/resources/square100.png?wxyabc
 CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/filters-with-quantifiers-combined.html from loading a resource from http://localhost:8000/resources/square100.png?wxydefabc
 CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/filters-with-quantifiers-combined.html from loading a resource from http://localhost:8000/resources/square100.png?acbwxy
-CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/filters-with-quantifiers-combined.html from loading a resource from http://localhost:8000/resources/square100.png?abcacbdefabcdjklwhitelistwxy
+CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/filters-with-quantifiers-combined.html from loading a resource from http://localhost:8000/resources/square100.png?abcacbdefabcdjklallowlistwxy
 layer at (0,0) size 785x952
   RenderView at (0,0) size 785x600
 layer at (0,0) size 785x952

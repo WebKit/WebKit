@@ -44,7 +44,7 @@
             "type": "ignore-previous-rules"
         },
         "trigger": {
-            "url-filter": "abcd.*whitelist"
+            "url-filter": "abcd.*allowlist"
         }
     },
     {
