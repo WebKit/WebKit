@@ -193,12 +193,12 @@ void SourceBufferPrivateGStreamer::didReceiveSample(MediaSample& sample)
 
 void SourceBufferPrivateGStreamer::didReceiveAllPendingSamples()
 {
-    m_client->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult::AppendSucceeded);
+    SourceBufferPrivate::appendCompleted(true, m_mediaSource ? m_mediaSource->isEnded() : true);
 }
 
 void SourceBufferPrivateGStreamer::appendParsingFailed()
 {
-    m_client->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult::ParsingFailed);
+    SourceBufferPrivate::appendCompleted(false, m_mediaSource ? m_mediaSource->isEnded() : true);
 }
 
 bool SourceBufferPrivateGStreamer::isSeeking() const

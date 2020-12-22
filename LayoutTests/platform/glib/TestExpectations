@@ -459,24 +459,6 @@ webkit.org/b/219245 webrtc/peer-connection-audio-unmute.html [ Crash ]
 webkit.org/b/219245 webrtc/peer-connection-remote-audio-mute.html [ Crash ]
 webkit.org/b/219245 webrtc/peer-connection-remote-audio-mute2.html [ Crash ]
 
-# Seek failures likely related to r270612
-webkit.org/b/219822 imported/w3c/web-platform-tests/media-source/mediasource-buffered-seek.html [ Failure ]
-webkit.org/b/219822 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html [ Failure ]
-webkit.org/b/219822 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-video-bitrate.html [ Pass Failure ]
-webkit.org/b/219822 imported/w3c/web-platform-tests/media-source/mediasource-liveseekable.html [ Failure ]
-webkit.org/b/219822 imported/w3c/web-platform-tests/media-source/mediasource-play-then-seek-back.html [ Failure ]
-webkit.org/b/219822 imported/w3c/web-platform-tests/media-source/mediasource-redundant-seek.html [ Failure ]
-webkit.org/b/219822 imported/w3c/web-platform-tests/media-source/mediasource-seek-during-pending-seek.html [ Failure ]
-webkit.org/b/219822 imported/w3c/web-platform-tests/media-source/mediasource-seekable.html [ Failure ]
-webkit.org/b/219822 imported/w3c/web-platform-tests/media-source/mediasource-sequencemode-append-buffer.html [ Failure ]
-webkit.org/b/219822 media/media-source/media-source-canplaythrough-event.html [ Failure ]
-webkit.org/b/219822 media/media-source/media-source-stalled-holds-sleep-assertion.html [ Failure ]
-webkit.org/b/219822 media/encrypted-media/clearKey/clearKey-cenc-audio-playback-mse.html [ Timeout ]
-webkit.org/b/219822 media/encrypted-media/clearKey/clearKey-cenc-video-playback-mse.html [ Timeout ]
-webkit.org/b/219822 media/media-source/media-source-paint-to-canvas.html [ Timeout ]
-webkit.org/b/219822 media/media-source/media-source-seek-redundant-append.html [ Timeout ]
-webkit.org/b/219822 media/media-source/media-source-seek-twice.html [ Timeout ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1934,6 +1916,13 @@ webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursor
 webkit.org/b/211614 imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate.any.worker.html [ Failure Pass ]
 webkit.org/b/211940 fast/text/multiple-codeunit-vertical-upright-2.html [ ImageOnlyFailure ]
 webkit.org/b/211940 fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
+
+webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-sequencemode-append-buffer.html [ Failure ]
+webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-seekable.html [ Failure ]
+webkit.org/b/197711 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames.html [ Pass Timeout Failure ]
+webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Crash Failure ]
+webkit.org/b/214349 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html [ Failure Crash ]
+webkit.org/b/220083 [ Debug ] media/media-source/media-source-unnecessary-seek-seeked.html [ Pass Crash ]
 
 # End: Common failures between GTK and WPE.
 
