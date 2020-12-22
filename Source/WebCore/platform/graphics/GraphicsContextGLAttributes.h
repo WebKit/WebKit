@@ -35,6 +35,13 @@ enum class GraphicsContextGLPowerPreference {
     HighPerformance
 };
 
+enum class GraphicsContextGLWebGLVersion {
+    WebGL1,
+#if ENABLE(WEBGL2)
+    WebGL2
+#endif
+};
+
 struct GraphicsContextGLAttributes {
     // WebGLContextAttributes
     bool alpha { true };
@@ -49,10 +56,11 @@ struct GraphicsContextGLAttributes {
 
     // Additional attributes.
     bool shareResources { true };
-    bool isWebGL2 { false };
     bool noExtensions { false };
     float devicePixelRatio { 1 };
     PowerPreference initialPowerPreference { PowerPreference::Default };
+    using WebGLVersion = GraphicsContextGLWebGLVersion;
+    WebGLVersion webGLVersion { WebGLVersion::WebGL1 };
 #if PLATFORM(COCOA)
     bool useMetal { false };
 #endif

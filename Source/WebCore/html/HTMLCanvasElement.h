@@ -81,10 +81,13 @@ public:
     CanvasRenderingContext2D* getContext2d(const String&);
 
 #if ENABLE(WEBGL)
+    using WebGLVersion = GraphicsContextGLWebGLVersion;
     static bool isWebGLType(const String&);
-    WebGLRenderingContextBase* createContextWebGL(const String&, WebGLContextAttributes&& = { });
-    WebGLRenderingContextBase* getContextWebGL(const String&, WebGLContextAttributes&& = { });
+    static WebGLVersion toWebGLVersion(const String&);
+    WebGLRenderingContextBase* createContextWebGL(WebGLVersion type, WebGLContextAttributes&& = { });
+    WebGLRenderingContextBase* getContextWebGL(WebGLVersion type, WebGLContextAttributes&& = { });
 #endif
+
 #if ENABLE(WEBGPU)
     static bool isWebGPUType(const String&);
     GPUCanvasContext* createContextWebGPU(const String&);

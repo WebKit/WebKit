@@ -190,8 +190,13 @@ void OffscreenCanvas::createContextWebGL(RenderingContextType contextType, WebGL
             return;
     } else
         return;
-
-    m_context = WebGLRenderingContextBase::create(*this, attrs, (contextType == RenderingContextType::Webgl) ? "webgl" : "webgl2");
+    GraphicsContextGLWebGLVersion webGLVersion = GraphicsContextGLWebGLVersion::WebGL1;
+#if ENABLE(WEBGL2)
+    webGLVersion = (contextType == RenderingContextType::Webgl) ? GraphicsContextGLWebGLVersion::WebGL1 : GraphicsContextGLWebGLVersion::WebGL2;
+#else
+    UNUSED_PARAM(contextType);
+#endif
+    m_context = WebGLRenderingContextBase::create(*this, attrs, webGLVersion);
 }
 
 #endif // ENABLE(WEBGL)

@@ -102,6 +102,8 @@ static EGLDisplay InitializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
         displayAttributes.append(EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE);
     }
 
+    LOG(WebGL, "Attempting to use ANGLE's %s backend.", attrs.useMetal ? "Metal" : "OpenGL");
+
     displayAttributes.append(EGL_NONE);
     display = EGL_GetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void*>(EGL_DEFAULT_DISPLAY), displayAttributes.data());
 
@@ -222,7 +224,7 @@ static void setGPUByRegistryID(CGLContextObj contextObj, CGLPixelFormatObj pixel
 GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attrs, HostWindow* hostWindow, GraphicsContextGLOpenGL* sharedContext, GraphicsContextGLIOSurfaceSwapChain* swapChain)
     : GraphicsContextGL(attrs, Destination::Offscreen, sharedContext)
 {
-    m_isForWebGL2 = attrs.isWebGL2;
+    m_isForWebGL2 = attrs.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
 
 #if HAVE(APPLE_GRAPHICS_CONTROL)
     m_powerPreferenceUsedForCreation = (hasLowAndHighPowerGPUs() && attrs.powerPreference == GraphicsContextGLPowerPreference::HighPerformance) ? GraphicsContextGLPowerPreference::HighPerformance : GraphicsContextGLPowerPreference::Default;

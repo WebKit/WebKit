@@ -128,7 +128,8 @@ using WebGLCanvas = WTF::Variant<RefPtr<HTMLCanvasElement>>;
 class WebGLRenderingContextBase : public GraphicsContextGL::Client, public GPUBasedCanvasRenderingContext, private ActivityStateChangeObserver {
     WTF_MAKE_ISO_ALLOCATED(WebGLRenderingContextBase);
 public:
-    static std::unique_ptr<WebGLRenderingContextBase> create(CanvasBase&, WebGLContextAttributes&, const String&);
+    using WebGLVersion = GraphicsContextGLWebGLVersion;
+    static std::unique_ptr<WebGLRenderingContextBase> create(CanvasBase&, WebGLContextAttributes&, WebGLVersion);
     virtual ~WebGLRenderingContextBase();
 
     WebGLCanvas canvas();

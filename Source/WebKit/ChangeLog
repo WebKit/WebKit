@@ -1,3 +1,18 @@
+2020-12-22  Dean Jackson  <dino@apple.com>
+
+        Use an enum class to identify WebGL versions
+        https://bugs.webkit.org/show_bug.cgi?id=220099
+        <rdar://problem/72596828>
+
+        Reviewed by Ken Russell.
+
+        Encode the WebGL version.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<WebCore::GraphicsContextGLAttributes>::encode):
+        (IPC::ArgumentCoder<WebCore::GraphicsContextGLAttributes>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+
 2020-12-22  Kate Cheney  <katherine_cheney@apple.com>
 
         Cannot see 'Add to my stations' button in BBC World service Radio

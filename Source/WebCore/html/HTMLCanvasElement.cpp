@@ -300,7 +300,7 @@ ExceptionOr<Optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::JSGlo
         auto attributes = convert<IDLDictionary<WebGLContextAttributes>>(state, !arguments.isEmpty() ? arguments[0].get() : JSC::jsUndefined());
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
-        auto context = createContextWebGL(contextId, WTFMove(attributes));
+        auto context = createContextWebGL(toWebGLVersion(contextId), WTFMove(attributes));
         if (!context)
             return Optional<RenderingContext> { WTF::nullopt };
 
@@ -335,7 +335,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
 
 #if ENABLE(WEBGL)
     if (HTMLCanvasElement::isWebGLType(type))
-        return getContextWebGL(type);
+        return getContextWebGL(HTMLCanvasElement::toWebGLVersion(type));
 #endif
 
 #if ENABLE(WEBGPU)
@@ -421,9 +421,20 @@ bool HTMLCanvasElement::isWebGLType(const String& type)
         || type == "webkit-3d";
 }
 
-WebGLRenderingContextBase* HTMLCanvasElement::createContextWebGL(const String& type, WebGLContextAttributes&& attrs)
+GraphicsContextGLWebGLVersion HTMLCanvasElement::toWebGLVersion(const String& type)
 {
-    ASSERT(HTMLCanvasElement::isWebGLType(type));
+    ASSERT(isWebGLType(type));
+#if ENABLE(WEBGL2)
+    if (type == "webgl2")
+        return WebGLVersion::WebGL2;
+#else
+    UNUSED_PARAM(type);
+#endif
+    return WebGLVersion::WebGL1;
+}
+
+WebGLRenderingContextBase* HTMLCanvasElement::createContextWebGL(WebGLVersion type, WebGLContextAttributes&& attrs)
+{
     ASSERT(!m_context);
 
     if (!shouldEnableWebGL(document().settings()))
@@ -457,10 +468,8 @@ WebGLRenderingContextBase* HTMLCanvasElement::createContextWebGL(const String& t
     return downcast<WebGLRenderingContextBase>(m_context.get());
 }
 
-WebGLRenderingContextBase* HTMLCanvasElement::getContextWebGL(const String& type, WebGLContextAttributes&& attrs)
+WebGLRenderingContextBase* HTMLCanvasElement::getContextWebGL(WebGLVersion type, WebGLContextAttributes&& attrs)
 {
-    ASSERT(HTMLCanvasElement::isWebGLType(type));
-
     if (!shouldEnableWebGL(document().settings()))
         return nullptr;
 

@@ -1070,6 +1070,16 @@ template <> struct EnumTraits<WebCore::GraphicsContextGLPowerPreference> {
     WebCore::GraphicsContextGLPowerPreference::HighPerformance
     >;
 };
+
+template <> struct EnumTraits<WebCore::GraphicsContextGLWebGLVersion> {
+    using values = EnumValues <
+    WebCore::GraphicsContextGLWebGLVersion,
+    WebCore::GraphicsContextGLWebGLVersion::WebGL1
+#if ENABLE(WEBGL2)
+    , WebCore::GraphicsContextGLWebGLVersion::WebGL2
+#endif
+    >;
+};
 #endif
 
 } // namespace WTF

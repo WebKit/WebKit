@@ -57,7 +57,11 @@ GraphicsContextGLPowerPreference RemoteGraphicsContextGLProxyBase::powerPreferen
 
 bool RemoteGraphicsContextGLProxyBase::isGLES2Compliant() const
 {
-    return contextAttributes().isWebGL2;
+#if ENABLE(WEBGL2)
+    return contextAttributes().webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
+#else
+    return false;
+#endif
 }
 
 void RemoteGraphicsContextGLProxyBase::markContextChanged()

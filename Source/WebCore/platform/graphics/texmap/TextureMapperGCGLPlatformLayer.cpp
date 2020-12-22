@@ -39,7 +39,11 @@ TextureMapperGCGLPlatformLayer::TextureMapperGCGLPlatformLayer(GraphicsContextGL
     switch (destination) {
     case GraphicsContextGLOpenGL::Destination::Offscreen: {
         auto sharingContext = PlatformDisplay::sharedDisplayForCompositing().sharingGLContext()->platformContext();
-        m_glContext = ANGLEContext::createContext(sharingContext, context.contextAttributes().isWebGL2);
+#if ENABLE(WEBGL2)
+        m_glContext = ANGLEContext::createContext(sharingContext, context.contextAttributes().webGLVersion == GraphicsContextGLWebGLVersion::WebGL2);
+#else
+        m_glContext = ANGLEContext::createContext(sharingContext, false);
+#endif
         break;
     }
     case GraphicsContextGLOpenGL::Destination::DirectlyToHostWindow:

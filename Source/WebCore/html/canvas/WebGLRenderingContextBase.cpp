@@ -645,11 +645,11 @@ static bool isHighPerformanceContext(const RefPtr<GraphicsContextGL>& context)
     return context->powerPreferenceUsedForCreation() == WebGLPowerPreference::HighPerformance;
 }
 
-std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(CanvasBase& canvas, WebGLContextAttributes& attributes, const String& type)
+std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(CanvasBase& canvas, WebGLContextAttributes& attributes, WebGLVersion type)
 {
 #if ENABLE(WEBGL2)
     // Note: WebGL 2.0 is only supported with the ANGLE backend.
-    if (type == "webgl2" && !RuntimeEnabledFeatures::sharedFeatures().webGL2Enabled())
+    if (type == GraphicsContextGLWebGLVersion::WebGL2 && !RuntimeEnabledFeatures::sharedFeatures().webGL2Enabled())
         return nullptr;
 #else
     UNUSED_PARAM(type);
@@ -706,13 +706,8 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
 
     attributes.noExtensions = true;
     attributes.shareResources = false;
-
     attributes.initialPowerPreference = attributes.powerPreference;
-
-#if ENABLE(WEBGL2)
-    if (type == "webgl2")
-        attributes.isWebGL2 = true;
-#endif
+    attributes.webGLVersion = type;
 
 #if PLATFORM(COCOA)
     if (RuntimeEnabledFeatures::sharedFeatures().webGLUsingMetal())
@@ -723,7 +718,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
         LOG(WebGL, "Create a WebGL context that looks real, but will require a policy resolution if used.");
         std::unique_ptr<WebGLRenderingContextBase> renderingContext = nullptr;
 #if ENABLE(WEBGL2)
-        if (type == "webgl2")
+        if (type == WebGLVersion::WebGL2)
             renderingContext = WebGL2RenderingContext::create(canvas, attributes);
         else
 #endif
@@ -746,7 +741,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
 
     std::unique_ptr<WebGLRenderingContextBase> renderingContext;
 #if ENABLE(WEBGL2)
-    if (type == "webgl2")
+    if (type == WebGLVersion::WebGL2)
         renderingContext = WebGL2RenderingContext::create(canvas, context.releaseNonNull(), attributes);
     else
 #endif

@@ -99,9 +99,9 @@ RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextG
     // Create the GraphicsContextGLOpenGL object first in order to establist a current context on this thread.
     auto context = adoptRef(new GraphicsContextGLOpenGL(attributes, hostWindow, destination));
 
-#if USE(LIBEPOXY) && USE(OPENGL_ES)
+#if USE(LIBEPOXY) && USE(OPENGL_ES) && ENABLE(WEBGL2)
     // Bail if GLES3 was requested but cannot be provided.
-    if (attributes.isWebGL2 && !epoxy_is_desktop_gl() && epoxy_gl_version() < 30)
+    if (attributes.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2 && !epoxy_is_desktop_gl() && epoxy_gl_version() < 30)
         return nullptr;
 #endif
 
@@ -114,7 +114,9 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     : GraphicsContextGL(attributes, destination, sharedContext)
 {
     ASSERT_UNUSED(sharedContext, !sharedContext);
-    m_isForWebGL2 = attributes.isWebGL2;
+#if ENABLE(WEBGL2)
+    m_isForWebGL2 = attributes.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
+#endif
 #if USE(NICOSIA)
     m_nicosiaLayer = WTF::makeUnique<Nicosia::GCGLANGLELayer>(*this, destination);
 #else
@@ -279,7 +281,11 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     }
 #else
     // Adjust the shader specification depending on whether GLES3 (i.e. WebGL2 support) was requested.
-    m_compiler = ANGLEWebKitBridge(SH_ESSL_OUTPUT, attributes.isWebGL2 ? SH_WEBGL2_SPEC : SH_WEBGL_SPEC);
+#if ENABLE(WEBGL2)
+    m_compiler = ANGLEWebKitBridge(SH_ESSL_OUTPUT, (attributes.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2) ? SH_WEBGL2_SPEC : SH_WEBGL_SPEC);
+#else
+    m_compiler = ANGLEWebKitBridge(SH_ESSL_OUTPUT, SH_WEBGL_SPEC);
+#endif
 #endif
 
     // ANGLE initialization.

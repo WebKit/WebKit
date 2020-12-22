@@ -3185,7 +3185,7 @@ void ArgumentCoder<WebCore::GraphicsContextGLAttributes>::encode(Encoder& encode
     encoder << attributes.failIfMajorPerformanceCaveat;
     encoder << attributes.powerPreference;
     encoder << attributes.shareResources;
-    encoder << attributes.isWebGL2;
+    encoder << attributes.webGLVersion;
     encoder << attributes.noExtensions;
     encoder << attributes.devicePixelRatio;
     encoder << attributes.initialPowerPreference;
@@ -3215,7 +3215,7 @@ Optional<WebCore::GraphicsContextGLAttributes> ArgumentCoder<WebCore::GraphicsCo
         return WTF::nullopt;
     if (!decoder.decode(attributes.shareResources))
         return WTF::nullopt;
-    if (!decoder.decode(attributes.isWebGL2))
+    if (!decoder.decode(attributes.webGLVersion))
         return WTF::nullopt;
     if (!decoder.decode(attributes.noExtensions))
         return WTF::nullopt;
