@@ -117,14 +117,15 @@ public:
     void devicesChanged(const Vector<CaptureDevice>&);
 
 private:
-    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints) final
-    {
-        return CoreAudioCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalt), constraints);
-    }
-
+    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*) override;
     CaptureDeviceManager& audioCaptureDeviceManager() final;
     const Vector<CaptureDevice>& speakerDevices() const final;
 };
+
+inline CaptureSourceOrError CoreAudioCaptureSourceFactory::createAudioCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
+{
+    return CoreAudioCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalt), constraints);
+}
 
 } // namespace WebCore
 

@@ -29,6 +29,7 @@
 
 #include "AudioSession.h"
 #include "CoreAudioCaptureSource.h"
+#include <wtf/WeakHashSet.h>
 
 OBJC_CLASS WebCoreAudioCaptureSourceIOSListener;
 
@@ -44,7 +45,12 @@ private:
     void beginAudioSessionInterruption() { beginInterruption(); }
     void endAudioSessionInterruption(AudioSession::MayResume) { endInterruption(); }
 
+    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*) final;
+    void addExtensiveObserver(ExtensiveObserver&) final;
+    void removeExtensiveObserver(ExtensiveObserver&) final;
+
     RetainPtr<WebCoreAudioCaptureSourceIOSListener> m_listener;
+    WeakHashSet<ExtensiveObserver> m_observers;
 };
 
 } // namespace WebCore

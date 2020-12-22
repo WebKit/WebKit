@@ -34,6 +34,7 @@
 #import <AVFoundation/AVAudioSession.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/Assertions.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>
 #import <wtf/Vector.h>
 
@@ -73,7 +74,6 @@
         if (auto* callback = protectedSelf->_callback)
             callback->scheduleUpdateCaptureDevices();
     });
-
 }
 
 @end
@@ -87,25 +87,34 @@ AVAudioSessionCaptureDeviceManager& AVAudioSessionCaptureDeviceManager::singleto
 }
 
 AVAudioSessionCaptureDeviceManager::AVAudioSessionCaptureDeviceManager()
+    : m_dispatchQueue(dispatch_queue_create("com.apple.WebKit.AVAudioSessionCaptureDeviceManager", DISPATCH_QUEUE_SERIAL))
 {
+    dispatch_async(m_dispatchQueue, makeBlockPtr([this, locker = holdLock(m_lock)] {
+        createAudioSession();
+    }).get());
+}
+
+void AVAudioSessionCaptureDeviceManager::createAudioSession()
+{
+    ASSERT(m_lock.isLocked());
+
 #if !PLATFORM(MACCATALYST)
     m_audioSession = adoptNS([[PAL::getAVAudioSessionClass() alloc] initAuxiliarySession]);
 #else
     // FIXME: Figure out if this is correct for Catalyst, where auxiliary session isn't available.
     m_audioSession = [PAL::getAVAudioSessionClass() sharedInstance];
 #endif
-    
+
     NSError *error = nil;
     auto options = AVAudioSessionCategoryOptionAllowBluetooth | AVAudioSessionCategoryOptionMixWithOthers;
     [m_audioSession setCategory:AVAudioSessionCategoryPlayAndRecord mode:AVAudioSessionModeVideoChat options:options error:&error];
-    if (error) {
+    if (error)
         RELEASE_LOG_ERROR(WebRTC, "Failed to set audio session category with error: %@.", error.localizedDescription);
-        return;
-    }
 }
 
 AVAudioSessionCaptureDeviceManager::~AVAudioSessionCaptureDeviceManager()
 {
+    dispatch_release(m_dispatchQueue);
     [m_listener invalidate];
     m_listener = nullptr;
 }
@@ -155,13 +164,22 @@ void AVAudioSessionCaptureDeviceManager::scheduleUpdateCaptureDevices()
 
 void AVAudioSessionCaptureDeviceManager::refreshAudioCaptureDevices()
 {
-    if (!m_listener)
-        m_listener = adoptNS([[WebAVAudioSessionAvailableInputsListener alloc] initWithCallback:this audioSession:m_audioSession.get()]);
+    {
+        // Make sure we have created the audio session.
+        auto locker = holdLock(m_lock);
+    }
+    bool firstTime = !m_devices;
+    if (m_audioSessionState == AudioSessionState::Inactive) {
+        m_audioSessionState = AudioSessionState::Active;
 
-    NSError *error = nil;
-    [m_audioSession setActive:YES withOptions:0 error:&error];
-    if (error)
-        RELEASE_LOG_ERROR(WebRTC, "Failed to activate audio session with error: %@.", error.localizedDescription);
+        if (!m_listener)
+            m_listener = adoptNS([[WebAVAudioSessionAvailableInputsListener alloc] initWithCallback:this audioSession:m_audioSession.get()]);
+
+        NSError *error = nil;
+        [m_audioSession setActive:YES withOptions:0 error:&error];
+        if (error)
+            RELEASE_LOG_ERROR(WebRTC, "Failed to activate audio session with error: %@.", error.localizedDescription);
+    }
 
     Vector<AVAudioSessionCaptureDevice> newAudioDevices;
     Vector<CaptureDevice> newDevices;
@@ -172,7 +190,6 @@ void AVAudioSessionCaptureDeviceManager::refreshAudioCaptureDevices()
         newAudioDevices.append(WTFMove(audioDevice));
     }
 
-    bool firstTime = !m_devices;
     bool haveDeviceChanges = !m_devices || newAudioDevices.size() != m_devices->size();
     if (!haveDeviceChanges) {
         for (size_t i = 0; i < newAudioDevices.size(); ++i) {
@@ -194,6 +211,30 @@ void AVAudioSessionCaptureDeviceManager::refreshAudioCaptureDevices()
 
     if (!firstTime)
         deviceChanged();
+}
+
+void AVAudioSessionCaptureDeviceManager::enableAllDevicesQuery()
+{
+    if (m_audioSessionState != AudioSessionState::NotNeeded)
+        return;
+
+    m_audioSessionState = AudioSessionState::Inactive;
+    refreshAudioCaptureDevices();
+}
+
+void AVAudioSessionCaptureDeviceManager::disableAllDevicesQuery()
+{
+    if (m_audioSessionState == AudioSessionState::NotNeeded)
+        return;
+
+    if (m_audioSessionState == AudioSessionState::Active) {
+        NSError *error = nil;
+        [m_audioSession setActive:NO withOptions:0 error:&error];
+        if (error)
+            RELEASE_LOG_ERROR(WebRTC, "Failed to disactivate audio session with error: %@.", error.localizedDescription);
+    }
+
+    m_audioSessionState = AudioSessionState::NotNeeded;
 }
 
 } // namespace WebCore

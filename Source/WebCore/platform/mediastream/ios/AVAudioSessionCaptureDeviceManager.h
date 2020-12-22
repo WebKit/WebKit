@@ -31,6 +31,7 @@
 #include "GenericTaskQueue.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/Lock.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS AVAudioSession;
@@ -54,12 +55,18 @@ public:
     
     void scheduleUpdateCaptureDevices();
 
+    void enableAllDevicesQuery();
+    void disableAllDevicesQuery();
+
 private:
     AVAudioSessionCaptureDeviceManager();
     ~AVAudioSessionCaptureDeviceManager();
 
+    void createAudioSession();
     void refreshAudioCaptureDevices();
     Vector<AVAudioSessionCaptureDevice>& audioSessionCaptureDevices();
+
+    enum class AudioSessionState { NotNeeded, Inactive, Active };
 
     Optional<Vector<CaptureDevice>> m_devices;
     Vector<CaptureDevice> m_speakerDevices;
@@ -67,6 +74,9 @@ private:
     RetainPtr<WebAVAudioSessionAvailableInputsListener> m_listener;
     RetainPtr<AVAudioSession> m_audioSession;
     GenericTaskQueue<Timer> m_updateDeviceStateQueue;
+    dispatch_queue_t m_dispatchQueue { nullptr };
+    Lock m_lock;
+    AudioSessionState m_audioSessionState { AudioSessionState::NotNeeded };
 };
 
 } // namespace WebCore

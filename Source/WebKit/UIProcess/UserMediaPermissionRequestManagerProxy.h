@@ -22,6 +22,7 @@
 #include "UserMediaPermissionCheckProxy.h"
 #include "UserMediaPermissionRequestProxy.h"
 #include <WebCore/MediaProducer.h>
+#include <WebCore/RealtimeMediaSourceFactory.h>
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
@@ -43,7 +44,11 @@ namespace WebKit {
 class WebPageProxy;
 
 class UserMediaPermissionRequestManagerProxy
+#if ENABLE(MEDIA_STREAM)
+    : public WebCore::AudioCaptureFactory::ExtensiveObserver
+#else
     : public CanMakeWeakPtr<UserMediaPermissionRequestManagerProxy>
+#endif
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
