@@ -195,9 +195,8 @@ endif ()
 
 if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_ADD_TARGET_CXX_FLAGS(ANGLE -Wno-cast-align
-                                      -Wno-deprecated-copy
+                                      -Wno-extra
                                       -Wno-suggest-attribute=format
-                                      -Wno-type-limits
                                       -Wno-undef
                                       -Wno-unused-parameter)
 endif ()

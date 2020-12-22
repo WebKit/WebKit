@@ -1,3 +1,24 @@
+2020-12-22  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        warning: enumerated and non-enumerated type in conditional expression in Compiler.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=220062
+
+        Reviewed by Dean Jackson.
+
+        Building ANGLE with -Wextra is too aggressive. -Wextra is great for code that we control,
+        where the burden of squashing warnings is relatively low. But with ANGLE, we have to either
+        land fixes upstream, or carry them downstream forever. It doesn't make sense to bother with
+        this for minor build warning fixes when upstream is clearly not using the same warning flags
+        and/or same compiler that we do.
+
+        Since we add -Wextra in our global flags, we have to manually override it here. We can now
+        also stop explicitly disabling other warnings that are implied by -Wextra.
+
+        Finally, note that changes.diff is not modified because this is, confusingly, a downstream
+        WebKit build file.
+
+        * CMakeLists.txt:
+
 2020-12-22  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] deqp/functional/gles3/texturespecification RGB4444 and RGB565 failures on Mac AMD
