@@ -139,6 +139,7 @@ public:
     ~ScrollController();
 
 #if PLATFORM(MAC)
+    // Returns true if handled.
     bool handleWheelEvent(const PlatformWheelEvent&);
 #endif
 
@@ -167,6 +168,7 @@ public:
     void updateGestureInProgressState(const PlatformWheelEvent&);
     float adjustScrollDestinationForDirectionalSnapping(ScrollEventAxis, float destination, float velocity, float originalPosition);
 #if PLATFORM(MAC)
+    // Returns true if handled.
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&);
 #endif
 #endif

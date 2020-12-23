@@ -121,7 +121,7 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
 #if ENABLE(CSS_SCROLL_SNAP)
     if (processWheelEventForScrollSnap(wheelEvent))
-        return false; // FIXME: Why don't we report that we handled it?
+        return true;
 #endif
     if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin || wheelEvent.phase() == PlatformWheelEventPhase::Cancelled)
         return false;
