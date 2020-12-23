@@ -381,12 +381,14 @@ Optional<Seconds> NetworkStorageSession::clientSideCookieCap(const RegistrableDo
     return m_ageCapForClientSideCookies;
 }
 
-HashMap<RegistrableDomain, HashSet<RegistrableDomain>>& NetworkStorageSession::storageAccessQuirks()
+const HashMap<RegistrableDomain, HashSet<RegistrableDomain>>& NetworkStorageSession::storageAccessQuirks()
 {
     static NeverDestroyed<HashMap<RegistrableDomain, HashSet<RegistrableDomain>>> map = [] {
         HashMap<RegistrableDomain, HashSet<RegistrableDomain>> map;
         map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoft.com"),
             HashSet { RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoftonline.com"_s) });
+        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("live.com"),
+            HashSet { RegistrableDomain::uncheckedCreateFromRegistrableDomainString("skype.com"_s) });
         map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("playstation.com"), HashSet {
             RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sonyentertainmentnetwork.com"_s),
             RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sony.com"_s) });
@@ -425,21 +427,6 @@ Optional<RegistrableDomain> NetworkStorageSession::findAdditionalLoginDomain(con
         return RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sony.com"_s);
 
     return WTF::nullopt;
-}
-
-RegistrableDomain NetworkStorageSession::mapToTopDomain(const RegistrableDomain& domainToMap)
-{
-    static NeverDestroyed<HashMap<RegistrableDomain, RegistrableDomain>> map = [] {
-        HashMap<RegistrableDomain, RegistrableDomain> map;
-        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("live.com"),
-            RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoft.com"_s));
-        return map;
-    }();
-
-    auto it = map.get().find(domainToMap);
-    if (it != map.get().end())
-        return it->value;
-    return domainToMap;
 }
 
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
