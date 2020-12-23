@@ -435,7 +435,7 @@ class Driver(object):
         environment['__XPC_ASAN_OPTIONS'] = environment['ASAN_OPTIONS']
 
         # Disable vnode-guard related simulated crashes for WKTR / DRT (rdar://problem/40674034).
-        environment['SQLITE_EXEMPT_PATH_FROM_VNODE_GUARDS'] = os.path.realpath(environment['DUMPRENDERTREE_TEMP'])
+        environment['SQLITE_EXEMPT_PATH_FROM_VNODE_GUARDS'] = '/'
         environment['__XPC_SQLITE_EXEMPT_PATH_FROM_VNODE_GUARDS'] = environment['SQLITE_EXEMPT_PATH_FROM_VNODE_GUARDS']
 
         environment['JSC_useKernTCSM'] = 'false'

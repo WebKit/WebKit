@@ -1,3 +1,21 @@
+2020-12-23  Dean Jackson  <dino@apple.com>
+
+        Simulated Python crash during test runs
+        https://bugs.webkit.org/show_bug.cgi?id=220108
+        <rdar://problem/72605338>
+
+        Reviewed by Geoffrey Garen.
+
+        The ResourceLoadStatistics code can unlink a database during the test
+        run, which causes a simulated python crash. We already worked around this
+        by setting the SQLITE_EXEMPT_PATH_FROM_VNODE_GUARDS environment variable
+        on a temporary directory, but it needs to include /private/var/folders as well.
+        However, I didn't have any luck setting multiple directories, so I
+        used '/' instead.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._setup_environ_for_driver):
+
 2020-12-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, fix the build with recent SDKs.
