@@ -411,7 +411,7 @@ void SourceBuffer::abortIfUpdating()
 
 MediaTime SourceBuffer::highestPresentationTimestamp() const
 {
-    return m_private->highestPresentationTimestamp();
+    return m_highestPresentationTimestamp;
 }
 
 void SourceBuffer::readyStateChanged()
@@ -1134,6 +1134,11 @@ void SourceBuffer::sourceBufferPrivateDurationChanged(const MediaTime& duration)
 {
     if (!isRemoved())
         m_source->setDurationInternal(duration);
+}
+
+void SourceBuffer::sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime& timestamp)
+{
+    m_highestPresentationTimestamp = timestamp;
 }
 
 void SourceBuffer::sourceBufferPrivateDidDropSample()

@@ -124,12 +124,27 @@ bool SourceBufferPrivateRemote::canSwitchToType(const ContentType&)
     return false;
 }
 
+void SourceBufferPrivateRemote::setMediaSourceEnded(bool isEnded)
+{
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::SetMediaSourceEnded(isEnded), m_remoteSourceBufferIdentifier);
+}
+
+void SourceBufferPrivateRemote::setMode(SourceBufferAppendMode mode)
+{
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::SetMode(mode), m_remoteSourceBufferIdentifier);
+}
+
 void SourceBufferPrivateRemote::updateBufferedFromTrackBuffers(bool sourceIsEnded)
 {
     if (!m_mediaSourcePrivate)
         return;
 
     m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::UpdateBufferedFromTrackBuffers(sourceIsEnded), m_remoteSourceBufferIdentifier);
+}
+
+void SourceBufferPrivateRemote::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, bool isEnded)
+{
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::RemoveCodedFrames(start, end, currentMediaTime, isEnded), m_remoteSourceBufferIdentifier);
 }
 
 void SourceBufferPrivateRemote::evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded)
@@ -153,6 +168,26 @@ void SourceBufferPrivateRemote::clearTrackBuffers()
     m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::ClearTrackBuffers(), m_remoteSourceBufferIdentifier);
 }
 
+void SourceBufferPrivateRemote::setAllTrackBuffersNeedRandomAccess()
+{
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::SetAllTrackBuffersNeedRandomAccess(), m_remoteSourceBufferIdentifier);
+}
+
+void SourceBufferPrivateRemote::setGroupStartTimestamp(const MediaTime& timestamp)
+{
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::SetGroupStartTimestamp(timestamp), m_remoteSourceBufferIdentifier);
+}
+
+void SourceBufferPrivateRemote::setGroupStartTimestampToEndTimestamp()
+{
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::SetGroupStartTimestampToEndTimestamp(), m_remoteSourceBufferIdentifier);
+}
+
+void SourceBufferPrivateRemote::setShouldGenerateTimestamps(bool shouldGenerateTimestamps)
+{
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::SetShouldGenerateTimestamps(shouldGenerateTimestamps), m_remoteSourceBufferIdentifier);
+}
+
 void SourceBufferPrivateRemote::reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize)
 {
     m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::ReenqueueMediaIfNeeded(currentMediaTime, pendingAppendDataCapacity, maximumBufferSize), m_remoteSourceBufferIdentifier);
@@ -161,6 +196,11 @@ void SourceBufferPrivateRemote::reenqueueMediaIfNeeded(const MediaTime& currentM
 void SourceBufferPrivateRemote::resetTimestampOffsetInTrackBuffers()
 {
     m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::ResetTimestampOffsetInTrackBuffers(), m_remoteSourceBufferIdentifier);
+}
+
+void SourceBufferPrivateRemote::startChangingType()
+{
+    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::StartChangingType(), m_remoteSourceBufferIdentifier);
 }
 
 void SourceBufferPrivateRemote::setTimestampOffset(const MediaTime& timestampOffset)
@@ -260,6 +300,12 @@ void SourceBufferPrivateRemote::sourceBufferPrivateAppendComplete(SourceBufferPr
 {
     if (m_client)
         m_client->sourceBufferPrivateAppendComplete(appendResult);
+}
+
+void SourceBufferPrivateRemote::sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime& timestamp)
+{
+    if (m_client)
+        m_client->sourceBufferPrivateHighestPresentationTimestampChanged(timestamp);
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateDurationChanged(const MediaTime& duration)

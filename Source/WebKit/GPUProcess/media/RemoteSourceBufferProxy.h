@@ -70,6 +70,7 @@ private:
     void sourceBufferPrivateStreamEndedWithDecodeError() final;
     void sourceBufferPrivateAppendError(bool decodeError) final;
     void sourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult) final;
+    void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) final;
     void sourceBufferPrivateDurationChanged(const MediaTime&) final;
     void sourceBufferPrivateDidParseSample(double sampleDuration) final;
     void sourceBufferPrivateDidDropSample() final;
@@ -83,17 +84,25 @@ private:
     // void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
 
     void setActive(bool);
+    void setMode(WebCore::SourceBufferAppendMode);
     void append(const IPC::DataReference&);
     void abort();
     void resetParserState();
     void removedFromMediaSource();
+    void setMediaSourceEnded(bool);
     void setReadyState(WebCore::MediaPlayer::ReadyState);
+    void startChangingType();
     void updateBufferedFromTrackBuffers(bool sourceIsEnded);
+    void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, bool isEnded);
     void evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded);
     void addTrackBuffer(TrackPrivateRemoteIdentifier);
     void resetTrackBuffers();
     void clearTrackBuffers();
+    void setAllTrackBuffersNeedRandomAccess();
     void reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize);
+    void setGroupStartTimestamp(const MediaTime&);
+    void setGroupStartTimestampToEndTimestamp();
+    void setShouldGenerateTimestamps(bool);
     void resetTimestampOffsetInTrackBuffers();
     void setTimestampOffset(const MediaTime&);
     void setAppendWindowStart(const MediaTime&);

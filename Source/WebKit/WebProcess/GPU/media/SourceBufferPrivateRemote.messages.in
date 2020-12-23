@@ -30,6 +30,7 @@ messages -> SourceBufferPrivateRemote NotRefCounted {
     SourceBufferPrivateStreamEndedWithDecodeError()
     SourceBufferPrivateAppendError(bool decodeError)
     SourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult appendResult)
+    SourceBufferPrivateHighestPresentationTimestampChanged(MediaTime timestamp)
     SourceBufferPrivateDurationChanged(MediaTime duration)
     SourceBufferPrivateDidParseSample(double sampleDuration)
     SourceBufferPrivateDidDropSample()

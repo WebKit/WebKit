@@ -115,6 +115,11 @@ void RemoteSourceBufferProxy::sourceBufferPrivateAppendError(bool decodeError)
     m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateAppendError(decodeError), m_identifier);
 }
 
+void RemoteSourceBufferProxy::sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime& timestamp)
+{
+    m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateHighestPresentationTimestampChanged(timestamp), m_identifier);
+}
+
 void RemoteSourceBufferProxy::sourceBufferPrivateDurationChanged(const MediaTime& duration)
 {
     m_connectionToWebProcess.connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDurationChanged(duration), m_identifier);
@@ -175,9 +180,19 @@ void RemoteSourceBufferProxy::removedFromMediaSource()
     m_sourceBufferPrivate->removedFromMediaSource();
 }
 
+void RemoteSourceBufferProxy::setMediaSourceEnded(bool isEnded)
+{
+    m_sourceBufferPrivate->setMediaSourceEnded(isEnded);
+}
+
 void RemoteSourceBufferProxy::setActive(bool active)
 {
     m_sourceBufferPrivate->setActive(active);
+}
+
+void RemoteSourceBufferProxy::setMode(WebCore::SourceBufferAppendMode appendMode)
+{
+    m_sourceBufferPrivate->setMode(appendMode);
 }
 
 void RemoteSourceBufferProxy::setReadyState(WebCore::MediaPlayer::ReadyState state)
@@ -185,9 +200,19 @@ void RemoteSourceBufferProxy::setReadyState(WebCore::MediaPlayer::ReadyState sta
     m_sourceBufferPrivate->setReadyState(state);
 }
 
+void RemoteSourceBufferProxy::startChangingType()
+{
+    m_sourceBufferPrivate->startChangingType();
+}
+
 void RemoteSourceBufferProxy::updateBufferedFromTrackBuffers(bool sourceIsEnded)
 {
     m_sourceBufferPrivate->updateBufferedFromTrackBuffers(sourceIsEnded);
+}
+
+void RemoteSourceBufferProxy::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, bool isEnded)
+{
+    m_sourceBufferPrivate->removeCodedFrames(start, end, currentTime, isEnded);
 }
 
 void RemoteSourceBufferProxy::evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded)
@@ -212,9 +237,29 @@ void RemoteSourceBufferProxy::clearTrackBuffers()
     m_sourceBufferPrivate->clearTrackBuffers();
 }
 
+void RemoteSourceBufferProxy::setAllTrackBuffersNeedRandomAccess()
+{
+    m_sourceBufferPrivate->setAllTrackBuffersNeedRandomAccess();
+}
+
 void RemoteSourceBufferProxy::reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize)
 {
     m_sourceBufferPrivate->reenqueueMediaIfNeeded(currentMediaTime, pendingAppendDataCapacity, maximumBufferSize);
+}
+
+void RemoteSourceBufferProxy::setGroupStartTimestamp(const MediaTime& timestamp)
+{
+    m_sourceBufferPrivate->setGroupStartTimestamp(timestamp);
+}
+
+void RemoteSourceBufferProxy::setGroupStartTimestampToEndTimestamp()
+{
+    m_sourceBufferPrivate->setGroupStartTimestampToEndTimestamp();
+}
+
+void RemoteSourceBufferProxy::setShouldGenerateTimestamps(bool shouldGenerateTimestamps)
+{
+    m_sourceBufferPrivate->setShouldGenerateTimestamps(shouldGenerateTimestamps);
 }
 
 void RemoteSourceBufferProxy::resetTimestampOffsetInTrackBuffers()

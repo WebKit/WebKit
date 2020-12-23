@@ -92,7 +92,7 @@ void SourceBufferPrivate::resetTrackBuffers()
     }
 }
 
-MediaTime SourceBufferPrivate::highestPresentationTimestamp() const
+void SourceBufferPrivate::updateHighestPresentationTimestamp()
 {
     MediaTime highestTime;
     for (auto& trackBuffer : m_trackBufferMap.values()) {
@@ -101,7 +101,13 @@ MediaTime SourceBufferPrivate::highestPresentationTimestamp() const
             continue;
         highestTime = std::max(highestTime, lastSampleIter->first);
     }
-    return highestTime;
+
+    if (m_highestPresentationTimestamp == highestTime)
+        return;
+
+    m_highestPresentationTimestamp = highestTime;
+    if (m_client)
+        m_client->sourceBufferPrivateHighestPresentationTimestampChanged(m_highestPresentationTimestamp);
 }
 
 void SourceBufferPrivate::setBufferedRanges(const PlatformTimeRanges& timeRanges)
@@ -610,6 +616,8 @@ void SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaT
 
     // 4. If buffer full flag equals true and this object is ready to accept more bytes, then set the buffer full flag to false.
     // No-op
+
+    updateHighestPresentationTimestamp();
 
     LOG(Media, "SourceBuffer::removeCodedFrames(%p) - buffered = %s", this, toString(m_buffered->ranges()).utf8().data());
 }
@@ -1249,6 +1257,8 @@ void SourceBufferPrivate::didReceiveSample(MediaSample& sample)
     // duration set to the maximum of the current duration and the group end timestamp.
     if (m_groupEndTimestamp > duration())
         m_client->sourceBufferPrivateDurationChanged(m_groupEndTimestamp);
+
+    updateHighestPresentationTimestamp();
 }
 
 } // namespace WebCore

@@ -75,13 +75,21 @@ public:
 
     virtual bool canSwitchToType(const ContentType&) { return false; }
 
+    virtual void setMediaSourceEnded(bool);
+    virtual void setMode(SourceBufferAppendMode mode) { m_appendMode = mode; }
     virtual void reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize);
     virtual void addTrackBuffer(const AtomString& trackId, RefPtr<MediaDescription>&&);
     virtual void resetTrackBuffers();
     virtual void clearTrackBuffers();
+    virtual void setAllTrackBuffersNeedRandomAccess();
+    virtual void setGroupStartTimestamp(const MediaTime& mediaTime) { m_groupStartTimestamp = mediaTime; }
+    virtual void setGroupStartTimestampToEndTimestamp() { m_groupStartTimestamp = m_groupEndTimestamp; }
+    virtual void setShouldGenerateTimestamps(bool flag) { m_shouldGenerateTimestamps = flag; }
     WEBCORE_EXPORT virtual void updateBufferedFromTrackBuffers(bool sourceIsEnded);
+    virtual void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, bool isEnded);
     WEBCORE_EXPORT virtual void evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded);
     virtual void resetTimestampOffsetInTrackBuffers();
+    virtual void startChangingType() { m_pendingInitializationSegmentForChangeType = true; }
     virtual void setTimestampOffset(const MediaTime& timestampOffset) { m_timestampOffset = timestampOffset; }
     virtual void setAppendWindowStart(const MediaTime& appendWindowStart) { m_appendWindowStart = appendWindowStart;}
     virtual void setAppendWindowEnd(const MediaTime& appendWindowEnd) { m_appendWindowEnd = appendWindowEnd; }
@@ -91,21 +99,13 @@ public:
     void setClient(SourceBufferPrivateClient* client) { m_client = client; }
     void setIsAttached(bool flag) { m_isAttached = flag; }
 
-    bool hasAudio() const { return m_hasAudio; }
-    bool hasVideo() const { return m_hasVideo; }
     bool bufferFull() const { return m_bufferFull; }
 
+    // Methods used by MediaSourcePrivate
+    bool hasAudio() const { return m_hasAudio; }
+    bool hasVideo() const { return m_hasVideo; }
+
     MediaTime timestampOffset() const { return m_timestampOffset; }
-    MediaTime highestPresentationTimestamp() const;
-    void startChangingType() { m_pendingInitializationSegmentForChangeType = true; }
-    void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, bool isEnded);
-    void setAllTrackBuffersNeedRandomAccess();
-    void setShouldGenerateTimestamps(bool flag) { m_shouldGenerateTimestamps = flag; }
-    void setMode(SourceBufferAppendMode mode) { m_appendMode = mode; }
-    void setGroupStartTimestamp(const MediaTime& mediaTime) { m_groupStartTimestamp = mediaTime; }
-    void setGroupStartTimestampToEndTimestamp() { m_groupStartTimestamp = m_groupEndTimestamp; }
-    uint64_t totalTrackBufferSizeInBytes() const;
-    void setMediaSourceEnded(bool isEnded);
 
     struct TrackBuffer {
         MediaTime lastDecodeTimestamp;
@@ -163,10 +163,12 @@ protected:
     WEBCORE_EXPORT void didReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&&, CompletionHandler<void()>&&);
     WEBCORE_EXPORT void didReceiveSample(MediaSample&);
     void provideMediaData(const AtomString& trackID);
+    uint64_t totalTrackBufferSizeInBytes() const;
 
     SourceBufferPrivateClient* m_client { nullptr };
 
 private:
+    void updateHighestPresentationTimestamp();
     void updateMinimumUpcomingPresentationTime(TrackBuffer&, const AtomString& trackID);
     void reenqueueMediaForTime(TrackBuffer&, const AtomString& trackID, const MediaTime&);
     bool validateInitializationSegment(const SourceBufferPrivateClient::InitializationSegment&);
@@ -190,6 +192,7 @@ private:
     MediaTime m_timestampOffset;
     MediaTime m_appendWindowStart { MediaTime::zeroTime() };
     MediaTime m_appendWindowEnd { MediaTime::positiveInfiniteTime() };
+    MediaTime m_highestPresentationTimestamp;
 
     MediaTime m_groupStartTimestamp { MediaTime::invalidTime() };
     MediaTime m_groupEndTimestamp { MediaTime::zeroTime() };
@@ -200,5 +203,17 @@ private:
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::SourceBufferAppendMode> {
+    using values = EnumValues<
+        WebCore::SourceBufferAppendMode,
+        WebCore::SourceBufferAppendMode::Segments,
+        WebCore::SourceBufferAppendMode::Sequence
+    >;
+};
+
+}; // namespace WTF
 
 #endif

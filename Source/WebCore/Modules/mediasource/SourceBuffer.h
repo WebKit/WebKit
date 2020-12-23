@@ -152,6 +152,7 @@ private:
     void sourceBufferPrivateStreamEndedWithDecodeError() final;
     void sourceBufferPrivateAppendError(bool decodeError) final;
     void sourceBufferPrivateAppendComplete(AppendResult) final;
+    void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) final;
     void sourceBufferPrivateDurationChanged(const MediaTime& duration) final;
     void sourceBufferPrivateDidParseSample(double sampleDuration) final;
     void sourceBufferPrivateDidDropSample() final;
@@ -224,6 +225,7 @@ private:
 
     MediaTime m_appendWindowStart;
     MediaTime m_appendWindowEnd;
+    MediaTime m_highestPresentationTimestamp;
 
     enum AppendStateType { WaitingForSegment, ParsingInitSegment, ParsingMediaSegment };
     AppendStateType m_appendState;
