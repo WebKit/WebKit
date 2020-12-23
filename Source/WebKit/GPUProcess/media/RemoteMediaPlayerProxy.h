@@ -204,6 +204,7 @@ private:
     void mediaPlayerMuteChanged() final;
     void mediaPlayerTimeChanged() final;
     void mediaPlayerDurationChanged() final;
+    void mediaPlayerSizeChanged() final;
     void mediaPlayerRateChanged() final;
     void mediaPlayerPlaybackStateChanged() final;
     void mediaPlayerResourceNotSupported() final;
@@ -222,7 +223,6 @@ private:
     void mediaPlayerDidRemoveTextTrack(WebCore::InbandTextTrackPrivate&) final;
 
     // Not implemented
-    void mediaPlayerSizeChanged() final;
     void mediaPlayerFirstVideoFrameAvailable() final;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)

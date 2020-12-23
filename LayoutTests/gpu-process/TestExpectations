@@ -279,7 +279,6 @@ inspector/layers/layers-compositing-reasons.html [ Skip ]
 
 media/controls [ Skip ]
 
-media/media-source/media-source-resize.html [ Timeout ]
 media/media-source/media-source-webm.html [ Timeout ]
 
 media/airplay-allows-buffering.html [ Skip ]
