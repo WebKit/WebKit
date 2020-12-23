@@ -1,3 +1,12 @@
+2020-12-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Enable WebGL 2
+        https://bugs.webkit.org/show_bug.cgi?id=192314
+
+        Reviewed by Kenneth Russell.
+
+        * platform/wincairo/TestExpectations:
+
 2020-12-23  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION: Scroll snapping triggers body scroll

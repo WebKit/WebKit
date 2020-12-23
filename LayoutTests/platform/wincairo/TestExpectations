@@ -267,26 +267,6 @@ webaudio [ Skip ]
 # WEB_RTC is disabled
 webrtc [ Skip ]
 
-# WEBGL2 is disabled
-fast/canvas/webgl/webgl2 [ Skip ]
-fast/canvas/webgl/bufferData-offset-length.html [ Skip ]
-fast/canvas/webgl/copyBufferSubData.html [ Skip ]
-fast/canvas/webgl/getBufferSubData-webgl1.html [ Skip ]
-fast/canvas/webgl/webgl2-buffer-targets.html [ Skip ]
-fast/canvas/webgl/webgl2-buffers.html [ Skip ]
-fast/canvas/webgl/webgl2-context-creation.html [ Skip ]
-fast/canvas/webgl/webgl2-getActiveUniforms.html [ Skip ]
-fast/canvas/webgl/webgl2-runtime-flag.html [ Skip ]
-fast/canvas/webgl/webgl2-texStorage.html [ Skip ]
-fast/canvas/webgl/webgl2-texture-upload-enums.html [ Skip ]
-inspector/canvas/requestContent-webgl2.html [ Skip ]
-inspector/canvas/create-context-webgl2.html [ Skip ]
-inspector/canvas/recording-webgl2-snapshots.html [ Skip ]
-inspector/canvas/resolveContext-webgl2.html [ Skip ]
-inspector/canvas/shaderProgram-add-remove-webgl2.html [ Skip ]
-webgl/webgl2-rendering-context-defined.html [ Skip ]
-webgl/webgl2-rendering-context-obtain.html [ Skip ]
-
 # WEBGPU is disabled
 webgpu [ Skip ]
 inspector/canvas/create-context-webgpu.html [ Skip ]
@@ -454,6 +434,20 @@ webkit.org/b/219842 fast/events/wheel/wheel-event-listeners-on-document-made-pas
 webkit.org/b/219842 fast/events/wheel/wheel-event-listeners-on-window-left-active.html [ Skip ]
 webkit.org/b/219842 fast/events/wheel/wheel-event-listeners-on-window-made-passive.html [ Skip ]
 webkit.org/b/219842 fast/events/wheel/wheel-events-become-non-cancelable.html [ Skip ]
+
+# Needs WebGL video texture support
+webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Skip ]
+webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-video.html [ Skip ]
+webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Skip ]
+webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Skip ]
+webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Skip ]
+webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Skip ]
+webgl/2.0.0/conformance/extensions/oes-texture-float-with-video.html [ Skip ]
+webgl/2.0.0/conformance/extensions/oes-texture-half-float-with-video.html [ Skip ]
+webgl/2.0.0/conformance/textures/image_bitmap_from_video [ Skip ]
+webgl/2.0.0/conformance/textures/video [ Skip ]
+webgl/2.0.0/conformance2/textures/image_bitmap_from_video [ Skip ]
+webgl/2.0.0/conformance2/textures/video [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # These areas are not implemented well on WinCairo
@@ -1219,7 +1213,6 @@ http/tests/ssl/media-stream [ Skip ]
 
 http/tests/subresource-integrity [ Skip ]
 http/tests/webarchive [ Skip ]
-http/tests/webgl [ Skip ]
 http/tests/webrtc [ Skip ]
 
 http/tests/websocket/tests/hybi/contentextensions [ Skip ]
@@ -1797,8 +1790,8 @@ transforms [ Skip ]
 traversal [ Skip ]
 userscripts [ Skip ]
 webanimations [ Skip ]
-webgl/2.0.0 [ Skip ]
-webgl/conformance2 [ Skip ]
+webgl/2.0.0/conformance/textures/image_bitmap_from_image_bitmap [ Skip ]
+webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap [ Skip ]
 workers/bomb.html [ Skip ]
 
 [ Debug ] fast/dom/xml-large.html [ Skip ]
@@ -1820,6 +1813,35 @@ workers/bomb.html [ Skip ]
 [ Debug ] loader/load-defer-resume-crash.html [ Skip ]
 [ Debug ] storage/indexeddb/database-odd-names.html [ Failure Pass ]
 [ Debug ] storage/indexeddb/primary-key-unique-to-objectstore.html [ Timeout Pass ]
+[ Debug ] webgl/1.0.3/conformance/canvas/drawingbuffer-test.html [ Skip ] # Crash by assertion failure
+[ Debug ] webgl/1.0.3/conformance/glsl/bugs/long-expressions-should-not-crash.html [ Slow ]
+[ Debug ] webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Slow ]
+[ Debug ] webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Slow ]
+[ Debug ] webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Slow ]
+[ Debug ] webgl/1.0.3/conformance/textures/texture-size-limit.html [ Slow ]
+[ Debug ] webgl/2.0.0/conformance/attribs/gl-vertexattribpointer.html [ Slow ]
+[ Debug ] webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Skip ] # Crash by assertion failure
+[ Debug ] webgl/2.0.0/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Slow ]
+[ Debug ] webgl/2.0.0/conformance/glsl/bugs/compound-assignment-type-combination.html [ Slow ]
+[ Debug ] webgl/2.0.0/conformance/glsl/bugs/compound-assignment-type-combination.html [ Slow ]
+[ Debug ] webgl/2.0.0/conformance/glsl/constructors/glsl-construct-ivec4.html [ Slow ]
+[ Debug ] webgl/2.0.0/conformance/glsl/constructors/glsl-construct-vec4.html [ Slow ]
+[ Debug ] webgl/2.0.0/conformance/glsl/misc/const-variable-initialization.html [ Slow ]
+[ Debug ] webgl/2.0.0/conformance/glsl/misc/const-variable-initialization.html [ Slow ]
+[ Debug ] webgl/2.0.0/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]
+[ Debug ] webgl/2.0.0/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]
+[ Debug ] webgl/2.0.0/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Slow ]
+[ Debug ] webgl/2.0.0/conformance/rendering/many-draw-calls.html [ Slow ]
+[ Debug ] webgl/2.0.0/conformance/rendering/multisample-corruption.html [ Slow ]
+[ Debug ] webgl/2.0.0/conformance/state/gl-object-get-calls.html [ Slow ]
+[ Debug ] webgl/2.0.0/conformance/textures/misc/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Slow ]
+[ Debug ] webgl/2.0.0/conformance/textures/misc/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Slow ]
+[ Debug ] webgl/2.0.0/conformance2/glsl3/compound-assignment-type-combination.html [ Slow ]
+[ Debug ] webgl/2.0.0/conformance2/glsl3/compound-assignment-type-combination.html [ Slow ]
+[ Debug ] webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-outofbounds.html [ Slow ]
+[ Debug ] webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format.html [ Slow ]
+[ Release ] webgl/1.0.3/conformance/canvas/drawingbuffer-test.html [ Failure ]
+[ Release ] webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Failure ]
 animations/additive-transform-animations.html [ ImageOnlyFailure ]
 animations/needs-layout.html [ ImageOnlyFailure ]
 animations/steps-transform-rendering-updates.html [ ImageOnlyFailure ]
@@ -2130,23 +2152,32 @@ performance-api/paint-timing/paint-timing-frames.html [ Timeout ]
 performance-api/paint-timing/paint-timing-with-worker.html [ Failure ]
 performance-api/paint-timing/performance-observer-first-contentful-paint.html [ Timeout ]
 storage/indexeddb/storage-limit-with-indices.html [ Failure ]
-webgl/1.0.3/conformance/canvas/drawingbuffer-test.html [ Skip ] # Timeout
 webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure ]
 webgl/1.0.3/conformance/extensions/oes-element-index-uint.html [ Failure ]
-webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Skip ] # Timeout
-webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-video.html [ Skip ] # Timeout
 webgl/1.0.3/conformance/glsl/bugs/array-of-struct-with-int-first-position.html [ Skip ] # This test makes DumpRenderTree process unable to exit
-webgl/1.0.3/conformance/glsl/bugs/long-expressions-should-not-crash.html [ Skip ] # Timeout
 webgl/1.0.3/conformance/more/functions/readPixelsBadArgs.html [ Failure ]
 webgl/1.0.3/conformance/more/functions/texImage2DHTML.html [ Failure ]
 webgl/1.0.3/conformance/more/functions/texSubImage2DHTML.html [ Failure ]
 webgl/1.0.3/conformance/programs/program-test.html [ Failure ]
-webgl/1.0.3/conformance/renderbuffers/framebuffer-object-attachment.html [ Failure ]
 webgl/1.0.3/conformance/textures/default-texture.html [ Failure ]
-webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Skip ] # Timeout
-webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Skip ] # Timeout
-webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Skip ] # Timeout
-webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Skip ] # Timeout
 webgl/1.0.3/conformance/textures/texture-mips.html [ Pass Failure ]
 webgl/1.0.3/conformance/textures/texture-upload-size.html [ Skip ] # Timeout
-webgl/webgl-vertex-array-object-defined.html [ Failure ]
+webgl/1.0.3/conformance/uniforms/uniform-default-values.html [ Failure Pass ]
+webgl/2.0.0/conformance/context/premultiplyalpha-test.html [ Failure ]
+webgl/2.0.0/conformance/glsl/bugs/conditional-discard-in-loop.html [ Failure ]
+webgl/2.0.0/conformance/glsl/bugs/loop-if-loop-gradient.html [ Skip ] # Flaky timeout if it runs with other tests
+webgl/2.0.0/conformance/glsl/bugs/qualcomm-crash.html [ Skip ] # Flaky timeout if it runs with other tests
+webgl/2.0.0/conformance/glsl/bugs/qualcomm-loop-with-continue-crash.html [ Skip ] # Flaky timeout if it runs with other tests
+webgl/2.0.0/conformance/glsl/bugs/sketchfab-lighting-shader-crash.html [ Skip ] # Flaky timeout if it runs with other tests
+webgl/2.0.0/conformance/textures/misc/default-texture.html [ Failure ]
+webgl/2.0.0/conformance/textures/misc/texture-mips.html [ Failure Pass ]
+webgl/2.0.0/conformance/textures/misc/texture-upload-size.html [ Skip ] # Timeout
+webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html [ Slow Failure ]
+webgl/2.0.0/conformance2/buffers/buffer-copying-contents.html [ Failure ]
+webgl/2.0.0/conformance2/glsl3/tricky-loop-conditions.html [ Failure ]
+webgl/2.0.0/conformance2/query/occlusion-query.html [ Failure ]
+webgl/2.0.0/conformance2/rendering/blitframebuffer-stencil-only.html [ Failure ]
+webgl/2.0.0/conformance2/rendering/element-index-uint.html [ Failure ]
+webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Slow Failure ]
+webgl/2.0.0/conformance2/textures/misc/tex-image-with-bad-args-from-dom-elements.html [ Skip ] # Timeout
+webgl/2.0.0/conformance2/transform_feedback/transform_feedback.html [ Skip ] # Timeout and flaky

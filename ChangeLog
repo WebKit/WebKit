@@ -1,3 +1,12 @@
+2020-12-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Enable WebGL 2
+        https://bugs.webkit.org/show_bug.cgi?id=192314
+
+        Reviewed by Kenneth Russell.
+
+        * Source/cmake/OptionsWin.cmake: Turned ENABLE_WEBGL2 on.
+
 2020-12-23  Monson Shao  <holymonson@gmail.com>
 
         [CMake] Fix seperated include dir of harfbuzz and harfbuzz-icu

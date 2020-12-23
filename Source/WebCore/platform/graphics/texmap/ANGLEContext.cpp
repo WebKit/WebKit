@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2018 Metrological Group B.V.
  * Copyright (C) 2018, 2019 Igalia S.L.
- * Copyright (C) 2009-2018 Apple Inc.
+ * Copyright (C) 2009-2020 Apple Inc.
  * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -122,6 +122,16 @@ std::unique_ptr<ANGLEContext> ANGLEContext::createContext(EGLContext sharingCont
     }
     contextAttributes.append(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE);
     contextAttributes.append(EGL_TRUE);
+    // WebGL requires that all resources are cleared at creation.
+    contextAttributes.append(EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE);
+    contextAttributes.append(EGL_TRUE);
+    // WebGL doesn't allow client arrays.
+    contextAttributes.append(EGL_CONTEXT_CLIENT_ARRAYS_ENABLED_ANGLE);
+    contextAttributes.append(EGL_FALSE);
+    // WebGL doesn't allow implicit creation of objects on bind.
+    contextAttributes.append(EGL_CONTEXT_BIND_GENERATES_RESOURCE_CHROMIUM);
+    contextAttributes.append(EGL_FALSE);
+
     if (strstr(displayExtensions, "EGL_ANGLE_power_preference")) {
         contextAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
         // EGL_LOW_POWER_ANGLE is the default. Change to
