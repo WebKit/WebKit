@@ -1,3 +1,14 @@
+2020-12-23  Monson Shao  <holymonson@gmail.com>
+
+        [CMake] Fix seperated include dir of harfbuzz and harfbuzz-icu
+        https://bugs.webkit.org/show_bug.cgi?id=220082
+
+        Reviewed by Alex Christensen.
+
+        In some distros (NixOS) harfbuzz and harfbuzz-icu may have different include dir.
+
+        * Source/cmake/FindHarfBuzz.cmake:
+
 2020-12-21  Ryan Hostetler  <rhost@apple.com>
 
         $(findstring iphone,$(SDKROOT)) fails when SDKROOT is not lowercase
