@@ -1,28 +1,7 @@
 <!--
-
-/*
-** Copyright (c) 2012 The Khronos Group Inc.
-**
-** Permission is hereby granted, free of charge, to any person obtaining a
-** copy of this software and/or associated documentation files (the
-** "Materials"), to deal in the Materials without restriction, including
-** without limitation the rights to use, copy, modify, merge, publish,
-** distribute, sublicense, and/or sell copies of the Materials, and to
-** permit persons to whom the Materials are furnished to do so, subject to
-** the following conditions:
-**
-** The above copyright notice and this permission notice shall be included
-** in all copies or substantial portions of the Materials.
-**
-** THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-** EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-** MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-** IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-** CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-** TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-** MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
-*/
-
+Copyright (c) 2019 The Khronos Group Inc.
+Use of this source code is governed by an MIT-style license that can be
+found in the LICENSE.txt file.
 -->
 <!DOCTYPE html>
 <html>
@@ -41,185 +20,192 @@
 "use strict";
 description("This test ensures that the WebGL context has all the methods in the specification.");
 
-var methods = [
-"getContextAttributes",
-"activeTexture",
-"attachShader",
-"bindAttribLocation",
-"bindBuffer",
-"bindFramebuffer",
-"bindRenderbuffer",
-"bindTexture",
-"blendColor",
-"blendEquation",
-"blendEquationSeparate",
-"blendFunc",
-"blendFuncSeparate",
-"bufferData",
-"bufferSubData",
-"checkFramebufferStatus",
-"clear",
-"clearColor",
-"clearDepth",
-"clearStencil",
-"colorMask",
-"compileShader",
-"compressedTexImage2D",
-"compressedTexSubImage2D",
-"copyTexImage2D",
-"copyTexSubImage2D",
-"createBuffer",
-"createFramebuffer",
-"createProgram",
-"createRenderbuffer",
-"createShader",
-"createTexture",
-"cullFace",
-"deleteBuffer",
-"deleteFramebuffer",
-"deleteProgram",
-"deleteRenderbuffer",
-"deleteShader",
-"deleteTexture",
-"depthFunc",
-"depthMask",
-"depthRange",
-"detachShader",
-"disable",
-"disableVertexAttribArray",
-"drawArrays",
-"drawElements",
-"enable",
-"enableVertexAttribArray",
-"finish",
-"flush",
-"framebufferRenderbuffer",
-"framebufferTexture2D",
-"frontFace",
-"generateMipmap",
-"getActiveAttrib",
-"getActiveUniform",
-"getAttachedShaders",
-"getAttribLocation",
-"getParameter",
-"getBufferParameter",
-"getError",
-"getExtension",
-"getFramebufferAttachmentParameter",
-"getProgramParameter",
-"getProgramInfoLog",
-"getRenderbufferParameter",
-"getShaderParameter",
-"getShaderInfoLog",
-"getShaderPrecisionFormat",
-"getShaderSource",
-"getSupportedExtensions",
-"getTexParameter",
-"getUniform",
-"getUniformLocation",
-"getVertexAttrib",
-"getVertexAttribOffset",
-"hint",
-"isBuffer",
-"isContextLost",
-"isEnabled",
-"isFramebuffer",
-"isProgram",
-"isRenderbuffer",
-"isShader",
-"isTexture",
-"lineWidth",
-"linkProgram",
-"pixelStorei",
-"polygonOffset",
-"readPixels",
-"renderbufferStorage",
-"sampleCoverage",
-"scissor",
-"shaderSource",
-"stencilFunc",
-"stencilFuncSeparate",
-"stencilMask",
-"stencilMaskSeparate",
-"stencilOp",
-"stencilOpSeparate",
-"texImage2D",
-"texParameterf",
-"texParameteri",
-"texSubImage2D",
-"uniform1f",
-"uniform1fv",
-"uniform1i",
-"uniform1iv",
-"uniform2f",
-"uniform2fv",
-"uniform2i",
-"uniform2iv",
-"uniform3f",
-"uniform3fv",
-"uniform3i",
-"uniform3iv",
-"uniform4f",
-"uniform4fv",
-"uniform4i",
-"uniform4iv",
-"uniformMatrix2fv",
-"uniformMatrix3fv",
-"uniformMatrix4fv",
-"useProgram",
-"validateProgram",
-"vertexAttrib1f",
-"vertexAttrib1fv",
-"vertexAttrib2f",
-"vertexAttrib2fv",
-"vertexAttrib3f",
-"vertexAttrib3fv",
-"vertexAttrib4f",
-"vertexAttrib4fv",
-"vertexAttribPointer",
-"viewport"
+const methods = [
+  "getContextAttributes",
+  "activeTexture",
+  "attachShader",
+  "bindAttribLocation",
+  "bindBuffer",
+  "bindFramebuffer",
+  "bindRenderbuffer",
+  "bindTexture",
+  "blendColor",
+  "blendEquation",
+  "blendEquationSeparate",
+  "blendFunc",
+  "blendFuncSeparate",
+  "bufferData",
+  "bufferSubData",
+  "checkFramebufferStatus",
+  "clear",
+  "clearColor",
+  "clearDepth",
+  "clearStencil",
+  "colorMask",
+  "compileShader",
+  "compressedTexImage2D",
+  "compressedTexSubImage2D",
+  "copyTexImage2D",
+  "copyTexSubImage2D",
+  "createBuffer",
+  "createFramebuffer",
+  "createProgram",
+  "createRenderbuffer",
+  "createShader",
+  "createTexture",
+  "cullFace",
+  "deleteBuffer",
+  "deleteFramebuffer",
+  "deleteProgram",
+  "deleteRenderbuffer",
+  "deleteShader",
+  "deleteTexture",
+  "depthFunc",
+  "depthMask",
+  "depthRange",
+  "detachShader",
+  "disable",
+  "disableVertexAttribArray",
+  "drawArrays",
+  "drawElements",
+  "enable",
+  "enableVertexAttribArray",
+  "finish",
+  "flush",
+  "framebufferRenderbuffer",
+  "framebufferTexture2D",
+  "frontFace",
+  "generateMipmap",
+  "getActiveAttrib",
+  "getActiveUniform",
+  "getAttachedShaders",
+  "getAttribLocation",
+  "getParameter",
+  "getBufferParameter",
+  "getError",
+  "getExtension",
+  "getFramebufferAttachmentParameter",
+  "getProgramParameter",
+  "getProgramInfoLog",
+  "getRenderbufferParameter",
+  "getShaderParameter",
+  "getShaderInfoLog",
+  "getShaderPrecisionFormat",
+  "getShaderSource",
+  "getSupportedExtensions",
+  "getTexParameter",
+  "getUniform",
+  "getUniformLocation",
+  "getVertexAttrib",
+  "getVertexAttribOffset",
+  "hint",
+  "isBuffer",
+  "isContextLost",
+  "isEnabled",
+  "isFramebuffer",
+  "isProgram",
+  "isRenderbuffer",
+  "isShader",
+  "isTexture",
+  "lineWidth",
+  "linkProgram",
+  "pixelStorei",
+  "polygonOffset",
+  "readPixels",
+  "renderbufferStorage",
+  "sampleCoverage",
+  "scissor",
+  "shaderSource",
+  "stencilFunc",
+  "stencilFuncSeparate",
+  "stencilMask",
+  "stencilMaskSeparate",
+  "stencilOp",
+  "stencilOpSeparate",
+  "texImage2D",
+  "texParameterf",
+  "texParameteri",
+  "texSubImage2D",
+  "uniform1f",
+  "uniform1fv",
+  "uniform1i",
+  "uniform1iv",
+  "uniform2f",
+  "uniform2fv",
+  "uniform2i",
+  "uniform2iv",
+  "uniform3f",
+  "uniform3fv",
+  "uniform3i",
+  "uniform3iv",
+  "uniform4f",
+  "uniform4fv",
+  "uniform4i",
+  "uniform4iv",
+  "uniformMatrix2fv",
+  "uniformMatrix3fv",
+  "uniformMatrix4fv",
+  "useProgram",
+  "validateProgram",
+  "vertexAttrib1f",
+  "vertexAttrib1fv",
+  "vertexAttrib2f",
+  "vertexAttrib2fv",
+  "vertexAttrib3f",
+  "vertexAttrib3fv",
+  "vertexAttrib4f",
+  "vertexAttrib4fv",
+  "vertexAttribPointer",
+  "viewport"
 ];
 
 // Properties to be ignored because they were added in versions of the
 // spec that are backward-compatible with this version
-var ignoredMethods = [
+const ignoredMethods = [
+  // There is no official spec for the commit API yet, the proposal link is:
+  // https://wiki.whatwg.org/wiki/OffscreenCanvas
+  "commit"
+];
+
+const optionalMethods = [
+  "makeXRCompatible"
 ];
 
 function assertFunction(v, f) {
   try {
     if (typeof v[f] != "function") {
-      testFailed("Property either does not exist or is not a function: " + f);
+      testFailed(`Property either does not exist or is not a function: ${f}`);
       return false;
     } else {
       return true;
     }
   } catch(e) {
-    testFailed("Trying to access the property '" + f + "' threw an error: "+e.toString());
+    testFailed(`Trying to access the property '${f}' threw an error: ${e.toString()}`);
   }
 }
 
 debug("");
 debug("Canvas.getContext");
 
-var wtu = WebGLTestUtils;
-var canvas = document.getElementById("canvas");
-var gl = wtu.create3DContext(canvas);
-var passed = true;
-for (var i=0; i<methods.length; i++) {
-  var r = assertFunction(gl, methods[i]);
+const wtu = WebGLTestUtils;
+const canvas = document.getElementById("canvas");
+const gl = wtu.create3DContext(canvas);
+let passed = true;
+methods.forEach(method => {
+  const r = assertFunction(gl, method);
   passed = passed && r;
-}
+});
 if (passed) {
   testPassed("All WebGL methods found.");
 }
-var extended = false;
-for (var i in gl) {
-  if (typeof gl[i] == "function" && methods.indexOf(i) == -1 && ignoredMethods.indexOf(i) == -1) {
+let extended = false;
+for (let propertyName of Object.getOwnPropertyNames(gl)) {
+  if (typeof gl[propertyName] == "function" && !methods.includes(propertyName) && !ignoredMethods.includes(propertyName) && !optionalMethods.includes(propertyName)) {
     if (!extended) {
       extended = true;
       testFailed("Also found the following extra methods:");
     }
-    testFailed(i);
+    testFailed(propertyName);
   }
 }
 

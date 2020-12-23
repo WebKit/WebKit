@@ -1,3 +1,20 @@
+2020-12-22  Dean Jackson  <dino@apple.com>
+
+        Update WebGL methods test to ignore makeXRCompatible
+        https://bugs.webkit.org/show_bug.cgi?id=220107
+        <rdar://problem/72603916>
+
+        Reviewed by Sam Weinig.
+
+        Sync upstream changes from
+        https://github.com/KhronosGroup/WebGL/pull/3198/
+        so that our versions of these tests can pass with
+        WebXR enabled.
+
+        * webgl/1.0.3/resources/webgl_test_files/conformance/context/methods.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/context/methods.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/context/methods-2.html:
+
 2020-12-22  Beth Dakin  <bdakin@apple.com>
 
         Remove non-inclusive language from tests in http/tests/xmlhttprequest
