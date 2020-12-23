@@ -18,6 +18,10 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux")
         linux/ProcessMemoryFootprint.h
         linux/CurrentProcessMemoryStatus.h
     )
+elseif (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    list(APPEND WTF_PUBLIC_HEADERS
+        spi/darwin/ProcessMemoryFootprint.h
+    )
 endif ()
 
 list(APPEND WTF_SOURCES
