@@ -65,7 +65,6 @@ public:
     public:
         virtual ~Delegate() { }
         virtual void willAppendItemOfType(ItemType) { }
-        virtual void didAppendItemOfType(ItemType) { }
         virtual void cacheNativeImage(NativeImage&) { }
         virtual bool isCachedImageBuffer(const ImageBuffer&) const { return false; }
         virtual void cacheFont(Font&) { }
@@ -155,7 +154,6 @@ private:
     {
         willAppendItemOfType(T::itemType);
         m_displayList.append<T>(std::forward<Args>(args)...);
-        didAppendItemOfType(T::itemType);
 
         if constexpr (T::isDrawingItem) {
             if (LIKELY(!m_displayList.tracksDrawingItemExtents()))
@@ -172,7 +170,6 @@ private:
     }
 
     WEBCORE_EXPORT void willAppendItemOfType(ItemType);
-    WEBCORE_EXPORT void didAppendItemOfType(ItemType);
 
     void appendStateChangeItem(const GraphicsContextStateChange&, GraphicsContextState::StateChangeFlags);
 

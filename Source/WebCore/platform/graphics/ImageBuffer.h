@@ -79,7 +79,7 @@ public:
     virtual DisplayList::DrawingContext* drawingContext() { return nullptr; }
     virtual bool prefersPreparationForDisplay() { return false; }
     virtual void flushDrawingContext() { }
-    virtual void flushDrawingContextAndCommit() { }
+    virtual void flushDrawingContextAsync() { }
     virtual void didFlush(DisplayList::FlushIdentifier) { }
 
     virtual void changeDestinationImageBuffer(RenderingResourceIdentifier) { }

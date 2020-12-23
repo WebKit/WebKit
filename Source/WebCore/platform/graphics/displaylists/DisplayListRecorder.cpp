@@ -126,12 +126,6 @@ void Recorder::willAppendItemOfType(ItemType type)
     }
 }
 
-void Recorder::didAppendItemOfType(ItemType type)
-{
-    if (m_delegate)
-        m_delegate->didAppendItemOfType(type);
-}
-
 void Recorder::updateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
 {
     currentState().stateChange.accumulate(state, flags);
@@ -182,7 +176,6 @@ void Recorder::appendDrawGraphsItemWithCachedFont(const Font& font, const GlyphB
 
 void Recorder::drawImageBuffer(WebCore::ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    imageBuffer.flushDrawingContext();
     m_displayList.cacheImageBuffer(imageBuffer);
     append<DrawImageBuffer>(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options);
 }

@@ -315,8 +315,7 @@ bool RemoteLayerBackingStore::display()
 
     m_layer->owner()->platformCALayerLayerDidDisplay(m_layer);
 
-    // FIXME: This method has a weird name. This is "submit work".
-    m_frontBuffer.imageBuffer->flushDrawingContextAndCommit();
+    m_frontBuffer.imageBuffer->flushDrawingContextAsync();
 
     m_frontBufferFlusher = m_frontBuffer.imageBuffer->createFlusher();
 

@@ -195,11 +195,11 @@ protected:
             return;
 
         TraceScope tracingScope(FlushRemoteImageBufferStart, FlushRemoteImageBufferEnd);
-        flushDrawingContextAndCommit();
+        flushDrawingContextAsync();
         waitForDidFlushWithTimeout();
     }
 
-    void flushDrawingContextAndCommit() override
+    void flushDrawingContextAsync() override
     {
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return;
@@ -256,12 +256,6 @@ protected:
     {
         if (LIKELY(m_remoteRenderingBackendProxy))
             m_remoteRenderingBackendProxy->didAppendData(handle, numberOfBytes, didChangeItemBuffer, m_renderingResourceIdentifier);
-    }
-
-    void didAppendItemOfType(WebCore::DisplayList::ItemType type) override
-    {
-        if (type == WebCore::DisplayList::ItemType::DrawImageBuffer)
-            flushDrawingContext();
     }
 
     void cacheFont(WebCore::Font& font) override
@@ -384,7 +378,6 @@ protected:
     Condition m_receivedFlushIdentifierChangedCondition;
     WebCore::DisplayList::FlushIdentifier m_receivedFlushIdentifier;
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
-    size_t m_itemCountInCurrentDisplayList { 0 };
 };
 
 template<typename BackendType>
