@@ -243,7 +243,7 @@ bool ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching(const Pla
 {
     switch (horizontalScrollElasticity()) {
     case ScrollElasticityAutomatic: {
-        bool scrollbarsAllowStretching = hasEnabledHorizontalScrollbar() || !hasEnabledVerticalScrollbar();
+        bool scrollbarsAllowStretching = allowsHorizontalScrolling() || !allowsVerticalScrolling();
         bool eventPreventsStretching = wheelEvent.isGestureStart() && isAlreadyPinnedInDirectionOfGesture(wheelEvent, ScrollEventAxis::Horizontal);
         return scrollbarsAllowStretching && !eventPreventsStretching;
     }
@@ -265,7 +265,7 @@ bool ScrollingTreeScrollingNodeDelegateMac::allowsVerticalStretching(const Platf
 {
     switch (verticalScrollElasticity()) {
     case ScrollElasticityAutomatic: {
-        bool scrollbarsAllowStretching = hasEnabledVerticalScrollbar() || !hasEnabledHorizontalScrollbar();
+        bool scrollbarsAllowStretching = allowsVerticalScrolling() || !allowsHorizontalScrolling();
         bool eventPreventsStretching = wheelEvent.isGestureStart() && isAlreadyPinnedInDirectionOfGesture(wheelEvent, ScrollEventAxis::Vertical);
         return scrollbarsAllowStretching && !eventPreventsStretching;
     }
@@ -336,14 +336,14 @@ RectEdges<bool> ScrollingTreeScrollingNodeDelegateMac::edgePinnedState() const
     return scrollingNode().edgePinnedState();
 }
 
-bool ScrollingTreeScrollingNodeDelegateMac::canScrollHorizontally() const
+bool ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalScrolling() const
 {
-    return hasEnabledHorizontalScrollbar();
+    return ScrollingTreeScrollingNodeDelegate::allowsHorizontalScrolling();
 }
 
-bool ScrollingTreeScrollingNodeDelegateMac::canScrollVertically() const
+bool ScrollingTreeScrollingNodeDelegateMac::allowsVerticalScrolling() const
 {
-    return hasEnabledVerticalScrollbar();
+    return ScrollingTreeScrollingNodeDelegate::allowsVerticalScrolling();
 }
 
 bool ScrollingTreeScrollingNodeDelegateMac::shouldRubberBandInDirection(ScrollDirection direction) const

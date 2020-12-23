@@ -50,8 +50,8 @@ private:
     IntSize stretchAmount() const override { return IntSize(); }
     bool pinnedInDirection(const FloatSize&) const override { return false; }
     RectEdges<bool> edgePinnedState() const override { return { }; }
-    bool canScrollHorizontally() const override { return false; }
-    bool canScrollVertically() const override { return false; }
+    bool allowsHorizontalScrolling() const override { return false; }
+    bool allowsVerticalScrolling() const override { return false; }
     bool shouldRubberBandInDirection(ScrollDirection) const override { return false; }
     void immediateScrollBy(const FloatSize&) override { }
     void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) override { }

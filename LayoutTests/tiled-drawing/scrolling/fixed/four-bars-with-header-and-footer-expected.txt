@@ -10,7 +10,7 @@
     (vertical scroll elasticity 2)
     (horizontal scrollbar mode 0)
     (vertical scrollbar mode 0)
-    (has enabled vertical scrollbar 1))
+    (allows vertical scrolling 1))
   (header height 100)
   (footer height 100)
   (layout viewport at (0,100) size 785x600)

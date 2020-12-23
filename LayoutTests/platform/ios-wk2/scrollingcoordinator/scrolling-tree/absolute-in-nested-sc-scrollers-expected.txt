@@ -20,7 +20,7 @@
         (vertical scroll elasticity 1)
         (horizontal scrollbar mode 0)
         (vertical scrollbar mode 0)
-        (has enabled vertical scrollbar 1))
+        (allows vertical scrolling 1))
       (children 1
         (Overflow scrolling node
           (scrollable area size 250 250)
@@ -30,7 +30,7 @@
             (vertical scroll elasticity 1)
             (horizontal scrollbar mode 0)
             (vertical scrollbar mode 0)
-            (has enabled vertical scrollbar 1))
+            (allows vertical scrolling 1))
           (children 1
             (Positioned node
               (layout constraints

@@ -23,7 +23,7 @@ Inner scrolling content
         (vertical scroll elasticity 0)
         (horizontal scrollbar mode 0)
         (vertical scrollbar mode 0)
-        (has enabled vertical scrollbar 1))
+        (allows vertical scrolling 1))
     )
   )
 )

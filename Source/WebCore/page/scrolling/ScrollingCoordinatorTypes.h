@@ -74,8 +74,8 @@ struct ScrollableAreaParameters {
     ScrollbarMode horizontalScrollbarMode { ScrollbarAuto };
     ScrollbarMode verticalScrollbarMode { ScrollbarAuto };
 
-    bool hasEnabledHorizontalScrollbar { false };
-    bool hasEnabledVerticalScrollbar { false };
+    bool allowsHorizontalScrolling { false };
+    bool allowsVerticalScrolling { false };
 
     bool horizontalScrollbarHiddenByStyle { false };
     bool verticalScrollbarHiddenByStyle { false };
@@ -88,10 +88,10 @@ struct ScrollableAreaParameters {
             && verticalScrollElasticity == other.verticalScrollElasticity
             && horizontalScrollbarMode == other.horizontalScrollbarMode
             && verticalScrollbarMode == other.verticalScrollbarMode
-            && hasEnabledHorizontalScrollbar == other.hasEnabledHorizontalScrollbar
+            && allowsHorizontalScrolling == other.allowsHorizontalScrolling
+            && allowsVerticalScrolling == other.allowsVerticalScrolling
             && horizontalScrollbarHiddenByStyle == other.horizontalScrollbarHiddenByStyle
             && verticalScrollbarHiddenByStyle == other.verticalScrollbarHiddenByStyle
-            && hasEnabledVerticalScrollbar == other.hasEnabledVerticalScrollbar
             && useDarkAppearanceForScrollbars == other.useDarkAppearanceForScrollbars;
     }
 };

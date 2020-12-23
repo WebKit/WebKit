@@ -452,6 +452,18 @@ bool ScrollableArea::hasLayerForScrollCorner() const
     return layerForScrollCorner();
 }
 
+bool ScrollableArea::allowsHorizontalScrolling() const
+{
+    auto* horizontalScrollbar = this->horizontalScrollbar();
+    return horizontalScrollbar && horizontalScrollbar->enabled();
+}
+
+bool ScrollableArea::allowsVerticalScrolling() const
+{
+    auto* verticalScrollbar = this->verticalScrollbar();
+    return verticalScrollbar && verticalScrollbar->enabled();
+}
+
 String ScrollableArea::horizontalScrollbarStateForTesting() const
 {
     return scrollAnimator().horizontalScrollbarStateForTesting();

@@ -181,10 +181,10 @@ bool ScrollingTreeScrollingNode::eventCanScrollContents(const PlatformWheelEvent
 
     auto wheelDelta = wheelEvent.delta();
 
-    if (!m_scrollableAreaParameters.hasEnabledHorizontalScrollbar)
+    if (!m_scrollableAreaParameters.allowsHorizontalScrolling)
         wheelDelta.setWidth(0);
 
-    if (!m_scrollableAreaParameters.hasEnabledVerticalScrollbar)
+    if (!m_scrollableAreaParameters.allowsVerticalScrolling)
         wheelDelta.setHeight(0);
 
     auto oldScrollPosition = currentScrollPosition();

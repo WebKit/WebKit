@@ -53,8 +53,8 @@ protected:
     FloatSize scrollableAreaSize() const { return m_scrollingNode.scrollableAreaSize(); }
     FloatSize totalContentsSize() const { return m_scrollingNode.totalContentsSize(); }
 
-    bool hasEnabledHorizontalScrollbar() const { return m_scrollingNode.hasEnabledHorizontalScrollbar(); }
-    bool hasEnabledVerticalScrollbar() const { return m_scrollingNode.hasEnabledVerticalScrollbar(); }
+    bool allowsHorizontalScrolling() const { return m_scrollingNode.allowsHorizontalScrolling(); }
+    bool allowsVerticalScrolling() const { return m_scrollingNode.allowsVerticalScrolling(); }
 
     ScrollElasticity horizontalScrollElasticity() const { return m_scrollingNode.horizontalScrollElasticity(); }
     ScrollElasticity verticalScrollElasticity() const { return m_scrollingNode.verticalScrollElasticity(); }

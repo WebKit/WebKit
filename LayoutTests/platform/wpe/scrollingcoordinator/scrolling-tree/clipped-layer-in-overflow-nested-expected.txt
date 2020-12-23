@@ -23,7 +23,7 @@
         (vertical scroll elasticity 1)
         (horizontal scrollbar mode 0)
         (vertical scrollbar mode 0)
-        (has enabled vertical scrollbar 1))
+        (allows vertical scrolling 1))
       (children 1
         (Overflow scrolling node
           (scroll position 0 150)
@@ -36,7 +36,7 @@
             (vertical scroll elasticity 1)
             (horizontal scrollbar mode 0)
             (vertical scrollbar mode 0)
-            (has enabled vertical scrollbar 1))
+            (allows vertical scrolling 1))
         )
       )
     )

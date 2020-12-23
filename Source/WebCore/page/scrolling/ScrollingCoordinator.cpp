@@ -423,10 +423,10 @@ TextStream& operator<<(TextStream& ts, ScrollableAreaParameters scrollableAreaPa
     ts.dumpProperty("horizontal scrollbar mode", scrollableAreaParameters.horizontalScrollbarMode);
     ts.dumpProperty("vertical scrollbar mode", scrollableAreaParameters.verticalScrollbarMode);
 
-    if (scrollableAreaParameters.hasEnabledHorizontalScrollbar)
-        ts.dumpProperty("has enabled horizontal scrollbar", scrollableAreaParameters.hasEnabledHorizontalScrollbar);
-    if (scrollableAreaParameters.hasEnabledVerticalScrollbar)
-        ts.dumpProperty("has enabled vertical scrollbar", scrollableAreaParameters.hasEnabledVerticalScrollbar);
+    if (scrollableAreaParameters.allowsHorizontalScrolling)
+        ts.dumpProperty("allows horizontal scrolling", scrollableAreaParameters.allowsHorizontalScrolling);
+    if (scrollableAreaParameters.allowsVerticalScrolling)
+        ts.dumpProperty("allows vertical scrolling", scrollableAreaParameters.allowsVerticalScrolling);
 
     if (scrollableAreaParameters.horizontalScrollbarHiddenByStyle)
         ts.dumpProperty("horizontal scrollbar hidden by style", scrollableAreaParameters.horizontalScrollbarHiddenByStyle);

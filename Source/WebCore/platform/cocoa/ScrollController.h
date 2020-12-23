@@ -81,8 +81,8 @@ public:
 
     virtual RectEdges<bool> edgePinnedState() const = 0;
 
-    virtual bool canScrollHorizontally() const = 0;
-    virtual bool canScrollVertically() const = 0;
+    virtual bool allowsHorizontalScrolling() const = 0;
+    virtual bool allowsVerticalScrolling() const = 0;
     virtual bool shouldRubberBandInDirection(ScrollDirection) const = 0;
 
     // FIXME: use ScrollClamping to collapse these to one.

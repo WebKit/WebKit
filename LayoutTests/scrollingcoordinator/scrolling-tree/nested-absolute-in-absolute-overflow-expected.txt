@@ -22,8 +22,8 @@ abs
         (vertical scroll elasticity 0)
         (horizontal scrollbar mode 0)
         (vertical scrollbar mode 0)
-        (has enabled horizontal scrollbar 1)
-        (has enabled vertical scrollbar 1))
+        (allows horizontal scrolling 1)
+        (allows vertical scrolling 1))
     )
     (Overflow scroll proxy node
       (related overflow scrolling node scroll position (0,0))

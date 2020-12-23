@@ -12,7 +12,7 @@ Scrolling content
     (vertical scroll elasticity 1)
     (horizontal scrollbar mode 0)
     (vertical scrollbar mode 0)
-    (has enabled vertical scrollbar 1))
+    (allows vertical scrolling 1))
   (layout viewport at (0,0) size 785x600)
   (min layout viewport origin (0,0))
   (max layout viewport origin (0,141))
@@ -26,7 +26,7 @@ Scrolling content
         (vertical scroll elasticity 1)
         (horizontal scrollbar mode 0)
         (vertical scrollbar mode 0)
-        (has enabled vertical scrollbar 1))
+        (allows vertical scrolling 1))
     )
     (Overflow scrolling node
       (scrollable area size 205 155)
@@ -36,8 +36,8 @@ Scrolling content
         (vertical scroll elasticity 1)
         (horizontal scrollbar mode 0)
         (vertical scrollbar mode 0)
-        (has enabled horizontal scrollbar 1)
-        (has enabled vertical scrollbar 1))
+        (allows horizontal scrolling 1)
+        (allows vertical scrolling 1))
       (children 1
         (Overflow scrolling node
           (scrollable area size 205 155)
@@ -47,7 +47,7 @@ Scrolling content
             (vertical scroll elasticity 1)
             (horizontal scrollbar mode 0)
             (vertical scrollbar mode 0)
-            (has enabled vertical scrollbar 1))
+            (allows vertical scrolling 1))
         )
       )
     )
@@ -62,7 +62,7 @@ Scrolling content
         (vertical scroll elasticity 1)
         (horizontal scrollbar mode 0)
         (vertical scrollbar mode 0)
-        (has enabled vertical scrollbar 1))
+        (allows vertical scrolling 1))
     )
     (Overflow scrolling node
       (scrollable area size 205 155)
@@ -72,7 +72,7 @@ Scrolling content
         (vertical scroll elasticity 1)
         (horizontal scrollbar mode 0)
         (vertical scrollbar mode 0)
-        (has enabled vertical scrollbar 1))
+        (allows vertical scrolling 1))
       (children 1
         (Positioned node
           (layout constraints

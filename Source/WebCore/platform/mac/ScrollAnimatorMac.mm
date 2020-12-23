@@ -1416,20 +1416,14 @@ IntSize ScrollAnimatorMac::stretchAmount() const
     return m_scrollableArea.overhangAmount();
 }
 
-bool ScrollAnimatorMac::canScrollHorizontally() const
+bool ScrollAnimatorMac::allowsHorizontalScrolling() const
 {
-    Scrollbar* scrollbar = m_scrollableArea.horizontalScrollbar();
-    if (!scrollbar)
-        return false;
-    return scrollbar->enabled();
+    return m_scrollableArea.allowsHorizontalScrolling();
 }
 
-bool ScrollAnimatorMac::canScrollVertically() const
+bool ScrollAnimatorMac::allowsVerticalScrolling() const
 {
-    Scrollbar* scrollbar = m_scrollableArea.verticalScrollbar();
-    if (!scrollbar)
-        return false;
-    return scrollbar->enabled();
+    return m_scrollableArea.allowsVerticalScrolling();
 }
 
 bool ScrollAnimatorMac::shouldRubberBandInDirection(ScrollDirection) const

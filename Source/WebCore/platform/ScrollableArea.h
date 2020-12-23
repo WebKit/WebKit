@@ -137,6 +137,9 @@ public:
     virtual bool horizontalScrollbarHiddenByStyle() const { return false; }
     virtual bool verticalScrollbarHiddenByStyle() const { return false; }
 
+    bool allowsHorizontalScrolling() const;
+    bool allowsVerticalScrolling() const;
+
     WEBCORE_EXPORT String horizontalScrollbarStateForTesting() const;
     WEBCORE_EXPORT String verticalScrollbarStateForTesting() const;
 

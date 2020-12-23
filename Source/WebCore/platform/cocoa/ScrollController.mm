@@ -428,11 +428,11 @@ void ScrollController::snapRubberBandTimerFired()
                 m_origVelocity.setWidth(0);
 
             // Don't rubber-band horizontally if it's not possible to scroll horizontally
-            if (!m_client.canScrollHorizontally())
+            if (!m_client.allowsHorizontalScrolling())
                 m_origVelocity.setWidth(0);
 
             // Don't rubber-band vertically if it's not possible to scroll vertically
-            if (!m_client.canScrollVertically())
+            if (!m_client.allowsVerticalScrolling())
                 m_origVelocity.setHeight(0);
         }
 

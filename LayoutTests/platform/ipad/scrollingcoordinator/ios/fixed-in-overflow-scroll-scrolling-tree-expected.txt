@@ -22,7 +22,7 @@
         (vertical scroll elasticity 1)
         (horizontal scrollbar mode 0)
         (vertical scrollbar mode 0)
-        (has enabled vertical scrollbar 1)))
+        (allows vertical scrolling 1)))
     (fixed node
       (fixed constraints
         (viewport-rect-at-last-layout (0,0) width=768 height=1004)

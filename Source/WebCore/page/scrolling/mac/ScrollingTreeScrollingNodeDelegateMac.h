@@ -80,8 +80,8 @@ private:
     IntSize stretchAmount() const final;
     bool pinnedInDirection(const FloatSize&) const final;
     RectEdges<bool> edgePinnedState() const final;
-    bool canScrollHorizontally() const final;
-    bool canScrollVertically() const final;
+    bool allowsHorizontalScrolling() const final;
+    bool allowsVerticalScrolling() const final;
     bool shouldRubberBandInDirection(ScrollDirection) const final;
     void immediateScrollBy(const FloatSize&) final;
     void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) final;

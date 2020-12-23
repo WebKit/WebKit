@@ -2025,8 +2025,8 @@ void ArgumentCoder<ScrollableAreaParameters>::encode(Encoder& encoder, const Scr
     encoder << parameters.horizontalScrollbarMode;
     encoder << parameters.verticalScrollbarMode;
 
-    encoder << parameters.hasEnabledHorizontalScrollbar;
-    encoder << parameters.hasEnabledVerticalScrollbar;
+    encoder << parameters.allowsHorizontalScrolling;
+    encoder << parameters.allowsVerticalScrolling;
 
     encoder << parameters.horizontalScrollbarHiddenByStyle;
     encoder << parameters.verticalScrollbarHiddenByStyle;
@@ -2046,9 +2046,9 @@ bool ArgumentCoder<ScrollableAreaParameters>::decode(Decoder& decoder, Scrollabl
     if (!decoder.decode(params.verticalScrollbarMode))
         return false;
 
-    if (!decoder.decode(params.hasEnabledHorizontalScrollbar))
+    if (!decoder.decode(params.allowsHorizontalScrolling))
         return false;
-    if (!decoder.decode(params.hasEnabledVerticalScrollbar))
+    if (!decoder.decode(params.allowsVerticalScrolling))
         return false;
 
     if (!decoder.decode(params.horizontalScrollbarHiddenByStyle))
