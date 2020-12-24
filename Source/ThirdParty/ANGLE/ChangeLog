@@ -1,3 +1,13 @@
+2020-12-23  Kyle Piddington  <kpiddington@apple.com>
+
+        [ANGLE] Metal backend renders tdl.js samples as red
+        https://bugs.webkit.org/show_bug.cgi?id=220129
+
+        Reviewed by Kenneth Russell.
+
+        * src/libANGLE/renderer/metal/FrameBufferMtl.mm:
+        (rx::FramebufferMtl::blitWithDraw):
+
 2020-12-22  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         warning: enumerated and non-enumerated type in conditional expression in Compiler.cpp

@@ -468,7 +468,7 @@ angle::Result FramebufferMtl::blitWithDraw(const gl::Context *context,
         colorBlitParams.srcLevel = srcColorRt->getLevelIndex();
         colorBlitParams.srcLayer = srcColorRt->getLayerIndex();
 
-        colorBlitParams.blitColorMask  = contextMtl->getColorMask();
+        colorBlitParams.blitColorMask  = MTLColorWriteMaskAll;
         colorBlitParams.enabledBuffers = getState().getEnabledDrawBuffers();
         colorBlitParams.filter         = filter;
         colorBlitParams.dstLuminance   = srcColorRt->getFormat()->actualAngleFormat().isLUMA();
