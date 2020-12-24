@@ -129,12 +129,11 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
     if (wheelEvent.phase() == PlatformWheelEventPhase::Began) {
         // FIXME: Trying to decide if a gesture is horizontal or vertical at the "began" phase is very error-prone.
         auto direction = directionFromEvent(wheelEvent, ScrollEventAxis::Horizontal);
-        // FIXME: pinnedInDirection() needs cleanup.
-        if (direction && m_client.pinnedInDirection(FloatSize(-wheelEvent.deltaX(), 0)) && !shouldRubberBandInDirection(direction.value()))
+        if (direction && m_client.isPinnedForScrollDelta(FloatSize(-wheelEvent.deltaX(), 0)) && !shouldRubberBandInDirection(direction.value()))
             return false;
 
         direction = directionFromEvent(wheelEvent, ScrollEventAxis::Vertical);
-        if (direction && m_client.pinnedInDirection(FloatSize(0, -wheelEvent.deltaY())) && !shouldRubberBandInDirection(direction.value()))
+        if (direction && m_client.isPinnedForScrollDelta(FloatSize(0, -wheelEvent.deltaY())) && !shouldRubberBandInDirection(direction.value()))
             return false;
 
         m_momentumScrollInProgress = false;
@@ -222,7 +221,7 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
         }
 
         if (isVerticallyStretched) {
-            if (!isHorizontallyStretched && m_client.pinnedInDirection(FloatSize(deltaX, 0))) {
+            if (!isHorizontallyStretched && m_client.isPinnedForScrollDelta(FloatSize(deltaX, 0))) {
                 // Stretching only in the vertical.
                 if (deltaY && (fabsf(deltaX / deltaY) < rubberbandDirectionLockStretchRatio))
                     deltaX = 0;
@@ -234,7 +233,7 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
             }
         } else if (isHorizontallyStretched) {
             // Stretching only in the horizontal.
-            if (m_client.pinnedInDirection(FloatSize(0, deltaY))) {
+            if (m_client.isPinnedForScrollDelta(FloatSize(0, deltaY))) {
                 if (deltaX && (fabsf(deltaY / deltaX) < rubberbandDirectionLockStretchRatio))
                     deltaY = 0;
                 else if (fabsf(deltaY) < rubberbandMinimumRequiredDeltaBeforeStretch) {
@@ -245,7 +244,7 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
             }
         } else {
             // Not stretching at all yet.
-            if (m_client.pinnedInDirection(FloatSize(deltaX, deltaY))) {
+            if (m_client.isPinnedForScrollDelta(FloatSize(deltaX, deltaY))) {
                 if (fabsf(deltaY) >= fabsf(deltaX)) {
                     if (fabsf(deltaX) < rubberbandMinimumRequiredDeltaBeforeStretch) {
                         m_overflowScrollDelta.setWidth(m_overflowScrollDelta.width() + deltaX);
@@ -257,7 +256,7 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
             }
         }
 
-        LOG_WITH_STREAM(Scrolling, stream << "ScrollController::handleWheelEvent() - deltaX " << deltaX << " deltaY " << deltaY << " pinned " << m_client.pinnedInDirection(FloatSize(deltaX, deltaY)) << " shouldStretch " << shouldStretch);
+        LOG_WITH_STREAM(Scrolling, stream << "ScrollController::handleWheelEvent() - deltaX " << deltaX << " deltaY " << deltaY << " pinned " << m_client.isPinnedForScrollDelta(FloatSize(deltaX, deltaY)) << " shouldStretch " << shouldStretch);
     }
 
     bool handled = true;
@@ -278,7 +277,7 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
                     deltaX = 0;
                     eventCoalescedDeltaX = 0;
                     handled = false;
-                } else if (!isHorizontallyStretched && !m_client.pinnedInDirection(FloatSize(deltaX, 0))) {
+                } else if (!isHorizontallyStretched && !m_client.isPinnedForScrollDelta(FloatSize(deltaX, 0))) {
                     deltaX *= scrollWheelMultiplier();
 
                     m_client.immediateScrollByWithoutContentEdgeConstraints(FloatSize(deltaX, 0));
@@ -291,7 +290,7 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
                     deltaY = 0;
                     eventCoalescedDeltaY = 0;
                     handled = false;
-                } else if (!isVerticallyStretched && !m_client.pinnedInDirection(FloatSize(0, deltaY))) {
+                } else if (!isVerticallyStretched && !m_client.isPinnedForScrollDelta(FloatSize(0, deltaY))) {
                     deltaY *= scrollWheelMultiplier();
 
                     m_client.immediateScrollByWithoutContentEdgeConstraints(FloatSize(0, deltaY));
@@ -302,7 +301,7 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
             IntSize stretchAmount = m_client.stretchAmount();
 
             if (m_momentumScrollInProgress) {
-                if ((m_client.pinnedInDirection(FloatSize(eventCoalescedDeltaX, eventCoalescedDeltaY)) || (fabsf(eventCoalescedDeltaX) + fabsf(eventCoalescedDeltaY) <= 0)) && m_lastMomentumScrollTimestamp) {
+                if ((m_client.isPinnedForScrollDelta(FloatSize(eventCoalescedDeltaX, eventCoalescedDeltaY)) || (fabsf(eventCoalescedDeltaX) + fabsf(eventCoalescedDeltaY) <= 0)) && m_lastMomentumScrollTimestamp) {
                     m_ignoreMomentumScrolls = true;
                     m_momentumScrollInProgress = false;
                     snapRubberBand();

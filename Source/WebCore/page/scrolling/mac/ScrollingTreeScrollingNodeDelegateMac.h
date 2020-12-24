@@ -71,14 +71,14 @@ public:
     void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const override;
 
 private:
-    bool isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent&, ScrollEventAxis) const;
+    bool isPinnedForScrollDeltaOnAxis(float scrollDelta, ScrollEventAxis, float scrollLimit = 0) const;
 
     // ScrollControllerClient.
     std::unique_ptr<ScrollControllerTimer> createTimer(Function<void()>&&) final;
     bool allowsHorizontalStretching(const PlatformWheelEvent&) const final;
     bool allowsVerticalStretching(const PlatformWheelEvent&) const final;
     IntSize stretchAmount() const final;
-    bool pinnedInDirection(const FloatSize&) const final;
+    bool isPinnedForScrollDelta(const FloatSize&) const final;
     RectEdges<bool> edgePinnedState() const final;
     bool allowsHorizontalScrolling() const final;
     bool allowsVerticalScrolling() const final;

@@ -215,19 +215,34 @@ bool ScrollingTreeScrollingNodeDelegateMac::isScrollSnapInProgress() const
     return m_scrollController.isScrollSnapInProgress();
 }
 
-// FIXME: We should find a way to share some of the code from newGestureIsStarting(), isAlreadyPinnedInDirectionOfGesture(),
-// allowsVerticalStretching(), and allowsHorizontalStretching() with the implementation in ScrollAnimatorMac.
-bool ScrollingTreeScrollingNodeDelegateMac::isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent& wheelEvent, ScrollEventAxis axis) const
+bool ScrollingTreeScrollingNodeDelegateMac::isPinnedForScrollDeltaOnAxis(float scrollDelta, ScrollEventAxis axis, float scrollLimit) const
 {
     auto scrollPosition = currentScrollPosition();
     switch (axis) {
     case ScrollEventAxis::Vertical:
-        return (wheelEvent.deltaY() > 0 && scrollPosition.y() <= minimumScrollPosition().y()) || (wheelEvent.deltaY() < 0 && scrollPosition.y() >= maximumScrollPosition().y());
+        if (scrollDelta < 0) {
+            auto topOffset = scrollPosition.y() - minimumScrollPosition().y();
+            return topOffset <= scrollLimit;
+        }
+
+        if (scrollDelta > 0) {
+            auto bottomOffset = maximumScrollPosition().y() - scrollPosition.y();
+            return bottomOffset <= scrollLimit;
+        }
+        break;
     case ScrollEventAxis::Horizontal:
-        return (wheelEvent.deltaX() > 0 && scrollPosition.x() <= minimumScrollPosition().x()) || (wheelEvent.deltaX() < 0 && scrollPosition.x() >= maximumScrollPosition().x());
+        if (scrollDelta < 0) {
+            auto leftOffset = scrollPosition.x() - minimumScrollPosition().x();
+            return leftOffset <= scrollLimit;
+        }
+
+        if (scrollDelta > 0) {
+            auto rightOffset = maximumScrollPosition().x() - scrollPosition.x();
+            return rightOffset <= scrollLimit;
+        }
+        break;
     }
 
-    ASSERT_NOT_REACHED();
     return false;
 }
 
@@ -244,7 +259,7 @@ bool ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching(const Pla
     switch (horizontalScrollElasticity()) {
     case ScrollElasticityAutomatic: {
         bool scrollbarsAllowStretching = allowsHorizontalScrolling() || !allowsVerticalScrolling();
-        bool eventPreventsStretching = wheelEvent.isGestureStart() && isAlreadyPinnedInDirectionOfGesture(wheelEvent, ScrollEventAxis::Horizontal);
+        bool eventPreventsStretching = wheelEvent.isGestureStart() && isPinnedForScrollDeltaOnAxis(-wheelEvent.deltaX(), ScrollEventAxis::Horizontal);
         return scrollbarsAllowStretching && !eventPreventsStretching;
     }
     case ScrollElasticityNone:
@@ -266,7 +281,7 @@ bool ScrollingTreeScrollingNodeDelegateMac::allowsVerticalStretching(const Platf
     switch (verticalScrollElasticity()) {
     case ScrollElasticityAutomatic: {
         bool scrollbarsAllowStretching = allowsVerticalScrolling() || !allowsHorizontalScrolling();
-        bool eventPreventsStretching = wheelEvent.isGestureStart() && isAlreadyPinnedInDirectionOfGesture(wheelEvent, ScrollEventAxis::Vertical);
+        bool eventPreventsStretching = wheelEvent.isGestureStart() && isPinnedForScrollDeltaOnAxis(-wheelEvent.deltaY(), ScrollEventAxis::Vertical);
         return scrollbarsAllowStretching && !eventPreventsStretching;
     }
     case ScrollElasticityNone:
@@ -301,32 +316,16 @@ IntSize ScrollingTreeScrollingNodeDelegateMac::stretchAmount() const
     return stretch;
 }
 
-// FIXME: Share more with ScrollingTreeScrollingNode::edgePinnedState().
-bool ScrollingTreeScrollingNodeDelegateMac::pinnedInDirection(const FloatSize& delta) const
+bool ScrollingTreeScrollingNodeDelegateMac::isPinnedForScrollDelta(const FloatSize& delta) const
 {
-    FloatSize limitDelta;
-    auto scrollPosition = currentScrollPosition();
+    // This "offset < 1" logic was added in r107488. Unclear if it's needed.
+    constexpr float scrollOffsetLimit = 1.0f - std::numeric_limits<float>::epsilon();
 
-    if (fabsf(delta.height()) >= fabsf(delta.width())) {
-        if (delta.height() < 0) {
-            // We are trying to scroll up. Make sure we are not pinned to the top.
-            limitDelta.setHeight(scrollPosition.y() - minimumScrollPosition().y());
-        } else {
-            // We are trying to scroll down. Make sure we are not pinned to the bottom.
-            limitDelta.setHeight(maximumScrollPosition().y() - scrollPosition.y());
-        }
-    } else if (delta.width()) {
-        if (delta.width() < 0) {
-            // We are trying to scroll left. Make sure we are not pinned to the left.
-            limitDelta.setWidth(scrollPosition.x() - minimumScrollPosition().x());
-        } else {
-            // We are trying to scroll right. Make sure we are not pinned to the right.
-            limitDelta.setWidth(maximumScrollPosition().x() - scrollPosition.x());
-        }
-    }
+    if (fabsf(delta.height()) >= fabsf(delta.width()))
+        return isPinnedForScrollDeltaOnAxis(delta.height(), ScrollEventAxis::Vertical, scrollOffsetLimit);
 
-    if ((delta.width() || delta.height()) && (limitDelta.width() < 1 && limitDelta.height() < 1))
-        return true;
+    if (delta.width())
+        return isPinnedForScrollDeltaOnAxis(delta.width(), ScrollEventAxis::Horizontal, scrollOffsetLimit);
 
     return false;
 }

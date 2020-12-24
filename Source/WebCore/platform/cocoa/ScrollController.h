@@ -77,7 +77,7 @@ public:
     virtual bool allowsVerticalStretching(const PlatformWheelEvent&) const = 0;
     virtual IntSize stretchAmount() const = 0;
 
-    virtual bool pinnedInDirection(const FloatSize&) const = 0;
+    virtual bool isPinnedForScrollDelta(const FloatSize&) const = 0;
 
     virtual RectEdges<bool> edgePinnedState() const = 0;
 

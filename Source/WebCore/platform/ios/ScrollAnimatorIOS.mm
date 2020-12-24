@@ -172,7 +172,7 @@ void ScrollAnimatorIOS::determineScrollableAreaForTouchSequence(const IntSize& s
 
     ScrollableArea* scrollableArea = &m_scrollableArea;
     while (true) {
-        if (!scrollableArea->isPinnedInBothDirections(scrollDelta))
+        if (!scrollableArea->isPinnedForScrollDelta(scrollDelta))
             break;
 
         ScrollableArea* enclosingArea = scrollableArea->enclosingScrollableArea();

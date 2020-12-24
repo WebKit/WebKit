@@ -146,7 +146,7 @@ private:
     IntSize stretchAmount() const final;
     bool allowsHorizontalStretching(const PlatformWheelEvent&) const final;
     bool allowsVerticalStretching(const PlatformWheelEvent&) const final;
-    bool pinnedInDirection(const FloatSize&) const final;
+    bool isPinnedForScrollDelta(const FloatSize&) const final;
     RectEdges<bool> edgePinnedState() const final;
     bool allowsHorizontalScrolling() const final;
     bool allowsVerticalScrolling() const final;
@@ -154,8 +154,6 @@ private:
     void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) final;
     void immediateScrollBy(const FloatSize&) final;
     void adjustScrollPositionToBoundsIfNecessary() final;
-
-    bool isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent&, ScrollEventAxis) const;
 #endif
 
     bool m_haveScrolledSincePageLoad;

@@ -1299,54 +1299,19 @@ bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
     return didHandleEvent;
 }
 
-bool ScrollAnimatorMac::pinnedInDirection(const FloatSize& direction) const
-{
-    FloatSize limitDelta;
-    if (fabsf(direction.height()) >= fabsf(direction.width())) {
-        if (direction.height() < 0) {
-            // We are trying to scroll up. Make sure we are not pinned to the top
-            limitDelta.setHeight(m_scrollableArea.visibleContentRect().y() + m_scrollableArea.scrollOrigin().y());
-        } else {
-            // We are trying to scroll down. Make sure we are not pinned to the bottom
-            limitDelta.setHeight(m_scrollableArea.totalContentsSize().height() - (m_scrollableArea.visibleContentRect().maxY() + m_scrollableArea.scrollOrigin().y()));
-        }
-    } else if (direction.width()) {
-        if (direction.width() < 0) {
-            // We are trying to scroll left. Make sure we are not pinned to the left
-            limitDelta.setWidth(m_scrollableArea.visibleContentRect().x() + m_scrollableArea.scrollOrigin().x());
-        } else {
-            // We are trying to scroll right. Make sure we are not pinned to the right
-            limitDelta.setWidth(m_scrollableArea.totalContentsSize().width() - (m_scrollableArea.visibleContentRect().maxX() + m_scrollableArea.scrollOrigin().x()));
-        }
-    }
-    
-    if ((direction.width() || direction.height()) && (limitDelta.width() < 1 && limitDelta.height() < 1))
-        return true;
-    return false;
-}
-
 RectEdges<bool> ScrollAnimatorMac::edgePinnedState() const
 {
     return m_scrollableArea.edgePinnedState();
 }
 
-// FIXME: We should find a way to share some of the code from newGestureIsStarting(), isAlreadyPinnedInDirectionOfGesture(),
-// allowsVerticalStretching(), and allowsHorizontalStretching() with the implementation in ScrollingTreeFrameScrollingNodeMac.
-static bool newGestureIsStarting(const PlatformWheelEvent& wheelEvent)
+bool ScrollAnimatorMac::isPinnedForScrollDelta(const FloatSize& delta) const
 {
-    return wheelEvent.phase() == PlatformWheelEventPhase::MayBegin || wheelEvent.phase() == PlatformWheelEventPhase::Began;
-}
+    if (fabsf(delta.height()) >= fabsf(delta.width()))
+        return m_scrollableArea.isPinnedForScrollDeltaOnAxis(delta.height(), ScrollEventAxis::Vertical);
 
-bool ScrollAnimatorMac::isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent& wheelEvent, ScrollEventAxis axis) const
-{
-    switch (axis) {
-    case ScrollEventAxis::Vertical:
-        return (wheelEvent.deltaY() > 0 && m_scrollableArea.scrolledToTop()) || (wheelEvent.deltaY() < 0 && m_scrollableArea.scrolledToBottom());
-    case ScrollEventAxis::Horizontal:
-        return (wheelEvent.deltaX() > 0 && m_scrollableArea.scrolledToLeft()) || (wheelEvent.deltaX() < 0 && m_scrollableArea.scrolledToRight());
-    }
+    if (delta.width())
+        return m_scrollableArea.isPinnedForScrollDeltaOnAxis(delta.width(), ScrollEventAxis::Horizontal);
 
-    ASSERT_NOT_REACHED();
     return false;
 }
 
@@ -1370,7 +1335,7 @@ bool ScrollAnimatorMac::allowsVerticalStretching(const PlatformWheelEvent& wheel
         Scrollbar* hScroller = m_scrollableArea.horizontalScrollbar();
         Scrollbar* vScroller = m_scrollableArea.verticalScrollbar();
         bool scrollbarsAllowStretching = ((vScroller && vScroller->enabled()) || (!hScroller || !hScroller->enabled()));
-        bool eventPreventsStretching = m_scrollableArea.hasScrollableOrRubberbandableAncestor() && newGestureIsStarting(wheelEvent) && isAlreadyPinnedInDirectionOfGesture(wheelEvent, ScrollEventAxis::Vertical);
+        bool eventPreventsStretching = m_scrollableArea.hasScrollableOrRubberbandableAncestor() && wheelEvent.isGestureStart() && m_scrollableArea.isPinnedForScrollDeltaOnAxis(-wheelEvent.deltaY(), ScrollEventAxis::Vertical);
 #if ENABLE(CSS_SCROLL_SNAP)
         if (!eventPreventsStretching)
             eventPreventsStretching = gestureShouldBeginSnap(wheelEvent, m_scrollableArea.verticalSnapOffsets());
@@ -1394,7 +1359,7 @@ bool ScrollAnimatorMac::allowsHorizontalStretching(const PlatformWheelEvent& whe
         Scrollbar* hScroller = m_scrollableArea.horizontalScrollbar();
         Scrollbar* vScroller = m_scrollableArea.verticalScrollbar();
         bool scrollbarsAllowStretching = ((hScroller && hScroller->enabled()) || (!vScroller || !vScroller->enabled()));
-        bool eventPreventsStretching = m_scrollableArea.hasScrollableOrRubberbandableAncestor() && newGestureIsStarting(wheelEvent) && isAlreadyPinnedInDirectionOfGesture(wheelEvent, ScrollEventAxis::Horizontal);
+        bool eventPreventsStretching = m_scrollableArea.hasScrollableOrRubberbandableAncestor() && wheelEvent.isGestureStart() && m_scrollableArea.isPinnedForScrollDeltaOnAxis(-wheelEvent.deltaX(), ScrollEventAxis::Horizontal);
 #if ENABLE(CSS_SCROLL_SNAP)
         if (!eventPreventsStretching)
             eventPreventsStretching = gestureShouldBeginSnap(wheelEvent, m_scrollableArea.horizontalSnapOffsets());

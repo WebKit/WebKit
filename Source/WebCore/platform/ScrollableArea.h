@@ -326,15 +326,8 @@ public:
     // This function is static so that it can be called from the main thread or the scrolling thread.
     WEBCORE_EXPORT static void computeScrollbarValueAndOverhang(float currentPosition, float totalSize, float visibleSize, float& doubleValue, float& overhangAmount);
 
-    bool isHorizontalScrollerPinnedToMinimumPosition() const { return !horizontalScrollbar() || scrollOffset().x() <= 0; }
-    bool isHorizontalScrollerPinnedToMaximumPosition() const { return !horizontalScrollbar() || scrollOffset().x() >= maximumScrollOffset().x(); }
-    bool isVerticalScrollerPinnedToMinimumPosition() const { return !verticalScrollbar() || scrollOffset().y() <= 0; }
-    bool isVerticalScrollerPinnedToMaximumPosition() const { return !verticalScrollbar() || scrollOffset().y() >= maximumScrollOffset().y(); }
-
-    bool isPinnedInBothDirections(const IntSize&) const; 
-    bool isPinnedHorizontallyInDirection(int horizontalScrollDelta) const; 
-    bool isPinnedVerticallyInDirection(int verticalScrollDelta) const;
-
+    bool isPinnedForScrollDeltaOnAxis(float scrollDelta, ScrollEventAxis) const;
+    bool isPinnedForScrollDelta(const FloatSize&) const;
     RectEdges<bool> edgePinnedState() const;
 
     // True if scrolling happens by moving compositing layers.

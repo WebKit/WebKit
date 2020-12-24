@@ -629,28 +629,34 @@ void ScrollableArea::updateScrollSnapState()
 }
 #endif
 
-
-bool ScrollableArea::isPinnedInBothDirections(const IntSize& scrollDelta) const
+bool ScrollableArea::isPinnedForScrollDeltaOnAxis(float scrollDelta, ScrollEventAxis axis) const
 {
-    return isPinnedHorizontallyInDirection(scrollDelta.width()) && isPinnedVerticallyInDirection(scrollDelta.height());
-}
+    auto scrollPosition = this->scrollPosition();
+    switch (axis) {
+    case ScrollEventAxis::Vertical:
+        if (scrollDelta < 0) // top
+            return scrollPosition.y() <= minimumScrollPosition().y();
 
-bool ScrollableArea::isPinnedHorizontallyInDirection(int horizontalScrollDelta) const
-{
-    if (horizontalScrollDelta < 0 && isHorizontalScrollerPinnedToMinimumPosition())
-        return true;
-    if (horizontalScrollDelta > 0 && isHorizontalScrollerPinnedToMaximumPosition())
-        return true;
+        if (scrollDelta > 0) // bottom
+            return scrollPosition.y() >= maximumScrollPosition().y();
+
+        break;
+    case ScrollEventAxis::Horizontal:
+        if (scrollDelta < 0) // left
+            return scrollPosition.x() <= minimumScrollPosition().x();
+
+        if (scrollDelta > 0) // right
+            return scrollPosition.x() >= maximumScrollPosition().x();
+
+        break;
+    }
+
     return false;
 }
 
-bool ScrollableArea::isPinnedVerticallyInDirection(int verticalScrollDelta) const
+bool ScrollableArea::isPinnedForScrollDelta(const FloatSize& scrollDelta) const
 {
-    if (verticalScrollDelta < 0 && isVerticalScrollerPinnedToMinimumPosition())
-        return true;
-    if (verticalScrollDelta > 0 && isVerticalScrollerPinnedToMaximumPosition())
-        return true;
-    return false;
+    return isPinnedForScrollDeltaOnAxis(scrollDelta.width(), ScrollEventAxis::Horizontal) && isPinnedForScrollDeltaOnAxis(scrollDelta.height(), ScrollEventAxis::Vertical);
 }
 
 RectEdges<bool> ScrollableArea::edgePinnedState() const
