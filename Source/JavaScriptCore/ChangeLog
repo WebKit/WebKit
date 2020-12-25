@@ -1,3 +1,27 @@
+2020-12-25  Mark Lam  <mark.lam@apple.com>
+
+        VMInspector::dumpRegisters() should not dump beyond the start of the next frame.
+        https://bugs.webkit.org/show_bug.cgi?id=220136
+        rdar://64404201
+
+        Reviewed by Yusuke Suzuki.
+
+        VMInspector::dumpRegisters() was dumping stack slots up for up to
+        codeBlock->numCalleeLocals() slots for any given CallFrame.  This is incorrect.
+        codeBlock->numCalleeLocals() indicates the maximum number of stack slots that the
+        codeBlock may use.  However, the executing codeBlock may not necessary use up that
+        number of slots before calling another function.
+
+        In the attached test case, the global program has 98 callee locals.  However, it
+        was only using a very small number of stack slots to call $vm.dumpRegisters().
+        On an ASAN build, iterating thru 98 stack slots of the global program (to dump
+        their contents) ended up reading beyond the top of the stack, and this made ASAN
+        very unhappy.  The fix is simply to ensure that VMInspector::dumpRegisters() never
+        dumps past the start of the next CallFrame.
+
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::dumpRegisters):
+
 2020-12-21  Jessica Tallon  <jtallon@igalia.com>
 
         [JSC] Add minimum parameter to the WASM JS-API for Memory & Table.

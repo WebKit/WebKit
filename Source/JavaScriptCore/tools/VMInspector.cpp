@@ -449,7 +449,27 @@ void VMInspector::dumpRegisters(CallFrame* callFrame)
     }
     dataLogF("-----------------------------------------------------------------------------\n");
 
-    end = it - codeBlock->numCalleeLocals() + codeBlock->numVars();
+    CallFrame* topCallFrame = vm.topCallFrame;
+    CallFrame* nextCallFrame = nullptr;
+
+    if (topCallFrame) {
+        topCallFrame->iterate(vm, [&] (StackVisitor& visitor) {
+            if (callFrame == visitor->callFrame())
+                return StackVisitor::Done;
+            nextCallFrame = visitor->callFrame();
+            return StackVisitor::Continue;
+        });
+    }
+
+    if (!nextCallFrame) {
+        // Don't know how much space on the stack frame is actually allocated for
+        // this frame. ASAN does not like it if we read beyond the frame.
+        end = it; // Stop the dump
+    } else {
+        end = bitwise_cast<const Register*>(nextCallFrame);
+        RELEASE_ASSERT(it - end < codeBlock->numCalleeLocals() - codeBlock->numVars());
+    }
+
     if (it != end) {
         do {
             JSValue v = (*it).jsValue();
