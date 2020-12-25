@@ -408,7 +408,7 @@ enum {
   Mips_T9_64 = 391,
   Mips_V0_64 = 392,
   Mips_V1_64 = 393,
-  Mips_NUM_TARGET_REGS 	// 394
+  Mips_NUM_TARGET_REGS     // 394
 };
 
 // Register classes

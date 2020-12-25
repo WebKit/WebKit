@@ -4,7 +4,7 @@
 ################################################################################
 # Specify which archs you want to compile in. By default, we build all archs.
 
-CAPSTONE_ARCHS ?= arm aarch64 m68k mips powerpc sparc systemz x86 xcore tms320c64x m680x evm
+CAPSTONE_ARCHS ?= arm aarch64 m68k mips powerpc sparc systemz x86 xcore tms320c64x m680x evm mos65xx
 
 
 ################################################################################

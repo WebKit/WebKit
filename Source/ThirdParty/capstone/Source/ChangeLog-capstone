@@ -1,15 +1,359 @@
 This file details the changelog of Capstone.
 
+---------------------------------
+Version 4.0.1: January 10th, 2019
+
+
+[ Core ]
+
+- Fix some issues for packaging (Debian, Gentoo).
+- Better support for building with Mingw.
+- cstool has new option -s to turn on skipdata mode.
+- cstool -v now report build settings of the core.
+- Add suite/capstone_get_setup.c so users can integrate with their own code
+  to retrieve Capstone settings at build time.
+
+
 [ Arm ]
 
-- Fix a bug where Arm.Operand is wrongly calculated for the second and
-  following operands
-- Fix a bug where Arm.OpInfo.memBarrier and Arm.OpInfo.op is wrongly
-  calculated
+- Fix 4.0 regression: the `tbh [r0, r1, lsl #1]` instruction sets the operand.shift.value back again (see #1317)
+- Remove ARM_REG_PC group for BX instruction.
 
-[ Bindings ]
 
-- Java; add Capstone.strerror() and CsInsn.regsAccess().
+[ X86 ]
+
+- Fix: endbr32 and endbr64 instructions are now properly decoded in both CS_MODE_32 and CS_MODE_64  (#1129)
+
+
+[ M680X ]
+
+- Fix some issues reported by clang-analyzer (#1329).
+
+
+[ Python ]
+
+- Fix skipdata setup.
+- Add getter/setter for skipdata_mnem, skipdata_callback.
+
+
+---------------------------------
+Version 4.0: December 18th, 2018
+
+
+[ Core ]
+
+- New APIs: cs_regs_access()
+- Add new options for cs_option(): CS_OPT_MNEMONIC & CS_OPT_UNSIGNED & CS_OPT_SYNTAX_MASM.
+- Various updates & bugfixes for all architectures.
+- Add 4 new architectures: EVM, M68K, M680X & TMS320C64x.
+- Add new group types: CS_GRP_PRIVILEGE & CS_GRP_BRANCH_RELATIVE.
+- Add new error types: CS_ERR_X86_MASM.
+
+
+[ X86 ]
+
+- Add XOP code condition type in x86_xop_cc.
+- Add some info on encoding to cs_x86 in cs_x86_encoding.
+- Add register flags update in cs_x86.{eflags, fpu_flags}
+- Change cs_x86.disp type from int32_t to int64_t.
+- Add new groups: X86_GRP_VM & X86_GRP_FPU.
+- Lots of new instructions (AVX)
+
+
+[ ARM64 ]
+
+- Add instruction ARM64_INS_NEGS & ARM64_INS_NGCS.
+
+
+[ Mips ]
+
+- Add mode CS_MODE_MIPS2.
+
+
+[ PPC ]
+
+- Change cs_ppc_op.imm type from int32_t to int64_t.
+- Add new groups: PPC_GRP_ICBT, PPC_GRP_P8ALTIVEC, PPC_GRP_P8VECTOR & PPC_GRP_QPX.
+- Lots of new instructions (QPX among them)
+
+
+[ Sparc ]
+
+- Change cs_sparc_op.imm type from int32_t to int64_t.
+
+
+[ Binding ]
+
+- New bindings: PowerShell & VB6
+
+
+---------------------------------
+Version 3.0.5: July 18th, 2018
+
+
+[ Core ]
+
+- Fix the include path for Android builds when building cstool.
+- Add posibility to disable universal build for Mac OS.
+- cstool: Separate instruction bytes by spaces.
+- Fix code path of pkg-config in Cmake.
+- Update XCode project for XCode 9.1.
+- Add Cortex-M support to cstool.
+- Cmake forces to be build using MT with MSVC.
+- Better support for Mac OS kernel.
+
+
+[ X86 ]
+
+- Fix some issues in handling EVEX & VEX3 instructions.
+- Fix immediate operand for AND instruction in ATT mode.
+- Fix ATT syntax when imm operand is 0.
+- Better handle XACQUIRE/XRELEASE.
+- Fix imm operand of RETF.
+
+
+[ ARM ]
+
+- Fix an integer overlow bug.
+
+
+[ ARM64 ]
+
+- Bug fix for incorrect operand type in certain load/store instructions.
+
+
+[ Mips ]
+
+- Mode CS_MODE_MIPS32R6 automatically sets CS_MODE_32
+
+
+[ PPC ]
+
+- Fix endian check.
+
+
+[ Sparc ]
+
+- Fix an integer overlow bug.
+
+
+[ SystemZ ]
+
+- Fix an integer overlow bug.
+
+
+[ Python binding ]
+
+- Raise error on accessing irrelevant data fields if skipdata & detail modes are enable.
+
+
+---------------------------------
+Version 3.0.5-rc3: July 31st, 2017
+
+
+[ Core ]
+
+- Fix compilation for MacOS kernel extension
+- cstool to support armbe and arm64be modes
+- Add nmake.bat for Windows build
+- Fix an integer overflow for Windows kernel driver
+- Support to embedded Capstone into MacOS kernel
+- cstool: fix mips64 mode
+- Fix a compiling error in MS Visual Studio 2015
+- Install pkgconfig file with CMake build
+- Fix SOVERSION property of CMake build
+- Properly handle switching to Endian mode at run-time for Arm, Arm64, Mips & Sparc
+- Fix MingW build
+- Better handle CMake installation for Linux 64bit
+
+
+[ X86 ]
+
+- Support BND prefix of Intel MPX extension
+- Correct operand size for CALL/JMP in 64bit mode with prefix 0x66
+- LOCK NOP is a valid instruction
+- Fix ATT syntax for instruction with zero offset segment register
+- LES/LDS are invalid in 64bit mode
+- Fix number of operands for some MOV instructions
+
+
+[ ARM ]
+
+- Fix POP reg to update SP register
+- Update flags for UADD8 instruction
+
+
+[ ARM64 ]
+
+- Better performance with new lookup table
+- Handle system registers added in ARMv8.1/2
+
+
+[ Java binding ]
+
+- Better handle input with invalid code
+
+
+[ Visual Basic binding ]
+
+- New binding
+
+---------------------------------
+Version 3.0.5-rc2: March 2nd, 2017
+
+
+[ Core ]
+
+- Fix build for Visual Studio 2012
+- Fix X86_REL_ADDR macro
+- Add CS_VERSION_MAJOR, CS_VERSION_MINOR, CS_VERSION_EXTRA
+- Better support for embedding Capstone into Windows kernel drivers
+- Support to embedded Capstone into MacOS kernel
+- Support MacOS 10.11 and up
+- Better support for Cygwin
+- Support build packages for FreeBSD & DragonflyBSD
+- Add a command-line tool "cstool"
+- Properly handle switching to Endian mode at run-time for Arm, Arm64, Mips & Sparc
+
+
+[ X86 ]
+
+- Some random 16-bit code can be handled wrongly.
+- Remove abundant operand type X86_OP_FP
+- Fix instructions MOVQ, LOOP, LOOPE, LOOPNE, CALL/JMP rel16, REPNE LODSD, MOV *AX, MOFFS, FAR JMP/CALL
+- Add X86_REG_EFLAGS for STC and STD
+- Fix instruction attributes for SYSEXIT, MOVW, ROL, LGS, SLDT
+- Rename registers ST0-ST7 to be consistent with asm output
+
+
+[ ARM ]
+
+- Properly handle IT instruction
+- Fix LDRSB
+- Fix writeback for LDR
+- Fix Thumb BigEndian setup
+
+
+[ ARM64 ]
+
+- Fix arith extender
+- Fix writeback for LDR
+- Rename enum arm64_mrs_reg to arm64_sysreg
+
+
+[ PowerPC ]
+
+- Print 0 offset for memory operand
+
+
+[ Sparc ]
+
+- Fix POPC instruction
+
+
+[ Python binding ]
+
+- Better PyPy support
+- Add __version__
+- Better support for Python 3
+- Fix CS_SKIPDATA_CALLBACK prototype
+- Cast skipdata function inside binding to simplify the API
+
+
+[ Java binding ]
+
+- Better handle input with invalid code
+
+
+[ PowerShell ]
+
+- New binding
+
+---------------------------------
+Version 3.0.4: July 15th, 2015
+
+
+[ Library ]
+
+- Improve cross-compile for Android using Android NDK.
+- Support cross-compile for AArch64 Android (with Linux GCC).
+- Removed osxkernel_inttypes.h that is incompatible with BSD license.
+- Make it possible to compile with CC having a space inside (like "ccache gcc").
+
+
+[ X86 ]
+
+- Fix a null pointer dereference bug on handling code with special prefixes.
+- Properly handle AL/AX/EAX operand for OUT instruction in AT&T syntax.
+- Print immediate operand in positive form in some algorithm instructions.
+- Properly decode some SSE instructions.
+
+
+[ PowerPC ]
+
+- Fixed a memory corruption bug.
+- Fixed a memory corruption bug for the engine built in DIET mode.
+
+
+[ Mips ]
+
+- Fixed instruction ID of SUBU instruction.
+- Fixed a memory corruption bug.
+
+
+[ Arm ]
+
+- Fixed a memory corruption bug on IT instruction.
+
+
+[ XCore ]
+
+- Fixed a memory corruption bug when instruction has a memory operand.
+
+
+[ Python ]
+
+- Support Virtualenv.
+- setup.py supports option --user if not in a virtualenv to allow for local usage.
+- Properly handle the destruction of Cs object in the case the shared library
+  was already unloaded.
+
+---------------------------------
+Version 3.0.3: May 08th, 2015
+
+
+[ Library ]
+
+- Support to embed into Mac OS X kernel extensions.
+- Now it is possible to compile Capstone with older C compilers, such as
+  GCC 4.8 on Ubuntu 12.04.
+- Add "test_iter" to MSVC project.
+
+
+[ X86 ]
+
+- All shifted instructions SHL, SHR, SAL, SAR, RCL, RCR, ROL & ROR now support
+  $1 as first operand in *AT&T* syntax (so we have "rcll $1, %edx" instead of
+  "rcll %edx").
+- CMPXCHG16B is a valid instruction with LOCK prefix.
+- Fixed a segfault on the input of 0xF3.
+
+
+[ Arm ]
+
+- BLX instruction modifies PC & LR registers.
+
+
+[ Sparc ]
+
+- Improved displacement decoding for sparc banching instructions.
+
+
+[ Python binding ]
+
+- Fix for Cython so it can properly initialize.
+- X86Op.avx_zero_mask now has c_bool type, but not c_uint8 type.
+- Properly support compile with Cygwin & install binding (setup.py).
 
 ---------------------------------
 Version 3.0.2: March 11th, 2015
@@ -244,14 +588,14 @@ Version 2.1: March 5th, 2014
 
 - Update all 5 architectures to fix bugs.
 - PowerPC:
-	- New instructions: FMR & MSYNC.
+    - New instructions: FMR & MSYNC.
 - Mips:
-	- New instruction: DLSA
+    - New instruction: DLSA
 - X86:
-	- Properly handle AVX-512 instructions.
-	- New instructions: PSETPM, SALC, INT1, GETSEC.
-	- Fix some memory leaking issues in case of prefixed instructions such
-	  as LOCK, REP, REPNE.
+    - Properly handle AVX-512 instructions.
+    - New instructions: PSETPM, SALC, INT1, GETSEC.
+    - Fix some memory leaking issues in case of prefixed instructions such
+      as LOCK, REP, REPNE.
 
 
 [ Python binding ]
@@ -282,7 +626,7 @@ Version 2.1: March 5th, 2014
 
 - make.sh now can uninstall the core engine. This is done with:
 
-	$ sudo ./make.sh uninstall
+    $ sudo ./make.sh uninstall
 
 ----------------------------------
 Version 2.0: January 22nd, 2014
@@ -320,7 +664,7 @@ Release 2.0 deprecates verison 1.0 and brings a lot of crucial changes.
 - Arm
      - Support Big-Endian mode (besides Little-Endian mode).
      - Support friendly register, so instead of output sub "r12,r11,0x14",
-	 we have "sub ip,fp,0x14".
+     we have "sub ip,fp,0x14".
 - Arm64: support Big-Endian mode (besides Little-Endian mode).
 - PowerPC: newly added.
 - Mips: support friendly register, so instead of output "srl $2,$1,0x1f",

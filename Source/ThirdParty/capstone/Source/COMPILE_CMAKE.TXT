@@ -16,8 +16,7 @@ Get CMake for free from http://www.cmake.org.
 
 (0) Tailor Capstone to your need.
 
-  Out of 12 archtitectures supported by Capstone (Arm, Arm64, M68K, Mips, PPC,
-  Sparc, SystemZ, X86, XCore, M680X, TMS320C64x & EVM), if you just need several selected archs,
+  Out of archtitectures supported by Capstone, if you just need several selected archs,
   run "cmake" with the unwanted archs disabled (set to 0) as followings.
 
   - CAPSTONE_ARM_SUPPORT: support ARM. Run cmake with -DCAPSTONE_ARM_SUPPORT=0 to remove ARM.
@@ -25,16 +24,19 @@ Get CMake for free from http://www.cmake.org.
   - CAPSTONE_M680X_SUPPORT: support M680X. Run cmake with -DCAPSTONE_M680X_SUPPORT=0 to remove M680X.
   - CAPSTONE_M68K_SUPPORT: support M68K. Run cmake with -DCAPSTONE_M68K_SUPPORT=0 to remove M68K.
   - CAPSTONE_MIPS_SUPPORT: support Mips. Run cmake with -DCAPSTONE_MIPS_SUPPORT=0 to remove Mips.
+  - CAPSTONE_MOS65XX_SUPPORT: support MOS65XX. Run cmake with -DCAPSTONE_MOS65XX_SUPPORT=0 to remove MOS65XX.
   - CAPSTONE_PPC_SUPPORT: support PPC. Run cmake with -DCAPSTONE_PPC_SUPPORT=0 to remove PPC.
   - CAPSTONE_SPARC_SUPPORT: support Sparc. Run cmake with -DCAPSTONE_SPARC_SUPPORT=0 to remove Sparc.
   - CAPSTONE_SYSZ_SUPPORT: support SystemZ. Run cmake with -DCAPSTONE_SYSZ_SUPPORT=0 to remove SystemZ.
   - CAPSTONE_XCORE_SUPPORT: support XCore. Run cmake with -DCAPSTONE_XCORE_SUPPORT=0 to remove XCore.
   - CAPSTONE_X86_SUPPORT: support X86. Run cmake with -DCAPSTONE_X86_SUPPORT=0 to remove X86.
-  - CAPSTONE_X86_TMS320C64X: support TMS320C64X. Run cmake with -DCAPSTONE_TMS320C64X_SUPPORT=0 to remove TMS320C64X.
-  - CAPSTONE_X86_M680X: support M680X. Run cmake with -DCAPSTONE_M680X_SUPPORT=0 to remove M680X.
-  - CAPSTONE_X86_EVM: support EVM. Run cmake with -DCAPSTONE_EVM_SUPPORT=0 to remove EVM.
+  - CAPSTONE_TMS320C64X_SUPPORT: support TMS320C64X. Run cmake with -DCAPSTONE_TMS320C64X_SUPPORT=0 to remove TMS320C64X.
+  - CAPSTONE_EVM_SUPPORT: support EVM. Run cmake with -DCAPSTONE_EVM_SUPPORT=0 to remove EVM.
+  - CAPSTONE_ARCHITECUTRE_DEFAULT: Whether architectures are enabled by default.
+      Set this of OFF with -DCAPSTONE_ARCHITECUTRE_DEFAULT=OFF to dissable all architectures by default.
+      You can then enable them again with one of the CAPSTONE_<ARCH>_SUPPORT options.
 
-  By default, all 10 architectures are compiled in.
+  By default, all architectures are compiled in.
 
 
   Besides, Capstone also allows some more customization via following macros.
@@ -55,6 +57,17 @@ Get CMake for free from http://www.cmake.org.
 
 (1) CMake allows you to generate different generators to build Capstone. Below is
     some examples on how to build Capstone on Windows with CMake.
+
+  (*) You can let CMake select a generator for you. Do:
+
+      mkdir build
+      cd build
+      cmake ..
+
+    This last command is also where you can pass additional CMake configuration flags
+    using `-D<key>=<value>`. Then to build use:
+
+      cmake --build . --config Release
 
 
   (*) To build Capstone using Nmake of Windows SDK, do:
@@ -83,3 +96,19 @@ Get CMake for free from http://www.cmake.org.
 (2) You can make sure the prior steps successfully worked by launching one of the
   testing binary (test*.exe).
 
+(3) You can also enable just one specific architecture by passing the architecture name
+  to either the cmake.sh or nmake.bat scripts. e.g.:
+
+    ../cmake.sh x86
+
+  Will just target the x86 architecture. The list of available architectures is: ARM,
+  ARM64, M68K, MIPS, PowerPC, Sparc, SystemZ, XCore, x86, TMS320C64x, M680x, EVM, MOS65XX.
+
+(4) You can also create an installation image with cmake, by using the 'install' target.
+  Use:
+
+    cmake --build . --config Release --target install
+
+  This will normally install an image in a default location (`C:\Program Files` on Windows),
+  so it's good to explicitly set this location when configuring CMake. Use: `-DCMAKE_INSTALL_PREFIX=image`
+  for instance, to put the installation in the 'image' subdirectory of the build directory.

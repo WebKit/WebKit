@@ -3,55 +3,55 @@
 #define _STDINT
 
 typedef __int8
-	int8_t,
-	int_least8_t;
+    int8_t,
+    int_least8_t;
 
 typedef __int16
-	int16_t,
-	int_least16_t;
+    int16_t,
+    int_least16_t;
 
 typedef __int32
-	int32_t,
-	int_least32_t,
-	int_fast8_t,
-	int_fast16_t,
-	int_fast32_t;
-	
+    int32_t,
+    int_least32_t,
+    int_fast8_t,
+    int_fast16_t,
+    int_fast32_t;
+    
 typedef __int64
-	int64_t,
-	intmax_t,
-	int_least64_t,
-	int_fast64_t;
+    int64_t,
+    intmax_t,
+    int_least64_t,
+    int_fast64_t;
 
 typedef unsigned __int8
-	uint8_t,
-	uint_least8_t;
-	
+    uint8_t,
+    uint_least8_t;
+    
 typedef unsigned __int16
-	uint16_t,
-	uint_least16_t;
-	
+    uint16_t,
+    uint_least16_t;
+    
 typedef unsigned __int32
-	uint32_t,
-	uint_least32_t,
-	uint_fast8_t,
-	uint_fast16_t,
-	uint_fast32_t;
-	
+    uint32_t,
+    uint_least32_t,
+    uint_fast8_t,
+    uint_fast16_t,
+    uint_fast32_t;
+    
 typedef unsigned __int64
-	uint64_t,
-	uintmax_t,
-	uint_least64_t,
-	uint_fast64_t;
+    uint64_t,
+    uintmax_t,
+    uint_least64_t,
+    uint_fast64_t;
 
 #ifndef _INTPTR_T_DEFINED
 #define _INTPTR_T_DEFINED
-typedef __int32	intptr_t;
+typedef __int32    intptr_t;
 #endif
 
 #ifndef _UINTPTR_T_DEFINED
 #define _UINTPTR_T_DEFINED
-typedef unsigned __int32	uintptr_t;
+typedef unsigned __int32    uintptr_t;
 #endif
 
 #define INT8_MIN         (-127i8 - 1)

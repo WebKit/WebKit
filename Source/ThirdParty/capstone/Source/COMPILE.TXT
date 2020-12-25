@@ -17,16 +17,15 @@ Capstone requires no prerequisite packages, so it is easy to compile & install.
 
 (0) Tailor Capstone to your need.
 
-  Out of 12 archtitectures supported by Capstone (Arm, Arm64, M68K, Mips, PPC,
-  Sparc, SystemZ, XCore, X86, M680X, TMS320C64x & EVM), if you just need several
+  Out of all archtitectures supported by Capstone, if you just need several
   selected archs, choose the ones you want to compile in by editing "config.mk"
   before going to next steps.
 
-  By default, all 12 architectures are compiled.
+  By default, all architectures are compiled.
 
   The other way of customize Capstone without having to edit config.mk is to
   pass the desired options on the commandline to ./make.sh. Currently,
-  Capstone supports 5 options, as followings.
+  Capstone supports 7 options, as followings.
 
   - CAPSTONE_ARCHS: specify list of architectures to compiled in.
   - CAPSTONE_USE_SYS_DYN_MEM: change this if you have your own dynamic memory management.
@@ -56,11 +55,11 @@ Capstone requires no prerequisite packages, so it is easy to compile & install.
 
   - To compile for current platform, run:
 
-		$ ./make.sh
+        $ ./make.sh
 
   - On 64-bit OS, run the command below to cross-compile Capstone for 32-bit binary:
 
-		$ ./make.sh nix32
+        $ ./make.sh nix32
 
 
 
@@ -68,11 +67,11 @@ Capstone requires no prerequisite packages, so it is easy to compile & install.
 
   To install Capstone, run:
 
-	$ sudo ./make.sh install
+    $ sudo ./make.sh install
 
-	For FreeBSD/OpenBSD, where sudo is unavailable, run:
+    For FreeBSD/OpenBSD, where sudo is unavailable, run:
 
-		$ su; ./make.sh install
+        $ su; ./make.sh install
 
   Users are then required to enter root password to copy Capstone into machine
   system directories.
@@ -83,22 +82,23 @@ Capstone requires no prerequisite packages, so it is easy to compile & install.
   NOTE: The core framework installed by "./make.sh install" consist of
   following files:
 
-	/usr/include/capstone/capstone.h
-	/usr/include/capstone/x86.h
-	/usr/include/capstone/arm.h
-	/usr/include/capstone/arm64.h
-	/usr/include/capstone/evm.h
-	/usr/include/capstone/m68k.h
-	/usr/include/capstone/m680x.h
-	/usr/include/capstone/mips.h
-	/usr/include/capstone/ppc.h
-	/usr/include/capstone/sparc.h
-	/usr/include/capstone/systemz.h
-	/usr/include/capstone/tms320c64x.h
-	/usr/include/capstone/xcore.h
-	/usr/include/capstone/platform.h
-	/usr/lib/libcapstone.so (for Linux/*nix), or /usr/lib/libcapstone.dylib (OSX)
-	/usr/lib/libcapstone.a
+    /usr/include/capstone/arm.h
+    /usr/include/capstone/arm64.h
+    /usr/include/capstone/capstone.h
+    /usr/include/capstone/evm.h
+    /usr/include/capstone/m680x.h
+    /usr/include/capstone/m68k.h
+    /usr/include/capstone/mips.h
+    /usr/include/capstone/mos65xx.h
+    /usr/include/capstone/platform.h
+    /usr/include/capstone/ppc.h
+    /usr/include/capstone/sparc.h
+    /usr/include/capstone/systemz.h
+    /usr/include/capstone/tms320c64x.h
+    /usr/include/capstone/x86.h
+    /usr/include/capstone/xcore.h
+    /usr/lib/libcapstone.a
+    /usr/lib/libcapstone.so (for Linux/*nix), or /usr/lib/libcapstone.dylib (OSX)
 
 
 
@@ -107,13 +107,13 @@ Capstone requires no prerequisite packages, so it is easy to compile & install.
   To cross-compile for Windows, Linux & gcc-mingw-w64-i686 (and also gcc-mingw-w64-x86-64
   for 64-bit binaries) are required.
 
-	- To cross-compile Windows 32-bit binary, simply run:
+    - To cross-compile Windows 32-bit binary, simply run:
 
-		$ ./make.sh cross-win32
+        $ ./make.sh cross-win32
 
-	- To cross-compile Windows 64-bit binary, run:
+    - To cross-compile Windows 64-bit binary, run:
 
-		$ ./make.sh cross-win64
+        $ ./make.sh cross-win64
 
   Resulted files libcapstone.dll, libcapstone.dll.a & tests/test*.exe can then
   be used on Windows machine.
@@ -122,19 +122,19 @@ Capstone requires no prerequisite packages, so it is easy to compile & install.
 
 (4) Cross-compile for iOS from Mac OSX.
 
-  To cross-compile for iOS (iPhone/iPad/iPod), Mac OSX with XCode installed is required. 
+  To cross-compile for iOS (iPhone/iPad/iPod), Mac OSX with XCode installed is required.
 
-	- To cross-compile for ArmV7 (iPod 4, iPad 1/2/3, iPhone4, iPhone4S), run:
-		$ ./make.sh ios_armv7
+    - To cross-compile for ArmV7 (iPod 4, iPad 1/2/3, iPhone4, iPhone4S), run:
+        $ ./make.sh ios_armv7
 
-	- To cross-compile for ArmV7s (iPad 4, iPhone 5C, iPad mini), run:
-		$ ./make.sh ios_armv7s
+    - To cross-compile for ArmV7s (iPad 4, iPhone 5C, iPad mini), run:
+        $ ./make.sh ios_armv7s
 
-	- To cross-compile for Arm64 (iPhone 5S, iPad mini Retina, iPad Air), run:
-		$ ./make.sh ios_arm64
+    - To cross-compile for Arm64 (iPhone 5S, iPad mini Retina, iPad Air), run:
+        $ ./make.sh ios_arm64
 
-	- To cross-compile for all iDevices (armv7 + armv7s + arm64), run:
-		$ ./make.sh ios
+    - To cross-compile for all iDevices (armv7 + armv7s + arm64), run:
+        $ ./make.sh ios
 
   Resulted files libcapstone.dylib, libcapstone.a & tests/test* can then
   be used on iOS devices.
@@ -146,9 +146,9 @@ Capstone requires no prerequisite packages, so it is easy to compile & install.
   To cross-compile for Android (smartphone/tablet), Android NDK is required.
   NOTE: Only ARM and ARM64 are currently supported.
 
-	$ NDK=/android/android-ndk-r10e ./make.sh cross-android arm
+    $ NDK=/android/android-ndk-r10e ./make.sh cross-android arm
   or
-	$ NDK=/android/android-ndk-r10e ./make.sh cross-android arm64
+    $ NDK=/android/android-ndk-r10e ./make.sh cross-android arm64
 
   Resulted files libcapstone.so, libcapstone.a & tests/test* can then
   be used on Android devices.
@@ -174,19 +174,19 @@ Capstone requires no prerequisite packages, so it is easy to compile & install.
 
 (7) By default, "cc" (default C compiler on the system) is used as compiler.
 
-	- To use "clang" compiler instead, run the command below:
+    - To use "clang" compiler instead, run the command below:
 
-		$ ./make.sh clang
+        $ ./make.sh clang
 
-	- To use "gcc" compiler instead, run:
+    - To use "gcc" compiler instead, run:
 
-		$ ./make.sh gcc
+        $ ./make.sh gcc
 
 
 
 (8) To uninstall Capstone, run the command below:
 
-		$ sudo ./make.sh uninstall
+        $ sudo ./make.sh uninstall
 
 
 

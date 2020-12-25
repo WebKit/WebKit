@@ -185,7 +185,7 @@ static uint8_t DecoderTableMicroMips16[] = {
   0
 };
 
-static uint8_t DecoderTableMicroMips32[] = {
+static const uint8_t DecoderTableMicroMips32[] = {
 /* 0 */       MCD_OPC_ExtractField, 26, 6,  // Inst{31-26} ...
 /* 3 */       MCD_OPC_FilterValue, 0, 189, 3, // Skip to: 964
 /* 7 */       MCD_OPC_ExtractField, 0, 6,  // Inst{5-0} ...
@@ -598,7 +598,7 @@ static uint8_t DecoderTableMicroMips32[] = {
   0
 };
 
-static uint8_t DecoderTableMips32[] = {
+static const uint8_t DecoderTableMips32[] = {
 /* 0 */       MCD_OPC_ExtractField, 26, 6,  // Inst{31-26} ...
 /* 3 */       MCD_OPC_FilterValue, 0, 173, 3, // Skip to: 948
 /* 7 */       MCD_OPC_ExtractField, 0, 6,  // Inst{5-0} ...
@@ -3823,7 +3823,7 @@ static uint8_t DecoderTableMips32[] = {
   0
 };
 
-static uint8_t DecoderTableMips32r6_64r632[] = {
+static const uint8_t DecoderTableMips32r6_64r632[] = {
 /* 0 */       MCD_OPC_ExtractField, 26, 6,  // Inst{31-26} ...
 /* 3 */       MCD_OPC_FilterValue, 0, 205, 1, // Skip to: 468
 /* 7 */       MCD_OPC_ExtractField, 0, 6,  // Inst{5-0} ...
@@ -4260,7 +4260,7 @@ static uint8_t DecoderTableMips32r6_64r632[] = {
   0
 };
 
-static uint8_t DecoderTableMips32r6_64r6_GP6432[] = {
+static const uint8_t DecoderTableMips32r6_64r6_GP6432[] = {
 /* 0 */       MCD_OPC_ExtractField, 0, 11,  // Inst{10-0} ...
 /* 3 */       MCD_OPC_FilterValue, 53, 15, 0, // Skip to: 22
 /* 7 */       MCD_OPC_CheckPredicate, 39, 30, 0, // Skip to: 41
@@ -4274,7 +4274,7 @@ static uint8_t DecoderTableMips32r6_64r6_GP6432[] = {
   0
 };
 
-static uint8_t DecoderTableMips6432[] = {
+static const uint8_t DecoderTableMips6432[] = {
 /* 0 */       MCD_OPC_ExtractField, 26, 6,  // Inst{31-26} ...
 /* 3 */       MCD_OPC_FilterValue, 0, 112, 1, // Skip to: 375
 /* 7 */       MCD_OPC_ExtractField, 0, 6,  // Inst{5-0} ...
@@ -4797,7 +4797,7 @@ static uint8_t DecoderTableMips6432[] = {
 
 static bool getbool(uint64_t b)
 {
-	return b != 0;
+    return b != 0;
 }
 
 static bool checkDecoderPredicate(unsigned Idx, uint64_t Bits)
@@ -6859,11 +6859,11 @@ static DecodeStatus fname(DecodeStatus S, unsigned Idx, InsnType insn, MCInst *M
 }
 
 #define DecodeInstruction(fname, fieldname, decoder, InsnType) \
-static DecodeStatus fname(uint8_t DecodeTable[], MCInst *MI, \
+static DecodeStatus fname(const uint8_t DecodeTable[], MCInst *MI, \
            InsnType insn, uint64_t Address, MCRegisterInfo *MRI, int feature) \
 { \
   uint64_t Bits = getFeatureBits(feature); \
-  uint8_t *Ptr = DecodeTable; \
+  const uint8_t *Ptr = DecodeTable; \
   uint32_t CurFieldValue = 0, ExpectedValue; \
   DecodeStatus S = MCDisassembler_Success; \
   unsigned Start, Len, NumToSkip, PIdx, Opc, DecodeIdx; \

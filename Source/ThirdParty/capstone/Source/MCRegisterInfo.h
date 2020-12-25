@@ -24,18 +24,18 @@
 /// An unsigned integer type large enough to represent all physical registers,
 /// but not necessarily virtual registers.
 typedef uint16_t MCPhysReg;
-typedef MCPhysReg* iterator;
+typedef const MCPhysReg* iterator;
 
 typedef struct MCRegisterClass {
-	iterator RegsBegin;
-	uint8_t *RegSet;
-	uint32_t NameIdx;
-	uint16_t RegsSize;
-	uint16_t RegSetSize;
-	uint16_t ID;
-	uint16_t RegSize, Alignment; // Size & Alignment of register in bytes
-	int8_t CopyCost;
-	bool Allocatable;
+    iterator RegsBegin;
+    const uint8_t *RegSet;
+    uint32_t NameIdx;
+    uint16_t RegsSize;
+    uint16_t RegSetSize;
+    uint16_t ID;
+    uint16_t RegSize, Alignment; // Size & Alignment of register in bytes
+    int8_t CopyCost;
+    bool Allocatable;
 } MCRegisterClass;
 
 /// MCRegisterDesc - This record contains information about a particular
@@ -46,21 +46,21 @@ typedef struct MCRegisterClass {
 /// super-registers of AX.
 ///
 typedef struct MCRegisterDesc {
-	uint32_t Name;      // Printable name for the reg (for debugging)
-	uint32_t SubRegs;   // Sub-register set, described above
-	uint32_t SuperRegs; // Super-register set, described above
+    uint32_t Name;      // Printable name for the reg (for debugging)
+    uint32_t SubRegs;   // Sub-register set, described above
+    uint32_t SuperRegs; // Super-register set, described above
 
-	// Offset into MCRI::SubRegIndices of a list of sub-register indices for each
-	// sub-register in SubRegs.
-	uint32_t SubRegIndices;
+    // Offset into MCRI::SubRegIndices of a list of sub-register indices for each
+    // sub-register in SubRegs.
+    uint32_t SubRegIndices;
 
-	// RegUnits - Points to the list of register units. The low 4 bits holds the
-	// Scale, the high bits hold an offset into DiffLists. See MCRegUnitIterator.
-	uint32_t RegUnits;
+    // RegUnits - Points to the list of register units. The low 4 bits holds the
+    // Scale, the high bits hold an offset into DiffLists. See MCRegUnitIterator.
+    uint32_t RegUnits;
 
-	/// Index into list with lane mask sequences. The sequence contains a lanemask
-	/// for every register unit.
-	uint16_t RegUnitLaneMasks;
+    /// Index into list with lane mask sequences. The sequence contains a lanemask
+    /// for every register unit.
+    uint16_t RegUnitLaneMasks;
 } MCRegisterDesc;
 
 /// MCRegisterInfo base class - We assume that the target defines a static
@@ -76,41 +76,41 @@ typedef struct MCRegisterDesc {
 /// virtual methods.
 ///
 typedef struct MCRegisterInfo {
-	MCRegisterDesc *Desc;                 // Pointer to the descriptor array
-	unsigned NumRegs;                           // Number of entries in the array
-	unsigned RAReg;                             // Return address register
-	unsigned PCReg;                             // Program counter register
-	MCRegisterClass *Classes;             // Pointer to the regclass array
-	unsigned NumClasses;                        // Number of entries in the array
-	unsigned NumRegUnits;                       // Number of regunits.
-	uint16_t (*RegUnitRoots)[2];          // Pointer to regunit root table.
-	MCPhysReg *DiffLists;                 // Pointer to the difflists array
-	char *RegStrings;                     // Pointer to the string table.
-	uint16_t *SubRegIndices;              // Pointer to the subreg lookup
-	// array.
-	unsigned NumSubRegIndices;                  // Number of subreg indices.
-	uint16_t *RegEncodingTable;           // Pointer to array of register
-	// encodings.
+    const MCRegisterDesc *Desc;                 // Pointer to the descriptor array
+    unsigned NumRegs;                           // Number of entries in the array
+    unsigned RAReg;                             // Return address register
+    unsigned PCReg;                             // Program counter register
+    const MCRegisterClass *Classes;             // Pointer to the regclass array
+    unsigned NumClasses;                        // Number of entries in the array
+    unsigned NumRegUnits;                       // Number of regunits.
+    uint16_t (*RegUnitRoots)[2];          // Pointer to regunit root table.
+    const MCPhysReg *DiffLists;                 // Pointer to the difflists array
+    const char *RegStrings;                     // Pointer to the string table.
+    const uint16_t *SubRegIndices;              // Pointer to the subreg lookup
+    // array.
+    unsigned NumSubRegIndices;                  // Number of subreg indices.
+    const uint16_t *RegEncodingTable;           // Pointer to array of register
+    // encodings.
 } MCRegisterInfo;
 
 void MCRegisterInfo_InitMCRegisterInfo(MCRegisterInfo *RI,
-		MCRegisterDesc *D, unsigned NR, unsigned RA,
-		unsigned PC,
-		MCRegisterClass *C, unsigned NC,
-		uint16_t (*RURoots)[2],
-		unsigned NRU,
-		MCPhysReg *DL,
-		char *Strings,
-		uint16_t *SubIndices,
-		unsigned NumIndices,
-		uint16_t *RET);
+        const MCRegisterDesc *D, unsigned NR, unsigned RA,
+        unsigned PC,
+        const MCRegisterClass *C, unsigned NC,
+        uint16_t (*RURoots)[2],
+        unsigned NRU,
+        const MCPhysReg *DL,
+        const char *Strings,
+        const uint16_t *SubIndices,
+        unsigned NumIndices,
+        const uint16_t *RET);
 
-unsigned MCRegisterInfo_getMatchingSuperReg(MCRegisterInfo *RI, unsigned Reg, unsigned SubIdx, MCRegisterClass *RC);
+unsigned MCRegisterInfo_getMatchingSuperReg(const MCRegisterInfo *RI, unsigned Reg, unsigned SubIdx, const MCRegisterClass *RC);
 
-unsigned MCRegisterInfo_getSubReg(MCRegisterInfo *RI, unsigned Reg, unsigned Idx);
+unsigned MCRegisterInfo_getSubReg(const MCRegisterInfo *RI, unsigned Reg, unsigned Idx);
 
-MCRegisterClass* MCRegisterInfo_getRegClass(MCRegisterInfo *RI, unsigned i);
+const MCRegisterClass* MCRegisterInfo_getRegClass(const MCRegisterInfo *RI, unsigned i);
 
-bool MCRegisterClass_contains(MCRegisterClass *c, unsigned Reg);
+bool MCRegisterClass_contains(const MCRegisterClass *c, unsigned Reg);
 
 #endif

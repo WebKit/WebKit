@@ -28,19 +28,19 @@ typedef struct MCOperand MCOperand;
 /// MCOperand - Instances of this class represent operands of the MCInst class.
 /// This is a simple discriminated union.
 struct MCOperand {
-	enum {
-		kInvalid = 0,                 ///< Uninitialized.
-		kRegister,                ///< Register operand.
-		kImmediate,               ///< Immediate operand.
-		kFPImmediate,             ///< Floating-point immediate operand.
-	} MachineOperandType;
-	unsigned char Kind;
+    enum {
+        kInvalid = 0,                 ///< Uninitialized.
+        kRegister,                ///< Register operand.
+        kImmediate,               ///< Immediate operand.
+        kFPImmediate,             ///< Floating-point immediate operand.
+    } MachineOperandType;
+    unsigned char Kind;
 
-	union {
-		unsigned RegVal;
-		int64_t ImmVal;
-		double FPImmVal;
-	};
+    union {
+        unsigned RegVal;
+        int64_t ImmVal;
+        double FPImmVal;
+    };
 };
 
 bool MCOperand_isValid(const MCOperand *op);
@@ -52,8 +52,6 @@ bool MCOperand_isImm(const MCOperand *op);
 bool MCOperand_isFPImm(const MCOperand *op);
 
 bool MCOperand_isInst(const MCOperand *op);
-
-void MCInst_clear(MCInst *m);
 
 /// getReg - Returns the register number.
 unsigned MCOperand_getReg(const MCOperand *op);
@@ -88,28 +86,28 @@ MCOperand *MCOperand_CreateImm1(MCInst *inst, int64_t Val);
 /// MCInst - Instances of this class represent a single low-level machine
 /// instruction.
 struct MCInst {
-	unsigned OpcodePub;
-	uint8_t size;	// number of operands
-	bool has_imm;	// indicate this instruction has an X86_OP_IMM operand - used for ATT syntax
-	uint8_t op1_size; // size of 1st operand - for X86 Intel syntax
-	unsigned Opcode;
-	MCOperand Operands[48];
-	cs_insn *flat_insn;	// insn to be exposed to public
-	uint64_t address;	// address of this insn
-	cs_struct *csh;	// save the main csh
-	uint8_t x86opsize;	// opsize for [mem] operand
+    unsigned OpcodePub;
+    uint8_t size;    // number of operands
+    bool has_imm;    // indicate this instruction has an X86_OP_IMM operand - used for ATT syntax
+    uint8_t op1_size; // size of 1st operand - for X86 Intel syntax
+    unsigned Opcode;
+    MCOperand Operands[48];
+    cs_insn *flat_insn;    // insn to be exposed to public
+    uint64_t address;    // address of this insn
+    cs_struct *csh;    // save the main csh
+    uint8_t x86opsize;    // opsize for [mem] operand
 
-	// (Optional) instruction prefix, which can be up to 4 bytes.
-	// A prefix byte gets value 0 when irrelevant.
-	// This is copied from cs_x86 struct
-	uint8_t x86_prefix[4];
-	uint8_t imm_size;	// immediate size for X86_OP_IMM operand
-	bool writeback;	// writeback for ARM
-	// operand access index for list of registers sharing the same access right (for ARM)
-	uint8_t ac_idx;
-	uint8_t popcode_adjust;   // Pseudo X86 instruction adjust
-	char assembly[8];	// for special instruction, so that we dont need printer
-	unsigned char evm_data[32];	// for EVM PUSH operand
+    // (Optional) instruction prefix, which can be up to 4 bytes.
+    // A prefix byte gets value 0 when irrelevant.
+    // This is copied from cs_x86 struct
+    uint8_t x86_prefix[4];
+    uint8_t imm_size;    // immediate size for X86_OP_IMM operand
+    bool writeback;    // writeback for ARM
+    // operand access index for list of registers sharing the same access right (for ARM)
+    uint8_t ac_idx;
+    uint8_t popcode_adjust;   // Pseudo X86 instruction adjust
+    char assembly[8];    // for special instruction, so that we dont need printer
+    unsigned char evm_data[32];    // for EVM PUSH operand
 };
 
 void MCInst_Init(MCInst *inst);
