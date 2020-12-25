@@ -3638,6 +3638,12 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
             continue;
         }
 
+        if (is<RenderLineBreak>(renderer)) {
+            layoutFormattingContextLineLayout.updateLineBreakBoxDimensions(downcast<RenderLineBreak>(renderer));
+            renderer.clearNeedsLayout();
+            continue;
+        }
+
         renderer.clearNeedsLayout();
     }
 

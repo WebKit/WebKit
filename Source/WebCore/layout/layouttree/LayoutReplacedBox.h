@@ -50,9 +50,6 @@ public:
     void setIntrinsicSize(LayoutSize size) { m_intrinsicSize = size; }
     void setIntrinsicRatio(LayoutUnit ratio) { m_intrinsicRatio = ratio; };
 
-    Optional<LayoutSize> contentSizeForIntegration() const { return m_contentSizeForIntegration; }
-    void setContentSizeForIntegration(LayoutSize size) { m_contentSizeForIntegration = size; }
-
     bool hasIntrinsicWidth() const;
     bool hasIntrinsicHeight() const;
     bool hasIntrinsicRatio() const;
@@ -68,7 +65,6 @@ private:
 
     Optional<LayoutSize> m_intrinsicSize;
     Optional<LayoutUnit> m_intrinsicRatio;
-    Optional<LayoutSize> m_contentSizeForIntegration;
     Optional<LayoutUnit> m_baseline;
     CachedImage* m_cachedImage { nullptr };
 };

@@ -44,6 +44,7 @@ class HitTestResult;
 class RenderBlockFlow;
 class RenderBox;
 class RenderBoxModelObject;
+class RenderLineBreak;
 struct PaintInfo;
 
 namespace LayoutIntegration {
@@ -66,6 +67,7 @@ public:
 
     void updateReplacedDimensions(const RenderBox&);
     void updateInlineBlockDimensions(const RenderBlock&);
+    void updateLineBreakBoxDimensions(const RenderLineBreak&);
     void updateStyle(const RenderBoxModelObject&);
     void layout();
 

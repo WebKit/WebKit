@@ -136,8 +136,6 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
     auto& replacedBox = downcast<Layout::ReplacedBox>(layoutBox);
 
     // Always use the physical size here for inline level boxes (this is where the logical vs. physical coords flip happens).
-    replacedBox.setContentSizeForIntegration({ replacedOrInlineBlock.contentWidth(), replacedOrInlineBlock.contentHeight() });
-
     auto& replacedBoxGeometry = m_layoutState.ensureGeometryForBox(replacedBox);
     // Scrollbars are placed "between" the border and the padding box and they never stretch the border box. They may shrink the padding box though.
     auto horizontalSpaceReservedForScrollbar = std::min(replacedOrInlineBlock.width() - replacedOrInlineBlock.paddingBoxWidth(), LayoutUnit(replacedOrInlineBlock.verticalScrollbarWidth()));
@@ -146,8 +144,29 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
     auto verticalSpaceReservedForScrollbar = std::min(replacedOrInlineBlock.height() - replacedOrInlineBlock.paddingBoxHeight(), LayoutUnit(replacedOrInlineBlock.horizontalScrollbarHeight()));
     replacedBoxGeometry.setVerticalSpaceForScrollbar(verticalSpaceReservedForScrollbar);
 
+    replacedBoxGeometry.setContentBoxWidth(replacedOrInlineBlock.contentWidth());
+    replacedBoxGeometry.setContentBoxHeight(replacedOrInlineBlock.contentHeight());
+
+    replacedBoxGeometry.setBorder({ { replacedOrInlineBlock.borderLeft(), replacedOrInlineBlock.borderRight() }, { replacedOrInlineBlock.borderTop(), replacedOrInlineBlock.borderBottom() } });
+    replacedBoxGeometry.setPadding(Layout::Edges { { replacedOrInlineBlock.paddingLeft(), replacedOrInlineBlock.paddingRight() }, { replacedOrInlineBlock.paddingTop(), replacedOrInlineBlock.paddingBottom() } });
+
+    replacedBoxGeometry.setHorizontalMargin({ replacedOrInlineBlock.marginLeft(), replacedOrInlineBlock.marginRight() });
+    replacedBoxGeometry.setVerticalMargin({ replacedOrInlineBlock.marginTop(), replacedOrInlineBlock.marginBottom() });
+
     auto baseline = replacedOrInlineBlock.baselinePosition(AlphabeticBaseline, false /* firstLine */, HorizontalLine, PositionOnContainingLine);
     replacedBox.setBaseline(roundToInt(baseline));
+}
+
+void LineLayout::updateLineBreakBoxDimensions(const RenderLineBreak& lineBreakBox)
+{
+    // This is just a box geometry reset (see InlineFormattingContext::layoutInFlowContent).
+    auto& boxGeometry = m_layoutState.ensureGeometryForBox(m_boxTree.layoutBoxForRenderer(lineBreakBox));
+
+    boxGeometry.setHorizontalMargin({ });
+    boxGeometry.setBorder({ });
+    boxGeometry.setPadding({ });
+    boxGeometry.setContentBoxWidth({ });
+    boxGeometry.setVerticalMargin({ });
 }
 
 void LineLayout::updateStyle(const RenderBoxModelObject& renderer)
@@ -170,7 +189,8 @@ void LineLayout::layout()
     auto horizontalConstraints = Layout::HorizontalConstraints { flow().borderAndPaddingStart(), flow().contentSize().width() };
     auto verticalConstraints = Layout::VerticalConstraints { flow().borderAndPaddingBefore(), { } };
 
-    inlineFormattingContext.layoutInFlowContent(invalidationState, { horizontalConstraints, verticalConstraints });
+    inlineFormattingContext.lineLayoutForIntergration(invalidationState, { horizontalConstraints, verticalConstraints });
+
     constructContent();
 }
 

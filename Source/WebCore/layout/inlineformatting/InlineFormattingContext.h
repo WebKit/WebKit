@@ -65,6 +65,8 @@ public:
     const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
     InlineFormattingState& formattingState() { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
 
+    void lineLayoutForIntergration(InvalidationState&, const ConstraintsForInFlowContent&);
+
 private:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
 

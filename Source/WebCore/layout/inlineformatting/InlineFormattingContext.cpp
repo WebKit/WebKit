@@ -141,6 +141,14 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root() << ")");
 }
 
+void InlineFormattingContext::lineLayoutForIntergration(InvalidationState& invalidationState, const ConstraintsForInFlowContent& constraints)
+{
+    invalidateFormattingState(invalidationState);
+    collectInlineContentIfNeeded();
+    auto& inlineItems = formattingState().inlineItems();
+    lineLayout(inlineItems, { 0, inlineItems.size() }, constraints);
+}
+
 LayoutUnit InlineFormattingContext::usedContentHeight() const
 {
     // 10.6.7 'Auto' heights for block formatting context roots
