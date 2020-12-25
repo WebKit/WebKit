@@ -149,8 +149,7 @@ static Optional<InlineLayoutUnit> horizontalAlignmentOffset(const Line::RunList&
 
 LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingContext)
     : m_inlineFormattingContext(inlineFormattingContext)
-    // FIXME: line-height should not require complex alignment in simple cases.
-    , m_inlineLevelBoxesNeedVerticalAlignment(!rootBox().style().lineHeight().isNegative() || !inlineFormattingContext.layoutState().inNoQuirksMode())
+    , m_inlineLevelBoxesNeedVerticalAlignment(!inlineFormattingContext.layoutState().inNoQuirksMode())
 {
 }
 
@@ -207,6 +206,12 @@ void LineBoxBuilder::setVerticalGeometryForInlineBox(LineBox::InlineLevelBox& in
 void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::RunList& runs)
 {
     auto horizontalAligmentOffset = lineBox.horizontalAlignmentOffset().valueOr(InlineLayoutUnit { });
+    struct SimplifiedVerticalAlignment {
+        InlineLayoutUnit inlineLevelBoxTop { 0 };
+        InlineLayoutUnit inlineLevelBoxBottom { 0 };
+        InlineLayoutUnit rootInlineBoxLogicalTop { 0 };
+    };
+    auto simplifiedVerticalAlignment = SimplifiedVerticalAlignment { };
     // Empty root inline boxes require special collapsing.
     m_inlineLevelBoxesNeedVerticalAlignment = m_inlineLevelBoxesNeedVerticalAlignment || runs.isEmpty();
 
@@ -218,7 +223,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         if (isInitiallyConsideredNonEmpty)
             rootInlineBox->setIsNonEmpty();
         setVerticalGeometryForInlineBox(*rootInlineBox);
-        m_inlineLevelBoxesNeedVerticalAlignment = m_inlineLevelBoxesNeedVerticalAlignment || rootInlineBox->baseline() != rootInlineBox->layoutBounds().ascent;
+        simplifiedVerticalAlignment = { { } , rootInlineBox->layoutBounds().height(), rootInlineBox->layoutBounds().ascent - rootInlineBox->baseline() };
         lineBox.addRootInlineBox(WTFMove(rootInlineBox));
     };
     createRootInlineBox();
@@ -296,7 +301,13 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
                     m_inlineLevelBoxesNeedVerticalAlignment = true;
                     return;
                 }
-                atomicInlineLevelBox->setLogicalTop(rootInlineBox.baseline() - ascent);
+                // Only baseline alignment for now.
+                auto logicalTop = rootInlineBox.baseline() - ascent;
+                auto layoutBoundsTop = rootInlineBox.layoutBounds().ascent - ascent;
+                simplifiedVerticalAlignment.inlineLevelBoxTop = std::min(simplifiedVerticalAlignment.inlineLevelBoxTop, layoutBoundsTop);
+                simplifiedVerticalAlignment.inlineLevelBoxBottom = std::max(simplifiedVerticalAlignment.inlineLevelBoxBottom, layoutBoundsTop + marginBoxHeight);
+                simplifiedVerticalAlignment.rootInlineBoxLogicalTop = std::max(simplifiedVerticalAlignment.rootInlineBoxLogicalTop, ascent - rootInlineBox.baseline());
+                atomicInlineLevelBox->setLogicalTop(logicalTop);
             };
             alignInlineBoxIfEligible();
             lineBox.addInlineLevelBox(WTFMove(atomicInlineLevelBox));
@@ -338,8 +349,8 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         ASSERT_NOT_REACHED();
     }
     if (!m_inlineLevelBoxesNeedVerticalAlignment) {
-        rootInlineBox.setLogicalTop({ });
-        lineBox.setLogicalHeight(rootInlineBox.layoutBounds().height());
+        rootInlineBox.setLogicalTop(simplifiedVerticalAlignment.rootInlineBoxLogicalTop);
+        lineBox.setLogicalHeight(simplifiedVerticalAlignment.inlineLevelBoxBottom - simplifiedVerticalAlignment.inlineLevelBoxTop);
     }
 }
 
