@@ -100,11 +100,17 @@ void LayoutRect::unite(const LayoutRect& other)
         return;
     }
 
-    LayoutPoint newLocation(std::min(x(), other.x()), std::min(y(), other.y()));
-    LayoutPoint newMaxPoint(std::max(maxX(), other.maxX()), std::max(maxY(), other.maxY()));
+    uniteEvenIfEmpty(other);
+}
 
-    m_location = newLocation;
-    m_size = newMaxPoint - newLocation;
+void LayoutRect::uniteEvenIfEmpty(const LayoutRect& other)
+{
+    auto minX = std::min(x(), other.x());
+    auto minY = std::min(y(), other.y());
+    auto maxX = std::max(this->maxX(), other.maxX());
+    auto maxY = std::max(this->maxY(), other.maxY());
+
+    setLocationAndSizeFromEdges(minX, minY, maxX, maxY);
 }
 
 bool LayoutRect::checkedUnite(const LayoutRect& other)

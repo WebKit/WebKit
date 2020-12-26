@@ -297,7 +297,7 @@ inline void Rect::expandToContain(const Rect& rect)
 {
     ASSERT(m_hasValidWidth);
     ASSERT(m_hasValidHeight);
-    m_rect.unite(rect);
+    m_rect.uniteEvenIfEmpty(rect);
 }
 
 inline Rect Rect::clone() const
