@@ -128,6 +128,7 @@ else ()
         platform/graphics/ca/win/WebTiledBackingLayerWin.cpp
 
         platform/graphics/cg/ColorCG.cpp
+        platform/graphics/cg/ColorSpaceCG.cpp
         platform/graphics/cg/FloatPointCG.cpp
         platform/graphics/cg/FloatRectCG.cpp
         platform/graphics/cg/FloatSizeCG.cpp
@@ -182,6 +183,7 @@ else ()
         platform/graphics/ca/win/CACFLayerTreeHostClient.h
         platform/graphics/ca/win/PlatformCALayerWin.h
 
+        platform/graphics/cg/ColorSpaceCG.h
         platform/graphics/cg/GraphicsContextCG.h
         platform/graphics/cg/IOSurfacePool.h
         platform/graphics/cg/ImageBufferCGBackend.h

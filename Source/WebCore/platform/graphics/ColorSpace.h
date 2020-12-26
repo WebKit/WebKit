@@ -25,6 +25,10 @@
 
 #pragma once
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 enum class ColorSpace : uint8_t {
@@ -32,5 +36,7 @@ enum class ColorSpace : uint8_t {
     LinearRGB,
     DisplayP3
 };
+
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ColorSpace);
 
 } // namespace WebCore

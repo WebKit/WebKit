@@ -165,20 +165,4 @@ TextStream& operator<<(TextStream& ts, const Color& color)
     return ts << serializationForRenderTreeAsText(color);
 }
 
-TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
-{
-    switch (colorSpace) {
-    case ColorSpace::SRGB:
-        ts << "sRGB";
-        break;
-    case ColorSpace::LinearRGB:
-        ts << "LinearRGB";
-        break;
-    case ColorSpace::DisplayP3:
-        ts << "DisplayP3";
-        break;
-    }
-    return ts;
-}
-
 } // namespace WebCore

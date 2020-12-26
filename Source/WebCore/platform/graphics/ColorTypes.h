@@ -25,11 +25,12 @@
 
 #pragma once
 
+#include "ColorComponents.h"
 #include "ColorSpace.h"
+#include <functional>
 
 namespace WebCore {
 
-template<typename> struct ColorComponents;
 template<typename> struct ComponentTraits;
 
 template<> struct ComponentTraits<uint8_t> {
@@ -353,6 +354,20 @@ template<typename T> constexpr bool operator!=(const XYZA<T>& a, const XYZA<T>& 
     return !(a == b);
 }
 
+template<typename Functor> constexpr decltype(auto) callWithColorType(const ColorComponents<float>& components, ColorSpace colorSpace, Functor&& functor)
+{
+    switch (colorSpace) {
+    case ColorSpace::SRGB:
+        return std::invoke(std::forward<Functor>(functor), asSRGBA(components));
+    case ColorSpace::LinearRGB:
+        return std::invoke(std::forward<Functor>(functor), asLinearSRGBA(components));
+    case ColorSpace::DisplayP3:
+        return std::invoke(std::forward<Functor>(functor), asDisplayP3(components));
+    }
+
+    ASSERT_NOT_REACHED();
+    return std::invoke(std::forward<Functor>(functor), asSRGBA(components));
+}
 
 // Packed Color Formats
 

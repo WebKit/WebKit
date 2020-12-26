@@ -28,7 +28,7 @@
 
 #if USE(CG)
 
-#include "GraphicsContextCG.h"
+#include "ColorSpaceCG.h"
 #include <wtf/Assertions.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TinyLRUCache.h>
@@ -97,21 +97,24 @@ Color::Color(CGColorRef color, SemanticTag tag)
 static CGColorRef leakCGColor(const Color& color)
 {
     auto [colorSpace, components] = color.colorSpaceAndComponents();
+
+    auto cgColorSpace = cachedCGColorSpace(colorSpace);
+
+    // Some CG ports don't support all the color spaces required and return
+    // sRGBColorSpaceRef() for unsupported color spaces. In those cases, we
+    // need to eagerly and potentially lossily convert the color into sRGB
+    // ourselves before creating the CGColorRef.
+    if (colorSpace != ColorSpace::SRGB && cgColorSpace == sRGBColorSpaceRef()) {
+        auto colorConvertedToSRGBA = callWithColorType(components, colorSpace, [] (const auto& color) {
+            return toSRGBA(color);
+        });
+        components = asColorComponents(colorConvertedToSRGBA);
+    }
+
     auto [r, g, b, a] = components;
     CGFloat cgFloatComponents[4] { r, g, b, a };
 
-    switch (colorSpace) {
-    case ColorSpace::SRGB:
-        return CGColorCreate(sRGBColorSpaceRef(), cgFloatComponents);
-    case ColorSpace::DisplayP3:
-        return CGColorCreate(displayP3ColorSpaceRef(), cgFloatComponents);
-    case ColorSpace::LinearRGB:
-        // FIXME: Do we ever create CGColorRefs in these spaces? It may only be ImageBuffers.
-        return CGColorCreate(sRGBColorSpaceRef(), cgFloatComponents);
-    }
-
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    return CGColorCreate(cgColorSpace, cgFloatComponents);
 }
 
 CGColorRef cachedCGColor(const Color& color)

@@ -33,27 +33,102 @@ namespace WebCore {
 float linearToRGBColorComponent(float);
 float rgbToLinearColorComponent(float);
 
+
+// All color types must at least implement the following conversions to and from the XYZA color space:
+//    XYZA<float> toXYZA(const ColorType<float>&);
+//    ColorType<float> toColorType(const XYZA<float>&);
+//
+// Any additional conversions can be thought of as optimizations, shortcutting unnecessary steps, though
+// some may be integral to the base conversion.
+
+
+// SRGBA
+WEBCORE_EXPORT XYZA<float> toXYZA(const SRGBA<float>&);
+WEBCORE_EXPORT SRGBA<float> toSRGBA(const XYZA<float>&);
+// Additions
 WEBCORE_EXPORT LinearSRGBA<float> toLinearSRGBA(const SRGBA<float>&);
+WEBCORE_EXPORT HSLA<float> toHSLA(const SRGBA<float>&);
+WEBCORE_EXPORT CMYKA<float> toCMYKA(const SRGBA<float>&);
+
+// LinearSRGBA
+WEBCORE_EXPORT XYZA<float> toXYZA(const LinearSRGBA<float>&);
+WEBCORE_EXPORT LinearSRGBA<float> toLinearSRGBA(const XYZA<float>&);
+// Additions
 WEBCORE_EXPORT SRGBA<float> toSRGBA(const LinearSRGBA<float>&);
 
+
+// DisplayP3
+WEBCORE_EXPORT XYZA<float> toXYZA(const DisplayP3<float>&);
+WEBCORE_EXPORT DisplayP3<float> toDisplayP3(const XYZA<float>&);
+// Additions
 WEBCORE_EXPORT LinearDisplayP3<float> toLinearDisplayP3(const DisplayP3<float>&);
+
+
+// LinearDisplayP3
+WEBCORE_EXPORT XYZA<float> toXYZA(const LinearDisplayP3<float>&);
+WEBCORE_EXPORT LinearDisplayP3<float> toLinearDisplayP3(const XYZA<float>&);
+// Additions
 WEBCORE_EXPORT DisplayP3<float> toDisplayP3(const LinearDisplayP3<float>&);
 
-WEBCORE_EXPORT SRGBA<float> toSRGBA(const DisplayP3<float>&);
-WEBCORE_EXPORT DisplayP3<float> toDisplayP3(const SRGBA<float>&);
 
-WEBCORE_EXPORT HSLA<float> toHSLA(const SRGBA<float>&);
+// HSLA
+WEBCORE_EXPORT XYZA<float> toXYZA(const HSLA<float>&);
+WEBCORE_EXPORT HSLA<float> toHSLA(const XYZA<float>&);
+// Additions
 WEBCORE_EXPORT SRGBA<float> toSRGBA(const HSLA<float>&);
 
-SRGBA<float> toSRGBA(const CMYKA<float>&);
+
+// CMYKA
+WEBCORE_EXPORT XYZA<float> toXYZA(const CMYKA<float>&);
+WEBCORE_EXPORT CMYKA<float> toCMYKA(const XYZA<float>&);
+// Additions
+WEBCORE_EXPORT SRGBA<float> toSRGBA(const CMYKA<float>&);
 
 
-// Identity conversions (useful for generic contexts)
+// Identity conversions (useful for generic contexts).
 
 constexpr SRGBA<float> toSRGBA(const SRGBA<float>& color) { return color; }
 constexpr LinearSRGBA<float> toLinearSRGBA(const LinearSRGBA<float>& color) { return color; }
 constexpr DisplayP3<float> toDisplayP3(const DisplayP3<float>& color) { return color; }
 constexpr LinearDisplayP3<float> toLinearDisplayP3(const LinearDisplayP3<float>& color) { return color; }
 constexpr HSLA<float> toHSLA(const HSLA<float>& color) { return color; }
+constexpr CMYKA<float> toCMYKA(const CMYKA<float>& color) { return color; }
+constexpr XYZA<float> toXYZA(const XYZA<float>& color) { return color; }
+
+
+// Fallback conversions.
+
+// All types are required to have a conversion to XYZA, so these are guaranteed to work if
+// another overload is not already provided.
+
+template<typename T> SRGBA<float> toSRGBA(const T& color)
+{
+    return toSRGBA(toXYZA(color));
+}
+
+template<typename T> SRGBA<float> toLinearSRGBA(const T& color)
+{
+    return toLinearSRGBA(toXYZA(color));
+}
+
+template<typename T> SRGBA<float> toDisplayP3(const T& color)
+{
+    return toDisplayP3(toXYZA(color));
+}
+
+template<typename T> SRGBA<float> toLinearDisplayP3(const T& color)
+{
+    return toLinearDisplayP3(toXYZA(color));
+}
+
+template<typename T> SRGBA<float> toHSLA(const T& color)
+{
+    return toHSLA(toXYZA(color));
+}
+
+template<typename T> SRGBA<float> toCMYKA(const T& color)
+{
+    return toCMYKA(toXYZA(color));
+}
 
 } // namespace WebCore

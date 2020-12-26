@@ -181,9 +181,6 @@ private:
     Color(Ref<ExtendedColor>&&);
 
     void setColor(SRGBA<uint8_t>);
-    void setColor(const SRGBA<float>&);
-    void setColor(const LinearSRGBA<float>&);
-    void setColor(const DisplayP3<float>&);
     void setExtendedColor(Ref<ExtendedColor>&&);
 
     void tagAsSemantic() { m_colorData.inlineColorAndFlags |= isSemanticInlineColorBit; }
@@ -218,7 +215,6 @@ WEBCORE_EXPORT CGColorRef cachedCGColor(const Color&);
 #endif
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Color&);
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ColorSpace);
 
 inline bool operator==(const Color& a, const Color& b)
 {
@@ -276,32 +272,22 @@ inline Color::Color(Optional<SRGBA<uint8_t>> color, SemanticTag)
 
 inline Color::Color(ColorComponents<float> components, ColorSpace colorSpace)
 {
-    switch (colorSpace) {
-    case ColorSpace::SRGB:
-        setColor(asSRGBA(components));
-        return;
-    case ColorSpace::LinearRGB:
-        setColor(asLinearSRGBA(components));
-        return;
-    case ColorSpace::DisplayP3:
-        setColor(asDisplayP3(components));
-        return;
-    }
+    setExtendedColor(ExtendedColor::create(components, colorSpace));
 }
 
 inline Color::Color(const SRGBA<float>& color)
 {
-    setColor(color);
+    setExtendedColor(ExtendedColor::create(color));
 }
 
 inline Color::Color(const LinearSRGBA<float>& color)
 {
-    setColor(color);
+    setExtendedColor(ExtendedColor::create(color));
 }
 
 inline Color::Color(const DisplayP3<float>& color)
 {
-    setColor(color);
+    setExtendedColor(ExtendedColor::create(color));
 }
 
 inline Color::Color(Ref<ExtendedColor>&& extendedColor)
@@ -400,21 +386,6 @@ inline void Color::setColor(SRGBA<uint8_t> color)
 {
     m_colorData.inlineColorAndFlags = static_cast<uint64_t>(PackedColor::RGBA { color }.value) << 32;
     tagAsValid();
-}
-
-inline void Color::setColor(const SRGBA<float>& color)
-{
-    setExtendedColor(ExtendedColor::create(color));
-}
-
-inline void Color::setColor(const LinearSRGBA<float>& color)
-{
-    setExtendedColor(ExtendedColor::create(color));
-}
-
-inline void Color::setColor(const DisplayP3<float>& color)
-{
-    setExtendedColor(ExtendedColor::create(color));
 }
 
 inline void Color::setExtendedColor(Ref<ExtendedColor>&& extendedColor)

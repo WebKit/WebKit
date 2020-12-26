@@ -82,17 +82,7 @@ inline ExtendedColor::ExtendedColor(ColorComponents<float> components, ColorSpac
 
 template<typename Functor> decltype(auto) ExtendedColor::callOnUnderlyingType(Functor&& functor) const
 {
-    switch (m_colorSpace) {
-    case ColorSpace::SRGB:
-        return std::invoke(std::forward<Functor>(functor), asSRGBA(m_components));
-    case ColorSpace::LinearRGB:
-        return std::invoke(std::forward<Functor>(functor), asLinearSRGBA(m_components));
-    case ColorSpace::DisplayP3:
-        return std::invoke(std::forward<Functor>(functor), asDisplayP3(m_components));
-    }
-
-    ASSERT_NOT_REACHED();
-    return std::invoke(std::forward<Functor>(functor), asSRGBA(m_components));
+    return callWithColorType(m_components, m_colorSpace, std::forward<Functor>(functor));
 }
 
 }

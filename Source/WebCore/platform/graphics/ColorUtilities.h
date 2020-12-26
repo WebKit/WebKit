@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ColorComponents.h"
 #include "ColorTypes.h"
 #include <algorithm>
 #include <cmath>
@@ -32,8 +33,6 @@
 #include <math.h>
 
 namespace WebCore {
-
-template<typename> struct SRGBA;
 
 float lightness(const SRGBA<float>&);
 float luminance(const SRGBA<float>&);
@@ -147,12 +146,12 @@ template<template<typename> typename ColorType, typename... ComponentType> const
 
 template<typename ColorType, typename Functor> ColorType colorByModifingEachNonAlphaComponent(const ColorType& color, Functor&& functor)
 {
-    // FIXME: This should be made to work with colors that don't use the names red, green, and blue for their channels.
-    auto copy = color;
-    copy.red = std::invoke(functor, color.red);
-    copy.green = std::invoke(functor, color.green);
-    copy.blue = std::invoke(std::forward<Functor>(functor), color.blue);
-    return copy;
+    auto components = asColorComponents(color);
+    auto copy = components;
+    copy[0] = std::invoke(functor, components[0]);
+    copy[1] = std::invoke(functor, components[1]);
+    copy[2] = std::invoke(std::forward<Functor>(functor), components[2]);
+    return { copy[0], copy[1], copy[2], copy[3] };
 }
 
 template<typename ColorType> constexpr ColorType colorWithOverridenAlpha(const ColorType& color, uint8_t overrideAlpha)

@@ -279,6 +279,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/ca/cocoa/WebTiledBackingLayer.mm
 
     platform/graphics/cg/ColorCG.cpp
+    platform/graphics/cg/ColorSpaceCG.cpp
     platform/graphics/cg/FloatPointCG.cpp
     platform/graphics/cg/FloatRectCG.cpp
     platform/graphics/cg/FloatSizeCG.cpp
@@ -544,6 +545,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ca/cocoa/PlatformCAAnimationCocoa.h
     platform/graphics/ca/cocoa/PlatformCALayerCocoa.h
 
+    platform/graphics/cg/ColorSpaceCG.h
     platform/graphics/cg/GraphicsContextCG.h
     platform/graphics/cg/IOSurfacePool.h
     platform/graphics/cg/ImageBufferCGBackend.h

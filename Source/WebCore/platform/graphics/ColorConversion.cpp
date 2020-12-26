@@ -88,7 +88,7 @@ DisplayP3<float> toDisplayP3(const LinearDisplayP3<float>& color)
     };
 }
 
-static LinearSRGBA<float> toLinearSRGBA(const XYZA<float>& color)
+LinearSRGBA<float> toLinearSRGBA(const XYZA<float>& color)
 {
     // https://en.wikipedia.org/wiki/SRGB
     // http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
@@ -100,7 +100,7 @@ static LinearSRGBA<float> toLinearSRGBA(const XYZA<float>& color)
     return asLinearSRGBA(xyzToLinearSRGBMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
-static XYZA<float> toXYZ(const LinearSRGBA<float>& color)
+XYZA<float> toXYZA(const LinearSRGBA<float>& color)
 {
     // https://en.wikipedia.org/wiki/SRGB
     // http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
@@ -112,7 +112,7 @@ static XYZA<float> toXYZ(const LinearSRGBA<float>& color)
     return asXYZA(linearSRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
-static LinearDisplayP3<float> toLinearDisplayP3(const XYZA<float>& color)
+LinearDisplayP3<float> toLinearDisplayP3(const XYZA<float>& color)
 {
     // https://drafts.csswg.org/css-color/#color-conversion-code
     constexpr ColorMatrix<3, 3> xyzToLinearDisplayP3Matrix {
@@ -123,7 +123,7 @@ static LinearDisplayP3<float> toLinearDisplayP3(const XYZA<float>& color)
     return asLinearDisplayP3(xyzToLinearDisplayP3Matrix.transformedColorComponents(asColorComponents(color)));
 }
 
-static XYZA<float> toXYZ(const LinearDisplayP3<float>& color)
+XYZA<float> toXYZA(const LinearDisplayP3<float>& color)
 {
     // https://drafts.csswg.org/css-color/#color-conversion-code
     constexpr ColorMatrix<3, 3> linearDisplayP3ToXYZMatrix {
@@ -132,16 +132,6 @@ static XYZA<float> toXYZ(const LinearDisplayP3<float>& color)
         0.0f,                0.0451133818589026f, 1.043944368900976f
     };
     return asXYZA(linearDisplayP3ToXYZMatrix.transformedColorComponents(asColorComponents(color)));
-}
-
-SRGBA<float> toSRGBA(const DisplayP3<float>& color)
-{
-    return toSRGBA(toLinearSRGBA(toXYZ(toLinearDisplayP3(color))));
-}
-
-DisplayP3<float> toDisplayP3(const SRGBA<float>& color)
-{
-    return toDisplayP3(toLinearDisplayP3(toXYZ(toLinearSRGBA(color))));
 }
 
 HSLA<float> toHSLA(const SRGBA<float>& color)
@@ -237,6 +227,60 @@ SRGBA<float> toSRGBA(const CMYKA<float>& color)
     float g = colors * (1.0f - m);
     float b = colors * (1.0f - y);
     return { r, g, b, a };
+}
+
+CMYKA<float> toCMYKA(const SRGBA<float>& color)
+{
+    auto [r, g, b, a] = color;
+
+    auto k = 1.0f - std::max({ r, g, b });
+    if (k == 1.0f)
+        return { 0, 0, 0, 1.0f, a };
+    
+    auto c = (1.0f - r - k) / (1.0f - k);
+    auto m = (1.0f - g - k) / (1.0f - k);
+    auto y = (1.0f - b - k) / (1.0f - k);
+    return { c, m, y, k, a };
+}
+
+XYZA<float> toXYZA(const SRGBA<float>& color)
+{
+    return toXYZA(toLinearSRGBA(color));
+}
+
+SRGBA<float> toSRGBA(const XYZA<float>& color)
+{
+    return toSRGBA(toLinearSRGBA(color));
+}
+
+XYZA<float> toXYZA(const DisplayP3<float>& color)
+{
+    return toXYZA(toLinearDisplayP3(color));
+}
+
+DisplayP3<float> toDisplayP3(const XYZA<float>& color)
+{
+    return toDisplayP3(toLinearDisplayP3(color));
+}
+
+XYZA<float> toXYZA(const HSLA<float>& color)
+{
+    return toXYZA(toSRGBA(color));
+}
+
+HSLA<float> toHSLA(const XYZA<float>& color)
+{
+    return toHSLA(toSRGBA(color));
+}
+
+XYZA<float> toXYZA(const CMYKA<float>& color)
+{
+    return toXYZA(toSRGBA(color));
+}
+
+CMYKA<float> toCMYKA(const XYZA<float>& color)
+{
+    return toCMYKA(toSRGBA(color));
 }
 
 } // namespace WebCore
