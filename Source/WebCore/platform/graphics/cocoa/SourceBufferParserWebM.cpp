@@ -1108,7 +1108,7 @@ void SourceBufferParserWebM::VideoTrackData::createSampleBuffer(const CMTime& pr
     }
 
     auto trackID = track.track_uid.value();
-    parser().provideMediaData(sampleBuffer.leakRef(), trackID, metadata.position);
+    parser().provideMediaData(WTFMove(sampleBuffer), trackID, metadata.position);
 #else
     UNUSED_PARAM(presentationTime);
     UNUSED_PARAM(sampleCount);
@@ -1210,7 +1210,7 @@ void SourceBufferParserWebM::AudioTrackData::createSampleBuffer(Optional<size_t>
     m_packetDescriptions.clear();
 
     auto trackID = track().track_uid.value();
-    parser().provideMediaData(sampleBuffer.leakRef(), trackID, latestByteRangeOffset);
+    parser().provideMediaData(WTFMove(sampleBuffer), trackID, latestByteRangeOffset);
 }
 
 void SourceBufferParserWebM::flushPendingAudioBuffers()
