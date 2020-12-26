@@ -3644,6 +3644,12 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
             continue;
         }
 
+        if (is<RenderInline>(renderer)) {
+            layoutFormattingContextLineLayout.updateInlineBoxDimensions(downcast<RenderInline>(renderer));
+            renderer.clearNeedsLayout();
+            continue;
+        }
+
         renderer.clearNeedsLayout();
     }
 

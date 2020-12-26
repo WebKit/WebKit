@@ -169,6 +169,16 @@ void LineLayout::updateLineBreakBoxDimensions(const RenderLineBreak& lineBreakBo
     boxGeometry.setVerticalMargin({ });
 }
 
+void LineLayout::updateInlineBoxDimensions(const RenderInline& renderInline)
+{
+    auto& boxGeometry = m_layoutState.ensureGeometryForBox(m_boxTree.layoutBoxForRenderer(renderInline));
+
+    boxGeometry.setBorder({ { renderInline.borderLeft(), renderInline.borderRight() }, { renderInline.borderTop(), renderInline.borderBottom() } });
+    boxGeometry.setPadding(Layout::Edges { { renderInline.paddingLeft(), renderInline.paddingRight() }, { renderInline.paddingTop(), renderInline.paddingBottom() } });
+    boxGeometry.setHorizontalMargin({ renderInline.marginLeft(), renderInline.marginRight() });
+    boxGeometry.setVerticalMargin({ });
+}
+
 void LineLayout::updateStyle(const RenderBoxModelObject& renderer)
 {
     m_boxTree.updateStyle(renderer);
