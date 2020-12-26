@@ -518,14 +518,10 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             return;
         // Grab the inline boxes (even those that don't have associated layout boxes on the current line due to line wrapping)
         // and update their geometries.
-        for (auto& inlineLevelBox : lineBox.inlineLevelBoxList()) {
+        for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
             if (!inlineLevelBox->isInlineBox())
                 continue;
             auto& layoutBox = inlineLevelBox->layoutBox();
-            if (&layoutBox == &root()) {
-                // Ignore root inline box.
-                continue;
-            }
             auto& boxGeometry = formattingState.boxGeometry(layoutBox);
             // Inline boxes may or may not be wrapped and have runs on multiple lines (e.g. <span>first line<br>second line<br>third line</span>)
             auto inlineBoxMarginRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox, boxGeometry);

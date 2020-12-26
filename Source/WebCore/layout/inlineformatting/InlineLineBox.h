@@ -147,8 +147,6 @@ public:
     InlineRect logicalRectForRootInlineBox() const { return m_rootInlineBox->logicalRect(); }
     InlineRect logicalMarginRectForInlineLevelBox(const Box&, const BoxGeometry&) const;
 
-    auto inlineLevelBoxList() const { return m_inlineLevelBoxRectMap.values(); }
-
     const InlineLevelBox& rootInlineBox() const { return *m_rootInlineBox; }
     using InlineLevelBoxList = Vector<std::unique_ptr<InlineLevelBox>>;
     const InlineLevelBoxList& nonRootInlineLevelBoxes() const { return m_nonRootInlineLevelBoxList; }

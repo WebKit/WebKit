@@ -169,13 +169,13 @@ InlineContentBuilder::LineLevelVisualAdjustmentsForRunsList InlineContentBuilder
     for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
         auto lineNeedsLegacyIntegralVerticalPosition = [&] {
             // InlineTree rounds y position to integral value for certain content (see InlineFlowBox::placeBoxesInBlockDirection).
-            auto inlineLevelBoxList = inlineFormattingState.lineBoxes()[lineIndex].inlineLevelBoxList();
-            if (inlineLevelBoxList.size() == 1) {
+            auto& nonRootInlineLevelBoxList = inlineFormattingState.lineBoxes()[lineIndex].nonRootInlineLevelBoxes();
+            if (nonRootInlineLevelBoxList.isEmpty()) {
                 // This is text content only with root inline box.
                 return true;
             }
             // Text + <br> (or just <br> or text<span></span><br>) behaves like text.
-            for (auto& inlineLevelBox : inlineLevelBoxList) {
+            for (auto& inlineLevelBox : nonRootInlineLevelBoxList) {
                 if (inlineLevelBox->isAtomicInlineLevelBox()) {
                     // Content like text<img> prevents legacy snapping.
                     return false;
