@@ -1,0 +1,4 @@
+
+PASS 'toString' redefinition with accessor fails
+PASS 'valueOf' redefinition with accessor fails
+

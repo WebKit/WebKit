@@ -1,0 +1,6 @@
+
+PASS 'toString' accessor property is defined
+PASS 'toString' data property is created via [[Set]]
+PASS 'valueOf' accessor property is defined
+PASS 'valueOf' data property is created via [[Set]]
+

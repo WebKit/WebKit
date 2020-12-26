@@ -1,17 +1,11 @@
 <html>
 <head>
     <script src="../../../../resources/js-test-pre.js"></script>
-    <script src="resources/location-tests-functions.js"></script>
 </head>
 <body>
 <script>
-    window.location.__defineGetter__("valueOf", function () {
-        return function() { return "haxored"; }
-    });
-
-    var result = normalizeURL(String(window.location));
-    var correctValue = normalizeURL(document.URL);
-    shouldBe("result", "correctValue");
+    function getter() { throw new Error("[[Get]] should be unreachable!"); }
+    shouldThrowErrorName("location.__defineGetter__('valueOf', getter)", "TypeError");
 </script>
 <script src="../../../../resources/js-test-post.js"></script>
 </body>

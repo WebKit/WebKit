@@ -3009,10 +3009,6 @@ sub GenerateHeader
         $structureFlags{"JSC::OverridesGetPrototype"} = 1;
     }
     
-    if ($interface->extendedAttributes->{CustomToStringName}) {
-        push(@headerContent, "    static String toStringName(const JSC::JSObject*, JSC::JSGlobalObject*);\n");
-    }
-    
     if ($interface->extendedAttributes->{CustomPreventExtensions}) {
         push(@headerContent, "    static bool preventExtensions(JSC::JSObject*, JSC::JSGlobalObject*);\n");
     }
@@ -7663,17 +7659,6 @@ sub GeneratePrototypeDeclaration
     push(@$outputArray, "\n");
     push(@$outputArray, "    void finishCreation(JSC::VM&);\n");
 
-    # FIXME: Should this override putByIndex as well?
-    if ($interface->extendedAttributes->{CustomPutOnPrototype}) {
-        push(@$outputArray, "\n");
-        push(@$outputArray, "    static bool put(JSC::JSCell*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
-    }
-
-    if ($interface->extendedAttributes->{CustomDefineOwnPropertyOnPrototype}) {
-        push(@$outputArray, "\n");
-        push(@$outputArray, "    static bool defineOwnProperty(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyName, const JSC::PropertyDescriptor&, bool shouldThrow);\n");
-    }
-
     $structureFlags{"JSC::HasStaticPropertyTable"} = 1 if PrototypeHasStaticPropertyTable($interface) && IsGlobalInterface($interface);
     $structureFlags{"JSC::IsImmutablePrototypeExoticObject"} = 1 if $interface->extendedAttributes->{IsImmutablePrototypeExoticObjectOnPrototype};
 
@@ -8037,9 +8022,7 @@ sub InstanceOverridesGetCallData
 sub HeaderNeedsPrototypeDeclaration
 {
     my $interface = shift;
-    return IsDOMGlobalObject($interface)
-        || $interface->extendedAttributes->{CustomPutOnPrototype}
-        || $interface->extendedAttributes->{CustomDefineOwnPropertyOnPrototype};
+    return IsDOMGlobalObject($interface);
 }
 
 sub IsLegacyUnforgeable

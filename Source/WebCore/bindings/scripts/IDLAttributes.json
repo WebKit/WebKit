@@ -91,9 +91,6 @@
         "CustomDefineOwnProperty": {
             "contextsAllowed": ["interface"]
         },
-        "CustomDefineOwnPropertyOnPrototype": {
-            "contextsAllowed": ["interface"]
-        },
         "CustomDeleteProperty": {
             "contextsAllowed": ["interface"]
         },
@@ -133,16 +130,10 @@
         "CustomPut": {
             "contextsAllowed": ["interface"]
         },
-        "CustomPutOnPrototype": {
-            "contextsAllowed": ["interface"]
-        },
         "CustomSetter": {
             "contextsAllowed": ["attribute"]
         },
         "CustomToJSObject": {
-            "contextsAllowed": ["interface"]
-        },
-        "CustomToStringName": {
             "contextsAllowed": ["interface"]
         },
         "CustomEnabled": {

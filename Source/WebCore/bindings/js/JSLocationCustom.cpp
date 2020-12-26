@@ -113,23 +113,6 @@ bool JSLocation::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lex
     RELEASE_AND_RETURN(scope, JSObject::getOwnPropertySlotByIndex(object, lexicalGlobalObject, index, slot));
 }
 
-static bool putCommon(JSLocation& thisObject, JSGlobalObject& lexicalGlobalObject, PropertyName propertyName)
-{
-    VM& vm = lexicalGlobalObject.vm();
-
-    // Always allow assigning to the whole location.
-    // However, alllowing assigning of pieces might inadvertently disclose parts of the original location.
-    // So fall through to the access check for those.
-    if (propertyName == static_cast<JSVMClientData*>(vm.clientData)->builtinNames().hrefPublicName())
-        return false;
-
-    // Block access and throw if there is a security error.
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, thisObject.wrapped().window(), ThrowSecurityError))
-        return true;
-
-    return false;
-}
-
 void JSLocation::doPutPropertySecurityCheck(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PutPropertySlot&)
 {
     auto* thisObject = jsCast<JSLocation*>(object);
@@ -149,22 +132,27 @@ void JSLocation::doPutPropertySecurityCheck(JSObject* object, JSGlobalObject* le
 
 bool JSLocation::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, JSValue value, PutPropertySlot& putPropertySlot)
 {
+    VM& vm = lexicalGlobalObject->vm();
     auto* thisObject = jsCast<JSLocation*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    if (putCommon(*thisObject, *lexicalGlobalObject, propertyName))
-        return false;
+    // Always allow assigning to the whole location.
+    // However, allowing assigning of pieces might inadvertently disclose parts of the original location.
+    // So fall through to the access check for those.
+    if (propertyName != static_cast<JSVMClientData*>(vm.clientData)->builtinNames().hrefPublicName()) {
+        if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped().window(), ThrowSecurityError))
+            return false;
+    }
 
     return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);
 }
 
 bool JSLocation::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index, JSValue value, bool shouldThrow)
 {
-    VM& vm = lexicalGlobalObject->vm();
     auto* thisObject = jsCast<JSLocation*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    if (putCommon(*thisObject, *lexicalGlobalObject, Identifier::from(vm, index)))
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped().window(), ThrowSecurityError))
         return false;
 
     return JSObject::putByIndex(cell, lexicalGlobalObject, index, value, shouldThrow);
@@ -205,9 +193,6 @@ bool JSLocation::defineOwnProperty(JSObject* object, JSGlobalObject* lexicalGlob
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped().window(), ThrowSecurityError))
         return false;
 
-    VM& vm = lexicalGlobalObject->vm();
-    if (descriptor.isAccessorDescriptor() && (propertyName == vm.propertyNames->toString || propertyName == vm.propertyNames->valueOf))
-        return false;
     return Base::defineOwnProperty(object, lexicalGlobalObject, propertyName, descriptor, throwException);
 }
 
@@ -223,31 +208,6 @@ JSValue JSLocation::getPrototype(JSObject* object, JSGlobalObject* lexicalGlobal
 bool JSLocation::preventExtensions(JSObject*, JSGlobalObject*)
 {
     return false;
-}
-
-String JSLocation::toStringName(const JSObject* object, JSGlobalObject* lexicalGlobalObject)
-{
-    auto* thisObject = jsCast<const JSLocation*>(object);
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped().window(), DoNotReportSecurityError))
-        return "Object"_s;
-    return "Location"_s;
-}
-
-bool JSLocationPrototype::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
-{
-    VM& vm = lexicalGlobalObject->vm();
-    auto* thisObject = jsCast<JSLocationPrototype*>(cell);
-    if (propertyName == vm.propertyNames->toString || propertyName == vm.propertyNames->valueOf)
-        return false;
-    return Base::put(thisObject, lexicalGlobalObject, propertyName, value, slot);
-}
-
-bool JSLocationPrototype::defineOwnProperty(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, const PropertyDescriptor& descriptor, bool throwException)
-{
-    VM& vm = lexicalGlobalObject->vm();
-    if (descriptor.isAccessorDescriptor() && (propertyName == vm.propertyNames->toString || propertyName == vm.propertyNames->valueOf))
-        return false;
-    return Base::defineOwnProperty(object, lexicalGlobalObject, propertyName, descriptor, throwException);
 }
 
 } // namespace WebCore

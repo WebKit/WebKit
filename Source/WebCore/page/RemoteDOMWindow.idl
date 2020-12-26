@@ -32,7 +32,6 @@
     CustomPreventExtensions,
     CustomProxyToJSObject,
     CustomPut,
-    CustomToStringName,
     ImplicitThis,
     InterfaceName=Window,
     IsImmutablePrototypeExoticObject,

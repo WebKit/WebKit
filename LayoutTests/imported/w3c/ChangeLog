@@ -1,3 +1,15 @@
+2020-12-26  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Remove [CustomToStringName] and Location-specific extended attributes
+        https://bugs.webkit.org/show_bug.cgi?id=219276
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/html/browsers/history/the-location-interface/location-non-configurable-toString-valueOf-expected.txt: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/location-non-configurable-toString-valueOf.html: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/location-prototype-no-toString-valueOf-expected.txt: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/location-prototype-no-toString-valueOf.html: Added.
+
 2020-12-22  Ziran Sun  <zsun@igalia.com>
 
         Add test for logical properties in webkit non-standard '-webkit-writing-mode: horizontal-bt' mode

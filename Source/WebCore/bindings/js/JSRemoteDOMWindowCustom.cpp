@@ -127,9 +127,4 @@ bool JSRemoteDOMWindow::preventExtensions(JSObject*, JSGlobalObject*)
     return false;
 }
 
-String JSRemoteDOMWindow::toStringName(const JSObject*, JSGlobalObject*)
-{
-    return "Object"_s;
-}
-
 } // namepace WebCore

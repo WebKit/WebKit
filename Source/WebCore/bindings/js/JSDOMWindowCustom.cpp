@@ -500,14 +500,6 @@ bool JSDOMWindow::preventExtensions(JSObject*, JSGlobalObject*)
     return false;
 }
 
-String JSDOMWindow::toStringName(const JSObject* object, JSGlobalObject* lexicalGlobalObject)
-{
-    auto* thisObject = jsCast<const JSDOMWindow*>(object);
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped(), DoNotReportSecurityError))
-        return "Object"_s;
-    return "Window"_s;
-}
-
 // Custom Attributes
 
 JSValue JSDOMWindow::event(JSGlobalObject& lexicalGlobalObject) const
