@@ -634,6 +634,9 @@ bool ScrollableArea::isPinnedForScrollDeltaOnAxis(float scrollDelta, ScrollEvent
     auto scrollPosition = this->scrollPosition();
     switch (axis) {
     case ScrollEventAxis::Vertical:
+        if (!allowsVerticalScrolling())
+            return true;
+
         if (scrollDelta < 0) // top
             return scrollPosition.y() <= minimumScrollPosition().y();
 
@@ -642,6 +645,9 @@ bool ScrollableArea::isPinnedForScrollDeltaOnAxis(float scrollDelta, ScrollEvent
 
         break;
     case ScrollEventAxis::Horizontal:
+        if (!allowsHorizontalScrolling())
+            return true;
+
         if (scrollDelta < 0) // left
             return scrollPosition.x() <= minimumScrollPosition().x();
 
@@ -656,7 +662,8 @@ bool ScrollableArea::isPinnedForScrollDeltaOnAxis(float scrollDelta, ScrollEvent
 
 bool ScrollableArea::isPinnedForScrollDelta(const FloatSize& scrollDelta) const
 {
-    return isPinnedForScrollDeltaOnAxis(scrollDelta.width(), ScrollEventAxis::Horizontal) && isPinnedForScrollDeltaOnAxis(scrollDelta.height(), ScrollEventAxis::Vertical);
+    return (!scrollDelta.width() || isPinnedForScrollDeltaOnAxis(scrollDelta.width(), ScrollEventAxis::Horizontal))
+        && (!scrollDelta.height() || isPinnedForScrollDeltaOnAxis(scrollDelta.height(), ScrollEventAxis::Vertical));
 }
 
 RectEdges<bool> ScrollableArea::edgePinnedState() const
@@ -665,12 +672,15 @@ RectEdges<bool> ScrollableArea::edgePinnedState() const
     auto minScrollPosition = minimumScrollPosition();
     auto maxScrollPosition = maximumScrollPosition();
 
+    bool horizontallyUnscrollable = !allowsHorizontalScrolling();
+    bool verticallyUnscrollable = !allowsVerticalScrolling();
+
     // Top, right, bottom, left.
     return {
-        scrollPosition.y() <= minScrollPosition.y(),
-        scrollPosition.x() >= maxScrollPosition.x(),
-        scrollPosition.y() >= maxScrollPosition.y(),
-        scrollPosition.x() <= minScrollPosition.x()
+        verticallyUnscrollable || scrollPosition.y() <= minScrollPosition.y(),
+        horizontallyUnscrollable || scrollPosition.x() >= maxScrollPosition.x(),
+        verticallyUnscrollable || scrollPosition.y() >= maxScrollPosition.y(),
+        horizontallyUnscrollable || scrollPosition.x() <= minScrollPosition.x()
     };
 }
 

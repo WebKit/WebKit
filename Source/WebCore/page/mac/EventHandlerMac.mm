@@ -819,8 +819,10 @@ static ContainerNode* findEnclosingScrollableContainer(ContainerNode* node, cons
         if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin || wheelEvent.phase() == PlatformWheelEventPhase::Cancelled)
             return candidate;
 
-        if ((biasedDelta.height() > 0 && !scrollableArea->scrolledToTop()) || (biasedDelta.height() < 0 && !scrollableArea->scrolledToBottom())
-            || (biasedDelta.width() > 0 && !scrollableArea->scrolledToLeft()) || (biasedDelta.width() < 0 && !scrollableArea->scrolledToRight()))
+        if (biasedDelta.height() && !scrollableArea->isPinnedForScrollDeltaOnAxis(-biasedDelta.height(), ScrollEventAxis::Vertical))
+            return candidate;
+
+        if (biasedDelta.width() && !scrollableArea->isPinnedForScrollDeltaOnAxis(-biasedDelta.width(), ScrollEventAxis::Horizontal))
             return candidate;
     }
     

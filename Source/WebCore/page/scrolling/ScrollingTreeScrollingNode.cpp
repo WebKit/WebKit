@@ -198,12 +198,15 @@ RectEdges<bool> ScrollingTreeScrollingNode::edgePinnedState() const
     auto minScrollPosition = minimumScrollPosition();
     auto maxScrollPosition = maximumScrollPosition();
 
+    bool horizontallyUnscrollable = !allowsHorizontalScrolling();
+    bool verticallyUnscrollable = !allowsVerticalScrolling();
+
     // Top, right, bottom, left.
     return {
-        scrollPosition.y() <= minScrollPosition.y(),
-        scrollPosition.x() >= maxScrollPosition.x(),
-        scrollPosition.y() >= maxScrollPosition.y(),
-        scrollPosition.x() <= minScrollPosition.x()
+        verticallyUnscrollable || scrollPosition.y() <= minScrollPosition.y(),
+        horizontallyUnscrollable || scrollPosition.x() >= maxScrollPosition.x(),
+        verticallyUnscrollable || scrollPosition.y() >= maxScrollPosition.y(),
+        horizontallyUnscrollable || scrollPosition.x() <= minScrollPosition.x()
     };
 }
 

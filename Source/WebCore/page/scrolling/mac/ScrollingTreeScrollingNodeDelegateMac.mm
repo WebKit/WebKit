@@ -220,6 +220,9 @@ bool ScrollingTreeScrollingNodeDelegateMac::isPinnedForScrollDeltaOnAxis(float s
     auto scrollPosition = currentScrollPosition();
     switch (axis) {
     case ScrollEventAxis::Vertical:
+        if (!allowsVerticalScrolling())
+            return true;
+
         if (scrollDelta < 0) {
             auto topOffset = scrollPosition.y() - minimumScrollPosition().y();
             return topOffset <= scrollLimit;
@@ -231,6 +234,9 @@ bool ScrollingTreeScrollingNodeDelegateMac::isPinnedForScrollDeltaOnAxis(float s
         }
         break;
     case ScrollEventAxis::Horizontal:
+        if (!allowsHorizontalScrolling())
+            return true;
+
         if (scrollDelta < 0) {
             auto leftOffset = scrollPosition.x() - minimumScrollPosition().x();
             return leftOffset <= scrollLimit;
