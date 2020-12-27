@@ -106,27 +106,27 @@ template<typename T> SRGBA<float> toSRGBA(const T& color)
     return toSRGBA(toXYZA(color));
 }
 
-template<typename T> SRGBA<float> toLinearSRGBA(const T& color)
+template<typename T> LinearSRGBA<float> toLinearSRGBA(const T& color)
 {
     return toLinearSRGBA(toXYZA(color));
 }
 
-template<typename T> SRGBA<float> toDisplayP3(const T& color)
+template<typename T> DisplayP3<float> toDisplayP3(const T& color)
 {
     return toDisplayP3(toXYZA(color));
 }
 
-template<typename T> SRGBA<float> toLinearDisplayP3(const T& color)
+template<typename T> LinearDisplayP3<float> toLinearDisplayP3(const T& color)
 {
     return toLinearDisplayP3(toXYZA(color));
 }
 
-template<typename T> SRGBA<float> toHSLA(const T& color)
+template<typename T> HSLA<float> toHSLA(const T& color)
 {
     return toHSLA(toXYZA(color));
 }
 
-template<typename T> SRGBA<float> toCMYKA(const T& color)
+template<typename T> CMYKA<float> toCMYKA(const T& color)
 {
     return toCMYKA(toXYZA(color));
 }
