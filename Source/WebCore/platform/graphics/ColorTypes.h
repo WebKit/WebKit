@@ -370,7 +370,7 @@ template<typename T> constexpr bool operator!=(const XYZA<T>& a, const XYZA<T>& 
     return !(a == b);
 }
 
-template<typename Functor> constexpr decltype(auto) callWithColorType(const ColorComponents<float>& components, ColorSpace colorSpace, Functor&& functor)
+template<typename T, typename Functor> constexpr decltype(auto) callWithColorType(const ColorComponents<T>& components, ColorSpace colorSpace, Functor&& functor)
 {
     switch (colorSpace) {
     case ColorSpace::SRGB:
