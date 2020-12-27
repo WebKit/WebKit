@@ -72,6 +72,8 @@
   cmd: runWebAssemblyReferenceSpecTest :normal
 - path: wasm/references-spec-tests/table_size.wast.js
   cmd: runWebAssemblyReferenceSpecTest :normal
+- path: wasm/references-spec-tests/table_fill.wast.js
+  cmd: runWebAssemblyReferenceSpecTest :normal
 
 - path: wasm/multi-value-spec-tests/block.wast.js
   cmd: runWebAssemblySpecTest :normal

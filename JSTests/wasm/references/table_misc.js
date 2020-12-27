@@ -165,7 +165,6 @@ assert.throws(() => new WebAssembly.Module((new Builder())
     assert.eq($1.exports.tbl.get(19), "test")
     assert.eq($1.exports.tbl.get(18), null)
 
-    assert.throws(() => $1.exports.tbl_fill(20,null,0), Error, "Out of bounds table access (evaluating 'func(...args)')")
     assert.throws(() => $1.exports.tbl_fill(20,null,1), Error, "Out of bounds table access (evaluating 'func(...args)')")
     assert.throws(() => $1.exports.tbl_fill(19,null,2), Error, "Out of bounds table access (evaluating 'func(...args)')")
     assert.throws(() => $1.exports.tbl_fill(4294967295,null,1), Error, "Out of bounds table access (evaluating 'func(...args)')")

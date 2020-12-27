@@ -1,5 +1,22 @@
 2020-12-27  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
+        [WASM-References] Adjust table.fill to satisfy the spec
+        https://bugs.webkit.org/show_bug.cgi?id=220161
+
+        Reviewed by Yusuke Suzuki.
+
+        Fixed table.fill for the case when count is 0 and offset is equal to
+        table size.
+
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::setWasmTableElement):
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/WasmOperations.h:
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::WASM_SLOW_PATH_DECL):
+
+2020-12-27  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
         [WASM-References] Add declared function indexes set to check from what functions we can create refs
         https://bugs.webkit.org/show_bug.cgi?id=220009
 

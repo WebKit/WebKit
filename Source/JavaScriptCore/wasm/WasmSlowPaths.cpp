@@ -309,7 +309,7 @@ WASM_SLOW_PATH_DECL(table_get)
 WASM_SLOW_PATH_DECL(table_set)
 {
     auto instruction = pc->as<WasmTableSet, WasmOpcodeTraits>();
-    int32_t index = READ(instruction.m_index).unboxedInt32();
+    uint32_t index = READ(instruction.m_index).unboxedUInt32();
     EncodedJSValue value = READ(instruction.m_value).encodedJSValue();
     if (!Wasm::operationSetWasmTableElement(instance, instruction.m_tableIndex, index, value))
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
@@ -345,9 +345,9 @@ WASM_SLOW_PATH_DECL(table_size)
 WASM_SLOW_PATH_DECL(table_fill)
 {
     auto instruction = pc->as<WasmTableFill, WasmOpcodeTraits>();
-    int32_t offset = READ(instruction.m_offset).unboxedInt32();
+    uint32_t offset = READ(instruction.m_offset).unboxedUInt32();
     EncodedJSValue fill = READ(instruction.m_fill).encodedJSValue();
-    int32_t size = READ(instruction.m_size).unboxedInt32();
+    uint32_t size = READ(instruction.m_size).unboxedUInt32();
     if (!Wasm::operationWasmTableFill(instance, instruction.m_tableIndex, offset, fill, size))
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
     WASM_END();
@@ -368,7 +368,7 @@ WASM_SLOW_PATH_DECL(table_grow)
 {
     auto instruction = pc->as<WasmTableGrow, WasmOpcodeTraits>();
     EncodedJSValue fill = READ(instruction.m_fill).encodedJSValue();
-    int32_t size = READ(instruction.m_size).unboxedInt32();
+    uint32_t size = READ(instruction.m_size).unboxedUInt32();
     WASM_RETURN(Wasm::operationWasmTableGrow(instance, instruction.m_tableIndex, fill, size));
 }
 

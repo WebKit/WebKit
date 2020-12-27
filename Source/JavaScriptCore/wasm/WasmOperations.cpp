@@ -661,13 +661,10 @@ JSC_DEFINE_JIT_OPERATION(operationGetWasmTableElement, EncodedJSValue, (Instance
     return JSValue::encode(instance->table(tableIndex)->get(index));
 }
 
-static bool setWasmTableElement(Instance* instance, unsigned tableIndex, int32_t signedIndex, EncodedJSValue encValue)
+static bool setWasmTableElement(Instance* instance, unsigned tableIndex, uint32_t index, EncodedJSValue encValue)
 {
     ASSERT(tableIndex < instance->module().moduleInformation().tableCount());
-    if (signedIndex < 0)
-        return false;
 
-    uint32_t index = signedIndex;
     if (index >= instance->table(tableIndex)->length())
         return false;
 
@@ -694,7 +691,7 @@ static bool setWasmTableElement(Instance* instance, unsigned tableIndex, int32_t
     return true;
 }
 
-JSC_DEFINE_JIT_OPERATION(operationSetWasmTableElement, bool, (Instance* instance, unsigned tableIndex, int32_t signedIndex, EncodedJSValue encValue))
+JSC_DEFINE_JIT_OPERATION(operationSetWasmTableElement, bool, (Instance* instance, unsigned tableIndex, uint32_t signedIndex, EncodedJSValue encValue))
 {
     return setWasmTableElement(instance, tableIndex, signedIndex, encValue);
 }
@@ -737,12 +734,10 @@ JSC_DEFINE_JIT_OPERATION(operationWasmElemDrop, void, (Instance* instance, unsig
     instance->elemDrop(elementIndex);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmTableGrow, int32_t, (Instance* instance, unsigned tableIndex, EncodedJSValue fill, int32_t delta))
+JSC_DEFINE_JIT_OPERATION(operationWasmTableGrow, int32_t, (Instance* instance, unsigned tableIndex, EncodedJSValue fill, uint32_t delta))
 {
     ASSERT(tableIndex < instance->module().moduleInformation().tableCount());
     auto oldSize = instance->table(tableIndex)->length();
-    if (delta < 0)
-        return oldSize;
     auto newSize = instance->table(tableIndex)->grow(delta);
     if (!newSize || *newSize == oldSize)
         return -1;
@@ -753,20 +748,18 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTableGrow, int32_t, (Instance* instance, u
     return oldSize;
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmTableFill, bool, (Instance* instance, unsigned tableIndex, int32_t unsafeOffset, EncodedJSValue fill, int32_t unsafeCount))
+JSC_DEFINE_JIT_OPERATION(operationWasmTableFill, bool, (Instance* instance, unsigned tableIndex, uint32_t offset, EncodedJSValue fill, uint32_t count))
 {
     ASSERT(tableIndex < instance->module().moduleInformation().tableCount());
-    if (unsafeOffset < 0 || unsafeCount < 0)
+
+    if (WTF::sumOverflows<uint32_t>(offset, count))
         return false;
 
-    unsigned offset = unsafeOffset;
-    unsigned count = unsafeCount;
-
-    if (offset >= instance->table(tableIndex)->length() || offset + count > instance->table(tableIndex)->length())
+    if (offset + count > instance->table(tableIndex)->length())
         return false;
 
-    for (unsigned j = 0; j < count; ++j)
-        setWasmTableElement(instance, tableIndex, offset + j, fill);
+    for (uint32_t index = 0; index < count; ++index)
+        setWasmTableElement(instance, tableIndex, offset + index, fill);
 
     return true;
 }
