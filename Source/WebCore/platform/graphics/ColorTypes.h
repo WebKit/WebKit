@@ -43,6 +43,22 @@ template<> struct ComponentTraits<float> {
     static constexpr float maxValue = 1.0f;
 };
 
+template<typename, typename = void> inline constexpr bool HasColorSpaceMember = false;
+template<typename T> inline constexpr bool HasColorSpaceMember<T, std::void_t<decltype(std::declval<T>().colorSpace)>> = true;
+
+template<typename, typename = void> inline constexpr bool IsConvertibleToColorComponents = false;
+template<typename T> inline constexpr bool IsConvertibleToColorComponents<T, std::void_t<decltype(asColorComponents(std::declval<T>()))>> = true;
+
+template<typename, typename = void> inline constexpr bool HasComponentTypeMember = false;
+template<typename T> inline constexpr bool HasComponentTypeMember<T, std::void_t<typename T::ComponentType>> = true;
+
+template<typename T, typename U, bool enabled> inline constexpr bool HasComponentTypeValue = false;
+template<typename T, typename U> inline constexpr bool HasComponentTypeValue<T, U, true> = std::is_same_v<typename T::ComponentType, U>;
+template<typename T, typename U> inline constexpr bool HasComponentType = HasComponentTypeValue<T, U, HasComponentTypeMember<T>>;
+
+template<typename T> inline constexpr bool IsColorType = HasColorSpaceMember<T> && IsConvertibleToColorComponents<T> && HasComponentTypeMember<T>;
+template<typename T, typename U> inline constexpr bool IsColorTypeWithComponentType = HasColorSpaceMember<T> && IsConvertibleToColorComponents<T> && HasComponentType<T, U>;
+
 template<typename Parent> struct ColorWithAlphaHelper {
     // Helper to allow convenient syntax for working with color types.
     // e.g. auto yellowWith50PercentAlpha = Color::yellow.colorWithAlphaByte(128);

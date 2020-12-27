@@ -77,9 +77,9 @@ public:
     Color(Optional<SRGBA<uint8_t>>, SemanticTag);
 
     Color(ColorComponents<float>, ColorSpace);
-    Color(const SRGBA<float>&);
-    Color(const LinearSRGBA<float>&);
-    Color(const DisplayP3<float>&);
+
+    template<typename ColorType, typename std::enable_if_t<IsColorTypeWithComponentType<ColorType, float>>* = nullptr>
+    Color(const ColorType&);
 
     explicit Color(WTF::HashTableEmptyValueType);
     explicit Color(WTF::HashTableDeletedValueType);
@@ -275,17 +275,8 @@ inline Color::Color(ColorComponents<float> components, ColorSpace colorSpace)
     setExtendedColor(ExtendedColor::create(components, colorSpace));
 }
 
-inline Color::Color(const SRGBA<float>& color)
-{
-    setExtendedColor(ExtendedColor::create(color));
-}
-
-inline Color::Color(const LinearSRGBA<float>& color)
-{
-    setExtendedColor(ExtendedColor::create(color));
-}
-
-inline Color::Color(const DisplayP3<float>& color)
+template<typename ColorType, typename std::enable_if_t<IsColorTypeWithComponentType<ColorType, float>>*>
+inline Color::Color(const ColorType& color)
 {
     setExtendedColor(ExtendedColor::create(color));
 }
