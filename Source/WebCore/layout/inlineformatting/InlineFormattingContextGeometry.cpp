@@ -218,8 +218,8 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
     auto createRootInlineBox = [&] {
         auto rootInlineBox = LineBox::InlineLevelBox::createRootInlineBox(rootBox(), horizontalAligmentOffset, lineBox.logicalWidth());
 
-        auto lineHasImaginaryStrut = layoutState().inNoQuirksMode();
-        auto isInitiallyConsideredNonEmpty = !lineBox.isConsideredEmpty() && lineHasImaginaryStrut;
+        auto inlineBoxHasImaginaryStrut = layoutState().inNoQuirksMode();
+        auto isInitiallyConsideredNonEmpty = !lineBox.isConsideredEmpty() && inlineBoxHasImaginaryStrut;
         if (isInitiallyConsideredNonEmpty)
             rootInlineBox->setIsNonEmpty();
         setVerticalGeometryForInlineBox(*rootInlineBox);
@@ -319,6 +319,10 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
             auto initialLogicalWidth = lineBox.logicalWidth() - run.logicalLeft();
             ASSERT(initialLogicalWidth >= 0);
             auto inlineBox = LineBox::InlineLevelBox::createInlineBox(layoutBox, logicalLeft, initialLogicalWidth);
+            // Inline level boxes on empty lines are still considered empty (e.g. <span><div>pre and post blocks are empty</div></span>)
+            auto inlineBoxHasImaginaryStrut = layoutState().inNoQuirksMode() && !lineBox.isConsideredEmpty();
+            if (inlineBoxHasImaginaryStrut)
+                inlineBox->setIsNonEmpty();
             setVerticalGeometryForInlineBox(*inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
             continue;
