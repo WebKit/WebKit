@@ -50,6 +50,8 @@
   cmd: runWebAssemblyReferenceSpecTest :normal
 - path: wasm/references-spec-tests/ref_is_null.wast.js
   cmd: runWebAssemblyReferenceSpecTest :normal
+- path: wasm/references-spec-tests/ref_func.wast.js
+  cmd: runWebAssemblyReferenceSpecTest :normal
 - path: wasm/references-spec-tests/table_copy.wast.js
   cmd: runWebAssemblyReferenceSpecTest :normal
 - path: wasm/references-spec-tests/table_init.wast.js

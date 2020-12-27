@@ -78,7 +78,6 @@ function makeFuncrefIdent() {
               .Function("i")
               .Function("get_i")
               .Function("fix")
-              .Function("get_not_exported")
               .Function("local_read")
           .End()
           .Code()
@@ -107,10 +106,6 @@ function makeFuncrefIdent() {
               .RefFunc(2)
             .End()
 
-            .Function("get_not_exported", { params: [], ret: "funcref" }, [])
-              .RefFunc(4)
-            .End()
-
             .Function("ret_42", { params: [], ret: "i32" }, [])
               .I32Const(42)
             .End()
@@ -137,8 +132,6 @@ function makeFuncrefIdent() {
     assert.eq(instance.exports.get_i()(null), null)
     assert.eq(instance.exports.get_i()(myfun), myfun)
     assert.throws(() => instance.exports.get_i()(5), Error, "Funcref must be an exported wasm function (evaluating 'func(...args)')")
-
-    assert.eq(instance.exports.get_not_exported()(), 42)
 
     assert.eq(instance.exports.fix()(), instance.exports.fix());
     assert.eq(instance.exports.fix(), instance.exports.fix);
@@ -396,6 +389,9 @@ for (let importedFun of [function(i) { return i; }, makeFuncrefIdent()]) {
       .Function().End()
       .Table()
             .Table({initial: 1, element: "funcref"})
+      .End()
+      .Global()
+          .RefFunc("funcref", 0, "immutable") // to declare the imported function.
       .End()
       .Export()
           .Function("test1")

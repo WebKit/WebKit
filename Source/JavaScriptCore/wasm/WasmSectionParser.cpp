@@ -306,6 +306,9 @@ auto SectionParser::parseGlobal() -> PartialResult
             global.initializationType = GlobalInformation::FromExpression;
         WASM_PARSER_FAIL_IF(typeForInitOpcode != global.type, "Global init_expr opcode of type ", typeForInitOpcode, " doesn't match global's type ", global.type);
 
+        if (initOpcode == RefFunc)
+            m_info->addDeclaredFunction(global.initialBitsOrImportNumber);
+
         m_info->globals.uncheckedAppend(WTFMove(global));
     }
 
@@ -337,6 +340,7 @@ auto SectionParser::parseExport() -> PartialResult
         switch (kind) {
         case ExternalKind::Function: {
             WASM_PARSER_FAIL_IF(kindIndex >= m_info->functionIndexSpaceSize(), exportNumber, "th Export has invalid function number ", kindIndex, " it exceeds the function index space ", m_info->functionIndexSpaceSize(), ", named '", fieldString, "'");
+            m_info->addDeclaredFunction(kindIndex);
             break;
         }
         case ExternalKind::Table: {
@@ -685,6 +689,7 @@ auto SectionParser::parseElementSegmentVectorOfExpressions(Vector<uint32_t>& res
         if (opcode == RefFunc) {
             WASM_PARSER_FAIL_IF(!parseVarUInt32(functionIndex), "can't get Element section's ", elementNum, "th element's ", index, "th index");
             WASM_PARSER_FAIL_IF(functionIndex >= m_info->functionIndexSpaceSize(), "Element section's ", elementNum, "th element's ", index, "th index is ", functionIndex, " which exceeds the function index space size of ", m_info->functionIndexSpaceSize());
+            m_info->addDeclaredFunction(functionIndex);
         } else {
             Type typeOfNull;
             WASM_PARSER_FAIL_IF(!parseRefType(typeOfNull), "ref.null type must be a func type in elem section");
@@ -708,6 +713,7 @@ auto SectionParser::parseElementSegmentVectorOfIndexes(Vector<uint32_t>& result,
         WASM_PARSER_FAIL_IF(!parseVarUInt32(functionIndex), "can't get Element section's ", elementNum, "th element's ", index, "th index");
         WASM_PARSER_FAIL_IF(functionIndex >= m_info->functionIndexSpaceSize(), "Element section's ", elementNum, "th element's ", index, "th index is ", functionIndex, " which exceeds the function index space size of ", m_info->functionIndexSpaceSize());
 
+        m_info->addDeclaredFunction(functionIndex);
         result.uncheckedAppend(functionIndex);
     }
 

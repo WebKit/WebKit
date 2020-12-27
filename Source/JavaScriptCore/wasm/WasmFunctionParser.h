@@ -1005,13 +1005,15 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     }
 
     case RefFunc: {
-        uint32_t index;
-        ExpressionType result;
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get index for ref.func");
 
+        uint32_t index;
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get index for ref.func");
         WASM_VALIDATOR_FAIL_IF(index >= m_info.functionIndexSpaceSize(), "ref.func index ", index, " is too large, max is ", m_info.functionIndexSpaceSize());
+        WASM_VALIDATOR_FAIL_IF(!m_info.isDeclaredFunction(index), "ref.func index ", index, " isn't declared");
         m_info.addReferencedFunction(index);
+
+        ExpressionType result;
         WASM_TRY_ADD_TO_CONTEXT(addRefFunc(index, result));
         m_expressionStack.constructAndAppend(Funcref, result);
         return { };

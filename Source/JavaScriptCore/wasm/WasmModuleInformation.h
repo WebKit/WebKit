@@ -74,6 +74,9 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     const BitVector& referencedFunctions() const { return m_referencedFunctions; }
     void addReferencedFunction(unsigned index) const { m_referencedFunctions.set(index); }
 
+    bool isDeclaredFunction(uint32_t index) const { return m_declaredFunctions.contains(index); }
+    void addDeclaredFunction(uint32_t index) { m_declaredFunctions.set(index); }
+
     Vector<Import> imports;
     Vector<SignatureIndex> importFunctionSignatureIndices;
     Vector<SignatureIndex> internalFunctionSignatureIndices;
@@ -94,7 +97,8 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     Vector<CustomSection> customSections;
     Ref<NameSection> nameSection;
     uint32_t numberOfDataSegments { 0 };
-    
+
+    BitVector m_declaredFunctions;
     mutable BitVector m_referencedFunctions;
 };
 

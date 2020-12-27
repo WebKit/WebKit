@@ -1,3 +1,30 @@
+2020-12-27  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-References] Add declared function indexes set to check from what functions we can create refs
+        https://bugs.webkit.org/show_bug.cgi?id=220009
+
+        Reviewed by Yusuke Suzuki.
+
+        By ref-types spec we can create references only from declared functions.
+        Declared function is a function that was mentioned:
+        as export,
+        as part of ref.func init expression for a global,
+        in the element section.
+        In this patch declared function indexes set introduced to check this
+        requirement.
+        https://webassembly.github.io/reference-types/core/valid/instructions.html#reference-instructions.
+
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmModuleInformation.h:
+        (JSC::Wasm::ModuleInformation::isDeclaredFunction const):
+        (JSC::Wasm::ModuleInformation::addDeclaredFunction):
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseGlobal):
+        (JSC::Wasm::SectionParser::parseExport):
+        (JSC::Wasm::SectionParser::parseElementSegmentVectorOfExpressions):
+        (JSC::Wasm::SectionParser::parseElementSegmentVectorOfIndexes):
+
 2020-12-25  Mark Lam  <mark.lam@apple.com>
 
         VMInspector::dumpRegisters() should not dump beyond the start of the next frame.
