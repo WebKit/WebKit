@@ -319,9 +319,9 @@ WASM_SLOW_PATH_DECL(table_set)
 WASM_SLOW_PATH_DECL(table_init)
 {
     auto instruction = pc->as<WasmTableInit, WasmOpcodeTraits>();
-    int32_t dstOffset = READ(instruction.m_dstOffset).unboxedInt32();
-    int32_t srcOffset = READ(instruction.m_srcOffset).unboxedInt32();
-    int32_t length = READ(instruction.m_length).unboxedInt32();
+    uint32_t dstOffset = READ(instruction.m_dstOffset).unboxedUInt32();
+    uint32_t srcOffset = READ(instruction.m_srcOffset).unboxedUInt32();
+    uint32_t length = READ(instruction.m_length).unboxedUInt32();
     if (!Wasm::operationWasmTableInit(instance, instruction.m_elementIndex, instruction.m_tableIndex, dstOffset, srcOffset, length))
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
     WASM_END();

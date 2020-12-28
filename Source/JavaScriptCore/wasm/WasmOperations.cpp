@@ -696,33 +696,26 @@ JSC_DEFINE_JIT_OPERATION(operationSetWasmTableElement, bool, (Instance* instance
     return setWasmTableElement(instance, tableIndex, signedIndex, encValue);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmTableInit, bool, (Instance* instance, unsigned elementIndex, unsigned tableIndex, int32_t dstOffset, int32_t srcOffset, int32_t length))
+JSC_DEFINE_JIT_OPERATION(operationWasmTableInit, bool, (Instance* instance, unsigned elementIndex, unsigned tableIndex, uint32_t dstOffset, uint32_t srcOffset, uint32_t length))
 {
     ASSERT(elementIndex < instance->module().moduleInformation().elementCount());
     ASSERT(tableIndex < instance->module().moduleInformation().tableCount());
 
-    if ((srcOffset < 0) || (dstOffset < 0) || (length < 0))
+    if (WTF::sumOverflows<uint32_t>(srcOffset, length))
         return false;
 
-    Checked<uint32_t, RecordOverflow> lastSrcElementIndexChecked = static_cast<uint32_t>(srcOffset);
-    lastSrcElementIndexChecked += static_cast<uint32_t>(length);
-
-    uint32_t lastSrcElementIndex;
-    if (lastSrcElementIndexChecked.safeGet(lastSrcElementIndex) == CheckedState::DidOverflow)
+    if (WTF::sumOverflows<uint32_t>(dstOffset, length))
         return false;
 
-    if (!instance->elementAt(elementIndex) || lastSrcElementIndex > instance->elementAt(elementIndex)->length())
+    if (dstOffset + length > instance->table(tableIndex)->length())
         return false;
 
-    Checked<uint32_t, RecordOverflow> lastDstElementIndexChecked = static_cast<uint32_t>(dstOffset);
-    lastDstElementIndexChecked += static_cast<uint32_t>(length);
-
-    uint32_t lastDstElementIndex;
-    if (lastDstElementIndexChecked.safeGet(lastDstElementIndex) == CheckedState::DidOverflow)
+    const uint32_t lengthOfElementSegment = instance->elementAt(elementIndex) ? instance->elementAt(elementIndex)->length() : 0U;
+    if (srcOffset + length > lengthOfElementSegment)
         return false;
 
-    if (lastDstElementIndex > instance->table(tableIndex)->length())
-        return false;
+    if (!lengthOfElementSegment)
+        return true;
 
     instance->tableInit(dstOffset, srcOffset, length, elementIndex, tableIndex);
     return true;
@@ -739,7 +732,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTableGrow, int32_t, (Instance* instance, u
     ASSERT(tableIndex < instance->module().moduleInformation().tableCount());
     auto oldSize = instance->table(tableIndex)->length();
     auto newSize = instance->table(tableIndex)->grow(delta);
-    if (!newSize || *newSize == oldSize)
+    if (!newSize)
         return -1;
 
     for (unsigned i = oldSize; i < instance->table(tableIndex)->length(); ++i)

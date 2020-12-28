@@ -81,9 +81,9 @@ assert.throws(() => new WebAssembly.Module((new Builder())
     assert.eq($1.exports.tbl.get(24), "hi")
     assert.eq($1.exports.tbl.get(25), null)
     assert.eq($1.exports.tbl_size(), 30)
-    assert.eq($1.exports.tbl_grow(null, 0), -1)
+    assert.eq($1.exports.tbl_grow(null, 0), 30)
     assert.eq($1.exports.tbl_grow(null, 5), -1)
-    assert.eq($1.exports.tbl_grow(null, 0), -1)
+    assert.eq($1.exports.tbl_grow(null, 0), 30)
 }
 
 assert.throws(() => new WebAssembly.Module((new Builder())
