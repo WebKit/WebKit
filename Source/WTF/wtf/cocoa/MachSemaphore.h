@@ -28,6 +28,7 @@
 #include <mach/semaphore.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Seconds.h>
 
 namespace WTF {
 
@@ -41,6 +42,7 @@ public:
 
     WTF_EXPORT_PRIVATE void signal();
     WTF_EXPORT_PRIVATE void wait();
+    WTF_EXPORT_PRIVATE void waitFor(Seconds);
 
     WTF_EXPORT_PRIVATE MachSendRight createSendRight();
 

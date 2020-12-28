@@ -59,6 +59,12 @@ void MachSemaphore::wait()
     semaphore_wait(m_semaphore);
 }
 
+void MachSemaphore::waitFor(Seconds timeout)
+{
+    auto seconds = timeout.secondsAs<unsigned>();
+    semaphore_timedwait(m_semaphore, { seconds, static_cast<clock_res_t>(timeout.nanosecondsAs<uint64_t>() - seconds * NSEC_PER_SEC) });
+}
+
 MachSendRight MachSemaphore::createSendRight()
 {
     return MachSendRight::create(m_semaphore);
