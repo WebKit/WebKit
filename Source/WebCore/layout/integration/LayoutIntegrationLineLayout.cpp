@@ -463,25 +463,25 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         }
 
         auto& line = inlineContent.lineForRun(run);
-        auto baseline = paintOffset.y() + line.lineBoxTop() + line.baseline();
         auto expansion = run.expansion();
         // TextRun expects the xPos to be adjusted with the aligment offset (e.g. when the line is center aligned
         // and the run starts at 100px, due to the horizontal aligment, the xpos is supposed to be at 0px).
+        auto& fontCascade = style.fontCascade();
         auto xPos = rect.x() - (line.lineBoxLeft() + line.contentLeftOffset());
         WebCore::TextRun textRun { textContent.renderedContent(), xPos, expansion.horizontalExpansion, expansion.behavior };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
-        FloatPoint textOrigin { rect.x() + paintOffset.x(), roundToDevicePixel(baseline, deviceScaleFactor) };
 
         TextPainter textPainter(paintInfo.context());
-        textPainter.setFont(style.fontCascade());
+        textPainter.setFont(fontCascade);
         textPainter.setStyle(computeTextPaintStyle(flow().frame(), style, paintInfo));
+        textPainter.setGlyphDisplayListIfNeeded(run, paintInfo, fontCascade, paintInfo.context(), textRun);
 
-        textPainter.setGlyphDisplayListIfNeeded(run, paintInfo, style.fontCascade(), paintInfo.context(), textRun);
+        auto textOrigin = FloatPoint { paintOffset.x() + rect.x(), roundToDevicePixel(paintOffset.y() + rect.y() + fontCascade.fontMetrics().ascent(), deviceScaleFactor) };
         textPainter.paint(textRun, rect, textOrigin);
 
         if (!style.textDecorationsInEffect().isEmpty()) {
             auto& textRenderer = downcast<RenderText>(m_boxTree.rendererForLayoutBox(run.layoutBox()));
-            auto painter = TextDecorationPainter { paintInfo.context(), style.textDecorationsInEffect(), textRenderer, false, style.fontCascade() };
+            auto painter = TextDecorationPainter { paintInfo.context(), style.textDecorationsInEffect(), textRenderer, false, fontCascade };
             painter.setWidth(rect.width());
             painter.paintTextDecoration(textRun, textOrigin, rect.location() + paintOffset);
         }
