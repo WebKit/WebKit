@@ -1,3 +1,17 @@
+2020-12-28  Alexey Proskuryakov  <ap@apple.com>
+
+        built-product-archive should work with Python 3
+        https://bugs.webkit.org/show_bug.cgi?id=220157
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/built-product-archive:
+        (webkitBuildDirectoryForConfigurationAndPlatform): Decode result as a string,
+        because the directory is then used in string manipulation.
+        (createZipFromList): Use Python 3 compatible 'except' syntax. The new syntax works
+        in Python 2.6 and newer.
+        (createZip): Ditto.
+
 2020-12-23  Dean Jackson  <dino@apple.com>
 
         Simulated Python crash during test runs

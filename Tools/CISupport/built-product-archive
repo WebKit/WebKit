@@ -84,7 +84,7 @@ def webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, ful
         command += ['--top-level']
     else:
         command += ['--configuration']
-    return subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0].strip()
+    return subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0].strip().decode('utf-8')
 
 
 def determineWebKitBuildDirectories(platform, fullPlatform, configuration):
@@ -116,7 +116,7 @@ def createZipFromList(listToZip, configuration, excludePattern=None):
 
     try:
         os.unlink(archiveFile)
-    except OSError, e:
+    except OSError as e:
         if e.errno != errno.ENOENT:
             raise
 
@@ -151,7 +151,7 @@ def createZip(directoryToZip, configuration, embedParentDirectoryNameOnDarwin=Fa
 
     try:
         os.unlink(archiveFile)
-    except OSError, e:
+    except OSError as e:
         if e.errno != errno.ENOENT:
             raise
 
