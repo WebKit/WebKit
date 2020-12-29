@@ -416,7 +416,7 @@ void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(Line
             }
             case VerticalAlign::Length: {
                 auto& style = inlineLevelBox->style();
-                auto logicalTopOffsetFromParentBaseline = floatValueForLength(style.verticalAlignLength(), style.computedLineHeight()) + inlineLevelBox->layoutBounds().height();
+                auto logicalTopOffsetFromParentBaseline = floatValueForLength(style.verticalAlignLength(), style.computedLineHeight()) + inlineLevelBox->layoutBounds().ascent;
                 logicalTop = parentInlineBox.layoutBounds().ascent - logicalTopOffsetFromParentBaseline;
                 break;
             }
@@ -491,7 +491,7 @@ void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(Line
                 case VerticalAlign::Length: {
                     auto& style = inlineLevelBox->style();
                     auto verticalAlignOffset = floatValueForLength(style.verticalAlignLength(), style.computedLineHeight());
-                    auto logicalTopOffsetFromParentBaseline = verticalAlignOffset + inlineLevelBox->layoutBounds().height();
+                    auto logicalTopOffsetFromParentBaseline = verticalAlignOffset + inlineLevelBox->baseline();
                     baselineOffsetFromParentBaseline = logicalTopOffsetFromParentBaseline - inlineLevelBox->baseline();
                     break;
                 }
@@ -553,7 +553,7 @@ void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(Line
             case VerticalAlign::Length: {
                 auto& style = inlineLevelBox->style();
                 auto verticalAlignOffset = floatValueForLength(style.verticalAlignLength(), style.computedLineHeight());
-                auto logicalTopOffsetFromParentBaseline = verticalAlignOffset + inlineLevelBox->logicalHeight();
+                auto logicalTopOffsetFromParentBaseline = verticalAlignOffset + inlineLevelBox->baseline();
                 logicalTop = parentInlineBox.baseline() - logicalTopOffsetFromParentBaseline;
                 break;
             }
