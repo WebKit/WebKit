@@ -1,3 +1,13 @@
+2020-12-30  Simon Fraser  <simon.fraser@apple.com>
+
+        [LFC Display] Stacking item bounds were wrong in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=220201
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/layoutformattingcontext/display/stacking-item-bounds-expected.html: Added.
+        * fast/layoutformattingcontext/display/stacking-item-bounds.html: Added.
+
 2020-12-28  Alexey Proskuryakov  <ap@apple.com>
 
         Mark tests as flaky for https://bugs.webkit.org/show_bug.cgi?id=220188

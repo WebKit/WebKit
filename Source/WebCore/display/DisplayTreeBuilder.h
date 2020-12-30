@@ -70,14 +70,17 @@ private:
     void recursiveBuildDisplayTree(const Layout::LayoutState&, const Layout::Box&, InsertionPosition&);
     void buildInlineDisplayTree(const Layout::LayoutState&, const Layout::ContainerBox&, InsertionPosition&);
 
-    StackingItem* insertIntoTree(std::unique_ptr<Box>&&, InsertionPosition&);
+    enum class WillTraverseDescendants { Yes, No };
+    StackingItem* insertIntoTree(std::unique_ptr<Box>&&, InsertionPosition&, WillTraverseDescendants);
     void insert(std::unique_ptr<Box>&&, InsertionPosition&) const;
 
     void accountForBoxPaintingExtent(const Box&);
 
     void pushStateForBoxDescendants(const Layout::ContainerBox&, const Layout::BoxGeometry&, const ContainerBox&, StackingItem*);
-    void popState(const ContainerBox& currentBox);
-    
+    void popState(const BoxModelBox& currentBox);
+
+    void didAppendNonContainerStackingItem(StackingItem&);
+
     BuildingState& currentState();
     const PositioningContext& positioningContext();
 

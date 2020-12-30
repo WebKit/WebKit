@@ -104,8 +104,8 @@ struct BuildingState {
     StackingItem& currentStackingItem;
     StackingItem& currentStackingContextItem;
 
-    AbsoluteFloatRect currentStackingItemPaintedContentExtent;
-    AbsoluteFloatRect currentStackingItemPaintingExtent;
+    AbsoluteFloatRect currentStackingItemPaintedContentExtent; // This stacking item's contents only.
+    AbsoluteFloatRect currentStackingItemPaintingExtent; // Including descendant items.
 };
 
 TreeBuilder::TreeBuilder(float pixelSnappingFactor)
@@ -174,7 +174,7 @@ void TreeBuilder::pushStateForBoxDescendants(const Layout::ContainerBox& layoutC
     });
 }
 
-void TreeBuilder::popState(const ContainerBox& currentBox)
+void TreeBuilder::popState(const BoxModelBox& currentBox)
 {
     ASSERT(m_stateStack->size() > 1);
     auto& currentState = m_stateStack->last();
@@ -207,7 +207,7 @@ void TreeBuilder::popState(const ContainerBox& currentBox)
             descendantItemsPaintingExtent.intersect(clipRect);
         }
 
-        auto itemPaintingExtent = unionRect(descendantItemsPaintingExtent, currentBox.absolutePaintingExtent());
+        auto itemPaintingExtent = unionRect(descendantItemsPaintingExtent, boxPaintingExtent);
         currentState.currentStackingItem.setPaintedBoundsIncludingDescendantItems(itemPaintingExtent);
 
         previousState.currentStackingItemPaintingExtent.unite(itemPaintingExtent);
@@ -218,6 +218,27 @@ void TreeBuilder::popState(const ContainerBox& currentBox)
         currentState.currentStackingContextItem.sortLists();
 
     m_stateStack->removeLast();
+}
+
+void TreeBuilder::didAppendNonContainerStackingItem(StackingItem& item)
+{
+    // This is s simplified version of pushStateForBoxDescendants/popState.
+    auto currentStackingContextItem = [&]() -> StackingItem& {
+        if (item.isStackingContext())
+            return item;
+        
+        return m_stateStack->last().currentStackingContextItem;
+    };
+
+    m_stateStack->append({
+        m_stateStack->last().positioningContext,
+        item,
+        currentStackingContextItem(),
+        { },
+        { }
+    });
+
+    popState(item.box());
 }
 
 void TreeBuilder::accountForBoxPaintingExtent(const Box& box)
@@ -249,7 +270,7 @@ void TreeBuilder::insert(std::unique_ptr<Box>&& box, InsertionPosition& insertio
     }
 }
 
-StackingItem* TreeBuilder::insertIntoTree(std::unique_ptr<Box>&& box, InsertionPosition& insertionPosition)
+StackingItem* TreeBuilder::insertIntoTree(std::unique_ptr<Box>&& box, InsertionPosition& insertionPosition, WillTraverseDescendants willTraverseDescendants)
 {
     if (box->participatesInZOrderSorting() && is<BoxModelBox>(*box)) {
         auto boxModelBox = std::unique_ptr<BoxModelBox> { downcast<BoxModelBox>(box.release()) };
@@ -260,10 +281,18 @@ StackingItem* TreeBuilder::insertIntoTree(std::unique_ptr<Box>&& box, InsertionP
 
         auto* stackingItemPtr = stackingItem.get();
         currentState().currentStackingContextItem.addChildStackingItem(WTFMove(stackingItem));
+        
+        if (willTraverseDescendants == WillTraverseDescendants::No)
+            didAppendNonContainerStackingItem(*stackingItemPtr);
+
         return stackingItemPtr;
     }
 
     insert(WTFMove(box), insertionPosition);
+
+    if (willTraverseDescendants == WillTraverseDescendants::No)
+        accountForBoxPaintingExtent(*insertionPosition.currentChild);
+
     return nullptr;
 }
 
@@ -275,8 +304,8 @@ void TreeBuilder::buildInlineDisplayTree(const Layout::LayoutState& layoutState,
         if (run.text()) {
             auto& lineGeometry = inlineFormattingState.lines().at(run.lineIndex());
             auto textBox = m_boxFactory.displayBoxForTextRun(run, lineGeometry, positioningContext().inFlowContainingBlockContext());
-            accountForBoxPaintingExtent(*textBox);
             insert(WTFMove(textBox), insertionPosition);
+            accountForBoxPaintingExtent(*insertionPosition.currentChild);
             continue;
         }
 
@@ -291,8 +320,7 @@ void TreeBuilder::buildInlineDisplayTree(const Layout::LayoutState& layoutState,
 
         auto geometry = layoutState.geometryForBox(run.layoutBox());
         auto displayBox = m_boxFactory.displayBoxForLayoutBox(run.layoutBox(), geometry, positioningContext().inFlowContainingBlockContext());
-        accountForBoxPaintingExtent(*displayBox);
-        insertIntoTree(WTFMove(displayBox), insertionPosition);
+        insertIntoTree(WTFMove(displayBox), insertionPosition, WillTraverseDescendants::No);
     }
 }
 
@@ -309,13 +337,12 @@ void TreeBuilder::recursiveBuildDisplayTree(const Layout::LayoutState& layoutSta
 
     Box& currentBox = *displayBox;
 
-    auto* stackingItem = insertIntoTree(WTFMove(displayBox), insertionPosition);
-    if (!is<Layout::ContainerBox>(layoutBox))
+    auto willTraverseDescendants = (is<Layout::ContainerBox>(layoutBox) && downcast<Layout::ContainerBox>(layoutBox).hasChild()) ? WillTraverseDescendants::Yes : WillTraverseDescendants::No;
+    auto* stackingItem = insertIntoTree(WTFMove(displayBox), insertionPosition, willTraverseDescendants);
+    if (willTraverseDescendants == WillTraverseDescendants::No)
         return;
 
     auto& layoutContainerBox = downcast<Layout::ContainerBox>(layoutBox);
-    if (!layoutContainerBox.hasChild())
-        return;
 
     ContainerBox& currentContainerBox = downcast<ContainerBox>(currentBox);
     pushStateForBoxDescendants(layoutContainerBox, geometry, currentContainerBox, stackingItem);
