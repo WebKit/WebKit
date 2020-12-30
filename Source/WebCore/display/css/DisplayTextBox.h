@@ -43,7 +43,7 @@ public:
     const Layout::LineRun::Text& text() const { return m_text; }
 
 private:
-
+    const char* boxName() const final;
     String debugDescription() const final;
     
     Layout::LineRun::Expansion m_expansion;

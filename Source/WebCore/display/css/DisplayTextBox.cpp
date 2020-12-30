@@ -41,11 +41,16 @@ TextBox::TextBox(AbsoluteFloatRect borderBox, Style&& displayStyle, const Layout
 {
 }
 
+const char* TextBox::boxName() const
+{
+    return "text box";
+}
+
 String TextBox::debugDescription() const
 {
     TextStream stream;
 
-    stream << "text box " << absoluteBoxRect() << " (" << this << ")";
+    stream << boxName() << " " << absoluteBoxRect() << " (" << this << ")";
     auto textContent = text().content().substring(text().start(), text().length());
     textContent.replaceWithLiteral('\\', "\\\\");
     textContent.replaceWithLiteral('\n', "\\n");

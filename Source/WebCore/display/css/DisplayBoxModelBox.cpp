@@ -127,10 +127,15 @@ AbsoluteFloatRect BoxModelBox::absolutePaintingExtent() const
     return paintingExtent;
 }
 
+const char* BoxModelBox::boxName() const
+{
+    return "box model box";
+}
+
 String BoxModelBox::debugDescription() const
 {
     TextStream stream;
-    stream << "display box model box " << absoluteBorderBoxRect() << " (" << this << ")";
+    stream << boxName() << " " << absoluteBorderBoxRect() << " (" << this << ")";
     if (m_ancestorClip)
         stream << " ancestor clip " << m_ancestorClip->clipRect() << " affected by radius " << m_ancestorClip->affectedByBorderRadius();
 

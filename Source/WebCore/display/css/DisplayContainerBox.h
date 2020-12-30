@@ -41,7 +41,7 @@ public:
     void setFirstChild(std::unique_ptr<Box>&&);
 
 private:
-    String debugDescription() const override;
+    const char* boxName() const override;
 
     std::unique_ptr<Box> m_firstChild;
 };

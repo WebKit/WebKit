@@ -384,8 +384,7 @@ void showDisplayTree(const Box& box)
 static void outputStackingTree(TextStream& stream, const char* prefix, const StackingItem& stackingItem)
 {
     stream.writeIndent();
-    stream << prefix;
-    stream << "bounds " << stackingItem.paintedContentBounds() << " ";
+    stream << "[" << prefix << "] item (" << &stackingItem << ") " << stackingItem.paintedContentBounds() << " - ";
 
     TextStream::IndentScope indent(stream);
     outputDisplayTree(stream, stackingItem.box(), false);
@@ -393,17 +392,17 @@ static void outputStackingTree(TextStream& stream, const char* prefix, const Sta
     {
         TextStream::IndentScope indent(stream);
         for (auto& childStackingItem : stackingItem.negativeZOrderList())
-            outputStackingTree(stream, "- ", *childStackingItem);
+            outputStackingTree(stream, "-", *childStackingItem);
 
         for (auto& childStackingItem : stackingItem.positiveZOrderList())
-            outputStackingTree(stream, childStackingItem->isStackingContext() ? "+ " : "p ", *childStackingItem);
+            outputStackingTree(stream, childStackingItem->isStackingContext() ? "+" : "p", *childStackingItem);
     }
 }
 
 String displayTreeAsText(const StackingItem& stackingItem)
 {
-    TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
-    outputStackingTree(stream, "", stackingItem);
+    TextStream stream(TextStream::LineMode::MultipleLine);
+    outputStackingTree(stream, "+", stackingItem);
     return stream.release();
 }
 

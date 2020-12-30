@@ -40,10 +40,15 @@ ImageBox::ImageBox(AbsoluteFloatRect borderBox, Style&& displayStyle, RefPtr<Ima
 {
 }
 
+const char* ImageBox::boxName() const
+{
+    return "image box";
+}
+
 String ImageBox::debugDescription() const
 {
     TextStream stream;
-    stream << "image box " << absoluteBorderBoxRect() << " (" << this << ") replaced content rect: " << replacedContentRect() << " image: " << m_image.get();
+    stream << boxName() << " " << absoluteBorderBoxRect() << " (" << this << ") replaced content rect: " << replacedContentRect() << " image: " << m_image.get();
     return stream.release();
 }
 

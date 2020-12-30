@@ -41,6 +41,7 @@ class BoxRareGeometry;
 // This box can draw backgrounds and borders.
 class BoxModelBox : public Box {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BoxModelBox);
+    friend class BoxFactory;
 public:
     BoxModelBox(AbsoluteFloatRect borderBox, Style&&, OptionSet<Flags> = { });
     virtual ~BoxModelBox();
@@ -64,7 +65,8 @@ public:
     String debugDescription() const override;
 
 private:
-    friend class BoxFactory;
+    const char* boxName() const override;
+
     void setAbsolutePaddingBoxRect(const AbsoluteFloatRect& box) { m_paddingBoxRect = box; }
     void setAbsoluteContentBoxRect(const AbsoluteFloatRect& box) { m_contentBoxRect = box; }
 

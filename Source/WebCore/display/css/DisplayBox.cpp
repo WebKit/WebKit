@@ -55,10 +55,15 @@ bool Box::participatesInZOrderSorting() const
     return !isLineBreakBox() && style().participatesInZOrderSorting();
 }
 
+const char* Box::boxName() const
+{
+    return "box";
+}
+
 String Box::debugDescription() const
 {
     TextStream stream;
-    stream << "display box " << absoluteBoxRect() << " (" << this << ")";
+    stream << boxName() << " " << absoluteBoxRect() << " (" << this << ")";
     return stream.release();
 }
 

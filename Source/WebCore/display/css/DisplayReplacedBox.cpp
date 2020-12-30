@@ -38,6 +38,11 @@ ReplacedBox::ReplacedBox(AbsoluteFloatRect borderBox, Style&& displayStyle, Opti
 {
 }
 
+const char* ReplacedBox::boxName() const
+{
+    return "replaced box";
+}
+
 } // namespace Display
 } // namespace WebCore
 

@@ -45,14 +45,9 @@ void ContainerBox::setFirstChild(std::unique_ptr<Box>&& box)
     m_firstChild = WTFMove(box);
 }
 
-String ContainerBox::debugDescription() const
+const char* ContainerBox::boxName() const
 {
-    TextStream stream;
-    stream << "container box " << absoluteBorderBoxRect() << " (" << this << ")";
-    if (auto* clip = ancestorClip())
-        stream << " ancestor clip " << clip->clipRect() << " affected by radius " << clip->affectedByBorderRadius();
-
-    return stream.release();
+    return "container box";
 }
 
 } // namespace Display

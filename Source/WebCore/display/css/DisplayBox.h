@@ -73,6 +73,8 @@ public:
     virtual String debugDescription() const;
 
 private:
+    virtual const char* boxName() const;
+
     AbsoluteFloatRect m_absoluteBoxRect;
     Style m_style;
     std::unique_ptr<Box> m_nextSibling;

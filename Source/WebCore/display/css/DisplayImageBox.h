@@ -45,6 +45,7 @@ public:
     Image* image() const { return m_image.get(); }
 
 private:
+    const char* boxName() const final;
     String debugDescription() const final;
 
     RefPtr<Image> m_image;
