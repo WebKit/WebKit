@@ -566,6 +566,7 @@ void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox& rootBox, LayoutUnit&
     if (!checkChildren)
         return;
 
+    InlineBox* maxAscentInlineBox = nullptr;
     for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
         if (child->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
@@ -604,6 +605,7 @@ void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox& rootBox, LayoutUnit&
             if (affectsAscent && (maxAscent < ascent || !setMaxAscent)) {
                 maxAscent = ascent;
                 setMaxAscent = true;
+                maxAscentInlineBox = child;
             }
 
             if (affectsDescent && (maxDescent < descent || !setMaxDescent)) {
@@ -612,10 +614,17 @@ void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox& rootBox, LayoutUnit&
             }
         }
 
-        if (inlineFlowBox)
+        if (inlineFlowBox) {
             inlineFlowBox->computeLogicalBoxHeights(rootBox, maxPositionTop, maxPositionBottom, maxAscent, maxDescent,
-                                                    setMaxAscent, setMaxDescent, strictMode, textBoxDataMap,
-                                                    baselineType, verticalPositionCache);
+                setMaxAscent, setMaxDescent, strictMode, textBoxDataMap, baselineType, verticalPositionCache);
+        }
+    }
+    if (maxAscentInlineBox) {
+        // When the inline box stretches the ascent, we floor the logical top value to make sure the inline box does not
+        // stick out of block container at the top (see above).
+        // In such cases the logical top also needs to be adjusted to match this stretched ascent geometry.
+        // (not doing so will result a subpixel logical top offset while it should be flushed with the top edge)
+        maxAscentInlineBox->setLogicalTop(floorf(maxAscentInlineBox->logicalTop()));
     }
 }
 

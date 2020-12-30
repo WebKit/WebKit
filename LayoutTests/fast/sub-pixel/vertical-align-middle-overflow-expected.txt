@@ -1,3 +1,7 @@
 PASS Does not overflow.
-  Cell 2
-The block above should not have a scrollbar.
+PASS Does not overflow.
+PASS Does not overflow.
+  text
+  text
+  text
+The blocks above should not have scrollbars.

@@ -1,3 +1,14 @@
+2020-12-30  Zalan Bujtas  <zalan@apple.com>
+
+        [Legacy Line Layout] Remove unnecessary 'vertical-align: middle' integral rounding
+        https://bugs.webkit.org/show_bug.cgi?id=220198
+
+        Reviewed by Antti Koivisto.
+
+        Added additional 'vertical-align' values.
+
+        * fast/sub-pixel/vertical-align-middle-overflow.html:
+
 2020-12-30  Simon Fraser  <simon.fraser@apple.com>
 
         [LFC Display] Stacking item bounds were wrong in some cases
