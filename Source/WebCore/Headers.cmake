@@ -1488,6 +1488,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderLayerBacking.h
     rendering/RenderLayerCompositor.h
     rendering/RenderLayerModelObject.h
+    rendering/RenderLayerScrollableArea.h
     rendering/RenderLineBoxList.h
     rendering/RenderMedia.h
     rendering/RenderObject.h
