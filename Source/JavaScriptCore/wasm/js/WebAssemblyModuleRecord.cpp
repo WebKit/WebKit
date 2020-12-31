@@ -84,6 +84,7 @@ void WebAssemblyModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_instance);
     visitor.append(thisObject->m_startFunction);
+    visitor.append(thisObject->m_exportsObject);
 }
 
 void WebAssemblyModuleRecord::prepareLink(VM& vm, JSWebAssemblyInstance* instance)
@@ -360,7 +361,7 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
     }
 
     unsigned functionImportCount = codeBlock->functionImportCount();
-    auto makeFunctionWrapper = [&] (const String& field, uint32_t index) -> JSValue {
+    auto makeFunctionWrapper = [&] (uint32_t index) -> JSValue {
         // If we already made a wrapper, do not make a new one.
         JSValue wrapper = m_instance->instance().getFunctionWrapper(index);
 
@@ -387,7 +388,7 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
             Wasm::WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = codeBlock->entrypointLoadLocationFromFunctionIndexSpace(index);
             Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(index);
             const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
-            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), field, m_instance.get(), embedderEntrypointCallee, entrypointLoadLocation, signatureIndex);
+            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), makeString(index), m_instance.get(), embedderEntrypointCallee, entrypointLoadLocation, signatureIndex);
             wrapper = function;
         }
 
@@ -398,7 +399,7 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
     };
 
     for (auto index : moduleInformation.referencedFunctions())
-        makeFunctionWrapper("Referenced function", index);
+        makeFunctionWrapper(index);
 
     // Globals
     {
@@ -411,8 +412,8 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
                 initialBits = m_instance->instance().loadI64Global(global.initialBitsOrImportNumber);
             } else if (global.initializationType == Wasm::GlobalInformation::FromRefFunc) {
                 ASSERT(global.initialBitsOrImportNumber < moduleInformation.functionIndexSpaceSize());
-                ASSERT(makeFunctionWrapper("Global init expr", global.initialBitsOrImportNumber).isCallable(vm));
-                initialBits = JSValue::encode(makeFunctionWrapper("Global init expr", global.initialBitsOrImportNumber));
+                ASSERT(makeFunctionWrapper(global.initialBitsOrImportNumber).isCallable(vm));
+                initialBits = JSValue::encode(makeFunctionWrapper(global.initialBitsOrImportNumber));
             } else
                 initialBits = global.initialBitsOrImportNumber;
 
@@ -437,14 +438,16 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
     SymbolTable* exportSymbolTable = module->exportSymbolTable();
 
     // Let exports be a list of (string, JS value) pairs that is mapped from each external value e in instance.exports as follows:
+    // https://webassembly.github.io/spec/js-api/index.html#create-an-exports-object
+    JSObject* exportsObject = constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
     JSModuleEnvironment* moduleEnvironment = JSModuleEnvironment::create(vm, globalObject, nullptr, exportSymbolTable, JSValue(), this);
     for (const auto& exp : moduleInformation.exports) {
         JSValue exportedValue;
         switch (exp.kind) {
         case Wasm::ExternalKind::Function: {
-            exportedValue = makeFunctionWrapper(String::fromUTF8(exp.field), exp.kindIndex);
+            exportedValue = makeFunctionWrapper(exp.kindIndex);
             ASSERT(exportedValue.isCallable(vm));
-            ASSERT(makeFunctionWrapper(String::fromUTF8(exp.field), exp.kindIndex) == exportedValue);
+            ASSERT(makeFunctionWrapper(exp.kindIndex) == exportedValue);
             break;
         }
         case Wasm::ExternalKind::Table: {
@@ -494,13 +497,25 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
         }
         }
 
+        Identifier propertyName = Identifier::fromString(vm, String::fromUTF8(exp.field));
+
         bool shouldThrowReadOnlyError = false;
         bool ignoreReadOnlyErrors = true;
         bool putResult = false;
-        symbolTablePutTouchWatchpointSet(moduleEnvironment, globalObject, Identifier::fromString(vm, String::fromUTF8(exp.field)), exportedValue, shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
+        symbolTablePutTouchWatchpointSet(moduleEnvironment, globalObject, propertyName, exportedValue, shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
         scope.assertNoException();
         RELEASE_ASSERT(putResult);
+
+        if (Optional<uint32_t> index = parseIndex(propertyName)) {
+            exportsObject->putDirectIndex(globalObject, index.value(), exportedValue);
+            RETURN_IF_EXCEPTION(scope, void());
+        } else
+            exportsObject->putDirect(vm, propertyName, exportedValue);
     }
+
+    objectConstructorFreeze(globalObject, exportsObject);
+    RETURN_IF_EXCEPTION(scope, void());
+    m_exportsObject.set(vm, this, exportsObject);
 
     bool hasStart = !!moduleInformation.startFunctionIndexSpace;
     if (hasStart) {

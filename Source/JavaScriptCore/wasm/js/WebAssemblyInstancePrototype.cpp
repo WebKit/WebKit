@@ -32,6 +32,7 @@
 #include "JSCInlines.h"
 #include "JSModuleNamespaceObject.h"
 #include "JSWebAssemblyInstance.h"
+#include "WebAssemblyModuleRecord.h"
 
 namespace JSC {
 static JSC_DECLARE_HOST_FUNCTION(webAssemblyInstanceProtoFuncExports);
@@ -68,7 +69,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyInstanceProtoFuncExports, (JSGlobalObject* g
 
     JSWebAssemblyInstance* instance = getInstance(globalObject, vm, callFrame->thisValue()); 
     RETURN_IF_EXCEPTION(throwScope, { });
-    return JSValue::encode(instance->moduleNamespaceObject());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(instance->moduleRecord()->exportsObject()));
 }
 
 WebAssemblyInstancePrototype* WebAssemblyInstancePrototype::create(VM& vm, JSGlobalObject*, Structure* structure)

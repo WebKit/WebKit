@@ -57,13 +57,13 @@ JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, Ref<W
         new (this->instance().importFunction<WriteBarrier<JSObject>>(i)) WriteBarrier<JSObject>();
 }
 
-void JSWebAssemblyInstance::finishCreation(VM& vm, JSWebAssemblyModule* module, JSModuleNamespaceObject* moduleNamespaceObject)
+void JSWebAssemblyInstance::finishCreation(VM& vm, JSWebAssemblyModule* module, WebAssemblyModuleRecord* moduleRecord)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
 
     m_module.set(vm, this, module);
-    m_moduleNamespaceObject.set(vm, this, moduleNamespaceObject);
+    m_moduleRecord.set(vm, this, moduleRecord);
 
     vm.heap.reportExtraMemoryAllocated(m_instance->extraMemoryAllocated());
 }
@@ -81,7 +81,7 @@ void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_module);
     visitor.append(thisObject->m_codeBlock);
-    visitor.append(thisObject->m_moduleNamespaceObject);
+    visitor.append(thisObject->m_moduleRecord);
     visitor.append(thisObject->m_memory);
     for (unsigned i = 0; i < thisObject->instance().module().moduleInformation().tableCount(); ++i)
         visitor.append(thisObject->m_tables[i]);
@@ -137,14 +137,13 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, JSGlobalObject* globalObjec
         info->wasmToEmbedderStub = m_codeBlock->wasmToEmbedderStub(importFunctionNum);
     }
 
-    auto* moduleRecord = jsCast<WebAssemblyModuleRecord*>(m_moduleNamespaceObject->moduleRecord());
-    moduleRecord->prepareLink(vm, this);
+    m_moduleRecord->prepareLink(vm, this);
 
     if (creationMode == Wasm::CreationMode::FromJS) {
-        moduleRecord->link(globalObject, jsNull(), importObject, creationMode);
+        m_moduleRecord->link(globalObject, jsNull(), importObject, creationMode);
         RETURN_IF_EXCEPTION(scope, void());
 
-        JSValue startResult = moduleRecord->evaluate(globalObject);
+        JSValue startResult = m_moduleRecord->evaluate(globalObject);
         UNUSED_PARAM(startResult);
         RETURN_IF_EXCEPTION(scope, void());
     }
@@ -176,8 +175,6 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, JSGlobalObject* 
     WebAssemblyModuleRecord* moduleRecord = WebAssemblyModuleRecord::create(globalObject, vm, globalObject->webAssemblyModuleRecordStructure(), moduleKey, moduleInformation);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 
-    JSModuleNamespaceObject* moduleNamespace = moduleRecord->getModuleNamespace(globalObject);
-
     auto storeTopCallFrame = [&vm] (void* topCallFrame) {
         vm.topCallFrame = bitwise_cast<CallFrame*>(topCallFrame);
     };
@@ -185,7 +182,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, JSGlobalObject* 
     // FIXME: These objects could be pretty big we should try to throw OOM here.
     auto* jsInstance = new (NotNull, allocateCell<JSWebAssemblyInstance>(vm.heap)) JSWebAssemblyInstance(vm, instanceStructure, 
         Wasm::Instance::create(&vm.wasmContext, WTFMove(module), &vm.topEntryFrame, vm.addressOfSoftStackLimit(), WTFMove(storeTopCallFrame)));
-    jsInstance->finishCreation(vm, jsModule, moduleNamespace);
+    jsInstance->finishCreation(vm, jsModule, moduleRecord);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 
     // Let funcs, memories and tables be initially-empty lists of callable JavaScript objects, WebAssembly.Memory objects and WebAssembly.Table objects, respectively.

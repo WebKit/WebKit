@@ -62,6 +62,8 @@ public:
     void link(JSGlobalObject*, JSValue scriptFetcher, JSObject* importObject, Wasm::CreationMode);
     JS_EXPORT_PRIVATE JSValue evaluate(JSGlobalObject*);
 
+    JSObject* exportsObject() const { return m_exportsObject.get(); }
+
 private:
     WebAssemblyModuleRecord(VM&, Structure*, const Identifier&);
 
@@ -71,6 +73,7 @@ private:
 
     WriteBarrier<JSWebAssemblyInstance> m_instance;
     WriteBarrier<JSObject> m_startFunction;
+    WriteBarrier<JSObject> m_exportsObject;
 };
 
 } // namespace JSC

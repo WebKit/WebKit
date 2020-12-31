@@ -45,6 +45,7 @@
 #include "StrongInlines.h"
 #include "StructureInlines.h"
 #include "ThrowScope.h"
+#include "WebAssemblyModuleRecord.h"
 
 namespace JSC {
 
@@ -182,7 +183,7 @@ static void resolve(VM& vm, JSGlobalObject* globalObject, JSPromise* promise, JS
     if (resolveKind == Resolve::WithInstance)
         promise->resolve(globalObject, instance);
     else if (resolveKind == Resolve::WithModuleRecord) {
-        auto* moduleRecord = instance->moduleNamespaceObject()->moduleRecord();
+        auto* moduleRecord = instance->moduleRecord();
         if (UNLIKELY(Options::dumpModuleRecord()))
             moduleRecord->dump();
         promise->resolve(globalObject, moduleRecord);

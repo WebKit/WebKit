@@ -1,3 +1,20 @@
+2020-12-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Update WebAssembly instance's exports object
+        https://bugs.webkit.org/show_bug.cgi?id=220189
+
+        Reviewed by Alexey Shvayka.
+
+        * stress/sampling-profiler-wasm-name-section.js:
+        (platformSupportsSamplingProfiler.vm.isWasmSupported):
+        * stress/sampling-profiler-wasm.js:
+        (platformSupportsSamplingProfiler.vm.isWasmSupported):
+        * wasm/js-api/test_basic_api.js:
+        (const.c.in.constructorProperties.switch):
+        * wasm/stress/exports-object.js: Added.
+        (async try):
+        (catch):
+
 2020-12-27  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-References] Fix table.init and table.grow to satisfy the spec

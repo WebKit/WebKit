@@ -84,9 +84,8 @@ for (const c in constructorProperties) {
         assert.isUndef(instance.exports.__proto__);
         assert.eq(Reflect.isExtensible(instance.exports), false);
         assert.eq(Symbol.iterator in instance.exports, false);
-        assert.eq(Symbol.toStringTag in instance.exports, true);
-        assert.eq(Object.getOwnPropertySymbols(instance.exports).length, 1);
-        assert.eq(Object.getOwnPropertySymbols(instance.exports)[0], Symbol.toStringTag);
+        assert.eq(Symbol.toStringTag in instance.exports, false);
+        assert.eq(Object.getOwnPropertySymbols(instance.exports).length, 0);
         assert.throws(() => instance.exports[Symbol.toStringTag] = 42, TypeError, `Attempted to assign to readonly property.`);
         break;
     case "Memory":

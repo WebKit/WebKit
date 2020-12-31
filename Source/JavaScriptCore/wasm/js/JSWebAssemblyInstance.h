@@ -40,6 +40,7 @@ namespace JSC {
 
 class JSModuleNamespaceObject;
 class JSWebAssemblyModule;
+class WebAssemblyModuleRecord;
 
 namespace Wasm {
 class CodeBlock;
@@ -67,7 +68,7 @@ public:
     void finalizeCreation(VM&, JSGlobalObject*, Ref<Wasm::CodeBlock>&&, JSObject* importObject, Wasm::CreationMode);
     
     Wasm::Instance& instance() { return m_instance.get(); }
-    JSModuleNamespaceObject* moduleNamespaceObject() { return m_moduleNamespaceObject.get(); }
+    WebAssemblyModuleRecord* moduleRecord() { return m_moduleRecord.get(); }
 
     JSWebAssemblyMemory* memory() { return m_memory.get(); }
     void setMemory(VM& vm, JSWebAssemblyMemory* value) {
@@ -103,7 +104,7 @@ public:
 
 private:
     JSWebAssemblyInstance(VM&, Structure*, Ref<Wasm::Instance>&&);
-    void finishCreation(VM&, JSWebAssemblyModule*, JSModuleNamespaceObject*);
+    void finishCreation(VM&, JSWebAssemblyModule*, WebAssemblyModuleRecord*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
     Ref<Wasm::Instance> m_instance;
@@ -112,7 +113,7 @@ private:
     WriteBarrier<JSGlobalObject> m_globalObject;
     WriteBarrier<JSWebAssemblyModule> m_module;
     WriteBarrier<JSWebAssemblyCodeBlock> m_codeBlock;
-    WriteBarrier<JSModuleNamespaceObject> m_moduleNamespaceObject;
+    WriteBarrier<WebAssemblyModuleRecord> m_moduleRecord;
     WriteBarrier<JSWebAssemblyMemory> m_memory;
     Vector<WriteBarrier<JSWebAssemblyTable>> m_tables;
 };
