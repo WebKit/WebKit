@@ -57,6 +57,12 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyMemory, (JSGlobalObject* globalOb
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
+    JSObject* newTarget = asObject(callFrame->newTarget());
+    Structure* webAssemblyMemoryStructure = newTarget == callFrame->jsCallee()
+        ? globalObject->webAssemblyMemoryStructure()
+        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->webAssemblyMemoryStructure());
+    RETURN_IF_EXCEPTION(throwScope, { });
+
     JSObject* memoryDescriptor;
     {
         JSValue argument = callFrame->argument(0);
@@ -123,7 +129,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyMemory, (JSGlobalObject* globalOb
         sharingMode = Wasm::MemorySharingMode::Shared;
     }
 
-    auto* jsMemory = JSWebAssemblyMemory::tryCreate(globalObject, vm, globalObject->webAssemblyMemoryStructure());
+    auto* jsMemory = JSWebAssemblyMemory::tryCreate(globalObject, vm, webAssemblyMemoryStructure);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     RefPtr<Wasm::Memory> memory = Wasm::Memory::tryCreate(initialPageCount, maximumPageCount, sharingMode,

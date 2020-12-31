@@ -55,6 +55,12 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
+    JSObject* newTarget = asObject(callFrame->newTarget());
+    Structure* webAssemblyTableStructure = newTarget == callFrame->jsCallee()
+        ? globalObject->webAssemblyTableStructure()
+        : InternalFunction::createSubclassStructure(globalObject, newTarget, getFunctionRealm(vm, newTarget)->webAssemblyTableStructure());
+    RETURN_IF_EXCEPTION(throwScope, { });
+
     JSObject* memoryDescriptor;
     {
         JSValue argument = callFrame->argument(0);
@@ -115,7 +121,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
             createRangeError(globalObject, "couldn't create Table"_s)));
     }
 
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(JSWebAssemblyTable::tryCreate(globalObject, vm, globalObject->webAssemblyTableStructure(), wasmTable.releaseNonNull())));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(JSWebAssemblyTable::tryCreate(globalObject, vm, webAssemblyTableStructure, wasmTable.releaseNonNull())));
 }
 
 JSC_DEFINE_HOST_FUNCTION(callJSWebAssemblyTable, (JSGlobalObject* globalObject, CallFrame*))
