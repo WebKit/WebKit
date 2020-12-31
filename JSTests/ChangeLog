@@ -1,3 +1,11 @@
+2020-12-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix iteration count check
+        https://bugs.webkit.org/show_bug.cgi?id=220206
+
+        * wasm/stress/multivalue-iteration-count.js: Added.
+        (async let):
+
 2020-12-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Update WebAssembly instance's exports object

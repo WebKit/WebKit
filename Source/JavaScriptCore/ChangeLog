@@ -1,5 +1,15 @@
 2020-12-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, fix iteration count check
+        https://bugs.webkit.org/show_bug.cgi?id=220206
+
+        We should have iterationCount variable to track iteration count since it can be larger than MarkedArgumentBuffer's size.
+
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+
+2020-12-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Wasm multivalue should iterate iterable result from JS function first before converting values
         https://bugs.webkit.org/show_bug.cgi?id=220206
 

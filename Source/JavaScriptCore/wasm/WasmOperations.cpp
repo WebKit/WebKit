@@ -522,10 +522,12 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, I
     auto wasmCallInfo = wasmCallingConvention().callInformationFor(*signature, CallRole::Callee);
     RegisterAtOffsetList registerResultOffsets = wasmCallInfo.computeResultsOffsetList();
 
+    unsigned iterationCount = 0;
     MarkedArgumentBuffer buffer;
     forEachInIterable(globalObject, result, [&] (VM&, JSGlobalObject*, JSValue value) -> void {
         if (buffer.size() < signature->returnCount())
             buffer.append(value);
+        ++iterationCount;
     });
     RETURN_IF_EXCEPTION(scope, void());
 
@@ -534,7 +536,7 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, I
         return;
     }
 
-    if (buffer.size() != signature->returnCount()) {
+    if (iterationCount != signature->returnCount()) {
         throwVMTypeError(globalObject, scope, "Incorrect number of values returned to Wasm from JS");
         return;
     }
