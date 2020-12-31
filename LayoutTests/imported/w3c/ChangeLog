@@ -1,3 +1,13 @@
+2020-12-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Wasm multivalue should iterate iterable result from JS function first before converting values
+        https://bugs.webkit.org/show_bug.cgi?id=220206
+
+        Reviewed by Alexey Shvayka.
+
+        * web-platform-tests/wasm/jsapi/constructor/multi-value.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/constructor/multi-value.any.worker-expected.txt:
+
 2020-12-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Update WebAssembly instance's exports object

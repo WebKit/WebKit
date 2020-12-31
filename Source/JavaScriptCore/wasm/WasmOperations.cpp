@@ -508,6 +508,7 @@ JSC_DEFINE_JIT_OPERATION(operationConvertToF32, float, (CallFrame* callFrame, JS
     return static_cast<float>(v.toNumber(callFrame->lexicalGlobalObject(vm)));
 }
 
+// https://webassembly.github.io/multi-value/js-api/index.html#run-a-host-function
 JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, Instance* instance, const Signature* signature, JSValue result, uint64_t* registerResults, uint64_t* calleeFramePointer))
 {
     // FIXME: Consider passing JSWebAssemblyInstance* instead.
@@ -521,47 +522,58 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, I
     auto wasmCallInfo = wasmCallingConvention().callInformationFor(*signature, CallRole::Callee);
     RegisterAtOffsetList registerResultOffsets = wasmCallInfo.computeResultsOffsetList();
 
-    unsigned itemsInserted = 0;
-    forEachInIterable(globalObject, result, [&] (VM& vm, JSGlobalObject* globalObject, JSValue value) -> void {
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        if (itemsInserted < signature->returnCount()) {
-            uint64_t unboxedValue;
-            switch (signature->returnType(itemsInserted)) {
-            case I32:
-                unboxedValue = value.toInt32(globalObject);
-                break;
-            case F32:
-                unboxedValue = bitwise_cast<uint32_t>(value.toFloat(globalObject));
-                break;
-            case F64:
-                unboxedValue = bitwise_cast<uint64_t>(value.toNumber(globalObject));
-                break;
-            case Funcref:
-                if (!value.isCallable(vm)) {
-                    throwTypeError(globalObject, scope, "Funcref value is not a function"_s);
-                    return;
-                }
-                FALLTHROUGH;
-            case Externref:
-                unboxedValue = bitwise_cast<uint64_t>(value);
-                RELEASE_ASSERT(Options::useWebAssemblyReferences());
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-            }
-
-            RETURN_IF_EXCEPTION(scope, void());
-            auto rep = wasmCallInfo.results[itemsInserted];
-            if (rep.isReg())
-                registerResults[registerResultOffsets.find(rep.reg())->offset() / sizeof(uint64_t)] = unboxedValue;
-            else
-                calleeFramePointer[rep.offsetFromFP() / sizeof(uint64_t)] = unboxedValue;
-        }
-        itemsInserted++;
+    MarkedArgumentBuffer buffer;
+    forEachInIterable(globalObject, result, [&] (VM&, JSGlobalObject*, JSValue value) -> void {
+        if (buffer.size() < signature->returnCount())
+            buffer.append(value);
     });
     RETURN_IF_EXCEPTION(scope, void());
-    if (itemsInserted != signature->returnCount())
+
+    if (buffer.hasOverflowed()) {
+        throwOutOfMemoryError(globalObject, scope, "JS results to Wasm are too large");
+        return;
+    }
+
+    if (buffer.size() != signature->returnCount()) {
         throwVMTypeError(globalObject, scope, "Incorrect number of values returned to Wasm from JS");
+        return;
+    }
+
+    for (unsigned index = 0; index < buffer.size(); ++index) {
+        JSValue value = buffer.at(index);
+
+        uint64_t unboxedValue = 0;
+        switch (signature->returnType(index)) {
+        case I32:
+            unboxedValue = value.toInt32(globalObject);
+            break;
+        case F32:
+            unboxedValue = bitwise_cast<uint32_t>(value.toFloat(globalObject));
+            break;
+        case F64:
+            unboxedValue = bitwise_cast<uint64_t>(value.toNumber(globalObject));
+            break;
+        case Funcref:
+            if (!value.isCallable(vm)) {
+                throwTypeError(globalObject, scope, "Funcref value is not a function"_s);
+                return;
+            }
+            FALLTHROUGH;
+        case Externref:
+            unboxedValue = bitwise_cast<uint64_t>(value);
+            RELEASE_ASSERT(Options::useWebAssemblyReferences());
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        RETURN_IF_EXCEPTION(scope, void());
+
+        auto rep = wasmCallInfo.results[index];
+        if (rep.isReg())
+            registerResults[registerResultOffsets.find(rep.reg())->offset() / sizeof(uint64_t)] = unboxedValue;
+        else
+            calleeFramePointer[rep.offsetFromFP() / sizeof(uint64_t)] = unboxedValue;
+    }
 }
 
 // FIXME: It would be much easier to inline this when we have a global GC, which could probably mean we could avoid

@@ -1,3 +1,16 @@
+2020-12-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Wasm multivalue should iterate iterable result from JS function first before converting values
+        https://bugs.webkit.org/show_bug.cgi?id=220206
+
+        Reviewed by Alexey Shvayka.
+
+        When converting JS results to Wasm multivalue (result from JS when executing Wasm->JS calls), we should first iterate all results from iterable.
+        And then, we should convert each element into Wasm value. Currently, we are converting while iterating, this is not aligned to the spec.
+
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+
 2020-12-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Update WebAssembly instance's exports object
