@@ -319,9 +319,11 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
             auto initialLogicalWidth = lineBox.logicalWidth() - run.logicalLeft();
             ASSERT(initialLogicalWidth >= 0);
             auto inlineBox = LineBox::InlineLevelBox::createInlineBox(layoutBox, logicalLeft, initialLogicalWidth);
+            auto& inlineBoxGeometry = formattingContext().geometryForBox(layoutBox);
             // Inline level boxes on empty lines are still considered empty (e.g. <span><div>pre and post blocks are empty</div></span>)
             auto inlineBoxHasImaginaryStrut = layoutState().inNoQuirksMode() && !lineBox.isConsideredEmpty();
-            if (inlineBoxHasImaginaryStrut)
+            auto isConsideredNonEmpty = inlineBoxHasImaginaryStrut || inlineBoxGeometry.horizontalPadding().valueOr(0_lu) || inlineBoxGeometry.horizontalBorder();
+            if (isConsideredNonEmpty)
                 inlineBox->setIsNonEmpty();
             setVerticalGeometryForInlineBox(*inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
