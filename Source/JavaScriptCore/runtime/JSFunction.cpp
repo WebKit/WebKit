@@ -604,7 +604,7 @@ bool JSFunction::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Prop
         if ((propertyName == vm.propertyNames->caller || propertyName == vm.propertyNames->arguments) && executable->hasCallerAndArgumentsProperties())
             return false;
 
-        if (propertyName == vm.propertyNames->prototype && !executable->isArrowFunction())
+        if (propertyName == vm.propertyNames->prototype && executable->hasPrototypeProperty())
             return false;
 
         thisObject->reifyLazyPropertyIfNeeded(vm, globalObject, propertyName);
