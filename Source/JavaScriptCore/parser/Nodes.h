@@ -2374,6 +2374,9 @@ namespace JSC {
         virtual bool isAssignmentElementNode() const { return false; }
         virtual bool isRestParameter() const { return false; }
         virtual RegisterID* emitDirectBinding(BytecodeGenerator&, RegisterID*, ExpressionNode*) { return nullptr; }
+
+        virtual RegisterID* writableDirectBindingIfPossible(BytecodeGenerator&) const { return nullptr; }
+        virtual void finishDirectBindingAssignment(BytecodeGenerator&) const { }
         
     protected:
         DestructuringPatternNode();
@@ -2460,6 +2463,9 @@ namespace JSC {
 
         const JSTextPosition& divotStart() const { return m_divotStart; }
         const JSTextPosition& divotEnd() const { return m_divotEnd; }
+
+        RegisterID* writableDirectBindingIfPossible(BytecodeGenerator&) const final;
+        void finishDirectBindingAssignment(BytecodeGenerator&) const;
         
     private:
         void collectBoundIdentifiers(Vector<Identifier>&) const final;
@@ -2498,6 +2504,9 @@ namespace JSC {
 
         const JSTextPosition& divotStart() const { return m_divotStart; }
         const JSTextPosition& divotEnd() const { return m_divotEnd; }
+
+        RegisterID* writableDirectBindingIfPossible(BytecodeGenerator&) const final;
+        void finishDirectBindingAssignment(BytecodeGenerator&) const;
 
     private:
         void collectBoundIdentifiers(Vector<Identifier>&) const final;

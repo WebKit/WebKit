@@ -1,3 +1,41 @@
+2021-01-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove unnecessary mov bytecodes when performing simple object pattern destructuring to variables
+        https://bugs.webkit.org/show_bug.cgi?id=220219
+
+        Reviewed by Alexey Shvayka.
+
+        Currently, we are first puts object pattern's expression into temporary variable, and then, we store it into local variable register.
+
+        The following code
+
+            ({ data } = object);
+
+        emits this kind of bytecode.
+
+            get_by_id          dst:loc10, base:loc9, property:0
+            mov                dst:loc6, src:loc10
+
+        However, this should be
+
+            get_by_id          dst:loc6, base:loc9, property:0
+
+        We are emitting many unnecessary movs since this destructuring pattern is common. Increasing amount of mov (1) discourages inlining unnecessarily and (2) simply makes
+        bytecode memory large. Since this is very common pattern, we should carefully optimize it to remove such unnecessary movs.
+
+        This patch looks into pattern when performing object pattern destructuring. And avoid emitting mov when it is possible. There are some cases we cannot remove movs, so
+        this patch's writableDirectBindingIfPossible looks into whether this is possible (& profitable).
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ObjectPatternNode::bindValue const):
+        (JSC::BindingNode::writableDirectBindingIfPossible const):
+        (JSC::BindingNode::finishDirectBindingAssignment const):
+        (JSC::AssignmentElementNode::writableDirectBindingIfPossible const):
+        (JSC::AssignmentElementNode::finishDirectBindingAssignment const):
+        * parser/Nodes.h:
+        (JSC::DestructuringPatternNode::writableDirectBindingIfPossible const):
+        (JSC::DestructuringPatternNode::finishDirectBindingAssignment const):
+
 2021-01-02  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Improve error message for uninitialized |this| in derived constructor

@@ -5264,7 +5264,39 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {
         const auto& target = m_targetPatterns[i];
         if (target.bindingType == BindingType::Element) {
-            RefPtr<RegisterID> temp = generator.newTemporary();
+            // If the destructuring becomes get_by_id and mov, then we should store results directly to the local's binding.
+            // From
+            //     get_by_id          dst:loc10, base:loc9, property:0
+            //     mov                dst:loc6, src:loc10
+            // To
+            //     get_by_id          dst:loc6, base:loc9, property:0
+            auto writableDirectBindingIfPossible = [&]() -> RegisterID* {
+                // The following pattern is possible. In that case, after setting |data| local variable, we need to store property name into the set.
+                // So, old property name |data| result must be kept before setting it into |data|.
+                //     ({ [data]: data, ...obj } = object);
+                if (m_containsRestElement && m_containsComputedProperty && target.propertyExpression)
+                    return nullptr;
+                // default value can include a reference to local variable. So filling value to a local variable can differ result.
+                // We give up fast path if default value includes non constant.
+                // For example,
+                //     ({ data = data } = object);
+                if (target.defaultValue && !target.defaultValue->isConstant())
+                    return nullptr;
+                return target.pattern->writableDirectBindingIfPossible(generator);
+            };
+
+            auto finishDirectBindingAssignment = [&]() {
+                ASSERT(writableDirectBindingIfPossible());
+                target.pattern->finishDirectBindingAssignment(generator);
+            };
+
+            RefPtr<RegisterID> temp;
+            RegisterID* directBinding = writableDirectBindingIfPossible();
+            if (directBinding)
+                temp = directBinding;
+            else
+                temp = generator.newTemporary();
+
             RefPtr<RegisterID> propertyName;
             if (!target.propertyExpression) {
                 Optional<uint32_t> optionalIndex = parseIndex(target.propertyName);
@@ -5296,7 +5328,10 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
 
             if (target.defaultValue)
                 assignDefaultValueIfUndefined(generator, temp.get(), target.defaultValue);
-            target.pattern->bindValue(generator, temp.get());
+            if (directBinding)
+                finishDirectBindingAssignment();
+            else
+                target.pattern->bindValue(generator, temp.get());
         } else {
             ASSERT(target.bindingType == BindingType::RestElement);
             ASSERT(i == m_targetPatterns.size() - 1);
@@ -5329,6 +5364,32 @@ void ObjectPatternNode::collectBoundIdentifiers(Vector<Identifier>& identifiers)
 {
     for (size_t i = 0; i < m_targetPatterns.size(); i++)
         m_targetPatterns[i].pattern->collectBoundIdentifiers(identifiers);
+}
+
+RegisterID* BindingNode::writableDirectBindingIfPossible(BytecodeGenerator& generator) const
+{
+    Variable var = generator.variable(m_boundProperty);
+    bool isReadOnly = var.isReadOnly() && m_bindingContext != AssignmentContext::ConstDeclarationStatement;
+    if (RegisterID* local = var.local()) {
+        if (m_bindingContext == AssignmentContext::AssignmentExpression) {
+            if (generator.needsTDZCheck(var))
+                return nullptr;
+        }
+        if (isReadOnly)
+            return nullptr;
+        return local;
+    }
+    return nullptr;
+}
+
+void BindingNode::finishDirectBindingAssignment(BytecodeGenerator& generator) const
+{
+    ASSERT(writableDirectBindingIfPossible(generator));
+    Variable var = generator.variable(m_boundProperty);
+    RegisterID* local = var.local();
+    generator.emitProfileType(local, var, divotStart(), divotEnd());
+    if (m_bindingContext == AssignmentContext::DeclarationStatement || m_bindingContext == AssignmentContext::ConstDeclarationStatement)
+        generator.liftTDZCheckIfPossible(var);
 }
 
 void BindingNode::bindValue(BytecodeGenerator& generator, RegisterID* value) const
@@ -5373,6 +5434,32 @@ void BindingNode::toString(StringBuilder& builder) const
 void BindingNode::collectBoundIdentifiers(Vector<Identifier>& identifiers) const
 {
     identifiers.append(m_boundProperty);
+}
+
+RegisterID* AssignmentElementNode::writableDirectBindingIfPossible(BytecodeGenerator& generator) const
+{
+    if (!m_assignmentTarget->isResolveNode())
+        return nullptr;
+    ResolveNode* lhs = static_cast<ResolveNode*>(m_assignmentTarget);
+    Variable var = generator.variable(lhs->identifier());
+    bool isReadOnly = var.isReadOnly();
+    if (RegisterID* local = var.local()) {
+        if (generator.needsTDZCheck(var))
+            return nullptr;
+        if (isReadOnly)
+            return nullptr;
+        return local;
+    }
+    return nullptr;
+}
+
+void AssignmentElementNode::finishDirectBindingAssignment(BytecodeGenerator& generator) const
+{
+    ASSERT_UNUSED(generator, writableDirectBindingIfPossible(generator));
+    ResolveNode* lhs = static_cast<ResolveNode*>(m_assignmentTarget);
+    Variable var = generator.variable(lhs->identifier());
+    RegisterID* local = var.local();
+    generator.emitProfileType(local, divotStart(), divotEnd());
 }
 
 void AssignmentElementNode::collectBoundIdentifiers(Vector<Identifier>&) const

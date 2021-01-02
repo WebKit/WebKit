@@ -1,3 +1,15 @@
+2021-01-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove unnecessary mov bytecodes when performing simple object pattern destructuring to variables
+        https://bugs.webkit.org/show_bug.cgi?id=220219
+
+        Reviewed by Alexey Shvayka.
+
+        * stress/object-pattern-simple-fast-path.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (test1):
+
 2021-01-02  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Improve error message for uninitialized |this| in derived constructor
