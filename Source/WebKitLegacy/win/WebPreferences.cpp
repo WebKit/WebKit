@@ -105,6 +105,16 @@ static bool booleanValueForPreferencesValue(CFPropertyListRef value)
     return numberValueForPreferencesValue<int>(value);
 }
 
+static RetainPtr<CFStringRef> stringValueForPreferencesValue(CFPropertyListRef value)
+{
+    if (!value)
+        return nullptr;
+    if (CFGetTypeID(value) != CFStringGetTypeID())
+        return nullptr;
+
+    return static_cast<CFStringRef>(value);
+}
+
 // WebPreferences ----------------------------------------------------------------
 
 static CFDictionaryRef defaultSettings;
@@ -2338,6 +2348,8 @@ HRESULT WebPreferences::setBoolPreferenceForTesting(_In_ BSTR key, _In_ BOOL val
 
 #if USE(CF)
     auto keyString = String(key).createCFString();
+    if (booleanValueForPreferencesValue(valueForKey(keyString.get()).get()) == !!value)
+        return S_OK;
     setValueForKey(keyString.get(), value ? kCFBooleanTrue : kCFBooleanFalse);
 #endif
 
@@ -2353,6 +2365,8 @@ HRESULT WebPreferences::setUInt32PreferenceForTesting(_In_ BSTR key, _In_ unsign
 
 #if USE(CF)
     auto keyString = String(key).createCFString();
+    if (numberValueForPreferencesValue<int>(valueForKey(keyString.get()).get()) == value)
+        return S_OK;
     setValueForKey(keyString.get(), cfNumber(static_cast<int>(value)).get());
 #endif
 
@@ -2368,6 +2382,8 @@ HRESULT WebPreferences::setDoublePreferenceForTesting(_In_ BSTR key, _In_ double
 
 #if USE(CF)
     auto keyString = String(key).createCFString();
+    if (numberValueForPreferencesValue<float>(valueForKey(keyString.get()).get()) == value)
+        return S_OK;
     setValueForKey(keyString.get(), cfNumber(static_cast<float>(value)).get());
 #endif
 
@@ -2384,6 +2400,8 @@ HRESULT WebPreferences::setStringPreferenceForTesting(_In_ BSTR key, _In_ BSTR v
 #if USE(CF)
     auto keyString = String(key).createCFString();
     auto valueString = String(value).createCFString();
+    if (!CFStringCompare(stringValueForPreferencesValue(valueForKey(keyString.get()).get()).get(), valueString.get(), 0))
+        return S_OK;
     setValueForKey(keyString.get(), valueString.get());
 #endif
 

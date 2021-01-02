@@ -1,3 +1,27 @@
+2021-01-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][DumpRenderTree] Some JS tests are timing out only in Debug builds since r269157
+        https://bugs.webkit.org/show_bug.cgi?id=220145
+        <rdar://problem/72756207>
+
+        Reviewed by Sam Weinig.
+
+        r269157 added new WebKit1 APIs to set a preference, and
+        DumpRenderTree uses them to reset all preferences after each
+        testing. However, it was too slow for large pages because the API
+        is causing resolveStyle for every preference. Some JS tests failed
+        as timeout in debug builds because they are generating large
+        pages.
+
+        * WebPreferences.cpp:
+        (stringValueForPreferencesValue): Added.
+        (WebPreferences::setBoolPreferenceForTesting):
+        (WebPreferences::setUInt32PreferenceForTesting):
+        (WebPreferences::setDoublePreferenceForTesting):
+        (WebPreferences::setStringPreferenceForTesting):
+        Do nothing if the new preference value is same with the current
+        value.
+
 2020-12-19  Rob Buis  <rbuis@igalia.com>
 
         Move FrameLoader::arePluginsEnabled to Frame
