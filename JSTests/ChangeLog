@@ -1,3 +1,20 @@
+2021-01-02  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Don't throw if `function.caller` is a non-strict / generator / async function
+        https://bugs.webkit.org/show_bug.cgi?id=220216
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/function-caller-async-arrow-function-body.js: Removed.
+        * stress/function-caller-async-function-body.js: Removed.
+        * stress/function-caller-async-generator-body.js: Removed.
+        * stress/function-caller-generator-body.js: Removed.
+        * stress/function-caller-generator-method-body.js: Removed.
+        * stress/function-hidden-as-caller.js: Added.
+        * stress/polymorphic-access-exception-handler-should-not-clobber-used-register.js:
+        * stress/tail-call-recognize.js:
+        * test262/expectations.yaml: Mark 45 test cases as passing.
+
 2020-12-31  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         JSFunction::deleteProperty() fails to delete a non-existent "prototype" property

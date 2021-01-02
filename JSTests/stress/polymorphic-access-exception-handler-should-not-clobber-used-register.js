@@ -1,6 +1,7 @@
 //@ runDefault("--useConcurrentJIT=0", "--useRandomizingFuzzerAgent=1", "--airRandomizeRegs=1", "--airRandomizeRegsSeed=3421187372", "--jitPolicyScale=0")
 
 function foo() {
+    'use strict';
     try {
         foo.caller;
     } catch (e) {

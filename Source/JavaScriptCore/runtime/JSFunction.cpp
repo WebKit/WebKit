@@ -380,7 +380,6 @@ static JSValue retrieveCallerFunction(VM& vm, CallFrame* callFrame, JSFunction* 
 JSC_DEFINE_CUSTOM_GETTER(callerGetter, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSFunction* thisObj = jsCast<JSFunction*>(JSValue::decode(thisValue));
     ASSERT(!thisObj->isHostFunction());
@@ -398,35 +397,11 @@ JSC_DEFINE_CUSTOM_GETTER(callerGetter, (JSGlobalObject* globalObject, EncodedJSV
     // Firefox returns null for native code callers, so we match that behavior.
     if (function->isHostOrBuiltinFunction())
         return JSValue::encode(jsNull());
-    SourceParseMode parseMode = function->jsExecutable()->parseMode();
-    switch (parseMode) {
-    case SourceParseMode::GeneratorBodyMode:
-    case SourceParseMode::AsyncGeneratorBodyMode:
-        return JSValue::encode(throwTypeError(globalObject, scope, "Function.caller used to retrieve generator body"_s));
-    case SourceParseMode::AsyncFunctionBodyMode:
-    case SourceParseMode::AsyncArrowFunctionBodyMode:
-        return JSValue::encode(throwTypeError(globalObject, scope, "Function.caller used to retrieve async function body"_s));
-    case SourceParseMode::NormalFunctionMode:
-    case SourceParseMode::GeneratorWrapperFunctionMode:
-    case SourceParseMode::GetterMode:
-    case SourceParseMode::SetterMode:
-    case SourceParseMode::MethodMode:
-    case SourceParseMode::ArrowFunctionMode:
-    case SourceParseMode::AsyncFunctionMode:
-    case SourceParseMode::AsyncMethodMode:
-    case SourceParseMode::AsyncArrowFunctionMode:
-    case SourceParseMode::ProgramMode:
-    case SourceParseMode::ModuleAnalyzeMode:
-    case SourceParseMode::ModuleEvaluateMode:
-    case SourceParseMode::AsyncGeneratorWrapperFunctionMode:
-    case SourceParseMode::AsyncGeneratorWrapperMethodMode:
-    case SourceParseMode::GeneratorWrapperMethodMode:
-    case SourceParseMode::ClassFieldInitializerMode:
-        if (!function->jsExecutable()->isInStrictContext())
-            return JSValue::encode(caller);
-        return JSValue::encode(throwTypeError(globalObject, scope, "Function.caller used to retrieve strict caller"_s));
-    }
-    RELEASE_ASSERT_NOT_REACHED();
+
+    if (!function->jsExecutable()->hasCallerAndArgumentsProperties())
+        return JSValue::encode(jsNull());
+
+    return JSValue::encode(caller);
 }
 
 bool JSFunction::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)

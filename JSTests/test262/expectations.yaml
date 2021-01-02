@@ -1334,12 +1334,6 @@ test/language/eval-code/indirect/var-env-global-lex-non-strict.js:
   strict mode: 'Test262Error: Expected SameValue(«function TypeError() {'
 test/language/expressions/arrow-function/eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/arrow-function/forbidden-ext/b2/arrow-function-forbidden-ext-indirect-access-own-prop-caller-get.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
-test/language/expressions/arrow-function/forbidden-ext/b2/arrow-function-forbidden-ext-indirect-access-own-prop-caller-value.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
-test/language/expressions/arrow-function/forbidden-ext/b2/arrow-function-forbidden-ext-indirect-access-prop-caller.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
 test/language/expressions/arrow-function/scope-body-lex-distinct.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/arrow-function/scope-param-rest-elem-var-open.js:
@@ -1506,30 +1500,6 @@ test/language/expressions/class/elements/nested-direct-eval-err-contains-argumen
 test/language/expressions/class/elements/nested-private-direct-eval-err-contains-arguments.js:
   default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
   strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
-test/language/expressions/class/gen-method-static/forbidden-ext/b2/cls-expr-gen-meth-static-forbidden-ext-indirect-access-own-prop-caller-get.js:
-  default: 'TypeError: Function.caller used to retrieve generator body'
-test/language/expressions/class/gen-method-static/forbidden-ext/b2/cls-expr-gen-meth-static-forbidden-ext-indirect-access-own-prop-caller-value.js:
-  default: 'TypeError: Function.caller used to retrieve generator body'
-test/language/expressions/class/gen-method-static/forbidden-ext/b2/cls-expr-gen-meth-static-forbidden-ext-indirect-access-prop-caller.js:
-  default: 'TypeError: Function.caller used to retrieve generator body'
-test/language/expressions/class/gen-method/forbidden-ext/b2/cls-expr-gen-meth-forbidden-ext-indirect-access-own-prop-caller-get.js:
-  default: 'TypeError: Function.caller used to retrieve generator body'
-test/language/expressions/class/gen-method/forbidden-ext/b2/cls-expr-gen-meth-forbidden-ext-indirect-access-own-prop-caller-value.js:
-  default: 'TypeError: Function.caller used to retrieve generator body'
-test/language/expressions/class/gen-method/forbidden-ext/b2/cls-expr-gen-meth-forbidden-ext-indirect-access-prop-caller.js:
-  default: 'TypeError: Function.caller used to retrieve generator body'
-test/language/expressions/class/method-static/forbidden-ext/b2/cls-expr-meth-static-forbidden-ext-indirect-access-own-prop-caller-get.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
-test/language/expressions/class/method-static/forbidden-ext/b2/cls-expr-meth-static-forbidden-ext-indirect-access-own-prop-caller-value.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
-test/language/expressions/class/method-static/forbidden-ext/b2/cls-expr-meth-static-forbidden-ext-indirect-access-prop-caller.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
-test/language/expressions/class/method/forbidden-ext/b2/cls-expr-meth-forbidden-ext-indirect-access-own-prop-caller-get.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
-test/language/expressions/class/method/forbidden-ext/b2/cls-expr-meth-forbidden-ext-indirect-access-own-prop-caller-value.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
-test/language/expressions/class/method/forbidden-ext/b2/cls-expr-meth-forbidden-ext-indirect-access-prop-caller.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
 test/language/expressions/compound-assignment/S11.13.2_A5.10_T1.js:
   default: "ReferenceError: Can't find variable: x"
 test/language/expressions/compound-assignment/S11.13.2_A5.10_T2.js:
@@ -1638,24 +1608,12 @@ test/language/expressions/dynamic-import/for-await-resolution-and-error-agen-yie
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: f Expected SameValue(«null», «foo») to be true'
 test/language/expressions/function/eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/function/forbidden-ext/b2/func-expr-forbidden-ext-indirect-access-own-prop-caller-get.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
-test/language/expressions/function/forbidden-ext/b2/func-expr-forbidden-ext-indirect-access-own-prop-caller-value.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
-test/language/expressions/function/forbidden-ext/b2/func-expr-forbidden-ext-indirect-access-prop-caller.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
 test/language/expressions/function/scope-body-lex-distinct.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/function/scope-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
 test/language/expressions/generators/eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/generators/forbidden-ext/b2/gen-func-expr-forbidden-ext-indirect-access-own-prop-caller-get.js:
-  default: 'TypeError: Function.caller used to retrieve generator body'
-test/language/expressions/generators/forbidden-ext/b2/gen-func-expr-forbidden-ext-indirect-access-own-prop-caller-value.js:
-  default: 'TypeError: Function.caller used to retrieve generator body'
-test/language/expressions/generators/forbidden-ext/b2/gen-func-expr-forbidden-ext-indirect-access-prop-caller.js:
-  default: 'TypeError: Function.caller used to retrieve generator body'
 test/language/expressions/generators/generator-created-after-decl-inst.js:
   default: 'Test262Error: Expected SameValue(«[object Generator]», «[object Generator]») to be false'
   strict mode: 'Test262Error: Expected SameValue(«[object Generator]», «[object Generator]») to be false'
@@ -1683,18 +1641,6 @@ test/language/expressions/new/non-ctor-err-realm.js:
   strict mode: 'Test262Error: production including Arguments Expected a TypeError but got a TypeError'
 test/language/expressions/object/method-definition/async-gen-meth-eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/object/method-definition/forbidden-ext/b2/gen-meth-forbidden-ext-indirect-access-own-prop-caller-get.js:
-  default: 'TypeError: Function.caller used to retrieve generator body'
-test/language/expressions/object/method-definition/forbidden-ext/b2/gen-meth-forbidden-ext-indirect-access-own-prop-caller-value.js:
-  default: 'TypeError: Function.caller used to retrieve generator body'
-test/language/expressions/object/method-definition/forbidden-ext/b2/gen-meth-forbidden-ext-indirect-access-prop-caller.js:
-  default: 'TypeError: Function.caller used to retrieve generator body'
-test/language/expressions/object/method-definition/forbidden-ext/b2/meth-forbidden-ext-indirect-access-own-prop-caller-get.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
-test/language/expressions/object/method-definition/forbidden-ext/b2/meth-forbidden-ext-indirect-access-own-prop-caller-value.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
-test/language/expressions/object/method-definition/forbidden-ext/b2/meth-forbidden-ext-indirect-access-prop-caller.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
 test/language/expressions/object/method-definition/gen-meth-eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/object/method-definition/meth-eval-var-scope-syntax-err.js:
@@ -1819,30 +1765,6 @@ test/language/statements/class/elements/nested-direct-eval-err-contains-argument
 test/language/statements/class/elements/nested-private-direct-eval-err-contains-arguments.js:
   default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
   strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
-test/language/statements/class/gen-method-static/forbidden-ext/b2/cls-decl-gen-meth-static-forbidden-ext-indirect-access-own-prop-caller-get.js:
-  default: 'TypeError: Function.caller used to retrieve generator body'
-test/language/statements/class/gen-method-static/forbidden-ext/b2/cls-decl-gen-meth-static-forbidden-ext-indirect-access-own-prop-caller-value.js:
-  default: 'TypeError: Function.caller used to retrieve generator body'
-test/language/statements/class/gen-method-static/forbidden-ext/b2/cls-decl-gen-meth-static-forbidden-ext-indirect-access-prop-caller.js:
-  default: 'TypeError: Function.caller used to retrieve generator body'
-test/language/statements/class/gen-method/forbidden-ext/b2/cls-decl-gen-meth-forbidden-ext-indirect-access-own-prop-caller-get.js:
-  default: 'TypeError: Function.caller used to retrieve generator body'
-test/language/statements/class/gen-method/forbidden-ext/b2/cls-decl-gen-meth-forbidden-ext-indirect-access-own-prop-caller-value.js:
-  default: 'TypeError: Function.caller used to retrieve generator body'
-test/language/statements/class/gen-method/forbidden-ext/b2/cls-decl-gen-meth-forbidden-ext-indirect-access-prop-caller.js:
-  default: 'TypeError: Function.caller used to retrieve generator body'
-test/language/statements/class/method-static/forbidden-ext/b2/cls-decl-meth-static-forbidden-ext-indirect-access-own-prop-caller-get.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
-test/language/statements/class/method-static/forbidden-ext/b2/cls-decl-meth-static-forbidden-ext-indirect-access-own-prop-caller-value.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
-test/language/statements/class/method-static/forbidden-ext/b2/cls-decl-meth-static-forbidden-ext-indirect-access-prop-caller.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
-test/language/statements/class/method/forbidden-ext/b2/cls-decl-meth-forbidden-ext-indirect-access-own-prop-caller-get.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
-test/language/statements/class/method/forbidden-ext/b2/cls-decl-meth-forbidden-ext-indirect-access-own-prop-caller-value.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
-test/language/statements/class/method/forbidden-ext/b2/cls-decl-meth-forbidden-ext-indirect-access-prop-caller.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
 test/language/statements/const/dstr/ary-init-iter-get-err-array-prototype.js:
   default: 'TypeError: Spread syntax requires ...iterable[Symbol.iterator] to be a function'
   strict mode: 'TypeError: Spread syntax requires ...iterable[Symbol.iterator] to be a function'
@@ -1965,24 +1887,12 @@ test/language/statements/for/scope-body-lex-open.js:
   strict mode: 'Test262Error: Expected SameValue(«inside», «outside») to be true'
 test/language/statements/function/eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/statements/function/forbidden-ext/b2/func-decl-forbidden-ext-indirect-access-own-prop-caller-get.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
-test/language/statements/function/forbidden-ext/b2/func-decl-forbidden-ext-indirect-access-own-prop-caller-value.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
-test/language/statements/function/forbidden-ext/b2/func-decl-forbidden-ext-indirect-access-prop-caller.js:
-  default: 'TypeError: Function.caller used to retrieve strict caller'
 test/language/statements/function/scope-body-lex-distinct.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/statements/function/scope-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
 test/language/statements/generators/eval-var-scope-syntax-err.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/statements/generators/forbidden-ext/b2/gen-func-decl-forbidden-ext-indirect-access-own-prop-caller-get.js:
-  default: 'TypeError: Function.caller used to retrieve generator body'
-test/language/statements/generators/forbidden-ext/b2/gen-func-decl-forbidden-ext-indirect-access-own-prop-caller-value.js:
-  default: 'TypeError: Function.caller used to retrieve generator body'
-test/language/statements/generators/forbidden-ext/b2/gen-func-decl-forbidden-ext-indirect-access-prop-caller.js:
-  default: 'TypeError: Function.caller used to retrieve generator body'
 test/language/statements/generators/generator-created-after-decl-inst.js:
   default: 'Test262Error: Expected SameValue(«[object Generator]», «[object Generator]») to be false'
   strict mode: 'Test262Error: Expected SameValue(«[object Generator]», «[object Generator]») to be false'

@@ -1,3 +1,28 @@
+2021-01-02  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Don't throw if `function.caller` is a non-strict / generator / async function
+        https://bugs.webkit.org/show_bug.cgi?id=220216
+
+        Reviewed by Yusuke Suzuki.
+
+        The spec forbids [1] ES6+ and strict mode functions from having their own "caller"
+        property. r230662 went even further, throwing TypeError if `function.caller` attempts
+        to return non-strict / generator / async function, which doesn't contradict ECMA-262,
+        but diverges from V8 and SpiderMonkey (they just return the caller).
+
+        Since throwing TypeError causes quite a lot test262 failures and is a bit dangerous
+        (legacy library which uses `function.caller` is called from ES6 code), this patch
+        replaces it with `null` return.
+
+        Given that r230662 appears to be web-compatible, this change preserves its intent
+        to limit `function.caller` API as much as possible by returning `null` for all ES6+
+        functions, including methods, accessors, and arrow functions. 
+
+        [1]: https://tc39.es/ecma262/#sec-forbidden-extensions (paragraphs 1-2)
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+
 2020-12-31  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         JSFunction::deleteProperty() fails to delete a non-existent "prototype" property

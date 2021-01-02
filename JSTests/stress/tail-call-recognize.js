@@ -4,13 +4,7 @@ function callerMustBeRun() {
 }
 
 function callerMustBeStrict() {
-    var errorThrown = false;
-    try {
-        callerMustBeStrict.caller;
-    } catch (e) {
-        errorThrown = true;
-    }
-    if (!errorThrown)
+    if (!Object.is(callerMustBeStrict.caller, null))
         throw Error("Wrong caller, expected strict caller but got ", callerMustBeStrict.caller);
 }
 
