@@ -77,7 +77,7 @@ shouldBe('(new B()).getValueParentFunction()', 'expectedValue');
 
 shouldBe('(new C(false)).value', 'expectedValue');
 
-shouldThrow('(new C(true))', '"ReferenceError: Cannot access uninitialized variable."');
+shouldThrow('(new C(true))', `"ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."`);
 
 shouldBe('E.getParentStaticValue()', 'expectedValue');
 
@@ -95,13 +95,13 @@ shouldBe('(new F()).genGetParentValueDeepArrow().next().value', 'expectedValue')
 shouldBe('(new class extends A { constructor() { ((a = super(), b = super.getValue())=>{ this.id = b; })() } }).id', 'expectedValue');
 var expectedNewTarget;
 shouldBe('(new class extends A { constructor() { ((a = super(), b = new.target)=>{ this.newTarget = b; })(); expectedNewTarget = new.target;} }).newTarget', 'expectedNewTarget');
-shouldThrow('(new class extends A { constructor() { ((a = super.getValue())=>{ this.id = a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
-shouldThrow('(new class extends A { constructor() { ((a = super.getValue(), b=super())=>{ this.id = a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
-shouldThrow('(new class extends F { constructor() { ((a = super.prop)=>{ return a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
-shouldThrow('(new class extends F { constructor() { ((a = super.prop, b=super())=>{ return a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
-shouldThrow('(new class extends F { constructor() { ((a = (super.prop = "value"))=>{ this.id = a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
-shouldThrow('(new class extends F { constructor() { ((a = (super.prop = "value"), b=super())=>{ this.id = a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
-shouldThrow('(new class extends F { constructor() { ((a = super.genGetParentValue().next().value)=>{ this.id = a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
-shouldThrow('(new class extends F { constructor() { ((a = super.genGetParentValue().next().value, b=super())=>{ this.id = a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
+shouldThrow('(new class extends A { constructor() { ((a = super.getValue())=>{ this.id = a; })() } })', `"ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."`);
+shouldThrow('(new class extends A { constructor() { ((a = super.getValue(), b=super())=>{ this.id = a; })() } })', `"ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."`);
+shouldThrow('(new class extends F { constructor() { ((a = super.prop)=>{ return a; })() } })', `"ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."`);
+shouldThrow('(new class extends F { constructor() { ((a = super.prop, b=super())=>{ return a; })() } })', `"ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."`);
+shouldThrow('(new class extends F { constructor() { ((a = (super.prop = "value"))=>{ this.id = a; })() } })', `"ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."`);
+shouldThrow('(new class extends F { constructor() { ((a = (super.prop = "value"), b=super())=>{ this.id = a; })() } })', `"ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."`);
+shouldThrow('(new class extends F { constructor() { ((a = super.genGetParentValue().next().value)=>{ this.id = a; })() } })', `"ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."`);
+shouldThrow('(new class extends F { constructor() { ((a = super.genGetParentValue().next().value, b=super())=>{ this.id = a; })() } })', `"ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."`);
 
 var successfullyParsed = true;

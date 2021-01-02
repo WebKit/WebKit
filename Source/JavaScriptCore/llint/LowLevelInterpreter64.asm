@@ -824,7 +824,7 @@ llintOp(op_check_tdz, OpCheckTdz, macro (size, get, dispatch)
     get(m_targetVirtualRegister, t0)
     loadConstantOrVariable(size, t0, t1)
     bqneq t1, ValueEmpty, .opNotTDZ
-    callSlowPath(_slow_path_throw_tdz_error)
+    callSlowPath(_slow_path_check_tdz)
 
 .opNotTDZ:
     dispatch()

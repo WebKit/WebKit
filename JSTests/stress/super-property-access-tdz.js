@@ -15,7 +15,7 @@ function shouldThrowTDZ(f) {
         f();
     } catch(e) {
         assert(e instanceof ReferenceError);
-        assert(e.toString() === "ReferenceError: Cannot access uninitialized variable.");
+        assert(e.toString() === `ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object.`);
         threw = true;
     }
     assert(threw);

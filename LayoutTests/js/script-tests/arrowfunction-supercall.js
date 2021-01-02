@@ -149,8 +149,8 @@ shouldBeTrue("indexOfarrowInChildConstructorInStackError > -1 && errorStack.inde
 shouldBeTrue("indexOfChildClassInStackError > -1 && errorStack.indexOf('ChildClass', indexOfChildClassInStackError + 1) === -1");
 
 shouldBe("(new class extends A { constructor() { ((a = super())=>{})() } }).id", "value");
-shouldThrow('(new class extends A { constructor() { ((a = this)=>{ return a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
-shouldThrow('(new class extends A { constructor() { ((a = this, b=super())=>{ return a; })() } })', '"ReferenceError: Cannot access uninitialized variable."');
+shouldThrow('(new class extends A { constructor() { ((a = this)=>{ return a; })() } })', `"ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."`);
+shouldThrow('(new class extends A { constructor() { ((a = this, b=super())=>{ return a; })() } })', `"ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."`);
 shouldNotThrow('(new class extends A { constructor() { ((a = new.target)=>{ return a; })(); super(); } })');
 shouldNotThrow('(new class extends A { constructor() { ((a = new.target, b=super())=>{ return a; })() } })');
 

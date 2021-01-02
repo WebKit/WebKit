@@ -123,7 +123,7 @@ drainMicrotasks();
 shouldBe(childA4, undefined);
 shouldBe(value, 'abc');
 shouldBe(error, undefined);
-shouldBe(catchError.toString(), 'ReferenceError: Cannot access uninitialized variable.');
+shouldBe(catchError.toString(), `ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object.`);
 
 catchError = undefined;
 error = undefined; 

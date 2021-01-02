@@ -1,6 +1,6 @@
 CONSOLE MESSAGE: TypeError: The result of constructing a custom element must be a HTMLElement
 CONSOLE MESSAGE: TypeError: The result of constructing a custom element must be a HTMLElement
-CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
+CONSOLE MESSAGE: ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object.
 CONSOLE MESSAGE: Bad
 
 PASS HTML parser must create a fallback HTMLUnknownElement when a custom element constructor returns a Text node

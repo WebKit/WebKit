@@ -254,7 +254,7 @@ function checkTDZDuringCreate(klass) {
         // We do not care about this error
     }
     drainMicrotasks();
-    const error = asyncError.error instanceof ReferenceError && asyncError.error.toString() === 'ReferenceError: Cannot access uninitialized variable.';
+    const error = asyncError.error.toString() === `ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object.`;
     if (!error) throw new Error('TDZ error is expected, but appeared:' + asyncError.error);
 }
 

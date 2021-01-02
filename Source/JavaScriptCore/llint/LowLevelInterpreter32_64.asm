@@ -838,7 +838,7 @@ llintOp(op_check_tdz, OpCheckTdz, macro (size, get, dispatch)
     get(m_targetVirtualRegister, t0)
     loadConstantOrVariableTag(size, t0, t1)
     bineq t1, EmptyValueTag, .opNotTDZ
-    callSlowPath(_slow_path_throw_tdz_error)
+    callSlowPath(_slow_path_check_tdz)
 
 .opNotTDZ:
     dispatch()

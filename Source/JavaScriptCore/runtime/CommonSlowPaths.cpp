@@ -371,16 +371,14 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_this)
     RETURN_WITH_PROFILING_CUSTOM(bytecode.m_srcDst, value, PROFILE_VALUE(value));
 }
 
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_throw_tdz_error)
-{
-    BEGIN();
-    THROW(createTDZError(globalObject));
-}
-
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_check_tdz)
 {
     BEGIN();
-    THROW(createTDZError(globalObject));
+    auto bytecode = pc->as<OpCheckTdz>();
+    if (bytecode.m_targetVirtualRegister == codeBlock->thisRegister())
+        THROW(createReferenceError(globalObject, "'super()' must be called in derived constructor before accessing |this| or returning non-object."_s));
+    else
+        THROW(createTDZError(globalObject));
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_throw_strict_mode_readonly_property_write_error)

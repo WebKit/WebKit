@@ -41,7 +41,7 @@ function test1() {
             return this;
         }
     }
-    assertThrow(()=>(new E), 'ReferenceError: Cannot access uninitialized variable.');
+    assertThrow(()=>(new E), `ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object.`);
     assert(Reflect.getPrototypeOf(E.prototype) === null);
 }
 test(test1);
@@ -116,7 +116,7 @@ function test6() {
     class E extends jsNull() { constructor() { let ret = this; return ret; } }
     class F extends jsNull() { constructor() { return 25; } }
     class G extends jsNull() { constructor() { super(); } }
-    assertThrow(() => Reflect.construct(E, [], D), 'ReferenceError: Cannot access uninitialized variable.');
+    assertThrow(() => Reflect.construct(E, [], D), `ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object.`);
     assertThrow(() => Reflect.construct(F, [], D), 'TypeError: Cannot return a non-object type in the constructor of a derived class.');
 
     let threw = false;

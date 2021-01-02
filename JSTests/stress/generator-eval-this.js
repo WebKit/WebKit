@@ -43,7 +43,7 @@ class A extends B {
 
 shouldThrow(() => {
     new A();
-}, `ReferenceError: Cannot access uninitialized variable.`);
+}, `ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object.`);
 
 class C {
     *generator()

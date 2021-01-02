@@ -88,7 +88,7 @@ class DerivedWithEval extends Base {
 shouldBeTrue('(new Base) instanceof Base');
 shouldBeTrue('(new Derived) instanceof Derived');
 shouldBeTrue('(new DerivedWithEval) instanceof DerivedWithEval');
-shouldThrow('(new DerivedWithEval(true))', '"ReferenceError: Cannot access uninitialized variable."');
+shouldThrow('(new DerivedWithEval(true))', `"ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."`);
 shouldBe('(new Derived).callBaseMethod()', 'baseMethodValue');
 shouldBe('x = (new Derived).callBaseMethod; x()', 'baseMethodValue');
 shouldBe('(new Derived).callBaseMethodInGetter', 'baseMethodValue');
@@ -117,7 +117,7 @@ shouldThrow('new (class extends Base { constructor() { return undefined } })');
 shouldBeTrue('new (class extends Base { constructor() { super(); return undefined } }) instanceof Object');
 shouldBe('x = { }; new (class extends Base { constructor() { return x } });', 'x');
 shouldBeFalse('x instanceof Base');
-shouldThrow('new (class extends Base { constructor() { } })', '"ReferenceError: Cannot access uninitialized variable."');
+shouldThrow('new (class extends Base { constructor() { } })', `"ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."`);
 shouldThrow('new (class extends Base { constructor() { return 1; } })', '"TypeError: Cannot return a non-object type in the constructor of a derived class."');
 shouldThrow('new (class extends null { constructor() { return undefined } })');
 shouldThrow('new (class extends null { constructor() { super(); return undefined } })', '"TypeError: function is not a constructor (evaluating \'super()\')"');
@@ -142,9 +142,9 @@ shouldThrow('new (class { constructor() { (function () { eval("super()");})(); }
 shouldThrow('(new (class { method() { (function () { eval("super.method()");})(); }})).method()', '"SyntaxError: super is not valid in this context."');
 
 shouldThrow('new (class extends Base { constructor() { super(); super();}})', '"ReferenceError: \'super()\' can\'t be called more than once in a constructor."');
-shouldThrow('(new class D extends class { m() {}} { constructor() { eval(\'super["m"]()\') } })', '"ReferenceError: Cannot access uninitialized variable."');
-shouldThrow('new class extends class { m() {}} { constructor() { super["m"](super()) } }', '"ReferenceError: Cannot access uninitialized variable."');
-shouldThrow('(new class D extends class { m() {}} { constructor(f) { super[f()]() } }(()=>"m"))', '"ReferenceError: Cannot access uninitialized variable."');
+shouldThrow('(new class D extends class { m() {}} { constructor() { eval(\'super["m"]()\') } })', `"ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."`);
+shouldThrow('new class extends class { m() {}} { constructor() { super["m"](super()) } }', `"ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."`);
+shouldThrow('(new class D extends class { m() {}} { constructor(f) { super[f()]() } }(()=>"m"))', `"ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."`);
 
 shouldNotThrow('(new class D extends class { m() {}} { constructor() { super(); eval(\'super["m"]()\') } })');
 shouldThrow('new class extends class { m() {}} { constructor() { super(); super["m"](super()) } }', '"ReferenceError: \'super()\' can\'t be called more than once in a constructor."');
