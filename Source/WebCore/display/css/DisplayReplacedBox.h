@@ -36,7 +36,7 @@ class ReplacedBox : public BoxModelBox {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ReplacedBox);
     friend class BoxFactory;
 public:
-    ReplacedBox(AbsoluteFloatRect borderBox, Style&&, OptionSet<Flags>);
+    ReplacedBox(AbsoluteFloatRect borderBox, Style&&, OptionSet<TypeFlags>);
     
     AbsoluteFloatRect replacedContentRect() const { return m_replacedContentRect; }
 

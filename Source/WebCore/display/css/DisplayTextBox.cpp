@@ -35,7 +35,7 @@ namespace WebCore {
 namespace Display {
 
 TextBox::TextBox(AbsoluteFloatRect borderBox, Style&& displayStyle, const Layout::LineRun& lineRun)
-    : Box(borderBox, WTFMove(displayStyle), { Flags::TextBox })
+    : Box(borderBox, WTFMove(displayStyle), { TypeFlags::TextBox })
     , m_expansion(lineRun.expansion())
     , m_text(lineRun.text().value())
 {

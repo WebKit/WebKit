@@ -36,10 +36,10 @@
 namespace WebCore {
 namespace Display {
 
-Box::Box(AbsoluteFloatRect absoluteRect, Style&& displayStyle, OptionSet<Flags> flags)
+Box::Box(AbsoluteFloatRect absoluteRect, Style&& displayStyle, OptionSet<TypeFlags> flags)
     : m_absoluteBoxRect(absoluteRect)
     , m_style(WTFMove(displayStyle))
-    , m_flags(flags)
+    , m_typeFlags(flags)
 {
 }
 

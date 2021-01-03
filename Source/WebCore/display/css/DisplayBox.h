@@ -41,7 +41,7 @@ using AbsoluteFloatRect = FloatRect;
 class Box {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Box);
 public:
-    enum class Flags : uint8_t {
+    enum class TypeFlags : uint8_t {
         BoxModelBox     = 1 << 0,
         ContainerBox    = 1 << 1,
         ImageBox        = 1 << 2,
@@ -49,7 +49,7 @@ public:
         LineBreakBox    = 1 << 4, // FIXME: Workaround for webkit.org/b/219335
     };
 
-    Box(AbsoluteFloatRect, Style&&, OptionSet<Flags> = { });
+    Box(AbsoluteFloatRect, Style&&, OptionSet<TypeFlags> = { });
     virtual ~Box();
 
     const Style& style() const { return m_style; }
@@ -58,12 +58,12 @@ public:
 
     virtual AbsoluteFloatRect absolutePaintingExtent() const { return m_absoluteBoxRect; }
 
-    bool isBoxModelBox() const { return m_flags.contains(Flags::BoxModelBox); }
-    bool isContainerBox() const { return m_flags.contains(Flags::ContainerBox); }
-    bool isImageBox() const { return m_flags.contains(Flags::ImageBox); }
-    bool isReplacedBox() const { return m_flags.contains(Flags::ImageBox); /* and other types later. */ }
-    bool isTextBox() const { return m_flags.contains(Flags::TextBox); }
-    bool isLineBreakBox() const { return m_flags.contains(Flags::LineBreakBox); }
+    bool isBoxModelBox() const { return m_typeFlags.contains(TypeFlags::BoxModelBox); }
+    bool isContainerBox() const { return m_typeFlags.contains(TypeFlags::ContainerBox); }
+    bool isImageBox() const { return m_typeFlags.contains(TypeFlags::ImageBox); }
+    bool isReplacedBox() const { return m_typeFlags.contains(TypeFlags::ImageBox); /* and other types later. */ }
+    bool isTextBox() const { return m_typeFlags.contains(TypeFlags::TextBox); }
+    bool isLineBreakBox() const { return m_typeFlags.contains(TypeFlags::LineBreakBox); }
 
     bool participatesInZOrderSorting() const;
 
@@ -78,7 +78,7 @@ private:
     AbsoluteFloatRect m_absoluteBoxRect;
     Style m_style;
     std::unique_ptr<Box> m_nextSibling;
-    OptionSet<Flags> m_flags;
+    OptionSet<TypeFlags> m_typeFlags;
 };
 
 } // namespace Display

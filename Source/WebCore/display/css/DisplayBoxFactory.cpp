@@ -135,10 +135,10 @@ std::unique_ptr<Box> BoxFactory::displayBoxForLayoutBox(const Layout::Box& layou
         return containerBox;
     }
 
-    OptionSet<Box::Flags> flags;
+    OptionSet<Box::TypeFlags> flags;
     // FIXME: Workaround for webkit.org/b/219335.
     if (layoutBox.isLineBreakBox())
-        flags.add(Box::Flags::LineBreakBox);
+        flags.add(Box::TypeFlags::LineBreakBox);
 
     return makeUnique<Box>(snapRectToDevicePixels(borderBoxRect, m_pixelSnappingFactor), WTFMove(style), flags);
 }

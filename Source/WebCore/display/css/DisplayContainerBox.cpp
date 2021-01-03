@@ -36,7 +36,7 @@ namespace WebCore {
 namespace Display {
 
 ContainerBox::ContainerBox(AbsoluteFloatRect borderBox, Style&& displayStyle)
-    : BoxModelBox(borderBox, WTFMove(displayStyle), { Flags::ContainerBox })
+    : BoxModelBox(borderBox, WTFMove(displayStyle), { TypeFlags::ContainerBox })
 {
 }
 

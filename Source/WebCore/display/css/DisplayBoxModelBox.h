@@ -43,7 +43,7 @@ class BoxModelBox : public Box {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BoxModelBox);
     friend class BoxFactory;
 public:
-    BoxModelBox(AbsoluteFloatRect borderBox, Style&&, OptionSet<Flags> = { });
+    BoxModelBox(AbsoluteFloatRect borderBox, Style&&, OptionSet<TypeFlags> = { });
     virtual ~BoxModelBox();
 
     AbsoluteFloatRect absoluteBorderBoxRect() const { return absoluteBoxRect(); }
