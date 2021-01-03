@@ -5809,9 +5809,9 @@ function floatFormatter(obj,token)
 function integerFormatter(obj)
 {let value=typeof obj.value==="number"?obj.value:obj.description;return String.standardFormatters.d(value);}
 var currentStyle=null;function styleFormatter(obj)
-{currentStyle={};var buffer=document.createElement("span");buffer.setAttribute("style",obj.description);for(var i=0;i<buffer.style.length;i++){var property=buffer.style[i];if(isWhitelistedProperty(property))
+{currentStyle={};var buffer=document.createElement("span");buffer.setAttribute("style",obj.description);for(var i=0;i<buffer.style.length;i++){var property=buffer.style[i];if(isAllowlistedProperty(property))
 currentStyle[property]=buffer.style[property];}}
-function isWhitelistedProperty(property)
+function isAllowlistedProperty(property)
 {for(var prefix of["background","border","color","font","line","margin","padding","text"]){if(property.startsWith(prefix)||property.startsWith("-webkit-"+prefix))
 return true;}
 return false;}
