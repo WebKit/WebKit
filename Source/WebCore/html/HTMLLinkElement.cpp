@@ -583,7 +583,7 @@ void HTMLLinkElement::handleClick(Event& event)
     RefPtr<Frame> frame = document().frame();
     if (!frame)
         return;
-    frame->loader().changeLocation(url, target(), &event, LockHistory::No, LockBackForwardList::No, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
+    frame->loader().changeLocation(url, target(), &event, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
 }
 
 URL HTMLLinkElement::href() const

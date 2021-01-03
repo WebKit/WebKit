@@ -197,7 +197,7 @@ void MathMLElement::defaultEventHandler(Event& event)
             const auto& url = stripLeadingAndTrailingHTMLSpaces(href);
             event.setDefaultHandled();
             if (auto* frame = document().frame())
-                frame->loader().changeLocation(document().completeURL(url), "_self", &event, LockHistory::No, LockBackForwardList::No, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
+                frame->loader().changeLocation(document().completeURL(url), "_self", &event, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
             return;
         }
     }

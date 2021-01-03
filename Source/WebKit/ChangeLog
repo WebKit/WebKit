@@ -1,3 +1,19 @@
+2021-01-02  Rob Buis  <rbuis@igalia.com>
+
+        Remove some FrameLoader::changeLocation parameters
+        https://bugs.webkit.org/show_bug.cgi?id=220186
+
+        Reviewed by Darin Adler.
+
+        Adapt to API change.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::clickedLink):
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit::WebContextMenuClient::searchWithGoogle):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::navigateToPDFLinkWithSimulatedClick):
+
 2020-12-23  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process]: Don't call flushDrawingContext() in the middle of recording drawing commands

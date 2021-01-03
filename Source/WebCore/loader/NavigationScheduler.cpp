@@ -266,7 +266,7 @@ public:
         if (!m_historySteps) {
             // Special case for go(0) from a frame -> reload only the frame
             // To follow Firefox and IE's behavior, history reload can only navigate the self frame.
-            frame.loader().changeLocation(frame.document()->url(), "_self", 0, lockHistory(), lockBackForwardList(), ReferrerPolicy::EmptyString, shouldOpenExternalURLs());
+            frame.loader().changeLocation(frame.document()->url(), "_self", 0, ReferrerPolicy::EmptyString, shouldOpenExternalURLs());
             return;
         }
         

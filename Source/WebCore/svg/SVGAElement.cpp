@@ -143,7 +143,7 @@ void SVGAElement::defaultEventHandler(Event& event)
             auto frame = makeRefPtr(document().frame());
             if (!frame)
                 return;
-            frame->loader().changeLocation(document().completeURL(url), target, &event, LockHistory::No, LockBackForwardList::No, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
+            frame->loader().changeLocation(document().completeURL(url), target, &event, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
             return;
         }
     }

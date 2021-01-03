@@ -517,7 +517,7 @@ void HTMLAnchorElement::handleClick(Event& event)
     // URL can be created. Thus, it should be empty for now.
     ASSERT(!privateClickMeasurement || privateClickMeasurement->reportURL().isNull());
     
-    frame->loader().changeLocation(completedURL, effectiveTarget, &event, LockHistory::No, LockBackForwardList::No, referrerPolicy, document().shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, systemPreviewInfo, WTFMove(privateClickMeasurement));
+    frame->loader().changeLocation(completedURL, effectiveTarget, &event, referrerPolicy, document().shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, systemPreviewInfo, WTFMove(privateClickMeasurement));
 
     sendPings(completedURL);
 }
