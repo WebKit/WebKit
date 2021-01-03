@@ -45,6 +45,8 @@ Here lies an `iframe` with no content/src:
 				<string>emptyFrame</string>
 				<key>WebResourceMIMEType</key>
 				<string>text/html</string>
+				<key>WebResourceTextEncodingName</key>
+				<string>UTF-8</string>
 				<key>WebResourceURL</key>
 				<string>about:blank</string>
 			</dict>

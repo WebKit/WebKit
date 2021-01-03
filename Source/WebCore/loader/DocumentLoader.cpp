@@ -1879,7 +1879,7 @@ bool DocumentLoader::maybeLoadEmpty()
     }
 
     String mimeType = shouldLoadEmpty ? "text/html" : frameLoader()->client().generatedMIMETypeForURLScheme(m_request.url().protocol().toStringWithoutCopying());
-    m_response = ResourceResponse(m_request.url(), mimeType, 0, String());
+    m_response = ResourceResponse(m_request.url(), mimeType, 0, "UTF-8"_s);
     finishedLoading();
     return true;
 }
