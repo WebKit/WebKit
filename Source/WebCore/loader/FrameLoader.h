@@ -321,6 +321,8 @@ public:
     // For subresource requests the FrameLoadType parameter has no effect and can be skipped.
     void addExtraFieldsToRequest(ResourceRequest&, IsMainResource, FrameLoadType = FrameLoadType::Standard);
 
+    void scheduleRefreshIfNeeded(Document&, const String& content);
+
 private:
     enum FormSubmissionCacheLoadPolicy {
         MayAttemptCacheOnlyLoadForFormSubmissionItem,

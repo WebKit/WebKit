@@ -3695,25 +3695,10 @@ void Document::processHttpEquiv(const String& equiv, const String& content, bool
         styleScope().setPreferredStylesheetSetName(content);
         break;
 
-    case HTTPHeaderName::Refresh: {
-        double delay = 0;
-        String urlString;
-        if (frame && parseMetaHTTPEquivRefresh(content, delay, urlString)) {
-            URL completedURL;
-            if (urlString.isEmpty())
-                completedURL = m_url;
-            else
-                completedURL = completeURL(urlString);
-            if (!completedURL.protocolIsJavaScript())
-                frame->navigationScheduler().scheduleRedirect(*this, delay, completedURL);
-            else {
-                String message = "Refused to refresh " + m_url.stringCenterEllipsizedToLength() + " to a javascript: URL";
-                addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
-            }
-        }
-
+    case HTTPHeaderName::Refresh:
+        if (frame)
+            frame->loader().scheduleRefreshIfNeeded(*this, content);
         break;
-    }
 
     case HTTPHeaderName::SetCookie:
         if (isHTMLDocument())

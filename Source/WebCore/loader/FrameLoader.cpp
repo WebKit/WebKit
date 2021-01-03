@@ -711,17 +711,7 @@ void FrameLoader::receivedFirstData()
 
     LinkLoader::loadLinksFromHeader(documentLoader.response().httpHeaderField(HTTPHeaderName::Link), document.url(), document, LinkLoader::MediaAttributeCheck::MediaAttributeEmpty);
 
-    double delay;
-    String urlString;
-    if (!parseMetaHTTPEquivRefresh(documentLoader.response().httpHeaderField(HTTPHeaderName::Refresh), delay, urlString))
-        return;
-    auto completedURL = urlString.isEmpty() ? document.url() : document.completeURL(urlString);
-    if (!completedURL.protocolIsJavaScript())
-        m_frame.navigationScheduler().scheduleRedirect(document, delay, completedURL);
-    else {
-        auto message = "Refused to refresh " + document.url().stringCenterEllipsizedToLength() + " to a javascript: URL";
-        document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
-    }
+    scheduleRefreshIfNeeded(document, documentLoader.response().httpHeaderField(HTTPHeaderName::Refresh));
 }
 
 void FrameLoader::setOutgoingReferrer(const URL& url)
@@ -2946,6 +2936,21 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, IsMainResour
     if (request.responseContentDispositionEncodingFallbackArray().isEmpty()) {
         // Always try UTF-8. If that fails, try frame encoding (if any) and then the default.
         request.setResponseContentDispositionEncodingFallbackArray("UTF-8", m_frame.document()->encoding(), m_frame.settings().defaultTextEncodingName());
+    }
+}
+
+void FrameLoader::scheduleRefreshIfNeeded(Document& document, const String& content)
+{
+    double delay = 0;
+    String urlString;
+    if (parseMetaHTTPEquivRefresh(content, delay, urlString)) {
+        auto completedURL = urlString.isEmpty() ? document.url() : document.completeURL(urlString);
+        if (!completedURL.protocolIsJavaScript())
+            m_frame.navigationScheduler().scheduleRedirect(document, delay, completedURL);
+        else {
+            String message = "Refused to refresh " + document.url().stringCenterEllipsizedToLength() + " to a javascript: URL";
+            document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
+        }
     }
 }
 
