@@ -109,7 +109,7 @@ struct BuildingState {
 };
 
 TreeBuilder::TreeBuilder(float pixelSnappingFactor)
-    : m_boxFactory(pixelSnappingFactor)
+    : m_boxFactory(*this, pixelSnappingFactor)
     , m_stateStack(makeUnique<Vector<BuildingState>>())
 {
     m_stateStack->reserveInitialCapacity(32);
@@ -126,6 +126,9 @@ std::unique_ptr<Tree> TreeBuilder::build(const Layout::LayoutState& layoutState)
 #if ENABLE(TREE_DEBUGGING)
     LOG_WITH_STREAM(FormattingContextLayout, stream << "Building display tree for:\n" << layoutTreeAsText(rootLayoutBox, &layoutState));
 #endif
+
+    ASSERT(!m_tree);
+    m_tree = makeUnique<Tree>();
 
     m_rootBackgroundPropgation = BoxFactory::determineRootBackgroundPropagation(rootLayoutBox);
 
@@ -144,7 +147,8 @@ std::unique_ptr<Tree> TreeBuilder::build(const Layout::LayoutState& layoutState)
 #if ENABLE(TREE_DEBUGGING)
     LOG_WITH_STREAM(FormattingContextLayout, stream << "Display tree:\n" << displayTreeAsText(*rootStackingItem));
 #endif
-    return makeUnique<Tree>(WTFMove(rootStackingItem));
+    m_tree->setRootStackingItem(WTFMove(rootStackingItem));
+    return WTFMove(m_tree);
 }
 
 void TreeBuilder::pushStateForBoxDescendants(const Layout::ContainerBox& layoutContainerBox, const Layout::BoxGeometry& layoutGeometry, const ContainerBox& displayBox, StackingItem* boxStackingItem)

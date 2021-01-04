@@ -34,18 +34,26 @@ namespace Display {
 
 class ContainerBox;
 class StackingItem;
+class View;
 
 class Tree {
     WTF_MAKE_FAST_ALLOCATED(Tree);
+    friend class TreeBuilder;
 public:
-    explicit Tree(std::unique_ptr<StackingItem>&&);
+    Tree();
     ~Tree();
+    
+    View* view() const { return m_view; }
+    void setView(View* view) { m_view = view; }
 
     const StackingItem& rootStackingItem() const { return *m_rootStackingItem; }
-    const ContainerBox& rootBox() const;
+     const ContainerBox& rootBox() const;
 
 private:
+    void setRootStackingItem(std::unique_ptr<StackingItem>&&);
+
     std::unique_ptr<StackingItem> m_rootStackingItem;
+    View* m_view { nullptr };
 };
 
 } // namespace Display

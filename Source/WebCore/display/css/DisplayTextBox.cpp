@@ -34,8 +34,8 @@
 namespace WebCore {
 namespace Display {
 
-TextBox::TextBox(AbsoluteFloatRect borderBox, Style&& displayStyle, const Layout::LineRun& lineRun)
-    : Box(borderBox, WTFMove(displayStyle), { TypeFlags::TextBox })
+TextBox::TextBox(Tree& tree, AbsoluteFloatRect borderBox, Style&& displayStyle, const Layout::LineRun& lineRun)
+    : Box(tree, borderBox, WTFMove(displayStyle), { TypeFlags::TextBox })
     , m_expansion(lineRun.expansion())
     , m_text(lineRun.text().value())
 {

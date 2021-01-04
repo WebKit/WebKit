@@ -33,8 +33,8 @@
 namespace WebCore {
 namespace Display {
 
-ReplacedBox::ReplacedBox(AbsoluteFloatRect borderBox, Style&& displayStyle, OptionSet<TypeFlags> flags)
-    : BoxModelBox(borderBox, WTFMove(displayStyle), flags)
+ReplacedBox::ReplacedBox(Tree& tree, AbsoluteFloatRect borderBox, Style&& displayStyle, OptionSet<TypeFlags> flags)
+    : BoxModelBox(tree, borderBox, WTFMove(displayStyle), flags)
 {
 }
 

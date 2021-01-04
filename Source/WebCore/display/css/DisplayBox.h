@@ -35,6 +35,8 @@
 namespace WebCore {
 namespace Display {
 
+class Tree;
+
 // FIXME: Make this a strong type.
 using AbsoluteFloatRect = FloatRect;
 
@@ -49,7 +51,7 @@ public:
         LineBreakBox    = 1 << 4, // FIXME: Workaround for webkit.org/b/219335
     };
 
-    Box(AbsoluteFloatRect, Style&&, OptionSet<TypeFlags> = { });
+    Box(Tree&, AbsoluteFloatRect, Style&&, OptionSet<TypeFlags> = { });
     virtual ~Box();
 
     const Style& style() const { return m_style; }
@@ -75,6 +77,7 @@ public:
 private:
     virtual const char* boxName() const;
 
+    const Tree& m_tree;
     AbsoluteFloatRect m_absoluteBoxRect;
     Style m_style;
     std::unique_ptr<Box> m_nextSibling;

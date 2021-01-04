@@ -34,8 +34,8 @@
 namespace WebCore {
 namespace Display {
 
-ImageBox::ImageBox(AbsoluteFloatRect borderBox, Style&& displayStyle, RefPtr<Image>&& image)
-    : ReplacedBox(borderBox, WTFMove(displayStyle), { TypeFlags::ImageBox })
+ImageBox::ImageBox(Tree& tree, AbsoluteFloatRect borderBox, Style&& displayStyle, RefPtr<Image>&& image)
+    : ReplacedBox(tree, borderBox, WTFMove(displayStyle), { TypeFlags::ImageBox })
     , m_image(WTFMove(image))
 {
 }

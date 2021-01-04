@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "DisplayTree.h"
 #include "FillLayer.h"
 #include "ShadowData.h"
 #include <wtf/IsoMallocInlines.h>
@@ -36,11 +37,13 @@
 namespace WebCore {
 namespace Display {
 
-Box::Box(AbsoluteFloatRect absoluteRect, Style&& displayStyle, OptionSet<TypeFlags> flags)
-    : m_absoluteBoxRect(absoluteRect)
+Box::Box(Tree& tree, AbsoluteFloatRect absoluteRect, Style&& displayStyle, OptionSet<TypeFlags> flags)
+    : m_tree(tree)
+    , m_absoluteBoxRect(absoluteRect)
     , m_style(WTFMove(displayStyle))
     , m_typeFlags(flags)
 {
+    UNUSED_PARAM(m_tree);
 }
 
 Box::~Box() = default;

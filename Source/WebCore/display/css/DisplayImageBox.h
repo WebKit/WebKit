@@ -40,7 +40,7 @@ class Style;
 class ImageBox : public ReplacedBox {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ImageBox);
 public:
-    ImageBox(AbsoluteFloatRect borderBox, Style&&, RefPtr<Image>&&);
+    ImageBox(Tree&, AbsoluteFloatRect borderBox, Style&&, RefPtr<Image>&&);
 
     Image* image() const { return m_image.get(); }
 

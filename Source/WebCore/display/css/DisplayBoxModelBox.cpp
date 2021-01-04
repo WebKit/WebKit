@@ -38,8 +38,8 @@
 namespace WebCore {
 namespace Display {
 
-BoxModelBox::BoxModelBox(AbsoluteFloatRect borderBox, Style&& displayStyle, OptionSet<TypeFlags> flags)
-    : Box(borderBox, WTFMove(displayStyle), flags | TypeFlags::BoxModelBox)
+BoxModelBox::BoxModelBox(Tree& tree, AbsoluteFloatRect borderBox, Style&& displayStyle, OptionSet<TypeFlags> flags)
+    : Box(tree, borderBox, WTFMove(displayStyle), flags | TypeFlags::BoxModelBox)
 {
 }
 

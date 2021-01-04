@@ -36,8 +36,7 @@ namespace Display {
 class TextBox : public Box {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(TextBox);
 public:
-
-    TextBox(AbsoluteFloatRect borderBox, Style&&, const Layout::LineRun&);
+    TextBox(Tree&, AbsoluteFloatRect borderBox, Style&&, const Layout::LineRun&);
 
     Layout::LineRun::Expansion expansion() const { return m_expansion; }
     const Layout::LineRun::Text& text() const { return m_text; }

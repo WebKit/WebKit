@@ -30,18 +30,19 @@
 
 #include "DisplayContainerBox.h"
 #include "DisplayStackingItem.h"
+#include "DisplayView.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 namespace Display {
 
-Tree::Tree(std::unique_ptr<StackingItem>&& rootStackingItem)
-    : m_rootStackingItem(WTFMove(rootStackingItem))
-{
-    ASSERT(m_rootStackingItem);
-}
-
+Tree::Tree() = default;
 Tree::~Tree() = default;
+
+void Tree::setRootStackingItem(std::unique_ptr<StackingItem>&& rootItem)
+{
+    m_rootStackingItem = WTFMove(rootItem);
+}
 
 const ContainerBox& Tree::rootBox() const
 {

@@ -55,6 +55,7 @@ class Tree;
 struct BuildingState;
 
 class TreeBuilder {
+    friend class BoxFactory;
 public:
     explicit TreeBuilder(float pixelSnappingFactor);
     ~TreeBuilder();
@@ -81,12 +82,15 @@ private:
 
     void didAppendNonContainerStackingItem(StackingItem&);
 
+    Tree& tree() const { return *m_tree; }
+
     BuildingState& currentState();
     const PositioningContext& positioningContext();
 
     BoxFactory m_boxFactory;
     RootBackgroundPropagation m_rootBackgroundPropgation { RootBackgroundPropagation::None };
 
+    std::unique_ptr<Tree> m_tree;
     std::unique_ptr<Vector<BuildingState>> m_stateStack;
 };
 

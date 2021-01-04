@@ -52,6 +52,7 @@ class BoxModelBox;
 class BoxRareGeometry;
 class ContainerBox;
 class Style;
+class TreeBuilder;
 
 enum class RootBackgroundPropagation : uint8_t {
     None,
@@ -65,8 +66,8 @@ struct ContainingBlockContext {
 
 class BoxFactory {
 public:
-    explicit BoxFactory(float pixelSnappingFactor);
-
+    BoxFactory(TreeBuilder&, float pixelSnappingFactor);
+    
     static RootBackgroundPropagation determineRootBackgroundPropagation(const Layout::ContainerBox& rootLayoutBox);
 
     std::unique_ptr<ContainerBox> displayBoxForRootBox(const Layout::ContainerBox&, const Layout::BoxGeometry&, RootBackgroundPropagation) const;
@@ -91,6 +92,7 @@ private:
     static const Layout::ContainerBox* documentElementBoxFromRootBox(const Layout::ContainerBox& rootLayoutBox);
     static const Layout::Box* bodyBoxFromRootBox(const Layout::ContainerBox& rootLayoutBox);
 
+    TreeBuilder& m_treeBuilder;
     float m_pixelSnappingFactor { 1 };
 };
 

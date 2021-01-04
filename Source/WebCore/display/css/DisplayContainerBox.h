@@ -35,7 +35,7 @@ namespace Display {
 class ContainerBox : public BoxModelBox {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ContainerBox);
 public:
-    ContainerBox(AbsoluteFloatRect borderBox, Style&&);
+    ContainerBox(Tree&, AbsoluteFloatRect borderBox, Style&&);
     
     const Box* firstChild() const { return m_firstChild.get(); }
     void setFirstChild(std::unique_ptr<Box>&&);

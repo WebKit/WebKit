@@ -36,6 +36,8 @@
 #include "DisplayFillLayerImageGeometry.h"
 #include "DisplayImageBox.h"
 #include "DisplayTextBox.h"
+#include "DisplayTree.h"
+#include "DisplayTreeBuilder.h"
 #include "FloatPoint3D.h"
 #include "InlineLineGeometry.h"
 #include "LayoutBoxGeometry.h"
@@ -48,8 +50,9 @@
 namespace WebCore {
 namespace Display {
 
-BoxFactory::BoxFactory(float pixelSnappingFactor)
-    : m_pixelSnappingFactor(pixelSnappingFactor)
+BoxFactory::BoxFactory(TreeBuilder& builder, float pixelSnappingFactor)
+    : m_treeBuilder(builder)
+    , m_pixelSnappingFactor(pixelSnappingFactor)
 {
 }
 
@@ -85,7 +88,7 @@ std::unique_ptr<ContainerBox> BoxFactory::displayBoxForRootBox(const Layout::Con
 
     auto style = Style { rootLayoutBox.style(), styleForBackground };
 
-    auto rootBox = makeUnique<ContainerBox>(snapRectToDevicePixels(borderBoxRect, m_pixelSnappingFactor), WTFMove(style));
+    auto rootBox = makeUnique<ContainerBox>(m_treeBuilder.tree(), snapRectToDevicePixels(borderBoxRect, m_pixelSnappingFactor), WTFMove(style));
     // We pass rootBox as its own containingBlockBox here to allow it to be a reference everywhere else.
     setupBoxModelBox(*rootBox, rootLayoutBox, geometry, { *rootBox, { 0, 0 } }, styleForBackground);
     return rootBox;
@@ -123,14 +126,14 @@ std::unique_ptr<Box> BoxFactory::displayBoxForLayoutBox(const Layout::Box& layou
         if (auto* cachedImage = downcast<Layout::ReplacedBox>(layoutBox).cachedImage())
             image = cachedImage->image();
 
-        auto imageBox = makeUnique<ImageBox>(pixelSnappedBorderBoxRect, WTFMove(style), WTFMove(image));
+        auto imageBox = makeUnique<ImageBox>(m_treeBuilder.tree(), pixelSnappedBorderBoxRect, WTFMove(style), WTFMove(image));
         setupBoxModelBox(*imageBox, layoutBox, geometry, containingBlockContext, styleForBackground);
         return imageBox;
     }
     
     if (is<Layout::ContainerBox>(layoutBox)) {
         // FIXME: The decision to make a ContainerBox should be made based on whether this Display::Box will have children.
-        auto containerBox = makeUnique<ContainerBox>(pixelSnappedBorderBoxRect, WTFMove(style));
+        auto containerBox = makeUnique<ContainerBox>(m_treeBuilder.tree(), pixelSnappedBorderBoxRect, WTFMove(style));
         setupBoxModelBox(*containerBox, layoutBox, geometry, containingBlockContext, styleForBackground);
         return containerBox;
     }
@@ -140,7 +143,7 @@ std::unique_ptr<Box> BoxFactory::displayBoxForLayoutBox(const Layout::Box& layou
     if (layoutBox.isLineBreakBox())
         flags.add(Box::TypeFlags::LineBreakBox);
 
-    return makeUnique<Box>(snapRectToDevicePixels(borderBoxRect, m_pixelSnappingFactor), WTFMove(style), flags);
+    return makeUnique<Box>(m_treeBuilder.tree(), snapRectToDevicePixels(borderBoxRect, m_pixelSnappingFactor), WTFMove(style), flags);
 }
 
 std::unique_ptr<Box> BoxFactory::displayBoxForTextRun(const Layout::LineRun& run, const Layout::InlineLineGeometry& lineGeometry, const ContainingBlockContext& containingBlockContext) const
@@ -154,7 +157,7 @@ std::unique_ptr<Box> BoxFactory::displayBoxForTextRun(const Layout::LineRun& run
     runRect.move(containingBlockContext.offsetFromRoot);
 
     auto style = Style { run.layoutBox().style() };
-    return makeUnique<TextBox>(snapRectToDevicePixels(runRect, m_pixelSnappingFactor), WTFMove(style), run);
+    return makeUnique<TextBox>(m_treeBuilder.tree(), snapRectToDevicePixels(runRect, m_pixelSnappingFactor), WTFMove(style), run);
 }
 
 void BoxFactory::setupBoxGeometry(BoxModelBox& box, const Layout::Box&, const Layout::BoxGeometry& layoutGeometry, const ContainingBlockContext& containingBlockContext) const
