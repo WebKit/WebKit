@@ -1,3 +1,21 @@
+2021-01-04  Jeff Miller  <jeffm@apple.com>
+
+        Update user-visible copyright strings to include 2021
+        https://bugs.webkit.org/show_bug.cgi?id=219901
+
+        Reviewed by Anders Carlsson.
+
+        * GPUProcess/EntryPoint/Cocoa/XPCService/GPUService/Info-OSX.plist:
+        * GPUProcess/EntryPoint/Cocoa/XPCService/GPUService/Info-iOS.plist:
+        * Info.plist:
+        * NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkService/Info-OSX.plist:
+        * NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkService/Info-iOS.plist:
+        * PluginProcess/EntryPoint/Cocoa/XPCService/PluginService.Info.plist:
+        * WebAuthnProcess/EntryPoint/Cocoa/XPCService/WebAuthnService/Info-OSX.plist:
+        * WebAuthnProcess/EntryPoint/Cocoa/XPCService/WebAuthnService/Info-iOS.plist:
+        * WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-OSX.plist:
+        * WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-iOS.plist:
+
 2021-01-02  Rob Buis  <rbuis@igalia.com>
 
         Remove some FrameLoader::changeLocation parameters

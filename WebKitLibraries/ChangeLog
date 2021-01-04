@@ -1,3 +1,12 @@
+2021-01-04  Jeff Miller  <jeffm@apple.com>
+
+        Update user-visible copyright strings to include 2021
+        https://bugs.webkit.org/show_bug.cgi?id=219901
+
+        Reviewed by Anders Carlsson.
+
+        * win/tools/scripts/COPYRIGHT-END-YEAR:
+
 2020-10-08  Keith Rollin  <krollin@apple.com>
 
         Remove copy-webkitlibraries-to-product-directory
