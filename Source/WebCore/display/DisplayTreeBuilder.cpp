@@ -264,6 +264,7 @@ const PositioningContext& TreeBuilder::positioningContext()
 
 void TreeBuilder::insert(std::unique_ptr<Box>&& box, InsertionPosition& insertionPosition) const
 {
+    box->setParent(&insertionPosition.container);
     if (insertionPosition.currentChild) {
         auto boxPtr = box.get();
         insertionPosition.currentChild->setNextSibling(WTFMove(box));

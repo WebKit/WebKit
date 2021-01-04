@@ -35,6 +35,7 @@
 namespace WebCore {
 namespace Display {
 
+class ContainerBox;
 class Tree;
 
 // FIXME: Make this a strong type.
@@ -69,6 +70,9 @@ public:
 
     bool participatesInZOrderSorting() const;
 
+    ContainerBox* parent() const { return m_parent; }
+    void setParent(ContainerBox* parent) { m_parent = parent; }
+
     const Box* nextSibling() const { return m_nextSibling.get(); }
     void setNextSibling(std::unique_ptr<Box>&&);
 
@@ -80,6 +84,7 @@ private:
     const Tree& m_tree;
     AbsoluteFloatRect m_absoluteBoxRect;
     Style m_style;
+    ContainerBox* m_parent { nullptr };
     std::unique_ptr<Box> m_nextSibling;
     OptionSet<TypeFlags> m_typeFlags;
 };
