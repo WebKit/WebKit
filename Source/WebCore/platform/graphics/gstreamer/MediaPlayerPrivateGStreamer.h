@@ -251,7 +251,6 @@ protected:
         VolumeChanged = 1 << 3,
         MuteChanged = 1 << 4,
         TextChanged = 1 << 5,
-        SizeChanged = 1 << 6,
         StreamCollectionChanged = 1 << 7
     };
 
@@ -305,7 +304,6 @@ protected:
     void readyTimerFired();
 
     void notifyPlayerOfVideo();
-    void notifyPlayerOfVideoCaps();
     void notifyPlayerOfAudio();
     void notifyPlayerOfText();
     void newTextSample();
@@ -317,7 +315,6 @@ protected:
 
     static void sourceSetupCallback(MediaPlayerPrivateGStreamer*, GstElement*);
     static void videoChangedCallback(MediaPlayerPrivateGStreamer*);
-    static void videoSinkCapsChangedCallback(MediaPlayerPrivateGStreamer*);
     static void audioChangedCallback(MediaPlayerPrivateGStreamer*);
     static void textChangedCallback(MediaPlayerPrivateGStreamer*);
     static GstFlowReturn newTextSampleCallback(MediaPlayerPrivateGStreamer*);
@@ -456,6 +453,8 @@ private:
     void loadFull(const String& url, const String& pipelineName);
 
     void updateTracks(GRefPtr<GstStreamCollection>&&);
+    void videoSinkCapsChanged(GstPad*);
+    void updateVideoSizeAndOrientationFromCaps(const GstCaps*);
 
 #if ENABLE(ENCRYPTED_MEDIA)
     bool isCDMAttached() const { return m_cdmInstance; }

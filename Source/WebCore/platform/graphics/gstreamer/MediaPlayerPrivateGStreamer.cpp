@@ -1081,17 +1081,36 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
     m_player->mediaEngineUpdated();
 }
 
-void MediaPlayerPrivateGStreamer::videoSinkCapsChangedCallback(MediaPlayerPrivateGStreamer* player)
+void MediaPlayerPrivateGStreamer::videoSinkCapsChanged(GstPad* videoSinkPad)
 {
-    player->m_notifier->notify(MainThreadNotification::VideoCapsChanged, [player] {
-        player->notifyPlayerOfVideoCaps();
-    });
-}
+    GRefPtr<GstCaps> caps = adoptGRef(gst_pad_get_current_caps(videoSinkPad));
+    if (!caps) {
+        // This can happen when downgrading the state of the pipeline, which causes the caps to be unset.
+        return;
+    }
+    // We're in videoSinkPad streaming thread.
+    ASSERT(!isMainThread());
+    GST_DEBUG_OBJECT(videoSinkPad, "Received new caps: %" GST_PTR_FORMAT, caps.get());
 
-void MediaPlayerPrivateGStreamer::notifyPlayerOfVideoCaps()
-{
-    m_videoSize = IntSize();
-    m_player->mediaEngineUpdated();
+    bool hasFirstSampleReachedSink;
+    // This actually lacks contention since both notify::caps and triggerRepaint() are both run in the same streaming thread.
+    {
+        auto sampleLocker = holdLock(m_sampleMutex);
+        hasFirstSampleReachedSink = !!m_sample;
+    }
+
+    if (!hasFirstSampleReachedSink) {
+        // We want to wait for the sink to receive the first buffer before emitting dimensions, since only by then we
+        // are guaranteed that any potential tag event with a rotation has been handled.
+        GST_DEBUG_OBJECT(videoSinkPad, "Ignoring notify::caps until the first buffer reaches the sink.");
+        return;
+    }
+
+    RunLoop::main().dispatch([weakThis = makeWeakPtr(this), this, caps = WTFMove(caps)] {
+        if (!weakThis)
+            return;
+        updateVideoSizeAndOrientationFromCaps(caps.get());
+    });
 }
 
 void MediaPlayerPrivateGStreamer::audioChangedCallback(MediaPlayerPrivateGStreamer* player)
@@ -1704,66 +1723,6 @@ FloatSize MediaPlayerPrivateGStreamer::naturalSize() const
     if (!hasVideo())
         return FloatSize();
 
-    if (!m_videoSize.isEmpty())
-        return m_videoSize;
-
-    auto sampleLocker = holdLock(m_sampleMutex);
-    if (!GST_IS_SAMPLE(m_sample.get()))
-        return FloatSize();
-
-    GstCaps* caps = gst_sample_get_caps(m_sample.get());
-    if (!caps)
-        return FloatSize();
-
-    // TODO: handle possible clean aperture data. See https://bugzilla.gnome.org/show_bug.cgi?id=596571
-    // TODO: handle possible transformation matrix. See https://bugzilla.gnome.org/show_bug.cgi?id=596326
-
-    // Get the video PAR and original size, if this fails the
-    // video-sink has likely not yet negotiated its caps.
-    int pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride;
-    IntSize originalSize;
-    GstVideoFormat format;
-    if (!getVideoSizeAndFormatFromCaps(caps, originalSize, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride))
-        return FloatSize();
-
-#if USE(TEXTURE_MAPPER_GL)
-    // When using accelerated compositing, if the video is tagged as rotated 90 or 270 degrees, swap width and height.
-    if (m_canRenderingBeAccelerated) {
-        if (m_videoSourceOrientation.usesWidthAsHeight())
-            originalSize = originalSize.transposedSize();
-    }
-#endif
-
-    GST_DEBUG_OBJECT(pipeline(), "Original video size: %dx%d", originalSize.width(), originalSize.height());
-    GST_DEBUG_OBJECT(pipeline(), "Pixel aspect ratio: %d/%d", pixelAspectRatioNumerator, pixelAspectRatioDenominator);
-
-    // Calculate DAR based on PAR and video size.
-    int displayWidth = originalSize.width() * pixelAspectRatioNumerator;
-    int displayHeight = originalSize.height() * pixelAspectRatioDenominator;
-
-    // Divide display width and height by their GCD to avoid possible overflows.
-    int displayAspectRatioGCD = gst_util_greatest_common_divisor(displayWidth, displayHeight);
-    displayWidth /= displayAspectRatioGCD;
-    displayHeight /= displayAspectRatioGCD;
-
-    // Apply DAR to original video size. This is the same behavior as in xvimagesink's setcaps function.
-    uint64_t width = 0, height = 0;
-    if (!(originalSize.height() % displayHeight)) {
-        GST_DEBUG_OBJECT(pipeline(), "Keeping video original height");
-        width = gst_util_uint64_scale_int(originalSize.height(), displayWidth, displayHeight);
-        height = originalSize.height();
-    } else if (!(originalSize.width() % displayWidth)) {
-        GST_DEBUG_OBJECT(pipeline(), "Keeping video original width");
-        height = gst_util_uint64_scale_int(originalSize.width(), displayHeight, displayWidth);
-        width = originalSize.width();
-    } else {
-        GST_DEBUG_OBJECT(pipeline(), "Approximating while keeping original video height");
-        width = gst_util_uint64_scale_int(originalSize.height(), displayWidth, displayHeight);
-        height = originalSize.height();
-    }
-
-    GST_DEBUG_OBJECT(pipeline(), "Natural size: %" G_GUINT64_FORMAT "x%" G_GUINT64_FORMAT, width, height);
-    m_videoSize = FloatSize(static_cast<int>(width), static_cast<int>(height));
     return m_videoSize;
 }
 
@@ -2064,21 +2023,6 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
     case GST_MESSAGE_TOC:
         processTableOfContents(message);
         break;
-    case GST_MESSAGE_TAG: {
-        GstTagList* tags = nullptr;
-        GUniqueOutPtr<gchar> tag;
-        gst_message_parse_tag(message, &tags);
-        if (gst_tag_list_get_string(tags, GST_TAG_IMAGE_ORIENTATION, &tag.outPtr())) {
-            if (!g_strcmp0(tag.get(), "rotate-90"))
-                setVideoSourceOrientation(ImageOrientation::OriginRightTop);
-            else if (!g_strcmp0(tag.get(), "rotate-180"))
-                setVideoSourceOrientation(ImageOrientation::OriginBottomRight);
-            else if (!g_strcmp0(tag.get(), "rotate-270"))
-                setVideoSourceOrientation(ImageOrientation::OriginLeftBottom);
-        }
-        gst_tag_list_unref(tags);
-        break;
-    }
     case GST_MESSAGE_STREAMS_SELECTED: {
         if (m_isLegacyPlaybin)
             break;
@@ -2860,7 +2804,9 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url, const String&
 
     GRefPtr<GstPad> videoSinkPad = adoptGRef(gst_element_get_static_pad(m_videoSink.get(), "sink"));
     if (videoSinkPad)
-        g_signal_connect_swapped(videoSinkPad.get(), "notify::caps", G_CALLBACK(videoSinkCapsChangedCallback), this);
+        g_signal_connect(videoSinkPad.get(), "notify::caps", G_CALLBACK(+[](GstPad* videoSinkPad, GParamSpec*, MediaPlayerPrivateGStreamer* player) {
+            player->videoSinkCapsChanged(videoSinkPad);
+        }), this);
 }
 
 bool MediaPlayerPrivateGStreamer::didPassCORSAccessCheck() const
@@ -3020,8 +2966,100 @@ void MediaPlayerPrivateGStreamer::repaint()
     m_drawCondition.notifyOne();
 }
 
+static ImageOrientation getVideoOrientation(GstElement* sink)
+{
+    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(sink, "sink"));
+    ASSERT(pad);
+    GRefPtr<GstEvent> tagsEvent = adoptGRef(gst_pad_get_sticky_event(pad.get(), GST_EVENT_TAG, 0));
+    if (!tagsEvent) {
+        GST_DEBUG_OBJECT(pad.get(), "No sticky tag event, applying no rotation.");
+        return ImageOrientation::OriginTopLeft;
+    }
+
+    GstTagList* tagList;
+    gst_event_parse_tag(tagsEvent.get(), &tagList);
+    ASSERT(tagList);
+    GUniqueOutPtr<gchar> tag;
+    if (!gst_tag_list_get_string(tagList, GST_TAG_IMAGE_ORIENTATION, &tag.outPtr())) {
+        GST_DEBUG_OBJECT(pad.get(), "No image_orientation tag, applying no rotation.");
+        return ImageOrientation::OriginTopLeft;
+    }
+
+    GST_DEBUG_OBJECT(pad.get(), "Found image_orientation tag: %s", tag.get());
+    if (!g_strcmp0(tag.get(), "rotate-90"))
+        return ImageOrientation::OriginRightTop;
+    if (!g_strcmp0(tag.get(), "rotate-180"))
+        return ImageOrientation::OriginBottomRight;
+    if (!g_strcmp0(tag.get(), "rotate-270"))
+        return ImageOrientation::OriginLeftBottom;
+    // Default rotation.
+    return ImageOrientation::OriginTopLeft;
+}
+
+void MediaPlayerPrivateGStreamer::updateVideoSizeAndOrientationFromCaps(const GstCaps* caps)
+{
+    ASSERT(isMainThread());
+
+    // TODO: handle possible clean aperture data. See https://bugzilla.gnome.org/show_bug.cgi?id=596571
+    // TODO: handle possible transformation matrix. See https://bugzilla.gnome.org/show_bug.cgi?id=596326
+
+    // Get the video PAR and original size, if this fails the
+    // video-sink has likely not yet negotiated its caps.
+    int pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride;
+    IntSize originalSize;
+    GstVideoFormat format;
+    if (!getVideoSizeAndFormatFromCaps(caps, originalSize, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride)) {
+        GST_WARNING("Failed to get size and format from caps: %" GST_PTR_FORMAT, caps);
+        return;
+    }
+
+    setVideoSourceOrientation(getVideoOrientation(m_videoSink.get()));
+
+#if USE(TEXTURE_MAPPER_GL)
+    // When using accelerated compositing, if the video is tagged as rotated 90 or 270 degrees, swap width and height.
+    if (m_canRenderingBeAccelerated) {
+        if (m_videoSourceOrientation.usesWidthAsHeight())
+            originalSize = originalSize.transposedSize();
+    }
+#endif
+
+    GST_DEBUG_OBJECT(pipeline(), "Original video size: %dx%d", originalSize.width(), originalSize.height());
+    GST_DEBUG_OBJECT(pipeline(), "Pixel aspect ratio: %d/%d", pixelAspectRatioNumerator, pixelAspectRatioDenominator);
+
+    // Calculate DAR based on PAR and video size.
+    int displayWidth = originalSize.width() * pixelAspectRatioNumerator;
+    int displayHeight = originalSize.height() * pixelAspectRatioDenominator;
+
+    // Divide display width and height by their GCD to avoid possible overflows.
+    int displayAspectRatioGCD = gst_util_greatest_common_divisor(displayWidth, displayHeight);
+    displayWidth /= displayAspectRatioGCD;
+    displayHeight /= displayAspectRatioGCD;
+
+    // Apply DAR to original video size. This is the same behavior as in xvimagesink's setcaps function.
+    uint64_t width = 0, height = 0;
+    if (!(originalSize.height() % displayHeight)) {
+        GST_DEBUG_OBJECT(pipeline(), "Keeping video original height");
+        width = gst_util_uint64_scale_int(originalSize.height(), displayWidth, displayHeight);
+        height = originalSize.height();
+    } else if (!(originalSize.width() % displayWidth)) {
+        GST_DEBUG_OBJECT(pipeline(), "Keeping video original width");
+        height = gst_util_uint64_scale_int(originalSize.width(), displayHeight, displayWidth);
+        width = originalSize.width();
+    } else {
+        GST_DEBUG_OBJECT(pipeline(), "Approximating while keeping original video height");
+        width = gst_util_uint64_scale_int(originalSize.height(), displayWidth, displayHeight);
+        height = originalSize.height();
+    }
+
+    GST_DEBUG_OBJECT(pipeline(), "Saving natural size: %" G_GUINT64_FORMAT "x%" G_GUINT64_FORMAT, width, height);
+    m_videoSize = FloatSize(static_cast<int>(width), static_cast<int>(height));
+    m_player->sizeChanged();
+}
+
 void MediaPlayerPrivateGStreamer::triggerRepaint(GstSample* sample)
 {
+    ASSERT(!isMainThread());
+
     bool shouldTriggerResize;
     {
         auto sampleLocker = holdLock(m_sampleMutex);
@@ -3031,8 +3069,15 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GstSample* sample)
 
     if (shouldTriggerResize) {
         GST_DEBUG_OBJECT(pipeline(), "First sample reached the sink, triggering video dimensions update");
-        m_notifier->notify(MainThreadNotification::SizeChanged, [this] {
-            m_player->sizeChanged();
+        GRefPtr<GstCaps> caps(gst_sample_get_caps(sample));
+        if (!caps) {
+            GST_ERROR_OBJECT(pipeline(), "Received sample without caps: %" GST_PTR_FORMAT, sample);
+            return;
+        }
+        RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), this, caps = WTFMove(caps)] {
+            if (!weakThis)
+                return;
+            updateVideoSizeAndOrientationFromCaps(caps.get());
         });
     }
 
