@@ -49,6 +49,13 @@ const ContainerBox& Tree::rootBox() const
     return downcast<ContainerBox>(m_rootStackingItem->box());
 }
 
+void Tree::setBoxNeedsDisplay(Box&, Optional<AbsoluteFloatRect>) const
+{
+    // FIXME: For now, just repaint the world.
+    if (m_view)
+        m_view->setNeedsDisplay();
+}
+
 } // namespace Display
 } // namespace WebCore
 

@@ -105,6 +105,11 @@ void LayerController::prepareForDisplay(Tree& displayTree)
     m_contentLayer->setAcceleratesDrawing(acceleratedDrawingEnabled);
 }
 
+void LayerController::setNeedsDisplay()
+{
+    m_contentLayer->setNeedsDisplay();
+}
+
 void LayerController::flushLayers()
 {
     if (!m_rootLayer)

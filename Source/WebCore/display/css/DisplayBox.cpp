@@ -43,7 +43,6 @@ Box::Box(Tree& tree, AbsoluteFloatRect absoluteRect, Style&& displayStyle, Optio
     , m_style(WTFMove(displayStyle))
     , m_typeFlags(flags)
 {
-    UNUSED_PARAM(m_tree);
 }
 
 Box::~Box() = default;
@@ -56,6 +55,11 @@ void Box::setNextSibling(std::unique_ptr<Box>&& box)
 bool Box::participatesInZOrderSorting() const
 {
     return !isLineBreakBox() && style().participatesInZOrderSorting();
+}
+
+void Box::setNeedsDisplay(Optional<AbsoluteFloatRect> subrect)
+{
+    m_tree.setBoxNeedsDisplay(*this, subrect);
 }
 
 const char* Box::boxName() const

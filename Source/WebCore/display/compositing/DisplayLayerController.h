@@ -52,6 +52,9 @@ public:
 
     void setIsInWindow(bool);
 
+    // FIXME: Temporary.
+    void setNeedsDisplay();
+
     const View& view() const { return m_view; }
 
 private:

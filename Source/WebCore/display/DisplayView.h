@@ -62,6 +62,9 @@ public:
     FrameView& frameView() const { return m_frameView; }
     Frame& frame() const;
 
+    // FIXME: Temporary.
+    void setNeedsDisplay();
+
     float deviceScaleFactor() const;
 
 private:

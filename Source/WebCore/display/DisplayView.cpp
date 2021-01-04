@@ -79,6 +79,7 @@ void View::prepareForDisplay()
 
     auto treeBuilder = TreeBuilder { deviceScaleFactor() };
     m_displayTree = treeBuilder.build(*layoutState);
+    m_displayTree->setView(this);
 
     m_layerController.prepareForDisplay(*m_displayTree);
 }
@@ -86,6 +87,11 @@ void View::prepareForDisplay()
 void View::flushLayers()
 {
     m_layerController.flushLayers();
+}
+
+void View::setNeedsDisplay()
+{
+    m_layerController.setNeedsDisplay();
 }
 
 void View::setIsInWindow(bool isInWindow)

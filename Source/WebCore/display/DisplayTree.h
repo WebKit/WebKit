@@ -27,14 +27,18 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FloatRect.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
 namespace Display {
 
+class Box;
 class ContainerBox;
 class StackingItem;
 class View;
+
+using AbsoluteFloatRect = FloatRect;
 
 class Tree {
     WTF_MAKE_FAST_ALLOCATED(Tree);
@@ -48,6 +52,8 @@ public:
 
     const StackingItem& rootStackingItem() const { return *m_rootStackingItem; }
      const ContainerBox& rootBox() const;
+
+    void setBoxNeedsDisplay(Box&, Optional<AbsoluteFloatRect> subrect = WTF::nullopt) const;
 
 private:
     void setRootStackingItem(std::unique_ptr<StackingItem>&&);
