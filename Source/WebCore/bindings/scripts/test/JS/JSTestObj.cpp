@@ -1591,7 +1591,6 @@ static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_singleConditionalOve
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_attachShadowRoot);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_operationWithExternalDictionaryParameter);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_bufferSourceParameter);
-static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_legacyCallerNamed);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_testReturnValueOptimization);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_testReturnValueOptimizationWithException);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_conditionallyExposedToWindowFunction);
@@ -2323,7 +2322,6 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "attachShadowRoot", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunction_attachShadowRoot), (intptr_t) (1) } },
     { "operationWithExternalDictionaryParameter", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunction_operationWithExternalDictionaryParameter), (intptr_t) (1) } },
     { "bufferSourceParameter", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunction_bufferSourceParameter), (intptr_t) (1) } },
-    { "legacyCallerNamed", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunction_legacyCallerNamed), (intptr_t) (1) } },
     { "testReturnValueOptimization", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunction_testReturnValueOptimization), (intptr_t) (2) } },
     { "testReturnValueOptimizationWithException", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunction_testReturnValueOptimizationWithException), (intptr_t) (2) } },
     { "conditionallyExposedToWindowFunction", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunction_conditionallyExposedToWindowFunction), (intptr_t) (0) } },
@@ -2538,75 +2536,6 @@ void JSTestObj::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlo
     for (unsigned i = 0, count = thisObject->wrapped().length(); i < count; ++i)
         propertyNames.add(Identifier::from(vm, i));
     JSObject::getOwnPropertyNames(object, lexicalGlobalObject, propertyNames, mode);
-}
-
-static inline EncodedJSValue callJSTestObj1(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
-{
-    VM& vm = lexicalGlobalObject->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    auto* castedThis = jsCast<JSTestObj*>(callFrame->jsCallee());
-    ASSERT(castedThis);
-    auto& impl = castedThis->wrapped();
-    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto param = convert<IDLLong>(*lexicalGlobalObject, argument0.value());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    throwScope.release();
-    impl.legacyCallerNamed(WTFMove(param));
-    return JSValue::encode(jsUndefined());
-}
-
-static inline EncodedJSValue callJSTestObj2(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
-{
-    VM& vm = lexicalGlobalObject->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    auto* castedThis = jsCast<JSTestObj*>(callFrame->jsCallee());
-    ASSERT(castedThis);
-    auto& impl = castedThis->wrapped();
-    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto param = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLLong>(impl.legacyCallerOperationFromBindings(WTFMove(param)))));
-}
-
-static inline EncodedJSValue callJSTestObj3(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
-{
-    VM& vm = lexicalGlobalObject->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    auto* castedThis = jsCast<JSTestObj*>(callFrame->jsCallee());
-    ASSERT(castedThis);
-    auto& impl = castedThis->wrapped();
-    throwScope.release();
-    impl.legacyCallerOperationFromBindings();
-    return JSValue::encode(jsUndefined());
-}
-
-JSC_DEFINE_HOST_FUNCTION(callJSTestObj, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
-{
-    VM& vm = lexicalGlobalObject->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    size_t argsCount = std::min<size_t>(1, callFrame->argumentCount());
-    if (argsCount == 0) {
-        RELEASE_AND_RETURN(throwScope, (callJSTestObj3(lexicalGlobalObject, callFrame)));
-    }
-    if (argsCount == 1) {
-        JSValue distinguishingArg = callFrame->uncheckedArgument(0);
-        if (distinguishingArg.isNumber())
-            RELEASE_AND_RETURN(throwScope, (callJSTestObj1(lexicalGlobalObject, callFrame)));
-        RELEASE_AND_RETURN(throwScope, (callJSTestObj2(lexicalGlobalObject, callFrame)));
-    }
-    return throwVMTypeError(lexicalGlobalObject, throwScope);
-}
-
-CallData JSTestObj::getCallData(JSCell*)
-{
-    CallData callData;
-    callData.type = CallData::Type::Native;
-    callData.native.function = callJSTestObj;
-    return callData;
 }
 
 template<> inline JSTestObj* IDLAttribute<JSTestObj>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
@@ -9289,28 +9218,6 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_bufferSourceParamet
 JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_bufferSourceParameter, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_bufferSourceParameterBody>(*lexicalGlobalObject, *callFrame, "bufferSourceParameter");
-}
-
-static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_legacyCallerNamedBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
-{
-    auto& vm = JSC::getVM(lexicalGlobalObject);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(callFrame);
-    auto& impl = castedThis->wrapped();
-    if (UNLIKELY(callFrame->argumentCount() < 1))
-        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto param = convert<IDLLong>(*lexicalGlobalObject, argument0.value());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    throwScope.release();
-    impl.legacyCallerNamed(WTFMove(param));
-    return JSValue::encode(jsUndefined());
-}
-
-JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_legacyCallerNamed, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
-{
-    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_legacyCallerNamedBody>(*lexicalGlobalObject, *callFrame, "legacyCallerNamed");
 }
 
 static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_testReturnValueOptimizationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)

@@ -167,7 +167,6 @@ sub GenerateInterface
     AddMapLikeAttributesAndOperationIfNeeded($interface);
     AddSetLikeAttributesAndOperationIfNeeded($interface);
     AddStringifierOperationIfNeeded($interface);
-    AddLegacyCallerOperationIfNeeded($interface);
 
     if ($interface->isCallback) {
         $object->GenerateCallbackInterfaceHeader($interface, $enumerations, $dictionaries);
@@ -484,23 +483,6 @@ sub AddStringifierOperationIfNeeded
 
         push(@{$interface->operations}, $stringifier);
         return;
-    }
-}
-
-sub AddLegacyCallerOperationIfNeeded
-{
-    my $interface = shift;
-
-    foreach my $operation (@{$interface->operations}, @{$interface->anonymousOperations}) {
-        if ($operation->extendedAttributes->{LegacyCaller}) {
-            $interface->{LegacyCallers} = [] if !exists $interface->{LegacyCallers};
-
-            my $clonedOperation = IDLParser::cloneOperation($operation);
-            push(@{$interface->{LegacyCallers}}, $clonedOperation);
-    
-            $clonedOperation->{overloads} = $interface->{LegacyCallers};
-            $clonedOperation->{overloadIndex} = @{$interface->{LegacyCallers}};
-        }
     }
 }
 
@@ -5918,17 +5900,6 @@ sub GenerateGetCallData
 
     return if $interface->extendedAttributes->{CustomGetCallData};
 
-    if ($interface->extendedAttributes->{Plugin}) {
-        GeneratePluginCall($outputArray, $interface, $className);
-    } else {
-        GenerateLegacyCallerDefinitions($outputArray, $interface, $className);
-    }
-}
-
-sub GeneratePluginCall
-{
-    my ($outputArray, $interface, $className) = @_;
-
     AddToImplIncludes("JSPluginElementFunctions.h");
 
     push(@$outputArray, "CallData ${className}::getCallData(JSCell* cell)\n");
@@ -5939,74 +5910,6 @@ sub GeneratePluginCall
     push(@$outputArray, "    return pluginElementCustomGetCallData(thisObject);\n");
     push(@$outputArray, "}\n");
     push(@$outputArray, "\n");
-}
-
-sub GenerateLegacyCallerDefinitions
-{
-    my ($outputArray, $interface, $className) = @_;
-
-    my @legacyCallers = @{$interface->{LegacyCallers}};
-    if (@legacyCallers > 1) {
-        foreach my $legacyCaller (@legacyCallers) {
-            GenerateLegacyCallerDefinition($outputArray, $interface, $className, $legacyCaller);
-        }
-
-        my $overloadFunctionPrefix = "call${className}";
-
-        push(@$outputArray, "JSC_DEFINE_HOST_FUNCTION(${overloadFunctionPrefix}, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))\n");
-        push(@$outputArray, "{\n");
-        push(@$outputArray, "    VM& vm = lexicalGlobalObject->vm();\n");
-        push(@$outputArray, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
-        push(@$outputArray, "    UNUSED_PARAM(throwScope);\n");
-
-        GenerateOverloadDispatcher($legacyCallers[0], $interface, $overloadFunctionPrefix, "", "lexicalGlobalObject, callFrame");
-
-        push(@$outputArray, "}\n\n");
-    } else {
-        GenerateLegacyCallerDefinition($outputArray, $interface, $className, $legacyCallers[0]);
-    }
-
-    push(@$outputArray, "CallData ${className}::getCallData(JSCell*)\n");
-    push(@$outputArray, "{\n");
-    push(@$outputArray, "    CallData callData;\n");
-    push(@$outputArray, "    callData.type = CallData::Type::Native;\n");
-    push(@$outputArray, "    callData.native.function = call${className};\n");
-    push(@$outputArray, "    return callData;\n");
-    push(@$outputArray, "}\n");
-    push(@$outputArray, "\n");
-}
-
-sub GenerateLegacyCallerDefinition
-{
-    my ($outputArray, $interface, $className, $operation) = @_;
-
-    my $isOverloaded = $operation->{overloads} && @{$operation->{overloads}} > 1;
-    if ($isOverloaded) {
-        push(@$outputArray, "static inline EncodedJSValue call${className}$operation->{overloadIndex}(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)\n");
-    } else {
-        push(@$outputArray, "static JSC_DECLARE_HOST_FUNCTION(call${className});\n");
-        push(@$outputArray, "JSC_DEFINE_HOST_FUNCTION(call${className}, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))\n");
-    }
-
-    push(@$outputArray, "{\n");
-    push(@$outputArray, "    VM& vm = lexicalGlobalObject->vm();\n");
-    push(@$outputArray, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
-    push(@$outputArray, "    UNUSED_PARAM(throwScope);\n");
-
-    my $indent = "    ";
-    GenerateArgumentsCountCheck($outputArray, $operation, $interface, $indent);
-
-    push(@$outputArray, "    auto* castedThis = jsCast<${className}*>(callFrame->jsCallee());\n");
-    push(@$outputArray, "    ASSERT(castedThis);\n");
-    push(@$outputArray, "    auto& impl = castedThis->wrapped();\n");
-
-    my $functionImplementationName = $operation->extendedAttributes->{ImplementedAs} || $codeGenerator->WK_lcfirst($operation->name) || "legacyCallerOperationFromBindings";
-    my $functionString = GenerateParametersCheck($outputArray, $operation, $interface, $functionImplementationName, $indent);
-
-    my $hasThrowScope = 1;
-    GenerateImplementationFunctionCall($outputArray, $operation, $interface, $functionString, $indent, $hasThrowScope);
-
-    push(@$outputArray, "}\n\n");
 }
 
 sub GenerateCallWithUsingReferences
@@ -8016,7 +7919,7 @@ sub IsConstructable
 sub InstanceOverridesGetCallData
 {
     my $interface = shift;
-    return $interface->{LegacyCallers} || $interface->extendedAttributes->{CustomGetCallData} || $interface->extendedAttributes->{Plugin};
+    return $interface->extendedAttributes->{CustomGetCallData} || $interface->extendedAttributes->{Plugin};
 }
 
 sub HeaderNeedsPrototypeDeclaration

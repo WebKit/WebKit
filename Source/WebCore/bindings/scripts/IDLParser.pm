@@ -549,43 +549,6 @@ sub cloneType
     return $clonedType;
 }
 
-sub cloneArgument
-{
-    my $argument = shift;
-
-    my $clonedArgument = IDLArgument->new();
-    $clonedArgument->name($argument->name);
-    $clonedArgument->type(cloneType($argument->type));
-    $clonedArgument->isVariadic($argument->isVariadic);
-    $clonedArgument->isOptional($argument->isOptional);
-    $clonedArgument->default($argument->default);
-    copyExtendedAttributes($clonedArgument->extendedAttributes, $argument->extendedAttributes);
-
-    return $clonedArgument;
-}
-
-sub cloneOperation
-{
-    my $operation = shift;
-
-    my $clonedOperation = IDLOperation->new();
-    $clonedOperation->name($operation->name);
-    $clonedOperation->type(cloneType($operation->type));
-    
-    foreach my $argument (@{$operation->arguments}) {
-        push(@{$clonedOperation->arguments}, cloneArgument($argument));
-    }
-
-    $clonedOperation->isConstructor($operation->isConstructor);
-    $clonedOperation->isStatic($operation->isStatic);
-    $clonedOperation->isStringifier($operation->isStringifier);
-    $clonedOperation->specials($operation->specials);
-
-    copyExtendedAttributes($clonedOperation->extendedAttributes, $operation->extendedAttributes);
-
-    return $clonedOperation;
-}
-
 sub makeSimpleType
 {
     my $typeName = shift;

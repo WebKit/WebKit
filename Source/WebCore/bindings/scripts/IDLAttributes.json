@@ -295,9 +295,6 @@
             "contextsAllowed": ["interface"],
             "values": ["*"]
         },
-        "LegacyCaller": {
-            "contextsAllowed": ["operation"]
-        },
         "LegacyFactoryFunction": {
             "contextsAllowed": ["interface"],
             "values": ["*"],

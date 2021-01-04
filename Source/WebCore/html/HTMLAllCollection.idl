@@ -26,6 +26,7 @@
 [
     LegacyUnenumerableNamedProperties,
     MasqueradesAsUndefined,
+    CustomGetCallData,
     GenerateIsReachable=ImplOwnerNodeRoot,
     Exposed=Window
 ] interface HTMLAllCollection {
@@ -33,5 +34,5 @@
 
     getter Element? (unsigned long index);
     [ImplementedAs=namedItemOrItems] getter (HTMLCollection or Element)? namedItem([RequiresExistingAtomString] DOMString name);
-    [ImplementedAs=namedOrIndexedItemOrItems, LegacyCaller] (HTMLCollection or Element)? item(optional [AtomString] DOMString nameOrIndex);
+    [ImplementedAs=namedOrIndexedItemOrItems] (HTMLCollection or Element)? item(optional [AtomString] DOMString nameOrIndex);
 };

@@ -24,7 +24,6 @@
 #include "JSDOMConvertEnumeration.h"
 #include "JSDOMWrapper.h"
 #include "TestObj.h"
-#include <JavaScriptCore/CallData.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -45,8 +44,6 @@ public:
     static bool getOwnPropertySlot(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::PropertySlot&);
     static bool getOwnPropertySlotByIndex(JSC::JSObject*, JSC::JSGlobalObject*, unsigned propertyName, JSC::PropertySlot&);
     static void getOwnPropertyNames(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyNameArray&, JSC::EnumerationMode = JSC::EnumerationMode());
-    static JSC::CallData getCallData(JSC::JSCell*);
-
     static void destroy(JSC::JSCell*);
 
     DECLARE_INFO;
@@ -85,7 +82,7 @@ public:
     static JSC::JSValue testStaticCustomPromiseFunction(JSC::JSGlobalObject&, JSC::CallFrame&, Ref<DeferredPromise>&&);
     JSC::JSValue testCustomReturnsOwnPromiseFunction(JSC::JSGlobalObject&, JSC::CallFrame&);
 public:
-    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesAnyFormOfGetPropertyNames | JSC::OverridesGetCallData | JSC::OverridesGetOwnPropertySlot;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesAnyFormOfGetPropertyNames | JSC::OverridesGetOwnPropertySlot;
 protected:
     JSTestObj(JSC::Structure*, JSDOMGlobalObject&, Ref<TestObj>&&);
 
