@@ -181,6 +181,13 @@ if (USE_ANGLE_WEBGL)
         FILES ${libglesv2_entry_points_headers}
         FLATTENED
     )
+    if (WIN32 AND TARGET GLESv2)
+        # GLESv2 needs to have a direct or indirect dependency to
+        # LibGLESv2EntryPointsHeaders for CMake Visual Studio generator
+        # to eliminate duplicated custom commands. Otherwise,
+        # entry_points_*.h will be copied twice in both projects.
+        add_dependencies(GLESv2 LibGLESv2EntryPointsHeaders)
+    endif ()
 
     add_custom_target(ANGLE-webgl-headers
         DEPENDS LibGLESv2EntryPointsHeaders ANGLEWebGLHeaders

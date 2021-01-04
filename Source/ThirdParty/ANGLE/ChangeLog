@@ -1,3 +1,27 @@
+2021-01-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][CMake][MSBuild][ANGLE] entry_points_*.h was generated twice both in LibGLESv2EntryPointsHeaders and GLESv2 projects
+        https://bugs.webkit.org/show_bug.cgi?id=220251
+
+        Reviewed by Kenneth Russell.
+
+        WinCairo port is supporting both CMake Visual Studio generator and
+        Ninja generator. However, CMake Visual Studio builds was failing
+        as the following error.
+
+        > ANGLE\Headers\ANGLE/entry_points_egl.h(13,10): fatal error C1083: Cannot open include file: 'export.h': No such file or directory (compiling source file ...\texmap\ANGLEContext.cpp)
+
+        entry_points_egl.h was generated twice both in
+        LibGLESv2EntryPointsHeaders and GLESv2 projects. However, the
+        post-process script adjust-angle-include-paths.py was invoked only
+        in LibGLESv2EntryPointsHeaders project.
+
+        GLESv2 target needs to have a direct or indirect dependency to
+        LibGLESv2EntryPointsHeaders target for CMake Visual Studio
+        generator to eliminate duplicated custom commands.
+
+        * CMakeLists.txt: Added add_dependencies(GLESv2 LibGLESv2EntryPointsHeaders) only if WIN32.
+
 2021-01-02  James Darpinian  <jdarpinian@chromium.org>
 
         Enable some ANGLE workarounds on iOS
