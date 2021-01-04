@@ -404,7 +404,7 @@ void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* conten
         // Update our intrinsic size to match what the content renderer has computed, so that when we
         // constrain the size below, the correct intrinsic size will be obtained for comparison against
         // min and max widths.
-        if (intrinsicRatio && !intrinsicSize.isEmpty())
+        if (intrinsicRatio && !intrinsicSize.isZero())
             m_intrinsicSize = LayoutSize(intrinsicSize);
 
         if (!isHorizontalWritingMode()) {
@@ -414,7 +414,7 @@ void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* conten
         }
     } else {
         computeIntrinsicRatioInformation(intrinsicSize, intrinsicRatio);
-        if (intrinsicRatio && !intrinsicSize.isEmpty())
+        if (intrinsicRatio && !intrinsicSize.isZero())
             m_intrinsicSize = LayoutSize(isHorizontalWritingMode() ? intrinsicSize : intrinsicSize.transposedSize());
     }
 
