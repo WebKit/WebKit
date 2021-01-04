@@ -1,9 +1,9 @@
 # - Try to find OpenXR.
 # Once done, this will define
 #
-#  OPENXR_FOUND - system has WPE.
-#  OPENXR_INCLUDE_DIRS - the WPE include directories
-#  OPENXR_LIBRARIES - link these to use WPE.
+#  OPENXR_FOUND - system has OpenXR.
+#  OPENXR_INCLUDE_DIRS - the OpenXR include directories
+#  OPENXR_LIBRARIES - link these to use OpenXR.
 #
 # Copyright (C) 2019 Igalia S.L.
 #
@@ -44,4 +44,4 @@ find_library(OPENXR_LIBRARIES
 mark_as_advanced(OPENXR_INCLUDE_DIRS OPENXR_LIBRARIES)
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(OpenXR REQUIRED_VARS OPENXR_INCLUDE_DIRS OPENXR_LIBRARIES)
+find_package_handle_standard_args(OpenXR FOUND_VAR OPENXR_FOUND REQUIRED_VARS OPENXR_INCLUDE_DIRS OPENXR_LIBRARIES)

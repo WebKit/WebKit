@@ -15,6 +15,7 @@
     <dependencies>
       <dep package="wpebackend-fdo"/>
       <dep package="libsoup"/>
+      <dep package="openxr"/>
     </dependencies>
   </metamodule>
 
@@ -119,5 +120,14 @@
             checkoutdir="meson-${version}"
             hash="sha256:f68f56d60c80a77df8fc08fa1016bc5831605d4717b622c96212573271e14ecc"/>
   </distutils>
+
+  <!-- OpenXR required for WebXR support -->
+  <cmake id="openxr">
+    <pkg-config>openxr.pc</pkg-config>
+    <branch module="KhronosGroup/OpenXR-SDK/archive/release-${version}.tar.gz" version="1.0.11"
+            checkoutdir="openxr-${version}"
+            repo="github-tarball"
+            hash="sha256:8f28f0f7707487435578264ac18e14af17a5eab2062fc925fe01cd96ed802dce"/>
+  </cmake>
 
 </moduleset>

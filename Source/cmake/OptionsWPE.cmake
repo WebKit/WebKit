@@ -184,6 +184,9 @@ endif ()
 
 if (ENABLE_WEBXR)
     find_package(OpenXR 1.0.9)
+    if (NOT OPENXR_FOUND)
+        message(FATAL_ERROR "OpenXR is required to enable WebXR support.")
+    endif ()
     SET_AND_EXPOSE_TO_BUILD(USE_OPENXR ${OpenXR_FOUND})
 endif ()
 
