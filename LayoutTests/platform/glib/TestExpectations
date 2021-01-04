@@ -1924,6 +1924,15 @@ webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-see
 webkit.org/b/214349 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html [ Failure Crash ]
 webkit.org/b/220083 [ Debug ] media/media-source/media-source-unnecessary-seek-seeked.html [ Pass Crash ]
 
+webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-framesize.html [ Pass Failure ]
+webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framesize-expected.txt [ Pass Failure ]
+webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize-expected.txt [ Pass Failure ]
+webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-framesize.html [ Pass Failure ]
+webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framesize.html [ Pass Failure ]
+webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-framesize-expected.txt [ Pass Failure ]
+webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-framesize-expected.txt [ Pass Failure ]
+webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Pass Failure ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
