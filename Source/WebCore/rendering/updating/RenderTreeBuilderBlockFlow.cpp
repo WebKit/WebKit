@@ -39,8 +39,13 @@ RenderTreeBuilder::BlockFlow::BlockFlow(RenderTreeBuilder& builder)
 
 void RenderTreeBuilder::BlockFlow::attach(RenderBlockFlow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
-    if (parent.multiColumnFlow() && (!parent.isFieldset() || !child->isLegend())) {
-        if (parent.isFieldset() && beforeChild && beforeChild->isLegend())
+    if (parent.multiColumnFlow()) {
+        auto legendAvoidsMulticolumn = parent.isFieldset() && child->isLegend();
+        if (legendAvoidsMulticolumn)
+            return m_builder.blockBuilder().attach(parent, WTFMove(child), nullptr);
+
+        auto legendBeforeChildIsIncorrect = parent.isFieldset() && beforeChild && beforeChild->isLegend();
+        if (legendBeforeChildIsIncorrect)
             return m_builder.blockBuilder().attach(*parent.multiColumnFlow(), WTFMove(child), nullptr);
 
         return m_builder.attach(*parent.multiColumnFlow(), WTFMove(child), beforeChild);
