@@ -1,3 +1,22 @@
+2021-01-05  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] :focus should match inside the focus event
+        https://bugs.webkit.org/show_bug.cgi?id=220243
+
+        Reviewed by Frédéric Wang.
+
+        Import focus-in-focus-event-001.html test from WPT.
+        Rebaseline 2 tests:
+        - focus-autofocus.html now passes after fixing this bug.
+        - focus-visible-005.html now fails, but it was passing because it was not checking anything due to this bug.
+
+        * web-platform-tests/css/selectors/focus-in-focus-event-001-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-in-focus-event-001.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-005-expected.txt: Rebaseline.
+        * web-platform-tests/css/selectors/w3c-import.log:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/focus-autofocus-expected.txt: Rebaesline.
+
+
 2021-01-04  Rob Buis  <rbuis@igalia.com>
 
         Add missing support/refresh.sub.html

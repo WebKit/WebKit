@@ -4445,6 +4445,13 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
         // Set focus on the new node
         m_focusedElement = newFocusedElement;
         setFocusNavigationStartingNode(m_focusedElement.get());
+        m_focusedElement->setFocus(true);
+
+        // The setFocus call triggers a blur and a focus event. Event handlers could cause the focused element to be cleared.
+        if (m_focusedElement != newFocusedElement) {
+            // handler shifted focus
+            return false;
+        }
 
         // Dispatch the focus event and let the node do any other focus related activities (important for text fields)
         m_focusedElement->dispatchFocusEvent(oldFocusedElement.copyRef(), direction);
@@ -4465,14 +4472,6 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
         // on it, probably when <rdar://problem/8503958> is m.
         m_focusedElement->dispatchFocusInEvent(eventNames().DOMFocusInEvent, oldFocusedElement.copyRef()); // DOM level 2 for compatibility.
 
-        if (m_focusedElement != newFocusedElement) {
-            // handler shifted focus
-            return false;
-        }
-
-        m_focusedElement->setFocus(true);
-
-        // The setFocus call triggers a blur and a focus event. Event handlers could cause the focused element to be cleared.
         if (m_focusedElement != newFocusedElement) {
             // handler shifted focus
             return false;
