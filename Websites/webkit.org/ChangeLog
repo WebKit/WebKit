@@ -1,5 +1,14 @@
 2021-01-05  Jon Davis  <jond@apple.com>
 
+        Disable public APIs on webkit.org blog
+        https://bugs.webkit.org/show_bug.cgi?id=220028
+
+        Reviewed by Timothy Hatcher.
+
+        * wp-content/plugins/disable-public-apis.php: Added.
+
+2021-01-05  Jon Davis  <jond@apple.com>
+
         Enforce strong password changes on webkit.org blog
         https://bugs.webkit.org/show_bug.cgi?id=220027
 
