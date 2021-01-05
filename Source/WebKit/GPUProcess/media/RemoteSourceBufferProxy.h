@@ -93,7 +93,7 @@ private:
     void setReadyState(WebCore::MediaPlayer::ReadyState);
     void startChangingType();
     void updateBufferedFromTrackBuffers(bool sourceIsEnded);
-    void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, bool isEnded);
+    void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, bool isEnded, CompletionHandler<void()>&&);
     void evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded);
     void addTrackBuffer(TrackPrivateRemoteIdentifier);
     void resetTrackBuffers();

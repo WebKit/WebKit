@@ -1,3 +1,12 @@
+2021-01-05  Peng Liu  <peng.liu6@apple.com>
+
+        [Media in GPU Process][MSE] SourceBuffer fires update and updateend events before the coded frames are removed
+        https://bugs.webkit.org/show_bug.cgi?id=220334
+
+        Reviewed by Eric Carlson.
+
+        * gpu-process/TestExpectations:
+
 2021-01-05  Chris Fleizach  <cfleizach@apple.com>
 
         AX: aria-orientation is ignored on input[type="range"]

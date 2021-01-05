@@ -210,9 +210,9 @@ void RemoteSourceBufferProxy::updateBufferedFromTrackBuffers(bool sourceIsEnded)
     m_sourceBufferPrivate->updateBufferedFromTrackBuffers(sourceIsEnded);
 }
 
-void RemoteSourceBufferProxy::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, bool isEnded)
+void RemoteSourceBufferProxy::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, bool isEnded, CompletionHandler<void()>&& completionHandler)
 {
-    m_sourceBufferPrivate->removeCodedFrames(start, end, currentTime, isEnded);
+    m_sourceBufferPrivate->removeCodedFrames(start, end, currentTime, isEnded, WTFMove(completionHandler));
 }
 
 void RemoteSourceBufferProxy::evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded)

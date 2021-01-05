@@ -40,7 +40,7 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     ResetTrackBuffers()
     ClearTrackBuffers()
     SetAllTrackBuffersNeedRandomAccess()
-    RemoveCodedFrames(MediaTime start, MediaTime end, MediaTime currentTime, bool isEnded)
+    RemoveCodedFrames(MediaTime start, MediaTime end, MediaTime currentTime, bool isEnded) -> () Async
     EvictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, MediaTime currentTime, MediaTime duration, bool isEnded)
     ReenqueueMediaIfNeeded(MediaTime currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize)
     SetGroupStartTimestamp(MediaTime timestamp)

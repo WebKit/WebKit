@@ -613,18 +613,18 @@ void SourceBuffer::removeTimerFired()
 
     // 6. Run the coded frame removal algorithm with start and end as the start and end of the removal range.
 
-    m_private->removeCodedFrames(m_pendingRemoveStart, m_pendingRemoveEnd, m_source->currentTime(), m_source->isEnded());
+    m_private->removeCodedFrames(m_pendingRemoveStart, m_pendingRemoveEnd, m_source->currentTime(), m_source->isEnded(), [this, protectedThis = makeRef(*this)] {
+        // 7. Set the updating attribute to false.
+        m_updating = false;
+        m_pendingRemoveStart = MediaTime::invalidTime();
+        m_pendingRemoveEnd = MediaTime::invalidTime();
 
-    // 7. Set the updating attribute to false.
-    m_updating = false;
-    m_pendingRemoveStart = MediaTime::invalidTime();
-    m_pendingRemoveEnd = MediaTime::invalidTime();
+        // 8. Queue a task to fire a simple event named update at this SourceBuffer object.
+        scheduleEvent(eventNames().updateEvent);
 
-    // 8. Queue a task to fire a simple event named update at this SourceBuffer object.
-    scheduleEvent(eventNames().updateEvent);
-
-    // 9. Queue a task to fire a simple event named updateend at this SourceBuffer object.
-    scheduleEvent(eventNames().updateendEvent);
+        // 9. Queue a task to fire a simple event named updateend at this SourceBuffer object.
+        scheduleEvent(eventNames().updateendEvent);
+    });
 }
 
 uint64_t SourceBuffer::maximumBufferSize() const

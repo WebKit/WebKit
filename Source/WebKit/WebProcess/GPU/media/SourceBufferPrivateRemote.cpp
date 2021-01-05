@@ -142,9 +142,9 @@ void SourceBufferPrivateRemote::updateBufferedFromTrackBuffers(bool sourceIsEnde
     m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::UpdateBufferedFromTrackBuffers(sourceIsEnded), m_remoteSourceBufferIdentifier);
 }
 
-void SourceBufferPrivateRemote::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, bool isEnded)
+void SourceBufferPrivateRemote::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, bool isEnded, CompletionHandler<void()>&& completionHandler)
 {
-    m_gpuProcessConnection.connection().send(Messages::RemoteSourceBufferProxy::RemoveCodedFrames(start, end, currentMediaTime, isEnded), m_remoteSourceBufferIdentifier);
+    m_gpuProcessConnection.connection().sendWithAsyncReply(Messages::RemoteSourceBufferProxy::RemoveCodedFrames(start, end, currentMediaTime, isEnded), WTFMove(completionHandler), m_remoteSourceBufferIdentifier);
 }
 
 void SourceBufferPrivateRemote::evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded)
