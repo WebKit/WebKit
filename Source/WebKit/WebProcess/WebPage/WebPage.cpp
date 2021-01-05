@@ -3718,13 +3718,9 @@ void WebPage::forceRepaintWithoutCallback()
     m_drawingArea->forceRepaint();
 }
 
-void WebPage::forceRepaint(CallbackID callbackID)
+void WebPage::forceRepaint(CompletionHandler<void()>&& completionHandler)
 {
-    if (m_drawingArea->forceRepaintAsync(callbackID))
-        return;
-
-    forceRepaintWithoutCallback();
-    send(Messages::WebPageProxy::VoidCallback(callbackID));
+    m_drawingArea->forceRepaintAsync(*this, WTFMove(completionHandler));
 }
 
 void WebPage::preferencesDidChange(const WebPreferencesStore& store)

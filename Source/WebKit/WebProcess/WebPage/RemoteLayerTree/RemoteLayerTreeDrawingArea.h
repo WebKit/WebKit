@@ -87,7 +87,7 @@ private:
     bool layerTreeStateIsFrozen() const override { return m_isRenderingSuspended; }
 
     void forceRepaint() override;
-    bool forceRepaintAsync(CallbackID) override { return false; }
+    void forceRepaintAsync(WebPage&, CompletionHandler<void()>&&) override;
 
     void setViewExposedRect(Optional<WebCore::FloatRect>) override;
     Optional<WebCore::FloatRect> viewExposedRect() const override { return m_viewExposedRect; }

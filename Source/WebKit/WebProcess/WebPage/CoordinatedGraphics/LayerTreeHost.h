@@ -79,7 +79,7 @@ public:
 
     void scrollNonCompositedContents(const WebCore::IntRect&);
     void forceRepaint();
-    bool forceRepaintAsync(CallbackID);
+    void forceRepaintAsync(CompletionHandler<void()>&&);
     void sizeDidChange(const WebCore::IntSize& newSize);
 
     void pauseRendering();
@@ -193,7 +193,7 @@ private:
     RefPtr<ThreadedCompositor> m_compositor;
     SimpleViewportController m_viewportController;
     struct {
-        OptionalCallbackID callbackID;
+        CompletionHandler<void()> callback;
         bool needsFreshFlush { false };
     } m_forceRepaintAsync;
     RunLoop::Timer<LayerTreeHost> m_layerFlushTimer;
@@ -213,7 +213,7 @@ inline void LayerTreeHost::setRootCompositingLayer(WebCore::GraphicsLayer*) { }
 inline void LayerTreeHost::setViewOverlayRootLayer(WebCore::GraphicsLayer*) { }
 inline void LayerTreeHost::scrollNonCompositedContents(const WebCore::IntRect&) { }
 inline void LayerTreeHost::forceRepaint() { }
-inline bool LayerTreeHost::forceRepaintAsync(CallbackID) { return false; }
+inline bool LayerTreeHost::forceRepaintAsync(CompletionHandler<void()>&) { return false; }
 inline void LayerTreeHost::sizeDidChange(const WebCore::IntSize&) { }
 inline void LayerTreeHost::pauseRendering() { }
 inline void LayerTreeHost::resumeRendering() { }

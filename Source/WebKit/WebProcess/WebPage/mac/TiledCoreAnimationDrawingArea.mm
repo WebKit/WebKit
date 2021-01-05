@@ -173,16 +173,19 @@ void TiledCoreAnimationDrawingArea::forceRepaint()
     [CATransaction synchronize];
 }
 
-bool TiledCoreAnimationDrawingArea::forceRepaintAsync(CallbackID callbackID)
+void TiledCoreAnimationDrawingArea::forceRepaintAsync(WebPage& page, CompletionHandler<void()>&& completionHandler)
 {
-    if (m_layerTreeStateIsFrozen)
-        return false;
+    if (m_layerTreeStateIsFrozen) {
+        page.forceRepaintWithoutCallback();
+        return completionHandler();
+    }
 
-    dispatchAfterEnsuringUpdatedScrollPosition([this, callbackID] {
+    dispatchAfterEnsuringUpdatedScrollPosition([this, weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)] () mutable {
+        if (!weakThis)
+            return completionHandler();
         m_webPage.drawingArea()->forceRepaint();
-        m_webPage.send(Messages::WebPageProxy::VoidCallback(callbackID));
+        completionHandler();
     });
-    return true;
 }
 
 void TiledCoreAnimationDrawingArea::setLayerTreeStateIsFrozen(bool layerTreeStateIsFrozen)

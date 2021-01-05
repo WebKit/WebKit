@@ -208,9 +208,9 @@ void LayerTreeHost::forceRepaint()
     flushAndRenderLayers();
 }
 
-bool LayerTreeHost::forceRepaintAsync(CallbackID)
+void LayerTreeHost::forceRepaintAsync(CompletionHandler<void()>&& completionHandler)
 {
-    return false;
+    completionHandler();
 }
 
 void LayerTreeHost::sizeDidChange(const WebCore::IntSize& newSize)

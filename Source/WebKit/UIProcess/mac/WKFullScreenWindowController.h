@@ -62,7 +62,6 @@ typedef enum FullScreenState : NSInteger FullScreenState;
     FullScreenState _fullScreenState;
 
     double _savedScale;
-    RefPtr<WebKit::VoidCallback> _repaintCallback;
     float _savedTopContentInset;
 }
 

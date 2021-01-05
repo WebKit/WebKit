@@ -222,7 +222,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     RunJavaScriptInFrameInScriptWorld(struct WebCore::RunJavaScriptParameters parameters, Optional<WebCore::FrameIdentifier> frameID, std::pair<WebKit::ContentWorldIdentifier, String> world) -> (IPC::DataReference resultData, Optional<WebCore::ExceptionDetails> details) Async
 
-    ForceRepaint(WebKit::CallbackID callbackID)
+    ForceRepaint() -> () Async
     SelectAll()
     ScheduleFullEditorStateUpdate()
 

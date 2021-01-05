@@ -184,6 +184,12 @@ void RemoteLayerTreeDrawingArea::updatePreferences(const WebPreferencesStore&)
     DebugPageOverlays::settingsChanged(*m_webPage.corePage());
 }
 
+void RemoteLayerTreeDrawingArea::forceRepaintAsync(WebPage& page, CompletionHandler<void()>&& completionHandler)
+{
+    page.forceRepaintWithoutCallback();
+    completionHandler();
+}
+
 #if PLATFORM(IOS_FAMILY)
 void RemoteLayerTreeDrawingArea::setDeviceScaleFactor(float deviceScaleFactor)
 {

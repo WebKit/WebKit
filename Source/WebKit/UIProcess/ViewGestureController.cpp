@@ -560,10 +560,10 @@ void ViewGestureController::forceRepaintIfNeeded()
 
     auto pageID = m_webPageProxy.identifier();
     GestureID gestureID = m_currentGestureID;
-    m_webPageProxy.forceRepaint(VoidCallback::create([pageID, gestureID] (CallbackBase::Error error) {
+    m_webPageProxy.forceRepaint([pageID, gestureID] () {
         if (auto gestureController = controllerForGesture(pageID, gestureID))
             gestureController->removeSwipeSnapshot();
-    }));
+    });
 }
 
 void ViewGestureController::willEndSwipeGesture(WebBackForwardListItem& targetItem, bool cancelled)

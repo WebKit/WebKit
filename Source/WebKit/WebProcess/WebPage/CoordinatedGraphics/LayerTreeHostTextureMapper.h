@@ -67,7 +67,7 @@ public:
     void setNonCompositedContentsNeedDisplay(const WebCore::IntRect&);
     void scrollNonCompositedContents(const WebCore::IntRect&);
     void forceRepaint();
-    bool forceRepaintAsync(CallbackID);
+    void forceRepaintAsync(CompletionHandler<void()>&&);
     void sizeDidChange(const WebCore::IntSize& newSize);
     void pauseRendering();
     void resumeRendering();

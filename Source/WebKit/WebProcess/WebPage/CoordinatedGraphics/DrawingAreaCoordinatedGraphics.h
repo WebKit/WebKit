@@ -51,7 +51,7 @@ private:
     void setNeedsDisplayInRect(const WebCore::IntRect&) override;
     void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) override;
     void forceRepaint() override;
-    bool forceRepaintAsync(CallbackID) override;
+    void forceRepaintAsync(WebPage&, CompletionHandler<void()>&&) override;
 
     void setLayerTreeStateIsFrozen(bool) override;
     bool layerTreeStateIsFrozen() const override { return m_layerTreeStateIsFrozen; }

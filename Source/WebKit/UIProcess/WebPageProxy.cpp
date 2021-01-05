@@ -4192,38 +4192,18 @@ void WebPageProxy::getWebArchiveOfFrame(WebFrameProxy* frame, Function<void (API
     send(Messages::WebPage::GetWebArchiveOfFrame(frame->frameID(), callbackID));
 }
 
-void WebPageProxy::forceRepaint(RefPtr<VoidCallback>&& callback)
+void WebPageProxy::forceRepaint(CompletionHandler<void()>&& callback)
 {
-    if (!hasRunningProcess()) {
-        // FIXME: If the page is invalid we should not call the callback. It'd be better to just return false from forceRepaint.
-        callback->invalidate(CallbackBase::Error::OwnerWasInvalidated);
-        return;
-    }
+    if (!hasRunningProcess())
+        return callback();
 
-    Function<void(CallbackBase::Error)> didForceRepaintCallback = [this, callback = WTFMove(callback)](CallbackBase::Error error) mutable {
-        if (error != CallbackBase::Error::None) {
-            callback->invalidate(error);
-            return;
-        }
-
-        if (!hasRunningProcess()) {
-            callback->invalidate(CallbackBase::Error::OwnerWasInvalidated);
-            return;
-        }
-    
-        callAfterNextPresentationUpdate([callback = WTFMove(callback)](CallbackBase::Error error) {
-            if (error != CallbackBase::Error::None) {
-                callback->invalidate(error);
-                return;
-            }
-
-            callback->performCallback();
-        });
-    };
-
-    auto callbackID = m_callbacks.put(WTFMove(didForceRepaintCallback), m_process->throttler().backgroundActivity("WebPageProxy::forceRepaint"_s));
     m_drawingArea->waitForBackingStoreUpdateOnNextPaint();
-    send(Messages::WebPage::ForceRepaint(callbackID));
+
+    sendWithAsyncReply(Messages::WebPage::ForceRepaint(), [this, protectedThis = makeRef(*this), callback = WTFMove(callback)] () mutable {
+        callAfterNextPresentationUpdate([callback = WTFMove(callback)] (auto) mutable {
+            callback();
+        });
+    });
 }
 
 static OptionSet<IPC::SendOption> printingSendOptions(bool isPerformingDOMPrintOperation)

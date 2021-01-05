@@ -213,12 +213,17 @@ void DrawingAreaCoordinatedGraphics::forceRepaint()
         }
 }
 
-bool DrawingAreaCoordinatedGraphics::forceRepaintAsync(CallbackID callbackID)
+void DrawingAreaCoordinatedGraphics::forceRepaintAsync(WebPage& page, CompletionHandler<void()>&& completionHandler)
 {
-    if (m_layerTreeStateIsFrozen)
-        return false;
+    if (m_layerTreeStateIsFrozen) {
+        page.forceRepaintWithoutCallback();
+        return completionHandler();
+    }
 
-    return m_layerTreeHost && m_layerTreeHost->forceRepaintAsync(callbackID);
+    if (m_layerTreeHost)
+        m_layerTreeHost->forceRepaintAsync(WTFMove(completionHandler));
+    else
+        completionHandler();
 }
 
 void DrawingAreaCoordinatedGraphics::setLayerTreeStateIsFrozen(bool isFrozen)

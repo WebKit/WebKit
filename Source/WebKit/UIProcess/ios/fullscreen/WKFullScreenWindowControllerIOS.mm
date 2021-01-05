@@ -460,7 +460,6 @@ private:
     RetainPtr<UIWindow> _window;
     RetainPtr<UIViewController> _rootViewController;
 
-    RefPtr<WebKit::VoidCallback> _repaintCallback;
     RetainPtr<UIViewController> _viewControllerForPresentation;
     RetainPtr<WKFullScreenViewController> _fullscreenViewController;
     RetainPtr<UISwipeGestureRecognizer> _startDismissGestureRecognizer;
@@ -624,9 +623,7 @@ private:
         arguments.userZoom = 1;
         page->setOverrideViewportArguments(arguments);
 
-        _repaintCallback = WebKit::VoidCallback::create([protectedSelf = retainPtr(self), self](WebKit::CallbackBase::Error) {
-            _repaintCallback = nullptr;
-
+        page->forceRepaint([protectedSelf = retainPtr(self), self] {
             if (_exitRequested) {
                 _exitRequested = NO;
                 [self _exitFullscreenImmediately];
@@ -641,7 +638,6 @@ private:
             ASSERT_NOT_REACHED();
             [self _exitFullscreenImmediately];
         });
-        page->forceRepaint(_repaintCallback.copyRef());
 
         [CATransaction commit];
     }];
@@ -833,13 +829,7 @@ private:
     [_window setHidden:YES];
     _window = nil;
 
-    if (_repaintCallback) {
-        _repaintCallback->invalidate(WebKit::CallbackBase::Error::OwnerWasInvalidated);
-        ASSERT(!_repaintCallback);
-    }
-
-    _repaintCallback = WebKit::VoidCallback::create([protectedSelf = retainPtr(self), self](WebKit::CallbackBase::Error) {
-        _repaintCallback = nullptr;
+    CompletionHandler<void()> completionHandler([protectedSelf = retainPtr(self), self] {
         _webViewPlaceholder.get().parent = nil;
         [_webViewPlaceholder removeFromSuperview];
 
@@ -858,9 +848,9 @@ private:
 
     auto* page = [self._webView _page].get();
     if (page && page->isViewFocused())
-        page->forceRepaint(_repaintCallback.copyRef());
+        page->forceRepaint(WTFMove(completionHandler));
     else
-        _repaintCallback->performCallback();
+        completionHandler();
 
     [_fullscreenViewController setPrefersStatusBarHidden:YES];
     _fullscreenViewController = nil;

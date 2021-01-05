@@ -85,7 +85,7 @@ public:
 
     // FIXME: These should be pure virtual.
     virtual void forceRepaint() { }
-    virtual bool forceRepaintAsync(CallbackID) { return false; }
+    virtual void forceRepaintAsync(WebPage&, CompletionHandler<void()>&&) = 0;
     virtual void setLayerTreeStateIsFrozen(bool) { }
     virtual bool layerTreeStateIsFrozen() const { return false; }
 

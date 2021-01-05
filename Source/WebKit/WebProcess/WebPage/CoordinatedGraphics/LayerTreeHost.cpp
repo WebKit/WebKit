@@ -141,7 +141,7 @@ void LayerTreeHost::layerFlushTimerFired()
 
     // If a force-repaint callback was registered, we should force a 'frame sync' that
     // will guarantee us a call to renderNextFrame() once the update is complete.
-    if (m_forceRepaintAsync.callbackID)
+    if (m_forceRepaintAsync.callback)
         m_coordinator.forceFrameSync();
 
     bool didSync = m_coordinator.flushPendingLayerChanges();
@@ -190,16 +190,15 @@ void LayerTreeHost::forceRepaint()
     m_compositor->forceRepaint();
 }
 
-bool LayerTreeHost::forceRepaintAsync(CallbackID callbackID)
+void LayerTreeHost::forceRepaintAsync(CompletionHandler<void()>&& callback)
 {
     scheduleLayerFlush();
 
     // We want a clean repaint, meaning that if we're currently waiting for the renderer
     // to finish an update, we'll have to schedule another flush when it's done.
-    ASSERT(!m_forceRepaintAsync.callbackID);
-    m_forceRepaintAsync.callbackID = OptionalCallbackID(callbackID);
+    ASSERT(!m_forceRepaintAsync.callback);
+    m_forceRepaintAsync.callback = WTFMove(callback);
     m_forceRepaintAsync.needsFreshFlush = m_scheduledWhileWaitingForRenderer;
-    return true;
 }
 
 void LayerTreeHost::sizeDidChange(const IntSize& size)
@@ -405,7 +404,7 @@ void LayerTreeHost::renderNextFrame(bool forceRepaint)
     bool scheduledWhileWaitingForRenderer = std::exchange(m_scheduledWhileWaitingForRenderer, false);
     m_coordinator.renderNextFrame();
 
-    if (m_forceRepaintAsync.callbackID) {
+    if (m_forceRepaintAsync.callback) {
         // If the asynchronous force-repaint needs a separate fresh flush, it was due to
         // the force-repaint request being registered while CoordinatedLayerTreeHost was
         // waiting for the renderer to finish an update.
@@ -414,10 +413,8 @@ void LayerTreeHost::renderNextFrame(bool forceRepaint)
         // Execute the callback if another layer flush and the subsequent state update
         // aren't needed. If they are, the callback will be executed when this function
         // is called after the next update.
-        if (!m_forceRepaintAsync.needsFreshFlush) {
-            m_webPage.send(Messages::WebPageProxy::VoidCallback(m_forceRepaintAsync.callbackID.callbackID()));
-            m_forceRepaintAsync.callbackID = OptionalCallbackID();
-        }
+        if (!m_forceRepaintAsync.needsFreshFlush)
+            m_forceRepaintAsync.callback();
         m_forceRepaintAsync.needsFreshFlush = false;
     }
 

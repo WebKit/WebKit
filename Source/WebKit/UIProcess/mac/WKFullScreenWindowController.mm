@@ -155,13 +155,6 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-    if (_repaintCallback) {
-        _repaintCallback->invalidate(WebKit::CallbackBase::Error::OwnerWasInvalidated);
-        // invalidate() calls completeFinishExitFullScreenAnimationAfterRepaint, which
-        // clears _repaintCallback.
-        ASSERT(!_repaintCallback);
-    }
-
     _videoFullscreenManagerProxyClient.setParent(nullptr);
 
     [super dealloc];
@@ -574,16 +567,9 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
     [self _manager]->restoreScrollPosition();
     _page->setTopContentInset(_savedTopContentInset);
 
-    if (_repaintCallback) {
-        _repaintCallback->invalidate(WebKit::CallbackBase::Error::OwnerWasInvalidated);
-        // invalidate() calls completeFinishExitFullScreenAnimationAfterRepaint, which
-        // clears _repaintCallback.
-        ASSERT(!_repaintCallback);
-    }
-    _repaintCallback = WebKit::VoidCallback::create([self](WebKit::CallbackBase::Error) {
-        [self completeFinishExitFullScreenAnimationAfterRepaint];
+    _page->forceRepaint([weakSelf = WeakObjCPtr<WKFullScreenWindowController>(self)] {
+        [weakSelf completeFinishExitFullScreenAnimationAfterRepaint];
     });
-    _page->forceRepaint(_repaintCallback.copyRef());
 
     [CATransaction commit];
     [CATransaction flush];
@@ -605,7 +591,6 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
     [[_webView window] makeKeyAndOrderFront:self];
     _webViewPlaceholder = nil;
     
-    _repaintCallback = nullptr;
     _page->setSuppressVisibilityUpdates(false);
     _page->setNeedsDOMWindowResizeEvent();
 
