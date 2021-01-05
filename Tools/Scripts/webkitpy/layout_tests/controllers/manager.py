@@ -614,7 +614,7 @@ class Manager(object):
                 response_text = response.read()
                 try:
                     response_json = json.loads(response_text)
-                except ValueError as error:
+                except ValueError:
                     _log.error("JSON upload failed; failed to parse the response: %s", response_text)
                     continue
 

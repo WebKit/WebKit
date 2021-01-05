@@ -321,7 +321,7 @@ class ChangeLog(object):
     def parse_latest_entry_from_file(cls, changelog_file):
         try:
             return next(cls.parse_entries_from_file(changelog_file))
-        except StopIteration as e:
+        except StopIteration:
             return None
 
     svn_blame_regexp = re.compile(r'^(\s*(?P<revision>\d+) [^ ]+)\s*(?P<line>.*?\n)')

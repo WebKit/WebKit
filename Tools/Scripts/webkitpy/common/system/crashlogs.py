@@ -53,7 +53,7 @@ class CrashLogs(object):
         if self._host.platform.is_mac() or self._host.platform.is_ios():
             return self._find_newest_log_darwin(process_name, pid, include_errors, newer_than)
         elif self._host.platform.is_win():
-            return self._find_newest_log_win(process_name, pid, include_errors, newer_than)
+            return self._find_newest_log_win(pid, include_errors, newer_than)
         return None
 
     def find_all_logs(self, include_errors=False, newer_than=None):
@@ -100,7 +100,7 @@ class CrashLogs(object):
             return errors
         return None
 
-    def _find_newest_log_win(self, process_name, pid, include_errors, newer_than):
+    def _find_newest_log_win(self, pid, include_errors, newer_than):
         def is_crash_log(fs, dirpath, basename):
             if self._crash_logs_to_skip and fs.join(dirpath, basename) in self._crash_logs_to_skip:
                 return False

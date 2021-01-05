@@ -637,8 +637,6 @@ class SimulatedDevice(object):
         def _log_debug_error(error):
             _log.debug(error.message_with_output())
 
-        output = None
-
         with Timeout(timeout, handler=RuntimeError(u'Timed out waiting for process to open {} on {}'.format(bundle_id, self.udid)), patch=False):
             while True:
                 output = self.executive.run_command(

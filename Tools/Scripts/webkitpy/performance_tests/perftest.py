@@ -185,7 +185,6 @@ class PerfTest(object):
         if self.run_failed(output):
             return False
 
-        current_metric = None
         for line in re.split('\n', output.text):
             description_match = self._description_regex.match(line)
             if description_match:

@@ -54,7 +54,7 @@ class PromptForBugOrTitle(AbstractStep):
         # Otherwise we assume it's a bug subject.
         try:
             state["bug_id"] = int(user_response)
-        except ValueError as TypeError:
+        except ValueError:
             parsed_url = None
             try:
                 parsed_url = urlparse(user_response)

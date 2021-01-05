@@ -70,7 +70,7 @@ class Profiler(object):
     # Used by ProfilerFactory to lookup a profiler from the --profiler=NAME option.
     name = None
 
-    def __init__(self, host, executable_path, output_dir, identifier=None):
+    def __init__(self, host, executable_path, output_dir):
         self._host = host
         self._executable_path = executable_path
         self._output_dir = output_dir
@@ -92,7 +92,7 @@ class Profiler(object):
 
 class SingleFileOutputProfiler(Profiler):
     def __init__(self, host, executable_path, output_dir, output_suffix, identifier=None):
-        super(SingleFileOutputProfiler, self).__init__(host, executable_path, output_dir, identifier)
+        super(SingleFileOutputProfiler, self).__init__(host, executable_path, output_dir)
         # FIXME: Currently all reports are kept as test.*, until we fix that, search up to 1000 names before giving up.
         self._output_path = self._host.workspace.find_unused_filename(self._output_dir, self._identifier, output_suffix, search_limit=1000)
         assert(self._output_path)

@@ -95,11 +95,11 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
         try:
             succeeded = task.run()
             return succeeded
-        except PatchIsNotValid as error:
+        except PatchIsNotValid:
             return False
-        except UnableToApplyPatch as e:
+        except UnableToApplyPatch:
             return False
-        except PatchIsNotApplicable as e:
+        except PatchIsNotApplicable:
             return False
         except ScriptError as e:
             self._post_reject_message_on_bug(self._tool, patch, task.failure_status_id, self._failing_tests_message(task, patch))

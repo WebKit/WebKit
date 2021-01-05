@@ -124,7 +124,6 @@ class MeteredStream(object):
         self.write(self._ensure_newline(txt), now, pid)
 
     def _erase_last_partial_line(self):
-        num_chars = len(self._last_partial_line)
         self._stream.write(self._erasure(self._last_partial_line))
         self._last_partial_line = ''
         self._stream.flush()

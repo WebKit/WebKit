@@ -112,13 +112,13 @@ class QueueEngine:
                         continue
                     message = "Unexpected failure when processing patch!  Please file a bug against webkit-patch.\n%s" % e.message_with_output(output_limit=5000)
                     self._delegate.handle_unexpected_error(work_item, message)
-            except TerminateQueue as e:
+            except TerminateQueue:
                 self._stopping("TerminateQueue exception received.")
                 return 0
-            except KeyboardInterrupt as e:
+            except KeyboardInterrupt:
                 self._stopping("User terminated queue.")
                 return 1
-            except Exception as e:
+            except Exception:
                 traceback.print_exc()
                 # Don't try tell the status bot, in case telling it causes an exception.
                 self._sleep("Exception while preparing queue")

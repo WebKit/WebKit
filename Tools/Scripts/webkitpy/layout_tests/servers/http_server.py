@@ -41,7 +41,7 @@ _log = logging.getLogger(__name__)
 
 class Lighttpd(http_server_base.HttpServerBase):
 
-    def __init__(self, port_obj, output_dir, background=False, port=None,
+    def __init__(self, port_obj, output_dir, port=None,
                  root=None, run_background=None, additional_dirs=None,
                  layout_tests_dir=None):
         """Args:
@@ -194,7 +194,7 @@ class Lighttpd(http_server_base.HttpServerBase):
         for log_prefix in ('access.log-', 'error.log-'):
             try:
                 self._remove_log_files(self._output_dir, log_prefix)
-            except OSError as e:
+            except OSError:
                 _log.warning('Failed to remove old %s %s files' % (self._name, log_prefix))
 
     def _spawn_process(self):

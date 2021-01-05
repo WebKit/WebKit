@@ -58,18 +58,15 @@ class SingleQuoteChecker(object):
         self._handle_style_error = handle_style_error
 
     def check(self, lines):
-        in_multiline_comment = False
         line_number = 0
         for line in lines:
             line = line.strip()
             line_number = line_number + 1
 
             if (line.endswith("*/")):
-                in_multiline_comment = False
                 continue
 
             if (line.startswith("/*") or line.startswith("*")):
-                in_multiline_comment = True
                 continue
 
             # Remove "double quoted" strings.

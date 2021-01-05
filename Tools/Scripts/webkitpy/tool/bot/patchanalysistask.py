@@ -242,7 +242,6 @@ class PatchAnalysisTask(object):
         if self._test():
             return True
         second_results = self._delegate.test_results()
-        second_script_error = self._script_error
         if second_results is None:
             return False
 

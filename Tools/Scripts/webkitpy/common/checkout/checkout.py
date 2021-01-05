@@ -155,7 +155,7 @@ class Checkout(object):
     def bug_id_for_this_commit(self, git_commit, changed_files=None):
         try:
             return parse_bug_id_from_changelog(self.commit_message_for_this_commit(git_commit, changed_files).message())
-        except ScriptError as e:
+        except ScriptError:
             pass  # We might not have ChangeLogs.
 
     def apply_patch(self, patch):

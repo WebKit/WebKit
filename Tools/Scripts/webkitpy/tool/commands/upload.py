@@ -81,7 +81,6 @@ class CleanPendingCommit(Command):
         return join_with_separators(what_was_cleared)
 
     def execute(self, options, args, tool):
-        committers = CommitterList()
         for bug_id in tool.bugs.queries.fetch_bug_ids_from_pending_commit_list():
             bug = self._tool.bugs.fetch_bug(bug_id)
             patches = bug.patches(include_obsolete=True)
@@ -477,8 +476,6 @@ class CreateBug(Command):
 
         commit_id = commit_ids[0]
 
-        bug_title = ""
-        comment_text = ""
         if options.prompt:
             (bug_title, comment_text) = self.prompt_for_bug_title_and_comment()
         else:
@@ -498,8 +495,6 @@ class CreateBug(Command):
             PostCommits.execute(self, options, commit_ids[1:], tool)
 
     def create_bug_from_patch(self, options, args, tool):
-        bug_title = ""
-        comment_text = ""
         if options.prompt:
             (bug_title, comment_text) = self.prompt_for_bug_title_and_comment()
         else:
@@ -508,7 +503,7 @@ class CreateBug(Command):
             comment_text = commit_message.body(lstrip=True)
 
         diff = tool.scm().create_patch(options.git_commit)
-        bug_id = tool.bugs.create_bug(bug_title, comment_text, options.component, diff, "Patch", cc=options.cc, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
+        tool.bugs.create_bug(bug_title, comment_text, options.component, diff, "Patch", cc=options.cc, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
 
     def prompt_for_bug_title_and_comment(self):
         bug_title = User.prompt("Bug title: ")

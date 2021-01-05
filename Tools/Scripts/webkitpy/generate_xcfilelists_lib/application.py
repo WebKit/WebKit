@@ -120,7 +120,7 @@ class Application(object):
 
             try:
                 func = self.dispatch[args.command]
-            except KeyError as e:
+            except KeyError:
                 raise util.InvalidCommandError(args.command)
 
             return func()
@@ -139,7 +139,7 @@ class Application(object):
         except SystemExit:
             raise
 
-        except BaseException as e:
+        except BaseException:
             traceback.print_exc()
             return os.EX_SOFTWARE
 
@@ -329,7 +329,7 @@ specified on the command-line:
             self._log_progress("Generating .xcfilelists for {}/{}/{}".format(*triple))
             try:
                 generators = core_operation(generator, generators)
-            except BaseException as e:
+            except BaseException:
                 # TODO: Turn the traceback into a string, and then allow
                 # this field to be pickled and printed by the calling
                 # context. Right now, pickling raises an exception if it

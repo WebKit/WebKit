@@ -213,7 +213,7 @@ class SuggestNominations(AbstractCommitLogCommand):
         for commit_message in self._recent_commit_messages():
             try:
                 self._count_commit(self._parse_commit_message(commit_message), analysis)
-            except CommitLogError as exception:
+            except CommitLogError:
                 continue
         return analysis['counters_by_email']
 
@@ -263,7 +263,6 @@ class SuggestNominations(AbstractCommitLogCommand):
         for author_email, counter in counters:
             if author_email != counter['latest_email']:
                 continue
-            contributor = self._committer_list.contributor_by_email(author_email)
             author_name = counter['latest_name']
             patch_count = counter['count']
             counter['names'] = counter['names'] - set([author_name])

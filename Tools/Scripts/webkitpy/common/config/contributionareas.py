@@ -201,7 +201,6 @@ class ContributionAreas(object):
         areas = set()
         for file_path in touched_files:
             split_file_path = self._split_path(file_path)
-            tokenized_file_path = None
             tokenized_file_path = sum([self._split_camelcase(token, lambda x: x.lower()) for token in split_file_path], [])
             for area in self._contribution_areas:
                 if area.matches(split_file_path) or area.matches(tokenized_file_path):

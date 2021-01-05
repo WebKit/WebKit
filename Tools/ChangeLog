@@ -1,3 +1,60 @@
+2021-01-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove some unused variables from webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=220180
+
+        Reviewed by Aakash Jain, Sam Weinig and Jonathan Bedard.
+
+        * Scripts/webkitpy/benchmark_runner/webdriver_benchmark_runner.py:
+        * Scripts/webkitpy/benchmark_runner/webserver_benchmark_runner.py:
+        * Scripts/webkitpy/codegen/main.py:
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        * Scripts/webkitpy/common/checkout/checkout.py:
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        * Scripts/webkitpy/common/config/committers.py:
+        * Scripts/webkitpy/common/config/contributionareas.py:
+        * Scripts/webkitpy/common/message_pool.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        * Scripts/webkitpy/common/net/credentials.py:
+        * Scripts/webkitpy/common/system/crashlogs.py:
+        * Scripts/webkitpy/common/system/executive.py:
+        * Scripts/webkitpy/common/system/profiler.py:
+        * Scripts/webkitpy/common/system/user.py:
+        * Scripts/webkitpy/generate_xcfilelists_lib/application.py:
+        * Scripts/webkitpy/generate_xcfilelists_lib/generators.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+        * Scripts/webkitpy/layout_tests/servers/http_server.py:
+        * Scripts/webkitpy/layout_tests/views/buildbot_results.py:
+        * Scripts/webkitpy/layout_tests/views/metered_stream.py:
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        * Scripts/webkitpy/port/device_port.py:
+        * Scripts/webkitpy/port/factory.py:
+        * Scripts/webkitpy/port/leakdetector_valgrind.py:
+        * Scripts/webkitpy/port/server_process.py:
+        * Scripts/webkitpy/style/checkers/js.py:
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader.py:
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        * Scripts/webkitpy/tool/bot/queueengine.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/suggestnominations.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        * Scripts/webkitpy/tool/multicommandtool.py:
+        * Scripts/webkitpy/tool/servers/rebaselineserver.py:
+        * Scripts/webkitpy/tool/steps/commit.py:
+        * Scripts/webkitpy/tool/steps/confirmdiff.py:
+        * Scripts/webkitpy/tool/steps/haslanded.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        * Scripts/webkitpy/tool/steps/promptforbugortitle.py:
+        * Scripts/webkitpy/tool/steps/sortxcodeprojectfiles.py:
+        * Scripts/webkitpy/tool/steps/suggestreviewers_unittest.py:
+        * Scripts/webkitpy/w3c/test_exporter.py:
+        * Scripts/webkitpy/xcode/simulated_device.py:
+
 2021-01-05  Sihui Liu  <sihui_liu@appe.com>
 
         Fail speech recognition when page is muted for audio capture

@@ -102,7 +102,7 @@ class SVN(SCM, SVNRepository):
             svn_info_args = [cls.executable_name, 'info']
             exit_code = executive.run_command(svn_info_args, cwd=path, return_exit_code=True)
             return (exit_code == 0)
-        except OSError as e:
+        except OSError:
             return False
 
     def find_uuid(self, path):
@@ -248,7 +248,7 @@ class SVN(SCM, SVNRepository):
         log_command = ['log', '--quiet', '--limit=%s' % limit, path]
         try:
             log_output = self._run_svn(log_command, cwd=self.checkout_root)
-        except ScriptError as e:
+        except ScriptError:
             return []
         for line in log_output.splitlines():
             match = re.search('^r(?P<revision>\d+) ', line)

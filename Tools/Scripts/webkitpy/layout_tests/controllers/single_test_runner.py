@@ -194,7 +194,6 @@ class SingleTestRunner(object):
               which html file is used for producing the driver_output.
         """
         failures = []
-        fs = self._filesystem
         if driver_output.timeout:
             failures.append(test_failures.FailureTimeout(bool(reference_filename)))
 

@@ -109,8 +109,6 @@ class ValgrindError:
                 frames = gather_frames(stack, source_dir)
                 self._backtraces.append([description, frames])
                 description = None
-                stack = None
-                frames = None
             elif description and node.localName != None:
                 # The lastest description has no stack, e.g. "Address 0x28 is unknown".
                 self._additional.append(description)
@@ -222,7 +220,6 @@ class LeakDetectorValgrind(object):
         try:
             parsed_string = parseString(leaks_output)
         except ExpatError as e:
-            parse_failed = True
             _log.error("could not parse %s: %s" % (string_utils.decode(leaks_output, target_type=str), e))
             return
 

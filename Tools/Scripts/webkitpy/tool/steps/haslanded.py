@@ -81,7 +81,7 @@ class HasLanded(confirmdiff.ConfirmDiff):
         try:
             return executive.run_command(
                 ["interdiff", diff1_patch.name, diff2_patch.name], decode_output=False)
-        except ScriptError as e:
+        except ScriptError:
             _log.warning("Unable to find interdiff util (part of GNU difftools package) which is required.")
             raise
 

@@ -101,7 +101,7 @@ class BuiltinsGeneratorTests:
         combined_outputs = output_mode == "Combined"
         return self.generate_from_js_builtins(test_files, work_directory, framework_name=framework_name, combined_outputs=combined_outputs)
 
-    def wrappers_builtin_test(self, test_name, test_files, work_directory):
+    def wrappers_builtin_test(self, test_files, work_directory):
         return self.generate_from_js_builtins(test_files, work_directory, framework_name="WebCore", generate_wrappers=True)
 
     def run_test(self, reference_directory, test_name, test_files, generate_builtin_callback):

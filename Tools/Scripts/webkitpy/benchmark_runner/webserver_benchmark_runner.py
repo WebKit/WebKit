@@ -31,7 +31,6 @@ class WebServerBenchmarkRunner(BenchmarkRunner):
         return result
 
     def _run_one_test(self, web_root, test_file):
-        result = None
         try:
             self._http_server_driver.serve(web_root)
             url = urljoin(self._http_server_driver.base_url(), self._plan_name + '/' + test_file)

@@ -213,7 +213,6 @@ class CommitterList(object):
         self._reviewers = []
 
         for name, data in contributors.items():
-            contributor = None
             status = data.get('status')
             if status == "reviewer":
                 contributor = Reviewer(name, data.get('emails'), data.get('nicks'), data.get('aliases'), data.get('expertise'))

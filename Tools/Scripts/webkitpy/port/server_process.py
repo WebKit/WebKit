@@ -186,7 +186,7 @@ class ServerProcess(object):
         try:
             self._proc.stdin.write(string_utils.encode(bytes))
             self._proc.stdin.flush()
-        except (IOError, ValueError) as e:
+        except (IOError, ValueError):
             self.stop(0.0)
             # stop() calls _reset(), so we have to set crashed to True after calling stop()
             # unless we already know that this is a timeout.
@@ -314,7 +314,7 @@ class ServerProcess(object):
                     _log.debug('{} because of no data while reading stdout for the server process.'.format(self._crash_message))
                     self._crashed = True
                 self._error += data
-        except IOError as e:
+        except IOError:
             # We can ignore the IOErrors because we will detect if the subporcess crashed
             # the next time through the loop in _read()
             pass

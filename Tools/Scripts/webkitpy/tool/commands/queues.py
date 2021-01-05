@@ -62,7 +62,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
     def _cc_watchers(self, bug_id):
         try:
             self._tool.bugs.add_cc_to_bug(bug_id, self.watchers)
-        except Exception as e:
+        except Exception:
             traceback.print_exc()
             _log.error("Failed to CC watchers.")
 

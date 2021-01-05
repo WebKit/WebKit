@@ -146,7 +146,7 @@ class BaseGenerator(object):
                     generator = pickle.load(pickle_file)
                     generator.application = self.application
                     generators.append(generator)
-                except EOFError as e:
+                except EOFError:
                     break
             return generators
 

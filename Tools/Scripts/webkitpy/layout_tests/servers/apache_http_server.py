@@ -90,7 +90,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
 
         # FIXME: We shouldn't be calling a protected method of _port_obj!
         executable = self._port_obj._path_to_apache()
-        config_file_path = self._copy_apache_config_file(self.tests_dir, output_dir)
+        config_file_path = self._copy_apache_config_file(output_dir)
 
         start_cmd = [executable,
             '-f', config_file_path,
@@ -152,10 +152,9 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         self._start_cmd = start_cmd
         self._stop_cmd = stop_cmd
 
-    def _copy_apache_config_file(self, test_dir, output_dir):
+    def _copy_apache_config_file(self, output_dir):
         """Copy apache config file and returns the path to use.
         Args:
-          test_dir: absolute path to the LayoutTests directory.
           output_dir: absolute path to the layout test results directory.
         """
         httpd_config = self._port_obj._path_to_apache_config_file()

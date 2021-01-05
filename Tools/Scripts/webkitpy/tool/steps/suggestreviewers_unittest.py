@@ -45,7 +45,6 @@ class SuggestReviewersTest(unittest.TestCase):
         self.assertEqual(captured.root.log.getvalue(), '')
 
     def test_basic(self):
-        capture = OutputCapture()
         step = SuggestReviewers(MockTool(), MockOptions(suggest_reviewers=True, git_commit=None))
         with OutputCapture(level=logging.INFO) as captured:
             step.run(dict(bug_id='123'))

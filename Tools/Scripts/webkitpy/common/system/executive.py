@@ -297,7 +297,7 @@ class Executive(AbstractExecutive):
                     if process_name_filter(process_name):
                         running_pids.append(int(pid))
                         self.pid_to_system_pid[int(pid)] = int(winpid)
-                except ValueError as e:
+                except ValueError:
                     pass
         else:
             with self.popen(['ps', '-eo', 'pid,comm'], stdout=self.PIPE, stderr=self.PIPE) as ps_process:
@@ -309,7 +309,7 @@ class Executive(AbstractExecutive):
                         pid, process_name = line.strip().split(b' ', 1)
                         if process_name_filter(string_utils.decode(process_name, target_type=str)):
                             running_pids.append(int(pid))
-                    except ValueError as e:
+                    except ValueError:
                         pass
 
         return sorted(running_pids)

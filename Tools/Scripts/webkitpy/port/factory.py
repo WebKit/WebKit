@@ -127,7 +127,7 @@ class PortFactory(object):
     def __init__(self, host):
         self._host = host
 
-    def _default_port(self, options):
+    def _default_port(self):
         platform = self._host.platform
         if platform.is_linux() or platform.is_freebsd():
             return 'gtk'
@@ -141,7 +141,7 @@ class PortFactory(object):
         """Returns an object implementing the Port interface. If
         port_name is None, this routine attempts to guess at the most
         appropriate port on this platform."""
-        port_name = port_name or self._default_port(options)
+        port_name = port_name or self._default_port()
 
         classes = []
         for port_class in self.PORT_CLASSES:

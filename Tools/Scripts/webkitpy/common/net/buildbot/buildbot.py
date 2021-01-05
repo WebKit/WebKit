@@ -137,7 +137,7 @@ class Builder(object):
         def predicate(form):
             try:
                 return form.find_control("username")
-            except Exception as e:
+            except Exception:
                 return False
 
         if not self._browser:
@@ -436,7 +436,6 @@ class BuildBot(object):
 
     def failure_map(self):
         failure_map = FailureMap()
-        revision_to_failing_bots = {}
         for builder_status in self.builder_statuses():
             if builder_status["is_green"]:
                 continue
