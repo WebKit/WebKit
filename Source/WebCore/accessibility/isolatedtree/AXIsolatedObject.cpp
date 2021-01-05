@@ -401,8 +401,8 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
         setObjectProperty(AXPropertyName::WebArea, object.webAreaObject());
         setProperty(AXPropertyName::PreventKeyboardDOMEventDispatch, object.preventKeyboardDOMEventDispatch());
         setProperty(AXPropertyName::SessionID, object.sessionID());
-        setProperty(AXPropertyName::DocumentURI, object.documentURI());
-        setProperty(AXPropertyName::DocumentEncoding, object.documentEncoding());
+        setProperty(AXPropertyName::DocumentURI, object.documentURI().isolatedCopy());
+        setProperty(AXPropertyName::DocumentEncoding, object.documentEncoding().isolatedCopy());
         setObjectVectorProperty(AXPropertyName::DocumentLinks, object.documentLinks());
     }
 
@@ -1338,7 +1338,7 @@ String AXIsolatedObject::doAXStringForRange(const PlainTextRange& axRange) const
 {
     return Accessibility::retrieveValueFromMainThread<String>([&axRange, this] () -> String {
         if (auto* object = associatedAXObject())
-            return object->doAXStringForRange(axRange);
+            return object->doAXStringForRange(axRange).isolatedCopy();
         return { };
     });
 }
