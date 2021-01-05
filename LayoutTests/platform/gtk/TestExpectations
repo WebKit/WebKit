@@ -1715,8 +1715,6 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/as
 
 fast/frames/lots-of-iframes.html [ Slow ]
 
-imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing.html [ Slow ]
-
 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-negative-innerwidth-innerheight.html [ Slow ]
 
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-root.html [ Slow ]

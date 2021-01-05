@@ -1,3 +1,18 @@
+2021-01-04  Rob Buis  <rbuis@igalia.com>
+
+        Add missing support/refresh.sub.html
+        https://bugs.webkit.org/show_bug.cgi?id=220230
+
+        Reviewed by Sam Weinig.
+
+        Unskip test that passes now.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-01-04  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening

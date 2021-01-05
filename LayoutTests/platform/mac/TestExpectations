@@ -1414,8 +1414,6 @@ media/modern-media-controls/time-labels-support/elapsed-time.html [ Skip ]
 # <rdar://problem/33850189>
 http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]
 
-webkit.org/b/177322 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing.html [ Pass Failure ]
-
 webkit.org/b/177323 imported/w3c/web-platform-tests/fetch/security/embedded-credentials.tentative.sub.html [ Pass Failure ]
 
 webkit.org/b/177388 inspector/canvas/shaderProgram-add-remove-webgl.html [ Pass Failure ]
