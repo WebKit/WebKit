@@ -28,6 +28,7 @@ import sys
 import re
 import fileinput
 from optparse import OptionParser
+from functools import reduce
 
 usage = "usage: %prog [options] [FILES]\n  Compute the mean and 95% confidence interval of a sample set.\n  Standard input or files must contain two or more decimal numbers, one per line."
 parser = OptionParser(usage=usage)
@@ -88,11 +89,11 @@ if options.verbose:
     length = 7
     for item in results:
         line = "      %.2f %s" % (item, options.unit)
-        print line
+        print(line)
         length = len(line) if len(line) > length else length
 
-    print "-" * length
+    print("-" * length)
 
 prefix = "Mean: " if options.verbose else ""
-print "%s%.2f %s +/- %.2f %s (%.1f%%)" % (prefix, mean, options.unit, confidenceInterval, options.unit, confidencePercent)
+print("%s%.2f %s +/- %.2f %s (%.1f%%)" % (prefix, mean, options.unit, confidenceInterval, options.unit, confidencePercent))
 

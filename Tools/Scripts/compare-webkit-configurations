@@ -39,11 +39,11 @@ def main():
 
     force_webkit2 = args.webkit2
     if args.comparison == "remote-layer-tree":
-        print "Forcing use of WebKit2, as the remote layer tree depends on WebKit2."
+        print("Forcing use of WebKit2, as the remote layer tree depends on WebKit2.")
         force_webkit2 = True
 
     if args.comparison == "webkit2" and force_webkit2:
-        print "It doesn't make sense to test WebKit1 vs. WebKit2 *and* force WebKit2 on."
+        print("It doesn't make sense to test WebKit1 vs. WebKit2 *and* force WebKit2 on.")
         sys.exit(1)
 
     configuration_flag = flag_for_comparison(args.comparison)
@@ -65,7 +65,7 @@ def flag_for_comparison(comparison_name):
     if comparison_name == "webkit2":
         return "-2"
 
-    print "Unknown comparison:", comparison_name
+    print("Unknown comparison:", comparison_name)
     sys.exit(1)
 
 def run_webkit_tests(tests, results_directory, use_webkit2, additional_arguments=[]):

@@ -53,7 +53,7 @@ def check_source_file(source_file, checkout_root, platform_headers):
             continue
 
         if header not in platform_headers and header not in PLATFORM_GENERATED_HEADERS:
-            print "ERROR: %s:%d %s" % (source_file[len(checkout_root) + 1:], line_count, line.strip('\n'))
+            print("ERROR: %s:%d %s" % (source_file[len(checkout_root) + 1:], line_count, line.strip('\n')))
             failures_found += 1
 
     f.close()
@@ -73,7 +73,7 @@ for root, dirs, files in os.walk(platform_dir):
             layering_violations_count += check_source_file(os.path.join(root, file_name), checkout_root, platform_headers)
 
 if layering_violations_count:
-    print "Total: %d layering violations found in %s" % (layering_violations_count, platform_dir[len(checkout_root) + 1:])
+    print("Total: %d layering violations found in %s" % (layering_violations_count, platform_dir[len(checkout_root) + 1:]))
     sys.exit(1)
 
 sys.exit(0)

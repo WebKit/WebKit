@@ -19,7 +19,7 @@ def bss_symbols(lib, sfilter=None):
     return symbols
 
 if len(sys.argv) < 3:
-    print "Usage: %s lib1 lib2" % sys.argv[0]
+    print("Usage: %s lib1 lib2" % sys.argv[0])
     sys.exit(1)
 
 s1 = bss_symbols(sys.argv[1], lambda x: x == 'u')
@@ -31,8 +31,8 @@ for symbol in s1:
         symbols.append(symbol)
 
 if symbols:
-    print 'The following symbols are global in %s and not in %s' % (sys.argv[1], sys.argv[2])
-    print '\n'.join(sorted(symbols))
+    print('The following symbols are global in %s and not in %s' % (sys.argv[1], sys.argv[2]))
+    print('\n'.join(sorted(symbols)))
     sys.exit(1)
 
 sys.exit(0)

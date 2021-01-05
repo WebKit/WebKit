@@ -74,11 +74,11 @@ class ICStats:
                         self.slowPutById[slowPutByIdKey] += count
 
     def dumpStats(self):
-        print "Total Slow getById = {0:>13,d}".format(self.totalSlowGetById)
-        print "Total Slow putById = {0:>13,d}".format(self.totalSlowPutById)
+        print("Total Slow getById = {0:>13,d}".format(self.totalSlowGetById))
+        print("Total Slow putById = {0:>13,d}".format(self.totalSlowPutById))
 
-        print "Operation                            Base                  Property                              Location          Count  % tot"
-        print "-----------------------------------  --------------------  ------------------------------------  ------------  ---------   slow"
+        print("Operation                            Base                  Property                              Location          Count  % tot")
+        print("-----------------------------------  --------------------  ------------------------------------  ------------  ---------   slow")
 
         keys = sorted(self.combinedRecords.keys(), key=lambda t: self.combinedRecords[t], reverse=True)
         for key in keys:
@@ -97,12 +97,12 @@ class ICStats:
             if len(property) > 36:
                 property = property[0:32] + "..."
 
-            print "{0:35}  {1:20}  {2:36}  {3:12}  {4:>9d}{5}".format(operation[0:34], base, property, key[3], count, slowPercent)
+            print("{0:35}  {1:20}  {2:36}  {3:12}  {4:>9d}{5}".format(operation[0:34], base, property, key[3], count, slowPercent))
 
 
 def usage():
-    print "Usage: {0} [ic-stats-file]".format(sys.argv[0])
-    print "        Where <ic-stats-file> is the results of using the useICStats option."
+    print("Usage: {0} [ic-stats-file]".format(sys.argv[0]))
+    print("        Where <ic-stats-file> is the results of using the useICStats option.")
     exit(1)
 
 if __name__ == "__main__":
@@ -112,10 +112,10 @@ if __name__ == "__main__":
         try:
             file = open(sys.argv[1], "r")
         except IOError as e:
-            print "Couldn't open {0}, {1}".format(sys.argv[1], e.strerror)
+            print("Couldn't open {0}, {1}".format(sys.argv[1], e.strerror))
             usage()
         except:
-            print "Unexpected error:", sys.exc_info()[0]
+            print("Unexpected error:", sys.exc_info()[0])
             usage()
     else:
         file = sys.stdin

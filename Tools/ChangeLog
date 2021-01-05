@@ -1,3 +1,41 @@
+2021-01-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Update root level scripts in Tools/Scripts to Python 3
+        https://bugs.webkit.org/show_bug.cgi?id=220200
+
+        Reviewed by Darin Adler and Jonathan Bedard.
+
+        Mostly 2to3 inspired.
+
+        * Scripts/check-for-global-bss-symbols-in-webkitgtk-libs:
+        * Scripts/check-for-invalid-symbols-in-version-script:
+        * Scripts/check-for-platform-layering-violations:
+        * Scripts/clean-webkit:
+        * Scripts/compare-results:
+        * Scripts/compare-webkit-configurations:
+        * Scripts/download-github-release.py:
+        * Scripts/dump-webkit-tests-run:
+        * Scripts/export-w3c-performance-wg-tests:
+        * Scripts/extract-dependencies-from-makefile:
+        * Scripts/extract-localizable-strings:
+        * Scripts/find-duplicate-files:
+        * Scripts/ic-stats.py:
+        * Scripts/import-w3c-performance-wg-tests:
+        * Scripts/make-dist:
+        * Scripts/malloc-tree:
+        * Scripts/mark-jsc-stress-test:
+        * Scripts/open-layout-test:
+        * Scripts/read-checksum-from-png:
+        * Scripts/rebase-patch-after-webkit-move:
+        * Scripts/run-gtk-tests:
+        * Scripts/run-webdriver-tests:
+        * Scripts/run-wpe-tests:
+        * Scripts/sampstat:
+        * Scripts/sync-feature-defines:
+        * Scripts/sync-master-with-upstream:
+        * Scripts/update-wasm-gcc-torture.py:
+        * Scripts/validate-committer-lists:
+
 2021-01-05  Youenn Fablet  <youenn@apple.com>
 
         Enable WebRTC codecs in GPU process only for --use-gpu-process option

@@ -33,11 +33,17 @@
 
 import logging
 import os
-import subprocess
 import re
-import urllib2
+import subprocess
+import sys
+
 from datetime import date, datetime, timedelta
 from optparse import OptionParser
+
+if sys.version_info > (3, 0):
+    from urllib.request import urlopen
+else:
+    from urllib2 import urlopen
 
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.checkout.changelog import ChangeLogEntry
@@ -53,10 +59,10 @@ _log = logging.getLogger(__name__)
 def print_list_if_non_empty(title, list_to_print):
     if not list_to_print:
         return
-    print # Newline before the list
-    print title
+    print() # Newline before the list
+    print(title)
     for item in list_to_print:
-        print item
+        print(item)
 
 
 class CommitterListFromMailingList(object):
@@ -64,7 +70,7 @@ class CommitterListFromMailingList(object):
     reviewers_list_url = "http://lists.webkit.org/mailman/roster/webkit-reviewers"
 
     def _fetch_emails_from_page(self, url):
-        page = urllib2.urlopen(url)
+        page = urlopen(url)
         soup = BeautifulSoup(page)
 
         emails = []
@@ -93,7 +99,7 @@ class CommitterListFromMailingList(object):
             for email in committer.emails:
                 email_to_committer_map[email] = committer
 
-        return filter(lambda email: not email_to_committer_map.get(email), emails)
+        return [email for email in emails if not email_to_committer_map.get(email)]
 
     def check_for_emails_missing_from_list(self, committer_list):
         committer_emails = self._fetch_emails_from_page(self.committers_list_url)
@@ -211,9 +217,9 @@ class CommitterListFromGit(object):
             last_commit_dates[match_result.group('author')] = float(match_result.group('timestamp'))
 
     def _fill_in_emails_for_old_logins(self):
-        authors_missing_email = filter(lambda author: author.find('@') == -1, self._last_commit_time_by_author_cache)
-        authors_with_email = filter(lambda author: author.find('@') != -1, self._last_commit_time_by_author_cache)
-        prefixes_of_authors_with_email = map(lambda author: author.split('@')[0], authors_with_email)
+        authors_missing_email = [author for author in self._last_commit_time_by_author_cache if author.find('@') == -1]
+        authors_with_email = [author for author in self._last_commit_time_by_author_cache if author.find('@') != -1]
+        prefixes_of_authors_with_email = [author.split('@')[0] for author in authors_with_email]
 
         for author in authors_missing_email:
             # First check to see if we have a manual mapping from login to email.
@@ -245,10 +251,10 @@ class CommitterListFromGit(object):
 
     @staticmethod
     def _print_three_column_row(widths, values):
-        print "%s%s%s" % (values[0].ljust(widths[0]), values[1].ljust(widths[1]), values[2])
+        print("%s%s%s" % (values[0].ljust(widths[0]), values[1].ljust(widths[1]), values[2]))
 
     def possibly_expired_committers(self, committer_list):
-        authors_and_last_commits = self._last_commit_by_author().items()
+        authors_and_last_commits = list(self._last_commit_by_author().items())
         authors_and_last_commits.sort(lambda a,b: cmp(a[1], b[1]), reverse=True)
         committer_cutof = date.today() - timedelta(days=365)
         retired_authors_and_last_commits = []
@@ -284,8 +290,8 @@ class CommitterListFromGit(object):
     def print_possibly_expired_committers(self, committer_list):
         retired_authors_and_last_commits = self.possibly_expired_committers(committer_list)
         column_widths = [13, 25]
-        print
-        print "Committers who have not committed within one year:"
+        print()
+        print("Committers who have not committed within one year:")
         self._print_three_column_row(column_widths, ("Last Commit", "Committer Email", "Committer Record"))
         for (author, last_commit) in retired_authors_and_last_commits:
             committer_record = committer_list.committer_by_email(author)
@@ -296,10 +302,10 @@ class CommitterListFromGit(object):
         inactive_reviewers = self.possibly_inactive_reviewers(committer_list)
         
         column_widths = [13, 25]
-        print
-        print "Reviewers who have not reviewed within one year:"
+        print()
+        print("Reviewers who have not reviewed within one year:")
         for contributor in inactive_reviewers:
-            print "\"{}\" {}".format(contributor.full_name.encode("utf-8"), contributor.bugzilla_email())
+            print("\"{}\" {}".format(contributor.full_name.encode("utf-8"), contributor.bugzilla_email()))
 
     def print_committers_missing_from_committer_list(self, committer_list):
         missing_from_contributors_json = []
@@ -328,9 +334,9 @@ class CommitterListBugzillaChecker(object):
         return self._bugzilla.queries.is_invalid_bugzilla_email(committer.bugzilla_email())
 
     def print_committers_with_invalid_bugzilla_emails(self, committer_list):
-        print # Print a newline before we start hitting bugzilla (it logs about logging in).
-        print "Checking committer emails against bugzilla (this will take a long time)"
-        committers_with_invalid_bugzilla_email = filter(self._has_invalid_bugzilla_email, committer_list.committers())
+        print() # Print a newline before we start hitting bugzilla (it logs about logging in).
+        print("Checking committer emails against bugzilla (this will take a long time)")
+        committers_with_invalid_bugzilla_email = list(filter(self._has_invalid_bugzilla_email, committer_list.committers()))
         print_list_if_non_empty("Committers with invalid bugzilla email:", committers_with_invalid_bugzilla_email)
 
 
@@ -341,7 +347,7 @@ def dump_mailmap(committer_list):
     def format_email_with_gitsvn_uuid(email):
         return "<{0}@268f45cc-cd09-0410-ab3c-d52691b4dbfc>".format(email)        
 
-    email_to_legacy_username = dict(map(reversed, CommitterListFromGit.login_to_email_address.items()))
+    email_to_legacy_username = dict(list(map(reversed, list(CommitterListFromGit.login_to_email_address.items()))))
     def map_emails_to_legacy_username(emails):
         legacy_username = None
         for email in emails:
@@ -359,8 +365,8 @@ def dump_mailmap(committer_list):
             other_emails.append(legacy_username)
 
         for other_email in other_emails:
-            print full_name, format_email(canonical_email), format_email(other_email)
-            print full_name, format_email(canonical_email), format_email_with_uuid(other_email)
+            print(full_name, format_email(canonical_email), format_email(other_email))
+            print(full_name, format_email(canonical_email), format_email_with_uuid(other_email))
 
 
 def main():
@@ -374,7 +380,7 @@ def main():
 
     committer_list = CommitterList()
     if options.dump:
-        print committer_list.as_json()
+        print(committer_list.as_json())
         return 0
 
     if options.dump_mailmap:
@@ -382,20 +388,20 @@ def main():
         return 0
 
     if options.canonicalize:
-        print "Updating contributors.json in-place..."
+        print("Updating contributors.json in-place...")
         committer_list.reformat_in_place()
-        print "Done"
+        print("Done")
         return 0
 
     CommitterListFromMailingList().check_for_emails_missing_from_list(committer_list)
  
     if not Git.in_working_directory("."):
-        print """\n\nWARNING: validate-committer-lists requires a git checkout.
+        print("""\n\nWARNING: validate-committer-lists requires a git checkout.
 The following checks are disabled:
  - List of inactive committers
  - List of inactive reviewers
  - List of historical committers missing from contributors.json
-"""
+""")
         return 1
 
     svn_committer_list = CommitterListFromGit()

@@ -31,7 +31,11 @@ import shutil
 import subprocess
 import sys
 import tarfile
-import urllib2
+
+if sys.version_info > (3, 0):
+    from urllib.request import urlopen
+else:
+    from urllib2 import urlopen
 
 LKGR_URL = 'https://storage.googleapis.com/wasm-llvm/builds/%s/lkgr.json'
 TORTURE_FILE = 'wasm-torture-emwasm-%s.tbz2'
@@ -65,7 +69,7 @@ def update_lkgr(args):
     lkgr_url = LKGR_URL % args.platform
     if not args.lkgr:
         print('Downloading: %s' % lkgr_url)
-        args.lkgr = json.loads(urllib2.urlopen(lkgr_url).read())['build']
+        args.lkgr = json.loads(urlopen(lkgr_url).read())['build']
     print('lkgr: %s' % args.lkgr)
 
 
@@ -74,7 +78,7 @@ def untar_torture(args):
     torture_url = TORTURE_URL % (args.platform, args.lkgr, torture_file)
     if not os.path.exists(torture_file):
         print('Downloading: %s' % torture_url)
-        torture_download = urllib2.urlopen(torture_url)
+        torture_download = urlopen(torture_url)
         with open(torture_file, 'wb') as f:
             f.write(torture_download.read())
     if not args.nountar:

@@ -25,16 +25,20 @@
 
 "Copies the most recently updated FeatureDefines.xcconfig file to all the others."
 
+# A webkitpy import needs to go first for autoinstaller to work with subsequent imports.
+from webkitpy.style.checkers.featuredefines import FEATURE_DEFINE_FILES
+
 import os
 import shutil
-from webkitpy.style.checkers.featuredefines import FEATURE_DEFINE_FILES
+import six
+
 
 newest_file = max(FEATURE_DEFINE_FILES, key=os.path.getctime)
 remaining_files = FEATURE_DEFINE_FILES
 remaining_files.remove(newest_file)
 
-print "Copy %s to each of: %s " % (newest_file, ", ".join(remaining_files))
-response = raw_input("Continue [Y/n]: ")
+print("Copy %s to each of: %s " % (newest_file, ", ".join(remaining_files)))
+response = six.moves.input("Continue [Y/n]: ")
 
 if not response:
     response = 'y'

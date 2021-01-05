@@ -74,7 +74,7 @@ class JSCTestModifier(object):
         skip_line_prefix = "//@ skip if"
         skip_conditions = []
         skip_line = "{} {} {}"
-        supported_variables = filter(lambda variable: variable in self._conditions, JSCTestModifier.variables)
+        supported_variables = [variable for variable in JSCTestModifier.variables if variable in self._conditions]
         condition_template = "{}" if len(supported_variables) == 1 else "({})"
         for variable in supported_variables:
             skip_conditions.append(condition_template.format(self._parse_condition(variable, self._conditions[variable])))

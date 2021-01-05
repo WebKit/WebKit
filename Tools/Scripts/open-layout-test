@@ -65,7 +65,7 @@ def main(argv, stdout, stderr):
 
     test_url = driver.test_to_uri(test_name)
     if not needs_server:
-        print "Opening %s" % test_url
+        print("Opening %s" % test_url)
         subprocess.Popen(['open', test_url])
         return
 

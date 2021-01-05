@@ -20,7 +20,7 @@ def script_symbols(script):
     return symbols
 
 if len(sys.argv) < 3:
-    print "Usage: %s script lib" % sys.argv[0]
+    print("Usage: %s script lib" % sys.argv[0])
     sys.exit(1)
 
 
@@ -34,8 +34,8 @@ for symbol in script_symbols(sys.argv[1]):
         symbols.append(symbol)
 
 if symbols:
-    print 'The following symbols are in version script %s and not in library %s' % (sys.argv[1], sys.argv[2])
-    print '\n'.join(sorted(symbols))
+    print('The following symbols are in version script %s and not in library %s' % (sys.argv[1], sys.argv[2]))
+    print('\n'.join(sorted(symbols)))
     sys.exit(1)
 
 sys.exit(0)

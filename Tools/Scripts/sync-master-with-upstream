@@ -38,9 +38,9 @@ import subprocess
 def run(args, error_message = None):
     if subprocess.call(args) != 0:
         if error_message:
-            print error_message
+            print(error_message)
         exit(1)
 
 run(["git", "fetch", "upstream"], "Have you run configure-github-as-upstream to configure an upstream repository?")
 run(["git", "push", "origin", "upstream/master:master"])
-print "\nConsider running 'git merge origin' to update your local branches."
+print("\nConsider running 'git merge origin' to update your local branches.")

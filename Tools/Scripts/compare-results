@@ -36,13 +36,13 @@ from webkitpy.benchmark_runner.benchmark_json_merge import mergeJSONs
 try:
     from scipy import stats
 except:
-    print "ERROR: scipy package is not installed. Run `pip install scipy`"
+    print("ERROR: scipy package is not installed. Run `pip install scipy`")
     sys.exit(1)
 
 try:
     import numpy
 except:
-    print "ERROR: numpy package is not installed. Run `pip install numpy`"
+    print("ERROR: numpy package is not installed. Run `pip install numpy`")
     sys.exit(1)
 
 def readJSONFile(path):
@@ -228,10 +228,10 @@ def dumpBreakdowns(a, b):
     strings.insert(2, verticalSeparator)
     strings.append(verticalSeparator)
 
-    print "\n"
+    print("\n")
     for s in strings:
         print(s)
-    print "\n"
+    print("\n")
 
 def writeCSV(a, b, fileName):
     strings = []
@@ -327,7 +327,7 @@ def motionMarkResults(payload):
         payload = payload["MotionMark-1.1"]
     else:
         payload = payload["MotionMark-1.1.1"]
-    testNames = payload["tests"].keys()
+    testNames = list(payload["tests"].keys())
     numTests = len(payload["tests"][testNames[0]]["metrics"]["Score"]["current"])
     results = []
     for i in range(numTests):
@@ -365,7 +365,7 @@ def biggerIsBetter(benchmarkType):
     if benchmarkType == PLT5:
         return False
 
-    print "Should not be reached."
+    print("Should not be reached.")
     assert False
 
 def ttest(benchmarkType, a, b):
@@ -373,28 +373,28 @@ def ttest(benchmarkType, a, b):
     (tStatistic, pValue) = stats.ttest_ind(a, b, equal_var=False)
     aMean = numpy.mean(a)
     bMean = numpy.mean(b)
-    print "a mean = {:.5f}".format(aMean)
-    print "b mean = {:.5f}".format(bMean)
+    print("a mean = {:.5f}".format(aMean))
+    print("b mean = {:.5f}".format(bMean))
 
-    print "pValue = {:.10f}".format(pValue)
+    print("pValue = {:.10f}".format(pValue))
 
     if biggerIsBetter(benchmarkType):
-        print "(Bigger means are better.)"
+        print("(Bigger means are better.)")
         if aMean > bMean:
-            print "{:.3f} times worse".format((aMean / bMean))
+            print("{:.3f} times worse".format((aMean / bMean)))
         else:
-            print "{:.3f} times better".format((bMean / aMean))
+            print("{:.3f} times better".format((bMean / aMean)))
     else:
-        print "(Smaller means are better.)"
+        print("(Smaller means are better.)")
         if aMean > bMean:
-            print "{:.3f} times better".format((aMean / bMean))
+            print("{:.3f} times better".format((aMean / bMean)))
         else:
-            print "{:.3f} times worse".format((bMean / aMean))
+            print("{:.3f} times worse".format((bMean / aMean)))
 
     if pValue <= 0.05:
-        print "Results ARE significant"
+        print("Results ARE significant")
     else:
-        print "Results ARE NOT significant"
+        print("Results ARE NOT significant")
 
 def getOptions():
     parser = argparse.ArgumentParser(description="Compare two WebKit benchmark results. Pass in at least two JSON result files to compare them. This script prints the pValue along with the magnitude of the change. If more than one JSON is passed as a/b they will be merged when computing the breakdown.")
@@ -438,11 +438,11 @@ def main():
     typeB = detectBenchmark(b)
 
     if typeA != typeB:
-        print "-a and -b are not the same benchmark. a={} b={}".format(typeA, typeB)
+        print("-a and -b are not the same benchmark. a={} b={}".format(typeA, typeB))
         sys.exit(1)
 
     if not (typeA and typeB):
-        print "Unknown benchmark type. a={} b={}".format(typeA, typeB)
+        print("Unknown benchmark type. a={} b={}".format(typeA, typeB))
         sys.exit(1)
     
     if typeA == JetStream2:
@@ -479,7 +479,7 @@ def main():
         if args.csv:
             writeCSV(plt5Breakdown(a), plt5Breakdown(b), args.csv)
     else:
-        print "Unknown benchmark type"
+        print("Unknown benchmark type")
         sys.exit(1)
 
 

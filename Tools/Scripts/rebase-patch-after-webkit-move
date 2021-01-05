@@ -21,7 +21,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# A webkitpy import needs to go first for autoinstaller to work with subsequent imports.
+import webkitpy
+
 import os
+import six
 import sys
 
 REBASE_DICTIONARY = {
@@ -48,7 +52,7 @@ def needs_rebase(line):
     if not is_editable_line(line):
         return RebaseStatus.DO_NOT_NEED
 
-    for current_name, rebased_name in REBASE_DICTIONARY.iteritems():
+    for current_name, rebased_name in six.iteritems(REBASE_DICTIONARY):
         # Check if we've already rebased. We need to check if the rebased_name is already in the REBASE_DICTIONARY,
         # in this case, we don't know if we've already been rebased.
         if append_source(rebased_name) in line and rebased_name not in REBASE_DICTIONARY:
@@ -60,7 +64,7 @@ def needs_rebase(line):
             return RebaseStatus.NEED
 
     # Check if we might need a rebase
-    for current_name, rebased_name in REBASE_DICTIONARY.iteritems():
+    for current_name, rebased_name in six.iteritems(REBASE_DICTIONARY):
         if append_source(current_name) in line:
             return RebaseStatus.MAYBE_NEED
 
@@ -69,11 +73,11 @@ def needs_rebase(line):
 
 def rebase_line(line):
     if not is_editable_line(line):
-        for current_name, rebased_name in REBASE_DICTIONARY.iteritems():
+        for current_name, rebased_name in six.iteritems(REBASE_DICTIONARY):
             if current_name in line:
                 sys.stderr.write('Found an instance of {} in the patch.  Did you mean to replace it with {}?\n'.format(current_name, rebased_name))
         return line
-    for current_name, rebased_name in REBASE_DICTIONARY.iteritems():
+    for current_name, rebased_name in six.iteritems(REBASE_DICTIONARY):
         if append_source(current_name) in line:
             return line.replace(append_source(current_name), append_source(rebased_name))
     return line
@@ -118,13 +122,13 @@ def parse_arguments():
         sys.stderr.write('Reading patch from stdin\n')
         return []
     elif sys.argv[1] == '-h' or sys.argv[1] == 'help':
-        print 'rebase-patch-after-webkit-move usage:'
-        print '\trebase-patch-after-webkit-move -h, help'
-        print '\t\tPrint this message'
-        print '\trebase-patch-after-webkit-move <path to patch>'
-        print '\t\tReplace the patch at the provided path with a rebased patch'
-        print '\trebase-patch-after-webkit-move'
-        print '\t\tTreat stdin as the patch to be rebased'
+        print('rebase-patch-after-webkit-move usage:')
+        print('\trebase-patch-after-webkit-move -h, help')
+        print('\t\tPrint this message')
+        print('\trebase-patch-after-webkit-move <path to patch>')
+        print('\t\tReplace the patch at the provided path with a rebased patch')
+        print('\trebase-patch-after-webkit-move')
+        print('\t\tTreat stdin as the patch to be rebased')
         exit(0)
 
     for path in sys.argv[1:]:
