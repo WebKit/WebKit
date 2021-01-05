@@ -1,3 +1,17 @@
+2021-01-05  Beth Dakin  <bdakin@apple.com>
+
+        Remove non-inclusive language from copy of JetStream 2.0 in Websites/
+        https://bugs.webkit.org/show_bug.cgi?id=220257
+
+        Reviewed by Darin Adler.
+
+        * JetStream2.0/code-load/inspector-payload.js:
+        (WebInspector.DOMNode.WebInspector.Resource.WebInspector.ConsoleMessageView.prototype._formatWithSubstitutionString.styleFormatter):
+        (WebInspector.DOMNode.WebInspector.Resource.WebInspector.ConsoleMessageView.prototype._formatWithSubstitutionString.isAllowlistedProperty):
+        (WebInspector.DOMNode.WebInspector.Resource.WebInspector.ConsoleMessageView.prototype._formatWithSubstitutionString.isWhitelistedProperty): Deleted.
+        * JetStream2.0/web-tooling-benchmark/browser.js:
+        * JetStream2.0/web-tooling-benchmark/cli.js:
+
 2019-09-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Update demos to work on STP 92
