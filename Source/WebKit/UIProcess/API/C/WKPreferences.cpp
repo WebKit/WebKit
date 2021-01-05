@@ -1675,7 +1675,6 @@ bool WKPreferencesGetPaintTimingEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->paintTimingEnabled();
 }
 
-
 void WKPreferencesSetIsNSURLSessionWebSocketEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setIsNSURLSessionWebSocketEnabled(flag);
@@ -1684,6 +1683,16 @@ void WKPreferencesSetIsNSURLSessionWebSocketEnabled(WKPreferencesRef preferences
 bool WKPreferencesGetIsNSURLSessionWebSocketEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->isNSURLSessionWebSocketEnabled();
+}
+
+void WKPreferencesSetWebRTCPlatformCodecsInGPUProcessEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setWebRTCPlatformCodecsInGPUProcessEnabled(flag);
+}
+
+bool WKPreferencesGetWebRTCPlatformCodecsInGPUProcessEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->webRTCPlatformCodecsInGPUProcessEnabled();
 }
 
 WK_EXPORT void WKPreferencesSetIsAccessibilityIsolatedTreeEnabled(WKPreferencesRef preferencesRef, bool flag)

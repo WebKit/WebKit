@@ -392,6 +392,9 @@ def parse_args(args):
         options.internal_feature.append('UseGPUProcessForCanvasRenderingEnabled')
         options.internal_feature.append('UseGPUProcessForDOMRenderingEnabled')
         options.internal_feature.append('UseGPUProcessForWebGLEnabled')
+        if not options.experimental_feature:
+            options.experimental_feature = []
+        options.experimental_feature.append('WebRTCPlatformCodecsInGPUProcessEnabled')
         if options.result_report_flavor:
             raise RuntimeError('--use-gpu-process implicitly sets the result flavor, this should not be overridden')
         options.result_report_flavor = 'gpuprocess'
