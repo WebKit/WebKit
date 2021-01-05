@@ -11,18 +11,16 @@ FAIL getter order for imports object assert_array_equals: expected property 1 to
 PASS imports
 PASS No imports
 PASS exports and imports
-FAIL i64 exports and imports imported global module:global cannot be an i64 (evaluating 'new WebAssembly.Instance(module, ...args)')
+PASS i64 exports and imports
 PASS import with i32-returning function
 PASS import with function that takes and returns i32
-FAIL import with i64-returning function assert_true: Should have called into JS expected true got false
-FAIL import with function that takes and returns i64 WebAssembly function that returns i64 can't be called from JavaScript (evaluating 'instance.exports.fn2()')
+PASS import with i64-returning function
+PASS import with function that takes and returns i64
 PASS import with i32-taking function
-FAIL import with i64-taking function assert_throws_js: function "() => instance.exports.fn(6)" threw object "RuntimeError: WebAssembly function with an i64 argument can't be called from JavaScript (evaluating 'instance.exports.fn(6)')" ("RuntimeError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL export i64-returning function WebAssembly function that returns i64 can't be called from JavaScript (evaluating 'instance.exports.fn()')
+PASS import with i64-taking function
+PASS export i64-returning function
 PASS i32 mutable WebAssembly.Global import
-FAIL i64 mutable WebAssembly.Global import WebAssembly.Global does not accept i64 initial value
-FAIL Multiple i64 arguments WebAssembly function with an i64 argument can't be called from JavaScript (evaluating 'fn(1n, 0n)')
+PASS i64 mutable WebAssembly.Global import
+PASS Multiple i64 arguments
 PASS stray argument
 

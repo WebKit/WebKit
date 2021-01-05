@@ -96,6 +96,60 @@ Optional<double> JSValue::toNumberFromPrimitive() const
     return WTF::nullopt;
 }
 
+// https://tc39.es/ecma262/#sec-tobigint
+JSValue JSValue::toBigInt(JSGlobalObject* globalObject) const
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue primitive = toPrimitive(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (primitive.isBigInt())
+        return primitive;
+
+    if (primitive.isBoolean()) {
+#if USE(BIGINT32)
+        return jsBigInt32(primitive.asBoolean());
+#else
+        RELEASE_AND_RETURN(scope, JSBigInt::createFrom(globalObject, primitive.asBoolean()));
+#endif
+    }
+
+    if (primitive.isString()) {
+        scope.release();
+        return toStringView(globalObject, primitive, [&] (StringView view) {
+            return JSBigInt::parseInt(globalObject, view);
+        });
+    }
+
+    ASSERT(primitive.isUndefinedOrNull() || primitive.isNumber() || primitive.isSymbol());
+    throwTypeError(globalObject, scope, "Invalid argument type in ToBigInt operation"_s);
+    return jsUndefined();
+}
+
+// https://tc39.es/ecma262/#sec-tobigint64
+int64_t JSValue::toBigInt64(JSGlobalObject* globalObject) const
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue value = toBigInt(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    return JSBigInt::toBigInt64(value);
+}
+
+// https://tc39.es/ecma262/#sec-tobiguint64
+uint64_t JSValue::toBigUInt64(JSGlobalObject* globalObject) const
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue value = toBigInt(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    return JSBigInt::toBigUInt64(value);
+}
+
 JSObject* JSValue::toObjectSlowCase(JSGlobalObject* globalObject) const
 {
     VM& vm = globalObject->vm();

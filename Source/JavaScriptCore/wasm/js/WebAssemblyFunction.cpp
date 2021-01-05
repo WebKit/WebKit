@@ -91,7 +91,7 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
         case Wasm::Externref:
             break;
         case Wasm::I64:
-            arg = JSValue();
+            arg = JSValue::decode(bitwise_cast<uint64_t>(arg.toBigInt64(globalObject)));
             break;
         case Wasm::F32:
             arg = JSValue::decode(bitwise_cast<uint32_t>(arg.toFloat(globalObject)));
@@ -214,7 +214,10 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
     totalFrameSize += wasmCallInfo.headerAndArgumentStackSizeInBytes;
     totalFrameSize += savedResultRegisters.size() * sizeof(CPURegister);
 
-    if (wasmCallInfo.argumentsIncludeI64 || wasmCallInfo.resultsIncludeI64)
+    // FIXME: Optimize Wasm function call even if arguments include I64.
+    // This requires I64 extraction from BigInt.
+    // https://bugs.webkit.org/show_bug.cgi?id=220053
+    if (wasmCallInfo.argumentsIncludeI64)
         return nullptr;
 
     totalFrameSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), totalFrameSize);

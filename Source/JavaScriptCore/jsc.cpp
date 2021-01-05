@@ -2415,7 +2415,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateHeapBigInt, (JSGlobalObject* globalObject
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue argument = callFrame->argument(0);
-    JSValue bigInt = toBigInt(globalObject, argument);
+    JSValue bigInt = argument.toBigInt(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 #if USE(BIGINT32)
     if (bigInt.isHeapBigInt())
@@ -2434,7 +2434,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateBigInt32, (JSGlobalObject* globalObject, 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue argument = callFrame->argument(0);
-    JSValue bigIntValue = toBigInt(globalObject, argument);
+    JSValue bigIntValue = argument.toBigInt(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (bigIntValue.isBigInt32())
         return JSValue::encode(bigIntValue);

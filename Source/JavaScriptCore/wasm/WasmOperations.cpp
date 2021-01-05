@@ -58,23 +58,6 @@ IGNORE_WARNINGS_BEGIN("frame-address")
 
 namespace JSC { namespace Wasm {
 
-JSC_DEFINE_JIT_OPERATION(operationWasmThrowBadI64, void, (JSWebAssemblyInstance* instance))
-{
-    VM& vm = instance->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-
-    {
-        auto throwScope = DECLARE_THROW_SCOPE(vm);
-        JSGlobalObject* globalObject = instance->globalObject();
-        auto* error = ErrorInstance::create(globalObject, vm, globalObject->errorStructure(ErrorType::TypeError), "i64 not allowed as return type or argument to an imported function"_s);
-        throwException(globalObject, throwScope, error);
-    }
-
-    genericUnwind(vm, callFrame);
-    ASSERT(!!vm.callFrameForCatch);
-}
-
 static bool shouldTriggerOMGCompile(TierUpCount& tierUp, OMGCallee* replacement, uint32_t functionIndex)
 {
     if (!replacement && !tierUp.checkIfOptimizationThresholdReached()) {
@@ -481,6 +464,15 @@ JSC_DEFINE_JIT_OPERATION(operationWasmUnwind, void, (CallFrame* callFrame))
     ASSERT(!!vm.callFrameForCatch);
 }
 
+JSC_DEFINE_JIT_OPERATION(operationConvertToI64, int64_t, (CallFrame* callFrame, JSValue v))
+{
+    // FIXME: Consider passing JSWebAssemblyInstance* instead.
+    // https://bugs.webkit.org/show_bug.cgi?id=203206
+    VM& vm = callFrame->deprecatedVM();
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return v.toBigInt64(callFrame->lexicalGlobalObject(vm));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationConvertToF64, double, (CallFrame* callFrame, JSValue v))
 {
     // FIXME: Consider passing JSWebAssemblyInstance* instead.
@@ -506,6 +498,15 @@ JSC_DEFINE_JIT_OPERATION(operationConvertToF32, float, (CallFrame* callFrame, JS
     VM& vm = callFrame->deprecatedVM();
     NativeCallFrameTracer tracer(vm, callFrame);
     return static_cast<float>(v.toNumber(callFrame->lexicalGlobalObject(vm)));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationConvertToBigInt, EncodedJSValue, (CallFrame* callFrame, Instance* instance, int64_t value))
+{
+    JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
+    JSGlobalObject* globalObject = jsInstance->globalObject();
+    VM& vm = globalObject->vm();
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return JSValue::encode(JSBigInt::makeHeapBigIntOrBigInt32(globalObject, value));
 }
 
 // https://webassembly.github.io/multi-value/js-api/index.html#run-a-host-function
@@ -548,6 +549,9 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, I
         switch (signature->returnType(index)) {
         case I32:
             unboxedValue = value.toInt32(globalObject);
+            break;
+        case I64:
+            unboxedValue = value.toBigInt64(globalObject);
             break;
         case F32:
             unboxedValue = bitwise_cast<uint32_t>(value.toFloat(globalObject));

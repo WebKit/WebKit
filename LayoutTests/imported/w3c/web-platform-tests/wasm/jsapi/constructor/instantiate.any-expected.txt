@@ -17,32 +17,28 @@ PASS No imports: BufferSource argument
 PASS No imports: Module argument
 PASS exports and imports: BufferSource argument
 PASS exports and imports: Module argument
-FAIL i64 exports and imports: BufferSource argument promise_test: Unhandled rejection with value: object "LinkError: imported global module:global cannot be an i64"
-FAIL i64 exports and imports: Module argument promise_test: Unhandled rejection with value: object "LinkError: imported global module:global cannot be an i64"
+PASS i64 exports and imports: BufferSource argument
+PASS i64 exports and imports: Module argument
 PASS import with i32-returning function: BufferSource argument
 PASS import with i32-returning function: Module argument
 PASS import with function that takes and returns i32: BufferSource argument
 PASS import with function that takes and returns i32: Module argument
-FAIL import with i64-returning function: BufferSource argument assert_true: Should have called into JS expected true got false
-FAIL import with i64-returning function: Module argument assert_true: Should have called into JS expected true got false
-FAIL import with function that takes and returns i64: BufferSource argument promise_test: Unhandled rejection with value: object "RuntimeError: WebAssembly function that returns i64 can't be called from JavaScript (evaluating 'instance.exports.fn2()')"
-FAIL import with function that takes and returns i64: Module argument promise_test: Unhandled rejection with value: object "RuntimeError: WebAssembly function that returns i64 can't be called from JavaScript (evaluating 'instance.exports.fn2()')"
+PASS import with i64-returning function: BufferSource argument
+PASS import with i64-returning function: Module argument
+PASS import with function that takes and returns i64: BufferSource argument
+PASS import with function that takes and returns i64: Module argument
 PASS import with i32-taking function: BufferSource argument
 PASS import with i32-taking function: Module argument
-FAIL import with i64-taking function: BufferSource argument assert_throws_js: function "() => instance.exports.fn(6)" threw object "RuntimeError: WebAssembly function with an i64 argument can't be called from JavaScript (evaluating 'instance.exports.fn(6)')" ("RuntimeError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL import with i64-taking function: Module argument assert_throws_js: function "() => instance.exports.fn(6)" threw object "RuntimeError: WebAssembly function with an i64 argument can't be called from JavaScript (evaluating 'instance.exports.fn(6)')" ("RuntimeError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL export i64-returning function: BufferSource argument promise_test: Unhandled rejection with value: object "RuntimeError: WebAssembly function that returns i64 can't be called from JavaScript (evaluating 'instance.exports.fn()')"
-FAIL export i64-returning function: Module argument promise_test: Unhandled rejection with value: object "RuntimeError: WebAssembly function that returns i64 can't be called from JavaScript (evaluating 'instance.exports.fn()')"
+PASS import with i64-taking function: BufferSource argument
+PASS import with i64-taking function: Module argument
+PASS export i64-returning function: BufferSource argument
+PASS export i64-returning function: Module argument
 PASS i32 mutable WebAssembly.Global import: BufferSource argument
 PASS i32 mutable WebAssembly.Global import: Module argument
-FAIL i64 mutable WebAssembly.Global import: BufferSource argument WebAssembly.Global does not accept i64 initial value
-FAIL i64 mutable WebAssembly.Global import: Module argument WebAssembly.Global does not accept i64 initial value
-FAIL Multiple i64 arguments: BufferSource argument promise_test: Unhandled rejection with value: object "RuntimeError: WebAssembly function with an i64 argument can't be called from JavaScript (evaluating 'fn(1n, 0n)')"
-FAIL Multiple i64 arguments: Module argument promise_test: Unhandled rejection with value: object "RuntimeError: WebAssembly function with an i64 argument can't be called from JavaScript (evaluating 'fn(1n, 0n)')"
+PASS i64 mutable WebAssembly.Global import: BufferSource argument
+PASS i64 mutable WebAssembly.Global import: Module argument
+PASS Multiple i64 arguments: BufferSource argument
+PASS Multiple i64 arguments: Module argument
 PASS stray argument: BufferSource argument
 PASS stray argument: Module argument
 PASS Synchronous options handling: Buffer argument

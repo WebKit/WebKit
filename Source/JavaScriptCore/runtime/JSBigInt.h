@@ -420,6 +420,26 @@ public:
     static JSValue asUintN(JSGlobalObject*, uint64_t numberOfBits, int32_t bigIntAsInt32);
 #endif
 
+    static uint64_t toBigUInt64(JSValue bigInt)
+    {
+        ASSERT(bigInt.isBigInt());
+#if USE(BIGINT32)
+        if (bigInt.isBigInt32())
+            return static_cast<uint64_t>(static_cast<int64_t>(bigInt.bigInt32AsInt32()));
+#endif
+        return toBigUInt64Heap(bigInt.asHeapBigInt());
+    }
+
+    static uint64_t toBigInt64(JSValue bigInt)
+    {
+        ASSERT(bigInt.isBigInt());
+#if USE(BIGINT32)
+        if (bigInt.isBigInt32())
+            return static_cast<int64_t>(bigInt.bigInt32AsInt32());
+#endif
+        return static_cast<int64_t>(toBigUInt64Heap(bigInt.asHeapBigInt()));
+    }
+
     static Optional<uint64_t> toUint64(JSValue bigInt)
     {
         ASSERT(bigInt.isBigInt());
@@ -587,6 +607,8 @@ private:
     static ImplResult truncateToNBits(JSGlobalObject*, int32_t, BigIntImpl);
     template <typename BigIntImpl>
     static ImplResult truncateAndSubFromPowerOfTwo(JSGlobalObject*, int32_t, BigIntImpl, bool resultSign);
+
+    JS_EXPORT_PRIVATE static uint64_t toBigUInt64Heap(JSBigInt*);
 
     JS_EXPORT_PRIVATE static Optional<uint64_t> toUint64Heap(JSBigInt*);
 

@@ -34,7 +34,14 @@ const imp = {
 };
 
 const instance = new WebAssembly.Instance(module, imp);
-assert.throws(() => instance.exports.foo(20), WebAssembly.RuntimeError, "WebAssembly function with an i64 argument can't be called from JavaScript");
-assert.throws(() => instance.exports.foo({valueOf() { throw new Error("Should not be called!"); }}), WebAssembly.RuntimeError, "WebAssembly function with an i64 argument can't be called from JavaScript");
-assert.throws(() => instance.exports.bar(), WebAssembly.RuntimeError, "WebAssembly function that returns i64 can't be called from JavaScript");
-assert.eq(called, false);
+assert.throws(() => instance.exports.foo(20), TypeError, "Invalid argument type in ToBigInt operation");
+assert.eq(instance.exports.foo(20n), undefined);
+assert.truthy(called);
+called = false;
+let convertCalled = false;
+assert.eq(instance.exports.foo({valueOf() { convertCalled = true; return 20n; }}), undefined);
+assert.truthy(convertCalled);
+assert.truthy(called);
+called = false;
+assert.eq(instance.exports.bar(), 25n);
+assert.truthy(called, false);

@@ -1,3 +1,27 @@
+2021-01-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WASM] [BigInt] Add I64 to BigInt conversion
+        https://bugs.webkit.org/show_bug.cgi?id=213528
+
+        Reviewed by Michael Saboff.
+
+        * wasm/function-tests/function-import-return-value.js:
+        (assert.truthy):
+        (assert.throws):
+        (assert.eq):
+        * wasm/function-tests/i64-conversion.js: Renamed from JSTests/wasm/function-tests/i64-from-js-exceptions.js.
+        (assert.eq.instance.exports.foo.valueOf):
+        * wasm/js-api/global-error.js:
+        * wasm/stress/i64-call.js: Added.
+        (async test):
+        * wasm/stress/i64-extract.js: Added.
+        (testI64):
+        * wasm/stress/immutable-globals.js:
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.i.assert.eq):
+        * wasm/stress/multi-value-i64.js: Added.
+        (async test):
+        * wasm/stress/mutable-globals.js:
+
 2021-01-05  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         We should have a DFG intrinsic for the construct case of the Object constructor

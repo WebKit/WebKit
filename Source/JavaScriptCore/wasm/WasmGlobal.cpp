@@ -35,11 +35,13 @@
 
 namespace JSC { namespace Wasm {
 
-JSValue Global::get() const
+JSValue Global::get(JSGlobalObject* globalObject) const
 {
     switch (m_type) {
     case Wasm::Type::I32:
         return jsNumber(bitwise_cast<int32_t>(static_cast<uint32_t>(m_value.m_primitive)));
+    case Wasm::Type::I64:
+        return JSBigInt::makeHeapBigIntOrBigInt32(globalObject, static_cast<int64_t>(m_value.m_primitive));
     case Wasm::Type::F32:
         return jsNumber(purifyNaN(static_cast<double>(bitwise_cast<float>(static_cast<uint32_t>(m_value.m_primitive)))));
     case Wasm::Type::F64:
@@ -62,6 +64,12 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
         int32_t value = argument.toInt32(globalObject);
         RETURN_IF_EXCEPTION(throwScope, void());
         m_value.m_primitive = static_cast<uint64_t>(static_cast<uint32_t>(value));
+        break;
+    }
+    case Wasm::Type::I64: {
+        int64_t value = argument.toBigInt64(globalObject);
+        RETURN_IF_EXCEPTION(throwScope, void());
+        m_value.m_primitive = static_cast<uint64_t>(value);
         break;
     }
     case Wasm::Type::F32: {

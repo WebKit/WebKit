@@ -54,7 +54,7 @@ public:
 
     Wasm::Type type() const { return m_type; }
     Wasm::GlobalInformation::Mutability mutability() const { return m_mutability; }
-    JSValue get() const;
+    JSValue get(JSGlobalObject*) const;
     uint64_t getPrimitive() const { return m_value.m_primitive; }
     void set(JSGlobalObject*, JSValue);
     void visitAggregate(SlotVisitor&);

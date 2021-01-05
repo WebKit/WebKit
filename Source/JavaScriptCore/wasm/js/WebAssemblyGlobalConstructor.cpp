@@ -108,7 +108,10 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
             break;
         }
         case Wasm::Type::I64: {
-            return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Global does not accept i64 initial value"_s)));
+            int64_t value = argument.toBigInt64(globalObject);
+            RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+            initialValue = static_cast<uint64_t>(value);
+            break;
         }
         case Wasm::Type::F32: {
             float value = argument.toFloat(globalObject);

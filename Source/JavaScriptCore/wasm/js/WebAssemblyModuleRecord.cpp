@@ -238,13 +238,15 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
                         return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a same mutability")));
                     switch (moduleInformation.globals[import.kindIndex].type) {
                     case Wasm::Funcref:
-                        value = globalValue->global()->get();
+                        value = globalValue->global()->get(globalObject);
+                        RETURN_IF_EXCEPTION(scope, void());
                         if (!isWebAssemblyHostFunction(vm, value) && !value.isNull())
                             return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a wasm exported function or null")));
                         m_instance->instance().setGlobal(import.kindIndex, value);
                         break;
                     case Wasm::Externref:
-                        value = globalValue->global()->get();
+                        value = globalValue->global()->get(globalObject);
+                        RETURN_IF_EXCEPTION(scope, void());
                         m_instance->instance().setGlobal(import.kindIndex, value);
                         break;
                     case Wasm::I32:
@@ -258,14 +260,19 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
                     }
                 } else {
                     const auto globalType = moduleInformation.globals[import.kindIndex].type;
-                    // ii. If the global_type of i is i64 or Type(v) is not Number, throw a WebAssembly.LinkError.
-                    if (globalType == Wasm::I64)
-                        return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "cannot be an i64")));
-                    if (!isRefType(globalType) && !value.isNumber())
-                        return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a number")));
+                    if (!isRefType(globalType)) {
+                        // ii. If the global_type of i is i64 or Type(v) is Number, throw a WebAssembly.LinkError.
+                        if (globalType == Wasm::I64) {
+                            if (!value.isBigInt())
+                                return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a BigInt")));
+                        } else {
+                            if (!value.isNumber())
+                                return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a number")));
+                        }
+                    }
 
                     // iii. Append ToWebAssemblyValue(v) to imports.
-                    switch (moduleInformation.globals[import.kindIndex].type) {
+                    switch (globalType) {
                     case Wasm::Funcref:
                         if (!isWebAssemblyHostFunction(vm, value) && !value.isNull())
                             return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a wasm exported function or null")));
@@ -277,6 +284,12 @@ void WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, JSValue, JSObje
                     case Wasm::I32:
                         m_instance->instance().setGlobal(import.kindIndex, value.toInt32(globalObject));
                         break;
+                    case Wasm::I64: {
+                        int64_t bits = value.toBigInt64(globalObject);
+                        RETURN_IF_EXCEPTION(scope, void());
+                        m_instance->instance().setGlobal(import.kindIndex, bits);
+                        break;
+                    }
                     case Wasm::F32:
                         m_instance->instance().setGlobal(import.kindIndex, bitwise_cast<uint32_t>(value.toFloat(globalObject)));
                         break;

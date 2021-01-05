@@ -73,12 +73,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyGlobalProtoFuncValueOf, (JSGlobalObject* glo
     JSWebAssemblyGlobal* global = getGlobal(globalObject, vm, callFrame->thisValue());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-    switch (global->global()->type()) {
-    case Wasm::Type::I64:
-        return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Global.prototype.valueOf does not work with i64 type"_s)));
-    default:
-        return JSValue::encode(global->global()->get());
-    }
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(global->global()->get(globalObject)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(webAssemblyGlobalProtoGetterFuncValue, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -89,12 +84,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyGlobalProtoGetterFuncValue, (JSGlobalObject*
     JSWebAssemblyGlobal* global = getGlobal(globalObject, vm, callFrame->thisValue());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-    switch (global->global()->type()) {
-    case Wasm::Type::I64:
-        return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Global.prototype.value does not work with i64 type"_s)));
-    default:
-        return JSValue::encode(global->global()->get());
-    }
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(global->global()->get(globalObject)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(webAssemblyGlobalProtoSetterFuncValue, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -111,14 +101,9 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyGlobalProtoSetterFuncValue, (JSGlobalObject*
     if (global->global()->mutability() == Wasm::GlobalInformation::Mutability::Immutable)
         return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Global.prototype.value attempts to modify immutable global value"_s)));
 
-    switch (global->global()->type()) {
-    case Wasm::Type::I64:
-        return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Global.prototype.value does not work with i64 type"_s)));
-    default:
-        global->global()->set(globalObject, callFrame->argument(0));
-        RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-        return JSValue::encode(jsUndefined());
-    }
+    global->global()->set(globalObject, callFrame->argument(0));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    return JSValue::encode(jsUndefined());
 }
 
 WebAssemblyGlobalPrototype* WebAssemblyGlobalPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)

@@ -42,8 +42,6 @@ namespace Wasm {
     macro(DivisionByZero, "Division by zero") \
     macro(IntegerOverflow, "Integer overflow") \
     macro(StackOverflow, "Stack overflow") \
-    macro(I64ArgumentType, "WebAssembly function with an i64 argument can't be called from JavaScript") \
-    macro(I64ReturnType, "WebAssembly function that returns i64 can't be called from JavaScript") \
     macro(FuncrefNotWasm, "Funcref must be an exported wasm function")
 
 enum class ExceptionType : uint32_t {

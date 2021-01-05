@@ -72,37 +72,6 @@ void BigIntConstructor::finishCreation(VM& vm, BigIntPrototype* bigIntPrototype)
 
 // ------------------------------ Functions ---------------------------
 
-JSValue toBigInt(JSGlobalObject* globalObject, JSValue argument)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue primitive = argument.toPrimitive(globalObject);
-    RETURN_IF_EXCEPTION(scope, { });
-    
-    if (primitive.isBigInt())
-        return primitive;
-
-    if (primitive.isBoolean()) {
-#if USE(BIGINT32)
-        return jsBigInt32(primitive.asBoolean());
-#else
-        RELEASE_AND_RETURN(scope, JSBigInt::createFrom(globalObject, primitive.asBoolean()));
-#endif
-    }
-
-    if (primitive.isString()) {
-        scope.release();
-        return toStringView(globalObject, primitive, [&] (StringView view) {
-            return JSBigInt::parseInt(globalObject, view);
-        });
-    }
-
-    ASSERT(primitive.isUndefinedOrNull() || primitive.isNumber() || primitive.isSymbol());
-    throwTypeError(globalObject, scope, "Invalid argument type in ToBigInt operation"_s);
-    return jsUndefined();
-}
-
 JSC_DEFINE_HOST_FUNCTION(callBigIntConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -127,7 +96,7 @@ JSC_DEFINE_HOST_FUNCTION(callBigIntConstructor, (JSGlobalObject* globalObject, C
         RELEASE_AND_RETURN(scope, JSValue::encode(JSBigInt::makeHeapBigIntOrBigInt32(globalObject, primitive.asDouble())));
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(toBigInt(globalObject, primitive)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(primitive.toBigInt(globalObject)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(constructBigIntConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -145,7 +114,7 @@ JSC_DEFINE_HOST_FUNCTION(bigIntConstructorFuncAsUintN, (JSGlobalObject* globalOb
     auto numberOfBits = callFrame->argument(0).toIndex(globalObject, "number of bits");
     RETURN_IF_EXCEPTION(scope, { });
 
-    JSValue bigInt = toBigInt(globalObject, callFrame->argument(1));
+    JSValue bigInt = callFrame->argument(1).toBigInt(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
 #if USE(BIGINT32)
@@ -165,7 +134,7 @@ JSC_DEFINE_HOST_FUNCTION(bigIntConstructorFuncAsIntN, (JSGlobalObject* globalObj
     auto numberOfBits = callFrame->argument(0).toIndex(globalObject, "number of bits");
     RETURN_IF_EXCEPTION(scope, { });
 
-    JSValue bigInt = toBigInt(globalObject, callFrame->argument(1));
+    JSValue bigInt = callFrame->argument(1).toBigInt(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
 #if USE(BIGINT32)

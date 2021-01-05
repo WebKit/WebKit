@@ -58,6 +58,4 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(BigIntConstructor, InternalFunction);
 
-JS_EXPORT_PRIVATE JSValue toBigInt(JSGlobalObject*, JSValue);
-
 } // namespace JSC

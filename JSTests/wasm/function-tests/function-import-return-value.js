@@ -151,7 +151,7 @@ import * as assert from '../assert.js'
     const func = () => 20;
     const instance = new WebAssembly.Instance(module, {imp: {func}});
     for (let i = 0; i < 100; i++) {
-        assert.throws(() => instance.exports.foo(), TypeError, "i64 not allowed as return type or argument to an imported function");
+        assert.throws(() => instance.exports.foo(), TypeError, "Invalid argument type in ToBigInt operation");
     }
 }
 
@@ -159,7 +159,7 @@ import * as assert from '../assert.js'
     const builder = new Builder()
         .Type().End()
         .Import()
-            .Function("imp", "func", { params: ["i64"], ret: "void"})
+            .Function("imp", "func", { params: [], ret: "i64"})
         .End()
         .Function().End()
         .Export()
@@ -167,7 +167,34 @@ import * as assert from '../assert.js'
         .End()
         .Code()
             .Function("foo", {params: [], ret: "void"})
-                 .I64Const(20)
+                .Call(0)
+                .Drop()
+                .Return()
+            .End()
+        .End();
+
+
+    const bin = builder.WebAssembly().get();
+    const module = new WebAssembly.Module(bin);
+    const func = () => 20n;
+    const instance = new WebAssembly.Instance(module, {imp: {func}});
+    for (let i = 0; i < 100; i++) {
+        assert.eq(instance.exports.foo(), undefined);
+    }
+}
+
+{
+    const builder = new Builder()
+        .Type().End()
+        .Import()
+            .Function("imp", "func", { params: [], ret: "i64"})
+        .End()
+        .Function().End()
+        .Export()
+            .Function("foo")
+        .End()
+        .Code()
+            .Function("foo", {params: [], ret: "i64"})
                 .Call(0)
                 .Return()
             .End()
@@ -176,10 +203,10 @@ import * as assert from '../assert.js'
 
     const bin = builder.WebAssembly().get();
     const module = new WebAssembly.Module(bin);
-    const func = () => 20;
+    const func = () => 20n;
     const instance = new WebAssembly.Instance(module, {imp: {func}});
     for (let i = 0; i < 100; i++) {
-        assert.throws(() => instance.exports.foo(), TypeError, "i64 not allowed as return type or argument to an imported function");
+        assert.eq(instance.exports.foo(), 20n);
     }
 }
 
@@ -205,13 +232,49 @@ import * as assert from '../assert.js'
     const bin = builder.WebAssembly().get();
     const module = new WebAssembly.Module(bin);
     let called = false;
-    const func = () => {
+    const func = (value) => {
         called = true;
+        assert.eq(value, 20n);
+    };
+    const instance = new WebAssembly.Instance(module, {imp: {func}});
+    for (let i = 0; i < 100; i++) {
+        called = false;
+        assert.eq(instance.exports.foo(), undefined);
+        assert.truthy(called);
+    }
+}
+
+{
+    const builder = new Builder()
+        .Type().End()
+        .Import()
+            .Function("imp", "func", { params: ["i64"], ret: "i64"})
+        .End()
+        .Function().End()
+        .Export()
+            .Function("foo")
+        .End()
+        .Code()
+            .Function("foo", {params: [], ret: "i64"})
+                 .I64Const(20)
+                .Call(0)
+                .Return()
+            .End()
+        .End();
+
+
+    const bin = builder.WebAssembly().get();
+    const module = new WebAssembly.Module(bin);
+    let called = false;
+    const func = (value) => {
+        called = true;
+        return value + 22n;
     }
     const instance = new WebAssembly.Instance(module, {imp: {func}});
     for (let i = 0; i < 100; i++) {
-        assert.throws(() => instance.exports.foo(), TypeError, "i64 not allowed as return type or argument to an imported function");
-        assert.eq(called, false);
+        called = false;
+        assert.eq(instance.exports.foo(), 42n);
+        assert.truthy(called);
     }
 }
 
@@ -241,7 +304,39 @@ import * as assert from '../assert.js'
     };
     const instance = new WebAssembly.Instance(module);
     for (let i = 0; i < 100; i++) {
-        assert.throws(() => instance.exports.foo(value), Error, "WebAssembly function with an i64 argument can't be called from JavaScript");
-        assert.eq(called, false);
+        assert.throws(() => instance.exports.foo(value), Error, "Invalid argument type in ToBigInt operation");
+        assert.eq(called, true);
+    }
+}
+
+{
+    const builder = new Builder()
+        .Type().End()
+        .Function().End()
+        .Export()
+            .Function("foo")
+        .End()
+        .Code()
+            .Function("foo", {params: ["i64"], ret: "i64"})
+                .GetLocal(0)
+                .Return()
+            .End()
+        .End();
+
+
+    const bin = builder.WebAssembly().get();
+    const module = new WebAssembly.Module(bin);
+    let called = false;
+    let value = {
+        valueOf() {
+            called = true;
+            return 42n;
+        }
+    };
+    const instance = new WebAssembly.Instance(module);
+    for (let i = 0; i < 100; i++) {
+        called = false;
+        assert.eq(instance.exports.foo(value), 42n);
+        assert.eq(called, true);
     }
 }

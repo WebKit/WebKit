@@ -3043,6 +3043,25 @@ JSValue JSBigInt::asUintN(JSGlobalObject* globalObject, uint64_t n, int32_t bigI
 }
 #endif
 
+uint64_t JSBigInt::toBigUInt64Heap(JSBigInt* bigInt)
+{
+    auto length = bigInt->length();
+    if (!length)
+        return 0;
+    uint64_t value = 0;
+    if constexpr (sizeof(Digit) == 4) {
+        value = static_cast<uint64_t>(bigInt->digit(0));
+        if (length > 1)
+            value |= static_cast<uint64_t>(bigInt->digit(1)) << 32;
+    } else {
+        ASSERT(sizeof(Digit) == 8);
+        value = bigInt->digit(0);
+    }
+    if (!bigInt->sign())
+        return value;
+    return ~(value - 1); // To avoid undefined behavior, we compute two's compliment by hand in C while this is simply `-value`.
+}
+
 Optional<uint64_t> JSBigInt::toUint64Heap(JSBigInt* bigInt)
 {
     auto length = bigInt->length();

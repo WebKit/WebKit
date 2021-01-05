@@ -137,9 +137,10 @@ import * as assert from '../assert.js'
         }
         {
             let binding = instance.exports.i64;
-            assert.throws(() => binding.value, TypeError, `WebAssembly.Global.prototype.value does not work with i64 type`);
-            assert.throws(() => binding.value = 42, TypeError, `WebAssembly.Global.prototype.value does not work with i64 type`);
-            assert.eq(instance.exports.getI64AsI32(), 0);
+            assert.eq(binding.value, 0n);
+            assert.throws(() => binding.value = 42, TypeError, `Invalid argument type in ToBigInt operation`);
+            binding.value = 42n;
+            assert.eq(instance.exports.getI64AsI32(), 42);
             instance.exports.setI32AsI64(20);
             assert.eq(instance.exports.getI64AsI32(), 20);
             instance.exports.setI32AsI64(0);

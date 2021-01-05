@@ -1,3 +1,27 @@
+2021-01-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WASM] [BigInt] Add I64 to BigInt conversion
+        https://bugs.webkit.org/show_bug.cgi?id=213528
+
+        Reviewed by Michael Saboff.
+
+        * web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/constructor/instantiate.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/constructor/instantiate.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/global/constructor.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/global/constructor.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/global/value-get-set.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/global/value-get-set.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/instance/constructor.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/instance/constructor.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/instantiateStreaming-bad-imports.any-expected.txt:
+        * web-platform-tests/wasm/webapi/instantiateStreaming-bad-imports.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/instantiateStreaming.any-expected.txt:
+        * web-platform-tests/wasm/webapi/instantiateStreaming.any.worker-expected.txt:
+
 2021-01-05  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors] :focus should match inside the focus event

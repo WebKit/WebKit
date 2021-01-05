@@ -298,6 +298,10 @@ public:
     uint32_t toIndex(JSGlobalObject*, const char* errorName) const;
     double toLength(JSGlobalObject*) const;
 
+    JS_EXPORT_PRIVATE JSValue toBigInt(JSGlobalObject*) const;
+    int64_t toBigInt64(JSGlobalObject*) const;
+    uint64_t toBigUInt64(JSGlobalObject*) const;
+
     Optional<uint32_t> toUInt32AfterToNumeric(JSGlobalObject*) const;
 
     // Floating point conversions (this is a convenience function for WebCore;

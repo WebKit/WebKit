@@ -1,3 +1,58 @@
+2021-01-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WASM] [BigInt] Add I64 to BigInt conversion
+        https://bugs.webkit.org/show_bug.cgi?id=213528
+
+        Reviewed by Michael Saboff.
+
+        This patch implements i64 to BigInt / BigInt to i64 support in WebAssembly to expose i64 features to JS.
+
+            1. Arguments of exposed wasm functions can have i64.
+            2. Returned values of exposed wasm functions can have i64.
+            3. WebAssembly.Global can expose i64 value to JS.
+
+        Currently, we do not support fast JS->Wasm IC for wasm functions including i64 arguments. But this should be supported later
+        in https://bugs.webkit.org/show_bug.cgi?id=220053.
+
+        * jsc.cpp:
+        (JSC_DEFINE_HOST_FUNCTION):
+        * runtime/BigIntConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::toBigInt): Deleted.
+        * runtime/BigIntConstructor.h:
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::toBigUInt64Heap):
+        * runtime/JSBigInt.h:
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toBigInt const):
+        (JSC::JSValue::toBigInt64 const):
+        (JSC::JSValue::toBigUInt64 const):
+        * runtime/JSCJSValue.h:
+        * wasm/WasmExceptionType.h:
+        * wasm/WasmGlobal.cpp:
+        (JSC::Wasm::Global::get const):
+        (JSC::Wasm::Global::set):
+        * wasm/WasmGlobal.h:
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/WasmOperations.h:
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::marshallJSResult):
+        (JSC::Wasm::createJSToWasmWrapper):
+        (JSC::Wasm::boxWasmResult): Deleted.
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+        (JSC::Wasm::handleBadI64Use): Deleted.
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+        * wasm/js/WebAssemblyGlobalConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyGlobalPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+
 2021-01-05  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         We should have a DFG intrinsic for the construct case of the Object constructor

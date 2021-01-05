@@ -47,12 +47,14 @@ class Signature;
 
 JSC_DECLARE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&));
 JSC_DECLARE_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (Instance*, uint32_t functionIndex));
-JSC_DECLARE_JIT_OPERATION(operationWasmThrowBadI64, void, (JSWebAssemblyInstance*));
 JSC_DECLARE_JIT_OPERATION(operationWasmUnwind, void, (CallFrame*));
 
+JSC_DECLARE_JIT_OPERATION(operationConvertToI64, int64_t, (CallFrame*, JSValue));
 JSC_DECLARE_JIT_OPERATION(operationConvertToF64, double, (CallFrame*, JSValue));
 JSC_DECLARE_JIT_OPERATION(operationConvertToI32, int32_t, (CallFrame*, JSValue));
 JSC_DECLARE_JIT_OPERATION(operationConvertToF32, float, (CallFrame*, JSValue));
+
+JSC_DECLARE_JIT_OPERATION(operationConvertToBigInt, EncodedJSValue, (CallFrame*, Instance*, int64_t));
 
 JSC_DECLARE_JIT_OPERATION(operationIterateResults, void, (CallFrame*, Instance*, const Signature*, JSValue, uint64_t*, uint64_t*));
 JSC_DECLARE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (CallFrame*, Wasm::Instance*, const Signature*, IndexingType, JSValue*));

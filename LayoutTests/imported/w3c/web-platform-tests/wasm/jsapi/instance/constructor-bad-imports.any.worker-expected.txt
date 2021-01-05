@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: TypeError: WebAssembly.Global does not accept i64 initial value
-
-Harness Error (FAIL), message = TypeError: WebAssembly.Global does not accept i64 initial value
 
 PASS new WebAssembly.Instance(module): Non-object imports argument: null
 PASS new WebAssembly.Instance(module): Non-object imports argument: true
@@ -77,4 +74,35 @@ PASS new WebAssembly.Instance(module): Importing an f64 global with an incorrect
 PASS new WebAssembly.Instance(module): Importing an i32 mutable global with a primitive value
 PASS new WebAssembly.Instance(module): Importing an i32 mutable global with an immutable Global object
 PASS new WebAssembly.Instance(module): Importing an i64 mutable global with a primitive value
+PASS new WebAssembly.Instance(module): Importing an i64 mutable global with an immutable Global object
+PASS new WebAssembly.Instance(module): Importing an f32 mutable global with a primitive value
+PASS new WebAssembly.Instance(module): Importing an f32 mutable global with an immutable Global object
+PASS new WebAssembly.Instance(module): Importing an f64 mutable global with a primitive value
+PASS new WebAssembly.Instance(module): Importing an f64 mutable global with an immutable Global object
+PASS new WebAssembly.Instance(module): Importing memory with an incorrectly-typed value: undefined
+PASS new WebAssembly.Instance(module): Importing memory with an incorrectly-typed value: null
+PASS new WebAssembly.Instance(module): Importing memory with an incorrectly-typed value: true
+PASS new WebAssembly.Instance(module): Importing memory with an incorrectly-typed value: ""
+PASS new WebAssembly.Instance(module): Importing memory with an incorrectly-typed value: symbol "Symbol()"
+PASS new WebAssembly.Instance(module): Importing memory with an incorrectly-typed value: 1
+PASS new WebAssembly.Instance(module): Importing memory with an incorrectly-typed value: 0.1
+PASS new WebAssembly.Instance(module): Importing memory with an incorrectly-typed value: NaN
+PASS new WebAssembly.Instance(module): Importing memory with an incorrectly-typed value: plain object
+PASS new WebAssembly.Instance(module): Importing memory with an incorrectly-typed value: WebAssembly.Memory
+PASS new WebAssembly.Instance(module): Importing memory with an incorrectly-typed value: WebAssembly.Memory.prototype
+PASS new WebAssembly.Instance(module): Importing memory with an incorrectly-typed value: Object.create(WebAssembly.Memory.prototype)
+PASS new WebAssembly.Instance(module): Importing memory with an incorrectly-typed value: WebAssembly.Memory object (too large)
+PASS new WebAssembly.Instance(module): Importing table with an incorrectly-typed value: undefined
+PASS new WebAssembly.Instance(module): Importing table with an incorrectly-typed value: null
+PASS new WebAssembly.Instance(module): Importing table with an incorrectly-typed value: true
+PASS new WebAssembly.Instance(module): Importing table with an incorrectly-typed value: ""
+PASS new WebAssembly.Instance(module): Importing table with an incorrectly-typed value: symbol "Symbol()"
+PASS new WebAssembly.Instance(module): Importing table with an incorrectly-typed value: 1
+PASS new WebAssembly.Instance(module): Importing table with an incorrectly-typed value: 0.1
+PASS new WebAssembly.Instance(module): Importing table with an incorrectly-typed value: NaN
+PASS new WebAssembly.Instance(module): Importing table with an incorrectly-typed value: plain object
+PASS new WebAssembly.Instance(module): Importing table with an incorrectly-typed value: WebAssembly.Table
+PASS new WebAssembly.Instance(module): Importing table with an incorrectly-typed value: WebAssembly.Table.prototype
+PASS new WebAssembly.Instance(module): Importing table with an incorrectly-typed value: Object.create(WebAssembly.Table.prototype)
+PASS new WebAssembly.Instance(module): Importing table with an incorrectly-typed value: WebAssembly.Table object (too large)
 

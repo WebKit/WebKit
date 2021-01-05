@@ -88,8 +88,8 @@ import * as assert from '../assert.js'
         }
         {
             let binding = instance.exports.i64;
-            assert.throws(() => binding.value, TypeError, `WebAssembly.Global.prototype.value does not work with i64 type`);
-            assert.throws(() => binding.value = 42, TypeError, `WebAssembly.Global.prototype.value attempts to modify immutable global value`);
+            assert.eq(binding.value, 0n);
+            assert.throws(() => binding.value = 42n, TypeError, `WebAssembly.Global.prototype.value attempts to modify immutable global value`);
             assert.eq(instance.exports.getI64AsI32(), 0);
         }
         {

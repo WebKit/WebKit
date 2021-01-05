@@ -51,28 +51,6 @@ static void materializeImportJSCell(JIT& jit, unsigned importIndex, GPRReg resul
     jit.loadPtr(JIT::Address(result, Instance::offsetOfImportFunction(importIndex)), result);
 }
 
-static Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> handleBadI64Use(VM& vm, JIT& jit, unsigned importIndex)
-{
-    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
-    jit.loadWasmContextInstance(GPRInfo::argumentGPR0);
-
-    // Store Callee.
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, Instance::offsetOfOwner()), GPRInfo::argumentGPR0);
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, JSWebAssemblyInstance::offsetOfModule()), GPRInfo::argumentGPR1);
-    jit.prepareCallOperation(vm);
-    jit.storePtr(GPRInfo::argumentGPR1, JIT::Address(GPRInfo::callFrameRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
-
-    auto call = jit.call(OperationPtrTag);
-    jit.jumpToExceptionHandler(vm);
-
-    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, JITCompilationCanFail);
-    if (UNLIKELY(linkBuffer.didFailToAllocate()))
-        return makeUnexpected(BindingFailure::OutOfMemory);
-
-    linkBuffer.link(call, FunctionPtr<OperationPtrTag>(operationWasmThrowBadI64));
-    return FINALIZE_WASM_CODE(linkBuffer, WasmEntryPtrTag, "WebAssembly->JavaScript invalid i64 use in import[%i]", importIndex);
-}
-
 Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm, Bag<CallLinkInfo>& callLinkInfos, SignatureIndex signatureIndex, unsigned importIndex)
 {
     // FIXME: This function doesn't properly abstract away the calling convention.
@@ -95,9 +73,6 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
 
     jit.emitFunctionPrologue();
     jit.store64(JIT::TrustedImm32(0), JIT::Address(GPRInfo::callFrameRegister, CallFrameSlot::codeBlock * static_cast<int>(sizeof(Register)))); // FIXME Stop using 0 as codeBlocks. https://bugs.webkit.org/show_bug.cgi?id=165321
-
-    if (wasmCallInfo.argumentsIncludeI64 || wasmCallInfo.resultsIncludeI64)
-        return handleBadI64Use(vm, jit, importIndex);
 
     // Here we assume that the JS calling convention saves at least all the wasm callee saved. We therefore don't need to save and restore more registers since the wasm callee already took care of this.
     RegisterSet missingCalleeSaves = wasmCC.calleeSaveRegisters;
@@ -129,11 +104,11 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             switch (argType) {
             case Void:
             case Func:
-            case I64:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
             case Externref:
             case Funcref:
-            case I32: {
+            case I32:
+            case I64: {
                 GPRReg gprReg;
                 if (marshalledGPRs < wasmCC.gprArgs.size())
                     gprReg = wasmCC.gprArgs[marshalledGPRs].gpr();
@@ -201,17 +176,18 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             switch (argType) {
             case Void:
             case Func:
-            case I64:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
             case Externref:
             case Funcref:
             case I32:
+            case I64: {
                 // Skipped: handled above.
                 if (marshalledGPRs >= wasmCC.gprArgs.size())
                     frOffset += sizeof(Register);
                 ++marshalledGPRs;
                 calleeFrameOffset += sizeof(Register);
                 break;
+            }
             case F32: {
                 FPRReg fprReg;
                 if (marshalledFPRs < wasmCC.fprArgs.size())
@@ -240,6 +216,28 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
                 break;
             }
             }
+        }
+    }
+
+    CCallHelpers::JumpList exceptionChecks;
+
+    if (wasmCallInfo.argumentsIncludeI64) {
+        // Since all argument GPRs and FPRs are stored into stack frames, clobbering caller-save registers is OK here.
+        // We call functions to convert I64 to BigInt.
+        unsigned calleeFrameOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
+        for (unsigned argNum = 0; argNum < argCount; ++argNum) {
+            if (signature.argument(argNum) == I64) {
+                jit.loadWasmContextInstance(GPRInfo::argumentGPR0);
+                jit.load64(calleeFrame.withOffset(calleeFrameOffset), GPRInfo::argumentGPR1);
+                jit.setupArguments<decltype(operationConvertToBigInt)>(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1);
+                auto call = jit.call(OperationPtrTag);
+                exceptionChecks.append(jit.emitJumpIfException(vm));
+                jit.store64(GPRInfo::returnValueGPR, calleeFrame.withOffset(calleeFrameOffset));
+                jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                    linkBuffer.link(call, FunctionPtr<OperationPtrTag>(operationConvertToBigInt));
+                });
+            }
+            calleeFrameOffset += sizeof(Register);
         }
     }
 
@@ -275,8 +273,6 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
     JIT::Call slowCall = jit.nearCall();
     done.link(&jit);
 
-    CCallHelpers::JumpList exceptionChecks;
-
     if (signature.returnCount() == 1) {
         switch (signature.returnType(0)) {
         case Void:
@@ -285,7 +281,18 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             RELEASE_ASSERT_NOT_REACHED();
             break;
         case I64: {
-            RELEASE_ASSERT_NOT_REACHED(); // Handled above.
+            // FIXME: Optimize I64 extraction from BigInt.
+            // https://bugs.webkit.org/show_bug.cgi?id=220053
+            GPRReg dest = wasmCallInfo.results[0].gpr();
+            jit.setupArguments<decltype(operationConvertToI64)>(GPRInfo::returnValueGPR);
+            auto call = jit.call(OperationPtrTag);
+            exceptionChecks.append(jit.emitJumpIfException(vm));
+            jit.move(GPRInfo::returnValueGPR, dest);
+
+            jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                linkBuffer.link(call, FunctionPtr<OperationPtrTag>(operationConvertToI64));
+            });
+            break;
         }
         case I32: {
             CCallHelpers::JumpList done;

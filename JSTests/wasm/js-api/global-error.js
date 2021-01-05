@@ -195,7 +195,7 @@ for ( let imp of [undefined, null, {}, () => {}, "number", new Number(4)]) {
         .End();
     const module = new WebAssembly.Module(builder.WebAssembly().get());
     let instance = new WebAssembly.Instance(module);
-    assert.throws(() => instance.exports.bigInt.value, TypeError, "WebAssembly.Global.prototype.value does not work with i64 type");
+    assert.eq(instance.exports.bigInt.value, 0n);
 }
 
 {
@@ -207,5 +207,5 @@ for ( let imp of [undefined, null, {}, () => {}, "number", new Number(4)]) {
         .Function().End()
         .Global().GetGlobal("i64", 0, "immutable").End();
     const module = new WebAssembly.Module(builder.WebAssembly().get());
-    assert.throws(() => new WebAssembly.Instance(module, { imp: { global: undefined } }), WebAssembly.LinkError, "imported global imp:global cannot be an i64 (evaluating 'new WebAssembly.Instance(module, { imp: { global: undefined } })')");
+    assert.throws(() => new WebAssembly.Instance(module, { imp: { global: undefined } }), WebAssembly.LinkError, "imported global imp:global must be a BigInt (evaluating 'new WebAssembly.Instance(module, { imp: { global: undefined } })')");
 }
