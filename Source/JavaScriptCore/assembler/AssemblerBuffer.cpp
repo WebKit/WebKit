@@ -45,6 +45,20 @@ ThreadSpecificAssemblerData& threadSpecificAssemblerData()
     return *threadSpecificAssemblerDataPtr;
 }
 
+#if CPU(ARM64E)
+static ThreadSpecificAssemblerData* threadSpecificAssemblerHashesPtr;
+ThreadSpecificAssemblerData& threadSpecificAssemblerHashes()
+{
+    static std::once_flag flag;
+    std::call_once(
+        flag,
+        [] () {
+            threadSpecificAssemblerHashesPtr = new ThreadSpecificAssemblerData();
+        });
+    return *threadSpecificAssemblerHashesPtr;
+}
+#endif // CPU(ARM64E)
+
 #endif // ENABLE(ASSEMBLER)
 
 } // namespace JSC

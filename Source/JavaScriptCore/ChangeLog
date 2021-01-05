@@ -1,3 +1,29 @@
+2020-11-17  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Validate every instruction in AssemblerBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=218104
+        <rdar://problem/69433094>
+
+        Reviewed by Saam Barati.
+
+        * assembler/AssemblerBuffer.cpp:
+        (JSC::threadSpecificAssemblerHashes):
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerBuffer::AssemblerBuffer):
+        (JSC::AssemblerBuffer::~AssemblerBuffer):
+        (JSC::AssemblerBuffer::releaseAssemblerData):
+        (JSC::AssemblerBuffer::releaseAssemblerHashes):
+        (JSC::AssemblerBuffer::putIntegralUnchecked):
+        (JSC::AssemblerBuffer::grow):
+        (JSC::AssemblerBuffer::outOfLineGrow):
+        (JSC::ARM64EHash::update): Deleted.
+        (JSC::ARM64EHash::finalHash const): Deleted.
+        (): Deleted.
+        (JSC::AssemblerBuffer::hash const): Deleted.
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+        * assembler/LinkBuffer.h:
+
 2021-01-04  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-References] Fix data section parsing and add more tests from ref-types

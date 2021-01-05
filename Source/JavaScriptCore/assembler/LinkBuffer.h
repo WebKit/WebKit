@@ -360,6 +360,9 @@ private:
     size_t m_size;
 #if ENABLE(BRANCH_COMPACTION)
     AssemblerData m_assemblerStorage;
+#if CPU(ARM64E)
+    AssemblerData m_assemblerHashesStorage;
+#endif
     bool m_shouldPerformBranchCompaction { true };
 #endif
     bool m_didAllocate;
