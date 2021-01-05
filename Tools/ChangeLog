@@ -1,5 +1,13 @@
 2021-01-05  Alexey Proskuryakov  <ap@apple.com>
 
+        Revert part of https://trac.webkit.org/r271158
+        Update root level scripts in Tools/Scripts to Python 3
+
+        * Scripts/extract-dependencies-from-makefile: This print_function import
+        was necessary, the build is broken without it.
+
+2021-01-05  Alexey Proskuryakov  <ap@apple.com>
+
         Remove some unused variables from webkitpy
         https://bugs.webkit.org/show_bug.cgi?id=220180
 

@@ -33,6 +33,7 @@
 # files). Read the make dependency information from stdin and write the results
 # to the specified files.
 
+from __future__ import print_function
 
 import argparse
 import re
