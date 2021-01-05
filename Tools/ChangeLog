@@ -3,6 +3,13 @@
         Revert part of https://trac.webkit.org/r271158
         Update root level scripts in Tools/Scripts to Python 3
 
+        * Scripts/make-dist: This also needed print_function.
+
+2021-01-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Revert part of https://trac.webkit.org/r271158
+        Update root level scripts in Tools/Scripts to Python 3
+
         * Scripts/extract-dependencies-from-makefile: This print_function import
         was necessary, the build is broken without it.
 
