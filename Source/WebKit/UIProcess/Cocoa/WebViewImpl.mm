@@ -5052,10 +5052,8 @@ void WebViewImpl::attributedSubstringForProposedRange(NSRange proposedRange, voi
     });
 }
 
-void WebViewImpl::firstRectForCharacterRange(NSRange range, void(^completionHandlerPtr)(NSRect firstRect, NSRange actualRange))
+void WebViewImpl::firstRectForCharacterRange(NSRange range, void(^completionHandler)(NSRect firstRect, NSRange actualRange))
 {
-    auto completionHandler = adoptNS([completionHandlerPtr copy]);
-
     LOG(TextInput, "firstRectForCharacterRange:(%u, %u)", range.location, range.length);
 
     // Just to match NSTextView's behavior. Regression tests cannot detect this;
@@ -5066,22 +5064,14 @@ void WebViewImpl::firstRectForCharacterRange(NSRange range, void(^completionHand
 
     if (range.location == NSNotFound) {
         LOG(TextInput, "    -> NSZeroRect");
-        completionHandlerPtr(NSZeroRect, range);
+        completionHandler(NSZeroRect, range);
         return;
     }
 
-    auto weakThis = makeWeakPtr(*this);
-    m_page->firstRectForCharacterRangeAsync(range, [weakThis, completionHandler](const WebCore::IntRect& rect, const EditingRange& actualRange, WebKit::CallbackBase::Error error) {
-        auto completionHandlerBlock = (void (^)(NSRect, NSRange))completionHandler.get();
+    m_page->firstRectForCharacterRangeAsync(range, [weakThis = makeWeakPtr(*this), completionHandler = makeBlockPtr(completionHandler)](const WebCore::IntRect& rect, const EditingRange& actualRange) {
         if (!weakThis) {
             LOG(TextInput, "    ...firstRectForCharacterRange failed (WebViewImpl was destroyed).");
-            completionHandlerBlock(NSZeroRect, NSMakeRange(NSNotFound, 0));
-            return;
-        }
-
-        if (error != WebKit::CallbackBase::Error::None) {
-            LOG(TextInput, "    ...firstRectForCharacterRange failed.");
-            completionHandlerBlock(NSZeroRect, NSMakeRange(NSNotFound, 0));
+            completionHandler(NSZeroRect, NSMakeRange(NSNotFound, 0));
             return;
         }
 
@@ -5089,7 +5079,7 @@ void WebViewImpl::firstRectForCharacterRange(NSRange range, void(^completionHand
         resultRect = [[weakThis->m_view window] convertRectToScreen:resultRect];
 
         LOG(TextInput, "    -> firstRectForCharacterRange returned (%f, %f, %f, %f)", resultRect.origin.x, resultRect.origin.y, resultRect.size.width, resultRect.size.height);
-        completionHandlerBlock(resultRect, actualRange);
+        completionHandler(resultRect, actualRange);
     });
 }
 

@@ -1,3 +1,22 @@
+2021-01-05  Alex Christensen  <achristensen@webkit.org>
+
+        Use sendWithAsyncReply instead of RectForCharacterRangeCallback
+        https://bugs.webkit.org/show_bug.cgi?id=220125
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::firstRectForCharacterRange):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::firstRectForCharacterRangeAsync):
+        (WebKit::WebPageProxy::rectForCharacterRangeCallback): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::firstRectForCharacterRangeAsync):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-01-05  Sihui Liu  <sihui_liu@appe.com>
 
         Fail speech recognition when page is muted for audio capture

@@ -397,7 +397,6 @@ struct QueuedTouchEvents {
 #endif
 
 typedef GenericCallback<const String&, bool, int32_t> ValidateCommandCallback;
-typedef GenericCallback<const WebCore::IntRect&, const EditingRange&> RectForCharacterRangeCallback;
 
 #if ENABLE(APPLICATION_MANIFEST)
 typedef GenericCallback<const Optional<WebCore::ApplicationManifest>&> ApplicationManifestCallback;
@@ -892,7 +891,7 @@ public:
     void getMarkedRangeAsync(CompletionHandler<void(const EditingRange&)>&&);
     void getSelectedRangeAsync(CompletionHandler<void(const EditingRange&)>&&);
     void characterIndexForPointAsync(const WebCore::IntPoint&, WTF::Function<void (uint64_t, CallbackBase::Error)>&&);
-    void firstRectForCharacterRangeAsync(const EditingRange&, WTF::Function<void (const WebCore::IntRect&, const EditingRange&, CallbackBase::Error)>&&);
+    void firstRectForCharacterRangeAsync(const EditingRange&, CompletionHandler<void(const WebCore::IntRect&, const EditingRange&)>&&);
     void setCompositionAsync(const String& text, const Vector<WebCore::CompositionUnderline>&, const Vector<WebCore::CompositionHighlight>&, const EditingRange& selectionRange, const EditingRange& replacementRange);
     void confirmCompositionAsync();
 
@@ -2163,7 +2162,6 @@ private:
 #if ENABLE(APPLICATION_MANIFEST)
     void applicationManifestCallback(const Optional<WebCore::ApplicationManifest>&, CallbackID);
 #endif
-    void rectForCharacterRangeCallback(const WebCore::IntRect&, const EditingRange&, CallbackID);
 #if PLATFORM(MAC)
     void attributedStringForCharacterRangeCallback(const WebCore::AttributedString&, const EditingRange&, CallbackID);
     void fontAtSelectionCallback(const FontInfo&, double, bool, CallbackID);

@@ -5547,17 +5547,16 @@ void WebPage::characterIndexForPointAsync(const WebCore::IntPoint& point, Callba
     send(Messages::WebPageProxy::UnsignedCallback(editingRange.location, callbackID));
 }
 
-void WebPage::firstRectForCharacterRangeAsync(const EditingRange& editingRange, CallbackID callbackID)
+void WebPage::firstRectForCharacterRangeAsync(const EditingRange& editingRange, CompletionHandler<void(const WebCore::IntRect&, const EditingRange&)>&& completionHandler)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
     auto range = EditingRange::toRange(frame, editingRange);
-    if (!range) {
-        send(Messages::WebPageProxy::RectForCharacterRangeCallback({ }, { }, callbackID));
-        return;
-    }
+    if (!range)
+        return completionHandler({ }, { });
+
     // FIXME: Pass an EditingRange that matches the range of the first rect, rather than the entire passed-in range?
     auto rect = frame.view()->contentsToWindow(frame.editor().firstRectForRange(*range));
-    send(Messages::WebPageProxy::RectForCharacterRangeCallback(rect, editingRange, callbackID));
+    completionHandler(rect, editingRange);
 }
 
 void WebPage::setCompositionAsync(const String& text, const Vector<CompositionUnderline>& underlines, const Vector<CompositionHighlight>& highlights, const EditingRange& selection, const EditingRange& replacementEditingRange)

@@ -7331,20 +7331,6 @@ void WebPageProxy::logScrollingEvent(uint32_t eventType, MonotonicTime timestamp
     }
 }
 
-void WebPageProxy::rectForCharacterRangeCallback(const IntRect& rect, const EditingRange& actualRange, CallbackID callbackID)
-{
-    MESSAGE_CHECK(m_process, actualRange.isValid());
-
-    auto callback = m_callbacks.take<RectForCharacterRangeCallback>(callbackID);
-    if (!callback) {
-        // FIXME: Log error or assert.
-        // this can validly happen if a load invalidated the callback, though
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(rect, actualRange);
-}
-
 #if PLATFORM(GTK)
 void WebPageProxy::printFinishedCallback(const ResourceError& printError, CallbackID callbackID)
 {
@@ -8955,15 +8941,12 @@ void WebPageProxy::characterIndexForPointAsync(const WebCore::IntPoint& point, W
     send(Messages::WebPage::CharacterIndexForPointAsync(point, callbackID));
 }
 
-void WebPageProxy::firstRectForCharacterRangeAsync(const EditingRange& range, WTF::Function<void (const WebCore::IntRect&, const EditingRange&, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::firstRectForCharacterRangeAsync(const EditingRange& range, CompletionHandler<void(const WebCore::IntRect&, const EditingRange&)>&& callbackFunction)
 {
-    if (!hasRunningProcess()) {
-        callbackFunction(WebCore::IntRect(), EditingRange(), CallbackBase::Error::Unknown);
-        return;
-    }
+    if (!hasRunningProcess())
+        return callbackFunction({ }, { });
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::firstRectForCharacterRangeAsync"_s));
-    send(Messages::WebPage::FirstRectForCharacterRangeAsync(range, callbackID));
+    sendWithAsyncReply(Messages::WebPage::FirstRectForCharacterRangeAsync(range), WTFMove(callbackFunction));
 }
 
 void WebPageProxy::setCompositionAsync(const String& text, const Vector<CompositionUnderline>& underlines, const Vector<CompositionHighlight>& highlights, const EditingRange& selectionRange, const EditingRange& replacementRange)
