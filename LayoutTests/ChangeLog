@@ -1,3 +1,13 @@
+2021-01-05  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: aria-orientation is ignored on input[type="range"]
+        https://bugs.webkit.org/show_bug.cgi?id=220222
+        <rdar://problem/72765547>
+
+        Reviewed by Zalan Bujtas.
+
+        * accessibility/mac/range-orientation.html: Added.
+
 2021-01-05  Truitt Savell  <tsavell@apple.com>
 
         [ Big Sur ] fast/images/webp-as-image.html is failing
