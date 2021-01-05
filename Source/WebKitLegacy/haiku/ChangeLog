@@ -1,0 +1,259 @@
+2010-04-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r57468.
+        http://trac.webkit.org/changeset/57468
+        https://bugs.webkit.org/show_bug.cgi?id=37433
+
+        Broke the world...  Must have applied the patch wrong
+        (Requested by abarth on #webkit).
+
+        * WebCoreSupport/FrameLoaderClientHaiku.cpp:
+        (WebCore::FrameLoaderClientHaiku::committedLoad):
+
+2010-04-11  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Factor DocumentWriter out of FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=37175
+
+        Update these callsites because the method moved to DocumentWriter.
+
+        * WebCoreSupport/FrameLoaderClientHaiku.cpp:
+        (WebCore::FrameLoaderClientHaiku::committedLoad):
+
+2010-04-07  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Removed redundant FrameLoaderClient::dispatchDidLoadResourceByXMLHttpRequest()
+        https://bugs.webkit.org/show_bug.cgi?id=36949
+
+        * WebCoreSupport/FrameLoaderClientHaiku.cpp:
+        * WebCoreSupport/FrameLoaderClientHaiku.h:
+
+2010-03-31  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Adds Geolocation param for cancelGeolocationPermissionRequestForFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=35031
+
+        * WebCoreSupport/ChromeClientHaiku.h:
+        (WebCore::ChromeClientHaiku::cancelGeolocationPermissionRequestForFrame):
+
+2010-03-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix. Include WindowsKeyboardCodes.h instead of KeyboardCodes.h.
+
+        * WebCoreSupport/EditorClientHaiku.cpp:
+
+2010-03-24  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Make Icon::createIconForFiles() optional.
+        https://bugs.webkit.org/show_bug.cgi?id=35072
+
+        - Rename iconForFiles() to chooseIconForFiles().
+        - Call Icon::createIconForFiles() from chooseIconForFiles().
+
+        * WebCoreSupport/ChromeClientHaiku.cpp:
+        (WebCore::ChromeClientHaiku::chooseIconForFiles):
+        * WebCoreSupport/ChromeClientHaiku.h:
+
+2010-03-16  Yury Semikhatsky <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Introduce InspectorFrontendClient that provides InspectorFrontend with an interface to the embedder. InspectorClient now serves as a delegate for InspectorController and does not contain methods for managing inspector frontend window. That allows to create remote InspectorFrontendHost.
+
+        Introduce InspectorFrontendClient that would provide InspectorFrontend with an interface to the embedder
+        https://bugs.webkit.org/show_bug.cgi?id=35036
+
+        * WebCoreSupport/InspectorClientHaiku.cpp:
+        (WebCore::InspectorClientHaiku::openInspectorFrontend):
+        * WebCoreSupport/InspectorClientHaiku.h:
+
+2010-03-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Remove invalidateContents, it isn't used and it never makes sense to only invalidate the contents.
+
+        * WebCoreSupport/ChromeClientHaiku.cpp:
+        * WebCoreSupport/ChromeClientHaiku.h:
+
+2010-03-02  Adam Treat  <atreat@rim.com>
+
+        Reviewed by Dave Hyatt.
+
+        Adapt the haiku port to the refactoring of repaint methods.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34214
+
+        * WebCoreSupport/ChromeClientHaiku.cpp:
+        (WebCore::ChromeClientHaiku::invalidateContents):
+        (WebCore::ChromeClientHaiku::invalidateWindow):
+        (WebCore::ChromeClientHaiku::invalidateContentsAndWindow):
+        (WebCore::ChromeClient::invalidateContentsForSlowScroll):
+        * WebCoreSupport/ChromeClientHaiku.h:
+
+2010-02-23  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        Adds ChromeClient::cancelGeolocationPermissionRequestForFrame
+        https://bugs.webkit.org/show_bug.cgi?id=34962
+
+        This method is required so that a Geolocation object can cancel an
+        asynchronous permission request. This allows the chrome client to cancel
+        any UI it is showing for the permission request.
+
+        * WebCoreSupport/ChromeClientHaiku.h:
+        (WebCore::ChromeClientHaiku::cancelGeolocationPermissionRequestForFrame):
+
+2010-02-17  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin, Darin Fisher, Simon Hausmann.
+
+        When a live iframe element is moved between pages, it still depends on the old page.
+        https://bugs.webkit.org/show_bug.cgi?id=34382
+
+        * WebCoreSupport/FrameLoaderClientHaiku.cpp:
+        (WebCore::FrameLoaderClientHaiku::didTransferChildFrameToNewDocument):
+        Added empty implementation of a new virtual method.
+
+        * WebCoreSupport/FrameLoaderClientHaiku.h:
+
+2010-02-17  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Introduces new Icon loading interface in order to support
+        asynchronous loading.
+        https://bugs.webkit.org/show_bug.cgi?id=32054
+
+        Add an empty implementation of ChromeClient::iconForFiles().
+
+        * WebCoreSupport/ChromeClientHaiku.cpp:
+        (WebCore::ChromeClientHaiku::iconForFiles):
+        * WebCoreSupport/ChromeClientHaiku.h:
+
+2009-12-06  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        Build fix. Add in FrameLoaderClientHaiku the declaration of three functions introduced in r51644.
+
+        * WebCoreSupport/FrameLoaderClientHaiku.cpp:
+        (WebCore::FrameLoaderClientHaiku::dispatchDidPushStateWithinPage):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidReplaceStateWithinPage):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidPopStateWithinPage):
+        * WebCoreSupport/FrameLoaderClientHaiku.h:
+
+2009-12-03  Pavel Feldman  <pfeldman@dhcp-172-28-174-220.spb.corp.google.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Simplify the settings support in inspector controller.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32076
+
+        * WebCoreSupport/InspectorClientHaiku.cpp:
+        (WebCore::InspectorClientHaiku::populateSetting):
+        (WebCore::InspectorClientHaiku::storeSetting):
+        * WebCoreSupport/InspectorClientHaiku.h:
+
+2009-12-03  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Brady Eidson.
+
+        [Android] The FrameLoaderClient is unaware of BackForwardList changes.
+        https://bugs.webkit.org/show_bug.cgi?id=31914
+
+        * WebCoreSupport/FrameLoaderClientHaiku.cpp:
+        (WebCore::FrameLoaderClientHaiku::dispatchDidAddBackForwardItem): Add an empty implementation. Method added to FrameLoaderClient by Android (see bug).
+        (WebCore::FrameLoaderClientHaiku::dispatchDidRemoveBackForwardItem): ditto.
+        (WebCore::FrameLoaderClientHaiku::dispatchDidChangeBackForwardIndex): ditto.
+        * WebCoreSupport/FrameLoaderClientHaiku.h:
+
+2009-11-13  Adam Roben  <aroben@apple.com>
+
+        Update for changes to FrameLoaderClient
+
+        Fixes <http://webkit.org/b/31124> Tell the WebFrameLoadDelegate when
+        window objects in isolated worlds are cleared
+
+        Reviewed by Dave Hyatt.
+
+        * WebCoreSupport/FrameLoaderClientHaiku.cpp:
+        (WebCore::FrameLoaderClientHaiku::dispatchDidClearWindowObjectInWorld):
+        * WebCoreSupport/FrameLoaderClientHaiku.h:
+        Replaced windowObjectCleared with this function. Does nothing if the
+        passed-in world is not the mainThreadNormalWorld().
+
+2009-10-30  Evan Stade  <estade@chromium.org>
+
+        Reviewed by David Levin.
+
+        Notify the chrome when the focused node has changed.
+        https://bugs.webkit.org/show_bug.cgi?id=30832
+
+        Added stub implementation for new ChromeClient function.
+
+        * WebCoreSupport/ChromeClientHaiku.cpp:
+        (WebCore::ChromeClientHaiku::focusedNodeChanged):
+        * WebCoreSupport/ChromeClientHaiku.h:
+
+2009-10-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Factor PolicyChecker out of FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=30155
+
+        Move the policy callback to the policy object.
+
+        * WebCoreSupport/FrameLoaderClientHaiku.cpp:
+        (WebCore::FrameLoaderClientHaiku::dispatchWillSubmitForm):
+        (WebCore::FrameLoaderClientHaiku::dispatchDecidePolicyForMIMEType):
+        (WebCore::FrameLoaderClientHaiku::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientHaiku::dispatchDecidePolicyForNavigationAction):
+
+2009-09-17  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Make PlatformWindow return something else than PlatformWidget
+        https://bugs.webkit.org/show_bug.cgi?id=29085
+
+        Reflect the rename of platformWindow and it's return type.
+
+        * WebCoreSupport/ChromeClientHaiku.cpp:
+        (WebCore::ChromeClientHaiku::platformPageClient):
+        * WebCoreSupport/ChromeClientHaiku.h:
+
+2009-08-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25889
+        [GTK] scrollbar policy for main frame is not implementable
+
+        Add empty implementation for new ChromeClient method.
+
+        * WebCoreSupport/ChromeClientHaiku.h:
+        (ChromeClientHaiku::scrollbarsModeDidChange):
+
+2009-07-29  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Added foundation work to allow a testing infrastructure for the Web
+        Inspector.
+
+        * WebCoreSupport/InspectorClientHaiku.cpp:
+        (WebCore::InspectorClientHaiku::inspectorWindowObjectCleared):
+        * WebCoreSupport/InspectorClientHaiku.h:
+
