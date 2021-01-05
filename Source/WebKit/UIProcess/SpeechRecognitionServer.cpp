@@ -168,6 +168,20 @@ void SpeechRecognitionServer::invalidate(WebCore::SpeechRecognitionConnectionCli
     }
 }
 
+void SpeechRecognitionServer::abortForPageIsBecomingInvisible()
+{
+    if (!m_recognizer)
+        return;
+
+    auto currentClientIdentifier = m_recognizer->currentClientIdentifier();
+    if (!currentClientIdentifier)
+        return;
+
+    auto error = WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::Aborted, "Page is no longer visible"_s };
+    sendUpdate(*currentClientIdentifier, WebCore::SpeechRecognitionUpdateType::Error, error);
+    m_recognizer->reset();
+}
+
 void SpeechRecognitionServer::sendUpdate(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier, WebCore::SpeechRecognitionUpdateType type, Optional<WebCore::SpeechRecognitionError> error, Optional<Vector<WebCore::SpeechRecognitionResultData>> result)
 {
     auto update = WebCore::SpeechRecognitionUpdate::create(clientIdentifier, type);

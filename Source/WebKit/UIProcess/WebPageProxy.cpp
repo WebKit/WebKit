@@ -1995,8 +1995,12 @@ void WebPageProxy::dispatchActivityStateChange()
     if ((changed & ActivityState::WindowIsActive) && isViewWindowActive())
         updateCurrentModifierState();
 
-    if ((m_potentiallyChangedActivityStateFlags & ActivityState::IsVisible) && isViewVisible())
-        viewIsBecomingVisible();
+    if ((m_potentiallyChangedActivityStateFlags & ActivityState::IsVisible)) {
+        if (isViewVisible())
+            viewIsBecomingVisible();
+        else
+            m_process->pageIsBecomingInvisible(m_webPageID);
+    }
 
     bool isNowInWindow = (changed & ActivityState::IsInWindow) && isInWindow();
     // We always want to wait for the Web process to reply if we've been in-window before and are coming back in-window.
