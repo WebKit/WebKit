@@ -62,6 +62,7 @@ function test()
         description: "Check if a redirected resource has timing information.",
         test(resolve, reject) {
             const delay = 100;
+            WI.reportInternalError = (e) => { };
 
             WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived)
             .then((event) => {
