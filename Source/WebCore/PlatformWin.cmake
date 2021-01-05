@@ -216,17 +216,5 @@ file(COPY
     DESTINATION
     ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources
 )
-if (WTF_PLATFORM_WIN_CAIRO AND EXISTS ${WEBKIT_LIBRARIES_DIR}/etc/ssl/cert.pem)
-    make_directory(${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/certificates)
-    file(COPY
-        ${WEBKIT_LIBRARIES_DIR}/etc/ssl/cert.pem
-        DESTINATION
-        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/certificates
-    )
-    file(RENAME
-        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/certificates/cert.pem
-        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/certificates/cacert.pem
-    )
-endif ()
 
 set(WebCore_OUTPUT_NAME WebCore${DEBUG_SUFFIX})

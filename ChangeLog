@@ -1,3 +1,16 @@
+2021-01-05  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][curl] Enable CURLSSLOPT_NATIVE_CA flag to use system's CA certs instead of cacert.pem
+        https://bugs.webkit.org/show_bug.cgi?id=220258
+
+        Reviewed by Don Olmstead.
+
+        Libcurl 7.71 added a new flag CURLSSLOPT_NATIVE_CA to use the
+        operating system's native CA store only for Windows. Use the flag
+        for WinCairo port.
+
+        * Source/cmake/OptionsWinCairo.cmake: Bumped the minimum Curl version.
+
 2021-01-04  Lauro Moura  <lmoura@igalia.com>
 
         [WebXR][WPE] Build fails without openxr installed

@@ -26,42 +26,10 @@
 #include "config.h"
 #include "CurlSSLHandle.h"
 
-#if USE(CF)
-#if OS(WINDOWS)
-#include "WebCoreBundleWin.h"
-#endif
-
-#include <wtf/RetainPtr.h>
-#endif
-
 namespace WebCore {
-
-static String getCACertPathEnv()
-{
-    char* envPath = getenv("CURL_CA_BUNDLE_PATH");
-    if (envPath)
-        return String(envPath);
-
-#if USE(CF)
-    CFBundleRef webKitBundleRef = webKitBundle();
-    if (webKitBundleRef) {
-        RetainPtr<CFURLRef> certURLRef = adoptCF(CFBundleCopyResourceURL(webKitBundleRef, CFSTR("cacert"), CFSTR("pem"), CFSTR("certificates")));
-        if (certURLRef) {
-            char path[MAX_PATH];
-            if (CFURLGetFileSystemRepresentation(certURLRef.get(), false, reinterpret_cast<UInt8*>(path), MAX_PATH) && *path)
-                return String(path);
-        }
-    }
-#endif
-
-    return String();
-}
 
 void CurlSSLHandle::platformInitialize()
 {
-    auto caCertPath = getCACertPathEnv();
-    if (!caCertPath.isEmpty())
-        setCACertPath(WTFMove(caCertPath));
 }
 
 }
