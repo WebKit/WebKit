@@ -1,3 +1,10 @@
+2021-01-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, revert part of r271158 to fix builtins generator tests.
+
+        * Scripts/webkitpy/codegen/main.py:
+        (BuiltinsGeneratorTests.wrappers_builtin_test):
+
 2021-01-05  Sihui Liu  <sihui_liu@appe.com>
 
         Stop speech recognition if page becomes invisible
