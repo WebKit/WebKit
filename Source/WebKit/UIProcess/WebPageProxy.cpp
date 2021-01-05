@@ -2344,23 +2344,15 @@ void WebPageProxy::executeEditCommand(const String& commandName, const String& a
     send(Messages::WebPage::ExecuteEditCommand(commandName, argument));
 }
 
-void WebPageProxy::requestFontAttributesAtSelectionStart(Function<void(const WebCore::FontAttributes&, CallbackBase::Error)>&& callback)
+void WebPageProxy::requestFontAttributesAtSelectionStart(CompletionHandler<void(const WebCore::FontAttributes&)>&& callback)
 {
-    if (!hasRunningProcess()) {
-        callback({ }, CallbackBase::Error::Unknown);
-        return;
-    }
+    if (!hasRunningProcess())
+        return callback({ });
 
-    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivity("WebPageProxy::requestFontAttributesAtSelectionStart"_s));
-    send(Messages::WebPage::RequestFontAttributesAtSelectionStart(callbackID));
-}
-
-void WebPageProxy::fontAttributesCallback(const WebCore::FontAttributes& attributes, CallbackID callbackID)
-{
-    m_cachedFontAttributesAtSelectionStart = attributes;
-
-    if (auto callback = m_callbacks.take<FontAttributesCallback>(callbackID))
-        callback->performCallbackWithReturnValue(attributes);
+    sendWithAsyncReply(Messages::WebPage::RequestFontAttributesAtSelectionStart(), [this, protectedThis = makeRef(*this), callback = WTFMove(callback)] (const WebCore::FontAttributes& attributes) mutable {
+        m_cachedFontAttributesAtSelectionStart = attributes;
+        callback(attributes);
+    });
 }
 
 void WebPageProxy::setEditable(bool editable)

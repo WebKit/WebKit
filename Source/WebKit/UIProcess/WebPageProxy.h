@@ -374,7 +374,6 @@ enum class WebContentMode : uint8_t;
 typedef GenericCallback<API::Data*> DataCallback;
 typedef GenericCallback<uint64_t> UnsignedCallback;
 typedef GenericCallback<const String&> StringCallback;
-typedef GenericCallback<const WebCore::FontAttributes&> FontAttributesCallback;
 typedef GenericCallback<bool> BoolCallback;
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
@@ -720,8 +719,7 @@ public:
     bool isMediaStreamCaptureMuted() const { return m_mutedState & WebCore::MediaProducer::MediaStreamCaptureIsMuted; }
     void setMediaStreamCaptureMuted(bool);
 
-    void requestFontAttributesAtSelectionStart(Function<void(const WebCore::FontAttributes&, CallbackBase::Error)>&&);
-    void fontAttributesCallback(const WebCore::FontAttributes&, CallbackID);
+    void requestFontAttributesAtSelectionStart(CompletionHandler<void(const WebCore::FontAttributes&)>&&);
 
     void setCanShowPlaceholder(const WebCore::ElementContext&, bool);
 

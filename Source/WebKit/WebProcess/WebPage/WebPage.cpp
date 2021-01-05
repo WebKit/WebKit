@@ -3010,10 +3010,9 @@ void WebPage::setCurrentHistoryItemForReattach(WebKit::BackForwardListItemState&
     corePage()->mainFrame().loader().history().setCurrentItem(historyItemRef);
 }
 
-void WebPage::requestFontAttributesAtSelectionStart(CallbackID callbackID)
+void WebPage::requestFontAttributesAtSelectionStart(CompletionHandler<void(const WebCore::FontAttributes&)>&& completionHandler)
 {
-    auto attributes = m_page->focusController().focusedOrMainFrame().editor().fontAttributesAtSelectionStart();
-    send(Messages::WebPageProxy::FontAttributesCallback(attributes, callbackID));
+    completionHandler(m_page->focusController().focusedOrMainFrame().editor().fontAttributesAtSelectionStart());
 }
 
 void WebPage::cancelGesturesBlockedOnSynchronousReplies()

@@ -1535,7 +1535,7 @@ private:
     void updateBackForwardListForReattach(const Vector<WebKit::BackForwardListItemState>&);
     void setCurrentHistoryItemForReattach(WebKit::BackForwardListItemState&&);
 
-    void requestFontAttributesAtSelectionStart(CallbackID);
+    void requestFontAttributesAtSelectionStart(CompletionHandler<void(const WebCore::FontAttributes&)>&&);
 
 #if ENABLE(REMOTE_INSPECTOR)
     void setIndicating(bool);

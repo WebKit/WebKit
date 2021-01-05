@@ -1,5 +1,24 @@
 2021-01-05  Alex Christensen  <achristensen@webkit.org>
 
+        Use sendWithAsyncReply instead of FontAttributesCallback
+        https://bugs.webkit.org/show_bug.cgi?id=220123
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::typingAttributesWithCompletionHandler):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestFontAttributesAtSelectionStart):
+        (WebKit::WebPageProxy::fontAttributesCallback): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestFontAttributesAtSelectionStart):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+2021-01-05  Alex Christensen  <achristensen@webkit.org>
+
         Use sendWithAsyncReply instead of RectForCharacterRangeCallback
         https://bugs.webkit.org/show_bug.cgi?id=220125
 

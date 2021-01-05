@@ -263,7 +263,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     SetNeedsFontAttributes(bool needsFontAttributes)
 
-    RequestFontAttributesAtSelectionStart(WebKit::CallbackID callbackID)
+    RequestFontAttributesAtSelectionStart() -> (struct WebCore::FontAttributes attributes) Async
 
     DidRemoveEditCommand(uint64_t commandID)
     ReapplyEditCommand(uint64_t commandID)

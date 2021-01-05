@@ -2979,12 +2979,7 @@ void WebViewImpl::typingAttributesWithCompletionHandler(void(^completion)(NSDict
         return;
     }
 
-    m_page->requestFontAttributesAtSelectionStart([completion = makeBlockPtr(completion)] (const WebCore::FontAttributes& attributes, CallbackBase::Error error) {
-        if (error != CallbackBase::Error::None) {
-            completion(nil);
-            return;
-        }
-
+    m_page->requestFontAttributesAtSelectionStart([completion = makeBlockPtr(completion)] (const WebCore::FontAttributes& attributes) {
         auto attributesAsDictionary = attributes.createDictionary();
         completion(attributesAsDictionary.get());
     });
