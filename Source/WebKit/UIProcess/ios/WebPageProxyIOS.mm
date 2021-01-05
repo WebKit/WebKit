@@ -171,17 +171,6 @@ void WebPageProxy::touchesCallback(const WebCore::IntPoint& point, SelectionTouc
     callback->performCallbackWithReturnValue(point, touches, flags);
 }
 
-void WebPageProxy::selectionContextCallback(const String& selectedText, const String& beforeText, const String& afterText, CallbackID callbackID)
-{
-    auto callback = m_callbacks.take<SelectionContextCallback>(callbackID);
-    if (!callback) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(selectedText, beforeText, afterText);
-}
-
 void WebPageProxy::selectionRectsCallback(const Vector<WebCore::SelectionRect>& selectionRects, CallbackID callbackID)
 {
     auto callback = m_callbacks.take<SelectionRectsCallback>(callbackID);
@@ -593,15 +582,12 @@ void WebPageProxy::updateSelectionWithExtentPointAndBoundary(const WebCore::IntP
     
 }
 
-void WebPageProxy::requestDictationContext(WTF::Function<void (const String&, const String&, const String&, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::requestDictationContext(CompletionHandler<void(const String&, const String&, const String&)>&& callbackFunction)
 {
-    if (!hasRunningProcess()) {
-        callbackFunction(String(), String(), String(), CallbackBase::Error::Unknown);
-        return;
-    }
+    if (!hasRunningProcess())
+        return callbackFunction({ }, { }, { });
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::requestDictationContext"_s));
-    m_process->send(Messages::WebPage::RequestDictationContext(callbackID), m_webPageID);
+    sendWithAsyncReply(Messages::WebPage::RequestDictationContext(), WTFMove(callbackFunction));
 }
 
 void WebPageProxy::requestAutocorrectionContext()
@@ -614,15 +600,11 @@ void WebPageProxy::handleAutocorrectionContext(const WebAutocorrectionContext& c
     pageClient().handleAutocorrectionContext(context);
 }
 
-void WebPageProxy::getSelectionContext(WTF::Function<void(const String&, const String&, const String&, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::getSelectionContext(CompletionHandler<void(const String&, const String&, const String&)>&& callbackFunction)
 {
-    if (!hasRunningProcess()) {
-        callbackFunction(String(), String(), String(), CallbackBase::Error::Unknown);
-        return;
-    }
-    
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getSelectionContext"_s));
-    m_process->send(Messages::WebPage::GetSelectionContext(callbackID), m_webPageID);
+    if (!hasRunningProcess())
+        return callbackFunction({ }, { }, { });
+    sendWithAsyncReply(Messages::WebPage::GetSelectionContext(), WTFMove(callbackFunction));
 }
 
 void WebPageProxy::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, OptionSet<WebEvent::Modifier> modifiers, uint64_t requestID)

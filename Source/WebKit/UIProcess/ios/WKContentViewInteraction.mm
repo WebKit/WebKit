@@ -3104,10 +3104,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
 
 - (void)_lookupForWebView:(id)sender
 {
-    RetainPtr<WKContentView> view = self;
-    _page->getSelectionContext([view](const String& selectedText, const String& textBefore, const String& textAfter, WebKit::CallbackBase::Error error) {
-        if (error != WebKit::CallbackBase::Error::None)
-            return;
+    _page->getSelectionContext([view = retainPtr(self)](const String& selectedText, const String& textBefore, const String& textAfter) {
         if (!selectedText)
             return;
 
@@ -4285,11 +4282,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)requestDictationContext:(void (^)(NSString *selectedText, NSString *beforeText, NSString *afterText))completionHandler
 {
-    UIWKDictationContextHandler dictationHandler = [completionHandler copy];
-
-    _page->requestDictationContext([dictationHandler](const String& selectedText, const String& beforeText, const String& afterText, WebKit::CallbackBase::Error) {
+    _page->requestDictationContext([dictationHandler = makeBlockPtr(completionHandler)](const String& selectedText, const String& beforeText, const String& afterText) {
         dictationHandler(selectedText, beforeText, afterText);
-        [dictationHandler release];
     });
 }
 

@@ -375,7 +375,6 @@ typedef GenericCallback<API::Data*> DataCallback;
 typedef GenericCallback<uint64_t> UnsignedCallback;
 typedef GenericCallback<const String&> StringCallback;
 typedef GenericCallback<const WebCore::FontAttributes&> FontAttributesCallback;
-typedef GenericCallback<const String&, const String&, const String&> SelectionContextCallback;
 typedef GenericCallback<bool> BoolCallback;
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
@@ -790,7 +789,7 @@ public:
     bool applyAutocorrection(const String& correction, const String& originalText);
     void requestAutocorrectionContext();
     void handleAutocorrectionContext(const WebAutocorrectionContext&);
-    void requestDictationContext(WTF::Function<void (const String&, const String&, const String&, CallbackBase::Error)>&&);
+    void requestDictationContext(CompletionHandler<void(const String&, const String&, const String&)>&&);
     void replaceDictatedText(const String& oldText, const String& newText);
     void replaceSelectedText(const String& oldText, const String& newText);
     void didReceivePositionInformation(const InteractionInformationAtPosition&);
@@ -817,7 +816,7 @@ public:
     void disableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID);
     void handleSmartMagnificationInformationForPotentialTap(uint64_t requestID, const WebCore::FloatRect& renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale, bool nodeIsRootLevel);
     void contentSizeCategoryDidChange(const String& contentSizeCategory);
-    void getSelectionContext(WTF::Function<void(const String&, const String&, const String&, CallbackBase::Error)>&&);
+    void getSelectionContext(CompletionHandler<void(const String&, const String&, const String&)>&&);
     void handleTwoFingerTapAtPoint(const WebCore::IntPoint&, OptionSet<WebKit::WebEvent::Modifier>, uint64_t requestID);
     void setForceAlwaysUserScalable(bool);
     bool forceAlwaysUserScalable() const { return m_forceAlwaysUserScalable; }
@@ -2172,7 +2171,6 @@ private:
 #if PLATFORM(IOS_FAMILY)
     void gestureCallback(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>, CallbackID);
     void touchesCallback(const WebCore::IntPoint&, SelectionTouch, OptionSet<SelectionFlags>, CallbackID);
-    void selectionContextCallback(const String& selectedText, const String& beforeText, const String& afterText, CallbackID);
     void interpretKeyEvent(const EditorState&, bool isCharEvent, CompletionHandler<void(bool)>&&);
     void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect, WebCore::RouteSharingPolicy, const String&);
     void selectionRectsCallback(const Vector<WebCore::SelectionRect>&, CallbackID);

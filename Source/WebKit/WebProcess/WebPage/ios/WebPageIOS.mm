@@ -561,13 +561,11 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&)
     return false;
 }
 
-void WebPage::getSelectionContext(CallbackID callbackID)
+void WebPage::getSelectionContext(CompletionHandler<void(const String&, const String&, const String&)>&& completionHandler)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
-    if (!frame.selection().isRange()) {
-        send(Messages::WebPageProxy::SelectionContextCallback(String(), String(), String(), callbackID));
-        return;
-    }
+    if (!frame.selection().isRange())
+        return completionHandler({ }, { }, { });
     const int selectionExtendedContextLength = 350;
 
     auto& selection = frame.selection().selection();
@@ -575,7 +573,7 @@ void WebPage::getSelectionContext(CallbackID callbackID)
     String textBefore = plainTextForDisplay(rangeExpandedByCharactersInDirectionAtWordBoundary(selection.start(), selectionExtendedContextLength, SelectionDirection::Backward));
     String textAfter = plainTextForDisplay(rangeExpandedByCharactersInDirectionAtWordBoundary(selection.end(), selectionExtendedContextLength, SelectionDirection::Forward));
 
-    send(Messages::WebPageProxy::SelectionContextCallback(selectedText, textBefore, textAfter, callbackID));
+    completionHandler(selectedText, textBefore, textAfter);
 }
 
 NSObject *WebPage::accessibilityObjectForMainFramePlugin()
@@ -2209,7 +2207,7 @@ void WebPage::updateSelectionWithExtentPoint(const WebCore::IntPoint& point, boo
     send(Messages::WebPageProxy::UnsignedCallback(m_selectionAnchor == Start, callbackID));
 }
 
-void WebPage::requestDictationContext(CallbackID callbackID)
+void WebPage::requestDictationContext(CompletionHandler<void(const String&, const String&, const String&)>&& completionHandler)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     VisiblePosition startPosition = frame.selection().selection().start();
@@ -2244,7 +2242,7 @@ void WebPage::requestDictationContext(CallbackID callbackID)
         contextAfter = plainTextForContext(makeSimpleRange(endPosition, lastPosition));
     }
 
-    send(Messages::WebPageProxy::SelectionContextCallback(selectedText, contextBefore, contextAfter, callbackID));
+    completionHandler(selectedText, contextBefore, contextAfter);
 }
 
 void WebPage::replaceSelectedText(const String& oldText, const String& newText)

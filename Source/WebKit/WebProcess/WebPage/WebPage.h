@@ -740,7 +740,7 @@ public:
     void updateSelectionWithExtentPoint(const WebCore::IntPoint&, bool isInteractingWithFocusedElement, RespectSelectionAnchor, CallbackID);
     void updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint&, WebCore::TextGranularity, bool isInteractingWithFocusedElement, CallbackID);
 
-    void requestDictationContext(CallbackID);
+    void requestDictationContext(CompletionHandler<void(const String&, const String&, const String&)>&&);
     void replaceDictatedText(const String& oldText, const String& newText);
     void replaceSelectedText(const String& oldText, const String& newText);
     void requestAutocorrectionData(const String& textForAutocorrection, CompletionHandler<void(WebAutocorrectionData)>&& reply);
@@ -760,7 +760,7 @@ public:
     void setIsShowingInputViewForFocusedElement(bool);
     bool isShowingInputViewForFocusedElement() const { return m_isShowingInputViewForFocusedElement; }
     void updateSelectionAppearance();
-    void getSelectionContext(CallbackID);
+    void getSelectionContext(CompletionHandler<void(const String&, const String&, const String&)>&&);
     void handleTwoFingerTapAtPoint(const WebCore::IntPoint&, OptionSet<WebKit::WebEvent::Modifier>, uint64_t requestID);
     void getRectsForGranularityWithSelectionOffset(WebCore::TextGranularity, int32_t, CallbackID);
     void getRectsAtSelectionOffsetWithText(int32_t, const String&, CallbackID);

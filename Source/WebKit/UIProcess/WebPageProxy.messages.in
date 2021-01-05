@@ -183,7 +183,6 @@ messages -> WebPageProxy {
 #if PLATFORM(IOS_FAMILY)
     GestureCallback(WebCore::IntPoint point, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> flags, WebKit::CallbackID callbackID)
     TouchesCallback(WebCore::IntPoint point, enum:uint8_t WebKit::SelectionTouch touches, OptionSet<WebKit::SelectionFlags> flags, WebKit::CallbackID callbackID)
-    SelectionContextCallback(String selectedText, String beforeText, String afterText, WebKit::CallbackID callbackID)
     InterpretKeyEvent(struct WebKit::EditorState state, bool isCharEvent) -> (bool handled) Synchronous
     DidReceivePositionInformation(struct WebKit::InteractionInformationAtPosition information)
     SaveImageToLibrary(WebKit::SharedMemory::IPCHandle handle)
