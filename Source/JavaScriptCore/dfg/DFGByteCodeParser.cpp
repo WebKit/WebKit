@@ -4094,8 +4094,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
         return true;
     }
 
-    // FIXME: This should handle construction as well. https://bugs.webkit.org/show_bug.cgi?id=155591
-    if (function->classInfo(*m_vm) == ObjectConstructor::info() && kind == CodeForCall) {
+    if (function->classInfo(*m_vm) == ObjectConstructor::info()) {
         insertChecks();
 
         Node* resultNode;

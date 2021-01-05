@@ -1,3 +1,14 @@
+2021-01-05  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        We should have a DFG intrinsic for the construct case of the Object constructor
+        https://bugs.webkit.org/show_bug.cgi?id=155591
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/new-object-no-expected-function.js: Added.
+        * stress/call-object-constructor-with-new.js: Added.
+        * stress/dfg-builtin-constructor-cross-realm.js: Added.
+
 2021-01-05  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-References] Added few unreached-invalid tests

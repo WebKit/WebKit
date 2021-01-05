@@ -1,3 +1,22 @@
+2021-01-05  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        We should have a DFG intrinsic for the construct case of the Object constructor
+        https://bugs.webkit.org/show_bug.cgi?id=155591
+
+        Reviewed by Yusuke Suzuki.
+
+        Given that a) ObjectConstructor behaves identically for [[Call]] and [[Construct]] with itself
+        as NewTarget [1] and b) handleConstantInternalFunction() returns early if NewTarget is altered,
+        this patch simply removes CodeForCall guard.
+
+        While `new Object()` is already optimized via BytecodeGenerator::emitExpectedFunctionSnippet(),
+        this change is a 4x speedup for rather rare usages like `new window.Object()`.
+
+        [1]: https://tc39.es/ecma262/#sec-object-value (step 1)
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+
 2021-01-05  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-References] Added few unreached-invalid tests
