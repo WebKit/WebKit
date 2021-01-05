@@ -71,6 +71,12 @@ constexpr double sqrtOfTwoDouble = M_SQRT2;
 constexpr float sqrtOfTwoFloat = static_cast<float>(M_SQRT2);
 #endif
 
+#if OS(HAIKU)
+    // It seems the C99 version somehow gets redefined after cmath include (which undefines them)
+    #undef isinf
+    #undef signbit
+#endif
+
 #if COMPILER(MSVC)
 
 // Work around a bug in Win, where atan2(+-infinity, +-infinity) yields NaN instead of specific values.

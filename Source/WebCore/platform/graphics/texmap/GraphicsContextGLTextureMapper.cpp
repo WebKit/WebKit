@@ -27,7 +27,6 @@
  */
 
 #include "config.h"
-#include "GraphicsContextGLOpenGL.h"
 
 #if ENABLE(WEBGL) && USE(TEXTURE_MAPPER)
 

@@ -74,11 +74,13 @@ class DeprecatedPort(object):
             "mac-wk2": MacWK2Port,
             "win": WinPort,
             "wincairo": WinCairoPort,
+            "haiku": HaikuPort,
             "wpe": WpePort,
         }
         default_port = {
             "Windows": WinPort,
             "Darwin": MacPort,
+            "Haiku": HaikuPort,
         }
         # Do we really need MacPort as the ultimate default?
         return ports.get(port_name, default_port.get(platform.system(), MacPort))()
@@ -222,6 +224,23 @@ class GtkWK2Port(DeprecatedPort):
     def run_webkit_tests_command(self, build_style=None):
         command = super(GtkWK2Port, self).run_webkit_tests_command(build_style)
         command.append("--gtk")
+        return command
+
+
+class HaikuPort(DeprecatedPort):
+    port_flag_name = "haiku"
+
+    def build_webkit_command(self, build_style=None):
+        command = super(HaikuPort, self).build_webkit_command(build_style=build_style)
+        command.append("--haiku")
+        command.append("--update-haiku")
+        command.append("--no-webkit2")
+        command.append(super(HaikuPort, self).makeArgs())
+        return command
+
+    def run_webkit_tests_command(self, build_style=None):
+        command = super(HaikuPort, self).run_webkit_tests_command(build_style)
+        command.append("--haiku")
         return command
 
 

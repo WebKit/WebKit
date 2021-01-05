@@ -30,6 +30,7 @@
 #include <chrono>
 #include <memory>
 #include <stddef.h>
+#include <string.h>
 #include <strings.h>
 
 #include "mbmalloc.h"

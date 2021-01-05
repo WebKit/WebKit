@@ -30,6 +30,10 @@
 #include "PointerID.h"
 #include <wtf/WindowsExtras.h>
 
+#if PLATFORM(HAIKU)
+class BMessage;
+#endif
+
 namespace WebCore {
 
 const double ForceAtClick = 1;
@@ -87,6 +91,10 @@ const double ForceAtForceClick = 2;
         PlatformMouseEvent(HWND, UINT, WPARAM, LPARAM, bool didActivateWebView = false);
         void setClickCount(int count) { m_clickCount = count; }
         bool didActivateWebView() const { return m_didActivateWebView; }
+#endif
+
+#if PLATFORM(HAIKU)
+        PlatformMouseEvent(const BMessage*);
 #endif
 
     protected:

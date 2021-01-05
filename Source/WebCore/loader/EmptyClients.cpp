@@ -37,6 +37,7 @@
 #include "DOMPasteAccess.h"
 #include "DataListSuggestionPicker.h"
 #include "DatabaseProvider.h"
+#include "DateTimeChooser.h"
 #include "DiagnosticLoggingClient.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"

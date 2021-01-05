@@ -186,8 +186,11 @@ WTF_EXPORT_PRIVATE RetainPtr<CFURLRef> pathAsURL(const String&);
 String filenameForDisplay(const String&);
 #endif
 
-#if OS(WINDOWS)
+#if OS(WINDOWS) || OS(HAIKU)
 WTF_EXPORT_PRIVATE String localUserSpecificStorageDirectory();
+#endif
+
+#if OS(WINDOWS)
 WTF_EXPORT_PRIVATE String roamingUserSpecificStorageDirectory();
 WTF_EXPORT_PRIVATE String createTemporaryDirectory();
 WTF_EXPORT_PRIVATE bool deleteNonEmptyDirectory(const String&);

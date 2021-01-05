@@ -43,7 +43,7 @@
 #define THUMB_FUNC_PARAM(name)
 #endif
 
-#if (OS(LINUX) || OS(FREEBSD)) && CPU(X86_64)
+#if (OS(LINUX) || OS(FREEBSD) || OS(HAIKU)) && CPU(X86_64)
 #define GLOBAL_REFERENCE(name) #name "@plt"
 #elif CPU(X86) && COMPILER(MINGW)
 #define GLOBAL_REFERENCE(name) "@" #name "@4"
@@ -87,6 +87,7 @@
     || OS(FUCHSIA)             \
     || OS(OPENBSD)             \
     || OS(HURD)                \
+    || OS(HAIKU)               \
     || OS(NETBSD)              \
     || COMPILER(MINGW)
     // GNU as-compatible syntax.

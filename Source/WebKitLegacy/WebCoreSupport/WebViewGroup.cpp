@@ -28,7 +28,7 @@
 #include "WebStorageNamespaceProvider.h"
 #include "WebView.h"
 #include "WebVisitedLinkStore.h"
-#include <WebCore/UserContentController.h>
+#include <WebCore/page/UserContentController.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringHash.h>
 

@@ -7,7 +7,6 @@ include(target/WebCore)
 set_property(DIRECTORY . PROPERTY FOLDER "WebKitLegacy")
 
 set(WebKitLegacy_SOURCES
-    Storage/InprocessIDBServer.cpp
     Storage/StorageAreaImpl.cpp
     Storage/StorageAreaSync.cpp
     Storage/StorageNamespaceImpl.cpp
@@ -16,6 +15,7 @@ set(WebKitLegacy_SOURCES
     Storage/StorageTracker.cpp
     Storage/WebDatabaseProvider.cpp
     Storage/WebStorageNamespaceProvider.cpp
+	Storage/InProcessIDBServer.cpp
 
     WebCoreSupport/NetworkStorageSessionMap.cpp
     WebCoreSupport/WebResourceLoadScheduler.cpp
@@ -52,6 +52,12 @@ endif ()
 
 if (APPLE)
     set_target_properties(WebKitLegacy PROPERTIES LINK_FLAGS "-umbrella WebKit")
+endif ()
+
+if (HAIKU)
+	WEBKIT_POPULATE_LIBRARY_VERSION(WEBKIT)
+	set_target_properties(WebKitLegacy PROPERTIES VERSION ${WEBKIT_VERSION} SOVERSION ${WEBKIT_VERSION_MAJOR})
+	install(TARGETS WebKitLegacy DESTINATION "${LIB_INSTALL_DIR}")
 endif ()
 
 if (MSVC)

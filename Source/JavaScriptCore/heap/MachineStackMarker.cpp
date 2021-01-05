@@ -27,6 +27,7 @@
 #include <wtf/BitVector.h>
 #include <wtf/PageBlock.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/Platform.h>
 
 namespace JSC {
 

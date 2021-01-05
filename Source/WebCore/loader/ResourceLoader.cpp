@@ -805,7 +805,14 @@ bool ResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSpace
 }
 
 #endif
-    
+
+bool ResourceLoader::didReceiveInvalidCertificate(ResourceHandle* handle,
+    const BCertificate& certificate, const char* message)
+{
+    CertificateInfo info(certificate);
+    return frameLoader()->notifier().didReceiveInvalidCertificate(this, info, message);
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 RetainPtr<CFDictionaryRef> ResourceLoader::connectionProperties(ResourceHandle*)

@@ -82,6 +82,11 @@
 #include "MediaPlayerPrivateAVFoundationCF.h"
 #endif
 
+#if PLATFORM(HAIKU)
+#include "MediaPlayerPrivateHaiku.h"
+#define PlatformMediaEngineClassName MediaPlayerPrivate
+#endif
+
 #if USE(EXTERNAL_HOLEPUNCH)
 #include "MediaPlayerPrivateHolePunch.h"
 #endif

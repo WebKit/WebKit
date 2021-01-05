@@ -38,6 +38,10 @@
 #include <sys/stat.h>
 #endif
 
+#if PLATFORM(HAIKU)
+#define MAP_FILE 0
+#endif
+
 #if USE(GLIB)
 #include <gio/gfiledescriptorbased.h>
 #include <gio/gio.h>

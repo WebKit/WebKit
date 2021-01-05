@@ -54,6 +54,12 @@ interface ID2D1RenderTarget;
 
 #if USE(CAIRO)
 typedef struct _cairo_pattern cairo_pattern_t;
+typedef void* PlatformGradient;
+#endif
+
+#if PLATFORM(HAIKU)
+#include <Gradient.h>
+#include <memory>
 #endif
 
 namespace WebCore {
@@ -125,6 +131,10 @@ public:
     RefPtr<cairo_pattern_t> createPattern(float globalAlpha, const AffineTransform&);
 #endif
 
+#if USE(HAIKU)
+    const BGradient& getHaikuGradient();
+#endif
+
 #if USE(CG)
     void paint(GraphicsContext&);
     void paint(CGContextRef);
@@ -159,6 +169,10 @@ private:
 
 #if USE(DIRECT2D)
     COMPtr<ID2D1Brush> m_brush;
+#endif
+
+#if USE(HAIKU)
+    std::unique_ptr<BGradient> m_gradient;
 #endif
 };
 

@@ -46,6 +46,7 @@ if (USE_TEXTURE_MAPPER_GL)
         platform/graphics/texmap/TextureMapperContextAttributes.cpp
         platform/graphics/texmap/TextureMapperGL.cpp
         platform/graphics/texmap/TextureMapperShaderProgram.cpp
+		platform/graphics/texmap/TextureMapperGCGLPlatformLayer.cpp
     )
 endif ()
 

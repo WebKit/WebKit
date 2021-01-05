@@ -34,6 +34,8 @@
 #include "ImageBufferDirect2DBackend.h"
 #elif USE(CAIRO)
 #include "ImageBufferCairoImageSurfaceBackend.h"
+#elif USE(HAIKU)
+#include "ImageBufferHaikuSurfaceBackend.h"
 #endif
 
 #if HAVE(IOSURFACE)
@@ -48,6 +50,8 @@ using UnacceleratedImageBufferBackend = ImageBufferCGBitmapBackend;
 using UnacceleratedImageBufferBackend = ImageBufferDirect2DBackend;
 #elif USE(CAIRO)
 using UnacceleratedImageBufferBackend = ImageBufferCairoImageSurfaceBackend;
+#elif USE(HAIKU)
+using UnacceleratedImageBufferBackend = ImageBufferHaikuSurfaceBackend;
 #endif
 
 #if HAVE(IOSURFACE)

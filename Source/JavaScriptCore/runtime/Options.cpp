@@ -31,6 +31,7 @@
 #include "LLIntCommon.h"
 #include "MinimumReservedZoneSize.h"
 #include <algorithm>
+#include <cmath>
 #include <limits>
 #include <mutex>
 #include <stdlib.h>
@@ -88,7 +89,7 @@ Optional<OptionsStorage::Unsigned> parse(const char* string)
     return WTF::nullopt;
 }
 
-#if CPU(ADDRESS64) || OS(DARWIN)
+#if CPU(ADDRESS64) || OS(DARWIN) || OS(HAIKU)
 template<>
 Optional<OptionsStorage::Size> parse(const char* string)
 {
@@ -97,7 +98,7 @@ Optional<OptionsStorage::Size> parse(const char* string)
         return value;
     return WTF::nullopt;
 }
-#endif // CPU(ADDRESS64) || OS(DARWIN)
+#endif // CPU(ADDRESS64) || OS(DARWIN) || OS(HAIKU)
 
 template<>
 Optional<OptionsStorage::Double> parse(const char* string)

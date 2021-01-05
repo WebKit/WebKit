@@ -45,6 +45,8 @@ OBJC_CLASS NSImage;
 typedef struct HBITMAP__* HBITMAP;
 #elif USE(CAIRO)
 #include "RefPtrCairo.h"
+#elif PLATFORM(HAIKU)
+class BBitmap;
 #endif
 
 // We need to #define YOffset as it needs to be shared with WebKit
@@ -66,6 +68,8 @@ typedef RetainPtr<NSImage> DragImageRef;
 typedef HBITMAP DragImageRef;
 #elif USE(CAIRO)
 typedef RefPtr<cairo_surface_t> DragImageRef;
+#elif PLATFORM(HAIKU)
+typedef BBitmap* DragImageRef;
 #endif
 
 #if PLATFORM(COCOA)

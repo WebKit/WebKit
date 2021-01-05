@@ -35,6 +35,7 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
         Efl
         FTW
         GTK
+        Haiku
         JSCOnly
         Mac
         PlayStation

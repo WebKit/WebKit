@@ -54,6 +54,8 @@ typedef D2D_RECT_U D2D1_RECT_U;
 
 struct D2D_RECT_F;
 typedef D2D_RECT_F D2D1_RECT_F;
+#elif PLATFORM(HAIKU)
+class BRect;
 #endif
 
 #if USE(CAIRO)
@@ -202,6 +204,9 @@ public:
     IntRect(const D2D1_RECT_U&);
     operator D2D1_RECT_F() const;
     operator D2D1_RECT_U() const;
+#elif PLATFORM(HAIKU)
+    explicit IntRect(const BRect&);
+    operator BRect() const;
 #endif
 
 #if USE(CAIRO)

@@ -33,6 +33,8 @@
 #include "DNSResolveQueueCurl.h"
 #elif USE(CF)
 #include "DNSResolveQueueCFNet.h"
+#elif USE(HAIKU)
+#include "DNSResolveQueueHaiku.h"
 #endif
 
 #include <wtf/CompletionHandler.h>

@@ -101,6 +101,9 @@ class PlatformInfo(object):
     def is_cygwin(self):
         return self._is_cygwin
 
+    def is_haiku(self):
+        return self.os_name == 'haiku'
+
     def is_linux(self):
         return self.os_name == 'linux'
 
@@ -229,6 +232,8 @@ class PlatformInfo(object):
             return 'ios'
         if sys_platform.startswith('linux'):
             return 'linux'
+        if sys_platform.startswith('haiku'):
+            return 'haiku'
         if sys_platform.startswith('win') or sys_platform == 'cygwin':
             return 'win'
         if sys_platform.startswith('freebsd'):

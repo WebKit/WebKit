@@ -97,6 +97,8 @@
 #include <wtf/ProcessID.h>
 #include <wtf/ProcessPrivilege.h>
 
+#include "CertificateInfo.h"
+
 #define PREFIX_PARAMETERS "%p - [webFrame=%p, webFrameID=%" PRIu64 ", webPage=%p, webPageID=%" PRIu64 "] WebFrameLoaderClient::"
 #define WEBFRAME (&webFrame())
 #define WEBFRAMEID (webFrame().frameID().toUInt64())
@@ -254,6 +256,12 @@ bool WebFrameLoaderClient::shouldUseCredentialStorage(DocumentLoader*, unsigned 
         return true;
 
     return webPage->injectedBundleResourceLoadClient().shouldUseCredentialStorage(*webPage, m_frame, identifier);
+}
+
+bool WebFrameLoaderClient::dispatchDidReceiveInvalidCertificate(WebCore::DocumentLoader*, const WebCore::CertificateInfo&, const char* message)
+{
+	notImplemented();
+	return true;
 }
 
 void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long, const AuthenticationChallenge&)

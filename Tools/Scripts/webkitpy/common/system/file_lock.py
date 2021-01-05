@@ -58,7 +58,7 @@ class FileLock(object):
             fcntl.flock(self._lock_file_descriptor, fcntl.LOCK_UN)
 
     def acquire_lock(self):
-        self._lock_file_descriptor = os.open(self._lock_file_path, os.O_TRUNC | os.O_CREAT)
+        self._lock_file_descriptor = os.open(self._lock_file_path, os.O_TRUNC | os.O_CREAT | os.O_WRONLY)
         start_time = time.time()
         while True:
             try:

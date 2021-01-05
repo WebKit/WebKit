@@ -48,6 +48,8 @@ sub applyPreprocessor
         if ($Config::Config{"osname"} eq "MSWin32") {
             $preprocessor = $ENV{CC} || "cl";
             push(@args, qw(/EP));
+        } elsif (($Config::Config{'osname'}) =~ /haiku/i) {
+            $preprocessor = "/bin/env gcc";
         } else {
             $preprocessor = $ENV{CC} || (-x "/usr/bin/clang" ? "/usr/bin/clang" : "/usr/bin/gcc");
             push(@args, qw(-E -P -x c++));

@@ -98,6 +98,7 @@ public:
         HolePunch,
         MediaFoundation,
         MockMSE,
+        Haiku,
     };
 
     enum class WirelessPlaybackTargetType : uint8_t {

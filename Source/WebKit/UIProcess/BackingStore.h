@@ -41,6 +41,10 @@ interface ID3D11DeviceContext1;
 interface ID3D11Texture2D;
 #endif
 
+#if USE(HAIKU)
+#include <View.h>
+#endif
+
 namespace WebKit {
 
 class ShareableBitmap;
@@ -66,6 +70,9 @@ public:
         ID3D11Texture2D* backBuffer { nullptr };
     };
     typedef DXConnections PlatformGraphicsContext;
+#endif
+#if USE(HAIKU)
+    typedef BView* PlatformGraphicsContext;
 #endif
 
     void paint(PlatformGraphicsContext, const WebCore::IntRect&);

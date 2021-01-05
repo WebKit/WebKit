@@ -62,6 +62,8 @@ void mbscavenge()
 {
 #ifdef __APPLE__
     malloc_zone_pressure_relief(nullptr, 0);
+#elif defined(__HAIKU__)
+	/* TODO */
 #else
     malloc_trim(0);
 #endif

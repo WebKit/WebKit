@@ -511,12 +511,16 @@ set(WTF_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}"
     "${WTF_DERIVED_SOURCES_DIR}"
     "${WTF_DIR}"
-    "${WTF_DIR}/wtf"
     "${WTF_DIR}/wtf/dtoa"
     "${WTF_DIR}/wtf/persistence"
     "${WTF_DIR}/wtf/text"
     "${WTF_DIR}/wtf/text/icu"
     "${WTF_DIR}/wtf/threads"
+    "${WTF_DIR}/wtf/unicode"
+)
+
+set(WTF_LOCAL_INCLUDE_DIRECTORIES
+    "${WTF_DIR}/wtf"
     "${WTF_DIR}/wtf/unicode"
 )
 

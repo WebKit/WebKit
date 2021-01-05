@@ -94,6 +94,11 @@
 #define WTF_OS_FUCHSIA 1
 #endif
 
+/* OS(HAIKU) - Haiku */
+#if defined(__HAIKU__)
+#define WTF_OS_HAIKU 1
+#endif
+
 /* OS(HURD) - GNU/Hurd */
 #if defined(__GNU__)
 #define WTF_OS_HURD 1
@@ -125,6 +130,7 @@
     || OS(DARWIN)           \
     || OS(FREEBSD)          \
     || OS(FUCHSIA)          \
+    || OS(HAIKU)            \
     || OS(HURD)             \
     || OS(LINUX)            \
     || OS(NETBSD)           \

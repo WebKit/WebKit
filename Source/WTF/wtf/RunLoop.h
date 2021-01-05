@@ -48,6 +48,11 @@
 #include <wtf/glib/GRefPtr.h>
 #endif
 
+#if USE(HAIKU_EVENT_LOOP)
+class BHandler;
+class BMessageRunner;
+#endif
+
 namespace WTF {
 
 #if USE(COCOA_EVENT_LOOP)
@@ -106,7 +111,7 @@ public:
     WTF_EXPORT_PRIVATE void observe(const Observer&);
 #endif
 
-#if USE(GENERIC_EVENT_LOOP) || USE(WINDOWS_EVENT_LOOP)
+#if USE(GENERIC_EVENT_LOOP) || USE(HAIKU_EVENT_LOOP) || USE(WINDOWS_EVENT_LOOP)
     // Run the single iteration of the RunLoop. It consumes the pending tasks and expired timers, but it won't be blocked.
     WTF_EXPORT_PRIVATE static void iterate();
     WTF_EXPORT_PRIVATE static void setWakeUpCallback(WTF::Function<void()>&&);
@@ -156,6 +161,8 @@ public:
         GRefPtr<GSource> m_source;
         bool m_isRepeating { false };
         Seconds m_interval { 0 };
+#elif USE(HAIKU_EVENT_LOOP)
+		BMessageRunner* m_messageRunner;
 #elif USE(GENERIC_EVENT_LOOP)
         bool isActive(const AbstractLocker&) const;
         void stop(const AbstractLocker&);
@@ -238,6 +245,8 @@ private:
     Vector<GRefPtr<GMainLoop>> m_mainLoops;
     GRefPtr<GSource> m_source;
     WeakHashSet<Observer> m_observers;
+#elif USE(HAIKU_EVENT_LOOP)
+    BHandler* m_handler;
 #elif USE(GENERIC_EVENT_LOOP)
     void schedule(Ref<TimerBase::ScheduledTask>&&);
     void schedule(const AbstractLocker&, Ref<TimerBase::ScheduledTask>&&);

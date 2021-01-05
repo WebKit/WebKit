@@ -52,6 +52,10 @@ list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
     ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
 )
 
+SET(WebKitTestRunner_LOCAL_INCLUDE_DIRECTORIES
+    ${WEBCORE_DIR}/platform/graphics
+)
+
 set(WebKitTestRunner_WEB_PREFERENCES_TEMPLATES
     ${WebKitTestRunner_DIR}/Scripts/PreferencesTemplates/TestOptionsGeneratedKeys.h.erb
 )

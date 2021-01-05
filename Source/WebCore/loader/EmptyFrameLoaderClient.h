@@ -59,6 +59,7 @@ class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
     bool shouldUseCredentialStorage(DocumentLoader*, unsigned long) override { return false; }
     void dispatchWillSendRequest(DocumentLoader*, unsigned long, ResourceRequest&, const ResourceResponse&) final { }
     void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long, const AuthenticationChallenge&) final { }
+	bool dispatchDidReceiveInvalidCertificate(DocumentLoader*, const CertificateInfo&, const char* message) final { return false; }
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     bool canAuthenticateAgainstProtectionSpace(DocumentLoader*, unsigned long, const ProtectionSpace&) final { return false; }
 #endif

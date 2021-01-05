@@ -138,7 +138,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
         while (pos < (linelen-1))
         {
           p = &line[pos++];
-          if (*p == '/') 
+          if (*p == '/')
             result.type = FTPDirectoryEntry; /* its a dir */
           else if (*p == 'r')
             result.type = FTPFileEntry; /* its a file */
@@ -188,11 +188,6 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
             result.filename = tokens[1];
             result.filenameLength = p - tokens[1];
 
-            if (!result.type) /* access denied */
-            {
-              result.type = FTPFileEntry; /* is assuming 'f'ile correct? */
-              return FTPJunkEntry;            /* NO! junk it. */
-            }
             return result.type;
           }
           if (pos >= (linelen-1) || line[pos] != ',')

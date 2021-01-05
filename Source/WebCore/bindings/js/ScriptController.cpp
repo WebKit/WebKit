@@ -493,7 +493,7 @@ NPObject* ScriptController::windowScriptNPObject()
 }
 #endif
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) &&!PLATFORM(HAIKU)
 RefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(Widget* widget)
 {
     if (!is<PluginViewBase>(*widget))

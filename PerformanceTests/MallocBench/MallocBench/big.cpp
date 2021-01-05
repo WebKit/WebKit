@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstdlib>
+#include <string.h>
 #include <strings.h>
 
 #include "mbmalloc.h"

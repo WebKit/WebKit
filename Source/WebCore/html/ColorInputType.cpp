@@ -39,6 +39,7 @@
 #include "Chrome.h"
 #include "Color.h"
 #include "ColorSerialization.h"
+#include "ElementChildIterator.h"
 #include "Event.h"
 #include "HTMLDataListElement.h"
 #include "HTMLDivElement.h"

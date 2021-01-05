@@ -30,6 +30,8 @@
 #include "PolymorphicAccess.h"
 #include "Repatch.h"
 
+#include "JSCellInlines.h"
+
 namespace JSC {
 
 #if ENABLE(JIT)

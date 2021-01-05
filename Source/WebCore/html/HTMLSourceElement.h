@@ -26,6 +26,7 @@
 #pragma once
 
 #include "HTMLElement.h"
+#include "MediaList.h"
 #include "Timer.h"
 
 namespace WebCore {

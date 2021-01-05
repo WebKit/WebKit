@@ -64,6 +64,10 @@
 #include <glib.h>
 #endif
 
+#if PLATFORM(HAIKU)
+#include <OS.h>
+#endif
+
 namespace WTF {
 
 #if OS(WINDOWS)
@@ -232,6 +236,13 @@ static inline double currentTime()
 static inline double currentTime()
 {
     return static_cast<double>(g_get_real_time() / 1000000.0);
+}
+
+#elif PLATFORM(HAIKU)
+
+double currentTime()
+{
+    return (double)real_time_clock_usecs() / 1000000.0;
 }
 
 #else

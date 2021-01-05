@@ -58,6 +58,11 @@ class PlatformContextDirect2D;
 #elif USE(CAIRO)
 #include "RefPtrCairo.h"
 
+#elif PLATFORM(HAIKU)
+
+class BShape;
+typedef BShape PlatformPath;
+
 #elif USE(WINGDI)
 
 namespace WebCore {

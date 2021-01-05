@@ -44,6 +44,10 @@ typedef union _GdkEvent GdkEvent;
 #endif
 #endif
 
+#if PLATFORM(HAIKU)
+#include <Message.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #include <wtf/RetainPtr.h>
 OBJC_CLASS WebEvent;
@@ -84,6 +88,8 @@ public:
     NSEvent *nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(GTK)
     GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
+#elif PLATFORM(HAIKU)
+    const BMessage* nativeEvent() const { return m_nativeEvent; }
 #elif PLATFORM(IOS_FAMILY)
     ::WebEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(WIN)
@@ -98,6 +104,8 @@ private:
     RetainPtr<NSEvent> m_nativeEvent;
 #elif PLATFORM(GTK)
     GUniquePtr<GdkEvent> m_nativeEvent;
+#elif PLATFORM(HAIKU)
+    BMessage* m_nativeEvent;
 #elif PLATFORM(IOS_FAMILY)
     RetainPtr<::WebEvent> m_nativeEvent;
 #elif PLATFORM(WIN)

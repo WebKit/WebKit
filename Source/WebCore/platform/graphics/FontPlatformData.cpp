@@ -73,12 +73,14 @@ FontPlatformData FontPlatformData::cloneWithSyntheticOblique(const FontPlatformD
     return copy;
 }
 
+#if !PLATFORM(HAIKU)
 FontPlatformData FontPlatformData::cloneWithSize(const FontPlatformData& source, float size)
 {
     FontPlatformData copy(source);
     copy.m_size = size;
     return copy;
 }
+#endif
 #endif
 
 #if !USE(CORE_TEXT) && !PLATFORM(WIN)

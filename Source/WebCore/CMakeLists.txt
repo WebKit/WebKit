@@ -77,18 +77,15 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/crypto/algorithms"
     "${WEBCORE_DIR}/crypto/keys"
     "${WEBCORE_DIR}/crypto/parameters"
-    "${WEBCORE_DIR}/css"
     "${WEBCORE_DIR}/css/parser"
     "${WEBCORE_DIR}/css/typedom"
     "${WEBCORE_DIR}/cssjit"
     "${WEBCORE_DIR}/display"
     "${WEBCORE_DIR}/display/compositing"
     "${WEBCORE_DIR}/display/css"
-    "${WEBCORE_DIR}/dom"
     "${WEBCORE_DIR}/dom/messageports"
     "${WEBCORE_DIR}/domjit"
     "${WEBCORE_DIR}/editing"
-    "${WEBCORE_DIR}/fileapi"
     "${WEBCORE_DIR}/history"
     "${WEBCORE_DIR}/html"
     "${WEBCORE_DIR}/html/canvas"
@@ -121,19 +118,16 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/page"
     "${WEBCORE_DIR}/page/csp"
     "${WEBCORE_DIR}/page/scrolling"
-    "${WEBCORE_DIR}/platform"
     "${WEBCORE_DIR}/platform/animation"
     "${WEBCORE_DIR}/platform/audio"
     "${WEBCORE_DIR}/platform/encryptedmedia"
     "${WEBCORE_DIR}/platform/gamepad"
-    "${WEBCORE_DIR}/platform/graphics"
     "${WEBCORE_DIR}/platform/graphics/cpu/arm"
     "${WEBCORE_DIR}/platform/graphics/cpu/arm/filters"
     "${WEBCORE_DIR}/platform/graphics/displaylists"
     "${WEBCORE_DIR}/platform/graphics/filters"
     "${WEBCORE_DIR}/platform/graphics/iso"
     "${WEBCORE_DIR}/platform/graphics/opentype"
-    "${WEBCORE_DIR}/platform/graphics/transforms"
     "${WEBCORE_DIR}/platform/mediacapabilities"
     "${WEBCORE_DIR}/platform/mediarecorder"
     "${WEBCORE_DIR}/platform/mediastream"
@@ -142,13 +136,11 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/mock/mediasource"
     "${WEBCORE_DIR}/platform/network"
     "${WEBCORE_DIR}/platform/sql"
-    "${WEBCORE_DIR}/platform/text"
     "${WEBCORE_DIR}/platform/xr"
     "${WEBCORE_DIR}/plugins"
     "${WEBCORE_DIR}/rendering"
     "${WEBCORE_DIR}/rendering/line"
     "${WEBCORE_DIR}/rendering/mathml"
-    "${WEBCORE_DIR}/rendering/shapes"
     "${WEBCORE_DIR}/rendering/style"
     "${WEBCORE_DIR}/rendering/svg"
     "${WEBCORE_DIR}/rendering/updating"
@@ -168,6 +160,18 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/worklets"
     "${WEBCORE_DIR}/xml"
     "${WEBCORE_DIR}/xml/parser"
+)
+
+set(WebCore_LOCAL_INCLUDE_DIRECTORIES
+	"${WEBCORE_DIR}/css"
+	"${WEBCORE_DIR}/dom"
+	"${WEBCORE_DIR}/fileapi"
+	"${WEBCORE_DIR}/platform"
+	"${WEBCORE_DIR}/platform/graphics"
+	"${WEBCORE_DIR}/platform/graphics/transforms"
+	"${WEBCORE_DIR}/platform/text"
+	"${WEBCORE_DIR}/rendering/shapes"
+
 )
 
 set(WebCore_IDL_INCLUDES
@@ -2168,6 +2172,19 @@ GENERATE_DOM_NAMES(XML ${WEBCORE_DIR}/xml/xmlattrs.in)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/XMLNames.cpp)
 
 WEBKIT_COMPUTE_SOURCES(WebCore)
+
+IF (HAIKU)
+    # Can't use INCLUDE_DIRECTORIES, because some header file names conflicts between Haiku and WebKit
+    foreach(inc ${WebCore_LOCAL_INCLUDE_DIRECTORIES})
+        ADD_DEFINITIONS(-iquote ${inc})
+    endforeach(inc)
+
+    INCLUDE_DIRECTORIES(${WebCore_INCLUDE_DIRECTORIES} ${WebCoreTestSupport_INCLUDE_DIRECTORIES})
+ELSE (HAIKU)
+    INCLUDE_DIRECTORIES(${WebCore_LOCAL_INCLUDE_DIRECTORIES} ${WebCore_INCLUDE_DIRECTORIES} ${WebCoreTestSupport_INCLUDE_DIRECTORIES})
+ENDIF (HAIKU)
+
+include_directories(SYSTEM ${WebCore_SYSTEM_INCLUDE_DIRECTORIES})
 
 if (MSVC)
     WEBKIT_ADD_PRECOMPILED_HEADER("WebCorePrefix.h" "WebCorePrefix.cpp" WebCore_SOURCES)

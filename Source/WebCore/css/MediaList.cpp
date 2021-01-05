@@ -25,6 +25,7 @@
 #include "CSSStyleSheet.h"
 #include "DOMWindow.h"
 #include "Document.h"
+#include "MediaFeatureNames.h"
 #include "MediaQuery.h"
 #include "MediaQueryParser.h"
 #include <wtf/NeverDestroyed.h>

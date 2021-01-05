@@ -40,6 +40,10 @@
 typedef struct _GModule GModule;
 #endif
 
+#if PLATFORM(HAIKU)
+#include <kernel/image.h>
+#endif
+
 #if USE(FOUNDATION)
 OBJC_CLASS NSSet;
 OBJC_CLASS NSBundle;
@@ -63,6 +67,8 @@ namespace WebKit {
 typedef NSBundle *PlatformBundle;
 #elif USE(GLIB)
 typedef ::GModule* PlatformBundle;
+#elif PLATFORM(HAIKU)
+typedef image_id PlatformBundle;
 #else
 typedef void* PlatformBundle;
 #endif

@@ -523,6 +523,10 @@ inline WKWebGLLoadPolicy toAPI(WebCore::WebGLLoadPolicy webGLLoadPolicy)
 #include "WKAPICastGtk.h"
 #endif
 
+#if defined(BUILDING_HAIKU__)
+#include "WKAPICastHaiku.h"
+#endif
+
 #if defined(BUILDING_WPE__)
 #include "WKAPICastWPE.h"
 #endif

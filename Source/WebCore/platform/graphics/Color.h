@@ -50,6 +50,10 @@ typedef D2D_VECTOR_4F D2D1_VECTOR_4F;
 typedef struct _GdkRGBA GdkRGBA;
 #endif
 
+#if PLATFORM(HAIKU)
+struct rgb_color;
+#endif
+
 namespace WebCore {
 
 // Able to represent:
@@ -138,6 +142,11 @@ public:
 #if USE(CG)
     WEBCORE_EXPORT Color(CGColorRef);
     WEBCORE_EXPORT Color(CGColorRef, SemanticTag);
+#endif
+
+#if PLATFORM(HAIKU)
+    Color(const rgb_color&);
+    operator rgb_color() const;
 #endif
 
 #if PLATFORM(WIN)

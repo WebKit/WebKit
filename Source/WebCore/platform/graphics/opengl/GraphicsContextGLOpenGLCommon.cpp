@@ -59,7 +59,7 @@
 #include "EpoxyShims.h"
 #elif USE(OPENGL_ES)
 #include "OpenGLESShims.h"
-#elif PLATFORM(GTK) || PLATFORM(WIN)
+#elif PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(HAIKU)
 #include "OpenGLShims.h"
 #endif
 

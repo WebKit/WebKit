@@ -344,12 +344,16 @@ String filenameFromHTTPContentDisposition(const String& value)
 
         if (key.isEmpty() || key != "filename")
             continue;
-        
+
         String value = keyValuePair.substring(valueStartPos + 1).stripWhiteSpace();
 
         // Remove quotes if there are any
-        if (value[0] == '\"')
-            value = value.substring(1, value.length() - 2);
+        if (value[0] == '"') {
+            if (value[value.length() - 1] == '"')
+                value = value.substring(1, value.length() - 2);
+            else
+                return String();
+        }
 
         return value;
     }

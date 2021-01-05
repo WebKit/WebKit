@@ -259,12 +259,10 @@ OpenTypeMathData::OpenTypeMathData(const FontPlatformData& font)
     : m_mathFont(font.createOpenTypeMathHarfBuzzFont())
 {
 }
-#elif USE(DIRECT2D)
+#else
 OpenTypeMathData::OpenTypeMathData(const FontPlatformData& font)
 {
 }
-#else
-OpenTypeMathData::OpenTypeMathData(const FontPlatformData&) = default;
 #endif
 
 OpenTypeMathData::~OpenTypeMathData() = default;

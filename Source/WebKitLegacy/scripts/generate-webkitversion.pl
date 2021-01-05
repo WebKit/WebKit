@@ -44,6 +44,7 @@ my $usage = "generate-webkitversion --config WebKit/mac/Configurations/Version.x
 
 my $major_version = "";
 my $minor_version = "";
+my $tiny_version = "";
 # The appropriate Apple-maintained Version.xcconfig file for WebKit version information is in WebKit/mac/Configurations/.
 my $configFile = "./Source/WebKit/mac/Configurations/Version.xcconfig";
 my $outputDir = "";
@@ -68,10 +69,15 @@ while (my $line = <INPUT>) {
       $line =~ s/^(MINOR_VERSION)\s+(=)\s+(\d+);/$3/;
       $minor_version = $line;
     }
+    if ($line =~ /^TINY_VERSION\s+=\s+\d+;/) {
+      $line =~ s/^(TINY_VERSION)\s+(=)\s+(\d+);/$3/;
+      $tiny_version = $line;
+    }
 }
 
 $major_version = "531" unless (length($major_version));
 $minor_version = "3" unless (length($minor_version));
+$tiny_version = "0" unless (length($tiny_version));
 
 my $webKitVersionPath = "$outputDir/WebKitVersion.h";
 
@@ -125,6 +131,7 @@ sub printWebKitVersionHeaderFile
 
     print F "#define WEBKIT_MAJOR_VERSION $major_version\n";
     print F "#define WEBKIT_MINOR_VERSION $minor_version\n\n";
+    print F "#define WEBKIT_TINY_VERSION $tiny_version\n\n";
 
     print F "#endif //WebKitVersion_h\n";
 

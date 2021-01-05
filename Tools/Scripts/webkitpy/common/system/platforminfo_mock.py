@@ -52,6 +52,9 @@ class MockPlatformInfo(object):
     def is_linux(self):
         return self.os_name == 'linux'
 
+    def is_haiku(self):
+        return self.os_name == 'haiku'
+
     def is_win(self):
         return self.os_name == 'win'
 

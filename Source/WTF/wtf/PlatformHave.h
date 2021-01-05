@@ -202,11 +202,11 @@
 #define HAVE_HOSTED_CORE_ANIMATION 1
 #endif
 
-#if OS(DARWIN) || OS(FUCHSIA) || ((OS(FREEBSD) || defined(__GLIBC__) || defined(__BIONIC__)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)))
+#if OS(DARWIN) || OS(FUCHSIA) || OS(HAIKU) || ((OS(FREEBSD) || defined(__GLIBC__) || defined(__BIONIC__)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)))
 #define HAVE_MACHINE_CONTEXT 1
 #endif
 
-#if OS(DARWIN) || (OS(LINUX) && defined(__GLIBC__) && !defined(__UCLIBC__) && !CPU(MIPS))
+#if OS(DARWIN) || OS(HAIKU) || (OS(LINUX) && defined(__GLIBC__) && !defined(__UCLIBC__) && !CPU(MIPS))
 #define HAVE_BACKTRACE 1
 #endif
 
@@ -214,7 +214,7 @@
 #define HAVE_BACKTRACE_SYMBOLS 1
 #endif
 
-#if OS(DARWIN) || OS(LINUX)
+#if OS(DARWIN) || OS(HAIKU) || OS(LINUX)
 #define HAVE_DLADDR 1
 #endif
 
@@ -314,7 +314,7 @@
 #define HAVE_STACK_BOUNDS_FOR_NEW_THREAD 1
 #endif
 
-#if !OS(WINDOWS) && !PLATFORM(PLAYSTATION)
+#if !OS(WINDOWS) && !PLATFORM(PLAYSTATION) && !OS(HAIKU)
 #define HAVE_MEMMEM 1
 #endif
 

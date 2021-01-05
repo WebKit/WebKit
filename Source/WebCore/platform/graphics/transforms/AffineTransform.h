@@ -33,6 +33,8 @@
 
 #if USE(CG)
 typedef struct CGAffineTransform CGAffineTransform;
+#elif PLATFORM(HAIKU)
+#include <AffineTransform.h>
 #endif
 
 #if PLATFORM(WIN)
@@ -181,6 +183,8 @@ public:
 
 #if USE(CG)
     WEBCORE_EXPORT operator CGAffineTransform() const;
+#elif PLATFORM(HAIKU)
+    operator BAffineTransform() const;
 #endif
 
 #if PLATFORM(WIN)

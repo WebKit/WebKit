@@ -27,6 +27,7 @@
 
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/FrameLoaderClient.h>
+#include "CertificateInfo.h"
 #include <pal/SessionID.h>
 
 namespace WebKit {
@@ -100,6 +101,9 @@ private:
 #if ENABLE(DATA_DETECTION)
     void dispatchDidFinishDataDetection(NSArray *detectionResults) final;
 #endif
+    
+    bool dispatchDidReceiveInvalidCertificate(WebCore::DocumentLoader*, const WebCore::CertificateInfo&, const char* message);
+    
     void dispatchDidChangeMainDocument() final;
     void dispatchWillChangeDocument(const URL& currentUrl, const URL& newUrl) final;
 

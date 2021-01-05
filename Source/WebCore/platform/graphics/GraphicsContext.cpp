@@ -914,7 +914,7 @@ void GraphicsContext::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRec
     imageBuffer.clipToMask(*this, destinationRect);
 }
 
-#if !USE(CG) && !USE(DIRECT2D) && !USE(CAIRO)
+#if !USE(CG) && !USE(DIRECT2D) && !USE(CAIRO) && !USE(HAIKU)
 IntRect GraphicsContext::clipBounds() const
 {
     ASSERT_NOT_REACHED();
@@ -983,7 +983,7 @@ void GraphicsContext::fillRoundedRect(const FloatRoundedRect& rect, const Color&
 }
 
 #if !USE(CG) && !USE(DIRECT2D) && !USE(CAIRO)
-void GraphicsContext::fillRectWithRoundedHole(const IntRect& rect, const FloatRoundedRect& roundedHoleRect, const Color& color)
+void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const FloatRoundedRect& roundedHoleRect, const Color& color)
 {
     if (paintingDisabled())
         return;
@@ -1053,7 +1053,7 @@ void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags)
 }
 #endif
 
-#if !USE(CAIRO) && !USE(DIRECT2D)
+#if !USE(CAIRO) && !USE(DIRECT2D) && !PLATFORM(HAIKU)
 void GraphicsContext::setPlatformStrokeStyle(StrokeStyle)
 {
 }

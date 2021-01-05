@@ -182,10 +182,12 @@ IntPoint Widget::convertToContainingWindow(const IntPoint& localPoint) const
 
 #if !PLATFORM(COCOA)
 
+#if !PLATFORM(HAIKU)
 Widget::Widget(PlatformWidget widget)
 {
     init(widget);
 }
+#endif
 
 IntRect Widget::frameRect() const
 {
@@ -290,6 +292,7 @@ void Widget::paint(GraphicsContext&, const IntRect&, SecurityOriginPaintPolicy, 
     notImplemented();
 }
 
+#if !PLATFORM(HAIKU)
 void Widget::setFocus(bool)
 {
     notImplemented();
@@ -309,6 +312,7 @@ void Widget::hide()
 {
     notImplemented();
 }
+#endif
 
 void Widget::setIsSelected(bool)
 {

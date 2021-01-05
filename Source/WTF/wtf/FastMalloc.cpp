@@ -37,6 +37,10 @@
 #endif // HAVE(RESOURCE_H)
 #endif
 
+#if OS(HAIKU)
+#include <OS.h>
+#endif
+
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
 #include <wtf/Atomics.h>
 #include <wtf/HashMap.h>
@@ -601,6 +605,14 @@ FastMallocStatistics fastMallocStatistics()
     PROCESS_MEMORY_COUNTERS resourceUsage;
     GetProcessMemoryInfo(GetCurrentProcess(), &resourceUsage, sizeof(resourceUsage));
     statistics.committedVMBytes = resourceUsage.PeakWorkingSetSize;
+#elif OS(HAIKU)
+	ssize_t cookie = NULL;
+	statistics.committedVMBytes = 0;
+	area_info info;
+	while(get_next_area_info(B_CURRENT_TEAM, &cookie, &info) == B_OK)
+	{
+		statistics.committedVMBytes += info.ram_size;
+	}
 #elif HAVE(RESOURCE_H)
     struct rusage resourceUsage;
     getrusage(RUSAGE_SELF, &resourceUsage);

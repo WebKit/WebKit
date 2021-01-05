@@ -125,6 +125,7 @@ Usage: $programName [options] [options to pass to build system]
 
   --ftw                             Build the FTW Windows port
   --gtk                             Build the GTK+ port
+  --haiku                           Build the Haiku port
   --wpe                             Build the WPE port
   --wincairo                        Build using Cairo (rather than CoreGraphics) on Windows
   --playstation                     Build the PlayStation port

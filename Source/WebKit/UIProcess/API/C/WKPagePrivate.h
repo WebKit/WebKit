@@ -31,6 +31,9 @@
 
 #if defined(WIN32) || defined(_WIN32)
 typedef int WKProcessID;
+#elif PLATFORM(HAIKU)
+#include <wtf/ProcessID.h>
+typedef WTF::ProcessID WKProcessID;
 #else
 #include <unistd.h>
 typedef pid_t WKProcessID;

@@ -4,6 +4,7 @@ import random
 import shutil
 import subprocess
 import tempfile
+import locale
 from datetime import datetime, timedelta
 
 from six import iteritems, PY2
@@ -320,12 +321,13 @@ class OpenSSLEnvironment(object):
         if not os.path.exists(key_path) or not os.path.exists(cert_path):
             return False
 
+        locale.setlocale(locale.LC_ALL, 'C')
+
         with self._config_openssl(hosts) as openssl:
             end_date_str = openssl("x509",
                                    "-noout",
                                    "-enddate",
                                    "-in", cert_path).split("=", 1)[1].strip()
-            # Not sure if this works in other locales
             end_date = datetime.strptime(end_date_str, "%b %d %H:%M:%S %Y %Z")
             time_buffer = timedelta(**CERT_EXPIRY_BUFFER)
             # Because `strptime` does not account for time zone offsets, it is

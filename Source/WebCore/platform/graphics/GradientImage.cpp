@@ -30,6 +30,10 @@
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 
+#if PLATFORM(HAIKU)
+#include <View.h>
+#endif
+
 namespace WebCore {
 
 GradientImage::GradientImage(Gradient& generator, const FloatSize& size)
@@ -45,11 +49,20 @@ ImageDrawResult GradientImage::draw(GraphicsContext& destContext, const FloatRec
     GraphicsContextStateSaver stateSaver(destContext);
     destContext.setCompositeOperation(options.compositeOperator(), options.blendMode());
     destContext.clip(destRect);
+#if PLATFORM(HAIKU)
+    // FIXME on Haiku, translate() will also translate the current state
+    // clipping. We push the clipping in another state to avoid that.
+    destContext.platformContext()->PushState();
+#endif
     destContext.translate(destRect.location());
     if (destRect.size() != srcRect.size())
         destContext.scale(destRect.size() / srcRect.size());
     destContext.translate(-srcRect.location());
     destContext.fillRect(FloatRect(FloatPoint(), size()), m_gradient.get());
+
+#if PLATFORM(HAIKU)
+    destContext.platformContext()->PopState();
+#endif
     return ImageDrawResult::DidDraw;
 }
 

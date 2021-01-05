@@ -30,7 +30,7 @@
 
 #include "GraphicsContextGLOpenGL.h"
 
-#if PLATFORM(GTK) || PLATFORM(WIN)
+#if PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(HAIKU)
 #include "OpenGLShims.h"
 #elif USE(OPENGL_ES)
 #include <OpenGLES/ES2/glext.h>
@@ -70,7 +70,7 @@ PlatformGLObject ExtensionsGLOpenGL::createVertexArrayOES()
         return 0;
 
     GLuint array = 0;
-#if PLATFORM(GTK) || PLATFORM(WIN)
+#if PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(HAIKU)
     if (isVertexArrayObjectSupported())
         glGenVertexArrays(1, &array);
 #elif defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
@@ -175,7 +175,7 @@ bool ExtensionsGLOpenGL::supportsExtension(const String& name)
 
     // GL_OES_vertex_array_object
     if (name == "GL_OES_vertex_array_object") {
-#if (PLATFORM(GTK))
+#if (PLATFORM(GTK) || PLATFORM(HAIKU))
         return m_availableExtensions.contains("GL_ARB_vertex_array_object");
 #else
         return m_availableExtensions.contains("GL_APPLE_vertex_array_object");
@@ -272,7 +272,7 @@ String ExtensionsGLOpenGL::getExtensions()
     return String(reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS)));
 }
 
-#if PLATFORM(GTK) || PLATFORM(WIN)
+#if PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(HAIKU)
 bool ExtensionsGLOpenGL::isVertexArrayObjectSupported()
 {
     static const bool supportsVertexArrayObject = supports("GL_OES_vertex_array_object");

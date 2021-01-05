@@ -85,7 +85,7 @@ class Lighttpd(http_server_base.HttpServerBase):
         base_conf_file = self._port_obj.path_from_webkit_base('Tools',
             'Scripts', 'webkitpy', 'layout_tests', 'servers', 'lighttpd.conf')
         out_conf_file = os.path.join(self._output_dir, 'lighttpd.conf')
-        time_str = time.strftime("%d%b%Y-%H%M%S")
+        time_str = time.asctime()
         access_file_name = "access.log-" + time_str + ".txt"
         access_log = os.path.join(self._output_dir, access_file_name)
         log_file_name = "error.log-" + time_str + ".txt"
@@ -108,11 +108,13 @@ class Lighttpd(http_server_base.HttpServerBase):
         # Write out our cgi handlers.  Run perl through env so that it
         # processes the #! line and runs perl with the proper command
         # line arguments. Emulate apache's mod_asis with a cat cgi handler.
-        f.write(('cgi.assign = ( ".cgi"  => "/usr/bin/env",\n'
-                 '               ".pl"   => "/usr/bin/env",\n'
+        f.write(('cgi.assign = ( ".cgi"  => "%s",\n'
+                 '               ".pl"   => "%s",\n'
                  '               ".asis" => "/bin/cat",\n'
                  '               ".php"  => "%s" )\n\n') %
-                                     self._port_obj._path_to_lighttpd_php())
+                (self._port_obj._path_to_lighttpd_env(),
+                 self._port_obj._path_to_lighttpd_env(),
+                 self._port_obj._path_to_lighttpd_php()))
 
         # Setup log files
         f.write(('server.errorlog = "%s"\n'

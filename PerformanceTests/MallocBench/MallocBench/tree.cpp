@@ -26,6 +26,7 @@
 #include "tree.h"
 #include <limits>
 #include <stdlib.h>
+#include <string.h>
 #include <strings.h>
 
 #include "mbmalloc.h"

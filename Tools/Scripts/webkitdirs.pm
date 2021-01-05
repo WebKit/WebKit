@@ -104,6 +104,7 @@ use constant {
     AppleWin    => "AppleWin",
     FTW         => "FTW",
     GTK         => "GTK",
+    Haiku       => "Haiku",
     iOS         => "iOS",
     tvOS        => "tvOS",
     watchOS     => "watchOS",
@@ -429,6 +430,7 @@ sub determineArchitecture
     }
 
     $architecture = 'x86_64' if $architecture =~ /amd64/i;
+    $architecture = 'x86' if ($architecture =~ /BePC/ && isHaiku());
     $architecture = 'arm64' if $architecture =~ /aarch64/i;
 }
 
@@ -505,6 +507,8 @@ sub determineNumberOfCPUs
     return if defined $numberOfCPUs;
     if (defined($ENV{NUMBER_OF_PROCESSORS})) {
         $numberOfCPUs = $ENV{NUMBER_OF_PROCESSORS};
+    } elsif (isHaiku()) {
+        $numberOfCPUs = `sysinfo -cpu | grep "CPU #" | wc -l`
     } elsif (isLinux()) {
         # First try the nproc utility, if it exists. If we get no
         # results fall back to just interpretting /proc directly.
@@ -569,6 +573,7 @@ sub argumentsForConfiguration()
     push(@args, '--64-bit') if (isWin64());
     push(@args, '--ftw') if isFTW();
     push(@args, '--gtk') if isGtk();
+    push(@args, '--haiku') if isHaiku();
     push(@args, '--wpe') if isWPE();
     push(@args, '--jsc-only') if isJSCOnly();
     push(@args, '--wincairo') if isWinCairo();
@@ -865,7 +870,7 @@ sub executableProductDir
     my $binaryDirectory;
     if (isAnyWindows() && !isPlayStation()) {
         $binaryDirectory = isWin64() ? "bin64" : "bin32";
-    } elsif (isGtk() || isJSCOnly() || isWPE() || isPlayStation()) {
+    } elsif (isGtk() || isJSCOnly() || isWPE() || isHaiku() || isPlayStation()) {
         $binaryDirectory = "bin";
     } else {
         return $productDirectory;
@@ -1192,6 +1197,12 @@ sub builtDylibPathForName
 
         return "";
     }
+    if (isHaiku()) {
+        if (isWK2()) {
+            return "$configurationProductDir/lib/libWebKit2.so";
+        }
+        return "$configurationProductDir/lib/libWebKit.so";
+    }
     if (isIOSWebKit()) {
         return "$configurationProductDir/$libraryName.framework/$libraryName";
     }
@@ -1322,6 +1333,7 @@ sub determinePortName()
     my %argToPortName = (
         ftw => FTW,
         gtk => GTK,
+        haiku => Haiku,
         'jsc-only' => JSCOnly,
         playstation => PlayStation,
         wincairo => WinCairo,
@@ -1360,6 +1372,7 @@ sub determinePortName()
         if ($unknownPortProhibited) {
             my $portsChoice = join "\n\t", qw(
                 --gtk
+                --haiku
                 --jsc-only
                 --wpe
             );
@@ -1519,6 +1532,11 @@ sub isLinux()
 sub isBSD()
 {
     return ($^O eq "freebsd") || ($^O eq "openbsd") || ($^O eq "netbsd") || 0;
+}
+
+sub isHaiku()
+{
+    return ($^O eq "haiku") || 0;
 }
 
 sub isX86_64()
@@ -1843,7 +1861,7 @@ sub relativeScriptsDir()
 sub launcherPath()
 {
     my $relativeScriptsPath = relativeScriptsDir();
-    if (isGtk() || isWPE()) {
+    if (isGtk() || isHaiku() || isWPE()) {
         if (inFlatpakSandbox()) {
             return "Tools/Scripts/run-minibrowser";
         }
@@ -1861,6 +1879,8 @@ sub launcherName()
         return "Safari";
     } elsif (isAppleWinWebKit() || isFTW()) {
         return "MiniBrowser";
+    } elsif (isHaiku()) {
+        return "HaikuLauncher";
     }
 }
 
@@ -2144,6 +2164,8 @@ sub getJhbuildPath()
     }
     if (isGtk()) {
         push(@jhbuildPath, "DependenciesGTK");
+    } elsif (isHaiku()) {
+        return () # Unused on Haiku.
     } elsif (isWPE()) {
         push(@jhbuildPath, "DependenciesWPE");
     } else {
@@ -2273,7 +2295,7 @@ sub jhbuildWrapperPrefix()
 
 sub wrapperPrefixIfNeeded()
 {
-    if (isAnyWindows() || isJSCOnly() || isPlayStation()) {
+    if (isAnyWindows() || isJSCOnly() || isPlayStation() || isHaiku()) {
         return ();
     }
     if (isAppleCocoaWebKit()) {

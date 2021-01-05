@@ -1316,6 +1316,12 @@ class Port(object):
         This is needed only by ports that use the http_server.py module."""
         raise NotImplementedError('Port._path_to_lighttpd_php')
 
+    def _path_to_lighttpd_env(self):
+        """Returns path to the env executable.
+
+        This is used to run CGI scripts in lighttpd."""
+        return "/usr/bin/env"
+
     def _webkit_baseline_path(self, platform):
         """Return the  full path to the top of the baseline tree for a
         given platform."""

@@ -41,6 +41,8 @@
 
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
 #include <wtf/RetainPtr.h>
+#elif PLATFORM(HAIKU)
+class BUrlContext;
 #endif
 
 #if PLATFORM(COCOA)
@@ -138,6 +140,12 @@ public:
     void setCookieObserverHandler(Function<void ()>&&);
     void getCredentialFromPersistentStorage(const ProtectionSpace&, GCancellable*, Function<void (Credential&&)>&& completionHandler);
     void saveCredentialToPersistentStorage(const ProtectionSpace&, const Credential&);
+#elif USE(HAIKU)
+    WEBCORE_EXPORT NetworkStorageSession(PAL::SessionID);
+    ~NetworkStorageSession();
+
+    BUrlContext& platformSession() const;
+    void setPlatformSession(BUrlContext*);
 #elif USE(CURL)
     WEBCORE_EXPORT NetworkStorageSession(PAL::SessionID);
     ~NetworkStorageSession();
@@ -256,6 +264,8 @@ private:
     HTTPCookieAcceptPolicy m_cookieAcceptPolicy;
     GRefPtr<SoupCookieJar> m_cookieStorage;
     Function<void ()> m_cookieObserverHandler;
+#elif USE(HAIKU)
+    BUrlContext* m_context;
 #elif USE(CURL)
     mutable UniqueRef<CookieJarDB> m_cookieDatabase;
 #else

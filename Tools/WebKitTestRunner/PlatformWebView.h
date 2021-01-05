@@ -45,6 +45,11 @@ typedef RetainPtr<CGImageRef> PlatformImage;
 typedef struct _GtkWidget GtkWidget;
 typedef WKViewRef PlatformWKView;
 typedef GtkWidget* PlatformWindow;
+#elif PLATFORM(HAIKU)
+class BWebView;
+class BWindow;
+typedef BWebView* PlatformWKView;
+typedef BWindow* PlatformWindow;
 #elif PLATFORM(WPE)
 namespace WPEToolingBackends {
 class HeadlessViewBackend;

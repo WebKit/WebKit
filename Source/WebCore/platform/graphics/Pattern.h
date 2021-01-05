@@ -46,6 +46,9 @@ typedef WebCore::PlatformContextDirect2D PlatformGraphicsContext;
 #elif USE(CAIRO)
 typedef struct _cairo_pattern cairo_pattern_t;
 typedef cairo_pattern_t* PlatformPatternPtr;
+#elif PLATFORM(HAIKU)
+#include <interface/GraphicsDefs.h>
+typedef pattern* PlatformPatternPtr;
 #elif USE(WINGDI)
 typedef void* PlatformPatternPtr;
 #endif

@@ -40,6 +40,19 @@
 #include <windows.h>
 #endif
 
+#ifdef __HAIKU__
+#include <Application.h>
+
+static status_t apprunner(void* data)
+{
+	thread_id mainThread = *(thread_id*)data;
+	BApplication* app = new BApplication("application/x-vnd.webkit-imagediff");
+	send_data(mainThread, 0, NULL, 0);
+	app->Run();
+	return 0;
+}
+#endif
+
 using namespace ImageDiff;
 
 #ifdef _WIN32
@@ -53,6 +66,13 @@ int main(int argc, const char* argv[])
 #ifdef _WIN32
     _setmode(0, _O_BINARY);
     _setmode(1, _O_BINARY);
+#endif
+
+#ifdef __HAIKU__
+	thread_id me = find_thread(NULL);
+	thread_id appthread = spawn_thread(apprunner, "BApplication thread", B_LOW_PRIORITY, &me);
+	resume_thread(appthread);
+	receive_data(&appthread, NULL, 0);
 #endif
 
     float tolerance = 0.0f;

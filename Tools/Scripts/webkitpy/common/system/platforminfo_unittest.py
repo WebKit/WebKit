@@ -80,7 +80,7 @@ class TestPlatformInfo(unittest.TestCase):
         if info.is_mac() or info.is_win():
             self.assertIsNotNone(info.os_version)
         self.assertNotEqual(info.display_name(), '')
-        self.assertTrue(info.is_mac() or info.is_win() or info.is_linux() or info.is_freebsd())
+        self.assertTrue(info.is_mac() or info.is_win() or info.is_linux() or info.is_freebsd() or info.is_haiku())
         self.assertIsNotNone(info.terminal_width())
 
         if info.is_mac():

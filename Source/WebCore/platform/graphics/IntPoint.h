@@ -53,6 +53,10 @@ struct D2D_POINT_2F;
 typedef D2D_POINT_2F D2D1_POINT_2F;
 #endif
 
+#if PLATFORM(HAIKU)
+class BPoint;
+#endif
+
 namespace WTF {
 class TextStream;
 }
@@ -143,6 +147,9 @@ public:
     explicit IntPoint(const D2D1_POINT_2F&); // Don't do this implicitly, since it's lossy.
     operator D2D1_POINT_2F() const;
     operator D2D1_POINT_2U() const;
+#elif PLATFORM(HAIKU)
+    explicit IntPoint(const BPoint&);
+    operator BPoint() const;
 #endif
 
 private:

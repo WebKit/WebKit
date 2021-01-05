@@ -45,7 +45,7 @@
 #include <Accelerate/Accelerate.h>
 #endif
 
-#if PLATFORM(GTK) || PLATFORM(WIN)
+#if PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(HAIKU)
 #include "OpenGLShims.h"
 #elif USE(OPENGL_ES)
 #import <OpenGLES/ES2/glext.h>

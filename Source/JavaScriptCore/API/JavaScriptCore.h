@@ -27,7 +27,6 @@
 #define JavaScriptCore_h
 
 #include <JavaScriptCore/JavaScript.h>
-#include <JavaScriptCore/JSStringRefCF.h>
 
 #if defined(__OBJC__) && JSC_OBJC_API_ENABLED
 

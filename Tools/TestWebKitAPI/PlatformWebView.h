@@ -50,6 +50,9 @@ typedef NSWindow *PlatformWindow;
 #elif PLATFORM(GTK)
 typedef WKViewRef PlatformWKView;
 typedef GtkWidget *PlatformWindow;
+#elif PLATFORM(HAIKU)
+typedef BView* PlatformWKView;
+typedef BWindow* PlatformWindow;
 #elif PLATFORM(WPE)
 namespace WPEToolingBackends {
 class HeadlessViewBackend;

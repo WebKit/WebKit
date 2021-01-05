@@ -52,7 +52,7 @@
 #include "OpenGLESShims.h"
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
-#elif PLATFORM(GTK) || PLATFORM(WIN)
+#elif PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(HAIKU)
 #include "OpenGLShims.h"
 #endif
 

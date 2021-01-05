@@ -46,6 +46,10 @@ OBJC_CLASS NSImage;
 typedef struct HBITMAP__ *HBITMAP;
 #endif
 
+#if PLATFORM(HAIKU)
+class BBitmap;
+#endif
+
 namespace WebCore {
 
 class Settings;

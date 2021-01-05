@@ -66,7 +66,7 @@ chdir File::Spec->catdir("Tools", "DumpRenderTree") or die;
 my $result;
 if (isAppleCocoaWebKit()) {
     $result = buildXCodeProject("DumpRenderTree", $clean, XcodeOptions(), @ARGV);
-} elsif (isGtk() || isWPE() || isAnyWindows()) {
+} elsif (isGtk() || isWPE() || isAnyWindows() || isHaiku()) {
     # GTK, WPE and Windows build everything in one shot. No need to build anything here.
     $result = 0;
 } else {

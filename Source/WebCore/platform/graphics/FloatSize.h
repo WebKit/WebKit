@@ -36,6 +36,10 @@
 #include <CoreGraphics/CoreGraphics.h>
 #endif
 
+#if PLATFORM(HAIKU)
+class BSize;
+#endif
+
 #if USE(CG)
 typedef struct CGSize CGSize;
 #endif
@@ -142,6 +146,11 @@ public:
     {
         return FloatSize(m_height, m_width);
     }
+
+#if PLATFORM(HAIKU)
+    FloatSize(const BSize&);
+    operator BSize() const;
+#endif
 
 #if USE(CG)
     WEBCORE_EXPORT explicit FloatSize(const CGSize&); // don't do this implicitly since it's lossy

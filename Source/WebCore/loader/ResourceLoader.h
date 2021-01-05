@@ -115,6 +115,9 @@ public:
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     virtual bool canAuthenticateAgainstProtectionSpace(const ProtectionSpace&);
 #endif
+
+    bool didReceiveInvalidCertificate(ResourceHandle*, const BCertificate&, const char*) override;
+
     virtual void receivedCancellation(const AuthenticationChallenge&);
 
 #if USE(QUICK_LOOK)

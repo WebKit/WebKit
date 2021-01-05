@@ -31,6 +31,8 @@
 #include <JavaScriptCore/PropertySlot.h>
 #include <type_traits>
 
+using namespace JSC;
+
 namespace WebCore {
 
 void addValueIterableMethods(JSC::JSGlobalObject&, JSC::JSObject&);

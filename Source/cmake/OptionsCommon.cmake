@@ -113,7 +113,13 @@ endif ()
 
 # GTK and WPE use the GNU installation directories as defaults.
 if (NOT PORT STREQUAL "GTK" AND NOT PORT STREQUAL "WPE")
-    set(LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib" CACHE PATH "Absolute path to library installation directory")
+    IF(HAIKU)
+        set(LIB_SUFFIX "/${CMAKE_HAIKU_SECONDARY_ARCH}" CACHE STRING
+            "Define suffix of directory name (x86/x86_gcc2)")
+    ELSE()
+        set(LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)")
+    ENDIF()
+    set(LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" CACHE PATH "Absolute path to library installation directory")
     set(EXEC_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/bin" CACHE PATH "Absolute path to executable installation directory")
     set(LIBEXEC_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/bin" CACHE PATH "Absolute path to install executables executed by the library")
 endif ()

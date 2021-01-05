@@ -59,10 +59,16 @@ checkRequiredSystemConfig();
 setConfiguration();
 chdirWebKit();
 
-my @xcodeOptions = ("-target", "ImageDiff");
-push @xcodeOptions, XcodeOptions();
 
 # Build
-chdir "Tools/ImageDiff" or die;
-$result = buildXCodeProject("ImageDiff", $clean, @xcodeOptions, @ARGV);
+if (isAppleCocoaWebKit()) {
+    my @xcodeOptions = ("-target", "ImageDiff");
+    push @xcodeOptions, XcodeOptions();
+    $result = buildXCodeProject("ImageDiff", $clean, @xcodeOptions, @ARGV);
+} elsif (isHaiku()) {
+    $result = 0;
+} else {
+    die "Building not defined for this platform!\n";
+}
+
 exit exitStatus($result);

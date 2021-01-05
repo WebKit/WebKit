@@ -65,6 +65,10 @@ typedef struct OpaqueCFHTTPCookieStorage* CFHTTPCookieStorageRef;
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 #endif
 
+#if PLATFORM(HAIKU)
+class BCertificate;
+#endif
+
 namespace WTF {
 class SchedulePair;
 template<typename T> class MessageQueue;
@@ -140,6 +144,10 @@ public:
     void unschedule(WTF::SchedulePair&);
 #endif
 
+#if PLATFORM(HAIKU)
+    bool didReceiveInvalidCertificate(BCertificate& certificate, const char* message);
+#endif
+
 #if USE(CFURLCONNECTION)
     CFURLStorageSessionRef storageSession() const;
     CFURLConnectionRef connection() const;
@@ -161,7 +169,7 @@ public:
 
     WEBCORE_EXPORT static void forceContentSniffing();
 
-#if USE(CURL)
+#if USE(CURL) || USE(HAIKU)
     ResourceHandleInternal* getInternal() { return d.get(); }
 #endif
 

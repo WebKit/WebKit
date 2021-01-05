@@ -34,6 +34,8 @@
 #include <WebKit/WKBaseGtk.h>
 #elif defined(BUILDING_WPE__)
 #include <WebKit/WKBaseWPE.h>
+#elif defined(BUILDING_HAIKU__)
+#include <WebKit/WKBaseHaiku.h>
 #elif defined(__APPLE__)
 #include <WebKit/WKBaseMac.h>
 #elif defined(_WIN32)

@@ -28,6 +28,8 @@
 
 #if defined(USE_CAIRO) && USE_CAIRO
 typedef struct _cairo_surface cairo_surface_t;
+#elif defined(USE_HAIKU)
+class BBitmap;
 #else
 typedef struct CGImage *CGImageRef;
 #endif
@@ -41,6 +43,8 @@ public:
 
 #if defined(USE_CAIRO) && USE_CAIRO
     PlatformImage(cairo_surface_t*);
+#elif defined(USE_HAIKU)
+	PlatformImage(BBitmap*);
 #else
     PlatformImage(CGImageRef);
 #endif
@@ -58,6 +62,8 @@ public:
 private:
 #if defined(USE_CAIRO) && USE_CAIRO
     cairo_surface_t* m_image;
+#elif defined(USE_HAIKU)
+	BBitmap* m_image;
 #else
     CGImageRef m_image;
     mutable void* m_buffer { nullptr };

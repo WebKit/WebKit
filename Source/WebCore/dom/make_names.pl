@@ -65,6 +65,8 @@ require Config;
 my $ccLocation = "";
 if ($ENV{CC}) {
     $ccLocation = $ENV{CC};
+} elsif (($Config::Config{'osname'}) =~ /haiku/i) {
+    $ccLocation = "/bin/env gcc";
 } elsif ($Config::Config{"osname"} eq "darwin" && $ENV{SDKROOT}) {
     chomp($ccLocation = `xcrun -find cc -sdk '$ENV{SDKROOT}'`);
 } else {

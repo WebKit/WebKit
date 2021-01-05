@@ -34,6 +34,8 @@
 #include "DumpRenderTreeWin.h"
 #elif PLATFORM(GTK)
 #include "DumpRenderTreeGtk.h"
+#elif PLATFORM(HAIKU)
+#include "DumpRenderTreeHaiku.h"
 #endif
 
 #include <string>

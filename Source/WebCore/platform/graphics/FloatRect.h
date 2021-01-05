@@ -41,6 +41,10 @@ typedef struct _NSRect NSRect;
 #endif
 #endif // PLATFORM(MAC)
 
+#if PLATFORM(HAIKU)
+class BRect;
+#endif
+
 #if USE(CAIRO)
 typedef struct _cairo_rectangle cairo_rectangle_t;
 #endif
@@ -211,6 +215,11 @@ public:
 #if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
     WEBCORE_EXPORT FloatRect(const NSRect&);
     WEBCORE_EXPORT operator NSRect() const;
+#endif
+
+#if PLATFORM(HAIKU)
+    FloatRect(const BRect&);
+    operator BRect() const;
 #endif
 
 #if USE(CAIRO)
