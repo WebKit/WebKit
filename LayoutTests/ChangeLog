@@ -1,3 +1,12 @@
+2021-01-05  Truitt Savell  <tsavell@apple.com>
+
+        [ Big Sur ] fast/images/webp-as-image.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=220330
+
+        unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2021-01-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION: http/tests/inspector/network/resource-timing.html is a flaky failure

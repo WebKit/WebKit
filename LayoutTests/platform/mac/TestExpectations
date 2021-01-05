@@ -2014,7 +2014,7 @@ imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-without
 [ BigSur+ ] inspector/canvas/updateShader-webgpu.html [ Skip ]
 
 # WebP images
-[ BigSur+ ] fast/images/webp-as-image.html [ Pass ]
+[ BigSur+ ] fast/images/webp-as-image.html [ Pass Failure ]
 [ BigSur+ ] fast/images/animated-webp-as-image.html [ Pass ]
 
 # <rdar://problem/59015708>
