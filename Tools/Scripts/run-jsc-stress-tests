@@ -551,6 +551,7 @@ end
 
 COLLECT_CONTINUOUSLY_OPTIONS = shouldCollectContinuously? ? ["--collectContinuously=true", "--useGenerationalGC=false"] : []
 
+$serialRunlist = []
 $runlist = []
 
 def frameworkFromJSCPath(jscPath)
@@ -618,6 +619,14 @@ def addRunCommand(kind, command, outputHandler, errorHandler, *additionalEnv)
         $benchmarkDirectory, command, "#{$collectionName}/#{$benchmark}", name, outputHandler,
         errorHandler)
     plan.additionalEnv.push(*additionalEnv)
+    if $runCommandOptions[:serial]
+        # Add this to the list of tests to be run on their own, so
+        # that we can treat them specially when scheduling, but keep
+        # it in the $runlist for code that dosn't care about
+        # scheduling.
+        $serialRunlist << plan
+    end
+
     if $numChildProcesses > 1 and $runCommandOptions[:isSlow]
         $runlist.unshift plan
     else
@@ -667,6 +676,10 @@ end
 def crashOK!
     $testSpecificRequiredOptions += ["-s"]
     $runCommandOptions[:crashOK] = true
+end
+
+def serial!
+    $runCommandOptions[:serial] = true
 end
 
 def requireOptions(*options)
@@ -2389,17 +2402,27 @@ def runRemote
     detectFailures
 end
 
-def prepareGnuParallelTestRunner
-    path = $runnerDir + "parallel-tests"
+def prepareGnuParallelRunnerJobs(name, runlist, exclude)
+    path = $runnerDir + name
     FileUtils.mkdir_p($runnerDir)
 
     File.open(path, "w") {
         | outp |
-        $runlist.each {
+        runlist.each {
             | plan |
+            if exclude.has_key?(plan)
+                next
+            end
             outp.puts("./test_script_#{plan.index}")
         }
     }
+end
+
+def prepareGnuParallelTestRunner
+    serialTests = {}
+    $serialRunlist.each { |p| serialTests[p] = nil }
+    prepareGnuParallelRunnerJobs("parallel-tests", $runlist, serialTests)
+    prepareGnuParallelRunnerJobs("serial-tests", $serialRunlist, {})
 end
 
 def withGnuParallelSshWrapper(&blk)
@@ -2461,21 +2484,24 @@ def unpackBundleGnuParallel
     }
 end
 
-def runGnuParallelRunner
-    inputs = $runnerDir + "parallel-tests"
+def runGnuParallelRunner(inputs, options={})
     timeout = 300
     if ENV["JSCTEST_timeout"]
         timeout = ENV["JSCTEST_timeout"].to_f.ceil.to_i
+    end
+    # We add 1 to make sure we always have waiting jobs and
+    # don't run into stalls due to ssh latency. However, we
+    # want to respect numChildProcesses, so we don't just use
+    # the -j +1 GNU parallel idiom.
+    parallelJobsOnEachHost = $numChildProcesses + 1
+    if options[:parallelJobsOnEachHost]
+      parallelJobsOnEachHost = options[:parallelJobsOnEachHost]
     end
     withGnuParallelSshLoginFile {
         | slf |
         cmd = [
             "parallel",
-            # We add 1 to make sure we always have waiting jobs and
-            # don't run into stalls due to ssh latency. However, we
-            # want to respect numChildProcesses, so we don't just use
-            # the -j +1 GNU parallel idiom.
-            "-j", "#{$numChildProcesses + 1}",
+            "-j", "#{parallelJobsOnEachHost}",
             "--retries 5",
             "--line-buffer", # we know our output is line-oriented
             "--slf", slf,
@@ -2508,7 +2534,9 @@ def runGnuParallel
     if $remoteHosts.size == 0
         raise "All remote hosts failed, giving up"
     end
-    runGnuParallelRunner
+    runGnuParallelRunner($runnerDir + "serial-tests",
+                         { :parallelJobsOnEachHost => 1})
+    runGnuParallelRunner($runnerDir + "parallel-tests")
     detectFailures
 end
 

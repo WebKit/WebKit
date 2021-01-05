@@ -305,17 +305,27 @@ def prepareShellTestRunner
     FileUtils.cp SCRIPTS_PATH + "jsc-stress-test-helpers" + "shell-runner.sh", $runnerDir + "runscript"
 end
 
+def output_target(outp, plan, prereqs)
+    index = plan.index
+    target = "test_done_#{index}"
+    outp.puts "#{target}: #{prereqs.join(" ")}"
+    outp.puts "\tsh test_script_#{index}"
+    target
+end
+
 def prepareMakeTestRunner(remoteIndex)
     # The goals of our parallel test runner are scalability and simplicity. The
     # simplicity part is particularly important. We don't want to have to have
     # a full-time contributor just philosophising about parallel testing.
     #
-    # As such, we just pass off all of the hard work to 'make'. This creates a
-    # dummy directory ("$outputDir/.runner") in which we create a dummy
-    # Makefile. The Makefile has an 'all' rule that depends on all of the tests.
-    # That is, for each test we know we will run, there is a rule in the
-    # Makefile and 'all' depends on it. Running 'make -j <whatever>' on this
-    # Makefile results in 'make' doing all of the hard work:
+    # As such, we just pass off all of the hard work to 'make'. This
+    # creates a dummy directory ("$outputDir/.runner") in which we
+    # create a dummy Makefile. The Makefile has a 'parallel' rule that
+    # depends all tests, other than the ones marked 'serial'. The
+    # serial tests are arranged in a chain; the last target in the
+    # serial chain depends on 'parallel' and 'all' depends on the head
+    # of the chain. Running 'make -j <whatever>' on this Makefile
+    # results in 'make' doing all of the hard work:
     #
     # - Load balancing just works. Most systems have a great load balancer in
     #   'make'. If your system doesn't then just install a real 'make'.
@@ -340,23 +350,39 @@ def prepareMakeTestRunner(remoteIndex)
     # basically using the filesystem as a concurrent database of test failures.
     # Even if two tests fail at the same time, since they're touching different
     # files we won't miss any failures.
-    runIndices = []
+    serialPlans = {}
+    $serialRunlist.each { |p| serialPlans[p] = nil }
+    runPlans = []
+    serialRunPlans = []
     $runlist.each {
         | plan |
         if !$remote or plan.index % $remoteHosts.length == remoteIndex
-            runIndices << plan.index
+            if serialPlans.has_key?(plan)
+                serialRunPlans << plan
+            else
+                runPlans << plan
+            end
         end
     }
-    
+
     File.open($runnerDir + "Makefile.#{remoteIndex}", "w") {
         | outp |
-        outp.puts("all: " + runIndices.map{|v| "test_done_#{v}"}.join(' '))
-        runIndices.each {
-            | index |
-            plan = $runlist[index]
-            outp.puts "test_done_#{index}:"
-            outp.puts "\tsh test_script_#{plan.index}"
+        if serialRunPlans.empty?
+            outp.puts("all: parallel")
+        else
+            serialPrereq = "test_done_#{serialRunPlans[-1].index}"
+            outp.puts("all: #{serialPrereq}")
+            prev_target = "parallel"
+            serialRunPlans.each {
+                | plan |
+                prev_target = output_target(outp, plan, [prev_target])
+            }
+        end
+        parallelTargets = runPlans.collect {
+            | plan |
+            output_target(outp, plan, [])
         }
+        outp.puts("parallel: " + parallelTargets.join(" "))
     }
 end
 

@@ -1,3 +1,21 @@
+2021-01-05  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] allow stress tests to opt out of parallel execution
+        https://bugs.webkit.org/show_bug.cgi?id=213373
+
+        Reviewed by Yusuke Suzuki.
+
+        On memory-limited devices, some JSC stress tests may intermittently OOM when
+        they get scheduled along with another heavy JSC stress test. However, the tests
+        might be able to complete if run on their own.
+
+        This patch adds a serial! directive that causes a JSC stress test to only ever
+        be scheduled to run by itself. It's currently unused and needs to be enabled on
+        a test-by-test basis.
+
+        * Scripts/run-jsc-stress-tests:
+        * Scripts/webkitruby/jsc-stress-test-writer-default.rb:
+
 2021-01-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r271169.
