@@ -27,6 +27,7 @@
 #include "SpeechRecognitionServer.h"
 
 #include "SpeechRecognitionPermissionRequest.h"
+#include "UserMediaProcessManager.h"
 #include "WebProcessProxy.h"
 #include "WebSpeechRecognitionConnectionMessages.h"
 #include <WebCore/SpeechRecognitionRequestInfo.h>
@@ -124,6 +125,8 @@ void SpeechRecognitionServer::handleRequest(WebCore::SpeechRecognitionRequest& r
         return;
     }
 
+    WebProcessProxy::muteCaptureInPagesExcept(m_identifier);
+
     bool mockDeviceCapturesEnabled = m_checkIfMockSpeechRecognitionEnabled();
     m_recognizer->start(clientIdentifier, sourceOrError.source(), mockDeviceCapturesEnabled, request.lang(), request.continuous(), request.interimResults(), request.maxAlternatives());
 #else
@@ -188,6 +191,15 @@ IPC::Connection* SpeechRecognitionServer::messageSenderConnection() const
 uint64_t SpeechRecognitionServer::messageSenderDestinationID() const
 {
     return m_identifier.toUInt64();
+}
+
+void SpeechRecognitionServer::mute()
+{
+    if (!m_recognizer)
+        return;
+    
+    if (auto* source = m_recognizer->source())
+        source->mute();
 }
 
 } // namespace WebKit

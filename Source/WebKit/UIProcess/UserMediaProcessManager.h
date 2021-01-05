@@ -22,6 +22,7 @@
 
 #include "UserMediaPermissionRequestManagerProxy.h"
 #include <WebCore/CaptureDevice.h>
+#include <WebCore/PageIdentifier.h>
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
@@ -36,7 +37,6 @@ public:
     UserMediaProcessManager();
 
     bool willCreateMediaStream(UserMediaPermissionRequestManagerProxy&, bool withAudio, bool withVideo);
-    void muteCaptureMediaStreamsExceptIn(WebPageProxy&);
 
     void revokeSandboxExtensionsIfNeeded(WebProcessProxy&);
 

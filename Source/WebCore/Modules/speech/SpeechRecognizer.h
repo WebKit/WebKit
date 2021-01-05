@@ -52,6 +52,7 @@ public:
     WEBCORE_EXPORT void stop();
 
     Optional<SpeechRecognitionConnectionClientIdentifier> currentClientIdentifier() const { return m_clientIdentifier; }
+    SpeechRecognitionCaptureSource* source() { return m_source.get(); }
 
 private:
     void stopInternal();

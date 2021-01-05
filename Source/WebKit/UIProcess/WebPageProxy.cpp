@@ -2387,7 +2387,7 @@ void WebPageProxy::setMediaStreamCaptureMuted(bool muted)
 void WebPageProxy::activateMediaStreamCaptureInPage()
 {
 #if ENABLE(MEDIA_STREAM)
-    UserMediaProcessManager::singleton().muteCaptureMediaStreamsExceptIn(*this);
+    WebProcessProxy::muteCaptureInPagesExcept(m_webPageID);
 #endif
     setMuted(m_mutedState & ~WebCore::MediaProducer::MediaStreamCaptureIsMuted);
 }
@@ -5954,8 +5954,10 @@ void WebPageProxy::setMuted(WebCore::MediaProducer::MutedStateFlags state)
 #if ENABLE(MEDIA_STREAM)
     bool hasMutedCaptureStreams = m_mediaState & WebCore::MediaProducer::MutedCaptureMask;
     if (hasMutedCaptureStreams && !(state & WebCore::MediaProducer::MediaStreamCaptureIsMuted))
-        UserMediaProcessManager::singleton().muteCaptureMediaStreamsExceptIn(*this);
+        WebProcessProxy::muteCaptureInPagesExcept(m_webPageID);
 #endif
+
+    m_process->pageMutedStateChanged(m_webPageID, state);
 
     send(Messages::WebPage::SetMuted(state));
     activityStateDidChange({ ActivityState::IsAudible, ActivityState::IsCapturingMedia });

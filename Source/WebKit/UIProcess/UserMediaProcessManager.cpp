@@ -23,6 +23,7 @@
 
 #include "Logging.h"
 #include "MediaDeviceSandboxExtensions.h"
+#include "SpeechRecognitionPermissionManager.h"
 #include "WebPageProxy.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
@@ -54,18 +55,6 @@ UserMediaProcessManager& UserMediaProcessManager::singleton()
 UserMediaProcessManager::UserMediaProcessManager()
     : m_debounceTimer(RunLoop::main(), this, &UserMediaProcessManager::captureDevicesChanged)
 {
-}
-
-void UserMediaProcessManager::muteCaptureMediaStreamsExceptIn(WebPageProxy& pageStartingCapture)
-{
-#if PLATFORM(COCOA)
-    UserMediaPermissionRequestManagerProxy::forEach([&pageStartingCapture](auto& proxy) {
-        if (&proxy.page() != &pageStartingCapture)
-            proxy.page().setMediaStreamCaptureMuted(true);
-    });
-#else
-    UNUSED_PARAM(pageStartingCapture);
-#endif
 }
 
 #if ENABLE(SANDBOX_EXTENSIONS)

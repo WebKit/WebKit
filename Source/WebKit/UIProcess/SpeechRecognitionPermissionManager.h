@@ -42,6 +42,7 @@ public:
     void request(const String& lang, const WebCore::ClientOrigin&, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&&);
 
     void decideByDefaultAction(const WebCore::SecurityOrigin&, CompletionHandler<void(bool)>&&);
+    WebPageProxy& page() { return m_page; }
 
 private:
     void startNextRequest();

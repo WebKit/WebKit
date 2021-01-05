@@ -63,6 +63,7 @@ public:
     void stop(WebCore::SpeechRecognitionConnectionClientIdentifier);
     void abort(WebCore::SpeechRecognitionConnectionClientIdentifier);
     void invalidate(WebCore::SpeechRecognitionConnectionClientIdentifier);
+    void mute();
 
 private:
     void requestPermissionForRequest(WebCore::SpeechRecognitionRequest&);

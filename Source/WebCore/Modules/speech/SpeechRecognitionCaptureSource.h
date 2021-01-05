@@ -44,10 +44,11 @@ class SpeechRecognitionCaptureSource {
 public:
     SpeechRecognitionCaptureSource() = default;
     ~SpeechRecognitionCaptureSource() = default;
-    using DataCallback = Function<void(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t)>;
-    using StateUpdateCallback = Function<void(const SpeechRecognitionUpdate&)>;
+    WEBCORE_EXPORT void mute();
 
 #if ENABLE(MEDIA_STREAM)
+    using DataCallback = Function<void(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t)>;
+    using StateUpdateCallback = Function<void(const SpeechRecognitionUpdate&)>;
     SpeechRecognitionCaptureSource(SpeechRecognitionConnectionClientIdentifier, DataCallback&&, StateUpdateCallback&&, Ref<RealtimeMediaSource>&&);
     WEBCORE_EXPORT static Optional<WebCore::CaptureDevice> findCaptureDevice();
     WEBCORE_EXPORT static CaptureSourceOrError createRealtimeMediaSource(const CaptureDevice&);

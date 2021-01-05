@@ -1,0 +1,56 @@
+<html>
+<script>
+
+var speechRecognition = null;
+var recorder = null;
+
+function start()
+{
+    if (!speechRecognition)
+        speechRecognition = new webkitSpeechRecognition();
+    speechRecognition.continuous = true;
+    speechRecognition.onstart = () => window.webkit.messageHandlers.testHandler.postMessage("Start");
+    speechRecognition.onerror = (event) => window.webkit.messageHandlers.testHandler.postMessage("Error: " + event.error + " - " +  event.message);
+
+    speechRecognition.start();
+}
+
+function stop()
+{
+    if (speechRecognition)
+        speechRecognition.stop();
+}
+
+function gotMedia(stream) {
+    try {
+        var tracks = stream.getAudioTracks();
+        tracks[0].onmute = () => window.webkit.messageHandlers.testHandler.postMessage("Recorder Mute");
+
+        if (!recorder)
+            recorder = new MediaRecorder(stream);
+
+        recorder.onerror = (event) => window.webkit.messageHandlers.testHandler.postMessage("Recorder Error: " + event.code + " - " +  event.message);
+        recorder.start();
+    } catch(e) {
+        window.webkit.messageHandlers.testHandler.postMessage("Recorder Error : " + e);
+    }
+}
+
+function startRecorder() {
+    if (recorder) {
+        recorder.start();
+        return;
+    }
+
+    navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(gotMedia)
+    .catch(e => { window.webkit.messageHandlers.testHandler.postMessage("UserMedia Error: " + e); });
+}
+
+function stopRecorder() {
+    if (recorder)
+        recorder.stop();
+}
+
+</script>
+</html>

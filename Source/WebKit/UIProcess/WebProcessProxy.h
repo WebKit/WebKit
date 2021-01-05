@@ -45,6 +45,7 @@
 #include "WebPageProxyIdentifier.h"
 #include "WebProcessProxyMessagesReplies.h"
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/MediaProducer.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
@@ -398,10 +399,12 @@ public:
 #if ENABLE(IPC_TESTING_API)
     void setIgnoreInvalidMessageForTesting();
 #endif
-    
+
 #if ENABLE(MEDIA_STREAM)
+    static void muteCaptureInPagesExcept(WebCore::PageIdentifier);
     SpeechRecognitionRemoteRealtimeMediaSourceManager& ensureSpeechRecognitionRemoteRealtimeMediaSourceManager();
 #endif
+    void pageMutedStateChanged(WebCore::PageIdentifier, WebCore::MediaProducer::MutedStateFlags);
 
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed);

@@ -146,6 +146,11 @@ void SpeechRecognitionCaptureSourceImpl::sourceMutedChanged()
     m_stateUpdateCallback(SpeechRecognitionUpdate::createError(m_clientIdentifier, SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, "Source is muted" }));
 }
 
+void SpeechRecognitionCaptureSourceImpl::mute()
+{
+    m_source->setMuted(true);
+}
+
 } // namespace WebCore
 
 #endif

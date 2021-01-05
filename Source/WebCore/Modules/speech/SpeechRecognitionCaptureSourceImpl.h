@@ -54,6 +54,7 @@ public:
     using StateUpdateCallback = Function<void(const SpeechRecognitionUpdate&)>;
     SpeechRecognitionCaptureSourceImpl(SpeechRecognitionConnectionClientIdentifier, DataCallback&&, StateUpdateCallback&&, Ref<RealtimeMediaSource>&&);
     ~SpeechRecognitionCaptureSourceImpl();
+    void mute();
 
 private:
     // RealtimeMediaSource::AudioSampleObserver

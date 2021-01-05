@@ -34,6 +34,13 @@
 
 namespace WebCore {
 
+void SpeechRecognitionCaptureSource::mute()
+{
+#if ENABLE(MEDIA_STREAM)
+    m_impl->mute();
+#endif
+}
+
 #if ENABLE(MEDIA_STREAM)
 
 Optional<CaptureDevice> SpeechRecognitionCaptureSource::findCaptureDevice()

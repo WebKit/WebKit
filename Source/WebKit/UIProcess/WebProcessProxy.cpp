@@ -1764,7 +1764,29 @@ SpeechRecognitionRemoteRealtimeMediaSourceManager& WebProcessProxy::ensureSpeech
     return *m_speechRecognitionRemoteRealtimeMediaSourceManager;
 }
 
+void WebProcessProxy::muteCaptureInPagesExcept(WebCore::PageIdentifier pageID)
+{
+#if PLATFORM(COCOA)
+    for (auto* page : globalPageMap().values()) {
+        if (page->webPageID() != pageID)
+            page->setMediaStreamCaptureMuted(true);
+    }
+#else
+    UNUSED_PARAM(pageID);
 #endif
+}
+
+#endif
+
+void WebProcessProxy::pageMutedStateChanged(WebCore::PageIdentifier identifier, WebCore::MediaProducer::MutedStateFlags flags)
+{
+    bool mutedForCapture = flags & MediaProducer::AudioAndVideoCaptureIsMuted;
+    if (!mutedForCapture)
+        return;
+
+    if (auto speechRecognitionServer = m_speechRecognitionServerMap.get(identifier))
+        speechRecognitionServer->mute();
+}
 
 #if PLATFORM(WATCHOS)
 
