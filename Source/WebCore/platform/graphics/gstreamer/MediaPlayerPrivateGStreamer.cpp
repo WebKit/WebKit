@@ -1172,8 +1172,8 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
         if (!track->trackIndex())
             track->setActive(true);
         ASSERT(streamId == track->id());
-        m_audioTracks.add(streamId, track);
-        m_player->addAudioTrack(*track);
+        m_audioTracks.add(streamId, track.copyRef());
+        m_player->addAudioTrack(track.get());
     }
 
     purgeInvalidAudioTracks(validAudioStreams);
