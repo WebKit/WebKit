@@ -743,16 +743,11 @@ auto SectionParser::parseData() -> PartialResult
     WASM_PARSER_FAIL_IF(!m_info->data.tryReserveCapacity(segmentCount), "can't allocate enough memory for Data section's ", segmentCount, " segments");
 
     for (uint32_t segmentNumber = 0; segmentNumber < segmentCount; ++segmentNumber) {
-        uint32_t memoryIndex = UINT32_MAX;
-        uint8_t dataFlag = UINT8_MAX;
+        uint32_t memoryIndexOrDataFlag = UINT32_MAX;
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(memoryIndexOrDataFlag), "can't get ", segmentNumber, "th Data segment's flag");
 
-        if (Options::useWebAssemblyReferences()) {
-            WASM_PARSER_FAIL_IF(!parseUInt8(dataFlag), "can't get ", segmentNumber, "th Data segment's flag");
-            memoryIndex = 0U;
-        } else
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(memoryIndex), "can't get ", segmentNumber, "th Data segment's index");
-
-        if (!Options::useWebAssemblyReferences() || !dataFlag) {
+        if (!Options::useWebAssemblyReferences() || !memoryIndexOrDataFlag) {
+            const uint32_t memoryIndex = memoryIndexOrDataFlag;
             WASM_PARSER_FAIL_IF(memoryIndex >= m_info->memoryCount(), segmentNumber, "th Data segment has index ", memoryIndex, " which exceeds the number of Memories ", m_info->memoryCount());
 
             Optional<I32InitExpr> initExpr;
@@ -775,6 +770,7 @@ auto SectionParser::parseData() -> PartialResult
 
         ASSERT(Options::useWebAssemblyReferences());
 
+        const uint32_t dataFlag = memoryIndexOrDataFlag;
         if (dataFlag == 0x01) {
             uint32_t dataByteLength;
             WASM_PARSER_FAIL_IF(!parseVarUInt32(dataByteLength), "can't get ", segmentNumber, "th Data segment's data byte length");

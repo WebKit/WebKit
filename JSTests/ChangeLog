@@ -1,3 +1,25 @@
+2021-01-04  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-References] Fix data section parsing and add more tests from ref-types
+        https://bugs.webkit.org/show_bug.cgi?id=220235
+
+        Reviewed by Yusuke Suzuki.
+
+        Add more tests from ref-types spec.
+
+        * wasm.yaml:
+        * wasm/references-spec-tests/binary-leb128.wast.js: Added.
+        * wasm/references-spec-tests/binary.wast.js: Added.
+        * wasm/references-spec-tests/br_table.wast.js: Added.
+        * wasm/references-spec-tests/call_indirect.wast.js: Added.
+        * wasm/references-spec-tests/custom.wast.js: Added.
+        * wasm/references-spec-tests/data.wast.js: Added.
+        * wasm/references-spec-tests/exports.wast.js: Added.
+        * wasm/references-spec-tests/global.wast.js: Added.
+        * wasm/references-spec-tests/imports.wast.js: Added.
+        * wasm/references-spec-tests/memory_grow.wast.js: Added.
+        * wasm/references-spec-tests/table.wast.js: Added.
+
 2021-01-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove unnecessary mov bytecodes when performing simple object pattern destructuring to variables

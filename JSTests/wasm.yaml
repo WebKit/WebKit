@@ -78,6 +78,28 @@
   cmd: runWebAssemblyReferenceSpecTest :normal
 - path: wasm/references-spec-tests/bulk.wast.js
   cmd: runWebAssemblyReferenceSpecTest :normal
+- path: wasm/references-spec-tests/binary-leb128.wast.js
+  cmd: runWebAssemblyReferenceSpecTest :normal
+- path: wasm/references-spec-tests/binary.wast.js
+  cmd: runWebAssemblyReferenceSpecTest :normal
+- path: wasm/references-spec-tests/br_table.wast.js
+  cmd: runWebAssemblyReferenceSpecTest :normal
+- path: wasm/references-spec-tests/call_indirect.wast.js
+  cmd: runWebAssemblyReferenceSpecTest :normal
+- path: wasm/references-spec-tests/custom.wast.js
+  cmd: runWebAssemblyReferenceSpecTest :normal
+- path: wasm/references-spec-tests/data.wast.js
+  cmd: runWebAssemblyReferenceSpecTest :normal
+- path: wasm/references-spec-tests/exports.wast.js
+  cmd: runWebAssemblyReferenceSpecTest :normal
+- path: wasm/references-spec-tests/global.wast.js
+  cmd: runWebAssemblyReferenceSpecTest :normal
+- path: wasm/references-spec-tests/imports.wast.js
+  cmd: runWebAssemblyReferenceSpecTest :normal
+- path: wasm/references-spec-tests/memory_grow.wast.js
+  cmd: runWebAssemblyReferenceSpecTest :normal
+- path: wasm/references-spec-tests/table.wast.js
+  cmd: runWebAssemblyReferenceSpecTest :normal
 
 - path: wasm/multi-value-spec-tests/block.wast.js
   cmd: runWebAssemblySpecTest :normal
