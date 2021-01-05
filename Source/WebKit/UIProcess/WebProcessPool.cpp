@@ -344,8 +344,6 @@ WebProcessPool::~WebProcessPool()
         supplement->clearProcessPool();
     }
 
-    invalidateCallbackMap(m_dictionaryCallbacks, CallbackBase::Error::OwnerWasInvalidated);
-
     platformInvalidateContext();
 
 #ifndef NDEBUG

@@ -2204,15 +2204,12 @@ void WebPageProxy::restoreSelectionInFocusedEditableElement()
     send(Messages::WebPage::RestoreSelectionInFocusedEditableElement());
 }
 
-void WebPageProxy::validateCommand(const String& commandName, WTF::Function<void (const String&, bool, int32_t, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::validateCommand(const String& commandName, CompletionHandler<void(bool, int32_t)>&& callbackFunction)
 {
-    if (!hasRunningProcess()) {
-        callbackFunction(String(), false, 0, CallbackBase::Error::Unknown);
-        return;
-    }
+    if (!hasRunningProcess())
+        return callbackFunction(false, 0);
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::validateCommand"_s));
-    send(Messages::WebPage::ValidateCommand(commandName, callbackID));
+    sendWithAsyncReply(Messages::WebPage::ValidateCommand(commandName), WTFMove(callbackFunction));
 }
 
 void WebPageProxy::increaseListLevel()
@@ -7184,17 +7181,6 @@ void WebPageProxy::computedPagesCallback(const Vector<IntRect>& pageRects, doubl
     }
 
     callback->performCallbackWithReturnValue(pageRects, totalScaleFactorForPrinting, computedPageMargin);
-}
-
-void WebPageProxy::validateCommandCallback(const String& commandName, bool isEnabled, int state, CallbackID callbackID)
-{
-    auto callback = m_callbacks.take<ValidateCommandCallback>(callbackID);
-    if (!callback) {
-        // FIXME: Log error or assert.
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(commandName.impl(), isEnabled, state);
 }
 
 void WebPageProxy::unsignedCallback(uint64_t result, CallbackID callbackID)

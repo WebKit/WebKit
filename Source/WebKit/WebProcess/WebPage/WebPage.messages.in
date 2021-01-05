@@ -252,7 +252,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     TryClose() -> (bool shouldClose) Async
 
     SetEditable(bool editable)
-    ValidateCommand(String name, WebKit::CallbackID callbackID)
+    ValidateCommand(String name) -> (bool isEnabled, int32_t state) Async
     ExecuteEditCommand(String name, String argument)
 
     IncreaseListLevel()

@@ -52,10 +52,6 @@ namespace WebKit {
 class WebProcessPool;
 class WebProcessProxy;
 
-typedef GenericCallback<API::Array*> ArrayCallback;
-typedef GenericCallback<WebCore::HTTPCookieAcceptPolicy> HTTPCookieAcceptPolicyCallback;
-typedef GenericCallback<const Vector<WebCore::Cookie>&> GetCookiesCallback;
-
 class WebCookieManagerProxy : public API::ObjectImpl<API::Object::Type::CookieManager>, private IPC::MessageReceiver {
 public:
     static Ref<WebCookieManagerProxy> create(NetworkProcessProxy& networkProcess) { return adoptRef(*new WebCookieManagerProxy(networkProcess)); }

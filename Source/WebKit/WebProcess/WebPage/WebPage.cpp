@@ -2948,7 +2948,7 @@ bool WebPage::handleKeyEventByRelinquishingFocusToChrome(const KeyboardEvent& ev
     return m_page->focusController().relinquishFocusToChrome(FocusDirection::Backward);
 }
 
-void WebPage::validateCommand(const String& commandName, CallbackID callbackID)
+void WebPage::validateCommand(const String& commandName, CompletionHandler<void(bool, int32_t)>&& completionHandler)
 {
     bool isEnabled = false;
     int32_t state = 0;
@@ -2961,7 +2961,7 @@ void WebPage::validateCommand(const String& commandName, CallbackID callbackID)
         isEnabled = command.isSupported() && command.isEnabled();
     }
 
-    send(Messages::WebPageProxy::ValidateCommandCallback(commandName, isEnabled, state, callbackID));
+    completionHandler(isEnabled, state);
 }
 
 void WebPage::executeEditCommand(const String& commandName, const String& argument)

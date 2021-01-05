@@ -3129,13 +3129,8 @@ bool WebViewImpl::validateUserInterfaceItem(id <NSValidatedUserInterfaceItem> it
         // If we are not already awaiting validation for this command, start the asynchronous validation process.
         // FIXME: Theoretically, there is a race here; when we get the answer it might be old, from a previous time
         // we asked for the same command; there is no guarantee the answer is still valid.
-        auto weakThis = makeWeakPtr(*this);
-        m_page->validateCommand(commandName, [weakThis](const String& commandName, bool isEnabled, int32_t state, WebKit::CallbackBase::Error error) {
+        m_page->validateCommand(commandName, [weakThis = makeWeakPtr(*this), commandName](bool isEnabled, int32_t state) {
             if (!weakThis)
-                return;
-
-            // If the process exits before the command can be validated, we'll be called back with an error.
-            if (error != WebKit::CallbackBase::Error::None)
                 return;
 
             weakThis->setUserInterfaceItemState(commandName, isEnabled, state);

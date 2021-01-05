@@ -109,8 +109,6 @@ struct GPUProcessCreationParameters;
 struct NetworkProcessCreationParameters;
 struct WebProcessCreationParameters;
 struct WebProcessDataStoreParameters;
-    
-typedef GenericCallback<API::Dictionary*> DictionaryCallback;
 
 #if PLATFORM(COCOA)
 int networkProcessLatencyQOS();
@@ -664,8 +662,6 @@ private:
 #endif
 
     bool m_processTerminationEnabled { true };
-
-    HashMap<uint64_t, RefPtr<DictionaryCallback>> m_dictionaryCallbacks;
 
     bool m_memoryCacheDisabled { false };
     bool m_javaScriptConfigurationFileEnabled { false };

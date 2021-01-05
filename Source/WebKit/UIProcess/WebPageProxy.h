@@ -395,8 +395,6 @@ struct QueuedTouchEvents {
 };
 #endif
 
-typedef GenericCallback<const String&, bool, int32_t> ValidateCommandCallback;
-
 #if ENABLE(APPLICATION_MANIFEST)
 typedef GenericCallback<const Optional<WebCore::ApplicationManifest>&> ApplicationManifestCallback;
 #endif
@@ -691,7 +689,7 @@ public:
     void selectAll();
     void executeEditCommand(const String& commandName, const String& argument = String());
     void executeEditCommand(const String& commandName, const String& argument, CompletionHandler<void()>&&);
-    void validateCommand(const String& commandName, WTF::Function<void (const String&, bool, int32_t, CallbackBase::Error)>&&);
+    void validateCommand(const String& commandName, CompletionHandler<void(bool, int32_t)>&&);
 
     const EditorState& editorState() const { return m_editorState; }
     bool canDelete() const { return hasSelectedRange() && isContentEditable(); }
@@ -2155,7 +2153,6 @@ private:
     void stringCallback(const String&, CallbackID);
     void invalidateStringCallback(CallbackID);
     void computedPagesCallback(const Vector<WebCore::IntRect>&, double totalScaleFactorForPrinting, const WebCore::FloatBoxExtent& computedPageMargin, CallbackID);
-    void validateCommandCallback(const String&, bool, int, CallbackID);
     void unsignedCallback(uint64_t, CallbackID);
 #if ENABLE(APPLICATION_MANIFEST)
     void applicationManifestCallback(const Optional<WebCore::ApplicationManifest>&, CallbackID);
