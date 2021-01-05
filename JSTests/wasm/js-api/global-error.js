@@ -128,7 +128,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: set_global 1 of unknown global, limit is 1, in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')");
+    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: 1 of unknown global, limit is 1, in function at index 0 (evaluating 'new WebAssembly.Module(bin.get())')");
 }
 
 

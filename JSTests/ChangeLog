@@ -1,3 +1,16 @@
+2021-01-05  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-References] Added few unreached-invalid tests
+        https://bugs.webkit.org/show_bug.cgi?id=220311
+
+        Reviewed by Yusuke Suzuki.
+
+        Added unreached-invalid tests and fix error messages in existing tests.
+
+        * wasm.yaml:
+        * wasm/js-api/global-error.js:
+        * wasm/references-spec-tests/unreached-invalid.wast.js: Added.
+
 2021-01-04  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-References] Fix data section parsing and add more tests from ref-types

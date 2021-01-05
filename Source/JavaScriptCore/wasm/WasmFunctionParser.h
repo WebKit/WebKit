@@ -139,6 +139,11 @@ private:
     PartialResult WARN_UNUSED_RETURN parseElementIndex(unsigned&);
     PartialResult WARN_UNUSED_RETURN parseDataSegmentIndex(unsigned&);
 
+    PartialResult WARN_UNUSED_RETURN parseIndexForLocal(uint32_t&);
+    PartialResult WARN_UNUSED_RETURN parseIndexForGlobal(uint32_t&);
+    PartialResult WARN_UNUSED_RETURN parseFunctionIndex(uint32_t&);
+    PartialResult WARN_UNUSED_RETURN parseBranchTarget(uint32_t&);
+
     struct TableInitImmediates {
         unsigned elementIndex;
         unsigned tableIndex;
@@ -517,6 +522,46 @@ auto FunctionParser<Context>::parseTableIndex(unsigned& result) -> PartialResult
     WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't parse table index");
     WASM_VALIDATOR_FAIL_IF(tableIndex >= m_info.tableCount(), "table index ", tableIndex, " is invalid, limit is ", m_info.tableCount());
     result = tableIndex;
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::parseIndexForLocal(uint32_t& resultIndex) -> PartialResult
+{
+    uint32_t index;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get index for local");
+    WASM_VALIDATOR_FAIL_IF(index >= m_locals.size(), "attempt to use unknown local ", index, " last one is ", m_locals.size());
+    resultIndex = index;
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::parseIndexForGlobal(uint32_t& resultIndex) -> PartialResult
+{
+    uint32_t index;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get global's index");
+    WASM_VALIDATOR_FAIL_IF(index >= m_info.globals.size(), index, " of unknown global, limit is ", m_info.globals.size());
+    resultIndex = index;
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::parseFunctionIndex(uint32_t& resultIndex) -> PartialResult
+{
+    uint32_t functionIndex;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(functionIndex), "can't parse function index");
+    WASM_PARSER_FAIL_IF(functionIndex >= m_info.functionIndexSpaceSize(), "function index ", functionIndex, " exceeds function index space ", m_info.functionIndexSpaceSize());
+    resultIndex = functionIndex;
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::parseBranchTarget(uint32_t& resultTarget) -> PartialResult
+{
+    uint32_t target;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(target), "can't get br / br_if's target");
+    WASM_PARSER_FAIL_IF(target >= m_controlStack.size(), "br / br_if's target ", target, " exceeds control stack size ", m_controlStack.size());
+    resultTarget = target;
     return { };
 }
 
@@ -1021,9 +1066,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
     case GetLocal: {
         uint32_t index;
+        WASM_FAIL_IF_HELPER_FAILS(parseIndexForLocal(index));
+
         ExpressionType result;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get index for get_local");
-        WASM_VALIDATOR_FAIL_IF(index >= m_locals.size(), "attempt to use unknown local ", index, " last one is ", m_locals.size());
         WASM_TRY_ADD_TO_CONTEXT(getLocal(index, result));
         m_expressionStack.constructAndAppend(m_locals[index], result);
         return { };
@@ -1031,8 +1076,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
     case SetLocal: {
         uint32_t index;
+        WASM_FAIL_IF_HELPER_FAILS(parseIndexForLocal(index));
+
         TypedExpression value;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get index for set_local");
         WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "set_local");
         WASM_VALIDATOR_FAIL_IF(index >= m_locals.size(), "attempt to set unknown local ", index, " last one is ", m_locals.size());
         WASM_VALIDATOR_FAIL_IF(value.type() != m_locals[index], "set_local to type ", value.type(), " expected ", m_locals[index]);
@@ -1042,7 +1088,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
     case TeeLocal: {
         uint32_t index;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get index for tee_local");
+        WASM_FAIL_IF_HELPER_FAILS(parseIndexForLocal(index));
+
         WASM_PARSER_FAIL_IF(m_expressionStack.isEmpty(), "can't tee_local on empty expression stack");
         TypedExpression value = m_expressionStack.last();
         WASM_VALIDATOR_FAIL_IF(index >= m_locals.size(), "attempt to tee unknown local ", index, " last one is ", m_locals.size());
@@ -1053,11 +1100,11 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
     case GetGlobal: {
         uint32_t index;
-        ExpressionType result;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get get_global's index");
-        WASM_VALIDATOR_FAIL_IF(index >= m_info.globals.size(), "get_global ", index, " of unknown global, limit is ", m_info.globals.size());
+        WASM_FAIL_IF_HELPER_FAILS(parseIndexForGlobal(index));
         Type resultType = m_info.globals[index].type;
         ASSERT(isValueType(resultType));
+
+        ExpressionType result;
         WASM_TRY_ADD_TO_CONTEXT(getGlobal(index, result));
         m_expressionStack.constructAndAppend(resultType, result);
         return { };
@@ -1065,10 +1112,10 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
     case SetGlobal: {
         uint32_t index;
-        TypedExpression value;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get set_global's index");
-        WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "set_global value");
+        WASM_FAIL_IF_HELPER_FAILS(parseIndexForGlobal(index));
 
+        TypedExpression value;
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "set_global value");
         WASM_VALIDATOR_FAIL_IF(index >= m_info.globals.size(), "set_global ", index, " of unknown global, limit is ", m_info.globals.size());
         WASM_VALIDATOR_FAIL_IF(m_info.globals[index].mutability == GlobalInformation::Immutable, "set_global ", index, " is immutable");
 
@@ -1082,8 +1129,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
     case Call: {
         uint32_t functionIndex;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(functionIndex), "can't parse call's function index");
-        WASM_PARSER_FAIL_IF(functionIndex >= m_info.functionIndexSpaceSize(), "call function index ", functionIndex, " exceeds function index space ", m_info.functionIndexSpaceSize());
+        WASM_FAIL_IF_HELPER_FAILS(parseFunctionIndex(functionIndex));
 
         SignatureIndex calleeSignatureIndex = m_info.signatureIndexFromFunctionIndexSpace(functionIndex);
         const Signature& calleeSignature = SignatureInformation::get(calleeSignatureIndex);
@@ -1235,9 +1281,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     case Br:
     case BrIf: {
         uint32_t target;
+        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
+
         TypedExpression condition;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(target), "can't get br / br_if's target");
-        WASM_PARSER_FAIL_IF(target >= m_controlStack.size(), "br / br_if's target ", target, " exceeds control stack size ", m_controlStack.size());
         if (m_currentOpcode == BrIf) {
             WASM_TRY_POP_EXPRESSION_STACK_INTO(condition, "br / br_if condition");
             WASM_VALIDATOR_FAIL_IF(condition.type() != I32, "conditional branch with non-i32 condition ", condition.type());
@@ -1454,17 +1500,31 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         return { };
     }
 
-    // one immediate cases
-    case SetLocal:
     case GetLocal:
-    case TeeLocal:
+    case SetLocal:
+    case TeeLocal: {
+        uint32_t index;
+        WASM_FAIL_IF_HELPER_FAILS(parseIndexForLocal(index));
+        return { };
+    }
+
     case GetGlobal:
-    case SetGlobal:
-    case Br:
-    case BrIf:
+    case SetGlobal: {
+        uint32_t index;
+        WASM_FAIL_IF_HELPER_FAILS(parseIndexForGlobal(index));
+        return { };
+    }
+
     case Call: {
-        uint32_t unused;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get immediate for ", m_currentOpcode, " in unreachable context");
+        uint32_t functionIndex;
+        WASM_FAIL_IF_HELPER_FAILS(parseFunctionIndex(functionIndex));
+        return { };
+    }
+
+    case Br:
+    case BrIf: {
+        uint32_t target;
+        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
         return { };
     }
 
