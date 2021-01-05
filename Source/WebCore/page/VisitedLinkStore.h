@@ -26,8 +26,8 @@
 #pragma once
 
 #include <wtf/Forward.h>
-#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -50,7 +50,7 @@ public:
     WEBCORE_EXPORT void invalidateStylesForLink(SharedStringHash);
 
 private:
-    HashSet<Page*> m_pages;
+    WeakHashSet<Page> m_pages;
 };
 
 } // namespace WebCore

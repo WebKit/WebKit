@@ -148,10 +148,10 @@ void PageDebugger::reportException(JSGlobalObject* state, JSC::Exception* except
 void PageDebugger::setJavaScriptPaused(const PageGroup& pageGroup, bool paused)
 {
     for (auto& page : pageGroup.pages()) {
-        for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext())
+        for (auto* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext())
             setJavaScriptPaused(*frame, paused);
 
-        if (auto* frontendClient = page->inspectorController().inspectorFrontendClient()) {
+        if (auto* frontendClient = page.inspectorController().inspectorFrontendClient()) {
             if (paused)
                 frontendClient->pagePaused();
             else

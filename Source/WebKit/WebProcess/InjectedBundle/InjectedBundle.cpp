@@ -170,9 +170,8 @@ void InjectedBundle::resetOriginAccessAllowLists()
 
 void InjectedBundle::setAsynchronousSpellCheckingEnabled(WebPageGroupProxy* pageGroup, bool enabled)
 {
-    const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
-    for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
-        (*iter)->settings().setAsynchronousSpellCheckingEnabled(enabled);
+    for (auto& page : PageGroup::pageGroup(pageGroup->identifier())->pages())
+        page.settings().setAsynchronousSpellCheckingEnabled(enabled);
 }
 
 int InjectedBundle::numberOfPages(WebFrame* frame, double pageWidthInPixels, double pageHeightInPixels)
@@ -287,9 +286,8 @@ void InjectedBundle::didReceiveMessageToPage(WebPage* page, const String& messag
 
 void InjectedBundle::setUserStyleSheetLocation(WebPageGroupProxy* pageGroup, const String& location)
 {
-    const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
-    for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
-        (*iter)->settings().setUserStyleSheetLocation(URL(URL(), location));
+    for (auto& page : PageGroup::pageGroup(pageGroup->identifier())->pages())
+        page.settings().setUserStyleSheetLocation(URL(URL(), location));
 }
 
 void InjectedBundle::setWebNotificationPermission(WebPage* page, const String& originString, bool allowed)
@@ -343,8 +341,8 @@ InjectedBundle::DocumentIDToURLMap InjectedBundle::liveDocumentURLs(WebPageGroup
         result.add(document->identifier().toUInt64(), document->url().string());
 
     if (excludeDocumentsInPageGroupPages) {
-        for (const auto* page : PageGroup::pageGroup(pageGroup->identifier())->pages()) {
-            for (const auto* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        for (auto& page : PageGroup::pageGroup(pageGroup->identifier())->pages()) {
+            for (auto* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
                 if (!frame->document())
                     continue;
                 result.remove(frame->document()->identifier().toUInt64());

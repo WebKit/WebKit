@@ -36,33 +36,33 @@ VisitedLinkStore::VisitedLinkStore()
 
 VisitedLinkStore::~VisitedLinkStore()
 {
-    ASSERT(m_pages.isEmpty());
+    ASSERT(m_pages.computesEmpty());
 }
 
 void VisitedLinkStore::addPage(Page& page)
 {
-    ASSERT(!m_pages.contains(&page));
+    ASSERT(!m_pages.contains(page));
 
-    m_pages.add(&page);
+    m_pages.add(page);
 }
 
 void VisitedLinkStore::removePage(Page& page)
 {
-    ASSERT(m_pages.contains(&page));
+    ASSERT(m_pages.contains(page));
 
-    m_pages.remove(&page);
+    m_pages.remove(page);
 }
 
 void VisitedLinkStore::invalidateStylesForAllLinks()
 {
     for (auto& page : m_pages)
-        page->invalidateStylesForAllLinks();
+        page.invalidateStylesForAllLinks();
 }
 
 void VisitedLinkStore::invalidateStylesForLink(SharedStringHash linkHash)
 {
     for (auto& page : m_pages)
-        page->invalidateStylesForLink(linkHash);
+        page.invalidateStylesForLink(linkHash);
 }
 
 } // namespace WebCore

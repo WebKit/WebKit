@@ -1,5 +1,19 @@
 2021-01-05  Alex Christensen  <achristensen@webkit.org>
 
+        Use WeakHashSet<Page> instead of HashSet<Page*>
+        https://bugs.webkit.org/show_bug.cgi?id=220102
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setAsynchronousSpellCheckingEnabled):
+        (WebKit::InjectedBundle::setUserStyleSheetLocation):
+        (WebKit::InjectedBundle::liveDocumentURLs):
+        * WebProcess/WebStorage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::dispatchLocalStorageEvent):
+
+2021-01-05  Alex Christensen  <achristensen@webkit.org>
+
         Use sendWithAsyncReply instead of SelectionContextCallback
         https://bugs.webkit.org/show_bug.cgi?id=220121
 

@@ -33,13 +33,13 @@ namespace WebCore {
 PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page& page, bool deferSelf)
 {
     for (auto& otherPage : page.group().pages()) {
-        if ((deferSelf || otherPage != &page)) {
-            if (!otherPage->defersLoading()) {
-                m_deferredFrames.append(&otherPage->mainFrame());
+        if ((deferSelf || &otherPage != &page)) {
+            if (!otherPage.defersLoading()) {
+                m_deferredFrames.append(&otherPage.mainFrame());
 
                 // This code is not logically part of load deferring, but we do not want JS code executed beneath modal
                 // windows or sheets, which is exactly when PageGroupLoadDeferrer is used.
-                for (Frame* frame = &otherPage->mainFrame(); frame; frame = frame->tree().traverseNext())
+                for (auto* frame = &otherPage.mainFrame(); frame; frame = frame->tree().traverseNext())
                     frame->document()->suspendScheduledTasks(ReasonForSuspension::WillDeferLoading);
             }
         }

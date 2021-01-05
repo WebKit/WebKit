@@ -26,7 +26,7 @@
 #pragma once
 
 #include "PluginData.h"
-#include <wtf/HashSet.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -46,7 +46,7 @@ public:
 private:
     virtual void refreshPlugins() = 0;
 
-    HashSet<Page*> m_pages;
+    WeakHashSet<Page> m_pages;
 };
 
 }

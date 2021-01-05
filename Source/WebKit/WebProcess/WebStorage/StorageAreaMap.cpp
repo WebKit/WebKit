@@ -337,8 +337,8 @@ void StorageAreaMap::dispatchLocalStorageEvent(const Optional<StorageAreaImplIde
 
     // Namespace IDs for local storage namespaces are equivalent to web page group IDs.
     auto& pageGroup = *WebProcess::singleton().webPageGroup(m_namespace.pageGroupID())->corePageGroup();
-    for (auto* page : pageGroup.pages())
-        frames.appendVector(framesForEventDispatching(*page, m_securityOrigin, StorageType::Local, storageAreaImplID));
+    for (auto& page : pageGroup.pages())
+        frames.appendVector(framesForEventDispatching(page, m_securityOrigin, StorageType::Local, storageAreaImplID));
 
     StorageEventDispatcher::dispatchLocalStorageEventsToFrames(pageGroup, frames, key, oldValue, newValue, urlString, m_securityOrigin->data());
 }

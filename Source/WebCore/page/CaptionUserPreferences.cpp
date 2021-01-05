@@ -100,15 +100,14 @@ void CaptionUserPreferences::setCaptionDisplayMode(CaptionUserPreferences::Capti
 
 Page* CaptionUserPreferences::currentPage() const
 {
-    if (m_pageGroup.pages().isEmpty())
-        return nullptr;
-
-    return *(m_pageGroup.pages().begin());
+    for (auto& page : m_pageGroup.pages())
+        return &page;
+    return nullptr;
 }
 
 bool CaptionUserPreferences::userPrefersCaptions() const
 {
-    Page* page = currentPage();
+    auto* page = currentPage();
     if (!page)
         return false;
 
@@ -117,7 +116,7 @@ bool CaptionUserPreferences::userPrefersCaptions() const
 
 void CaptionUserPreferences::setUserPrefersCaptions(bool preference)
 {
-    Page* page = currentPage();
+    auto* page = currentPage();
     if (!page)
         return;
 
@@ -127,7 +126,7 @@ void CaptionUserPreferences::setUserPrefersCaptions(bool preference)
 
 bool CaptionUserPreferences::userPrefersSubtitles() const
 {
-    Page* page = currentPage();
+    auto* page = currentPage();
     if (!page)
         return false;
 
@@ -136,7 +135,7 @@ bool CaptionUserPreferences::userPrefersSubtitles() const
 
 void CaptionUserPreferences::setUserPrefersSubtitles(bool preference)
 {
-    Page* page = currentPage();
+    auto* page = currentPage();
     if (!page)
         return;
 
@@ -146,7 +145,7 @@ void CaptionUserPreferences::setUserPrefersSubtitles(bool preference)
 
 bool CaptionUserPreferences::userPrefersTextDescriptions() const
 {
-    Page* page = currentPage();
+    auto* page = currentPage();
     if (!page)
         return false;
     
@@ -155,7 +154,7 @@ bool CaptionUserPreferences::userPrefersTextDescriptions() const
 
 void CaptionUserPreferences::setUserPrefersTextDescriptions(bool preference)
 {
-    Page* page = currentPage();
+    auto* page = currentPage();
     if (!page)
         return;
     
@@ -406,7 +405,7 @@ void CaptionUserPreferences::updateCaptionStyleSheetOverride()
 {
     String captionsOverrideStyleSheet = captionsStyleSheetOverride();
     for (auto& page : m_pageGroup.pages())
-        page->setCaptionUserPreferencesStyleSheet(captionsOverrideStyleSheet);
+        page.setCaptionUserPreferencesStyleSheet(captionsOverrideStyleSheet);
 }
 
 String CaptionUserPreferences::primaryAudioTrackLanguageOverride() const

@@ -30,6 +30,8 @@
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakHashSet.h>
+#include <wtf/WeakPtr.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
 #include "ContentExtensionActions.h"
@@ -56,7 +58,7 @@ struct ResourceLoadInfo;
 
 class UserContentProvider;
 
-class UserContentProviderInvalidationClient {
+class UserContentProviderInvalidationClient : public CanMakeWeakPtr<UserContentProviderInvalidationClient> {
 public:
     virtual ~UserContentProviderInvalidationClient()
     {
@@ -98,8 +100,8 @@ protected:
     WEBCORE_EXPORT void invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
 
 private:
-    HashSet<Page*> m_pages;
-    HashSet<UserContentProviderInvalidationClient*> m_userMessageHandlerInvalidationClients;
+    WeakHashSet<Page> m_pages;
+    WeakHashSet<UserContentProviderInvalidationClient> m_userMessageHandlerInvalidationClients;
 };
 
 } // namespace WebCore

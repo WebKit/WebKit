@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -45,7 +45,7 @@ public:
 
     WEBCORE_EXPORT static PageGroup* pageGroup(const String& groupName);
 
-    const HashSet<Page*>& pages() const { return m_pages; }
+    const WeakHashSet<Page>& pages() const { return m_pages; }
 
     void addPage(Page&);
     void removePage(Page&);
@@ -60,7 +60,7 @@ public:
 
 private:
     String m_name;
-    HashSet<Page*> m_pages;
+    WeakHashSet<Page> m_pages;
 
     unsigned m_identifier;
 

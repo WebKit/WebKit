@@ -269,10 +269,10 @@ Frame* FrameTree::find(const AtomString& name, Frame& activeFrame) const
     if (!page)
         return nullptr;
     
-    for (auto* otherPage : page->group().pages()) {
-        if (otherPage == page)
+    for (auto& otherPage : page->group().pages()) {
+        if (&otherPage == page)
             continue;
-        for (auto* frame = &otherPage->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        for (auto* frame = &otherPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
             if (frame->tree().uniqueName() == name && isFrameFamiliarWith(activeFrame, *frame))
                 return frame;
         }
