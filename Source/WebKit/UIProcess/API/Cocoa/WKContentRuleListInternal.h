@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKContentRuleList.h"
+#import "WKContentRuleListPrivate.h"
 
 #import "APIContentRuleList.h"
 #import "WKObject.h"

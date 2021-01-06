@@ -48,6 +48,8 @@ public:
 
     const WTF::String& name() const { return m_name; }
     const WebKit::WebCompiledContentRuleList& compiledRuleList() const { return m_compiledRuleList.get(); }
+    
+    static bool supportsRegularExpression(const WTF::String&);
 
 private:
     WTF::String m_name;

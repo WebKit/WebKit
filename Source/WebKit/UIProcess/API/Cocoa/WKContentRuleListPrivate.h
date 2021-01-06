@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKContentRuleListInternal.h"
+#import <WebKit/WKContentRuleList.h>
 
-#import "WebCompiledContentRuleList.h"
+@interface WKContentRuleList (WKPrivate)
 
-@implementation WKContentRuleList
-
-- (void)dealloc
-{
-    _contentRuleList->~ContentRuleList();
-
-    [super dealloc];
-}
-
-#pragma mark WKObject protocol implementation
-
-- (API::Object&)_apiObject
-{
-    return *_contentRuleList;
-}
-
-- (NSString *)identifier
-{
-    return _contentRuleList->name();
-}
-
-@end
-
-@implementation WKContentRuleList (WKPrivate)
-
-+ (BOOL)_supportsRegularExpression:(NSString *)regex
-{
-    return API::ContentRuleList::supportsRegularExpression(regex);
-}
++ (BOOL)_supportsRegularExpression:(NSString *)regex WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end

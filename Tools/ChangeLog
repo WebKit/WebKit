@@ -1,3 +1,13 @@
+2021-01-06  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to determine whether a regex is supported in WKContentRuleList
+        https://bugs.webkit.org/show_bug.cgi?id=220095
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentRuleListNotification.mm:
+        (TEST):
+
 2021-01-06  Sihui Liu  <sihui_liu@appe.com>
 
         Stop speech recognition if page becomes invisible

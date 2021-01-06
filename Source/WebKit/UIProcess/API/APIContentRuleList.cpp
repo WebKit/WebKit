@@ -29,6 +29,8 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "WebCompiledContentRuleList.h"
+#include <WebCore/CombinedURLFilters.h>
+#include <WebCore/URLFilterParser.h>
 
 namespace API {
 
@@ -41,6 +43,34 @@ ContentRuleList::ContentRuleList(const WTF::String& name, Ref<WebKit::WebCompile
 
 ContentRuleList::~ContentRuleList()
 {
+}
+
+bool ContentRuleList::supportsRegularExpression(const WTF::String& regex)
+{
+    using namespace WebCore::ContentExtensions;
+    CombinedURLFilters combinedURLFilters;
+    URLFilterParser urlFilterParser(combinedURLFilters);
+
+    switch (urlFilterParser.addPattern(regex, false, 0)) {
+    case URLFilterParser::Ok:
+    case URLFilterParser::MatchesEverything:
+        return true;
+    case URLFilterParser::NonASCII:
+    case URLFilterParser::UnsupportedCharacterClass:
+    case URLFilterParser::BackReference:
+    case URLFilterParser::ForwardReference:
+    case URLFilterParser::MisplacedStartOfLine:
+    case URLFilterParser::WordBoundary:
+    case URLFilterParser::AtomCharacter:
+    case URLFilterParser::Group:
+    case URLFilterParser::Disjunction:
+    case URLFilterParser::MisplacedEndOfLine:
+    case URLFilterParser::EmptyPattern:
+    case URLFilterParser::YarrError:
+    case URLFilterParser::InvalidQuantifier:
+        break;
+    }
+    return false;
 }
 
 } // namespace API
