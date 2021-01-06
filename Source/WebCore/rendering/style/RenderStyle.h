@@ -233,7 +233,6 @@ public:
 
     bool hasAnyPublicPseudoStyles() const;
     bool hasPseudoStyle(PseudoId) const;
-    void setHasPseudoStyle(PseudoId);
     void setHasPseudoStyles(PseudoIdSet);
     bool hasUniquePseudoStyle() const;
 
@@ -1838,7 +1837,6 @@ private:
 
         bool hasAnyPublicPseudoStyles() const { return static_cast<unsigned>(PseudoId::PublicPseudoIdMask) & pseudoBits; }
         bool hasPseudoStyle(PseudoId) const;
-        void setHasPseudoStyle(PseudoId);
         void setHasPseudoStyles(PseudoIdSet);
 
         unsigned effectiveDisplay : 5; // DisplayType
@@ -2031,13 +2029,6 @@ inline bool RenderStyle::NonInheritedFlags::hasPseudoStyle(PseudoId pseudo) cons
     ASSERT(pseudo > PseudoId::None);
     ASSERT(pseudo < PseudoId::FirstInternalPseudoId);
     return pseudoBits & (1 << (static_cast<unsigned>(pseudo) - 1 /* PseudoId::None */));
-}
-
-inline void RenderStyle::NonInheritedFlags::setHasPseudoStyle(PseudoId pseudo)
-{
-    ASSERT(pseudo > PseudoId::None);
-    ASSERT(pseudo < PseudoId::FirstInternalPseudoId);
-    pseudoBits |= 1 << (static_cast<unsigned>(pseudo) - 1 /* PseudoId::None */);
 }
 
 inline void RenderStyle::NonInheritedFlags::setHasPseudoStyles(PseudoIdSet pseudoIdSet)
@@ -2340,11 +2331,6 @@ inline bool RenderStyle::hasAnyPublicPseudoStyles() const
 inline bool RenderStyle::hasPseudoStyle(PseudoId pseudo) const
 {
     return m_nonInheritedFlags.hasPseudoStyle(pseudo);
-}
-
-inline void RenderStyle::setHasPseudoStyle(PseudoId pseudo)
-{
-    m_nonInheritedFlags.setHasPseudoStyle(pseudo);
 }
 
 inline void RenderStyle::setHasPseudoStyles(PseudoIdSet pseudoIdSet)
