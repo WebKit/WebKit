@@ -22,6 +22,7 @@
 
 import itertools
 
+from collections import Counter
 
 class MessageReceiver(object):
     def __init__(self, name, superclass, attributes, messages, condition):
@@ -61,3 +62,13 @@ class Parameter(object):
 
     def has_attribute(self, attribute):
         return attribute in self.attributes
+
+
+def check_global_model(receivers):
+    errors = []
+    receiver_counts = Counter([r.name for r in receivers])
+    receiver_duplicates = [n for n, c in receiver_counts.items() if c > 1]
+    if receiver_duplicates:
+        errors.append('Duplicate message receiver names: %s' % (', '.join(receiver_duplicates)))
+
+    return errors

@@ -20,6 +20,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# Examples of how to run:
+# python Source/WebKit/Scripts/webkit/messages_unittest.py [-r]
+# cd Source/WebKit/Scripts && python -m webkit.messages_unittest
+# cd Source/WebKit/Scripts && python -m unittest discover -p '*_unittest.py'
+
 import os
 import re
 import sys
@@ -30,33 +35,34 @@ if sys.version_info > (3, 0):
 else:
     from StringIO import StringIO
 
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+module_directory = os.path.dirname(os.path.abspath(__file__))
+
+sys.path.append(os.path.abspath(os.path.join(module_directory, os.path.pardir)))
 from webkit import messages
 from webkit import parser
 
-script_directory = os.path.dirname(os.path.realpath(__file__))
+tests_directory = os.path.join(module_directory, 'tests')
 
 reset_results = False
 
-with open(os.path.join(script_directory, 'test.messages.in')) as in_file:
+with open(os.path.join(tests_directory, 'TestWithoutAttributes.messages.in')) as in_file:
     _messages_file_contents = in_file.read()
 
-with open(os.path.join(script_directory, 'test-legacy.messages.in')) as in_file:
+with open(os.path.join(tests_directory, 'TestWithLegacyReceiver.messages.in')) as in_file:
     _legacy_messages_file_contents = in_file.read()
 
-with open(os.path.join(script_directory, 'test-superclass.messages.in')) as in_file:
+with open(os.path.join(tests_directory, 'TestWithSuperclass.messages.in')) as in_file:
     _superclass_messages_file_contents = in_file.read()
 
-_expected_receiver_header_file_name = '../testMessages.h'
-_expected_legacy_receiver_header_file_name = '../test-legacyMessages.h'
-_expected_superclass_receiver_header_file_name = '../test-superclassMessages.h'
+_expected_receiver_header_file_name = 'TestWithoutAttributesMessages.h'
+_expected_legacy_receiver_header_file_name = 'TestWithLegacyReceiverMessages.h'
+_expected_superclass_receiver_header_file_name = 'TestWithSuperclassMessages.h'
 
-_expected_receiver_implementation_file_name = '../testMessageReceiver.cpp'
-_expected_legacy_receiver_implementation_file_name = '../test-legacyMessageReceiver.cpp'
-_expected_superclass_receiver_implementation_file_name = '../test-superclassMessageReceiver.cpp'
+_expected_receiver_implementation_file_name = 'TestWithoutAttributesMessageReceiver.cpp'
+_expected_legacy_receiver_implementation_file_name = 'TestWithLegacyReceiverMessageReceiver.cpp'
+_expected_superclass_receiver_implementation_file_name = 'TestWithSuperclassMessageReceiver.cpp'
 
-_expected_results = {
-    'name': 'WebPage',
+_base_expected_results = {
     'conditions': ('(ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))'),
     'messages': (
         {
@@ -237,8 +243,12 @@ _expected_results = {
     ),
 }
 
+_expected_results = dict(_base_expected_results, name='TestWithoutAttributes')
+
+_expected_legacy_results = dict(_base_expected_results, name='TestWithLegacyReceiver')
+
 _expected_superclass_results = {
-    'name': 'WebPage',
+    'name': 'TestWithSuperclass',
     'superclass': 'WebPageBase',
     'conditions': None,
     'messages': (
@@ -345,11 +355,11 @@ class ParsingTest(MessagesTest):
         for index, message in enumerate(self.receiver.messages):
             self.check_message(message, _expected_results['messages'][index])
 
-        self.assertEquals(self.legacy_receiver.name, _expected_results['name'])
-        self.assertEquals(self.legacy_receiver.condition, _expected_results['conditions'])
-        self.assertEquals(len(self.legacy_receiver.messages), len(_expected_results['messages']))
+        self.assertEquals(self.legacy_receiver.name, _expected_legacy_results['name'])
+        self.assertEquals(self.legacy_receiver.condition, _expected_legacy_results['conditions'])
+        self.assertEquals(len(self.legacy_receiver.messages), len(_expected_legacy_results['messages']))
         for index, message in enumerate(self.legacy_receiver.messages):
-            self.check_message(message, _expected_results['messages'][index])
+            self.check_message(message, _expected_legacy_results['messages'][index])
 
         self.assertEquals(self.superclass_receiver.name, _expected_superclass_results['name'])
         self.assertEquals(self.superclass_receiver.superclass, _expected_superclass_results['superclass'])
@@ -362,11 +372,11 @@ class GeneratedFileContentsTest(unittest.TestCase):
     def assertGeneratedFileContentsEqual(self, actual_file_contents, expected_file_name):
         try:
             if reset_results:
-                with open(os.path.join(script_directory, expected_file_name), mode='w') as out_file:
+                with open(os.path.join(tests_directory, expected_file_name), mode='w') as out_file:
                     out_file.write(actual_file_contents)
                 return
 
-            with open(os.path.join(script_directory, expected_file_name), mode='r') as in_file:
+            with open(os.path.join(tests_directory, expected_file_name), mode='r') as in_file:
                 expected_file_contents = in_file.read()
             actual_line_list = actual_file_contents.splitlines(False)
             expected_line_list = expected_file_contents.splitlines(False)

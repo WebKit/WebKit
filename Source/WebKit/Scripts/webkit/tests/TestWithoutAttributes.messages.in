@@ -30,7 +30,7 @@
     #FakeLoadURLC(String url)
     # FakeLoadURLD(String url)
 
-messages -> WebPage {
+messages -> TestWithoutAttributes {
     LoadURL(String url)
 #if ENABLE(TOUCH_EVENTS)
     LoadSomething(String url)

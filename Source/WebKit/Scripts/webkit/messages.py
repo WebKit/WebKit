@@ -26,16 +26,8 @@ import sys
 
 from webkit import parser
 
-WANTS_CONNECTION_ATTRIBUTE = 'WantsConnection'
-WANTS_DISPATCH_MESSAGE_ATTRIBUTE = 'WantsDispatchMessage'
-WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE = 'WantsAsyncDispatchMessage'
-LEGACY_RECEIVER_ATTRIBUTE = 'LegacyReceiver'
-NOT_REFCOUNTED_RECEIVER_ATTRIBUTE = 'NotRefCounted'
-SYNCHRONOUS_ATTRIBUTE = 'Synchronous'
-ASYNC_ATTRIBUTE = 'Async'
-
 _license_header = """/*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,6 +52,13 @@ _license_header = """/*
 
 """
 
+WANTS_CONNECTION_ATTRIBUTE = 'WantsConnection'
+WANTS_DISPATCH_MESSAGE_ATTRIBUTE = 'WantsDispatchMessage'
+WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE = 'WantsAsyncDispatchMessage'
+LEGACY_RECEIVER_ATTRIBUTE = 'LegacyReceiver'
+NOT_REFCOUNTED_RECEIVER_ATTRIBUTE = 'NotRefCounted'
+SYNCHRONOUS_ATTRIBUTE = 'Synchronous'
+ASYNC_ATTRIBUTE = 'Async'
 
 def messages_header_filename(receiver):
     return '%sMessages.h' % receiver.name
@@ -799,10 +798,9 @@ def generate_message_handler(receiver):
 
     result.append(_license_header)
     result.append('#include "config.h"\n')
-    result.append('\n')
 
     if receiver.condition:
-        result.append('#if %s\n\n' % receiver.condition)
+        result.append('#if %s\n' % receiver.condition)
 
     result.append('#include "%s.h"\n\n' % receiver.name)
     result += generate_header_includes_from_conditions(header_conditions)
@@ -895,7 +893,7 @@ def generate_message_handler(receiver):
         result.append('    ASSERT_NOT_REACHED();\n')
         result.append('}\n')
 
-    result.append('\n} // namespace WebKit\n\n')
+    result.append('\n} // namespace WebKit\n')
 
     if receiver.condition:
         result.append('\n#endif // %s\n' % receiver.condition)
@@ -1170,10 +1168,6 @@ def generate_message_argument_description_implementation(receivers, receiver_hea
     result += generate_header_includes_from_conditions(header_conditions)
     result.append('\n')
 
-    for header in receiver_headers:
-        result.append('#include "%s"\n' % (header))
-
-    result.append('\n')
     result.append('namespace IPC {\n')
     result.append('\n')
 

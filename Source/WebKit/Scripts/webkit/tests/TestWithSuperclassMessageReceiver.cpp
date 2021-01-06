@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  */
 
 #include "config.h"
-
-#include "WebPage.h"
+#include "TestWithSuperclass.h"
 
 #include "ArgumentCoders.h"
 #include "Decoder.h"
@@ -33,13 +32,13 @@
 #if ENABLE(TEST_FEATURE)
 #include "TestTwoStateEnum.h"
 #endif
-#include "WebPageMessages.h"
+#include "TestWithSuperclassMessages.h"
 #include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Messages {
 
-namespace WebPage {
+namespace TestWithSuperclass {
 
 #if ENABLE(TEST_FEATURE)
 
@@ -161,55 +160,55 @@ void TestSynchronousMessage::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::
     connection.sendSyncReply(WTFMove(encoder));
 }
 
-} // namespace WebPage
+} // namespace TestWithSuperclass
 
 } // namespace Messages
 
 namespace WebKit {
 
-void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void TestWithSuperclass::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     auto protectedThis = makeRef(*this);
-    if (decoder.messageName() == Messages::WebPage::LoadURL::name()) {
-        IPC::handleMessage<Messages::WebPage::LoadURL>(decoder, this, &WebPage::loadURL);
+    if (decoder.messageName() == Messages::TestWithSuperclass::LoadURL::name()) {
+        IPC::handleMessage<Messages::TestWithSuperclass::LoadURL>(decoder, this, &TestWithSuperclass::loadURL);
         return;
     }
 #if ENABLE(TEST_FEATURE)
-    if (decoder.messageName() == Messages::WebPage::TestAsyncMessage::name()) {
-        IPC::handleMessageAsync<Messages::WebPage::TestAsyncMessage>(connection, decoder, this, &WebPage::testAsyncMessage);
-        return;
-    }
-#endif
-#if ENABLE(TEST_FEATURE)
-    if (decoder.messageName() == Messages::WebPage::TestAsyncMessageWithNoArguments::name()) {
-        IPC::handleMessageAsync<Messages::WebPage::TestAsyncMessageWithNoArguments>(connection, decoder, this, &WebPage::testAsyncMessageWithNoArguments);
+    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessage::name()) {
+        IPC::handleMessageAsync<Messages::TestWithSuperclass::TestAsyncMessage>(connection, decoder, this, &TestWithSuperclass::testAsyncMessage);
         return;
     }
 #endif
 #if ENABLE(TEST_FEATURE)
-    if (decoder.messageName() == Messages::WebPage::TestAsyncMessageWithMultipleArguments::name()) {
-        IPC::handleMessageAsync<Messages::WebPage::TestAsyncMessageWithMultipleArguments>(connection, decoder, this, &WebPage::testAsyncMessageWithMultipleArguments);
+    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessageWithNoArguments::name()) {
+        IPC::handleMessageAsync<Messages::TestWithSuperclass::TestAsyncMessageWithNoArguments>(connection, decoder, this, &TestWithSuperclass::testAsyncMessageWithNoArguments);
         return;
     }
 #endif
 #if ENABLE(TEST_FEATURE)
-    if (decoder.messageName() == Messages::WebPage::TestAsyncMessageWithConnection::name()) {
-        IPC::handleMessageAsyncWantsConnection<Messages::WebPage::TestAsyncMessageWithConnection>(connection, decoder, this, &WebPage::testAsyncMessageWithConnection);
+    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessageWithMultipleArguments::name()) {
+        IPC::handleMessageAsync<Messages::TestWithSuperclass::TestAsyncMessageWithMultipleArguments>(connection, decoder, this, &TestWithSuperclass::testAsyncMessageWithMultipleArguments);
+        return;
+    }
+#endif
+#if ENABLE(TEST_FEATURE)
+    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessageWithConnection::name()) {
+        IPC::handleMessageAsyncWantsConnection<Messages::TestWithSuperclass::TestAsyncMessageWithConnection>(connection, decoder, this, &TestWithSuperclass::testAsyncMessageWithConnection);
         return;
     }
 #endif
     WebPageBase::didReceiveMessage(connection, decoder);
 }
 
-void WebPage::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+void TestWithSuperclass::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
     auto protectedThis = makeRef(*this);
-    if (decoder.messageName() == Messages::WebPage::TestSyncMessage::name()) {
-        IPC::handleMessageSynchronous<Messages::WebPage::TestSyncMessage>(connection, decoder, replyEncoder, this, &WebPage::testSyncMessage);
+    if (decoder.messageName() == Messages::TestWithSuperclass::TestSyncMessage::name()) {
+        IPC::handleMessageSynchronous<Messages::TestWithSuperclass::TestSyncMessage>(connection, decoder, replyEncoder, this, &TestWithSuperclass::testSyncMessage);
         return;
     }
-    if (decoder.messageName() == Messages::WebPage::TestSynchronousMessage::name()) {
-        IPC::handleMessageSynchronous<Messages::WebPage::TestSynchronousMessage>(connection, decoder, replyEncoder, this, &WebPage::testSynchronousMessage);
+    if (decoder.messageName() == Messages::TestWithSuperclass::TestSynchronousMessage::name()) {
+        IPC::handleMessageSynchronous<Messages::TestWithSuperclass::TestSynchronousMessage>(connection, decoder, replyEncoder, this, &TestWithSuperclass::testSynchronousMessage);
         return;
     }
     UNUSED_PARAM(connection);
@@ -219,4 +218,3 @@ void WebPage::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& d
 }
 
 } // namespace WebKit
-

@@ -20,7 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> WebPage : WebPageBase {
+messages -> TestWithSuperclass : WebPageBase {
     LoadURL(String url)
 #if ENABLE(TEST_FEATURE)
     TestAsyncMessage(enum:bool WebKit::TestTwoStateEnum twoStateEnum) -> (uint64_t result) Async

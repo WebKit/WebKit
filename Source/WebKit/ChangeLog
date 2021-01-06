@@ -1,3 +1,153 @@
+2021-01-05  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebKit IPC generator tests have duplicate receiver names, limiting the implementation
+        https://bugs.webkit.org/show_bug.cgi?id=220236
+
+        Reviewed by Chris Dumez.
+
+        IPC test message receivers defined multiple receivers with same name.
+        Rename the test message receivers based on what feature they test. No
+        change in the non-test code.
+
+        The IPC works with message identifier defined by the MessageName type.
+        Having multiple clashing receiver names is problematic because a MessageName
+        is defined by pair <receiver name, message name>. Since different receivers
+        might have different kinds of messages with same message name, these might end
+        up mapping to two conflicting message kinds.
+
+        The rename of test classes makes the tests conform to the already used contract
+        that the MessageName is globally unique to each individual conceptual message
+        because the receiver names are unique.
+
+        This enables further implementations that make decisions based on the
+        message name. Example is to decide whether a message is synchronous or
+        not. This cannot be implemented generally if there is multiple different kinds of
+        messages with same name.
+
+        Rename the test message receiver files based on the receiver name. This is
+        more consistent with the existing convention used in the actual code.
+
+        Move the script test results from the Scripts/ directory to a tests/ subdirectory
+        of the tool. This is to not fill the Scripts/ directory with Scripts/webkit/ related
+        test result data.
+
+        Adds previously missing test result file MessageArgumentDescriptions.cpp, which was not added
+        when the feature was implemented.
+
+        Tested by existing tests and new model_unittest.py.
+
+        * Scripts/Makefile: Removed.
+        * Scripts/MessageNames.cpp: Removed.
+        * Scripts/MessageNames.h: Removed.
+        * Scripts/generate-message-receiver.py:
+        (main):
+        * Scripts/test-legacyMessageReceiver.cpp: Removed.
+        * Scripts/testMessageReceiver.cpp: Removed.
+        * Scripts/webkit/messages.py:
+        * Scripts/webkit/messages_unittest.py:
+        (ParsingTest.test_receiver):
+        (GeneratedFileContentsTest.assertGeneratedFileContentsEqual):
+        * Scripts/webkit/model.py:
+        (Parameter.has_attribute):
+        (check_global_model):
+        * Scripts/webkit/model_unittest.py: Added.
+        (ModelCheckTest):
+        (ModelCheckTest.test_duplicate_receivers):
+        (test_mismatch_message_attribute_sync):
+        * Scripts/webkit/tests/Makefile: Added.
+        * Scripts/webkit/tests/MessageArgumentDescriptions.cpp: Added.
+        (IPC::jsValueForArguments):
+        (IPC::jsValueForReplyArguments):
+        (IPC::messageArgumentDescriptions):
+        (IPC::messageReplyArgumentDescriptions):
+        (IPC::messageIsSync):
+        * Scripts/webkit/tests/MessageNames.cpp: Added.
+        (IPC::description):
+        (IPC::receiverName):
+        (IPC::isValidMessageName):
+        * Scripts/webkit/tests/MessageNames.h: Added.
+        (WTF::isValidEnum):
+        * Scripts/webkit/tests/TestWithLegacyReceiver.messages.in: Renamed from Source/WebKit/Scripts/webkit/test-legacy.messages.in.
+        * Scripts/webkit/tests/TestWithLegacyReceiverMessageReceiver.cpp: Added.
+        (Messages::TestWithLegacyReceiver::GetPluginProcessConnection::send):
+        (Messages::TestWithLegacyReceiver::TestMultipleAttributes::send):
+        (WebKit::TestWithLegacyReceiver::didReceiveTestWithLegacyReceiverMessage):
+        (WebKit::TestWithLegacyReceiver::didReceiveSyncTestWithLegacyReceiverMessage):
+        * Scripts/webkit/tests/TestWithLegacyReceiverMessages.h: Renamed from Source/WebKit/Scripts/test-legacyMessages.h.
+        (Messages::TestWithLegacyReceiver::messageReceiverName):
+        (Messages::TestWithLegacyReceiver::LoadURL::name):
+        (Messages::TestWithLegacyReceiver::LoadSomething::name):
+        (Messages::TestWithLegacyReceiver::TouchEvent::name):
+        (Messages::TestWithLegacyReceiver::AddEvent::name):
+        (Messages::TestWithLegacyReceiver::LoadSomethingElse::name):
+        (Messages::TestWithLegacyReceiver::DidReceivePolicyDecision::name):
+        (Messages::TestWithLegacyReceiver::Close::name):
+        (Messages::TestWithLegacyReceiver::PreferencesDidChange::name):
+        (Messages::TestWithLegacyReceiver::SendDoubleAndFloat::name):
+        (Messages::TestWithLegacyReceiver::SendInts::name):
+        (Messages::TestWithLegacyReceiver::CreatePlugin::name):
+        (Messages::TestWithLegacyReceiver::RunJavaScriptAlert::name):
+        (Messages::TestWithLegacyReceiver::GetPlugins::name):
+        (Messages::TestWithLegacyReceiver::GetPluginProcessConnection::name):
+        (Messages::TestWithLegacyReceiver::TestMultipleAttributes::name):
+        (Messages::TestWithLegacyReceiver::TestParameterAttributes::name):
+        (Messages::TestWithLegacyReceiver::TemplateTest::name):
+        (Messages::TestWithLegacyReceiver::SetVideoLayerID::name):
+        (Messages::TestWithLegacyReceiver::DidCreateWebProcessConnection::name):
+        (Messages::TestWithLegacyReceiver::InterpretKeyEvent::name):
+        (Messages::TestWithLegacyReceiver::DeprecatedOperation::name):
+        (Messages::TestWithLegacyReceiver::ExperimentalOperation::name):
+        * Scripts/webkit/tests/TestWithLegacyReceiverMessagesReplies.h: Renamed from Source/WebKit/Scripts/testMessagesReplies.h.
+        * Scripts/webkit/tests/TestWithSuperclass.messages.in: Renamed from Source/WebKit/Scripts/webkit/test-superclass.messages.in.
+        * Scripts/webkit/tests/TestWithSuperclassMessageReceiver.cpp: Renamed from Source/WebKit/Scripts/test-superclassMessageReceiver.cpp.
+        (WebKit::TestWithSuperclass::didReceiveMessage):
+        (WebKit::TestWithSuperclass::didReceiveSyncMessage):
+        * Scripts/webkit/tests/TestWithSuperclassMessages.h: Renamed from Source/WebKit/Scripts/test-superclassMessages.h.
+        (Messages::TestWithSuperclass::messageReceiverName):
+        (Messages::TestWithSuperclass::LoadURL::name):
+        (Messages::TestWithSuperclass::TestAsyncMessage::name):
+        (Messages::TestWithSuperclass::TestAsyncMessage::asyncMessageReplyName):
+        (Messages::TestWithSuperclass::TestAsyncMessageWithNoArguments::name):
+        (Messages::TestWithSuperclass::TestAsyncMessageWithNoArguments::asyncMessageReplyName):
+        (Messages::TestWithSuperclass::TestAsyncMessageWithMultipleArguments::name):
+        (Messages::TestWithSuperclass::TestAsyncMessageWithMultipleArguments::asyncMessageReplyName):
+        (Messages::TestWithSuperclass::TestAsyncMessageWithConnection::name):
+        (Messages::TestWithSuperclass::TestAsyncMessageWithConnection::asyncMessageReplyName):
+        (Messages::TestWithSuperclass::TestSyncMessage::name):
+        (Messages::TestWithSuperclass::TestSynchronousMessage::name):
+        * Scripts/webkit/tests/TestWithSuperclassMessagesReplies.h: Renamed from Source/WebKit/Scripts/test-superclassMessagesReplies.h.
+        * Scripts/webkit/tests/TestWithoutAttributes.messages.in: Renamed from Source/WebKit/Scripts/webkit/test.messages.in.
+        * Scripts/webkit/tests/TestWithoutAttributesMessageReceiver.cpp: Added.
+        (Messages::TestWithoutAttributes::GetPluginProcessConnection::send):
+        (Messages::TestWithoutAttributes::TestMultipleAttributes::send):
+        (WebKit::TestWithoutAttributes::didReceiveMessage):
+        (WebKit::TestWithoutAttributes::didReceiveSyncMessage):
+        * Scripts/webkit/tests/TestWithoutAttributesMessages.h: Renamed from Source/WebKit/Scripts/testMessages.h.
+        (Messages::TestWithoutAttributes::messageReceiverName):
+        (Messages::TestWithoutAttributes::LoadURL::name):
+        (Messages::TestWithoutAttributes::LoadSomething::name):
+        (Messages::TestWithoutAttributes::TouchEvent::name):
+        (Messages::TestWithoutAttributes::AddEvent::name):
+        (Messages::TestWithoutAttributes::LoadSomethingElse::name):
+        (Messages::TestWithoutAttributes::DidReceivePolicyDecision::name):
+        (Messages::TestWithoutAttributes::Close::name):
+        (Messages::TestWithoutAttributes::PreferencesDidChange::name):
+        (Messages::TestWithoutAttributes::SendDoubleAndFloat::name):
+        (Messages::TestWithoutAttributes::SendInts::name):
+        (Messages::TestWithoutAttributes::CreatePlugin::name):
+        (Messages::TestWithoutAttributes::RunJavaScriptAlert::name):
+        (Messages::TestWithoutAttributes::GetPlugins::name):
+        (Messages::TestWithoutAttributes::GetPluginProcessConnection::name):
+        (Messages::TestWithoutAttributes::TestMultipleAttributes::name):
+        (Messages::TestWithoutAttributes::TestParameterAttributes::name):
+        (Messages::TestWithoutAttributes::TemplateTest::name):
+        (Messages::TestWithoutAttributes::SetVideoLayerID::name):
+        (Messages::TestWithoutAttributes::DidCreateWebProcessConnection::name):
+        (Messages::TestWithoutAttributes::InterpretKeyEvent::name):
+        (Messages::TestWithoutAttributes::DeprecatedOperation::name):
+        (Messages::TestWithoutAttributes::ExperimentalOperation::name):
+        * Scripts/webkit/tests/TestWithoutAttributesMessagesReplies.h: Renamed from Source/WebKit/Scripts/test-legacyMessagesReplies.h.
+
 2021-01-05  Tim Horton  <timothy_horton@apple.com>
 
         SourcesCocoa.txt should not be installed in the Web Content service bundle

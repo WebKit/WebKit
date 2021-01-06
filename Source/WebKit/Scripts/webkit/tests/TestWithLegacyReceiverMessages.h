@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,7 @@
 #endif
 #include "MessageNames.h"
 #include "Plugin.h"
-#include "WebPageMessagesReplies.h"
+#include "TestWithLegacyReceiverMessagesReplies.h"
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/PluginData.h>
@@ -56,18 +56,18 @@ class WebTouchEvent;
 }
 
 namespace Messages {
-namespace WebPage {
+namespace TestWithLegacyReceiver {
 
 static inline IPC::ReceiverName messageReceiverName()
 {
-    return IPC::ReceiverName::WebPage;
+    return IPC::ReceiverName::TestWithLegacyReceiver;
 }
 
 class LoadURL {
 public:
     using Arguments = std::tuple<const String&>;
 
-    static IPC::MessageName name() { return IPC::MessageName::WebPage_LoadURL; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_LoadURL; }
     static const bool isSync = false;
 
     explicit LoadURL(const String& url)
@@ -89,7 +89,7 @@ class LoadSomething {
 public:
     using Arguments = std::tuple<const String&>;
 
-    static IPC::MessageName name() { return IPC::MessageName::WebPage_LoadSomething; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_LoadSomething; }
     static const bool isSync = false;
 
     explicit LoadSomething(const String& url)
@@ -112,7 +112,7 @@ class TouchEvent {
 public:
     using Arguments = std::tuple<const WebKit::WebTouchEvent&>;
 
-    static IPC::MessageName name() { return IPC::MessageName::WebPage_TouchEvent; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_TouchEvent; }
     static const bool isSync = false;
 
     explicit TouchEvent(const WebKit::WebTouchEvent& event)
@@ -135,7 +135,7 @@ class AddEvent {
 public:
     using Arguments = std::tuple<const WebKit::WebTouchEvent&>;
 
-    static IPC::MessageName name() { return IPC::MessageName::WebPage_AddEvent; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_AddEvent; }
     static const bool isSync = false;
 
     explicit AddEvent(const WebKit::WebTouchEvent& event)
@@ -158,7 +158,7 @@ class LoadSomethingElse {
 public:
     using Arguments = std::tuple<const String&>;
 
-    static IPC::MessageName name() { return IPC::MessageName::WebPage_LoadSomethingElse; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_LoadSomethingElse; }
     static const bool isSync = false;
 
     explicit LoadSomethingElse(const String& url)
@@ -180,7 +180,7 @@ class DidReceivePolicyDecision {
 public:
     using Arguments = std::tuple<uint64_t, uint64_t, uint32_t>;
 
-    static IPC::MessageName name() { return IPC::MessageName::WebPage_DidReceivePolicyDecision; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_DidReceivePolicyDecision; }
     static const bool isSync = false;
 
     DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction)
@@ -201,7 +201,7 @@ class Close {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::WebPage_Close; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_Close; }
     static const bool isSync = false;
 
     const Arguments& arguments() const
@@ -217,7 +217,7 @@ class PreferencesDidChange {
 public:
     using Arguments = std::tuple<const WebKit::WebPreferencesStore&>;
 
-    static IPC::MessageName name() { return IPC::MessageName::WebPage_PreferencesDidChange; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_PreferencesDidChange; }
     static const bool isSync = false;
 
     explicit PreferencesDidChange(const WebKit::WebPreferencesStore& store)
@@ -238,7 +238,7 @@ class SendDoubleAndFloat {
 public:
     using Arguments = std::tuple<double, float>;
 
-    static IPC::MessageName name() { return IPC::MessageName::WebPage_SendDoubleAndFloat; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_SendDoubleAndFloat; }
     static const bool isSync = false;
 
     SendDoubleAndFloat(double d, float f)
@@ -259,7 +259,7 @@ class SendInts {
 public:
     using Arguments = std::tuple<const Vector<uint64_t>&, const Vector<Vector<uint64_t>>&>;
 
-    static IPC::MessageName name() { return IPC::MessageName::WebPage_SendInts; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_SendInts; }
     static const bool isSync = false;
 
     SendInts(const Vector<uint64_t>& ints, const Vector<Vector<uint64_t>>& intVectors)
@@ -280,7 +280,7 @@ class CreatePlugin {
 public:
     using Arguments = std::tuple<uint64_t, const WebKit::Plugin::Parameters&>;
 
-    static IPC::MessageName name() { return IPC::MessageName::WebPage_CreatePlugin; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_CreatePlugin; }
     static const bool isSync = true;
 
     using Reply = std::tuple<bool&>;
@@ -303,7 +303,7 @@ class RunJavaScriptAlert {
 public:
     using Arguments = std::tuple<uint64_t, const String&>;
 
-    static IPC::MessageName name() { return IPC::MessageName::WebPage_RunJavaScriptAlert; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_RunJavaScriptAlert; }
     static const bool isSync = true;
 
     using Reply = std::tuple<>;
@@ -326,7 +326,7 @@ class GetPlugins {
 public:
     using Arguments = std::tuple<bool>;
 
-    static IPC::MessageName name() { return IPC::MessageName::WebPage_GetPlugins; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_GetPlugins; }
     static const bool isSync = true;
 
     using Reply = std::tuple<Vector<WebCore::PluginInfo>&>;
@@ -349,7 +349,7 @@ class GetPluginProcessConnection {
 public:
     using Arguments = std::tuple<const String&>;
 
-    static IPC::MessageName name() { return IPC::MessageName::WebPage_GetPluginProcessConnection; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_GetPluginProcessConnection; }
     static const bool isSync = true;
 
     using DelayedReply = GetPluginProcessConnectionDelayedReply;
@@ -374,7 +374,7 @@ class TestMultipleAttributes {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::WebPage_TestMultipleAttributes; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_TestMultipleAttributes; }
     static const bool isSync = true;
 
     using DelayedReply = TestMultipleAttributesDelayedReply;
@@ -394,7 +394,7 @@ class TestParameterAttributes {
 public:
     using Arguments = std::tuple<uint64_t, double, double>;
 
-    static IPC::MessageName name() { return IPC::MessageName::WebPage_TestParameterAttributes; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_TestParameterAttributes; }
     static const bool isSync = false;
 
     TestParameterAttributes(uint64_t foo, double bar, double baz)
@@ -415,7 +415,7 @@ class TemplateTest {
 public:
     using Arguments = std::tuple<const HashMap<String, std::pair<String, uint64_t>>&>;
 
-    static IPC::MessageName name() { return IPC::MessageName::WebPage_TemplateTest; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_TemplateTest; }
     static const bool isSync = false;
 
     explicit TemplateTest(const HashMap<String, std::pair<String, uint64_t>>& a)
@@ -436,7 +436,7 @@ class SetVideoLayerID {
 public:
     using Arguments = std::tuple<const WebCore::GraphicsLayer::PlatformLayerID&>;
 
-    static IPC::MessageName name() { return IPC::MessageName::WebPage_SetVideoLayerID; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_SetVideoLayerID; }
     static const bool isSync = false;
 
     explicit SetVideoLayerID(const WebCore::GraphicsLayer::PlatformLayerID& videoLayerID)
@@ -458,7 +458,7 @@ class DidCreateWebProcessConnection {
 public:
     using Arguments = std::tuple<const IPC::MachPort&, const OptionSet<WebKit::SelectionFlags>&>;
 
-    static IPC::MessageName name() { return IPC::MessageName::WebPage_DidCreateWebProcessConnection; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_DidCreateWebProcessConnection; }
     static const bool isSync = false;
 
     DidCreateWebProcessConnection(const IPC::MachPort& connectionIdentifier, const OptionSet<WebKit::SelectionFlags>& flags)
@@ -481,7 +481,7 @@ class InterpretKeyEvent {
 public:
     using Arguments = std::tuple<uint32_t>;
 
-    static IPC::MessageName name() { return IPC::MessageName::WebPage_InterpretKeyEvent; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_InterpretKeyEvent; }
     static const bool isSync = true;
 
     using Reply = std::tuple<Vector<WebCore::KeypressCommand>&>;
@@ -506,7 +506,7 @@ class DeprecatedOperation {
 public:
     using Arguments = std::tuple<const IPC::DummyType&>;
 
-    static IPC::MessageName name() { return IPC::MessageName::WebPage_DeprecatedOperation; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_DeprecatedOperation; }
     static const bool isSync = false;
 
     explicit DeprecatedOperation(const IPC::DummyType& dummy)
@@ -529,7 +529,7 @@ class ExperimentalOperation {
 public:
     using Arguments = std::tuple<const IPC::DummyType&>;
 
-    static IPC::MessageName name() { return IPC::MessageName::WebPage_ExperimentalOperation; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_ExperimentalOperation; }
     static const bool isSync = false;
 
     explicit ExperimentalOperation(const IPC::DummyType& dummy)
@@ -547,7 +547,7 @@ private:
 };
 #endif
 
-} // namespace WebPage
+} // namespace TestWithLegacyReceiver
 } // namespace Messages
 
 #endif // (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
