@@ -39,7 +39,7 @@ namespace WebKit {
 
 class RemoteAudioSourceProvider;
 
-class RemoteAudioSourceProviderManager : public IPC::Connection::ThreadMessageReceiverRefCounted {
+class RemoteAudioSourceProviderManager : public IPC::Connection::WorkQueueMessageReceiver {
 public:
     static Ref<RemoteAudioSourceProviderManager> create() { return adoptRef(*new RemoteAudioSourceProviderManager()); }
     ~RemoteAudioSourceProviderManager();
@@ -51,9 +51,6 @@ public:
 
 private:
     RemoteAudioSourceProviderManager();
-
-    // IPC::Connection::ThreadMessageReceiver
-    void dispatchToThread(Function<void()>&&) final;
 
     // Messages
     void audioStorageChanged(WebCore::MediaPlayerIdentifier, const SharedMemory::IPCHandle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);

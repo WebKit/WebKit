@@ -54,12 +54,12 @@ void RemoteAudioSourceProviderManager::setConnection(IPC::Connection* connection
         return;
 
     if (m_connection)
-        m_connection->removeThreadMessageReceiver(Messages::RemoteAudioSourceProviderManager::messageReceiverName());
+        m_connection->removeWorkQueueMessageReceiver(Messages::RemoteAudioSourceProviderManager::messageReceiverName());
 
     m_connection = WTFMove(connection);
 
     if (m_connection)
-        m_connection->addThreadMessageReceiver(Messages::RemoteAudioSourceProviderManager::messageReceiverName(), this);
+        m_connection->addWorkQueueMessageReceiver(Messages::RemoteAudioSourceProviderManager::messageReceiverName(), m_queue, this);
 }
 
 void RemoteAudioSourceProviderManager::addProvider(Ref<RemoteAudioSourceProvider>&& provider)
@@ -67,7 +67,7 @@ void RemoteAudioSourceProviderManager::addProvider(Ref<RemoteAudioSourceProvider
     ASSERT(WTF::isMainRunLoop());
     setConnection(&WebProcess::singleton().ensureGPUProcessConnection().connection());
 
-    dispatchToThread([this, provider = WTFMove(provider)]() mutable {
+    m_queue->dispatch([this, provider = WTFMove(provider)]() mutable {
         auto identifier = provider->identifier();
 
         ASSERT(!m_providers.contains(identifier));
@@ -79,15 +79,10 @@ void RemoteAudioSourceProviderManager::removeProvider(MediaPlayerIdentifier iden
 {
     ASSERT(WTF::isMainRunLoop());
 
-    dispatchToThread([this, identifier] {
+    m_queue->dispatch([this, identifier] {
         ASSERT(m_providers.contains(identifier));
         m_providers.remove(identifier);
     });
-}
-
-void RemoteAudioSourceProviderManager::dispatchToThread(Function<void()>&& callback)
-{
-    m_queue->dispatch(WTFMove(callback));
 }
 
 void RemoteAudioSourceProviderManager::audioStorageChanged(MediaPlayerIdentifier identifier, const SharedMemory::IPCHandle& ipcHandle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
