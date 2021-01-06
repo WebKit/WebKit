@@ -440,20 +440,6 @@ public:
         return static_cast<int64_t>(toBigUInt64Heap(bigInt.asHeapBigInt()));
     }
 
-    static Optional<uint64_t> toUint64(JSValue bigInt)
-    {
-        ASSERT(bigInt.isBigInt());
-#if USE(BIGINT32)
-        if (bigInt.isBigInt32()) {
-            auto value = bigInt.bigInt32AsInt32();
-            if (value < 0)
-                return WTF::nullopt;
-            return value;
-        }
-#endif
-        return toUint64Heap(jsCast<JSBigInt*>(bigInt));
-    }
-
     Digit digit(unsigned);
     void setDigit(unsigned, Digit); // Use only when initializing.
     JS_EXPORT_PRIVATE JSBigInt* rightTrim(JSGlobalObject*);

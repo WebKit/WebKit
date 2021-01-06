@@ -193,7 +193,7 @@ static Optional<uint64_t> convertToUint64(JSC::JSValue jsValue)
         return value;
     }
     if (jsValue.isBigInt())
-        return JSC::JSBigInt::toUint64(jsValue);
+        return JSC::JSBigInt::toBigUInt64(jsValue);
     return WTF::nullopt;
 }
 
@@ -352,10 +352,8 @@ template<typename IntegralType> bool encodeNumericType(IPC::Encoder& encoder, JS
 {
     if (jsValue.isBigInt()) {
         // FIXME: Support negative BigInt.
-        auto result = JSC::JSBigInt::toUint64(jsValue);
-        if (!result)
-            return false;
-        encoder << static_cast<IntegralType>(*result);
+        uint64_t result = JSC::JSBigInt::toBigUInt64(jsValue);
+        encoder << static_cast<IntegralType>(result);
         return true;
     }
     if (!jsValue.isNumber())

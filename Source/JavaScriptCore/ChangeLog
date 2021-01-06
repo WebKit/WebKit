@@ -1,3 +1,23 @@
+2021-01-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Replace JSBigInt::toUint64 with JSBigInt::toBigUInt64
+        https://bugs.webkit.org/show_bug.cgi?id=220378
+
+        Reviewed by Darin Adler.
+
+        This patch replaces JSBigInt::toUint64 with JSBigInt::toBigUInt64.
+        Rough purposes of these functions are the same, and  JSBigInt::toBigUInt64
+        has the semantics defined in the ECMA262 spec. While the behavior is
+        slightly different[1], this difference does not matter for the clients of
+        JSBigInt::toUint64.
+
+        [1]: JSBigInt::toUint64 fails conversion if JSBigInt is out of range of uint64_t,
+             while JSBigInt::toBigUInt64 always generates uint64_t by computing mod UINT64_MAX.
+
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::toUint64Heap): Deleted.
+        * runtime/JSBigInt.h:
+
 2021-01-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DFG/FTL DirectCall need to respect Wasm IC
