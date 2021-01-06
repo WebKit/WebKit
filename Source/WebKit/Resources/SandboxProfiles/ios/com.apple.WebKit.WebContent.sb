@@ -827,6 +827,12 @@
     )
 )
 
+(deny file-read* (with no-report)
+    (home-literal
+        "/Library/Preferences/com.apple.WebKit.WebContent.plist"
+    )
+)
+
 (deny sysctl*)
 (allow sysctl-read
     (sysctl-name
@@ -949,7 +955,10 @@
 (media-accessibility-support)
 
 (deny mach-lookup (with no-log)
-    (global-name "com.apple.fontservicesd"))
+    (global-name "com.apple.SystemConfiguration.configd")
+    (global-name "com.apple.aggregated")
+    (global-name "com.apple.fontservicesd")
+)
 
 (deny mach-lookup (with telemetry-backtrace)
     (global-name "com.apple.PowerManagement.control"))

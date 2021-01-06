@@ -1,5 +1,16 @@
 2021-01-06  Per Arne Vollan  <pvollan@apple.com>
 
+        [iOS] Silence selected sandbox violation reports
+        https://bugs.webkit.org/show_bug.cgi?id=220320
+
+        Reviewed by Darin Adler.
+
+        For performance reasons, benign sandbox violations in the WebContent process can be silenced on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2021-01-06  Per Arne Vollan  <pvollan@apple.com>
+
         [iOS] Add missing endpoint in sandbox message filter
         https://bugs.webkit.org/show_bug.cgi?id=219731
         <rdar://problem/71566760>
