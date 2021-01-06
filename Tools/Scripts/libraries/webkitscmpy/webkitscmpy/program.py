@@ -43,7 +43,7 @@ class Command(object):
             raise NotImplementedError("'{}' does not have a help message")
 
     @classmethod
-    def main(cls, args, repository):
+    def main(cls, args, repository, **kwargs):
         sys.stderr.write('No command specified\n')
         return -1
 
@@ -81,7 +81,7 @@ class Find(Command):
         )
 
     @classmethod
-    def main(cls, args, repository):
+    def main(cls, args, repository, **kwargs):
         try:
             commit = repository.find(args.argument[0], include_log=args.include_log)
         except (local.Scm.Exception, ValueError) as exception:
@@ -143,7 +143,7 @@ class Checkout(Command):
         )
 
     @classmethod
-    def main(cls, args, repository):
+    def main(cls, args, repository, **kwargs):
         if not repository.path:
             sys.stderr.write("Cannot checkout on remote repository")
             return 1
@@ -162,7 +162,7 @@ class Checkout(Command):
         return 0
 
 
-def main(args=None, path=None, loggers=None, contributors=None):
+def main(args=None, path=None, loggers=None, contributors=None, identifier_template=None):
     logging.basicConfig(level=logging.WARNING)
 
     loggers = [logging.getLogger(), webkitcorepy_log,  log] + (loggers or [])
@@ -183,7 +183,9 @@ def main(args=None, path=None, loggers=None, contributors=None):
 
     subparsers = parser.add_subparsers(help='sub-command help')
 
-    for program in [Find, Checkout]:
+    from webkitscmpy.canonicalize import Canonicalize
+
+    for program in [Find, Checkout, Canonicalize]:
         subparser = subparsers.add_parser(program.name, help=program.help)
         subparser.set_defaults(main=program.main)
         program.parser(subparser, loggers=loggers)
@@ -195,4 +197,4 @@ def main(args=None, path=None, loggers=None, contributors=None):
     else:
         repository = local.Scm.from_path(path=parsed.repository, contributors=contributors)
 
-    return parsed.main(args=parsed, repository=repository)
+    return parsed.main(args=parsed, repository=repository, identifier_template=identifier_template)

@@ -42,5 +42,9 @@ if '__main__' == __name__:
             if nick not in contributors:
                 contributors[nick] = c
 
-    sys.exit(program.main(path=os.path.dirname(__file__), contributors=contributors))
+    sys.exit(program.main(
+        path=os.path.dirname(__file__),
+        contributors=contributors,
+        identifier_template='Canonical link: https://commits.webkit.org/{}',
+    ))
 

@@ -1,3 +1,45 @@
+2021-01-05  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Add command to canonicalize unpushed commits
+        https://bugs.webkit.org/show_bug.cgi?id=219982
+        <rdar://problem/72427536>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/git-webkit: Specify web-service for canonical identifier translation.
+        * Scripts/libraries/webkitscmpy/setup.py: Add canonicalize directory to package.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/canonicalize: Added.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/canonicalize/__init__.py: Added.
+        (Canonicalize): Command to edit history of unpushed commits on a branch.
+        (Canonicalize.parser):
+        (Canonicalize.main): Call `git filter-branch` to edit commit message and authorship
+        of unpushed commits.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/canonicalize/committer.py: Added.
+        (canonicalize): Given a name, email and a contributor mapping, return a canonical name
+        and email for the given author or committer.
+        (main): Print out the canonical author and committer to be parsed by `git filter-branch`.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/canonicalize/message.py: Added.
+        (main): Add the canonical identifier to a commit message.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/contributor.py:
+        (Contributor): Add unknown author regex.
+        (Contributor.from_scm_log):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        (Git.__init__): Add `git filter-branch` mock. Note that this mock makes an effort to test
+        message.py and contributor.py, but not the shell script passed to the command.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program.py:
+        (Command.main): Accept arbitrary **kwargs.
+        (Find.main): Ditto.
+        (Checkout.main): Ditto.
+        (main): Allow caller to specify a string template for canonical identifiers in commit messages.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/canonicalize_unittest.py: Added.
+        (TestCanonicalize):
+        (TestCanonicalize.test_invalid):
+        (TestCanonicalize.test_no_commits):
+        (TestCanonicalize.test_formated_identifier):
+        (TestCanonicalize.test_git_svn):
+        (TestCanonicalize.test_branch_commits):
+
 2021-01-05  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] allow stress tests to opt out of parallel execution

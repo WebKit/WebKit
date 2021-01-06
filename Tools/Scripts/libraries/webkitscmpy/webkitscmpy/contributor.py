@@ -30,6 +30,7 @@ from webkitcorepy import string_utils
 class Contributor(object):
     GIT_AUTHOR_RE = re.compile(r'Author: (?P<author>.*) <(?P<email>[^@]+@[^@]+)(@.*)?>')
     AUTOMATED_CHECKIN_RE = re.compile(r'Author: (?P<author>.*) <devnull>')
+    UNKNOWN_AUTHOR = re.compile(r'Author: (?P<author>.*) <None>')
     SVN_AUTHOR_RE = re.compile(r'r\d+ \| (?P<email>.*) \| (?P<date>.*) \| \d+ lines?')
     SVN_PATCH_FROM_RE = re.compile(r'Patch by (?P<author>.*) <(?P<email>.*)> on \d+-\d+-\d+')
 
@@ -111,12 +112,12 @@ class Contributor(object):
         email = None
         author = None
 
-        for expression in [cls.GIT_AUTHOR_RE, cls.SVN_AUTHOR_RE, cls.SVN_PATCH_FROM_RE, cls.AUTOMATED_CHECKIN_RE]:
+        for expression in [cls.GIT_AUTHOR_RE, cls.SVN_AUTHOR_RE, cls.SVN_PATCH_FROM_RE, cls.AUTOMATED_CHECKIN_RE, cls.UNKNOWN_AUTHOR]:
             match = expression.match(line)
             if match:
                 if 'author' in expression.groupindex:
                     author = match.group('author')
-                    if '(no author)' in author or 'Automated Checkin' in author:
+                    if '(no author)' in author or 'Automated Checkin' in author or 'Unknown' in author:
                         author = None
                 if 'email' in expression.groupindex:
                     email = match.group('email')

@@ -50,6 +50,7 @@ setup(
     license='Modified BSD',
     packages=[
         'webkitscmpy',
+        'webkitscmpy.canonicalize',
         'webkitscmpy.local',
         'webkitscmpy.mocks',
         'webkitscmpy.mocks.local',

@@ -25,8 +25,10 @@ import os
 import re
 
 from datetime import datetime
-from webkitcorepy import mocks
+from webkitcorepy import mocks, OutputCapture, StringIO
 from webkitscmpy import local, Commit, Contributor
+from webkitscmpy.canonicalize.committer import main as committer_main
+from webkitscmpy.canonicalize.message import main as message_main
 
 
 class Git(mocks.Subprocess):
@@ -58,6 +60,7 @@ class Git(mocks.Subprocess):
                     commit.revision = None
 
         self.head = self.commits[self.default_branch][-1]
+        self.remotes = {'origin/{}'.format(branch): commits[-1] for branch, commits in self.commits.items()}
         self.tags = {}
 
         if git_svn:
@@ -233,6 +236,14 @@ nothing to commit, working tree clean
                 generator=lambda *args, **kwargs:
                     mocks.ProcessCompletion(returncode=0) if self.checkout(args[2]) else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
+                self.executable, 'filter-branch', '-f',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.filter_branch(
+                    args[-1],
+                    identifier_template=args[-2].split("'")[-2] if args[-3] == '--msg-filter' else None,
+                    environment_shell=args[4] if args[3] == '--env-filter' and args[4] else None,
+                )
+            ), mocks.Subprocess.Route(
                 self.executable,
                 cwd=self.path,
                 completion=mocks.ProcessCompletion(
@@ -265,16 +276,22 @@ nothing to commit, working tree clean
                     return self.commits[self.default_branch][found.branch_point - difference - 1]
                 return None
 
+        something = str(something)
+        if '..' in something:
+            a, b = something.split('..')
+            a = self.find(a)
+            b = self.find(b)
+            return b if a and b else None
+
         if something == 'HEAD':
             return self.head
         if something in self.commits.keys():
             return self.commits[something][-1]
         if something in self.tags.keys():
             return self.tags[something]
+        if something in self.remotes.keys():
+            return self.remotes[something]
 
-        something = str(something)
-        if '..' in something:
-            something = something.split('..')[1]
         for branch, commits in self.commits.items():
             if branch == something:
                 return commits[-1]
@@ -286,10 +303,16 @@ nothing to commit, working tree clean
         return None
 
     def count(self, something):
-        match = self.find(something)
-        if '..' in something or not match.branch_point:
-            return match.identifier
-        return match.branch_point + match.identifier
+        if '..' not in something:
+            match = self.find(something)
+            return (match.branch_point or 0) + match.identifier
+
+        a, b = something.split('..')
+        a = self.find(a)
+        b = self.find(b)
+        if a.branch_point == b.branch_point:
+            return abs(b.identifier - a.identifier)
+        return b.identifier
 
     def branches_on(self, hash):
         result = set()
@@ -313,3 +336,89 @@ nothing to commit, working tree clean
             self.head = commit
             self.detached = something not in self.commits.keys()
         return True if commit else False
+
+    def filter_branch(self, range, identifier_template=None, environment_shell=None):
+        # We can't effectively mock the bash script in the command, but we can mock the python code that
+        # script calls, which is where the program logic is.
+        head, start = range.split('...')
+        head = self.find(head)
+        start = self.find(start)
+
+        commits_to_edit = []
+        for commit in reversed(self.commits[head.branch]):
+            if commit.branch == start.branch and commit.identifier <= start.identifier:
+                break
+            commits_to_edit.insert(0, commit)
+        if head.branch != self.default_branch:
+            for commit in reversed(self.commits[self.default_branch][:head.branch_point]):
+                if commit.identifier <= start.identifier:
+                    break
+                commits_to_edit.insert(0, commit)
+
+        stdout = StringIO()
+        original_env = {key: os.environ.get('OLDPWD') for key in [
+            'OLDPWD', 'GIT_COMMIT',
+            'GIT_AUTHOR_NAME', 'GIT_AUTHOR_EMAIL',
+            'GIT_COMMITTER_NAME', 'GIT_COMMITTER_EMAIL',
+        ]}
+
+        try:
+            count = 0
+            os.environ['OLDPWD'] = self.path
+            for commit in commits_to_edit:
+                count += 1
+                os.environ['GIT_COMMIT'] = commit.hash
+                os.environ['GIT_AUTHOR_NAME'] = commit.author.name
+                os.environ['GIT_AUTHOR_EMAIL'] = commit.author.email
+                os.environ['GIT_COMMITTER_NAME'] = commit.author.name
+                os.environ['GIT_COMMITTER_EMAIL'] = commit.author.email
+
+                stdout.write(
+                    'Rewrite {hash} ({count}/{total}) (--- seconds passed, remaining --- predicted)\n'.format(
+                        hash=commit.hash,
+                        count=count,
+                        total=len(commits_to_edit),
+                    ))
+
+                if identifier_template:
+                    messagefile = StringIO()
+                    messagefile.write(commit.message)
+                    messagefile.seek(0)
+                    with OutputCapture() as captured:
+                        message_main(messagefile, identifier_template)
+                    lines = captured.stdout.getvalue().splitlines()
+                    if lines[-1].startswith('git-svn-id: https://svn'):
+                        lines.pop(-1)
+                    commit.message = '\n'.join(lines)
+
+                if not environment_shell:
+                    continue
+                if re.search(r'echo "Overwriting', environment_shell):
+                    stdout.write('Overwriting {}\n'.format(commit.hash))
+
+                match = re.search(r'(?P<json>\S+\.json)', environment_shell)
+                if match:
+                    with OutputCapture() as captured:
+                        committer_main(match.group('json'))
+                    captured.stdout.seek(0)
+                    for line in captured.stdout.readlines():
+                        line = line.rstrip()
+                        os.environ[line.split(' ')[0]] = ' '.join(line.split(' ')[1:])
+
+                commit.author = Contributor(name=os.environ['GIT_AUTHOR_NAME'], emails=[os.environ['GIT_AUTHOR_EMAIL']])
+
+                if re.search(r'echo "\s+', environment_shell):
+                    for key in ['GIT_AUTHOR_NAME', 'GIT_AUTHOR_EMAIL', 'GIT_COMMITTER_NAME', 'GIT_COMMITTER_EMAIL']:
+                        stdout.write('    {}={}\n'.format(key, os.environ[key]))
+
+        finally:
+            for key, value in original_env.items():
+                if value is not None:
+                    os.environ[key] = value
+                else:
+                    del os.environ[key]
+
+        return mocks.ProcessCompletion(
+            returncode=0,
+            stdout=stdout.getvalue(),
+        )
