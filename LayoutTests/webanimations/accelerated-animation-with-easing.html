@@ -26,11 +26,15 @@
 <div id="easing-on-animation-two-keyframes"></div>
 <div id="easing-on-animation-three-keyframes"></div>
 <div id="easing-on-keyframe"></div>
+<script src="../resources/ui-helper.js"></script>
 <script>
 
 (async function() {
     if (window.testRunner)
         testRunner.waitUntilDone();
+
+    await UIHelper.ensureStablePresentationUpdate();
+    await UIHelper.ensureStablePresentationUpdate();
 
     const animations = [];
 
@@ -72,9 +76,8 @@
     }));
 
     await Promise.all(animations.map(animation => animation.ready));
-    await new Promise(requestAnimationFrame);
-    await new Promise(requestAnimationFrame);
-    await new Promise(requestAnimationFrame);
+    await UIHelper.ensureStablePresentationUpdate();
+    await UIHelper.ensureStablePresentationUpdate();
 
     if (window.testRunner)
         testRunner.notifyDone();
