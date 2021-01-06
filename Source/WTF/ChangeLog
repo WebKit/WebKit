@@ -1,3 +1,16 @@
+2021-01-05  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Add a feature flag to stop leaking an XPC boost message to XPC services
+        https://bugs.webkit.org/show_bug.cgi?id=219453
+        <rdar://72834999>
+
+        Reviewed by Geoff Garen.
+
+        Add new RUNNINGBOARD_WEBKIT_PRIORITY_SUPPORT build time flag since we need a recent
+        enough build of RunningBoard to do this.
+
+        * wtf/PlatformHave.h:
+
 2020-12-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a helper method to WTF::MachSemaphore to wait with a timeout duration
