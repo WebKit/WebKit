@@ -1,3 +1,22 @@
+2021-01-06  Lauro Moura  <lmoura@igalia.com>
+
+        [Flatpak SDK] coredumpctl invocation when using a local SDK repo fallbacks to the remote repo
+        https://bugs.webkit.org/show_bug.cgi?id=219934
+
+        Reviewed by Philippe Normand.
+
+        Some commands run in flatpak may end up calling other commands on the
+        host through flatpak-spawn that would enter the flatpak environment
+        again. One such command happens when getting crash logs, which invokes
+        webkit-flatpak with --gdb-stack-trace.
+
+        Before this commit, the WEBKIT_FLATPAK_USER_DIR is not forwarded,
+        making flatpakutils.py to download the regular UserFlatpak SDK instead
+        of using the one in the mentioned variable.
+
+        * Scripts/webkitpy/port/linux_get_crash_log.py:
+        (GDBCrashLogGenerator._get_trace_from_flatpak):
+
 2021-01-05  Aditya Keerthi  <akeerthi@apple.com>
 
         REGRESSION (r261157): Crash in WKSelectPopover when running as iPhone app on iPad

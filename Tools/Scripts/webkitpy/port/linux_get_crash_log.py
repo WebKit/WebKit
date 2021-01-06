@@ -108,8 +108,16 @@ class GDBCrashLogGenerator(object):
         else:
             coredump_since = "--gdb-stack-trace"
         webkit_flatpak_path = self._webkit_finder.path_to_script('webkit-flatpak')
-        cmd = ['flatpak-spawn', '--host', webkit_flatpak_path, '--%s' % self._port_name,
-               "--%s" % self._configuration.lower(), coredump_since]
+        cmd = ['flatpak-spawn', '--host']
+
+        # Forward WEBKIT_FLATPAK_USER_DIR so webkit-flatpak can use the same flatpak
+        # install as the current one.
+        user_dir = os.environ.get('WEBKIT_FLATPAK_USER_DIR')
+        if user_dir:
+            cmd.append("--env=WEBKIT_FLATPAK_USER_DIR=%s" % user_dir)
+
+        cmd.extend([webkit_flatpak_path, '--%s' % self._port_name,
+                    "--%s" % self._configuration.lower(), "--verbose", coredump_since])
 
         proc = self._executive.popen(cmd, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         crash_log, stderr = proc.communicate()
