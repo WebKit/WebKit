@@ -1788,6 +1788,12 @@ void WebProcessProxy::pageMutedStateChanged(WebCore::PageIdentifier identifier, 
         speechRecognitionServer->mute();
 }
 
+void WebProcessProxy::pageIsBecomingInvisible(WebCore::PageIdentifier identifier)
+{
+    if (auto server = m_speechRecognitionServerMap.get(identifier))
+        server->abortForPageIsBecomingInvisible();
+}
+
 #if PLATFORM(WATCHOS)
 
 void WebProcessProxy::startBackgroundActivityForFullscreenInput()

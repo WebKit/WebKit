@@ -161,6 +161,11 @@ void SpeechRecognitionPermissionManager::continueProcessingRequest()
     }
     ASSERT(m_userPermissionCheck == CheckResult::Granted);
 
+    if (!m_page.isViewVisible()) {
+        completeCurrentRequest(SpeechRecognitionPermissionDecision::Deny);
+        return;
+    }
+
     completeCurrentRequest(SpeechRecognitionPermissionDecision::Grant);
 }
 
