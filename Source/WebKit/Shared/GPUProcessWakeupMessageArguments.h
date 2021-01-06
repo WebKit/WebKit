@@ -32,10 +32,16 @@
 
 namespace WebKit {
 
+enum class GPUProcessWakeupReason : uint8_t {
+    Unspecified,
+    ItemCountHysteresisExceeded
+};
+
 struct GPUProcessWakeupMessageArguments {
     WebCore::DisplayList::ItemBufferIdentifier itemBufferIdentifier;
     uint64_t offset { 0 };
     WebCore::RenderingResourceIdentifier destinationImageBufferIdentifier;
+    GPUProcessWakeupReason reason { GPUProcessWakeupReason::Unspecified };
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<GPUProcessWakeupMessageArguments> decode(Decoder&);
@@ -47,6 +53,7 @@ void GPUProcessWakeupMessageArguments::encode(Encoder& encoder) const
     encoder << itemBufferIdentifier;
     encoder << offset;
     encoder << destinationImageBufferIdentifier;
+    encoder << reason;
 }
 
 template<class Decoder>
@@ -67,9 +74,26 @@ Optional<GPUProcessWakeupMessageArguments> GPUProcessWakeupMessageArguments::dec
     if (!destinationImageBufferIdentifier)
         return WTF::nullopt;
 
-    return {{ *itemBufferIdentifier, *offset, *destinationImageBufferIdentifier }};
+    Optional<GPUProcessWakeupReason> reason;
+    decoder >> reason;
+    if (!reason)
+        return WTF::nullopt;
+
+    return {{ *itemBufferIdentifier, *offset, *destinationImageBufferIdentifier, *reason }};
 }
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::GPUProcessWakeupReason> {
+    using values = EnumValues<
+        WebKit::GPUProcessWakeupReason,
+        WebKit::GPUProcessWakeupReason::Unspecified,
+        WebKit::GPUProcessWakeupReason::ItemCountHysteresisExceeded
+    >;
+};
+
+} // namespace WTF
 
 #endif // ENABLE(GPU_PROCESS)

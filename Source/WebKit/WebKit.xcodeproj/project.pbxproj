@@ -1968,6 +1968,7 @@
 		F42D634122A0EFDF00D2FB3A /* WebAutocorrectionData.h in Headers */ = {isa = PBXBuildFile; fileRef = F42D633F22A0EFD300D2FB3A /* WebAutocorrectionData.h */; };
 		F430E9422247335F005FE053 /* WebsiteMetaViewportPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = F430E941224732A9005FE053 /* WebsiteMetaViewportPolicy.h */; };
 		F430E94422473DFF005FE053 /* WebContentMode.h in Headers */ = {isa = PBXBuildFile; fileRef = F430E94322473DB8005FE053 /* WebContentMode.h */; };
+		F437C8D92593B7E300DB8A1C /* RemoteRenderingBackendCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = F437C8D82593B7E300DB8A1C /* RemoteRenderingBackendCreationParameters.h */; };
 		F438CD1C2241421400DE6DDA /* WKWebpagePreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = F438CD1B224140A600DE6DDA /* WKWebpagePreferences.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F438CD1F22414D4000DE6DDA /* WKWebpagePreferencesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = F438CD1E22414D4000DE6DDA /* WKWebpagePreferencesInternal.h */; };
 		F438CD212241F69500DE6DDA /* WKWebpagePreferencesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F438CD202241F69500DE6DDA /* WKWebpagePreferencesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5777,6 +5778,7 @@
 		F42D634022A0EFD300D2FB3A /* WebAutocorrectionData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebAutocorrectionData.mm; path = ios/WebAutocorrectionData.mm; sourceTree = "<group>"; };
 		F430E941224732A9005FE053 /* WebsiteMetaViewportPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebsiteMetaViewportPolicy.h; sourceTree = "<group>"; };
 		F430E94322473DB8005FE053 /* WebContentMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebContentMode.h; sourceTree = "<group>"; };
+		F437C8D82593B7E300DB8A1C /* RemoteRenderingBackendCreationParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderingBackendCreationParameters.h; sourceTree = "<group>"; };
 		F438CD1B224140A600DE6DDA /* WKWebpagePreferences.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWebpagePreferences.h; sourceTree = "<group>"; };
 		F438CD1D22414AD600DE6DDA /* WKWebpagePreferences.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebpagePreferences.mm; sourceTree = "<group>"; };
 		F438CD1E22414D4000DE6DDA /* WKWebpagePreferencesInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWebpagePreferencesInternal.h; sourceTree = "<group>"; };
@@ -6514,6 +6516,7 @@
 				E1CC1B8E12D7EADF00625838 /* PrintInfo.h */,
 				463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */,
 				9B1229D023FF2A5E008CA751 /* RemoteAudioDestinationIdentifier.h */,
+				F437C8D82593B7E300DB8A1C /* RemoteRenderingBackendCreationParameters.h */,
 				5CB7AFE623C681B000E49CF3 /* ResourceLoadInfo.h */,
 				5C00993B2417FB7E00D53C25 /* ResourceLoadStatisticsParameters.h */,
 				410482CB1DDD2FB500F006D0 /* RTCNetwork.cpp */,
@@ -11848,6 +11851,7 @@
 				1A5704FC1BE1751100874AF1 /* RemoteObjectInvocation.h in Headers */,
 				1AC1338018590AE400F3EC05 /* RemoteObjectRegistry.h in Headers */,
 				1AC1338618590C4600F3EC05 /* RemoteObjectRegistryMessages.h in Headers */,
+				F437C8D92593B7E300DB8A1C /* RemoteRenderingBackendCreationParameters.h in Headers */,
 				0F594790187B3B3A00437857 /* RemoteScrollingCoordinator.h in Headers */,
 				0F5947A8187B517600437857 /* RemoteScrollingCoordinatorMessages.h in Headers */,
 				0F59479B187B3B6000437857 /* RemoteScrollingCoordinatorProxy.h in Headers */,

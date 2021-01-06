@@ -41,6 +41,12 @@
 #include <WebCore/DisplayListReplayer.h>
 #include <wtf/WeakPtr.h>
 
+#if PLATFORM(COCOA)
+namespace WTF {
+class MachSemaphore;
+}
+#endif
+
 namespace WebCore {
 namespace DisplayList {
 class DisplayList;
@@ -56,13 +62,14 @@ namespace WebKit {
 
 class DisplayListReaderHandle;
 class GPUConnectionToWebProcess;
+struct RemoteRenderingBackendCreationParameters;
 
 class RemoteRenderingBackend
     : public IPC::MessageSender
     , private IPC::MessageReceiver
     , public WebCore::DisplayList::ItemBufferReadingClient {
 public:
-    static std::unique_ptr<RemoteRenderingBackend> create(GPUConnectionToWebProcess&, RenderingBackendIdentifier);
+    static std::unique_ptr<RemoteRenderingBackend> create(GPUConnectionToWebProcess&, RemoteRenderingBackendCreationParameters&&);
     virtual ~RemoteRenderingBackend();
 
     GPUConnectionToWebProcess* gpuConnectionToWebProcess() const;
@@ -78,7 +85,7 @@ public:
     void setNextItemBufferToRead(WebCore::DisplayList::ItemBufferIdentifier, WebCore::RenderingResourceIdentifier destination);
 
 private:
-    RemoteRenderingBackend(GPUConnectionToWebProcess&, RenderingBackendIdentifier);
+    RemoteRenderingBackend(GPUConnectionToWebProcess&, RemoteRenderingBackendCreationParameters&&);
 
     Optional<WebCore::DisplayList::ItemHandle> WARN_UNUSED_RETURN decodeItem(const uint8_t* data, size_t length, WebCore::DisplayList::ItemType, uint8_t* handleLocation) override;
 
@@ -95,7 +102,7 @@ private:
     }
 
     WebCore::DisplayList::ReplayResult submit(const WebCore::DisplayList::DisplayList&, WebCore::ImageBuffer& destination);
-    RefPtr<WebCore::ImageBuffer> nextDestinationImageBufferAfterApplyingDisplayLists(WebCore::ImageBuffer& initialDestination, size_t initialOffset, DisplayListReaderHandle&);
+    RefPtr<WebCore::ImageBuffer> nextDestinationImageBufferAfterApplyingDisplayLists(WebCore::ImageBuffer& initialDestination, size_t initialOffset, DisplayListReaderHandle&, GPUProcessWakeupReason);
 
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const override;
@@ -139,6 +146,9 @@ private:
     RenderingBackendIdentifier m_renderingBackendIdentifier;
     HashMap<WebCore::DisplayList::ItemBufferIdentifier, RefPtr<DisplayListReaderHandle>> m_sharedDisplayListHandles;
     Optional<PendingWakeupInformation> m_pendingWakeupInfo;
+#if PLATFORM(COCOA)
+    std::unique_ptr<WTF::MachSemaphore> m_resumeDisplayListSemaphore;
+#endif
 };
 
 } // namespace WebKit

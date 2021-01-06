@@ -46,6 +46,13 @@ public:
     size_t advance(size_t amount) override;
     WebCore::DisplayList::ItemBufferHandle createHandle() const;
 
+    bool tryToResume(SharedDisplayListHandle::ResumeReadingInformation&& info)
+    {
+        auto& header = this->header();
+        header.resumeReadingInfo = WTFMove(info);
+        return header.waitingStatus.compareExchangeWeak(SharedDisplayListHandle::WaitingStatus::Waiting, SharedDisplayListHandle::WaitingStatus::Resuming);
+    }
+
 private:
     DisplayListWriterHandle(WebCore::DisplayList::ItemBufferIdentifier identifier, Ref<SharedMemory>&& sharedMemory)
         : SharedDisplayListHandle(identifier, WTFMove(sharedMemory))

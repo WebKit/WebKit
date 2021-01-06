@@ -25,41 +25,56 @@
 
 #pragma once
 
-#include "SharedDisplayListHandle.h"
-#include <wtf/FastMalloc.h>
+#if ENABLE(GPU_PROCESS)
+
+#include "RenderingBackendIdentifier.h"
+#include <wtf/MachSendRight.h>
 
 namespace WebKit {
 
-class DisplayListReaderHandle : public SharedDisplayListHandle {
-    WTF_MAKE_NONCOPYABLE(DisplayListReaderHandle); WTF_MAKE_FAST_ALLOCATED;
-public:
-    static Ref<DisplayListReaderHandle> create(WebCore::DisplayList::ItemBufferIdentifier identifier, Ref<SharedMemory>&& sharedMemory)
-    {
-        return adoptRef(*new DisplayListReaderHandle(identifier, WTFMove(sharedMemory)));
-    }
+struct RemoteRenderingBackendCreationParameters {
+    RenderingBackendIdentifier identifier;
+#if PLATFORM(COCOA)
+    MachSendRight sendRightForResumeDisplayListSemaphore;
+#endif
 
-    size_t advance(size_t amount) override;
-    std::unique_ptr<WebCore::DisplayList::DisplayList> displayListForReading(size_t offset, size_t capacity, WebCore::DisplayList::ItemBufferReadingClient&) const;
-
-    void startWaiting()
-    {
-        header().waitingStatus.store(SharedDisplayListHandle::WaitingStatus::Waiting);
-    }
-
-    Optional<SharedDisplayListHandle::ResumeReadingInformation> stopWaiting()
-    {
-        auto& header = this->header();
-        if (header.waitingStatus.exchange(SharedDisplayListHandle::WaitingStatus::NotWaiting) == SharedDisplayListHandle::WaitingStatus::Resuming)
-            return { header.resumeReadingInfo };
-
-        return WTF::nullopt;
-    }
-
-private:
-    DisplayListReaderHandle(WebCore::DisplayList::ItemBufferIdentifier identifier, Ref<SharedMemory>&& sharedMemory)
-        : SharedDisplayListHandle(identifier, WTFMove(sharedMemory))
-    {
-    }
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<RemoteRenderingBackendCreationParameters> decode(Decoder&);
 };
 
+template<class Encoder>
+void RemoteRenderingBackendCreationParameters::encode(Encoder& encoder) const
+{
+    encoder << identifier;
+#if PLATFORM(COCOA)
+    encoder << sendRightForResumeDisplayListSemaphore;
+#endif
+}
+
+template<class Decoder>
+Optional<RemoteRenderingBackendCreationParameters> RemoteRenderingBackendCreationParameters::decode(Decoder& decoder)
+{
+    RemoteRenderingBackendCreationParameters parameters;
+
+    Optional<RenderingBackendIdentifier> identifier;
+    decoder >> identifier;
+    if (!identifier)
+        return WTF::nullopt;
+
+    parameters.identifier = *identifier;
+
+#if PLATFORM(COCOA)
+    Optional<MachSendRight> sendRightForResumeDisplayListSemaphore;
+    decoder >> sendRightForResumeDisplayListSemaphore;
+    if (!sendRightForResumeDisplayListSemaphore)
+        return WTF::nullopt;
+
+    parameters.sendRightForResumeDisplayListSemaphore = WTFMove(*sendRightForResumeDisplayListSemaphore);
+#endif
+
+    return parameters;
+}
+
 } // namespace WebKit
+
+#endif // ENABLE(GPU_PROCESS)

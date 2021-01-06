@@ -55,6 +55,17 @@ public:
 
     virtual size_t advance(size_t amount) = 0;
 
+    enum class WaitingStatus : uint8_t {
+        NotWaiting,
+        Waiting,
+        Resuming
+    };
+
+    struct ResumeReadingInformation {
+        uint64_t offset;
+        uint64_t destination;
+    };
+
 protected:
     SharedDisplayListHandle(WebCore::DisplayList::ItemBufferIdentifier identifier, Ref<SharedMemory>&& sharedMemory)
         : m_identifier(identifier)
@@ -67,8 +78,11 @@ protected:
         ~DisplayListSharedMemoryHeader() = delete;
 
         Atomic<uint64_t> unreadBytes;
+        ResumeReadingInformation resumeReadingInfo;
+        Atomic<WaitingStatus> waitingStatus;
     };
 
+    const DisplayListSharedMemoryHeader& header() const { return *reinterpret_cast<const DisplayListSharedMemoryHeader*>(data()); }
     DisplayListSharedMemoryHeader& header() { return *reinterpret_cast<DisplayListSharedMemoryHeader*>(data()); }
 
 private:

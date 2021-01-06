@@ -32,6 +32,7 @@
 #include "GPUConnectionToWebProcess.h"
 #include "ImageDataReference.h"
 #include "PlatformRemoteImageBufferProxy.h"
+#include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
 #include "SharedMemory.h"
@@ -66,8 +67,12 @@ void RemoteRenderingBackendProxy::connectToGPUProcess()
     auto& connection = WebProcess::singleton().ensureGPUProcessConnection();
     connection.addClient(*this);
     connection.messageReceiverMap().addMessageReceiver(Messages::RemoteRenderingBackendProxy::messageReceiverName(), m_renderingBackendIdentifier.toUInt64(), *this);
-
-    send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_renderingBackendIdentifier), 0);
+    send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend({
+        m_renderingBackendIdentifier,
+#if PLATFORM(COCOA)
+        m_resumeDisplayListSemaphore.createSendRight(),
+#endif
+    }), 0);
 }
 
 void RemoteRenderingBackendProxy::reestablishGPUProcessConnection()
@@ -272,12 +277,30 @@ void RemoteRenderingBackendProxy::didAppendData(const DisplayList::ItemBufferHan
 
     bool wasEmpty = sharedHandle->advance(numberOfBytes) == numberOfBytes;
     if (!wasEmpty || didChangeItemBuffer == DisplayList::DidChangeItemBuffer::Yes) {
-        if (m_deferredWakeupMessageArguments && !--m_remainingItemsToAppendBeforeSendingWakeup)
-            sendWakeupMessage(*std::exchange(m_deferredWakeupMessageArguments, WTF::nullopt));
+        if (m_deferredWakeupMessageArguments) {
+            if (sharedHandle->tryToResume({ m_deferredWakeupMessageArguments->offset, m_deferredWakeupMessageArguments->destinationImageBufferIdentifier.toUInt64() })) {
+#if PLATFORM(COCOA)
+                m_resumeDisplayListSemaphore.signal();
+#endif
+                m_deferredWakeupMessageArguments = WTF::nullopt;
+                m_remainingItemsToAppendBeforeSendingWakeup = 0;
+            } else if (!--m_remainingItemsToAppendBeforeSendingWakeup) {
+                m_deferredWakeupMessageArguments->reason = GPUProcessWakeupReason::ItemCountHysteresisExceeded;
+                sendWakeupMessage(*std::exchange(m_deferredWakeupMessageArguments, WTF::nullopt));
+            }
+        }
         return;
     }
 
     sendDeferredWakeupMessageIfNeeded();
+
+    auto offsetToRead = sharedHandle->writableOffset() - numberOfBytes;
+    if (sharedHandle->tryToResume({ offsetToRead, destinationImageBuffer.toUInt64() })) {
+#if PLATFORM(COCOA)
+        m_resumeDisplayListSemaphore.signal();
+#endif
+        return;
+    }
 
     // Instead of sending the wakeup message immediately, wait for some additional data. This gives the
     // web process a "head start", decreasing the likelihood that the GPU process will encounter frequent
@@ -285,11 +308,7 @@ void RemoteRenderingBackendProxy::didAppendData(const DisplayList::ItemBufferHan
     constexpr unsigned itemCountHysteresisBeforeSendingWakeup = 512;
 
     m_remainingItemsToAppendBeforeSendingWakeup = itemCountHysteresisBeforeSendingWakeup;
-    m_deferredWakeupMessageArguments = {{
-        handle.identifier,
-        sharedHandle->writableOffset() - numberOfBytes,
-        destinationImageBuffer
-    }};
+    m_deferredWakeupMessageArguments = {{ handle.identifier, offsetToRead, destinationImageBuffer }};
 }
 
 RefPtr<DisplayListWriterHandle> RemoteRenderingBackendProxy::mostRecentlyUsedDisplayListHandle()

@@ -33,25 +33,33 @@
 #include "PlatformRemoteImageBuffer.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerProxy.h"
+#include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/SystemTracing.h>
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/MachSemaphore.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
-std::unique_ptr<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RenderingBackendIdentifier renderingBackendIdentifier)
+std::unique_ptr<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& parameters)
 {
-    return std::unique_ptr<RemoteRenderingBackend>(new RemoteRenderingBackend(gpuConnectionToWebProcess, renderingBackendIdentifier));
+    return std::unique_ptr<RemoteRenderingBackend>(new RemoteRenderingBackend(gpuConnectionToWebProcess, WTFMove(parameters)));
 }
 
-RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RenderingBackendIdentifier renderingBackendIdentifier)
+RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& parameters)
     : m_gpuConnectionToWebProcess(makeWeakPtr(gpuConnectionToWebProcess))
-    , m_renderingBackendIdentifier(renderingBackendIdentifier)
+    , m_renderingBackendIdentifier(parameters.identifier)
+#if PLATFORM(COCOA)
+    , m_resumeDisplayListSemaphore(makeUnique<MachSemaphore>(WTFMove(parameters.sendRightForResumeDisplayListSemaphore)))
+#endif
 {
     if (auto* gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get())
-        gpuConnectionToWebProcess->messageReceiverMap().addMessageReceiver(Messages::RemoteRenderingBackend::messageReceiverName(), renderingBackendIdentifier.toUInt64(), *this);
+        gpuConnectionToWebProcess->messageReceiverMap().addMessageReceiver(Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64(), *this);
 }
 
 RemoteRenderingBackend::~RemoteRenderingBackend()
@@ -153,7 +161,7 @@ DisplayList::ReplayResult RemoteRenderingBackend::submit(const DisplayList::Disp
     }.replay();
 }
 
-RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists(ImageBuffer& initialDestination, size_t initialOffset, DisplayListReaderHandle& handle)
+RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists(ImageBuffer& initialDestination, size_t initialOffset, DisplayListReaderHandle& handle, GPUProcessWakeupReason reason)
 {
     auto destination = makeRefPtr(initialDestination);
     auto handleProtector = makeRef(handle);
@@ -195,13 +203,13 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
             destination = makeRefPtr(m_remoteResourceCache.cachedImageBuffer(*result.nextDestinationImageBuffer));
             if (!destination) {
                 ASSERT(!m_pendingWakeupInfo);
-                m_pendingWakeupInfo = {{{ handle.identifier(), offset, *result.nextDestinationImageBuffer }, WTF::nullopt }};
+                m_pendingWakeupInfo = {{{ handle.identifier(), offset, *result.nextDestinationImageBuffer, reason }, WTF::nullopt }};
             }
         }
 
         if (result.reasonForStopping == DisplayList::StopReplayReason::MissingCachedResource) {
             m_pendingWakeupInfo = {{
-                { handle.identifier(), offset, destination->renderingResourceIdentifier() },
+                { handle.identifier(), offset, destination->renderingResourceIdentifier(), reason },
                 result.missingCachedResourceIdentifier
             }};
         }
@@ -209,8 +217,51 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
         if (m_pendingWakeupInfo)
             break;
 
-        if (!sizeToRead)
-            break;
+        if (!sizeToRead) {
+            if (reason != GPUProcessWakeupReason::ItemCountHysteresisExceeded)
+                break;
+
+            handle.startWaiting();
+#if PLATFORM(COCOA)
+            m_resumeDisplayListSemaphore->waitFor(30_us);
+#else
+            sleep(30_us);
+#endif
+
+            auto resumeReadingInfo = handle.stopWaiting();
+            if (!resumeReadingInfo)
+                break;
+
+            sizeToRead = handle.unreadBytes();
+            if (UNLIKELY(!sizeToRead)) {
+                // FIXME: Add a message check to terminate the web process.
+                ASSERT_NOT_REACHED();
+                break;
+            }
+
+            auto newDestinationIdentifier = makeObjectIdentifier<RenderingResourceIdentifierType>(resumeReadingInfo->destination);
+            if (UNLIKELY(!newDestinationIdentifier)) {
+                // FIXME: Add a message check to terminate the web process.
+                ASSERT_NOT_REACHED();
+                break;
+            }
+
+            destination = makeRefPtr(m_remoteResourceCache.cachedImageBuffer(newDestinationIdentifier));
+
+            if (UNLIKELY(!destination)) {
+                // FIXME: Add a message check to terminate the web process.
+                ASSERT_NOT_REACHED();
+                break;
+            }
+
+            offset = resumeReadingInfo->offset;
+
+            if (!destination) {
+                ASSERT(!m_pendingWakeupInfo);
+                m_pendingWakeupInfo = {{{ handle.identifier(), offset, newDestinationIdentifier, reason }, WTF::nullopt }};
+                break;
+            }
+        }
     }
 
     return destination;
@@ -233,7 +284,7 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayList(const GPUProcessWakeupMes
         return;
     }
 
-    destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, arguments.offset, *initialHandle);
+    destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, arguments.offset, *initialHandle, arguments.reason);
     if (!destinationImageBuffer) {
         RELEASE_ASSERT(m_pendingWakeupInfo);
         return;
@@ -252,7 +303,7 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayList(const GPUProcessWakeupMes
 
         // Otherwise, continue reading the next display list item buffer from the start.
         auto arguments = std::exchange(m_pendingWakeupInfo, WTF::nullopt)->arguments;
-        destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, arguments.offset, *nextHandle);
+        destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, arguments.offset, *nextHandle, arguments.reason);
         if (!destinationImageBuffer) {
             RELEASE_ASSERT(m_pendingWakeupInfo);
             break;
@@ -267,7 +318,7 @@ void RemoteRenderingBackend::setNextItemBufferToRead(DisplayList::ItemBufferIden
         ASSERT_NOT_REACHED();
         return;
     }
-    m_pendingWakeupInfo = {{{ identifier, SharedDisplayListHandle::headerSize(), destinationIdentifier }, WTF::nullopt }};
+    m_pendingWakeupInfo = {{{ identifier, SharedDisplayListHandle::headerSize(), destinationIdentifier, GPUProcessWakeupReason::Unspecified }, WTF::nullopt }};
 }
 
 void RemoteRenderingBackend::getImageData(AlphaPremultiplication outputFormat, IntRect srcRect, RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&& completionHandler)

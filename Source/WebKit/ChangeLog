@@ -1,3 +1,140 @@
+2021-01-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Concurrent Display Lists] GPU process should not immediately sleep after reading all available display list items
+        https://bugs.webkit.org/show_bug.cgi?id=219586
+        <rdar://problem/72275412>
+
+        Reviewed by Chris Dumez.
+
+        This patch adds a mechanism for the GPU process to wait for a short duration (~30 microseconds) after it has
+        finished reading all available data in its shared item buffer; if the web process writes additional data to the
+        item buffer (thereby bumping the unread bytes counter) during this time, we immediately resume processing the
+        new display list items in the GPU process, rather than wait for a new wakeup message.
+
+        This allows us to avoid the cost of going to sleep just to immediately wake up in the GPU process, in the case
+        where the web process is writing display list items at a very fast rate and the GPU process just happens to
+        catch up (i.e. advance `unreadBytes()` to 0).
+
+        See below for more details.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::createRenderingBackend):
+
+        Refactor the rendering backend creation message from the web process to the GPU process, so that the rendering
+        backend creation arguments are encapsulated in a single struct, RemoteRenderingBackendCreationParameters. This
+        struct contains the rendering backend identifier and, on Cocoa platforms, a mach send right that can be used to
+        construct the corresponding display list wakeup semaphore in the GPU process.
+
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+        * GPUProcess/graphics/DisplayListReaderHandle.h:
+        (WebKit::DisplayListReaderHandle::startWaiting):
+        (WebKit::DisplayListReaderHandle::stopWaiting):
+
+        Add helper methods for the GPU process to start and stop waiting for new items. See the call site in
+        RemoteRenderingBackend for more detail, as well as the comments in SharedDisplayListHandle below.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::create):
+        (WebKit::RemoteRenderingBackend::RemoteRenderingBackend):
+
+        Refactor this codepath to take RemoteRenderingBackendCreationParameters instead of just an identifier.
+
+        (WebKit::RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists):
+
+        In the case where we received the wakeup message due to exceeding the display list item count hysteresis, wait
+        for a short duration using the semaphore after we hit an unread count of 0. This allows the web process to write
+        more items and signal the semaphore, so that we can resume reading in the GPU process.
+
+        (WebKit::RemoteRenderingBackend::wakeUpAndApplyDisplayList):
+        (WebKit::RemoteRenderingBackend::setNextItemBufferToRead):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * Shared/GPUProcessWakeupMessageArguments.h:
+        (WebKit::GPUProcessWakeupMessageArguments::encode const):
+        (WebKit::GPUProcessWakeupMessageArguments::decode):
+
+        Plumb a GPUProcessWakeupReason enum flag over to the GPU process, via wake-up arguments. This flag is used by
+        the GPU process to determine whether we should expect additional items to eventually enter the stream, and
+        whether we should eagerly go to sleep after processing all known items. In other words, if the wakeup message is
+        being sent as a result of flushing the image buffer, we don't want to unnecessarily wait for more items;
+        however, if the wakeup message is being sent as a result of exceeding the (currently) 512-item hysteresis, then
+        we can probably expect more items to stream in, so it's more optimal to wait after finishing all known display
+        list items.
+
+        * Shared/RemoteRenderingBackendCreationParameters.h: Copied from Source/WebKit/Shared/GPUProcessWakeupMessageArguments.h.
+        (WebKit::RemoteRenderingBackendCreationParameters::encode const):
+        (WebKit::RemoteRenderingBackendCreationParameters::decode):
+
+        See above for more details.
+
+        * Shared/SharedDisplayListHandle.h:
+        (WebKit::SharedDisplayListHandle::header const):
+
+        Adds a new WaitingStatus enum type internal to SharedDisplayListHandle and its subclasses, which is used to
+        coordinate the act of waiting for new item data in the GPU process. A shared display list handle now contains
+        an atomic `waitingStatus` flag indicating whether the GPU process is in the process of waiting for more items,
+        and also whether the web process has acknowledged the fact that the GPU process is waiting (thereby putting the
+        GPU process in a state where it is waiting to resume processing). Along with this enum, we also add two new
+        8-byte values to the header section: an offset to begin reading item data after resuming, and 8 bytes for an
+        identifier indicating the new destination (for the purposes of display list rendering, this is a
+        RenderingResourceIdentifier, though this will be different for WebGL).
+
+            +--> NotWaiting <--+
+            |        |         |
+            |        |         | [3a]
+            | [3b]   | [1]     |
+            |        |         |
+        Resuming     +----> Waiting
+            ^                  |
+            |        [2]       |
+            +------------------+
+
+        There are three main ways in which this state machine may transition, numbered [1]-[3] in the above diagram.
+
+        [1] When the GPU process finishes processing available items, it enters Waiting state, indicating that it is now
+            waiting for additional item data. This corresponds to the call to `DisplayListReaderHandle::startWaiting`.
+
+        [2] When the web process bumps the unread count of an item buffer, if it has a pending wakeup message or would
+            otherwise need to schedule a pending wakeup message, see if we can instead simply tell the GPU process to
+            resume processing, instead of sending a wakeup message. This corresponds to a call to the helper method
+            `DisplayListWriterHandle::tryToResume`.
+
+        [3] If the maximum wait duration (~30 microseconds) has passed (i.e. scenario 3a) or if the web process has
+            transitioned us from Waiting to Resuming state (i.e. scenario 3b), then transition back to NotWaiting. In
+            both scenarios, this corresponds to a call to `DisplayListReaderHandle::stopWaiting`. In the case where we
+            transitioned from Resuming state, we can immediately continue processing display list items.
+
+        In the case where we successfully resume, we're essentially "re-waking" the GPU process without the overhead of
+        an additional IPC message, using the same shared display list handle. Since this would've otherwise been a
+        separate wakeup message, we need to be careful that we continue processing display list items from the correct
+        offset into the shared display list handle, and using the correct destination image buffer. This is because the
+        writable offset of the item buffer may have been reset in the middle of waiting by the web process, or the
+        destination image buffer may have changed while waiting. To handle these scenarios, we introduce the
+        `ResumeReadingInformation` struct, which contains both of these pieces of information. An instance of this
+        struct exists in the shared memory header section; this is written by the web process immediately prior to
+        transitioning to Resuming state, and read by the GPU process when transitioning from Resuming to NotWaiting.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/DisplayListWriterHandle.h:
+        (WebKit::DisplayListWriterHandle::tryToResume):
+
+        Add a helper method for the web process to try and notify the GPU process that it should try and resume
+        display list processing. See the call site in RemoteRenderingBackendProxy for more detail, as well as the
+        comments in SharedDisplayListHandle above.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::connectToGPUProcess):
+        (WebKit::RemoteRenderingBackendProxy::didAppendData):
+
+        Rather than always schedule (or send) a wakeup message here in the case where the unread count is 0, see if we
+        can instead tell the GPU process to stop waiting and resume display list processing. To do this, we use the new
+        DisplayListWriterHandle::tryToResume method, giving it the new offset to begin reading items from as well as the
+        destination image buffer to which we should apply display list items. If we successfully tell the GPU process to
+        resume reading, then we can clear out (or avoid storing) wakeup message arguments and avoid sending an IPC
+        wakeup message.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+
 2021-01-06  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to determine whether a regex is supported in WKContentRuleList

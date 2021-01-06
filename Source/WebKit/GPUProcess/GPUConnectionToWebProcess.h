@@ -65,6 +65,7 @@ class RemoteGraphicsContextGL;
 class RemoteSampleBufferDisplayLayerManager;
 class UserMediaCaptureManagerProxy;
 struct RemoteAudioSessionConfiguration;
+struct RemoteRenderingBackendCreationParameters;
 
 class GPUConnectionToWebProcess
     : public RefCounted<GPUConnectionToWebProcess>
@@ -124,7 +125,7 @@ private:
 #endif
 #endif
 
-    void createRenderingBackend(RenderingBackendIdentifier);
+    void createRenderingBackend(RemoteRenderingBackendCreationParameters&&);
     void releaseRenderingBackend(RenderingBackendIdentifier);
 
 #if ENABLE(WEBGL)

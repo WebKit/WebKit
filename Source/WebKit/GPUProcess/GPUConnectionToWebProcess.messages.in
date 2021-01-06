@@ -23,7 +23,7 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> GPUConnectionToWebProcess WantsDispatchMessage {
-    void CreateRenderingBackend(WebKit::RenderingBackendIdentifier renderingBackendIdentifier)
+    void CreateRenderingBackend(struct WebKit::RemoteRenderingBackendCreationParameters parameters)
     void ReleaseRenderingBackend(WebKit::RenderingBackendIdentifier renderingBackendIdentifier)
 #if ENABLE(WEBGL)
     void CreateGraphicsContextGL(struct WebCore::GraphicsContextGLAttributes attributes, WebKit::GraphicsContextGLIdentifier graphicsContextGLIdentifier)
