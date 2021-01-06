@@ -1,3 +1,56 @@
+2021-01-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Refactor some logic around touch event deferring gesture recognizers
+        https://bugs.webkit.org/show_bug.cgi?id=220345
+
+        Reviewed by Tim Horton.
+
+        Rename `_deferringGestureRecognizerForFoo` to `_touchStartDeferringGestureRecognizerForFoo`, to make it clear
+        that these deferring gestures are only intended to defer native gestures until the "touchstart" event has been
+        handled.
+
+        This distinction becomes important once I introduce deferring gesture recognizers that defer the "touchend"
+        event, and prevent gestures that activate upon touch end (i.e. various types of tap gesture recognizers).
+
+        See below for more details.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handlePreventableTouchEvent):
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::doneDeferringTouchStart):
+        (WebKit::PageClientImpl::doneDeferringNativeGestures): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setUpInteraction]):
+        (-[WKContentView cleanUpInteraction]):
+        (-[WKContentView _removeDefaultGestureRecognizers]):
+        (-[WKContentView _addDefaultGestureRecognizers]):
+        (-[WKContentView _webTouchEventsRecognized:]):
+        (-[WKContentView _touchStartDeferringGestures]):
+        (-[WKContentView _doneDeferringTouchStart:]):
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+        (-[WKContentView _deferringGestureRecognizers]): Deleted.
+        (-[WKContentView _doneDeferringNativeGestures:]): Deleted.
+
+        Rename this to `-_doneDeferringTouchStart:`.
+
+        (-[WKContentView deferringGestureRecognizer:shouldDeferGesturesAfterEndingTouchesWithEvent:]):
+
+        Deleted. This logic has been moved to WKContentView (see below).
+
+        * UIProcess/ios/WKDeferringGestureRecognizer.h:
+        * UIProcess/ios/WKDeferringGestureRecognizer.mm:
+        (-[WKDeferringGestureRecognizer touchesEnded:withEvent:]): Deleted.
+
+        Additionally refactor this code so that this fallback logic for lifting the gesture gate exists inside
+        `WKContentView` (after ending all touches), rather than inside the deferring gesture recognizer. While this
+        doesn't affect the extant touch start deferring gestures, it will ensure that touch end deferring gestures won't
+        get reset prematurely due to the web touch events gesture recognizer ending before the touch end deferring
+        gesture.
+
 2021-01-05  Kate Cheney  <katherine_cheney@apple.com>
 
         NSCrossWebsiteTrackingUsageDescription is not working on Mac, ITP is always enabled

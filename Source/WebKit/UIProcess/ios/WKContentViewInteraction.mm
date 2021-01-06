@@ -764,20 +764,20 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self addGestureRecognizer:_touchActionDownSwipeGestureRecognizer.get()];
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    _deferringGestureRecognizerForImmediatelyResettableGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
-    [_deferringGestureRecognizerForImmediatelyResettableGestures setName:@"Touch event deferrer (immediate reset)"];
+    _touchStartDeferringGestureRecognizerForImmediatelyResettableGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
+    [_touchStartDeferringGestureRecognizerForImmediatelyResettableGestures setName:@"Touch start deferrer (immediate reset)"];
 
-    _deferringGestureRecognizerForDelayedResettableGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
-    [_deferringGestureRecognizerForDelayedResettableGestures setName:@"Touch event deferrer (delayed reset)"];
+    _touchStartDeferringGestureRecognizerForDelayedResettableGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
+    [_touchStartDeferringGestureRecognizerForDelayedResettableGestures setName:@"Touch start deferrer (delayed reset)"];
 
-    _deferringGestureRecognizerForSyntheticTapGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
-    [_deferringGestureRecognizerForSyntheticTapGestures setName:@"Touch event deferrer (synthetic tap)"];
+    _touchStartDeferringGestureRecognizerForSyntheticTapGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
+    [_touchStartDeferringGestureRecognizerForSyntheticTapGestures setName:@"Touch start deferrer (synthetic tap)"];
 
-    for (WKDeferringGestureRecognizer *gesture in self._deferringGestureRecognizers) {
+    for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures) {
         gesture.delegate = self;
         [self addGestureRecognizer:gesture];
     }
-#endif
+#endif // ENABLE(IOS_TOUCH_EVENTS)
 
     _touchEventGestureRecognizer = adoptNS([[UIWebTouchEventsGestureRecognizer alloc] initWithTarget:self action:@selector(_webTouchEventsRecognized:) touchDelegate:self]);
     [_touchEventGestureRecognizer setDelegate:self];
@@ -953,7 +953,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self removeGestureRecognizer:_touchEventGestureRecognizer.get()];
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    for (WKDeferringGestureRecognizer *gesture in self._deferringGestureRecognizers) {
+    for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures) {
         gesture.delegate = nil;
         [self removeGestureRecognizer:gesture];
     }
@@ -1084,7 +1084,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 - (void)_removeDefaultGestureRecognizers
 {
 #if ENABLE(IOS_TOUCH_EVENTS)
-    for (WKDeferringGestureRecognizer *gesture in self._deferringGestureRecognizers)
+    for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures)
         [self removeGestureRecognizer:gesture];
 #endif
     [self removeGestureRecognizer:_touchEventGestureRecognizer.get()];
@@ -1111,7 +1111,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 - (void)_addDefaultGestureRecognizers
 {
 #if ENABLE(IOS_TOUCH_EVENTS)
-    for (WKDeferringGestureRecognizer *gesture in self._deferringGestureRecognizers)
+    for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures)
         [self addGestureRecognizer:gesture];
 #endif
     [self addGestureRecognizer:_touchEventGestureRecognizer.get()];
@@ -1548,8 +1548,17 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
 
         if (nativeWebTouchEvent.isPotentialTap() && self.hasHiddenContentEditable && self._hasFocusedElement && !self.window.keyWindow)
             [self.window makeKeyWindow];
+
+#if ENABLE(IOS_TOUCH_EVENTS)
+        if (!_page->isHandlingPreventableTouchStart()) {
+            for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures) {
+                if (gesture.state == UIGestureRecognizerStatePossible)
+                    gesture.state = UIGestureRecognizerStateFailed;
+            }
+        }
+#endif // ENABLE(IOS_TOUCH_EVENTS)
     }
-#endif
+#endif // ENABLE(TOUCH_EVENTS)
 }
 
 #if ENABLE(TOUCH_EVENTS)
@@ -1727,7 +1736,7 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 
-- (NSArray<WKDeferringGestureRecognizer *> *)_deferringGestureRecognizers
+- (NSArray<WKDeferringGestureRecognizer *> *)_touchStartDeferringGestures
 {
     WKDeferringGestureRecognizer *recognizers[3];
     NSUInteger count = 0;
@@ -1735,15 +1744,15 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
         if (recognizer)
             recognizers[count++] = recognizer.get();
     };
-    add(_deferringGestureRecognizerForImmediatelyResettableGestures);
-    add(_deferringGestureRecognizerForDelayedResettableGestures);
-    add(_deferringGestureRecognizerForSyntheticTapGestures);
+    add(_touchStartDeferringGestureRecognizerForImmediatelyResettableGestures);
+    add(_touchStartDeferringGestureRecognizerForDelayedResettableGestures);
+    add(_touchStartDeferringGestureRecognizerForSyntheticTapGestures);
     return [NSArray arrayWithObjects:recognizers count:count];
 }
 
-- (void)_doneDeferringNativeGestures:(BOOL)preventNativeGestures
+- (void)_doneDeferringTouchStart:(BOOL)preventNativeGestures
 {
-    for (WKDeferringGestureRecognizer *gesture in self._deferringGestureRecognizers)
+    for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures)
         [gesture setDefaultPrevented:preventNativeGestures];
 }
 
@@ -2128,7 +2137,7 @@ static Class tapAndAHalfRecognizerClass()
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer*)otherGestureRecognizer
 {
 #if ENABLE(IOS_TOUCH_EVENTS)
-    for (WKDeferringGestureRecognizer *gesture in self._deferringGestureRecognizers) {
+    for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures) {
         if (isSamePair(gestureRecognizer, otherGestureRecognizer, _touchEventGestureRecognizer.get(), gesture))
             return YES;
     }
@@ -7301,11 +7310,6 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     return ![self gestureRecognizer:deferringGestureRecognizer isInterruptingMomentumScrollingWithEvent:event];
 }
 
-- (BOOL)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer shouldDeferGesturesAfterEndingTouchesWithEvent:(UIEvent *)event
-{
-    return _page->isHandlingPreventableTouchStart();
-}
-
 - (BOOL)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer shouldDeferOtherGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 {
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -7357,13 +7361,13 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
         return NO;
     };
 
-    if (gestureRecognizer == _doubleTapGestureRecognizer || gestureRecognizer == _singleTapGestureRecognizer)
-        return deferringGestureRecognizer == _deferringGestureRecognizerForSyntheticTapGestures;
+    if ([gestureRecognizer isKindOfClass:WKSyntheticTapGestureRecognizer.class])
+        return deferringGestureRecognizer == _touchStartDeferringGestureRecognizerForSyntheticTapGestures;
 
     if (mayDelayResetOfContainingSubgraph(gestureRecognizer))
-        return deferringGestureRecognizer == _deferringGestureRecognizerForDelayedResettableGestures;
+        return deferringGestureRecognizer == _touchStartDeferringGestureRecognizerForDelayedResettableGestures;
 
-    return deferringGestureRecognizer == _deferringGestureRecognizerForImmediatelyResettableGestures;
+    return deferringGestureRecognizer == _touchStartDeferringGestureRecognizerForImmediatelyResettableGestures;
 #else
     UNUSED_PARAM(deferringGestureRecognizer);
     UNUSED_PARAM(gestureRecognizer);
