@@ -295,6 +295,8 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
         dispatchOverOrOutEvent(eventNames().pointeroutEvent, currentTarget.get());
         dispatchEnterOrLeaveEvent(eventNames().pointerleaveEvent);
         capturingData.previousTarget = nullptr;
+
+        touchWithIdentifierWasRemoved(pointerEvent->pointerId());
     }
 }
 #endif
@@ -304,7 +306,7 @@ RefPtr<PointerEvent> PointerCaptureController::pointerEventForMouseEvent(const M
     // If we already have known touches then we cannot dispatch a mouse event,
     // for instance in the case of a long press to initiate a system drag.
     for (auto& capturingData : m_activePointerIdsToCapturingData.values()) {
-        if (capturingData.pointerType == PointerEvent::touchPointerType())
+        if (capturingData.pointerType == PointerEvent::touchPointerType() && capturingData.pointerIsPressed && !capturingData.cancelled)
             return nullptr;
     }
 
