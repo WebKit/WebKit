@@ -74,7 +74,7 @@ class Canonicalize(Command):
             repository.executable(), 'rev-list',
             '--count', '--no-merges',
             '{remote}/{branch}..{branch}'.format(remote=args.remote, branch=branch),
-        ], capture_output=True, cwd=repository.path)
+        ], capture_output=True, cwd=repository.root_path)
         if result.returncode:
             sys.stderr.write('Failed to find local commits\n')
             return -1
@@ -135,7 +135,7 @@ fi'''.format(
                         setting_message='' if log.level > logging.DEBUG else 'echo "    $KEY=$VALUE"',
                     ),
                 ] + message_filter + ['{}...{}'.format(branch, base.hash)],
-                    cwd=repository.path,
+                    cwd=repository.root_path,
                     env={'FILTER_BRANCH_SQUELCH_WARNING': '1', 'PYTHONPATH': ':'.join(sys.path)},
                     stdout=devnull if log.level > logging.WARNING else None,
                     stderr=devnull if log.level > logging.WARNING else None,
