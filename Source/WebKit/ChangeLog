@@ -1,3 +1,15 @@
+2021-01-06  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Add missing endpoint in sandbox message filter
+        https://bugs.webkit.org/show_bug.cgi?id=219731
+        <rdar://problem/71566760>
+
+        Reviewed by Darin Adler.
+
+        Add missing endpoint in the WebContent process' sandbox message filter on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2021-01-05  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] WebM format reader doesn't work with a url in a <source> element
