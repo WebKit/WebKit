@@ -8,6 +8,9 @@
     var loader;
     var source;
     var sourceBuffer;
+    var resizeEventFired = false;
+    var videoWidth = 0;
+    var videoHeight = 0;
 
     function loaderPromise(loader) {
         return new Promise((resolve, reject) => {
@@ -22,9 +25,9 @@
                 // First resize can be 0x0
                 if (video.videoWidth == 0 && video.videoHeight == 0)
                     return;
-                consoleWrite(`EVENT(${event.type})`);
-                testExpected('video.videoWidth', width);
-                testExpected('video.videoHeight', height);
+                resizeEventFired = true;
+                videoWidth = video.videoWidth;
+                videoHeight = video.videoHeight;
                 resolve();
             });
         });
@@ -43,7 +46,7 @@
 
             run('source.duration = loader.duration()');
             run('sourceBuffer = source.addSourceBuffer(loader.type())');
-            const resized = resizePromise(video, 320, 240);
+            const resized = resizePromise(video);
             run('sourceBuffer.appendBuffer(loader.initSegment())');
 
             await waitFor(sourceBuffer, 'update');
@@ -52,6 +55,9 @@
             run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
 
             await resized;
+            testExpected('resizeEventFired', true);
+            testExpected('videoWidth', 320);
+            testExpected('videoHeight', 240);
             endTest();
         } catch (e) {
             failTest(`Caught exception: "${e}"`);

@@ -1,5 +1,18 @@
 2021-01-05  Peng Liu  <peng.liu6@apple.com>
 
+        media-source-webm.html: Handle frame size in HAVE_METADATA
+        https://bugs.webkit.org/show_bug.cgi?id=220046
+
+        Reviewed by Daniel Bates.
+
+        A follow-up patch to fix a failure on Big Sur. A 'resize' event can be fired before or
+        after the 'update' event. The test needs to support both cases.
+
+        * media/media-source/media-source-webm-expected.txt:
+        * media/media-source/media-source-webm.html:
+
+2021-01-05  Peng Liu  <peng.liu6@apple.com>
+
         [Media in GPU Process][MSE] SourceBuffer fires update and updateend events before the coded frames are removed
         https://bugs.webkit.org/show_bug.cgi?id=220334
 
