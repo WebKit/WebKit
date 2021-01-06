@@ -741,8 +741,9 @@ void GraphicsLayerCA::setContentsVisible(bool contentsVisible)
 
     GraphicsLayer::setContentsVisible(contentsVisible);
     noteLayerPropertyChanged(ContentsVisibilityChanged);
+
     // Visibility affects whether the contentsLayer is parented.
-    if (m_contentsLayer)
+    if (m_contentsLayer || m_contentsClippingLayer)
         noteSublayersChanged();
 }
 
