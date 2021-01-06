@@ -1,3 +1,19 @@
+2021-01-05  Kate Cheney  <katherine_cheney@apple.com>
+
+        NSCrossWebsiteTrackingUsageDescription is not working on Mac, ITP is always enabled
+        https://bugs.webkit.org/show_bug.cgi?id=220190
+        <rdar://problem/72744909>
+
+        Reviewed by Brent Fulgham.
+
+        Consider the presence of the NSCrossWebsiteTrackingUsageDescription
+        key as an indication to disable ITP for WKWebView until we implement
+        a mechanism for disabling it in WKWebView like we do for iOS to avoid
+        compatibility bugs.
+
+        * Shared/Cocoa/DefaultWebBrowserChecks.mm:
+        (WebKit::determineITPStateInternal):
+
 2021-01-05  Aditya Keerthi  <akeerthi@apple.com>
 
         REGRESSION (r261157): Crash in WKSelectPopover when running as iPhone app on iPad
