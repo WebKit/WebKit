@@ -35,6 +35,14 @@ namespace WebCore {
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
 
+#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+bool PlatformMediaSessionManager::m_webMFormatReaderEnabled;
+#endif
+
+#if ENABLE(VORBIS) && PLATFORM(MAC)
+bool PlatformMediaSessionManager::m_vorbisDecoderEnabled;
+#endif
+
 static std::unique_ptr<PlatformMediaSessionManager>& sharedPlatformMediaSessionManager()
 {
     static NeverDestroyed<std::unique_ptr<PlatformMediaSessionManager>> platformMediaSessionManager;
@@ -608,6 +616,42 @@ bool PlatformMediaSessionManager::shouldDeactivateAudioSession()
 void PlatformMediaSessionManager::setShouldDeactivateAudioSession(bool deactivate)
 {
     deactivateAudioSession() = deactivate;
+}
+
+bool PlatformMediaSessionManager::webMFormatReaderEnabled()
+{
+#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+    return m_webMFormatReaderEnabled;
+#else
+    return false;
+#endif
+}
+
+void PlatformMediaSessionManager::setWebMFormatReaderEnabled(bool enabled)
+{
+#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+    m_webMFormatReaderEnabled = enabled;
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
+bool PlatformMediaSessionManager::vorbisDecoderEnabled()
+{
+#if ENABLE(VORBIS) && PLATFORM(MAC)
+    return m_vorbisDecoderEnabled;
+#else
+    return false;
+#endif
+}
+
+void PlatformMediaSessionManager::setVorbisDecoderEnabled(bool enabled)
+{
+#if ENABLE(VORBIS) && PLATFORM(MAC)
+    m_vorbisDecoderEnabled = enabled;
+#else
+    UNUSED_PARAM(enabled);
+#endif
 }
 
 #else // ENABLE(VIDEO) || ENABLE(WEB_AUDIO)

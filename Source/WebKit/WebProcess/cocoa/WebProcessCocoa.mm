@@ -68,7 +68,9 @@
 #import <WebCore/NSScrollerImpDetails.h>
 #import <WebCore/PerformanceLogging.h>
 #import <WebCore/PictureInPictureSupport.h>
+#import <WebCore/PlatformMediaSessionManager.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/RuntimeEnabledFeatures.h>
 #import <WebCore/SWContextManager.h>
 #import <WebCore/SystemBattery.h>
 #import <WebCore/SystemSoundManager.h>
@@ -326,6 +328,14 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if TARGET_OS_IPHONE
     // Priority decay on iOS 9 is impacting page load time so we fix the priority of the WebProcess' main thread (rdar://problem/22003112).
     pthread_set_fixedpriority_self();
+#endif
+
+#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+    PlatformMediaSessionManager::setWebMFormatReaderEnabled(RuntimeEnabledFeatures::sharedFeatures().webMFormatReaderEnabled());
+#endif
+
+#if ENABLE(VORBIS) && PLATFORM(MAC)
+    PlatformMediaSessionManager::setVorbisDecoderEnabled(RuntimeEnabledFeatures::sharedFeatures().vorbisDecoderEnabled());
 #endif
 
     if (!parameters.mediaMIMETypes.isEmpty())

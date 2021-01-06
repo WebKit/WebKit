@@ -3838,6 +3838,14 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
             settings.setWebAuthenticationEnabled(true);
     }
 #endif
+
+#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+    PlatformMediaSessionManager::setWebMFormatReaderEnabled(RuntimeEnabledFeatures::sharedFeatures().webMFormatReaderEnabled());
+#endif
+
+#if ENABLE(VORBIS) && PLATFORM(MAC)
+    PlatformMediaSessionManager::setVorbisDecoderEnabled(RuntimeEnabledFeatures::sharedFeatures().vorbisDecoderEnabled());
+#endif
 }
 
 #if ENABLE(DATA_DETECTION)

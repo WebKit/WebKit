@@ -29,6 +29,7 @@
 #if PLATFORM(COCOA)
 
 #import "ContentType.h"
+#import "SourceBufferParserWebM.h"
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
@@ -63,8 +64,15 @@ bool AVAssetMIMETypeCache::canDecodeExtendedType(const ContentType& type)
 {
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     ASSERT(isAvailable());
-    return [PAL::getAVURLAssetClass() isPlayableExtendedMIMEType:type.raw()];
+    if ([PAL::getAVURLAssetClass() isPlayableExtendedMIMEType:type.raw()])
+        return true;
+
+#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+    if (SourceBufferParserWebM::isContentTypeSupported(type) == MediaPlayerEnums::SupportsType::IsSupported)
+        return true;
 #endif
+
+#endif // ENABLE(VIDEO) && USE(AVFOUNDATION)
 
     return false;
 }
@@ -147,6 +155,13 @@ void AVAssetMIMETypeCache::initializeCache(HashSet<String, ASCIICaseInsensitiveH
 
     for (NSString* type in [PAL::getAVURLAssetClass() audiovisualMIMETypes])
         cache.add(type);
+
+#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+    if (SourceBufferParserWebM::isWebMFormatReaderAvailable()) {
+        auto webmTypes = SourceBufferParserWebM::webmMIMETypes();
+        cache.add(webmTypes.begin(), webmTypes.end());
+    }
+#endif
 
     if (m_cacheTypeCallback)
         m_cacheTypeCallback(copyToVector(cache));

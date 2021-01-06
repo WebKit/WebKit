@@ -31,7 +31,7 @@
 #import "CAAudioStreamDescription.h"
 #import "Logging.h"
 #import "MediaUtilities.h"
-#import "RuntimeEnabledFeatures.h"
+#import "PlatformMediaSessionManager.h"
 #import <AudioToolbox/AudioComponent.h>
 #import <AudioToolbox/AudioFormat.h>
 #import <CoreMedia/CMFormatDescription.h>
@@ -177,7 +177,7 @@ bool isVorbisDecoderAvailable()
     static bool available;
 
 #if ENABLE(VORBIS) && PLATFORM(MAC)
-    if (!RuntimeEnabledFeatures::sharedFeatures().vorbisDecoderEnabled())
+    if (!PlatformMediaSessionManager::vorbisDecoderEnabled())
         return false;
 
     static dispatch_once_t onceToken;

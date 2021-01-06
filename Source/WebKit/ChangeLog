@@ -1,3 +1,29 @@
+2021-01-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] WebM format reader doesn't work with a url in a <source> element
+        https://bugs.webkit.org/show_bug.cgi?id=219961
+        <rdar://problem/72399014>
+
+        Reviewed by Andy Estes.
+
+        Only enable a WebM track when the it has FlagEnabled element, or when we see that
+        it has media samples. This is necessary because there are WebM files with empty tracks,
+        and CoreMedia won't play a file if any enabled track doesn't have samples.
+
+        * Shared/mac/MediaFormatReader/FormatReader.cpp:
+        (WebKit::FormatReader::didParseTracks):
+        * Shared/mac/MediaFormatReader/TrackReader.cpp:
+        (WebKit::TrackReader::create):
+        (WebKit::TrackReader::TrackReader):
+        (WebKit::TrackReader::finishParsing):
+        (WebKit::TrackReader::isEnabled const):
+        (WebKit::TrackReader::copyProperty):
+        * Shared/mac/MediaFormatReader/TrackReader.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2021-01-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor some logic around touch event deferring gesture recognizers

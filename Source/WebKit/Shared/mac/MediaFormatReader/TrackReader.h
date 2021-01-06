@@ -54,26 +54,23 @@ public:
     static constexpr WrapperClass wrapperClass();
     static CMBaseClassID wrapperClassID();
     static CoreMediaWrapped<TrackReader>* unwrap(CMBaseObjectRef);
-
-    static RefPtr<TrackReader> create(Allocator&&, const FormatReader&, const WebCore::VideoTrackPrivate*);
-    static RefPtr<TrackReader> create(Allocator&&, const FormatReader&, const WebCore::AudioTrackPrivate*);
-    static RefPtr<TrackReader> create(Allocator&&, const FormatReader&, const WebCore::InbandTextTrackPrivate*);
-
     static WTF::WorkQueue& storageQueue();
+
+    static RefPtr<TrackReader> create(Allocator&&, const FormatReader&, CMMediaType, uint64_t, Optional<bool>);
 
     uint64_t trackID() const { return m_trackID; }
     void addSample(Ref<WebCore::MediaSample>&&, MTPluginByteSourceRef);
     void waitForSample(Function<bool(WebCore::SampleMap&, bool)>&&) const;
 
-    bool isEnabled() const { return m_isEnabled; }
-    void setEnabled(bool enabled) { m_isEnabled = enabled; }
+    void setEnabled(bool enabled) { m_isEnabled = enabled ? Enabled::True : Enabled::False; }
+    CMMediaType mediaType() const { return m_mediaType; }
 
     void finishParsing();
 
 private:
     using CoreMediaWrapped<TrackReader>::unwrap;
 
-    TrackReader(Allocator&&, const FormatReader&, CMMediaType, uint64_t);
+    TrackReader(Allocator&&, const FormatReader&, CMMediaType, uint64_t, Optional<bool>);
 
     // CMBaseClass
     String debugDescription() const final { return "WebKit::TrackReader"_s; }
@@ -93,10 +90,12 @@ private:
         bool hasAllSamples { false };
     };
 
+    enum Enabled : uint8_t { Unknown, False, True };
+
     const uint64_t m_trackID;
     const CMMediaType m_mediaType;
     const MediaTime m_duration;
-    std::atomic<bool> m_isEnabled { false };
+    std::atomic<Enabled> m_isEnabled { Enabled::Unknown };
     mutable Condition m_sampleStorageCondition;
     mutable Lock m_sampleStorageLock;
     mutable std::unique_ptr<SampleStorage> m_sampleStorage;

@@ -144,26 +144,29 @@ void FormatReader::didParseTracks(SourceBufferPrivateClient::InitializationSegme
     m_duration = WTFMove(segment.duration);
 
     for (auto& videoTrack : segment.videoTracks) {
-        if (auto trackReader = TrackReader::create(allocator(), *this, videoTrack.track.get()))
-            m_trackReaders.append(trackReader.releaseNonNull());
-        // FIXME: How do we know which tracks should be enabled?
-        if (m_trackReaders.size() == 1)
-            m_trackReaders[0]->setEnabled(true);
+        auto track = videoTrack.track.get();
+        auto trackReader = TrackReader::create(allocator(), *this, kCMMediaType_Video, *track->trackUID(), track->defaultEnabled());
+        if (!trackReader)
+            continue;
+
+        m_trackReaders.append(trackReader.releaseNonNull());
     }
 
     for (auto& audioTrack : segment.audioTracks) {
-        if (auto trackReader = TrackReader::create(allocator(), *this, audioTrack.track.get()))
-            m_trackReaders.append(trackReader.releaseNonNull());
-        // FIXME: How do we know which tracks should be enabled?
-        if (m_trackReaders.size() == segment.videoTracks.size() + 1)
-            m_trackReaders[segment.videoTracks.size()]->setEnabled(true);
+        auto track = audioTrack.track.get();
+        auto trackReader = TrackReader::create(allocator(), *this, kCMMediaType_Audio, *track->trackUID(), track->defaultEnabled());
+        if (!trackReader)
+            continue;
+
+        m_trackReaders.append(trackReader.releaseNonNull());
     }
 
     for (auto& textTrack : segment.textTracks) {
-        if (auto trackReader = TrackReader::create(allocator(), *this, textTrack.track.get()))
+        auto track = textTrack.track.get();
+        if (auto trackReader = TrackReader::create(allocator(), *this, kCMMediaType_Text, *track->trackUID(), track->defaultEnabled()))
             m_trackReaders.append(trackReader.releaseNonNull());
     }
-    
+
     m_parseTracksCondition.notifyAll();
 }
 

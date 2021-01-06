@@ -38,6 +38,11 @@ Optional<uint64_t> TrackPrivateBase::trackUID() const
     return WTF::nullopt;
 }
 
+Optional<bool> TrackPrivateBase::defaultEnabled() const
+{
+    return WTF::nullopt;
+}
+
 #if !RELEASE_LOG_DISABLED
 
 static uint64_t s_uniqueId = 0;

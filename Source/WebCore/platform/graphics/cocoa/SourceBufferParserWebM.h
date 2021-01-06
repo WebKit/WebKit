@@ -60,7 +60,9 @@ class WEBCORE_EXPORT SourceBufferParserWebM : public SourceBufferParser, private
 public:
     class StreamingVectorReader;
 
+    static bool isWebMFormatReaderAvailable();
     static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&);
+    static const HashSet<String, ASCIICaseInsensitiveHash>& webmMIMETypes();
     static RefPtr<SourceBufferParserWebM> create(const ContentType&);
 
     SourceBufferParserWebM();

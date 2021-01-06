@@ -144,25 +144,9 @@ CoreMediaWrapped<TrackReader>* TrackReader::unwrap(CMBaseObjectRef object)
     return unwrap(checked_cf_cast<WrapperRef>(object));
 }
 
-RefPtr<TrackReader> TrackReader::create(Allocator&& allocator, const FormatReader& formatReader, const VideoTrackPrivate* track)
+RefPtr<TrackReader> TrackReader::create(Allocator&& allocator, const FormatReader& formatReader, CMMediaType mediaType, uint64_t trackID, Optional<bool> enabled)
 {
-    if (!track)
-        return nullptr;
-    return adoptRef(new (allocator) TrackReader(WTFMove(allocator), formatReader, kCMMediaType_Video, *track->trackUID()));
-}
-
-RefPtr<TrackReader> TrackReader::create(Allocator&& allocator, const FormatReader& formatReader, const AudioTrackPrivate* track)
-{
-    if (!track)
-        return nullptr;
-    return adoptRef(new (allocator) TrackReader(WTFMove(allocator), formatReader, kCMMediaType_Audio, *track->trackUID()));
-}
-
-RefPtr<TrackReader> TrackReader::create(Allocator&& allocator, const FormatReader& formatReader, const InbandTextTrackPrivate* track)
-{
-    if (!track)
-        return nullptr;
-    return adoptRef(new (allocator) TrackReader(WTFMove(allocator), formatReader, kCMMediaType_Text, *track->trackUID()));
+    return adoptRef(new (allocator) TrackReader(WTFMove(allocator), formatReader, mediaType, trackID, enabled));
 }
 
 WorkQueue& TrackReader::storageQueue()
@@ -171,13 +155,16 @@ WorkQueue& TrackReader::storageQueue()
     return queue;
 }
 
-TrackReader::TrackReader(Allocator&& allocator, const FormatReader& formatReader, CMMediaType mediaType, uint64_t trackID)
+TrackReader::TrackReader(Allocator&& allocator, const FormatReader& formatReader, CMMediaType mediaType, uint64_t trackID, Optional<bool> enabled)
     : CoreMediaWrapped(WTFMove(allocator))
     , m_trackID(trackID)
     , m_mediaType(mediaType)
     , m_duration(formatReader.duration())
 {
     ASSERT(!isMainThread());
+
+    if (enabled)
+        m_isEnabled = enabled.value() ? Enabled::True : Enabled::False;
 }
 
 void TrackReader::addSample(Ref<MediaSample>&& sample, MTPluginByteSourceRef byteSource)
@@ -216,13 +203,16 @@ void TrackReader::finishParsing()
     if (!m_sampleStorage)
         m_sampleStorage = makeUnique<SampleStorage>();
     m_sampleStorage->hasAllSamples = true;
+    if (m_isEnabled == Enabled::Unknown)
+        m_isEnabled = m_sampleStorage->sampleMap.empty() ? Enabled::False : Enabled::True;
     m_sampleStorageCondition.notifyAll();
 }
 
 OSStatus TrackReader::copyProperty(CFStringRef key, CFAllocatorRef allocator, void* copiedValue)
 {
-    if (CFEqual(key, PAL::get_MediaToolbox_kMTPluginTrackReaderProperty_Enabled())) {
-        *reinterpret_cast<CFBooleanRef*>(copiedValue) = retainPtr(m_isEnabled ? kCFBooleanTrue : kCFBooleanFalse).leakRef();
+    // Don't block waiting for media if the we know the enabled state.
+    if (CFEqual(key, PAL::get_MediaToolbox_kMTPluginTrackReaderProperty_Enabled()) && m_isEnabled != Enabled::Unknown) {
+        *reinterpret_cast<CFBooleanRef*>(copiedValue) = retainPtr(m_isEnabled == Enabled::True ? kCFBooleanTrue : kCFBooleanFalse).leakRef();
         return noErr;
     }
 
@@ -232,6 +222,15 @@ OSStatus TrackReader::copyProperty(CFStringRef key, CFAllocatorRef allocator, vo
     });
 
     auto& sampleMap = m_sampleStorage->sampleMap;
+
+    if (CFEqual(key, PAL::get_MediaToolbox_kMTPluginTrackReaderProperty_Enabled())) {
+        if (m_isEnabled == Enabled::Unknown)
+            m_isEnabled = sampleMap.empty() ? Enabled::False : Enabled::True;
+
+        *reinterpret_cast<CFBooleanRef*>(copiedValue) = retainPtr(m_isEnabled == Enabled::True ? kCFBooleanTrue : kCFBooleanFalse).leakRef();
+        return noErr;
+    }
+
     if (sampleMap.empty())
         return kCMBaseObjectError_ValueNotAvailable;
 

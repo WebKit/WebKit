@@ -58,6 +58,11 @@ public:
     WEBCORE_EXPORT static void setShouldDeactivateAudioSession(bool);
     WEBCORE_EXPORT static bool shouldDeactivateAudioSession();
 
+    WEBCORE_EXPORT static void setWebMFormatReaderEnabled(bool);
+    WEBCORE_EXPORT static bool webMFormatReaderEnabled();
+    WEBCORE_EXPORT static void setVorbisDecoderEnabled(bool);
+    WEBCORE_EXPORT static bool vorbisDecoderEnabled();
+
     virtual ~PlatformMediaSessionManager() = default;
 
     virtual void scheduleSessionStatusUpdate() { }
@@ -200,6 +205,13 @@ private:
 
     WeakHashSet<PlatformMediaSession::AudioCaptureSource> m_audioCaptureSources;
     GenericTaskQueue<Timer> updateSessionStateQueue;
+
+#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+    static bool m_webMFormatReaderEnabled;
+#endif
+#if ENABLE(VORBIS) && PLATFORM(MAC)
+    static bool m_vorbisDecoderEnabled;
+#endif
 
 #if !RELEASE_LOG_DISABLED
     Ref<AggregateLogger> m_logger;
