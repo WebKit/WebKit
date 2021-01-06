@@ -1,3 +1,42 @@
+2021-01-06  Alex Christensen  <achristensen@webkit.org>
+
+        Use sendWithAsyncReply instead of iOS-specific GenericCallbacks
+        https://bugs.webkit.org/show_bug.cgi?id=220346
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _accessibilityRetrieveRectsEnclosingSelectionOffset:withGranularity:]):
+        (-[WKContentView _accessibilityRetrieveRectsAtSelectionOffset:withText:completionHandler:]):
+        (selectionChangedWithGesture):
+        (selectionChangedWithTouch):
+        (-[WKContentView changeSelectionWithGestureAt:withGesture:withState:withFlags:]):
+        (-[WKContentView changeSelectionWithTouchAt:withSelectionTouch:baseIsStart:withFlags:]):
+        (-[WKContentView changeSelectionWithTouchesFrom:to:withGesture:withState:]):
+        (-[WKContentView updateCurrentFocusedElementInformation:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::requestFocusedElementInformation):
+        (WebKit::WebPageProxy::selectWithGesture):
+        (WebKit::WebPageProxy::updateSelectionWithTouches):
+        (WebKit::WebPageProxy::selectWithTwoTouches):
+        (WebKit::WebPageProxy::requestRectsForGranularityWithSelectionOffset):
+        (WebKit::WebPageProxy::requestRectsAtSelectionOffsetWithText):
+        (WebKit::WebPageProxy::gestureCallback): Deleted.
+        (WebKit::WebPageProxy::touchesCallback): Deleted.
+        (WebKit::WebPageProxy::selectionRectsCallback): Deleted.
+        (WebKit::WebPageProxy::focusedElementInformationCallback): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestFocusedElementInformation):
+        (WebKit::WebPage::selectWithGesture):
+        (WebKit::WebPage::updateSelectionWithTouches):
+        (WebKit::WebPage::selectWithTwoTouches):
+        (WebKit::WebPage::getRectsForGranularityWithSelectionOffset):
+        (WebKit::WebPage::getRectsAtSelectionOffsetWithText):
+
 2021-01-06  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Silence selected sandbox violation reports

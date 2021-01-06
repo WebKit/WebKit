@@ -725,10 +725,10 @@ public:
     void inspectorNodeSearchEndedAtPosition(const WebCore::FloatPoint&);
 
     void blurFocusedElement();
-    void requestFocusedElementInformation(CallbackID);
-    void selectWithGesture(const WebCore::IntPoint&, GestureType, GestureRecognizerState, bool isInteractingWithFocusedElement, CallbackID);
-    void updateSelectionWithTouches(const WebCore::IntPoint&, SelectionTouch, bool baseIsStart, CallbackID);
-    void selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore::IntPoint& to, GestureType, GestureRecognizerState, CallbackID);
+    void requestFocusedElementInformation(CompletionHandler<void(const FocusedElementInformation&)>&&);
+    void selectWithGesture(const WebCore::IntPoint&, GestureType, GestureRecognizerState, bool isInteractingWithFocusedElement, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&&);
+    void updateSelectionWithTouches(const WebCore::IntPoint&, SelectionTouch, bool baseIsStart, CompletionHandler<void(const WebCore::IntPoint&, SelectionTouch, OptionSet<SelectionFlags>)>&&);
+    void selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore::IntPoint& to, GestureType, GestureRecognizerState, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&&);
     void extendSelection(WebCore::TextGranularity, CompletionHandler<void()>&&);
     void selectWordBackward();
     void moveSelectionByOffset(int32_t offset, CompletionHandler<void()>&&);
@@ -762,8 +762,8 @@ public:
     void updateSelectionAppearance();
     void getSelectionContext(CompletionHandler<void(const String&, const String&, const String&)>&&);
     void handleTwoFingerTapAtPoint(const WebCore::IntPoint&, OptionSet<WebKit::WebEvent::Modifier>, uint64_t requestID);
-    void getRectsForGranularityWithSelectionOffset(WebCore::TextGranularity, int32_t, CallbackID);
-    void getRectsAtSelectionOffsetWithText(int32_t, const String&, CallbackID);
+    void getRectsForGranularityWithSelectionOffset(WebCore::TextGranularity, int32_t, CompletionHandler<void(const Vector<WebCore::SelectionRect>&)>&&);
+    void getRectsAtSelectionOffsetWithText(int32_t, const String&, CompletionHandler<void(const Vector<WebCore::SelectionRect>&)>&&);
     void storeSelectionForAccessibility(bool);
     void startAutoscrollAtPosition(const WebCore::FloatPoint&);
     void cancelAutoscroll();

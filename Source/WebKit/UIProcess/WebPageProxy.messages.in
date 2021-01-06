@@ -174,8 +174,6 @@ messages -> WebPageProxy {
     ApplicationManifestCallback(Optional<WebCore::ApplicationManifest> manifest, WebKit::CallbackID callbackID)
 #endif
 #if PLATFORM(IOS_FAMILY)
-    GestureCallback(WebCore::IntPoint point, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> flags, WebKit::CallbackID callbackID)
-    TouchesCallback(WebCore::IntPoint point, enum:uint8_t WebKit::SelectionTouch touches, OptionSet<WebKit::SelectionFlags> flags, WebKit::CallbackID callbackID)
     InterpretKeyEvent(struct WebKit::EditorState state, bool isCharEvent) -> (bool handled) Synchronous
     DidReceivePositionInformation(struct WebKit::InteractionInformationAtPosition information)
     SaveImageToLibrary(WebKit::SharedMemory::IPCHandle handle)
@@ -185,7 +183,6 @@ messages -> WebPageProxy {
     DidCompleteSyntheticClick()
     DisableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID)
     HandleSmartMagnificationInformationForPotentialTap(uint64_t requestID, WebCore::FloatRect renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale, bool nodeIsRootLevel)
-    SelectionRectsCallback(Vector<WebCore::SelectionRect> selectionRects, WebKit::CallbackID callbackID);
 #endif
 #if ENABLE(DATA_DETECTION)
     SetDataDetectionResult(struct WebKit::DataDetectionResult dataDetectionResult)
@@ -401,7 +398,6 @@ messages -> WebPageProxy {
     ScrollingNodeScrollDidEndScroll()
     ShowInspectorHighlight(struct WebCore::InspectorOverlay::Highlight highlight)
     HideInspectorHighlight()
-    FocusedElementInformationCallback(struct WebKit::FocusedElementInformation information, WebKit::CallbackID callbackID)
 
     ShowInspectorIndication()
     HideInspectorIndication()

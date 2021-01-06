@@ -3740,10 +3740,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (void)_accessibilityRetrieveRectsEnclosingSelectionOffset:(NSInteger)offset withGranularity:(UITextGranularity)granularity
 {
-    RetainPtr<WKContentView> view = self;
-    _page->requestRectsForGranularityWithSelectionOffset(toWKTextGranularity(granularity), offset , [view, offset, granularity](const Vector<WebCore::SelectionRect>& selectionRects, WebKit::CallbackBase::Error error) {
-        if (error != WebKit::CallbackBase::Error::None)
-            return;
+    _page->requestRectsForGranularityWithSelectionOffset(toWKTextGranularity(granularity), offset, [view = retainPtr(self), offset, granularity](const Vector<WebCore::SelectionRect>& selectionRects) {
         if ([view respondsToSelector:@selector(_accessibilityDidGetSelectionRects:withGranularity:atOffset:)])
             [view _accessibilityDidGetSelectionRects:[view webSelectionRectsForSelectionRects:selectionRects] withGranularity:granularity atOffset:offset];
     });
@@ -3757,12 +3754,10 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 - (void)_accessibilityRetrieveRectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text completionHandler:(void (^)(const Vector<WebCore::SelectionRect>& rects))completionHandler
 {
     RetainPtr<WKContentView> view = self;
-    _page->requestRectsAtSelectionOffsetWithText(offset, text, [view, offset, capturedCompletionHandler = makeBlockPtr(completionHandler)](const Vector<WebCore::SelectionRect>& selectionRects, WebKit::CallbackBase::Error error) {
+    _page->requestRectsAtSelectionOffsetWithText(offset, text, [view, offset, capturedCompletionHandler = makeBlockPtr(completionHandler)](const Vector<WebCore::SelectionRect>& selectionRects) {
         if (capturedCompletionHandler)
             capturedCompletionHandler(selectionRects);
 
-        if (error != WebKit::CallbackBase::Error::None)
-            return;
         if ([view respondsToSelector:@selector(_accessibilityDidGetSelectionRects:withGranularity:atOffset:)])
             [view _accessibilityDidGetSelectionRects:[view webSelectionRectsForSelectionRects:selectionRects] withGranularity:UITextGranularityWord atOffset:offset];
     });
@@ -4007,17 +4002,13 @@ static inline WebCore::SelectionDirection toWKSelectionDirection(UITextDirection
     }
 }
 
-static void selectionChangedWithGesture(WKContentView *view, const WebCore::IntPoint& point, WebKit::GestureType gestureType, WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> flags, WebKit::CallbackBase::Error error)
+static void selectionChangedWithGesture(WKContentView *view, const WebCore::IntPoint& point, WebKit::GestureType gestureType, WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> flags)
 {
-    if (error != WebKit::CallbackBase::Error::None)
-        return;
     [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithGestureAt:(CGPoint)point withGesture:toUIWKGestureType(gestureType) withState:toUIGestureRecognizerState(gestureState) withFlags:toUIWKSelectionFlags(flags)];
 }
 
-static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoint& point, WebKit::SelectionTouch touch, OptionSet<WebKit::SelectionFlags> flags, WebKit::CallbackBase::Error error)
+static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoint& point, WebKit::SelectionTouch touch, OptionSet<WebKit::SelectionFlags> flags)
 {
-    if (error != WebKit::CallbackBase::Error::None)
-        return;
     [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:toUIWKSelectionTouch((WebKit::SelectionTouch)touch) withFlags:toUIWKSelectionFlags(flags)];
 }
 
@@ -4034,8 +4025,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)changeSelectionWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)state withFlags:(UIWKSelectionFlags)flags
 {
     _usingGestureForSelection = YES;
-    _page->selectWithGesture(WebCore::IntPoint(point), toGestureType(gestureType), toGestureRecognizerState(state), self._hasFocusedElement, [self, strongSelf = retainPtr(self), state, flags](const WebCore::IntPoint& point, WebKit::GestureType gestureType, WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> innerFlags, WebKit::CallbackBase::Error error) {
-        selectionChangedWithGesture(self, point, gestureType, gestureState, toSelectionFlags(flags) | innerFlags, error);
+    _page->selectWithGesture(WebCore::IntPoint(point), toGestureType(gestureType), toGestureRecognizerState(state), self._hasFocusedElement, [self, strongSelf = retainPtr(self), state, flags](const WebCore::IntPoint& point, WebKit::GestureType gestureType, WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> innerFlags) {
+        selectionChangedWithGesture(self, point, gestureType, gestureState, toSelectionFlags(flags) | innerFlags);
         if (state == UIGestureRecognizerStateEnded || state == UIGestureRecognizerStateCancelled)
             _usingGestureForSelection = NO;
     });
@@ -4044,8 +4035,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)changeSelectionWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch baseIsStart:(BOOL)baseIsStart withFlags:(UIWKSelectionFlags)flags
 {
     _usingGestureForSelection = YES;
-    _page->updateSelectionWithTouches(WebCore::IntPoint(point), toSelectionTouch(touch), baseIsStart, [self, strongSelf = retainPtr(self), flags](const WebCore::IntPoint& point, WebKit::SelectionTouch touch, OptionSet<WebKit::SelectionFlags> innerFlags, WebKit::CallbackBase::Error error) {
-        selectionChangedWithTouch(self, point, touch, toSelectionFlags(flags) | innerFlags, error);
+    _page->updateSelectionWithTouches(WebCore::IntPoint(point), toSelectionTouch(touch), baseIsStart, [self, strongSelf = retainPtr(self), flags](const WebCore::IntPoint& point, WebKit::SelectionTouch touch, OptionSet<WebKit::SelectionFlags> innerFlags) {
+        selectionChangedWithTouch(self, point, touch, toSelectionFlags(flags) | innerFlags);
         if (toUIWKSelectionTouch(touch) != UIWKSelectionTouchStarted && toUIWKSelectionTouch(touch) != UIWKSelectionTouchMoved)
             _usingGestureForSelection = NO;
     });
@@ -4054,8 +4045,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)changeSelectionWithTouchesFrom:(CGPoint)from to:(CGPoint)to withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)gestureState
 {
     _usingGestureForSelection = YES;
-    _page->selectWithTwoTouches(WebCore::IntPoint(from), WebCore::IntPoint(to), toGestureType(gestureType), toGestureRecognizerState(gestureState), [self, strongSelf = retainPtr(self)](const WebCore::IntPoint& point, WebKit::GestureType gestureType, WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> flags, WebKit::CallbackBase::Error error) {
-        selectionChangedWithGesture(self, point, gestureType, gestureState, flags, error);
+    _page->selectWithTwoTouches(WebCore::IntPoint(from), WebCore::IntPoint(to), toGestureType(gestureType), toGestureRecognizerState(gestureState), [self, strongSelf = retainPtr(self)](const WebCore::IntPoint& point, WebKit::GestureType gestureType, WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> flags) {
+        selectionChangedWithGesture(self, point, gestureType, gestureState, flags);
         if (toUIGestureRecognizerState(gestureState) == UIGestureRecognizerStateEnded || toUIGestureRecognizerState(gestureState) == UIGestureRecognizerStateCancelled)
             _usingGestureForSelection = NO;
     });
@@ -6329,8 +6320,8 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 {
     WeakObjCPtr<WKContentView> weakSelf { self };
     auto identifierBeforeUpdate = _focusedElementInformation.focusedElementIdentifier;
-    _page->requestFocusedElementInformation([callback = WTFMove(callback), identifierBeforeUpdate, weakSelf] (auto& info, auto error) {
-        if (!weakSelf || error != WebKit::CallbackBase::Error::None || info.focusedElementIdentifier != identifierBeforeUpdate) {
+    _page->requestFocusedElementInformation([callback = WTFMove(callback), identifierBeforeUpdate, weakSelf] (auto& info) {
+        if (!weakSelf || info.focusedElementIdentifier != identifierBeforeUpdate) {
             // If the focused element may have changed in the meantime, don't overwrite focused element information.
             callback(false);
             return;

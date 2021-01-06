@@ -149,59 +149,12 @@ bool WebPageProxy::readSelectionFromPasteboard(const String&)
     return false;
 }
 
-void WebPageProxy::gestureCallback(const WebCore::IntPoint& point, GestureType gestureType, GestureRecognizerState gestureState, OptionSet<SelectionFlags> flags, CallbackID callbackID)
+void WebPageProxy::requestFocusedElementInformation(CompletionHandler<void(const FocusedElementInformation&)>&& callback)
 {
-    auto callback = m_callbacks.take<GestureCallback>(callbackID);
-    if (!callback) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    
-    callback->performCallbackWithReturnValue(point, gestureType, gestureState, flags);
-}
+    if (!hasRunningProcess())
+        return callback({ });
 
-void WebPageProxy::touchesCallback(const WebCore::IntPoint& point, SelectionTouch touches, OptionSet<SelectionFlags> flags, CallbackID callbackID)
-{
-    auto callback = m_callbacks.take<TouchesCallback>(callbackID);
-    if (!callback) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(point, touches, flags);
-}
-
-void WebPageProxy::selectionRectsCallback(const Vector<WebCore::SelectionRect>& selectionRects, CallbackID callbackID)
-{
-    auto callback = m_callbacks.take<SelectionRectsCallback>(callbackID);
-    if (!callback) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    
-    callback->performCallbackWithReturnValue(selectionRects);
-}
-
-void WebPageProxy::focusedElementInformationCallback(const FocusedElementInformation& info, CallbackID callbackID)
-{
-    auto callback = m_callbacks.take<FocusedElementInformationCallback>(callbackID);
-    if (!callback) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(info);
-}
-
-void WebPageProxy::requestFocusedElementInformation(Function<void(const FocusedElementInformation&, CallbackBase::Error)>&& callback)
-{
-    if (!hasRunningProcess()) {
-        callback({ }, CallbackBase::Error::OwnerWasInvalidated);
-        return;
-    }
-
-    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivity("WebPageProxy::requestFocusedElementInformation"_s));
-    m_process->send(Messages::WebPage::RequestFocusedElementInformation(callbackID), m_webPageID);
+    sendWithAsyncReply(Messages::WebPage::RequestFocusedElementInformation(), WTFMove(callback));
 }
 
 void WebPageProxy::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdate, bool sendEvenIfUnchanged)
@@ -422,26 +375,20 @@ void WebPageProxy::layerTreeCommitComplete()
     pageClient().layerTreeCommitComplete();
 }
 
-void WebPageProxy::selectWithGesture(const WebCore::IntPoint point, GestureType gestureType, GestureRecognizerState gestureState, bool isInteractingWithFocusedElement, WTF::Function<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<WebKit::SelectionFlags>, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::selectWithGesture(const WebCore::IntPoint point, GestureType gestureType, GestureRecognizerState gestureState, bool isInteractingWithFocusedElement, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<WebKit::SelectionFlags>)>&& callback)
 {
-    if (!hasRunningProcess()) {
-        callbackFunction(WebCore::IntPoint(), GestureType::Loupe, GestureRecognizerState::Possible, { }, CallbackBase::Error::Unknown);
-        return;
-    }
+    if (!hasRunningProcess())
+        return callback({ }, GestureType::Loupe, GestureRecognizerState::Possible, { });
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::selectWithGesture"_s));
-    m_process->send(Messages::WebPage::SelectWithGesture(point, gestureType, gestureState, isInteractingWithFocusedElement, callbackID), m_webPageID);
+    sendWithAsyncReply(Messages::WebPage::SelectWithGesture(point, gestureType, gestureState, isInteractingWithFocusedElement), WTFMove(callback));
 }
 
-void WebPageProxy::updateSelectionWithTouches(const WebCore::IntPoint point, SelectionTouch touches, bool baseIsStart, Function<void(const WebCore::IntPoint&, SelectionTouch, OptionSet<SelectionFlags>, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::updateSelectionWithTouches(const WebCore::IntPoint point, SelectionTouch touches, bool baseIsStart, CompletionHandler<void(const WebCore::IntPoint&, SelectionTouch, OptionSet<SelectionFlags>)>&& callback)
 {
-    if (!hasRunningProcess()) {
-        callbackFunction(WebCore::IntPoint(), SelectionTouch::Started, { }, CallbackBase::Error::Unknown);
-        return;
-    }
+    if (!hasRunningProcess())
+        return callback(WebCore::IntPoint(), SelectionTouch::Started, { });
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::updateSelectionWithTouches"_s));
-    m_process->send(Messages::WebPage::UpdateSelectionWithTouches(point, touches, baseIsStart, callbackID), m_webPageID);
+    sendWithAsyncReply(Messages::WebPage::UpdateSelectionWithTouches(point, touches, baseIsStart), WTFMove(callback));
 }
     
 void WebPageProxy::replaceDictatedText(const String& oldText, const String& newText)
@@ -612,15 +559,12 @@ void WebPageProxy::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, Opt
     send(Messages::WebPage::HandleTwoFingerTapAtPoint(point, modifiers, requestID));
 }
 
-void WebPageProxy::selectWithTwoTouches(const WebCore::IntPoint from, const WebCore::IntPoint to, GestureType gestureType, GestureRecognizerState gestureState, Function<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::selectWithTwoTouches(const WebCore::IntPoint from, const WebCore::IntPoint to, GestureType gestureType, GestureRecognizerState gestureState, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&& callback)
 {
-    if (!hasRunningProcess()) {
-        callbackFunction(WebCore::IntPoint(), GestureType::Loupe, GestureRecognizerState::Possible, { }, CallbackBase::Error::Unknown);
-        return;
-    }
+    if (!hasRunningProcess())
+        return callback({ }, GestureType::Loupe, GestureRecognizerState::Possible, { });
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::selectWithTwoTouches"_s));
-    m_process->send(Messages::WebPage::SelectWithTwoTouches(from, to, gestureType, gestureState, callbackID), m_webPageID);
+    sendWithAsyncReply(Messages::WebPage::SelectWithTwoTouches(from, to, gestureType, gestureState), WTFMove(callback));
 }
 
 void WebPageProxy::didReceivePositionInformation(const InteractionInformationAtPosition& info)
@@ -745,26 +689,20 @@ void WebPageProxy::selectWordBackward()
     m_process->send(Messages::WebPage::SelectWordBackward(), m_webPageID);
 }
 
-void WebPageProxy::requestRectsForGranularityWithSelectionOffset(WebCore::TextGranularity granularity, uint32_t offset, WTF::Function<void(const Vector<WebCore::SelectionRect>&, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::requestRectsForGranularityWithSelectionOffset(WebCore::TextGranularity granularity, uint32_t offset, CompletionHandler<void(const Vector<WebCore::SelectionRect>&)>&& callback)
 {
-    if (!hasRunningProcess()) {
-        callbackFunction(Vector<WebCore::SelectionRect>(), CallbackBase::Error::Unknown);
-        return;
-    }
+    if (!hasRunningProcess())
+        return callback({ });
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::requestRectsForGranularityWithSelectionOffset"_s));
-    m_process->send(Messages::WebPage::GetRectsForGranularityWithSelectionOffset(granularity, offset, callbackID), m_webPageID);
+    sendWithAsyncReply(Messages::WebPage::GetRectsForGranularityWithSelectionOffset(granularity, offset), WTFMove(callback));
 }
 
-void WebPageProxy::requestRectsAtSelectionOffsetWithText(int32_t offset, const String& text, WTF::Function<void(const Vector<WebCore::SelectionRect>&, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::requestRectsAtSelectionOffsetWithText(int32_t offset, const String& text, CompletionHandler<void(const Vector<WebCore::SelectionRect>&)>&& callback)
 {
-    if (!hasRunningProcess()) {
-        callbackFunction(Vector<WebCore::SelectionRect>(), CallbackBase::Error::Unknown);
-        return;
-    }
+    if (!hasRunningProcess())
+        return callback({ });
     
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::requestRectsAtSelectionOffsetWithText"_s));
-    m_process->send(Messages::WebPage::GetRectsAtSelectionOffsetWithText(offset, text, callbackID), m_webPageID);
+    sendWithAsyncReply(Messages::WebPage::GetRectsAtSelectionOffsetWithText(offset, text), WTFMove(callback));
 }
 
 void WebPageProxy::storeSelectionForAccessibility(bool shouldStore)

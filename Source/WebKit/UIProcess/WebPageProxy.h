@@ -399,13 +399,6 @@ struct QueuedTouchEvents {
 typedef GenericCallback<const Optional<WebCore::ApplicationManifest>&> ApplicationManifestCallback;
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-typedef GenericCallback<const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>> GestureCallback;
-typedef GenericCallback<const WebCore::IntPoint&, SelectionTouch, OptionSet<SelectionFlags>> TouchesCallback;
-typedef GenericCallback<const Vector<WebCore::SelectionRect>&> SelectionRectsCallback;
-typedef GenericCallback<const FocusedElementInformation&> FocusedElementInformationCallback;
-#endif
-
 #if PLATFORM(COCOA)
 using DrawToPDFCallback = GenericCallback<const IPC::DataReference&>;
 typedef GenericCallback<bool, bool, String, double, double, uint64_t> NowPlayingInfoCallback;
@@ -761,9 +754,9 @@ public:
     void setOverrideViewportArguments(const Optional<WebCore::ViewportArguments>&);
     void willCommitLayerTree(TransactionID);
 
-    void selectWithGesture(const WebCore::IntPoint, GestureType, GestureRecognizerState, bool isInteractingWithFocusedElement, WTF::Function<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>, CallbackBase::Error)>&&);
-    void updateSelectionWithTouches(const WebCore::IntPoint, SelectionTouch, bool baseIsStart, Function<void(const WebCore::IntPoint&, SelectionTouch, OptionSet<SelectionFlags>, CallbackBase::Error)>&&);
-    void selectWithTwoTouches(const WebCore::IntPoint from, const WebCore::IntPoint to, GestureType, GestureRecognizerState, Function<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>, CallbackBase::Error)>&&);
+    void selectWithGesture(const WebCore::IntPoint, GestureType, GestureRecognizerState, bool isInteractingWithFocusedElement, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&&);
+    void updateSelectionWithTouches(const WebCore::IntPoint, SelectionTouch, bool baseIsStart, CompletionHandler<void(const WebCore::IntPoint&, SelectionTouch, OptionSet<SelectionFlags>)>&&);
+    void selectWithTwoTouches(const WebCore::IntPoint from, const WebCore::IntPoint to, GestureType, GestureRecognizerState, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&&);
     void extendSelection(WebCore::TextGranularity, CompletionHandler<void()>&& = { });
     void selectWordBackward();
     void moveSelectionByOffset(int32_t offset, CompletionHandler<void()>&&);
@@ -815,8 +808,8 @@ public:
     double minimumEffectiveDeviceWidth() const { return m_viewportConfigurationMinimumEffectiveDeviceWidth; }
     void setMinimumEffectiveDeviceWidthWithoutViewportConfigurationUpdate(double minimumEffectiveDeviceWidth) { m_viewportConfigurationMinimumEffectiveDeviceWidth = minimumEffectiveDeviceWidth; }
     void setIsScrollingOrZooming(bool);
-    void requestRectsForGranularityWithSelectionOffset(WebCore::TextGranularity, uint32_t offset, WTF::Function<void(const Vector<WebCore::SelectionRect>&, CallbackBase::Error)>&&);
-    void requestRectsAtSelectionOffsetWithText(int32_t offset, const String&, WTF::Function<void(const Vector<WebCore::SelectionRect>&, CallbackBase::Error)>&&);
+    void requestRectsForGranularityWithSelectionOffset(WebCore::TextGranularity, uint32_t offset, CompletionHandler<void(const Vector<WebCore::SelectionRect>&)>&&);
+    void requestRectsAtSelectionOffsetWithText(int32_t offset, const String&, CompletionHandler<void(const Vector<WebCore::SelectionRect>&)>&&);
     void autofillLoginCredentials(const String& username, const String& password);
     void storeSelectionForAccessibility(bool);
     void startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWindow);
@@ -1418,7 +1411,7 @@ public:
     void recordAutomaticNavigationSnapshot();
     void suppressNextAutomaticNavigationSnapshot() { m_shouldSuppressNextAutomaticNavigationSnapshot = true; }
     void recordNavigationSnapshot(WebBackForwardListItem&);
-    void requestFocusedElementInformation(Function<void(const FocusedElementInformation&, CallbackBase::Error)>&&);
+    void requestFocusedElementInformation(CompletionHandler<void(const FocusedElementInformation&)>&&);
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     RefPtr<ViewSnapshot> takeViewSnapshot(Optional<WebCore::IntRect>&&);
@@ -2156,11 +2149,8 @@ private:
     void fontAtSelectionCallback(const FontInfo&, double, bool, CallbackID);
 #endif
 #if PLATFORM(IOS_FAMILY)
-    void gestureCallback(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>, CallbackID);
-    void touchesCallback(const WebCore::IntPoint&, SelectionTouch, OptionSet<SelectionFlags>, CallbackID);
     void interpretKeyEvent(const EditorState&, bool isCharEvent, CompletionHandler<void(bool)>&&);
     void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect, WebCore::RouteSharingPolicy, const String&);
-    void selectionRectsCallback(const Vector<WebCore::SelectionRect>&, CallbackID);
 
     void updateStringForFind(const String&);
 #endif
@@ -2225,7 +2215,6 @@ private:
 
     void enableInspectorNodeSearch();
     void disableInspectorNodeSearch();
-    void focusedElementInformationCallback(const FocusedElementInformation&, CallbackID);
 #else
     void didReleaseAllTouchPoints() { }
 #endif // PLATFORM(IOS_FAMILY)

@@ -922,13 +922,13 @@ void WebPage::handleDoubleTapForDoubleClickAtPoint(const IntPoint& point, Option
     nodeRespondingToDoubleClick->document().frame()->eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MouseReleased, 2, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), 0, WebCore::OneFingerTap));
 }
 
-void WebPage::requestFocusedElementInformation(WebKit::CallbackID callbackID)
+void WebPage::requestFocusedElementInformation(CompletionHandler<void(const FocusedElementInformation&)>&& completionHandler)
 {
     FocusedElementInformation info;
     if (m_focusedElement)
         getFocusedElementInformation(info);
 
-    send(Messages::WebPageProxy::FocusedElementInformationCallback(info, callbackID));
+    completionHandler(info);
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -1339,7 +1339,7 @@ static IntPoint constrainPoint(const IntPoint& point, const Frame& frame, const 
     return constrainedPoint;
 }
 
-void WebPage::selectWithGesture(const IntPoint& point, GestureType gestureType, GestureRecognizerState gestureState, bool isInteractingWithFocusedElement, CallbackID callbackID)
+void WebPage::selectWithGesture(const IntPoint& point, GestureType gestureType, GestureRecognizerState gestureState, bool isInteractingWithFocusedElement, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&& completionHandler)
 {
     if (static_cast<GestureRecognizerState>(gestureState) == GestureRecognizerState::Began)
         setFocusedFrameBeforeSelectingTextAtLocation(point);
@@ -1348,7 +1348,7 @@ void WebPage::selectWithGesture(const IntPoint& point, GestureType gestureType, 
     VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithFocusedElement);
 
     if (position.isNull()) {
-        send(Messages::WebPageProxy::GestureCallback(point, gestureType, gestureState, { }, callbackID));
+        completionHandler(point, gestureType, gestureState, { });
         return;
     }
     Optional<SimpleRange> range;
@@ -1468,7 +1468,7 @@ void WebPage::selectWithGesture(const IntPoint& point, GestureType gestureType, 
     if (range)
         frame.selection().setSelectedRange(range, position.affinity(), WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
 
-    send(Messages::WebPageProxy::GestureCallback(point, gestureType, gestureState, flags, callbackID));
+    completionHandler(point, gestureType, gestureState, flags);
 }
 
 static Optional<SimpleRange> rangeForPointInRootViewCoordinates(Frame& frame, const IntPoint& pointInRootViewCoordinates, bool baseIsStart)
@@ -1687,15 +1687,13 @@ void WebPage::dispatchSyntheticMouseEventsForSelectionGesture(SelectionTouch tou
     }
 }
 
-void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch selectionTouch, bool baseIsStart, CallbackID callbackID)
+void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch selectionTouch, bool baseIsStart, CompletionHandler<void(const WebCore::IntPoint&, SelectionTouch, OptionSet<SelectionFlags>)>&& completionHandler)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     IntPoint pointInDocument = frame.view()->rootViewToContents(point);
     VisiblePosition position = frame.visiblePositionForPoint(pointInDocument);
-    if (position.isNull()) {
-        send(Messages::WebPageProxy::TouchesCallback(point, selectionTouch, { }, callbackID));
-        return;
-    }
+    if (position.isNull())
+        return completionHandler(point, selectionTouch, { });
 
     if (shouldDispatchSyntheticMouseEventsWhenModifyingSelection())
         dispatchSyntheticMouseEventsForSelectionGesture(selectionTouch, point);
@@ -1731,10 +1729,10 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch s
     if (range)
         frame.selection().setSelectedRange(range, position.affinity(), WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
 
-    send(Messages::WebPageProxy::TouchesCallback(point, selectionTouch, flags, callbackID));
+    completionHandler(point, selectionTouch, flags);
 }
 
-void WebPage::selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore::IntPoint& to, GestureType gestureType, GestureRecognizerState gestureState, CallbackID callbackID)
+void WebPage::selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore::IntPoint& to, GestureType gestureType, GestureRecognizerState gestureState, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&& completionHandler)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     auto fromPosition = frame.visiblePositionForPoint(frame.view()->rootViewToContents(from));
@@ -1746,7 +1744,7 @@ void WebPage::selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore:
     }
 
     // We can use the same callback for the gestures with one point.
-    send(Messages::WebPageProxy::GestureCallback(from, gestureType, gestureState, { }, callbackID));
+    completionHandler(from, gestureType, gestureState, { });
 }
 
 void WebPage::extendSelection(WebCore::TextGranularity granularity, CompletionHandler<void()>&& completionHandler)
@@ -1951,7 +1949,7 @@ void WebPage::requestEvasionRectsAboveSelection(CompletionHandler<void(const Vec
     reply(WTFMove(rectsToAvoidInRootViewCoordinates));
 }
 
-void WebPage::getRectsForGranularityWithSelectionOffset(WebCore::TextGranularity granularity, int32_t offset, CallbackID callbackID)
+void WebPage::getRectsForGranularityWithSelectionOffset(WebCore::TextGranularity granularity, int32_t offset, CompletionHandler<void(const Vector<WebCore::SelectionRect>&)>&& completionHandler)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
@@ -1960,13 +1958,13 @@ void WebPage::getRectsForGranularityWithSelectionOffset(WebCore::TextGranularity
     auto direction = offset < 0 ? SelectionDirection::Backward : SelectionDirection::Forward;
     auto range = enclosingTextUnitOfGranularity(position, granularity, direction);
     if (!range || range->collapsed()) {
-        send(Messages::WebPageProxy::SelectionRectsCallback({ }, callbackID));
+        completionHandler({ });
         return;
     }
 
     auto selectionRects = RenderObject::collectSelectionRectsWithoutUnionInteriorLines(*range);
     convertContentToRootViewSelectionRects(*frame.view(), selectionRects);
-    send(Messages::WebPageProxy::SelectionRectsCallback(selectionRects, callbackID));
+    completionHandler(selectionRects);
 }
 
 void WebPage::storeSelectionForAccessibility(bool shouldStore)
@@ -1991,14 +1989,14 @@ static Optional<SimpleRange> rangeNearPositionMatchesText(const VisiblePosition&
     return findClosestPlainText(range, matchText, { }, characterCount({ range.start, *boundaryPoint }, TextIteratorEmitsCharactersBetweenAllVisiblePositions));
 }
 
-void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& text, CallbackID callbackID)
+void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& text, CompletionHandler<void(const Vector<WebCore::SelectionRect>&)>&& completionHandler)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     auto& selection = m_storedSelectionForAccessibility.isNone() ? frame.selection().selection() : m_storedSelectionForAccessibility;
     auto startPosition = visiblePositionForPositionWithOffset(selection.visibleStart(), offset);
     auto range = makeSimpleRange(startPosition, visiblePositionForPositionWithOffset(startPosition, text.length()));
     if (!range || range->collapsed()) {
-        send(Messages::WebPageProxy::SelectionRectsCallback({ }, callbackID));
+        completionHandler({ });
         return;
     }
 
@@ -2012,7 +2010,7 @@ void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& te
 
     auto selectionRects = RenderObject::collectSelectionRectsWithoutUnionInteriorLines(*range);
     convertContentToRootViewSelectionRects(*frame.view(), selectionRects);
-    send(Messages::WebPageProxy::SelectionRectsCallback(selectionRects, callbackID));
+    completionHandler(selectionRects);
 }
 
 VisiblePosition WebPage::visiblePositionInFocusedNodeForPoint(const Frame& frame, const IntPoint& point, bool isInteractingWithFocusedElement)

@@ -65,9 +65,9 @@ messages -> WebPage LegacyReceiver {
     InspectorNodeSearchMovedToPosition(WebCore::FloatPoint point)
     InspectorNodeSearchEndedAtPosition(WebCore::FloatPoint point)
     BlurFocusedElement()
-    SelectWithGesture(WebCore::IntPoint point, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState, bool isInteractingWithFocusedElement, WebKit::CallbackID callbackID)
-    UpdateSelectionWithTouches(WebCore::IntPoint point, enum:uint8_t WebKit::SelectionTouch touches, bool baseIsStart, WebKit::CallbackID callbackID)
-    SelectWithTwoTouches(WebCore::IntPoint from, WebCore::IntPoint to, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState, WebKit::CallbackID callbackID)
+    SelectWithGesture(WebCore::IntPoint point, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState, bool isInteractingWithFocusedElement) -> (WebCore::IntPoint point, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> flags) Async
+    UpdateSelectionWithTouches(WebCore::IntPoint point, enum:uint8_t WebKit::SelectionTouch touches, bool baseIsStart) -> (WebCore::IntPoint point, enum:uint8_t WebKit::SelectionTouch touch, OptionSet<WebKit::SelectionFlags> selectionFlags) Async
+    SelectWithTwoTouches(WebCore::IntPoint from, WebCore::IntPoint to, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState) -> (WebCore::IntPoint point, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> selectionFlags) Async
     ExtendSelection(enum:uint8_t WebCore::TextGranularity granularity) -> () Async
     SelectWordBackward()
     MoveSelectionByOffset(int32_t offset) -> () Async
@@ -108,12 +108,12 @@ messages -> WebPage LegacyReceiver {
     SetAllowsMediaDocumentInlinePlayback(bool allows)
     HandleTwoFingerTapAtPoint(WebCore::IntPoint point, OptionSet<WebKit::WebEvent::Modifier> modifiers, uint64_t requestID)
     SetForceAlwaysUserScalable(bool userScalable)
-    GetRectsForGranularityWithSelectionOffset(enum:uint8_t WebCore::TextGranularity granularity, int32_t offset, WebKit::CallbackID callbackID)
-    GetRectsAtSelectionOffsetWithText(int32_t offset, String text, WebKit::CallbackID callbackID)
+    GetRectsForGranularityWithSelectionOffset(enum:uint8_t WebCore::TextGranularity granularity, int32_t offset) -> (Vector<WebCore::SelectionRect> rect) Async
+    GetRectsAtSelectionOffsetWithText(int32_t offset, String text) -> (Vector<WebCore::SelectionRect> rect) Async
     StoreSelectionForAccessibility(bool shouldStore)
     StartAutoscrollAtPosition(WebCore::FloatPoint positionInWindow)
     CancelAutoscroll()
-    RequestFocusedElementInformation(WebKit::CallbackID callbackID)
+    RequestFocusedElementInformation() -> (struct WebKit::FocusedElementInformation info) Async
     HardwareKeyboardAvailabilityChanged(bool keyboardIsAttached)
     SetIsShowingInputViewForFocusedElement(bool showingInputView)
     UpdateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta) -> () Async
