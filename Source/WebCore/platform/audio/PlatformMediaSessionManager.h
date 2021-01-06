@@ -206,7 +206,7 @@ private:
     WeakHashSet<PlatformMediaSession::AudioCaptureSource> m_audioCaptureSources;
     GenericTaskQueue<Timer> updateSessionStateQueue;
 
-#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+#if ENABLE(WEBM_FORMAT_READER)
     static bool m_webMFormatReaderEnabled;
 #endif
 #if ENABLE(VORBIS) && PLATFORM(MAC)

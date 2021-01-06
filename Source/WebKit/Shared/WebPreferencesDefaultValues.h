@@ -102,7 +102,7 @@ bool defaultIncrementalPDFEnabled();
 bool defaultWebXREnabled();
 #endif
 
-#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+#if ENABLE(WEBM_FORMAT_READER)
 bool defaultWebMFormatReaderEnabled();
 #endif
 

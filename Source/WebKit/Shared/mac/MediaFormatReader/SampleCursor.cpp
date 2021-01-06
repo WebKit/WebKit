@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SampleCursor.h"
 
-#if HAVE(MT_PLUGIN_FORMAT_READER)
+#if ENABLE(WEBM_FORMAT_READER)
 
 #include "TrackReader.h"
 #include <WebCore/MediaSample.h>
@@ -365,4 +365,4 @@ OSStatus SampleCursor::getPlayableHorizon(CMTime*) const
 
 } // namespace WebKit
 
-#endif // HAVE(MT_PLUGIN_FORMAT_READER)
+#endif // ENABLE(WEBM_FORMAT_READER)

@@ -245,7 +245,7 @@ public:
     bool incrementalPDFLoadingEnabled() const { return m_incrementalPDFLoadingEnabled; }
 #endif
     
-#if HAVE(MT_PLUGIN_FORMAT_READER)
+#if ENABLE(WEBM_FORMAT_READER)
     void setWebMFormatReaderEnabled(bool isEnabled) { m_webMFormatReaderEnabled = isEnabled; }
     bool webMFormatReaderEnabled() const { return m_webMFormatReaderEnabled; }
 #endif
@@ -392,7 +392,7 @@ private:
     bool m_incrementalPDFLoadingEnabled { false };
 #endif
 
-#if HAVE(MT_PLUGIN_FORMAT_READER)
+#if ENABLE(WEBM_FORMAT_READER)
     bool m_webMFormatReaderEnabled { false };
 #endif
 

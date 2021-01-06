@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TrackReader.h"
 
-#if HAVE(MT_PLUGIN_FORMAT_READER)
+#if ENABLE(WEBM_FORMAT_READER)
 
 #include "FormatReader.h"
 #include "SampleCursor.h"
@@ -288,4 +288,4 @@ OSStatus TrackReader::createCursorAtLastSampleInDecodeOrder(MTPluginSampleCursor
 
 } // namespace WebKit
 
-#endif // HAVE(MT_PLUGIN_FORMAT_READER)
+#endif // ENABLE(WEBM_FORMAT_READER)

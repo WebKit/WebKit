@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if HAVE(MT_PLUGIN_FORMAT_READER)
+#if ENABLE(WEBM_FORMAT_READER)
 
 #include "CoreMediaWrapped.h"
 #include <WebCore/SourceBufferPrivateClient.h>
@@ -92,4 +92,4 @@ constexpr FormatReader::WrapperClass FormatReader::wrapperClass()
 
 } // namespace WebKit
 
-#endif // HAVE(MT_PLUGIN_FORMAT_READER)
+#endif // ENABLE(WEBM_FORMAT_READER)

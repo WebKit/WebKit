@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if HAVE(MT_PLUGIN_FORMAT_READER)
+#if ENABLE(WEBM_FORMAT_READER)
 
 #include "CoreMediaWrapped.h"
 #include <WebCore/SampleMap.h>
@@ -122,4 +122,4 @@ constexpr TrackReader::WrapperClass TrackReader::wrapperClass()
 
 } // namespace WebKit
 
-#endif // HAVE(MT_PLUGIN_FORMAT_READER)
+#endif // ENABLE(WEBM_FORMAT_READER)

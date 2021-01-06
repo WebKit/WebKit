@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CoreMediaWrapped.h"
 
-#if HAVE(MT_PLUGIN_FORMAT_READER)
+#if ENABLE(WEBM_FORMAT_READER)
 
 #include <pal/cf/CoreMediaSoftLink.h>
 
@@ -49,4 +49,4 @@ const CMBaseVTable* wrapperVTable(CMBaseObjectRef wrapper)
 
 } // namespace WebKit
 
-#endif // HAVE(MT_PLUGIN_FORMAT_READER)
+#endif // ENABLE(WEBM_FORMAT_READER)

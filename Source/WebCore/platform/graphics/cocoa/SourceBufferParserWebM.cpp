@@ -466,7 +466,7 @@ const HashSet<String, ASCIICaseInsensitiveHash>& SourceBufferParserWebM::webmMIM
 
 static bool canLoadFormatReader()
 {
-#if !HAVE(MT_PLUGIN_FORMAT_READER)
+#if !ENABLE(WEBM_FORMAT_READER)
     return false;
 #elif USE(APPLE_INTERNAL_SDK)
     return true;

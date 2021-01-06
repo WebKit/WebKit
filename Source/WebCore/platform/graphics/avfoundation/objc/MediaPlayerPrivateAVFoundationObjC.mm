@@ -270,7 +270,7 @@ static dispatch_queue_t globalPullDelegateQueue()
 
 static void registerFormatReaderIfNecessary()
 {
-#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+#if ENABLE(WEBM_FORMAT_READER)
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         // Like we do for other media formats, allow the format reader to run in the WebContent or GPU process
@@ -806,7 +806,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url)
 
 static bool willUseWebMFormatReaderForType(const String& type)
 {
-#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+#if ENABLE(WEBM_FORMAT_READER)
     if (!SourceBufferParserWebM::isWebMFormatReaderAvailable())
         return false;
 

@@ -1002,7 +1002,7 @@ WebMFormatReaderEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   humanReadableName: "WebM format reader"
   humanReadableDescription: "Enable MediaToolbox format reader plug-in for WebM"
-  condition: ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+  condition: ENABLE(WEBM_FORMAT_READER)
   defaultValue:
     WebKit:
       default: WebKit::defaultWebMFormatReaderEnabled()

@@ -273,7 +273,7 @@ bool defaultWebXREnabled()
 
 #endif // ENABLE(WEBXR)
 
-#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+#if ENABLE(WEBM_FORMAT_READER)
 
 bool defaultWebMFormatReaderEnabled()
 {
@@ -284,7 +284,7 @@ bool defaultWebMFormatReaderEnabled()
     return false;
 }
 
-#endif
+#endif // ENABLE(WEBM_FORMAT_READER)
 
 #if ENABLE(VP9)
 

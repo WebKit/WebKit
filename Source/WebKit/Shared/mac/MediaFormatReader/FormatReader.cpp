@@ -26,7 +26,7 @@
 #include "config.h"
 #include "FormatReader.h"
 
-#if HAVE(MT_PLUGIN_FORMAT_READER)
+#if ENABLE(WEBM_FORMAT_READER)
 
 #include "TrackReader.h"
 #include <WebCore/AudioTrackPrivate.h>
@@ -236,4 +236,4 @@ OSStatus FormatReader::copyTrackArray(CFArrayRef* trackArrayCopy)
 
 } // namespace WebKit
 
-#endif // HAVE(MT_PLUGIN_FORMAT_READER)
+#endif // ENABLE(WEBM_FORMAT_READER)

@@ -3839,7 +3839,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     }
 #endif
 
-#if ENABLE(MEDIA_SOURCE) && HAVE(MT_PLUGIN_FORMAT_READER)
+#if ENABLE(WEBM_FORMAT_READER)
     PlatformMediaSessionManager::setWebMFormatReaderEnabled(RuntimeEnabledFeatures::sharedFeatures().webMFormatReaderEnabled());
 #endif
 
