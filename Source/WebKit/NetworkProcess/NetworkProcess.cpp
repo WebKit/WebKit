@@ -1324,19 +1324,24 @@ bool NetworkProcess::privateClickMeasurementEnabled() const
     return m_privateClickMeasurementEnabled;
 }
 
-void NetworkProcess::setPrivateClickMeasurementDebugMode(bool debugMode)
+void NetworkProcess::setPrivateClickMeasurementDebugMode(bool enabled)
 {
-    if (RuntimeEnabledFeatures::sharedFeatures().privateClickMeasurementDebugModeEnabled() == debugMode)
+    if (m_privateClickMeasurementDebugModeEnabled == enabled)
         return;
 
-    RuntimeEnabledFeatures::sharedFeatures().setPrivateClickMeasurementDebugModeEnabled(debugMode);
+    m_privateClickMeasurementDebugModeEnabled = enabled;
 
-    String message = debugMode ? "[Private Click Measurement] Turned Debug Mode on."_s : "[Private Click Measurement] Turned Debug Mode off."_s;
+    String message = enabled ? "[Private Click Measurement] Turned Debug Mode on."_s : "[Private Click Measurement] Turned Debug Mode off."_s;
     for (auto& networkConnectionToWebProcess : m_webProcessConnections.values()) {
         if (networkConnectionToWebProcess->sessionID().isEphemeral())
             continue;
         networkConnectionToWebProcess->broadcastConsoleMessage(MessageSource::PrivateClickMeasurement, MessageLevel::Info, message);
     }
+}
+
+bool NetworkProcess::privateClickMeasurementDebugModeEnabled() const
+{
+    return m_privateClickMeasurementDebugModeEnabled;
 }
 
 void NetworkProcess::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, const URL& url, const String& userAgent, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)

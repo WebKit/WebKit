@@ -1,3 +1,26 @@
+2021-01-05  John Wilander  <wilander@apple.com>
+
+        PCM: Experimental debug mode stops working after initial use
+        https://bugs.webkit.org/show_bug.cgi?id=220336
+        <rdar://problem/72398086>
+
+        Reviewed by Brent Fulgham.
+
+        The existing experimental PCM debug mode uses
+        RuntimeEnabledFeatures::sharedFeatures().privateClickMeasurementDebugModeEnabled()
+        which is not correct in the network process. This makes the flag to lose its
+        state after navigations in new tabs.
+
+        This patch moves the flag to be alongside the PCM feature flag in
+        WebKit::NetworkProcess.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setPrivateClickMeasurementDebugMode):
+        (WebKit::NetworkProcess::privateClickMeasurementDebugModeEnabled const):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::debugModeEnabled const):
+
 2021-01-05  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebKit IPC generator tests have duplicate receiver names, limiting the implementation
