@@ -1389,8 +1389,14 @@ inline SlowPathReturnType virtualForWithFunction(JSGlobalObject* globalObject, C
                 reinterpret_cast<void*>(KeepTheFrame));
         }
     }
-    return encodeResult(executable->entrypointFor(
-        kind, MustCheckArity).executableAddress(),
+
+    MacroAssemblerCodePtr<JSEntryPtrTag> codePtr;
+    if (executable->isHostFunction())
+        codePtr = jsToWasmICCodePtr(vm, kind, function);
+    if (!codePtr)
+        codePtr = executable->entrypointFor(kind, MustCheckArity);
+
+    return encodeResult(codePtr.executableAddress(),
         reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
 }
 

@@ -1,5 +1,37 @@
 2021-01-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] DFG/FTL DirectCall need to respect Wasm IC
+        https://bugs.webkit.org/show_bug.cgi?id=220339
+
+        Reviewed by Saam Barati.
+
+        We found that Wasm IC for fast calls are not used in several places.
+
+            1. LLInt calls
+            2. DFG/FTL DirectCall
+            3. Virtual calls
+
+        We noticed this because of r271112. r271112 made wasm function loading from exports constant-folded in DFG/FTL.
+        And it emits DirectCall instead of Call in DFG/FTL. Then, we missed Wasm IC and get large performance regression
+        in JetStream2 richard-wasm.
+
+        In this patch, we use Wasm IC as much as possible. The key thing of this wasm IC is that it relies on callee.
+        So, if the place is just checking Executable, then we should not go to that IC. Fortunately, the above three checks
+        callee before using code pointer obtained for Wasm IC.
+
+            1. LLInt call fast path first checks callee.
+            2. DFG/FTL DirectCall requires callee is constant for wasm functions.
+            3. Virtual calls are not storing generated codePtr.
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * jit/JITOperations.cpp:
+        (JSC::virtualForWithFunction):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setUpCall):
+
+2021-01-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [WASM] [BigInt] Add I64 to BigInt conversion
         https://bugs.webkit.org/show_bug.cgi?id=213528
 
