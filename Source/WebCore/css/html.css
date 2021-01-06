@@ -1006,7 +1006,7 @@ select {
 }
 
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-select:matches([size], [multiple]), select[size][multiple] {
+select:is([size], [multiple]), select[size][multiple] {
     -webkit-appearance: listbox;
     align-items: flex-start;
     border: 1px inset gray;
@@ -1014,7 +1014,7 @@ select:matches([size], [multiple]), select[size][multiple] {
     white-space: initial;
 }
 
-select:matches([size="0"], [size="1"]) {
+select:is([size=""], [size="0"], [size="1"]) {
     -webkit-appearance: menulist;
     align-items: center;
     border: 1px solid;
