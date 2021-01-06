@@ -30,7 +30,7 @@ typedef struct _WebKitWebAudioSrc WebKitWebAudioSrc;
 
 GType webkit_web_audio_src_get_type();
 
-void webkitWebAudioSourceSetDispatchToRenderThreadCallback(WebKitWebAudioSrc*, Function<void(Function<void()>&&)>&&);
+void webkitWebAudioSourceSetDispatchToRenderThreadFunction(WebKitWebAudioSrc*, Function<void(Function<void()>&&)>&&);
 
 #endif // USE(GSTREAMER)
 

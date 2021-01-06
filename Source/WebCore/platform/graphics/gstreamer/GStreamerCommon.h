@@ -294,6 +294,10 @@ bool isGStreamerPluginAvailable(const char* name);
 
 GstElement* createPlatformAudioSink();
 
+bool webkitGstSetElementStateSynchronously(GstElement*, GstState, Function<bool(GstMessage*)>&& = [](GstMessage*) -> bool {
+    return true;
+});
+
 }
 
 #ifndef GST_BUFFER_DTS_OR_PTS

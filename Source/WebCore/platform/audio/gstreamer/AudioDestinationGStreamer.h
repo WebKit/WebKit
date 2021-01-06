@@ -21,11 +21,8 @@
 #include "AudioBus.h"
 #include "AudioDestination.h"
 #include "GRefPtrGStreamer.h"
+#include <wtf/Condition.h>
 #include <wtf/Forward.h>
-
-typedef struct _GstElement GstElement;
-typedef struct _GstPad GstPad;
-typedef struct _GstMessage GstMessage;
 
 namespace WebCore {
 
@@ -42,12 +39,16 @@ public:
     unsigned framesPerBuffer() const final;
 
     gboolean handleMessage(GstMessage*);
+    void notifyIsPlaying(bool);
 
 protected:
     virtual void startRendering(CompletionHandler<void(bool)>&&);
     virtual void stopRendering(CompletionHandler<void(bool)>&&);
 
 private:
+    void notifyStartupResult(bool);
+    void notifyStopResult(bool);
+
     RefPtr<AudioBus> m_renderBus;
 
     float m_sampleRate;
@@ -55,6 +56,10 @@ private:
     bool m_audioSinkAvailable { false };
     GRefPtr<GstElement> m_pipeline;
     GRefPtr<GstElement> m_src;
+    CompletionHandler<void(bool)> m_startupCompletionHandler;
+    CompletionHandler<void(bool)> m_stopCompletionHandler;
+    Lock m_setStateLock;
+    Condition m_setStateCondition;
 };
 
 } // namespace WebCore

@@ -32,6 +32,7 @@
 #include <gst/audio/audio-info.h>
 #include <gst/gst.h>
 #include <mutex>
+#include <wtf/Scope.h>
 #include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
@@ -452,6 +453,47 @@ GstElement* createPlatformAudioSink()
     }
 
     return audioSink;
+}
+
+bool webkitGstSetElementStateSynchronously(GstElement* pipeline, GstState targetState, Function<bool(GstMessage*)>&& messageHandler)
+{
+    GST_DEBUG_OBJECT(pipeline, "Setting state to %s", gst_element_state_get_name(targetState));
+
+    GstState currentState;
+    auto result = gst_element_get_state(pipeline, &currentState, nullptr, 10);
+    if (result == GST_STATE_CHANGE_SUCCESS && currentState >= targetState) {
+        GST_DEBUG_OBJECT(pipeline, "Target state already reached");
+        return true;
+    }
+
+    auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(pipeline)));
+    gst_bus_enable_sync_message_emission(bus.get());
+
+    auto cleanup = makeScopeExit([bus = GRefPtr<GstBus>(bus), pipeline, targetState] {
+        gst_bus_disable_sync_message_emission(bus.get());
+        GstState currentState;
+        auto result = gst_element_get_state(pipeline, &currentState, nullptr, 0);
+        GST_DEBUG_OBJECT(pipeline, "Task finished, result: %s, target state reached: %s", gst_element_state_change_return_get_name(result), boolForPrinting(currentState == targetState));
+    });
+
+    result = gst_element_set_state(pipeline, targetState);
+    if (result == GST_STATE_CHANGE_FAILURE)
+        return false;
+
+    if (result == GST_STATE_CHANGE_ASYNC) {
+        while (auto message = adoptGRef(gst_bus_timed_pop_filtered(bus.get(), GST_CLOCK_TIME_NONE, GST_MESSAGE_STATE_CHANGED))) {
+            if (!messageHandler(message.get()))
+                return false;
+
+            result = gst_element_get_state(pipeline, &currentState, nullptr, 10);
+            if (result == GST_STATE_CHANGE_FAILURE)
+                return false;
+
+            if (currentState == targetState)
+                return true;
+        }
+    }
+    return true;
 }
 
 }

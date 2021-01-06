@@ -32,8 +32,10 @@
 #include "WebKitWebAudioSourceGStreamer.h"
 #include <gst/audio/gstaudiobasesink.h>
 #include <gst/gst.h>
+#include <wtf/PrintStream.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -120,14 +122,15 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
     , m_renderBus(AudioBus::create(numberOfOutputChannels, AudioUtilities::renderQuantumSize, false))
     , m_sampleRate(sampleRate)
 {
-    m_pipeline = gst_pipeline_new("audio-destination");
-    GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
+    static Atomic<uint32_t> pipelineId;
+    m_pipeline = gst_pipeline_new(makeString("audio-destination-", pipelineId.exchangeAdd(1)).ascii().data());
+    auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
     ASSERT(bus);
     gst_bus_add_signal_watch_full(bus.get(), RunLoopSourcePriority::RunLoopDispatcher);
     g_signal_connect(bus.get(), "message", G_CALLBACK(messageCallback), this);
 
-    m_src = reinterpret_cast<GstElement*>(g_object_new(WEBKIT_TYPE_WEB_AUDIO_SRC, "rate", sampleRate,
-        "bus", m_renderBus.get(), "provider", this, "frames", AudioUtilities::renderQuantumSize, nullptr));
+    m_src = GST_ELEMENT_CAST(g_object_new(WEBKIT_TYPE_WEB_AUDIO_SRC, "rate", sampleRate,
+        "bus", m_renderBus.get(), "destination", this, "frames", AudioUtilities::renderQuantumSize, nullptr));
 
     GRefPtr<GstElement> audioSink = createPlatformAudioSink();
     m_audioSinkAvailable = audioSink;
@@ -165,12 +168,14 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
 
 AudioDestinationGStreamer::~AudioDestinationGStreamer()
 {
-    GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Disposing");
+    auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
     ASSERT(bus);
     g_signal_handlers_disconnect_by_func(bus.get(), reinterpret_cast<gpointer>(messageCallback), this);
     gst_bus_remove_signal_watch(bus.get());
 
     gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
+    notifyStopResult(true);
 }
 
 unsigned AudioDestinationGStreamer::framesPerBuffer() const
@@ -192,7 +197,7 @@ gboolean AudioDestinationGStreamer::handleMessage(GstMessage* message)
         gst_message_parse_error(message, &error.outPtr(), &debug.outPtr());
         g_warning("Error: %d, %s. Debug output: %s", error->code,  error->message, debug.get());
         gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
-        m_isPlaying = false;
+        notifyIsPlaying(false);
         break;
     case GST_MESSAGE_STATE_CHANGED:
         if (GST_MESSAGE_SRC(message) == GST_OBJECT(m_pipeline.get())) {
@@ -200,18 +205,16 @@ gboolean AudioDestinationGStreamer::handleMessage(GstMessage* message)
             gst_message_parse_state_changed(message, &oldState, &newState, &pending);
 
             GST_INFO_OBJECT(m_pipeline.get(), "State changed (old: %s, new: %s, pending: %s)",
-                gst_element_state_get_name(oldState),
-                gst_element_state_get_name(newState),
-                gst_element_state_get_name(pending));
+                gst_element_state_get_name(oldState), gst_element_state_get_name(newState), gst_element_state_get_name(pending));
 
             WTF::String dotFileName = makeString(GST_OBJECT_NAME(m_pipeline.get()), '_',
-                gst_element_state_get_name(oldState), '_',
-                gst_element_state_get_name(newState));
+                gst_element_state_get_name(oldState), '_', gst_element_state_get_name(newState));
 
             GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
         }
         break;
     default:
+        GST_DEBUG_OBJECT(m_pipeline.get(), "Unhandled message: %s", GST_MESSAGE_TYPE_NAME(message));
         break;
     }
     return TRUE;
@@ -219,48 +222,89 @@ gboolean AudioDestinationGStreamer::handleMessage(GstMessage* message)
 
 void AudioDestinationGStreamer::start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&& completionHandler)
 {
-    webkitWebAudioSourceSetDispatchToRenderThreadCallback(WEBKIT_WEB_AUDIO_SRC(m_src.get()), WTFMove(dispatchToRenderThread));
+    webkitWebAudioSourceSetDispatchToRenderThreadFunction(WEBKIT_WEB_AUDIO_SRC(m_src.get()), WTFMove(dispatchToRenderThread));
     startRendering(WTFMove(completionHandler));
 }
 
 void AudioDestinationGStreamer::startRendering(CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(m_audioSinkAvailable);
-    bool success = false;
-    if (m_audioSinkAvailable) {
-        GST_DEBUG("Starting");
-        if (gst_element_set_state(m_pipeline.get(), GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
-            g_warning("Error: Failed to set pipeline to playing");
-            m_isPlaying = false;
-        } else {
-            m_isPlaying = true;
-            success = true;
-        }
+    m_startupCompletionHandler = WTFMove(completionHandler);
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Starting audio rendering, sink %s", m_audioSinkAvailable ? "available" : "not available");
+
+    if (m_isPlaying) {
+        notifyStartupResult(true);
+        return;
     }
 
-    callOnMainThread([completionHandler = WTFMove(completionHandler), success]() mutable {
-        completionHandler(success);
-    });
+    if (!m_audioSinkAvailable) {
+        notifyStartupResult(false);
+        return;
+    }
+
+    notifyStartupResult(webkitGstSetElementStateSynchronously(m_pipeline.get(), GST_STATE_PLAYING, [this](GstMessage* message) -> bool {
+        return handleMessage(message);
+    }));
 }
 
 void AudioDestinationGStreamer::stop(CompletionHandler<void(bool)>&& completionHandler)
 {
     stopRendering(WTFMove(completionHandler));
+    webkitWebAudioSourceSetDispatchToRenderThreadFunction(WEBKIT_WEB_AUDIO_SRC(m_src.get()), nullptr);
 }
 
 void AudioDestinationGStreamer::stopRendering(CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(m_audioSinkAvailable);
-    bool success = false;
-    if (m_audioSinkAvailable) {
-        GST_DEBUG("Stopping");
-        gst_element_set_state(m_pipeline.get(), GST_STATE_PAUSED);
-        m_isPlaying = false;
-        success = true;
+    m_stopCompletionHandler = WTFMove(completionHandler);
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Stopping audio rendering, sink %s", m_audioSinkAvailable ? "available" : "not available");
+
+    if (!m_isPlaying) {
+        GST_DEBUG_OBJECT(m_pipeline.get(), "Already stopped");
+        notifyStopResult(true);
+        return;
     }
-    callOnMainThread([completionHandler = WTFMove(completionHandler), success]() mutable {
-        completionHandler(success);
+
+    if (!m_audioSinkAvailable) {
+        notifyStopResult(false);
+        return;
+    }
+
+    notifyStopResult(webkitGstSetElementStateSynchronously(m_pipeline.get(), GST_STATE_READY, [this](GstMessage* message) -> bool {
+        return handleMessage(message);
+    }));
+}
+
+void AudioDestinationGStreamer::notifyStartupResult(bool success)
+{
+    callOnMainThreadAndWait([this, completionHandler = WTFMove(m_startupCompletionHandler), success]() mutable {
+        GST_DEBUG_OBJECT(m_pipeline.get(), "Has start completion handler: %s", boolForPrinting(!!completionHandler));
+        if (completionHandler)
+            completionHandler(success);
     });
+}
+
+void AudioDestinationGStreamer::notifyStopResult(bool success)
+{
+    if (success)
+        notifyIsPlaying(false);
+
+    callOnMainThreadAndWait([this, completionHandler = WTFMove(m_stopCompletionHandler), success]() mutable {
+        GST_DEBUG_OBJECT(m_pipeline.get(), "Has stop completion handler: %s", boolForPrinting(!!completionHandler));
+        if (completionHandler)
+            completionHandler(success);
+    });
+}
+
+void AudioDestinationGStreamer::notifyIsPlaying(bool isPlaying)
+{
+    if (m_isPlaying == isPlaying)
+        return;
+
+    GST_DEBUG("Is playing: %s", boolForPrinting(isPlaying));
+    m_isPlaying = isPlaying;
+    if (m_callback)
+        m_callback->isPlayingDidChange();
 }
 
 } // namespace WebCore
