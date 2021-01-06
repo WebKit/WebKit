@@ -1,3 +1,13 @@
+2021-01-05  Tim Horton  <timothy_horton@apple.com>
+
+        SourcesCocoa.txt should not be installed in the Web Content service bundle
+        https://bugs.webkit.org/show_bug.cgi?id=220338
+
+        Reviewed by Wenson Hsieh.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Remove SourcesCocoa.txt from the target.
+
 2021-01-05  Peng Liu  <peng.liu6@apple.com>
 
         [Media in GPU Process][MSE] SourceBuffer fires update and updateend events before the coded frames are removed

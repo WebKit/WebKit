@@ -1212,7 +1212,6 @@
 		57FABB0F25817CF00059DC95 /* AuthenticationServicesCoreSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FABB0E25817CF00059DC95 /* AuthenticationServicesCoreSPI.h */; };
 		57FABB122581827C0059DC95 /* AuthenticationServicesCoreSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FABB102581827C0059DC95 /* AuthenticationServicesCoreSoftLink.h */; };
 		57FABB132581827C0059DC95 /* AuthenticationServicesCoreSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57FABB112581827C0059DC95 /* AuthenticationServicesCoreSoftLink.mm */; };
-		57FABB14258188230059DC95 /* SourcesCocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2D7DEBE121269D5F00B9F73C /* SourcesCocoa.txt */; };
 		57FD318022B35158008D0E8B /* NavigationSOAuthorizationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317822B35149008D0E8B /* NavigationSOAuthorizationSession.h */; };
 		57FD318122B3515B008D0E8B /* PopUpSOAuthorizationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317022B35148008D0E8B /* PopUpSOAuthorizationSession.h */; };
 		57FD318222B3515E008D0E8B /* RedirectSOAuthorizationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 57FD317422B35149008D0E8B /* RedirectSOAuthorizationSession.h */; };
@@ -12959,7 +12958,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				57FABB14258188230059DC95 /* SourcesCocoa.txt in Resources */,
 				E1D26A53175964D90095BFD1 /* WebContentProcess.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
