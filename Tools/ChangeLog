@@ -1,3 +1,29 @@
+2021-01-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Assorted fixes for bisect-builds
+        https://bugs.webkit.org/show_bug.cgi?id=220158
+
+        Reviewed by Jonathan Bedard.
+
+        Switched to Python 3.
+        Many trivial Python style changes.
+        Simplified arguments, and cleaned up output.
+        Switched from run-safari to run-minibrowser on macOS, as run-safari currently
+        doesn't work on regular macOS installations.
+
+        * Scripts/bisect-builds: 
+        (QueueDescriptor): New class that holds a description of a queue, or a "platform",
+        as coming from a string like mac-catalina or mac-catalina-x86_64-release. Used for
+        matching arguments to an existing archive directory on the server.
+        (trac_link): Added. The tool now prints a trac link for seeing where the regression
+        was introduced.
+        (bisect_builds): Fixed arithmetic mistakes. Got rid of an unnecessary while-true loop,
+        as the function was already recursive.
+        (host_platform_name): The script now defaults to current platform, so -p argument
+        is mostly to select simulator.
+        (main): Moved code from "if __name__ == '__main__'" block into main function for
+        consistency.
+
 2021-01-06  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to determine whether a regex is supported in WKContentRuleList
