@@ -192,52 +192,24 @@ void WebPageProxy::setMainFrameIsScrollable(bool isScrollable)
     send(Messages::WebPage::SetMainFrameIsScrollable(isScrollable));
 }
 
-void WebPageProxy::attributedSubstringForCharacterRangeAsync(const EditingRange& range, Function<void(const WebCore::AttributedString&, const EditingRange&, CallbackBase::Error)>&& callbackFunction)
+void WebPageProxy::attributedSubstringForCharacterRangeAsync(const EditingRange& range, CompletionHandler<void(const WebCore::AttributedString&, const EditingRange&)>&& callbackFunction)
 {
     if (!hasRunningProcess()) {
-        callbackFunction({ }, EditingRange(), CallbackBase::Error::Unknown);
+        callbackFunction({ }, { });
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::attributedSubstringForCharacterRangeAsync"_s));
-
-    send(Messages::WebPage::AttributedSubstringForCharacterRangeAsync(range, callbackID));
+    sendWithAsyncReply(Messages::WebPage::AttributedSubstringForCharacterRangeAsync(range), WTFMove(callbackFunction));
 }
 
-void WebPageProxy::attributedStringForCharacterRangeCallback(const WebCore::AttributedString& string, const EditingRange& actualRange, CallbackID callbackID)
-{
-    MESSAGE_CHECK(actualRange.isValid());
-
-    auto callback = m_callbacks.take<AttributedStringForCharacterRangeCallback>(callbackID);
-    if (!callback) {
-        // FIXME: Log error or assert.
-        // this can validly happen if a load invalidated the callback, though
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(string, actualRange);
-}
-
-void WebPageProxy::fontAtSelection(Function<void(const FontInfo&, double, bool, CallbackBase::Error)>&& callback)
+void WebPageProxy::fontAtSelection(CompletionHandler<void(const FontInfo&, double, bool)>&& callback)
 {
     if (!hasRunningProcess()) {
-        callback({ }, 0, false, CallbackBase::Error::Unknown);
+        callback({ }, 0, false);
         return;
     }
 
-    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivity("WebPageProxy::fontAtSelection"_s));
-    send(Messages::WebPage::FontAtSelection(callbackID));
-}
-
-void WebPageProxy::fontAtSelectionCallback(const FontInfo& fontInfo, double fontSize, bool selectionHasMultipleFonts, CallbackID callbackID)
-{
-    auto callback = m_callbacks.take<FontAtSelectionCallback>(callbackID);
-    if (!callback) {
-        // FIXME: Log error or assert.
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(fontInfo, fontSize, selectionHasMultipleFonts);
+    sendWithAsyncReply(Messages::WebPage::FontAtSelection(), WTFMove(callback));
 }
 
 String WebPageProxy::stringSelectionForPasteboard()

@@ -457,8 +457,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ConfirmCompositionAsync()
 #endif
 #if PLATFORM(MAC)
-    AttributedSubstringForCharacterRangeAsync(struct WebKit::EditingRange range, WebKit::CallbackID callbackID);
-    FontAtSelection(WebKit::CallbackID callbackID)
+    AttributedSubstringForCharacterRangeAsync(struct WebKit::EditingRange range) -> (struct WebCore::AttributedString string, struct WebKit::EditingRange range) Async
+    FontAtSelection() -> (struct WebKit::FontInfo fontInfo, double fontSize, bool selectionHasMultipleFonts) Async
 #endif
 
     SetAlwaysShowsHorizontalScroller(bool alwaysShowsHorizontalScroller)

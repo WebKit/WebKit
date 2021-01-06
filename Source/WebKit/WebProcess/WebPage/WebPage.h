@@ -903,8 +903,8 @@ public:
 #endif
 
 #if PLATFORM(MAC)
-    void attributedSubstringForCharacterRangeAsync(const EditingRange&, CallbackID);
-    void fontAtSelection(CallbackID);
+    void attributedSubstringForCharacterRangeAsync(const EditingRange&, CompletionHandler<void(const WebCore::AttributedString&, const EditingRange&)>&&);
+    void fontAtSelection(CompletionHandler<void(const FontInfo&, double, bool)>&&);
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(SERVICE_CONTROLS)

@@ -2951,9 +2951,7 @@ void WebViewImpl::updateFontManagerIfNeeded()
     if (!fontPanelIsVisible && !m_page->editorState().isContentRichlyEditable)
         return;
 
-    m_page->fontAtSelection([](const FontInfo& fontInfo, double fontSize, bool selectionHasMultipleFonts, CallbackBase::Error error) {
-        if (error != CallbackBase::Error::None)
-            return;
+    m_page->fontAtSelection([](const FontInfo& fontInfo, double fontSize, bool selectionHasMultipleFonts) {
 
         BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -5025,20 +5023,12 @@ void WebViewImpl::hasMarkedTextWithCompletionHandler(void(^completionHandler)(BO
     });
 }
 
-void WebViewImpl::attributedSubstringForProposedRange(NSRange proposedRange, void(^completionHandlerPtr)(NSAttributedString *attrString, NSRange actualRange))
+void WebViewImpl::attributedSubstringForProposedRange(NSRange proposedRange, void(^completionHandler)(NSAttributedString *attrString, NSRange actualRange))
 {
-    auto completionHandler = adoptNS([completionHandlerPtr copy]);
-
     LOG(TextInput, "attributedSubstringFromRange:(%u, %u)", proposedRange.location, proposedRange.length);
-    m_page->attributedSubstringForCharacterRangeAsync(proposedRange, [completionHandler](const WebCore::AttributedString& string, const EditingRange& actualRange, WebKit::CallbackBase::Error error) {
-        void (^completionHandlerBlock)(NSAttributedString *, NSRange) = (void (^)(NSAttributedString *, NSRange))completionHandler.get();
-        if (error != WebKit::CallbackBase::Error::None) {
-            LOG(TextInput, "    ...attributedSubstringFromRange failed.");
-            completionHandlerBlock(0, NSMakeRange(NSNotFound, 0));
-            return;
-        }
+    m_page->attributedSubstringForCharacterRangeAsync(proposedRange, [completionHandler = makeBlockPtr(completionHandler)](const WebCore::AttributedString& string, const EditingRange& actualRange) {
         LOG(TextInput, "    -> attributedSubstringFromRange returned %@", string.string.get());
-        completionHandlerBlock(string.string.get(), actualRange);
+        completionHandler(string.string.get(), actualRange);
     });
 }
 

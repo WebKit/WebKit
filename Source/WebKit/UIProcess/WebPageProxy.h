@@ -399,11 +399,6 @@ struct QueuedTouchEvents {
 typedef GenericCallback<const Optional<WebCore::ApplicationManifest>&> ApplicationManifestCallback;
 #endif
 
-#if PLATFORM(MAC)
-typedef GenericCallback<const WebCore::AttributedString&, const EditingRange&> AttributedStringForCharacterRangeCallback;
-typedef GenericCallback<const FontInfo&, double, bool> FontAtSelectionCallback;
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 typedef GenericCallback<const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>> GestureCallback;
 typedef GenericCallback<const WebCore::IntPoint&, SelectionTouch, OptionSet<SelectionFlags>> TouchesCallback;
@@ -905,8 +900,8 @@ public:
     void changeFont(WebCore::FontChanges&&);
 
 #if PLATFORM(MAC)
-    void attributedSubstringForCharacterRangeAsync(const EditingRange&, Function<void(const WebCore::AttributedString&, const EditingRange&, CallbackBase::Error)>&&);
-    void fontAtSelection(Function<void(const FontInfo&, double, bool, CallbackBase::Error)>&&);
+    void attributedSubstringForCharacterRangeAsync(const EditingRange&, CompletionHandler<void(const WebCore::AttributedString&, const EditingRange&)>&&);
+    void fontAtSelection(CompletionHandler<void(const FontInfo&, double, bool)>&&);
 
     void startWindowDrag();
     NSWindow *platformWindow();
@@ -2158,7 +2153,6 @@ private:
     void applicationManifestCallback(const Optional<WebCore::ApplicationManifest>&, CallbackID);
 #endif
 #if PLATFORM(MAC)
-    void attributedStringForCharacterRangeCallback(const WebCore::AttributedString&, const EditingRange&, CallbackID);
     void fontAtSelectionCallback(const FontInfo&, double, bool, CallbackID);
 #endif
 #if PLATFORM(IOS_FAMILY)

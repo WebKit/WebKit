@@ -329,19 +329,19 @@ void WebPage::sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdenti
     }
 }
 
-void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& editingRange, CallbackID callbackID)
+void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& editingRange, CompletionHandler<void(const WebCore::AttributedString&, const EditingRange&)>&& completionHandler)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
     const VisibleSelection& selection = frame.selection().selection();
     if (selection.isNone() || !selection.isContentEditable() || selection.isInPasswordField()) {
-        send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback({ }, EditingRange(), callbackID));
+        completionHandler({ }, { });
         return;
     }
 
     auto range = EditingRange::toRange(frame, editingRange);
     if (!range) {
-        send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback({ }, EditingRange(), callbackID));
+        completionHandler({ }, { });
         return;
     }
 
@@ -360,42 +360,42 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
     ASSERT(rangeToSend.isValid());
     if (!rangeToSend.isValid()) {
         // Send an empty EditingRange as a last resort for <rdar://problem/27078089>.
-        send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback({ WTFMove(attributedString), nil }, EditingRange(), callbackID));
+        completionHandler({ WTFMove(attributedString), nil }, EditingRange());
         return;
     }
 
-    send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback({ WTFMove(attributedString), nil }, rangeToSend, callbackID));
+    completionHandler({ WTFMove(attributedString), nil }, rangeToSend);
 }
 
-void WebPage::fontAtSelection(CallbackID callbackID)
+void WebPage::fontAtSelection(CompletionHandler<void(const FontInfo&, double, bool)>&& completionHandler)
 {
     bool selectionHasMultipleFonts = false;
     auto& frame = m_page->focusController().focusedOrMainFrame();
 
     if (frame.selection().selection().isNone()) {
-        send(Messages::WebPageProxy::FontAtSelectionCallback({ }, 0, false, callbackID));
+        completionHandler({ }, 0, false);
         return;
     }
 
     auto* font = frame.editor().fontForSelection(selectionHasMultipleFonts);
     if (!font) {
-        send(Messages::WebPageProxy::FontAtSelectionCallback({ }, 0, false, callbackID));
+        completionHandler({ }, 0, false);
         return;
     }
 
     auto ctFont = font->getCTFont();
     if (!ctFont) {
-        send(Messages::WebPageProxy::FontAtSelectionCallback({ }, 0, false, callbackID));
+        completionHandler({ }, 0, false);
         return;
     }
 
     auto fontDescriptor = adoptCF(CTFontCopyFontDescriptor(ctFont));
     if (!fontDescriptor) {
-        send(Messages::WebPageProxy::FontAtSelectionCallback({ }, 0, false, callbackID));
+        completionHandler({ }, 0, false);
         return;
     }
 
-    send(Messages::WebPageProxy::FontAtSelectionCallback({ adoptCF(CTFontDescriptorCopyAttributes(fontDescriptor.get())) }, CTFontGetSize(ctFont), selectionHasMultipleFonts, callbackID));
+    completionHandler({ adoptCF(CTFontDescriptorCopyAttributes(fontDescriptor.get())) }, CTFontGetSize(ctFont), selectionHasMultipleFonts);
 }
     
 
