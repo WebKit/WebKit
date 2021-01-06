@@ -33,5 +33,3 @@
 # rdar://68957822 (REGRESSION: [ BigSur wk2 rosetta ] compositing/contents-scale/hidpi-compositing-layer-positioned-on-scaled-context.html is a flaky failure)
 [ BigSur+ ] compositing/contents-scale/hidpi-compositing-layer-positioned-on-scaled-context.html  [ Pass Failure ]
 
-webkit.org/b/218725 inspector/debugger/tail-deleted-frames/tail-deleted-frames-intermediate-frames.html [ Pass Timeout ]
-

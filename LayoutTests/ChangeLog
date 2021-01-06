@@ -1,3 +1,15 @@
+2021-01-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [Mac] inspector/debugger/tail-deleted-frames/tail-deleted-frames-intermediate-frames.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=218725
+
+        Unreviewed test gardening.
+
+        This isn't specific to Rosetta, so move the expectation to mac-wk2.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectationsRosetta:
+
 2021-01-06  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (2020-10-23): webanimations/accelerated-animation-with-easing.html is flaky on Mac Debug

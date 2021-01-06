@@ -1319,3 +1319,5 @@ webkit.org/b/219322 fast/layoutformattingcontext/table-simple-border-collapse2.h
 
 webkit.org/b/220018 webanimations/accelerated-transform-related-animation-property-order.html [ ImageOnlyFailure ]
 
+webkit.org/b/218725 inspector/debugger/tail-deleted-frames/tail-deleted-frames-intermediate-frames.html [ Pass Timeout ]
+
