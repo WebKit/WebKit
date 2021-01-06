@@ -2587,11 +2587,11 @@ void WebPage::pageStoppedScrolling()
 }
 
 #if ENABLE(CONTEXT_MENUS)
-WebContextMenu* WebPage::contextMenu()
+WebContextMenu& WebPage::contextMenu()
 {
     if (!m_contextMenu)
-        m_contextMenu = WebContextMenu::create(this);
-    return m_contextMenu.get();
+        m_contextMenu = WebContextMenu::create(*this);
+    return *m_contextMenu;
 }
 
 WebContextMenu* WebPage::contextMenuAtPointInWindow(const IntPoint& point)
@@ -2602,7 +2602,7 @@ WebContextMenu* WebPage::contextMenuAtPointInWindow(const IntPoint& point)
     PlatformMouseEvent mousePressEvent(point, point, RightButton, PlatformEvent::MousePressed, 1, false, false, false, false, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap);
     corePage()->userInputBridge().handleMousePressEvent(mousePressEvent);
     bool handled = corePage()->userInputBridge().handleContextMenuEvent(mousePressEvent, corePage()->mainFrame());
-    auto* menu = handled ? contextMenu() : nullptr;
+    auto* menu = handled ? &contextMenu() : nullptr;
     PlatformMouseEvent mouseReleaseEvent(point, point, RightButton, PlatformEvent::MouseReleased, 1, false, false, false, false, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap);
     corePage()->userInputBridge().handleMouseReleaseEvent(mouseReleaseEvent);
 
@@ -2750,7 +2750,7 @@ static bool handleContextMenuEvent(const PlatformMouseEvent& platformMouseEvent,
     bool handled = page->corePage()->userInputBridge().handleContextMenuEvent(platformMouseEvent, *frame);
 #if ENABLE(CONTEXT_MENUS)
     if (handled)
-        page->contextMenu()->show();
+        page->contextMenu().show();
 #endif
     return handled;
 }
@@ -2765,7 +2765,7 @@ void WebPage::contextMenuForKeyEvent()
     bool handled = frame.eventHandler().sendContextMenuEventForKey();
 #if ENABLE(CONTEXT_MENUS)
     if (handled)
-        contextMenu()->show();
+        contextMenu().show();
 #else
     UNUSED_PARAM(handled);
 #endif

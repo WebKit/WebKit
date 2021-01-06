@@ -819,7 +819,7 @@ public:
     void pageDidScroll();
 
 #if ENABLE(CONTEXT_MENUS)
-    WebContextMenu* contextMenu();
+    WebContextMenu& contextMenu();
     WebContextMenu* contextMenuAtPointInWindow(const WebCore::IntPoint&);
 #endif
 

@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef WebContextMenu_h
-#define WebContextMenu_h
+#pragma once
 
 #if ENABLE(CONTEXT_MENUS)
 
@@ -27,6 +26,7 @@
 
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class Image;
@@ -39,7 +39,7 @@ class WebPage;
 
 class WebContextMenu : public RefCounted<WebContextMenu> {
 public:
-    static Ref<WebContextMenu> create(WebPage* page) 
+    static Ref<WebContextMenu> create(WebPage& page)
     {
         return adoptRef(*new WebContextMenu(page));
     }
@@ -51,13 +51,12 @@ public:
     Vector<WebContextMenuItemData> items() const;
 
 private:
-    WebContextMenu(WebPage*);
+    WebContextMenu(WebPage&);
     void menuItemsWithUserData(Vector<WebContextMenuItemData>&, RefPtr<API::Object>&) const;
 
-    WebPage* m_page;
+    WeakPtr<WebPage> m_page;
 };
 
 } // namespace WebKit
 
 #endif // ENABLE(CONTEXT_MENUS)
-#endif // WebPopupMenu_h

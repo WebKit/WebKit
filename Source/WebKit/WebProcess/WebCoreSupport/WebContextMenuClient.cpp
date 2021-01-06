@@ -95,7 +95,7 @@ void WebContextMenuClient::stopSpeaking()
 
 void WebContextMenuClient::showContextMenu()
 {
-    m_page->contextMenu()->show();
+    m_page->contextMenu().show();
 }
 
 #endif
