@@ -120,6 +120,10 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     DisplayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+    UserInterfaceIdiomDidChange(bool isPadOrMac)
+#endif
+
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     BacklightLevelDidChange(float backlightLevel)
 #endif

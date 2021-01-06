@@ -680,6 +680,14 @@ void WebProcessPool::registerNotificationObservers()
         startObservingPreferenceChanges();
     }];
 #endif
+    if (![UIApplication sharedApplication]) {
+        m_applicationLaunchObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
+            if (WebKit::updateCurrentUserInterfaceIdiom()) {
+                auto isPadOrMac = WebKit::currentUserInterfaceIdiomIsPadOrMac();
+                sendToAllProcesses(Messages::WebProcess::UserInterfaceIdiomDidChange(isPadOrMac));
+            }
+        }];
+    }
 #endif
 
     m_powerSourceNotifier = WTF::makeUnique<WebCore::PowerSourceNotifier>([this] (bool hasAC) {
@@ -711,6 +719,7 @@ void WebProcessPool::unregisterNotificationObservers()
 
 #if PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter] removeObserver:m_accessibilityEnabledObserver.get()];
+    [[NSNotificationCenter defaultCenter] removeObserver:m_applicationLaunchObserver.get()];
 #endif
 
     [[NSNotificationCenter defaultCenter] removeObserver:m_activationObserver.get()];

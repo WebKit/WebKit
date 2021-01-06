@@ -79,6 +79,16 @@ void setCurrentUserInterfaceIdiomIsPadOrMac(bool isPad)
     userInterfaceIdiomIsPadState = isPad ? UserInterfaceIdiomState::IsPad : UserInterfaceIdiomState::IsNotPad;
 }
 
+bool updateCurrentUserInterfaceIdiom()
+{
+    bool isPad = userInterfaceIdiomIsPad();
+    if (currentUserInterfaceIdiomIsPadOrMac() == isPad)
+        return false;
+
+    setCurrentUserInterfaceIdiomIsPadOrMac(isPad);
+    return true;
+}
+
 }
 
 #endif

@@ -536,6 +536,8 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+    void userInterfaceIdiomDidChange(bool);
+
     bool shouldFreezeOnSuspension() const;
     void updateFreezerStatus();
 #endif

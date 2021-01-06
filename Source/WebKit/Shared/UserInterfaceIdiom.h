@@ -31,6 +31,7 @@ namespace WebKit {
 
 bool currentUserInterfaceIdiomIsPadOrMac();
 void setCurrentUserInterfaceIdiomIsPadOrMac(bool);
+bool updateCurrentUserInterfaceIdiom();
 
 }
 

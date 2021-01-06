@@ -902,6 +902,11 @@ void WebProcess::accessibilityProcessSuspendedNotification(bool suspended)
     UIAccessibilityPostNotification(kAXPidStatusChangedNotification, @{ @"pid" : @(getpid()), @"suspended" : @(suspended) });
 }
 
+void WebProcess::userInterfaceIdiomDidChange(bool isPadOrMac)
+{
+    WebKit::setCurrentUserInterfaceIdiomIsPadOrMac(isPadOrMac);
+}
+
 bool WebProcess::shouldFreezeOnSuspension() const
 {
     switch (m_processType) {

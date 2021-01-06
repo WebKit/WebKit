@@ -659,6 +659,7 @@ private:
     std::unique_ptr<WebCore::PowerSourceNotifier> m_powerSourceNotifier;
     RetainPtr<NSObject> m_activationObserver;
     RetainPtr<NSObject> m_accessibilityEnabledObserver;
+    RetainPtr<NSObject> m_applicationLaunchObserver;
 #endif
 
     bool m_processTerminationEnabled { true };

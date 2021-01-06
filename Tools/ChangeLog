@@ -1,3 +1,39 @@
+2021-01-05  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (r261157): Crash in WKSelectPopover when running as iPhone app on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=220065
+        <rdar://problem/71932792>
+
+        Reviewed by Darin Adler.
+
+        Added an API test to exercise the previously crashing, and now fixed,
+        codepath. Note that the test will trivially pass on iPhones, since the
+        crash only occurs on iPads. See below for an explanation of how the
+        test functions on iPads.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/UserInterfaceIdiomUpdate.mm: Added.
+        (TestWebKitAPI::TEST):
+
+        Since TestWebKitAPI is not an application, [UIApplication sharedApplication]
+        is nil when the test creates a WKWebView. Consequently, when the WKWebView
+        is created, WebKit uses the device hardware information to determine the user
+        interface idiom (iPad). Now, before the test interacts with the WKWebView,
+        the user interface idiom is changed to an iPhone and the UIApplication is
+        initialized. Note that the UIApplicationDidFinishLaunchingNotification
+        is manually posted, since there is no UIApplicationDelegate.
+
+        Without the changes in this patch, the test will crash, since the user
+        interface idiom maintained by WebKit would not be updated, and would
+        remain iPad rather than iPhone. Hence, when focusing a select element, the test
+        would attempt to present a UIPopoverController. However, since the idiom
+        is actually iPhone, UIKit will throw an NSInvalidArgumentException.
+
+        After the changes in this patch, the test does crash, as the change to the
+        user interface idiom after UIApplication creation is recognized by WebKit,
+        and the attempt to present a UIPopoverController under the iPhone idiom
+        does not occur.
+
 2021-01-05  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Add command to canonicalize unpushed commits

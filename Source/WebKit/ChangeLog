@@ -1,3 +1,77 @@
+2021-01-05  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (r261157): Crash in WKSelectPopover when running as iPhone app on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=220065
+        <rdar://problem/71932792>
+
+        Reviewed by Darin Adler.
+
+        r261157 changed how WebKit determined the user interface idiom for
+        WKWebViews that were created in daemons. Since daemons do not create
+        UIApplications, WebKit cannot use UIDevice in these instances. Instead,
+        the user interface idiom determination logic was updated to include
+        a check for device hardware, using MobileGestalt, in cases where no
+        UIApplication was created.
+
+        Since WebKit only determines the user interface idiom once (then
+        storing the obtained value), the added determination logic breaks
+        down for iPhone apps on iPad. Consider the following sequence of
+        events, eventually leading to a crash when interacting with a
+        <select> element:
+
+        1. A WKWebView is created prior to UIApplication initialization. This
+           can be achieved by creating one in another class's "load" method.
+
+        2. Since the app is physically running on an iPad, WebKit determines
+           the user interface idiom to be "iPad" and saves this information.
+
+        3. Once the app actually launches, UIApplication is initialized.
+           Since this is an iPhone app on iPad, the actual user interface
+           idiom is "iPhone". However, WebKit does not know this, since
+           it uses the saved user interface idiom from (2).
+
+        4. When tapping a <select> element, WebKit checks its saved idiom,
+           an attempts to present a UIPopoverController (the standard behavior
+           under the iPad idiom).
+
+        5. However, since the actual idiom is iPhone, UIKit throws an
+           NSInvalidArgumentException, since UIPopoverController
+           should not be used when running under the iPhone idiom.
+
+        A simple fix for the crash would be to call into UIKit to check the
+        idiom each time it is required, rather than relying on the saved bit.
+        However, this does not address the more general issue, which is that
+        WebKit's saved idiom and the actual idiom can be out of sync.
+
+        Consequently, the approach taken is to update the saved idiom when
+        it changes. This should only occur when a UIApplication is initialized.
+        Hence, we listen for UIApplicationDidFinishLaunchingNotification,
+        and if the actual idiom is different from our saved idiom, we update the
+        saved idiom and also notify the WebProcess.
+
+        * Shared/UserInterfaceIdiom.h:
+        * Shared/UserInterfaceIdiom.mm:
+        (WebKit::updateCurrentUserInterfaceIdiom):
+
+        This method checks the actual idiom and updates the saved idiom if
+        they differ. Returns true only if the idiom was updated.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::registerNotificationObservers):
+
+        Listen for UIApplicationDidFinishLaunchingNotification if the idiom
+        can change (UIApplication is uninitialized). Then, if the actual
+        and saved idiom differ, notify all WebProcesses of the change.
+
+        (WebKit::WebProcessPool::unregisterNotificationObservers):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::userInterfaceIdiomDidChange):
+
+        Update the saved idiom using the information from the UIProcess.
+
 2021-01-05  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Add a feature flag to stop leaking an XPC boost message to XPC services
