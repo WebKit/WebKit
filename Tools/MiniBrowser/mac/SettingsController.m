@@ -104,6 +104,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         LargeImageAsyncDecodingEnabledPreferenceKey,
         AnimatedImageAsyncDecodingEnabledPreferenceKey,
         WebViewFillsWindowKey,
+        ResourceLoadStatisticsEnabledPreferenceKey,
     ];
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
