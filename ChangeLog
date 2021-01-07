@@ -1,3 +1,14 @@
+2021-01-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Make svn status ignore Python 3 __pycache__ directories.
+
+        Unreviewed.
+
+        Python 2 *.pyc files are still inconsistently handled via svn:ignore on each
+        directory, but it is not worth cleaning up before GitHub move.
+
+        * Tools: Added property svn:global-ignores.
+
 2021-01-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK][CMake] Add a build switch USE_OPENGL_OR_ES to be able to disable OpenGL and ES
