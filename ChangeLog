@@ -1,3 +1,15 @@
+2021-01-07  Ryan Hostetler  <rhost@apple.com>
+
+        make clean/installsrc fail: You cannot specify -alltargets and also specify individual targets.
+        https://bugs.webkit.org/show_bug.cgi?id=220370
+        rdar://72834872
+
+        Reviewed by Andy Estes.
+
+        Update hardcoded '-alltargets' to use new XCODE_TARGET variable.
+
+        * Makefile.shared:
+
 2021-01-07  Monson Shao  <holymonson@gmail.com>
 
         [CMake] Add USE_APPLE_ICU option

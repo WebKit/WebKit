@@ -102,7 +102,7 @@ define invoke_xcode
 		echo; \
 		echo "===== BUILDING $$(basename "$$(pwd)") ====="; \
 		echo; \
-		$1 xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) $2 | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} \
+		$1 xcodebuild $(OTHER_OPTIONS) $(XCODE_TARGET) $(XCODE_OPTIONS) $2 | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} \
 	)
 endef
 
@@ -137,9 +137,17 @@ else
 endif
 
 clean:
+ifndef XCODE_TARGET
 	@$(call invoke_xcode,,-alltargets clean)
+else
+	@$(call invoke_xcode,,clean)
+endif
 
 installsrc:
+ifndef XCODE_TARGET
 	@$(call invoke_xcode,,-alltargets installsrc SRCROOT="$(SRCROOT)$(PATH_FROM_ROOT)")
+else
+	@$(call invoke_xcode,,installsrc SRCROOT="$(SRCROOT)$(PATH_FROM_ROOT)")
+endif
 
 force: ;
