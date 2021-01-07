@@ -213,6 +213,11 @@ void MediaPlayerPrivateRemote::setPreservesPitch(bool preservesPitch)
     connection().send(Messages::RemoteMediaPlayerProxy::SetPreservesPitch(preservesPitch), m_id);
 }
 
+void MediaPlayerPrivateRemote::setPitchCorrectionAlgorithm(WebCore::MediaPlayer::PitchCorrectionAlgorithm algorithm)
+{
+    connection().send(Messages::RemoteMediaPlayerProxy::SetPitchCorrectionAlgorithm(algorithm), m_id);
+}
+
 void MediaPlayerPrivateRemote::setVolumeDouble(double volume)
 {
     connection().send(Messages::RemoteMediaPlayerProxy::SetVolume(volume), m_id);

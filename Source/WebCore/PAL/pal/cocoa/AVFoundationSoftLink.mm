@@ -126,6 +126,7 @@ SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVFrameRateRange, PAL_
 
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVAssetImageGeneratorApertureModeCleanAperture, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVAudioTimePitchAlgorithmSpectral, NSString *, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVAudioTimePitchAlgorithmTimeDomain, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVAudioTimePitchAlgorithmVarispeed, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVCaptureDeviceWasConnectedNotification, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVCaptureDeviceWasDisconnectedNotification, NSString *, PAL_EXPORT)

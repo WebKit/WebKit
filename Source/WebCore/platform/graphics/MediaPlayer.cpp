@@ -931,6 +931,15 @@ void MediaPlayer::setPreservesPitch(bool preservesPitch)
     m_private->setPreservesPitch(preservesPitch);
 }
 
+void MediaPlayer::setPitchCorrectionAlgorithm(PitchCorrectionAlgorithm pitchCorrectionAlgorithm)
+{
+    if (m_pitchCorrectionAlgorithm == pitchCorrectionAlgorithm)
+        return;
+
+    m_pitchCorrectionAlgorithm = pitchCorrectionAlgorithm;
+    m_private->setPitchCorrectionAlgorithm(pitchCorrectionAlgorithm);
+}
+
 std::unique_ptr<PlatformTimeRanges> MediaPlayer::buffered()
 {
     return m_private->buffered();

@@ -206,6 +206,7 @@ private:
     void setMuted(bool) final;
     void setPrivateBrowsingMode(bool) final;
     void setPreservesPitch(bool) final;
+    void setPitchCorrectionAlgorithm(WebCore::MediaPlayer::PitchCorrectionAlgorithm) final;
 
     bool shouldIgnoreIntrinsicSize() final;
 

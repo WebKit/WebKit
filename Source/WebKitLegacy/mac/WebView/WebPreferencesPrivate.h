@@ -73,6 +73,12 @@ typedef enum : unsigned {
     WebKitAudioSessionCategoryAudioProcessing = 'proc',
 } WebKitAudioSessionCategory;
 
+typedef enum {
+    WebKitPitchCorrectionAlgorithmBestAllAround = 0,
+    WebKitPitchCorrectionAlgorithmBestForMusic,
+    WebKitPitchCorrectionAlgorithmBestForSpeech,
+} WebKitPitchCorrectionAlgorithm;
+
 extern NSString *WebPreferencesChangedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 extern NSString *WebPreferencesRemovedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 extern NSString *WebPreferencesChangedInternalNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
@@ -350,6 +356,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL CSSIndividualTransformPropertiesEnabled;
 @property (nonatomic) BOOL contactPickerAPIEnabled;
 @property (nonatomic, setter=_setSpeechRecognitionEnabled:) BOOL _speechRecognitionEnabled;
+@property (nonatomic, setter=_setPitchCorrectionAlgorithm:) WebKitPitchCorrectionAlgorithm _pitchCorrectionAlgorithm;
 @end
 
 @interface WebPreferences (WebPrivateDeprecated)

@@ -410,6 +410,13 @@ PaymentRequestEnabled:
     WebCore:
       default: false
 
+PitchCorrectionAlgorithm:
+  type: uint32_t
+  refinedType: MediaPlayerEnums::PitchCorrectionAlgorithm
+  defaultValue:
+    WebCore:
+      default: MediaPlayerEnums::PitchCorrectionAlgorithm::BestAllAround
+
 PDFImageCachingPolicy:
   type: uint32_t
   refinedType: PDFImageCachingPolicy

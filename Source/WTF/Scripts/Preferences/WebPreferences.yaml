@@ -1717,6 +1717,17 @@ PictureInPictureAPIEnabled:
     WebCore:
       default: true
 
+PitchCorrectionAlgorithm:
+  type: uint32_t
+  webcoreBinding: custom
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(COCOA)": static_cast<uint32_t>(WebCore::MediaPlayerEnums::PitchCorrectionAlgorithm::BestForSpeech)
+      default: static_cast<uint32_t>(WebCore::MediaPlayerEnums::PitchCorrectionAlgorithm::BestAllAround)
+    WebKit:
+      "PLATFORM(COCOA)": static_cast<uint32_t>(WebCore::MediaPlayerEnums::PitchCorrectionAlgorithm::BestForSpeech)
+      default: static_cast<uint32_t>(WebCore::MediaPlayerEnums::PitchCorrectionAlgorithm::BestAllAround)
+
 PluginsEnabled:
   type: bool
   webcoreGetter: arePluginsEnabled

@@ -1,3 +1,13 @@
+2021-01-06  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Revert audioTimePitchAlgorithm to "TimeDomain" from "Spectral"
+        https://bugs.webkit.org/show_bug.cgi?id=220341
+
+        Reviewed by Youenn Fablet.
+
+        * pal/cocoa/AVFoundationSoftLink.h:
+        * pal/cocoa/AVFoundationSoftLink.mm:
+
 2020-12-15  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Adopt -externalContentProtectionStatus

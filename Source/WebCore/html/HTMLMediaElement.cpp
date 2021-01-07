@@ -1447,6 +1447,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
     if (!autoplay() && !m_havePreparedToPlay)
         m_player->setPreload(m_mediaSession->effectivePreloadForElement());
     m_player->setPreservesPitch(m_webkitPreservesPitch);
+    m_player->setPitchCorrectionAlgorithm(document().settings().pitchCorrectionAlgorithm());
 
     if (!m_explicitlyMuted) {
         m_explicitlyMuted = true;

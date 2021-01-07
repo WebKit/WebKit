@@ -123,6 +123,7 @@ public:
     virtual double rate() const { return 0; }
 
     virtual void setPreservesPitch(bool) { }
+    virtual void setPitchCorrectionAlgorithm(MediaPlayer::PitchCorrectionAlgorithm) { }
 
     virtual bool paused() const = 0;
 

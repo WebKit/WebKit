@@ -51,6 +51,12 @@ typedef NS_ENUM(NSInteger, _WKEditableLinkBehavior) {
     _WKEditableLinkBehaviorNeverLive,
 } WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 
+typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
+    _WKPitchCorrectionAlgorithmBestAllAround,
+    _WKPitchCorrectionAlgorithmBestForMusic,
+    _WKPitchCorrectionAlgorithmBestForSpeech,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @class _WKExperimentalFeature;
 @class _WKInternalDebugFeature;
 
@@ -163,6 +169,7 @@ typedef NS_ENUM(NSInteger, _WKEditableLinkBehavior) {
 @property (nonatomic, setter=_setAccessibilityIsolatedTreeEnabled:) BOOL _accessibilityIsolatedTreeEnabled WK_API_AVAILABLE(macos(10.16));
 @property (nonatomic, setter=_setSpeechRecognitionEnabled:) BOOL _speechRecognitionEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, setter=_setPrivateClickMeasurementEnabled:) BOOL _privateClickMeasurementEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setPitchCorrectionAlgorithm:) _WKPitchCorrectionAlgorithm _pitchCorrectionAlgorithm WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #if !TARGET_OS_IPHONE
 @property (nonatomic, setter=_setWebGLEnabled:) BOOL _webGLEnabled WK_API_AVAILABLE(macos(10.13.4));

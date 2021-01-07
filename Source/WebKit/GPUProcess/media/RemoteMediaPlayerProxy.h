@@ -133,6 +133,7 @@ public:
     void setPreload(WebCore::MediaPlayerEnums::Preload);
     void setPrivateBrowsingMode(bool);
     void setPreservesPitch(bool);
+    void setPitchCorrectionAlgorithm(WebCore::MediaPlayer::PitchCorrectionAlgorithm);
 
     void setVisible(bool);
     void setShouldMaintainAspectRatio(bool);

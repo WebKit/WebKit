@@ -398,6 +398,9 @@ public:
     bool preservesPitch() const;
     void setPreservesPitch(bool);
 
+    void setPitchCorrectionAlgorithm(PitchCorrectionAlgorithm);
+    PitchCorrectionAlgorithm pitchCorrectionAlgorithm() const { return m_pitchCorrectionAlgorithm; }
+
     std::unique_ptr<PlatformTimeRanges> buffered();
     std::unique_ptr<PlatformTimeRanges> seekable();
     void bufferedTimeRangesChanged();
@@ -671,6 +674,7 @@ private:
     bool m_contentMIMETypeWasInferredFromExtension { false };
     bool m_initializingMediaEngine { false };
     DynamicRangeMode m_preferredDynamicRangeMode { DynamicRangeMode::Standard };
+    PitchCorrectionAlgorithm m_pitchCorrectionAlgorithm { PitchCorrectionAlgorithm::BestAllAround };
 
 #if ENABLE(MEDIA_SOURCE)
     RefPtr<MediaSourcePrivateClient> m_mediaSource;

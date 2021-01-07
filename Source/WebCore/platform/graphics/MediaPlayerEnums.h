@@ -106,6 +106,11 @@ public:
         TargetTypeTVOut
     };
 
+    enum class PitchCorrectionAlgorithm : uint8_t {
+        BestAllAround,
+        BestForMusic,
+        BestForSpeech,
+    };
 };
 
 String convertEnumerationToString(MediaPlayerEnums::ReadyState);
@@ -237,6 +242,15 @@ using values = EnumValues<
     WebCore::MediaPlayerEnums::WirelessPlaybackTargetType::TargetTypeNone,
     WebCore::MediaPlayerEnums::WirelessPlaybackTargetType::TargetTypeAirPlay,
     WebCore::MediaPlayerEnums::WirelessPlaybackTargetType::TargetTypeTVOut
+    >;
+};
+
+template<> struct EnumTraits<WebCore::MediaPlayerEnums::PitchCorrectionAlgorithm> {
+using values = EnumValues<
+    WebCore::MediaPlayerEnums::PitchCorrectionAlgorithm,
+    WebCore::MediaPlayerEnums::PitchCorrectionAlgorithm::BestAllAround,
+    WebCore::MediaPlayerEnums::PitchCorrectionAlgorithm::BestForMusic,
+    WebCore::MediaPlayerEnums::PitchCorrectionAlgorithm::BestForSpeech
     >;
 };
 

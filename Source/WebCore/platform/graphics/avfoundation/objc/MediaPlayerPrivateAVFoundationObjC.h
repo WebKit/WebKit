@@ -198,6 +198,7 @@ private:
     void setRateDouble(double) final;
     double rate() const final;
     void setPreservesPitch(bool) final;
+    void setPitchCorrectionAlgorithm(MediaPlayer::PitchCorrectionAlgorithm) final;
     void seekToTime(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance) final;
     unsigned long long totalBytes() const final;
     std::unique_ptr<PlatformTimeRanges> platformBufferedTimeRanges() const final;

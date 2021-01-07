@@ -206,6 +206,11 @@ void RemoteMediaPlayerProxy::setPreservesPitch(bool preservesPitch)
     m_player->setPreservesPitch(preservesPitch);
 }
 
+void RemoteMediaPlayerProxy::setPitchCorrectionAlgorithm(WebCore::MediaPlayer::PitchCorrectionAlgorithm algorithm)
+{
+    m_player->setPitchCorrectionAlgorithm(algorithm);
+}
+
 void RemoteMediaPlayerProxy::prepareForRendering()
 {
     m_player->prepareForRendering();

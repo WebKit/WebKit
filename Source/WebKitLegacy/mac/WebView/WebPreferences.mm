@@ -45,6 +45,7 @@
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/AudioSession.h>
 #import <WebCore/DeprecatedGlobalSettings.h>
+#import <WebCore/MediaPlayerEnums.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
@@ -3376,6 +3377,16 @@ static NSString *classIBCreatorID = nil;
 - (void)_setSpeechRecognitionEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitSpeechRecognitionEnabledPreferenceKey];
+}
+
+- (WebKitPitchCorrectionAlgorithm)_pitchCorrectionAlgorithm
+{
+    return static_cast<WebKitPitchCorrectionAlgorithm>([self _unsignedIntValueForKey:WebKitPitchCorrectionAlgorithmPreferenceKey]);
+}
+
+- (void)_setPitchCorrectionAlgorithm:(WebKitPitchCorrectionAlgorithm)pitchCorrectionAlgorithm
+{
+    [self _setUnsignedIntValue:pitchCorrectionAlgorithm forKey:WebKitPitchCorrectionAlgorithmPreferenceKey];
 }
 
 @end

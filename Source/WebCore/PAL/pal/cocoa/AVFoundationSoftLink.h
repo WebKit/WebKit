@@ -100,6 +100,8 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, AVFrameRateRange)
 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAudioTimePitchAlgorithmSpectral, NSString *)
 #define AVAudioTimePitchAlgorithmSpectral PAL::get_AVFoundation_AVAudioTimePitchAlgorithmSpectral()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAudioTimePitchAlgorithmTimeDomain, NSString *)
+#define AVAudioTimePitchAlgorithmTimeDomain PAL::get_AVFoundation_AVAudioTimePitchAlgorithmTimeDomain()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAudioTimePitchAlgorithmVarispeed, NSString *)
 #define AVAudioTimePitchAlgorithmVarispeed PAL::get_AVFoundation_AVAudioTimePitchAlgorithmVarispeed()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVMediaCharacteristicVisual, NSString *)

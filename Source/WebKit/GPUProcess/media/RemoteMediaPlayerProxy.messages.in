@@ -46,6 +46,7 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     SetPreload(enum:uint8_t WebCore::MediaPlayerEnums::Preload preload)
     SetPrivateBrowsingMode(bool privateMode)
     SetPreservesPitch(bool preservesPitch)
+    SetPitchCorrectionAlgorithm(WebCore::MediaPlayer::PitchCorrectionAlgorithm algorithm)
 
     PrepareForRendering()
     SetVisible(bool visible)
