@@ -46,6 +46,7 @@ namespace JSC {
     typedef ThreadSpecific<AssemblerData, WTF::CanBeGCThread::True> ThreadSpecificAssemblerData;
 
     JS_EXPORT_PRIVATE ThreadSpecificAssemblerData& threadSpecificAssemblerData();
+    JS_EXPORT_PRIVATE ThreadSpecificAssemblerData& threadSpecificAssemblerHashes();
 
     class LinkBuffer;
 
@@ -183,23 +184,22 @@ namespace JSC {
 #if CPU(ARM64E)
     class ARM64EHash {
     public:
-        ARM64EHash() = default;
-        ALWAYS_INLINE void update(uint32_t value)
+        ARM64EHash(uint32_t initialHash)
+            : m_hash(initialHash)
+        {
+        }
+
+        ALWAYS_INLINE uint32_t update(uint32_t value)
         {
             uint64_t input = value ^ m_hash;
             uint64_t a = static_cast<uint32_t>(tagInt(input, static_cast<PtrTag>(0)) >> 39);
             uint64_t b = tagInt(input, static_cast<PtrTag>(0xb7e151628aed2a6a)) >> 23;
             m_hash = a ^ b;
+            return m_hash;
         }
-        uint32_t finalHash() const
-        {
-            uint64_t hash = m_hash;
-            uint64_t a = static_cast<uint32_t>(tagInt(hash, static_cast<PtrTag>(0xbf7158809cf4f3c7)) >> 39);
-            uint64_t b = tagInt(hash, static_cast<PtrTag>(0x62e7160f38b4da56)) >> 23;
-            return static_cast<uint32_t>(a ^ b);
-        }
+
     private:
-        uint32_t m_hash { 0 };
+        uint32_t m_hash;
     };
 #endif
 
@@ -208,15 +208,29 @@ namespace JSC {
         AssemblerBuffer()
             : m_storage()
             , m_index(0)
+#if CPU(ARM64E)
+            , m_hash(static_cast<uint32_t>(bitwise_cast<uint64_t>(this)))
+            , m_hashes()
+#endif
         {
-            auto& threadSpecific = threadSpecificAssemblerData();
-            m_storage.takeBufferIfLarger(WTFMove(*threadSpecific));
+            auto& threadSpecificData = threadSpecificAssemblerData();
+            m_storage.takeBufferIfLarger(WTFMove(*threadSpecificData));
+#if CPU(ARM64E)
+            auto& threadSpecificHashes = threadSpecificAssemblerHashes();
+            m_hashes.takeBufferIfLarger(WTFMove(*threadSpecificHashes));
+            ASSERT(m_storage.capacity() == m_hashes.capacity());
+#endif
         }
 
         ~AssemblerBuffer()
         {
-            auto& threadSpecific = threadSpecificAssemblerData();
-            threadSpecific->takeBufferIfLarger(WTFMove(m_storage));
+#if CPU(ARM64E)
+            ASSERT(m_storage.capacity() == m_hashes.capacity());
+            auto& threadSpecificHashes = threadSpecificAssemblerHashes();
+            threadSpecificHashes->takeBufferIfLarger(WTFMove(m_hashes));
+#endif
+            auto& threadSpecificData = threadSpecificAssemblerData();
+            threadSpecificData->takeBufferIfLarger(WTFMove(m_storage));
         }
 
         bool isAvailable(unsigned space)
@@ -269,7 +283,17 @@ namespace JSC {
 
         unsigned debugOffset() { return m_index; }
 
-        AssemblerData&& releaseAssemblerData() { return WTFMove(m_storage); }
+        AssemblerData&& releaseAssemblerData()
+        {
+            return WTFMove(m_storage);
+        }
+
+#if CPU(ARM64E)
+        AssemblerData&& releaseAssemblerHashes()
+        {
+            return WTFMove(m_hashes);
+        }
+#endif
 
         // LocalWriter is a trick to keep the storage buffer and the index
         // in memory while issuing multiple Stores.
@@ -323,14 +347,9 @@ namespace JSC {
         };
 #endif // !CPU(ARM64)
 
-#if CPU(ARM64E)
-        ARM64EHash hash() const { return m_hash; }
-#endif
-
 #if !CPU(ARM64) // If we were to define this on arm64e, we'd need a way to update the hash as we write directly into the buffer.
         void* data() const { return m_storage.buffer(); }
 #endif
-
 
     protected:
         template<typename IntegralType>
@@ -348,7 +367,8 @@ namespace JSC {
 #if CPU(ARM64)
             static_assert(sizeof(value) == 4, "");
 #if CPU(ARM64E)
-            m_hash.update(value);
+            uint32_t hash = m_hash.update(value);
+            WTF::unalignedStore<uint32_t>(m_hashes.buffer() + m_index, hash);
 #endif
 #endif
             ASSERT(isAvailable(sizeof(IntegralType)));
@@ -360,11 +380,17 @@ namespace JSC {
         void grow(int extraCapacity = 0)
         {
             m_storage.grow(extraCapacity);
+#if CPU(ARM64E)
+            m_hashes.grow(extraCapacity);
+#endif
         }
 
         NEVER_INLINE void outOfLineGrow()
         {
             m_storage.grow();
+#if CPU(ARM64E)
+            m_hashes.grow();
+#endif
         }
 
 #if !CPU(ARM64)
@@ -376,6 +402,7 @@ namespace JSC {
         unsigned m_index;
 #if CPU(ARM64E)
         ARM64EHash m_hash;
+        AssemblerData m_hashes;
 #endif
     };
 
