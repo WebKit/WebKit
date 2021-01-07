@@ -35,10 +35,12 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
+OBJC_CLASS ASCAppleIDCredential;
 OBJC_CLASS ASCAuthorizationPresentationContext;
 OBJC_CLASS ASCAuthorizationPresenter;
 OBJC_CLASS ASCLoginChoiceProtocol;
 OBJC_CLASS LAContext;
+OBJC_CLASS NSError;
 OBJC_CLASS WKASCAuthorizationPresenterDelegate;
 
 namespace WebKit {
@@ -50,7 +52,7 @@ class AuthenticatorPresenterCoordinator : public CanMakeWeakPtr<AuthenticatorPre
     WTF_MAKE_NONCOPYABLE(AuthenticatorPresenterCoordinator);
 public:
     using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>, WTF::StrongEnumHashTraits<WebCore::AuthenticatorTransport>>;
-    using CredentialRequestHandler = Function<void()>;
+    using CredentialRequestHandler = Function<void(ASCAppleIDCredential *, NSError *)>;
 
     AuthenticatorPresenterCoordinator(const AuthenticatorManager&, const String& rpId, const TransportSet&, WebCore::ClientDataType);
     ~AuthenticatorPresenterCoordinator();
@@ -63,8 +65,8 @@ public:
 
     void setCredentialRequestHandler(CredentialRequestHandler&& handler) { m_credentialRequestHandler = WTFMove(handler); }
     void setLAContext(LAContext *);
-
     void didSelectAssertionResponse(ASCLoginChoiceProtocol *, LAContext *);
+    void setPin(const String&);
 
 private:
     WeakPtr<AuthenticatorManager> m_manager;
@@ -79,6 +81,8 @@ private:
 
     CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)> m_responseHandler;
     HashMap<ASCLoginChoiceProtocol *, RefPtr<WebCore::AuthenticatorAssertionResponse>> m_credentials;
+
+    CompletionHandler<void(const String&)> m_pinHandler;
 };
 
 } // namespace WebKit

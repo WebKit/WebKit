@@ -243,6 +243,9 @@ function ios_family_process_webauthn_entitlements()
 
     plistbuddy Add :com.apple.nfcd.hwmanager bool YES
     plistbuddy Add :com.apple.nfcd.session.reader.internal bool YES
+    # FIXME(rdar://problem/72646664): Find a better way to invoke NearField in the background.
+    plistbuddy Add :com.apple.internal.nfc.allow.backgrounded.session bool YES
+    plistbuddy Add :com.apple.UIKit.vends-view-services bool YES
 
     plistbuddy Add :keychain-access-groups array
     plistbuddy Add :keychain-access-groups:0 string com.apple.webkit.webauthn

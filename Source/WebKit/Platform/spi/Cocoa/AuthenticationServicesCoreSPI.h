@@ -71,6 +71,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)presentAuthorizationWithContext:(ASCAuthorizationPresentationContext *)context completionHandler:(void (^)(id<ASCCredentialProtocol> _Nullable, NSError * _Nullable))completionHandler;
 - (void)updateInterfaceWithLoginChoices:(NSArray<id <ASCLoginChoiceProtocol>> *)loginChoices;
+- (void)presentPINEntryInterface;
+- (void)dismissWithError:(nullable NSError *)error;
 
 @property (nonatomic, weak) id <ASCAuthorizationPresenterDelegate> delegate;
 
@@ -157,6 +159,23 @@ typedef NS_ENUM(NSInteger, ASCSecurityKeyPublicKeyCredentialLoginChoiceKind) {
 @property (nonatomic, readonly, copy, nullable) NSData *identityToken;
 
 @end
+
+extern NSErrorDomain const ASCAuthorizationErrorDomain;
+
+typedef NS_ERROR_ENUM(ASCAuthorizationErrorDomain, ASCAuthorizationError) {
+    ASCAuthorizationErrorUnknown,
+    ASCAuthorizationErrorFailed,
+    ASCAuthorizationErrorUserCanceled,
+    ASCAuthorizationErrorPINRequired,
+};
+
+extern NSString * const ASCPINValidationResultKey;
+
+typedef NS_ENUM(NSInteger, ASCPINValidationResult) {
+    ASCPINValidationResultPINBlocked,
+    ASCPINValidationResultPINAuthBlocked,
+    ASCPINValidationResultPINInvalid,
+};
 
 NS_ASSUME_NONNULL_END
 

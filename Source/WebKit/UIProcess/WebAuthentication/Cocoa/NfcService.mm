@@ -52,7 +52,7 @@ NfcService::~NfcService()
 bool NfcService::isAvailable()
 {
 #if HAVE(NEAR_FIELD)
-    return [[getNFHardwareManagerClass() sharedHardwareManager] areFeaturesSupported:NFFeatureReaderMode outError:nil];
+    return [[getNFHardwareManagerClass() sharedHardwareManagerWithNoUI] areFeaturesSupported:NFFeatureReaderMode outError:nil];
 #else
     return false;
 #endif
@@ -118,7 +118,7 @@ void NfcService::platformStartDiscovery()
             m_connection = NfcConnection::create(WTFMove(session), *this);
         });
     });
-    [[getNFHardwareManagerClass() sharedHardwareManager] startReaderSession:callback.get()];
+    [[getNFHardwareManagerClass() sharedHardwareManagerWithNoUI] startReaderSession:callback.get()];
 #endif // HAVE(NEAR_FIELD)
 }
 

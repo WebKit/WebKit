@@ -38,4 +38,10 @@ SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCPlatformPublicKeyCredentialLoginChoice);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCSecurityKeyPublicKeyCredentialLoginChoice);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCAppleIDCredential);
 
+SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, AuthenticationServicesCore, ASCAuthorizationErrorDomain, NSErrorDomain);
+#define ASCAuthorizationErrorDomain WebKit::get_AuthenticationServicesCore_ASCAuthorizationErrorDomain()
+
+SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, AuthenticationServicesCore, ASCPINValidationResultKey, NSString*);
+#define ASCPINValidationResultKey WebKit::get_AuthenticationServicesCore_ASCPINValidationResultKey()
+
 #endif // HAVE(ASC_AUTH_UI)

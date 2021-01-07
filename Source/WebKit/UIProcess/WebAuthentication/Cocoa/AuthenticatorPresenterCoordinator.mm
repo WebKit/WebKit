@@ -86,16 +86,42 @@ AuthenticatorPresenterCoordinator::~AuthenticatorPresenterCoordinator()
         m_laContextHandler(nullptr);
     if (m_responseHandler)
         m_responseHandler(nullptr);
+    if (m_pinHandler)
+        m_pinHandler(String());
 }
 
-void AuthenticatorPresenterCoordinator::updatePresenter(WebAuthenticationStatus)
+void AuthenticatorPresenterCoordinator::updatePresenter(WebAuthenticationStatus status)
 {
-    // FIXME(219713): Adopt new UI for the update flow.
+#if HAVE(ASC_AUTH_UI)
+    switch (status) {
+    case WebAuthenticationStatus::PinBlocked: {
+        auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorPINRequired userInfo:@{ ASCPINValidationResultKey: @(ASCPINValidationResultPINBlocked) }]);
+        m_credentialRequestHandler(nil, error.get());
+        break;
+    }
+    case WebAuthenticationStatus::PinAuthBlocked: {
+        auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorPINRequired userInfo:@{ ASCPINValidationResultKey: @(ASCPINValidationResultPINAuthBlocked) }]);
+        m_credentialRequestHandler(nil, error.get());
+        break;
+    }
+    case WebAuthenticationStatus::PinInvalid: {
+        auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorPINRequired userInfo:@{ ASCPINValidationResultKey: @(ASCPINValidationResultPINInvalid) }]);
+        m_credentialRequestHandler(nil, error.get());
+        break;
+    }
+    default:
+        // FIXME(219713): Adopt new UI for the update flow.
+        break;
+    }
+#endif // HAVE(ASC_AUTH_UI)
 }
 
-void AuthenticatorPresenterCoordinator::requestPin(uint64_t, CompletionHandler<void(const String&)>&&)
+void AuthenticatorPresenterCoordinator::requestPin(uint64_t, CompletionHandler<void(const String&)>&& completionHandler)
 {
-    // FIXME(219712): Adopt new UI for the Client PIN flow.
+#if HAVE(ASC_AUTH_UI)
+    m_pinHandler = WTFMove(completionHandler);
+    [m_presenter presentPINEntryInterface];
+#endif // HAVE(ASC_AUTH_UI)
 }
 
 void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<AuthenticatorAssertionResponse>>&& responses, WebAuthenticationSource source, CompletionHandler<void(AuthenticatorAssertionResponse*)>&& completionHandler)
@@ -156,11 +182,16 @@ void AuthenticatorPresenterCoordinator::requestLAContextForUserVerification(Comp
 
 void AuthenticatorPresenterCoordinator::dimissPresenter(WebAuthenticationResult result)
 {
+#if HAVE(ASC_AUTH_UI)
     if (result == WebAuthenticationResult::Succeeded && m_credentialRequestHandler) {
-        m_credentialRequestHandler();
+        // FIXME(219767): Replace the ASCAppleIDCredential with the upcoming WebAuthn credentials one.
+        // This is just a place holder to tell the UI that the ceremony succeeds.
+        m_credentialRequestHandler(adoptNS([WebKit::allocASCAppleIDCredentialInstance() initWithUser:@"" identityToken:adoptNS([[NSData alloc] init]).get()]).get(), nil);
         return;
     }
-    // FIXME(219716): Adopt new UI for the dismiss flow.
+
+    [m_presenter dismissWithError:nil];
+#endif // HAVE(ASC_AUTH_UI)
 }
 
 void AuthenticatorPresenterCoordinator::setLAContext(LAContext *context)
@@ -183,6 +214,11 @@ void AuthenticatorPresenterCoordinator::didSelectAssertionResponse(ASCLoginChoic
         response->setLAContext(context);
 
     m_responseHandler(response.get());
+}
+
+void AuthenticatorPresenterCoordinator::setPin(const String& pin)
+{
+    m_pinHandler(pin);
 }
 
 } // namespace WebKit

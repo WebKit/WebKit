@@ -47,10 +47,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)authorizationPresenter:(ASCAuthorizationPresenter *)presenter credentialRequestedForLoginChoice:(id <ASCLoginChoiceProtocol>)loginChoice authenticatedContext:(nullable LAContext *)context completionHandler:(void (^)(id <ASCCredentialProtocol> _Nullable credential, NSError * _Nullable error))completionHandler
 {
-    auto requestHandler = [completionHandler = makeBlockPtr(completionHandler)] {
-        // FIXME(219767): Replace the ASCAppleIDCredential with the upcoming WebAuthn credentials one.
-        // This is just a place holder to tell the UI that the ceremony succeeds.
-        completionHandler(adoptNS([WebKit::allocASCAppleIDCredentialInstance() initWithUser:@"" identityToken:adoptNS([[NSData alloc] init]).get()]).get(), nil);
+    auto requestHandler = [completionHandler = makeBlockPtr(completionHandler)] (ASCAppleIDCredential *credential, NSError *error) {
+        completionHandler(credential, error);
     };
     [self dispatchCoordinatorCallback:[requestHandler = WTFMove(requestHandler)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
         coordinator.setCredentialRequestHandler(WTFMove(requestHandler));
@@ -87,7 +85,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)authorizationPresenter:(ASCAuthorizationPresenter *)presenter validateUserEnteredPIN:(NSString *)pin completionHandler:(void (^)(id <ASCCredentialProtocol> credential, NSError *error))completionHandler
 {
-    // FIXME(219712): Adopt new UI for the Client PIN flow.
+    auto requestHandler = [completionHandler = makeBlockPtr(completionHandler)] (ASCAppleIDCredential *credential, NSError *error) {
+        completionHandler(credential, error);
+    };
+    [self dispatchCoordinatorCallback:[requestHandler = WTFMove(requestHandler)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
+        coordinator.setCredentialRequestHandler(WTFMove(requestHandler));
+    }];
+
+    String pinString = pin;
+    [self dispatchCoordinatorCallback:[pinString = WTFMove(pinString)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
+        coordinator.setPin(pinString);
+    }];
 }
 
 - (void)dispatchCoordinatorCallback:(Function<void(WebKit::AuthenticatorPresenterCoordinator&)>&&)callback
