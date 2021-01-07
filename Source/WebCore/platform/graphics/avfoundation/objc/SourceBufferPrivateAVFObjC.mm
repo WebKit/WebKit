@@ -624,7 +624,7 @@ void SourceBufferPrivateAVFObjC::destroyParser()
     if (!parser)
         return;
 #if HAVE(AVSTREAMSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    if (m_mediaSource && m_mediaSource->player()->hasStreamSession())
+    if (m_mediaSource && m_mediaSource->player() && m_mediaSource->player()->hasStreamSession())
         [m_mediaSource->player()->streamSession() removeStreamDataParser:parser];
 #endif
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
