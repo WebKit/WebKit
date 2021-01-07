@@ -571,9 +571,7 @@ public:
         
 public:
     using Base = JSSegmentedVariableObject;
-    // Do we realy need OverridesAnyFormOfGetPropertyNames here?
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=212954
-    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable | OverridesGetOwnPropertySlot | OverridesAnyFormOfGetPropertyNames | IsImmutablePrototypeExoticObject;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable | OverridesGetOwnPropertySlot | IsImmutablePrototypeExoticObject;
 
     static constexpr bool needsDestruction = true;
     template<typename CellType, SubspaceAccess mode>

@@ -186,7 +186,7 @@ JSValue objectConstructorGetOwnPropertyDescriptors(JSGlobalObject* globalObject,
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     PropertyNameArray properties(vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Exclude);
-    object->methodTable(vm)->getOwnPropertyNames(object, globalObject, properties, EnumerationMode(DontEnumPropertiesMode::Include));
+    object->methodTable(vm)->getOwnPropertyNames(object, globalObject, properties, DontEnumPropertiesMode::Include);
     RETURN_IF_EXCEPTION(scope, { });
 
     JSObject* descriptors = constructEmptyObject(globalObject);
@@ -294,7 +294,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorAssign, (JSGlobalObject* globalObject,
             auto canPerformFastPropertyEnumerationForObjectAssign = [] (Structure* structure) {
                 if (structure->typeInfo().overridesGetOwnPropertySlot())
                     return false;
-                if (structure->typeInfo().overridesAnyFormOfGetPropertyNames())
+                if (structure->typeInfo().overridesAnyFormOfGetOwnPropertyNames())
                     return false;
                 // FIXME: Indexed properties can be handled.
                 // https://bugs.webkit.org/show_bug.cgi?id=185358
@@ -357,7 +357,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorAssign, (JSGlobalObject* globalObject,
         targetCanPerformFastPut = false;
 
         PropertyNameArray properties(vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Exclude);
-        source->methodTable(vm)->getOwnPropertyNames(source, globalObject, properties, EnumerationMode(DontEnumPropertiesMode::Include));
+        source->methodTable(vm)->getOwnPropertyNames(source, globalObject, properties, DontEnumPropertiesMode::Include);
         RETURN_IF_EXCEPTION(scope, { });
 
         unsigned numProperties = properties.size();
@@ -403,7 +403,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject,
     RETURN_IF_EXCEPTION(scope, { });
 
     PropertyNameArray properties(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
-    target->methodTable(vm)->getOwnPropertyNames(target, globalObject, properties, EnumerationMode(DontEnumPropertiesMode::Include));
+    target->methodTable(vm)->getOwnPropertyNames(target, globalObject, properties, DontEnumPropertiesMode::Include);
     RETURN_IF_EXCEPTION(scope, { });
 
     unsigned index = 0;
@@ -557,7 +557,7 @@ static JSValue defineProperties(JSGlobalObject* globalObject, JSObject* object, 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     PropertyNameArray propertyNames(vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Exclude);
-    asObject(properties)->methodTable(vm)->getOwnPropertyNames(asObject(properties), globalObject, propertyNames, EnumerationMode(DontEnumPropertiesMode::Exclude));
+    asObject(properties)->methodTable(vm)->getOwnPropertyNames(asObject(properties), globalObject, propertyNames, DontEnumPropertiesMode::Exclude);
     RETURN_IF_EXCEPTION(scope, { });
     size_t numProperties = propertyNames.size();
     Vector<PropertyDescriptor> descriptors;
@@ -648,7 +648,7 @@ bool setIntegrityLevel(JSGlobalObject* globalObject, VM& vm, JSObject* object)
         return false;
 
     PropertyNameArray properties(vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Exclude);
-    object->methodTable(vm)->getOwnPropertyNames(object, globalObject, properties, EnumerationMode(DontEnumPropertiesMode::Include));
+    object->methodTable(vm)->getOwnPropertyNames(object, globalObject, properties, DontEnumPropertiesMode::Include);
     RETURN_IF_EXCEPTION(scope, false);
 
     PropertyNameArray::const_iterator end = properties.end();
@@ -695,7 +695,7 @@ bool testIntegrityLevel(JSGlobalObject* globalObject, VM& vm, JSObject* object)
 
     // 6. Let keys be ? O.[[OwnPropertyKeys]]().
     PropertyNameArray keys(vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Exclude);
-    object->methodTable(vm)->getOwnPropertyNames(object, globalObject, keys, EnumerationMode(DontEnumPropertiesMode::Include));
+    object->methodTable(vm)->getOwnPropertyNames(object, globalObject, keys, DontEnumPropertiesMode::Include);
     RETURN_IF_EXCEPTION(scope, { });
 
     // 7. For each element k of keys, do
@@ -877,7 +877,7 @@ JSArray* ownPropertyKeys(JSGlobalObject* globalObject, JSObject* object, Propert
     }
 
     PropertyNameArray properties(vm, propertyNameMode, PrivateSymbolMode::Exclude);
-    object->methodTable(vm)->getOwnPropertyNames(object, globalObject, properties, EnumerationMode(dontEnumPropertiesMode));
+    object->methodTable(vm)->getOwnPropertyNames(object, globalObject, properties, dontEnumPropertiesMode);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (propertyNameMode != PropertyNameMode::StringsAndSymbols) {

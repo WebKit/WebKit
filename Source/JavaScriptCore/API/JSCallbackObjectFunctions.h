@@ -569,7 +569,7 @@ EncodedJSValue JSCallbackObject<Parent>::callImpl(JSGlobalObject* globalObject, 
 }
 
 template <class Parent>
-void JSCallbackObject<Parent>::getOwnNonIndexPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSCallbackObject<Parent>::getOwnSpecialPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     VM& vm = getVM(globalObject);
     JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(object);
@@ -588,7 +588,7 @@ void JSCallbackObject<Parent>::getOwnNonIndexPropertyNames(JSObject* object, JSG
             for (iterator it = staticValues->begin(); it != end; ++it) {
                 StringImpl* name = it->key.get();
                 StaticValueEntry* entry = it->value.get();
-                if (entry->getProperty && (!(entry->attributes & kJSPropertyAttributeDontEnum) || mode.includeDontEnumProperties())) {
+                if (entry->getProperty && (mode == DontEnumPropertiesMode::Include || !(entry->attributes & kJSPropertyAttributeDontEnum))) {
                     ASSERT(!name->isSymbol());
                     propertyNames.add(Identifier::fromString(vm, String(name)));
                 }
@@ -601,15 +601,13 @@ void JSCallbackObject<Parent>::getOwnNonIndexPropertyNames(JSObject* object, JSG
             for (iterator it = staticFunctions->begin(); it != end; ++it) {
                 StringImpl* name = it->key.get();
                 StaticFunctionEntry* entry = it->value.get();
-                if (!(entry->attributes & kJSPropertyAttributeDontEnum) || mode.includeDontEnumProperties()) {
+                if (mode == DontEnumPropertiesMode::Include || !(entry->attributes & kJSPropertyAttributeDontEnum)) {
                     ASSERT(!name->isSymbol());
                     propertyNames.add(Identifier::fromString(vm, String(name)));
                 }
             }
         }
     }
-    
-    Parent::getOwnNonIndexPropertyNames(thisObject, globalObject, propertyNames, mode);
 }
 
 template <class Parent>

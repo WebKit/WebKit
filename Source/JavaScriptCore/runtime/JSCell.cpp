@@ -206,12 +206,12 @@ void JSCell::doPutPropertySecurityCheck(JSObject*, JSGlobalObject*, PropertyName
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void JSCell::getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode)
+void JSCell::getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, DontEnumPropertiesMode)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void JSCell::getOwnNonIndexPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode)
+void JSCell::getOwnSpecialPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, DontEnumPropertiesMode)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -233,11 +233,6 @@ const char* JSCell::className(VM& vm) const
     return classInfo(vm)->className;
 }
 
-void JSCell::getPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode)
-{
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
 bool JSCell::customHasInstance(JSObject*, JSGlobalObject*, JSValue)
 {
     RELEASE_ASSERT_NOT_REACHED();
@@ -254,16 +249,6 @@ uint32_t JSCell::getEnumerableLength(JSGlobalObject*, JSObject*)
 {
     RELEASE_ASSERT_NOT_REACHED();
     return 0;
-}
-
-void JSCell::getStructurePropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode)
-{
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-void JSCell::getGenericPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode)
-{
-    RELEASE_ASSERT_NOT_REACHED();
 }
 
 bool JSCell::preventExtensions(JSObject*, JSGlobalObject*)

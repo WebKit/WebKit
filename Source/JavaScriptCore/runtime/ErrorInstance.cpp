@@ -260,20 +260,12 @@ bool ErrorInstance::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalO
     return Base::getOwnPropertySlot(thisObject, globalObject, propertyName, slot);
 }
 
-void ErrorInstance::getOwnNonIndexPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNameArray, EnumerationMode enumerationMode)
+void ErrorInstance::getOwnSpecialPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray&, DontEnumPropertiesMode mode)
 {
     VM& vm = globalObject->vm();
     ErrorInstance* thisObject = jsCast<ErrorInstance*>(object);
-    thisObject->materializeErrorInfoIfNeeded(vm);
-    Base::getOwnNonIndexPropertyNames(thisObject, globalObject, propertyNameArray, enumerationMode);
-}
-
-void ErrorInstance::getStructurePropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNameArray, EnumerationMode enumerationMode)
-{
-    VM& vm = globalObject->vm();
-    ErrorInstance* thisObject = jsCast<ErrorInstance*>(object);
-    thisObject->materializeErrorInfoIfNeeded(vm);
-    Base::getStructurePropertyNames(thisObject, globalObject, propertyNameArray, enumerationMode);
+    if (mode == DontEnumPropertiesMode::Include)
+        thisObject->materializeErrorInfoIfNeeded(vm);
 }
 
 bool ErrorInstance::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)

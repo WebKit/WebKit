@@ -72,18 +72,19 @@ const ClassInfo JSObject::s_info = { "Object", nullptr, nullptr, nullptr, CREATE
 
 const ClassInfo JSFinalObject::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFinalObject) };
 
-static inline void getClassPropertyNames(JSGlobalObject* globalObject, const ClassInfo* classInfo, PropertyNameArray& propertyNames, EnumerationMode mode)
+ALWAYS_INLINE void JSObject::getNonReifiedStaticPropertyNames(VM& vm, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
-    VM& vm = globalObject->vm();
+    if (staticPropertiesReified(vm))
+        return;
 
     // Add properties from the static hashtables of properties
-    for (; classInfo; classInfo = classInfo->parentClass) {
-        const HashTable* table = classInfo->staticPropHashTable;
+    for (const ClassInfo* info = classInfo(vm); info; info = info->parentClass) {
+        const HashTable* table = info->staticPropHashTable;
         if (!table)
             continue;
 
         for (auto iter = table->begin(); iter != table->end(); ++iter) {
-            if (!(iter->attributes() & PropertyAttribute::DontEnum) || mode.includeDontEnumProperties())
+            if (mode == DontEnumPropertiesMode::Include || !(iter->attributes() & PropertyAttribute::DontEnum))
                 propertyNames.add(Identifier::fromString(vm, iter.key()));
         }
     }
@@ -2380,54 +2381,49 @@ JSC_DEFINE_HOST_FUNCTION(objectPrivateFuncInstanceOf, (JSGlobalObject* globalObj
     return JSValue::encode(jsBoolean(JSObject::defaultHasInstance(globalObject, value, proto)));
 }
 
-// FIXME: Assert that properties returned by getOwnPropertyNames() are reported enumerable by getOwnPropertySlot().
-// https://bugs.webkit.org/show_bug.cgi?id=219926
-void JSObject::getPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSObject::getPropertyNames(JSGlobalObject* globalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
-        throwStackOverflowError(globalObject, scope);
-        return;
-    }
+    JSObject* object = this;
+    unsigned prototypeCount = 0;
 
-    object->methodTable(vm)->getOwnPropertyNames(object, globalObject, propertyNames, mode);
-    RETURN_IF_EXCEPTION(scope, void());
+    while (true) {
+        object->methodTable(vm)->getOwnPropertyNames(object, globalObject, propertyNames, mode);
+        RETURN_IF_EXCEPTION(scope, void());
 
-    JSValue nextProto = object->getPrototype(vm, globalObject);
-    RETURN_IF_EXCEPTION(scope, void());
-    if (nextProto.isNull())
-        return;
+        JSValue prototype = object->getPrototype(vm, globalObject);
+        RETURN_IF_EXCEPTION(scope, void());
+        if (prototype.isNull())
+            break;
 
-    JSObject* prototype = asObject(nextProto);
-    while(1) {
-        if (prototype->structure(vm)->typeInfo().overridesGetPropertyNames()) {
-            scope.release();
-            prototype->methodTable(vm)->getPropertyNames(prototype, globalObject, propertyNames, mode);
+        if (UNLIKELY(++prototypeCount > maximumPrototypeChainDepth)) {
+            throwStackOverflowError(globalObject, scope);
             return;
         }
-        prototype->methodTable(vm)->getOwnPropertyNames(prototype, globalObject, propertyNames, mode);
-        RETURN_IF_EXCEPTION(scope, void());
-        nextProto = prototype->getPrototype(vm, globalObject);
-        RETURN_IF_EXCEPTION(scope, void());
-        if (nextProto.isNull())
-            break;
-        prototype = asObject(nextProto);
+
+        object = asObject(prototype);
     }
 }
 
-void JSObject::getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSObject::getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
-    VM& vm = globalObject->vm();
-    if (!mode.includeJSObjectProperties()) {
-        // We still have to get non-indexed properties from any subclasses of JSObject that have them.
-        object->methodTable(vm)->getOwnNonIndexPropertyNames(object, globalObject, propertyNames, mode);
-        return;
-    }
+    object->getOwnIndexedPropertyNames(globalObject, propertyNames, mode);
+    object->getOwnNonIndexPropertyNames(globalObject, propertyNames, mode);
+}
+
+void JSObject::getOwnSpecialPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, DontEnumPropertiesMode)
+{
+    // Structure::validateFlags() breaks if this method isn't exported, which is impossible if it's inlined.
+}
+
+void JSObject::getOwnIndexedPropertyNames(JSGlobalObject*, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
+{
+    JSObject* object = this;
 
     if (propertyNames.includeStringProperties()) {
-        // Add numeric properties first. That appears to be the accepted convention.
+        // Add numeric properties first per step 2 of https://tc39.es/ecma262/#sec-ordinaryownpropertykeys
         // FIXME: Filling PropertyNameArray with an identifier for every integer
         // is incredibly inefficient for large arrays. We need a different approach,
         // which almost certainly means a different structure for PropertyNameArray.
@@ -2475,7 +2471,7 @@ void JSObject::getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObjec
                 
                 SparseArrayValueMap::const_iterator end = map->end();
                 for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it) {
-                    if (mode.includeDontEnumProperties() || !(it->value.attributes() & PropertyAttribute::DontEnum))
+                    if (mode == DontEnumPropertiesMode::Include || !(it->value.attributes() & PropertyAttribute::DontEnum))
                         keys.uncheckedAppend(static_cast<unsigned>(it->key));
                 }
                 
@@ -2490,20 +2486,19 @@ void JSObject::getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObjec
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
-
-    object->methodTable(vm)->getOwnNonIndexPropertyNames(object, globalObject, propertyNames, mode);
 }
 
-void JSObject::getOwnNonIndexPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSObject::getOwnNonIndexPropertyNames(JSGlobalObject* globalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     VM& vm = globalObject->vm();
-    if (!object->staticPropertiesReified(vm))
-        getClassPropertyNames(globalObject, object->classInfo(vm), propertyNames, mode);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!mode.includeJSObjectProperties())
-        return;
-    
-    object->structure(vm)->getPropertyNamesFromStructure(vm, propertyNames, mode);
+    methodTable(vm)->getOwnSpecialPropertyNames(this, globalObject, propertyNames, mode);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    getNonReifiedStaticPropertyNames(vm, propertyNames, mode);
+    structure(vm)->getPropertyNamesFromStructure(vm, propertyNames, mode);
+    scope.assertNoException();
 }
 
 double JSObject::toNumber(JSGlobalObject* globalObject) const
@@ -3834,41 +3829,6 @@ uint32_t JSObject::getEnumerableLength(JSGlobalObject* globalObject, JSObject* o
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return 0;
-    }
-}
-
-void JSObject::getStructurePropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
-{
-    VM& vm = globalObject->vm();
-    object->structure(vm)->getPropertyNamesFromStructure(vm, propertyNames, mode);
-}
-
-void JSObject::getGenericPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    object->methodTable(vm)->getOwnPropertyNames(object, globalObject, propertyNames, EnumerationMode(mode, JSObjectPropertiesMode::Exclude));
-    RETURN_IF_EXCEPTION(scope, void());
-
-    JSValue nextProto = object->getPrototype(vm, globalObject);
-    RETURN_IF_EXCEPTION(scope, void());
-    if (nextProto.isNull())
-        return;
-
-    JSObject* prototype = asObject(nextProto);
-    while (true) {
-        if (prototype->structure(vm)->typeInfo().overridesGetPropertyNames()) {
-            scope.release();
-            prototype->methodTable(vm)->getPropertyNames(prototype, globalObject, propertyNames, mode);
-            return;
-        }
-        prototype->methodTable(vm)->getOwnPropertyNames(prototype, globalObject, propertyNames, mode);
-        RETURN_IF_EXCEPTION(scope, void());
-        nextProto = prototype->getPrototype(vm, globalObject);
-        RETURN_IF_EXCEPTION(scope, void());
-        if (nextProto.isNull())
-            break;
-        prototype = asObject(nextProto);
     }
 }
 

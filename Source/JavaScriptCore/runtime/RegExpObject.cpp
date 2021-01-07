@@ -75,28 +75,11 @@ bool RegExpObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Pr
     return Base::deleteProperty(cell, globalObject, propertyName, slot);
 }
 
-void RegExpObject::getOwnNonIndexPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
+void RegExpObject::getOwnSpecialPropertyNames(JSObject*, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     VM& vm = globalObject->vm();
-    if (mode.includeDontEnumProperties())
+    if (mode == DontEnumPropertiesMode::Include)
         propertyNames.add(vm.propertyNames->lastIndex);
-    Base::getOwnNonIndexPropertyNames(object, globalObject, propertyNames, mode);
-}
-
-void RegExpObject::getPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
-{
-    VM& vm = globalObject->vm();
-    if (mode.includeDontEnumProperties())
-        propertyNames.add(vm.propertyNames->lastIndex);
-    Base::getPropertyNames(object, globalObject, propertyNames, mode);
-}
-
-void RegExpObject::getGenericPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
-{
-    VM& vm = globalObject->vm();
-    if (mode.includeDontEnumProperties())
-        propertyNames.add(vm.propertyNames->lastIndex);
-    Base::getGenericPropertyNames(object, globalObject, propertyNames, mode);
 }
 
 bool RegExpObject::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)

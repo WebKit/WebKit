@@ -500,7 +500,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
                 m_propertyNames = stringifier.m_arrayReplacerPropertyNames.data();
             else {
                 PropertyNameArray objectPropertyNames(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
-                m_object->methodTable(vm)->getOwnPropertyNames(m_object, globalObject, objectPropertyNames, EnumerationMode());
+                m_object->methodTable(vm)->getOwnPropertyNames(m_object, globalObject, objectPropertyNames, DontEnumPropertiesMode::Exclude);
                 RETURN_IF_EXCEPTION(scope, false);
                 m_propertyNames = objectPropertyNames.releaseData();
             }
@@ -719,7 +719,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 markedStack.appendWithCrashOnOverflow(object);
                 indexStack.append(0);
                 propertyStack.append(PropertyNameArray(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
-                object->methodTable(vm)->getOwnPropertyNames(object, m_globalObject, propertyStack.last(), EnumerationMode());
+                object->methodTable(vm)->getOwnPropertyNames(object, m_globalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
                 RETURN_IF_EXCEPTION(scope, { });
             }
             objectStartVisitMember:

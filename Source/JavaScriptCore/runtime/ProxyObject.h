@@ -34,7 +34,7 @@ class ProxyObject final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetCallData | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesGetPropertyNames | OverridesAnyFormOfGetPropertyNames | OverridesGetPrototype | ProhibitsPropertyCaching;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnPropertyNames | OverridesGetPrototype | OverridesGetCallData | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | ProhibitsPropertyCaching;
 
     template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
@@ -57,7 +57,6 @@ public:
         if (isCallable)
             flags |= (ImplementsHasInstance | ImplementsDefaultHasInstance);
         Structure* result = Structure::create(vm, globalObject, prototype, TypeInfo(ProxyObjectType, flags), info(), NonArray | MayHaveIndexedAccessors);
-        result->setIsQuickPropertyAccessAllowedForEnumeration(false);
         RELEASE_ASSERT(!result->canAccessPropertiesQuicklyForEnumeration());
         RELEASE_ASSERT(!result->canCachePropertyNameEnumerator(vm));
         return result;
@@ -89,11 +88,7 @@ private:
     static bool preventExtensions(JSObject*, JSGlobalObject*);
     static bool isExtensible(JSObject*, JSGlobalObject*);
     static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
-    static void getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
-    static void getPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
-    static NO_RETURN_DUE_TO_CRASH void getOwnNonIndexPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
-    static NO_RETURN_DUE_TO_CRASH void getStructurePropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
-    static NO_RETURN_DUE_TO_CRASH void getGenericPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    static void getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, DontEnumPropertiesMode);
     static bool setPrototype(JSObject*, JSGlobalObject*, JSValue prototype, bool shouldThrowIfCantSet);
     static JSValue getPrototype(JSObject*, JSGlobalObject*);
     static void visitChildren(JSCell*, SlotVisitor&);

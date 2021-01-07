@@ -194,32 +194,20 @@ void Structure::validateFlags()
         && methodTable.doPutPropertySecurityCheck != JSCell::doPutPropertySecurityCheck;
     RELEASE_ASSERT(overridesPutPropertySecurityCheck == typeInfo().hasPutPropertySecurityCheck());
 
-    bool overridesGetPropertyNames =
-        methodTable.getPropertyNames != JSObject::getPropertyNames
-        && methodTable.getPropertyNames != JSCell::getPropertyNames;
     bool overridesGetOwnPropertyNames =
         methodTable.getOwnPropertyNames != JSObject::getOwnPropertyNames
         && methodTable.getOwnPropertyNames != JSCell::getOwnPropertyNames;
-    bool overridesGetOwnNonIndexPropertyNames =
-        methodTable.getOwnNonIndexPropertyNames != JSObject::getOwnNonIndexPropertyNames
-        && methodTable.getOwnNonIndexPropertyNames != JSCell::getOwnNonIndexPropertyNames;
+    RELEASE_ASSERT(overridesGetOwnPropertyNames == typeInfo().overridesGetOwnPropertyNames());
 
-    RELEASE_ASSERT(overridesGetPropertyNames == typeInfo().overridesGetPropertyNames());
-
-    // We can strengthen this into an equivalence test if there are no classes
-    // that specifies this flag without overriding any of the forms of getPropertyNames.
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=212954
-    if (overridesGetPropertyNames
-        || overridesGetOwnPropertyNames
-        || overridesGetOwnNonIndexPropertyNames)
-        RELEASE_ASSERT(typeInfo().overridesAnyFormOfGetPropertyNames());
+    bool overridesGetOwnSpecialPropertyNames =
+        methodTable.getOwnSpecialPropertyNames != JSObject::getOwnSpecialPropertyNames
+        && methodTable.getOwnSpecialPropertyNames != JSCell::getOwnSpecialPropertyNames;
+    RELEASE_ASSERT(overridesGetOwnSpecialPropertyNames == typeInfo().overridesGetOwnSpecialPropertyNames());
 
     bool overridesGetPrototype =
         methodTable.getPrototype != static_cast<MethodTable::GetPrototypeFunctionPtr>(JSObject::getPrototype)
         && methodTable.getPrototype != JSCell::getPrototype;
-
-    if (overridesGetPrototype)
-        RELEASE_ASSERT(typeInfo().overridesGetPrototype());
+    RELEASE_ASSERT(overridesGetPrototype == typeInfo().overridesGetPrototype());
 }
 #else
 inline void Structure::validateFlags() { }
@@ -1203,7 +1191,7 @@ PropertyOffset Structure::attributeChange(VM& vm, PropertyName propertyName, uns
         });
 }
 
-void Structure::getPropertyNamesFromStructure(VM& vm, PropertyNameArray& propertyNames, EnumerationMode mode)
+void Structure::getPropertyNamesFromStructure(VM& vm, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     PropertyTable* table = ensurePropertyTableIfNotEmpty(vm);
     if (!table)
@@ -1213,7 +1201,7 @@ void Structure::getPropertyNamesFromStructure(VM& vm, PropertyNameArray& propert
     bool foundSymbol = false;
 
     auto checkDontEnumAndAdd = [&](PropertyTable::iterator iter) {
-        if (!(iter->attributes & PropertyAttribute::DontEnum) || mode.includeDontEnumProperties()) {
+        if (mode == DontEnumPropertiesMode::Include || !(iter->attributes & PropertyAttribute::DontEnum)) {
             if (knownUnique)
                 propertyNames.addUnchecked(iter->key);
             else
@@ -1491,6 +1479,8 @@ bool Structure::canAccessPropertiesQuicklyForEnumeration() const
     if (hasCustomGetterSetterProperties())
         return false;
     if (isUncacheableDictionary())
+        return false;
+    if (typeInfo().overridesGetOwnPropertyNames())
         return false;
     return true;
 }

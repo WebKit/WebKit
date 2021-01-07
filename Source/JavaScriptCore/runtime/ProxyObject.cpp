@@ -890,10 +890,9 @@ void ProxyObject::performGetOwnPropertyNames(JSGlobalObject* globalObject, Prope
     JSValue ownKeysMethod = handler->getMethod(globalObject, callData, makeIdentifier(vm, "ownKeys"), "'ownKeys' property of a Proxy's handler should be callable"_s);
     RETURN_IF_EXCEPTION(scope, void());
     JSObject* target = this->target();
-    EnumerationMode enumerationMode(DontEnumPropertiesMode::Include);
     if (ownKeysMethod.isUndefined()) {
         scope.release();
-        target->methodTable(vm)->getOwnPropertyNames(target, globalObject, propertyNames, enumerationMode);
+        target->methodTable(vm)->getOwnPropertyNames(target, globalObject, propertyNames, DontEnumPropertiesMode::Include);
         return;
     }
 
@@ -946,7 +945,7 @@ void ProxyObject::performGetOwnPropertyNames(JSGlobalObject* globalObject, Prope
     RETURN_IF_EXCEPTION(scope, void());
 
     PropertyNameArray targetKeys(vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Exclude);
-    target->methodTable(vm)->getOwnPropertyNames(target, globalObject, targetKeys, enumerationMode);
+    target->methodTable(vm)->getOwnPropertyNames(target, globalObject, targetKeys, DontEnumPropertiesMode::Include);
     RETURN_IF_EXCEPTION(scope, void());
     Vector<UniquedStringImpl*> targetConfigurableKeys;
     Vector<UniquedStringImpl*> targetNonConfigurableKeys;
@@ -1013,35 +1012,13 @@ void ProxyObject::performGetOwnEnumerablePropertyNames(JSGlobalObject* globalObj
     }
 }
 
-void ProxyObject::getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNameArray, EnumerationMode enumerationMode)
+void ProxyObject::getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNameArray, DontEnumPropertiesMode mode)
 {
     ProxyObject* thisObject = jsCast<ProxyObject*>(object);
-    if (enumerationMode.includeDontEnumProperties())
+    if (mode == DontEnumPropertiesMode::Include)
         thisObject->performGetOwnPropertyNames(globalObject, propertyNameArray);
     else
         thisObject->performGetOwnEnumerablePropertyNames(globalObject, propertyNameArray);
-}
-
-void ProxyObject::getPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNameArray, EnumerationMode enumerationMode)
-{
-    NO_TAIL_CALLS();
-    JSObject::getPropertyNames(object, globalObject, propertyNameArray, enumerationMode);
-}
-
-void ProxyObject::getOwnNonIndexPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode)
-{
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-void ProxyObject::getStructurePropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode)
-{
-    // We should always go down the getOwnPropertyNames path.
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-void ProxyObject::getGenericPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode)
-{
-    RELEASE_ASSERT_NOT_REACHED();
 }
 
 bool ProxyObject::performSetPrototype(JSGlobalObject* globalObject, JSValue prototype, bool shouldThrowIfCantSet)

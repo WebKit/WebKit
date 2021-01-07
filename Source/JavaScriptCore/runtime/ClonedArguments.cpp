@@ -197,11 +197,11 @@ bool ClonedArguments::getOwnPropertySlot(JSObject* object, JSGlobalObject* globa
     return Base::getOwnPropertySlot(thisObject, globalObject, ident, slot);
 }
 
-void ClonedArguments::getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& array, EnumerationMode mode)
+void ClonedArguments::getOwnSpecialPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray&, DontEnumPropertiesMode mode)
 {
     ClonedArguments* thisObject = jsCast<ClonedArguments*>(object);
-    thisObject->materializeSpecialsIfNecessary(globalObject);
-    Base::getOwnPropertyNames(thisObject, globalObject, array, mode);
+    if (mode == DontEnumPropertiesMode::Include)
+        thisObject->materializeSpecialsIfNecessary(globalObject);
 }
 
 bool ClonedArguments::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName ident, JSValue value, PutPropertySlot& slot)

@@ -75,7 +75,7 @@ JSC_DEFINE_CUSTOM_GETTER(arrayLengthGetter, (JSGlobalObject* lexicalGlobalObject
     return JSValue::encode(jsNumber(thisObject->getLength()));
 }
 
-void RuntimeArray::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
+void RuntimeArray::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     VM& vm = lexicalGlobalObject->vm();
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(object);
@@ -83,10 +83,10 @@ void RuntimeArray::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexical
     for (unsigned i = 0; i < length; ++i)
         propertyNames.add(Identifier::from(vm, i));
 
-    if (mode.includeDontEnumProperties())
+    if (mode == DontEnumPropertiesMode::Include)
         propertyNames.add(vm.propertyNames->length);
 
-    JSObject::getOwnPropertyNames(thisObject, lexicalGlobalObject, propertyNames, mode);
+    thisObject->getOwnNonIndexPropertyNames(lexicalGlobalObject, propertyNames, mode);
 }
 
 bool RuntimeArray::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot)

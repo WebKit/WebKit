@@ -530,7 +530,7 @@ public:
     void setCachedPropertyNames(VM&, CachedPropertyNamesKind, JSImmutableButterfly*);
     bool canCacheOwnPropertyNames() const;
 
-    void getPropertyNamesFromStructure(VM&, PropertyNameArray&, EnumerationMode);
+    void getPropertyNamesFromStructure(VM&, PropertyNameArray&, DontEnumPropertiesMode);
 
     JSValue cachedSpecialProperty(CachedSpecialPropertyKey key)
     {

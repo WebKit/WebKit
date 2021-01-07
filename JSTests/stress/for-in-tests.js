@@ -88,6 +88,24 @@ function shouldThrowSyntaxError(script) {
     foo(null);
 })();
 (function() {
+    // Iterate over an object with non-reified static property names & structure property
+    if (typeof WebAssembly === "undefined")
+        return;
+
+    WebAssembly.foo = 1;
+
+    function forIn() {
+        for (var key in WebAssembly) {}
+        return key;
+    }
+    noInline(forIn);
+
+    for (var i = 0; i < 10000; ++i) {
+        if (forIn() !== "foo")
+            throw new Error("bad result");
+    }
+})();
+(function() {
     var foo = function(a, b) {
         for (var p in b) {
             var f1 = a[p];

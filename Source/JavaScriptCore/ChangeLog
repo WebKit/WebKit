@@ -1,3 +1,219 @@
+2021-01-07  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] Simplify get*PropertyNames() methods and EnumerationMode
+        https://bugs.webkit.org/show_bug.cgi?id=212954
+
+        Reviewed by Yusuke Suzuki.
+
+        Before this change, [[OwnPropertyKeys]] overrides were sometimes implemented
+        inconsistently, via different get*PropertyNames() methods that duplicated logic
+        (e.g. ErrorInstance, RegExpObject, and StringObject).
+
+        This patch:
+
+        1. Introduces a clear convention to implement [[OwnPropertyKeys]] overrides:
+           if it's defined by the spec, getOwnPropertyNames() method is used; otherwise,
+           non-materialized properties are enumerated / reified in getOwnSpecialPropertyNames().
+           While no class should define both methods, we don't assert this to support inheritance.
+
+           Removes getOwnNonIndexPropertyNames() from the method table and converts it to instance
+           method; its overrides were renamed to getOwnSpecialPropertyNames() and exempted from
+           calling the no-op base method.
+
+           This approach was chosen, instead of getOwnNonIndexPropertyNames() override, because
+           for/in enumeration must be sure there are no enumerable properties between
+           getEnumerableLength() and the first structure property.
+
+           Also, removes getStructurePropertyNames() from the method table as it's unreasonable
+           to override it.
+
+        2. Extracts JSObject::getOwnIndexPropertyNames() instance method to enforce
+           correct enumeration order in getOwnPropertyNames() overrides: special indices =>
+           butterfly storage => special properties => non-reified static => structure properties.
+
+           Loose mode `arguments` were fixed to enumerate indices from butterfly storage before
+           special properties [1], aligning JSC with V8 and SpiderMonkey.
+
+        3. Reworks for/in enumeration so the special properties always come before structure ones,
+           aligning enumeration order of String objects [2] and typed arrays [3] that have expando
+           properties with the spec, V8, and SpiderMonkey.
+
+           Removes getPropertyNames() and getGenericPropertyNames() from the method table, along
+           with their overrides, because ES7 disabled customization of for/in enumeration [4].
+           Instead, JSObject::getPropertyNames() instance method and getEnumerablePropertyNames()
+           are introduced, featuring a loop instead of recursion.
+
+           Also, this enabled dropping hard-to-follow JSObjectPropertiesMode bit and simplifying
+           EnumerationMode to an enum.
+
+        for/in and Object.keys microbenchmarks are neutral. This change does not affect
+        JSPropertyNameEnumerator caching, nor fast paths of its bytecodes.
+
+        [1]: https://tc39.es/ecma262/#sec-createmappedargumentsobject (steps 15-16 and 20-21)
+        [2]: https://tc39.es/ecma262/#sec-string-exotic-objects-ownpropertykeys
+        [3]: https://tc39.es/ecma262/#sec-integer-indexed-exotic-objects-ownpropertykeys
+        [4]: https://github.com/tc39/ecma262/pull/367
+
+        * API/JSAPIValueWrapper.h:
+        Remove OverridesAnyFormOfGetPropertyNames structure flag as it should never be queried
+        from JSCell instances.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::getOwnSpecialPropertyNames):
+        (JSC::JSCallbackObject<Parent>::getOwnNonIndexPropertyNames): Deleted.
+        * API/JSObjectRef.cpp:
+        (JSObjectCopyPropertyNames):
+        * bindings/ScriptValue.cpp:
+        (Inspector::jsToInspectorValue):
+        * bytecode/ObjectAllocationProfileInlines.h:
+        (JSC::ObjectAllocationProfileBase<Derived>::possibleDefaultPropertyCount):
+        Use DontEnumPropertyMode::Include as the intent is to count all properties, even
+        private symbols. EnumerationMode() defaults did exclude non-enumerable properties.
+
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::getOwnPropertyNames):
+        * debugger/DebuggerScope.h:
+        * runtime/ClassInfo.h:
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::getOwnSpecialPropertyNames):
+        Don't materialize DontEnum properties unless it's DontEnumPropertiesMode::Include,
+        advancing provided microbenchmark by ~23%.
+
+        (JSC::ClonedArguments::getOwnPropertyNames): Deleted.
+        * runtime/ClonedArguments.h:
+        * runtime/EnumerationMode.h:
+        Explicitly specify enum type to reduce its size.
+
+        (JSC::EnumerationMode::EnumerationMode): Deleted.
+        (JSC::EnumerationMode::includeDontEnumProperties): Deleted.
+        (JSC::EnumerationMode::includeJSObjectProperties): Deleted.
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::getOwnSpecialPropertyNames):
+        Don't materialize DontEnum properties unless it's DontEnumPropertiesMode::Include,
+        advancing provided microbenchmark by a factor of 5.
+
+        (JSC::ErrorInstance::getOwnNonIndexPropertyNames): Deleted.
+        (JSC::ErrorInstance::getStructurePropertyNames): Deleted.
+        * runtime/ErrorInstance.h:
+        * runtime/GenericArguments.h:
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::getOwnPropertyNames):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::getOwnSpecialPropertyNames):
+        (JSC::JSArray::getOwnNonIndexPropertyNames): Deleted.
+        * runtime/JSArray.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getOwnPropertyNames):
+        (JSC::JSCell::getOwnSpecialPropertyNames):
+        (JSC::JSCell::getOwnNonIndexPropertyNames): Deleted.
+        (JSC::JSCell::getPropertyNames): Deleted.
+        (JSC::JSCell::getStructurePropertyNames): Deleted.
+        (JSC::JSCell::getGenericPropertyNames): Deleted.
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnSpecialPropertyNames):
+        (JSC::JSFunction::getOwnNonIndexPropertyNames): Deleted.
+        * runtime/JSFunction.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::getOwnPropertyNames):
+        * runtime/JSGlobalObject.h:
+        Remove OverridesAnyFormOfGetPropertyNames structure flag as it's inherited from
+        JSSymbolTableObject, and JSGlobalObject itself doesn't override getOwn*PropertyNames().
+
+        * runtime/JSLexicalEnvironment.cpp:
+        (JSC::JSLexicalEnvironment::getOwnSpecialPropertyNames):
+        (JSC::JSLexicalEnvironment::getOwnNonIndexPropertyNames): Deleted.
+        * runtime/JSLexicalEnvironment.h:
+        * runtime/JSModuleEnvironment.cpp:
+        (JSC::JSModuleEnvironment::getOwnSpecialPropertyNames):
+        (JSC::JSModuleEnvironment::getOwnNonIndexPropertyNames): Deleted.
+        * runtime/JSModuleEnvironment.h:
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::getOwnPropertyNames):
+        Call getOwnNonIndexPropertyNames() directly, guarded by includeSymbolProperties() check,
+        since module namespace objects can't have string properties besides m_names.
+        (See https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-defineownproperty-p-desc)
+
+        * runtime/JSModuleNamespaceObject.h:
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Holder::appendNextProperty):
+        (JSC::Walker::walk):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getNonReifiedStaticPropertyNames):
+        (JSC::JSObject::getPropertyNames):
+        (JSC::JSObject::getOwnPropertyNames):
+        (JSC::JSObject::getOwnSpecialPropertyNames):
+        (JSC::JSObject::getOwnIndexedPropertyNames):
+        (JSC::JSObject::getOwnNonIndexPropertyNames):
+        (JSC::getClassPropertyNames): Deleted.
+        (JSC::JSObject::getStructurePropertyNames): Deleted.
+        (JSC::JSObject::getGenericPropertyNames): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSObject::getOwnSpecialPropertyNames):
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::getEnumerablePropertyNames):
+        * runtime/JSPropertyNameEnumerator.h:
+        (JSC::propertyNameEnumerator):
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::getOwnPropertyNames):
+        (JSC::JSProxy::getPropertyNames): Deleted.
+        (JSC::JSProxy::getStructurePropertyNames): Deleted.
+        (JSC::JSProxy::getGenericPropertyNames): Deleted.
+        * runtime/JSProxy.h:
+        * runtime/JSSymbolTableObject.cpp:
+        (JSC::JSSymbolTableObject::getOwnSpecialPropertyNames):
+        (JSC::JSSymbolTableObject::getOwnNonIndexPropertyNames): Deleted.
+        * runtime/JSSymbolTableObject.h:
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::overridesGetOwnPropertyNames const):
+        (JSC::TypeInfo::overridesGetOwnSpecialPropertyNames const):
+        (JSC::TypeInfo::overridesAnyFormOfGetOwnPropertyNames const):
+        (JSC::TypeInfo::overridesGetPropertyNames const): Deleted.
+        (JSC::TypeInfo::overridesAnyFormOfGetPropertyNames const): Deleted.
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetOwnPropertyDescriptors):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::defineProperties):
+        (JSC::setIntegrityLevel):
+        (JSC::testIntegrityLevel):
+        (JSC::ownPropertyKeys):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+        (JSC::ProxyObject::getOwnPropertyNames):
+        (JSC::ProxyObject::getPropertyNames): Deleted.
+        (JSC::ProxyObject::getOwnNonIndexPropertyNames): Deleted.
+        (JSC::ProxyObject::getStructurePropertyNames): Deleted.
+        (JSC::ProxyObject::getGenericPropertyNames): Deleted.
+        * runtime/ProxyObject.h:
+        Remove IsQuickPropertyAccessAllowedForEnumeration flag from ProxyObject's structure
+        since canAccessPropertiesQuicklyForEnumeration() now checks for method overrides.
+
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::getOwnSpecialPropertyNames):
+        (JSC::RegExpObject::getOwnNonIndexPropertyNames): Deleted.
+        (JSC::RegExpObject::getPropertyNames): Deleted.
+        (JSC::RegExpObject::getGenericPropertyNames): Deleted.
+        * runtime/RegExpObject.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::getOwnPropertyNames):
+        (JSC::StringObject::getOwnNonIndexPropertyNames): Deleted.
+        * runtime/StringObject.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::validateFlags):
+        Strengthen overridesGetOwn*PropertyNames and overridesGetPrototype asserts into
+        equivalence tests.
+
+        (JSC::Structure::getPropertyNamesFromStructure):
+        (JSC::Structure::canAccessPropertiesQuicklyForEnumeration const):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::canCacheOwnPropertyNames const):
+        * tools/JSDollarVM.cpp:
+        Remove OverridesAnyFormOfGetPropertyNames structure flag as it's inherited from
+        JSArray, and RuntimeArray itself doesn't override getOwn*PropertyNames().
+
 2021-01-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] New expression and value function call should reserve function register if arguments include assignments

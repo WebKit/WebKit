@@ -100,11 +100,11 @@ bool JSRemoteDOMWindow::deletePropertyByIndex(JSCell*, JSGlobalObject* lexicalGl
     return false;
 }
 
-void JSRemoteDOMWindow::getOwnPropertyNames(JSObject*, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSRemoteDOMWindow::getOwnPropertyNames(JSObject*, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     // FIXME: Add scoped children indexes.
 
-    if (mode.includeDontEnumProperties())
+    if (mode == DontEnumPropertiesMode::Include)
         addCrossOriginOwnPropertyNames<CrossOriginObject::Window>(*lexicalGlobalObject, propertyNames);
 }
 

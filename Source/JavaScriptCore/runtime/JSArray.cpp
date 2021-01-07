@@ -283,15 +283,11 @@ static int compareKeysForQSort(const void* a, const void* b)
     return (da > db) - (da < db);
 }
 
-void JSArray::getOwnNonIndexPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSArray::getOwnSpecialPropertyNames(JSObject*, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     VM& vm = globalObject->vm();
-    JSArray* thisObject = jsCast<JSArray*>(object);
-
-    if (mode.includeDontEnumProperties())
+    if (mode == DontEnumPropertiesMode::Include)
         propertyNames.add(vm.propertyNames->length);
-
-    JSObject::getOwnNonIndexPropertyNames(thisObject, globalObject, propertyNames, mode);
 }
 
 // This method makes room in the vector, but leaves the new space for count slots uncleared.

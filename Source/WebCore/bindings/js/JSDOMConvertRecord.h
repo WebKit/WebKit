@@ -100,7 +100,7 @@ private:
     
         // 4. Let keys be ? O.[[OwnPropertyKeys]]().
         JSC::PropertyNameArray keys(vm, JSC::PropertyNameMode::Strings, JSC::PrivateSymbolMode::Exclude);
-        object->methodTable(vm)->getOwnPropertyNames(object, &lexicalGlobalObject, keys, JSC::EnumerationMode(JSC::DontEnumPropertiesMode::Include));
+        object->methodTable(vm)->getOwnPropertyNames(object, &lexicalGlobalObject, keys, JSC::DontEnumPropertiesMode::Include);
 
         RETURN_IF_EXCEPTION(scope, { });
 
@@ -113,7 +113,7 @@ private:
 
             // 2. If desc is not undefined and desc.[[Enumerable]] is true:
 
-            // It's necessary to filter enumerable here rather than using the default EnumerationMode,
+            // It's necessary to filter enumerable here rather than using DontEnumPropertiesMode::Exclude,
             // to prevent an observable extra [[GetOwnProperty]] operation in the case of ProxyObject records.
             if (didGetDescriptor && descriptor.enumerable()) {
                 // 1. Let typedKey be key converted to an IDL value of type K.

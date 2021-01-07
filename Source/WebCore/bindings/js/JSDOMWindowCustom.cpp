@@ -454,14 +454,14 @@ static void addScopedChildrenIndexes(JSGlobalObject& lexicalGlobalObject, DOMWin
 }
 
 // https://html.spec.whatwg.org/#windowproxy-ownpropertykeys
-void JSDOMWindow::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSDOMWindow::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
 
     addScopedChildrenIndexes(*lexicalGlobalObject, thisObject->wrapped(), propertyNames);
 
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped(), DoNotReportSecurityError)) {
-        if (mode.includeDontEnumProperties())
+        if (mode == DontEnumPropertiesMode::Include)
             addCrossOriginOwnPropertyNames<CrossOriginObject::Window>(*lexicalGlobalObject, propertyNames);
         return;
     }

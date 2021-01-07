@@ -253,7 +253,7 @@ bool NPJSObject::enumerate(NPIdentifier** identifiers, uint32_t* identifierCount
     JSLockHolder lock(vm);
 
     PropertyNameArray propertyNames(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
-    m_jsObject->methodTable(vm)->getPropertyNames(m_jsObject.get(), lexicalGlobalObject, propertyNames, EnumerationMode());
+    m_jsObject->getPropertyNames(lexicalGlobalObject, propertyNames, DontEnumPropertiesMode::Exclude);
 
     NPIdentifier* nameIdentifiers = npnMemNewArray<NPIdentifier>(propertyNames.size());
 

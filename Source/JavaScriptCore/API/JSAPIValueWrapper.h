@@ -33,13 +33,7 @@ class JSAPIValueWrapper final : public JSCell {
     friend JSValue jsAPIValueWrapper(JSGlobalObject*, JSValue);
 public:
     using Base = JSCell;
-
-    // OverridesAnyFormOfGetPropertyNames (which used to be OverridesGetPropertyNames) was here
-    // since ancient times back when we pessimistically choose to apply this flag. I think we
-    // can remove it, but we should do more testing before we do so.
-    // Ref: http://trac.webkit.org/changeset/49694/webkit#file9
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=212954
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesAnyFormOfGetPropertyNames | StructureIsImmortal;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)

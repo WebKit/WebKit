@@ -543,7 +543,7 @@ static JSC_DECLARE_CUSTOM_GETTER(runtimeArrayLengthGetter);
 class RuntimeArray : public JSArray {
 public:
     typedef JSArray Base;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | OverridesAnyFormOfGetPropertyNames;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
 
 IGNORE_WARNINGS_BEGIN("unused-const-variable")
     static constexpr bool needsDestruction = false;

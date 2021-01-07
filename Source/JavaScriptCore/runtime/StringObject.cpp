@@ -145,7 +145,7 @@ bool StringObject::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObj
     return JSObject::deletePropertyByIndex(thisObject, globalObject, i);
 }
 
-void StringObject::getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
+void StringObject::getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     VM& vm = globalObject->vm();
     StringObject* thisObject = jsCast<StringObject*>(object);
@@ -153,17 +153,11 @@ void StringObject::getOwnPropertyNames(JSObject* object, JSGlobalObject* globalO
         int size = thisObject->internalValue()->length();
         for (int i = 0; i < size; ++i)
             propertyNames.add(Identifier::from(vm, i));
+        thisObject->getOwnIndexedPropertyNames(globalObject, propertyNames, mode);
     }
-    return JSObject::getOwnPropertyNames(thisObject, globalObject, propertyNames, mode);
-}
-
-void StringObject::getOwnNonIndexPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
-{
-    VM& vm = globalObject->vm();
-    StringObject* thisObject = jsCast<StringObject*>(object);
-    if (mode.includeDontEnumProperties())
+    if (mode == DontEnumPropertiesMode::Include)
         propertyNames.add(vm.propertyNames->length);
-    return JSObject::getOwnNonIndexPropertyNames(thisObject, globalObject, propertyNames, mode);
+    thisObject->getOwnNonIndexPropertyNames(globalObject, propertyNames, mode);
 }
 
 String StringObject::toStringName(const JSObject*, JSGlobalObject*)

@@ -1,3 +1,21 @@
+2021-01-07  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] Simplify get*PropertyNames() methods and EnumerationMode
+        https://bugs.webkit.org/show_bug.cgi?id=212954
+
+        Reviewed by Yusuke Suzuki.
+
+        * ChakraCore.yaml:
+        * ChakraCore/test/Basics/enum.baseline-jsc: Removed.
+        * microbenchmarks/for-in-on-object-with-lazily-materialized-properties.js:
+        Removed because ErrorInstance no longer materializes properties during for/in enumeration.
+
+        * microbenchmarks/object-keys-cloned-arguments.js: Added.
+        * microbenchmarks/object-keys-error-object.js: Added.
+        * stress/arguments-properties-order.js: Added.
+        * stress/for-in-tests.js:
+        * stress/for-in-typed-array.js:
+
 2021-01-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] New expression and value function call should reserve function register if arguments include assignments

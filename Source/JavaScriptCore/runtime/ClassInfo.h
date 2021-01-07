@@ -80,20 +80,12 @@ struct MethodTable {
     using DefaultValueFunctionPtr = JSValue (*)(const JSObject*, JSGlobalObject*, PreferredPrimitiveType);
     DefaultValueFunctionPtr METHOD_TABLE_ENTRY(defaultValue);
 
-    using GetOwnPropertyNamesFunctionPtr = void (*)(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    using GetOwnPropertyNamesFunctionPtr = void (*)(JSObject*, JSGlobalObject*, PropertyNameArray&, DontEnumPropertiesMode);
     GetOwnPropertyNamesFunctionPtr METHOD_TABLE_ENTRY(getOwnPropertyNames);
-
-    using GetOwnNonIndexPropertyNamesFunctionPtr = void (*)(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
-    GetOwnNonIndexPropertyNamesFunctionPtr METHOD_TABLE_ENTRY(getOwnNonIndexPropertyNames);
-
-    using GetPropertyNamesFunctionPtr = void (*)(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
-    GetPropertyNamesFunctionPtr METHOD_TABLE_ENTRY(getPropertyNames);
+    GetOwnPropertyNamesFunctionPtr METHOD_TABLE_ENTRY(getOwnSpecialPropertyNames);
 
     using GetEnumerableLengthFunctionPtr = uint32_t (*)(JSGlobalObject*, JSObject*);
     GetEnumerableLengthFunctionPtr METHOD_TABLE_ENTRY(getEnumerableLength);
-
-    GetPropertyNamesFunctionPtr METHOD_TABLE_ENTRY(getStructurePropertyNames);
-    GetPropertyNamesFunctionPtr METHOD_TABLE_ENTRY(getGenericPropertyNames);
 
     using ClassNameFunctionPtr = String (*)(const JSObject*, VM&);
     ClassNameFunctionPtr METHOD_TABLE_ENTRY(className);
@@ -168,11 +160,8 @@ struct MethodTable {
         &ClassName::toThis, \
         &ClassName::defaultValue, \
         &ClassName::getOwnPropertyNames, \
-        &ClassName::getOwnNonIndexPropertyNames, \
-        &ClassName::getPropertyNames, \
+        &ClassName::getOwnSpecialPropertyNames, \
         &ClassName::getEnumerableLength, \
-        &ClassName::getStructurePropertyNames, \
-        &ClassName::getGenericPropertyNames, \
         &ClassName::className, \
         &ClassName::toStringName, \
         &ClassName::customHasInstance, \

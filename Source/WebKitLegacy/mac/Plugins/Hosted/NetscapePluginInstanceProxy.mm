@@ -1273,7 +1273,7 @@ bool NetscapePluginInstanceProxy::enumerate(uint32_t objectID, data_t& resultDat
     JSGlobalObject* lexicalGlobalObject = frame->script().globalObject(pluginWorld());
  
     PropertyNameArray propertyNames(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
-    object->methodTable(vm)->getPropertyNames(object, lexicalGlobalObject, propertyNames, EnumerationMode());
+    object->getPropertyNames(lexicalGlobalObject, propertyNames, DontEnumPropertiesMode::Exclude);
 
     RetainPtr<NSMutableArray> array = adoptNS([[NSMutableArray alloc] init]);
     for (unsigned i = 0; i < propertyNames.size(); i++) {

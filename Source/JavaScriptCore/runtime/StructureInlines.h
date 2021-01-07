@@ -275,7 +275,7 @@ inline bool Structure::canCacheOwnPropertyNames() const
         return false;
     if (hasIndexedProperties(indexingType()))
         return false;
-    if (typeInfo().overridesAnyFormOfGetPropertyNames())
+    if (typeInfo().overridesAnyFormOfGetOwnPropertyNames())
         return false;
     return true;
 }

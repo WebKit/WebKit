@@ -238,7 +238,7 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
 
     // 3. Let input properties be the result of calling the EnumerableOwnNames operation with keyframe input as the object.
     PropertyNameArray inputProperties(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
-    JSObject::getOwnPropertyNames(keyframesInput.get(), &lexicalGlobalObject, inputProperties, EnumerationMode());
+    JSObject::getOwnPropertyNames(keyframesInput.get(), &lexicalGlobalObject, inputProperties, DontEnumPropertiesMode::Exclude);
 
     // 4. Make up a new list animation properties that consists of all of the properties that are in both input properties and animatable
     //    properties, or which are in input properties and conform to the <custom-property-name> production.

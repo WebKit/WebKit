@@ -487,7 +487,7 @@ bool _NPN_Enumerate(NPP, NPObject* o, NPIdentifier** identifier, uint32_t* count
         JSGlobalObject* lexicalGlobalObject = globalObject;
         PropertyNameArray propertyNames(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
 
-        obj->imp->methodTable(vm)->getPropertyNames(obj->imp, lexicalGlobalObject, propertyNames, EnumerationMode());
+        obj->imp->getPropertyNames(lexicalGlobalObject, propertyNames, DontEnumPropertiesMode::Exclude);
         unsigned size = static_cast<unsigned>(propertyNames.size());
         // FIXME: This should really call NPN_MemAlloc but that's in WebKit
         NPIdentifier* identifiers = static_cast<NPIdentifier*>(malloc(sizeof(NPIdentifier) * size));

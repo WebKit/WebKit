@@ -27,56 +27,20 @@
 
 namespace JSC {
 
-enum class PropertyNameMode {
+enum class PropertyNameMode : uint8_t {
     Symbols = 1 << 0,
     Strings = 1 << 1,
     StringsAndSymbols = Symbols | Strings,
 };
 
-enum class PrivateSymbolMode {
+enum class PrivateSymbolMode : uint8_t {
     Include,
     Exclude
 };
 
-enum class DontEnumPropertiesMode {
+enum class DontEnumPropertiesMode : uint8_t {
     Include,
     Exclude
-};
-
-enum class JSObjectPropertiesMode {
-    Include,
-    Exclude
-};
-
-class EnumerationMode {
-public:
-    EnumerationMode(DontEnumPropertiesMode dontEnumPropertiesMode = DontEnumPropertiesMode::Exclude, JSObjectPropertiesMode jsObjectPropertiesMode = JSObjectPropertiesMode::Include)
-        : m_dontEnumPropertiesMode(dontEnumPropertiesMode)
-        , m_jsObjectPropertiesMode(jsObjectPropertiesMode)
-    {
-    }
-
-    EnumerationMode(const EnumerationMode& mode, JSObjectPropertiesMode jsObjectPropertiesMode)
-        : m_dontEnumPropertiesMode(mode.m_dontEnumPropertiesMode)
-        , m_jsObjectPropertiesMode(jsObjectPropertiesMode)
-    {
-    }
-
-    // Add other constructors as needed for convenience
-
-    bool includeDontEnumProperties()
-    {
-        return m_dontEnumPropertiesMode == DontEnumPropertiesMode::Include;
-    }
-
-    bool includeJSObjectProperties()
-    {
-        return m_jsObjectPropertiesMode == JSObjectPropertiesMode::Include;
-    }
-
-private:
-    DontEnumPropertiesMode m_dontEnumPropertiesMode;
-    JSObjectPropertiesMode m_jsObjectPropertiesMode;
 };
 
 } // namespace JSC

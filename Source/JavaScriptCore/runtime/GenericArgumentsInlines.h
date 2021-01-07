@@ -90,7 +90,7 @@ bool GenericArguments<Type>::getOwnPropertySlotByIndex(JSObject* object, JSGloba
 }
 
 template<typename Type>
-void GenericArguments<Type>::getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& array, EnumerationMode mode)
+void GenericArguments<Type>::getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& array, DontEnumPropertiesMode mode)
 {
     VM& vm = globalObject->vm();
     Type* thisObject = jsCast<Type*>(object);
@@ -101,15 +101,15 @@ void GenericArguments<Type>::getOwnPropertyNames(JSObject* object, JSGlobalObjec
                 continue;
             array.add(Identifier::from(vm, i));
         }
+        thisObject->getOwnIndexedPropertyNames(globalObject, array, mode);
     }
 
-    if (mode.includeDontEnumProperties() && !thisObject->overrodeThings()) {
+    if (mode == DontEnumPropertiesMode::Include && !thisObject->overrodeThings()) {
         array.add(vm.propertyNames->length);
         array.add(vm.propertyNames->callee);
-        if (array.includeSymbolProperties())
-            array.add(vm.propertyNames->iteratorSymbol);
+        array.add(vm.propertyNames->iteratorSymbol);
     }
-    Base::getOwnPropertyNames(thisObject, globalObject, array, mode);
+    thisObject->getOwnNonIndexPropertyNames(globalObject, array, mode);
 }
 
 template<typename Type>

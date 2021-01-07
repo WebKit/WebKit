@@ -469,13 +469,13 @@ bool JSFunction::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObje
     RELEASE_AND_RETURN(scope, Base::getOwnPropertySlot(thisObject, globalObject, propertyName, slot));
 }
 
-void JSFunction::getOwnNonIndexPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSFunction::getOwnSpecialPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     JSFunction* thisObject = jsCast<JSFunction*>(object);
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (mode.includeDontEnumProperties()) {
+    if (mode == DontEnumPropertiesMode::Include) {
         if (!thisObject->isHostOrBuiltinFunction()) {
             // Make sure prototype has been reified.
             PropertySlot slot(thisObject, PropertySlot::InternalMethodType::VMInquiry, &vm);
@@ -499,7 +499,6 @@ void JSFunction::getOwnNonIndexPropertyNames(JSObject* object, JSGlobalObject* g
             }
         }
     }
-    RELEASE_AND_RETURN(scope, Base::getOwnNonIndexPropertyNames(thisObject, globalObject, propertyNames, mode));
 }
 
 bool JSFunction::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)

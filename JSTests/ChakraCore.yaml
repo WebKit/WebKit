@@ -303,7 +303,7 @@
 - path: ChakraCore/test/Basics/scan.js
   cmd: runChakra :baseline, "NoException", "scan.baseline-jsc", []
 - path: ChakraCore/test/Basics/enum.js
-  cmd: runChakra :baseline, "NoException", "enum.baseline-jsc", []
+  cmd: runChakra :pass, "NoException", "", []
 - path: ChakraCore/test/Basics/with3.js
   cmd: runChakra :baseline, "NoException", "with3.baseline-jsc", []
 - path: ChakraCore/test/Basics/cross_site_accessor_main.js

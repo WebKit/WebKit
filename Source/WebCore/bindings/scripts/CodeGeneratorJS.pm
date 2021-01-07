@@ -1104,7 +1104,7 @@ sub GenerateGetOwnPropertyNames
     my $namedGetterOperation = GetNamedGetterOperation($interface);
     my $indexedGetterOperation = GetIndexedGetterOperation($interface);
     
-    push(@$outputArray, "void ${className}::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, EnumerationMode mode)\n");
+    push(@$outputArray, "void ${className}::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)\n");
     push(@$outputArray, "{\n");
     if ($indexedGetterOperation || $namedGetterOperation) {
         push(@$outputArray, "    VM& vm = JSC::getVM(lexicalGlobalObject);\n");
@@ -1130,7 +1130,7 @@ sub GenerateGetOwnPropertyNames
             push(@$outputArray, "    for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())\n");
             push(@$outputArray, "        propertyNames.add(Identifier::fromString(vm, propertyName));\n");
         } else {
-            push(@$outputArray, "    if (mode.includeDontEnumProperties()) {\n");
+            push(@$outputArray, "    if (mode == DontEnumPropertiesMode::Include) {\n");
             push(@$outputArray, "        for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())\n");
             push(@$outputArray, "            propertyNames.add(Identifier::fromString(vm, propertyName));\n");
             push(@$outputArray, "    }\n");
@@ -2962,8 +2962,8 @@ sub GenerateHeader
     }
     
     if (InstanceOverridesGetOwnPropertyNames($interface)) {
-        push(@headerContent, "    static void getOwnPropertyNames(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyNameArray&, JSC::EnumerationMode = JSC::EnumerationMode());\n");
-        $structureFlags{"JSC::OverridesAnyFormOfGetPropertyNames"} = 1;
+        push(@headerContent, "    static void getOwnPropertyNames(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyNameArray&, JSC::DontEnumPropertiesMode);\n");
+        $structureFlags{"JSC::OverridesGetOwnPropertyNames"} = 1;
     }
     
     if (InstanceOverridesPut($interface)) {

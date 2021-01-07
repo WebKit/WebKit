@@ -48,13 +48,8 @@ static constexpr unsigned TypeInfoPerCellBit = 1 << 7; // Unlike other inline fl
 // Out of line flags.
 
 static constexpr unsigned ImplementsHasInstance = 1 << 8;
-static constexpr unsigned OverridesGetPropertyNames = 1 << 9;
-// OverridesAnyFormOfGetPropertyNames means that we cannot make assumptions about
-// the cacheability or enumerability of property names, and therefore, we'll need
-// to disable certain optimizations. This flag should be set if one or more of the
-// following Object methods are overridden:
-//     getOwnPropertyNames, getOwnNonIndexPropertyNames, getPropertyNames
-static constexpr unsigned OverridesAnyFormOfGetPropertyNames = 1 << 10;
+static constexpr unsigned OverridesGetOwnPropertyNames = 1 << 9;
+static constexpr unsigned OverridesGetOwnSpecialPropertyNames = 1 << 10;
 static constexpr unsigned ProhibitsPropertyCaching = 1 << 11;
 static constexpr unsigned GetOwnPropertySlotIsImpure = 1 << 12;
 static constexpr unsigned NewImpurePropertyFiresWatchpoints = 1 << 13;
@@ -103,8 +98,9 @@ public:
     static bool perCellBit(InlineTypeFlags flags) { return flags & TypeInfoPerCellBit; }
     bool overridesToThis() const { return isSetOnFlags1<OverridesToThis>(); }
     bool structureIsImmortal() const { return isSetOnFlags2<StructureIsImmortal>(); }
-    bool overridesGetPropertyNames() const { return isSetOnFlags2<OverridesGetPropertyNames>(); }
-    bool overridesAnyFormOfGetPropertyNames() const { return isSetOnFlags2<OverridesAnyFormOfGetPropertyNames>(); }
+    bool overridesGetOwnPropertyNames() const { return isSetOnFlags2<OverridesGetOwnPropertyNames>(); }
+    bool overridesGetOwnSpecialPropertyNames() const { return isSetOnFlags2<OverridesGetOwnSpecialPropertyNames>(); }
+    bool overridesAnyFormOfGetOwnPropertyNames() const { return overridesGetOwnPropertyNames() || overridesGetOwnSpecialPropertyNames(); }
     bool overridesGetPrototype() const { return isSetOnFlags2<OverridesGetPrototype>(); }
     bool prohibitsPropertyCaching() const { return isSetOnFlags2<ProhibitsPropertyCaching>(); }
     bool getOwnPropertySlotIsImpure() const { return isSetOnFlags2<GetOwnPropertySlotIsImpure>(); }

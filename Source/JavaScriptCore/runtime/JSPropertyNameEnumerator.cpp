@@ -87,4 +87,52 @@ void JSPropertyNameEnumerator::visitChildren(JSCell* cell, SlotVisitor& visitor)
     }
 }
 
+// FIXME: Assert that properties returned by getOwnPropertyNames() are reported enumerable by getOwnPropertySlot().
+// https://bugs.webkit.org/show_bug.cgi?id=219926
+void getEnumerablePropertyNames(JSGlobalObject* globalObject, JSObject* base, PropertyNameArray& propertyNames, uint32_t& indexedLength, uint32_t& structurePropertyCount)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    Structure* structure = base->structure(vm);
+    if (structure->canAccessPropertiesQuicklyForEnumeration() && indexedLength == base->getArrayLength()) {
+        // Inlined JSObject::getOwnNonIndexPropertyNames()
+        base->methodTable(vm)->getOwnSpecialPropertyNames(base, globalObject, propertyNames, DontEnumPropertiesMode::Exclude);
+        RETURN_IF_EXCEPTION(scope, void());
+
+        base->getNonReifiedStaticPropertyNames(vm, propertyNames, DontEnumPropertiesMode::Exclude);
+        unsigned nonStructurePropertyCount = propertyNames.size();
+        structure->getPropertyNamesFromStructure(vm, propertyNames, DontEnumPropertiesMode::Exclude);
+        scope.assertNoException();
+
+        // |propertyNames| contains properties exclusively from the structure.
+        if (!nonStructurePropertyCount)
+            structurePropertyCount = propertyNames.size();
+    } else {
+        base->methodTable(vm)->getOwnPropertyNames(base, globalObject, propertyNames, DontEnumPropertiesMode::Exclude);
+        RETURN_IF_EXCEPTION(scope, void());
+        // |propertyNames| contains all indexed properties, so disable enumeration based on getEnumerableLength().
+        indexedLength = 0;
+    }
+
+    JSObject* object = base;
+    unsigned prototypeCount = 0;
+
+    while (true) {
+        JSValue prototype = object->getPrototype(vm, globalObject);
+        RETURN_IF_EXCEPTION(scope, void());
+        if (prototype.isNull())
+            break;
+
+        if (UNLIKELY(++prototypeCount > JSObject::maximumPrototypeChainDepth)) {
+            throwStackOverflowError(globalObject, scope);
+            return;
+        }
+
+        object = asObject(prototype);
+        object->methodTable(vm)->getOwnPropertyNames(object, globalObject, propertyNames, DontEnumPropertiesMode::Exclude);
+        RETURN_IF_EXCEPTION(scope, void());
+    }
+}
+
 } // namespace JSC

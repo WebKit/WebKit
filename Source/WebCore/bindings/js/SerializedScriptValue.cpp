@@ -1728,7 +1728,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     lengthStack.removeLast();
 
                     propertyStack.append(PropertyNameArray(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
-                    array->methodTable(vm)->getOwnNonIndexPropertyNames(array, m_lexicalGlobalObject, propertyStack.last(), EnumerationMode());
+                    array->getOwnNonIndexPropertyNames(m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
                     if (propertyStack.last().size()) {
                         write(NonIndexPropertiesTag);
                         indexStack.append(0);
@@ -1778,7 +1778,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 inputObjectStack.append(inObject);
                 indexStack.append(0);
                 propertyStack.append(PropertyNameArray(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
-                inObject->methodTable(vm)->getOwnPropertyNames(inObject, m_lexicalGlobalObject, propertyStack.last(), EnumerationMode());
+                inObject->methodTable(vm)->getOwnPropertyNames(inObject, m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
             }
             objectStartVisitMember:
             FALLTHROUGH;
@@ -1846,7 +1846,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     JSObject* object = inputObjectStack.last();
                     ASSERT(jsDynamicCast<JSMap*>(vm, object));
                     propertyStack.append(PropertyNameArray(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
-                    object->methodTable(vm)->getOwnPropertyNames(object, m_lexicalGlobalObject, propertyStack.last(), EnumerationMode());
+                    object->methodTable(vm)->getOwnPropertyNames(object, m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
                     write(NonMapPropertiesTag);
                     indexStack.append(0);
                     goto objectStartVisitMember;
@@ -1890,7 +1890,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     JSObject* object = inputObjectStack.last();
                     ASSERT(jsDynamicCast<JSSet*>(vm, object));
                     propertyStack.append(PropertyNameArray(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
-                    object->methodTable(vm)->getOwnPropertyNames(object, m_lexicalGlobalObject, propertyStack.last(), EnumerationMode());
+                    object->methodTable(vm)->getOwnPropertyNames(object, m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
                     write(NonSetPropertiesTag);
                     indexStack.append(0);
                     goto objectStartVisitMember;

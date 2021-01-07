@@ -138,14 +138,14 @@ bool DebuggerScope::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, P
     return thisObject->methodTable(globalObject->vm())->deleteProperty(thisObject, globalObject, propertyName, slot);
 }
 
-void DebuggerScope::getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
+void DebuggerScope::getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     DebuggerScope* scope = jsCast<DebuggerScope*>(object);
     ASSERT(scope->isValid());
     if (!scope->isValid())
         return;
     JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());
-    thisObject->methodTable(globalObject->vm())->getPropertyNames(thisObject, globalObject, propertyNames, mode);
+    thisObject->getPropertyNames(globalObject, propertyNames, mode);
 }
 
 bool DebuggerScope::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)

@@ -425,7 +425,7 @@ bool JSNPObject::deleteProperty(JSGlobalObject* lexicalGlobalObject, NPIdentifie
     return true;
 }
 
-void JSNPObject::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNameArray, EnumerationMode)
+void JSNPObject::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNameArray, DontEnumPropertiesMode)
 {
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

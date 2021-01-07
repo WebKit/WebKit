@@ -125,7 +125,7 @@ template <class Parent>
 class JSCallbackObject final : public Parent {
 public:
     using Base = Parent;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | ProhibitsPropertyCaching | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | ImplementsHasInstance | OverridesAnyFormOfGetPropertyNames | OverridesGetCallData;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnSpecialPropertyNames | OverridesGetCallData | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | ImplementsHasInstance | ProhibitsPropertyCaching;
     static_assert(!(StructureFlags & ImplementsDefaultHasInstance), "using customHasInstance");
 
     ~JSCallbackObject();
@@ -211,7 +211,7 @@ private:
 
     static bool customHasInstance(JSObject*, JSGlobalObject*, JSValue);
 
-    static void getOwnNonIndexPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    static void getOwnSpecialPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, DontEnumPropertiesMode);
 
     static CallData getConstructData(JSCell*);
     static CallData getCallData(JSCell*);

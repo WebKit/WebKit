@@ -217,7 +217,7 @@ bool JSModuleNamespaceObject::deleteProperty(JSCell* cell, JSGlobalObject* globa
     return !thisObject->m_exports.contains(propertyName.uid());
 }
 
-void JSModuleNamespaceObject::getOwnPropertyNames(JSObject* cell, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSModuleNamespaceObject::getOwnPropertyNames(JSObject* cell, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -225,7 +225,7 @@ void JSModuleNamespaceObject::getOwnPropertyNames(JSObject* cell, JSGlobalObject
     // https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-ownpropertykeys
     JSModuleNamespaceObject* thisObject = jsCast<JSModuleNamespaceObject*>(cell);
     for (const auto& name : thisObject->m_names) {
-        if (!mode.includeDontEnumProperties()) {
+        if (mode == DontEnumPropertiesMode::Exclude) {
             // Perform [[GetOwnProperty]] to throw ReferenceError if binding is uninitialized.
             PropertySlot slot(cell, PropertySlot::InternalMethodType::GetOwnProperty);
             thisObject->getOwnPropertySlotCommon(globalObject, name.impl(), slot);
@@ -233,7 +233,8 @@ void JSModuleNamespaceObject::getOwnPropertyNames(JSObject* cell, JSGlobalObject
         }
         propertyNames.add(name.impl());
     }
-    Base::getOwnPropertyNames(thisObject, globalObject, propertyNames, mode);
+    if (propertyNames.includeSymbolProperties())
+        thisObject->getOwnNonIndexPropertyNames(globalObject, propertyNames, mode);
 }
 
 bool JSModuleNamespaceObject::defineOwnProperty(JSObject* cell, JSGlobalObject* globalObject, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)

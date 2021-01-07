@@ -37,7 +37,7 @@ Exception* throwRuntimeObjectInvalidAccessError(JSGlobalObject*, ThrowScope&);
 class WEBCORE_EXPORT RuntimeObject : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesAnyFormOfGetPropertyNames | OverridesGetCallData;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnPropertyNames | OverridesGetCallData;
     static constexpr bool needsDestruction = true;
 
     template<typename CellType, JSC::SubspaceAccess>
@@ -64,7 +64,7 @@ public:
     static CallData getCallData(JSCell*);
     static CallData getConstructData(JSCell*);
 
-    static void getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, EnumerationMode);
+    static void getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, DontEnumPropertiesMode);
 
     void invalidate();
 

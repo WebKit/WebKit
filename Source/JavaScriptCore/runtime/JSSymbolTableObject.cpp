@@ -53,7 +53,7 @@ bool JSSymbolTableObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObj
     return Base::deleteProperty(thisObject, globalObject, propertyName, slot);
 }
 
-void JSSymbolTableObject::getOwnNonIndexPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSSymbolTableObject::getOwnSpecialPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     VM& vm = globalObject->vm();
     JSSymbolTableObject* thisObject = jsCast<JSSymbolTableObject*>(object);
@@ -61,15 +61,13 @@ void JSSymbolTableObject::getOwnNonIndexPropertyNames(JSObject* object, JSGlobal
         ConcurrentJSLocker locker(thisObject->symbolTable()->m_lock);
         SymbolTable::Map::iterator end = thisObject->symbolTable()->end(locker);
         for (SymbolTable::Map::iterator it = thisObject->symbolTable()->begin(locker); it != end; ++it) {
-            if (!(it->value.getAttributes() & PropertyAttribute::DontEnum) || mode.includeDontEnumProperties()) {
+            if (mode == DontEnumPropertiesMode::Include || !it->value.isDontEnum()) {
                 if (it->key->isSymbol() && !propertyNames.includeSymbolProperties())
                     continue;
                 propertyNames.add(Identifier::fromUid(vm, it->key.get()));
             }
         }
     }
-
-    Base::getOwnNonIndexPropertyNames(thisObject, globalObject, propertyNames, mode);
 }
 
 } // namespace JSC

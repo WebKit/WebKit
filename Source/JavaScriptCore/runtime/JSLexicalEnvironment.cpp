@@ -64,7 +64,7 @@ void JSLexicalEnvironment::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     }
 }
 
-void JSLexicalEnvironment::getOwnNonIndexPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, EnumerationMode mode)
+void JSLexicalEnvironment::getOwnSpecialPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     JSLexicalEnvironment* thisObject = jsCast<JSLexicalEnvironment*>(object);
 
@@ -73,7 +73,7 @@ void JSLexicalEnvironment::getOwnNonIndexPropertyNames(JSObject* object, JSGloba
         SymbolTable::Map::iterator end = thisObject->symbolTable()->end(locker);
         VM& vm = globalObject->vm();
         for (SymbolTable::Map::iterator it = thisObject->symbolTable()->begin(locker); it != end; ++it) {
-            if (it->value.getAttributes() & PropertyAttribute::DontEnum && !mode.includeDontEnumProperties())
+            if (mode == DontEnumPropertiesMode::Exclude && it->value.isDontEnum())
                 continue;
             if (!thisObject->isValidScopeOffset(it->value.scopeOffset()))
                 continue;
@@ -82,8 +82,6 @@ void JSLexicalEnvironment::getOwnNonIndexPropertyNames(JSObject* object, JSGloba
             propertyNames.add(Identifier::fromUid(vm, it->key.get()));
         }
     }
-    // Skip the JSSymbolTableObject's implementation of getOwnNonIndexPropertyNames
-    JSObject::getOwnNonIndexPropertyNames(thisObject, globalObject, propertyNames, mode);
 }
 
 bool JSLexicalEnvironment::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)

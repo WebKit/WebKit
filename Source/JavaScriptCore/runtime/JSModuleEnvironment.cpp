@@ -96,7 +96,7 @@ bool JSModuleEnvironment::getOwnPropertySlot(JSObject* cell, JSGlobalObject* glo
     return Base::getOwnPropertySlot(thisObject, globalObject, propertyName, slot);
 }
 
-void JSModuleEnvironment::getOwnNonIndexPropertyNames(JSObject* cell, JSGlobalObject* globalObject, PropertyNameArray& propertyNamesArray, EnumerationMode mode)
+void JSModuleEnvironment::getOwnSpecialPropertyNames(JSObject* cell, JSGlobalObject*, PropertyNameArray& propertyNamesArray, DontEnumPropertiesMode)
 {
     JSModuleEnvironment* thisObject = jsCast<JSModuleEnvironment*>(cell);
     if (propertyNamesArray.includeStringProperties()) {
@@ -106,7 +106,6 @@ void JSModuleEnvironment::getOwnNonIndexPropertyNames(JSObject* cell, JSGlobalOb
                 propertyNamesArray.add(importEntry.localName);
         }
     }
-    return Base::getOwnNonIndexPropertyNames(thisObject, globalObject, propertyNamesArray, mode);
 }
 
 bool JSModuleEnvironment::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
