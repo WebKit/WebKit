@@ -1748,7 +1748,7 @@ void WebProcessProxy::createSpeechRecognitionServer(SpeechRecognitionServerIdent
 
 void WebProcessProxy::destroySpeechRecognitionServer(SpeechRecognitionServerIdentifier identifier)
 {
-    if (m_speechRecognitionServerMap.remove(identifier))
+    if (auto server = m_speechRecognitionServerMap.take(identifier))
         removeMessageReceiver(Messages::SpeechRecognitionServer::messageReceiverName(), identifier);
 }
 

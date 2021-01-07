@@ -28,6 +28,7 @@
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -36,12 +37,15 @@
 static bool shouldGrantPermissionRequest = true;
 static bool permissionRequested = false;
 static bool receivedScriptMessage;
+static bool didFinishNavigation;
 static RetainPtr<WKScriptMessage> lastScriptMessage;
+static RetainPtr<WKWebView> createdWebView;
 
 @interface SpeechRecognitionPermissionUIDelegate : NSObject<WKUIDelegatePrivate>
 - (void)_webView:(WKWebView *)webView requestSpeechRecognitionPermissionForOrigin:(WKSecurityOrigin *)origin decisionHandler:(void (^)(BOOL))decisionHandler;
 - (void)_webView:(WKWebView *)webView requestMediaCaptureAuthorization: (_WKCaptureDevices)devices decisionHandler:(void (^)(BOOL))decisionHandler;
 - (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler;
+- (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures;
 @end
 
 @implementation SpeechRecognitionPermissionUIDelegate
@@ -60,6 +64,12 @@ static RetainPtr<WKScriptMessage> lastScriptMessage;
 {
     decisionHandler(@"0x9876543210", YES);
 }
+
+- (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
+{
+    createdWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    return createdWebView.get();
+}
 @end
 
 @interface SpeechRecognitionMessageHandler : NSObject <WKScriptMessageHandler>
@@ -70,6 +80,23 @@ static RetainPtr<WKScriptMessage> lastScriptMessage;
 {
     receivedScriptMessage = true;
     lastScriptMessage = message;
+}
+@end
+
+@interface SpeechRecognitionNavigationDelegate : NSObject <WKNavigationDelegate>
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler;
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation;
+@end
+
+@implementation SpeechRecognitionNavigationDelegate
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
+{
+    decisionHandler(WKNavigationActionPolicyAllow, preferences);
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    didFinishNavigation = true;
 }
 @end
 
@@ -205,6 +232,40 @@ TEST(WebKit2, SpeechRecognitionPageBecomesInvisible)
     [webView evaluateJavaScript:@"start()" completionHandler:nil];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     EXPECT_WK_STREQ(@"Error: not-allowed - Permission check failed", [lastScriptMessage body]);
+}
+
+TEST(WebKit2, SpeechRecognitionPageIsDestroyed)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto preferences = [configuration preferences];
+    preferences._mockCaptureDevicesEnabled = YES;
+    preferences._speechRecognitionEnabled = YES;
+    preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    auto delegate = adoptNS([[SpeechRecognitionPermissionUIDelegate alloc] init]);
+    auto navigationDelegate = adoptNS([[SpeechRecognitionNavigationDelegate alloc] init]);
+    shouldGrantPermissionRequest = true;
+    createdWebView = nullptr;
+
+    @autoreleasepool {
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+        [webView setUIDelegate:delegate.get()];
+        [webView setNavigationDelegate:navigationDelegate.get()];
+
+        didFinishNavigation = false;
+        [webView loadHTMLString:@"<script>speechRecognition = new webkitSpeechRecognition(); speechRecognition.start(); speechRecognition = null;</script>" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+        TestWebKitAPI::Util::run(&didFinishNavigation);
+        [configuration.get().processPool _garbageCollectJavaScriptObjectsForTesting];
+
+        bool finishedRunningScript = false;
+        [webView evaluateJavaScript:@"open('http://webkit.org')" completionHandler: [&] (id result, NSError *error) {
+            finishedRunningScript = true;
+        }];
+        TestWebKitAPI::Util::run(&finishedRunningScript);
+    }
+
+    TestWebKitAPI::Util::sleep(0.5);
+
+    EXPECT_TRUE(!!createdWebView);
 }
 
 #endif
