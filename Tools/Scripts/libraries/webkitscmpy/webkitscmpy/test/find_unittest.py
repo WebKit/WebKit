@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,6 +21,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
+import shutil
+import tempfile
 import unittest
 
 from datetime import datetime
@@ -113,12 +115,16 @@ class TestFind(unittest.TestCase):
         self.assertEqual(captured.stdout.getvalue(), '2.2@branch-b | r5 | 5th commit\n')
 
     def test_revision_git_svn(self):
-        with OutputCapture() as captured, mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime:
-            self.assertEqual(0, program.main(
-                args=('find', 'r5', '-q'),
-                path=self.path,
-            ))
-        self.assertEqual(captured.stdout.getvalue(), '2.2@branch-b | 3cd32e352410, r5 | 5th commit\n')
+        try:
+            dirname = tempfile.mkdtemp()
+            with OutputCapture() as captured, mocks.local.Git(dirname, git_svn=True, remote='git@example.org:{}'.format(self.path)), mocks.local.Svn(), MockTime:
+                self.assertEqual(0, program.main(
+                    args=('find', 'r5', '-q'),
+                    path=dirname,
+                ))
+            self.assertEqual(captured.stdout.getvalue(), '2.2@branch-b | 3cd32e352410, r5 | 5th commit\n')
+        finally:
+            shutil.rmtree(dirname)
 
     def test_standard(self):
         with OutputCapture() as captured, mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime:

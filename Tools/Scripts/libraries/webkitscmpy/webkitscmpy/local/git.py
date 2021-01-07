@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import os
 import re
 import six
 
@@ -64,15 +65,14 @@ class Git(Scm):
     @property
     @decorators.Memoize()
     def is_svn(self):
-        try:
-            return run(
-                [self.executable(), 'svn', 'find-rev', 'r1'],
-                cwd=self.root_path,
-                capture_output=True,
-                encoding='utf-8',
-                timeout=1,
-            ).returncode == 0
-        except TimeoutExpired:
+        config = os.path.join(self.root_path, '.git/config')
+        if not os.path.isfile(config):
+            return False
+
+        with open(config, 'r') as config:
+            for line in config.readlines():
+                if line.startswith('[svn-remote "svn"]'):
+                    return True
             return False
 
     @property

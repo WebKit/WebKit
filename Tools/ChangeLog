@@ -1,3 +1,24 @@
+2021-01-07  Jonathan Bedard  <JonWBedard@gmail.com>
+
+        [webkitscmpy] Use .git/config to verify if repository is git-svn
+        https://bugs.webkit.org/show_bug.cgi?id=220427
+        <rdar://problem/72899735>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version number.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.is_svn): Use .git/config to verify if a repository is git-svn.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        (Git): Populate .git/config if the provided path is writeable.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/find_unittest.py:
+        (TestFind.test_revision_git_svn): Use a temporary directory so files
+        can be written.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGit.test_scm_type): Use a temporary directory so files can be written.
+        (TestGit.test_info): Ditto.
+        (TestGit.test_commit_revision): Ditto.
+
 2021-01-07  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess] Implement GPUProcess crash recovery for MediaElementAudioSourceNode

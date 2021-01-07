@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -62,6 +62,44 @@ class Git(mocks.Subprocess):
         self.head = self.commits[self.default_branch][-1]
         self.remotes = {'origin/{}'.format(branch): commits[-1] for branch, commits in self.commits.items()}
         self.tags = {}
+
+        # If the directory provided actually exists, populate it
+        if os.path.isdir(self.path):
+            if not os.path.isdir(os.path.join(self.path, '.git')):
+                os.mkdir(os.path.join(self.path, '.git'))
+            with open(os.path.join(self.path, '.git', 'config'), 'w') as config:
+                config.write(
+                    '[core]\n'
+                    '    repositoryformatversion = 0\n'
+                    '	filemode = true\n'
+                    '	bare = false\n'
+                    '	logallrefupdates = true\n'
+                    '	ignorecase = true\n'
+                    '	precomposeunicode = true\n'
+                    '[remote "origin"]\n'
+                    '    url = {remote}\n'
+                    '    fetch = +refs/heads/*:refs/remotes/origin/*\n'
+                    '[branch "{branch}"]\n'
+                    '    remote = origin\n'
+                    '    merge = refs/heads/{branch}\n'.format(
+                        remote=self.remote,
+                        branch=self.default_branch,
+                    ))
+                if git_svn:
+                    domain = 'webkit.org'
+                    if self.remote.startswith('https://'):
+                        domain = self.remote.split('/')[2]
+                    elif '@' in self.remote:
+                        domain = self.remote.split('@')[1].split(':')[0]
+
+                    config.write(
+                        '[svn-remote "svn"]\n'
+                        '    url = https://svn.{domain}/repository/webkit\n'
+                        '    fetch = trunk:refs/remotes/origin/{branch}'.format(
+                            domain=domain,
+                            branch=self.default_branch,
+                        )
+                    )
 
         if git_svn:
             git_svn_routes = [

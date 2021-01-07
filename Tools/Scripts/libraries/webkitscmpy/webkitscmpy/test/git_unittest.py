@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,6 +21,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import shutil
+import tempfile
 import unittest
 
 from datetime import datetime
@@ -77,52 +79,65 @@ class TestGit(unittest.TestCase):
             self.assertEqual(local.Git(self.path).default_branch, 'main')
 
     def test_scm_type(self):
-        with mocks.local.Git(self.path), MockTime, LoggerCapture():
-            self.assertTrue(local.Git(self.path).is_git)
-            self.assertFalse(local.Git(self.path).is_svn)
+        try:
+            dirname = tempfile.mkdtemp()
+            with mocks.local.Git(dirname, remote='git@example.org:{}'.format(self.path)), MockTime, LoggerCapture():
+                self.assertTrue(local.Git(dirname).is_git)
+                self.assertFalse(local.Git(dirname).is_svn)
 
-        with mocks.local.Git(self.path, git_svn=True), MockTime, LoggerCapture():
-            self.assertTrue(local.Git(self.path).is_git)
-            self.assertTrue(local.Git(self.path).is_svn)
+            with mocks.local.Git(dirname, git_svn=True, remote='git@example.org:{}'.format(self.path)), MockTime, LoggerCapture():
+                self.assertTrue(local.Git(dirname).is_git)
+                self.assertTrue(local.Git(dirname).is_svn)
+
+        finally:
+            shutil.rmtree(dirname)
 
     def test_info(self):
-        with mocks.local.Git(self.path), MockTime, LoggerCapture():
-            with self.assertRaises(local.Git.Exception):
-                self.assertEqual(dict(), local.Git(self.path).info())
+        try:
+            dirname = tempfile.mkdtemp()
+            with mocks.local.Git(dirname, remote='git@example.org:{}'.format(self.path)), MockTime, LoggerCapture():
+                with self.assertRaises(local.Git.Exception):
+                    self.assertEqual(dict(), local.Git(dirname).info())
 
-        with mocks.local.Git(self.path, git_svn=True), MockTime:
-            self.assertDictEqual(
-                {
-                    'Path': '.',
-                    'Repository Root': 'git@example.org:/mock/repository',
-                    'URL': 'git@example.org:/mock/repository/main',
-                    'Revision': '6',
-                    'Node Kind': 'directory',
-                    'Schedule': 'normal',
-                    'Last Changed Author': 'jbedard@apple.com',
-                    'Last Changed Rev': '6',
-                    'Last Changed Date': datetime.fromtimestamp(1601665000).strftime('%Y-%m-%d %H:%M:%S'),
-                }, local.Git(self.path).info(),
-            )
+            with mocks.local.Git(dirname, git_svn=True, remote='git@example.org:{}'.format(self.path)), MockTime:
+                self.assertDictEqual(
+                    {
+                        'Path': '.',
+                        'Repository Root': 'git@example.org:/mock/repository',
+                        'URL': 'git@example.org:/mock/repository/main',
+                        'Revision': '6',
+                        'Node Kind': 'directory',
+                        'Schedule': 'normal',
+                        'Last Changed Author': 'jbedard@apple.com',
+                        'Last Changed Rev': '6',
+                        'Last Changed Date': datetime.fromtimestamp(1601665000).strftime('%Y-%m-%d %H:%M:%S'),
+                    }, local.Git(dirname).info(),
+                )
+        finally:
+            shutil.rmtree(dirname)
 
     def test_commit_revision(self):
-        with mocks.local.Git(self.path), MockTime, LoggerCapture():
-            with self.assertRaises(local.Git.Exception):
-                self.assertEqual(None, local.Git(self.path).commit(revision=1))
+        try:
+            dirname = tempfile.mkdtemp()
+            with mocks.local.Git(dirname), MockTime, LoggerCapture():
+                with self.assertRaises(local.Git.Exception):
+                    self.assertEqual(None, local.Git(dirname).commit(revision=1))
 
-        with mocks.local.Git(self.path, git_svn=True), MockTime, LoggerCapture():
-            self.assertEqual('1@main', str(local.Git(self.path).commit(revision=1)))
-            self.assertEqual('2@main', str(local.Git(self.path).commit(revision=2)))
-            self.assertEqual('2.1@branch-a', str(local.Git(self.path).commit(revision=3)))
-            self.assertEqual('3@main', str(local.Git(self.path).commit(revision=4)))
-            self.assertEqual('2.2@branch-b', str(local.Git(self.path).commit(revision=5)))
-            self.assertEqual('4@main', str(local.Git(self.path).commit(revision=6)))
-            self.assertEqual('2.2@branch-a', str(local.Git(self.path).commit(revision=7)))
-            self.assertEqual('2.3@branch-b', str(local.Git(self.path).commit(revision=8)))
+            with mocks.local.Git(dirname, git_svn=True, remote='git@example.org:{}'.format(self.path)), MockTime, LoggerCapture():
+                self.assertEqual('1@main', str(local.Git(dirname).commit(revision=1)))
+                self.assertEqual('2@main', str(local.Git(dirname).commit(revision=2)))
+                self.assertEqual('2.1@branch-a', str(local.Git(dirname).commit(revision=3)))
+                self.assertEqual('3@main', str(local.Git(dirname).commit(revision=4)))
+                self.assertEqual('2.2@branch-b', str(local.Git(dirname).commit(revision=5)))
+                self.assertEqual('4@main', str(local.Git(dirname).commit(revision=6)))
+                self.assertEqual('2.2@branch-a', str(local.Git(dirname).commit(revision=7)))
+                self.assertEqual('2.3@branch-b', str(local.Git(dirname).commit(revision=8)))
 
-            # Out-of-bounds commit
-            with self.assertRaises(local.Git.Exception):
-                self.assertEqual(None, local.Git(self.path).commit(revision=10))
+                # Out-of-bounds commit
+                with self.assertRaises(local.Git.Exception):
+                    self.assertEqual(None, local.Git(dirname).commit(revision=10))
+        finally:
+            shutil.rmtree(dirname)
 
     def test_commit_hash(self):
         for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
