@@ -1,3 +1,27 @@
+2021-01-07  Andy Estes  <aestes@apple.com>
+
+        [Mac] Prepend "Media" to FormatReader, SampleCursor, and TrackReader class names
+        https://bugs.webkit.org/show_bug.cgi?id=220424
+
+        Reviewed by Eric Carlson.
+
+        Also moved MediaSampleByteRange into its own file from MediaTrackReader.cpp.
+
+        * MediaFormatReaderPlugIn/MediaFormatReaderPlugIn.cpp:
+        * Shared/API/c/mac/WKMediaFormatReader.cpp: Renamed from Source/WebKit/Shared/API/c/mac/WKFormatReader.cpp.
+        * Shared/API/c/mac/WKMediaFormatReader.h: Renamed from Source/WebKit/Shared/API/c/mac/WKFormatReader.h.
+        * Shared/mac/MediaFormatReader/CoreMediaWrapped.h: Updated DECLARE_CORE_MEDIA_TRAITS to account for renaming.
+        * Shared/mac/MediaFormatReader/MediaFormatReader.cpp: Renamed from Source/WebKit/Shared/mac/MediaFormatReader/FormatReader.cpp.
+        * Shared/mac/MediaFormatReader/MediaFormatReader.h: Renamed from Source/WebKit/Shared/mac/MediaFormatReader/FormatReader.h.
+        * Shared/mac/MediaFormatReader/MediaSampleByteRange.cpp: Added.
+        * Shared/mac/MediaFormatReader/MediaSampleByteRange.h: Added.
+        * Shared/mac/MediaFormatReader/MediaSampleCursor.cpp: Renamed from Source/WebKit/Shared/mac/MediaFormatReader/SampleCursor.cpp.
+        * Shared/mac/MediaFormatReader/MediaSampleCursor.h: Renamed from Source/WebKit/Shared/mac/MediaFormatReader/SampleCursor.h.
+        * Shared/mac/MediaFormatReader/MediaTrackReader.cpp: Renamed from Source/WebKit/Shared/mac/MediaFormatReader/TrackReader.cpp.
+        * Shared/mac/MediaFormatReader/MediaTrackReader.h: Renamed from Source/WebKit/Shared/mac/MediaFormatReader/TrackReader.h.
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-01-07  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess] Implement GPUProcess crash recovery for MediaElementAudioSourceNode

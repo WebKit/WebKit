@@ -107,7 +107,7 @@ Shared/API/c/cf/WKURLCF.mm
 Shared/API/c/cg/WKImageCG.cpp
 
 Shared/API/c/mac/WKCertificateInfoMac.mm
-Shared/API/c/mac/WKFormatReader.cpp
+Shared/API/c/mac/WKMediaFormatReader.cpp
 Shared/API/c/mac/WKObjCTypeWrapperRef.mm
 Shared/API/c/mac/WKURLRequestNS.mm
 Shared/API/c/mac/WKURLResponseNS.mm
@@ -215,9 +215,10 @@ Shared/mac/WebHitTestResultData.mm
 Shared/mac/WebMemorySampler.mac.mm
 
 Shared/mac/MediaFormatReader/CoreMediaWrapped.cpp
-Shared/mac/MediaFormatReader/FormatReader.cpp
-Shared/mac/MediaFormatReader/SampleCursor.cpp
-Shared/mac/MediaFormatReader/TrackReader.cpp
+Shared/mac/MediaFormatReader/MediaFormatReader.cpp
+Shared/mac/MediaFormatReader/MediaSampleByteRange.cpp
+Shared/mac/MediaFormatReader/MediaSampleCursor.cpp
+Shared/mac/MediaFormatReader/MediaTrackReader.cpp
 
 Shared/Plugins/mac/PluginSandboxProfile.mm
 

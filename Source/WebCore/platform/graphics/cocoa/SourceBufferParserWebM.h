@@ -218,7 +218,7 @@ public:
         Vector<AudioStreamPacketDescription> m_packetDescriptions;
 
         // FIXME: 0.5 - 1.0 seconds is a better duration per sample buffer, but use 2 seconds so at least the first
-        // sample buffer will play until we fix SampleCursor::createSampleBuffer to deal with `endCursor`.
+        // sample buffer will play until we fix MediaSampleCursor::createSampleBuffer to deal with `endCursor`.
         float m_minimumSampleDuration { 2 };
     };
 

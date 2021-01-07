@@ -1543,11 +1543,11 @@
 		A13B3DA2207F39DE0090C58D /* MobileWiFiSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A13B3DA1207F39DE0090C58D /* MobileWiFiSPI.h */; };
 		A13DC682207AA6B20066EF72 /* WKApplicationStateTrackingView.h in Headers */ = {isa = PBXBuildFile; fileRef = A13DC680207AA6B20066EF72 /* WKApplicationStateTrackingView.h */; };
 		A15797642582B1DB00528236 /* MediaFormatReader.bundle in Copy Plug-ins */ = {isa = PBXBuildFile; fileRef = A16E66002581930800EE1749 /* MediaFormatReader.bundle */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		A15799B72584433200528236 /* TrackReader.h in Headers */ = {isa = PBXBuildFile; fileRef = A15799AE2584433100528236 /* TrackReader.h */; };
+		A15799B72584433200528236 /* MediaTrackReader.h in Headers */ = {isa = PBXBuildFile; fileRef = A15799AE2584433100528236 /* MediaTrackReader.h */; };
 		A15799BC2584433200528236 /* CoreMediaWrapped.h in Headers */ = {isa = PBXBuildFile; fileRef = A15799B32584433100528236 /* CoreMediaWrapped.h */; };
-		A15799BD2584433200528236 /* SampleCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = A15799B42584433100528236 /* SampleCursor.h */; };
-		A15799BE2584433200528236 /* FormatReader.h in Headers */ = {isa = PBXBuildFile; fileRef = A15799B52584433100528236 /* FormatReader.h */; };
-		A1579B28258490E500528236 /* WKFormatReader.h in Headers */ = {isa = PBXBuildFile; fileRef = A1579B26258490E500528236 /* WKFormatReader.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A15799BD2584433200528236 /* MediaSampleCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = A15799B42584433100528236 /* MediaSampleCursor.h */; };
+		A15799BE2584433200528236 /* MediaFormatReader.h in Headers */ = {isa = PBXBuildFile; fileRef = A15799B52584433100528236 /* MediaFormatReader.h */; };
+		A1579B28258490E500528236 /* WKMediaFormatReader.h in Headers */ = {isa = PBXBuildFile; fileRef = A1579B26258490E500528236 /* WKMediaFormatReader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A15EEDE61E301CEE000069B0 /* WKPasswordView.h in Headers */ = {isa = PBXBuildFile; fileRef = A15EEDE41E301CEE000069B0 /* WKPasswordView.h */; };
 		A16E66752581A44800EE1749 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit.framework */; };
 		A16E66872581A4F700EE1749 /* MediaFormatReaderPlugIn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A16E66862581A4F700EE1749 /* MediaFormatReaderPlugIn.cpp */; };
@@ -1565,6 +1565,7 @@
 		A1A4FE5C18DCE9FA00B5EA8A /* _WKDownloadInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A1A4FE5918DCE9FA00B5EA8A /* _WKDownloadInternal.h */; };
 		A1A4FE6118DD54A400B5EA8A /* _WKDownloadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A1A4FE6018DD54A400B5EA8A /* _WKDownloadDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1ADAFB62368E6A8009CB776 /* SharedMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1ADAFB52368E4B8009CB776 /* SharedMemory.cpp */; };
+		A1B4DCE125A7923C007D178C /* MediaSampleByteRange.h in Headers */ = {isa = PBXBuildFile; fileRef = A1B4DCDF25A79211007D178C /* MediaSampleByteRange.h */; };
 		A1C512C9190656E500448914 /* WebPreviewLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A1C512C7190656E500448914 /* WebPreviewLoaderClient.h */; };
 		A1DF631318E0B7C8003A3E2A /* LegacyDownloadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF631118E0B7C8003A3E2A /* LegacyDownloadClient.h */; };
 		A1E688701F6E2BAB007006A6 /* QuarantineSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A1E6886F1F6E2BAB007006A6 /* QuarantineSPI.h */; };
@@ -4899,15 +4900,15 @@
 		A13B3DA1207F39DE0090C58D /* MobileWiFiSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MobileWiFiSPI.h; sourceTree = "<group>"; };
 		A13DC680207AA6B20066EF72 /* WKApplicationStateTrackingView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKApplicationStateTrackingView.h; path = ios/WKApplicationStateTrackingView.h; sourceTree = "<group>"; };
 		A13DC681207AA6B20066EF72 /* WKApplicationStateTrackingView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKApplicationStateTrackingView.mm; path = ios/WKApplicationStateTrackingView.mm; sourceTree = "<group>"; };
-		A15799AE2584433100528236 /* TrackReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackReader.h; sourceTree = "<group>"; };
-		A15799AF2584433100528236 /* SampleCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SampleCursor.cpp; sourceTree = "<group>"; };
-		A15799B02584433100528236 /* FormatReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormatReader.cpp; sourceTree = "<group>"; };
-		A15799B12584433100528236 /* TrackReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TrackReader.cpp; sourceTree = "<group>"; };
+		A15799AE2584433100528236 /* MediaTrackReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTrackReader.h; sourceTree = "<group>"; };
+		A15799AF2584433100528236 /* MediaSampleCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSampleCursor.cpp; sourceTree = "<group>"; };
+		A15799B02584433100528236 /* MediaFormatReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaFormatReader.cpp; sourceTree = "<group>"; };
+		A15799B12584433100528236 /* MediaTrackReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaTrackReader.cpp; sourceTree = "<group>"; };
 		A15799B32584433100528236 /* CoreMediaWrapped.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreMediaWrapped.h; sourceTree = "<group>"; };
-		A15799B42584433100528236 /* SampleCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleCursor.h; sourceTree = "<group>"; };
-		A15799B52584433100528236 /* FormatReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormatReader.h; sourceTree = "<group>"; };
-		A1579B25258490E500528236 /* WKFormatReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKFormatReader.cpp; sourceTree = "<group>"; };
-		A1579B26258490E500528236 /* WKFormatReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFormatReader.h; sourceTree = "<group>"; };
+		A15799B42584433100528236 /* MediaSampleCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSampleCursor.h; sourceTree = "<group>"; };
+		A15799B52584433100528236 /* MediaFormatReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaFormatReader.h; sourceTree = "<group>"; };
+		A1579B25258490E500528236 /* WKMediaFormatReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKMediaFormatReader.cpp; sourceTree = "<group>"; };
+		A1579B26258490E500528236 /* WKMediaFormatReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKMediaFormatReader.h; sourceTree = "<group>"; };
 		A1579B8325852B7C00528236 /* CoreMediaWrapped.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CoreMediaWrapped.cpp; sourceTree = "<group>"; };
 		A15EEDE31E301CEE000069B0 /* WKPasswordView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKPasswordView.mm; path = ios/WKPasswordView.mm; sourceTree = "<group>"; };
 		A15EEDE41E301CEE000069B0 /* WKPasswordView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKPasswordView.h; path = ios/WKPasswordView.h; sourceTree = "<group>"; };
@@ -4936,6 +4937,8 @@
 		A1A4FE5918DCE9FA00B5EA8A /* _WKDownloadInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKDownloadInternal.h; sourceTree = "<group>"; };
 		A1A4FE6018DD54A400B5EA8A /* _WKDownloadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKDownloadDelegate.h; sourceTree = "<group>"; };
 		A1ADAFB52368E4B8009CB776 /* SharedMemory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemory.cpp; sourceTree = "<group>"; };
+		A1B4DCDF25A79211007D178C /* MediaSampleByteRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSampleByteRange.h; sourceTree = "<group>"; };
+		A1B4DCE025A79211007D178C /* MediaSampleByteRange.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSampleByteRange.cpp; sourceTree = "<group>"; };
 		A1B89B92221E023300EB4CEA /* SDKVariant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = SDKVariant.xcconfig; sourceTree = "<group>"; };
 		A1B9CA382246E54A003D6DCA /* WebPaymentCoordinatorCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPaymentCoordinatorCocoa.mm; sourceTree = "<group>"; };
 		A1C512C6190656E500448914 /* WebPreviewLoaderClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebPreviewLoaderClient.cpp; path = ios/WebPreviewLoaderClient.cpp; sourceTree = "<group>"; };
@@ -9316,12 +9319,14 @@
 			children = (
 				A1579B8325852B7C00528236 /* CoreMediaWrapped.cpp */,
 				A15799B32584433100528236 /* CoreMediaWrapped.h */,
-				A15799B02584433100528236 /* FormatReader.cpp */,
-				A15799B52584433100528236 /* FormatReader.h */,
-				A15799AF2584433100528236 /* SampleCursor.cpp */,
-				A15799B42584433100528236 /* SampleCursor.h */,
-				A15799B12584433100528236 /* TrackReader.cpp */,
-				A15799AE2584433100528236 /* TrackReader.h */,
+				A15799B02584433100528236 /* MediaFormatReader.cpp */,
+				A15799B52584433100528236 /* MediaFormatReader.h */,
+				A1B4DCE025A79211007D178C /* MediaSampleByteRange.cpp */,
+				A1B4DCDF25A79211007D178C /* MediaSampleByteRange.h */,
+				A15799AF2584433100528236 /* MediaSampleCursor.cpp */,
+				A15799B42584433100528236 /* MediaSampleCursor.h */,
+				A15799B12584433100528236 /* MediaTrackReader.cpp */,
+				A15799AE2584433100528236 /* MediaTrackReader.h */,
 			);
 			path = MediaFormatReader;
 			sourceTree = "<group>";
@@ -10297,8 +10302,8 @@
 				7CD5EBBA1746A83E000C1C45 /* WKBaseMac.h */,
 				BC407621124FF0400068F20A /* WKCertificateInfoMac.h */,
 				BC407622124FF0400068F20A /* WKCertificateInfoMac.mm */,
-				A1579B25258490E500528236 /* WKFormatReader.cpp */,
-				A1579B26258490E500528236 /* WKFormatReader.h */,
+				A1579B25258490E500528236 /* WKMediaFormatReader.cpp */,
+				A1579B26258490E500528236 /* WKMediaFormatReader.h */,
 				7CD5EBB71746A15B000C1C45 /* WKObjCTypeWrapperRef.h */,
 				7CD5EBB61746A15B000C1C45 /* WKObjCTypeWrapperRef.mm */,
 				BC407623124FF0400068F20A /* WKURLRequestNS.h */,
@@ -11575,7 +11580,6 @@
 				C59C4A5918B81174007BDCB6 /* FocusedElementInformation.h in Headers */,
 				BCE81D8D1319F7EF00241910 /* FontInfo.h in Headers */,
 				9BD8AB4A25820E53005386F8 /* FontReference.h in Headers */,
-				A15799BE2584433200528236 /* FormatReader.h in Headers */,
 				1A14F8E21D74C834006CBEC6 /* FrameInfoData.h in Headers */,
 				1AE00D611831792100087DD7 /* FrameLoadState.h in Headers */,
 				5C121E842410208D00486F9B /* FrameTreeNodeData.h in Headers */,
@@ -11659,9 +11663,13 @@
 				1A6D86C21DF75265007745E8 /* MachMessage.h in Headers */,
 				BCC56F791159957D001CCAF9 /* MachPort.h in Headers */,
 				1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */,
+				A15799BE2584433200528236 /* MediaFormatReader.h in Headers */,
 				9342589A255B535A0059EEDD /* MediaPermissionUtilities.h in Headers */,
 				07E19EFC23D401F10094FFB4 /* MediaPlayerPrivateRemoteMessages.h in Headers */,
 				07E19EFD23D401F10094FFB4 /* MediaPlayerPrivateRemoteMessagesReplies.h in Headers */,
+				A1B4DCE125A7923C007D178C /* MediaSampleByteRange.h in Headers */,
+				A15799BD2584433200528236 /* MediaSampleCursor.h in Headers */,
+				A15799B72584433200528236 /* MediaTrackReader.h in Headers */,
 				51933DEF1965EB31008AC3EA /* MenuUtilities.h in Headers */,
 				9B47908D25314D8300EC11AB /* MessageArgumentDescriptions.h in Headers */,
 				1AC4C82916B876A90069DCCD /* MessageFlags.h in Headers */,
@@ -11872,7 +11880,6 @@
 				0E97D74D200E900400BF6643 /* SafeBrowsingSPI.h in Headers */,
 				5CA9854A210BEB640057EB6B /* SafeBrowsingWarning.h in Headers */,
 				BC2D021712AC41CB00E732A3 /* SameDocumentNavigationType.h in Headers */,
-				A15799BD2584433200528236 /* SampleCursor.h in Headers */,
 				1AAB4A8D1296F0A20023952F /* SandboxExtension.h in Headers */,
 				E1E552C516AE065F004ED653 /* SandboxInitializationParameters.h in Headers */,
 				E4D54D0421F1D72D007E3C36 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h in Headers */,
@@ -11936,7 +11943,6 @@
 				1AAF263914687C39004A1E8A /* TiledCoreAnimationDrawingArea.h in Headers */,
 				1AF05D8714688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.h in Headers */,
 				2F8336861FA139DF00C6E080 /* TouchBarMenuData.h in Headers */,
-				A15799B72584433200528236 /* TrackReader.h in Headers */,
 				46BEB6E322FBB21A00269867 /* TransientLocalStorageNamespace.h in Headers */,
 				57EB2E3A21E1983E00B89CDF /* U2fAuthenticator.h in Headers */,
 				1AFE436618B6C081009C7A48 /* UIDelegate.h in Headers */,
@@ -12356,7 +12362,6 @@
 				51489CC32370DBFA0044E68A /* WKFindResult.h in Headers */,
 				51489CC7237237800044E68A /* WKFindResultInternal.h in Headers */,
 				2E16B6CF2017B7AD008996D6 /* WKFocusedFormControlView.h in Headers */,
-				A1579B28258490E500528236 /* WKFormatReader.h in Headers */,
 				E5CB07DC20E1678F0022C183 /* WKFormColorControl.h in Headers */,
 				E548EBD121015F0E00BE3C32 /* WKFormColorPicker.h in Headers */,
 				C54256B718BEC18C00DE4179 /* WKFormPeripheral.h in Headers */,
@@ -12408,6 +12413,7 @@
 				51A9E10B1315CD18009E7031 /* WKKeyValueStorageManager.h in Headers */,
 				2D790A9F1AD7164900AB90B3 /* WKLayoutMode.h in Headers */,
 				5CE912142293C280005BEC78 /* WKMain.h in Headers */,
+				A1579B28258490E500528236 /* WKMediaFormatReader.h in Headers */,
 				49917DA7252D649E0050313F /* WKMediaPlaybackState.h in Headers */,
 				1AB40EE61BF677E300BA81BE /* WKMenuItemIdentifiersPrivate.h in Headers */,
 				5CABDC8622C40FDE001EDE8E /* WKMessageListener.h in Headers */,

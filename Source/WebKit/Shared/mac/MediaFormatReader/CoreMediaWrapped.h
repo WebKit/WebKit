@@ -37,8 +37,8 @@ template<typename> struct CoreMediaTraits;
 
 #define DECLARE_CORE_MEDIA_TRAITS(ClassName) \
 namespace WebKit { \
-class ClassName; \
-template<> struct CoreMediaTraits<ClassName> { \
+class Media##ClassName; \
+template<> struct CoreMediaTraits<Media##ClassName> { \
     using Class = MTPlugin##ClassName##Class; \
     using Ref = MTPlugin##ClassName##Ref; \
     using VTable = MTPlugin##ClassName##VTable; \

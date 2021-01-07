@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <WebKit/WKFormatReader.h>
+#include <WebKit/WKMediaFormatReader.h>
 
 extern "C" WK_EXPORT OSStatus CreateMediaFormatReaderInstance(MTPluginByteSourceRef, CFAllocatorRef, CFDictionaryRef, MTPluginFormatReaderRef*);
 
 OSStatus CreateMediaFormatReaderInstance(MTPluginByteSourceRef byteSource, CFAllocatorRef allocator, CFDictionaryRef, MTPluginFormatReaderRef* formatReader)
 {
-    OSStatus status = WKFormatReaderCreate(allocator, formatReader);
+    OSStatus status = WKMediaFormatReaderCreate(allocator, formatReader);
     if (status != noErr)
         return status;
-    return WKFormatReaderStartOnMainThread(*formatReader, byteSource);
+    return WKMediaFormatReaderStartOnMainThread(*formatReader, byteSource);
 }
