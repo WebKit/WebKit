@@ -291,6 +291,8 @@ localizedStrings["Clamp to sRGB"] = "Clamp to sRGB";
 localizedStrings["Classes"] = "Classes";
 localizedStrings["Clear Cookies"] = "Clear Cookies";
 localizedStrings["Clear Filters"] = "Clear Filters";
+/* Text for button that will clear both text filters and time range filters. */
+localizedStrings["Clear Filters @ Heap Allocations Timeline View"] = "Clear Filters";
 localizedStrings["Clear Local Storage"] = "Clear Local Storage";
 localizedStrings["Clear Log"] = "Clear Log";
 localizedStrings["Clear Network Items (%s)"] = "Clear Network Items (%s)";
@@ -468,6 +470,8 @@ localizedStrings["Disabled Common @ Font Details Sidebar Property Value"] = "Dis
 localizedStrings["Discretionary @ Font Details Sidebar Property Value"] = "Discretionary";
 localizedStrings["Disk Cache"] = "Disk Cache";
 localizedStrings["Dismiss"] = "Dismiss";
+/* Tooltip for the dismiss button in banner views. */
+localizedStrings["Dismiss @ Banner View"] = "Dismiss";
 localizedStrings["Displayed Columns"] = "Displayed Columns";
 localizedStrings["Do not clear network items on new page loads"] = "Do not clear network items on new page loads";
 localizedStrings["Do not clear the console on new page loads"] = "Do not clear the console on new page loads";
@@ -1434,6 +1438,8 @@ localizedStrings["The \u201C%s\u201D\ntable is empty."] = "The \u201C%s\u201D\nt
 localizedStrings["The contents and enabled state will be preserved across Web Inspector sessions."] = "The contents and enabled state will be preserved across Web Inspector sessions.";
 localizedStrings["The page's content has changed"] = "The page's content has changed";
 localizedStrings["The resource was requested insecurely."] = "The resource was requested insecurely.";
+/* Message displayed in a banner when one or more snapshots that the user has not yet seen are being filtered. */
+localizedStrings["There are new snapshots that have been filtered @ Heap Allocations Timeline View"] = "There are new snapshots that have been filtered";
 localizedStrings["There are unread messages that have been filtered"] = "There are unread messages that have been filtered";
 localizedStrings["There is an incurred energy penalty each time the page enters script. This commonly happens with timers, event handlers, and observers."] = "There is an incurred energy penalty each time the page enters script. This commonly happens with timers, event handlers, and observers.";
 localizedStrings["These are all of the different test result levels."] = "These are all of the different test result levels.";

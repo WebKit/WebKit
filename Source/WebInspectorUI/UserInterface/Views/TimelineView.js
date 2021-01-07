@@ -337,4 +337,5 @@ WI.TimelineView.Event = {
     ScannerShow: "timeline-view-scanner-show",
     ScannerHide: "timeline-view-scanner-hide",
     NeedsEntireSelectedRange: "timeline-view-needs-entire-selected-range",
+    NeedsFiltersCleared: "timeline-view-needs-filters-cleared",
 };

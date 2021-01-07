@@ -88,6 +88,14 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
         this._snapshotListPathComponent = new WI.HierarchicalPathComponent(WI.UIString("Snapshot List"), "snapshot-list-icon", "snapshot-list", false, false);
         this._snapshotListPathComponent.addEventListener(WI.HierarchicalPathComponent.Event.Clicked, this._snapshotListPathComponentClicked, this);
 
+        this._unseenRecords = [];
+        this._unseenRecordsBannerView = new WI.BannerView(WI.UIString("There are new snapshots that have been filtered", "There are new snapshots that have been filtered @ Heap Allocations Timeline View", "Message displayed in a banner when one or more snapshots that the user has not yet seen are being filtered."), {
+            actionButtonMessage: WI.UIString("Clear Filters", "Clear Filters @ Heap Allocations Timeline View", "Text for button that will clear both text filters and time range filters."),
+            showDismissButton: true,
+        });
+        this._unseenRecordsBannerView.addEventListener(WI.BannerView.Event.ActionButtonClicked, this._handleUnseenRecordsBannerClearFiltersClicked, this);
+        this._unseenRecordsBannerView.addEventListener(WI.BannerView.Event.DismissButtonClicked, this._handleUnseenRecordsBannerDismissClicked, this);
+
         this._dataGrid = new WI.TimelineDataGrid(columns);
         this._dataGrid.sortColumnIdentifier = "timestamp";
         this._dataGrid.sortOrder = WI.DataGrid.SortOrder.Ascending;
@@ -248,13 +256,17 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
             return;
 
         for (let heapAllocationsTimelineRecord of this._pendingRecords) {
-            this._dataGrid.addRowInSortOrder(new WI.HeapAllocationsTimelineDataGridNode(heapAllocationsTimelineRecord, {
+            let dataGridNode = new WI.HeapAllocationsTimelineDataGridNode(heapAllocationsTimelineRecord, {
                 graphDataSource: this,
                 heapAllocationsView: this,
-            }));
+            });
+            this._dataGrid.addRowInSortOrder(dataGridNode);
+            if (dataGridNode.hidden)
+                this._unseenRecords.push(dataGridNode);
         }
 
         this._pendingRecords = [];
+        this._updateUnseenRecordsBannerView();
         this._updateCompareHeapSnapshotButton();
     }
 
@@ -266,6 +278,8 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
 
         this.showHeapSnapshotList();
         this._pendingRecords = [];
+        this._unseenRecords = [];
+        this._updateUnseenRecordsBannerView();
         this._updateCompareHeapSnapshotButton();
     }
 
@@ -278,6 +292,13 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
 
         console.assert(this._contentViewContainer.currentContentView);
         this._contentViewContainer.currentContentView.updateFilter(filters);
+    }
+
+    filterDidChange()
+    {
+        super.filterDidChange();
+
+        this._updateUnseenRecordsBannerView();
     }
 
     // Private
@@ -365,6 +386,18 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
         }
 
         this._compareHeapSnapshotsButtonItem.enabled = hasAtLeastTwoValidSnapshots;
+    }
+
+    _updateUnseenRecordsBannerView()
+    {
+        this._unseenRecords = this._unseenRecords.filter((record) => record.hidden);
+        if (this._unseenRecords.length) {
+            if (this._unseenRecordsBannerView.parentView !== this)
+                this.insertSubviewBefore(this._unseenRecordsBannerView, this._dataGrid);
+        } else {
+            if (this._unseenRecordsBannerView.parentView === this)
+                this.removeSubview(this._unseenRecordsBannerView);
+        }
     }
 
     _importButtonNavigationItemClicked()
@@ -476,5 +509,17 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
         this._baselineDataGridNode = null;
         this._selectingComparisonHeapSnapshots = false;
         this._compareHeapSnapshotsButtonItem.activated = false;
+    }
+
+    _handleUnseenRecordsBannerClearFiltersClicked(event)
+    {
+        this.dispatchEventToListeners(WI.TimelineView.Event.NeedsFiltersCleared);
+        this.dispatchEventToListeners(WI.TimelineView.Event.NeedsEntireSelectedRange);
+    }
+
+    _handleUnseenRecordsBannerDismissClicked(event)
+    {
+        this._unseenRecords = [];
+        this._updateUnseenRecordsBannerView();
     }
 };

@@ -1,3 +1,43 @@
+2021-01-07  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: console.takeHeapSnapshot() appears to have no effect
+        https://bugs.webkit.org/show_bug.cgi?id=219987
+
+        Reviewed by Devin Rousso.
+
+        Added a banner that appears above the snapshots data grid when there are new (unseen) snapshots that are being
+        filtered by either the selected time range or filter text.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        * UserInterface/Views/BannerView.css: Added.
+        (.banner-view):
+        (.banner-view > button):
+        (.banner-view > .dismiss):
+        * UserInterface/Views/BannerView.js: Added.
+        (WI.BannerView.prototype._handleActionButtonClicked):
+        (WI.BannerView.prototype._handleDismissButtonClicked):
+        (WI.BannerView):
+        - Added `WI.BannerView` to handle layout and styling of banners.
+        * UserInterface/Views/HeapAllocationsTimelineView.css:
+        (.timeline-view.heap-allocations > .banner-view + .data-grid):
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WI.HeapAllocationsTimelineView):
+        (WI.HeapAllocationsTimelineView.prototype.layout):
+        - Take note of any new records that are immediately hidden.
+        (WI.HeapAllocationsTimelineView.prototype.reset):
+        (WI.HeapAllocationsTimelineView.prototype.filterDidChange):
+        (WI.HeapAllocationsTimelineView.prototype._updateUnseenRecordsBannerView):
+        - Check that unseen messages are still hidden and add/remove the banner as appropriate.
+        (WI.HeapAllocationsTimelineView.prototype._handleUnseenRecordsBannerClearFiltersClicked):
+        (WI.HeapAllocationsTimelineView.prototype._handleUnseenRecordsBannerDismissClicked):
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView):
+        (WI.TimelineRecordingContentView.prototype._handleTimelineViewNeedsFiltersCleared):
+        - Handle the `WI.TimelineView.Event.NeedsFiltersCleared` event.
+        * UserInterface/Views/TimelineView.js:
+        - Added `WI.TimelineView.Event.NeedsFiltersCleared` event.
+
 2020-12-10  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Show current properties for font in new Elements sidebar Font panel

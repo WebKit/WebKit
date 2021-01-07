@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.timeline-view.heap-allocations > .data-grid {
+.banner-view {
+    display: flex;
+    flex-shrink: 0;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    height: var(--navigation-bar-height);
+    padding: 0 4px;
+    color: var(--yellow-highlight-text-color);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    background-color: var(--yellow-highlight-background-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.banner-view > button {
+    margin-inline-start: 4px;
+}
+
+.banner-view > .dismiss {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
-
-.timeline-view.heap-allocations > .banner-view + .data-grid {
-    top: var(--navigation-bar-height);
-}
-
-.timeline-view.heap-allocations > .data-grid td .icon.heap-snapshot {
-    content: url(../Images/TypeIcons.svg#HeapSnapshot-light);
-}
-
-.timeline-view.heap-allocations > .data-grid tr.invalid {
-    color: gray;
-}
-
-.timeline-view.heap-allocations > .data-grid:not(:focus) tr.selected.invalid {
-    color: gray !important;
-}
-
-.timeline-view.heap-allocations > .data-grid tr.baseline {
-    background: hsl(129, 29%, 77%);
-}
-
-.timeline-view.heap-allocations > .content-view-container {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-}
-
-@media (prefers-color-scheme: dark) {
-    .timeline-view.heap-allocations > .data-grid td .icon.heap-snapshot {
-        content: url(../Images/TypeIcons.svg#HeapSnapshot-dark);
-    }
+    inset-inline-end: 5px;
+    width: 16px;
+    height: 16px;
+    padding-bottom: 2px;
 }
