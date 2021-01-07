@@ -296,7 +296,7 @@ static void browserSearchBoxSizeAllocate(GtkWidget *widget, int width, int heigh
 
     BrowserSearchBox *searchBox = BROWSER_SEARCH_BOX(widget);
     if (searchBox->optionsPopover)
-        gtk_native_check_resize(GTK_NATIVE(searchBox->optionsPopover));
+        gtk_popover_present(GTK_POPOVER(searchBox->optionsPopover));
 }
 #endif
 

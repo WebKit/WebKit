@@ -63,6 +63,18 @@ gtk_window_move(GtkWindow*, int, int)
 }
 
 static inline void
+gtk_window_resize(GtkWindow* window, int width, int height)
+{
+    gtk_window_set_default_size(window, width, height);
+}
+
+static inline void
+gtk_window_get_size(GtkWindow* window, int* width, int* height)
+{
+    gtk_window_get_default_size(window, width, height);
+}
+
+static inline void
 gtk_init(int*, char***)
 {
     gtk_init();

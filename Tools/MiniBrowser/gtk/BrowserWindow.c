@@ -399,12 +399,15 @@ static void webViewReadyToShow(WebKitWebView *webView, BrowserWindow *window)
 
     GdkRectangle geometry;
     webkit_window_properties_get_geometry(windowProperties, &geometry);
-#if !GTK_CHECK_VERSION(3, 98, 0)
+#if GTK_CHECK_VERSION(3, 99, 5)
+    if (geometry.width > 0 && geometry.height > 0)
+        gtk_window_set_default_size(GTK_WINDOW(window), geometry.width, geometry.height);
+#else
     if (geometry.x >= 0 && geometry.y >= 0)
         gtk_window_move(GTK_WINDOW(window), geometry.x, geometry.y);
-#endif
     if (geometry.width > 0 && geometry.height > 0)
         gtk_window_resize(GTK_WINDOW(window), geometry.width, geometry.height);
+#endif
 
     if (!webkit_window_properties_get_toolbar_visible(windowProperties))
         gtk_widget_hide(window->toolbar);

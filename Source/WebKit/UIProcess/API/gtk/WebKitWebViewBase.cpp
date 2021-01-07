@@ -862,8 +862,8 @@ static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, GtkAllocation* allo
 
 #if USE(GTK4)
     for (auto* child = gtk_widget_get_first_child(widget); child; child = gtk_widget_get_next_sibling(child)) {
-        if (GTK_IS_NATIVE(child))
-            gtk_native_check_resize(GTK_NATIVE(child));
+        if (GTK_IS_POPOVER(child))
+            gtk_popover_present(GTK_POPOVER(child));
     }
 #endif
 
