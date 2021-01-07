@@ -1321,3 +1321,5 @@ webkit.org/b/220018 webanimations/accelerated-transform-related-animation-proper
 
 webkit.org/b/218725 inspector/debugger/tail-deleted-frames/tail-deleted-frames-intermediate-frames.html [ Pass Timeout ]
 
+webkit.org/b/219516 http/wpt/service-workers/service-worker-spinning-install.https.html [ Pass Failure ]
+
