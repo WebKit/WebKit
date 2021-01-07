@@ -2736,6 +2736,10 @@ void EventHandler::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& 
     updateWheelGestureState(wheelEvent, eventHandling);
 
 #if ENABLE(ASYNC_SCROLLING)
+
+    if (!m_frame.page())
+        return;
+
     FrameView* view = m_frame.view();
     if (auto scrollingCoordinator = m_frame.page()->scrollingCoordinator()) {
         if (scrollingCoordinator->coordinatesScrollingForFrameView(*view))

@@ -162,6 +162,10 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
 
         return processingSteps;
     }();
+
+    auto scrollingTree = m_scrollingTrees.get(pageID);
+    if (!scrollingTree)
+        dispatchWheelEventViaMainThread(pageID, wheelEvent, processingSteps);
 #else
     UNUSED_PARAM(canRubberBandAtLeft);
     UNUSED_PARAM(canRubberBandAtRight);

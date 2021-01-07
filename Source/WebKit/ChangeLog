@@ -1,3 +1,18 @@
+2021-01-07  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r270425) [GTK] wheel scrolling stopped working
+        https://bugs.webkit.org/show_bug.cgi?id=219547
+
+        Reviewed by Carlos Garcia Campos.
+
+        In GTK we may have the case where the async scrolling is disabled at
+        runtime despite being compiled with ASYNC_SCROLLING/SCROLLING_THREAD.
+        In these cases, the wheel events still need to be dispatched through
+        the main thread.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+
 2021-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Build failures with GTK4 3.99.5.1
