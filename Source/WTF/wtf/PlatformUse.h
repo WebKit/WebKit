@@ -326,8 +326,3 @@
 #if PLATFORM(COCOA)
 #define USE_OPENXR 0
 #endif
-
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 140000) || PLATFORM(MACCATALYST)
-// FIXME: Include macOS once <rdar://problem/72817121> is fixed.
-#define USE_ITP_TCC_CHECK 1
-#endif

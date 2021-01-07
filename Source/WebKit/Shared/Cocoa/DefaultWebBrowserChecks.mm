@@ -112,12 +112,11 @@ static bool determineITPStateInternal(bool appWasLinkedOnOrAfter, const String& 
     if (!isFullWebBrowser(bundleIdentifier) && !hasRequestedCrossWebsiteTrackingPermission())
         return true;
 
-#if USE(ITP_TCC_CHECK)
-    TCCAccessPreflightResult result = TCCAccessPreflight(getkTCCServiceWebKitIntelligentTrackingPrevention(), nullptr);
-    return result != kTCCAccessPreflightDenied;
-#else
-    return false;
+    TCCAccessPreflightResult result = kTCCAccessPreflightDenied;
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 140000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000)
+    result = TCCAccessPreflight(getkTCCServiceWebKitIntelligentTrackingPrevention(), nullptr);
 #endif
+    return result != kTCCAccessPreflightDenied;
 }
 
 static dispatch_queue_t g_itpQueue;
