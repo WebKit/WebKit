@@ -314,3 +314,8 @@
 #define USE_PTHREAD_JIT_PERMISSIONS_API 1
 #endif
 #endif
+
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 140000) || PLATFORM(MACCATALYST)
+// FIXME: Include macOS once <rdar://problem/72817121> is fixed.
+#define USE_ITP_TCC_CHECK 1
+#endif
