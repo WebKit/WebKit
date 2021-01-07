@@ -546,15 +546,11 @@ enum OptionEquivalence {
     v(enablePolyvariantDevirtualization, usePolyvariantDevirtualization, SameOption) \
     v(enablePolymorphicAccessInlining, usePolymorphicAccessInlining, SameOption) \
     v(enablePolymorphicCallInlining, usePolymorphicCallInlining, SameOption) \
-    v(enableMovHintRemoval, useMovHintRemoval, SameOption) \
     v(enableObjectAllocationSinking, useObjectAllocationSinking, SameOption) \
     v(enableConcurrentJIT, useConcurrentJIT, SameOption) \
     v(enableProfiler, useProfiler, SameOption) \
     v(enableArchitectureSpecificOptimizations, useArchitectureSpecificOptimizations, SameOption) \
-    v(enablePolyvariantCallInlining, usePolyvariantCallInlining, SameOption) \
-    v(enablePolyvariantByIdInlining, usePolyvariantByIdInlining, SameOption) \
     v(objectsAreImmortal, useImmortalObjects, SameOption) \
-    v(showObjectStatistics, dumpObjectStatistics, SameOption) \
     v(disableGC, useGC, InvertedOption) \
     v(enableTypeProfiler, useTypeProfiler, SameOption) \
     v(enableControlFlowProfiler, useControlFlowProfiler, SameOption) \
