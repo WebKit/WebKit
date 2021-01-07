@@ -44,19 +44,13 @@ using namespace WebCore;
 Ref<RemoteAudioSourceProvider> RemoteAudioSourceProvider::create(WebCore::MediaPlayerIdentifier identifier, WTF::LoggerHelper& helper)
 {
     auto provider = adoptRef(*new RemoteAudioSourceProvider(identifier, helper));
-
-    auto& gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
-    gpuProcessConnection.audioSourceProviderManager().addProvider(provider.copyRef());
-
-#if ENABLE(WEB_AUDIO)
-    gpuProcessConnection.connection().send(Messages::RemoteMediaPlayerProxy::CreateAudioSourceProvider { }, provider->identifier());
-#endif
-
+    provider->m_gpuProcessConnection->audioSourceProviderManager().addProvider(provider.copyRef());
     return provider;
 }
 
 RemoteAudioSourceProvider::RemoteAudioSourceProvider(MediaPlayerIdentifier identifier, WTF::LoggerHelper& helper)
     : m_identifier(identifier)
+    , m_gpuProcessConnection(makeWeakPtr(WebProcess::singleton().ensureGPUProcessConnection()))
 #if !RELEASE_LOG_DISABLED
     , m_logger(helper.logger())
     , m_logIdentifier(helper.logIdentifier())
@@ -64,6 +58,10 @@ RemoteAudioSourceProvider::RemoteAudioSourceProvider(MediaPlayerIdentifier ident
 {
     ASSERT(isMainThread());
     UNUSED_PARAM(helper);
+
+#if ENABLE(WEB_AUDIO)
+    m_gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::CreateAudioSourceProvider { }, identifier);
+#endif
 }
 
 RemoteAudioSourceProvider::~RemoteAudioSourceProvider()
@@ -73,12 +71,14 @@ RemoteAudioSourceProvider::~RemoteAudioSourceProvider()
 void RemoteAudioSourceProvider::close()
 {
     ASSERT(isMainThread());
-    WebProcess::singleton().ensureGPUProcessConnection().audioSourceProviderManager().removeProvider(m_identifier);
+    if (m_gpuProcessConnection)
+        m_gpuProcessConnection->audioSourceProviderManager().removeProvider(m_identifier);
 }
 
 void RemoteAudioSourceProvider::hasNewClient(AudioSourceProviderClient* client)
 {
-    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteMediaPlayerProxy::SetShouldEnableAudioSourceProvider { !!client }, m_identifier);
+    if (m_gpuProcessConnection)
+        m_gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::SetShouldEnableAudioSourceProvider { !!client }, m_identifier);
 }
 
 void RemoteAudioSourceProvider::audioSamplesAvailable(const PlatformAudioData& data, const AudioStreamDescription& description, size_t size)

@@ -4966,13 +4966,6 @@ void HTMLMediaElement::mediaEngineWasUpdated()
 
     m_mediaSession->mediaEngineUpdated();
 
-#if ENABLE(WEB_AUDIO)
-    if (m_audioSourceNode && audioSourceProvider()) {
-        auto locker = holdLock(m_audioSourceNode->processLock());
-        audioSourceProvider()->setClient(m_audioSourceNode);
-    }
-#endif
-
 #if ENABLE(ENCRYPTED_MEDIA)
     if (m_player && m_mediaKeys)
         m_player->cdmInstanceAttached(m_mediaKeys->cdmInstance());
@@ -5011,9 +5004,35 @@ void HTMLMediaElement::mediaPlayerEngineUpdated()
     m_droppedVideoFrames = 0;
 #endif
 
+#if ENABLE(WEB_AUDIO)
+    if (m_audioSourceNode) {
+        if (auto* provider = audioSourceProvider())
+            provider->setClient(m_audioSourceNode);
+    }
+#endif
+
     m_havePreparedToPlay = false;
 
     scheduleMediaEngineWasUpdated();
+}
+
+void HTMLMediaElement::mediaPlayerWillInitializeMediaEngine()
+{
+    ASSERT(isMainThread());
+#if ENABLE(WEB_AUDIO)
+    // Make sure the MediaElementAudioSourceNode's process function does not try and access the media player while its engine is getting updated.
+    if (m_audioSourceNode)
+        m_audioSourceNode->processLock().lock();
+#endif
+}
+
+void HTMLMediaElement::mediaPlayerDidInitializeMediaEngine()
+{
+    ASSERT(isMainThread());
+#if ENABLE(WEB_AUDIO)
+    if (m_audioSourceNode)
+        m_audioSourceNode->processLock().unlock();
+#endif
 }
 
 void HTMLMediaElement::mediaPlayerCharacteristicChanged()
@@ -6560,6 +6579,7 @@ void HTMLMediaElement::setAudioSourceNode(MediaElementAudioSourceNode* sourceNod
         audioSourceProvider()->setClient(m_audioSourceNode);
 }
 
+// This may get called on the audio thread by MediaElementAudioSourceNode.
 AudioSourceProvider* HTMLMediaElement::audioSourceProvider()
 {
     if (m_player)

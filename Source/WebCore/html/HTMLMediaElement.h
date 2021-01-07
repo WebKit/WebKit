@@ -658,6 +658,8 @@ private:
     void mediaPlayerRenderingModeChanged() final;
     bool mediaPlayerAcceleratedCompositingEnabled() final;
     void mediaPlayerEngineUpdated() final;
+    void mediaPlayerWillInitializeMediaEngine() final;
+    void mediaPlayerDidInitializeMediaEngine() final;
 
     void scheduleMediaEngineWasUpdated();
     void mediaEngineWasUpdated();

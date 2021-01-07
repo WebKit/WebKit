@@ -33,6 +33,7 @@
 #include <WebCore/PlatformMediaSession.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakHashSet.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -44,7 +45,7 @@ class RemoteMediaPlayerManager;
 class RemoteLegacyCDMFactory;
 struct WebPageCreationParameters;
 
-class GPUProcessConnection : public RefCounted<GPUProcessConnection>, IPC::Connection::Client {
+class GPUProcessConnection : public RefCounted<GPUProcessConnection>, public CanMakeWeakPtr<GPUProcessConnection>, IPC::Connection::Client {
 public:
     static Ref<GPUProcessConnection> create(IPC::Connection::Identifier connectionIdentifier)
     {

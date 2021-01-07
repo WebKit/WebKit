@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO) && PLATFORM(COCOA)
 
+#include "GPUProcessConnection.h"
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/WebAudioSourceProviderCocoa.h>
 #include <wtf/LoggerHelper.h>
@@ -65,6 +66,7 @@ private:
 #endif
 
     WebCore::MediaPlayerIdentifier m_identifier;
+    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;

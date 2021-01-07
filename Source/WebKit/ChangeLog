@@ -1,3 +1,30 @@
+2021-01-07  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] Implement GPUProcess crash recovery for MediaElementAudioSourceNode
+        https://bugs.webkit.org/show_bug.cgi?id=220391
+
+        Reviewed by Geoffrey Garen.
+
+        When audio is playing using WebAudio and a MediaElementAudioSourceNode, make sure that
+        audio resumes playing seemlessly after a GPUProcess crash.
+
+        * WebProcess/GPU/GPUProcessConnection.h:
+        Subclass CanMakeWeakPtr<> so that clients can hold a weak pointer to a GPUProcessConnection.
+
+        * WebProcess/GPU/media/RemoteAudioSourceProvider.cpp:
+        (WebKit::RemoteAudioSourceProvider::create):
+        (WebKit::RemoteAudioSourceProvider::RemoteAudioSourceProvider):
+        (WebKit::RemoteAudioSourceProvider::close):
+        (WebKit::RemoteAudioSourceProvider::hasNewClient):
+        * WebProcess/GPU/media/RemoteAudioSourceProvider.h:
+        Associate the RemoteAudioSourceProvider with a specific GPUProcessConnection instead of always
+        using the latest connection via WebProcess::ensureGPUProcessConnection(). In the event of a
+        GPUProcess crash, MediaPlayer will reconstruct its MediaPlayerPrivate which will reconstruct
+        a new RemoteAudioSourceProvider (since RemoteAudioSourceProvider is owned by
+        MediaPlayerPrivateRemote). As a result, RemoteAudioSourceProvider does not need to do anything
+        to deal with a GPUProcess crash. However, we need to make sure it only interacts with the
+        GPUProcessConnection that existed when it was constructed.
+
 2021-01-07  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebKit IPC message names should indicate if the message is synchronous

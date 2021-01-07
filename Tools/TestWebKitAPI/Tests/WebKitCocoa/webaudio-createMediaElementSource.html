@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<script>
+    function handleLoaded() {
+        context = new (window.AudioContext || window.webkitAudioContext)();
+        var myAudio = document.querySelector('audio');
+        myAudio = new Audio();
+        myAudio.src = "large-video-with-audio.mp4";
+        var source = context.createMediaElementSource(myAudio);
+        var gainNode = context.createGain();
+        source.connect(gainNode);
+        gainNode.connect(context.destination);
+
+        testButton.onclick = () => {
+            context.resume();
+            myAudio.play();
+        }
+    }
+</script>
+<body onload=handleLoaded()>
+    <input type="button" id="testButton" value="Click me"></input>
+</body>
+<html>

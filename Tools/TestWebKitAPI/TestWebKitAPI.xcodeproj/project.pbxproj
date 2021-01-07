@@ -259,6 +259,7 @@
 		468BC45522653A1000A36C96 /* open-window-then-write-to-it.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 468BC454226539C800A36C96 /* open-window-then-write-to-it.html */; };
 		468F2F942368DAF100F4B864 /* window-open-then-document-open.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 468F2F932368DAA700F4B864 /* window-open-then-document-open.html */; };
 		46918EFC2237283C00468DFE /* DeviceOrientation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46918EFB2237283500468DFE /* DeviceOrientation.mm */; };
+		46A44A5425A7830300F61E16 /* webaudio-createMediaElementSource.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 46A44A5325A782DD00F61E16 /* webaudio-createMediaElementSource.html */; };
 		46A46A1A2575645600A1B118 /* SessionStorage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46A46A192575645600A1B118 /* SessionStorage.mm */; };
 		46A911592108E6780078D40D /* CustomUserAgent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46A911582108E66B0078D40D /* CustomUserAgent.mm */; };
 		46AE5A3720F9066D00E0873E /* SimpleServiceWorkerRegistrations-4.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4656A75720F9054F0002E21F /* SimpleServiceWorkerRegistrations-4.sqlite3 */; };
@@ -1685,6 +1686,7 @@
 				5703BB8D2463F88700475FB2 /* web-authentication-make-credential-la-no-attestation.html in Copy Resources */,
 				57EDFC5C245A1A3F00959521 /* web-authentication-make-credential-la-no-mock.html in Copy Resources */,
 				5742178E2400D2DF002B303D /* web-authentication-make-credential-la.html in Copy Resources */,
+				46A44A5425A7830300F61E16 /* webaudio-createMediaElementSource.html in Copy Resources */,
 				1C2B81861C89259D00A5529F /* webfont.html in Copy Resources */,
 				31E9BDA3247F5729002E51A2 /* webgl.html in Copy Resources */,
 				51714EB41CF8C78C004723C4 /* WebProcessKillIDBCleanup-1.html in Copy Resources */,
@@ -1999,6 +2001,7 @@
 		468BC454226539C800A36C96 /* open-window-then-write-to-it.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "open-window-then-write-to-it.html"; sourceTree = "<group>"; };
 		468F2F932368DAA700F4B864 /* window-open-then-document-open.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "window-open-then-document-open.html"; sourceTree = "<group>"; };
 		46918EFB2237283500468DFE /* DeviceOrientation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DeviceOrientation.mm; sourceTree = "<group>"; };
+		46A44A5325A782DD00F61E16 /* webaudio-createMediaElementSource.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "webaudio-createMediaElementSource.html"; sourceTree = "<group>"; };
 		46A46A192575645600A1B118 /* SessionStorage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SessionStorage.mm; sourceTree = "<group>"; };
 		46A911582108E66B0078D40D /* CustomUserAgent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomUserAgent.mm; sourceTree = "<group>"; };
 		46C1EA9725758805005E409E /* alert.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = alert.html; sourceTree = "<group>"; };
@@ -3983,6 +3986,7 @@
 				5703BB8C2463F87200475FB2 /* web-authentication-make-credential-la-no-attestation.html */,
 				57EDFC5B245A18F500959521 /* web-authentication-make-credential-la-no-mock.html */,
 				5742178D2400D26C002B303D /* web-authentication-make-credential-la.html */,
+				46A44A5325A782DD00F61E16 /* webaudio-createMediaElementSource.html */,
 				51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */,
 				51714EB31CF8C761004723C4 /* WebProcessKillIDBCleanup-2.html */,
 				5120C83B1E674E350025B250 /* WebsiteDataStoreCustomPaths.html */,

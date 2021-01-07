@@ -211,6 +211,9 @@ public:
     virtual void mediaPlayerCurrentPlaybackTargetIsWirelessChanged(bool) { };
 #endif
 
+    virtual void mediaPlayerWillInitializeMediaEngine() { }
+    virtual void mediaPlayerDidInitializeMediaEngine() { }
+
     virtual String mediaPlayerReferrer() const { return String(); }
     virtual String mediaPlayerUserAgent() const { return String(); }
     virtual void mediaPlayerEnterFullscreen() { }
