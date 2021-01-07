@@ -439,7 +439,6 @@ void Connection::markCurrentlyDispatchedMessageAsInvalid()
 std::unique_ptr<Encoder> Connection::createSyncMessageEncoder(MessageName messageName, uint64_t destinationID, uint64_t& syncRequestID)
 {
     auto encoder = makeUnique<Encoder>(messageName, destinationID);
-    encoder->setIsSyncMessage(true);
 
     // Encode the sync request ID.
     syncRequestID = ++m_syncRequestID;

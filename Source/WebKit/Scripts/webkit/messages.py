@@ -25,7 +25,7 @@ import re
 import sys
 
 from webkit import parser
-from webkit.model import BUILTIN_ATTRIBUTE, ASYNC_ATTRIBUTE
+from webkit.model import BUILTIN_ATTRIBUTE, ASYNC_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE
 
 _license_header = """/*
  * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
@@ -58,7 +58,6 @@ WANTS_DISPATCH_MESSAGE_ATTRIBUTE = 'WantsDispatchMessage'
 WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE = 'WantsAsyncDispatchMessage'
 LEGACY_RECEIVER_ATTRIBUTE = 'LegacyReceiver'
 NOT_REFCOUNTED_RECEIVER_ATTRIBUTE = 'NotRefCounted'
-SYNCHRONOUS_ATTRIBUTE = 'Synchronous'
 
 
 def receiver_enumerator_order_key(receiver_name):
@@ -84,7 +83,7 @@ class MessageEnumerator(object):
 
     @classmethod
     def sort_key(cls, obj):
-        return receiver_enumerator_order_key(obj.receiver.name), str(obj)
+        return obj.messages[0].has_attribute(SYNCHRONOUS_ATTRIBUTE), receiver_enumerator_order_key(obj.receiver.name), str(obj)
 
 
 def get_message_enumerators(receivers):
@@ -974,6 +973,15 @@ def generate_message_names_header(receivers):
     result.append('ReceiverName receiverName(MessageName);\n')
     result.append('const char* description(MessageName);\n')
     result.append('bool isValidMessageName(MessageName);\n')
+    result.append('constexpr bool messageIsSync(MessageName name)\n')
+    result.append('{\n')
+    first_synchronous = next((e for e in message_enumerators if e.messages[0].has_attribute(SYNCHRONOUS_ATTRIBUTE)), None)
+    if first_synchronous:
+        result.append('    return name >= MessageName::%s;\n' % first_synchronous)
+    else:
+        result.append('    UNUSED_PARAM(name);\n')
+        result.append('    return false;\n')
+    result.append('}\n')
     result.append('\n')
     result.append('} // namespace IPC\n')
     result.append('\n')
@@ -1172,36 +1180,6 @@ def generate_message_argument_description_implementation(receivers, receiver_hea
 
     result += generate_js_argument_descriptions(receivers, 'messageReplyArgumentDescriptions', lambda message: message.reply_parameters if message.has_attribute(SYNCHRONOUS_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE) else None)
 
-    result.append('\n')
-    result.append('bool messageIsSync(MessageName name)\n')
-    result.append('{\n')
-    result.append('    switch (name) {\n')
-    for receiver in receivers:
-        has_emit_receiver_condition = False
-        previous_message_condition = None
-        for message in receiver.messages:
-            if message.reply_parameters is None or not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
-                continue
-            if not has_emit_receiver_condition and receiver.condition:
-                has_emit_receiver_condition = True
-                result.append('#if %s\n' % receiver.condition)
-            if previous_message_condition != message.condition:
-                if previous_message_condition:
-                    result.append('#endif\n')
-                if message.condition:
-                    result.append('#if %s\n' % message.condition)
-            previous_message_condition = message.condition
-            result.append('    case MessageName::%s:\n' % MessageEnumerator(receiver, [message]))
-            result.append('        return true;\n')
-        if previous_message_condition:
-            result.append('#endif\n')
-        if has_emit_receiver_condition:
-            result.append('#endif\n')
-    result.append('    default:\n')
-    result.append('        break;\n')
-    result.append('    }\n')
-    result.append('    return false;\n')
-    result.append('}\n')
     result.append('\n')
 
     result.append('} // namespace WebKit\n')

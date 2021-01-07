@@ -22,10 +22,11 @@
 
 import itertools
 
-from collections import Counter
+from collections import Counter, defaultdict
 
 BUILTIN_ATTRIBUTE = "Builtin"
 ASYNC_ATTRIBUTE = "Async"
+SYNCHRONOUS_ATTRIBUTE = 'Synchronous'
 
 class MessageReceiver(object):
     def __init__(self, name, superclass, attributes, messages, condition):
@@ -68,7 +69,7 @@ class Parameter(object):
 
 
 ipc_receiver = MessageReceiver(name="IPC", superclass=None, attributes=[BUILTIN_ATTRIBUTE], messages=[
-    Message('WrappedAsyncMessageForTesting', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
+    Message('WrappedAsyncMessageForTesting', [], [], attributes=[BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE], condition=None),
     Message('SyncMessageReply', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
     Message('InitializeConnection', [], [], attributes=[BUILTIN_ATTRIBUTE], condition="PLATFORM(COCOA)"),
     Message('LegacySessionState', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None)
@@ -82,6 +83,21 @@ def check_global_model_inputs(receivers):
     if receiver_duplicates:
         errors.append('Duplicate message receiver names: %s' % (', '.join(receiver_duplicates)))
 
+    # A message might be defined multiple times using ifdef conditions.
+    # Certain attributes must match in this case. E.g. USE(COCOA) cannot have a sync message that
+    # would be non-sync in USE(GTK).
+    matching_attributes = [SYNCHRONOUS_ATTRIBUTE]
+    for receiver in receivers:
+        receiver_messages = defaultdict(list)
+        for message in receiver.messages:
+            receiver_messages[message.name].append(message)
+        for messages in receiver_messages.values():
+            m0 = messages[0]
+            for i in range(1, len(messages)):
+                mi = messages[i]
+                if any(m0.has_attribute(a) != mi.has_attribute(a) for a in matching_attributes):
+                    errors.append('Receiver %s message %s attribute mismatch: %s (%s) != %s (%s))' % (receiver.name, message.name,
+                                  m0.attributes, m0.condition, mi.attributes, mi.condition))
     return errors
 
 

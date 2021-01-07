@@ -1,3 +1,44 @@
+2021-01-07  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebKit IPC message names should indicate if the message is synchronous
+        https://bugs.webkit.org/show_bug.cgi?id=220319
+
+        Reviewed by Chris Dumez.
+
+        Order WebKit IPC MessageName enumerators by listing asynchronous
+        messages first. This enables relatively efficient implementation of
+        isMessageSync().
+
+        Remove MessageFlags::SyncMessage. This information is already stored
+        in the MessageName -- a message is either synchronous or asynchronous,
+        but not both.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::createSyncMessageEncoder):
+        * Platform/IPC/Decoder.cpp:
+        (IPC::Decoder::alignBufferPosition):
+        * Platform/IPC/Decoder.h:
+        (IPC::Decoder::isSyncMessage const):
+        * Platform/IPC/Encoder.cpp:
+        (IPC::Encoder::grow):
+        * Platform/IPC/Encoder.h:
+        * Platform/IPC/MessageArgumentDescriptions.h:
+        * Platform/IPC/MessageFlags.h:
+        * Scripts/webkit/messages.py:
+        * Scripts/webkit/messages_unittest.py:
+        (GeneratedFileContentsTest):
+        * Scripts/webkit/model.py:
+        (check_global_model_inputs):
+        * Scripts/webkit/model_unittest.py:
+        (test_mismatch_message_attribute_sync):
+        * Scripts/webkit/tests/MessageArgumentDescriptions.cpp:
+        * Scripts/webkit/tests/MessageNames.cpp:
+        (IPC::description):
+        (IPC::receiverName):
+        (IPC::isValidMessageName):
+        * Scripts/webkit/tests/MessageNames.h:
+        (IPC::messageIsSync):
+
 2021-01-07  Sihui Liu  <sihui_liu@appe.com>
 
         ASSERTION FAILED: !m_messageReceiverMapCount under WebKit::SpeechRecognitionServer::~SpeechRecognitionServer()

@@ -96,11 +96,6 @@ Decoder::~Decoder()
     // FIXME: We need to dispose of the mach ports in cases of failure.
 }
 
-bool Decoder::isSyncMessage() const
-{
-    return m_messageFlags.contains(MessageFlags::SyncMessage);
-}
-
 ShouldDispatchWhenWaitingForSyncReply Decoder::shouldDispatchMessageWhenWaitingForSyncReply() const
 {
     if (m_messageFlags.contains(MessageFlags::DispatchMessageWhenWaitingForSyncReply))
@@ -165,7 +160,7 @@ bool Decoder::alignBufferPosition(size_t alignment, size_t size)
         markInvalid();
         return false;
     }
-    
+
     m_bufferPos = alignedPosition;
     return true;
 }

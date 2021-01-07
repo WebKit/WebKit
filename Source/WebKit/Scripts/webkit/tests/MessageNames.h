@@ -47,7 +47,6 @@ enum class MessageName : uint16_t {
     , TestWithLegacyReceiver_DidCreateWebProcessConnection
     , TestWithLegacyReceiver_DidReceivePolicyDecision
     , TestWithLegacyReceiver_ExperimentalOperation
-    , TestWithLegacyReceiver_GetPluginProcessConnection
     , TestWithLegacyReceiver_GetPlugins
     , TestWithLegacyReceiver_InterpretKeyEvent
     , TestWithLegacyReceiver_LoadSomething
@@ -59,7 +58,6 @@ enum class MessageName : uint16_t {
     , TestWithLegacyReceiver_SendInts
     , TestWithLegacyReceiver_SetVideoLayerID
     , TestWithLegacyReceiver_TemplateTest
-    , TestWithLegacyReceiver_TestMultipleAttributes
     , TestWithLegacyReceiver_TestParameterAttributes
     , TestWithLegacyReceiver_TouchEvent
     , TestWithSuperclass_LoadURL
@@ -67,8 +65,6 @@ enum class MessageName : uint16_t {
     , TestWithSuperclass_TestAsyncMessageWithConnection
     , TestWithSuperclass_TestAsyncMessageWithMultipleArguments
     , TestWithSuperclass_TestAsyncMessageWithNoArguments
-    , TestWithSuperclass_TestSyncMessage
-    , TestWithSuperclass_TestSynchronousMessage
     , TestWithoutAttributes_AddEvent
     , TestWithoutAttributes_Close
     , TestWithoutAttributes_CreatePlugin
@@ -76,7 +72,6 @@ enum class MessageName : uint16_t {
     , TestWithoutAttributes_DidCreateWebProcessConnection
     , TestWithoutAttributes_DidReceivePolicyDecision
     , TestWithoutAttributes_ExperimentalOperation
-    , TestWithoutAttributes_GetPluginProcessConnection
     , TestWithoutAttributes_GetPlugins
     , TestWithoutAttributes_InterpretKeyEvent
     , TestWithoutAttributes_LoadSomething
@@ -88,23 +83,32 @@ enum class MessageName : uint16_t {
     , TestWithoutAttributes_SendInts
     , TestWithoutAttributes_SetVideoLayerID
     , TestWithoutAttributes_TemplateTest
-    , TestWithoutAttributes_TestMultipleAttributes
     , TestWithoutAttributes_TestParameterAttributes
     , TestWithoutAttributes_TouchEvent
     , InitializeConnection
     , LegacySessionState
     , SyncMessageReply
-    , WrappedAsyncMessageForTesting
     , TestWithSuperclass_TestAsyncMessageReply
     , TestWithSuperclass_TestAsyncMessageWithConnectionReply
     , TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply
     , TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply
-    , Last = TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply
+    , TestWithLegacyReceiver_GetPluginProcessConnection
+    , TestWithLegacyReceiver_TestMultipleAttributes
+    , TestWithSuperclass_TestSyncMessage
+    , TestWithSuperclass_TestSynchronousMessage
+    , TestWithoutAttributes_GetPluginProcessConnection
+    , TestWithoutAttributes_TestMultipleAttributes
+    , WrappedAsyncMessageForTesting
+    , Last = WrappedAsyncMessageForTesting
 };
 
 ReceiverName receiverName(MessageName);
 const char* description(MessageName);
 bool isValidMessageName(MessageName);
+constexpr bool messageIsSync(MessageName name)
+{
+    return name >= MessageName::TestWithLegacyReceiver_GetPluginProcessConnection;
+}
 
 } // namespace IPC
 

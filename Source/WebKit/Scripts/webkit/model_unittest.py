@@ -63,6 +63,23 @@ messages -> WebPage {
         self.assertEquals(len(errors), 1)
         self.assertTrue("Duplicate" in errors[0])
 
+    def test_mismatch_message_attribute_sync(self):
+        contents = """
+messages -> WebPage {
+#if USE(COCOA)
+    LoadURL(String url) Synchronous
+#endif
+#if USE(GTK)
+    LoadURL(String url)
+#endif
+}"""
+        receiver = parser.parse(StringIO(contents))
+        self.assertEquals(receiver.name, 'WebPage')
+        self.assertEquals(receiver.messages[0].name, 'LoadURL')
+        errors = model.check_global_model_inputs([receiver])
+        self.assertEquals(len(errors), 1)
+        self.assertTrue("attribute mismatch" in errors[0])
+
 
 if __name__ == '__main__':
     unittest.main()

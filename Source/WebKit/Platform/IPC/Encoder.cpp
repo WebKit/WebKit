@@ -90,11 +90,6 @@ Encoder::~Encoder()
     // FIXME: We need to dispose of the attachments in cases of failure.
 }
 
-bool Encoder::isSyncMessage() const
-{
-    return messageFlags().contains(MessageFlags::SyncMessage);
-}
-
 ShouldDispatchWhenWaitingForSyncReply Encoder::shouldDispatchMessageWhenWaitingForSyncReply() const
 {
     if (messageFlags().contains(MessageFlags::DispatchMessageWhenWaitingForSyncReply))
@@ -102,14 +97,6 @@ ShouldDispatchWhenWaitingForSyncReply Encoder::shouldDispatchMessageWhenWaitingF
     if (messageFlags().contains(MessageFlags::DispatchMessageWhenWaitingForUnboundedSyncReply))
         return ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC;
     return ShouldDispatchWhenWaitingForSyncReply::No;
-}
-
-void Encoder::setIsSyncMessage(bool isSyncMessage)
-{
-    if (isSyncMessage)
-        messageFlags().add(MessageFlags::SyncMessage);
-    else
-        messageFlags().remove(MessageFlags::SyncMessage);
 }
 
 void Encoder::setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply shouldDispatchWhenWaitingForSyncReply)
@@ -205,7 +192,7 @@ uint8_t* Encoder::grow(size_t alignment, size_t size)
 
     m_bufferSize = alignedSize + size;
     m_bufferPointer = m_buffer + alignedSize + size;
-    
+
     return m_buffer + alignedSize;
 }
 

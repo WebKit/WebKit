@@ -46,8 +46,6 @@ const char* description(MessageName name)
         return "TestWithLegacyReceiver_DidReceivePolicyDecision";
     case MessageName::TestWithLegacyReceiver_ExperimentalOperation:
         return "TestWithLegacyReceiver_ExperimentalOperation";
-    case MessageName::TestWithLegacyReceiver_GetPluginProcessConnection:
-        return "TestWithLegacyReceiver_GetPluginProcessConnection";
     case MessageName::TestWithLegacyReceiver_GetPlugins:
         return "TestWithLegacyReceiver_GetPlugins";
     case MessageName::TestWithLegacyReceiver_InterpretKeyEvent:
@@ -70,8 +68,6 @@ const char* description(MessageName name)
         return "TestWithLegacyReceiver_SetVideoLayerID";
     case MessageName::TestWithLegacyReceiver_TemplateTest:
         return "TestWithLegacyReceiver_TemplateTest";
-    case MessageName::TestWithLegacyReceiver_TestMultipleAttributes:
-        return "TestWithLegacyReceiver_TestMultipleAttributes";
     case MessageName::TestWithLegacyReceiver_TestParameterAttributes:
         return "TestWithLegacyReceiver_TestParameterAttributes";
     case MessageName::TestWithLegacyReceiver_TouchEvent:
@@ -86,10 +82,6 @@ const char* description(MessageName name)
         return "TestWithSuperclass_TestAsyncMessageWithMultipleArguments";
     case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments:
         return "TestWithSuperclass_TestAsyncMessageWithNoArguments";
-    case MessageName::TestWithSuperclass_TestSyncMessage:
-        return "TestWithSuperclass_TestSyncMessage";
-    case MessageName::TestWithSuperclass_TestSynchronousMessage:
-        return "TestWithSuperclass_TestSynchronousMessage";
     case MessageName::TestWithoutAttributes_AddEvent:
         return "TestWithoutAttributes_AddEvent";
     case MessageName::TestWithoutAttributes_Close:
@@ -104,8 +96,6 @@ const char* description(MessageName name)
         return "TestWithoutAttributes_DidReceivePolicyDecision";
     case MessageName::TestWithoutAttributes_ExperimentalOperation:
         return "TestWithoutAttributes_ExperimentalOperation";
-    case MessageName::TestWithoutAttributes_GetPluginProcessConnection:
-        return "TestWithoutAttributes_GetPluginProcessConnection";
     case MessageName::TestWithoutAttributes_GetPlugins:
         return "TestWithoutAttributes_GetPlugins";
     case MessageName::TestWithoutAttributes_InterpretKeyEvent:
@@ -128,8 +118,6 @@ const char* description(MessageName name)
         return "TestWithoutAttributes_SetVideoLayerID";
     case MessageName::TestWithoutAttributes_TemplateTest:
         return "TestWithoutAttributes_TemplateTest";
-    case MessageName::TestWithoutAttributes_TestMultipleAttributes:
-        return "TestWithoutAttributes_TestMultipleAttributes";
     case MessageName::TestWithoutAttributes_TestParameterAttributes:
         return "TestWithoutAttributes_TestParameterAttributes";
     case MessageName::TestWithoutAttributes_TouchEvent:
@@ -140,8 +128,6 @@ const char* description(MessageName name)
         return "LegacySessionState";
     case MessageName::SyncMessageReply:
         return "SyncMessageReply";
-    case MessageName::WrappedAsyncMessageForTesting:
-        return "WrappedAsyncMessageForTesting";
     case MessageName::TestWithSuperclass_TestAsyncMessageReply:
         return "TestWithSuperclass_TestAsyncMessageReply";
     case MessageName::TestWithSuperclass_TestAsyncMessageWithConnectionReply:
@@ -150,6 +136,20 @@ const char* description(MessageName name)
         return "TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply";
     case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply:
         return "TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply";
+    case MessageName::TestWithLegacyReceiver_GetPluginProcessConnection:
+        return "TestWithLegacyReceiver_GetPluginProcessConnection";
+    case MessageName::TestWithLegacyReceiver_TestMultipleAttributes:
+        return "TestWithLegacyReceiver_TestMultipleAttributes";
+    case MessageName::TestWithSuperclass_TestSyncMessage:
+        return "TestWithSuperclass_TestSyncMessage";
+    case MessageName::TestWithSuperclass_TestSynchronousMessage:
+        return "TestWithSuperclass_TestSynchronousMessage";
+    case MessageName::TestWithoutAttributes_GetPluginProcessConnection:
+        return "TestWithoutAttributes_GetPluginProcessConnection";
+    case MessageName::TestWithoutAttributes_TestMultipleAttributes:
+        return "TestWithoutAttributes_TestMultipleAttributes";
+    case MessageName::WrappedAsyncMessageForTesting:
+        return "WrappedAsyncMessageForTesting";
     }
     ASSERT_NOT_REACHED();
     return "<invalid message name>";
@@ -167,7 +167,6 @@ ReceiverName receiverName(MessageName messageName)
     case MessageName::TestWithLegacyReceiver_DidCreateWebProcessConnection:
     case MessageName::TestWithLegacyReceiver_DidReceivePolicyDecision:
     case MessageName::TestWithLegacyReceiver_ExperimentalOperation:
-    case MessageName::TestWithLegacyReceiver_GetPluginProcessConnection:
     case MessageName::TestWithLegacyReceiver_GetPlugins:
     case MessageName::TestWithLegacyReceiver_InterpretKeyEvent:
     case MessageName::TestWithLegacyReceiver_LoadSomething:
@@ -179,7 +178,6 @@ ReceiverName receiverName(MessageName messageName)
     case MessageName::TestWithLegacyReceiver_SendInts:
     case MessageName::TestWithLegacyReceiver_SetVideoLayerID:
     case MessageName::TestWithLegacyReceiver_TemplateTest:
-    case MessageName::TestWithLegacyReceiver_TestMultipleAttributes:
     case MessageName::TestWithLegacyReceiver_TestParameterAttributes:
     case MessageName::TestWithLegacyReceiver_TouchEvent:
         return ReceiverName::TestWithLegacyReceiver;
@@ -188,8 +186,6 @@ ReceiverName receiverName(MessageName messageName)
     case MessageName::TestWithSuperclass_TestAsyncMessageWithConnection:
     case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments:
     case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments:
-    case MessageName::TestWithSuperclass_TestSyncMessage:
-    case MessageName::TestWithSuperclass_TestSynchronousMessage:
         return ReceiverName::TestWithSuperclass;
     case MessageName::TestWithoutAttributes_AddEvent:
     case MessageName::TestWithoutAttributes_Close:
@@ -198,7 +194,6 @@ ReceiverName receiverName(MessageName messageName)
     case MessageName::TestWithoutAttributes_DidCreateWebProcessConnection:
     case MessageName::TestWithoutAttributes_DidReceivePolicyDecision:
     case MessageName::TestWithoutAttributes_ExperimentalOperation:
-    case MessageName::TestWithoutAttributes_GetPluginProcessConnection:
     case MessageName::TestWithoutAttributes_GetPlugins:
     case MessageName::TestWithoutAttributes_InterpretKeyEvent:
     case MessageName::TestWithoutAttributes_LoadSomething:
@@ -210,20 +205,29 @@ ReceiverName receiverName(MessageName messageName)
     case MessageName::TestWithoutAttributes_SendInts:
     case MessageName::TestWithoutAttributes_SetVideoLayerID:
     case MessageName::TestWithoutAttributes_TemplateTest:
-    case MessageName::TestWithoutAttributes_TestMultipleAttributes:
     case MessageName::TestWithoutAttributes_TestParameterAttributes:
     case MessageName::TestWithoutAttributes_TouchEvent:
         return ReceiverName::TestWithoutAttributes;
     case MessageName::InitializeConnection:
     case MessageName::LegacySessionState:
     case MessageName::SyncMessageReply:
-    case MessageName::WrappedAsyncMessageForTesting:
         return ReceiverName::IPC;
     case MessageName::TestWithSuperclass_TestAsyncMessageReply:
     case MessageName::TestWithSuperclass_TestAsyncMessageWithConnectionReply:
     case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply:
     case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply:
         return ReceiverName::AsyncReply;
+    case MessageName::TestWithLegacyReceiver_GetPluginProcessConnection:
+    case MessageName::TestWithLegacyReceiver_TestMultipleAttributes:
+        return ReceiverName::TestWithLegacyReceiver;
+    case MessageName::TestWithSuperclass_TestSyncMessage:
+    case MessageName::TestWithSuperclass_TestSynchronousMessage:
+        return ReceiverName::TestWithSuperclass;
+    case MessageName::TestWithoutAttributes_GetPluginProcessConnection:
+    case MessageName::TestWithoutAttributes_TestMultipleAttributes:
+        return ReceiverName::TestWithoutAttributes;
+    case MessageName::WrappedAsyncMessageForTesting:
+        return ReceiverName::IPC;
     }
     ASSERT_NOT_REACHED();
     return ReceiverName::Invalid;
@@ -261,8 +265,6 @@ bool isValidMessageName(MessageName messageName)
     if (messageName == IPC::MessageName::TestWithLegacyReceiver_ExperimentalOperation)
         return true;
 #endif
-    if (messageName == IPC::MessageName::TestWithLegacyReceiver_GetPluginProcessConnection)
-        return true;
     if (messageName == IPC::MessageName::TestWithLegacyReceiver_GetPlugins)
         return true;
 #if PLATFORM(MAC)
@@ -291,8 +293,6 @@ bool isValidMessageName(MessageName messageName)
         return true;
     if (messageName == IPC::MessageName::TestWithLegacyReceiver_TemplateTest)
         return true;
-    if (messageName == IPC::MessageName::TestWithLegacyReceiver_TestMultipleAttributes)
-        return true;
     if (messageName == IPC::MessageName::TestWithLegacyReceiver_TestParameterAttributes)
         return true;
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
@@ -317,10 +317,6 @@ bool isValidMessageName(MessageName messageName)
     if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments)
         return true;
 #endif
-    if (messageName == IPC::MessageName::TestWithSuperclass_TestSyncMessage)
-        return true;
-    if (messageName == IPC::MessageName::TestWithSuperclass_TestSynchronousMessage)
-        return true;
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
     if (messageName == IPC::MessageName::TestWithoutAttributes_AddEvent)
         return true;
@@ -343,8 +339,6 @@ bool isValidMessageName(MessageName messageName)
     if (messageName == IPC::MessageName::TestWithoutAttributes_ExperimentalOperation)
         return true;
 #endif
-    if (messageName == IPC::MessageName::TestWithoutAttributes_GetPluginProcessConnection)
-        return true;
     if (messageName == IPC::MessageName::TestWithoutAttributes_GetPlugins)
         return true;
 #if PLATFORM(MAC)
@@ -373,8 +367,6 @@ bool isValidMessageName(MessageName messageName)
         return true;
     if (messageName == IPC::MessageName::TestWithoutAttributes_TemplateTest)
         return true;
-    if (messageName == IPC::MessageName::TestWithoutAttributes_TestMultipleAttributes)
-        return true;
     if (messageName == IPC::MessageName::TestWithoutAttributes_TestParameterAttributes)
         return true;
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
@@ -388,8 +380,6 @@ bool isValidMessageName(MessageName messageName)
     if (messageName == IPC::MessageName::LegacySessionState)
         return true;
     if (messageName == IPC::MessageName::SyncMessageReply)
-        return true;
-    if (messageName == IPC::MessageName::WrappedAsyncMessageForTesting)
         return true;
 #if ENABLE(TEST_FEATURE)
     if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessageReply)
@@ -407,6 +397,20 @@ bool isValidMessageName(MessageName messageName)
     if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply)
         return true;
 #endif
+    if (messageName == IPC::MessageName::TestWithLegacyReceiver_GetPluginProcessConnection)
+        return true;
+    if (messageName == IPC::MessageName::TestWithLegacyReceiver_TestMultipleAttributes)
+        return true;
+    if (messageName == IPC::MessageName::TestWithSuperclass_TestSyncMessage)
+        return true;
+    if (messageName == IPC::MessageName::TestWithSuperclass_TestSynchronousMessage)
+        return true;
+    if (messageName == IPC::MessageName::TestWithoutAttributes_GetPluginProcessConnection)
+        return true;
+    if (messageName == IPC::MessageName::TestWithoutAttributes_TestMultipleAttributes)
+        return true;
+    if (messageName == IPC::MessageName::WrappedAsyncMessageForTesting)
+        return true;
     return false;
 };
 

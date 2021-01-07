@@ -58,7 +58,7 @@ public:
     MessageName messageName() const { return m_messageName; }
     uint64_t destinationID() const { return m_destinationID; }
 
-    bool isSyncMessage() const;
+    bool isSyncMessage() const { return messageIsSync(messageName()); }
     ShouldDispatchWhenWaitingForSyncReply shouldDispatchMessageWhenWaitingForSyncReply() const;
     bool shouldUseFullySynchronousModeForTesting() const;
 

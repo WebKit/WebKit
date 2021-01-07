@@ -573,31 +573,6 @@ Optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(MessageNa
     return WTF::nullopt;
 }
 
-bool messageIsSync(MessageName name)
-{
-    switch (name) {
-    case MessageName::TestWithSuperclass_TestSyncMessage:
-        return true;
-    case MessageName::TestWithSuperclass_TestSynchronousMessage:
-        return true;
-#if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
-    case MessageName::TestWithLegacyReceiver_GetPluginProcessConnection:
-        return true;
-    case MessageName::TestWithLegacyReceiver_TestMultipleAttributes:
-        return true;
-#endif
-#if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
-    case MessageName::TestWithoutAttributes_GetPluginProcessConnection:
-        return true;
-    case MessageName::TestWithoutAttributes_TestMultipleAttributes:
-        return true;
-#endif
-    default:
-        break;
-    }
-    return false;
-}
-
 } // namespace WebKit
 
 #endif
