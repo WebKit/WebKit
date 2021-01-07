@@ -64,6 +64,8 @@ void WebURLSchemeHandler::startTask(WebPageProxy& page, WebProcessProxy& process
 
 WebProcessProxy* WebURLSchemeHandler::processForTaskIdentifier(uint64_t taskIdentifier) const
 {
+    if (!decltype(m_tasks)::isValidKey(taskIdentifier))
+        return nullptr;
     auto iterator = m_tasks.find(taskIdentifier);
     if (iterator == m_tasks.end())
         return nullptr;
@@ -91,6 +93,8 @@ void WebURLSchemeHandler::stopAllTasksForPage(WebPageProxy& page, WebProcessProx
 
 void WebURLSchemeHandler::stopTask(WebPageProxy& page, uint64_t taskIdentifier)
 {
+    if (!decltype(m_tasks)::isValidKey(taskIdentifier))
+        return;
     auto iterator = m_tasks.find(taskIdentifier);
     if (iterator == m_tasks.end())
         return;
@@ -116,6 +120,8 @@ void WebURLSchemeHandler::removeTaskFromPageMap(WebPageProxyIdentifier pageID, u
     auto iterator = m_tasksByPageIdentifier.find(pageID);
     ASSERT(iterator != m_tasksByPageIdentifier.end());
     ASSERT(iterator->value.contains(taskID));
+    if (!decltype(iterator->value)::isValidValue(taskID))
+        return;
     iterator->value.remove(taskID);
     if (iterator->value.isEmpty())
         m_tasksByPageIdentifier.remove(iterator);
