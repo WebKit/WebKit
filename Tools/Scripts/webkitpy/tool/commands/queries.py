@@ -50,6 +50,7 @@ from webkitpy.common.system.user import User
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import Command
+from webkitpy.layout_tests.controllers.layout_test_finder import LayoutTestFinder
 from webkitpy.layout_tests.models.test_expectations import TestExpectations
 from webkitpy.port import platform_options, configuration_options
 
@@ -489,7 +490,8 @@ class PrintExpectations(Command):
                 print(file)
             return
 
-        tests = set(default_port.tests(args))
+        finder = LayoutTestFinder(default_port, None)
+        tests = set(finder.find_tests_by_path(args))
         for port_name in port_names:
             model = self._model(options, port_name, tests)
             tests_to_print = self._filter_tests(options, model, tests)
@@ -553,7 +555,8 @@ class PrintBaselines(Command):
             port_names = [default_port.name()]
 
         # FIXME: make real_tests() a public method.
-        tests = sorted(default_port._real_tests(args))
+        finder = LayoutTestFinder(default_port, None)
+        tests = sorted(finder._real_tests(args))
 
         for port_name in port_names:
             if port_name != port_names[0]:

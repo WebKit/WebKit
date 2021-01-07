@@ -27,28 +27,117 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import errno
+import json
 import logging
 import re
 
+from webkitpy.common import find_files
 from webkitpy.layout_tests.models import test_expectations
+from webkitpy.port.base import Port
 
 
 _log = logging.getLogger(__name__)
 
 
+# When collecting test cases, we include any file with these extensions.
+_supported_test_extensions = set(['.html', '.shtml', '.xml', '.xhtml', '.pl', '.htm', '.php', '.svg', '.mht', '.xht'])
+
+
+# If any changes are made here be sure to update the isUsedInReftest method in old-run-webkit-tests as well.
+def _is_reference_html_file(filesystem, dirname, filename):
+    if filename.startswith('ref-') or filename.startswith('notref-'):
+        return True
+    filename_wihout_ext, ext = filesystem.splitext(filename)
+    # FIXME: _supported_reference_extensions should be here, https://bugs.webkit.org/show_bug.cgi?id=220421
+    if ext not in Port._supported_reference_extensions:
+        return False
+    for suffix in ['-expected', '-expected-mismatch', '-ref', '-notref']:
+        if filename_wihout_ext.endswith(suffix):
+            return True
+    return False
+
+
+def _has_supported_extension(filesystem, filename):
+    """Return true if filename is one of the file extensions we want to run a test on."""
+    extension = filesystem.splitext(filename)[1]
+    return extension in _supported_test_extensions
+
+
 class LayoutTestFinder(object):
+    """Finds LayoutTests
+
+    We consider any file will a given set of extensions as tests, except for
+    those which appear to be references (-expected.html, etc.). Notably this
+    means that a test _doesn't_ need to have any associated -expected.* file
+    (in those cases, we will report the missing result).
+    """
+
     def __init__(self, port, options):
+        # FIXME: we should minimize/eliminate usage of the port, https://bugs.webkit.org/show_bug.cgi?id=220421
         self._port = port
         self._options = options
         self._filesystem = self._port.host.filesystem
         self.LAYOUT_TESTS_DIRECTORY = 'LayoutTests'
+        self._w3c_resource_files = None
 
     def find_tests(self, options, args, device_type=None):
         paths = self._strip_test_dir_prefixes(args)
         if options and options.test_list:
             paths += self._strip_test_dir_prefixes(self._read_test_names_from_file(options.test_list, self._port.TEST_PATH_SEPARATOR))
-        test_files = self._port.tests(paths, device_type=device_type)
+        test_files = self.find_tests_by_path(paths, device_type=device_type)
         return (paths, test_files)
+
+    def find_tests_by_path(self, paths, device_type=None):
+        """Return the list of tests found. Both generic and platform-specific tests matching paths should be returned."""
+        expanded_paths = self._expanded_paths(paths, device_type=device_type)
+        return self._real_tests(expanded_paths)
+
+    def _expanded_paths(self, paths, device_type=None):
+        expanded_paths = []
+        fs = self._port._filesystem
+        all_platform_dirs = [path for path in fs.glob(fs.join(self._port.layout_tests_dir(), 'platform', '*')) if fs.isdir(path)]
+        for path in paths:
+            expanded_paths.append(path)
+            if self._port.test_isdir(path) and not path.startswith('platform') and not fs.isabs(path):
+                for platform_dir in all_platform_dirs:
+                    if fs.isdir(fs.join(platform_dir, path)) and platform_dir in self._port.baseline_search_path(device_type=device_type):
+                        expanded_paths.append(self._port.relative_test_filename(fs.join(platform_dir, path)))
+
+        return expanded_paths
+
+    def _real_tests(self, paths):
+        # When collecting test cases, skip these directories
+        skipped_directories = set(['.svn', '_svn', 'resources', 'support', 'script-tests', 'reference', 'reftest'])
+        files = find_files.find(self._port._filesystem, self._port.layout_tests_dir(), paths, skipped_directories, self._is_test_file, self._port.test_key)
+        return [self._port.relative_test_filename(f) for f in files]
+
+    def _is_test_file(self, filesystem, dirname, filename):
+        if not _has_supported_extension(filesystem, filename):
+            return False
+        if _is_reference_html_file(filesystem, dirname, filename):
+            return False
+        if self._is_w3c_resource_file(filesystem, dirname, filename):
+            return False
+        return True
+
+    def _is_w3c_resource_file(self, filesystem, dirname, filename):
+        path = filesystem.join(dirname, filename)
+        w3c_path = filesystem.join(self._port.layout_tests_dir(), "imported", "w3c")
+        if w3c_path not in path:
+            return False
+
+        if not self._w3c_resource_files:
+            filepath = filesystem.join(w3c_path, "resources", "resource-files.json")
+            json_data = filesystem.read_text_file(filepath)
+            self._w3c_resource_files = json.loads(json_data)
+
+        subpath = path[len(w3c_path) + 1:].replace('\\', '/')
+        if subpath in self._w3c_resource_files["files"]:
+            return True
+        for dirpath in self._w3c_resource_files["directories"]:
+            if dirpath in subpath:
+                return True
+        return False
 
     def find_touched_tests(self, new_or_modified_paths, apply_skip_expectations=True):
         potential_test_paths = []
@@ -66,7 +155,7 @@ class LayoutTestFinder(object):
         if not potential_test_paths:
             return None
 
-        tests = self._port.tests(list(set(potential_test_paths)))
+        tests = self.find_tests_by_path(list(set(potential_test_paths)))
         if not apply_skip_expectations:
             return tests
 

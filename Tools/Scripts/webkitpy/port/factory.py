@@ -116,7 +116,6 @@ class PortFactory(object):
         'jsc_only.JscOnlyPort',
         'mac.MacCatalystPort',
         'mac.MacPort',
-        'mock_drt.MockDRTPort',
         'test.TestPort',
         'win.FTWPort',
         'win.WinCairoPort',

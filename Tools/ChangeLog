@@ -1,3 +1,74 @@
+2021-01-07  Sam Sneddon  <gsnedders@apple.com>
+
+        LayoutTestFinder should be in charge of finding layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=220025
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder.py:
+        (_is_reference_html_file): Formerly Port.is_reference_html_file
+        (_has_supported_extension): Formerly Port._has_supported_extension
+        (LayoutTestFinder.__init__): Define self._w3c_resource_files
+        (LayoutTestFinder.find_tests): Change to call within the class
+        (LayoutTestFinder.find_tests_by_path): Formerly Port.tests
+        (LayoutTestFinder._expanded_paths): Formerly Port._expanded_paths
+        (LayoutTestFinder._real_tests): Formerly Port._real_tests
+        (LayoutTestFinder._is_test_file): Formerly Port._is_test_file
+        (LayoutTestFinder._is_w3c_resource_file): Formerly Port._is_w3c_resource_file
+        (LayoutTestFinder.find_touched_tests): Update for the above
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder_unittest.py:
+        (MockLayoutTestFinder):
+        (MockLayoutTestFinder._real_tests): Move this from the former MockPort.tests
+        (LayoutTestFinderTests.make_finder): Similar to the make_port in base_unittest.py
+        (LayoutTestFinderTests.touched_files): Adjust for MockLayoutTestFinder
+        (LayoutTestFinderTests):
+        (LayoutTestFinderTests.test_is_reference_html_file): Add test to check references are subset of tests
+        (LayoutTestFinderTests.test_find_no_paths_specified): Formerly PortTest.test_find_no_paths_specified
+        (LayoutTestFinderTests.test_find_one_test): Formerly PortTest.test_find_one_test
+        (LayoutTestFinderTests.test_find_glob): Formerly PortTest.test_find_glob
+        (LayoutTestFinderTests.test_find_with_skipped_directories): Formerly PortTest.test_find_with_skipped_directories
+        (LayoutTestFinderTests.test_find_with_skipped_directories_2): Formerly PortTest.test_find_with_skipped_directories_2
+        (LayoutTestFinderTests.test_is_test_file): Formerly PortTest.test_is_test_file
+        (LayoutTestFinderTests.test_is_w3c_resource_file): Formerly PortTest.test_is_w3c_resource_file
+        (test_touched_but_skipped_test): Adjust for MockLayoutTestFinder
+        (MockPort): Deleted.
+        (LayoutTestFinderTests.test_touched_test): Deleted.
+        (LayoutTestFinderTests.test_expected_touched_test): Deleted.
+        (LayoutTestFinderTests.test_platform_expected_touched_test): Deleted.
+        (LayoutTestFinderTests.test_platform_duplicate_touched_test): Deleted.
+        (LayoutTestFinderTests.test_touched_but_skipped_test): Deleted.
+        * Scripts/webkitpy/layout_tests/models/test_input.py:
+        (TestInput.__init__): Remove unused reference_files and should_run_pixel_tests
+        (TestInput.__repr__): Remove unused should_run_pixel_tests
+        * Scripts/webkitpy/port/base.py:
+        (Port.tests): Deleted.
+        (Port._expanded_paths): Deleted.
+        (Port._real_tests): Deleted.
+        (Port.is_w3c_resource_file): Deleted.
+        (Port.is_reference_html_file): Deleted.
+        (Port._has_supported_extension): Deleted.
+        (Port._is_test_file): Deleted.
+        * Scripts/webkitpy/port/base_unittest.py:
+        (PortTest.test_find_no_paths_specified): Deleted.
+        (PortTest.test_find_one_test): Deleted.
+        (PortTest.test_find_glob): Deleted.
+        (PortTest.test_find_with_skipped_directories): Deleted.
+        (PortTest.test_find_with_skipped_directories_2): Deleted.
+        (PortTest.test_is_test_file): Deleted.
+        (PortTest.test_is_reference_html_file): Deleted.
+        (PortTest.test_tests): Deleted.
+        (PortTest.test_is_w3c_resource_file): Deleted.
+        (test_jhbuild_wrapper): Deleted.
+        (test_ref_tests_platform_directory): Deleted.
+        (test_commits_for_upload): Deleted.
+        * Scripts/webkitpy/port/factory.py:
+        (PortFactory): Remove mock_drt
+        * Scripts/webkitpy/port/mock_drt.py: Removed.
+        * Scripts/webkitpy/port/mock_drt_unittest.py: Removed.
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (PrintExpectations.execute): Adjust for Port.tests moving to LayoutTestFinder
+        (PrintBaselines.execute): Adjust for Port._real_tests moving to LayoutTestFinder
+
 2021-01-07  Sihui Liu  <sihui_liu@appe.com>
 
         ASSERTION FAILED: !m_messageReceiverMapCount under WebKit::SpeechRecognitionServer::~SpeechRecognitionServer()

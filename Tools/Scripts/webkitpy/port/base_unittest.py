@@ -232,63 +232,6 @@ class PortTest(unittest.TestCase):
         port._filesystem = MockFileSystem({'/mock-checkout/LayoutTests/platform/foo/TestExpectations': ''})
         self.assertTrue(port.uses_test_expectations_file())
 
-    def test_find_no_paths_specified(self):
-        port = self.make_port(with_tests=True)
-        tests = port.tests([])
-        self.assertNotEqual(len(tests), 0)
-
-    def test_find_one_test(self):
-        port = self.make_port(with_tests=True)
-        tests = port.tests(['failures/expected/image.html'])
-        self.assertEqual(len(tests), 1)
-
-    def test_find_glob(self):
-        port = self.make_port(with_tests=True)
-        tests = port.tests(['failures/expected/im*'])
-        self.assertEqual(len(tests), 2)
-
-    def test_find_with_skipped_directories(self):
-        port = self.make_port(with_tests=True)
-        tests = port.tests(['userscripts'])
-        self.assertNotIn('userscripts/resources/iframe.html', tests)
-
-    def test_find_with_skipped_directories_2(self):
-        port = self.make_port(with_tests=True)
-        tests = port.tests(['userscripts/resources'])
-        self.assertEqual(tests, [])
-
-    def test_is_test_file(self):
-        port = self.make_port()
-        self.assertTrue(port._is_test_file(port.host.filesystem, '', 'foo.html'))
-        self.assertTrue(port._is_test_file(port.host.filesystem, '', 'foo.shtml'))
-        self.assertTrue(port._is_test_file(port.host.filesystem, '', 'foo.svg'))
-        self.assertTrue(port._is_test_file(port.host.filesystem, '', 'test-ref-test.html'))
-        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'foo.png'))
-        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'foo-expected.html'))
-        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'foo-expected.svg'))
-        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'foo-expected.xht'))
-        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'foo-expected-mismatch.html'))
-        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'foo-expected-mismatch.svg'))
-        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'foo-expected-mismatch.xhtml'))
-        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'foo-ref.html'))
-        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'foo-notref.html'))
-        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'foo-notref.xht'))
-        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'foo-ref.xhtml'))
-        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'ref-foo.html'))
-        self.assertFalse(port._is_test_file(port.host.filesystem, '', 'notref-foo.xhr'))
-
-    def test_is_reference_html_file(self):
-        filesystem = MockFileSystem()
-        self.assertTrue(Port.is_reference_html_file(filesystem, '', 'foo-expected.html'))
-        self.assertTrue(Port.is_reference_html_file(filesystem, '', 'foo-expected-mismatch.xml'))
-        self.assertTrue(Port.is_reference_html_file(filesystem, '', 'foo-ref.xhtml'))
-        self.assertTrue(Port.is_reference_html_file(filesystem, '', 'foo-notref.svg'))
-        self.assertFalse(Port.is_reference_html_file(filesystem, '', 'foo.html'))
-        self.assertFalse(Port.is_reference_html_file(filesystem, '', 'foo-expected.txt'))
-        self.assertFalse(Port.is_reference_html_file(filesystem, '', 'foo-expected.shtml'))
-        self.assertFalse(Port.is_reference_html_file(filesystem, '', 'foo-expected.php'))
-        self.assertFalse(Port.is_reference_html_file(filesystem, '', 'foo-expected.mht'))
-
     def test_reference_files(self):
         port = self.make_port(with_tests=True)
         self.assertEqual(port.reference_files('passes/svgreftest.svg'), [('==', port.layout_tests_dir() + '/passes/svgreftest-expected.svg')])
@@ -339,14 +282,6 @@ class PortTest(unittest.TestCase):
         self.assertFalse(port.test_isdir('passes/does_not_exist.html'))
         self.assertFalse(port.test_isdir('passes/does_not_exist/'))
 
-    def test_tests(self):
-        port = self.make_port(with_tests=True)
-        tests = port.tests([])
-        self.assertIn('passes/text.html', tests)
-
-        tests = port.tests(['passes'])
-        self.assertIn('passes/text.html', tests)
-
     def test_build_path(self):
         port = self.make_port(
             executive=MockExecutive2(output='/default-build-path/Debug'),
@@ -359,30 +294,6 @@ class PortTest(unittest.TestCase):
             options=optparse.Values({'build_directory': '/my-build-directory/'}),
         )
         self.assertEqual(port._build_path(), '/my-build-directory/Debug-embedded-port')
-
-    def test_is_w3c_resource_file(self):
-        port = self.make_port()
-        port.host.filesystem.write_text_file(port.layout_tests_dir() + "/imported/w3c/resources/resource-files.json", """
-{"directories": [
-"web-platform-tests/common",
-"web-platform-tests/dom/nodes/Document-createElement-namespace-tests",
-"web-platform-tests/fonts",
-"web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/source/support",
-"web-platform-tests/html/browsers/browsing-the-web/unloading-documents/support",
-"web-platform-tests/html/browsers/history/the-history-interface/non-automated",
-"web-platform-tests/html/browsers/history/the-location-interface/non-automated",
-"web-platform-tests/images",
-"web-platform-tests/service-workers",
-"web-platform-tests/tools"
-], "files": [
-"web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-block-defer-scripts-subframe.html",
-"web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-not-hang-scriptloader-subframe.html"
-]}""")
-        self.assertFalse(port.is_w3c_resource_file(port.host.filesystem, port.layout_tests_dir() + "/imported/w3", "resource_file.html"))
-        self.assertFalse(port.is_w3c_resource_file(port.host.filesystem, port.layout_tests_dir() + "/imported/w3c", "resource_file.html"))
-        self.assertFalse(port.is_w3c_resource_file(port.host.filesystem, port.layout_tests_dir() + "/imported/w3c/web-platform-tests/XMLHttpRequest", "xmlhttprequest-sync-block-defer-scripts-subframe.html.html"))
-        self.assertTrue(port.is_w3c_resource_file(port.host.filesystem, port.layout_tests_dir() + "/imported/w3c/web-platform-tests/XMLHttpRequest", "xmlhttprequest-sync-block-defer-scripts-subframe.html"))
-        self.assertTrue(port.is_w3c_resource_file(port.host.filesystem, port.layout_tests_dir() + "/imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace-tests", "test.html"))
 
     def test_jhbuild_wrapper(self):
         port = self.make_port(port_name='foo')
