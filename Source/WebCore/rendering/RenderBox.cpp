@@ -2499,14 +2499,9 @@ void RenderBox::computeLogicalWidthInFragment(LogicalExtentComputedValues& compu
     if (hasPerpendicularContainingBlock)
         containerWidthInInlineDirection = perpendicularContainingBlockLogicalHeight();
 
-    Optional<LayoutUnit> logicalHeight;
-    if (style().hasAspectRatio() && style().logicalWidth().isAuto() && (style().logicalHeight().isFixed() || style().logicalHeight().isPercentOrCalculated()))
-        logicalHeight = computeLogicalHeightUsing(MainOrPreferredSize, style().logicalHeight(), { });
-
     // Width calculations
-    if (logicalHeight) {
-        LayoutUnit logicalWidth = inlineSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), style().logicalAspectRatio(), style().boxSizing(), *logicalHeight);
-        computedValues.m_extent = constrainLogicalWidthInFragmentByMinMax(logicalWidth, containerWidthInInlineDirection, cb, fragment);
+    if (shouldComputeLogicalWidthFromAspectRatio() && style().logicalWidth().isAuto()) {
+        computedValues.m_extent = computeLogicalWidthFromAspectRatio(fragment);
     } else if (treatAsReplaced) {
         computedValues.m_extent = logicalWidthLength.value() + borderAndPaddingLogicalWidth();
     } else {
