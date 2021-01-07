@@ -1,3 +1,15 @@
+2021-01-07  Monson Shao  <holymonson@gmail.com>
+
+        [CMake] Add USE_APPLE_ICU option
+        https://bugs.webkit.org/show_bug.cgi?id=220081
+
+        Reviewed by Yusuke Suzuki.
+
+        Add USE_APPLE_ICU option to allow non-Mac ports (GTK or JSCOnly) on Darwin could build with
+        non-Apple ICU.
+
+        * CMakeLists.txt:
+
 2021-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Build failures with GTK4 3.99.5.1

@@ -1,3 +1,16 @@
+2021-01-07  Monson Shao  <holymonson@gmail.com>
+
+        [CMake] Add USE_APPLE_ICU option
+        https://bugs.webkit.org/show_bug.cgi?id=220081
+
+        Reviewed by Yusuke Suzuki.
+
+        Add USE_APPLE_ICU option to allow non-Mac ports (GTK or JSCOnly) on Darwin could build with
+        non-Apple ICU.
+
+        * Source/cmake/OptionsCommon.cmake:
+        * Source/cmake/WebKitFindPackage.cmake:
+
 2021-01-06  Alexey Proskuryakov  <ap@apple.com>
 
         Make svn status ignore Python 3 __pycache__ directories.

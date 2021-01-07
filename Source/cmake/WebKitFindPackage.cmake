@@ -6,7 +6,7 @@
 # nicer to work with.
 #
 # The purpose of this file is to make the behavior of find_package consistent
-# across ports and CMake versions. 
+# across ports and CMake versions.
 
 # CMake provided targets. Remove wrappers whenever the minimum version is bumped.
 #
@@ -86,7 +86,7 @@ macro(find_package package)
     endif ()
 
     # Apple builds have a unique location for ICU
-    if (APPLE AND "${package}" STREQUAL "ICU")
+    if (USE_APPLE_ICU AND "${package}" STREQUAL "ICU")
         set(_found_package ON)
 
         set(ICU_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/ICU/Headers)
@@ -98,6 +98,7 @@ macro(find_package package)
 
         set(ICU_LIBRARIES ${ICU_UC_LIBRARY})
         set(ICU_FOUND ON)
+        message(STATUS "Found ICU: ${ICU_LIBRARIES}")
     endif ()
 
     if (NOT _found_package)
