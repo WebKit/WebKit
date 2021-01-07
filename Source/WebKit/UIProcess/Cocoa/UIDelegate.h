@@ -31,6 +31,7 @@
 #import "APIUIClient.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/WeakPtr.h>
 
 @class _WKActivatedElementInfo;
 @class WKWebView;
@@ -47,7 +48,7 @@ class RegistrableDomain;
 
 namespace WebKit {
 
-class UIDelegate {
+class UIDelegate : public CanMakeWeakPtr<UIDelegate> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit UIDelegate(WKWebView *);
@@ -72,7 +73,7 @@ private:
         // API::ContextMenuClient
         void menuFromProposedMenu(WebPageProxy&, NSMenu *, const WebHitTestResultData&, API::Object*, CompletionHandler<void(RetainPtr<NSMenu>&&)>&&) override;
 
-        UIDelegate& m_uiDelegate;
+        WeakPtr<UIDelegate> m_uiDelegate;
     };
 #endif
 
@@ -131,7 +132,7 @@ private:
 #if ENABLE(DEVICE_ORIENTATION)
         void shouldAllowDeviceOrientationAndMotionAccess(WebKit::WebPageProxy&, WebFrameProxy&, FrameInfoData&&, CompletionHandler<void(bool)>&&) final;
 #endif
-        bool needsFontAttributes() const final { return m_uiDelegate.m_delegateMethods.webViewDidChangeFontAttributes; }
+        bool needsFontAttributes() const final { return m_uiDelegate ? m_uiDelegate->m_delegateMethods.webViewDidChangeFontAttributes : false; }
         void didChangeFontAttributes(const WebCore::FontAttributes&) final;
         void decidePolicyForUserMediaPermissionRequest(WebPageProxy&, WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, UserMediaPermissionRequestProxy&) final;
         void checkUserMediaPermissionForOrigin(WebPageProxy&, WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, UserMediaPermissionCheckProxy&) final;
@@ -163,10 +164,10 @@ private:
 #endif
         void decidePolicyForSpeechRecognitionPermissionRequest(WebPageProxy&, API::SecurityOrigin&, CompletionHandler<void(bool)>&&) final;
 
-        UIDelegate& m_uiDelegate;
+        WeakPtr<UIDelegate> m_uiDelegate;
     };
 
-    WKWebView *m_webView;
+    WeakObjCPtr<WKWebView> m_webView;
     WeakObjCPtr<id <WKUIDelegate> > m_delegate;
 
     struct {

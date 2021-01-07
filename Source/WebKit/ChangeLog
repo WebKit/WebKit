@@ -1,5 +1,140 @@
 2021-01-07  Alex Christensen  <achristensen@webkit.org>
 
+        Use smart pointers in UIDelegate and NavigationState
+        https://bugs.webkit.org/show_bug.cgi?id=220394
+        <rdar://problem/72496374>
+
+        Reviewed by Geoff Garen.
+
+        UIDelegate and NavigationState are owned by WKWebView, but the clients are owned by WebPageProxy,
+        which is independently reference counted and can have a different lifetime.
+        There should be no raw C++ references between the two, so use WeakPtr instead.
+        Also, use WeakObjCPtr<WKWebView> instead of a raw C++ WKWebView*
+
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationState):
+        (WebKit::NavigationState::~NavigationState):
+        (WebKit::NavigationState::navigationGestureDidBegin):
+        (WebKit::NavigationState::navigationGestureWillEnd):
+        (WebKit::NavigationState::navigationGestureDidEnd):
+        (WebKit::NavigationState::willRecordNavigationSnapshot):
+        (WebKit::NavigationState::navigationGestureSnapshotWasRemoved):
+        (WebKit::NavigationState::didRequestPasswordForQuickLookDocument):
+        (WebKit::NavigationState::didFirstPaint):
+        (WebKit::NavigationState::NavigationClient::NavigationClient):
+        (WebKit::NavigationState::NavigationClient::webGLLoadPolicy const):
+        (WebKit::NavigationState::NavigationClient::resolveWebGLLoadPolicy const):
+        (WebKit::NavigationState::NavigationClient::didChangeBackForwardList):
+        (WebKit::NavigationState::NavigationClient::willGoToBackForwardListItem):
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        (WebKit::NavigationState::NavigationClient::contentRuleListNotification):
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationResponse):
+        (WebKit::NavigationState::NavigationClient::didStartProvisionalNavigation):
+        (WebKit::NavigationState::NavigationClient::didStartProvisionalLoadForFrame):
+        (WebKit::NavigationState::NavigationClient::didReceiveServerRedirectForProvisionalNavigation):
+        (WebKit::NavigationState::NavigationClient::willPerformClientRedirect):
+        (WebKit::NavigationState::NavigationClient::didPerformClientRedirect):
+        (WebKit::NavigationState::NavigationClient::didCancelClientRedirect):
+        (WebKit::NavigationState::NavigationClient::didFailProvisionalNavigationWithError):
+        (WebKit::NavigationState::NavigationClient::didFailProvisionalLoadWithErrorForFrame):
+        (WebKit::NavigationState::NavigationClient::didCommitNavigation):
+        (WebKit::NavigationState::NavigationClient::didCommitLoadForFrame):
+        (WebKit::NavigationState::NavigationClient::didFinishDocumentLoad):
+        (WebKit::NavigationState::NavigationClient::didFinishNavigation):
+        (WebKit::NavigationState::NavigationClient::didFinishLoadForFrame):
+        (WebKit::NavigationState::NavigationClient::didFailNavigationWithError):
+        (WebKit::NavigationState::NavigationClient::didFailLoadWithErrorForFrame):
+        (WebKit::NavigationState::NavigationClient::didSameDocumentNavigation):
+        (WebKit::NavigationState::NavigationClient::renderingProgressDidChange):
+        (WebKit::NavigationState::NavigationClient::shouldBypassContentModeSafeguards const):
+        (WebKit::NavigationState::NavigationClient::didReceiveAuthenticationChallenge):
+        (WebKit::NavigationState::NavigationClient::shouldAllowLegacyTLS):
+        (WebKit::NavigationState::NavigationClient::didNegotiateModernTLS):
+        (WebKit::NavigationState::NavigationClient::processDidTerminate):
+        (WebKit::NavigationState::NavigationClient::processDidBecomeResponsive):
+        (WebKit::NavigationState::NavigationClient::processDidBecomeUnresponsive):
+        (WebKit::NavigationState::NavigationClient::webCryptoMasterKey):
+        (WebKit::NavigationState::NavigationClient::navigationActionDidBecomeDownload):
+        (WebKit::NavigationState::NavigationClient::navigationResponseDidBecomeDownload):
+        (WebKit::NavigationState::NavigationClient::contextMenuDidCreateDownload):
+        (WebKit::NavigationState::NavigationClient::didStartLoadForQuickLookDocumentInMainFrame):
+        (WebKit::NavigationState::NavigationClient::didFinishLoadForQuickLookDocumentInMainFrame):
+        (WebKit::NavigationState::NavigationClient::decidePolicyForSOAuthorizationLoad):
+        (WebKit::NavigationState::HistoryClient::HistoryClient):
+        (WebKit::NavigationState::HistoryClient::didNavigateWithNavigationData):
+        (WebKit::NavigationState::HistoryClient::didPerformClientRedirect):
+        (WebKit::NavigationState::HistoryClient::didPerformServerRedirect):
+        (WebKit::NavigationState::HistoryClient::didUpdateHistoryTitle):
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::ContextMenuClient::ContextMenuClient):
+        (WebKit::UIDelegate::ContextMenuClient::menuFromProposedMenu):
+        (WebKit::UIDelegate::UIClient::UIClient):
+        (WebKit::UIDelegate::UIClient::createNewPage):
+        (WebKit::UIDelegate::UIClient::runJavaScriptAlert):
+        (WebKit::UIDelegate::UIClient::runJavaScriptConfirm):
+        (WebKit::UIDelegate::UIClient::runJavaScriptPrompt):
+        (WebKit::UIDelegate::UIClient::requestStorageAccessConfirm):
+        (WebKit::UIDelegate::UIClient::decidePolicyForGeolocationPermissionRequest):
+        (WebKit::UIDelegate::UIClient::didResignInputElementStrongPasswordAppearance):
+        (WebKit::UIDelegate::UIClient::canRunBeforeUnloadConfirmPanel const):
+        (WebKit::UIDelegate::UIClient::runBeforeUnloadConfirmPanel):
+        (WebKit::UIDelegate::UIClient::exceededDatabaseQuota):
+        (WebKit::UIDelegate::UIClient::takeFocus):
+        (WebKit::UIDelegate::UIClient::handleAutoplayEvent):
+        (WebKit::UIDelegate::UIClient::canRunModal const):
+        (WebKit::UIDelegate::UIClient::runModal):
+        (WebKit::UIDelegate::UIClient::headerHeight):
+        (WebKit::UIDelegate::UIClient::footerHeight):
+        (WebKit::UIDelegate::UIClient::drawHeader):
+        (WebKit::UIDelegate::UIClient::drawFooter):
+        (WebKit::UIDelegate::UIClient::pageDidScroll):
+        (WebKit::UIDelegate::UIClient::focus):
+        (WebKit::UIDelegate::UIClient::unfocus):
+        (WebKit::UIDelegate::UIClient::unavailablePluginButtonClicked):
+        (WebKit::UIDelegate::UIClient::didExceedBackgroundResourceLimitWhileInForeground):
+        (WebKit::UIDelegate::UIClient::didNotHandleWheelEvent):
+        (WebKit::UIDelegate::UIClient::setIsResizable):
+        (WebKit::UIDelegate::UIClient::setWindowFrame):
+        (WebKit::UIDelegate::UIClient::windowFrame):
+        (WebKit::UIDelegate::UIClient::mouseDidMoveOverElement):
+        (WebKit::UIDelegate::UIClient::toolbarsAreVisible):
+        (WebKit::UIDelegate::UIClient::didClickAutoFillButton):
+        (WebKit::UIDelegate::UIClient::showPage):
+        (WebKit::UIDelegate::UIClient::saveDataToFileInDownloadsFolder):
+        (WebKit::UIDelegate::UIClient::decidePolicyForNotificationPermissionRequest):
+        (WebKit::UIDelegate::UIClient::configurationForLocalInspector):
+        (WebKit::UIDelegate::UIClient::didAttachLocalInspector):
+        (WebKit::UIDelegate::UIClient::willCloseLocalInspector):
+        (WebKit::UIDelegate::UIClient::runOpenPanel):
+        (WebKit::UIDelegate::UIClient::shouldAllowDeviceOrientationAndMotionAccess):
+        (WebKit::UIDelegate::UIClient::didChangeFontAttributes):
+        (WebKit::UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest):
+        (WebKit::UIDelegate::UIClient::checkUserMediaPermissionForOrigin):
+        (WebKit::UIDelegate::UIClient::mediaCaptureStateDidChange):
+        (WebKit::UIDelegate::UIClient::reachedApplicationCacheOriginQuota):
+        (WebKit::UIDelegate::UIClient::printFrame):
+        (WebKit::UIDelegate::UIClient::close):
+        (WebKit::UIDelegate::UIClient::fullscreenMayReturnToInline):
+        (WebKit::UIDelegate::UIClient::didEnterFullscreen):
+        (WebKit::UIDelegate::UIClient::didExitFullscreen):
+        (WebKit::UIDelegate::UIClient::shouldIncludeAppLinkActionsForElement):
+        (WebKit::UIDelegate::UIClient::actionsForElement):
+        (WebKit::UIDelegate::UIClient::didNotHandleTapAsClick):
+        (WebKit::UIDelegate::UIClient::presentingViewController):
+        (WebKit::UIDelegate::UIClient::dataDetectionContext):
+        (WebKit::UIDelegate::UIClient::requestPointerLock):
+        (WebKit::UIDelegate::UIClient::didLosePointerLock):
+        (WebKit::UIDelegate::UIClient::didShowSafeBrowsingWarning):
+        (WebKit::UIDelegate::UIClient::confirmPDFOpening):
+        (WebKit::UIDelegate::UIClient::runWebAuthenticationPanel):
+        (WebKit::UIDelegate::UIClient::hasVideoInPictureInPictureDidChange):
+        (WebKit::UIDelegate::UIClient::imageOrMediaDocumentSizeChanged):
+        (WebKit::UIDelegate::UIClient::decidePolicyForSpeechRecognitionPermissionRequest):
+
+2021-01-07  Alex Christensen  <achristensen@webkit.org>
+
         Assertion failure in WebPageProxy::stopURLSchemeTask,
         https://bugs.webkit.org/show_bug.cgi?id=220401
 

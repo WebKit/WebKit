@@ -36,6 +36,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/UniqueRef.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/WeakPtr.h>
 
 @class WKWebView;
 @protocol WKHistoryDelegatePrivate;
@@ -53,7 +54,7 @@ namespace WebKit {
 
 struct WebNavigationDataStore;
 
-class NavigationState final : private PageLoadState::Observer {
+class NavigationState final : private PageLoadState::Observer, public CanMakeWeakPtr<NavigationState> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit NavigationState(WKWebView *);
@@ -150,7 +151,7 @@ private:
         void decidePolicyForSOAuthorizationLoad(WebPageProxy&, SOAuthorizationLoadPolicy, const String&, CompletionHandler<void(SOAuthorizationLoadPolicy)>&&) override;
 #endif
 
-        NavigationState& m_navigationState;
+        WeakPtr<NavigationState> m_navigationState;
     };
     
     class HistoryClient final : public API::HistoryClient {
@@ -164,7 +165,7 @@ private:
         void didPerformServerRedirect(WebPageProxy&, const WTF::String&, const WTF::String&) override;
         void didUpdateHistoryTitle(WebPageProxy&, const WTF::String&, const WTF::String&) override;
         
-        NavigationState& m_navigationState;
+        WeakPtr<NavigationState> m_navigationState;
     };
 
     // PageLoadState::Observer
