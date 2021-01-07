@@ -36,6 +36,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/URLHelpers.h>
+#import <wtf/spi/cf/CFBundleSPI.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -118,17 +119,23 @@ static NSString* visibleDomain(const String& host)
 
 static NSString *alertMessageText(MediaPermissionReason reason, OptionSet<MediaPermissionType> types, const WebCore::SecurityOrigin& origin)
 {
-    if (origin.protocol() != "http" && origin.protocol() != "https")
-        return nil;
+    NSString *visibleOrigin;
+    if (origin.protocol() != "http" && origin.protocol() != "https") {
+        NSBundle *appBundle = [NSBundle mainBundle];
+        NSString *displayName = appBundle.infoDictionary[(__bridge NSString *)_kCFBundleDisplayNameKey];
+        NSString *readableName = appBundle.infoDictionary[(__bridge NSString *)kCFBundleNameKey];
+        visibleOrigin = displayName ?: readableName;
+    } else
+        visibleOrigin = visibleDomain(origin.host());
 
     switch (reason) {
     case MediaPermissionReason::UserMedia:
         if (types.contains(MediaPermissionType::Audio) && types.contains(MediaPermissionType::Video))
-            return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your camera and microphone?", @"Message for user media prompt"), visibleDomain(origin.host())];
+            return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your camera and microphone?", @"Message for user media prompt"), visibleOrigin];
         if (types.contains(MediaPermissionType::Audio))
-            return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your microphone?", @"Message for user microphone access prompt"), visibleDomain(origin.host())];
+            return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your microphone?", @"Message for user microphone access prompt"), visibleOrigin];
         if (types.contains(MediaPermissionType::Video))
-            return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your camera?", @"Message for user camera access prompt"), visibleDomain(origin.host())];
+            return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your camera?", @"Message for user camera access prompt"), visibleOrigin];
         return nil;
     case MediaPermissionReason::SpeechRecognition:
         return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to capture your audio and use it for speech recognition?", @"Message for spechrecognition prompt"), visibleDomain(origin.host())];
