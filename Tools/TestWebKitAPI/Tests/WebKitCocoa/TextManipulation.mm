@@ -924,6 +924,41 @@ TEST(TextManipulation, StartTextManipulationExtractsValuesFromTextInputs)
     EXPECT_WK_STREQ("Two", items[1].tokens[0].content);
 }
 
+TEST(TextManipulation, StartTextManipulationDoesNotExtractUserModifiedText)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><body><input id='one'><input id='two'></body>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_EQ([delegate items].count, 0UL);
+
+    Vector<RetainPtr<_WKTextManipulationItem>> items;
+    done = false;
+    [delegate setItemCallback:[&] (_WKTextManipulationItem *item) {
+        items.append(retainPtr(item));
+        done = true;
+    }];
+
+    [webView stringByEvaluatingJavaScript:@"document.getElementById('one').focus();"
+        "document.execCommand('InsertText', true, 'foo');"
+        "document.getElementById('two').value = 'bar';"];
+
+    Util::run(&done);
+
+    EXPECT_EQ(items.size(), 1U);
+
+    auto tokens = [items[0] tokens];
+    EXPECT_EQ(tokens.count, 1UL);
+    EXPECT_WK_STREQ("bar", tokens.firstObject.content);
+}
+
 TEST(TextManipulation, StartTextManipulationExtractsVisibleLineBreaksInTextAsExcludedTokens)
 {
     auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);

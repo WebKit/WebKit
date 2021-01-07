@@ -1,3 +1,18 @@
+2021-01-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Text fields should not be translated while typing
+        https://bugs.webkit.org/show_bug.cgi?id=220431
+        <rdar://problem/71724918>
+
+        Reviewed by Tim Horton.
+
+        Add an API test that modifies text in two input fields (by executing an edit command, and then by
+        programmatically setting the value attribute). The test verifies that only the latter (programmatic) value
+        change propagates a text manipulation update to the client layer.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2021-01-07  Jonathan Bedard  <JonWBedard@gmail.com>
 
         [webkitscmpy] Use .git/config to verify if repository is git-svn

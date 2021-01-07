@@ -605,6 +605,10 @@ void TextManipulationController::scheduleObservationUpdate()
         for (auto& node : nodesToObserve) {
             if (!node->isConnected())
                 continue;
+
+            if (auto host = makeRefPtr(node->shadowHost()); is<HTMLInputElement>(host.get()) && downcast<HTMLInputElement>(*host).lastChangeWasUserEdit())
+                continue;
+
             if (!commonAncestor)
                 commonAncestor = is<ContainerNode>(node.get()) ? node.ptr() : node->parentNode();
             else if (!node->isDescendantOf(commonAncestor.get()))
