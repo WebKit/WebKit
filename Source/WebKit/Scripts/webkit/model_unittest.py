@@ -59,7 +59,7 @@ messages -> WebPage {
         self.assertEquals(other_receiver.name, 'WebPage')
         self.assertEquals(other_receiver.messages[0].name, 'LoadURL')
         self.assertEquals(other_receiver.messages[1].name, 'LoadURL2')
-        errors = model.check_global_model([receiver, other_receiver])
+        errors = model.check_global_model_inputs([receiver, other_receiver])
         self.assertEquals(len(errors), 1)
         self.assertTrue("Duplicate" in errors[0])
 

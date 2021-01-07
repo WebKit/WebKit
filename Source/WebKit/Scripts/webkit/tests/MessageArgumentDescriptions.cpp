@@ -44,6 +44,7 @@
 #if ENABLE(TEST_FEATURE)
 #include "TestTwoStateEnum.h"
 #endif
+#include "TestWithIfMessageMessages.h"
 #include "TestWithLegacyReceiverMessages.h"
 #include "TestWithSuperclassMessages.h"
 #include "TestWithoutAttributesMessages.h"
@@ -206,6 +207,14 @@ Optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObject, Me
     case MessageName::TestWithoutAttributes_ExperimentalOperation:
         return jsValueForDecodedArguments<Messages::TestWithoutAttributes::ExperimentalOperation::Arguments>(globalObject, decoder);
 #endif
+#endif
+#if PLATFORM(COCOA)
+    case MessageName::TestWithIfMessage_LoadURL:
+        return jsValueForDecodedArguments<Messages::TestWithIfMessage::LoadURL::Arguments>(globalObject, decoder);
+#endif
+#if PLATFORM(GTK)
+    case MessageName::TestWithIfMessage_LoadURL:
+        return jsValueForDecodedArguments<Messages::TestWithIfMessage::LoadURL::Arguments>(globalObject, decoder);
 #endif
     default:
         break;
@@ -494,6 +503,19 @@ Optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageName na
             {"dummy", "IPC::DummyType", nullptr, false},
         };
 #endif
+#endif
+#if PLATFORM(COCOA)
+    case MessageName::TestWithIfMessage_LoadURL:
+        return Vector<ArgumentDescription> {
+            {"url", "String", nullptr, false},
+        };
+#endif
+#if PLATFORM(GTK)
+    case MessageName::TestWithIfMessage_LoadURL:
+        return Vector<ArgumentDescription> {
+            {"url", "String", nullptr, false},
+            {"value", "int64_t", nullptr, false},
+        };
 #endif
     default:
         break;

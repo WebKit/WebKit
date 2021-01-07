@@ -1,2 +1,2 @@
 all:
-	python ../../generate-message-receiver.py . TestWithSuperclass TestWithLegacyReceiver TestWithoutAttributes
+	python ../../generate-message-receiver.py . TestWithSuperclass TestWithLegacyReceiver TestWithoutAttributes TestWithIfMessage

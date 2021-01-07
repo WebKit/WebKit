@@ -30,6 +30,8 @@ namespace IPC {
 const char* description(MessageName name)
 {
     switch (name) {
+    case MessageName::TestWithIfMessage_LoadURL:
+        return "TestWithIfMessage_LoadURL";
     case MessageName::TestWithLegacyReceiver_AddEvent:
         return "TestWithLegacyReceiver_AddEvent";
     case MessageName::TestWithLegacyReceiver_Close:
@@ -78,20 +80,12 @@ const char* description(MessageName name)
         return "TestWithSuperclass_LoadURL";
     case MessageName::TestWithSuperclass_TestAsyncMessage:
         return "TestWithSuperclass_TestAsyncMessage";
-    case MessageName::TestWithSuperclass_TestAsyncMessageReply:
-        return "TestWithSuperclass_TestAsyncMessageReply";
     case MessageName::TestWithSuperclass_TestAsyncMessageWithConnection:
         return "TestWithSuperclass_TestAsyncMessageWithConnection";
-    case MessageName::TestWithSuperclass_TestAsyncMessageWithConnectionReply:
-        return "TestWithSuperclass_TestAsyncMessageWithConnectionReply";
     case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments:
         return "TestWithSuperclass_TestAsyncMessageWithMultipleArguments";
-    case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply:
-        return "TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply";
     case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments:
         return "TestWithSuperclass_TestAsyncMessageWithNoArguments";
-    case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply:
-        return "TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply";
     case MessageName::TestWithSuperclass_TestSyncMessage:
         return "TestWithSuperclass_TestSyncMessage";
     case MessageName::TestWithSuperclass_TestSynchronousMessage:
@@ -140,14 +134,22 @@ const char* description(MessageName name)
         return "TestWithoutAttributes_TestParameterAttributes";
     case MessageName::TestWithoutAttributes_TouchEvent:
         return "TestWithoutAttributes_TouchEvent";
-    case MessageName::WrappedAsyncMessageForTesting:
-        return "IPC::WrappedAsyncMessageForTesting";
-    case MessageName::SyncMessageReply:
-        return "IPC::SyncMessageReply";
     case MessageName::InitializeConnection:
-        return "IPC::InitializeConnection";
+        return "InitializeConnection";
     case MessageName::LegacySessionState:
-        return "IPC::LegacySessionState";
+        return "LegacySessionState";
+    case MessageName::SyncMessageReply:
+        return "SyncMessageReply";
+    case MessageName::WrappedAsyncMessageForTesting:
+        return "WrappedAsyncMessageForTesting";
+    case MessageName::TestWithSuperclass_TestAsyncMessageReply:
+        return "TestWithSuperclass_TestAsyncMessageReply";
+    case MessageName::TestWithSuperclass_TestAsyncMessageWithConnectionReply:
+        return "TestWithSuperclass_TestAsyncMessageWithConnectionReply";
+    case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply:
+        return "TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply";
+    case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply:
+        return "TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply";
     }
     ASSERT_NOT_REACHED();
     return "<invalid message name>";
@@ -156,14 +158,8 @@ const char* description(MessageName name)
 ReceiverName receiverName(MessageName messageName)
 {
     switch (messageName) {
-    case MessageName::TestWithSuperclass_LoadURL:
-    case MessageName::TestWithSuperclass_TestAsyncMessage:
-    case MessageName::TestWithSuperclass_TestAsyncMessageWithConnection:
-    case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments:
-    case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments:
-    case MessageName::TestWithSuperclass_TestSyncMessage:
-    case MessageName::TestWithSuperclass_TestSynchronousMessage:
-        return ReceiverName::TestWithSuperclass;
+    case MessageName::TestWithIfMessage_LoadURL:
+        return ReceiverName::TestWithIfMessage;
     case MessageName::TestWithLegacyReceiver_AddEvent:
     case MessageName::TestWithLegacyReceiver_Close:
     case MessageName::TestWithLegacyReceiver_CreatePlugin:
@@ -187,6 +183,14 @@ ReceiverName receiverName(MessageName messageName)
     case MessageName::TestWithLegacyReceiver_TestParameterAttributes:
     case MessageName::TestWithLegacyReceiver_TouchEvent:
         return ReceiverName::TestWithLegacyReceiver;
+    case MessageName::TestWithSuperclass_LoadURL:
+    case MessageName::TestWithSuperclass_TestAsyncMessage:
+    case MessageName::TestWithSuperclass_TestAsyncMessageWithConnection:
+    case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments:
+    case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments:
+    case MessageName::TestWithSuperclass_TestSyncMessage:
+    case MessageName::TestWithSuperclass_TestSynchronousMessage:
+        return ReceiverName::TestWithSuperclass;
     case MessageName::TestWithoutAttributes_AddEvent:
     case MessageName::TestWithoutAttributes_Close:
     case MessageName::TestWithoutAttributes_CreatePlugin:
@@ -210,16 +214,16 @@ ReceiverName receiverName(MessageName messageName)
     case MessageName::TestWithoutAttributes_TestParameterAttributes:
     case MessageName::TestWithoutAttributes_TouchEvent:
         return ReceiverName::TestWithoutAttributes;
+    case MessageName::InitializeConnection:
+    case MessageName::LegacySessionState:
+    case MessageName::SyncMessageReply:
+    case MessageName::WrappedAsyncMessageForTesting:
+        return ReceiverName::IPC;
     case MessageName::TestWithSuperclass_TestAsyncMessageReply:
     case MessageName::TestWithSuperclass_TestAsyncMessageWithConnectionReply:
     case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply:
     case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply:
         return ReceiverName::AsyncReply;
-    case MessageName::WrappedAsyncMessageForTesting:
-    case MessageName::SyncMessageReply:
-    case MessageName::InitializeConnection:
-    case MessageName::LegacySessionState:
-        return ReceiverName::IPC;
     }
     ASSERT_NOT_REACHED();
     return ReceiverName::Invalid;
@@ -227,164 +231,182 @@ ReceiverName receiverName(MessageName messageName)
 
 bool isValidMessageName(MessageName messageName)
 {
-    if (messageName == IPC::MessageName::TestWithSuperclass_LoadURL)
-        return true;
-#if ENABLE(TEST_FEATURE)
-    if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessage)
-        return true;
-    if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessageReply)
+#if PLATFORM(COCOA)
+    if (messageName == IPC::MessageName::TestWithIfMessage_LoadURL)
         return true;
 #endif
-#if ENABLE(TEST_FEATURE)
-    if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments)
-        return true;
-    if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply)
-        return true;
-#endif
-#if ENABLE(TEST_FEATURE)
-    if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments)
-        return true;
-    if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply)
-        return true;
-#endif
-#if ENABLE(TEST_FEATURE)
-    if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithConnection)
-        return true;
-    if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithConnectionReply)
-        return true;
-#endif
-    if (messageName == IPC::MessageName::TestWithSuperclass_TestSyncMessage)
-        return true;
-    if (messageName == IPC::MessageName::TestWithSuperclass_TestSynchronousMessage)
-        return true;
-    if (messageName == IPC::MessageName::TestWithLegacyReceiver_LoadURL)
-        return true;
-#if ENABLE(TOUCH_EVENTS)
-    if (messageName == IPC::MessageName::TestWithLegacyReceiver_LoadSomething)
-        return true;
-#endif
-#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
-    if (messageName == IPC::MessageName::TestWithLegacyReceiver_TouchEvent)
+#if PLATFORM(GTK)
+    if (messageName == IPC::MessageName::TestWithIfMessage_LoadURL)
         return true;
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
     if (messageName == IPC::MessageName::TestWithLegacyReceiver_AddEvent)
         return true;
 #endif
-#if ENABLE(TOUCH_EVENTS)
-    if (messageName == IPC::MessageName::TestWithLegacyReceiver_LoadSomethingElse)
+    if (messageName == IPC::MessageName::TestWithLegacyReceiver_Close)
+        return true;
+    if (messageName == IPC::MessageName::TestWithLegacyReceiver_CreatePlugin)
+        return true;
+#if ENABLE(DEPRECATED_FEATURE)
+    if (messageName == IPC::MessageName::TestWithLegacyReceiver_DeprecatedOperation)
+        return true;
+#endif
+#if PLATFORM(MAC)
+    if (messageName == IPC::MessageName::TestWithLegacyReceiver_DidCreateWebProcessConnection)
         return true;
 #endif
     if (messageName == IPC::MessageName::TestWithLegacyReceiver_DidReceivePolicyDecision)
         return true;
-    if (messageName == IPC::MessageName::TestWithLegacyReceiver_Close)
+#if ENABLE(EXPERIMENTAL_FEATURE)
+    if (messageName == IPC::MessageName::TestWithLegacyReceiver_ExperimentalOperation)
+        return true;
+#endif
+    if (messageName == IPC::MessageName::TestWithLegacyReceiver_GetPluginProcessConnection)
+        return true;
+    if (messageName == IPC::MessageName::TestWithLegacyReceiver_GetPlugins)
+        return true;
+#if PLATFORM(MAC)
+    if (messageName == IPC::MessageName::TestWithLegacyReceiver_InterpretKeyEvent)
+        return true;
+#endif
+#if ENABLE(TOUCH_EVENTS)
+    if (messageName == IPC::MessageName::TestWithLegacyReceiver_LoadSomething)
+        return true;
+#endif
+#if ENABLE(TOUCH_EVENTS)
+    if (messageName == IPC::MessageName::TestWithLegacyReceiver_LoadSomethingElse)
+        return true;
+#endif
+    if (messageName == IPC::MessageName::TestWithLegacyReceiver_LoadURL)
         return true;
     if (messageName == IPC::MessageName::TestWithLegacyReceiver_PreferencesDidChange)
+        return true;
+    if (messageName == IPC::MessageName::TestWithLegacyReceiver_RunJavaScriptAlert)
         return true;
     if (messageName == IPC::MessageName::TestWithLegacyReceiver_SendDoubleAndFloat)
         return true;
     if (messageName == IPC::MessageName::TestWithLegacyReceiver_SendInts)
         return true;
-    if (messageName == IPC::MessageName::TestWithLegacyReceiver_CreatePlugin)
+    if (messageName == IPC::MessageName::TestWithLegacyReceiver_SetVideoLayerID)
         return true;
-    if (messageName == IPC::MessageName::TestWithLegacyReceiver_RunJavaScriptAlert)
-        return true;
-    if (messageName == IPC::MessageName::TestWithLegacyReceiver_GetPlugins)
-        return true;
-    if (messageName == IPC::MessageName::TestWithLegacyReceiver_GetPluginProcessConnection)
+    if (messageName == IPC::MessageName::TestWithLegacyReceiver_TemplateTest)
         return true;
     if (messageName == IPC::MessageName::TestWithLegacyReceiver_TestMultipleAttributes)
         return true;
     if (messageName == IPC::MessageName::TestWithLegacyReceiver_TestParameterAttributes)
         return true;
-    if (messageName == IPC::MessageName::TestWithLegacyReceiver_TemplateTest)
-        return true;
-    if (messageName == IPC::MessageName::TestWithLegacyReceiver_SetVideoLayerID)
-        return true;
-#if PLATFORM(MAC)
-    if (messageName == IPC::MessageName::TestWithLegacyReceiver_DidCreateWebProcessConnection)
-        return true;
-#endif
-#if PLATFORM(MAC)
-    if (messageName == IPC::MessageName::TestWithLegacyReceiver_InterpretKeyEvent)
-        return true;
-#endif
-#if ENABLE(DEPRECATED_FEATURE)
-    if (messageName == IPC::MessageName::TestWithLegacyReceiver_DeprecatedOperation)
-        return true;
-#endif
-#if ENABLE(EXPERIMENTAL_FEATURE)
-    if (messageName == IPC::MessageName::TestWithLegacyReceiver_ExperimentalOperation)
-        return true;
-#endif
-    if (messageName == IPC::MessageName::TestWithoutAttributes_LoadURL)
-        return true;
-#if ENABLE(TOUCH_EVENTS)
-    if (messageName == IPC::MessageName::TestWithoutAttributes_LoadSomething)
-        return true;
-#endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
-    if (messageName == IPC::MessageName::TestWithoutAttributes_TouchEvent)
+    if (messageName == IPC::MessageName::TestWithLegacyReceiver_TouchEvent)
         return true;
 #endif
+    if (messageName == IPC::MessageName::TestWithSuperclass_LoadURL)
+        return true;
+#if ENABLE(TEST_FEATURE)
+    if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessage)
+        return true;
+#endif
+#if ENABLE(TEST_FEATURE)
+    if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithConnection)
+        return true;
+#endif
+#if ENABLE(TEST_FEATURE)
+    if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments)
+        return true;
+#endif
+#if ENABLE(TEST_FEATURE)
+    if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments)
+        return true;
+#endif
+    if (messageName == IPC::MessageName::TestWithSuperclass_TestSyncMessage)
+        return true;
+    if (messageName == IPC::MessageName::TestWithSuperclass_TestSynchronousMessage)
+        return true;
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
     if (messageName == IPC::MessageName::TestWithoutAttributes_AddEvent)
+        return true;
+#endif
+    if (messageName == IPC::MessageName::TestWithoutAttributes_Close)
+        return true;
+    if (messageName == IPC::MessageName::TestWithoutAttributes_CreatePlugin)
+        return true;
+#if ENABLE(DEPRECATED_FEATURE)
+    if (messageName == IPC::MessageName::TestWithoutAttributes_DeprecatedOperation)
+        return true;
+#endif
+#if PLATFORM(MAC)
+    if (messageName == IPC::MessageName::TestWithoutAttributes_DidCreateWebProcessConnection)
+        return true;
+#endif
+    if (messageName == IPC::MessageName::TestWithoutAttributes_DidReceivePolicyDecision)
+        return true;
+#if ENABLE(EXPERIMENTAL_FEATURE)
+    if (messageName == IPC::MessageName::TestWithoutAttributes_ExperimentalOperation)
+        return true;
+#endif
+    if (messageName == IPC::MessageName::TestWithoutAttributes_GetPluginProcessConnection)
+        return true;
+    if (messageName == IPC::MessageName::TestWithoutAttributes_GetPlugins)
+        return true;
+#if PLATFORM(MAC)
+    if (messageName == IPC::MessageName::TestWithoutAttributes_InterpretKeyEvent)
+        return true;
+#endif
+#if ENABLE(TOUCH_EVENTS)
+    if (messageName == IPC::MessageName::TestWithoutAttributes_LoadSomething)
         return true;
 #endif
 #if ENABLE(TOUCH_EVENTS)
     if (messageName == IPC::MessageName::TestWithoutAttributes_LoadSomethingElse)
         return true;
 #endif
-    if (messageName == IPC::MessageName::TestWithoutAttributes_DidReceivePolicyDecision)
-        return true;
-    if (messageName == IPC::MessageName::TestWithoutAttributes_Close)
+    if (messageName == IPC::MessageName::TestWithoutAttributes_LoadURL)
         return true;
     if (messageName == IPC::MessageName::TestWithoutAttributes_PreferencesDidChange)
+        return true;
+    if (messageName == IPC::MessageName::TestWithoutAttributes_RunJavaScriptAlert)
         return true;
     if (messageName == IPC::MessageName::TestWithoutAttributes_SendDoubleAndFloat)
         return true;
     if (messageName == IPC::MessageName::TestWithoutAttributes_SendInts)
         return true;
-    if (messageName == IPC::MessageName::TestWithoutAttributes_CreatePlugin)
+    if (messageName == IPC::MessageName::TestWithoutAttributes_SetVideoLayerID)
         return true;
-    if (messageName == IPC::MessageName::TestWithoutAttributes_RunJavaScriptAlert)
-        return true;
-    if (messageName == IPC::MessageName::TestWithoutAttributes_GetPlugins)
-        return true;
-    if (messageName == IPC::MessageName::TestWithoutAttributes_GetPluginProcessConnection)
+    if (messageName == IPC::MessageName::TestWithoutAttributes_TemplateTest)
         return true;
     if (messageName == IPC::MessageName::TestWithoutAttributes_TestMultipleAttributes)
         return true;
     if (messageName == IPC::MessageName::TestWithoutAttributes_TestParameterAttributes)
         return true;
-    if (messageName == IPC::MessageName::TestWithoutAttributes_TemplateTest)
-        return true;
-    if (messageName == IPC::MessageName::TestWithoutAttributes_SetVideoLayerID)
-        return true;
-#if PLATFORM(MAC)
-    if (messageName == IPC::MessageName::TestWithoutAttributes_DidCreateWebProcessConnection)
+#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
+    if (messageName == IPC::MessageName::TestWithoutAttributes_TouchEvent)
         return true;
 #endif
-#if PLATFORM(MAC)
-    if (messageName == IPC::MessageName::TestWithoutAttributes_InterpretKeyEvent)
+#if PLATFORM(COCOA)
+    if (messageName == IPC::MessageName::InitializeConnection)
         return true;
 #endif
-#if ENABLE(DEPRECATED_FEATURE)
-    if (messageName == IPC::MessageName::TestWithoutAttributes_DeprecatedOperation)
-        return true;
-#endif
-#if ENABLE(EXPERIMENTAL_FEATURE)
-    if (messageName == IPC::MessageName::TestWithoutAttributes_ExperimentalOperation)
-        return true;
-#endif
-    if (messageName == IPC::MessageName::WrappedAsyncMessageForTesting)
+    if (messageName == IPC::MessageName::LegacySessionState)
         return true;
     if (messageName == IPC::MessageName::SyncMessageReply)
         return true;
-    if (messageName == IPC::MessageName::InitializeConnection)
+    if (messageName == IPC::MessageName::WrappedAsyncMessageForTesting)
         return true;
-    if (messageName == IPC::MessageName::LegacySessionState)
+#if ENABLE(TEST_FEATURE)
+    if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessageReply)
         return true;
+#endif
+#if ENABLE(TEST_FEATURE)
+    if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithConnectionReply)
+        return true;
+#endif
+#if ENABLE(TEST_FEATURE)
+    if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply)
+        return true;
+#endif
+#if ENABLE(TEST_FEATURE)
+    if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply)
+        return true;
+#endif
     return false;
 };
 

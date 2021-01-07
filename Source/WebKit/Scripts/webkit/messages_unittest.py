@@ -30,345 +30,37 @@ import re
 import sys
 import unittest
 
-if sys.version_info > (3, 0):
-    from io import StringIO
-else:
-    from StringIO import StringIO
-
 module_directory = os.path.dirname(os.path.abspath(__file__))
 
 sys.path.append(os.path.abspath(os.path.join(module_directory, os.path.pardir)))
-from webkit import messages
-from webkit import parser
+from webkit import messages, model, parser  # noqa: E402
 
 tests_directory = os.path.join(module_directory, 'tests')
 
 reset_results = False
 
-with open(os.path.join(tests_directory, 'TestWithoutAttributes.messages.in')) as in_file:
-    _messages_file_contents = in_file.read()
-
-with open(os.path.join(tests_directory, 'TestWithLegacyReceiver.messages.in')) as in_file:
-    _legacy_messages_file_contents = in_file.read()
-
-with open(os.path.join(tests_directory, 'TestWithSuperclass.messages.in')) as in_file:
-    _superclass_messages_file_contents = in_file.read()
-
-_expected_receiver_header_file_name = 'TestWithoutAttributesMessages.h'
-_expected_legacy_receiver_header_file_name = 'TestWithLegacyReceiverMessages.h'
-_expected_superclass_receiver_header_file_name = 'TestWithSuperclassMessages.h'
-
-_expected_receiver_implementation_file_name = 'TestWithoutAttributesMessageReceiver.cpp'
-_expected_legacy_receiver_implementation_file_name = 'TestWithLegacyReceiverMessageReceiver.cpp'
-_expected_superclass_receiver_implementation_file_name = 'TestWithSuperclassMessageReceiver.cpp'
-
-_base_expected_results = {
-    'conditions': ('(ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))'),
-    'messages': (
-        {
-            'name': 'LoadURL',
-            'parameters': (
-                ('String', 'url'),
-            ),
-            'conditions': (None),
-        },
-        {
-            'name': 'LoadSomething',
-            'parameters': (
-                ('String', 'url'),
-            ),
-            'conditions': ('ENABLE(TOUCH_EVENTS)'),
-        },
-        {
-            'name': 'TouchEvent',
-            'parameters': (
-                ('WebKit::WebTouchEvent', 'event'),
-            ),
-            'conditions': ('(ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))'),
-        },
-        {
-            'name': 'AddEvent',
-            'parameters': (
-                ('WebKit::WebTouchEvent', 'event'),
-            ),
-            'conditions': ('(ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))'),
-        },
-        {
-            'name': 'LoadSomethingElse',
-            'parameters': (
-                ('String', 'url'),
-            ),
-            'conditions': ('ENABLE(TOUCH_EVENTS)'),
-        },
-        {
-            'name': 'DidReceivePolicyDecision',
-            'parameters': (
-                ('uint64_t', 'frameID'),
-                ('uint64_t', 'listenerID'),
-                ('uint32_t', 'policyAction'),
-            ),
-            'conditions': (None),
-        },
-        {
-            'name': 'Close',
-            'parameters': (),
-            'conditions': (None),
-        },
-        {
-            'name': 'PreferencesDidChange',
-            'parameters': (
-                ('WebKit::WebPreferencesStore', 'store'),
-            ),
-            'conditions': (None),
-        },
-        {
-            'name': 'SendDoubleAndFloat',
-            'parameters': (
-                ('double', 'd'),
-                ('float', 'f'),
-            ),
-            'conditions': (None),
-        },
-        {
-            'name': 'SendInts',
-            'parameters': (
-                ('Vector<uint64_t>', 'ints'),
-                ('Vector<Vector<uint64_t>>', 'intVectors')
-            ),
-            'conditions': (None),
-        },
-        {
-            'name': 'CreatePlugin',
-            'parameters': (
-                ('uint64_t', 'pluginInstanceID'),
-                ('WebKit::Plugin::Parameters', 'parameters')
-            ),
-            'reply_parameters': (
-                ('bool', 'result'),
-            ),
-            'conditions': (None),
-        },
-        {
-            'name': 'RunJavaScriptAlert',
-            'parameters': (
-                ('uint64_t', 'frameID'),
-                ('String', 'message')
-            ),
-            'reply_parameters': (),
-            'conditions': (None),
-        },
-        {
-            'name': 'GetPlugins',
-            'parameters': (
-                ('bool', 'refresh'),
-            ),
-            'reply_parameters': (
-                ('Vector<WebCore::PluginInfo>', 'plugins'),
-            ),
-            'conditions': (None),
-        },
-        {
-            'name': 'GetPluginProcessConnection',
-            'parameters': (
-                ('String', 'pluginPath'),
-            ),
-            'reply_parameters': (
-                ('IPC::Connection::Handle', 'connectionHandle'),
-            ),
-            'conditions': (None),
-        },
-        {
-            'name': 'TestMultipleAttributes',
-            'parameters': (
-            ),
-            'reply_parameters': (
-            ),
-            'conditions': (None),
-        },
-        {
-            'name': 'TestParameterAttributes',
-            'parameters': (
-                ('uint64_t', 'foo', ('AttributeOne', 'AttributeTwo')),
-                ('double', 'bar'),
-                ('double', 'baz', ('AttributeThree',)),
-            ),
-            'conditions': (None),
-        },
-        {
-            'name': 'TemplateTest',
-            'parameters': (
-                ('HashMap<String, std::pair<String, uint64_t>>', 'a'),
-            ),
-            'conditions': (None),
-        },
-        {
-            'name': 'SetVideoLayerID',
-            'parameters': (
-                ('WebCore::GraphicsLayer::PlatformLayerID', 'videoLayerID'),
-            ),
-            'conditions': (None),
-        },
-        {
-            'name': 'DidCreateWebProcessConnection',
-            'parameters': (
-                ('IPC::MachPort', 'connectionIdentifier'),
-                ('OptionSet<WebKit::SelectionFlags>', 'flags'),
-            ),
-            'conditions': ('PLATFORM(MAC)'),
-        },
-        {
-            'name': 'InterpretKeyEvent',
-            'parameters': (
-                ('uint32_t', 'type'),
-            ),
-            'reply_parameters': (
-                ('Vector<WebCore::KeypressCommand>', 'commandName'),
-            ),
-            'conditions': ('PLATFORM(MAC)'),
-        },
-        {
-            'name': 'DeprecatedOperation',
-            'parameters': (
-                ('IPC::DummyType', 'dummy'),
-            ),
-            'conditions': ('ENABLE(DEPRECATED_FEATURE)'),
-        },
-        {
-            'name': 'ExperimentalOperation',
-            'parameters': (
-                ('IPC::DummyType', 'dummy'),
-            ),
-            'conditions': ('ENABLE(EXPERIMENTAL_FEATURE)'),
-        }
-    ),
-}
-
-_expected_results = dict(_base_expected_results, name='TestWithoutAttributes')
-
-_expected_legacy_results = dict(_base_expected_results, name='TestWithLegacyReceiver')
-
-_expected_superclass_results = {
-    'name': 'TestWithSuperclass',
-    'superclass': 'WebPageBase',
-    'conditions': None,
-    'messages': (
-        {
-            'name': 'LoadURL',
-            'parameters': (
-                ('String', 'url'),
-            ),
-            'conditions': (None),
-        },
-        {
-            'name': 'TestAsyncMessage',
-            'parameters': (
-                ('WebKit::TestTwoStateEnum', 'twoStateEnum'),
-            ),
-            'reply_parameters': (
-                ('uint64_t', 'result'),
-            ),
-            'conditions': ('ENABLE(TEST_FEATURE)'),
-        },
-        {
-            'name': 'TestAsyncMessageWithNoArguments',
-            'parameters': (),
-            'reply_parameters': (),
-            'conditions': ('ENABLE(TEST_FEATURE)'),
-        },
-        {
-            'name': 'TestAsyncMessageWithMultipleArguments',
-            'parameters': (),
-            'reply_parameters': (
-                ('bool', 'flag'),
-                ('uint64_t', 'value'),
-            ),
-            'conditions': ('ENABLE(TEST_FEATURE)'),
-        },
-        {
-            'name': 'TestAsyncMessageWithConnection',
-            'parameters': (
-                ('int', 'value'),
-            ),
-            'reply_parameters': (
-                ('bool', 'flag'),
-            ),
-            'conditions': ('ENABLE(TEST_FEATURE)'),
-        },
-        {
-            'name': 'TestSyncMessage',
-            'parameters': (
-                ('uint32_t', 'param'),
-            ),
-            'reply_parameters': (
-                ('uint8_t', 'reply'),
-            ),
-            'conditions': (None),
-        },
-        {
-            'name': 'TestSynchronousMessage',
-            'parameters': (
-                ('bool', 'value'),
-            ),
-            'reply_parameters': (
-                ('Optional<WebKit::TestClassName>', 'optionalReply'),
-            ),
-            'conditions': (None),
-        },
-    ),
-}
+_test_receiver_names = ['TestWithSuperclass', 'TestWithLegacyReceiver', 'TestWithoutAttributes', 'TestWithIfMessage']
 
 
-class MessagesTest(unittest.TestCase):
-    def setUp(self):
-        self.receiver = parser.parse(StringIO(_messages_file_contents))
-        self.legacy_receiver = parser.parse(StringIO(_legacy_messages_file_contents))
-        self.superclass_receiver = parser.parse(StringIO(_superclass_messages_file_contents))
+def receiver_header_file_name(receiver_name):
+    return '%sMessages.h' % receiver_name
 
 
-class ParsingTest(MessagesTest):
-    def check_message(self, message, expected_message):
-        self.assertEquals(message.name, expected_message['name'])
-        self.assertEquals(len(message.parameters), len(expected_message['parameters']))
-        for index, parameter in enumerate(message.parameters):
-            expected_parameter = expected_message['parameters'][index]
-            self.assertEquals(parameter.type, expected_parameter[0])
-            self.assertEquals(parameter.name, expected_parameter[1])
-            if len(expected_parameter) > 2:
-                self.assertEquals(parameter.attributes, frozenset(expected_parameter[2]))
-                for attribute in expected_parameter[2]:
-                    self.assertTrue(parameter.has_attribute(attribute))
-            else:
-                self.assertEquals(parameter.attributes, frozenset())
-        if message.reply_parameters is not None:
-            for index, parameter in enumerate(message.reply_parameters):
-                self.assertEquals(parameter.type, expected_message['reply_parameters'][index][0])
-                self.assertEquals(parameter.name, expected_message['reply_parameters'][index][1])
-        else:
-            self.assertFalse('reply_parameters' in expected_message)
-        self.assertEquals(message.condition, expected_message['conditions'])
+def receiver_implementation_file_name(receiver_name):
+    return '%sMessageReceiver.cpp' % receiver_name
 
-    def test_receiver(self):
-        """Receiver should be parsed as expected"""
-        self.assertEquals(self.receiver.name, _expected_results['name'])
-        self.assertEquals(self.receiver.condition, _expected_results['conditions'])
-        self.assertEquals(len(self.receiver.messages), len(_expected_results['messages']))
-        for index, message in enumerate(self.receiver.messages):
-            self.check_message(message, _expected_results['messages'][index])
 
-        self.assertEquals(self.legacy_receiver.name, _expected_legacy_results['name'])
-        self.assertEquals(self.legacy_receiver.condition, _expected_legacy_results['conditions'])
-        self.assertEquals(len(self.legacy_receiver.messages), len(_expected_legacy_results['messages']))
-        for index, message in enumerate(self.legacy_receiver.messages):
-            self.check_message(message, _expected_legacy_results['messages'][index])
-
-        self.assertEquals(self.superclass_receiver.name, _expected_superclass_results['name'])
-        self.assertEquals(self.superclass_receiver.superclass, _expected_superclass_results['superclass'])
-        self.assertEquals(len(self.superclass_receiver.messages), len(_expected_superclass_results['messages']))
-        for index, message in enumerate(self.superclass_receiver.messages):
-            self.check_message(message, _expected_superclass_results['messages'][index])
+def parse_receiver(receiver_name):
+    with open(os.path.join(tests_directory, '{}.messages.in'.format(receiver_name))) as in_file:
+        return parser.parse(in_file)
+    assert(False)
 
 
 class GeneratedFileContentsTest(unittest.TestCase):
+    def setUp(self):
+        self.test_receivers = [parse_receiver(receiver_name) for receiver_name in _test_receiver_names]
+        self.receivers = model.generate_global_model(self.test_receivers)
+
     def assertGeneratedFileContentsEqual(self, actual_file_contents, expected_file_name):
         try:
             if reset_results:
@@ -385,48 +77,27 @@ class GeneratedFileContentsTest(unittest.TestCase):
                 self.assertEquals(actual_line, expected_line_list[index])
 
             self.assertEquals(len(actual_line_list), len(expected_line_list))
-        except:
+        except Exception:
             sys.stderr.write('In expected file %s\n' % expected_file_name)
             raise
 
-    def assertHeaderEqual(self, input_messages_file_contents, expected_file_name):
-        actual_file_contents = messages.generate_messages_header(parser.parse(StringIO(input_messages_file_contents)))
-        self.assertGeneratedFileContentsEqual(actual_file_contents, expected_file_name)
+    def test_receiver(self):
+        for receiver_name, receiver in zip(_test_receiver_names, self.test_receivers):
+            header_contents = messages.generate_messages_header(receiver)
+            self.assertGeneratedFileContentsEqual(header_contents, os.path.join(tests_directory, '{}Messages.h'.format(receiver_name)))
+            implementation_contents = messages.generate_message_handler(receiver)
+            self.assertGeneratedFileContentsEqual(implementation_contents, os.path.join(tests_directory, '{}MessageReceiver.cpp'.format(receiver_name)))
 
-    def assertImplementationEqual(self, input_messages_file_contents, expected_file_name):
-        actual_file_contents = messages.generate_message_handler(parser.parse(StringIO(input_messages_file_contents)))
-        self.assertGeneratedFileContentsEqual(actual_file_contents, expected_file_name)
+    def test_message_names(self):
+        header_contents = messages.generate_message_names_header(self.receivers)
+        self.assertGeneratedFileContentsEqual(header_contents, os.path.join(tests_directory, 'MessageNames.h'))
+        implementation_contents = messages.generate_message_names_implementation(self.receivers)
+        self.assertGeneratedFileContentsEqual(implementation_contents, os.path.join(tests_directory, 'MessageNames.cpp'))
 
-
-class HeaderTest(GeneratedFileContentsTest):
-    def test_receiver_headers(self):
-        self.assertHeaderEqual(_messages_file_contents,
-                               _expected_receiver_header_file_name)
-        self.assertHeaderEqual(_legacy_messages_file_contents,
-                               _expected_legacy_receiver_header_file_name)
-        self.assertHeaderEqual(_superclass_messages_file_contents,
-                               _expected_superclass_receiver_header_file_name)
-
-
-class ReceiverImplementationTest(GeneratedFileContentsTest):
-    def test_receiver_implementations(self):
-        self.assertImplementationEqual(_messages_file_contents,
-                                       _expected_receiver_implementation_file_name)
-        self.assertImplementationEqual(_legacy_messages_file_contents,
-                                       _expected_legacy_receiver_implementation_file_name)
-        self.assertImplementationEqual(_superclass_messages_file_contents,
-                                       _expected_superclass_receiver_implementation_file_name)
-
-
-class UnsupportedPrecompilerDirectiveTest(unittest.TestCase):
-    def test_error_at_else(self):
-        with self.assertRaisesRegexp(Exception, r"ERROR: '#else.*' is not supported in the \*\.in files"):
-            messages.generate_message_handler(parser.parse(StringIO("asd\n#else bla\nfoo")))
-
-    def test_error_at_elif(self):
-        with self.assertRaisesRegexp(Exception, r"ERROR: '#elif.*' is not supported in the \*\.in files"):
-            messages.generate_message_handler(parser.parse(StringIO("asd\n#elif bla\nfoo")))
-
+    def test_message_argument_description(self):
+        receiver_header_files = ['{}Messages.h'.format(receiver.name) for receiver in self.receivers]
+        implementation_contents = messages.generate_message_argument_description_implementation(self.receivers, receiver_header_files)
+        self.assertGeneratedFileContentsEqual(implementation_contents, os.path.join(tests_directory, 'MessageArgumentDescriptions.cpp'))
 
 def add_reset_results_to_unittest_help():
     script_name = os.path.basename(__file__)

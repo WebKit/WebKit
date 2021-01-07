@@ -24,6 +24,9 @@ import itertools
 
 from collections import Counter
 
+BUILTIN_ATTRIBUTE = "Builtin"
+ASYNC_ATTRIBUTE = "Async"
+
 class MessageReceiver(object):
     def __init__(self, name, superclass, attributes, messages, condition):
         self.name = name
@@ -64,7 +67,15 @@ class Parameter(object):
         return attribute in self.attributes
 
 
-def check_global_model(receivers):
+ipc_receiver = MessageReceiver(name="IPC", superclass=None, attributes=[BUILTIN_ATTRIBUTE], messages=[
+    Message('WrappedAsyncMessageForTesting', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
+    Message('SyncMessageReply', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
+    Message('InitializeConnection', [], [], attributes=[BUILTIN_ATTRIBUTE], condition="PLATFORM(COCOA)"),
+    Message('LegacySessionState', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None)
+], condition=None)
+
+
+def check_global_model_inputs(receivers):
     errors = []
     receiver_counts = Counter([r.name for r in receivers])
     receiver_duplicates = [n for n, c in receiver_counts.items() if c > 1]
@@ -72,3 +83,13 @@ def check_global_model(receivers):
         errors.append('Duplicate message receiver names: %s' % (', '.join(receiver_duplicates)))
 
     return errors
+
+
+def generate_global_model(receivers):
+    async_reply_messages = []
+    for receiver in receivers:
+        for message in receiver.messages:
+            if message.has_attribute(ASYNC_ATTRIBUTE):
+                async_reply_messages.append(Message(name='%s_%sReply' % (receiver.name, message.name), parameters=message.reply_parameters, reply_parameters=[], attributes=None, condition=message.condition))
+    async_reply_receiver = MessageReceiver(name='AsyncReply', superclass='None', attributes=[BUILTIN_ATTRIBUTE], messages=async_reply_messages, condition=None)
+    return [ipc_receiver, async_reply_receiver] + receivers

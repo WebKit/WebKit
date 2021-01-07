@@ -54,13 +54,17 @@ def main(argv):
             sys.stderr.write("Error: %s defined in file %s/%s.messages.in instead of %s.messages.in\n" % (receiver.name, base_dir, parameter, receiver.name))
             sys.exit(1)
 
-    errors = webkit.model.check_global_model(receivers)
+    errors = webkit.model.check_global_model_inputs(receivers)
     if errors:
         for e in errors:
             sys.stderr.write("Error: %s\n" % e)
         sys.exit(1)
 
+    receivers = webkit.model.generate_global_model(receivers)
+
     for receiver in receivers:
+        if receiver.has_attribute(webkit.model.BUILTIN_ATTRIBUTE):
+            continue
         with open('%sMessageReceiver.cpp' % receiver.name, "w+") as implementation_output:
             implementation_output.write(webkit.messages.generate_message_handler(receiver))
 

@@ -29,16 +29,18 @@
 namespace IPC {
 
 enum class ReceiverName : uint8_t {
-    TestWithSuperclass = 1
+    TestWithIfMessage = 1
     , TestWithLegacyReceiver = 2
-    , TestWithoutAttributes = 3
-    , IPC = 4
-    , AsyncReply = 5
-    , Invalid = 6
+    , TestWithSuperclass = 3
+    , TestWithoutAttributes = 4
+    , IPC = 5
+    , AsyncReply = 6
+    , Invalid = 7
 };
 
 enum class MessageName : uint16_t {
-    TestWithLegacyReceiver_AddEvent
+    TestWithIfMessage_LoadURL
+    , TestWithLegacyReceiver_AddEvent
     , TestWithLegacyReceiver_Close
     , TestWithLegacyReceiver_CreatePlugin
     , TestWithLegacyReceiver_DeprecatedOperation
@@ -62,13 +64,9 @@ enum class MessageName : uint16_t {
     , TestWithLegacyReceiver_TouchEvent
     , TestWithSuperclass_LoadURL
     , TestWithSuperclass_TestAsyncMessage
-    , TestWithSuperclass_TestAsyncMessageReply
     , TestWithSuperclass_TestAsyncMessageWithConnection
-    , TestWithSuperclass_TestAsyncMessageWithConnectionReply
     , TestWithSuperclass_TestAsyncMessageWithMultipleArguments
-    , TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply
     , TestWithSuperclass_TestAsyncMessageWithNoArguments
-    , TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply
     , TestWithSuperclass_TestSyncMessage
     , TestWithSuperclass_TestSynchronousMessage
     , TestWithoutAttributes_AddEvent
@@ -93,11 +91,15 @@ enum class MessageName : uint16_t {
     , TestWithoutAttributes_TestMultipleAttributes
     , TestWithoutAttributes_TestParameterAttributes
     , TestWithoutAttributes_TouchEvent
-    , WrappedAsyncMessageForTesting
-    , SyncMessageReply
     , InitializeConnection
     , LegacySessionState
-    , Last = LegacySessionState
+    , SyncMessageReply
+    , WrappedAsyncMessageForTesting
+    , TestWithSuperclass_TestAsyncMessageReply
+    , TestWithSuperclass_TestAsyncMessageWithConnectionReply
+    , TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply
+    , TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply
+    , Last = TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply
 };
 
 ReceiverName receiverName(MessageName);

@@ -1,3 +1,44 @@
+2021-01-07  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebKit IPC builtin messages should be part of the model
+        https://bugs.webkit.org/show_bug.cgi?id=220318
+
+        Reviewed by Chris Dumez.
+
+        Add IPC and AsyncReply message receivers to the IPC model
+        so that their messages can be part of the generator dynamic logic instead of
+        being part of the static textual templates.
+        
+        IPC receiver is a built-in message receiver that has few async messages.
+
+        AsyncReply receiver is a built-in message receiver that has one async message
+        for each message declared as 'Async' in any receiver.
+
+        This helps to refine features such as "is message asynchronous" more easily.
+
+        Adds new test case TestWithIfMessage to check a case that went wrong when
+        making the change.
+
+        Moves parsing tests to parser_unittest.py so that TestWithIfMessage does not
+        need to be added to the parsing tests. The said test is not intended to exercises
+        anything particular in the parsing.
+
+        Adds test logic for asserting MessageNames.{h,cpp} and MessageArgumentDescriptions.cpp
+        are as expected.
+
+        * Scripts/generate-message-receiver.py:
+        (main):
+        * Scripts/webkit/messages.py:
+        * Scripts/webkit/model.py:
+        (check_global_model_inputs):
+        (generate_global_model):
+        * Scripts/webkit/model_unittest.py:
+        * Scripts/webkit/tests/MessageNames.cpp:
+        (IPC::description):
+        (IPC::receiverName):
+        (IPC::isValidMessageName):
+        * Scripts/webkit/tests/MessageNames.h:
+
 2021-01-07  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r270425) [GTK] wheel scrolling stopped working

@@ -25,6 +25,7 @@ import re
 import sys
 
 from webkit import parser
+from webkit.model import BUILTIN_ATTRIBUTE, ASYNC_ATTRIBUTE
 
 _license_header = """/*
  * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
@@ -58,7 +59,51 @@ WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE = 'WantsAsyncDispatchMessage'
 LEGACY_RECEIVER_ATTRIBUTE = 'LegacyReceiver'
 NOT_REFCOUNTED_RECEIVER_ATTRIBUTE = 'NotRefCounted'
 SYNCHRONOUS_ATTRIBUTE = 'Synchronous'
-ASYNC_ATTRIBUTE = 'Async'
+
+
+def receiver_enumerator_order_key(receiver_name):
+    if receiver_name == 'IPC':
+        return 1
+    elif receiver_name == 'AsyncReply':
+        return 2
+    return 0
+
+
+class MessageEnumerator(object):
+
+    def __init__(self, receiver, messages):
+        self.receiver = receiver
+        self.messages = messages
+
+    def __str__(self):
+        if self.messages[0].has_attribute(BUILTIN_ATTRIBUTE):
+            return self.messages[0].name
+        if self.receiver.name == 'AsyncReply':
+            return self.messages[0].name
+        return '%s_%s' % (self.receiver.name, self.messages[0].name)
+
+    @classmethod
+    def sort_key(cls, obj):
+        return receiver_enumerator_order_key(obj.receiver.name), str(obj)
+
+
+def get_message_enumerators(receivers):
+    enumerators = []
+    for receiver in receivers:
+        receiver_enumerators = {}
+        for message in receiver.messages:
+            if message.name not in receiver_enumerators:
+                receiver_enumerators[message.name] = MessageEnumerator(receiver, messages=[message])
+            else:
+                receiver_enumerators[message.name].messages.append(message)
+        enumerators += receiver_enumerators.values()
+    assert(len(enumerators) == len(set(enumerators)))
+    return sorted(enumerators, key=MessageEnumerator.sort_key)
+
+
+def get_receiver_enumerators(receivers):
+    return sorted((r.name for r in receivers), key=lambda n: (receiver_enumerator_order_key(n), n))
+
 
 def messages_header_filename(receiver):
     return '%sMessages.h' % receiver.name
@@ -911,45 +956,19 @@ def generate_message_names_header(receivers):
     result.append('namespace IPC {\n')
     result.append('\n')
     result.append('enum class ReceiverName : uint8_t {')
-
-    enum_value = 1
-    first_receiver = True
-    for receiver in receivers:
-        result.append('\n')
-        result.append('    ')
-        if not first_receiver:
-            result.append(', ')
-        first_receiver = False
-        result.append('%s = %d' % (receiver.name, enum_value))
-        enum_value = enum_value + 1
-    result.append('\n    , IPC = %d' % enum_value)
-    enum_value = enum_value + 1
-    result.append('\n    , AsyncReply = %d' % enum_value)
-    enum_value = enum_value + 1
-    result.append('\n    , Invalid = %d' % enum_value)
+    result.append('\n    ')
+    enums = ['%s = %d' % (e, v) for v, e in enumerate(get_receiver_enumerators(receivers), 1)]
+    result.append('\n    , '.join(enums))
+    result.append('\n    , Invalid = %d' % (len(enums) + 1))
     result.append('\n};\n')
     result.append('\n')
+
+    message_enumerators = get_message_enumerators(receivers)
+
     result.append('enum class MessageName : uint16_t {')
-
-    enum_values = set()
-    for receiver in receivers:
-        for message in receiver.messages:
-            enum_values.add('%s_%s' % (receiver.name, message.name))
-            if message.has_attribute(ASYNC_ATTRIBUTE):
-                enum_values.add('%s_%sReply' % (receiver.name, message.name))
-
-    first_message = True
-    for enum_value in sorted(enum_values):
-        result.append('\n    ')
-        if not first_message:
-            result.append(', ')
-        first_message = False
-        result.append(enum_value)
-    result.append('\n    , WrappedAsyncMessageForTesting')
-    result.append('\n    , SyncMessageReply')
-    result.append('\n    , InitializeConnection')
-    result.append('\n    , LegacySessionState')
-    result.append('\n    , Last = LegacySessionState')
+    result.append('\n    ')
+    result.append('\n    , '.join(str(e) for e in message_enumerators))
+    result.append('\n    , Last = %s' % message_enumerators[-1])
     result.append('\n};\n')
     result.append('\n')
     result.append('ReceiverName receiverName(MessageName);\n')
@@ -987,24 +1006,11 @@ def generate_message_names_implementation(receivers):
     result.append('const char* description(MessageName name)\n')
     result.append('{\n')
     result.append('    switch (name) {\n')
-    enum_values = set()
-    for receiver in receivers:
-        for message in receiver.messages:
-            enum_values.add('%s_%s' % (receiver.name, message.name))
-            if message.has_attribute(ASYNC_ATTRIBUTE):
-                enum_values.add('%s_%sReply' % (receiver.name, message.name))
 
-    for enum_value in sorted(enum_values):
-        result.append('    case MessageName::%s:\n' % enum_value)
-        result.append('        return "%s";\n' % enum_value)
-    result.append('    case MessageName::WrappedAsyncMessageForTesting:\n')
-    result.append('        return "IPC::WrappedAsyncMessageForTesting";\n')
-    result.append('    case MessageName::SyncMessageReply:\n')
-    result.append('        return "IPC::SyncMessageReply";\n')
-    result.append('    case MessageName::InitializeConnection:\n')
-    result.append('        return "IPC::InitializeConnection";\n')
-    result.append('    case MessageName::LegacySessionState:\n')
-    result.append('        return "IPC::LegacySessionState";\n')
+    message_enumerators = get_message_enumerators(receivers)
+    for enumerator in message_enumerators:
+        result.append('    case MessageName::%s:\n' % enumerator)
+        result.append('        return "%s";\n' % enumerator)
     result.append('    }\n')
     result.append('    ASSERT_NOT_REACHED();\n')
     result.append('    return "<invalid message name>";\n')
@@ -1013,30 +1019,14 @@ def generate_message_names_implementation(receivers):
     result.append('ReceiverName receiverName(MessageName messageName)\n')
     result.append('{\n')
     result.append('    switch (messageName) {\n')
-    message_receiver_map = dict()
-    async_reply_messages = set()
-    for receiver in receivers:
-        messages = set()
-        for message in receiver.messages:
-            messages.add('%s_%s' % (receiver.name, message.name))
-            if message.has_attribute(ASYNC_ATTRIBUTE):
-                async_reply_messages.add('%s_%sReply' % (receiver.name, message.name))
-        if len(messages):
-            message_receiver_map[receiver.name] = messages
-
-    for receiver_name, message_names in message_receiver_map.items():
-        for message_name in sorted(message_names):
-            result.append('    case MessageName::%s:\n' % message_name)
-        result.append('        return ReceiverName::%s;\n' % receiver_name)
-
-    for async_reply_message in sorted(async_reply_messages):
-        result.append('    case MessageName::%s:\n' % async_reply_message)
-    result.append('        return ReceiverName::AsyncReply;\n')
-    result.append('    case MessageName::WrappedAsyncMessageForTesting:\n')
-    result.append('    case MessageName::SyncMessageReply:\n')
-    result.append('    case MessageName::InitializeConnection:\n')
-    result.append('    case MessageName::LegacySessionState:\n')
-    result.append('        return ReceiverName::IPC;\n')
+    prev_enumerator = None
+    for enumerator in message_enumerators:
+        if prev_enumerator and prev_enumerator.receiver != enumerator.receiver:
+            result.append('        return ReceiverName::%s;\n' % prev_enumerator.receiver.name)
+        result.append('    case MessageName::%s:\n' % enumerator)
+        prev_enumerator = enumerator
+    if prev_enumerator:
+        result.append('        return ReceiverName::%s;\n' % prev_enumerator.receiver.name)
     result.append('    }\n')
     result.append('    ASSERT_NOT_REACHED();\n')
     result.append('    return ReceiverName::Invalid;\n')
@@ -1044,25 +1034,14 @@ def generate_message_names_implementation(receivers):
     result.append('\n')
     result.append('bool isValidMessageName(MessageName messageName)\n')
     result.append('{\n')
-    for receiver in receivers:
-        for message in receiver.messages:
+    for enumerator in message_enumerators:
+        for message in enumerator.messages:
             if message.condition:
                 result.append('#if %s\n' % message.condition)
-            result.append('    if (messageName == IPC::MessageName::%s_%s)\n' % (receiver.name, message.name))
+            result.append('    if (messageName == IPC::MessageName::%s)\n' % enumerator)
             result.append('        return true;\n')
-            if message.has_attribute(ASYNC_ATTRIBUTE):
-                result.append('    if (messageName == IPC::MessageName::%s_%sReply)\n' % (receiver.name, message.name))
-                result.append('        return true;\n')
             if message.condition:
                 result.append('#endif\n')
-    result.append('    if (messageName == IPC::MessageName::WrappedAsyncMessageForTesting)\n')
-    result.append('        return true;\n')
-    result.append('    if (messageName == IPC::MessageName::SyncMessageReply)\n')
-    result.append('        return true;\n')
-    result.append('    if (messageName == IPC::MessageName::InitializeConnection)\n')
-    result.append('        return true;\n')
-    result.append('    if (messageName == IPC::MessageName::LegacySessionState)\n')
-    result.append('        return true;\n')
     result.append('    return false;\n')
     result.append('};\n')
     result.append('\n')
@@ -1075,6 +1054,8 @@ def generate_js_value_conversion_function(result, receivers, function_name, argu
     result.append('{\n')
     result.append('    switch (name) {\n')
     for receiver in receivers:
+        if receiver.has_attribute(BUILTIN_ATTRIBUTE):
+            continue
         if receiver.condition:
             result.append('#if %s\n' % receiver.condition)
         previous_message_condition = None
@@ -1106,10 +1087,14 @@ def generate_js_argument_descriptions(receivers, function_name, arguments_from_m
     result.append('{\n')
     result.append('    switch (name) {\n')
     for receiver in receivers:
+        if receiver.has_attribute(BUILTIN_ATTRIBUTE):
+            continue
         if receiver.condition:
             result.append('#if %s\n' % receiver.condition)
         previous_message_condition = None
         for message in receiver.messages:
+            if message.has_attribute(BUILTIN_ATTRIBUTE):
+                continue
             argument_list = arguments_from_message(message)
             if argument_list is None:
                 continue
@@ -1155,6 +1140,8 @@ def generate_message_argument_description_implementation(receivers, receiver_hea
         '"JSIPCBinding.h"': [None]
     }
     for receiver in receivers:
+        if receiver.has_attribute(BUILTIN_ATTRIBUTE):
+            continue
         header_conditions['"%s"' % messages_header_filename(receiver)] = [None]
         collect_header_conditions_for_receiver(receiver, header_conditions)
 
@@ -1204,7 +1191,7 @@ def generate_message_argument_description_implementation(receivers, receiver_hea
                 if message.condition:
                     result.append('#if %s\n' % message.condition)
             previous_message_condition = message.condition
-            result.append('    case MessageName::%s_%s:\n' % (receiver.name, message.name))
+            result.append('    case MessageName::%s:\n' % MessageEnumerator(receiver, [message]))
             result.append('        return true;\n')
         if previous_message_condition:
             result.append('#endif\n')
