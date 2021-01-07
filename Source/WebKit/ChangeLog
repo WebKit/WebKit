@@ -1,3 +1,13 @@
+2021-01-07  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a build fix after r271221
+
+        * Platform/spi/Cocoa/NearFieldSPI.h:
+        * UIProcess/WebAuthentication/Cocoa/NfcService.mm:
+        (WebKit::NfcService::isAvailable):
+        (WebKit::NfcService::platformStartDiscovery):
+        Changed back to sharedHardwareManager.
+
 2021-01-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Adopt new UI for the Client PIN and dismiss flow
