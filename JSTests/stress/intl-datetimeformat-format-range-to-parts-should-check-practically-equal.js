@@ -48,7 +48,7 @@ function compare(actual, expected) {
     }
 }
 
-if ($vm.icuVersion() >= 64) {
+if ($vm.icuHeaderVersion() >= 64) {
     {
         const date = new Date(2019, 7, 10,  1, 2, 3, 234);
 
