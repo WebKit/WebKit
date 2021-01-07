@@ -364,8 +364,9 @@ namespace JSC {
     {
     }
 
-    inline ArgumentsNode::ArgumentsNode(ArgumentListNode* listNode)
+    inline ArgumentsNode::ArgumentsNode(ArgumentListNode* listNode, bool hasAssignments)
         : m_listNode(listNode)
+        , m_hasAssignments(hasAssignments)
     {
     }
 

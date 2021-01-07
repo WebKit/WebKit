@@ -200,7 +200,7 @@ public:
     ExpressionType createMethodDefinition(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&) { return FunctionExpr; }
     void setFunctionNameStart(int, int) { }
     int createArguments() { return ArgumentsResult; }
-    int createArguments(int) { return ArgumentsResult; }
+    int createArguments(int, bool) { return ArgumentsResult; }
     ExpressionType createSpreadExpression(const JSTokenLocation&, ExpressionType, int, int, int) { return SpreadExpr; }
     ExpressionType createObjectSpreadExpression(const JSTokenLocation&, ExpressionType, int, int, int) { return ObjectSpreadExpr; }
     TemplateString createTemplateString(const JSTokenLocation&, const Identifier*, const Identifier*) { return TemplateStringResult; }

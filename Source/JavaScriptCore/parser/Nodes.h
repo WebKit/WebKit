@@ -914,9 +914,13 @@ namespace JSC {
     class ArgumentsNode final : public ParserArenaFreeable {
     public:
         ArgumentsNode();
-        ArgumentsNode(ArgumentListNode*);
+        ArgumentsNode(ArgumentListNode*, bool hasAssignments);
+
+        bool hasAssignments() const { return m_hasAssignments; }
 
         ArgumentListNode* m_listNode;
+    private:
+        bool m_hasAssignments { false };
     };
 
     class NewExprNode final : public ExpressionNode, public ThrowableExpressionData {

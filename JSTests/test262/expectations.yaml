@@ -1630,12 +1630,6 @@ test/language/expressions/logical-assignment/lgcl-nullish-assignment-operator-no
   default: 'Test262: This statement should not be evaluated.'
 test/language/expressions/logical-assignment/lgcl-or-assignment-operator-non-simple-lhs.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/expressions/new/ctorExpr-fn-ref-before-args-eval-fn-wrapup.js:
-  default: "TypeError: 1 is not a constructor (evaluating 'new x(x = 1)')"
-  strict mode: "TypeError: 1 is not a constructor (evaluating 'new x(x = 1)')"
-test/language/expressions/new/ctorExpr-isCtor-after-args-eval-fn-wrapup.js:
-  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/language/expressions/new/non-ctor-err-realm.js:
   default: 'Test262Error: production including Arguments Expected a TypeError but got a TypeError'
   strict mode: 'Test262Error: production including Arguments Expected a TypeError but got a TypeError'

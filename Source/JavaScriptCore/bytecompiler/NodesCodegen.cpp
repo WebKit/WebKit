@@ -979,7 +979,11 @@ RegisterID* NewExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
         expectedFunction = generator.expectedFunctionForIdentifier(static_cast<ResolveNode*>(m_expr)->identifier());
     else
         expectedFunction = NoExpectedFunction;
-    RefPtr<RegisterID> func = generator.emitNode(m_expr);
+
+    RefPtr<RegisterID> func = nullptr;
+    if (m_args && m_args->hasAssignments())
+        func = generator.newTemporary();
+    func = generator.emitNode(func.get(), m_expr);
     RefPtr<RegisterID> returnValue = generator.finalDestination(dst, func.get());
     CallArguments callArguments(generator, m_args);
     return generator.emitConstruct(returnValue.get(), func.get(), func.get(), expectedFunction, callArguments, divot(), divotStart(), divotEnd());
@@ -1100,7 +1104,10 @@ RegisterID* FunctionCallValueNode::emitBytecode(BytecodeGenerator& generator, Re
         return ret;
     }
 
-    RefPtr<RegisterID> func = generator.emitNode(m_expr);
+    RefPtr<RegisterID> func = nullptr;
+    if (m_args && m_args->hasAssignments())
+        func = generator.newTemporary();
+    func = generator.emitNode(func.get(), m_expr);
     RefPtr<RegisterID> returnValue = generator.finalDestination(dst, func.get());
     if (isOptionalChainBase())
         generator.emitOptionalCheck(func.get());

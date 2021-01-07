@@ -477,7 +477,7 @@ public:
     }
 
     ArgumentsNode* createArguments() { return new (m_parserArena) ArgumentsNode(); }
-    ArgumentsNode* createArguments(ArgumentListNode* args) { return new (m_parserArena) ArgumentsNode(args); }
+    ArgumentsNode* createArguments(ArgumentListNode* args, bool hasAssignments) { return new (m_parserArena) ArgumentsNode(args, hasAssignments); }
     ArgumentListNode* createArgumentsList(const JSTokenLocation& location, ExpressionNode* arg) { return new (m_parserArena) ArgumentListNode(location, arg); }
     ArgumentListNode* createArgumentsList(const JSTokenLocation& location, ArgumentListNode* args, ExpressionNode* arg) { return new (m_parserArena) ArgumentListNode(location, args, arg); }
 

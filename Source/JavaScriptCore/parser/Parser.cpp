@@ -1126,6 +1126,7 @@ template <typename LexerType>
 template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDestructuringPattern(TreeBuilder& context, DestructuringKind kind, ExportType exportType, const Identifier** duplicateIdentifier, bool* hasDestructuringPattern, AssignmentContext bindingContext, int depth)
 {
     failIfStackOverflow();
+    m_parserState.assignmentCount++;
     int nonLHSCount = m_parserState.nonLHSCount;
     TreeDestructuringPattern pattern;
     switch (m_token.m_type) {
@@ -4836,6 +4837,7 @@ template <class TreeBuilder> TreeArguments Parser<LexerType>::parseArguments(Tre
     auto argumentsStart = m_token.m_startPosition;
     auto argumentsDivot = m_token.m_endPosition;
 
+    int initialAssignments = m_parserState.assignmentCount;
     ArgumentType argType = ArgumentType::Normal;
     TreeExpression firstArg = parseArgument(context, argType);
     failIfFalse(firstArg, "Cannot parse function argument");
@@ -4867,10 +4869,10 @@ template <class TreeBuilder> TreeArguments Parser<LexerType>::parseArguments(Tre
     handleProductionOrFail2(CLOSEPAREN, ")", "end", "argument list");
     if (hasSpread) {
         TreeExpression spreadArray = context.createSpreadExpression(location, context.createArray(location, context.createElementList(argList)), argumentsStart, argumentsDivot, m_lastTokenEndPosition);
-        return context.createArguments(context.createArgumentsList(location, spreadArray));
+        return context.createArguments(context.createArgumentsList(location, spreadArray), initialAssignments != m_parserState.assignmentCount);
     }
 
-    return context.createArguments(argList);
+    return context.createArguments(argList, initialAssignments != m_parserState.assignmentCount);
 }
 
 template <typename LexerType>
