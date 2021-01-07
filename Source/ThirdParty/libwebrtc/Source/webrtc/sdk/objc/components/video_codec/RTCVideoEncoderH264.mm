@@ -377,8 +377,6 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
   _isKeyFrameRequired = false;
   _isH264LowLatencyEncoderEnabled = true;
 
-  RTC_LOG(LS_ERROR) << "H264 encode initWithCodecInfo";
-
   return self;
 }
 
@@ -429,9 +427,6 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
 - (NSInteger)encode:(RTCVideoFrame *)frame
     codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)codecSpecificInfo
            frameTypes:(NSArray<NSNumber *> *)frameTypes {
-
-  RTC_LOG(LS_ERROR) << "H264 encode new frame";
-
   if (!_callback || ![self hasCompressionSession]) {
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
   }
@@ -884,7 +879,6 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
               timestamp:(uint32_t)timestamp
                rotation:(RTCVideoRotation)rotation
      isKeyFrameRequired:(bool)isKeyFrameRequired {
-  RTC_LOG(LS_ERROR) << "H264 encoded frame " << status;
   if (status != noErr) {
     RTC_LOG(LS_ERROR) << "H264 encode failed with code: " << status;
     if (isKeyFrameRequired)

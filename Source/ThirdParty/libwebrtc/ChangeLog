@@ -1,3 +1,24 @@
+2021-01-07  Youenn Fablet  <youenn@apple.com>
+
+        Remove non-inclusive language from libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=220101
+        <rdar://problem/72727968>
+
+        Reviewed by Beth Dakin.
+
+        Remove logging erroneously added in https://trac.webkit.org/changeset/271150.
+        Remove non-inclusive language from Source/webrtc/rtc_base/message_digest.h as done in
+        https://webrtc-review.googlesource.com/c/src/+/200701.
+
+        * Source/webrtc/rtc_base/message_digest.h:
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.mm:
+        (-[RTCVideoDecoderH264 init]):
+        (-[RTCVideoDecoderH264 decodeData:size:timeStamp:]):
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+        (-[RTCVideoEncoderH264 initWithCodecInfo:]):
+        (-[RTCVideoEncoderH264 encode:codecSpecificInfo:frameTypes:]):
+        (-[RTCVideoEncoderH264 frameWasEncoded:flags:sampleBuffer:codecSpecificInfo:width:height:renderTimeMs:timestamp:rotation:isKeyFrameRequired:]):
+
 2021-01-05  Youenn Fablet  <youenn@apple.com>
 
         Remove non-inclusive language from libwebrtc

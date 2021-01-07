@@ -82,7 +82,6 @@ void decompressionOutputCallback(void *decoderRef,
   if (self) {
     _memoryPool = CMMemoryPoolCreate(nil);
   }
-    RTC_LOG(LS_ERROR) << "H264 decode init";
   return self;
 }
 
@@ -110,7 +109,6 @@ void decompressionOutputCallback(void *decoderRef,
         size:(size_t)size
         timeStamp:(uint32_t)timeStamp {
 
-    RTC_LOG(LS_ERROR) << "H264 decodeData";
   if (_error != noErr) {
     RTC_LOG(LS_WARNING) << "Last frame decode failed.";
     _error = noErr;
