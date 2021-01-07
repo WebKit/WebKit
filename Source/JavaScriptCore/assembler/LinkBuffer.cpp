@@ -120,12 +120,6 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
 
 #if ENABLE(BRANCH_COMPACTION)
 
-#if CPU(ARM64E)
-#define ENABLE_VERIFY_JIT_HASH 1
-#else
-#define ENABLE_VERIFY_JIT_HASH 0
-#endif
-
 class BranchCompactionLinkBuffer;
 
 using ThreadSpecificBranchCompactionLinkBuffer = ThreadSpecific<BranchCompactionLinkBuffer, WTF::CanBeGCThread::True>;
@@ -240,14 +234,14 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
 
     Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink = macroAssembler.jumpsToLink();
     m_assemblerStorage = macroAssembler.m_assembler.buffer().releaseAssemblerData();
-    uint8_t* inData = reinterpret_cast<uint8_t*>(m_assemblerStorage.buffer());
+    uint8_t* inData = bitwise_cast<uint8_t*>(m_assemblerStorage.buffer());
+#if CPU(ARM64E)
+    ARM64EHash verifyUncompactedHash { static_cast<uint32_t>(bitwise_cast<uint64_t>(&macroAssembler.m_assembler.buffer())) };
+    m_assemblerHashesStorage = macroAssembler.m_assembler.buffer().releaseAssemblerHashes();
+    uint32_t* inHashes = bitwise_cast<uint32_t*>(m_assemblerHashesStorage.buffer());
+#endif
 
     uint8_t* codeOutData = m_code.dataLocation<uint8_t*>();
-
-#if ENABLE(VERIFY_JIT_HASH)
-    const uint32_t expectedFinalHash = macroAssembler.m_assembler.buffer().hash().finalHash();
-    ARM64EHash verifyUncompactedHash;
-#endif
 
     BranchCompactionLinkBuffer outBuffer(m_size, useFastJITPermissions() ? codeOutData : 0);
     uint8_t* outData = outBuffer.data();
@@ -260,6 +254,16 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
     int readPtr = 0;
     int writePtr = 0;
     unsigned jumpCount = jumpsToLink.size();
+
+    auto read = [&](const InstructionType* ptr) -> InstructionType {
+        InstructionType value = *ptr;
+#if CPU(ARM64E)
+        uint32_t hash = verifyUncompactedHash.update(value);
+        unsigned index = (bitwise_cast<uint8_t*>(ptr) - inData) / 4;
+        RELEASE_ASSERT(inHashes[index] == hash);
+#endif
+        return value;
+    };
 
     if (useFastJITPermissions())
         threadSelfRestrictRWXToRW();
@@ -278,11 +282,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
             ASSERT(!(readPtr % 2));
             ASSERT(!(writePtr % 2));
             while (copySource != copyEnd) {
-                InstructionType insn = *copySource++;
-#if ENABLE(VERIFY_JIT_HASH)
-                static_assert(sizeof(InstructionType) == 4, "");
-                verifyUncompactedHash.update(insn);
-#endif
+                InstructionType insn = read(copySource++);
                 *copyDst++ = insn;
             }
             recordLinkOffsets(m_assemblerStorage, readPtr, jumpsToLink[i].from(), offset);
@@ -336,23 +336,11 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
         RELEASE_ASSERT(bytes % sizeof(InstructionType) == 0);
 
         for (size_t i = 0; i < bytes; i += sizeof(InstructionType)) {
-            InstructionType insn = *src++;
-#if ENABLE(VERIFY_JIT_HASH)
-            verifyUncompactedHash.update(insn);
-#endif
+            InstructionType insn = read(src++);
             *dst++ = insn;
         }
     }
 
-#if ENABLE(VERIFY_JIT_HASH)
-    if (verifyUncompactedHash.finalHash() != expectedFinalHash) {
-#ifndef NDEBUG
-        dataLogLn("Hashes don't match: ", RawPointer(bitwise_cast<void*>(static_cast<uintptr_t>(verifyUncompactedHash.finalHash()))), " ", RawPointer(bitwise_cast<void*>(static_cast<uintptr_t>(expectedFinalHash))));
-        dataLogLn("Crashing!");
-#endif
-        CRASH();
-    }
-#endif
 
     recordLinkOffsets(m_assemblerStorage, readPtr, initialSize, readPtr - writePtr);
         
