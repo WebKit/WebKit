@@ -1,9 +1,6 @@
 
-PASS Observer attribute getters.
+FAIL Observer attribute getters. Failed to construct 'IntersectionObserver': rootMargin must be specified in pixels or percent.
 PASS observer.root
 PASS observer.thresholds
 PASS observer.rootMargin
-PASS set observer.root
-PASS set observer.thresholds
-PASS set observer.rootMargin
 

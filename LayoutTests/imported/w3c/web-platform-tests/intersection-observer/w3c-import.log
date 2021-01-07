@@ -18,12 +18,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/bounding-box.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/client-rect.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/containing-block.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/cross-document-root.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/cross-origin-iframe.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/disconnect.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/display-none.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/document-scrolling-element-root.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/edge-inclusive-intersection.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/empty-root-margin.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/explicit-root-different-document.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/idlharness.window.js
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/iframe-no-root-with-wrapping-scroller.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/iframe-no-root.html
@@ -36,6 +38,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/multiple-targets.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/multiple-thresholds.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/nested-cross-origin-iframe.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/not-in-containing-block-chain.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/observer-attributes.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/observer-callback-arguments.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/observer-exceptions.html
@@ -48,6 +51,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/rtl-clipped-root.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/same-document-no-root.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/same-document-root.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/same-document-with-document-root.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/same-document-zero-size-target.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/same-origin-grand-child-iframe.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/shadow-content.html

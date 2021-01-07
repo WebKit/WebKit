@@ -1,3 +1,29 @@
+2021-01-07  Cathie Chen  <cathiechen@igalia.com>
+
+        Update WPT test suite for intersection-observer
+        https://bugs.webkit.org/show_bug.cgi?id=220403
+
+        Reviewed by Rob Buis.
+
+        Sync WPT intersection-observer tests with 5a3a1b414d32952355eae7c949c109424979b988.
+
+        * web-platform-tests/intersection-observer/cross-document-root-expected.txt: Added.
+        * web-platform-tests/intersection-observer/cross-document-root.html: Added.
+        * web-platform-tests/intersection-observer/explicit-root-different-document.tentative-expected.txt: Added.
+        * web-platform-tests/intersection-observer/explicit-root-different-document.tentative.html: Added.
+        * web-platform-tests/intersection-observer/intersection-ratio-ib-split.html:
+        * web-platform-tests/intersection-observer/not-in-containing-block-chain.tentative-expected.txt: Added.
+        * web-platform-tests/intersection-observer/not-in-containing-block-chain.tentative.html: Added.
+        * web-platform-tests/intersection-observer/observer-attributes-expected.txt:
+        * web-platform-tests/intersection-observer/observer-attributes.html:
+        * web-platform-tests/intersection-observer/resources/cross-origin-child-iframe.sub.html:
+        * web-platform-tests/intersection-observer/resources/same-origin-grand-child-iframe.html:
+        * web-platform-tests/intersection-observer/same-document-with-document-root-expected.txt: Added.
+        * web-platform-tests/intersection-observer/same-document-with-document-root.html: Added.
+        * web-platform-tests/intersection-observer/same-origin-grand-child-iframe.sub.html:
+        * web-platform-tests/intersection-observer/target-in-different-window.html:
+        * web-platform-tests/intersection-observer/w3c-import.log:
+
 2021-01-06  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (r267227): imported/w3c/web-platform-tests/xhr/event-timeout.any.html is a flaky failure
