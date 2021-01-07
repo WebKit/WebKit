@@ -1,3 +1,49 @@
+2021-01-07  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r271034. rdar://problem/72894016
+
+    DFG should make sure replacement watchpoint is fired before folding to PutByOffset
+    https://bugs.webkit.org/show_bug.cgi?id=220031
+    <rdar://72045350>
+    
+    Reviewed by Saam Barati.
+    
+    * dfg/DFGByteCodeParser.cpp:
+    (JSC::DFG::ByteCodeParser::presenceConditionIfConsistent):
+    (JSC::DFG::ByteCodeParser::checkPresence):
+    (JSC::DFG::ByteCodeParser::checkPresenceForReplace):
+    (JSC::DFG::ByteCodeParser::load):
+    (JSC::DFG::ByteCodeParser::store):
+    (JSC::DFG::ByteCodeParser::presenceLike): Deleted.
+    (JSC::DFG::ByteCodeParser::checkPresenceLike): Deleted.
+    * dfg/DFGConstantFoldingPhase.cpp:
+    (JSC::DFG::ConstantFoldingPhase::tryFoldAsPutByOffset):
+    * runtime/Structure.cpp:
+    (JSC::Structure::dump const):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271034 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-12-21  Keith Miller  <keith_miller@apple.com>
+
+            DFG should make sure replacement watchpoint is fired before folding to PutByOffset
+            https://bugs.webkit.org/show_bug.cgi?id=220031
+            <rdar://72045350>
+
+            Reviewed by Saam Barati.
+
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::presenceConditionIfConsistent):
+            (JSC::DFG::ByteCodeParser::checkPresence):
+            (JSC::DFG::ByteCodeParser::checkPresenceForReplace):
+            (JSC::DFG::ByteCodeParser::load):
+            (JSC::DFG::ByteCodeParser::store):
+            (JSC::DFG::ByteCodeParser::presenceLike): Deleted.
+            (JSC::DFG::ByteCodeParser::checkPresenceLike): Deleted.
+            * dfg/DFGConstantFoldingPhase.cpp:
+            (JSC::DFG::ConstantFoldingPhase::tryFoldAsPutByOffset):
+            * runtime/Structure.cpp:
+            (JSC::Structure::dump const):
+
 2020-12-16  Mark Lam  <mark.lam@apple.com>
 
         Cherry-pick r270981. rdar://problem/72552976

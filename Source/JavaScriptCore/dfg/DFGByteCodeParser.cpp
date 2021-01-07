@@ -227,14 +227,14 @@ private:
 
     // Create a presence ObjectPropertyCondition based on some known offset and structure set. Does not
     // check the validity of the condition, but it may return a null one if it encounters a contradiction.
-    ObjectPropertyCondition presenceLike(
+    ObjectPropertyCondition presenceConditionIfConsistent(
         JSObject* knownBase, UniquedStringImpl*, PropertyOffset, const StructureSet&);
     
     // Attempt to watch the presence of a property. It will watch that the property is present in the same
     // way as in all of the structures in the set. It may emit code instead of just setting a watchpoint.
     // Returns true if this all works out.
-    bool checkPresenceLike(JSObject* knownBase, UniquedStringImpl*, PropertyOffset, const StructureSet&);
-    void checkPresenceLike(Node* base, UniquedStringImpl*, PropertyOffset, const StructureSet&);
+    bool checkPresence(JSObject* knownBase, UniquedStringImpl*, PropertyOffset, const StructureSet&);
+    void checkPresenceForReplace(Node* base, UniquedStringImpl*, PropertyOffset, const StructureSet&);
     
     // Works with both GetByIdVariant and the setter form of PutByIdVariant.
     template<typename VariantType>
@@ -4393,7 +4393,7 @@ Node* ByteCodeParser::load(
         method, op);
 }
 
-ObjectPropertyCondition ByteCodeParser::presenceLike(
+ObjectPropertyCondition ByteCodeParser::presenceConditionIfConsistent(
     JSObject* knownBase, UniquedStringImpl* uid, PropertyOffset offset, const StructureSet& set)
 {
     if (set.isEmpty())
@@ -4411,18 +4411,24 @@ ObjectPropertyCondition ByteCodeParser::presenceLike(
     return ObjectPropertyCondition::presenceWithoutBarrier(knownBase, uid, offset, attributes);
 }
 
-bool ByteCodeParser::checkPresenceLike(
+bool ByteCodeParser::checkPresence(
     JSObject* knownBase, UniquedStringImpl* uid, PropertyOffset offset, const StructureSet& set)
 {
-    return check(presenceLike(knownBase, uid, offset, set));
+    return check(presenceConditionIfConsistent(knownBase, uid, offset, set));
 }
 
-void ByteCodeParser::checkPresenceLike(
+void ByteCodeParser::checkPresenceForReplace(
     Node* base, UniquedStringImpl* uid, PropertyOffset offset, const StructureSet& set)
 {
     if (JSObject* knownBase = base->dynamicCastConstant<JSObject*>(*m_vm)) {
-        if (checkPresenceLike(knownBase, uid, offset, set))
+        auto condition = presenceConditionIfConsistent(knownBase, uid, offset, set);
+        if (check(condition)) {
+            auto* watchpointSet = knownBase->structure(*m_vm)->propertyReplacementWatchpointSet(condition.offset());
+            // This means that we probably have a stale cache and we should gather more information.
+            if (!watchpointSet || watchpointSet->isStillValid())
+                addToGraph(ForceOSRExit);
             return;
+        }
     }
 
     addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(set)), base);
@@ -4475,7 +4481,7 @@ Node* ByteCodeParser::load(
                 // property is watchably present, in which case we get rid of the structure check.
 
                 ObjectPropertyCondition presenceCondition =
-                    presenceLike(knownBase, uid, variant.offset(), variant.structureSet());
+                    presenceConditionIfConsistent(knownBase, uid, variant.offset(), variant.structureSet());
                 if (presenceCondition) {
                     ObjectPropertyCondition equivalenceCondition =
                         presenceCondition.attemptToMakeEquivalenceWithoutBarrier(*m_vm);
@@ -4532,7 +4538,7 @@ Node* ByteCodeParser::store(Node* base, unsigned identifier, const PutByIdVarian
 {
     RELEASE_ASSERT(variant.kind() == PutByIdVariant::Replace);
 
-    checkPresenceLike(base, m_graph.identifiers()[identifier], variant.offset(), variant.structure());
+    checkPresenceForReplace(base, m_graph.identifiers()[identifier], variant.offset(), variant.structure());
     return handlePutByOffset(base, identifier, variant.offset(), value);
 }
 
