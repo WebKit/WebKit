@@ -58,6 +58,19 @@ public:
     // Called from RenderSVGResourceContainer::willBeDestroyed().
     static void resourceDestroyed(RenderSVGResourceContainer&);
 
+    class SetStyleForScope {
+        WTF_MAKE_NONCOPYABLE(SetStyleForScope);
+    public:
+        SetStyleForScope(RenderElement&, const RenderStyle& scopedStyle, const RenderStyle& newStyle);
+        ~SetStyleForScope();
+    private:
+        void setStyle(const RenderStyle&);
+
+        RenderElement& m_renderer;
+        const RenderStyle& m_scopedStyle;
+        bool m_needsNewStyle { false };
+    };
+
 private:
     void addResourcesFromRenderer(RenderElement&, const RenderStyle&);
     void removeResourcesFromRenderer(RenderElement&);
