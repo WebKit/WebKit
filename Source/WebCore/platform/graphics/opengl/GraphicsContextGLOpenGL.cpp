@@ -236,7 +236,7 @@ RefPtr<ImageData> GraphicsContextGLOpenGL::paintRenderingResultsToImageData()
 #if !PLATFORM(COCOA)
 RefPtr<ImageData> GraphicsContextGLOpenGL::readCompositedResults()
 {
-    return nullptr;
+    return readRenderingResults();
 }
 #endif
 
