@@ -72,15 +72,16 @@ if ("${PC_HARFBUZZ_VERSION}" VERSION_LESS "1.3.3")
     add_definitions(-DENABLE_OPENTYPE_MATH=1)
 endif ()
 
-# Set the default value for ENABLE_GLES2 automatically.
-# We are not enabling or disabling automatically a feature here, because
-# the feature is by default always on.
-# What we select here automatically is if we use OPENGL (ENABLE_GLES2=OFF)
-# or OPENGLES2 (ENABLE_GLES2=ON) for building the feature.
+# Set the default value for ENABLE_GLES2 and USE_OPENGL_OR_ES.
 set(ENABLE_GLES2_DEFAULT OFF)
+set(USE_OPENGL_OR_ES_DEFAULT OFF)
 
 if (OPENGLES2_FOUND AND (NOT OPENGL_FOUND OR WTF_CPU_ARM OR WTF_CPU_ARM64))
     set(ENABLE_GLES2_DEFAULT ON)
+endif ()
+
+if (OPENGL_FOUND OR OPENGLES2_FOUND)
+    set(USE_OPENGL_OR_ES_DEFAULT ON)
 endif ()
 
 # Public options specific to the GTK port. Do not add any options here unless
@@ -95,6 +96,7 @@ WEBKIT_OPTION_DEFINE(ENABLE_WAYLAND_TARGET "Whether to enable support for the Wa
 WEBKIT_OPTION_DEFINE(USE_LIBNOTIFY "Whether to enable the default web notification implementation." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBHYPHEN "Whether to enable the default automatic hyphenation implementation." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBSECRET "Whether to enable the persistent credential storage using libsecret." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_OPENGL_OR_ES "Whether to use OpenGL or ES." PUBLIC ${USE_OPENGL_OR_ES_DEFAULT})
 WEBKIT_OPTION_DEFINE(USE_OPENJPEG "Whether to enable support for JPEG2000 images." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_WOFF2 "Whether to enable support for WOFF2 Web Fonts." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_WPE_RENDERER "Whether to enable WPE rendering" PUBLIC ON)
@@ -104,7 +106,13 @@ WEBKIT_OPTION_DEFINE(USE_SYSTEMD "Whether to enable journald logging" PUBLIC ON)
 # completely unsupported. They are intended for use only by WebKit developers.
 WEBKIT_OPTION_DEFINE(USE_ANGLE_WEBGL "Whether to use ANGLE as WebGL backend." PRIVATE OFF)
 
+WEBKIT_OPTION_DEPEND(ENABLE_3D_TRANSFORMS USE_OPENGL_OR_ES)
+WEBKIT_OPTION_DEPEND(ENABLE_ASYNC_SCROLLING USE_OPENGL_OR_ES)
+WEBKIT_OPTION_DEPEND(ENABLE_GLES2 USE_OPENGL_OR_ES)
+WEBKIT_OPTION_DEPEND(ENABLE_WEBGL USE_OPENGL_OR_ES)
 WEBKIT_OPTION_DEPEND(USE_ANGLE_WEBGL ENABLE_WEBGL)
+WEBKIT_OPTION_DEPEND(USE_GSTREAMER_GL USE_OPENGL_OR_ES)
+WEBKIT_OPTION_DEPEND(USE_WPE_RENDERER USE_OPENGL_OR_ES)
 WEBKIT_OPTION_DEPEND(USE_WPE_RENDERER ENABLE_WAYLAND_TARGET)
 
 SET_AND_EXPOSE_TO_BUILD(ENABLE_DEVELOPER_MODE ${DEVELOPER_MODE})
@@ -266,7 +274,7 @@ endif ()
 
 SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER TRUE)
 
-if (OPENGL_FOUND OR ENABLE_GLES2)
+if (USE_OPENGL_OR_ES)
     # USE_OPENGL is the opposite of ENABLE_GLES2.
     if (ENABLE_GLES2)
         find_package(OpenGLES2 REQUIRED)

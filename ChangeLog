@@ -1,3 +1,17 @@
+2021-01-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK][CMake] Add a build switch USE_OPENGL_OR_ES to be able to disable OpenGL and ES
+        https://bugs.webkit.org/show_bug.cgi?id=220183
+
+        Reviewed by Kenneth Russell.
+
+        r270477 removed ENABLE_GRAPHICS_CONTEXT_GL macro and build switch,
+        but GTK port still needs the build switch. Revert r270477
+        partially to restore the build switch and rename it to
+        USE_OPENGL_OR_ES.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2021-01-05  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][curl] Enable CURLSSLOPT_NATIVE_CA flag to use system's CA certs instead of cacert.pem
