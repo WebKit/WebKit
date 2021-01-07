@@ -51,7 +51,7 @@ inline void emitPointerValidation(CCallHelpers& jit, GPRReg pointerGPR, TagType 
         isNonZero.link(&jit);
         jit.pushToSave(pointerGPR);
         jit.untagPtr(tag, pointerGPR);
-        jit.validateUntaggedPtr(pointerGPR, pointerGPR);
+        jit.validateUntaggedPtr(pointerGPR);
         jit.popToRestore(pointerGPR);
     }
 }

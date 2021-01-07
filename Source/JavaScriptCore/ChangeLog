@@ -1,5 +1,22 @@
 2021-01-07  Mark Lam  <mark.lam@apple.com>
 
+        The scratch register should be different from the target register when calling validateUntaggedPtr.
+        https://bugs.webkit.org/show_bug.cgi?id=220397
+        rdar://72771069
+
+        Reviewed by Yusuke Suzuki.
+
+        * assembler/MacroAssemblerARM64E.h:
+        (JSC::MacroAssemblerARM64E::validateUntaggedPtr):
+        - Added an ASSERT to enforce this invariant.
+        * jit/ThunkGenerators.cpp:
+        (JSC::emitPointerValidation):
+        - emitPointerValidation() was reusing the target register as the scratch register.
+          This is a hold over from the previous way of doing the validation (which had a
+          bug).  With the validation bug fixed, this register reuse is no longer allowed.
+
+2021-01-07  Mark Lam  <mark.lam@apple.com>
+
         Remove some aliases of obsolete JSC options.
         https://bugs.webkit.org/show_bug.cgi?id=220402
 

@@ -87,6 +87,7 @@ public:
             scratch = getCachedDataTempRegisterIDAndInvalidate();
 
         DisallowMacroScratchRegisterUsage disallowScope(*this);
+        ASSERT(target != scratch);
         rshift64(target, TrustedImm32(8), scratch);
         and64(TrustedImm64(0xff000000000000), scratch, scratch);
         or64(target, scratch, scratch);
