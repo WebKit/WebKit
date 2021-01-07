@@ -1,3 +1,16 @@
+2021-01-06  Mark Lam  <mark.lam@apple.com>
+
+        Fix a dataMemoryTempRegister use violation in FTLLowerDFGToB3's compileLoopHint().
+        https://bugs.webkit.org/show_bug.cgi?id=220399
+
+        Reviewed by Yusuke Suzuki.
+
+        This was tripping an assertion failure on the invalid use of the dataMemoryTempRegister
+        during a Debug build JSC stress test run with DoesGC validation enabled.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileLoopHint):
+
 2021-01-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DateTimeFormat#formatRange should generate the same output to DateTimeFormat#format if startDate and endDate are "practically-equal"
