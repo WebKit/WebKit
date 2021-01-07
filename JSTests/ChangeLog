@@ -1,5 +1,68 @@
 2021-01-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Update test262
+        https://bugs.webkit.org/show_bug.cgi?id=220398
+
+        Reviewed by Mark Lam.
+
+        * test262/expectations.yaml:
+        * test262/harness/testIntl.js:
+        * test262/latest-changes-summary.txt:
+        * test262/test/built-ins/TypedArray/prototype/includes/BigInt/detached-buffer-during-fromIndex-returns-false-for-zero.js: Added.
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/includes/BigInt/detached-buffer-during-fromIndex-returns-true-for-undefined.js: Added.
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/includes/detached-buffer-during-fromIndex-returns-false-for-zero.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/includes/detached-buffer-during-fromIndex-returns-true-for-undefined.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/includes/detached-buffer-tointeger.js: Removed.
+        * test262/test/built-ins/TypedArray/prototype/indexOf/BigInt/detached-buffer-during-fromIndex-returns-minus-one-for-undefined.js: Added.
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/indexOf/BigInt/detached-buffer-during-fromIndex-returns-minus-one-for-zero.js: Added.
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/indexOf/detached-buffer-during-fromIndex-returns-minus-one-for-undefined.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/indexOf/detached-buffer-during-fromIndex-returns-minus-one-for-zero.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/join/BigInt/detached-buffer-during-fromIndex-returns-single-comma.js: Added.
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/join/BigInt/detached-buffer.js:
+        (let.obj.toString):
+        (testWithBigIntTypedArrayConstructors):
+        (obj.toString): Deleted.
+        * test262/test/built-ins/TypedArray/prototype/join/detached-buffer-during-fromIndex-returns-single-comma.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/join/detached-buffer.js:
+        (let.obj.toString):
+        (testWithTypedArrayConstructors):
+        (obj.toString): Deleted.
+        * test262/test/built-ins/TypedArray/prototype/lastIndexOf/BigInt/detached-buffer-during-fromIndex-returns-minus-one-for-undefined.js: Added.
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/lastIndexOf/BigInt/detached-buffer-during-fromIndex-returns-minus-one-for-zero.js: Added.
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/lastIndexOf/detached-buffer-during-fromIndex-returns-minus-one-for-undefined.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArray/prototype/lastIndexOf/detached-buffer-during-fromIndex-returns-minus-one-for-zero.js: Added.
+        (testWithTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/GetOwnProperty/BigInt/index-prop-desc.js:
+        (testWithBigIntTypedArrayConstructors):
+        * test262/test/built-ins/TypedArrayConstructors/internals/Set/detached-buffer.js:
+        (testWithTypedArrayConstructors):
+        * test262/test/intl402/DateTimeFormat/prototype/formatRange/date-same-returns-single-date.js: Added.
+        * test262/test/intl402/DateTimeFormat/prototype/formatRangeToParts/date-same-returns-single-date.js: Added.
+        (zip):
+        (compare):
+        * test262/test/intl402/Intl/getCanonicalLocales/canonicalized-tags.js:
+        * test262/test/intl402/Intl/getCanonicalLocales/preferred-grandfathered.js:
+        * test262/test/intl402/Intl/getCanonicalLocales/preferred-variant.js:
+        * test262/test/intl402/Locale/extensions-grandfathered.js:
+        * test262/test/intl402/Locale/likely-subtags-grandfathered.js:
+        (of.regularGrandfathered.const.extra.of.extras.i.test):
+        * test262/test262-Revision.txt:
+
+2021-01-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] DateTimeFormat#formatRange should generate the same output to DateTimeFormat#format if startDate and endDate are "practically-equal"
         https://bugs.webkit.org/show_bug.cgi?id=220395
 

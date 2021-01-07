@@ -29,7 +29,7 @@ testWithBigIntTypedArrayConstructors(function(TA) {
   assert.sameValue(descriptor0.enumerable, true);
   assert.sameValue(descriptor0.writable, true);
 
-  assert.sameValue(descriptor1.value, 42n);
+  assert.sameValue(descriptor1.value, 43n);
   assert.sameValue(descriptor1.configurable, true);
   assert.sameValue(descriptor1.enumerable, true);
   assert.sameValue(descriptor1.writable, true);

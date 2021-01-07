@@ -36,10 +36,10 @@ info: |
 includes: [testIntl.js]
 ---*/
 
-// Generated from https://github.com/unicode-org/cldr/blob/master/common/supplemental/supplementalMetadata.xml
-// File-Date: 2020-03-30
+// https://github.com/unicode-org/cldr/blame/master/common/supplemental/supplementalMetadata.xml#L531
+// http://unicode.org/reports/tr35/#LocaleId_Canonicalization
 var canonicalizedTags = {
-  "ja-latn-hepburn-heploc": "ja-Latn-alalc97-hepburn",
+  "ja-latn-hepburn-heploc": "ja-Latn-alalc97",
 };
 
 // make sure the data above is correct

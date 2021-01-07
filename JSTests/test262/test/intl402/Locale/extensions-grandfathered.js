@@ -31,7 +31,7 @@ const testData = [
             region: "FR",
             numberingSystem: "latn",
         },
-        canonical: "fr-Cyrl-FR-u-nu-latn-x-cel-gaulish",
+        canonical: "fr-Cyrl-FR-u-nu-latn",
     },
 
     // Regular grandfathered with modern replacement.

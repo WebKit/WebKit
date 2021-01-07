@@ -37,7 +37,7 @@ var canonicalizedTags = {
   "es-419-u-nu-latn": "es-419-u-nu-latn",
   "cmn-hans-cn-u-ca-t-ca-x-t-u": "zh-Hans-CN-t-ca-u-ca-x-t-u",
   "de-gregory-u-ca-gregory": "de-gregory-u-ca-gregory",
-  "sgn-GR": "sgn-GR",
+  "sgn-GR": "gss",
   "ji": "yi",
   "de-DD": "de-DE",
   "in": "id",

@@ -848,11 +848,8 @@ test/intl402/Intl/getCanonicalLocales/non-iana-canon.js:
   default: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
   strict mode: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
 test/intl402/Intl/getCanonicalLocales/preferred-grandfathered.js:
-  default: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
-test/intl402/Intl/getCanonicalLocales/preferred-variant.js:
-  default: 'Test262Error: Expected SameValue(«ja-Latn-alalc97», «ja-Latn-alalc97-hepburn») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«ja-Latn-alalc97», «ja-Latn-alalc97-hepburn») to be true'
+  default: 'Test262Error: Expected SameValue(«xtg-x-cel-gaulish», «xtg») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«xtg-x-cel-gaulish», «xtg») to be true'
 test/intl402/Intl/getCanonicalLocales/transformed-ext-canonical.js:
   default: 'Test262Error: Expected SameValue(«sl-t-sl-rozaj-biske-1994», «sl-t-sl-1994-biske-rozaj») to be true'
   strict mode: 'Test262Error: Expected SameValue(«sl-t-sl-rozaj-biske-1994», «sl-t-sl-1994-biske-rozaj») to be true'
@@ -877,9 +874,12 @@ test/intl402/Locale/constructor-options-region-valid.js:
 test/intl402/Locale/constructor-tag.js:
   default: 'Test262Error: new Intl.Locale("sl-ROZAJ-BISKE-1994").toString() returns "sl-1994-biske-rozaj" Expected SameValue(«sl-rozaj-biske-1994», «sl-1994-biske-rozaj») to be true'
   strict mode: 'Test262Error: new Intl.Locale("sl-ROZAJ-BISKE-1994").toString() returns "sl-1994-biske-rozaj" Expected SameValue(«sl-rozaj-biske-1994», «sl-1994-biske-rozaj») to be true'
+test/intl402/Locale/extensions-grandfathered.js:
+  default: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-u-nu-latn-x-cel-gaulish», «fr-Cyrl-FR-u-nu-latn») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-u-nu-latn-x-cel-gaulish», «fr-Cyrl-FR-u-nu-latn») to be true'
 test/intl402/Locale/likely-subtags-grandfathered.js:
-  default: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
+  default: 'Test262Error: Expected SameValue(«xtg-x-cel-gaulish», «xtg») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«xtg-x-cel-gaulish», «xtg») to be true'
 test/intl402/Locale/likely-subtags.js:
   default: 'Test262Error: "en-u-co".maximize() should be "en-Latn-US-u-co" Expected SameValue(«en-Latn-US-u-co-yes», «en-Latn-US-u-co») to be true'
   strict mode: 'Test262Error: "en-u-co".maximize() should be "en-Latn-US-u-co" Expected SameValue(«en-Latn-US-u-co-yes», «en-Latn-US-u-co») to be true'

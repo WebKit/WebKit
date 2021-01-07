@@ -30,6 +30,7 @@ testWithTypedArrayConstructors(function(TA) {
   let sample = new TA([42]);
   $DETACHBUFFER(sample.buffer);
   sample[0] = 1;
+
   assert.sameValue(sample[0], undefined, '`sample[0] = 1` is undefined');
   sample['1.1'] = 1;
   assert.sameValue(sample['1.1'], undefined, '`sample[\'1.1\'] = 1` is undefined');

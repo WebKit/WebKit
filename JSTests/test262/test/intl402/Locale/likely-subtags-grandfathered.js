@@ -68,7 +68,7 @@ const regularGrandfathered = [
     },
     {
         tag: "cel-gaulish",
-        canonical: "xtg-x-cel-gaulish",
+        canonical: "xtg",
     },
     {
         tag: "zh-guoyu",
@@ -123,15 +123,15 @@ const extras = [
     "x-private",
 ];
 
-for (const {tag} of regularGrandfathered) {
+for (const {tag, canonical} of regularGrandfathered) {
     const priv = "-x-0";
-    const tagMax = new Intl.Locale(tag + priv).maximize().toString().slice(0, -priv.length);
-    const tagMin = new Intl.Locale(tag + priv).minimize().toString().slice(0, -priv.length);
+    const tagMax = new Intl.Locale(canonical + priv).maximize().toString().slice(0, -priv.length);
+    const tagMin = new Intl.Locale(canonical + priv).minimize().toString().slice(0, -priv.length);
 
     for (const extra of extras) {
         const loc = new Intl.Locale(tag + "-" + extra);
 
-        let canonical = tag + "-" + extra;
+        let canonicalWithExtra = canonical + "-" + extra;
         let canonicalMax = tagMax + "-" + extra;
         let canonicalMin = tagMin + "-" + extra;
 
@@ -139,7 +139,7 @@ for (const {tag} of regularGrandfathered) {
         if (/^[a-z0-9]{5,8}|[0-9][a-z0-9]{3}$/i.test(extra)) {
             const sorted = s => s.replace(/(-([a-z0-9]{5,8}|[0-9][a-z0-9]{3}))+$/i,
                                           m => m.split("-").sort().join("-"));
-            canonical = sorted(canonical);
+            canonicalWithExtra = sorted(canonicalWithExtra);
             canonicalMax = sorted(canonicalMax);
             canonicalMin = sorted(canonicalMin);
         }
@@ -156,20 +156,17 @@ for (const {tag} of regularGrandfathered) {
         // what needs to happen next.
         //
         // From <http://unicode.org/reports/tr35/#Language_Tag_to_Locale_Identifier>:
+        // 
+        // > A valid [BCP47] language tag can be converted to a valid Unicode BCP 47 locale 
+        // > identifier according to Annex C. LocaleId Canonicalization
+        // 
+        // From <http://unicode.org/reports/tr35/#LocaleId_Canonicalization>
+        // > The languageAlias, scriptAlias, territoryAlias, and variantAlias elements are used
+        // > as rules to transform an input source localeId. The first step is to transform the
+        // > languageId portion of the localeId.
         //
-        // > If the BCP 47 primary language subtag matches the type attribute of a languageAlias
-        // > element in Supplemental Data, replace the language subtag with the replacement value.
-        // >  1. ...
-        // >  2. Five special deprecated grandfathered codes (such as i-default) are in type
-        //       attributes, and are also replaced.
-        // >  3. ...
-        //
-        // So let's assume grandfathered tags are treated as 'primary language subtag' if and only
-        // if no additional subtags are present. Because in all other cases, we don't really have a
-        // grandfathered tag, but only some arbitrary combination of random subtags.
-        //
-        // Basically what we expect here is that only grandfathered without any additional subtags
-        // are canonicalised to their modern form and in all other cases they're left as is.
+        // For regular grandfathered tags, "lojban", "gaulish", "guoyu", "hakka", and "xiang" will
+        // therefore be considered as the "variant" subtag and be replaced by rules in languageAlias.
         //
         // Not all language tag processor will pass this test, for example because they don't order
         // variant subtags in alphabetical order or they're too eager when detecting grandfathered
@@ -187,7 +184,7 @@ for (const {tag} of regularGrandfathered) {
         //
         // So, if your implementation fails this assertion, but you still like to test the rest of
         // this file, a pull request to split this file seems the way to go!
-        assert.sameValue(loc.toString(), canonical);
+        assert.sameValue(loc.toString(), canonicalWithExtra);
 
         assert.sameValue(loc.maximize().toString(), canonicalMax);
         assert.sameValue(loc.maximize().maximize().toString(), canonicalMax);
