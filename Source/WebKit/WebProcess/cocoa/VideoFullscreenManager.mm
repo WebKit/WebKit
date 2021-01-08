@@ -250,7 +250,9 @@ void VideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElemen
     auto [model, interface] = ensureModelAndInterface(contextId);
     HTMLMediaElementEnums::VideoFullscreenMode oldMode = interface->fullscreenMode();
 
-    addClientForContext(contextId);
+    if (oldMode == HTMLMediaElementEnums::VideoFullscreenModeNone)
+        addClientForContext(contextId);
+
     if (!interface->layerHostingContext())
         interface->setLayerHostingContext(LayerHostingContext::createForExternalHostingProcess());
 
@@ -329,6 +331,7 @@ void VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(WebCore::
     auto& interface = ensureInterface(contextId);
 
     interface.setTargetIsFullscreen(false);
+    removeClientForContext(contextId);
 
     m_page->send(Messages::VideoFullscreenManagerProxy::ExitFullscreenWithoutAnimationToMode(contextId, targetMode));
 }

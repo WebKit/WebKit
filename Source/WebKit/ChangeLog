@@ -1,3 +1,17 @@
+2021-01-07  Peng Liu  <peng.liu6@apple.com>
+
+        PlaybackSessionManager::m_clientCounts is not updated correctly when a video enters picture-in-picture from fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=220435
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::enterVideoFullscreenForVideoElement):
+        When a fullscreen video enters picture-in-picture, we should not call `addClientForContext()`
+        because `m_clientCounts` was updated when the video entered fullscreen.
+        (WebKit::VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation):
+        We need to call `removeClientForContext()` in this function like `didCleanupFullscreen()` does.
+
 2021-01-07  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Add runtime logging to format reader and WebM parser
