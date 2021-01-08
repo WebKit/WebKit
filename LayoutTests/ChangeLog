@@ -1,3 +1,16 @@
+2021-01-07  Zalan Bujtas  <zalan@apple.com>
+
+        paypal.com: text at the bottom of the page is not aligned properly
+        https://bugs.webkit.org/show_bug.cgi?id=220444
+        <rdar://problem/60356338>
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/vertical-align-block-elements-expected.html:
+        * fast/css/vertical-align-block-elements.html:
+        * fast/inline/incorrect-vertical-alignment-inside-inline-block-expected.html: Added.
+        * fast/inline/incorrect-vertical-alignment-inside-inline-block.html: Added.
+
 2021-01-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         [ Mac ] http/wpt/service-workers/service-worker-spinning-install.https.html is flaky failing

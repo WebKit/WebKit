@@ -489,9 +489,12 @@ bool InlineFlowBox::requiresIdeographicBaseline(const GlyphOverflowAndFallbackFo
 
 static bool verticalAlignApplies(const RenderObject& renderer)
 {
-    // http://www.w3.org/TR/CSS2/visudet.html#propdef-vertical-align - vertical-align
-    // only applies to inline level and table-cell elements
-    return !renderer.isText() || renderer.parent()->isInline() || renderer.parent()->isTableCell();
+    // http://www.w3.org/TR/CSS2/visudet.html#propdef-vertical-align - vertical-align only applies to inline level and table-cell elements.
+    // FIXME: Ideally we would only align inline level boxes which means that text inside an inline box would just sit on the box itself.
+    if (!renderer.isText())
+        return true;
+    auto& parentRenderer = *renderer.parent();
+    return (parentRenderer.isInline() && parentRenderer.style().display() != DisplayType::InlineBlock) || parentRenderer.isTableCell();
 }
 
 void InlineFlowBox::adjustMaxAscentAndDescent(int& maxAscent, int& maxDescent, int maxPositionTop, int maxPositionBottom)
