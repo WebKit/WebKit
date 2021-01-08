@@ -6,6 +6,9 @@ ifneq (,$(SDKROOT))
 	ifneq (,$(findstring macosx,$(call TO_LOWER,$(notdir $(SDKROOT)))))
 		WEBINSPECTORUI_MODULE = WebInspectorUI
 	endif
+	ifeq ($(MAKECMDGOALS),installsrc)
+		WEBINSPECTORUI_MODULE = WebInspectorUI
+	endif
 else
 	WEBINSPECTORUI_MODULE = WebInspectorUI
 endif

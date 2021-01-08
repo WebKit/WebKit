@@ -16,6 +16,9 @@ ifneq (,$(SDKROOT))
 	ifneq (,$(findstring watch,$(call TO_LOWER,$(notdir $(SDKROOT)))))
 		LIBWEBRTC_MODULE = libwebrtc
 	endif
+	ifeq ($(MAKECMDGOALS),installsrc)
+		LIBWEBRTC_MODULE = libwebrtc
+	endif
 else
 	LIBWEBRTC_MODULE = libwebrtc
 endif
