@@ -31,6 +31,7 @@
 #include <WebCore/UserStyleSheetTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -48,8 +49,8 @@ public:
 
     virtual ~WebPageGroup();
 
-    void addPage(WebPageProxy*);
-    void removePage(WebPageProxy*);
+    void addPage(WebPageProxy&);
+    void removePage(WebPageProxy&);
 
     uint64_t pageGroupID() const { return m_data.pageGroupID; }
 
@@ -64,7 +65,7 @@ private:
     WebPageGroupData m_data;
     RefPtr<WebPreferences> m_preferences;
     Ref<WebUserContentControllerProxy> m_userContentController;
-    HashSet<WebPageProxy*> m_pages;
+    WeakHashSet<WebPageProxy> m_pages;
 };
 
 } // namespace WebKit

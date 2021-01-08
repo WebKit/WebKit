@@ -1,3 +1,42 @@
+2021-01-07  Alex Christensen  <achristensen@webkit.org>
+
+        Use WeakHashSet instead of HashSet<T*>
+        https://bugs.webkit.org/show_bug.cgi?id=220455
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::invalidateAndCancel):
+        (WebKit::NetworkSession::registerNetworkDataTask):
+        (WebKit::NetworkSession::unregisterNetworkDataTask):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::registerNetworkDataTask): Deleted.
+        (WebKit::NetworkSession::unregisterNetworkDataTask): Deleted.
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::addPage):
+        (WebKit::WebPageGroup::removePage):
+        (WebKit::WebPageGroup::setPreferences):
+        * UIProcess/WebPageGroup.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+        (WebKit::WebPageProxy::~WebPageProxy):
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::~WebPreferences):
+        (WebKit::WebPreferences::addPage):
+        (WebKit::WebPreferences::removePage):
+        (WebKit::WebPreferences::update):
+        (WebKit::WebPreferences::updateBoolValueForInternalDebugFeatureKey):
+        * UIProcess/WebPreferences.h:
+        * WebProcess/Geolocation/WebGeolocationManager.cpp:
+        (WebKit::WebGeolocationManager::registerWebPage):
+        (WebKit::WebGeolocationManager::unregisterWebPage):
+        (WebKit::WebGeolocationManager::setEnableHighAccuracyForPage):
+        (WebKit::WebGeolocationManager::isUpdating const):
+        (WebKit::WebGeolocationManager::isHighAccuracyEnabled const):
+        * WebProcess/Geolocation/WebGeolocationManager.h:
+        (WebKit::WebGeolocationManager::isUpdating const): Deleted.
+        (WebKit::WebGeolocationManager::isHighAccuracyEnabled const): Deleted.
+
 2021-01-07  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Silence diagnostics sandbox violations

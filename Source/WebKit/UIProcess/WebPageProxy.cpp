@@ -548,7 +548,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     WebProcessPool::statistics().wkPageCount++;
 
     m_preferences->addPage(*this);
-    m_pageGroup->addPage(this);
+    m_pageGroup->addPage(*this);
 
     m_inspector = WebInspectorProxy::create(*this);
 
@@ -604,7 +604,7 @@ WebPageProxy::~WebPageProxy()
         TextChecker::closeSpellDocumentWithTag(m_spellDocumentTag.value());
 
     m_preferences->removePage(*this);
-    m_pageGroup->removePage(this);
+    m_pageGroup->removePage(*this);
 
 #ifndef NDEBUG
     webPageProxyCounter.decrement();

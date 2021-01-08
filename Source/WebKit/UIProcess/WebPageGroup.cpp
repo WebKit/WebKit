@@ -93,12 +93,12 @@ WebPageGroup::~WebPageGroup()
     webPageGroupMap().remove(pageGroupID());
 }
 
-void WebPageGroup::addPage(WebPageProxy* page)
+void WebPageGroup::addPage(WebPageProxy& page)
 {
     m_pages.add(page);
 }
 
-void WebPageGroup::removePage(WebPageProxy* page)
+void WebPageGroup::removePage(WebPageProxy& page)
 {
     m_pages.remove(page);
 }
@@ -111,7 +111,7 @@ void WebPageGroup::setPreferences(WebPreferences* preferences)
     m_preferences = preferences;
 
     for (auto& webPageProxy : m_pages)
-        webPageProxy->setPreferences(*m_preferences);
+        webPageProxy.setPreferences(*m_preferences);
 }
 
 WebPreferences& WebPageGroup::preferences() const

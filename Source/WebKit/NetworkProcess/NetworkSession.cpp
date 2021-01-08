@@ -151,8 +151,8 @@ void NetworkSession::destroyResourceLoadStatistics(CompletionHandler<void()>&& c
 
 void NetworkSession::invalidateAndCancel()
 {
-    for (auto* task : m_dataTaskSet)
-        task->invalidateAndCancel();
+    for (auto& task : m_dataTaskSet)
+        task.invalidateAndCancel();
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (m_resourceLoadStatistics)
         m_resourceLoadStatistics->invalidateAndCancel();
@@ -370,6 +370,16 @@ void NetworkSession::removeKeptAliveLoad(NetworkResourceLoader& loader)
 std::unique_ptr<WebSocketTask> NetworkSession::createWebSocketTask(NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol)
 {
     return nullptr;
+}
+
+void NetworkSession::registerNetworkDataTask(NetworkDataTask& task)
+{
+    m_dataTaskSet.add(task);
+}
+
+void NetworkSession::unregisterNetworkDataTask(NetworkDataTask& task)
+{
+    m_dataTaskSet.remove(task);
 }
 
 } // namespace WebKit

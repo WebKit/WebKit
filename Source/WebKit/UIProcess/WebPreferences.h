@@ -32,6 +32,7 @@
 #include "WebPreferencesStore.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakHashSet.h>
 
 #define DECLARE_PREFERENCE_GETTER_AND_SETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
     void set##KeyUpper(const Type& value); \
@@ -138,7 +139,7 @@ private:
     const String m_globalDebugKeyPrefix;
     WebPreferencesStore m_store;
 
-    HashSet<WebPageProxy*> m_pages;
+    WeakHashSet<WebPageProxy> m_pages;
     unsigned m_updateBatchCount { 0 };
     bool m_needUpdateAfterBatch { false };
 };

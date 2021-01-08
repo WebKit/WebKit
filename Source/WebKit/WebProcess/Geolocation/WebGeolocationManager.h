@@ -32,6 +32,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 class Geolocation;
@@ -61,8 +62,8 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    bool isUpdating() const { return !m_pageSet.isEmpty(); }
-    bool isHighAccuracyEnabled() const { return !m_highAccuracyPageSet.isEmpty(); }
+    bool isUpdating() const;
+    bool isHighAccuracyEnabled() const;
 
     void didChangePosition(const WebCore::GeolocationPositionData&);
     void didFailToDeterminePosition(const String& errorMessage);
@@ -71,8 +72,8 @@ private:
 #endif // PLATFORM(IOS_FAMILY)
 
     WebProcess& m_process;
-    HashSet<WebPage*> m_pageSet;
-    HashSet<WebPage*> m_highAccuracyPageSet;
+    WeakHashSet<WebPage> m_pageSet;
+    WeakHashSet<WebPage> m_highAccuracyPageSet;
 };
 
 } // namespace WebKit

@@ -54,7 +54,7 @@ void WebGeolocationManager::registerWebPage(WebPage& page, const String& authori
 {
     bool wasUpdating = isUpdating();
 
-    m_pageSet.add(&page);
+    m_pageSet.add(page);
 
     if (!wasUpdating)
         m_process.parentProcessConnection()->send(Messages::WebGeolocationManagerProxy::StartUpdating(page.webPageProxyIdentifier(), authorizationToken), 0);
@@ -64,8 +64,8 @@ void WebGeolocationManager::unregisterWebPage(WebPage& page)
 {
     bool highAccuracyWasEnabled = isHighAccuracyEnabled();
 
-    m_pageSet.remove(&page);
-    m_highAccuracyPageSet.remove(&page);
+    m_pageSet.remove(page);
+    m_highAccuracyPageSet.remove(page);
 
     if (!isUpdating())
         m_process.parentProcessConnection()->send(Messages::WebGeolocationManagerProxy::StopUpdating(), 0);
@@ -81,9 +81,9 @@ void WebGeolocationManager::setEnableHighAccuracyForPage(WebPage& page, bool ena
     bool highAccuracyWasEnabled = isHighAccuracyEnabled();
 
     if (enabled)
-        m_highAccuracyPageSet.add(&page);
+        m_highAccuracyPageSet.add(page);
     else
-        m_highAccuracyPageSet.remove(&page);
+        m_highAccuracyPageSet.remove(page);
 
     bool highAccuracyShouldBeEnabled = isHighAccuracyEnabled();
     if (highAccuracyWasEnabled != highAccuracyShouldBeEnabled)
@@ -123,5 +123,15 @@ void WebGeolocationManager::resetPermissions()
     m_process.resetAllGeolocationPermissions();
 }
 #endif // PLATFORM(IOS_FAMILY)
+
+bool WebGeolocationManager::isUpdating() const
+{
+    return !m_pageSet.computesEmpty();
+}
+
+bool WebGeolocationManager::isHighAccuracyEnabled() const
+{
+    return !m_highAccuracyPageSet.computesEmpty();
+}
 
 } // namespace WebKit

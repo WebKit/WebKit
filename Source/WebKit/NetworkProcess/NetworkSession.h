@@ -83,8 +83,8 @@ public:
     NetworkProcess& networkProcess() { return m_networkProcess; }
     WebCore::NetworkStorageSession* networkStorageSession() const;
 
-    void registerNetworkDataTask(NetworkDataTask& task) { m_dataTaskSet.add(&task); }
-    void unregisterNetworkDataTask(NetworkDataTask& task) { m_dataTaskSet.remove(&task); }
+    void registerNetworkDataTask(NetworkDataTask&);
+    void unregisterNetworkDataTask(NetworkDataTask&);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     WebResourceLoadStatisticsStore* resourceLoadStatistics() const { return m_resourceLoadStatistics.get(); }
@@ -159,7 +159,7 @@ protected:
 
     PAL::SessionID m_sessionID;
     Ref<NetworkProcess> m_networkProcess;
-    HashSet<NetworkDataTask*> m_dataTaskSet;
+    WeakHashSet<NetworkDataTask> m_dataTaskSet;
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     String m_resourceLoadStatisticsDirectory;
     RefPtr<WebResourceLoadStatisticsStore> m_resourceLoadStatistics;

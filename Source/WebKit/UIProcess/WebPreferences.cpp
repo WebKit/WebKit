@@ -76,7 +76,7 @@ WebPreferences::WebPreferences(const WebPreferences& other)
 
 WebPreferences::~WebPreferences()
 {
-    ASSERT(m_pages.isEmpty());
+    ASSERT(m_pages.computesEmpty());
 }
 
 Ref<WebPreferences> WebPreferences::copy() const
@@ -86,14 +86,14 @@ Ref<WebPreferences> WebPreferences::copy() const
 
 void WebPreferences::addPage(WebPageProxy& webPageProxy)
 {
-    ASSERT(!m_pages.contains(&webPageProxy));
-    m_pages.add(&webPageProxy);
+    ASSERT(!m_pages.contains(webPageProxy));
+    m_pages.add(webPageProxy);
 }
 
 void WebPreferences::removePage(WebPageProxy& webPageProxy)
 {
-    ASSERT(m_pages.contains(&webPageProxy));
-    m_pages.remove(&webPageProxy);
+    ASSERT(m_pages.contains(webPageProxy));
+    m_pages.remove(webPageProxy);
 }
 
 void WebPreferences::update()
@@ -104,7 +104,7 @@ void WebPreferences::update()
     }
         
     for (auto& webPageProxy : m_pages)
-        webPageProxy->preferencesDidChange();
+        webPageProxy.preferencesDidChange();
 }
 
 void WebPreferences::startBatchingUpdates()
@@ -166,8 +166,8 @@ void WebPreferences::updateBoolValueForKey(const String& key, bool value)
 void WebPreferences::updateBoolValueForInternalDebugFeatureKey(const String& key, bool value)
 {
     if (key == WebPreferencesKey::processSwapOnCrossSiteNavigationEnabledKey()) {
-        for (auto* page : m_pages)
-            page->process().processPool().configuration().setProcessSwapsOnNavigation(value);
+        for (auto& page : m_pages)
+            page.process().processPool().configuration().setProcessSwapsOnNavigation(value);
 
         return;
     }
