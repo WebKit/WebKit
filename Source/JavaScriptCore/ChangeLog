@@ -1,3 +1,20 @@
+2021-01-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG/FTL Atomics should assume non-typed-array input with storage-edge
+        https://bugs.webkit.org/show_bug.cgi?id=220451
+        <rdar://problem/71237065>
+
+        Reviewed by Mark Lam.
+
+        Atomics implementation assumed that it only gets TypedArray via checkArray filter if storage-edge exists. But this is wrong.
+        String and the other cases can put storage-edge while it is not TypedArray. We should check whether this is one of TypedArray,
+        and if it is not, we should make it generic one instead of using fast TypedArray path.
+
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::isOneOfTypedArrayView const):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
 2021-01-07  Mark Lam  <mark.lam@apple.com>
 
         Work around Clang bug in __builtin_return_address().

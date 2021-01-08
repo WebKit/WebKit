@@ -1335,8 +1335,10 @@ private:
                 node->arrayMode().refine(
                     m_graph, node, base->prediction(), index->prediction()));
             
-            if (node->arrayMode().type() == Array::Generic)
+            if (!node->arrayMode().isOneOfTypedArrayView()) {
+                node->setArrayMode(ArrayMode(Array::Generic, node->arrayMode().action()));
                 break;
+            }
             
             for (unsigned i = numExtraAtomicsArgs(node->op()); i--;) {
                 Edge& child = m_graph.child(node, 2 + i);

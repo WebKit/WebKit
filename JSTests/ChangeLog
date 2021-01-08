@@ -1,3 +1,16 @@
+2021-01-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG/FTL Atomics should assume non-typed-array input with storage-edge
+        https://bugs.webkit.org/show_bug.cgi?id=220451
+        <rdar://problem/71237065>
+
+        Reviewed by Mark Lam.
+
+        * stress/atomics-and-multiple-typed-arrays.js: Added.
+        (foo):
+        * stress/atomics-and-string.js: Added.
+        (foo):
+
 2021-01-07  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [JSC] Simplify get*PropertyNames() methods and EnumerationMode
