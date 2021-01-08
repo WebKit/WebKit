@@ -1,3 +1,23 @@
+2021-01-08  Youenn Fablet  <youenn@apple.com>
+
+        Make sure that if NetworkProcess clears DOMCache, it also clears service worker registrations
+        https://bugs.webkit.org/show_bug.cgi?id=220408
+        <rdar://problem/72360003>
+
+        Reviewed by Alex Christensen.
+
+        It is expected that clearing DOM cache mandates clearing service worker registrations
+        as service workers expect cache entries added at install time to stay.
+        It is hard for clients to enforce this so it is best to handle it in Network Process.
+        When DOMCache is cleared, service worker registrations will also be cleared.
+        The reverse is not guaranteed.
+        Covered by API test.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains):
+
 2021-01-07  Alex Christensen  <achristensen@webkit.org>
 
         Use WeakHashSet instead of HashSet<T*>
