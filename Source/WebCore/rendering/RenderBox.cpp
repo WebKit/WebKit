@@ -2828,14 +2828,6 @@ void RenderBox::updateLogicalHeight()
     setMarginAfter(computedValues.m_margins.m_after);
 }
 
-static LayoutUnit blockSizeFromAspectRatio(LayoutUnit borderPaddingInlineSum, LayoutUnit borderPaddingBlockSum, double aspectRatio, BoxSizing boxSizing, LayoutUnit inlineSize)
-{
-    if (boxSizing == BoxSizing::BorderBox)
-        return inlineSize / LayoutUnit(aspectRatio);
-
-    return ((inlineSize - borderPaddingInlineSum) / LayoutUnit(aspectRatio)) + borderPaddingBlockSum;
-}
-
 RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const
 {
     LogicalExtentComputedValues computedValues;
@@ -3313,6 +3305,9 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogi
         if (stretchedHeight)
             return stretchedHeight.value();
     }
+
+    if (shouldComputeLogicalHeightFromAspectRatio())
+        return blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), style().logicalAspectRatio(), style().boxSizing(), logicalWidth());
 
     if (h.isPercentOrCalculated() && isOutOfFlowPositioned() && !isRenderFragmentedFlow()) {
         // FIXME: This is wrong if the containingBlock has a perpendicular writing mode.

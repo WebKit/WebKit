@@ -696,6 +696,18 @@ protected:
 
     void incrementVisuallyNonEmptyPixelCountIfNeeded(const IntSize&);
 
+    bool shouldComputeLogicalHeightFromAspectRatio() const;
+    bool shouldComputeLogicalWidthFromAspectRatio() const;
+    bool shouldComputeLogicalWidthFromAspectRatioAndInsets() const;
+    LayoutUnit computeLogicalWidthFromAspectRatio(RenderFragmentContainer* = nullptr) const;
+
+    static LayoutUnit blockSizeFromAspectRatio(LayoutUnit borderPaddingInlineSum, LayoutUnit borderPaddingBlockSum, double aspectRatio, BoxSizing boxSizing, LayoutUnit inlineSize)
+    {
+        if (boxSizing == BoxSizing::BorderBox)
+            return inlineSize / LayoutUnit(aspectRatio);
+        return ((inlineSize - borderPaddingInlineSum) / LayoutUnit(aspectRatio)) + borderPaddingBlockSum;
+    }
+
 private:
     bool replacedMinMaxLogicalHeightComputesAsNone(SizeType) const;
 
@@ -743,11 +755,6 @@ private:
     LayoutRect computeVisibleRectUsingPaintOffset(const LayoutRect&) const;
     
     void applyTopLeftLocationOffsetWithFlipping(LayoutPoint&) const;
-
-    bool shouldComputeLogicalHeightFromAspectRatio() const;
-    bool shouldComputeLogicalWidthFromAspectRatio() const;
-    bool shouldComputeLogicalWidthFromAspectRatioAndInsets() const;
-    LayoutUnit computeLogicalWidthFromAspectRatio(RenderFragmentContainer* = nullptr) const;
 
 private:
     // The width/height of the contents + borders + padding.  The x/y location is relative to our container (which is not always our parent).
