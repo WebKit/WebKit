@@ -159,8 +159,31 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
         // handle_axis_event
         [](void* data, struct wpe_input_axis_event* event)
         {
-            auto& page = reinterpret_cast<View*>(data)->page();
-            page.handleWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(), WebWheelEvent::Phase::PhaseNone, WebWheelEvent::Phase::PhaseNone));
+            auto& view = *reinterpret_cast<View*>(data);
+
+            // FIXME: We shouldn't hard-code this.
+            enum Axis {
+                Vertical,
+                Horizontal
+            };
+
+            switch (event->axis) {
+            case Vertical:
+                view.m_horizontalScrollActive = !!event->value;
+                break;
+            case Horizontal:
+                view.m_verticalScrollActive = !!event->value;
+                break;
+            }
+
+            // We treat an axis motion event with a value of zero to be equivalent
+            // to a 'stop' event. Motion events with zero motion don't exist naturally,
+            // so this allows a backend to express 'stop' events without changing API.
+            auto& page = view.page();
+            if (event->value)
+                page.handleWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(), WebWheelEvent::Phase::PhaseChanged, WebWheelEvent::Phase::PhaseNone));
+            else if (!view.m_horizontalScrollActive && !view.m_verticalScrollActive)
+                page.handleWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(), WebWheelEvent::Phase::PhaseEnded, WebWheelEvent::Phase::PhaseNone));
         },
         // handle_touch_event
         [](void* data, struct wpe_input_touch_event* event)

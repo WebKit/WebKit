@@ -134,6 +134,9 @@ private:
     mutable GRefPtr<WebKitWebViewAccessible> m_accessible;
 #endif
 
+    bool m_horizontalScrollActive { false };
+    bool m_verticalScrollActive { false };
+
     WebKit::InputMethodFilter m_inputMethodFilter;
 };
 

@@ -217,7 +217,7 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& touchEvent, b
     if (scrollGestureController.handleEvent(touchPoint)) {
         struct wpe_input_axis_event* axisEvent = scrollGestureController.axisEvent();
         if (axisEvent->type != wpe_input_axis_event_type_null)
-            page.handleWheelEvent(WebKit::NativeWebWheelEvent(axisEvent, m_view.page().deviceScaleFactor(), WebWheelEvent::Phase::PhaseNone, WebWheelEvent::Phase::PhaseNone));
+            page.handleWheelEvent(WebKit::NativeWebWheelEvent(axisEvent, m_view.page().deviceScaleFactor(), scrollGestureController.phase(), WebWheelEvent::Phase::PhaseNone));
         return;
     }
 

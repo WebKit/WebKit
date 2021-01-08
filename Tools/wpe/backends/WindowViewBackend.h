@@ -90,6 +90,11 @@ private:
         } touch;
 
         struct {
+            int32_t horizontal { 0 };
+            int32_t vertical { 0 };
+        } axis_discrete;
+
+        struct {
             int32_t rate { 0 };
             int32_t delay { 0 };
         } repeatInfo;

@@ -146,7 +146,7 @@ const struct wl_registry_listener WindowViewBackend::s_registryListener = {
             window->m_xdg = static_cast<struct zxdg_shell_v6*>(wl_registry_bind(registry, name, &zxdg_shell_v6_interface, 1));
 
         if (!std::strcmp(interface, "wl_seat"))
-            window->m_seat = static_cast<struct wl_seat*>(wl_registry_bind(registry, name, &wl_seat_interface, 4));
+            window->m_seat = static_cast<struct wl_seat*>(wl_registry_bind(registry, name, &wl_seat_interface, 5));
     },
     // global_remove
     [](void*, struct wl_registry*, uint32_t) { },
@@ -238,17 +238,64 @@ const struct wl_pointer_listener WindowViewBackend::s_pointerListener = {
     // axis
     [](void* data, struct wl_pointer*, uint32_t time, uint32_t axis, wl_fixed_t value)
     {
+        if (axis != WL_POINTER_AXIS_HORIZONTAL_SCROLL && axis != WL_POINTER_AXIS_VERTICAL_SCROLL)
+            return;
+
         auto& window = *static_cast<WindowViewBackend*>(data);
         if (window.m_seatData.pointer.target) {
             struct wpe_input_axis_event event = { wpe_input_axis_event_type_motion,
                 time, window.m_seatData.pointer.coords.first, window.m_seatData.pointer.coords.second, axis, -wl_fixed_to_int(value), window.modifiers() };
+            if (axis == WL_POINTER_AXIS_HORIZONTAL_SCROLL && window.m_seatData.axis_discrete.horizontal)
+                event.value = window.m_seatData.axis_discrete.horizontal;
+            else if (axis == WL_POINTER_AXIS_VERTICAL_SCROLL && window.m_seatData.axis_discrete.vertical)
+                event.value = window.m_seatData.axis_discrete.vertical;
+#if WPE_CHECK_VERSION(1, 5, 0)
+            else {
+                struct wpe_input_axis_2d_event event2d = { event, 0, 0 };
+                event2d.base.type = static_cast<wpe_input_axis_event_type>(wpe_input_axis_event_type_mask_2d | wpe_input_axis_event_type_motion_smooth);
+
+                if (axis == WL_POINTER_AXIS_HORIZONTAL_SCROLL)
+                    event2d.x_axis = wl_fixed_to_double(value);
+                else
+                    event2d.y_axis = -wl_fixed_to_double(value);
+
+                window.dispatchInputAxisEvent(&event2d.base);
+                return;
+            }
+#endif
+            window.dispatchInputAxisEvent(&event);
+            window.m_seatData.axis_discrete.horizontal = window.m_seatData.axis_discrete.vertical = 0;
+        }
+    },
+    // frame
+    [](void*, struct wl_pointer*) { },
+    // axis_source
+    [](void*, struct wl_pointer*, uint32_t) { },
+    // axis_stop
+    [](void* data, struct wl_pointer*, uint32_t time, uint32_t axis)
+    {
+        if (axis != WL_POINTER_AXIS_HORIZONTAL_SCROLL && axis != WL_POINTER_AXIS_VERTICAL_SCROLL)
+            return;
+
+        auto& window = *static_cast<WindowViewBackend*>(data);
+        if (window.m_seatData.pointer.target) {
+            struct wpe_input_axis_event event = { wpe_input_axis_event_type_motion,
+                time, window.m_seatData.pointer.coords.first, window.m_seatData.pointer.coords.second, axis, 0, window.modifiers() };
             window.dispatchInputAxisEvent(&event);
         }
     },
-    nullptr, // frame
-    nullptr, // axis_source
-    nullptr, // axis_stop
-    nullptr, // axis_discrete
+    // axis_discrete
+    [](void* data, struct wl_pointer*, uint32_t axis, int32_t discrete) {
+        auto& window = *static_cast<WindowViewBackend*>(data);
+        switch (axis) {
+        case WL_POINTER_AXIS_HORIZONTAL_SCROLL:
+            window.m_seatData.axis_discrete.horizontal = discrete;
+            break;
+        case WL_POINTER_AXIS_VERTICAL_SCROLL:
+            window.m_seatData.axis_discrete.vertical = -discrete;
+            break;
+        }
+    },
 };
 
 const struct wl_keyboard_listener WindowViewBackend::s_keyboardListener = {
