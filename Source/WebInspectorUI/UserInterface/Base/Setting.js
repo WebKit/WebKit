@@ -194,6 +194,7 @@ WI.settings = {
     cpuTimelineThreadDetailsExpanded: new WI.Setting("cpu-timeline-thread-details-expanded", false),
     emulateInUserGesture: new WI.Setting("emulate-in-user-gesture", false),
     enableControlFlowProfiler: new WI.Setting("enable-control-flow-profiler", false),
+    enableElementsTabIndependentStylesDetailsSidebarPanel: new WI.Setting("elements-tab-independent-styles-details-panel", true),
     enableLineWrapping: new WI.Setting("enable-line-wrapping", true),
     frontendAppearance: new WI.Setting("frontend-appearance", "system"),
     groupMediaRequestsByDOMNode: new WI.Setting("group-media-requests-by-dom-node", WI.Setting.migrateValue("group-by-dom-node") || false),
@@ -222,7 +223,6 @@ WI.settings = {
     experimentalEnablePreviewFeatures: new WI.Setting("experimental-enable-preview-features", true),
     experimentalEnableStylesJumpToEffective: new WI.Setting("experimental-styles-jump-to-effective", false),
     experimentalEnableStylesJumpToVariableDeclaration: new WI.Setting("experimental-styles-jump-to-variable-declaration", false),
-    experimentalEnableIndependentStylesPanel: new WI.Setting("experimental-independent-styles-panel", false),
     experimentalEnableFontDetailsPanel: new WI.Setting("experimental-font-details-panel", false),
 
     // Protocol

@@ -1,3 +1,21 @@
+2021-01-08  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Promote experimental "Show independent Styles sidebar" setting to "Elements" settings pane and enable by default
+        https://bugs.webkit.org/show_bug.cgi?id=218126
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        - Remove experimental naming from setting and enable by default.
+        * UserInterface/Views/RulesStyleDetailsSidebarPanel.js:
+        (WI.RulesStyleDetailsSidebarPanel.prototype.get allowExclusivePresentation):
+        (WI.RulesStyleDetailsSidebarPanel):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createElementsSettingsView):
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+        - Move setting to "Elements" settings pane.
+
 2021-01-07  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: console.takeHeapSnapshot() appears to have no effect

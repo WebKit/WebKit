@@ -285,6 +285,9 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             elementsSettingsView.addSeparator();
         }
 
+        elementsSettingsView.addSetting(WI.UIString("Details Sidebars:", "Details Sidebars: @ Settings Elements Pane", "Category label for detail sidebar settings."), WI.settings.enableElementsTabIndependentStylesDetailsSidebarPanel, WI.UIString("Show independent Styles sidebar", "Show independent Styles sidebar @ Settings Elements Pane", "Settings tab checkbox label for whether the independent styles sidebar should be shown"));
+        elementsSettingsView.addSeparator();
+
         elementsSettingsView.addSetting(WI.UIString("CSS Changes:"), WI.settings.cssChangesPerNode, WI.UIString("Show only for selected node"));
 
         this._createReferenceLink(elementsSettingsView);
@@ -400,7 +403,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         }
 
         let elementsGroup = experimentalSettingsView.addGroup(WI.UIString("Elements Tab:", "Elements Tab: @ Experimental Settings", "Category label for experimental settings pertaining to the Elements tab"));
-        elementsGroup.addSetting(WI.settings.experimentalEnableIndependentStylesPanel, WI.UIString("Show independent Styles sidebar"));
         elementsGroup.addSetting(WI.settings.experimentalEnableFontDetailsPanel, WI.UIString("Show Font details sidebar panel"));
         experimentalSettingsView.addSeparator();
 
@@ -427,7 +429,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             listenForChange(WI.settings.experimentalEnableStylesJumpToVariableDeclaration);
         }
 
-        listenForChange(WI.settings.experimentalEnableIndependentStylesPanel);
         listenForChange(WI.settings.experimentalEnableFontDetailsPanel);
 
         this._createReferenceLink(experimentalSettingsView);

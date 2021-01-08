@@ -34,6 +34,6 @@ WI.RulesStyleDetailsSidebarPanel = class RulesStyleDetailsSidebarPanel extends W
 
     get allowExclusivePresentation()
     {
-        return WI.settings.experimentalEnableIndependentStylesPanel.value;
+        return WI.settings.enableElementsTabIndependentStylesDetailsSidebarPanel.value;
     }
 };

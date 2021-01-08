@@ -442,6 +442,8 @@ localizedStrings["Detached"] = "Detached";
 localizedStrings["Details"] = "Details";
 /* Label for the details sidebar. */
 localizedStrings["Details @ Sidebar"] = "Details";
+/* Category label for detail sidebar settings. */
+localizedStrings["Details Sidebars: @ Settings Elements Pane"] = "Details Sidebars:";
 localizedStrings["Device %d"] = "Device %d";
 localizedStrings["Device Settings"] = "Device Settings";
 localizedStrings["Diagnoses common accessibility problems affecting screen readers and other assistive technology."] = "Diagnoses common accessibility problems affecting screen readers and other assistive technology.";
@@ -1300,7 +1302,8 @@ localizedStrings["Show all resources"] = "Show all resources";
 localizedStrings["Show compositing borders"] = "Show compositing borders";
 localizedStrings["Show full certificate"] = "Show full certificate";
 localizedStrings["Show hidden tabs"] = "Show hidden tabs";
-localizedStrings["Show independent Styles sidebar"] = "Show independent Styles sidebar";
+/* Settings tab checkbox label for whether the independent styles sidebar should be shown */
+localizedStrings["Show independent Styles sidebar @ Settings Elements Pane"] = "Show independent Styles sidebar";
 localizedStrings["Show jump to effective property button"] = "Show jump to effective property button";
 localizedStrings["Show jump to variable declaration button"] = "Show jump to variable declaration button";
 localizedStrings["Show only for selected node"] = "Show only for selected node";
