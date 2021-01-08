@@ -1,3 +1,22 @@
+2021-01-08  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Add standard mechanism for packaging pip packages (work-around)
+        https://bugs.webkit.org/show_bug.cgi?id=220468
+        <rdar://problem/72935720>
+
+        Reviewed by Stephanie Lewis.
+
+        Temporary change to make these packages easier to pip install.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/__init__.py: Bump version.
+        * Scripts/libraries/resultsdbpy/setup.py: Use string instead of version object.
+        * Scripts/libraries/webkitcorepy/setup.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump version.
+        * Scripts/libraries/webkitflaskpy/setup.py: Use string instead of version object.
+        * Scripts/libraries/webkitflaskpy/webkitflaskpy/__init__.py: Bump version.
+        * Scripts/libraries/webkitscmpy/setup.py: Use string instead of version object.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version.
+
 2021-01-08  Chris Dumez  <cdumez@apple.com>
 
         Make it safe to re-enter HashMap::clear()

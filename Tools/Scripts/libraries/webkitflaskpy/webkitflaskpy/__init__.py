@@ -43,7 +43,7 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(0, 1, 0)
+version = Version(0, 1, 1)
 
 AutoInstall.register(Package('click'), Version(7, 1, 2))
 AutoInstall.register(Package('flask'), Version(1, 1, 2))

@@ -20,7 +20,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitscmpy import version
 from setuptools import setup
 
 
@@ -31,7 +30,7 @@ def readme():
 
 setup(
     name='webkitscmpy',
-    version=str(version),
+    version='0.7.4',
     description='Library designed to interact with git and svn repositories.',
     long_description=readme(),
     classifiers=[
