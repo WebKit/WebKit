@@ -1,3 +1,13 @@
+2021-01-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] AtomicsIsLockFree's AI result is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=220452
+        <rdar://problem/71228690>
+
+        Reviewed by Mark Lam.
+
+        * stress/atomics-is-lock-free-and-zero.js: Added.
+
 2021-01-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DFG/FTL Atomics should assume non-typed-array input with storage-edge
