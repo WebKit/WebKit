@@ -1,3 +1,19 @@
+2021-01-08  Peng Liu  <peng.liu6@apple.com>
+
+        PlaybackSessionManager::m_clientCounts is not updated correctly when a video enters picture-in-picture from fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=220435
+
+        Reviewed by Jer Noble.
+
+        A follow-up patch to fix an assertion failure on Mac.
+        `VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation()` should not call
+        `removeClientForContext()` on Mac because `didCleanupFullscreen()` will do that.
+
+        Fix layout test: media/element-containing-pip-video-going-into-fullscreen.html
+
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation):
+
 2021-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] -[WKWebView acceptsFirstMouse:] sometimes crashes in IPC::Connection::createSyncMessageEncoder

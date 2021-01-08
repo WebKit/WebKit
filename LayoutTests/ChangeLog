@@ -1,3 +1,13 @@
+2021-01-08  Peng Liu  <peng.liu6@apple.com>
+
+        PlaybackSessionManager::m_clientCounts is not updated correctly when a video enters picture-in-picture from fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=220435
+
+        Reviewed by Jer Noble.
+
+        * media/element-containing-pip-video-going-into-fullscreen-expected.txt:
+        * media/element-containing-pip-video-going-into-fullscreen.html:
+
 2021-01-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         fast/text/canvas-color-fonts/COLR.html prematurely exits

@@ -29,8 +29,11 @@
             runWithKeyDown(function(){ video.webkitSetPresentationMode('picture-in-picture'); });
         }
 
-        function onfirstpresentationmodechanged()
+        async function onfirstpresentationmodechanged()
         {
+            if (window.internals)
+                await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+
             testExpected("video.webkitPresentationMode", "picture-in-picture");
             video.removeEventListener('webkitpresentationmodechanged', onfirstpresentationmodechanged);
 
@@ -54,8 +57,11 @@
                 checkFinalState();
         }
 
-        function checkFinalState()
+        async function checkFinalState()
         {
+            if (window.internals)
+                await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+
             testExpected("document.webkitCurrentFullScreenElement", videoContainer);
             testExpected("video.webkitPresentationMode", "inline");
             endTest();
