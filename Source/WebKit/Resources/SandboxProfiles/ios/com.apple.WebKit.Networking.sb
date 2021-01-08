@@ -454,7 +454,6 @@
     (sysctl-name "hw.l3settings")
     (sysctl-name "hw.logicalcpu")
     (sysctl-name "hw.logicalcpu_max")
-    (sysctl-name "hw.memsize")
     (sysctl-name "hw.pagesize")
     (sysctl-name "hw.physicalcpu")
     (sysctl-name "hw.physicalcpu_max")
@@ -547,6 +546,7 @@
         "hw.cpu64bit_capable"
         "hw.ncpu"
         "hw.machine" ;; Needed by CFNetwork (CFURLProtocols)
+        "hw.memsize"
         "hw.model" ;; Needed for bundle loading
         "hw.pagesize_compat" ;; Needed by bmalloc
         "kern.bootargs"  ;; Needed for bundle loading

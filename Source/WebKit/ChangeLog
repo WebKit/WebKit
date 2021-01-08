@@ -1,3 +1,16 @@
+2021-01-07  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Silence diagnostics sandbox violations
+        https://bugs.webkit.org/show_bug.cgi?id=220414
+
+        Reviewed by Darin Adler.
+
+        For performance reasons, silence benign diagnostics sandbox violations in the WebContent process on iOS.
+        Additionally, remove logging for a sysctl in the Networking process' sandbox, since it is known to be used.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2021-01-07  Kate Cheney  <katherine_cheney@apple.com>
 
         Error in layout tests: "Passed ITP enabled state (0) does not match TCC setting (1)"
