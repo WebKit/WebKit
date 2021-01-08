@@ -20,43 +20,46 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import logging
-import os
 import sys
 
-log = logging.getLogger('webkitscmpy')
-
-
-def _maybe_add_webkitcorepy_path():
-    # Hopefully we're beside webkitcorepy, otherwise webkitcorepy will need to be installed.
-    libraries_path = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-    webkitcorepy_path = os.path.join(libraries_path, 'webkitcorepy')
-    if os.path.isdir(webkitcorepy_path) and os.path.isdir(os.path.join(webkitcorepy_path, 'webkitcorepy')) and webkitcorepy_path not in sys.path:
-        sys.path.insert(0, webkitcorepy_path)
-
-
-_maybe_add_webkitcorepy_path()
-
-try:
-    from webkitcorepy import AutoInstall, Package, Version
-except ImportError:
-    raise ImportError(
-        "'webkitcorepy' could not be found on your Python path.\n" +
-        "You are not running from a WebKit checkout.\n" +
-        "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
-    )
-
-version = Version(0, 7, 3)
-
-AutoInstall.register(Package('fasteners', Version(0, 15, 0)))
-AutoInstall.register(Package('monotonic', Version(1, 5)))
-AutoInstall.register(Package('xmltodict', Version(0, 12, 0)))
-
-from webkitscmpy.contributor import Contributor
-from webkitscmpy.commit import Commit
-from webkitscmpy.scm_base import ScmBase
-
+from .command import Command
+from webkitcorepy import arguments
 from webkitscmpy import local
-from webkitscmpy import mocks
 
-name = 'webkitscmpy'
+
+class Checkout(Command):
+    name = 'checkout'
+    help = 'Given an identifier, revision or hash, normalize and checkout that commit'
+
+    @classmethod
+    def parser(cls, parser, loggers=None):
+        arguments.LoggingGroup(
+            parser,
+            loggers=loggers,
+            help='{} amount of logging and commit information displayed'
+        )
+
+        parser.add_argument(
+            'argument', nargs=1,
+            type=str, default=None,
+            help='String representation of a commit or branch to be normalized',
+        )
+
+    @classmethod
+    def main(cls, args, repository, **kwargs):
+        if not repository.path:
+            sys.stderr.write("Cannot checkout on remote repository")
+            return 1
+
+        try:
+            commit = repository.checkout(args.argument[0])
+        except (local.Scm.Exception, ValueError) as exception:
+            # ValueErrors and Scm exceptions usually contain enough information to be displayed
+            # to the user as an error
+            sys.stderr.write(str(exception) + '\n')
+            return 1
+
+        if not commit:
+            sys.stderr.write("Failed to map '{}'\n".format(args.argument[0]))
+            return 1
+        return 0

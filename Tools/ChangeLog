@@ -1,3 +1,24 @@
+2021-01-07  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Split program into separate files
+        https://bugs.webkit.org/show_bug.cgi?id=220369
+        <rdar://problem/72856906>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/canonicalize: Move to webkitscmpy/program/canonicalize.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py: Update imports.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program: Moved from webkitscmpy/program.py.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program.py: Moved to webkitscmpy/program.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/__init__.py: Moved from webkitscmpy/program.py.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/canonicalize: Moved from webkitscmpy/canonicalize.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/canonicalize/committer.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/canonicalize/message.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/checkout.py: Moved from webkitscmpy/program.py.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/command.py: Moved from webkitscmpy/program.py.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/find.py: Moved from webkitscmpy/program.py.
+
 2021-01-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Text fields should not be translated while typing

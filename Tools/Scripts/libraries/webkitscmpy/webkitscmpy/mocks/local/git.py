@@ -27,8 +27,8 @@ import re
 from datetime import datetime
 from webkitcorepy import mocks, OutputCapture, StringIO
 from webkitscmpy import local, Commit, Contributor
-from webkitscmpy.canonicalize.committer import main as committer_main
-from webkitscmpy.canonicalize.message import main as message_main
+from webkitscmpy.program.canonicalize.committer import main as committer_main
+from webkitscmpy.program.canonicalize.message import main as message_main
 
 
 class Git(mocks.Subprocess):
