@@ -233,8 +233,10 @@ void JSModuleNamespaceObject::getOwnPropertyNames(JSObject* cell, JSGlobalObject
         }
         propertyNames.add(name.impl());
     }
-    if (propertyNames.includeSymbolProperties())
+    if (propertyNames.includeSymbolProperties()) {
+        scope.release();
         thisObject->getOwnNonIndexPropertyNames(globalObject, propertyNames, mode);
+    }
 }
 
 bool JSModuleNamespaceObject::defineOwnProperty(JSObject* cell, JSGlobalObject* globalObject, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
