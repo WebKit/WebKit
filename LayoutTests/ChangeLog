@@ -1,3 +1,13 @@
+2021-01-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Enable ENABLE_USERSELECT_ALL for -webkit-user-select:all support
+        https://bugs.webkit.org/show_bug.cgi?id=118740
+
+        Reviewed by Don Olmstead.
+
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2021-01-08  Youenn Fablet  <youenn@apple.com>
 
         Fix count failure check in LayoutTests/webrtc/h264-high.html

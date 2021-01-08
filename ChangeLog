@@ -1,3 +1,17 @@
+2021-01-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Enable ENABLE_USERSELECT_ALL for -webkit-user-select:all support
+        https://bugs.webkit.org/show_bug.cgi?id=118740
+
+        Reviewed by Don Olmstead.
+
+        This change also fixes the assertion failure of
+        editing/inserting/insert-list-user-select-none-crash.html
+        (Bug 216256).
+
+        * Source/cmake/OptionsFTW.cmake: Removed the line disabling ENABLE_USERSELECT_ALL.
+        * Source/cmake/OptionsWin.cmake: Ditto.
+
 2021-01-07  Ryan Hostetler  <rhost@apple.com>
 
         make clean/installsrc fail: You cannot specify -alltargets and also specify individual targets.

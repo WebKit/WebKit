@@ -1535,10 +1535,6 @@ editing/selection/selection-across-shadow-boundaries-readonly-1.html [ Pass Imag
 editing/selection/selection-across-shadow-boundaries-readonly-2.html [ Pass ImageOnlyFailure ]
 editing/selection/selection-across-shadow-boundaries-readonly-3.html [ Pass ImageOnlyFailure ]
 editing/selection/update-selection-by-style-change.html [ ImageOnlyFailure ]
-editing/selection/user-select-all-image-with-single-click.html [ Failure ]
-editing/selection/user-select-all-selection.html [ Failure ]
-editing/selection/user-select-all-with-shift.html [ Failure ]
-editing/selection/user-select-all-with-single-click.html [ Failure ]
 [ Debug ] editing/selection/5057506.html [ Pass Failure ]
 [ Debug ] editing/selection/directionality-after-undo-replace.html [ Pass Failure ]
 
@@ -1852,7 +1848,6 @@ css3/flexbox/flexbox-baseline-margins.html [ Failure ]
 css3/flexbox/flexitem.html [ Failure ]
 css3/font-feature-settings-stylistic-set.html [ ImageOnlyFailure ]
 css3/masking/clip-path-filter.html [ ImageOnlyFailure ]
-editing/inserting/insert-list-user-select-none-crash.html [ Skip ] # Crash by assertion failure
 editing/selection/move-by-word-visually-across-object-element-1.html [ Failure ]
 editing/selection/move-by-word-visually-across-object-element-2.html [ Failure ]
 editing/selection/move-by-word-visually-across-object-element-3.html [ Failure ]
