@@ -1,3 +1,14 @@
+2021-01-08  Alexey Proskuryakov  <ap@apple.com>
+
+        JavaScriptCore API headers contain project style includes
+        https://bugs.webkit.org/show_bug.cgi?id=220449
+        rdar://problem/71493605
+
+        Reviewed by Yusuke Suzuki.
+
+        * API/JSStringRefCF.h:
+        * API/JavaScriptCore.h:
+
 2021-01-08  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         for/in over a Proxy should not call [[GetOwnProperty]] trap twice per property
