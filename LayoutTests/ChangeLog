@@ -1,5 +1,29 @@
 2021-01-08  Youenn Fablet  <youenn@apple.com>
 
+        Fix count failure check in LayoutTests/webrtc/h264-high.html
+        https://bugs.webkit.org/show_bug.cgi?id=220234
+        <rdar://problem/72791771>
+
+        Reviewed by Eric Carlson.
+
+        Frame size error check should check for count being 50 instead of 20.
+        Update code to use a max variable instead.
+        Move common code between the two tests in webrtc/h264-profile-tests.js.
+        Add ios specific expectations since high resolutions do not seem to be supported there.
+
+        * platform/ios/webrtc/h264-baseline-expected.txt: Added.
+        * platform/ios/webrtc/h264-high-expected.txt: Added.
+        * platform/mac-wk2/TestExpectations:
+        * webrtc/h264-baseline.html:
+        * webrtc/h264-high.html:
+        * webrtc/h264-profile-tests.js: Added.
+        (async waitForVideoSize):
+        (testProfile):
+        (async testResolutions.async resolutions):
+        (async testResolutions):
+
+2021-01-08  Youenn Fablet  <youenn@apple.com>
+
         PaintFrameForMedia has a null identifier when media player is a media stream track video player
         https://bugs.webkit.org/show_bug.cgi?id=220411
 

@@ -9,6 +9,7 @@
     <body>
         <video id="video" autoplay=""></video>
         <script src ="routines.js"></script>
+        <script src="h264-profile-tests.js"></script>
         <script>
 const resolutions = [
  [320, 240],
@@ -23,59 +24,8 @@ const resolutions = [
  [1920, 1080]
 ];
 
-async function waitForVideoSize(width, height)
-{
-    let counter = 0;
-    while (++counter < 50 && video.videoWidth != width && video.videoHeight != height)
-        await waitFor(200);
-
-    if (counter === 20)
-        return Promise.reject("Video size not expected : " + video.videoWidth + " " + video.videoHeight);
-}
-
-let pc1, pc2;
-let localVideoTrack;
-promise_test(async (test) => {
-    const localStream = await navigator.mediaDevices.getUserMedia({ video: true });
-    localVideoTrack = localStream.getVideoTracks()[0];
-    const stream = await new Promise((resolve, reject) => {
-        createConnections((firstConnection) => {
-            pc1 = firstConnection;
-            firstConnection.addTrack(localVideoTrack, localStream);
-        }, (secondConnection) => {
-            pc2 = secondConnection;
-            secondConnection.ontrack = (trackEvent) => {
-                resolve(trackEvent.streams[0]);
-            };
-        }, { observeOffer : (offer) => {
-            offer.sdp = setH264HighCodec(offer.sdp);
-            return offer;
-        }
-        });
-        setTimeout(() => reject("Test timed out"), 5000);
-    });
-
-    video.srcObject = stream;
-    await video.play();
-}, "High video exchange");
-
-resolutions.forEach(resolution => {
-    promise_test(async (test) => {
-        await localVideoTrack.applyConstraints({ width : resolution[0], height : resolution[1] });
-        return waitForVideoSize(resolution[0], resolution[1]);
-    }, "Video resolution test: " + resolution[0] + " " + resolution[1]);
-});
-
-resolutions.forEach(resolution => {
-    promise_test(async (test) => {
-        const parameters = pc1.getSenders()[0].getParameters();
-        parameters.encodings[0].maxBitrate = 100000;
-        pc1.getSenders()[0].setParameters(parameters);
-
-        await localVideoTrack.applyConstraints({ width : resolution[0], height : resolution[1] });
-        return waitForVideoSize(resolution[0], resolution[1]);
-    }, "Video resolution test with maxBitrate: " + resolution[0] + " " + resolution[1]);
-});
+testProfile(setH264HighCodec, "High video exchange");
+testResolutions(resolutions);
         </script>
     </body>
 </html>
