@@ -1,3 +1,16 @@
+2021-01-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        fast/text/canvas-color-fonts/COLR.html prematurely exits
+        https://bugs.webkit.org/show_bug.cgi?id=220453
+        <rdar://problem/71056602>
+
+        Reviewed by Sam Weinig.
+
+        The test is asynchronous and I forgot to mark it as such.
+
+        * fast/text/canvas-color-fonts/COLR.html:
+        * platform/mac-wk1/TestExpectations:
+
 2021-01-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         [Mojave] imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing.html is a flaky failure

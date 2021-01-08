@@ -21,12 +21,16 @@
 <div style="position: absolute; left: 698px; top: 38px; width: 4px; height: 204px; background: blue;"></div>
 </div>
 <script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
 let font = "200px 'WebFont'";
 document.fonts.load(font).then(function() {
     let canvas = document.getElementById("canvas");
     let context = canvas.getContext("2d");
     context.font = font;
     context.fillText("BAB", 100, 200);
+    if (self.testRunner)
+        testRunner.notifyDone();
 });
 </script>
 </body>
