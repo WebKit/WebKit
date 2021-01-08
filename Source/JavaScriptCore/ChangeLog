@@ -1,3 +1,29 @@
+2021-01-08  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        for/in over a Proxy should not call [[GetOwnProperty]] trap twice per property
+        https://bugs.webkit.org/show_bug.cgi?id=189034
+
+        Reviewed by Yusuke Suzuki.
+
+        Although the spec [1] doesn't normatively require calling [[GetOwnProperty]]
+        only once per property, this is what V8 and SpiderMonkey do.
+
+        Since [[Enumerable]] property attribute is checked by has_enumerable_property
+        bytecode op, this patch avoids another observable [[GetOwnProperty]] call
+        by using DontEnumPropertiesMode::Include exclusively for Proxy objects.
+
+        A side effect of this change: if a property becomes [[Enumerable]] after
+        [[OwnPropertyKeys]] trap was called, it will be enumerated, which matches
+        the spec [2] and developer expectations.
+
+        This patch advances provided microbenchmark by 100%.
+
+        [1]: https://tc39.es/ecma262/#sec-enumerate-object-properties
+        [2]: https://tc39.es/ecma262/#sec-%foriniteratorprototype%.next (step 7.b.iii)
+
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::getEnumerablePropertyNames):
+
 2021-01-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, add missing scope.release() in JSModuleNamespaceObject

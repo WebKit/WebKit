@@ -73,7 +73,7 @@ const dontEnumDesc = { value: 0, writable: true, enumerable: false, configurable
         }
         shouldBe(target.a, 1);
         shouldBe(target.b, 0);
-        shouldBe(target.c, 0);
+        shouldBe(target.c, 1);
     }
 
     for (var i = 0; i < 1e5; ++i)

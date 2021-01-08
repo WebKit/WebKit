@@ -1,3 +1,14 @@
+2021-01-08  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        for/in over a Proxy should not call [[GetOwnProperty]] trap twice per property
+        https://bugs.webkit.org/show_bug.cgi?id=189034
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/for-in-proxy.js: Added.
+        * stress/for-in-redefine-enumerable.js:
+        * stress/proxy-for-in.js: Added.
+
 2021-01-08  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-References] Add optional default value parameter for Table.constructor, Table.grow and Table.set

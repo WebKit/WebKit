@@ -94,6 +94,16 @@ void getEnumerablePropertyNames(JSGlobalObject* globalObject, JSObject* base, Pr
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    auto getOwnPropertyNames = [&](JSObject* object) {
+        auto mode = DontEnumPropertiesMode::Exclude;
+        if (object->type() == ProxyObjectType) {
+            // This ensures Proxy's [[GetOwnProperty]] trap is invoked only once per property, by OpHasEnumerableProperty.
+            // Although doing this for all objects is spec-conformant, collecting DontEnum properties isn't free.
+            mode = DontEnumPropertiesMode::Include;
+        }
+        object->methodTable(vm)->getOwnPropertyNames(object, globalObject, propertyNames, mode);
+    };
+
     Structure* structure = base->structure(vm);
     if (structure->canAccessPropertiesQuicklyForEnumeration() && indexedLength == base->getArrayLength()) {
         // Inlined JSObject::getOwnNonIndexPropertyNames()
@@ -109,7 +119,7 @@ void getEnumerablePropertyNames(JSGlobalObject* globalObject, JSObject* base, Pr
         if (!nonStructurePropertyCount)
             structurePropertyCount = propertyNames.size();
     } else {
-        base->methodTable(vm)->getOwnPropertyNames(base, globalObject, propertyNames, DontEnumPropertiesMode::Exclude);
+        getOwnPropertyNames(base);
         RETURN_IF_EXCEPTION(scope, void());
         // |propertyNames| contains all indexed properties, so disable enumeration based on getEnumerableLength().
         indexedLength = 0;
@@ -130,7 +140,7 @@ void getEnumerablePropertyNames(JSGlobalObject* globalObject, JSObject* base, Pr
         }
 
         object = asObject(prototype);
-        object->methodTable(vm)->getOwnPropertyNames(object, globalObject, propertyNames, DontEnumPropertiesMode::Exclude);
+        getOwnPropertyNames(object);
         RETURN_IF_EXCEPTION(scope, void());
     }
 }
