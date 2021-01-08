@@ -55,6 +55,7 @@ def readJSONFile(path):
 Speedometer2 = "Speedometer2"
 JetStream2 = "JetStream2"
 PLT5 = "PLT5"
+PLUM3 = "PLUM3"
 MotionMark = "MotionMark"
 MotionMark1_1 = "MotionMark-1.1"
 MotionMark1_1_1 = "MotionMark-1.1.1"
@@ -119,6 +120,14 @@ def plt5Breakdown(jsonObject):
             result["warm--" + nameMapping[test]].append(warmTests[test]["Geometric"])
             result["cold--" + nameMapping[test]].append(coldTests[test]["Geometric"])
 
+    return result
+
+def plum3Breakdown(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "B"
+    for test in breakdown._results["PLUM3-PhysFootprint"]["tests"].keys():
+        result[test] = breakdown._results["PLUM3-PhysFootprint"]["tests"][test]["metrics"]["Allocations"]["Geometric"]["current"]
     return result
 
 def displayStr(value):
@@ -310,6 +319,14 @@ def PLT5Results(payload):
         results.append(obj["Geometric"])
     return results
 
+def detectPLUM3(payload):
+    return "PLUM3-PhysFootprint" in payload
+
+def PLUM3Results(payload):
+    assert detectPLUM3(payload)
+    breakdown = BenchmarkResults(payload)
+    return breakdown._results["PLUM3-PhysFootprint"]["metrics"]["Allocations"]["Arithmetic"]["current"]
+
 def detectMotionMark(payload):
     return "MotionMark" in payload
 
@@ -345,6 +362,8 @@ def detectBenchmark(payload):
         return Speedometer2
     if detectPLT5(payload):
         return PLT5
+    if detectPLUM3(payload):
+        return PLUM3
     if detectMotionMark(payload):
         return MotionMark
     if detectMotionMark1_1(payload):
@@ -363,6 +382,8 @@ def biggerIsBetter(benchmarkType):
     if benchmarkType == MotionMark1_1:
         return True
     if benchmarkType == PLT5:
+        return False
+    if benchmarkType == PLUM3:
         return False
 
     print("Should not be reached.")
@@ -478,6 +499,14 @@ def main():
 
         if args.csv:
             writeCSV(plt5Breakdown(a), plt5Breakdown(b), args.csv)
+    elif typeA == PLUM3:
+        if args.breakdown:
+            dumpBreakdowns(plum3Breakdown(a), plum3Breakdown(b))
+
+        ttest(typeA, PLUM3Results(a), PLUM3Results(b))
+
+        if args.csv:
+            writeCSV(plum3Breakdown(a), plum3Breakdown(b), args.csv)
     else:
         print("Unknown benchmark type")
         sys.exit(1)
