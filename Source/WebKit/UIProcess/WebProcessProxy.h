@@ -407,6 +407,10 @@ public:
     void pageMutedStateChanged(WebCore::PageIdentifier, WebCore::MediaProducer::MutedStateFlags);
     void pageIsBecomingInvisible(WebCore::PageIdentifier);
 
+#if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
+    static bool shouldEnableRemoteInspector();
+#endif
+
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed);
 

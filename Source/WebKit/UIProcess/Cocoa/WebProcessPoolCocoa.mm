@@ -332,6 +332,13 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     if (!m_resolvedPaths.containerTemporaryDirectory.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(m_resolvedPaths.containerTemporaryDirectory, SandboxExtension::Type::ReadWrite, parameters.containerTemporaryDirectoryExtensionHandle);
 #endif
+#if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
+    if (WebProcessProxy::shouldEnableRemoteInspector()) {
+        SandboxExtension::Handle enableRemoteWebInspectorExtensionHandle;
+        if (SandboxExtension::createHandleForMachLookup("com.apple.webinspector"_s, WTF::nullopt, enableRemoteWebInspectorExtensionHandle))
+            parameters.enableRemoteWebInspectorExtensionHandle = WTFMove(enableRemoteWebInspectorExtensionHandle);
+    }
+#endif
 
     parameters.fontAllowList = m_fontAllowList;
 

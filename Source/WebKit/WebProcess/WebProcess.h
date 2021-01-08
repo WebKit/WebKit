@@ -318,7 +318,7 @@ public:
 #if PLATFORM(COCOA)
     void setMediaMIMETypes(const Vector<String>);
 #if ENABLE(REMOTE_INSPECTOR)
-    void enableRemoteWebInspector(const SandboxExtension::Handle&);
+    void enableRemoteWebInspector();
 #endif
     void unblockServicesRequiredByAccessibility(const SandboxExtension::HandleArray&);
 #if ENABLE(CFPREFS_DIRECT_MODE)

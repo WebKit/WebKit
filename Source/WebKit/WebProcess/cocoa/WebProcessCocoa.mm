@@ -260,6 +260,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     SandboxExtension::consumePermanently(parameters.containerCachesDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.containerTemporaryDirectoryExtensionHandle);
 #endif
+#if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
+    if (SandboxExtension::consumePermanently(parameters.enableRemoteWebInspectorExtensionHandle))
+        Inspector::RemoteInspector::setNeedMachSandboxExtension(false);
+#endif
 #endif
 
     // Disable NSURLCache.
@@ -991,10 +995,8 @@ void WebProcess::backlightLevelDidChange(float backlightLevel)
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
-void WebProcess::enableRemoteWebInspector(const SandboxExtension::Handle& handle)
+void WebProcess::enableRemoteWebInspector()
 {
-    SandboxExtension::consumePermanently(handle);
-    Inspector::RemoteInspector::setNeedMachSandboxExtension(false);
     Inspector::RemoteInspector::singleton();
 }
 #endif

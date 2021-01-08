@@ -1,3 +1,33 @@
+2021-01-08  Youenn Fablet  <youenn@apple.com>
+
+        Service Worker is no longer inspectable
+        https://bugs.webkit.org/show_bug.cgi?id=220406
+        <rdar://problem/72883757>
+
+        Reviewed by Per Arne Vollan.
+
+        We were sending the sandbox extension later when enabling remote inspector.
+        But this is not soon enough for inspecting service workers.
+        For that reason, send the sandbox extension at process init time based on whether develop menu is on or not.
+
+        Manually tested by validating that Develop Menu can list running service workers.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::shouldEnableRemoteInspector):
+        (WebKit::WebProcessProxy::enableRemoteInspectorIfNeeded):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::enableRemoteWebInspector):
+
 2021-01-08  Chris Lord  <clord@igalia.com>
 
         [WPE] Enable smooth-motion and kinetic scrolling on touchpads

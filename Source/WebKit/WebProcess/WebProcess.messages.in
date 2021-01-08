@@ -133,7 +133,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #if PLATFORM(COCOA)
     SetMediaMIMETypes(Vector<String> types)
 #if ENABLE(REMOTE_INSPECTOR)
-    EnableRemoteWebInspector(WebKit::SandboxExtension::Handle handle);
+    EnableRemoteWebInspector();
 #endif
 #endif
 
