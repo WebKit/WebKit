@@ -1163,4 +1163,36 @@ TEST(WTF_HashMap, Random_IsEvenlyDistributedAfterRemove)
     }
 }
 
+class TestObjectWithCustomDestructor {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    TestObjectWithCustomDestructor(Function<void()>&& runInDestructor)
+        : m_runInDestructor(WTFMove(runInDestructor))
+    { }
+
+    ~TestObjectWithCustomDestructor()
+    {
+        m_runInDestructor();
+    }
+
+private:
+    Function<void()> m_runInDestructor;
+};
+
+TEST(WTF_HashMap, Clear_Reenter)
+{
+    HashMap<uint64_t, std::unique_ptr<TestObjectWithCustomDestructor>> map;
+    for (unsigned i = 1; i <= 10; ++i) {
+        map.add(i, makeUnique<TestObjectWithCustomDestructor>([&map] {
+            map.clear();
+            EXPECT_EQ(0U, map.size());
+            EXPECT_TRUE(map.isEmpty());
+        }));
+    }
+    EXPECT_EQ(10U, map.size());
+    map.clear();
+    EXPECT_EQ(0U, map.size());
+    EXPECT_TRUE(map.isEmpty());
+}
+
 } // namespace TestWebKitAPI
