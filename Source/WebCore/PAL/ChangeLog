@@ -1,3 +1,15 @@
+2021-01-08  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Reset user directory suffix before getting sandbox directory
+        https://bugs.webkit.org/show_bug.cgi?id=220358
+        <rdar://problem/57616019>
+
+        Reviewed by Brent Fulgham.
+
+        Declare functions to get and set user directory suffix.
+
+        * pal/spi/cocoa/CoreServicesSPI.h:
+
 2021-01-06  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Revert audioTimePitchAlgorithm to "TimeDomain" from "Spectral"

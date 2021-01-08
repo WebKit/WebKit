@@ -699,7 +699,13 @@ void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationPar
 #if USE(CACHE_COMPILED_SANDBOX)
     // This must be called before initializeSandboxParameters so that the path does not include the user directory suffix.
     // We don't want the user directory suffix because we want all processes of the same type to use the same cache directory.
+    // If the user directory suffix is not empty, reset it and restore when finished.
+    char* suffix = _get_user_dir_suffix();
+    if (suffix)
+        _set_user_dir_suffix(nullptr);
     String dataVaultParentDirectory { sandboxDataVaultParentDirectory() };
+    if (suffix)
+        _set_user_dir_suffix(suffix);
 #else
     String dataVaultParentDirectory;
 #endif
