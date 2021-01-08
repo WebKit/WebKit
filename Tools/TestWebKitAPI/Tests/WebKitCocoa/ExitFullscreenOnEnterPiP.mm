@@ -99,6 +99,10 @@ TEST(ExitFullscreenOnEnterPiP, VideoFullscreen)
 
 TEST(ExitFullscreenOnEnterPiP, ElementFullscreen)
 {
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{
+        @"WebCoreLogging": @"Fullscreen=debug",
+        @"WebKit2Logging": @"Fullscreen=debug",
+    }];
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration preferences]._fullScreenEnabled = YES;
     [configuration preferences]._allowsPictureInPictureMediaPlayback = YES;
@@ -108,6 +112,11 @@ TEST(ExitFullscreenOnEnterPiP, ElementFullscreen)
     [webView _setFullscreenDelegate:handler.get()];
 
     [webView synchronouslyLoadTestPageNamed:@"ExitFullscreenOnEnterPiP"];
+
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{
+        @"WebCoreLogging": @"",
+        @"WebKit2Logging": @"",
+    }];
 
     didEnterFullscreen = false;
     [webView evaluateJavaScript:@"document.getElementById('enter-element-fullscreen').click()" completionHandler: nil];
@@ -130,6 +139,7 @@ TEST(ExitFullscreenOnEnterPiP, ElementFullscreen)
 
     [webView evaluateJavaScript:@"document.getElementById('exit-pip').click()" completionHandler: nil];
     ASSERT_TRUE(TestWebKitAPI::Util::runFor(&didExitPiP, 10));
+
 }
 
 } // namespace TestWebKitAPI

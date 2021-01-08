@@ -1,3 +1,17 @@
+2021-01-08  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed test gardening. Attempting to diagnose failing PiP API tests by enabling more logging 
+        during the test run, to be collected after a failed test.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/xcshareddata/xcschemes/DumpRenderTree.xcscheme:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/xcshareddata/xcschemes/TestWebKitAPI.xcscheme:
+        * TestWebKitAPI/Tests/WebKitCocoa/ExitFullscreenOnEnterPiP.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ExitPiPOnSuspendVideoElement.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewCloseAllMediaPresentations.mm:
+        (TEST):
+
 2021-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] -[WKWebView acceptsFirstMouse:] sometimes crashes in IPC::Connection::createSyncMessageEncoder

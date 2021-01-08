@@ -62,6 +62,11 @@ TEST(PictureInPicture, ExitPiPOnSuspendVideoElement)
     if (!WebCore::supportsPictureInPicture())
         return;
 
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{
+        @"WebCoreLogging": @"Fullscreen=debug",
+        @"WebKit2Logging": @"Fullscreen=debug",
+    }];
+
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration preferences]._fullScreenEnabled = YES;
     [configuration preferences]._allowsPictureInPictureMediaPlayback = YES;
@@ -70,6 +75,11 @@ TEST(PictureInPicture, ExitPiPOnSuspendVideoElement)
     [webView setUIDelegate:handler.get()];
 
     [webView synchronouslyLoadTestPageNamed:@"ExitFullscreenOnEnterPiP"];
+
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{
+        @"WebCoreLogging": @"",
+        @"WebKit2Logging": @"",
+    }];
 
     didEnterPiP = false;
     [webView evaluateJavaScript:@"document.getElementById('enter-pip').click()" completionHandler: nil];

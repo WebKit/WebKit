@@ -41,11 +41,23 @@ TEST(WKWebViewCloseAllMediaPresentations, PictureInPicture)
     if (!WebCore::supportsPictureInPicture())
         return;
 
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{
+        @"WebCoreLogging": @"Fullscreen=debug",
+        @"WebKit2Logging": @"Fullscreen=debug",
+    }];
+
+
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [[configuration preferences] _setAllowsPictureInPictureMediaPlayback:YES];
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
 
     [webView synchronouslyLoadHTMLString:@"<video src=video-with-audio.mp4 webkit-playsinline playsinline loop></video>"];
+
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{
+        @"WebCoreLogging": @"",
+        @"WebKit2Logging": @"",
+    }];
+
     [webView objectByEvaluatingJavaScript:@"document.querySelector('video').addEventListener('webkitpresentationmodechanged', event => { window.webkit.messageHandlers.testHandler.postMessage('presentationmodechanged'); });"];
 
     __block bool presentationModeChanged = false;
