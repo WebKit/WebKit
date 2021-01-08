@@ -80,7 +80,6 @@ enum class WaitForOption {
 #define MESSAGE_CHECK_BASE(assertion, connection) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, (void)0)
 
 #define MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion) do { \
-    ASSERT(assertion); \
     if (UNLIKELY(!(assertion))) { \
         (connection)->markCurrentlyDispatchedMessageAsInvalid(); \
         { completion; } \
@@ -89,7 +88,6 @@ enum class WaitForOption {
 } while (0)
 
 #define MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(assertion, connection, returnValue) do { \
-    ASSERT(assertion); \
     if (UNLIKELY(!(assertion))) { \
         (connection)->markCurrentlyDispatchedMessageAsInvalid(); \
         return (returnValue); \

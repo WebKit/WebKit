@@ -1,3 +1,12 @@
+2021-01-07  Alex Christensen  <achristensen@webkit.org>
+
+        Remove assertions in MESSAGE_CHECK definition
+        https://bugs.webkit.org/show_bug.cgi?id=220401
+
+        * Platform/IPC/Connection.h:
+        The unit test associated with r271263 hits these assertions in debug builds.
+        Since we plan to increase this type of unit testing, I remove the assertions.
+
 2021-01-07  Mark Lam  <mark.lam@apple.com>
 
         Work around Clang bug in __builtin_return_address().
