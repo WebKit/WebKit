@@ -106,7 +106,7 @@ public:
     void clipToImageBuffer(ImageBuffer&, const FloatRect&) override;
     void clipToDrawingCommands(const FloatRect& destination, ColorSpace, Function<void(GraphicsContext&)>&&) override;
     void paintFrameForMedia(MediaPlayer&, const FloatRect& destination) override;
-    bool canPaintFrameForMedia() const override { return false; }
+    bool canPaintFrameForMedia(const MediaPlayer&) const override { return false; }
     
     void applyDeviceScaleFactor(float) override;
 

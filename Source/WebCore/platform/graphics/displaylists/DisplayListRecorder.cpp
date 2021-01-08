@@ -446,8 +446,14 @@ void Recorder::clipToDrawingCommands(const FloatRect& destination, ColorSpace co
     append<ClipToDrawingCommands>(destination, colorSpace, recordingContext->takeDisplayList());
 }
 
+bool Recorder::canPaintFrameForMedia(const MediaPlayer& player) const
+{
+    return !!player.identifier();
+}
+
 void Recorder::paintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
 {
+    ASSERT(player.identifier());
     append<PaintFrameForMedia>(player, destination);
 }
 

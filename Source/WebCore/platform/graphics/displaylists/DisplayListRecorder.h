@@ -143,8 +143,8 @@ private:
     void clipToImageBuffer(WebCore::ImageBuffer&, const FloatRect&) override;
     void clipToDrawingCommands(const FloatRect& destination, ColorSpace, Function<void(GraphicsContext&)>&&) override;
     void paintFrameForMedia(MediaPlayer&, const FloatRect& destination) override;
-    bool canPaintFrameForMedia() const override { return true; }
-    
+    bool canPaintFrameForMedia(const MediaPlayer&) const override;
+
     void applyDeviceScaleFactor(float) override;
 
     FloatRect roundToDevicePixels(const FloatRect&, GraphicsContext::RoundingMode) override;

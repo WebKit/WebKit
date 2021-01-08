@@ -105,7 +105,7 @@ public:
     virtual void clipToImageBuffer(ImageBuffer&, const FloatRect&) = 0;
     virtual void clipToDrawingCommands(const FloatRect& destination, ColorSpace, Function<void(GraphicsContext&)>&& drawingFunction) = 0;
     virtual void paintFrameForMedia(MediaPlayer&, const FloatRect& destination) = 0;
-    virtual bool canPaintFrameForMedia() const = 0;
+    virtual bool canPaintFrameForMedia(const MediaPlayer&) const = 0;
     
     virtual void applyDeviceScaleFactor(float) = 0;
 

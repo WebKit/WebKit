@@ -509,6 +509,7 @@ imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-taint
 imported/w3c/web-platform-tests/webrtc [ Skip ]
 
 webrtc [ Skip ]
+webrtc/video.html [ Pass ]
 
 webgl [ Skip ]
 http/tests/security/webgl-remote-read-remote-image-allowed.html [ Skip ]

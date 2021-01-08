@@ -99,7 +99,7 @@ private:
     void clipToImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect&) override;
     void clipToDrawingCommands(const WebCore::FloatRect& destination, WebCore::ColorSpace, Function<void(WebCore::GraphicsContext&)>&&) override;
     void paintFrameForMedia(WebCore::MediaPlayer&, const WebCore::FloatRect& destination) override;
-    bool canPaintFrameForMedia() const override { return false; }
+    bool canPaintFrameForMedia(const WebCore::MediaPlayer&) const override { return false; }
 
     void applyDeviceScaleFactor(float) override;
 

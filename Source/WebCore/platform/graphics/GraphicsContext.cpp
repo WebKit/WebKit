@@ -1302,7 +1302,7 @@ void GraphicsContext::paintFrameForMedia(MediaPlayer& player, const FloatRect& d
     if (paintingDisabled())
         return;
 
-    if (m_impl && m_impl->canPaintFrameForMedia()) {
+    if (m_impl && m_impl->canPaintFrameForMedia(player)) {
         m_impl->paintFrameForMedia(player, destination);
         return;
     }
