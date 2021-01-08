@@ -1,3 +1,17 @@
+2021-01-08  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r267402): [ macOS iOS Release ] imported/w3c/web-platform-tests/user-timing/measure-l3.any.worker.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=217118
+        <rdar://problem/69774340>
+
+        Reviewed by Tim Horton.
+
+        r268928 wasn't sufficient.  This test still failed about 1/500 runs for me, but after further truncation of less significant bits
+        it successfully ran 10000 times with no failures.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2021-01-08  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Enable ENABLE_USERSELECT_ALL for -webkit-user-select:all support

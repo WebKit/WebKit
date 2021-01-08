@@ -1,3 +1,13 @@
+2021-01-08  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r267402): [ macOS iOS Release ] imported/w3c/web-platform-tests/user-timing/measure-l3.any.worker.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=217118
+
+        Reviewed by Tim Horton.
+
+        * web-platform-tests/user-timing/measure-l3.any.js:
+        (test):
+
 2021-01-07  Cathie Chen  <cathiechen@igalia.com>
 
         Update WPT test suite for intersection-observer
