@@ -1,3 +1,28 @@
+2021-01-07  Kate Cheney  <katherine_cheney@apple.com>
+
+        Error in layout tests: "Passed ITP enabled state (0) does not match TCC setting (1)"
+        https://bugs.webkit.org/show_bug.cgi?id=220385
+        <rdar://problem/70730482>
+
+        Reviewed by Darin Adler.
+
+        No new tests, this has no behavior change. It will fix excessive
+        logging when running tests.
+
+        We do not need to log a discrepancy between these states
+        for WebKitTestRunner or TestWebKitAPI because they are sometimes treated
+        like web browsers but need to turn ITP on/off for specific tests, so
+        these states will not always match.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::activateSessionCleanup):
+        * Shared/Cocoa/DefaultWebBrowserChecks.h:
+        * Shared/Cocoa/DefaultWebBrowserChecks.mm:
+        (WebKit::isRunningTest):
+        (WebKit::isParentProcessAFullWebBrowser):
+        (WebKit::isFullWebBrowser):
+        (WebKit::shouldBeTreatedAsFullBrowser): Deleted.
+
 2021-01-07  Alex Christensen  <achristensen@webkit.org>
 
         Remove assertions in MESSAGE_CHECK definition

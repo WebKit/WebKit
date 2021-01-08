@@ -46,7 +46,7 @@ namespace WebKit {
 
 static bool isFullWebBrowser(const String&);
 
-bool shouldBeTreatedAsFullBrowser(const String& bundleID)
+bool isRunningTest(const String& bundleID)
 {
     return bundleID == "com.apple.WebKit.TestWebKitAPI"_s || bundleID == "com.apple.WebKit.WebKitTestRunner"_s || bundleID == "org.webkit.WebKitTestRunnerApp"_s;
 }
@@ -223,7 +223,7 @@ bool isParentProcessAFullWebBrowser(Optional<audit_token_t> auditToken)
         fullWebBrowser = WTF::hasEntitlement(auditToken.value(), "com.apple.developer.web-browser");
     });
 
-    return fullWebBrowser || shouldBeTreatedAsFullBrowser(WebCore::applicationBundleIdentifier());
+    return fullWebBrowser || isRunningTest(WebCore::applicationBundleIdentifier());
 }
 
 static bool isFullWebBrowser(const String& bundleIdentifier)
@@ -232,7 +232,7 @@ static bool isFullWebBrowser(const String& bundleIdentifier)
 
     static bool fullWebBrowser = WTF::processHasEntitlement("com.apple.developer.web-browser");
 
-    return fullWebBrowser || shouldBeTreatedAsFullBrowser(bundleIdentifier);
+    return fullWebBrowser || isRunningTest(bundleIdentifier);
 }
 
 bool isFullWebBrowser()

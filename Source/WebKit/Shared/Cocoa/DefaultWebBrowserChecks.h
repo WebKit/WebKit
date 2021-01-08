@@ -37,7 +37,7 @@ namespace WebKit {
 bool hasRequestedCrossWebsiteTrackingPermission();
 bool hasProhibitedUsageStrings();
 Optional<Vector<WebCore::RegistrableDomain>> getAppBoundDomainsTesting(const String&);
-bool shouldBeTreatedAsFullBrowser(const String& bundleID);
+bool isRunningTest(const String& bundleID);
 void determineITPState();
 bool doesAppHaveITPEnabled();
 bool doesParentProcessHaveITPEnabled(Optional<audit_token_t>, bool);

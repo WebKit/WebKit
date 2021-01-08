@@ -1197,7 +1197,8 @@ static void activateSessionCleanup(NetworkSessionCocoa& session, const NetworkSe
     bool itpEnabled = doesParentProcessHaveITPEnabled(parentAuditToken, parameters.appHasRequestedCrossWebsiteTrackingPermission);
     bool passedEnabledState = session.isResourceLoadStatisticsEnabled();
 
-    if (itpEnabled != passedEnabledState)
+    // We do not need to log a discrepancy between states for WebKitTestRunner or TestWebKitAPI.
+    if (itpEnabled != passedEnabledState && !isRunningTest(WebCore::applicationBundleIdentifier()))
         WTFLogAlways("Passed ITP enabled state (%d) does not match TCC setting (%d)\n", passedEnabledState, itpEnabled);
     session.setResourceLoadStatisticsEnabled(passedEnabledState);
 #endif
