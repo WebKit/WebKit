@@ -355,6 +355,7 @@ protected:
 #endif
 
     GRefPtr<GstStreamVolume> m_volumeElement;
+    GRefPtr<GstElement> m_audioSink;
     GRefPtr<GstElement> m_videoSink;
     GRefPtr<GstElement> m_pipeline;
     IntSize m_size;

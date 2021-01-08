@@ -200,6 +200,8 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
 #endif
     m_isPlayerShuttingDown.store(false);
 
+    m_audioSink = createAudioSink();
+
 #if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
     auto& sharedDisplay = PlatformDisplay::sharedDisplay();
     if (is<PlatformDisplayLibWPE>(sharedDisplay))
@@ -2706,6 +2708,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url, const String&
         GST_INFO_OBJECT(pipeline(), "Tearing down as we need to use %s now.", playbinName);
         changePipelineState(GST_STATE_NULL);
         m_pipeline = nullptr;
+        m_audioSink = nullptr;
     }
 
     ASSERT(!m_pipeline);
@@ -2773,7 +2776,10 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url, const String&
 
     g_object_set(m_pipeline.get(), "text-sink", m_textAppSink.get(), nullptr);
 
-    g_object_set(m_pipeline.get(), "audio-sink", createAudioSink(), nullptr);
+    if (!m_audioSink)
+        m_audioSink = createAudioSink();
+
+    g_object_set(m_pipeline.get(), "audio-sink", m_audioSink.get(), nullptr);
     if (m_player->isVideoPlayer())
         g_object_set(m_pipeline.get(), "video-sink", createVideoSink(), nullptr);
 
