@@ -133,6 +133,7 @@ void SpeechRecognizer::stopRecognition()
 
 void SpeechRecognizer::resetRecognition()
 {
+    abortRecognition();
 }
 
 #endif
