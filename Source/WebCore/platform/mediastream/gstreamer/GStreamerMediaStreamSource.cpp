@@ -51,6 +51,9 @@ static GstStaticPadTemplate videoSrcTemplate = GST_STATIC_PAD_TEMPLATE("video_sr
 static GstStaticPadTemplate audioSrcTemplate = GST_STATIC_PAD_TEMPLATE("audio_src", GST_PAD_SRC, GST_PAD_SOMETIMES,
     GST_STATIC_CAPS("audio/x-raw(ANY);"));
 
+GST_DEBUG_CATEGORY_STATIC(webkitMediaStreamSrcDebug);
+#define GST_CAT_DEFAULT webkitMediaStreamSrcDebug
+
 GRefPtr<GstTagList> mediaStreamTrackPrivateGetTags(MediaStreamTrackPrivate* track)
 {
     auto tagList = adoptGRef(gst_tag_list_new_empty());
@@ -303,9 +306,6 @@ static void webkitMediaStreamSrcUriHandlerInit(gpointer gIface, gpointer)
     iface->get_uri = webkitMediaStreamSrcUriGetUri;
     iface->set_uri = webkitMediaStreamSrcUriSetUri;
 }
-
-GST_DEBUG_CATEGORY_STATIC(webkitMediaStreamSrcDebug);
-#define GST_CAT_DEFAULT webkitMediaStreamSrcDebug
 
 #define doInit \
     G_IMPLEMENT_INTERFACE(GST_TYPE_URI_HANDLER, webkitMediaStreamSrcUriHandlerInit); \
