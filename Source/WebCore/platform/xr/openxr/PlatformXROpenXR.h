@@ -44,6 +44,7 @@ namespace PlatformXR {
 class OpenXRDevice final : public Device {
 public:
     OpenXRDevice(XrSystemId, XrInstance, WorkQueue&, CompletionHandler<void()>&&);
+    ~OpenXRDevice();
     XrSystemId xrSystemId() const { return m_systemId; }
 
 private:
@@ -54,6 +55,11 @@ private:
 
     WebCore::IntSize recommendedResolution(SessionMode) final;
 
+    void initializeTrackingAndRendering(SessionMode) final;
+    void shutDownTrackingAndRendering() final;
+
+    void resetSession();
+
     using ViewConfigurationPropertiesMap = HashMap<XrViewConfigurationType, XrViewConfigurationProperties, IntHash<XrViewConfigurationType>, WTF::StrongEnumHashTraits<XrViewConfigurationType>>;
     ViewConfigurationPropertiesMap m_viewConfigurationProperties;
     using ViewConfigurationViewsMap = HashMap<XrViewConfigurationType, Vector<XrViewConfigurationView>, IntHash<XrViewConfigurationType>, WTF::StrongEnumHashTraits<XrViewConfigurationType>>;
@@ -61,9 +67,11 @@ private:
 
     XrSystemId m_systemId;
     XrInstance m_instance;
-    XrSession m_session;
+    XrSession m_session { XR_NULL_HANDLE };
 
     WorkQueue& m_queue;
+
+    XrViewConfigurationType m_currentViewConfigurationType;
 };
 
 } // namespace PlatformXR

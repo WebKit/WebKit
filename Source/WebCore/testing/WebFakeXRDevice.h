@@ -70,6 +70,8 @@ public:
     void setEmulatedPosition(bool emulated) { m_emulatedPosition = emulated; }
     Vector<Ref<FakeXRView>>& views() { return m_views; }
 private:
+    void initializeTrackingAndRendering(PlatformXR::SessionMode) final { }
+    void shutDownTrackingAndRendering() final { }
     Optional<Vector<FakeXRBoundsPoint>> m_nativeBoundsGeometry;
     RefPtr<WebXRRigidTransform> m_viewerOrigin;
     RefPtr<WebXRRigidTransform> m_floorOrigin;

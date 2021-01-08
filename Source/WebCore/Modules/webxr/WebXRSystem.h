@@ -107,6 +107,10 @@ private:
     class DummyInlineDevice final : public PlatformXR::Device {
     public:
         DummyInlineDevice();
+
+    private:
+        void initializeTrackingAndRendering(PlatformXR::SessionMode) final { }
+        void shutDownTrackingAndRendering() final { }
     };
     DummyInlineDevice m_defaultInlineDevice;
 

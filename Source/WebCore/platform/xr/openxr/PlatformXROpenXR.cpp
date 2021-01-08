@@ -24,11 +24,11 @@
 
 #include "Logging.h"
 #include <openxr/openxr_platform.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Optional.h>
 #include <wtf/Scope.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/WTFString.h>
-#include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 
@@ -53,15 +53,15 @@ String resultToString(XrResult value, XrInstance instance)
     return makeString("<unknown ", int(value), ">");
 }
 
-#define RETURN_IF_FAILED(result, call, instance, ...)                                               \
-    if (XR_FAILED(result)) {                                                                        \
-        LOG(XR, "%s %s: %s\n", __func__, call, resultToString(result, instance).utf8().data());     \
-        return __VA_ARGS__;                                                                         \
-    }                                                                                               \
+#define RETURN_IF_FAILED(result, call, instance, ...)                                           \
+    if (XR_FAILED(result)) {                                                                    \
+        LOG(XR, "%s %s: %s\n", __func__, call, resultToString(result, instance).utf8().data()); \
+        return __VA_ARGS__;                                                                     \
+    }
 
 struct Instance::Impl {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     Impl();
     ~Impl();
 
@@ -260,6 +260,11 @@ OpenXRDevice::OpenXRDevice(XrSystemId id, XrInstance instance, WorkQueue& queue,
     });
 }
 
+OpenXRDevice::~OpenXRDevice()
+{
+    shutDownTrackingAndRendering();
+}
+
 Device::ListOfEnabledFeatures OpenXRDevice::enumerateReferenceSpaces(XrSession& session) const
 {
     uint32_t referenceSpacesCount;
@@ -375,6 +380,51 @@ WebCore::IntSize OpenXRDevice::recommendedResolution(SessionMode mode)
     if (viewsIterator != m_configurationViews.end())
         return { static_cast<int>(viewsIterator->value[0].recommendedImageRectWidth), static_cast<int>(viewsIterator->value[0].recommendedImageRectHeight) };
     return Device::recommendedResolution(mode);
+}
+
+XrViewConfigurationType toXrViewConfigurationType(SessionMode mode)
+{
+    switch (mode) {
+    case SessionMode::ImmersiveVr:
+        return XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO;
+    case SessionMode::Inline:
+    case SessionMode::ImmersiveAr:
+        return XR_VIEW_CONFIGURATION_TYPE_PRIMARY_MONO;
+    };
+    ASSERT_NOT_REACHED();
+    return XR_VIEW_CONFIGURATION_TYPE_PRIMARY_MONO;
+}
+
+void OpenXRDevice::initializeTrackingAndRendering(SessionMode mode)
+{
+    m_queue.dispatch([this, mode]() {
+        ASSERT(m_instance != XR_NULL_HANDLE);
+        ASSERT(m_session == XR_NULL_HANDLE);
+
+        m_currentViewConfigurationType = toXrViewConfigurationType(mode);
+        ASSERT(m_configurationViews.contains(m_currentViewConfigurationType));
+
+        // Create the session.
+        auto sessionCreateInfo = createStructure<XrSessionCreateInfo, XR_TYPE_SESSION_CREATE_INFO>();
+        sessionCreateInfo.systemId = m_systemId;
+        auto result = xrCreateSession(m_instance, &sessionCreateInfo, &m_session);
+        RETURN_IF_FAILED(result, "xrEnumerateInstanceExtensionProperties", m_instance);
+    });
+}
+
+void OpenXRDevice::resetSession()
+{
+    m_queue.dispatch([this]() {
+        if (m_session == XR_NULL_HANDLE)
+            return;
+        xrDestroySession(m_session);
+        m_session = XR_NULL_HANDLE;
+    });
+}
+
+void OpenXRDevice::shutDownTrackingAndRendering()
+{
+    resetSession();
 }
 
 } // namespace PlatformXR

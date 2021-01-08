@@ -59,6 +59,9 @@ public:
 
     bool supportsOrientationTracking() const { return m_supportsOrientationTracking; }
 
+    virtual void initializeTrackingAndRendering(SessionMode) = 0;
+    virtual void shutDownTrackingAndRendering() = 0;
+
 protected:
     Device() = default;
 

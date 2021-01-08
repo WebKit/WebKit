@@ -57,12 +57,16 @@ WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMod
     , m_activeRenderState(WebXRRenderState::create(mode))
     , m_animationTimer(*this, &WebXRSession::animationTimerFired)
 {
-    // FIXME: If no other features of the user agent have done so already, perform the necessary platform-specific steps to
-    // initialize the device's tracking and rendering capabilities, including showing any necessary instructions to the user.
+    m_device->initializeTrackingAndRendering(mode);
+
     suspendIfNeeded();
 }
 
-WebXRSession::~WebXRSession() = default;
+WebXRSession::~WebXRSession()
+{
+    if (!m_ended && m_device)
+        m_device->shutDownTrackingAndRendering();
+}
 
 XREnvironmentBlendMode WebXRSession::environmentBlendMode() const
 {
@@ -329,6 +333,9 @@ void WebXRSession::shutdown()
     //  6.1. Releasing exclusive access to the XR device if session is an immersive session.
     //  6.2. Deallocating any graphics resources acquired by session for presentation to the XR device.
     //  6.3. Putting the XR device in a state such that a different source may be able to initiate a session with the same device if session is an immersive session.
+    if (m_device)
+        m_device->shutDownTrackingAndRendering();
+
     // 7. Queue a task that fires an XRSessionEvent named end on session.
     auto event = XRSessionEvent::create(eventNames().endEvent, { makeRefPtr(*this) });
     queueTaskToDispatchEvent(*this, TaskSource::WebXR, WTFMove(event));
@@ -342,7 +349,8 @@ void WebXRSession::end(EndPromise&& promise)
     Ref<WebXRSession> protectedThis(*this);
     // 1. Let promise be a new Promise.
     // 2. Shut down the target XRSession object.
-    shutdown();
+    if (!m_ended)
+        shutdown();
 
     // 3. Queue a task to perform the following steps:
     queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [promise = WTFMove(promise)] () mutable {
