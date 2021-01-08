@@ -1,3 +1,19 @@
+2021-01-07  Mark Lam  <mark.lam@apple.com>
+
+        Work around Clang bug in __builtin_return_address().
+        https://bugs.webkit.org/show_bug.cgi?id=220432
+        rdar://71648468
+
+        Reviewed by Yusuke Suzuki.
+
+        * PluginProcess/mac/PluginProcessShim.mm:
+        (WebKit::shimCFStringCompare):
+        - We go direct to ptrauth.h instead of using the WTF PtrTag abstraction because
+          this file appears to be going out of its way to avoid importing config.h.
+          Because of this, importing PtrTag.h results in a lot of build error complications.
+          Rather than jump thru many hoops to make importing PtrTag.h work and because all
+          we really want is only to use ptrauth_strip(), importing ptrauth.h is simpler.
+
 2021-01-07  Peng Liu  <peng.liu6@apple.com>
 
         PlaybackSessionManager::m_clientCounts is not updated correctly when a video enters picture-in-picture from fullscreen

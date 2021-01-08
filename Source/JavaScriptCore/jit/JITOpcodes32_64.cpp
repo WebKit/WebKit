@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1187,10 +1187,10 @@ void JIT::privateCompileHasIndexedProperty(ByValInfo* byValInfo, ReturnAddressPt
 
     byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
         m_codeBlock, patchBuffer, JITStubRoutinePtrTag,
-        "Baseline has_indexed_property stub for %s, return point %p", toCString(*m_codeBlock).data(), returnAddress.value());
+        "Baseline has_indexed_property stub for %s, return point %p", toCString(*m_codeBlock).data(), returnAddress.untaggedValue());
     
     MacroAssembler::repatchJump(byValInfo->badTypeJump, CodeLocationLabel<JITStubRoutinePtrTag>(byValInfo->stubRoutine->code().code()));
-    MacroAssembler::repatchCall(CodeLocationCall<NoPtrTag>(MacroAssemblerCodePtr<NoPtrTag>(returnAddress)), FunctionPtr<OperationPtrTag>(operationHasIndexedPropertyGeneric));
+    MacroAssembler::repatchCall(CodeLocationCall<ReturnAddressPtrTag>(MacroAssemblerCodePtr<ReturnAddressPtrTag>(returnAddress)), FunctionPtr<OperationPtrTag>(operationHasIndexedPropertyGeneric));
 }
 
 void JIT::emit_op_has_enumerable_indexed_property(const Instruction* currentInstruction)

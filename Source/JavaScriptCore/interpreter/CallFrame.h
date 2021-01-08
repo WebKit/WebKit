@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -318,6 +318,8 @@ namespace JSC  {
 JS_EXPORT_PRIVATE bool isFromJSCode(void* returnAddress);
 
 #if USE(BUILTIN_FRAME_ADDRESS)
+// FIXME (see rdar://72897291): Work around a Clang bug where __builtin_return_address()
+// sometimes gives us a signed pointer, and sometimes does not.
 #define DECLARE_CALL_FRAME(vm) \
     ({ \
         ASSERT(JSC::isFromJSCode(removeCodePtrTag<void*>(__builtin_return_address(0)))); \

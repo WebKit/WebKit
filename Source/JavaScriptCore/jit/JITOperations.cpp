@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,7 +86,9 @@ extern "C" void * _ReturnAddress(void);
 
 #define OUR_RETURN_ADDRESS _ReturnAddress()
 #else
-#define OUR_RETURN_ADDRESS __builtin_return_address(0)
+// FIXME (see rdar://72897291): Work around a Clang bug where __builtin_return_address()
+// sometimes gives us a signed pointer, and sometimes does not.
+#define OUR_RETURN_ADDRESS removeCodePtrTag(__builtin_return_address(0))
 #endif
 
 #if ENABLE(OPCODE_SAMPLING)
@@ -2947,6 +2949,9 @@ JSC_DEFINE_JIT_OPERATION(operationExceptionFuzz, void, (JSGlobalObject* globalOb
     UNUSED_PARAM(scope);
 #if COMPILER(GCC_COMPATIBLE)
     void* returnPC = __builtin_return_address(0);
+    // FIXME (see rdar://72897291): Work around a Clang bug where __builtin_return_address()
+    // sometimes gives us a signed pointer, and sometimes does not.
+    returnPC = removeCodePtrTag(returnPC);
     doExceptionFuzzing(globalObject, scope, "JITOperations", returnPC);
 #endif // COMPILER(GCC_COMPATIBLE)
 }
@@ -2960,6 +2965,9 @@ JSC_DEFINE_JIT_OPERATION(operationExceptionFuzzWithCallFrame, void, (VM* vmPoint
     UNUSED_PARAM(scope);
 #if COMPILER(GCC_COMPATIBLE)
     void* returnPC = __builtin_return_address(0);
+    // FIXME (see rdar://72897291): Work around a Clang bug where __builtin_return_address()
+    // sometimes gives us a signed pointer, and sometimes does not.
+    returnPC = removeCodePtrTag(returnPC);
     doExceptionFuzzing(callFrame->lexicalGlobalObject(vm), scope, "JITOperations", returnPC);
 #endif // COMPILER(GCC_COMPATIBLE)
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1513,15 +1513,15 @@ void JIT::privateCompilePutByVal(const ConcurrentJSLocker&, ByValInfo* byValInfo
     if (!isDirect) {
         byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
             m_codeBlock, patchBuffer, JITStubRoutinePtrTag,
-            "Baseline put_by_val stub for %s, return point %p", toCString(*m_codeBlock).data(), returnAddress.value());
+            "Baseline put_by_val stub for %s, return point %p", toCString(*m_codeBlock).data(), returnAddress.untaggedValue());
         
     } else {
         byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
             m_codeBlock, patchBuffer, JITStubRoutinePtrTag,
-            "Baseline put_by_val_direct stub for %s, return point %p", toCString(*m_codeBlock).data(), returnAddress.value());
+            "Baseline put_by_val_direct stub for %s, return point %p", toCString(*m_codeBlock).data(), returnAddress.untaggedValue());
     }
     MacroAssembler::repatchJump(byValInfo->badTypeJump, CodeLocationLabel<JITStubRoutinePtrTag>(byValInfo->stubRoutine->code().code()));
-    MacroAssembler::repatchCall(CodeLocationCall<NoPtrTag>(MacroAssemblerCodePtr<NoPtrTag>(returnAddress)), FunctionPtr<OperationPtrTag>(isDirect ? operationDirectPutByValGeneric : operationPutByValGeneric));
+    MacroAssembler::repatchCall(CodeLocationCall<ReturnAddressPtrTag>(MacroAssemblerCodePtr<ReturnAddressPtrTag>(returnAddress)), FunctionPtr<OperationPtrTag>(isDirect ? operationDirectPutByValGeneric : operationPutByValGeneric));
 }
 // This function is only consumed from another translation unit (JITOperations.cpp),
 // so we list off the two expected specializations in advance.
@@ -1557,11 +1557,11 @@ void JIT::privateCompilePutPrivateNameWithCachedId(ByValInfo* byValInfo, ReturnA
 
     byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
         m_codeBlock, patchBuffer, JITStubRoutinePtrTag,
-        "Baseline put_private_name with cached property name '%s' stub for %s, return point %p", propertyName.uid()->utf8().data(), toCString(*m_codeBlock).data(), returnAddress.value());
+        "Baseline put_private_name with cached property name '%s' stub for %s, return point %p", propertyName.uid()->utf8().data(), toCString(*m_codeBlock).data(), returnAddress.untaggedValue());
     byValInfo->stubInfo = gen.stubInfo();
 
     MacroAssembler::repatchJump(byValInfo->notIndexJump, CodeLocationLabel<JITStubRoutinePtrTag>(byValInfo->stubRoutine->code().code()));
-    MacroAssembler::repatchCall(CodeLocationCall<NoPtrTag>(MacroAssemblerCodePtr<NoPtrTag>(returnAddress)), FunctionPtr<OperationPtrTag>(operationPutPrivateNameGeneric));
+    MacroAssembler::repatchCall(CodeLocationCall<ReturnAddressPtrTag>(MacroAssemblerCodePtr<ReturnAddressPtrTag>(returnAddress)), FunctionPtr<OperationPtrTag>(operationPutPrivateNameGeneric));
 }
 
 template<typename Op>
@@ -1595,11 +1595,11 @@ void JIT::privateCompilePutByValWithCachedId(ByValInfo* byValInfo, ReturnAddress
 
     byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
         m_codeBlock, patchBuffer, JITStubRoutinePtrTag,
-        "Baseline put_by_val%s with cached property name '%s' stub for %s, return point %p", (putKind == PutKind::Direct) ? "_direct" : "", propertyName.uid()->utf8().data(), toCString(*m_codeBlock).data(), returnAddress.value());
+        "Baseline put_by_val%s with cached property name '%s' stub for %s, return point %p", (putKind == PutKind::Direct) ? "_direct" : "", propertyName.uid()->utf8().data(), toCString(*m_codeBlock).data(), returnAddress.untaggedValue());
     byValInfo->stubInfo = gen.stubInfo();
 
     MacroAssembler::repatchJump(byValInfo->notIndexJump, CodeLocationLabel<JITStubRoutinePtrTag>(byValInfo->stubRoutine->code().code()));
-    MacroAssembler::repatchCall(CodeLocationCall<NoPtrTag>(MacroAssemblerCodePtr<NoPtrTag>(returnAddress)), FunctionPtr<OperationPtrTag>(putKind == PutKind::Direct ? operationDirectPutByValGeneric : operationPutByValGeneric));
+    MacroAssembler::repatchCall(CodeLocationCall<ReturnAddressPtrTag>(MacroAssemblerCodePtr<ReturnAddressPtrTag>(returnAddress)), FunctionPtr<OperationPtrTag>(putKind == PutKind::Direct ? operationDirectPutByValGeneric : operationPutByValGeneric));
 }
 // This function is only consumed from another translation unit (JITOperations.cpp),
 // so we list off the two expected specializations in advance.

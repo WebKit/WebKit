@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,10 @@
 #import <sys/shm.h>
 #import <wtf/Compiler.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
+
+#if CPU(ARM64E)
+#import <ptrauth.h>
+#endif
 
 namespace WebKit {
 
@@ -239,7 +243,13 @@ static CFComparisonResult shimCFStringCompare(CFStringRef a, CFStringRef b, CFSt
 {
     if (pluginProcessShimCallbacks.stringCompare) {
         CFComparisonResult result;
-        if (pluginProcessShimCallbacks.stringCompare(a, b, options, __builtin_return_address(0), result))
+        // FIXME (see rdar://72897291): Work around a Clang bug where __builtin_return_address()
+        // sometimes gives us a signed pointer, and sometimes does not.
+        void* returnAddress = __builtin_return_address(0);
+#if CPU(ARM64E)
+        returnAddress = ptrauth_strip(returnAddress, ptrauth_key_process_dependent_code);
+#endif
+        if (pluginProcessShimCallbacks.stringCompare(a, b, options, returnAddress, result))
             return result;
     }
 
