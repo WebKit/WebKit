@@ -109,8 +109,29 @@ void AuthenticatorPresenterCoordinator::updatePresenter(WebAuthenticationStatus 
         m_credentialRequestHandler(nil, error.get());
         break;
     }
+    case WebAuthenticationStatus::MultipleNFCTagsPresent: {
+        auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorMultipleNFCTagsPresent userInfo:nil]);
+        [m_presenter updateInterfaceForUserVisibleError:error.get()];
+        break;
+    }
+    case WebAuthenticationStatus::NoCredentialsFound:
+    case WebAuthenticationStatus::LANoCredential: {
+        auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorNoCredentialsFound userInfo:nil]);
+        [m_presenter updateInterfaceForUserVisibleError:error.get()];
+        break;
+    }
+    case WebAuthenticationStatus::LAError: {
+        auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorLAError userInfo:nil]);
+        [m_presenter updateInterfaceForUserVisibleError:error.get()];
+        break;
+    }
+    case WebAuthenticationStatus::LAExcludeCredentialsMatched: {
+        auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorLAExcludeCredentialsMatched userInfo:nil]);
+        [m_presenter updateInterfaceForUserVisibleError:error.get()];
+        break;
+    }
     default:
-        // FIXME(219713): Adopt new UI for the update flow.
+        ASSERT_NOT_REACHED();
         break;
     }
 #endif // HAVE(ASC_AUTH_UI)
