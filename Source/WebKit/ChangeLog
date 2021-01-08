@@ -1,3 +1,32 @@
+2021-01-07  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Add runtime logging to format reader and WebM parser
+        https://bugs.webkit.org/show_bug.cgi?id=220423
+        <rdar://problem/72896655>
+
+        Reviewed by Andy Estes.
+
+        Use the Document::sharedLogger to log format and track reader state changes
+        and errors.
+
+        * Shared/mac/MediaFormatReader/MediaFormatReader.cpp:
+        (WebKit::nextLogIdentifier):
+        (WebKit::logChannel):
+        (WebKit::logClassName):
+        (WebKit::MediaFormatReader::parseByteSource):
+        (WebKit::MediaFormatReader::didParseTracks):
+        (WebKit::MediaFormatReader::copyProperty):
+        (WebKit::MediaFormatReader::nextTrackReaderLogIdentifier const):
+        * Shared/mac/MediaFormatReader/MediaFormatReader.h:
+        * Shared/mac/MediaFormatReader/WebKit::MediaTrackReader.cpp:
+        (WebKit::MediaTrackReader::MediaTrackReader):
+        (WebKit::MediaTrackReader::finishParsing):
+        (WebKit::MediaTrackReader::mediaTypeString const):
+        (WebKit::MediaTrackReader::copyProperty):
+        (WebKit::MediaTrackReader::finalize):
+        (WebKit::MediaTrackReader::logChannel const):
+        * Shared/mac/MediaFormatReader/WebKit::MediaTrackReader.h:
+
 2021-01-07  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [JSC] Simplify get*PropertyNames() methods and EnumerationMode

@@ -515,6 +515,56 @@ static void printNavigationErrorMessage(Frame& frame, const URL& activeURL, cons
 
 uint64_t Document::s_globalTreeVersion = 0;
 
+static const void* sharedLoggerOwner()
+{
+    static uint64_t owner = cryptographicallyRandomNumber();
+    return reinterpret_cast<const void*>(owner);
+}
+
+static Logger*& staticSharedLogger()
+{
+    static Logger* logger;
+    return logger;
+}
+
+const Logger& Document::sharedLogger()
+{
+    if (!staticSharedLogger()) {
+        staticSharedLogger() = &Logger::create(sharedLoggerOwner()).leakRef();
+        configureSharedLogger();
+    }
+    
+    return *staticSharedLogger();
+}
+
+void Document::configureSharedLogger()
+{
+    auto logger = staticSharedLogger();
+    if (!logger)
+        return;
+
+    bool alwaysOnLoggingAllowed = !allDocumentsMap().isEmpty() && WTF::allOf(allDocumentsMap().values(), [](auto* document) {
+        auto* page = document->page();
+        return !page || page->sessionID().isAlwaysOnLoggingAllowed();
+    });
+    logger->setEnabled(sharedLoggerOwner(), alwaysOnLoggingAllowed);
+}
+
+auto Document::addToDocumentsMap() -> DocumentsMap::AddResult
+{
+    auto addResult = allDocumentsMap().add(m_identifier, this);
+    configureSharedLogger();
+    
+    return addResult;
+}
+
+void Document::removeFromDocumentsMap()
+{
+    ASSERT(allDocumentsMap().contains(m_identifier));
+    allDocumentsMap().remove(m_identifier);
+    configureSharedLogger();
+}
+
 auto Document::allDocumentsMap() -> DocumentsMap&
 {
     static NeverDestroyed<DocumentsMap> documents;
@@ -589,7 +639,7 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
     , m_editor(makeUniqueRef<Editor>(*this))
     , m_selection(makeUniqueRef<FrameSelection>(this))
 {
-    auto addResult = allDocumentsMap().add(m_identifier, this);
+    auto addResult = addToDocumentsMap();
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
     // We depend on the url getting immediately set in subframes, but we
@@ -649,8 +699,8 @@ Document::~Document()
     }
 #endif
 
-    ASSERT(allDocumentsMap().contains(m_identifier));
-    allDocumentsMap().remove(m_identifier);
+    removeFromDocumentsMap();
+
     // We need to remove from the contexts map very early in the destructor so that calling postTask() on this Document from another thread is safe.
     removeFromContextsMap();
 

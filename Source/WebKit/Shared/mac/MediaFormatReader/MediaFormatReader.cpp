@@ -31,11 +31,14 @@
 #include "MediaTrackReader.h"
 #include <WebCore/AudioTrackPrivate.h>
 #include <WebCore/ContentType.h>
+#include <WebCore/Document.h>
 #include <WebCore/InbandTextTrackPrivate.h>
+#include <WebCore/Logging.h>
 #include <WebCore/MediaSample.h>
 #include <WebCore/SourceBufferParserWebM.h>
 #include <WebCore/VideoTrackPrivate.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/WorkQueue.h>
 
 #include <pal/cocoa/MediaToolboxSoftLink.h>
@@ -46,6 +49,15 @@ namespace WebKit {
 
 using namespace PAL;
 using namespace WebCore;
+
+static const void* nextLogIdentifier()
+{
+    static uint64_t logIdentifier = cryptographicallyRandomNumber();
+    return reinterpret_cast<const void*>(++logIdentifier);
+}
+
+static WTFLogChannel& logChannel() { return WebCore::LogMedia; }
+static const char* logClassName() { return "MediaFormatReader"; }
 
 CMBaseClassID MediaFormatReader::wrapperClassID()
 {
@@ -97,6 +109,14 @@ void MediaFormatReader::parseByteSource(RetainPtr<MTPluginByteSourceRef>&& byteS
         return;
     }
 
+    if (!m_logger) {
+        m_logger = makeRefPtr(Document::sharedLogger());
+        m_logIdentifier = nextLogIdentifier();
+    }
+
+    ALWAYS_LOG(LOGIDENTIFIER);
+    parser->setLogger(*m_logger, m_logIdentifier);
+
     // Set a minimum audio sample duration of 0 so the parser creates indivisible samples with byte source ranges.
     parser->setMinimumAudioSampleDuration(0);
 
@@ -139,6 +159,10 @@ void MediaFormatReader::didParseTracks(SourceBufferPrivateClient::Initialization
     ASSERT(!m_parseTracksStatus);
     ASSERT(m_duration.isInvalid());
     ASSERT(m_trackReaders.isEmpty());
+
+    ALWAYS_LOG(LOGIDENTIFIER);
+    if (errorCode)
+        ERROR_LOG(LOGIDENTIFIER, errorCode);
 
     m_parseTracksStatus = errorCode ? kMTPluginFormatReaderError_ParsingFailure : noErr;
     m_duration = WTFMove(segment.duration);
@@ -186,6 +210,7 @@ void MediaFormatReader::didProvideMediaData(Ref<MediaSample>&& mediaSample, uint
 void MediaFormatReader::finishParsing(Ref<SourceBufferParser>&& parser)
 {
     ASSERT(!isMainThread());
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     auto locker = holdLock(m_parseTracksLock);
     ASSERT(m_parseTracksStatus.hasValue());
@@ -213,6 +238,7 @@ OSStatus MediaFormatReader::copyProperty(CFStringRef key, CFAllocatorRef allocat
         }
     }
 
+    ERROR_LOG(LOGIDENTIFIER, "asked for unsupported property ", String(key));
     return kCMBaseObjectError_ValueNotAvailable;
 }
 
@@ -232,6 +258,11 @@ OSStatus MediaFormatReader::copyTrackArray(CFArrayRef* trackArrayCopy)
 
     *trackArrayCopy = adoptCF(CFArrayCreateCopy(allocator(), mutableArray.get())).leakRef();
     return noErr;
+}
+
+const void* MediaFormatReader::nextTrackReaderLogIdentifier(uint64_t trackID) const
+{
+    return LoggerHelper::childLogIdentifier(m_logIdentifier, trackID);
 }
 
 } // namespace WebKit

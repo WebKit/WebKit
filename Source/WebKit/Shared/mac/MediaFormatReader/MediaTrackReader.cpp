@@ -33,6 +33,7 @@
 #include "MediaSampleCursor.h"
 #include <WebCore/AudioTrackPrivate.h>
 #include <WebCore/InbandTextTrackPrivate.h>
+#include <WebCore/Logging.h>
 #include <WebCore/MediaDescription.h>
 #include <WebCore/SampleMap.h>
 #include <WebCore/VideoTrackPrivate.h>
@@ -73,9 +74,12 @@ MediaTrackReader::MediaTrackReader(Allocator&& allocator, const MediaFormatReade
     , m_trackID(trackID)
     , m_mediaType(mediaType)
     , m_duration(formatReader.duration())
+    , m_logger(formatReader.logger())
+    , m_logIdentifier(formatReader.nextTrackReaderLogIdentifier(trackID))
 {
     ASSERT(!isMainThread());
 
+    ALWAYS_LOG(LOGIDENTIFIER, mediaTypeString(), " ", trackID);
     if (enabled)
         m_isEnabled = enabled.value() ? Enabled::True : Enabled::False;
 }
@@ -112,13 +116,35 @@ void MediaTrackReader::waitForSample(Function<bool(SampleMap&, bool)>&& predicat
 void MediaTrackReader::finishParsing()
 {
     ASSERT(!isMainThread());
+
+    ALWAYS_LOG(LOGIDENTIFIER);
     auto locker = holdLock(m_sampleStorageLock);
     if (!m_sampleStorage)
         m_sampleStorage = makeUnique<SampleStorage>();
     m_sampleStorage->hasAllSamples = true;
-    if (m_isEnabled == Enabled::Unknown)
+    if (m_isEnabled == Enabled::Unknown) {
         m_isEnabled = m_sampleStorage->sampleMap.empty() ? Enabled::False : Enabled::True;
+        if (m_isEnabled == Enabled::False)
+            ERROR_LOG(LOGIDENTIFIER, "ignoring empty ", mediaTypeString(), " track");
+    }
     m_sampleStorageCondition.notifyAll();
+}
+
+const char* MediaTrackReader::mediaTypeString() const
+{
+    switch (m_mediaType) {
+    case kCMMediaType_Video:
+        return "video";
+        break;
+    case kCMMediaType_Audio:
+        return "audio";
+        break;
+    case kCMMediaType_Text:
+        return "text";
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return "unknown";
 }
 
 OSStatus MediaTrackReader::copyProperty(CFStringRef key, CFAllocatorRef allocator, void* copiedValue)
@@ -137,15 +163,20 @@ OSStatus MediaTrackReader::copyProperty(CFStringRef key, CFAllocatorRef allocato
     auto& sampleMap = m_sampleStorage->sampleMap;
 
     if (CFEqual(key, PAL::get_MediaToolbox_kMTPluginTrackReaderProperty_Enabled())) {
-        if (m_isEnabled == Enabled::Unknown)
+        if (m_isEnabled == Enabled::Unknown) {
             m_isEnabled = sampleMap.empty() ? Enabled::False : Enabled::True;
+            if (m_isEnabled == Enabled::False)
+                ERROR_LOG(LOGIDENTIFIER, "ignoring empty ", mediaTypeString(), " track");
+        }
 
         *reinterpret_cast<CFBooleanRef*>(copiedValue) = retainPtr(m_isEnabled == Enabled::True ? kCFBooleanTrue : kCFBooleanFalse).leakRef();
         return noErr;
     }
 
-    if (sampleMap.empty())
+    if (sampleMap.empty()) {
+        ERROR_LOG(LOGIDENTIFIER, "sample table empty when asked for ", String(key));
         return kCMBaseObjectError_ValueNotAvailable;
+    }
 
     auto& lastSample = *sampleMap.decodeOrder().rbegin()->second;
 
@@ -162,6 +193,7 @@ OSStatus MediaTrackReader::copyProperty(CFStringRef key, CFAllocatorRef allocato
         return noErr;
     }
 
+    ERROR_LOG(LOGIDENTIFIER, "asked for unsupported property ", String(key));
     return kCMBaseObjectError_ValueNotAvailable;
 }
 
@@ -197,6 +229,11 @@ OSStatus MediaTrackReader::createCursorAtLastSampleInDecodeOrder(MTPluginSampleC
 {
     *sampleCursor = MediaSampleCursor::createAtDecodedSample(allocator(), *this, MediaSampleCursor::DecodedSample::Last).leakRef()->wrapper();
     return noErr;
+}
+
+WTFLogChannel& MediaTrackReader::logChannel() const
+{
+    return WebCore::LogMedia;
 }
 
 } // namespace WebKit

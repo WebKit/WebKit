@@ -90,6 +90,12 @@ private:
         bool hasAllSamples { false };
     };
 
+    const char* mediaTypeString() const;
+    const WTF::Logger& logger() const { return m_logger; }
+    const char* logClassName() const { return "MediaTrackReader"; }
+    const void* logIdentifier() const { return m_logIdentifier; }
+    WTFLogChannel& logChannel() const;
+
     enum Enabled : uint8_t { Unknown, False, True };
 
     const uint64_t m_trackID;
@@ -99,6 +105,8 @@ private:
     mutable Condition m_sampleStorageCondition;
     mutable Lock m_sampleStorageLock;
     mutable std::unique_ptr<SampleStorage> m_sampleStorage;
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
 };
 
 constexpr MediaTrackReader::WrapperClass MediaTrackReader::wrapperClass()

@@ -61,6 +61,22 @@ namespace WTF {
 
 template<typename> struct LogArgument;
 
+template<> struct LogArgument<webm::TrackType> {
+    static String toString(webm::TrackType type)
+    {
+        switch (type) {
+        case webm::TrackType::kVideo: return "Video"_s;
+        case webm::TrackType::kAudio: return "Audio"_s;
+        case webm::TrackType::kComplex: return "Complex"_s;
+        case webm::TrackType::kLogo: return "Logo"_s;
+        case webm::TrackType::kSubtitle: return "Subtitle"_s;
+        case webm::TrackType::kButtons: return "Buttons"_s;
+        case webm::TrackType::kControl: return "Control"_s;
+        }
+        return "Unknown"_s;
+    }
+};
+
 template<> struct LogArgument<webm::Id> {
     static String toString(webm::Id id)
     {
@@ -243,10 +259,8 @@ namespace WebCore {
 
 using namespace PAL;
 
-#if !RELEASE_LOG_DISABLED
-static WTFLogChannel& logChannel() { return LogMediaSource; }
+static WTFLogChannel& logChannel() { return LogMedia; }
 static const char* logClassName() { return "SourceBufferParserWebM"; }
-#endif
 
 // FIXME: Remove this once kCMVideoCodecType_VP9 is added to CMFormatDescription.h
 constexpr CMVideoCodecType kCMVideoCodecType_VP9 { 'vp09' };
@@ -627,7 +641,7 @@ void SourceBufferParserWebM::appendData(Segment&& segment, AppendFlags appendFla
         // position of the incoming Ebml Element, and reset the parser, which will cause the Ebml element to be
         // parsed as a top-level element, rather than as a child of the Segment.
         if (!m_reader->rewindTo(*m_rewindToPosition)) {
-            ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "failed to rewind reader, bailing");
+            ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "failed to rewind reader");
             break;
         }
 
@@ -688,13 +702,11 @@ void SourceBufferParserWebM::invalidate()
     m_currentBlock.reset();
 }
 
-#if !RELEASE_LOG_DISABLED
 void SourceBufferParserWebM::setLogger(const Logger& logger, const void* logIdentifier)
 {
     m_logger = makeRefPtr(logger);
     m_logIdentifier = logIdentifier;
 }
-#endif
 
 auto SourceBufferParserWebM::trackDataForTrackNumber(uint64_t trackNumber) -> TrackData*
 {
@@ -720,15 +732,13 @@ Status SourceBufferParserWebM::OnElementBegin(const ElementMetadata& metadata, A
 
     if ((m_state == State::None && metadata.id != Id::kEbml && metadata.id != Id::kSegment)
         || (m_state == State::ReadingSegment && metadata.id != Id::kInfo && metadata.id != Id::kTracks && metadata.id != Id::kCluster)) {
-        DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, "state(", m_state, "), id(", metadata.id, "), position(", metadata.position, "), headerSize(", metadata.header_size, "), size(", metadata.size, "), skipping");
+        INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "state(", m_state, "), id(", metadata.id, "), position(", metadata.position, "), headerSize(", metadata.header_size, "), size(", metadata.size, "), skipping");
 
         *action = Action::kSkip;
         return Status(Status::kOkCompleted);
     }
 
-#if !RELEASE_LOG_DISABLED
     auto oldState = m_state;
-#endif
 
     if (metadata.id == Id::kEbml)
         m_state = State::ReadingEbml;
@@ -743,7 +753,7 @@ Status SourceBufferParserWebM::OnElementBegin(const ElementMetadata& metadata, A
     else if (metadata.id == Id::kCluster)
         m_state = State::ReadingCluster;
 
-    DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, "state(", oldState, "->", m_state, "), id(", metadata.id, "), position(", metadata.position, "), headerSize(", metadata.header_size, "), size(", metadata.size, ")");
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "state(", oldState, "->", m_state, "), id(", metadata.id, "), position(", metadata.position, "), headerSize(", metadata.header_size, "), size(", metadata.size, ")");
 
     return Status(Status::kOkCompleted);
 }
@@ -751,10 +761,9 @@ Status SourceBufferParserWebM::OnElementBegin(const ElementMetadata& metadata, A
 Status SourceBufferParserWebM::OnElementEnd(const ElementMetadata& metadata)
 {
     UNUSED_PARAM(metadata);
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
-#if !RELEASE_LOG_DISABLED
     auto oldState = m_state;
-#endif
 
     if (metadata.id == Id::kEbml || metadata.id == Id::kSegment)
         m_state = State::None;
@@ -763,7 +772,7 @@ Status SourceBufferParserWebM::OnElementEnd(const ElementMetadata& metadata)
     else if (metadata.id == Id::kTrackEntry)
         m_state = State::ReadingTracks;
 
-    DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, "state(", oldState, "->", m_state, "), id(", metadata.id, "), size(", metadata.size, ")");
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "state(", oldState, "->", m_state, "), id(", metadata.id, "), size(", metadata.size, ")");
 
     return Status(Status::kOkCompleted);
 }
@@ -771,6 +780,8 @@ Status SourceBufferParserWebM::OnElementEnd(const ElementMetadata& metadata)
 Status SourceBufferParserWebM::OnEbml(const ElementMetadata& metadata, const Ebml& ebml)
 {
     UNUSED_PARAM(metadata);
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+
     if (ebml.doc_type.is_present() && ebml.doc_type.value().compare("webm"))
         return Status(Status::Code(ErrorCode::InvalidDocType));
 
@@ -783,8 +794,10 @@ Status SourceBufferParserWebM::OnEbml(const ElementMetadata& metadata, const Ebm
 Status SourceBufferParserWebM::OnSegmentBegin(const ElementMetadata& metadata, Action* action)
 {
     UNUSED_PARAM(metadata);
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+
     if (!m_initializationSegmentEncountered) {
-        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Encountered Segment before Embl, bailing");
+        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Encountered Segment before Embl");
         return Status(Status::Code(ErrorCode::InvalidInitSegment));
     }
 
@@ -799,8 +812,10 @@ Status SourceBufferParserWebM::OnSegmentBegin(const ElementMetadata& metadata, A
 Status SourceBufferParserWebM::OnInfo(const ElementMetadata& metadata, const Info& info)
 {
     UNUSED_PARAM(metadata);
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+
     if (!m_initializationSegmentEncountered || !m_initializationSegment) {
-        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Encountered Info outside Segment, bailing");
+        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Encountered Info outside Segment");
         return Status(Status::Code(ErrorCode::InvalidInitSegment));
     }
 
@@ -814,7 +829,8 @@ Status SourceBufferParserWebM::OnInfo(const ElementMetadata& metadata, const Inf
 Status SourceBufferParserWebM::OnClusterBegin(const ElementMetadata& metadata, const Cluster& cluster, Action* action)
 {
     UNUSED_PARAM(metadata);
-    UNUSED_PARAM(cluster);
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+
     ASSERT(action);
     if (!action)
         return Status(Status::kNotEnoughMemory);
@@ -849,20 +865,29 @@ Status SourceBufferParserWebM::OnTrackEntry(const ElementMetadata& metadata, con
     auto trackType = trackEntry.track_type.value();
     String codecId { trackEntry.codec_id.value().data(), (unsigned)trackEntry.codec_id.value().length() };
 
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, trackType, ", codec ", codecId);
+
     if (trackType == TrackType::kVideo && !supportedVideoCodecs().contains(codecId)) {
-        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Encountered unsupported video codec ID \"", codecId, "\", bailing");
+        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Encountered unsupported video codec ID ", codecId);
         return Status(Status::Code(ErrorCode::UnsupportedVideoCodec));
     }
 
     if (trackType == TrackType::kAudio && !supportedAudioCodecs().contains(codecId)) {
-        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Encountered unsupported audio codec ID \"", codecId, "\", bailing");
+        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Encountered unsupported audio codec ID ", codecId);
         return Status(Status::Code(ErrorCode::UnsupportedAudioCodec));
     }
 
-    if (trackType == TrackType::kVideo)
-        m_initializationSegment->videoTracks.append({ MediaDescriptionWebM::create(TrackEntry(trackEntry)), VideoTrackPrivateWebM::create(TrackEntry(trackEntry)) });
-    else if (trackType == TrackType::kAudio)
-        m_initializationSegment->audioTracks.append({ MediaDescriptionWebM::create(TrackEntry(trackEntry)), AudioTrackPrivateWebM::create(TrackEntry(trackEntry)) });
+    if (trackType == TrackType::kVideo) {
+        auto track = VideoTrackPrivateWebM::create(TrackEntry(trackEntry));
+        if (m_logger)
+            track->setLogger(*m_logger, LoggerHelper::childLogIdentifier(m_logIdentifier, ++m_nextChildIdentifier));
+        m_initializationSegment->videoTracks.append({ MediaDescriptionWebM::create(TrackEntry(trackEntry)), WTFMove(track) });
+    } else if (trackType == TrackType::kAudio) {
+        auto track = AudioTrackPrivateWebM::create(TrackEntry(trackEntry));
+        if (m_logger)
+            track->setLogger(*m_logger, LoggerHelper::childLogIdentifier(m_logIdentifier, ++m_nextChildIdentifier));
+        m_initializationSegment->audioTracks.append({ MediaDescriptionWebM::create(TrackEntry(trackEntry)), WTFMove(track) });
+    }
 
     StringView codecString { trackEntry.codec_id.value().data(), (unsigned)trackEntry.codec_id.value().length() };
 #if ENABLE(VP9)
@@ -897,6 +922,8 @@ Status SourceBufferParserWebM::OnTrackEntry(const ElementMetadata& metadata, con
 webm::Status SourceBufferParserWebM::OnBlockBegin(const ElementMetadata& metadata, const Block& block, Action* action)
 {
     UNUSED_PARAM(metadata);
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+
     ASSERT(action);
     if (!action)
         return Status(Status::kNotEnoughMemory);
@@ -912,6 +939,7 @@ webm::Status SourceBufferParserWebM::OnBlockEnd(const ElementMetadata& metadata,
 {
     UNUSED_PARAM(metadata);
     UNUSED_PARAM(block);
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
     m_currentBlock = WTF::nullopt;
 
@@ -921,6 +949,8 @@ webm::Status SourceBufferParserWebM::OnBlockEnd(const ElementMetadata& metadata,
 webm::Status SourceBufferParserWebM::OnSimpleBlockBegin(const ElementMetadata& metadata, const SimpleBlock& block, Action* action)
 {
     UNUSED_PARAM(metadata);
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+
     ASSERT(action);
     if (!action)
         return Status(Status::kNotEnoughMemory);
@@ -935,6 +965,8 @@ webm::Status SourceBufferParserWebM::OnSimpleBlockBegin(const ElementMetadata& m
 webm::Status SourceBufferParserWebM::OnSimpleBlockEnd(const ElementMetadata& metadata, const SimpleBlock& block)
 {
     UNUSED_PARAM(metadata);
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+
     UNUSED_PARAM(block);
 
     m_currentBlock = WTF::nullopt;
@@ -945,6 +977,8 @@ webm::Status SourceBufferParserWebM::OnSimpleBlockEnd(const ElementMetadata& met
 webm::Status SourceBufferParserWebM::OnBlockGroupBegin(const webm::ElementMetadata& metadata, webm::Action* action)
 {
     UNUSED_PARAM(metadata);
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+
     ASSERT(action);
     if (!action)
         return Status(Status::kNotEnoughMemory);
@@ -957,6 +991,7 @@ webm::Status SourceBufferParserWebM::OnBlockGroupEnd(const webm::ElementMetadata
 {
     UNUSED_PARAM(metadata);
     UNUSED_PARAM(blockGroup);
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     return Status(Status::kOkCompleted);
 }
 
@@ -966,8 +1001,10 @@ webm::Status SourceBufferParserWebM::OnFrame(const FrameMetadata& metadata, Read
     if (!reader)
         return Status(Status::kNotEnoughMemory);
 
-    if (!m_currentBlock)
+    if (!m_currentBlock) {
+        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "no current block!");
         return Status(Status::kInvalidElementId);
+    }
 
     auto* block = WTF::switchOn(*m_currentBlock, [](Block& block) {
         return &block;

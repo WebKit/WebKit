@@ -270,6 +270,7 @@ private:
 
     RefPtr<const WTF::Logger> m_logger;
     const void* m_logIdentifier { nullptr };
+    uint64_t m_nextChildIdentifier { 0 };
 };
 
 }

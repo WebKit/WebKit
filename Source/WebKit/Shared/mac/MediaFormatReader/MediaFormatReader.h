@@ -31,6 +31,7 @@
 #include <WebCore/SourceBufferPrivateClient.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
+#include <wtf/Logger.h>
 
 DECLARE_CORE_MEDIA_TRAITS(FormatReader);
 
@@ -55,6 +56,9 @@ public:
     void startOnMainThread(MTPluginByteSourceRef);
     const MediaTime& duration() const { return m_duration; }
 
+    const Logger& logger() const { ASSERT(m_logger); return *m_logger.get(); }
+    const void* nextTrackReaderLogIdentifier(uint64_t) const;
+
 private:
     explicit MediaFormatReader(Allocator&&);
 
@@ -71,6 +75,8 @@ private:
 
     // WrapperClass
     OSStatus copyTrackArray(CFArrayRef*);
+    
+    const void* logIdentifier() const { return m_logIdentifier; }
 
     RetainPtr<MTPluginByteSourceRef> m_byteSource;
     Condition m_parseTracksCondition;
@@ -78,6 +84,8 @@ private:
     MediaTime m_duration;
     Optional<OSStatus> m_parseTracksStatus;
     Vector<Ref<MediaTrackReader>> m_trackReaders;
+    RefPtr<const Logger> m_logger;
+    const void* m_logIdentifier;
 };
 
 constexpr MediaFormatReader::WrapperClass MediaFormatReader::wrapperClass()

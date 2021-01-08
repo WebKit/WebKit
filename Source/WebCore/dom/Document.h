@@ -1492,6 +1492,7 @@ public:
     void setMayBeDetachedFromFrame(bool mayBeDetachedFromFrame) { m_mayBeDetachedFromFrame = mayBeDetachedFromFrame; }
 
     Logger& logger();
+    WEBCORE_EXPORT static const Logger& sharedLogger();
 
     WEBCORE_EXPORT void setConsoleMessageListener(RefPtr<StringCallback>&&); // For testing.
 
@@ -1718,6 +1719,10 @@ private:
     bool isBodyPotentiallyScrollable(HTMLBodyElement&);
 
     void didLogMessage(const WTFLogChannel&, WTFLogLevel, Vector<JSONLogValue>&&) final;
+    static void configureSharedLogger();
+
+    DocumentsMap::AddResult addToDocumentsMap();
+    void removeFromDocumentsMap();
 
     const Ref<const Settings> m_settings;
 
