@@ -2255,3 +2255,5 @@ webkit.org/b/219965 [ BigSur ] imported/w3c/web-platform-tests/fetch/content-typ
 
 webkit.org/b/217621 media/video-buffering-allowed.html [ Pass Timeout ]
 
+webkit.org/b/220484 [ Mojave ] imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing.html [ Pass Failure ]
+
