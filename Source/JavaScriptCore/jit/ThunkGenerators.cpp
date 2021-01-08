@@ -44,15 +44,13 @@ inline void emitPointerValidation(CCallHelpers& jit, GPRReg pointerGPR, TagType 
 {
     if (!ASSERT_ENABLED)
         return;
-    if (!Options::useJITCage()) {
-        CCallHelpers::Jump isNonZero = jit.branchTestPtr(CCallHelpers::NonZero, pointerGPR);
-        jit.abortWithReason(TGInvalidPointer);
-        isNonZero.link(&jit);
-        jit.pushToSave(pointerGPR);
-        jit.untagPtr(tag, pointerGPR);
-        jit.validateUntaggedPtr(pointerGPR);
-        jit.popToRestore(pointerGPR);
-    }
+    CCallHelpers::Jump isNonZero = jit.branchTestPtr(CCallHelpers::NonZero, pointerGPR);
+    jit.abortWithReason(TGInvalidPointer);
+    isNonZero.link(&jit);
+    jit.pushToSave(pointerGPR);
+    jit.untagPtr(tag, pointerGPR);
+    jit.validateUntaggedPtr(pointerGPR, pointerGPR);
+    jit.popToRestore(pointerGPR);
 }
 
 // We will jump here if the JIT code tries to make a call, but the
