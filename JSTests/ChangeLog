@@ -1,5 +1,23 @@
 2021-01-08  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
+        [WASM-References] Add optional default value parameter for Table.constructor, Table.grow and Table.set
+        https://bugs.webkit.org/show_bug.cgi?id=220323
+
+        Reviewed by Yusuke Suzuki.
+
+        Add tests for Table.grow, Table.set and Table ctor with optional initializing parameter.
+        Spec: https://webassembly.github.io/reference-types/js-api/index.html#tables.
+
+        * wasm/references/table_js_api.js: Added.
+        (Pelmen):
+        (testTableGrowForExternrefTables):
+        (async testTableGrowForFuncrefTables):
+        (testTableConstructorForExternrefTables):
+        (async testTableConstructorForFuncrefTables):
+        (async testTableSetForFuncrefTables):
+
+2021-01-08  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
         [WASM-References] Add linking tests
         https://bugs.webkit.org/show_bug.cgi?id=220314
 

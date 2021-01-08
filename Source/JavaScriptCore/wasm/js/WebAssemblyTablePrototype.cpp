@@ -91,10 +91,15 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncGrow, (JSGlobalObject* globalO
     uint32_t delta = toNonWrappingUint32(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
+    JSValue defaultValue = jsNull();
+    if (Options::useWebAssemblyReferences() && callFrame->argumentCount() > 1)
+        defaultValue = callFrame->argument(1);
+    if (table->table()->isFuncrefTable() && !defaultValue.isNull() && !isWebAssemblyHostFunction(vm, defaultValue))
+        return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table.prototype.grow expects the second argument to be null or an instance of WebAssembly.Function"_s);
     uint32_t oldLength = table->length();
 
-    if (!table->grow(delta))
-        return JSValue::encode(throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Table.prototype.grow could not grow the table"_s)));
+    if (!table->grow(delta, defaultValue))
+        return throwVMRangeError(globalObject, throwScope, "WebAssembly.Table.prototype.grow could not grow the table"_s);
 
     return JSValue::encode(jsNumber(oldLength));
 }
@@ -110,7 +115,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncGet, (JSGlobalObject* globalOb
     uint32_t index = toNonWrappingUint32(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (index >= table->length())
-        return JSValue::encode(throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Table.prototype.get expects an integer less than the length of the table"_s)));
+        return throwVMRangeError(globalObject, throwScope, "WebAssembly.Table.prototype.get expects an integer less than the length of the table"_s);
 
     return JSValue::encode(table->get(index));
 }
@@ -124,18 +129,20 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncSet, (JSGlobalObject* globalOb
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     JSValue value = callFrame->argument(1);
+    if (Options::useWebAssemblyReferences() && value.isUndefined())
+        value = jsNull();
 
     uint32_t index = toNonWrappingUint32(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     if (index >= table->length())
-        return JSValue::encode(throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Table.prototype.set expects an integer less than the length of the table"_s)));
+        return throwVMRangeError(globalObject, throwScope, "WebAssembly.Table.prototype.set expects an integer less than the length of the table"_s);
 
     if (table->table()->asFuncrefTable()) {
         WebAssemblyFunction* wasmFunction = nullptr;
         WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
         if (!value.isNull() && !isWebAssemblyHostFunction(vm, value, wasmFunction, wasmWrapperFunction))
-            return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function"_s)));
+            return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function"_s);
 
         if (value.isNull())
             table->clear(index);

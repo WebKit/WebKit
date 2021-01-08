@@ -81,11 +81,11 @@ void JSWebAssemblyTable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     thisObject->table()->visitAggregate(visitor);
 }
 
-bool JSWebAssemblyTable::grow(uint32_t delta)
+bool JSWebAssemblyTable::grow(uint32_t delta, JSValue defaultValue)
 {
     if (delta == 0)
         return true;
-    return !!m_table->grow(delta);
+    return !!m_table->grow(delta, defaultValue);
 }
 
 JSValue JSWebAssemblyTable::get(uint32_t index)

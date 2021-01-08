@@ -65,7 +65,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
     {
         JSValue argument = callFrame->argument(0);
         if (!argument.isObject())
-            return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Table expects its first argument to be an object"_s)));
+            return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table expects its first argument to be an object"_s);
         memoryDescriptor = jsCast<JSObject*>(argument);
     }
 
@@ -81,7 +81,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
         else if (elementString == "externref")
             type = Wasm::TableElementType::Externref;
         else
-            return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Table expects its 'element' field to be the string 'funcref' or 'externref'"_s)));
+            return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table expects its 'element' field to be the string 'funcref' or 'externref'"_s);
     }
 
     Identifier initialIdent = Identifier::fromString(vm, "initial");
@@ -109,19 +109,33 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
         maximum = toNonWrappingUint32(globalObject, maxSizeValue);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-        if (initial > *maximum) {
-            return JSValue::encode(throwException(globalObject, throwScope,
-                createRangeError(globalObject, "'maximum' property must be greater than or equal to the 'initial' property"_s)));
-        }
+        if (initial > *maximum)
+            return throwVMRangeError(globalObject, throwScope, "'maximum' property must be greater than or equal to the 'initial' property"_s);
     }
 
     RefPtr<Wasm::Table> wasmTable = Wasm::Table::tryCreate(initial, maximum, type);
-    if (!wasmTable) {
-        return JSValue::encode(throwException(globalObject, throwScope,
-            createRangeError(globalObject, "couldn't create Table"_s)));
+    if (!wasmTable)
+        return throwVMRangeError(globalObject, throwScope, "couldn't create Table"_s);
+
+    JSWebAssemblyTable* jsWebAssemblyTable = JSWebAssemblyTable::tryCreate(globalObject, vm, webAssemblyTableStructure, wasmTable.releaseNonNull());
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+
+    JSValue defaultValue = callFrame->argument(1);
+    if (Options::useWebAssemblyReferences() && !defaultValue.isUndefined()) {
+        WebAssemblyFunction* wasmFunction = nullptr;
+        WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
+        if (jsWebAssemblyTable->table()->isFuncrefTable() && (!defaultValue.isNull() && !isWebAssemblyHostFunction(vm, defaultValue, wasmFunction, wasmWrapperFunction)))
+            return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table.prototype.constructor expects the second argument to be null or an instance of WebAssembly.Function"_s);
+        for (uint32_t tableIndex = 0; tableIndex < initial; ++tableIndex) {
+            if (jsWebAssemblyTable->table()->isFuncrefTable())
+                jsWebAssemblyTable->set(tableIndex, wasmFunction);
+            if (jsWebAssemblyTable->table()->isExternrefTable())
+                jsWebAssemblyTable->set(tableIndex, defaultValue);
+            RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+        }
     }
 
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(JSWebAssemblyTable::tryCreate(globalObject, vm, webAssemblyTableStructure, wasmTable.releaseNonNull())));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(jsWebAssemblyTable));
 }
 
 JSC_DEFINE_HOST_FUNCTION(callJSWebAssemblyTable, (JSGlobalObject* globalObject, CallFrame*))

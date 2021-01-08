@@ -749,7 +749,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTableGrow, int32_t, (Instance* instance, u
 {
     ASSERT(tableIndex < instance->module().moduleInformation().tableCount());
     auto oldSize = instance->table(tableIndex)->length();
-    auto newSize = instance->table(tableIndex)->grow(delta);
+    auto newSize = instance->table(tableIndex)->grow(delta, jsNull());
     if (!newSize)
         return -1;
 

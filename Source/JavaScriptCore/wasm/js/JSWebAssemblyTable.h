@@ -58,7 +58,7 @@ public:
     Optional<uint32_t> maximum() const { return m_table->maximum(); }
     uint32_t length() const { return m_table->length(); }
     uint32_t allocatedLength() const { return m_table->allocatedLength(length()); }
-    bool grow(uint32_t delta) WARN_UNUSED_RETURN;
+    bool grow(uint32_t delta, JSValue defaultValue) WARN_UNUSED_RETURN;
     JSValue get(uint32_t);
     void set(uint32_t, WebAssemblyFunction*);
     void set(uint32_t, WebAssemblyWrapperFunction*);

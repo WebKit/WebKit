@@ -79,7 +79,7 @@ RefPtr<Table> Table::tryCreate(uint32_t initial, Optional<uint32_t> maximum, Tab
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-Optional<uint32_t> Table::grow(uint32_t delta)
+Optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
 {
     RELEASE_ASSERT(m_owner);
     if (delta == 0)
@@ -123,7 +123,7 @@ Optional<uint32_t> Table::grow(uint32_t delta)
             return WTF::nullopt;
     }
 
-    if (!checkedGrow(m_jsValues, [] (WriteBarrier<Unknown>& slot) { slot.setStartingValue(jsNull()); }))
+    if (!checkedGrow(m_jsValues, [defaultValue] (WriteBarrier<Unknown>& slot) { slot.setStartingValue(defaultValue); }))
         return WTF::nullopt;
 
     setLength(newLength);

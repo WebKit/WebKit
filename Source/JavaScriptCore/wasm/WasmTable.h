@@ -67,6 +67,7 @@ public:
 
     TableElementType type() const { return m_type; }
     bool isExternrefTable() const { return m_type == TableElementType::Externref; }
+    bool isFuncrefTable() const { return m_type == TableElementType::Funcref; }
     FuncRefTable* asFuncrefTable();
 
     static bool isValidLength(uint32_t length) { return length < maxTableEntries; }
@@ -75,7 +76,7 @@ public:
     void set(uint32_t, JSValue);
     JSValue get(uint32_t) const;
 
-    Optional<uint32_t> grow(uint32_t delta);
+    Optional<uint32_t> grow(uint32_t delta, JSValue defaultValue);
     void copy(const Table* srcTable, uint32_t dstIndex, uint32_t srcIndex);
 
     void visitAggregate(SlotVisitor&);

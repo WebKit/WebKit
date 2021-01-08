@@ -1,3 +1,31 @@
+2021-01-08  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-References] Add optional default value parameter for Table.constructor, Table.grow and Table.set
+        https://bugs.webkit.org/show_bug.cgi?id=220323
+
+        Reviewed by Yusuke Suzuki.
+
+        Introduce the new optional parameter "defaultValue" for Table.grow(numOfElementsToAdd, [defaultValue]).
+        It is used to initialize newly added table elements.
+        Introduce the new optional parameter "defaultValue" for Table({initial: N, element:type}, [defaultValue]).
+        After Table is created we append initial times defaultValue to table if it is present.
+        Also add type check for funcref's table for Table.grow, Table ctor and Table.set.
+        Spec: https://webassembly.github.io/reference-types/js-api/index.html#tables.
+
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::Table::grow):
+        * wasm/WasmTable.h:
+        (JSC::Wasm::Table::isFuncrefTable const):
+        * wasm/js/JSWebAssemblyTable.cpp:
+        (JSC::JSWebAssemblyTable::grow):
+        * wasm/js/JSWebAssemblyTable.h:
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2021-01-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] AtomicsIsLockFree's AI result is wrong
