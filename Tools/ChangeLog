@@ -1,3 +1,15 @@
+2021-01-07  Paulo Matos  <pmatos@igalia.com>
+
+        Fix mktemp call for busybox mktemp
+        https://bugs.webkit.org/show_bug.cgi?id=220422
+
+        Reviewed by Alexey Proskuryakov.
+
+        Busybox mktemp requires the template to have 6 Xs.
+        GNU mktemp doesn't care so use 6 Xs in order to ensure this will work if busybox mktemp is installed.
+
+        * Scripts/run-jsc-stress-tests:
+
 2021-01-07  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Split program into separate files (Follow-up fix)

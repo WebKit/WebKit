@@ -751,7 +751,7 @@ def runBytecodeCacheImpl(optionalTestSpecificOptions, *additionalEnv)
     if ($hostOS == "darwin")
         fileTemplate = "bytecode-cache"
     elsif ($hostOS == "linux" && $architecture != "mips")
-        fileTemplate = "bytecode-cacheXXX"
+        fileTemplate = "bytecode-cacheXXXXXX"
     else
         skip
         return
