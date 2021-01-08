@@ -1,3 +1,16 @@
+2021-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] -[WKWebView acceptsFirstMouse:] sometimes crashes in IPC::Connection::createSyncMessageEncoder
+        https://bugs.webkit.org/show_bug.cgi?id=220469
+        <rdar://problem/72319199>
+
+        Reviewed by Chris Dumez.
+
+        Add an API test that exercises the crash by calling into `-acceptsFirstMouse:` during web process launch.
+
+        * TestWebKitAPI/Tests/mac/AcceptsFirstMouse.mm:
+        (TestWebKitAPI::TEST):
+
 2021-01-08  Sihui Liu  <sihui_liu@appe.com>
 
         Stop using MediaRecorder in API test WebKit2.SpeechRecognitionErrorWhenStartingAudioCaptureOnDifferentPage

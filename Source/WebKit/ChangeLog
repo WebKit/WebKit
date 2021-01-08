@@ -1,3 +1,25 @@
+2021-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] -[WKWebView acceptsFirstMouse:] sometimes crashes in IPC::Connection::createSyncMessageEncoder
+        https://bugs.webkit.org/show_bug.cgi?id=220469
+        <rdar://problem/72319199>
+
+        Reviewed by Chris Dumez.
+
+        When sending IPC to the web process from the UI process, it's possible for the `WebProcessProxy`'s IPC
+        connection to be null in the case where the web process is still in the act of launching. In the case of
+        asynchronous IPC, we handle this by queueing the IPC message on the `WebProcessProxy` in the case where the
+        connection hasn't been created yet (refer to `AuxiliaryProcessProxy::sendMessage`). However, in the case where
+        we're sending a sync message, we assume that the IPC connection exists in `MessageSender::sendSync`, which
+        causes us to crash with a null dereference.
+
+        To fix this, remove the debug assertion in `MessageSender::sendSync` and return a null `SendSyncResult` in the
+        case where the connection has not been created.
+
+        Test: WebKit2.AcceptsFirstMouseDuringWebProcessLaunch
+
+        * Platform/IPC/MessageSender.h:
+
 2021-01-08  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Adopt new UI for the update flow
