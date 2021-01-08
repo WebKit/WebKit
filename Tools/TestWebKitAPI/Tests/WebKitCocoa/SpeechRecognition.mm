@@ -183,7 +183,7 @@ TEST(WebKit2, SpeechRecognitionErrorWhenStartingAudioCaptureOnDifferentPage)
     // First page is muted when second page starts media recorder.
     receivedScriptMessage = false;
     [secondWebView synchronouslyLoadTestPageNamed:@"speechrecognition-basic"];
-    [secondWebView stringByEvaluatingJavaScript:@"startRecorder()"];
+    [secondWebView stringByEvaluatingJavaScript:@"startAudio()"];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     EXPECT_WK_STREQ(@"Error: audio-capture - Source is muted", [lastScriptMessage body]);
 
@@ -191,7 +191,7 @@ TEST(WebKit2, SpeechRecognitionErrorWhenStartingAudioCaptureOnDifferentPage)
     receivedScriptMessage = false;
     [firstWebView synchronouslyLoadHTMLString:@"<script>speechRecognition = new webkitSpeechRecognition(); speechRecognition.start();</script>" baseURL:[NSURL URLWithString:@"https://webkit.org"]];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
-    EXPECT_WK_STREQ(@"Recorder Mute", [lastScriptMessage body]);
+    EXPECT_WK_STREQ(@"Audio Mute", [lastScriptMessage body]);
 }
 
 // FIXME: enable this test on iOS when https://webkit.org/b/175204 is fixed.

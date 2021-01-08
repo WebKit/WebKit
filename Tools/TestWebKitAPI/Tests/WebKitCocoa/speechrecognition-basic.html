@@ -1,4 +1,7 @@
 <html>
+<body>
+<audio id="audio" autoplay></audio>
+
 <script>
 
 var speechRecognition = null;
@@ -24,33 +27,23 @@ function stop()
 function gotMedia(stream) {
     try {
         var tracks = stream.getAudioTracks();
-        tracks[0].onmute = () => window.webkit.messageHandlers.testHandler.postMessage("Recorder Mute");
-
-        if (!recorder)
-            recorder = new MediaRecorder(stream);
-
-        recorder.onerror = (event) => window.webkit.messageHandlers.testHandler.postMessage("Recorder Error: " + event.code + " - " +  event.message);
-        recorder.start();
+        tracks[0].onmute = () => window.webkit.messageHandlers.testHandler.postMessage("Audio Mute");
+        var audio = document.getElementById('audio');
+        audio.srcObject = stream;
+        audio.play();
     } catch(e) {
-        window.webkit.messageHandlers.testHandler.postMessage("Recorder Error : " + e);
+        window.webkit.messageHandlers.testHandler.postMessage("gotMedia Error : " + e);
     }
 }
 
-function startRecorder() {
-    if (recorder) {
-        recorder.start();
-        return;
-    }
-
+function startAudio()
+{
     navigator.mediaDevices.getUserMedia({ audio: true })
     .then(gotMedia)
-    .catch(e => { window.webkit.messageHandlers.testHandler.postMessage("UserMedia Error: " + e); });
-}
-
-function stopRecorder() {
-    if (recorder)
-        recorder.stop();
+    .catch(e => { window.webkit.messageHandlers.testHandler.postMessage("startAudio Error: " + e); });
 }
 
 </script>
+
+</body>
 </html>
