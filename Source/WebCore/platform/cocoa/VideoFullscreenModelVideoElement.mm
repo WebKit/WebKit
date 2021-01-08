@@ -173,7 +173,8 @@ void VideoFullscreenModelVideoElement::setVideoLayerFrame(FloatRect rect)
 
 void VideoFullscreenModelVideoElement::setVideoLayerGravity(MediaPlayer::VideoGravity gravity)
 {
-    m_videoElement->setVideoFullscreenGravity(gravity);
+    if (m_videoElement)
+        m_videoElement->setVideoFullscreenGravity(gravity);
 }
 
 const Vector<AtomString>& VideoFullscreenModelVideoElement::observedEventNames()
