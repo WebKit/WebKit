@@ -69,17 +69,27 @@ static GRefPtr<GstCaps> createSinkPadTemplateCaps()
 {
     GRefPtr<GstCaps> caps = adoptGRef(gst_caps_new_empty());
 
+    if (CDMFactoryThunder::singleton().supportedKeySystems().isEmpty()) {
+        GST_WARNING("no supported key systems in Thunder, we won't be able to decrypt anything with the its decryptor");
+        return caps;
+    }
+
+    for (int i = 0; cencEncryptionMediaTypes[i]; ++i) {
+        gst_caps_append_structure(caps.get(), gst_structure_new("application/x-cenc", "original-media-type", G_TYPE_STRING,
+            cencEncryptionMediaTypes[i], nullptr));
+    }
     for (const auto& keySystem : CDMFactoryThunder::singleton().supportedKeySystems()) {
         for (int i = 0; cencEncryptionMediaTypes[i]; ++i) {
             gst_caps_append_structure(caps.get(), gst_structure_new("application/x-cenc", "original-media-type", G_TYPE_STRING,
                 cencEncryptionMediaTypes[i], "protection-system", G_TYPE_STRING, GStreamerEMEUtilities::keySystemToUuid(keySystem), nullptr));
         }
-        if (GStreamerEMEUtilities::isWidevineKeySystem(keySystem)) {
-            // No key system UUID for webm. It's not set in caps for it and it's just Widevine.
-            for (int i = 0; webmEncryptionMediaTypes[i]; ++i) {
-                gst_caps_append_structure(caps.get(), gst_structure_new("application/x-webm-enc", "original-media-type", G_TYPE_STRING,
-                    webmEncryptionMediaTypes[i], nullptr));
-            }
+    }
+
+    if (CDMFactoryThunder::singleton().supportsKeySystem(GStreamerEMEUtilities::s_WidevineKeySystem)) {
+        // WebM is Widevine only so no Widevine, no WebM decryption.
+        for (int i = 0; webmEncryptionMediaTypes[i]; ++i) {
+            gst_caps_append_structure(caps.get(), gst_structure_new("application/x-webm-enc", "original-media-type", G_TYPE_STRING,
+                webmEncryptionMediaTypes[i], nullptr));
         }
     }
 
