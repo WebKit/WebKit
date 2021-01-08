@@ -160,7 +160,7 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
 
         if (this._hasVariationValue(property, variationTag, {optional: true})) {
             let axis = property.variations.get(variationTag);
-            result += WI.UIString(" (Range: %d-%d, Default: %d)", " (Range: %d-%d, Default: %d) @ Font Details Sidebar", "A range and default value for a single variation axis of a font.").format(axis.minimumValue, axis.maximumValue, axis.defaultValue);
+            return this._createVariationValueElement(result, axis.minimumValue, axis.maximumValue, axis.defaultValue);
         }
 
         return result;
@@ -169,7 +169,19 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
     _formatVariationValue(variation)
     {
         let value = variation.value || variation.value === 0 ? variation.value : variation.defaultValue;
-        return WI.UIString("%d (Range: %d-%d, Default: %d)", "%d (Range: %d-%d, Default: %d) @ Font Details Sidebar", "A value, range, and default value for a single variation axis of a font.").format(value, variation.minimumValue, variation.maximumValue, variation.defaultValue);
+        return this._createVariationValueElement(value, variation.minimumValue, variation.maximumValue, variation.defaultValue);
+    }
+
+    _createVariationValueElement(value, minimumValue, maximumValue, defaultValue)
+    {
+        let valueElement = document.createElement("div");
+        valueElement.textContent = value;
+
+        let secondaryElement = valueElement.appendChild(document.createElement("span"));
+        secondaryElement.className = "secondary";
+        secondaryElement.textContent = WI.UIString(" (Range: %d-%d, Default: %d)", " (Range: %d-%d, Default: %d) @ Font Details Sidebar", "A range and default value for a single variation axis of a font.").format(minimumValue, maximumValue, defaultValue);
+        
+        return valueElement;
     }
 
     _formatSimpleFeatureValues(property, features, noMatchesResult)

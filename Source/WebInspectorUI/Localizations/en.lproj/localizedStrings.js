@@ -24,8 +24,6 @@ localizedStrings["%.2f\u00d7"] = "%.2f\u00d7";
 localizedStrings["%.2fms"] = "%.2fms";
 localizedStrings["%.2fs"] = "%.2fs";
 localizedStrings["%.3fms"] = "%.3fms";
-/* A value, range, and default value for a single variation axis of a font. */
-localizedStrings["%d (Range: %d-%d, Default: %d) @ Font Details Sidebar"] = "%d (Range: %d-%d, Default: %d)";
 localizedStrings["%d Error"] = "%d Error";
 localizedStrings["%d Errors"] = "%d Errors";
 localizedStrings["%d Errors, %d Warnings"] = "%d Errors, %d Warnings";

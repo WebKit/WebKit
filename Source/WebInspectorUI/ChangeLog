@@ -1,5 +1,26 @@
 2021-01-08  Patrick Angle  <pangle@apple.com>
 
+        Web Inspector: Font Details sidebar - Improve visibility of values by emphasizing them/de-emphasizing range information
+        https://bugs.webkit.org/show_bug.cgi?id=219996
+
+        Reviewed by Devin Rousso.
+
+        Create a separate element to hold secondary axis information like minimum, maxiumum, and default values to make
+        sure attention is drawn to the actual value.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        * UserInterface/Views/FontDetailsPanel.css: Added.
+        (.sidebar > .panel.details.style-font > .content .details-section > .content > .group > .row.simple > .value .secondary):
+        * UserInterface/Views/FontDetailsPanel.js:
+        (WI.FontDetailsPanel.prototype._formatSimpleSingleValue):
+        (WI.FontDetailsPanel.prototype._formatVariationValue):
+        (WI.FontDetailsPanel.prototype._createVariationValueElement):
+        - Both _formatSimpleSingleValue and _formatVariationValue now use _createVariationValueElement when they need to
+        display secondary information alongside the value.
+
+2021-01-08  Patrick Angle  <pangle@apple.com>
+
         Web Inspector: Promote experimental "Show independent Styles sidebar" setting to "Elements" settings pane and enable by default
         https://bugs.webkit.org/show_bug.cgi?id=218126
 
