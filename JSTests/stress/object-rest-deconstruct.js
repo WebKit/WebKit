@@ -3,8 +3,15 @@ let assert = (e) => {
         throw Error("Bad assertion!");
 }
 
-let assertPropDescriptor = (restObj, prop) => {
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error(`Bad value: ${actual}!`);
+}
+
+function assertDataProperty(restObj, prop, value) {
+    shouldBe(restObj[prop], value);
     let desc = Object.getOwnPropertyDescriptor(restObj, prop);
+    shouldBe(desc.value, value);
     assert(desc.enumerable);
     assert(desc.writable);
     assert(desc.configurable);
@@ -19,11 +26,8 @@ let assertPropDescriptor = (restObj, prop) => {
     assert(a === 5);
     assert(b === 3);
 
-    assert(rest.x === 1);
-    assert(rest.y === 2);
-
-    assertPropDescriptor(rest, 'x');
-    assertPropDescriptor(rest, 'y');
+    assertDataProperty(rest, 'x', 1);
+    assertDataProperty(rest, 'y', 2);
 })();
 
 // Empty Object
@@ -101,8 +105,7 @@ let assertPropDescriptor = (restObj, prop) => {
     assert(a === 3);
     assert(b === 4);
 
-    assert(rest.x === 3);
-    assertPropDescriptor(rest, 'x');
+    assertDataProperty(rest, 'x', 3);
 })();
 
 // Skip non-enumerable case
@@ -128,8 +131,8 @@ let assertPropDescriptor = (restObj, prop) => {
     assert(rest.a === 3);
     assert(rest.b === 4);
 
-    assertPropDescriptor(rest, 'a');
-    assertPropDescriptor(rest, 'b');
+    assertDataProperty(rest, 'a', 3);
+    assertDataProperty(rest, 'b', 4);
 })();
 
 // Destructuring function parameter
@@ -235,3 +238,126 @@ let assertPropDescriptor = (restObj, prop) => {
     }
 })();
 
+(function nonEnumerableSymbol() {
+    var __s0 = Symbol("s0");
+    var __s1 = Symbol("s1");
+
+    var source = {};
+    Object.defineProperties(source, {
+        [__s0]: {value: 0, enumerable: false},
+        [__s1]: {value: 1, enumerable: false},
+    });
+
+    var {[__s0]: s0, ...target} = source;
+
+    shouldBe(s0, 0);
+    assert(!Object.getOwnPropertySymbols(target).length);
+})();
+
+(function dunderProto() {
+    var source = {};
+    var protoValue = {};
+    Object.defineProperty(source, "__proto__", {value: protoValue, enumerable: true});
+    var {...target} = source;
+
+    assertDataProperty(target, "__proto__", protoValue);
+    shouldBe(Object.getPrototypeOf(target), Object.prototype);
+})();
+
+(function stringPrimitive() {
+    var source = "012";
+    var {0: a, ["2"]: c, ...target} = source;
+
+    shouldBe(a, "0");
+    shouldBe(c, "2");
+    assertDataProperty(target, 1, "1");
+    shouldBe(Object.keys(target).join(), "1");
+})();
+
+(function ProxyObject() {
+    var __s0 = Symbol("s0");
+    var __s1 = Symbol("s1");
+
+    var ownKeysCalls = 0;
+    var gopdCalls = [];
+    var getCalls = [];
+
+    var source = new Proxy({
+        [__s0]: "s0", [__s1]: "s1",
+        a: 0, b: 1, c: 2, d: 3,
+    }, {
+        ownKeys: (t) => {
+            ++ownKeysCalls;
+            return Reflect.ownKeys(t);
+        },
+        getOwnPropertyDescriptor: (t, key) => {
+            gopdCalls.push(key);
+            var desc = Reflect.getOwnPropertyDescriptor(t, key);
+            if (key === "b" || key === __s0)
+                desc.enumerable = false;
+            return desc;
+        },
+        get: (t, key, receiver) => {
+            getCalls.push(key);
+            return Reflect.get(t, key, receiver);
+        },
+    });
+
+    var {c, ["d"]: d, ...target} = source;
+
+    shouldBe(ownKeysCalls, 1);
+    shouldBe(gopdCalls.map(String).join(), "a,b,Symbol(s0),Symbol(s1)");
+    shouldBe(getCalls.map(String).join(), "c,d,a,Symbol(s1)");
+
+    assertDataProperty(target, "a", 0);
+    shouldBe(c, 2);
+    shouldBe(d, 3);
+    shouldBe(Object.keys(target).join(), "a");
+
+    var symbols = Object.getOwnPropertySymbols(target);
+    shouldBe(symbols[0], __s1);
+    shouldBe(symbols.length, 1);
+})();
+
+(function indexedProperties() {
+    var source = [0, 1, 2, 3];
+    Object.defineProperty(source, "1", {enumerable: false});
+    var {2: c, ["3"]: d, ...target} = source;
+
+    assertDataProperty(target, "0", 0);
+    shouldBe(Object.keys(target).join(), "0");
+})();
+
+(function CustomAccessor() {
+    var source = $vm.createCustomTestGetterSetter();
+    var {customValueGlobalObject, ...target} = source;
+
+    assertDataProperty(target, "customValue", source);
+    assert(!target.hasOwnProperty("customValueGlobalObject"));
+    shouldBe(customValueGlobalObject[Symbol.toStringTag], "global");
+    assertDataProperty(target, "customAccessor", source);
+    assertDataProperty(target, "customAccessorGlobalObject", customValueGlobalObject);
+})();
+
+(function CustomAccessorInNonReifiedPropertyTable() {
+    // make sure we reifyAllStaticProperties() before deciding on the fast/slow path
+
+    var source = $vm.createStaticCustomAccessor();
+    source.testField = 42;
+    var {...target} = source;
+
+    assertDataProperty(target, "testField", 42);
+    assertDataProperty(target, "testStaticAccessor", 42);
+})();
+
+(function uncacheableDictionary() {
+    var source = {a: 0, b: 1, c: 2, d: 3};
+    Object.defineProperty(source, "c", {enumerable: false});
+    $vm.toUncacheableDictionary(source);
+    var {b, ["d"]: d, ...target} = source;
+
+    assertDataProperty(target, "a", 0);
+    shouldBe(b, 1);
+    shouldBe(d, 3);
+    shouldBe(Object.keys(target).join(), "a");
+})();

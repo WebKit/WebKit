@@ -67,7 +67,6 @@ namespace JSC {
     macro(defineProperty) \
     macro(defaultPromiseThen) \
     macro(getOwnPropertyNames) \
-    macro(ownKeys) \
     macro(Set) \
     macro(throwTypeErrorFunction) \
     macro(typedArrayLength) \
@@ -169,6 +168,7 @@ namespace JSC {
     macro(hasOwnLengthProperty) \
     macro(importModule) \
     macro(propertyIsEnumerable) \
+    macro(copyDataProperties) \
     macro(meta) \
     macro(webAssemblyCompileStreamingInternal) \
     macro(webAssemblyInstantiateStreamingInternal) \

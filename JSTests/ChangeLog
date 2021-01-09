@@ -1,5 +1,17 @@
 2021-01-08  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        Implement @copyDataProperties in C++ to optimize object rest / spread
+        https://bugs.webkit.org/show_bug.cgi?id=193618
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/object-rest-destructuring.js: Added.
+        * microbenchmarks/object-spread.js: Added.
+        * stress/object-rest-deconstruct.js:
+        * stress/object-spread.js:
+
+2021-01-08  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         for/in over a Proxy should not call [[GetOwnProperty]] trap twice per property
         https://bugs.webkit.org/show_bug.cgi?id=189034
 

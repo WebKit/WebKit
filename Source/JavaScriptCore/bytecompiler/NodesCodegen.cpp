@@ -1778,20 +1778,6 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_createArgumentsButterfly(JSC::
     return generator.emitCreateArgumentsButterfly(generator.finalDestination(dst));
 }
 
-RegisterID* BytecodeIntrinsicNode::emit_intrinsic_defineEnumerableWritableConfigurableDataProperty(JSC::BytecodeGenerator& generator, JSC::RegisterID* dst)
-{
-    ArgumentListNode* node = m_args->m_listNode;
-    RefPtr<RegisterID> newObj = generator.emitNode(node);
-    node = node->m_next;
-    RefPtr<RegisterID> propertyNameRegister = generator.emitNode(node);
-    node = node->m_next;
-    RefPtr<RegisterID> value = generator.emitNode(node);
-    ASSERT(!node->m_next);
-
-    generator.emitCallDefineProperty(newObj.get(), propertyNameRegister.get(), value.get(), nullptr, nullptr, BytecodeGenerator::PropertyConfigurable | BytecodeGenerator::PropertyWritable | BytecodeGenerator::PropertyEnumerable, m_position);
-    return dst;
-}
-
 #define JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS(name) \
     RegisterID* BytecodeIntrinsicNode::emit_intrinsic_##name(BytecodeGenerator& generator, RegisterID* dst) \
     { \
@@ -5358,9 +5344,8 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
                 generator.move(args.argumentRegister(2), excludedSetReg.get());
             }
 
-            RefPtr<RegisterID> result = generator.newTemporary();
-            generator.emitCall(result.get(), copyDataProperties.get(), NoExpectedFunction, args, divot(), divotStart(), divotEnd(), DebuggableCall::No);
-            target.pattern->bindValue(generator, result.get());
+            generator.emitCall(generator.newTemporary(), copyDataProperties.get(), NoExpectedFunction, args, divot(), divotStart(), divotEnd(), DebuggableCall::No);
+            target.pattern->bindValue(generator, newObject.get());
         }
     }
 
@@ -5569,8 +5554,7 @@ RegisterID* ObjectSpreadExpressionNode::emitBytecode(BytecodeGenerator& generato
     RefPtr<RegisterID> src = generator.newTemporary();
     generator.emitNode(src.get(), m_expression);
     
-    // load and call @copyDataPropertiesNoExclusions
-    RefPtr<RegisterID> copyDataProperties = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::copyDataPropertiesNoExclusions);
+    RefPtr<RegisterID> copyDataProperties = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::copyDataProperties);
     
     CallArguments args(generator, nullptr, 2);
     generator.emitLoad(args.thisRegister(), jsUndefined());

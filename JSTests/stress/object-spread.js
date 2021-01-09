@@ -7,12 +7,18 @@ assert.sameValue = (a, b) =>  {
     assert(a === b);
 }
 
-function validatePropertyDescriptor(o, p) {
-    let desc = Object.getOwnPropertyDescriptor(o, p);
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error(`Bad value: ${actual}!`);
+}
 
+function assertDataProperty(target, prop, value) {
+    shouldBe(target[prop], value);
+    let desc = Object.getOwnPropertyDescriptor(target, prop);
+    shouldBe(desc.value, value);
     assert(desc.enumerable);
-    assert(desc.configurable);
     assert(desc.writable);
+    assert(desc.configurable);
 }
 
 // Base cases
@@ -22,10 +28,8 @@ function validatePropertyDescriptor(o, p) {
 
     assert.sameValue(obj.a, 1);
     assert(obj.b, 2);
-    assert(obj.c, 3);
-    assert(obj.d, 4);
-    validatePropertyDescriptor(obj, "c");
-    validatePropertyDescriptor(obj, "d");
+    assertDataProperty(obj, "c", 3);
+    assertDataProperty(obj, "d", 4);
     assert(Object.keys(obj), 2);
 })();
 
@@ -33,16 +37,11 @@ function validatePropertyDescriptor(o, p) {
     let o = {c: 3, d: 4};
     let obj = {a: 1, b: 2, ...o};
 
-    assert.sameValue(obj.a, 1);
-    assert.sameValue(obj.b, 2);
-    assert.sameValue(obj.c, 3);
-    assert.sameValue(obj.d, 4);
+    assertDataProperty(obj, "a", 1);
+    assertDataProperty(obj, "b", 2);
+    assertDataProperty(obj, "c", 3);
+    assertDataProperty(obj, "d", 4);
     assert.sameValue(Object.keys(obj).length, 4);
-
-    validatePropertyDescriptor(obj, "a");
-    validatePropertyDescriptor(obj, "b");
-    validatePropertyDescriptor(obj, "c");
-    validatePropertyDescriptor(obj, "d");
 })();
 
 (() => {
@@ -128,12 +127,10 @@ function validatePropertyDescriptor(o, p) {
 
     let obj = {...o, c: 4, d: 5};
 
-    assert.sameValue(Object.getOwnPropertyDescriptor(obj, "a").value, 42);
+    assertDataProperty(obj, "a", 42);
     assert.sameValue(obj.c, 4);
     assert.sameValue(obj.d, 5);
     assert.sameValue(Object.keys(obj).length, 3);
-
-    validatePropertyDescriptor(obj, "a");
 })();
 
 (() => {
@@ -223,10 +220,8 @@ function validatePropertyDescriptor(o, p) {
 
     let obj = {...o, a: 3};
 
-    assert.sameValue(obj.a, 3)
-    assert.sameValue(obj.b, 2);
-    validatePropertyDescriptor(obj, "a");
-    validatePropertyDescriptor(obj, "b");
+    assertDataProperty(obj, "a", 3);
+    assertDataProperty(obj, "b", 2);
 })();
 
 // Setter
@@ -311,3 +306,119 @@ function validatePropertyDescriptor(o, p) {
     assert(executedSetter);
 })();
 
+(function nonEnumerableSymbol() {
+    var __s0 = Symbol("s0");
+    var source = {};
+    Object.defineProperties(source, {
+        [__s0]: {value: 0, enumerable: false},
+    });
+
+    var target = {[__s0]: 1, ...target};
+    assertDataProperty(target, __s0, 1);
+})();
+
+(function dunderProto() {
+    var source = {};
+    var protoValue = {};
+    Object.defineProperty(source, "__proto__", {value: protoValue, enumerable: true});
+    var target = {...source};
+
+    assertDataProperty(target, "__proto__", protoValue);
+    shouldBe(Object.getPrototypeOf(target), Object.prototype);
+})();
+
+(function stringPrimitive() {
+    var source = "012";
+    var target = {get 0() {}, ["2"]: 22, ...source};
+
+    assertDataProperty(target, 0, "0");
+    assertDataProperty(target, 1, "1");
+    assertDataProperty(target, 2, "2");
+    shouldBe(Object.keys(target).join(), "0,1,2");
+})();
+
+(function ProxyObject() {
+    var __s0 = Symbol("s0");
+    var __s1 = Symbol("s1");
+
+    var ownKeysCalls = 0;
+    var gopdCalls = [];
+    var getCalls = [];
+
+    var source = new Proxy({
+        [__s0]: "s0", [__s1]: "s1",
+        a: 0, b: 1, c: 2, d: 3,
+    }, {
+        ownKeys: (t) => {
+            ++ownKeysCalls;
+            return Reflect.ownKeys(t);
+        },
+        getOwnPropertyDescriptor: (t, key) => {
+            gopdCalls.push(key);
+            var desc = Reflect.getOwnPropertyDescriptor(t, key);
+            if (key === "b" || key === __s0)
+                desc.enumerable = false;
+            return desc;
+        },
+        get: (t, key, receiver) => {
+            getCalls.push(key);
+            return Reflect.get(t, key, receiver);
+        },
+    });
+
+    var target = {a() {}, b: 11, [__s1]: "foo", ...source, ["d"]: 33};
+
+    shouldBe(ownKeysCalls, 1);
+    shouldBe(gopdCalls.map(String).join(), "a,b,c,d,Symbol(s0),Symbol(s1)");
+    shouldBe(getCalls.map(String).join(), "a,c,d,Symbol(s1)");
+
+    assertDataProperty(target, "a", 0);
+    assertDataProperty(target, "b", 11);
+    assertDataProperty(target, "c", 2);
+    assertDataProperty(target, "d", 33);
+
+    shouldBe(Reflect.ownKeys(target).map(String).join(), "a,b,c,d,Symbol(s1)");
+})();
+
+(function indexedProperties() {
+    var source = [0, 1, 2];
+    Object.defineProperty(source, "1", {enumerable: false});
+    var target = {set ["2"](_v) {}, ...source};
+
+    assertDataProperty(target, "0", 0);
+    assertDataProperty(target, "2", 2);
+    shouldBe(Object.keys(target).join(), "0,2");
+})();
+
+(function CustomAccessor() {
+    var source = $vm.createCustomTestGetterSetter();
+    var target = {...source};
+
+    assertDataProperty(target, "customValue", source);
+    shouldBe(target.customValueGlobalObject, target.customAccessorGlobalObject);
+    shouldBe(target.customValueGlobalObject[Symbol.toStringTag], "global");
+    assertDataProperty(target, "customAccessor", source);
+})();
+
+(function CustomAccessorInNonReifiedPropertyTable() {
+    // make sure we reifyAllStaticProperties() before deciding on the fast/slow path
+
+    var source = $vm.createStaticCustomAccessor();
+    source.testField = 42;
+    var target = {...source};
+
+    assertDataProperty(target, "testField", 42);
+    assertDataProperty(target, "testStaticAccessor", 42);
+})();
+
+(function uncacheableDictionary() {
+    var source = {a: 0, b: 1, c: 2};
+    Object.defineProperty(source, "c", {enumerable: false});
+    $vm.toUncacheableDictionary(source);
+    var b = 11;
+    var target = {get a() {}, b, ...source};
+
+    assertDataProperty(target, "a", 0);
+    assertDataProperty(target, "b", 1);
+    shouldBe(Object.keys(target).join(), "a,b");
+})();

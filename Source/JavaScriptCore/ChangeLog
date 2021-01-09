@@ -1,3 +1,48 @@
+2021-01-08  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Implement @copyDataProperties in C++ to optimize object rest / spread
+        https://bugs.webkit.org/show_bug.cgi?id=193618
+
+        Reviewed by Yusuke Suzuki.
+
+        Since @copyDataProperties is inherently polymorphic, implementing it in JS is not beneficial.
+        This patch:
+
+        1. Merges almost identical @copyDataProperties variants and moves them to C++, avoiding
+           allocations of JSArray instances and Identifier wrappers.
+        2. Skips non-observable [[Get]] calls, leveraging `slot.isTaintedByOpaqueObject()`.
+        3. Performs [[DefineOwnProperty]] via putDirectMayBeIndex(), since the spec guarantees
+           property creation to be successful [1]: `target` is an newly created object that is
+           not yet accessible to userland code. It's impossible for `target` to be non-extensible
+           nor have a non-configurable property.
+        4. Introduces a fast path similar to Object.assign, but:
+           a) with no checks on `target`, because it's guaranteed to be an extensible JSFinalObject;
+           b) with less checks on `source`, since we are performing putDirect() and don't care about
+              read-only properties nor __proto__.
+
+        Altogether, these changes result in 3.1x speed-up for object rest / spread.
+        Also, this patch removes unnecessary `target` return and @isObject check.
+
+        [1]: https://tc39.es/ecma262/#sec-copydataproperties (step 6.c.ii.2, note the "!" prefix)
+
+        * builtins/BuiltinNames.h:
+        * builtins/GlobalOperations.js:
+        (globalPrivate.speciesConstructor):
+        (globalPrivate.copyDataProperties): Deleted.
+        (globalPrivate.copyDataPropertiesNoExclusions): Deleted.
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/LinkTimeConstant.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ObjectPatternNode::bindValue const):
+        (JSC::ObjectSpreadExpressionNode::emitBytecode):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_defineEnumerableWritableConfigurableDataProperty): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::canPerformFastPropertyEnumerationForCopyDataProperties):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSGlobalObjectFunctions.h:
+
 2021-01-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Disable JITCage compile time in old iOS
