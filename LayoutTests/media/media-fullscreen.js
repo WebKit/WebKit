@@ -40,7 +40,8 @@ function fullscreenchange()
 
 async function beginfullscreen()
 {
-    await testExpectedEventually("mediaElement.webkitDisplayingFullscreen", true);
+    if (window.internals)
+        await testExpectedEventually("internals.isChangingPresentationMode(mediaElement)", false);
     run("mediaElement.webkitExitFullScreen()");
 }
 

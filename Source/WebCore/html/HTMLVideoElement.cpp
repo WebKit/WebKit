@@ -330,8 +330,8 @@ ExceptionOr<void> HTMLVideoElement::webkitEnterFullscreen()
         return { };
 
     // Generate an exception if this isn't called in response to a user gesture, or if the 
-    // element does not support fullscreen.
-    if (!mediaSession().fullscreenPermitted() || !supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard))
+    // element does not support fullscreen, or the element is changing fullscreen mode.
+    if (!mediaSession().fullscreenPermitted() || !supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard) || isChangingVideoFullscreenMode())
         return Exception { InvalidStateError };
 
     enterFullscreen();
@@ -341,7 +341,7 @@ ExceptionOr<void> HTMLVideoElement::webkitEnterFullscreen()
 void HTMLVideoElement::webkitExitFullscreen()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    if (isFullscreen())
+    if (isFullscreen() && !isChangingVideoFullscreenMode())
         exitFullscreen();
 }
 

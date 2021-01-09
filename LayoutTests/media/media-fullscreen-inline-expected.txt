@@ -30,7 +30,7 @@ EVENT(mouseup)
 * event handler triggered by user gesture
 RUN(mediaElement.webkitEnterFullScreen())
 EVENT(webkitfullscreenchange)
-EXPECTED (mediaElement.webkitDisplayingFullscreen == 'true') OK
+EXPECTED (internals.isChangingPresentationMode(mediaElement) == 'false') OK
 RUN(mediaElement.webkitExitFullScreen())
 EVENT(webkitfullscreenchange)
 
