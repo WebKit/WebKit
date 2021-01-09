@@ -318,3 +318,12 @@ class Git(Scm):
             [self.executable(), 'checkout'] + [argument] + log_arg,
             cwd=self.root_path,
         ).returncode else self.commit()
+
+    def pull(self):
+        commit = self.commit()
+        code = run([self.executable(), 'pull'], cwd=self.root_path).returncode
+        if not code and self.is_svn:
+            return run([
+                self.executable(), 'svn', 'fetch', '--log-window-size=5000', '-r', '{}:HEAD'.format(commit.revision),
+            ], cwd=self.root_path).returncode
+        return code

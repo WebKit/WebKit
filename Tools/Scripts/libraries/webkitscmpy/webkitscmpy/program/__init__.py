@@ -23,7 +23,6 @@
 import argparse
 import logging
 import os
-import sys
 
 from webkitcorepy import arguments, log as webkitcorepy_log
 from webkitscmpy import local, log, remote
@@ -32,9 +31,11 @@ from .canonicalize import Canonicalize
 from .command import Command
 from .checkout import Checkout
 from .find import Find
+from .pull import Pull
+from .setup_git_svn import SetupGitSvn
 
 
-def main(args=None, path=None, loggers=None, contributors=None, identifier_template=None):
+def main(args=None, path=None, loggers=None, contributors=None, identifier_template=None, subversion=None):
     logging.basicConfig(level=logging.WARNING)
 
     loggers = [logging.getLogger(), webkitcorepy_log,  log] + (loggers or [])
@@ -55,7 +56,11 @@ def main(args=None, path=None, loggers=None, contributors=None, identifier_templ
 
     subparsers = parser.add_subparsers(help='sub-command help')
 
-    for program in [Find, Checkout, Canonicalize]:
+    programs = [Find, Checkout, Canonicalize, Pull]
+    if subversion:
+        programs.append(SetupGitSvn)
+
+    for program in programs:
         subparser = subparsers.add_parser(program.name, help=program.help)
         subparser.set_defaults(main=program.main)
         program.parser(subparser, loggers=loggers)
@@ -67,4 +72,9 @@ def main(args=None, path=None, loggers=None, contributors=None, identifier_templ
     else:
         repository = local.Scm.from_path(path=parsed.repository, contributors=contributors)
 
-    return parsed.main(args=parsed, repository=repository, identifier_template=identifier_template)
+    return parsed.main(
+        args=parsed,
+        repository=repository,
+        identifier_template=identifier_template,
+        subversion=subversion,
+    )

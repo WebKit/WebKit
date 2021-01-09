@@ -1,4 +1,4 @@
-# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,19 +22,16 @@
 
 import sys
 
+from .command import Command
 
-class Command(object):
-    name = None
-    help = None
 
-    @classmethod
-    def parser(cls, parser, loggers=None):
-        if cls.name is None:
-            raise NotImplementedError('Command does not have a name')
-        if cls.help is None:
-            raise NotImplementedError("'{}' does not have a help message")
+class Pull(Command):
+    name = 'pull'
+    help = 'Update the current checkout, synchronize git-svn if configured'
 
     @classmethod
     def main(cls, args, repository, **kwargs):
-        sys.stderr.write('No command specified\n')
-        return -1
+        if not repository.path:
+            sys.stderr.write('Cannot update remote repository\n')
+            return 1
+        return repository.pull()

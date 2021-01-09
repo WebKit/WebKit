@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -64,7 +64,6 @@ class Svn(Scm):
                     self._metadata_cache = json.load(file)
             except BaseException:
                 self._metadata_cache = dict(version=str(self.CACHE_VERSION))
-                raise
         else:
             self._metadata_cache = dict(version=str(self.CACHE_VERSION))
 
@@ -392,3 +391,6 @@ class Svn(Scm):
             command.append('-q')
 
         return None if run(command, cwd=self.root_path).returncode else commit
+
+    def pull(self):
+        return run([self.executable(), 'up'], cwd=self.root_path).returncode

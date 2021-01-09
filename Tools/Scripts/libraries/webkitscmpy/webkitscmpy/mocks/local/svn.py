@@ -130,6 +130,10 @@ class Svn(mocks.Subprocess):
                 generator=lambda *args, **kwargs:
                     mocks.ProcessCompletion(returncode=0) if self.up(args[3]) else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
+                self.executable, 'up',
+                cwd=self.path,
+                completion=mocks.ProcessCompletion(returncode=0),
+            ), mocks.Subprocess.Route(
                 self.executable,
                 cwd=self.path,
                 completion=mocks.ProcessCompletion(

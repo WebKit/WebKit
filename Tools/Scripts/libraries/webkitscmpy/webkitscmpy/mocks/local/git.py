@@ -70,18 +70,18 @@ class Git(mocks.Subprocess):
             with open(os.path.join(self.path, '.git', 'config'), 'w') as config:
                 config.write(
                     '[core]\n'
-                    '    repositoryformatversion = 0\n'
-                    '	filemode = true\n'
-                    '	bare = false\n'
-                    '	logallrefupdates = true\n'
-                    '	ignorecase = true\n'
-                    '	precomposeunicode = true\n'
+                    '\trepositoryformatversion = 0\n'
+                    '\tfilemode = true\n'
+                    '\tbare = false\n'
+                    '\tlogallrefupdates = true\n'
+                    '\tignorecase = true\n'
+                    '\tprecomposeunicode = true\n'
                     '[remote "origin"]\n'
-                    '    url = {remote}\n'
-                    '    fetch = +refs/heads/*:refs/remotes/origin/*\n'
+                    '\turl = {remote}\n'
+                    '\tfetch = +refs/heads/*:refs/remotes/origin/*\n'
                     '[branch "{branch}"]\n'
-                    '    remote = origin\n'
-                    '    merge = refs/heads/{branch}\n'.format(
+                    '\tremote = origin\n'
+                    '\tmerge = refs/heads/{branch}\n'.format(
                         remote=self.remote,
                         branch=self.default_branch,
                     ))
@@ -281,6 +281,15 @@ nothing to commit, working tree clean
                     identifier_template=args[-2].split("'")[-2] if args[-3] == '--msg-filter' else None,
                     environment_shell=args[4] if args[3] == '--env-filter' and args[4] else None,
                 )
+            ), mocks.Subprocess.Route(
+                self.executable, 'svn', 'fetch', '--log-window-size=5000', '-r', re.compile(r'\d+:HEAD'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs:
+                    mocks.ProcessCompletion(returncode=0) if git_svn or local.Git(self.path).is_svn else mocks.ProcessCompletion(returncode=-1),
+            ), mocks.Subprocess.Route(
+                self.executable, 'pull',
+                cwd=self.path,
+                completion=mocks.ProcessCompletion(returncode=0),
             ), mocks.Subprocess.Route(
                 self.executable,
                 cwd=self.path,

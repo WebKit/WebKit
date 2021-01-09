@@ -1,3 +1,42 @@
+2021-01-08  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Provide command to automatically configure git-svn
+        https://bugs.webkit.org/show_bug.cgi?id=220442
+        <rdar://problem/72908233>
+
+        Reviewed by Yusuke Suzuki.
+
+        Add commands to update repository and connect a git repository to a subversion repository.
+
+        * Scripts/git-webkit: Define subversion URL.
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.pull): Add function to update repository with the remote.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/scm.py:
+        (Scm.pull): Add function to update repository with the remote.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn.__init__): Suppress exception when metadata cache is invalid.
+        (Svn.pull): Add function to update repository with the remote.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        (Git): Use tabs in git config, add 'git svn fetch' and 'git pull' commands.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/svn.py:
+        (Svn.__init__): Add 'svn up' command.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/__init__.py:
+        (main): Add Pull and SetupGitSvn commands.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/command.py:
+        (Command.parser): Support use of the default parser.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/pull.py: Added.
+        (Pull): Update the current repository from its remote.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/setup_git_svn.py: Added.
+        (SetupGitSvn): Add command which populates the .git config file with information
+        linking to a subversion repository.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/setup_git_svn_unittest.py: Added.
+        (TestSetupGitSvn):
+        (TestSetupGitSvn.test_svn):
+        (TestSetupGitSvn.test_empty):
+        (TestSetupGitSvn.test_add):
+
 2021-01-08  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed test gardening. Attempting to diagnose failing PiP API tests by enabling more logging 
