@@ -1,0 +1,34 @@
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+</script>
+</head>
+<body class="">
+<div id="result-iframe-wrap" role="main">
+<iframe id="result" srcdoc="
+<!DOCTYPE html>
+<body translate=&quot;no&quot; >
+<script id=&quot;rendered-js&quot; type=&quot;module&quot;>
+    
+(async function () {
+    const req = await fetch('https://localhost:8443/loading/resources/remote-blob.php');
+
+    const blob = await req.blob();
+    const blob2 = blob.slice(5000, 10000);
+    blob2.arrayBuffer();
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+</script>
+
+ 
+</body>
+ 
+"
+sandbox="allow-downloads allow-forms allow-modals allow-pointer-lock allow-popups allow-presentation  allow-scripts allow-top-navigation-by-user-activation" allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; microphone; midi; payment; vr" allowtransparency="true" allowpaymentrequest="true" allowfullscreen="true" class="result-iframe">
+</iframe>
+</div>
+</body>
