@@ -199,35 +199,38 @@ String Blob::normalizedContentType(const String& contentType)
     return contentType.convertToASCIILowercase();
 }
 
-void Blob::loadBlob(ScriptExecutionContext& context, FileReaderLoader::ReadType readType, CompletionHandler<void(std::unique_ptr<BlobLoader>)>&& completionHandler)
+void Blob::loadBlob(ScriptExecutionContext& context, FileReaderLoader::ReadType readType, CompletionHandler<void(BlobLoader&)>&& completionHandler)
 {
     auto blobLoader = makeUnique<BlobLoader>([this, pendingActivity = makePendingActivity(*this), completionHandler = WTFMove(completionHandler)](BlobLoader& blobLoader) mutable {
-        completionHandler(m_blobLoaders.take(&blobLoader));
+        completionHandler(blobLoader);
+        m_blobLoaders.take(&blobLoader);
     });
-    auto* blobLoaderPtr = blobLoader.get();
-    m_blobLoaders.add(WTFMove(blobLoader));
-    blobLoaderPtr->start(*this, &context, readType);
+
+    blobLoader->start(*this, &context, readType);
+
+    if (blobLoader->isLoading())
+        m_blobLoaders.add(WTFMove(blobLoader));
 }
 
 void Blob::text(ScriptExecutionContext& context, Ref<DeferredPromise>&& promise)
 {
-    loadBlob(context, FileReaderLoader::ReadAsText, [promise = WTFMove(promise)](std::unique_ptr<BlobLoader> blobLoader) mutable {
-        if (auto optionalErrorCode = blobLoader->errorCode()) {
+    loadBlob(context, FileReaderLoader::ReadAsText, [promise = WTFMove(promise)](BlobLoader& blobLoader) mutable {
+        if (auto optionalErrorCode = blobLoader.errorCode()) {
             promise->reject(Exception { *optionalErrorCode });
             return;
         }
-        promise->resolve<IDLDOMString>(blobLoader->stringResult());
+        promise->resolve<IDLDOMString>(blobLoader.stringResult());
     });
 }
 
 void Blob::arrayBuffer(ScriptExecutionContext& context, Ref<DeferredPromise>&& promise)
 {
-    loadBlob(context, FileReaderLoader::ReadAsArrayBuffer, [promise = WTFMove(promise)](std::unique_ptr<BlobLoader> blobLoader) mutable {
-        if (auto optionalErrorCode = blobLoader->errorCode()) {
+    loadBlob(context, FileReaderLoader::ReadAsArrayBuffer, [promise = WTFMove(promise)](BlobLoader& blobLoader) mutable {
+        if (auto optionalErrorCode = blobLoader.errorCode()) {
             promise->reject(Exception { *optionalErrorCode });
             return;
         }
-        auto arrayBuffer = blobLoader->arrayBufferResult();
+        auto arrayBuffer = blobLoader.arrayBufferResult();
         if (!arrayBuffer) {
             promise->reject(Exception { InvalidStateError });
             return;
