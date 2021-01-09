@@ -1,3 +1,16 @@
+2021-01-09  Zalan Bujtas  <zalan@apple.com>
+
+        play.google.com: App preview images are clipped
+        https://bugs.webkit.org/show_bug.cgi?id=220470
+        <rdar://problem/60258531>
+
+        Reviewed by Simon Fraser.
+
+        Progressions (matching FF and Chrome).
+
+        * fast/inline/inline-block-baseline-with-overflow-not-visible-expected.html: Added.
+        * fast/inline/inline-block-baseline-with-overflow-not-visible.html: Added.
+
 2021-01-08  Brady Eidson  <beidson@apple.com>
 
         Removing broken test from r271337 until I can fix it.

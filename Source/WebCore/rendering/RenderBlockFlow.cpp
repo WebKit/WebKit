@@ -3135,6 +3135,13 @@ Optional<int> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirecti
     if (isWritingModeRoot() && !isRubyRun())
         return WTF::nullopt;
 
+    if (style().display() == DisplayType::InlineBlock) {
+        // The baseline of an 'inline-block' is the baseline of its last line box in the normal flow, unless it has either no in-flow line boxes or if its 'overflow'
+        // property has a computed value other than 'visible'. see https://www.w3.org/TR/CSS22/visudet.html
+        auto shouldSynthesizeBaseline = !style().isOverflowVisible() && !is<HTMLFormControlElement>(element());
+        if (shouldSynthesizeBaseline)
+            return WTF::nullopt;
+    }
     // Note that here we only take the left and bottom into consideration. Our caller takes the right and top into consideration.
     float boxHeight = lineDirection == HorizontalLine ? height() + m_marginBox.bottom() : width() + m_marginBox.left();
     float lastBaseline = 0;

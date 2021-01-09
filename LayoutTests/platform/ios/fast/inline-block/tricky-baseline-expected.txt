@@ -7,11 +7,11 @@ layer at (0,0) size 800x600
         text run at (0,0) width 750: "It is not clear what the right behavior is here. The CSS2.1 draft is currently ambiguous about how to handle overflow"
         text run at (0,20) width 46: "blocks."
       RenderBR {BR} at (45,20) size 1x19
-      RenderText {#text} at (104,282) size 4x19
-        text run at (104,282) width 4: " "
+      RenderText {#text} at (104,429) size 4x19
+        text run at (104,429) width 4: " "
       RenderText {#text} at (0,0) size 0x0
-layer at (8,101) size 104x204 clip at (10,103) size 85x200 scrollHeight 520
-  RenderBlock {DIV} at (0,93) size 104x204 [border: (2px solid #800080)]
+layer at (8,248) size 104x204 clip at (10,250) size 85x200 scrollHeight 520
+  RenderBlock {DIV} at (0,240) size 104x204 [border: (2px solid #800080)]
     RenderText {#text} at (2,2) size 81x39
       text run at (2,2) width 81: "This is some"
       text run at (2,22) width 28: "text."
