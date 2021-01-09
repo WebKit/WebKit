@@ -143,7 +143,7 @@ protected:
     Blob(ScriptExecutionContext*, const URL& srcURL, long long start, long long end, const String& contentType);
 
 private:
-    void loadBlob(ScriptExecutionContext&, FileReaderLoader::ReadType, CompletionHandler<void(std::unique_ptr<BlobLoader>)>&&);
+    void loadBlob(ScriptExecutionContext&, FileReaderLoader::ReadType, CompletionHandler<void(BlobLoader&)>&&);
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const override;
