@@ -93,6 +93,7 @@ public:
     IsIntegratedRootBoxFirstChild isIntegratedRootBoxFirstChild() const { return m_isIntegratedRootBoxFirstChild; }
     void setIsIntegratedRootBoxFirstChild(bool);
     bool shouldIgnoreTrailingLetterSpacing() const;
+    bool shouldNotSynthesizeInlineBlockBaseline() const;
 
 private:
     void setQuirksMode(QuirksMode quirksMode) { m_quirksMode = quirksMode; }

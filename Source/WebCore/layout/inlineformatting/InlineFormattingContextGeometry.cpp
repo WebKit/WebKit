@@ -271,11 +271,22 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
             auto& inlineLevelBoxGeometry = formattingContext().geometryForBox(layoutBox);
             auto marginBoxHeight = inlineLevelBoxGeometry.marginBoxHeight();
             auto ascent = InlineLayoutUnit { };
-            if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
-                auto& formattingState = layoutState().establishedInlineFormattingState(downcast<ContainerBox>(layoutBox));
-                auto& lastLine = formattingState.lines().last();
-                auto inlineBlockBaseline = lastLine.lineBoxLogicalRect().top() + lastLine.baseline();
-                ascent = inlineLevelBoxGeometry.marginBefore() + inlineLevelBoxGeometry.borderTop() + inlineLevelBoxGeometry.paddingTop().valueOr(0) + inlineBlockBaseline;
+            if (layoutState().shouldNotSynthesizeInlineBlockBaseline()) {
+                // Integration codepath constructs replaced boxes for inline-block content.
+                ASSERT(layoutBox.isReplacedBox());
+                ascent = *downcast<ReplacedBox>(layoutBox).baseline();
+            } else if (layoutBox.isInlineBlockBox()) {
+                // The baseline of an 'inline-block' is the baseline of its last line box in the normal flow, unless it has either no in-flow line boxes or
+                // if its 'overflow' property has a computed value other than 'visible', in which case the baseline is the bottom margin edge.
+                auto synthesizeBaseline = !layoutBox.establishesInlineFormattingContext() || !layoutBox.style().isOverflowVisible();
+                if (synthesizeBaseline)
+                    ascent = marginBoxHeight;
+                else {
+                    auto& formattingState = layoutState().establishedInlineFormattingState(downcast<ContainerBox>(layoutBox));
+                    auto& lastLine = formattingState.lines().last();
+                    auto inlineBlockBaseline = lastLine.lineBoxLogicalRect().top() + lastLine.baseline();
+                    ascent = inlineLevelBoxGeometry.marginBefore() + inlineLevelBoxGeometry.borderTop() + inlineLevelBoxGeometry.paddingTop().valueOr(0) + inlineBlockBaseline;
+                }
             } else if (layoutBox.isReplacedBox())
                 ascent = downcast<ReplacedBox>(layoutBox).baseline().valueOr(marginBoxHeight);
             else

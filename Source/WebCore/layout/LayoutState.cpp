@@ -244,6 +244,11 @@ bool LayoutState::shouldIgnoreTrailingLetterSpacing() const
     return RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled();
 }
 
+bool LayoutState::shouldNotSynthesizeInlineBlockBaseline() const
+{
+    return RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled();
+}
+
 }
 }
 
