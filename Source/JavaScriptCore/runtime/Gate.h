@@ -27,7 +27,7 @@
 
 namespace JSC {
 
-#if ENABLE(JIT_OPERATION_VALIDATION)
+#if ENABLE(JIT_OPERATION_VALIDATION) || CPU(ARM64E)
 
 #define JSC_UTILITY_GATES(v) \
     v(jitCagePtr, NoPtrTag) \

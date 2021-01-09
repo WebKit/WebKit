@@ -1,3 +1,13 @@
+2021-01-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Disable JITCage compile time in old iOS
+        https://bugs.webkit.org/show_bug.cgi?id=220477
+
+        Reviewed by Darin Adler.
+
+        * runtime/Gate.h: This is required in LLInt ARM64E.
+        * runtime/Options.cpp:
+
 2021-01-08  Alexey Proskuryakov  <ap@apple.com>
 
         JavaScriptCore API headers contain project style includes

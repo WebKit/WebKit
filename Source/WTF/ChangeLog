@@ -1,3 +1,14 @@
+2021-01-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Disable JITCage compile time in old iOS
+        https://bugs.webkit.org/show_bug.cgi?id=220477
+
+        Reviewed by Darin Adler.
+
+        ENABLE(JIT_CAGE) becomes false in old iOS.
+
+        * wtf/PlatformEnable.h:
+
 2021-01-08  Chris Dumez  <cdumez@apple.com>
 
         Make it safe to re-enter HashMap::clear()

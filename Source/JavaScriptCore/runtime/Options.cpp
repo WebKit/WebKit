@@ -1125,7 +1125,7 @@ bool OptionReader::Option::operator==(const Option& other) const
     return false;
 }
 
-#if ENABLE(JIT_CAGE) && defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 150000
+#if ENABLE(JIT_CAGE)
 bool canUseJITCage() { return JSC_JIT_CAGE_VERSION(); }
 #else
 bool canUseJITCage() { return false; }
