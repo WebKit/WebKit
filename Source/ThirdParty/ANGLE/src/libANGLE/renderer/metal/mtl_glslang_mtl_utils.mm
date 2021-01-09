@@ -10,6 +10,7 @@
 #include "compiler/translator/TranslatorMetalDirect.h"
 #include "libANGLE/renderer/metal/ShaderMtl.h"
 #include "libANGLE/renderer/metal/mtl_glslang_mtl_utils.h"
+#include "common/utilities.h"
 
 namespace rx
 {
@@ -145,6 +146,47 @@ sh::TranslatorMetalReflection *getReflectionFromCompiler(gl::Compiler *compiler,
     return translatorMetalDirect->getTranslatorMetalReflection();
 }
 
+std::string updateShaderAttributes(std::string shaderSourceIn, const gl::ProgramState &programState)
+{
+    // Build string to attrib map.
+    const auto & programAttributes = programState.getProgramInputs();
+    std::ostringstream stream;
+    std::unordered_map<std::string, uint32_t> attributeBindings;
+    for(auto & attribute : programAttributes)
+    {
+        const int regs = gl::VariableRegisterCount(attribute.type);
+        if(regs > 1)
+        {
+            for(int i = 0; i < regs; i++)
+            {
+                stream.str("");
+                stream << attribute.name << "_" << std::to_string(i) << kUnassignedAttributeString;
+                attributeBindings.insert({std::string(stream.str()), i+attribute.location});
+            }
+        }
+        else
+        {
+            stream.str("");
+            stream << attribute.name << kUnassignedAttributeString;
+            attributeBindings.insert({std::string(stream.str()),attribute.location});
+        }
+    }
+
+    //Rewrite attributes
+    std::string outputSource = shaderSourceIn;
+    for(auto it = attributeBindings.begin(); it!=attributeBindings.end(); ++it)
+    {
+        std::size_t attribFound= outputSource.find(it->first);
+        if(attribFound != std::string::npos)
+        {
+            stream.str("");
+            stream << "[[attribute(" << it->second << ")]]";
+            outputSource = outputSource.replace(attribFound+it->first.length()-strlen(kUnassignedAttributeString), strlen(kUnassignedAttributeString), stream.str());
+        }
+    }
+    return outputSource;
+}
+
 angle::Result GlslangGetMSL(const gl::Context *glContext,
                             const gl::ProgramState &programState,
                             const gl::Caps &glCaps,
@@ -191,6 +233,17 @@ angle::Result GlslangGetMSL(const gl::Context *glContext,
     {
         (*mslCodeOut)[type]                         = shaderSources[type];
         (*mslShaderInfoOut)[type].metalShaderSource = shaderSources[type];
+        std::string source;
+        if(type == gl::ShaderType::Vertex)
+        {
+            source = updateShaderAttributes(shaderSources[type], programState);
+        }
+        else
+        {
+            source = shaderSources[type];
+        }
+        (*mslCodeOut)[type]                         = source;
+        (*mslShaderInfoOut)[type].metalShaderSource = source;
         gl::Shader *shader                        = programState.getAttachedShader(type);
         sh::TranslatorMetalReflection *reflection = getReflectionFromShader(shader);
         // Retrieve automatic texture slot assignments

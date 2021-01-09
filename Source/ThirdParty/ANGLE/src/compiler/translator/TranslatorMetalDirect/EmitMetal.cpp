@@ -1226,7 +1226,7 @@ void GenMetalTraverser::emitAttributeDeclaration(const TField &field,
     EmitVariableDeclarationConfig evdConfig;
     evdConfig.disableStructSpecifier = true;
     emitVariableDeclaration(VarDecl(field), evdConfig);
-    mOut << " [[attribute(" << annotationIndices.attribute++ << ")]]";
+    mOut << rx::mtl::kUnassignedAttributeString;
 }
 
 void GenMetalTraverser::emitStructDeclaration(const TType &type)

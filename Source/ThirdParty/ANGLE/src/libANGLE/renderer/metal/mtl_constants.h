@@ -27,6 +27,13 @@ constexpr uint32_t kMaxRenderTargets = 4;
 constexpr uint32_t kMaxShaderUBOs = 12;
 constexpr uint32_t kMaxUBOSize    = 16384;
 
+constexpr uint32_t kMaxShaderXFBs = gl::IMPLEMENTATION_MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS;
+
+// The max size of a buffer that will be allocated in shared memory.
+// NOTE(hqle): This is just a hint. There is no official document on what is the max allowed size
+// for shared memory.
+constexpr size_t kSharedMemBufferMaxBufSizeHint = 128 * 1024;
+
 constexpr size_t kDefaultAttributeSize = 4 * sizeof(float);
 
 // Metal limits
@@ -44,6 +51,7 @@ constexpr uint32_t kUniformBufferSettingOffsetMinAlignment = 256;
 constexpr uint32_t kUniformBufferSettingOffsetMinAlignment = 4;
 #endif
 constexpr uint32_t kIndexBufferOffsetAlignment       = 4;
+constexpr uint32_t kArgumentBufferOffsetAlignment    = kUniformBufferSettingOffsetMinAlignment;
 constexpr uint32_t kTextureToBufferBlittingAlignment = 256;
 
 // Font end binding limits
@@ -66,7 +74,16 @@ constexpr uint32_t kShadowSamplerCompareModesBindingIndex = kTransformFeedbackBi
 // Binding index for UBO's argument buffer
 constexpr uint32_t kUBOArgumentBufferBindingIndex = kShadowSamplerCompareModesBindingIndex + 1;
 
-constexpr uint32_t kStencilMaskAll = 0xff;  // Only 8 bits stencil is supported
+constexpr uint32_t kStencilMaskAll = 0xff;  // Only 8 bit stencil is supported
+
+static const char * kUnassignedAttributeString = " __unassigned_attribute__";
+
+
+constexpr float kEmulatedAlphaValue = 1.0f;
+
+constexpr uint32_t kOcclusionQueryResultSize = sizeof(uint64_t);
+
+
 
 }  // namespace mtl
 }  // namespace rx
