@@ -1,3 +1,21 @@
+2021-01-10  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Factor marked text style collection code out of InlineTextBox
+        https://bugs.webkit.org/show_bug.cgi?id=220249
+
+        Reviewed by Zalan Bujtas.
+
+        * TestExpectations:
+
+        Mark http/wpt/css/css-highlight-api/highlight-text-cascade.html failing.
+
+        This test requires CSS4 highlight pseudo element inheritance (https://bugs.webkit.org/show_bug.cgi?id=220325)
+        which we (or anyone else) don't support.
+
+        It was passing by accident because the code was getting '::highlight' pseudo element style from a wrong element
+        (containing block instead of inline element) in certain cases. Renderer was found via InlineBox parent() which doesn't
+        match render tree parent in case inline culling optimization is active. The correct way is to use render tree parent.
+
 2021-01-09  Zalan Bujtas  <zalan@apple.com>
 
         play.google.com: App preview images are clipped

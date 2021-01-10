@@ -40,7 +40,7 @@
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
 #include "InlineTextBoxStyle.h"
-#include "MarkedText.h"
+#include "MarkedTextStyle.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBlock.h"
@@ -433,36 +433,6 @@ Optional<bool> InlineTextBox::emphasisMarkExistsAndIsAbove(const RenderStyle& st
     return isAbove;
 }
 
-struct InlineTextBox::MarkedTextStyle {
-    static bool areBackgroundMarkedTextStylesEqual(const MarkedTextStyle& a, const MarkedTextStyle& b)
-    {
-        return a.backgroundColor == b.backgroundColor;
-    }
-    static bool areForegroundMarkedTextStylesEqual(const MarkedTextStyle& a, const MarkedTextStyle& b)
-    {
-        return a.textStyles == b.textStyles && a.textShadow == b.textShadow && a.alpha == b.alpha;
-    }
-    static bool areDecorationMarkedTextStylesEqual(const MarkedTextStyle& a, const MarkedTextStyle& b)
-    {
-        return a.textDecorationStyles == b.textDecorationStyles && a.textShadow == b.textShadow && a.alpha == b.alpha;
-    }
-
-    Color backgroundColor;
-    TextPaintStyle textStyles;
-    TextDecorationPainter::Styles textDecorationStyles;
-    Optional<ShadowData> textShadow;
-    float alpha;
-};
-
-struct InlineTextBox::StyledMarkedText : MarkedText {
-    StyledMarkedText(const MarkedText& marker)
-        : MarkedText { marker }
-    {
-    }
-
-    MarkedTextStyle style;
-};
-
 static MarkedText createMarkedTextFromSelectionInBox(const InlineTextBox& box)
 {
     auto [selectionStart, selectionEnd] = box.selectionStartEnd();
@@ -544,8 +514,6 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     bool containsComposition = renderer().textNode() && renderer().frame().editor().compositionNode() == renderer().textNode();
     bool useCustomUnderlines = containsComposition && renderer().frame().editor().compositionUsesCustomUnderlines();
 
-    MarkedTextStyle unmarkedStyle = computeStyleForUnmarkedMarkedText(paintInfo);
-
     // 1. Paint backgrounds behind text if needed. Examples of such backgrounds include selection
     // and composition underlines.
     if (paintInfo.phase != PaintPhase::Selection && paintInfo.phase != PaintPhase::TextClip && !isPrinting) {
@@ -563,7 +531,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
                 markedTexts.append(WTFMove(selectionMarkedText));
         }
 #endif
-        auto styledMarkedTexts = subdivideAndResolveStyle(markedTexts, unmarkedStyle, paintInfo);
+        auto styledMarkedTexts = subdivideAndResolveStyle(markedTexts, renderer(), isFirstLine(), paintInfo);
 
         // Coalesce styles of adjacent marked texts to minimize the number of drawing commands.
         auto coalescedStyledMarkedTexts = coalesceAdjacentMarkedTexts(styledMarkedTexts, &MarkedTextStyle::areBackgroundMarkedTextStylesEqual);
@@ -611,7 +579,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
             markedTexts.append(WTFMove(selectionMarkedText));
     }
 
-    auto styledMarkedTexts = subdivideAndResolveStyle(markedTexts, unmarkedStyle, paintInfo);
+    auto styledMarkedTexts = subdivideAndResolveStyle(markedTexts, renderer(), isFirstLine(), paintInfo);
 
     // ... now remove the selection marked text if we are excluding selection.
     if (!isPrinting && paintInfo.paintBehavior.contains(PaintBehavior::ExcludeSelection))
@@ -794,141 +762,6 @@ void InlineTextBox::paintPlatformDocumentMarker(GraphicsContext& context, const 
 
     bounds.moveBy(boxOrigin);
     context.drawDotsForDocumentMarker(bounds, lineStyleForMarkedTextType());
-}
-
-auto InlineTextBox::computeStyleForUnmarkedMarkedText(const PaintInfo& paintInfo) const -> MarkedTextStyle
-{
-    auto& lineStyle = this->lineStyle();
-
-    MarkedTextStyle style;
-    style.textDecorationStyles = TextDecorationPainter::stylesForRenderer(renderer(), lineStyle.textDecorationsInEffect(), isFirstLine());
-    style.textStyles = computeTextPaintStyle(renderer().frame(), lineStyle, paintInfo);
-    style.textShadow = ShadowData::clone(paintInfo.forceTextColor() ? nullptr : lineStyle.textShadow());
-    style.alpha = 1;
-    return style;
-}
-
-auto InlineTextBox::resolveStyleForMarkedText(const MarkedText& markedText, const MarkedTextStyle& baseStyle, const PaintInfo& paintInfo) -> StyledMarkedText
-{
-    MarkedTextStyle style = baseStyle;
-    switch (markedText.type) {
-    case MarkedText::Correction:
-    case MarkedText::DictationAlternatives:
-#if PLATFORM(IOS_FAMILY)
-    // FIXME: See <rdar://problem/8933352>. Also, remove the PLATFORM(IOS_FAMILY)-guard.
-    case MarkedText::DictationPhraseWithAlternatives:
-#endif
-    case MarkedText::GrammarError:
-    case MarkedText::SpellingError:
-    case MarkedText::Unmarked:
-        break;
-    case MarkedText::Highlight:
-        if (auto renderStyle = parent()->renderer().getUncachedPseudoStyle({ PseudoId::Highlight, markedText.highlightName }, &parent()->renderer().style())) {
-            style.backgroundColor = renderStyle->backgroundColor();
-            style.textStyles.fillColor = renderStyle->computedStrokeColor();
-            style.textStyles.strokeColor = renderStyle->computedStrokeColor();
-            
-            auto color = TextDecorationPainter::decorationColor(*renderStyle.get());
-            auto decorationStyle = renderStyle->textDecorationStyle();
-            auto decorations = renderStyle->textDecorationsInEffect();
-
-            if (decorations.contains(TextDecoration::Underline)) {
-                style.textDecorationStyles.underlineColor = color;
-                style.textDecorationStyles.underlineStyle = decorationStyle;
-            }
-            if (decorations.contains(TextDecoration::Overline)) {
-                style.textDecorationStyles.overlineColor = color;
-                style.textDecorationStyles.overlineStyle = decorationStyle;
-            }
-            if (decorations.contains(TextDecoration::LineThrough)) {
-                style.textDecorationStyles.linethroughColor = color;
-                style.textDecorationStyles.linethroughStyle = decorationStyle;
-            }
-        }
-        break;
-#if ENABLE(APP_HIGHLIGHTS)
-    case MarkedText::AppHighlight: {
-        OptionSet<StyleColor::Options> styleColorOptions = { StyleColor::Options::UseSystemAppearance };
-        style.backgroundColor = renderer().theme().appHighlightColor(styleColorOptions);
-        break;
-    }
-#endif
-    case MarkedText::DraggedContent:
-        style.alpha = 0.25;
-        break;
-    case MarkedText::Selection: {
-        style.textStyles = computeTextSelectionPaintStyle(style.textStyles, renderer(), lineStyle(), paintInfo, style.textShadow);
-
-        Color selectionBackgroundColor = renderer().selectionBackgroundColor();
-        style.backgroundColor = selectionBackgroundColor;
-        if (selectionBackgroundColor.isValid() && selectionBackgroundColor.isVisible() && style.textStyles.fillColor == selectionBackgroundColor)
-            style.backgroundColor = selectionBackgroundColor.invertedColorWithAlpha(1.0);
-        break;
-    }
-    case MarkedText::TextMatch: {
-        // Text matches always use the light system appearance.
-        OptionSet<StyleColor::Options> styleColorOptions = { StyleColor::Options::UseSystemAppearance };
-#if PLATFORM(MAC)
-        style.textStyles.fillColor = renderer().theme().systemColor(CSSValueAppleSystemLabel, styleColorOptions);
-#endif
-        style.backgroundColor = renderer().theme().textSearchHighlightColor(styleColorOptions);
-        break;
-    }
-    }
-    StyledMarkedText styledMarkedText = markedText;
-    styledMarkedText.style = WTFMove(style);
-    return styledMarkedText;
-}
-
-auto InlineTextBox::subdivideAndResolveStyle(const Vector<MarkedText>& textsToSubdivide, const MarkedTextStyle& baseStyle, const PaintInfo& paintInfo) -> Vector<StyledMarkedText>
-{
-    if (textsToSubdivide.isEmpty())
-        return { };
-
-    auto markedTexts = subdivide(textsToSubdivide);
-    ASSERT(!markedTexts.isEmpty());
-    if (UNLIKELY(markedTexts.isEmpty()))
-        return { };
-
-    // Compute frontmost overlapping styled marked texts.
-    Vector<StyledMarkedText> frontmostMarkedTexts;
-    frontmostMarkedTexts.reserveInitialCapacity(markedTexts.size());
-    frontmostMarkedTexts.uncheckedAppend(resolveStyleForMarkedText(markedTexts[0], baseStyle, paintInfo));
-    for (auto it = markedTexts.begin() + 1, end = markedTexts.end(); it != end; ++it) {
-        StyledMarkedText& previousStyledMarkedText = frontmostMarkedTexts.last();
-        if (previousStyledMarkedText.startOffset == it->startOffset && previousStyledMarkedText.endOffset == it->endOffset) {
-            // Marked texts completely cover each other.
-            previousStyledMarkedText = resolveStyleForMarkedText(*it, previousStyledMarkedText.style, paintInfo);
-            continue;
-        }
-        frontmostMarkedTexts.uncheckedAppend(resolveStyleForMarkedText(*it, baseStyle, paintInfo));
-    }
-
-    return frontmostMarkedTexts;
-}
-
-auto InlineTextBox::coalesceAdjacentMarkedTexts(const Vector<StyledMarkedText>& textsToCoalesce, MarkedTextStylesEqualityFunction areMarkedTextStylesEqual) -> Vector<StyledMarkedText>
-{
-    if (textsToCoalesce.isEmpty())
-        return { };
-
-    auto areAdjacentMarkedTextsWithSameStyle = [&] (const StyledMarkedText& a, const StyledMarkedText& b) {
-        return a.endOffset == b.startOffset && areMarkedTextStylesEqual(a.style, b.style);
-    };
-
-    Vector<StyledMarkedText> styledMarkedTexts;
-    styledMarkedTexts.reserveInitialCapacity(textsToCoalesce.size());
-    styledMarkedTexts.uncheckedAppend(textsToCoalesce[0]);
-    for (auto it = textsToCoalesce.begin() + 1, end = textsToCoalesce.end(); it != end; ++it) {
-        StyledMarkedText& previousStyledMarkedText = styledMarkedTexts.last();
-        if (areAdjacentMarkedTextsWithSameStyle(previousStyledMarkedText, *it)) {
-            previousStyledMarkedText.endOffset = it->endOffset;
-            continue;
-        }
-        styledMarkedTexts.uncheckedAppend(*it);
-    }
-
-    return styledMarkedTexts;
 }
 
 Vector<MarkedText> InlineTextBox::collectMarkedTextsForDraggedContent()

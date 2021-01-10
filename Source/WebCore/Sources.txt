@@ -2195,6 +2195,7 @@ rendering/LayerOverlapMap.cpp
 rendering/LayoutDisallowedScope.cpp
 rendering/LayoutRepainter.cpp
 rendering/MarkedText.cpp
+rendering/MarkedTextStyle.cpp
 rendering/OrderIterator.cpp
 rendering/PointerEventsHitRules.cpp
 rendering/RenderAttachment.cpp

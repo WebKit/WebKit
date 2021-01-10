@@ -33,6 +33,7 @@ class RenderedDocumentMarker;
 class TextPainter;
 struct CompositionUnderline;
 struct MarkedText;
+struct StyledMarkedText;
 struct TextPaintStyle;
 
 const unsigned short cNoTruncation = USHRT_MAX;
@@ -164,21 +165,11 @@ public:
     FloatRect calculateDocumentMarkerBounds(const MarkedText&) const;
 
 private:
-    struct MarkedTextStyle;
-    struct StyledMarkedText;
-
     enum class TextPaintPhase { Background, Foreground, Decoration };
 
     Vector<MarkedText> collectMarkedTextsForDraggedContent();
     Vector<MarkedText> collectMarkedTextsForDocumentMarkers(TextPaintPhase) const;
     Vector<MarkedText> collectMarkedTextsForHighlights(TextPaintPhase) const;
-
-    MarkedTextStyle computeStyleForUnmarkedMarkedText(const PaintInfo&) const;
-    StyledMarkedText resolveStyleForMarkedText(const MarkedText&, const MarkedTextStyle& baseStyle, const PaintInfo&);
-    Vector<StyledMarkedText> subdivideAndResolveStyle(const Vector<MarkedText>&, const MarkedTextStyle& baseStyle, const PaintInfo&);
-
-    using MarkedTextStylesEqualityFunction = bool (*)(const MarkedTextStyle&, const MarkedTextStyle&);
-    Vector<StyledMarkedText> coalesceAdjacentMarkedTexts(const Vector<StyledMarkedText>&, MarkedTextStylesEqualityFunction);
 
     FloatPoint textOriginFromBoxRect(const FloatRect&) const;
 
