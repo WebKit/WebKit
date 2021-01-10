@@ -142,14 +142,6 @@ VisiblePosition RenderLineBreak::positionForPoint(const LayoutPoint&, const Rend
     return createVisiblePosition(0, Affinity::Downstream);
 }
 
-void RenderLineBreak::setSelectionState(HighlightState state)
-{
-    RenderBoxModelObject::setSelectionState(state);
-    if (!m_inlineBoxWrapper)
-        return;
-    m_inlineBoxWrapper->root().setHasSelectedChildren(state != HighlightState::None);
-}
-
 IntRect RenderLineBreak::linesBoundingBox() const
 {
     auto run = LayoutIntegration::runFor(*this);

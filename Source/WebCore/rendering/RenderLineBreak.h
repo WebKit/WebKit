@@ -65,7 +65,6 @@ private:
     int caretMinOffset() const final;
     int caretMaxOffset() const final;
     bool canBeSelectionLeaf() const final;
-    void setSelectionState(HighlightState) final;
 
     LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode) const final;
     int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode) const final;

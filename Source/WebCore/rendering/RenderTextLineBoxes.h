@@ -56,8 +56,6 @@ public:
 
     InlineTextBox* findNext(int offset, int& position) const;
 
-    void setSelectionState(RenderText&, RenderObject::HighlightState);
-
     LayoutRect visualOverflowBoundingBox(const RenderText&) const;
 
 #if ASSERT_ENABLED

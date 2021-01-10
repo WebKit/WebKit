@@ -294,7 +294,6 @@ RootInlineBox* ComplexLineLayout::constructLine(BidiRunList<BidiRun>& bidiRuns, 
 {
     ASSERT(bidiRuns.firstRun());
 
-    bool rootHasSelectedChildren = false;
     InlineFlowBox* parentBox = 0;
     int runCount = bidiRuns.runCount() - lineInfo.runsFromLeadingWhitespace();
     
@@ -310,9 +309,6 @@ RootInlineBox* ComplexLineLayout::constructLine(BidiRunList<BidiRun>& bidiRuns, 
         InlineBox* box = createInlineBoxForRenderer(&r->renderer(), isOnlyRun);
         r->setBox(box);
 
-        if (!rootHasSelectedChildren && box->renderer().selectionState() != RenderObject::HighlightState::None)
-            rootHasSelectedChildren = true;
-        
         // If we have no parent box yet, or if the run is not simply a sibling,
         // then we need to construct inline boxes as necessary to properly enclose the
         // run's inline box. Segments can only be siblings at the root level, as
@@ -342,11 +338,6 @@ RootInlineBox* ComplexLineLayout::constructLine(BidiRunList<BidiRun>& bidiRuns, 
     // We should have a root inline box. It should be unconstructed and
     // be the last continuation of our line list.
     ASSERT(lastRootBox() && !lastRootBox()->isConstructed());
-
-    // Set the m_selectedChildren flag on the root inline box if one of the leaf inline box
-    // from the bidi runs walk above has a selection state.
-    if (rootHasSelectedChildren)
-        lastRootBox()->root().setHasSelectedChildren(true);
 
     // Set bits on our inline flow boxes that indicate which sides should
     // paint borders/margins/padding. This knowledge will ultimately be used when

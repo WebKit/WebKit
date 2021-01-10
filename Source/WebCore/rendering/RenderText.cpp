@@ -1276,9 +1276,6 @@ void RenderText::setSelectionState(HighlightState state)
 {
     RenderObject::setSelectionState(state);
 
-    if (canUpdateSelectionOnRootLineBoxes())
-        m_lineBoxes.setSelectionState(*this, state);
-
     // The containing block can be null in case of an orphaned tree.
     RenderBlock* containingBlock = this->containingBlock();
     if (containingBlock && !containingBlock->isRenderView())

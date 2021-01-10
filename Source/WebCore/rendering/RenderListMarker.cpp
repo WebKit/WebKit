@@ -1948,15 +1948,6 @@ FloatRect RenderListMarker::getRelativeMarkerRect()
     return relativeRect;
 }
 
-void RenderListMarker::setSelectionState(HighlightState state)
-{
-    // The selection state for our containing block hierarchy is updated by the base class call.
-    RenderBox::setSelectionState(state);
-
-    if (m_inlineBoxWrapper && canUpdateSelectionOnRootLineBoxes())
-        m_inlineBoxWrapper->root().setHasSelectedChildren(state != HighlightState::None);
-}
-
 LayoutRect RenderListMarker::selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent)
 {
     ASSERT(!needsLayout());

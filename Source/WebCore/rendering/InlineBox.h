@@ -275,7 +275,7 @@ public:
     float expansion() const { return m_expansion; }
 
     void setHasHyphen(bool hasHyphen) { m_bitfields.setHasEllipsisBoxOrHyphen(hasHyphen); }
-    void setCanHaveLeftExpansion(bool canHaveLeftExpansion) { m_bitfields.setHasSelectedChildrenOrCanHaveLeftExpansion(canHaveLeftExpansion); }
+    void setCanHaveLeftExpansion(bool canHaveLeftExpansion) { m_bitfields.setCanHaveLeftExpansion(canHaveLeftExpansion); }
     void setCanHaveRightExpansion(bool canHaveRightExpansion) { m_bitfields.setCanHaveRightExpansion(canHaveRightExpansion); }
     void setForceRightExpansion() { m_bitfields.setForceRightExpansion(true); }
     void setForceLeftExpansion() { m_bitfields.setForceLeftExpansion(true); }
@@ -311,7 +311,7 @@ private:
             , m_hasVirtualLogicalHeight(false)
             , m_isHorizontal(isHorizontal)
             , m_endsWithBreak(false)
-            , m_hasSelectedChildrenOrCanHaveLeftExpansion(false)
+            , m_canHaveLeftExpansion(false)
             , m_canHaveRightExpansion(false)
             , m_knownToHaveNoOverflow(true)  
             , m_hasEllipsisBoxOrHyphen(false)
@@ -343,7 +343,7 @@ private:
         // for RootInlineBox
         ADD_BOOLEAN_BITFIELD(endsWithBreak, EndsWithBreak); // Whether the line ends with a <br>.
         // shared between RootInlineBox and InlineTextBox
-        ADD_BOOLEAN_BITFIELD(hasSelectedChildrenOrCanHaveLeftExpansion, HasSelectedChildrenOrCanHaveLeftExpansion);
+        ADD_BOOLEAN_BITFIELD(canHaveLeftExpansion, CanHaveLeftExpansion);
         ADD_BOOLEAN_BITFIELD(canHaveRightExpansion, CanHaveRightExpansion);
         ADD_BOOLEAN_BITFIELD(knownToHaveNoOverflow, KnownToHaveNoOverflow);
         ADD_BOOLEAN_BITFIELD(hasEllipsisBoxOrHyphen, HasEllipsisBoxOrHyphen);
@@ -392,13 +392,11 @@ protected:
     bool endsWithBreak() const { return m_bitfields.endsWithBreak(); }
     void setEndsWithBreak(bool endsWithBreak) { m_bitfields.setEndsWithBreak(endsWithBreak); }
     bool hasEllipsisBox() const { return m_bitfields.hasEllipsisBoxOrHyphen(); }
-    bool hasSelectedChildren() const { return m_bitfields.hasSelectedChildrenOrCanHaveLeftExpansion(); }
-    void setHasSelectedChildren(bool hasSelectedChildren) { m_bitfields.setHasSelectedChildrenOrCanHaveLeftExpansion(hasSelectedChildren); }
     void setHasEllipsisBox(bool hasEllipsisBox) { m_bitfields.setHasEllipsisBoxOrHyphen(hasEllipsisBox); }
 
     // For InlineTextBox
     bool hasHyphen() const { return m_bitfields.hasEllipsisBoxOrHyphen(); }
-    bool canHaveLeftExpansion() const { return m_bitfields.hasSelectedChildrenOrCanHaveLeftExpansion(); }
+    bool canHaveLeftExpansion() const { return m_bitfields.canHaveLeftExpansion(); }
     bool canHaveRightExpansion() const { return m_bitfields.canHaveRightExpansion(); }
     bool forceRightExpansion() const { return m_bitfields.forceRightExpansion(); }
     bool forceLeftExpansion() const { return m_bitfields.forceLeftExpansion(); }

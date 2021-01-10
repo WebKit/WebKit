@@ -736,15 +736,6 @@ LayoutRect RenderReplaced::localSelectionRect(bool checkWhetherSelected) const
     return LayoutRect(newLogicalTop, 0_lu, rootBox.selectionHeight(), height());
 }
 
-void RenderReplaced::setSelectionState(HighlightState state)
-{
-    // The selection state for our containing block hierarchy is updated by the base class call.
-    RenderBox::setSelectionState(state);
-
-    if (m_inlineBoxWrapper && canUpdateSelectionOnRootLineBoxes())
-        m_inlineBoxWrapper->root().setHasSelectedChildren(isHighlighted(selectionState(), view().selection()));
-}
-
 bool RenderReplaced::isSelected() const
 {
     return isHighlighted(selectionState(), view().selection());

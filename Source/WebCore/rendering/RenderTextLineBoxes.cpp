@@ -170,30 +170,6 @@ LayoutRect RenderTextLineBoxes::visualOverflowBoundingBox(const RenderText& rend
     return rect;
 }
 
-void RenderTextLineBoxes::setSelectionState(RenderText& renderer, RenderObject::HighlightState state)
-{
-    if (state == RenderObject::HighlightState::Inside || state == RenderObject::HighlightState::None) {
-        for (auto* box = m_first; box; box = box->nextTextBox())
-            box->root().setHasSelectedChildren(state == RenderObject::HighlightState::Inside);
-        return;
-    }
-
-    auto start = renderer.view().selection().startOffset();
-    auto end = renderer.view().selection().endOffset();
-    if (state == RenderObject::HighlightState::Start) {
-        end = renderer.text().length();
-        // to handle selection from end of text to end of line
-        if (start && start == end)
-            start = end - 1;
-    } else if (state == RenderObject::HighlightState::End)
-        start = 0;
-
-    for (auto* box = m_first; box; box = box->nextTextBox()) {
-        if (box->isSelected(start, end))
-            box->root().setHasSelectedChildren(true);
-    }
-}
-
 void RenderTextLineBoxes::dirtyAll()
 {
     for (auto* box = m_first; box; box = box->nextTextBox())

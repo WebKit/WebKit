@@ -74,7 +74,6 @@ private:
     bool isImage() const override;
     bool isText() const { return !isImage(); }
 
-    void setSelectionState(HighlightState) override;
     LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) override;
     bool canBeSelectionLeaf() const override { return true; }
 

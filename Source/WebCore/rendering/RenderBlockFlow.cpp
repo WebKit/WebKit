@@ -3202,12 +3202,47 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
         return result;
     }
 
+    auto hasSelectedChildren = [&](const RootInlineBox& root) {
+        for (auto* box = root.firstLeafDescendant(); box; box = box->nextLeafOnLine()) {
+            if (!is<InlineTextBox>(*box)) {
+                if (box->selectionState() != HighlightState::None)
+                    return true;
+                continue;
+            }
+
+            auto start = view().selection().startOffset();
+            auto end = view().selection().endOffset();
+
+            auto& textBox = downcast<InlineTextBox>(*box);
+            switch (textBox.renderer().selectionState()) {
+            case RenderObject::HighlightState::None:
+                continue;
+            case RenderObject::HighlightState::Inside:
+                return true;
+            case RenderObject::HighlightState::Start:
+                end = textBox.renderer().text().length();
+                // to handle selection from end of text to end of line
+                if (start && start == end)
+                    start = end - 1;
+                break;
+            case RenderObject::HighlightState::End:
+                start = 0;
+                break;
+            case RenderObject::HighlightState::Both:
+                break;
+            }
+            if (textBox.isSelected(start, end))
+                return true;
+        }
+        return false;
+    };
+
     RootInlineBox* lastSelectedLine = 0;
     RootInlineBox* curr;
-    for (curr = firstRootBox(); curr && !curr->hasSelectedChildren(); curr = curr->nextRootBox()) { }
+    for (curr = firstRootBox(); curr && !hasSelectedChildren(*curr); curr = curr->nextRootBox()) { }
 
     // Now paint the gaps for the lines.
-    for (; curr && curr->hasSelectedChildren(); curr = curr->nextRootBox()) {
+    for (; curr && hasSelectedChildren(*curr); curr = curr->nextRootBox()) {
         LayoutUnit selTop =  curr->selectionTopAdjustedForPrecedingBlock();
         LayoutUnit selHeight = curr->selectionHeightAdjustedForPrecedingBlock();
 
