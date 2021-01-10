@@ -40,17 +40,24 @@ InlineLayoutUnit InlineFormattingContext::Quirks::initialLineHeight() const
     return root.style().fontMetrics().floatHeight();
 }
 
-bool InlineFormattingContext::Quirks::shouldInlineLevelBoxStretchLineBox(const LineBox& lineBox, const LineBox::InlineLevelBox& inlineLevelBox) const
+bool InlineFormattingContext::Quirks::inlineLevelBoxAffectsLineBox(const LineBox::InlineLevelBox& inlineLevelBox, const LineBox& lineBox) const
 {
-    if (inlineLevelBox.isEmpty())
-        return false;
-    if (layoutState().inNoQuirksMode())
-        return true;
-    if (!inlineLevelBox.isLineBreakBox())
-        return true;
-    // <br> in non-standard mode stretches the line box only when the line is empty.
-    // e.g. <div><span><br></span></div> will stretch but <div>this will not stretch to 200px<span style="font-size: 200px;"><br></span></div>
-    return lineBox.isConsideredEmpty();
+    if (inlineLevelBox.isInlineBox())
+        return inlineLevelBox.hasContent();
+    if (inlineLevelBox.isLineBreakBox()) {
+        // <br> in non-standard mode stretches the line box only when the line is empty.
+        // e.g. <div><span><br></span></div> will stretch but <div>this will not stretch to 200px<span style="font-size: 200px;"><br></span></div>
+        return layoutState().inNoQuirksMode() ? true : lineBox.isConsideredEmpty();
+    }
+    if (inlineLevelBox.isAtomicInlineLevelBox()) {
+        if (inlineLevelBox.layoutBounds().height())
+            return true;
+        // While in practice when the negative vertical margin makes the layout bounds empty (e.g: height: 100px; margin-top: -100px;), and this inline
+        // level box contributes 0px to the line box height, it still needs to be taken into account while computing line box geometries.
+        auto& boxGeometry = formattingContext().geometryForBox(inlineLevelBox.layoutBox());
+        return boxGeometry.marginBefore() || boxGeometry.marginAfter();
+    }
+    return false;
 }
 
 bool InlineFormattingContext::Quirks::hasSoftWrapOpportunityAtImage() const

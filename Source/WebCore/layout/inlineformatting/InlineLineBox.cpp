@@ -71,6 +71,12 @@ void LineBox::InlineLevelBox::setLogicalHeight(InlineLayoutUnit logicalHeight)
     m_logicalRect.setHeight(roundToInt(logicalHeight));
 }
 
+void LineBox::InlineLevelBox::setHasContent()
+{
+    ASSERT(isInlineBox());
+    m_hasContent = true;
+}
+
 bool LineBox::InlineLevelBox::hasLineBoxRelativeAlignment() const
 {
     auto verticalAlignment = layoutBox().style().verticalAlign();

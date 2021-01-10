@@ -221,7 +221,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         auto inlineBoxHasImaginaryStrut = layoutState().inNoQuirksMode();
         auto isInitiallyConsideredNonEmpty = !lineBox.isConsideredEmpty() && inlineBoxHasImaginaryStrut;
         if (isInitiallyConsideredNonEmpty)
-            rootInlineBox->setIsNonEmpty();
+            rootInlineBox->setHasContent();
         setVerticalGeometryForInlineBox(*rootInlineBox);
         simplifiedVerticalAlignment = { { } , rootInlineBox->layoutBounds().height(), rootInlineBox->layoutBounds().ascent - rootInlineBox->baseline() };
         lineBox.addRootInlineBox(WTFMove(rootInlineBox));
@@ -294,10 +294,6 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
             auto atomicInlineLevelBox = LineBox::InlineLevelBox::createAtomicInlineLevelBox(layoutBox, logicalLeft, { run.logicalWidth(), marginBoxHeight });
             atomicInlineLevelBox->setBaseline(ascent);
             atomicInlineLevelBox->setLayoutBounds(LineBox::InlineLevelBox::LayoutBounds { ascent, marginBoxHeight - ascent });
-            // While in practice when the negative vertical margin makes the layout bounds empty (e.g: height: 100px; margin-top: -100px;), and this inline
-            // level box contributes 0px to the line box height, it should not be considered empty.
-            if (marginBoxHeight || inlineLevelBoxGeometry.marginBefore() || inlineLevelBoxGeometry.marginAfter())
-                atomicInlineLevelBox->setIsNonEmpty();
             // Let's estimate the logical top so that we can avoid running the alignment on simple inline boxes.
             auto alignInlineBoxIfEligible = [&] {
                 if (m_inlineLevelBoxesNeedVerticalAlignment)
@@ -335,7 +331,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
             auto inlineBoxHasImaginaryStrut = layoutState().inNoQuirksMode() && !lineBox.isConsideredEmpty();
             auto isConsideredNonEmpty = inlineBoxHasImaginaryStrut || inlineBoxGeometry.horizontalPadding().valueOr(0_lu) || inlineBoxGeometry.horizontalBorder();
             if (isConsideredNonEmpty)
-                inlineBox->setIsNonEmpty();
+                inlineBox->setHasContent();
             setVerticalGeometryForInlineBox(*inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
             continue;
@@ -349,13 +345,12 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         }
         if (run.isText() || run.isSoftLineBreak()) {
             // FIXME: Adjust non-empty inline box height when glyphs from the non-primary font stretch the box.
-            lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent()).setIsNonEmpty();
+            lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent()).setHasContent();
             continue;
         }
         if (run.isHardLineBreak()) {
             auto lineBreakBox = LineBox::InlineLevelBox::createLineBreakBox(layoutBox, logicalLeft);
             setVerticalGeometryForInlineBox(*lineBreakBox);
-            lineBreakBox->setIsNonEmpty();
             lineBox.addInlineLevelBox(WTFMove(lineBreakBox));
             continue;
         }
@@ -392,7 +387,7 @@ void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(Line
 
         auto minimumLogicalTop = Optional<InlineLayoutUnit> { };
         auto maximumLogicalBottom = Optional<InlineLayoutUnit> { };
-        if (!rootInlineBox.isEmpty()) {
+        if (quirks.inlineLevelBoxAffectsLineBox(rootInlineBox, lineBox)) {
             minimumLogicalTop = InlineLayoutUnit { };
             maximumLogicalBottom = rootInlineBox.layoutBounds().height();
             inlineLevelBoxAbsoluteTopAndBottomMap.add(&rootInlineBox, AbsoluteTopAndBottom { *minimumLogicalTop, *maximumLogicalBottom });
@@ -454,7 +449,7 @@ void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(Line
             auto absoluteLogicalBottom = absoluteLogicalTop + inlineLevelBox->layoutBounds().height();
             inlineLevelBoxAbsoluteTopAndBottomMap.add(inlineLevelBox.get(), AbsoluteTopAndBottom { absoluteLogicalTop, absoluteLogicalBottom });
             // Stretch the min/max absolute values if applicable.
-            if (quirks.shouldInlineLevelBoxStretchLineBox(lineBox, *inlineLevelBox)) {
+            if (quirks.inlineLevelBoxAffectsLineBox(*inlineLevelBox, lineBox)) {
                 minimumLogicalTop = std::min(minimumLogicalTop.valueOr(absoluteLogicalTop), absoluteLogicalTop);
                 maximumLogicalBottom = std::max(maximumLogicalBottom.valueOr(absoluteLogicalBottom), absoluteLogicalBottom);
             }
@@ -464,7 +459,7 @@ void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(Line
         // 2. Check if the line box relative aligned inline boxes (top, bottom etc) have enough room and stretch the line box further if needed.
         auto lineBoxLogicalHeight = maximumLogicalBottom.valueOr(InlineLayoutUnit()) - minimumLogicalTop.valueOr(InlineLayoutUnit());
         for (auto* lineBoxRelativeInlineLevelBox : lineBoxRelativeInlineLevelBoxes) {
-            if (!quirks.shouldInlineLevelBoxStretchLineBox(lineBox, *lineBoxRelativeInlineLevelBox))
+            if (!quirks.inlineLevelBoxAffectsLineBox(*lineBoxRelativeInlineLevelBox, lineBox))
                 continue;
             lineBoxLogicalHeight = std::max(lineBoxLogicalHeight, lineBoxRelativeInlineLevelBox->layoutBounds().height());
         }
@@ -477,7 +472,7 @@ void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(Line
         inlineLevelBoxAbsoluteBaselineOffsetMap.add(&rootInlineBox, InlineLayoutUnit { });
 
         auto maximumTopOffsetFromRootInlineBoxBaseline = Optional<InlineLayoutUnit> { };
-        if (!rootInlineBox.isEmpty())
+        if (quirks.inlineLevelBoxAffectsLineBox(rootInlineBox, lineBox))
             maximumTopOffsetFromRootInlineBoxBaseline = rootInlineBox.layoutBounds().ascent;
 
         for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
@@ -535,7 +530,7 @@ void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(Line
                 }
             }
             inlineLevelBoxAbsoluteBaselineOffsetMap.add(inlineLevelBox.get(), absoluteBaselineOffset);
-            auto affectsRootInlineBoxVerticalPosition = quirks.shouldInlineLevelBoxStretchLineBox(lineBox, *inlineLevelBox);
+            auto affectsRootInlineBoxVerticalPosition = quirks.inlineLevelBoxAffectsLineBox(*inlineLevelBox, lineBox);
             if (affectsRootInlineBoxVerticalPosition)
                 maximumTopOffsetFromRootInlineBoxBaseline = std::max(maximumTopOffsetFromRootInlineBoxBaseline.valueOr(std::numeric_limits<InlineLayoutUnit>::lowest()), absoluteBaselineOffset + inlineLevelBox->layoutBounds().ascent);
         }

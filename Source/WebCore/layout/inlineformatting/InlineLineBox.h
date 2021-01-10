@@ -77,8 +77,8 @@ public:
         };
         LayoutBounds layoutBounds() const { return m_layoutBounds; }
 
-        bool isEmpty() const { return m_isEmpty; }
-        void setIsNonEmpty() { m_isEmpty = false; }
+        bool hasContent() const { return m_hasContent; }
+        void setHasContent();
 
         VerticalAlign verticalAlign() const { return layoutBox().style().verticalAlign(); }
         const Box& layoutBox() const { return *m_layoutBox; }
@@ -124,7 +124,7 @@ public:
         LayoutBounds m_layoutBounds;
         InlineLayoutUnit m_baseline { 0 };
         Optional<InlineLayoutUnit> m_descent;
-        bool m_isEmpty { true };
+        bool m_hasContent { false };
         Type m_type { Type::InlineBox };
     };
 
