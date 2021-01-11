@@ -1,3 +1,16 @@
+2021-01-11  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Relax assertion in Element::dispatchFocusOutEvent() for non-web process case
+        https://bugs.webkit.org/show_bug.cgi?id=220478
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a test that verifies we do not crash
+        due to the assertion failure.
+
+        * editing/inserting/caret-surround-expected.txt: Added.
+        * editing/inserting/caret-surround.html: Added.
+
 2021-01-11  Sihui Liu  <sihui_liu@appe.com>
 
         Make SpeechRecognition permission error more informative
