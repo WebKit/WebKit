@@ -232,10 +232,14 @@ void IDBTransaction::internalAbort()
 
         auto& info = m_database->info();
         Vector<uint64_t> identifiersToRemove;
+        Vector<std::unique_ptr<IDBObjectStore>> objectStoresToDelete;
         for (auto& iterator : m_deletedObjectStores) {
             if (info.infoForExistingObjectStore(iterator.key)) {
                 auto name = iterator.value->info().name();
-                m_referencedObjectStores.set(name, WTFMove(iterator.value));
+                auto result = m_referencedObjectStores.add(name, nullptr);
+                if (!result.isNewEntry)
+                    objectStoresToDelete.append(std::exchange(result.iterator->value, nullptr));
+                result.iterator->value = std::exchange(iterator.value, nullptr);
                 identifiersToRemove.append(iterator.key);
             }
         }
@@ -245,6 +249,12 @@ void IDBTransaction::internalAbort()
 
         for (auto& objectStore : m_referencedObjectStores.values())
             objectStore->rollbackForVersionChangeAbort();
+
+        for (auto& objectStore : objectStoresToDelete) {
+            objectStore->rollbackForVersionChangeAbort();
+            auto objectStoreIdentifier = objectStore->info().identifier();
+            m_deletedObjectStores.set(objectStoreIdentifier, std::exchange(objectStore, nullptr));
+        }
     }
 
     transitionedToFinishing(IndexedDB::TransactionState::Aborting);
