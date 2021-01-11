@@ -1,3 +1,36 @@
+2021-01-11  Sihui Liu  <sihui_liu@appe.com>
+
+        Make SpeechRecognition permission error more informative
+        https://bugs.webkit.org/show_bug.cgi?id=220436
+
+        Reviewed by Youenn Fablet.
+
+        Make SpeechRecognitionPermissionManager complete requests with an optional SpeechRecognitionError instead of a 
+        boolean value.
+
+        * UIProcess/SpeechRecognitionPermissionManager.cpp:
+        (WebKit::SpeechRecognitionPermissionManager::~SpeechRecognitionPermissionManager):
+        (WebKit::SpeechRecognitionPermissionManager::request):
+        (WebKit::SpeechRecognitionPermissionManager::startProcessingRequest):
+        (WebKit::SpeechRecognitionPermissionManager::continueProcessingRequest):
+        (WebKit::SpeechRecognitionPermissionManager::completeCurrentRequest):
+        (WebKit::SpeechRecognitionPermissionManager::requestSpeechRecognitionServiceAccess):
+        (WebKit::SpeechRecognitionPermissionManager::requestMicrophoneAccess):
+        (WebKit::SpeechRecognitionPermissionManager::requestUserPermission):
+        * UIProcess/SpeechRecognitionPermissionManager.h:
+        * UIProcess/SpeechRecognitionPermissionRequest.h:
+        (WebKit::SpeechRecognitionPermissionRequest::create):
+        (WebKit::SpeechRecognitionPermissionRequest::complete):
+        (WebKit::SpeechRecognitionPermissionRequest::SpeechRecognitionPermissionRequest):
+        * UIProcess/SpeechRecognitionServer.cpp:
+        (WebKit::SpeechRecognitionServer::requestPermissionForRequest):
+        * UIProcess/SpeechRecognitionServer.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestSpeechRecognitionPermission):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createSpeechRecognitionServer):
+
 2021-01-11  Alex Christensen  <achristensen@webkit.org>
 
         Use sendWithAsyncReply instead of dataCallback for icon loading

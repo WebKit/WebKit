@@ -39,7 +39,7 @@ public:
     enum class CheckResult { Denied, Granted, Unknown };
     explicit SpeechRecognitionPermissionManager(WebPageProxy&);
     ~SpeechRecognitionPermissionManager();
-    void request(const String& lang, const WebCore::ClientOrigin&, CompletionHandler<void(SpeechRecognitionPermissionDecision)>&&);
+    void request(const String& lang, const WebCore::ClientOrigin&, CompletionHandler<void(Optional<WebCore::SpeechRecognitionError>&&)>&&);
 
     void decideByDefaultAction(const WebCore::SecurityOrigin&, CompletionHandler<void(bool)>&&);
     WebPageProxy& page() { return m_page; }
@@ -48,7 +48,7 @@ private:
     void startNextRequest();
     void startProcessingRequest();
     void continueProcessingRequest();
-    void completeCurrentRequest(SpeechRecognitionPermissionDecision);
+    void completeCurrentRequest(Optional<WebCore::SpeechRecognitionError>&& = WTF::nullopt);
     void requestMicrophoneAccess();
     void requestSpeechRecognitionServiceAccess();
     void requestUserPermission();

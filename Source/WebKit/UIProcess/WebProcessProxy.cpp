@@ -1724,7 +1724,7 @@ void WebProcessProxy::createSpeechRecognitionServer(SpeechRecognitionServerIdent
     auto& speechRecognitionServer = m_speechRecognitionServerMap.add(identifier, nullptr).iterator->value;
     auto permissionChecker = [weakPage = makeWeakPtr(targetPage)](auto& lang, auto& origin, auto&& completionHandler) mutable {
         if (!weakPage) {
-            completionHandler(SpeechRecognitionPermissionDecision::Deny);
+            completionHandler(WebCore::SpeechRecognitionError { SpeechRecognitionErrorType::NotAllowed, "Page no longer exists"_s });
             return;
         }
 

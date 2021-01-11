@@ -14,7 +14,7 @@ shouldNotThrow("recognition = new webkitSpeechRecognition()");
 shouldNotThrow("recognition.start()");
 recognition.onerror = (event) => {
     shouldBeEqualToString("event.error", "not-allowed");
-    shouldBeEqualToString("event.message", "Permission check failed");
+    shouldBeEqualToString("event.message", "User permission check has failed");
 
     finishJSTest();
 }
