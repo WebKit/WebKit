@@ -16,6 +16,9 @@ const mediaController = createControls(shadowRoot, media, null);
 const button = document.body.appendChild(document.createElement("button"));
 button.textContent = "Enter Fullscreen";
 
+if (window.internals)
+    internals.setMockVideoPresentationModeEnabled(true);
+
 function enterFullscreen()
 {
     if (!("eventSender" in window)) {
@@ -38,7 +41,8 @@ function enterFullscreen()
     eventSender.mouseUp();
 }
 
-media.addEventListener("webkitfullscreenchange", function() {
+function toggleFullscreen()
+{
     if (media.webkitDisplayingFullscreen) {
         debug("Media entered fullscreen");
         shouldBe("mediaController.layoutTraits", "LayoutTraits.macOS | LayoutTraits.Fullscreen");
@@ -56,6 +60,13 @@ media.addEventListener("webkitfullscreenchange", function() {
         button.remove();
         finishJSTest();
     }
+}
+
+media.addEventListener("webkitfullscreenchange", function() {
+    if (window.internals)
+        shouldBecomeEqual("internals.isChangingPresentationMode(media)", "false", toggleFullscreen);
+    else
+        toggleFullscreen();
 });
 
 media.addEventListener("loadedmetadata", enterFullscreen);
