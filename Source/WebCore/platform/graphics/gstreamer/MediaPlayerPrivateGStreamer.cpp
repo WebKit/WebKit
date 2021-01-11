@@ -2623,8 +2623,7 @@ void MediaPlayerPrivateGStreamer::didEnd()
 
 void MediaPlayerPrivateGStreamer::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
 {
-    auto& gstRegistryScanner = GStreamerRegistryScanner::singleton();
-    types = gstRegistryScanner.mimeTypeSet(GStreamerRegistryScanner::Configuration::Decoding);
+    GStreamerRegistryScanner::getSupportedDecodingTypes(types);
 }
 
 MediaPlayer::SupportsType MediaPlayerPrivateGStreamer::supportsType(const MediaEngineSupportParameters& parameters)

@@ -732,8 +732,7 @@ void MediaPlayerPrivateGStreamerMSE::trackDetected(AppendPipeline& appendPipelin
 
 void MediaPlayerPrivateGStreamerMSE::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
 {
-    auto& gstRegistryScanner = GStreamerRegistryScannerMSE::singleton();
-    types = gstRegistryScanner.mimeTypeSet(GStreamerRegistryScanner::Configuration::Decoding);
+    GStreamerRegistryScannerMSE::getSupportedDecodingTypes(types);
 }
 
 MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const MediaEngineSupportParameters& parameters)

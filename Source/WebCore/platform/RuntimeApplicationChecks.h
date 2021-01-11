@@ -35,17 +35,19 @@ WEBCORE_EXPORT int presentingApplicationPID();
 #if PLATFORM(WIN)
 inline bool isInWebProcess() { return false; }
 inline bool isInGPUProcess() { return false; }
-#elif !PLATFORM(COCOA)
+#elif !PLATFORM(COCOA) && !USE(GLIB)
 inline bool isInWebProcess() { return true; }
 inline bool isInGPUProcess() { return false; }
+inline bool isInNetworkProcess() { return false; }
 #endif
 
-#if PLATFORM(COCOA)
-
+#if PLATFORM(COCOA) || USE(GLIB)
 bool isInWebProcess();
 bool isInGPUProcess();
 bool isInNetworkProcess();
+#endif
 
+#if PLATFORM(COCOA)
 WEBCORE_EXPORT void setApplicationBundleIdentifier(const String&);
 WEBCORE_EXPORT void setApplicationBundleIdentifierOverride(const String&);
 WEBCORE_EXPORT String applicationBundleIdentifier();
@@ -121,10 +123,6 @@ WEBCORE_EXPORT bool isCrunchyroll();
 } // IOSApplication
 
 #endif // PLATFORM(IOS_FAMILY)
-
-#else
-
-inline bool isInNetworkProcess() { return false; }
 
 #endif // PLATFORM(COCOA)
 

@@ -36,9 +36,12 @@ namespace WebCore {
 class ContentType;
 
 class GStreamerRegistryScanner {
-    friend NeverDestroyed<GStreamerRegistryScanner>;
 public:
     static GStreamerRegistryScanner& singleton();
+    static void getSupportedDecodingTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
+
+    explicit GStreamerRegistryScanner(bool isMediaSource = false);
+    ~GStreamerRegistryScanner() = default;
 
     enum Configuration {
         Decoding = 0,
@@ -62,9 +65,6 @@ public:
     bool areAllCodecsSupported(Configuration, const Vector<String>& codecs, bool shouldCheckForHardwareUse = false) const;
 
 protected:
-    GStreamerRegistryScanner(bool isMediaSource = false);
-    ~GStreamerRegistryScanner() = default;
-
     struct ElementFactories {
         enum class Type {
             AudioParser  = 1 << 0,

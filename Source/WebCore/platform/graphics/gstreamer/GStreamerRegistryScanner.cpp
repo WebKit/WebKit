@@ -23,6 +23,7 @@
 #if USE(GSTREAMER)
 #include "ContentType.h"
 #include "GStreamerCommon.h"
+#include "RuntimeApplicationChecks.h"
 #include <fnmatch.h>
 #include <gst/pbutils/codec-utils.h>
 #include <wtf/PrintStream.h>
@@ -37,6 +38,14 @@ GStreamerRegistryScanner& GStreamerRegistryScanner::singleton()
 {
     static NeverDestroyed<GStreamerRegistryScanner> sharedInstance;
     return sharedInstance;
+}
+
+void GStreamerRegistryScanner::getSupportedDecodingTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
+{
+    if (isInWebProcess())
+        types = singleton().mimeTypeSet(GStreamerRegistryScanner::Configuration::Decoding);
+    else
+        types = GStreamerRegistryScanner().mimeTypeSet(GStreamerRegistryScanner::Configuration::Decoding);
 }
 
 GStreamerRegistryScanner::ElementFactories::ElementFactories(OptionSet<ElementFactories::Type> types)
@@ -174,6 +183,8 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::Element
 GStreamerRegistryScanner::GStreamerRegistryScanner(bool isMediaSource)
     : m_isMediaSource(isMediaSource)
 {
+    if (!isInWebProcess())
+        gst_init(nullptr, nullptr);
     GST_DEBUG_CATEGORY_INIT(webkit_media_gst_registry_scanner_debug, "webkitregistryscanner", 0, "WebKit GStreamer registry scanner");
 
     ElementFactories factories(OptionSet<ElementFactories::Type>::fromRaw(static_cast<unsigned>(ElementFactories::Type::All)));

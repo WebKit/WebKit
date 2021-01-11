@@ -28,10 +28,9 @@
 namespace WebCore {
 
 class GStreamerRegistryScannerMSE : public GStreamerRegistryScanner {
-    friend NeverDestroyed<GStreamerRegistryScannerMSE>;
 public:
     static GStreamerRegistryScannerMSE& singleton();
-protected:
+    static void getSupportedDecodingTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     GStreamerRegistryScannerMSE();
 };
 

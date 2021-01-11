@@ -27,6 +27,7 @@ platform/glib/FileMonitorGLib.cpp
 platform/glib/KeyedDecoderGlib.cpp
 platform/glib/KeyedEncoderGlib.cpp
 platform/glib/LowPowerModeNotifierGLib.cpp
+platform/glib/RuntimeApplicationChecksGLib.cpp
 platform/glib/SharedBufferGlib.cpp
 platform/glib/UserAgentGLib.cpp
 
