@@ -82,7 +82,6 @@ struct _WebKitSettingsPrivate {
     CString mediaContentTypesRequiringHardwareSupport;
     bool allowModalDialogs { false };
     bool zoomTextOnly { false };
-    double screenDpi { 96 };
 #if PLATFORM(GTK)
     bool enableBackForwardNavigationGestures { false };
 #endif
@@ -177,7 +176,6 @@ enum {
 
 static void webKitSettingsDispose(GObject* object)
 {
-    WebCore::setScreenDPIObserverHandler(nullptr, object);
     G_OBJECT_CLASS(webkit_settings_parent_class)->dispose(object);
 }
 
@@ -192,23 +190,6 @@ static void webKitSettingsConstructed(GObject* object)
     bool mediaStreamEnabled = prefs->mediaStreamEnabled();
     prefs->setMediaDevicesEnabled(mediaStreamEnabled);
     prefs->setPeerConnectionEnabled(mediaStreamEnabled);
-
-    settings->priv->screenDpi = WebCore::screenDPI();
-    WebCore::setScreenDPIObserverHandler([settings]() {
-        auto newScreenDpi = WebCore::screenDPI();
-        if (newScreenDpi == settings->priv->screenDpi)
-            return;
-
-        auto scalingFactor = newScreenDpi / settings->priv->screenDpi;
-        auto fontSize = settings->priv->preferences->defaultFontSize();
-        auto monospaceFontSize = settings->priv->preferences->defaultFixedFontSize();
-        settings->priv->screenDpi = newScreenDpi;
-
-        g_object_freeze_notify(G_OBJECT(settings));
-        webkit_settings_set_default_font_size(settings, std::round(fontSize * scalingFactor));
-        webkit_settings_set_default_monospace_font_size(settings, std::round(monospaceFontSize * scalingFactor));
-        g_object_thaw_notify(G_OBJECT(settings));
-    }, object);
 }
 
 static void webKitSettingsSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)

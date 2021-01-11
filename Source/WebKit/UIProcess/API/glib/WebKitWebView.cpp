@@ -73,6 +73,7 @@
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/GUniquePtrSoup.h>
 #include <WebCore/JSDOMExceptionHandling.h>
+#include <WebCore/PlatformScreen.h>
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/URLSoup.h>
 #include <glib/gi18n-lib.h>
@@ -306,6 +307,8 @@ struct _WebKitWebViewPrivate {
 
     GRefPtr<WebKitWebsiteDataManager> websiteDataManager;
     GRefPtr<WebKitWebsitePolicies> websitePolicies;
+
+    double textScaleFactor;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -796,6 +799,15 @@ static void webkitWebViewConstructed(GObject* object)
 
     priv->backForwardList = adoptGRef(webkitBackForwardListCreate(&getPage(webView).backForwardList()));
     priv->windowProperties = adoptGRef(webkitWindowPropertiesCreate());
+
+    priv->textScaleFactor = WebCore::screenDPI() / 96.;
+    getPage(webView).setTextZoomFactor(priv->textScaleFactor);
+    WebCore::setScreenDPIObserverHandler([webView] {
+        auto& page = getPage(webView);
+        auto zoomFactor = page.textZoomFactor() / webView->priv->textScaleFactor;
+        webView->priv->textScaleFactor = WebCore::screenDPI() / 96.;
+        page.setTextZoomFactor(zoomFactor * webView->priv->textScaleFactor);
+    }, webView);
 }
 
 static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
@@ -953,6 +965,8 @@ static void webkitWebViewDispose(GObject* object)
 #if PLATFORM(WPE)
     webView->priv->view->close();
 #endif
+
+    WebCore::setScreenDPIObserverHandler(nullptr, webView);
 
     G_OBJECT_CLASS(webkit_web_view_parent_class)->dispose(object);
 }
@@ -3603,7 +3617,7 @@ void webkit_web_view_set_zoom_level(WebKitWebView* webView, gdouble zoomLevel)
 
     auto& page = getPage(webView);
     if (webkit_settings_get_zoom_text_only(webView->priv->settings.get()))
-        page.setTextZoomFactor(zoomLevel);
+        page.setTextZoomFactor(zoomLevel * webView->priv->textScaleFactor);
     else
         page.setPageZoomFactor(zoomLevel);
     g_object_notify(G_OBJECT(webView), "zoom-level");
@@ -3624,7 +3638,7 @@ gdouble webkit_web_view_get_zoom_level(WebKitWebView* webView)
 
     auto& page = getPage(webView);
     gboolean zoomTextOnly = webkit_settings_get_zoom_text_only(webView->priv->settings.get());
-    return zoomTextOnly ? page.textZoomFactor() : page.pageZoomFactor();
+    return zoomTextOnly ? page.textZoomFactor() / webView->priv->textScaleFactor : page.pageZoomFactor();
 }
 
 /**
