@@ -1,3 +1,36 @@
+2021-01-11  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebKit::IPC::Encoder needs definitions of all custom enum values at the Encoder definition time
+        https://bugs.webkit.org/show_bug.cgi?id=220410
+
+        Reviewed by Darin Adler.
+
+        Change WTF::EnumTraits to have either EnumTraits::values or EnumTraits::isValidEnum().
+        Previously, if clients wanted to check isValidEnum for custom enum, they had to:
+         1) Define HasCustomIsValidEnum<TheirEnum> : true_type {};
+         2) Define new function template isValidEnum() for TheirEnum
+         3) Ensure that their isValidEnum() was defined before the definition of the call to
+            the isValidEnum().
+
+        This has the problem that isValidEnum() cannot be called in generic code, because
+        at the definition time generic code typically does not have all the types in scope
+        that will be used at instantiation time.
+        Each isValidEnum() is their own function template, C++ does not have function template
+        specialization.
+
+        After the change, clients need to:
+         1) Define EnumTraits<TheirEnum> { bool isValidEnum(...) }
+
+        Fix by using the fact that WTF::EnumTraits is a class and that can have template
+        specializations.
+
+        Consistent with the EnumTraits::values case:
+          a) Automatic case?     --> Define EnumTraits::values
+          b) Manual/custom case? --> Define EnumTraits::isValidEnum()
+
+        * wtf/EnumTraits.h:
+        (WTF::isValidEnum):
+
 2021-01-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Disable JITCage compile time in old iOS

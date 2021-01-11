@@ -51,17 +51,21 @@ struct EnumValueChecker<T, EnumValues<E>> {
     }
 };
 
-template<typename U> class HasCustomIsValidEnum : public std::false_type { };
-
-template<typename E, typename T, std::enable_if_t<std::is_enum<E>::value && !std::is_same<std::underlying_type_t<E>, bool>::value && !HasCustomIsValidEnum<E>::value>* = nullptr>
-constexpr bool isValidEnum(T t)
+template<typename E, typename T, typename = std::enable_if_t<!std::is_same_v<std::underlying_type_t<E>, bool>>>
+constexpr auto isValidEnum(T t) -> decltype(EnumValueChecker<T, typename EnumTraits<E>::values>::isValidEnum(t), bool())
 {
     static_assert(sizeof(T) >= sizeof(std::underlying_type_t<E>), "Integral type must be at least the size of the underlying enum type");
 
     return EnumValueChecker<T, typename EnumTraits<E>::values>::isValidEnum(t);
 }
 
-template<typename E, typename T, std::enable_if_t<std::is_same<std::underlying_type_t<E>, bool>::value>* = nullptr>
+template<typename E, typename T, typename = std::enable_if_t<!std::is_same_v<std::underlying_type_t<E>, bool>>>
+auto isValidEnum(T t) -> decltype(EnumTraits<E>::isValidEnum(t), bool())
+{
+    return EnumTraits<E>::isValidEnum(t);
+}
+
+template<typename E, typename T, typename = std::enable_if_t<std::is_same_v<std::underlying_type_t<E>, bool>>>
 constexpr bool isValidEnum(T t)
 {
     return !t || t == 1;

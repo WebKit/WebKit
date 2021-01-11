@@ -115,15 +115,14 @@ constexpr bool messageIsSync(MessageName name)
 namespace WTF {
 
 template<>
-class HasCustomIsValidEnum<IPC::MessageName> : public std::true_type { };
-template<typename E, typename T, std::enable_if_t<std::is_same_v<E, IPC::MessageName>>* = nullptr>
-bool isValidEnum(T messageName)
-{
-    static_assert(sizeof(T) == sizeof(E), "isValidEnum<IPC::MessageName> should only be called with 16-bit types");
-    static_assert(std::is_unsigned<T>::value, "isValidEnum<IPC::MessageName> should only be called with unsigned types");
-    if (messageName > static_cast<std::underlying_type<IPC::MessageName>::type>(IPC::MessageName::Last))
-        return false;
-    return IPC::isValidMessageName(static_cast<E>(messageName));
+struct EnumTraits<IPC::MessageName> {
+    template<typename T>
+    static std::enable_if_t<sizeof(T) == sizeof(IPC::MessageName) && std::is_unsigned_v<T>, bool> isValidEnum(T messageName)
+    {
+        if (messageName > WTF::enumToUnderlyingType(IPC::MessageName::Last))
+            return false;
+        return IPC::isValidMessageName(static_cast<IPC::MessageName>(messageName));
+    }
 };
 
 } // namespace WTF
