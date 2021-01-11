@@ -2687,6 +2687,40 @@ void MediaPlayerPrivateGStreamer::updateDownloadBufferingFlag()
     }
 }
 
+static void setPlaybackFlags(GstElement* pipeline)
+{
+    unsigned hasAudio = getGstPlayFlag("audio");
+    unsigned hasVideo = getGstPlayFlag("video");
+    unsigned hasText = getGstPlayFlag("text");
+    unsigned hasNativeVideo = getGstPlayFlag("native-video");
+    unsigned hasNativeAudio = getGstPlayFlag("native-audio");
+
+    unsigned flags = 0;
+    g_object_get(pipeline, "flags", &flags, nullptr);
+    GST_TRACE_OBJECT(pipeline, "default flags %x", flags);
+    flags = flags & ~hasText;
+    flags = flags & ~hasNativeAudio;
+    flags = flags & ~hasNativeVideo;
+
+#if !ENABLE(TEXT_SINK)
+    hasText = 0x0;
+#endif
+
+#if !ENABLE(NATIVE_VIDEO)
+    hasNativeVideo = 0x0;
+#endif
+
+#if !ENABLE(NATIVE_AUDIO)
+    hasNativeAudio = 0x0;
+#endif
+
+    GST_INFO_OBJECT(pipeline, "text %s, audio %s (native %s), video %s (native %s)", boolForPrinting(hasText), boolForPrinting(hasAudio),
+        boolForPrinting(hasNativeAudio), boolForPrinting(hasVideo), boolForPrinting(hasNativeVideo));
+    flags |= hasText | hasAudio | hasVideo | hasNativeVideo | hasNativeAudio;
+    g_object_set(pipeline, "flags", flags, nullptr);
+    GST_DEBUG_OBJECT(pipeline, "current pipeline flags %x", flags);
+}
+
 void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url, const String& pipelineName)
 {
     GST_INFO("Creating pipeline for %s player", m_player->isVideoPlayer() ? "video" : "audio");
@@ -2720,6 +2754,8 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url, const String&
     setStreamVolumeElement(GST_STREAM_VOLUME(m_pipeline.get()));
 
     GST_INFO_OBJECT(pipeline(), "Using legacy playbin element: %s", boolForPrinting(m_isLegacyPlaybin));
+
+    setPlaybackFlags(pipeline());
 
     // Let also other listeners subscribe to (application) messages in this bus.
     GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
