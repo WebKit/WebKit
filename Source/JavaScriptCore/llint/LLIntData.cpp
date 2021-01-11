@@ -54,7 +54,7 @@ extern "C" void wasm_entry(void*, void*, void*);
 
 #endif // !ENABLE(C_LOOP)
 
-#if ENABLE(JIT_CAGE)
+#if CPU(ARM64E)
 extern "C" void vmEntryToJavaScriptTrampoline(void);
 extern "C" void tailCallJSEntryTrampoline(void);
 extern "C" void tailCallJSEntrySlowPathTrampoline(void);
@@ -89,9 +89,12 @@ void initialize()
 
     JITOperationList::populatePointersInJavaScriptCoreForLLInt();
 
+#if CPU(ARM64E)
+
 #if ENABLE(JIT_CAGE)
     if (Options::useJITCage())
         g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::jitCagePtr)] = jitCagePtrThunk().code().executableAddress();
+#endif
 
 #define INITIALIZE_JS_GATE(name, tag) \
     do { \
@@ -203,7 +206,7 @@ void initialize()
 
     INITIALIZE_TAG_AND_UNTAG_THUNKS(llint_function_for_call_arity_check);
     INITIALIZE_TAG_AND_UNTAG_THUNKS(llint_function_for_construct_arity_check);
-#endif // ENABLE(JIT_CAGE)
+#endif // CPU(ARM64E)
 #endif // ENABLE(C_LOOP)
 }
 

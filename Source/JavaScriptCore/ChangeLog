@@ -1,3 +1,30 @@
+2021-01-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JITCage's Gate mechanism is used in ARM64E even if JITCage is disable
+        https://bugs.webkit.org/show_bug.cgi?id=220500
+
+        Reviewed by Mark Lam.
+
+        We should ensure that Gate mechanism just works even if ENABLE(JIT_CAGE) is OFF in ARM64E since
+        in LLInt we are always using Gate even if ENABLE(JIT_CAGE) is OFF. It makes LLInt code
+        significantly simpler: we do not want to have multiple implementations for ARM64E for ENABLE(JIT_CAGE) ON/OFF
+        in LLInt if it is not necessary in terms of performance. And it didn't cause performance regression.
+        So for simplicity, we are always using Gate in LLInt.
+
+        However, when disabling ENABLE(JIT_CAGE), we accidentally disabled Gate mechanism too in LLInt.
+        It makes ARM64E broken if ENABLE(JIT_CAGE) is OFF. This patch makes Gate work even if ENABLE(JIT_CAGE) is OFF,
+        and this is the expected design.
+
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        * llint/LLIntEntrypoint.cpp:
+        (JSC::LLInt::setFunctionEntrypoint):
+        (JSC::LLInt::setEvalEntrypoint):
+        (JSC::LLInt::setProgramEntrypoint):
+        (JSC::LLInt::setModuleProgramEntrypoint):
+        * llint/LLIntThunks.cpp:
+        * llint/LLIntThunks.h:
+
 2021-01-08  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Implement @copyDataProperties in C++ to optimize object rest / spread

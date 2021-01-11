@@ -42,7 +42,7 @@ extern "C" {
     EncodedJSValue vmEntryHostFunction(JSGlobalObject*, CallFrame*, void*);
 }
 
-#if ENABLE(JIT_CAGE)
+#if CPU(ARM64E)
 extern "C" {
     void jitCagePtrGateAfter(void);
     void vmEntryToJavaScriptGateAfter(void);
@@ -80,7 +80,11 @@ MacroAssemblerCodeRef<ExceptionHandlerPtrTag> callToThrowThunk();
 MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleUncaughtExceptionThunk();
 MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleCatchThunk(OpcodeSize);
 
+#if ENABLE(JIT_CAGE)
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> jitCagePtrThunk();
+#endif
+
+#if CPU(ARM64E)
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> createJSGateThunk(void*, PtrTag, const char*);
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> createWasmGateThunk(void*, PtrTag, const char*);
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> createTailCallGate(PtrTag);
@@ -91,6 +95,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> exceptionHandlerGateThunk();
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> returnFromLLIntGateThunk();
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> untagGateThunk(void*);
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> tagGateThunk(void*);
+#endif
 
 MacroAssemblerCodeRef<JSEntryPtrTag> normalOSRExitTrampolineThunk();
 #if ENABLE(DFG_JIT)

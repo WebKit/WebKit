@@ -40,7 +40,7 @@ namespace JSC {
 
 #if ENABLE(JIT)
 
-#if ENABLE(JIT_CAGE)
+#if CPU(ARM64E)
 
 #define JSC_ANNOTATE_LLINT_JIT_OPERATION(name) \
     JSC_ANNOTATE_JIT_OPERATION(_JITTarget_##name, name)
@@ -343,7 +343,7 @@ MacroAssemblerCodeRef<JSEntryPtrTag> fuzzerReturnEarlyFromLoopHintThunk()
     return codeRef;
 }
 
-#if ENABLE(JIT_CAGE)
+#if CPU(ARM64E)
 
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> createJSGateThunk(void* pointer, PtrTag tag, const char* name)
 {
@@ -486,6 +486,10 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> untagGateThunk(void* pointer)
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, NativeToJITGatePtrTag, "untag thunk");
 }
+
+#endif // CPU(ARM64E)
+
+#if ENABLE(JIT_CAGE)
 
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> jitCagePtrThunk()
 {
