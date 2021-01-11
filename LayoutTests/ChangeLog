@@ -1,3 +1,22 @@
+2021-01-11  Sihui Liu  <sihui_liu@appe.com>
+
+        Keep newly created IDBIndex objects in deleted map when IDBTransaction is aborted
+        https://bugs.webkit.org/show_bug.cgi?id=220489
+        <rdar://problem/70498831>
+
+        Reviewed by Youenn Fablet.
+
+        * storage/indexeddb/modern/abort-index-info-expected.txt: Added.
+        * storage/indexeddb/modern/abort-index-info-private-expected.txt: Added.
+        * storage/indexeddb/modern/abort-index-info-private.html: Added.
+        * storage/indexeddb/modern/abort-index-info.html: Added.
+        * storage/indexeddb/modern/resources/abort-index-info.js: Added.
+        (prepareDatabase):
+        (versionChangeSuccessCallback.secondRequest.onerror):
+        (versionChangeSuccessCallback):
+        (secondUpgradeNeeded):
+        (checkState):
+
 2021-01-11  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r258321): CSS rules using :first-of-type are applied to any/all siblings in a group under certain circumstances

@@ -1,0 +1,51 @@
+Explores the edge cases of what IDBIndex objects look like after a version change transaction that changed them aborts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+connection1 = event.target.result;
+objectStore1 = connection1.createObjectStore('objectStore');
+index1_1 = objectStore1.createIndex('foo', 'foo');
+
+PASS connection1.version is 1
+PASS objectStore1.indexNames.length is 1
+PASS index1_1.name is "foo"
+connection1.close();
+secondRequest = indexedDB.open(dbname, 2);
+secondRequest.onupgradeneeded = secondUpgradeNeeded;
+
+connection2 = event.target.result;
+objectStore2 = secondRequest.transaction.objectStore('objectStore');
+index2_1 = objectStore2.index('foo');
+
+PASS connection2.version is 2
+PASS objectStore2.indexNames.length is 1
+PASS index2_1.name is "foo"
+
+objectStore2.deleteIndex('foo');
+new_index2_1 = objectStore2.createIndex('foo', 'foo');
+index2_2 = objectStore2.createIndex('bar', 'bar');
+
+PASS objectStore2.indexNames.length is 2
+PASS new_index2_1.name is "foo"
+PASS index2_2.name is "bar"
+
+secondRequest.transaction.abort();
+connection2.close()
+
+PASS connection1.version is 1
+PASS objectStore1.indexNames.length is 1
+PASS index1_1.name is "foo"
+PASS connection2.version is 1
+PASS objectStore2.indexNames.length is 1
+PASS index2_1.name is "foo"
+PASS new_index2_1.name is "foo"
+PASS index2_2.name is "bar"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
