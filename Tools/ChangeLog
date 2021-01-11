@@ -1,3 +1,12 @@
+2021-01-11  Youenn Fablet  <youenn@apple.com>
+
+        WebProcessPool::establishWorkerContextConnectionToNetworkProcess should make sure to remove the selected process from the cache
+        https://bugs.webkit.org/show_bug.cgi?id=220503
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2021-01-11  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Stop using deprecated addFactoryArguments method

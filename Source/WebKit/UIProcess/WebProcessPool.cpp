@@ -567,6 +567,11 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
             serviceWorkerProcessProxy = process.get();
             serviceWorkerProcessProxy->enableServiceWorkers(processPool->userContentControllerIdentifierForServiceWorkers());
 
+            if (serviceWorkerProcessProxy->isInProcessCache()) {
+                processPool->webProcessCache().removeProcess(*serviceWorkerProcessProxy, WebProcessCache::ShouldShutDownProcess::No);
+                ASSERT(!serviceWorkerProcessProxy->isInProcessCache());
+            }
+
             WEBPROCESSPOOL_RELEASE_LOG_IF_ALLOWED_STATIC(ServiceWorker, "establishWorkerContextConnectionToNetworkProcess reusing an existing web process (process=%p, PID=%d)", serviceWorkerProcessProxy, serviceWorkerProcessProxy->processIdentifier());
             break;
         }

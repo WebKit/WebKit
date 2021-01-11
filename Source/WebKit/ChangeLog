@@ -1,3 +1,19 @@
+2021-01-11  Youenn Fablet  <youenn@apple.com>
+
+        WebProcessPool::establishWorkerContextConnectionToNetworkProcess should make sure to remove the selected process from the cache
+        https://bugs.webkit.org/show_bug.cgi?id=220503
+
+        Reviewed by Darin Adler.
+
+        In case we reuse an existing web process, make sure to remove it from web process cache.
+        Covered by API test.
+
+        * UIProcess/WebProcessCache.cpp:
+        (WebKit::WebProcessCache::addProcessIfPossible):
+        (WebKit::WebProcessCache::addProcess):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToNetworkProcess):
+
 2021-01-11  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Enable the client decoder entitlement for the GPU Process
