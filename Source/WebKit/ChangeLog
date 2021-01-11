@@ -1,3 +1,58 @@
+2021-01-11  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [PlayStation] Add MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=220359
+
+        Reviewed by Don Olmstead.
+
+        Add WKRunloop API to allow an external program to run WebKit's generic runloop.
+
+        * UIProcess/API/C/playstation/WKRunLoop.cpp: Added.
+        (WKRunLoopRunMain):
+        (WKRunLoopStopMain):
+        (WKRunLoopCallOnMainThread):
+        (WKRunLoopInitializeMain):
+        * UIProcess/API/C/playstation/WKRunLoop.h: Added.
+
+        Add private WKPagePaint() to draw contents to bitmap.
+        Remove unused WKPageSetSize() implementation.
+
+        * UIProcess/API/C/playstation/WKPagePrivatePlayStation.cpp:
+        (drawPageBackground):
+        (WKPageHandleMouseEvent): Fix button click event handling.
+        (WKPagePaint):
+        * UIProcess/API/C/playstation/WKPagePrivatePlayStation.h:
+
+        Add WKView API to set view client along with fullscreen API and visibility state API.
+
+        * UIProcess/API/C/playstation/WKView.cpp:
+        (WKViewGetPage):
+        (WKViewSetSize):
+        (WKViewSetFocus):
+        (WKViewSetActive):
+        (WKViewSetVisible):
+        (WKViewWillEnterFullScreen):
+        (WKViewDidEnterFullScreen):
+        (WKViewWillExitFullScreen):
+        (WKViewDidExitFullScreen):
+        (WKViewRequestExitFullScreen):
+        (WKViewIsFullScreen):
+        (WKViewSetViewClient):
+        * UIProcess/API/C/playstation/WKView.h:
+        * UIProcess/API/C/playstation/WKViewClient.h: Added.
+        * UIProcess/API/playstation/APIViewClient.h: Added.
+        * UIProcess/playstation/PageClientImpl.cpp:
+        * UIProcess/playstation/PageClientImpl.h:
+        * UIProcess/playstation/PlayStationWebView.cpp:
+        * UIProcess/playstation/PlayStationWebView.h:
+
+        Allow rendering without accelerated compositing.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
+        * PlatformPlayStation.cmake: Add relevant sources and include directories.
+
 2021-01-11  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebKit::IPC::Encoder needs definitions of all custom enum values at the Encoder definition time

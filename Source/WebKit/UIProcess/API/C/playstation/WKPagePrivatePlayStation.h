@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2021 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,9 +32,11 @@
 extern "C" {
 #endif
 
-WK_EXPORT void WKPageHandleKeyboardEvent(WKPageRef page, WKKeyboardEvent);
-WK_EXPORT void WKPageHandleMouseEvent(WKPageRef page, WKMouseEvent);
-WK_EXPORT void WKPageHandleWheelEvent(WKPageRef page, WKWheelEvent);
+WK_EXPORT void WKPageHandleKeyboardEvent(WKPageRef, WKKeyboardEvent);
+WK_EXPORT void WKPageHandleMouseEvent(WKPageRef, WKMouseEvent);
+WK_EXPORT void WKPageHandleWheelEvent(WKPageRef, WKWheelEvent);
+
+WK_EXPORT void WKPagePaint(WKPageRef, unsigned char* cairoSurfaceARGB32Data, WKSize surfaceSize, WKRect paintRect);
 
 #ifdef __cplusplus
 }

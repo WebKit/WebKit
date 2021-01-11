@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2021 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,14 +25,30 @@
 
 #pragma once
 
-#include <WebKit/WKBase.h>
+#include <WebKit/WKViewClient.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 WK_EXPORT WKViewRef WKViewCreate(WKPageConfigurationRef configuration);
-WK_EXPORT WKPageRef WKViewGetPage(WKViewRef view);
+
+WK_EXPORT void WKViewSetViewClient(WKViewRef, const WKViewClientBase*);
+
+WK_EXPORT WKPageRef WKViewGetPage(WKViewRef);
+
+WK_EXPORT void WKViewSetSize(WKViewRef, WKSize viewSize);
+
+WK_EXPORT void WKViewSetFocus(WKViewRef, bool);
+WK_EXPORT void WKViewSetActive(WKViewRef, bool);
+WK_EXPORT void WKViewSetVisible(WKViewRef, bool);
+
+WK_EXPORT void WKViewWillEnterFullScreen(WKViewRef);
+WK_EXPORT void WKViewDidEnterFullScreen(WKViewRef);
+WK_EXPORT void WKViewWillExitFullScreen(WKViewRef);
+WK_EXPORT void WKViewDidExitFullScreen(WKViewRef);
+WK_EXPORT void WKViewRequestExitFullScreen(WKViewRef);
+WK_EXPORT bool WKViewIsFullScreen(WKViewRef);
 
 #ifdef __cplusplus
 }

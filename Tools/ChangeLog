@@ -1,3 +1,34 @@
+2021-01-11  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [PlayStation] Add MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=220359
+
+        Reviewed by Don Olmstead.
+
+        Add PlayStation MiniBrowser sources and CMakeLists.txt.
+
+        * MiniBrowser/playstation/CMakeLists.txt: Added.
+        * MiniBrowser/playstation/ImageButton.cpp: Added.
+        * MiniBrowser/playstation/ImageButton.h: Added.
+        * MiniBrowser/playstation/MainWindow.cpp: Added.
+        * MiniBrowser/playstation/MainWindow.h: Added.
+        * MiniBrowser/playstation/StringUtils.h: Added.
+        * MiniBrowser/playstation/TitleBar.cpp: Added.
+        * MiniBrowser/playstation/TitleBar.h: Added.
+        * MiniBrowser/playstation/ToolkittenUtils.h: Added.
+        * MiniBrowser/playstation/URLBar.cpp: Added.
+        * MiniBrowser/playstation/URLBar.h: Added.
+        * MiniBrowser/playstation/WebContext.cpp: Added.
+        * MiniBrowser/playstation/WebContext.h: Added.
+        * MiniBrowser/playstation/WebViewWindow.cpp: Added.
+        * MiniBrowser/playstation/WebViewWindow.h: Added.
+        * MiniBrowser/playstation/main.cpp: Added.
+        (loadLibraryOrExit):
+        (initialize):
+        (ApplicationClient::updateApplication):
+        (main):
+        * PlatformPlayStation.cmake: Added.
+
 2021-01-09  Lauro Moura  <lmoura@igalia.com>
 
         [GStreamer] Build failure with gst-build: Missing gst/audio/audio.h

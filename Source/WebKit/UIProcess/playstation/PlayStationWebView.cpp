@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2021 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,7 @@ RefPtr<PlayStationWebView> PlayStationWebView::create(const API::PageConfigurati
 
 PlayStationWebView::PlayStationWebView(const API::PageConfiguration& conf)
     : m_pageClient(makeUnique<PageClientImpl>(*this))
+    , m_viewStateFlags { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsFocused, WebCore::ActivityState::IsVisible, WebCore::ActivityState::IsInWindow }
 {
     auto configuration = conf.copy();
     auto* pool = configuration->processPool();
@@ -51,19 +52,104 @@ PlayStationWebView::~PlayStationWebView()
 {
 }
 
-bool PlayStationWebView::isActive() const
+void PlayStationWebView::setClient(std::unique_ptr<API::ViewClient>&& client)
 {
-    return m_active;
+    if (!client)
+        m_client = makeUnique<API::ViewClient>();
+    else
+        m_client = WTFMove(client);
 }
 
-bool PlayStationWebView::isFocused() const
+void PlayStationWebView::setViewSize(WebCore::IntSize viewSize)
 {
-    return m_focused;
+    m_viewSize = viewSize;
 }
 
-bool PlayStationWebView::isVisible() const
+void PlayStationWebView::setViewState(OptionSet<WebCore::ActivityState::Flag> flags)
 {
-    return m_visible;
+    auto changedFlags = m_viewStateFlags ^ flags;
+    m_viewStateFlags = flags;
+
+    if (changedFlags)
+        m_page->activityStateDidChange(changedFlags);
+}
+
+void PlayStationWebView::setViewNeedsDisplay(const WebCore::Region& region)
+{
+    if (m_client)
+        m_client->setViewNeedsDisplay(*this, region);
+}
+
+#if ENABLE(FULLSCREEN_API)
+void PlayStationWebView::willEnterFullScreen()
+{
+    m_isFullScreen = true;
+    m_page->fullScreenManager()->willEnterFullScreen();
+}
+
+void PlayStationWebView::didEnterFullScreen()
+{
+    m_page->fullScreenManager()->didEnterFullScreen();
+}
+
+void PlayStationWebView::willExitFullScreen()
+{
+    m_page->fullScreenManager()->willExitFullScreen();
+}
+
+void PlayStationWebView::didExitFullScreen()
+{
+    m_page->fullScreenManager()->didExitFullScreen();
+    m_isFullScreen = false;
+}
+
+void PlayStationWebView::requestExitFullScreen()
+{
+    if (isFullScreen())
+        m_page->fullScreenManager()->requestExitFullScreen();
+}
+
+void PlayStationWebView::closeFullScreenManager()
+{
+    if (m_client && isFullScreen())
+        m_client->closeFullScreen(*this);
+    m_isFullScreen = false;
+}
+
+bool PlayStationWebView::isFullScreen()
+{
+    return m_isFullScreen;
+}
+
+void PlayStationWebView::enterFullScreen()
+{
+    if (m_client && !isFullScreen())
+        m_client->enterFullScreen(*this);
+}
+
+void PlayStationWebView::exitFullScreen()
+{
+    if (m_client && isFullScreen())
+        m_client->exitFullScreen(*this);
+}
+
+void PlayStationWebView::beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame)
+{
+    if (m_client)
+        m_client->beganEnterFullScreen(*this, initialFrame, finalFrame);
+}
+
+void PlayStationWebView::beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame)
+{
+    if (m_client)
+        m_client->beganExitFullScreen(*this, initialFrame, finalFrame);
+}
+#endif
+
+void PlayStationWebView::setCursor(const WebCore::Cursor& cursor)
+{
+    if (m_client)
+        m_client->setCursor(*this, cursor);
 }
 
 } // namespace WebKit

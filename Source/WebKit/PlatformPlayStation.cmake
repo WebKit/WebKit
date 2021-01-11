@@ -102,6 +102,7 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/API/C/playstation/WKContextConfigurationPlayStation.cpp
     UIProcess/API/C/playstation/WKPagePrivatePlayStation.cpp
+    UIProcess/API/C/playstation/WKRunloop.cpp
     UIProcess/API/C/playstation/WKView.cpp
 
     UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
@@ -154,6 +155,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/API/C/cairo"
     "${WEBKIT_DIR}/UIProcess/API/C/curl"
     "${WEBKIT_DIR}/UIProcess/API/C/playstation"
+    "${WEBKIT_DIR}/UIProcess/API/playstation"
     "${WEBKIT_DIR}/UIProcess/CoordinatedGraphics"
     "${WEBKIT_DIR}/UIProcess/playstation"
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport/curl"
@@ -175,5 +177,7 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
 
     UIProcess/API/C/playstation/WKContextConfigurationPlayStation.h
     UIProcess/API/C/playstation/WKPagePrivatePlayStation.h
+    UIProcess/API/C/playstation/WKRunloop.h
     UIProcess/API/C/playstation/WKView.h
+    UIProcess/API/C/playstation/WKViewClient.h
 )

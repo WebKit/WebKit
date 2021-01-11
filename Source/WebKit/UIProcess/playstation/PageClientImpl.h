@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2021 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +26,16 @@
 #pragma once
 
 #include "PageClient.h"
+#if ENABLE(FULLSCREEN_API)
+#include "WebFullScreenManagerProxy.h"
+#endif
 
 namespace WebKit {
 
 class DrawingAreaProxy;
 class PlayStationWebView;
 
-class PageClientImpl : public PageClient
+class PageClientImpl final : public PageClient
 #if ENABLE(FULLSCREEN_API)
     , public WebFullScreenManagerProxyClient
 #endif
@@ -43,103 +46,110 @@ public:
 
 private:
     // Create a new drawing area proxy for the given page.
-    std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy(WebProcessProxy&) final;
+    std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy(WebProcessProxy&) override;
 
     // Tell the view to invalidate the given region. The region is in view coordinates.
-    void setViewNeedsDisplay(const WebCore::Region&) final;
+    void setViewNeedsDisplay(const WebCore::Region&) override;
 
     // Tell the view to scroll to the given position, and whether this was a programmatic scroll.
-    void requestScroll(const WebCore::FloatPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin) final;
+    void requestScroll(const WebCore::FloatPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin) override;
 
     // Return the current scroll position (not necessarily the same as the WebCore scroll position, because of scaling, insets etc.)
-    WebCore::FloatPoint viewScrollPosition() final;
+    WebCore::FloatPoint viewScrollPosition() override;
 
     // Return the size of the view the page is associated with.
-    WebCore::IntSize viewSize() final;
+    WebCore::IntSize viewSize() override;
 
     // Return whether the view's containing window is active.
-    bool isViewWindowActive() final;
+    bool isViewWindowActive() override;
 
     // Return whether the view is focused.
-    bool isViewFocused() final;
+    bool isViewFocused() override;
 
     // Return whether the view is visible.
-    bool isViewVisible() final;
+    bool isViewVisible() override;
 
     // Return whether the view is in a window.
-    bool isViewInWindow() final;
+    bool isViewInWindow() override;
 
-    void processDidExit() final;
-    void didRelaunchProcess() final;
-    void pageClosed() final;
+    void processDidExit() override;
+    void didRelaunchProcess() override;
+    void pageClosed() override;
 
-    void preferencesDidChange() final;
+    void preferencesDidChange() override;
 
-    void toolTipChanged(const String&, const String&) final;
+    void toolTipChanged(const String&, const String&) override;
 
-    void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) final;
+    void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
 
-    void handleDownloadRequest(DownloadProxy&) final;
+    void handleDownloadRequest(DownloadProxy&) override;
 
-    void didChangeContentSize(const WebCore::IntSize&) final;
+    void didChangeContentSize(const WebCore::IntSize&) override;
 
-    void setCursor(const WebCore::Cursor&) final;
-    void setCursorHiddenUntilMouseMoves(bool) final;
-    void didChangeViewportProperties(const WebCore::ViewportAttributes&) final;
+    void setCursor(const WebCore::Cursor&) override;
+    void setCursorHiddenUntilMouseMoves(bool) override;
+    void didChangeViewportProperties(const WebCore::ViewportAttributes&) override;
 
-    void registerEditCommand(Ref<WebEditCommandProxy>&&, UndoOrRedo) final;
-    void clearAllEditCommands() final;
-    bool canUndoRedo(UndoOrRedo) final;
-    void executeUndoRedo(UndoOrRedo) final;
-    void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) final;
+    void registerEditCommand(Ref<WebEditCommandProxy>&&, UndoOrRedo) override;
+    void clearAllEditCommands() override;
+    bool canUndoRedo(UndoOrRedo) override;
+    void executeUndoRedo(UndoOrRedo) override;
+    void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) override;
 
-    WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&) final;
-    WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) final;
-    WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) final;
-    WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) final;
-    WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) final;
-    WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) final;
+    WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&) override;
+    WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) override;
+    WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) override;
+    WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) override;
+    WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) override;
+    WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) override;
 
-    void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) final;
+    void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) override;
 
-    RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) final;
+    RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
 
-    void enterAcceleratedCompositingMode(const LayerTreeContext&) final;
-    void exitAcceleratedCompositingMode() final;
-    void updateAcceleratedCompositingMode(const LayerTreeContext&) final;
+    void enterAcceleratedCompositingMode(const LayerTreeContext&) override;
+    void exitAcceleratedCompositingMode() override;
+    void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
 
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)
-    WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() final;
+    WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() override;
+
+    void closeFullScreenManager() override;
+    bool isFullScreen() override;
+    void enterFullScreen() override;
+    void exitFullScreen() override;
+    void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) override;
+    void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) override;
 #endif
 
     // Custom representations.
-    void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&) final;
+    void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&) override;
 
-    void navigationGestureDidBegin() final;
-    void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&) final;
-    void navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem&) final;
-    void navigationGestureDidEnd() final;
-    void willRecordNavigationSnapshot(WebBackForwardListItem&) final;
-    void didRemoveNavigationGestureSnapshot() final;
+    void navigationGestureDidBegin() override;
+    void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&) override;
+    void navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem&) override;
+    void navigationGestureDidEnd() override;
+    void willRecordNavigationSnapshot(WebBackForwardListItem&) override;
+    void didRemoveNavigationGestureSnapshot() override;
 
-    void didFirstVisuallyNonEmptyLayoutForMainFrame() final;
-    void didFinishNavigation(API::Navigation*) final;
-    void didFailNavigation(API::Navigation*) final;
-    void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) final;
+    void didFirstVisuallyNonEmptyLayoutForMainFrame() override;
+    void didFinishNavigation(API::Navigation*) override;
+    void didFailNavigation(API::Navigation*) override;
+    void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override;
 
-    void didChangeBackgroundColor() final;
-    void isPlayingAudioWillChange() final;
-    void isPlayingAudioDidChange() final;
+    void didChangeBackgroundColor() override;
+    void isPlayingAudioWillChange() override;
+    void isPlayingAudioDidChange() override;
 
-    void refView() final;
-    void derefView() final;
+    void refView() override;
+    void derefView() override;
 
-    void didRestoreScrollPosition() final;
+    void didRestoreScrollPosition() override;
 
-    WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() final;
+    WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
 
-    void requestDOMPasteAccess(const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
+    void requestDOMPasteAccess(const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) override;
 
     PlayStationWebView& m_view;
 };

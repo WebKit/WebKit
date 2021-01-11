@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2021 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include "APIViewClient.h"
 #include "PageClientImpl.h"
 #include "WKView.h"
 #include "WebPageProxy.h"
@@ -38,21 +39,45 @@ public:
     static RefPtr<PlayStationWebView> create(const API::PageConfiguration&);
     virtual ~PlayStationWebView();
 
+    void setClient(std::unique_ptr<API::ViewClient>&&);
+
     WebPageProxy* page() { return m_page.get(); }
 
-    bool isActive() const;
-    bool isFocused() const;
-    bool isVisible() const;
+    void setViewSize(WebCore::IntSize);
+    WebCore::IntSize viewSize() const { return m_viewSize; }
+
+    void setViewState(OptionSet<WebCore::ActivityState::Flag>);
+    OptionSet<WebCore::ActivityState::Flag> viewState() const { return m_viewStateFlags; }
+
+#if ENABLE(FULLSCREEN_API)
+    void willEnterFullScreen();
+    void didEnterFullScreen();
+    void willExitFullScreen();
+    void didExitFullScreen();
+    void requestExitFullScreen();
+#endif
+
+    // Functions called by PageClientImpl
+    void setViewNeedsDisplay(const WebCore::Region&);
+#if ENABLE(FULLSCREEN_API)
+    bool isFullScreen();
+    void closeFullScreenManager();
+    void enterFullScreen();
+    void exitFullScreen();
+    void beganEnterFullScreen(const WebCore::IntRect&, const WebCore::IntRect&);
+    void beganExitFullScreen(const WebCore::IntRect&, const WebCore::IntRect&);
+#endif
+    void setCursor(const WebCore::Cursor&);
 
 private:
     PlayStationWebView(const API::PageConfiguration&);
 
+    std::unique_ptr<API::ViewClient> m_client;
     std::unique_ptr<WebKit::PageClientImpl> m_pageClient;
     RefPtr<WebPageProxy> m_page;
+    OptionSet<WebCore::ActivityState::Flag> m_viewStateFlags;
 
-    bool m_active { false };
-    bool m_focused { false };
-    bool m_visible { false };
+    WebCore::IntSize m_viewSize;
 #if ENABLE(FULLSCREEN_API)
     bool m_isFullScreen { false };
 #endif

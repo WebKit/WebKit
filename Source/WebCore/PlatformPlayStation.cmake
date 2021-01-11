@@ -53,6 +53,7 @@ list(APPEND WebCore_SOURCES
     platform/playstation/PlatformScreenPlayStation.cpp
     platform/playstation/ScrollbarThemePlayStation.cpp
     platform/playstation/UserAgentPlayStation.cpp
+    platform/playstation/WidgetPlayStation.cpp
 
     platform/posix/SharedBufferPOSIX.cpp
 
