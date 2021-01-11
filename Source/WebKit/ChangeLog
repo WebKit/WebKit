@@ -1,3 +1,34 @@
+2021-01-11  Kate Cheney  <katherine_cheney@apple.com>
+
+        Crash in pageDidComputePageRects()
+        https://bugs.webkit.org/show_bug.cgi?id=220518
+        <rdar://problem/71065870>
+
+        Reviewed by Ryosuke Niwa.
+
+        Make _printOperation a weak pointer and check it before use.
+        Since WKPrintingView is ref counted, a reference could still exist
+        even if _printOperation is nil. Remove the comment as it is not a
+        justification for a raw pointer.
+
+        * UIProcess/mac/WKPrintingView.h:
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _adjustPrintingMarginsForHeaderAndFooter]):
+        (-[WKPrintingView _firstPrintedPageNumber]):
+        (-[WKPrintingView _lastPrintedPageNumber]):
+        (-[WKPrintingView _preparePDFDataForPrintingOnSecondaryThread]):
+        (pageDidComputePageRects):
+        (-[WKPrintingView _askPageToComputePageRects]):
+        (-[WKPrintingView knowsPageRange:]):
+        (-[WKPrintingView _drawPreview:]):
+        (-[WKPrintingView drawRect:]):
+        (-[WKPrintingView _drawPageBorderWithSizeOnMainThread:]):
+        (-[WKPrintingView drawPageBorderWithSize:]):
+        (-[WKPrintingView rectForPage:]):
+        (-[WKPrintingView locationOfPrintRect:]):
+        (-[WKPrintingView beginDocument]):
+        (-[WKPrintingView endDocument]):
+
 2021-01-11  Sihui Liu  <sihui_liu@appe.com>
 
         Make SpeechRecognition permission error more informative
