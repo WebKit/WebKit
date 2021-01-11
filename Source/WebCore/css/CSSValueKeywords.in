@@ -1264,6 +1264,8 @@ rgb
 rgba
 hsl
 hsla
+lab
+lch
 //color
 
 // transform

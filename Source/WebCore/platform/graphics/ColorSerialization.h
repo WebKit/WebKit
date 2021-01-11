@@ -32,6 +32,7 @@ namespace WebCore {
 class Color;
 
 template<typename> struct DisplayP3;
+template<typename> struct Lab;
 template<typename> struct LinearSRGBA;
 template<typename> struct SRGBA;
 
@@ -54,6 +55,10 @@ WEBCORE_EXPORT String serializationForRenderTreeAsText(const LinearSRGBA<float>&
 WEBCORE_EXPORT String serializationForCSS(const DisplayP3<float>&);
 WEBCORE_EXPORT String serializationForHTML(const DisplayP3<float>&);
 WEBCORE_EXPORT String serializationForRenderTreeAsText(const DisplayP3<float>&);
+
+WEBCORE_EXPORT String serializationForCSS(const Lab<float>&);
+WEBCORE_EXPORT String serializationForHTML(const Lab<float>&);
+WEBCORE_EXPORT String serializationForRenderTreeAsText(const Lab<float>&);
 
 WEBCORE_EXPORT String serializationForCSS(const Color&);
 WEBCORE_EXPORT String serializationForHTML(const Color&);

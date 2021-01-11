@@ -42,6 +42,9 @@ TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
     case ColorSpace::DisplayP3:
         ts << "DisplayP3";
         break;
+    case ColorSpace::Lab:
+        ts << "L*a*b";
+        break;
     }
     return ts;
 }

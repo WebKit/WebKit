@@ -82,6 +82,12 @@ CGColorSpaceRef displayP3ColorSpaceRef()
     return displayP3ColorSpace;
 }
 
+CGColorSpaceRef labColorSpaceRef()
+{
+    // FIXME: Add support for conversion to Lab on supported platforms.
+    return sRGBColorSpaceRef();
+}
+
 CGColorSpaceRef extendedSRGBColorSpaceRef()
 {
     static CGColorSpaceRef extendedSRGBColorSpace;

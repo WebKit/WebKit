@@ -1,3 +1,18 @@
+2021-01-11  Sam Weinig  <weinig@apple.com>
+
+        Support lab(), lch(), gray() and color(lab ...) colors
+        https://bugs.webkit.org/show_bug.cgi?id=205675
+
+        Reviewed by Simon Fraser.
+
+        Original patch by Simon Fraser.
+
+        Parsing tests for lab/lch/gray colors.
+
+        * TestExpectations: Unskip lab/lch tests.
+        * fast/css/parsing-lab-colors-expected.txt: Added.
+        * fast/css/parsing-lab-colors.html: Added.
+
 2021-01-10  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Factor marked text style collection code out of InlineTextBox

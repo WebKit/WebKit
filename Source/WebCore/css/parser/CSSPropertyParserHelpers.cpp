@@ -296,12 +296,17 @@ RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange& range)
     return nullptr;
 }
 
-inline bool shouldAcceptUnitlessValue(double value, CSSParserMode cssParserMode, UnitlessQuirk unitless)
+inline bool shouldAcceptUnitlessValue(double value, CSSParserMode cssParserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
 {
     // FIXME: Presentational HTML attributes shouldn't use the CSS parser for lengths
-    return value == 0
-        || isUnitLessValueParsingEnabledForMode(cssParserMode)
-        || (cssParserMode == HTMLQuirksMode && unitless == UnitlessQuirk::Allow);
+
+    if (value == 0 && unitlessZero == UnitlessZeroQuirk::Allow)
+        return true;
+
+    if (isUnitLessValueParsingEnabledForMode(cssParserMode))
+        return true;
+    
+    return cssParserMode == HTMLQuirksMode && unitless == UnitlessQuirk::Allow;
 }
 
 Optional<LengthRaw> consumeLengthRaw(CSSParserTokenRange& range, CSSParserMode cssParserMode, ValueRange valueRange, UnitlessQuirk unitless)
@@ -339,7 +344,7 @@ Optional<LengthRaw> consumeLengthRaw(CSSParserTokenRange& range, CSSParserMode c
         return { { token.unitType(), range.consumeIncludingWhitespace().numericValue() } };
     }
     if (token.type() == NumberToken) {
-        if (!shouldAcceptUnitlessValue(token.numericValue(), cssParserMode, unitless)
+        if (!shouldAcceptUnitlessValue(token.numericValue(), cssParserMode, unitless, UnitlessZeroQuirk::Allow)
             || (valueRange == ValueRangeNonNegative && token.numericValue() < 0))
             return WTF::nullopt;
         if (std::isinf(token.numericValue()))
@@ -464,7 +469,7 @@ RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange& range, CSS
     return nullptr;
 }
 
-Optional<AngleRaw> consumeAngleRaw(CSSParserTokenRange& range, CSSParserMode cssParserMode, UnitlessQuirk unitless)
+Optional<AngleRaw> consumeAngleRaw(CSSParserTokenRange& range, CSSParserMode cssParserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
 {
     const CSSParserToken& token = range.peek();
     if (token.type() == DimensionToken) {
@@ -480,7 +485,7 @@ Optional<AngleRaw> consumeAngleRaw(CSSParserTokenRange& range, CSSParserMode css
         }
     }
 
-    if (token.type() == NumberToken && shouldAcceptUnitlessValue(token.numericValue(), cssParserMode, unitless))
+    if (token.type() == NumberToken && shouldAcceptUnitlessValue(token.numericValue(), cssParserMode, unitless, unitlessZero))
         return { { CSSUnitType::CSS_DEG, range.consumeIncludingWhitespace().numericValue() } };
 
     if (token.type() != FunctionToken)
@@ -490,7 +495,7 @@ Optional<AngleRaw> consumeAngleRaw(CSSParserTokenRange& range, CSSParserMode css
     return calcParser.consumeAngleRaw();
 }
 
-RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange& range, CSSParserMode cssParserMode, UnitlessQuirk unitless)
+RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange& range, CSSParserMode cssParserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
 {
     const CSSParserToken& token = range.peek();
     if (token.type() == FunctionToken) {
@@ -502,13 +507,13 @@ RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange& range, CSSParserMode
         return nullptr;
     }
 
-    if (auto angle = consumeAngleRaw(range, cssParserMode, unitless))
+    if (auto angle = consumeAngleRaw(range, cssParserMode, unitless, unitlessZero))
         return CSSValuePool::singleton().createValue(angle->value, angle->type);
 
     return nullptr;
 }
 
-static RefPtr<CSSPrimitiveValue> consumeAngleOrPercent(CSSParserTokenRange& range, CSSParserMode cssParserMode, ValueRange valueRange, UnitlessQuirk unitless)
+static RefPtr<CSSPrimitiveValue> consumeAngleOrPercent(CSSParserTokenRange& range, CSSParserMode cssParserMode, ValueRange valueRange, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
 {
     const CSSParserToken& token = range.peek();
     if (token.type() == DimensionToken) {
@@ -522,7 +527,7 @@ static RefPtr<CSSPrimitiveValue> consumeAngleOrPercent(CSSParserTokenRange& rang
             return nullptr;
         }
     }
-    if (token.type() == NumberToken && shouldAcceptUnitlessValue(token.numericValue(), cssParserMode, unitless))
+    if (token.type() == NumberToken && shouldAcceptUnitlessValue(token.numericValue(), cssParserMode, unitless, unitlessZero))
         return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().numericValue(), CSSUnitType::CSS_DEG);
 
     if (token.type() == PercentageToken)
@@ -549,7 +554,7 @@ RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange& range, CSSParserMode 
 {
     const CSSParserToken& token = range.peek();
     CSSUnitType unit = token.unitType();
-    bool acceptUnitless = token.type() == NumberToken && unitless == UnitlessQuirk::Allow && shouldAcceptUnitlessValue(token.numericValue(), cssParserMode, unitless);
+    bool acceptUnitless = token.type() == NumberToken && unitless == UnitlessQuirk::Allow && shouldAcceptUnitlessValue(token.numericValue(), cssParserMode, unitless, UnitlessZeroQuirk::Allow);
     if (acceptUnitless)
         unit = CSSUnitType::CSS_MS;
     if (token.type() == DimensionToken || acceptUnitless) {
@@ -748,7 +753,7 @@ static Color parseHSLParameters(CSSParserTokenRange& range, CSSParserMode cssPar
     ASSERT(range.peek().functionId() == CSSValueHsl || range.peek().functionId() == CSSValueHsla);
     CSSParserTokenRange args = consumeFunction(range);
     double angleInDegrees;
-    if (auto angle = consumeAngleRaw(args, cssParserMode, UnitlessQuirk::Forbid))
+    if (auto angle = consumeAngleRaw(args, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid))
         angleInDegrees = CSSPrimitiveValue::computeDegrees(angle->type, angle->value);
     else {
         if (!consumeNumberRaw(args, angleInDegrees))
@@ -792,49 +797,158 @@ static Color parseHSLParameters(CSSParserTokenRange& range, CSSParserMode cssPar
     return convertToComponentBytes(toSRGBA(HSLA<float> { static_cast<float>(colorArray[0]), static_cast<float>(colorArray[1]), static_cast<float>(colorArray[2]), static_cast<float>(alpha) }));
 }
 
+static Optional<float> parseOptionalAlpha(CSSParserTokenRange& range)
+{
+    if (!consumeSlashIncludingWhitespace(range))
+        return 1.0f;
+
+    if (auto alphaParameter = consumePercentRaw(range, ValueRangeAll))
+        return clampTo<float>(*alphaParameter / 100.0, 0.0, 1.0);
+
+    double alphaParameter;
+    if (!consumeNumberRaw(range, alphaParameter, ValueRangeAll))
+        return WTF::nullopt;
+
+    return clampTo<float>(alphaParameter, 0.0, 1.0);
+}
+
+static Color parseLabParameters(CSSParserTokenRange& range)
+{
+    ASSERT(range.peek().functionId() == CSSValueLab);
+    CSSParserTokenRange args = consumeFunction(range);
+
+    auto lightness = consumePercentRaw(args, ValueRangeAll);
+    if (!lightness)
+        return { };
+
+    double aValue;
+    if (!consumeNumberRaw(args, aValue, ValueRangeAll))
+        return { };
+
+    double bValue;
+    if (!consumeNumberRaw(args, bValue, ValueRangeAll))
+        return { };
+
+    auto alpha = parseOptionalAlpha(args);
+    if (!alpha)
+        return { };
+
+    if (!args.atEnd())
+        return { };
+
+    return Lab<float> { static_cast<float>(*lightness), static_cast<float>(aValue), static_cast<float>(bValue), *alpha };
+}
+
+static Color parseLCHParameters(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+{
+    ASSERT(range.peek().functionId() == CSSValueLch);
+    CSSParserTokenRange args = consumeFunction(range);
+
+    auto lightness = consumePercentRaw(args, ValueRangeAll);
+    if (!lightness)
+        return Color();
+
+    double chromaValue;
+    if (!consumeNumberRaw(args, chromaValue, ValueRangeAll))
+        return { };
+
+    double angleInDegrees;
+    if (auto hueValue = consumeAngleRaw(args, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid))
+        angleInDegrees = CSSPrimitiveValue::computeDegrees(hueValue->type, hueValue->value);
+    else {
+        if (!consumeNumberRaw(args, angleInDegrees, ValueRangeAll))
+            return { };
+    }
+
+    angleInDegrees = fmod(angleInDegrees, 360.0);
+    if (angleInDegrees < 0.0)
+        angleInDegrees += 360.0;
+
+    auto alpha = parseOptionalAlpha(args);
+    if (!alpha)
+        return { };
+
+    if (!args.atEnd())
+        return { };
+
+    return toLab(LCHA<float> { static_cast<float>(*lightness), static_cast<float>(chromaValue), static_cast<float>(angleInDegrees), *alpha });
+}
+
+template<typename ColorType>
+static Color parseColorFunctionForSRGBOrDisplayP3Parameters(CSSParserTokenRange& args)
+{
+    ASSERT(args.peek().id() == CSSValueSRGB || args.peek().id() == CSSValueDisplayP3);
+    consumeIdentRaw(args);
+
+    double colorChannels[3] = { 0, 0, 0 };
+    for (int i = 0; i < 3; ++i) {
+        double value;
+        if (consumeNumberRaw(args, value))
+            colorChannels[i] = value;
+        else
+            break;
+    }
+
+    auto alpha = parseOptionalAlpha(args);
+    if (!alpha)
+        return { };
+
+    return ColorType { clampTo<float>(colorChannels[0], 0.0, 1.0), clampTo<float>(colorChannels[1], 0.0, 1.0), clampTo<float>(colorChannels[2], 0.0, 1.0), *alpha };
+}
+
+static Color parseColorFunctionForLabParameters(CSSParserTokenRange& args)
+{
+    ASSERT(args.peek().id() == CSSValueLab);
+    consumeIdentRaw(args);
+
+    auto lightness = consumePercentRaw(args, ValueRangeAll);
+    if (!lightness)
+        return { };
+
+    double aValue;
+    if (!consumeNumberRaw(args, aValue, ValueRangeAll))
+        return { };
+
+    double bValue;
+    if (!consumeNumberRaw(args, bValue, ValueRangeAll))
+        return { };
+
+    auto alpha = parseOptionalAlpha(args);
+    if (!alpha)
+        return { };
+
+    return Lab<float> { static_cast<float>(*lightness), static_cast<float>(aValue), static_cast<float>(bValue), *alpha };
+}
+
 static Color parseColorFunctionParameters(CSSParserTokenRange& range)
 {
     ASSERT(range.peek().functionId() == CSSValueColor);
     CSSParserTokenRange args = consumeFunction(range);
 
-    ColorSpace colorSpace;
+    Color color;
     switch (args.peek().id()) {
     case CSSValueSRGB:
-        colorSpace = ColorSpace::SRGB;
+        color = parseColorFunctionForSRGBOrDisplayP3Parameters<SRGBA<float>>(args);
         break;
     case CSSValueDisplayP3:
-        colorSpace = ColorSpace::DisplayP3;
+        color = parseColorFunctionForSRGBOrDisplayP3Parameters<DisplayP3<float>>(args);
+        break;
+    case CSSValueLab:
+        color = parseColorFunctionForLabParameters(args);
         break;
     default:
         return { };
     }
-    consumeIdent(args);
 
-    double colorChannels[4] = { 0, 0, 0, 1 };
-    for (int i = 0; i < 3; ++i) {
-        double value;
-        if (consumeNumberRaw(args, value))
-            colorChannels[i] = std::max(0.0, std::min(1.0, value));
-        else
-            break;
-    }
-
-    if (consumeSlashIncludingWhitespace(args)) {
-        auto alphaParameter = consumePercent(args, ValueRangeAll);
-        if (!alphaParameter)
-            alphaParameter = consumeNumber(args, ValueRangeAll);
-        if (!alphaParameter)
-            return { };
-
-        colorChannels[3] = std::max(0.0, std::min(1.0, alphaParameter->isPercentage() ? (alphaParameter->doubleValue() / 100) : alphaParameter->doubleValue()));
-    }
+    if (!color.isValid())
+        return { };
 
     // FIXME: Support the comma-separated list of fallback color values.
 
     if (!args.atEnd())
         return { };
 
-    return Color { ColorComponents { static_cast<float>(colorChannels[0]), static_cast<float>(colorChannels[1]), static_cast<float>(colorChannels[2]), static_cast<float>(colorChannels[3]) }, colorSpace };
+    return color;
 }
 
 static Optional<SRGBA<uint8_t>> parseHexColor(CSSParserTokenRange& range, bool acceptQuirkyColors)
@@ -887,6 +1001,12 @@ static Color parseColorFunction(CSSParserTokenRange& range, CSSParserMode cssPar
     case CSSValueHsl:
     case CSSValueHsla:
         color = parseHSLParameters(colorRange, cssParserMode);
+        break;
+    case CSSValueLab:
+        color = parseLabParameters(colorRange);
+        break;
+    case CSSValueLch:
+        color = parseLCHParameters(colorRange, cssParserMode);
         break;
     case CSSValueColor:
         color = parseColorFunctionParameters(colorRange);
@@ -1272,7 +1392,7 @@ static bool consumeGradientColorStops(CSSParserTokenRange& range, CSSParserMode 
     
     auto consumeStopPosition = [&] {
         return gradient.gradientType() == CSSConicGradient
-            ? consumeAngleOrPercent(range, mode, ValueRangeAll, UnitlessQuirk::Forbid)
+            ? consumeAngleOrPercent(range, mode, ValueRangeAll, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow)
             : consumeLengthOrPercent(range, mode, ValueRangeAll);
     };
 
@@ -1446,7 +1566,7 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& args, CSSPars
     RefPtr<CSSLinearGradientValue> result = CSSLinearGradientValue::create(repeating, gradientType);
 
     bool expectComma = true;
-    RefPtr<CSSPrimitiveValue> angle = consumeAngle(args, cssParserMode, UnitlessQuirk::Forbid);
+    RefPtr<CSSPrimitiveValue> angle = consumeAngle(args, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
     if (angle)
         result->setAngle(angle.releaseNonNull());
     else if (gradientType == CSSPrefixedLinearGradient || consumeIdent<CSSValueTo>(args)) {
@@ -1482,7 +1602,8 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& args, CSSParse
     bool expectComma = false;
     if (args.peek().type() == IdentToken) {
         if (consumeIdent<CSSValueFrom>(args)) {
-            auto angle = consumeAngle(args, context.mode, UnitlessQuirk::Forbid);
+            // FIXME: Unlike linear-gradient, conic-gradients are not specified to allow unitless 0 angles - https://www.w3.org/TR/css-images-4/#valdef-conic-gradient-angle.
+            auto angle = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
             if (!angle)
                 return nullptr;
             result->setAngle(WTFMove(angle));
@@ -1782,7 +1903,7 @@ static RefPtr<CSSFunctionValue> consumeFilterFunction(CSSParserTokenRange& range
             return filterValue;
 
         if (filterType == CSSValueHueRotate)
-            parsedValue = consumeAngle(args, context.mode, UnitlessQuirk::Forbid);
+            parsedValue = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
         else if (filterType == CSSValueBlur)
             parsedValue = consumeLength(args, HTMLStandardMode, ValueRangeNonNegative);
         else {
@@ -1957,7 +2078,8 @@ Optional<FontStyleRaw> consumeFontStyleRaw(CSSParserTokenRange& range, CSSParser
     ASSERT(ident == CSSValueOblique);
 #if ENABLE(VARIATION_FONTS)
     if (!range.atEnd()) {
-        if (auto angle = consumeAngleRaw(range, cssParserMode)) {
+        // FIXME: This angle does specify that unitless 0 is allowed - see https://drafts.csswg.org/css-fonts-4/#valdef-font-style-oblique-angle
+        if (auto angle = consumeAngleRaw(range, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow)) {
             if (isFontStyleAngleInRange(CSSPrimitiveValue::computeDegrees(angle->type, angle->value)))
                 return { { CSSValueOblique, WTFMove(angle) } };
             return WTF::nullopt;

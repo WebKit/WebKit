@@ -71,6 +71,20 @@ WEBCORE_EXPORT LinearDisplayP3<float> toLinearDisplayP3(const XYZA<float>&);
 WEBCORE_EXPORT DisplayP3<float> toDisplayP3(const LinearDisplayP3<float>&);
 
 
+// Lab
+WEBCORE_EXPORT XYZA<float> toXYZA(const Lab<float>&);
+WEBCORE_EXPORT Lab<float> toLab(const XYZA<float>&);
+// Additions
+WEBCORE_EXPORT LCHA<float> toLCHA(const Lab<float>&);
+
+
+// LCHA
+WEBCORE_EXPORT XYZA<float> toXYZA(const LCHA<float>&);
+WEBCORE_EXPORT LCHA<float> toLCHA(const XYZA<float>&);
+// Additions
+WEBCORE_EXPORT Lab<float> toLab(const LCHA<float>&);
+
+
 // HSLA
 WEBCORE_EXPORT XYZA<float> toXYZA(const HSLA<float>&);
 WEBCORE_EXPORT HSLA<float> toHSLA(const XYZA<float>&);
@@ -91,6 +105,8 @@ constexpr SRGBA<float> toSRGBA(const SRGBA<float>& color) { return color; }
 constexpr LinearSRGBA<float> toLinearSRGBA(const LinearSRGBA<float>& color) { return color; }
 constexpr DisplayP3<float> toDisplayP3(const DisplayP3<float>& color) { return color; }
 constexpr LinearDisplayP3<float> toLinearDisplayP3(const LinearDisplayP3<float>& color) { return color; }
+constexpr Lab<float> toLab(const Lab<float>& color) { return color; }
+constexpr LCHA<float> toLCHA(const LCHA<float>& color) { return color; }
 constexpr HSLA<float> toHSLA(const HSLA<float>& color) { return color; }
 constexpr CMYKA<float> toCMYKA(const CMYKA<float>& color) { return color; }
 constexpr XYZA<float> toXYZA(const XYZA<float>& color) { return color; }
@@ -119,6 +135,16 @@ template<typename T> DisplayP3<float> toDisplayP3(const T& color)
 template<typename T> LinearDisplayP3<float> toLinearDisplayP3(const T& color)
 {
     return toLinearDisplayP3(toXYZA(color));
+}
+
+template<typename T> Lab<float> toLab(const T& color)
+{
+    return toLab(toXYZA(color));
+}
+
+template<typename T> LCHA<float> toLCHA(const T& color)
+{
+    return toLCHA(toXYZA(color));
 }
 
 template<typename T> HSLA<float> toHSLA(const T& color)

@@ -6,9 +6,11 @@
 <link rel="match" href="whitetext-ref.html">
 <meta name="assert" content="lch() with no alpha">
 <style>
-    .test { color: red; background-color: #333; padding: 3px;}
-    .test { color: lch(100% 0 0);} /* white (sRGB #FFFFFF) converted to LCH */
+    body { background-color: grey; }
+    .test { background-color: red; width: 12em; height: 12em; }
+    .test { background-color: lch(100% 0 0);} /* white (sRGB #FFFFFF) converted to Lab */
 </style>
 <body>
-    <p class="test">Test passes if this text is white</p>
+    <p>Test passes if you see a white square, and no red.</p>
+    <p class="test"> </p>
 </body>

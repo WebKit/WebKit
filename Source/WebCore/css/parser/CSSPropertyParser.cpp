@@ -981,7 +981,8 @@ static RefPtr<CSSFontStyleRangeValue> consumeFontStyleRange(CSSParserTokenRange&
     if (keyword->valueID() != CSSValueOblique || range.atEnd())
         return CSSFontStyleRangeValue::create(keyword.releaseNonNull());
 
-    if (auto firstAngle = consumeAngle(range, cssParserMode)) {
+    // FIXME: This should probably not allow the unitless zero.
+    if (auto firstAngle = consumeAngle(range, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow)) {
         auto firstAngleInDegrees = firstAngle->doubleValue(CSSUnitType::CSS_DEG);
         if (!isFontStyleAngleInRange(firstAngleInDegrees))
             return nullptr;
@@ -990,7 +991,9 @@ static RefPtr<CSSFontStyleRangeValue> consumeFontStyleRange(CSSParserTokenRange&
             result->append(firstAngle.releaseNonNull());
             return CSSFontStyleRangeValue::create(keyword.releaseNonNull(), WTFMove(result));
         }
-        auto secondAngle = consumeAngle(range, cssParserMode);
+
+        // FIXME: This should probably not allow the unitless zero.
+        auto secondAngle = consumeAngle(range, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
         if (!secondAngle)
             return nullptr;
         auto secondAngleInDegrees = secondAngle->doubleValue(CSSUnitType::CSS_DEG);
@@ -1900,12 +1903,12 @@ static RefPtr<CSSValue> consumeTransformValue(CSSParserTokenRange& range, CSSPar
     case CSSValueSkewX:
     case CSSValueSkewY:
     case CSSValueSkew:
-        parsedValue = consumeAngle(args, cssParserMode, UnitlessQuirk::Forbid);
+        parsedValue = consumeAngle(args, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
         if (!parsedValue)
             return nullptr;
         if (functionId == CSSValueSkew && consumeCommaIncludingWhitespace(args)) {
             transformValue->append(*parsedValue);
-            parsedValue = consumeAngle(args, cssParserMode, UnitlessQuirk::Forbid);
+            parsedValue = consumeAngle(args, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
             if (!parsedValue)
                 return nullptr;
         }
@@ -1956,7 +1959,7 @@ static RefPtr<CSSValue> consumeTransformValue(CSSParserTokenRange& range, CSSPar
     case CSSValueRotate3d:
         if (!consumeNumbers(args, transformValue, 3) || !consumeCommaIncludingWhitespace(args))
             return nullptr;
-        parsedValue = consumeAngle(args, cssParserMode, UnitlessQuirk::Forbid);
+        parsedValue = consumeAngle(args, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
         if (!parsedValue)
             return nullptr;
         break;
@@ -2122,7 +2125,7 @@ static RefPtr<CSSValue> consumeRotate(CSSParserTokenRange& range, CSSParserMode 
 
         // Then, attempt to parse an angle. We try this as a fallback rather than the first option because
         // a unitless 0 angle would be consumed as an angle.
-        parsedValue = consumeAngle(range, cssParserMode, UnitlessQuirk::Forbid);
+        parsedValue = consumeAngle(range, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
         if (parsedValue) {
             // If we had already parsed an angle or numbers but not 3 in a row, this value is invalid.
             if (angle || (list->length() && list->length() != 3))
@@ -2242,7 +2245,7 @@ static RefPtr<CSSValue> consumeGlyphOrientation(CSSParserTokenRange& range, CSSP
         return nullptr;
     }
     
-    return consumeAngle(range, mode, UnitlessQuirk::Allow);
+    return consumeAngle(range, mode, UnitlessQuirk::Allow, UnitlessZeroQuirk::Allow);
 }
 
 static RefPtr<CSSValue> consumePaintOrder(CSSParserTokenRange& range)

@@ -96,6 +96,8 @@ static ASCIILiteral serialization(ColorSpace colorSpace)
         return "linear-srgb"_s;
     case ColorSpace::DisplayP3:
         return "display-p3"_s;
+    case ColorSpace::Lab:
+        return "lab"_s;
     }
 
     ASSERT_NOT_REACHED();
@@ -161,6 +163,27 @@ String serializationForRenderTreeAsText(const DisplayP3<float>& color)
     return serialization(color);
 }
 
+// Lab<float> overloads
+
+String serializationForCSS(const Lab<float>& color)
+{
+    // https://www.w3.org/TR/css-color-4/#serializing-lab-lch
+
+    auto [c1, c2, c3, alpha] = color;
+    if (WTF::areEssentiallyEqual(alpha, 1.0f))
+        return makeString("lab(", c1, "% ", c2, ' ', c3, ')');
+    return makeString("lab(", c1, "% ", c2, ' ', c3, " / ", alpha, ')');
+}
+
+String serializationForHTML(const Lab<float>& color)
+{
+    return serializationForCSS(color);
+}
+
+String serializationForRenderTreeAsText(const Lab<float>& color)
+{
+    return serializationForCSS(color);
+}
 
 // Color overloads
 

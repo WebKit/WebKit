@@ -1,3 +1,42 @@
+2021-01-11  Sam Weinig  <weinig@apple.com>
+
+        Support lab(), lch(), gray() and color(lab ...) colors
+        https://bugs.webkit.org/show_bug.cgi?id=205675
+
+        Reviewed by Simon Fraser.
+
+        Update tests to use rectangles rather than text to make anti-aliasing differences
+        not cause failures. These changes will be upstreamed to the WebPlatformTests.
+
+        * web-platform-tests/css/css-color/lab-001-expected.html:
+        * web-platform-tests/css/css-color/lab-001.html:
+        * web-platform-tests/css/css-color/lab-002-expected.html:
+        * web-platform-tests/css/css-color/lab-002.html:
+        * web-platform-tests/css/css-color/lab-003-expected.html:
+        * web-platform-tests/css/css-color/lab-003.html:
+        * web-platform-tests/css/css-color/lab-004-expected.html:
+        * web-platform-tests/css/css-color/lab-004.html:
+        * web-platform-tests/css/css-color/lab-005-expected.html:
+        * web-platform-tests/css/css-color/lab-005.html:
+        * web-platform-tests/css/css-color/lab-006-expected.html:
+        * web-platform-tests/css/css-color/lab-006.html:
+        * web-platform-tests/css/css-color/lab-007-expected.html:
+        * web-platform-tests/css/css-color/lab-007.html:
+        * web-platform-tests/css/css-color/lch-001-expected.html:
+        * web-platform-tests/css/css-color/lch-001.html:
+        * web-platform-tests/css/css-color/lch-002-expected.html:
+        * web-platform-tests/css/css-color/lch-002.html:
+        * web-platform-tests/css/css-color/lch-003-expected.html:
+        * web-platform-tests/css/css-color/lch-003.html:
+        * web-platform-tests/css/css-color/lch-004-expected.html:
+        * web-platform-tests/css/css-color/lch-004.html:
+        * web-platform-tests/css/css-color/lch-005-expected.html:
+        * web-platform-tests/css/css-color/lch-005.html:
+        * web-platform-tests/css/css-color/lch-006-expected.html:
+        * web-platform-tests/css/css-color/lch-006.html:
+        * web-platform-tests/css/css-color/lch-007-expected.html:
+        * web-platform-tests/css/css-color/lch-007.html:
+
 2021-01-08  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r267402): [ macOS iOS Release ] imported/w3c/web-platform-tests/user-timing/measure-l3.any.worker.html is a flaky failure

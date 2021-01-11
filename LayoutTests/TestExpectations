@@ -2017,22 +2017,6 @@ webkit.org/b/148801 imported/w3c/web-platform-tests/css/css-color/t422-rgba-onsc
 webkit.org/b/148801 imported/w3c/web-platform-tests/css/css-color/t425-hsla-onscreen-multiple-boxes-c.xht [ ImageOnlyFailure ]
 webkit.org/b/148801 imported/w3c/web-platform-tests/css/css-color/t425-hsla-onscreen-b.xht [ ImageOnlyFailure Pass ]
 
-# lab/lch not supported
-imported/w3c/web-platform-tests/css/css-color/lab-001.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-color/lab-002.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-color/lab-003.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-color/lab-004.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-color/lab-005.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-color/lab-006.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-color/lab-007.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-color/lch-001.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-color/lch-002.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-color/lch-003.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-color/lch-004.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-color/lch-005.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-color/lch-006.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-color/lch-007.html [ Skip ]
-
 # Initial failures on the import of css-color
 imported/w3c/web-platform-tests/css/css-color/t31-color-text-a.xht [ ImageOnlyFailure ]
 

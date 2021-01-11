@@ -55,6 +55,7 @@ bool consumeSlashIncludingWhitespace(CSSParserTokenRange&);
 CSSParserTokenRange consumeFunction(CSSParserTokenRange&);
 
 enum class UnitlessQuirk { Allow, Forbid };
+enum class UnitlessZeroQuirk { Allow, Forbid };
 enum class AllowXResolutionUnit { Allow, Forbid };
 
 struct AngleRaw {
@@ -81,8 +82,8 @@ Optional<double> consumePercentRaw(CSSParserTokenRange&, ValueRange = ValueRange
 RefPtr<CSSPrimitiveValue> consumePercent(CSSParserTokenRange&, ValueRange);
 Optional<LengthOrPercentRaw> consumeLengthOrPercentRaw(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
-Optional<AngleRaw> consumeAngleRaw(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid);
-RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid);
+Optional<AngleRaw> consumeAngleRaw(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Forbid);
+RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange&, AllowXResolutionUnit = AllowXResolutionUnit::Forbid);
 
