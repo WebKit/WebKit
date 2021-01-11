@@ -323,9 +323,8 @@ void DocumentLoader::stopLoading()
             m_frame->loader().stopLoading(UnloadEventPolicy::None);
     }
 
-    for (auto callbackIdentifier : m_iconLoaders.values())
-        notifyFinishedLoadingIcon(callbackIdentifier, nullptr);
-    m_iconLoaders.clear();
+    for (auto& callback : std::exchange(m_iconLoaders, { }).values())
+        callback(nullptr);
     m_iconsPendingLoadDecision.clear();
     
 #if ENABLE(APPLICATION_MANIFEST)
@@ -2174,25 +2173,23 @@ void DocumentLoader::startIconLoading()
     m_frame->loader().client().getLoadDecisionForIcons(iconDecisions);
 }
 
-void DocumentLoader::didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, uint64_t newCallbackID)
+void DocumentLoader::didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, CompletionHandler<void(SharedBuffer*)>&& completionHandler)
 {
     auto icon = m_iconsPendingLoadDecision.take(loadIdentifier);
 
     // If the decision was not to load or this DocumentLoader is already detached, there is no load to perform.
     if (!decision || !m_frame)
-        return;
+        return completionHandler(nullptr);
 
     // If the LinkIcon we just took is empty, then the DocumentLoader had all of its loaders stopped
     // while this icon load decision was pending.
     // In this case we need to notify the client that the icon finished loading with empty data.
-    if (icon.url.isEmpty()) {
-        notifyFinishedLoadingIcon(newCallbackID, nullptr);
-        return;
-    }
+    if (icon.url.isEmpty())
+        return completionHandler(nullptr);
 
     auto iconLoader = makeUnique<IconLoader>(*this, icon.url);
     auto* rawIconLoader = iconLoader.get();
-    m_iconLoaders.set(WTFMove(iconLoader), newCallbackID);
+    m_iconLoaders.add(WTFMove(iconLoader), WTFMove(completionHandler));
 
     rawIconLoader->startLoading();
 }
@@ -2202,15 +2199,8 @@ void DocumentLoader::finishedLoadingIcon(IconLoader& loader, SharedBuffer* buffe
     // If the DocumentLoader has detached from its frame, all icon loads should have already been cancelled.
     ASSERT(m_frame);
 
-    auto callbackIdentifier = m_iconLoaders.take(&loader);
-    notifyFinishedLoadingIcon(callbackIdentifier, buffer);
-}
-
-void DocumentLoader::notifyFinishedLoadingIcon(uint64_t callbackIdentifier, SharedBuffer* buffer)
-{
-    RELEASE_ASSERT(callbackIdentifier);
-    RELEASE_ASSERT(m_frame);
-    m_frame->loader().client().finishedLoadingIcon(callbackIdentifier, buffer);
+    if (auto callback = m_iconLoaders.take(&loader))
+        callback(buffer);
 }
 
 void DocumentLoader::dispatchOnloadEvents()

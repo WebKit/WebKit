@@ -44,7 +44,7 @@ namespace API {
 
 class Data : public ObjectImpl<API::Object::Type::Data> {
 public:
-    typedef void (*FreeDataFunction)(unsigned char*, const void* context);
+    using FreeDataFunction = void (*)(unsigned char*, const void* context);
 
     static Ref<Data> createWithoutCopying(const unsigned char* bytes, size_t size, FreeDataFunction freeDataFunction, const void* context)
     {
@@ -53,14 +53,14 @@ public:
 
     static Ref<Data> create(const unsigned char* bytes, size_t size)
     {
-        unsigned char *copiedBytes = 0;
+        unsigned char *copiedBytes = nullptr;
 
         if (size) {
             copiedBytes = static_cast<unsigned char*>(fastMalloc(size));
             memcpy(copiedBytes, bytes, size);
         }
 
-        return createWithoutCopying(copiedBytes, size, fastFreeBytes, 0);
+        return createWithoutCopying(copiedBytes, size, fastFreeBytes, nullptr);
     }
     
     static Ref<Data> create(const Vector<unsigned char>& buffer)
@@ -68,6 +68,8 @@ public:
         return create(buffer.data(), buffer.size());
     }
 
+    static RefPtr<Data> create(const IPC::DataReference&);
+    
 #if PLATFORM(COCOA)
     static Ref<Data> createWithoutCopying(RetainPtr<NSData>);
 #endif
@@ -100,11 +102,11 @@ private:
             fastFree(static_cast<void*>(bytes));
     }
 
-    const unsigned char* m_bytes;
-    size_t m_size;
+    const unsigned char* m_bytes { nullptr };
+    size_t m_size { 0 };
 
-    FreeDataFunction m_freeDataFunction;
-    const void* m_context;
+    FreeDataFunction m_freeDataFunction { nullptr };
+    const void* m_context { nullptr };
 };
 
 } // namespace API

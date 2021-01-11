@@ -387,7 +387,7 @@ public:
     bool isAlwaysOnLoggingAllowed() const;
 
     void startIconLoading();
-    WEBCORE_EXPORT void didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, uint64_t newCallbackID);
+    WEBCORE_EXPORT void didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, CompletionHandler<void(SharedBuffer*)>&&);
     void finishedLoadingIcon(IconLoader&, SharedBuffer*);
 
     const Vector<LinkIcon>& linkIcons() const { return m_linkIcons; }
@@ -503,8 +503,6 @@ private:
     void cancelPolicyCheckIfNeeded();
     void becomeMainResourceClient();
 
-    void notifyFinishedLoadingIcon(uint64_t callbackIdentifier, SharedBuffer*);
-
 #if ENABLE(APPLICATION_MANIFEST)
     void notifyFinishedLoadingApplicationManifest(uint64_t callbackIdentifier, Optional<ApplicationManifest>);
 #endif
@@ -605,7 +603,7 @@ private:
     bool m_waitingForNavigationPolicy { false };
 
     HashMap<uint64_t, LinkIcon> m_iconsPendingLoadDecision;
-    HashMap<std::unique_ptr<IconLoader>, uint64_t> m_iconLoaders;
+    HashMap<std::unique_ptr<IconLoader>, CompletionHandler<void(SharedBuffer*)>> m_iconLoaders;
     Vector<LinkIcon> m_linkIcons;
 
 #if ENABLE(APPLICATION_MANIFEST)

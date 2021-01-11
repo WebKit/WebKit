@@ -6548,10 +6548,15 @@ void WebPage::didLosePointerLock()
 }
 #endif
 
-void WebPage::didGetLoadDecisionForIcon(bool decision, CallbackID loadIdentifier, OptionalCallbackID newCallbackID)
+void WebPage::didGetLoadDecisionForIcon(bool decision, CallbackID loadIdentifier, CompletionHandler<void(const IPC::SharedBufferDataReference&)>&& completionHandler)
 {
-    if (auto* documentLoader = corePage()->mainFrame().loader().documentLoader())
-        documentLoader->didGetLoadDecisionForIcon(decision, loadIdentifier.toInteger(), newCallbackID.toInteger());
+    auto* documentLoader = corePage()->mainFrame().loader().documentLoader();
+    if (!documentLoader)
+        return completionHandler({ });
+
+    documentLoader->didGetLoadDecisionForIcon(decision, loadIdentifier.toInteger(), [completionHandler = WTFMove(completionHandler)] (WebCore::SharedBuffer* iconData) mutable {
+        completionHandler({ iconData });
+    });
 }
 
 void WebPage::setUseIconLoadingClient(bool useIconLoadingClient)

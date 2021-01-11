@@ -32,6 +32,7 @@
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/WeakPtr.h>
 
 @class WebDownload;
 @class WebFrame;
@@ -52,7 +53,7 @@ class ResourceLoader;
 class ResourceRequest;
 }
 
-class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
+class WebFrameLoaderClient : public WebCore::FrameLoaderClient, public CanMakeWeakPtr<WebFrameLoaderClient> {
 public:
     explicit WebFrameLoaderClient(WebFrame* = nullptr);
     ~WebFrameLoaderClient();
@@ -246,9 +247,11 @@ private:
     void sendH2Ping(const URL&, CompletionHandler<void(Expected<Seconds, WebCore::ResourceError>&&)>&&) final;
 
     void getLoadDecisionForIcons(const Vector<std::pair<WebCore::LinkIcon&, uint64_t>>&) final;
-    void finishedLoadingIcon(uint64_t, WebCore::SharedBuffer*) final;
+    void finishedLoadingIcon(WebCore::SharedBuffer*);
 
-    uint64_t m_activeIconLoadCallbackID { 0 };
+#if !PLATFORM(IOS_FAMILY)
+    bool m_loadingIcon { false };
+#endif
 
     RetainPtr<WebFrame> m_webFrame;
 

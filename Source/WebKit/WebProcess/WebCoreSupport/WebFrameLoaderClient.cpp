@@ -1909,17 +1909,6 @@ void WebFrameLoaderClient::getLoadDecisionForIcons(const Vector<std::pair<WebCor
         webPage->send(Messages::WebPageProxy::GetLoadDecisionForIcon(icon.first, CallbackID::fromInteger(icon.second)));
 }
 
-void WebFrameLoaderClient::finishedLoadingIcon(uint64_t callbackIdentifier, SharedBuffer* data)
-{
-    auto callbackID = CallbackID::fromInteger(callbackIdentifier);
-    if (WebPage* webPage { m_frame->page() }) {
-        if (data)
-            webPage->send(Messages::WebPageProxy::FinishedLoadingIcon(callbackID, { *data }));
-        else
-            webPage->send(Messages::WebPageProxy::FinishedLoadingIcon(callbackID, { }));
-    }
-}
-
 void WebFrameLoaderClient::didCreateWindow(DOMWindow& window)
 {
     auto* webPage = m_frame->page();

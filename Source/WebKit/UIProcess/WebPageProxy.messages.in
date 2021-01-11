@@ -508,7 +508,6 @@ messages -> WebPageProxy {
     DidRestoreScrollPosition()
 
     GetLoadDecisionForIcon(struct WebCore::LinkIcon icon, WebKit::CallbackID callbackID)
-    FinishedLoadingIcon(WebKit::CallbackID callbackID, IPC::SharedBufferDataReference data);
 
 #if PLATFORM(MAC)
     DidHandleAcceptedCandidate()

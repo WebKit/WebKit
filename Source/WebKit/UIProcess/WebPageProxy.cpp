@@ -9405,23 +9405,19 @@ void WebPageProxy::didRestoreScrollPosition()
 
 void WebPageProxy::getLoadDecisionForIcon(const WebCore::LinkIcon& icon, CallbackID loadIdentifier)
 {
-    m_iconLoadingClient->getLoadDecisionForIcon(icon, [this, protectedThis = RefPtr<WebPageProxy>(this), loadIdentifier](WTF::Function<void (API::Data*, CallbackBase::Error)>&& callbackFunction) {
+    m_iconLoadingClient->getLoadDecisionForIcon(icon, [this, protectedThis = makeRef(*this), loadIdentifier] (CompletionHandler<void(API::Data*)>&& callback) {
         if (!hasRunningProcess()) {
-            if (callbackFunction)
-                callbackFunction(nullptr, CallbackBase::Error::Unknown);
+            if (callback)
+                callback(nullptr);
             return;
         }
 
-        bool decision = (bool)callbackFunction;
-        auto newCallbackIdentifier = decision ? OptionalCallbackID(m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivity("WebPageProxy::getLoadDecisionForIcon"_s))) : OptionalCallbackID();
-
-        send(Messages::WebPage::DidGetLoadDecisionForIcon(decision, loadIdentifier, newCallbackIdentifier));
+        if (!callback)
+            return sendWithAsyncReply(Messages::WebPage::DidGetLoadDecisionForIcon(false, loadIdentifier), [](auto) { });
+        sendWithAsyncReply(Messages::WebPage::DidGetLoadDecisionForIcon(true, loadIdentifier), [callback = WTFMove(callback)](const IPC::DataReference& iconData) mutable {
+            callback(API::Data::create(iconData).get());
+        });
     });
-}
-
-void WebPageProxy::finishedLoadingIcon(CallbackID callbackID, const IPC::DataReference& data)
-{
-    dataCallback(data, callbackID);
 }
 
 WebCore::UserInterfaceLayoutDirection WebPageProxy::userInterfaceLayoutDirection()

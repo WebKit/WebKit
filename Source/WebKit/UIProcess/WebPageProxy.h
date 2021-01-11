@@ -1548,7 +1548,6 @@ public:
     void didRestoreScrollPosition();
 
     void getLoadDecisionForIcon(const WebCore::LinkIcon&, WebKit::CallbackID);
-    void finishedLoadingIcon(WebKit::CallbackID, const IPC::DataReference&);
 
     void setFocus(bool focused);
     void setWindowFrame(const WebCore::FloatRect&);

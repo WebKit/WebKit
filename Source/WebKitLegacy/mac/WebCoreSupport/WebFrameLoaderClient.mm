@@ -1301,8 +1301,6 @@ void WebFrameLoaderClient::didFinishLoad()
 
 void WebFrameLoaderClient::prepareForDataSourceReplacement()
 {
-    m_activeIconLoadCallbackID = 0;
-
     if (![m_webFrame.get() _dataSource]) {
         ASSERT(!core(m_webFrame.get())->tree().childCount());
         return;
@@ -2198,7 +2196,7 @@ void WebFrameLoaderClient::getLoadDecisionForIcons(const Vector<std::pair<WebCor
 #if PLATFORM(MAC)
     if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_DEFAULT_ICON_LOADING)) {
         for (auto& icon : icons)
-            documentLoader->didGetLoadDecisionForIcon(false, icon.second, 0);
+            documentLoader->didGetLoadDecisionForIcon(false, icon.second, [](auto) { });
 
         return;
     }
@@ -2210,29 +2208,32 @@ void WebFrameLoaderClient::getLoadDecisionForIcons(const Vector<std::pair<WebCor
 
     if (disallowedDueToImageLoadSettings || !frame->isMainFrame() || !documentLoader->url().protocolIsInHTTPFamily() || ![WebView _isIconLoadingEnabled]) {
         for (auto& icon : icons)
-            documentLoader->didGetLoadDecisionForIcon(false, icon.second, 0);
+            documentLoader->didGetLoadDecisionForIcon(false, icon.second, [](auto) { });
 
         return;
     }
 
-    ASSERT(!m_activeIconLoadCallbackID);
-
 #if !PLATFORM(IOS_FAMILY)
+    ASSERT(!m_loadingIcon);
     // WebKit 1, which only supports one icon per page URL, traditionally has preferred the last icon in case of multiple icons listed.
     // To preserve that behavior we walk the list backwards.
     for (auto icon = icons.rbegin(); icon != icons.rend(); ++icon) {
-        if (icon->first.type != WebCore::LinkIconType::Favicon || m_activeIconLoadCallbackID) {
-            documentLoader->didGetLoadDecisionForIcon(false, icon->second, 0);
+        if (icon->first.type != WebCore::LinkIconType::Favicon || m_loadingIcon) {
+            documentLoader->didGetLoadDecisionForIcon(false, icon->second, [](auto) { });
             continue;
         }
 
-        m_activeIconLoadCallbackID = 1;
-        documentLoader->didGetLoadDecisionForIcon(true, icon->second, m_activeIconLoadCallbackID);
+        m_loadingIcon = true;
+        documentLoader->didGetLoadDecisionForIcon(true, icon->second, [this, weakThis = makeWeakPtr(*this)] (WebCore::SharedBuffer* buffer) {
+            if (!weakThis)
+                return;
+            finishedLoadingIcon(buffer);
+        });
     }
 #else
     // No WebCore icon loading on iOS
     for (auto& icon : icons)
-        documentLoader->didGetLoadDecisionForIcon(false, icon.second, 0);
+        documentLoader->didGetLoadDecisionForIcon(false, icon.second, [](auto) { });
 #endif
 }
 
@@ -2260,12 +2261,11 @@ static NSImage *webGetNSImage(WebCore::Image* image, NSSize size)
 }
 #endif // !PLATFORM(IOS_FAMILY)
 
-void WebFrameLoaderClient::finishedLoadingIcon(uint64_t callbackID, WebCore::SharedBuffer* iconData)
+void WebFrameLoaderClient::finishedLoadingIcon(WebCore::SharedBuffer* iconData)
 {
 #if !PLATFORM(IOS_FAMILY)
-    ASSERT(m_activeIconLoadCallbackID);
-    ASSERT(callbackID = m_activeIconLoadCallbackID);
-    m_activeIconLoadCallbackID = 0;
+    ASSERT(m_loadingIcon);
+    m_loadingIcon = false;
 
     WebView *webView = getWebView(m_webFrame.get());
     if (!webView)
@@ -2279,7 +2279,6 @@ void WebFrameLoaderClient::finishedLoadingIcon(uint64_t callbackID, WebCore::Sha
     if (icon)
         [webView _setMainFrameIcon:icon];
 #else
-    UNUSED_PARAM(callbackID);
     UNUSED_PARAM(iconData);
 #endif
 }

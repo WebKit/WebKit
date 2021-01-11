@@ -361,7 +361,6 @@ public:
     virtual void didRestoreScrollPosition() { }
 
     virtual void getLoadDecisionForIcons(const Vector<std::pair<WebCore::LinkIcon&, uint64_t>>&) { }
-    virtual void finishedLoadingIcon(uint64_t, SharedBuffer*) { }
 
     virtual void didCreateWindow(DOMWindow&) { }
 

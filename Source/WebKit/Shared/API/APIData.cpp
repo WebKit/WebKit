@@ -27,10 +27,18 @@
 #include "APIData.h"
 
 #include "ArgumentCoders.h"
+#include "DataReference.h"
 #include "Decoder.h"
 #include "Encoder.h"
 
 namespace API {
+
+RefPtr<Data> Data::create(const IPC::DataReference& data)
+{
+    if (data.isEmpty())
+        return nullptr;
+    return create(data.data(), data.size());
+}
 
 void Data::encode(IPC::Encoder& encoder) const
 {

@@ -139,6 +139,12 @@ def function_parameter_type(type, kind):
     return 'const %s&' % type
 
 
+def reply_type(type):
+    if type == 'IPC::SharedBufferDataReference':
+        return 'IPC::DataReference'
+    return type
+
+
 def reply_parameter_type(type):
     return '%s&' % type
 
@@ -151,12 +157,12 @@ def arguments_type(message):
     return 'std::tuple<%s>' % ', '.join(function_parameter_type(parameter.type, parameter.kind) for parameter in message.parameters)
 
 
-def reply_type(message):
+def reply_tuple(message):
     return 'std::tuple<%s>' % (', '.join(reply_parameter_type(parameter.type) for parameter in message.reply_parameters))
 
 
 def reply_arguments_type(message):
-    return 'std::tuple<%s>' % (', '.join(parameter.type for parameter in message.reply_parameters))
+    return 'std::tuple<%s>' % (', '.join(reply_type(parameter.type) for parameter in message.reply_parameters))
 
 
 def message_to_reply_forward_declaration(message):
@@ -193,7 +199,7 @@ def message_to_struct_declaration(receiver, message):
         send_parameters = [(function_parameter_type(x.type, x.kind), x.name) for x in message.reply_parameters]
         completion_handler_parameters = '%s' % ', '.join([' '.join(x) for x in send_parameters])
         if message.has_attribute(ASYNC_ATTRIBUTE):
-            move_parameters = ', '.join([move_type(x.type) for x in message.reply_parameters])
+            move_parameters = ', '.join([move_type(reply_type(x.type)) for x in message.reply_parameters])
             result.append('    static void callReply(IPC::Decoder&, CompletionHandler<void(%s)>&&);\n' % move_parameters)
             result.append('    static void cancelReply(CompletionHandler<void(%s)>&&);\n' % move_parameters)
             result.append('    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::%s_%sReply; }\n' % (receiver.name, message.name))
@@ -205,7 +211,7 @@ def message_to_struct_declaration(receiver, message):
             if len(send_parameters):
                 result.append(', %s' % completion_handler_parameters)
             result.append(');\n')
-        result.append('    using Reply = %s;\n' % reply_type(message))
+        result.append('    using Reply = %s;\n' % reply_tuple(message))
         result.append('    using ReplyArguments = %s;\n' % reply_arguments_type(message))
 
     if len(function_parameters):
@@ -865,10 +871,10 @@ def generate_message_handler(receiver):
                 result.append('#if %s\n\n' % message.condition)
 
             if message.has_attribute(ASYNC_ATTRIBUTE):
-                move_parameters = message.name, ', '.join([move_type(x.type) for x in message.reply_parameters])
+                move_parameters = message.name, ', '.join([move_type(reply_type(x.type)) for x in message.reply_parameters])
                 result.append('void %s::callReply(IPC::Decoder& decoder, CompletionHandler<void(%s)>&& completionHandler)\n{\n' % move_parameters)
                 for x in message.reply_parameters:
-                    result.append('    Optional<%s> %s;\n' % (x.type, x.name))
+                    result.append('    Optional<%s> %s;\n' % (reply_type(x.type), x.name))
                     result.append('    decoder >> %s;\n' % x.name)
                     result.append('    if (!%s) {\n        ASSERT_NOT_REACHED();\n        cancelReply(WTFMove(completionHandler));\n        return;\n    }\n' % x.name)
                 result.append('    completionHandler(')
@@ -876,7 +882,7 @@ def generate_message_handler(receiver):
                     result.append('WTFMove(*%s)' % ('), WTFMove(*'.join(x.name for x in message.reply_parameters)))
                 result.append(');\n}\n\n')
                 result.append('void %s::cancelReply(CompletionHandler<void(%s)>&& completionHandler)\n{\n    completionHandler(' % move_parameters)
-                result.append(', '.join(['IPC::AsyncReplyError<' + x.type + '>::create()' for x in message.reply_parameters]))
+                result.append(', '.join(['IPC::AsyncReplyError<' + reply_type(x.type) + '>::create()' for x in message.reply_parameters]))
                 result.append(');\n}\n\n')
 
             result.append('void %s::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection' % (message.name))

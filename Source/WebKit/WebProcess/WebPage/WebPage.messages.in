@@ -540,7 +540,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     SetUserInterfaceLayoutDirection(uint32_t direction)
 
-    DidGetLoadDecisionForIcon(bool decision, WebKit::CallbackID loadIdentifier, WebKit::OptionalCallbackID newCallbackID)
+    DidGetLoadDecisionForIcon(bool decision, WebKit::CallbackID loadIdentifier) -> (IPC::SharedBufferDataReference iconData) Async
     SetUseIconLoadingClient(bool useIconLoadingClient)
 
 #if ENABLE(GAMEPAD)

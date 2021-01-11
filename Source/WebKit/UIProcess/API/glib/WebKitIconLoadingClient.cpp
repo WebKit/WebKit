@@ -34,7 +34,7 @@ public:
     }
 
 private:
-    void getLoadDecisionForIcon(const WebCore::LinkIcon& icon, CompletionHandler<void(Function<void(API::Data*, CallbackBase::Error)>&&)>&& completionHandler) override
+    void getLoadDecisionForIcon(const WebCore::LinkIcon& icon, CompletionHandler<void(CompletionHandler<void(API::Data*)>&&)>&& completionHandler) override
     {
         // WebCore can send non HTTP icons.
         if (!icon.url.protocolIsInHTTPFamily()) {
@@ -49,8 +49,8 @@ private:
                 return;
             }
 
-            completionHandler([protectedWebView = WTFMove(protectedWebView), icon = WTFMove(icon)] (API::Data* iconData, CallbackBase::Error error) {
-                if (error != CallbackBase::Error::None || !iconData)
+            completionHandler([protectedWebView = WTFMove(protectedWebView), icon = WTFMove(icon)] (API::Data* iconData) {
+                if (!iconData)
                     return;
                 webkitWebViewSetIcon(protectedWebView.get(), icon, *iconData);
             });
