@@ -130,7 +130,8 @@ class ConfigureBuild(buildstep.BuildStep):
         self.buildOnly = buildOnly
         self.additionalArguments = additionalArguments
         self.device_model = device_model
-        self.addFactoryArguments(platform=platform, configuration=configuration, architecture=architecture, buildOnly=buildOnly, additionalArguments=additionalArguments, device_model=device_model)
+        if not USE_BUILDBOT_VERSION2:
+            self.addFactoryArguments(platform=platform, configuration=configuration, architecture=architecture, buildOnly=buildOnly, additionalArguments=additionalArguments, device_model=device_model)
 
     def start(self):
         self.setProperty("platform", self.platform)

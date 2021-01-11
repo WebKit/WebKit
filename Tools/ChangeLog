@@ -1,5 +1,14 @@
 2021-01-11  Aakash Jain  <aakash_jain@apple.com>
 
+        [build.webkit.org] Stop using deprecated addFactoryArguments method
+        https://bugs.webkit.org/show_bug.cgi?id=220513
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/steps.py:
+
+2021-01-11  Aakash Jain  <aakash_jain@apple.com>
+
         [ews] Add python 3 support - part 1
         https://bugs.webkit.org/show_bug.cgi?id=220510
 
