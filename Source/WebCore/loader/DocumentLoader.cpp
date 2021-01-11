@@ -323,8 +323,9 @@ void DocumentLoader::stopLoading()
             m_frame->loader().stopLoading(UnloadEventPolicy::None);
     }
 
-    for (auto& callback : std::exchange(m_iconLoaders, { }).values())
+    for (auto& callback : m_iconLoaders.values())
         callback(nullptr);
+    m_iconLoaders.clear();
     m_iconsPendingLoadDecision.clear();
     
 #if ENABLE(APPLICATION_MANIFEST)
