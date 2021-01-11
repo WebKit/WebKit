@@ -705,6 +705,7 @@ void RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock(RenderElement
             if (auto* newEnclosingFragmentedFlow = newParent->enclosingFragmentedFlow(); is<RenderMultiColumnFlow>(newEnclosingFragmentedFlow) && currentEnclosingFragment != newEnclosingFragmentedFlow) {
                 // Let the fragmented flow know that it has a new in-flow descendant.
                 multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*newEnclosingFragmentedFlow), child);
+                child.initializeFragmentedFlowStateOnInsertion();
             }
         }
     } else {
