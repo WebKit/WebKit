@@ -36,6 +36,9 @@ namespace Style {
 
 std::unique_ptr<Relations> commitRelationsToRenderStyle(RenderStyle& style, const Element& element, const Relations& relations)
 {
+    if (!relations.isEmpty())
+        style.setUnique();
+
     std::unique_ptr<Relations> remainingRelations;
 
     auto appendStyleRelation = [&remainingRelations] (const Relation& relation) {
@@ -61,7 +64,6 @@ std::unique_ptr<Relations> commitRelationsToRenderStyle(RenderStyle& style, cons
             style.setLastChildState();
             break;
         case Relation::Unique:
-            style.setUnique();
             break;
         case Relation::AffectedByPreviousSibling:
         case Relation::DescendantsAffectedByPreviousSibling:

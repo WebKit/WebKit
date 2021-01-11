@@ -1,3 +1,14 @@
+2021-01-11  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r258321): CSS rules using :first-of-type are applied to any/all siblings in a group under certain circumstances
+        https://bugs.webkit.org/show_bug.cgi?id=218256
+        <rdar://problem/70749584>
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/positional-selector-style-sharing-expected.html: Added.
+        * fast/css/positional-selector-style-sharing.html: Added.
+
 2021-01-11  Sam Weinig  <weinig@apple.com>
 
         Support lab(), lch(), gray() and color(lab ...) colors
