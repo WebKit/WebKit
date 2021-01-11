@@ -1,3 +1,9 @@
+2021-01-11  BJ Burg  <bburg@apple.com>
+
+        Unreviewed, update my contributor information.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2021-01-11  Youenn Fablet  <youenn@apple.com>
 
         WebProcessPool::establishWorkerContextConnectionToNetworkProcess should make sure to remove the selected process from the cache

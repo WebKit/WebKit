@@ -781,6 +781,18 @@
          "AryehGregor"
       ]
    },
+   "BJ Burg" : {
+      "emails" : [
+         "bburg@apple.com",
+         "burg@cs.washington.edu"
+      ],
+      "expertise" : "Developer Tools, Web Inspector, WebDriver, Cocoa API",
+      "nicks" : [
+         "bburg",
+         "burg"
+      ],
+      "status" : "reviewer"
+   },
    "Babak Shafiei" : {
       "emails" : [
          "bshafiei@apple.com"
@@ -962,18 +974,6 @@
       "nicks" : [
          "brettx"
       ]
-   },
-   "Brian Burg" : {
-      "emails" : [
-         "bburg@apple.com",
-         "burg@cs.washington.edu"
-      ],
-      "expertise" : "Developer Tools, Web Inspector",
-      "nicks" : [
-         "bburg",
-         "brrian"
-      ],
-      "status" : "reviewer"
    },
    "Brian Holt" : {
       "emails" : [
