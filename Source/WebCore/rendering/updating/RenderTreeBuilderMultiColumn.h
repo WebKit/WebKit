@@ -42,6 +42,7 @@ public:
     // sets. If |child| is such a renderer, resolve it to the placeholder that lives at the original
     // location in the tree.
     RenderObject* resolveMovedChild(RenderFragmentedFlow& enclosingFragmentedFlow, RenderObject* beforeChild);
+    void restoreColumnSpannersForContainer(const RenderElement& container, RenderMultiColumnFlow&);
     void multiColumnDescendantInserted(RenderMultiColumnFlow&, RenderObject& newDescendant);
     void multiColumnRelativeWillBeRemoved(RenderMultiColumnFlow&, RenderObject& relative);
     static RenderObject* adjustBeforeChildForMultiColumnSpannerIfNeeded(RenderObject& beforeChild);
