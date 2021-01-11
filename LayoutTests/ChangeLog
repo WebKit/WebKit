@@ -1,3 +1,18 @@
+2021-01-11  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Debugger: allow breakpoint actions to be evaluated as a user gesture
+        https://bugs.webkit.org/show_bug.cgi?id=200275
+
+        Reviewed by Brian Burg.
+
+        * inspector/debugger/breakpoint-action-emulateUserGesture.html: Added.
+        * inspector/debugger/breakpoint-action-emulateUserGesture-expected.txt: Added.
+        * inspector/debugger/breakpoint-action-emulateUserGesture-userIsInteracting.html: Added.
+        * inspector/debugger/breakpoint-action-emulateUserGesture-userIsInteracting-expected.txt: Added.
+
+        * TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2021-01-11  Sihui Liu  <sihui_liu@appe.com>
 
         Keep newly created IDBIndex objects in deleted map when IDBTransaction is aborted

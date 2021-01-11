@@ -1,0 +1,13 @@
+Tests for Debugger.BreakpointAction emulateUserGesture parameter.
+
+
+== Running test suite: Debugger.BreakpointAction
+-- Running test case: Debugger.BreakpointAction.emulateUserGesture.false
+Before debugger
+Not in User Gesture
+After debugger
+-- Running test case: Debugger.BreakpointAction.emulateUserGesture.true
+Before debugger
+In User Gesture
+After debugger
+

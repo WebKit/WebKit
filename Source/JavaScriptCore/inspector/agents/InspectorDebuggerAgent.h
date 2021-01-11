@@ -96,7 +96,7 @@ public:
     Protocol::ErrorStringOr<void> setShouldBlackboxURL(const String& url, bool shouldBlackbox, Optional<bool>&& caseSensitive, Optional<bool>&& isRegex) final;
 
     // JSC::Debugger::Client
-    JSC::JSObject* scopeExtensionObject(JSC::Debugger&, JSC::JSGlobalObject*, JSC::DebuggerCallFrame&) final;
+    JSC::JSObject* debuggerScopeExtensionObject(JSC::Debugger&, JSC::JSGlobalObject*, JSC::DebuggerCallFrame&) final;
 
     // JSC::Debugger::Observer
     void didParseSource(JSC::SourceID, const JSC::Debugger::Script&) final;

@@ -120,6 +120,18 @@ void PageDebuggerAgent::unmuteConsole()
     PageConsoleClient::unmute();
 }
 
+void PageDebuggerAgent::debuggerWillEvaluate(JSC::Debugger&, const JSC::Breakpoint::Action& action)
+{
+    if (action.emulateUserGesture)
+        m_breakpointActionUserGestureEmulationScopeStack.append(makeUniqueRef<UserGestureEmulationScope>(m_inspectedPage, true));
+}
+
+void PageDebuggerAgent::debuggerDidEvaluate(JSC::Debugger&, const JSC::Breakpoint::Action& action)
+{
+    if (action.emulateUserGesture)
+        m_breakpointActionUserGestureEmulationScopeStack.removeLast();
+}
+
 void PageDebuggerAgent::breakpointActionLog(JSC::JSGlobalObject* lexicalGlobalObject, const String& message)
 {
     m_inspectedPage.console().addMessage(MessageSource::JS, MessageLevel::Log, message, createScriptCallStack(lexicalGlobalObject));

@@ -130,6 +130,8 @@ static T parseBreakpointOptions(Protocol::ErrorString& errorString, RefPtr<JSON:
                 // in the frontend across multiple backend probe actions and segregate object groups.
                 action.id = actionObject->getInteger(Protocol::Debugger::BreakpointAction::idKey).valueOr(JSC::noBreakpointActionID);
 
+                action.emulateUserGesture = actionObject->getBoolean(Protocol::Debugger::BreakpointAction::emulateUserGestureKey).valueOr(false);
+
                 actions.append(WTFMove(action));
             }
         }
@@ -1103,12 +1105,12 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setPauseForInternalScripts
     return { };
 }
 
-JSC::JSObject* InspectorDebuggerAgent::scopeExtensionObject(JSC::Debugger& debugger, JSC::JSGlobalObject* globalObject, JSC::DebuggerCallFrame& debuggerCallFrame)
+JSC::JSObject* InspectorDebuggerAgent::debuggerScopeExtensionObject(JSC::Debugger& debugger, JSC::JSGlobalObject* globalObject, JSC::DebuggerCallFrame& debuggerCallFrame)
 {
     auto injectedScript = m_injectedScriptManager.injectedScriptFor(globalObject);
     ASSERT(!injectedScript.hasNoValue());
     if (injectedScript.hasNoValue())
-        return JSC::Debugger::Client::scopeExtensionObject(debugger, globalObject, debuggerCallFrame);
+        return JSC::Debugger::Client::debuggerScopeExtensionObject(debugger, globalObject, debuggerCallFrame);
 
     auto* debuggerGlobalObject = debuggerCallFrame.scope()->globalObject();
     auto callFrame = toJS(debuggerGlobalObject, debuggerGlobalObject, JavaScriptCallFrame::create(debuggerCallFrame).ptr());

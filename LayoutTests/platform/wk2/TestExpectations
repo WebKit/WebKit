@@ -749,6 +749,7 @@ fast/forms/call-text-did-change-in-text-field-when-typing.html [ Pass ]
 http/tests/privateClickMeasurement [ Pass ]
 
 # User interaction is a WebKit2 concept.
+inspector/debugger/breakpoint-action-emulateUserGesture-userIsInteracting.html [ Pass ]
 inspector/debugger/evaluateOnCallFrame-emulateUserGesture-userIsInteracting.html [ Pass ]
 inspector/runtime/evaluate-emulateUserGesture-userIsInteracting.html [ Pass ]
 inspector/runtime/callFunctionOn-emulateUserGesture-userIsInteracting.html [ Pass ]

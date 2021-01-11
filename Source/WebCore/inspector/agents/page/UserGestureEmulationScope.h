@@ -41,6 +41,7 @@ class Page;
 
 class UserGestureEmulationScope {
     WTF_MAKE_NONCOPYABLE(UserGestureEmulationScope);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     UserGestureEmulationScope(Page& inspectedPage, bool emulateUserGesture);
     ~UserGestureEmulationScope();

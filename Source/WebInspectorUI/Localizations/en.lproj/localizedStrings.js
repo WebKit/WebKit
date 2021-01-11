@@ -549,7 +549,10 @@ localizedStrings["Elements"] = "Elements";
 localizedStrings["Elements Tab Name"] = "Elements";
 /* Category label for experimental settings pertaining to the Elements tab */
 localizedStrings["Elements Tab: @ Experimental Settings"] = "Elements Tab:";
-localizedStrings["Emulate User Gesture"] = "Emulate User Gesture";
+/* Checkbox shown in the Console to cause future evaluations as though they are in response to user interaction. */
+localizedStrings["Emulate User Gesture @ Console"] = "Emulate User Gesture";
+/* Checkbox shown when configuring log/evaluate/probe breakpoint actions to cause it to be evaluated as though it was in response to user interaction. */
+localizedStrings["Emulate User Gesture @ breakpoint action configuration"] = "Emulate User Gesture";
 localizedStrings["Enable Audit"] = "Enable Audit";
 localizedStrings["Enable Breakpoint"] = "Enable Breakpoint";
 localizedStrings["Enable Breakpoints"] = "Enable Breakpoints";

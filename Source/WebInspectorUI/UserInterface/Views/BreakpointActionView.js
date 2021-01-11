@@ -126,6 +126,21 @@ WI.BreakpointActionView = class BreakpointActionView extends WI.Object
     {
         this._bodyElement.removeChildren();
 
+        let createOptionsElements = () => {
+            let optionsElement = document.createElement("div");
+
+            let emulateUserGestureLabel = optionsElement.appendChild(document.createElement("label"));
+
+            this._emulateUserGestureCheckbox = emulateUserGestureLabel.appendChild(document.createElement("input"));
+            this._emulateUserGestureCheckbox.type = "checkbox";
+            this._emulateUserGestureCheckbox.checked = this._action.emulateUserGesture;
+            this._emulateUserGestureCheckbox.addEventListener("change", this._handleEmulateUserGestureCheckboxChange.bind(this));
+
+            emulateUserGestureLabel.appendChild(document.createTextNode(WI.UIString("Emulate User Gesture", "Emulate User Gesture @ breakpoint action configuration", "Checkbox shown when configuring log/evaluate/probe breakpoint actions to cause it to be evaluated as though it was in response to user interaction.")));
+
+            return optionsElement;
+        };
+
         switch (this._action.type) {
         case WI.BreakpointAction.Type.Log:
             this._bodyElement.hidden = false;
@@ -138,7 +153,13 @@ WI.BreakpointActionView = class BreakpointActionView extends WI.Object
             if (!omitFocus)
                 setTimeout(function() { input.focus(); }, 0);
 
-            var descriptionElement = this._bodyElement.appendChild(document.createElement("div"));
+            var flexWrapper = this._bodyElement.appendChild(document.createElement("div"));
+            flexWrapper.className = "flex";
+
+            if (WI.BreakpointAction.supportsEmulateUserAction())
+                flexWrapper.appendChild(createOptionsElements());
+
+            var descriptionElement = flexWrapper.appendChild(document.createElement("div"));
             descriptionElement.classList.add("description");
             descriptionElement.setAttribute("dir", "ltr");
             descriptionElement.textContent = WI.UIString("${expr} = expression");
@@ -166,6 +187,9 @@ WI.BreakpointActionView = class BreakpointActionView extends WI.Object
 
             var completionController = new WI.CodeMirrorCompletionController(this._delegate.breakpointActionViewCodeMirrorCompletionControllerMode(this, this._codeMirror), this._codeMirror);
             completionController.addExtendedCompletionProvider("javascript", WI.javaScriptRuntimeCompletionProvider);
+
+            if (WI.BreakpointAction.supportsEmulateUserAction())
+                this._bodyElement.appendChild(createOptionsElements());
 
             // CodeMirror needs a refresh after the popover displays to layout otherwise it doesn't appear.
             setTimeout(() => {
@@ -206,5 +230,10 @@ WI.BreakpointActionView = class BreakpointActionView extends WI.Object
         this._codeMirrorViewport.from = from;
         this._codeMirrorViewport.to = to;
         this._delegate.breakpointActionViewResized(this);
+    }
+
+    _handleEmulateUserGestureCheckboxChange(event)
+    {
+        this._action.emulateUserGesture = this._emulateUserGestureCheckbox.checked;
     }
 };

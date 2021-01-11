@@ -55,6 +55,7 @@ public:
         Type type;
         String data;
         BreakpointActionID id { noBreakpointActionID };
+        bool emulateUserGesture { false };
     };
 
     using ActionsVector = Vector<Action>;

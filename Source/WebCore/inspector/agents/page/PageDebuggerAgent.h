@@ -39,6 +39,7 @@ class DOMWrapperWorld;
 class Document;
 class Frame;
 class Page;
+class UserGestureEmulationScope;
 
 class PageDebuggerAgent final : public WebDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(PageDebuggerAgent);
@@ -50,6 +51,10 @@ public:
 
     // DebuggerBackendDispatcherHandler
     Inspector::Protocol::ErrorStringOr<std::tuple<Ref<Inspector::Protocol::Runtime::RemoteObject>, Optional<bool> /* wasThrown */, Optional<int> /* savedResultIndex */>> evaluateOnCallFrame(const Inspector::Protocol::Debugger::CallFrameId&, const String& expression, const String& objectGroup, Optional<bool>&& includeCommandLineAPI, Optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, Optional<bool>&& returnByValue, Optional<bool>&& generatePreview, Optional<bool>&& saveResult, Optional<bool>&& emulateUserGesture);
+
+    // JSC::Debugger::Client
+    void debuggerWillEvaluate(JSC::Debugger&, const JSC::Breakpoint::Action&);
+    void debuggerDidEvaluate(JSC::Debugger&, const JSC::Breakpoint::Action&);
 
     // JSC::Debugger::Observer
     void breakpointActionLog(JSC::JSGlobalObject*, const String& data);
@@ -75,6 +80,7 @@ private:
     Inspector::InjectedScript injectedScriptForEval(Inspector::Protocol::ErrorString&, Optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);
 
     Page& m_inspectedPage;
+    Vector<UniqueRef<UserGestureEmulationScope>> m_breakpointActionUserGestureEmulationScopeStack;
 };
 
 } // namespace WebCore

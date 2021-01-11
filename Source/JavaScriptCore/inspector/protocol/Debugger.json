@@ -41,7 +41,8 @@
             "properties": [
                 { "name": "type", "type": "string", "enum": ["log", "evaluate", "sound", "probe"], "description": "Different kinds of breakpoint actions." },
                 { "name": "data", "type": "string", "optional": true, "description": "Data associated with this breakpoint type (e.g. for type \"eval\" this is the JavaScript string to evaluate)." },
-                { "name": "id", "$ref": "BreakpointActionIdentifier", "optional": true, "description": "A frontend-assigned identifier for this breakpoint action." }
+                { "name": "id", "$ref": "BreakpointActionIdentifier", "optional": true, "description": "A frontend-assigned identifier for this breakpoint action." },
+                { "name": "emulateUserGesture", "type": "boolean", "optional": true, "description": "Indicates whether this action should be executed with a user gesture or not. Defaults to <code>false<code>." }
             ]
         },
         {

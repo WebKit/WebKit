@@ -77,14 +77,21 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         }, this);
         WI.settings.clearLogOnNavigate.addEventListener(WI.Setting.Event.Changed, this._handleClearLogOnNavigateSettingChanged, this);
 
-        this._emulateInUserGestureNavigationItem = new WI.CheckboxNavigationItem("emulate-in-user-gesture", WI.UIString("Emulate User Gesture"), WI.settings.emulateInUserGesture.value);
-        this._emulateInUserGestureNavigationItem.tooltip = WI.UIString("Run console commands as if inside a user gesture");
-        this._emulateInUserGestureNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, function(event) {
-            WI.settings.emulateInUserGesture.value = !WI.settings.emulateInUserGesture.value;
-        }, this);
-        WI.settings.emulateInUserGesture.addEventListener(WI.Setting.Event.Changed, this._handleEmulateInUserGestureSettingChanged, this);
+        let checkboxesNavigationItems = [this._preserveLogNavigationItem];
 
-        this._checkboxesNavigationItemGroup = new WI.GroupNavigationItem([this._preserveLogNavigationItem, this._emulateInUserGestureNavigationItem, new WI.DividerNavigationItem]);
+        // COMPATIBILITY (iOS 13): `Runtime.evaluate` did not have a `emulateUserGesture` parameter yet.
+        if (WI.sharedApp.isWebDebuggable() && InspectorBackend.hasCommand("Runtime.evaluate", "emulateUserGesture")) {
+            this._emulateUserGestureNavigationItem = new WI.CheckboxNavigationItem("emulate-in-user-gesture", WI.UIString("Emulate User Gesture", "Emulate User Gesture @ Console", "Checkbox shown in the Console to cause future evaluations as though they are in response to user interaction."), WI.settings.emulateInUserGesture.value);
+            this._emulateUserGestureNavigationItem.tooltip = WI.UIString("Run console commands as if inside a user gesture");
+            this._emulateUserGestureNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, function(event) {
+                WI.settings.emulateInUserGesture.value = !WI.settings.emulateInUserGesture.value;
+            }, this);
+            WI.settings.emulateInUserGesture.addEventListener(WI.Setting.Event.Changed, this._handleEmulateInUserGestureSettingChanged, this);
+            checkboxesNavigationItems.push(this._emulateUserGestureNavigationItem);
+        }
+
+        checkboxesNavigationItems.push(new WI.DividerNavigationItem);
+        this._checkboxesNavigationItemGroup = new WI.GroupNavigationItem(checkboxesNavigationItems);
 
         let scopeBarItems = [
             new WI.ScopeBarItem(WI.LogContentView.Scopes.All, WI.UIString("All"), {exclusive: true}),
@@ -906,7 +913,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     _handleEmulateInUserGestureSettingChanged()
     {
-        this._emulateInUserGestureNavigationItem.checked = WI.settings.emulateInUserGesture.value;
+        this._emulateUserGestureNavigationItem.checked = WI.settings.emulateInUserGesture.value;
     }
 
     _keyDown(event)
