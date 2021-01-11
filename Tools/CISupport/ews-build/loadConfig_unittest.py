@@ -89,10 +89,10 @@ class ConfigDotJSONTest(unittest.TestCase):
             schedulers_to_buildername_map[scheduler['name']] = scheduler['builderNames']
 
         for builder in config['builders']:
-            for key, value in builder.iteritems():
+            for key, value in builder.items():
                 if key == 'triggered_by':
                     self.assertTrue(len(value) == 1, 'triggered_by "{}" is invalid, it should contain a single trigger.'.format(value))
-                    self.assertTrue(value[0] in schedulers_to_buildername_map.keys(),
+                    self.assertTrue(value[0] in list(schedulers_to_buildername_map.keys()),
                                     'triggered_by "{}" for builder "{}" is not listed in schedulers section.'.format(value[0], builder['name']))
 
                     # Ensure that the triggered_by is correct, verify by matching that the builder for the triggered_by scheduler actually triggers current builder
@@ -127,7 +127,7 @@ class TagsForBuilderTest(unittest.TestCase):
         self.verifyTags('macOS-High-Sierra-Release-32bit-WK2-EWS', ['macOS', 'High', 'Sierra', 'Release', 'WK2', '32bit'])
 
     def test_tags_type(self):
-        tags = loadConfig.getTagsForBuilder({'name': u'iOS-11-EWS'})
+        tags = loadConfig.getTagsForBuilder({'name': 'iOS-11-EWS'})
         self.assertEqual(tags, ['iOS'])
         self.assertEqual(type(tags[0]), str)
 
