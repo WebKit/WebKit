@@ -42,8 +42,20 @@ InlineLayoutUnit InlineFormattingContext::Quirks::initialLineHeight() const
 
 bool InlineFormattingContext::Quirks::inlineLevelBoxAffectsLineBox(const LineBox::InlineLevelBox& inlineLevelBox, const LineBox& lineBox) const
 {
-    if (inlineLevelBox.isInlineBox())
-        return inlineLevelBox.hasContent();
+    if (inlineLevelBox.isInlineBox()) {
+        // Inline boxes (e.g. root inline box or <span>) affects line boxes either through the strut or actual content.
+        if (inlineLevelBox.hasContent())
+            return true;
+        if (!inlineLevelBox.isRootInlineBox()) {
+            auto& boxGeometry = formattingContext().geometryForBox(inlineLevelBox.layoutBox());
+            if (boxGeometry.horizontalBorder() || boxGeometry.horizontalPadding().valueOr(0_lu)) {
+                // Horizontal border and padding make the inline box stretch the line (e.g. <span style="padding: 10px;"></span>).
+                return true;
+            }
+        }
+        auto inlineBoxHasImaginaryStrut = layoutState().inNoQuirksMode();
+        return inlineBoxHasImaginaryStrut && !lineBox.isConsideredEmpty();
+    }
     if (inlineLevelBox.isLineBreakBox()) {
         // <br> in non-standard mode stretches the line box only when the line is empty.
         // e.g. <div><span><br></span></div> will stretch but <div>this will not stretch to 200px<span style="font-size: 200px;"><br></span></div>
