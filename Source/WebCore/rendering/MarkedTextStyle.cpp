@@ -74,7 +74,7 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
 #if ENABLE(APP_HIGHLIGHTS)
     case MarkedText::AppHighlight: {
         OptionSet<StyleColor::Options> styleColorOptions = { StyleColor::Options::UseSystemAppearance };
-        style.backgroundColor = renderer().theme().appHighlightColor(styleColorOptions);
+        style.backgroundColor = renderer.theme().appHighlightColor(styleColorOptions);
         break;
     }
 #endif
