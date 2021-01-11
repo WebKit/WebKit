@@ -701,11 +701,11 @@ protected:
     bool shouldComputeLogicalWidthFromAspectRatioAndInsets() const;
     LayoutUnit computeLogicalWidthFromAspectRatio(RenderFragmentContainer* = nullptr) const;
 
-    static LayoutUnit blockSizeFromAspectRatio(LayoutUnit borderPaddingInlineSum, LayoutUnit borderPaddingBlockSum, double aspectRatio, BoxSizing boxSizing, LayoutUnit inlineSize)
+    static LayoutUnit blockSizeFromAspectRatio(LayoutUnit borderPaddingInlineSum, LayoutUnit borderPaddingBlockSum, LayoutUnit aspectRatio, BoxSizing boxSizing, LayoutUnit inlineSize)
     {
         if (boxSizing == BoxSizing::BorderBox)
-            return inlineSize / LayoutUnit(aspectRatio);
-        return ((inlineSize - borderPaddingInlineSum) / LayoutUnit(aspectRatio)) + borderPaddingBlockSum;
+            return inlineSize / aspectRatio;
+        return ((inlineSize - borderPaddingInlineSum) / aspectRatio) + borderPaddingBlockSum;
     }
 
 private:
