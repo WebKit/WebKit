@@ -584,7 +584,8 @@ void WebInspectorProxy::frontendLoaded()
         automationSession->inspectorFrontendLoaded(*m_inspectedPage);
     
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    m_extensionController->inspectorFrontendLoaded();
+    if (m_extensionController)
+        m_extensionController->inspectorFrontendLoaded();
 #endif
 }
 
