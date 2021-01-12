@@ -239,7 +239,8 @@ Vector<String> extractGStreamerOptionsFromCommandLine()
 
 bool ensureGStreamerInitialized()
 {
-    RELEASE_ASSERT(isInWebProcess());
+    // FIXME: Re-enable this ASSERT when fixing https://bugs.webkit.org/show_bug.cgi?id=220542
+    // RELEASE_ASSERT(isInWebProcess());
     static std::once_flag onceFlag;
     static bool isGStreamerInitialized;
     std::call_once(onceFlag, [] {
