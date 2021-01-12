@@ -66,24 +66,3 @@ async function doScrollTest(targetElement, direction, scrollMotions)
 
     await UIHelper.waitForScrollCompletion();
 }
-
-function delay(time) {
-    return new Promise(resolve => setTimeout(resolve, time));
-}
-
-function shortScrollShouldSnapBack(targetElement, direction)
-{
-    var scrollPositionBeforeSnap = targetElement.scrollLeft;
-    return doScrollSnap(targetElement, HORIZONTAL).then(() => {
-        // The targetElement should have remained on the same snap point.
-        expectTrue("targetElement.scrollLeft == scrollPositionBeforeSnap", "div honored snap points.");
-    });
-}
-
-function scrollGlideShouldScrollTo(targetElement, direction, expectedValue)
-{
-    return doScrollGlide(targetElement, HORIZONTAL).then(() => {
-        // The targetElement should have snapped to the given snap position.
-        expectTrue("targetElement.scrollLeft == " + expectedValue, "div scrolled to next window.");
-    });
-}

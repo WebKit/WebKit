@@ -32,11 +32,19 @@
 
         async function runTests()
         {
-            await UIHelper.delayFor(0);
-            await scrollGlideShouldScrollTo(document.scrollingElement, VERTICAL, "window.innerHeight");
-            await UIHelper.delayFor(0);
-            await shortScrollShouldSnapBack(document.scrollingElement, VERTICAL);
-            finishJSTest();
+            try {
+                await UIHelper.delayFor(0);
+                await doScrollGlide(document.scrollingElement, VERTICAL);
+                expectTrue(document.scrollingElement.scrollTop == window.innerHeight, "div scrolled to next window.");
+
+                await UIHelper.delayFor(0);
+                await doScrollSnap(document.scrollingElement, VERTICAL);
+                expectTrue(document.scrollingElement.scrollTop == window.innerHeight, "div honored snap points.");
+            } catch (e) {
+                console.log(e);
+            } finally {
+                finishJSTest();
+            }
         }
 
         function onLoad()
