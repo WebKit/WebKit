@@ -1,3 +1,17 @@
+2021-01-12  Peng Liu  <peng.liu6@apple.com>
+
+        REGRESSION (r271341): media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-inline.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=220530
+
+        Reviewed by Eric Carlson.
+
+        Similar to r271377, this patch fixes a layout test failure/timeout by enabling "MockVideoPresentationMode"
+        and sending a request to enter/exit fullscreen after the current mode change is completed.
+
+        * media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-inline-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-inline.html:
+        * platform/mac/TestExpectations:
+
 2021-01-12  Martin Robinson  <mrobinson@igalia.com>
 
         Clean up some mainframe scroll snap tests
