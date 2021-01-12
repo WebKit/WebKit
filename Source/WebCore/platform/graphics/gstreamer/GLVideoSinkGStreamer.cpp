@@ -133,11 +133,7 @@ Optional<GRefPtr<GstContext>> requestGLContext(const char* contextType)
     if (!g_strcmp0(contextType, "gst.gl.app_context")) {
         GstContext* appContext = gst_context_new("gst.gl.app_context", TRUE);
         GstStructure* structure = gst_context_writable_structure(appContext);
-#if GST_CHECK_VERSION(1, 12, 0)
         gst_structure_set(structure, "context", GST_TYPE_GL_CONTEXT, gstGLContext, nullptr);
-#else
-        gst_structure_set(structure, "context", GST_GL_TYPE_CONTEXT, gstGLContext, nullptr);
-#endif
         return adoptGRef(appContext);
     }
 
@@ -158,15 +154,11 @@ static bool setGLContext(GstElement* elementSink, const char* contextType)
 
 static GstStateChangeReturn webKitGLVideoSinkChangeState(GstElement* element, GstStateChange transition)
 {
-#if GST_CHECK_VERSION(1, 14, 0)
     GST_DEBUG_OBJECT(element, "%s", gst_state_change_get_name(transition));
-#endif
 
     switch (transition) {
     case GST_STATE_CHANGE_NULL_TO_READY:
-#if GST_CHECK_VERSION(1, 14, 0)
     case GST_STATE_CHANGE_READY_TO_READY:
-#endif
     case GST_STATE_CHANGE_READY_TO_PAUSED: {
         if (!setGLContext(element, GST_GL_DISPLAY_CONTEXT_TYPE))
             return GST_STATE_CHANGE_FAILURE;

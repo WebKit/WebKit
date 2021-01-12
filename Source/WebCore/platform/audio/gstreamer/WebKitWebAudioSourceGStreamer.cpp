@@ -78,7 +78,6 @@ struct _WebKitWebAudioSrcPrivate {
 
     GRefPtr<GstBufferPool> pool;
 
-    bool enableGapBufferSupport;
     bool hasRenderedAudibleFrame { false };
 
     Lock dispatchToRenderThreadLock;
@@ -93,11 +92,6 @@ struct _WebKitWebAudioSrcPrivate {
         sourcePad = webkitGstGhostPadFromStaticTemplate(&srcTemplate, "src", nullptr);
 
         g_rec_mutex_init(&mutex);
-
-        // GAP buffer support is enabled only for GStreamer 1.12.5 because of a
-        // memory leak that was fixed in that version.
-        // https://bugzilla.gnome.org/show_bug.cgi?id=793067
-        enableGapBufferSupport = webkitGstCheckVersion(1, 12, 5);
     }
 
     ~_WebKitWebAudioSrcPrivate()
@@ -370,7 +364,7 @@ static void webKitWebAudioSrcRenderAndPushFrames(GRefPtr<GstElement>&& element, 
         GST_BUFFER_TIMESTAMP(buffer.get()) = outputTimestamp.position.nanoseconds();
         GST_BUFFER_DURATION(buffer.get()) = duration;
 
-        if (priv->enableGapBufferSupport && priv->bus->channel(i)->isSilent())
+        if (priv->bus->channel(i)->isSilent())
             GST_BUFFER_FLAG_SET(buffer.get(), GST_BUFFER_FLAG_GAP);
 
         if (failed)
@@ -430,9 +424,7 @@ static GstStateChangeReturn webKitWebAudioSrcChangeState(GstElement* element, Gs
     auto* src = WEBKIT_WEB_AUDIO_SRC(element);
     auto* priv = src->priv;
 
-#if GST_CHECK_VERSION(1, 14, 0)
     GST_DEBUG_OBJECT(element, "%s", gst_state_change_get_name(transition));
-#endif
 
     switch (transition) {
     case GST_STATE_CHANGE_NULL_TO_READY:

@@ -256,9 +256,7 @@ static GstStateChangeReturn webKitAudioSinkChangeState(GstElement* element, GstS
     auto* sink = WEBKIT_AUDIO_SINK(element);
     auto* priv = sink->priv;
 
-#if GST_CHECK_VERSION(1, 14, 0)
     GST_DEBUG_OBJECT(sink, "Handling %s transition", gst_state_change_get_name(stateChange));
-#endif
 
     auto& mixer = GStreamerAudioMixer::singleton();
     if (priv->interAudioSink && stateChange == GST_STATE_CHANGE_NULL_TO_READY)

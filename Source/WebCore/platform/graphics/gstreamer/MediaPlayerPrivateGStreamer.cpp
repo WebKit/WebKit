@@ -153,14 +153,6 @@ static void busMessageCallback(GstBus*, GstMessage* message, MediaPlayerPrivateG
     player->handleMessage(message);
 }
 
-static void convertToInternalProtocol(URL& url)
-{
-    if (webkitGstCheckVersion(1, 12, 0))
-        return;
-    if (url.protocolIsInHTTPFamily() || url.protocolIsBlob())
-        url.setProtocol(makeString("webkit+", url.protocol()));
-}
-
 static void initializeDebugCategory()
 {
     static std::once_flag onceFlag;
@@ -848,22 +840,15 @@ bool MediaPlayerPrivateGStreamer::hasSingleSecurityOrigin() const
 
 Optional<bool> MediaPlayerPrivateGStreamer::wouldTaintOrigin(const SecurityOrigin& origin) const
 {
-    if (webkitGstCheckVersion(1, 12, 0)) {
-        GST_TRACE_OBJECT(pipeline(), "Checking %u origins", m_origins.size());
-        for (auto& responseOrigin : m_origins) {
-            if (!origin.canAccess(*responseOrigin)) {
-                GST_DEBUG_OBJECT(pipeline(), "Found reachable response origin");
-                return true;
-            }
+    GST_TRACE_OBJECT(pipeline(), "Checking %u origins", m_origins.size());
+    for (auto& responseOrigin : m_origins) {
+        if (!origin.canAccess(*responseOrigin)) {
+            GST_DEBUG_OBJECT(pipeline(), "Found reachable response origin");
+            return true;
         }
-        GST_DEBUG_OBJECT(pipeline(), "No valid response origin found");
-        return false;
     }
-
-    // GStreamer < 1.12 has an incomplete uridownloader implementation so we
-    // can't use WebKitWebSrc for adaptive fragments downloading if this
-    // version is detected.
-    return m_hasTaintedOrigin;
+    GST_DEBUG_OBJECT(pipeline(), "No valid response origin found");
+    return false;
 }
 
 void MediaPlayerPrivateGStreamer::simulateAudioInterruption()
@@ -983,7 +968,6 @@ void MediaPlayerPrivateGStreamer::setPlaybinURL(const URL& url)
         cleanURLString = cleanURLString.substring(0, url.pathEnd());
 
     m_url = URL(URL(), cleanURLString);
-    convertToInternalProtocol(m_url);
     GST_INFO_OBJECT(pipeline(), "Load %s", m_url.string().utf8().data());
     g_object_set(m_pipeline.get(), "uri", m_url.string().utf8().data(), nullptr);
 }
@@ -1973,7 +1957,6 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             GST_DEBUG_OBJECT(pipeline(), "Processing HTTP headers: %" GST_PTR_FORMAT, structure);
             if (const char* uri = gst_structure_get_string(structure, "uri")) {
                 URL url(URL(), uri);
-                convertToInternalProtocol(url);
                 m_origins.add(SecurityOrigin::create(url));
 
                 if (url != m_url) {
@@ -2012,11 +1995,6 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         } else if (gst_structure_has_name(structure, "webkit-network-statistics")) {
             if (gst_structure_get(structure, "read-position", G_TYPE_UINT64, &m_networkReadPosition, "size", G_TYPE_UINT64, &m_httpResponseTotalSize, nullptr))
                 GST_DEBUG_OBJECT(pipeline(), "Updated network read position %" G_GUINT64_FORMAT ", size: %" G_GUINT64_FORMAT, m_networkReadPosition, m_httpResponseTotalSize);
-        } else if (gst_structure_has_name(structure, "adaptive-streaming-statistics")) {
-            if (WEBKIT_IS_WEB_SRC(m_source.get()) && !webkitGstCheckVersion(1, 12, 0)) {
-                if (const char* uri = gst_structure_get_string(structure, "uri"))
-                    m_hasTaintedOrigin = webKitSrcWouldTaintOrigin(WEBKIT_WEB_SRC_CAST(m_source.get()), SecurityOrigin::create(URL(URL(), uri)));
-            }
         } else if (gst_structure_has_name(structure, "GstCacheDownloadComplete")) {
             GST_INFO_OBJECT(pipeline(), "Stream is fully downloaded, stopping monitoring downloading progress.");
             m_fillTimer.stop();
@@ -2816,11 +2794,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url, const String&
     m_textAppSinkPad = adoptGRef(gst_element_get_static_pad(m_textAppSink.get(), "sink"));
     ASSERT(m_textAppSinkPad);
 
-    GRefPtr<GstCaps> textCaps;
-    if (webkitGstCheckVersion(1, 14, 0))
-        textCaps = adoptGRef(gst_caps_new_empty_simple("application/x-subtitle-vtt"));
-    else
-        textCaps = adoptGRef(gst_caps_new_empty_simple("text/vtt"));
+    auto textCaps = adoptGRef(gst_caps_new_empty_simple("application/x-subtitle-vtt"));
     g_object_set(m_textAppSink.get(), "emit-signals", TRUE, "enable-last-sample", FALSE, "caps", textCaps.get(), nullptr);
     g_signal_connect_swapped(m_textAppSink.get(), "new-sample", G_CALLBACK(newTextSampleCallback), this);
 

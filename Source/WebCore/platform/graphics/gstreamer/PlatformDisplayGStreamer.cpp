@@ -98,21 +98,13 @@ bool PlatformDisplay::tryEnsureGstGLContext() const
     if (!contextHandle)
         return false;
 
-    bool shouldAdoptRef = webkitGstCheckVersion(1, 14, 0);
-
-    if (shouldAdoptRef)
-        m_gstGLDisplay = adoptGRef(createGstGLDisplay(*this));
-    else
-        m_gstGLDisplay = createGstGLDisplay(*this);
+    m_gstGLDisplay = adoptGRef(createGstGLDisplay(*this));
     if (!m_gstGLDisplay)
         return false;
 
     GstGLPlatform glPlatform = sharedContext->isEGLContext() ? GST_GL_PLATFORM_EGL : GST_GL_PLATFORM_GLX;
 
-    if (shouldAdoptRef)
-        m_gstGLContext = adoptGRef(gst_gl_context_new_wrapped(m_gstGLDisplay.get(), reinterpret_cast<guintptr>(contextHandle), glPlatform, glAPI));
-    else
-        m_gstGLContext = gst_gl_context_new_wrapped(m_gstGLDisplay.get(), reinterpret_cast<guintptr>(contextHandle), glPlatform, glAPI);
+    m_gstGLContext = adoptGRef(gst_gl_context_new_wrapped(m_gstGLDisplay.get(), reinterpret_cast<guintptr>(contextHandle), glPlatform, glAPI));
 
     // Activate and fill the GStreamer wrapped context with the Webkit's shared one.
     auto* previousActiveContext = GLContext::current();

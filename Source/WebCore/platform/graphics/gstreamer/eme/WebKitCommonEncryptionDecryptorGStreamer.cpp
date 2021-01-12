@@ -125,7 +125,7 @@ static GstCaps* transformCaps(GstBaseTransform* base, GstPadDirection direction,
             // GST_PROTECTION_UNSPECIFIED_SYSTEM_ID was added in the GStreamer
             // developement git master which will ship as version 1.16.0.
             gst_structure_set_name(outgoingStructure.get(),
-#if GST_CHECK_VERSION(1, 15, 0)
+#if GST_CHECK_VERSION(1, 16, 0)
                 !g_strcmp0(klass->protectionSystemId(self), GST_PROTECTION_UNSPECIFIED_SYSTEM_ID) ? "application/x-webm-enc" :
 #endif
                 "application/x-cenc");

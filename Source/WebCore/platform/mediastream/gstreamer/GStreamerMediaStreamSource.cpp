@@ -401,9 +401,7 @@ static void webkitMediaStreamSrcDispose(GObject* object)
 
 static GstStateChangeReturn webkitMediaStreamSrcChangeState(GstElement* element, GstStateChange transition)
 {
-#if GST_CHECK_VERSION(1, 14, 0)
     GST_DEBUG_OBJECT(element, "%s", gst_state_change_get_name(transition));
-#endif
 
     if (transition == GST_STATE_CHANGE_PAUSED_TO_READY)
         stopObservingTracks(WEBKIT_MEDIA_STREAM_SRC(element));

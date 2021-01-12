@@ -57,9 +57,8 @@ GStreamerAudioMixer::GStreamerAudioMixer()
 
 void GStreamerAudioMixer::ensureState(GstStateChange stateChange)
 {
-#if GST_CHECK_VERSION(1, 14, 0)
     GST_DEBUG_OBJECT(m_pipeline.get(), "Handling %s transition (%u mixer pads)", gst_state_change_get_name(stateChange), m_mixer->numsinkpads);
-#endif
+
     switch (stateChange) {
     case GST_STATE_CHANGE_READY_TO_PAUSED:
         gst_element_set_state(m_pipeline.get(), GST_STATE_PAUSED);

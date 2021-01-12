@@ -465,12 +465,8 @@ static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
     // 1) webKitWebSrcSetMediaPlayer() is called by MediaPlayerPrivateGStreamer by means of hooking playbin's
     //    "source-setup" event. This doesn't work for additional WebKitWebSrc elements created by adaptivedemux.
     //
-    // 2) A GstContext query made here. Because of a bug, this only works in GStreamer >= 1.12.
-    //
-    // As a compatibility workaround, the http: URI protocol is only registered for gst>=1.12; otherwise using
-    // webkit+http:, which is used by MediaPlayerPrivateGStreamer but not by adaptivedemux's additional source
-    // elements, therefore using souphttpsrc instead and not routing traffic through the NetworkProcess.
-    if (webkitGstCheckVersion(1, 12, 0) && !members->player) {
+    // 2) A GstContext query made here.
+    if (!members->player) {
         members.runUnlocked([src, baseSrc]() {
             GRefPtr<GstQuery> query = adoptGRef(gst_query_new_context(WEBKIT_WEB_SRC_PLAYER_CONTEXT_TYPE_NAME));
             if (gst_pad_peer_query(GST_BASE_SRC_PAD(baseSrc), query.get())) {
@@ -863,15 +859,9 @@ static GstURIType webKitWebSrcUriGetType(GType)
 const gchar* const* webKitWebSrcGetProtocols(GType)
 {
     static const char* protocols[4];
-    if (webkitGstCheckVersion(1, 12, 0)) {
-        protocols[0] = "http";
-        protocols[1] = "https";
-        protocols[2] = "blob";
-    } else {
-        protocols[0] = "webkit+http";
-        protocols[1] = "webkit+https";
-        protocols[2] = "webkit+blob";
-    }
+    protocols[0] = "http";
+    protocols[1] = "https";
+    protocols[2] = "blob";
     protocols[3] = nullptr;
     return protocols;
 }
@@ -879,10 +869,6 @@ const gchar* const* webKitWebSrcGetProtocols(GType)
 static URL convertPlaybinURI(const char* uriString)
 {
     URL url(URL(), uriString);
-    if (!webkitGstCheckVersion(1, 12, 0)) {
-        ASSERT(url.protocol().substring(0, 7) == "webkit+");
-        url.setProtocol(url.protocol().substring(7).toString());
-    }
     return url;
 }
 

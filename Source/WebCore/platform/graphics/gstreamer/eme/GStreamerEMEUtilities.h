@@ -79,7 +79,7 @@ public:
     const String& systemId() const { return m_systemId; }
     String payloadContainerType() const
     {
-#if GST_CHECK_VERSION(1, 15, 0)
+#if GST_CHECK_VERSION(1, 16, 0)
         if (m_systemId == GST_PROTECTION_UNSPECIFIED_SYSTEM_ID)
             return "webm"_s;
 #endif
