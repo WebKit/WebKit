@@ -62,7 +62,7 @@ namespace WTF {
 template<typename> struct LogArgument;
 
 template<> struct LogArgument<webm::TrackType> {
-    static String toString(webm::TrackType type)
+    static ASCIILiteral toString(webm::TrackType type)
     {
         switch (type) {
         case webm::TrackType::kVideo: return "Video"_s;
@@ -78,7 +78,7 @@ template<> struct LogArgument<webm::TrackType> {
 };
 
 template<> struct LogArgument<webm::Id> {
-    static String toString(webm::Id id)
+    static ASCIILiteral toString(webm::Id id)
     {
         switch (id) {
         case webm::Id::kEbml: return "Ebml"_s;
@@ -235,7 +235,7 @@ template<> struct LogArgument<webm::Id> {
 };
 
 template<> struct LogArgument<WebCore::SourceBufferParserWebM::State> {
-    static String toString(WebCore::SourceBufferParserWebM::State state)
+    static ASCIILiteral toString(WebCore::SourceBufferParserWebM::State state)
     {
         switch (state) {
         case WebCore::SourceBufferParserWebM::State::None: return "None"_s;

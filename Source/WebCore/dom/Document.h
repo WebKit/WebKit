@@ -1721,7 +1721,7 @@ private:
     void didLogMessage(const WTFLogChannel&, WTFLogLevel, Vector<JSONLogValue>&&) final;
     static void configureSharedLogger();
 
-    DocumentsMap::AddResult addToDocumentsMap();
+    void addToDocumentsMap();
     void removeFromDocumentsMap();
 
     const Ref<const Settings> m_settings;

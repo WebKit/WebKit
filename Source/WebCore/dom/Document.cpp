@@ -550,12 +550,12 @@ void Document::configureSharedLogger()
     logger->setEnabled(sharedLoggerOwner(), alwaysOnLoggingAllowed);
 }
 
-auto Document::addToDocumentsMap() -> DocumentsMap::AddResult
+void Document::addToDocumentsMap()
 {
     auto addResult = allDocumentsMap().add(m_identifier, this);
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+
     configureSharedLogger();
-    
-    return addResult;
 }
 
 void Document::removeFromDocumentsMap()
@@ -639,8 +639,7 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
     , m_editor(makeUniqueRef<Editor>(*this))
     , m_selection(makeUniqueRef<FrameSelection>(this))
 {
-    auto addResult = addToDocumentsMap();
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    addToDocumentsMap();
 
     // We depend on the url getting immediately set in subframes, but we
     // also depend on the url NOT getting immediately set in opened windows.
