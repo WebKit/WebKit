@@ -1,3 +1,15 @@
+2021-01-12  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Reset user directory suffix before getting sandbox directory
+        https://bugs.webkit.org/show_bug.cgi?id=220358
+        <rdar://problem/57616019>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Declare functions to get and set user directory suffix.
+
+        * pal/spi/cocoa/CoreServicesSPI.h:
+
 2021-01-12  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Support key rotation with HLS-backed encrypted media streams

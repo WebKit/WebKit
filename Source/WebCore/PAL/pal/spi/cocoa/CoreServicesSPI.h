@@ -25,6 +25,12 @@
 
 #pragma once
 
-extern "C" void _CSCheckFixDisable();
-extern "C" CFArrayRef _UTCopyDeclaredTypeIdentifiers(void);
+WTF_EXTERN_C_BEGIN
 
+void _CSCheckFixDisable();
+CFArrayRef _UTCopyDeclaredTypeIdentifiers(void);
+
+char *_get_user_dir_suffix();
+bool _set_user_dir_suffix(const char *user_dir_suffix);
+
+WTF_EXTERN_C_END
