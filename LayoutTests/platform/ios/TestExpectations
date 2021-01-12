@@ -3479,7 +3479,6 @@ fast/shadow-dom/ios/ [ Pass ]
 # https://bugs.webkit.org/show_bug.cgi?id=217156
 fast/forms/defaultValue-clobbering.html [ Failure ]
 
-webkit.org/b/219105 fast/text/international/complex-character-based-fallback.html [ Failure ]
 webkit.org/b/219105 platform/ios/ios/fast/text/opticalFontWithTextStyle.html [ Failure ]
 
 webkit.org/b/219460 [ Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation.https.html [ Pass Failure ]
