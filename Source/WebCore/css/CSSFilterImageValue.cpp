@@ -131,7 +131,11 @@ RefPtr<Image> CSSFilterImageValue::image(RenderElement& renderer, const FloatSiz
         return &Image::nullImage();
     cssFilter->apply();
 
-    return cssFilter->output()->copyImage();
+    auto* output = cssFilter->output();
+    if (!output)
+        return &Image::nullImage();
+
+    return output->copyImage();
 }
 
 void CSSFilterImageValue::filterImageChanged(const IntRect&)
