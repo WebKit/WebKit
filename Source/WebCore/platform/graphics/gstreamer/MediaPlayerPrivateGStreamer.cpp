@@ -200,6 +200,7 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
 #endif
     m_isPlayerShuttingDown.store(false);
 
+    ensureGStreamerInitialized();
     m_audioSink = createAudioSink();
 
 #if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
