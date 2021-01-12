@@ -35,8 +35,10 @@ namespace WebCore {
 GST_DEBUG_CATEGORY(webkit_video_capture_source_debug);
 #define GST_CAT_DEFAULT webkit_video_capture_source_debug
 
-static void initializeGStreamerDebug()
+static void initializeDebugCategory()
 {
+    ensureGStreamerInitialized();
+
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_video_capture_source_debug, "webkitvideocapturesource", 0,
@@ -121,14 +123,14 @@ GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(String&& deviceID, Stri
     : RealtimeVideoCaptureSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt))
     , m_capturer(makeUnique<GStreamerVideoCapturer>(source_factory))
 {
-    initializeGStreamerDebug();
+    initializeDebugCategory();
 }
 
 GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(GStreamerCaptureDevice device, String&& hashSalt)
     : RealtimeVideoCaptureSource(String { device.persistentId() }, String { device.label() }, WTFMove(hashSalt))
     , m_capturer(makeUnique<GStreamerVideoCapturer>(device))
 {
-    initializeGStreamerDebug();
+    initializeDebugCategory();
 }
 
 GStreamerVideoCaptureSource::~GStreamerVideoCaptureSource()

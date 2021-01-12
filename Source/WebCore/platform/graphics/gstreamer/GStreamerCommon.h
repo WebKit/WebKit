@@ -69,8 +69,9 @@ const char* capsMediaType(const GstCaps*);
 bool doCapsHaveType(const GstCaps*, const char*);
 bool areEncryptedCaps(const GstCaps*);
 Vector<String> extractGStreamerOptionsFromCommandLine();
-bool initializeGStreamer(Optional<Vector<String>>&& = WTF::nullopt);
-bool initializeGStreamerAndRegisterWebKitElements();
+void setGStreamerOptionsFromUIProcess(Vector<String>&&);
+bool ensureGStreamerInitialized();
+void registerWebKitGStreamerElements();
 unsigned getGstPlayFlag(const char* nick);
 uint64_t toGstUnsigned64Time(const MediaTime&);
 #if ENABLE(THUNDER)

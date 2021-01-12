@@ -458,8 +458,9 @@ std::unique_ptr<webrtc::VideoEncoder> GStreamerVideoEncoderFactory::CreateVideoE
 
 GStreamerVideoEncoderFactory::GStreamerVideoEncoderFactory()
 {
-    static std::once_flag debugRegisteredFlag;
+    ensureGStreamerInitialized();
 
+    static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_webrtcenc_debug, "webkitlibwebrtcvideoencoder", 0, "WebKit WebRTC video encoder");
         gst_element_register(nullptr, "webrtcvideoencoder", GST_RANK_NONE, WEBRTC_TYPE_VIDEO_ENCODER);

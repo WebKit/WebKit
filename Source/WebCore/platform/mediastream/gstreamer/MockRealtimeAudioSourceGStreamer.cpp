@@ -65,6 +65,7 @@ Ref<MockRealtimeAudioSource> MockRealtimeAudioSourceGStreamer::createForMockAudi
 MockRealtimeAudioSourceGStreamer::MockRealtimeAudioSourceGStreamer(String&& deviceID, String&& name, String&& hashSalt)
     : MockRealtimeAudioSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt))
 {
+    ensureGStreamerInitialized();
 }
 
 void MockRealtimeAudioSourceGStreamer::render(Seconds delta)

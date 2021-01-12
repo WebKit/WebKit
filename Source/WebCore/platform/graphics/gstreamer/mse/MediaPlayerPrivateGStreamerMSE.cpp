@@ -98,10 +98,8 @@ private:
 
 void MediaPlayerPrivateGStreamerMSE::registerMediaEngine(MediaEngineRegistrar registrar)
 {
-    initializeGStreamerAndRegisterWebKitElements();
     GST_DEBUG_CATEGORY_INIT(webkit_mse_debug, "webkitmse", 0, "WebKit MSE media player");
-    if (isAvailable())
-        registrar(makeUnique<MediaPlayerFactoryGStreamerMSE>());
+    registrar(makeUnique<MediaPlayerFactoryGStreamerMSE>());
 }
 
 MediaPlayerPrivateGStreamerMSE::MediaPlayerPrivateGStreamerMSE(MediaPlayer* player)

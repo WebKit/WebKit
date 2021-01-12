@@ -1,3 +1,30 @@
+2021-01-12  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Lazy initialization support
+        https://bugs.webkit.org/show_bug.cgi?id=209332
+
+        Reviewed by Carlos Garcia Campos.
+
+        Introduce a GTK/WPE UserMediaCaptureManager that relays permission requests to the
+        RealtimeMediaSourceCenter running in the WebProcess. We might move this to the GPUProcess at
+        some point but for the time being we only want to avoid initializing GStreamer from the
+        UIProcess.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        * UIProcess/glib/UserMediaPermissionRequestManagerProxyGLib.cpp: Added.
+        (WebKit::UserMediaPermissionRequestManagerProxy::processUserMediaPermissionRequest):
+        * WebProcess/glib/UserMediaCaptureManager.cpp: Added.
+        (WebKit::UserMediaCaptureManager::UserMediaCaptureManager):
+        (WebKit::UserMediaCaptureManager::~UserMediaCaptureManager):
+        (WebKit::UserMediaCaptureManager::validateUserMediaRequestConstraints):
+        * WebProcess/glib/UserMediaCaptureManager.h: Added.
+        (WebKit::UserMediaCaptureManager::supplementName):
+        * WebProcess/glib/UserMediaCaptureManager.messages.in: Added.
+        * WebProcess/glib/WebProcessGLib.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2021-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.31.1 release

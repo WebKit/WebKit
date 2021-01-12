@@ -34,9 +34,9 @@ GST_DEBUG_CATEGORY(webkit_capturer_debug);
 
 namespace WebCore {
 
-static void initializeGStreamerAndDebug()
+static void initializeDebugCategory()
 {
-    initializeGStreamer();
+    ensureGStreamerInitialized();
 
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
@@ -49,7 +49,7 @@ GStreamerCapturer::GStreamerCapturer(GStreamerCaptureDevice device, GRefPtr<GstC
     , m_caps(caps)
     , m_sourceFactory(nullptr)
 {
-    initializeGStreamerAndDebug();
+    initializeDebugCategory();
 }
 
 GStreamerCapturer::GStreamerCapturer(const char* sourceFactory, GRefPtr<GstCaps> caps)
@@ -57,7 +57,7 @@ GStreamerCapturer::GStreamerCapturer(const char* sourceFactory, GRefPtr<GstCaps>
     , m_caps(caps)
     , m_sourceFactory(sourceFactory)
 {
-    initializeGStreamerAndDebug();
+    initializeDebugCategory();
 }
 
 GStreamerCapturer::~GStreamerCapturer()

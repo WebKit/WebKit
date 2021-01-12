@@ -56,6 +56,7 @@ Ref<MockRealtimeVideoSource> MockRealtimeVideoSourceGStreamer::createForMockDisp
 MockRealtimeVideoSourceGStreamer::MockRealtimeVideoSourceGStreamer(String&& deviceID, String&& name, String&& hashSalt)
     : MockRealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt))
 {
+    ensureGStreamerInitialized();
 }
 
 void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()

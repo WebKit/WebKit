@@ -99,6 +99,8 @@ Ref<MediaSampleGStreamer> MediaSampleGStreamer::createFakeSample(GstCaps*, Media
 
 Ref<MediaSampleGStreamer> MediaSampleGStreamer::createImageSample(Vector<uint8_t>&& bgraData, unsigned width, unsigned height, double frameRate)
 {
+    ensureGStreamerInitialized();
+
     size_t size = bgraData.sizeInBytes();
     auto* data = bgraData.releaseBuffer().leakPtr();
     auto buffer = adoptGRef(gst_buffer_new_wrapped_full(GST_MEMORY_FLAG_READONLY, data, size, 0, size, data, [](gpointer data) {

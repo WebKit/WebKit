@@ -44,6 +44,9 @@ GST_DEBUG_CATEGORY(webkit_audio_destination_debug);
 
 static void initializeDebugCategory()
 {
+    ensureGStreamerInitialized();
+    registerWebKitGStreamerElements();
+
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_audio_destination_debug, "webkitaudiodestination", 0, "WebKit WebAudio Destination");

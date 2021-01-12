@@ -27,6 +27,7 @@
 #include "GStreamerAudioMixer.h"
 #include "GstAllocatorFastMalloc.h"
 #include "IntSize.h"
+#include "RuntimeApplicationChecks.h"
 #include "SharedBuffer.h"
 #include "WebKitAudioSinkGStreamer.h"
 #include <gst/audio/audio-info.h>
@@ -214,6 +215,12 @@ bool areEncryptedCaps(const GstCaps* caps)
 #endif
 }
 
+static Optional<Vector<String>> s_UIProcessCommandLineOptions;
+void setGStreamerOptionsFromUIProcess(Vector<String>&& options)
+{
+    s_UIProcessCommandLineOptions = WTFMove(options);
+}
+
 Vector<String> extractGStreamerOptionsFromCommandLine()
 {
     GUniqueOutPtr<char> contents;
@@ -230,11 +237,12 @@ Vector<String> extractGStreamerOptionsFromCommandLine()
     return options;
 }
 
-bool initializeGStreamer(Optional<Vector<String>>&& options)
+bool ensureGStreamerInitialized()
 {
+    RELEASE_ASSERT(isInWebProcess());
     static std::once_flag onceFlag;
     static bool isGStreamerInitialized;
-    std::call_once(onceFlag, [options = WTFMove(options)] {
+    std::call_once(onceFlag, [] {
         isGStreamerInitialized = false;
 
         // USE_PLAYBIN3 is dangerous for us because its potential sneaky effect
@@ -245,7 +253,8 @@ bool initializeGStreamer(Optional<Vector<String>>&& options)
             WTFLogAlways("The USE_PLAYBIN3 variable was detected in the environment. Expect playback issues or please unset it.");
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-        Vector<String> parameters = options.valueOr(extractGStreamerOptionsFromCommandLine());
+        Vector<String> parameters = s_UIProcessCommandLineOptions.valueOr(extractGStreamerOptionsFromCommandLine());
+        s_UIProcessCommandLineOptions.reset();
         char** argv = g_new0(char*, parameters.size() + 2);
         int argc = parameters.size() + 1;
         argv[0] = g_strdup(getCurrentExecutableName().data());
@@ -292,11 +301,8 @@ bool isThunderRanked()
 }
 #endif
 
-bool initializeGStreamerAndRegisterWebKitElements()
+void registerWebKitGStreamerElements()
 {
-    if (!initializeGStreamer())
-        return false;
-
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
 #if USE(GSTREAMER_FULL)
@@ -343,7 +349,6 @@ bool initializeGStreamerAndRegisterWebKitElements()
             }
         }
     });
-    return true;
 }
 
 unsigned getGstPlayFlag(const char* nick)

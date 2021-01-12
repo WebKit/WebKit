@@ -1,0 +1,44 @@
+/*
+ * Copyright (C) 2020 Igalia S.L.
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+#include "config.h"
+#include "UserMediaPermissionRequestManagerProxy.h"
+
+#include "DeviceIdHashSaltStorage.h"
+#include "Logging.h"
+#include "UserMediaCaptureManagerMessages.h"
+#include "WebPageProxy.h"
+#include "WebProcess.h"
+#include "WebProcessProxy.h"
+#include "WebsiteDataStore.h"
+#include <WebCore/UserMediaRequest.h>
+
+namespace WebKit {
+using namespace WebCore;
+
+void UserMediaPermissionRequestManagerProxy::platformValidateUserMediaRequestConstraints(RealtimeMediaSourceCenter::ValidConstraintsHandler&& validHandler, RealtimeMediaSourceCenter::InvalidConstraintsHandler&& invalidHandler, String&& deviceIDHashSalt)
+{
+    m_page.process().connection()->sendWithAsyncReply(Messages::UserMediaCaptureManager::ValidateUserMediaRequestConstraints(m_currentUserMediaRequest->userRequest(), deviceIDHashSalt), [validHandler = WTFMove(validHandler), invalidHandler = WTFMove(invalidHandler)](Optional<String> invalidConstraint, Vector<WebCore::CaptureDevice> audioDevices, Vector<WebCore::CaptureDevice> videoDevices, Optional<String> deviceIdentifierHashSalt) mutable {
+        if (invalidConstraint.hasValue())
+            invalidHandler(*invalidConstraint);
+        else
+            validHandler(WTFMove(audioDevices), WTFMove(videoDevices), WTFMove(*deviceIdentifierHashSalt));
+    });
+}
+
+} // namespace WebKit

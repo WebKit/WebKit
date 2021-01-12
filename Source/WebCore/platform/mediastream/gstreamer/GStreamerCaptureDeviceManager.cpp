@@ -79,7 +79,7 @@ Optional<GStreamerCaptureDevice> GStreamerCaptureDeviceManager::gstreamerDeviceW
 
 const Vector<CaptureDevice>& GStreamerCaptureDeviceManager::captureDevices()
 {
-    initializeGStreamer();
+    ensureGStreamerInitialized();
     if (m_devices.isEmpty())
         refreshCaptureDevices();
 
