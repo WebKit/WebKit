@@ -6441,7 +6441,7 @@ bool WebPageProxy::sendMessage(std::unique_ptr<IPC::Encoder> encoder, OptionSet<
 
 IPC::Connection* WebPageProxy::messageSenderConnection() const
 {
-    return m_process->connection();
+    return m_process->hasConnection() ? m_process->connection() : nullptr;
 }
 
 uint64_t WebPageProxy::messageSenderDestinationID() const

@@ -76,6 +76,11 @@ public:
         ASSERT(m_connection);
         return m_connection.get();
     }
+
+    bool hasConnection() const
+    {
+        return !!m_connection;
+    }
     
     bool hasConnection(const IPC::Connection& connection) const
     {

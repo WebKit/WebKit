@@ -1,3 +1,24 @@
+2021-01-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        ASSERTION FAILED: m_connection under WebKit::WebPageProxy::acceptsFirstMouse()
+        https://bugs.webkit.org/show_bug.cgi?id=220545
+        <rdar://problem/73043854>
+
+        Reviewed by Tim Horton.
+
+        Avoid the assertion by making it safe to call `WebPageProxy::messageSenderConnection` in debug builds, in the
+        case where the web process is still launching.
+
+        * UIProcess/AuxiliaryProcessProxy.h:
+        (WebKit::AuxiliaryProcessProxy::hasConnection const):
+
+        Add a helper method that returns whether or not a process proxy has a non-null connection.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::messageSenderConnection const):
+
+        Use the above helper to avoid calling into `AuxiliaryProcessProxy::connection()` when the connection is null.
+
 2021-01-12  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Support key rotation with HLS-backed encrypted media streams
