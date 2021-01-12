@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2017-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -75,20 +75,27 @@ def loadBuilderConfig(c, is_test_mode_enabled=False):
         schedulerClass = globals()[schedulerClassName]
         c['schedulers'].append(schedulerClass(**scheduler))
 
-    forceScheduler = ForceScheduler(
-        name="force",
-        builderNames=[str(builder['name']) for builder in config['builders']],
-        reason=StringParameter(name="reason", default="", size=40),
+    # Setup force schedulers
+    builderNames = [str(builder['name']) for builder in config['builders']]
+    reason = StringParameter(name='reason', default='', size=40)
+    properties = [BooleanParameter(name='is_clean', label='Force Clean build')]
+    if USE_BUILDBOT_VERSION2:
+        forceScheduler = ForceScheduler(name='force', builderNames=builderNames, reason=reason, properties=properties)
+    else:
+        forceScheduler = ForceScheduler(
+            name='force',
+            builderNames=builderNames,
+            reason=reason,
 
-        # Validate SVN revision: number or empty string
-        revision=StringParameter(name="revision", default="", regex=re.compile(r'^(\d*)$')),
+            # Validate SVN revision: number or empty string
+            revision=StringParameter(name="revision", default="", regex=re.compile(r'^(\d*)$')),
 
-        # Disable default enabled input fields: branch, repository, project, additional properties
-        branch=FixedParameter(name="branch"),
-        repository=FixedParameter(name="repository"),
-        project=FixedParameter(name="project"),
-        properties=[BooleanParameter(name="is_clean", label="Force Clean build")]
-    )
+            # Disable default enabled input fields: branch, repository, project, additional properties
+            branch=FixedParameter(name="branch"),
+            repository=FixedParameter(name="repository"),
+            project=FixedParameter(name="project"),
+            properties=properties
+        )
     c['schedulers'].append(forceScheduler)
 
     c['builders'] = []
