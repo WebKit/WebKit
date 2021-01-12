@@ -1,3 +1,13 @@
+2021-01-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/fast/clip/overflow-border-radius-combinations-expected.txt:
+        * platform/wincairo/fast/clip/overflow-border-radius-composited-expected.txt:
+        * platform/wincairo/fast/clip/overflow-border-radius-transformed-expected.txt:
+        * platform/wincairo/fast/inline-block/tricky-baseline-expected.txt:
+
 2021-01-11  Simon Fraser  <simon.fraser@apple.com>
 
         Safari 14 on 2x display renders NYS DMV page as blurry
