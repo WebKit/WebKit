@@ -162,6 +162,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteAudioTrackProxyMessagesReplie
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteCDMFactoryProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteCDMFactoryProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteCDMFactoryProxyMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteCDMInstanceMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteCDMInstanceMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteCDMInstanceMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteCDMInstanceProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteCDMInstanceProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteCDMInstanceProxyMessagesReplies.h

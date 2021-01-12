@@ -180,6 +180,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/GPU/media/MediaSourcePrivateRemote \
 	WebProcess/GPU/media/RemoteAudioSession \
 	WebProcess/GPU/media/RemoteAudioSourceProviderManager \
+	WebProcess/GPU/media/RemoteCDMInstance \
 	WebProcess/GPU/media/RemoteCDMInstanceSession \
 	WebProcess/GPU/media/RemoteLegacyCDMSession \
 	WebProcess/GPU/media/SourceBufferPrivateRemote \

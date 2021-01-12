@@ -27,16 +27,18 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 
+#include "MessageReceiver.h"
 #include "RemoteCDMFactory.h"
 #include "RemoteCDMInstanceConfiguration.h"
 #include "RemoteCDMInstanceIdentifier.h"
+#include "SharedBufferCopy.h"
 #include <WebCore/CDMInstance.h>
 
 namespace WebKit {
 
-class RemoteCDMInstance final : public WebCore::CDMInstance {
+class RemoteCDMInstance final : public WebCore::CDMInstance, private IPC::MessageReceiver {
 public:
-    virtual ~RemoteCDMInstance() = default;
+    virtual ~RemoteCDMInstance();
     static Ref<RemoteCDMInstance> create(WeakPtr<RemoteCDMFactory>&&, RemoteCDMInstanceIdentifier&&, RemoteCDMInstanceConfiguration&&);
 
     const RemoteCDMInstanceIdentifier& identifier() const { return m_identifier; }
@@ -44,16 +46,25 @@ public:
 private:
     RemoteCDMInstance(WeakPtr<RemoteCDMFactory>&&, RemoteCDMInstanceIdentifier&&, RemoteCDMInstanceConfiguration&&);
 
+    // IPC::MessageReceiver
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+
+    // Messages
+    void unrequestedInitializationDataReceived(const String&, IPC::SharedBufferCopy&&);
+
     ImplementationType implementationType() const final { return ImplementationType::Remote; }
     void initializeWithConfiguration(const WebCore::CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, SuccessCallback&&) final;
     void setServerCertificate(Ref<WebCore::SharedBuffer>&&, SuccessCallback&&) final;
     void setStorageDirectory(const String&) final;
     const String& keySystem() const final { return m_configuration.keySystem; }
     RefPtr<WebCore::CDMInstanceSession> createSession() final;
+    void setClient(WeakPtr<WebCore::CDMInstanceClient>&& client) final { m_client = WTFMove(client); }
+    void clearClient() final { m_client.clear(); }
 
     WeakPtr<RemoteCDMFactory> m_factory;
     RemoteCDMInstanceIdentifier m_identifier;
     RemoteCDMInstanceConfiguration m_configuration;
+    WeakPtr<WebCore::CDMInstanceClient> m_client;
 };
 
 }

@@ -200,6 +200,7 @@ NS_ASSUME_NONNULL_END
 @end
 
 @interface AVContentKeySession (AVContentKeyGroup_Support)
+@property (readonly, nullable) AVContentKeyReportGroup *defaultContentKeyGroup;
 - (nonnull AVContentKeyReportGroup *)makeContentKeyGroup;
 @end
 

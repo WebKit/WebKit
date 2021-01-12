@@ -277,6 +277,9 @@ void MediaSourcePrivateAVFObjC::setDecompressionSession(WebCoreDecompressionSess
 #if ENABLE(ENCRYPTED_MEDIA)
 void MediaSourcePrivateAVFObjC::cdmInstanceAttached(CDMInstance& instance)
 {
+    if (m_cdmInstance.get() == &instance)
+        return;
+
     ASSERT(!m_cdmInstance);
     m_cdmInstance = &instance;
     for (auto& sourceBuffer : m_sourceBuffers)
