@@ -931,6 +931,8 @@ void VideoFullscreenInterfaceAVKit::setupFullscreen(UIView& videoView, const Int
     ASSERT(standby || mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::setupFullscreen(%p)", this);
 
+    m_changingStandbyOnly = mode == HTMLMediaElementEnums::VideoFullscreenModeNone && standby;
+
     [playerController() setHasEnabledVideo:true];
     [playerController() setHasVideo:true];
     [playerController() setContentDimensions:videoDimensions];
@@ -961,6 +963,8 @@ bool VideoFullscreenInterfaceAVKit::exitFullscreen(const IntRect& finalRect)
     // is entering picture-in-picture. We need to ignore the request in that case.
     if (m_standby && m_enteringPictureInPicture)
         return false;
+
+    m_changingStandbyOnly = !m_currentMode.hasVideo() && m_standby;
 
     m_targetMode = HTMLMediaElementEnums::VideoFullscreenModeNone;
 
@@ -1490,6 +1494,7 @@ void VideoFullscreenInterfaceAVKit::doEnterFullscreen()
         }
         m_fullscreenChangeObserver->didEnterFullscreen(size);
         m_enteringPictureInPicture = false;
+        m_changingStandbyOnly = false;
     }
 
     if (m_currentMode.hasPictureInPicture() && m_videoFullscreenModel && !m_restoringFullscreenForPictureInPictureStop)
@@ -1537,6 +1542,7 @@ void VideoFullscreenInterfaceAVKit::doExitFullscreen()
     dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), this] {
         if (m_fullscreenChangeObserver)
             m_fullscreenChangeObserver->didExitFullscreen();
+        m_changingStandbyOnly = false;
     });
 }
 

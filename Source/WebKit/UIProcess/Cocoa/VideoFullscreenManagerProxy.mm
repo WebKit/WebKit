@@ -763,6 +763,11 @@ void VideoFullscreenManagerProxy::willExitFullscreen(PlaybackSessionContextIdent
 void VideoFullscreenManagerProxy::didExitFullscreen(PlaybackSessionContextIdentifier contextId)
 {
     m_page->send(Messages::VideoFullscreenManager::DidExitFullscreen(contextId));
+
+#if PLATFORM(IOS_FAMILY)
+    if (ensureInterface(contextId).changingStandbyOnly())
+        return;
+#endif
     m_page->didExitFullscreen();
 }
 
@@ -773,6 +778,11 @@ void VideoFullscreenManagerProxy::didEnterFullscreen(PlaybackSessionContextIdent
         optionalSize = size;
 
     m_page->send(Messages::VideoFullscreenManager::DidEnterFullscreen(contextId, optionalSize));
+
+#if PLATFORM(IOS_FAMILY)
+    if (ensureInterface(contextId).changingStandbyOnly())
+        return;
+#endif
     m_page->didEnterFullscreen();
 }
 

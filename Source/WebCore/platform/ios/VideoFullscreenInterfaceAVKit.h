@@ -90,6 +90,7 @@ public:
     WEBCORE_EXPORT void setHasVideoContentLayer(bool);
     WEBCORE_EXPORT void setInlineRect(const IntRect&, bool visible);
     WEBCORE_EXPORT void preparedToReturnToStandby();
+    bool changingStandbyOnly() { return m_changingStandbyOnly; }
 
     enum class ExitFullScreenReason {
         DoneButtonTapped,
@@ -218,6 +219,7 @@ protected:
     bool m_inlineIsVisible { false };
     bool m_standby { false };
     bool m_targetStandby { false };
+    bool m_changingStandbyOnly { false };
 
 #if PLATFORM(WATCHOS)
     bool m_waitingForPreparedToExit { false };
