@@ -1560,6 +1560,9 @@ webkit.org/b/97026 accessibility/file-upload-button-with-axpress.html [ Skip ] #
 # Color Well is not implemented:
 accessibility/color-well.html
 
+# aria-braille* attributes are not implemented:
+accessibility/braille-label-role.html
+
 # Failing Windows-only accessibility tests
 webkit.org/b/127485 [ Debug ] accessibility/win/parent-element.html [ Failure ]
 webkit.org/b/127485 [ Release ] accessibility/win/parent-element.html [ Pass Failure ]

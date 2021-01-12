@@ -1159,6 +1159,20 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     return self.axBackingObject->roleDescription();
 }
 
+- (NSString *)accessibilityBrailleLabel
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    return self.axBackingObject->brailleLabel();
+}
+
+- (NSString *)accessibilityBrailleRoleDescription
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    return self.axBackingObject->brailleRoleDescription();
+}
+
 - (NSString *)accessibilityLabel
 {
     if (![self _prepareAccessibilityCall])

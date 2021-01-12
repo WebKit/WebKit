@@ -397,6 +397,8 @@ public:
     String ariaDescribedByAttribute() const override { return String(); }
     const String placeholderValue() const override;
     bool accessibleNameDerivesFromContent() const override;
+    String brailleLabel() const override { return getAttribute(HTMLNames::aria_braillelabelAttr); }
+    String brailleRoleDescription() const override { return getAttribute(HTMLNames::aria_brailleroledescriptionAttr); }
 
     // Abbreviations
     String expandedTextValue() const override { return String(); }

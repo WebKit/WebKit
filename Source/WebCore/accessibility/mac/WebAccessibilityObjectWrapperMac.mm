@@ -535,6 +535,14 @@ using namespace WebCore;
 #define NSAccessibilityRelativeFrameAttribute @"AXRelativeFrame"
 #endif
 
+#ifndef NSAccessibilityBrailleLabelAttribute
+#define NSAccessibilityBrailleLabelAttribute @"AXBrailleLabel"
+#endif
+
+#ifndef NSAccessibilityBrailleRoleDescriptionAttribute
+#define NSAccessibilityBrailleRoleDescriptionAttribute @"AXBrailleRoleDescription"
+#endif
+
 extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 
 @implementation WebAccessibilityObjectWrapper
@@ -2901,6 +2909,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         backingObject->ariaDetailsElements(details);
         return convertToNSArray(details);
     }
+
+    if ([attributeName isEqualToString:NSAccessibilityBrailleLabelAttribute])
+        return backingObject->brailleLabel();
+
+    if ([attributeName isEqualToString:NSAccessibilityBrailleRoleDescriptionAttribute])
+        return backingObject->brailleRoleDescription();
 
     if ([attributeName isEqualToString:NSAccessibilityRelativeFrameAttribute])
         return [NSValue valueWithRect:(NSRect)backingObject->relativeFrame()];

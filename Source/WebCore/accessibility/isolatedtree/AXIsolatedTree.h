@@ -69,6 +69,8 @@ enum class AXPropertyName : uint16_t {
     AutoCompleteValue,
     BlockquoteLevel,
     BoundingBoxRect,
+    BrailleLabel,
+    BrailleRoleDescription,
     CanHaveSelectedChildren,
     CanSetExpandedAttribute,
     CanSetFocusAttribute,

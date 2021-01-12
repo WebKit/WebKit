@@ -17,6 +17,8 @@ archive
 aria-activedescendant
 aria-atomic
 aria-autocomplete
+aria-braillelabel
+aria-brailleroledescription
 aria-busy
 aria-checked
 aria-colcount
