@@ -1,3 +1,52 @@
+2021-01-12  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Update tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=220312
+
+        Reviewed by Sergio Villar Senin.
+
+        [selectors] Update :focus-visible tests from WPT
+
+        * web-platform-tests/css/selectors/focus-in-focus-event-001-expected.txt:
+        * web-platform-tests/css/selectors/focus-in-focus-event-001.html:
+        * web-platform-tests/css/selectors/focus-in-focusin-event-001-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-in-focusin-event-001.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-001-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-001.html:
+        * web-platform-tests/css/selectors/focus-visible-002-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-002.html:
+        * web-platform-tests/css/selectors/focus-visible-003-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-003.html:
+        * web-platform-tests/css/selectors/focus-visible-004-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-004.html:
+        * web-platform-tests/css/selectors/focus-visible-005-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-005.html:
+        * web-platform-tests/css/selectors/focus-visible-006-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-006.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-007.html:
+        * web-platform-tests/css/selectors/focus-visible-008-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-008.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-009-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-009.html:
+        * web-platform-tests/css/selectors/focus-visible-010-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-010.html:
+        * web-platform-tests/css/selectors/focus-visible-011.html:
+        * web-platform-tests/css/selectors/focus-visible-012-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-012.html:
+        * web-platform-tests/css/selectors/focus-visible-014-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-014.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-015-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-015.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-016-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-016.html: Added.
+        * web-platform-tests/css/selectors/parsing/parse-focus-visible-expected.txt: Added.
+        * web-platform-tests/css/selectors/parsing/parse-focus-visible.html: Added.
+        * web-platform-tests/css/selectors/parsing/parse-not-expected.txt:
+        Reported failure at webkit.org/b/220532.
+        * web-platform-tests/css/selectors/parsing/parse-not.html:
+        * web-platform-tests/css/selectors/parsing/w3c-import.log:
+        * web-platform-tests/css/selectors/w3c-import.log:
+
 2021-01-11  Sam Weinig  <weinig@apple.com>
 
         Support lab(), lch(), gray() and color(lab ...) colors

@@ -6,5 +6,5 @@ If the element has a red background, then the test result is FAILURE. If the ele
 
 Click me, then use a keyboard shortcut.
 
-FAIL Keyboard focus should match :focus-visible assert_equals: after focus() expected "rgb(0, 100, 0)" but got "rgba(46, 52, 54, 0.59)"
+FAIL Keyboard focus should match :focus-visible assert_equals: outlineColor for DIV#el should be green expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
 

@@ -193,6 +193,11 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 
 imported/w3c/web-platform-tests/compat/webkit-box-rtl-flex.html [ Pass ]
 
+# Tests that timeout on Apple platforms.
+webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-002.html [ Pass ]
+webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-003.html [ Pass ]
+webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-004.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
 #////////////////////////////////////////////////////////////////////////////////////////

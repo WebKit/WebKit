@@ -1,0 +1,5 @@
+
+Target
+
+FAIL :focus-visible matches after script focus move assert_equals: backgroundColor for INPUT#input should be lime expected "rgb(0, 255, 0)" but got "rgb(255, 0, 0)"
+

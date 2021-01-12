@@ -9,7 +9,7 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-None
+appearance
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
@@ -29,16 +29,22 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/floating-first-letter-feff.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-display-none-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-in-focus-event-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-in-focusin-event-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-008.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-010.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-011.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-012.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-014.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-015.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-016.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-within-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-within-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-within-002-expected.html

@@ -16,6 +16,8 @@ PASS ":not(:host)" should be a valid selector
 PASS ":not(:host(.a))" should be a valid selector
 PASS ":host(:not(.a))" should be a valid selector
 PASS ":not(:host(:not(.a)))" should be a valid selector
+PASS ":not([disabled][selected])" should be a valid selector
+PASS ":not([disabled],[selected])" should be a valid selector
 PASS ":not()" should be an invalid selector
 PASS ":not(:not())" should be an invalid selector
 PASS ":not(::before)" should be an invalid selector
