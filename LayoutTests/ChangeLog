@@ -1,3 +1,9 @@
+2021-01-12  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK gardening
+
+        * platform/glib/TestExpectations: media/media-fullscreen-inline.html times out.
+
 2021-01-12  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors] Update tests from WPT

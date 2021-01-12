@@ -457,6 +457,8 @@ webkit.org/b/218653 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-p
 
 webkit.org/b/218580 fast/mediastream/captureStream/canvas2d.html [ Failure Timeout ]
 
+webkit.org/b/220540 media/media-fullscreen-inline.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
