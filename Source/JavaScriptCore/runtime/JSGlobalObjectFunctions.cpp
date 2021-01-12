@@ -34,6 +34,7 @@
 #include "JSInternalPromise.h"
 #include "JSModuleLoader.h"
 #include "JSPromise.h"
+#include "JSSet.h"
 #include "Lexer.h"
 #include "LiteralParser.h"
 #include "ObjectConstructor.h"

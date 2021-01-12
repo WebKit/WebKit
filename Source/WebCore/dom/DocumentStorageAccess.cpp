@@ -38,6 +38,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "NetworkStorageSession.h"
 #include "Page.h"
+#include "Quirks.h"
 #include "RegistrableDomain.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"

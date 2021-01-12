@@ -38,7 +38,11 @@ class HTMLElement;
 class HTMLVideoElement;
 class LayoutUnit;
 class PlatformMouseEvent;
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+class RegistrableDomain;
 enum class StorageAccessWasGranted : bool;
+#endif
 
 class Quirks {
     WTF_MAKE_NONCOPYABLE(Quirks); WTF_MAKE_FAST_ALLOCATED;

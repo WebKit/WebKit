@@ -1,3 +1,20 @@
+2021-01-12  Don Olmstead  <don.olmstead@sony.com>
+
+        Non-unified build fixes mid January 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=220560
+
+        Unreviewed non-unified build fixes.
+
+        * UIProcess/SpeechRecognitionPermissionManager.cpp:
+        (WebKit::SpeechRecognitionPermissionManager::~SpeechRecognitionPermissionManager):
+        (WebKit::SpeechRecognitionPermissionManager::request):
+        (WebKit::SpeechRecognitionPermissionManager::startProcessingRequest):
+        (WebKit::SpeechRecognitionPermissionManager::continueProcessingRequest):
+        (WebKit::SpeechRecognitionPermissionManager::completeCurrentRequest):
+        (WebKit::SpeechRecognitionPermissionManager::requestSpeechRecognitionServiceAccess):
+        (WebKit::SpeechRecognitionPermissionManager::requestMicrophoneAccess):
+        (WebKit::SpeechRecognitionPermissionManager::requestUserPermission):
+
 2021-01-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r265044): [macOS] Safari autocorrects text when typing in login field on amazon.com

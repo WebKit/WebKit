@@ -28,6 +28,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutBoxGeometry.h"
+
 namespace WebCore {
 namespace Layout {
 

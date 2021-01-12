@@ -32,6 +32,7 @@
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "Logging.h"
+#include "MediaPlayer.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
 

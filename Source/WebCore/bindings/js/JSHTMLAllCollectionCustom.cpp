@@ -31,6 +31,8 @@
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertNullable.h"
 #include "JSDOMConvertUnion.h"
+#include "JSElement.h"
+#include "JSHTMLCollection.h"
 
 namespace WebCore {
 using namespace JSC;

@@ -1,3 +1,14 @@
+2021-01-12  Don Olmstead  <don.olmstead@sony.com>
+
+        Non-unified build fixes mid January 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=220560
+
+        Unreviewed non-unified build fixes.
+
+        * API/JSLockRef.cpp:
+        * runtime/JSCJSValue.cpp:
+        * runtime/JSGlobalObjectFunctions.cpp:
+
 2021-01-11  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debugger: allow breakpoint actions to be evaluated as a user gesture

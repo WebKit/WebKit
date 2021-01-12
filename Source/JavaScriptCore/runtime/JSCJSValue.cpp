@@ -30,6 +30,7 @@
 #include "JSBigInt.h"
 #include "JSCInlines.h"
 #include "NumberObject.h"
+#include "ParseInt.h"
 #include "TypeError.h"
 
 namespace JSC {
