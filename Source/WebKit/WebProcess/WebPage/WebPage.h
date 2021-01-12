@@ -1798,6 +1798,8 @@ private:
 
     Vector<RefPtr<SandboxExtension>> consumeSandboxExtensions(SandboxExtension::HandleArray&&);
     void revokeSandboxExtensions(Vector<RefPtr<SandboxExtension>>& sandboxExtensions);
+
+    void setSelectionRange(const WebCore::IntPoint&, WebCore::TextGranularity, bool);
     
     WebCore::PageIdentifier m_identifier;
 
@@ -1825,6 +1827,7 @@ private:
     HashMap<PDFPluginIdentifier, WeakPtr<PDFPlugin>> m_pdfPlugInsWithHUD;
 #endif
 
+    WTF::Function<void()> m_selectionChangedHandler;
     bool m_isInRedo { false };
     bool m_isClosed { false };
     bool m_tabToLinks { false };
