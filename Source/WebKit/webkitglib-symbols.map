@@ -7,7 +7,6 @@ global:
     "bmalloc::PerThreadStorage<bmalloc::PerHeapKind<bmalloc::Cache> >::s_key";
     "bmalloc::vmPageSize()::cached";
     "WebKit::NetworkProcessMain(int, char**)";
-    "WebKit::PluginProcessMain(int, char**)";
     "WebKit::WebKitExtensionManager::initialize(WebKit::InjectedBundle*, API::Object*)";
     "WebKit::WebKitExtensionManager::singleton()";
     "WebKit::WebProcessMain(int, char**)";

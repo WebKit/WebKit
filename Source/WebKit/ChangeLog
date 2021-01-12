@@ -1,3 +1,10 @@
+2021-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.31.1 release
+
+        * gtk/NEWS: Add release notes for 2.31.1.
+        * webkitglib-symbols.map: Remove WebKit::PluginProcessMain.
+
 2021-01-11  Peng Liu  <peng.liu6@apple.com>
 
         Receiving two enter/exit fullscreen delegate callbacks on iPad when presenting fullscreen elements

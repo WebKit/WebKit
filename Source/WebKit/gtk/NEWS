@@ -1,4 +1,17 @@
 ================
+WebKitGTK 2.31.1
+================
+
+What's new in WebKitGTK 2.31.1?
+
+  - Remove support for NPAPI plugins.
+  - Enable the web process cache when PSON is enabled too.
+  - TLS errors and proxy settings APIs have been moved from WebKitContext to WebKitWebsiteDataManager.
+  - Add new API to remove individual scripts/stylesheets using WebKitUserContentManager.
+  - Correctly apply the system font scaling factor.
+  - Show main loop frames information in the web inspector.
+
+================
 WebKitGTK 2.29.4
 ================
 
