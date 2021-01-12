@@ -1182,6 +1182,8 @@
 		F4A32ECB1F0643370047C544 /* contenteditable-in-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4A32ECA1F0642F40047C544 /* contenteditable-in-iframe.html */; };
 		F4A9202F1FEE34E900F59590 /* apple-data-url.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4A9202E1FEE34C800F59590 /* apple-data-url.html */; };
 		F4AB578A1F65165400DB0DA1 /* custom-draggable-div.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4AB57891F65164B00DB0DA1 /* custom-draggable-div.html */; };
+		F4B0168325AE060F00E445C4 /* DisableSpellcheck.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4B0168225AE060F00E445C4 /* DisableSpellcheck.mm */; };
+		F4B0168425AE08F800E445C4 /* DisableSpellcheckPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4B0167F25AE02D600E445C4 /* DisableSpellcheckPlugIn.mm */; };
 		F4B825D81EF4DBFB006E417F /* compressed-files.zip in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4B825D61EF4DBD4006E417F /* compressed-files.zip */; };
 		F4B86D4F20BCD5B20099A7E6 /* paint-significant-area-milestone.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4B86D4E20BCD5970099A7E6 /* paint-significant-area-milestone.html */; };
 		F4BC0B142146C849002A0478 /* FocusPreservationTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4BC0B132146C849002A0478 /* FocusPreservationTests.mm */; };
@@ -2947,6 +2949,8 @@
 		F4A32ECA1F0642F40047C544 /* contenteditable-in-iframe.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "contenteditable-in-iframe.html"; sourceTree = "<group>"; };
 		F4A9202E1FEE34C800F59590 /* apple-data-url.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "apple-data-url.html"; sourceTree = "<group>"; };
 		F4AB57891F65164B00DB0DA1 /* custom-draggable-div.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "custom-draggable-div.html"; sourceTree = "<group>"; };
+		F4B0167F25AE02D600E445C4 /* DisableSpellcheckPlugIn.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DisableSpellcheckPlugIn.mm; sourceTree = "<group>"; };
+		F4B0168225AE060F00E445C4 /* DisableSpellcheck.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DisableSpellcheck.mm; sourceTree = "<group>"; };
 		F4B825D61EF4DBD4006E417F /* compressed-files.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = "compressed-files.zip"; sourceTree = "<group>"; };
 		F4B86D4E20BCD5970099A7E6 /* paint-significant-area-milestone.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "paint-significant-area-milestone.html"; sourceTree = "<group>"; };
 		F4BC0B132146C849002A0478 /* FocusPreservationTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FocusPreservationTests.mm; sourceTree = "<group>"; };
@@ -3276,6 +3280,8 @@
 				2D2D13B2229F408B005068AF /* DeviceManagementRestrictions.mm */,
 				46918EFB2237283500468DFE /* DeviceOrientation.mm */,
 				CEA7F57B20895F5B0078EF6E /* DidResignInputElementStrongPasswordAppearance.mm */,
+				F4B0168225AE060F00E445C4 /* DisableSpellcheck.mm */,
+				F4B0167F25AE02D600E445C4 /* DisableSpellcheckPlugIn.mm */,
 				73BD731723A846500020F450 /* DisplayName.mm */,
 				518EE51A20A78CFB00E024F3 /* DoAfterNextPresentationUpdateAfterCrash.mm */,
 				2D7FD19222419087007887F1 /* DocumentEditingContext.mm */,
@@ -5514,6 +5520,7 @@
 				515BE1711D428E4B00DD7C68 /* StoreBlobThenDelete.mm in Sources */,
 				7CCE7ED01A411A7E00447C4C /* StringByEvaluatingJavaScriptFromString.mm in Sources */,
 				7CCE7ED11A411A7E00447C4C /* StringTruncator.mm in Sources */,
+				F4B0168325AE060F00E445C4 /* DisableSpellcheck.mm in Sources */,
 				ECA680CE1E68CC0900731D20 /* StringUtilities.mm in Sources */,
 				CE4D5DE71F6743BA0072CFC6 /* StringWithDirection.cpp in Sources */,
 				7CCE7ED21A411A7E00447C4C /* SubresourceErrorCrash.mm in Sources */,
@@ -5697,6 +5704,7 @@
 				5C4259462266A68A0039AA7A /* BasicProposedCredentialPlugIn.mm in Sources */,
 				374B7A611DF371CF00ACCB6C /* BundleEditingDelegatePlugIn.mm in Sources */,
 				7A89BB682331643A0042CB1E /* BundleFormDelegatePlugIn.mm in Sources */,
+				F4B0168425AE08F800E445C4 /* DisableSpellcheckPlugIn.mm in Sources */,
 				A13EBBB01B87436F00097110 /* BundleParametersPlugIn.mm in Sources */,
 				37A709AF1E3EA97E00CA5969 /* BundleRangeHandlePlugIn.mm in Sources */,
 				5C75716122124C5200B9E5AC /* BundleRetainPagePlugIn.mm in Sources */,

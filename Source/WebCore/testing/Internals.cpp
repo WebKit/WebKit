@@ -2489,6 +2489,11 @@ void Internals::setAutomaticSpellingCorrectionEnabled(bool enabled)
 #endif
 }
 
+bool Internals::isSpellcheckDisabledExceptTextReplacement(const HTMLInputElement& element) const
+{
+    return element.isSpellcheckDisabledExceptTextReplacement();
+}
+
 void Internals::handleAcceptedCandidate(const String& candidate, unsigned location, unsigned length)
 {
     if (!contextDocument() || !contextDocument()->frame())

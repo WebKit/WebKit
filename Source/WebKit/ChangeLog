@@ -1,5 +1,22 @@
 2021-01-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        REGRESSION (r265044): [macOS] Safari autocorrects text when typing in login field on amazon.com
+        https://bugs.webkit.org/show_bug.cgi?id=220556
+        <rdar://problem/71602937>
+
+        Reviewed by Darin Adler.
+
+        Restores the implementation of `WKBundleNodeHandleSetHTMLInputElementSpellcheckEnabled`, which was removed in
+        r265044, with the reasoning that the code was unused. However, Safari still uses this SPI on macOS to prevent
+        automatic spelling correction from triggering when editing form fields that are AutoFillable.
+
+        Test: WebKit.DisableSpellcheck
+
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (WKBundleNodeHandleSetHTMLInputElementSpellcheckEnabled):
+
+2021-01-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         ASSERTION FAILED: m_connection under WebKit::WebPageProxy::acceptsFirstMouse()
         https://bugs.webkit.org/show_bug.cgi?id=220545
         <rdar://problem/73043854>
