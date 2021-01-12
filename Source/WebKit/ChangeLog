@@ -1,3 +1,20 @@
+2021-01-12  Youenn Fablet  <youenn@apple.com>
+
+        Unmuting a track in case of end of interruption by another web process tab is not working well with capture muting icons
+        https://bugs.webkit.org/show_bug.cgi?id=220058
+
+        Reviewed by Eric Carlson.
+
+        Add an observer of AudioSession interruptions that forwards the signal to all tabs of the process.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::PageAudioSessionInterruptionObserver::PageAudioSessionInterruptionObserver):
+        (WebKit::PageAudioSessionInterruptionObserver::~PageAudioSessionInterruptionObserver):
+        (WebKit::PageAudioSessionInterruptionObserver::beginAudioSessionInterruption):
+        (WebKit::PageAudioSessionInterruptionObserver::endAudioSessionInterruption):
+        (WebKit::listenToAudioSessionInterruption):
+
 2021-01-12  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Lazy initialization support

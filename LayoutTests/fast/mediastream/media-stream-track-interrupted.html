@@ -50,8 +50,11 @@
 
     function testTrack(track, title)
     {
-        promise_test((test) => {
-            return new Promise((resolve, reject) => {
+        promise_test(async (test) => {
+            if (track.muted)
+                await new Promise(resolve => track.onunmute = resolve);
+
+            await new Promise((resolve, reject) => {
                 let isVideo = track.kind == "video";
                 if (window.internals) {
                     assert_false(internals.pageMediaState().includes('HasMutedVideoCaptureDevice'));
@@ -67,12 +70,9 @@
                         track.onunmute = (evt) => {
                             waitForPageStateChange(10, pageState, resolve, reject)
                         }
-
                         if (window.internals) {
-                            assert_true(pageMediaState.includes(isVideo ? 'HasMutedVideoCaptureDevice' : 'HasMutedAudioCaptureDevice'));
-                            assert_false(pageMediaState.includes(isVideo ? 'HasMutedAudioCaptureDevice' : 'HasMutedVideoCaptureDevice'));
-                            assert_true(pageMediaState.includes(isVideo ? 'HasActiveAudioCaptureDevice' : 'HasActiveVideoCaptureDevice'));
-                            assert_false(pageMediaState.includes(isVideo ? 'HasActiveVideoCaptureDevice' : 'HasActiveAudioCaptureDevice'));
+                            assert_true(pageMediaState.includes('HasMutedAudioCaptureDevice'), 'audio muted');
+                            assert_true(pageMediaState.includes('HasMutedVideoCaptureDevice'), 'video muted');
                             pageState = internals.pageMediaState();
                             internals.setMediaStreamSourceInterrupted(track, false)
                         }
@@ -85,6 +85,8 @@
                 }
                 setTimeout(() => reject("Muted state did not change in 1 second"), 1000);
             });
+            track.onmute = () => { };
+            track.onunmute = () => { };
         }, title);
     }
 

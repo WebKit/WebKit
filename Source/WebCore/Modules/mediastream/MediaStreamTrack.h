@@ -72,7 +72,7 @@ public:
     static void endCapture(Document&);
 
     static MediaProducer::MediaStateFlags captureState(Document&);
-    static void updateCaptureAccordingToMutedState(Document&);
+    static void updateCaptureAccordingToMutedState(Document&, MediaProducer::MutedStateFlags);
 
     virtual bool isCanvas() const { return false; }
 
@@ -169,7 +169,7 @@ private:
     explicit MediaStreamTrack(MediaStreamTrack&);
 
     void configureTrackRendering();
-    void updateToPageMutedState();
+    void updateToPageMutedState(MediaProducer::MutedStateFlags);
 
     // ActiveDOMObject API.
     void stop() final { stopTrack(); }

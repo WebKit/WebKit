@@ -79,6 +79,7 @@
 #include "LowPowerModeNotifier.h"
 #include "MediaCanStartListener.h"
 #include "MediaRecorderProvider.h"
+#include "MediaStreamTrack.h"
 #include "Navigator.h"
 #include "PageConfiguration.h"
 #include "PageConsoleClient.h"
@@ -2070,6 +2071,24 @@ void Page::stopMediaCapture()
 #if ENABLE(MEDIA_STREAM)
     forEachDocument([] (Document& document) {
         document.stopMediaCapture();
+    });
+#endif
+}
+
+void Page::beginAudioCaptureInterruption()
+{
+#if ENABLE(MEDIA_STREAM)
+    forEachDocument([mutedState = mutedState()](auto& document) {
+        MediaStreamTrack::updateCaptureAccordingToMutedState(document, mutedState | MediaProducer::AudioAndVideoCaptureIsMuted);
+    });
+#endif
+}
+
+void Page::endAudioCaptureInterruption()
+{
+#if ENABLE(MEDIA_STREAM)
+    forEachDocument([mutedState = mutedState()](auto& document) {
+        MediaStreamTrack::updateCaptureAccordingToMutedState(document, mutedState);
     });
 #endif
 }

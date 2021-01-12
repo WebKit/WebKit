@@ -831,6 +831,9 @@ public:
     bool textInteractionEnabled() { return m_textInteractionEnabled; }
     void setTextInteractionEnabled(bool value) { m_textInteractionEnabled = value; }
 
+    WEBCORE_EXPORT void beginAudioCaptureInterruption();
+    WEBCORE_EXPORT void endAudioCaptureInterruption();
+
 private:
     struct Navigation {
         RegistrableDomain domain;
