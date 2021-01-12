@@ -1,3 +1,14 @@
+2021-01-12  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer] Switch from ENABLE_ to USE_ in native audio/video and text sink options
+        https://bugs.webkit.org/show_bug.cgi?id=220515
+
+        Reviewed by Philippe Normand.
+
+        * Source/cmake/GStreamerDefinitions.cmake: Add USE_ definitions.
+        * Source/cmake/WebKitFeatures.cmake: Remove global ENABLE_
+        definitions.
+
 2021-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.31.1 release

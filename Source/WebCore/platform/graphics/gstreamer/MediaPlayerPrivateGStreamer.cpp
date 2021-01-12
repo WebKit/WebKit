@@ -2704,6 +2704,7 @@ static void setPlaybackFlags(GstElement* pipeline)
     unsigned hasText = getGstPlayFlag("text");
     unsigned hasNativeVideo = getGstPlayFlag("native-video");
     unsigned hasNativeAudio = getGstPlayFlag("native-audio");
+    unsigned hasSoftwareColorBalance = getGstPlayFlag("soft-colorbalance");
 
     unsigned flags = 0;
     g_object_get(pipeline, "flags", &flags, nullptr);
@@ -2711,22 +2712,26 @@ static void setPlaybackFlags(GstElement* pipeline)
     flags = flags & ~hasText;
     flags = flags & ~hasNativeAudio;
     flags = flags & ~hasNativeVideo;
+    flags = flags & ~hasSoftwareColorBalance;
 
-#if !ENABLE(TEXT_SINK)
+#if !USE(GSTREAMER_TEXT_SINK)
     hasText = 0x0;
 #endif
 
-#if !ENABLE(NATIVE_VIDEO)
+#if USE(GSTREAMER_NATIVE_VIDEO)
+    hasSoftwareColorBalance = 0x0;
+#else
     hasNativeVideo = 0x0;
 #endif
 
-#if !ENABLE(NATIVE_AUDIO)
+#if !USE(GSTREAMER_NATIVE_AUDIO)
     hasNativeAudio = 0x0;
 #endif
 
-    GST_INFO_OBJECT(pipeline, "text %s, audio %s (native %s), video %s (native %s)", boolForPrinting(hasText), boolForPrinting(hasAudio),
-        boolForPrinting(hasNativeAudio), boolForPrinting(hasVideo), boolForPrinting(hasNativeVideo));
-    flags |= hasText | hasAudio | hasVideo | hasNativeVideo | hasNativeAudio;
+    GST_INFO_OBJECT(pipeline, "text %s, audio %s (native %s), video %s (native %s, software color balance %s)", boolForPrinting(hasText),
+        boolForPrinting(hasAudio), boolForPrinting(hasNativeAudio), boolForPrinting(hasVideo), boolForPrinting(hasNativeVideo),
+        boolForPrinting(hasSoftwareColorBalance));
+    flags |= hasText | hasAudio | hasVideo | hasNativeVideo | hasNativeAudio | hasSoftwareColorBalance;
     g_object_set(pipeline, "flags", flags, nullptr);
     GST_DEBUG_OBJECT(pipeline, "current pipeline flags %x", flags);
 }
