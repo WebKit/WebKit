@@ -1,3 +1,11 @@
+2021-01-11  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Gardening API test crash
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2021-01-11  Sihui Liu  <sihui_liu@appe.com>
 
         Make SpeechRecognition permission error more informative

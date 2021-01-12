@@ -38,6 +38,11 @@
             "/webkit/WebKitWebView/install-missing-plugins-permission-request": {
                 "expected": {"gtk": {"status": ["TIMEOUT", "FAIL"], "bug": ["webkit.org/b/147822", "webkit.org/b/210635"]}}
             },
+            "/webkit/WebKitWebExtension/document-loaded-signal": {
+                "expected": {
+                    "wpe@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/219980"}
+                }
+            },
             "/webkit/WebKitWebExtension/form-submission-steps": {
                 "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/205333"}}
             },
@@ -47,7 +52,7 @@
             "/webkit/WebKitWebExtension/user-messages": {
                 "expected": {
                     "gtk": {"status": ["FAIL", "TIMEOUT", "PASS"], "bug": "webkit.org/b/211336"},
-                    "wpe": {"status": ["FAIL", "TIMEOUT", "PASS"], "bug": "webkit.org/b/211336"}
+                    "wpe": {"status": ["FAIL", "TIMEOUT", "PASS", "CRASH"], "bug": ["webkit.org/b/211336", "webkit.org/b/219980"]}
                 }
             }
         }
