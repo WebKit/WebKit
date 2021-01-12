@@ -547,8 +547,6 @@ localizedStrings["Element overlaps other compositing element"] = "Element overla
 localizedStrings["Elements"] = "Elements";
 /* Name of Elements Tab */
 localizedStrings["Elements Tab Name"] = "Elements";
-/* Category label for experimental settings pertaining to the Elements tab */
-localizedStrings["Elements Tab: @ Experimental Settings"] = "Elements Tab:";
 /* Checkbox shown in the Console to cause future evaluations as though they are in response to user interaction. */
 localizedStrings["Emulate User Gesture @ Console"] = "Emulate User Gesture";
 /* Checkbox shown when configuring log/evaluate/probe breakpoint actions to cause it to be evaluated as though it was in response to user interaction. */
@@ -1294,7 +1292,6 @@ localizedStrings["Show All Nodes (%d More)"] = "Show All Nodes (%d More)";
 localizedStrings["Show Console"] = "Show Console";
 localizedStrings["Show Console tab"] = "Show Console tab";
 localizedStrings["Show Elements"] = "Show Elements";
-localizedStrings["Show Font details sidebar panel"] = "Show Font details sidebar panel";
 localizedStrings["Show Path"] = "Show Path";
 localizedStrings["Show Remaining (%d)"] = "Show Remaining (%d)";
 localizedStrings["Show Scope Chain on pause"] = "Show Scope Chain on pause";

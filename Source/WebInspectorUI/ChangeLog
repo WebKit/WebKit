@@ -1,3 +1,17 @@
+2021-01-12  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Remove experimental setting and enable Font details sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=220438
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WI.ElementsTabContentView):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
 2021-01-11  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debugger: allow breakpoint actions to be evaluated as a user gesture
