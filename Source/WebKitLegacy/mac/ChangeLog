@@ -1,3 +1,19 @@
+2021-01-13  Alex Christensen  <achristensen@webkit.org>
+
+        Remove deprecated script and stylesheet injection SPI, replaced with more inclusively-named SPI
+        https://bugs.webkit.org/show_bug.cgi?id=214936
+
+        Reviewed by Youenn Fablet.
+
+        rdar://64376341 tracks the adoption of the replacement.  Once that is done, we can remove the old SPI.
+
+        * WebView/WebView.mm:
+        (+[WebView _addUserScriptToGroup:world:source:url:whitelist:blacklist:injectionTime:]): Deleted.
+        (+[WebView _addUserScriptToGroup:world:source:url:whitelist:blacklist:injectionTime:injectedFrames:]): Deleted.
+        (+[WebView _addUserStyleSheetToGroup:world:source:url:whitelist:blacklist:]): Deleted.
+        (+[WebView _addUserStyleSheetToGroup:world:source:url:whitelist:blacklist:injectedFrames:]): Deleted.
+        * WebView/WebViewPrivate.h:
+
 2021-01-13  Martin Robinson  <mrobinson@igalia.com>
 
         Scroll-snap points should be triggered during programmatic scroll
