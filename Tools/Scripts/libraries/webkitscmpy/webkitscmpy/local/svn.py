@@ -164,6 +164,7 @@ class Svn(Scm):
             if log.poll():
                 raise self.Exception("Failed to construct branch history for '{}'".format(branch))
 
+            was_last_on_default = False
             line = log.stdout.readline()
             while line:
                 match = self.LOG_RE.match(line)
@@ -179,8 +180,11 @@ class Svn(Scm):
                         break
                     if not is_default_branch:
                         if revision in self._metadata_cache[self.default_branch]:
-                            self._metadata_cache[branch].insert(pos, revision)
-                            break
+                            if was_last_on_default:
+                                break
+                            was_last_on_default = True
+                        else:
+                            was_last_on_default = False
                     self._metadata_cache[branch].insert(pos, revision)
                 line = log.stdout.readline()
         finally:
@@ -326,13 +330,14 @@ class Svn(Scm):
             if branch != self.default_branch:
                 branch = self._branch_for(revision)
 
-        date = info['Last Changed Date'].split(' (')[0]
-        tz_diff = date.split(' ')[-1]
-        date = datetime.strptime(date[:-len(tz_diff)], '%Y-%m-%d %H:%M:%S ')
-        date += timedelta(
-            hours=int(tz_diff[1:3]),
-            minutes=int(tz_diff[3:5]),
-        ) * (1 if tz_diff[0] == '-' else -1)
+        date = info['Last Changed Date'].split(' (')[0] if info.get('Last Changed Date') else None
+        if date:
+            tz_diff = date.split(' ')[-1]
+            date = datetime.strptime(date[:-len(tz_diff)], '%Y-%m-%d %H:%M:%S ')
+            date += timedelta(
+                hours=int(tz_diff[1:3]),
+                minutes=int(tz_diff[3:5]),
+            ) * (1 if tz_diff[0] == '-' else -1)
 
         if not identifier:
             if branch != self.default_branch and revision > self._metadata_cache.get(self.default_branch, [0])[-1]:
@@ -376,7 +381,7 @@ class Svn(Scm):
             branch=branch,
             identifier=identifier,
             branch_point=branch_point,
-            timestamp=int(calendar.timegm(date.timetuple())),
+            timestamp=int(calendar.timegm(date.timetuple())) if date else None,
             author=author,
             message=message,
         )

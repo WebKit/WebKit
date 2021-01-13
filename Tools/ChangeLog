@@ -1,3 +1,24 @@
+2021-01-13  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Handle single commit touching multiple branches
+        https://bugs.webkit.org/show_bug.cgi?id=220601
+        <rdar://problem/73165609>
+
+        Reviewed by Stephanie Lewis.
+
+        In WebKit's history, there are a few cases of commits that touch multiple branches (like
+        https://trac.webkit.org/changeset/92419/webkit). These types of commits are not correct,
+        but we need to handle them if they are in the history of a branch.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn._cache_revisions): Branches only intersect trunk when two sequential commits are from trunk.
+        (Svn.commit): Support case where no commit time can be found.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/svn.py:
+        (Svn._cache_revisions): Branches only intersect trunk when two sequential commits are from trunk.
+        (Svn.commit): Support case where no commit time can be found.
+
 2021-01-13  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Use PostgreSQL for new build.webkit.org database

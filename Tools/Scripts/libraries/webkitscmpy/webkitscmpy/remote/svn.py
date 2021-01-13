@@ -232,6 +232,7 @@ class Svn(Scm):
             if response.status_code != 200:
                 raise self.Exception("Failed to construct branch history for '{}'".format(branch))
 
+            was_last_on_default = False
             for line in response.iter_lines():
                 match = self.HISTORY_RE.match(line)
                 if not match:
@@ -248,8 +249,11 @@ class Svn(Scm):
                     break
                 if not is_default_branch:
                     if revision in self._metadata_cache[self.default_branch]:
-                        self._metadata_cache[branch].insert(pos, revision)
-                        break
+                        if was_last_on_default:
+                            break
+                        was_last_on_default = True
+                    else:
+                        was_last_on_default = False
                 self._metadata_cache[branch].insert(pos, revision)
 
         if self._metadata_cache[self.default_branch][0] == [0]:
@@ -386,7 +390,7 @@ class Svn(Scm):
             if branch != self.default_branch:
                 branch = self._branch_for(revision)
 
-        date = datetime.strptime(info['Last Changed Date'], '%Y-%m-%d %H:%M:%S')
+        date = datetime.strptime(info['Last Changed Date'], '%Y-%m-%d %H:%M:%S') if info.get('Last Changed Date') else None
 
         if not identifier:
             if branch != self.default_branch and revision > self._metadata_cache.get(self.default_branch, [0])[-1]:
@@ -433,7 +437,7 @@ class Svn(Scm):
             branch=branch,
             identifier=identifier,
             branch_point=branch_point,
-            timestamp=int(calendar.timegm(date.timetuple())),
+            timestamp=int(calendar.timegm(date.timetuple())) if date else None,
             author=author,
             message=message,
         )
