@@ -360,7 +360,11 @@ private:
 void CDMInstanceSessionThunder::challengeGeneratedCallback(RefPtr<SharedBuffer>&& buffer)
 {
     ParsedResponseMessage parsedResponseMessage(buffer);
-    ASSERT(parsedResponseMessage);
+    if (!parsedResponseMessage) {
+        GST_ERROR("response message parsing failed");
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
     if (!m_challengeCallbacks.isEmpty()) {
         m_message = WTFMove(parsedResponseMessage.payload());
