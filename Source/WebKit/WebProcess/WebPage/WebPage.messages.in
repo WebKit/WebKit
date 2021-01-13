@@ -196,7 +196,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     UpdateWebsitePolicies(struct WebKit::WebsitePoliciesData websitePolicies)
     NotifyUserScripts()
-    DidReceivePolicyDecision(WebCore::FrameIdentifier frameID, uint64_t listenerID, struct WebKit::PolicyDecision policyDecision)
+    DidReceivePolicyDecision(WebCore::FrameIdentifier frameID, uint64_t listenerID, struct WebKit::PolicyDecision policyDecision, WebKit::SandboxExtension::HandleArray networkExtensionsSandboxExtensions)
 
     ContinueWillSubmitForm(WebCore::FrameIdentifier frameID, uint64_t listenerID)
 
