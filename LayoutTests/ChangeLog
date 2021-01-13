@@ -1,3 +1,40 @@
+2021-01-12  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, remove old iOS 13 test directories.
+
+        * platform/ios-13/TestExpectations: Removed.
+        * platform/ios-13/fast/forms/slider-thumb-shared-style-expected.txt: Removed.
+        * platform/ios-13/fast/text/international/system-language/navigator-language/navigator-language-en-US-expected.txt: Removed.
+        * platform/ios-13/fast/text/international/system-language/navigator-language/navigator-language-en-expected.txt: Removed.
+        * platform/ios-13/fast/text/international/system-language/navigator-language/navigator-language-es-ES-expected.txt: Removed.
+        * platform/ios-13/fast/text/international/system-language/navigator-language/navigator-language-es-MX-expected.txt: Removed.
+        * platform/ios-13/fast/text/international/system-language/navigator-language/navigator-language-es-expected.txt: Removed.
+        * platform/ios-13/fast/text/international/system-language/navigator-language/navigator-language-fr-expected.txt: Removed.
+        * platform/ios-13/fast/text/international/system-language/navigator-language/navigator-language-hi-expected.txt: Removed.
+        * platform/ios-13/fast/text/international/system-language/navigator-language/navigator-language-pt-BR-expected.txt: Removed.
+        * platform/ios-13/fast/text/international/system-language/navigator-language/navigator-language-ru-expected.txt: Removed.
+        * platform/ios-13/http/tests/xmlhttprequest/methods-async-expected.txt: Removed.
+        * platform/ios-13/http/tests/xmlhttprequest/methods-expected.txt: Removed.
+        * platform/ios-13/http/tests/xmlhttprequest/workers/methods-async-expected.txt: Removed.
+        * platform/ios-13/http/tests/xmlhttprequest/workers/methods-expected.txt: Removed.
+        * platform/ios-13/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt: Removed.
+        * platform/ios-13/imported/w3c/web-platform-tests/css/css-flexbox/inline-flex-editing-with-updating-text-crash-expected.txt: Removed.
+        * platform/ios-13/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any-expected.txt: Removed.
+        * platform/ios-13/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.worker-expected.txt: Removed.
+        * platform/ios-13/imported/w3c/web-platform-tests/fetch/redirect-navigate/preserve-fragment-expected.txt: Removed.
+        * platform/ios-13/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt: Removed.
+        * platform/ios-13/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002-expected.txt: Removed.
+        * platform/ios-13/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002-expected.txt: Removed.
+        * platform/ios-13/imported/w3c/web-platform-tests/xhr/send-entity-body-empty-expected.txt: Removed.
+        * platform/ios-13/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-async-expected.txt: Removed.
+        * platform/ios-13/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-expected.txt: Removed.
+        * platform/ios-13/imported/w3c/web-platform-tests/xhr/send-entity-body-none-expected.txt: Removed.
+        * platform/ios-13/platform/TestExpectations: Removed.
+        * platform/ios-13/platform/ios/ios/fast/text/opticalFont-expected.txt: Removed.
+        * platform/ios-13/platform/ios/ios/fast/text/opticalFontWithTextStyle-expected.txt: Removed.
+        * platform/ios-13/platform/ios/ios/fast/text/opticalFontWithWeight-expected.txt: Removed.
+        * platform/ipad-13/platform/ios/ios/fast/text/opticalFontWithTextStyle-expected.txt: Removed.
+
 2021-01-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] "Correct Spelling Automatically" menu items are inconsistent when autocorrect="off"

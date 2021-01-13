@@ -1,6 +1,0 @@
-FAIL navigator.language should be es-mx. Was es-419.
-PASS successfullyParsed is true
-Some tests failed.
-
-TEST COMPLETE
-

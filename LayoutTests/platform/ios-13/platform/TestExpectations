@@ -1,3 +1,0 @@
-# Certain versions of iOS use different text security characters.
-webkit.org/b/209692 platform/ios/fast/text/text-security-disc-bullet-pua-ios-new.html [ ImageOnlyFailure ]
-webkit.org/b/209692 fast/text/text-security-disc-bullet-pua.html [ ImageOnlyFailure ]
