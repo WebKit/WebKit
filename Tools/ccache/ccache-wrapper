@@ -40,6 +40,7 @@ try()
 try $(which ccache &> /dev/null)
 try /usr/local
 try /opt/brew
+try /opt/homebrew
 try "${HOMEBREW_TEMP}/../brew"
 try "${HOMEBREW_TEMP}/../../brew"
 

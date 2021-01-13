@@ -1,3 +1,17 @@
+2021-01-12  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
+
+        Invoke ccache properly on macOS aarch64
+        https://bugs.webkit.org/show_bug.cgi?id=220497
+
+        Reviewed by Darin Adler.
+
+        For macOS aarch64, the current homebrew recommends to install homebrew to `/opt/homebrew`.
+        https://docs.brew.sh/Installation
+
+        This patch adds it to the list which `ccache-wrapper` searches.
+
+        * ccache/ccache-wrapper:
+
 2021-01-12  BJ Burg  <bburg@apple.com>
 
         [Cocoa] Web Inspector: move browser domain activation methods back to WKWebView and UIDelegate
