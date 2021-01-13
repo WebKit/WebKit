@@ -10122,8 +10122,10 @@ void SpeculativeJIT::compileCallDOMGetter(Node* node)
         m_jit.emitStoreCodeOrigin(m_currentNode->origin.semantic);
         if (Options::useJITCage())
             m_jit.appendCall(vmEntryCustomAccessor);
-        else
-            m_jit.appendCall(getter.retagged<CFunctionPtrTag>());
+        else {
+            FunctionPtr<OperationPtrTag> bypassedFunction = FunctionPtr<OperationPtrTag>(MacroAssemblerCodePtr<OperationPtrTag>(WTF::tagNativeCodePtrImpl<OperationPtrTag>(WTF::untagNativeCodePtrImpl<CustomAccessorPtrTag>(getter.executableAddress()))));
+            m_jit.appendOperationCall(bypassedFunction);
+        }
         m_jit.setupResults(resultRegs);
 
         m_jit.exceptionCheck();

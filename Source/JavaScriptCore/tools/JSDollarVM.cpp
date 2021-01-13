@@ -987,9 +987,15 @@ void DOMJITGetter::finishCreation(VM& vm)
 {
     DollarVMAssertScope assertScope;
     Base::finishCreation(vm);
-    const DOMJIT::GetterSetter* domJIT = &DOMJITGetterDOMJIT;
-    auto* customGetterSetter = DOMAttributeGetterSetter::create(vm, domJIT->getter(), nullptr, DOMAttributeAnnotation { DOMJITNode::info(), domJIT });
-    putDirectCustomAccessor(vm, Identifier::fromString(vm, "customGetter"), customGetterSetter, PropertyAttribute::ReadOnly | PropertyAttribute::CustomAccessor);
+    {
+        const DOMJIT::GetterSetter* domJIT = &DOMJITGetterDOMJIT;
+        auto* customGetterSetter = DOMAttributeGetterSetter::create(vm, domJIT->getter(), nullptr, DOMAttributeAnnotation { DOMJITNode::info(), domJIT });
+        putDirectCustomAccessor(vm, Identifier::fromString(vm, "customGetter"), customGetterSetter, PropertyAttribute::ReadOnly | PropertyAttribute::CustomAccessor);
+    }
+    {
+        auto* customGetterSetter = DOMAttributeGetterSetter::create(vm, domJITGetterCustomGetter, nullptr, DOMAttributeAnnotation { DOMJITNode::info(), nullptr });
+        putDirectCustomAccessor(vm, Identifier::fromString(vm, "customGetter2"), customGetterSetter, PropertyAttribute::ReadOnly | PropertyAttribute::CustomAccessor);
+    }
 }
 
 JSC_DEFINE_CUSTOM_GETTER(domJITGetterCustomGetter, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))

@@ -1,3 +1,28 @@
+2021-01-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Bypass OperationPtrTagging for JITCage verification for CallDOMGetter
+        https://bugs.webkit.org/show_bug.cgi?id=220564
+
+        Reviewed by Saam Barati.
+
+        CustomAccessorPtrTag functions are not registered ones for JITCage since we are using C++ trampoline to invoke them.
+        However, we do not want to use this trampoline in x64 due to performance issue. So we would like to call these
+        functions directly from JIT while they are not registered (And this is OK in JITCage since they are called from trampoline).
+        In this patch we bypass OperationPtrTagging by using WTF::tagNativeCodePtrImpl directly for non JITCage case.
+
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::appendOperationCall):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCallDOMGetter):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::appendOperationCall):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOMGetter):
+        (JSC::FTL::DFG::LowerDFGToB3::vmCall):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::operation):
+        * tools/JSDollarVM.cpp:
+
 2021-01-12  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext] super accesses broken on arrow functions defined as class field

@@ -402,6 +402,7 @@ public:
     // https://bugs.webkit.org/show_bug.cgi?id=184324
     template<typename FunctionType>
     LValue operation(FunctionType function) { return constIntPtr(tagCFunctionPtr<void*, OperationPtrTag>(function)); }
+    LValue operation(FunctionPtr<OperationPtrTag> function) { return constIntPtr(function.executableAddress()); }
 
     void jump(LBasicBlock);
     void branch(LValue condition, LBasicBlock taken, Weight takenWeight, LBasicBlock notTaken, Weight notTakenWeight);

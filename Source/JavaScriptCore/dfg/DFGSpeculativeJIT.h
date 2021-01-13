@@ -986,6 +986,13 @@ public:
         return m_jit.appendCall(function);
     }
 
+    JITCompiler::Call appendOperationCall(const FunctionPtr<OperationPtrTag> function)
+    {
+        prepareForExternalCall();
+        m_jit.emitStoreCodeOrigin(m_currentNode->origin.semantic);
+        return m_jit.appendOperationCall(function);
+    }
+
     JITCompiler::Call appendCallWithCallFrameRollbackOnException(const FunctionPtr<CFunctionPtrTag> function)
     {
         JITCompiler::Call call = appendCall(function);
