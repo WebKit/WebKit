@@ -1,5 +1,19 @@
 2021-01-12  Lauro Moura  <lmoura@igalia.com>
 
+        [GLIB] Rebaselines after r271348
+
+        Unreviewed test gardening.
+
+        * platform/glib/fast/inline-block/tricky-baseline-expected.txt:
+        * platform/gtk/fast/clip/overflow-border-radius-combinations-expected.txt:
+        * platform/gtk/fast/clip/overflow-border-radius-composited-expected.txt:
+        * platform/gtk/fast/clip/overflow-border-radius-transformed-expected.txt:
+        * platform/wpe/fast/clip/overflow-border-radius-combinations-expected.txt:
+        * platform/wpe/fast/clip/overflow-border-radius-composited-expected.txt:
+        * platform/wpe/fast/clip/overflow-border-radius-transformed-expected.txt:
+
+2021-01-12  Lauro Moura  <lmoura@igalia.com>
+
         [GLIB] Rebaselines after r271110
 
         Unreviewed test gardening.
