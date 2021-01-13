@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
@@ -24,23 +25,15 @@
 <div id="console"></div>
 
 <script>
-
     description("This tests some basic attributes about the details element.");
 
-    var callbackCount = 0;
     if (window.accessibilityController) {
         window.jsTestIsAsync = true;
 
         var body = accessibilityController.rootElement.childAtIndex(0);
         body.addNotificationListener(function(notification) {
-            if (notification == "AXExpandedChanged") {
-                callbackCount++;
+            if (notification == "AXExpandedChanged")
                 debug("Received " + notification + " notification ");
-
-                if (callbackCount == 2) {
-                   finishJSTest();
-                }
-            }
         });
 
         var details1 = accessibilityController.accessibleElementById("details1");
@@ -55,44 +48,62 @@
 
         // Toggle the expanded state.
         details1.setBoolAttributeValue("AXExpanded", false);
+
+        // After toggling the expanded state on a <details> element, the underlying HTMLDetailsElement goes away and it is replaced by a new object.
+        // Thus, we need to retrieve the corresponding accessible object again since the current one becomes defunct.
+        // See HTMLDetailsElement::toggleOpen().
+        setTimeout(async function() {
+            await waitFor(() => {
         details1 = accessibilityController.accessibleElementById("details1");
+                return !details1.isExpanded;
+            });
         summary1 = accessibilityController.accessibleElementById("summary1");
         shouldBeFalse("details1.isExpanded");
         shouldBeFalse("summary1.isExpanded");
 
         // Give it the same value to make sure we don't expand.
         details1.setBoolAttributeValue("AXExpanded", false);
+            await waitFor(() => {
         details1 = accessibilityController.accessibleElementById("details1");
+                return !details1.isExpanded;
+            });
         summary1 = accessibilityController.accessibleElementById("summary1");
         shouldBeFalse("details1.isExpanded");
         shouldBeFalse("summary1.isExpanded");
 
         // Set to expand again.
         details1.setBoolAttributeValue("AXExpanded", true);
+            await waitFor(() => {
         details1 = accessibilityController.accessibleElementById("details1");
+                return details1.isExpanded;
+            });
         summary1 = accessibilityController.accessibleElementById("summary1");
         shouldBeTrue("details1.isExpanded");
         shouldBeTrue("summary1.isExpanded");
 
         // And duplicate the true state to make sure it doesn't toggle off.
         details1.setBoolAttributeValue("AXExpanded", true);
+            await waitFor(() => {
         details1 = accessibilityController.accessibleElementById("details1");
+                return details1.isExpanded;
+            });
         summary1 = accessibilityController.accessibleElementById("summary1");
         shouldBeTrue("details1.isExpanded");
         shouldBeTrue("summary1.isExpanded");
 
-        var details2 = accessibilityController.accessibleElementById("details2");
+            details2 = accessibilityController.accessibleElementById("details2");
         shouldBe("details2.subrole", "'AXSubrole: AXDetails'");
         shouldBeFalse("details2.isExpanded");
 
         // Expanded status should be correct when detail has group role
-        var details3 = accessibilityController.accessibleElementById("details3");
+            details3 = accessibilityController.accessibleElementById("details3");
         shouldBe("details3.subrole", "'AXSubrole: AXApplicationGroup'");
         shouldBeTrue("details3.isExpanded");
+
+            finishJSTest();
+        }, 0);
     }
-
 </script>
-
 <script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

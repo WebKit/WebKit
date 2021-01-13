@@ -17,10 +17,12 @@ PASS summary1.role is 'AXRole: AXButton'
 PASS summary1.subrole is 'AXSubrole: AXSummary'
 PASS summary1.title is 'AXTitle: Some open info'
 PASS details1.isAttributeSettable('AXExpanded') is true
+Received AXExpandedChanged notification
 PASS details1.isExpanded is false
 PASS summary1.isExpanded is false
 PASS details1.isExpanded is false
 PASS summary1.isExpanded is false
+Received AXExpandedChanged notification
 PASS details1.isExpanded is true
 PASS summary1.isExpanded is true
 PASS details1.isExpanded is true
@@ -29,8 +31,6 @@ PASS details2.subrole is 'AXSubrole: AXDetails'
 PASS details2.isExpanded is false
 PASS details3.subrole is 'AXSubrole: AXApplicationGroup'
 PASS details3.isExpanded is true
-Received AXExpandedChanged notification
-Received AXExpandedChanged notification
 PASS successfullyParsed is true
 
 TEST COMPLETE
