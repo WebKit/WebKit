@@ -4380,6 +4380,10 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyBorderTopLeftRadius:
     case CSSPropertyBorderBottomLeftRadius:
     case CSSPropertyBorderBottomRightRadius:
+    case CSSPropertyBorderStartStartRadius:
+    case CSSPropertyBorderStartEndRadius:
+    case CSSPropertyBorderEndStartRadius:
+    case CSSPropertyBorderEndEndRadius:
         return consumeBorderRadiusCorner(m_range, m_context.mode);
     case CSSPropertyWebkitBoxFlexGroup:
         return consumeInteger(m_range, 0);

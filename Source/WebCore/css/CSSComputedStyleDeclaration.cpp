@@ -3929,6 +3929,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyBorderBlockStartColor:
         case CSSPropertyBorderBlockStartStyle:
         case CSSPropertyBorderBlockStartWidth:
+        case CSSPropertyBorderEndEndRadius:        
+        case CSSPropertyBorderEndStartRadius:        
         case CSSPropertyBorderInlineEnd:
         case CSSPropertyBorderInlineEndColor:
         case CSSPropertyBorderInlineEndStyle:
@@ -3937,6 +3939,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyBorderInlineStartColor:
         case CSSPropertyBorderInlineStartStyle:
         case CSSPropertyBorderInlineStartWidth:
+        case CSSPropertyBorderStartEndRadius:        
+        case CSSPropertyBorderStartStartRadius:        
         case CSSPropertyInsetBlockEnd:
         case CSSPropertyInsetBlockStart:
         case CSSPropertyInsetInlineEnd:

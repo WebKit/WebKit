@@ -85,6 +85,11 @@ constexpr inline bool isVerticalTextFlow(TextFlow textflow)
     return textflow & TextFlowVerticalMask;
 }
 
+constexpr inline bool isFlippedLinesTextFlow(TextFlow textflow)
+{
+    return isFlippedTextFlow(textflow) != isVerticalTextFlow(textflow);
+}
+
 // Lines have vertical orientation; modes vertical-lr or vertical-rl.
 constexpr inline bool isVerticalWritingMode(WritingMode writingMode)
 {
@@ -106,7 +111,7 @@ constexpr inline bool isHorizontalWritingMode(WritingMode writingMode)
 // Bottom of the line occurs earlier in the block; modes vertical-lr or horizontal-bt.
 constexpr inline bool isFlippedLinesWritingMode(WritingMode writingMode)
 {
-    return isVerticalWritingMode(writingMode) != isFlippedWritingMode(writingMode);
+    return isFlippedLinesTextFlow(makeTextFlow(writingMode, TextDirection::LTR));
 }
 
 enum class LogicalBoxSide : uint8_t {
@@ -121,6 +126,22 @@ enum class BoxSide : uint8_t {
     Right,
     Bottom,
     Left
+};
+
+enum class LogicalBoxCorner : uint8_t {
+    StartStart,
+    StartEnd,
+    EndStart,
+    EndEnd
+};
+
+// The mapping is with the first start/end giving the block axis side,
+// and the second the inline-axis side, i.e. patterned as 'border-block-inline-radius'.
+enum class BoxCorner : uint8_t {
+    TopLeft,
+    TopRight,
+    BottomRight,
+    BottomLeft
 };
 
 constexpr std::array<BoxSide, 4> allBoxSides = { BoxSide::Top, BoxSide::Right, BoxSide::Bottom, BoxSide::Left };
@@ -162,6 +183,20 @@ constexpr inline BoxSide mapLogicalSideToPhysicalSide(WritingMode writingMode, L
     // Set the direction such that side is mirrored if isFlippedWritingMode() is true
     TextDirection direction = isFlippedWritingMode(writingMode) ? TextDirection::RTL : TextDirection::LTR;
     return mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), logicalSide);
+}
+
+constexpr inline BoxCorner mapLogicalCornerToPhysicalCorner(TextFlow textflow, LogicalBoxCorner logicalBoxCorner)
+{
+    bool isBlockStart = logicalBoxCorner == LogicalBoxCorner::StartStart || logicalBoxCorner == LogicalBoxCorner::StartEnd;
+    bool isInlineStart = logicalBoxCorner == LogicalBoxCorner::StartStart || logicalBoxCorner == LogicalBoxCorner::EndStart;
+    if (isBlockStart == isFlippedTextFlow(textflow)) {
+        if (isInlineStart == isReversedTextFlow(textflow))
+            return BoxCorner::BottomRight;
+    } else if (isInlineStart != isReversedTextFlow(textflow))
+        return BoxCorner::TopLeft;
+    if (isBlockStart == isFlippedLinesTextFlow(textflow))
+        return BoxCorner::BottomLeft;
+    return BoxCorner::TopRight;
 }
 
 } // namespace WebCore

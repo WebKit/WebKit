@@ -54,12 +54,19 @@ void CSSProperty::wrapValueInCommaSeparatedList()
 
 static CSSPropertyID resolveToPhysicalProperty(TextDirection direction, WritingMode writingMode, LogicalBoxSide logicalSide, const StylePropertyShorthand& shorthand)
 {
+    RELEASE_ASSERT(shorthand.length() == 4);
     return shorthand.properties()[static_cast<size_t>(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), logicalSide))];
+}
+
+static CSSPropertyID resolveToPhysicalProperty(TextDirection direction, WritingMode writingMode, LogicalBoxCorner logicalBoxCorner, const StylePropertyShorthand& shorthand)
+{
+    RELEASE_ASSERT(shorthand.length() == 4);
+    return shorthand.properties()[static_cast<size_t>(mapLogicalCornerToPhysicalCorner(makeTextFlow(writingMode, direction), logicalBoxCorner))];
 }
 
 enum LogicalExtent { LogicalWidth, LogicalHeight };
 
-static CSSPropertyID resolveToPhysicalProperty(WritingMode writingMode, LogicalExtent logicalSide, const CSSPropertyID* properties)
+static CSSPropertyID resolveToPhysicalProperty(WritingMode writingMode, LogicalExtent logicalSide, const CSSPropertyID (&properties)[2])
 {
     if (writingMode == WritingMode::TopToBottom || writingMode == WritingMode::BottomToTop)
         return properties[logicalSide];
@@ -156,6 +163,14 @@ CSSPropertyID CSSProperty::resolveDirectionAwareProperty(CSSPropertyID propertyI
         const CSSPropertyID properties[2] = { CSSPropertyMaxWidth, CSSPropertyMaxHeight };
         return resolveToPhysicalProperty(writingMode, LogicalHeight, properties);
     }
+    case CSSPropertyBorderStartStartRadius:
+        return resolveToPhysicalProperty(direction, writingMode, LogicalBoxCorner::StartStart, borderRadiusShorthand());
+    case CSSPropertyBorderStartEndRadius:
+        return resolveToPhysicalProperty(direction, writingMode, LogicalBoxCorner::StartEnd, borderRadiusShorthand());
+    case CSSPropertyBorderEndStartRadius:
+        return resolveToPhysicalProperty(direction, writingMode, LogicalBoxCorner::EndStart, borderRadiusShorthand());
+    case CSSPropertyBorderEndEndRadius:
+        return resolveToPhysicalProperty(direction, writingMode, LogicalBoxCorner::EndEnd, borderRadiusShorthand());
     default:
         return propertyID;
     }
@@ -210,6 +225,10 @@ bool CSSProperty::isDirectionAwareProperty(CSSPropertyID propertyID)
     case CSSPropertyMinBlockSize:
     case CSSPropertyMaxInlineSize:
     case CSSPropertyMaxBlockSize:
+    case CSSPropertyBorderStartStartRadius:
+    case CSSPropertyBorderStartEndRadius:
+    case CSSPropertyBorderEndStartRadius:
+    case CSSPropertyBorderEndEndRadius:
         return true;
     default:
         return false;

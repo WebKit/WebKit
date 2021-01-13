@@ -1513,6 +1513,24 @@
                 "url": "https://www.w3.org/TR/css3-background/#the-border-color"
             }
         },
+        "border-end-end-radius": {
+            "codegen-properties": {
+                "skip-builder": true
+            },
+            "specification": {
+                "category": "css-logical-props",
+                "url": "https://drafts.csswg.org/css-logical-1/#border-radius-properties"
+            }
+        },
+        "border-end-start-radius": {
+            "codegen-properties": {
+                "skip-builder": true
+            },
+            "specification": {
+                "category": "css-logical-props",
+                "url": "https://drafts.csswg.org/css-logical-1/#border-radius-properties"
+            }
+        },
         "border-image": {
             "codegen-properties": {
                 "longhands": [
@@ -1886,6 +1904,24 @@
             "specification": {
                 "category": "css-22",
                 "url": "https://www.w3.org/TR/CSS22/tables.html#separated-borders"
+            }
+        },
+        "border-start-end-radius": {
+            "codegen-properties": {
+                "skip-builder": true
+            },
+            "specification": {
+                "category": "css-logical-props",
+                "url": "https://drafts.csswg.org/css-logical-1/#border-radius-properties"
+            }
+        },
+        "border-start-start-radius": {
+            "codegen-properties": {
+                "skip-builder": true
+            },
+            "specification": {
+                "category": "css-logical-props",
+                "url": "https://drafts.csswg.org/css-logical-1/#border-radius-properties"
             }
         },
         "border-style": {

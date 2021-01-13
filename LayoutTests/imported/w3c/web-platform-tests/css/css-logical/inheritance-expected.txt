@@ -13,10 +13,10 @@ PASS Property border-block-start-style has initial value none
 PASS Property border-block-start-style does not inherit
 PASS Property border-block-start-width has initial value 3px
 PASS Property border-block-start-width does not inherit
-FAIL Property border-end-end-radius has initial value 0px assert_true: border-end-end-radius doesn't seem to be supported in the computed style expected true got false
-FAIL Property border-end-end-radius does not inherit assert_true: expected true got false
-FAIL Property border-end-start-radius has initial value 0px assert_true: border-end-start-radius doesn't seem to be supported in the computed style expected true got false
-FAIL Property border-end-start-radius does not inherit assert_true: expected true got false
+PASS Property border-end-end-radius has initial value 0px
+PASS Property border-end-end-radius does not inherit
+PASS Property border-end-start-radius has initial value 0px
+PASS Property border-end-start-radius does not inherit
 PASS Property border-inline-end-color has initial value rgb(0, 0, 255)
 PASS Property border-inline-end-color does not inherit
 PASS Property border-inline-end-style has initial value none
@@ -29,10 +29,10 @@ PASS Property border-inline-start-style has initial value none
 PASS Property border-inline-start-style does not inherit
 PASS Property border-inline-start-width has initial value 3px
 PASS Property border-inline-start-width does not inherit
-FAIL Property border-start-end-radius has initial value 0px assert_true: border-start-end-radius doesn't seem to be supported in the computed style expected true got false
-FAIL Property border-start-end-radius does not inherit assert_true: expected true got false
-FAIL Property border-start-start-radius has initial value 0px assert_true: border-start-start-radius doesn't seem to be supported in the computed style expected true got false
-FAIL Property border-start-start-radius does not inherit assert_true: expected true got false
+PASS Property border-start-end-radius has initial value 0px
+PASS Property border-start-end-radius does not inherit
+PASS Property border-start-start-radius has initial value 0px
+PASS Property border-start-start-radius does not inherit
 PASS Property inline-size has initial value 294px
 PASS Property inline-size does not inherit
 PASS Property inset-block-end has initial value auto

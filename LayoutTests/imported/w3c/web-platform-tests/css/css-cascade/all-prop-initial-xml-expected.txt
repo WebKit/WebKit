@@ -41,6 +41,8 @@ PASS border-bottom-right-radius
 PASS border-bottom-style
 PASS border-bottom-width
 PASS border-collapse
+PASS border-end-end-radius
+PASS border-end-start-radius
 PASS border-image-outset
 PASS border-image-repeat
 PASS border-image-slice
@@ -58,6 +60,8 @@ PASS border-left-width
 PASS border-right-color
 PASS border-right-style
 PASS border-right-width
+PASS border-start-end-radius
+PASS border-start-start-radius
 PASS border-top-color
 PASS border-top-left-radius
 PASS border-top-right-radius
