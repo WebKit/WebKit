@@ -1,3 +1,17 @@
+2021-01-13  Youenn Fablet  <youenn@apple.com>
+
+        Use promise_test in WPT beacon/beacon-common.sub.js instead of async_test
+        https://bugs.webkit.org/show_bug.cgi?id=220541
+        <rdar://problem/72940308>
+
+        Reviewed by Geoffrey Garen.
+
+        Use promise_test to limit the number of requests sent in parallel.
+        This helps the server responds properly.
+
+        * web-platform-tests/beacon/beacon-common.sub.js:
+        (runTests):
+
 2021-01-12  Cathie Chen  <cathiechen@igalia.com>
 
         The rootBounds of IntersectionObserverEntry is not correct when {root:document}
