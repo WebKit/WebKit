@@ -154,7 +154,7 @@ public:
     using SubResourceDomain = WebCore::RegistrableDomain;
 
     static WebProcess& singleton();
-    static constexpr ProcessType processType = ProcessType::WebContent;
+    static constexpr WebCore::AuxiliaryProcessType processType = WebCore::AuxiliaryProcessType::WebContent;
 
     template <typename T>
     T* supplement()

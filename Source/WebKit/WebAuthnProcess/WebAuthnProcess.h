@@ -49,7 +49,7 @@ class WebAuthnProcess : public AuxiliaryProcess, public ThreadSafeRefCounted<Web
 public:
     explicit WebAuthnProcess(AuxiliaryProcessInitializationParameters&&);
     ~WebAuthnProcess();
-    static constexpr ProcessType processType = ProcessType::WebAuthn;
+    static constexpr WebCore::AuxiliaryProcessType processType = WebCore::AuxiliaryProcessType::WebAuthn;
 
     void removeWebAuthnConnectionToWebProcess(WebAuthnConnectionToWebProcess&);
 

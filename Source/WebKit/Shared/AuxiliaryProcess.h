@@ -29,6 +29,7 @@
 #include "MessageReceiverMap.h"
 #include "MessageSender.h"
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/UserActivity.h>
 #include <wtf/HashMap.h>
 #include <wtf/RunLoop.h>
@@ -44,18 +45,6 @@ class AuxiliaryProcess : protected IPC::Connection::Client, public IPC::MessageS
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcess);
 
 public:
-    enum class ProcessType : uint8_t {
-        WebContent,
-        Network,
-        Plugin,
-#if ENABLE(GPU_PROCESS)
-        GPU,
-#endif
-#if ENABLE(WEB_AUTHN)
-        WebAuthn
-#endif
-    };
-
     void initialize(const AuxiliaryProcessInitializationParameters&);
 
     // disable and enable termination of the process. when disableTermination is called, the
@@ -177,7 +166,7 @@ struct AuxiliaryProcessInitializationParameters {
     Optional<WebCore::ProcessIdentifier> processIdentifier;
     IPC::Connection::Identifier connectionIdentifier;
     HashMap<String, String> extraInitializationData;
-    AuxiliaryProcess::ProcessType processType;
+    WebCore::AuxiliaryProcessType processType;
 #if PLATFORM(COCOA)
     OSObjectPtr<xpc_object_t> priorityBoostMessage;
 #endif

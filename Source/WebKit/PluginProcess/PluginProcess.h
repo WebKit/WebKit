@@ -49,7 +49,7 @@ class PluginProcess : public AuxiliaryProcess
 
 public:
     static PluginProcess& singleton();
-    static constexpr ProcessType processType = ProcessType::Plugin;
+    static constexpr WebCore::AuxiliaryProcessType processType = WebCore::AuxiliaryProcessType::Plugin;
 
     void removeWebProcessConnection(WebProcessConnection*);
 

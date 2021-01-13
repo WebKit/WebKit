@@ -39,6 +39,7 @@ public:
     virtual bool parseCommandLine(int argc, char** argv);
     virtual void platformFinalize() { }
 
+    AuxiliaryProcessInitializationParameters& initializationParameters() { return m_parameters; }
     AuxiliaryProcessInitializationParameters&& takeInitializationParameters() { return WTFMove(m_parameters); }
 
 protected:
@@ -55,6 +56,8 @@ template<typename AuxiliaryProcessType, typename AuxiliaryProcessMainType>
 int AuxiliaryProcessMain(int argc, char** argv)
 {
     AuxiliaryProcessMainType auxiliaryMain;
+
+    auxiliaryMain.initializationParameters().processType = AuxiliaryProcessType::processType;
 
     if (!auxiliaryMain.platformInitialize())
         return EXIT_FAILURE;

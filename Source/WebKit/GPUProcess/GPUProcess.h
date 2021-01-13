@@ -52,7 +52,7 @@ class GPUProcess : public AuxiliaryProcess, public ThreadSafeRefCounted<GPUProce
 public:
     explicit GPUProcess(AuxiliaryProcessInitializationParameters&&);
     ~GPUProcess();
-    static constexpr ProcessType processType = ProcessType::GPU;
+    static constexpr WebCore::AuxiliaryProcessType processType = WebCore::AuxiliaryProcessType::GPU;
 
     void removeGPUConnectionToWebProcess(GPUConnectionToWebProcess&);
 

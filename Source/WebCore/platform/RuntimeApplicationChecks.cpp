@@ -60,4 +60,23 @@ void setPresentingApplicationPID(int pid)
     presentingApplicationPIDOverride() = pid;
 }
 
+static Optional<AuxiliaryProcessType>& auxiliaryProcessType()
+{
+    static Optional<AuxiliaryProcessType> auxiliaryProcessType;
+    return auxiliaryProcessType;
+}
+
+void setAuxiliaryProcessType(AuxiliaryProcessType type)
+{
+    auxiliaryProcessType() = type;
+}
+
+bool checkAuxiliaryProcessType(AuxiliaryProcessType type)
+{
+    auto currentType = auxiliaryProcessType();
+    if (!currentType)
+        return false;
+    return *currentType == type; 
+}
+
 } // namespace WebCore

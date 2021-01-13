@@ -113,7 +113,7 @@ struct CachedSandboxHeader {
 // byte N
 
 struct SandboxInfo {
-    SandboxInfo(const String& parentDirectoryPath, const String& directoryPath, const String& filePath, const SandboxParametersPtr& sandboxParameters, const CString& header, const AuxiliaryProcess::ProcessType& processType, const SandboxInitializationParameters& initializationParameters, const String& profileOrProfilePath, bool isProfilePath)
+    SandboxInfo(const String& parentDirectoryPath, const String& directoryPath, const String& filePath, const SandboxParametersPtr& sandboxParameters, const CString& header, const WebCore::AuxiliaryProcessType& processType, const SandboxInitializationParameters& initializationParameters, const String& profileOrProfilePath, bool isProfilePath)
         : parentDirectoryPath { parentDirectoryPath }
         , directoryPath { directoryPath }
         , filePath { filePath }
@@ -131,7 +131,7 @@ struct SandboxInfo {
     const String& filePath;
     const SandboxParametersPtr& sandboxParameters;
     const CString& header;
-    const AuxiliaryProcess::ProcessType& processType;
+    const WebCore::AuxiliaryProcessType& processType;
     const SandboxInitializationParameters& initializationParameters;
     const String& profileOrProfilePath;
     const bool isProfilePath;
@@ -218,21 +218,21 @@ static Optional<Vector<char>> fileContents(const String& path, bool shouldLock =
 #if USE(APPLE_INTERNAL_SDK)
 // These strings must match the last segment of the "com.apple.rootless.storage.<this part must match>" entry in each
 // process's restricted entitlements file (ex. Configurations/Networking-OSX-restricted.entitlements).
-constexpr const char* processStorageClass(AuxiliaryProcess::ProcessType type)
+constexpr const char* processStorageClass(WebCore::AuxiliaryProcessType type)
 {
     switch (type) {
-    case AuxiliaryProcess::ProcessType::WebContent:
+    case WebCore::AuxiliaryProcessType::WebContent:
         return "WebKitWebContentSandbox";
-    case AuxiliaryProcess::ProcessType::Network:
+    case WebCore::AuxiliaryProcessType::Network:
         return "WebKitNetworkingSandbox";
-    case AuxiliaryProcess::ProcessType::Plugin:
+    case WebCore::AuxiliaryProcessType::Plugin:
         return "WebKitPluginSandbox";
 #if ENABLE(GPU_PROCESS)
-    case AuxiliaryProcess::ProcessType::GPU:
+    case WebCore::AuxiliaryProcessType::GPU:
         return "WebKitGPUSandbox";
 #endif
 #if ENABLE(WEB_AUTHN)
-    case AuxiliaryProcess::ProcessType::WebAuthn:
+    case WebCore::AuxiliaryProcessType::WebAuthn:
         return "WebKitWebAuthnSandbox";
 #endif
     }
@@ -278,27 +278,27 @@ static String sandboxDataVaultParentDirectory()
     return resolvedPath;
 }
 
-static String sandboxDirectory(AuxiliaryProcess::ProcessType processType, const String& parentDirectory)
+static String sandboxDirectory(WebCore::AuxiliaryProcessType processType, const String& parentDirectory)
 {
     StringBuilder directory;
     directory.append(parentDirectory);
     switch (processType) {
-    case AuxiliaryProcess::ProcessType::WebContent:
+    case WebCore::AuxiliaryProcessType::WebContent:
         directory.append("/com.apple.WebKit.WebContent.Sandbox");
         break;
-    case AuxiliaryProcess::ProcessType::Network:
+    case WebCore::AuxiliaryProcessType::Network:
         directory.append("/com.apple.WebKit.Networking.Sandbox");
         break;
-    case AuxiliaryProcess::ProcessType::Plugin:
+    case WebCore::AuxiliaryProcessType::Plugin:
         directory.append("/com.apple.WebKit.Plugin.Sandbox");
         break;
 #if ENABLE(GPU_PROCESS)
-    case AuxiliaryProcess::ProcessType::GPU:
+    case WebCore::AuxiliaryProcessType::GPU:
         directory.append("/com.apple.WebKit.GPU.Sandbox");
         break;
 #endif
 #if ENABLE(WEB_AUTHN)
-    case AuxiliaryProcess::ProcessType::WebAuthn:
+    case WebCore::AuxiliaryProcessType::WebAuthn:
         directory.append("/com.apple.WebKit.WebAuthn.Sandbox");
         break;
 #endif
@@ -581,7 +581,7 @@ static bool applySandbox(const AuxiliaryProcessInitializationParameters& paramet
 #if USE(CACHE_COMPILED_SANDBOX)
     // The plugin process's DARWIN_USER_TEMP_DIR and DARWIN_USER_CACHE_DIR sandbox parameters are randomized so
     // so the compiled sandbox should not be cached because it won't be reused.
-    if (parameters.processType == AuxiliaryProcess::ProcessType::Plugin)
+    if (parameters.processType == WebCore::AuxiliaryProcessType::Plugin)
         return compileAndApplySandboxSlowCase(profileOrProfilePath, isProfilePath, sandboxInitializationParameters);
 
     SandboxParametersPtr sandboxParameters { sandbox_create_params() };

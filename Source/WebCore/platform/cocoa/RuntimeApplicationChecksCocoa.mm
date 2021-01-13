@@ -90,24 +90,6 @@ void clearApplicationBundleIdentifierTestingOverride()
 #endif
 }
 
-bool isInWebProcess()
-{
-    static bool mainBundleIsWebProcess = [[[NSBundle mainBundle] bundleIdentifier] hasPrefix:@"com.apple.WebKit.WebContent"];
-    return mainBundleIsWebProcess;
-}
-
-bool isInGPUProcess()
-{
-    static bool mainBundleIsGPUProcess = [[[NSBundle mainBundle] bundleIdentifier] hasPrefix:@"com.apple.WebKit.GPU"];
-    return mainBundleIsGPUProcess;
-}
-
-bool isInNetworkProcess()
-{
-    static bool mainBundleIsNetworkProcess = [[[NSBundle mainBundle] bundleIdentifier] hasPrefix:@"com.apple.WebKit.Networking"];
-    return mainBundleIsNetworkProcess;
-}
-
 static bool applicationBundleIsEqualTo(const String& bundleIdentifierString)
 {
     return applicationBundleIdentifier() == bundleIdentifierString;

@@ -144,7 +144,7 @@ public:
 
     NetworkProcess(AuxiliaryProcessInitializationParameters&&);
     ~NetworkProcess();
-    static constexpr ProcessType processType = ProcessType::Network;
+    static constexpr WebCore::AuxiliaryProcessType processType = WebCore::AuxiliaryProcessType::Network;
 
     template <typename T>
     T* supplement()
