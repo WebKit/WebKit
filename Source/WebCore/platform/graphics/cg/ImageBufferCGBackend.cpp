@@ -92,6 +92,9 @@ static RetainPtr<CGImageRef> createCroppedImageIfNecessary(CGImageRef image, con
 
 static RefPtr<Image> createBitmapImageAfterScalingIfNeeded(RefPtr<NativeImage>&& image, const IntSize& logicalSize, const IntSize& backendSize, float resolutionScale, PreserveResolution preserveResolution)
 {
+    if (!image)
+        return nullptr;
+
     if (resolutionScale == 1 || preserveResolution == PreserveResolution::Yes)
         image = NativeImage::create(createCroppedImageIfNecessary(image->platformImage().get(), backendSize));
     else {

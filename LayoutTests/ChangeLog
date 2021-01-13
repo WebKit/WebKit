@@ -1,3 +1,15 @@
+2021-01-13  Rob Buis  <rbuis@igalia.com>
+
+        Null check native image in createBitmapImageAfterScalingIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=220348
+
+        Reviewed by Alex Christensen.
+
+        Add test for border-image with large scale factor.
+
+        * fast/css/border-image-scale-crash-expected.txt: Added.
+        * fast/css/border-image-scale-crash.html: Added.
+
 2021-01-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r271401.
