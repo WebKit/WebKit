@@ -240,7 +240,7 @@ void BBQPlan::didCompleteCompilation(const AbstractLocker& locker)
 
             embedderToWasmInternalFunction->entrypoint.compilation = makeUnique<B3::Compilation>(
                 FINALIZE_CODE(linkBuffer, B3CompilationPtrTag, "Embedder->WebAssembly entrypoint[%i] %s name %s", functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
-                WTFMove(context.embedderEntrypointByproducts));
+                nullptr);
         }
     }
 
