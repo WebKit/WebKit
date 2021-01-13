@@ -1,3 +1,38 @@
+2021-01-13  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r271448. rdar://problem/73168438
+
+    PCM: Experimental debug mode needs to be read from defaults differently on iOS
+    https://bugs.webkit.org/show_bug.cgi?id=220573
+    <rdar://problem/73092137>
+    
+    Reviewed by Brent Fulgham.
+    
+    Experimental features on iOS use the prefix "WebKitExperimental" so we
+    need to read it that way on that platform. PCM is not supported on other
+    platforms than macOS and iOS at this point.
+    
+    * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+    (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271448 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-13  John Wilander  <wilander@apple.com>
+
+            PCM: Experimental debug mode needs to be read from defaults differently on iOS
+            https://bugs.webkit.org/show_bug.cgi?id=220573
+            <rdar://problem/73092137>
+
+            Reviewed by Brent Fulgham.
+
+            Experimental features on iOS use the prefix "WebKitExperimental" so we
+            need to read it that way on that platform. PCM is not supported on other
+            platforms than macOS and iOS at this point.
+
+            * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+            (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+
 2021-01-11  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebKit::IPC::Encoder needs definitions of all custom enum values at the Encoder definition time
