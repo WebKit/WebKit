@@ -1,3 +1,14 @@
+2021-01-12  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Implement serial tests for the ruby test writer
+        https://bugs.webkit.org/show_bug.cgi?id=220360
+
+        Reviewed by Yusuke Suzuki.
+
+        This is a verbatim copy of the implementation in the default writer.
+
+        * Scripts/webkitruby/jsc-stress-test-writer-ruby.rb:
+
 2021-01-12  Tetsuharu Ohzeki  <tetsuharu.ohzeki@gmail.com>
 
         Invoke ccache properly on macOS aarch64

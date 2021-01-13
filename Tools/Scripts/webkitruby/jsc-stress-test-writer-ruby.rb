@@ -410,24 +410,48 @@ def prepareShellTestRunner
     `dos2unix #{$runnerDir + "runscript"}`    
 end
 
+def output_target(outp, plan, prereqs)
+    index = plan.index
+    target = "test_done_#{index}"
+    outp.puts "#{target}: #{prereqs.join(" ")}"
+    outp.puts "\truby test_script_#{index}"
+    target
+end
+
 def prepareMakeTestRunner(remoteIndex)
-    runIndices = []
+    serialPlans = {}
+    $serialRunlist.each { |p| serialPlans[p] = nil }
+    runPlans = []
+    serialRunPlans = []
     $runlist.each {
         | plan |
         if !$remote or plan.index % $remoteHosts.length == remoteIndex
-            runIndices << plan.index
+            if serialPlans.has_key?(plan)
+                serialRunPlans << plan
+            else
+                runPlans << plan
+            end
         end
     }
-    
+
     File.open($runnerDir + "Makefile.#{remoteIndex}", "w") {
         | outp |
-        outp.puts("all: " + runIndices.map{|v| "test_done_#{v}"}.join(' '))
-        runIndices.each {
-            | index |
-            plan = $runlist[index]
-            outp.puts "test_done_#{index}:"
-            outp.puts "\truby test_script_#{plan.index}"
+        if serialRunPlans.empty?
+            outp.puts("all: parallel")
+        else
+            serialPrereq = "test_done_#{serialRunPlans[-1].index}"
+            outp.puts("all: #{serialPrereq}")
+            prev_target = "parallel"
+            serialRunPlans.each {
+                | plan |
+                prev_target = output_target(outp, plan, [prev_target])
+            }
+        end
+        parallelTargets = runPlans.collect {
+            | plan |
+            output_target(outp, plan, [])
         }
+        outp.puts("parallel: " + parallelTargets.join(" "))
     }
 end
 
