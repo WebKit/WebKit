@@ -842,10 +842,6 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self setUpScribbleInteraction];
 #endif
 
-#if ENABLE(APP_HIGHLIGHTS)
-    [self setupAppHighlightMenus];
-#endif
-
     _twoFingerSingleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_twoFingerSingleTapGestureRecognized:)]);
     [_twoFingerSingleTapGestureRecognizer setAllowableMovement:60];
     [_twoFingerSingleTapGestureRecognizer _setAllowableSeparation:150];
@@ -6658,6 +6654,10 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
 - (void)_selectionChanged
 {
+#if ENABLE(APP_HIGHLIGHTS)
+    [self setUpAppHighlightMenus];
+#endif
+
     [self _updateSelectionAssistantSuppressionState];
 
     _cachedSelectedTextRange = nil;
@@ -8684,12 +8684,16 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-- (void)setupAppHighlightMenus
+- (void)setUpAppHighlightMenus
 {
+    if (_hasSetUpAppHighlightMenus)
+        return;
+
     if (_page->preferences().appHighlightsEnabled()) {
         auto addHighlightCurrentGroupItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToCurrentGroup() action:@selector(createHighlightInCurrentGroupWithRange:)]);
         auto addHighlightNewGroupItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToNewGroup() action:@selector(createHighlightInNewGroupWithRange:)]);
         [[UIMenuController sharedMenuController] setMenuItems:@[ addHighlightCurrentGroupItem.get(), addHighlightNewGroupItem.get() ]];
+        _hasSetUpAppHighlightMenus = YES;
     }
 }
 

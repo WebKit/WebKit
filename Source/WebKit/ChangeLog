@@ -1,3 +1,23 @@
+2021-01-13  Megan Gardner  <megan_gardner@apple.com>
+
+        Defer setting up app highlight menus until needed to not delay launch time.
+        https://bugs.webkit.org/show_bug.cgi?id=220577
+        rdar://72940219
+
+        Delay adding the app highlight menus to the callout bar until a selection happens,
+        as the creation of these menus is expensive, and they are only needed if a selection is
+        made on the page, which is not guaranteed to happen.
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _processDidExit]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setUpInteraction]):
+        (-[WKContentView _selectionChanged]):
+        (-[WKContentView setupAppHighlightMenus]):
+
 2021-01-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r271401.

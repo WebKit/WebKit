@@ -440,6 +440,10 @@ private:
     BlockPtr<void()> _actionToPerformAfterReceivingEditDragSnapshot;
 #endif
 
+#if ENABLE(APP_HIGHLIGHTS)
+    BOOL _hasSetUpAppHighlightMenus;
+#endif
+
 #if PLATFORM(WATCHOS)
     RetainPtr<WKFocusedFormControlView> _focusedFormControlView;
     RetainPtr<UIViewController> _presentedFullScreenInputViewController;
