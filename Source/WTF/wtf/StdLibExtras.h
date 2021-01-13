@@ -127,9 +127,6 @@ inline bool is8ByteAligned(void* p)
     return !((uintptr_t)(p) & (sizeof(double) - 1));
 }
 
-/*
- * C++'s idea of a reinterpret_cast lacks sufficient cojones.
- */
 template<typename ToType, typename FromType>
 inline ToType bitwise_cast(FromType from)
 {
