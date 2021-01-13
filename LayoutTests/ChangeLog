@@ -1,5 +1,13 @@
 2021-01-12  Lauro Moura  <lmoura@igalia.com>
 
+        [WPE] Gardening Focus-visible failures
+
+        Unreviewed test gardening.
+
+        * platform/wpe/TestExpectations:
+
+2021-01-12  Lauro Moura  <lmoura@igalia.com>
+
         [GLIB] Rebaselines after r271348
 
         Unreviewed test gardening.
