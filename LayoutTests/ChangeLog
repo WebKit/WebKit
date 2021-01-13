@@ -1,3 +1,14 @@
+2021-01-13  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r257839): Broken focus when 'display' changes in an attribute selector
+        https://bugs.webkit.org/show_bug.cgi?id=217240
+        <rdar://problem/69891684>
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/dom/focus-style-resolution-attribute-change-expected.html: Added.
+        * fast/dom/focus-style-resolution-attribute-change.html: Added.
+
 2021-01-13  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] fbostatequery, negativebufferapi, negativevertexarrayapi, shaderstatequery conformance failures

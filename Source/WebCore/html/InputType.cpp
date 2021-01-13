@@ -656,9 +656,9 @@ void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFi
 {
     ASSERT(element());
     element()->setValueInternal(sanitizedValue, eventBehavior);
-    element()->invalidateStyleForSubtree();
     if (!valueChanged)
         return;
+    element()->invalidateStyleForSubtree();
 
     switch (eventBehavior) {
     case DispatchChangeEvent:

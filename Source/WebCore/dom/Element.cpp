@@ -1966,10 +1966,6 @@ void Element::invalidateStyle()
 {
     Node::invalidateStyle(Style::Validity::ElementInvalid);
     invalidateSiblingsIfNeeded(*this);
-
-    // FIXME: This flag should be set whenever styles are invalidated while computed styles are present,
-    // not just in this codepath.
-    setNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
 }
 
 void Element::invalidateStyleAndLayerComposition()
