@@ -1197,6 +1197,7 @@
 		F4D2986E20FEE7370092D636 /* RunScriptAfterDocumentLoad.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D2986D20FEE7370092D636 /* RunScriptAfterDocumentLoad.mm */; };
 		F4D4F3B61E4E2BCB00BB2767 /* DragAndDropSimulatorIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D4F3B41E4E2BCB00BB2767 /* DragAndDropSimulatorIOS.mm */; };
 		F4D4F3B91E4E36E400BB2767 /* DragAndDropTestsIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D4F3B71E4E36E400BB2767 /* DragAndDropTestsIOS.mm */; };
+		F4D5D69525AF8BE400205280 /* DisableAutomaticSpellingCorrection.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D5D69425AF8BE400205280 /* DisableAutomaticSpellingCorrection.mm */; };
 		F4D5E4E81F0C5D38008C1A49 /* dragstart-clear-selection.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4D5E4E71F0C5D27008C1A49 /* dragstart-clear-selection.html */; };
 		F4D65DA81F5E4704009D8C27 /* selected-text-image-link-and-editable.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4D65DA71F5E46C0009D8C27 /* selected-text-image-link-and-editable.html */; };
 		F4D9818F2196B920008230FC /* editable-nested-lists.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4D9818E2196B911008230FC /* editable-nested-lists.html */; };
@@ -2967,6 +2968,7 @@
 		F4D2986D20FEE7370092D636 /* RunScriptAfterDocumentLoad.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RunScriptAfterDocumentLoad.mm; sourceTree = "<group>"; };
 		F4D4F3B41E4E2BCB00BB2767 /* DragAndDropSimulatorIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragAndDropSimulatorIOS.mm; sourceTree = "<group>"; };
 		F4D4F3B71E4E36E400BB2767 /* DragAndDropTestsIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragAndDropTestsIOS.mm; sourceTree = "<group>"; };
+		F4D5D69425AF8BE400205280 /* DisableAutomaticSpellingCorrection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DisableAutomaticSpellingCorrection.mm; sourceTree = "<group>"; };
 		F4D5E4E71F0C5D27008C1A49 /* dragstart-clear-selection.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "dragstart-clear-selection.html"; sourceTree = "<group>"; };
 		F4D65DA71F5E46C0009D8C27 /* selected-text-image-link-and-editable.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "selected-text-image-link-and-editable.html"; sourceTree = "<group>"; };
 		F4D9818E2196B911008230FC /* editable-nested-lists.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "editable-nested-lists.html"; sourceTree = "<group>"; };
@@ -4505,6 +4507,7 @@
 				7AEAD47C1E20113800416EFE /* CrossPartitionFileSchemeAccess.mm */,
 				E5AA8D1C25151CC60051CC45 /* DateInputTests.mm */,
 				939BA91614103412001A01BD /* DeviceScaleFactorOnBack.mm */,
+				F4D5D69425AF8BE400205280 /* DisableAutomaticSpellingCorrection.mm */,
 				37E1064A1697676400B78BD0 /* DOMHTMLTableCellCellAbove.mm */,
 				2D51A0C51C8BF00400765C45 /* DOMHTMLVideoElementWrapper.mm */,
 				46397B941DC2C850009A78AE /* DOMNode.mm */,
@@ -5194,6 +5197,8 @@
 				7CCE7EE91A411AE600447C4C /* DidAssociateFormControls.cpp in Sources */,
 				7CCE7EEA1A411AE600447C4C /* DidNotHandleKeyDown.cpp in Sources */,
 				AD57AC211DA7465B00FF1BDE /* DidRemoveFrameFromHiearchyInPageCache.cpp in Sources */,
+				F4D5D69525AF8BE400205280 /* DisableAutomaticSpellingCorrection.mm in Sources */,
+				F4B0168325AE060F00E445C4 /* DisableSpellcheck.mm in Sources */,
 				FEC2A85424CE975F00ADBC35 /* DisallowVMEntry.cpp in Sources */,
 				F4094CC725545BD5003D73E3 /* DisplayListTests.cpp in Sources */,
 				F457275E25578D06007ACA34 /* DisplayListTestsCG.cpp in Sources */,
@@ -5520,7 +5525,6 @@
 				515BE1711D428E4B00DD7C68 /* StoreBlobThenDelete.mm in Sources */,
 				7CCE7ED01A411A7E00447C4C /* StringByEvaluatingJavaScriptFromString.mm in Sources */,
 				7CCE7ED11A411A7E00447C4C /* StringTruncator.mm in Sources */,
-				F4B0168325AE060F00E445C4 /* DisableSpellcheck.mm in Sources */,
 				ECA680CE1E68CC0900731D20 /* StringUtilities.mm in Sources */,
 				CE4D5DE71F6743BA0072CFC6 /* StringWithDirection.cpp in Sources */,
 				7CCE7ED21A411A7E00447C4C /* SubresourceErrorCrash.mm in Sources */,
@@ -5704,7 +5708,6 @@
 				5C4259462266A68A0039AA7A /* BasicProposedCredentialPlugIn.mm in Sources */,
 				374B7A611DF371CF00ACCB6C /* BundleEditingDelegatePlugIn.mm in Sources */,
 				7A89BB682331643A0042CB1E /* BundleFormDelegatePlugIn.mm in Sources */,
-				F4B0168425AE08F800E445C4 /* DisableSpellcheckPlugIn.mm in Sources */,
 				A13EBBB01B87436F00097110 /* BundleParametersPlugIn.mm in Sources */,
 				37A709AF1E3EA97E00CA5969 /* BundleRangeHandlePlugIn.mm in Sources */,
 				5C75716122124C5200B9E5AC /* BundleRetainPagePlugIn.mm in Sources */,
@@ -5713,6 +5716,7 @@
 				A14FC58B1B89927100D107EB /* ContentFilteringPlugIn.mm in Sources */,
 				5C121E8D2410704900486F9B /* ContentWorldPlugIn.mm in Sources */,
 				CEA7F57D2089624B0078EF6E /* DidResignInputElementStrongPasswordAppearance.mm in Sources */,
+				F4B0168425AE08F800E445C4 /* DisableSpellcheckPlugIn.mm in Sources */,
 				518EE51920A78CE500E024F3 /* DoubleDefersLoadingPlugin.mm in Sources */,
 				5CB5B3C21FFC55CF00C27BB0 /* FrameHandleSerialization.mm in Sources */,
 				0E404A8C2166DE0A008271BA /* InjectedBundleNodeHandleIsSelectElement.mm in Sources */,

@@ -164,6 +164,7 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
     postLayoutData.selectedTextLength = characterCount({ *selectionStartBoundary, *selectionEnd });
     postLayoutData.paragraphContextForCandidateRequest = contextRangeForCandidateRequest ? plainText(*contextRangeForCandidateRequest) : String();
     postLayoutData.stringForCandidateRequest = frame.editor().stringForCandidateRequest();
+    postLayoutData.canEnableAutomaticSpellingCorrection = frame.editor().canEnableAutomaticSpellingCorrection();
 
     auto quads = RenderObject::absoluteTextQuads(*selectedRange);
     if (!quads.isEmpty())

@@ -67,6 +67,12 @@ static JSValueRef getMenuItemTitleCallback(JSContextRef context, JSObjectRef obj
     return JSValueMakeString(context, toJS(wkTitle).get());
 }
 
+static JSValueRef getMenuItemEnabledCallback(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
+{
+    auto* privateData = static_cast<MenuItemPrivateData*>(JSObjectGetPrivate(object));
+    return JSValueMakeBoolean(context, WKContextMenuItemGetEnabled(privateData->m_item.get()));
+}
+
 static JSClassRef getMenuItemClass();
 
 static JSValueRef getMenuItemChildrenCallback(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
@@ -90,6 +96,7 @@ static JSStaticFunction staticMenuItemFunctions[] = {
 static JSStaticValue staticMenuItemValues[] = {
     { "title", getMenuItemTitleCallback, 0, kJSPropertyAttributeReadOnly },
     { "children", getMenuItemChildrenCallback, 0, kJSPropertyAttributeReadOnly },
+    { "enabled", getMenuItemEnabledCallback, 0, kJSPropertyAttributeReadOnly },
     { 0, 0, 0, 0 }
 };
 

@@ -290,6 +290,9 @@ webkit.org/b/187230 editing/mac/style/do-not-crash-when-showing-font-panel.html 
 # Fails with WebKit1 only.
 editing/secure-input/reset-state-on-navigation.html [ Failure ]
 
+# Context menu API is not exposed on DumpRenderTree.
+editing/mac/spelling/disable-automatic-spelling-correction-context-menu-item.html [ Skip ]
+
 http/tests/plugins/nounsupported-plugin.html [ Skip ]
 http/tests/plugins/supported-plugin-all-origin-visibility.html [ Skip ]
 http/tests/plugins/supported-plugin-origin-specific-visibility.html [ Skip ]

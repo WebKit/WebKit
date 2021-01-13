@@ -132,6 +132,7 @@ void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
     encoder << candidateRequestStartPosition;
     encoder << paragraphContextForCandidateRequest;
     encoder << stringForCandidateRequest;
+    encoder << canEnableAutomaticSpellingCorrection;
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
     encoder << surroundingContext;
@@ -223,6 +224,9 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
         return false;
 
     if (!decoder.decode(result.stringForCandidateRequest))
+        return false;
+
+    if (!decoder.decode(result.canEnableAutomaticSpellingCorrection))
         return false;
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -338,6 +342,8 @@ TextStream& operator<<(TextStream& ts, const EditorState& editorState)
         ts.dumpProperty("paragraphContextForCandidateRequest", editorState.postLayoutData().paragraphContextForCandidateRequest);
     if (editorState.postLayoutData().stringForCandidateRequest.length())
         ts.dumpProperty("stringForCandidateRequest", editorState.postLayoutData().stringForCandidateRequest);
+    if (editorState.postLayoutData().canEnableAutomaticSpellingCorrection)
+        ts.dumpProperty("canEnableAutomaticSpellingCorrection", editorState.postLayoutData().canEnableAutomaticSpellingCorrection);
 #endif
 
     if (editorState.postLayoutData().canCut)
