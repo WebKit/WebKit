@@ -150,7 +150,7 @@ bool JSValueIsString(JSContextRef ctx, JSValueRef value)
     JSLockHolder locker(globalObject);
     return toJS(globalObject, value).isString();
 #else
-    return value && toJS(value).isString();
+    return toJS(value).isString();
 #endif
 }
 
@@ -165,7 +165,7 @@ bool JSValueIsObject(JSContextRef ctx, JSValueRef value)
     JSLockHolder locker(globalObject);
     return toJS(globalObject, value).isObject();
 #else
-    return value && toJS(value).isObject();
+    return toJS(value).isObject();
 #endif
 }
 
@@ -180,7 +180,7 @@ bool JSValueIsSymbol(JSContextRef ctx, JSValueRef value)
     JSLockHolder locker(globalObject);
     return toJS(globalObject, value).isSymbol();
 #else
-    return value && toJS(value).isSymbol();
+    return toJS(value).isSymbol();
 #endif
 }
 

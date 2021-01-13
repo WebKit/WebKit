@@ -1,3 +1,7 @@
+2021-01-13  Russell Epstein  <repstein@apple.com>
+
+        Revert r270719. rdar://problem/73165685
+
 2021-01-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] JITCage's Gate mechanism is used in ARM64E even if JITCage is disable
