@@ -1484,10 +1484,6 @@ test/language/expressions/class/class-name-ident-await-escaped.js:
 test/language/expressions/class/class-name-ident-await.js:
   default: "SyntaxError: Unexpected identifier 'await'. Expected opening '{' at the start of a class body."
   strict mode: "SyntaxError: Unexpected identifier 'await'. Expected opening '{' at the start of a class body."
-test/language/expressions/class/class-name-ident-static-escaped.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/expressions/class/class-name-ident-static.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/expressions/class/elements/arrow-body-direct-eval-err-contains-arguments.js:
   default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
   strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
@@ -1743,10 +1739,6 @@ test/language/statements/class/class-name-ident-await-escaped.js:
 test/language/statements/class/class-name-ident-await.js:
   default: "SyntaxError: Unexpected identifier 'await'"
   strict mode: "SyntaxError: Unexpected identifier 'await'"
-test/language/statements/class/class-name-ident-static-escaped.js:
-  default: 'Test262: This statement should not be evaluated.'
-test/language/statements/class/class-name-ident-static.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/class/elements/arrow-body-direct-eval-err-contains-arguments.js:
   default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
   strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'

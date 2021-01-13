@@ -2851,12 +2851,12 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
     info.startLine = location.line;
     info.startColumn = tokenColumn();
     info.startOffset = location.startOffset;
-    next();
 
     AutoPopScopeRef classScope(this, pushScope());
     classScope->setIsLexicalScope();
     classScope->preventVarDeclarations();
     classScope->setStrictMode();
+    next();
 
     ASSERT_WITH_MESSAGE(requirements != FunctionNameRequirements::Unnamed, "Currently, there is no caller that uses FunctionNameRequirements::Unnamed for class syntax.");
     ASSERT_WITH_MESSAGE(!(requirements == FunctionNameRequirements::None && !info.className), "When specifying FunctionNameRequirements::None, we need to initialize info.className with the default value in the caller side.");
