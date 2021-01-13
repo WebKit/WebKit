@@ -71,10 +71,8 @@ Ref<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext& context, 
     auto track = adoptRef(*new MediaStreamTrack(context, WTFMove(privateTrack)));
     track->suspendIfNeeded();
 
-    if (track->isCaptureTrack()) {
-        if (auto* page = track->document()->page())
-            track->updateToPageMutedState(page->mutedState());
-    }
+    if (track->isCaptureTrack())
+        track->updateToPageMutedState();
 
     return track;
 }
@@ -471,57 +469,47 @@ static bool isSourceCapturingForTrackInDocument(RealtimeMediaSource& source, Doc
 }
 #endif
 
-void MediaStreamTrack::updateCaptureAccordingToMutedState(Document& document, MediaProducer::MutedStateFlags mutedState)
+void MediaStreamTrack::updateCaptureAccordingToMutedState(Document& document)
 {
 #if PLATFORM(IOS_FAMILY)
     auto* page = document.page();
     if (!page)
         return;
 
-    bool pageMuted = mutedState & MediaProducer::AudioAndVideoCaptureIsMuted;
-
-    auto updateTracksAccordingPageMutedState = [](const Document& document, CaptureDevice::DeviceType deviceType, bool pageMuted) {
-        // We can only have one source at a time: we can mute all tracks but unmute only one of them.
-        for (auto* captureTrack : allCaptureTracks()) {
-            if (captureTrack->document() != &document || captureTrack->ended() || captureTrack->source().deviceType() != deviceType)
-                continue;
-            captureTrack->m_private->setMuted(pageMuted);
-            // If unmuting, unmute the first source of the document we know.
-            if (!pageMuted)
-                break;
-        }
-    };
     auto* activeAudioSource = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().activeSource();
-    if (activeAudioSource && isSourceCapturingForTrackInDocument(*activeAudioSource, document))
+    if (activeAudioSource && isSourceCapturingForTrackInDocument(*activeAudioSource, document)) {
+        bool pageMuted = page->mutedState() & MediaProducer::AudioAndVideoCaptureIsMuted;
         activeAudioSource->setMuted(pageMuted || (document.hidden() && document.settings().interruptAudioOnPageVisibilityChangeEnabled()));
-    else
-        updateTracksAccordingPageMutedState(document, CaptureDevice::DeviceType::Microphone, pageMuted);
+    }
 
     auto* activeVideoSource = RealtimeMediaSourceCenter::singleton().videoCaptureFactory().activeSource();
-    if (activeVideoSource && isSourceCapturingForTrackInDocument(*activeVideoSource, document))
+    if (activeVideoSource && isSourceCapturingForTrackInDocument(*activeVideoSource, document)) {
+        bool pageMuted = page->mutedState() & MediaProducer::AudioAndVideoCaptureIsMuted;
         activeVideoSource->setMuted(pageMuted || document.hidden());
-    else
-        updateTracksAccordingPageMutedState(document, CaptureDevice::DeviceType::Camera, pageMuted);
+    }
 #else
     for (auto* captureTrack : allCaptureTracks()) {
         if (captureTrack->document() == &document && !captureTrack->ended())
-            captureTrack->updateToPageMutedState(mutedState);
+            captureTrack->updateToPageMutedState();
     }
 #endif
 }
 
-void MediaStreamTrack::updateToPageMutedState(MediaProducer::MutedStateFlags mutedState)
+void MediaStreamTrack::updateToPageMutedState()
 {
     ASSERT(isCaptureTrack());
+    auto* page = document()->page();
+    if (!page)
+        return;
 
     switch (source().deviceType()) {
     case CaptureDevice::DeviceType::Microphone:
     case CaptureDevice::DeviceType::Camera:
-        m_private->setMuted(mutedState & MediaProducer::AudioAndVideoCaptureIsMuted);
+        m_private->setMuted(page->mutedState() & MediaProducer::AudioAndVideoCaptureIsMuted);
         break;
     case CaptureDevice::DeviceType::Screen:
     case CaptureDevice::DeviceType::Window:
-        m_private->setMuted(mutedState & MediaProducer::ScreenCaptureIsMuted);
+        m_private->setMuted(page->mutedState() & MediaProducer::ScreenCaptureIsMuted);
         break;
     case CaptureDevice::DeviceType::Speaker:
     case CaptureDevice::DeviceType::Unknown:

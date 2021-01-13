@@ -1809,13 +1809,9 @@ void Document::visibilityStateChanged()
         client->visibilityStateChanged();
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
-    auto* page = this->page();
-    if (!page)
-        return;
-
     if (auto mediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists()) {
         if (!mediaSessionManager->isInterrupted())
-            MediaStreamTrack::updateCaptureAccordingToMutedState(*this, page->mutedState());
+            MediaStreamTrack::updateCaptureAccordingToMutedState(*this);
     }
 #endif
 }
@@ -4301,7 +4297,7 @@ void Document::pageMutedStateDidChange()
         audioProducer.pageMutedStateDidChange();
 
 #if ENABLE(MEDIA_STREAM)
-    MediaStreamTrack::updateCaptureAccordingToMutedState(*this, page()->mutedState());
+    MediaStreamTrack::updateCaptureAccordingToMutedState(*this);
 #endif
 }
 

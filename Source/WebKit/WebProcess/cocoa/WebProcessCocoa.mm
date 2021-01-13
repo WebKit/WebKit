@@ -54,7 +54,6 @@
 #import <JavaScriptCore/Options.h>
 #import <WebCore/AVAssetMIMETypeCache.h>
 #import <WebCore/AXObjectCache.h>
-#import <WebCore/AudioSession.h>
 #import <WebCore/CPUMonitor.h>
 #import <WebCore/DisplayRefreshMonitorManager.h>
 #import <WebCore/FontCache.h>
@@ -169,10 +168,6 @@ using namespace WebCore;
 #if PLATFORM(MAC)
 static const Seconds cpuMonitoringInterval { 8_min };
 static const double serviceWorkerCPULimit { 0.5 }; // 50% average CPU usage over 8 minutes.
-#endif
-
-#if PLATFORM(IOS)
-static void listenToAudioSessionInterruption();
 #endif
 
 void WebProcess::platformSetCacheModel(CacheModel)
@@ -411,10 +406,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
     WebCore::IOSurface::setMaximumSize(parameters.maximumIOSurfaceSize);
-
-#if PLATFORM(IOS)
-    listenToAudioSessionInterruption();
-#endif
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&& parameters)
@@ -1185,49 +1176,6 @@ void WebProcess::waitForPendingPasteboardWritesToFinish(const String& pasteboard
         }
     }
 }
-
-#if PLATFORM(IOS)
-class PageAudioSessionInterruptionObserver : public AudioSession::InterruptionObserver {
-public:
-    PageAudioSessionInterruptionObserver();
-    ~PageAudioSessionInterruptionObserver();
-
-private:
-    void beginAudioSessionInterruption() final;
-    void endAudioSessionInterruption(WebCore::AudioSession::MayResume) final;
-};
-
-PageAudioSessionInterruptionObserver::PageAudioSessionInterruptionObserver()
-{
-    AudioSession::sharedSession().addInterruptionObserver(*this);
-}
-
-PageAudioSessionInterruptionObserver::~PageAudioSessionInterruptionObserver()
-{
-    AudioSession::sharedSession().removeInterruptionObserver(*this);
-}
-
-void PageAudioSessionInterruptionObserver::beginAudioSessionInterruption()
-{
-    Page::forEachPage([](auto& page) {
-        page.beginAudioCaptureInterruption();
-    });
-}
-
-void PageAudioSessionInterruptionObserver::endAudioSessionInterruption(AudioSession::MayResume mayResume)
-{
-    if (mayResume == AudioSession::MayResume::No)
-        return;
-    Page::forEachPage([](auto& page) {
-        page.endAudioCaptureInterruption();
-    });
-}
-
-void listenToAudioSessionInterruption()
-{
-    static NeverDestroyed<PageAudioSessionInterruptionObserver> observer;
-}
-#endif
 
 } // namespace WebKit
 

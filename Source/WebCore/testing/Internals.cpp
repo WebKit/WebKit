@@ -5278,16 +5278,7 @@ void Internals::setMediaStreamTrackIdentifier(MediaStreamTrack& track, String&& 
 
 void Internals::setMediaStreamSourceInterrupted(MediaStreamTrack& track, bool interrupted)
 {
-    auto* document = contextDocument();
-    auto* page = document ? document->page() : nullptr;
-    if (!page)
-        return;
-
     track.source().setInterruptedForTesting(interrupted);
-    if (interrupted)
-        page->beginAudioCaptureInterruption();
-    else
-        page->endAudioCaptureInterruption();
 }
 
 bool Internals::isMediaStreamSourceInterrupted(MediaStreamTrack& track) const

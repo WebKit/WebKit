@@ -183,6 +183,13 @@ OSStatus BaseAudioSharedUnit::resume()
         m_needsReconfiguration = false;
         reconfigure();
     }
+
+    ASSERT(!m_producingCount);
+
+    forEachClient([](auto& client) {
+        client.setMuted(false);
+    });
+
     return 0;
 }
 
@@ -194,6 +201,13 @@ OSStatus BaseAudioSharedUnit::suspend()
 
     m_suspended = true;
     stopInternal();
+
+    forEachClient([](auto& client) {
+        client.setMuted(true);
+    });
+
+    ASSERT(!m_producingCount);
+
     return 0;
 }
 

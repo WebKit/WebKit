@@ -1814,8 +1814,7 @@ static inline void checkDocumentsCaptureStateConsistency(const Vector<String>& e
 
 void WebProcess::revokeUserMediaDeviceSandboxExtensions(const Vector<String>& extensionIDs)
 {
-    if (!MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled())
-        checkDocumentsCaptureStateConsistency(extensionIDs);
+    checkDocumentsCaptureStateConsistency(extensionIDs);
 
     for (const auto& extensionID : extensionIDs) {
         auto extension = m_mediaCaptureSandboxExtensions.take(extensionID);
