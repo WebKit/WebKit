@@ -127,6 +127,8 @@ public:
 
     bool needsBlackFullscreenBackgroundQuirk() const;
 
+    bool requiresUserGestureToPauseInPictureInPicture() const;
+
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     static bool isMicrosoftTeamsRedirectURL(const URL&);
     static bool hasStorageAccessForAllLoginDomains(const HashSet<RegistrableDomain>&, const RegistrableDomain&);
@@ -167,6 +169,7 @@ private:
     mutable Optional<bool> m_needsVP9FullRangeFlagQuirk;
     mutable Optional<bool> m_needsHDRPixelDepthQuirk;
     mutable Optional<bool> m_needsBlackFullscreenBackgroundQuirk;
+    mutable Optional<bool> m_requiresUserGestureToPauseInPictureInPicture;
 };
 
 } // namespace WebCore

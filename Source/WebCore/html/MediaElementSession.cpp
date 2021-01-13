@@ -315,6 +315,14 @@ SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted() co
 
     // FIXME: Why are we checking top-level document only for PerDocumentAutoplayBehavior?
     const auto& topDocument = document.topDocument();
+    if (topDocument.quirks().requiresUserGestureToPauseInPictureInPicture()
+        && m_element.fullscreenMode() & HTMLMediaElementEnums::VideoFullscreenModePictureInPicture
+        && !m_element.paused()
+        && !document.processingUserGestureForMedia()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because a quirk requires a user gesture to pause while in Picture-in-Picture");
+        return MediaPlaybackDenialReason::UserGestureRequired;
+    }
+
     if (topDocument.mediaState() & MediaProducer::HasUserInteractedWithMediaElement && topDocument.quirks().needsPerDocumentAutoplayBehavior())
         return { };
 
