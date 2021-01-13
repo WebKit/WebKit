@@ -603,11 +603,14 @@ static NSURL *createUniqueWebDataURL();
         return [[documentView window] isInSnapshottingPaint] ? WebCore::PaintBehavior::Snapshotting : WebCore::PaintBehavior::Normal;
 #endif
 #if PLATFORM(MAC)
-        if ([documentView _web_isDrawingIntoLayer])
+        // Even if we are layer-backed, we may be painting into an offscreen context.
+        // We can be sure it's an offscreen context if we are not parented in a window, so exclude that case.
+        // This does not cover all cases, such as a parented view being painted into an offscreen context.
+        if ([documentView _web_isDrawingIntoLayer] && documentView.window)
             return WebCore::PaintBehavior::Normal;
 #endif
     }
-    
+
     return OptionSet<WebCore::PaintBehavior>(WebCore::PaintBehavior::FlattenCompositingLayers) | WebCore::PaintBehavior::Snapshotting;
 }
 

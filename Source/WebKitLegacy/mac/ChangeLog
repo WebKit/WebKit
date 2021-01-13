@@ -1,3 +1,27 @@
+2021-01-12  Tim Horton  <timothy_horton@apple.com>
+
+        QuickLook snapshots are missing some image content
+        https://bugs.webkit.org/show_bug.cgi?id=220571
+        <rdar://problem/72184373>
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _paintBehaviorForDestinationContext:]):
+        Quick Look snapshots use WebView, and call displayRectIgnoringOpacity:inContext:
+        in order to paint it into a bitmap context. However, if the WebView is layer-backed,
+        including for reasons outside of WebKit or Quick Look's control, it currently
+        does a "normal" paint (as opposed to a snapshotting + flattening paint).
+        This results in async image decoding kicking in, which is undesirable
+        for a snapshot, since there is no opportunity to repaint when the decode
+        is complete.
+
+        It is difficult to detect all cases in which WebView is being painted into
+        an offscreen context, but one case that we can easily detect, and which
+        fixes Quick Look, is if the WebView itself is not hosted in a window.
+
+        So, if not hosted in a window, do a snapshotting+flattening paint.
+
 2021-01-11  Alex Christensen  <achristensen@webkit.org>
 
         Use sendWithAsyncReply instead of dataCallback for icon loading
