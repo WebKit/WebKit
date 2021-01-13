@@ -1,3 +1,12 @@
+2021-01-13  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Use PostgreSQL for new build.webkit.org database
+        https://bugs.webkit.org/show_bug.cgi?id=220589
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/master_buildbot2.cfg:
+
 2021-01-13  Sam Sneddon  <gsnedders@apple.com>
 
         Avoid over-aggressive clearing of *.pyc files running webkitpy tests
