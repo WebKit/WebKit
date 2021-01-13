@@ -201,6 +201,8 @@ public:
     {
         return API::InspectorConfiguration::create();
     }
+    virtual void didEnableInspectorBrowserDomain(WebKit::WebPageProxy&) { }
+    virtual void didDisableInspectorBrowserDomain(WebKit::WebPageProxy&) { }
 
     virtual void decidePolicyForSpeechRecognitionPermissionRequest(WebKit::WebPageProxy& page, API::SecurityOrigin& origin, CompletionHandler<void(bool)>&& completionHandler) { page.requestSpeechRecognitionPermissionByDefaultAction(origin.securityOrigin(), WTFMove(completionHandler)); }
 };

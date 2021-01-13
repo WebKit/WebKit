@@ -31,8 +31,4 @@
 
 @property (nonatomic, weak, setter=_setDiagnosticLoggingDelegate:) id<_WKDiagnosticLoggingDelegate> _diagnosticLoggingDelegate;
 
-// Browser
-- (void)_browserExtensionsEnabled:(NSDictionary<NSString *, NSString *> *)extensionIDToName;
-- (void)_browserExtensionsDisabled:(NSSet<NSString *> *)extensionIDs;
-
 @end

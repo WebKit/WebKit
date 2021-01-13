@@ -104,16 +104,6 @@ static void resetGlobalState()
 
 @implementation InspectorDelegate
 
-- (void)inspectorDidEnableBrowserDomain:(_WKInspector *)inspector
-{
-    browserDomainEnabledForInspectorCalled = true;
-}
-
-- (void)inspectorDidDisableBrowserDomain:(_WKInspector *)inspector
-{
-    browserDomainDisabledForInspectorCalled = true;
-}
-
 - (void)inspector:(_WKInspector *)inspector openURLExternally:(NSURL *)url
 {
     EXPECT_STREQ(url.absoluteString.UTF8String, urlToOpen.get().absoluteString.UTF8String);
@@ -154,6 +144,16 @@ static void resetGlobalState()
 
     if (shouldCallInspectorCloseReentrantly)
         [inspector close];
+}
+
+- (void)_webViewDidEnableInspectorBrowserDomain:(WKWebView *)webView
+{
+    browserDomainEnabledForInspectorCalled = true;
+}
+
+- (void)_webViewDidDisableInspectorBrowserDomain:(WKWebView *)webView
+{
+    browserDomainDisabledForInspectorCalled = true;
 }
 
 @end

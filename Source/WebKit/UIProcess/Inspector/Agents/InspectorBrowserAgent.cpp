@@ -26,7 +26,7 @@
 #include "config.h"
 #include "InspectorBrowserAgent.h"
 
-#include "APIInspectorClient.h"
+#include "APIUIClient.h"
 #include "WebInspectorProxy.h"
 #include "WebPageInspectorController.h"
 #include "WebPageProxy.h"
@@ -71,9 +71,6 @@ Inspector::Protocol::ErrorStringOr<void> InspectorBrowserAgent::enable()
 
     m_inspectedPage.inspectorController().setEnabledBrowserAgent(this);
 
-    if (auto* inspector = m_inspectedPage.inspector())
-        inspector->inspectorClient().browserDomainEnabled(*inspector);
-
     return { };
 }
 
@@ -83,9 +80,6 @@ Inspector::Protocol::ErrorStringOr<void> InspectorBrowserAgent::disable()
         return makeUnexpected("Browser domain already disabled"_s);
 
     m_inspectedPage.inspectorController().setEnabledBrowserAgent(nullptr);
-
-    if (auto* inspector = m_inspectedPage.inspector())
-        inspector->inspectorClient().browserDomainDisabled(*inspector);
 
     return { };
 }

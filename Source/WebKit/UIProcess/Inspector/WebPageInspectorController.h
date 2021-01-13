@@ -77,7 +77,10 @@ public:
     void didCommitProvisionalPage(WebCore::PageIdentifier oldWebPageID, WebCore::PageIdentifier newWebPageID);
 
     InspectorBrowserAgent* enabledBrowserAgent() const { return m_enabledBrowserAgent; }
-    void setEnabledBrowserAgent(InspectorBrowserAgent* agent) { m_enabledBrowserAgent = agent; }
+    void setEnabledBrowserAgent(InspectorBrowserAgent*);
+
+    void browserExtensionsEnabled(HashMap<String, String>&&);
+    void browserExtensionsDisabled(HashSet<String>&&);
 
 private:
     WebPageAgentContext webPageAgentContext();
@@ -89,7 +92,7 @@ private:
     Ref<Inspector::BackendDispatcher> m_backendDispatcher;
     Inspector::AgentRegistry m_agents;
 
-    WebPageProxy& m_page;
+    WebPageProxy& m_inspectedPage;
 
     Inspector::InspectorTargetAgent* m_targetAgent { nullptr };
     HashMap<String, std::unique_ptr<InspectorTargetProxy>> m_targets;

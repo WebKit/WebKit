@@ -700,18 +700,6 @@ void WebInspectorProxy::setDiagnosticLoggingAvailable(bool available)
 #endif
 }
 
-void WebInspectorProxy::browserExtensionsEnabled(HashMap<String, String>&& extensionIDToName)
-{
-    if (auto* browserAgent = m_inspectedPage->inspectorController().enabledBrowserAgent())
-        browserAgent->extensionsEnabled(WTFMove(extensionIDToName));
-}
-
-void WebInspectorProxy::browserExtensionsDisabled(HashSet<String>&& extensionIDs)
-{
-    if (auto* browserAgent = m_inspectedPage->inspectorController().enabledBrowserAgent())
-        browserAgent->extensionsDisabled(WTFMove(extensionIDs));
-}
-
 void WebInspectorProxy::save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs)
 {
     if (!m_inspectedPage->preferences().developerExtrasEnabled())

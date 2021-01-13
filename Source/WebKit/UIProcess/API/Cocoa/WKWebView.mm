@@ -90,6 +90,7 @@
 #import "WebCertificateInfo.h"
 #import "WebFullScreenManagerProxy.h"
 #import "WebPageGroup.h"
+#import "WebPageInspectorController.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
 #import "WebProcessPool.h"
@@ -1647,6 +1648,25 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     if (auto* inspector = _page->inspector())
         return wrapper(*inspector);
     return nil;
+}
+
+- (void)_didEnableBrowserExtensions:(NSDictionary<NSString *, NSString *> *)extensionIDToNameMap
+{
+    HashMap<String, String> transformed;
+    transformed.reserveInitialCapacity(extensionIDToNameMap.count);
+    [extensionIDToNameMap enumerateKeysAndObjectsUsingBlock:[&](NSString *extensionID, NSString *extensionName, BOOL *) {
+        transformed.set(extensionID, extensionName);
+    }];
+    _page->inspectorController().browserExtensionsEnabled(WTFMove(transformed));
+}
+
+- (void)_didDisableBrowserExtensions:(NSSet<NSString *> *)extensionIDs
+{
+    HashSet<String> transformed;
+    transformed.reserveInitialCapacity(extensionIDs.count);
+    for (NSString *extensionID in extensionIDs)
+        transformed.addVoid(extensionID);
+    _page->inspectorController().browserExtensionsDisabled(WTFMove(transformed));
 }
 
 - (_WKFrameHandle *)_mainFrame

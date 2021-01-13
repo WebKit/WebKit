@@ -183,6 +183,9 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
 #if ENABLE(WEB_AUTHN)
     m_delegateMethods.webViewRunWebAuthenticationPanelInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(_webView:runWebAuthenticationPanel:initiatedByFrame:completionHandler:)];
 #endif
+    
+    m_delegateMethods.webViewDidEnableInspectorBrowserDomain = [delegate respondsToSelector:@selector(_webViewDidEnableInspectorBrowserDomain:)];
+    m_delegateMethods.webViewDidDisableInspectorBrowserDomain = [delegate respondsToSelector:@selector(_webViewDidDisableInspectorBrowserDomain:)];
 }
 
 #if ENABLE(CONTEXT_MENUS)
@@ -1548,6 +1551,36 @@ void UIDelegate::UIClient::decidePolicyForSpeechRecognitionPermissionRequest(Web
         checker->didCallCompletionHandler();
         completionHandler(granted);
     }).get()];
+}
+
+void UIDelegate::UIClient::didEnableInspectorBrowserDomain(WebPageProxy&)
+{
+    if (!m_uiDelegate)
+        return;
+
+    if (!m_uiDelegate->m_delegateMethods.webViewDidEnableInspectorBrowserDomain)
+        return;
+
+    auto delegate = (id <WKUIDelegatePrivate>)m_uiDelegate->m_delegate.get();
+    if (!delegate)
+        return;
+
+    [delegate _webViewDidEnableInspectorBrowserDomain:m_uiDelegate->m_webView.get().get()];
+}
+
+void UIDelegate::UIClient::didDisableInspectorBrowserDomain(WebPageProxy&)
+{
+    if (!m_uiDelegate)
+        return;
+
+    if (!m_uiDelegate->m_delegateMethods.webViewDidDisableInspectorBrowserDomain)
+        return;
+
+    auto delegate = (id <WKUIDelegatePrivate>)m_uiDelegate->m_delegate.get();
+    if (!delegate)
+        return;
+
+    [delegate _webViewDidDisableInspectorBrowserDomain:m_uiDelegate->m_webView.get().get()];
 }
 
 } // namespace WebKit

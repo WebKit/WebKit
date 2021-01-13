@@ -27,7 +27,6 @@
 #import "InspectorDelegate.h"
 
 #import "WebInspectorProxy.h"
-#import "WebPageProxy.h"
 #import "_WKInspectorDelegate.h"
 #import "_WKInspectorInternal.h"
 
@@ -52,8 +51,6 @@ void InspectorDelegate::setDelegate(id <_WKInspectorDelegate> delegate)
 {
     m_delegate = delegate;
 
-    m_delegateMethods.inspectorDidEnableBrowserDomain = [delegate respondsToSelector:@selector(inspectorDidEnableBrowserDomain:)];
-    m_delegateMethods.inspectorDidDisableBrowserDomain = [delegate respondsToSelector:@selector(inspectorDidDisableBrowserDomain:)];
     m_delegateMethods.inspectorOpenURLExternally = [delegate respondsToSelector:@selector(inspector:openURLExternally:)];
 }
 
@@ -62,30 +59,8 @@ InspectorDelegate::InspectorClient::InspectorClient(InspectorDelegate& delegate)
 {
 }
 
-InspectorDelegate::InspectorClient::~InspectorClient() = default;
-
-void InspectorDelegate::InspectorClient::browserDomainEnabled(WebInspectorProxy&)
+InspectorDelegate::InspectorClient::~InspectorClient()
 {
-    if (!m_inspectorDelegate.m_delegateMethods.inspectorDidEnableBrowserDomain)
-        return;
-
-    auto& delegate = m_inspectorDelegate.m_delegate;
-    if (!delegate)
-        return;
-
-    [delegate inspectorDidEnableBrowserDomain:m_inspectorDelegate.m_inspector.get().get()];
-}
-
-void InspectorDelegate::InspectorClient::browserDomainDisabled(WebInspectorProxy&)
-{
-    if (!m_inspectorDelegate.m_delegateMethods.inspectorDidDisableBrowserDomain)
-        return;
-
-    auto& delegate = m_inspectorDelegate.m_delegate;
-    if (!delegate)
-        return;
-
-    [delegate inspectorDidDisableBrowserDomain:m_inspectorDelegate.m_inspector.get().get()];
 }
 
 void InspectorDelegate::InspectorClient::openURLExternally(WebInspectorProxy&, const String& url)

@@ -1,3 +1,74 @@
+2021-01-12  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: move browser domain activation methods back to WKWebView and UIDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=220480
+
+        Reviewed by Devin Rousso.
+
+        Having browser domain activation methods on WKInspectorDelegate means that
+        the browser domain will not work with remote inspection of WKWebViews on
+        macOS. Move these methods back to UIDelegate/WKWebView so that it is possible
+        to remote inspect Safari Technology Preview with another Safari while still
+        benefiting from the browser domain being turned on.
+
+        Covered by existing API tests.
+
+        * UIProcess/API/APIInspectorClient.h:
+        (API::InspectorClient::browserDomainEnabled): Deleted.
+        (API::InspectorClient::browserDomainDisabled): Deleted.
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::didEnableInspectorBrowserDomain): Moved.
+        (API::UIClient::didDisableInspectorBrowserDomain): Moved.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didEnableBrowserExtensions:]): Moved.
+        (-[WKWebView _didDisableBrowserExtensions:]): Moved.
+        Moved from WKInspector.mm. Rather than accessing the browser agent
+        directly from ObjC code, use the page's WebPageInspectorController.
+
+        * UIProcess/API/Cocoa/_WKInspectorDelegate.h:
+        * UIProcess/API/Cocoa/_WKInspectorPrivate.h:
+        * UIProcess/API/Cocoa/_WKInspector.mm:
+        (-[_WKInspector _browserExtensionsEnabled:]): Deleted.
+        (-[_WKInspector _browserExtensionsDisabled:]): Deleted.
+
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::didEnableInspectorBrowserDomain):
+        (WebKit::UIDelegate::UIClient::didDisableInspectorBrowserDomain):
+        * UIProcess/Inspector/Agents/InspectorBrowserAgent.cpp:
+        (WebKit::InspectorBrowserAgent::enable):
+        (WebKit::InspectorBrowserAgent::disable):
+        * UIProcess/Inspector/Cocoa/InspectorDelegate.h:
+        * UIProcess/Inspector/Cocoa/InspectorDelegate.mm:
+        (WebKit::InspectorDelegate::setDelegate):
+        (WebKit::InspectorDelegate::InspectorClient::~InspectorClient):
+        (WebKit::InspectorDelegate::InspectorClient::browserDomainEnabled): Deleted.
+        (WebKit::InspectorDelegate::InspectorClient::browserDomainDisabled): Deleted.
+        * UIProcess/Inspector/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::browserExtensionsEnabled): Deleted.
+        (WebKit::WebInspectorProxy::browserExtensionsDisabled): Deleted.
+        * UIProcess/Inspector/WebInspectorProxy.h:
+
+        * UIProcess/Inspector/WebPageInspectorController.h:
+        * UIProcess/Inspector/WebPageInspectorController.cpp:
+        (WebKit::WebPageInspectorController::WebPageInspectorController):
+        (WebKit::WebPageInspectorController::init):
+        (WebKit::WebPageInspectorController::connectFrontend):
+        (WebKit::WebPageInspectorController::disconnectFrontend):
+        (WebKit::WebPageInspectorController::disconnectAllFrontends):
+        (WebKit::WebPageInspectorController::setIndicating):
+        (WebKit::WebPageInspectorController::createInspectorTarget):
+        (WebKit::WebPageInspectorController::webPageAgentContext):
+        (WebKit::WebPageInspectorController::setEnabledBrowserAgent): Added.
+        (WebKit::WebPageInspectorController::browserExtensionsEnabled): Added. 
+        (WebKit::WebPageInspectorController::browserExtensionsDisabled): Added.
+        Drive-by: rename m_page to m_inspectedPage to emphasize that this
+        class exists as part of Web Inspector's backend, not its frontend.
+
 2021-01-12  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] GPU Process unable to play MSE content due to missing sandbox rules 

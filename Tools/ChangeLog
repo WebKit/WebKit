@@ -1,3 +1,17 @@
+2021-01-12  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Web Inspector: move browser domain activation methods back to WKWebView and UIDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=220480
+
+        Reviewed by Devin Rousso.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorDelegate.mm:
+        (-[UIDelegate _webViewDidEnableInspectorBrowserDomain:]):
+        (-[UIDelegate _webViewDidDisableInspectorBrowserDomain:]):
+        (-[InspectorDelegate inspectorDidEnableBrowserDomain:]): Deleted.
+        (-[InspectorDelegate inspectorDidDisableBrowserDomain:]): Deleted.
+        Adapt to new location for delegate methods.
+
 2021-01-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r265044): [macOS] Safari autocorrects text when typing in login field on amazon.com

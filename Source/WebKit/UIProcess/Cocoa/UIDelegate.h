@@ -163,6 +163,8 @@ private:
         void runWebAuthenticationPanel(WebPageProxy&, API::WebAuthenticationPanel&, WebFrameProxy&, FrameInfoData&&, CompletionHandler<void(WebAuthenticationPanelResult)>&&) final;
 #endif
         void decidePolicyForSpeechRecognitionPermissionRequest(WebPageProxy&, API::SecurityOrigin&, CompletionHandler<void(bool)>&&) final;
+        void didEnableInspectorBrowserDomain(WebPageProxy&) final;
+        void didDisableInspectorBrowserDomain(WebPageProxy&) final;
 
         WeakPtr<UIDelegate> m_uiDelegate;
     };
@@ -250,6 +252,8 @@ private:
 #if ENABLE(WEB_AUTHN)
         bool webViewRunWebAuthenticationPanelInitiatedByFrameCompletionHandler : 1;
 #endif
+        bool webViewDidEnableInspectorBrowserDomain : 1;
+        bool webViewDidDisableInspectorBrowserDomain : 1;
     } m_delegateMethods;
 };
 
