@@ -1,3 +1,7 @@
+2021-01-13  Russell Epstein  <repstein@apple.com>
+
+        Revert r270664. rdar://problem/73165685
+
 2021-01-08  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Implement @copyDataProperties in C++ to optimize object rest / spread
