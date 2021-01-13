@@ -1,3 +1,18 @@
+2021-01-13  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] fbostatequery, negativebufferapi, negativevertexarrayapi, shaderstatequery conformance failures
+        https://bugs.webkit.org/show_bug.cgi?id=220372
+
+        Reviewed by Darin Adler.
+
+        Add a needed early-out in drawArraysInstanced validation when the
+        primitive count is zero. This patch will be upstreamed to ANGLE
+        afterward.
+
+        * src/libANGLE/validationES.h:
+        (gl::ValidateDrawArraysAttribs):
+        (gl::ValidateDrawArraysCommon):
+
 2021-01-08  Kyle Piddington  <kpiddington@apple.com>
 
         Failures of attribute location conformance tests with Metal backend

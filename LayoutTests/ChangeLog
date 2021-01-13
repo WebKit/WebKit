@@ -1,3 +1,20 @@
+2021-01-13  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] fbostatequery, negativebufferapi, negativevertexarrayapi, shaderstatequery conformance failures
+        https://bugs.webkit.org/show_bug.cgi?id=220372
+
+        Reviewed by Darin Adler.
+
+        Rebaseline tests which are either now passing or which have
+        progressed.
+
+        * webgl/2.0.0/conformance/programs/program-test-expected.txt:
+        * webgl/2.0.0/conformance2/state/gl-object-get-calls-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/fbostatequery-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/negativebufferapi-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/negativevertexarrayapi-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/shaderstatequery-expected.txt:
+
 2021-01-13  Rini Patel  <rini_patel@apple.com>
 
         [GPU process] Some more Layout tests failures in TestExpectations

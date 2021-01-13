@@ -42,7 +42,7 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 38: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 0, gl.FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE) is non-zero.
 [ 39: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 0, gl.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE) is non-zero.
 [ 40: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 0, gl.FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING) is non-zero.
-[ 41: FAIL ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 0, gl.FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER) should be 0 (of type number). Was null (of type object).
+[ 41: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 0, gl.FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER) is 0
 [ 42: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 7, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.TEXTURE
 [ 43: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 7, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is anotherTexture
 [ 44: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 7, gl.FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL) is 0
@@ -53,28 +53,28 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 49: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 7, gl.FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE) is non-zero.
 [ 50: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 7, gl.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE) is non-zero.
 [ 51: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 7, gl.FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING) is non-zero.
-[ 52: FAIL ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 7, gl.FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER) should be 0 (of type number). Was null (of type object).
+[ 52: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 7, gl.FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER) is 0
 [ 53: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.RENDERBUFFER
 [ 54: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is renderbuffer
 [ 55: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.RENDERBUFFER
 [ 56: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is renderbuffer
-[ 57: FAIL ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) should be 36161. Was 0.
-[ 58: FAIL ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) should be [object WebGLRenderbuffer]. Was null.
+[ 57: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.RENDERBUFFER
+[ 58: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is renderbuffer
 [ 59: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE) is non-zero.
 [ 60: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE) is non-zero.
 [ 61: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE) is non-zero.
 [ 62: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING) is non-zero.
 [ 63: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE) is non-zero.
 [ 64: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING) is non-zero.
-[ 65: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : after evaluating: gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE)
+[ 65: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE)
 [ 66: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING) is non-zero.
-[ 67: FAIL ] getFramebufferAttachmentParameter did not generate INVALID_ENUM for invalid parameter enum: NO_ERROR
+[ 67: PASS ] getFramebufferAttachmentParameter correctly handled invalid parameter enums
 [ 68: PASS ] getFramebufferAttachmentParameter correctly handled invalid target enums
 [ 69: PASS ] getFramebufferAttachmentParameter correctly handled invalid attachment enums
 [ 70: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
-[ 71: FAIL ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.BACK, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) should be 33304. Was 5890.
-[ 72: FAIL ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) should be 33304. Was 0.
-[ 73: FAIL ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.STENCIL, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) should be 33304. Was 0.
+[ 71: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.BACK, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.FRAMEBUFFER_DEFAULT
+[ 72: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.FRAMEBUFFER_DEFAULT
+[ 73: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.STENCIL, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.FRAMEBUFFER_DEFAULT
 [ 74: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.BACK, gl.FRAMEBUFFER_ATTACHMENT_RED_SIZE) is non-zero.
 [ 75: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.BACK, gl.FRAMEBUFFER_ATTACHMENT_GREEN_SIZE) is non-zero.
 [ 76: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.BACK, gl.FRAMEBUFFER_ATTACHMENT_BLUE_SIZE) is non-zero.
@@ -105,7 +105,7 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 101: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 0, gl.FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE) is non-zero.
 [ 102: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 0, gl.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE) is non-zero.
 [ 103: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 0, gl.FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING) is non-zero.
-[ 104: FAIL ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 0, gl.FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER) should be 0 (of type number). Was null (of type object).
+[ 104: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 0, gl.FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER) is 0
 [ 105: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 7, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.TEXTURE
 [ 106: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 7, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is anotherTexture
 [ 107: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 7, gl.FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL) is 0
@@ -116,27 +116,27 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 112: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 7, gl.FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE) is non-zero.
 [ 113: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 7, gl.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE) is non-zero.
 [ 114: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 7, gl.FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING) is non-zero.
-[ 115: FAIL ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 7, gl.FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER) should be 0 (of type number). Was null (of type object).
+[ 115: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + 7, gl.FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER) is 0
 [ 116: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.RENDERBUFFER
 [ 117: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is renderbuffer
 [ 118: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.RENDERBUFFER
 [ 119: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is renderbuffer
-[ 120: FAIL ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) should be 36161. Was 0.
-[ 121: FAIL ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) should be [object WebGLRenderbuffer]. Was null.
+[ 120: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.RENDERBUFFER
+[ 121: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME) is renderbuffer
 [ 122: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE) is non-zero.
 [ 123: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE) is non-zero.
 [ 124: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE) is non-zero.
 [ 125: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING) is non-zero.
 [ 126: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE) is non-zero.
 [ 127: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING) is non-zero.
-[ 128: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_ENUM : after evaluating: gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE)
+[ 128: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE)
 [ 129: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING) is non-zero.
-[ 130: FAIL ] getFramebufferAttachmentParameter did not generate INVALID_ENUM for invalid parameter enum: NO_ERROR
+[ 130: PASS ] getFramebufferAttachmentParameter correctly handled invalid parameter enums
 [ 131: PASS ] getFramebufferAttachmentParameter correctly handled invalid target enums
 [ 132: PASS ] getFramebufferAttachmentParameter correctly handled invalid attachment enums
 [ 133: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
-[ 134: FAIL ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.BACK, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) should be 33304. Was 5890.
-[ 135: FAIL ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) should be 33304. Was 0.
+[ 134: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.BACK, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.FRAMEBUFFER_DEFAULT
+[ 135: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.FRAMEBUFFER_DEFAULT
 [ 136: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.STENCIL, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.NONE
 [ 137: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.BACK, gl.FRAMEBUFFER_ATTACHMENT_RED_SIZE) is non-zero.
 [ 138: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.BACK, gl.FRAMEBUFFER_ATTACHMENT_GREEN_SIZE) is non-zero.
@@ -270,15 +270,15 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 266: PASS ] gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_TYPE) is gl.FLOAT
 [ 267: PASS ] gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_NORMALIZED) is false
 [ 268: PASS ] gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_DIVISOR) is 0
-[ 269: FAIL ] gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_INTEGER) should be false (of type boolean). Was null (of type object).
+[ 269: PASS ] gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_INTEGER) is false
 [ 270: PASS ] gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_DIVISOR) is 2
 [ 271: PASS ] gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_STRIDE) is 36
 [ 272: PASS ] gl.getVertexAttribOffset(1, gl.VERTEX_ATTRIB_ARRAY_POINTER) is 12
 [ 273: PASS ] gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_ENABLED) is false
 [ 274: PASS ] gl.getVertexAttrib(1, gl.CURRENT_VERTEX_ATTRIB) is [5, 6, 7, 8]
-[ 275: FAIL ] gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_TYPE) should be 5124. Was 5126.
-[ 276: FAIL ] gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_INTEGER) should be true (of type boolean). Was null (of type object).
-[ 277: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM :
+[ 275: PASS ] gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_TYPE) is gl.INT
+[ 276: PASS ] gl.getVertexAttrib(1, gl.VERTEX_ATTRIB_ARRAY_INTEGER) is true
+[ 277: PASS ] getError was expected value: NO_ERROR :
 [ 278: PASS ] getVertexAttrib correctly handled invalid parameter enums
 [ 279: PASS ] getError was expected value: INVALID_VALUE : after evaluating: gl.getVertexAttrib(16, gl.CURRENT_VERTEX_ATTRIB)
 [ 280: PASS ] gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) is gl.NONE
@@ -365,4 +365,4 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 361: PASS ] getActiveUniformBlockParameter correctly handled invalid pname enums
 [ 362: PASS ] getError was expected value: NO_ERROR :
 [ 363: PASS ] successfullyParsed is true
-[ FAIL ] 35 failures reported
+[ FAIL ] 14 failures reported

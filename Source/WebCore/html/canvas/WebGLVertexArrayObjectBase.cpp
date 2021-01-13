@@ -52,7 +52,7 @@ void WebGLVertexArrayObjectBase::setElementArrayBuffer(const AbstractLocker& loc
     
 }
 
-void WebGLVertexArrayObjectBase::setVertexAttribState(const AbstractLocker& locker, GCGLuint index, GCGLsizei bytesPerElement, GCGLint size, GCGLenum type, GCGLboolean normalized, GCGLsizei stride, GCGLintptr offset, WebGLBuffer* buffer)
+void WebGLVertexArrayObjectBase::setVertexAttribState(const AbstractLocker& locker, GCGLuint index, GCGLsizei bytesPerElement, GCGLint size, GCGLenum type, GCGLboolean normalized, GCGLsizei stride, GCGLintptr offset, bool isInteger, WebGLBuffer* buffer)
 {
     GCGLsizei validatedStride = stride ? stride : bytesPerElement;
     
@@ -71,6 +71,7 @@ void WebGLVertexArrayObjectBase::setVertexAttribState(const AbstractLocker& lock
     state.stride = validatedStride;
     state.originalStride = stride;
     state.offset = offset;
+    state.isInteger = isInteger;
 }
 
 void WebGLVertexArrayObjectBase::unbindBuffer(const AbstractLocker& locker, WebGLBuffer& buffer)

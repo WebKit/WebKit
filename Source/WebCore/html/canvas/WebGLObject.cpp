@@ -67,15 +67,7 @@ void WebGLObject::deleteObject(const AbstractLocker& locker, GraphicsContextGL* 
     if (!hasGroupOrContext())
         return;
 
-    // ANGLE correctly handles object deletion with WebGL semantics.
-    // For other GL implementations, delay deletion until we know
-    // the object is not attached anywhere.
-#if USE(ANGLE)
-    if (!m_calledDelete) {
-        m_calledDelete = true;
-#else
     if (!m_attachmentCount) {
-#endif
         if (!context3d)
             context3d = getAGraphicsContextGL();
 

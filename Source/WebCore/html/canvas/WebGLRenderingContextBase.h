@@ -495,7 +495,14 @@ protected:
     bool validateIndexArrayPrecise(GCGLsizei count, GCGLenum type, GCGLintptr offset, unsigned& numElementsRequired);
     bool validateVertexAttributes(unsigned elementCount, unsigned primitiveCount = 0);
 
+    // Validates the incoming WebGL object, which is assumed to be non-null.
+    // Checks that the object belongs to this context and that it's not marked for
+    // deletion. Performs a context lost check internally.
     bool validateWebGLObject(const char*, WebGLObject*);
+
+    // Validates the incoming WebGL program or shader, which is assumed to be
+    // non-null. OpenGL ES's validation rules differ for these types of objects
+    // compared to others. Performs a context lost check internally.
     bool validateWebGLProgramOrShader(const char*, WebGLObject*);
 
 #if !USE(ANGLE)
@@ -1046,9 +1053,13 @@ protected:
     // Return false if caller should return without further processing.
     bool deleteObject(const WTF::AbstractLocker&, WebGLObject*);
 
-    // Helper function for bind* (bindBuffer, bindTexture, etc) and useProgram.
-    // Return false if caller should return without further processing.
-    bool checkObjectToBeBound(const char* functionName, WebGLObject*);
+    // Helper function for APIs which can legally receive null objects, including
+    // the bind* calls (bindBuffer, bindTexture, etc.) and useProgram. Checks that
+    // the object belongs to this context and that it's not marked for deletion.
+    // Returns false if the caller should return without further processing.
+    // Performs a context lost check internally.
+    // This returns true for null WebGLObject arguments!
+    bool validateNullableWebGLObject(const char* functionName, WebGLObject*);
 
     // Helper function to validate the target for bufferData and
     // getBufferParameter.

@@ -60,6 +60,7 @@ public:
         GCGLsizei originalStride { 0 };
         GCGLintptr offset { 0 };
         GCGLuint divisor { 0 };
+        bool isInteger { false };
     };
 
     bool isDefaultObject() const { return m_type == Type::Default; }
@@ -71,7 +72,7 @@ public:
     void setElementArrayBuffer(const WTF::AbstractLocker&, WebGLBuffer*);
 
     VertexAttribState& getVertexAttribState(int index) { return m_vertexAttribState[index]; }
-    void setVertexAttribState(const WTF::AbstractLocker&, GCGLuint, GCGLsizei, GCGLint, GCGLenum, GCGLboolean, GCGLsizei, GCGLintptr, WebGLBuffer*);
+    void setVertexAttribState(const WTF::AbstractLocker&, GCGLuint, GCGLsizei, GCGLint, GCGLenum, GCGLboolean, GCGLsizei, GCGLintptr, bool, WebGLBuffer*);
     void unbindBuffer(const WTF::AbstractLocker&, WebGLBuffer&);
 
     void setVertexAttribDivisor(GCGLuint index, GCGLuint divisor);
