@@ -26,6 +26,12 @@
 import logging
 import re
 
+try:
+    from importlib.util import source_from_cache
+except ImportError:  # Python 2
+    def source_from_cache(path):
+        return path[:-1]
+
 
 _log = logging.getLogger(__name__)
 
@@ -67,9 +73,14 @@ class _DirectoryTree(object):
         _log.debug("Cleaning orphaned *.pyc files from: %s" % self.search_directory)
         filenames = self.filesystem.files_under(self.search_directory)
         for filename in filenames:
-            if filename.endswith(".pyc") and filename[:-1] not in filenames:
-                _log.info("Deleting orphan *.pyc file: %s" % filename)
-                self.filesystem.remove(filename)
+            if filename.endswith(".pyc"):
+                try:
+                    orphan = source_from_cache(filename) not in filenames
+                except ValueError:
+                    orphan = True
+                if orphan:
+                    _log.info("Deleting orphan *.pyc file: %s" % filename)
+                    self.filesystem.remove(filename)
 
 
 class Finder(object):
