@@ -91,12 +91,12 @@ bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity 
     auto newOffset = ScrollableArea::scrollOffsetFromPosition(newPosition, scrollOrigin);
     auto currentOffset = ScrollableArea::scrollOffsetFromPosition(this->currentPosition(), scrollOrigin);
     if (orientation == HorizontalScrollbar) {
-        newOffset.setX(m_scrollController.adjustScrollDestinationForDirectionalSnapping(ScrollEventAxis::Horizontal, newOffset.x(), multiplier, currentOffset.x()));
+        newOffset.setX(m_scrollController.adjustScrollDestination(ScrollEventAxis::Horizontal, newOffset.x(), multiplier, currentOffset.x()));
         newPosition = ScrollableArea::scrollPositionFromOffset(newOffset, scrollOrigin);
         return scroll(HorizontalScrollbar, granularity, newPosition.x() - this->currentPosition().x(), 1.0);
     }
 
-    newOffset.setY(m_scrollController.adjustScrollDestinationForDirectionalSnapping(ScrollEventAxis::Vertical, newPosition.y(), multiplier, currentOffset.y()));
+    newOffset.setY(m_scrollController.adjustScrollDestination(ScrollEventAxis::Vertical, newPosition.y(), multiplier, currentOffset.y()));
     newPosition = ScrollableArea::scrollPositionFromOffset(newOffset, scrollOrigin);
     return scroll(VerticalScrollbar, granularity, newPosition.y() - this->currentPosition().y(), 1.0);
 #else
@@ -353,5 +353,31 @@ void ScrollAnimator::didAddHorizontalScrollbar(Scrollbar*)
 {
     m_animationProgrammaticScroll->updateVisibleLengths();
 }
+
+FloatPoint ScrollAnimator::adjustScrollOffsetForSnappingIfNeeded(const FloatPoint& offset, ScrollSnapPointSelectionMethod method)
+{
+#if ENABLE(CSS_SCROLL_SNAP)
+    if (!m_scrollController.usesScrollSnap())
+        return offset;
+
+    Optional<float> originalXOffset, originalYOffset;
+    FloatSize velocity;
+    if (method == ScrollSnapPointSelectionMethod::Directional) {
+        FloatSize scrollOrigin = toFloatSize(m_scrollableArea.scrollOrigin());
+        auto currentOffset = ScrollableArea::scrollOffsetFromPosition(this->currentPosition(), scrollOrigin);
+        originalXOffset = currentOffset.x();
+        originalYOffset = currentOffset.y();
+        velocity = { offset.x() - currentOffset.x(), offset.y() - currentOffset.y() };
+    }
+
+    FloatPoint newOffset = offset;
+    newOffset.setX(m_scrollController.adjustScrollDestination(ScrollEventAxis::Horizontal, newOffset.x(), velocity.width(), originalXOffset));
+    newOffset.setY(m_scrollController.adjustScrollDestination(ScrollEventAxis::Vertical, newOffset.y(), velocity.height(), originalYOffset));
+    return newOffset;
+#else
+    return offset;
+#endif
+}
+
 
 } // namespace WebCore

@@ -35,6 +35,11 @@ namespace WebCore {
 
 bool useSmoothScrolling(ScrollBehavior behavior, Element* associatedElement)
 {
+    // FIXME: Should we use document()->scrollingElement()?
+    // See https://bugs.webkit.org/show_bug.cgi?id=205059
+    if (associatedElement == associatedElement->document().scrollingElement())
+        associatedElement = associatedElement->document().documentElement();
+
     if (!associatedElement
         || !associatedElement->renderer()
         || !associatedElement->document().settings().CSSOMViewSmoothScrollingEnabled())

@@ -2597,24 +2597,21 @@ void RenderLayer::applyPostLayoutScrollPositionIfNeeded()
     m_postLayoutScrollPosition = WTF::nullopt;
 }
 
-void RenderLayer::scrollToXPosition(int x, ScrollType scrollType, ScrollClamping clamping, AnimatedScroll animated)
+void RenderLayer::scrollToXPosition(int x, const ScrollPositionChangeOptions& options)
 {
     ScrollPosition position(x, m_scrollPosition.y());
-    setScrollPosition(position, scrollType, clamping, animated);
+    setScrollPosition(position, options);
 }
 
-void RenderLayer::scrollToYPosition(int y, ScrollType scrollType, ScrollClamping clamping, AnimatedScroll animated)
+void RenderLayer::scrollToYPosition(int y, const ScrollPositionChangeOptions& options)
 {
     ScrollPosition position(m_scrollPosition.x(), y);
-    setScrollPosition(position, scrollType, clamping, animated);
+    setScrollPosition(position, options);
 }
 
-void RenderLayer::setScrollPosition(const ScrollPosition& position, ScrollType scrollType, ScrollClamping clamping, AnimatedScroll animated)
+void RenderLayer::setScrollPosition(const ScrollPosition& position, const ScrollPositionChangeOptions& options)
 {
-    if (animated == AnimatedScroll::Yes)
-        scrollToOffsetWithAnimation(scrollOffsetFromPosition(position), scrollType, clamping);
-    else
-        scrollToOffset(scrollOffsetFromPosition(position), scrollType, clamping);
+    scrollToOffset(scrollOffsetFromPosition(position), options);
 }
 
 ScrollOffset RenderLayer::clampScrollOffset(const ScrollOffset& scrollOffset) const
@@ -2633,35 +2630,27 @@ bool RenderLayer::requestScrollPositionUpdate(const ScrollPosition& position, Sc
     return false;
 }
 
-void RenderLayer::scrollToOffset(const ScrollOffset& scrollOffset, ScrollType scrollType, ScrollClamping clamping)
+void RenderLayer::scrollToOffset(const ScrollOffset& scrollOffset, const ScrollPositionChangeOptions& options)
 {
     if (currentScrollBehaviorStatus() == ScrollBehaviorStatus::InNonNativeAnimation)
         scrollAnimator().cancelAnimations();
 
-    ScrollOffset clampedScrollOffset = clamping == ScrollClamping::Clamped ? clampScrollOffset(scrollOffset) : scrollOffset;
+    ScrollOffset clampedScrollOffset = options.clamping == ScrollClamping::Clamped ? clampScrollOffset(scrollOffset) : scrollOffset;
     if (clampedScrollOffset == this->scrollOffset())
         return;
 
     auto previousScrollType = currentScrollType();
-    setCurrentScrollType(scrollType);
+    setCurrentScrollType(options.type);
 
-    if (!requestScrollPositionUpdate(scrollPositionFromOffset(clampedScrollOffset), scrollType, clamping))
-        scrollToOffsetWithoutAnimation(clampedScrollOffset, clamping);
-    setScrollBehaviorStatus(ScrollBehaviorStatus::NotInAnimation);
-
-    setCurrentScrollType(previousScrollType);
-}
-
-void RenderLayer::scrollToOffsetWithAnimation(const ScrollOffset& offset, ScrollType scrollType, ScrollClamping clamping)
-{
-    auto previousScrollType = currentScrollType();
-    setCurrentScrollType(scrollType);
-
-    ScrollOffset newScrollOffset = clamping == ScrollClamping::Clamped ? clampScrollOffset(offset) : offset;
-    if (currentScrollBehaviorStatus() == ScrollBehaviorStatus::InNonNativeAnimation)
-        scrollAnimator().cancelAnimations();
-    if (newScrollOffset != this->scrollOffset())
-        ScrollableArea::scrollToOffsetWithAnimation(newScrollOffset);
+    ScrollOffset snappedOffset = ceiledIntPoint(scrollAnimator().adjustScrollOffsetForSnappingIfNeeded(clampedScrollOffset, options.snapPointSelectionMethod));
+    if (options.animated == AnimatedScroll::Yes)
+        ScrollableArea::scrollToOffsetWithAnimation(snappedOffset);
+    else {
+        auto snappedPosition = scrollPositionFromOffset(snappedOffset);
+        if (!requestScrollPositionUpdate(snappedPosition, options.type, options.clamping))
+            scrollToOffsetWithoutAnimation(snappedOffset, options.clamping);
+        setScrollBehaviorStatus(ScrollBehaviorStatus::NotInAnimation);
+    }
 
     setCurrentScrollType(previousScrollType);
 }
@@ -2822,11 +2811,12 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
     FrameView& frameView = renderer().view().frameView();
     auto* parentLayer = enclosingContainingBlockLayer(*this, CrossFrameBoundaries::No);
 
-    auto shouldUseAnimatedScroll = [this](Element* element, ScrollBehavior behavior)
+    auto scrollPositionChangeOptionsForElement = [this, options](Element* element)
     {
-        bool useAnimatedScrolling = !renderer().frame().eventHandler().autoscrollInProgress()
-            && element && useSmoothScrolling(behavior, element);
-        return useAnimatedScrolling ? AnimatedScroll::Yes : AnimatedScroll::No;
+        auto scrollPositionOptions = ScrollPositionChangeOptions::createProgrammatic();
+        if (!renderer().frame().eventHandler().autoscrollInProgress() && element && useSmoothScrolling(options.behavior, element))
+            scrollPositionOptions.animated = AnimatedScroll::Yes;
+        return scrollPositionOptions;
     };
 
     if (allowsCurrentScroll()) {
@@ -2852,8 +2842,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
         ScrollOffset clampedScrollOffset = clampScrollOffset(scrollOffset() + toIntSize(roundedIntRect(revealRect).location()));
         if (clampedScrollOffset != scrollOffset() || currentScrollBehaviorStatus() != ScrollBehaviorStatus::NotInAnimation) {
             ScrollOffset oldScrollOffset = scrollOffset();
-            auto animated = shouldUseAnimatedScroll(box->element(), options.behavior);
-            setScrollPosition(scrollPositionFromOffset(clampedScrollOffset), ScrollType::Programmatic, ScrollClamping::Clamped, animated);
+            scrollToOffset(clampedScrollOffset, scrollPositionChangeOptionsForElement(box->element()));
             IntSize scrollOffsetDifference = clampedScrollOffset - oldScrollOffset;
             localExposeRect.move(-scrollOffsetDifference);
             newRect = LayoutRect(box->localToAbsoluteQuad(FloatQuad(FloatRect(localExposeRect)), UseTransforms).boundingBox());
@@ -2878,14 +2867,14 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
                 expandScrollRectToVisibleTargetRectToIncludeScrollPadding(renderer, viewRect, newRect);
 
                 LayoutRect exposeRect = getRectToExpose(viewRect, newRect, insideFixed, options.alignX, options.alignY);
-
                 IntPoint scrollPosition(roundedIntPoint(exposeRect.location()));
+
                 // Adjust offsets if they're outside of the allowable range.
                 scrollPosition = scrollPosition.constrainedBetween(IntPoint(), IntPoint(frameView.contentsSize()));
+
                 // FIXME: Should we use contentDocument()->scrollingElement()?
                 // See https://bugs.webkit.org/show_bug.cgi?id=205059
-                auto animated = shouldUseAnimatedScroll(element, options.behavior);
-                frameView.setScrollPosition(scrollPosition, ScrollClamping::Clamped, animated);
+                frameView.setScrollPosition(scrollPosition, scrollPositionChangeOptionsForElement(element));
 
                 if (options.shouldAllowCrossOriginScrolling == ShouldAllowCrossOriginScrolling::Yes || frameView.safeToPropagateScrollToParent()) {
                     if (auto* enclosingLayer = ownerElement->renderer()->enclosingLayer())
@@ -2928,11 +2917,10 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
             LayoutRect revealRect = getRectToExpose(viewRect, targetRect, insideFixed, options.alignX, options.alignY);
             // Avoid scrolling to the rounded value of revealRect.location() if we don't actually need to scroll
             if (revealRect != viewRect) {
-                ScrollOffset clampedScrollPosition = roundedIntPoint(revealRect.location()).constrainedBetween(minScrollPosition, maxScrollPosition);
                 // FIXME: Should we use document()->scrollingElement()?
                 // See https://bugs.webkit.org/show_bug.cgi?id=205059
-                auto animated = shouldUseAnimatedScroll(element, options.behavior);
-                frameView.setScrollPosition(clampedScrollPosition, ScrollClamping::Clamped, animated);
+                ScrollOffset clampedScrollPosition = roundedIntPoint(revealRect.location()).constrainedBetween(minScrollPosition, maxScrollPosition);
+                frameView.setScrollPosition(clampedScrollPosition, scrollPositionChangeOptionsForElement(element));
             }
 
             // This is the outermost view of a web page, so after scrolling this view we

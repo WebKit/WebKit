@@ -1,3 +1,36 @@
+2021-01-13  Martin Robinson  <mrobinson@igalia.com>
+
+        Scroll-snap points should be triggered during programmatic scroll
+        https://bugs.webkit.org/show_bug.cgi?id=145330
+        <rdar://problem/21467780>
+
+        Reviewed by Simon Fraser.
+
+        Update test expectations for newly passing tests and tests that now
+        fail in a different way.
+
+        * web-platform-tests/css/css-scroll-snap/overflowing-snap-areas-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/scroll-margin-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/scroll-padding-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-stop-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-type-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/scrollTo-scrollBy-snaps-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/adding-snap-area-while-snapped-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/changing-scroll-snap-align-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/move-current-target-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/remove-current-target-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/snap-area-capturing-add-scroll-container-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/snap-area-capturing-remove-scroll-container-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/snap-inline-block-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/snap-to-transformed-target-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-both-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-margin-both-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-margin-x-axis-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-margin-y-axis-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-x-axis-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-y-axis-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/unreachable-snap-positions-expected.txt:
+
 2021-01-12  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r267571): black line appears upon navigating back from apple.com shopping bag

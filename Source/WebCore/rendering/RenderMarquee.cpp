@@ -171,11 +171,12 @@ void RenderMarquee::start()
     if (m_timer.isActive() || m_layer->renderer().style().marqueeIncrement().isZero())
         return;
 
+    auto details = ScrollPositionChangeOptions::createProgrammaticUnclamped();
     if (!m_suspended && !m_stopped) {
         if (isHorizontal())
-            m_layer->scrollToOffset(ScrollOffset(m_start, 0), ScrollType::Programmatic, ScrollClamping::Unclamped);
+            m_layer->scrollToOffset(ScrollOffset(m_start, 0), details);
         else
-            m_layer->scrollToOffset(ScrollOffset(0, m_start), ScrollType::Programmatic, ScrollClamping::Unclamped);
+            m_layer->scrollToOffset(ScrollOffset(0, m_start), details);
     } else {
         m_suspended = false;
         m_stopped = false;

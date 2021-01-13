@@ -106,8 +106,8 @@ private:
     int scrollTop() const override;
     int scrollWidth() const override;
     int scrollHeight() const override;
-    void setScrollLeft(int, ScrollType, ScrollClamping, AnimatedScroll) override;
-    void setScrollTop(int, ScrollType, ScrollClamping, AnimatedScroll) override;
+    void setScrollLeft(int, const ScrollPositionChangeOptions&) override;
+    void setScrollTop(int, const ScrollPositionChangeOptions&) override;
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 

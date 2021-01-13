@@ -166,7 +166,7 @@ public:
     unsigned activeScrollSnapIndexForAxis(ScrollEventAxis) const;
     void updateScrollSnapState(const ScrollableArea&);
     void updateGestureInProgressState(const PlatformWheelEvent&);
-    float adjustScrollDestinationForDirectionalSnapping(ScrollEventAxis, float destination, float velocity, float originalPosition);
+    float adjustScrollDestination(ScrollEventAxis, float destinationOffset, float velocity, Optional<float> originalOffset);
 #if PLATFORM(MAC)
     // Returns true if handled.
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&);

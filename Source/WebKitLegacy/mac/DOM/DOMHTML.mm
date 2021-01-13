@@ -113,7 +113,10 @@
     auto* layer = downcast<WebCore::RenderBox>(*renderer).layer();
     if (adjustForIOSCaret)
         layer->setAdjustForIOSCaretWhenScrolling(true);
-    layer->scrollToOffset(WebCore::ScrollOffset(x, y), WebCore::ScrollType::Programmatic, WebCore::ScrollClamping::Unclamped);
+
+    auto scrollPositionChangeOptions = WebCore::ScrollPositionChangeOptions::createProgrammatic();
+    scrollPositionChangeOptions.clamping = WebCore::ScrollClamping::Unclamped;
+    layer->scrollToOffset(WebCore::ScrollOffset(x, y), scrollPositionChangeOptions);
     if (adjustForIOSCaret)
         layer->setAdjustForIOSCaretWhenScrolling(false);
 }

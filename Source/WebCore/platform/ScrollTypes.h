@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FloatPoint.h"
 #include "IntPoint.h"
 #include <cstdint>
 #include <wtf/Assertions.h>
@@ -249,6 +250,15 @@ enum class ScrollPositioningBehavior : uint8_t {
     Stationary
 };
 
+// This value controls the method used to select snap points during scrolling. This may either
+// be "directional" or "closest." The directional method only chooses snap points that are at or
+// beyond the scroll destination in the direction of the scroll. The "closest" method does not
+// have this constraint.
+enum class ScrollSnapPointSelectionMethod : uint8_t {
+    Directional,
+    Closest,
+};
+
 using ScrollbarControlState = unsigned;
 using ScrollbarControlPartMask = unsigned;
 using ScrollingNodeID = uint64_t;
@@ -256,6 +266,33 @@ using ScrollingNodeID = uint64_t;
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollType);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollClamping);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollBehaviorForFixedElements);
+
+struct ScrollPositionChangeOptions {
+    ScrollType type;
+    ScrollClamping clamping = ScrollClamping::Clamped;
+    AnimatedScroll animated = AnimatedScroll::No;
+    ScrollSnapPointSelectionMethod snapPointSelectionMethod = ScrollSnapPointSelectionMethod::Closest;
+
+    static ScrollPositionChangeOptions createProgrammatic()
+    {
+        return { ScrollType::Programmatic };
+    }
+
+    static ScrollPositionChangeOptions createProgrammaticWithOptions(ScrollClamping clamping, AnimatedScroll animated, ScrollSnapPointSelectionMethod snapPointSelectionMethod)
+    {
+        return { ScrollType::Programmatic, clamping, animated, snapPointSelectionMethod };
+    }
+
+    static ScrollPositionChangeOptions createUser()
+    {
+        return { ScrollType::User };
+    }
+
+    static ScrollPositionChangeOptions createProgrammaticUnclamped()
+    {
+        return { ScrollType::Programmatic, ScrollClamping::Unclamped };
+    }
+};
 
 } // namespace WebCore
 

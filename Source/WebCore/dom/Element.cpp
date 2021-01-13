@@ -948,7 +948,7 @@ void Element::scrollBy(const ScrollToOptions& options)
     ScrollToOptions scrollToOptions = normalizeNonFiniteCoordinatesOrFallBackTo(options, 0, 0);
     scrollToOptions.left.value() += scrollLeft();
     scrollToOptions.top.value() += scrollTop();
-    scrollTo(scrollToOptions);
+    scrollTo(scrollToOptions, ScrollClamping::Clamped, ScrollSnapPointSelectionMethod::Directional);
 }
 
 void Element::scrollBy(double x, double y)
@@ -956,7 +956,7 @@ void Element::scrollBy(double x, double y)
     scrollBy(ScrollToOptions(x, y));
 }
 
-void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping)
+void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, ScrollSnapPointSelectionMethod snapPointSelectionMethod)
 {
     if (!document().settings().CSSOMViewScrollingAPIEnabled()) {
         // If the element is the root element and document is in quirks mode, terminate these steps.
@@ -975,7 +975,7 @@ void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping)
         if (!window)
             return;
 
-        window->scrollTo(options, clamping);
+        window->scrollTo(options, clamping, snapPointSelectionMethod);
         return;
     }
 
@@ -985,7 +985,7 @@ void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping)
     if (!renderer || !renderer->hasOverflowClip())
         return;
 
-    ScrollToOptions scrollToOptions = normalizeNonFiniteCoordinatesOrFallBackTo(options,
+    auto scrollToOptions = normalizeNonFiniteCoordinatesOrFallBackTo(options,
         adjustForAbsoluteZoom(renderer->scrollLeft(), *renderer),
         adjustForAbsoluteZoom(renderer->scrollTop(), *renderer)
     );
@@ -993,8 +993,10 @@ void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping)
         clampToInteger(scrollToOptions.left.value() * renderer->style().effectiveZoom()),
         clampToInteger(scrollToOptions.top.value() * renderer->style().effectiveZoom())
     );
-    AnimatedScroll animated = useSmoothScrolling(scrollToOptions.behavior.valueOr(ScrollBehavior::Auto), this) ? AnimatedScroll::Yes : AnimatedScroll::No;
-    renderer->setScrollPosition(scrollPosition, ScrollType::Programmatic, clamping, animated);
+
+    auto animated = useSmoothScrolling(scrollToOptions.behavior.valueOr(ScrollBehavior::Auto), this) ? AnimatedScroll::Yes : AnimatedScroll::No;
+    auto scrollPositionChangeOptions = ScrollPositionChangeOptions::createProgrammaticWithOptions(clamping, animated, snapPointSelectionMethod);
+    renderer->setScrollPosition(scrollPosition, scrollPositionChangeOptions);
 }
 
 void Element::scrollTo(double x, double y)
@@ -1320,21 +1322,20 @@ void Element::setScrollLeft(int newLeft)
 {
     document().updateLayoutIgnorePendingStylesheets();
 
+    auto options = ScrollPositionChangeOptions::createProgrammatic();
+    options.animated = useSmoothScrolling(ScrollBehavior::Auto, this) ? AnimatedScroll::Yes : AnimatedScroll::No;
+
     if (document().scrollingElement() == this) {
         if (auto* frame = documentFrameWithNonNullView()) {
-            // FIXME: Should we use document()->scrollingElement()?
-            // See https://bugs.webkit.org/show_bug.cgi?id=205059
-            AnimatedScroll animated = useSmoothScrolling(ScrollBehavior::Auto, document().documentElement()) ? AnimatedScroll::Yes : AnimatedScroll::No;
             IntPoint position(static_cast<int>(newLeft * frame->pageZoomFactor() * frame->frameScaleFactor()), frame->view()->scrollY());
-            frame->view()->setScrollPosition(position, ScrollClamping::Clamped, animated);
+            frame->view()->setScrollPosition(position, options);
         }
         return;
     }
 
     if (auto* renderer = renderBox()) {
         int clampedLeft = clampToInteger(newLeft * renderer->style().effectiveZoom());
-        AnimatedScroll animated = useSmoothScrolling(ScrollBehavior::Auto, this) ? AnimatedScroll::Yes : AnimatedScroll::No;
-        renderer->setScrollLeft(clampedLeft, ScrollType::Programmatic, ScrollClamping::Clamped, animated);
+        renderer->setScrollLeft(clampedLeft, options);
         if (auto* scrollableArea = renderer->layer())
             scrollableArea->setScrollShouldClearLatchedState(true);
     }
@@ -1344,21 +1345,20 @@ void Element::setScrollTop(int newTop)
 {
     document().updateLayoutIgnorePendingStylesheets();
 
+    auto options = ScrollPositionChangeOptions::createProgrammatic();
+    options.animated = useSmoothScrolling(ScrollBehavior::Auto, this) ? AnimatedScroll::Yes : AnimatedScroll::No;
+
     if (document().scrollingElement() == this) {
         if (auto* frame = documentFrameWithNonNullView()) {
-            // FIXME: Should we use document()->scrollingElement()?
-            // See https://bugs.webkit.org/show_bug.cgi?id=205059
-            AnimatedScroll animated = useSmoothScrolling(ScrollBehavior::Auto, document().documentElement()) ? AnimatedScroll::Yes : AnimatedScroll::No;
             IntPoint position(frame->view()->scrollX(), static_cast<int>(newTop * frame->pageZoomFactor() * frame->frameScaleFactor()));
-            frame->view()->setScrollPosition(position, ScrollClamping::Clamped, animated);
+            frame->view()->setScrollPosition(position, options);
         }
         return;
     }
 
     if (auto* renderer = renderBox()) {
         int clampedTop = clampToInteger(newTop * renderer->style().effectiveZoom());
-        AnimatedScroll animated = useSmoothScrolling(ScrollBehavior::Auto, this) ? AnimatedScroll::Yes : AnimatedScroll::No;
-        renderer->setScrollTop(clampedTop, ScrollType::Programmatic, ScrollClamping::Clamped, animated);
+        renderer->setScrollTop(clampedTop, options);
         if (auto* scrollableArea = renderer->layer())
             scrollableArea->setScrollShouldClearLatchedState(true);
     }

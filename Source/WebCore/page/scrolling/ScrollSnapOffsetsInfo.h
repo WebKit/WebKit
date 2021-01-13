@@ -66,8 +66,8 @@ const unsigned invalidSnapOffsetIndex = UINT_MAX;
 // the scrolling container's border box.
 void updateSnapOffsetsForScrollableArea(ScrollableArea&, const RenderBox& scrollingElementBox, const RenderStyle& scrollingElementStyle, LayoutRect viewportRectInBorderBoxCoordinates);
 
-WEBCORE_EXPORT LayoutUnit closestSnapOffset(const Vector<LayoutUnit>& snapOffsets, const Vector<ScrollOffsetRange<LayoutUnit>>& snapOffsetRanges, LayoutUnit scrollDestination, float velocity, unsigned& activeSnapIndex, Optional<LayoutUnit> originalPositionForDirectionalSnapping = WTF::nullopt);
-WEBCORE_EXPORT float closestSnapOffset(const Vector<float>& snapOffsets, const Vector<ScrollOffsetRange<float>>& snapOffsetRanges, float scrollDestination, float velocity, unsigned& activeSnapIndex, Optional<float> originalPositionForDirectionalSnapping = WTF::nullopt);
+WEBCORE_EXPORT LayoutUnit closestSnapOffset(const Vector<LayoutUnit>& snapOffsets, const Vector<ScrollOffsetRange<LayoutUnit>>& snapOffsetRanges, LayoutUnit scrollDestinationOffset, float velocity, unsigned& activeSnapIndex, Optional<LayoutUnit> originalPositionForDirectionalSnapping = WTF::nullopt);
+WEBCORE_EXPORT float closestSnapOffset(const Vector<float>& snapOffsets, const Vector<ScrollOffsetRange<float>>& snapOffsetRanges, float scrollDestinationOffset, float velocity, unsigned& activeSnapIndex, Optional<float> originalPositionForDirectionalSnapping = WTF::nullopt);
 
 }; // namespace WebCore
 

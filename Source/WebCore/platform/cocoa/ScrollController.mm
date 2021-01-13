@@ -904,18 +904,21 @@ void ScrollController::setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis
     setActiveScrollSnapIndexForAxis(axis, activeIndex);
 }
 
-float ScrollController::adjustScrollDestinationForDirectionalSnapping(ScrollEventAxis axis, float destination, float velocity, float originalPosition)
+float ScrollController::adjustScrollDestination(ScrollEventAxis axis, float destinationOffset, float velocity, Optional<float> originalOffset)
 {
     if (!usesScrollSnap())
-        return destination;
+        return destinationOffset;
 
     ScrollSnapAnimatorState& snapState = *m_scrollSnapState;
     auto snapOffsets = snapState.snapOffsetsForAxis(axis);
     if (!snapOffsets.size())
-        return destination;
+        return destinationOffset;
 
     unsigned snapIndex;
-    LayoutUnit offset = closestSnapOffset(snapState.snapOffsetsForAxis(axis), snapState.snapOffsetRangesForAxis(axis), LayoutUnit(destination / m_client.pageScaleFactor()), velocity, snapIndex, LayoutUnit(originalPosition / m_client.pageScaleFactor()));
+    Optional<LayoutUnit> originalOffsetInLayoutUnits;
+    if (originalOffset.hasValue())
+        originalOffsetInLayoutUnits = LayoutUnit(*originalOffset / m_client.pageScaleFactor());
+    LayoutUnit offset = closestSnapOffset(snapState.snapOffsetsForAxis(axis), snapState.snapOffsetRangesForAxis(axis), LayoutUnit(destinationOffset / m_client.pageScaleFactor()), velocity, snapIndex, originalOffsetInLayoutUnits);
     return offset * m_client.pageScaleFactor();
 }
 

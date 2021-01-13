@@ -37,6 +37,7 @@
 #include "WheelEventTestMonitor.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
+#include <wtf/Optional.h>
 
 #if ENABLE(RUBBER_BANDING) || ENABLE(CSS_SCROLL_SNAP)
 #include "ScrollController.h"
@@ -137,6 +138,8 @@ public:
     virtual String verticalScrollbarStateForTesting() const { return emptyString(); }
 
     void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&& testMonitor) { m_wheelEventTestMonitor = testMonitor; }
+
+    FloatPoint adjustScrollOffsetForSnappingIfNeeded(const FloatPoint& offset, ScrollSnapPointSelectionMethod);
 
 #if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
     std::unique_ptr<ScrollControllerTimer> createTimer(Function<void()>&&) final;

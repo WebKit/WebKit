@@ -447,16 +447,15 @@ public:
 
     bool requestScrollPositionUpdate(const ScrollPosition&, ScrollType = ScrollType::User, ScrollClamping = ScrollClamping::Clamped) final;
 
-    WEBCORE_EXPORT void scrollToOffset(const ScrollOffset&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped);
-    WEBCORE_EXPORT void scrollToOffsetWithAnimation(const ScrollOffset&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped);
+    WEBCORE_EXPORT void scrollToOffset(const ScrollOffset&, const ScrollPositionChangeOptions& = ScrollPositionChangeOptions::createProgrammatic());
 
-    void scrollToXPosition(int x, ScrollType, ScrollClamping = ScrollClamping::Clamped, AnimatedScroll = AnimatedScroll::No);
-    void scrollToYPosition(int y, ScrollType, ScrollClamping = ScrollClamping::Clamped, AnimatedScroll = AnimatedScroll::No);
-    void setScrollPosition(const ScrollPosition&, ScrollType, ScrollClamping = ScrollClamping::Clamped, AnimatedScroll = AnimatedScroll::No);
+    void scrollToXPosition(int x, const ScrollPositionChangeOptions&);
+    void scrollToYPosition(int y, const ScrollPositionChangeOptions&);
+    void setScrollPosition(const ScrollPosition&, const ScrollPositionChangeOptions&);
 
     // These are only used by marquee.
-    void scrollToXOffset(int x) { scrollToOffset(ScrollOffset(x, scrollOffset().y()), ScrollType::Programmatic, ScrollClamping::Unclamped); }
-    void scrollToYOffset(int y) { scrollToOffset(ScrollOffset(scrollOffset().x(), y), ScrollType::Programmatic, ScrollClamping::Unclamped); }
+    void scrollToXOffset(int x) { scrollToOffset(ScrollOffset(x, scrollOffset().y()), ScrollPositionChangeOptions::createProgrammaticUnclamped()); }
+    void scrollToYOffset(int y) { scrollToOffset(ScrollOffset(scrollOffset().x(), y), ScrollPositionChangeOptions::createProgrammaticUnclamped()); }
 
     void setPostLayoutScrollPosition(Optional<ScrollPosition>);
     void applyPostLayoutScrollPositionIfNeeded();

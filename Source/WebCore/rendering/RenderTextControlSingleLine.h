@@ -57,8 +57,8 @@ private:
     int scrollTop() const override;
     int scrollWidth() const override;
     int scrollHeight() const override;
-    void setScrollLeft(int, ScrollType, ScrollClamping, AnimatedScroll) override;
-    void setScrollTop(int, ScrollType, ScrollClamping, AnimatedScroll) override;
+    void setScrollLeft(int, const ScrollPositionChangeOptions&) override;
+    void setScrollTop(int, const ScrollPositionChangeOptions&) override;
     bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = nullptr, RenderBox* startBox = nullptr, const IntPoint& wheelEventAbsolutePoint = IntPoint()) final;
     bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = 0) final;
 

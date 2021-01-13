@@ -100,33 +100,33 @@ static void indicesOfNearestSnapOffsets(LayoutType offset, const Vector<LayoutTy
 }
 
 template <typename LayoutType>
-static LayoutType closestSnapOffset(const Vector<LayoutType>& snapOffsets, const Vector<ScrollOffsetRange<LayoutType>>& snapOffsetRanges, LayoutType scrollDestination, float velocity, unsigned& activeSnapIndex, Optional<LayoutType> originalPositionForDirectionalSnapping)
+static LayoutType closestSnapOffset(const Vector<LayoutType>& snapOffsets, const Vector<ScrollOffsetRange<LayoutType>>& snapOffsetRanges, LayoutType scrollDestinationOffset, float velocity, unsigned& activeSnapIndex, Optional<LayoutType> originalOffsetForDirectionalSnapping)
 {
     ASSERT(snapOffsets.size());
     activeSnapIndex = 0;
 
     unsigned lowerSnapOffsetRangeIndex;
     unsigned upperSnapOffsetRangeIndex;
-    indicesOfNearestSnapOffsetRanges<LayoutType>(scrollDestination, snapOffsetRanges, lowerSnapOffsetRangeIndex, upperSnapOffsetRangeIndex);
+    indicesOfNearestSnapOffsetRanges<LayoutType>(scrollDestinationOffset, snapOffsetRanges, lowerSnapOffsetRangeIndex, upperSnapOffsetRangeIndex);
     if (lowerSnapOffsetRangeIndex == upperSnapOffsetRangeIndex && upperSnapOffsetRangeIndex != invalidSnapOffsetIndex) {
         activeSnapIndex = invalidSnapOffsetIndex;
-        return scrollDestination;
+        return scrollDestinationOffset;
     }
 
-    if (scrollDestination <= snapOffsets.first())
+    if (scrollDestinationOffset <= snapOffsets.first())
         return snapOffsets.first();
 
     activeSnapIndex = snapOffsets.size() - 1;
-    if (scrollDestination >= snapOffsets.last())
+    if (scrollDestinationOffset >= snapOffsets.last())
         return snapOffsets.last();
 
     unsigned lowerIndex;
     unsigned upperIndex;
-    indicesOfNearestSnapOffsets<LayoutType>(scrollDestination, snapOffsets, lowerIndex, upperIndex);
+    indicesOfNearestSnapOffsets<LayoutType>(scrollDestinationOffset, snapOffsets, lowerIndex, upperIndex);
     LayoutType lowerSnapPosition = snapOffsets[lowerIndex];
     LayoutType upperSnapPosition = snapOffsets[upperIndex];
     if (!std::abs(velocity)) {
-        bool isCloserToLowerSnapPosition = scrollDestination - lowerSnapPosition <= upperSnapPosition - scrollDestination;
+        bool isCloserToLowerSnapPosition = scrollDestinationOffset - lowerSnapPosition <= upperSnapPosition - scrollDestinationOffset;
         activeSnapIndex = isCloserToLowerSnapPosition ? lowerIndex : upperIndex;
         return isCloserToLowerSnapPosition ? lowerSnapPosition : upperSnapPosition;
     }
@@ -141,7 +141,7 @@ static LayoutType closestSnapOffset(const Vector<LayoutType>& snapOffsets, const
             return lowerSnapPosition;
         }
 
-        if (!originalPositionForDirectionalSnapping.hasValue() || *originalPositionForDirectionalSnapping > upperSnapPosition) {
+        if (!originalOffsetForDirectionalSnapping.hasValue() || *originalOffsetForDirectionalSnapping > upperSnapPosition) {
             activeSnapIndex = upperIndex;
             return upperSnapPosition;
         }
@@ -151,24 +151,24 @@ static LayoutType closestSnapOffset(const Vector<LayoutType>& snapOffsets, const
             return upperSnapPosition;
         }
 
-        if (!originalPositionForDirectionalSnapping.hasValue() || *originalPositionForDirectionalSnapping < lowerSnapPosition) {
+        if (!originalOffsetForDirectionalSnapping.hasValue() || *originalOffsetForDirectionalSnapping < lowerSnapPosition) {
             activeSnapIndex = lowerIndex;
             return lowerSnapPosition;
         }
     }
 
     activeSnapIndex = invalidSnapOffsetIndex;
-    return scrollDestination;
+    return scrollDestinationOffset;
 }
 
-LayoutUnit closestSnapOffset(const Vector<LayoutUnit>& snapOffsets, const Vector<ScrollOffsetRange<LayoutUnit>>& snapOffsetRanges, LayoutUnit scrollDestination, float velocity, unsigned& activeSnapIndex, Optional<LayoutUnit> originalPositionForDirectionalSnapping)
+LayoutUnit closestSnapOffset(const Vector<LayoutUnit>& snapOffsets, const Vector<ScrollOffsetRange<LayoutUnit>>& snapOffsetRanges, LayoutUnit scrollDestinationOffset, float velocity, unsigned& activeSnapIndex, Optional<LayoutUnit> originalOffsetForDirectionalSnapping)
 {
-    return closestSnapOffset<LayoutUnit>(snapOffsets, snapOffsetRanges, scrollDestination, velocity, activeSnapIndex, originalPositionForDirectionalSnapping);
+    return closestSnapOffset<LayoutUnit>(snapOffsets, snapOffsetRanges, scrollDestinationOffset, velocity, activeSnapIndex, originalOffsetForDirectionalSnapping);
 }
 
-float closestSnapOffset(const Vector<float>& snapOffsets, const Vector<ScrollOffsetRange<float>>& snapOffsetRanges, float scrollDestination, float velocity, unsigned& activeSnapIndex, Optional<float> originalPositionForDirectionalSnapping)
+float closestSnapOffset(const Vector<float>& snapOffsets, const Vector<ScrollOffsetRange<float>>& snapOffsetRanges, float scrollDestinationOffset, float velocity, unsigned& activeSnapIndex, Optional<float> originalOffsetForDirectionalSnapping)
 {
-    return closestSnapOffset<float>(snapOffsets, snapOffsetRanges, scrollDestination, velocity, activeSnapIndex, originalPositionForDirectionalSnapping);
+    return closestSnapOffset<float>(snapOffsets, snapOffsetRanges, scrollDestinationOffset, velocity, activeSnapIndex, originalOffsetForDirectionalSnapping);
 }
 
 enum class InsetOrOutset {

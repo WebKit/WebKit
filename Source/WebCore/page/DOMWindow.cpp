@@ -90,6 +90,7 @@
 #include "RuntimeApplicationChecks.h"
 #include "ScheduledAction.h"
 #include "Screen.h"
+#include "ScrollAnimator.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginData.h"
 #include "SecurityPolicy.h"
@@ -1674,7 +1675,7 @@ void DOMWindow::scrollBy(const ScrollToOptions& options) const
     ScrollToOptions scrollToOptions = normalizeNonFiniteCoordinatesOrFallBackTo(options, 0, 0);
     scrollToOptions.left.value() += view->mapFromLayoutToCSSUnits(view->contentsScrollPosition().x());
     scrollToOptions.top.value() += view->mapFromLayoutToCSSUnits(view->contentsScrollPosition().y());
-    scrollTo(scrollToOptions);
+    scrollTo(scrollToOptions, ScrollClamping::Clamped, ScrollSnapPointSelectionMethod::Directional);
 }
 
 void DOMWindow::scrollTo(double x, double y, ScrollClamping clamping) const
@@ -1682,7 +1683,7 @@ void DOMWindow::scrollTo(double x, double y, ScrollClamping clamping) const
     scrollTo(ScrollToOptions(x, y), clamping);
 }
 
-void DOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping clamping) const
+void DOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, ScrollSnapPointSelectionMethod snapPointSelectionMethod) const
 {
     if (!isCurrentlyDisplayedInFrame())
         return;
@@ -1706,9 +1707,9 @@ void DOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping clamping
 
     // FIXME: Should we use document()->scrollingElement()?
     // See https://bugs.webkit.org/show_bug.cgi?id=205059
-    AnimatedScroll animated = useSmoothScrolling(scrollToOptions.behavior.valueOr(ScrollBehavior::Auto), document()->documentElement()) ? AnimatedScroll::Yes : AnimatedScroll::No;
-
-    view->setContentsScrollPosition(layoutPos, clamping, animated);
+    auto animated = useSmoothScrolling(scrollToOptions.behavior.valueOr(ScrollBehavior::Auto), document()->documentElement()) ? AnimatedScroll::Yes : AnimatedScroll::No;
+    auto scrollPositionChangeOptions = ScrollPositionChangeOptions::createProgrammaticWithOptions(clamping, animated, snapPointSelectionMethod);
+    view->setContentsScrollPosition(layoutPos, scrollPositionChangeOptions);
 }
 
 bool DOMWindow::allowedToChangeWindowGeometry() const

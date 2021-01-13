@@ -207,13 +207,13 @@ IntPoint ScrollView::contentsScrollPosition() const
     return scrollPosition();
 }
 
-void ScrollView::setContentsScrollPosition(const IntPoint& position, ScrollClamping clamping, AnimatedScroll animated)
+void ScrollView::setContentsScrollPosition(const IntPoint& position, const ScrollPositionChangeOptions& options)
 {
 #if PLATFORM(IOS_FAMILY)
     if (platformWidget())
         setActualScrollPosition(position);
 #endif
-    setScrollPosition(position, clamping, animated);
+    setScrollPosition(position, options);
 }
 
 FloatRect ScrollView::exposedContentRect() const
@@ -514,7 +514,7 @@ void ScrollView::completeUpdatesAfterScrollTo(const IntSize& scrollDelta)
     updateCompositingLayersAfterScrolling();
 }
 
-void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition, ScrollClamping clamping, AnimatedScroll/* animated*/)
+void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition, const ScrollPositionChangeOptions& options)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollView::setScrollPosition " << scrollPosition);
 
@@ -529,11 +529,11 @@ void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition, ScrollC
     if (currentScrollBehaviorStatus() == ScrollBehaviorStatus::InNonNativeAnimation)
         scrollAnimator().cancelAnimations();
 
-    ScrollPosition newScrollPosition = (!delegatesScrolling() && clamping == ScrollClamping::Clamped) ? adjustScrollPositionWithinRange(scrollPosition) : scrollPosition;
+    ScrollPosition newScrollPosition = (!delegatesScrolling() && options.clamping == ScrollClamping::Clamped) ? adjustScrollPositionWithinRange(scrollPosition) : scrollPosition;
     if ((!delegatesScrolling() || currentScrollType() == ScrollType::User) && currentScrollBehaviorStatus() == ScrollBehaviorStatus::NotInAnimation && newScrollPosition == this->scrollPosition())
         return;
 
-    if (!requestScrollPositionUpdate(newScrollPosition, currentScrollType(), clamping))
+    if (!requestScrollPositionUpdate(newScrollPosition, currentScrollType(), options.clamping))
         updateScrollbars(newScrollPosition);
 
     setScrollBehaviorStatus(ScrollBehaviorStatus::NotInAnimation);
