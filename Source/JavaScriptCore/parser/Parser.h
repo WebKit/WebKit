@@ -1842,7 +1842,7 @@ private:
 
     bool isDisallowedIdentifierAwait(const JSToken& token)
     {
-        return token.m_type == AWAIT && (!m_parserState.allowAwait || currentScope()->isAsyncFunctionBoundary() || m_scriptMode == JSParserScriptMode::Module);
+        return token.m_type == AWAIT && (!m_parserState.allowAwait || currentScope()->isAsyncFunction() || m_scriptMode == JSParserScriptMode::Module);
     }
 
     bool isDisallowedIdentifierYield(const JSToken& token)

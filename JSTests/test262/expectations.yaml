@@ -1481,9 +1481,6 @@ test/language/expressions/call/tco-non-eval-with.js:
 test/language/expressions/class/class-name-ident-await-escaped.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
   strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
-test/language/expressions/class/class-name-ident-await.js:
-  default: "SyntaxError: Unexpected identifier 'await'. Expected opening '{' at the start of a class body."
-  strict mode: "SyntaxError: Unexpected identifier 'await'. Expected opening '{' at the start of a class body."
 test/language/expressions/class/elements/arrow-body-direct-eval-err-contains-arguments.js:
   default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
   strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
@@ -1736,9 +1733,6 @@ test/language/statements/async-generator/return-undefined-implicit-and-explicit.
 test/language/statements/class/class-name-ident-await-escaped.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
   strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
-test/language/statements/class/class-name-ident-await.js:
-  default: "SyntaxError: Unexpected identifier 'await'"
-  strict mode: "SyntaxError: Unexpected identifier 'await'"
 test/language/statements/class/elements/arrow-body-direct-eval-err-contains-arguments.js:
   default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
   strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'

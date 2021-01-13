@@ -2860,7 +2860,7 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
 
     ASSERT_WITH_MESSAGE(requirements != FunctionNameRequirements::Unnamed, "Currently, there is no caller that uses FunctionNameRequirements::Unnamed for class syntax.");
     ASSERT_WITH_MESSAGE(!(requirements == FunctionNameRequirements::None && !info.className), "When specifying FunctionNameRequirements::None, we need to initialize info.className with the default value in the caller side.");
-    if (match(IDENT)) {
+    if (match(IDENT) || (match(AWAIT) && !isDisallowedIdentifierAwait(m_token))) {
         info.className = m_token.m_data.ident;
         next();
         failIfTrue(classScope->declareLexicalVariable(info.className, true) & DeclarationResult::InvalidStrictMode, "'", info.className->impl(), "' is not a valid class name");
