@@ -1,3 +1,12 @@
+2021-01-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [macOS WK1] ASSERTION FAILED: !needsLayout() in WebCore::FrameView::paintContents
+        https://bugs.webkit.org/show_bug.cgi?id=219219
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Skip crashing tests.
+
 2021-01-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, remove old iOS 13 test directories.

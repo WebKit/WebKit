@@ -1197,8 +1197,6 @@ webkit.org/b/217478 imported/w3c/web-platform-tests/css/css-masking/clip-path/cl
 
 webkit.org/b/215325 [ Mojave ] media/remote-control-command-seek.html [ Pass Timeout ]
 
-webkit.org/b/217761 [ Mojave+ Debug ] webgl/2.0.0/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Pass Crash ]
-
 webkit.org/b/217934 inspector/debugger/breakpoint-resolve-when-script-added.html [ Skip ]
 
 webkit.org/b/218341 [ Debug ] inspector/dom-debugger/attribute-modified-style.html [ Pass Timeout ]
@@ -1217,3 +1215,6 @@ webkit.org/b/219498 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-t
 
 webkit.org/b/220188 [ BigSur+ ] http/tests/security/http-0.9/default-port-script-blocked.html [ Pass Failure ]
 webkit.org/b/220188 [ BigSur+ ] http/tests/security/http-0.9/default-port-plugin-blocked.html [ Pass Failure ]
+
+webkit.org/b/217761 [ Debug ] webgl/conformance/extensions/s3tc-and-rgtc.html [ Skip ]
+webkit.org/b/217761 [ Debug ] webgl/2.0.0/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Skip ]
