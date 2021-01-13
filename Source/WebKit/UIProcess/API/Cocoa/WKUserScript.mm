@@ -85,61 +85,11 @@
 @implementation WKUserScript (WKPrivate)
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-- (instancetype)_initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray *)legacyWhitelist legacyBlacklist:(NSArray *)legacyBlacklist userContentWorld:(_WKUserContentWorld *)userContentWorld
-{
-    if (!(self = [super init]))
-        return nil;
-
-    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { source, API::UserScript::generateUniqueURL(), makeVector<String>(legacyWhitelist), makeVector<String>(legacyBlacklist), API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::WaitForNotificationBeforeInjecting::No }, *userContentWorld->_contentWorld->_contentWorld);
-
-    return self;
-}
-
-- (instancetype)_initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray *)legacyWhitelist legacyBlacklist:(NSArray *)legacyBlacklist associatedURL:(NSURL *)associatedURL userContentWorld:(_WKUserContentWorld *)userContentWorld
-{
-    if (!(self = [super init]))
-        return nil;
-
-    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { source, associatedURL, makeVector<String>(legacyWhitelist), makeVector<String>(legacyBlacklist), API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::WaitForNotificationBeforeInjecting::No }, *userContentWorld->_contentWorld->_contentWorld);
-
-    return self;
-}
-
 - (_WKUserContentWorld *)_userContentWorld
 {
     return [[[_WKUserContentWorld alloc] _initWithContentWorld:wrapper(_userScript->contentWorld())] autorelease];
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
-
-- (instancetype)_initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray *)legacyWhitelist legacyBlacklist:(NSArray *)legacyBlacklist contentWorld:(WKContentWorld *)contentWorld
-{
-    if (!(self = [super init]))
-        return nil;
-
-    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { source, API::UserScript::generateUniqueURL(), makeVector<String>(legacyWhitelist), makeVector<String>(legacyBlacklist), API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::WaitForNotificationBeforeInjecting::No }, *contentWorld->_contentWorld);
-
-    return self;
-}
-
-- (instancetype)_initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray *)legacyWhitelist legacyBlacklist:(NSArray *)legacyBlacklist associatedURL:(NSURL *)associatedURL contentWorld:(WKContentWorld *)contentWorld
-{
-    if (!(self = [super init]))
-        return nil;
-
-    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { source, associatedURL, makeVector<String>(legacyWhitelist), makeVector<String>(legacyBlacklist), API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::WaitForNotificationBeforeInjecting::No }, *contentWorld->_contentWorld);
-
-    return self;
-}
-
-- (instancetype)_initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray<NSString *> *)legacyWhitelist legacyBlacklist:(NSArray<NSString *> *)legacyBlacklist associatedURL:(NSURL *)associatedURL contentWorld:(WKContentWorld *)contentWorld deferRunningUntilNotification:(BOOL)deferRunningUntilNotification
-{
-    if (!(self = [super init]))
-        return nil;
-
-    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { source, associatedURL, makeVector<String>(legacyWhitelist), makeVector<String>(legacyBlacklist), API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, deferRunningUntilNotification ? WebCore::WaitForNotificationBeforeInjecting::Yes : WebCore::WaitForNotificationBeforeInjecting::No }, *contentWorld->_contentWorld);
-
-    return self;
-}
 
 - (instancetype)_initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly includeMatchPatternStrings:(NSArray<NSString *> *)includeMatchPatternStrings excludeMatchPatternStrings:(NSArray<NSString *> *)excludeMatchPatternStrings associatedURL:(NSURL *)associatedURL contentWorld:(WKContentWorld *)contentWorld deferRunningUntilNotification:(BOOL)deferRunningUntilNotification
 {

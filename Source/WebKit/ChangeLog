@@ -1,3 +1,27 @@
+2021-01-13  Alex Christensen  <achristensen@webkit.org>
+
+        Remove deprecated script and stylesheet SPI, replaced with more inclusively-named SPI
+        https://bugs.webkit.org/show_bug.cgi?id=214937
+
+        Reviewed by Youenn Fablet.
+
+        Once rdar://problem/66227777 is done we will be able to remove this old SPI.
+
+        * UIProcess/API/Cocoa/WKUserScript.mm:
+        (-[WKUserScript _initWithSource:injectionTime:forMainFrameOnly:legacyWhitelist:legacyBlacklist:userContentWorld:]): Deleted.
+        (-[WKUserScript _initWithSource:injectionTime:forMainFrameOnly:legacyWhitelist:legacyBlacklist:associatedURL:userContentWorld:]): Deleted.
+        (-[WKUserScript _initWithSource:injectionTime:forMainFrameOnly:legacyWhitelist:legacyBlacklist:contentWorld:]): Deleted.
+        (-[WKUserScript _initWithSource:injectionTime:forMainFrameOnly:legacyWhitelist:legacyBlacklist:associatedURL:contentWorld:]): Deleted.
+        (-[WKUserScript _initWithSource:injectionTime:forMainFrameOnly:legacyWhitelist:legacyBlacklist:associatedURL:contentWorld:deferRunningUntilNotification:]): Deleted.
+        * UIProcess/API/Cocoa/WKUserScriptPrivate.h:
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.h:
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.mm:
+        (-[_WKUserStyleSheet initWithSource:forWKWebView:forMainFrameOnly:level:userContentWorld:]): Deleted.
+        (-[_WKUserStyleSheet initWithSource:forWKWebView:forMainFrameOnly:baseURL:level:userContentWorld:]): Deleted.
+        (-[_WKUserStyleSheet initWithSource:forMainFrameOnly:legacyWhitelist:legacyBlacklist:userContentWorld:]): Deleted.
+        (-[_WKUserStyleSheet initWithSource:forMainFrameOnly:legacyWhitelist:legacyBlacklist:baseURL:userContentWorld:]): Deleted.
+        (-[_WKUserStyleSheet initWithSource:forMainFrameOnly:legacyWhitelist:legacyBlacklist:baseURL:level:userContentWorld:]): Deleted.
+
 2021-01-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Reimplement WebCore::isInWebProcess() family as cross-platform by using AuxiliaryProcessInitializationParameters.processType

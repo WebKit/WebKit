@@ -51,73 +51,6 @@
     return self;
 }
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-- (instancetype)initWithSource:(NSString *)source forWKWebView:(WKWebView *)webView forMainFrameOnly:(BOOL)forMainFrameOnly level:(_WKUserStyleLevel)level userContentWorld:(_WKUserContentWorld *)userContentWorld
-{
-    if (!(self = [super init]))
-        return nil;
-
-    // FIXME: In the API test, we can use generateUniqueURL below before the API::Object constructor has done this... where should this really be?
-    WebKit::InitializeWebKit2();
-
-    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { source, API::UserStyleSheet::generateUniqueURL(), { }, { }, forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, API::toWebCoreUserStyleLevel(level), [webView _page]->webPageID() }, *userContentWorld->_contentWorld->_contentWorld);
-
-    return self;
-}
-
-- (instancetype)initWithSource:(NSString *)source forWKWebView:(WKWebView *)webView forMainFrameOnly:(BOOL)forMainFrameOnly baseURL:(NSURL *)baseURL level:(_WKUserStyleLevel)level userContentWorld:(_WKUserContentWorld *)userContentWorld
-{
-    if (!(self = [super init]))
-        return nil;
-
-    // FIXME: In the API test, we can use generateUniqueURL below before the API::Object constructor has done this... where should this really be?
-    WebKit::InitializeWebKit2();
-
-    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { source, baseURL, { }, { }, forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, API::toWebCoreUserStyleLevel(level), [webView _page]->webPageID() }, *userContentWorld->_contentWorld->_contentWorld);
-
-    return self;
-}
-
-- (instancetype)initWithSource:(NSString *)source forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray<NSString *> *)legacyWhitelist legacyBlacklist:(NSArray<NSString *> *)legacyBlacklist userContentWorld:(_WKUserContentWorld *)userContentWorld
-{
-    if (!(self = [super init]))
-        return nil;
-
-    // FIXME: In the API test, we can use generateUniqueURL below before the API::Object constructor has done this... where should this really be?
-    WebKit::InitializeWebKit2();
-
-    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { source, API::UserStyleSheet::generateUniqueURL(), makeVector<String>(legacyWhitelist), makeVector<String>(legacyBlacklist), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::UserStyleUserLevel }, *userContentWorld->_contentWorld->_contentWorld);
-
-    return self;
-}
-
-- (instancetype)initWithSource:(NSString *)source forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray<NSString *> *)legacyWhitelist legacyBlacklist:(NSArray<NSString *> *)legacyBlacklist baseURL:(NSURL *)baseURL userContentWorld:(_WKUserContentWorld *)userContentWorld
-{
-    if (!(self = [super init]))
-        return nil;
-
-    // FIXME: In the API test, we can use generateUniqueURL below before the API::Object constructor has done this... where should this really be?
-    WebKit::InitializeWebKit2();
-
-    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { source, baseURL, makeVector<String>(legacyWhitelist), makeVector<String>(legacyBlacklist), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::UserStyleUserLevel }, *userContentWorld->_contentWorld->_contentWorld);
-
-    return self;
-}
-
-- (instancetype)initWithSource:(NSString *)source forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray<NSString *> *)legacyWhitelist legacyBlacklist:(NSArray<NSString *> *)legacyBlacklist baseURL:(NSURL *)baseURL level:(_WKUserStyleLevel)level userContentWorld:(_WKUserContentWorld *)userContentWorld
-{
-    if (!(self = [super init]))
-        return nil;
-
-    // FIXME: In the API test, we can use generateUniqueURL below before the API::Object constructor has done this... where should this really be?
-    WebKit::InitializeWebKit2();
-
-    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { source, baseURL, makeVector<String>(legacyWhitelist), makeVector<String>(legacyBlacklist), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, API::toWebCoreUserStyleLevel(level) }, *userContentWorld->_contentWorld->_contentWorld);
-
-    return self;
-}
-ALLOW_DEPRECATED_DECLARATIONS_END
-
 - (instancetype)initWithSource:(NSString *)source forWKWebView:(WKWebView *)webView forMainFrameOnly:(BOOL)forMainFrameOnly includeMatchPatternStrings:(NSArray<NSString *> *)includeMatchPatternStrings excludeMatchPatternStrings:(NSArray<NSString *> *)excludeMatchPatternStrings baseURL:(NSURL *)baseURL level:(_WKUserStyleLevel)level contentWorld:(WKContentWorld *)contentWorld
 {
 
@@ -127,7 +60,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     return self;
 }
-
 
 - (void)dealloc
 {
