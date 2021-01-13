@@ -217,6 +217,9 @@
     (iokit-property "CapsLockDelay")
     (iokit-property "CaseSensitive")
     (iokit-property "ConfigState")
+    (iokit-property "DPLanes")
+    (iokit-property "DPLinkBit")
+    (iokit-property "DPLinkRate")
     (iokit-property "Description")
     (iokit-property "Development")
     (iokit-property-regex #"^Device( Characteristics|EqID)")
@@ -229,10 +232,17 @@
     (iokit-property "Family ID")
     (iokit-property "ForceSupported")
     (iokit-property "Formats")
+    (iokit-property "FramebufferEnabled")
+    (iokit-property "FramebufferStarted")
     (iokit-property "GPUConfigurationVariable")
+    (iokit-property "GPUDCCDisplayable")
+    (iokit-property "GPUDebugNullClientMask")
     (iokit-property "GpuDebugPolicy")
+    (iokit-property "GPURawCounterBundleName")
+    (iokit-property "GPURawCounterPluginClassName")
     (iokit-property "HEVCSupported")
     (iokit-property "HIDPointerAccelerationType")
+    (iokit-property "HwCtxCacheUpdate")
     (iokit-property-regex #"^IOAccel(DisplayPipeCapabilities|Index|Types|Revision)")
     (iokit-property-regex #"^IO(Class|MatchCategory|NameMatch)")
     (iokit-property-regex #"^IOAudioControl(ChannelID|ID|SubType|Usage|Value)")
@@ -338,6 +348,7 @@
     (iokit-property "attached-gpu-control-path")
     (iokit-property-regex #"^audio-(codec-info|device-mvalue|device-nvalue|selector)")
     (iokit-property "av-signal-type")
+    (iokit-property "backlight-PWM-freq")
     (iokit-property "bcdVersion")
     (iokit-property-regex #"^(board|device|revision|subsystem|vendor)-id")
     (iokit-property "boot-gamma-restored")
@@ -350,6 +361,11 @@
     (iokit-property "connector-type")
     (iokit-property-regex #"^(device|revision|subsystem-vendor|touch-size)-id")
     (iokit-property "device_type")
+    (iokit-property "display-bpc")
+    (iokit-property "display-connect-flags")
+    (iokit-property "display-link-component-bits")
+    (iokit-property "display-pixel-component-bits")
+    (iokit-property "display-type")
     (iokit-property "dpm")
     (iokit-property "errordb") ;; Needed for OpenGL on older hardware
     (iokit-property "filevault-image") ;; Needed by LaunchServices
@@ -399,6 +415,45 @@
     (iokit-property "IOAVDHEVCDecodeCapabilities") ;; <rdar://problem/71100188>
 #endif
 )
+
+;; <rdar://problem/60088861>
+(if (equal? (param "CPU") "arm64")
+    (allow iokit-get-properties
+        (iokit-property "ADSSupported")
+        (iokit-property "IOAVDHEVCDecodeCapabilities")
+        (iokit-property "IOGLESBundleName") ;; <rdar://problem/67473780>
+        (iokit-property "MetalPluginClassName") ;; <rdar://problem/67473780>
+        (iokit-property "MetalPluginName") ;; <rdar://problem/67473780>
+        (iokit-property "IOSurfaceAcceleratorCapabilitiesDict") ;; <rdar://problem/63696732>
+        (iokit-property "acoustic-id") ;; <rdar://problem/65290967>
+    ))
+
+(if (equal? (param "CPU") "arm64")
+    (with-filter (iokit-registry-entry-class "IOService")
+        (allow iokit-get-properties
+            (iokit-property "IORegistryEntryPropertyKeys"))))
+
+(if (equal? (param "CPU") "arm64")
+    (with-filter (iokit-registry-entry-class "IOMobileFramebuffer")
+        (allow iokit-get-properties
+            (iokit-property "AppleTV"
+                            "DisplayPipePlaneBaseAlignment"
+                            "DisplayPipeStrideRequirements"
+                            "dfr"
+                            "external"
+                            "hdcp-hoover-protocol"))))
+
+(if (equal? (param "CPU") "arm64")
+    (with-filter (iokit-registry-entry-class "IOPlatformDevice")
+        (allow iokit-get-properties
+            (iokit-property "soc-generation"))))
+
+(if (equal? (param "CPU") "arm64")
+    (with-filter (iokit-registry-entry-class "IOService")
+        (allow iokit-get-properties
+            (iokit-property "chip-id"
+                            "display-rotation"
+                            "display-scale"))))
 
 (deny mach-lookup (xpc-service-name-prefix ""))
 (allow mach-lookup
@@ -609,6 +664,7 @@
        (global-name "com.apple.SystemConfiguration.configd")
        (global-name "com.apple.analyticsd")
        (global-name "com.apple.assertiond.processassertionconnection")
+       (global-name "com.apple.audio.toolbox.reporting.service")
        (global-name "com.apple.audio.SystemSoundServer-OSX")
        (global-name "com.apple.audio.audiohald")
        (global-name "com.apple.cfprefsd.daemon")
