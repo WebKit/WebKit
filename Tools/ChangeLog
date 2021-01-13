@@ -1,3 +1,17 @@
+2021-01-13  Diego Pino Garcia  <dpino@igalia.com>
+
+        [buildbot] WebKitGTK(GTK4) isn't triggered after a binary build
+        https://bugs.webkit.org/show_bug.cgi?id=220586
+
+        Reviewed by Aakash Jain.
+
+        r269945 added a new WebKitGTK (GTK4) post-commit bot that runs several test suites
+        (layout-test, api-tests and webdriver-tests). The bot was expected to run after
+        every binary build, however that wasn't happening because the bot wasn't set as
+        triggerable.
+
+        * CISupport/build-webkit-org/config.json:
+
 2021-01-12  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Implement serial tests for the ruby test writer
