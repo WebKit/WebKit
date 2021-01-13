@@ -7722,7 +7722,9 @@ static Optional<IntersectionObservationState> computeIntersectionState(FrameView
         if (!rootRenderer->isContainingBlockAncestorFor(*targetRenderer))
             return WTF::nullopt;
 
-        if (rootRenderer->hasOverflowClip())
+        if (observer.root() == &target.document())
+            localRootBounds = frameView.layoutViewportRect();
+        else if (rootRenderer->hasOverflowClip())
             localRootBounds = rootRenderer->contentBoxRect();
         else
             localRootBounds = { FloatPoint(), rootRenderer->size() };
@@ -7831,8 +7833,7 @@ void Document::updateIntersectionObservations()
                 if (intersectionState) {
                     auto* targetFrameView = target->document().view();
                     targetBoundingClientRect = targetFrameView->absoluteToClientRect(intersectionState->absoluteTargetRect, target->renderer()->style().effectiveZoom());
-                    auto* rootRenderer = observer->root() ? observer->root()->renderer() : frameView->renderView();
-                    clientRootBounds = frameView->absoluteToClientRect(intersectionState->absoluteRootBounds, rootRenderer->style().effectiveZoom());
+                    clientRootBounds = frameView->absoluteToLayoutViewportRect(intersectionState->absoluteRootBounds);
                     if (intersectionState->isIntersecting)
                         clientIntersectionRect = targetFrameView->absoluteToClientRect(intersectionState->absoluteIntersectionRect, target->renderer()->style().effectiveZoom());
                 }

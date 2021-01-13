@@ -1,3 +1,12 @@
+2021-01-12  Cathie Chen  <cathiechen@igalia.com>
+
+        The rootBounds of IntersectionObserverEntry is not correct when {root:document}
+        https://bugs.webkit.org/show_bug.cgi?id=219495
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/intersection-observer/same-document-with-document-root-expected.txt:
+
 2021-01-12  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors] Update tests from WPT

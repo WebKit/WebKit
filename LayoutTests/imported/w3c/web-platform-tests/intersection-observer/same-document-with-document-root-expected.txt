@@ -1,5 +1,5 @@
 
 PASS IntersectionObserver in a single document using document as root.
 PASS First rAF.
-FAIL document.scrollingElement.scrollTop = 300 assert_equals: entries.length expected 2 but got 1
+PASS document.scrollingElement.scrollTop = 300
 
