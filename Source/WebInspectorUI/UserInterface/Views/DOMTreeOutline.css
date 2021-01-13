@@ -136,7 +136,7 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-with
 }
 
 .tree-outline.dom li > span > .html-text-node {
-    unicode-bidi: isolate-override;
+    unicode-bidi: isolate;
 }
 
 .tree-outline.dom li .pseudo-class-indicator {

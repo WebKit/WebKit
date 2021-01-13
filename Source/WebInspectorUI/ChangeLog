@@ -1,3 +1,16 @@
+2021-01-13  Ebrahim Byagowi  <ebrahim@gnu.org>
+
+        Web Inspector: RTL content inside elements is reversed and unreadable
+        https://bugs.webkit.org/show_bug.cgi?id=220241
+
+        Reviewed by BJ Burg.
+
+        Use appropiate unicode-bidi value so that it won't reverse RTL text
+        inside elements.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom li > span > .html-text-node):
+
 2021-01-12  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Remove experimental setting and enable Font details sidebar
