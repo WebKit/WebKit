@@ -37,7 +37,6 @@ REFERENCES=("X")
 CURRENT_API=()
 UPCOMING_API=()
 ARCHS=${ARCHS:-$(uname -m)}
-CONFIGURATION=${CONFIGURATION:-Release}
 
 shouldBuild=true
 runReferences=true
@@ -149,7 +148,7 @@ buildBenchmark() {
     fi
 
     log "Building $BENCHMARK_NAME... (FRAMEWORK_SEARCH_PATHS='$BUILD_DIRECTORY')"
-    xcodebuild -project "$project" -target "$BENCHMARK_NAME" -configuration "$CONFIGURATION" build "FRAMEWORK_SEARCH_PATHS='$BUILD_DIRECTORY'" "ARCHS='$ARCHS'"
+    xcodebuild -project "$project" -target "$BENCHMARK_NAME" -configuration Release build "FRAMEWORK_SEARCH_PATHS='$BUILD_DIRECTORY'" "ARCHS='$ARCHS'"
 }
 
 build() {
@@ -162,14 +161,9 @@ runJSBenchmark() {
 }
 
 runNativeBenchmark() {
-    pushd "build/$CONFIGURATION" &> /dev/null
+    pushd "build/Release" &> /dev/null
     "./$BENCHMARK_NAME"
-    local exitCode=$?
-    if [ $exitCode -ne 0 ]; then
-        echo "Benchmark exited with an error: $PWD/$BENCHMARK_NAME exited with $exitCode" 1>&2
-    fi
     popd &> /dev/null
-    return $exitCode
 }
 
 runBenchmarkIteration() {
@@ -185,9 +179,6 @@ runBenchmark() {
 
     local result
     result=$(runBenchmarkIteration)
-    if [ $? -ne 0 ]; then
-        exit 1
-    fi
     RESULTS[$((BENCHMARK_ID * iterations + ITERATION))]=$result
     log "Finished in ${result}ms"
 }

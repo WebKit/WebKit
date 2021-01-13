@@ -1,3 +1,7 @@
+2021-01-13  Russell Epstein  <repstein@apple.com>
+
+        Revert r270665. rdar://problem/73165685
+
 2021-01-03  Beth Dakin  <bdakin@apple.com>
 
         Remove non-inclusive language from JetStream 2.0
