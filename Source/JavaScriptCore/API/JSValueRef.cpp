@@ -64,7 +64,7 @@ using namespace JSC;
 
     if (jsValue.isUndefined())
         return kJSTypeUndefined;
-    if (!jsValue || jsValue.isNull())
+    if (jsValue.isNull())
         return kJSTypeNull;
     if (jsValue.isBoolean())
         return kJSTypeBoolean;
@@ -105,7 +105,7 @@ bool JSValueIsNull(JSContextRef ctx, JSValueRef value)
     JSLockHolder locker(globalObject);
     return toJS(globalObject, value).isNull();
 #else
-    return !value || toJS(value).isNull();
+    return toJS(value).isNull();
 #endif
 }
 
