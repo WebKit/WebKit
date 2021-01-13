@@ -1,3 +1,15 @@
+2021-01-12  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION (r267571): black line appears upon navigating back from apple.com shopping bag
+        https://bugs.webkit.org/show_bug.cgi?id=220550
+        <rdar://problem/72459816>
+
+        Reviewed by Antti Koivisto.
+
+        Mark two additional PASS results for ::marker tests.
+
+        * web-platform-tests/css/css-pseudo/parsing/marker-supported-properties-in-animation-expected.txt:
+
 2021-01-13  Youenn Fablet  <youenn@apple.com>
 
         Use promise_test in WPT beacon/beacon-common.sub.js instead of async_test

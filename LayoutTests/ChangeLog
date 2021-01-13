@@ -1,3 +1,17 @@
+2021-01-12  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION (r267571): black line appears upon navigating back from apple.com shopping bag
+        https://bugs.webkit.org/show_bug.cgi?id=220550
+        <rdar://problem/72459816>
+
+        Reviewed by Antti Koivisto.
+
+        Add a test that checks that adding a pseudo-element for an existing host element does not use
+        the host element's style to consider starting a transition.
+
+        * webanimations/no-transition-on-after-pseudo-element-upon-creation-expected.html: Added.
+        * webanimations/no-transition-on-after-pseudo-element-upon-creation.html: Added.
+
 2021-01-12  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Gardening Focus-visible failures

@@ -29,7 +29,7 @@ PASS Animation of list-style-image in ::marker
 PASS Animation of list-style-position in ::marker
 PASS Animation of list-style-type in ::marker
 FAIL Animation of line-height in ::marker assert_equals: expected "normal" but got "35px"
-FAIL Transition of font in ::marker assert_in_array: value "italic small-caps 500 expanded 15px/35px Ahem" not in array ["italic small-caps 500 expanded 15px Ahem", "italic small-caps 500 expanded 15px/normal Ahem"]
+PASS Transition of font in ::marker
 PASS Transition of font-family in ::marker
 PASS Transition of font-feature-settings in ::marker
 FAIL Transition of font-kerning in ::marker assert_equals: expected "none" but got "auto"
@@ -58,5 +58,5 @@ FAIL Transition of list-style in ::marker assert_equals: expected "outside none 
 PASS Transition of list-style-image in ::marker
 PASS Transition of list-style-position in ::marker
 PASS Transition of list-style-type in ::marker
-FAIL Transition of line-height in ::marker assert_equals: expected "normal" but got "35px"
+PASS Transition of line-height in ::marker
 target

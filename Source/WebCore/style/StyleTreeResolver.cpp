@@ -316,20 +316,7 @@ const RenderStyle* TreeResolver::parentBoxStyleForPseudo(const ElementUpdate& el
 ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderStyle> newStyle, const Styleable& styleable, Change parentChange)
 {
     auto& element = styleable.element;
-
-    // FIXME: Ideally we could just call Element::renderOrDisplayContentsStyle() with a PseudoId
-    // and get the style for any PseudoId, not just PseudoId::Before or PseudoId::After.
-    auto* pseudoElement = [styleable]() -> PseudoElement* {
-        switch (styleable.pseudoId) {
-        case PseudoId::Before:
-            return styleable.element.beforePseudoElement();
-        case PseudoId::After:
-            return styleable.element.afterPseudoElement();
-        default:
-            return nullptr;
-        }
-    }();
-    auto* oldStyle = pseudoElement ? pseudoElement->renderOrDisplayContentsStyle() : element.renderOrDisplayContentsStyle();
+    auto* oldStyle = element.renderOrDisplayContentsStyle(styleable.pseudoId);
 
     OptionSet<AnimationImpact> animationImpact;
 
