@@ -92,7 +92,7 @@ namespace WebCore {
         PluginPackage(const String& path, const time_t& lastModified);
 
         bool fetchInfo();
-        bool isPluginBlacklisted();
+        bool isPluginForbidden();
         void determineQuirks(const String& mimeType);
 
         void determineModuleVersionFromDescription();

@@ -54,7 +54,7 @@ static String getVersionInfo(const LPVOID versionInfoData, const String& info)
     return String(reinterpret_cast<UChar*>(buffer), bufferLength - 1);
 }
 
-bool PluginPackage::isPluginBlacklisted()
+bool PluginPackage::isPluginForbidden()
 {
     if (name() == "Citrix ICA Client") {
         // The Citrix ICA Client plug-in requires a Mozilla-based browser; see <rdar://6418681>.
@@ -186,7 +186,7 @@ bool PluginPackage::fetchInfo()
     m_moduleVersion.leastSig = info->dwFileVersionLS;
     m_moduleVersion.mostSig = info->dwFileVersionMS;
 
-    if (isPluginBlacklisted())
+    if (isPluginForbidden())
         return false;
 
     Vector<String> types = getVersionInfo(versionInfoData.data(), "MIMEType").split('|');

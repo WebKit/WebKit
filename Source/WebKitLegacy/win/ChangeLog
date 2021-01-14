@@ -1,3 +1,16 @@
+2021-01-13  Alex Christensen  <achristensen@webkit.org>
+
+        Use more inclusive language in legacy Windows plugin code
+        https://bugs.webkit.org/show_bug.cgi?id=220605
+
+        Reviewed by Darin Adler.
+
+        * Plugins/PluginPackage.h:
+        * Plugins/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::isPluginForbidden):
+        (WebCore::PluginPackage::fetchInfo):
+        (WebCore::PluginPackage::isPluginBlacklisted): Deleted.
+
 2021-01-02  Rob Buis  <rbuis@igalia.com>
 
         Remove some FrameLoader::changeLocation parameters
