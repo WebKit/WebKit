@@ -212,13 +212,15 @@ void RenderInline::updateAlwaysCreateLineBoxes(bool fullLayout)
 
     auto* parentStyle = &parent()->style();
     RenderInline* parentRenderInline = is<RenderInline>(*parent()) ? downcast<RenderInline>(parent()) : nullptr;
+    auto hasHardLineBreakChildOnly = firstChild() && firstChild() == lastChild() && firstChild()->isBR();
     bool checkFonts = document().inNoQuirksMode();
     bool alwaysCreateLineBoxes = (parentRenderInline && parentRenderInline->alwaysCreateLineBoxes())
         || (parentRenderInline && parentStyle->verticalAlign() != VerticalAlign::Baseline)
         || style().verticalAlign() != VerticalAlign::Baseline
         || style().textEmphasisMark() != TextEmphasisMark::None
         || (checkFonts && (!parentStyle->fontCascade().fontMetrics().hasIdenticalAscentDescentAndLineGap(style().fontCascade().fontMetrics())
-        || parentStyle->lineHeight() != style().lineHeight()));
+        || parentStyle->lineHeight() != style().lineHeight()))
+        || hasHardLineBreakChildOnly;
 
     if (!alwaysCreateLineBoxes && checkFonts && view().usesFirstLineRules()) {
         // Have to check the first line style as well.

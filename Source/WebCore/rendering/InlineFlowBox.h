@@ -44,6 +44,7 @@ public:
         : InlineBox(renderer)
         , m_includeLogicalLeftEdge(false)
         , m_includeLogicalRightEdge(false)
+        , m_hasHardLinebreak(false)
         , m_descendantsHaveSameLineHeightAndBaseline(true)
         , m_baselineType(AlphabeticBaseline)
         , m_hasAnnotationsBefore(false)
@@ -208,6 +209,7 @@ public:
 
     bool hasTextChildren() const { return m_hasTextChildren; }
     bool hasTextDescendants() const { return m_hasTextDescendants; }
+    bool hasHardLinebreak() const { return m_hasHardLinebreak; }
     void setHasTextChildren() { m_hasTextChildren = true; setHasTextDescendants(); }
     void setHasTextDescendants() { m_hasTextDescendants = true; }
     
@@ -312,6 +314,7 @@ private:
     unsigned m_includeLogicalRightEdge : 1;
     unsigned m_hasTextChildren : 1;
     unsigned m_hasTextDescendants : 1;
+    unsigned m_hasHardLinebreak : 1;
     unsigned m_descendantsHaveSameLineHeightAndBaseline : 1;
 
 protected:

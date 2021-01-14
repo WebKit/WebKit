@@ -137,7 +137,9 @@ void InlineFlowBox::addToLine(InlineBox* child)
             if (child->renderer().isLineBreak()) {
                 // FIXME: This isn't ideal. We only turn off because current layout test results expect the <br> to be 0-height on the baseline.
                 // Other than making a zillion tests have to regenerate results, there's no reason to ditch the optimization here.
-                shouldClearDescendantsHaveSameLineHeightAndBaseline = child->renderer().isBR();
+                auto childIsHardLinebreak = child->renderer().isBR();
+                shouldClearDescendantsHaveSameLineHeightAndBaseline = childIsHardLinebreak;
+                m_hasHardLinebreak = m_hasHardLinebreak || childIsHardLinebreak;
             } else {
                 auto& childFlowBox = downcast<InlineFlowBox>(*child);
                 // Check the child's bit, and then also check for differences in font, line-height, vertical-align
@@ -595,8 +597,12 @@ void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox& rootBox, LayoutUnit&
         } else if (child->verticalAlign() == VerticalAlign::Bottom && verticalAlignApplies(child->renderer())) {
             if (maxPositionBottom < boxHeight)
                 maxPositionBottom = boxHeight;
-        } else if (!inlineFlowBox || strictMode || inlineFlowBox->hasTextChildren() || (inlineFlowBox->descendantsHaveSameLineHeightAndBaseline() && inlineFlowBox->hasTextDescendants())
-                   || inlineFlowBox->renderer().hasInlineDirectionBordersOrPadding()) {
+        } else if (strictMode
+            || !inlineFlowBox
+            || inlineFlowBox->hasTextChildren()
+            || (inlineFlowBox->descendantsHaveSameLineHeightAndBaseline() && inlineFlowBox->hasTextDescendants())
+            || inlineFlowBox->renderer().hasInlineDirectionBordersOrPadding()
+            || inlineFlowBox->hasHardLinebreak()) {
             // Note that these values can be negative.  Even though we only affect the maxAscent and maxDescent values
             // if our box (excluding line-height) was above (for ascent) or below (for descent) the root baseline, once you factor in line-height
             // the final box can end up being fully above or fully below the root box's baseline!  This is ok, but what it

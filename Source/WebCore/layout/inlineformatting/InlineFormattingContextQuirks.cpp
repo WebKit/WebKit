@@ -44,6 +44,16 @@ InlineLayoutUnit InlineFormattingContext::Quirks::initialLineHeight() const
 
 bool InlineFormattingContext::Quirks::inlineLevelBoxAffectsLineBox(const LineBox::InlineLevelBox& inlineLevelBox, const LineBox& lineBox) const
 {
+    if (inlineLevelBox.isLineBreakBox()) {
+        if (layoutState().inNoQuirksMode())
+            return true;
+        // In quirks mode linebreak boxes (<br>) affect the line box when they are inside a non-root inline box (<span></span>) or when
+        // the line has no other inline level box/root inlinebox has no content.
+        auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent());
+        if (!parentInlineBox.isRootInlineBox())
+            return true;
+        return !parentInlineBox.hasContent() && lineBox.nonRootInlineLevelBoxes().size() == 1;
+    }
     if (inlineLevelBox.isInlineBox()) {
         // Inline boxes (e.g. root inline box or <span>) affects line boxes either through the strut or actual content.
         if (inlineLevelBox.hasContent())
@@ -57,11 +67,6 @@ bool InlineFormattingContext::Quirks::inlineLevelBoxAffectsLineBox(const LineBox
         }
         auto inlineBoxHasImaginaryStrut = layoutState().inNoQuirksMode();
         return inlineBoxHasImaginaryStrut && !lineBox.isConsideredEmpty();
-    }
-    if (inlineLevelBox.isLineBreakBox()) {
-        // <br> in non-standard mode stretches the line box only when the line is empty.
-        // e.g. <div><span><br></span></div> will stretch but <div>this will not stretch to 200px<span style="font-size: 200px;"><br></span></div>
-        return layoutState().inNoQuirksMode() ? true : lineBox.isConsideredEmpty();
     }
     if (inlineLevelBox.isAtomicInlineLevelBox()) {
         if (inlineLevelBox.layoutBounds().height())
