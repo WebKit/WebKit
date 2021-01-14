@@ -183,10 +183,12 @@ void alertForPermission(WebPageProxy& page, MediaPermissionReason reason, Option
 #if PLATFORM(MAC)
     auto alert = adoptNS([NSAlert new]);
     [alert setMessageText:alertTitle];
-    [alert addButtonWithTitle:doNotAllowButtonString];
-    [alert addButtonWithTitle:allowButtonString];
+    NSButton *button = [alert addButtonWithTitle:allowButtonString];
+    button.keyEquivalent = @"";
+    button = [alert addButtonWithTitle:doNotAllowButtonString];
+    button.keyEquivalent = @"\E";
     [alert beginSheetModalForWindow:webView.window completionHandler:[completionBlock](NSModalResponse returnCode) {
-        auto shouldAllow = returnCode == NSAlertSecondButtonReturn;
+        auto shouldAllow = returnCode == NSAlertFirstButtonReturn;
         completionBlock(shouldAllow);
     }];
 #else
