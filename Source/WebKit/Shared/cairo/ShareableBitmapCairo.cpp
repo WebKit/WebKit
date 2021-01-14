@@ -45,7 +45,7 @@ Checked<unsigned, RecordOverflow> ShareableBitmap::calculateBytesPerRow(WebCore:
     return cairo_format_stride_for_width(cairoFormat, size.width());
 }
 
-unsigned ShareableBitmap::calculateBytesPerPixel(const Configuration&)
+Checked<unsigned, RecordOverflow> ShareableBitmap::calculateBytesPerPixel(const Configuration&)
 {
     return 4;
 }

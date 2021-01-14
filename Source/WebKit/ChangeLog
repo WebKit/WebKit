@@ -1,3 +1,24 @@
+2021-01-14  Chris Dumez  <cdumez@apple.com>
+
+        [Hardening] Protect against overflows in calculateBytesPerRow()
+        https://bugs.webkit.org/show_bug.cgi?id=220625
+        <rdar://73040899>
+
+        Reviewed by Alex Christensen.
+
+        Protect against overflows in calculateBytesPerRow().
+
+        * Shared/ShareableBitmap.h:
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::calculateBytesPerPixel):
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::calculateBytesPerRow):
+        (WebKit::ShareableBitmap::calculateBytesPerPixel):
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        (WebKit::ShareableBitmap::createCGImage const):
+        * Shared/win/ShareableBitmapDirect2D.cpp:
+        (WebKit::ShareableBitmap::calculateBytesPerPixel):
+
 2021-01-14  Geoffrey Garen  <ggaren@apple.com>
 
         Removed most uses of dispatch_async(dispatch_get_main_queue(), ...)

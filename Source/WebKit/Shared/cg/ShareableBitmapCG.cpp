@@ -72,15 +72,17 @@ static CGBitmapInfo bitmapInfo(const ShareableBitmap::Configuration& configurati
 
 Checked<unsigned, RecordOverflow> ShareableBitmap::calculateBytesPerRow(WebCore::IntSize size, const Configuration& configuration)
 {
-    unsigned bytesPerRow = calculateBytesPerPixel(configuration) * size.width();
+    Checked<unsigned, RecordOverflow> bytesPerRow = calculateBytesPerPixel(configuration) * size.width();
+    if (bytesPerRow.hasOverflowed())
+        return bytesPerRow;
 #if HAVE(IOSURFACE)
-    return IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, bytesPerRow);
+    return IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, bytesPerRow.unsafeGet());
 #else
     return bytesPerRow;
 #endif
 }
 
-unsigned ShareableBitmap::calculateBytesPerPixel(const Configuration& configuration)
+Checked<unsigned, RecordOverflow> ShareableBitmap::calculateBytesPerPixel(const Configuration& configuration)
 {
     return wantsExtendedRange(configuration) ? 8 : 4;
 }
@@ -88,12 +90,20 @@ unsigned ShareableBitmap::calculateBytesPerPixel(const Configuration& configurat
 std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
     ASSERT(RunLoop::isMain());
-    ref(); // Balanced by deref in releaseBitmapContextData.
 
-    unsigned bytesPerPixel = calculateBytesPerPixel(m_configuration);
-    RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreateWithData(data(), m_size.width(), m_size.height(), bytesPerPixel * 8 / 4, calculateBytesPerRow(m_size, m_configuration).unsafeGet(), colorSpace(m_configuration), bitmapInfo(m_configuration), releaseBitmapContextData, this));
+    auto bitsPerComponent = calculateBytesPerPixel(m_configuration) * 8 / 4;
+    if (bitsPerComponent.hasOverflowed())
+        return nullptr;
+
+    auto bytesPerRow = calculateBytesPerRow(m_size, m_configuration);
+    if (bytesPerRow.hasOverflowed())
+        return nullptr;
+
+    RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreateWithData(data(), m_size.width(), m_size.height(), bitsPerComponent.unsafeGet(), bytesPerRow.unsafeGet(), colorSpace(m_configuration), bitmapInfo(m_configuration), releaseBitmapContextData, this));
     if (!bitmapContext)
         return nullptr;
+
+    ref(); // Balanced by deref in releaseBitmapContextData.
 
     ASSERT(bitmapContext.get());
 
@@ -150,8 +160,15 @@ RetainPtr<CGImageRef> ShareableBitmap::makeCGImage()
 RetainPtr<CGImageRef> ShareableBitmap::createCGImage(CGDataProviderRef dataProvider) const
 {
     ASSERT_ARG(dataProvider, dataProvider);
-    unsigned bytesPerPixel = calculateBytesPerPixel(m_configuration);
-    RetainPtr<CGImageRef> image = adoptCF(CGImageCreate(m_size.width(), m_size.height(), bytesPerPixel * 8 / 4, bytesPerPixel * 8, calculateBytesPerRow(m_size, m_configuration).unsafeGet(), colorSpace(m_configuration), bitmapInfo(m_configuration), dataProvider, 0, false, kCGRenderingIntentDefault));
+    auto bitsPerPixel = calculateBytesPerPixel(m_configuration) * 8;
+    if (bitsPerPixel.hasOverflowed())
+        return nullptr;
+
+    auto bytesPerRow = calculateBytesPerRow(m_size, m_configuration);
+    if (bytesPerRow.hasOverflowed())
+        return nullptr;
+
+    RetainPtr<CGImageRef> image = adoptCF(CGImageCreate(m_size.width(), m_size.height(), bitsPerPixel.unsafeGet() / 4, bitsPerPixel.unsafeGet(), bytesPerRow.unsafeGet(), colorSpace(m_configuration), bitmapInfo(m_configuration), dataProvider, 0, false, kCGRenderingIntentDefault));
     return image;
 }
 

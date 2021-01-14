@@ -153,7 +153,7 @@ private:
 
     static Checked<unsigned, RecordOverflow> numBytesForSize(WebCore::IntSize, const ShareableBitmap::Configuration&);
     static Checked<unsigned, RecordOverflow> calculateBytesPerRow(WebCore::IntSize, const Configuration&);
-    static unsigned calculateBytesPerPixel(const Configuration&);
+    static Checked<unsigned, RecordOverflow> calculateBytesPerPixel(const Configuration&);
 
 #if USE(CG)
     RetainPtr<CGImageRef> createCGImage(CGDataProviderRef) const;

@@ -58,7 +58,7 @@ Checked<unsigned, RecordOverflow> ShareableBitmap::calculateBytesPerRow(WebCore:
     return calculateBytesPerPixel(configuration) * size.width();
 }
 
-unsigned ShareableBitmap::calculateBytesPerPixel(const Configuration&)
+Checked<unsigned, RecordOverflow> ShareableBitmap::calculateBytesPerPixel(const Configuration&)
 {
     return 4;
 }
