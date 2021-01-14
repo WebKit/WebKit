@@ -61,56 +61,32 @@ Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMe
     if (path.isEmpty() || !path.startsWith(privateClickMeasurementPathPrefix))
         return makeUnexpected(nullString());
 
-    if (!redirectURL.protocolIs("https") || redirectURL.hasCredentials() || redirectURL.hasQuery() || redirectURL.hasFragmentIdentifier()) {
-        if (UNLIKELY(debugModeEnabled())) {
-            RELEASE_LOG_INFO(PrivateClickMeasurement, "Conversion was not accepted because the URL's protocol is not HTTPS or the URL contains one or more of username, password, query string, and fragment.");
-            return makeUnexpected("[Private Click Measurement] Conversion was not accepted because the URL's protocol is not HTTPS or the URL contains one or more of username, password, query string, and fragment."_s);
-        }
-        return makeUnexpected(nullString());
-    }
+    if (!redirectURL.protocolIs("https") || redirectURL.hasCredentials() || redirectURL.hasQuery() || redirectURL.hasFragmentIdentifier())
+        return makeUnexpected("[Private Click Measurement] Conversion was not accepted because the URL's protocol is not HTTPS or the URL contains one or more of username, password, query string, and fragment."_s);
 
 
     auto prefixLength = sizeof(privateClickMeasurementPathPrefix) - 1;
     if (path.length() == prefixLength + privateClickMeasurementAttributionTriggerDataPathSegmentSize) {
         auto attributionTriggerDataUInt64 = path.substring(prefixLength, privateClickMeasurementAttributionTriggerDataPathSegmentSize).toUInt64Strict();
-        if (!attributionTriggerDataUInt64 || *attributionTriggerDataUInt64 > AttributionTriggerData::MaxEntropy) {
-            if (UNLIKELY(debugModeEnabled())) {
-                RELEASE_LOG_INFO(PrivateClickMeasurement, "Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of %{public}u.", AttributionTriggerData::MaxEntropy);
-                return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of "_s, AttributionTriggerData::MaxEntropy, "."_s));
-            }
-            return makeUnexpected(nullString());
-        }
+        if (!attributionTriggerDataUInt64 || *attributionTriggerDataUInt64 > AttributionTriggerData::MaxEntropy)
+            return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of "_s, AttributionTriggerData::MaxEntropy, "."_s));
 
         return AttributionTriggerData { static_cast<uint32_t>(*attributionTriggerDataUInt64), Priority { 0 } };
     }
     
     if (path.length() == prefixLength + privateClickMeasurementAttributionTriggerDataPathSegmentSize + 1 + privateClickMeasurementPriorityPathSegmentSize) {
         auto attributionTriggerDataUInt64 = path.substring(prefixLength, privateClickMeasurementAttributionTriggerDataPathSegmentSize).toUInt64Strict();
-        if (!attributionTriggerDataUInt64 || *attributionTriggerDataUInt64 > AttributionTriggerData::MaxEntropy) {
-            if (UNLIKELY(debugModeEnabled())) {
-                RELEASE_LOG_INFO(PrivateClickMeasurement, "Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of %{public}u.", AttributionTriggerData::MaxEntropy);
-                return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of "_s, AttributionTriggerData::MaxEntropy, "."_s));
-            }
-            return makeUnexpected(nullString());
-        }
+        if (!attributionTriggerDataUInt64 || *attributionTriggerDataUInt64 > AttributionTriggerData::MaxEntropy)
+            return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of "_s, AttributionTriggerData::MaxEntropy, "."_s));
 
         auto attributionPriorityUInt64 = path.substring(prefixLength + privateClickMeasurementAttributionTriggerDataPathSegmentSize + 1, privateClickMeasurementPriorityPathSegmentSize).toUInt64Strict();
-        if (!attributionPriorityUInt64 || *attributionPriorityUInt64 > Priority::MaxEntropy) {
-            if (UNLIKELY(debugModeEnabled())) {
-                RELEASE_LOG_INFO(PrivateClickMeasurement, "Conversion was not accepted because the priority could not be parsed or was higher than the allowed maximum of %{public}u.", Priority::MaxEntropy);
-                return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the priority could not be parsed or was higher than the allowed maximum of "_s, Priority::MaxEntropy, "."_s));
-            }
-            return makeUnexpected(nullString());
-        }
+        if (!attributionPriorityUInt64 || *attributionPriorityUInt64 > Priority::MaxEntropy)
+            return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the priority could not be parsed or was higher than the allowed maximum of "_s, Priority::MaxEntropy, "."_s));
 
         return AttributionTriggerData { static_cast<uint32_t>(*attributionTriggerDataUInt64), Priority { static_cast<uint32_t>(*attributionPriorityUInt64) } };
     }
 
-    if (UNLIKELY(debugModeEnabled())) {
-        RELEASE_LOG_INFO(PrivateClickMeasurement, "Conversion was not accepted because the URL path contained unrecognized parts.");
-        return makeUnexpected("[Private Click Measurement] Conversion was not accepted because the URL path contained unrecognized parts."_s);
-    }
-    return makeUnexpected(nullString());
+    return makeUnexpected("[Private Click Measurement] Conversion was not accepted because the URL path contained unrecognized parts."_s);
 }
 
 Optional<Seconds> PrivateClickMeasurement::attributeAndGetEarliestTimeToSend(AttributionTriggerData&& attributionTriggerData)
@@ -167,11 +143,6 @@ Ref<JSON::Object> PrivateClickMeasurement::json() const
     reportDetails->setInteger("trigger_data"_s, m_attributionTriggerData->data);
     reportDetails->setInteger("version"_s, 1);
     return reportDetails;
-}
-
-bool PrivateClickMeasurement::debugModeEnabled()
-{
-    return RuntimeEnabledFeatures::sharedFeatures().privateClickMeasurementDebugModeEnabled();
 }
 
 }

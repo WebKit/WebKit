@@ -268,7 +268,6 @@ public:
 
 private:
     bool isValid() const;
-    static bool debugModeEnabled();
 
     SourceID m_sourceID;
     SourceSite m_sourceSite;
