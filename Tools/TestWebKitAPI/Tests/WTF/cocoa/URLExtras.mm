@@ -113,6 +113,8 @@ TEST(WTF_URLExtras, URLExtras_Spoof)
         "xn--2-zic", // U+0032 U+05E1
         "xn--uoa", // U+027E
         "xn--fja", // U+01C0
+        "xn--koa", // U+0274
+        "xn--tma", // U+0237
     };
     for (const String& host : punycodedSpoofHosts) {
         auto url = makeString("http://", host, "/").utf8();

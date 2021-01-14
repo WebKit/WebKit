@@ -130,8 +130,10 @@ static bool isLookalikeCharacter(const Optional<UChar32>& previousCodePoint, UCh
     /* 0x0131 LATIN SMALL LETTER DOTLESS I is intentionally not considered a lookalike character because it is visually distinguishable from i and it has legitimate use in the Turkish language. */
     case 0x01C0: /* LATIN LETTER DENTAL CLICK */
     case 0x01C3: /* LATIN LETTER RETROFLEX CLICK */
+    case 0x0237: /* LATIN SMALL LETTER DOTLESS J */
     case 0x0251: /* LATIN SMALL LETTER ALPHA */
     case 0x0261: /* LATIN SMALL LETTER SCRIPT G */
+    case 0x0274: /* LATIN LETTER SMALL CAPITAL N */
     case 0x027E: /* LATIN SMALL LETTER R WITH FISHHOOK */
     case 0x02D0: /* MODIFIER LETTER TRIANGULAR COLON */
     case 0x0335: /* COMBINING SHORT STROKE OVERLAY */

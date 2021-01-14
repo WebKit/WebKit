@@ -1,3 +1,18 @@
+2021-01-14  Alex Christensen  <achristensen@webkit.org>
+
+        Add dotless j and small N to unicode lookalike character list
+        https://bugs.webkit.org/show_bug.cgi?id=220632
+        <rdar://problem/72101901>
+
+        Reviewed by David Kilzer.
+
+        They are visually distinguishable from j and n, but they are also not used in any common languages like dotless i is,
+        (I know, all my international phonetic alphabet enthusiast friends are disappointed)
+        so there's not much reason not to add them.  Chrome and Firefox have already added them, so let's do it too.
+
+        * wtf/URLHelpers.cpp:
+        (WTF::URLHelpers::isLookalikeCharacter):
+
 2021-01-14  Geoffrey Garen  <ggaren@apple.com>
 
         Removed most uses of dispatch_async(dispatch_get_main_queue(), ...)
