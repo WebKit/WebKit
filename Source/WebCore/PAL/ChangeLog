@@ -1,3 +1,13 @@
+2021-01-14  Tim Horton  <timothy_horton@apple.com>
+
+        Exceptions thrown when invoking a <select> on an iPhone-idiom app running on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=220628
+        <rdar://problem/70546547>
+
+        Reviewed by Wenson Hsieh.
+
+        * pal/spi/ios/MobileGestaltSPI.h:
+
 2021-01-12  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Reset user directory suffix before getting sandbox directory
