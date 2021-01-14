@@ -12833,10 +12833,11 @@ void SpeculativeJIT::compileThrowStaticError(Node* node)
 void SpeculativeJIT::compileGetEnumerableLength(Node* node)
 {
     SpeculateCellOperand enumerator(this, node->child1());
-    GPRFlushedCallResult result(this);
+    GPRTemporary result(this, Reuse, enumerator);
+    GPRReg enumeratorGPR = enumerator.gpr();
     GPRReg resultGPR = result.gpr();
 
-    m_jit.load32(MacroAssembler::Address(enumerator.gpr(), JSPropertyNameEnumerator::indexedLengthOffset()), resultGPR);
+    m_jit.load32(MacroAssembler::Address(enumeratorGPR, JSPropertyNameEnumerator::indexedLengthOffset()), resultGPR);
     strictInt32Result(resultGPR, node);
 }
 
