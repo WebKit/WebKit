@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "AirCode.h"
 #include "AllowMacroScratchRegisterUsageIf.h"
 #include "B3BasicBlockInlines.h"
 #include "B3CCallValue.h"
@@ -2151,8 +2152,12 @@ B3::Value* B3IRGenerator::createCallPatchpoint(BasicBlock* block, Origin origin,
     patchpointFunctor(patchpoint);
     patchpoint->appendVector(constrainedArguments);
 
-    if (returnType != B3::Void)
-        patchpoint->resultConstraints = WTFMove(wasmCallInfo.results);
+    if (returnType != B3::Void) {
+        Vector<B3::ValueRep, 1> resultConstraints;
+        for (auto valueLocation : wasmCallInfo.results)
+            resultConstraints.append(B3::ValueRep(valueLocation));
+        patchpoint->resultConstraints = WTFMove(resultConstraints);
+    }
     return patchpoint;
 }
 

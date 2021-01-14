@@ -603,12 +603,12 @@ JSC_DEFINE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (CallFrame* ca
 
     static_assert(sizeof(JSValue) == sizeof(CPURegister), "The code below relies on this.");
     for (unsigned i = 0; i < signature->returnCount(); ++i) {
-        B3::ValueRep rep = wasmCallInfo.results[i];
+        ValueLocation loc = wasmCallInfo.results[i];
         JSValue value;
-        if (rep.isReg())
-            value = stackPointerFromCallee[(registerResults.find(rep.reg())->offset() + wasmCallInfo.headerAndArgumentStackSizeInBytes) / sizeof(JSValue)];
+        if (loc.isReg())
+            value = stackPointerFromCallee[(registerResults.find(loc.reg())->offset() + wasmCallInfo.headerAndArgumentStackSizeInBytes) / sizeof(JSValue)];
         else
-            value = stackPointerFromCallee[rep.offsetFromSP() / sizeof(JSValue)];
+            value = stackPointerFromCallee[loc.offsetFromSP() / sizeof(JSValue)];
         result->initializeIndex(initializationScope, i, value);
     }
 

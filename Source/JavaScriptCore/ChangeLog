@@ -1,3 +1,55 @@
+2021-01-14  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Implement a B3::ValueRep replacement for wasm-llint
+        https://bugs.webkit.org/show_bug.cgi?id=220412
+
+        Reviewed by Yusuke Suzuki.
+
+        The LLInt code in WebAssembly uses B3::ValueRep to store
+        information about the calling convention for functions. We will
+        use instead a new class with just enough functionality for those
+        needs (basically, whether a value in a function call will be in a
+        register or the stack) and convert to B3::ValueRep when
+        transitioning into B3/Air. This is part of the work needed to
+        allow WebAssembly to work without B3, and eventually in
+        interpreted mode only.
+
+        * Sources.txt: add new sources.
+        * b3/B3ValueRep.h:
+        (JSC::B3::ValueRep::ValueRep): include WasmValueLocation.h and add
+        a method to convert B3::ValueRep to Wasm::ValueLocation.
+        * JavaScriptCore.xcodeproj/project.pbxproj: add new sources.
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::emitCallPatchpoint): covert existing Wasm::ValueLocation into B3::ValueRep.
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::createCallPatchpoint): ditto.
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::CallInformation::computeResultsOffsetList): use Wasm::ValueLocation.
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION): ditto.
+        * wasm/WasmValueLocation.cpp: new class, basically B3::ValueRep
+        without all the stuff we don't need in WasmLLInt.
+        (JSC::Wasm::ValueLocation::dump const):
+        (WTF::printInternal):
+        * wasm/WasmValueLocation.h: ditto.
+        (JSC::Wasm::ValueLocation::ValueLocation):
+        (JSC::Wasm::ValueLocation::reg):
+        (JSC::Wasm::ValueLocation::stack):
+        (JSC::Wasm::ValueLocation::stackArgument):
+        (JSC::Wasm::ValueLocation::kind const):
+        (JSC::Wasm::ValueLocation::isReg const):
+        (JSC::Wasm::ValueLocation::reg const):
+        (JSC::Wasm::ValueLocation::isGPR const):
+        (JSC::Wasm::ValueLocation::isFPR const):
+        (JSC::Wasm::ValueLocation::gpr const):
+        (JSC::Wasm::ValueLocation::fpr const):
+        (JSC::Wasm::ValueLocation::isStack const):
+        (JSC::Wasm::ValueLocation::offsetFromFP const):
+        (JSC::Wasm::ValueLocation::isStackArgument const):
+        (JSC::Wasm::ValueLocation::offsetFromSP const):
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::marshallJSResult): use Wasm::ValueLocation.
+
 2021-01-14  Saam Barati  <sbarati@apple.com>
 
         SpeculativeJIT::compileGetEnumerableLength should not use GPRFlushedCallResult

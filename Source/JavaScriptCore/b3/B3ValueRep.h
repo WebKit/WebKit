@@ -34,6 +34,9 @@
 #include "RegisterSet.h"
 #include "ValueRecovery.h"
 #include <wtf/PrintStream.h>
+#if ENABLE(WEBASSEMBLY)
+#include "WasmValueLocation.h"
+#endif
 
 namespace JSC {
 
@@ -120,6 +123,28 @@ public:
     {
         ASSERT(kind == WarmAny || kind == ColdAny || kind == LateColdAny || kind == SomeRegister || kind == SomeRegisterWithClobber || kind == SomeEarlyRegister || kind == SomeLateRegister);
     }
+
+#if ENABLE(WEBASSEMBLY)
+    ValueRep(Wasm::ValueLocation location)
+    {
+        switch (location.kind()) {
+        case Wasm::ValueLocation::Kind::Register:
+            m_kind = Register;
+            u.reg = location.reg();
+            break;
+        case Wasm::ValueLocation::Kind::Stack:
+            m_kind = Stack;
+            u.offsetFromFP = location.offsetFromFP();
+            break;
+        case Wasm::ValueLocation::Kind::StackArgument:
+            m_kind = StackArgument;
+            u.offsetFromSP = location.offsetFromSP();
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    }
+#endif
 
     static ValueRep reg(Reg reg)
     {

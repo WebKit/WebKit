@@ -91,19 +91,19 @@ void marshallJSResult(CCallHelpers& jit, const Signature& signature, const CallI
         FPRReg fprScratch = wasmCallingConvention().fprArgs[0].fpr();
         bool hasI64 = false;
         for (unsigned i = 0; i < signature.returnCount(); ++i) {
-            B3::ValueRep rep = wasmFrameConvention.results[i];
+            ValueLocation loc = wasmFrameConvention.results[i];
             Type type = signature.returnType(i);
 
             hasI64 |= type == Wasm::I64;
-            if (rep.isReg()) {
+            if (loc.isReg()) {
                 if (type != Wasm::I64) {
-                    boxWasmResult(jit, signature.returnType(i), rep.reg(), scratch);
-                    jit.storeValue(scratch, CCallHelpers::Address(CCallHelpers::stackPointerRegister, savedResultRegisters.find(rep.reg())->offset() + wasmFrameConvention.headerAndArgumentStackSizeInBytes));
+                    boxWasmResult(jit, signature.returnType(i), loc.reg(), scratch);
+                    jit.storeValue(scratch, CCallHelpers::Address(CCallHelpers::stackPointerRegister, savedResultRegisters.find(loc.reg())->offset() + wasmFrameConvention.headerAndArgumentStackSizeInBytes));
                 } else
-                    jit.storeValue(JSValueRegs { rep.reg().gpr() }, CCallHelpers::Address(CCallHelpers::stackPointerRegister, savedResultRegisters.find(rep.reg())->offset() + wasmFrameConvention.headerAndArgumentStackSizeInBytes));
+                    jit.storeValue(JSValueRegs { loc.reg().gpr() }, CCallHelpers::Address(CCallHelpers::stackPointerRegister, savedResultRegisters.find(loc.reg())->offset() + wasmFrameConvention.headerAndArgumentStackSizeInBytes));
             } else {
                 if (type != Wasm::I64) {
-                    auto location = CCallHelpers::Address(CCallHelpers::stackPointerRegister, rep.offsetFromSP());
+                    auto location = CCallHelpers::Address(CCallHelpers::stackPointerRegister, loc.offsetFromSP());
                     Reg tmp = type == F32 || type == F64 ? Reg(fprScratch) : Reg(scratch.gpr());
                     jit.load64ToReg(location, tmp);
                     boxWasmResult(jit, signature.returnType(i), tmp, scratch);
@@ -129,7 +129,7 @@ void marshallJSResult(CCallHelpers& jit, const Signature& signature, const CallI
         // This is required to convert values to BigInt.
         if (hasI64) {
             for (unsigned i = 0; i < signature.returnCount(); ++i) {
-                B3::ValueRep rep = wasmFrameConvention.results[i];
+                ValueLocation loc = wasmFrameConvention.results[i];
                 Type type = signature.returnType(i);
                 if (type != Wasm::I64)
                     continue;
@@ -141,18 +141,18 @@ void marshallJSResult(CCallHelpers& jit, const Signature& signature, const CallI
                     jit.loadWasmContextInstance(wasmContextInstanceGPR);
                 }
 
-                if (rep.isReg())
-                    jit.load64(CCallHelpers::Address(CCallHelpers::stackPointerRegister, savedResultRegisters.find(rep.reg())->offset() + wasmFrameConvention.headerAndArgumentStackSizeInBytes), GPRInfo::argumentGPR0);
+                if (loc.isReg())
+                    jit.load64(CCallHelpers::Address(CCallHelpers::stackPointerRegister, savedResultRegisters.find(loc.reg())->offset() + wasmFrameConvention.headerAndArgumentStackSizeInBytes), GPRInfo::argumentGPR0);
                 else {
-                    auto location = CCallHelpers::Address(CCallHelpers::stackPointerRegister, rep.offsetFromSP());
+                    auto location = CCallHelpers::Address(CCallHelpers::stackPointerRegister, loc.offsetFromSP());
                     jit.load64ToReg(location, GPRInfo::argumentGPR0);
                 }
                 jit.setupArguments<decltype(operationConvertToBigInt)>(wasmContextInstanceGPR, GPRInfo::argumentGPR0);
                 jit.callOperation(FunctionPtr<OperationPtrTag>(operationConvertToBigInt));
-                if (rep.isReg())
-                    jit.storeValue(JSValueRegs { GPRInfo::returnValueGPR }, CCallHelpers::Address(CCallHelpers::stackPointerRegister, savedResultRegisters.find(rep.reg())->offset() + wasmFrameConvention.headerAndArgumentStackSizeInBytes));
+                if (loc.isReg())
+                    jit.storeValue(JSValueRegs { GPRInfo::returnValueGPR }, CCallHelpers::Address(CCallHelpers::stackPointerRegister, savedResultRegisters.find(loc.reg())->offset() + wasmFrameConvention.headerAndArgumentStackSizeInBytes));
                 else {
-                    auto location = CCallHelpers::Address(CCallHelpers::stackPointerRegister, rep.offsetFromSP());
+                    auto location = CCallHelpers::Address(CCallHelpers::stackPointerRegister, loc.offsetFromSP());
                     jit.storeValue(JSValueRegs { GPRInfo::returnValueGPR }, location);
                 }
             }

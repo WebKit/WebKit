@@ -39,6 +39,7 @@
 #include "B3PatchpointSpecial.h"
 #include "B3Procedure.h"
 #include "B3ProcedureInlines.h"
+#include "B3StackmapGenerationParams.h"
 #include "BinarySwitch.h"
 #include "JSCJSValueInlines.h"
 #include "JSWebAssemblyInstance.h"
@@ -2964,8 +2965,12 @@ B3::PatchpointValue* AirIRGenerator::emitCallPatchpoint(BasicBlock* block, const
     for (unsigned i = 0; i < args.size(); ++i)
         patchArgs[i + offset] = ConstrainedTmp(args[i], locations.params[i]);
 
-    if (patchpoint->type() != B3::Void)
-        patchpoint->resultConstraints = WTFMove(locations.results);
+    if (patchpoint->type() != B3::Void) {
+        Vector<B3::ValueRep, 1> resultConstraints;
+        for (auto valueLocation : locations.results)
+            resultConstraints.append(B3::ValueRep(valueLocation));
+        patchpoint->resultConstraints = WTFMove(resultConstraints);
+    }
     emitPatchpoint(block, patchpoint, results, WTFMove(patchArgs));
     return patchpoint;
 }

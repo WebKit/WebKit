@@ -27,28 +27,20 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "AirCode.h"
 #include "AllowMacroScratchRegisterUsage.h"
-#include "B3ArgumentRegValue.h"
-#include "B3BasicBlock.h"
-#include "B3Const64Value.h"
-#include "B3ConstrainedValue.h"
-#include "B3MemoryValue.h"
-#include "B3PatchpointValue.h"
-#include "B3Procedure.h"
-#include "B3StackmapGenerationParams.h"
 #include "CallFrame.h"
 #include "LinkBuffer.h"
 #include "RegisterAtOffsetList.h"
 #include "RegisterSet.h"
 #include "WasmFormat.h"
 #include "WasmSignature.h"
+#include "WasmValueLocation.h"
 
 namespace JSC { namespace Wasm {
 
 constexpr unsigned numberOfLLIntCalleeSaveRegisters = 2;
 
-using ArgumentLocation = B3::ValueRep;
+using ArgumentLocation = ValueLocation;
 enum class CallRole : uint8_t {
     Caller,
     Callee,
@@ -64,9 +56,9 @@ struct CallInformation {
     RegisterAtOffsetList computeResultsOffsetList()
     {
         RegisterSet usedResultRegisters;
-        for (B3::ValueRep rep : results) {
-            if (rep.isReg())
-                usedResultRegisters.set(rep.reg());
+        for (ValueLocation loc : results) {
+            if (loc.isReg())
+                usedResultRegisters.set(loc.reg());
         }
 
         RegisterAtOffsetList savedRegs(usedResultRegisters, RegisterAtOffsetList::ZeroBased);
