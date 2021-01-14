@@ -13,6 +13,8 @@ promise_test(async() => {
 
     internals.settings.setShouldManageAudioSessionCategory(true);
 
+    const defaultCategory = internals.audioSessionCategory();
+
     let stream = await navigator.mediaDevices.getUserMedia({audio : true});
 
     localVideo.srcObject = stream;
@@ -24,9 +26,21 @@ promise_test(async() => {
     await new Promise(resolve => setTimeout(resolve, 10));
     assert_equals(internals.audioSessionCategory(), "PlayAndRecord");
 
-    stream.removeTrack(stream.getAudioTracks()[0]);
+    const audioTrack = stream.getAudioTracks()[0];
+    stream.removeTrack(audioTrack);
     await new Promise(resolve => setTimeout(resolve, 10));
     assert_equals(internals.audioSessionCategory(), "PlayAndRecord");
-}, "Check audio session state in case of disabled audio tracks");
+
+    audioTrack.stop();
+    const maxTries = 100;
+    let counter = 0;
+    while (++counter < maxTries) {
+        if (internals.audioSessionCategory() != "PlayAndRecord")
+            break;
+        await new Promise(resolve => setTimeout(resolve, 10));
+    }
+    assert_less_than(counter, maxTries);
+    assert_equals(internals.audioSessionCategory(), defaultCategory);
+}, "Check audio session state in case of disabled and stopped audio tracks");
 </script>
 </body>

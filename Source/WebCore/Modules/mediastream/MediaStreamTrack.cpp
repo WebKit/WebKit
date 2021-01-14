@@ -105,8 +105,7 @@ MediaStreamTrack::~MediaStreamTrack()
 
     allCaptureTracks().remove(this);
 
-    if (m_private->type() == RealtimeMediaSource::Type::Audio)
-        PlatformMediaSessionManager::sharedManager().removeAudioCaptureSource(*this);
+    ASSERT(m_private->type() != RealtimeMediaSource::Type::Audio || !PlatformMediaSessionManager::sharedManager().hasAudioCaptureSource(*this));
 }
 
 const AtomString& MediaStreamTrack::kind() const
@@ -538,6 +537,9 @@ void MediaStreamTrack::trackStarted(MediaStreamTrackPrivate&)
 
 void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
 {
+    if (m_isCaptureTrack && m_private->type() == RealtimeMediaSource::Type::Audio)
+        PlatformMediaSessionManager::sharedManager().removeAudioCaptureSource(*this);
+
     // http://w3c.github.io/mediacapture-main/#life-cycle
     // When a MediaStreamTrack track ends for any reason other than the stop() method being invoked, the User Agent must queue a task that runs the following steps:
     // 1. If the track's readyState attribute has the value ended already, then abort these steps.
