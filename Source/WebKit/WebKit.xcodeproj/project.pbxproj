@@ -2956,6 +2956,12 @@
 		1D0369A82567943C00440372 /* RemoteTextTrackProxyMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteTextTrackProxyMessagesReplies.h; path = DerivedSources/WebKit2/RemoteTextTrackProxyMessagesReplies.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D0369A92567943C00440372 /* RemoteVideoTrackProxyMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteVideoTrackProxyMessagesReplies.h; path = DerivedSources/WebKit2/RemoteVideoTrackProxyMessagesReplies.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D0369AA2567943C00440372 /* RemoteTextTrackProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteTextTrackProxyMessageReceiver.cpp; path = DerivedSources/WebKit2/RemoteTextTrackProxyMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D0530C9258EAB4400E436F7 /* combine-feature-flags-plist.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "combine-feature-flags-plist.py"; sourceTree = "<group>"; };
+		1D0530D1259162C800E436F7 /* WebKit-ios.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WebKit-ios.plist"; sourceTree = "<group>"; };
+		1D0530D2259162C900E436F7 /* WebKit-appletvos.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WebKit-appletvos.plist"; sourceTree = "<group>"; };
+		1D0530D3259162C900E436F7 /* WebKit-macos.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WebKit-macos.plist"; sourceTree = "<group>"; };
+		1D0530D4259162C900E436F7 /* WebKit-watchos.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WebKit-watchos.plist"; sourceTree = "<group>"; };
+		1D0530D52591941500E436F7 /* generate-feature-flags-plist.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "generate-feature-flags-plist.sh"; sourceTree = "<group>"; };
 		1D0ECEAA23FC858400D172F6 /* RemoteMediaPlayerProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteMediaPlayerProxyCocoa.mm; sourceTree = "<group>"; };
 		1D32F89823A8465A00B1EA6A /* RemoteMediaResource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaResource.h; sourceTree = "<group>"; };
 		1D32F89923A8468000B1EA6A /* RemoteMediaResource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaResource.cpp; sourceTree = "<group>"; };
@@ -3001,7 +3007,6 @@
 		1DE076D92460CCBD00B211E8 /* WebPreferencesDefaultValuesCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPreferencesDefaultValuesCocoa.mm; sourceTree = "<group>"; };
 		1DE0D095211CC21300439B5F /* WKShareSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKShareSheet.h; sourceTree = "<group>"; };
 		1DE2DFAC23A959F8003E013A /* RemoteMediaResourceIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaResourceIdentifier.h; sourceTree = "<group>"; };
-		1DEC97AC246B691E007C83F4 /* WebKit.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = WebKit.plist; sourceTree = "<group>"; };
 		1DF29018257F202F003C28AF /* MediaSourcePrivateRemote.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaSourcePrivateRemote.messages.in; sourceTree = "<group>"; };
 		1DF29E61257F3794003C28AF /* MediaSourcePrivateRemoteMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MediaSourcePrivateRemoteMessageReceiver.cpp; path = DerivedSources/WebKit2/MediaSourcePrivateRemoteMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF29E62257F3795003C28AF /* MediaSourcePrivateRemoteMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MediaSourcePrivateRemoteMessagesReplies.h; path = DerivedSources/WebKit2/MediaSourcePrivateRemoteMessagesReplies.h; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6973,7 +6978,10 @@
 		1DEC97AB246B6865007C83F4 /* FeatureFlags */ = {
 			isa = PBXGroup;
 			children = (
-				1DEC97AC246B691E007C83F4 /* WebKit.plist */,
+				1D0530D2259162C900E436F7 /* WebKit-appletvos.plist */,
+				1D0530D1259162C800E436F7 /* WebKit-ios.plist */,
+				1D0530D3259162C900E436F7 /* WebKit-macos.plist */,
+				1D0530D4259162C900E436F7 /* WebKit-watchos.plist */,
 			);
 			path = FeatureFlags;
 			sourceTree = "<group>";
@@ -10975,7 +10983,9 @@
 				535E08CA225460FC00DF00CA /* postprocess-header-rule */,
 				7CDE73A21F9DA59700390312 /* PreferencesTemplates */,
 				0FC0856E187CE0A900780D86 /* __init__.py */,
+				1D0530C9258EAB4400E436F7 /* combine-feature-flags-plist.py */,
 				4157853021276B6F00DD3800 /* copy-webcontent-resources-to-private-headers.sh */,
+				1D0530D52591941500E436F7 /* generate-feature-flags-plist.sh */,
 				C0CE73361247F70E00BC0EC4 /* generate-message-receiver.py */,
 				0FC0856F187CE0A900780D86 /* messages.py */,
 				0FC08570187CE0A900780D86 /* model.py */,
@@ -13096,17 +13106,20 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"${SRCROOT}/FeatureFlags/WebKit.plist",
+				"$(SRCROOT)/FeatureFlags/WebKit-appletvos.plist",
+				"$(SRCROOT)/FeatureFlags/WebKit-ios.plist",
+				"$(SRCROOT)/FeatureFlags/WebKit-macos.plist",
+				"$(SRCROOT)/FeatureFlags/WebKit-watchos.plist",
 			);
 			name = "Copy Feature Flags Plist";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"${INSTALL_ROOT}/${WK_INSTALL_PATH_PREFIX}/${SYSTEM_LIBRARY_DIR}/FeatureFlags/Domain/WebKit.plist",
+				"$(INSTALL_ROOT)/$(WK_INSTALL_PATH_PREFIX)/$(SYSTEM_LIBRARY_DIR)/FeatureFlags/Domain/WebKit.plist",
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "if [[ ${WK_PLATFORM_NAME} == \"maccatalyst\" ]]; then\n    exit 0;\nfi\n\nSOURCE_DIR=\"${SRCROOT}/FeatureFlags\"\nDEST_DIR=${INSTALL_ROOT}/${WK_INSTALL_PATH_PREFIX}/${SYSTEM_LIBRARY_DIR}/FeatureFlags/Domain\n\nif [[ ! -d \"${DEST_DIR}\" ]]; then\n    mkdir -p \"${DEST_DIR}\"\nfi\n\nditto \"${SOURCE_DIR}/WebKit.plist\" \"${DEST_DIR}/WebKit.plist\"\n";
+			shellScript = "${SRCROOT}/Scripts/generate-feature-flags-plist.sh\n";
 		};
 		2D7DEBDF21269C9F00B9F73C /* Generate Unified Sources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -13721,6 +13734,7 @@
 				1D0369AE256796B900440372 /* RemoteAudioTrackProxyMessageReceiver.cpp in Sources */,
 				0FF24A2D1879E4BC003ABF0D /* RemoteCaptureSampleManagerMessageReceiver.cpp in Sources */,
 				CDAC20F723FC726C0021DEE3 /* RemoteCDMFactoryProxyMessageReceiver.cpp in Sources */,
+				CDA6D45125A989C7004B1DF6 /* RemoteCDMInstanceMessageReceiver.cpp in Sources */,
 				CDAC20F823FC726C0021DEE3 /* RemoteCDMInstanceProxyMessageReceiver.cpp in Sources */,
 				CD46618324010A670047CA35 /* RemoteCDMInstanceSessionMessageReceiver.cpp in Sources */,
 				CDAC20F923FC726C0021DEE3 /* RemoteCDMInstanceSessionProxyMessageReceiver.cpp in Sources */,
@@ -13781,7 +13795,6 @@
 				2D11B7642126A282006F8878 /* UnifiedSource10.cpp in Sources */,
 				2D11B7632126A282006F8878 /* UnifiedSource10-mm.mm in Sources */,
 				2D11B7652126A282006F8878 /* UnifiedSource11-mm.mm in Sources */,
-				CDA6D45125A989C7004B1DF6 /* RemoteCDMInstanceMessageReceiver.cpp in Sources */,
 				2D11B7662126A282006F8878 /* UnifiedSource11.cpp in Sources */,
 				2D11B7672126A282006F8878 /* UnifiedSource12-mm.mm in Sources */,
 				2D11B7682126A282006F8878 /* UnifiedSource12.cpp in Sources */,
