@@ -1,3 +1,21 @@
+2021-01-13  Jer Noble  <jer.noble@apple.com>
+
+        [HANG] 496ms to 1360ms in WebCore::AVAudioSessionCaptureDeviceManager::refreshAudioCaptureDevices()
+        https://bugs.webkit.org/show_bug.cgi?id=220471
+
+        Reviewed by Youenn Fablet.
+
+        Use the completion-handler version of RealtimeMediaSourceCenter::getMediaStreamDevices().
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList):
+        (WebKit::UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::updateCaptureDevices):
+        (WebKit::UserMediaProcessManager::beginMonitoringCaptureDevices):
+        * UIProcess/UserMediaProcessManager.h:
+
 2021-01-13  Per Arne Vollan  <pvollan@apple.com>
 
         [Cocoa] Network extension sandbox extensions are sometimes issued too late

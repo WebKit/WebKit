@@ -217,41 +217,51 @@ void UserMediaProcessManager::captureDevicesChanged()
     });
 }
 
+void UserMediaProcessManager::updateCaptureDevices(ShouldNotify shouldNotify)
+{
+    WebCore::RealtimeMediaSourceCenter::singleton().getMediaStreamDevices([this, shouldNotify] (auto&& newDevices) mutable {
+        auto oldDevices = WTFMove(m_captureDevices);
+        m_captureDevices = WTFMove(newDevices);
+
+        if (shouldNotify == ShouldNotify::No)
+            return;
+
+        if (m_captureDevices.size() == oldDevices.size()) {
+            bool haveChanges = false;
+            for (auto &newDevice : m_captureDevices) {
+                if (newDevice.type() != WebCore::CaptureDevice::DeviceType::Camera && newDevice.type() != WebCore::CaptureDevice::DeviceType::Microphone)
+                    continue;
+
+                auto index = oldDevices.findMatching([&newDevice] (auto& oldDevice) {
+                    return newDevice.persistentId() == oldDevice.persistentId() && newDevice.enabled() != oldDevice.enabled();
+                });
+
+                if (index == notFound) {
+                    haveChanges = true;
+                    break;
+                }
+            }
+
+            if (!haveChanges)
+                return;
+        }
+
+        // When a device with camera and microphone is attached or detached, the CaptureDevice notification for
+        // the different devices won't arrive at the same time so delay a bit so we can coalesce the callbacks.
+        if (!m_debounceTimer.isActive())
+            m_debounceTimer.startOneShot(deviceChangeDebounceTimerInterval);
+    });
+}
+
 void UserMediaProcessManager::beginMonitoringCaptureDevices()
 {
     static std::once_flag onceFlag;
 
     std::call_once(onceFlag, [this] {
-        m_captureDevices = WebCore::RealtimeMediaSourceCenter::singleton().getMediaStreamDevices();
+        updateCaptureDevices(ShouldNotify::No);
 
         WebCore::RealtimeMediaSourceCenter::singleton().setDevicesChangedObserver([this]() {
-            auto oldDevices = WTFMove(m_captureDevices);
-            m_captureDevices = WebCore::RealtimeMediaSourceCenter::singleton().getMediaStreamDevices();
-
-            if (m_captureDevices.size() == oldDevices.size()) {
-                bool haveChanges = false;
-                for (auto &newDevice : m_captureDevices) {
-                    if (newDevice.type() != WebCore::CaptureDevice::DeviceType::Camera && newDevice.type() != WebCore::CaptureDevice::DeviceType::Microphone)
-                        continue;
-
-                    auto index = oldDevices.findMatching([&newDevice] (auto& oldDevice) {
-                        return newDevice.persistentId() == oldDevice.persistentId() && newDevice.enabled() != oldDevice.enabled();
-                    });
-
-                    if (index == notFound) {
-                        haveChanges = true;
-                        break;
-                    }
-                }
-
-                if (!haveChanges)
-                    return;
-            }
-
-            // When a device with camera and microphone is attached or detached, the CaptureDevice notification for
-            // the different devices won't arrive at the same time so delay a bit so we can coalesce the callbacks.
-            if (!m_debounceTimer.isActive())
-                m_debounceTimer.startOneShot(deviceChangeDebounceTimerInterval);
+            updateCaptureDevices(ShouldNotify::Yes);
         });
     });
 }
