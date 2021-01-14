@@ -1,3 +1,12 @@
+2021-01-14  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, apply post-landing review comments from Darin for r271495.
+
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::calculateBytesPerRow):
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        (WebKit::ShareableBitmap::makeCGImageCopy):
+
 2021-01-14  Peng Liu  <peng.liu6@apple.com>
 
         [Cocoa] Add a script to generate the "Feature Flags" plist file

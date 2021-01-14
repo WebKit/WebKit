@@ -73,9 +73,9 @@ static CGBitmapInfo bitmapInfo(const ShareableBitmap::Configuration& configurati
 Checked<unsigned, RecordOverflow> ShareableBitmap::calculateBytesPerRow(WebCore::IntSize size, const Configuration& configuration)
 {
     Checked<unsigned, RecordOverflow> bytesPerRow = calculateBytesPerPixel(configuration) * size.width();
+#if HAVE(IOSURFACE)
     if (bytesPerRow.hasOverflowed())
         return bytesPerRow;
-#if HAVE(IOSURFACE)
     return IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, bytesPerRow.unsafeGet());
 #else
     return bytesPerRow;
@@ -104,8 +104,6 @@ std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
         return nullptr;
 
     ref(); // Balanced by deref in releaseBitmapContextData.
-
-    ASSERT(bitmapContext.get());
 
     // We want the origin to be in the top left corner so we flip the backing store context.
     CGContextTranslateCTM(bitmapContext.get(), 0, m_size.height());
@@ -145,8 +143,7 @@ RetainPtr<CGImageRef> ShareableBitmap::makeCGImageCopy()
     if (!graphicsContext)
         return nullptr;
 
-    RetainPtr<CGImageRef> image = adoptCF(CGBitmapContextCreateImage(graphicsContext->platformContext()));
-    return image;
+    return adoptCF(CGBitmapContextCreateImage(graphicsContext->platformContext()));
 }
 
 RetainPtr<CGImageRef> ShareableBitmap::makeCGImage()
