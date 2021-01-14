@@ -154,7 +154,8 @@ void GraphicsContextImplCairo::fillRect(const FloatRect& rect, const Color& colo
 
 void GraphicsContextImplCairo::fillRect(const FloatRect& rect, Gradient& gradient)
 {
-    auto pattern = gradient.createPattern(1.0);
+    auto& state = graphicsContext().state();
+    auto pattern = gradient.createPattern(1.0, state.fillGradientSpaceTransform);
     if (!pattern)
         return;
 

@@ -98,10 +98,12 @@ void DrawGlyphsRecorder::populateInternalState(const GraphicsContextState& conte
 {
     m_originalState.fillStyle.color = contextState.fillColor;
     m_originalState.fillStyle.gradient = contextState.fillGradient;
+    m_originalState.fillStyle.gradientSpaceTransform = contextState.fillGradientSpaceTransform;
     m_originalState.fillStyle.pattern = contextState.fillPattern;
 
     m_originalState.strokeStyle.color = contextState.strokeColor;
     m_originalState.strokeStyle.gradient = contextState.strokeGradient;
+    m_originalState.strokeStyle.gradientSpaceTransform = contextState.strokeGradientSpaceTransform;
     m_originalState.strokeStyle.pattern = contextState.strokePattern;
 
     m_originalState.ctm = m_owner.currentState().ctm; // FIXME: Deal with base CTM.
@@ -119,7 +121,7 @@ void DrawGlyphsRecorder::populateInternalContext(const GraphicsContextState& con
     if (m_originalState.fillStyle.color.isValid())
         m_internalContext.setFillColor(m_originalState.fillStyle.color);
     else if (m_originalState.fillStyle.gradient)
-        m_internalContext.setFillGradient(*m_originalState.fillStyle.gradient);
+        m_internalContext.setFillGradient(*m_originalState.fillStyle.gradient, m_originalState.fillStyle.gradientSpaceTransform);
     else {
         ASSERT(m_originalState.fillStyle.pattern);
         if (m_originalState.fillStyle.pattern)
@@ -129,7 +131,7 @@ void DrawGlyphsRecorder::populateInternalContext(const GraphicsContextState& con
     if (m_originalState.strokeStyle.color.isValid())
         m_internalContext.setStrokeColor(m_originalState.strokeStyle.color);
     else if (m_originalState.strokeStyle.gradient)
-        m_internalContext.setStrokeGradient(*m_originalState.strokeStyle.gradient);
+        m_internalContext.setStrokeGradient(*m_originalState.strokeStyle.gradient, m_originalState.strokeStyle.gradientSpaceTransform);
     else {
         ASSERT(m_originalState.strokeStyle.pattern);
         if (m_originalState.strokeStyle.pattern)

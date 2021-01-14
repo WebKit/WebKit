@@ -115,9 +115,9 @@ static TextStream& operator<<(TextStream& ts, const ConcatenateCTM& item)
     return ts;
 }
 
-SetInlineFillGradient::SetInlineFillGradient(const Gradient& gradient)
+SetInlineFillGradient::SetInlineFillGradient(const Gradient& gradient, const AffineTransform& gradientSpaceTransform)
     : m_data(gradient.data())
-    , m_gradientSpaceTransformation(gradient.gradientSpaceTransform())
+    , m_gradientSpaceTransform(gradientSpaceTransform)
     , m_spreadMethod(gradient.spreadMethod())
     , m_colorStopCount(static_cast<uint8_t>(gradient.stops().size()))
 {
@@ -128,19 +128,9 @@ SetInlineFillGradient::SetInlineFillGradient(const Gradient& gradient)
     }
 }
 
-Ref<Gradient> SetInlineFillGradient::gradient() const
-{
-    auto gradient = Gradient::create(Gradient::Data(m_data));
-    for (uint8_t i = 0; i < m_colorStopCount; ++i)
-        gradient->addColorStop({ m_offsets[i], Color(m_colors[i]) });
-    gradient->setSpreadMethod(m_spreadMethod);
-    gradient->setGradientSpaceTransform(m_gradientSpaceTransformation);
-    return gradient;
-}
-
-SetInlineFillGradient::SetInlineFillGradient(float offsets[maxColorStopCount], SRGBA<uint8_t> colors[maxColorStopCount], const Gradient::Data& data, const AffineTransform& gradientSpaceTransformation, GradientSpreadMethod spreadMethod, uint8_t colorStopCount)
+SetInlineFillGradient::SetInlineFillGradient(float offsets[maxColorStopCount], SRGBA<uint8_t> colors[maxColorStopCount], const Gradient::Data& data, const AffineTransform& gradientSpaceTransform, GradientSpreadMethod spreadMethod, uint8_t colorStopCount)
     : m_data(data)
-    , m_gradientSpaceTransformation(gradientSpaceTransformation)
+    , m_gradientSpaceTransform(gradientSpaceTransform)
     , m_spreadMethod(spreadMethod)
     , m_colorStopCount(colorStopCount)
 {
@@ -151,10 +141,19 @@ SetInlineFillGradient::SetInlineFillGradient(float offsets[maxColorStopCount], S
     }
 }
 
+Ref<Gradient> SetInlineFillGradient::gradient() const
+{
+    auto gradient = Gradient::create(Gradient::Data(m_data));
+    for (uint8_t i = 0; i < m_colorStopCount; ++i)
+        gradient->addColorStop({ m_offsets[i], Color(m_colors[i]) });
+    gradient->setSpreadMethod(m_spreadMethod);
+    return gradient;
+}
+
 void SetInlineFillGradient::apply(GraphicsContext& context) const
 {
     if (m_colorStopCount <= maxColorStopCount)
-        context.setFillGradient(gradient());
+        context.setFillGradient(gradient(), m_gradientSpaceTransform);
 }
 
 bool SetInlineFillGradient::isInline(const Gradient& gradient)

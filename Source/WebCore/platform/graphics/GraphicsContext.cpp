@@ -211,13 +211,13 @@ void GraphicsContextStateChange::accumulate(const GraphicsContextState& state, G
 void GraphicsContextStateChange::apply(GraphicsContext& context) const
 {
     if (m_changeFlags.contains(GraphicsContextState::StrokeGradientChange))
-        context.setStrokeGradient(*m_state.strokeGradient);
+        context.setStrokeGradient(*m_state.strokeGradient, m_state.strokeGradientSpaceTransform);
 
     if (m_changeFlags.contains(GraphicsContextState::StrokePatternChange))
         context.setStrokePattern(*m_state.strokePattern);
 
     if (m_changeFlags.contains(GraphicsContextState::FillGradientChange))
-        context.setFillGradient(*m_state.fillGradient);
+        context.setFillGradient(*m_state.fillGradient, m_state.fillGradientSpaceTransform);
 
     if (m_changeFlags.contains(GraphicsContextState::FillPatternChange))
         context.setFillPattern(*m_state.fillPattern);
@@ -620,10 +620,11 @@ void GraphicsContext::setFillPattern(Ref<Pattern>&& pattern)
         m_impl->updateState(m_state, GraphicsContextState::FillPatternChange);
 }
 
-void GraphicsContext::setStrokeGradient(Ref<Gradient>&& gradient)
+void GraphicsContext::setStrokeGradient(Ref<Gradient>&& gradient, const AffineTransform& strokeGradientSpaceTransform)
 {
     m_state.strokeColor = { };
     m_state.strokeGradient = WTFMove(gradient);
+    m_state.strokeGradientSpaceTransform = strokeGradientSpaceTransform;
     m_state.strokePattern = nullptr;
     if (m_impl)
         m_impl->updateState(m_state, GraphicsContextState::StrokeGradientChange);
@@ -636,10 +637,11 @@ void GraphicsContext::setFillRule(WindRule fillRule)
         m_impl->updateState(m_state, GraphicsContextState::FillRuleChange);
 }
 
-void GraphicsContext::setFillGradient(Ref<Gradient>&& gradient)
+void GraphicsContext::setFillGradient(Ref<Gradient>&& gradient, const AffineTransform& fillGradientSpaceTransform)
 {
     m_state.fillColor = { };
     m_state.fillGradient = WTFMove(gradient);
+    m_state.fillGradientSpaceTransform = fillGradientSpaceTransform;
     m_state.fillPattern = nullptr;
     if (m_impl)
         m_impl->updateState(m_state, GraphicsContextState::FillGradientChange); // FIXME: also fill pattern?

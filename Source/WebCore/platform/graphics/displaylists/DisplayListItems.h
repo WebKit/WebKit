@@ -174,9 +174,8 @@ public:
     static constexpr bool isDrawingItem = false;
     static constexpr uint8_t maxColorStopCount = 4;
 
-    SetInlineFillGradient(const Gradient&);
-    WEBCORE_EXPORT SetInlineFillGradient(float offsets[maxColorStopCount], SRGBA<uint8_t> colors[maxColorStopCount], const Gradient::Data&,
-        const AffineTransform& gradientSpaceTransformation, GradientSpreadMethod, uint8_t colorStopCount);
+    SetInlineFillGradient(const Gradient&, const AffineTransform& gradientSpaceTransform);
+    WEBCORE_EXPORT SetInlineFillGradient(float offsets[maxColorStopCount], SRGBA<uint8_t> colors[maxColorStopCount], const Gradient::Data&, const AffineTransform& gradientSpaceTransform, GradientSpreadMethod, uint8_t colorStopCount);
 
     static bool isInline(const Gradient&);
     Ref<Gradient> gradient() const;
@@ -187,7 +186,7 @@ private:
     float m_offsets[maxColorStopCount];
     SRGBA<uint8_t> m_colors[maxColorStopCount];
     Gradient::Data m_data;
-    AffineTransform m_gradientSpaceTransformation;
+    AffineTransform m_gradientSpaceTransform;
     GradientSpreadMethod m_spreadMethod { GradientSpreadMethod::Pad };
     uint8_t m_colorStopCount { 0 };
 };

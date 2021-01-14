@@ -158,7 +158,7 @@ static RefPtr<cairo_pattern_t> createConic(float xo, float yo, float r, float an
     return gradient;
 }
 
-RefPtr<cairo_pattern_t> Gradient::createPattern(float globalAlpha)
+RefPtr<cairo_pattern_t> Gradient::createPattern(float globalAlpha, const AffineTransform& gradientSpaceTransform)
 {
     auto gradient = WTF::switchOn(m_data,
         [&] (const LinearData& data) {
@@ -195,7 +195,7 @@ RefPtr<cairo_pattern_t> Gradient::createPattern(float globalAlpha)
         break;
     }
 
-    cairo_matrix_t matrix = toCairoMatrix(m_gradientSpaceTransformation);
+    cairo_matrix_t matrix = toCairoMatrix(gradientSpaceTransform);
     cairo_matrix_invert(&matrix);
     cairo_pattern_set_matrix(gradient.get(), &matrix);
 
@@ -204,7 +204,7 @@ RefPtr<cairo_pattern_t> Gradient::createPattern(float globalAlpha)
 
 void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
 {
-    auto pattern = createPattern(1.0);
+    auto pattern = createPattern(1.0, context.state().fillGradientSpaceTransform);
     if (!pattern)
         return;
 

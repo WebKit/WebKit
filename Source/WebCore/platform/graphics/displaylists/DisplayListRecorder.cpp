@@ -102,7 +102,7 @@ void Recorder::appendStateChangeItem(const GraphicsContextStateChange& changes, 
         append<SetInlineFillColor>(changes.m_state.fillColor.asInline());
 
     if (changeFlags.contains(GraphicsContextState::FillGradientChange))
-        append<SetInlineFillGradient>(*changes.m_state.fillGradient);
+        append<SetInlineFillGradient>(*changes.m_state.fillGradient, changes.m_state.fillGradientSpaceTransform);
 }
 
 void Recorder::willAppendItemOfType(ItemType type)

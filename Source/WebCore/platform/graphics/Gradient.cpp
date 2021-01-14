@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,8 +45,6 @@ Gradient::Gradient(Data&& data)
     : m_data(WTFMove(data))
 {
 }
-
-Gradient::~Gradient() = default;
 
 void Gradient::adjustParametersForTiledDrawing(FloatSize& size, FloatRect& srcRect, const FloatSize& spacing)
 {
@@ -127,14 +125,6 @@ void Gradient::setSpreadMethod(GradientSpreadMethod spreadMethod)
     m_cachedHash = 0;
 }
 
-void Gradient::setGradientSpaceTransform(const AffineTransform& gradientSpaceTransformation)
-{
-    if (m_gradientSpaceTransformation == gradientSpaceTransformation)
-        return;
-    m_gradientSpaceTransformation = gradientSpaceTransformation;
-    m_cachedHash = 0;
-}
-
 // FIXME: Instead of these add(Hasher) functions, consider using encode functions to compute the hash.
 
 static void add(Hasher& hasher, const Color& color)
@@ -146,11 +136,6 @@ static void add(Hasher& hasher, const Color& color)
 static void add(Hasher& hasher, const FloatPoint& point)
 {
     add(hasher, point.x(), point.y());
-}
-
-static void add(Hasher& hasher, const AffineTransform& transform)
-{
-    add(hasher, transform.a(), transform.b(), transform.c(), transform.d(), transform.e(), transform.f());
 }
 
 static void add(Hasher& hasher, const Gradient::ColorStop& stop)
@@ -177,7 +162,7 @@ unsigned Gradient::hash() const
 {
     if (!m_cachedHash) {
         sortStops();
-        m_cachedHash = computeHash(m_data, m_spreadMethod, m_gradientSpaceTransformation, m_stops);
+        m_cachedHash = computeHash(m_data, m_spreadMethod, m_stops);
     }
     return m_cachedHash;
 }

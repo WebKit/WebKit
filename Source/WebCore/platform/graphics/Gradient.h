@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008 Torch Mobile, Inc.
  *
@@ -104,8 +104,6 @@ public:
 
     WEBCORE_EXPORT static Ref<Gradient> create(Data&&);
 
-    WEBCORE_EXPORT ~Gradient();
-
     bool isZeroSize() const;
 
     const Data& data() const { return m_data; }
@@ -118,16 +116,13 @@ public:
     WEBCORE_EXPORT void setSpreadMethod(GradientSpreadMethod);
     GradientSpreadMethod spreadMethod() const { return m_spreadMethod; }
 
-    WEBCORE_EXPORT void setGradientSpaceTransform(const AffineTransform& gradientSpaceTransformation);
-    const AffineTransform& gradientSpaceTransform() const { return m_gradientSpaceTransformation; }
-
     void fill(GraphicsContext&, const FloatRect&);
     void adjustParametersForTiledDrawing(FloatSize&, FloatRect&, const FloatSize& spacing);
 
     unsigned hash() const;
 
 #if USE(CAIRO)
-    RefPtr<cairo_pattern_t> createPattern(float globalAlpha);
+    RefPtr<cairo_pattern_t> createPattern(float globalAlpha, const AffineTransform&);
 #endif
 
 #if USE(CG)
@@ -157,7 +152,6 @@ private:
     mutable bool m_stopsSorted { false };
     GradientSpreadMethod m_spreadMethod { GradientSpreadMethod::Pad };
     mutable unsigned m_cachedHash { 0 };
-    AffineTransform m_gradientSpaceTransformation;
 
 #if USE(CG)
     RetainPtr<CGGradientRef> m_gradient;
@@ -276,7 +270,6 @@ template<typename Encoder> void Gradient::encode(Encoder& encoder) const
     encoder << m_stops;
     encoder << m_stopsSorted;
     encoder << m_spreadMethod;
-    encoder << m_gradientSpaceTransformation;
 }
 
 template<typename Decoder> Optional<Ref<Gradient>> Gradient::decode(Decoder& decoder)
@@ -306,12 +299,6 @@ template<typename Decoder> Optional<Ref<Gradient>> Gradient::decode(Decoder& dec
     if (!decoder.decode(spreadMethod))
         return WTF::nullopt;
     gradient->setSpreadMethod(spreadMethod);
-
-    Optional<AffineTransform> gradientSpaceTransformation;
-    decoder >> gradientSpaceTransformation;
-    if (!gradientSpaceTransformation)
-        return WTF::nullopt;
-    gradient->setGradientSpaceTransform(WTFMove(*gradientSpaceTransformation));
 
     return gradient;
 }

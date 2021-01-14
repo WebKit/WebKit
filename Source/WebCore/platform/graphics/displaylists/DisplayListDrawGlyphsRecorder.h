@@ -98,6 +98,7 @@ private:
         struct Style {
             Color color;
             RefPtr<Gradient> gradient;
+            AffineTransform gradientSpaceTransform;
             RefPtr<Pattern> pattern;
         };
         Style fillStyle;

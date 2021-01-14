@@ -292,7 +292,8 @@ void CairoOperationRecorder::fillRect(const FloatRect& rect, Gradient& gradient)
         }
     };
 
-    append(createCommand<FillRect>(rect, gradient.createPattern(1.0)));
+    auto& state = graphicsContext().state();
+    append(createCommand<FillRect>(rect, gradient.createPattern(1.0, state.fillGradientSpaceTransform)));
 }
 
 void CairoOperationRecorder::fillRect(const FloatRect& rect, const Color& color, CompositeOperator compositeOperator, BlendMode blendMode)

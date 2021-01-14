@@ -54,7 +54,7 @@ private:
     Ref<Gradient> m_gradient;
     RefPtr<Image> m_cachedImage;
     FloatSize m_cachedAdjustedSize;
-    unsigned m_cachedGeneratorHash;
+    unsigned m_cachedGeneratorHash { 0 };
     FloatSize m_cachedScaleFactor;
 };
 

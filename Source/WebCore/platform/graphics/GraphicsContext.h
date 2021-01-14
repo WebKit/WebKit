@@ -212,6 +212,9 @@ struct GraphicsContextState {
     Color fillColor { Color::black };
     Color shadowColor;
 
+    AffineTransform strokeGradientSpaceTransform;
+    AffineTransform fillGradientSpaceTransform;
+    
     StrokeStyle strokeStyle { SolidStroke };
     WindRule fillRule { WindRule::NonZero };
 
@@ -303,7 +306,7 @@ public:
     void setStrokePattern(Ref<Pattern>&&);
     Pattern* strokePattern() const { return m_state.strokePattern.get(); }
 
-    void setStrokeGradient(Ref<Gradient>&&);
+    void setStrokeGradient(Ref<Gradient>&&, const AffineTransform& = { });
     Gradient* strokeGradient() const { return m_state.strokeGradient.get(); }
 
     void setFillRule(WindRule);
@@ -315,7 +318,7 @@ public:
     void setFillPattern(Ref<Pattern>&&);
     Pattern* fillPattern() const { return m_state.fillPattern.get(); }
 
-    WEBCORE_EXPORT void setFillGradient(Ref<Gradient>&&);
+    WEBCORE_EXPORT void setFillGradient(Ref<Gradient>&&, const AffineTransform& = { });
     Gradient* fillGradient() const { return m_state.fillGradient.get(); }
 
     void setShadowsIgnoreTransforms(bool);
