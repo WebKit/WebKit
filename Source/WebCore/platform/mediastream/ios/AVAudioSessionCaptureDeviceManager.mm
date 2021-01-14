@@ -107,9 +107,8 @@ void AVAudioSessionCaptureDeviceManager::createAudioSession()
 
     NSError *error = nil;
     auto options = AVAudioSessionCategoryOptionAllowBluetooth | AVAudioSessionCategoryOptionMixWithOthers;
-    [m_audioSession setCategory:AVAudioSessionCategoryPlayAndRecord mode:AVAudioSessionModeVideoChat options:options error:&error];
-    if (error)
-        RELEASE_LOG_ERROR(WebRTC, "Failed to set audio session category with error: %@.", error.localizedDescription);
+    [m_audioSession setCategory:AVAudioSessionCategoryPlayAndRecord mode:AVAudioSessionModeDefault options:options error:&error];
+    RELEASE_LOG_ERROR_IF(error, WebRTC, "Failed to set audio session category with error: %@.", error.localizedDescription);
 }
 
 AVAudioSessionCaptureDeviceManager::~AVAudioSessionCaptureDeviceManager()
