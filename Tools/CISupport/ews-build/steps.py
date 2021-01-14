@@ -2828,7 +2828,7 @@ class PrintConfiguration(steps.ShellSequence):
             return 'Unknown'
 
         build_to_name_mapping = {
-            '11.0': 'Big Sur',
+            '11': 'Big Sur',
             '10.15': 'Catalina',
             '10.14': 'Mojave',
             '10.13': 'High Sierra',
