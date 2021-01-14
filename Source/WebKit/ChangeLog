@@ -1,3 +1,44 @@
+2021-01-14  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r271477. rdar://problem/73204264
+
+    REGRESSION(r270961): Flipgrid can no longer capture video
+    https://bugs.webkit.org/show_bug.cgi?id=220609
+    <rdar://73168009>
+    
+    Reviewed by Darin Adler.
+    
+    Add back line in RemoteAudio::setStorage() that was initializing m_buffer and that was
+    dropped by mistake in the refactoring in r270961. This was causing
+    RemoteCaptureSampleManager::RemoteAudio::audioSamplesAvailable() to return early because
+    m_buffer was not initialized.
+    
+    No new tests, unsure how to test this.
+    
+    * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+    (WebKit::RemoteCaptureSampleManager::RemoteAudio::setStorage):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271477 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-13  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION(r270961): Flipgrid can no longer capture video
+            https://bugs.webkit.org/show_bug.cgi?id=220609
+            <rdar://73168009>
+
+            Reviewed by Darin Adler.
+
+            Add back line in RemoteAudio::setStorage() that was initializing m_buffer and that was
+            dropped by mistake in the refactoring in r270961. This was causing
+            RemoteCaptureSampleManager::RemoteAudio::audioSamplesAvailable() to return early because
+            m_buffer was not initialized.
+
+            No new tests, unsure how to test this.
+
+            * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+            (WebKit::RemoteCaptureSampleManager::RemoteAudio::setStorage):
+
 2021-01-13  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r271448. rdar://problem/73168438
