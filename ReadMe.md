@@ -27,19 +27,19 @@ On Windows, follow the [instructions on our website](https://webkit.org/webkit-o
 Run the following command to clone WebKit's Git SVN repository:
 
 ```
-git clone git://git.webkit.org/WebKit.git WebKit
+git clone git@github.com:WebKit/WebKit.git WebKit
 ```
 
 or
 
 ```
-git clone https://git.webkit.org/git/WebKit.git WebKit
+git clone https://github.com/WebKit/WebKit.git WebKit
 ```
 
-If you want to be able to commit changes to the repository, or just want to check out branches that aren’t contained in WebKit.git, you will need track WebKit's Subversion repository. You can run the following command to configure this and other options of the new Git clone for WebKit development.
+If you want to be able to track Subversion revision from your git checkout, you can run the following command to do so:
 
 ```
-Tools/Scripts/webkit-patch setup-git-clone
+Tools/Scripts/git-webkit setup-git-svn
 ```
 
 For information about this, and other aspects of using Git with WebKit, read [the wiki page](https://trac.webkit.org/wiki/UsingGitWithWebKit).
