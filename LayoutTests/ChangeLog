@@ -1,3 +1,16 @@
+2021-01-13  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Rebaseline and gardening a few tests
+
+        Unreviewed test gardening.
+
+        The windowClient one differs from GTK's by running a few test cases
+        instead of stopping near the start in a Harness timeout.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https-expected.txt:
+        * platform/wpe/webgl/1.0.3/conformance/context/methods-expected.txt: Removed.
+
 2021-01-13  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Support key rotation with HLS-backed encrypted media streams
