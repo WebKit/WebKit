@@ -62,6 +62,7 @@ public:
     virtual ~WebFullScreenManagerProxy();
 
     bool isFullScreen();
+    bool blocksReturnToFullscreenFromPictureInPicture() const;
     void close();
 
     void willEnterFullScreen();
@@ -79,7 +80,7 @@ public:
 
 private:
     void supportsFullScreen(bool withKeyboard, CompletionHandler<void(bool)>&&);
-    void enterFullScreen();
+    void enterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture);
     void exitFullScreen();
     void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame);
     void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame);
@@ -89,6 +90,7 @@ private:
 
     WebPageProxy& m_page;
     WebFullScreenManagerProxyClient& m_client;
+    bool m_blocksReturnToFullscreenFromPictureInPicture { false };
 };
 
 } // namespace WebKit

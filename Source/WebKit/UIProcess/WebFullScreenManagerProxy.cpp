@@ -146,8 +146,14 @@ bool WebFullScreenManagerProxy::isFullScreen()
     return m_client.isFullScreen();
 }
 
-void WebFullScreenManagerProxy::enterFullScreen()
+bool WebFullScreenManagerProxy::blocksReturnToFullscreenFromPictureInPicture() const
 {
+    return m_blocksReturnToFullscreenFromPictureInPicture;
+}
+
+void WebFullScreenManagerProxy::enterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture)
+{
+    m_blocksReturnToFullscreenFromPictureInPicture = blocksReturnToFullscreenFromPictureInPicture;
     m_client.enterFullScreen();
 }
 
@@ -155,7 +161,7 @@ void WebFullScreenManagerProxy::exitFullScreen()
 {
     m_client.exitFullScreen();
 }
-    
+
 void WebFullScreenManagerProxy::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
 {
     m_client.beganEnterFullScreen(initialFrame, finalFrame);

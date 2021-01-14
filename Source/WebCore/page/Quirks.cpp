@@ -1273,4 +1273,25 @@ bool Quirks::requiresUserGestureToPauseInPictureInPicture() const
     return *m_requiresUserGestureToPauseInPictureInPicture;
 }
 
+bool Quirks::blocksReturnToFullscreenFromPictureInPictureQuirk() const
+{
+#if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_PRESENTATION_MODE)
+    // Some sites (e.g., wowhead.com and vimeo.com) do not set element's styles properly when a video
+    // returns to fullscreen from picture-in-picture. This quirk disables the "return to fullscreen
+    // from picture-in-picture" feature for those sites. We should remove the quirk once rdar://problem/73167861
+    // and rdar://problem/73167931 have been fixed.
+    if (!needsQuirks())
+        return false;
+
+    if (!m_blocksReturnToFullscreenFromPictureInPictureQuirk) {
+        auto domain = RegistrableDomain { m_document->topDocument().url() };
+        m_blocksReturnToFullscreenFromPictureInPictureQuirk = domain == "vimeo.com"_s || domain == "wowhead.com"_s;
+    }
+
+    return *m_blocksReturnToFullscreenFromPictureInPictureQuirk;
+#else
+    return false;
+#endif
+}
+
 }

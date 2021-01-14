@@ -1,3 +1,30 @@
+2021-01-14  Peng Liu  <peng.liu6@apple.com>
+
+        Add a quirk to disable "return to element fullscreen from picture-in-picture" for some sites
+        https://bugs.webkit.org/show_bug.cgi?id=220606
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.messages.in:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::setupFullscreenWithID):
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::blocksReturnToFullscreenFromPictureInPicture const):
+        (WebKit::WebFullScreenManagerProxy::enterFullScreen):
+        * UIProcess/WebFullScreenManagerProxy.h:
+        * UIProcess/WebFullScreenManagerProxy.messages.in:
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController enterFullScreen]):
+        (-[WKFullScreenWindowController didEnterPictureInPicture]):
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::enterFullScreenForElement):
+        * WebProcess/InjectedBundle/InjectedBundlePageFullScreenClient.cpp:
+        (WebKit::InjectedBundlePageFullScreenClient::enterFullScreenForElement):
+        * WebProcess/InjectedBundle/InjectedBundlePageFullScreenClient.h:
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::enterVideoFullscreenForVideoElement):
+
 2021-01-14  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, apply post-landing review comments from Darin for r271495.
