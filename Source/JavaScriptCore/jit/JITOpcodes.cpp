@@ -101,6 +101,7 @@ void JIT::emit_op_new_object(const Instruction* currentInstruction)
         auto butterfly = TrustedImmPtr(nullptr);
         emitAllocateJSObject(resultReg, JITAllocator::constant(allocator), allocatorReg, TrustedImmPtr(structure), butterfly, scratchReg, slowCases);
         emitInitializeInlineStorage(resultReg, structure->inlineCapacity());
+        mutatorFence(*m_vm);
         addSlowCase(slowCases);
         emitPutVirtualRegister(bytecode.m_dst);
     }
@@ -1085,6 +1086,7 @@ void JIT::emit_op_create_this(const Instruction* currentInstruction)
     emitAllocateJSObject(resultReg, JITAllocator::variable(), allocatorReg, structureReg, butterfly, scratchReg, slowCases);
     load8(Address(structureReg, Structure::inlineCapacityOffset()), scratchReg);
     emitInitializeInlineStorage(resultReg, scratchReg);
+    mutatorFence(*m_vm);
     addSlowCase(slowCases);
     emitPutVirtualRegister(bytecode.m_dst);
 }

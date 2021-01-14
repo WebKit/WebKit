@@ -1,3 +1,14 @@
+2021-01-14  Saam Barati  <sbarati@apple.com>
+
+        Baseline JIT should emit mutatorFence after inline allocations
+        https://bugs.webkit.org/show_bug.cgi?id=220572
+
+        Reviewed by Yusuke Suzuki.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emit_op_create_this):
+
 2021-01-13  Xan Lopez  <xan@igalia.com>
 
         [JSC] Remove the unused compilation byproducts from the wasm embedder entrypoint
