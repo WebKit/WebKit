@@ -114,7 +114,9 @@
     _visibleContentRectUpdateCallbacks.append(makeBlockPtr(updateBlock));
     [self _scheduleVisibleContentRectUpdate];
 #else
-    dispatch_async(dispatch_get_main_queue(), updateBlock);
+    RunLoop::main().dispatch([updateBlock = makeBlockPtr(updateBlock)] {
+        updateBlock();
+    });
 #endif
 }
 

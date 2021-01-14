@@ -1030,7 +1030,7 @@ static RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDe
         [userInfo setObject:errorMessage forKey:_WKJavaScriptExceptionMessageErrorKey];
 
         auto error = adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorJavaScriptExceptionOccurred userInfo:userInfo.get()]);
-        dispatch_async(dispatch_get_main_queue(), [handler, error] {
+        RunLoop::main().dispatch([handler, error] {
             auto rawHandler = (void (^)(id, NSError *))handler.get();
             rawHandler(nil, error.get());
         });
@@ -1345,7 +1345,9 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 {
 #if PLATFORM(IOS_FAMILY)
     if (![self usesStandardContentView]) {
-        dispatch_async(dispatch_get_main_queue(), updateBlock);
+        RunLoop::main().dispatch([updateBlock = makeBlockPtr(updateBlock)] {
+            updateBlock();
+        });
         return;
     }
 #endif

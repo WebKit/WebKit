@@ -416,7 +416,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
         backingStoreFlusher->flush();
 
         MonotonicTime timestamp = MonotonicTime::now();
-        dispatch_async(dispatch_get_main_queue(), [pageID, timestamp] {
+        RunLoop::main().dispatch([pageID, timestamp] {
             if (WebPage* webPage = WebProcess::singleton().webPage(pageID))
                 webPage->didFlushLayerTreeAtTime(timestamp);
         });

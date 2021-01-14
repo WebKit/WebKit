@@ -112,7 +112,7 @@ Ref<WebCore::PlatformCALayer> PlatformCALayerRemoteCustom::clone(PlatformCALayer
 
             AVPlayerLayer *destinationPlayerLayer = static_cast<AVPlayerLayer *>(clonedLayer.get());
             AVPlayerLayer *sourcePlayerLayer = static_cast<AVPlayerLayer *>(platformLayer());
-            dispatch_async(dispatch_get_main_queue(), [destinationPlayerLayer, sourcePlayerLayer] {
+            RunLoop::main().dispatch([destinationPlayerLayer, sourcePlayerLayer] {
                 [destinationPlayerLayer setPlayer:[sourcePlayerLayer player]];
             });
         } else {

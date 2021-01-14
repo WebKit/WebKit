@@ -289,9 +289,8 @@ static void MainThreadAdoptAndRelease(id obj)
 #endif
     // We own obj at this point, so we don't need the block to implicitly
     // retain it.
-    __block id objNotRetained = obj;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [objNotRetained release];
+    RunLoop::main().dispatch([obj] {
+        [obj release];
     });
 }
 
@@ -437,8 +436,8 @@ void WebThreadPostNotification(NSString* name, id object, id userInfo)
     if (pthread_main_np())
         [[NSNotificationCenter defaultCenter] postNotificationName:name object:object userInfo:userInfo];
     else {
-        dispatch_async(dispatch_get_main_queue(), ^ {
-            [[NSNotificationCenter defaultCenter] postNotificationName:name object:object userInfo:userInfo];
+        RunLoop::main().dispatch([name = retainPtr(name), object = retainPtr(object), userInfo = retainPtr(userInfo)] {
+            [[NSNotificationCenter defaultCenter] postNotificationName:name.get() object:object.get() userInfo:userInfo.get()];
         });
     }
 }

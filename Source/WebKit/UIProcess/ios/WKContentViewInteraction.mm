@@ -1450,7 +1450,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
         _page->activityStateDidChange(WebCore::ActivityState::IsFocused, WebKit::WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
 
         if (_keyWebEventHandler) {
-            dispatch_async(dispatch_get_main_queue(), [weakHandler = WeakObjCPtr<id>(_keyWebEventHandler.get()), weakSelf = WeakObjCPtr<WKContentView>(self)] {
+            RunLoop::main().dispatch([weakHandler = WeakObjCPtr<id>(_keyWebEventHandler.get()), weakSelf = WeakObjCPtr<WKContentView>(self)] {
                 auto strongSelf = weakSelf.get();
                 if (!strongSelf || [strongSelf isFirstResponder])
                     return;

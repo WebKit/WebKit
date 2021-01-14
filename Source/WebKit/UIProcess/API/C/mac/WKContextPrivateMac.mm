@@ -40,6 +40,7 @@
 #import "WebProcessPool.h"
 #import <WebCore/PluginBlocklist.h>
 #import <WebCore/WebGLBlocklist.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 
 bool WKContextIsPlugInUpdateAvailable(WKContextRef, WKStringRef)
@@ -83,7 +84,7 @@ void WKContextGetInfoForInstalledPlugIns(WKContextRef contextRef, WKContextGetIn
     RefPtr<API::Array> array = API::Array::create(WTFMove(pluginInfoDictionaries));
 
     WebKit::toImpl(contextRef)->ref();
-    dispatch_async(dispatch_get_main_queue(), ^() {
+    RunLoop::main().dispatch([block = makeBlockPtr(block), array = WTFMove(array), contextRef] {
         block(WebKit::toAPI(array.get()), 0);
     
         WebKit::toImpl(contextRef)->deref();

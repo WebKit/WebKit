@@ -36,6 +36,7 @@
 #import <mutex>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <syslog.h>
+#import <wtf/RunLoop.h>
 #import <wtf/StringPrintStream.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
@@ -87,7 +88,7 @@ OSStatus AudioSampleDataSource::setupConverter()
 
     OSStatus err = AudioConverterNew(&m_inputDescription->streamDescription(), &m_outputDescription->streamDescription(), &m_converter);
     if (err) {
-        dispatch_async(dispatch_get_main_queue(), [this, protectedThis = makeRefPtr(*this), err] {
+        RunLoop::main().dispatch([this, protectedThis = makeRefPtr(*this), err] {
             ERROR_LOG("AudioConverterNew returned error ", err);
         });
     }
@@ -161,7 +162,7 @@ void AudioSampleDataSource::pushSamplesInternal(const AudioBufferList& bufferLis
 
     if (m_inputSampleOffset == MediaTime::invalidTime()) {
         m_inputSampleOffset = MediaTime(1 - sampleTime.timeValue(), sampleTime.timeScale());
-        dispatch_async(dispatch_get_main_queue(), [logIdentifier = LOGIDENTIFIER, inputSampleOffset = m_inputSampleOffset.timeValue(), maximumSampleCount = m_maximumSampleCount, this, protectedThis = makeRefPtr(*this)] {
+        RunLoop::main().dispatch([logIdentifier = LOGIDENTIFIER, inputSampleOffset = m_inputSampleOffset.timeValue(), maximumSampleCount = m_maximumSampleCount, this, protectedThis = makeRefPtr(*this)] {
             ALWAYS_LOG(logIdentifier, "input sample offset is ", inputSampleOffset, ", maximumSampleCount is ", maximumSampleCount);
         });
     }
@@ -238,7 +239,7 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t 
 
         m_outputSampleOffset = (endFrame - sampleCount) - timeStamp;
         m_outputSampleOffset -= computeOffsetDelay(m_outputDescription->sampleRate(), m_lastPushedSampleCount);
-        dispatch_async(dispatch_get_main_queue(), [logIdentifier = LOGIDENTIFIER, outputSampleOffset = m_outputSampleOffset, this, protectedThis = makeRefPtr(*this)] {
+        RunLoop::main().dispatch([logIdentifier = LOGIDENTIFIER, outputSampleOffset = m_outputSampleOffset, this, protectedThis = makeRefPtr(*this)] {
             ALWAYS_LOG(logIdentifier, "setting new offset to ", outputSampleOffset);
         });
     }
@@ -246,7 +247,7 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t 
     timeStamp += m_outputSampleOffset;
 
     if (timeStamp < startFrame || timeStamp + sampleCount > endFrame) {
-        dispatch_async(dispatch_get_main_queue(), [logIdentifier = LOGIDENTIFIER, timeStamp, startFrame, endFrame, sampleCount, outputSampleOffset = m_outputSampleOffset, this, protectedThis = makeRefPtr(*this)] {
+        RunLoop::main().dispatch([logIdentifier = LOGIDENTIFIER, timeStamp, startFrame, endFrame, sampleCount, outputSampleOffset = m_outputSampleOffset, this, protectedThis = makeRefPtr(*this)] {
             ERROR_LOG(logIdentifier, "not enough data, sample ", timeStamp, " with offset ", outputSampleOffset, ", trying to get ", sampleCount, " samples, but not completely in range [", startFrame, " .. ", endFrame, "]");
         });
 
@@ -259,7 +260,7 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t 
         } else {
             // We are too close from endFrame, let's wait for more data to be pushed.
             m_outputSampleOffset -= sampleCount;
-            dispatch_async(dispatch_get_main_queue(), [logIdentifier = LOGIDENTIFIER, outputSampleOffset = m_outputSampleOffset, this, protectedThis = makeRefPtr(*this)] {
+            RunLoop::main().dispatch([logIdentifier = LOGIDENTIFIER, outputSampleOffset = m_outputSampleOffset, this, protectedThis = makeRefPtr(*this)] {
                 ALWAYS_LOG(logIdentifier, "updating offset to ", outputSampleOffset);
             });
         }

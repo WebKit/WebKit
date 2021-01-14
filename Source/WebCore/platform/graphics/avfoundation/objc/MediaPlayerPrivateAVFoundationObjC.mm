@@ -942,7 +942,7 @@ void MediaPlayerPrivateAVFoundationObjC::setAVPlayerItem(AVPlayerItem *item)
 
     RetainPtr<AVPlayer> strongPlayer = m_avPlayer.get();
     RetainPtr<AVPlayerItem> strongItem = item;
-    dispatch_async(dispatch_get_main_queue(), [strongPlayer, strongItem] {
+    RunLoop::main().dispatch([strongPlayer, strongItem] {
         [strongPlayer replaceCurrentItemWithPlayerItem:strongItem.get()];
     });
 }

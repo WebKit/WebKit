@@ -199,7 +199,7 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
 
     if (![_immediateActionRecognizer animationController]) {
         // FIXME: We should be able to remove the dispatch_async when rdar://problem/19502927 is resolved.
-        dispatch_async(dispatch_get_main_queue(), ^{
+        RunLoop::main().dispatch([self, strongSelf = retainPtr(self)] {
             [self _cancelImmediateAction];
         });
     }

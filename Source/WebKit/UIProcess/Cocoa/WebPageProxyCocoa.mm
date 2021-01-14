@@ -456,7 +456,7 @@ static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *
 void WebPageProxy::requestThumbnailWithOperation(WKQLThumbnailLoadOperation *operation)
 {
     [operation setCompletionBlock:^{
-        dispatch_async(dispatch_get_main_queue(), ^{
+        RunLoop::main().dispatch([this, operation = retainPtr(operation)] {
             auto identifier = [operation identifier];
             auto convertedImage = convertPlatformImageToBitmap([operation thumbnail], WebCore::IntSize(400, 400));
             if (!convertedImage)

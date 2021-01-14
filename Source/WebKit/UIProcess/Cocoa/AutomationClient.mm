@@ -85,9 +85,9 @@ void AutomationClient::requestAutomationSession(const String& sessionIdentifier,
     // RemoteInspector will try to acquire its lock to register the new session and
     // deadlock because it's already taken while handling XPC messages.
     NSString *requestedSessionIdentifier = sessionIdentifier;
-    dispatch_async(dispatch_get_main_queue(), ^{
+    RunLoop::main().dispatch([this, requestedSessionIdentifier = retainPtr(requestedSessionIdentifier), configuration = retainPtr(configuration)] {
         if (m_delegateMethods.requestAutomationSession)
-            [m_delegate.get() _processPool:m_processPool didRequestAutomationSessionWithIdentifier:requestedSessionIdentifier configuration:configuration];
+            [m_delegate.get() _processPool:m_processPool didRequestAutomationSessionWithIdentifier:requestedSessionIdentifier.get() configuration:configuration.get()];
     });
 }
 

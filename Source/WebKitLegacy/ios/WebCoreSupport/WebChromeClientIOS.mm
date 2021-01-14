@@ -146,8 +146,8 @@ void WebChromeClientIOS::runOpenPanel(Frame&, FileChooser& chooser)
     };
 
     if (WebThreadIsCurrent()) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[webView() _UIKitDelegateForwarder] webView:webView() runOpenPanelForFileButtonWithResultListener:listener configuration:configuration];
+        RunLoop::main().dispatch([this, listener = retainPtr(listener), configuration = retainPtr(configuration)] {
+            [[webView() _UIKitDelegateForwarder] webView:webView() runOpenPanelForFileButtonWithResultListener:listener.get() configuration:configuration.get()];
         });
     } else
         [[webView() _UIKitDelegateForwarder] webView:webView() runOpenPanelForFileButtonWithResultListener:listener configuration:configuration];

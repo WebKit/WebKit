@@ -61,14 +61,14 @@ WebSQLiteDatabaseTrackerClient::~WebSQLiteDatabaseTrackerClient()
 
 void WebSQLiteDatabaseTrackerClient::willBeginFirstTransaction()
 {
-    dispatch_async(dispatch_get_main_queue(), [this] {
+    RunLoop::main().dispatch([this] {
         m_hysteresis.start();
     });
 }
 
 void WebSQLiteDatabaseTrackerClient::didFinishLastTransaction()
 {
-    dispatch_async(dispatch_get_main_queue(), [this] {
+    RunLoop::main().dispatch([this] {
         m_hysteresis.stop();
     });
 }

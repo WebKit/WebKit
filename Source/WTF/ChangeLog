@@ -1,3 +1,23 @@
+2021-01-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed most uses of dispatch_async(dispatch_get_main_queue(), ...)
+        https://bugs.webkit.org/show_bug.cgi?id=220066
+
+        Reviewed by Antti Koivisto.
+
+        dispatch_async has two downsides:
+
+        (1) Its order is undefined (and in practice highly variable) relative to
+        other WebKit operations. This sometimes causes flakiness.
+
+        (2) It doesn't honor the RunLoop first paint optimization.
+
+        We can use RunLoop::dispatch() instead.
+
+        * wtf/cocoa/MainThreadCocoa.mm:
+        (WTF::dispatchAsyncOnMainThreadWithWebThreadLockIfNeeded):
+        (WTF::callOnWebThreadOrDispatchAsyncOnMainThread):
+
 2021-01-14  Per Arne Vollan  <pvollan@apple.com>
 
         [GPUP][iOS] Create sandbox extensions for cache and temp directory

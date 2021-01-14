@@ -879,7 +879,7 @@ private:
     if (superview)
         return;
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    RunLoop::main().dispatch([self, strongSelf = retainPtr(self)] {
         if ([_webViewPlaceholder superview] == nil && [_webViewPlaceholder parent] == self)
             [self close];
     });

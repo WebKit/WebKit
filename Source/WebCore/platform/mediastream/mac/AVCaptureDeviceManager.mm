@@ -260,7 +260,7 @@ void AVCaptureDeviceManager::registerForDeviceNotifications()
     if (!m_callback)
         return;
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    RunLoop::main().dispatch([self, protectedSelf = retainPtr(self)] {
         if (m_callback)
             m_callback->refreshCaptureDevices();
     });

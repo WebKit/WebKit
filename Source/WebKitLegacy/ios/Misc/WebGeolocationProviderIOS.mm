@@ -37,6 +37,7 @@
 #import <wtf/HashSet.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
 
 using namespace WebCore;
@@ -178,7 +179,7 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
         return;
 
     if (!_isSuspended) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        RunLoop::main().dispatch([self, strongSelf = retainPtr(self)] {
             if (!_coreLocationProvider) {
                 ASSERT(!_coreLocationUpdateListenerProxy);
                 _coreLocationUpdateListenerProxy = adoptNS([[_WebCoreLocationUpdateThreadingProxy alloc] initWithProvider:self]);
@@ -208,7 +209,7 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
     _pendingInitialPositionWebView.remove(webView);
 
     if (_registeredWebViews.isEmpty()) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        RunLoop::main().dispatch([self, strongSelf = retainPtr(self)] {
             [_coreLocationProvider stop];
         });
         _enableHighAccuracy = NO;
@@ -226,7 +227,7 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
 {
     ASSERT(WebThreadIsLockedOrDisabled());
     _enableHighAccuracy = _enableHighAccuracy || enableHighAccuracy;
-    dispatch_async(dispatch_get_main_queue(), ^{
+    RunLoop::main().dispatch([self, strongSelf = retainPtr(self)] {
         [_coreLocationProvider setEnableHighAccuracy:_enableHighAccuracy];
     });
 }
@@ -241,7 +242,7 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
     _webViewsWaitingForCoreLocationAuthorization.add(webView, listener);
     _trackedWebViews.add(webView);
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    RunLoop::main().dispatch([self, strongSelf = retainPtr(self)] {
         if (!_coreLocationProvider) {
             ASSERT(!_coreLocationUpdateListenerProxy);
             _coreLocationUpdateListenerProxy = adoptNS([[_WebCoreLocationUpdateThreadingProxy alloc] initWithProvider:self]);

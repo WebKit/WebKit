@@ -31,6 +31,7 @@
 
 #import "WebNetscapePluginView.h"
 #import "WebKitLogging.h"
+#import <wtf/RunLoop.h>
 
 using namespace WebCore;
 
@@ -174,7 +175,7 @@ void NPN_PluginThreadAsyncCall(NPP instance, void (*func) (void *), void *userDa
 {
     WebNetscapePluginView *pluginView = pluginViewForInstance(instance);
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    RunLoop::main().dispatch([pluginView = retainPtr(pluginView), userData, func] {
         if (!pluginView || !pluginView->plugin) {
             // The plug-in has already been destroyed.
             return;

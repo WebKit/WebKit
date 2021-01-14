@@ -683,12 +683,12 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
         successBlock:^(NSArray *processedResults, NSString *displayString) {
             ASSERT([processedResults count] == 1);
             _WKFileUploadItem *result = [processedResults objectAtIndex:0];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self _chooseFiles:@[result.fileURL] displayString:displayString iconImage:result.displayImage.get()];
+            RunLoop::main().dispatch([self, strongSelf = retainPtr(self), result = retainPtr(result), displayString = retainPtr(displayString)] {
+                [self _chooseFiles:@[result.get().fileURL] displayString:displayString.get() iconImage:result.get().displayImage.get()];
             });
         }
         failureBlock:^{
-            dispatch_async(dispatch_get_main_queue(), ^{
+            RunLoop::main().dispatch([self, strongSelf = retainPtr(self)] {
                 [self _cancel];
             });
         }
@@ -712,12 +712,12 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
                     iconImage = result.displayImage;
             }
 
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self _chooseFiles:fileURLs displayString:displayString iconImage:iconImage.get()];
+            RunLoop::main().dispatch([self, strongSelf = retainPtr(self), fileURLs = retainPtr(fileURLs), displayString = retainPtr(displayString), iconImage] {
+                [self _chooseFiles:fileURLs.get() displayString:displayString.get() iconImage:iconImage.get()];
             });
         }
         failureBlock:^{
-            dispatch_async(dispatch_get_main_queue(), ^{
+            RunLoop::main().dispatch([self, strongSelf = retainPtr(self)] {
                 [self _cancel];
             });
         }

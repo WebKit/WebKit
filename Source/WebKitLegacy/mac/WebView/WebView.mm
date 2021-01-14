@@ -244,6 +244,7 @@
 #import <pal/spi/mac/NSViewSPI.h>
 #import <pal/spi/mac/NSWindowSPI.h>
 #import <wtf/Assertions.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
 #import <wtf/HashTraits.h>
 #import <wtf/MainThread.h>
@@ -1891,7 +1892,9 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 {
     WebThreadRun(^{
         [WebView _releaseMemoryNow];
-        dispatch_async(dispatch_get_main_queue(), handler);
+        RunLoop::main().dispatch([handler = makeBlockPtr(handler)] {
+            handler();
+        });
     });
 }
 
@@ -5024,15 +5027,13 @@ IGNORE_WARNINGS_END
 
 - (void)forwardInvocation:(NSInvocation *)invocation
 {
-    // Store _forwarder in an ivar so it is retained by the block.
-    _WebSafeForwarder *forwarder = _forwarder;
     if (WebThreadIsCurrent()) {
         [invocation retainArguments];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [forwarder forwardInvocation:invocation];
+        RunLoop::main().dispatch([forwarder = retainPtr(_forwarder), invocation = retainPtr(invocation)] {
+            [forwarder forwardInvocation:invocation.get()];
         });
     } else
-        [forwarder forwardInvocation:invocation];
+        [_forwarder forwardInvocation:invocation];
 }
 
 - (BOOL)respondsToSelector:(SEL)aSelector
@@ -6449,7 +6450,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
                 if (errorOrNil)
                     return;
 
-                dispatch_async(dispatch_get_main_queue(), [self, path = RetainPtr<NSString>(fileURL.path), fileNames, fileCount, dragData] {
+                RunLoop::main().dispatch([self, path = RetainPtr<NSString>(fileURL.path), fileNames, fileCount, dragData] {
                     fileNames->append(path.get());
                     if (fileNames->size() == fileCount) {
                         dragData->setFileNames(*fileNames);
@@ -7977,7 +7978,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::JSGlobalObject* lexicalGlo
             _private->page->setTabKeyCyclesThroughElements(!flag);
 #if PLATFORM(MAC)
         if (flag) {
-            dispatch_async(dispatch_get_main_queue(), [] {
+            RunLoop::main().dispatch([] {
                 [[NSSpellChecker sharedSpellChecker] _preflightChosenSpellServer];
             });
         }

@@ -2372,7 +2372,7 @@ void WebFrameLoaderClient::finishedLoadingIcon(WebCore::SharedBuffer* iconData)
 #if USE(WEB_THREAD)
             WebThreadRun(^{
 #else
-            dispatch_async(dispatch_get_main_queue(), ^{
+            RunLoop::main().dispatch([self, strongSelf = retainPtr(self), success] {
 #endif
                 if (success)
                     [self receivedPolicyDecision:WebCore::PolicyAction::Ignore];

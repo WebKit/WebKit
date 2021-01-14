@@ -889,7 +889,7 @@ void WebProcessPool::notifyPreferencesChanged(const String& domain, const String
 #if PLATFORM(MAC)
 static void webProcessPoolHighDynamicRangeDidChangeCallback(CMNotificationCenterRef, const void*, CFStringRef notificationName, const void*, CFTypeRef)
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    RunLoop::main().dispatch([] {
         auto properties = WebCore::collectScreenProperties();
         for (auto& pool : WebProcessPool::allProcessPools())
             pool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(properties));

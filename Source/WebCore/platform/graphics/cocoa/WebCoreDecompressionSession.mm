@@ -101,7 +101,7 @@ void WebCoreDecompressionSession::maybeBecomeReadyForMoreMediaData()
     }
 
     RefPtr<WebCoreDecompressionSession> protectedThis { this };
-    dispatch_async(dispatch_get_main_queue(), [protectedThis] {
+    RunLoop::main().dispatch([protectedThis] {
         if (protectedThis->m_notificationCallback)
             protectedThis->m_notificationCallback();
     });
@@ -419,7 +419,7 @@ void WebCoreDecompressionSession::enqueueDecodedSample(CMSampleBufferRef sample,
     if (!shouldNotify)
         return;
 
-    dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), callback = WTFMove(m_hasAvailableFrameCallback)] {
+    RunLoop::main().dispatch([protectedThis = makeRefPtr(this), callback = WTFMove(m_hasAvailableFrameCallback)] {
         callback();
     });
 }
@@ -437,7 +437,7 @@ void WebCoreDecompressionSession::requestMediaDataWhenReady(std::function<void()
 
     if (notificationCallback && isReadyForMoreMediaData()) {
         RefPtr<WebCoreDecompressionSession> protectedThis { this };
-        dispatch_async(dispatch_get_main_queue(), [protectedThis] {
+        RunLoop::main().dispatch([protectedThis] {
             if (protectedThis->m_notificationCallback)
                 protectedThis->m_notificationCallback();
         });
@@ -453,7 +453,7 @@ void WebCoreDecompressionSession::stopRequestingMediaData()
 void WebCoreDecompressionSession::notifyWhenHasAvailableVideoFrame(std::function<void()> callback)
 {
     if (callback && m_producerQueue && !CMBufferQueueIsEmpty(m_producerQueue.get())) {
-        dispatch_async(dispatch_get_main_queue(), [callback] {
+        RunLoop::main().dispatch([callback] {
             callback();
         });
         return;

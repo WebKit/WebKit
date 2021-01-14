@@ -29,6 +29,7 @@
 #import "SystemBattery.h"
 #import <notify.h>
 #import <pal/spi/cocoa/IOPSLibSPI.h>
+#import <wtf/RunLoop.h>
 
 namespace WebCore {
 
@@ -45,7 +46,7 @@ PowerSourceNotifier::PowerSourceNotifier(PowerSourceNotifierCallback&& callback)
 
     // If the current value of systemHasAC() is uncached, force a notification.
     if (!cachedSystemHasAC()) {
-        dispatch_async(dispatch_get_main_queue(), [weakThis = makeWeakPtr(*this)] {
+        RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
             if (weakThis)
                 weakThis->notifyPowerSourceChanged();
         });

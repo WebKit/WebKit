@@ -335,7 +335,9 @@ static WKWebViewConfiguration *configuration;
     if ([NSThread isMainThread])
         runConversion();
     else
-        dispatch_async(dispatch_get_main_queue(), runConversion);
+        RunLoop::main().dispatch([runConversion = makeBlockPtr(runConversion)] {
+            runConversion();
+        });
 }
 
 @end

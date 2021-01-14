@@ -33,6 +33,7 @@
 #import <pal/spi/cocoa/IOKitSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RunLoop.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(BackBoardServices)
@@ -212,8 +213,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
         _ioSystemClient = IOHIDEventSystemClientCreate(kCFAllocatorDefault);
 
     if (eventRef) {
-        RetainPtr<IOHIDEventRef> strongEvent = eventRef;
-        dispatch_async(dispatch_get_main_queue(), ^{
+        RunLoop::main().dispatch([strongEvent = retainPtr(eventRef)] {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             uint32_t contextID = [UIApplication sharedApplication].keyWindow._contextId;
 ALLOW_DEPRECATED_DECLARATIONS_END
@@ -240,7 +240,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         kIOHIDEventOptionNone));
     
     if (markerEvent) {
-        dispatch_async(dispatch_get_main_queue(), [markerEvent = WTFMove(markerEvent)] {
+        RunLoop::main().dispatch([markerEvent = WTFMove(markerEvent)] {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             auto contextID = [UIApplication sharedApplication].keyWindow._contextId;
 ALLOW_DEPRECATED_DECLARATIONS_END

@@ -39,6 +39,7 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RunLoop.h>
 #import <wtf/UniqueRef.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -362,7 +363,7 @@ void MediaSessionHelperiOS::externalOutputDeviceAvailableDidChange()
 #endif
 
     // Now playing won't work unless we turn on the delivery of remote control events.
-    dispatch_async(dispatch_get_main_queue(), ^{
+    RunLoop::main().dispatch([] {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
         [[PAL::getUIApplicationClass() sharedApplication] beginReceivingRemoteControlEvents];
         END_BLOCK_OBJC_EXCEPTIONS
@@ -377,7 +378,7 @@ void MediaSessionHelperiOS::externalOutputDeviceAvailableDidChange()
 
 #if !PLATFORM(WATCHOS)
     if (!pthread_main_np()) {
-        dispatch_async(dispatch_get_main_queue(), [routeDetector = WTFMove(_routeDetector)] () mutable {
+        RunLoop::main().dispatch([routeDetector = WTFMove(_routeDetector)] () mutable {
             LOG(Media, "safelyTearDown - dipatched to UI thread.");
             BEGIN_BLOCK_OBJC_EXCEPTIONS
             routeDetector.get().routeDetectionEnabled = NO;

@@ -182,7 +182,7 @@ static bool processHasActiveRunTimeLimitation()
     } else if (_assertionsNeedingBackgroundTask.computesEmpty()) {
         // Release the background task asynchronously because releasing the background task may destroy the ProcessThrottler and we don't
         // want it to get destroyed while in the middle of updating its assertion.
-        dispatch_async(dispatch_get_main_queue(), ^{
+        RunLoop::main().dispatch([self, strongSelf = retainPtr(self)] {
             if (_assertionsNeedingBackgroundTask.computesEmpty())
                 [self _releaseBackgroundTask];
         });
@@ -223,7 +223,7 @@ static bool processHasActiveRunTimeLimitation()
     // upon resuming, or the user reactivated the app shortly after expiration).
     if (remainingTime == RBSProcessTimeLimitationNone) {
         [self _releaseBackgroundTask];
-        dispatch_async(dispatch_get_main_queue(), ^{
+        RunLoop::main().dispatch([self, strongSelf = retainPtr(self)] {
             [self _updateBackgroundTask];
         });
         return;
@@ -271,11 +271,10 @@ typedef void(^RBSAssertionInvalidationCallbackType)();
 {
     RELEASE_LOG(ProcessSuspension, "%p - WKRBSAssertionDelegate: assertion was invalidated, error: %{public}@", error, self);
 
-    __weak WKRBSAssertionDelegate *weakSelf = self;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        WKRBSAssertionDelegate *strongSelf = weakSelf;
-        if (strongSelf && strongSelf.invalidationCallback)
-            strongSelf.invalidationCallback();
+    RunLoop::main().dispatch([weakSelf = WeakObjCPtr<WKRBSAssertionDelegate>(self)] {
+        auto strongSelf = weakSelf.get();
+        if (strongSelf && strongSelf.get().invalidationCallback)
+            strongSelf.get().invalidationCallback();
     });
 }
 @end
@@ -302,7 +301,6 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
     : m_assertionType(assertionType)
     , m_pid(pid)
 {
-    auto weakThis = makeWeakPtr(*this);
     NSString *runningBoardAssertionName = runningBoardNameForAssertionType(assertionType);
     ASSERT(runningBoardAssertionName);
     if (!pid) {
@@ -324,9 +322,9 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
     NSError *acquisitionError = nil;
     if (![m_rbsAssertion acquireWithError:&acquisitionError]) {
         RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}@ assertion '%{public}s' for process with PID %d, error: %{public}@", this, runningBoardAssertionName, reason.utf8().data(), pid, acquisitionError);
-        dispatch_async(dispatch_get_main_queue(), ^{
+        RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
             if (weakThis)
-                processAssertionWasInvalidated();
+                weakThis->processAssertionWasInvalidated();
         });
     } else
         RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion: Successfully took RBS %{public}@ assertion '%{public}s' for process with PID %d", this, runningBoardAssertionName, reason.utf8().data(), pid);

@@ -137,23 +137,12 @@ bool ContentFilterUnblockHandler::canHandleRequest(const ResourceRequest& reques
     return isUnblockRequest;
 }
 
-static inline void dispatchToMainThread(void (^block)())
-{
-    dispatch_async(dispatch_get_main_queue(), ^{
-#if PLATFORM(IOS_FAMILY)
-        WebThreadRun(block);
-#else
-        block();
-#endif
-    });
-}
-
 void ContentFilterUnblockHandler::requestUnblockAsync(DecisionHandlerFunction decisionHandler) const
 {
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
     if (m_webFilterEvaluator) {
         [m_webFilterEvaluator unblockWithCompletion:[decisionHandler](BOOL unblocked, NSError *) {
-            dispatchToMainThread([decisionHandler, unblocked] {
+            callOnMainThread([decisionHandler, unblocked] {
                 LOG(ContentFiltering, "WebFilterEvaluator %s the unblock request.\n", unblocked ? "allowed" : "did not allow");
                 decisionHandler(unblocked);
             });
@@ -164,7 +153,7 @@ void ContentFilterUnblockHandler::requestUnblockAsync(DecisionHandlerFunction de
 
     if (m_unblockRequester) {
         m_unblockRequester([decisionHandler](bool unblocked) {
-            dispatchToMainThread([decisionHandler, unblocked] {
+            callOnMainThread([decisionHandler, unblocked] {
                 decisionHandler(unblocked);
             });
         });

@@ -929,7 +929,7 @@ static const NSUInteger orderedListSegment = 2;
 
 - (void)menuDidClose:(NSMenu *)menu
 {
-    dispatch_async(dispatch_get_main_queue(), [impl = _impl] {
+    RunLoop::main().dispatch([impl = _impl] {
         if (impl)
             impl->handleDOMPasteRequestWithResult(WebCore::DOMPasteAccessResponse::DeniedForGesture);
     });
@@ -1809,8 +1809,7 @@ void WebViewImpl::updateWindowAndViewFrames()
 
     m_didScheduleWindowAndViewFrameUpdate = true;
 
-    auto weakThis = makeWeakPtr(*this);
-    dispatch_async(dispatch_get_main_queue(), [weakThis] {
+    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
         if (!weakThis)
             return;
 
@@ -1936,8 +1935,7 @@ void WebViewImpl::setTopContentInset(CGFloat contentInset)
 
     m_didScheduleSetTopContentInset = true;
 
-    auto weakThis = makeWeakPtr(*this);
-    dispatch_async(dispatch_get_main_queue(), [weakThis] {
+    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
         if (!weakThis)
             return;
         weakThis->dispatchSetTopContentInset();
@@ -2940,7 +2938,7 @@ void WebViewImpl::didBecomeEditable()
 {
     [m_windowVisibilityObserver startObservingFontPanel];
 
-    dispatch_async(dispatch_get_main_queue(), [] {
+    RunLoop::main().dispatch([] {
         [[NSSpellChecker sharedSpellChecker] _preflightChosenSpellServer];
     });
 }
@@ -3383,10 +3381,10 @@ void WebViewImpl::requestCandidatesForSelectionIfNeeded()
     NSTextCheckingTypes checkingTypes = NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
     auto weakThis = makeWeakPtr(*this);
     m_lastCandidateRequestSequenceNumber = [[NSSpellChecker sharedSpellChecker] requestCandidatesForSelectedRange:selectedRange inString:postLayoutData.paragraphContextForCandidateRequest types:checkingTypes options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() completionHandler:[weakThis](NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        RunLoop::main().dispatch([weakThis, sequenceNumber, candidates = retainPtr(candidates)] {
             if (!weakThis)
                 return;
-            weakThis->handleRequestedCandidates(sequenceNumber, candidates);
+            weakThis->handleRequestedCandidates(sequenceNumber, candidates.get());
         });
     }];
 }
@@ -4129,7 +4127,7 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
                 if (errorOrNil)
                     return;
 
-                dispatch_async(dispatch_get_main_queue(), [this, path = RetainPtr<NSString>(fileURL.path), fileNames, fileCount, dragData, pasteboardName] {
+                RunLoop::main().dispatch([this, path = RetainPtr<NSString>(fileURL.path), fileNames, fileCount, dragData, pasteboardName] {
                     fileNames->append(path.get());
                     if (fileNames->size() == fileCount) {
                         SandboxExtension::Handle sandboxExtensionHandle;

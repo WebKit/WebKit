@@ -135,7 +135,7 @@ void determineITPState()
     dispatch_async(g_itpQueue, [appWasLinkedOnOrAfter, bundleIdentifier = WebCore::applicationBundleIdentifier().isolatedCopy()] {
         g_currentITPState = determineITPStateInternal(appWasLinkedOnOrAfter, bundleIdentifier) ? ITPState::Enabled : ITPState::Disabled;
 
-        dispatch_async(dispatch_get_main_queue(), ^{
+        RunLoop::main().dispatch([] {
             dispatch_release(g_itpQueue);
             g_itpQueue = nullptr;
         });

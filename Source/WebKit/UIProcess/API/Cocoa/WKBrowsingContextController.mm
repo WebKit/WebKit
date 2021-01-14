@@ -105,9 +105,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if ([NSThread isMainThread])
         WebKit::WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme);
     else {
-        dispatch_async(dispatch_get_main_queue(), makeBlockPtr([scheme = retainPtr(scheme)] {
+        RunLoop::main().dispatch([scheme = retainPtr(scheme)] {
             WebKit::WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme.get());
-        }).get());
+        });
     }
 }
 
@@ -116,9 +116,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if ([NSThread isMainThread])
         WebKit::WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme);
     else {
-        dispatch_async(dispatch_get_main_queue(), makeBlockPtr([scheme = retainPtr(scheme)] {
+        RunLoop::main().dispatch([scheme = retainPtr(scheme)] {
             WebKit::WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme.get());
-        }).get());
+        });
     }
 }
 

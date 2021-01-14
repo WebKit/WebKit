@@ -1941,7 +1941,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         return;
     }
 
-    dispatch_async(dispatch_get_main_queue(), [retainedSelf = retainPtr(self)] {
+    RunLoop::main().dispatch([retainedSelf = retainPtr(self)] {
         WKWebView *webView = retainedSelf.get();
         if (![webView _isValid])
             return;
@@ -2079,7 +2079,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
 
             if (!CGPointEqualToPoint(activePoint, currentPoint)) {
                 RetainPtr<WKScrollView> strongScrollView = _scrollView;
-                dispatch_async(dispatch_get_main_queue(), [strongScrollView, activePoint] {
+                RunLoop::main().dispatch([strongScrollView, activePoint] {
                     [strongScrollView setContentOffset:activePoint animated:NO];
                 });
             }
@@ -2438,7 +2438,7 @@ static int32_t activeOrientation(WKWebView *webView)
 {
     RetainPtr<WKWebView> strongSelf = self;
     [self _doAfterNextPresentationUpdate:[strongSelf] {
-        dispatch_async(dispatch_get_main_queue(), [strongSelf] {
+        RunLoop::main().dispatch([strongSelf] {
             if ([strongSelf->_stableStatePresentationUpdateCallbacks count])
                 [strongSelf _firePresentationUpdateForPendingStableStatePresentationCallbacks];
         });
@@ -2719,7 +2719,9 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 - (void)_doAfterNextStablePresentationUpdate:(dispatch_block_t)updateBlock
 {
     if (![self usesStandardContentView]) {
-        dispatch_async(dispatch_get_main_queue(), updateBlock);
+        RunLoop::main().dispatch([updateBlock = makeBlockPtr(updateBlock)] {
+            updateBlock();
+        });
         return;
     }
 

@@ -31,6 +31,7 @@
 #import "Logging.h"
 #import "RunningBoardServicesSPI.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RunLoop.h>
 
 namespace WebKit {
 
@@ -104,7 +105,7 @@ void EndowmentStateTracker::registerMonitorIfNecessary()
         [config setStateDescriptor:stateDescriptor];
 
         [config setUpdateHandler:[this] (RBSProcessMonitor * _Nonnull monitor, RBSProcessHandle * _Nonnull process, RBSProcessStateUpdate * _Nonnull update) mutable {
-            dispatch_async(dispatch_get_main_queue(), [this, state = stateFromEndowments(update.state.endowmentNamespaces)]() mutable {
+            RunLoop::main().dispatch([this, state = stateFromEndowments(update.state.endowmentNamespaces)]() mutable {
                 setState(WTFMove(state));
             });
         }];

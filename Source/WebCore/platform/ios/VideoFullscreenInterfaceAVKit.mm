@@ -317,7 +317,7 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
     [view setTransform:transform];
 
     NSTimeInterval animationDuration = [CATransaction animationDuration];
-    dispatch_async(dispatch_get_main_queue(), ^{
+    RunLoop::main().dispatch([self, strongSelf = retainPtr(self), targetVideoFrame, animationDuration] {
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
 
         _videoSublayerFrame = targetVideoFrame;
@@ -1419,7 +1419,7 @@ void VideoFullscreenInterfaceAVKit::preparedToReturnToStandby()
 
 void VideoFullscreenInterfaceAVKit::finalizeSetup()
 {
-    dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), this] {
+    RunLoop::main().dispatch([protectedThis = makeRefPtr(this), this] {
         if (m_fullscreenChangeObserver) {
             if (!m_hasVideoContentLayer && m_targetMode.hasVideo()) {
                 m_finalizeSetupNeedsVideoContentLayer = true;
@@ -1539,7 +1539,7 @@ void VideoFullscreenInterfaceAVKit::doExitFullscreen()
 
     m_standby = false;
 
-    dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), this] {
+    RunLoop::main().dispatch([protectedThis = makeRefPtr(this), this] {
         if (m_fullscreenChangeObserver)
             m_fullscreenChangeObserver->didExitFullscreen();
         m_changingStandbyOnly = false;

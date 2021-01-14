@@ -451,7 +451,7 @@ static void tryInterceptNavigation(Ref<API::NavigationAction>&& navigationAction
             completionHandler(success);
         });
         [LSAppLink openWithURL:url completionHandler:[localCompletionHandler](BOOL success, NSError *) {
-            dispatch_async(dispatch_get_main_queue(), [localCompletionHandler, success] {
+            RunLoop::main().dispatch([localCompletionHandler, success] {
                 (*localCompletionHandler)(success);
                 delete localCompletionHandler;
             });

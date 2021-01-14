@@ -3180,7 +3180,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 {
     // In case anything we do by performing the press action causes an alert or other modal
     // behaviors, we need to return now, so that VoiceOver doesn't hang indefinitely.
-    dispatch_async(dispatch_get_main_queue(), ^ {
+    RunLoop::main().dispatch([self, protectedSelf = retainPtr(self)] {
         [self _accessibilityPerformPressAction];
     });
 }
@@ -3199,7 +3199,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 - (void)accessibilityPerformIncrementAction
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    RunLoop::main().dispatch([self, protectedSelf = retainPtr(self)] {
         [self _accessibilityPerformIncrementAction];
     });
 }
@@ -3218,7 +3218,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 - (void)accessibilityPerformDecrementAction
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    RunLoop::main().dispatch([self, protectedSelf = retainPtr(self)] {
         [self _accessibilityPerformDecrementAction];
     });
 }

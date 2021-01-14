@@ -135,7 +135,7 @@
         if (error)
             LOG_ERROR("PKCanMakePaymentsWithMerchantIdentifierAndDomain error %@", error);
 
-        dispatch_async(dispatch_get_main_queue(), ^{
+        RunLoop::main().dispatch([self, protectedSelf = retainPtr(self), merchantURL = retainPtr(merchantURL)] {
             ASSERT(_didRequestMerchantSessionCompletion);
 
             auto presenter = _presenter.get();
@@ -144,7 +144,7 @@
                 return;
             }
 
-            presenter->client().presenterWillValidateMerchant(*presenter, merchantURL);
+            presenter->client().presenterWillValidateMerchant(*presenter, merchantURL.get());
         });
     }];
 }
