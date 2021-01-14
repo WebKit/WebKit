@@ -50,6 +50,11 @@ void GPUProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
 #endif
     encoder << parentPID;
+
+#if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)
+    encoder << containerCachesDirectoryExtensionHandle;
+    encoder << containerTemporaryDirectoryExtensionHandle;
+#endif
 }
 
 bool GPUProcessCreationParameters::decode(IPC::Decoder& decoder, GPUProcessCreationParameters& result)
@@ -68,6 +73,21 @@ bool GPUProcessCreationParameters::decode(IPC::Decoder& decoder, GPUProcessCreat
 #endif
     if (!decoder.decode(result.parentPID))
         return false;
+
+#if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)
+    Optional<SandboxExtension::Handle> containerCachesDirectoryExtensionHandle;
+    decoder >> containerCachesDirectoryExtensionHandle;
+    if (!containerCachesDirectoryExtensionHandle)
+        return false;
+    result.containerCachesDirectoryExtensionHandle = WTFMove(*containerCachesDirectoryExtensionHandle);
+
+    Optional<SandboxExtension::Handle> containerTemporaryDirectoryExtensionHandle;
+    decoder >> containerTemporaryDirectoryExtensionHandle;
+    if (!containerTemporaryDirectoryExtensionHandle)
+        return false;
+    result.containerTemporaryDirectoryExtensionHandle = WTFMove(*containerTemporaryDirectoryExtensionHandle);
+#endif
+
     return true;
 }
 

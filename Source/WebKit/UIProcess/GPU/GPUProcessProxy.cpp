@@ -49,6 +49,11 @@
 #include <wtf/spi/darwin/XPCSPI.h>
 #endif
 
+#if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)
+#include "SandboxUtilities.h"
+#include <wtf/FileSystem.h>
+#endif
+
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, this->connection())
 
 namespace WebKit {
@@ -106,6 +111,18 @@ GPUProcessProxy* GPUProcessProxy::singletonIfCreated()
     return singleton().get();
 }
 
+#if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)
+static String gpuProcessCachesDirectory()
+{
+    String path = pathForProcessContainer() + "/Library/Caches/com.apple.WebKit.GPU/";
+    path = stringByResolvingSymlinksInPath(path);
+
+    FileSystem::makeAllDirectories(path);
+    
+    return path;
+}
+#endif
+
 GPUProcessProxy::GPUProcessProxy()
     : AuxiliaryProcessProxy()
     , m_throttler(*this, false)
@@ -131,6 +148,17 @@ GPUProcessProxy::GPUProcessProxy()
 #endif
 #endif
     parameters.parentPID = getCurrentProcessID();
+
+#if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)
+    auto containerCachesDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(gpuProcessCachesDirectory());
+    auto containerTemporaryDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(WebProcessPool::containerTemporaryDirectory());
+
+    if (!containerCachesDirectory.isEmpty())
+        SandboxExtension::createHandleWithoutResolvingPath(containerCachesDirectory, SandboxExtension::Type::ReadWrite, parameters.containerCachesDirectoryExtensionHandle);
+
+    if (!containerTemporaryDirectory.isEmpty())
+        SandboxExtension::createHandleWithoutResolvingPath(containerTemporaryDirectory, SandboxExtension::Type::ReadWrite, parameters.containerTemporaryDirectoryExtensionHandle);
+#endif
 
     // Initialize the GPU process.
     send(Messages::GPUProcess::InitializeGPUProcess(parameters), 0);
