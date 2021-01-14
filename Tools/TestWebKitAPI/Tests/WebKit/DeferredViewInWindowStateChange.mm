@@ -75,7 +75,14 @@ TEST(WebKit, DeferredViewInWindowStateChange)
 
     [wkView endDeferringViewInWindowChanges];
 
-    EXPECT_JS_TRUE(webView.page(), "document.hidden");
+    __block bool done = false;
+    WKPageRef page = webView.page();
+    dispatch_async(dispatch_get_main_queue(), ^{
+        EXPECT_JS_TRUE(page, "document.hidden");
+        done = true;
+    });
+
+    Util::run(&done);
 }
 
 } // namespace TestWebKitAPI

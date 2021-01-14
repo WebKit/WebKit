@@ -505,11 +505,16 @@ void WebPageProxy::scheduleActivityStateUpdate()
     // then schedule dispatch on runloop observer to collect changes in the same runloop cycle before dispatching.
     if (hasActiveCATransaction) {
         [CATransaction addCommitHandler:[weakThis = makeWeakPtr(*this)] {
-            auto protectedThis = makeRefPtr(weakThis.get());
-            if (!protectedThis)
-                return;
+            // We can't call dispatchActivityStateChange directly underneath this commit handler, because it has side-effects
+            // that may result in other frameworks trying to install commit handlers for the same phase, which is not allowed.
+            // So, dispatch_async here; we only care that the activity state change doesn't apply until after the active commit is complete.
+            dispatch_async(dispatch_get_main_queue(), [weakThis] {
+                auto protectedThis = makeRefPtr(weakThis.get());
+                if (!protectedThis)
+                    return;
 
-            protectedThis->dispatchActivityStateChange();
+                protectedThis->dispatchActivityStateChange();
+            });
         } forPhase:kCATransactionPhasePostCommit];
         return;
     }

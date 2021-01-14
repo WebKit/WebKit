@@ -27,6 +27,7 @@
 #define PlatformWebView_h
 
 #include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
 
 #if USE(CG)
 #include <CoreGraphics/CGGeometry.h>
@@ -69,6 +70,7 @@ namespace TestWebKitAPI {
 
 class PlatformWebView {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(PlatformWebView);
 public:
     explicit PlatformWebView(WKPageConfigurationRef);
     explicit PlatformWebView(WKContextRef, WKPageGroupRef = 0);
