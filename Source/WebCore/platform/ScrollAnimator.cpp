@@ -375,6 +375,7 @@ FloatPoint ScrollAnimator::adjustScrollOffsetForSnappingIfNeeded(const FloatPoin
     newOffset.setY(m_scrollController.adjustScrollDestination(ScrollEventAxis::Vertical, newOffset.y(), velocity.height(), originalYOffset));
     return newOffset;
 #else
+    UNUSED_PARAM(method);
     return offset;
 #endif
 }
