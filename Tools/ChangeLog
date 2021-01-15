@@ -1,3 +1,19 @@
+2021-01-15  Rob Buis  <rbuis@igalia.com>
+
+        Use event loop to set title
+        https://bugs.webkit.org/show_bug.cgi?id=218496
+
+        Reviewed by Ryosuke Niwa.
+
+        Adapt unit tests to wait for title change tasks
+        to be processed.
+
+        * TestWebKitAPI/Tests/WebKit/PageLoadState.cpp:
+        (TestWebKitAPI::didChangeTitle):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (TEST):
+
 2021-01-15  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Clean-up the TextCombiner
