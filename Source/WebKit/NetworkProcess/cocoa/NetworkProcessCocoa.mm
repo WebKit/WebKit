@@ -80,6 +80,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     SandboxExtension::consumePermanently(parameters.cookieStorageDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.containerCachesDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.parentBundleDirectoryExtensionHandle);
+    SandboxExtension::consumePermanently(parameters.tempDirectoryExtensionHandle);
 #endif
 
     _CFNetworkSetATSContext(parameters.networkATSContext.get());

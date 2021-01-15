@@ -156,6 +156,7 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
         SandboxExtension::createHandleForReadWriteDirectory(containerCachesDirectory, parameters.containerCachesDirectoryExtensionHandle);
     if (String parentBundleDirectory = WebProcessPool::parentBundleDirectory(); !parentBundleDirectory.isEmpty())
         SandboxExtension::createHandle(parentBundleDirectory, SandboxExtension::Type::ReadOnly, parameters.parentBundleDirectoryExtensionHandle);
+    SandboxExtension::createHandleForTemporaryFile(emptyString(), SandboxExtension::Type::ReadWrite, parameters.tempDirectoryExtensionHandle);
 #endif
     WebProcessPool::platformInitializeNetworkProcess(parameters);
     send(Messages::NetworkProcess::InitializeNetworkProcess(parameters), 0);
