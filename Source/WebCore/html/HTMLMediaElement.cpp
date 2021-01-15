@@ -908,6 +908,9 @@ void HTMLMediaElement::scheduleEvent(Ref<Event>&& event)
 
 void HTMLMediaElement::scheduleResolvePendingPlayPromises()
 {
+    if (m_pendingPlayPromises.isEmpty())
+        return;
+
     m_promiseTaskQueue.enqueueTask([this, pendingPlayPromises = WTFMove(m_pendingPlayPromises)] () mutable {
         resolvePendingPlayPromises(WTFMove(pendingPlayPromises));
     });
@@ -915,6 +918,9 @@ void HTMLMediaElement::scheduleResolvePendingPlayPromises()
 
 void HTMLMediaElement::scheduleRejectPendingPlayPromises(Ref<DOMException>&& error)
 {
+    if (m_pendingPlayPromises.isEmpty())
+        return;
+
     m_promiseTaskQueue.enqueueTask([this, error = WTFMove(error), pendingPlayPromises = WTFMove(m_pendingPlayPromises)] () mutable {
         rejectPendingPlayPromises(WTFMove(pendingPlayPromises), WTFMove(error));
     });
@@ -3609,6 +3615,7 @@ ExceptionOr<void> HTMLMediaElement::setVolume(double volume)
     scheduleEvent(eventNames().volumechangeEvent);
 
     if (isPlaying() && !m_mediaSession->playbackPermitted()) {
+        scheduleRejectPendingPlayPromises(DOMException::create(NotAllowedError));
         pauseInternal();
         setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
     }
@@ -3876,6 +3883,7 @@ double HTMLMediaElement::percentLoaded() const
 void HTMLMediaElement::mediaPlayerDidAddAudioTrack(AudioTrackPrivate& track)
 {
     if (isPlaying() && !m_mediaSession->playbackPermitted()) {
+        scheduleRejectPendingPlayPromises(DOMException::create(NotAllowedError));
         pauseInternal();
         setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
     }
@@ -5050,6 +5058,7 @@ void HTMLMediaElement::mediaPlayerCharacteristicChanged()
     updateRenderer();
 
     if (!paused() && !m_mediaSession->playbackPermitted()) {
+        scheduleRejectPendingPlayPromises(DOMException::create(NotAllowedError));
         pauseInternal();
         setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
     }
@@ -7802,6 +7811,7 @@ void HTMLMediaElement::updateShouldAutoplay()
 void HTMLMediaElement::updateShouldPlay()
 {
     if (!paused() && !m_mediaSession->playbackPermitted()) {
+        scheduleRejectPendingPlayPromises(DOMException::create(NotAllowedError));
         pauseInternal();
         setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
     } else if (canTransitionFromAutoplayToPlay())
