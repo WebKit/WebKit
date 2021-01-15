@@ -149,7 +149,7 @@ static Optional<InlineLayoutUnit> horizontalAlignmentOffset(const Line::RunList&
 
 LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingContext)
     : m_inlineFormattingContext(inlineFormattingContext)
-    , m_inlineLevelBoxesNeedVerticalAlignment(!inlineFormattingContext.layoutState().inNoQuirksMode())
+    , m_inlineLevelBoxesNeedVerticalAlignment(!inlineFormattingContext.layoutState().inStandardsMode())
 {
 }
 

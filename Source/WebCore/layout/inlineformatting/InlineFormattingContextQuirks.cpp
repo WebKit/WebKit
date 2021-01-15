@@ -37,7 +37,7 @@ InlineLayoutUnit InlineFormattingContext::Quirks::initialLineHeight() const
 {
     // Negative lineHeight value means the line-height is not set
     auto& root = formattingContext().root();
-    if (layoutState().inNoQuirksMode() || !root.style().lineHeight().isNegative())
+    if (layoutState().inStandardsMode() || !root.style().lineHeight().isNegative())
         return root.style().computedLineHeight();
     return root.style().fontMetrics().floatHeight();
 }
@@ -45,7 +45,7 @@ InlineLayoutUnit InlineFormattingContext::Quirks::initialLineHeight() const
 bool InlineFormattingContext::Quirks::inlineLevelBoxAffectsLineBox(const LineBox::InlineLevelBox& inlineLevelBox, const LineBox& lineBox) const
 {
     if (inlineLevelBox.isLineBreakBox()) {
-        if (layoutState().inNoQuirksMode())
+        if (layoutState().inStandardsMode())
             return true;
         // In quirks mode linebreak boxes (<br>) affect the line box when they are inside a non-root inline box (<span></span>) or when
         // the line has no other inline level box/root inlinebox has no content.
@@ -65,7 +65,7 @@ bool InlineFormattingContext::Quirks::inlineLevelBoxAffectsLineBox(const LineBox
                 return true;
             }
         }
-        auto inlineBoxHasImaginaryStrut = layoutState().inNoQuirksMode();
+        auto inlineBoxHasImaginaryStrut = layoutState().inStandardsMode();
         return inlineBoxHasImaginaryStrut && !lineBox.isConsideredEmpty();
     }
     if (inlineLevelBox.isAtomicInlineLevelBox()) {
