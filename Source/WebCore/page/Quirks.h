@@ -130,6 +130,7 @@ public:
     bool requiresUserGestureToPauseInPictureInPicture() const;
 
     WEBCORE_EXPORT bool blocksReturnToFullscreenFromPictureInPictureQuirk() const;
+    bool shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk() const;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     static bool isMicrosoftTeamsRedirectURL(const URL&);
@@ -173,6 +174,7 @@ private:
     mutable Optional<bool> m_needsBlackFullscreenBackgroundQuirk;
     mutable Optional<bool> m_requiresUserGestureToPauseInPictureInPicture;
     mutable Optional<bool> m_blocksReturnToFullscreenFromPictureInPictureQuirk;
+    mutable Optional<bool> m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk;
 };
 
 } // namespace WebCore
