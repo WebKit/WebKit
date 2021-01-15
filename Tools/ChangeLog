@@ -1,5 +1,18 @@
 2021-01-15  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitscmpy] Cache credentials from keychain
+        https://bugs.webkit.org/show_bug.cgi?id=220671
+        <rdar://problem/73262349>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.credentials): Cache credentials from keychain even when not specified by the user.
+
+2021-01-15  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitscmpy] Make UI parsing for parent commits more flexible
         https://bugs.webkit.org/show_bug.cgi?id=220661
         <rdar://problem/73256932>

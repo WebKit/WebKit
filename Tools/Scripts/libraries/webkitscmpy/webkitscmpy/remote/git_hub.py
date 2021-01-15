@@ -94,8 +94,10 @@ class GitHub(Scm):
                 access_token = getpass.getpass('API key: ')
                 password_prompted = True
 
-        if username_prompted or password_prompted:
+        if username and access_token:
             self._cached_credentials = (username, access_token)
+
+        if username_prompted or password_prompted:
             sys.stderr.write('Store username and access token in system keyring for {}? (Y/N): '.format(self.api_url))
             response = (input if sys.version_info > (3, 0) else raw_input)()
             if response.lower() in ['y', 'yes', 'ok']:
