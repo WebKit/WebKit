@@ -133,21 +133,10 @@ ALWAYS_INLINE static bool isIdentifierOrKeyword(const JSToken& token)
 {
     return token.m_type == IDENT || token.m_type & KeywordTokenFlag;
 }
-// _Any_ContextualKeyword includes keywords such as "let" or "yield", which have a specific meaning depending on the current parse mode
-// or strict mode. These helpers allow to treat all contextual keywords as identifiers as required.
-ALWAYS_INLINE static bool isAnyContextualKeyword(const JSToken& token)
+// "let", "yield", and "await" may be keywords or identifiers depending on context.
+ALWAYS_INLINE static bool isContextualKeyword(const JSToken& token)
 {
     return token.m_type >= FirstContextualKeywordToken && token.m_type <= LastContextualKeywordToken;
-}
-ALWAYS_INLINE static bool isIdentifierOrAnyContextualKeyword(const JSToken& token)
-{
-    return token.m_type == IDENT || isAnyContextualKeyword(token);
-}
-// _Safe_ContextualKeyword includes only contextual keywords which can be treated as identifiers independently from parse mode. The exeption
-// to this rule is `await`, but matchSpecIdentifier() always treats it as an identifier regardless.
-ALWAYS_INLINE static bool isSafeContextualKeyword(const JSToken& token)
-{
-    return token.m_type >= FirstSafeContextualKeywordToken && token.m_type <= LastSafeContextualKeywordToken;
 }
 
 JS_EXPORT_PRIVATE extern std::atomic<unsigned> globalParseCount;
@@ -1684,27 +1673,20 @@ private:
         return result;
     }
 
-    // http://ecma-international.org/ecma-262/6.0/#sec-identifiers-static-semantics-early-errors
-    ALWAYS_INLINE bool isLETMaskedAsIDENT()
-    {
-        return match(LET) && !strictMode();
-    }
-
-    // http://ecma-international.org/ecma-262/6.0/#sec-identifiers-static-semantics-early-errors
-    ALWAYS_INLINE bool isYIELDMaskedAsIDENT(bool inGenerator)
-    {
-        return match(YIELD) && !strictMode() && !inGenerator;
-    }
-
-    // http://ecma-international.org/ecma-262/6.0/#sec-generator-function-definitions-static-semantics-early-errors
-    ALWAYS_INLINE bool matchSpecIdentifier(bool inGenerator)
-    {
-        return match(IDENT) || isLETMaskedAsIDENT() || isYIELDMaskedAsIDENT(inGenerator) || isSafeContextualKeyword(m_token);
-    }
-
     ALWAYS_INLINE bool matchSpecIdentifier()
     {
-        return match(IDENT) || isLETMaskedAsIDENT() || isYIELDMaskedAsIDENT(currentScope()->isGenerator()) || isSafeContextualKeyword(m_token);
+        return match(IDENT) || isAllowedIdentifierLet(m_token) || isAllowedIdentifierYield(m_token) || isPossiblyEscapedAwait(m_token);
+    }
+
+    // Special case where some information is already known.
+    ALWAYS_INLINE bool matchSpecIdentifier(bool canUseYield, bool isAwait)
+    {
+        return isAwait || match(IDENT) || isAllowedIdentifierLet(m_token) || (canUseYield && isPossiblyEscapedYield(m_token));
+    }
+
+    ALWAYS_INLINE bool matchIdentifierOrPossiblyEscapedContextualKeyword()
+    {
+        return match(IDENT) || isPossiblyEscapedLet(m_token) || isPossiblyEscapedYield(m_token) || isPossiblyEscapedAwait(m_token);
     }
 
     template <class TreeBuilder> TreeSourceElements parseSourceElements(TreeBuilder&, SourceElementsMode);
@@ -1835,19 +1817,62 @@ private:
         return !m_errorMessage.isNull();
     }
 
-    bool isDisallowedIdentifierLet(const JSToken& token)
+    bool isAllowedIdentifierLet(const JSToken& token)
     {
-        return token.m_type == LET && strictMode();
+        return isPossiblyEscapedLet(token) && !strictMode();
+    }
+
+    ALWAYS_INLINE bool isPossiblyEscapedLet(const JSToken& token)
+    {
+        return token.m_type == LET || UNLIKELY(token.m_type == ESCAPED_KEYWORD && *token.m_data.ident == m_vm.propertyNames->letKeyword);
     }
 
     bool isDisallowedIdentifierAwait(const JSToken& token)
     {
-        return token.m_type == AWAIT && (!m_parserState.allowAwait || currentScope()->isAsyncFunction() || m_scriptMode == JSParserScriptMode::Module);
+        return isPossiblyEscapedAwait(token) && !canUseIdentifierAwait();
+    }
+
+    bool isAllowedIdentifierAwait(const JSToken& token)
+    {
+        return isPossiblyEscapedAwait(token) && canUseIdentifierAwait();
+    }
+
+    ALWAYS_INLINE bool isPossiblyEscapedAwait(const JSToken& token)
+    {
+        return token.m_type == AWAIT || UNLIKELY(token.m_type == ESCAPED_KEYWORD && *token.m_data.ident == m_vm.propertyNames->awaitKeyword);
+    }
+
+    ALWAYS_INLINE bool canUseIdentifierAwait()
+    {
+        return m_parserState.allowAwait && !currentScope()->isAsyncFunction() && m_scriptMode != JSParserScriptMode::Module;
     }
 
     bool isDisallowedIdentifierYield(const JSToken& token)
     {
-        return token.m_type == YIELD && (strictMode() || currentScope()->isGenerator());
+        return isPossiblyEscapedYield(token) && !canUseIdentifierYield();
+    }
+
+    bool isAllowedIdentifierYield(const JSToken& token)
+    {
+        return isPossiblyEscapedYield(token) && canUseIdentifierYield();
+    }
+
+    ALWAYS_INLINE bool isPossiblyEscapedYield(const JSToken& token)
+    {
+        return token.m_type == YIELD || UNLIKELY(token.m_type == ESCAPED_KEYWORD && *token.m_data.ident == m_vm.propertyNames->yieldKeyword);
+    }
+
+    ALWAYS_INLINE bool canUseIdentifierYield()
+    {
+        return !strictMode() && !currentScope()->isGenerator();
+    }
+
+    bool matchAllowedEscapedContextualKeyword()
+    {
+        ASSERT(m_token.m_type == ESCAPED_KEYWORD);
+        return (*m_token.m_data.ident == m_vm.propertyNames->letKeyword && !strictMode())
+            || (*m_token.m_data.ident == m_vm.propertyNames->awaitKeyword && canUseIdentifierAwait())
+            || (*m_token.m_data.ident == m_vm.propertyNames->yieldKeyword && canUseIdentifierYield());
     }
     
     ALWAYS_INLINE SuperBinding adjustSuperBindingForBaseConstructor(ConstructorKind constructorKind, SuperBinding superBinding, ScopeRef functionScope)
@@ -1875,7 +1900,7 @@ private:
 
     const char* disallowedIdentifierAwaitReason()
     {
-        if (!m_parserState.allowAwait || currentScope()->isAsyncFunctionBoundary())
+        if (!m_parserState.allowAwait || currentScope()->isAsyncFunction())
             return "in an async function";
         if (m_scriptMode == JSParserScriptMode::Module)
             return "in a module";

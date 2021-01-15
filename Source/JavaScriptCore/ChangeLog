@@ -1,3 +1,47 @@
+2021-01-14  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Correctly handle escaped keyword identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=220634
+
+        Reviewed by Yusuke Suzuki.
+
+        When `let`, `await`, and `yield` are accepted as identifiers, they should be accepted even in escaped form.
+        This patch ensures this behavior for variable, parameter, and label names.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::isArrowFunctionParameters):
+        (JSC::Parser<LexerType>::parseStatementListItem):
+        (JSC::Parser<LexerType>::parseVariableDeclarationList):
+        (JSC::Parser<LexerType>::parseFormalParameters):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        Make use of new parser functions.
+
+        * parser/Parser.h:
+        (JSC::isContextualKeyword): Renamed from isAnyContextualKeyword.
+        (JSC::Parser::matchSpecIdentifier): Allow escaped contextual keywords.
+        (JSC::Parser::matchIdentifierOrPossiblyEscapedContextualKeyword): Added.
+        (JSC::Parser::isAllowedIdentifierLet): Renamed from isLETMaskedAsIDENT.
+        (JSC::Parser::isPossiblyEscapedLet): Added.
+        (JSC::Parser::isDisallowedIdentifierAwait): Added.
+        (JSC::Parser::isAllowedIdentifierAwait): Added.
+        (JSC::Parser::isPossiblyEscapedAwait): Added.
+        (JSC::Parser::canUseIdentifierAwait): Added.
+        (JSC::Parser::isDisallowedIdentifierYield): Added.
+        (JSC::Parser::isAllowedIdentifierYield): Renamed from isYIELDMaskedAsIDENT.
+        (JSC::Parser::isPossiblyEscapedYield): Added.
+        (JSC::Parser::canUseIdentifierYield): Added.
+        (JSC::Parser::matchAllowedEscapedContextualKeyword): Added.
+        (JSC::Parser::disallowedIdentifierAwaitReason): Fix mistake (left over from previous patch).
+        (JSC::isIdentifierOrAnyContextualKeyword): Deleted.
+        (JSC::isSafeContextualKeyword): Deleted.
+        (JSC::Parser::isDisallowedIdentifierLet): Deleted.
+
+        * parser/ParserTokens.h:
+        Remove obsolete notion of "safe contextual keyword".
+
 2021-01-14  Xan Lopez  <xan@igalia.com>
 
         [JSC] Implement a B3::ValueRep replacement for wasm-llint

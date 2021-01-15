@@ -74,13 +74,13 @@
     if (token.m_type == RESERVED || token.m_type == RESERVED_IF_STRICT) \
         semanticFail("Cannot use the reserved word '", getToken(token), "' as a ", __VA_ARGS__); \
     if (token.m_type & KeywordTokenFlag) { \
-        if (!isAnyContextualKeyword(token)) \
+        if (!isContextualKeyword(token)) \
             semanticFail("Cannot use the keyword '", getToken(token), "' as a ", __VA_ARGS__); \
-        if (isDisallowedIdentifierLet(token)) \
+        if (token.m_type == LET && strictMode())\
             semanticFail("Cannot use 'let' as a ", __VA_ARGS__, " ", disallowedIdentifierLetReason()); \
-        if (isDisallowedIdentifierAwait(token)) \
+        if (token.m_type == AWAIT && !canUseIdentifierAwait()) \
             semanticFail("Cannot use 'await' as a ", __VA_ARGS__, " ", disallowedIdentifierAwaitReason()); \
-        if (isDisallowedIdentifierYield(token)) \
+        if (token.m_type == YIELD && !canUseIdentifierYield()) \
             semanticFail("Cannot use 'yield' as a ", __VA_ARGS__, " ", disallowedIdentifierYieldReason()); \
     } \
 } while (0)
@@ -337,7 +337,7 @@ template <class TreeBuilder> bool Parser<LexerType>::isArrowFunctionParameters(T
     }
 
     if (matchSpecIdentifier()) {
-        semanticFailIfTrue(!m_parserState.allowAwait && match(AWAIT), "Cannot use 'await' as a parameter name in an async function");
+        semanticFailIfTrue(isDisallowedIdentifierAwait(m_token), "Cannot use 'await' as a parameter name in an async function");
         SavePoint saveArrowFunctionPoint = createSavePoint(context);
         next();
         bool isArrowFunction = match(ARROWFUNCTION);
@@ -673,12 +673,12 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatementList
         if (!strictMode()) {
             SavePoint savePoint = createSavePoint(context);
             next();
-            // Intentionally use `isIdentifierOrAnyContextualKeyword(m_token)` and don't use `matchSpecIdentifier()`.
-            // We would like to fall into parseVariableDeclaration path even if "yield" is not treated as an Identifier.
+            // Intentionally use `matchIdentifierOrPossiblyEscapedContextualKeyword()` and not `matchSpecIdentifier()`.
+            // We would like contextual keywords to fall under parseVariableDeclaration even when not used as identifiers.
             // For example, under a generator context, matchSpecIdentifier() for "yield" returns `false`.
             // But we would like to enter parseVariableDeclaration and raise an error under the context of parseVariableDeclaration
             // to raise consistent errors between "var", "const" and "let".
-            if (!isIdentifierOrAnyContextualKeyword(m_token) && !match(OPENBRACE) && !match(OPENBRACKET))
+            if (!matchIdentifierOrPossiblyEscapedContextualKeyword() && !match(OPENBRACE) && !match(OPENBRACKET))
                 shouldParseVariableDeclaration = false;
             restoreSavePoint(context, savePoint);
         }
@@ -697,6 +697,12 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatementList
     case FUNCTION:
         result = parseFunctionDeclaration(context);
         break;
+    case ESCAPED_KEYWORD:
+        if (!matchAllowedEscapedContextualKeyword()) {
+            failDueToUnexpectedToken();
+            break;
+        }
+        FALLTHROUGH;
     case IDENT:
         if (UNLIKELY(*m_token.m_data.ident == m_vm.propertyNames->async && !m_token.m_data.escaped)) {
             // Eagerly parse as AsyncFunctionDeclaration. This is the uncommon case,
@@ -831,7 +837,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDecl
 
         failIfTrue(match(PRIVATENAME), "Cannot use a private name to declare a variable");
         if (matchSpecIdentifier()) {
-            failIfTrue(match(LET) && (declarationType == DeclarationType::LetDeclaration || declarationType == DeclarationType::ConstDeclaration), 
+            failIfTrue(isPossiblyEscapedLet(m_token) && (declarationType == DeclarationType::LetDeclaration || declarationType == DeclarationType::ConstDeclaration), 
                 "Cannot use 'let' as an identifier name for a LexicalDeclaration");
             semanticFailIfTrue(isDisallowedIdentifierAwait(m_token), "Cannot use 'await' as a ", declarationTypeToVariableKind(declarationType), " ", disallowedIdentifierAwaitReason());
             JSTextPosition varStart = tokenStartPosition();
@@ -2093,7 +2099,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFormalParameters(TreeB
         
         if (match(DOTDOTDOT)) {
             next();
-            semanticFailIfTrue(!m_parserState.allowAwait && match(AWAIT), "Cannot use 'await' as a parameter name in an async function");
+            semanticFailIfTrue(isDisallowedIdentifierAwait(m_token), "Cannot use 'await' as a parameter name in an async function");
             TreeDestructuringPattern destructuringPattern = parseDestructuringPattern(context, DestructuringKind::DestructureToParameters, ExportType::NotExported, &duplicateParameter, &hasDestructuringPattern);
             propagateError();
             parameter = context.createRestParameter(destructuringPattern, restParameterStart);
@@ -2339,8 +2345,8 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
 
     ScopeRef parentScope = currentScope();
 
-    bool isDisallowedAwaitFunctionName = isDisallowedIdentifierAwait(m_token);
-    const char* isDisallowedAwaitFunctionNameReason = isDisallowedAwaitFunctionName ? disallowedIdentifierAwaitReason() : nullptr;
+    bool functionNameIsAwait = isPossiblyEscapedAwait(m_token);
+    const char* isDisallowedAwaitFunctionNameReason = functionNameIsAwait && !canUseIdentifierAwait() ? disallowedIdentifierAwaitReason() : nullptr;
 
     AutoPopScopeRef functionScope(this, pushScope());
     functionScope->setSourceParseMode(mode);
@@ -2482,16 +2488,16 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
         //     function * BindingIdentifier[Yield]opt ( FormalParameters[Yield] ) { GeneratorBody }
         //
         // The name of FunctionExpression and AsyncFunctionExpression can accept "yield" even in the context of generator.
-        bool upperScopeIsGenerator = false;
+        bool canUseYield = !strictMode();
         if (!(functionDefinitionType == FunctionDefinitionType::Expression && SourceParseModeSet(SourceParseMode::NormalFunctionMode, SourceParseMode::AsyncFunctionMode).contains(mode)))
-            upperScopeIsGenerator = upperScope(1)->isGenerator();
+            canUseYield &= !parentScope->isGenerator();
 
         if (requirements != FunctionNameRequirements::Unnamed) {
             ASSERT_WITH_MESSAGE(!(requirements == FunctionNameRequirements::None && !functionInfo.name), "When specifying FunctionNameRequirements::None, we need to initialize functionInfo.name with the default value in the caller side.");
-            if (matchSpecIdentifier(upperScopeIsGenerator)) {
+            if (matchSpecIdentifier(canUseYield, functionNameIsAwait)) {
                 functionInfo.name = m_token.m_data.ident;
                 m_parserState.lastFunctionName = functionInfo.name;
-                if (UNLIKELY(isDisallowedAwaitFunctionName))
+                if (UNLIKELY(isDisallowedAwaitFunctionNameReason))
                     semanticFailIfTrue(functionDefinitionType == FunctionDefinitionType::Declaration || isAsyncFunctionOrAsyncGeneratorWrapperParseMode(mode), "Cannot declare function named 'await' ", isDisallowedAwaitFunctionNameReason);
                 else if (isAsyncFunctionOrAsyncGeneratorWrapperParseMode(mode) && match(AWAIT) && functionDefinitionType == FunctionDefinitionType::Expression)
                     semanticFail("Cannot declare ", stringForFunctionMode(mode), " named 'await'");
@@ -2860,7 +2866,7 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
 
     ASSERT_WITH_MESSAGE(requirements != FunctionNameRequirements::Unnamed, "Currently, there is no caller that uses FunctionNameRequirements::Unnamed for class syntax.");
     ASSERT_WITH_MESSAGE(!(requirements == FunctionNameRequirements::None && !info.className), "When specifying FunctionNameRequirements::None, we need to initialize info.className with the default value in the caller side.");
-    if (match(IDENT) || (match(AWAIT) && !isDisallowedIdentifierAwait(m_token))) {
+    if (match(IDENT) || isAllowedIdentifierAwait(m_token)) {
         info.className = m_token.m_data.ident;
         next();
         failIfTrue(classScope->declareLexicalVariable(info.className, true) & DeclarationResult::InvalidStrictMode, "'", info.className->impl(), "' is not a valid class name");
@@ -3898,7 +3904,7 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
     
     failIfStackOverflow();
 
-    if (match(YIELD) && !isYIELDMaskedAsIDENT(currentScope()->isGenerator()))
+    if (match(YIELD) && !canUseIdentifierYield())
         return parseYieldExpression(context);
 
     JSTextPosition start = tokenStartPosition();
@@ -3909,7 +3915,7 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
     bool wasOpenParen = match(OPENPAREN);
     // Do not use matchSpecIdentifier() here since it is slower than isIdentifierOrKeyword.
     // Whether spec identifier is will be validated by isArrowFunctionParameters().
-    bool wasIdentifierOrKeyword = isIdentifierOrKeyword(m_token);
+    bool wasIdentifierOrKeyword = matchIdentifierOrKeyword() || (m_token.m_type == ESCAPED_KEYWORD);
     bool maybeValidArrowFunctionStart = wasOpenParen || wasIdentifierOrKeyword;
     SavePoint savePoint = createSavePoint(context);
     size_t usedVariablesSize = 0;
@@ -3970,7 +3976,7 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
 
         return lhs;
     }
-    
+
     int assignmentStack = 0;
     Operator op;
     bool hadAssignment = false;
@@ -4813,11 +4819,15 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
     case BACKQUOTE:
         return parseTemplateLiteral(context, LexerType::RawStringsBuildMode::DontBuildRawStrings);
     case YIELD:
-        if (!strictMode() && !currentScope()->isGenerator())
+        if (canUseIdentifierYield())
             goto identifierExpression;
         failDueToUnexpectedToken();
     case LET:
         if (!strictMode())
+            goto identifierExpression;
+        failDueToUnexpectedToken();
+    case ESCAPED_KEYWORD:
+        if (matchAllowedEscapedContextualKeyword())
             goto identifierExpression;
         FALLTHROUGH;
     default:

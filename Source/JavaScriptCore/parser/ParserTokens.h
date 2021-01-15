@@ -98,8 +98,6 @@ enum JSTokenType {
 
     FirstContextualKeywordToken = LET,
     LastContextualKeywordToken = AWAIT,
-    FirstSafeContextualKeywordToken = AWAIT,
-    LastSafeContextualKeywordToken = LastContextualKeywordToken,
 
     OPENBRACE = 0,
     CLOSEBRACE,

@@ -1478,9 +1478,6 @@ test/language/expressions/call/tco-non-eval-global.js:
   default: 'RangeError: Maximum call stack size exceeded.'
 test/language/expressions/call/tco-non-eval-with.js:
   default: 'RangeError: Maximum call stack size exceeded.'
-test/language/expressions/class/class-name-ident-await-escaped.js:
-  default: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
-  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
 test/language/expressions/class/elements/arrow-body-direct-eval-err-contains-arguments.js:
   default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
   strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
@@ -1703,18 +1700,6 @@ test/language/global-code/script-decl-var-err.js:
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/language/identifier-resolution/assign-to-global-undefined.js:
   strict mode: Expected uncaught exception with name 'ReferenceError' but none was thrown
-test/language/identifiers/part-unicode-13.0.0-escaped.js:
-  default: "SyntaxError: Invalid unicode escape in identifier: '_\\u0B55'"
-  strict mode: "SyntaxError: Invalid unicode escape in identifier: '_\\u0B55'"
-test/language/identifiers/part-unicode-13.0.0.js:
-  default: "SyntaxError: Invalid character '\\u0b55'"
-  strict mode: "SyntaxError: Invalid character '\\u0b55'"
-test/language/identifiers/start-unicode-13.0.0-escaped.js:
-  default: "SyntaxError: Invalid unicode escape in identifier: '\\u08BE'"
-  strict mode: "SyntaxError: Invalid unicode escape in identifier: '\\u08BE'"
-test/language/identifiers/start-unicode-13.0.0.js:
-  default: "SyntaxError: Invalid character '\\u08be'"
-  strict mode: "SyntaxError: Invalid character '\\u08be'"
 test/language/literals/regexp/u-astral-char-class-invert.js:
   default: 'Test262Error: Expected SameValue(«�», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
@@ -1730,9 +1715,6 @@ test/language/statements/async-generator/generator-created-after-decl-inst.js:
 test/language/statements/async-generator/return-undefined-implicit-and-explicit.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [tick 1, g1 ret, tick 2, g2 ret, g3 ret, g4 ret] and [tick 1, g1 ret, g2 ret, tick 2, g3 ret, g4 ret] to have the same contents. Ticks for implicit and explicit return undefined'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [tick 1, g1 ret, tick 2, g2 ret, g3 ret, g4 ret] and [tick 1, g1 ret, g2 ret, tick 2, g3 ret, g4 ret] to have the same contents. Ticks for implicit and explicit return undefined'
-test/language/statements/class/class-name-ident-await-escaped.js:
-  default: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
-  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
 test/language/statements/class/elements/arrow-body-direct-eval-err-contains-arguments.js:
   default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
   strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
@@ -1888,11 +1870,6 @@ test/language/statements/labeled/decl-async-generator.js:
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/labeled/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/statements/labeled/value-await-non-module-escaped.js:
-  default: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
-  strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'aw\\u0061it'"
-test/language/statements/labeled/value-yield-non-strict-escaped.js:
-  default: "SyntaxError: Unexpected escaped characters in keyword token: 'yi\\u0065ld'"
 test/language/statements/let/block-local-closure-set-before-initialization.js:
   default: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/language/statements/let/dstr/ary-init-iter-get-err-array-prototype.js:
@@ -1901,8 +1878,6 @@ test/language/statements/let/dstr/ary-init-iter-get-err-array-prototype.js:
 test/language/statements/let/dstr/ary-ptrn-elem-id-iter-val-array-prototype.js:
   default: 'Test262Error: Expected SameValue(«3», «42») to be true'
   strict mode: 'Test262Error: Expected SameValue(«3», «42») to be true'
-test/language/statements/let/syntax/escaped-let.js:
-  default: "SyntaxError: Unexpected escaped characters in keyword token: 'l\\u0065t'"
 test/language/statements/switch/scope-lex-async-function.js:
   default: Expected uncaught exception with name 'ReferenceError' but none was thrown
 test/language/statements/switch/scope-lex-async-generator.js:
