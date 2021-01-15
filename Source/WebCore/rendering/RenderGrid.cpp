@@ -1141,7 +1141,7 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
         if (desiredLogicalHeight != child.logicalHeight()) {
             // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
             child.setLogicalHeight(0_lu);
-            child.setNeedsLayout();
+            child.setNeedsLayout(MarkOnlyThis);
         }
     }
 }
