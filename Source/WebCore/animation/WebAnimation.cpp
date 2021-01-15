@@ -1253,12 +1253,6 @@ void WebAnimation::acceleratedStateDidChange()
         downcast<DocumentTimeline>(*m_timeline).animationAcceleratedRunningStateDidChange(*this);
 }
 
-void WebAnimation::applyPendingAcceleratedActions()
-{
-    if (is<KeyframeEffect>(m_effect))
-        downcast<KeyframeEffect>(*m_effect).applyPendingAcceleratedActions();
-}
-
 WebAnimation& WebAnimation::readyPromiseResolve()
 {
     return *this;

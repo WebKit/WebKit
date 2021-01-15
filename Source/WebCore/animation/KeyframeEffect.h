@@ -133,7 +133,7 @@ public:
     void animationTimelineDidChange(AnimationTimeline*) final;
     void animationTimingDidChange();
     void transformRelatedPropertyDidChange();
-    void applyPendingAcceleratedActions();
+    OptionSet<AcceleratedActionApplicationResult> applyPendingAcceleratedActions();
 
     void willChangeRenderer();
 
@@ -172,6 +172,8 @@ public:
     bool requiresPseudoElement() const;
     bool hasImplicitKeyframes() const;
 
+    void stopAcceleratingTransformRelatedProperties(UseAcceleratedAction);
+
 private:
     KeyframeEffect(Element*, PseudoId);
 
@@ -203,6 +205,7 @@ private:
     void setBlendingKeyframes(KeyframeList&);
     Seconds timeToNextTick() const final;
     Optional<double> progressUntilNextStep(double) const final;
+    bool isTargetingTransformRelatedProperty() const;
     void checkForMatchingTransformFunctionLists();
     void checkForMatchingFilterFunctionLists();
     void checkForMatchingColorFilterFunctionLists();

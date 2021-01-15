@@ -1,3 +1,24 @@
+2021-01-15  Antoine Quint  <graouts@webkit.org>
+
+        Reversed transform animation not applied alongside other transform animations
+        https://bugs.webkit.org/show_bug.cgi?id=218655
+        <rdar://problem/71116284>
+
+        Reviewed by Simon Fraser.
+
+        Add new tests that start a transform-related animation that runs accelerated, then add another
+        transform-related animation that either initially or eventually is not accelerated. In all cases,
+        we check that once the second animation is no longer accelerated that the first animation is also
+        no longer accelerated.
+
+        * platform/win/TestExpectations:
+        * webanimations/combining-transform-animations-with-different-acceleration-capabilities-2-expected.txt: Added.
+        * webanimations/combining-transform-animations-with-different-acceleration-capabilities-2.html: Added.
+        * webanimations/combining-transform-animations-with-different-acceleration-capabilities-3-expected.txt: Added.
+        * webanimations/combining-transform-animations-with-different-acceleration-capabilities-3.html: Added.
+        * webanimations/combining-transform-animations-with-different-acceleration-capabilities-expected.txt: Added.
+        * webanimations/combining-transform-animations-with-different-acceleration-capabilities.html: Added.
+
 2021-01-15  Tomoki Imai  <Tomoki.Imai@sony.com>
 
         When non-integer tabindex is set, the behavior of element should be same as the tabindex is omitted.

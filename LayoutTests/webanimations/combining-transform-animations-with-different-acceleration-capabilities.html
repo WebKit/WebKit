@@ -1,0 +1,31 @@
+<div id="target" style="width: 100px; height: 100px; background-color: black;"></div>
+<script src="../resources/js-test.js"></script>
+<script>
+
+const element = document.getElementById("target");
+const timing = { duration: 1000, iterations: Infinity };
+
+const shouldBecomeEqualAsync = async (actual, expected) => new Promise(resolve => shouldBecomeEqual(actual, expected, resolve));
+
+(async () => {
+    if (!window.testRunner || !window.internals) {
+        debug("This test should be run in a test runner.");
+        return;
+    }
+
+    testRunner.waitUntilDone();
+
+    // First, start a transform-related animation that can be accelerated.
+    element.animate({ scale: [1, 2] }, timing);
+    await shouldBecomeEqualAsync("internals.acceleratedAnimationsForElement(element).length", "1");
+
+    // Now, start another transform-related animation that cannot be accelerated due to running at
+    // a speed other than 1. This should not only prevent this animation from running accelerated,
+    // but also make the previous animation revert to a non-accelerated state.
+    element.animate({ rotate: ["30deg", "60deg"] }, timing).updatePlaybackRate(0.5);
+    await shouldBecomeEqualAsync("internals.acceleratedAnimationsForElement(element).length", "0");
+
+    testRunner.notifyDone();
+})();
+    
+</script>

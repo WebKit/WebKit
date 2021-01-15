@@ -124,7 +124,6 @@ public:
     virtual void resolve(RenderStyle&, Optional<Seconds> = WTF::nullopt);
     void effectTargetDidChange(const Optional<const Styleable>& previousTarget, const Optional<const Styleable>& newTarget);
     void acceleratedStateDidChange();
-    void applyPendingAcceleratedActions();
     void willChangeRenderer();
 
     bool isRunningAccelerated() const;
