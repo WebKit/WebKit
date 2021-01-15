@@ -51,7 +51,7 @@ class GitHub(Scm):
         self.api_url = 'https://api.github.{}'.format(match.group('domain'))
         self.owner = match.group('owner')
         self.name = match.group('repository')
-        self._hash_link_re = re.compile(r'/{owner}/{name}/commits?/(?P<hash>[0-9a-f]+)'.format(
+        self._hash_link_re = re.compile(r'/{owner}/{name}/[^/]*commit[^/]*/(?P<hash>[0-9a-f]+)'.format(
             owner=self.owner,
             name=self.name,
         ))
