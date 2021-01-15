@@ -20,7 +20,7 @@
 
     var keyCount = 0;
     function handleKeyDown(event) {
-        debug("Keycode received: identifier: " + event.keyIdentifier + " key name: " + event.key);
+        debug("Keycode received: identifier: " + event.keyIdentifier + " key name: " + event.key + " key code: " + event.keyCode);
         event.preventDefault();
         event.stopPropagation();
 
