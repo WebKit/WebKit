@@ -452,10 +452,10 @@ void HTMLElement::parseAttribute(const QualifiedName& name, const AtomString& va
     }
 
     if (name == tabindexAttr) {
-        if (value.isEmpty())
-            setTabIndexExplicitly(WTF::nullopt);
-        else if (auto optionalTabIndex = parseHTMLInteger(value))
+        if (auto optionalTabIndex = parseHTMLInteger(value))
             setTabIndexExplicitly(optionalTabIndex.value());
+        else
+            setTabIndexExplicitly(WTF::nullopt);
         return;
     }
     
