@@ -88,7 +88,7 @@ public:
 #endif
 
 private:
-    void lowMemoryHandler(Critical);
+    void lowMemoryHandler(Critical, Synchronous);
 
     // AuxiliaryProcess
     void initializeProcess(const AuxiliaryProcessInitializationParameters&) override;

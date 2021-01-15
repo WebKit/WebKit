@@ -161,6 +161,15 @@ void releaseMemory(Critical critical, Synchronous synchronous, MaintainBackForwa
 #endif
 }
 
+void releaseGraphicsMemory(Critical critical, Synchronous synchronous)
+{
+    TraceScope scope(MemoryPressureHandlerStart, MemoryPressureHandlerEnd, static_cast<uint64_t>(critical), static_cast<uint64_t>(synchronous));
+
+    platformReleaseGraphicsMemory(critical);
+
+    WTF::releaseFastMallocFreeMemory();
+}
+
 #if !RELEASE_LOG_DISABLED
 static unsigned pageCount()
 {
@@ -213,6 +222,7 @@ void logMemoryStatisticsAtTimeOfDeath()
 
 #if !PLATFORM(COCOA)
 void platformReleaseMemory(Critical) { }
+void platformReleaseGraphicsMemory(Critical) { }
 void jettisonExpensiveObjectsOnTopLevelNavigation() { }
 void registerMemoryReleaseNotifyCallbacks() { }
 #endif

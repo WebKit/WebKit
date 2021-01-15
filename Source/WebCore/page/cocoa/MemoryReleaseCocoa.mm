@@ -72,6 +72,15 @@ void platformReleaseMemory(Critical)
 #endif
 }
 
+void platformReleaseGraphicsMemory(Critical)
+{
+    IOSurfacePool::sharedPool().discardAllSurfaces();
+
+#if CACHE_SUBIMAGES
+    SubimageCacheWithTimer::clear();
+#endif
+}
+
 void jettisonExpensiveObjectsOnTopLevelNavigation()
 {
 #if PLATFORM(IOS_FAMILY)

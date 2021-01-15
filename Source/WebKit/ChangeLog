@@ -1,3 +1,19 @@
+2021-01-15  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] Improve the GPUProcess' memory pressure handler
+        https://bugs.webkit.org/show_bug.cgi?id=220659
+
+        Reviewed by Simon Fraser.
+
+        Improve the GPUProcess' memory pressure handler to clear things like the IOSurfacePool
+        and the SubimageCacheWithTimer.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::lowMemoryHandler):
+        (WebKit::GPUProcess::initializeGPUProcess):
+        (WebKit::GPUProcess::prepareToSuspend):
+        * GPUProcess/GPUProcess.h:
+
 2021-01-15  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] UI<->WebPocess IPC needed for enumerateDevices support

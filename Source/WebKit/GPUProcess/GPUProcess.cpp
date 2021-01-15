@@ -41,6 +41,7 @@
 #include "WebProcessPoolMessages.h"
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/LogInitialization.h>
+#include <WebCore/MemoryRelease.h>
 #include <WebCore/NowPlayingManager.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <wtf/Algorithms.h>
@@ -114,9 +115,9 @@ bool GPUProcess::shouldTerminate()
     return m_webProcessConnections.isEmpty();
 }
 
-void GPUProcess::lowMemoryHandler(Critical critical)
+void GPUProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)
 {
-    WTF::releaseFastMallocFreeMemory();
+    WebCore::releaseGraphicsMemory(critical, synchronous);
 }
 
 void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
@@ -125,8 +126,8 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
     AtomString::init();
 
     auto& memoryPressureHandler = MemoryPressureHandler::singleton();
-    memoryPressureHandler.setLowMemoryHandler([this] (Critical critical, Synchronous) {
-        lowMemoryHandler(critical);
+    memoryPressureHandler.setLowMemoryHandler([this] (Critical critical, Synchronous synchronous) {
+        lowMemoryHandler(critical, synchronous);
     });
     memoryPressureHandler.install();
 
@@ -165,7 +166,7 @@ void GPUProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<v
 {
     RELEASE_LOG(ProcessSuspension, "%p - GPUProcess::prepareToSuspend(), isSuspensionImminent: %d", this, isSuspensionImminent);
 
-    lowMemoryHandler(Critical::Yes);
+    lowMemoryHandler(Critical::Yes, Synchronous::Yes);
     completionHandler();
 }
 
