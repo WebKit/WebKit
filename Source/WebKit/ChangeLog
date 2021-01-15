@@ -1,3 +1,17 @@
+2021-01-15  Alex Christensen  <achristensen@webkit.org>
+
+        Remove non-inclusively named WKBrowsingContextGroup SPI
+        https://bugs.webkit.org/show_bug.cgi?id=220604
+
+        Reviewed by Anders Carlsson.
+
+        Once rdar://problem/73167624 has been integrated, we can remove the old SPI, which has been replaced in r263099
+
+        * UIProcess/API/Cocoa/WKBrowsingContextGroup.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextGroup.mm:
+        (-[WKBrowsingContextGroup addUserStyleSheet:baseURL:whitelistedURLPatterns:blacklistedURLPatterns:mainFrameOnly:]): Deleted.
+        (-[WKBrowsingContextGroup addUserScript:baseURL:whitelistedURLPatterns:blacklistedURLPatterns:injectionTime:mainFrameOnly:]): Deleted.
+
 2021-01-15  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess] Improve the GPUProcess' memory pressure handler
