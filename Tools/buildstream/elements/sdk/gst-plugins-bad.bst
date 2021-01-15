@@ -1,14 +1,15 @@
 kind: meson
 sources:
 - kind: tar
-  url: gst_downloads:gst-plugins-bad/gst-plugins-bad-1.18.0.tar.xz
-  ref: f382ab1caddd64aaa7acb7c4787487f63fd39bd0fde9c757655cbaa457c1185f
+  url: gst_downloads:gst-plugins-bad/gst-plugins-bad-1.18.2.tar.xz
+  ref: 8ad5822f1118fe46a19af54422b74e3a16d79a6800dcb173b49e199a496b341a
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:
 - sdk/gstreamer.bst
 - sdk/gst-plugins-base.bst
 - sdk/openjpeg.bst
+- sdk/libdrm.bst
 - sdk/libkate.bst
 - sdk/libusrsctp.bst
 - sdk-build-depends/libusb.bst
@@ -17,7 +18,6 @@ depends:
 - freedesktop-sdk.bst:components/librsvg.bst
 - freedesktop-sdk.bst:components/frei0r.bst
 - freedesktop-sdk.bst:components/ladspa-sdk.bst
-- freedesktop-sdk.bst:components/libdrm.bst
 - freedesktop-sdk.bst:components/libfdk-aac.bst
 - freedesktop-sdk.bst:components/libglvnd.bst
 - freedesktop-sdk.bst:components/libnice.bst

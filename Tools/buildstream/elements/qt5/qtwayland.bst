@@ -2,7 +2,7 @@ kind: qmake
 
 depends:
 - qt5/qtdeclarative.bst
-- freedesktop-sdk.bst:components/libdrm.bst
+- sdk/libdrm.bst
 
 sources:
 - kind: tar

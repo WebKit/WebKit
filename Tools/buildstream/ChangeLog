@@ -1,5 +1,38 @@
 2021-01-15  Philippe Normand  <pnormand@igalia.com>
 
+        [Flatpak SDK] Update GStreamer and Mesa
+        https://bugs.webkit.org/show_bug.cgi?id=220237
+
+        Reviewed by Adrian Perez de Castro.
+
+        This patch updates several SDK components:
+
+        - GStreamer 1.18.0 -> 1.18.2
+        - Mesa 20.1.10 -> 20.3.2
+
+        Additionally some libdrm-related cleanups are included, since we have our own version of
+        this component, it is better to use it everywhere instead of the upstream SDK version, to
+        avoid collisions.
+
+        This patch also updates the pipenv dependencies used by Buildstream.
+
+        * Pipfile.lock:
+        * elements/freedesktop-sdk.bst:
+        * elements/qt5/qtbase.bst:
+        * elements/qt5/qtwayland.bst:
+        * elements/sdk/gst-libav.bst:
+        * elements/sdk/gst-plugins-bad.bst:
+        * elements/sdk/gst-plugins-base.bst:
+        * elements/sdk/gst-plugins-good.bst:
+        * elements/sdk/gst-plugins-ugly.bst:
+        * elements/sdk/gstreamer.bst:
+        * elements/sdk/mesa.bst:
+        * elements/sdk/xorg-server.bst:
+        * patches/mesa/0004-mesa-clear-texture-s-views-when-texture-is-remove.patch: Removed.
+        * patches/mesa/mesa_libdrm_deps.patch:
+
+2021-01-15  Philippe Normand  <pnormand@igalia.com>
+
         [Flatpak SDK] Updates for gst-build and gst-plugins-rs support
         https://bugs.webkit.org/show_bug.cgi?id=220418
 

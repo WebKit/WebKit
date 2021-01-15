@@ -10,7 +10,6 @@ depends:
 - freedesktop-sdk.bst:bootstrap-import.bst
 - freedesktop-sdk.bst:components/nettle.bst
 - freedesktop-sdk.bst:components/libtirpc.bst
-- freedesktop-sdk.bst:components/libdrm.bst
 - freedesktop-sdk.bst:components/dummy-gbm.bst
 - freedesktop-sdk.bst:components/libepoxy.bst
 - freedesktop-sdk.bst:components/pixman.bst
@@ -22,6 +21,7 @@ depends:
 - freedesktop-sdk.bst:components/xorg-font-util.bst
 - freedesktop-sdk.bst:components/wayland.bst
 - freedesktop-sdk.bst:components/systemd.bst
+- sdk/libdrm.bst
 
 variables:
   conf-local: |

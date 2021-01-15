@@ -1,8 +1,8 @@
 kind: meson
 sources:
 - kind: tar
-  url: gst_downloads:gst-plugins-base/gst-plugins-base-1.18.0.tar.xz
-  ref: 762abdd1a950809a1cea62fff7f86b5f7d6bd5f6841e3e585c700b823cdb7897
+  url: gst_downloads:gst-plugins-base/gst-plugins-base-1.18.2.tar.xz
+  ref: dd04fb1f7826e2f6d9b4d66fc22f19cc6a47c301e13041f0ee3d7f65c89b05ac
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:
@@ -11,6 +11,7 @@ depends:
 - sdk/graphene.bst
 - sdk/gtk+-3.bst
 - freedesktop-sdk.bst:components/pango.bst
+- sdk/libdrm.bst
 - sdk/libsoup.bst
 - freedesktop-sdk.bst:bootstrap-import.bst
 - freedesktop-sdk.bst:components/alsa-lib.bst

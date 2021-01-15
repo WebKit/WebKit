@@ -68,7 +68,7 @@ variables:
     -Dlibunwind=%{enable_libunwind}
     -Dllvm=true
     -Dlmsensors=false
-    -Dplatforms=x11,drm,surfaceless,wayland
+    -Dplatforms=x11,wayland
     -Dselinux=false
     -Dshared-glapi=true
     -Dvalgrind=false
@@ -105,9 +105,7 @@ public:
 sources:
 - kind: git_tag
   url: gitlab_freedesktop_org:mesa/mesa.git
-  track: '20.1'
-  ref: mesa-20.1.10-1-gbdf94921c02b82e0d5f67d7c1ee0aacbce336056
+  track: '20.3'
+  ref: mesa-20.3.2-1-g6d2e76d2425901dec7bb21da62b5f0f2b81f1e8a
 - kind: patch
   path: patches/mesa/mesa_libdrm_deps.patch
-- kind: patch
-  path: patches/mesa/0004-mesa-clear-texture-s-views-when-texture-is-remove.patch
