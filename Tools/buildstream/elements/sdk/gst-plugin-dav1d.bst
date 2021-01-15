@@ -14,9 +14,12 @@ environment:
   PATH: /usr/bin:/usr/lib/sdk/rust/bin
 
 config:
-  install-commands:
+  build-commands:
   - |
     cargo --offline build --release
+
+  install-commands:
+  - |
     install -D -m a+r -t "%{install-root}%{libdir}/gstreamer-1.0" ./target/release/libgst*
 
 public:
