@@ -292,6 +292,7 @@ void disconnectSimpleBusMessageCallback(GstElement* pipeline);
 enum class GstVideoDecoderPlatform { ImxVPU, Video4Linux, OpenMAX };
 
 bool isGStreamerPluginAvailable(const char* name);
+bool gstElementFactoryEquals(GstElement*, const char* name);
 
 GstElement* createPlatformAudioSink();
 

@@ -442,6 +442,11 @@ bool isGStreamerPluginAvailable(const char* name)
     return plugin;
 }
 
+bool gstElementFactoryEquals(GstElement* element, const char* name)
+{
+    return equal(GST_OBJECT_NAME(gst_element_get_factory(element)), name);
+}
+
 GstElement* createPlatformAudioSink()
 {
     GstElement* audioSink = webkitAudioSinkNew();

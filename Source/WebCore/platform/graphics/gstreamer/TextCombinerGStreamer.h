@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Cable Television Laboratories, Inc.
+ * Copyright (C) 2021 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +28,6 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
-#include <glib-object.h>
 #include <gst/gst.h>
 
 #define WEBKIT_TYPE_TEXT_COMBINER webkit_text_combiner_get_type()
@@ -38,27 +38,24 @@
 #define WEBKIT_IS_TEXT_COMBINER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), WEBKIT_TYPE_TEXT_COMBINER))
 #define WEBKIT_TEXT_COMBINER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS((obj), WEBKIT_TYPE_TEXT_COMBINER, WebKitTextCombinerClass))
 
+GType webkit_text_combiner_get_type(void);
+
 typedef struct _WebKitTextCombiner WebKitTextCombiner;
 typedef struct _WebKitTextCombinerClass WebKitTextCombinerClass;
+typedef struct _WebKitTextCombinerPrivate WebKitTextCombinerPrivate;
 
 struct _WebKitTextCombiner {
     GstBin parent;
 
-    GstElement *funnel;
+    WebKitTextCombinerPrivate* priv;
 };
 
 struct _WebKitTextCombinerClass {
     GstBinClass parentClass;
-
-    // Future padding
-    void (* _webkit_reserved1)(void);
-    void (* _webkit_reserved2)(void);
-    void (* _webkit_reserved3)(void);
-    void (* _webkit_reserved4)(void);
-    void (* _webkit_reserved5)(void);
-    void (* _webkit_reserved6)(void);
 };
 
 GstElement* webkitTextCombinerNew();
+
+void webKitTextCombinerHandleCapsEvent(WebKitTextCombiner*, GstPad*, GstEvent*);
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)

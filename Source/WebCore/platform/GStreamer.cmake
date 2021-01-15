@@ -21,6 +21,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
         platform/graphics/gstreamer/MediaSampleGStreamer.cpp
         platform/graphics/gstreamer/TextCombinerGStreamer.cpp
+        platform/graphics/gstreamer/TextCombinerPadGStreamer.cpp
         platform/graphics/gstreamer/TextSinkGStreamer.cpp
         platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp
         platform/graphics/gstreamer/VideoSinkGStreamer.cpp
