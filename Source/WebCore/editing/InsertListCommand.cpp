@@ -299,6 +299,10 @@ void InsertListCommand::unlistifyParagraph(const VisiblePosition& originalStart,
         previousListChild = enclosingListChild(start.previous().deepEquivalent().deprecatedNode(), listNode);
         ASSERT(previousListChild != listChildNode);
     }
+
+    if (start.isNull() || end.isNull())
+        return;
+
     // When removing a list, we must always create a placeholder to act as a point of insertion
     // for the list content being removed.
     auto placeholder = HTMLBRElement::create(document());
