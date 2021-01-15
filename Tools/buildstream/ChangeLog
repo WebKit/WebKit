@@ -1,3 +1,26 @@
+2021-01-15  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Updates for gst-build and gst-plugins-rs support
+        https://bugs.webkit.org/show_bug.cgi?id=220418
+
+        Reviewed by Adrian Perez de Castro.
+
+        This patch:
+
+        - bumps from Meson 0.55.3 to Meson 0.56.1 in the FDO junction
+        - includes cargo-c in the SDK, this is a new dependency for gst-build (only if
+          gst-plugins-rs is enabled though)
+        - includes the latest release of the rsclosedcaption GStreamer plugin in the SDK. This
+          plugin includes several elements (ccconverter, cea608tott) that will be useful in order to
+          support CEA608 rendering in WebKit GStreamer ports.
+
+        * elements/freedesktop-sdk.bst:
+        * elements/sdk-platform.bst:
+        * elements/sdk/cargo-c.bst: Added.
+        * elements/sdk/gst-plugin-closedcaption.bst: Added.
+        * files/gst-plugin-closedcaption/Cargo.lock: Added.
+        * patches/fdo-0001-meson-Bump-to-0.56.1.patch: Added.
+
 2021-01-07  Lauro Moura  <lmoura@igalia.com>
 
         [Flatpak SDK] Update GTK4 to 4.0.0

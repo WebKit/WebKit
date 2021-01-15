@@ -1,0 +1,50 @@
+From d4031cb7ca754eb44fda67d906dc2ecf22690f1b Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Wed, 6 Jan 2021 18:05:30 +0000
+Subject: [PATCH] meson: Bump to 0.56.1
+
+---
+ elements/components/meson.bst                      |  6 ++----
+ .../meson/aarch64-can-potentially-build-arm.patch  | 14 --------------
+ 2 files changed, 2 insertions(+), 18 deletions(-)
+ delete mode 100644 patches/meson/aarch64-can-potentially-build-arm.patch
+
+diff --git a/elements/components/meson.bst b/elements/components/meson.bst
+index b09d8bd81..3ca0cfa1f 100644
+--- a/elements/components/meson.bst
++++ b/elements/components/meson.bst
+@@ -12,9 +12,7 @@ build-depends:
+ sources:
+ - kind: git_tag
+   url: github:mesonbuild/meson.git
+-  track: '0.55'
+-  ref: 0.55.3-0-g776acd2a805c9b42b4f0375150977df42130317f
++  track: '0.56'
++  ref: 0.56.1-0-gf9e6917f79a62aea367ede149031e7deef9d5521
+ - kind: patch
+   path: patches/meson/meson-no-lib64.patch
+-- kind: patch
+-  path: patches/meson/aarch64-can-potentially-build-arm.patch
+diff --git a/patches/meson/aarch64-can-potentially-build-arm.patch b/patches/meson/aarch64-can-potentially-build-arm.patch
+deleted file mode 100644
+index fd01df2c2..000000000
+--- a/patches/meson/aarch64-can-potentially-build-arm.patch
++++ /dev/null
+@@ -1,14 +0,0 @@
+-diff --git a/mesonbuild/environment.py b/mesonbuild/environment.py
+-index 52a305d2e..0d8a3c379 100644
+---- a/mesonbuild/environment.py
+-+++ b/mesonbuild/environment.py
+-@@ -443,7 +443,8 @@ def machine_info_can_run(machine_info: MachineInfo):
+-     true_build_cpu_family = detect_cpu_family({})
+-     return \
+-         (machine_info.cpu_family == true_build_cpu_family) or \
+--        ((true_build_cpu_family == 'x86_64') and (machine_info.cpu_family == 'x86'))
+-+        ((true_build_cpu_family == 'x86_64') and (machine_info.cpu_family == 'x86')) or \
+-+        ((true_build_cpu_family == 'aarch64') and (machine_info.cpu_family == 'arm'))
+- 
+- def search_version(text):
+-     # Usually of the type 4.1.4 but compiler output may contain
+-- 
+2.29.2
+

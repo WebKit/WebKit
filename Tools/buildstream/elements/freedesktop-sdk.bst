@@ -10,6 +10,8 @@ sources:
   path: patches/nettle-no-debug.diff
 - kind: patch
   path: patches/fdo-0001-pango-Bump-to-1.47.patch
+- kind: patch
+  path: patches/fdo-0001-meson-Bump-to-0.56.1.patch
 config:
   options:
     target_arch: '%{arch}'

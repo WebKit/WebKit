@@ -10,6 +10,7 @@ depends:
 # replaced (patched) elements:
 - sdk/adwaita-icon-theme.bst
 - sdk/capnp.bst
+- sdk/cargo-c.bst
 - sdk/ccls.bst
 - sdk/cmake-lsp.bst
 - sdk/clangd.bst
@@ -20,6 +21,7 @@ depends:
 - sdk/graphviz.bst
 - sdk/gst-libav.bst
 - sdk/gst-plugin-dav1d.bst
+- sdk/gst-plugin-closedcaption.bst
 - sdk/gst-plugins-bad.bst
 - sdk/gst-plugins-base.bst
 - sdk/gst-plugins-good.bst
