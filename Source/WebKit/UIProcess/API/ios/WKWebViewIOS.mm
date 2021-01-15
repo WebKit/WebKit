@@ -1187,12 +1187,51 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [self _zoomToPoint:origin atScale:_initialScaleFactor animated:animated];
 }
 
-// focusedElementRect and selectionRect are both in document coordinates.
-- (void)_zoomToFocusRect:(const WebCore::FloatRect&)focusedElementRectInDocumentCoordinates selectionRect:(const WebCore::FloatRect&)selectionRectInDocumentCoordinates insideFixed:(BOOL)insideFixed
+- (BOOL)_selectionRectIsFullyVisibleAndNonEmpty
+{
+    auto rect = _page->selectionBoundingRectInRootViewCoordinates();
+    return !rect.isEmpty() && CGRectContainsRect(self._contentRectForUserInteraction, rect);
+}
+
+- (void)_scrollToAndRevealSelectionIfNeeded
+{
+    if (![_scrollView isScrollEnabled])
+        return;
+
+    auto selectionRect = _page->selectionBoundingRectInRootViewCoordinates();
+    constexpr CGFloat selectionRectPadding = 4;
+    selectionRect.inflate(selectionRectPadding);
+    selectionRect.intersect([_contentView bounds]);
+    if (selectionRect.isEmpty())
+        return;
+
+    WebCore::FloatRect userInteractionContentRect = self._contentRectForUserInteraction;
+    auto scrollDeltaInContentCoordinates = CGSizeZero;
+
+    if (userInteractionContentRect.maxY() < selectionRect.maxY())
+        scrollDeltaInContentCoordinates.height = selectionRect.maxY() - userInteractionContentRect.maxY();
+    else if (userInteractionContentRect.y() > selectionRect.y())
+        scrollDeltaInContentCoordinates.height = selectionRect.y() - userInteractionContentRect.y();
+
+    if (userInteractionContentRect.maxX() < selectionRect.maxX())
+        scrollDeltaInContentCoordinates.width = selectionRect.maxX() - userInteractionContentRect.maxX();
+    else if (userInteractionContentRect.x() > selectionRect.x())
+        scrollDeltaInContentCoordinates.width = selectionRect.x() - userInteractionContentRect.x();
+
+    if (CGSizeEqualToSize(scrollDeltaInContentCoordinates, CGSizeZero))
+        return;
+
+    auto scale = contentZoomScale(self);
+    auto newContentOffset = [_scrollView contentOffset];
+    newContentOffset.x += scrollDeltaInContentCoordinates.width * scale;
+    newContentOffset.y += scrollDeltaInContentCoordinates.height * scale;
+    [_scrollView setContentOffset:newContentOffset animated:YES];
+}
+
+- (void)_zoomToFocusRect:(const WebCore::FloatRect&)focusedElementRectInDocumentCoordinates selectionRect:(const WebCore::FloatRect&)selectionRectInDocumentCoordinates
     fontSize:(float)fontSize minimumScale:(double)minimumScale maximumScale:(double)maximumScale allowScaling:(BOOL)allowScaling forceScroll:(BOOL)forceScroll
 {
     LOG_WITH_STREAM(VisibleRects, stream << "_zoomToFocusRect:" << focusedElementRectInDocumentCoordinates << " selectionRect:" << selectionRectInDocumentCoordinates);
-    UNUSED_PARAM(insideFixed);
 
     const double minimumHeightToShowContentAboveKeyboard = 106;
     const CFTimeInterval formControlZoomAnimationDuration = 0.25;
@@ -2249,6 +2288,9 @@ static int32_t activeOrientation(WKWebView *webView)
     if (!endFrameValue)
         return;
 
+    auto previousInputViewBounds = _inputViewBounds;
+    BOOL selectionWasVisible = self._selectionRectIsFullyVisibleAndNonEmpty;
+
     // The keyboard rect is always in screen coordinates. In the view services case the window does not
     // have the interface orientation rotation transformation; its host does. So, it makes no sense to
     // clip the keyboard rect against its screen.
@@ -2271,6 +2313,9 @@ static int32_t activeOrientation(WKWebView *webView)
         if (bottomInsetBeforeAdjustment != bottomInsetAfterAdjustment)
             _totalScrollViewBottomInsetAdjustmentForKeyboard += bottomInsetAfterAdjustment - bottomInsetBeforeAdjustment;
     }
+
+    if (selectionWasVisible && [_contentView _hasFocusedElement] && !CGRectIsEmpty(previousInputViewBounds) && !CGRectIsEmpty(_inputViewBounds) && !CGRectEqualToRect(previousInputViewBounds, _inputViewBounds))
+        [self _scrollToAndRevealSelectionIfNeeded];
 
     [self _scheduleVisibleContentRectUpdate];
 }
