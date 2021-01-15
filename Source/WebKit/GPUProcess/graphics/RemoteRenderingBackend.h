@@ -65,14 +65,13 @@ class GPUConnectionToWebProcess;
 struct RemoteRenderingBackendCreationParameters;
 
 class RemoteRenderingBackend
-    : public IPC::MessageSender
-    , private IPC::MessageReceiver
+    : private IPC::MessageSender
+    , public IPC::Connection::WorkQueueMessageReceiver
     , public WebCore::DisplayList::ItemBufferReadingClient {
 public:
-    static std::unique_ptr<RemoteRenderingBackend> create(GPUConnectionToWebProcess&, RemoteRenderingBackendCreationParameters&&);
+    static Ref<RemoteRenderingBackend> create(GPUConnectionToWebProcess&, RemoteRenderingBackendCreationParameters&&);
     virtual ~RemoteRenderingBackend();
 
-    GPUConnectionToWebProcess* gpuConnectionToWebProcess() const;
     RemoteResourceCache& remoteResourceCache() { return m_remoteResourceCache; }
 
     // Rendering operations.
@@ -83,6 +82,8 @@ public:
     void didFlush(WebCore::DisplayList::FlushIdentifier, WebCore::RenderingResourceIdentifier);
 
     void setNextItemBufferToRead(WebCore::DisplayList::ItemBufferIdentifier, WebCore::RenderingResourceIdentifier destination);
+
+    void disconnect();
 
 private:
     RemoteRenderingBackend(GPUConnectionToWebProcess&, RemoteRenderingBackendCreationParameters&&);
@@ -141,8 +142,9 @@ private:
         }
     };
 
+    Ref<WorkQueue> m_workQueue;
     RemoteResourceCache m_remoteResourceCache;
-    WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
+    Ref<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     RenderingBackendIdentifier m_renderingBackendIdentifier;
     HashMap<WebCore::DisplayList::ItemBufferIdentifier, RefPtr<DisplayListReaderHandle>> m_sharedDisplayListHandles;
     Optional<PendingWakeupInformation> m_pendingWakeupInfo;

@@ -61,6 +61,9 @@ RemoteMediaPlayerManagerProxy::~RemoteMediaPlayerManagerProxy()
 
 void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier identifier, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& proxyConfiguration, CompletionHandler<void(RemoteMediaPlayerConfiguration&)>&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
+
+    auto locker = holdLock(m_proxiesLock);
     ASSERT(!m_proxies.contains(identifier));
 
     RemoteMediaPlayerConfiguration playerConfiguration;
@@ -74,6 +77,8 @@ void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier iden
 
 void RemoteMediaPlayerManagerProxy::deleteMediaPlayer(MediaPlayerIdentifier identifier)
 {
+    ASSERT(RunLoop::isMain());
+    auto locker = holdLock(m_proxiesLock);
     if (auto proxy = m_proxies.take(identifier))
         proxy->invalidate();
 }
@@ -168,21 +173,25 @@ void RemoteMediaPlayerManagerProxy::supportsKeySystem(MediaPlayerEnums::MediaEng
 
 void RemoteMediaPlayerManagerProxy::didReceivePlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
+    ASSERT(RunLoop::isMain());
     if (auto* player = m_proxies.get(makeObjectIdentifier<MediaPlayerIdentifierType>(decoder.destinationID())))
         player->didReceiveMessage(connection, decoder);
 }
 
 void RemoteMediaPlayerManagerProxy::didReceiveSyncPlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& encoder)
 {
+    ASSERT(RunLoop::isMain());
     if (auto* player = m_proxies.get(makeObjectIdentifier<MediaPlayerIdentifierType>(decoder.destinationID())))
         player->didReceiveSyncMessage(connection, decoder, encoder);
 }
 
-RemoteMediaPlayerProxy* RemoteMediaPlayerManagerProxy::getProxy(const MediaPlayerIdentifier& identifier)
+// May get called on a background thread.
+RefPtr<MediaPlayer> RemoteMediaPlayerManagerProxy::mediaPlayer(const MediaPlayerIdentifier& identifier)
 {
+    auto locker = holdLock(m_proxiesLock);
     auto results = m_proxies.find(identifier);
     if (results != m_proxies.end())
-        return results->value.get();
+        return results->value->mediaPlayer();
     return nullptr;
 }
 

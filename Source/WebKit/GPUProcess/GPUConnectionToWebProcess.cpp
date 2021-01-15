@@ -165,6 +165,7 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
     : m_connection(IPC::Connection::createServerConnection(connectionIdentifier, *this))
     , m_gpuProcess(gpuProcess)
     , m_webProcessIdentifier(webProcessIdentifier)
+    , m_remoteMediaPlayerManagerProxy(makeUnique<RemoteMediaPlayerManagerProxy>(*this))
     , m_sessionID(sessionID)
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     , m_libWebRTCCodecsProxy(LibWebRTCCodecsProxy::create(*this))
@@ -202,8 +203,12 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
     }
 #endif
 
+    // RemoteRenderingBackend objects ref their GPUConnectionToWebProcess so we need to make sure
+    // to break the reference cycle by destroying them.
+    m_remoteRenderingBackendMap.clear();
+
     gpuProcess().connectionToWebProcessClosed(connection);
-    gpuProcess().removeGPUConnectionToWebProcess(*this);
+    gpuProcess().removeGPUConnectionToWebProcess(*this); // May destroy |this|.
 }
 
 Logger& GPUConnectionToWebProcess::logger()
@@ -238,14 +243,6 @@ RemoteMediaResourceManager& GPUConnectionToWebProcess::remoteMediaResourceManage
         m_remoteMediaResourceManager = makeUnique<RemoteMediaResourceManager>();
 
     return *m_remoteMediaResourceManager;
-}
-
-RemoteMediaPlayerManagerProxy& GPUConnectionToWebProcess::remoteMediaPlayerManagerProxy()
-{
-    if (!m_remoteMediaPlayerManagerProxy)
-        m_remoteMediaPlayerManagerProxy = makeUnique<RemoteMediaPlayerManagerProxy>(*this);
-
-    return *m_remoteMediaPlayerManagerProxy;
 }
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
@@ -292,7 +289,7 @@ RemoteAudioSessionProxy& GPUConnectionToWebProcess::audioSessionProxy()
 void GPUConnectionToWebProcess::createRenderingBackend(RemoteRenderingBackendCreationParameters&& parameters)
 {
     auto addResult = m_remoteRenderingBackendMap.ensure(parameters.identifier, [&]() {
-        return RemoteRenderingBackend::create(*this, WTFMove(parameters));
+        return makeUnique<RemoteRenderingBackendWrapper>(RemoteRenderingBackend::create(*this, WTFMove(parameters)));
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
@@ -301,6 +298,16 @@ void GPUConnectionToWebProcess::releaseRenderingBackend(RenderingBackendIdentifi
 {
     bool found = m_remoteRenderingBackendMap.remove(renderingBackendIdentifier);
     ASSERT_UNUSED(found, found);
+}
+
+GPUConnectionToWebProcess::RemoteRenderingBackendWrapper::RemoteRenderingBackendWrapper(Ref<RemoteRenderingBackend>&& remoteRenderingBackend)
+    : m_remoteRenderingBackend(WTFMove(remoteRenderingBackend))
+{
+}
+
+GPUConnectionToWebProcess::RemoteRenderingBackendWrapper::~RemoteRenderingBackendWrapper()
+{
+    m_remoteRenderingBackend->disconnect();
 }
 
 #if ENABLE(WEBGL)

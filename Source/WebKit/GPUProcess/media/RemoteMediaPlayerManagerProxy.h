@@ -33,6 +33,7 @@
 #include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MediaPlayerIdentifier.h>
+#include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
 
 namespace WebKit {
@@ -68,7 +69,7 @@ public:
     WTFLogChannel& logChannel() const final;
 #endif
 
-    RemoteMediaPlayerProxy* getProxy(const WebCore::MediaPlayerIdentifier&);
+    RefPtr<WebCore::MediaPlayer> mediaPlayer(const WebCore::MediaPlayerIdentifier&);
 
 private:
     // IPC::MessageReceiver
@@ -86,6 +87,7 @@ private:
     void clearMediaCacheForOrigins(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&&, Vector<WebCore::SecurityOriginData>&&);
     void supportsKeySystem(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&&, const String&&, CompletionHandler<void(bool)>&&);
 
+    Lock m_proxiesLock;
     HashMap<WebCore::MediaPlayerIdentifier, std::unique_ptr<RemoteMediaPlayerProxy>> m_proxies;
     GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
 

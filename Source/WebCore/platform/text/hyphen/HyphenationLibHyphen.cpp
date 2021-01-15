@@ -241,6 +241,8 @@ public:
     {
         return WebCore::HyphenationDictionary::create(FileSystem::fileSystemRepresentation(dictionaryPath.string()));
     }
+
+    static AtomString createKeyForStorage(const AtomString& key) { return key; }
 };
 
 } // namespace WTF

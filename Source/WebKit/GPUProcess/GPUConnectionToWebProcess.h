@@ -38,7 +38,7 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <pal/SessionID.h>
 #include <wtf/Logger.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 #if ENABLE(WEBGL)
 #include "GraphicsContextGLIdentifier.h"
@@ -68,7 +68,7 @@ struct RemoteAudioSessionConfiguration;
 struct RemoteRenderingBackendCreationParameters;
 
 class GPUConnectionToWebProcess
-    : public RefCounted<GPUConnectionToWebProcess>
+    : public ThreadSafeRefCounted<GPUConnectionToWebProcess, WTF::DestructionThread::Main>
     , public WebCore::NowPlayingManager::Client
     , IPC::Connection::Client {
 public:
@@ -106,7 +106,7 @@ public:
 #if ENABLE(GPU_PROCESS)
     RemoteMediaEngineConfigurationFactoryProxy& mediaEngineConfigurationFactoryProxy();
 #endif
-    RemoteMediaPlayerManagerProxy& remoteMediaPlayerManagerProxy();
+    RemoteMediaPlayerManagerProxy& remoteMediaPlayerManagerProxy() { return *m_remoteMediaPlayerManagerProxy; }
 
 #if USE(AUDIO_SESSION)
     RemoteAudioSessionProxyManager& audioSessionManager();
@@ -192,7 +192,17 @@ private:
     bool m_allowsDisplayCapture { false };
 #endif
 
-    using RemoteRenderingBackendMap = HashMap<RenderingBackendIdentifier, std::unique_ptr<RemoteRenderingBackend>>;
+    class RemoteRenderingBackendWrapper {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        RemoteRenderingBackendWrapper(Ref<RemoteRenderingBackend>&&);
+        ~RemoteRenderingBackendWrapper();
+
+    private:
+        Ref<RemoteRenderingBackend> m_remoteRenderingBackend;
+    };
+
+    using RemoteRenderingBackendMap = HashMap<RenderingBackendIdentifier, std::unique_ptr<RemoteRenderingBackendWrapper>>;
     RemoteRenderingBackendMap m_remoteRenderingBackendMap;
 #if ENABLE(WEBGL)
     using RemoteGraphicsContextGLMap = HashMap<GraphicsContextGLIdentifier, std::unique_ptr<RemoteGraphicsContextGL>>;

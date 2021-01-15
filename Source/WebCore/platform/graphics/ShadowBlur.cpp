@@ -36,9 +36,11 @@
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "Timer.h"
+#include <wtf/Lock.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 
 namespace WebCore {
@@ -61,23 +63,21 @@ class ScratchBuffer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ScratchBuffer()
-        : m_purgeTimer(*this, &ScratchBuffer::clearScratchBuffer)
-        , m_lastWasInset(false)
-#if ASSERT_ENABLED
-        , m_bufferInUse(false)
-#endif
+        : m_purgeTimer(RunLoop::main(), this, &ScratchBuffer::purgeTimerFired)
     {
     }
 
-    ImageBuffer* getScratchBuffer(const IntSize& size)
+    RefPtr<ImageBuffer> getScratchBuffer(const IntSize& size)
     {
-        ASSERT(!m_bufferInUse);
-#if ASSERT_ENABLED
-        m_bufferInUse = true;
-#endif
+        ASSERT(lock().isHeld());
+        auto releaseLayerImage = makeScopeExit([this] {
+            if (m_imageBuffer)
+                scheduleScratchBufferPurge();
+        });
+
         // We do not need to recreate the buffer if the current buffer is large enough.
         if (m_imageBuffer && m_imageBuffer->logicalSize().width() >= size.width() && m_imageBuffer->logicalSize().height() >= size.height())
-            return m_imageBuffer.get();
+            return m_imageBuffer;
 
         // Round to the nearest 32 pixels so we do not grow the buffer for similar sized requests.
         IntSize roundedSize(roundUpToMultipleOf32(size.width()), roundUpToMultipleOf32(size.height()));
@@ -86,11 +86,12 @@ public:
 
         // ShadowBlur is not used with accelerated drawing, so it's OK to make an unconditionally unaccelerated buffer.
         m_imageBuffer = ImageBuffer::create(roundedSize, RenderingMode::Unaccelerated, 1);
-        return m_imageBuffer.get();
+        return m_imageBuffer;
     }
 
     bool setCachedShadowValues(const FloatSize& radius, const Color& color, const FloatRect& shadowRect, const FloatRoundedRect::Radii& radii, const FloatSize& layerSize)
     {
+        ASSERT(lock().isHeld());
         if (!m_lastWasInset && m_lastRadius == radius && m_lastColor == color && m_lastShadowRect == shadowRect &&  m_lastRadii == radii && m_lastLayerSize == layerSize)
             return false;
 
@@ -106,6 +107,7 @@ public:
 
     bool setCachedInsetShadowValues(const FloatSize& radius, const Color& color, const FloatRect& bounds, const FloatRect& shadowRect, const FloatRoundedRect::Radii& radii)
     {
+        ASSERT(lock().isHeld());
         if (m_lastWasInset && m_lastRadius == radius && m_lastColor == color && m_lastInsetBounds == bounds && shadowRect == m_lastShadowRect && radii == m_lastRadii)
             return false;
 
@@ -119,48 +121,55 @@ public:
         return true;
     }
 
+    static ScratchBuffer& singleton();
+    static Lock& lock();
+
+private:
     void scheduleScratchBufferPurge()
     {
-#if ASSERT_ENABLED
-        m_bufferInUse = false;
-#endif
-        if (m_purgeTimer.isActive())
-            m_purgeTimer.stop();
-
+        ASSERT(lock().isHeld());
         const Seconds scratchBufferPurgeInterval { 2_s };
         m_purgeTimer.startOneShot(scratchBufferPurgeInterval);
     }
 
-    static ScratchBuffer& singleton();
+    void purgeTimerFired()
+    {
+        ASSERT(isMainThread());
+        if (auto locker = tryHoldLock(lock()))
+            clearScratchBuffer();
+    }
 
-private:
     void clearScratchBuffer()
     {
+        ASSERT(lock().isHeld());
         m_imageBuffer = nullptr;
         m_lastRadius = FloatSize();
         m_lastLayerSize = FloatSize();
     }
 
     RefPtr<ImageBuffer> m_imageBuffer;
-    Timer m_purgeTimer;
+    RunLoop::Timer<ScratchBuffer> m_purgeTimer;
 
     FloatRect m_lastInsetBounds;
     FloatRect m_lastShadowRect;
     FloatRoundedRect::Radii m_lastRadii;
     Color m_lastColor;
     FloatSize m_lastRadius;
-    bool m_lastWasInset;
+    bool m_lastWasInset { false };
     FloatSize m_lastLayerSize;
-
-#if ASSERT_ENABLED
-    bool m_bufferInUse;
-#endif
 };
 
 ScratchBuffer& ScratchBuffer::singleton()
 {
+    ASSERT(lock().isHeld());
     static NeverDestroyed<ScratchBuffer> scratchBuffer;
     return scratchBuffer;
+}
+
+Lock& ScratchBuffer::lock()
+{
+    static Lock lock;
+    return lock;
 }
 
 static float radiusToLegacyRadius(float radius)
@@ -683,26 +692,32 @@ void ShadowBlur::drawInsetShadowWithoutTiling(const AffineTransform&, const Floa
 
 void ShadowBlur::drawRectShadowWithTiling(const AffineTransform& transform, const FloatRoundedRect& shadowedRect, const IntSize& templateSize, const IntSize& edgeSize, const DrawImageCallback& drawImage, const FillRectCallback& fillRect, const LayerImageProperties& layerImageProperties)
 {
+    RefPtr<ImageBuffer> layerImageBuffer;
 #if USE(CG)
-    auto* layerImage = ScratchBuffer::singleton().getScratchBuffer(templateSize);
-    auto releaseLayerImage = makeScopeExit([] {
-        ScratchBuffer::singleton().scheduleScratchBufferPurge();
-    });
+    auto locker = tryHoldLock(ScratchBuffer::lock());
+    if (locker) {
+        layerImageBuffer = ScratchBuffer::singleton().getScratchBuffer(templateSize);
+        if (!layerImageBuffer)
+            return;
+    }
 #else
     UNUSED_PARAM(layerImageProperties);
-    auto layerImageBuffer = ImageBuffer::create(templateSize, RenderingMode::Unaccelerated, 1);
-    auto* layerImage = layerImageBuffer.get();
 #endif
 
-    if (!layerImage)
-        return;
+    if (!layerImageBuffer) {
+        layerImageBuffer = ImageBuffer::create(templateSize, RenderingMode::Unaccelerated, 1);
+        if (!layerImageBuffer)
+            return;
+    }
+    auto* layerImage = layerImageBuffer.get();
 
     FloatRect templateShadow = FloatRect(edgeSize.width(), edgeSize.height(), templateSize.width() - 2 * edgeSize.width(), templateSize.height() - 2 * edgeSize.height());
 
     bool redrawNeeded = true;
 #if USE(CG)
     // Only redraw in the scratch buffer if its cached contents don't match our needs
-    redrawNeeded = ScratchBuffer::singleton().setCachedShadowValues(m_blurRadius, m_color, templateShadow, shadowedRect.radii(), layerImageProperties.layerSize);
+    if (locker)
+        redrawNeeded = ScratchBuffer::singleton().setCachedShadowValues(m_blurRadius, m_color, templateShadow, shadowedRect.radii(), layerImageProperties.layerSize);
 #endif
 
     if (redrawNeeded) {
@@ -737,18 +752,22 @@ void ShadowBlur::drawRectShadowWithTiling(const AffineTransform& transform, cons
 
 void ShadowBlur::drawInsetShadowWithTiling(const AffineTransform& transform, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const IntSize& templateSize, const IntSize& edgeSize, const DrawImageCallback& drawImage, const FillRectWithHoleCallback& fillRectWithHole)
 {
+    RefPtr<ImageBuffer> layerImageBuffer;
 #if USE(CG)
-    auto* layerImage = ScratchBuffer::singleton().getScratchBuffer(templateSize);
-    auto releaseLayerImage = makeScopeExit([] {
-        ScratchBuffer::singleton().scheduleScratchBufferPurge();
-    });
-#else
-    auto layerImageBuffer = ImageBuffer::create(templateSize, RenderingMode::Unaccelerated, 1);
-    auto* layerImage = layerImageBuffer.get();
+    auto locker = tryHoldLock(ScratchBuffer::lock());
+    if (locker) {
+        layerImageBuffer = ScratchBuffer::singleton().getScratchBuffer(templateSize);
+        if (!layerImageBuffer)
+            return;
+    }
 #endif
 
-    if (!layerImage)
-        return;
+    if (!layerImageBuffer) {
+        layerImageBuffer = ImageBuffer::create(templateSize, RenderingMode::Unaccelerated, 1);
+        if (!layerImageBuffer)
+            return;
+    }
+    auto* layerImage = layerImageBuffer.get();
 
     // Draw the rectangle with hole.
     FloatRect templateBounds(0, 0, templateSize.width(), templateSize.height());
@@ -757,7 +776,8 @@ void ShadowBlur::drawInsetShadowWithTiling(const AffineTransform& transform, con
     bool redrawNeeded = true;
 #if USE(CG)
     // Only redraw in the scratch buffer if its cached contents don't match our needs
-    redrawNeeded = ScratchBuffer::singleton().setCachedInsetShadowValues(m_blurRadius, m_color, templateBounds, templateHole, holeRect.radii());
+    if (locker)
+        redrawNeeded = ScratchBuffer::singleton().setCachedInsetShadowValues(m_blurRadius, m_color, templateBounds, templateHole, holeRect.radii());
 #endif
 
     if (redrawNeeded) {

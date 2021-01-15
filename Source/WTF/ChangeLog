@@ -1,3 +1,18 @@
+2021-01-15  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] Move DOM / Canvas rendering off the main thread in the GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=220476
+
+        Reviewed by Simon Fraser.
+
+        Add trait function that gets called TinyLRUCache to convert the key before storing
+        it. It is useful for clients that need to call isolatedCopy() on the key String before
+        storing it.
+
+        * wtf/TinyLRUCache.h:
+        (WTF::TinyLRUCachePolicy::createKeyForStorage):
+        (WTF::TinyLRUCache::get):
+
 2021-01-14  Alex Christensen  <achristensen@webkit.org>
 
         Add dotless j and small N to unicode lookalike character list

@@ -35,6 +35,7 @@ struct TinyLRUCachePolicy {
     static bool isKeyNull(const KeyType&) { return false; }
     static ValueType createValueForNullKey() { return { }; }
     static ValueType createValueForKey(const KeyType&) { return { }; }
+    static KeyType createKeyForStorage(const KeyType& key) { return key; }
 };
 
 template<typename KeyType, typename ValueType, size_t capacity = 4, typename Policy = TinyLRUCachePolicy<KeyType, ValueType>>
@@ -66,7 +67,7 @@ public:
         if (m_cache.size() == capacity)
             m_cache.remove(0);
 
-        m_cache.append(std::make_pair(key, Policy::createValueForKey(key)));
+        m_cache.append(std::make_pair(Policy::createKeyForStorage(key), Policy::createValueForKey(key)));
         return m_cache.last().second;
     }
 

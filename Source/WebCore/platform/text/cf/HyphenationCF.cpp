@@ -63,6 +63,8 @@ public:
 
         return CFStringIsHyphenationAvailableForLocale(locale.get()) ? locale : nullptr;
     }
+
+    static AtomString createKeyForStorage(const AtomString& key) { return key; }
 };
 }
 

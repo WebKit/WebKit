@@ -1,3 +1,69 @@
+2021-01-15  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] Move DOM / Canvas rendering off the main thread in the GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=220476
+
+        Reviewed by Simon Fraser.
+
+        Move DOM / Canvas rendering off the main thread (and on a high-priority serial WorkQueue) in the
+        GPUProcess by making RemoteRenderingBackend a WorkQueueMessageReceiver. There is a serial WorkQueue
+        per RemoteRenderingBackend, which means each WebPage gets its own WorkQueue.
+
+        A/B testing shows this mostly perf-neutral (could be a slight progression on some hardware). I believe
+        this new architecture should also give us more optimization opportunities in the future. For example,
+        we may be able to more aggressively wait on the cross-process semaphore when waiting for new DisplayList
+        entries without worrying about blocking the main thread.
+
+        I have run layout tests in Debug on both macOS & iOS with the GPUProcess enabled and I believe I
+        have fixed all the crashes that were discovered.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::GPUConnectionToWebProcess):
+        (WebKit::GPUConnectionToWebProcess::didClose):
+        (WebKit::GPUConnectionToWebProcess::createRenderingBackend):
+        (WebKit::GPUConnectionToWebProcess::RemoteRenderingBackendWrapper::RemoteRenderingBackendWrapper):
+        (WebKit::GPUConnectionToWebProcess::RemoteRenderingBackendWrapper::~RemoteRenderingBackendWrapper):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        (WebKit::GPUConnectionToWebProcess::remoteMediaPlayerManagerProxy):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::create):
+        (WebKit::RemoteRenderingBackend::RemoteRenderingBackend):
+        (WebKit::RemoteRenderingBackend::~RemoteRenderingBackend):
+        (WebKit::RemoteRenderingBackend::disconnect):
+        (WebKit::RemoteRenderingBackend::messageSenderConnection const):
+        (WebKit::RemoteRenderingBackend::applyMediaItem):
+        (WebKit::RemoteRenderingBackend::createImageBuffer):
+        (WebKit::RemoteRenderingBackend::wakeUpAndApplyDisplayList):
+        (WebKit::RemoteRenderingBackend::getImageData):
+        (WebKit::RemoteRenderingBackend::getDataURLForImageBuffer):
+        (WebKit::RemoteRenderingBackend::getDataForImageBuffer):
+        (WebKit::RemoteRenderingBackend::getBGRADataForImageBuffer):
+        (WebKit::RemoteRenderingBackend::cacheNativeImage):
+        (WebKit::RemoteRenderingBackend::cacheFont):
+        (WebKit::RemoteRenderingBackend::deleteAllFonts):
+        (WebKit::RemoteRenderingBackend::releaseRemoteResource):
+        (WebKit::RemoteRenderingBackend::didCreateSharedDisplayListHandle):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * GPUProcess/media/RemoteLegacyCDMProxy.cpp:
+        (WebKit::RemoteLegacyCDMProxy::cdmMediaPlayer const):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::createMediaPlayer):
+        (WebKit::RemoteMediaPlayerManagerProxy::deleteMediaPlayer):
+        (WebKit::RemoteMediaPlayerManagerProxy::didReceivePlayerMessage):
+        (WebKit::RemoteMediaPlayerManagerProxy::didReceiveSyncPlayerMessage):
+        (WebKit::RemoteMediaPlayerManagerProxy::mediaPlayer):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        * Platform/SharedMemory.h:
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::ShareableBitmap):
+        (WebKit::ShareableBitmap::~ShareableBitmap):
+        * Shared/ShareableBitmap.h:
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        (WebKit::ShareableBitmap::releaseBitmapContextData):
+        (WebKit::ShareableBitmap::releaseDataProviderData):
+
 2021-01-15  Alex Christensen  <achristensen@webkit.org>
 
         Remove non-inclusively named WKBrowsingContextGroup SPI

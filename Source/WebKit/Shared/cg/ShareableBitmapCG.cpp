@@ -171,13 +171,6 @@ RetainPtr<CGImageRef> ShareableBitmap::createCGImage(CGDataProviderRef dataProvi
 
 void ShareableBitmap::releaseBitmapContextData(void* typelessBitmap, void* typelessData)
 {
-    if (!RunLoop::isMain()) {
-        RunLoop::main().dispatch([typelessBitmap, typelessData] {
-            releaseBitmapContextData(typelessBitmap, typelessData);
-        });
-        return;
-    }
-
     ShareableBitmap* bitmap = static_cast<ShareableBitmap*>(typelessBitmap);
     ASSERT_UNUSED(typelessData, bitmap->data() == typelessData);
     bitmap->deref(); // Balanced by ref in createGraphicsContext.
@@ -185,13 +178,6 @@ void ShareableBitmap::releaseBitmapContextData(void* typelessBitmap, void* typel
 
 void ShareableBitmap::releaseDataProviderData(void* typelessBitmap, const void* typelessData, size_t)
 {
-    if (!RunLoop::isMain()) {
-        RunLoop::main().dispatch([typelessBitmap, typelessData] {
-            releaseDataProviderData(typelessBitmap, typelessData, 0);
-        });
-        return;
-    }
-
     ShareableBitmap* bitmap = static_cast<ShareableBitmap*>(typelessBitmap);
     ASSERT_UNUSED(typelessData, bitmap->data() == typelessData);
     bitmap->deref(); // Balanced by ref in createCGImage.

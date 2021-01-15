@@ -28,8 +28,8 @@
 #include "SharedMemory.h"
 #include <WebCore/IntRect.h>
 #include <WebCore/PlatformImage.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 #if USE(CG)
 #include "ColorSpaceData.h"
@@ -52,7 +52,7 @@ class GraphicsContext;
 
 namespace WebKit {
     
-class ShareableBitmap : public RefCounted<ShareableBitmap> {
+class ShareableBitmap : public ThreadSafeRefCounted<ShareableBitmap> {
 public:
     struct Configuration {
         bool isOpaque { false };

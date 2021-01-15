@@ -32,7 +32,9 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/HashTraits.h>
+#include <wtf/Lock.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/RunLoop.h>
 
 #define CACHE_SUBIMAGES 1
 
@@ -95,9 +97,10 @@ private:
     void prune();
     void clearAll();
 
+    Lock m_lock;
     HashCountedSet<CGImageRef> m_imageCounts;
     SubimageCacheHashSet m_cache;
-    Timer m_timer;
+    RunLoop::Timer<SubimageCacheWithTimer> m_timer;
 
     static SubimageCacheWithTimer& subimageCache();
     static bool subimageCacheExists();

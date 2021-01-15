@@ -38,6 +38,7 @@
 #include "RemoteRenderingBackendProxyMessages.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/WorkQueue.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/cocoa/MachSemaphore.h>
@@ -46,38 +47,41 @@
 namespace WebKit {
 using namespace WebCore;
 
-std::unique_ptr<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& parameters)
+Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& parameters)
 {
-    return std::unique_ptr<RemoteRenderingBackend>(new RemoteRenderingBackend(gpuConnectionToWebProcess, WTFMove(parameters)));
+    return adoptRef(*new RemoteRenderingBackend(gpuConnectionToWebProcess, WTFMove(parameters)));
 }
 
 RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& parameters)
-    : m_gpuConnectionToWebProcess(makeWeakPtr(gpuConnectionToWebProcess))
+    : m_workQueue(WorkQueue::create("RemoteRenderingBackend work queue", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive))
+    , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_renderingBackendIdentifier(parameters.identifier)
 #if PLATFORM(COCOA)
     , m_resumeDisplayListSemaphore(makeUnique<MachSemaphore>(WTFMove(parameters.sendRightForResumeDisplayListSemaphore)))
 #endif
 {
-    if (auto* gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get())
-        gpuConnectionToWebProcess->messageReceiverMap().addMessageReceiver(Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64(), *this);
+    ASSERT(RunLoop::isMain());
+    gpuConnectionToWebProcess.connection().addWorkQueueMessageReceiver(Messages::RemoteRenderingBackend::messageReceiverName(), m_workQueue, this, m_renderingBackendIdentifier.toUInt64());
 }
 
 RemoteRenderingBackend::~RemoteRenderingBackend()
 {
-    if (auto* gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get())
-        gpuConnectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
+    // Make sure we destroy the ResourceCache on the WorkQueue since it gets populated on the WorkQueue.
+    m_workQueue->dispatch([remoteResourceCache = WTFMove(m_remoteResourceCache)] { });
 }
 
-GPUConnectionToWebProcess* RemoteRenderingBackend::gpuConnectionToWebProcess() const
+void RemoteRenderingBackend::disconnect()
 {
-    return m_gpuConnectionToWebProcess.get();
+    ASSERT(RunLoop::isMain());
+
+    // The RemoteRenderingBackend destructor won't be called until disconnect() is called and we unregister ourselves as a WorkQueueMessageReceiver because
+    // the IPC::Connection refs its WorkQueueMessageReceivers.
+    m_gpuConnectionToWebProcess->connection().removeWorkQueueMessageReceiver(Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
 }
 
 IPC::Connection* RemoteRenderingBackend::messageSenderConnection() const
 {
-    if (auto* gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get())
-        return &gpuConnectionToWebProcess->connection();
-    return nullptr;
+    return &m_gpuConnectionToWebProcess->connection();
 }
 
 uint64_t RemoteRenderingBackend::messageSenderDestinationID() const
@@ -87,19 +91,13 @@ uint64_t RemoteRenderingBackend::messageSenderDestinationID() const
 
 bool RemoteRenderingBackend::applyMediaItem(DisplayList::ItemHandle item, GraphicsContext& context)
 {
+    ASSERT(!RunLoop::isMain());
+
     if (!item.is<DisplayList::PaintFrameForMedia>())
         return false;
 
     auto& mediaItem = item.get<DisplayList::PaintFrameForMedia>();
-    auto process = gpuConnectionToWebProcess();
-    if (!process)
-        return false;
-
-    auto playerProxy = process->remoteMediaPlayerManagerProxy().getProxy(mediaItem.identifier());
-    if (!playerProxy)
-        return false;
-
-    auto player = playerProxy->mediaPlayer();
+    auto player = m_gpuConnectionToWebProcess->remoteMediaPlayerManagerProxy().mediaPlayer(mediaItem.identifier());
     if (!player)
         return false;
 
@@ -119,6 +117,7 @@ void RemoteRenderingBackend::didFlush(DisplayList::FlushIdentifier flushIdentifi
 
 void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, float resolutionScale, ColorSpace colorSpace, PixelFormat pixelFormat, RenderingResourceIdentifier renderingResourceIdentifier)
 {
+    ASSERT(!RunLoop::isMain());
     ASSERT(renderingMode == RenderingMode::Accelerated || renderingMode == RenderingMode::Unaccelerated);
 
     RefPtr<ImageBuffer> imageBuffer;
@@ -269,6 +268,8 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
 
 void RemoteRenderingBackend::wakeUpAndApplyDisplayList(const GPUProcessWakeupMessageArguments& arguments)
 {
+    ASSERT(!RunLoop::isMain());
+
     TraceScope tracingScope(WakeUpAndApplyDisplayListStart, WakeUpAndApplyDisplayListEnd);
     auto destinationImageBuffer = makeRefPtr(m_remoteResourceCache.cachedImageBuffer(arguments.destinationImageBufferIdentifier));
     if (UNLIKELY(!destinationImageBuffer)) {
@@ -323,6 +324,8 @@ void RemoteRenderingBackend::setNextItemBufferToRead(DisplayList::ItemBufferIden
 
 void RemoteRenderingBackend::getImageData(AlphaPremultiplication outputFormat, IntRect srcRect, RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(IPC::ImageDataReference&&)>&& completionHandler)
 {
+    ASSERT(!RunLoop::isMain());
+
     RefPtr<ImageData> imageData;
     if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier))
         imageData = imageBuffer->getImageData(outputFormat, srcRect);
@@ -331,6 +334,8 @@ void RemoteRenderingBackend::getImageData(AlphaPremultiplication outputFormat, I
 
 void RemoteRenderingBackend::getDataURLForImageBuffer(const String& mimeType, Optional<double> quality, WebCore::PreserveResolution preserveResolution, WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(String&&)>&& completionHandler)
 {
+    ASSERT(!RunLoop::isMain());
+
     String urlString;
     if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier))
         urlString = imageBuffer->toDataURL(mimeType, quality, preserveResolution);
@@ -339,6 +344,8 @@ void RemoteRenderingBackend::getDataURLForImageBuffer(const String& mimeType, Op
 
 void RemoteRenderingBackend::getDataForImageBuffer(const String& mimeType, Optional<double> quality, WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<uint8_t>&&)>&& completionHandler)
 {
+    ASSERT(!RunLoop::isMain());
+
     Vector<uint8_t> data;
     if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier))
         data = imageBuffer->toData(mimeType, quality);
@@ -347,6 +354,8 @@ void RemoteRenderingBackend::getDataForImageBuffer(const String& mimeType, Optio
 
 void RemoteRenderingBackend::getBGRADataForImageBuffer(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<uint8_t>&&)>&& completionHandler)
 {
+    ASSERT(!RunLoop::isMain());
+
     Vector<uint8_t> data;
     if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier))
         data = imageBuffer->toBGRAData();
@@ -355,6 +364,8 @@ void RemoteRenderingBackend::getBGRADataForImageBuffer(WebCore::RenderingResourc
 
 void RemoteRenderingBackend::cacheNativeImage(const ShareableBitmap::Handle& handle, RenderingResourceIdentifier renderingResourceIdentifier)
 {
+    ASSERT(!RunLoop::isMain());
+
     auto bitmap = ShareableBitmap::create(handle);
     if (!bitmap)
         return;
@@ -371,6 +382,8 @@ void RemoteRenderingBackend::cacheNativeImage(const ShareableBitmap::Handle& han
 
 void RemoteRenderingBackend::cacheFont(Ref<Font>&& font)
 {
+    ASSERT(!RunLoop::isMain());
+
     auto identifier = font->renderingResourceIdentifier();
     m_remoteResourceCache.cacheFont(WTFMove(font));
     if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(identifier))
@@ -379,16 +392,20 @@ void RemoteRenderingBackend::cacheFont(Ref<Font>&& font)
 
 void RemoteRenderingBackend::deleteAllFonts()
 {
+    ASSERT(!RunLoop::isMain());
     m_remoteResourceCache.deleteAllFonts();
 }
 
 void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
+    ASSERT(!RunLoop::isMain());
     m_remoteResourceCache.releaseRemoteResource(renderingResourceIdentifier);
 }
 
 void RemoteRenderingBackend::didCreateSharedDisplayListHandle(DisplayList::ItemBufferIdentifier identifier, const SharedMemory::IPCHandle& handle, RenderingResourceIdentifier destinationBufferIdentifier)
 {
+    ASSERT(!RunLoop::isMain());
+
     if (UNLIKELY(m_sharedDisplayListHandles.contains(identifier))) {
         // FIXME: Add a message check to terminate the web process.
         ASSERT_NOT_REACHED();

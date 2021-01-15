@@ -87,11 +87,7 @@ RefPtr<MediaPlayer> RemoteLegacyCDMProxy::cdmMediaPlayer(const LegacyCDM*) const
     if (!m_playerId || !m_factory)
         return nullptr;
 
-    auto proxy = m_factory->gpuConnectionToWebProcess().remoteMediaPlayerManagerProxy().getProxy(m_playerId);
-    if (!proxy)
-        return nullptr;
-
-    return proxy->mediaPlayer();
+    return m_factory->gpuConnectionToWebProcess().remoteMediaPlayerManagerProxy().mediaPlayer(m_playerId);
 }
 
 }

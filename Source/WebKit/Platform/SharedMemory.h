@@ -28,7 +28,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 #if USE(UNIX_DOMAIN_SOCKETS)
 #include "Attachment.h"
@@ -56,7 +56,7 @@ class MachSendRight;
 
 namespace WebKit {
 
-class SharedMemory : public RefCounted<SharedMemory> {
+class SharedMemory : public ThreadSafeRefCounted<SharedMemory> {
 public:
     enum class Protection {
         ReadOnly,
