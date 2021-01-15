@@ -42,6 +42,7 @@ class WebProcess;
 
 class UserMediaCaptureManager : public WebProcessSupplement, public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(UserMediaCaptureManager);
 public:
     explicit UserMediaCaptureManager(WebProcess&);
     ~UserMediaCaptureManager();
@@ -56,6 +57,9 @@ private:
     using ValidateUserMediaRequestConstraintsCallback = CompletionHandler<void(Optional<String> invalidConstraint, Vector<WebCore::CaptureDevice>& audioDevices, Vector<WebCore::CaptureDevice>& videoDevices, Optional<String> deviceIdentifierHashSalt)>;
     void validateUserMediaRequestConstraints(WebCore::MediaStreamRequest, String hashSalt, ValidateUserMediaRequestConstraintsCallback&&);
     ValidateUserMediaRequestConstraintsCallback m_validateUserMediaRequestConstraintsCallback;
+
+    using GetMediaStreamDevicesCallback = CompletionHandler<void(Vector<WebCore::CaptureDevice>&&)>;
+    void getMediaStreamDevices(GetMediaStreamDevicesCallback&&);
 
     WebProcess& m_process;
 };

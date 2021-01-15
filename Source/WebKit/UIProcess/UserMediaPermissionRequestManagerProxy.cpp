@@ -508,7 +508,7 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionRequest()
     });
 }
 
-#if ENABLE(MEDIA_STREAM) && !USE(GLIB)
+#if !USE(GLIB)
 void UserMediaPermissionRequestManagerProxy::platformValidateUserMediaRequestConstraints(WebCore::RealtimeMediaSourceCenter::ValidConstraintsHandler&& validHandler, RealtimeMediaSourceCenter::InvalidConstraintsHandler&& invalidHandler, String&& deviceIDHashSalt)
 {
     RealtimeMediaSourceCenter::singleton().validateRequestConstraints(WTFMove(validHandler), WTFMove(invalidHandler), m_currentUserMediaRequest->userRequest(), WTFMove(deviceIDHashSalt));
@@ -659,12 +659,19 @@ static inline bool haveMicrophoneDevice(const Vector<WebCore::CaptureDevice>& de
     });
 }
 
+#if !USE(GLIB)
+void UserMediaPermissionRequestManagerProxy::platformGetMediaStreamDevices(CompletionHandler<void(Vector<WebCore::CaptureDevice>&&)>&& completionHandler)
+{
+    RealtimeMediaSourceCenter::singleton().getMediaStreamDevices(WTFMove(completionHandler));
+}
+#endif
+
 void UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList(bool revealIdsAndLabels, CompletionHandler<void(Vector<CaptureDevice>&&)>&& completion)
 {
     static const unsigned defaultMaximumCameraCount = 1;
     static const unsigned defaultMaximumMicrophoneCount = 1;
 
-    RealtimeMediaSourceCenter::singleton().getMediaStreamDevices([this, weakThis = makeWeakPtr(this), revealIdsAndLabels, completion = WTFMove(completion)] (auto&& devices) mutable {
+    platformGetMediaStreamDevices([this, weakThis = makeWeakPtr(this), revealIdsAndLabels, completion = WTFMove(completion)](auto&& devices) mutable {
         unsigned cameraCount = 0;
         unsigned microphoneCount = 0;
 

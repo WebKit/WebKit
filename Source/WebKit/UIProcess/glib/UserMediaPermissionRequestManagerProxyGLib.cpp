@@ -19,13 +19,9 @@
 #include "config.h"
 #include "UserMediaPermissionRequestManagerProxy.h"
 
-#include "DeviceIdHashSaltStorage.h"
-#include "Logging.h"
 #include "UserMediaCaptureManagerMessages.h"
 #include "WebPageProxy.h"
-#include "WebProcess.h"
 #include "WebProcessProxy.h"
-#include "WebsiteDataStore.h"
 #include <WebCore/UserMediaRequest.h>
 
 namespace WebKit {
@@ -39,6 +35,11 @@ void UserMediaPermissionRequestManagerProxy::platformValidateUserMediaRequestCon
         else
             validHandler(WTFMove(audioDevices), WTFMove(videoDevices), WTFMove(*deviceIdentifierHashSalt));
     });
+}
+
+void UserMediaPermissionRequestManagerProxy::platformGetMediaStreamDevices(CompletionHandler<void(Vector<CaptureDevice>&&)>&& completionHandler)
+{
+    m_page.process().connection()->sendWithAsyncReply(Messages::UserMediaCaptureManager::GetMediaStreamDevices(), WTFMove(completionHandler));
 }
 
 } // namespace WebKit

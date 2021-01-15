@@ -1,3 +1,26 @@
+2021-01-15  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] UI<->WebPocess IPC needed for enumerateDevices support
+        https://bugs.webkit.org/show_bug.cgi?id=220542
+
+        Reviewed by Eric Carlson.
+
+        For GLib ports the UIProcess will now send a message to the WebProcess to retrieve the
+        MediaStream devices. This is required because we want to avoid initializing GStreamer in the
+        UIProcess as much as possible.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::platformGetMediaStreamDevices):
+        (WebKit::UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        * UIProcess/glib/UserMediaPermissionRequestManagerProxyGLib.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::platformGetMediaStreamDevices):
+        * WebProcess/glib/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::validateUserMediaRequestConstraints):
+        (WebKit::UserMediaCaptureManager::getMediaStreamDevices):
+        * WebProcess/glib/UserMediaCaptureManager.h:
+        * WebProcess/glib/UserMediaCaptureManager.messages.in:
+
 2021-01-14  Peng Liu  <peng.liu6@apple.com>
 
         Add a quirk to disable "return to element fullscreen from picture-in-picture" for some sites

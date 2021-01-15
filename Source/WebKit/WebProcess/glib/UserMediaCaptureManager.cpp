@@ -51,7 +51,7 @@ UserMediaCaptureManager::~UserMediaCaptureManager()
 void UserMediaCaptureManager::validateUserMediaRequestConstraints(WebCore::MediaStreamRequest request, String hashSalt, ValidateUserMediaRequestConstraintsCallback&& completionHandler)
 {
     m_validateUserMediaRequestConstraintsCallback = WTFMove(completionHandler);
-    RealtimeMediaSourceCenter::InvalidConstraintsHandler invalidHandler = [this](const String& invalidConstraint) mutable {
+    auto invalidHandler = [this](const String& invalidConstraint) mutable {
         Vector<CaptureDevice> audioDevices;
         Vector<CaptureDevice> videoDevices;
         m_validateUserMediaRequestConstraintsCallback(invalidConstraint, audioDevices, videoDevices, { });
@@ -62,6 +62,11 @@ void UserMediaCaptureManager::validateUserMediaRequestConstraints(WebCore::Media
     };
 
     RealtimeMediaSourceCenter::singleton().validateRequestConstraints(WTFMove(validHandler), WTFMove(invalidHandler), request, WTFMove(hashSalt));
+}
+
+void UserMediaCaptureManager::getMediaStreamDevices(GetMediaStreamDevicesCallback&& completionHandler)
+{
+    RealtimeMediaSourceCenter::singleton().getMediaStreamDevices(WTFMove(completionHandler));
 }
 
 }

@@ -121,6 +121,7 @@ private:
     bool wasGrantedVideoOrAudioAccess(WebCore::FrameIdentifier, const WebCore::SecurityOrigin& userMediaDocumentOrigin, const WebCore::SecurityOrigin& topLevelDocumentOrigin);
 
     void computeFilteredDeviceList(bool revealIdsAndLabels, CompletionHandler<void(Vector<WebCore::CaptureDevice>&&)>&&);
+    void platformGetMediaStreamDevices(CompletionHandler<void(Vector<WebCore::CaptureDevice>&&)>&&);
 
     void processUserMediaPermissionRequest();
     void processUserMediaPermissionInvalidRequest(const String& invalidConstraint);
