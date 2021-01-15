@@ -1,3 +1,17 @@
+2021-01-14  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Cocoa] Strip DataDetectors links when copying content to the pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=220526
+        <rdar://problem/71045590>
+
+        Reviewed by Ryosuke Niwa.
+
+        Added a test which copies content containing two data detected links
+        and verifies that the links are removed.
+
+        * editing/pasteboard/copy-paste-data-detected-links-expected.txt: Added.
+        * editing/pasteboard/copy-paste-data-detected-links.html: Added.
+
 2021-01-14  Youenn Fablet  <youenn@apple.com>
 
         MediaSessionManager should update its state as soon as an audio capture track is ended

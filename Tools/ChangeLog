@@ -1,3 +1,19 @@
+2021-01-14  Aditya Keerthi  <akeerthi@apple.com>
+
+        [Cocoa] Strip DataDetectors links when copying content to the pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=220526
+        <rdar://problem/71045590>
+
+        Reviewed by Ryosuke Niwa.
+
+        Added API tests to verify DataDetectors links are not preserved when
+        copying/pasting WebArchives and rich text.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/CopyRTF.mm:
+        (StripsDataDetectorsLinks):
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteWebArchive.mm:
+        (StripsDataDetectorsLinks):
+
 2021-01-14  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Add GitHub credentials

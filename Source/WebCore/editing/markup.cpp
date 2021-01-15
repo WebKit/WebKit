@@ -82,6 +82,10 @@
 #include <wtf/URLParser.h>
 #include <wtf/text/StringBuilder.h>
 
+#if ENABLE(DATA_DETECTION)
+#include "DataDetection.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -255,6 +259,15 @@ private:
     String textContentRespectingRange(const Text&);
 
     bool shouldPreserveMSOListStyleForElement(const Element&);
+
+    enum class SpanReplacementType : uint8_t {
+        None,
+        Slot,
+#if ENABLE(DATA_DETECTION)
+        DataDetector,
+#endif
+    };
+    SpanReplacementType spanReplacementForElement(const Element&);
 
     void appendStartTag(StringBuilder& out, const Element&, bool addDisplayInline, RangeFullySelectsNode);
     void appendEndTag(StringBuilder& out, const Element&) override;
@@ -506,11 +519,25 @@ bool StyledMarkupAccumulator::shouldPreserveMSOListStyleForElement(const Element
     return false;
 }
 
+StyledMarkupAccumulator::SpanReplacementType StyledMarkupAccumulator::spanReplacementForElement(const Element& element)
+{
+    if (is<HTMLSlotElement>(element))
+        return SpanReplacementType::Slot;
+
+#if ENABLE(DATA_DETECTION)
+    if (DataDetection::isDataDetectorElement(element))
+        return SpanReplacementType::DataDetector;
+#endif
+
+    return SpanReplacementType::None;
+}
+
 void StyledMarkupAccumulator::appendStartTag(StringBuilder& out, const Element& element, bool addDisplayInline, RangeFullySelectsNode rangeFullySelectsNode)
 {
     const bool documentIsHTML = element.document().isHTMLDocument();
-    const bool isSlotElement = is<HTMLSlotElement>(element);
-    if (UNLIKELY(isSlotElement))
+
+    auto replacementType = spanReplacementForElement(element);
+    if (UNLIKELY(replacementType != SpanReplacementType::None))
         out.append("<span");
     else
         appendOpenTag(out, element, nullptr);
@@ -518,7 +545,7 @@ void StyledMarkupAccumulator::appendStartTag(StringBuilder& out, const Element& 
     appendCustomAttributes(out, element, nullptr);
 
     const bool shouldAnnotateOrForceInline = element.isHTMLElement() && (shouldAnnotate() || addDisplayInline);
-    bool shouldOverrideStyleAttr = (shouldAnnotateOrForceInline || shouldApplyWrappingStyle(element) || isSlotElement) && !shouldPreserveMSOListStyleForElement(element);
+    bool shouldOverrideStyleAttr = (shouldAnnotateOrForceInline || shouldApplyWrappingStyle(element) || replacementType != SpanReplacementType::None) && !shouldPreserveMSOListStyleForElement(element);
     if (element.hasAttributes()) {
         for (const Attribute& attribute : element.attributesIterator()) {
             // We'll handle the style attribute separately, below.
@@ -526,6 +553,10 @@ void StyledMarkupAccumulator::appendStartTag(StringBuilder& out, const Element& 
                 continue;
             if (element.isEventHandlerAttribute(attribute) || element.isJavaScriptURLAttribute(attribute))
                 continue;
+#if ENABLE(DATA_DETECTION)
+            if (replacementType == SpanReplacementType::DataDetector && DataDetection::isDataDetectorAttribute(attribute.name()))
+                continue;
+#endif
             appendAttribute(out, element, attribute, 0);
         }
     }
@@ -540,11 +571,16 @@ void StyledMarkupAccumulator::appendStartTag(StringBuilder& out, const Element& 
         } else
             newInlineStyle = EditingStyle::create();
 
-        if (isSlotElement)
+        if (replacementType == SpanReplacementType::Slot)
             newInlineStyle->addDisplayContents();
 
         if (is<StyledElement>(element) && downcast<StyledElement>(element).inlineStyle())
             newInlineStyle->overrideWithStyle(*downcast<StyledElement>(element).inlineStyle());
+
+#if ENABLE(DATA_DETECTION)
+        if (replacementType == SpanReplacementType::DataDetector && newInlineStyle->style())
+            newInlineStyle->style()->removeProperty(CSSPropertyTextDecorationColor);
+#endif
 
         if (shouldAnnotateOrForceInline) {
             if (shouldAnnotate())
@@ -576,7 +612,7 @@ void StyledMarkupAccumulator::appendStartTag(StringBuilder& out, const Element& 
 
 void StyledMarkupAccumulator::appendEndTag(StringBuilder& out, const Element& element)
 {
-    if (UNLIKELY(is<HTMLSlotElement>(element)))
+    if (UNLIKELY(spanReplacementForElement(element) != SpanReplacementType::None))
         out.append("</span>");
     else
         MarkupAccumulator::appendEndTag(out, element);
