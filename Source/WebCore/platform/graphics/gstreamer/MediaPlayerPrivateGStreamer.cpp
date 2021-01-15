@@ -1217,39 +1217,16 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfText()
     purgeInvalidTextTracks(validTextStreams);
 }
 
-GstFlowReturn MediaPlayerPrivateGStreamer::newTextSampleCallback(MediaPlayerPrivateGStreamer* player)
+void MediaPlayerPrivateGStreamer::handleTextSample(GstSample* sample, const char* streamId)
 {
-    player->newTextSample();
-    return GST_FLOW_OK;
-}
-
-void MediaPlayerPrivateGStreamer::newTextSample()
-{
-    if (!m_textAppSink)
-        return;
-
-    GRefPtr<GstEvent> streamStartEvent = adoptGRef(
-        gst_pad_get_sticky_event(m_textAppSinkPad.get(), GST_EVENT_STREAM_START, 0));
-
-    GRefPtr<GstSample> sample;
-    g_signal_emit_by_name(m_textAppSink.get(), "pull-sample", &sample.outPtr(), nullptr);
-    ASSERT(sample);
-
-    if (streamStartEvent) {
-        bool found = FALSE;
-        const gchar* id;
-        gst_event_parse_stream_start(streamStartEvent.get(), &id);
-        for (auto& track : m_textTracks.values()) {
-            if (!strcmp(track->streamId().utf8().data(), id)) {
-                track->handleSample(sample);
-                found = true;
-                break;
-            }
+    for (auto& track : m_textTracks.values()) {
+        if (!strcmp(track->streamId().utf8().data(), streamId)) {
+            track->handleSample(sample);
+            return;
         }
-        if (!found)
-            GST_WARNING("Got sample with unknown stream ID %s.", id);
-    } else
-        GST_WARNING("Unable to handle sample with no stream start event.");
+    }
+
+    GST_WARNING_OBJECT(m_pipeline.get(), "Got sample with unknown stream ID %s.", streamId);
 }
 
 MediaTime MediaPlayerPrivateGStreamer::platformDuration() const
@@ -2788,17 +2765,10 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url, const String&
     ASSERT(textCombiner);
     g_object_set(m_pipeline.get(), "text-stream-combiner", textCombiner, nullptr);
 
-    m_textAppSink = webkitTextSinkNew();
-    ASSERT(m_textAppSink);
+    m_textSink = webkitTextSinkNew(makeWeakPtr(*this));
+    ASSERT(m_textSink);
 
-    m_textAppSinkPad = adoptGRef(gst_element_get_static_pad(m_textAppSink.get(), "sink"));
-    ASSERT(m_textAppSinkPad);
-
-    auto textCaps = adoptGRef(gst_caps_new_empty_simple("application/x-subtitle-vtt"));
-    g_object_set(m_textAppSink.get(), "emit-signals", TRUE, "enable-last-sample", FALSE, "caps", textCaps.get(), nullptr);
-    g_signal_connect_swapped(m_textAppSink.get(), "new-sample", G_CALLBACK(newTextSampleCallback), this);
-
-    g_object_set(m_pipeline.get(), "text-sink", m_textAppSink.get(), nullptr);
+    g_object_set(m_pipeline.get(), "text-sink", m_textSink.get(), nullptr);
 
     if (!m_audioSink)
         m_audioSink = createAudioSink();

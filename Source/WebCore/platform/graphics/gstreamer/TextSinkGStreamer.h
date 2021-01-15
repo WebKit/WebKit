@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Cable Television Laboratories, Inc.
+ * Copyright (C) 2021 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,11 +28,17 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
-#include <glib-object.h>
-#include <gst/app/gstappsink.h>
 #include <gst/gst.h>
+#include <wtf/Forward.h>
+
+namespace WebCore {
+class MediaPlayerPrivateGStreamer;
+}
+
+G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_TEXT_SINK webkit_text_sink_get_type()
+GType webkit_text_sink_get_type(void);
 
 #define WEBKIT_TEXT_SINK(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_TEXT_SINK, WebKitTextSink))
 #define WEBKIT_TEXT_SINK_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST((klass), WEBKIT_TYPE_TEXT_SINK, WebKitTextSinkClass))
@@ -41,23 +48,19 @@
 
 typedef struct _WebKitTextSink WebKitTextSink;
 typedef struct _WebKitTextSinkClass WebKitTextSinkClass;
+typedef struct _WebKitTextSinkPrivate WebKitTextSinkPrivate;
 
 struct _WebKitTextSink {
-    GstAppSink parent;
+    GstBin parent;
+    WebKitTextSinkPrivate* priv;
 };
 
 struct _WebKitTextSinkClass {
-    GstAppSinkClass parentClass;
-
-    // Future padding
-    void (* _webkit_reserved1)(void);
-    void (* _webkit_reserved2)(void);
-    void (* _webkit_reserved3)(void);
-    void (* _webkit_reserved4)(void);
-    void (* _webkit_reserved5)(void);
-    void (* _webkit_reserved6)(void);
+    GstBinClass parentClass;
 };
 
-GstElement* webkitTextSinkNew();
+GstElement* webkitTextSinkNew(WTF::WeakPtr<WebCore::MediaPlayerPrivateGStreamer>&&);
+
+G_END_DECLS
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)

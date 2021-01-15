@@ -223,6 +223,8 @@ public:
     void flushCurrentBuffer();
 #endif
 
+    void handleTextSample(GstSample*, const char* streamId);
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
     const char* logClassName() const override { return "MediaPlayerPrivateGStreamer"; }
@@ -296,7 +298,6 @@ protected:
     void notifyPlayerOfVideo();
     void notifyPlayerOfAudio();
     void notifyPlayerOfText();
-    void newTextSample();
 
     void ensureAudioSourceProvider();
     void setAudioStreamProperties(GObject*);
@@ -307,7 +308,6 @@ protected:
     static void videoChangedCallback(MediaPlayerPrivateGStreamer*);
     static void audioChangedCallback(MediaPlayerPrivateGStreamer*);
     static void textChangedCallback(MediaPlayerPrivateGStreamer*);
-    static GstFlowReturn newTextSampleCallback(MediaPlayerPrivateGStreamer*);
 
     void timeChanged();
     void loadingFailed(MediaPlayer::NetworkState, MediaPlayer::ReadyState = MediaPlayer::ReadyState::HaveNothing, bool forceNotifications = false);
@@ -456,8 +456,7 @@ private:
 #endif
 
     Atomic<bool> m_isPlayerShuttingDown;
-    GRefPtr<GstElement> m_textAppSink;
-    GRefPtr<GstPad> m_textAppSinkPad;
+    GRefPtr<GstElement> m_textSink;
     GstStructure* m_mediaLocations { nullptr };
     int m_mediaLocationCurrentIndex { 0 };
     bool m_isPlaybackRatePaused { false };

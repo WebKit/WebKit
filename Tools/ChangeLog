@@ -1,3 +1,13 @@
+2021-01-15  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Clean-up the TextSink
+        https://bugs.webkit.org/show_bug.cgi?id=220651
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * Scripts/webkitpy/style/checker.py: Add GStreamer TextSink implementation to GObject
+        classes allow-list.
+
 2021-01-15  Rob Buis  <rbuis@igalia.com>
 
         Use event loop to set title

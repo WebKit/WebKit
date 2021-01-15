@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Cable Television Laboratories, Inc.
+ * Copyright (C) 2021 Igalia S.L
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,78 +25,115 @@
  */
 
 #include "config.h"
+#include "TextSinkGStreamer.h"
+
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
-#include "TextSinkGStreamer.h"
+#include "GStreamerCommon.h"
+#include "MediaPlayerPrivateGStreamer.h"
+#include <gst/app/gstappsink.h>
+#include <wtf/glib/WTFGType.h>
 
 GST_DEBUG_CATEGORY_STATIC(webkitTextSinkDebug);
 #define GST_CAT_DEFAULT webkitTextSinkDebug
 
-#define webkit_text_sink_parent_class parent_class
-G_DEFINE_TYPE_WITH_CODE(WebKitTextSink, webkit_text_sink, GST_TYPE_APP_SINK,
-    GST_DEBUG_CATEGORY_INIT(webkitTextSinkDebug, "webkittextsink", 0,
-        "webkit text sink"));
+using namespace WebCore;
 
-enum {
-    Prop0,
-    PropSync,
-    PropLast
+struct _WebKitTextSinkPrivate {
+    GRefPtr<GstElement> appSink;
+    WeakPtr<MediaPlayerPrivateGStreamer> mediaPlayerPrivate;
+    const char* streamId { nullptr };
 };
 
-static void webkit_text_sink_init(WebKitTextSink* sink)
+#define webkit_text_sink_parent_class parent_class
+WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitTextSink, webkit_text_sink, GST_TYPE_BIN,
+    GST_DEBUG_CATEGORY_INIT(webkitTextSinkDebug, "webkittextsink", 0, "webkit text sink"))
+
+static void webkitTextSinkHandleSample(WebKitTextSink* self, GRefPtr<GstSample>&& sample)
 {
-    /* We want to get cues as quickly as possible so WebKit has time to handle them,
-     * and we don't want cues to block when they come in the wrong order. */
-    gst_base_sink_set_sync(GST_BASE_SINK(sink), false);
+    auto* priv = self->priv;
+    if (!priv->streamId) {
+        auto pad = adoptGRef(gst_element_get_static_pad(priv->appSink.get(), "sink"));
+        auto streamStartEvent = adoptGRef(gst_pad_get_sticky_event(pad.get(), GST_EVENT_STREAM_START, 0));
+
+        if (streamStartEvent)
+            gst_event_parse_stream_start(streamStartEvent.get(), &priv->streamId);
+    }
+
+    if (priv->streamId) {
+        // As the mediaPlayerPrivate WeakPtr is constructed from the main thread, we have to use it
+        // from the main thread as well.
+        callOnMainThreadAndWait([priv, sample = WTFMove(sample)] {
+            priv->mediaPlayerPrivate->handleTextSample(sample.get(), priv->streamId);
+        });
+        return;
+    }
+    GST_WARNING_OBJECT(self, "Unable to handle sample with no stream start event.");
 }
 
-static void webkitTextSinkGetProperty(GObject*, guint /* propertyId */,
-    GValue*, GParamSpec*)
+static void webkitTextSinkConstructed(GObject* object)
 {
-    /* Do nothing with PropSync */
+    GST_CALL_PARENT(G_OBJECT_CLASS, constructed, (object));
+
+    auto* sink = WEBKIT_TEXT_SINK(object);
+    auto* priv = sink->priv;
+
+    priv->appSink = gst_element_factory_make("appsink", nullptr);
+    gst_bin_add(GST_BIN_CAST(sink), priv->appSink.get());
+
+    auto pad = adoptGRef(gst_element_get_static_pad(priv->appSink.get(), "sink"));
+    gst_element_add_pad(GST_ELEMENT_CAST(sink), gst_ghost_pad_new("sink", pad.get()));
+
+    auto textCaps = adoptGRef(gst_caps_new_empty_simple("application/x-subtitle-vtt"));
+    g_object_set(priv->appSink.get(), "emit-signals", TRUE, "enable-last-sample", FALSE, "caps", textCaps.get(), nullptr);
+
+    g_signal_connect(priv->appSink.get(), "new-sample", G_CALLBACK(+[](GstElement* appSink, WebKitTextSink* sink) -> GstFlowReturn {
+        webkitTextSinkHandleSample(sink, adoptGRef(gst_app_sink_pull_sample(GST_APP_SINK(appSink))));
+        return GST_FLOW_OK;
+    }), sink);
+
+    g_signal_connect(priv->appSink.get(), "new-preroll", G_CALLBACK(+[](GstElement* appSink, WebKitTextSink* sink) -> GstFlowReturn {
+        webkitTextSinkHandleSample(sink, adoptGRef(gst_app_sink_pull_preroll(GST_APP_SINK(appSink))));
+        return GST_FLOW_OK;
+    }), sink);
+
+    // We want to get cues as quickly as possible so WebKit has time to handle them,
+    // and we don't want cues to block when they come in the wrong order.
+    gst_base_sink_set_sync(GST_BASE_SINK_CAST(sink->priv->appSink.get()), false);
 }
 
-static void webkitTextSinkSetProperty(GObject*, guint /* propertyId */,
-    const GValue*, GParamSpec*)
-{
-    /* Do nothing with PropSync */
-}
-
-static gboolean webkitTextSinkQuery(GstElement *element, GstQuery *query)
+static gboolean webkitTextSinkQuery(GstElement* element, GstQuery* query)
 {
     switch (GST_QUERY_TYPE(query)) {
     case GST_QUERY_DURATION:
     case GST_QUERY_POSITION:
-        /* Ignore duration and position because we don't want the seek bar to be
-         * based on where the cues are. */
+        // Ignore duration and position because we don't want the seek bar to be based on where the cues are.
         return false;
     default:
-        WebKitTextSink* sink = WEBKIT_TEXT_SINK(element);
-        GstElement* parent = GST_ELEMENT(&sink->parent);
-        return GST_ELEMENT_CLASS(parent_class)->query(parent, query);
+        return GST_CALL_PARENT_WITH_DEFAULT(GST_ELEMENT_CLASS, query, (element, query), FALSE);
     }
 }
 
 static void webkit_text_sink_class_init(WebKitTextSinkClass* klass)
 {
-    GObjectClass* gobjectClass = G_OBJECT_CLASS(klass);
-    GstElementClass* elementClass = GST_ELEMENT_CLASS(klass);
+    auto* gobjectClass = G_OBJECT_CLASS(klass);
+    auto* elementClass = GST_ELEMENT_CLASS(klass);
 
-    gst_element_class_set_metadata(elementClass, "WebKit text sink", "Generic",
-        "An appsink that ignores the sync property and position and duration queries",
+    gst_element_class_set_metadata(elementClass, "WebKit text sink", GST_ELEMENT_FACTORY_KLASS_SINK,
+        "WebKit's text sink collecting cues encoded in WebVTT by the WebKit text-combiner",
         "Brendan Long <b.long@cablelabs.com>");
 
-    gobjectClass->get_property = GST_DEBUG_FUNCPTR(webkitTextSinkGetProperty);
-    gobjectClass->set_property = GST_DEBUG_FUNCPTR(webkitTextSinkSetProperty);
+    gobjectClass->constructed = GST_DEBUG_FUNCPTR(webkitTextSinkConstructed);
     elementClass->query = GST_DEBUG_FUNCPTR(webkitTextSinkQuery);
-
-    /* Override "sync" so playsink doesn't mess with our appsink */
-    g_object_class_override_property(gobjectClass, PropSync, "sync");
 }
 
-GstElement* webkitTextSinkNew()
+GstElement* webkitTextSinkNew(WeakPtr<MediaPlayerPrivateGStreamer>&& player)
 {
-    return GST_ELEMENT(g_object_new(WEBKIT_TYPE_TEXT_SINK, nullptr));
+    auto* element = GST_ELEMENT_CAST(g_object_new(WEBKIT_TYPE_TEXT_SINK, nullptr));
+    auto* sink = WEBKIT_TEXT_SINK(element);
+    ASSERT(isMainThread());
+    sink->priv->mediaPlayerPrivate = WTFMove(player);
+    return element;
 }
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)
