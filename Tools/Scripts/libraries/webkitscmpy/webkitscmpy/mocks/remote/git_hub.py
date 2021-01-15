@@ -58,6 +58,29 @@ class GitHub(mocks.Requests):
 
         self.head = self.commits[self.default_branch][-1]
         self.tags = {}
+        self._environment = None
+
+    def __enter__(self):
+        prefix = self.remote.split('/')[0].replace('.', '_').upper()
+        username_key = '{}_USERNAME'.format(prefix)
+        token_key = '{}_ACCESS_TOKEN'.format(prefix)
+        self._environment = {
+            username_key: os.environ.get(username_key),
+            token_key: os.environ.get(token_key),
+        }
+        os.environ[username_key] = 'username'
+        os.environ[token_key] = 'token'
+
+        return super(GitHub, self).__enter__()
+
+    def __exit__(self, *args, **kwargs):
+        result = super(GitHub, self).__exit__(*args, **kwargs)
+        for key in self._environment.keys():
+            if self._environment[key]:
+                os.environ[key] = self._environment[key]
+            else:
+                del os.environ[key]
+        return result
 
     def commit(self, ref):
         if ref in self.commits:

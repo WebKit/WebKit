@@ -21,12 +21,16 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import calendar
+import getpass
+import os
 import re
 import requests
 import six
+import sys
 
 from datetime import datetime
-from webkitcorepy import decorators
+from requests.auth import HTTPBasicAuth
+from webkitcorepy import OutputCapture, decorators
 from webkitscmpy import Commit, Contributor
 from webkitscmpy.remote.scm import Scm
 from xml.dom import minidom
@@ -51,16 +55,72 @@ class GitHub(Scm):
             owner=self.owner,
             name=self.name,
         ))
+        self._cached_credentials = None
 
         super(GitHub, self).__init__(url, dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors)
+
+    def credentials(self, required=True):
+        if self._cached_credentials:
+            return self._cached_credentials
+
+        prefix = self.url.split('/')[2].replace('.', '_').upper()
+        username = os.environ.get('{}_USERNAME'.format(prefix))
+        access_token = os.environ.get('{}_ACCESS_TOKEN'.format(prefix))
+        if username and access_token:
+            self._cached_credentials = (username, access_token)
+            return username, access_token
+
+        with OutputCapture():
+            import keyring
+
+        username_prompted = False
+        password_prompted = False
+        if not username:
+            username = keyring.get_password(self.api_url, 'username')
+            if not username and required:
+                if not sys.stderr.isatty() or not sys.stdin.isatty():
+                    raise OSError('No tty to prompt user for username')
+                sys.stderr.write("Authentication required to use GitHub's API\n")
+                sys.stderr.write("Please generate a 'Personal access token' via 'Developer settings' for your user\n")
+                sys.stderr.write('Username: ')
+                username = (input if sys.version_info > (3, 0) else raw_input)()
+                username_prompted = True
+
+        if not access_token and required:
+            access_token = keyring.get_password(self.api_url, username)
+            if not access_token:
+                if not sys.stderr.isatty() or not sys.stdin.isatty():
+                    raise OSError('No tty to prompt user for username')
+                access_token = getpass.getpass('API key: ')
+                password_prompted = True
+
+        if username_prompted or password_prompted:
+            self._cached_credentials = (username, access_token)
+            sys.stderr.write('Store username and access token in system keyring for {}? (Y/N): '.format(self.api_url))
+            response = (input if sys.version_info > (3, 0) else raw_input)()
+            if response.lower() in ['y', 'yes', 'ok']:
+                sys.stderr.write('Storing credentials...\n')
+                keyring.set_password(self.api_url, 'username', username)
+                keyring.set_password(self.api_url, username, access_token)
+            else:
+                sys.stderr.write('Credentials cached in process.\n')
+
+        return username, access_token
 
     @property
     def is_git(self):
         return True
 
-    def request(self, path=None, params=None, headers=None):
+    def request(self, path=None, params=None, headers=None, authenticated=None):
         headers = {key: value for key, value in headers.items()} if headers else dict()
         headers['Accept'] = headers.get('Accept', 'application/vnd.github.v3+json')
+
+        username, access_token = self.credentials(required=bool(authenticated))
+        auth = HTTPBasicAuth(username, access_token) if username and access_token else None
+        if authenticated is False:
+            auth = None
+        if authenticated and not auth:
+            raise self.Exception('Request requires authentication, none provided')
 
         params = {key: value for key, value in params.items()} if params else dict()
         params['per_page'] = params.get('per_page', 100)
@@ -72,14 +132,14 @@ class GitHub(Scm):
             name=self.name,
             path='/{}'.format(path) if path else '',
         )
-        response = requests.get(url, params=params, headers=headers)
+        response = requests.get(url, params=params, headers=headers, auth=auth)
         if response.status_code != 200:
             return None
         result = response.json()
 
         while isinstance(response.json(), list) and len(response.json()) == params['per_page']:
             params['page'] += 1
-            response = requests.get(url, params=params, headers=headers)
+            response = requests.get(url, params=params, headers=headers, auth=auth)
             if response.status_code != 200:
                 raise self.Exception("Failed to assemble pagination requests for '{}', failed on page {}".format(url, params['page']))
             result += response.json()
