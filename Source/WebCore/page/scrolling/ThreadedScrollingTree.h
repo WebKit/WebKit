@@ -113,6 +113,7 @@ private:
     std::unique_ptr<RunLoop::Timer<ThreadedScrollingTree>> m_delayedRenderingUpdateDetectionTimer;
 
     bool m_scrollAnimatorEnabled { false };
+    bool m_hasNodesWithSynchronousScrollingReasons { false };
 };
 
 } // namespace WebCore

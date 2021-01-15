@@ -317,11 +317,16 @@ void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, ScrollingS
     
     if (behavior & ScrollingStateTreeAsTextBehaviorIncludeLayerIDs) {
         ts.dumpProperty("root contents layer ID", m_rootContentsLayer.layerID());
-        ts.dumpProperty("counter scrolling layer ID", m_counterScrollingLayer.layerID());
-        ts.dumpProperty("inset clip layer ID", m_insetClipLayer.layerID());
-        ts.dumpProperty("content shadow layer ID", m_contentShadowLayer.layerID());
-        ts.dumpProperty("header layer ID", m_headerLayer.layerID());
-        ts.dumpProperty("footer layer ID", m_footerLayer.layerID());
+        if (m_counterScrollingLayer.layerID())
+            ts.dumpProperty("counter scrolling layer ID", m_counterScrollingLayer.layerID());
+        if (m_insetClipLayer.layerID())
+            ts.dumpProperty("inset clip layer ID", m_insetClipLayer.layerID());
+        if (m_contentShadowLayer.layerID())
+            ts.dumpProperty("content shadow layer ID", m_contentShadowLayer.layerID());
+        if (m_headerLayer.layerID())
+            ts.dumpProperty("header layer ID", m_headerLayer.layerID());
+        if (m_footerLayer.layerID())
+            ts.dumpProperty("footer layer ID", m_footerLayer.layerID());
     }
 
     if (m_frameScaleFactor != 1)

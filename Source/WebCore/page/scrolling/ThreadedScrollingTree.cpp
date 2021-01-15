@@ -168,10 +168,15 @@ void ThreadedScrollingTree::propagateSynchronousScrollingReasons(const HashSet<S
                 currNode = nodeForID(downcast<ScrollingTreeOverflowScrollProxyNode>(*currNode).overflowScrollingNodeID());
                 continue;
             }
+            
+            if (is<ScrollingTreeFrameScrollingNode>(currNode))
+                break;
 
             currNode = currNode->parent();
         }
     };
+
+    m_hasNodesWithSynchronousScrollingReasons = !synchronousScrollingNodes.isEmpty();
 
     for (auto nodeID : synchronousScrollingNodes) {
         if (auto node = nodeForID(nodeID))
@@ -181,8 +186,7 @@ void ThreadedScrollingTree::propagateSynchronousScrollingReasons(const HashSet<S
 
 bool ThreadedScrollingTree::canUpdateLayersOnScrollingThread() const
 {
-    auto* rootNode = this->rootNode();
-    return !(rootNode && rootNode->hasSynchronousScrollingReasons());
+    return m_hasNodesWithSynchronousScrollingReasons;
 }
 
 void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode& node, ScrollingLayerPositionAction scrollingLayerPositionAction)
