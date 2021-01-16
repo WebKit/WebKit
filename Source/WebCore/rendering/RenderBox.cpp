@@ -643,6 +643,13 @@ void RenderBox::updateLayerTransform()
 LayoutUnit RenderBox::constrainLogicalWidthInFragmentByMinMax(LayoutUnit logicalWidth, LayoutUnit availableWidth, RenderBlock& cb, RenderFragmentContainer* fragment) const
 {
     const RenderStyle& styleToUse = style();
+
+    if (shouldComputeLogicalHeightFromAspectRatio()) {
+        LayoutUnit logicalMinWidth, logicalMaxWidth;
+        std::tie(logicalMinWidth, logicalMaxWidth) = computeMinMaxLogicalWidthFromAspectRatio();
+        logicalWidth = std::max(logicalMinWidth, std::min(logicalWidth, logicalMaxWidth));
+    }
+
     if (!styleToUse.logicalMaxWidth().isUndefined())
         logicalWidth = std::min(logicalWidth, computeLogicalWidthInFragmentUsing(MaxSize, styleToUse.logicalMaxWidth(), availableWidth, cb, fragment));
     return std::max(logicalWidth, computeLogicalWidthInFragmentUsing(MinSize, styleToUse.logicalMinWidth(), availableWidth, cb, fragment));
@@ -3625,38 +3632,53 @@ void RenderBox::computePositionedLogicalWidth(LogicalExtentComputedValues& compu
                                        logicalLeftLength, logicalRightLength, marginLogicalLeft, marginLogicalRight,
                                        computedValues);
 
+    LayoutUnit transferredMinSize = LayoutUnit::min();
+    LayoutUnit transferredMaxSize = LayoutUnit::max();
+    if (shouldComputeLogicalHeightFromAspectRatio())
+        std::tie(transferredMinSize, transferredMaxSize) = computeMinMaxLogicalWidthFromAspectRatio();
+
+    LogicalExtentComputedValues maxValues;
+    maxValues.m_extent = LayoutUnit::max();
     // Calculate constraint equation values for 'max-width' case.
     if (!style().logicalMaxWidth().isUndefined()) {
-        LogicalExtentComputedValues maxValues;
-
         computePositionedLogicalWidthUsing(MaxSize, style().logicalMaxWidth(), containerBlock, containerDirection,
                                            containerLogicalWidth, bordersPlusPadding,
                                            logicalLeftLength, logicalRightLength, marginLogicalLeft, marginLogicalRight,
                                            maxValues);
-
-        if (computedValues.m_extent > maxValues.m_extent) {
-            computedValues.m_extent = maxValues.m_extent;
-            computedValues.m_position = maxValues.m_position;
-            computedValues.m_margins.m_start = maxValues.m_margins.m_start;
-            computedValues.m_margins.m_end = maxValues.m_margins.m_end;
-        }
+    }
+    if (transferredMaxSize < maxValues.m_extent) {
+        computePositionedLogicalWidthUsing(MaxSize, Length(transferredMaxSize, Fixed), containerBlock, containerDirection,
+            containerLogicalWidth, bordersPlusPadding,
+            logicalLeftLength, logicalRightLength, marginLogicalLeft, marginLogicalRight,
+            maxValues);
+    }
+    if (computedValues.m_extent > maxValues.m_extent) {
+        computedValues.m_extent = maxValues.m_extent;
+        computedValues.m_position = maxValues.m_position;
+        computedValues.m_margins.m_start = maxValues.m_margins.m_start;
+        computedValues.m_margins.m_end = maxValues.m_margins.m_end;
     }
 
+    LogicalExtentComputedValues minValues;
+    minValues.m_extent = LayoutUnit::min();
     // Calculate constraint equation values for 'min-width' case.
     if (!style().logicalMinWidth().isZero() || style().logicalMinWidth().isIntrinsic()) {
-        LogicalExtentComputedValues minValues;
-
         computePositionedLogicalWidthUsing(MinSize, style().logicalMinWidth(), containerBlock, containerDirection,
+            containerLogicalWidth, bordersPlusPadding,
+            logicalLeftLength, logicalRightLength, marginLogicalLeft, marginLogicalRight,
+            minValues);
+    }
+    if (transferredMinSize > minValues.m_extent) {
+        computePositionedLogicalWidthUsing(MinSize, Length(transferredMinSize, Fixed), containerBlock, containerDirection,
                                            containerLogicalWidth, bordersPlusPadding,
                                            logicalLeftLength, logicalRightLength, marginLogicalLeft, marginLogicalRight,
                                            minValues);
-
-        if (computedValues.m_extent < minValues.m_extent) {
-            computedValues.m_extent = minValues.m_extent;
-            computedValues.m_position = minValues.m_position;
-            computedValues.m_margins.m_start = minValues.m_margins.m_start;
-            computedValues.m_margins.m_end = minValues.m_margins.m_end;
-        }
+    }
+    if (computedValues.m_extent < minValues.m_extent) {
+        computedValues.m_extent = minValues.m_extent;
+        computedValues.m_position = minValues.m_position;
+        computedValues.m_margins.m_start = minValues.m_margins.m_start;
+        computedValues.m_margins.m_end = minValues.m_margins.m_end;
     }
 
     computedValues.m_extent += bordersPlusPadding;
@@ -5031,6 +5053,22 @@ LayoutUnit RenderBox::computeLogicalWidthFromAspectRatio(RenderFragmentContainer
 
     LayoutUnit containerWidthInInlineDirection = std::max<LayoutUnit>(0, containingBlockLogicalWidthForContentInFragment(fragment));
     return constrainLogicalWidthInFragmentByMinMax(logicalWidth, containerWidthInInlineDirection, *containingBlock(), fragment);
+}
+
+std::pair<LayoutUnit, LayoutUnit> RenderBox::computeMinMaxLogicalWidthFromAspectRatio() const
+{
+    auto ratio = LayoutUnit { style().logicalAspectRatio() };
+    LayoutUnit blockMinSize = constrainLogicalHeightByMinMax(LayoutUnit(), WTF::nullopt);
+    LayoutUnit blockMaxSize = constrainLogicalHeightByMinMax(LayoutUnit::max(), WTF::nullopt);
+    LayoutUnit transferredMinSize = LayoutUnit();
+    LayoutUnit transferredMaxSize = LayoutUnit::max();
+    if (blockMinSize > LayoutUnit())
+        transferredMinSize = inlineSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), ratio, style().boxSizing(), blockMinSize);
+    if (blockMaxSize != LayoutUnit::max())
+        transferredMaxSize = inlineSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), ratio, style().boxSizing(), blockMaxSize);
+    // Minimum size wins over maximum size.
+    transferredMaxSize = std::max(transferredMaxSize, transferredMinSize);
+    return { transferredMinSize, transferredMaxSize };
 }
 
 bool RenderBox::hasRelativeDimensions() const

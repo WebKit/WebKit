@@ -701,6 +701,7 @@ protected:
     bool shouldComputeLogicalWidthFromAspectRatio() const;
     bool shouldComputeLogicalWidthFromAspectRatioAndInsets() const;
     LayoutUnit computeLogicalWidthFromAspectRatio(RenderFragmentContainer* = nullptr) const;
+    std::pair<LayoutUnit, LayoutUnit> computeMinMaxLogicalWidthFromAspectRatio() const;
 
     static LayoutUnit blockSizeFromAspectRatio(LayoutUnit borderPaddingInlineSum, LayoutUnit borderPaddingBlockSum, LayoutUnit aspectRatio, BoxSizing boxSizing, LayoutUnit inlineSize)
     {
