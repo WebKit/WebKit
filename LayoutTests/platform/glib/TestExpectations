@@ -503,6 +503,8 @@ webkit.org/b/184569 storage/indexeddb/modern/transactions-stop-on-navigation.htm
 
 webkit.org/b/208292 storage/indexeddb/detached-iframe.html [ Failure Pass ]
 
+webkit.org/b/220610 storage/indexeddb/result-request-cycle.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of IndexedDB-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -804,6 +806,8 @@ webkit.org/b/98653  svg/text/lengthAdjust-text-metrics.html [ Failure ]
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/216024 fast/text/ahom.html [ ImageOnlyFailure ]
+
+webkit.org/b/220680 fast/text/cjk-multi-codepoint-cluster-vertical.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Text-related bugs

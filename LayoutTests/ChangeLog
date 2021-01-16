@@ -1,3 +1,11 @@
+2021-01-15  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening a couple failures
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2021-01-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Release assert in Document::updateStyleIfNeeded() via PrintContext::end() inside HTMLTitleElement::insertedIntoAncestor and removedFromAncestor
