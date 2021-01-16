@@ -1,3 +1,15 @@
+2021-01-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fixes with newer clang
+        https://bugs.webkit.org/show_bug.cgi?id=220679
+
+        Reviewed by Mark Lam.
+
+        Class needs type casting to be used as map key in Objective-C. After https://reviews.llvm.org/D67983,
+        Objective-C++ also requires this (see discussion there for why it's OK to just cast).
+
+        * API/JSWrapperMap.mm: (-[JSWrapperMap classInfoForClass:]):
+
 2021-01-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Clean up DFGPreciseLocalClobberize to avoid duplicate code

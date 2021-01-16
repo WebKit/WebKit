@@ -629,7 +629,7 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
         return nil;
 
     // Check if we've already created a JSObjCClassInfo for this Class.
-    if (JSObjCClassInfo* classInfo = (JSObjCClassInfo*)m_classMap[cls])
+    if (JSObjCClassInfo* classInfo = (JSObjCClassInfo*)m_classMap[(id)cls])
         return classInfo;
 
     // Skip internal classes beginning with '_' - just copy link to the parent class's info.
@@ -641,10 +641,10 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
         });
 
         if (!conformsToExportProtocol)
-            return m_classMap[cls] = [self classInfoForClass:class_getSuperclass(cls)];
+            return m_classMap[(id)cls] = [self classInfoForClass:class_getSuperclass(cls)];
     }
 
-    return m_classMap[cls] = [[[JSObjCClassInfo alloc] initForClass:cls] autorelease];
+    return m_classMap[(id)cls] = [[[JSObjCClassInfo alloc] initForClass:cls] autorelease];
 }
 
 - (JSValue *)jsWrapperForObject:(id)object inContext:(JSContext *)context

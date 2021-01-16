@@ -216,7 +216,7 @@ static void simpleSignalHandler(int sig)
     exit(128 + sig);
 }
 
-void lockDownDiscreteGraphics()
+static void lockDownDiscreteGraphics()
 {
     mach_port_t masterPort;
     kern_return_t kernResult = IOMasterPort(bootstrap_port, &masterPort);
@@ -248,7 +248,7 @@ void lockDownDiscreteGraphics()
         NSLog(@"IOObjectRelease() failed in %s with kernResult = %d", __FUNCTION__, kernResult);
 }
 
-void addSleepAssertions()
+static void addSleepAssertions()
 {
     CFStringRef assertionName = CFSTR("WebKit LayoutTestHelper");
     CFStringRef assertionDetails = CFSTR("WebKit layout-test helper tool is preventing sleep.");
