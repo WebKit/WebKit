@@ -1,3 +1,12 @@
+2021-01-15  Ling Ho  <lingho@apple.com>
+
+        Bugzilla patch upload no longer displays the agreement for some users
+        https://bugs.webkit.org/show_bug.cgi?id=220678
+
+        Reviewed by Alexey Proskuryakov.
+
+        * template/en/default/attachment/patchlegalese.html.tmpl:
+
 2020-06-01  Ling Ho  <lingho@apple.com>
 
         Show patch IDs in the drop down menu under the Patch Diff Screen
