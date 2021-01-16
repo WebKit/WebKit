@@ -57,7 +57,6 @@ public:
         InlineLayoutPoint logicalTopLeft;
         InlineLayoutUnit lineLogicalWidth;
         InlineLayoutUnit contentLogicalWidth;
-        bool isLineConsideredEmpty { true };
         bool isLastLineWithInlineContent { true };
         const Line::RunList& runs;
     };

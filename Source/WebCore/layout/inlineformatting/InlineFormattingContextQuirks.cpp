@@ -66,7 +66,9 @@ bool InlineFormattingContext::Quirks::inlineLevelBoxAffectsLineBox(const LineBox
             }
         }
         auto inlineBoxHasImaginaryStrut = layoutState().inStandardsMode();
-        return inlineBoxHasImaginaryStrut && !lineBox.isConsideredEmpty();
+        // Inline box with strut only stetches the line box when it has additional inline level boxes (not inline boxes) or the root inline box has content.
+        // e.g. <!DOCTYPE html><div"><span style="font-size: 100px;"></span><img src="foo" style="width: 0px; height: 0px;"></div>
+        return inlineBoxHasImaginaryStrut && (lineBox.hasNonInlineBox() || lineBox.rootInlineBox().hasContent());
     }
     if (inlineLevelBox.isAtomicInlineLevelBox()) {
         if (inlineLevelBox.layoutBounds().height())

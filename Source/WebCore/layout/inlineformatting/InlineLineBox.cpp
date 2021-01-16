@@ -83,9 +83,8 @@ bool LineBox::InlineLevelBox::hasLineBoxRelativeAlignment() const
     return verticalAlignment == VerticalAlign::Top || verticalAlignment == VerticalAlign::Bottom;
 }
 
-LineBox::LineBox(const InlineLayoutPoint& logicalTopleft, InlineLayoutUnit contentLogicalWidth, IsLineConsideredEmpty isLineConsideredEmpty, size_t numberOfRuns)
+LineBox::LineBox(const InlineLayoutPoint& logicalTopleft, InlineLayoutUnit contentLogicalWidth, size_t numberOfRuns)
     : m_logicalRect(logicalTopleft, InlineLayoutSize { contentLogicalWidth, { } })
-    , m_isConsideredEmpty(isLineConsideredEmpty == IsLineConsideredEmpty::Yes)
 {
     m_nonRootInlineLevelBoxList.reserveInitialCapacity(numberOfRuns);
     m_inlineLevelBoxRectMap.reserveInitialCapacity(numberOfRuns);
@@ -99,7 +98,7 @@ void LineBox::addRootInlineBox(std::unique_ptr<InlineLevelBox>&& rootInlineBox)
 
 void LineBox::addInlineLevelBox(std::unique_ptr<InlineLevelBox>&& inlineLevelBox)
 {
-    m_hasInlineBox = m_hasInlineBox || inlineLevelBox->isInlineBox();
+    m_boxTypes.add(inlineLevelBox->type());
     m_inlineLevelBoxRectMap.set(&inlineLevelBox->layoutBox(), inlineLevelBox.get());
     m_nonRootInlineLevelBoxList.append(WTFMove(inlineLevelBox));
 }

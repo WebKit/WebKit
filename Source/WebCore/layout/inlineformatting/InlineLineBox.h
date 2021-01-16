@@ -90,13 +90,15 @@ public:
         bool isLineBreakBox() const { return m_type == Type::LineBreakBox; }
         bool hasLineBoxRelativeAlignment() const;
 
-        enum class Type {
-            InlineBox,
-            RootInlineBox,
-            AtomicInlineLevelBox,
-            LineBreakBox,
-            GenericInlineLevelBox
+        enum class Type : uint8_t {
+            InlineBox             = 1 << 0,
+            RootInlineBox         = 1 << 1,
+            AtomicInlineLevelBox  = 1 << 2,
+            LineBreakBox          = 1 << 3,
+            GenericInlineLevelBox = 1 << 4
         };
+        Type type() const { return m_type; }
+
         InlineLevelBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutSize, Type);
         InlineLevelBox() = default;
 
@@ -128,8 +130,7 @@ public:
         Type m_type { Type::InlineBox };
     };
 
-    enum class IsLineConsideredEmpty { No, Yes };
-    LineBox(const InlineLayoutPoint& logicalTopLeft, InlineLayoutUnit logicalWidth, IsLineConsideredEmpty, size_t numberOfRuns);
+    LineBox(const InlineLayoutPoint& logicalTopLeft, InlineLayoutUnit logicalWidth, size_t numberOfRuns);
 
     const InlineRect& logicalRect() const { return m_logicalRect; }
     InlineLayoutUnit logicalWidth() const { return logicalSize().width(); }
@@ -138,8 +139,8 @@ public:
     InlineLayoutSize logicalSize() const { return logicalRect().size(); }
 
     Optional<InlineLayoutUnit> horizontalAlignmentOffset() const { return m_horizontalAlignmentOffset; }
-    bool isConsideredEmpty() const { return m_isConsideredEmpty; }
-    bool hasInlineBox() const { return m_hasInlineBox; }
+    bool hasInlineBox() const { return m_boxTypes.contains(InlineLevelBox::Type::InlineBox); }
+    bool hasNonInlineBox() const { return m_boxTypes.containsAny({ InlineLevelBox::Type::AtomicInlineLevelBox, InlineLevelBox::Type::LineBreakBox, InlineLevelBox::Type::GenericInlineLevelBox }); }
 
     const InlineLevelBox& inlineLevelBoxForLayoutBox(const Box& layoutBox) const { return *m_inlineLevelBoxRectMap.get(&layoutBox); }
 
@@ -169,8 +170,7 @@ private:
 private:
     InlineRect m_logicalRect;
     Optional<InlineLayoutUnit> m_horizontalAlignmentOffset;
-    bool m_isConsideredEmpty { true };
-    bool m_hasInlineBox { false };
+    OptionSet<InlineLevelBox::Type> m_boxTypes;
 
     std::unique_ptr<InlineLevelBox> m_rootInlineBox;
     InlineLevelBoxList m_nonRootInlineLevelBoxList;

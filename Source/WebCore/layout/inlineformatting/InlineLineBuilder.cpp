@@ -264,7 +264,6 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
         , m_lineLogicalRect.topLeft()
         , m_lineLogicalRect.width()
         , m_line.contentLogicalWidth()
-        , m_line.isConsideredEmpty()
         , isLastLine
         , m_line.runs()};
 }
