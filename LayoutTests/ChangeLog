@@ -1,3 +1,16 @@
+2021-01-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Release assert in Document::updateStyleIfNeeded() via PrintContext::end() inside HTMLTitleElement::insertedIntoAncestor and removedFromAncestor
+        https://bugs.webkit.org/show_bug.cgi?id=218496
+
+        Reviewed by Darin Adler.
+
+        Remove the title element to eliminiate the non-determinism.
+
+        * http/tests/loading/redirect-with-no-location-crash-expected.txt:
+        * http/tests/loading/redirect-with-no-location-crash.html:
+        * platform/wk2/http/tests/loading/redirect-with-no-location-crash-expected.txt:
+
 2021-01-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Emoji keyboard covers text field on twitter.com/messages
