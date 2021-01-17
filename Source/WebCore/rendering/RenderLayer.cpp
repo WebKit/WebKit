@@ -2583,35 +2583,6 @@ LayoutSize RenderLayer::offsetFromAncestor(const RenderLayer* ancestorLayer, Col
     return toLayoutSize(convertToLayerCoords(ancestorLayer, LayoutPoint(), adjustForColumns));
 }
 
-#if ENABLE(IOS_TOUCH_EVENTS)
-bool RenderLayer::handleTouchEvent(const PlatformTouchEvent& touchEvent)
-{
-    // If we have accelerated scrolling, let the scrolling be handled outside of WebKit.
-    if (hasCompositedScrollableOverflow())
-        return false;
-
-    return ScrollableArea::handleTouchEvent(touchEvent);
-}
-
-void RenderLayer::registerAsTouchEventListenerForScrolling()
-{
-    if (!renderer().element() || m_registeredAsTouchEventListenerForScrolling)
-        return;
-    
-    renderer().document().addTouchEventHandler(*renderer().element());
-    m_registeredAsTouchEventListenerForScrolling = true;
-}
-
-void RenderLayer::unregisterAsTouchEventListenerForScrolling()
-{
-    if (!renderer().element() || !m_registeredAsTouchEventListenerForScrolling)
-        return;
-
-    renderer().document().removeTouchEventHandler(*renderer().element());
-    m_registeredAsTouchEventListenerForScrolling = false;
-}
-#endif // ENABLE(IOS_TOUCH_EVENTS)
-
 static inline bool frameElementAndViewPermitScroll(HTMLFrameElementBase* frameElementBase, FrameView& frameView)
 {
     // If scrollbars aren't explicitly forbidden, permit scrolling.

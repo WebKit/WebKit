@@ -1638,37 +1638,6 @@ void RenderLayerScrollableArea::updateAllScrollbarRelatedStyle()
     updateResizerStyle();
 }
 
-#if ENABLE(IOS_TOUCH_EVENTS)
-bool RenderLayerScrollableArea::handleTouchEvent(const PlatformTouchEvent& touchEvent)
-{
-    // If we have accelerated scrolling, let the scrolling be handled outside of WebKit.
-    if (hasCompositedScrollableOverflow())
-        return false;
-
-    return ScrollableArea::handleTouchEvent(touchEvent);
-}
-
-void RenderLayerScrollableArea::registerAsTouchEventListenerForScrolling()
-{
-    auto& renderer = m_layer.renderer();
-    if (!renderer.element() || m_registeredAsTouchEventListenerForScrolling)
-        return;
-
-    renderer.document().addTouchEventHandler(*renderer.element());
-    m_registeredAsTouchEventListenerForScrolling = true;
-}
-
-void RenderLayerScrollableArea::unregisterAsTouchEventListenerForScrolling()
-{
-    auto& renderer = m_layer.renderer;
-    if (!renderer.element() || !m_registeredAsTouchEventListenerForScrolling)
-        return;
-
-    renderer.document().removeTouchEventHandler(*renderer.element());
-    m_registeredAsTouchEventListenerForScrolling = false;
-}
-#endif // ENABLE(IOS_TOUCH_EVENTS)
-
 // FIXME: this is only valid after we've made layers.
 bool RenderLayerScrollableArea::usesCompositedScrolling() const
 {
