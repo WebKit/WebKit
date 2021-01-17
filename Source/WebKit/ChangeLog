@@ -1,3 +1,23 @@
+2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        JITOperation does not exist in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=220686
+
+        Reviewed by Mark Lam.
+
+        Now, we do not register host functions as JIT operations. As a result, WebKit.framework does not have any JITOperations.
+        We should remove population of JITOperations code in WebKit.framework.
+
+        * Shared/API/c/WKString.cpp:
+        (WKStringCopyJSString):
+        * Shared/Cocoa/WebKit2InitializeCocoa.mm:
+        (WebKit::runInitializationCode):
+        * Shared/WebKit2Initialize.cpp:
+        (WebKit::InitializeWebKit2):
+        * Shared/WebKitJITOperations.cpp: Removed.
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-01-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [non-Cocoa] Add a new AuxiliaryProcessMainBase class for auxiliary processes without singleton()
