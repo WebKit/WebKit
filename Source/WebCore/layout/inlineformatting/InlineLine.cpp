@@ -56,8 +56,6 @@ void Line::initialize()
     m_runs.clear();
     m_trailingSoftHyphenWidth = { };
     m_trimmableTrailingContent.reset();
-    m_isConsideredEmpty = true;
-    m_isConsideredEmptyBeforeTrimmableTrailingContent = { };
 }
 
 void Line::removeCollapsibleContent(InlineLayoutUnit extraHorizontalSpace)
@@ -132,19 +130,6 @@ void Line::removeTrailingTrimmableContent()
     }
 
     m_contentLogicalWidth -= m_trimmableTrailingContent.remove();
-    // If we removed the first visible run on the line, we need to re-check the visibility status.
-    if (m_isConsideredEmptyBeforeTrimmableTrailingContent) {
-        // Just because the line was considered empty before the removed content, it does not necessarily mean it is still empty.
-        // <span>  </span><span style="padding-left: 10px"></span>  <- non-empty
-        m_isConsideredEmpty = [&] {
-            for (auto& run : m_runs) {
-                if (!isRunConsideredEmpty(run))
-                    return false;
-            }
-            return true;
-        }();
-        m_isConsideredEmptyBeforeTrimmableTrailingContent = { };
-    }
 }
 
 void Line::visuallyCollapsePreWrapOverflowContent(InlineLayoutUnit extraHorizontalSpace)
@@ -204,10 +189,6 @@ void Line::append(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
         appendNonReplacedInlineBox(inlineItem, logicalWidth);
     else
         ASSERT_NOT_REACHED();
-
-    // Check if this newly appended content makes the line non-empty.
-    if (m_isConsideredEmpty && !m_runs.isEmpty() && !isRunConsideredEmpty(m_runs.last()))
-        m_isConsideredEmpty = false;
 }
 
 void Line::appendNonBreakableSpace(const InlineItem& inlineItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
@@ -295,9 +276,6 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
     // Set the trailing trimmable content.
     if (inlineTextItem.isWhitespace() && !InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem)) {
         m_trimmableTrailingContent.addFullyTrimmableContent(m_runs.size() - 1, contentLogicalWidth() - oldContentLogicalWidth);
-        // If we ever trim this content, we need to know if the line visibility state needs to be recomputed.
-        if (m_trimmableTrailingContent.isEmpty())
-            m_isConsideredEmptyBeforeTrimmableTrailingContent = isConsideredEmpty();
         return;
     }
     // Any non-whitespace, no-trimmable content resets the existing trimmable.

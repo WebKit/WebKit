@@ -110,7 +110,7 @@ public:
         InlineLayoutUnit collapsibleWidth { 0 };
         Optional<InlineLayoutUnit> trailingSoftHyphenWidth;
         bool hasFullyCollapsibleTrailingRun { false };
-        bool isEmpty { true };
+        bool hasContent { false };
     };
     Result processInlineContent(const ContinuousContent&, const LineStatus&);
 

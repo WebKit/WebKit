@@ -46,12 +46,6 @@ public:
 
     void append(const InlineItem&, InlineLayoutUnit logicalWidth);
 
-    // <span></span> considered empty.
-    // <span><br></span> is considered empty.
-    // <span>text</span> is not considered empty.
-    // <span style="padding: 10px"></span> is not considered empty. 
-    bool isConsideredEmpty() const { return m_isConsideredEmpty; }
-
     InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
     InlineLayoutUnit contentLogicalRight() const { return m_runs.isEmpty() ? 0.0f : m_runs.last().logicalRight(); }
 
@@ -178,8 +172,6 @@ private:
     TrimmableTrailingContent m_trimmableTrailingContent;
     InlineLayoutUnit m_contentLogicalWidth { 0 };
     Optional<InlineLayoutUnit> m_trailingSoftHyphenWidth { 0 };
-    bool m_isConsideredEmpty { true };
-    Optional<bool> m_isConsideredEmptyBeforeTrimmableTrailingContent;
 };
 
 inline void Line::TrimmableTrailingContent::reset()

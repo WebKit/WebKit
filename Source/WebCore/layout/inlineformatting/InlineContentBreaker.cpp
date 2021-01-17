@@ -136,7 +136,7 @@ InlineContentBreaker::Result InlineContentBreaker::processInlineContent(const Co
         if (auto lastLineWrapOpportunityIndex = lastWrapOpportunityIndex(candidateContent.runs())) {
             auto isEligibleLineWrapOpportunity = [&] (auto& candidateItem) {
                 // Just check for leading preserved whitespace for now.
-                if (!lineStatus.isEmpty || !is<InlineTextItem>(candidateItem))
+                if (lineStatus.hasContent || !is<InlineTextItem>(candidateItem))
                     return true;
                 auto inlineTextItem = downcast<InlineTextItem>(candidateItem);
                 return !inlineTextItem.isWhitespace() || InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem);
@@ -199,7 +199,7 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
                 // We tried to break the content but the available space can't even accommodate the first character.
                 // 1. Wrap the content over to the next line when we've got content on the line already.
                 // 2. Keep the first character on the empty line (or keep the whole run if it has only one character/completely empty).
-                if (!lineStatus.isEmpty)
+                if (lineStatus.hasContent)
                     return { Result::Action::Wrap, IsEndOfLine::Yes };
                 auto leadingTextRunIndex = *firstTextRunIndex(continuousContent);
                 auto& inlineTextItem = downcast<InlineTextItem>(continuousContent.runs()[leadingTextRunIndex].inlineItem);
@@ -214,7 +214,7 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
         }
     }
     // If we are not allowed to break this overflowing content, we still need to decide whether keep it or wrap it to the next line.
-    if (lineStatus.isEmpty) {
+    if (!lineStatus.hasContent) {
         ASSERT(!m_hasWrapOpportunityAtPreviousPosition);
         return { Result::Action::Keep, IsEndOfLine::No };
     }

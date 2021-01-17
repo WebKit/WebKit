@@ -355,8 +355,7 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
     if (runsExpandHorizontally)
         m_line.applyRunExpansion(m_lineLogicalRect.width() - m_line.contentLogicalRight());
     auto lineEndsWithHyphen = false;
-    if (!m_line.isConsideredEmpty()) {
-        ASSERT(!m_line.runs().isEmpty());
+    if (!m_line.runs().isEmpty()) {
         auto& lastTextContent = m_line.runs().last().textContent();
         lineEndsWithHyphen = lastTextContent && lastTextContent->needsHyphen();
     }
@@ -622,9 +621,9 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
         return adjustedLineLogicalRect;
     }();
     auto availableWidth = lineLogicalRectForCandidateContent.width() - m_line.contentLogicalRight();
-    // Check if this new content fits.
-    auto isLineConsideredEmpty = m_line.isConsideredEmpty() && !m_contentIsConstrainedByFloat;
-    auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidth, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), isLineConsideredEmpty };
+    // While the floats are not considered to be on the line, they make the line contentful for line breaking.
+    auto lineHasContent = !m_line.runs().isEmpty() || m_contentIsConstrainedByFloat;
+    auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidth, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), lineHasContent };
     auto result = inlineContentBreaker.processInlineContent(continuousInlineContent, lineStatus);
     if (result.lastWrapOpportunityItem)
         m_wrapOpportunityList.append(result.lastWrapOpportunityItem);
