@@ -176,8 +176,9 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
     const RenderStyle& newStyle = style();
     if (oldStyle && scrollSnapContainerRequiresUpdateForStyleUpdate(*oldStyle, newStyle)) {
         if (RenderLayer* renderLayer = layer()) {
-            renderLayer->updateSnapOffsets();
-            renderLayer->updateScrollSnapState();
+            auto* scrollableLayer = renderLayer->ensureLayerScrollableArea();
+            scrollableLayer->updateSnapOffsets();
+            scrollableLayer->updateScrollSnapState();
         } else if (isBody() || isDocumentElementRenderer()) {
             FrameView& frameView = view().frameView();
             frameView.updateSnapOffsets();
@@ -195,8 +196,9 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
         if (scrollSnapBox && scrollSnapBox->layer()) {
             const RenderStyle& style = scrollSnapBox->style();
             if (style.scrollSnapType().strictness != ScrollSnapStrictness::None) {
-                scrollSnapBox->layer()->updateSnapOffsets();
-                scrollSnapBox->layer()->updateScrollSnapState();
+                auto* scrollableLayer = scrollSnapBox->layer()->ensureLayerScrollableArea();
+                scrollableLayer->updateSnapOffsets();
+                scrollableLayer->updateScrollSnapState();
                 if (scrollSnapBox->isBody() || scrollSnapBox->isDocumentElementRenderer())
                     scrollSnapBox->view().frameView().updateScrollingCoordinatorScrollSnapProperties();
             }

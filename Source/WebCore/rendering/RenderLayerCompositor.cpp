@@ -55,6 +55,7 @@
 #include "RenderIFrame.h"
 #include "RenderImage.h"
 #include "RenderLayerBacking.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderReplica.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
@@ -4662,8 +4663,11 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForViewportConstrained
 LayoutRect RenderLayerCompositor::parentRelativeScrollableRect(const RenderLayer& layer, const RenderLayer* ancestorLayer) const
 {
     // FIXME: ancestorLayer needs to be always non-null, so should become a reference.
-    if (!ancestorLayer)
-        return LayoutRect({ }, LayoutSize(layer.visibleSize()));
+    if (!ancestorLayer) {
+        if (!layer.scrollableArea())
+            return LayoutRect();
+        return LayoutRect({ }, LayoutSize(layer.scrollableArea()->visibleSize()));
+    }
 
     LayoutRect scrollableRect;
     if (is<RenderBox>(layer.renderer()))
@@ -4725,8 +4729,10 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingRole(Rende
         if (changes & ScrollingNodeChangeFlags::Layer)
             updateScrollingNodeLayers(newNodeID, layer, *scrollingCoordinator);
 
-        if (changes & ScrollingNodeChangeFlags::LayerGeometry && treeState.parentNodeID)
-            scrollingCoordinator->setScrollingNodeScrollableAreaGeometry(newNodeID, layer);
+        if (changes & ScrollingNodeChangeFlags::LayerGeometry && treeState.parentNodeID) {
+            if (auto* scrollableLayer = layer.scrollableArea())
+                scrollingCoordinator->setScrollingNodeScrollableAreaGeometry(newNodeID, *scrollableLayer);
+        }
     }
 
     return newNodeID;
@@ -4901,7 +4907,7 @@ ScrollableArea* RenderLayerCompositor::scrollableAreaForScrollingNodeID(Scrollin
     if (nodeID == m_renderView.frameView().scrollingNodeID())
         return &m_renderView.frameView();
 
-    return m_scrollingNodeToLayerMap.get(nodeID).get();
+    return m_scrollingNodeToLayerMap.get(nodeID)->scrollableArea();
 }
 
 void RenderLayerCompositor::willRemoveScrollingLayerWithBacking(RenderLayer& layer, RenderLayerBacking& backing)

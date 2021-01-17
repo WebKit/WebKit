@@ -80,6 +80,7 @@
 #include "Range.h"
 #include "RenderFrameSet.h"
 #include "RenderLayer.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderListBox.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderView.h"
@@ -1853,7 +1854,7 @@ ScrollableArea* EventHandler::enclosingScrollableArea(Node* node)
 
         if (auto* scrollableLayer = layer->enclosingScrollableLayer(IncludeSelfOrNot::IncludeSelf, CrossFrameBoundaries::No)) {
             if (!scrollableLayer->isRenderViewLayer())
-                return scrollableLayer;
+                return scrollableLayer->scrollableArea();
         }
     }
 
@@ -2984,7 +2985,7 @@ bool EventHandler::handleWheelEventInAppropriateEnclosingBox(Node* startNode, co
 
     RenderBox* currentEnclosingBox = &initialEnclosingBox;
     while (currentEnclosingBox) {
-        if (RenderLayer* boxLayer = currentEnclosingBox->layer()) {
+        if (auto* boxLayer = currentEnclosingBox->layer() ? currentEnclosingBox->layer()->scrollableArea() : nullptr) {
             auto platformEvent = wheelEvent.underlyingPlatformEvent();
             bool scrollingWasHandled;
             if (platformEvent) {

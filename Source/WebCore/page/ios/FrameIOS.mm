@@ -57,6 +57,7 @@
 #import "Range.h"
 #import "RenderLayer.h"
 #import "RenderLayerCompositor.h"
+#import "RenderLayerScrollableArea.h"
 #import "RenderTextControl.h"
 #import "RenderView.h"
 #import "RenderedDocumentMarker.h"
@@ -819,14 +820,17 @@ void Frame::overflowScrollPositionChangedForNode(const IntPoint& position, Node*
     if (!renderer || !renderer->hasLayer())
         return;
 
-    RenderLayer& layer = *downcast<RenderBoxModelObject>(*renderer).layer();
+    auto* layer = downcast<RenderBoxModelObject>(*renderer).layer();
+    if (!layer)
+        return;
+    auto* scrollableLayer = layer->ensureLayerScrollableArea();
 
-    auto oldScrollType = layer.currentScrollType();
-    layer.setCurrentScrollType(isUserScroll ? ScrollType::User : ScrollType::Programmatic);
-    layer.scrollToOffsetWithoutAnimation(position);
-    layer.setCurrentScrollType(oldScrollType);
+    auto oldScrollType = scrollableLayer->currentScrollType();
+    scrollableLayer->setCurrentScrollType(isUserScroll ? ScrollType::User : ScrollType::Programmatic);
+    scrollableLayer->scrollToOffsetWithoutAnimation(position);
+    scrollableLayer->setCurrentScrollType(oldScrollType);
 
-    layer.didEndScroll(); // FIXME: Should we always call this?
+    scrollableLayer->didEndScroll(); // FIXME: Should we always call this?
 }
 
 void Frame::resetAllGeolocationPermission()

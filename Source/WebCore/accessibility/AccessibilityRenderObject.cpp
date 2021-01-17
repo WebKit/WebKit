@@ -83,6 +83,7 @@
 #include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderLineBreak.h"
 #include "RenderListBox.h"
 #include "RenderListItem.h"
@@ -3906,7 +3907,7 @@ ScrollableArea* AccessibilityRenderObject::getScrollableAreaIfScrollable() const
     if (!box.canBeScrolledAndHasScrollableArea())
         return nullptr;
 
-    return box.layer();
+    return box.layer() ? box.layer()->scrollableArea() : nullptr;
 }
 
 void AccessibilityRenderObject::scrollTo(const IntPoint& point) const

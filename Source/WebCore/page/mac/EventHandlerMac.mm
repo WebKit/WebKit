@@ -54,6 +54,7 @@
 #import "PlatformWheelEvent.h"
 #import "Range.h"
 #import "RenderLayer.h"
+#import "RenderLayerScrollableArea.h"
 #import "RenderListBox.h"
 #import "RenderView.h"
 #import "RenderWidget.h"
@@ -791,7 +792,12 @@ static ScrollableArea* scrollableAreaForBox(RenderBox& box)
     if (is<RenderListBox>(box))
         return downcast<RenderListBox>(&box);
 
-    return box.layer();
+    if (box.layer()) {
+        if (auto* scrollableLayer = box.layer()->scrollableArea())
+            return scrollableLayer;
+    }
+
+    return nullptr;
 }
 
 // FIXME: This could be written in terms of ScrollableArea::enclosingScrollableArea().

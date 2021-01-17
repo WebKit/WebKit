@@ -928,6 +928,27 @@ bool RenderBox::isScrollableOrRubberbandableBox() const
     return canBeScrolledAndHasScrollableArea();
 }
 
+bool RenderBox::requiresLayerWithScrollableArea() const
+{
+    // The RenderView is always expected to be potentially scrollable.
+    if (isRenderView() || isDocumentElementRenderer())
+        return true;
+
+    // Overflow handling needs RenderLayerScrollableArea.
+    if (scrollsOverflow() || hasHorizontalOverflow() || hasVerticalOverflow())
+        return true;
+
+    // Resize handling needs RenderLayerScrollableArea.
+    if (style().resize() != Resize::None)
+        return true;
+
+    // Marquee handling needs RenderLayerScrollableArea.
+    if (isHTMLMarquee() && style().marqueeBehavior() != MarqueeBehavior::None)
+        return true;
+
+    return false;
+}
+
 // FIXME: This is badly named. overflow:hidden can be programmatically scrolled, yet this returns false in that case.
 bool RenderBox::canBeProgramaticallyScrolled() const
 {

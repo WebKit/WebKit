@@ -53,13 +53,14 @@
 #include "PerformanceLoggingClient.h"
 #include "PluginViewBase.h"
 #include "ProgressTracker.h"
+#include "RenderEmbeddedObject.h"
 #include "RenderFragmentContainer.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderHTMLCanvas.h"
 #include "RenderIFrame.h"
 #include "RenderImage.h"
 #include "RenderLayerCompositor.h"
-#include "RenderEmbeddedObject.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderMedia.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
@@ -2065,10 +2066,12 @@ bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScroll
     layersChanged |= createOrDestroyLayer(m_layerForScrollCorner, needsScrollCornerLayer, true, "scroll corner");
 
     if (auto* scrollingCoordinator = m_owningLayer.page().scrollingCoordinator()) {
-        if (horizontalScrollbarLayerChanged)
-            scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(m_owningLayer, HorizontalScrollbar);
-        if (verticalScrollbarLayerChanged)
-            scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(m_owningLayer, VerticalScrollbar);
+        if (auto* scrollableArea = m_owningLayer.scrollableArea()) {
+            if (horizontalScrollbarLayerChanged)
+                scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(*scrollableArea, HorizontalScrollbar);
+            if (verticalScrollbarLayerChanged)
+                scrollingCoordinator->scrollableAreaScrollbarLayerDidChange(*scrollableArea, VerticalScrollbar);
+        }
     }
 
     return layersChanged;

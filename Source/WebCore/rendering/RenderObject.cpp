@@ -1002,7 +1002,7 @@ Optional<FloatRect> RenderObject::computeFloatVisibleRectInContainer(const Float
 static void outputRenderTreeLegend(TextStream& stream)
 {
     stream.nextLine();
-    stream << "(B)lock/(I)nline/I(N)line-block, (A)bsolute/Fi(X)ed/(R)elative/Stic(K)y, (F)loating, (O)verflow clip, Anon(Y)mous, (G)enerated, has(L)ayer, (C)omposited, (+)Dirty style, (+)Dirty layout";
+    stream << "(B)lock/(I)nline/I(N)line-block, (A)bsolute/Fi(X)ed/(R)elative/Stic(K)y, (F)loating, (O)verflow clip, Anon(Y)mous, (G)enerated, has(L)ayer, hasLayer(S)crollableArea, (C)omposited, (+)Dirty style, (+)Dirty layout";
     stream.nextLine();
 }
 
@@ -1116,10 +1116,14 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
     else
         stream << "-";
 
-    if (hasLayer())
+    if (hasLayer()) {
         stream << "L";
-    else
-        stream << "-";
+        if (downcast<RenderLayerModelObject>(*this).layer()->scrollableArea())
+            stream << "S";
+        else
+            stream << "-";
+    } else
+        stream << "--";
 
     if (isComposited())
         stream << "C";

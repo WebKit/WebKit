@@ -49,6 +49,7 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderLayer.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderLayoutState.h"
 #include "RenderScrollbar.h"
 #include "RenderText.h"
@@ -882,7 +883,11 @@ ScrollableArea* RenderListBox::enclosingScrollableArea() const
     if (!layer)
         return nullptr;
 
-    return layer->enclosingScrollableLayer(IncludeSelfOrNot::ExcludeSelf, CrossFrameBoundaries::No);
+    auto* enclosingScrollableLayer = layer->enclosingScrollableLayer(IncludeSelfOrNot::ExcludeSelf, CrossFrameBoundaries::No);
+    if (!enclosingScrollableLayer)
+        return nullptr;
+
+    return enclosingScrollableLayer->scrollableArea();
 }
 
 bool RenderListBox::isScrollableOrRubberbandable()

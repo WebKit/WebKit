@@ -100,6 +100,7 @@ class RenderObject : public CachedImageClient, public CanMakeWeakPtr<RenderObjec
     friend class RenderBlockFlow;
     friend class RenderElement;
     friend class RenderLayer;
+    friend class RenderLayerScrollableArea;
 public:
     // Anonymous objects should pass the document as their node, and they will then automatically be
     // marked as anonymous in the constructor.

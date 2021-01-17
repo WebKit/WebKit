@@ -49,6 +49,7 @@
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
 #include "RenderLayer.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "RuntimeEnabledFeatures.h"
@@ -253,9 +254,11 @@ void TextFieldInputType::elementDidBlur()
     if (!innerLayer)
         return;
 
+    auto* innerLayerScrollable = innerLayer->ensureLayerScrollableArea();
+
     bool isLeftToRightDirection = downcast<RenderTextControlSingleLine>(*renderer).style().isLeftToRightDirection();
-    ScrollOffset scrollOffset(isLeftToRightDirection ? 0 : innerLayer->scrollWidth(), 0);
-    innerLayer->scrollToOffset(scrollOffset);
+    ScrollOffset scrollOffset(isLeftToRightDirection ? 0 : innerLayerScrollable->scrollWidth(), 0);
+    innerLayerScrollable->scrollToOffset(scrollOffset);
 
 #if ENABLE(DATALIST_ELEMENT)
     closeSuggestions();

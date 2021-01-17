@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2003, 2009, 2012, 2015 Apple Inc. All rights reserved.
+ * Copyright (c) 2020 Igalia S.L.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
  *
@@ -51,7 +52,6 @@
 #include "RenderBox.h"
 #include "RenderPtr.h"
 #include "ScrollBehavior.h"
-#include "ScrollableArea.h"
 #include <memory>
 #include <wtf/Markable.h>
 #include <wtf/WeakPtr.h>
@@ -75,6 +75,7 @@ class RenderGeometryMap;
 class RenderLayerBacking;
 class RenderLayerCompositor;
 class RenderLayerFilters;
+class RenderLayerScrollableArea;
 class RenderMarquee;
 class RenderReplica;
 class RenderScrollbarPart;
@@ -143,16 +144,68 @@ struct ScrollRectToVisibleOptions {
 using ScrollingScope = uint64_t;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RenderLayer);
-class RenderLayer final : public ScrollableArea {
+class RenderLayer : public CanMakeWeakPtr<RenderLayer> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(RenderLayer);
 public:
     friend class RenderReplica;
     friend class RenderLayerFilters;
     friend class RenderLayerBacking;
     friend class RenderLayerCompositor;
+    friend class RenderLayerScrollableArea;
 
     explicit RenderLayer(RenderLayerModelObject&);
     virtual ~RenderLayer();
+
+    WEBCORE_EXPORT RenderLayerScrollableArea* scrollableArea() const;
+    WEBCORE_EXPORT RenderLayerScrollableArea* ensureLayerScrollableArea();
+
+    // Start of temporary glue code to help landing webkit.org/b/60305 (split RenderLayer into RenderLayer/RenderLayerScrollableArea)
+    ScrollType currentScrollType() const;
+    WEBCORE_EXPORT ScrollAnimator& scrollAnimator() const;
+    WEBCORE_EXPORT ScrollOffset scrollOffset() const;
+    WEBCORE_EXPORT void scrollToOffset(const ScrollOffset&, const ScrollPositionChangeOptions& = ScrollPositionChangeOptions::createProgrammatic());
+    void scrollToXPosition(int x, const ScrollPositionChangeOptions&);
+    void scrollToYPosition(int y, const ScrollPositionChangeOptions&);
+    void setScrollPosition(const ScrollPosition&, const ScrollPositionChangeOptions&);
+    void scrollByRecursively(const IntSize& delta, ScrollableArea** scrolledArea = nullptr);
+    void setRequiresScrollPositionReconciliation(bool requiresReconciliation = true);
+#if PLATFORM(IOS_FAMILY)
+    WEBCORE_EXPORT void setAdjustForIOSCaretWhenScrolling(bool);
+#endif
+    void setScrollShouldClearLatchedState(bool);
+    bool shouldPlaceBlockDirectionScrollbarOnLeft() const;
+    bool containsDirtyOverlayScrollbars() const;
+    bool hasScrollableOrRubberbandableAncestor();
+    RenderMarquee* marquee() const;
+    void updateLayerPositionsAfterDocumentScroll();
+    bool hitTestOverflowControls(HitTestResult&, const IntPoint& localPoint);
+    void paintOverflowControls(GraphicsContext&, const IntPoint&, const IntRect& damageRect, bool paintingOverlayControls = false);
+    void paintScrollCorner(GraphicsContext&, const IntPoint&, const IntRect& damageRect);
+    void paintResizer(GraphicsContext&, const LayoutPoint&, const LayoutRect& damageRect);
+    void paintOverlayScrollbars(GraphicsContext&, const LayoutRect& damageRect, OptionSet<PaintBehavior>, RenderObject* subtreePaintRoot = nullptr);
+    IntSize reachableTotalContentsSize() const;
+    bool horizontalScrollbarHiddenByStyle() const;
+    bool verticalScrollbarHiddenByStyle() const;
+    void setPostLayoutScrollPosition(Optional<ScrollPosition>);
+    void panScrollFromPoint(const IntPoint&);
+    ScrollPosition scrollPosition() const;
+    GraphicsLayer* layerForHorizontalScrollbar() const;
+    GraphicsLayer* layerForVerticalScrollbar() const;
+    Scrollbar* horizontalScrollbar() const;
+    Scrollbar* verticalScrollbar() const;
+    bool scrollingMayRevealBackground() const;
+    bool hasScrollableHorizontalOverflow() const;
+    bool hasScrollableVerticalOverflow() const;
+    bool hasScrollbars() const { return horizontalScrollbar() || verticalScrollbar(); }
+    bool hasHorizontalScrollbar() const { return horizontalScrollbar(); }
+    bool hasVerticalScrollbar() const { return verticalScrollbar(); }
+    int verticalScrollbarWidth(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
+    int horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
+    bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
+    void scrollToXOffset(int x) { scrollToOffset(ScrollOffset(x, scrollOffset().y()), ScrollPositionChangeOptions::createProgrammaticUnclamped()); }
+    void scrollToYOffset(int y) { scrollToOffset(ScrollOffset(scrollOffset().x(), y), ScrollPositionChangeOptions::createProgrammaticUnclamped()); }
+    void setConstrainsScrollingToContentEdge(bool);
+    // End of temporary glue code
 
 #if PLATFORM(IOS_FAMILY)
     // Called before the renderer's widget (if any) has been nulled out.
@@ -222,6 +275,9 @@ public:
     bool layerListMutationAllowed() const { return m_layerListMutationAllowed; }
     void setLayerListMutationAllowed(bool flag) { m_layerListMutationAllowed = flag; }
 #endif
+
+protected:
+    void destroy();
 
 private:
     // These flags propagate in paint order (z-order tree).
@@ -411,8 +467,6 @@ public:
 
     void styleChanged(StyleDifference, const RenderStyle* oldStyle);
 
-    RenderMarquee* marquee() const { return m_marquee.get(); }
-
     bool isSelfPaintingLayer() const { return m_isSelfPaintingLayer; }
 
     bool cannotBlitToWindow() const;
@@ -433,106 +487,29 @@ public:
 
     LayoutRect rect() const { return LayoutRect(location(), size()); }
 
-    IntSize visibleSize() const final;
-    IntSize contentsSize() const final;
-    IntSize reachableTotalContentsSize() const final;
+    IntSize visibleSize() const;
 
     int scrollWidth() const;
     int scrollHeight() const;
-
-    void panScrollFromPoint(const IntPoint&);
-
-    // Scrolling methods for layers that can scroll their overflow.
-    void scrollByRecursively(const IntSize& delta, ScrollableArea** scrolledArea = nullptr);
-
-    bool requestScrollPositionUpdate(const ScrollPosition&, ScrollType = ScrollType::User, ScrollClamping = ScrollClamping::Clamped) final;
-
-    WEBCORE_EXPORT void scrollToOffset(const ScrollOffset&, const ScrollPositionChangeOptions& = ScrollPositionChangeOptions::createProgrammatic());
-
-    void scrollToXPosition(int x, const ScrollPositionChangeOptions&);
-    void scrollToYPosition(int y, const ScrollPositionChangeOptions&);
-    void setScrollPosition(const ScrollPosition&, const ScrollPositionChangeOptions&);
-
-    // These are only used by marquee.
-    void scrollToXOffset(int x) { scrollToOffset(ScrollOffset(x, scrollOffset().y()), ScrollPositionChangeOptions::createProgrammaticUnclamped()); }
-    void scrollToYOffset(int y) { scrollToOffset(ScrollOffset(scrollOffset().x(), y), ScrollPositionChangeOptions::createProgrammaticUnclamped()); }
-
-    void setPostLayoutScrollPosition(Optional<ScrollPosition>);
-    void applyPostLayoutScrollPositionIfNeeded();
 
     // Returns the nearest enclosing layer that is scrollable.
     // FIXME: This can return the RenderView's layer when callers probably want the FrameView as a ScrollableArea.
     RenderLayer* enclosingScrollableLayer(IncludeSelfOrNot, CrossFrameBoundaries) const;
 
-    void availableContentSizeChanged(AvailableSizeChangeReason) final;
-
     // "absoluteRect" is in scaled document coordinates.
     void scrollRectToVisible(const LayoutRect& absoluteRect, bool insideFixed, const ScrollRectToVisibleOptions&);
-
-    bool scrollsOverflow() const;
-    bool hasScrollableHorizontalOverflow() const;
-    bool hasScrollableVerticalOverflow() const;
-    bool hasScrollbars() const { return m_hBar || m_vBar; }
-    void setHasHorizontalScrollbar(bool);
-    void setHasVerticalScrollbar(bool);
-
-    Ref<Scrollbar> createScrollbar(ScrollbarOrientation);
-    void destroyScrollbar(ScrollbarOrientation);
-
-    bool hasHorizontalScrollbar() const { return horizontalScrollbar(); }
-    bool hasVerticalScrollbar() const { return verticalScrollbar(); }
-
-    bool horizontalScrollbarHiddenByStyle() const final;
-    bool verticalScrollbarHiddenByStyle() const final;
-
-    // ScrollableArea overrides
-    ScrollPosition scrollPosition() const final { return m_scrollPosition; }
-
-    Scrollbar* horizontalScrollbar() const final { return m_hBar.get(); }
-    Scrollbar* verticalScrollbar() const final { return m_vBar.get(); }
-    ScrollableArea* enclosingScrollableArea() const final;
-
-    bool handleWheelEventForScrolling(const PlatformWheelEvent&, Optional<WheelScrollGestureState>) final;
-    bool isScrollableOrRubberbandable() final;
-    bool hasScrollableOrRubberbandableAncestor() final;
-    bool useDarkAppearance() const final;
-#if ENABLE(CSS_SCROLL_SNAP)
-    void updateSnapOffsets() final;
-#endif
-
-    bool requiresScrollPositionReconciliation() const { return m_requiresScrollPositionReconciliation; }
-    void setRequiresScrollPositionReconciliation(bool requiresReconciliation = true) { m_requiresScrollPositionReconciliation = requiresReconciliation; }
-
-#if PLATFORM(IOS_FAMILY)
-#if ENABLE(IOS_TOUCH_EVENTS)
-    bool handleTouchEvent(const PlatformTouchEvent&) final;
-#endif
-    
-    void didStartScroll() final;
-    void didEndScroll() final;
-    void didUpdateScroll() final;
-#endif
-
     // Returns true when the layer could do touch scrolling, but doesn't look at whether there is actually scrollable overflow.
     bool canUseCompositedScrolling() const;
     // Returns true when there is actually scrollable overflow (requires layout to be up-to-date).
-    bool hasCompositedScrollableOverflow() const { return m_hasCompositedScrollableOverflow; }
+    bool hasCompositedScrollableOverflow() const;
 
-    int verticalScrollbarWidth(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
-    int horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
+    bool hasOverlayScrollbars() const;
 
-    bool hasOverflowControls() const;
     bool isPointInResizeControl(IntPoint localPoint) const;
-    bool hitTestOverflowControls(HitTestResult&, const IntPoint& localPoint);
     IntSize offsetFromResizeCorner(const IntPoint& localPoint) const;
-
-    void paintOverflowControls(GraphicsContext&, const IntPoint&, const IntRect& damageRect, bool paintingOverlayControls = false);
-    void paintScrollCorner(GraphicsContext&, const IntPoint&, const IntRect& damageRect);
-    void paintResizer(GraphicsContext&, const LayoutPoint&, const LayoutRect& damageRect);
 
     void updateScrollInfoAfterLayout();
 
-    bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
     void autoscroll(const IntPoint&);
 
     bool canResize() const;
@@ -554,9 +531,6 @@ public:
 
     void updateLayerPositionsAfterStyleChange();
     void updateLayerPositionsAfterLayout(bool isRelayoutingSubtree, bool didFullRepaint);
-
-    void updateLayerPositionsAfterOverflowScroll();
-    void updateLayerPositionsAfterDocumentScroll();
 
     bool hasCompositedLayerInEnclosingPaginationChain() const;
     enum PaginationInclusionMode { ExcludeCompositedPaginatedLayers, IncludeCompositedPaginatedLayers };
@@ -637,6 +611,8 @@ public:
     RenderLayer* enclosingAncestorForPosition(PositionType) const;
     
     RenderLayer* enclosingLayerInContainingBlockOrder() const;
+    RenderLayer* enclosingContainingBlockLayer(CrossFrameBoundaries) const;
+    RenderLayer* enclosingFrameRenderLayer() const;
 
     // The layer relative to which clipping rects for this layer are computed.
     RenderLayer* clippingRootForPainting() const;
@@ -698,7 +674,6 @@ public:
         RenderObject* subtreePaintRoot = nullptr, OptionSet<PaintLayerFlag> = { }, SecurityOriginPaintPolicy = SecurityOriginPaintPolicy::AnyOrigin, EventRegionContext* = nullptr);
     bool hitTest(const HitTestRequest&, HitTestResult&);
     bool hitTest(const HitTestRequest&, const HitTestLocation&, HitTestResult&);
-    void paintOverlayScrollbars(GraphicsContext&, const LayoutRect& damageRect, OptionSet<PaintBehavior>, RenderObject* subtreePaintRoot = nullptr);
 
     struct ClipRectsContext {
         ClipRectsContext(const RenderLayer* inRootLayer, ClipRectsType inClipRectsType, OverlayScrollbarSizeRelevancy inOverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, ShouldRespectOverflowClip inRespectOverflowClip = RespectOverflowClip)
@@ -784,11 +759,6 @@ public:
     void setStaticInlinePosition(LayoutUnit position) { m_staticInlinePosition = position; }
     void setStaticBlockPosition(LayoutUnit position) { m_staticBlockPosition = position; }
 
-#if PLATFORM(IOS_FAMILY)
-    bool adjustForIOSCaretWhenScrolling() const { return m_adjustForIOSCaretWhenScrolling; }
-    void setAdjustForIOSCaretWhenScrolling(bool adjustForIOSCaretWhenScrolling) { m_adjustForIOSCaretWhenScrolling = adjustForIOSCaretWhenScrolling; }
-#endif
-
     bool hasTransform() const { return renderer().hasTransform(); }
     // Note that this transform has the transform-origin baked in.
     TransformationMatrix* transform() const { return m_transform.get(); }
@@ -858,15 +828,10 @@ public:
     RenderLayerBacking* ensureBacking();
     void clearBacking(bool layerBeingDestroyed = false);
 
-    GraphicsLayer* layerForHorizontalScrollbar() const final;
-    GraphicsLayer* layerForVerticalScrollbar() const final;
-    GraphicsLayer* layerForScrollCorner() const final;
-
-    bool usesCompositedScrolling() const final;
-    bool usesAsyncScrolling() const final;
-
     bool hasCompositedScrollingAncestor() const { return m_hasCompositedScrollingAncestor; }
     void setHasCompositedScrollingAncestor(bool hasCompositedScrollingAncestor) { m_hasCompositedScrollingAncestor = hasCompositedScrollingAncestor; }
+
+    bool usesCompositedScrolling() const;
 
     // Layers with the same ScrollingScope are scrolled by some common ancestor scroller. Used for async scrolling.
     Optional<ScrollingScope> boxScrollingScope() const { return m_boxScrollingScope; }
@@ -884,11 +849,6 @@ public:
     // Returns true if background phase is painted opaque in the given rect.
     // The query rect is given in local coordinates.
     bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect&) const;
-
-    bool scrollingMayRevealBackground() const;
-
-    bool containsDirtyOverlayScrollbars() const { return m_containsDirtyOverlayScrollbars; }
-    void setContainsDirtyOverlayScrollbars(bool dirtyScrollbars) { m_containsDirtyOverlayScrollbars = dirtyScrollbars; }
 
     bool paintsWithFilters() const;
     bool requiresFullLayerImageForFilters() const;
@@ -918,8 +878,6 @@ public:
 
     RenderLayer* enclosingFragmentedFlowAncestor() const;
 
-    bool shouldPlaceBlockDirectionScrollbarOnLeft() const final { return renderer().shouldPlaceBlockDirectionScrollbarOnLeft(); }
-
     WEBCORE_EXPORT void simulateFrequentPaint();
     bool paintingFrequently() const { return m_paintFrequencyTracker.paintingFrequently(); }
 
@@ -930,7 +888,7 @@ public:
     enum class EventRegionInvalidationReason { Paint, SettingDidChange, Style, NonCompositedFrame };
     bool invalidateEventRegion(EventRegionInvalidationReason);
 
-    String debugDescription() const final;
+    String debugDescription() const;
 
 private:
 
@@ -1010,9 +968,6 @@ private:
 
     void updateSelfPaintingLayer();
 
-    void updateScrollbarsAfterStyleChange(const RenderStyle* oldStyle);
-    void updateScrollbarsAfterLayout();
-
     enum UpdateLayerPositionsFlag {
         CheckForRepaint                     = 1 << 0,
         NeedsFullRepaintInBacking           = 1 << 1,
@@ -1038,8 +993,6 @@ private:
     };
     void updateLayerPositionsAfterScroll(RenderGeometryMap*, OptionSet<UpdateLayerPositionsAfterScrollFlag> = { });
 
-    ScrollOffset clampScrollOffset(const ScrollOffset&) const;
-
     RenderLayer* enclosingPaginationLayerInSubtree(const RenderLayer* rootLayer, PaginationInclusionMode) const;
 
     LayoutPoint renderBoxLocation() const { return is<RenderBox>(renderer()) ? downcast<RenderBox>(renderer()).location() : LayoutPoint(); }
@@ -1052,6 +1005,9 @@ private:
 
     void ensureLayerFilters();
     void clearLayerFilters();
+
+    void updateLayerScrollableArea();
+    void clearLayerScrollableArea();
 
     RenderLayerFilters* filtersForPainting(GraphicsContext&, OptionSet<PaintLayerFlag>) const;
     GraphicsContext* setupFilters(GraphicsContext& destinationContext, LayerPaintingInfo&, OptionSet<PaintLayerFlag>, const LayoutSize& offsetFromRoot);
@@ -1099,64 +1055,13 @@ private:
     
     bool hitTestContents(const HitTestRequest&, HitTestResult&, const LayoutRect& layerBounds, const HitTestLocation&, HitTestFilter) const;
     bool hitTestContentsForFragments(const LayerFragments&, const HitTestRequest&, HitTestResult&, const HitTestLocation&, HitTestFilter, bool& insideClipRect) const;
-    bool hitTestResizerInFragments(const LayerFragments&, const HitTestLocation&, LayoutPoint& pointInFragment) const;
     RenderLayer* hitTestTransformedLayerInFragments(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest&, HitTestResult&,
         const LayoutRect& hitTestRect, const HitTestLocation&, const HitTestingTransformState* = nullptr, double* zOffset = nullptr);
 
     bool listBackgroundIsKnownToBeOpaqueInRect(const LayerList&, const LayoutRect&) const;
 
-    void computeScrollDimensions();
-    void computeHasCompositedScrollableOverflow();
-
-    bool hasHorizontalOverflow() const;
-    bool hasVerticalOverflow() const;
-
-    bool showsOverflowControls() const;
-
     bool shouldBeSelfPaintingLayer() const;
 
-    // ScrollableArea interface
-    bool isRenderLayer() const final { return true; }
-    void invalidateScrollbarRect(Scrollbar&, const IntRect&) final;
-    void invalidateScrollCornerRect(const IntRect&) final;
-    bool isActive() const final;
-    bool isScrollCornerVisible() const final;
-    IntRect scrollCornerRect() const final;
-    IntRect convertFromScrollbarToContainingView(const Scrollbar&, const IntRect&) const final;
-    IntRect convertFromContainingViewToScrollbar(const Scrollbar&, const IntRect&) const final;
-    IntPoint convertFromScrollbarToContainingView(const Scrollbar&, const IntPoint&) const final;
-    IntPoint convertFromContainingViewToScrollbar(const Scrollbar&, const IntPoint&) const final;
-    void setScrollOffset(const ScrollOffset&) final;
-    ScrollingNodeID scrollingNodeID() const final;
-
-    IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const final;
-    IntSize overhangAmount() const final;
-    IntPoint lastKnownMousePositionInView() const final;
-    bool isHandlingWheelEvent() const final;
-    bool shouldSuspendScrollAnimations() const final;
-    IntRect scrollableAreaBoundingBox(bool* isInsideFixed = nullptr) const final;
-    bool isUserScrollInProgress() const final;
-    bool isRubberBandInProgress() const final;
-    bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
-#if ENABLE(CSS_SCROLL_SNAP)
-    bool isScrollSnapInProgress() const final;
-#endif
-    bool usesMockScrollAnimator() const final;
-    void logMockScrollAnimatorMessage(const String&) const final;
-
-#if ENABLE(IOS_TOUCH_EVENTS)
-    void registerAsTouchEventListenerForScrolling();
-    void unregisterAsTouchEventListenerForScrolling();
-#endif
-
-    // NOTE: This should only be called by the overridden setScrollOffset from ScrollableArea.
-    void scrollTo(const ScrollPosition&);
-    void updateCompositingLayersAfterScroll();
-
-    IntSize scrollbarOffset(const Scrollbar&) const;
-    
-    void updateScrollableAreaSet(bool hasOverflow);
-    
     bool allowsCurrentScroll() const;
 
     void dirtyAncestorChainVisibleDescendantStatus();
@@ -1196,14 +1101,6 @@ private:
     // Convert a point in absolute coords into layer coords, taking transforms into account
     LayoutPoint absoluteToContents(const LayoutPoint&) const;
 
-    void positionOverflowControls(const IntSize&);
-    void updateScrollCornerStyle();
-    void clearScrollCorner();
-    void updateResizerStyle();
-    void clearResizer();
-
-    void drawPlatformResizerImage(GraphicsContext&, const LayoutRect& resizerCornerRect);
-
     void updatePagination();
 
     void setHasCompositingDescendant(bool b)  { m_hasCompositingDescendant = b; }
@@ -1211,11 +1108,6 @@ private:
     
     void setIndirectCompositingReason(IndirectCompositingReason reason) { m_indirectCompositingReason = static_cast<unsigned>(reason); }
     bool mustCompositeForIndirectReasons() const { return m_indirectCompositingReason; }
-
-    LayoutUnit overflowTop() const;
-    LayoutUnit overflowBottom() const;
-    LayoutUnit overflowLeft() const;
-    LayoutUnit overflowRight() const;
 
     struct OverflowControlRects {
         IntRect horizontalScrollbar;
@@ -1228,8 +1120,6 @@ private:
         }
     };
     OverflowControlRects overflowControlsRects() const;
-
-    bool overflowControlsIntersectRect(const IntRect& localRect) const;
 
     OptionSet<Compositing> m_compositingDirtyBits;
 
@@ -1247,7 +1137,6 @@ private:
     // Keeps track of whether the layer is currently resizing, so events can cause resizing to start and stop.
     bool m_inResizeMode : 1;
 
-    bool m_scrollDimensionsDirty : 1;
     bool m_isSelfPaintingLayer : 1;
 
     // If have no self-painting descendants, we don't have to walk our children during painting. This can lead to
@@ -1259,14 +1148,12 @@ private:
                                  // we ended up painting this layer or any descendants (and therefore need to
                                  // blend).
     bool m_paintingInsideReflection : 1;  // A state bit tracking if we are painting inside a replica.
-    bool m_inOverflowRelayout : 1;
     unsigned m_repaintStatus : 2; // RepaintStatus
 
     bool m_visibleContentStatusDirty : 1;
     bool m_hasVisibleContent : 1;
     bool m_visibleDescendantStatusDirty : 1;
     bool m_hasVisibleDescendant : 1;
-    bool m_registeredScrollableArea : 1;
     bool m_isFixedIntersectingViewport : 1;
     bool m_behavesAsFixed : 1;
 
@@ -1277,7 +1164,6 @@ private:
 
     bool m_hasCompositedNonContainedDescendants : 1;
     bool m_hasCompositedScrollingAncestor : 1; // In the layer-order tree.
-    bool m_hasCompositedScrollableOverflow : 1;
 
     bool m_hasTransformedAncestor : 1;
     bool m_has3DTransformedAncestor : 1;
@@ -1286,17 +1172,6 @@ private:
 
     unsigned m_indirectCompositingReason : 4; // IndirectCompositingReason
     unsigned m_viewportConstrainedNotCompositedReason : 2; // ViewportConstrainedNotCompositedReason
-
-#if PLATFORM(IOS_FAMILY)
-#if ENABLE(IOS_TOUCH_EVENTS)
-    bool m_registeredAsTouchEventListenerForScrolling : 1;
-#endif
-    bool m_adjustForIOSCaretWhenScrolling : 1;
-#endif
-
-    bool m_requiresScrollPositionReconciliation : 1;
-    bool m_containsDirtyOverlayScrollbars : 1;
-    bool m_updatingMarqueePosition : 1;
 
 #if ASSERT_ENABLED
     bool m_layerListMutationAllowed : 1;
@@ -1338,25 +1213,11 @@ private:
     // The layer's width/height
     IntSize m_layerSize;
 
-    ScrollPosition m_scrollPosition;
-    Optional<ScrollPosition> m_postLayoutScrollPosition;
-
-    // The width/height of our scrolled area.
-    IntSize m_scrollSize;
-
-    // For layers with overflow, we have a pair of scrollbars.
-    RefPtr<Scrollbar> m_hBar;
-    RefPtr<Scrollbar> m_vBar;
-
     std::unique_ptr<ClipRectsCache> m_clipRectsCache;
-    
-    IntPoint m_cachedOverlayScrollbarOffset;
 
     Markable<ScrollingScope, IntegralMarkableTraits<ScrollingScope, 0>> m_boxScrollingScope;
     Markable<ScrollingScope, IntegralMarkableTraits<ScrollingScope, 0>> m_contentsScrollingScope;
 
-    std::unique_ptr<RenderMarquee> m_marquee; // Used for <marquee>.
-    
     // Cached normal flow values for absolute positioned elements with static left/top values.
     LayoutUnit m_staticInlinePosition;
     LayoutUnit m_staticBlockPosition;
@@ -1366,10 +1227,6 @@ private:
     // May ultimately be extended to many replicas (with their own paint order).
     RenderPtr<RenderReplica> m_reflection;
 
-    // Renderers to hold our custom scroll corner and resizer.
-    RenderPtr<RenderScrollbarPart> m_scrollCorner;
-    RenderPtr<RenderScrollbarPart> m_resizer;
-
     // Pointer to the enclosing RenderLayer that caused us to be paginated. It is 0 if we are not paginated.
     WeakPtr<RenderLayer> m_enclosingPaginationLayer;
 
@@ -1377,6 +1234,7 @@ private:
 
     std::unique_ptr<RenderLayerFilters> m_filters;
     std::unique_ptr<RenderLayerBacking> m_backing;
+    std::unique_ptr<RenderLayerScrollableArea> m_scrollableArea;
     
     PaintFrequencyTracker m_paintFrequencyTracker;
 };
@@ -1449,6 +1307,3 @@ void showPaintOrderTree(const WebCore::RenderLayer*);
 void showLayerTree(const WebCore::RenderObject*);
 #endif
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RenderLayer)
-    static bool isType(const WebCore::ScrollableArea& area) { return area.isRenderLayer(); }
-SPECIALIZE_TYPE_TRAITS_END()

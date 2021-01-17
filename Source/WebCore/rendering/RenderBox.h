@@ -57,6 +57,7 @@ public:
             || !style().hasAutoUsedZIndex() || hasRunningAcceleratedAnimations();
     }
 
+    bool requiresLayerWithScrollableArea() const;
     bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) const final;
     
     // Returns false for the body renderer if its background is propagated to the root.

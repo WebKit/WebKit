@@ -49,17 +49,253 @@
 
 namespace WebCore {
 
-// FIXME: Mark as 'final' once the actual implementation lands.
-class RenderLayerScrollableArea : public ScrollableArea {
+class RenderMarquee;
+
+class RenderLayerScrollableArea final : public ScrollableArea {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit RenderLayerScrollableArea(RenderLayer&);
     virtual ~RenderLayerScrollableArea();
 
+    RenderLayer& layer() { return m_layer; }
+
+    void clear();
+
+    RenderMarquee* marquee() const { return m_marquee.get(); }
+    void updateMarqueePosition();
+    void createOrDestroyMarquee();
+
+    void restoreScrollPosition();
+
+#if ENABLE(IOS_TOUCH_EVENTS)
+    void registerAsTouchEventListenerForScrolling();
+    void unregisterAsTouchEventListenerForScrolling();
+#endif
+
+    void setPostLayoutScrollPosition(Optional<ScrollPosition>);
+    void applyPostLayoutScrollPositionIfNeeded();
+
+    int scrollWidth() const;
+    int scrollHeight() const;
+
+    void panScrollFromPoint(const IntPoint&);
+
+    // Scrolling methods for layers that can scroll their overflow.
+    void scrollByRecursively(const IntSize& delta, ScrollableArea** scrolledArea = nullptr);
+
+    WEBCORE_EXPORT void scrollToOffset(const ScrollOffset&, const ScrollPositionChangeOptions& = ScrollPositionChangeOptions::createProgrammatic());
+    void scrollToXPosition(int x, const ScrollPositionChangeOptions&);
+    void scrollToYPosition(int y, const ScrollPositionChangeOptions&);
+    void setScrollPosition(const ScrollPosition&, const ScrollPositionChangeOptions&);
+
+    // These are only used by marquee.
+    void scrollToXOffset(int x) { scrollToOffset(ScrollOffset(x, scrollOffset().y()), ScrollPositionChangeOptions::createProgrammaticUnclamped()); }
+    void scrollToYOffset(int y) { scrollToOffset(ScrollOffset(scrollOffset().x(), y), ScrollPositionChangeOptions::createProgrammaticUnclamped()); }
+
+    bool scrollsOverflow() const;
+    bool hasScrollableHorizontalOverflow() const;
+    bool hasScrollableVerticalOverflow() const;
+    bool hasScrollbars() const { return horizontalScrollbar() || verticalScrollbar(); }
+    bool hasHorizontalScrollbar() const { return horizontalScrollbar(); }
+    bool hasVerticalScrollbar() const { return verticalScrollbar(); }
+    void setHasHorizontalScrollbar(bool);
+    void setHasVerticalScrollbar(bool);
+
+    Ref<Scrollbar> createScrollbar(ScrollbarOrientation);
+    void destroyScrollbar(ScrollbarOrientation);
+
+    bool requiresScrollPositionReconciliation() const { return m_requiresScrollPositionReconciliation; }
+    void setRequiresScrollPositionReconciliation(bool requiresReconciliation = true) { m_requiresScrollPositionReconciliation = requiresReconciliation; }
+
+    // Returns true when the layer could do touch scrolling, but doesn't look at whether there is actually scrollable overflow.
+    bool canUseCompositedScrolling() const;
+    // Returns true when there is actually scrollable overflow (requires layout to be up-to-date).
+    bool hasCompositedScrollableOverflow() const { return m_hasCompositedScrollableOverflow; }
+
+    int verticalScrollbarWidth(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
+    int horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
+
+    bool hasOverflowControls() const;
+    bool hitTestOverflowControls(HitTestResult&, const IntPoint& localPoint);
+    bool hitTestResizerInFragments(const LayerFragments&, const HitTestLocation&, LayoutPoint& pointInFragment) const;
+
+    void paintOverflowControls(GraphicsContext&, const IntPoint&, const IntRect& damageRect, bool paintingOverlayControls = false);
+    void paintScrollCorner(GraphicsContext&, const IntPoint&, const IntRect& damageRect);
+    void paintResizer(GraphicsContext&, const LayoutPoint&, const LayoutRect& damageRect);
+    void paintOverlayScrollbars(GraphicsContext&, const LayoutRect& damageRect, OptionSet<PaintBehavior>, RenderObject* subtreePaintRoot = nullptr);
+
+    void updateScrollInfoAfterLayout();
+
+    bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
+
+public:
+    // All methods in this section override ScrollableaArea methods (final).
+    void availableContentSizeChanged(AvailableSizeChangeReason) final;
+
+    bool horizontalScrollbarHiddenByStyle() const final;
+    bool verticalScrollbarHiddenByStyle() const final;
+
+    ScrollPosition scrollPosition() const final { return m_scrollPosition; }
+
+    Scrollbar* horizontalScrollbar() const final { return m_hBar.get(); }
+    Scrollbar* verticalScrollbar() const final { return m_vBar.get(); }
+    ScrollableArea* enclosingScrollableArea() const final;
+
+    bool handleWheelEventForScrolling(const PlatformWheelEvent&, Optional<WheelScrollGestureState>) final;
+    bool isScrollableOrRubberbandable() final;
+    bool hasScrollableOrRubberbandableAncestor() final;
+    bool useDarkAppearance() const final;
+#if ENABLE(CSS_SCROLL_SNAP)
+    void updateSnapOffsets() final;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+#if ENABLE(IOS_TOUCH_EVENTS)
+    bool handleTouchEvent(const PlatformTouchEvent&) final;
+#endif
+
+    void didStartScroll() final;
+    void didEndScroll() final;
+    void didUpdateScroll() final;
+#endif
+
+    GraphicsLayer* layerForHorizontalScrollbar() const final;
+    GraphicsLayer* layerForVerticalScrollbar() const final;
+    GraphicsLayer* layerForScrollCorner() const final;
+
+    bool usesCompositedScrolling() const final;
+    bool usesAsyncScrolling() const final;
+
     bool shouldPlaceBlockDirectionScrollbarOnLeft() const final;
 
+    bool isRenderLayer() const final { return true; }
+    void invalidateScrollbarRect(Scrollbar&, const IntRect&) final;
+    void invalidateScrollCornerRect(const IntRect&) final;
+    bool isActive() const final;
+    bool isScrollCornerVisible() const final;
+    IntRect scrollCornerRect() const final;
+    IntRect convertFromScrollbarToContainingView(const Scrollbar&, const IntRect&) const final;
+    IntRect convertFromContainingViewToScrollbar(const Scrollbar&, const IntRect&) const final;
+    IntPoint convertFromScrollbarToContainingView(const Scrollbar&, const IntPoint&) const final;
+    IntPoint convertFromContainingViewToScrollbar(const Scrollbar&, const IntPoint&) const final;
+    void setScrollOffset(const ScrollOffset&) final;
+    ScrollingNodeID scrollingNodeID() const final;
+
+    IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const final;
+    IntSize overhangAmount() const final;
+    IntPoint lastKnownMousePositionInView() const final;
+    bool isHandlingWheelEvent() const final;
+    bool shouldSuspendScrollAnimations() const final;
+    IntRect scrollableAreaBoundingBox(bool* isInsideFixed = nullptr) const final;
+    bool isUserScrollInProgress() const final;
+    bool isRubberBandInProgress() const final;
+    bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
+#if ENABLE(CSS_SCROLL_SNAP)
+    bool isScrollSnapInProgress() const final;
+#endif
+    bool usesMockScrollAnimator() const final;
+    void logMockScrollAnimatorMessage(const String&) const final;
+
+    String debugDescription() const final;
+
+    IntSize visibleSize() const final;
+    IntSize contentsSize() const final;
+    IntSize reachableTotalContentsSize() const final;
+
+    bool requestScrollPositionUpdate(const ScrollPosition&, ScrollType = ScrollType::User, ScrollClamping = ScrollClamping::Clamped) final;
+
+    bool containsDirtyOverlayScrollbars() const { return m_containsDirtyOverlayScrollbars; }
+    void setContainsDirtyOverlayScrollbars(bool dirtyScrollbars) { m_containsDirtyOverlayScrollbars = dirtyScrollbars; }
+
+    void updateScrollbarsAfterStyleChange(const RenderStyle* oldStyle);
+    void updateScrollbarsAfterLayout();
+
+    void positionOverflowControls(const IntSize&);
+    void clearScrollCorner();
+    void clearResizer();
+
+    void updateAllScrollbarRelatedStyle();
+
+    void drawPlatformResizerImage(GraphicsContext&, const LayoutRect& resizerCornerRect);
+
+    LayoutUnit overflowTop() const;
+    LayoutUnit overflowBottom() const;
+    LayoutUnit overflowLeft() const;
+    LayoutUnit overflowRight() const;
+
+    RenderLayer::OverflowControlRects overflowControlsRects() const;
+
+    bool overflowControlsIntersectRect(const IntRect& localRect) const;
+
+    bool scrollingMayRevealBackground() const;
+
+    void computeScrollDimensions();
+    void computeHasCompositedScrollableOverflow();
+
+    bool hasHorizontalOverflow() const;
+    bool hasVerticalOverflow() const;
+
+    bool showsOverflowControls() const;
+
+    // NOTE: This should only be called by the overridden setScrollOffset from ScrollableArea.
+    void scrollTo(const ScrollPosition&);
+    void updateCompositingLayersAfterScroll();
+
+    IntSize scrollbarOffset(const Scrollbar&) const;
+
+    void updateScrollableAreaSet(bool hasOverflow);
+
+    ScrollOffset clampScrollOffset(const ScrollOffset&) const;
+
+    void updateLayerPositionsAfterOverflowScroll();
+    void updateLayerPositionsAfterDocumentScroll();
+
+    Optional<LayoutRect> updateScrollPosition(const ScrollPositionChangeOptions&, const LayoutRect& revealRect, const LayoutRect& localExposeRect);
+
+#if PLATFORM(IOS_FAMILY)
+    bool adjustForIOSCaretWhenScrolling() const { return m_adjustForIOSCaretWhenScrolling; }
+    void setAdjustForIOSCaretWhenScrolling(bool adjustForIOSCaretWhenScrolling) { m_adjustForIOSCaretWhenScrolling = adjustForIOSCaretWhenScrolling; }
+#endif
+
 private:
+    void updateScrollCornerStyle();
+    void updateResizerStyle();
+
+private:
+    bool m_scrollDimensionsDirty { true };
+    bool m_inOverflowRelayout { false };
+    bool m_registeredScrollableArea { false };
+    bool m_hasCompositedScrollableOverflow { false };
+
+#if PLATFORM(IOS_FAMILY)
+#if ENABLE(IOS_TOUCH_EVENTS)
+    bool m_registeredAsTouchEventListenerForScrolling { false };
+#endif
+    bool m_adjustForIOSCaretWhenScrolling { false };
+#endif
+    bool m_requiresScrollPositionReconciliation { false };
+    bool m_containsDirtyOverlayScrollbars { false };
+    bool m_updatingMarqueePosition { false };
+
+    // The width/height of our scrolled area.
+    int m_scrollWidth { 0 };
+    int m_scrollHeight { 0 };
+
     RenderLayer& m_layer;
+    ScrollPosition m_scrollPosition;
+    Optional<ScrollPosition> m_postLayoutScrollPosition;
+
+    // For layers with overflow, we have a pair of scrollbars.
+    RefPtr<Scrollbar> m_hBar;
+    RefPtr<Scrollbar> m_vBar;
+
+    IntPoint m_cachedOverlayScrollbarOffset;
+
+    // Renderers to hold our custom scroll corner and resizer.
+    RenderPtr<RenderScrollbarPart> m_scrollCorner;
+    RenderPtr<RenderScrollbarPart> m_resizer;
+
+    std::unique_ptr<RenderMarquee> m_marquee; // Used for <marquee>.
 };
 
 } // namespace WebCore

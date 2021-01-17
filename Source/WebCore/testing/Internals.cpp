@@ -158,6 +158,7 @@
 #include "RenderEmbeddedObject.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
 #include "RenderTheme.h"
@@ -1838,7 +1839,8 @@ ExceptionOr<void> Internals::scrollBySimulatingWheelEvent(Element& element, doub
         if (!box.canBeScrolledAndHasScrollableArea())
             return Exception { InvalidAccessError };
 
-        scrollableArea = box.layer();
+        ASSERT(box.layer());
+        scrollableArea = box.layer()->scrollableArea();
     }
     
     if (!scrollableArea)
@@ -2864,8 +2866,10 @@ ExceptionOr<ScrollableArea*> Internals::scrollableAreaForNode(Node* node) const
 
         if (is<RenderListBox>(renderBox))
             scrollableArea = &downcast<RenderListBox>(renderBox);
-        else
-            scrollableArea = renderBox.layer();
+        else {
+            ASSERT(renderBox.layer());
+            scrollableArea = renderBox.layer()->scrollableArea();
+        }
     } else
         return Exception { InvalidNodeTypeError };
 
