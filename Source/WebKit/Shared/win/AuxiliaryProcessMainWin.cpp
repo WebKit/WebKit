@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-bool AuxiliaryProcessMainBase::parseCommandLine(int argc, char** argv)
+bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
 {
     for (int i = 0; i < argc; i++) {
         if (!strcmp(argv[i], "-clientIdentifier") && i + 1 < argc) {

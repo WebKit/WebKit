@@ -33,26 +33,12 @@
 
 namespace WebKit {
 
-static RefPtr<GPUProcess> globalGPUProcess;
-
-class GPUProcessMainGStreamer final: public AuxiliaryProcessMainBase {
-public:
-    bool platformInitialize() override
-    {
-        return true;
-    }
+class GPUProcessMainGStreamer final: public AuxiliaryProcessMainBaseNoSingleton<GPUProcess> {
 };
-
-template<>
-void initializeAuxiliaryProcess<GPUProcess>(AuxiliaryProcessInitializationParameters&& parameters)
-{
-    static NeverDestroyed<GPUProcess> gpuProcess(WTFMove(parameters));
-    globalGPUProcess = &gpuProcess.get();
-}
 
 int GPUProcessMain(int argc, char** argv)
 {
-    return AuxiliaryProcessMain<GPUProcess, GPUProcessMainGStreamer>(argc, argv);
+    return AuxiliaryProcessMain<GPUProcessMainGStreamer>(argc, argv);
 }
 
 } // namespace WebKit

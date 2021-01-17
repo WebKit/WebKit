@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2021 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,45 +34,66 @@
 
 namespace WebKit {
 
-class AuxiliaryProcessMainBase {
+class AuxiliaryProcessMainCommon {
 public:
-    virtual bool platformInitialize() { return true; }
-    virtual bool parseCommandLine(int argc, char** argv);
-    virtual void platformFinalize() { }
-
-    AuxiliaryProcessInitializationParameters& initializationParameters() { return m_parameters; }
-    AuxiliaryProcessInitializationParameters&& takeInitializationParameters() { return WTFMove(m_parameters); }
+    bool parseCommandLine(int argc, char** argv);
 
 protected:
     AuxiliaryProcessInitializationParameters m_parameters;
 };
 
-template<typename AuxiliaryProcessType>
-void initializeAuxiliaryProcess(AuxiliaryProcessInitializationParameters&& parameters)
-{
-    AuxiliaryProcessType::singleton().initialize(WTFMove(parameters));
-}
+template<typename AuxiliaryProcessType, bool HasSingleton = true>
+class AuxiliaryProcessMainBase : public AuxiliaryProcessMainCommon {
+public:
+    virtual bool platformInitialize() { return true; }
+    virtual void platformFinalize() { }
 
-template<typename AuxiliaryProcessType, typename AuxiliaryProcessMainType>
+    virtual void initializeAuxiliaryProcess(AuxiliaryProcessInitializationParameters&& parameters)
+    {
+        if constexpr (HasSingleton)
+            AuxiliaryProcessType::singleton().initialize(WTFMove(parameters));
+    }
+
+    int run(int argc, char** argv)
+    {
+        m_parameters.processType = AuxiliaryProcessType::processType;
+
+        if (!platformInitialize())
+            return EXIT_FAILURE;
+
+        if (!parseCommandLine(argc, argv))
+            return EXIT_FAILURE;
+
+        InitializeWebKit2();
+
+        initializeAuxiliaryProcess(WTFMove(m_parameters));
+        RunLoop::run();
+        platformFinalize();
+
+        return EXIT_SUCCESS;
+    }
+};
+
+template<typename AuxiliaryProcessType>
+class AuxiliaryProcessMainBaseNoSingleton : public AuxiliaryProcessMainBase<AuxiliaryProcessType, false> {
+public:
+    AuxiliaryProcessType& process() { return *m_process; };
+
+    void initializeAuxiliaryProcess(AuxiliaryProcessInitializationParameters&& parameters) override
+    {
+        m_process = adoptRef(new AuxiliaryProcessType(WTFMove(parameters)));
+    }
+
+protected:
+    RefPtr<AuxiliaryProcessType> m_process;
+};
+
+template<typename AuxiliaryProcessMainType>
 int AuxiliaryProcessMain(int argc, char** argv)
 {
-    AuxiliaryProcessMainType auxiliaryMain;
+    NeverDestroyed<AuxiliaryProcessMainType> auxiliaryMain;
 
-    auxiliaryMain.initializationParameters().processType = AuxiliaryProcessType::processType;
-
-    if (!auxiliaryMain.platformInitialize())
-        return EXIT_FAILURE;
-
-    if (!auxiliaryMain.parseCommandLine(argc, argv))
-        return EXIT_FAILURE;
-
-    InitializeWebKit2();
-
-    initializeAuxiliaryProcess<AuxiliaryProcessType>(auxiliaryMain.takeInitializationParameters());
-    RunLoop::run();
-    auxiliaryMain.platformFinalize();
-
-    return EXIT_SUCCESS;
+    return auxiliaryMain->run(argc, argv);
 }
 
 } // namespace WebKit

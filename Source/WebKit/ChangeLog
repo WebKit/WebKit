@@ -1,3 +1,64 @@
+2021-01-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [non-Cocoa] Add a new AuxiliaryProcessMainBase class for auxiliary processes without singleton()
+        https://bugs.webkit.org/show_bug.cgi?id=220615
+
+        Reviewed by Don Olmstead.
+
+        non-Cocoa ports auxiliary processes are using AuxiliaryProcessMain
+        as the entry points. AuxiliaryProcessMain supports both kinds of
+        auxiliary processes with and without singleton() method by using
+        initializeAuxiliaryProcess template function. However, all
+        initializeAuxiliaryProcess look similar code. They can share more
+        code.
+
+        Added a AuxiliaryProcessMainBaseNoSingleton template class for
+        auxiliary processes without singleton().
+
+        Moved the code that was in AuxiliaryProcessMain to
+        AuxiliaryProcessMainBase::run() to remove
+        takeInitializationParameters().
+
+        * GPUProcess/gstreamer/GPUProcessMainGStreamer.cpp:
+        (WebKit::GPUProcessMain):
+        (WebKit::initializeAuxiliaryProcess<GPUProcess>): Deleted.
+        * GPUProcess/playstation/GPUProcessMainPlayStation.cpp:
+        (WebKit::GPUProcessMain):
+        (WebKit::initializeAuxiliaryProcess<GPUProcess>): Deleted.
+        * GPUProcess/win/GPUProcessMainWin.cpp:
+        (WebKit::GPUProcessMain):
+        (WebKit::initializeAuxiliaryProcess<GPUProcess>): Deleted.
+        * NetworkProcess/curl/NetworkProcessMainCurl.cpp:
+        (WebKit::NetworkProcessMain):
+        (WebKit::initializeAuxiliaryProcess<NetworkProcess>): Deleted.
+        * NetworkProcess/soup/NetworkProcessMainSoup.cpp:
+        (WebKit::NetworkProcessMain):
+        (WebKit::initializeAuxiliaryProcess<NetworkProcess>): Deleted.
+        * Shared/AuxiliaryProcessMain.h:
+        (WebKit::AuxiliaryProcessMainBase::platformInitialize):
+        (WebKit::AuxiliaryProcessMainBase::platformFinalize):
+        (WebKit::AuxiliaryProcessMainBase::initializeAuxiliaryProcess):
+        (WebKit::AuxiliaryProcessMainBase::run):
+        (WebKit::AuxiliaryProcessMainBaseNoSingleton::process):
+        (WebKit::AuxiliaryProcessMain):
+        (WebKit::AuxiliaryProcessMainBase::initializationParameters): Deleted.
+        (WebKit::AuxiliaryProcessMainBase::takeInitializationParameters): Deleted.
+        (WebKit::initializeAuxiliaryProcess): Deleted.
+        * Shared/unix/AuxiliaryProcessMain.cpp:
+        (WebKit::AuxiliaryProcessMainCommon::parseCommandLine):
+        (WebKit::AuxiliaryProcessMainBase::parseCommandLine): Deleted.
+        * Shared/win/AuxiliaryProcessMainWin.cpp:
+        (WebKit::AuxiliaryProcessMainCommon::parseCommandLine):
+        (WebKit::AuxiliaryProcessMainBase::parseCommandLine): Deleted.
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        (WebKit::WebProcessMain):
+        * WebProcess/playstation/WebProcessMainPlayStation.cpp:
+        (WebKit::WebProcessMain):
+        * WebProcess/win/WebProcessMainWin.cpp:
+        (WebKit::WebProcessMain):
+        * WebProcess/wpe/WebProcessMainWPE.cpp:
+        (WebKit::WebProcessMain):
+
 2021-01-17  Youenn Fablet  <youenn@apple.com>
 
         Add CoreMedia aavds entitlement to WebContent and GPU processes

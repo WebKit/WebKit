@@ -76,7 +76,7 @@ static void initializeAccessibility()
 }
 #endif
 
-class WebProcessMainWPE final : public AuxiliaryProcessMainBase {
+class WebProcessMainWPE final : public AuxiliaryProcessMainBase<WebProcess> {
 public:
     bool platformInitialize() override
     {
@@ -103,7 +103,7 @@ public:
 
 int WebProcessMain(int argc, char** argv)
 {
-    return AuxiliaryProcessMain<WebProcess, WebProcessMainWPE>(argc, argv);
+    return AuxiliaryProcessMain<WebProcessMainWPE>(argc, argv);
 }
 
 } // namespace WebKit

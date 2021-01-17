@@ -32,17 +32,12 @@
 namespace WebKit {
 using namespace WebCore;
 
-class WebProcessMainPlayStation final: public AuxiliaryProcessMainBase {
-public:
-    bool platformInitialize() override
-    {
-        return true;
-    }
+class WebProcessMainPlayStation final: public AuxiliaryProcessMainBase<WebProcess> {
 };
 
 int WebProcessMain(int argc, char** argv)
 {
-    return AuxiliaryProcessMain<WebProcess, WebProcessMainPlayStation>(argc, argv);
+    return AuxiliaryProcessMain<WebProcessMainPlayStation>(argc, argv);
 }
 
 } // namespace WebKit

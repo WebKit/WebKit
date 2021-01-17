@@ -31,26 +31,17 @@
 
 namespace WebKit {
 
-static RefPtr<NetworkProcess> globalNetworkProcess;
-
-class NetworkProcessMainCurl final: public AuxiliaryProcessMainBase {
+class NetworkProcessMainCurl final: public AuxiliaryProcessMainBaseNoSingleton<NetworkProcess> {
 public:
     void platformFinalize() override
     {
-        globalNetworkProcess->destroySession(PAL::SessionID::defaultSessionID());
+        process().destroySession(PAL::SessionID::defaultSessionID());
     }
 };
 
-template<>
-void initializeAuxiliaryProcess<NetworkProcess>(AuxiliaryProcessInitializationParameters&& parameters)
-{
-    static NeverDestroyed<NetworkProcess> networkProcess(WTFMove(parameters));
-    globalNetworkProcess = &networkProcess.get();
-}
-
 int NetworkProcessMain(int argc, char** argv)
 {
-    return AuxiliaryProcessMain<NetworkProcess, NetworkProcessMainCurl>(argc, argv);
+    return AuxiliaryProcessMain<NetworkProcessMainCurl>(argc, argv);
 }
 
 } // namespace WebKit

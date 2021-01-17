@@ -43,7 +43,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-class WebProcessMainGtk final: public AuxiliaryProcessMainBase {
+class WebProcessMainGtk final: public AuxiliaryProcessMainBase<WebProcess> {
 public:
     bool platformInitialize() override
     {
@@ -75,7 +75,7 @@ int WebProcessMain(int argc, char** argv)
     // This call needs to happen before any threads begin execution
     unsetenv("GTK_THEME");
 
-    return AuxiliaryProcessMain<WebProcess, WebProcessMainGtk>(argc, argv);
+    return AuxiliaryProcessMain<WebProcessMainGtk>(argc, argv);
 }
 
 } // namespace WebKit

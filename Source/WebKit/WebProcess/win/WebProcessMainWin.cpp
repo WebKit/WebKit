@@ -37,7 +37,7 @@ SOFT_LINK_OPTIONAL(user32, SetProcessDpiAwarenessContext, BOOL, STDAPICALLTYPE, 
 namespace WebKit {
 using namespace WebCore;
 
-class WebProcessMainWin final : public AuxiliaryProcessMainBase {
+class WebProcessMainWin final : public AuxiliaryProcessMainBase<WebProcess> {
 public:
     bool platformInitialize() override
     {
@@ -54,7 +54,7 @@ int WebProcessMain(int argc, char** argv)
     // WebProcess uses DirectX
     HRESULT hr = ::CoInitializeEx(nullptr, COINIT_MULTITHREADED);
     RELEASE_ASSERT(SUCCEEDED(hr));
-    return AuxiliaryProcessMain<WebProcess, WebProcessMainWin>(argc, argv);
+    return AuxiliaryProcessMain<WebProcessMainWin>(argc, argv);
 }
 
 } // namespace WebKit

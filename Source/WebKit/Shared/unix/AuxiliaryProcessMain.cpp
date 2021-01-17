@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-bool AuxiliaryProcessMainBase::parseCommandLine(int argc, char** argv)
+bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
 {
     ASSERT(argc >= 3);
     if (argc < 3)
