@@ -239,6 +239,7 @@ size_t Thread::getRegisters(PlatformRegisters& registers)
 Thread& Thread::initializeCurrentTLS()
 {
     // Not a WTF-created thread, ThreadIdentifier is not established yet.
+    WTF::initialize();
     Ref<Thread> thread = adoptRef(*new Thread());
 
     HANDLE handle;

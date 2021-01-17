@@ -305,7 +305,8 @@ void addSignalHandler(Signal signal, SignalHandler&& handler)
             auto result = sigfillset(&action.sa_mask);
             RELEASE_ASSERT(!result);
             // Do not block this signal since it is used on non-Darwin systems to suspend and resume threads.
-            result = sigdelset(&action.sa_mask, SigThreadSuspendResume);
+            RELEASE_ASSERT(g_wtfConfig.isThreadSuspendResumeSignalConfigured);
+            result = sigdelset(&action.sa_mask, g_wtfConfig.sigThreadSuspendResume);
             RELEASE_ASSERT(!result);
             action.sa_flags = SA_SIGINFO;
             auto systemSignals = toSystemSignal(signal);

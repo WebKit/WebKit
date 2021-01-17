@@ -70,6 +70,11 @@ struct Config {
 
     bool isPermanentlyFrozen;
 
+#if USE(PTHREADS)
+    bool isUserSpecifiedThreadSuspendResumeSignalConfigured;
+    bool isThreadSuspendResumeSignalConfigured;
+    int sigThreadSuspendResume;
+#endif
 #if OS(UNIX)
     SignalHandlers signalHandlers;
 #endif

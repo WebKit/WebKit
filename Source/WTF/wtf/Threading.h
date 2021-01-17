@@ -72,13 +72,6 @@ class PrintStream;
 
 WTF_EXPORT_PRIVATE void initialize();
 
-#if USE(PTHREADS)
-
-// We use SIGUSR1 to suspend and resume machine threads in JavaScriptCore.
-constexpr const int SigThreadSuspendResume = SIGUSR1;
-
-#endif
-
 enum class GCThreadType : uint8_t {
     None = 0,
     Main,

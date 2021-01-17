@@ -182,6 +182,17 @@ void JSDisableGCTimer(void)
     GCActivityCallback::s_shouldCreateGCTimer = false;
 }
 
+#if !OS(DARWIN) && !OS(WINDOWS)
+bool JSConfigureSignalForGC(int signal)
+{
+    if (g_wtfConfig.isThreadSuspendResumeSignalConfigured)
+        return false;
+    g_wtfConfig.sigThreadSuspendResume = signal;
+    g_wtfConfig.isUserSpecifiedThreadSuspendResumeSignalConfigured = true;
+    return true;
+}
+#endif
+
 JSObjectRef JSGetMemoryUsageStatistics(JSContextRef ctx)
 {
     if (!ctx) {

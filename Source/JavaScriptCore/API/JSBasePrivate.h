@@ -47,6 +47,17 @@ JS_EXPORT void JSReportExtraMemoryCost(JSContextRef ctx, size_t size) JSC_API_AV
 
 JS_EXPORT void JSDisableGCTimer(void);
 
+#if !defined(__APPLE__) && !defined(WIN32) && !defined(_WIN32)
+/*!
+@function JSConfigureSignalForGC
+@abstract Configure signals for GC in non-Apple and non-Windows platforms.
+@param signal The signal number to use.
+@result true if the signal is successfully configured, otherwise false.
+@discussion Call this function before any of JSC initialization starts. Otherwise, it fails.
+*/
+JS_EXPORT bool JSConfigureSignalForGC(int signal);
+#endif
+
 /*!
 @function
 @abstract Produces an object with various statistics about current memory usage.

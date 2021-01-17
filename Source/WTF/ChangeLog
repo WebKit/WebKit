@@ -1,3 +1,29 @@
+2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Add JSC API configuring GC signals in Linux
+        https://bugs.webkit.org/show_bug.cgi?id=220641
+
+        Reviewed by Mark Lam.
+
+        In Linux and FreeBSD, we need to use signals to suspend and resume threads.
+        By default, we are using SIGUSR1, but it is possible that some embedders want to use
+        the other signals since they are using SIGUSR1 already. To work-around that, this
+        patch offers the way for embedders to configure signals.
+
+        * wtf/Threading.h:
+        * wtf/WTFConfig.h:
+        * wtf/posix/ThreadingPOSIX.cpp:
+        (WTF::Thread::signalHandlerSuspendResume):
+        (WTF::Thread::initializePlatformThreading):
+        (WTF::Thread::initializeCurrentThreadEvenIfNonWTFCreated):
+        (WTF::Thread::initializeCurrentTLS):
+        (WTF::Thread::suspend):
+        (WTF::Thread::resume):
+        * wtf/threads/Signals.cpp:
+        (WTF::addSignalHandler):
+        * wtf/win/ThreadingWin.cpp:
+        (WTF::Thread::initializeCurrentTLS):
+
 2021-01-15  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess] Move DOM / Canvas rendering off the main thread in the GPUProcess
