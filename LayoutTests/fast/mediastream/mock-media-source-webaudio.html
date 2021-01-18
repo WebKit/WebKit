@@ -32,6 +32,11 @@
             analyser.connect(gain);
             gain.connect(context.destination);
 
+            const secondSource = context.createMediaStreamSource(stream);
+            const sourceGain = new GainNode(context, { gain : 0 });
+            secondSource.connect(gain);
+            sourceGain.connect(context.destination);
+
             function analyse() {
                 var freqDomain = new Uint8Array(analyser.frequencyBinCount);
                 analyser.getByteFrequencyData(freqDomain);

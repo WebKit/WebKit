@@ -1,3 +1,15 @@
+2021-01-18  Youenn Fablet  <youenn@apple.com>
+
+        WebRTC live Opus audio stream stutters
+        https://bugs.webkit.org/show_bug.cgi?id=220599
+        <rdar://problem/73190139>
+
+        Reviewed by Darin Adler.
+
+        Add media stream source nodes to ensure that concurrent reading is not an issue anymore.
+
+        * fast/mediastream/mock-media-source-webaudio.html:
+
 2021-01-15  Rob Buis  <rbuis@igalia.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=220224

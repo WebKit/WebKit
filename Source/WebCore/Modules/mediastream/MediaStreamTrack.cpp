@@ -50,6 +50,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptExecutionContext.h"
 #include "Settings.h"
+#include "WebAudioSourceProvider.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
@@ -622,9 +623,9 @@ bool MediaStreamTrack::virtualHasPendingActivity() const
     return !m_ended;
 }
 
-AudioSourceProvider* MediaStreamTrack::audioSourceProvider()
+RefPtr<WebAudioSourceProvider> MediaStreamTrack::createAudioSourceProvider()
 {
-    return m_private->audioSourceProvider();
+    return m_private->createAudioSourceProvider();
 }
 
 Document* MediaStreamTrack::document() const
