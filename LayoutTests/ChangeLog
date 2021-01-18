@@ -1,3 +1,27 @@
+2021-01-18  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for LayoutTests/accessibility/canvas-fallback-content.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=220644
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/canvas-fallback-content-2-expected.txt:
+        Removed the checks for the document.activeElement since the goal here is
+        not to test this method.
+
+        * accessibility/canvas-fallback-content-2.html:
+        Retrieved the accessibility Objects by ID directly from the accessibilityController.
+        This simplifies the code since it is not necessary to set focus to the
+        object via the document, to then retrieve the focused accessibility element.
+        This works for isolated tree mode on and off.
+
+        * accessibility/canvas-fallback-content.html:
+        Kept the focus manipulations but used Promises to make it work in both
+        isolated mode on and off.
+
+        * platform/win/accessibility/canvas-fallback-content-expected.txt: Deleted.
+        * platform/win/TestExpectations: Skip since this test was already failing in win.
+
 2021-01-18  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         createImageBitmap() causes null pointer dereference using Cairo lib

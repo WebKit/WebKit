@@ -1,7 +1,9 @@
 <!DOCTYPE HTML>
 <html>
-<body>
+<head>
 <script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
 
 <div>
   <a id="link1" href="#">Link</a>
@@ -52,65 +54,57 @@
 </canvas>
 
 <div id="console"></div>
+
 <script>
-description("This tests a number of different elements in canvas fallback content to make sure their accessible attributes are essentially identical to the corresponding elements outside of canvas fallback content.");
+    description("This tests a number of different elements in canvas fallback content to make sure their accessible attributes are essentially identical to the corresponding elements outside of canvas fallback content.");
 
-if (window.testRunner && window.accessibilityController) {
-    window.testRunner.dumpAsText();
+    if (window.testRunner && window.accessibilityController) {
+        window.testRunner.dumpAsText();
 
-    function check(id1, id2) {
-        debug(id1);
-        window.element1 = document.getElementById(id1);
-        element1.focus();
-        shouldBe("document.activeElement == element1", "true");
-        window.axElement1 = accessibilityController.focusedElement;
+        function check(id1, id2) {
+            window.axElement1 = accessibilityController.accessibleElementById(id1);
+            window.axElement2 = accessibilityController.accessibleElementById(id2);
 
-        debug(id2);
-        window.element2 = document.getElementById(id2);
-        element2.focus();
-        shouldBe("document.activeElement == element2", "true");
-        window.axElement2 = accessibilityController.focusedElement;
+            debug(id1);
+            debug(id2);
+            shouldBe("axElement2.role", "axElement1.role");
+            shouldBe("axElement2.roleDescription", "axElement1.roleDescription");
+            shouldBe("axElement2.title", "axElement1.title");
+            shouldBe("axElement2.description", "axElement1.description");
+            shouldBe("axElement2.helpText", "axElement1.helpText");
+            shouldBe("axElement2.stringValue", "axElement1.stringValue");
+            shouldBe("axElement2.isEnabled", "axElement1.isEnabled");
+            shouldBe("axElement2.isRequired", "axElement1.isRequired");
+            shouldBe("axElement2.isChecked", "axElement1.isChecked");
+            shouldBe("axElement2.intValue", "axElement1.intValue");
+            shouldBe("axElement2.minValue", "axElement1.minValue");
+            shouldBe("axElement2.maxValue", "axElement1.maxValue");
+            debug("");
+        }
 
-        shouldBe("axElement2.role", "axElement1.role");
-        shouldBe("axElement2.roleDescription", "axElement1.roleDescription");
-        shouldBe("axElement2.title", "axElement1.title");
-        shouldBe("axElement2.description", "axElement1.description");
-        shouldBe("axElement2.helpText", "axElement1.helpText");
-        shouldBe("axElement2.stringValue", "axElement1.stringValue");
-        shouldBe("axElement2.isEnabled", "axElement1.isEnabled");
-        shouldBe("axElement2.isRequired", "axElement1.isRequired");
-        shouldBe("axElement2.isChecked", "axElement1.isChecked");
-        shouldBe("axElement2.intValue", "axElement1.intValue");
-        shouldBe("axElement2.minValue", "axElement1.minValue");
-        shouldBe("axElement2.maxValue", "axElement1.maxValue");
-        debug("");
+        check("link1", "link2");
+        check("button1", "button2");
+        check("labeled-button1", "labeled-button2");
+        check("button-with-title1", "button-with-title2");
+        check("text1", "text2");
+        check("checkbox1", "checkbox2");
+        check("number1", "number2");
+        check("radio1", "radio2");
+        check("slider1", "slider2");
+        check("submit1", "submit2");
+        check("combobox1", "combobox2");
+        check("listbox1", "listbox2");
+        check("textarea1", "textarea2");
+        check("focusable1", "focusable2");
+        check("heading1", "heading2");
+        check("aria-button1", "aria-button2");
+        check("aria-disabledbutton1", "aria-disabledbutton2");
+        check("aria-enabledbutton1", "aria-enabledbutton2");
+        check("aria-requiredbutton1", "aria-requiredbutton2");
+        check("aria-togglebutton1", "aria-togglebutton2");
+        check("aria-link1", "aria-link2");
     }
-
-    check("link1", "link2");
-    check("button1", "button2");
-    check("labeled-button1", "labeled-button2");
-    check("button-with-title1", "button-with-title2");
-    check("text1", "text2");
-    check("checkbox1", "checkbox2");
-    check("number1", "number2");
-    check("radio1", "radio2");
-    check("slider1", "slider2");
-    check("submit1", "submit2");
-    check("combobox1", "combobox2");
-    check("listbox1", "listbox2");
-    check("textarea1", "textarea2");
-    check("focusable1", "focusable2");
-    check("heading1", "heading2");
-    check("aria-button1", "aria-button2");
-    check("aria-disabledbutton1", "aria-disabledbutton2");
-    check("aria-enabledbutton1", "aria-enabledbutton2");
-    check("aria-requiredbutton1", "aria-requiredbutton2");
-    check("aria-togglebutton1", "aria-togglebutton2");
-    check("aria-link1", "aria-link2");
-}
-
 </script>
-
 <script src="../resources/js-test-post.js"></script>
 </body>
 </html>

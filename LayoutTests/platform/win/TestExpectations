@@ -1638,7 +1638,7 @@ accessibility/scroll-to-make-visible-iframe-offscreen.html [ Skip ]
 accessibility/aria-roledescription.html [ Failure ]
 
 # Attempt to add a text element that claims NOT to be an accessibility element:
-webkit.org/b/140870 [ Debug ] accessibility/canvas-fallback-content.html [ Skip ]
+webkit.org/b/140870 accessibility/canvas-fallback-content.html [ Skip ]
 webkit.org/b/140870 [ Debug ] accessibility/canvas-accessibilitynodeobject.html [ Skip ]
 
 # Asserts because it does not have a popup menu:
