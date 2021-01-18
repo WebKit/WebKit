@@ -1,5 +1,16 @@
 2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] DFG/FTL Atomics should not accept Float32/Float64 typed arrays
+        https://bugs.webkit.org/show_bug.cgi?id=220692
+        <rdar://problem/73238369>
+
+        Reviewed by Mark Lam.
+
+        * stress/atomics-float-edge.js: Added.
+        (foo):
+
+2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] FTL OSR entry FlushFormat array is reversed
         https://bugs.webkit.org/show_bug.cgi?id=220695
         <rdar://problem/72930932>

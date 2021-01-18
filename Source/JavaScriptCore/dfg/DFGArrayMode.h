@@ -508,13 +508,6 @@ public:
         return type() == Array::AnyTypedArray || isTypedView(typedArrayType());
     }
 
-    bool isOneOfTypedArrayView() const
-    {
-        if (type() == Array::AnyTypedArray)
-            return false;
-        return isTypedView(typedArrayType());
-    }
-    
     bool operator==(const ArrayMode& other) const
     {
         return type() == other.type()

@@ -1,5 +1,23 @@
 2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] DFG/FTL Atomics should not accept Float32/Float64 typed arrays
+        https://bugs.webkit.org/show_bug.cgi?id=220692
+        <rdar://problem/73238369>
+
+        Reviewed by Mark Lam.
+
+        We accidentally accept Float32/Float64 typed arrays. We should accept only integer TypedArrays (Int8, Uint8, ... etc.)
+        as specified in [1]. If the other types come, we just make it Array::Generic and call slow path which can handle them.
+
+        [1]: https://tc39.es/ecma262/#sec-validateintegertypedarray
+
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::isOneOfTypedArrayView const): Deleted.
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
+2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] FTL OSR entry FlushFormat array is reversed
         https://bugs.webkit.org/show_bug.cgi?id=220695
         <rdar://problem/72930932>
