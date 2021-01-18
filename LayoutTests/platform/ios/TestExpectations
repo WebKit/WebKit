@@ -3164,10 +3164,6 @@ fast/attachment/attachment-title-with-rtl.html [ ImageOnlyFailure ]
 
 fast/forms/textfield-no-linebreak.html [ ImageOnlyFailure ]
 
-# <rdar://problem/47855174> REGRESSION (iOS 13?): Layout tests http/wpt/mediarecorder/MediaRecorder-dataavailable.html and http/wpt/mediarecorder/MediaRecorder-mock-dataavailable.html are failing
-http/wpt/mediarecorder/MediaRecorder-dataavailable.html [ Failure ]
-http/wpt/mediarecorder/MediaRecorder-mock-dataavailable.html [ Failure ]
-
 # <rdar://problem/47897726> REGRESSION (iOS 13): Multiple media tests failing
 media/audio-controls-timeline-in-media-document.html [ Failure ]
 media/controls-strict.html [ Failure ]
