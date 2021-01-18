@@ -1,3 +1,12 @@
+2021-01-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] callerIsOMGCompiled should be robust
+        https://bugs.webkit.org/show_bug.cgi?id=220697
+
+        Reviewed by Mark Lam.
+
+        * stress/callerIsOMGCompiled-should-be-robust.js: Added.
+
 2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DFG/FTL Atomics should not accept Float32/Float64 typed arrays
