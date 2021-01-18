@@ -48,11 +48,13 @@ bool InlineFormattingContext::Quirks::inlineLevelBoxAffectsLineBox(const LineBox
         if (layoutState().inStandardsMode())
             return true;
         // In quirks mode linebreak boxes (<br>) affect the line box when they are inside a non-root inline box (<span></span>) or when
-        // the line has no other inline level box/root inlinebox has no content.
+        // the line has no other inline level box.
+        // e.g <div><img><br></div> should produce a line with no descent.
         auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent());
         if (!parentInlineBox.isRootInlineBox())
             return true;
-        return !parentInlineBox.hasContent() && lineBox.nonRootInlineLevelBoxes().size() == 1;
+        // is <br> the only inline level box on the line?
+        return lineBox.nonRootInlineLevelBoxes().size() == 1;
     }
     if (inlineLevelBox.isInlineBox()) {
         // Inline boxes (e.g. root inline box or <span>) affects line boxes either through the strut or actual content.
@@ -66,9 +68,7 @@ bool InlineFormattingContext::Quirks::inlineLevelBoxAffectsLineBox(const LineBox
             }
         }
         auto inlineBoxHasImaginaryStrut = layoutState().inStandardsMode();
-        // Inline box with strut only stetches the line box when it has additional inline level boxes (not inline boxes) or the root inline box has content.
-        // e.g. <!DOCTYPE html><div><span style="font-size: 100px;"></span><img src="foo" style="width: 0px; height: 0px;"></div>
-        return inlineBoxHasImaginaryStrut && (lineBox.hasNonInlineBox() || lineBox.rootInlineBox().hasContent());
+        return inlineBoxHasImaginaryStrut;
     }
     if (inlineLevelBox.isAtomicInlineLevelBox()) {
         if (inlineLevelBox.layoutBounds().height())
