@@ -211,16 +211,21 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         InlineLayoutUnit rootInlineBoxLogicalTop { 0 };
     };
     auto simplifiedVerticalAlignment = SimplifiedVerticalAlignment { };
-    // Empty root inline boxes require special collapsing.
-    m_inlineLevelBoxesNeedVerticalAlignment = m_inlineLevelBoxesNeedVerticalAlignment || runs.isEmpty();
 
     auto createRootInlineBox = [&] {
         auto rootInlineBox = LineBox::InlineLevelBox::createRootInlineBox(rootBox(), horizontalAligmentOffset, lineBox.logicalWidth());
         setVerticalGeometryForInlineBox(*rootInlineBox);
-        simplifiedVerticalAlignment = { { } , rootInlineBox->layoutBounds().height(), rootInlineBox->layoutBounds().ascent - rootInlineBox->baseline() };
         lineBox.addRootInlineBox(WTFMove(rootInlineBox));
     };
     createRootInlineBox();
+    // Set the initial simplified vertical alignment if applicable.
+    auto& rootInlineBox = lineBox.rootInlineBox();
+    if (!m_inlineLevelBoxesNeedVerticalAlignment) {
+        auto lineHasNoContent = runs.isEmpty();
+        auto lineBoxBottom = lineHasNoContent ? InlineLayoutUnit(0.0f) : rootInlineBox.layoutBounds().height();
+        auto rootInlineBoxLogicalTop = lineHasNoContent ? -rootInlineBox.baseline() : rootInlineBox.layoutBounds().ascent - rootInlineBox.baseline();
+        simplifiedVerticalAlignment = { { }, lineBoxBottom, rootInlineBoxLogicalTop };
+    }
 
     auto createWrappedInlineBoxes = [&] {
         if (runs.isEmpty())
@@ -257,7 +262,6 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         }
     };
     createWrappedInlineBoxes();
-    auto& rootInlineBox = lineBox.rootInlineBox();
     for (auto& run : runs) {
         auto& layoutBox = run.layoutBox();
         auto logicalLeft = horizontalAligmentOffset + run.logicalLeft();
@@ -288,7 +292,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
             auto atomicInlineLevelBox = LineBox::InlineLevelBox::createAtomicInlineLevelBox(layoutBox, logicalLeft, { run.logicalWidth(), marginBoxHeight });
             atomicInlineLevelBox->setBaseline(ascent);
             atomicInlineLevelBox->setLayoutBounds(LineBox::InlineLevelBox::LayoutBounds { ascent, marginBoxHeight - ascent });
-            // Let's estimate the logical top so that we can avoid running the alignment on simple inline boxes.
+            // Let's pre-compute the logical top so that we can avoid running the alignment on simple inline boxes.
             auto alignInlineBoxIfEligible = [&] {
                 if (m_inlineLevelBoxesNeedVerticalAlignment)
                     return;
