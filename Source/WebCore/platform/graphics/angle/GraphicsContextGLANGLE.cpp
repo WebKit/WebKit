@@ -103,6 +103,8 @@ RefPtr<ImageData> GraphicsContextGLOpenGL::readPixelsForPaintResults()
 
 void GraphicsContextGLOpenGL::validateAttributes()
 {
+    m_internalColorFormat = contextAttributes().alpha ? GL_RGBA8 : GL_RGB8;
+
     validateDepthStencil(packedDepthStencilExtensionName);
 }
 
@@ -111,25 +113,7 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
     auto attrs = contextAttributes();
     const int width = size.width();
     const int height = size.height();
-    GLuint colorFormat, internalDepthStencilFormat = 0;
-    if (attrs.alpha) {
-        m_internalColorFormat = GL_RGBA8;
-        colorFormat = GL_RGBA;
-    } else {
-        m_internalColorFormat = GL_RGB8;
-        colorFormat = GL_RGB;
-    }
-    if (attrs.stencil || attrs.depth) {
-        // We don't allow the logic where stencil is required and depth is not.
-        // See GraphicsContextGLOpenGL::validateAttributes.
-
-        ExtensionsGL& extensions = getExtensions();
-        // Use a 24 bit depth buffer where we know we have it.
-        if (extensions.supports(packedDepthStencilExtensionName))
-            internalDepthStencilFormat = GL_DEPTH24_STENCIL8_OES;
-        else
-            internalDepthStencilFormat = GL_DEPTH_COMPONENT16;
-    }
+    GLuint colorFormat = attrs.alpha ? GL_RGBA : GL_RGB;
 
     // Resize multisample FBO.
     if (attrs.antialias) {
@@ -144,10 +128,10 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
         gl::FramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_multisampleColorBuffer);
         if (attrs.stencil || attrs.depth) {
             gl::BindRenderbuffer(GL_RENDERBUFFER, m_multisampleDepthStencilBuffer);
-            gl::RenderbufferStorageMultisampleANGLE(GL_RENDERBUFFER, sampleCount, internalDepthStencilFormat, width, height);
+            gl::RenderbufferStorageMultisampleANGLE(GL_RENDERBUFFER, sampleCount, m_internalDepthStencilFormat, width, height);
             // WebGL 1.0's rules state that combined depth/stencil renderbuffers
             // have to be attached to the synthetic DEPTH_STENCIL_ATTACHMENT point.
-            if (!isGLES2Compliant() && internalDepthStencilFormat == GL_DEPTH24_STENCIL8_OES)
+            if (!isGLES2Compliant() && m_internalDepthStencilFormat == GL_DEPTH24_STENCIL8_OES)
                 gl::FramebufferRenderbuffer(GL_FRAMEBUFFER, DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_multisampleDepthStencilBuffer);
             else {
                 if (attrs.stencil)
@@ -208,7 +192,7 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
 #endif
 #endif // PLATFORM(COCOA)
 
-    attachDepthAndStencilBufferIfNeeded(internalDepthStencilFormat, width, height);
+    attachDepthAndStencilBufferIfNeeded(m_internalDepthStencilFormat, width, height);
 
     bool mustRestoreFBO = true;
     if (attrs.antialias) {
@@ -435,17 +419,25 @@ void GraphicsContextGLOpenGL::readnPixelsImpl(GCGLint x, GCGLint y, GCGLsizei wi
 void GraphicsContextGLOpenGL::validateDepthStencil(const char* packedDepthStencilExtension)
 {
     ExtensionsGL& extensions = getExtensions();
-    auto attrs = contextAttributes();
+    // FIXME: Since the constructors of various platforms are not shared, we initialize this here.
+    // Upon constructing the context, always initialize the extensions that the WebGLRenderingContext* will
+    // use to turn on feature flags.
+    if (extensions.supports(packedDepthStencilExtension)) {
+        extensions.ensureEnabled(packedDepthStencilExtension);
+        m_internalDepthStencilFormat = GL_DEPTH24_STENCIL8_OES;
+    } else
+        m_internalDepthStencilFormat = GL_DEPTH_COMPONENT16;
 
+    auto attrs = contextAttributes();
     if (attrs.stencil) {
-        if (extensions.supports(packedDepthStencilExtension)) {
-            extensions.ensureEnabled(packedDepthStencilExtension);
+        if (m_internalDepthStencilFormat == GL_DEPTH24_STENCIL8_OES) {
             // Force depth if stencil is true.
             attrs.depth = true;
         } else
             attrs.stencil = false;
         setContextAttributes(attrs);
     }
+
     if (attrs.antialias) {
         // FIXME: must adjust this when upgrading to WebGL 2.0 / OpenGL ES 3.0 support.
         if (!extensions.supports("GL_ANGLE_framebuffer_multisample") || !extensions.supports("GL_ANGLE_framebuffer_blit") || !extensions.supports("GL_OES_rgb8_rgba8")) {

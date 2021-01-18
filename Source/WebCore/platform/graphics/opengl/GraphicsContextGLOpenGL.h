@@ -664,7 +664,9 @@ private:
 
     bool m_layerComposited { false };
     GCGLuint m_internalColorFormat { 0 };
-
+#if USE(ANGLE)
+    GCGLuint m_internalDepthStencilFormat { 0 };
+#endif
     struct GraphicsContextGLState {
         GCGLuint boundReadFBO { 0 };
         GCGLuint boundDrawFBO { 0 };
