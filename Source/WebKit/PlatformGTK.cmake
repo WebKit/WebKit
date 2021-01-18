@@ -677,6 +677,7 @@ if (ENABLE_INTROSPECTION)
             --pkg=libsoup-2.4
             --pkg-export=webkit2gtk-${WEBKITGTK_API_VERSION}
             --output=${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
+            --sources-top-dirs=${CMAKE_BINARY_DIR}
             --c-include="webkit2/webkit2.h"
             -DBUILDING_WEBKIT
             -DWEBKIT2_COMPILATION
@@ -724,6 +725,7 @@ if (ENABLE_INTROSPECTION)
             --pkg=libsoup-2.4
             --pkg-export=webkit2gtk-web-extension-${WEBKITGTK_API_VERSION}
             --output=${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.gir
+            --sources-top-dirs=${CMAKE_BINARY_DIR}
             --c-include="webkit2/webkit-web-extension.h"
             -DBUILDING_WEBKIT
             -DWEBKIT2_COMPILATION

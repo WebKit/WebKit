@@ -78,6 +78,7 @@ if (ENABLE_INTROSPECTION)
             --pkg=gobject-2.0
             --pkg-export=javascriptcoregtk-${WEBKITGTK_API_VERSION}
             --output=${CMAKE_BINARY_DIR}/JavaScriptCore-${WEBKITGTK_API_VERSION}.gir
+            --sources-top-dirs=${CMAKE_BINARY_DIR}
             --c-include="jsc/jsc.h"
             -DJSC_COMPILATION
             -I${CMAKE_SOURCE_DIR}/Source
