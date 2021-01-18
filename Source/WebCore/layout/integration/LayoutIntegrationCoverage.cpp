@@ -660,6 +660,8 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
         if (renderInline.paddingLeft() < 0 || renderInline.paddingRight() < 0 || renderInline.paddingTop() < 0 || renderInline.paddingBottom() < 0)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+        if (renderInline.isInFlowPositioned())
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
         auto fontAndTextReasons = canUseForFontAndText(downcast<RenderInline>(child), includeReasons);
         if (fontAndTextReasons)
             ADD_REASONS_AND_RETURN_IF_NEEDED(fontAndTextReasons, reasons, includeReasons);
