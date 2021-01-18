@@ -1,3 +1,19 @@
+2021-01-18  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        Remove recently added glue code: RenderLayer::(scrollToOffset / scrollToXOffset / scrollToYOffset)
+        https://bugs.webkit.org/show_bug.cgi?id=220705
+
+        Reviewed by Adrian Perez de Castro.
+
+        Follow-up on patch adressing the removal of the glue code that
+        forwards calls from RenderLayer to RenderLayerScrollableArea (see
+        webkit.org/b/60305).
+
+        Covered by existing tests.
+
+        * DOM/DOMHTML.mm:
+        (-[DOMHTMLElement setScrollXOffset:scrollYOffset:adjustForIOSCaret:]):
+
 2021-01-14  Geoffrey Garen  <ggaren@apple.com>
 
         Removed most uses of dispatch_async(dispatch_get_main_queue(), ...)

@@ -163,7 +163,6 @@ public:
     ScrollType currentScrollType() const;
     WEBCORE_EXPORT ScrollAnimator& scrollAnimator() const;
     WEBCORE_EXPORT ScrollOffset scrollOffset() const;
-    WEBCORE_EXPORT void scrollToOffset(const ScrollOffset&, const ScrollPositionChangeOptions& = ScrollPositionChangeOptions::createProgrammatic());
     void scrollToXPosition(int x, const ScrollPositionChangeOptions&);
     void scrollToYPosition(int y, const ScrollPositionChangeOptions&);
     void setScrollPosition(const ScrollPosition&, const ScrollPositionChangeOptions&);
@@ -202,8 +201,6 @@ public:
     int verticalScrollbarWidth(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
     int horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
     bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
-    void scrollToXOffset(int x) { scrollToOffset(ScrollOffset(x, scrollOffset().y()), ScrollPositionChangeOptions::createProgrammaticUnclamped()); }
-    void scrollToYOffset(int y) { scrollToOffset(ScrollOffset(scrollOffset().x(), y), ScrollPositionChangeOptions::createProgrammaticUnclamped()); }
     void setConstrainsScrollingToContentEdge(bool);
     // End of temporary glue code
 

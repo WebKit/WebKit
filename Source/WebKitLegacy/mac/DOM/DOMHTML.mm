@@ -53,6 +53,7 @@
 #import <WebCore/HTMLTextFormControlElement.h>
 #import <WebCore/JSExecState.h>
 #import <WebCore/RenderLayer.h>
+#import <WebCore/RenderLayerScrollableArea.h>
 #import <WebCore/WAKWindow.h>
 #import <WebCore/WebCoreThreadMessage.h>
 #endif
@@ -111,12 +112,16 @@
         return;
 
     auto* layer = downcast<WebCore::RenderBox>(*renderer).layer();
+    ASSERT(layer);
+
+    auto* scrollableLayer = layer->ensureLayerScrollableArea();
+
     if (adjustForIOSCaret)
         layer->setAdjustForIOSCaretWhenScrolling(true);
 
     auto scrollPositionChangeOptions = WebCore::ScrollPositionChangeOptions::createProgrammatic();
     scrollPositionChangeOptions.clamping = WebCore::ScrollClamping::Unclamped;
-    layer->scrollToOffset(WebCore::ScrollOffset(x, y), scrollPositionChangeOptions);
+    scrollableLayer->scrollToOffset(WebCore::ScrollOffset(x, y), scrollPositionChangeOptions);
     if (adjustForIOSCaret)
         layer->setAdjustForIOSCaretWhenScrolling(false);
 }

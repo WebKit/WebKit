@@ -50,6 +50,7 @@
 #include "HTMLMarqueeElement.h"
 #include "HTMLNames.h"
 #include "RenderLayer.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderView.h"
 
 namespace WebCore {
@@ -171,12 +172,15 @@ void RenderMarquee::start()
     if (m_timer.isActive() || m_layer->renderer().style().marqueeIncrement().isZero())
         return;
 
+    auto* scrollableLayer = m_layer->scrollableArea();
+    ASSERT(scrollableLayer);
+
     auto details = ScrollPositionChangeOptions::createProgrammaticUnclamped();
     if (!m_suspended && !m_stopped) {
         if (isHorizontal())
-            m_layer->scrollToOffset(ScrollOffset(m_start, 0), details);
+            scrollableLayer->scrollToOffset(ScrollOffset(m_start, 0), details);
         else
-            m_layer->scrollToOffset(ScrollOffset(0, m_start), details);
+            scrollableLayer->scrollToOffset(ScrollOffset(0, m_start), details);
     } else {
         m_suspended = false;
         m_stopped = false;
@@ -244,13 +248,16 @@ void RenderMarquee::timerFired()
 {
     if (m_layer->renderer().view().needsLayout())
         return;
-    
+
+    auto* scrollableLayer = m_layer->scrollableArea();
+    ASSERT(scrollableLayer);
+
     if (m_reset) {
         m_reset = false;
         if (isHorizontal())
-            m_layer->scrollToXOffset(m_start);
+            scrollableLayer->scrollToXOffset(m_start);
         else
-            m_layer->scrollToYOffset(m_start);
+            scrollableLayer->scrollToYOffset(m_start);
         return;
     }
     
@@ -290,9 +297,9 @@ void RenderMarquee::timerFired()
     }
     
     if (isHorizontal())
-        m_layer->scrollToXOffset(newPos);
+        scrollableLayer->scrollToXOffset(newPos);
     else
-        m_layer->scrollToYOffset(newPos);
+        scrollableLayer->scrollToYOffset(newPos);
 }
 
 } // namespace WebCore

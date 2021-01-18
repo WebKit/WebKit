@@ -396,11 +396,6 @@ ScrollOffset RenderLayer::scrollOffset() const
     return { 0, 0 };
 }
 
-void RenderLayer::scrollToOffset(const ScrollOffset& scrollOffset, const ScrollPositionChangeOptions& options)
-{
-    ensureLayerScrollableArea()->scrollToOffset(scrollOffset, options);
-}
-
 void RenderLayer::scrollToXPosition(int x, const ScrollPositionChangeOptions& options)
 {
     ensureLayerScrollableArea()->scrollToXPosition(x, options);
