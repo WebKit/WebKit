@@ -1,5 +1,17 @@
 2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] FTL OSR entry FlushFormat array is reversed
+        https://bugs.webkit.org/show_bug.cgi?id=220695
+        <rdar://problem/72930932>
+
+        Reviewed by Mark Lam.
+
+        * stress/ftl-osr-entry-order-reverse.js: Added.
+        (shouldThrow):
+        (foo):
+
+2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] GenericArguments<Type>::defineOwnProperty's assumption about error is not correct
         https://bugs.webkit.org/show_bug.cgi?id=220693
         <rdar://problem/72929171>

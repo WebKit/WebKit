@@ -1,5 +1,19 @@
 2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] FTL OSR entry FlushFormat array is reversed
+        https://bugs.webkit.org/show_bug.cgi?id=220695
+        <rdar://problem/72930932>
+
+        Reviewed by Mark Lam.
+
+        After r268783, FlushFormat array is erroneously sorted in reversed order.
+        This patch fixes that.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+
+2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] GenericArguments<Type>::defineOwnProperty's assumption about error is not correct
         https://bugs.webkit.org/show_bug.cgi?id=220693
         <rdar://problem/72929171>
