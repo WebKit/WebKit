@@ -936,7 +936,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
 
         for (const auto& propertyName : propertyNames) {
             bool excluded = isPropertyNameExcluded(globalObject, propertyName);
-            RETURN_IF_EXCEPTION(scope, false);
+            RETURN_IF_EXCEPTION(scope, { });
             if (excluded)
                 continue;
 
@@ -956,6 +956,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
             RETURN_IF_EXCEPTION(scope, { });
 
             target->putDirectMayBeIndex(globalObject, propertyName, value);
+            RETURN_IF_EXCEPTION(scope, { });
         }
     }
 
