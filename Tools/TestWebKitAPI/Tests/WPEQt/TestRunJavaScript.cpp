@@ -33,6 +33,7 @@ void TestRunJavaScript::main()
     m_view->loadHtml(QString("<html><head><title>%1</title></head><body /></html>").arg(title));
 
     waitForLoadSucceeded(m_view);
+    waitForSignal(m_view, SIGNAL(titleChanged()));
     QCOMPARE(m_view->loadProgress(), 100);
     QVERIFY(!m_view->isLoading());
     QCOMPARE(m_view->title(), title);

@@ -31,6 +31,7 @@ void TestLoadHtml::main()
 {
     m_view->loadHtml(QString("<html><head><title>WebViewTitle</title></head><body />"));
     waitForLoadSucceeded(m_view);
+    waitForSignal(m_view, SIGNAL(titleChanged()));
     QTRY_COMPARE(m_view->loadProgress(), 100);
     QTRY_VERIFY(!m_view->isLoading());
     QCOMPARE(m_view->title(), QStringLiteral("WebViewTitle"));
