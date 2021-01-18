@@ -45,8 +45,8 @@ private:
     bool accessKeyAction(bool sendMouseEvents) final;
 
     // Overridden to update the hover/active state of the corresponding control.
-    void setActive(bool = true, bool pause = false) final;
-    void setHovered(bool = true) final;
+    void setActive(bool, bool pause, IsUserActionStateChangeRoot) final;
+    void setHovered(bool, IsUserActionStateChangeRoot) final;
 
     // Overridden to either click() or focus() the corresponding control.
     void defaultEventHandler(Event&) final;

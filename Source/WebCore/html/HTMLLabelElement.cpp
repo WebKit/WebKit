@@ -85,26 +85,26 @@ HTMLFormElement* HTMLLabelElement::form() const
     return downcast<HTMLFormControlElement>(control.get())->form();
 }
 
-void HTMLLabelElement::setActive(bool down, bool pause)
+void HTMLLabelElement::setActive(bool down, bool pause, IsUserActionStateChangeRoot isUserActionStateChangeRoot)
 {
     if (down == active())
         return;
 
     // Update our status first.
-    HTMLElement::setActive(down, pause);
+    HTMLElement::setActive(down, pause, isUserActionStateChangeRoot);
 
     // Also update our corresponding control.
     if (auto element = control())
         element->setActive(down, pause);
 }
 
-void HTMLLabelElement::setHovered(bool over)
+void HTMLLabelElement::setHovered(bool over, IsUserActionStateChangeRoot isUserActionStateChangeRoot)
 {
     if (over == hovered())
         return;
         
     // Update our status first.
-    HTMLElement::setHovered(over);
+    HTMLElement::setHovered(over, isUserActionStateChangeRoot);
 
     // Also update our corresponding control.
     if (auto element = control())

@@ -87,7 +87,7 @@ private:
     bool isMouseFocusable() const override;
     bool isKeyboardFocusable(KeyboardEvent*) const override;
     void defaultEventHandler(Event&) final;
-    void setActive(bool active = true, bool pause = false) final;
+    void setActive(bool active, bool pause, IsUserActionStateChangeRoot) final;
     bool accessKeyAction(bool sendMouseEvents) final;
     bool isURLAttribute(const Attribute&) const final;
     bool canStartSelection() const final;
