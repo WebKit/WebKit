@@ -58,6 +58,7 @@
 #include "Page.h"
 #include "Range.h"
 #include "RenderLayer.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderText.h"
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
@@ -2391,9 +2392,10 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
 #if PLATFORM(IOS_FAMILY)
         if (RenderLayer* layer = start.deprecatedNode()->renderer()->enclosingLayer()) {
             if (!m_scrollingSuppressCount) {
-                layer->setAdjustForIOSCaretWhenScrolling(true);
+                auto* scrollableLayer = layer->ensureLayerScrollableArea();
+                scrollableLayer->setAdjustForIOSCaretWhenScrolling(true);
                 layer->scrollRectToVisible(rect, insideFixed, { revealMode, alignment, alignment, ShouldAllowCrossOriginScrolling::Yes });
-                layer->setAdjustForIOSCaretWhenScrolling(false);
+                scrollableLayer->setAdjustForIOSCaretWhenScrolling(false);
                 updateAppearance();
                 if (m_document->page())
                     m_document->page()->chrome().client().notifyRevealedSelectionByScrollingFrame(*m_document->frame());

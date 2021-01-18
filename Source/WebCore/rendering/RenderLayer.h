@@ -168,10 +168,6 @@ public:
     void setScrollPosition(const ScrollPosition&, const ScrollPositionChangeOptions&);
     void scrollByRecursively(const IntSize& delta, ScrollableArea** scrolledArea = nullptr);
     void setRequiresScrollPositionReconciliation(bool requiresReconciliation = true);
-#if PLATFORM(IOS_FAMILY)
-    WEBCORE_EXPORT void setAdjustForIOSCaretWhenScrolling(bool);
-#endif
-    void setScrollShouldClearLatchedState(bool);
     bool shouldPlaceBlockDirectionScrollbarOnLeft() const;
     bool containsDirtyOverlayScrollbars() const;
     bool hasScrollableOrRubberbandableAncestor();
@@ -201,7 +197,6 @@ public:
     int verticalScrollbarWidth(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
     int horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
     bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
-    void setConstrainsScrollingToContentEdge(bool);
     // End of temporary glue code
 
 #if PLATFORM(IOS_FAMILY)

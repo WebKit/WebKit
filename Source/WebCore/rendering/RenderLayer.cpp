@@ -422,19 +422,6 @@ void RenderLayer::setRequiresScrollPositionReconciliation(bool requiresReconcili
         m_scrollableArea->setRequiresScrollPositionReconciliation(requiresReconciliation);
 }
 
-#if PLATFORM(IOS_FAMILY)
-void RenderLayer::setAdjustForIOSCaretWhenScrolling(bool adjustForIOSCaretWhenScrolling)
-{
-    ensureLayerScrollableArea()->setAdjustForIOSCaretWhenScrolling(adjustForIOSCaretWhenScrolling);
-}
-#endif
-
-void RenderLayer::setScrollShouldClearLatchedState(bool shouldClear)
-{
-    if (m_scrollableArea)
-        m_scrollableArea->setScrollShouldClearLatchedState(shouldClear);
-}
-
 bool RenderLayer::shouldPlaceBlockDirectionScrollbarOnLeft() const
 {
     return renderer().shouldPlaceBlockDirectionScrollbarOnLeft();
@@ -604,12 +591,6 @@ int RenderLayer::horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy relevan
 bool RenderLayer::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
 {
     return ensureLayerScrollableArea()->scroll(direction, granularity, multiplier);
-}
-
-void RenderLayer::setConstrainsScrollingToContentEdge(bool constrainsScrollingToContentEdge)
-{
-    if (m_scrollableArea)
-        m_scrollableArea->setConstrainsScrollingToContentEdge(constrainsScrollingToContentEdge);
 }
 // End of temporary glue code
 

@@ -61,7 +61,9 @@ RenderMarquee::RenderMarquee(RenderLayer* layer)
     : m_layer(layer)
     , m_timer(*this, &RenderMarquee::timerFired)
 {
-    layer->setConstrainsScrollingToContentEdge(false);
+    ASSERT(layer);
+    ASSERT(layer->scrollableArea());
+    layer->scrollableArea()->setConstrainsScrollingToContentEdge(false);
 }
 
 RenderMarquee::~RenderMarquee() = default;
