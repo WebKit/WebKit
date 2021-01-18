@@ -853,9 +853,13 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
         if (!m_animatedBackingStoreHost)
             m_animatedBackingStoreHost = AnimatedBackingStoreHost::create(*this);
         m_nicosia.animatedBackingStoreClient = CoordinatedAnimatedBackingStoreClient::create(m_animatedBackingStoreHost.copyRef(), m_coordinator->visibleContentsRect(), { }, m_size, effectiveContentsScale());
+        m_nicosia.delta.animatedBackingStoreClientChanged = true;
+    } else  {
+        if (m_nicosia.animatedBackingStoreClient) {
+            m_nicosia.animatedBackingStoreClient = nullptr;
+            m_nicosia.delta.animatedBackingStoreClientChanged = true;
+        }
     }
-    // Each layer flush changes the AnimatedBackingStoreClient, being it null or a real one.
-    m_nicosia.delta.animatedBackingStoreClientChanged = true;
 
     // Determine image backing presence according to the composited image source.
     if (m_compositedNativeImage) {
