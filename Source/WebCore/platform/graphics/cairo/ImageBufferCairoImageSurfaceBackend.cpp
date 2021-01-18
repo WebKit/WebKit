@@ -60,6 +60,8 @@ std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfac
     cairo_surface_set_user_data(surface.get(), &s_surfaceDataKey, surfaceData, [](void* data) {
         fastFree(data);
     });
+    if (cairo_surface_status(surface.get()) != CAIRO_STATUS_SUCCESS)
+        return nullptr;
 
     return std::unique_ptr<ImageBufferCairoImageSurfaceBackend>(new ImageBufferCairoImageSurfaceBackend(parameters, WTFMove(surface)));
 }
