@@ -656,6 +656,8 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
         if (style.hasBackground())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+        if (style.hasOutline())
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
         if (renderInline.marginLeft() < 0 || renderInline.marginRight() < 0 || renderInline.marginTop() < 0 || renderInline.marginBottom() < 0)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
         if (renderInline.paddingLeft() < 0 || renderInline.paddingRight() < 0 || renderInline.paddingTop() < 0 || renderInline.paddingBottom() < 0)
