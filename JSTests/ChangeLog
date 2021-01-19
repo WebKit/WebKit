@@ -1,5 +1,19 @@
 2021-01-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Add another tests for r271571 part 2
+        https://bugs.webkit.org/show_bug.cgi?id=220702
+        <rdar://problem/71365255>
+
+        Reviewed by Mark Lam.
+
+        This patch adds yet another test for r271571.
+
+        * stress/ftl-osr-entry-order-reverse3.js: Added.
+        (foo.bar):
+        (foo):
+
+2021-01-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Add another tests for r271571
         https://bugs.webkit.org/show_bug.cgi?id=220701
         <rdar://problem/72464341>
