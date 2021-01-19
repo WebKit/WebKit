@@ -1,0 +1,3 @@
+
+PASS Calling `updateWith` inside `shippingaddresschange` without a `total` should not throw.
+

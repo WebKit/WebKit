@@ -653,10 +653,12 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
         return;
     }
 
-    auto totalResult = checkAndCanonicalizeTotal(detailsUpdate.total.amount);
-    if (totalResult.hasException()) {
-        abortWithException(totalResult.releaseException());
-        return;
+    if (detailsUpdate.total) {
+        auto totalResult = checkAndCanonicalizeTotal(detailsUpdate.total->amount);
+        if (totalResult.hasException()) {
+            abortWithException(totalResult.releaseException());
+            return;
+        }
     }
 
     auto detailsResult = checkAndCanonicalizeDetails(*context.globalObject(), detailsUpdate, m_options.requestShipping, ShouldValidatePaymentMethodIdentifier::Yes);
@@ -667,7 +669,7 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
 
     auto shippingOptionAndModifierData = detailsResult.releaseReturnValue();
 
-    m_details.total = WTFMove(detailsUpdate.total);
+    m_details.total = detailsUpdate.total ? WTFMove(*detailsUpdate.total) : PaymentItem();
     m_details.displayItems = WTFMove(detailsUpdate.displayItems);
     if (m_options.requestShipping) {
         m_details.shippingOptions = WTFMove(detailsUpdate.shippingOptions);
