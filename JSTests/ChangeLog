@@ -1,5 +1,18 @@
 2021-01-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Add another tests for r271571 part 3
+        https://bugs.webkit.org/show_bug.cgi?id=220703
+        <rdar://problem/71224976>
+
+        Reviewed by Mark Lam.
+
+        This patch adds yet another test for r271571.
+
+        * stress/ftl-osr-entry-order-reverse4.js: Added.
+        (foo):
+
+2021-01-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] callerIsOMGCompiled should be robust
         https://bugs.webkit.org/show_bug.cgi?id=220697
 
