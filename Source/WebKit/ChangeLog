@@ -1,3 +1,31 @@
+2021-01-19  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Syscall param sendmsg(msg.msg_iov[1]) points to uninitialised byte(s) in IPC::Connection::sendOutgoingMessage
+        https://bugs.webkit.org/show_bug.cgi?id=220668
+
+        Reviewed by Darin Adler.
+
+        We previously discovered that we need to either (a) manually zero the MessageInfo struct
+        with memcpy (accepted solution), or b) use __attribute__((packed)) to omit struct packing.
+        This seemed to fix our valgrind warnings when bmalloc was in use, but not when bmalloc is
+        disabled, as is good practice when valgrinding.
+
+        Turns out we need to zero (or pack) the AttachmentInfo struct as well. Let's go with zeroing
+        it, since all its members are trivially copyable, so that's safe to do.
+
+        For good measure, we'll implement a copy constructor and do so there as well. Do this for
+        MessageInfo too, to round out the original fix to MessageInfo.
+
+        Since AttachmentInfo and MessageInfo are no longer trivially-copyable, we now need to cast
+        them to void* when using memcpy in order to avoid -Wclass-memaccess warnings from GCC.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::AttachmentInfo::AttachmentInfo):
+        (): Deleted.
+        * Platform/IPC/unix/UnixMessage.h:
+        (IPC::MessageInfo::MessageInfo):
+        (IPC::UnixMessage::UnixMessage):
+
 2021-01-19  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r269865) Mail's context menu when right clicking on a link does not contain correct entries

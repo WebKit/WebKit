@@ -38,15 +38,23 @@ public:
     {
         // The entire MessageInfo is passed to write(), so we have to zero our
         // padding bytes to avoid writing uninitialized memory.
-        memset(this, 0, sizeof(*this));
+        memset(static_cast<void*>(this), 0, sizeof(*this));
     }
 
     MessageInfo(size_t bodySize, size_t initialAttachmentCount)
     {
-        memset(this, 0, sizeof(*this));
+        memset(static_cast<void*>(this), 0, sizeof(*this));
         m_bodySize = bodySize;
         m_attachmentCount = initialAttachmentCount;
     }
+
+    MessageInfo(const MessageInfo& info)
+    {
+        memset(static_cast<void*>(this), 0, sizeof(*this));
+        *this = info;
+    }
+
+    MessageInfo& operator=(const MessageInfo&) = default;
 
     void setBodyOutOfLine()
     {
@@ -61,9 +69,10 @@ public:
     size_t attachmentCount() const { return m_attachmentCount; }
 
 private:
-    size_t m_bodySize { 0 };
-    size_t m_attachmentCount { 0 };
-    bool m_isBodyOutOfLine { false };
+    // The MessageInfo will be copied using memcpy, so all members must be trivially copyable.
+    size_t m_bodySize;
+    size_t m_attachmentCount;
+    bool m_isBodyOutOfLine;
 };
 
 class UnixMessage {
