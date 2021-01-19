@@ -3234,7 +3234,7 @@ sub runGitUpdate()
     # to perform the rebase much much faster.
     system("git", "fetch");
     if (isGitSVNDirectory(".")) {
-        system("git", "svn", "rebase") == 0 or die;
+        system("git", "svn", "fetch") == 0 or die;
     } else {
         # This will die if branch.$BRANCHNAME.merge isn't set, which is
         # almost certainly what we want.
