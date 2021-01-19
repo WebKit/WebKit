@@ -1,3 +1,14 @@
+2021-01-19  Jonathan Bedard  <jbedard@apple.com>
+
+        [GitHub] Use github.com as the source of truth for EWS
+        https://bugs.webkit.org/show_bug.cgi?id=220479
+        <rdar://problem/72941463>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (CheckOutSource.__init__): Use GitHub.com instead of git.webkit.org.
+
 2021-01-18  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][DumpRenderTree] ASSERT(!m_channel) failed in WebSocket::contextDestroyed

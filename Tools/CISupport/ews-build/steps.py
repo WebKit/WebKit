@@ -104,7 +104,7 @@ class CheckOutSource(git.Git):
     haltOnFailure = False
 
     def __init__(self, **kwargs):
-        self.repourl = 'https://git.webkit.org/git/WebKit.git'
+        self.repourl = 'https://github.com/WebKit/WebKit.git'
         super(CheckOutSource, self).__init__(repourl=self.repourl,
                                                 retry=self.CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR,
                                                 timeout=2 * 60 * 60,
