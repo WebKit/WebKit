@@ -52,6 +52,7 @@
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
+#include "RenderRuby.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGGradientStop.h"
 #include "RenderSVGImage.h"
@@ -214,7 +215,35 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     } else if (is<RenderInline>(o)) {
         const RenderInline& inlineFlow = downcast<RenderInline>(o);
         // FIXME: Would be better not to just dump 0, 0 as the x and y here.
-        r = IntRect(0, 0, inlineFlow.linesBoundingBox().width(), inlineFlow.linesBoundingBox().height());
+        auto width = inlineFlow.linesBoundingBox().width();
+        auto inlineHeight = [&] {
+            // Let's match legacy line layout's RenderInline behavior and report 0 height when the inline box is "empty".
+            // FIXME: Remove and rebaseline when LFC inline boxes are enabled (see webkit.org/b/220722) 
+            auto height = inlineFlow.linesBoundingBox().height();
+            if (width)
+                return height;
+            if (is<RenderQuote>(inlineFlow) || is<RenderRubyAsInline>(inlineFlow))
+                return height;
+            if (inlineFlow.marginStart() || inlineFlow.marginEnd())
+                return height;
+            // This is mostly pre/post continuation content. Also see webkit.org/b/220735
+            if (inlineFlow.previousSibling())
+                return height;
+            if (inlineFlow.nextSibling() && !inlineFlow.document().inQuirksMode())
+                return height;
+            if (auto* firstChild = inlineFlow.firstChild()) {
+                if (firstChild != inlineFlow.lastChild())
+                    return height;
+                auto childIsEmpty = false;
+                if (is<RenderText>(*firstChild))
+                    childIsEmpty = !downcast<RenderText>(*firstChild).linesBoundingBox().height();
+                else if (is<RenderInline>(*firstChild))
+                    childIsEmpty = !downcast<RenderInline>(*firstChild).linesBoundingBox().height();
+                return childIsEmpty ? 0 : height;
+            }
+            return 0;
+        };
+        r = IntRect(0, 0, width, inlineHeight());
         adjustForTableCells = false;
     } else if (is<RenderTableCell>(o)) {
         // FIXME: Deliberately dump the "inner" box of table cells, since that is what current results reflect.  We'd like
