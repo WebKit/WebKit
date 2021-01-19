@@ -5071,8 +5071,14 @@ void SpeculativeJIT::compile(Node* node)
 
     case LoopHint:
         if (UNLIKELY(Options::returnEarlyFromInfiniteLoopsForFuzzing())) {
-            CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
-            if (baselineCodeBlock->loopHintsAreEligibleForFuzzingEarlyReturn()) {
+            bool emitEarlyReturn = true;
+            node->origin.semantic.walkUpInlineStack([&](CodeOrigin origin) {
+                CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(origin);
+                if (!baselineCodeBlock->loopHintsAreEligibleForFuzzingEarlyReturn())
+                    emitEarlyReturn = false;
+            });
+            if (emitEarlyReturn) {
+                CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
                 BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
                 const Instruction* instruction = baselineCodeBlock->instructions().at(bytecodeIndex.offset()).ptr();
 

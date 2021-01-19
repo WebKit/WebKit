@@ -1,3 +1,20 @@
+2021-01-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] earlyReturnFromInfiniteLoopsLimit should check all caller functions when emitting
+        https://bugs.webkit.org/show_bug.cgi?id=220700
+        <rdar://problem/71229150>
+
+        Reviewed by Mark Lam.
+
+        earlyReturnFromInfiniteLoopsLimit does not return when the function is builtin. But this does not consider about the case that
+        the caller is inlining and the caller is builtin. Since this returns from entire DFG / FTL functions, we should check any of
+        callers are not builtin functions too.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileLoopHint):
+
 2021-01-18  Mark Lam  <mark.lam@apple.com>
 
         [AppleWin 32bit] LLInt C Loop: LowLevelInterpreter.cpp(90,7): error C2653: 'WebConfig': is not a class or namespace name

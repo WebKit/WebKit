@@ -15037,10 +15037,16 @@ private:
         if (LIKELY(!Options::returnEarlyFromInfiniteLoopsForFuzzing()))
             return;
 
-        CodeBlock* baselineCodeBlock = m_graph.baselineCodeBlockFor(m_origin.semantic);
-        if (!baselineCodeBlock->loopHintsAreEligibleForFuzzingEarlyReturn())
+        bool emitEarlyReturn = true;
+        m_origin.semantic.walkUpInlineStack([&](CodeOrigin origin) {
+            CodeBlock* baselineCodeBlock = m_graph.baselineCodeBlockFor(origin);
+            if (!baselineCodeBlock->loopHintsAreEligibleForFuzzingEarlyReturn())
+                emitEarlyReturn = false;
+        });
+        if (!emitEarlyReturn)
             return;
 
+        CodeBlock* baselineCodeBlock = m_graph.baselineCodeBlockFor(m_origin.semantic);
         BytecodeIndex bytecodeIndex = m_origin.semantic.bytecodeIndex();
         const Instruction* instruction = baselineCodeBlock->instructions().at(bytecodeIndex.offset()).ptr();
         VM* vm = &this->vm();

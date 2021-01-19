@@ -1,5 +1,19 @@
 2021-01-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] earlyReturnFromInfiniteLoopsLimit should check all caller functions when emitting
+        https://bugs.webkit.org/show_bug.cgi?id=220700
+        <rdar://problem/71229150>
+
+        Reviewed by Mark Lam.
+
+        * stress/early-return-from-builtin.js: Added.
+        (let.o.get value):
+        (let.iter.Symbol.iterator):
+        * stress/early-return-from-builtin2.js: Added.
+        (foo):
+
+2021-01-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Add another tests for r271571 part 2
         https://bugs.webkit.org/show_bug.cgi?id=220702
         <rdar://problem/71365255>
