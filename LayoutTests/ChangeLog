@@ -1,3 +1,15 @@
+2021-01-19  Rob Buis  <rbuis@igalia.com>
+
+        Null check ResourceRequest IPC decode
+        https://bugs.webkit.org/show_bug.cgi?id=220400
+
+        Reviewed by Youenn Fablet.
+
+        Add test for this.
+
+        * ipc/web-authenticator-get-assertion-expected.txt: Added.
+        * ipc/web-authenticator-get-assertion.html: Added.
+
 2021-01-18  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening some failures and crashes

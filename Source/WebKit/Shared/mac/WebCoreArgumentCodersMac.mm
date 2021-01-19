@@ -231,6 +231,9 @@ bool ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData(Decoder& decode
     if (!IPC::decode(decoder, dictionary))
         return false;
 
+    if (!dictionary)
+        return false;
+
     auto nsURLRequest = createNSURLRequestFromSerializableRepresentation(dictionary.get(), IPC::tokenNullptrTypeRef());
     if (!nsURLRequest)
         return false;

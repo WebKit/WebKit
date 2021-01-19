@@ -1,3 +1,19 @@
+2021-01-19  Rob Buis  <rbuis@igalia.com>
+
+        Null check ResourceRequest IPC decode
+        https://bugs.webkit.org/show_bug.cgi?id=220400
+
+        Reviewed by Youenn Fablet.
+
+        Null check ResourceRequest IPC decode since
+        the IPC::decode call can succeed yet but set
+        the dictionary to null.
+
+        Test: ipc/web-authenticator-get-assertion.html
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData):
+
 2021-01-18  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Multilib conflicts in gir files
