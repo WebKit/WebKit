@@ -32,7 +32,7 @@ echo "Usage: configure-svn-auth.sh SVN_USERNAME SVN_PASSWORD"
 exit 1
 fi
 
-cat >> ~/.subversion/auth/svn.simple/7e01475a87eb5db3b8b41e7fbf6415d9 <<EOF
+cat >> ~/.subversion/auth/svn.simple/8e062ccdd6bc2b444f13bc12dbfd0c61 <<EOF
 K 8
 passtype
 V 6
@@ -43,8 +43,8 @@ V ${#2}
 $2
 K 15
 svn:realmstring
-V 39
-<http://svn.webkit.org:80> Mac OS Forge
+V 41
+<https://svn.webkit.org:443> Mac OS Forge
 K 8
 username
 V ${#1}
@@ -53,4 +53,4 @@ END
 EOF
 
 # This maches the ACL that subversion uses by default.
-chmod 644 ~/.subversion/auth/svn.simple/7e01475a87eb5db3b8b41e7fbf6415d9
+chmod 644 ~/.subversion/auth/svn.simple/8e062ccdd6bc2b444f13bc12dbfd0c61
