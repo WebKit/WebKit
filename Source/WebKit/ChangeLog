@@ -1,3 +1,14 @@
+2021-01-19  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r269865) Mail's context menu when right clicking on a link does not contain correct entries
+        https://bugs.webkit.org/show_bug.cgi?id=220745
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/c/WKContextMenuItem.cpp:
+        Add a bunch of static_asserts to verify that our binary values correspond to each other and don't change.
+        * Shared/API/c/WKContextMenuItemTypes.h:
+
 2021-01-19  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Polish the new WebAuthn UI
