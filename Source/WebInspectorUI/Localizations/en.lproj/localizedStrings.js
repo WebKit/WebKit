@@ -2,7 +2,7 @@ var localizedStrings = new Object;
 
 localizedStrings[" (Prototype)"] = " (Prototype)";
 /* A range and default value for a single variation axis of a font. */
-localizedStrings[" (Range: %d-%d, Default: %d) @ Font Details Sidebar"] = " (Range: %d-%d, Default: %d)";
+localizedStrings[" (Range: %s-%s, Default: %s) @ Font Details Sidebar"] = " (Range: %s-%s, Default: %s)";
 localizedStrings[" (line %s)"] = " (line %s)";
 localizedStrings["${expr} = expression"] = "${expr} = expression";
 localizedStrings["%.0f B"] = "%.0f B";
@@ -50,7 +50,6 @@ localizedStrings["%d redirect"] = "%d redirect";
 localizedStrings["%d redirects"] = "%d redirects";
 localizedStrings["%d resource"] = "%d resource";
 localizedStrings["%d resources"] = "%d resources";
-localizedStrings["%d%%"] = "%d%%";
 localizedStrings["%dpx"] = "%dpx";
 localizedStrings["%dpx\u00B2"] = "%dpx\u00B2";
 localizedStrings["%s (%s)"] = "%s (%s)";
@@ -76,6 +75,8 @@ localizedStrings["%s interval"] = "%s interval";
 localizedStrings["%s requests do not have a body"] = "%s requests do not have a body";
 localizedStrings["%s total"] = "%s total";
 localizedStrings["%s transferred"] = "%s transferred";
+/* A single value expressed as a percentage where the value has already been converted from a number to a string. */
+localizedStrings["%s%% @ Font Details Sidebar"] = "%s%%";
 localizedStrings["%s:"] = "%s:";
 localizedStrings["(%s)"] = "(%s)";
 localizedStrings["(Action %s)"] = "(Action %s)";
