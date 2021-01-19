@@ -89,8 +89,6 @@ Checked<unsigned, RecordOverflow> ShareableBitmap::calculateBytesPerPixel(const 
 
 std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
-    ASSERT(RunLoop::isMain());
-
     auto bitsPerComponent = calculateBytesPerPixel(m_configuration) * 8 / 4;
     if (bitsPerComponent.hasOverflowed())
         return nullptr;
