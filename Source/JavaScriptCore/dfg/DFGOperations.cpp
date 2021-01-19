@@ -3785,7 +3785,16 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
         return nullptr;
     }
 
-    auto failedOSREntry = [&] (CodeBlock* entryBlock) {
+    auto failedOSREntry = [&] (JITCode* jitCode) {
+        CodeBlock* entryBlock = jitCode->osrEntryBlock();
+        if (!entryBlock) {
+            CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("OSR entry code is already invalidated"));
+            codeBlock->baselineVersion()->countReoptimization();
+            // clearOSREntryBlockAndResetThresholds is already called in FTL::prepareOSREntry and because of that,
+            // jitCode->osrEntryBlock() is nullptr.
+            return nullptr;
+        }
+
         FTL::ForOSREntryJITCode* entryCode = entryBlock->jitCode()->ftlForOSREntry();
         entryCode->countEntryFailure();
         if (entryCode->entryFailureCount() <
@@ -3816,7 +3825,7 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
                     return tagCodePtrWithStackPointerForJITCall(untagCodePtr<char*, JSEntryPtrTag>(address), callFrame);
                 }
 
-                return failedOSREntry(entryBlock);
+                return failedOSREntry(jitCode);
             }
         }
     }
@@ -3858,7 +3867,7 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
             return nullptr;
         }
 
-        return failedOSREntry(entryBlock);
+        return failedOSREntry(jitCode);
     }
 
     // It's time to try to compile code for OSR entry.
@@ -3955,7 +3964,7 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
     ASSERT(canOSREnterHere);
     void* address = FTL::prepareOSREntry(vm, callFrame, codeBlock, jitCode->osrEntryBlock(), originBytecodeIndex, streamIndex);
     if (!address)
-        return failedOSREntry(jitCode->osrEntryBlock());
+        return failedOSREntry(jitCode);
     return tagCodePtrWithStackPointerForJITCall(untagCodePtr<char*, JSEntryPtrTag>(address), callFrame);
 }
 
