@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -113,7 +113,7 @@ extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
 
 #endif
 
-#if ENABLE_NETSCAPE_PLUGIN_API
+#if defined(ENABLE_NETSCAPE_PLUGIN_API) && ENABLE_NETSCAPE_PLUGIN_API
 - (void)_resumeNullEventsForAllNetscapePlugins;
 - (void)_pauseNullEventsForAllNetscapePlugins;
 #endif
