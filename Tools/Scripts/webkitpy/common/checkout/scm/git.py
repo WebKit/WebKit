@@ -548,10 +548,10 @@ class Git(SCM, SVNRepository):
         # Use references so that we can avoid collisions, e.g. we don't want to operate on refs/heads/trunk if it exists.
         remote_branch_refs = self.read_git_config('svn-remote.svn.fetch', cwd=self.checkout_root, executive=self._executive)
         if not remote_branch_refs:
-            remote_master_ref = 'refs/remotes/origin/master'
-            if not self.branch_ref_exists(remote_master_ref):
-                raise ScriptError(message="Can't find a branch to diff against. svn-remote.svn.fetch is not in the git config and %s does not exist" % remote_master_ref)
-            return remote_master_ref
+            for ref in ['refs/remotes/origin/main', 'refs/remotes/origin/master']:
+                if self.branch_ref_exists(ref):
+                    return ref
+            raise ScriptError(message="Can't find a branch to diff against. svn-remote.svn.fetch is not in the git config and neither main nor master exist")
 
         # FIXME: What's the right behavior when there are multiple svn-remotes listed?
         # For now, just use the first one.
