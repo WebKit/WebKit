@@ -1,3 +1,11 @@
+2021-01-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix GCC warnings
+        https://bugs.webkit.org/show_bug.cgi?id=220718
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::tierUpCommon):
+
 2021-01-19  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r271580) [GTK] LTS/Debian build failure due to unsupported g-ir-scanner parameter
