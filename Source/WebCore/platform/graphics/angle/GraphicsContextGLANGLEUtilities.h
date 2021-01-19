@@ -113,6 +113,7 @@ public:
         gl::BindFramebuffer(m_framebufferTarget, bindingValue);
         m_bindingChanged = m_bindingValue != bindingValue;
     }
+    GLuint framebufferTarget() const { return m_framebufferTarget; }
     ~ScopedRestoreReadFramebufferBinding()
     {
         if (m_bindingChanged)
