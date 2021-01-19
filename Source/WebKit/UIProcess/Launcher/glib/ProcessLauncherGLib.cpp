@@ -44,12 +44,6 @@
 
 namespace WebKit {
 
-static void childSetupFunction(gpointer userData)
-{
-    int socket = GPOINTER_TO_INT(userData);
-    close(socket);
-}
-
 #if OS(LINUX)
 static bool isFlatpakSpawnUsable()
 {
@@ -166,7 +160,6 @@ void ProcessLauncher::launchProcess()
     argv[i++] = nullptr;
 
     GRefPtr<GSubprocessLauncher> launcher = adoptGRef(g_subprocess_launcher_new(G_SUBPROCESS_FLAGS_INHERIT_FDS));
-    g_subprocess_launcher_set_child_setup(launcher.get(), childSetupFunction, GINT_TO_POINTER(socketPair.server), nullptr);
     g_subprocess_launcher_take_fd(launcher.get(), socketPair.client, socketPair.client);
 
     GUniqueOutPtr<GError> error;

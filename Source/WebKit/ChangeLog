@@ -1,3 +1,24 @@
+2021-01-19  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE][GTK] Remove unnecessary child setup function from process launcher
+        https://bugs.webkit.org/show_bug.cgi?id=220090
+
+        Reviewed by Carlos Garcia Campos.
+
+        The process launcher currently uses a child setup function to close the server end of its
+        IPC socket. But this is totally unnecessary because this socket always uses CLOEXEC. So the
+        child setup function is redundant.
+
+        This is step one towards making Eclipse not crash when its UI process JVM is using a huge
+        amount of memory. In such conditions, fork() will fail due to OOM, but posix_spawn() will
+        still succeed. A child setup function forces GLib to use fork() instead of posix_spawn().
+        However, this commit is not sufficient to fix Eclipse, because GSubprocess itself sets its
+        own child setup function.
+
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        (WebKit::childSetupFunction): Deleted.
+
 2021-01-19  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r271580) [GTK] LTS/Debian build failure due to unsupported g-ir-scanner parameter
