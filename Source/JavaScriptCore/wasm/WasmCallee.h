@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Compilation.h"
+#include "JITCompilation.h"
 #include "RegisterAtOffsetList.h"
 #include "WasmCompilationMode.h"
 #include "WasmFormat.h"

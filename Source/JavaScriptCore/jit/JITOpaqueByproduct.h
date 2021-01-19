@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,31 +25,24 @@
 
 #pragma once
 
-#if ENABLE(B3_JIT)
+#if ENABLE(JIT)
 
-#include "B3OpaqueByproduct.h"
-#include <memory>
-#include <wtf/Vector.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/PrintStream.h>
 
-namespace JSC { namespace B3 {
+namespace JSC {
 
-class OpaqueByproducts {
-    WTF_MAKE_NONCOPYABLE(OpaqueByproducts)
+class OpaqueByproduct {
+    WTF_MAKE_NONCOPYABLE(OpaqueByproduct);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    OpaqueByproducts();
-    JS_EXPORT_PRIVATE ~OpaqueByproducts();
+    OpaqueByproduct() { }
+    virtual ~OpaqueByproduct() { }
 
-    size_t count() const { return m_byproducts.size(); }
-    
-    void add(std::unique_ptr<OpaqueByproduct>);
-
-    void dump(PrintStream&) const;
-
-private:
-    Vector<std::unique_ptr<OpaqueByproduct>> m_byproducts;
+    virtual void dump(PrintStream&) const = 0;
 };
 
-} } // namespace JSC::B3
+} // namespace JSC
 
-#endif // ENABLE(B3_JIT)
+#endif // ENABLE(JIT)

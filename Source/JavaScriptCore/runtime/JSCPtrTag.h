@@ -44,7 +44,7 @@ using PtrTag = WTF::PtrTag;
     v(DOMJITFunctionPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::None) \
     v(DisassemblyPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::None) \
     /* Callee:JIT Caller:None */ \
-    v(B3CompilationPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::None) \
+    v(JITCompilationPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::None) \
     v(ExecutableMemoryPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::None) \
     v(LinkBufferPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::None) \
     v(Yarr8BitPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::None) \

@@ -27,8 +27,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Compilation.h"
 #include "B3Procedure.h"
+#include "JITCompilation.h"
 #include "VirtualRegister.h"
 #include "WasmFormat.h"
 #include "WasmLimits.h"

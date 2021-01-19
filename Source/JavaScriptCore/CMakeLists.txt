@@ -521,7 +521,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     assembler/X86_64Registers.h
 
     b3/B3Common.h
-    b3/B3Compilation.h
     b3/B3Type.h
 
     bindings/ScriptFunctionCall.h
@@ -757,6 +756,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     jit/JITAllocator.h
     jit/JITCode.h
     jit/JITCodeMap.h
+    jit/JITCompilation.h
     jit/JITCompilationEffort.h
     jit/JITMathICForwards.h
     jit/JITOperations.h

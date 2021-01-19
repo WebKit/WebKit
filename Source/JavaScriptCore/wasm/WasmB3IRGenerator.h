@@ -28,9 +28,9 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "B3Common.h"
-#include "B3Compilation.h"
-#include "B3OpaqueByproducts.h"
 #include "CCallHelpers.h"
+#include "JITCompilation.h"
+#include "JITOpaqueByproducts.h"
 #include "WasmCompilationMode.h"
 #include "WasmEmbedder.h"
 #include "WasmMemory.h"
@@ -47,7 +47,7 @@ class MemoryInformation;
 struct CompilationContext {
     std::unique_ptr<CCallHelpers> embedderEntrypointJIT;
     std::unique_ptr<CCallHelpers> wasmEntrypointJIT;
-    std::unique_ptr<B3::OpaqueByproducts> wasmEntrypointByproducts;
+    std::unique_ptr<OpaqueByproducts> wasmEntrypointByproducts;
 };
 
 Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationContext&, const FunctionData&, const Signature&, Vector<UnlinkedWasmToWasmCall>&, unsigned& osrEntryScratchBufferSize, const ModuleInformation&, MemoryMode, CompilationMode, uint32_t functionIndex, uint32_t loopIndexForOSREntry, TierUpCount* = nullptr);

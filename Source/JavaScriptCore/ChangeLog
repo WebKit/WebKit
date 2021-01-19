@@ -1,3 +1,62 @@
+2021-01-18  Xan López  <xan@igalia.com>
+
+        [JSC] Implement a B3::Compilation replacement for wasm-llint
+        https://bugs.webkit.org/show_bug.cgi?id=220585
+
+        Reviewed by Yusuke Suzuki.
+
+        Move B3Compilation, B3OpaqueByproducts and B3OpaqueByproduct to
+        jit/. They are used by non-B3 code and they are not really B3
+        specific. Also rename B3CompilationPtrTag to JITCompilationPtrTag.
+
+        * CMakeLists.txt: add new source files.
+        * JavaScriptCore.xcodeproj/project.pbxproj: ditto.
+        * Sources.txt: ditto.
+        * b3/B3Compile.cpp:
+        (JSC::B3::compile): use JITCompilationPtrTag.
+        * b3/B3Compile.h: change includes.
+        * b3/B3DataSection.h: ditto.
+        * b3/B3Procedure.cpp: ditto.
+        * b3/B3Procedure.h: ditto.
+        * b3/air/testair.cpp: use JITCompilationPtrTag.
+        * b3/testb3.h: change includes.
+        (invoke):
+        * b3/testb3_6.cpp:
+        (testInterpreter): use JITCompilationPtrTag.
+        (testEntrySwitchSimple): ditto.
+        (testEntrySwitchNoEntrySwitch): ditto.
+        (testEntrySwitchWithCommonPaths): ditto.
+        (testEntrySwitchWithCommonPathsAndNonTrivialEntrypoint): ditto.
+        (testEntrySwitchLoop): ditto.
+        * ftl/FTLJITCode.h: use JSC::OpaqueByproducts.
+        * ftl/FTLOutput.h: change includes.
+        * jit/JITCompilation.cpp: Renamed from Source/JavaScriptCore/b3/B3Compilation.cpp.
+        (JSC::Compilation::Compilation):
+        * jit/JITCompilation.h: Renamed from Source/JavaScriptCore/b3/B3Compilation.h.
+        (JSC::Compilation::code const):
+        (JSC::Compilation::codeRef const):
+        * jit/JITOpaqueByproduct.h: Renamed from Source/JavaScriptCore/b3/B3OpaqueByproduct.h.
+        * jit/JITOpaqueByproducts.cpp: Renamed from Source/JavaScriptCore/b3/B3OpaqueByproducts.cpp.
+        * jit/JITOpaqueByproducts.h: Renamed from Source/JavaScriptCore/b3/B3OpaqueByproducts.h.
+        * runtime/JSCPtrTag.h: rename B3CompilationPtrTag to JITCompilationPtrTag.
+        * wasm/WasmB3IRGenerator.h: use JSC::OpaqueByproducts.
+        * wasm/WasmBBQPlan.cpp: use JSC::Compilation.
+        (JSC::Wasm::BBQPlan::work):
+        (JSC::Wasm::BBQPlan::didCompleteCompilation):
+        * wasm/WasmBinding.h: change includes.
+        * wasm/WasmCallee.h: ditto.
+        * wasm/WasmFormat.h: use JSC::Compilation.
+        * wasm/WasmLLIntPlan.cpp: ditto.
+        (JSC::Wasm::LLIntPlan::didCompleteCompilation):
+        * wasm/WasmLLIntPlan.h: use JITCompilationPtrTag.
+        * wasm/WasmModule.h: ditto.
+        * wasm/WasmOMGForOSREntryPlan.cpp: use JSC::Compilation.
+        (JSC::Wasm::OMGForOSREntryPlan::work):
+        * wasm/WasmOMGPlan.cpp: ditto.
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmParser.h: change includes.
+        * wasm/js/WasmToJS.h: ditto.
+
 2021-01-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] earlyReturnFromInfiniteLoopsLimit should check all caller functions when emitting

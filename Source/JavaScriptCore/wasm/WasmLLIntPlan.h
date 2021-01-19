@@ -48,7 +48,7 @@ public:
     JS_EXPORT_PRIVATE LLIntPlan(Context*, Vector<uint8_t>&&, AsyncWork, CompletionTask&&);
     LLIntPlan(Context*, Ref<ModuleInformation>, const Ref<LLIntCallee>*, CompletionTask&&);
 
-    MacroAssemblerCodeRef<B3CompilationPtrTag>&& takeEntryThunks()
+    MacroAssemblerCodeRef<JITCompilationPtrTag>&& takeEntryThunks()
     {
         RELEASE_ASSERT(!failed() && !hasWork());
         return WTFMove(m_entryThunks);
@@ -84,7 +84,7 @@ private:
     const Ref<LLIntCallee>* m_callees { nullptr };
     Vector<Ref<LLIntCallee>> m_calleesVector;
     EmbedderEntrypointCalleeMap m_embedderCallees;
-    MacroAssemblerCodeRef<B3CompilationPtrTag> m_entryThunks;
+    MacroAssemblerCodeRef<JITCompilationPtrTag> m_entryThunks;
 };
 
 

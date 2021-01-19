@@ -120,7 +120,6 @@ b3/B3CheckValue.cpp
 b3/B3Common.cpp
 b3/B3Commutativity.cpp
 b3/B3Compile.cpp
-b3/B3Compilation.cpp
 b3/B3Const32Value.cpp
 b3/B3Const64Value.cpp
 b3/B3ConstDoubleValue.cpp
@@ -149,7 +148,6 @@ b3/B3LowerToAir.cpp
 b3/B3MathExtras.cpp
 b3/B3MemoryValue.cpp
 b3/B3MoveConstants.cpp
-b3/B3OpaqueByproducts.cpp
 b3/B3Opcode.cpp
 b3/B3OptimizeAssociativeExpressionTrees.cpp
 b3/B3Origin.cpp
@@ -643,6 +641,7 @@ jit/JITBitXorGenerator.cpp
 jit/JITCall.cpp
 jit/JITCall32_64.cpp
 jit/JITCode.cpp
+jit/JITCompilation.cpp
 jit/JITDisassembler.cpp
 jit/JITDivGenerator.cpp
 jit/JITExceptions.cpp
@@ -650,6 +649,7 @@ jit/JITInlineCacheGenerator.cpp
 jit/JITLeftShiftGenerator.cpp
 jit/JITMulGenerator.cpp
 jit/JITNegGenerator.cpp
+jit/JITOpaqueByproducts.cpp
 jit/JITOpcodes.cpp
 jit/JITOpcodes32_64.cpp
 jit/JITOperations.cpp

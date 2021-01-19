@@ -23,32 +23,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "B3Compilation.h"
+#pragma once
 
-#if ENABLE(B3_JIT)
+#if ENABLE(JIT)
 
-#include "B3OpaqueByproducts.h"
+#include "MacroAssemblerCodeRef.h"
+#include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
 
-namespace JSC { namespace B3 {
+namespace JSC {
 
-Compilation::Compilation(MacroAssemblerCodeRef<B3CompilationPtrTag> codeRef, std::unique_ptr<OpaqueByproducts> byproducts)
-    : m_codeRef(codeRef)
-    , m_byproducts(WTFMove(byproducts))
-{
-}
+class VM;
 
-Compilation::Compilation(Compilation&& other)
-    : m_codeRef(WTFMove(other.m_codeRef))
-    , m_byproducts(WTFMove(other.m_byproducts))
-{
-}
+class OpaqueByproducts;
 
-Compilation::~Compilation()
-{
-}
+// This class is a way to keep the result of a compilation alive and runnable.
 
-} } // namespace JSC::B3
+class Compilation {
+    WTF_MAKE_NONCOPYABLE(Compilation);
+    WTF_MAKE_FAST_ALLOCATED;
 
-#endif // ENABLE(B3_JIT)
+public:
+    JS_EXPORT_PRIVATE Compilation(MacroAssemblerCodeRef<JITCompilationPtrTag>, std::unique_ptr<OpaqueByproducts>);
+    JS_EXPORT_PRIVATE Compilation(Compilation&&);
+    JS_EXPORT_PRIVATE ~Compilation();
 
+    MacroAssemblerCodePtr<JITCompilationPtrTag> code() const { return m_codeRef.code(); }
+    MacroAssemblerCodeRef<JITCompilationPtrTag> codeRef() const { return m_codeRef; }
+    
+    CString disassembly() const { return m_codeRef.disassembly(); }
+
+private:
+    MacroAssemblerCodeRef<JITCompilationPtrTag> m_codeRef;
+    std::unique_ptr<OpaqueByproducts> m_byproducts;
+};
+
+} // namespace JSC
+
+#endif // ENABLE(JIT)

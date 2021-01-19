@@ -28,9 +28,9 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Compilation.h"
 #include "BytecodeDumper.h"
 #include "CalleeBits.h"
+#include "JITCompilation.h"
 #include "JSToWasm.h"
 #include "LLIntThunks.h"
 #include "LinkBuffer.h"
@@ -130,7 +130,7 @@ void LLIntPlan::didCompleteCompilation(const AbstractLocker& locker)
             linkBuffer.link<JITThunkPtrTag>(jumps[i], CodeLocationLabel<JITThunkPtrTag>(LLInt::wasmFunctionEntryThunk().code()));
         }
 
-        m_entryThunks = FINALIZE_CODE(linkBuffer, B3CompilationPtrTag, "Wasm LLInt entry thunks");
+        m_entryThunks = FINALIZE_CODE(linkBuffer, JITCompilationPtrTag, "Wasm LLInt entry thunks");
         m_callees = m_calleesVector.data();
     }
 
@@ -152,8 +152,8 @@ void LLIntPlan::didCompleteCompilation(const AbstractLocker& locker)
                 return;
             }
 
-            function->entrypoint.compilation = makeUnique<B3::Compilation>(
-                FINALIZE_CODE(linkBuffer, B3CompilationPtrTag, "Embedder->WebAssembly entrypoint[%i] %s", functionIndex, signature.toString().ascii().data()),
+            function->entrypoint.compilation = makeUnique<Compilation>(
+                FINALIZE_CODE(linkBuffer, JITCompilationPtrTag, "Embedder->WebAssembly entrypoint[%i] %s", functionIndex, signature.toString().ascii().data()),
                 nullptr);
 
             Ref<EmbedderEntrypointCallee> callee = EmbedderEntrypointCallee::create(WTFMove(function->entrypoint));

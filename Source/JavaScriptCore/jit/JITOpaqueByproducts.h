@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "B3OpaqueByproducts.h"
+#pragma once
 
-#if ENABLE(B3_JIT)
+#if ENABLE(JIT)
 
-namespace JSC { namespace B3 {
+#include "JITOpaqueByproduct.h"
+#include <memory>
+#include <wtf/Vector.h>
 
-OpaqueByproducts::OpaqueByproducts()
-{
-}
+namespace JSC {
 
-OpaqueByproducts::~OpaqueByproducts()
-{
-}
+class OpaqueByproducts {
+    WTF_MAKE_NONCOPYABLE(OpaqueByproducts)
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    OpaqueByproducts();
+    JS_EXPORT_PRIVATE ~OpaqueByproducts();
 
-void OpaqueByproducts::add(std::unique_ptr<OpaqueByproduct> byproduct)
-{
-    m_byproducts.append(WTFMove(byproduct));
-}
+    size_t count() const { return m_byproducts.size(); }
+    
+    void add(std::unique_ptr<OpaqueByproduct>);
 
-void OpaqueByproducts::dump(PrintStream& out) const
-{
-    out.print("Byproducts:\n");
-    if (m_byproducts.isEmpty()) {
-        out.print("    <empty>\n");
-        return;
-    }
-    for (auto& byproduct : m_byproducts)
-        out.print("    ", *byproduct, "\n");
-}
+    void dump(PrintStream&) const;
 
-} } // namespace JSC::B3
+private:
+    Vector<std::unique_ptr<OpaqueByproduct>> m_byproducts;
+};
 
-#endif // ENABLE(B3_JIT)
+} // namespace JSC
 
+#endif // ENABLE(JIT)

@@ -36,11 +36,11 @@
 #include "B3DataSection.h"
 #include "B3Dominators.h"
 #include "B3NaturalLoops.h"
-#include "B3OpaqueByproducts.h"
 #include "B3ProcedureInlines.h"
 #include "B3StackSlot.h"
 #include "B3ValueInlines.h"
 #include "B3Variable.h"
+#include "JITOpaqueByproducts.h"
 
 namespace JSC { namespace B3 {
 

@@ -23,26 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
+#include "JITOpaqueByproducts.h"
 
-#if ENABLE(B3_JIT)
+#if ENABLE(JIT)
 
-#include <wtf/FastMalloc.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/PrintStream.h>
+namespace JSC {
 
-namespace JSC { namespace B3 {
+OpaqueByproducts::OpaqueByproducts()
+{
+}
 
-class OpaqueByproduct {
-    WTF_MAKE_NONCOPYABLE(OpaqueByproduct);
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    OpaqueByproduct() { }
-    virtual ~OpaqueByproduct() { }
+OpaqueByproducts::~OpaqueByproducts()
+{
+}
 
-    virtual void dump(PrintStream&) const = 0;
-};
+void OpaqueByproducts::add(std::unique_ptr<OpaqueByproduct> byproduct)
+{
+    m_byproducts.append(WTFMove(byproduct));
+}
 
-} } // namespace JSC::B3
+void OpaqueByproducts::dump(PrintStream& out) const
+{
+    out.print("Byproducts:\n");
+    if (m_byproducts.isEmpty()) {
+        out.print("    <empty>\n");
+        return;
+    }
+    for (auto& byproduct : m_byproducts)
+        out.print("    ", *byproduct, "\n");
+}
 
-#endif // ENABLE(B3_JIT)
+} // namespace JSC
+
+#endif // ENABLE(JIT)
+
