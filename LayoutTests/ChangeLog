@@ -1,3 +1,13 @@
+2021-01-18  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening some failures and crashes
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-01-18  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][DumpRenderTree] ASSERT(!m_channel) failed in WebSocket::contextDestroyed

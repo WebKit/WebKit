@@ -251,6 +251,9 @@ webkit.org/b/217260 accessibility/spinbutton-crash.html [ Failure ]
 
 webkit.org/b/217801 accessibility/text-element-path.html [ Failure ]
 
+# aria-braille* attributes are not implemented:
+webkit.org/b/220719 accessibility/braille-label-role.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
