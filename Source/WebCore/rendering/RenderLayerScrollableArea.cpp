@@ -46,6 +46,28 @@
 #include "config.h"
 #include "RenderLayerScrollableArea.h"
 
+#include "DebugPageOverlays.h"
+#include "DeprecatedGlobalSettings.h"
+#include "Editor.h"
+#include "ElementRuleCollector.h"
+#include "EventHandler.h"
+#include "FocusController.h"
+#include "FrameSelection.h"
+#include "HitTestResult.h"
+#include "Logging.h"
+#include "RenderFlexibleBox.h"
+#include "RenderGeometryMap.h"
+#include "RenderLayerBacking.h"
+#include "RenderLayerCompositor.h"
+#include "RenderMarquee.h"
+#include "RenderScrollbar.h"
+#include "RenderScrollbarPart.h"
+#include "RenderView.h"
+#include "ScrollAnimator.h"
+#include "ScrollbarTheme.h"
+#include "ScrollingCoordinator.h"
+#include "ShadowRoot.h"
+
 namespace WebCore {
 
 RenderLayerScrollableArea::RenderLayerScrollableArea(RenderLayer& layer)

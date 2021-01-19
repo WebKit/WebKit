@@ -72,24 +72,6 @@ const ClassInfo JSObject::s_info = { "Object", nullptr, nullptr, nullptr, CREATE
 
 const ClassInfo JSFinalObject::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFinalObject) };
 
-ALWAYS_INLINE void JSObject::getNonReifiedStaticPropertyNames(VM& vm, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
-{
-    if (staticPropertiesReified(vm))
-        return;
-
-    // Add properties from the static hashtables of properties
-    for (const ClassInfo* info = classInfo(vm); info; info = info->parentClass) {
-        const HashTable* table = info->staticPropHashTable;
-        if (!table)
-            continue;
-
-        for (auto iter = table->begin(); iter != table->end(); ++iter) {
-            if (mode == DontEnumPropertiesMode::Include || !(iter->attributes() & PropertyAttribute::DontEnum))
-                propertyNames.add(Identifier::fromString(vm, iter.key()));
-        }
-    }
-}
-
 ALWAYS_INLINE void JSObject::markAuxiliaryAndVisitOutOfLineProperties(SlotVisitor& visitor, Butterfly* butterfly, Structure* structure, PropertyOffset maxOffset)
 {
     // We call this when we found everything without races.
