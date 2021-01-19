@@ -114,7 +114,7 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
         this._fontVariantPositionRow = new WI.DetailsSectionSimpleRow(WI.UIString("Position", "Position @ Font Details Sidebar Property", "Property title for `font-variant-position`."));
         this._fontVariantCapsRow = new WI.DetailsSectionSimpleRow(WI.UIString("Capitals", "Capitals @ Font Details Sidebar Property", "Property title for `font-variant-caps`."));
         this._fontVariantNumericRow = new WI.DetailsSectionSimpleRow(WI.UIString("Numeric", "Numeric @ Font Details Sidebar Property", "Property title for `font-variant-numeric`."));
-        this._fontVariantAlternatesRow = new WI.DetailsSectionSimpleRow(WI.UIString("Historical Figures", "Historical Figures @ Font Details Sidebar Property", "Property title for `font-variant-alternates`."));
+        this._fontVariantAlternatesRow = new WI.DetailsSectionSimpleRow(WI.UIString("Alternate Glyphs", "Alternate Glyphs @ Font Details Sidebar Property", "Property title for `font-variant-alternates`."));
         this._fontVariantEastAsianRow = new WI.DetailsSectionSimpleRow(WI.UIString("East Asian", "East Asian @ Font Details Sidebar Property", "Property title for `font-variant-east-asian`."));
         let featurePropertiesGroup = new WI.DetailsSectionGroup([this._fontVariantLigaturesRow, this._fontVariantPositionRow, this._fontVariantCapsRow, this._fontVariantNumericRow, this._fontVariantAlternatesRow, this._fontVariantEastAsianRow]);
 
