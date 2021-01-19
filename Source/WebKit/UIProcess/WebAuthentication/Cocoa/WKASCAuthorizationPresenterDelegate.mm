@@ -55,7 +55,9 @@ NS_ASSUME_NONNULL_BEGIN
     }];
 
     if ([loginChoice isKindOfClass:WebKit::getASCPlatformPublicKeyCredentialLoginChoiceClass()]) {
-        if ([(ASCPlatformPublicKeyCredentialLoginChoice *)loginChoice isRegistrationRequest]) {
+        auto *platformLoginChoice = (ASCPlatformPublicKeyCredentialLoginChoice *)loginChoice;
+
+        if ([platformLoginChoice isRegistrationRequest]) {
             [self dispatchCoordinatorCallback:[context = retainPtr(context)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
                 coordinator.setLAContext(context.get());
             }];
@@ -63,19 +65,21 @@ NS_ASSUME_NONNULL_BEGIN
             return;
         }
 
-        if (![(ASCPlatformPublicKeyCredentialLoginChoice *)loginChoice isRegistrationRequest]) {
-            [self dispatchCoordinatorCallback:[loginChoice, context = retainPtr(context)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
-                coordinator.didSelectAssertionResponse((ASCLoginChoiceProtocol *)loginChoice, context.get());
-            }];
+        String loginChoiceName = platformLoginChoice.name;
+        [self dispatchCoordinatorCallback:[loginChoiceName = WTFMove(loginChoiceName), context = retainPtr(context)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
+            coordinator.didSelectAssertionResponse(loginChoiceName, context.get());
+        }];
 
-            return;
-        }
+        return;
     }
 
     if ([loginChoice isKindOfClass:WebKit::getASCSecurityKeyPublicKeyCredentialLoginChoiceClass()]) {
-        if ([(ASCSecurityKeyPublicKeyCredentialLoginChoice *)loginChoice loginChoiceKind] == ASCSecurityKeyPublicKeyCredentialLoginChoiceKindAssertion) {
-            [self dispatchCoordinatorCallback:[loginChoice] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
-                coordinator.didSelectAssertionResponse((ASCLoginChoiceProtocol *)loginChoice, nil);
+        auto *securityKeyLoginChoice = (ASCSecurityKeyPublicKeyCredentialLoginChoice *)loginChoice;
+
+        if ([securityKeyLoginChoice loginChoiceKind] == ASCSecurityKeyPublicKeyCredentialLoginChoiceKindAssertion) {
+            String loginChoiceName = securityKeyLoginChoice.name;
+            [self dispatchCoordinatorCallback:[loginChoiceName = WTFMove(loginChoiceName)] (WebKit::AuthenticatorPresenterCoordinator& coordinator) mutable {
+                coordinator.didSelectAssertionResponse(loginChoiceName, nil);
             }];
 
             return;
