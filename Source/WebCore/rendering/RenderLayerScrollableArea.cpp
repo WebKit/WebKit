@@ -1725,8 +1725,10 @@ void RenderLayerScrollableArea::scrollByRecursively(const IntSize& delta, Scroll
         IntSize remainingScrollOffset = newScrollOffset - scrollOffset();
         if (!remainingScrollOffset.isZero() && renderer.parent()) {
             // FIXME: This skips scrollable frames.
-            if (auto* scrollableLayer = m_layer.enclosingScrollableLayer(IncludeSelfOrNot::ExcludeSelf, CrossFrameBoundaries::Yes))
-                scrollableLayer->scrollByRecursively(remainingScrollOffset, scrolledArea);
+            if (auto* enclosingScrollableLayer = m_layer.enclosingScrollableLayer(IncludeSelfOrNot::ExcludeSelf, CrossFrameBoundaries::Yes)) {
+                if (auto* scrollableLayer = enclosingScrollableLayer->scrollableArea())
+                    scrollableLayer->scrollByRecursively(remainingScrollOffset, scrolledArea);
+            }
 
             renderer.frame().eventHandler().updateAutoscrollRenderer();
         }

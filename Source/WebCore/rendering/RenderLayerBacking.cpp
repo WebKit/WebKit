@@ -1491,14 +1491,17 @@ void RenderLayerBacking::setLocationOfScrolledContents(ScrollOffset scrollOffset
 
 void RenderLayerBacking::updateScrollOffset(ScrollOffset scrollOffset)
 {
-    if (m_owningLayer.currentScrollType() == ScrollType::User) {
+    auto* scrollableLayer = m_owningLayer.scrollableArea();
+    ASSERT(scrollableLayer);
+
+    if (scrollableLayer->currentScrollType() == ScrollType::User) {
         // If scrolling is happening externally, we don't want to touch the layer bounds origin here because that will cause jitter.
         setLocationOfScrolledContents(scrollOffset, ScrollingLayerPositionAction::Sync);
-        m_owningLayer.setRequiresScrollPositionReconciliation(true);
+        scrollableLayer->setRequiresScrollPositionReconciliation(true);
     } else {
         // Note that we implement the contents offset via the bounds origin on this layer, rather than a position on the sublayer.
         setLocationOfScrolledContents(scrollOffset, ScrollingLayerPositionAction::Set);
-        m_owningLayer.setRequiresScrollPositionReconciliation(false);
+        scrollableLayer->setRequiresScrollPositionReconciliation(false);
     }
 
     ASSERT(m_scrolledContentsLayer->position().isZero());

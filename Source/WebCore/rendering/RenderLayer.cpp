@@ -377,49 +377,11 @@ RenderLayer::~RenderLayer()
 }
 
 // Start of temporary glue code to help landing webkit.org/b/60305 (split RenderLayer into RenderLayer/RenderLayerScrollableArea)
-ScrollType RenderLayer::currentScrollType() const
-{
-    if (m_scrollableArea)
-        return m_scrollableArea->currentScrollType();
-    return ScrollType::User;
-}
-
-ScrollAnimator& RenderLayer::scrollAnimator() const
-{
-    return const_cast<RenderLayer*>(this)->ensureLayerScrollableArea()->scrollAnimator();
-}
-
 ScrollOffset RenderLayer::scrollOffset() const
 {
     if (m_scrollableArea)
         return m_scrollableArea->scrollOffset();
     return { 0, 0 };
-}
-
-void RenderLayer::scrollToXPosition(int x, const ScrollPositionChangeOptions& options)
-{
-    ensureLayerScrollableArea()->scrollToXPosition(x, options);
-}
-
-void RenderLayer::scrollToYPosition(int y, const ScrollPositionChangeOptions& options)
-{
-    ensureLayerScrollableArea()->scrollToYPosition(y, options);
-}
-
-void RenderLayer::setScrollPosition(const ScrollPosition& position, const ScrollPositionChangeOptions& options)
-{
-    ensureLayerScrollableArea()->setScrollPosition(position, options);
-}
-
-void RenderLayer::scrollByRecursively(const IntSize& delta, ScrollableArea** scrolledArea)
-{
-    ensureLayerScrollableArea()->scrollByRecursively(delta, scrolledArea);
-}
-
-void RenderLayer::setRequiresScrollPositionReconciliation(bool requiresReconciliation)
-{
-    if (m_scrollableArea)
-        m_scrollableArea->setRequiresScrollPositionReconciliation(requiresReconciliation);
 }
 
 bool RenderLayer::shouldPlaceBlockDirectionScrollbarOnLeft() const
@@ -431,13 +393,6 @@ bool RenderLayer::containsDirtyOverlayScrollbars() const
 {
     if (m_scrollableArea)
         return m_scrollableArea->containsDirtyOverlayScrollbars();
-    return false;
-}
-
-bool RenderLayer::hasScrollableOrRubberbandableAncestor()
-{
-    if (m_scrollableArea)
-        return m_scrollableArea->hasScrollableOrRubberbandableAncestor();
     return false;
 }
 
@@ -483,27 +438,6 @@ void RenderLayer::paintOverlayScrollbars(GraphicsContext& context, const LayoutR
 {
     if (m_scrollableArea)
         m_scrollableArea->paintOverlayScrollbars(context, damageRect, behavior, subtreePaintRoot);
-}
-
-IntSize RenderLayer::reachableTotalContentsSize() const
-{
-    if (m_scrollableArea)
-        return m_scrollableArea->reachableTotalContentsSize();
-    return { 0, 0 };
-}
-
-bool RenderLayer::horizontalScrollbarHiddenByStyle() const
-{
-    if (m_scrollableArea)
-        return m_scrollableArea->horizontalScrollbarHiddenByStyle();
-    return false;
-}
-
-bool RenderLayer::verticalScrollbarHiddenByStyle() const
-{
-    if (m_scrollableArea)
-        return m_scrollableArea->verticalScrollbarHiddenByStyle();
-    return false;
 }
 
 void RenderLayer::setPostLayoutScrollPosition(Optional<ScrollPosition> position)

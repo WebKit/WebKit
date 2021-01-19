@@ -147,6 +147,7 @@
 #include <WebCore/PopupMenuWin.h>
 #include <WebCore/ProgressTracker.h>
 #include <WebCore/RenderLayer.h>
+#include <WebCore/RenderLayerScrollableArea.h>
 #include <WebCore/RenderTheme.h>
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/RenderView.h>
@@ -2049,7 +2050,7 @@ bool WebView::gesture(WPARAM wParam, LPARAM lParam)
             coreFrame->view()->scrollBy(logicalScrollDelta);
             scrolledArea = coreFrame->view();
         } else
-            scrollableLayer->scrollByRecursively(logicalScrollDelta, &scrolledArea);
+            scrollableLayer->ensureLayerScrollableArea()->scrollByRecursively(logicalScrollDelta, &scrolledArea);
 
         if (!(UpdatePanningFeedbackPtr() && BeginPanningFeedbackPtr() && EndPanningFeedbackPtr())) {
             CloseGestureInfoHandlePtr()(gestureHandle);

@@ -897,7 +897,9 @@ bool RenderListBox::isScrollableOrRubberbandable()
 
 bool RenderListBox::hasScrollableOrRubberbandableAncestor()
 {
-    return enclosingLayer() && enclosingLayer()->hasScrollableOrRubberbandableAncestor();
+    if (auto* scrollableLayer = enclosingLayer() ? enclosingLayer()->scrollableArea() : nullptr)
+        return scrollableLayer->hasScrollableOrRubberbandableAncestor();
+    return false;
 }
 
 IntRect RenderListBox::scrollableAreaBoundingBox(bool*) const

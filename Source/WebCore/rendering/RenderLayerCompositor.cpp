@@ -5046,11 +5046,14 @@ void LegacyWebKitScrollingLayerCoordinator::updateScrollingLayer(RenderLayer& la
     auto* backing = layer.backing();
     ASSERT(backing);
 
-    bool allowHorizontalScrollbar = !layer.horizontalScrollbarHiddenByStyle();
-    bool allowVerticalScrollbar = !layer.verticalScrollbarHiddenByStyle();
+    auto* scrollableLayer = layer.scrollableArea();
+    ASSERT(scrollableLayer);
+
+    bool allowHorizontalScrollbar = !scrollableLayer->horizontalScrollbarHiddenByStyle();
+    bool allowVerticalScrollbar = !scrollableLayer->verticalScrollbarHiddenByStyle();
 
     m_chromeClient.addOrUpdateScrollingLayer(layer.renderer().element(), backing->scrollContainerLayer()->platformLayer(), backing->scrolledContentsLayer()->platformLayer(),
-        layer.reachableTotalContentsSize(), allowHorizontalScrollbar, allowVerticalScrollbar);
+        scrollableLayer->reachableTotalContentsSize(), allowHorizontalScrollbar, allowVerticalScrollbar);
 }
 
 void LegacyWebKitScrollingLayerCoordinator::registerAllScrollingLayers()

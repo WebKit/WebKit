@@ -63,6 +63,7 @@
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderLayoutState.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderTableCell.h"
@@ -590,7 +591,9 @@ static void setupWheelEventMonitor(RenderLayer& layer)
     Page& page = layer.renderer().page();
     if (!page.isMonitoringWheelEvents())
         return;
-    layer.scrollAnimator().setWheelEventTestMonitor(page.wheelEventTestMonitor());
+    auto* scrollableLayer = layer.scrollableArea();
+    ASSERT(scrollableLayer);
+    scrollableLayer->scrollAnimator().setWheelEventTestMonitor(page.wheelEventTestMonitor());
 }
 
 void RenderBox::setScrollLeft(int newLeft, const ScrollPositionChangeOptions& options)
@@ -598,7 +601,7 @@ void RenderBox::setScrollLeft(int newLeft, const ScrollPositionChangeOptions& op
     if (!hasOverflowClip() || !layer())
         return;
     setupWheelEventMonitor(*layer());
-    layer()->scrollToXPosition(newLeft, options);
+    layer()->ensureLayerScrollableArea()->scrollToXPosition(newLeft, options);
 }
 
 void RenderBox::setScrollTop(int newTop, const ScrollPositionChangeOptions& options)
@@ -606,7 +609,7 @@ void RenderBox::setScrollTop(int newTop, const ScrollPositionChangeOptions& opti
     if (!hasOverflowClip() || !layer())
         return;
     setupWheelEventMonitor(*layer());
-    layer()->scrollToYPosition(newTop, options);
+    layer()->ensureLayerScrollableArea()->scrollToYPosition(newTop, options);
 }
 
 void RenderBox::setScrollPosition(const ScrollPosition& position, const ScrollPositionChangeOptions& options)
@@ -614,7 +617,7 @@ void RenderBox::setScrollPosition(const ScrollPosition& position, const ScrollPo
     if (!hasOverflowClip() || !layer())
         return;
     setupWheelEventMonitor(*layer());
-    layer()->setScrollPosition(position, options);
+    layer()->ensureLayerScrollableArea()->setScrollPosition(position, options);
 }
 
 void RenderBox::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const

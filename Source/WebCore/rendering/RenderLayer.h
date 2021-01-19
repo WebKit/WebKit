@@ -160,17 +160,9 @@ public:
     WEBCORE_EXPORT RenderLayerScrollableArea* ensureLayerScrollableArea();
 
     // Start of temporary glue code to help landing webkit.org/b/60305 (split RenderLayer into RenderLayer/RenderLayerScrollableArea)
-    ScrollType currentScrollType() const;
-    WEBCORE_EXPORT ScrollAnimator& scrollAnimator() const;
     WEBCORE_EXPORT ScrollOffset scrollOffset() const;
-    void scrollToXPosition(int x, const ScrollPositionChangeOptions&);
-    void scrollToYPosition(int y, const ScrollPositionChangeOptions&);
-    void setScrollPosition(const ScrollPosition&, const ScrollPositionChangeOptions&);
-    void scrollByRecursively(const IntSize& delta, ScrollableArea** scrolledArea = nullptr);
-    void setRequiresScrollPositionReconciliation(bool requiresReconciliation = true);
     bool shouldPlaceBlockDirectionScrollbarOnLeft() const;
     bool containsDirtyOverlayScrollbars() const;
-    bool hasScrollableOrRubberbandableAncestor();
     RenderMarquee* marquee() const;
     void updateLayerPositionsAfterDocumentScroll();
     bool hitTestOverflowControls(HitTestResult&, const IntPoint& localPoint);
@@ -178,9 +170,6 @@ public:
     void paintScrollCorner(GraphicsContext&, const IntPoint&, const IntRect& damageRect);
     void paintResizer(GraphicsContext&, const LayoutPoint&, const LayoutRect& damageRect);
     void paintOverlayScrollbars(GraphicsContext&, const LayoutRect& damageRect, OptionSet<PaintBehavior>, RenderObject* subtreePaintRoot = nullptr);
-    IntSize reachableTotalContentsSize() const;
-    bool horizontalScrollbarHiddenByStyle() const;
-    bool verticalScrollbarHiddenByStyle() const;
     void setPostLayoutScrollPosition(Optional<ScrollPosition>);
     void panScrollFromPoint(const IntPoint&);
     ScrollPosition scrollPosition() const;
