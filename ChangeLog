@@ -1,3 +1,13 @@
+2021-01-19  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r271580) [GTK] LTS/Debian build failure due to unsupported g-ir-scanner parameter
+        https://bugs.webkit.org/show_bug.cgi?id=220730
+
+        Reviewed by Philippe Normand.
+
+        * Source/cmake/FindGObjectIntrospection.cmake: Expose variable about the
+        presence of --sources-top-dirs.
+
 2021-01-14  Jonathan Bedard  <jbedard@apple.com>
 
         [GitHub] Reference GitHub repository in readme
