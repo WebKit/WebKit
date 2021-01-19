@@ -4616,6 +4616,8 @@ storage/indexeddb/shared-memory-structured-clone.html [ Skip ]
 
 webkit.org/b/220536 fast/text/cjk-multi-codepoint-cluster-vertical.html [ ImageOnlyFailure ]
 
+webkit.org/b/220579 fast/events/currentTarget-gc-crash.html [ Skip ]
+
 # These tests time out on Windows
 webkit.org/b/220653 webanimations/combining-transform-animations-with-different-acceleration-capabilities-2.html [ Skip ]
 webkit.org/b/220653 webanimations/combining-transform-animations-with-different-acceleration-capabilities-3.html [ Skip ]

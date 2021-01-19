@@ -1,3 +1,23 @@
+2021-01-18  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][DumpRenderTree] ASSERT(!m_channel) failed in WebSocket::contextDestroyed
+        https://bugs.webkit.org/show_bug.cgi?id=220450
+
+        Reviewed by Per Arne Vollan.
+
+        WebSocket::failAsynchronously() posts a deferred task calling
+        WebSocket::stop() by using callOnMainThread, but the task was not
+        executed soon because DumpRenderTree stopped running the run loop
+        after finishing the test.
+
+        DumpRenderTree's run loop should dispatch all deferred tasks
+        before finishing the current test. Deffer setting the variable
+        'done' by posting a application message.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp: Define a application message WM_DRT_TEST_DONE.
+        (DumpRenderTreeWndProc): Set 'done' in the case of WM_DRT_TEST_DONE.
+        (dump): Post WM_DRT_TEST_DONE.
+
 2021-01-18  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Fix WPEQt tests after r271514
