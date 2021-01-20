@@ -167,10 +167,6 @@ webkit.org/b/213829 css3/calc/background-position-parsing.html [ ImageOnlyFailur
 # Flexbox layout
 webkit.org/b/215502 fast/flexbox/image-percent-max-height.html [ Failure Pass ImageOnlyFailure ]
 
-# Focus-visible
-webkit.org/b/220578 imported/w3c/web-platform-tests/css/selectors/focus-visible-003.html [ Failure ]
-webkit.org/b/220578 imported/w3c/web-platform-tests/css/selectors/focus-visible-004.html [ Failure ]
-
 # Link target
 webkit.org/b/218553 http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-in-new-window.html [ Timeout ]
 webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag-from-subframe.html
