@@ -1,6 +1,0 @@
-Tests that AudioBufferSourceNode calls its onended EventListener, even after a GC.
-PASS source.onended called.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

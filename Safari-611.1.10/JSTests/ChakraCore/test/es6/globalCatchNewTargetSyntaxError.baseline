@@ -1,2 +1,0 @@
-SyntaxError: Invalid use of the 'new.target' keyword
-	at code (globalCatchNewTargetSyntaxError.js:6:34)

@@ -1,7 +1,0 @@
-2d.line.width.basic
-
-lineWidth determines the width of line strokes
-
-
-PASS lineWidth determines the width of line strokes
-

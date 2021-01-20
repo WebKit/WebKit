@@ -1,3 +1,0 @@
-
-FAIL Should apply the style attribute assert_true: expected true got false
-

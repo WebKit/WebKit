@@ -1,3 +1,0 @@
-
-PASS Checking 0 can be used as a Pointer ID.
-

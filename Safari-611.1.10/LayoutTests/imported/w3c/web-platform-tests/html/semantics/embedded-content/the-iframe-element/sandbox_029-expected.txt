@@ -1,3 +1,0 @@
-
-PASS Block document.cookie inside iframe with the sandbox attribute.
-

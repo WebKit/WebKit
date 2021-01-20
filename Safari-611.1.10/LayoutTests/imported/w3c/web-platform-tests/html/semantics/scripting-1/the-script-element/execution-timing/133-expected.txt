@@ -1,3 +1,0 @@
-
-PASS scheduler: inline HTML script added by SVG script
-

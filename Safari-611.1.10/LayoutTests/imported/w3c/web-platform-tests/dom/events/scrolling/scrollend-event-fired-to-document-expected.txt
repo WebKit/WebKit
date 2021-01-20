@@ -1,3 +1,0 @@
-
-FAIL Tests that the document gets scrollend event when no element scrolls by touch. promise_test: Unhandled rejection with value: "Document did not receive scrollend event after scroll left on target."
-

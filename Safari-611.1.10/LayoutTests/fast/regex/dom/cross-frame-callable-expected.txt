@@ -1,6 +1,0 @@
-PASS re('a') threw exception TypeError: re is not a function. (In 're('a')', 're' is an instance of RegExp).
-PASS re.exec('a') is ['a']
-PASS successfullyParsed is true
-
-TEST COMPLETE
-DONE

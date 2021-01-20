@@ -1,4 +1,0 @@
-UI DELEGATE STATUS CALLBACK: setStatusText:
-UI DELEGATE STATUS CALLBACK: setStatusText:PАSS
-
-PASS if status bar says "PASS".

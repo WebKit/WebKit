@@ -1,7 +1,0 @@
-Description
-
-This test validates the dl element.
-
-
-PASS The prototype for dl is HTMLDListElement.prototype
-

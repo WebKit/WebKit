@@ -1,3 +1,0 @@
-
-PASS save()/restore() can be nested as a stack
-

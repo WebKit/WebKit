@@ -1,7 +1,0 @@
-Test that an NSAttributedString from a range converts colors through -apple-color-filter.
-
-[is t]
-    NSColor: #5c5c5c (sRGB)
-    NSFont: Times-Roman 16.00 pt.
-
-

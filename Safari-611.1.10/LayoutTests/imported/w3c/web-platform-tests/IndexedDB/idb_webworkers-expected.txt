@@ -1,3 +1,0 @@
-
-PASS IndexedDB inside of a WebWorker
-

@@ -1,4 +1,0 @@
-Test
-
-FAIL Stylesheet in XHTML BODY blocking scripts assert_equals: expected "fixed" but got "static"
-

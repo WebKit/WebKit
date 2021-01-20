@@ -1,3 +1,0 @@
-
-PASS Test that self is not replaceable.
-

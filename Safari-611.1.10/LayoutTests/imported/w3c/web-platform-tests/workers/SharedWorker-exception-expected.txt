@@ -1,3 +1,0 @@
-
-FAIL This test checks whether exceptions in SharedWorkers are logged to the parent document. An exception should be logged to the error console. Can't find variable: SharedWorker
-

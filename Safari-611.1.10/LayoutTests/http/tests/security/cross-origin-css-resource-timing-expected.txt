@@ -1,3 +1,0 @@
-
-PASS CSS subresources of an opaque stylesheet should not populate resource timing entries
-

@@ -1,3 +1,0 @@
-{{fs_path(sub_path.sub.txt)}}
-{{fs_path(../sub_path.sub.txt)}}
-{{fs_path(/sub_path.sub.txt)}}

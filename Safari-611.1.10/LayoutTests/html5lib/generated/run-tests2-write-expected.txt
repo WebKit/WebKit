@@ -1,1 +1,0 @@
-../resources/tests2.dat: PASS

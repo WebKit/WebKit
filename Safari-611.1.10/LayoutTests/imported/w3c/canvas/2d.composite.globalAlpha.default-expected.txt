@@ -1,4 +1,0 @@
-2d.composite.globalAlpha.default
-Spec references: 2d.composite.globalAlpha.default
-Actual output:
-Passed

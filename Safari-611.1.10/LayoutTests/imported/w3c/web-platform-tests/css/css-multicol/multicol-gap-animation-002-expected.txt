@@ -1,3 +1,0 @@
-
-PASS column-gap: normal is not interpolable
-

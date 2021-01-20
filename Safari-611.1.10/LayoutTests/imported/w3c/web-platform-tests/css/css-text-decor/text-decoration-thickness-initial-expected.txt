@@ -1,3 +1,0 @@
-
-PASS Initial value of text-decoration-thickness should be auto
-

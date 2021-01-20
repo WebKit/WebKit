@@ -1,2 +1,0 @@
-Exception: SyntaxError: Cannot declare a parameter named 'a' in strict mode as it has already been declared.
-at multiunit.js:43

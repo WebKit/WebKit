@@ -1,3 +1,0 @@
-
-PASS Shadows with alpha components are correctly affected by globalAlpha
-

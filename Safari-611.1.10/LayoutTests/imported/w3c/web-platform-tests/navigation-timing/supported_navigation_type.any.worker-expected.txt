@@ -1,3 +1,0 @@
-
-FAIL supportedEntryTypes contains 'navigation'. assert_true: There should be an entry 'navigation' in PerformanceObserver.supportedEntryTypes expected true got false
-

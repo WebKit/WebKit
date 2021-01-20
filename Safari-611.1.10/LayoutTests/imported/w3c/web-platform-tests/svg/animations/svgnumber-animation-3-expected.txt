@@ -1,3 +1,0 @@
-
-PASS Test for SVGNumber animation with invalid units.
-

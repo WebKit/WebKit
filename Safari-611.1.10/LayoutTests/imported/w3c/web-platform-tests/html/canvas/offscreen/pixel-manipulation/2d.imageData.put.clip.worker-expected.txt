@@ -1,3 +1,0 @@
-
-PASS putImageData() is not affected by clipping regions
-

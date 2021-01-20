@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'srgbImageDataU8.dataUnion[i*4+j] = srgbPixels[i][j]')
-
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'srgbImageDataU8.dataUnion[i*4+j] = srgbPixels[i][j]')
-
-

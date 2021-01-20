@@ -1,2 +1,0 @@
-PASS paintEntry.startTime >= styleEntry.startTime + styleEntry.duration is true
-TEXT

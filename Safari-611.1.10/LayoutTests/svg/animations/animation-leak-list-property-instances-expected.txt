@@ -1,7 +1,0 @@
-This test checks that adding an animation to a SVG element does not leak the whole SVGDocument.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS 0 is 0
-

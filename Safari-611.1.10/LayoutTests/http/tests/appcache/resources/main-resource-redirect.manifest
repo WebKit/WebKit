@@ -1,4 +1,0 @@
-CACHE MANIFEST
-http://127.0.0.1:8000/resources/network-simulator.php?test=appcache-main-resource-main-resource-redirect&path=/appcache/resources/main-resource-redirect-frame-2.html
-NETWORK:
-http://127.0.0.1:8000/resources/network-simulator.php?test=appcache-main-resource-main-resource-redirect&command

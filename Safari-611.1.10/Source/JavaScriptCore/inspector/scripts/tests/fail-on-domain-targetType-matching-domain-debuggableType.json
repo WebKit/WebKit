@@ -1,8 +1,0 @@
-[
-{
-    "domain": "Domain",
-    "debuggableTypes": ["javascript"],
-    "commands": [{"name": "Command", "targetTypes": ["worker"]}],
-    "events": [{"name": "Event"}]
-}
-]

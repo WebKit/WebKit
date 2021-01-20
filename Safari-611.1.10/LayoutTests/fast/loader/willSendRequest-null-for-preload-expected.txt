@@ -1,1 +1,0 @@
-Test for Bug 53123: Crashes loading pages when cancelling subresource loads through WebKit. If the test doesn't crash, then it has passed. It must be run in DRT.

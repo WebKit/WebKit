@@ -1,4 +1,0 @@
-
-PASS operatorXY
-PASS assignOperatorXY
-

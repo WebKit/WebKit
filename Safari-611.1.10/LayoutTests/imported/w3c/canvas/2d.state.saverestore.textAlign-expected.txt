@@ -1,5 +1,0 @@
-2d.state.saverestore.textAlign
-save()/restore() works for textAlign
-Spec references: 2d.state.textAlign
-Actual output:
-Passed

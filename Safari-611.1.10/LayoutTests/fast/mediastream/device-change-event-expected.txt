@@ -1,3 +1,0 @@
-
-PASS 'devicechange' event fired when device list changes
-

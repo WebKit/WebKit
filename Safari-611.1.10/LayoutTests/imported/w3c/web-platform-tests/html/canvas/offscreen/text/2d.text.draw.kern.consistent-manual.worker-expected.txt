@@ -1,3 +1,0 @@
-
-PASS Stroked and filled text should have exactly the same kerning so it overlaps
-

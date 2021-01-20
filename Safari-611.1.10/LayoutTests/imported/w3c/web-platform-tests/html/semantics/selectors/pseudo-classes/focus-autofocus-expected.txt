@@ -1,4 +1,0 @@
-
-
-PASS :focus selector should work with an autofocused element.
-

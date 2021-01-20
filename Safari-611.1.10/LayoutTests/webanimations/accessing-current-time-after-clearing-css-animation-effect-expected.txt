@@ -1,3 +1,0 @@
-
-PASS Current time is 0 after removing its effect.
-

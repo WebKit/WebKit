@@ -1,3 +1,0 @@
-
-PASS save()/restore() stack depth is not unreasonably limited
-

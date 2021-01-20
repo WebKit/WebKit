@@ -1,3 +1,0 @@
-
-PASS WebSockets: Send/Receive ArrayBuffer, size less than network array buffer
-

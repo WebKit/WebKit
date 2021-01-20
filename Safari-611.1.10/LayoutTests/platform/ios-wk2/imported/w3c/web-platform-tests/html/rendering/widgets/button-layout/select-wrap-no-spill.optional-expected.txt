@@ -1,5 +1,0 @@
-
-
-
-FAIL Selected OPTION label with white-space:pre-wrap should not spill out. assert_equals: expected 26 but got 120
-

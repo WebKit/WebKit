@@ -1,3 +1,0 @@
-
-PASS getEntriesByType values are case sensitive
-

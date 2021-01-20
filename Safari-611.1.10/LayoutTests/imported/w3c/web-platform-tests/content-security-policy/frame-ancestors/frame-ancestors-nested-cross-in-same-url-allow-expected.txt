@@ -1,5 +1,0 @@
-Blocked access to external URL http://www1.localhost:8801/content-security-policy/frame-ancestors/support/frame-ancestors.sub.html?policy=http://localhost:8800%20http://www1.localhost:8801
-
-
-FAIL A 'frame-ancestors' CSP directive with a URL value should block or allow rendering in nested frames as appropriate. assert_unreached: Inner IFrame msg: The IFrame should have been blocked (or cross-origin). It wasn't. Reached unreachable code
-

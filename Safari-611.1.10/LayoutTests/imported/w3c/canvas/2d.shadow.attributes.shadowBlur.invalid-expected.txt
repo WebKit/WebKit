@@ -1,4 +1,0 @@
-2d.shadow.attributes.shadowBlur.invalid
-Spec references: 2d.shadow.blur.invalid
-Actual output:
-Passed

@@ -1,3 +1,0 @@
-
-FAIL @keyframes applies in the shadow tree assert_equals: expected 1 but got 0
-

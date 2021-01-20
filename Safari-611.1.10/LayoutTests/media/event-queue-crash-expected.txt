@@ -1,3 +1,0 @@
-When an element containing video is removed, WebKit should not crash.
-
-PASS. WebKit didn't crash.

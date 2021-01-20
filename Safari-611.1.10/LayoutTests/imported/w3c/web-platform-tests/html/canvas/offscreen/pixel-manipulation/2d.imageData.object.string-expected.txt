@@ -1,7 +1,0 @@
-2d.imageData.object.string
-
-ImageData.data converts strings to numbers with ToNumber
-
-
-PASS ImageData.data converts strings to numbers with ToNumber
-

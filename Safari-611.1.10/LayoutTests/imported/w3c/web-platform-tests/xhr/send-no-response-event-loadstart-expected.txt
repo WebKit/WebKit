@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: The send() method: Fire a progress event named loadstart (no response entity body and the state is LOADING)
-

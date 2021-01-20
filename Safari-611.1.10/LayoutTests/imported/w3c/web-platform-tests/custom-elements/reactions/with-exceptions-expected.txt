@@ -1,3 +1,0 @@
-
-PASS Reaction must run even after the exception is thrown
-

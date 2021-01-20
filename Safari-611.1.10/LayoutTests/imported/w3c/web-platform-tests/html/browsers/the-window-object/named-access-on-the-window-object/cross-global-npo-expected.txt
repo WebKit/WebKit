@@ -1,3 +1,0 @@
-
-PASS Named access across globals
-

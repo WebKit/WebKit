@@ -1,6 +1,0 @@
-function fn() {
-  return '𠮷'.match(/^.$/);
-}
-
-// Not asserting as this isn't quite an accurate test under es5
-test(fn);

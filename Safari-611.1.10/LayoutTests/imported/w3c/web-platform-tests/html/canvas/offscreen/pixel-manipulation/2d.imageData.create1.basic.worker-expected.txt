@@ -1,3 +1,0 @@
-
-PASS createImageData(imgdata) exists and returns something
-

@@ -1,4 +1,0 @@
-
-FAIL Tests scrollend event for calling scroll functions. promise_test: Unhandled rejection with value: "DIV.scrollTo did not receive scrollend event."
-FAIL Tests scrollend event for changing scroll attributes. promise_test: Unhandled rejection with value: "DIV.scrollTop did not receive scrollend event."
-

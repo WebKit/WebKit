@@ -1,3 +1,0 @@
-
-FAIL Expecting logs: ["PASS EvalError","PASS EvalError", "violated-directive=script-src"] assert_unreached: Logging timeout, expected logs violated-directive=script-src not sent. Reached unreachable code
-

@@ -1,6 +1,0 @@
-This page tests to make sure that the refresh of a page which holds a document reference in its DOM wrapper tree does not leak all of its associated JS objects.
-
-If the test passes, you'll see a single 'PASS' message below.
-
-PASS: Refresh did not leak JS objects.
-

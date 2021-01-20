@@ -1,3 +1,0 @@
-
-FAIL SharedArrayBuffer cannot cross agent clusters, service worker edition undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
-

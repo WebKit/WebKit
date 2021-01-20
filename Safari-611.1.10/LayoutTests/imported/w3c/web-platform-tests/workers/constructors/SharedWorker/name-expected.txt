@@ -1,3 +1,0 @@
-
-FAIL self.name Can't find variable: SharedWorker
-

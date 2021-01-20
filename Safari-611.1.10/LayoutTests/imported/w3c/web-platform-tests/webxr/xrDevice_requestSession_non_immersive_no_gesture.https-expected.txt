@@ -1,3 +1,0 @@
-
-PASS Requesting non-immersive session outside of a user gesture succeeds
-

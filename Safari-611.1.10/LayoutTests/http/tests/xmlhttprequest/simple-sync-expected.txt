@@ -1,3 +1,0 @@
-Test for bug 188033: Syncronous XMLHTTPRequest crashes on WinCairo.
-
-result: OK

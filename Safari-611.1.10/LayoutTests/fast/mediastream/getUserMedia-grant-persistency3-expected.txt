@@ -1,3 +1,0 @@
-
-PASS Testing same page getUserMedia grant persistency with visibility
-

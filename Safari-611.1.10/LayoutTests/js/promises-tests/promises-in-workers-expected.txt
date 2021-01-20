@@ -1,4 +1,0 @@
-
-PASS Test 1
-PASS Test 2
-

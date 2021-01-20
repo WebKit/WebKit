@@ -1,7 +1,0 @@
-2d.state.saverestore.underflow
-
-restore() with an empty stack has no effect
-
-
-PASS restore() with an empty stack has no effect
-

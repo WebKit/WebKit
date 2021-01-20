@@ -1,7 +1,0 @@
-2d.composite.canvas.lighter
-Spec references: 2d.composite.lighter
-Actual output:
-Expected output:
-
-Passed
-

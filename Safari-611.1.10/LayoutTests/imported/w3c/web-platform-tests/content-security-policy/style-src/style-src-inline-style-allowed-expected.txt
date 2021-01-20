@@ -1,3 +1,0 @@
-
-PASS Inline style should apply with 'unsafe-inline'
-Lorem ipsum

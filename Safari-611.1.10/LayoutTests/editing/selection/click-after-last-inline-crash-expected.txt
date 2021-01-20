@@ -1,7 +1,0 @@
-Click after the end of the line with link.
-
-This is a link
-
-It should NOT crash!
-
-PASS

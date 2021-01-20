@@ -1,3 +1,0 @@
-
-PASS Areas outside shadows are drawn correctly with destination-out
-

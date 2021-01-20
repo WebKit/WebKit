@@ -1,4 +1,0 @@
-
-
-FAIL Should not have executed the javascript url assert_true: Javascript url executed expected true got false
-

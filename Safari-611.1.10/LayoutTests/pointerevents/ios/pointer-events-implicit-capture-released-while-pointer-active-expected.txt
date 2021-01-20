@@ -1,3 +1,0 @@
-
-PASS Releasing pointer capture during a touch interaction redirects further pointer events to the hit-testing element.
-

@@ -1,3 +1,0 @@
-Test that inserting an SMP symbol from Character Palette works correctly. Should say PASS:
-
-PASS

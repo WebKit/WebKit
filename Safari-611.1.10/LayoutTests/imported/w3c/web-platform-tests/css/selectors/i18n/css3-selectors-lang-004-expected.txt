@@ -1,4 +1,0 @@
- 
-
-PASS A :lang value will match a lang attribute value regardless of case differences.
-

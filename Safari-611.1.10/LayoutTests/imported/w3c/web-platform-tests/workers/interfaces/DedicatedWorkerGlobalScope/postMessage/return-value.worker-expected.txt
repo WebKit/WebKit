@@ -1,3 +1,0 @@
-
-PASS return value of postMessage
-

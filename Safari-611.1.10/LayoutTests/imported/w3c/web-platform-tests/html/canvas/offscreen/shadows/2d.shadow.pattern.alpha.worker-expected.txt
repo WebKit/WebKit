@@ -1,3 +1,0 @@
-
-PASS Shadows are drawn correctly for partially-transparent fill patterns
-

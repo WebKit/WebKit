@@ -1,4 +1,0 @@
-
-PASS end event fires when immersive session ends
-PASS end event fires when non-immersive session ends
-

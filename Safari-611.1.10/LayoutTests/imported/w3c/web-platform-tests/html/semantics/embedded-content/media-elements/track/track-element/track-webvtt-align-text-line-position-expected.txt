@@ -1,4 +1,0 @@
-
-
-PASS Cue alignment, line and text position from settings
-

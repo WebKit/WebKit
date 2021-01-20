@@ -1,3 +1,0 @@
-
-PASS The browsing context must be chosen if the given name is same as its name
-

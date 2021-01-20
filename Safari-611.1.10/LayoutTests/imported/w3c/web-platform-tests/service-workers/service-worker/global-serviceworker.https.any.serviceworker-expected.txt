@@ -1,6 +1,0 @@
-
-FAIL First run assert_true: self.serviceWorker exists expected true got false
-FAIL Can post message to self during startup assert_true: self.serviceWorker exists expected true got false
-FAIL During install assert_true: self.serviceWorker exists expected true got false
-FAIL During activate assert_true: self.serviceWorker exists expected true got false
-

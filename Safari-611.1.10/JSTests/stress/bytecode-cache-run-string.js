@@ -1,3 +1,0 @@
-//@ runBytecodeCache
-
-runString('undefined');

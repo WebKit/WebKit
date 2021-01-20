@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: NetworkError: Response is not 2xx
-
-Harness Error (FAIL), message = NetworkError: Response is not 2xx
-
-

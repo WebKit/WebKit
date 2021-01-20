@@ -1,3 +1,0 @@
-Test that open throws a SYNTAX_ERR exception when called with an empty method.
-
-SUCCESS: got exception SyntaxError: The string did not match the expected pattern.

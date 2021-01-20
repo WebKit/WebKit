@@ -1,3 +1,0 @@
-
-PASS arcTo joins up to the last subpath point correctly
-

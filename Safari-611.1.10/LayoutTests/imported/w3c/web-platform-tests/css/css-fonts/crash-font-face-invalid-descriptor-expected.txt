@@ -1,3 +1,0 @@
-
-PASS Do not crash when setting an invalid @font-face descriptor via CSSOM
-

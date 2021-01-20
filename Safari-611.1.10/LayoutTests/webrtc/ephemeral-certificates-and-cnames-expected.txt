@@ -1,3 +1,0 @@
-
-PASS Ensuring certificates and cnames are ephemerals
-

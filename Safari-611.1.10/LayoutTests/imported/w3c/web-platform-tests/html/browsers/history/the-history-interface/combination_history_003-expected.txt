@@ -1,3 +1,0 @@
-
-PASS After calling of pushState and replaceState methods, check length
-

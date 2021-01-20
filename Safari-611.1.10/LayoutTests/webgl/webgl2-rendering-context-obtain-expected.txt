@@ -1,1 +1,0 @@
-PASS if a "webgl2" context can be obtained.

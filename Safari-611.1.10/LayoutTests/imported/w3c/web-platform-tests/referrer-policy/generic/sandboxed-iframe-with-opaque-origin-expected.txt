@@ -1,9 +1,0 @@
-CONSOLE MESSAGE: Origin null is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/referrer-policy/generic/undefined/common/security-features/subresource/xhr.py due to access control checks.
-Referrer Policy: A document with an opaque origin doesn't send referrers
-
-
-
-FAIL Sandboxed iframe with opaque origin doesn't send referrers. assert_equals: expected (undefined) undefined but got (string) "FAILURE"
-FAIL Sandboxed iframe with tuple origin sends referrers. assert_equals: expected "http://localhost:8800/referrer-policy/generic/sandboxed-iframe-with-opaque-origin.html" but got "FAILURE"
-

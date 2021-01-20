@@ -1,3 +1,0 @@
-
-PASS Interrupting an animation by setting 'display: none' should stop invalidating the animation timeline.
-

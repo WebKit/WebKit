@@ -1,3 +1,0 @@
-Tests that a SVG font-face element, in a user agent shadow tree, is allowed to load an external SVG font when the page has CSP policy: font-src 'none'. This test PASSED if there are no console warning messages.
-
-

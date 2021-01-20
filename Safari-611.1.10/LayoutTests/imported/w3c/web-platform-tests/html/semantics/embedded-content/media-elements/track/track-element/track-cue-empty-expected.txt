@@ -1,3 +1,0 @@
-
-PASS Invoke getCueAsHTML() on an empty cue
-

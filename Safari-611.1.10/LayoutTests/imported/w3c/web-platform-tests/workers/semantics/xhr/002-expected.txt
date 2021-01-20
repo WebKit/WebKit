@@ -1,3 +1,0 @@
-
-PASS sync XMLHttpRequest in dedicated worker
-

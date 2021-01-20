@@ -1,4 +1,0 @@
-
-PASS HTML parser must create a defined autonomous custom element when customElements.define comes after HTML parser creation
-PASS HTML parser must create a defined autonomous custom element when customElements.define comes before HTML parser creation
-

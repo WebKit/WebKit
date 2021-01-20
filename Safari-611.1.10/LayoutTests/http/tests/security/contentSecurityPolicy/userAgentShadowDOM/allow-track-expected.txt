@@ -1,4 +1,0 @@
-Tests that a HTML track element, in a user agent shadow tree, is allowed to load when the page has CSP policy: media-src 'none'.
-
-PASS track did load.
-

@@ -1,3 +1,0 @@
-
-FAIL Expecting logs: ["violated-directive=style-src-attr","PASS"] assert_unreached: Logging timeout, expected logs violated-directive=style-src-attr not sent. Reached unreachable code
-

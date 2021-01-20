@@ -1,3 +1,0 @@
-
-PASS Pausing an animation using the animation-play-state property stops animating styles with animation-direction: reverse.
-

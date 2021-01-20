@@ -1,6 +1,0 @@
-This is the top
-
-Click Me
-
-June
-PASS: hit testing found #target after select interaction

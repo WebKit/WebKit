@@ -1,5 +1,0 @@
-
-FAIL em units respond to font-size animation assert_equals: expected "15px" but got "1px"
-FAIL ex units respond to font-size animation assert_equals: expected "6.875px" but got "0.453125px"
-FAIL var() references respond to custom property animation assert_equals: expected "20px" but got "0px"
-

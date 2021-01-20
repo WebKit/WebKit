@@ -1,2 +1,0 @@
-Pass if no crash or assert when the list marker is inside a column spanner.
-

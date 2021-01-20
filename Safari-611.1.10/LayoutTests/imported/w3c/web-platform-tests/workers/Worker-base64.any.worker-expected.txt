@@ -1,3 +1,0 @@
-
-PASS Tests that atob() / btoa() functions are exposed to workers
-

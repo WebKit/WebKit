@@ -1,3 +1,0 @@
-
-PASS bezierCurveTo() with Infinity/NaN is ignored
-

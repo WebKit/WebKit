@@ -1,8 +1,0 @@
- Checks that multisample resolve has no timing issues
-PASS gl.getContextAttributes().antialias is true
-PASS gl.getError() is gl.NO_ERROR
-PASS gl.getError() is gl.NO_ERROR
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

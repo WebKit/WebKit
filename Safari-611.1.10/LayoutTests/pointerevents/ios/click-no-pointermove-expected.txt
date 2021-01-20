@@ -1,3 +1,0 @@
-
-PASS Testing that a synthetic click event does not dispatch a pointermove event for the synthetic mousemove event.
-

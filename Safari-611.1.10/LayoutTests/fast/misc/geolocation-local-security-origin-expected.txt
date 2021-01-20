@@ -1,1 +1,0 @@
-This test makes sure we are not getting a console message stating that geolocation is blocked when the url scheme is local (e.g. file://).

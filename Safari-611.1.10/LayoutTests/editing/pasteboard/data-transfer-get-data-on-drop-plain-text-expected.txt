@@ -1,9 +1,0 @@
-
-{
-    "dragover": {
-        "text/plain": ""
-    },
-    "drop": {
-        "text/plain": "Plain text"
-    }
-}

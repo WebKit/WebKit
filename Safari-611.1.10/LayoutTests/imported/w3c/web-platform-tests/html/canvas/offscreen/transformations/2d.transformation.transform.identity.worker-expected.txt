@@ -1,3 +1,0 @@
-
-PASS transform() with the identity matrix does nothing
-

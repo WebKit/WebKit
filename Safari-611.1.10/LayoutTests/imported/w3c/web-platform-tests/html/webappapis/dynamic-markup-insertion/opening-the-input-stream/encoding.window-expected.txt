@@ -1,3 +1,0 @@
-
-PASS doucment.open() and the document's encoding
-

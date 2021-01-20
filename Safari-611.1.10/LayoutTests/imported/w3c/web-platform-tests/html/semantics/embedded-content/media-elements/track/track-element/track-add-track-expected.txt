@@ -1,3 +1,0 @@
-
-PASS 'addtrack' event is fired when a TextTrack is created
-

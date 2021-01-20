@@ -1,3 +1,0 @@
-
-PASS document.open and no singleton replacement
-

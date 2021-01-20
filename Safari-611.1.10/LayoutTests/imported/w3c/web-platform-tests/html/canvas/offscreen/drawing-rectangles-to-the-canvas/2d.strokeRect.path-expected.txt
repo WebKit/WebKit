@@ -1,7 +1,0 @@
-2d.strokeRect.path
-
-strokeRect does not affect the current path
-
-
-PASS strokeRect does not affect the current path
-

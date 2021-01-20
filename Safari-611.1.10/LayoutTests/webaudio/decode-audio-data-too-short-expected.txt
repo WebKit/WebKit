@@ -1,9 +1,0 @@
-Test that decoding an audio file which is too short does not cause a crash.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

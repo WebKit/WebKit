@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: PASS: window.localStorage WAS accessible
-
-Test that the local storage quirk allows us to access localStorage from a file URL, even if unversal access is turned off.

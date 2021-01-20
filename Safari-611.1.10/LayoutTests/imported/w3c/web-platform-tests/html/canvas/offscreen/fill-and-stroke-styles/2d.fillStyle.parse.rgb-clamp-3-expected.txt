@@ -1,7 +1,0 @@
-2d.fillStyle.parse.rgb-clamp-3
-
-Assumes colours are clamped to [0,255].
-
-
-PASS OffscreenCanvas test: 2d.fillStyle.parse.rgb-clamp-3
-

@@ -1,3 +1,0 @@
-
-FAIL WebSockets: setting Secure cookie with document.cookie, checking ws request assert_unreached: error Reached unreachable code
-

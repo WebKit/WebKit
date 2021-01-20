@@ -1,3 +1,0 @@
-
-PASS Test Clients.get() cross origin
-

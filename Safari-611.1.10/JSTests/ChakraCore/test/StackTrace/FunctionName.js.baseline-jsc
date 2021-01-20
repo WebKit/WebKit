@@ -1,8 +1,0 @@
-foo@FunctionName.js:24:24
-func@FunctionName.js:28:12
-anonymous
-eval code
-eval@[native code]
-FunctionName.js:35:17
-bar@FunctionName.js:36:11
-global code@FunctionName.js:39:8

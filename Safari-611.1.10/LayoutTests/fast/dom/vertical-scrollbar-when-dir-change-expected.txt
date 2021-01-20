@@ -1,6 +1,0 @@
-original scroll y for RTL page : Success
-vertical scroll y for RTL page : Success
-original scroll y for LTR page : Success
-vertical scroll y for LTR page : Success
-
-

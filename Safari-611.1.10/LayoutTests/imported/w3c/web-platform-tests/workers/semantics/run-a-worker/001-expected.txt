@@ -1,3 +1,0 @@
-
-PASS worker global scope, dedicated worker
-

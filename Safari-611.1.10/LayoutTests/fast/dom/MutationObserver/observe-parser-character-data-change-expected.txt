@@ -1,4 +1,0 @@
-This tests observing the character data change by the HTML parser.
-
-PASS
-ab

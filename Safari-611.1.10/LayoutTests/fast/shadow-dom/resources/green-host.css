@@ -1,9 +1,0 @@
-:host, div {
-    /* For the ease of debugging. */
-    display: inline-block;
-    width: 100px;
-    height: 100px;
-
-    color: green;
-    background: green;
-}

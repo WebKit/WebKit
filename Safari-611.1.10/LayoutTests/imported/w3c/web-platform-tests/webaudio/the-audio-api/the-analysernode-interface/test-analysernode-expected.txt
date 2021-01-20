@@ -1,4 +1,0 @@
-
-PASS Test AnalyserNode API
-PASS Test AnalyserNode's ctor API
-

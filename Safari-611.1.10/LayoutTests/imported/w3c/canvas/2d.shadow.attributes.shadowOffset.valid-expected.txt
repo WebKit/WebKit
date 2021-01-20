@@ -1,4 +1,0 @@
-2d.shadow.attributes.shadowOffset.valid
-Spec references: 2d.shadow.offset.get 2d.shadow.offset.set
-Actual output:
-Passed

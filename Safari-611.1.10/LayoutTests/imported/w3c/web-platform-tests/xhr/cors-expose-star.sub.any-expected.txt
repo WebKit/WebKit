@@ -1,5 +1,0 @@
-
-PASS Basic Access-Control-Expose-Headers: * support
-PASS * for credentialed fetches only matches literally
-PASS * can be one of several values
-

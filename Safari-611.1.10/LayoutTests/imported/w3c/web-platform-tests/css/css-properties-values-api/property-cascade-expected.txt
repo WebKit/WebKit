@@ -1,4 +1,0 @@
-
-FAIL Registering a property does not affect cascade inner.computedStyleMap is not a function. (In 'inner.computedStyleMap()', 'inner.computedStyleMap' is undefined)
-FAIL Registering a property does not affect parsing The given initial value does not parse for the given syntax.
-

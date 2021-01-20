@@ -1,3 +1,0 @@
-
-PASS testing background-color: rgba(0.4 127.5 0.3)
-

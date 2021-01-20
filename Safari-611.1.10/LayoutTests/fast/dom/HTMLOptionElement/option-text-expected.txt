@@ -1,9 +1,0 @@
-Test for the text attribute of HTMLOptionElement. Specification.
-
-
-PASS: got "foo" as expected.
-PASS: got "foo" as expected.
-PASS: got "¥" as expected.
-PASS: got "foo bar" as expected.
-PASS: got "text" as expected.
-

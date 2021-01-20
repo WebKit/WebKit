@@ -1,3 +1,0 @@
-
-FAIL IDBObjectStore's keyPath attribute returns the same object. assert_equals: Same object instance is returned each time keyPath is inspected expected ["a", "b"] but got ["a", "b"]
-

@@ -1,3 +1,0 @@
-
-PASS Animation triggers on 'beginEvent'
-

@@ -1,3 +1,0 @@
-
-PASS respondWith() invokes stopImmediatePropagation()
-

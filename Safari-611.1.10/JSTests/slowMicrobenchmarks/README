@@ -1,6 +1,0 @@
-This directory contains tests that were once found in JSTests/microbenchmarks, but were pulled from there
-because they are too slow to run regularly. Now they run only for JSC testing, and only with
-defaultQuickRun.
-
-Only move benchmarks back into JSTests/microbenchmarks if you get them to run in under 100ms on a modern
-Mac.

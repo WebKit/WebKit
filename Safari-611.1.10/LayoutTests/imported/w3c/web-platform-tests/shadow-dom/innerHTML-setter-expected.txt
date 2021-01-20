@@ -1,6 +1,0 @@
-
-FAIL InnerHTML behavior on custom element in default XHTML namespace null is not an object (evaluating 'el.shadowRoot.firstChild')
-PASS Setting up the custom elements
-FAIL InnerHTML behavior on custom element in default 'foo' namespace null is not an object (evaluating 'el.shadowRoot.firstChild')
-PASS InnerHTML behavior with prefixes on custom element
-

@@ -1,2 +1,0 @@
-You should see 1 line with "SUCCESS" below:
-SUCCESS (value: "true")

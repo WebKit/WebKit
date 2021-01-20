@@ -1,3 +1,0 @@
-
-PASS arcTo() does not draw anything from P1 to P2
-

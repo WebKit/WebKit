@@ -1,7 +1,0 @@
-Test for the Heap.garbageCollected event.
-
-
-== Running test suite: Heap.garbageCollected
--- Running test case: TriggerGCs
-PASS: Should see both a Partial and Full Garbage Collection.
-

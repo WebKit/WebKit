@@ -1,5 +1,0 @@
-
-
-PASS keyword use-credentials
-PASS keyword anonymous
-

@@ -1,2 +1,0 @@
-Exception: SyntaxError: Cannot declare a variable named arguments in strict mode.
-at strictargs2-deferred.js:8

@@ -1,3 +1,0 @@
-
-PASS Window object's length IDL attribute (and named access)
-

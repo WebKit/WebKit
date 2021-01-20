@@ -1,3 +1,0 @@
-
-PASS IDBIndex.count() - throw DataError when using invalid key
-

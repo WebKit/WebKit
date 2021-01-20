@@ -1,2 +1,0 @@
-PASS: service worker resolved all extend lifetime promises
-

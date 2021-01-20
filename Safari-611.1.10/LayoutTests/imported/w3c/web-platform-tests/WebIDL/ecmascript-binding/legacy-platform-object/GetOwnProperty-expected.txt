@@ -1,5 +1,0 @@
-
-PASS [[GetOwnProperty]] with getters and no setters
-PASS [[GetOwnProperty]] with named property getters and setters
-PASS [[GetOwnProperty]] with indexed property getters and setters
-

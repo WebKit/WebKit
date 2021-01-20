@@ -1,3 +1,0 @@
-
-PASS <ratio> serializes with spaces around the integer.
-

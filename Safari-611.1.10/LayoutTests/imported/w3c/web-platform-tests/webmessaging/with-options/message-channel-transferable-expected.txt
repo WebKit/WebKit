@@ -1,3 +1,0 @@
-
-PASS MessageChannel's ports as MessagePort objects
-

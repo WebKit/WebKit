@@ -1,5 +1,0 @@
-PASS navigator.language is "hi-in"
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

@@ -1,7 +1,0 @@
-2d.transformation.scale.basic
-
-scale() works
-
-
-PASS scale() works
-

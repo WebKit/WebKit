@@ -1,3 +1,0 @@
-PASS error.code is error.PERMISSION_DENIED.
-PASS error.message is "Origin does not have permission to use Geolocation service".
-

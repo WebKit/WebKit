@@ -1,3 +1,0 @@
-
-FAIL WebSockets: close() when connecting assert_equals: expected 2 but got 3
-

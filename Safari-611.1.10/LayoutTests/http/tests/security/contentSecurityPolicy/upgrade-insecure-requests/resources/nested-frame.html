@@ -1,8 +1,0 @@
-<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-<script src="/js-test-resources/js-test-pre.js"></script>
-<div>
-    <p>The following script is loaded using 'http', but it should be upgraded to 'https' due to the
-'upgrade-insecure-requests' header.</p>
-    <script src="http://127.0.0.1:8443/security/contentSecurityPolicy/resources/alert-pass.js"></script>
-<div>
-<iframe src="https://127.0.0.1:8443/security/contentSecurityPolicy/upgrade-insecure-requests/resources/nested-nested-frame.html"></iframe>

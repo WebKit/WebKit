@@ -1,3 +1,0 @@
-
-PASS installed event should be fired before activating service worker
-

@@ -1,4 +1,0 @@
-
-PASS supportedEntryTypes contains 'resource'.
-PASS 'resource' entries should be observable.
-

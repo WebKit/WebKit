@@ -1,3 +1,0 @@
-
-PASS lineJoin 'bevel' is rendered correctly
-

@@ -1,4 +1,0 @@
- 
-
-PASS A :lang value that matches an identical lang attribute value on a parent element will produce styling.
-

@@ -1,3 +1,0 @@
-
-PASS Attributes first seen in mixed ASCII case should not be corrupted.
-

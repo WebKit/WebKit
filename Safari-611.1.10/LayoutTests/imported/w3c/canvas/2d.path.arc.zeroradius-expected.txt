@@ -1,7 +1,0 @@
-2d.path.arc.zeroradius
-arc() with zero radius draws a line to the start point
-Spec references: 2d.path.arc.zero
-Actual output:
-Expected output:
-
-Passed

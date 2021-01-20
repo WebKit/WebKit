@@ -1,3 +1,0 @@
-
-PASS inlineVerticalFieldOfView is set appropriately on immersively sessions
-

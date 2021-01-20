@@ -1,3 +1,0 @@
-
-PASS Test AudioWorkletNode subclass with parameters
-

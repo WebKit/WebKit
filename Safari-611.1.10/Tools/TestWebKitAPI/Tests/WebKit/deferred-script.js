@@ -1,1 +1,0 @@
-window.webkit.messageHandlers.firstpaint.postMessage("running deferred script");

@@ -1,2 +1,0 @@
-This should not crash or assert in Debug.
-

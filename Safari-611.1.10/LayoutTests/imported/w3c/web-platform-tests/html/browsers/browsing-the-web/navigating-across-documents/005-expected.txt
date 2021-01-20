@@ -1,3 +1,0 @@
-
-PASS Link with onclick navigation and href navigation
- Test

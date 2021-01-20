@@ -1,3 +1,0 @@
-
-PASS service workers are updated on redirects during navigation
-

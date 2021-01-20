@@ -1,3 +1,0 @@
-
-PASS pagehide event fires on history navigation forward
-

@@ -1,5 +1,0 @@
-filesystem: URLs are same-origin with the page in which they were created, but explicitly do not match the 'self' or '*' source in CSP directives because they are more akin to 'unsafe-inline' content, but should match filesystem: source.
-
-
-NOTRUN Expecting logs: ["PASS (1/1)"] No filesystem:// support, cannot run test.
-

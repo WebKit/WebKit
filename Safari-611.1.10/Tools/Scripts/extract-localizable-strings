@@ -1,3 +1,0 @@
-#!/bin/sh
-
-exec("$(dirname $0)/../../Source/WebCore/Scripts/extract-localizable-strings.pl" "$@")

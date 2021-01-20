@@ -1,3 +1,0 @@
-Some text to look up. This part is all selected, but the hit word is elsewhere so that doesn't matter.
-
-Lookup string for outside selected text: 'text'.

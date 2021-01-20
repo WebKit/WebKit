@@ -1,3 +1,0 @@
-Test for bug 75089: Access-Control-Request-Headers values should be lowercase.
-
-PASS

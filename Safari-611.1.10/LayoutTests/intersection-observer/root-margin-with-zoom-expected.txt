@@ -1,3 +1,0 @@
-
-PASS IntersectionObserver's root margin accounts for zooming
-

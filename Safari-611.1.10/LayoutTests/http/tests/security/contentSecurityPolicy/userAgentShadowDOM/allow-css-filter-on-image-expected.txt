@@ -1,4 +1,0 @@
-Tests that an inline stylesheet, in a user agent shadow tree, is allowed to load a SVG filter image when the page has CSP policy: img-src 'none'.
-
-PASS SVG filter image did load.
-

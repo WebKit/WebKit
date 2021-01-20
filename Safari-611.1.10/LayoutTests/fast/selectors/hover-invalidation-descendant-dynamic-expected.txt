@@ -1,5 +1,0 @@
-Test that dynamically activated :hover rule affecting descendants works.
-Hover to see a green box below.
-Hover to see a green box below.
-Selector compiler: PASS
-Selector checker: PASS

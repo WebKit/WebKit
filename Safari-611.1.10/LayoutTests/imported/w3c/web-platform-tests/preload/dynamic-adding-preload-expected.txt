@@ -1,3 +1,0 @@
-
-PASS Makes sure that a dynamically added preloaded resource is downloaded
-

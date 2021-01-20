@@ -1,9 +1,0 @@
-Tests XHR network resource payload is shown with correct encoding.
-
-
-== Running test suite: XHRWithRequestDataEncoding
--- Running test case: XHRWithRequestDataIsEncodedCorrectly
-PASS: Resource should be created.
-PASS: Request data should have expected content.
-PASS: Resource load should finish.
-

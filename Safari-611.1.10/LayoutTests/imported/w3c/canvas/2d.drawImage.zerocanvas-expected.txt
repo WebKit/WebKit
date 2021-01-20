@@ -1,6 +1,0 @@
-2d.drawImage.zerocanvas
-Spec references: 2d.drawImage.zerocanvas
-Actual output:
-Expected output:
-
-Passed

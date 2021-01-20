@@ -1,4 +1,0 @@
-
-PASS initEvent
-PASS Constructor
-

@@ -1,5 +1,0 @@
-Test
-
-
-PASS stylehash allowed from default-src
-

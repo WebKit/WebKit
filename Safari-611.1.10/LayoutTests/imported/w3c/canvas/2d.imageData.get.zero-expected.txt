@@ -1,5 +1,0 @@
-2d.imageData.get.zero
-getImageData() throws INDEX_SIZE_ERR if size is zero
-Spec references: 2d.imageData.getcreate.zero
-Actual output:
-Passed

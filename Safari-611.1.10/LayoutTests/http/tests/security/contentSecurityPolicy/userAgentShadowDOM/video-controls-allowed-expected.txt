@@ -1,3 +1,0 @@
-This test passed if there are no console error messages.
-
-

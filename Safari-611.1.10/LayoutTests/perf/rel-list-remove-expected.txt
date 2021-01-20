@@ -1,8 +1,0 @@
-Tests that relList remove is linear.
-PASS
-PASS
-PASS
-PASS
-PASS
-PASS
-

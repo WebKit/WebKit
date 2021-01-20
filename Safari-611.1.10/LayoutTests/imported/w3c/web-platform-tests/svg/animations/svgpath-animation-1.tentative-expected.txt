@@ -1,3 +1,0 @@
-
-PASS 'by' path animation
-

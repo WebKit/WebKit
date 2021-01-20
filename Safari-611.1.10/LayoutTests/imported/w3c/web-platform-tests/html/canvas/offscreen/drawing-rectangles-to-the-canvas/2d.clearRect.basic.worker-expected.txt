@@ -1,3 +1,0 @@
-
-PASS clearRect clears to transparent black
-

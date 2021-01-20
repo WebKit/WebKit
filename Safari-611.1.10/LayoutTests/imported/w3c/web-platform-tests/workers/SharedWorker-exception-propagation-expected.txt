@@ -1,3 +1,0 @@
-
-FAIL Uncaught error in shared worker should not propagate to window Can't find variable: SharedWorker
-

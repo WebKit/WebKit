@@ -1,6 +1,0 @@
-type.extend
-HTMLCanvasElement methods can be added, and the new methods used by canvases
-Spec references: canvas.type
-Defined in "Web IDL" (draft)
-Actual output:
-Passed

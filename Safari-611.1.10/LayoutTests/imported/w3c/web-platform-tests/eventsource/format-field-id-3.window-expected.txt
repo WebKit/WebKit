@@ -1,5 +1,0 @@
-
-PASS EventSource: lastEventId persists
-PASS EventSource: lastEventId resets
-PASS EventSource: lastEventId resets (id without colon)
-

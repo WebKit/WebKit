@@ -1,3 +1,0 @@
-
-PASS async document.write in a module
-

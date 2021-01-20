@@ -1,3 +1,0 @@
-
-PASS Request with uppercase header set
-

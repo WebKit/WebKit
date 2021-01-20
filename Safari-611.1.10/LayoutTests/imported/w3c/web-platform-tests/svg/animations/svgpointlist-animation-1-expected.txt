@@ -1,3 +1,0 @@
-
-PASS Tests from-to animation of points on polygons.
-

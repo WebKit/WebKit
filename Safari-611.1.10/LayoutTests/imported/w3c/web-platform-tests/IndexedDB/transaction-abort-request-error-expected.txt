@@ -1,3 +1,0 @@
-
-PASS Properties of error events fired at requests when aborting a transaction
-

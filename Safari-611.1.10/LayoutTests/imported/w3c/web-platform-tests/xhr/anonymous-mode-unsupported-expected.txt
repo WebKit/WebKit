@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: anonymous mode unsupported
-

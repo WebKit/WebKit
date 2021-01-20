@@ -1,3 +1,0 @@
-
-PASS pointerevent_root_computed_style
-

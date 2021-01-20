@@ -1,3 +1,0 @@
-
-FAIL scheduler: insert multiple inline scripts; first script deletes subsequent script  null is not an object (evaluating 's.parentNode')
-

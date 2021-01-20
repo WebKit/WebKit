@@ -1,1 +1,0 @@
-(repaint rects (rect 20 0 200 200) )

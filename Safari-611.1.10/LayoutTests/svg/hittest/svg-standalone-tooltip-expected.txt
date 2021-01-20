@@ -1,3 +1,0 @@
-Verifying the SVG document:
-PASS
-

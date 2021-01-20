@@ -1,2 +1,0 @@
-ALERT: Pass if no assert in debug
-

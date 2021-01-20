@@ -1,3 +1,0 @@
-
-PASS An initial observation is fired even when nothing else triggers rendering
-

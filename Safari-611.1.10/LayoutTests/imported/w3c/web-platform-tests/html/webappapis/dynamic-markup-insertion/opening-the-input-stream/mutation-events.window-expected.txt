@@ -1,3 +1,0 @@
-
-PASS document.open(), the HTML parser, and mutation events
-

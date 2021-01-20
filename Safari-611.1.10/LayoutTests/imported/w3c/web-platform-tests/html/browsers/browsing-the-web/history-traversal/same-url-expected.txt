@@ -1,3 +1,0 @@
-
-FAIL Test same-URL navigation and its effects on history assert_equals: expected 1 but got 2
-

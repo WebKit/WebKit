@@ -1,6 +1,0 @@
-Download started.
-Downloading URL with suggested filename "test"abe.png"
-Download completed.
-The suggested filename above should be 'test"abe.png' and the download should succeed.
-
-File backed blob URL

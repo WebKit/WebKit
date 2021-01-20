@@ -1,3 +1,0 @@
-
-PASS Missing arguments cause TypeError
-

@@ -1,3 +1,0 @@
-
-PASS WebSockets: setting Secure cookie with document.cookie, checking ws request
-

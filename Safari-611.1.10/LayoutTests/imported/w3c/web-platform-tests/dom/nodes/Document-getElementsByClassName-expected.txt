@@ -1,3 +1,0 @@
-
-PASS getElementsByClassName() should be a live collection
-

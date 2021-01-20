@@ -1,3 +1,0 @@
-
-PASS The style is not applied when it is disabled
-

@@ -1,8 +1,0 @@
-A 'frame-ancestors' CSP directive with '*' should allow rendering. Note that we can't distinguish blocked URLs from allowed cross-origin URLs due to the same-origin policy. This test PASSED if no console message declares that the frame was blocked.
-
-
-
---------
-Frame: '<!--frame1-->'
---------
-This is an IFrame sending a Content Security Policy header containing "frame-ancestors *".

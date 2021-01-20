@@ -1,3 +1,0 @@
-import "./foo.js";
-
-tosehuas;

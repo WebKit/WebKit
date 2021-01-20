@@ -1,4 +1,0 @@
-success if does not crash
-
-PASS Chrome crash with inline
-

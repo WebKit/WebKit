@@ -1,3 +1,0 @@
-
-PASS  WorkerLocation.hash with no <fragment> component
-

@@ -1,7 +1,0 @@
-SyntaxError: JSON Parse error: Unexpected EOF
-SyntaxError: JSON Parse error: Invalid number
-SyntaxError: JSON Parse error: Unterminated string
-SyntaxError: JSON Parse error: Expected ':' before value in object property definition
-SyntaxError: JSON Parse error: Expected '}'
-SyntaxError: JSON Parse error: Expected ']'
-SyntaxError: JSON Parse error: Unexpected comma at the end of array expression

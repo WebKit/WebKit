@@ -1,6 +1,0 @@
-hello
-
-
-PASS querySelector
-PASS querySelectorAll
-

@@ -1,7 +1,0 @@
-2d.clearRect.globalcomposite
-clearRect is not affected by globalCompositeOperation
-Spec references: 2d.clearRect
-Actual output:
-Expected output:
-
-Passed

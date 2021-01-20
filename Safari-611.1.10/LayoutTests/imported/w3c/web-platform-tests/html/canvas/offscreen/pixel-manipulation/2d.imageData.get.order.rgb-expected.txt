@@ -1,7 +1,0 @@
-2d.imageData.get.order.rgb
-
-getImageData() returns R then G then B
-
-
-PASS getImageData() returns R then G then B
-

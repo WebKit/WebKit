@@ -1,3 +1,0 @@
-
-PASS Animation does not triggers on 'repeat(0)'
-

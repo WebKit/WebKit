@@ -1,3 +1,0 @@
-
-PASS set media after src updates selected image
-

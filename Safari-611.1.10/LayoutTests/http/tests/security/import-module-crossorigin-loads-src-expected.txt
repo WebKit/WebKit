@@ -1,4 +1,0 @@
-ALERT: script ran.
-This test passes if the module script loads.
-
-PASS

@@ -1,3 +1,0 @@
-<Files fetch-cachable.txt>
-	Header set Cache-Control "public, max-age=31556926"
-</Files>

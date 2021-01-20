@@ -1,3 +1,0 @@
-
-PASS <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp"> top-level: navigating a frame to "none" should not fail
-

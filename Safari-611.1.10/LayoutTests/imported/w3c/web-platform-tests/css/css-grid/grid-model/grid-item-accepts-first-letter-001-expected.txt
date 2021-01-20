@@ -1,8 +1,0 @@
-
-PASS .grid,.inline-grid 1
-PASS .grid,.inline-grid 2
-The first item.
-The second item.
-The first item.
-The second item.
-

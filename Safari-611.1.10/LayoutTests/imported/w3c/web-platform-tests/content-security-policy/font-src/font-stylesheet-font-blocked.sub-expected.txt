@@ -1,3 +1,0 @@
-
-FAIL Test font does not load if it does not match font-src. assert_equals: expected "font-src" but got "font-src 'none'"
-

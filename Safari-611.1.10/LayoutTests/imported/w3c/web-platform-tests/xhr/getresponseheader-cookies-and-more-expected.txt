@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: getResponseHeader() custom/non-existent headers and cookies
-

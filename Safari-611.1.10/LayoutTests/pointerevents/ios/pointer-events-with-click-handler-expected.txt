@@ -1,3 +1,0 @@
-
-PASS Verifies that a single pair of pointerup and pointerdown events are dispatched in an element with a click event handler.
-

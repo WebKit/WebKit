@@ -1,3 +1,0 @@
-
-FAIL Fetch in service worker: referrer with origin-when-cross-origin policy undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
-

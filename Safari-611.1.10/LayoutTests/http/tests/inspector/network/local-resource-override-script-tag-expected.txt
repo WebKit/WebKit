@@ -1,8 +1,0 @@
-ALERT: DEFAULT override.js TEXT
-ALERT: OVERRIDDEN override.js TEXT
-Test a LocalResourceOverride overriding a <script> load.
-
-
-== Running test suite: LocalResourceOverride.Script
--- Running test case: LocalResourceOverride.Script.Tag
-

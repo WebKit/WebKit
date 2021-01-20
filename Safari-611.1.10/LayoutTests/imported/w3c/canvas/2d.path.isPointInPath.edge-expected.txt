@@ -1,5 +1,0 @@
-2d.path.isPointInPath.edge
-isPointInPath() counts points on the path as being inside
-Spec references: 2d.path.isPointInPath.edge
-Actual output:
-Passed

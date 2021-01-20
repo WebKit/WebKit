@@ -1,6 +1,0 @@
-This tests that select elements have the correct role.
-
-
-
-PASS accessibilityController.focusedElement.role is "AXRole: AXComboBox"
-

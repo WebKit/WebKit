@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
-
-PASS cached event test
-

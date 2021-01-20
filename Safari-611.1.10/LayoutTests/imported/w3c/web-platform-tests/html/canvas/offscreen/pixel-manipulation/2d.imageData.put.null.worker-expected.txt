@@ -1,3 +1,0 @@
-
-PASS putImageData() with null imagedata throws TypeError
-

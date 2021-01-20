@@ -1,3 +1,0 @@
-
-PASS Service Worker state property and "statechange" event
-

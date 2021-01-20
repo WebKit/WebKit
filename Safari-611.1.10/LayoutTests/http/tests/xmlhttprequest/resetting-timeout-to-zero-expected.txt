@@ -1,3 +1,0 @@
-
-PASS Resetting a timeout to zero after sending the request
-

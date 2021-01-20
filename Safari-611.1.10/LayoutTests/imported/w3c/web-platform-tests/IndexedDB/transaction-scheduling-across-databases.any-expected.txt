@@ -1,3 +1,0 @@
-
-PASS Check that transactions in different databases can run in parallel.
-

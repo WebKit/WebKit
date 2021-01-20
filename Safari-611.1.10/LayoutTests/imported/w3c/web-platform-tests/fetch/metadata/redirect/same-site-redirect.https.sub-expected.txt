@@ -1,9 +1,0 @@
-Blocked access to external URL https://www.localhost:9443/xhr/resources/redirect.py?location=https://localhost:9443/fetch/metadata/resources/record-header.py?file=redirect-same-site-same-origin4894cf22-4d3e-45f7-b9d2-a4c9e24e61e7
-Blocked access to external URL https://www.localhost:9443/xhr/resources/redirect.py?location=https://localhost:9443/fetch/metadata/resources/record-header.py?file=redirect-same-site-same-site4894cf22-4d3e-45f7-b9d2-a4c9e24e61e7
-Blocked access to external URL https://www.localhost:9443/xhr/resources/redirect.py?location=https://www.127.0.0.1:9443/fetch/metadata/resources/record-header.py?file=redirect-same-site-cross-site4894cf22-4d3e-45f7-b9d2-a4c9e24e61e7
-
-
-FAIL Same-Site -> Same-Origin redirect assert_not_equals: got disallowed value "No header has been recorded"
-FAIL Same-Site -> Same-Site redirect assert_not_equals: got disallowed value "No header has been recorded"
-FAIL Same-Site -> Cross-Site redirect assert_not_equals: got disallowed value "No header has been recorded"
-

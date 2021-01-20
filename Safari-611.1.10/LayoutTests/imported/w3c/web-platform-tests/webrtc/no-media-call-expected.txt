@@ -1,6 +1,0 @@
-
-PASS Can set up a basic WebRTC call with no data.
-iceConnectionState info
-
-First: completed
-Second: connected

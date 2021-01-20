@@ -1,3 +1,0 @@
-
-PASS A CSS Animation cannot be created on a <noscript> element.
-

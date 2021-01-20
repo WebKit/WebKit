@@ -1,2 +1,0 @@
-This test passes if this img tag below is empty and displays nothing. It ensures that the srcset attribute supports various forms of valid data uri schemes
-

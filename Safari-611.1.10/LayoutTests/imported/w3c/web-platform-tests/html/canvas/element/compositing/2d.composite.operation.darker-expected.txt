@@ -1,5 +1,0 @@
-2d.composite.operation.darker
-Actual output:
-
-FAIL Canvas test: 2d.composite.operation.darker assert_equals: ctx.globalCompositeOperation === 'xor' (got darker[string], expected xor[string]) expected "xor" but got "darker"
-

@@ -1,3 +1,0 @@
-
-PASS IDBCursor.continue() - objectstore - delete next element, and iterate to it
-

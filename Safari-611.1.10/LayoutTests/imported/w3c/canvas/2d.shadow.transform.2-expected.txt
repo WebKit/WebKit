@@ -1,7 +1,0 @@
-2d.shadow.transform.2
-Shadow offsets are not affected by transformations
-Spec references: 2d.shadow.render
-Actual output:
-Expected output:
-
-Passed

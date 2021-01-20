@@ -1,3 +1,0 @@
-This tests add scroll event listener to a document without browsing context. WebKit should not crash.
-
-PASS

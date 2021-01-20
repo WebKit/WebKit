@@ -1,3 +1,0 @@
-
-PASS Script src with an empty URL
-

@@ -1,3 +1,0 @@
-
-PASS CSS Shapes Test - shape-outside invalid shape
-

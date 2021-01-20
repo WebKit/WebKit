@@ -1,7 +1,0 @@
-size.attributes.style
-Canvas size is independent of CSS resizing
-Spec references: size.css
-Actual output:
-Expected output:
-
-Passed

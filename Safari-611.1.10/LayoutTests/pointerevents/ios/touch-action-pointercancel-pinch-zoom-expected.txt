@@ -1,3 +1,0 @@
-
-PASS Testing that pinching on an element with touch-action: pinch-zoom triggers a pointercancel event for each touch.
-

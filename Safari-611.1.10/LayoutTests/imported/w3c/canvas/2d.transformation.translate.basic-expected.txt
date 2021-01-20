@@ -1,7 +1,0 @@
-2d.transformation.translate.basic
-translate() works
-Spec references: 2d.transformation.translate
-Actual output:
-Expected output:
-
-Passed

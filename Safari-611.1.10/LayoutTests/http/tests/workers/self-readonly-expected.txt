@@ -1,2 +1,0 @@
-CONSOLE MESSAGE: NaN
-Test passes if "NaN" is returned by the worker.

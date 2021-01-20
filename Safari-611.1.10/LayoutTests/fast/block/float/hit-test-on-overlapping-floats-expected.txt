@@ -1,6 +1,0 @@
-PASS document.elementFromPoint(450, 10) is document.getElementById('rightc')
-PASS successfullyParsed is true
-
-TEST COMPLETE
-foobar
-

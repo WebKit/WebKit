@@ -1,4 +1,0 @@
-Test of firstElementChild with namespaces
-
-PASS firstElementChild with namespaces
-

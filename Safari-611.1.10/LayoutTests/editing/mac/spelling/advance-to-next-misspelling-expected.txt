@@ -1,5 +1,0 @@
-Advancing to the next misspelling (cmd+; on macOS) should select the word 'mispelled'.
-| <p>
-|   id="start"
-|   <br>
-|   "<#selection-anchor>mispelled<#selection-focus>"

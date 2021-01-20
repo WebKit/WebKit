@@ -1,6 +1,0 @@
-EVENT(webkitfullscreenchange)
-EXPECTED (document.webkitCurrentFullScreenElement == '[object HTMLHtmlElement]') OK
-EVENT(webkitfullscreenchange)
-EXPECTED (document.webkitCurrentFullScreenElement == '[object HTMLSpanElement]') OK
-END OF TEST
-

@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: current entries: 0
-PASS foundResources.length is 2
-

@@ -1,3 +1,0 @@
-
-PASS Transitions on ::before/::after pseudo-elements are canceled when the content property is cleared
-

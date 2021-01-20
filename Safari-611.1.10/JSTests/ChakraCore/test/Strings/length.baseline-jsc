@@ -1,3 +1,0 @@
-createFunction called
-x
-TypeError: x.length is not a function. (In 'x.length()', 'x.length' is 1)

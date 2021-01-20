@@ -1,7 +1,0 @@
-cheerio
-germannish
-
-elvish
-
-and more english
-Passed

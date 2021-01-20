@@ -1,3 +1,0 @@
-
-PASS arc() with missing last argument defaults to clockwise
-

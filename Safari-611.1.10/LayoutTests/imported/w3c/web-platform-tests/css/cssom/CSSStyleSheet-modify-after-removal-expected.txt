@@ -1,5 +1,0 @@
-
-
-PASS Modify sheet from removed iframe
-FAIL Modify constructed sheet from removed iframe Illegal constructor
-

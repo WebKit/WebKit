@@ -1,3 +1,0 @@
-
-PASS Setting width/height IDL attributes to 0
-

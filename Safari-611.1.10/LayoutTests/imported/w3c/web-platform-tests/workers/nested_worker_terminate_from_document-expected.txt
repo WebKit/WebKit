@@ -1,3 +1,0 @@
-
-FAIL Test terminating a chain of nested workers by calling terminate() from the owning document assert_equals: expected "Pass" but got "Fail: ReferenceError: Can't find variable: Worker"
-

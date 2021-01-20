@@ -1,3 +1,0 @@
-
-PASS Cross-Origin-Resource-Policy: same-site blocks retrieving HTTPS from HTTP
-

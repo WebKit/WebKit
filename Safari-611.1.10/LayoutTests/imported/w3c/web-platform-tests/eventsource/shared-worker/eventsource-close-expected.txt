@@ -1,3 +1,0 @@
-
-FAIL shared worker - EventSource: close() Can't find variable: SharedWorker
-

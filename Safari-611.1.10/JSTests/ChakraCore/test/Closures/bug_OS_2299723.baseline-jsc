@@ -1,4 +1,0 @@
-x: 5
-eval('var y = 5') threw 'Attempted to assign to readonly property.'
-eval('y = 5') threw 'Attempted to assign to readonly property.'
-y: 1

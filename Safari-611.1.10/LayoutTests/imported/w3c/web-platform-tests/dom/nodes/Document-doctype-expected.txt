@@ -1,4 +1,0 @@
-
-PASS Window document with doctype
-PASS new Document()
-

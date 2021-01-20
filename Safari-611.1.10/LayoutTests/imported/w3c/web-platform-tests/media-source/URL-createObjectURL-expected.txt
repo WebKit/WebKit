@@ -1,3 +1,0 @@
-
-PASS URL.createObjectURL(mediaSource) should return a unique Blob URI.
-

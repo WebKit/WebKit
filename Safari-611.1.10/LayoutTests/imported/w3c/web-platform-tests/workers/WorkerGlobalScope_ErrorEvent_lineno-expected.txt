@@ -1,3 +1,0 @@
-
-PASS  WorkerGlobalScope onerror event handler argument: line
-

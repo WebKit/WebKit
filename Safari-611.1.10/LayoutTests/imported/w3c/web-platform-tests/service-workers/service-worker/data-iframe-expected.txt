@@ -1,4 +1,0 @@
-
-
-PASS navigator.serviceWorker is not available in a data: iframe
-

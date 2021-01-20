@@ -1,6 +1,0 @@
-
-PASS defineProperty setter CONNECTING
-PASS defineProperty setter OPEN
-PASS defineProperty setter CLOSING
-PASS defineProperty setter CLOSED
-

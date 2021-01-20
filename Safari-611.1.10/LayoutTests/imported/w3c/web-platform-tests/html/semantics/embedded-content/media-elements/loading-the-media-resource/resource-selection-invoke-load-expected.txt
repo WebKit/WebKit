@@ -1,3 +1,0 @@
-
-FAIL invoking resource selection with load() assert_equals: networkState in separate script expected 0 but got 3
-

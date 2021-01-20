@@ -1,4 +1,0 @@
-* Tests that self.registration always returns the same object
-
-PASS: returned object was the same
-

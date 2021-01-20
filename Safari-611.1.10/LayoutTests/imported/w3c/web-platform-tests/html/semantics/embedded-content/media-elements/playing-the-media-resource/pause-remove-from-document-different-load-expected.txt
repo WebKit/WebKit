@@ -1,3 +1,0 @@
-
-PASS paused state when removing from a document
-

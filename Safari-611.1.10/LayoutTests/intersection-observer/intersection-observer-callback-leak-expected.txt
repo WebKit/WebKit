@@ -1,3 +1,0 @@
-
-PASS test: Nodes inside callback should be garbage collected if no one refers to it
-

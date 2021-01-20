@@ -1,6 +1,0 @@
-Test that we do not crash when repeatedly accessing properties of a cross-origin Window.
-
-This test passes if it does not crash
-
-
-PASS

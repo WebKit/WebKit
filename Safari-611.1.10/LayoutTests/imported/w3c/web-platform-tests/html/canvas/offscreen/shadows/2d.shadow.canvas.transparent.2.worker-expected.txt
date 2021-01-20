@@ -1,3 +1,0 @@
-
-PASS Shadows are not drawn for transparent parts of canvases
-

@@ -1,4 +1,0 @@
-
-PASS HTMLTrackElement.readyState default value
-PASS HTMLTrackElement.readyState values
-

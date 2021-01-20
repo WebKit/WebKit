@@ -1,2 +1,0 @@
-CONSOLE MESSAGE: Blocked attempt to show beforeunload confirmation dialog on behalf of a frame with different security origin. Protocols, domains, and ports must match.
-

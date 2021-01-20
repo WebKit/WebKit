@@ -1,3 +1,0 @@
-Confirm that svg element with document as parent is handled without crashing
-
-PASS

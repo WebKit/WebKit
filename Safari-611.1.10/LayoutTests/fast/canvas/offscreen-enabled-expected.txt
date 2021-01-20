@@ -1,3 +1,0 @@
-createImageBitmap exists
-
-OffscreenCanvas exists

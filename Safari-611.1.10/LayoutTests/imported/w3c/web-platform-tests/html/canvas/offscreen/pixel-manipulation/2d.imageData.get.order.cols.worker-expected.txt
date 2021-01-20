@@ -1,3 +1,0 @@
-
-PASS getImageData() returns leftmost columns first
-

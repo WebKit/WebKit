@@ -1,3 +1,0 @@
-Test that setRequestHeader throws a SYNTAX_ERR exception when called with an empty header name.
-
-SUCCESS: got exception SyntaxError: The string did not match the expected pattern.

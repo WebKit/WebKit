@@ -1,3 +1,0 @@
-
-PASS Negative destination width/height represents the correct rectangle
-

@@ -1,5 +1,0 @@
-2d.imageData.get.order.cols
-getImageData() returns leftmost columns first
-Spec references: 2d.pixelarray.order
-Actual output:
-Passed

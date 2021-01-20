@@ -1,9 +1,0 @@
-function
-function () {
-    [native code]
-}
-undefined
-undefined
-undefined
-TypeError: function is not a constructor (evaluating 'new Function.prototype()')
-TypeError: instanceof called on an object with an invalid prototype property.

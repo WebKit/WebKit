@@ -1,3 +1,0 @@
-
-PASS body.onload should set the window.onload handler
-

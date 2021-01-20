@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: abort() should not reset event listeners
-

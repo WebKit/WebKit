@@ -1,6 +1,0 @@
-Tests zooming into a text input on tap.
-
-
-tap location	{ x: 38.000, y: 862.000 }
-scale	1.455
-visibleRect	{ left: 0.000, top: 776.799, width: 219.979, height: 376.713 }

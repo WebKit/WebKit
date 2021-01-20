@@ -1,2 +1,0 @@
-http://127.0.0.1:8000/security/mixedContent/resources/subresource/protected-page.php - didReceiveAuthenticationChallenge - Responding with testUser:testPassword
-Authenticated with username testUser.

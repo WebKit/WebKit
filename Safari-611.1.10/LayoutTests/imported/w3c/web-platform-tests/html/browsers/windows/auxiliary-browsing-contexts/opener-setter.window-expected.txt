@@ -1,9 +1,0 @@
-
-FAIL Setting window.opener to undefined assert_equals: expected (string) "x" but got (undefined) undefined
-FAIL Setting window.opener to 42 assert_equals: expected (string) "x" but got (number) 42
-FAIL Setting window.opener to function () { return "hi" } assert_equals: expected (string) "x" but got (function) function "function () { return "hi" }"
-FAIL Setting window.opener to hi assert_equals: expected "x" but got "hi"
-FAIL Setting window.opener to [object Object] assert_equals: expected (string) "x" but got (object) object "[object Object]"
-FAIL Setting window.opener to  assert_equals: expected (string) "x" but got (object) []
-FAIL Setting window.opener to Symbol() assert_equals: expected (string) "x" but got (symbol) symbol "Symbol()"
-

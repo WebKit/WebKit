@@ -1,3 +1,0 @@
-
-PASS The same scripts work on both HTML and SVG elements
-

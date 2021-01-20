@@ -1,3 +1,0 @@
-
-PASS test: IntersectionObserverCallbacks stay alive if according observers is alive
-

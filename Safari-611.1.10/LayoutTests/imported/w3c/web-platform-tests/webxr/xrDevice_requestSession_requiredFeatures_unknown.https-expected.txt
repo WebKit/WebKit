@@ -1,3 +1,0 @@
-
-PASS Tests requestSession rejects for unknown requiredFeatures
-

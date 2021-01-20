@@ -1,3 +1,0 @@
-
-PASS Preflight cache should allow second request
-

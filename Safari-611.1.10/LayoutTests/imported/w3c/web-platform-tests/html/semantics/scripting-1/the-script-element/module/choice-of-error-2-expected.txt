@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: SyntaxError: Importing binding name 'default' cannot be resolved by star export entries.
-CONSOLE MESSAGE: SyntaxError: Importing binding name 'default' cannot be resolved by star export entries.
-
-FAIL Instantiation errors in different files should be reported depending on different roots null is not an object (evaluating 'log[0].constructor')
-

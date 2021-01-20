@@ -1,5 +1,0 @@
-Test requires popup blocker disabled
-
-
-PASS API availability following history traversal
-

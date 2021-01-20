@@ -1,3 +1,0 @@
-
-PASS Ensure that the 'cuechange' event is not fired before video playback has begun.
-

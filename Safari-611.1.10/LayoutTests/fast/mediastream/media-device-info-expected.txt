@@ -1,4 +1,0 @@
-
-PASS Test properties of MediaDeviceInfo
-PASS Ensure enumerateDevices exposes both microphone and camera
-

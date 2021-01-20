@@ -1,2 +1,0 @@
-This tests that XMLSerializer.serializeToString() correctly writes out an empty default namespace declaration if the element is not in any namespace.
-<x xmlns="foo"><y xmlns=""/></x>

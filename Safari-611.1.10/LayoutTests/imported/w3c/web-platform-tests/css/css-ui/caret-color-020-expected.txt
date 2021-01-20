@@ -1,4 +1,0 @@
-
-
-FAIL caret-color: currentcolor is interpolable textarea.animate is not a function. (In 'textarea.animate(keyframes, options)', 'textarea.animate' is undefined)
-

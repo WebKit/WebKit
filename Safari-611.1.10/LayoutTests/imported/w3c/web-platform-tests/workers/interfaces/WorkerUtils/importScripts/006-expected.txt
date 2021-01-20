@@ -1,6 +1,0 @@
-CONSOLE MESSAGE: DataCloneError: The object can not be cloned.
-
-Harness Error (FAIL), message = DataCloneError: The object can not be cloned.
-
-TIMEOUT importScripts uncaught exception Test timed out
-

@@ -1,3 +1,0 @@
-
-PASS IFrame discards are processed synchronously
-

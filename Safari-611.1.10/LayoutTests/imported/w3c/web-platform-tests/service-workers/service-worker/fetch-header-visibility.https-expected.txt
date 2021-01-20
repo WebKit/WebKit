@@ -1,3 +1,0 @@
-
-PASS Visibility of defaulted headers during interception
-

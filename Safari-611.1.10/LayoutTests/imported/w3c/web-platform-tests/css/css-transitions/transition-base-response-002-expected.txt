@@ -1,4 +1,0 @@
-
-
-FAIL Transitioning font-size on root affects rem units assert_equals: expected "15px" but got "16.5px"
-

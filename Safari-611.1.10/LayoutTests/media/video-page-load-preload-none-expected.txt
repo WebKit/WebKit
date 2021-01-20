@@ -1,8 +1,0 @@
-
-Test the document's load event is not delayed when a movie's preload attribute is "none".
-
-
-inline script
-EVENT(load)
-END OF TEST
-

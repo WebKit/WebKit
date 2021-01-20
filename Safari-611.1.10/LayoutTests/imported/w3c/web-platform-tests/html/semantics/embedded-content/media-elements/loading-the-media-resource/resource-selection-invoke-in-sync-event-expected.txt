@@ -1,3 +1,0 @@
-
-FAIL await a stable state and sync event handlers assert_equals: networkState in separate script expected 0 but got 3
-

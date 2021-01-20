@@ -1,4 +1,0 @@
-
-PASS worker
-FAIL shared Can't find variable: SharedWorker
-

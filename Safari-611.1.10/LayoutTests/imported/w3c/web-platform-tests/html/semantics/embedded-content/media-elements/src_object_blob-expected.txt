@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: Not allowed to load local resource: blob:blobinternal:///c560bf8a-80fc-4466-85f2-a199a6a3d49b
-
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT HTMLMediaElement.srcObject blob Test timed out
-

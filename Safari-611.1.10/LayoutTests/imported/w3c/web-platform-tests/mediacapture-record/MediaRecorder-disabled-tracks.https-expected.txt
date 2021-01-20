@@ -1,5 +1,0 @@
-
-PASS video-only
-PASS audio-only
-PASS audio-video
-

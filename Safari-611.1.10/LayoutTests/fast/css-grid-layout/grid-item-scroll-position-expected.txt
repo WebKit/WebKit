@@ -1,3 +1,0 @@
-
-PASS Checks that scroll position is kept when grid item content is modified.
-BBB

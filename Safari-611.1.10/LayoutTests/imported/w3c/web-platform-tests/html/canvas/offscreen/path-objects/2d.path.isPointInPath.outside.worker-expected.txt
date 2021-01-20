@@ -1,3 +1,0 @@
-
-PASS isPointInPath() works on paths outside the canvas
-

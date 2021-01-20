@@ -1,3 +1,0 @@
-Tests that iterating over HTMLCollection backwards is linear.
-PASS
-

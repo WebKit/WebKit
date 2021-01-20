@@ -1,2 +1,0 @@
-This test succeeds if the two blocks show red and green repectively: SUCCESS
-

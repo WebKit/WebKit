@@ -1,7 +1,0 @@
-v=0
-o=bob 2808844564 2808844564 IN IP4 host.biloxi.example.com
-s=
-c=IN IP4 0.0.0.0
-t=0 0
-m=audio 9322 RTP/AVP 97
-a=rtpmap:97 iLBC/8000

@@ -1,4 +1,0 @@
-
-PASS simpleEnum
-PASS enumWithExplicitIntBase
-

@@ -1,3 +1,0 @@
-
-PASS Callback is invoked with |this| value of MutationObserver and two arguments
-

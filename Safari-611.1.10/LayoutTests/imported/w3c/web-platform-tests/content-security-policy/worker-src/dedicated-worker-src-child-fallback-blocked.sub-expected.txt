@@ -1,6 +1,0 @@
-CONSOLE MESSAGE: Refused to load http://localhost:8800/content-security-policy/support/ping.js because it does not appear in the child-src directive of the Content Security Policy.
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Same-origin dedicated worker allowed by worker-src 'self'. Test timed out
-

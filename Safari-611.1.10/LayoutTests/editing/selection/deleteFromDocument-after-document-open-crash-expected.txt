@@ -1,3 +1,0 @@
-This calling deleteFromDocument after document.open. WebKit should not crash.
-PASS
-

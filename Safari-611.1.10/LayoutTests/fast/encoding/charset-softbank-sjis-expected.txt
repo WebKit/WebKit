@@ -1,6 +1,0 @@
-PASS document.characterSet is 'UTF-8'
-PASS 'é' is 'é'
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

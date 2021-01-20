@@ -1,2 +1,0 @@
-Before: selection type is Caret
-After: selection type is Caret

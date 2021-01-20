@@ -1,3 +1,0 @@
-
-PASS outerHTML: child of #document
-

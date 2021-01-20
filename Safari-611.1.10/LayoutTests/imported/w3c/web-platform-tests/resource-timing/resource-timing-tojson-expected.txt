@@ -1,3 +1,0 @@
-
-PASS Test toJSON() in PerformanceResourceTiming
-

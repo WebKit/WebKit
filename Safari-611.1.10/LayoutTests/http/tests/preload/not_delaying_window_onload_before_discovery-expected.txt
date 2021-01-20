@@ -1,8 +1,0 @@
-PASS finishedScript is false
-PASS finishedImage is false
-PASS successfullyParsed is true
-
-TEST COMPLETE
-PASS windowOnLoad is true
-PASS windowOnLoad is true
-

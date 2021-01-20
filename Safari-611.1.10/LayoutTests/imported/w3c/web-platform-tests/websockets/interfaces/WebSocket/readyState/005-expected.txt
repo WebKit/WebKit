@@ -1,3 +1,0 @@
-
-PASS WebSockets: defineProperty setter for readyState
-

@@ -1,3 +1,0 @@
-
-PASS Module integrity check is ignored if target module is already cached
-

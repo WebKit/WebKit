@@ -1,3 +1,0 @@
-
-PASS WebSockets: getting protocol in connecting
-

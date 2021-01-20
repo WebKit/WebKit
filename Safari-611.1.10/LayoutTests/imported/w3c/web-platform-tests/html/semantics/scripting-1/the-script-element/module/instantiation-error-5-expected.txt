@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: SyntaxError: Importing binding name 'something' is not found.
-CONSOLE MESSAGE: SyntaxError: Importing binding name 'something' is not found.
-
-FAIL Test that loading a graph in which a module is already errored results an error. null is not an object (evaluating 'ev.error.constructor')
-

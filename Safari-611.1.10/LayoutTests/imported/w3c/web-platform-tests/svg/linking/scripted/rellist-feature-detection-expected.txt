@@ -1,3 +1,0 @@
-
-PASS Make sure that relList based feature detection is working
-

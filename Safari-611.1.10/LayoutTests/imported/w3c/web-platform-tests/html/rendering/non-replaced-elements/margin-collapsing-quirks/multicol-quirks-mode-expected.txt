@@ -1,3 +1,0 @@
-
-PASS multicol default styles (quirks mode)
-

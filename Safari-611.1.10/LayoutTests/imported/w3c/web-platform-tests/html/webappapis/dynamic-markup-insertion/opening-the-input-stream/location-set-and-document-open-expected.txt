@@ -1,4 +1,0 @@
-
-
-PASS Location sets should cancel current navigation and prevent later document.open() from doing anything
-

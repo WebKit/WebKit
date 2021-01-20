@@ -1,3 +1,0 @@
-
-PASS restore() with an empty stack has no effect
-

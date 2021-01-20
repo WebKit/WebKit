@@ -1,6 +1,0 @@
-CONSOLE MESSAGE: Error: Error from only listener
-CONSOLE MESSAGE: Error: Error from first listener
-
-PASS Throwing in event listener with a single listeners
-PASS Throwing in event listener with multiple listeners
-

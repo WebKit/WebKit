@@ -1,4 +1,0 @@
-This tests that inline does not assert when its composite state changes.
-if (window.testRunner) testRunner.dumpAsText();
-* { display: inline-flex; flex-basis: 1; }
-PASS if no assert in debug.

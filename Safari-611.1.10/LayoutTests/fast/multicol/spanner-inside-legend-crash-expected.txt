@@ -1,2 +1,0 @@
-
-spanners should be ignored inside legends(legends are not part of the flow)

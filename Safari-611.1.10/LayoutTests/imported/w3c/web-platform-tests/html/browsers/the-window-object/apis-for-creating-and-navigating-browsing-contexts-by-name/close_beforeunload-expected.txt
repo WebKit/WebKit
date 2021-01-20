@@ -1,3 +1,0 @@
-
-PASS Running beforeunload handler in window.close()
-

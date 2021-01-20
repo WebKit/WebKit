@@ -1,3 +1,0 @@
-
-PASS Transformations are applied while building paths, not when drawing
-

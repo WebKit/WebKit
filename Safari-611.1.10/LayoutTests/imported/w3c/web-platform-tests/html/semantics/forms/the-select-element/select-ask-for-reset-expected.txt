@@ -1,5 +1,0 @@
-
-PASS ask for reset on node remove, non multiple.
-PASS ask for reset on node insert, non multiple.
-PASS change selectedness of option, non multiple.
-

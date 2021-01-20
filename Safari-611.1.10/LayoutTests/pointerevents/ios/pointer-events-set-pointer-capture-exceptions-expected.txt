@@ -1,3 +1,0 @@
-
-PASS The setPointerCapture() method can throw.
-

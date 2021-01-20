@@ -1,3 +1,0 @@
-
-PASS Async property on a dynamically-created script is true by default
-

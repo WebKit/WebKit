@@ -1,3 +1,0 @@
-
-PASS enumerateDevices() anonymizes microphone and track labels correctly
-

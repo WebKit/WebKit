@@ -1,8 +1,0 @@
-
-FAIL custom property '--a' assert_equals: property value returned correctly from specified style getPropertyValue (after serialization/re-parsing) expected "value" but got " value"
-FAIL custom property '--a;b' assert_equals: appears on specified style (after serialization/re-parsing) expected 1 but got 0
-FAIL custom property '---' assert_equals: property value returned correctly from specified style getPropertyValue (after serialization/re-parsing) expected "value" but got " value"
-FAIL custom property '--\' assert_equals: appears on specified style (after serialization/re-parsing) expected 1 but got 0
-FAIL custom property '--ab' assert_equals: property value returned correctly from specified style getPropertyValue (after serialization/re-parsing) expected "value" but got " value"
-FAIL custom property '--0' assert_equals: property value returned correctly from specified style getPropertyValue (after serialization/re-parsing) expected "value" but got " value"
-

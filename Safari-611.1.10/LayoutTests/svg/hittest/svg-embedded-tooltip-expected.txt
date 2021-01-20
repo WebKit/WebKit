@@ -1,8 +1,0 @@
-
-
-Verifying the inline SVG:
-PASS
-
-Verifying the embedded SVG:
-PASS
-

@@ -1,4 +1,0 @@
-
-PASS Link with onclick form submit to javascript url and href navigation
-
-Test

@@ -1,3 +1,0 @@
-
-PASS duration initial value
-

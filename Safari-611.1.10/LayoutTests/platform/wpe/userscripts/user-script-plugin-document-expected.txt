@@ -1,2 +1,0 @@
-CONSOLE MESSAGE: End Script: user-script-plugin-document.html
-

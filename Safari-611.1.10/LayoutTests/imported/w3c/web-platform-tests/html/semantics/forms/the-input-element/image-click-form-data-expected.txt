@@ -1,4 +1,0 @@
-
-
-FAIL Image submit button should not add extra form data if 'value' attribute is present with non-empty value assert_equals: expected "http://localhost:8800/html/semantics/forms/the-input-element/resources/image-submit-click.html?name.x=0&name.y=0" but got "http://localhost:8800/html/semantics/forms/the-input-element/resources/image-submit-click.html?name.x=0&name.y=0&name=value"
-

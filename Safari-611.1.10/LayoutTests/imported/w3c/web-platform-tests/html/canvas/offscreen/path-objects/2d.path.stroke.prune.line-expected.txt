@@ -1,7 +1,0 @@
-2d.path.stroke.prune.line
-
-Zero-length line segments from lineTo are removed before stroking
-
-
-PASS Zero-length line segments from lineTo are removed before stroking
-

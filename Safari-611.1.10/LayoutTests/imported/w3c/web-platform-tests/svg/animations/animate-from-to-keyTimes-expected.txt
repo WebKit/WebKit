@@ -1,3 +1,0 @@
-
-PASS Tests discrete from-to-keyTimes animations
-

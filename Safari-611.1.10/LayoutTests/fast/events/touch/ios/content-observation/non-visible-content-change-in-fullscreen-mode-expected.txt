@@ -1,4 +1,0 @@
-PASS if 'clicked' text is shown below.
-clicked
-END OF TEST
-

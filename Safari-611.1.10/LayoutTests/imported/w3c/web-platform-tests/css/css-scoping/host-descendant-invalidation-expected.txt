@@ -1,3 +1,0 @@
-
-PASS CSS Test: element style is correctly updated for rule with :host
-

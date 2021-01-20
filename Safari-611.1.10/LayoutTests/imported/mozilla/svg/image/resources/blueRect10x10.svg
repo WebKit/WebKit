@@ -1,6 +1,0 @@
-<!-- Helper SVG file used by some reftests -->
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="root">
-  <rect x="0"  y="0"  width="10" height="10" fill="blue"/>
-  <rect x="1" y="1" width="8"  height="8"  fill="lightblue"/>
-  <rect x="1" y="1" width="8"  height="4"  fill="teal"/>
-</svg>

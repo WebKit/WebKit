@@ -1,3 +1,0 @@
-
-PASS output value and defaultValue
-20

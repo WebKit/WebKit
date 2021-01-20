@@ -1,3 +1,0 @@
-
-PASS Ensure that XRWebGLLayer's constructor throws appropriate errors
-

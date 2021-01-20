@@ -1,4 +1,0 @@
-window size: [1208, 1579]
-zoom scale: 0.64
-
-

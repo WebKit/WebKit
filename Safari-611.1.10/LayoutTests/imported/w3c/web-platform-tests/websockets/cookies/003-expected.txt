@@ -1,3 +1,0 @@
-
-PASS WebSockets: sending HttpOnly cookies in ws request
-

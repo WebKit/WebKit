@@ -1,4 +1,0 @@
-This tests copying an image which is a direct child of a shadow root. To manually test, copy the image by pressing command / control + c. WebKit should not crash or hit an assertion.
-
-PASS - WebKit did not crash
-

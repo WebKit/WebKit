@@ -1,6 +1,0 @@
-PASS arrow key div scrolled to second div.
-PASS arrow key div scrolled back to first div.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

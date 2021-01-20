@@ -1,3 +1,0 @@
-
-PASS lineCap 'butt' is rendered correctly
-

@@ -1,8 +1,0 @@
-This tests for a hang when turning a selection that starts before a table and ends inside that table into a list. You should see one list item with the table. There is a bug that causes an extra empty list item to be created after the table.
-
-foo
-
-
-bar
-
-

@@ -1,5 +1,0 @@
-This tests scheduling a scroll event on an element then removing the element.
-WebKit should not collect its JS wrappers.
-
-PASS
-

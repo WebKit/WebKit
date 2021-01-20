@@ -1,3 +1,0 @@
-Original iconURL is: http://test.com/barfavicon.ico
-PASS Icon URL matches expected
-

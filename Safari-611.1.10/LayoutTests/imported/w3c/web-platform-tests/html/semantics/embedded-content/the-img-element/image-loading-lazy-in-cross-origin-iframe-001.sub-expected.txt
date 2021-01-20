@@ -1,5 +1,0 @@
-
-
-PASS A below-viewport loading=lazy image in a cross origin iframe loads only
-       when scrolled into viewport
-

@@ -1,1 +1,0 @@
-PASS: Unable to draw with invalid vertexAttribArray0

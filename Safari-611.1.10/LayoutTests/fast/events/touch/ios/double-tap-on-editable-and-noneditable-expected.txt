@@ -1,3 +1,0 @@
-PASS: No Selection
-PASS: Has Selection
-

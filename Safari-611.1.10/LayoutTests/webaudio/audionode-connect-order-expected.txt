@@ -1,8 +1,0 @@
-This tests that we don't trigger an assertion failure due to AudioNode connection order.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

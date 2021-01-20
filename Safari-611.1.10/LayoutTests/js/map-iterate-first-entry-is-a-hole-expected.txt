@@ -1,9 +1,0 @@
-Tests to make sure we correctly handle iterating a map when the first entry is a hole
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

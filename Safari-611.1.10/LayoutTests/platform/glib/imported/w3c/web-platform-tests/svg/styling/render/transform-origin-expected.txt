@@ -1,6 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 300x200
-  RenderSVGRoot {svg} at (110,110) size 80x30
-    RenderSVGContainer {g} at (110,110) size 80x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(140.00,130.00)}]
-      RenderSVGRect {rect} at (110,110) size 80x30 [transform={m=((2.00,0.00)(0.00,3.00)) t=(-30.00,-20.00)}] [fill={[type=SOLID] [color=#00FFFF]}] [x=0.00] [y=0.00] [width=40.00] [height=10.00]

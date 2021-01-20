@@ -1,3 +1,0 @@
-
-PASS Test currentTime at completion of OfflineAudioContext rendering
-

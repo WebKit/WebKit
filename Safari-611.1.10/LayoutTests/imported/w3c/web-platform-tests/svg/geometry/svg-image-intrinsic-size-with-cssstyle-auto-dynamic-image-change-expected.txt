@@ -1,3 +1,0 @@
-
-PASS Test <svg:image>'s sizing with css size as auto, with dynamic image change
-

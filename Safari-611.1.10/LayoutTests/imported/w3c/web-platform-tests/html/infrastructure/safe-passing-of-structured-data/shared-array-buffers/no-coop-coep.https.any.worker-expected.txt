@@ -1,5 +1,0 @@
-
-FAIL SharedArrayBuffer over MessageChannel without COOP+COEP Can't find variable: SharedArrayBuffer
-FAIL SharedArrayBuffer over BroadcastChannel without COOP+COEP Can't find variable: SharedArrayBuffer
-FAIL Bonus: self.crossOriginIsolated assert_false: expected false got undefined
-

@@ -1,4 +1,0 @@
-Pass if no hang.
-‫ foobar foobar‫
-
-

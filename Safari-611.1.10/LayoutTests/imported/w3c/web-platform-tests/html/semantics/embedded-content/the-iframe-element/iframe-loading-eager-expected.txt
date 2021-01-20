@@ -1,5 +1,0 @@
-
-
-
-PASS Test that iframes with loading='eager' load immediately regardless of their position with respect to the viewport.
-

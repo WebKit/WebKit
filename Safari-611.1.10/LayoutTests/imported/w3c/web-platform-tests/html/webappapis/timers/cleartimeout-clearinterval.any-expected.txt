@@ -1,4 +1,0 @@
-
-PASS Clear timeout with clearInterval
-PASS Clear interval with clearTimeout
-

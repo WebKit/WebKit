@@ -1,3 +1,0 @@
-
-PASS SVGGeometryElement.prototype.getTotalLength() query with 'pathLength', getTotalLength
-

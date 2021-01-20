@@ -1,3 +1,0 @@
-
-PASS Canvas width and height attributes are used as the surface size
-

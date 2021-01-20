@@ -1,3 +1,0 @@
-
-FAIL Cross-Origin-Embedder-Policy and data: URLs assert_true: Cross-origin without CORP did not fail expected true got false
-

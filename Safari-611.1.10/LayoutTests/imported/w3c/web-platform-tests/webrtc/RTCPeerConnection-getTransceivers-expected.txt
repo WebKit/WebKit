@@ -1,3 +1,0 @@
-
-PASS Initial peer connection should have list of zero senders, receivers and transceivers
-

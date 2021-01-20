@@ -1,3 +1,0 @@
-
-PASS IDBVersionChangeEvent fired in upgradeneeded, versionchange and deleteDatabase
-

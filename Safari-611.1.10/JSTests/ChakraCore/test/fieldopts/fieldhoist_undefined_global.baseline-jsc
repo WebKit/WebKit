@@ -1,3 +1,0 @@
-Exception: ReferenceError: Can't find variable: d
-fieldhoist_undefined_global.js:12:10
-global code@fieldhoist_undefined_global.js:15:3

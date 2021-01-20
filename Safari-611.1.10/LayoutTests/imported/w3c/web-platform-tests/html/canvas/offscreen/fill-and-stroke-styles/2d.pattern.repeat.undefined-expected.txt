@@ -1,5 +1,0 @@
-2d.pattern.repeat.undefined
-
-
-PASS OffscreenCanvas test: 2d.pattern.repeat.undefined
-

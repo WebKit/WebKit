@@ -1,3 +1,0 @@
-
-PASS Tests dialog.returnValue is settable and returns the last value set.
-

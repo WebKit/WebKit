@@ -1,3 +1,0 @@
-
-PASS isPointInPath() uses the non-zero winding number rule
-

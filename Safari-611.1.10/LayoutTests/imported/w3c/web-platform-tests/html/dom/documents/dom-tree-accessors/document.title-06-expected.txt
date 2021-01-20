@@ -1,3 +1,0 @@
-
-PASS document.title and the empty string
-

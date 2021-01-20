@@ -1,2 +1,0 @@
-SyntaxError: Can't have 'continue' outside of loop
-	at code (deferredBadContinue.js:14:28)

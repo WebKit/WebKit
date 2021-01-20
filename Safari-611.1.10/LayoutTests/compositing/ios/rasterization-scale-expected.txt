@@ -1,2 +1,0 @@
-This text should not be blurry
-rasterizationScale of layer is 2

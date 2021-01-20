@@ -1,3 +1,0 @@
-
-PASS Hit-testing text within a pseudo-element flex-item should return the flexbox as the hittest result.
-

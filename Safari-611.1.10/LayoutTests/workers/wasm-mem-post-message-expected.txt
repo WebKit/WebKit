@@ -1,5 +1,0 @@
-PASS () => worker.postMessage(b, [b]) threw exception TypeError: Cannot transfer a WebAssembly.Memory.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

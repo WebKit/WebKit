@@ -1,3 +1,0 @@
-
-PASS async XMLHttpRequest in dedicated worker
-

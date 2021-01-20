@@ -1,3 +1,0 @@
-
-PASS attribute selectors with missing right tokens succeed
-

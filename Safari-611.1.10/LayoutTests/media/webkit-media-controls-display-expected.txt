@@ -1,3 +1,0 @@
-Overloading ::-webkit-media-controls display property. PASS if it doesn't crash.
-
-

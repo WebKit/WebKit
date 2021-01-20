@@ -1,7 +1,0 @@
-2d.imageData.put.created
-
-putImageData() puts image data from createImageData() onto the canvas
-
-
-PASS putImageData() puts image data from createImageData() onto the canvas
-

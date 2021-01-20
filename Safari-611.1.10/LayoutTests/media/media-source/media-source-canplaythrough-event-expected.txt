@@ -1,5 +1,0 @@
-
-EVENT(sourceopen)
-EVENT(canplaythrough)
-END OF TEST
-

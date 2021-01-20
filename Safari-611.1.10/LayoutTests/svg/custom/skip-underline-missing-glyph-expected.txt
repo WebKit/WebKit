@@ -1,2 +1,0 @@
-This test makes sure that there is no ASSERT hit when we are attempting to draw a skip:ink text decoration on SVG text where the SVG font does not have all the glyphs that we need.
-abycとefygh

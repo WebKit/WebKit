@@ -1,3 +1,0 @@
-This tests that WebKit doesn't crash when there is an non-flattened iframe inside a flattened iframe.
-
-PASS. WebKit did not crash.

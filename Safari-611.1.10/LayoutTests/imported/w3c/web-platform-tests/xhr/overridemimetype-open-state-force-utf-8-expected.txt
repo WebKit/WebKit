@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: overrideMimeType() in open state, enforcing UTF-8 encoding
-

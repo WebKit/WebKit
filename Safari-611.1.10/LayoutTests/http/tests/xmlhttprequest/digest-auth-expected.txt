@@ -1,3 +1,0 @@
-Check Digest Access Authentication works well.
-
-PASS

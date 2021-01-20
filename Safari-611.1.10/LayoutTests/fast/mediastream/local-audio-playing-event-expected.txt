@@ -1,4 +1,0 @@
-
-PASS Local audio playback fires playing event
-PASS Calling play synchronously after setting srcObject shoud play and fire playing event
-

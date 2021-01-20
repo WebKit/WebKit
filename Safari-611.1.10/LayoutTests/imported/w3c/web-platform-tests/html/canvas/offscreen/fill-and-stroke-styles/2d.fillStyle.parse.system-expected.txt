@@ -1,5 +1,0 @@
-2d.fillStyle.parse.system
-
-
-FAIL OffscreenCanvas test: 2d.fillStyle.parse.system assert_regexp_match: expected object "/^#(?!(FF0000|ff0000|f00)$)/" but got "#ff0000"
-

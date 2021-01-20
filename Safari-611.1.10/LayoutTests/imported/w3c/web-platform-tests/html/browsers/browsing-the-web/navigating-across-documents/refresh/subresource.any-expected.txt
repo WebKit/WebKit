@@ -1,3 +1,0 @@
-
-PASS Refresh does not affect subresources.
-

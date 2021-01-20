@@ -1,3 +1,0 @@
-
-PASS Testing that setting touch-action: none on an element prevents double tap to zoom.
-

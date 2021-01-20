@@ -1,4 +1,0 @@
-
-PASS Test PerformanceMark existence and feature detection
-PASS Test PerformanceMeasure existence and feature detection
-

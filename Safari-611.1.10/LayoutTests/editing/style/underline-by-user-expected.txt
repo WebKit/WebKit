@@ -1,3 +1,0 @@
-This tests user initialized underlining of text. To manually test, underline "hello" below. WebKit should not crash.
-
-hello

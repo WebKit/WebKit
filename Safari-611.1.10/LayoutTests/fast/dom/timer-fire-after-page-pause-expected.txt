@@ -1,3 +1,0 @@
-Test for <rdar://problem/12116720> REGRESSION (Hoodoo): Scrolling to bottom of m.facebook.com doesn't load more posts [Millicom Colombia]
-
-PASS

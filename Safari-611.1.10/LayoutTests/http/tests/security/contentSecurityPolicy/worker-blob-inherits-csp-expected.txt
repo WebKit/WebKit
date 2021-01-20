@@ -1,3 +1,0 @@
-
-PASS Blob worker inherits CSP
-

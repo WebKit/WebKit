@@ -1,3 +1,0 @@
-
-PASS scale() with a scale factor of zero works
-

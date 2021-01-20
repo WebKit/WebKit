@@ -1,3 +1,0 @@
-
-PASS no src, parser-inserted, has style sheets blocking scripts, script nesting level == 2
-

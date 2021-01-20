@@ -1,4 +1,0 @@
-
-PASS Animations are composited by their order in the animation-name property.
-PASS Web-animation replaces CSS animation
-

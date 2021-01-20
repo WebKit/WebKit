@@ -1,3 +1,0 @@
-
-FAIL @property rules in shadow trees should have no effect assert_equals: expected "2px" but got " calc(1px + 1px)"
-

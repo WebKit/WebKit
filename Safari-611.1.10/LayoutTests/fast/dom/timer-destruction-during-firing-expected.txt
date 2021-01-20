@@ -1,3 +1,0 @@
-This tests deleting DOMTimer inside another DOMTimer. WebKit should not hit any debug assertions.
-
-PASS

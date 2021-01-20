@@ -1,6 +1,0 @@
-We should only repaint the bounds of the element with a fixed background.
-
-(repaint rects
-  (rect 8 -50 252 202)
-)
-

@@ -1,3 +1,0 @@
-
-PASS Default lineWidth strokes are affected by scale transformations
-

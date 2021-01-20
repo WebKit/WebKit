@@ -1,7 +1,0 @@
-2d.shadow.stroke.basic
-
-Shadows are drawn for strokes
-
-
-PASS Shadows are drawn for strokes
-

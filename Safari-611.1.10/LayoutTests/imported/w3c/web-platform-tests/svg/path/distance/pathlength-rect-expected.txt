@@ -1,5 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 55x55
-    RenderSVGRect {rect} at (0,0) size 55x55 [stroke={[type=SOLID] [color=#000000] [stroke width=10.00] [dash offset=1.00] [dash array={1.00, 1.00}] [path length=4.00]}] [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]

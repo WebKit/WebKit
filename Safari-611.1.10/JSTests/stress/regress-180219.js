@@ -1,3 +1,0 @@
-//@ runDefault
-gc();
-flashHeapAccess({});

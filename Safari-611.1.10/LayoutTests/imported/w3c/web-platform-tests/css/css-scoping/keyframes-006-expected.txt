@@ -1,3 +1,0 @@
-
-PASS @keyframes applies to the shadow host
-

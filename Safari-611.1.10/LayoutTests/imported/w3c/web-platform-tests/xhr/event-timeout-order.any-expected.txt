@@ -1,3 +1,0 @@
-
-FAIL XMLHttpRequest: event - timeout (order of events) assert_equals: expected "readystatechange(4)" but got "upload.progress(12,12,true)"
-

@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: Finished test
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

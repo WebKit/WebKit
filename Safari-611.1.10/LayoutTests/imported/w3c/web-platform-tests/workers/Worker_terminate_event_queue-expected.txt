@@ -1,3 +1,0 @@
-
-PASS  AbstractWorker terminate(): clear event queue
-

@@ -1,5 +1,0 @@
-2d.path.fill.winding.add
-
-
-PASS OffscreenCanvas test: 2d.path.fill.winding.add
-

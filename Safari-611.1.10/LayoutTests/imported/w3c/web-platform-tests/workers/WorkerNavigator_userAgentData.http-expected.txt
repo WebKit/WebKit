@@ -1,3 +1,0 @@
-
-PASS Test that userAgentData is not available in workers in non-secure contexts
-

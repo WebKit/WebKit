@@ -1,3 +1,0 @@
-
-FAIL Assignment to location after document is completely loaded assert_equals: expected 4 but got 3
-

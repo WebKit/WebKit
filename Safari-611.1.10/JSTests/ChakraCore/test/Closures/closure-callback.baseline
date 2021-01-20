@@ -1,4 +1,0 @@
-callback 1
-startTest: ran == false
-callback 2
-startTest: ran == true

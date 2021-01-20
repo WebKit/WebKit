@@ -1,4 +1,0 @@
-foo
-
-PASS Light DOM slot element should be in flattened assignedNodes
-

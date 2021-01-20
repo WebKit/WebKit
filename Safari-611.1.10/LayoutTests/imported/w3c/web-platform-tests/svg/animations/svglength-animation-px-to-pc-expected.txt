@@ -1,3 +1,0 @@
-
-PASS Test SVGLength animation from px to pc.
-

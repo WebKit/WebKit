@@ -1,6 +1,0 @@
-Test for bug 3565 - posting data via XMLHttpRequest doesn't work (wrong Content-Type).
-
-Should be text/plain;charset=UTF-8:
-
-text/plain;charset=UTF-8
-

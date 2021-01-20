@@ -1,3 +1,0 @@
-
-FAIL Fetch in worker: referrer with unsafe-url policy undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
-

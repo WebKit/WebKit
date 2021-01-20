@@ -1,7 +1,0 @@
-spec reference
-
-
-
-PASS audioElement.networkState should be NETWORK_LOADING during loadstart event
-PASS videoElement.networkState should be NETWORK_LOADING during loadstart event
-

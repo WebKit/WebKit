@@ -1,4 +1,0 @@
-
-PASS A zero-area hidden target should not be intersecting.
-PASS First rAF.
-

@@ -1,5 +1,0 @@
-
-PASS Initial value of math-style
-PASS Specified values of math-style
-PASS Inherited values of math-style
-

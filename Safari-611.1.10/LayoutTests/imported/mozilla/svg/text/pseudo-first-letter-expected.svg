@@ -1,8 +1,0 @@
-<!--
-     Any copyright is dedicated to the Public Domain.
-     http://creativecommons.org/publicdomain/zero/1.0/
--->
-<svg xmlns="http://www.w3.org/2000/svg" width="700" height="200">
-  <text x="100" y="100" style="font: 16px sans-serif"><tspan font-size="32px">h</tspan>ello there everyone
-    <tspan x="100" y="120">and good night</tspan></text>
-</svg>

@@ -1,3 +1,0 @@
-
-PASS text on HTMLOptionElement must enqueue disconnectedCallback when removing a custom element
-

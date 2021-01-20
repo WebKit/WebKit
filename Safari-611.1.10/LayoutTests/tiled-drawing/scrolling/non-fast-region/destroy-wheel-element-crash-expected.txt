@@ -1,3 +1,0 @@
-Test that elements with wheel event handlers are removed from the document's event handler set when the element is destroyed. Test passes if it does not crash.
-
-Iterations: 4

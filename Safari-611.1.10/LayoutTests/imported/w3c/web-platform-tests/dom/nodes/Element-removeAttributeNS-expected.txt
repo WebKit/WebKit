@@ -1,3 +1,0 @@
-
-PASS removeAttributeNS should take a local name.
-

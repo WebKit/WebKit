@@ -1,3 +1,0 @@
-
-PASS Makes sure that prefetch does not fire beforeload, error or load events.
-

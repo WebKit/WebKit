@@ -1,3 +1,0 @@
-File URLs should not be copied to the clipboard. There should be no pasted content below.
-
-

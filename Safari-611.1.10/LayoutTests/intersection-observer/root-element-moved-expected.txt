@@ -1,3 +1,0 @@
-
-PASS Document's active intersection observers get updated
-

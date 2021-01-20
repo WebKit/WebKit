@@ -1,3 +1,0 @@
-
-PASS Content-Type header for payload of ArrayBuffer type should be null
-

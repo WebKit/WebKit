@@ -1,5 +1,0 @@
-This test loads a worker, from a guid. The worker should be blocked from making an XHR to www1 as this resource's policy is connect-src 'self and a guid Worker should inherit is parent's policy. A report should be sent to the report-uri specified with this resource.
-
-
-FAIL Expecting logs: ["violated-directive=connect-src","xhr blocked","TEST COMPLETE"] assert_unreached: Logging timeout, expected logs violated-directive=connect-src not sent. Reached unreachable code
-

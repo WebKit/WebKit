@@ -1,8 +1,0 @@
-
-Harness Error (TIMEOUT), message = null
-
-NOTRUN marquee_events_start
-NOTRUN marquee_events_finish
-NOTRUN marquee_events_bounce
-NOTRUN marquee_events_bounce2
-   

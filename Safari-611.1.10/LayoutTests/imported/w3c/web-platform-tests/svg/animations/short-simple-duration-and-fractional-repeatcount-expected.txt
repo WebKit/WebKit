@@ -1,3 +1,0 @@
-
-PASS Short simple duration and fractional repeatCount does not hang
-

@@ -1,7 +1,0 @@
-2d.clearRect.globalalpha
-clearRect is not affected by globalAlpha
-Spec references: 2d.clearRect
-Actual output:
-Expected output:
-
-Passed

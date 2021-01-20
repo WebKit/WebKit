@@ -1,3 +1,0 @@
-Click to restart test
-
-PASS

@@ -1,7 +1,0 @@
-2d.composite.globalAlpha.image
-Spec references: 2d.composite.globalAlpha.image
-Actual output:
-Expected output:
-
-Passed
-

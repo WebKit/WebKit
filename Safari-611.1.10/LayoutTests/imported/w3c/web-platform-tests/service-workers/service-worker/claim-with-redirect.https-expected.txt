@@ -1,4 +1,0 @@
-
-
-PASS Claim works after redirection to another origin
-

@@ -1,3 +1,0 @@
-
-PASS ImageData.data clamps numbers to [0, 255]
-

@@ -1,4 +1,0 @@
-
-FAIL Test script error unhandled. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
-FAIL Test script error handled. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
-

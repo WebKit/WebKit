@@ -1,3 +1,0 @@
-
-PASS Client.id returns the client's ID.
-

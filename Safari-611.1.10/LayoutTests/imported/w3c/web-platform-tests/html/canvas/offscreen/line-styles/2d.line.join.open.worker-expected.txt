@@ -1,3 +1,0 @@
-
-PASS Line joins are not drawn at the corner of an unclosed rectangle
-

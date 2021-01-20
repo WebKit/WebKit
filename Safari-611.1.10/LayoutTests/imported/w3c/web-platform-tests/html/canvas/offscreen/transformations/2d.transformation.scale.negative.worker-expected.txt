@@ -1,3 +1,0 @@
-
-PASS scale() with negative scale factors works
-

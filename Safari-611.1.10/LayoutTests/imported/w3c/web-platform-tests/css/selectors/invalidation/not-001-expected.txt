@@ -1,4 +1,0 @@
-
-PASS precondition
-PASS Invalidation of sibling combinators in :not()
-

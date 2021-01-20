@@ -1,3 +1,0 @@
-
-PASS  WorkerLocation.hash with url encoding string
-

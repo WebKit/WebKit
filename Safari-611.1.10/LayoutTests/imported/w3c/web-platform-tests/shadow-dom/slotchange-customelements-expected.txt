@@ -1,3 +1,0 @@
-
-PASS slotchange must fire on initialization of custom elements with slotted children
-

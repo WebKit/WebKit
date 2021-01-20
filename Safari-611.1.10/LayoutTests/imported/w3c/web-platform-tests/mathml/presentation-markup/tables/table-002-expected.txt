@@ -1,6 +1,0 @@
-
-PASS Vertical alignment of cells
-PASS Horizontal alignment of cells
-
-
-

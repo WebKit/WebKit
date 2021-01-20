@@ -1,3 +1,0 @@
-
-PASS Tests if gradientTransform of a gradient is animateable.
-

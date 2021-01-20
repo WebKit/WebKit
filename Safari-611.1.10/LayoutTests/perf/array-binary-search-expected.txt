@@ -1,3 +1,0 @@
-Tests that binary search over an array is logarithmic.
-PASS
-

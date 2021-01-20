@@ -1,9 +1,0 @@
-
-Test HTMLMediaElement canPlayType() method with multiple .flac MIME types.
-
-These tests may be expected to fail if the WebKit port does not support the format.
-
-EXPECTED (audio.canPlayType('audio/x-flac') == 'maybe') OK
-EXPECTED (audio.canPlayType('audio/flac') == 'maybe') OK
-END OF TEST
-

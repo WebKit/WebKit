@@ -1,4 +1,0 @@
-My socks are blue.
-
-PASS text-attrs-xyrotate-have-length
-

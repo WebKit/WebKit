@@ -1,3 +1,0 @@
-
-FAIL getBoundingClientRect-empty-inline assert_equals: y expected 92 but got 0
-

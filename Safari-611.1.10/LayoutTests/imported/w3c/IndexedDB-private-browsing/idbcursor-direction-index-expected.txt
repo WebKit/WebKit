@@ -1,6 +1,0 @@
-
-PASS IDBCursor direction - index - next
-PASS IDBCursor direction - index - prev
-PASS IDBCursor direction - index - nextunique
-PASS IDBCursor direction - index - prevunique
-

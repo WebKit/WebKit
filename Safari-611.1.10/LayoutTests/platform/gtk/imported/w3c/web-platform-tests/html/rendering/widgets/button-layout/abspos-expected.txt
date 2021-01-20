@@ -1,5 +1,0 @@
-testtesttest
-
-FAIL abspos button with auto width, non-auto left/right (rtl) assert_equals: offsetLeft expected 657 but got 102
-FAIL abspos button with auto width, non-auto left/right (ltr) assert_equals: clientWidth expected 37 but got 592
-

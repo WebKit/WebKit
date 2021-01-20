@@ -1,3 +1,0 @@
-Check the child window. The test FAILED if you see a JavaScript alert() dialog. Otherwise, it PASSED.
-
-

@@ -1,4 +1,0 @@
-Test for bug 69681, canvas.toDataURL("image/jpeg") should not crash.
-PASS
-
-

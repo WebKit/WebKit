@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: the LOADING state change may be emitted multiple times
-

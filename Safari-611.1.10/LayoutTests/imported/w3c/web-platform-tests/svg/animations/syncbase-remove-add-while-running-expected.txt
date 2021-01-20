@@ -1,3 +1,0 @@
-
-FAIL Remove/Add syncbase while animation is running assert_equals: Sync base triggered expected 100 but got 0
-

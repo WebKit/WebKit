@@ -1,4 +1,0 @@
-This tests inserting text ("b") into a text field with specific CSS and an already existing text ("a"). To manually test, copy and paste some text into the text field below. Pasting should work as expected.
-
-
-PASSED the final text is 'ab'.

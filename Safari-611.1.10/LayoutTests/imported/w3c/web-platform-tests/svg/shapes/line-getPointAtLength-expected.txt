@@ -1,4 +1,0 @@
-
-PASS line supports getPointAtLength
-PASS line getPointAtLength ignores pathLength
-

@@ -1,3 +1,0 @@
-
-FAIL EventSource: "retry" field (bogus) assert_true: expected true got false
-

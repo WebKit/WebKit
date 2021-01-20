@@ -1,8 +1,0 @@
-typeof (x): object
-x.foo: 3
-x.b: 4
-x.onlyone: null
-x.foo: 6
-x.b: 7
-
-Reached end of Execution -- Exiting.

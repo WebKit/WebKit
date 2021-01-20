@@ -1,5 +1,0 @@
-This should be in the center of the container
-This is tall
-
-PASS .border 1
-

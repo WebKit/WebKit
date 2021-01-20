@@ -1,4 +1,0 @@
-
-PASS Setup worker
-PASS Test that service worker is in a different process
-

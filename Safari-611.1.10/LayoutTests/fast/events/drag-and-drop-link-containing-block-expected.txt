@@ -1,6 +1,0 @@
-Try to drag me
-
-
-PASS (drag started)
-PASS (dropped)
-

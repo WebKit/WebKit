@@ -1,3 +1,0 @@
-
-PASS clearRect is affected by transforms
-

@@ -1,5 +1,0 @@
-PASS Passes if we do not crash.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

@@ -1,3 +1,0 @@
-partial interface WorkletGlobalScope {
-    attribute WorkletGlobalScopeConstructor WorkletGlobalScope;
-};

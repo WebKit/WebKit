@@ -1,3 +1,0 @@
-
-PASS window.open()'s url parameter default
-

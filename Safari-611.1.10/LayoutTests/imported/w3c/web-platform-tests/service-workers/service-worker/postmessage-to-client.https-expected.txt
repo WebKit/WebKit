@@ -1,3 +1,0 @@
-
-PASS postMessage from ServiceWorker to Client.
-

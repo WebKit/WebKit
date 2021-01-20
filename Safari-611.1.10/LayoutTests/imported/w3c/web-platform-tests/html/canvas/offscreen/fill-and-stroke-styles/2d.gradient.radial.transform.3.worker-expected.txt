@@ -1,3 +1,0 @@
-
-PASS Radial gradient transforms do not experience broken caching effects
-

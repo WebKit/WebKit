@@ -1,4 +1,0 @@
-
-PASS Element colors are correct in light color scheme
-PASS Element colors are correct in light color scheme with boolean context query
-

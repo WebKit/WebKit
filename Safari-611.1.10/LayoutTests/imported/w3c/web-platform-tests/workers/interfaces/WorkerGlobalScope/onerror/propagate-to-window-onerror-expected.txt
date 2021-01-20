@@ -1,3 +1,0 @@
-
-PASS onerror, "not handled" with only window.onerror defined
-

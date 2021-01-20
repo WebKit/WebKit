@@ -1,4 +1,0 @@
-
-PASS removeEventListener
-PASS target
-

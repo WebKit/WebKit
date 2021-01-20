@@ -1,5 +1,0 @@
-
-
-This tests that we do not crash while inserting either list.
-
-PASS

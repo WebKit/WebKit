@@ -1,3 +1,0 @@
-
-PASS clearRect is not affected by globalAlpha
-

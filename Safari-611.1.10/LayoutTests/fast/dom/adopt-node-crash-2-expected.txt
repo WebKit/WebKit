@@ -1,2 +1,0 @@
-Tests for a crash due to adopting a DOM node during DOMFocusOut event. Test passes if it doesn't crash.
-

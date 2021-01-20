@@ -1,4 +1,0 @@
-
-Tests inserting an element before legend under multi-column layout.
-
-The test passes if WebKit doesn't crash or hit an assertion.

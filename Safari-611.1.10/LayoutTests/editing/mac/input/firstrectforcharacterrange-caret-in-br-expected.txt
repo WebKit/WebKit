@@ -1,9 +1,0 @@
-PASS xLocation > 0 is true
-PASS width is 0
-PASS height > 10 is true
-PASS height < 30 is true
-PASS successfullyParsed is true
-
-TEST COMPLETE
-
-

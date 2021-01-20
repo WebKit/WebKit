@@ -1,3 +1,0 @@
-
-PASS Preflighted async request with custom header
-

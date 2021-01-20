@@ -1,3 +1,0 @@
-
-PASS Set the src attribute to about:blank and check referrer
-

@@ -1,3 +1,0 @@
-
-PASS CSS subresources of a clean stylesheet should populate resource timing entries, but not for imported stylesheets
-

@@ -1,3 +1,0 @@
-
-PASS Allow localStorage and sessionStorage access inside iframe with sandbox='allow-same-origin allow-scripts'
-

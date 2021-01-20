@@ -1,4 +1,0 @@
-[("BUILD.gn",
-  "dummy_target",
-  "libc++/dummy_subpackage_file.h",
-  "libc++")]

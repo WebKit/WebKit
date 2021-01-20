@@ -1,5 +1,0 @@
-Initial value of motionQuery.matches: false - should be false
-
-Updated value of motionQuery.matches: true - should be true
-
-Note the updated value will only be filled if the listener fires.

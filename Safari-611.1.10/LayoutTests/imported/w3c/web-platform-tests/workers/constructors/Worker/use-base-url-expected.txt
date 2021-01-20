@@ -1,3 +1,0 @@
-
-PASS Use the document base url when resolving worker URLs
-

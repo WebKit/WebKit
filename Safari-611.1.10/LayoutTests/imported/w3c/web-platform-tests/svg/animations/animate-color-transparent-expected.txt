@@ -1,3 +1,0 @@
-
-PASS Tests that 'transparent' is treated as a valid color.
-

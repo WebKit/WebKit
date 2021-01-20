@@ -1,3 +1,0 @@
-
-PASS document.compatMode: Standards
-

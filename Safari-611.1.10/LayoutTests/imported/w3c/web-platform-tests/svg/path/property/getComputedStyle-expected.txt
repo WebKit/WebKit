@@ -1,3 +1,0 @@
-
-FAIL getComputedStyle assert_equals: expected (string) "none" but got (undefined) undefined
-

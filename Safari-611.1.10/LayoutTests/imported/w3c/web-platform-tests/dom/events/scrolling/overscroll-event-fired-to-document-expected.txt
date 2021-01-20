@@ -1,3 +1,0 @@
-
-FAIL Tests that the document gets overscroll event when no element scrolls after touch scrolling. promise_test: Unhandled rejection with value: "Document did not receive overscroll event after scroll up on target."
-

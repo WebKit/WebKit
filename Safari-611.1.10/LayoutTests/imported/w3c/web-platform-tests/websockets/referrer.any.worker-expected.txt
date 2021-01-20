@@ -1,3 +1,0 @@
-
-PASS Ensure no Referer header is included
-

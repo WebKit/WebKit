@@ -1,3 +1,0 @@
-
-PASS Ideal sample rate outside of min/max should be ignored
-

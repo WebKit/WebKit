@@ -1,3 +1,0 @@
-Should be slow scrolling because of slow repaint objects.
-
-Has slow repaint objects

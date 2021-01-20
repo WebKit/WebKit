@@ -1,3 +1,0 @@
-
-PASS Test FetchEvent.request passed to onfetch
-

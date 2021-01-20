@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: Refused to load data:text/css,body::after { content: 'FAIL'; } because it appears in neither the style-src directive nor the default-src directive of the Content Security Policy.
-
-
---------
-Frame: '<!--frame1-->'
---------
-Run test

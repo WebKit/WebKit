@@ -1,7 +1,0 @@
-2d.imageData.put.null
-
-putImageData() with null imagedata throws TypeError
-
-
-PASS putImageData() with null imagedata throws TypeError
-

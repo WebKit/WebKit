@@ -1,3 +1,0 @@
-
-PASS Animate SVGMarkerElement orientAttr to an angle
-

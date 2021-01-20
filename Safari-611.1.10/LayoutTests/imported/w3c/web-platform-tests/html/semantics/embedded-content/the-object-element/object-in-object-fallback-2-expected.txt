@@ -1,3 +1,0 @@
-
-FAIL Test <object> nesting inside <object> assert_equals: Should have loaded all should-load elements expected 12 but got 0
-

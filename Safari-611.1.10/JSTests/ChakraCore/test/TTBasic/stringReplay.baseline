@@ -1,7 +1,0 @@
-x: Hello
-y: World
-empty.length: 0
-x.length: 5
-x + ' ' + y: Hello World
-
-Reached end of Execution -- Exiting.

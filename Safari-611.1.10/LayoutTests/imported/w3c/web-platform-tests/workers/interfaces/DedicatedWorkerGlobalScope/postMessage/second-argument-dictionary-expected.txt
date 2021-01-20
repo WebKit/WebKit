@@ -1,3 +1,0 @@
-
-PASS Using dictionary as postMessage's second argument
-

@@ -1,3 +1,0 @@
-
-PASS Test behavior of dynamically inserting animate with begin attribute
-

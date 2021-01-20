@@ -1,5 +1,0 @@
-
-PASS unicode-bidi: isolate
-PASS unicode-bidi: isolate-override
-PASS unicode-bidi: plaintext
-

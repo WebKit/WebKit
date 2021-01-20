@@ -1,3 +1,0 @@
-
-PASS close() and setTimeout
-

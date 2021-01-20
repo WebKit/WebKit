@@ -1,3 +1,0 @@
-
-PASS Strokes in opposite directions are unioned, not subtracted
-

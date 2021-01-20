@@ -1,7 +1,0 @@
-This tests moving the selection backwards at the beginning of a line by word granularity
-| <div>
-|   "<#selection-focus>first"
-| <div>
-|   id="target"
-|   <#selection-anchor>
-|   "second"

@@ -1,1 +1,0 @@
-Tests deleting text in description list. The test passes if WebKit doesn't crash or hit an ssertion.

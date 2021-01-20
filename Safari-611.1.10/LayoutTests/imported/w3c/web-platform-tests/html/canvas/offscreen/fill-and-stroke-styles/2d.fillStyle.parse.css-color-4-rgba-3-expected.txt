@@ -1,5 +1,0 @@
-2d.fillStyle.parse.css-color-4-rgba-3
-
-
-PASS OffscreenCanvas test: 2d.fillStyle.parse.css-color-4-rgba-3
-

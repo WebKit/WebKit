@@ -1,6 +1,0 @@
-2d.line.union
-Spec references:
-Actual output:
-Expected output:
-
-Passed

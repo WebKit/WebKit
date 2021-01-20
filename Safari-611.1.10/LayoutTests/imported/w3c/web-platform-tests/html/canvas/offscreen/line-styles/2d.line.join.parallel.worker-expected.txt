@@ -1,3 +1,0 @@
-
-PASS Line joins are drawn at 180-degree joins
-

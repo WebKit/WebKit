@@ -1,3 +1,0 @@
-
-PASS Setting lineCap to invalid values is ignored
-

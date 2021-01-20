@@ -1,4 +1,0 @@
-Green
-
-PASS Specificity of :host() inside :is()
-

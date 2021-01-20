@@ -1,3 +1,0 @@
-Should not crash when trying to dispath touchEvent without touchList properties
-
-PASSED

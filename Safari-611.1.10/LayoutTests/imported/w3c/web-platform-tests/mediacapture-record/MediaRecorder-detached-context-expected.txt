@@ -1,3 +1,0 @@
-
-FAIL MediaRecorder creation with detached context assert_equals: expected "NotAllowedError" but got "InvalidStateError"
-

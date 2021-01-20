@@ -1,3 +1,0 @@
-
-PASS controller is set upon reload after registration
-

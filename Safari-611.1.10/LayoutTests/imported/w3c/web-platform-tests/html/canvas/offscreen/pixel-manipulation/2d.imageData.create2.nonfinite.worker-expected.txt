@@ -1,3 +1,0 @@
-
-PASS createImageData() throws TypeError if arguments are not finite
-

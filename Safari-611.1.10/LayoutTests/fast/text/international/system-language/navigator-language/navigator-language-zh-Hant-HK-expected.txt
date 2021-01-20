@@ -1,5 +1,0 @@
-PASS navigator.language is "zh-hk"
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

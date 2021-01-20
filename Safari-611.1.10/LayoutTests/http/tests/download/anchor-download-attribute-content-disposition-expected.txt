@@ -1,8 +1,0 @@
-Download started.
-Downloading URL with suggested filename "PASS.txt"
-Download completed.
-Tests that the filename from the Content-Disposition header is used even if a download attribute is specified in HTML.
-
-The suggested filename above should be "PASS.txt" and the download should succeed.
-
-Link with download attribute.

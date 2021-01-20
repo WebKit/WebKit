@@ -1,3 +1,0 @@
-
-PASS document.open() should not fire a beforeunload event
-

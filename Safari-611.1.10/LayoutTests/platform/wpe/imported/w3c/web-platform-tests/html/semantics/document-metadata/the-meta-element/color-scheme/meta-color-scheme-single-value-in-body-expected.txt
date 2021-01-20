@@ -1,3 +1,0 @@
-
-FAIL Meta color-scheme in body should apply. assert_equals: expected (string) "dark" but got (undefined) undefined
-

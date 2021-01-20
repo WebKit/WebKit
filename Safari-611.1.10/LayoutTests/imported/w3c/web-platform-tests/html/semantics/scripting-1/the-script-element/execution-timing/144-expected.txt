@@ -1,3 +1,0 @@
-
-PASS scheduler: SVG inline script changing the type attribute
-

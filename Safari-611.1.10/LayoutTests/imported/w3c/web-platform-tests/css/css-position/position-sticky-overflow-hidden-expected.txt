@@ -1,4 +1,0 @@
-
-PASS A sticky element should attach to an overflow:hidden ancestor
-PASS A sticky element should attach to an overflow:hidden ancestor inside a table
-

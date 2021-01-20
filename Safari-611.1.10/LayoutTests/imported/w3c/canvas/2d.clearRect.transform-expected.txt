@@ -1,7 +1,0 @@
-2d.clearRect.transform
-clearRect is affected by transforms
-Spec references: 2d.clearRect
-Actual output:
-Expected output:
-
-Passed

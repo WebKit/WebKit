@@ -1,8 +1,0 @@
-Test that we include template content in DOM Nodes for <template> elements.
-
-PASS: Got DOMNode for div element
-PASS: DOMNode does not have template content
-
-PASS: Got DOMNode for template element
-PASS: DOMNode has template content
-

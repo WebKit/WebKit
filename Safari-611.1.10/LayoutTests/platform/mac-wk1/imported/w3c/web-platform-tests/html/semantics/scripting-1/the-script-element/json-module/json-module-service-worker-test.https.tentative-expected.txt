@@ -1,5 +1,0 @@
-
-FAIL Javascript importing JSON Module should load within the context of a service worker promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.register')"
-FAIL JSON Modules should load within the context of a service worker promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.register')"
-FAIL JSON Module dynamic import should not load within the context of a service worker promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.register')"
-

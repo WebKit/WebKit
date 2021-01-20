@@ -1,4 +1,0 @@
-Blocked access to external URL http://www1.localhost:8800/content-security-policy/style-src/resources/style-src.css
-
-FAIL Programatically injected stylesheet should load assert_true: expected true got false
-Lorem ipsum

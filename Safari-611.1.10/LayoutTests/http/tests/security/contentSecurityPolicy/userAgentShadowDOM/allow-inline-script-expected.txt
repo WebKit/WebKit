@@ -1,3 +1,0 @@
-Tests that an inline JavaScript script, in a user agent shadow tree, is allowed to load when the page has CSP policy: script-src 'self'.
-
-PASS did execute inline script.

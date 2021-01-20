@@ -1,3 +1,0 @@
-
-PASS IDBDatabase.createObjectStore() - attempt to create an object store outside of a version change transaction
-

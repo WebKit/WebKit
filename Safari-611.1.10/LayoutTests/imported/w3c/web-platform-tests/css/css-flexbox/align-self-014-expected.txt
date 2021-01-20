@@ -1,4 +1,0 @@
-X X X X X
-
-PASS .content 1
-

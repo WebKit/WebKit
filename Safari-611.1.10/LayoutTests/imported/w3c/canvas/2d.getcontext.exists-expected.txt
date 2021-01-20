@@ -1,5 +1,0 @@
-2d.getcontext.exists
-The 2D context is implemented
-Spec references: context.2d
-Actual output:
-Passed

@@ -1,2 +1,0 @@
-load(image) load(svg)
-

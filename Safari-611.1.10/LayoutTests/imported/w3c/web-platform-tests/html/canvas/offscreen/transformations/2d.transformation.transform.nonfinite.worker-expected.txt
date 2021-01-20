@@ -1,3 +1,0 @@
-
-PASS transform() with Infinity/NaN is ignored
-

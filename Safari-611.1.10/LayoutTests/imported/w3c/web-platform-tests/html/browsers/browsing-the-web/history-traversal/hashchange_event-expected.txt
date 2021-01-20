@@ -1,3 +1,0 @@
-
-PASS Queue a task to fire hashchange event
-

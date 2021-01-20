@@ -1,3 +1,0 @@
-
-PASS MediaRecorder in detached frames
-

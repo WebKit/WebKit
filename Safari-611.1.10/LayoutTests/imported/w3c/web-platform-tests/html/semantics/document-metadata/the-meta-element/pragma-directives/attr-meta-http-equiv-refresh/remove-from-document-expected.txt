@@ -1,3 +1,0 @@
-
-PASS A meta must refresh the original document even if it was removed.
-

@@ -1,3 +1,0 @@
-
-PASS IDBDatabase.createObjectStore() - attempt to create an object store with an invalid key path
-

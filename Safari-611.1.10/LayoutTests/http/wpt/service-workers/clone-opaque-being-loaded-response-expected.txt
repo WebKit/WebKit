@@ -1,4 +1,0 @@
-
-PASS Setup worker
-PASS Ensure opaque response fetch is working
-

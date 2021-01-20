@@ -1,4 +1,0 @@
-
-PASS Media queries are not sorted lexicographically
-PASS Media queries are not deduplicated
-

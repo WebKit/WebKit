@@ -1,3 +1,0 @@
-
-PASS Load an iframe that has Cross-Origin-Resource-Policy header
-

@@ -1,4 +1,0 @@
-
-
-FAIL Should throw a securitypolicyviolation assert_equals: expected "object-src" but got "object-src 'none'"
-

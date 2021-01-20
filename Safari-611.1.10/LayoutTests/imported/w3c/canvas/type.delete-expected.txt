@@ -1,6 +1,0 @@
-type.delete
-window.HTMLCanvasElement interface object is [[Configurable]]
-Spec references: canvas.type
-Defined in "Web IDL" (draft)
-Actual output:
-Passed

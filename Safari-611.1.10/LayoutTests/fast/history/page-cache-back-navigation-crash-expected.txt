@@ -1,9 +1,0 @@
-Tests that removing a frame in a detached document after navigation does not cause a crash on navigating back
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

@@ -1,3 +1,0 @@
-Test that custom headers are not sent with OPTIONS preflight request.
-
-PASS

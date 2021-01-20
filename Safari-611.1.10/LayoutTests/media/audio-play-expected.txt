@@ -1,7 +1,0 @@
-Test that a 'play' event is fired when an audio element plays.
-
-RUN(mediaElement.src = findMediaFile('audio', 'content/test'))
-RUN(mediaElement.play())
-EVENT(play)
-END OF TEST
-

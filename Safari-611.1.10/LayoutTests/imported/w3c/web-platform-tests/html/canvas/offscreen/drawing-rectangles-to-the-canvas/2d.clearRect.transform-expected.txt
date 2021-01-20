@@ -1,7 +1,0 @@
-2d.clearRect.transform
-
-clearRect is affected by transforms
-
-
-PASS clearRect is affected by transforms
-

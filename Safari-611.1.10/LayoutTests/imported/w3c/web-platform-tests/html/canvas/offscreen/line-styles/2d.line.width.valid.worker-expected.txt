@@ -1,3 +1,0 @@
-
-PASS Setting lineWidth to valid values works
-

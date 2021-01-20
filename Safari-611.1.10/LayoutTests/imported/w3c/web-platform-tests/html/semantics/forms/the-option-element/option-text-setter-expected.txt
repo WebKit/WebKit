@@ -1,4 +1,0 @@
-
-
-FAIL Verify that using HTMLOptionElement.text setter does not update the existing text child node. assert_equals: Verify that the text child node does not have an updated value. expected "bar" but got "baz"
-

@@ -1,4 +1,0 @@
-
-PASS ServiceWorkerGlobalScope: close operation
-PASS ServiceWorkerGlobalScope close operation
-

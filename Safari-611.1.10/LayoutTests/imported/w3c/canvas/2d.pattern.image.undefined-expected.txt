@@ -1,5 +1,0 @@
-2d.pattern.image.undefined
-Spec references: 2d.pattern.IDL
-Defined in "Web IDL" (draft)
-Actual output:
-Passed

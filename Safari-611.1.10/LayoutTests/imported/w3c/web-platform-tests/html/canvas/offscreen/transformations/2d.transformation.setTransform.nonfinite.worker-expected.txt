@@ -1,3 +1,0 @@
-
-PASS setTransform() with Infinity/NaN is ignored
-

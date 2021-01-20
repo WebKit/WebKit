@@ -1,3 +1,0 @@
-
-PASS  WorkerGlobalScope API: setTimeout()
-

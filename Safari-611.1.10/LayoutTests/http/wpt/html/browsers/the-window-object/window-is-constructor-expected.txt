@@ -1,3 +1,0 @@
-
-PASS Window is a constructor, and throwing TypeError when it is called.
-

@@ -1,3 +1,0 @@
-
-PASS element.getElementsByClassName(array): "a", "b"
-

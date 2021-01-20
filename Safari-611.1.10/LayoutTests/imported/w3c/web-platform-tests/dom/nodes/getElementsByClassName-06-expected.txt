@@ -1,3 +1,0 @@
-
-PASS document.getElementsByClassName(): adding element with class
-

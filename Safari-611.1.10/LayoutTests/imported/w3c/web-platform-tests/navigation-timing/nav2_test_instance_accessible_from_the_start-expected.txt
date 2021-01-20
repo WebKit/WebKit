@@ -1,3 +1,0 @@
-
-FAIL PerformanceNavigationTiming instance exists with reasonable values. assert_true: expected true got false
-

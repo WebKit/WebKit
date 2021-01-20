@@ -1,3 +1,0 @@
-
-PASS createImageData(sw, sh) returns transparent black data of the right size
-

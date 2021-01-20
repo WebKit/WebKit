@@ -1,4 +1,0 @@
-PASS successfullyParsed is true
-
-TEST COMPLETE
-This test makes sure that RTCPeerConnection will free itself correctly even if released from the network thread.

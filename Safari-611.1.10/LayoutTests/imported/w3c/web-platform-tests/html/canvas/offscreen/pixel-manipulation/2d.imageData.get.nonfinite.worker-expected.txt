@@ -1,3 +1,0 @@
-
-PASS getImageData() throws TypeError if arguments are not finite
-

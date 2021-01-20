@@ -1,3 +1,0 @@
-PASS paintEntry.startTime > timestamps[expectedIterations] is true
-PASS paintEntry.startTime < timestamps[expectedIterations + 2] is true
-

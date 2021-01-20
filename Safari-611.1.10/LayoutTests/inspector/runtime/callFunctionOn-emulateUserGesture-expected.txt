@@ -1,9 +1,0 @@
-Tests for Runtime.callFunctionOn emulateUserGesture option.
-
-
-== Running test suite: Runtime.callFunctionOn.emulateUserGesture
--- Running test case: CallFunctionOnWithoutEmulatingUserGesture
-Not in User Gesture
--- Running test case: CallFunctionOnWithEmulatingUserGesture
-In User Gesture
-

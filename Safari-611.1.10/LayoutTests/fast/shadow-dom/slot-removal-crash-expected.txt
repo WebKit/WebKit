@@ -1,3 +1,0 @@
-This tests inserting or removing shadow tree with slot elements do not cause a crash.
-
-PASS

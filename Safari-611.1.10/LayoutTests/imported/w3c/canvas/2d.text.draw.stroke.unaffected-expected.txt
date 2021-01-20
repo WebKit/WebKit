@@ -1,7 +1,0 @@
-2d.text.draw.stroke.unaffected
-strokeText does not start a new path or subpath
-Spec references: 2d.text.draw.stroke
-Actual output:
-Expected output:
-
-Passed

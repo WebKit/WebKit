@@ -1,9 +1,0 @@
-
-Test <video> element with only width attribute and the poster is missing (cannot be downloaded).
-
-RUN(video.src = findMediaFile("video", "content/test"))
-EVENT(canplaythrough)
-EXPECTED (video.clientWidth == '320') OK
-EXPECTED (video.clientHeight == '240') OK
-END OF TEST
-

@@ -1,3 +1,0 @@
-
-PASS  scheduler: innerHTML and scripts moved in DOM
-

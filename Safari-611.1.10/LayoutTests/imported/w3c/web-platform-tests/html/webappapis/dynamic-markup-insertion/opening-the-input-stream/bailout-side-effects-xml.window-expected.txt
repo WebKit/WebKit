@@ -1,3 +1,0 @@
-
-PASS document.open bailout should not have any side effects (XML document)
-

@@ -1,3 +1,0 @@
-
-PASS install event type
-

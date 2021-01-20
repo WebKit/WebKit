@@ -1,5 +1,0 @@
-PASS Test looping playback at -1 playbackRate
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

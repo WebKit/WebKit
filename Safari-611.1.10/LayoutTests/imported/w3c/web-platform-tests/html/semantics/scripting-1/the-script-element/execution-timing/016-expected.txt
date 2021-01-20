@@ -1,4 +1,0 @@
-FAILED (This TC requires JavaScript enabled)
-
-PASS  scheduler: DOM added inline script later in document
-

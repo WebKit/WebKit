@@ -1,4 +1,0 @@
-
-PASS Use of .https file name flag implies secure context
-PASS Use of .https file name flag implies HTTPS scheme
-

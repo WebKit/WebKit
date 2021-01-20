@@ -1,4 +1,0 @@
-
-FAIL document.featurePolicy.features should advertise camera. undefined is not an object (evaluating 'document.featurePolicy.features')
-FAIL document.featurePolicy.features should advertise microphone. undefined is not an object (evaluating 'document.featurePolicy.features')
-

@@ -1,9 +1,0 @@
-Tests that if you alias the arguments in a very small function, arguments simplification still works.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-Passed some tests silently.
-
-TEST COMPLETE
-

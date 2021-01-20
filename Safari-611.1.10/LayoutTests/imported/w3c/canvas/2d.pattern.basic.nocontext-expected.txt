@@ -1,6 +1,0 @@
-2d.pattern.basic.nocontext
-Spec references: 2d.pattern.painting
-Actual output:
-Expected output:
-
-Passed

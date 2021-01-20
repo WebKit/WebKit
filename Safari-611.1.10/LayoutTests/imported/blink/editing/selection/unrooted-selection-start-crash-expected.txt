@@ -1,3 +1,0 @@
-Should not crash when selection start is unrooted (caused by reattachment of render objects).
- 
-

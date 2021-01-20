@@ -1,7 +1,0 @@
-Closing the inspector while executing the code for a breakpoint action should continue executing code.
-
-Found breakpoint.js
-inside breakpointWithCondition a:(1) b:(2) a+b:(3)
-Closing the inspector.
-PASS: Test did not crash after debugger disconnected.
-

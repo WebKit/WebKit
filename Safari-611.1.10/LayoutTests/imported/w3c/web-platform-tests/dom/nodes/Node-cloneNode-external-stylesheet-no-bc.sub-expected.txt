@@ -1,3 +1,0 @@
-
-PASS cloneNode on a stylesheet link in a browsing-context-less document
-

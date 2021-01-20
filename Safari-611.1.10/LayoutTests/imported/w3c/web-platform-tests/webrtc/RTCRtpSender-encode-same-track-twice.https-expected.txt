@@ -1,3 +1,0 @@
-
-PASS Two RTCRtpSenders encoding the same track
-

@@ -1,7 +1,0 @@
-
-Test that setting playbackRate on video with controller is ignored.
-
-EVENT(canplaythrough)
-EVENT(playing)
-END OF TEST
-

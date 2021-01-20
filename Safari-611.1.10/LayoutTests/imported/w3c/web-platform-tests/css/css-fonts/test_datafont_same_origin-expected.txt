@@ -1,5 +1,0 @@
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Test if data:font would be treated same origin. Test timed out
-This text should trigger 'TestFont' to load.

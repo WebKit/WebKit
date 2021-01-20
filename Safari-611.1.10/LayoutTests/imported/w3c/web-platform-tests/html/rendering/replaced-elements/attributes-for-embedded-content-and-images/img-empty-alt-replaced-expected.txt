@@ -1,4 +1,0 @@
-
-
-PASS Images with an empty alt attribute have an intrinsic size of zero
-

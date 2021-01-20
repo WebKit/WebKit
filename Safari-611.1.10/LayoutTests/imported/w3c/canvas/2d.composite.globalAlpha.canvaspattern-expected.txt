@@ -1,6 +1,0 @@
-2d.composite.globalAlpha.canvaspattern
-Spec references: 2d.composite.globalAlpha.image
-Actual output:
-Expected output:
-
-Passed

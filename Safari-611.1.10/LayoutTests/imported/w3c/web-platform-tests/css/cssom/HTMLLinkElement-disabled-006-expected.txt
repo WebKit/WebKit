@@ -1,3 +1,0 @@
-
-PASS HTMLLinkElement.disabled setter does nothing if the attribute isn't present already.
-

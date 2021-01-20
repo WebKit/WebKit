@@ -1,3 +1,0 @@
-
-PASS ImageData.data rounds numbers with round-to-zero
-

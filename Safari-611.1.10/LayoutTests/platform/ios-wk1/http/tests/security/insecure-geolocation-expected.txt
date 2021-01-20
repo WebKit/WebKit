@@ -1,1 +1,0 @@
-This test loads an insecure frame that tries to access geolocation. Access to geolocation is blocked over insecure connections.

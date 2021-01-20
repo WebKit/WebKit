@@ -1,3 +1,0 @@
-
-PASS padding-left should be taken from the !important property
-

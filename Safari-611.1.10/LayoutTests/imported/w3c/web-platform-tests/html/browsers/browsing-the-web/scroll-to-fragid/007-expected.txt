@@ -1,3 +1,0 @@
-
-PASS Fragment Navigation: hashchange event multiple changes old/newURL
-

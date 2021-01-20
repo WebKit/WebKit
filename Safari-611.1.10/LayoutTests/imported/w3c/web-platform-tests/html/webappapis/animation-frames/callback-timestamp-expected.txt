@@ -1,3 +1,0 @@
-
-PASS Check FrameRequestCallback has a DOMHighResTimeStamp argument
-

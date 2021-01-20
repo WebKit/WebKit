@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: Refused to connect to http://127.0.0.1:8000/eventsource/resources/simple-event-stream.asis because it does not appear in the connect-src directive of the Content Security Policy.
-Pass
-

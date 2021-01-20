@@ -1,4 +1,0 @@
-exception: TypeError: Attempting to define property on object that is not extensible.
-let x
-undefined
-true

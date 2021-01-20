@@ -1,5 +1,0 @@
-PASS Overrode XMLHttpRequest
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

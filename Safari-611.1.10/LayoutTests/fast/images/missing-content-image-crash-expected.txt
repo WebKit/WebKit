@@ -1,3 +1,0 @@
-Blocked access to external URL http://webkit.org/resources/missing.jpg
-PASS if no crash or assert.
-

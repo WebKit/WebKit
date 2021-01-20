@@ -1,7 +1,0 @@
-2d.imageData.put.dirty.zero
-putImageData() with zero-sized dirty rectangle puts nothing
-Spec references: 2d.imageData.put.normal
-Actual output:
-Expected output:
-
-Passed

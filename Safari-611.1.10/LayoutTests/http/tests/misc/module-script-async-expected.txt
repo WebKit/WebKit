@@ -1,2 +1,0 @@
-This tests for proper execution order of module scripts with the async attribute.
-PASS

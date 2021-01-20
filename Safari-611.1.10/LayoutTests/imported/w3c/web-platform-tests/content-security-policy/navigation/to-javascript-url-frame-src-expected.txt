@@ -1,4 +1,0 @@
-
-
-PASS <iframe src='javascript:...'> not blocked by 'frame-src'
-

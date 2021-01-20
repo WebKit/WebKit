@@ -1,4 +1,0 @@
-Text
-
-PASS First contentful paint fires due to its ancestor getting rotating into view.
-

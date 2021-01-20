@@ -1,1 +1,0 @@
-ERROR: Malformed domain specification: domain Domain has an item in targetTypes "[u'worker']" that is not supported by any value in debuggableTypes "[u'javascript']".

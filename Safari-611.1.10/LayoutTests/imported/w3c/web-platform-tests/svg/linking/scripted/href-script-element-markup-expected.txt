@@ -1,3 +1,0 @@
-
-PASS Test for loading external script by markup when setting both href and xlink:href
-

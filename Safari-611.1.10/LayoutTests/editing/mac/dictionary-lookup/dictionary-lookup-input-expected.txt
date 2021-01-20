@@ -1,7 +1,0 @@
-
-
-Some text to look up.
-
-Lookup string for input type=text field: 'withaverylongwordinthemiddle'.
-Lookup string for password field: 'null'.
-Lookup string for contentEditable div: 'look'.

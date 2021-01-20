@@ -1,5 +1,0 @@
-
-PASS cancelIdleCallback does nothing if there is no callback with the given handle
-PASS A cancelled callback is never invoked
-PASS Cancelling the currently executing idle callback should be allowed
-

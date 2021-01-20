@@ -1,4 +1,0 @@
-
-FAIL requestIdleCallback callback should time out assert_false: expected false got true
-FAIL requestIdleCallback callback should not time out assert_false: expected false got true
-

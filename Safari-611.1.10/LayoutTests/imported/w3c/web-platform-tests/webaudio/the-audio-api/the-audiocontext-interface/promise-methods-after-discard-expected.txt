@@ -1,5 +1,0 @@
-
-PASS suspend()
-PASS resume()
-PASS close()
-

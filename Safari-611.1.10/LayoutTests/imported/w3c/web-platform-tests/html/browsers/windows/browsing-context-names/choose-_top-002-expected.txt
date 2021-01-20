@@ -1,3 +1,0 @@
-
-PASS Should choose top browsing context for "_top" if current is not top
-

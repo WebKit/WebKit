@@ -1,6 +1,0 @@
-
-PASS self === self
-PASS self instanceof WorkerGlobalScope
-PASS 'self' in self
-PASS self = 1
-

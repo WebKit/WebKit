@@ -1,7 +1,0 @@
-
-
-Tests that allowed form actions work correctly with GET and a redirect.
-
-
-PASS Expecting logs: ["PASS","TEST COMPLETE"]
-

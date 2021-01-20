@@ -1,3 +1,0 @@
-PASS getSelection().toString() is ''
-PASS getSelection().toString() is ''
-webkit

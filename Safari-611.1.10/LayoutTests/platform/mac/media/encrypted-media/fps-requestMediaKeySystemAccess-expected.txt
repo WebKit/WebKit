@@ -1,4 +1,0 @@
-RUN(promise = navigator.requestMediaKeySystemAccess("com.apple.fps", capabilities))
-Promise resolved OK
-END OF TEST
-

@@ -1,7 +1,0 @@
-2d.shadow.gradient.alpha
-Shadows are drawn correctly for partially-transparent gradient fills
-Spec references: 2d.shadow.render
-Actual output:
-Expected output:
-
-Passed

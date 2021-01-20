@@ -1,6 +1,0 @@
-
-testBug1.js(11, 5)
-	Asm.js Compilation Error function : asmModule::testBug
-	SIMD builtin function returns wrong type
-
-Asm.js compilation failed.

@@ -1,5 +1,0 @@
-
-FAIL scrollIntoView on an SVG shape element, geometry assert_approx_equals: y after scroll expected 1958 +/- 1 but got 8
-FAIL scrollIntoView on an SVG shape element, translated assert_approx_equals: y after scroll expected 2958 +/- 1 but got 8
-FAIL scrollIntoView on an SVG shape element, rotated assert_approx_equals: x after scroll expected 2745.005859375 +/- 1 but got 0
-

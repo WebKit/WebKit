@@ -1,4 +1,0 @@
-
-PASS Window, Location, Navigator, HTMLDocument, and HTMLHeadElement
-PASS All window.* constructors
-

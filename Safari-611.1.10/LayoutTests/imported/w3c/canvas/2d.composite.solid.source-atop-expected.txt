@@ -1,6 +1,0 @@
-2d.composite.solid.source-atop
-Spec references: 2d.composite.source-atop
-Actual output:
-Expected output:
-
-Passed

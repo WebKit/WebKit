@@ -1,3 +1,0 @@
-
-PASS Setting 'animation-name: none' after a 'fill: forwards' animation has completed reverts to the unanimated style.
-

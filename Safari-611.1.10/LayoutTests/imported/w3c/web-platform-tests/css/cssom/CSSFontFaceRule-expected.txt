@@ -1,3 +1,0 @@
-
-PASS CSSFontFaceRule.cssText doesn't serialize with newlines
-

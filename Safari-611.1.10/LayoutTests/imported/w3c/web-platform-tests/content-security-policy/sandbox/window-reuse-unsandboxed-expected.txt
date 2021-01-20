@@ -1,3 +1,0 @@
-
-PASS Window object should be reused
-

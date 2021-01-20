@@ -1,3 +1,0 @@
-
-PASS Allow parent content to access sandbox child iframe content when sandbox='allow-same-origin'
-

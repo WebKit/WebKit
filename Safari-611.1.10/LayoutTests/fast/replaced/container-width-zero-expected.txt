@@ -1,6 +1,0 @@
-Bug #178073 - Don't use intrinsic width if our container's width is zero
-
-The test passes if you see PASS and no red.
-
-
-PASS

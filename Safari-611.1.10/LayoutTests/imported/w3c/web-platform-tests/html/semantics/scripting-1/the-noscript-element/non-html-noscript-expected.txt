@@ -1,3 +1,0 @@
-
-PASS Non-HTML <noscript> element shouldn't be undisplayed by a UA rule
-

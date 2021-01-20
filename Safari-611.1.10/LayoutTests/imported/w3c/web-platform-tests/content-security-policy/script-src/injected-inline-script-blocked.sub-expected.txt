@@ -1,3 +1,0 @@
-
-FAIL Expecting logs: ["violated-directive=script-src-elem",] assert_unreached: Logging timeout, expected logs violated-directive=script-src-elem not sent. Reached unreachable code
-

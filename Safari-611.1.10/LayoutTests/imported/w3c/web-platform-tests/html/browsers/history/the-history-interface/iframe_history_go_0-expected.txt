@@ -1,4 +1,0 @@
-
-
-PASS iframe's history.go(0) performs a location.reload()
-

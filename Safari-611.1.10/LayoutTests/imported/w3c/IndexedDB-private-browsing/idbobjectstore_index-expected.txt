@@ -1,3 +1,0 @@
-
-PASS IDBObjectStore.index() - returns an index
-

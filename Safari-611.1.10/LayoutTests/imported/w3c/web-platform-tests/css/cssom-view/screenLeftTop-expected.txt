@@ -1,4 +1,0 @@
-
-PASS screenLeft
-PASS screenTop
-

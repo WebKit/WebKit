@@ -1,3 +1,0 @@
-
-FAIL Testing basic functionalities of fontKerning for canvas assert_equals: ctx.fontVariantCaps === "Normal" (got [undefined], expected Normal[string]) expected (string) "Normal" but got (undefined) undefined
-

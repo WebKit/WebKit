@@ -1,9 +1,0 @@
-FAIL getByClassName('a') should be a A. Was a.
-FAIL getByClassName('A') should be a A. Was A.
-PASS getByClassName('ä') is "ä"
-PASS getByClassName('Ä') is "Ä"
-PASS successfullyParsed is true
-Some tests failed.
-
-TEST COMPLETE
-

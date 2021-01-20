@@ -1,3 +1,0 @@
-
-PASS play() throws when seeking an infinite-duration animation played in reverse
-

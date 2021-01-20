@@ -1,3 +1,0 @@
-
-FAIL Base URL in module dedicated workers: XHR assert_equals: expected "gamma\n" but got "beta\n"
-

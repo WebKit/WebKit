@@ -1,4 +1,0 @@
-FAILED (This TC requires JavaScript enabled)
-
-PASS  scheduler: adding external script but removeAttribute( src ) before it runs
-

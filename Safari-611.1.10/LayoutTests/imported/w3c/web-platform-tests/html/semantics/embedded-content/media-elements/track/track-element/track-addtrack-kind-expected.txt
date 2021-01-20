@@ -1,3 +1,0 @@
-
-PASS addTextTrack() only accepts known "kind" values
-

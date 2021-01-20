@@ -1,4 +1,0 @@
-
-Test for crash in WebCore::LogicalSelectionOffsetCaches::ContainingBlockInfo::setBlock()
-
-This test passes if it doesn't crash.

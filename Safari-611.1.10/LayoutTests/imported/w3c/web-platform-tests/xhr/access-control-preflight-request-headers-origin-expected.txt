@@ -1,3 +1,0 @@
-
-PASS 'Origin' should not be included in CORS Request-Headers
-

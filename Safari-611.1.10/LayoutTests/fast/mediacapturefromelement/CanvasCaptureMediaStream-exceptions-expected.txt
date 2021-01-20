@@ -1,4 +1,0 @@
-
-PASS check captureStream() throws Exception with invalid frame rate
-PASS check captureStream() throws Exception with cross origin content
-

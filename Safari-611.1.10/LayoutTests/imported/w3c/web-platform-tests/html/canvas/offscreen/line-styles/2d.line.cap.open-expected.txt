@@ -1,7 +1,0 @@
-2d.line.cap.open
-
-Line caps are drawn at the corners of an unclosed rectangle
-
-
-PASS Line caps are drawn at the corners of an unclosed rectangle
-

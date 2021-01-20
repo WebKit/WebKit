@@ -1,9 +1,0 @@
-Test whether WebSocket handshake fails if the server sends status line with non-ascii characters.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-PASS closeEvent.wasClean is false
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

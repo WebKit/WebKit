@@ -1,2 +1,0 @@
-This test makes sure that a crash doesn't occur when focusing an input element styled with a web font. The test is successful if there is no crash.
-

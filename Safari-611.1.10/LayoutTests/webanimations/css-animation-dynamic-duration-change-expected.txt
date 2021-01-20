@@ -1,3 +1,0 @@
-
-PASS A CSS Animation can be canceled and resumed by modifying its animation-duration.
-

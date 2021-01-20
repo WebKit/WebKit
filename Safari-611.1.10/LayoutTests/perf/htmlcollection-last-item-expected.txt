@@ -1,3 +1,0 @@
-Tests that accessing the last item in children HTMLCollection is a constant time operation.
-PASS
-

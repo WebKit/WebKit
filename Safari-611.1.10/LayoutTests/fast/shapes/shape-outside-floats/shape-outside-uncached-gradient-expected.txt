@@ -1,2 +1,0 @@
-This test should not crash when run with a tool like ASAN.
-Hello World

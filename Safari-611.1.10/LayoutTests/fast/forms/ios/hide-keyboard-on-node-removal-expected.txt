@@ -1,4 +1,0 @@
-Test that the keyboard disappears when the focused element is removed.
-To manually test, focus the text field below and type any character on iOS. The keyboard should be dismissed.
-
-PASS

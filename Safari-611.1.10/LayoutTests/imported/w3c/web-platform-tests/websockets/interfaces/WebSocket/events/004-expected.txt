@@ -1,3 +1,0 @@
-
-PASS WebSockets: members of EventTarget
-

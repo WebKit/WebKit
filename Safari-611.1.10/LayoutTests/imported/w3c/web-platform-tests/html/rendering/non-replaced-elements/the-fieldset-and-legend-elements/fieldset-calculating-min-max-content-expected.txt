@@ -1,9 +1,0 @@
-foo fooo
-x xx x
-foo fooofoo fooofoo fooo
-x xx x
-foo fooofooo
-
-PASS max-content
-PASS min-content
-

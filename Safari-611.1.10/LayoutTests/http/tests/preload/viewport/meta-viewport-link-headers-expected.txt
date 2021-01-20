@@ -1,3 +1,0 @@
-
-PASS Makes sure that Link headers support the media attribute and respond to <meta content=viewport>
-

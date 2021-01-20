@@ -1,2 +1,0 @@
-Exception: SyntaxError: Cannot destructure to a parameter name 'arguments' in strict mode.
-at strictargs-deferred.js:8

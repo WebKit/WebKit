@@ -1,3 +1,0 @@
-
-PASSED: selecting in the iframe did not scroll the page.
-

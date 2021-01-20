@@ -1,6 +1,0 @@
-
-testFail.js(10, 5)
-	Asm.js Compilation Error function : module0::foo
-	Expression for return must be subtype of Signed, Double, or Float
-
-Asm.js compilation failed.

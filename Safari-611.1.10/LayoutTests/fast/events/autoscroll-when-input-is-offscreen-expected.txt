@@ -1,3 +1,0 @@
-This test focuses a form, them scrolls to the bottom of the page. Then text is entered in the form, and we check to make sure the page has scrolled so that the input is visible again.
-PASS: page has scrolled back to the top to show the element that has text being entered into it.
-

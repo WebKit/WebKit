@@ -1,3 +1,0 @@
-
-PASS Verify CSP control of fetch() in a Service Worker
-

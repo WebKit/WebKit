@@ -1,3 +1,0 @@
-
-PASS Tests fallback to calcMode='discrete' on animation of SVGString with 'values'.
-

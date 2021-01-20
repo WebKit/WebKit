@@ -1,3 +1,0 @@
-
-PASS Signal detector detects track change within reasonable time
-

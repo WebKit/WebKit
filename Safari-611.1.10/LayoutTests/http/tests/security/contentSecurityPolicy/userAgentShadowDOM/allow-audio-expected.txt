@@ -1,4 +1,0 @@
-Tests that a HTML audio element, in a user agent shadow tree, is allowed to load when the page has CSP policy: media-src 'none'.
-
-PASS did load audio metadata.
-

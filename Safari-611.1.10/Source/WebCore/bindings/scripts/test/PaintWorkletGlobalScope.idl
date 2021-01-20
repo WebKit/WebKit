@@ -1,2 +1,0 @@
-[Exposed=PaintWorklet] interface PaintWorkletGlobalScope : WorkletGlobalScope {
-};

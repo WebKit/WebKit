@@ -1,3 +1,0 @@
-
-PASS Setting a CSSAnimation's property via style after setting its effect to null does not crash.
-

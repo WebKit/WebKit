@@ -1,3 +1,0 @@
-
-PASS This tests the constructor for the PromiseRejectionEvent DOM class.
-

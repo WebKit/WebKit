@@ -1,3 +1,0 @@
-
-PASS resource selection should not delay the load event indefinitely
-

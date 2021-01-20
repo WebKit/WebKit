@@ -1,3 +1,0 @@
-
-PASS Tests that Access-Control-Request-Headers are sorted.
-

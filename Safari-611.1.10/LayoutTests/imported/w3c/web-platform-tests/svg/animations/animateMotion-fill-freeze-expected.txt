@@ -1,3 +1,0 @@
-
-PASS Test for animation freeze when repeatDur is not a multiple of dur
-

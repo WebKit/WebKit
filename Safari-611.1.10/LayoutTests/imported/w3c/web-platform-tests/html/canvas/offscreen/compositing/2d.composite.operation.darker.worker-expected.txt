@@ -1,3 +1,0 @@
-
-FAIL 2d assert_equals: ctx.globalCompositeOperation === 'xor' (got darker[string], expected xor[string]) expected "xor" but got "darker"
-

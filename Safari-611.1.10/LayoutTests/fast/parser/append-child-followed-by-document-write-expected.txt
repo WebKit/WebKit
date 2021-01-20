@@ -1,3 +1,0 @@
-ALERT: document.firstChild.outerHTML: <a></a>
-document.firstChild.nextSibling.outerHTML: <html><head></head><body><b id="b"></b></body></html>
-

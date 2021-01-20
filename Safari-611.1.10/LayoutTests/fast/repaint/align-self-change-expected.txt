@@ -1,9 +1,0 @@
-Tests invalidation on align-self style change. Passes if there is no red.
-
-(repaint rects
-  (rect 0 302 100 300)
-  (rect 0 302 100 50)
-  (rect 0 52 100 300)
-  (rect 100 52 100 300)
-)
-

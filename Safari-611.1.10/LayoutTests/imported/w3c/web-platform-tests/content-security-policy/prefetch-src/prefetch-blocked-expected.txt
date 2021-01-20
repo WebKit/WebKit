@@ -1,5 +1,0 @@
-
-PASS Browser supports prefetch.
-PASS Browser supports performance APIs.
-FAIL Blocked prefetch generates report. assert_unreached: onload should not fire. Reached unreachable code
-

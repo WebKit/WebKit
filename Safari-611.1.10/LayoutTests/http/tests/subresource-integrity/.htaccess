@@ -1,8 +1,0 @@
-<Files "*crossorigin-anon*">
-    Header set "Access-Control-Allow-Origin" "*"
-</Files>
-
-<Files "*crossorigin-creds*">
-    Header set "Access-Control-Allow-Origin" "http://127.0.0.1:8000"
-    Header set "Access-Control-Allow-Credentials" "true"
-</Files>

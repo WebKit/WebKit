@@ -1,3 +1,0 @@
-
-PASS cancelAnimationFrame cancels a pending animation frame callback
-

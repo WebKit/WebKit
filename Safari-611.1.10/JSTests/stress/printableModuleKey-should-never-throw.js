@@ -1,3 +1,0 @@
-//@ runDefault
-
-import(0);

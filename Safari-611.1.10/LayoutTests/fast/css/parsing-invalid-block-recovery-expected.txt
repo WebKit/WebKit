@@ -1,3 +1,0 @@
-This test passes if nothing but "END OF TEST" is displayed
-
-END OF TEST

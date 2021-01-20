@@ -1,2 +1,0 @@
-PASS <path d="M 0 0 L 259 0 259 148 0 148 z" stroke="#fff" stroke-width="1" fill="#00ff00"></path>
-

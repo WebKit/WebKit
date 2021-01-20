@@ -1,2 +1,0 @@
-Paused animation
-style recalc count: 1

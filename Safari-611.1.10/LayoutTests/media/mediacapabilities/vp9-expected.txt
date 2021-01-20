@@ -1,3 +1,0 @@
-
-PASS Media capabilities in case of disabled VP9
-

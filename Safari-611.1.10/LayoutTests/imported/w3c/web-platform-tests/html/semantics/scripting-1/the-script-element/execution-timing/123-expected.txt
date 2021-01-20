@@ -1,3 +1,0 @@
-
-PASS scheduler: altering the type attribute and adding/removing external script with async=false
-

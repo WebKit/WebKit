@@ -1,3 +1,0 @@
-
-PASS An empty parser-inserted script element should return async=true
-

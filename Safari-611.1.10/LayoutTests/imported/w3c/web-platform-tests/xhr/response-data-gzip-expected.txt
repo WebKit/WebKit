@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: GZIP response was correctly inflated
-

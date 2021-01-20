@@ -1,2 +1,0 @@
-ALERT: continuing with correct fragment, promise, popstate, hashchange, timeout
-

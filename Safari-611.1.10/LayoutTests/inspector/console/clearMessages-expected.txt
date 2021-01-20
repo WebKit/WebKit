@@ -1,7 +1,0 @@
-Test for the Console.clearMessages command.
-
-
-== Running test suite: Console.clearMessages
--- Running test case: CallClearMessages
-PASS: Cleared event should fire.
-

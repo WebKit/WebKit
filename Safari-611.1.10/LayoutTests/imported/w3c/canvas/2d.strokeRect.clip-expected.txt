@@ -1,7 +1,0 @@
-2d.strokeRect.clip
-strokeRect is affected by clipping regions
-Spec references: 2d.strokeRect
-Actual output:
-Expected output:
-
-Passed

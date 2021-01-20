@@ -1,3 +1,0 @@
-
-PASS SVGAnimatedPreserveAspectRatio interface - utilizing the preserveAspectRatio property of SVGSVGElement
-

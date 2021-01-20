@@ -1,3 +1,0 @@
-
-PASS Tests end conditions are respected properly near the limits of float numeric precision
-

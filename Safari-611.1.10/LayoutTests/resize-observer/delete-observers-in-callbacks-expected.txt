@@ -1,5 +1,0 @@
-t1
-
-PASS ResizeObserver implemented
-PASS Test deleting observer in callbacks
-

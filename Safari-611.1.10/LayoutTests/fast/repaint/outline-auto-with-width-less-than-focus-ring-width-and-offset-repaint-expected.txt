@@ -1,6 +1,0 @@
-PASS window.internals.repaintRectsAsText().indexOf('3 5') is not -1
-PASS window.internals.repaintRectsAsText().indexOf('3 45') is not -1
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

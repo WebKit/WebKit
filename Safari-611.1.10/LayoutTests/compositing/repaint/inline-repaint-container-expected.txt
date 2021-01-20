@@ -1,3 +1,0 @@
-This should not assert in debug builds.
-
-test

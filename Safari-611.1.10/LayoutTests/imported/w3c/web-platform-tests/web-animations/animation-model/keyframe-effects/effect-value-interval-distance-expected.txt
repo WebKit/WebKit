@@ -1,3 +1,0 @@
-
-PASS Interval distance is calculated correctly (precision test)
-

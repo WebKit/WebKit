@@ -1,2 +1,0 @@
-Resolving media queries should not require more than 1 style resolution.
-Style resolution count: 1

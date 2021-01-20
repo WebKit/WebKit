@@ -1,3 +1,0 @@
-
-PASS fill() does not affect pixels outside the clip region.
-

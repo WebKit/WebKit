@@ -1,3 +1,0 @@
-
-PASS Tests async XHR preflight denial due to lack of CORS headers
-

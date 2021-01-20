@@ -1,3 +1,0 @@
-
-FAIL writing-mode: sideways-lr assert_equals: expected "sideways-lr" but got "horizontal-tb"
-

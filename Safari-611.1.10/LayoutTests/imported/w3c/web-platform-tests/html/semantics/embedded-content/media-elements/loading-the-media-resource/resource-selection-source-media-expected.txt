@@ -1,3 +1,0 @@
-
-FAIL the <source> media attribute has no effect assert_equals: expected 2 but got 3
-

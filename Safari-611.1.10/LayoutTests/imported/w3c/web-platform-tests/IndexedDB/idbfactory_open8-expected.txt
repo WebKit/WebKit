@@ -1,3 +1,0 @@
-
-PASS IDBFactory.open() - error in version change transaction aborts open
-

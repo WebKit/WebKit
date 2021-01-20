@@ -1,3 +1,0 @@
-
-PASS Tests setting and canceling timeout in workers.
-

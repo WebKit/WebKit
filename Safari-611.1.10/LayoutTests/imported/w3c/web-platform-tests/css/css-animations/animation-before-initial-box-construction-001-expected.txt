@@ -1,4 +1,0 @@
-Some content
-
-PASS animations started before initial-containing-block creation properly function
-

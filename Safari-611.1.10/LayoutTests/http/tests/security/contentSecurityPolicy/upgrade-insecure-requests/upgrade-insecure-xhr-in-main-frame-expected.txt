@@ -1,3 +1,0 @@
-ALERT: PASS: load was not blocked
-ALERT: PASS: onloadend called
-This test opens a HTTPS window that loads insecure data via XHR. We should upgrade this request and thereby avoid a mixed content callback.

@@ -1,8 +1,0 @@
-2d.text.draw.fontface.notinpage
-@font-face fonts should work even if they are not used in the page
-Actual output:
-Expected output:
-
-
-FAIL @font-face fonts should work even if they are not used in the page assert_approx_equals: Red channel of the pixel at (5, 5) expected 0 +/- 2 but got 255
-

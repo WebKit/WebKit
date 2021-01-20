@@ -1,7 +1,0 @@
-initial.reset.pattern
-Resetting the canvas state does not invalidate any existing patterns
-Spec references: initial.reset
-Actual output:
-Expected output:
-
-Passed

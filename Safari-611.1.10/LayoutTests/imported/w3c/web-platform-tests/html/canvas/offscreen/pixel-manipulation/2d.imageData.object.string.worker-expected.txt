@@ -1,3 +1,0 @@
-
-PASS ImageData.data converts strings to numbers with ToNumber
-

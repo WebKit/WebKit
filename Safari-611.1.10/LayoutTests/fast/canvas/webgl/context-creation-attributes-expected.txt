@@ -1,6 +1,0 @@
-Note that some of the values tested here might not be supported, and thus should return the default values.
-
-{"alpha":true,"antialias":true,"depth":true,"failIfMajorPerformanceCaveat":false,"powerPreference":"default","premultipliedAlpha":true,"preserveDrawingBuffer":false,"stencil":false}
-{"alpha":true,"antialias":true,"depth":true,"failIfMajorPerformanceCaveat":false,"powerPreference":"default","premultipliedAlpha":true,"preserveDrawingBuffer":false,"stencil":true}
-{"alpha":true,"antialias":true,"depth":true,"failIfMajorPerformanceCaveat":false,"powerPreference":"default","premultipliedAlpha":true,"preserveDrawingBuffer":false,"stencil":false}
-{"alpha":true,"antialias":true,"depth":true,"failIfMajorPerformanceCaveat":true,"powerPreference":"default","premultipliedAlpha":true,"preserveDrawingBuffer":false,"stencil":false}

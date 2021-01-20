@@ -1,5 +1,0 @@
-
-
-
-PASS form submission targetting a frame allowed after a redirect
-

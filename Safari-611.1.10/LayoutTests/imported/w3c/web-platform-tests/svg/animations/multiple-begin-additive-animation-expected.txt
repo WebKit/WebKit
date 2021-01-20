@@ -1,3 +1,0 @@
-
-PASS This tests additive='sum' support on animate elements with multiple begin times
-

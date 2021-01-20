@@ -1,3 +1,0 @@
-OPEN FILE PANEL
-
-PASS, no crash

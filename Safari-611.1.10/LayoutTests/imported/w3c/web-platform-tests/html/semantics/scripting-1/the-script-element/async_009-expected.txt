@@ -1,3 +1,0 @@
-
-PASS Document.write() silently fails from an Async script
-

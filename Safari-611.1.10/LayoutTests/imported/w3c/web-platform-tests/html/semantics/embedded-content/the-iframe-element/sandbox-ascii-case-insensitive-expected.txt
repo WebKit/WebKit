@@ -1,4 +1,0 @@
-
-PASS iframe 'sandbox' ASCII case insensitive, allow-same-orİgin
-PASS iframe 'sandbox' ASCII case insensitive, allow-ſcripts
-

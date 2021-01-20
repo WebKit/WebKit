@@ -1,3 +1,0 @@
-
-PASS paused state when moving to other document
-

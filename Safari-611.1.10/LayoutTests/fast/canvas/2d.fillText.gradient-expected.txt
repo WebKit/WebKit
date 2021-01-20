@@ -1,3 +1,0 @@
-On success, the square should have the bottom left portion of the base of the green I and red otherwise.
-
-TEST PASSED

@@ -1,4 +1,0 @@
-
-PASS location hash
-PASS Setting location.hash on srcdoc iframe
-

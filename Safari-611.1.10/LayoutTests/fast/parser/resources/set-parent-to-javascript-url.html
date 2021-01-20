@@ -1,7 +1,0 @@
-<script>
-const parent = window.parent;
-alert(1);
-parent.document.getElementsByTagName('iframe')[0].src = "javascript:alert(3),'PASS<script>alert(4)<\/script>'";
-alert(2);
-parent.setTimeout("done()", 0);
-</script>

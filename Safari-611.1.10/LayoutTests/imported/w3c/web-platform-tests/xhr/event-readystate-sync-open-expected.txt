@@ -1,4 +1,0 @@
-
-PASS XMLHttpRequest: open() call fires sync readystate event (sync)
-PASS XMLHttpRequest: open() call fires sync readystate event (async)
-

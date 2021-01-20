@@ -1,5 +1,0 @@
-
-PASS Property caret-color value 'auto'
-PASS Property caret-color value 'currentColor'
-PASS Property caret-color value 'red'
-

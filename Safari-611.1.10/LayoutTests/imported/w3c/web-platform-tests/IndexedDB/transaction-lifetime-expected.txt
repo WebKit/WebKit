@@ -1,3 +1,0 @@
-
-PASS Test events opening a second database when one connection is open already
-

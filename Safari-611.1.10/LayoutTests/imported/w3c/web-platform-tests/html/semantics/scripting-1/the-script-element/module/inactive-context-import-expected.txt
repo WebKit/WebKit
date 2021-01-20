@@ -1,3 +1,0 @@
-
-PASS dynamic import from inactive context should not crash
-

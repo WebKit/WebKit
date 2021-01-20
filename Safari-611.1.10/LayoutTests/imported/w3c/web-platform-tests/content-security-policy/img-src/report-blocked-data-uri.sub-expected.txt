@@ -1,4 +1,0 @@
-
-
-FAIL Expecting logs: ["violated-directive=img-src"] assert_unreached: Logging timeout, expected logs violated-directive=img-src not sent. Reached unreachable code
-

@@ -1,3 +1,0 @@
-This tests that when calling WorkerGlobalScope.importScripts() will two script URLs that the second script is not loaded if the first script URL was blocked by the Content Security Policy of the worker (inherited from this page).
-
-PASS threw exception NetworkError:  A network error occurred..

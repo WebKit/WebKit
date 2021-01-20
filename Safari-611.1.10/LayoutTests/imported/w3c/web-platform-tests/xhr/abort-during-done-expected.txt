@@ -1,5 +1,0 @@
-
-PASS XMLHttpRequest: abort() during DONE (sync)
-PASS XMLHttpRequest: abort() during DONE (sync aborted in readystatechange)
-PASS XMLHttpRequest: abort() during DONE (async)
-

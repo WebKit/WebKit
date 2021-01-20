@@ -1,5 +1,0 @@
-
-PASS Checking document metadata for text file
-PASS Checking DOM for text file
-PASS Checking contents for text file
-

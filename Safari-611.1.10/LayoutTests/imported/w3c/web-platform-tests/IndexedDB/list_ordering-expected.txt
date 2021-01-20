@@ -1,5 +1,0 @@
-
-PASS objectStoreNames and indexNames order - numbers
-PASS objectStoreNames and indexNames order - numbers 'overflow'
-PASS objectStoreNames and indexNames order - lexigraphical string sort
-

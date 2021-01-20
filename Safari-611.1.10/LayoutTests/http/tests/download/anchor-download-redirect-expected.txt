@@ -1,7 +1,0 @@
-Download started.
-Download was redirected to "http://127.0.0.1:8000/media/resources/test.pdf".
-Downloading URL with suggested filename "foo.pdf"
-Download completed.
-Tests that download redirects are reported to the client. the link.
-
-The suggested filename at the top should be foo.pdf and you should see a redirect to /media/resources/test.pdf.

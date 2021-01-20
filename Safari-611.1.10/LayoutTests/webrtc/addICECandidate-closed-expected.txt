@@ -1,3 +1,0 @@
-
-PASS Close a peer connection in the middle of gathering
-

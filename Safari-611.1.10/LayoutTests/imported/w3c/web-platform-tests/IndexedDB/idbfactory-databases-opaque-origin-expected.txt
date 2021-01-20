@@ -1,4 +1,0 @@
-
-PASS IDBFactory.databases() in non-sandboxed iframe should not reject
-PASS IDBFactory.databases() in sandboxed iframe should reject
-

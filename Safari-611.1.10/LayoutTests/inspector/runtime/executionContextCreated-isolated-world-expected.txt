@@ -1,9 +1,0 @@
-
-Test that exactly one Runtime.executionContextCreated event is fired for each existing context when Runtime.enable is called.
-
-
-== Running test suite: Runtime.executionContextCreated.IsolatedWorld
--- Running test case: Runtime.executionContextCreated.IsolatedWorld.Internal
-PASS: Received event for internal isolated world.
-PASS: Execution context should be internal.
-

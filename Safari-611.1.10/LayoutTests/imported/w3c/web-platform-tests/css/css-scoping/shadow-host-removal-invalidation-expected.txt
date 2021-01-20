@@ -1,3 +1,0 @@
-
-PASS :host rules are properly invalidated when stylesheets are removed
-

@@ -1,3 +1,0 @@
-
-PASS Test origin header /html/semantics/links/downloading-resources/resources/
-

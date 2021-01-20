@@ -1,8 +1,0 @@
-PASS: got stable update
-PASS successfullyParsed is true
-
-TEST COMPLETE
-This test will time out if no stable update is received.
-
-
-

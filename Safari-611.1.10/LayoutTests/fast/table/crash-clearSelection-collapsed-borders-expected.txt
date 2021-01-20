@@ -1,2 +1,0 @@
-95487: Crash in RenderTable::calcBorderEnd
-This test has PASSED if it didn't crash.

@@ -1,3 +1,0 @@
-
-FAIL IntersectionObserver with target in a different window. assert_equals: Notification after insertion into popup. expected 2 but got 1
-

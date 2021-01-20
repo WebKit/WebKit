@@ -1,3 +1,0 @@
-PASS: Cross-domain access allowed.
-PASS: PUT data received
-

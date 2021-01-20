@@ -1,3 +1,0 @@
-
-FAIL An expression in a predicate should not change the context node assert_equals: expected 1 but got 0
-

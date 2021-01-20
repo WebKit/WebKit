@@ -1,3 +1,0 @@
-
-FAIL Removing iframe from document via innerHTML removes it from history assert_equals: History length before iframe removal expected 2 but got 1
-

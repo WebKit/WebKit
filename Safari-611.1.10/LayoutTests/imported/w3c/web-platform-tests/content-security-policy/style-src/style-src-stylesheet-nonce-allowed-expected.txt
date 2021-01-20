@@ -1,3 +1,0 @@
-
-PASS Stylesheet link should load with correct nonce
-Lorem ipsum

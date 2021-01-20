@@ -1,3 +1,0 @@
-
-PASS Test that we don't generated boxes for foreignObject in non-rendered SVG.
-

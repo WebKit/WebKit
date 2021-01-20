@@ -1,8 +1,0 @@
-This tests that JS wrappers of nodes in a mutation record do not get collected.
-
-PASS
-PASS
-PASS
-PASS
-PASS
-

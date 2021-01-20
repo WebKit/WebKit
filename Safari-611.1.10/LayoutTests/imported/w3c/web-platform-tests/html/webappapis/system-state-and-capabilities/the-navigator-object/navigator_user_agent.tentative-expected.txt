@@ -1,3 +1,0 @@
-
-PASS navigator.getUserAgent() is not available in non-secure contexts.
-

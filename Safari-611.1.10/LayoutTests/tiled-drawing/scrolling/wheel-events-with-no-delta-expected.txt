@@ -1,1 +1,0 @@
-Success! We didn't get a wheel event with a delta of 0.

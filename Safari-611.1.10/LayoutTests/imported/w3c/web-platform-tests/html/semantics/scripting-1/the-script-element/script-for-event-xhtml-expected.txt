@@ -1,3 +1,0 @@
-
-PASS Scripts with for and event attributes should not run.
-

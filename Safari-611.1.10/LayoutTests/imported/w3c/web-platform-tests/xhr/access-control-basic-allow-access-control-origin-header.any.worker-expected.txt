@@ -1,3 +1,0 @@
-
-PASS Access control test with origin header
-

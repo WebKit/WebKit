@@ -1,7 +1,0 @@
-Description
-
-This test validates the div element.
-
-
-PASS The prototype for div is HTMLDivElement.prototype
-

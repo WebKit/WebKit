@@ -1,1 +1,0 @@
-Failure. Found: <h1 style="-webkit-text-size-adjust: auto;">foo</h1>, but expected: <h1>foo</h1>

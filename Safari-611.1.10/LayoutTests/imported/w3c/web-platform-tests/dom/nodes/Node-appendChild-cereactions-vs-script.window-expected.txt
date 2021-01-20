@@ -1,3 +1,0 @@
-
-FAIL Custom element reactions follow script execution Illegal constructor
-

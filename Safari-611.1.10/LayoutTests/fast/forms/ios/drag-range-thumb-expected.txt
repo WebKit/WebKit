@@ -1,4 +1,0 @@
-Tests that a basic range slider works
-
-
-Successfully handled oninput, value is now "456"

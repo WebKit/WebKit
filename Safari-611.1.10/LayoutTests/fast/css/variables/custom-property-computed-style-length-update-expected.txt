@@ -1,8 +1,0 @@
-Check that CSSStyleDeclaration.length is accurate after custom property modifications.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS afterAddingComputedPropertyLength > initialLength is true
-PASS afterAddingComputedPropertyLength === afterForcedLayoutLength is true
-

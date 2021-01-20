@@ -1,7 +1,0 @@
-2d.composite.canvas.source-over
-Spec references: 2d.composite.source-over
-Actual output:
-Expected output:
-
-Passed
-

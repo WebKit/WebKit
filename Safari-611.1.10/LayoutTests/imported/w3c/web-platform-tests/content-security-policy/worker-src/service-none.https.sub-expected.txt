@@ -1,3 +1,0 @@
-
-FAIL Same-origin service worker blocked by 'none'. assert_unreached: Should have rejected: undefined Reached unreachable code
-

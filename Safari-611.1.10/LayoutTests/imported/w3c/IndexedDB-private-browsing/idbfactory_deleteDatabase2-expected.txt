@@ -1,3 +1,0 @@
-
-PASS IDBFactory.deleteDatabase() - result of the request is set to undefined
-

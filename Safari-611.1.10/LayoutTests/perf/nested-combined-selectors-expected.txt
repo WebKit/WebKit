@@ -1,4 +1,0 @@
-Tests styling multiple combinators have linear performance
-PASS
-PASS
-

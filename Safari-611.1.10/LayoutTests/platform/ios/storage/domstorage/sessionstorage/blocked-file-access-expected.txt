@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: PASS: window.sessionStorage was accessible
-
-Test that we are permitted access to sessionStorage from a file URL if universal access is turned off.

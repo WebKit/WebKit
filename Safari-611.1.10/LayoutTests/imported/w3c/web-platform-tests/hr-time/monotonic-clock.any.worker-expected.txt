@@ -1,4 +1,0 @@
-
-PASS self.performance.now() returns a positive number
-PASS self.performance.now() difference is not negative
-

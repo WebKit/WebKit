@@ -1,7 +1,0 @@
-To manually test this, turn on bold, italic and underline via the context menu, and then type some text into the contenteditable. The text should be italicized and underlined, but not bold.
-
-after typing:
-| "abc"
-| <i>
-|   <u>
-|     "def<#selection-caret>"

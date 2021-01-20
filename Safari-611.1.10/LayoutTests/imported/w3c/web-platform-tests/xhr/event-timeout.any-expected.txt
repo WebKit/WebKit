@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: timeout event
-

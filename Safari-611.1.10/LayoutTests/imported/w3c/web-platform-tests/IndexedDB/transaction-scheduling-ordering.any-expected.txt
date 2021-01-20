@@ -1,3 +1,0 @@
-
-PASS Verify Indexed DB transactions are ordered per spec
-

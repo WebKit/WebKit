@@ -1,8 +1,0 @@
-The origin of an URL is called "unique" when it is considered to be different from every origin, including itself. The origin of a data-url is unique. When the current origin is unique, the CSP source 'self' must not match any URL.
-
-
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Iframe's url must not match with 'self'. It must be blocked. Test timed out
-

@@ -1,3 +1,0 @@
-
-PASS Testing that setting touch-action: pinch-zoom on an element prevents page scrolling.
-

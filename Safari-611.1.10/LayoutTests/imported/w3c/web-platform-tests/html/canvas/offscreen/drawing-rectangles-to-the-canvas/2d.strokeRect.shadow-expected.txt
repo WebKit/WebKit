@@ -1,7 +1,0 @@
-2d.strokeRect.shadow
-
-strokeRect draws shadows
-
-
-PASS strokeRect draws shadows
-

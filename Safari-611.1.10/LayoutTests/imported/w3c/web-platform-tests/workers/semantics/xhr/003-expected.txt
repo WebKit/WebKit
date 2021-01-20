@@ -1,3 +1,0 @@
-
-FAIL async XMLHttpRequest in shared worker Can't find variable: SharedWorker
-

@@ -1,3 +1,0 @@
-
-PASS An external module script with nomodule content attribute must run
-

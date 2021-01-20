@@ -1,4 +1,0 @@
-
-FAIL postMessaging to a dedicated sub-worker allows them to see each others' modifications Can't find variable: Worker
-FAIL Bonus: self.crossOriginIsolated assert_true: expected true got undefined
-

@@ -1,5 +1,0 @@
-webkit.org/b/136945 - ASSERTION FAILED: columnCount in WebCore::CSSParser::parseGridTemplateAreasRow
-
-This test has PASSED if it doesn't CRASH.
-
-

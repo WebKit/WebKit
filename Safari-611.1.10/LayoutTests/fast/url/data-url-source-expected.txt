@@ -1,5 +1,0 @@
-PASS internals.xhrResponseSource(xhr) is "Network"
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

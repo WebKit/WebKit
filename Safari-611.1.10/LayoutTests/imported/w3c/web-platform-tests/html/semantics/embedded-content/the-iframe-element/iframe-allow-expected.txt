@@ -1,3 +1,0 @@
-
-FAIL iframe-cross-origin-allow assert_false: Document inside cross-origin iframe without allow attribute should not have feature enabled expected false got undefined
-

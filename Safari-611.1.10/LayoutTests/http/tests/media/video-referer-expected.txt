@@ -1,5 +1,0 @@
-
-EVENT(canplay)
-END OF TEST
-Tests that the media player will send the relevant referer when requesting the media file.
-

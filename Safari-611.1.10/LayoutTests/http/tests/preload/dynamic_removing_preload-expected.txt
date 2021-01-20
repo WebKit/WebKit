@@ -1,5 +1,0 @@
-PASS downloadedScript is false
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

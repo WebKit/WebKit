@@ -1,3 +1,0 @@
-
-FAIL Tests that XML and CSS attributeTypes can be switched between. assert_approx_equals: expected 100 +/- 1 but got 300
-

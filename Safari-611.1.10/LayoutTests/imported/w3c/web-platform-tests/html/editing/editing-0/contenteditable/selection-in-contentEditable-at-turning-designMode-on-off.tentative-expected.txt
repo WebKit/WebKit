@@ -1,3 +1,0 @@
-
-PASS Selection in contenteditable shouldn't be reinitialized when changing designMode
-

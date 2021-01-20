@@ -1,6 +1,0 @@
-security.pattern.image.fillStyle
-Setting fillStyle to a pattern of a different-origin image makes the canvas origin-unclean
-Spec references: security.fillStyle.image
-Actual output:
-
-Passed

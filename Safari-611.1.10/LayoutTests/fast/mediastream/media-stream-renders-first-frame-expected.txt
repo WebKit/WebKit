@@ -1,4 +1,0 @@
-
-
-PASS A frame from the camera is shown before playback begins.
-

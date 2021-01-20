@@ -1,1 +1,0 @@
-Test that setRequestHeader() can be used to alter security-sensitive headers when the setting allowSettingAnyXHRHeaderFromFileURLs is enabled. This test PASSED if you do not see any console warnings.

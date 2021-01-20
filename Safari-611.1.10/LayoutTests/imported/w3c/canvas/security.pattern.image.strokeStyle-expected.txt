@@ -1,6 +1,0 @@
-security.pattern.image.strokeStyle
-Setting strokeStyle to a pattern of a different-origin image makes the canvas origin-unclean
-Spec references: security.strokeStyle.image
-Actual output:
-
-Passed

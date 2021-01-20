@@ -1,3 +1,0 @@
-
-PASS Finishing an animation that does not fill forwards causes its animation style to be cleared
-

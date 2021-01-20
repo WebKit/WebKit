@@ -1,3 +1,0 @@
-
-PASS Properties of IDBOpenDBRequest during failed IDBFactory open()
-

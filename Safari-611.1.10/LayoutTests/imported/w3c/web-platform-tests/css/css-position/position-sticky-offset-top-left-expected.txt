@@ -1,4 +1,0 @@
-
-PASS offsetTop/offsetLeft should be correct for sticky after script insertion
-PASS offsetTop/offsetLeft should be correct for sticky after script-caused layout
-

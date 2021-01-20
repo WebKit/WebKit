@@ -1,3 +1,0 @@
-
-PASS Testing that "pointerenter" and "pointerleave" have the element on which the event listener was added as their target.
-

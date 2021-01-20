@@ -1,3 +1,0 @@
-
-PASS getImageData() returns A in the fourth component
-

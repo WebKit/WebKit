@@ -1,4 +1,0 @@
-
-
-PASS window.open in sandbox iframe
-

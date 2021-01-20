@@ -1,4 +1,0 @@
-
-PASS Send "sensible" default value, whatever that means
-PASS XMLHttpRequest: send() - Accept-Language
-

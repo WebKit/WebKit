@@ -1,3 +1,0 @@
-
-PASS SVGAnimatedLength interface - utilizing the width property of SVGRectElement
-

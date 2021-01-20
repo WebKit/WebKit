@@ -1,3 +1,0 @@
-
-PASS Requesting immersive session outside of a user gesture rejects
-

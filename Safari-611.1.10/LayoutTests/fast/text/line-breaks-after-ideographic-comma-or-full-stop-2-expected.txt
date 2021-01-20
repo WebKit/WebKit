@@ -1,4 +1,0 @@
-This tests that a line break is prohibited between an ideographic comma and a right corner bracket.
-
-う、」う
-PASS

@@ -1,5 +1,0 @@
-This tests that videos with controls enabled are still draggable. In a browser, start the test by dragging the video outside its controls area.
-
-EVENT(drag)
-END OF TEST
-

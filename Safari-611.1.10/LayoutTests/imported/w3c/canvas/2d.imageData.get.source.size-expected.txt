@@ -1,5 +1,0 @@
-2d.imageData.get.source.size
-getImageData() returns bigger ImageData for bigger source rectangle
-Spec references: 2d.imageData.get.basic
-Actual output:
-Passed

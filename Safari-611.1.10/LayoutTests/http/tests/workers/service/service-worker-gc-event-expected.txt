@@ -1,4 +1,0 @@
-statechange to installed
-statechange to activating
-statechange to activated
-

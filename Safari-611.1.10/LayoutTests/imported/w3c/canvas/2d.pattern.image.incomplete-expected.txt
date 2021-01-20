@@ -1,5 +1,0 @@
-2d.pattern.image.incomplete
-Spec references: 2d.pattern.incomplete.image
-Actual output:
-
-Passed

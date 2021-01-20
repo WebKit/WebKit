@@ -1,3 +1,0 @@
-
-PASS No (UTF-8) sniffing allowed
-Â€Â€ Hello World! Â€Â€

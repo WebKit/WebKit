@@ -1,8 +1,0 @@
-A 'frame-ancestors' CSP directive with '*' should allow rendering. This test PASSED if you see content in the iframe below. Otherwise, it FAILED.
-
-
-
---------
-Frame: '<!--frame1-->'
---------
-This is an IFrame sending a Content Security Policy header containing "frame-ancestors *".

@@ -1,2 +1,0 @@
-Test CSSPrimitiveValue setters.
-setFloatValue The object can not be modified.

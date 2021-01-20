@@ -1,5 +1,0 @@
-Tests for tapping or clicking on an anchor element assigned to a slot with :hover rule.
-Tapping on "Tap me" below exactly once should activate the hyperlink.
-
-Tap me
-PASS

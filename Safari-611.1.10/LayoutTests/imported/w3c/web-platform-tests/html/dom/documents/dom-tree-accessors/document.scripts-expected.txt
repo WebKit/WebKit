@@ -1,3 +1,0 @@
-
-PASS Document.scripts should be a live collection
-

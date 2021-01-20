@@ -1,3 +1,0 @@
-
-PASS deleteCell() on HTMLTableRowElement must enqueue disconnectedCallback when removing a custom element
-

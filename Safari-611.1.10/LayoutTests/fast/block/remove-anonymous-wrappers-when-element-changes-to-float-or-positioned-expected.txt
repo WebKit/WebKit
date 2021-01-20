@@ -1,4 +1,0 @@
-webkit.org/b/115687: Ensure we remove anonymous wrappers if all elements on a line become inline (i.e. excluding floating or positioned).
-
-PASS
-  

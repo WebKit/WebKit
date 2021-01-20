@@ -1,6 +1,0 @@
-
-
---------
-Frame: '<!--frame1-->'
---------
-PASS did not crash.

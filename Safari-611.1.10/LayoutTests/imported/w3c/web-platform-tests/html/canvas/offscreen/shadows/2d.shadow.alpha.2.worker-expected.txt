@@ -1,3 +1,0 @@
-
-PASS Shadow colour alpha components are used
-

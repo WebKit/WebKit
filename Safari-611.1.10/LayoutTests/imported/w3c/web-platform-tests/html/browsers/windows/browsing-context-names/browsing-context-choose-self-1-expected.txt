@@ -1,3 +1,0 @@
-
-PASS The current browsing context must be chosen if the given name is '_self'
-

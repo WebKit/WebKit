@@ -1,7 +1,0 @@
-2d.path.stroke.scale1
-Stroke line widths are scaled by the current transformation matrix
-Spec references: 2d.path.transformation
-Actual output:
-Expected output:
-
-Passed

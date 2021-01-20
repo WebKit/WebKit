@@ -1,3 +1,0 @@
-
-PASS defaultValue and value include CDATASection Text nodes
-

@@ -1,3 +1,0 @@
-
-PASS Fetch events should not go through uncontrolled page.
-

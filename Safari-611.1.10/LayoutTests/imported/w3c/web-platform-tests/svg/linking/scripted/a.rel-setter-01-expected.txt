@@ -1,4 +1,0 @@
-
-PASS SVGAElement.rel setter
-PASS Test anchor's rel setter
-

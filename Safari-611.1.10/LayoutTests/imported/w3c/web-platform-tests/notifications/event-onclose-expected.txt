@@ -1,4 +1,0 @@
-
-PASS Checked test prerequisites.
-PASS Invoked the onclose event handler.
-

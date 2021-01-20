@@ -1,3 +1,0 @@
-
-PASS Below-viewport loading=lazy not-rendered images should never load, even when scrolled into view
-

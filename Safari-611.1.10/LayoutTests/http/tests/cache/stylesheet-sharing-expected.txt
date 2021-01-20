@@ -1,8 +1,0 @@
-shareable.css
-PASS styleSheetContentsShared is true
-non-shareable.css
-PASS styleSheetContentsShared is false
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

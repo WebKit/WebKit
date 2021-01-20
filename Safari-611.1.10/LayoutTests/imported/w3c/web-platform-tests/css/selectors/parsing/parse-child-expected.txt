@@ -1,4 +1,0 @@
-
-PASS "body > p" should be a valid selector
-PASS "div ol>li p" should be a valid selector
-

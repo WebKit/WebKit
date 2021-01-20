@@ -1,3 +1,0 @@
-
-PASS Ensure that content type round trips when reading blob data
-

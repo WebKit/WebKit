@@ -1,4 +1,0 @@
-
-PASS CSSKeyframeRule: style property
-PASS CSSKeyframeRule: style property has [PutForwards]
-

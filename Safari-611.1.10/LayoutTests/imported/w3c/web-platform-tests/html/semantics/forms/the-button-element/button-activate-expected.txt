@@ -1,4 +1,0 @@
-
-
-PASS button activation behaviour submits form
-

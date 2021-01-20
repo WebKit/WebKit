@@ -1,3 +1,0 @@
-
-PASS Zero-length line segments from lineTo are removed before stroking
-

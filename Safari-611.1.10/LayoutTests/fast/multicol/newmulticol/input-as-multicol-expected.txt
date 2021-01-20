@@ -1,7 +1,0 @@
-Test that a input element with multicolumn style attached is rendered property.
-
-The test passes if it does not crash or assert.
-
-PASS
-
-

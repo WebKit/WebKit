@@ -1,4 +1,0 @@
-
-PASS Property box-sizing value 'content-box'
-PASS Property box-sizing value 'border-box'
-

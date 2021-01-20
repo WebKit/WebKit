@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: The response attribute: Blob data
-

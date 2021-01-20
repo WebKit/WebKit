@@ -1,4 +1,0 @@
-
-PASS XMLHttpRequest: send() - conditional requests (tag)
-PASS XMLHttpRequest: send() - conditional requests (date)
-

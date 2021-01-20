@@ -1,3 +1,0 @@
-
-FAIL no src, parser-inserted, has style sheets blocking scripts, script nesting level == 1 assert_unreached: Load event should not be fired. Reached unreachable code
-

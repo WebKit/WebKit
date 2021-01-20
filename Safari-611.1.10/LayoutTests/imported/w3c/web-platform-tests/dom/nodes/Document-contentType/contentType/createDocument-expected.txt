@@ -1,3 +1,0 @@
-
-PASS document.implementation.createDocument: document.contentType === 'application/xhtml+xml'
-

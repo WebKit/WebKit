@@ -1,3 +1,0 @@
-
-PASS register worker that calls waitUntil with a promise that never resolves in oninstall
-

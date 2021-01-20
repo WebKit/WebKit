@@ -1,6 +1,0 @@
-
-
-PASS Check the frame heriarchy
-PASS Check the frame heriarchy 1
-PASS Check the frame heriarchy 2
-

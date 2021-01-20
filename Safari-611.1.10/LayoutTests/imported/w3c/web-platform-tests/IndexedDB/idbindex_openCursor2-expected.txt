@@ -1,3 +1,0 @@
-
-PASS IDBIndex.openCursor() - throw TransactionInactiveError on aborted transaction
-

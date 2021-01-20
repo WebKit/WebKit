@@ -1,4 +1,0 @@
-
-PASS 'secure' cookie visible in `document.cookie`
-PASS 'secure' cookie visible in HTTP request
-

@@ -1,3 +1,0 @@
-
-PASS This verifies several attributeTypes combiniations
-

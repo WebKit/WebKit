@@ -1,9 +1,0 @@
-PASS hitElement.id is "under-target"
-PASS scroller.scrollTop is 0
-swipe complete
-PASS scroller.scrollTop is 0
-PASS documentDidScroll is true
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

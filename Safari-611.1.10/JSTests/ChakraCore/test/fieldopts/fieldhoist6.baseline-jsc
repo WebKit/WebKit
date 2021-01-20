@@ -1,3 +1,0 @@
-Exception: ReferenceError: Can't find variable: f
-fieldhoist6.js:13:6
-global code@fieldhoist6.js:20:3

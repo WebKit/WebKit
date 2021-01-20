@@ -1,3 +1,0 @@
-
-PASS members of WorkerLocation
-

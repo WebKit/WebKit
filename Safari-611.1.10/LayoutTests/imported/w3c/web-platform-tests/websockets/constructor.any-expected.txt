@@ -1,3 +1,0 @@
-
-PASS Calling the WebSocket constructor with too many arguments should not throw.
-

@@ -1,3 +1,0 @@
-
-PASS [Unscopable] extended attribute makes @@unscopables object on the prototype object, whose prototype is null.
-

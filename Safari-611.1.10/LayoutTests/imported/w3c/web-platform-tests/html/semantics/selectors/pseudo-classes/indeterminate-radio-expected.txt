@@ -1,5 +1,0 @@
-
-
-
-PASS :indeterminate and input type=radio
-

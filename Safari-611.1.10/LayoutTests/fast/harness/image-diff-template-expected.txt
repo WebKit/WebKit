@@ -1,3 +1,0 @@
-Expected Image	Actual Image	Diff Image
-Animate:	Expected	Actual	Diff
-Loading...

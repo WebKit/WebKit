@@ -1,2 +1,0 @@
-PASS Re-sizing the content of the scrolled div correctly set a new scroll position.
-This test should be run in the test harness.

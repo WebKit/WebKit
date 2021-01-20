@@ -1,4 +1,0 @@
-This test verifies that execution terminates after a not-a-constructor exception is thrown. In particular, it verifies that the engine doesn't restart execution through a custom toString() function.
-
-PASS: Test complete.
-

@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: window.name should equal "test" after a cross-origin auxiliary frame navigation.
-CONSOLE MESSAGE: window.name equals "test".
-

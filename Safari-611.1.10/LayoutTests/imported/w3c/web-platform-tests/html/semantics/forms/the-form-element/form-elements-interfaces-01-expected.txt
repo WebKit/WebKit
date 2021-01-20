@@ -1,5 +1,0 @@
-
-PASS form.elements: interfaces
-PASS Testing interface HTMLFormControlsCollection
-PASS Testing interface HTMLCollection
-

@@ -1,3 +1,0 @@
-
-PASS Removing a transitioning property from transition-property should trigger transitioncancel
-

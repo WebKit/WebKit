@@ -1,3 +1,0 @@
-
-FAIL Cloning objects, preserving sharing #2 assert_equals: expected object "[object ImageData]" but got object "[object ImageData]"
-

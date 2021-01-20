@@ -1,8 +1,0 @@
-
-PASS decWrongTypes
-PASS incWrongTypes
-PASS greaterThanWrongReturnType
-PASS greaterEqualWrongReturnType
-PASS indexSetterWithMismatchedType
-PASS setterWithMismatchedType
-

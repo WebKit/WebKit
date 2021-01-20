@@ -1,7 +1,0 @@
-has enumerable
-has configurable
-has value
-has writable
-has get
-has set
-PASS

@@ -1,3 +1,0 @@
-
-PASS Navigated frame to about:blank and document.domain
-

@@ -1,3 +1,0 @@
-
-PASS IDBDatabase.createObjectStore() - object store 'name' and 'keyPath' properties are correctly set
-

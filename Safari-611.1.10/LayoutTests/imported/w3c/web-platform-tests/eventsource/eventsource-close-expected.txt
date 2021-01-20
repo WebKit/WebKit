@@ -1,4 +1,0 @@
-
-PASS EventSource: close()
-PASS EventSource: close(), test events
-

@@ -1,7 +1,0 @@
-
-
-Tests that allowed form actions work correctly.
-
-
-PASS Expecting logs: ["PASS","TEST COMPLETE"]
-

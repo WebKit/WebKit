@@ -1,7 +1,0 @@
-Tests for truncated async stack traces.
-
-
-== Running test suite: AsyncStackTrace.truncate
--- Running test case: TruncateBranchingStackTrace
-PASS: Paused in branching stack trace.
-

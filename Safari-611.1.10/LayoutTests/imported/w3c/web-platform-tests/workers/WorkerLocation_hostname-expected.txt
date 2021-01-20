@@ -1,3 +1,0 @@
-
-PASS  WorkerLocation URL decomposition IDL attribute: hostname
-

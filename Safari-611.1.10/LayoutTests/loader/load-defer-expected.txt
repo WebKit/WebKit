@@ -1,3 +1,0 @@
-ALERT: Test that load deferring works as intended.
-ALERT: PASS: The frame loaded after loads were resumed.
-

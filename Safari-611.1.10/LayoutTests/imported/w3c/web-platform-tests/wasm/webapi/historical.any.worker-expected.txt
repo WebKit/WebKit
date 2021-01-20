@@ -1,3 +1,0 @@
-
-FAIL historical promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.compileStreaming is not a function. (In 'WebAssembly.compileStreaming(fetch('../incrementer.wasm'))', 'WebAssembly.compileStreaming' is undefined)"
-

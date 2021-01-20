@@ -1,3 +1,0 @@
-
-PASS GPURenderPassEncoder created and successfully ended
-

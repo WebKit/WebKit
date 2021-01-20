@@ -1,4 +1,0 @@
-
-
-PASS Focusing on visible sticky input box should not scroll the page.
-

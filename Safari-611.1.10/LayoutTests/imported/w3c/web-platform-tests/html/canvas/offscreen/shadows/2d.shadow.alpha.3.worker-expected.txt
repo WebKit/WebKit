@@ -1,3 +1,0 @@
-
-PASS Shadows are affected by globalAlpha
-

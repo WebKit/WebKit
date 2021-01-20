@@ -1,4 +1,0 @@
-ABCD
-
-PASS Test 'by' animation of SVGLengthList.
-

@@ -1,3 +1,0 @@
-
-FAIL window.open() with "noreferrer" tests Can't find variable: BroadcastChannel
-

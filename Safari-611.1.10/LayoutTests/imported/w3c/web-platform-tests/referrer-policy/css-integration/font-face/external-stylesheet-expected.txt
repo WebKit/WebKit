@@ -1,5 +1,0 @@
-Check that resources from external stylesheets are loaded with the referrer and referrer policy from the external stylesheet.
-
-
-FAIL Font from external stylesheet. assert_equals: expected (string) "http://127.0.0.1:8800/common/security-features/subresource/stylesheet.py?id=0cfaf0c4-3f46-4939-a15f-3aa98cbdba75&type=font" but got (undefined) undefined
-

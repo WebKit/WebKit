@@ -1,3 +1,0 @@
-
-FAIL Snaps to the positions adjusted by scroll-padding assert_equals: expected 200 but got 0
-

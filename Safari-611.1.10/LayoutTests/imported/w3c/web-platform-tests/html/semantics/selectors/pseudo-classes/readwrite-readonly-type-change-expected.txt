@@ -1,4 +1,0 @@
- This text should be green on lime background.
-
-PASS Evaluation of :required and :optional changes for input type change.
-

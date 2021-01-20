@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: content-encoding:deflate response was correctly inflated
-

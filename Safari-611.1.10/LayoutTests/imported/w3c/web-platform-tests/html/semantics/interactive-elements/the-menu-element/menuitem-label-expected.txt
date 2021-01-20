@@ -1,4 +1,0 @@
-item2 item 3 item4
-
-FAIL Menuitem.label should be the label attribute content or the result of stripping and collapsing ASCII whitespace from the child text content. assert_equals: expected (string) "item1" but got (undefined) undefined
-

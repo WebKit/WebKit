@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: Did not parse stylesheet at 'http://127.0.0.1:8000/misc/resources/stylesheet-bad-mime-type.php' because non CSS MIME types are not allowed in strict mode.
-Tests that showing Web Inspector on a page that has a stylesheet with an invalid MIME type does not crash.
-
-This test passes if it does not crash.

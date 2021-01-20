@@ -1,2 +1,0 @@
-PASS: The worker script did not come from the network cache
-

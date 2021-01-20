@@ -1,5 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 120x120
-  RenderBlock (positioned) {HTML} at (0,0) size 120x120 [bgcolor=#FFFF00] [border: (10px solid #000000)]
-    RenderBody {BODY} at (18,18) size 84x0

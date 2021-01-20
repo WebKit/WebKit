@@ -1,5 +1,0 @@
-
-PASS initPopStateEvent
-PASS Initial value of PopStateEvent.state must be null
-PASS Dispatching a synthetic PopStateEvent
-

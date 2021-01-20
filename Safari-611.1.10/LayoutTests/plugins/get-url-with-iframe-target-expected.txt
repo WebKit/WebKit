@@ -1,3 +1,0 @@
- This tests that the plugin properly receives NPP_URLNotify for subframe loads.
-SUCCESS
-

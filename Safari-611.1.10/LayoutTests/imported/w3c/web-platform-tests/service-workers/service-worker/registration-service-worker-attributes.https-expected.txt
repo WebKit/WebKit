@@ -1,3 +1,0 @@
-
-PASS installing/waiting/active after registration
-

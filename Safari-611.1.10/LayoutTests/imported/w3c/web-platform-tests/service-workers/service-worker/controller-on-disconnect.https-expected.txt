@@ -1,3 +1,0 @@
-
-PASS controller is cleared on disconnected window
-

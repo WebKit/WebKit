@@ -1,3 +1,0 @@
-This tests dynamically mutating the slot value. WebKit should not crash.
-
-PASS - WebKit did not crash

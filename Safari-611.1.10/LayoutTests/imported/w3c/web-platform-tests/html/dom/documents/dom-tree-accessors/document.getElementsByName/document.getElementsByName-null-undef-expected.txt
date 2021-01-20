@@ -1,4 +1,0 @@
-
-PASS getElementsByName(null)
-PASS getElementsByName(undefined)
-

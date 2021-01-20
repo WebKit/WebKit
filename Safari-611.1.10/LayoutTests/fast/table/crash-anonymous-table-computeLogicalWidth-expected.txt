@@ -1,2 +1,0 @@
-Bug 70392: Multiple crashes in RenderTable during layout
-This test passes if it does not CRASH.

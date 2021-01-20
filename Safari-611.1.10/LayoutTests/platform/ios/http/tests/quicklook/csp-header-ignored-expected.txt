@@ -1,8 +1,0 @@
-Tests that a Content-Security-Policy HTTP header is ignored when delivered with a Microsoft Word document. This test PASSED if you see PASS below and there is no warning logged to the console. Otherwise, it FAILED.
-
-
-
---------
-Frame: '<!--frame1-->'
---------
-PASS

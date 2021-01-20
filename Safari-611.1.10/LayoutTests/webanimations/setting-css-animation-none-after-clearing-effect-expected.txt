@@ -1,3 +1,0 @@
-
-PASS Setting a CSS Animation to 'none' after setting its effect to null does not crash.
-

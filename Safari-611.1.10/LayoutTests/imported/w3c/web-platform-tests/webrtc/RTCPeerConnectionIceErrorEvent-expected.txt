@@ -1,3 +1,0 @@
-
-PASS RTCPeerConnectionIceErrorEvent constructed from init parameters
-

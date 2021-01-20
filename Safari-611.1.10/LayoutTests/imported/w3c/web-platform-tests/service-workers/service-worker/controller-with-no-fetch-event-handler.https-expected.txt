@@ -1,7 +1,0 @@
-
-PASS global setup
-PASS cross-origin request, no-cors mode
-PASS cross-origin request, cors denied
-PASS cross-origin request, cors approved
-PASS cleanup global state
-

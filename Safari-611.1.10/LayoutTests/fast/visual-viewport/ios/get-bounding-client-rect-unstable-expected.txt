@@ -1,9 +1,0 @@
-PASS boundingClientRect.top is expectedTop
-Doing unstable scroll
-PASS boundingClientRect.top is expectedTop
-Finishing scroll
-PASS boundingClientRect.top is expectedTop
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

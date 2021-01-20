@@ -1,3 +1,0 @@
-
-PASS scheduler: SVG script nested inline in external
-

@@ -1,5 +1,0 @@
-
-
-PASS Spin in fetch
-PASS Spin after fetch
-

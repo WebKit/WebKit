@@ -1,3 +1,0 @@
-
-PASS This checks the effect on multiple animations on one target
-

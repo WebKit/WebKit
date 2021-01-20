@@ -1,3 +1,0 @@
-
-PASS Verify that a resize event gets fired when the window is resized.
-

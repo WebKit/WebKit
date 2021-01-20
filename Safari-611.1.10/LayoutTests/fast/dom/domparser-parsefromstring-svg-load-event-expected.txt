@@ -1,9 +1,0 @@
-Tests that SVG load events are not fired in frameless documents. This test passes if you do not see a FAIL alert message.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

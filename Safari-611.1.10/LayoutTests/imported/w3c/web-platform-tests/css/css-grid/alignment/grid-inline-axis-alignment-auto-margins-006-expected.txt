@@ -1,6 +1,0 @@
-XXXX
-XX
-
-PASS #grid 1
-PASS #grid 2
-

@@ -1,4 +1,0 @@
-
-PASS Property column-rule-color value 'currentcolor'
-PASS Property column-rule-color value 'red'
-

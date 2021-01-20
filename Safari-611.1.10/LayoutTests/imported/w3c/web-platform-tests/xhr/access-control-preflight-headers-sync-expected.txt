@@ -1,3 +1,0 @@
-
-PASS Preflighted sync request with custom header
-

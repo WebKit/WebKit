@@ -1,3 +1,0 @@
-
-PASS Test animations that only express an offset
-

@@ -1,2 +1,0 @@
-PASS if '[click][click]' text is shown below.
-[click][click]

@@ -1,3 +1,0 @@
-
-PASS integration test on reset for a created-from-script form
-

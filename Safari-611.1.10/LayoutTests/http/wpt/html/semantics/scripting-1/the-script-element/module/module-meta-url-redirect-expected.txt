@@ -1,3 +1,0 @@
-
-PASS import.meta.url should be redirected url
-

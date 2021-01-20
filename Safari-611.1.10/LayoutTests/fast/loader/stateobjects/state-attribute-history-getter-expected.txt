@@ -1,4 +1,0 @@
-Check that setting a custom getter for history.state works correctly and that PopStateEvent.state still has a correct value.
-
-PASS
-

@@ -1,3 +1,0 @@
-
-FAIL HTML Test: Non-matching media type should have stylesheet assert_equals: expected 1 but got 0
-

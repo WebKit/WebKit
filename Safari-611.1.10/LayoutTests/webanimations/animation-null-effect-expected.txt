@@ -1,3 +1,0 @@
-Ensure removing the effect from an active animation is handled correctly.
-
-PASS if test does not crash.

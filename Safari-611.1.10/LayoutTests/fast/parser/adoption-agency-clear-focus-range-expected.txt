@@ -1,3 +1,0 @@
-Active Element must be moved to body: PASS
-range.startContainer must be moved to p: PASS
-

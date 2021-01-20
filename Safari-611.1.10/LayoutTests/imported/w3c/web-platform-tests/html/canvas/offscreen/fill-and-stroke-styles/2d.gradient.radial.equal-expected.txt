@@ -1,5 +1,0 @@
-2d.gradient.radial.equal
-
-
-PASS OffscreenCanvas test: 2d.gradient.radial.equal
-

@@ -1,1 +1,0 @@
-PASS: Draw commands with big numbers cause no problems.

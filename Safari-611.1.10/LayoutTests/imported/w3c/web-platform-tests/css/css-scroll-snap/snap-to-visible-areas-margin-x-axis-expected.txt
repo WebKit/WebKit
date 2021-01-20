@@ -1,3 +1,0 @@
-
-FAIL Scroll margin should be considered when calculating snap area visibilty while snapping on the x-axis assert_equals: expected 700 but got 500
-

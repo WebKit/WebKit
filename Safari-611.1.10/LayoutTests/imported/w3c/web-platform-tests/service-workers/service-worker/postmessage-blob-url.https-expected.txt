@@ -1,3 +1,0 @@
-
-PASS postMessage Blob URL to a ServiceWorker
-

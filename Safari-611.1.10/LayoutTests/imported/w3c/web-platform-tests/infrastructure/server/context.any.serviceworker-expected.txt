@@ -1,3 +1,0 @@
-
-FAIL context assert_equals: expected "https:" but got "http:"
-

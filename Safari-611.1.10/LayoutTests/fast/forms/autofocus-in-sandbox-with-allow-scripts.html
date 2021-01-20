@@ -1,8 +1,0 @@
-<script>
-if (window.testRunner)
-    testRunner.dumpAsText();
-</script>
-This test passes if the activeElement is the input element rather than the body
-(which it would be if the sandbox didn't allow autofocus although allow-scripts flag is set).
-<iframe sandbox="allow-scripts allow-modals"
-    src="data:text/html,<input autofocus onfocus><script>window.onload = function() { alert(document.activeElement.tagName) }</script>"></iframe>

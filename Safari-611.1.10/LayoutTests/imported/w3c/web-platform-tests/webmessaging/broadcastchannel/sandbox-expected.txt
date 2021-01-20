@@ -1,4 +1,0 @@
-
-
-FAIL Creating BroadcastChannel in an opaque origin assert_equals: expected "Created" but got "Exception: ReferenceError"
-

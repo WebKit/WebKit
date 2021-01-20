@@ -1,3 +1,0 @@
-
-PASS Basic G722 audio playback through a peer connection
-

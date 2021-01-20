@@ -1,6 +1,0 @@
-Test that uncaught exceptions will be reported to the window.onerror handler. Bug 8519.
-
-Main frame window.onerror: Error: Inline script exception at window-onerror2.html, line: 34, column: 47, error: Error: Inline script exception
-Main frame window.onerror: Exception in onload at window-onerror2.html, line: 2, column: 66, error: Exception in onload
-Main frame window.onerror: Error: Exception in setTimeout at window-onerror2.html, line: 29, column: 47, error: Error: Exception in setTimeout
-

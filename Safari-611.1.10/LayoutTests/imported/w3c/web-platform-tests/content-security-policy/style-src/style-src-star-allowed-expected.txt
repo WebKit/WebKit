@@ -1,3 +1,0 @@
-
-PASS * should allow any style
-Lorem ipsum

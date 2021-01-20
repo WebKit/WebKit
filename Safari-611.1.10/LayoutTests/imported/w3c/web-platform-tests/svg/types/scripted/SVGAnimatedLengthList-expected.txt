@@ -1,3 +1,0 @@
-
-PASS SVGAnimatedLengthList interface - utilizing the dx property of SVGTextElement
-

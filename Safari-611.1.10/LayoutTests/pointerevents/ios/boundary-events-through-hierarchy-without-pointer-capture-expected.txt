@@ -1,3 +1,0 @@
-
-PASS Testing that "pointerover", "pointerenter", "pointerout" and "pointerleave" events are dispatched correctly with capture disabled as a touch moves between elements in a hierarchy.
-

@@ -1,3 +1,0 @@
-
-PASS @keyframes from the document don't apply in the shadow tree
-

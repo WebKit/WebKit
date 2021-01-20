@@ -1,3 +1,0 @@
-
-PASS Requesting an immersive session when unsupported rejects
-

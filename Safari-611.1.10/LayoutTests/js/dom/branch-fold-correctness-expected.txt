@@ -1,4 +1,0 @@
-This page tests branches that might cause interesting forms of expression folding in bytecode.
-
-tests completed: 33
-

@@ -1,3 +1,0 @@
-
-PASS scrollIntoView should behave correctly if applies to shadow dom elements
-

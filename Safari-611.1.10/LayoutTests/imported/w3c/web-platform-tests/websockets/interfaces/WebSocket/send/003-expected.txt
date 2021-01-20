@@ -1,3 +1,0 @@
-
-PASS WebSockets: send() when readyState is CONNECTING
-

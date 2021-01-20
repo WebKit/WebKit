@@ -1,3 +1,0 @@
-
-FAIL Meta color-scheme in head applies. assert_equals: expected "dark" but got "auto"
-

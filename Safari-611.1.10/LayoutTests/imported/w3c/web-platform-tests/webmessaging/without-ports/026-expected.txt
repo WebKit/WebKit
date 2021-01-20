@@ -1,3 +1,0 @@
-
-PASS Cloning objects with getter properties
-

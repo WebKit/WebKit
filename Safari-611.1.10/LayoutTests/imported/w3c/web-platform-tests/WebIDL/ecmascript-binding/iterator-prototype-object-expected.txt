@@ -1,6 +1,0 @@
-
-PASS Has %IteratorPrototype% as prototype
-PASS next() exists and is writable, enumerable, and configurable
-PASS next() throws TypeError when called on ineligible receiver
-PASS Is specific to an interface
-

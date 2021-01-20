@@ -1,2 +1,0 @@
-PASS: service worker received install event and resolved the extend lifetime promise
-

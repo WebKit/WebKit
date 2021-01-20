@@ -1,9 +1,0 @@
-#EXTM3U
-
-#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="bipbop_audio",LANGUAGE="en-US",NAME="English Sound",AUTOSELECT=YES,DEFAULT=YES
-#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="bipbop_audio",LANGUAGE="fr-FR",NAME="French Sound",AUTOSELECT=NO,DEFAULT=NO,URI="french/prog_index.m3u8"
-#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="bipbop_audio",LANGUAGE="es-US",NAME="Spanish Sound",AUTOSELECT=NO,DEFAULT=NO,URI="spanish/prog_index.m3u8"
-
-#EXT-X-STREAM-INF:BANDWIDTH=634451,CODECS="mp4a.40.2, avc1.4d401e",RESOLUTION=640x480,AUDIO="bipbop_audio"
-bipbop/prog_index.m3u8
-#EXT-X-I-FRAME-STREAM-INF:BANDWIDTH=258613,CODECS="avc1.4d401e",URI="bipbop/iframe_index.m3u8"

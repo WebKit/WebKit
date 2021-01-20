@@ -1,5 +1,0 @@
-HasFuncDecl: _dmcn
-HasFuncDecl: findUL
-HasMaybeEscapedNestedFunc (DelayedObjectScopeAssignment): _dmcn (function  (#1.1), #2)
-HasMaybeEscapedUse: node
-HasFuncAssignment: findUL

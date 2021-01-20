@@ -1,5 +1,0 @@
-PASS repaintRects.indexOf('rect 0 0 11 11') is not -1
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

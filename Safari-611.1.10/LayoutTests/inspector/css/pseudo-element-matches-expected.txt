@@ -1,6 +1,0 @@
-Testing that pseudo element selectors correctly show matching selector information.
-
-
-video::-webkit-media-text-track-container
-audio::-webkit-media-text-track-container MATCHES
-

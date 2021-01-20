@@ -1,3 +1,0 @@
-
-PASS 'tbody' element, 'rows' attribute
-

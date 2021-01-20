@@ -1,3 +1,0 @@
-
-FAIL The end: DOMContentLoaded and defer scripts assert_false: DOMContentLoaded should not have fired before executing a task queued from a defer script expected false got true
-

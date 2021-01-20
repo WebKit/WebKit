@@ -1,3 +1,0 @@
-
-PASS Miter joins are drawn correctly with obtuse angles
-

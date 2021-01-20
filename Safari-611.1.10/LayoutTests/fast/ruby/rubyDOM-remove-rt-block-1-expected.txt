@@ -1,6 +1,0 @@
-SUCCESS!
-
-
-some textmore text
-and a block
-ruby text 2

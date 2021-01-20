@@ -1,9 +1,0 @@
-Test whether WebSocket handshake is OK with legacy response headers 'Sec-WebSocket-Location' and 'Sec-WebSocket-Origin'.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-PASS open event fired
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

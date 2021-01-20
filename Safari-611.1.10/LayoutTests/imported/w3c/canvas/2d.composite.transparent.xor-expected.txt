@@ -1,6 +1,0 @@
-2d.composite.transparent.xor
-Spec references: 2d.composite.xor
-Actual output:
-Expected output:
-
-Passed

@@ -1,5 +1,0 @@
-
-PASS Property font-kerning value 'auto'
-PASS Property font-kerning value 'normal'
-PASS Property font-kerning value 'none'
-

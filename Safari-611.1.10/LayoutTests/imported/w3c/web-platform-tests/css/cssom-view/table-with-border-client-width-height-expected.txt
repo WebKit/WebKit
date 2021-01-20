@@ -1,5 +1,0 @@
-a	b
-c	d
-
-PASS Table's clientWidth/Height and OffsetWidth/Height should be the same
-

@@ -1,3 +1,0 @@
-
-PASS canvas refers back to its canvas
-

@@ -1,6 +1,0 @@
-Original snap offsets with `start` alignment: vertical = { 0, 300, 600, 900, 1200 }
-Updated alignment to `center`: vertical = { 0, 150, 450, 750, 1050, 1200 }
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

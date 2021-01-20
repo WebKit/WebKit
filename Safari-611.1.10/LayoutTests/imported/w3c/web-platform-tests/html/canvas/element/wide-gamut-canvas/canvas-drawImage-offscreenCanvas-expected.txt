@@ -1,6 +1,0 @@
-
-FAIL Test drawing color managed OffscreenCanvas: Canvas color params: srgb, uint8;  OffscreenCanvas color params: srgb, uint8 canvas.transferControlToOffscreen is not a function. (In 'canvas.transferControlToOffscreen()', 'canvas.transferControlToOffscreen' is undefined)
-FAIL Test drawing color managed OffscreenCanvas: Canvas color params: srgb, uint8;  OffscreenCanvas color params: srgb, float16 canvas.transferControlToOffscreen is not a function. (In 'canvas.transferControlToOffscreen()', 'canvas.transferControlToOffscreen' is undefined)
-FAIL Test drawing color managed OffscreenCanvas: Canvas color params: srgb, float16;  OffscreenCanvas color params: srgb, uint8 canvas.transferControlToOffscreen is not a function. (In 'canvas.transferControlToOffscreen()', 'canvas.transferControlToOffscreen' is undefined)
-FAIL Test drawing color managed OffscreenCanvas: Canvas color params: srgb, float16;  OffscreenCanvas color params: srgb, float16 canvas.transferControlToOffscreen is not a function. (In 'canvas.transferControlToOffscreen()', 'canvas.transferControlToOffscreen' is undefined)
-

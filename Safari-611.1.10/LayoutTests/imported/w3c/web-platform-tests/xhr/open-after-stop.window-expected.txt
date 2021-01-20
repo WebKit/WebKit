@@ -1,3 +1,0 @@
-
-FAIL open() after window.stop() assert_unreached: loadend should not be fired after window.stop() and open() Reached unreachable code
-

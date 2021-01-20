@@ -1,7 +1,0 @@
-Blocked access to external URL http://www2.localhost:8800/html/browsers/origin/cross-origin-objects/frame.html
-Blocked access to external URL http://www2.localhost:8800/html/browsers/origin/cross-origin-objects/frame.html
-Blocked access to external URL http://www1.localhost:8800/html/browsers/origin/cross-origin-objects/frame.html
-
-Harness Error (TIMEOUT), message = null
-
-

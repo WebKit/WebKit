@@ -1,3 +1,0 @@
-
-PASS IDBCursor.continue() - object store - throw InvalidStateError caused by object store been deleted
-

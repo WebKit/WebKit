@@ -1,4 +1,0 @@
-
-PASS 404 response has proper responseURL
-PASS Redirected response has proper responseURL
-

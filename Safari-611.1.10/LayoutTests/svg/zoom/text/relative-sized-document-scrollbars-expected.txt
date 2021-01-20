@@ -1,6 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (7,5) size 786x590
-    RenderSVGRect {rect} at (7,5) size 786x590 [stroke={[type=SOLID] [color=#000000]}] [x=8.00] [y=6.00] [width=784.00] [height=588.00]
-    RenderSVGHiddenContainer {defs} at (0,0) size 0x0

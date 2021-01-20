@@ -1,2 +1,0 @@
-CONSOLE MESSAGE: Did not parse stylesheet at 'http://127.0.0.1:8000/mime/resources/style-with-text-plain.php/foo.css' because non CSS MIME types are not allowed in strict mode.
-This test passes if we do NOT apply the stylesheet (which turns the background color red.) The background color is: rgba(0, 0, 0, 0).

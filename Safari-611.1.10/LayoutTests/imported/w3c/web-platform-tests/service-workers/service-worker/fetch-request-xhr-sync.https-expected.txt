@@ -1,3 +1,0 @@
-
-FAIL Verify SyncXHR is intercepted assert_equals: HTTP response status code for intercepted request expected 200 but got 404
-

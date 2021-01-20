@@ -1,3 +1,0 @@
-
-PASS Testing the order in which pointer events are dispatched and that only one of each event is dispatched, even when a click event is registered.
-

@@ -1,8 +1,0 @@
-This test records the order by which load and DOMContentLoaded evnets fire relative to when document.fonts.ready is resolved.
-fonts.ready should resolve only after DOMContentLoaded and load event are fired, and fonts.check should return true for Ahem at that point.
-
-Before setting font-family - fonts.check Ahem: false
-DOMContentLoaded
-load
-fonts.ready - fonts.check Ahem: true
-hello

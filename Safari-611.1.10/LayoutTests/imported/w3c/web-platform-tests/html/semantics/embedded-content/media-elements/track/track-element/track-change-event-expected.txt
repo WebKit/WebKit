@@ -1,3 +1,0 @@
-
-PASS A 'change' event is fired when a TextTrack's mode changes
-

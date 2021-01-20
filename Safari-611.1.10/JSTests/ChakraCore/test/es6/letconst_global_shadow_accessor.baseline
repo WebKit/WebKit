@@ -1,5 +1,0 @@
-let x
-value: 10
-writable: false
-enumerable: false
-configurable: true

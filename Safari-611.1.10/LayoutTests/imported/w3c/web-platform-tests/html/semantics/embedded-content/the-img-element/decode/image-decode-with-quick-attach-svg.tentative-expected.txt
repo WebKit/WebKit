@@ -1,3 +1,0 @@
-
-FAIL SVGImageElement.prototype.decode(), attach to DOM before promise resolves. img.decode is not a function. (In 'img.decode()', 'img.decode' is undefined)
-

@@ -1,3 +1,0 @@
-Some text to not look up. This part is all selected, and should be taken as a unit when looked up.
-
-Lookup string for inside selected text: 'This part is all selected, and should be taken as a unit when looked up.'.

@@ -1,6 +1,0 @@
-The following two paragraphs should have the same line breaks:
-אבג דהו זחט
-
-אבג דהו זחט
-
-PASS

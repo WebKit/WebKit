@@ -1,3 +1,0 @@
-
-PASS Shadows can be offset with positive y
-

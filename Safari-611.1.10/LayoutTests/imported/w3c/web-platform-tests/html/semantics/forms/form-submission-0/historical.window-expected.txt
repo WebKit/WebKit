@@ -1,3 +1,0 @@
-
-PASS invalid event is only supported for form controls
-

@@ -1,3 +1,0 @@
-
-PASS IntersectionObserver reports a (non-intersecting) entry even if not in the containing block chain
-

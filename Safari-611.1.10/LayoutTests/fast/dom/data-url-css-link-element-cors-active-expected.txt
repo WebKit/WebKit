@@ -1,3 +1,0 @@
-This test tries to load a CSS link data URL with CORS activated.
-
-PASS

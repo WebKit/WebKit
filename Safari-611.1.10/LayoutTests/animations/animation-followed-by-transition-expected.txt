@@ -1,5 +1,0 @@
-Should see animationend followed by transitionend.
-
-animationend
-transitionend
-

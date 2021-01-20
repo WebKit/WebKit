@@ -1,3 +1,0 @@
-
-PASS Stroking does not start a new path or subpath
-

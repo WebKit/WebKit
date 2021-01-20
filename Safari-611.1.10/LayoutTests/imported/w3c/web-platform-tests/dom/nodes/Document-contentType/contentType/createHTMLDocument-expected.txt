@@ -1,3 +1,0 @@
-
-PASS document.implementation.createHTMLDocument: document.contentType === 'text/html'
-

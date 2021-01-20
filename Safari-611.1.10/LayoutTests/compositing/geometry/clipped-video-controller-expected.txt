@@ -1,3 +1,0 @@
-The video controller should not be visible below
-
-

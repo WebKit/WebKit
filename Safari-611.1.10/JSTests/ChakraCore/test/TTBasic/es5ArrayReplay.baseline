@@ -1,8 +1,0 @@
-Array.isArray(x): true
-x.foo: 3
-x[1]: 4
-x[11]: 3
-x[1]: 7
-x[11]: 6
-
-Reached end of Execution -- Exiting.

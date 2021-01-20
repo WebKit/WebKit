@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: Sandboxing 'http://127.0.0.1:8000/security/http-0.9/resources/nph-sandbox-should-not-persist-on-navigation.pl' because it is using HTTP/0.9.
-
-
---------
-Frame: '<!--frame1-->'
---------
-PASS

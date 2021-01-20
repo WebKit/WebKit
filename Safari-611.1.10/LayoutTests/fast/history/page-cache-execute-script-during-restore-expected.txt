@@ -1,3 +1,0 @@
-This tests executing a script while being restored from a page cache. WebKit should not hit a release assertion.
-
-PASS

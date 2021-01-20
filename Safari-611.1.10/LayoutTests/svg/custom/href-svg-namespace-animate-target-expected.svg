@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg">
-    <text x="10" y="20">Verify the XLinkNames namespace is not required before the 'href' attribute of the SVG animate elements.</text>	
-    <rect x="10" y="30" width="100" height="100" fill="green"/>
-    <rect x="120" y="30" width="100" height="100" fill="green"/>
-</svg>

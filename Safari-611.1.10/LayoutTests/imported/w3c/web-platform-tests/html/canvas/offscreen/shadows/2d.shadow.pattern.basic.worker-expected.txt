@@ -1,3 +1,0 @@
-
-PASS Shadows are drawn for fill patterns
-

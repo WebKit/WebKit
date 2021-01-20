@@ -1,8 +1,0 @@
-PASS Dispatched three clicks.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-
-This test verifies that repeatedly tapping a button when the viewport is at initial scale dispatches click events instead of only causing the user to zoom. To manually run the test, tap the button several quickly; the button should be clicked multiple times, without waiting for a ~300 ms delay between each tap.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

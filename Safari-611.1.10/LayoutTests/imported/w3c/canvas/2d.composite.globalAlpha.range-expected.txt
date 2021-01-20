@@ -1,4 +1,0 @@
-2d.composite.globalAlpha.range
-Spec references: 2d.composite.globalAlpha.range
-Actual output:
-Passed

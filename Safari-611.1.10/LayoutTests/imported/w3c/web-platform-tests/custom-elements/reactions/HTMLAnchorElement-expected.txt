@@ -1,3 +1,0 @@
-
-PASS text on HTMLAnchorElement must enqueue disconnectedCallback when removing a custom element
-

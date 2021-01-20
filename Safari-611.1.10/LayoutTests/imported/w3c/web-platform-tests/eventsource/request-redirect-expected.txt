@@ -1,6 +1,0 @@
-
-PASS EventSource: redirect (301)
-PASS EventSource: redirect (302)
-PASS EventSource: redirect (303)
-PASS EventSource: redirect (307)
-

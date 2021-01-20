@@ -1,3 +1,0 @@
-
-PASS Pointer events are fired as pressure changes.
-

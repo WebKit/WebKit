@@ -1,3 +1,0 @@
-
-PASS IDBObjectStore.openCursor() - iterate through 100 objects
-

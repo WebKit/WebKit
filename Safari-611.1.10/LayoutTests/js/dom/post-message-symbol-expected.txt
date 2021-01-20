@@ -1,3 +1,0 @@
-
-PASS Tests that posting a message that contains Symbols fails.
-

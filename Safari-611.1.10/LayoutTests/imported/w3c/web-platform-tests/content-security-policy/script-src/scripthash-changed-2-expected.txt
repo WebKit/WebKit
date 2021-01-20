@@ -1,3 +1,0 @@
-
-PASS scr2.innerText before modification should be blocked
-

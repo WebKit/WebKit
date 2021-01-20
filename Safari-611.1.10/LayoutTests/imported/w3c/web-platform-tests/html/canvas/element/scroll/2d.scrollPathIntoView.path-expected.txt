@@ -1,6 +1,0 @@
-2d.scrollPathIntoView.path
-scrollPathIntoView() with path argument works
-Actual output:
-
-FAIL scrollPathIntoView() with path argument works ctx.scrollPathIntoView is not a function. (In 'ctx.scrollPathIntoView(path)', 'ctx.scrollPathIntoView' is undefined)
-

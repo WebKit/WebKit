@@ -1,6 +1,0 @@
-Download started.
-Downloading URL with suggested filename "image.png"
-Download completed.
-The suggested filename above should be "image.png" and the download should succeed.
-
-Link with download attribute.

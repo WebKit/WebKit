@@ -1,4 +1,0 @@
-
-PASS insertRule with charset and omitted index argument
-PASS insertRule with charset and undefined index argument
-

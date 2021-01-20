@@ -1,2 +1,0 @@
-TypeError: function className() { [native code] }
-TypeError: function className() { [native code] }

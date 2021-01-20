@@ -1,3 +1,0 @@
-
-PASS CSS Test: :host in DOM APIs
-

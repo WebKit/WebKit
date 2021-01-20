@@ -1,3 +1,0 @@
-
-PASS document.createCDATASection must throw in HTML documents
-

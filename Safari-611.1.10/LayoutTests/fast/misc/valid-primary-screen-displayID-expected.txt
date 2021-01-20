@@ -1,2 +1,0 @@
-PASS: Valid primary screen display ID.
-

@@ -1,3 +1,0 @@
-
-PASS Test that previousSibling properly respects the filter.
-Test that previousSibling properly respects the filter.

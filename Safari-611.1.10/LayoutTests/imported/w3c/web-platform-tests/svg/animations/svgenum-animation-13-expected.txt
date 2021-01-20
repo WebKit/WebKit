@@ -1,3 +1,0 @@
-
-PASS Test ChannelSelectorType enumeration animations
-

@@ -1,3 +1,0 @@
-
-PASS clearRect does not draw shadows
-

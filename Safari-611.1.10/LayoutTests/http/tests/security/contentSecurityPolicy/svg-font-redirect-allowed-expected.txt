@@ -1,3 +1,0 @@
-Tests that a SVG font-face element is allowed to load a cross-origin external SVG font via a redirect by the Content Security Policy. This test PASSED if there are no console warning messages.
-
-

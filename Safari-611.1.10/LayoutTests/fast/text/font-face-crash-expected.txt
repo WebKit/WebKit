@@ -1,1 +1,0 @@
-This test makes sure that our failure load callback doesn't cause a crash if all the references to the FontFace have died. The test passes if there is no crash.

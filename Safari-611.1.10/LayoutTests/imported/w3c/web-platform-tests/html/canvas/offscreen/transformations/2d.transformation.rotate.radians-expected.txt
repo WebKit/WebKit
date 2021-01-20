@@ -1,7 +1,0 @@
-2d.transformation.rotate.radians
-
-rotate() uses radians
-
-
-PASS rotate() uses radians
-

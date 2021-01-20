@@ -1,3 +1,0 @@
-
-PASS Checked the Notification.permission property.
-

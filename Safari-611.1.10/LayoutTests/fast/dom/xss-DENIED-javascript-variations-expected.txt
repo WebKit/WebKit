@@ -1,9 +1,0 @@
-
-
-
---------
-Frame: 'DUPA'
---------
-Inner text should not be replaced.
-
-

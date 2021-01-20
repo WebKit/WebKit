@@ -1,3 +1,0 @@
-
-PASS This tests scripting a CSS property while animation is running
-

@@ -1,4 +1,0 @@
-There's a upload control below, with no file selected: missing value.
-
-
-SUCCESS

@@ -1,7 +1,0 @@
-2d.imageData.put.dirty.rect1
-putImageData() only modifies areas inside the dirty rectangle, using width and height
-Spec references: 2d.imageData.put.normal
-Actual output:
-Expected output:
-
-Passed

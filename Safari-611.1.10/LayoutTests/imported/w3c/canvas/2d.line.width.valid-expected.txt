@@ -1,5 +1,0 @@
-2d.line.width.valid
-Setting lineWidth to valid values works
-Spec references: 2d.lineWidth.set 2d.lineWidth.get
-Actual output:
-Passed

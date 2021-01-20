@@ -1,1 +1,0 @@
-This tests removing a focused object element. WebKit must not crash.

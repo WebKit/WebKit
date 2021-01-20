@@ -1,3 +1,0 @@
-
-PASS This by animation for all non-additive property types - should have no effect.
-

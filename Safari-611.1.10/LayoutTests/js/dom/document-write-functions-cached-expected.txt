@@ -1,8 +1,0 @@
-This page tests that the document functions write() and writeln() are cached. If the test passes, you'll see a PASS messages below.
-
-PASS: document.write is cached.
-PASS: document.writeln is cached.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

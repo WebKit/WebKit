@@ -1,3 +1,0 @@
-
-PASS connect should return the node connected to.
-

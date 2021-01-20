@@ -1,3 +1,0 @@
-
-FAIL MediaDevices and SecureContext assert_false: This test must be run in a non secure context expected false got true
-

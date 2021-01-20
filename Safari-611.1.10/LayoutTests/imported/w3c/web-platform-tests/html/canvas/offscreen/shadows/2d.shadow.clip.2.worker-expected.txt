@@ -1,3 +1,0 @@
-
-PASS Shadows are not drawn outside the clipping region
-

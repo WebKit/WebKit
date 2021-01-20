@@ -1,9 +1,0 @@
-This test makes sure the ready promise is fired when a local font is loaded successfully with a policy of ExternalResourceDownloadPolicy::Forbid.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS successfullyParsed is true
-
-TEST COMPLETE
-Hello

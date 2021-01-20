@@ -1,4 +1,0 @@
-
-PASS Test that calling OffscreenCanvas's commit pushes its contents to its placeholder.
-PASS Test that calling commit on an OffscreenCanvas that is not transferred from a HTMLCanvasElement throws an exception in a worker.
-

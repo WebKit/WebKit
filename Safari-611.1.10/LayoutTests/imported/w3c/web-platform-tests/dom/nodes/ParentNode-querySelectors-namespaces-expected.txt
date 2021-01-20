@@ -1,3 +1,0 @@
-
-PASS querySelectorAll must work with namespace attribute selectors on SVG
-

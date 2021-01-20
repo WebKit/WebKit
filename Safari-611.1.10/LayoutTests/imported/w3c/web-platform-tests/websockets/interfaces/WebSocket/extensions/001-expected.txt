@@ -1,3 +1,0 @@
-
-PASS WebSockets: getting extensions in connecting
-

@@ -1,6 +1,0 @@
-
-PASS ifStatement
-PASS ifElseStatement
-PASS ifElseIfStatement
-PASS ifElseIfElseStatement
-

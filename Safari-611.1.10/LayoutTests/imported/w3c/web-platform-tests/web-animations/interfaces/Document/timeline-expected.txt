@@ -1,3 +1,0 @@
-
-PASS Document.timeline returns the default document timeline
-

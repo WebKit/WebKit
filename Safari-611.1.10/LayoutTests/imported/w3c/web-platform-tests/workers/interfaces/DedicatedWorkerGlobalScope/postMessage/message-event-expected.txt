@@ -1,3 +1,0 @@
-
-PASS Properties of the 'message' event
-

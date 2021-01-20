@@ -1,3 +1,0 @@
-Tests that the div element with id=scrollable scroll width is 250.
-
- PASS

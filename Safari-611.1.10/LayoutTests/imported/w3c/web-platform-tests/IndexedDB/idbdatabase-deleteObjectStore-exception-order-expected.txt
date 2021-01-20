@@ -1,4 +1,0 @@
-
-PASS IDBDatabase.deleteObjectStore exception order: InvalidStateError vs. TransactionInactiveError
-PASS IDBDatabase.deleteObjectStore exception order: TransactionInactiveError vs. NotFoundError
-

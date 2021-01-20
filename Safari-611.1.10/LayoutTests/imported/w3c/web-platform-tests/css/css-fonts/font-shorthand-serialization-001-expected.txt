@@ -1,3 +1,0 @@
-
-PASS Default values of the longhands don't get serialized on the font shorthand
-

@@ -1,4 +1,0 @@
-This image resource sets a cookie. But based on the content rules, setting cookie should be blocked.
-document.cookie should be empty, and its value is ''
-
-

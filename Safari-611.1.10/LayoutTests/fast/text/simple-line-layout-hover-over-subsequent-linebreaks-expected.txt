@@ -1,6 +1,0 @@
-Pass if no crash or assert.
-foobar
-
-foobar
-
-

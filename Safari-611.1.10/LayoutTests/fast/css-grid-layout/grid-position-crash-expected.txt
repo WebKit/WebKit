@@ -1,3 +1,0 @@
-This test passes if it does not crash and you see a green "PASS" below.
-
-PASS

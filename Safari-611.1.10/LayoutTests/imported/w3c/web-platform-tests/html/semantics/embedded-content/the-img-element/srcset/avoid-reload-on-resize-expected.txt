@@ -1,4 +1,0 @@
-
-
-PASS Avoid srcset image reloads when viewport resizes
-

@@ -1,3 +1,0 @@
-
-PASS CSS Test: Style invalidation for ::slotted()
-

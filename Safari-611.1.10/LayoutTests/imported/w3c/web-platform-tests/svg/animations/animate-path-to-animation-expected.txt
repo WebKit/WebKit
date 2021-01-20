@@ -1,3 +1,0 @@
-
-FAIL Test calcMode spline with to animation. You should see a green 100x100 path and only PASS messages assert_equals: expected "M 20 20 L 80 20 L 80 80 L 20 80 Z" but got "M 40 40 L 60 40 L 60 60 L 40 60 Z"
-

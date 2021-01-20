@@ -1,3 +1,0 @@
-
-PASS Root element background should be transparent for dark color-scheme.
-

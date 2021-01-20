@@ -1,5 +1,0 @@
-
-PASS speakers, initially mono
-PASS discrete
-PASS speakers, initially stereo
-

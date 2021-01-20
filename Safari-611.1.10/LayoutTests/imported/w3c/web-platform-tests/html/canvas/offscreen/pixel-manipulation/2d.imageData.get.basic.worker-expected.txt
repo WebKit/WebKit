@@ -1,3 +1,0 @@
-
-PASS getImageData() exists and returns something
-

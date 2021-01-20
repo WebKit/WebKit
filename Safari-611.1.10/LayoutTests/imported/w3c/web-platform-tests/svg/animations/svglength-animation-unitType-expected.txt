@@ -1,3 +1,0 @@
-
-PASS Test change of unit type for SVGLength animation.
-

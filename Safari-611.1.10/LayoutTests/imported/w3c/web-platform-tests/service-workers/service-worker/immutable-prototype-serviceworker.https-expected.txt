@@ -1,3 +1,0 @@
-
-PASS worker prototype chain should be immutable
-

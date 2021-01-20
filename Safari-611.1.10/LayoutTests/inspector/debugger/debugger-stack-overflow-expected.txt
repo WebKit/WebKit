@@ -1,5 +1,0 @@
-Testing that we don't crash on a stack overflow.
-
-Starting Test
-Tests done
-

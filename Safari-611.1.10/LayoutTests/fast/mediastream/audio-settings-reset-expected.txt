@@ -1,3 +1,0 @@
-
-PASS Volume should be reset to default value if not specified explicitly
-

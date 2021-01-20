@@ -1,9 +1,0 @@
-Test that CanvasManager is able to record actions made to BitmapRenderer canvas contexts.
-
-
-== Running test suite: Canvas.recordingBitmapRenderer
--- Running test case: Canvas.recordingBitmapRenderer.Console
-PASS: The recording should have the name "TEST".
-PASS: The recording should have one frame.
-PASS: The first frame should have one action.
-

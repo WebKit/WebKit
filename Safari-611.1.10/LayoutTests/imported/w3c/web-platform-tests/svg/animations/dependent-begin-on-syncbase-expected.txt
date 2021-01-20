@@ -1,3 +1,0 @@
-
-FAIL Dependent timed element begin (restart) on syncbase assert_equals: expected 1 but got 0
-

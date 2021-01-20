@@ -1,3 +1,0 @@
-
-PASS Autofocus element in not-fully-active document should be skipped.
-

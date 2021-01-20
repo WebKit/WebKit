@@ -1,2 +1,0 @@
-Exception: SyntaxError: 'with' statements are not valid in strict mode.
-at bug212755.js:21

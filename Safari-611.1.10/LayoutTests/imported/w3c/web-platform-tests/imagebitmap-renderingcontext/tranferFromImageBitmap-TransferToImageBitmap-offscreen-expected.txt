@@ -1,3 +1,0 @@
-
-FAIL Test that transferToImageBitmap works and that resets the imagebitmap to black promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-

@@ -1,8 +1,0 @@
-
-Test that rubberbanding is canceled when the page does a programmatic scroll
-Waiting for rubberband...
-PASS window.scrollY is 1000
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

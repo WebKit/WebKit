@@ -1,3 +1,0 @@
-
-FAIL speechSynthesis.speak requires user activation assert_unreached: Reached unreachable code
-

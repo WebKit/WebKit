@@ -1,3 +1,0 @@
-
-PASS SVGAnimatedNumberList interface - utilizing the rotate property of SVGTextElement
-

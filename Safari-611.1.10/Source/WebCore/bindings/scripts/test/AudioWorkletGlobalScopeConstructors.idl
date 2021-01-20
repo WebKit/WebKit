@@ -1,2 +1,0 @@
-partial interface AudioWorkletGlobalScope {
-};

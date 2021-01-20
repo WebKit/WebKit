@@ -1,4 +1,0 @@
-This tests that we don't cause an assertion failure when performing a partial repaint of an <iframe> with zero height, enclosed in a flex box, whose content document contains a flex box with a child scrollable <div>.
-
-
-PASS

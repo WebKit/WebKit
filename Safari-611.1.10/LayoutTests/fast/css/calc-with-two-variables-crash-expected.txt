@@ -1,3 +1,0 @@
-This test PASSED if it doesn't cause a crash, especially when run with Guard Malloc or MallocScribble enabled.
-
-

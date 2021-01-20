@@ -1,3 +1,0 @@
-
-PASS Test 'to' animation of SVGNumberOptionalNumber without optional number.
-

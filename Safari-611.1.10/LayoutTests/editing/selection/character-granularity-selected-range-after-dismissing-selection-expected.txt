@@ -1,5 +1,0 @@
-WEB
-KIT
-The selected content is now: "WEB"
-The selected content is now: ""
-

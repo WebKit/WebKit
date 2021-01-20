@@ -1,2 +1,0 @@
-PASS: Not allowed to share file with Web Share Level 2 disabled: TypeError: Type error
-

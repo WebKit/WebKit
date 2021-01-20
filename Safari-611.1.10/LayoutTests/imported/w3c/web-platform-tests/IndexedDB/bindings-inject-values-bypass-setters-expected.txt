@@ -1,3 +1,0 @@
-
-PASS Returning values to script should bypass prototype setters
-

@@ -1,3 +1,0 @@
-
-PASS beforeunload in iframe on navigation of parent
-

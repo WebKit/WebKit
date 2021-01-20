@@ -1,8 +1,0 @@
-foobarbaz
-Success: window.getSelection() is ar.
-Success: s.extend(span2.firstChild, 4) raised IndexSizeError: The index is not in the allowed range..
-Success: s.extend(span2.firstChild, -1) raised IndexSizeError: The index is not in the allowed range..
-Success: window.getSelection() is b.
-Success: window.getSelection() is arbaz.
-Success: s.extend() raised TypeError: Not enough arguments.
-Success: s.extend(null, 0) raised TypeError: Argument 1 ('node') to Selection.extend must be an instance of Node.

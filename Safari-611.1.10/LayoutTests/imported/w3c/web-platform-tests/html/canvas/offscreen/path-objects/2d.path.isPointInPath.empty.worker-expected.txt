@@ -1,3 +1,0 @@
-
-PASS isPointInPath() works when there is no path
-

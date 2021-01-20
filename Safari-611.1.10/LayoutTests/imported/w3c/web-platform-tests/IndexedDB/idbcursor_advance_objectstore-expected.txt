@@ -1,3 +1,0 @@
-
-PASS  IDBCursor.advance() - object store - iterate cursor number of times specified by count
-

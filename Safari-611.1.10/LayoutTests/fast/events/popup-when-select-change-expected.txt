@@ -1,5 +1,0 @@
-ALERT: PASSED
- If the pop-up was not blocked then there will be an PASS message. Otherwise, the test fails.
-
-
-

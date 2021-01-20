@@ -1,3 +1,0 @@
-
-PASS IDBDatabase.createObjectStore() - create 1000 object stores, add one item and delete
-

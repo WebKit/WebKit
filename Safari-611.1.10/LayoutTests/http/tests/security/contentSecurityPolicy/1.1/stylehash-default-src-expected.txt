@@ -1,3 +1,0 @@
-
-PASS Style Hash allow hash in default-src
-

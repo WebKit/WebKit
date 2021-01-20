@@ -1,7 +1,0 @@
-Tests that pages using service workers can enter the Page Cache.
-pageshow - not from page cache
-PASS: frame has a controller
-pagehide - entering page cache
-pageshow - from page cache
-PASS: page entered page cache
-

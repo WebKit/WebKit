@@ -1,4 +1,0 @@
- This text should be green.
-
-PASS Evaluation of :placeholder-shown changes for input type change.
-

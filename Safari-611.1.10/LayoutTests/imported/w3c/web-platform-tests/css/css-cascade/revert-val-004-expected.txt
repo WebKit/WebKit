@@ -1,3 +1,0 @@
-
-PASS The revert keyword works with the all property
-

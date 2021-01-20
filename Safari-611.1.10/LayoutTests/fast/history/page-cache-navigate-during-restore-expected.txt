@@ -1,3 +1,0 @@
-This tests navigation while being restored from a page cache. WebKit should not hit any debug assertions.
-
-PASS

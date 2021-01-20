@@ -1,3 +1,0 @@
-
-PASS drawImage() of an SVG image
-

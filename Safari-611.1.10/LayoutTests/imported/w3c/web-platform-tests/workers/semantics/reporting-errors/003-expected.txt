@@ -1,3 +1,0 @@
-
-FAIL shared worker, no error event on worker or port Can't find variable: SharedWorker
-

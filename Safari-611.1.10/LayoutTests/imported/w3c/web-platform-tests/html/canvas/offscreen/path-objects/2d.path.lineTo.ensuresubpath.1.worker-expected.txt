@@ -1,3 +1,0 @@
-
-PASS If there is no subpath, the point is added and nothing is drawn
-

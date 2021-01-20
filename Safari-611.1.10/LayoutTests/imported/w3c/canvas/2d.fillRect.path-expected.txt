@@ -1,7 +1,0 @@
-2d.fillRect.path
-fillRect does not affect the current path
-Spec references: 2d.fillRect
-Actual output:
-Expected output:
-
-Passed

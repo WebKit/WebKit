@@ -1,5 +1,0 @@
-PASS globalX.code is globalX.NETWORK_ERR
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

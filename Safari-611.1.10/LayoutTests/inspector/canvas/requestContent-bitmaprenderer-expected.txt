@@ -1,7 +1,0 @@
-Test that CanvasAgent.requestContent can retrieve a dataURL with the current content of the BitmapRenderer canvas.
-
-
-== Running test suite: Canvas.requestContentBitmapRenderer
--- Running test case: Canvas.requestContentBitmapRenderer.validCanvasId
-PASS: Content should not be empty.
-

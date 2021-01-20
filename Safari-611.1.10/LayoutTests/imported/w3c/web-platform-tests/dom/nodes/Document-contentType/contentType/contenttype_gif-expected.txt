@@ -1,3 +1,0 @@
-
-PASS GIF document.contentType === 'image/gif'
-

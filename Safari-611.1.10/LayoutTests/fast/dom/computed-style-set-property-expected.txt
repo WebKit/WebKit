@@ -1,6 +1,0 @@
-You should see two "PASS" messages below:
-
-Computed style parent (should be null): null
-PASS: got an exception when trying to change a computed style declaration, NoModificationAllowedError: The object can not be modified.
-
-PASS: got an exception when trying to change a computed style declaration via setProperty, NoModificationAllowedError: The object can not be modified.

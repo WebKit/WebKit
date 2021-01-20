@@ -1,3 +1,0 @@
-
-FAIL xhr-worker assert_equals: expected "gamma\n" but got "beta\n"
-

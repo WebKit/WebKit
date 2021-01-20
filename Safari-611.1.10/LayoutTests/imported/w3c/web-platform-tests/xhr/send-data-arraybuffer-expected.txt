@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: The send() method: ArrayBuffer data
-

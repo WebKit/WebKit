@@ -1,3 +1,0 @@
-
-PASS document.characterSet should match the BOM
-

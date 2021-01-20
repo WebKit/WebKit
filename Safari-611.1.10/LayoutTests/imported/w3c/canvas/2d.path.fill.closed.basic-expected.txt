@@ -1,6 +1,0 @@
-2d.path.fill.closed.basic
-Spec references: 2d.path.fill.closed
-Actual output:
-Expected output:
-
-Passed

@@ -1,3 +1,0 @@
-
-PASS Setting cancelBubble=true prior to dispatchEvent()
-

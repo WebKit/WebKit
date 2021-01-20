@@ -1,2 +1,0 @@
-This test verifies that the page cache preserves pages with fonts loaded via the document.fonts API. The test loads a font, then navigates away and back, confirming that the font remains loaded. If successful, it outputs 'PASS' below.
-PASS

@@ -1,4 +1,0 @@
-PASS document.styleSheets[1].rules[0].style.cssText is "-webkit-mask-repeat-x: repeat; -webkit-mask-repeat-y: inherit;"
-PASS document.styleSheets[1].rules[0].style.getPropertyValue('-webkit-mask') is ""
-PASS document.styleSheets[1].rules[0].style.getPropertyValue('-webkit-mask-repeat') is "inherit"
-

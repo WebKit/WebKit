@@ -1,3 +1,0 @@
-
-PASS arcTo() draws a straight line from P0 to P1
-

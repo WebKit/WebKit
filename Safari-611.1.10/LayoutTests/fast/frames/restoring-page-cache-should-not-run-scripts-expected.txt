@@ -1,3 +1,0 @@
-This tests that pageshow event is fired before the focus elements are reset when a document in the page cache is restored.
-
-PASS

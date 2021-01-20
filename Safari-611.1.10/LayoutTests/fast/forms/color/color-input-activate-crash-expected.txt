@@ -1,3 +1,0 @@
-Touching the color input form should not crash.
-
-PASS: Test did not crash

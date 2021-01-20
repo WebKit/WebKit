@@ -1,7 +1,0 @@
-^^^bar$$$
-
-
-
-
-FAIL substring() arguments depending on the context node assert_equals: expected "bar$$$" but got "^^^bar$$$"
-

@@ -1,4 +1,0 @@
-
-
-FAIL Multiple 'metadata' tracks with 'default' assert_equals: expected "hidden" but got "showing"
-

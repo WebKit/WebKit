@@ -1,5 +1,0 @@
-2d.composite.globalAlpha.range
-
-
-PASS OffscreenCanvas test: 2d.composite.globalAlpha.range
-

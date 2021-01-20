@@ -1,5 +1,0 @@
-
-PASS IntersectionObserver that is unreachable in js should still generate notifications.
-PASS First rAF
-PASS document.scrollingElement.scrollTop = 300
-

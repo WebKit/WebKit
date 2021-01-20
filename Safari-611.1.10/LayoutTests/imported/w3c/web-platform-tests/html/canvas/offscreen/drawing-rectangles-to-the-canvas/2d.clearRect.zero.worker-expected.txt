@@ -1,3 +1,0 @@
-
-PASS clearRect of zero pixels has no effect
-

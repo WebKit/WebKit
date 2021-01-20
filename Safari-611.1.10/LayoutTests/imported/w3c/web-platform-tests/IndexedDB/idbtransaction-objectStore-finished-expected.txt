@@ -1,3 +1,0 @@
-
-PASS IDBTransaction objectStore() behavior when transaction is finished
-

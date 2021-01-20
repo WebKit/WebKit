@@ -1,7 +1,0 @@
-Description
-
-This test validates the p element.
-
-
-PASS The prototype for p is HTMLParagraphElement.prototype
-

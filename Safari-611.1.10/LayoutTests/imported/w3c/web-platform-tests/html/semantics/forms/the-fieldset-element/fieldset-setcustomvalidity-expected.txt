@@ -1,4 +1,0 @@
-
-
-FAIL fieldset setCustomValidity is correct assert_true: expected true got false
-

@@ -1,3 +1,0 @@
-
-PASS createRadialGradient() throws TypeError if arguments are not finite
-

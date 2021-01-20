@@ -1,5 +1,0 @@
-HasFuncDecl: test
-HasFuncDecl: test
-HasMaybeEscapedNestedFunc (UnknownUse): test (function  (#1.1), #2)
-test1
-test2

@@ -1,3 +1,0 @@
-
-PASS scale() with large scale factors works
-

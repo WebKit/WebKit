@@ -1,7 +1,0 @@
-2d.shadow.canvas.alpha
-
-Shadows are drawn correctly for partially-transparent canvases
-
-
-PASS Shadows are drawn correctly for partially-transparent canvases
-

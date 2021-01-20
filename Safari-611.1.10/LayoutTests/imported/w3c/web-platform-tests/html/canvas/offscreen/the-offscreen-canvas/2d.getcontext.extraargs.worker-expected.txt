@@ -1,3 +1,0 @@
-
-PASS The 2D context ignores extra getContext arguments
-

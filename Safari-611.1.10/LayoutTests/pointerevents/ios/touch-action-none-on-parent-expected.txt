@@ -1,3 +1,0 @@
-
-PASS Testing that setting touch-action: none on a parent element prevents page scrolling.
-

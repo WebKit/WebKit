@@ -1,3 +1,0 @@
-Tests that an inline stylesheet, in a user agent shadow tree, is allowed to load when the page has CSP policy: style-src 'none'. This test PASSED if there are no console warning messages.
-
-

@@ -1,7 +1,0 @@
-#external-unquoted {
-    background-image: url();
-}
-
-#external-quoted {
-    background-image: url("");
-}

@@ -1,8 +1,0 @@
-main frame - didStartProvisionalLoadForFrame
-main frame - didCommitLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
-main frame - didFinishDocumentLoadForFrame
-main frame - didHandleOnloadEventsForFrame
-frame "<!--framePath //<!--frame0-->-->" - didFailLoadWithError
-main frame - didFinishLoadForFrame
-

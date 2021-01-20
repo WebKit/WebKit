@@ -1,4 +1,0 @@
-
-PASS Default prevention via preventDefault
-PASS Default prevention via returnValue
-

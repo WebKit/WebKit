@@ -1,3 +1,0 @@
-
-FAIL Space characters at the start of a line are collapsed (per CSS) Can't find variable: FontFace
-

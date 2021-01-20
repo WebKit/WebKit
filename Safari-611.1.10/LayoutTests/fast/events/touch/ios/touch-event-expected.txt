@@ -1,3 +1,0 @@
-Received event touchstart at 50, 50
-Received event touchend
-Done

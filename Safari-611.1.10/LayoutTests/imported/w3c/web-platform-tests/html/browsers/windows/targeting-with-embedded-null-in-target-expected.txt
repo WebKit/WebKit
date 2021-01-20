@@ -1,4 +1,0 @@
- Click me
-
-PASS Targeting with embedded null in target
-

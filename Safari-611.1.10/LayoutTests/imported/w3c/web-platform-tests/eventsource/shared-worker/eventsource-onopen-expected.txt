@@ -1,3 +1,0 @@
-
-FAIL shared worker - EventSource: onopen (announcing the connection) Can't find variable: SharedWorker
-

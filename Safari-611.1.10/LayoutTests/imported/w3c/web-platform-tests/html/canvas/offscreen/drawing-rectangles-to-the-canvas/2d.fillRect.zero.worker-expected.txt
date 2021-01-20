@@ -1,3 +1,0 @@
-
-PASS fillRect of zero pixels has no effect
-

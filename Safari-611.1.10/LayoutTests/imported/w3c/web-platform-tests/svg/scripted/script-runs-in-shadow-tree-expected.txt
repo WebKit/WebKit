@@ -1,3 +1,0 @@
-
-PASS svg:script runs correctly in a shadow tree
-

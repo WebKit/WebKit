@@ -1,7 +1,0 @@
-Description
-
-This test validates the hr element.
-
-
-PASS The prototype for hr is HTMLHRElement.prototype
-

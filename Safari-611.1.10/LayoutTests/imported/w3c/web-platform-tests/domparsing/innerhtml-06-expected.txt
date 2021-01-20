@@ -1,5 +1,0 @@
-math in html: innerHTML
-
-
-PASS innerHTML defined on math.
-

@@ -1,3 +1,0 @@
-
-FAIL Draw SRGB image on an e-sRGB canvas and read back the e-sRGB pixels. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'actual.length')"
-

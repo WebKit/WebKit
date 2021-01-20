@@ -1,9 +1,0 @@
-step1_bootstrap
-Main document loaded
-step2_onFrameStartedLoading
-step3_onExecutionContextCreated: Requesting document from iframe's context.
-Received script object for iframe's document node
-step4_requestNode: Requesting DOM node for iframe's document node
-PASS: Received node for iframe's document node
-Test finished
-

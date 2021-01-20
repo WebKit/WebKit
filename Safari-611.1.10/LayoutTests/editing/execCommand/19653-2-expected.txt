@@ -1,5 +1,0 @@
-This tests splitting two paragraphs with InsertParagraph while the typing style is bold. New text entered after the split should be bold.
-x<div><b>Bold</b>x</div>
-
-This tests splitting two paragraphs with InsertLineBreak while the typing style is bold. New text entered after the split should be bold. The inserted <br> doesn't need to be surrounded by a bold tag here.
-x<b><br>Bold</b>x

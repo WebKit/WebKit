@@ -1,5 +1,0 @@
-
-PASS 'style' property location
-PASS 'style' property type
-PASS style should be settable
-

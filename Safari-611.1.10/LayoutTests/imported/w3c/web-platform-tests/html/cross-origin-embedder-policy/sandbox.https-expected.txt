@@ -1,3 +1,0 @@
-
-FAIL Cross-Origin-Embedder-Policy and sandbox assert_true: Request to same-origin resource without CORP did not fail expected true got false
-

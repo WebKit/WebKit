@@ -1,3 +1,0 @@
-
-PASS Check if the stylesheet's load event blocks the document load event
-

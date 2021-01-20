@@ -1,5 +1,0 @@
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT The element with a zero tabindex must be focused by press 'Tab' key Test timed out
-

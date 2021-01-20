@@ -1,3 +1,0 @@
-
-PASS document.createElement invoke a custom element constructor with no arguments
-

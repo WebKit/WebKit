@@ -1,3 +1,0 @@
-
-PASS Tests sending structure message to/from worker.
-

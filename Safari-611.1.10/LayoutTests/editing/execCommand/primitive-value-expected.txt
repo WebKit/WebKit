@@ -1,1 +1,0 @@
-This test checks that pasing in a combination of nested blocks where one starts with a text field doesn't crash or fail assertions. x

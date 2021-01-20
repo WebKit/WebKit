@@ -1,3 +1,0 @@
-
-PASS Deny cross-origin request with non-CORS-safelisted content type
-

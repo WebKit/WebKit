@@ -1,5 +1,0 @@
-2d.gradient.interpolate.outside
-
-
-PASS OffscreenCanvas test: 2d.gradient.interpolate.outside
-

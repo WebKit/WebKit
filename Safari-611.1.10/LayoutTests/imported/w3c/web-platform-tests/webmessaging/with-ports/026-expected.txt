@@ -1,3 +1,0 @@
-
-PASS object with length as transferable
-

@@ -1,8 +1,0 @@
-<!--
-     Any copyright is dedicated to the Public Domain.
-     http://creativecommons.org/publicdomain/zero/1.0/
--->
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <path id="p" d="M 100,100 h 50 v 200" fill="none" stroke="red" stroke-width="1"/>
-  <text style="font: 30px monospace"><textPath xlink:href="#p">a.b.c.d.e.</textPath></text>
-</svg>

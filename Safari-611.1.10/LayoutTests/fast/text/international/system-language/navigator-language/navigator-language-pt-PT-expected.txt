@@ -1,5 +1,0 @@
-PASS navigator.language is "pt-pt"
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

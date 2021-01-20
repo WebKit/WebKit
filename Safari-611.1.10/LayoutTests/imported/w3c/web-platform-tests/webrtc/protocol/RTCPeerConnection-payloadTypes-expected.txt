@@ -1,3 +1,0 @@
-
-PASS createOffer with the maximum set of codecs does not generate invalid payload types
-

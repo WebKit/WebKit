@@ -1,3 +1,0 @@
-
-FAIL Violation report status OK. assert_true: violated-directive value of  "default-src 'self'" did not match script-src. expected true got false
-

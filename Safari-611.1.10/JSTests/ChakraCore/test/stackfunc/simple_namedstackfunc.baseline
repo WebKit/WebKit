@@ -1,6 +1,0 @@
-HasFuncDecl: test
-HasFuncDecl: simple_stackfunc
-HasMaybeEscapedUse: i
-DoStackNestedFunc: test (function  (#1.1), #2)
-1
-1

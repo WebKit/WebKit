@@ -1,4 +1,0 @@
-info_query.html
-value_initial.html
-value_assigned.html
-random.html

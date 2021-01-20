@@ -1,3 +1,0 @@
-This tests that we don't cause an assertion failure when re-parenting a <mpath> after temporarily removing its referenced element.
-
-PASS

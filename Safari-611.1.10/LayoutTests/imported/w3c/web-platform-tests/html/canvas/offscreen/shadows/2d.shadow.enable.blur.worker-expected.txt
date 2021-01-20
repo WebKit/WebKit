@@ -1,3 +1,0 @@
-
-PASS Shadows are drawn if shadowBlur is set
-

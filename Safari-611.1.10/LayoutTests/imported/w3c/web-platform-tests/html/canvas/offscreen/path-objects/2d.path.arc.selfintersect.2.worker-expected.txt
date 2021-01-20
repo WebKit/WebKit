@@ -1,3 +1,0 @@
-
-PASS arc() with lineWidth > 2*radius is drawn sensibly
-

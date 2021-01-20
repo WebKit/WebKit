@@ -1,3 +1,0 @@
-
-PASS WebSockets: listening for events with onmessage
-

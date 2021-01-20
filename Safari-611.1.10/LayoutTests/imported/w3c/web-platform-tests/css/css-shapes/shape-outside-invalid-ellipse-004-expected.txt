@@ -1,3 +1,0 @@
-
-PASS CSS Shapes Test - Ellipse - invalid 1 arg
-

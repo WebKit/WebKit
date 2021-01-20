@@ -1,3 +1,0 @@
-
-FAIL WebSockets: 'URL' assert_equals: expected (undefined) undefined but got (string) "ws://localhost:49001/"
-

@@ -1,3 +1,0 @@
-
-PASS Preflighted cross-origin request denied
-

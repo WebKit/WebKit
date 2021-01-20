@@ -1,6 +1,0 @@
-
-PASS Attrs are subclasses of Nodes
-PASS appendChild with an attribute as the child should fail
-PASS replaceChild with an attribute as the child should fail
-PASS insertBefore with an attribute as the child should fail
-

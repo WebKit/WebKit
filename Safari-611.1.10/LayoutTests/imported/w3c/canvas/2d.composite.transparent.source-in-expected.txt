@@ -1,6 +1,0 @@
-2d.composite.transparent.source-in
-Spec references: 2d.composite.source-in
-Actual output:
-Expected output:
-
-Passed

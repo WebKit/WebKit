@@ -1,5 +1,0 @@
-Append source element before setting src attribute.
-Platforms that support setVideoPlaybackRequiresUserGesture will have the expected, empty, currentSrc. Platforms that don't should have the unexpected "src.mp4".
-
-EXPECTED (relativeURL(video.currentSrc) == ''), OBSERVED 'src.mp4' FAIL
-

@@ -1,3 +1,0 @@
-
-PASS CSS charset: page utf-16, CSS no decl
-

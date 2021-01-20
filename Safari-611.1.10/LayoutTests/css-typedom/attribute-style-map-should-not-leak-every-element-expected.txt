@@ -1,3 +1,0 @@
-This tests allocating 1000 elements and triggering GC. GC should collect some elements.
-
-PASS

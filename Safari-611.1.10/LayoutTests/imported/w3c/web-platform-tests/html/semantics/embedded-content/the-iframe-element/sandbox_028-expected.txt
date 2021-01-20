@@ -1,3 +1,0 @@
-
-PASS Block sandbox iframe from accessing other content from the same origin.
-

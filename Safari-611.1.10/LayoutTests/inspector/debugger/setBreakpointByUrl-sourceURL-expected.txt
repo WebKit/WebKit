@@ -1,8 +1,0 @@
-Debugger.setBreakpointByUrl in Script named via sourceURL
-
-Found sourceURL-test.js
-Running sourceURLFunction
-Hit Breakpoint!
-Evaluted value of `a` (expecting number 1) was: {"type":"number","value":1,"description":"1"}
-Evaluted value of `c` (expecting undefined) was: {"type":"undefined"}
-

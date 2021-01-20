@@ -1,3 +1,0 @@
-
-PASS Auxiliary browsing context created via `window.open` setting `noopener` should report `window.opener` `null`
-

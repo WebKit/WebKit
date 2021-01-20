@@ -1,3 +1,0 @@
-
-PASS Listening to a pointerout event alone dispatches the event.
-

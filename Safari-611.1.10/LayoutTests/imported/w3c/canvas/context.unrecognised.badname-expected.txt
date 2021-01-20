@@ -1,5 +1,0 @@
-context.unrecognised.badname
-getContext with unrecognised context name returns null
-Spec references: context.unrecognised
-Actual output:
-Passed

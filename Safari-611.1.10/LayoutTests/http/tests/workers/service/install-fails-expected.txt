@@ -1,3 +1,0 @@
-PASS: Worker became redundant
-PASS: registration.installing should be null
-

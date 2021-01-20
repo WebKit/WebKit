@@ -1,7 +1,0 @@
-TypeError: undefined is not an object (evaluating '(1, Object.prototype.valueOf)()')
-TypeError: undefined is not an object (evaluating 'foo()')
-TypeError: undefined is not an object (evaluating '(1, Object.prototype.valueOf)()')
-TypeError: undefined is not an object (evaluating 'foo()')
-true
-true
-undefined

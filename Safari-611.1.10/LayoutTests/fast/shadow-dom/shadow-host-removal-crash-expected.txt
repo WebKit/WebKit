@@ -1,4 +1,0 @@
-This tests removing a shadow host while EventHandler holds onto its shadow descendent. WebKit should not hit an assertion or crash. This test requires window.eventSender to run.
-
-foo
-bar

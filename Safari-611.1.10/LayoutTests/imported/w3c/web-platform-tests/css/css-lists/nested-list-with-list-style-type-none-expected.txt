@@ -1,5 +1,0 @@
-PASS if no crash or DCHECK failure in quirks mode.
-
-
-PASS CSS Lists: test the margin collapse of marker
-

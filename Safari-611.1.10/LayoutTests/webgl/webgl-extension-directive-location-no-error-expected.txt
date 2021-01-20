@@ -1,3 +1,0 @@
-Ensure that if a shader extension directive is specified after non-preprocessor symbols, no errors are logged.
-
-

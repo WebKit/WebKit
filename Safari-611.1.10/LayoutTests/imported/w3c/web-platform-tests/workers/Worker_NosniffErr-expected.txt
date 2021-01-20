@@ -1,3 +1,0 @@
-
-PASS  Worker with nosniff X-Content-Type-Options header
-

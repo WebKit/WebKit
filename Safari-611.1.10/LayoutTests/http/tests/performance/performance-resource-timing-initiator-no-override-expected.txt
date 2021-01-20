@@ -1,3 +1,0 @@
-PASS initiator is "img"
-PASS foundResources is 1
-

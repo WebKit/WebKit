@@ -1,4 +1,0 @@
- This text should be green.
-
-PASS Evaluation of :checked changes on input type change.
-

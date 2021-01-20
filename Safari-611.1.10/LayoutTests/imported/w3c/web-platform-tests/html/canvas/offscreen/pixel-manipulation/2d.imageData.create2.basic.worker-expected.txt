@@ -1,3 +1,0 @@
-
-PASS createImageData(sw, sh) exists and returns something
-

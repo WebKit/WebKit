@@ -1,4 +1,0 @@
-add_subdirectory(TestRunnerShared)
-add_subdirectory(DumpRenderTree)
-add_subdirectory(WebKitTestRunner)
-add_subdirectory(MiniBrowser/mac)

@@ -1,3 +1,0 @@
-
-PASS Test skipWaiting when a installed worker is waiting
-

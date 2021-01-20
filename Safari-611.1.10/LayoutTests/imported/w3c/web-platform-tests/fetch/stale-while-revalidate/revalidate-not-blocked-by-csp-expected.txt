@@ -1,3 +1,0 @@
-
-FAIL Request revalidation aren't blocked by CSP promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ReportingObserver"
-

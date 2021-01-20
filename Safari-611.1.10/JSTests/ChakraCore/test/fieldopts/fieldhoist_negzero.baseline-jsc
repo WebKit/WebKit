@@ -1,3 +1,0 @@
-Exception: ReferenceError: Can't find variable: obj0
-fieldhoist_negzero.js:9:32
-global code@fieldhoist_negzero.js:12:3

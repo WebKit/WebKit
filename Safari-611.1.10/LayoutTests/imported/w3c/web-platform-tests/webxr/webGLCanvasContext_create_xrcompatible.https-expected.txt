@@ -1,3 +1,0 @@
-
-PASS An XR-compatible webglCanvasContext can be created
-

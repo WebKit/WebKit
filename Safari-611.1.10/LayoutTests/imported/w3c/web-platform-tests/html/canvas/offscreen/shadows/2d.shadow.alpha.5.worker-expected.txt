@@ -1,3 +1,0 @@
-
-PASS Shadows of shapes with alpha components are drawn correctly
-

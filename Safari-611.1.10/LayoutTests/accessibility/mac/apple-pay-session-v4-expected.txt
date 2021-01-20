@@ -1,7 +1,0 @@
-PASS book.description is 'AXDescription: Book with Apple Pay'
-PASS checkout.description is 'AXDescription: Check out with Apple Pay'
-PASS subscribe.description is 'AXDescription: Subscribe with Apple Pay'
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

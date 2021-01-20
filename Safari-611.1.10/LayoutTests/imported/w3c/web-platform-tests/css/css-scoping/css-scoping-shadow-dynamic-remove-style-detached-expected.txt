@@ -1,3 +1,0 @@
-
-PASS Invalidation of style data while ShadowRoot is disconnected.
-

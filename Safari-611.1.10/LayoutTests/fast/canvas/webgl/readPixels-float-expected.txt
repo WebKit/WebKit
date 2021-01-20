@@ -1,7 +1,0 @@
-Create WebGL context
-Clear to black
-Create a floating point texture
-Create and bind framebuffer
-Clear framebuffer to red
-PASS: Framebuffer is floating-point red.
-

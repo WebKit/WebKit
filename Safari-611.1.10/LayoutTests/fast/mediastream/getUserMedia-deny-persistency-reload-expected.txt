@@ -1,2 +1,0 @@
-In case of reload, getUserMedia deny state should be reset
-PASS

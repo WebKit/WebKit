@@ -1,4 +1,0 @@
-This tests that an element with a positive z-index appears behind the full screen element. After entering full screen mode, only a green box should be visible. Click go full screen to run the test.
-EVENT(webkitfullscreenchange)
-END OF TEST
-

@@ -1,3 +1,0 @@
-Ensure that Text nodes that are not direct children of Script elements are not included for execution.
-
-PASS

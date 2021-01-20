@@ -1,1 +1,0 @@
-Test for WebKit bug #150201. Test passes if it does not crash in an ASan build.

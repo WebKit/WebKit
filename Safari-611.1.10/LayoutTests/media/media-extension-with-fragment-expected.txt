@@ -1,6 +1,0 @@
-
-EVENT(loadeddata)
-MediaPlayer extracted extension from src url. OK
-
-END OF TEST
-

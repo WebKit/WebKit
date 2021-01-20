@@ -1,6 +1,0 @@
-This tests updating the pseudo class state of a radio button in the middle of node insertions.
-The test passes if WebKit does not crash or hang.
-
-PASS
-
-

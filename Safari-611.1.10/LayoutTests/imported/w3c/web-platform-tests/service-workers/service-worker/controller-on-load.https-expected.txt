@@ -1,3 +1,0 @@
-
-PASS controller is set for a controlled document
-

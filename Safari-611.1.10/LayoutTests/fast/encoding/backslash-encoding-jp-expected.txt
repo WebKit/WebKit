@@ -1,6 +1,0 @@
-Bug 133678: TextCodecICU::encode turns the whole string as yen signs if there is any backslash in it
-
-
-
-PASS
-

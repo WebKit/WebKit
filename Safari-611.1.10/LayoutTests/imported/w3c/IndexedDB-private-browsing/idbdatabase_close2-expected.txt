@@ -1,3 +1,0 @@
-
-PASS IDBDatabase.close() - unblock the delete database request
-

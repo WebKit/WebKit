@@ -1,4 +1,0 @@
-
-
-PASS Parent frame should not fire own paint-timing events for subframes.
-

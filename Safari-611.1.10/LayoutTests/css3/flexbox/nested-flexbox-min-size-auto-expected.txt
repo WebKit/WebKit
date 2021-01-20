@@ -1,5 +1,0 @@
-Green rectangle should be entirely within the black rectangle
-
-
-PASS #container 1
-

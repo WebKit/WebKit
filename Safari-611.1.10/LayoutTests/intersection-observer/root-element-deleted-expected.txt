@@ -1,3 +1,0 @@
-
-PASS IntersectionObserver doesn't keep unreachable root alive
-

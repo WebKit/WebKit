@@ -1,9 +1,0 @@
-
-RUN(video.src = URL.createObjectURL(source))
-RUN(quality = video.getVideoPlaybackQuality())
-EXPECTED (quality.droppedVideoFrames == '0') OK
-EXPECTED (video.duration == '4') OK
-RUN(quality = video.getVideoPlaybackQuality())
-EXPECTED (quality.droppedVideoFrames == '5') OK
-END OF TEST
-

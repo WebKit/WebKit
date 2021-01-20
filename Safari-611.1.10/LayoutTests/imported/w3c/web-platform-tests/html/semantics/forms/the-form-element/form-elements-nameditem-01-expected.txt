@@ -1,5 +1,0 @@
-
-PASS RadioNodeList should exist
-PASS elements collection should return elements or RadioNodeLists
-PASS elements collection should include fieldsets
-

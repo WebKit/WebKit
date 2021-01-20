@@ -1,3 +1,0 @@
-
-PASS IDBObjectStore.getAllKeys() uses [EnforceRange]
-

@@ -1,9 +1,0 @@
-Tests that DelayNode delayTime parameter can be scheduled at a given time.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-PASS Test signal was correctly delayed by 0.5 sec.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

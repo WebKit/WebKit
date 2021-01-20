@@ -1,3 +1,0 @@
-
-FAIL Encoding specified in the 'charset' attribute should have precedence over 'content' attribute. assert_equals: expected "ISO-8859-15" but got "KOI8-R"
-

@@ -1,3 +1,0 @@
-
-PASS IDBDatabase.createObjectStore() - object store's name appears in database's list
-

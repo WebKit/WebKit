@@ -1,3 +1,0 @@
-
-PASS XHR should respect access-control-expose-headers header on redirect
-

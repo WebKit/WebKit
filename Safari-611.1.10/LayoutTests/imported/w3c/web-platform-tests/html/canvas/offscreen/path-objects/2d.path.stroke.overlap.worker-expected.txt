@@ -1,3 +1,0 @@
-
-PASS Stroked subpaths are combined before being drawn
-

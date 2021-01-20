@@ -1,5 +1,0 @@
-
-
-PASS ResizeObserver implemented
-PASS test0: Observe element from other frame
-

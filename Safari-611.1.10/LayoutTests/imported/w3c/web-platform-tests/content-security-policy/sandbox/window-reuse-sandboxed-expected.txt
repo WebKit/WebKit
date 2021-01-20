@@ -1,3 +1,0 @@
-
-FAIL Window object should not be reused assert_equals: expected (undefined) undefined but got (string) "test"
-

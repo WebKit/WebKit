@@ -1,3 +1,0 @@
-
-PASS lastModified should return the last modified date and time
-

@@ -1,6 +1,0 @@
-This tests clicking on a Text node assigned to a slot inside an anchor element. The link should be activated.
-To manually test, click "here" below and you should see "PASS" and the mouse cursor should indicate it's a hyperlink, not text:
-
-click here
-Activation: PASS
-Cursor: type=Hand hotSpot=0,0

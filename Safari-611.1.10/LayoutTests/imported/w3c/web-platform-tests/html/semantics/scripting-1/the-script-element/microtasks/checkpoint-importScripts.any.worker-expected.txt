@@ -1,3 +1,0 @@
-
-PASS Promise resolved during importScripts()
-

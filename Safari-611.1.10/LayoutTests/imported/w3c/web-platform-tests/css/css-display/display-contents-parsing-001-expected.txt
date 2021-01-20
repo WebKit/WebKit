@@ -1,3 +1,0 @@
-
-PASS Tests that the 'contents' value for the 'display' property is correctly parsed
-

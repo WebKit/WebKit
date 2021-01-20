@@ -1,3 +1,0 @@
-
-PASS isPointInPath() counts points on the path as being inside
-

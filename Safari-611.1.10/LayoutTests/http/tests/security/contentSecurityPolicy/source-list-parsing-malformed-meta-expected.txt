@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: Refused to connect to http://127.0.0.1:8000/xmlhttprequest/resources/get.txt because it does not appear in the connect-src directive of the Content Security Policy.
-Pass
-This test passes if the malformed meta tag doesn't cause a crash and the resource is blocked.

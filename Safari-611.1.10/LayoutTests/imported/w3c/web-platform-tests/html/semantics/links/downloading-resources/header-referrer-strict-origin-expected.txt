@@ -1,3 +1,0 @@
-
-PASS Test referer header /html/semantics/links/downloading-resources/resources/
-

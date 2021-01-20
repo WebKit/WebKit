@@ -1,3 +1,0 @@
-Before was: rgb(0, 0, 0) - should be rgb(0, 0, 0)
-
-After was: rgb(0, 128, 0) - should be rgb(0, 128, 0)

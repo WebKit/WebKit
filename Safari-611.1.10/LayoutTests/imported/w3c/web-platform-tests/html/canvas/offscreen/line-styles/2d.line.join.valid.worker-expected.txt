@@ -1,3 +1,0 @@
-
-PASS Setting lineJoin to valid values works
-

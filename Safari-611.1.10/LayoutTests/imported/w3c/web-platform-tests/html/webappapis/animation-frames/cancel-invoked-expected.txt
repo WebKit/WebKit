@@ -1,3 +1,0 @@
-
-PASS cancelAnimationFrame does nothing if there is no callback with the given handle
-

@@ -1,3 +1,0 @@
-
-PASS ImageData.data converts undefined to 0
-

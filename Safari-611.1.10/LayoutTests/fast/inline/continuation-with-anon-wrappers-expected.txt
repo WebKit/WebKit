@@ -1,2 +1,0 @@
-Test run: 720
-All passed.

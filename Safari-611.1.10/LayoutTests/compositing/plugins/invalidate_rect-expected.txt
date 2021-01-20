@@ -1,3 +1,0 @@
-This tests that NPN_InvalidateRect works correctly.
-SUCCESS
-

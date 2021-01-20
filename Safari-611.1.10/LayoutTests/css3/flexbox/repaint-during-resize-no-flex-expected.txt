@@ -1,9 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x90
-  RenderBlock {HTML} at (0,0) size 800x90
-    RenderBody {BODY} at (0,0) size 800x90
-      RenderFlexibleBox {DIV} at (0,0) size 800x90 [bgcolor=#333333]
-        RenderBlock {DIV} at (20,20) size 50x50 [bgcolor=#EEEEEE]
-        RenderBlock {DIV} at (110,20) size 10x50 [bgcolor=#EEEEEE]
-        RenderBlock {DIV} at (160,20) size 10x50 [bgcolor=#EEEEEE]

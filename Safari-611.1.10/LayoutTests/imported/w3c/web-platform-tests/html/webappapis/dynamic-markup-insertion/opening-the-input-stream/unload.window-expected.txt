@@ -1,3 +1,0 @@
-
-PASS document.open(): Do not fire pagehide, visibilitychange, or unload events
-

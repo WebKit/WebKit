@@ -1,3 +1,0 @@
-
-PASS Animated font-size on root affects rem units
-

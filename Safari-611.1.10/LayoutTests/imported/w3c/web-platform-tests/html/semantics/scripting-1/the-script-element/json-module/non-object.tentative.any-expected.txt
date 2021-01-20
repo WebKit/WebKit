@@ -1,7 +1,0 @@
-
-FAIL Non-object: null promise_test: Unhandled rejection with value: object "TypeError: 'application/json' is not a valid JavaScript MIME type."
-FAIL Non-object: true promise_test: Unhandled rejection with value: object "TypeError: 'application/json' is not a valid JavaScript MIME type."
-FAIL Non-object: false promise_test: Unhandled rejection with value: object "TypeError: 'application/json' is not a valid JavaScript MIME type."
-FAIL Non-object: string promise_test: Unhandled rejection with value: object "TypeError: 'application/json' is not a valid JavaScript MIME type."
-FAIL Non-object: array promise_test: Unhandled rejection with value: object "TypeError: 'application/json' is not a valid JavaScript MIME type."
-

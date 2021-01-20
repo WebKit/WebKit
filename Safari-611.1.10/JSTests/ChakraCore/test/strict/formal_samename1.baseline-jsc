@@ -1,2 +1,0 @@
-Exception: SyntaxError: Cannot declare a parameter named 'x' in strict mode as it has already been declared.
-at formal_samename1.js:9

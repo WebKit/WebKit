@@ -1,2 +1,0 @@
-
-PASS: Plug-in instance available while waiting for style sheets to load

@@ -1,3 +1,0 @@
-Test that root actions combined with DFA minimizing don't crash in Debug
-
-See https://bugs.webkit.org/show_bug.cgi?id=185979

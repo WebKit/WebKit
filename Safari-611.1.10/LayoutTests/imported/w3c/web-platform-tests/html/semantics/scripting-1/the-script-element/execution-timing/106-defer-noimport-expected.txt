@@ -1,4 +1,0 @@
-FAILED (This TC requires JavaScript enabled)
-
-FAIL  scheduler: stylesheets blocking defer scripts assert_equals: expected "fixed" but got "static"
-Test

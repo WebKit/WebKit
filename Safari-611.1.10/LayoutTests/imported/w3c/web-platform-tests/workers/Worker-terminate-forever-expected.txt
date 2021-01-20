@@ -1,3 +1,0 @@
-
-PASS Tests terminating a worker that is trying to run forever.
-

@@ -1,3 +1,0 @@
-Exception: TypeError: undefined is not an object (evaluating 'o.x')
-test_Neg_A@fieldhoist_nullfieldhoist.js:11:14
-global code@fieldhoist_nullfieldhoist.js:17:11

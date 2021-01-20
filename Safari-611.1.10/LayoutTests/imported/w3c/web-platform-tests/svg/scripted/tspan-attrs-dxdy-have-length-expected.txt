@@ -1,4 +1,0 @@
-His socks are very clean.
-
-PASS tspan-attrs-dxdy-have-length
-

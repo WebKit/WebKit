@@ -1,3 +1,0 @@
-
-PASS setting contentEditable to an invalid value throws a SyntaxError Exception
-

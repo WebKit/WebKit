@@ -1,4 +1,0 @@
-This tests that JS wrappers of targets removed from document to be delivered to an resize observer do not get collected.
-
-PASS
-

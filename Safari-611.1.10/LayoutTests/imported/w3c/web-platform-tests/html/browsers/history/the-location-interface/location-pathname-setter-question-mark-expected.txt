@@ -1,3 +1,0 @@
-
-PASS Set location.pathname to ?
-

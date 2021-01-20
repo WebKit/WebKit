@@ -1,3 +1,0 @@
-Test for bug 36854: Body from cross origin preflight response is prepended to the actual response body.
-
-PASS

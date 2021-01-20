@@ -1,1 +1,0 @@
-shouldBe("count++", "11");

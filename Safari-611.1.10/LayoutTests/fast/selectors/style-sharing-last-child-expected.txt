@@ -1,3 +1,0 @@
-You should see 1234 below (4 won't be visible in the DRT text dump, but it should still say PASS below)
-123
-PASS

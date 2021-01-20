@@ -1,3 +1,0 @@
-
-PASS Negative timeout in setInterval
-

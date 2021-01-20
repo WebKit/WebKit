@@ -1,5 +1,0 @@
-2d.gradient.interpolate.vertical
-
-
-PASS OffscreenCanvas test: 2d.gradient.interpolate.vertical
-

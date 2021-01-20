@@ -1,3 +1,0 @@
-
-FAIL Test cyclic for svg animations for syncbases assert_approx_equals: expected 100 +/- 1 but got 0
-

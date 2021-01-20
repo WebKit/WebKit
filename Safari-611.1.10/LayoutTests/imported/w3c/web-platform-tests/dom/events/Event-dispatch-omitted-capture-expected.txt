@@ -1,3 +1,0 @@
-
-PASS EventTarget.addEventListener with the capture argument omitted
-

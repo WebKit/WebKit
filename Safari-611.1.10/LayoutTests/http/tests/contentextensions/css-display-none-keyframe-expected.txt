@@ -1,1 +1,0 @@
-Test content extension inserting a display:none rule triggered by a resource in a keyframe.

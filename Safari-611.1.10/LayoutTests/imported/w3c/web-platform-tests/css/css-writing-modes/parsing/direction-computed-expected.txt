@@ -1,4 +1,0 @@
-
-PASS Property direction value 'ltr'
-PASS Property direction value 'rtl'
-

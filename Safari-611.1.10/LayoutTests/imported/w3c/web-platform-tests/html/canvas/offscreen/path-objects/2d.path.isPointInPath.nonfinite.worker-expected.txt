@@ -1,3 +1,0 @@
-
-PASS isPointInPath() returns false for non-finite arguments
-

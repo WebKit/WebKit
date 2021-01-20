@@ -1,3 +1,0 @@
-
-PASS The DIALOG element should be recognized
-

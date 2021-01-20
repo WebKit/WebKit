@@ -1,3 +1,0 @@
-
-PASS arcTo() with negative radius throws an exception
-

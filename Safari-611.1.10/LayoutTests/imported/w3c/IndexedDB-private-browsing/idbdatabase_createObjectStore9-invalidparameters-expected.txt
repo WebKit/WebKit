@@ -1,6 +1,0 @@
-
-PASS createObjectStore: Invalid optionalParameters - autoInc and empty keyPath
-PASS createObjectStore: Invalid optionalParameters - autoInc and keyPath array
-PASS createObjectStore: Invalid optionalParameters - autoInc and keyPath array 2
-PASS createObjectStore: Invalid optionalParameters - autoInc and keyPath object
-

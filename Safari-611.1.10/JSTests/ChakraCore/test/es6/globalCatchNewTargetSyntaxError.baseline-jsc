@@ -1,2 +1,0 @@
-Exception: SyntaxError: new.target is only valid inside functions.
-at globalCatchNewTargetSyntaxError.js:6

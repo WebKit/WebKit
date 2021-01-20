@@ -1,4 +1,0 @@
-
-
-PASS Testing that setting touch-action: none allows link traversal.
-

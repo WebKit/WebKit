@@ -1,3 +1,0 @@
-
-PASS Testing the basic properties of a pointer event triggered by a mouse.
-

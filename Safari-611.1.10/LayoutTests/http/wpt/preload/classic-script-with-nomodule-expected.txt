@@ -1,4 +1,0 @@
-foo
-
-PASS Makes sure that preloaded resources are not downloaded when the script is attributed with nomodule.
-

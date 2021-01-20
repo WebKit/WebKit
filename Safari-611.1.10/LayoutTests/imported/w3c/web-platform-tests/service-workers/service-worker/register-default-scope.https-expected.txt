@@ -1,5 +1,0 @@
-
-PASS default scope
-PASS undefined scope
-PASS null scope
-

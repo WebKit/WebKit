@@ -1,3 +1,0 @@
-
-PASS scr1.innerText before modification should not be blocked
-

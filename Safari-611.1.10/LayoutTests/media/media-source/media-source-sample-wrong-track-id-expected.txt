@@ -1,9 +1,0 @@
-
-RUN(video.src = URL.createObjectURL(source))
-EVENT(sourceopen)
-RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
-Append a set of invalid, overlapping samples. Should not crash.
-RUN(sourceBuffer.appendBuffer(mediaSegment))
-EVENT(updateend)
-END OF TEST
-

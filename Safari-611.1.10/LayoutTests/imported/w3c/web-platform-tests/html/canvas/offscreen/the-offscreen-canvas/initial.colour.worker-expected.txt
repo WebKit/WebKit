@@ -1,3 +1,0 @@
-
-PASS Initial state is transparent black
-

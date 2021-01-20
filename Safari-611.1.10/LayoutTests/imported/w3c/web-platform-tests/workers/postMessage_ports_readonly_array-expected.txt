@@ -1,3 +1,0 @@
-
-PASS  postMessage(): read-only ports array
-

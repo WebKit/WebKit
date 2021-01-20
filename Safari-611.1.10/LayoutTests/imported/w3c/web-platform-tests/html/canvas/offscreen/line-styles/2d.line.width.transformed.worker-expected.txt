@@ -1,3 +1,0 @@
-
-PASS Line stroke widths are affected by scale transformations
-

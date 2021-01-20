@@ -1,3 +1,0 @@
-
-PASS sync XHR should not fire window.onload synchronously
-

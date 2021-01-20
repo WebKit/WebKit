@@ -1,3 +1,0 @@
-
-PASS Test SVGLength animation set with 'values', different units and different count of spaces.
-

@@ -1,3 +1,0 @@
-
-PASS Testing that calling preventDefault() when handling a "pointerdown" event does not dispatch a "mousedown" event.
-

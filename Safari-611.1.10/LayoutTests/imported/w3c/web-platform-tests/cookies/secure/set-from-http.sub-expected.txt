@@ -1,4 +1,0 @@
-
-PASS 'secure' cookie not present in `document.cookie`
-PASS 'secure' cookie not sent in HTTP request
-

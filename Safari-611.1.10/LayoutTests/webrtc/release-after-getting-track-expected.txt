@@ -1,3 +1,0 @@
-
-PASS Ensuring collecting tracks does not lead to crashing
-

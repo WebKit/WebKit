@@ -1,9 +1,0 @@
-{
-    "domain": "Domain",
-    "events": [
-        {
-            "name": "PageOnly",
-            "targetTypes": "pagee"
-        }
-    ]
-}

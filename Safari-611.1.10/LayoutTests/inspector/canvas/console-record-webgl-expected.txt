@@ -1,9 +1,0 @@
-Test that CanvasManager is able to record actions made to WebGL canvas contexts.
-
-
-== Running test suite: Canvas.recordingWebGL
--- Running test case: Canvas.recordingWebGL.Console
-PASS: The recording should have the name "TEST".
-PASS: The recording should have one frame.
-PASS: The first frame should have one action.
-

@@ -1,3 +1,0 @@
-
-FAIL SVGAnimatedRect interface - utilizing the viewBox property of SVGSVGElement assert_true: expected true got false
-

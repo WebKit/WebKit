@@ -1,9 +1,0 @@
-Tests that the video's presentation mode is updated accordingly after entering and exiting Full Screen
-
-EXPECTED (video.webkitPresentationMode == 'inline') OK
-Going into Full Screen
-EXPECTED (video.webkitPresentationMode == 'fullscreen') OK
-Exiting Full Screen
-EXPECTED (video.webkitPresentationMode == 'inline') OK
-END OF TEST
-

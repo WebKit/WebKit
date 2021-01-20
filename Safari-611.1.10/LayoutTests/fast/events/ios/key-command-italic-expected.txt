@@ -1,3 +1,0 @@
-Tests that pressing Command + I in a rich editing field italizes the selection.
-| <i>
-|   "<#selection-anchor>This text should be italicized.<#selection-focus>"

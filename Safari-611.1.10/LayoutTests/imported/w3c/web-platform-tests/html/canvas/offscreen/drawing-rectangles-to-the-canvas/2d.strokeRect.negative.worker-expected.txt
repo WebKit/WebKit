@@ -1,3 +1,0 @@
-
-PASS strokeRect of negative sizes works
-

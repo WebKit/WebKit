@@ -1,4 +1,0 @@
-a link
-
-PASS querySelectorAll must not return removed elements
-

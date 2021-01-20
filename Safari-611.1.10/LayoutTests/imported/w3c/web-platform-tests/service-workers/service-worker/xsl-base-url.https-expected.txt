@@ -1,3 +1,0 @@
-
-PASS base URL when service worker does respondWith(fetch(responseUrl))
-

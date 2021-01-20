@@ -1,7 +1,0 @@
-2d.text.draw.fill.maxWidth.zero
-
-fillText handles maxWidth correctly
-
-
-PASS fillText handles maxWidth correctly
-

@@ -1,3 +1,0 @@
-
-PASS Setting miterLimit to invalid values is ignored
-

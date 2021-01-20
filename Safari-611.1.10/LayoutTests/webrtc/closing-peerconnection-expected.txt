@@ -1,3 +1,0 @@
-
-PASS closing and stopping peer connection in the middle of gathering candidates
-

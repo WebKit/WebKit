@@ -1,4 +1,0 @@
-There should be no compositing layers for sticky positioned elements.
-
-Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Right %
-

@@ -1,9 +1,0 @@
-Test that firstRectForCharacterRange result for vertical text is reasonable in a very simple case. To test manually, invoke Dictionary pop-up with Ctrl+Option+D combo.
-
-PASS textInputController.firstRectForCharacterRange(0, 1) is reasonable
-PASS textInputController.firstRectForCharacterRange(1, 0) is reasonable
-PASS textInputController.firstRectForCharacterRange(1, 200) is reasonable
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

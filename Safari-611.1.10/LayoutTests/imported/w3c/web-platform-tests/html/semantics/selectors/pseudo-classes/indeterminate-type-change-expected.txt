@@ -1,4 +1,0 @@
- This text should be green.
-
-PASS Evaluation of :indeterminate changes on input type change.
-

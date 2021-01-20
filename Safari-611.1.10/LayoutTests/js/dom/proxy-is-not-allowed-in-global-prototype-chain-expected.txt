@@ -1,2 +1,0 @@
-Caught: TypeError: Cannot set prototype of immutable prototype object
-

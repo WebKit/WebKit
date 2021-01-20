@@ -1,2 +1,0 @@
-Failed assertion img.complete === false (got true[boolean], expected false[boolean])
-

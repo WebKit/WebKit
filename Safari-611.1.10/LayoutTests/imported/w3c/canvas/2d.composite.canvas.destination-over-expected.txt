@@ -1,7 +1,0 @@
-2d.composite.canvas.destination-over
-Spec references: 2d.composite.destination-over
-Actual output:
-Expected output:
-
-Passed
-

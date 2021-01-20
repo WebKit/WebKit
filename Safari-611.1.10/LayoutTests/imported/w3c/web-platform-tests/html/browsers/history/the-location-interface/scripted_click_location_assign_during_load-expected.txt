@@ -1,5 +1,0 @@
-The popup blocker must be disabled for this test
-
-
-FAIL location.assign with click during load assert_equals: expected 2 but got 1
-

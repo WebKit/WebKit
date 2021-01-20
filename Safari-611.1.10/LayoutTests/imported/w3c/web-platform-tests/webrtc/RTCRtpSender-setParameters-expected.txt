@@ -1,3 +1,0 @@
-
-PASS setParameters() when transceiver is stopped should reject with InvalidStateError
-

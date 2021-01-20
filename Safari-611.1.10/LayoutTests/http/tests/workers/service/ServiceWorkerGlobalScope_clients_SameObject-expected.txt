@@ -1,4 +1,0 @@
-* Tests that self.clients always returns the same object
-
-PASS: returned object was the same
-

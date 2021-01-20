@@ -1,3 +1,0 @@
-
-PASS WebSockets: response header and close frame in same packet
-

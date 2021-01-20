@@ -1,4 +1,0 @@
-Tests that an <img> with a .mp4 source where that .mp4 has an edit list will correctly decode.
-Promise resolved OK
-END OF TEST
-

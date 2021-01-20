@@ -1,7 +1,0 @@
-Description
-
-This test validates the ul element.
-
-
-PASS The prototype for ul is HTMLUListElement.prototype
-

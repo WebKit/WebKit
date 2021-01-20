@@ -1,4 +1,0 @@
-
-PASS Check the actual length of the embed element's height
-PASS Check the actual length of the embed element's width
-

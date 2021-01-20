@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: sync requests should block events on pending async requests
-

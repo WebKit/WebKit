@@ -1,3 +1,0 @@
-
-PASS Tests SVGAngle animation from rad to grad.
-

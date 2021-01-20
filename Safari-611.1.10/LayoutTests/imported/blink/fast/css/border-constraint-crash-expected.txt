@@ -1,2 +1,0 @@
-
-This test PASSES if it does not CRASH.

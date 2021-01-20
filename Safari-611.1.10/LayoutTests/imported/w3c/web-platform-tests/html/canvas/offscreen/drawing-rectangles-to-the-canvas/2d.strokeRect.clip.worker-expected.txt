@@ -1,3 +1,0 @@
-
-PASS strokeRect is affected by clipping regions
-

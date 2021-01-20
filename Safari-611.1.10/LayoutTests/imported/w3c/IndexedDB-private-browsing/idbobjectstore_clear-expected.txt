@@ -1,3 +1,0 @@
-
-PASS IDBObjectStore.clear() - Verify clear removes all records
-

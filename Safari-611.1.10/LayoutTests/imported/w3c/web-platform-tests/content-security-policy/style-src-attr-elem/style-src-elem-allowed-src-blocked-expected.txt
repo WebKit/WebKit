@@ -1,3 +1,0 @@
-
-FAIL Inline style should be applied assert_equals: expected 1 but got 0
-

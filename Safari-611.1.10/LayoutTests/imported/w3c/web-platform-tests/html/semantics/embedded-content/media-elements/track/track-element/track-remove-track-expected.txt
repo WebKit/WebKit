@@ -1,3 +1,0 @@
-
-PASS Tests that the 'removetrack' event is fired when an out-of-band TextTrack is removed.
-

@@ -1,3 +1,0 @@
-
-PASS Verify the response of FetchEvent using XMLHttpRequest
-

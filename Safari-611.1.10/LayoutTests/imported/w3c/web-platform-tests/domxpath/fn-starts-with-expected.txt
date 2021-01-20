@@ -1,4 +1,0 @@
-foobarberbar
-
-FAIL starts-with() arguments depending on the context node assert_true: expected true got false
-

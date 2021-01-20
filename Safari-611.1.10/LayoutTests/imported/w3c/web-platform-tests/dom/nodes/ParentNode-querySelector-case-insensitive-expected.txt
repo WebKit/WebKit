@@ -1,5 +1,0 @@
-
-
-PASS querySelector
-PASS querySelectorAll
-

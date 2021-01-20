@@ -1,3 +1,0 @@
-Tests that a HTML object element, in a user agent shadow tree, is allowed to load a plugin when the page has CSP policy: object-src 'none'. This test PASSED if there are no console warning messages.
-
-

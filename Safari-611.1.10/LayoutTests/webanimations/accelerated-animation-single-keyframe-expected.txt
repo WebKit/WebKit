@@ -1,3 +1,0 @@
-
-PASS A transform animation with a single keyframe should be able to run accelerated.
-

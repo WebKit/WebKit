@@ -1,1 +1,0 @@
-window.parent.checkResult(didRunInlineScript);

@@ -1,3 +1,0 @@
-
-PASS Shadows take account of transformations
-

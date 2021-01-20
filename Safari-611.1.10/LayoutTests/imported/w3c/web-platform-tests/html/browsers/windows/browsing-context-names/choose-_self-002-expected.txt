@@ -1,3 +1,0 @@
-
-PASS choosing _self context should be case-insensitive
-

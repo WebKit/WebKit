@@ -1,1 +1,0 @@
-This test produces output in the console. Only the initial URL should be logged.

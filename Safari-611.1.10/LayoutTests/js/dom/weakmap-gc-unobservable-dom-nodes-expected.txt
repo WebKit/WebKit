@@ -1,9 +1,0 @@
-PASS 4 is defined.
-PASS 4 is defined.
-PASS 4 is defined.
-PASS 4 is defined.
-PASS 4 is defined.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

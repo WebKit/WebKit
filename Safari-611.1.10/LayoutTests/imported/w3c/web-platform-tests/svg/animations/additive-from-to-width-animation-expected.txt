@@ -1,3 +1,0 @@
-
-PASS This tests multiple additive='sum' animations running at the same time
-

@@ -1,9 +1,0 @@
-CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'http://127.0.0.1:8000/quicklook/top-navigation-blocked.html' from frame with URL 'http://127.0.0.1:8000/quicklook/resources/top-navigation-blocked.docx'. The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation-by-user-activation' flag is not set and navigation is not triggered by user activation.
-
-CONSOLE MESSAGE: SecurityError: The operation is insecure.
-
-
---------
-Frame: '<!--frame1-->'
---------
-Run test

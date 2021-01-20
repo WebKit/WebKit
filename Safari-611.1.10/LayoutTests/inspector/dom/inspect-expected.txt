@@ -1,8 +1,0 @@
-Test for basic DOM.events.inspect functionality.
-
-PASS: Got document.
-PASS: Queryied for target node.
-PASS: Set $0 to the target node.
-PASS: Evaluate $0.
-PASS: Id of $0 is "target".
-

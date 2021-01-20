@@ -1,7 +1,0 @@
-
-Test audio track handling.
-
-EVENT(addtrack)
-PASS: Track is in valid state.
-END OF TEST
-

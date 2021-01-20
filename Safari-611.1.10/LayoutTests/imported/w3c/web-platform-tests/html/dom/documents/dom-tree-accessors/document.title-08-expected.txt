@@ -1,4 +1,0 @@
-
-PASS No title element
-PASS title element contains multiple child text nodes
-

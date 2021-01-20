@@ -1,3 +1,0 @@
-
-PASS Type long timeout for setInterval
-

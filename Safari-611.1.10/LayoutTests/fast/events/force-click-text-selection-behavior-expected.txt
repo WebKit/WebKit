@@ -1,3 +1,0 @@
-Force click me.
-Select me.
-SUCCESS! We did not dismiss the selection when we force clicked the text.

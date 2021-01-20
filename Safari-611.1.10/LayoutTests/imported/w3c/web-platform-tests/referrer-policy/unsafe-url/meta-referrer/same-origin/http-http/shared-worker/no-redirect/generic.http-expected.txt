@@ -1,7 +1,0 @@
-
-FAIL The referrer URL is stripped-referrer when a
-                                 document served over http requires an http
-                                 sub-resource via shared-worker using the meta-referrer
-                                 delivery method with no-redirect and when
-                                 the target request is same-origin. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
-

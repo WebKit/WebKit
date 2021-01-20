@@ -1,9 +1,0 @@
-@import url("/WebKit/service-workers/resources/subresource.css");
-
-@font-face {
-    font-family:ahem;
-    src: url("Ahem.woff");
-}
-body {
-  cursor: url("images/cursor"), auto;
-}

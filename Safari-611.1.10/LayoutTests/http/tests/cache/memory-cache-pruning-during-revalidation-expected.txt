@@ -1,9 +1,0 @@
-Make sure we don't crash if the memory cache is getting pruned while a resource is being revalidated.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

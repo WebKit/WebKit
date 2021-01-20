@@ -1,2 +1,0 @@
-Exception: SyntaxError: Cannot delete unqualified property 'a' in strict mode.
-at delete.js:9

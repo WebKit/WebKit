@@ -1,4 +1,0 @@
-ABCD
-
-PASS This by animation for all XML property types
-

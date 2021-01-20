@@ -1,5 +1,0 @@
-PASS The iframe scrolled but the wrapper did not.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

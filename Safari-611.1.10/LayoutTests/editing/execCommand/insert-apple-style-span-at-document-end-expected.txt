@@ -1,3 +1,0 @@
-| "This test passes if we do not crash...Apple"
-| <br>
-| "WebKit<#selection-caret>"

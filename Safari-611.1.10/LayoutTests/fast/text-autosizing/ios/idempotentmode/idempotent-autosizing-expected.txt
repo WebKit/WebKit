@@ -1,9 +1,0 @@
-PASS result is >= 13
-PASS result is >= 7
-PASS successfullyParsed is true
-
-TEST COMPLETE
-Test
-Test
-Test
-Test

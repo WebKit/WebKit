@@ -1,7 +1,0 @@
-2d.state.saverestore.bitmap
-
-save()/restore() does not affect the current bitmap
-
-
-PASS save()/restore() does not affect the current bitmap
-

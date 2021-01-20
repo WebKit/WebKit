@@ -1,3 +1,0 @@
-
-PASS AnimationEvent should have the correct pseudoElement memeber
-

@@ -1,4 +1,0 @@
-FAILED (This TC requires JavaScript enabled)
-
-PASS  scheduler: Changing src of defer script before it runs
-

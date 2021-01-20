@@ -1,3 +1,0 @@
-
-PASS Script Hash allow hash in default-src
-

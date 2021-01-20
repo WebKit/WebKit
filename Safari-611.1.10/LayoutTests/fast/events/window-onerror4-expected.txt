@@ -1,4 +1,0 @@
-You should see a log record if window.onerror is working properly for this test.Bug 8519.
-
-Error caught successfully: SyntaxError: Left side of assignment is not a reference. File: window-onerror4.html Line: 16 Column: 9 Error: SyntaxError: Left side of assignment is not a reference.
-

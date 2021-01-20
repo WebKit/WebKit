@@ -1,3 +1,0 @@
-* { flex-direction: column-reverse; display: flex; height: 0%; }
-if (window.testRunner) testRunner.dumpAsText();
-This test PASSES if it does not CRASH on Debug builds.

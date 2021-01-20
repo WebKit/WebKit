@@ -1,4 +1,0 @@
-
-
-PASS Loading an nonexisting image should fail; triggering appropriate events
-

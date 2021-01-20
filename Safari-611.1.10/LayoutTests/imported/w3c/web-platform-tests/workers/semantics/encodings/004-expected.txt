@@ -1,3 +1,0 @@
-
-FAIL URL encoding, shared worker Can't find variable: SharedWorker
-

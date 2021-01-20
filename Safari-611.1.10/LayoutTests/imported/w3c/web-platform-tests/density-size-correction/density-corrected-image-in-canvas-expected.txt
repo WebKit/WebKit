@@ -1,6 +1,0 @@
-You should see green/yellow gradient boxes
-
-
-
-PASS Density corrected size: canvas
-

@@ -1,3 +1,0 @@
-
-PASS getImageData() returns bigger ImageData for bigger source rectangle
-

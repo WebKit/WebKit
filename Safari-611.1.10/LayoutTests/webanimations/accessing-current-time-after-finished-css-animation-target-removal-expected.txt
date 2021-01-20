@@ -1,3 +1,0 @@
-
-PASS Current time is null when removing an animation's target after completion.
-

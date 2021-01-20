@@ -1,3 +1,0 @@
-
-PASS base url, dedicated worker
-

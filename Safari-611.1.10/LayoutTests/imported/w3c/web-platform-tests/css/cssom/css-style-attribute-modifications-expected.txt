@@ -1,3 +1,0 @@
-
-PASS Mutating the style declaration doesn't remove the style attribute
-

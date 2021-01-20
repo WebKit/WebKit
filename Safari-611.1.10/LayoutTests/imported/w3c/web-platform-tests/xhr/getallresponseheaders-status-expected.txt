@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: getAllResponseHeaders() excludes status
-

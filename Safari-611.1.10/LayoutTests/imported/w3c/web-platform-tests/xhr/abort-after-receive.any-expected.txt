@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: abort() after successful receive should not fire "abort" event
-

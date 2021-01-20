@@ -1,6 +1,0 @@
-This tests that page scroll is restored after fullscreen. Press any key to start the test.
-
-
-EVENT(load)
-EXPECTED ((document.scrollingElement.scrollTop === originalScroll) == 'true') OK
-

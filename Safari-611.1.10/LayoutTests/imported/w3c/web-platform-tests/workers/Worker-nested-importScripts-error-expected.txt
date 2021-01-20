@@ -1,3 +1,0 @@
-
-PASS Tests that errors from the import scripts come from the expected file.
-

@@ -1,4 +1,0 @@
-Some content
-
-PASS Make sure that resources fetched by cross origin CSS are not in the timeline.
-

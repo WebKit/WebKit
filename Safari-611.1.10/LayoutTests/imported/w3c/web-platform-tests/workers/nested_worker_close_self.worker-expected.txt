@@ -1,3 +1,0 @@
-
-FAIL Nested work that closes itself Can't find variable: Worker
-

@@ -1,3 +1,0 @@
-Tests that AudioBufferSourceNode calls its onended EventListener.
-PASS source.onended called.
-

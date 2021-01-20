@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
-  <rect x="0" y="0" width="10" height="10" fill="green"/>
-  <rect x="15" y="0" width="20" height="20" fill="red"/>
-  <rect x="40" y="0" width="20" height="10" fill="green"/>
-  <rect x="65" y="0" width="20" height="15" fill="red"/>
-
-  <view id="view1" viewBox="0 0 10 10"/>
-  <view id="view2" viewBox="40 0 20 10" preserveAspectRatio="xMidYMax slice"/>
-</svg>

@@ -1,5 +1,0 @@
-
-This tests that a standalone MPEG-4 file with 'sdsm' and 'odsm' tracks is opened in a MediaDocument.
-
-PASS: <video> used
-

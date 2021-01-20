@@ -1,6 +1,0 @@
-PASS target1.offsetWidth is target2.offsetWidth
-PASS successfullyParsed is true
-
-TEST COMPLETE
-ㄔˉㄔˉㄔˉㄔˉㄔˉㄔˉ
-ㄔˉㄔˉㄔˉㄔˉㄔˉㄔˉ

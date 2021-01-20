@@ -1,3 +1,0 @@
-
-PASS strokeRect is not affected by globalCompositeOperation
-

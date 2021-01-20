@@ -1,9 +1,0 @@
-Text should turn green on hover.
-Text should turn green on hover.
-Text should turn green on mouse down.
-Text should turn green on mouse down.
-test1 FAIL
-test2 PASS
-test3 FAIL
-test4 PASS
-

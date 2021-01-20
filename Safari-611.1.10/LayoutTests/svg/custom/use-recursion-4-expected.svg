@@ -1,4 +1,0 @@
-<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-<text x="10" y="60">This should not crash.</text>
-<rect x="25" y="25" stroke-width="5px" fill="red" stroke="navy" width="60" height="10"/>
-</svg>

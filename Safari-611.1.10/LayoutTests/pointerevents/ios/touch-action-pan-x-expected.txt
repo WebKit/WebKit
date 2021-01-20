@@ -1,3 +1,0 @@
-
-PASS Testing that setting touch-action: pan-x on an element prevents page scrolling in the y-axis.
-

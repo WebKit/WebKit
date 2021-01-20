@@ -1,3 +1,0 @@
-
-PASS Preflight cache should be invalidated in presence of custom header
-

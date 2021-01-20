@@ -1,4 +1,0 @@
-
-
-PASS Video frames are resized in letterbox-mode when captured at non-native size.
-

@@ -1,3 +1,0 @@
-In WebKit1 there should be a repaint at 0,-500.
-
-

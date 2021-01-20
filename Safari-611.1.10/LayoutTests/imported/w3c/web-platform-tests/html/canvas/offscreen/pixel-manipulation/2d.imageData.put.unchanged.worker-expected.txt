@@ -1,3 +1,0 @@
-
-PASS putImageData(getImageData(...), ...) has no effect
-

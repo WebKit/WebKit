@@ -1,5 +1,0 @@
-2d.imageData.get.length
-getImageData() returns a correctly-sized Uint8ClampedArray
-Spec references: 2d.pixelarray.length
-Actual output:
-Passed

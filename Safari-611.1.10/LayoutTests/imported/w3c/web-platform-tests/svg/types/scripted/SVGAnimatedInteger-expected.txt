@@ -1,3 +1,0 @@
-
-PASS SVGAnimatedInteger interface - utilizing the targetX property of SVGFEConvolveMatrix
-

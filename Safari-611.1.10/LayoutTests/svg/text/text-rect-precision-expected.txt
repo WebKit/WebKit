@@ -1,3 +1,0 @@
-PASS Width of text element is the sum of the width of all characters.
-Sphinx of black quartz, judge my vow.
-.

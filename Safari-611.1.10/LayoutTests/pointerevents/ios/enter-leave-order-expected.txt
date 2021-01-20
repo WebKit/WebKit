@@ -1,3 +1,0 @@
-
-PASS Testing that "pointerenter" events are dispatched from top to bottom and "pointerleave" events are dispatched bottom to top.
-

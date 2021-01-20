@@ -1,5 +1,0 @@
-Should be green
-
-
-PASS x-prefixed pseudo-elements should make the whole rule invalid
-

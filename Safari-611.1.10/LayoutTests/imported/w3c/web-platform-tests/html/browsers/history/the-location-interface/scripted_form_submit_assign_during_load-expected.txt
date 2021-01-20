@@ -1,5 +1,0 @@
-The popup blocker must be disabled for this test
-
-
-PASS Assignment to location with form submit during load
-

@@ -1,3 +1,0 @@
-
-FAIL TouchEvent's touches, targetTouches, and changedTouches should be retargeted. Illegal constructor
-

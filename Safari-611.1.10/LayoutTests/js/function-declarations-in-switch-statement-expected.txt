@@ -1,7 +1,0 @@
-PASS t(1) is 20
-PASS t(2) is 20
-PASS t(3) is -1
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

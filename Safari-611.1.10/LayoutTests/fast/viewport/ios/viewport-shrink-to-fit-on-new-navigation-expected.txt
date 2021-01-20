@@ -1,6 +1,0 @@
-ALERT: pageshow - not from cache
-ALERT: pageshow - from cache
-window size: [1008, 1726]
-zoom scale: 0.32
-
-

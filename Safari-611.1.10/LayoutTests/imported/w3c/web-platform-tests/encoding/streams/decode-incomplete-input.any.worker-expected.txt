@@ -1,4 +1,0 @@
-
-PASS incomplete input with error mode "replacement" should end with a replacement character
-PASS incomplete input with error mode "fatal" should error the stream
-

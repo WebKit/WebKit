@@ -1,3 +1,0 @@
-
-PASS void methods return undefined
-

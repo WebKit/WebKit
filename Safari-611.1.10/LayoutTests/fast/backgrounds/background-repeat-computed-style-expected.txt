@@ -1,2 +1,0 @@
-This div should have a horizontal repeating background
-Pass

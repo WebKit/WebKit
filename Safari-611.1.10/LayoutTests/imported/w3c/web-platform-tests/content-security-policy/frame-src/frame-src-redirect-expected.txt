@@ -1,6 +1,0 @@
-
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Redirected iframe src should evaluate both enforced and report-only policies on both original request and when following redirect Test timed out
-

@@ -1,3 +1,0 @@
-
-PASS ParentNode.children should be a live collection
-

@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg">
-    <desc>Test that the instance of the 'externalResourcesRequired' attribute is animated correctly.</desc>
-    <def>
-        <rect id="rect" width="100" height="100" fill="green">
-            <set attributeName="externalResourcesRequired" to="true"/>
-        </rect>
-    </def>
-    <use href="#rect"/>
-</svg>

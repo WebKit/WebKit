@@ -1,5 +1,0 @@
-Exception: delete global variable SyntaxError
-Exception: delete global function SyntaxError
-Exception: delete local variable SyntaxError
-Exception: delete local function SyntaxError
-Exception: delete parameter SyntaxError

@@ -1,3 +1,0 @@
-
-PASS The transform property should not be affected by individual transform properties.
-

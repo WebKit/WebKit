@@ -1,4 +1,0 @@
-Tests that a HTML image element, in a user agent shadow tree, is allowed to load an image resource that has been temporarily moved when the page has CSP policy: img-src 'none'.
-
-PASS image did load.
-

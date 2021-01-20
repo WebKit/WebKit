@@ -1,3 +1,0 @@
-
-PASS Send data on a WebSocket before connection is opened - INVALID_STATE_ERR is returned
-

@@ -1,3 +1,0 @@
-
-PASS IDBObjectStore.add() - add where an index has unique:true specified
-

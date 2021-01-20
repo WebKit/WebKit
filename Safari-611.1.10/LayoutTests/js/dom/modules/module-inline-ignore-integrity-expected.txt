@@ -1,3 +1,0 @@
-
-PASS Inline module script ignores integrity
-

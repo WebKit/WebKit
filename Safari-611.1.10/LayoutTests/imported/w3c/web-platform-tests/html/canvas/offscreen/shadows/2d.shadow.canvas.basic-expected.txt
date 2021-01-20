@@ -1,7 +1,0 @@
-2d.shadow.canvas.basic
-
-Shadows are drawn for canvases
-
-
-PASS Shadows are drawn for canvases
-

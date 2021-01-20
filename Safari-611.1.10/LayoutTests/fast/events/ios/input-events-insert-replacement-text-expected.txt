@@ -1,9 +1,0 @@
-The
-This test verifies that input events of type "insertReplacementText" target the right ranges.
-
-To manually test, type 'T' into the input field and try to select a candidate. The output should indicate that the beforeinput and input events for the text replacement were handled, and that the range of the beforeinput event is from 0 to 1.
-
-Replacing "T" with "The"...
-Observed text replacement before input event with range: [0, 1] and data: "The"
-Observed text replacement input event with data: "The"
-

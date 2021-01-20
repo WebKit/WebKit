@@ -1,3 +1,0 @@
-
-PASS An async script does not block the parser while downloading
-21

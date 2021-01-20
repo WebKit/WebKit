@@ -1,8 +1,0 @@
-Test that the WebContent process has mach lookup access to frontboard and icon services when the attachment element is enabled
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS internals.hasSandboxMachLookupAccessToGlobalName('com.apple.WebKit.WebContent', 'com.apple.frontboard.systemappservices') is true
-PASS internals.hasSandboxMachLookupAccessToGlobalName('com.apple.WebKit.WebContent', 'com.apple.iconservices') is true
-

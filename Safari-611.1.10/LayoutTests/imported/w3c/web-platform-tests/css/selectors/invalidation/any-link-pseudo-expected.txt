@@ -1,4 +1,0 @@
-This link should have a green background.
-
-PASS Style was recalculated for the :any-link pseudo class.
-

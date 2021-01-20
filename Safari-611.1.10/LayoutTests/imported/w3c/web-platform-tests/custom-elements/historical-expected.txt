@@ -1,5 +1,0 @@
-
-PASS document.registerElement should not exist
-PASS document.createElement(localName, "string") should not work
-PASS document.createElementNS(namespace, qualifiedName, "string") should not work
-

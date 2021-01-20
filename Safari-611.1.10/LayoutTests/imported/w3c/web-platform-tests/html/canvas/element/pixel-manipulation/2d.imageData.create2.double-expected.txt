@@ -1,6 +1,0 @@
-2d.imageData.create2.double
-createImageData(w, h) double is converted to long
-Actual output:
-
-FAIL createImageData(w, h) double is converted to long assert_equals: imgdata1.width === 10 (got 11[number], expected 10[number]) expected 10 but got 11
-

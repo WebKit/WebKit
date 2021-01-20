@@ -1,7 +1,0 @@
-PASS window.internals.repaintRectsAsText().indexOf('8 541 180 18') is -1
-PASS successfullyParsed is true
-
-TEST COMPLETE
-this is scrolling and should be repainted.
-this should not be repainting
-

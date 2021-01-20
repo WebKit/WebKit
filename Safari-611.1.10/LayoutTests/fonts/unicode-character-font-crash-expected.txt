@@ -1,5 +1,0 @@
-Test case for bug 139969: [WinCairo] Crash when font data pointer is null.
-
-This test passes if it does not crash.
-
-⟩

@@ -1,7 +1,0 @@
-2d.path.stroke.prune.closed
-Zero-length line segments from closed paths are removed before stroking
-Spec references: 2d.path.stroke.prune
-Actual output:
-Expected output:
-
-Passed

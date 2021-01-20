@@ -1,6 +1,0 @@
-PASS e.width is 16
-PASS e.height is 16
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

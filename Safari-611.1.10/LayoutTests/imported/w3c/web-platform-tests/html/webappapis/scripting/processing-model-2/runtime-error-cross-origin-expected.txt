@@ -1,5 +1,0 @@
-Blocked access to external URL http://www1.localhost:8800/html/webappapis/scripting/processing-model-2/support/undefined-variable.js
-
-FAIL window.onerror - runtime error in <script src=//www1...> assert_true: ran expected true got false
-FAIL window.onerror - runtime error in <script src=//www1...> (column) assert_equals: fourth arg expected (number) 0 but got (undefined) undefined
-

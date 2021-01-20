@@ -1,3 +1,0 @@
-
-PASS Verify Service Worker can receive HTTP opaqueredirect response.
-

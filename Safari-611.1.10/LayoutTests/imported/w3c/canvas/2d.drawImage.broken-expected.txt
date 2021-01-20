@@ -1,6 +1,0 @@
-2d.drawImage.broken
-Spec references: 2d.drawImage.incomplete.image
-Actual output:
-Expected output:
-
-Passed

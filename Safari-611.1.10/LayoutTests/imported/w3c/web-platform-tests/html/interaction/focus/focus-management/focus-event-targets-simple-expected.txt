@@ -1,4 +1,0 @@
-
-
-PASS Focus events fire at correct targets in correct order in simple case
-

@@ -1,3 +1,0 @@
-
-PASS fillRect is affected by transforms
-

@@ -1,6 +1,0 @@
-2d.path.closePath.nextpoint
-Spec references: 2d.path.closePath.nonempty
-Actual output:
-Expected output:
-
-Passed

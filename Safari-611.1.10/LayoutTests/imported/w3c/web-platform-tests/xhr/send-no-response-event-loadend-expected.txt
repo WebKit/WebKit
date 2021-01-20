@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: The send() method: Fire a progress event named loadend (no response entity body)
-

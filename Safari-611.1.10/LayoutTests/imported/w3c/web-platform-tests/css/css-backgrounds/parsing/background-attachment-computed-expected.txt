@@ -1,4 +1,0 @@
-
-PASS Property background-attachment value 'fixed'
-PASS Property background-attachment value 'scroll, fixed, local'
-

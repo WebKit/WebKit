@@ -1,7 +1,0 @@
-2d.shadow.stroke.cap.1
-Shadows are not drawn for areas outside stroke caps
-Spec references: 2d.shadow.render
-Actual output:
-Expected output:
-
-Passed

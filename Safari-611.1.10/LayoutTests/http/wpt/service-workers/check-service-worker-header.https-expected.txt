@@ -1,3 +1,0 @@
-
-PASS Testing loading service worker script with the correct Service-Worker header
-

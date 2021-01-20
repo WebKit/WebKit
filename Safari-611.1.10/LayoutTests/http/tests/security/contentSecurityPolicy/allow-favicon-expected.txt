@@ -1,5 +1,0 @@
-http://127.0.0.1:8000/security/contentSecurityPolicy/allow-favicon.html - didFinishLoading
-http://127.0.0.1:8000/security/contentSecurityPolicy/allow-favicon.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/security/contentSecurityPolicy/allow-favicon.html, main document URL http://127.0.0.1:8000/security/contentSecurityPolicy/allow-favicon.html, http method GET> redirectResponse (null)
-http://127.0.0.1:8000/security/contentSecurityPolicy/allow-favicon.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/security/contentSecurityPolicy/allow-favicon.html, http status code 200>
-http://127.0.0.1:8000/misc/resources/favicon.ico - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/misc/resources/favicon.ico, main document URL http://127.0.0.1:8000/security/contentSecurityPolicy/allow-favicon.html, http method GET> redirectResponse (null)
-

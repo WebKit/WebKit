@@ -1,7 +1,0 @@
-2d.transformation.scale.multiple
-
-Multiple scale()s combine
-
-
-PASS Multiple scale()s combine
-

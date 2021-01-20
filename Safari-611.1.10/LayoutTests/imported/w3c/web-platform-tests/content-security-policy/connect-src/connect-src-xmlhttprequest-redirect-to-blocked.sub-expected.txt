@@ -1,3 +1,0 @@
-
-FAIL Expecting logs: ["PASS XMLHttpRequest.send() did not follow the disallowed redirect.","TEST COMPLETE","violated-directive=connect-src"] assert_unreached: Logging timeout, expected logs violated-directive=connect-src not sent. Reached unreachable code
-

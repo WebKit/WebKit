@@ -1,9 +1,0 @@
-startSwipeGesture
-completeSwipeGesture
-startSwipeGesture
-didBeginSwipe
-completeSwipeGesture
-willEndSwipe
-didEndSwipe
-didRemoveSwipeSnapshot
-

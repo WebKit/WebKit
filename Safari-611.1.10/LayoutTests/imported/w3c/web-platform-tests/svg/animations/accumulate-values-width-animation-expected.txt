@@ -1,3 +1,0 @@
-
-PASS This tests values animation and accumulate='sum'
-

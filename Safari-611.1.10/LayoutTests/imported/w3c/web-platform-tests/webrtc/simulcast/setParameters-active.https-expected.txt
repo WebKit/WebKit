@@ -1,5 +1,0 @@
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Simulcast setParameters active=false stops sending frames Test timed out
-

@@ -1,3 +1,0 @@
-
-PASS A 'click' event is dispatched when tapping even if preventDefault() was called for a pointer event.
-

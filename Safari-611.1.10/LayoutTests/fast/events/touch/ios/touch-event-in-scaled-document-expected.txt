@@ -1,3 +1,0 @@
-Tap me
-Received event touchstart at 500, 650
-Done

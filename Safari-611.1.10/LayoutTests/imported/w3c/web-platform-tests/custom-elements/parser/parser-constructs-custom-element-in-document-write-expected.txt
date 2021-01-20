@@ -1,3 +1,0 @@
-
-PASS HTML parser must instantiate custom elements inside document.write
-

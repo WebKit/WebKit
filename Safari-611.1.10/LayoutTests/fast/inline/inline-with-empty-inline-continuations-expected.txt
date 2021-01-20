@@ -1,5 +1,0 @@
-The first two green bars below should be 30px high and the last should be 60px high.
-
-PASS
-PASS
-PASS

@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: timeout during sync send() should not run
-

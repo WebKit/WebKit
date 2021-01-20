@@ -1,6 +1,0 @@
-type.prototype
-window.HTMLCanvasElement has prototype, which is { ReadOnly, DontDelete }. prototype has getContext, which is not
-Spec references: canvas.type
-Defined in "Web IDL" (draft)
-Actual output:
-Passed

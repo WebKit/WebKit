@@ -1,3 +1,0 @@
-
-PASS IDBObjectStore.count() - returns the number of records in the object store
-

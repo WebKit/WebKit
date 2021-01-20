@@ -1,4 +1,0 @@
-
-PASS Has basics
-PASS has() following delete()
-

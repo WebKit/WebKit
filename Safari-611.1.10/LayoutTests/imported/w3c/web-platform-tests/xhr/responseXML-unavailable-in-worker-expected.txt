@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest's responseXML property should not be exposed in workers.
-

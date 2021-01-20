@@ -1,3 +1,0 @@
-
-PASS arcTo() with Infinity/NaN is ignored
-

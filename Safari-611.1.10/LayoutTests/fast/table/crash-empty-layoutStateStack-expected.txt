@@ -1,3 +1,0 @@
-Bug 204527: Crashes in RenderTable when layoutStateStack is empty
-This test passes if it does not CRASH.
-

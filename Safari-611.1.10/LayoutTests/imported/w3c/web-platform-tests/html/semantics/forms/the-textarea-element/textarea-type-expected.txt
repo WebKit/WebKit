@@ -1,4 +1,0 @@
-
-
-PASS Textarea's type attribute should return 'textarea'
-

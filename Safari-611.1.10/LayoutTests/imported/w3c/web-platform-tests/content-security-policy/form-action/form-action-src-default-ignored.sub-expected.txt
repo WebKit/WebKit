@@ -1,7 +1,0 @@
-
-
-Tests that default-src does not cascade to form-action.
-
-
-PASS Expecting logs: ["PASS","TEST COMPLETE"]
-

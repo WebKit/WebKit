@@ -1,3 +1,0 @@
-
-PASS Expecting logs: ["PASS: 2 stylesheets on the page."]
-

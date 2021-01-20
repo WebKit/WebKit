@@ -1,4 +1,0 @@
-
-
-PASS div with content style's width and height attributes are not used to infer aspect-ratio
-

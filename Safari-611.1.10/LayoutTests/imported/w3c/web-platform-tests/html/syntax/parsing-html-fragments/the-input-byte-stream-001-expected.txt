@@ -1,4 +1,0 @@
- 
-
-PASS The character encoding of a page can be set using the HTTP header charset declaration.
-

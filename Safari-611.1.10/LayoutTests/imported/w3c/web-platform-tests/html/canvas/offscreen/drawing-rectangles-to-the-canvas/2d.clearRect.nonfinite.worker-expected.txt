@@ -1,3 +1,0 @@
-
-PASS clearRect() with Infinity/NaN is ignored
-

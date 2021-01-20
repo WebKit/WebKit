@@ -1,3 +1,0 @@
-
-PASS Call register() on ServiceWorkerContainer owned by closed window.
-

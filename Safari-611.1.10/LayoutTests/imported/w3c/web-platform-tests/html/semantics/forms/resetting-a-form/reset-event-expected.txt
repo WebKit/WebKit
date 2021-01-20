@@ -1,3 +1,0 @@
-
-PASS Test aspects of the reset event
-

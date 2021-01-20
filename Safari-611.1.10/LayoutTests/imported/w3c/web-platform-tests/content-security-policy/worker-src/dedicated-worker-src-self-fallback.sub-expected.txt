@@ -1,3 +1,0 @@
-
-FAIL Same-origin dedicated worker allowed by worker-src 'self'. The operation is insecure.
-

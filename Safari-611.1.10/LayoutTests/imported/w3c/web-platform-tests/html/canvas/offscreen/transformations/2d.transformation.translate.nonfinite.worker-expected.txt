@@ -1,3 +1,0 @@
-
-PASS translate() with Infinity/NaN is ignored
-

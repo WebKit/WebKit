@@ -1,3 +1,0 @@
-This tests removing the id from an element when there is a form associated element observing the same ID. WebKit should not crash.
-
-PASS

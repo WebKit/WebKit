@@ -1,3 +1,0 @@
-
-FAIL Tests modal dialog's containing block is the initial containing block assert_equals: expected null but got Element node <div style="position: absolute; top: 5000px; left: 5000px...
-

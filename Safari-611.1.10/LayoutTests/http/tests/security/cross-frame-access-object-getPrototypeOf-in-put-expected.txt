@@ -1,6 +1,0 @@
-This tests that you can't get the prototype of the window during [[Put]] operation.
-
-PASS: successfullyParsed should be 'true' and is.
-
-TEST COMPLETE
-

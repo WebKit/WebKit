@@ -1,3 +1,0 @@
-
-PASS dialog element: removing from document after showModal()
-

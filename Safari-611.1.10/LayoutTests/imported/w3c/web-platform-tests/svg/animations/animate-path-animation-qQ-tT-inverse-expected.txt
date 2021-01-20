@@ -1,3 +1,0 @@
-
-FAIL Test path animation where coordinate modes of start and end differ. You should see PASS messages assert_equals: expected "M -30 -30 q 37.5 0 37.5 30 t -37.5 30 Z" but got "M -30 -30 q 30 0 30 30 t -30 30 Z"
-

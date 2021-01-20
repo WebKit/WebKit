@@ -1,9 +1,0 @@
-Debugger.setBreakpoint on line:0 in <script src="...">
-
-Found breakpoint.js
-PASS: Received error setting duplicate breakpoint: Breakpoint for given location already exists
-Running breakpointBasic
-inside breakpointBasic
-Hit Breakpoint!
-PASS
-

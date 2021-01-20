@@ -1,1 +1,0 @@
-alert("CSP violation");

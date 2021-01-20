@@ -1,3 +1,0 @@
-
-PASS Returning keys to script should bypass prototype setters
-

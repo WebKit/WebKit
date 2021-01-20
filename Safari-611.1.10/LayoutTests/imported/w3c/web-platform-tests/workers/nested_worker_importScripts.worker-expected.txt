@@ -1,3 +1,0 @@
-
-FAIL Nested worker that calls importScripts() Can't find variable: Worker
-

@@ -1,4 +1,0 @@
-{
-    // Controls whether the SVN revision is included in the URL.
-    "include_revision": true,
-}

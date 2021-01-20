@@ -1,7 +1,0 @@
-
-== Running test suite: InspectorTest.TestPage.dispatchEventToFrontend
--- Running test case: InspectorTest.TestPage.dispatchEventToFrontend
-PASS: Received Event
-PASS: Event name should be the event dispatched.
-PASS: Event data should be included.
-

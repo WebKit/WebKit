@@ -1,3 +1,0 @@
-
-PASS putImageData() handles negative-sized dirty rectangles correctly
-

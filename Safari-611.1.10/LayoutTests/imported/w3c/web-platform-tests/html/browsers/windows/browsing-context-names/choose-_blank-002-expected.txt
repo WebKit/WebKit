@@ -1,3 +1,0 @@
-
-PASS Context for opened noreferrer link targeted to "_blank" should not have opener reference
-Link

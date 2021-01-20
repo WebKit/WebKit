@@ -1,3 +1,0 @@
-
-PASS Response with CORS-safelisted headers
-

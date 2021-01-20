@@ -1,2 +1,0 @@
-[Exposed=Worker] interface WorkerGlobalScope : EventTarget {
-};

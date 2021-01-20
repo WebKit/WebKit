@@ -1,3 +1,0 @@
-
-PASS Module script tags with crossorigin attribute must load data URLs
-

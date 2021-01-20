@@ -1,3 +1,0 @@
-
-PASS Sticky element's top property percentage value should be resolved against the div with overflow: hidden
-

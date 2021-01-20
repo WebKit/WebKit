@@ -1,4 +1,0 @@
-Click Here
-Test calling window.open() with a 1100 ms delay. A popup should not be allowed.
-PASS newWindow is null
-

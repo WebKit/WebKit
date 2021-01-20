@@ -1,3 +1,0 @@
-
-PASS Test Description: postMessage with duplicate transfer objects raises DataCloneError exception.
-

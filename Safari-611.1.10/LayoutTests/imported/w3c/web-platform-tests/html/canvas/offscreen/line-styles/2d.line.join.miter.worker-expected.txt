@@ -1,3 +1,0 @@
-
-PASS lineJoin 'miter' is rendered correctly
-

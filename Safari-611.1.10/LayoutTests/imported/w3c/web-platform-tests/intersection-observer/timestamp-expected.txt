@@ -1,6 +1,0 @@
-
-
-PASS Check that timestamps correspond to the to execution context that created the observer.
-PASS First rAF after iframe is loaded.
-PASS Generate notifications.
-

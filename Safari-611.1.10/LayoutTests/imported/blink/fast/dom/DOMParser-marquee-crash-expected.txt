@@ -1,2 +1,0 @@
-This creates a DOMParser object and tries to parse a document containing a marquee element (implemented in Private JS). If the test is successful, it should not crash.
-

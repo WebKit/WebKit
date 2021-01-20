@@ -1,4 +1,0 @@
-
-
-PASS CORS-exposed header names for a response from sw
-

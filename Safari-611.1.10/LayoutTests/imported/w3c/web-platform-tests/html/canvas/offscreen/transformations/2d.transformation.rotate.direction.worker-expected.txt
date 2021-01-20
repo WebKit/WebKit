@@ -1,3 +1,0 @@
-
-PASS rotate() is clockwise
-

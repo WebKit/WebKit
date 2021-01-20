@@ -1,3 +1,0 @@
-
-PASS A CSS transition that is retargeted during its ready promise should not use its from style as its before-change style.
-

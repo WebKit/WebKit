@@ -1,3 +1,0 @@
-
-PASS WebSockets: Same sub protocol twice
-

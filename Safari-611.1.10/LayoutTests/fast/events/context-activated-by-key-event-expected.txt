@@ -1,7 +1,0 @@
-This tests whether the context menu is displayed on the menu key press.
-example.com
-PASS WINDOW
-PASS CONTENTEDITABLE
-PASS ELEMENT
-PASS CONTENTEDITABLE SELECTION
-

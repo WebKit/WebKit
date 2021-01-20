@@ -1,3 +1,0 @@
-
-PASS Recursively repeated CORS requests with failed preflights should never result in unexpected behavior
-

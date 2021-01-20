@@ -1,4 +1,0 @@
-2d.text.font.default
-Spec references: 2d.text.font.default
-Actual output:
-Passed

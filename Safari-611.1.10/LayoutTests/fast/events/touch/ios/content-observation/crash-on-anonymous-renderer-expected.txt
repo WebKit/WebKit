@@ -1,3 +1,0 @@
-PASS if no crash.
-inline text with
-text inside block

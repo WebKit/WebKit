@@ -1,3 +1,0 @@
-
-PASS window.name after navigating to a different origin
-

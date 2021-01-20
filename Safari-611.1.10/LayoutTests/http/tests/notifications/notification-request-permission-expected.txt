@@ -1,7 +1,0 @@
-PASS Notification.requestPermission does not crash.
-PASS Notification.requestPermission does not crash.
-PASS Notification.requestPermission does not crash.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

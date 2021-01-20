@@ -1,3 +1,0 @@
-
-PASS Test behavior on dynamic-update of attributeName
-

@@ -1,6 +1,0 @@
-This tests moving the selection backwards at the beginning of a line by word granularity
-| <div>
-|   "<#selection-caret>first"
-| <div>
-|   id="target"
-|   "second"

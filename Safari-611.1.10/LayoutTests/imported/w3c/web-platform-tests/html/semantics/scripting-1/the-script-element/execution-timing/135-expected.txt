@@ -1,3 +1,0 @@
-
-PASS scheduler: external SVG script added by SVG script
-

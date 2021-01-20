@@ -1,9 +1,0 @@
-
-FAIL Static import. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Worker"
-FAIL Nested static import. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Worker"
-FAIL Static import and then dynamic import. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Worker"
-FAIL Dynamic import. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Worker"
-FAIL Nested dynamic import. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Worker"
-FAIL Dynamic import and then static import. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Worker"
-FAIL eval(import()). promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Worker"
-

@@ -1,9 +1,0 @@
-<!--
-     Any copyright is dedicated to the Public Domain.
-     http://creativecommons.org/publicdomain/zero/1.0/
--->
-<svg xmlns="http://www.w3.org/2000/svg">
-  <title>Testcase to check fill and stroke handling</title>
-
-  <text x="50" y="80" font-size="80" fill="blue" stroke="yellow" stroke-width="2">A B</text>
-</svg>

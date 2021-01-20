@@ -1,4 +1,0 @@
-
-PASS Getting implementation off the same document
-PASS Getting implementation off different documents
-

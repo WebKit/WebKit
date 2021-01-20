@@ -1,7 +1,0 @@
-2d.shadow.enable.x
-
-Shadows are drawn if shadowOffsetX is set
-
-
-PASS Shadows are drawn if shadowOffsetX is set
-

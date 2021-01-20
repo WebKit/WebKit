@@ -1,3 +1,0 @@
-
-PASS "currentcolor" is inherited as a keyword
-

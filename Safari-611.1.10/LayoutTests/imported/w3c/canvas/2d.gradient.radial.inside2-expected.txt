@@ -1,6 +1,0 @@
-2d.gradient.radial.inside2
-Spec references: 2d.gradient.radial.rendering
-Actual output:
-Expected output:
-
-Passed

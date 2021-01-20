@@ -1,3 +1,0 @@
-
-PASS putImageData() does not affect the current path
-

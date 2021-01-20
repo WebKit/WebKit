@@ -1,2 +1,0 @@
-x
- PASS: This file should not crash.

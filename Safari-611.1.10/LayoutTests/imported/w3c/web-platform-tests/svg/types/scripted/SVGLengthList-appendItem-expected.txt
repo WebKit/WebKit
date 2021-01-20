@@ -1,5 +1,0 @@
-ABC
-ABC
-
-PASS SVGLengthList, appendItem()
-

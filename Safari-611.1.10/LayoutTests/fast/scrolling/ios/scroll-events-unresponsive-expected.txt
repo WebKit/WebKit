@@ -1,5 +1,0 @@
-PASS receivedScrollEvent is false
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

@@ -1,3 +1,0 @@
-
-PASS EventSource: data field parsing
-

@@ -1,3 +1,0 @@
-
-PASS innerHTML should leave the removed children alone.
-

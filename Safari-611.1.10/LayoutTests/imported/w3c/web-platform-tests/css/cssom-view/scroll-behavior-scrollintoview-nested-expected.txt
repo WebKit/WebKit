@@ -1,3 +1,0 @@
-
-PASS scrollIntoView with nested elements with different scroll-behavior
-

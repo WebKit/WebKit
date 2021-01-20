@@ -1,2 +1,0 @@
-This test loads an external stylesheet, which then tries to load an external font file, which then triggers a contentextension action adding custom CSS selectors.
-With the appropriate content extension json installed, the test should not crash.

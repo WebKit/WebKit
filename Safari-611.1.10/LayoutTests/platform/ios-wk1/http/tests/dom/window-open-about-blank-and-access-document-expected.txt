@@ -1,2 +1,0 @@
-PASS newWindow.document is defined.
-

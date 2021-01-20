@@ -1,2 +1,0 @@
-This test verifies that the page cache suspends and resumes Web Animations from the page cache. The test starts an animation, then navigates away, waits a bit, navigates back, confirming that the timeline froze at a given time and resumed in the same spot, advancing the animation. If successful, it outputs 'PASS' below.
-PASS.

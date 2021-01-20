@@ -1,9 +1,0 @@
-Test for `Resource.ResponseSource.MemoryCache`.
-
-
-== Running test suite: Resource.ResponseSource.MemoryCache
--- Running test case: Resource.ResponseSource.MemoryCache
-PASS: Resource should exist.
-PASS: statusCode should be 304
-PASS: responseSource should be Symbol(memory-cache)
-

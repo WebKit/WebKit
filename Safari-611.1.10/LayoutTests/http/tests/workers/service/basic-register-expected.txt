@@ -1,7 +1,0 @@
-PASS: No service worker is initially registered for this origin
-Registered!
-PASS: registration object's scope is valid
-PASS: registration object's updateViaCache is valid
-PASS: A service worker is now registered for this origin
-PASS: registering a script which does not exist rejected the promise
-

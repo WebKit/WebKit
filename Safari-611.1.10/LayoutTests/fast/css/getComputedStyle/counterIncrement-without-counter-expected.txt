@@ -1,3 +1,0 @@
-PASS style.counterIncrement is "none"
-PASS style.counterReset is "none"
-

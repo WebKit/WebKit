@@ -1,5 +1,0 @@
-ALERT: original value
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

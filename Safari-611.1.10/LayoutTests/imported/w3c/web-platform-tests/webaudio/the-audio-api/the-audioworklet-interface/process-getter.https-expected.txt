@@ -1,4 +1,0 @@
-
-PASS 'process' getter on prototype
-PASS 'process' getter on instance
-

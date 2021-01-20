@@ -1,5 +1,0 @@
-PASS: A fake remote object should have object type.
-PASS: Each fake remote object instance should be unique.
-PASS: A fake remote object should have an empty list of own properties.
-PASS: A fake remote object should have an empty list of displayable properties.
-

@@ -1,3 +1,0 @@
-ALERT: Verifying credentials are used when given: Authenticated as user: username password: password
-ALERT: Verifying credentials are used preemptively for sync xhr: Authenticated as user: username password: password
-

@@ -1,6 +1,0 @@
-
-PASS Copied KeyframeEffect has the same target
-PASS Copied KeyframeEffect has the same keyframes
-PASS Copied KeyframeEffect has the same KeyframeEffectOptions
-PASS Copied KeyframeEffect has the same timing content
-

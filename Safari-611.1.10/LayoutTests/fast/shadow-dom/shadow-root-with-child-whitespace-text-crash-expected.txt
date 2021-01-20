@@ -1,3 +1,0 @@
-This tests creating a shadow root with leading and trailing white spaces. WebKit should not crash. You should see PASS below.
-
-PASS

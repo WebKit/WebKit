@@ -1,2 +1,0 @@
-This test PASSES if it doesn't CRASH in DEBUG builds.
-

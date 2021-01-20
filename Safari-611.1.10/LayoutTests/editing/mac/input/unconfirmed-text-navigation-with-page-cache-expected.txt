@@ -1,9 +1,0 @@
-Adding unconfirmed inline text...
-PASS event.data is 'has-marked-text: 1'
-Navigating away from a page with unconfirmed inline input...
-Navigating back to the first page...
-FAIL event.data should be has-marked-text: 0. Was has-marked-text: ReferenceError: Trying to access object from destroyed plug-in..
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

@@ -1,9 +1,0 @@
-
-PASS Property text-shadow value 'none'
-PASS Property text-shadow value '10px 20px'
-PASS Property text-shadow value 'red 10px 20px 30px'
-PASS Property text-shadow value 'calc(0.5em + 10px) calc(0.5em + 10px) calc(0.5em + 10px)'
-PASS Property text-shadow value 'calc(-0.5em + 10px) calc(-0.5em + 10px) calc(-0.5em + 10px)'
-PASS Property text-shadow value '10px 20px, 30px 40px'
-PASS Property text-shadow value 'lime 10px 20px 30px, red 40px 50px'
-

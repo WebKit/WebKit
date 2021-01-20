@@ -1,3 +1,0 @@
-
-PASS Removing a custom element inside a detached iframe must enqueue disconnectedCallback
-

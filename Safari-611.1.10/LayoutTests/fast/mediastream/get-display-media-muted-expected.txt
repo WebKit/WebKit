@@ -1,3 +1,0 @@
-
-PASS Mute video track during screen capture
-

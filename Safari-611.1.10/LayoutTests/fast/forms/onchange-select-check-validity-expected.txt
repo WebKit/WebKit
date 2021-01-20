@@ -1,4 +1,0 @@
-
-The select's validity was initially false
-The select's validity was changed to true
-

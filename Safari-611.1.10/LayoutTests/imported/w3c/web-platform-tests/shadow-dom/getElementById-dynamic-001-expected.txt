@@ -1,3 +1,0 @@
-
-PASS ShadowRoot.getElementById keeps working after host has been removed
-

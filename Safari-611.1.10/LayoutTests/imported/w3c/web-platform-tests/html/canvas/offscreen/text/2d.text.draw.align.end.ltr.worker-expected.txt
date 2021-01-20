@@ -1,3 +1,0 @@
-
-FAIL textAlign end with ltr is the right edge Can't find variable: FontFace
-

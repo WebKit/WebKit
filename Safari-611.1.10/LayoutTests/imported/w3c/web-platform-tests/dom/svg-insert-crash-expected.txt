@@ -1,3 +1,0 @@
-
-PASS The renderer should not crash.
-

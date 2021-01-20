@@ -1,4 +1,0 @@
-
-EVENT(webkitfullscreenchange) TEST(testFrame.getBoundingClientRect().right == document.body.getBoundingClientRect().right && testFrame.getBoundingClientRect().bottom == document.body.getBoundingClientRect().bottom) OK
-END OF TEST
-

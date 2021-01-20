@@ -1,3 +1,0 @@
-
-FAIL textAlign right is the right of the last em square (not the bounding box) Can't find variable: FontFace
-

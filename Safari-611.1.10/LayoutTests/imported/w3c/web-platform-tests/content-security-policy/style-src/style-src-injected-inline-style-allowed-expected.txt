@@ -1,3 +1,0 @@
-
-PASS Injected inline style should load with 'unsafe-inline'
-Lorem ipsum

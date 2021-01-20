@@ -1,6 +1,0 @@
-This tests removing the start block. WebKit should not crash.
-| <div>
-|   <br>
-| <#selection-caret>
-| <br>
-| <br>

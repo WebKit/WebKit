@@ -1,3 +1,0 @@
-
-PASS The parent browsing context must be chosen if the given name is '_parent'
-

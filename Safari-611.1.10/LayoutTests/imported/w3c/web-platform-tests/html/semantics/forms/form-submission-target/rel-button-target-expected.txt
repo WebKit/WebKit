@@ -1,9 +1,0 @@
-
-FAIL <form rel=""> with <button formtarget> promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: BroadcastChannel"
-FAIL <form rel="noopener"> with <button formtarget> promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: BroadcastChannel"
-FAIL <form rel="noreferrer"> with <button formtarget> promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: BroadcastChannel"
-FAIL <form rel="opener"> with <button formtarget> promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: BroadcastChannel"
-FAIL <form rel="noopener noreferrer"> with <button formtarget> promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: BroadcastChannel"
-FAIL <form rel="noreferrer opener"> with <button formtarget> promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: BroadcastChannel"
-FAIL <form rel="opener noopener"> with <button formtarget> promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: BroadcastChannel"
-

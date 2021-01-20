@@ -1,2 +1,0 @@
-PASS if no crash when the nested fragmented context is being destroyed with a spanner in it while forming a new continuation.
-

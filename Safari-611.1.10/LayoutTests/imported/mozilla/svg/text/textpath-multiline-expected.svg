@@ -1,9 +1,0 @@
-<!--
-     Any copyright is dedicated to the Public Domain.
-     http://creativecommons.org/publicdomain/zero/1.0/
--->
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <text x="100" y="100" style="line-height: 20px; white-space: pre-line; font: 16px sans-serif">line 1
-line 2
-line 3</text>
-</svg>

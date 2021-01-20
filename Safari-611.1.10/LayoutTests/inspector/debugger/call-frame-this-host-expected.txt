@@ -1,9 +1,0 @@
-Debugger.setBreakpoint on line:column in <script>
-
-Found <script>
-Running testFunction
-Hit Breakpoint!
-PASS: frame[0] type "object" className "Window"
-PASS: frame[1] type "object" className "Array"
-PASS: frame[2] type "object" className "Window"
-

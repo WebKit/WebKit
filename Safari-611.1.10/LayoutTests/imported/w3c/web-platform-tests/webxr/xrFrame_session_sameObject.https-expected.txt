@@ -1,3 +1,0 @@
-
-PASS XRFrame.session meets [SameObject] requirement
-

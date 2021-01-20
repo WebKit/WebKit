@@ -1,3 +1,0 @@
-
-PASS Generated Datachannel SDP uses correct SCTP offer syntax
-

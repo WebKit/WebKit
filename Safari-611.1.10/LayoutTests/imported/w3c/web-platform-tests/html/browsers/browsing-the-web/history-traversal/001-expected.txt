@@ -1,3 +1,0 @@
-
-PASS pageshow event from traversal
-

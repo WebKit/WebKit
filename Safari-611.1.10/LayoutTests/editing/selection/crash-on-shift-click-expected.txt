@@ -1,2 +1,0 @@
-This test shift clicks outside of a focused div with removing the focused div from the dom tree at the same time. If this doesn't crash, then the test passes.
-

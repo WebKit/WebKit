@@ -1,3 +1,0 @@
-
-PASS IDBIndex.getAllKeys() uses [EnforceRange]
-

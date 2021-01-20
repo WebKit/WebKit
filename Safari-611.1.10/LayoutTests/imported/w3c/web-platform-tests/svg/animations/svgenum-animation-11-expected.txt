@@ -1,3 +1,0 @@
-
-PASS Test BlendModeType enumeration animations
-

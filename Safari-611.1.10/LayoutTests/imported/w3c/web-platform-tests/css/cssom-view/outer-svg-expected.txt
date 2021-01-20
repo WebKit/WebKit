@@ -1,4 +1,0 @@
-
-PASS clientWidth, clientHeight, clientTop and clientLeft work on outer svg element
-PASS scrollWidth, scrollHeight, scrollTop and scrollLeft work on outer svg element
-

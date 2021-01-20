@@ -1,9 +1,0 @@
-When dropping a file, dataTransfer.types must contain "Files" and not "text/uri-list". This test requires eventSender.beginDragWithFiles.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS dataTransfer.types.includes("Files") is true
-PASS dataTransfer.types.includes("text/uri-list") is false
-PASS dataTransfer.getData("url") is ""
-

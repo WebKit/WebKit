@@ -1,7 +1,0 @@
-size.attributes.default
-Default width/height when attributes are missing
-Spec references: size.default size.missing
-Actual output:
-Expected output:
-
-Passed

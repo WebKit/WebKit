@@ -1,3 +1,0 @@
-PASS: final zoom scale was 1.2
-
-.

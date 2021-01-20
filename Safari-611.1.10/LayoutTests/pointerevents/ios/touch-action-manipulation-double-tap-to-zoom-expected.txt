@@ -1,3 +1,0 @@
-
-PASS Testing that setting touch-action: manipulation on an element allows double tap to zoom.
-

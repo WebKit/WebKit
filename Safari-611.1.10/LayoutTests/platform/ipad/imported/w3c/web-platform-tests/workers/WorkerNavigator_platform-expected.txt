@@ -1,3 +1,0 @@
-
-FAIL  WorkerNavigator.platform  assert_equals: expected "MacIntel" but got "iPad"
-

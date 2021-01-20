@@ -1,4 +1,0 @@
-
-
-FAIL maxlength doesn't apply to input type=number assert_equals: expected "1234" but got ""
-

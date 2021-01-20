@@ -1,1 +1,0 @@
-Test that a cursor with an invalid CSS URL does not trigger an assertion in a Debug build.

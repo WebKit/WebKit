@@ -1,3 +1,0 @@
-
-PASS Test referer header /beacon/resources/
-

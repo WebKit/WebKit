@@ -1,8 +1,0 @@
-
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Same-Origin object Test timed out
-NOTRUN Same-Site object
-NOTRUN Cross-Site object
-

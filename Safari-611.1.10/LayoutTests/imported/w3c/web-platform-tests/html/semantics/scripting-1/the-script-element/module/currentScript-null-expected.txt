@@ -1,3 +1,0 @@
-
-PASS currentScript on script type=module should be all null
-

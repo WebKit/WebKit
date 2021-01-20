@@ -1,3 +1,0 @@
-onerror
-new url: wss://127.0.0.1/websocket/tests/hybi/simple
-

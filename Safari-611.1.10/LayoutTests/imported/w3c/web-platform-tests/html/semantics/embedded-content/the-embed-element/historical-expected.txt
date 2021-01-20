@@ -1,3 +1,0 @@
-
-PASS embed legacycaller should not be supported
-

@@ -1,3 +1,0 @@
-
-PASS IDBCursor.update() - index - attempt to modify a record when object store been deleted
-

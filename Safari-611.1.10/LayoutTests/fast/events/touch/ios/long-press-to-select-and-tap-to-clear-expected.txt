@@ -1,3 +1,0 @@
-PASS: Correct Selection
-PASS: Cleared selection
-

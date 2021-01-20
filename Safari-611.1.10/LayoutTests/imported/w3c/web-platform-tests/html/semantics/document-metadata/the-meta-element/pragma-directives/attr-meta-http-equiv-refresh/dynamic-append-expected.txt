@@ -1,3 +1,0 @@
-
-PASS Meta refresh applies even when dynamically appended
-

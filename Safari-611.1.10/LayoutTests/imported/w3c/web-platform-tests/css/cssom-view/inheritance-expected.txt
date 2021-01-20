@@ -1,4 +1,0 @@
-
-PASS Property scroll-behavior has initial value auto
-PASS Property scroll-behavior does not inherit
-

@@ -1,6 +1,0 @@
-
-PASS Nonzero - inline
-PASS Evenodd - inline
-PASS Nonzero - computed
-PASS Evenodd - computed
-

@@ -1,3 +1,0 @@
-
-PASS pagehide IDL attribute
-

@@ -1,7 +1,0 @@
-2d.pattern.transform.identity
-Actual output:
-Expected output:
-
-
-PASS Canvas test: 2d.pattern.transform.identity
-

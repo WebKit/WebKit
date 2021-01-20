@@ -1,4 +1,0 @@
-2d.composite.operation.casesensitive
-Spec references: 2d.composite.operation.casesensitive
-Actual output:
-Passed

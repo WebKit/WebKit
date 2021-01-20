@@ -1,5 +1,0 @@
-
-PASS Property writing-mode value 'horizontal-tb'
-PASS Property writing-mode value 'vertical-rl'
-PASS Property writing-mode value 'vertical-lr'
-

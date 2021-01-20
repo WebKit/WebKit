@@ -1,7 +1,0 @@
-A media element backed by a Media Source should not delay the window's load event
-
-EXPECTED (source.readyState == 'closed') OK
-RUN(video.src = URL.createObjectURL(source))
-EVENT(load)
-END OF TEST
-

@@ -1,3 +1,0 @@
-
-PASS IDBCursor.update() - index - no argument
-

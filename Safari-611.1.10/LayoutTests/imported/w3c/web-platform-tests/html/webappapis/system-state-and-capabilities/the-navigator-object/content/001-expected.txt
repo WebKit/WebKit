@@ -1,3 +1,0 @@
-
-FAIL isContentHandlerRegistered for new content type navigator.isContentHandlerRegistered is not a function. (In 'navigator.isContentHandlerRegistered('application/x-notRegisteredInOtherTCs-001', location.href.replace(/\/[^\/]*$/, "") + '/%s')', 'navigator.isContentHandlerRegistered' is undefined)
-

@@ -1,3 +1,0 @@
-
-FAIL Test terminating a nested workers by calling terminate() from its parent worker assert_equals: expected "Pass" but got "Fail: ReferenceError: Can't find variable: Worker"
-
