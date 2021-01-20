@@ -1,3 +1,26 @@
+2021-01-19  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (Big Sur): position:absolute elements inside nested overflow:scroll don't track scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=220761
+        <rdar://problem/69075263>
+
+        Reviewed by Antti Koivisto.
+        
+        Add a scrolling tree dump test, and three iOS interactive tests, since testing scrolling-tree-only
+        behaviors is easier on iOS than macOS. absolute-in-nested-overflow-scroll.html is the basic test.
+        The two "stacking" variants have an opacity layer below and above the inner scroller to test some
+        more layer configurations.
+
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/absolute-in-nested-overflow-scroll-expected.txt: Added.
+        * scrollingcoordinator/ios/absolute-in-nested-overflow-scroll-expected.html: Added.
+        * scrollingcoordinator/ios/absolute-in-nested-overflow-scroll-intermediate-stacking-2-expected.html: Added.
+        * scrollingcoordinator/ios/absolute-in-nested-overflow-scroll-intermediate-stacking-2.html: Added.
+        * scrollingcoordinator/ios/absolute-in-nested-overflow-scroll-intermediate-stacking-expected.html: Added.
+        * scrollingcoordinator/ios/absolute-in-nested-overflow-scroll-intermediate-stacking.html: Added.
+        * scrollingcoordinator/ios/absolute-in-nested-overflow-scroll.html: Added.
+        * scrollingcoordinator/scrolling-tree/absolute-in-nested-overflow-scroll-expected.txt: Added.
+        * scrollingcoordinator/scrolling-tree/absolute-in-nested-overflow-scroll.html: Added.
+
 2021-01-20  Sam Weinig  <weinig@apple.com>
 
         Remove remaining non-standard CMYKA support from canvas

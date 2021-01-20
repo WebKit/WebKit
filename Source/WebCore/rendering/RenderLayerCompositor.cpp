@@ -160,7 +160,7 @@ struct RenderLayerCompositor::CompositingState {
         // Turn overlap testing off for later layers if it's already off, or if we have an animating transform.
         // Note that if the layer clips its descendants, there's no reason to propagate the child animation to the parent layers. That's because
         // we know for sure the animation is contained inside the clipping rectangle, which is already added to the overlap map.
-        auto canReenableOverlapTesting = [&layer]() {
+        auto canReenableOverlapTesting = [&layer] {
             return layer.isComposited() && RenderLayerCompositor::clipsCompositingDescendants(layer);
         };
         if ((!childState.testingOverlap && !canReenableOverlapTesting()) || layerExtent.knownToBeHaveExtentUncertainty())
@@ -3387,46 +3387,35 @@ bool RenderLayerCompositor::useCoordinatedScrollingForLayer(const RenderLayer& l
     return false;
 }
 
-static bool isScrolledByOverflowScrollLayer(const RenderLayer& layer, const RenderLayer& overflowScrollLayer)
-{
-    return layer.boxScrollingScope() == overflowScrollLayer.contentsScrollingScope();
-}
-
-static RenderLayer* enclosingCompositedScrollingLayer(const RenderLayer& layer, const RenderLayer& intermediateLayer, bool& sawIntermediateLayer)
-{
-    const auto* ancestorLayer = layer.parent();
-    while (ancestorLayer) {
-        if (ancestorLayer == &intermediateLayer)
-            sawIntermediateLayer = true;
-
-        if (ancestorLayer->hasCompositedScrollableOverflow())
-            return const_cast<RenderLayer*>(ancestorLayer);
-
-        ancestorLayer = ancestorLayer->parent();
-    }
-
-    return nullptr;
-}
-
 ScrollPositioningBehavior RenderLayerCompositor::layerScrollBehahaviorRelativeToCompositedAncestor(const RenderLayer& layer, const RenderLayer& compositedAncestor)
 {
     if (!layer.hasCompositedScrollingAncestor())
         return ScrollPositioningBehavior::None;
 
-    bool compositedAncestorIsInsideScroller = false;
-    auto* scrollingAncestor = enclosingCompositedScrollingLayer(layer, compositedAncestor, compositedAncestorIsInsideScroller);
-    if (!scrollingAncestor) {
-        ASSERT_NOT_REACHED(); // layer.hasCompositedScrollingAncestor() should guarantee we have one.
-        return ScrollPositioningBehavior::None;
-    }
-    
-    bool ancestorMovedByScroller = &compositedAncestor == scrollingAncestor || (compositedAncestorIsInsideScroller && isScrolledByOverflowScrollLayer(compositedAncestor, *scrollingAncestor));
-    bool layerMovedByScroller = isScrolledByOverflowScrollLayer(layer, *scrollingAncestor);
+    auto needsMovesNode = [&] {
+        bool result = false;
+        traverseAncestorLayers(layer, [&](const RenderLayer& ancestorLayer, bool isContainingBlockChain, bool /* isPaintOrderAncestor */) {
+            if (&ancestorLayer == &compositedAncestor)
+                return AncestorTraversal::Stop;
 
-    if (ancestorMovedByScroller == layerMovedByScroller)
-        return ScrollPositioningBehavior::None;
+            if (isContainingBlockChain && ancestorLayer.hasCompositedScrollableOverflow()) {
+                result = true;
+                return AncestorTraversal::Stop;
+            }
 
-    return layerMovedByScroller ? ScrollPositioningBehavior::Moves : ScrollPositioningBehavior::Stationary;
+            return AncestorTraversal::Continue;
+        });
+
+        return result;
+    };
+
+    if (needsMovesNode())
+        return ScrollPositioningBehavior::Moves;
+
+    if (layer.boxScrollingScope() != compositedAncestor.contentsScrollingScope())
+        return ScrollPositioningBehavior::Stationary;
+
+    return ScrollPositioningBehavior::None;
 }
 
 static void collectStationaryLayerRelatedOverflowNodes(const RenderLayer& layer, const RenderLayer&, Vector<ScrollingNodeID>& scrollingNodes)
@@ -4853,7 +4842,7 @@ void RenderLayerCompositor::updateSynchronousScrollingNodes()
     for (auto key : m_scrollingNodeToLayerMap.keys())
         nodesToClear.add(key);
     
-    auto clearSynchronousReasonsOnNodes = [&]() {
+    auto clearSynchronousReasonsOnNodes = [&] {
         for (auto nodeID : nodesToClear) {
             // ScrollingCoordinator handles updating synchronous scrolling reasons for the FrameView.
             if (nodeID == rootScrollingNodeID)
