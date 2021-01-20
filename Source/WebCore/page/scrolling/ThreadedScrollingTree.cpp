@@ -186,7 +186,7 @@ void ThreadedScrollingTree::propagateSynchronousScrollingReasons(const HashSet<S
 
 bool ThreadedScrollingTree::canUpdateLayersOnScrollingThread() const
 {
-    return m_hasNodesWithSynchronousScrollingReasons;
+    return !m_hasNodesWithSynchronousScrollingReasons;
 }
 
 void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode& node, ScrollingLayerPositionAction scrollingLayerPositionAction)
