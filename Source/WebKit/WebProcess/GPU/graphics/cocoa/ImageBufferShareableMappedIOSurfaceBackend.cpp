@@ -69,12 +69,8 @@ std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareable
     if (!surface)
         return nullptr;
 
-#if HAVE(IOSURFACE_SET_OWNERSHIP)
     // Claim in the WebProcess ownership of the IOSurface constructed by the GPUProcess so that Jetsam knows which processes to kill.
-    auto result = IOSurfaceSetOwnership(surface->surface(), mach_task_self(), kIOSurfaceMemoryLedgerTagGraphics, 0);
-    if (result != kIOReturnSuccess)
-        RELEASE_LOG_ERROR(Process, "Failed to claim ownership of IOSurface %p. Error: %d", surface->surface(), result);
-#endif
+    surface->setOwnership(mach_task_self());
 
     return makeUnique<ImageBufferShareableMappedIOSurfaceBackend>(parameters, WTFMove(surface));
 }
