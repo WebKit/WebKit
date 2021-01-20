@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description('The connected subframe counter should not overflow and make `disconnectSubframes` leave active subframes in a detached DOM node.');
+jsTestIsAsync = true;
+
+const FRAME_COUNT = 1024;
+
+onload = () => {
+    container = document.getElementById("testContainer");
+    for (let i = 0; i < FRAME_COUNT; ++i) {
+        setTimeout(() => {
+            let frame = document.createElement('iframe');
+            frame.style.display = 'none';
+            container.appendChild(frame);
+        }, 0);
+    }
+
+    setTimeout(() => {
+        container.remove();
+
+        shouldBeNull('container.firstChild.contentWindow');
+        finishJSTest();
+    }, 0);
+}
+</script>
+<div id="testContainer"></div>
+</body>
+</html>

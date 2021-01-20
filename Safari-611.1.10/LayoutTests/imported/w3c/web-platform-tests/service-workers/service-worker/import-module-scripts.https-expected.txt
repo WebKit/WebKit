@@ -1,0 +1,9 @@
+
+FAIL Static import. promise_test: Unhandled rejection with value: object "TypeError: SyntaxError: Unexpected token '*'. import call expects exactly one argument."
+FAIL Nested static import. promise_test: Unhandled rejection with value: object "TypeError: SyntaxError: Unexpected token '*'. import call expects exactly one argument."
+FAIL Static import and then dynamic import. promise_test: Unhandled rejection with value: object "TypeError: SyntaxError: Unexpected token '*'. import call expects exactly one argument."
+FAIL Dynamic import. assert_array_equals: value is "Failed to do dynamic import: Error: Could not import the module './export-on-load-script.js'.", expected array
+FAIL Nested dynamic import. assert_array_equals: value is "Failed to do dynamic import: Error: Could not import the module './export-on-dynamic-import-script.js'.", expected array
+FAIL Dynamic import and then static import. assert_array_equals: value is "Failed to do dynamic import: Error: Could not import the module './export-on-static-import-script.js'.", expected array
+FAIL eval(import()). assert_array_equals: value is "Failed to do dynamic import: Error: Could not import the module './export-on-load-script.js'.", expected array
+

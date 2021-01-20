@@ -1,0 +1,29 @@
+CONSOLE MESSAGE: MockPageOverlayClient::drawRect dirtyRect (0, 0, 512, 512)
+CONSOLE MESSAGE: MockPageOverlayClient::drawRect dirtyRect (512, 0, 512, 512)
+CONSOLE MESSAGE: MockPageOverlayClient::drawRect dirtyRect (0, 512, 512, 512)
+CONSOLE MESSAGE: MockPageOverlayClient::drawRect dirtyRect (512, 512, 512, 512)
+View-relative:
+(GraphicsLayer
+  (children 1
+    (GraphicsLayer
+      (anchor 0.00 0.00)
+      (bounds 800.00 600.00)
+      (drawsContent 1)
+      (backgroundColor #00000000)
+    )
+  )
+)
+
+
+Document-relative:
+(GraphicsLayer
+  (children 1
+    (GraphicsLayer
+      (anchor 0.00 0.00)
+      (bounds 5008.00 5016.00)
+      (drawsContent 1)
+      (backgroundColor #00000000)
+    )
+  )
+)
+

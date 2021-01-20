@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test loads a secure iframe that loads an insecure image inside a blob URL iframe.
+A blob URL created in a secure context is considered secure.  We should trigger a mixed content
+block because the blob URL grandchild iframe inherited the CSP directive block-all-mixed-content
+from the child frame. This test PASSED if the grandchild iframe is filled solid green.
+Otherwise, it FAILED.</p>
+<iframe srcdoc="<iframe srcdoc='<style>body { background: green }</style>'></iframe>" width="100%" height="300"></iframe>
+</body>
+</html>

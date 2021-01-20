@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="/js-test-resources/testharness.js"></script>
+  <script src="/js-test-resources/testharnessreport.js"></script>
+</head>
+<body>
+  <script>
+  async_test(function () {
+      var worker = new Worker('http://127.0.0.1:8000/security/contentSecurityPolicy/resources/worker.php?type=multiple-headers');
+      var evalBlocked = false;
+      var xhrBlocked = false;
+      var numMessages = 0;
+
+      worker.onmessage = this.step_func(function (event) {
+          numMessages++;
+          if (event.data === "xhr blocked")
+              xhrBlocked = true;
+          if (event.data === "eval blocked")
+              evalBlocked = true;
+
+          if (numMessages === 2) {
+              assert_true(xhrBlocked);
+              assert_true(evalBlocked);
+              this.done();
+          }
+      });
+  }, "Worker can have multiple CSP headers");
+  </script>
+</body>
+</html>

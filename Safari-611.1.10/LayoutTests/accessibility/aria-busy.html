@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+<div role="listbox" id="listbox1" aria-busy="true" aria-label="listbox being populated"></div>
+<div role="listbox" id="listbox2" aria-busy="false" aria-label="listbox already populated"></div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests that the 'busy' state is exposed correctly.");
+    if (window.accessibilityController) {
+        var listbox = accessibilityController.accessibleElementById("listbox1");
+        debug(platformValueForW3CName(listbox) + " is busy: " + listbox.boolAttributeValue("AXElementBusy"))
+
+        listbox = accessibilityController.accessibleElementById("listbox2");
+        debug(platformValueForW3CName(listbox) + " is busy: " + listbox.boolAttributeValue("AXElementBusy"))
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

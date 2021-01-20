@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+
+<filter id="f1" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox" 
+         x="0%" y="0%" width="100%" height="100%">
+  <feFlood flood-color="#ff0000" result="flood"/>
+  <feBlend mode="normal" in="SourceGraphic" in2="flood" x="10%" y="10%" width="80%" height="80%"/>
+</filter>
+<rect x="0" y="0" width="100" height="100" fill="#00ff00" filter="url(#f1)"/>
+
+<filter id="f2" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox" 
+         x="0%" y="0%" width="100%" height="100%">
+  <feFlood flood-color="#ff0000" result="flood"/>
+  <feBlend mode="multiply" in="SourceGraphic" in2="flood" x="10%" y="10%" width="80%" height="80%"/>
+</filter>
+<rect x="100" y="0" width="100" height="100" fill="#00ff00" filter="url(#f2)"/>
+
+<filter id="f3" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox" 
+         x="0%" y="0%" width="100%" height="100%">
+  <feFlood flood-color="#ff0000" result="flood"/>
+  <feBlend mode="screen" in="SourceGraphic" in2="flood" x="10%" y="10%" width="80%" height="80%"/>
+</filter>
+<rect x="200" y="0" width="100" height="100" fill="#00ff00" filter="url(#f3)"/>
+
+<filter id="f4" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox" 
+         x="0%" y="0%" width="100%" height="100%">
+  <feFlood flood-color="#ff0000" result="flood"/>
+  <feBlend mode="darken" in="SourceGraphic" in2="flood" x="10%" y="10%" width="80%" height="80%"/>
+</filter>
+<rect x="300" y="0" width="100" height="100" fill="#00ff00" filter="url(#f4)"/>
+
+<filter id="f5" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox" 
+         x="0%" y="0%" width="100%" height="100%">
+  <feFlood flood-color="#ff0000" result="flood"/>
+  <feBlend mode="lighten" in="SourceGraphic" in2="flood" x="10%" y="10%" width="80%" height="80%"/>
+</filter>
+<rect x="400" y="0" width="100" height="100" fill="#00ff00" filter="url(#f5)"/>
+
+</svg>

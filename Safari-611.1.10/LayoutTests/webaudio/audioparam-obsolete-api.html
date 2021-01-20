@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Checks that obsolete API is no longer present on AudioParam.");
+
+shouldBeUndefined("AudioParam.prototype.name");
+shouldBeUndefined("AudioParam.prototype.units");
+</script>
+</body>
+</html>

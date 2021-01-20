@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x42
+  RenderBlock {HTML} at (0,0) size 800x42
+layer at (8,8) size 784x26
+  RenderBody {BODY} at (8,8) size 784x26
+    RenderMultiColumnSet at (0,0) size 784x26
+    RenderBlock {DIV} at (0,26) size 784x0
+    RenderMultiColumnSet at (0,26) size 784x0
+layer at (8,8) size 384x52
+  RenderMultiColumnFlowThread at (0,0) size 384x52
+    RenderBlock {P} at (0,16) size 384x20
+      RenderText {#text} at (0,0) size 113x19
+        text run at (0,0) width 113: "PASS if no crash."

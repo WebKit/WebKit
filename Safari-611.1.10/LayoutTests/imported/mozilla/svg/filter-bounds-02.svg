@@ -1,0 +1,25 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+
+  <title>Testcase for checking that filter bounds include stroke width</title>
+
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=647687 -->
+
+  <defs>
+    <filter id="f1" filterUnits="objectBoundingBox">
+      <feFlood flood-color="red"/>
+    </filter>
+  </defs>
+
+  <rect height="100%" width="100%" fill="lime"/>
+
+  <polygon points="200,200 300,200 300,300 200,300" stroke-width="100"
+            fill="none" stroke="lime" filter="url(#f1)"/>
+
+  <rect x="150" y="150" height="200" width="200" fill="lime"/>
+
+</svg>

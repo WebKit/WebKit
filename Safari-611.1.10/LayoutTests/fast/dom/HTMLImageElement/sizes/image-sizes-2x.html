@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<script>
+    window.targetScaleFactor = 2;
+</script>
+<script src="../../../../resources/srcset-helper.js"></script>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../resources/currentSrcHelper.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function runTest()
+    {
+        shouldBe('document.getElementById("simple").clientWidth', 'window.innerWidth');
+        shouldBe('currentSrcFileName("simple")', '"image-set-2x.png"');
+        shouldBe('document.getElementById("small_sizes").clientWidth', '300');
+        shouldBe('currentSrcFileName("small_sizes")', '"image-set-2x.png"');
+        shouldBe('document.getElementById("sizes_x_descriptors").clientWidth', '400');
+        shouldBe('currentSrcFileName("sizes_x_descriptors")', '"image-set-2x.png"');
+        shouldBe('document.getElementById("sizes_src").clientWidth', '400');
+        shouldBe('currentSrcFileName("sizes_src")', '"image-set-1x.png"');
+        shouldBe('document.getElementById("default_sizes").clientWidth', 'window.innerWidth');
+        shouldBe('currentSrcFileName("default_sizes")', '"image-set-4x.png"');
+        shouldBe('document.getElementById("invalid_length").clientWidth', 'window.innerWidth');
+        shouldBe('currentSrcFileName("invalid_length")', '"image-set-2x.png"');
+        shouldBeCloseTo('document.getElementById("src_and_w").clientWidth', 700, 1/64);
+        shouldBe('currentSrcFileName("src_and_w")', '"image-set-4x.png"');
+        shouldBeCloseTo('document.getElementById("x_and_w").clientWidth', 700, 1/64);
+        shouldBe('currentSrcFileName("x_and_w")', '"image-set-4x.png"');
+        shouldBe('document.getElementById("x_and_w2").clientWidth', '400');
+        shouldBe('currentSrcFileName("x_and_w2")', '"image-set-2x.png"');
+        shouldBe('document.getElementById("x_and_w3").clientWidth', '400');
+        shouldBe('currentSrcFileName("x_and_w3")', '"image-set-2x.png"');
+        shouldBe('document.getElementById("half_size").clientWidth', '(window.innerWidth/2)');
+        shouldBe('currentSrcFileName("half_size")', '"image-set-2x.png"');
+        shouldBe('document.getElementById("infitisimal_sizes").clientWidth', '(window.innerWidth/100)');
+        shouldBe('currentSrcFileName("infitisimal_sizes")', '"image-set-2x.png"');
+        shouldBe('currentSrcFileName("fractional_sizes")', '"image-set-4x.png?1599"');
+    }
+</script>
+<img id="simple" src="" sizes="(max-width: 300px) 400px, 800px" srcset="../../../hidpi/resources/image-set-1x.png 400w, ../../../hidpi/resources/image-set-2x.png 800w">
+<img id="small_sizes" src="" sizes="300px" srcset="../../../hidpi/resources/image-set-1x.png 400w, ../../../hidpi/resources/image-set-2x.png 800w">
+<!-- 'sizes' has no impact on 'x' or 'src' resources -->
+<img id="sizes_x_descriptors" src="" sizes="50vw" srcset="../../../hidpi/resources/image-set-1x.png 1x, ../../../hidpi/resources/image-set-2x.png 2x">
+<img id="sizes_src" src="../../../hidpi/resources/image-set-1x.png" sizes="50vw">
+<!-- Missing sizes or an invalid one, give a source size of 100vw -->
+<img id="default_sizes" src="" srcset="../../../hidpi/resources/image-set-1x.png 400w, ../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 1600w">
+<img id="invalid_length" src="" sizes="(max-width: 300px) 400w, 800w" srcset="../../../hidpi/resources/image-set-1x.png 400w, ../../../hidpi/resources/image-set-2x.png 800w">
+<img id="src_and_w" src="../../../hidpi/resources/image-set-1x.png" sizes="700px" srcset="../resources/image-set-4x.png 1600w">
+<img id="x_and_w" sizes="700px" srcset="../../../hidpi/resources/image-set-1x.png 0.5x, ../resources/image-set-4x.png 1600w">
+<!-- The 'x' resource should be picked, and 'sizes' have no impact on its intrisic size -->
+<img id="x_and_w2" sizes="700px" srcset="../../../hidpi/resources/image-set-2x.png 2x, ../resources/image-set-4x.png 16000w">
+<img id="x_and_w3" sizes="700px" srcset="../resources/image-set-4x.png 16000w, ../../../hidpi/resources/image-set-2x.png 2x">
+<!-- The intrinsic size should be identical to the 'sizes' value -->
+<img id="half_size" sizes="50vw" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">
+<img id="infitisimal_sizes" sizes="1vw" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">
+<img id="fractional_sizes" sizes="99.9375vw" srcset="../resources/image-set-4x.png?1598 1598w,../resources/image-set-4x.png?1599 1599w,../resources/image-set-4x.png?1600 1600w,">

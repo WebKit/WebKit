@@ -1,0 +1,92 @@
+This tests moving right and left by word boundary across an object element. WebKit should not hang.
+
+Initial state:
+| <div>
+|   "<#selection-caret>Hello %)"
+| <div>
+|   <object>
+|     border="1"
+|     height="50"
+|     type="application/x-something"
+|     width="50"
+|   <br>
+|   <div>
+|     "World"
+
+Move right count: 1:
+| <div>
+|   "Hello<#selection-caret> %)"
+| <div>
+|   <object>
+|     border="1"
+|     height="50"
+|     type="application/x-something"
+|     width="50"
+|   <br>
+|   <div>
+|     "World"
+
+Move right count: 2:
+| <div>
+|   "Hello %)"
+| <div>
+|   <object>
+|     border="1"
+|     height="50"
+|     type="application/x-something"
+|     width="50"
+|   <br>
+|   <div>
+|     "World<#selection-caret>"
+
+Move right count: 3:
+| <div>
+|   "Hello %)"
+| <div>
+|   <object>
+|     border="1"
+|     height="50"
+|     type="application/x-something"
+|     width="50"
+|   <br>
+|   <div>
+|     "World<#selection-caret>"
+
+Move left count: 1:
+| <div>
+|   "Hello %)"
+| <div>
+|   <object>
+|     border="1"
+|     height="50"
+|     type="application/x-something"
+|     width="50"
+|   <br>
+|   <div>
+|     "<#selection-caret>World"
+
+Move left count: 2:
+| <div>
+|   "<#selection-caret>Hello %)"
+| <div>
+|   <object>
+|     border="1"
+|     height="50"
+|     type="application/x-something"
+|     width="50"
+|   <br>
+|   <div>
+|     "World"
+
+Move left count: 3:
+| <div>
+|   "<#selection-caret>Hello %)"
+| <div>
+|   <object>
+|     border="1"
+|     height="50"
+|     type="application/x-something"
+|     width="50"
+|   <br>
+|   <div>
+|     "World"

@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 269x19
+          text run at (0,0) width 269: "two and words should be on the same line"
+      RenderTable {TABLE} at (0,20) size 600x40
+        RenderTableSection {TBODY} at (0,0) size 600x40
+          RenderTableRow {TR} at (0,0) size 600x20
+            RenderTableCell {TD} at (0,0) size 150x20 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 68x19
+                text run at (0,0) width 68: "two words"
+            RenderTableCell {TD} at (150,0) size 450x20 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 28x19
+                text run at (0,0) width 28: "blah"
+          RenderTableRow {TR} at (0,20) size 600x20
+            RenderTableCell {TD} at (0,20) size 600x20 [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (0,0) size 28x19
+                text run at (0,0) width 28: "blah"

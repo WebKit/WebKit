@@ -1,0 +1,16 @@
+Click me Click me Click me Click me Click me Click me Click me Click me
+
+FAIL Anchor element with target=_blank with rel=noopener Can't find variable: BroadcastChannel
+FAIL Anchor element with target=_blank with rel=opener Can't find variable: BroadcastChannel
+FAIL Anchor element with target=_blank with implicit rel=noopener Can't find variable: BroadcastChannel
+FAIL Anchor element with target=_blank with rel=opener+noopener Can't find variable: BroadcastChannel
+FAIL Anchor element with target=_blank with rel=noopener+opener Can't find variable: BroadcastChannel
+FAIL Anchor element with target=_blank with rel=noreferrer Can't find variable: BroadcastChannel
+FAIL Anchor element with target=_blank with rel=opener+noreferrer Can't find variable: BroadcastChannel
+FAIL Anchor element with target=_blank with rel=noopener+opener+noreferrer Can't find variable: BroadcastChannel
+FAIL Area element with target=_blank with rel=noopener Can't find variable: BroadcastChannel
+FAIL Area element with target=_blank with rel=opener Can't find variable: BroadcastChannel
+FAIL Area element with target=_blank with implicit rel=noopener Can't find variable: BroadcastChannel
+FAIL Area element with target=_blank with rel=opener+noopener Can't find variable: BroadcastChannel
+FAIL Area element with target=_blank with rel=noopener+opener Can't find variable: BroadcastChannel
+

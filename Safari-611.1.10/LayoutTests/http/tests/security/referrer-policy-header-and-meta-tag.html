@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that referrer policy from meta tag overrides the HTTP header one.");
+jsTestIsAsync = true;
+
+onmessage = (msg) => {
+    actualReferrer = msg.data;
+    shouldBeEqualToString("actualReferrer", "");
+
+    frame.remove();
+    finishJSTest();
+}
+
+onload = () => {
+    frame = document.createElement("iframe");
+    frame.src = "resources/serve-referrer-policy-and-meta-tag.php?http_value=unsafe-url&meta_value=no-referrer";
+    document.body.appendChild(frame);
+}
+</script>
+</body>
+</html>

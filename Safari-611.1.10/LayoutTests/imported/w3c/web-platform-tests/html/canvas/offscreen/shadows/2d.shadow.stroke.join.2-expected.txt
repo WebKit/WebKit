@@ -1,0 +1,7 @@
+2d.shadow.stroke.join.2
+
+Shadows are drawn for stroke joins
+
+
+PASS Shadows are drawn for stroke joins
+

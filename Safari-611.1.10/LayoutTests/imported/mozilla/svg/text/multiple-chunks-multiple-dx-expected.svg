@@ -1,0 +1,10 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="200" viewBox="0 0 700 200">
+  <g transform="translate(100,100)" style="font: 16px sans-serif">
+    <text x='100' dx='10' text-anchor='end'>he</text>
+    <text x='300' dx='20 30' text-anchor="end">llo</text>
+  </g>
+</svg>

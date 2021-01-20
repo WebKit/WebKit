@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<div id="testElement">Test</div>
+<script>
+description("Tests that a repeating timer changing the style of a visible element does not get throttled.");
+jsTestIsAsync = true;
+
+var iterationCount = 0;
+var timeoutId;
+var testElement = document.getElementById("testElement");
+var wasThrottled = false;
+
+function timerCallback()
+{
+  ++iterationCount;
+  // Interact with the style of the element.
+  testElement.style["left"] = "" + iterationCount + "px";
+
+  // 5 iterations should suffice to throttle the timer.
+  if (iterationCount == 5) {
+    // Do not use shouldBeTrue() here because it would cause a DOM tree mutation and
+    // unthrottle the DOM Timer.
+    wasThrottled = internals.isTimerThrottled(timeoutId);
+  } else if (iterationCount == 6) {
+    debug("5th iteration, timer should not have been throttled.");
+    shouldBeFalse("wasThrottled");
+    debug("6th iteration, timer should still be unthrottled.");
+    shouldBeFalse("internals.isTimerThrottled(timeoutId)");
+    clearInterval(timeoutId);
+    finishJSTest();
+  }
+}
+
+timeoutId = setInterval(timerCallback, 10);
+debug("The timer should initially not be throttled.");
+shouldBeFalse("internals.isTimerThrottled(timeoutId)");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>

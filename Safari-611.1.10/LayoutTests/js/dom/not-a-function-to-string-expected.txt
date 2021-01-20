@@ -1,0 +1,4 @@
+This test verifies that execution terminates after a not-a-function exception is thrown. In particular, it verifies that the engine doesn't restart execution through a custom toString() function.
+
+PASS: Test complete.
+

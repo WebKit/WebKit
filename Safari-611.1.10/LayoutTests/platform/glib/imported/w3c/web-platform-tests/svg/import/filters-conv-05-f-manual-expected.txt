@@ -1,0 +1,64 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (66,62) size 668x310
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourceFilter {filter} [id="emNone"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
+          [feConvolveMatrix order="width=3 height=3" kernelMatrix="[1.00, 1.00, 1.00, 1.00, -7.00, 1.00, 1.00, 1.00, 1.00]" divisor="1.00" bias="0.00" target="(1,1)" edgeMode="NONE" kernelUnitLength="(1,1)" preserveAlpha="0"]
+            [SourceGraphic]
+        RenderSVGResourceFilter {filter} [id="emWrap"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
+          [feConvolveMatrix order="width=3 height=3" kernelMatrix="[1.00, 1.00, 1.00, 1.00, -7.00, 1.00, 1.00, 1.00, 1.00]" divisor="1.00" bias="0.00" target="(1,1)" edgeMode="WRAP" kernelUnitLength="(1,1)" preserveAlpha="0"]
+            [SourceGraphic]
+        RenderSVGResourceFilter {filter} [id="emDuplicate"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
+          [feConvolveMatrix order="width=3 height=3" kernelMatrix="[1.00, 1.00, 1.00, 1.00, -7.00, 1.00, 1.00, 1.00, 1.00]" divisor="1.00" bias="0.00" target="(1,1)" edgeMode="DUPLICATE" kernelUnitLength="(1,1)" preserveAlpha="0"]
+            [SourceGraphic]
+        RenderSVGContainer {g} at (0,0) size 200x167
+          RenderSVGRect {rect} at (0,0) size 17x167 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=10.00] [height=100.00]
+          RenderSVGRect {rect} at (16,0) size 168x17 [fill={[type=SOLID] [color=#FFFF00]}] [x=10.00] [y=0.00] [width=100.00] [height=10.00]
+          RenderSVGRect {rect} at (183,0) size 17x167 [fill={[type=SOLID] [color=#00FF00]}] [x=110.00] [y=0.00] [width=10.00] [height=100.00]
+          RenderSVGRect {rect} at (16,150) size 168x17 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=90.00] [width=100.00] [height=10.00]
+      RenderSVGText {text} at (120,37) size 240x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 239x21
+          chunk 1 (middle anchor) text run 1 at (120.60,54.00) startOffset 0 endOffset 27 width 238.80: "feConvolveMatrix 'edgeMode'"
+      RenderSVGContainer {use} at (66,166) size 201x168 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,100.00)}]
+        [filter="emNone"] RenderSVGResourceFilter {filter} at (0,0) size 120x100
+        RenderSVGContainer {g} at (66,166) size 201x168
+          RenderSVGRect {rect} at (66,166) size 18x168 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=10.00] [height=100.00]
+          RenderSVGRect {rect} at (83,166) size 167x18 [fill={[type=SOLID] [color=#FFFF00]}] [x=10.00] [y=0.00] [width=100.00] [height=10.00]
+          RenderSVGRect {rect} at (250,166) size 17x168 [fill={[type=SOLID] [color=#00FF00]}] [x=110.00] [y=0.00] [width=10.00] [height=100.00]
+          RenderSVGRect {rect} at (83,316) size 167x18 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=90.00] [width=100.00] [height=10.00]
+      RenderSVGText {text} at (84,207) size 32x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 32x16
+          chunk 1 (middle anchor) text run 1 at (84.40,220.00) startOffset 0 endOffset 4 width 31.20: "none"
+      RenderSVGContainer {use} at (300,166) size 200x168 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,100.00)}]
+        [filter="emWrap"] RenderSVGResourceFilter {filter} at (0,0) size 120x100
+        RenderSVGContainer {g} at (300,166) size 200x168
+          RenderSVGRect {rect} at (300,166) size 17x168 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=10.00] [height=100.00]
+          RenderSVGRect {rect} at (316,166) size 168x18 [fill={[type=SOLID] [color=#FFFF00]}] [x=10.00] [y=0.00] [width=100.00] [height=10.00]
+          RenderSVGRect {rect} at (483,166) size 17x168 [fill={[type=SOLID] [color=#00FF00]}] [x=110.00] [y=0.00] [width=10.00] [height=100.00]
+          RenderSVGRect {rect} at (316,316) size 168x18 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=90.00] [width=100.00] [height=10.00]
+      RenderSVGText {text} at (224,207) size 32x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 31x16
+          chunk 1 (middle anchor) text run 1 at (224.70,220.00) startOffset 0 endOffset 4 width 30.60: "wrap"
+      RenderSVGContainer {use} at (533,166) size 201x168 [transform={m=((1.00,0.00)(0.00,1.00)) t=(320.00,100.00)}]
+        [filter="emDuplicate"] RenderSVGResourceFilter {filter} at (0,0) size 120x100
+        RenderSVGContainer {g} at (533,166) size 201x168
+          RenderSVGRect {rect} at (533,166) size 17x168 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=10.00] [height=100.00]
+          RenderSVGRect {rect} at (550,166) size 167x18 [fill={[type=SOLID] [color=#FFFF00]}] [x=10.00] [y=0.00] [width=100.00] [height=10.00]
+          RenderSVGRect {rect} at (716,166) size 18x168 [fill={[type=SOLID] [color=#00FF00]}] [x=110.00] [y=0.00] [width=10.00] [height=100.00]
+          RenderSVGRect {rect} at (550,316) size 167x18 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=90.00] [width=100.00] [height=10.00]
+      RenderSVGText {text} at (352,207) size 56x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 56x16
+          chunk 1 (middle anchor) text run 1 at (352.10,220.00) startOffset 0 endOffset 9 width 55.80: "duplicate"
+    RenderSVGContainer {g} at (16,518) size 380x60
+      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.2 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGContainer {g} at (0,0) size 800x38
+      RenderSVGRect {rect} at (0,0) size 800x36 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
+      RenderSVGText {text} at (206,0) size 68x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 68x23
+          chunk 1 (middle anchor) text run 1 at (206.40,18.00) startOffset 0 endOffset 5 width 67.20: "DRAFT"

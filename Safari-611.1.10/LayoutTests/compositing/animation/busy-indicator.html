@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Busy!</title>
+        <style type="text/css" media="screen">
+             .app-startup #app-loading {
+               width: 300px;
+               height: 100px;
+               position: absolute;
+               background: #00FF00;
+             }
+             .app-startup #app-loading-progress {
+               position: absolute;
+               top: 30px;
+               left: 100px;
+             }
+            .progress-indicator {
+               width: 94px;
+               height: 30px;
+               background: url(busy-indicator-no.png) no-repeat center center;
+               display: none;
+             }
+             .progress-indicator > div {
+               position: absolute;
+               background: url(busy-indicator.png) no-repeat;
+               width: 18px;
+               height: 30px;
+               opacity: 0;
+               -webkit-animation-duration: 2.4s;
+               -webkit-animation-iteration-count: infinite;
+             }
+             .progress-indicator.visible .progress-indicator0 {
+               left: 0px;
+               -webkit-animation-delay: 0.4s;
+             }
+             .progress-indicator.visible .progress-indicator1 {
+               left: 19px;
+               -webkit-animation-delay: 0.8s;
+             }
+             .progress-indicator.visible .progress-indicator2 {
+               left: 38px;
+               -webkit-animation-delay: 1.2s;
+             }
+             .progress-indicator.visible .progress-indicator3 {
+               left: 57px;
+               -webkit-animation-delay: 1.6s;
+             }
+             .progress-indicator.visible .progress-indicator4 {
+               left: 76px;
+               -webkit-animation-delay: 2s;
+             }
+             .progress-indicator.visible { display: block; }
+             .progress-indicator.visible > div { -webkit-animation-play-state: running; }
+
+             @-webkit-keyframes spinner {
+                 0% {
+                     -webkit-transform: scale(0.7);
+                     opacity: 1;
+                 }
+                 10% {
+                     -webkit-transform: scale(1);
+                     opacity: 1;
+                 }
+                 25% {
+                     -webkit-transform: scale(0.7);
+                     opacity: 1;
+                 }
+                 30% {
+                     -webkit-transform: scale(0.7);
+                     opacity: 0;
+                 }
+                 100% {
+                     -webkit-transform: scale(0.7);
+                     opacity: 0;
+                 }
+             }
+             .progress-indicator.visible > div {
+                 -webkit-animation-name: spinner;
+             }
+    </style>
+    </head>
+    <body class="app-startup">
+        <div id="app-loading">
+            <div id="app-loading-progress" class="progress-indicator visible">
+                <div class="progress-indicator0"></div>
+                <div class="progress-indicator1"></div>
+                <div class="progress-indicator2"></div>
+                <div class="progress-indicator3"></div>
+                <div class="progress-indicator4"></div>
+            </div>
+        </div>
+    </body>
+</html>

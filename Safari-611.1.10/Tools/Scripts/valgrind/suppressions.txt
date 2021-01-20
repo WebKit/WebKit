@@ -1,0 +1,625 @@
+# There are three kinds of suppressions in this file.
+# 1. Third party leaks we have no control over.
+#
+# 2. Intentional unit test errors, false positives
+# in our own code, or leaks that are so trivial they are not worth fixing.
+#
+# 3. Suppressions for real WebKit bugs that are not yet fixed.
+# These should all be in webkit's bug tracking system
+# Periodically we should sweep this file and the bug tracker clean by
+# running overnight and removing outdated bugs/suppressions.
+#-----------------------------------------------------------------------
+
+# 1. Third party leaks we have no control over.
+{
+   # GTK developers don't like cleaning up one-time leaks.
+   # See http://mail.gnome.org/archives/gtk-devel-list/2004-April/msg00230.html.
+   gtk_init_check (Third Party)
+   Memcheck:Leak
+   ...
+   fun:gtk_init_check
+}
+
+{
+   FcConfigParseAndLoad (Third Party)
+   Memcheck:Leak
+   ...
+   fun:XML_ParseBuffer
+   fun:FcConfigParseAndLoad
+}
+
+{
+   FcConfigAppFontAddFile (Third Party)
+   Memcheck:Leak
+   ...
+   fun:FcConfigAppFontAddFile
+}
+
+{
+   # See also http://www.gnome.org/~johan/gtk.suppression
+   # (which has a smattering of similar pango suppressions).
+   FcFontRenderPrepare 1 (Third Party)
+   Memcheck:Leak
+   ...
+   fun:FcFontRenderPrepare
+   obj:*
+   fun:pango_font_map_load_fontset
+}
+
+{
+   FcFontRenderPrepare 2 (Third Party)
+   Memcheck:Leak
+   ...
+   fun:FcFontRenderPrepare
+   ...
+   fun:pango_itemize_with_base_dir
+}
+
+{
+   FcFontRenderPrepare 3 (Third Party)
+   Memcheck:Leak
+   ...
+   fun:FcFontRenderPrepare
+   ...
+   fun:pango_ot_buffer_output
+}
+
+{
+   FcFontRenderPrepare 4 (Third Party)
+   Memcheck:Leak
+   ...
+   fun:FcFontRenderPrepare
+   ...
+   fun:pango_context_get_metrics
+}
+
+{
+   FcDefaultSubstitute (Third Party)
+   Memcheck:Leak
+   ...
+   fun:FcDefaultSubstitute
+   ...
+   fun:pango_itemize_with_base_dir
+}
+
+{
+   # Reported in https://bugs.freedesktop.org/show_bug.cgi?id=8215.
+   FcPatternObjectInsertElt 1 (Third Party)
+   Memcheck:Leak
+   fun:malloc
+   fun:FcPatternObjectInsertElt
+   fun:FcPatternObjectAddWithBinding
+}
+
+{
+   # See https://bugs.freedesktop.org/show_bug.cgi?id=8428.
+   # and http://www.gnome.org/~johan/gtk.suppression.
+   FcPatternObjectInsertElt 2 (Third Party)
+   Memcheck:Leak
+   ...
+   fun:realloc
+   fun:FcPatternObjectInsertElt
+}
+
+{
+   FcConfigValues (Third Party)
+   Memcheck:Leak
+   ...
+   fun:malloc
+   fun:FcConfigValues
+   fun:FcConfigValues
+   ...
+   fun:FcConfigValues
+   fun:FcConfigValues
+}
+
+{
+   FcCharSetSort (Third Party)
+   Memcheck:Leak
+   ...
+   fun:FcFontSetSort
+   fun:FcFontSort
+}
+
+{
+   FcCharSetAddChar (Third Party)
+   Memcheck:Leak
+   ...
+   fun:FcCharSetFindLeafCreate
+   fun:FcCharSetAddChar
+}
+
+{
+   pango_script_get_sample_language (Third Party)
+   Memcheck:Leak
+   fun:malloc
+   fun:g_malloc
+   fun:g_strdup
+   fun:pango_script_get_sample_language
+   ...
+   fun:pango_font_get_metrics
+}
+
+{
+   # See http://sourceware.org/bugzilla/show_bug.cgi?id=12878.
+   dlopen (Third Party)
+   Memcheck:Leak
+   fun:calloc
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.1
+}
+
+{
+   # See also http://sources.redhat.com/bugzilla/show_bug.cgi?id=2451.
+   _dl_map_object_from_fd (Third Party)
+   Memcheck:Leak
+   fun:malloc
+   fun:_dl_map_object_from_fd
+}
+
+{
+   # See http://sources.redhat.com/bugzilla/show_bug.cgi?id=5171
+   pthread_create (Third Party)
+   Memcheck:Leak
+   fun:calloc
+   fun:allocate_dtv
+   fun:_dl_allocate_tls
+   fun:pthread_create@@GLIBC_2.1
+}
+
+{
+   # See http://sourceware.org/bugzilla/show_bug.cgi?id=14015.
+   dlsym (Third Party)
+   Memcheck:Leak
+   fun:calloc
+   fun:_dlerror_run
+   fun:dlsym
+}
+
+{
+   g_object_add_weak_pointer (Third Party)
+   Memcheck:Leak
+   ...
+   fun:g_object_weak_ref
+   fun:g_object_add_weak_pointer
+}
+
+{
+   g_build_filename (Third Party)
+   Memcheck:Leak
+   fun:realloc
+   fun:g_realloc
+   fun:g_string_maybe_expand
+   fun:g_string_insert_len
+   fun:g_build_path_va
+   fun:g_build_filename
+   fun:_ZL15initializeFontsPKc
+}
+
+{
+   gtk_im_context_set_client_window (Third Party)
+   Memcheck:Leak
+   ...
+   fun:malloc
+   fun:g_malloc
+   fun:g_strdup
+   fun:gtk_im_multicontext_get_slave
+   fun:gtk_im_multicontext_set_client_window
+   fun:gtk_im_context_set_client_window
+}
+
+{
+   gtk_css_provider_load_from_data (Third Party)
+   Memcheck:Leak
+   fun:realloc
+   fun:g_realloc
+   fun:g_string_maybe_expand
+   fun:g_string_insert_c
+   fun:_gtk_css_parser_read_char
+   fun:_gtk_css_parser_try_ident
+   fun:bindings_value_parse_one
+   fun:_gtk_css_array_value_parse
+   fun:gtk_css_provider_load_internal
+   fun:gtk_css_provider_load_from_data
+}
+
+{
+   # GTK leaks an X11 window.
+   gdk_x11_drawable_get_xid (Third Party)
+   Memcheck:Leak
+   fun:malloc
+   fun:g_malloc
+   fun:g_slice_alloc
+   fun:g_slice_alloc0
+   fun:g_type_create_instance
+   fun:g_object_constructor
+   fun:g_object_newv
+   fun:g_object_new
+   fun:_gdk_window_impl_new
+   fun:gdk_window_ensure_native
+   fun:gdk_x11_drawable_get_xid
+}
+
+{
+   # GTK leaks a cairo context (large leak)
+   gtk_window_realize (Third Party)
+   Memcheck:Leak
+   fun:malloc
+   fun:_cairo_default_context_create
+   fun:set_grip_shape
+   fun:resize_grip_create_window
+   fun:gtk_window_realize
+}
+
+{
+   g_quark_from_static_string (Third party)
+   Memcheck:Leak
+   fun:malloc
+   fun:g_malloc
+   fun:g_quark_from_static_string
+   fun:gobject_init_ctor
+   fun:call_init.part.0
+   fun:_dl_init
+   obj:/lib/x86_64-linux-gnu/ld-2.15.so
+   obj:*
+   obj:*
+   obj:*
+}
+
+{
+   /bin/bash (Third Party)
+   Memcheck:Leak
+   ...
+   obj:/bin/bash
+}
+
+{
+   libenchant.so new (Third party)
+   Memcheck:Leak
+   fun:_Znw*
+   ...
+   obj:*/libenchant.so.1.6.0
+   fun:enchant_broker_dict_exists
+}
+
+{
+   libenchant.so malloc (Third party)
+   Memcheck:Leak
+   fun:*alloc
+   ...
+   obj:*/libenchant.so.1.6.0
+   fun:enchant_broker_dict_exists
+}
+
+{
+   # Cairo leaks a pattern_t* in cairo_set_source_surface
+   cairo_set_source_surface (Third Party)
+   Memcheck:Leak
+   fun:malloc
+   fun:cairo_pattern_create_for_surface
+   fun:_cairo_default_context_set_source_surface
+   fun:cairo_set_source_surface
+}
+
+{
+   XRRFindDisplay (Third Party)
+   Memcheck:Leak
+   fun:malloc
+   fun:XRRFindDisplay
+}
+{
+   libflashplayer.so (Third Party)
+   Memcheck:Leak
+   ...
+   obj:/usr/lib/flashplugin-installer/libflashplayer.so
+}
+
+{
+   gdk_init (Third Party)
+   Memcheck:Leak
+   fun:malloc
+   ...
+   fun:_nl_find_domain
+   fun:__dcigettext
+   fun:gdk_screen_class_intern_init
+   fun:g_type_class_ref
+   fun:g_type_class_ref
+   fun:g_object_newv
+   fun:g_object_new
+   fun:_gdk_x11_screen_new
+   fun:gdk_display_open
+   fun:gdk_display_open_default_libgtk_only
+   fun:gdk_init_check
+   fun:gdk_init
+}
+
+{
+   XKeysymToString (Third Party)
+   Memcheck:Leak
+   fun:malloc
+   fun:XKeysymToString
+}
+
+{
+   g_thread_proxy (Third Party)
+   Memcheck:Leak
+   fun:*alloc
+   ...
+   fun:g_thread_proxy
+}
+
+{
+   JNI_CreateJavaVM (Third party)
+   Memcheck:Leak
+   ...
+   fun:JNI_CreateJavaVM
+   fun:JavaMain
+}
+
+{
+   _ZL10java_startP6Thread (Third party)
+   Memcheck:Leak
+   ...
+   fun:_ZN8VMThread3runEv
+   fun:_ZL10java_startP6Thread
+   ...
+
+}
+
+{
+   /bin/java (OpenJDK) (Third party)
+   Memcheck:Leak
+   ...
+   obj:/usr/lib/jvm/java-6-openjdk-amd64/jre/bin/java
+   ...
+}
+
+{
+   libGL.so (Third party)
+   Memcheck:Leak
+   ...
+   obj:*/libGL.so.*
+   ...
+}
+
+{
+   _cairo_xlib_shm_surface_create.isra.11 (Third Party)
+   Memcheck:Leak
+   fun:malloc
+   fun:_pixman_image_allocate
+   fun:pixman_image_create_bits
+   fun:_cairo_xlib_shm_surface_create.isra.11
+}
+
+{
+   __nss_database_lookup (Third Party)
+   Memcheck:Leak
+   fun:malloc
+   fun:nss_parse_service_list
+   fun:__nss_database_lookup
+   obj:*
+}
+
+{
+   gst_init_check (Third Party)
+   Memcheck:Leak
+   fun:malloc
+   fun:g_malloc
+   fun:g_intern_string
+   fun:_priv_gst_registry_chunks_load_plugin
+   fun:exchange_packets
+   fun:plugin_loader_load
+   fun:gst_registry_scan_plugin_file
+   fun:gst_registry_scan_path_level
+   fun:gst_registry_scan_path_internal
+   fun:gst_update_registry
+   fun:init_post
+   fun:g_option_context_parse
+   fun:gst_init_check
+
+}
+
+{
+   g_task_run_in_thread (Third Party)
+   Memcheck:Leak
+   fun:malloc
+   fun:g_malloc
+   fun:g_slice_alloc
+   fun:g_slice_alloc0
+   fun:g_system_thread_new
+   fun:g_thread_new_internal
+   fun:g_thread_pool_start_thread
+   fun:g_thread_pool_push
+   fun:g_task_start_task_thread
+   fun:g_task_run_in_thread
+}
+
+{
+   # Large leak in cairo_image_surface_create
+   _cairo_image_surface_create_with_pixman_format (Third Party)
+   Memcheck:Leak
+   fun:malloc
+   fun:_cairo_image_surface_create_for_pixman_image
+   fun:_cairo_image_surface_create_with_pixman_format
+   fun:_ZN7WebCore21copyCairoImageSurfaceEP14_cairo_surface
+}
+
+
+#-----------------------------------------------------------------------
+# 2. Intentional unit test errors, false positives
+# in our own code, or leaks that are so trivial they are not worth fixing.
+
+{
+   # According to dglazkov, these are one-time leaks and intentional.
+   # They may go away if the change to move these off the heap lands.
+   WebCore::SVGNames::init (Intentional)
+   Memcheck:Leak
+   ...
+   fun:_ZN7WebCore8SVGNames4initEv
+}
+
+{
+   # This is an on demand initialization which is done and then intentionally
+   # kept around (not freed) while the process is running.
+   WebCore::XMLNames::init (Intentional)
+   Memcheck:Leak
+   ...
+   fun:_ZN7WebCore8XMLNames4initEv
+}
+
+{
+   # This is WebKit wide theading initialization which is intentionally kept
+   # around (not freed) while the process is running.
+   WTF::ThreadIdentifierData::initialize() (Intentional)
+   Memcheck:Leak
+   ...
+   fun:_ZN3WTF20ThreadIdentifierData10initializeEj
+}
+
+{
+   # This is WebKit wide theading initialization which is intentionally kept
+   # around (not freed) while the process is running.
+   WTF::ThreadData (Intentional)
+   Memcheck:Leak
+   ...
+   fun:_ZN3WTF13wtfThreadDataEv
+}
+
+{
+   WTF::BitVector (Intentional)
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN3WTF10fastMallocEm
+   fun:_ZN3WTF9BitVector13OutOfLineBits6createEm
+   fun:_ZN3WTF9BitVector15resizeOutOfLineEm
+   fun:_ZN3WTF9BitVector10ensureSizeEm
+   fun:_ZN3WTF9BitVectorC1Em
+}
+
+{
+   # WTF::ThreadSpecific leaks a few bytes at a time.
+   WTF::ThreadSpecific::set() (Intentional)
+   Memcheck:Leak
+   fun:_Znw*
+   fun:_ZN3WTF14ThreadSpecificIbE3setEPb
+   fun:_ZN3WTF14ThreadSpecificIbEcvPbEv
+   fun:_ZN3WTF14ThreadSpecificIbEdeEv
+   fun:_ZN3WTF16registerGCThreadEv
+   fun:_ZN3JSC8GCThread12gcThreadMainEv
+   fun:_ZN3JSC8GCThread17gcThreadStartFuncEPv
+   fun:_ZN3WTFL16threadEntryPointEPv
+}
+
+{
+   # DOMObjectCache memory is not freed.
+   webkit_dom_document_get_default_view (Intentional)
+   Memcheck:Leak
+   fun:malloc
+   fun:g_malloc
+   fun:g_slice_alloc
+   fun:_ZN6WebKit14DOMObjectCache3putEPvS1_
+   fun:_ZL33webkit_dom_dom_window_constructormjP22_GObjectConstructParam
+   fun:g_object_newv
+   fun:g_object_new_valist
+   fun:g_object_new
+   fun:_ZN6WebKit13wrapDOMWindowEPN7WebCore9DOMWindowE
+   fun:webkit_dom_document_get_default_view
+ }
+
+#-----------------------------------------------------------------------
+# 3. Suppressions for real webkit bugs that are not yet fixed.
+# These should all be in webkit's bug tracking system (but a few aren't yet).
+
+{
+   # AtkProperty is cached but not released (see https://bugs.webkit.org/show_bug.cgi?id=118567#c2).
+   cacheAndReturnAtkProperty
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN3WTF10fastMallocEm
+   fun:_ZN3WTF13CStringBuffer19createUninitializedEm
+   fun:_ZN3WTF7CString4initEPKcm
+   fun:_ZN3WTF7CStringC1EPKcm
+   fun:_ZNK3WTF6String4utf8ENS0_14ConversionModeE
+   fun:cacheAndReturnAtkProperty
+}
+
+{
+   # AtkRelationSet is never freed because the target AtkObject is
+   # cached. See https://bugs.webkit.org/show_bug.cgi?id=118567.
+   AccessibilityUIElement::title()
+   Memcheck:Leak
+   fun:malloc
+   ...
+   fun:g_object_weak_ref
+   fun:atk_relation_set_property
+   fun:g_object_newv
+   fun:g_object_new_valist
+   fun:g_object_new
+   fun:atk_relation_new
+   fun:atk_relation_set_add_relation_by_type
+   fun:_ZL31setAtkRelationSetFromCoreObjectPN7WebCore19AccessibilityObjectEP15_AtkRelationSet
+   fun:_ZL30webkitAccessibleRefRelationSetP10_AtkObject
+   fun:_ZN22AccessibilityUIElement14titleUIElementEv
+}
+
+{
+   # Leak in webkitAccessibleNew https://bugs.webkit.org/show_bug.cgi?id=118382
+   webkitAccessibleNew
+   Memcheck:Leak
+   fun:*alloc
+   ...
+   fun:webkitAccessibleNew
+}
+
+{
+   # Leak ATK text https://bugs.webkit.org/show_bug.cgi?id=118385
+   webkitAccessibleTextGetText
+   Memcheck:Leak
+   fun:malloc
+   fun:g_malloc
+   fun:g_strdup
+   fun:_ZL27webkitAccessibleTextGetTextP8_AtkTextii
+   fun:_ZL23webkitAccessibleGetNameP10_AtkObject
+}
+
+{
+   # Leak PluginObject in exceptional circumstances https://bugs.webkit.org/show_bug.cgi?id=118528
+   WebCore::PluginView::start()
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZL14pluginAllocateP4_NPPP7NPClass
+   fun:_NPN_CreateObject
+   fun:NPP_New
+   fun:_ZN7WebCore10PluginView5startEv
+}
+
+{
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN3WTF10fastMallocEm
+   fun:_ZN3WTF10fastStrDupEPKc
+   fun:_ZN7WebCore12TextCodecICU14registerCodecsEPFvPKcPFN3WTF10PassOwnPtrINS_9TextCodecEEERKNS_12TextEncodingEPKvESB_E
+}
+
+{
+   # DumpRenderTree WebKitWebView is leaked
+   webViewCreate
+   Memcheck:Leak
+   fun:malloc
+   fun:g_malloc
+   fun:g_slice_alloc
+   fun:g_slist_prepend
+   fun:_ZL13webViewCreateP14_WebKitWebViewP15_WebKitWebFrame
+   fun:webkit_marshal_OBJECT__OBJECT
+   fun:g_closure_invoke
+   fun:signal_emit_unlocked_R
+   fun:g_signal_emit_valist
+   fun:g_signal_emit_by_name
+   fun:_ZN6WebKit12ChromeClient12createWindowEPN7WebCore5FrameERKNS1_16FrameLoadRequestERKNS1_14WindowFeaturesERKNS1_16NavigationActionE
+   fun:_ZNK7WebCore6Chrome12createWindowEPNS_5FrameERKNS_16FrameLoadRequestERKNS_14WindowFeaturesERKNS_16NavigationActionE
+   fun:_ZN7WebCore12createWindowEPNS_5FrameES1_RKNS_16FrameLoadRequestERKNS_14WindowFeaturesERb
+   fun:_ZN7WebCore9DOMWindow12createWindowERKN3WTF6StringERKNS1_12AtomicStringERKNS_14WindowFeaturesEPS0_PNS_5FrameESD_PFvSB_PvESE_
+   fun:_ZN7WebCore9DOMWindow4openERKN3WTF6StringERKNS1_12AtomicStringES4_PS0_S8_
+   fun:_ZN7WebCore11JSDOMWindow4openEPN3JSC9ExecStateE
+   fun:_ZN7WebCore32jsDOMWindowPrototypeFunctionOpenEPN3JSC9ExecStateE
+ }

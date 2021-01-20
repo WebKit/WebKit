@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<font horiz-adv-x="481" id="ascii">
+  <font-face font-family="testfont" units-per-em="1000" ascent="800" descent="-200" alphabetic="0"/>
+<glyph unicode="a" horiz-adv-x="1000" d="M500 0V500H1000V0H500Z"/>
+</font>
+</defs>
+</svg>

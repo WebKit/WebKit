@@ -1,0 +1,41 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/css-mislabeled-as-html-nosniff.css
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/css-mislabeled-as-html-nosniff.css.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/css-mislabeled-as-html.css
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/css-mislabeled-as-html.css.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/css-with-json-parser-breaker.css
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/empty-labeled-as-png.png
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/empty-labeled-as-png.png.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/html-correctly-labeled.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/html-correctly-labeled.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/html-js-polyglot.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/html-js-polyglot.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/html-js-polyglot2.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/html-js-polyglot2.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/js-mislabeled-as-html-nosniff.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/js-mislabeled-as-html-nosniff.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/js-mislabeled-as-html.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/js-mislabeled-as-html.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/png-correctly-labeled.png
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/png-correctly-labeled.png.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/png-mislabeled-as-html-nosniff.png
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/png-mislabeled-as-html-nosniff.png.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/png-mislabeled-as-html.png
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/png-mislabeled-as-html.png.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/sniffable-resource.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/corb/resources/subframe-that-posts-html-containing-blob-url-to-parent.html

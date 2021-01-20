@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+      #testcase * {
+          margin: 0;
+          padding: 0;
+      }
+      #testcase input {
+          width: 50px;
+      }
+  </style>
+</head>
+<body>
+    <p>Check styling of readonly input elements with the :in-range pseudo selector</p>
+    <div id=testcase>
+        <div>
+            <input type="text" readonly>
+            <input type="text" readonly min=1>
+            <input type="text" readonly min=1 value=0>
+            <input type="text" readonly min=1 value=1>
+            <input type="text" readonly max=42>
+            <input type="text" readonly max=42 value=42>
+            <input type="text" readonly max=42 value=43>
+            <input type="text" readonly min=1 max=42>
+            <input type="text" readonly min=1 max=42 value=0>
+            <input type="text" readonly min=1 max=42 value=1>
+            <input type="text" readonly min=1 max=42 value=2>
+            <input type="text" readonly min=1 max=42 value=41>
+            <input type="text" readonly min=1 max=42 value=42>
+            <input type="text" readonly min=1 max=42 value=43>
+        </div>
+        <div>
+            <input type="number" readonly>
+            <input type="number" readonly min=1>
+            <input type="number" readonly min=1 value=0>
+            <input type="number" readonly min=1 value=1>
+            <input type="number" readonly max=42>
+            <input type="number" readonly max=42 value=42>
+            <input type="number" readonly max=42 value=43>
+            <input type="number" readonly min=1 max=42>
+            <input type="number" readonly min=1 max=42 value=0>
+            <input type="number" readonly min=1 max=42 value=1>
+            <input type="number" readonly min=1 max=42 value=2>
+            <input type="number" readonly min=1 max=42 value=41>
+            <input type="number" readonly min=1 max=42 value=42>
+            <input type="number" readonly min=1 max=42 value=43>
+        </div>
+        <div>
+            <input type="number" readonly min>
+            <input type="number" readonly min value=0>
+            <input type="number" readonly max>
+            <input type="number" readonly max value=42>
+            <input type="number" readonly min max>
+            <input type="number" readonly min max=42>
+            <input type="number" readonly min=1 max>
+            <input type="number" readonly min max value=0>
+            <input type="number" readonly min=1 max value=0>
+            <input type="number" readonly min=1 max value=1>
+            <input type="number" readonly min max=42 value=42>
+            <input type="number" readonly min max=42 value=43>
+        </div>
+        <div>
+            <input type="number" readonly min="webkit">
+            <input type="number" readonly min="webkit" value=0>
+            <input type="number" readonly max="webkit">
+            <input type="number" readonly max="webkit" value=42>
+            <input type="number" readonly min="webkit" max="webkit">
+            <input type="number" readonly min="webkit" max=42>
+            <input type="number" readonly min=1 max="webkit">
+            <input type="number" readonly min="webkit" max="webkit" value=0>
+            <input type="number" readonly min=1 max="webkit" value=0>
+            <input type="number" readonly min=1 max="webkit" value=1>
+            <input type="number" readonly min="webkit" max=42 value=42>
+            <input type="number" readonly min="webkit" max=42 value=43>
+        </div>
+        <div>
+            <input type="range" readonly>
+            <input type="range" readonly min=1>
+            <input type="range" readonly min=1 value=0>
+            <input type="range" readonly min=1 value=1>
+            <input type="range" readonly max=42>
+            <input type="range" readonly max=42 value=42>
+            <input type="range" readonly max=42 value=43>
+            <input type="range" readonly min=1 max=42>
+            <input type="range" readonly min=1 max=42 value=0>
+            <input type="range" readonly min=1 max=42 value=1>
+            <input type="range" readonly min=1 max=42 value=2>
+            <input type="range" readonly min=1 max=42 value=41>
+            <input type="range" readonly min=1 max=42 value=42>
+            <input type="range" readonly min=1 max=42 value=43>
+        </div>
+        <div>
+            <input type="range" readonly min>
+            <input type="range" readonly min value=0>
+            <input type="range" readonly max>
+            <input type="range" readonly max value=42>
+            <input type="range" readonly min max>
+            <input type="range" readonly min max=42>
+            <input type="range" readonly min=1 max>
+            <input type="range" readonly min max value=0>
+            <input type="range" readonly min=1 max value=0>
+            <input type="range" readonly min=1 max value=1>
+            <input type="range" readonly min max=42 value=42>
+            <input type="range" readonly min max=42 value=43>
+        </div>
+        <div>
+            <input type="range" readonly min="webkit">
+            <input type="range" readonly min="webkit" value=0>
+            <input type="range" readonly max="webkit">
+            <input type="range" readonly max="webkit" value=42>
+            <input type="range" readonly min="webkit" max="webkit">
+            <input type="range" readonly min="webkit" max=42>
+            <input type="range" readonly min=1 max="webkit">
+            <input type="range" readonly min="webkit" max="webkit" value=0>
+            <input type="range" readonly min=1 max="webkit" value=0>
+            <input type="range" readonly min=1 max="webkit" value=1>
+            <input type="range" readonly min="webkit" max=42 value=42>
+            <input type="range" readonly min="webkit" max=42 value=43>
+        </div>
+    </div>
+</body>
+</html>

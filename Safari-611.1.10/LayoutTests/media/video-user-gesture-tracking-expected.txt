@@ -1,0 +1,9 @@
+RUN(window.internals.settings.setVideoPlaybackRequiresUserGesture(true);)
+RUN(video = document.createElement("video"))
+RUN(video.src = findMediaFile("video", "content/test"))
+RUN(document.body.appendChild(video))
+EXPECTED (window.internals.pageMediaState().includes('HasUserInteractedWithMediaElement') == 'false') OK
+RUN(video.play())
+EXPECTED (window.internals.pageMediaState().includes('HasUserInteractedWithMediaElement') == 'true') OK
+END OF TEST
+

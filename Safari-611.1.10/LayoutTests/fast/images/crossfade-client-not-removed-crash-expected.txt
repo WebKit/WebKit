@@ -1,0 +1,2 @@
+Blocked access to external URL http://-4294967295/
+PASS. WebKit didn't crash.

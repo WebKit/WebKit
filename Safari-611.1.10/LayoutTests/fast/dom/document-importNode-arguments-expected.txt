@@ -1,0 +1,9 @@
+This page tests calling document.importNode.
+
+PASS imported.childNodes.length is 2
+PASS imported.textContent == 'hello world' is true
+PASS imported.childNodes.length is 2
+PASS imported.textContent == 'hello world' is true
+PASS imported.childNodes.length is 0
+PASS imported.textContent == '' is true
+

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.dumpResourceLoadCallbacks();
+    if (window.internals)
+        internals.registerDefaultPortForProtocol(8000, "http");
+}
+</script>
+</head>
+<body>
+<iframe src="resources/nph-image-on-HTTP-0.9-page-blocked.pl"></iframe>
+</body>
+</html>

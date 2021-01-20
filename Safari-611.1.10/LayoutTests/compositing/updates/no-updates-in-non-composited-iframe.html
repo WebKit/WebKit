@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        description('Test that compositing updates do not happen in an iframe with no compoting layers.');
+        window.jsTestIsAsync = true;
+
+        let updateCount;
+        let iframeWindow;
+        let iframeDocument;
+        let targetElement;
+
+        function zeroUpdateCount()
+        {
+            if (iframeWindow.internals) {
+                iframeWindow.internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+                iframeWindow.internals.startTrackingCompositingUpdates();
+            }
+        }
+
+        function updateLayoutAndCompositingCount()
+        {
+            if (iframeWindow.internals) {
+                iframeWindow.internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+                updateCount = iframeWindow.internals.compositingUpdateCount();
+            }
+        }
+        
+        function testForCompositingUpdate(callback)
+        {
+            zeroUpdateCount();
+            callback();
+            updateLayoutAndCompositingCount();
+        }
+        
+        function runTests()
+        {
+            iframeWindow = document.getElementById('iframe').contentWindow;
+            
+            updateLayoutAndCompositingCount();
+
+            if (iframeWindow.internals) {
+                iframeWindow.internals.startTrackingCompositingUpdates();
+                updateCount = iframeWindow.internals.compositingUpdateCount();
+            }
+            
+            iframeDocument = iframeWindow.document;
+            targetElement = iframeDocument.getElementById('middle');
+
+            doNextTest();
+        }
+
+        let tests = [
+            {
+                'description' : 'Initial',
+                'mutation' : async () => {
+                    return;
+                },
+            },
+            {
+                'description' : 'Layout',
+                'mutation' : async () => {
+                    targetElement.style.overflow = 'hidden';
+                    return;
+                }
+            },
+            {
+                'description' : 'Change stacking order',
+                'mutation' : async () => {
+                    targetElement.style.zIndex = 1;
+                    return Promise.resolve();
+                }
+            },
+            {
+                'description' : 'Negative z-order child',
+                'mutation' : async () => {
+                    targetElement.style.zIndex = -1;
+                    let targetBounds = targetElement.getBoundingClientRect();
+                    let x = targetBounds.x + targetBounds.width / 2;
+                    let y = targetBounds.y + targetBounds.height / 2;
+                    iframeDocument.elementFromPoint(x, y); // Force a z-order list update.
+                    return Promise.resolve();
+                }
+            },
+            {
+                'description' : 'Change visibility',
+                'mutation' : async () => {
+                    targetElement.style.visibility = 'hidden';
+                    return Promise.resolve();
+                }
+            },
+            {
+                'description' : 'Change content',
+                'mutation' : async () => {
+                    iframeDocument.getElementById('child').textContent = 'child';
+                    return Promise.resolve();
+                }
+            },
+            {
+                'description' : 'Change clip path',
+                'mutation' : async () => {
+                    targetElement.style.webkitClipPath = 'inset(0 20% 0 50px)';
+                    return Promise.resolve();
+                }
+            },
+            {
+                'description' : 'Change transform',
+                'mutation' : async () => {
+                    targetElement.style.transform = 'translate(10px, 20px)';
+                    return Promise.resolve();
+                }
+            },
+            {
+                'description' : 'Image change',
+                'mutation' : async () => {
+                    let image = iframeDocument.getElementById('image');
+                    return new Promise((resolve, reject)=> {
+                        image.onload = ()=> resolve();
+                        image.src = "data:image/gif;base64,R0lGODlhAQABAPAAAP8REf///yH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==";
+                    });
+                }
+            },
+            // Must be last
+            {
+                'description' : 'Remove layer',
+                'mutation' : async () => {
+                    targetElement.remove();
+                    return Promise.resolve();
+                }
+            },
+        ];
+
+        function resetStyle(element)
+        {
+            element.removeAttribute('style');
+        }
+        
+        let nextTestIndex = 0;
+        async function doNextTest()
+        {
+            if (nextTestIndex == tests.length) {
+                finishJSTest();
+                return;
+            }
+
+            let test = tests[nextTestIndex];
+            debug(test.description);
+
+            zeroUpdateCount();
+            await test.mutation();
+            updateLayoutAndCompositingCount();
+
+            shouldBe('updateCount', '0');
+            resetStyle(targetElement);
+            
+            setTimeout(() => {
+                ++nextTestIndex;
+                doNextTest();
+            }, 0);
+        }
+        
+        window.addEventListener('load', () => {
+            window.setTimeout(runTests, 0);
+        }, false);
+    </script>
+
+</head>
+<body>
+    <iframe id="iframe" src="resources/non-composited.html"></iframe>
+
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+# See https://chromium.googlesource.com/angle/angle/+/master/doc/ContributingCode.md#selecting-reviewers for more info
+geofflang@chromium.org
+geofflang@google.com
+jmadill@chromium.org
+jmadill@google.com
+jonahr@google.com
+syoussefi@chromium.org
+syoussefi@google.com
+ynovikov@chromium.org
+ynovikov@google.com
+
+per-file AUTHORS=*
+per-file CONTRIBUTORS=*
+per-file DEPS=*
+per-file WATCHLISTS=*
+
+# COMPONENT: Internals>GPU>ANGLE
+# TEAM: angleproject@googlegroups.com

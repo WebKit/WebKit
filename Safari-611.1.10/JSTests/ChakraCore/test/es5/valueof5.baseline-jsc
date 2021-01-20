@@ -1,0 +1,13 @@
+x.valueOf()
+x.valueOf.call(undefined)
+TypeError: undefined is not an object (evaluating 'x.valueOf.call(undefined)')
+x.valueOf.call(null)
+TypeError: null is not an object (evaluating 'x.valueOf.call(null)')
+x.valueOf.call()
+TypeError: undefined is not an object (evaluating 'x.valueOf.call()')
+typeof x.valueOf.call(true)
+object
+typeof x.valueOf.call(42)
+object
+typeof x.valueOf.call('Hello')
+object

@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 642x17
+          text run at (0,0) width 642: "The black text should be identical to, and overlap, the red text, so there should be no red pixels below."
+      RenderBlock {DIV} at (0,34) size 784x186
+        RenderBlock {DIV} at (0,0) size 784x165 [color=#FF0000]
+          RenderText {#text} at (0,3) size 272x159
+            text run at (0,3) width 272: "v a\x{300} e"
+        RenderBlock {DIV} at (0,21) size 784x165
+          RenderText {#text} at (0,3) size 272x159
+            text run at (0,3) width 272: "v \x{E0} e"
+      RenderBlock {DIV} at (0,220) size 784x186
+        RenderBlock {DIV} at (0,0) size 784x165 [color=#FF0000]
+          RenderText {#text} at (0,3) size 272x159
+            text run at (0,3) width 272: "v a\x{300} e"
+        RenderBlock {DIV} at (0,21) size 784x165
+          RenderText {#text} at (0,3) size 272x159
+            text run at (0,3) width 272: "v \x{E0} e"

@@ -1,0 +1,11 @@
+RUN(promise = navigator.requestMediaKeySystemAccess("com.apple.fps", capabilities))
+Promise resolved OK
+RUN(promise = access.createMediaKeys())
+Promise resolved OK
+RUN(keys.setServerCertificate(serverCertificate))
+RUN(session = keys.createSession())
+EXPECTED (session != 'null') OK
+RUN(promise = session.generateRequest("sinf", initData))
+Promise resolved OK
+END OF TEST
+

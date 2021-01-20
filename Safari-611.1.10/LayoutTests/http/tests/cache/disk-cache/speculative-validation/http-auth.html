@@ -1,0 +1,51 @@
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script>
+description("Tests speculative revalidation of authenticated resources.");
+jsTestIsAsync = true;
+
+testRunner.setHandlesAuthenticationChallenges(true);
+testRunner.setAuthenticationUsername("testUsername");
+testRunner.setAuthenticationPassword("testPassword");
+
+state = "warmup";
+
+function clearCredentialStorage()
+{
+    xhr = new XMLHttpRequest();
+    xhr.open("GET", "resources/resource-with-auth.php?other", false, "badUsername", "badPassword");
+    xhr.send();
+    shouldBe("xhr.status", "401");
+}
+
+function frameLoaded()
+{
+    if (state == "warmup") {
+        // Navigate frame to 'about:blank' to flush to subresource loads metadata to disk.
+        state = "flushingMetadata";
+        testRunner.setHandlesAuthenticationChallenges(false);
+        document.getElementById("testFrame").src = "about:blank";
+        return;
+    }
+    if (state == "flushingMetadata") {
+        clearCredentialStorage();
+
+        internals.clearMemoryCache();
+        testRunner.setHandlesAuthenticationChallenges(false);
+
+        // Navigate frame to its original location again. This time it should speculatively
+        // validate subresources as we have subresource loads metadata in the disk cache.
+        state = "speculativeRevalidation";
+        document.getElementById("testFrame").src = "resources/frame-with-authenticated-resource.php";
+        return;
+    }
+    if (state == "speculativeRevalidation") {
+        testPassed("Successfuly loaded.");
+
+        finishJSTest();
+        return;
+    }
+}
+
+</script>
+<iframe id="testFrame" src="resources/frame-with-authenticated-resource.php" onload="frameLoaded()"></iframe>
+<script src="/js-test-resources/js-test-post.js"></script>

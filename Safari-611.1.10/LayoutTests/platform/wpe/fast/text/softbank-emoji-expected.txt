@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x246
+  RenderBlock {HTML} at (0,0) size 800x246
+    RenderBody {BODY} at (8,8) size 784x230
+      RenderBlock {DIV} at (0,0) size 784x230
+        RenderBlock {DIV} at (0,0) size 784x115
+          RenderText {#text} at (0,1) size 262x112
+            text run at (0,1) width 262: "\x{E001} a \x{E001}"
+        RenderBlock {DIV} at (0,115) size 784x115
+          RenderText {#text} at (0,1) size 75x112
+            text run at (0,1) width 75: "\x{E001}"

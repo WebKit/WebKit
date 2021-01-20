@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=200px">
+<title>This tests that backdrop filter with clip-path works properly.</title>
+<style>
+#text {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    overflow: hidden;
+}
+#blur {
+    position: absolute;
+    left: 50px;
+    top: 50px;
+    width: 100px;
+    height: 100px;
+
+    background-color: rgba(255, 0, 0, 0.5);
+    -webkit-backdrop-filter: blur(2px);
+    -webkit-clip-path: inset(10px);
+}
+</style>
+</head>
+<body>
+<div id="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum a nunc ultrices, faucibus ligula ac, euismod elit. Ut in vehicula enim. Suspendisse sodales auctor nunc, sit amet vehicula velit cursus vulputate. Nunc sed ipsum vitae massa dapibus sodales sit amet quis dui. Aenean sit amet interdum arcu, et facilisis diam. Ut a lacus eleifend, feugiat tellus vel, molestie lorem. Nulla pulvinar dapibus semper. Quisque mollis, neque non luctus aliquam, ex risus lacinia augue, vel eleifend augue erat eget ante.
+</div>
+<div id="blur"></div>
+</body>
+</html>

@@ -1,0 +1,37 @@
+This tests the constructor for the MediaStreamTrackEvent DOM class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+*** getUserMedia() succeeded, test stream ***
+PASS mediaStream is non-null.
+PASS mediaStream.getVideoTracks()[0] is non-null.
+
+*** No initializer passed ***
+PASS new MediaStreamTrackEvent('MediaStreamTrackEvent') threw exception TypeError: Not enough arguments.
+
+*** Bubbles and cancelable true, track is missing ***
+PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancelable: true }) threw exception TypeError: Member MediaStreamTrackEventInit.track is required and must be an instance of MediaStreamTrack.
+
+*** Bubbles and cancelable true, invalid track ***
+PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancelable: true, track: MediaStreamTrack }) threw exception TypeError: Type error.
+
+*** Initialize 'track' with a invalid values ***
+PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: 10 }) threw exception TypeError: Type error.
+PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: 'string' }) threw exception TypeError: Type error.
+PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: emptyObject }) threw exception TypeError: Type error.
+PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: document }) threw exception TypeError: Type error.
+
+*** Bubbles and cancelable true, valid track ***
+PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancelable: true, track: mediaStreamTrack }).bubbles is true
+PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancelable: true, track: mediaStreamTrack }).cancelable is true
+
+*** Initialize 'track' with valid track object ***
+PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: mediaStreamTrack }).track is non-null.
+PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: mediaStreamTrack }).track is mediaStreamTrack
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

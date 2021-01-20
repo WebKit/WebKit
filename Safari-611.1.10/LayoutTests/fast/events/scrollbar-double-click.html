@@ -1,0 +1,32 @@
+<body style="margin:0">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+
+<div id="overflow" style="border:2px solid black;overflow:auto;height:400px;width:400px; position:absolute;">
+<div style="background-color:red;height:720px"></div>
+<div style="background-color:green;height:1600px"></div>
+</div>
+
+<div id="console"></div>
+
+<script>
+if (window.eventSender) {
+    eventSender.mouseMoveTo(390, 300);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
+    setTimeout(finished, 1000);
+}
+
+function finished()
+{
+    document.getElementById('console').innerHTML = "Scroll offset is " + document.getElementById('overflow').scrollTop;
+    window.testRunner.notifyDone();
+}
+</script>

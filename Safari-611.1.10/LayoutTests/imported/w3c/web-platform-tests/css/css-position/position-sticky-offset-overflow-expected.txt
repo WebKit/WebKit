@@ -1,0 +1,4 @@
+
+FAIL sticky position offset should be able to cause overflow assert_equals: expected 200 but got 35
+FAIL sticky position offset in overflow should be accessible assert_equals: expected 50 but got 35
+

@@ -1,0 +1,10 @@
+<span contenteditable="true"><span>Pass<audio controls="controls"></span>
+</span>if no crash.<div id=empty_div></div><script>
+document.execCommand("justifyFull", false);
+var range = document.createRange();
+range.setEndBefore(empty_div);
+window.getSelection().addRange(range);
+document.execCommand("justifyFull", false);
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>

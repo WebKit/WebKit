@@ -1,0 +1,3 @@
+Test that inserting a node before a full-screened element doesn't cause a crash.
+END OF TEST
+

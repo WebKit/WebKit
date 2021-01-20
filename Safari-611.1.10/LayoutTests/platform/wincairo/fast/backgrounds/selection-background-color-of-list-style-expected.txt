@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x156
+  RenderBlock {HTML} at (0,0) size 800x156
+    RenderBody {BODY} at (8,8) size 784x132
+      RenderBlock {DIV} at (0,0) size 784x132
+        RenderBlock (anonymous) at (0,0) size 784x20
+          RenderText {#text} at (0,0) size 464x19
+            text run at (0,0) width 464: "Test passes if backgrounds of list style in ul and ol are each green and yellow."
+        RenderBlock {UL} at (0,36) size 784x40
+          RenderListItem {LI} at (40,0) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 26x19
+              text run at (0,0) width 26: "One"
+          RenderListItem {LI} at (40,20) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 28x19
+              text run at (0,0) width 28: "Two"
+        RenderBlock {OL} at (0,92) size 784x40
+          RenderListItem {LI} at (40,0) size 744x20
+            RenderListMarker at (-21,0) size 16x19: "1"
+            RenderText {#text} at (0,0) size 26x19
+              text run at (0,0) width 26: "One"
+          RenderListItem {LI} at (40,20) size 744x20
+            RenderListMarker at (-21,0) size 16x19: "2"
+            RenderText {#text} at (0,0) size 28x19
+              text run at (0,0) width 28: "Two"
+selection start: position 86 of child 0 {#text} of child 0 {DIV} of body
+selection end:   position 3 of child 0 {#text} of child 3 {LI} of child 3 {OL} of child 0 {DIV} of body

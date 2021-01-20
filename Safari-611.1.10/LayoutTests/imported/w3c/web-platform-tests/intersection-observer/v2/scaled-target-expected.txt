@@ -1,0 +1,4 @@
+
+
+FAIL IntersectionObserver V2 test with scale applied to target. assert_equals: expected "[true]" but got "[null]"
+

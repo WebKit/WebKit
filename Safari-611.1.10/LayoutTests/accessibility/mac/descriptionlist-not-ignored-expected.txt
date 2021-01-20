@@ -1,0 +1,16 @@
+term
+description
+This tests that dt and dd elements are not ignored if their render objects have block render objects children.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS test.childrenCount is 2
+PASS dt.role is "AXRole: AXGroup"
+PASS dt.subrole is "AXSubrole: AXTerm"
+PASS dd.role is "AXRole: AXGroup"
+PASS dd.subrole is "AXSubrole: AXDescription"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,7 @@
+2d.imageData.put.cross
+
+putImageData() accepts image data got from a different canvas
+
+
+PASS putImageData() accepts image data got from a different canvas
+

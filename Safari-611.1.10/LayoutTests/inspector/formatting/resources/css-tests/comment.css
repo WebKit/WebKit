@@ -1,0 +1,40 @@
+/* test \*/
+x{a:b;c:d}
+/* reset */
+
+/* test \*/x{a:b;c:d}
+/* reset */
+
+x/* test \*/{a:b;c:d}
+/* reset */
+
+x{/* test \*/a:b;c:d}
+/* reset */
+
+x{a/* test \*/:b;c:d}
+/* reset */
+
+x{a:/* test \*/b;c:d}
+/* reset */
+
+x{a:b/* test \*/;c:d}
+/* reset */
+
+x{a:b;/* test \*/c:d}
+/* reset */
+
+x{a:b;c/* test \*/:d}
+/* reset */
+
+x{a:b;c:/* test \*/d}
+/* reset */
+
+x{a:b;c:d/* test \*/}
+/* reset */
+
+x{a:b;c:d}/* test \*/
+/* reset */
+
+/* 1 \*/
+/* 2 \*/
+/* 3 \*/

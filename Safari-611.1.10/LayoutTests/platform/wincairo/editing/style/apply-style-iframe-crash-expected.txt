@@ -1,0 +1,5 @@
+
+
+
+PASS
+WebKit bug #132103: Crash applying editing commands from iframe onload event.

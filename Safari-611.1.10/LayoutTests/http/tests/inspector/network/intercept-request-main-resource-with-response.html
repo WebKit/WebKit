@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.interceptRequestWithResponse");
+
+    suite.addTestCase({
+        name: "Network.interceptRequest.MainResource with response",
+        description: "Main resource uses request interception on next page load and fulfills request",
+        async test() {
+            let localResourceOverride = WI.LocalResourceOverride.create("http://127.0.0.1:8000/inspector/network/intercept-request-main-resource-with-response.html", WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork, {
+                responseMIMEType: "text/html",
+                responseContent: `<!DOCTYPE html><html><head><script src="../resources/inspector-test.js"></`+`script></head><body><p>Overridden page content</p><script>alert("REPLACED HTML CONTENT"); TestPage.completeTest();</`+`script></body></html>`,
+                responseBase64Encoded: false,
+                responseStatus: 200,
+                responseStatusText: "OK",
+                responseHeaders: {},
+            });
+            WI.networkManager.addLocalResourceOverride(localResourceOverride);
+
+            await InspectorTest.reloadPage({ignoreCache: false, revalidateAllResources: true});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test request interception intercepting the main resource load with response.</p>
+<script>alert("ORIGINAL HTML CONTENT");</script>
+</body>
+</html>

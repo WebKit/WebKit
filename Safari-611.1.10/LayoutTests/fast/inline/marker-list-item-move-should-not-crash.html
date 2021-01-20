@@ -1,0 +1,13 @@
+<style>
+:matches(::marker) {
+   all: inherit;
+}
+</style>
+
+<li>Pass if no crash.</li>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.offsetHeight;
+document.linkColor = "foobar";
+</script>

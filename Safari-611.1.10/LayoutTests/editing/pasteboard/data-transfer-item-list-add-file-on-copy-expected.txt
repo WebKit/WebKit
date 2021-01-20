@@ -1,0 +1,314 @@
+Copy this text!
+To manually test, copy the above text. The output below dumps DataTransfer state following each operation,
+
+described directly above the output text for each step. The DataTransfer state should be consistent with the
+
+operation performed at each step.
+
+
+1. After adding a string
+{
+    "data": {
+        "text/plain": "hello world"
+    },
+    "items": [
+        {
+            "type": "text/plain",
+            "kind": "string",
+            "file": null
+        }
+    ],
+    "files": []
+}
+
+2. After adding a file of custom type
+{
+    "data": {
+        "Files": "",
+        "text/plain": "hello world"
+    },
+    "items": [
+        {
+            "type": "text/plain",
+            "kind": "string",
+            "file": null
+        },
+        {
+            "type": "custom",
+            "kind": "file",
+            "file": {
+                "name": "foo",
+                "bytes": 64,
+                "type": "custom"
+            }
+        }
+    ],
+    "files": [
+        {
+            "name": "foo",
+            "bytes": 64,
+            "type": "custom"
+        }
+    ]
+}
+
+3. After adding the first plain text file
+{
+    "data": {
+        "Files": "",
+        "text/plain": "hello world"
+    },
+    "items": [
+        {
+            "type": "text/plain",
+            "kind": "string",
+            "file": null
+        },
+        {
+            "type": "custom",
+            "kind": "file",
+            "file": {
+                "name": "foo",
+                "bytes": 64,
+                "type": "custom"
+            }
+        },
+        {
+            "type": "text/plain",
+            "kind": "file",
+            "file": {
+                "name": "first.txt",
+                "bytes": 72,
+                "type": "text/plain"
+            }
+        }
+    ],
+    "files": [
+        {
+            "name": "foo",
+            "bytes": 64,
+            "type": "custom"
+        },
+        {
+            "name": "first.txt",
+            "bytes": 72,
+            "type": "text/plain"
+        }
+    ]
+}
+
+4. After removing the last file
+{
+    "data": {
+        "Files": "",
+        "text/plain": "hello world"
+    },
+    "items": [
+        {
+            "type": "text/plain",
+            "kind": "string",
+            "file": null
+        },
+        {
+            "type": "custom",
+            "kind": "file",
+            "file": {
+                "name": "foo",
+                "bytes": 64,
+                "type": "custom"
+            }
+        }
+    ],
+    "files": [
+        {
+            "name": "foo",
+            "bytes": 64,
+            "type": "custom"
+        }
+    ]
+}
+removedItem.getAsFile() should be null: null
+
+5. After adding an HTML string
+{
+    "data": {
+        "Files": "",
+        "text/plain": "hello world",
+        "text/html": "<a>goodbye world</a>"
+    },
+    "items": [
+        {
+            "type": "text/plain",
+            "kind": "string",
+            "file": null
+        },
+        {
+            "type": "custom",
+            "kind": "file",
+            "file": {
+                "name": "foo",
+                "bytes": 64,
+                "type": "custom"
+            }
+        },
+        {
+            "type": "text/html",
+            "kind": "string",
+            "file": null
+        }
+    ],
+    "files": [
+        {
+            "name": "foo",
+            "bytes": 64,
+            "type": "custom"
+        }
+    ]
+}
+
+6. After adding another plain text file
+{
+    "data": {
+        "Files": "",
+        "text/plain": "hello world",
+        "text/html": "<a>goodbye world</a>"
+    },
+    "items": [
+        {
+            "type": "text/plain",
+            "kind": "string",
+            "file": null
+        },
+        {
+            "type": "custom",
+            "kind": "file",
+            "file": {
+                "name": "foo",
+                "bytes": 64,
+                "type": "custom"
+            }
+        },
+        {
+            "type": "text/html",
+            "kind": "string",
+            "file": null
+        },
+        {
+            "type": "text/plain",
+            "kind": "file",
+            "file": {
+                "name": "second.txt",
+                "bytes": 27,
+                "type": "text/plain"
+            }
+        }
+    ],
+    "files": [
+        {
+            "name": "foo",
+            "bytes": 64,
+            "type": "custom"
+        },
+        {
+            "name": "second.txt",
+            "bytes": 27,
+            "type": "text/plain"
+        }
+    ]
+}
+
+7. After removing the custom file
+{
+    "data": {
+        "Files": "",
+        "text/plain": "hello world",
+        "text/html": "<a>goodbye world</a>"
+    },
+    "items": [
+        {
+            "type": "text/plain",
+            "kind": "string",
+            "file": null
+        },
+        {
+            "type": "text/html",
+            "kind": "string",
+            "file": null
+        },
+        {
+            "type": "text/plain",
+            "kind": "file",
+            "file": {
+                "name": "second.txt",
+                "bytes": 27,
+                "type": "text/plain"
+            }
+        }
+    ],
+    "files": [
+        {
+            "name": "second.txt",
+            "bytes": 27,
+            "type": "text/plain"
+        }
+    ]
+}
+removedItem.getAsFile() should be null: null
+
+8. After removing the HTML string
+{
+    "data": {
+        "Files": "",
+        "text/plain": "hello world"
+    },
+    "items": [
+        {
+            "type": "text/plain",
+            "kind": "string",
+            "file": null
+        },
+        {
+            "type": "text/plain",
+            "kind": "file",
+            "file": {
+                "name": "second.txt",
+                "bytes": 27,
+                "type": "text/plain"
+            }
+        }
+    ],
+    "files": [
+        {
+            "name": "second.txt",
+            "bytes": 27,
+            "type": "text/plain"
+        }
+    ]
+}
+removedItem.getAsFile() should be null: null
+
+9. After removing the second text file
+{
+    "data": {
+        "text/plain": "hello world"
+    },
+    "items": [
+        {
+            "type": "text/plain",
+            "kind": "string",
+            "file": null
+        }
+    ],
+    "files": []
+}
+removedItem.getAsFile() should be null: null
+
+10. After removing the plain text string
+{
+    "data": {},
+    "items": [],
+    "files": []
+}
+removedItem.getAsFile() should be null: null
+The DataTransfer's FileList should be the same object: true
+

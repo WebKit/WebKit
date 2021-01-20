@@ -1,0 +1,37 @@
+
+A paragraph with a single line
+
+This tests caret browsing for html select elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS axCombo.role is 'AXRole: AXComboBox'
+PASS axMenuItemFoo.role is 'AXRole: AXMenuItem'
+PASS axPar.role is 'AXRole: AXParagraph'
+PASS axCombo.isFocusable is true
+PASS axMenuItemFoo.isFocusable is false
+PASS axMenuItemBar.isFocusable is false
+PASS axMenuItemFoo.isSelectable is true
+PASS axMenuItemBar.isSelectable is true
+PASS axPar.isFocusable is true
+PASS axCombo.isFocused is false
+PASS axMenuItemFoo.isSelected is true
+PASS axMenuItemBar.isSelected is false
+PASS axPar.isFocused is false
+PASS axCombo.isFocused is true
+PASS axMenuItemFoo.isSelected is true
+PASS axMenuItemBar.isSelected is false
+PASS axPar.isFocused is false
+PASS axCombo.isFocused is true
+PASS axMenuItemFoo.isSelected is false
+PASS axMenuItemBar.isSelected is true
+PASS axPar.isFocused is false
+PASS axCombo.isFocused is false
+PASS axMenuItemFoo.isSelected is false
+PASS axMenuItemBar.isSelected is true
+PASS axPar.isFocused is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

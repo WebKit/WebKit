@@ -1,0 +1,9 @@
+Test that, when RequireUserGestureForAudioRateChange is set, starting playback of an audio file requires a user gesture.
+
+
+RUN(internals.setMediaElementRestrictions(video, "RequireUserGestureForAudioRateChange"))
+RUN(video.src = findMediaFile('video', 'content/test'))
+RUN(video.play().then(resolvePromise, rejectPromise))
+Promise correctly rejected.
+END OF TEST
+

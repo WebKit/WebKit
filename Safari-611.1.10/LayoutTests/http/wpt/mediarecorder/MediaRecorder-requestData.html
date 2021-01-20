@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+<head>
+    <title>MediaRecorder Dataavailable</title>
+    <link rel="help" href="https://w3c.github.io/mediacapture-record/MediaRecorder.html#mediarecorder">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <script src="../common/canvas-tests.js"></script>
+    <link rel="stylesheet" href="../common/canvas-tests.css">
+</head>
+<body>
+<div>
+    <video id="player">
+    </video>
+</div>
+<div>
+    <canvas id="canvas" width="200" height="200">
+    </canvas>
+    <canvas id="frame" width="200" height="200">
+    </canvas>
+</div>
+<script>
+    if (window.internals)
+        window.internals.setUseGPUProcessForWebRTC(true);
+
+    var context;
+    var drawStartTime;
+
+    function createVideoStream() {
+        const canvas = document.getElementById("canvas");
+        context = canvas.getContext('2d');
+        return canvas.captureStream();
+    }
+
+    function doRedImageDraw() {
+        if (context) {
+            context.fillStyle = "#ff0000";
+            context.fillRect(0, 0, 200, 200);
+            if (Date.now() - drawStartTime < 500) {
+                window.requestAnimationFrame(doRedImageDraw);
+            } else {
+                drawStartTime = Date.now();
+                doGreenImageDraw();
+            }
+        }
+    }
+
+    function doGreenImageDraw() {
+        if (context) {
+            context.fillStyle = "#00ff00";
+            context.fillRect(0, 0, 200, 200);
+            if (Date.now() - drawStartTime < 2000) {
+                window.requestAnimationFrame(doGreenImageDraw);
+            }
+        }
+    }
+
+    function checkForEmptyBlobCount() {
+        if (window.internals)
+            return internals.usingAppleInternalSDK();
+        return true;
+    }
+
+    async_test(t => {
+        const video = createVideoStream();
+        const recorder = new MediaRecorder(video);
+        let nonEmptyBlobCount = 0;
+        recorder.ondataavailable = t.step_func(blobEvent => {
+            if (blobEvent.data.size <= 0 && checkForEmptyBlobCount())
+                return;
+            if (++nonEmptyBlobCount <= 1)
+                return;
+            recorder.stop();
+            clearTimeout(timeout);
+            clearInterval(interval);
+            t.done();
+        });
+        drawStartTime = Date.now();
+        doRedImageDraw();
+
+        recorder.start();
+
+        let interval = setInterval(() => {
+             recorder.requestData();
+        }, 500);
+
+        let timeout = setTimeout(() => {
+            console.log("Got non empty blobs: " + nonEmptyBlobCount);
+            recorder.stop();
+            assert_not_reached();
+        }, 5000);
+    }, 'Verify MediaRecorder requestData returns data progressively');
+</script>
+</body>
+</html>

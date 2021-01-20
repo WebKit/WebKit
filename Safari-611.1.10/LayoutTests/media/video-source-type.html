@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> &lt;source&gt; @type attribute</title>
+
+    <script src=media-file.js></script>
+    <script src=video-test.js></script>
+    <script>
+        waitForEvent("loadstart", function () {
+            video = mediaElement = document.getElementsByTagName('video')[0];
+            testExpected("stripExtension(relativeURL(video.currentSrc))", stripExtension(findMediaFile("video", "content/test")));
+            endTest();
+        });
+    </script>
+</head>
+<body>
+    <video controls>
+        <source src=content/error.mpeg type=video/blahblah>
+        <source src=test.mp4 type=video/x-chicken-face>
+        <source src=test.ogv type=audio/x-higglety-pigglety>
+        <source src=content/test.mp4 type=video/mp4>
+        <source src=content/test.ogv type=video/ogg>
+        <source src=content/error2.mpeg type=video/mpeg>
+    </video>
+</body>
+</html>

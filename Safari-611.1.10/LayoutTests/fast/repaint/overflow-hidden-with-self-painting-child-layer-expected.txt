@@ -1,0 +1,5 @@
+PASS window.internals.repaintRectsAsText().indexOf('200 200') is not -1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

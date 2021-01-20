@@ -1,0 +1,8 @@
+
+FAIL Property counter-set value 'none' assert_true: counter-set doesn't seem to be supported in the computed style expected true got false
+FAIL Property counter-set value 'myCounter' assert_true: counter-set doesn't seem to be supported in the computed style expected true got false
+FAIL Property counter-set value 'myCounter 5' assert_true: counter-set doesn't seem to be supported in the computed style expected true got false
+FAIL Property counter-set value 'myCounter 7 otherCounter 8' assert_true: counter-set doesn't seem to be supported in the computed style expected true got false
+FAIL Property counter-set value 'myCounter otherCounter 8' assert_true: counter-set doesn't seem to be supported in the computed style expected true got false
+FAIL Property counter-set value 'myCounter 7 otherCounter' assert_true: counter-set doesn't seem to be supported in the computed style expected true got false
+

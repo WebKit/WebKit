@@ -1,0 +1,32 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<iframe src="../../content/test.mp4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+<script type="text/javascript">
+
+description("Testing that a media document initially starts with an audio layout and then transitions to a video layout.");
+
+window.jsTestIsAsync = true;
+
+let media;
+
+(function runTestIfReady() {
+    const iframe = document.querySelector("iframe");
+    media = iframe.contentDocument.querySelector("video");
+
+    if (!media) {
+        setTimeout(runTestIfReady);
+        return;
+    }
+
+    // Media initially is laid out as an audio element but then becomes a video.
+    shouldBeTrue("media.classList.contains('audio')");
+    shouldBecomeEqual("media.classList.contains('video')", "true", () => {
+        debug("");
+        iframe.remove();
+        finishJSTest();
+    });
+})();
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

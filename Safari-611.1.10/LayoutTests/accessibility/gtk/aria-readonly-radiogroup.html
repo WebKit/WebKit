@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+  <div id="content">
+    <div role="radiogroup"><div role="radio" id="test1"></div></div>
+    <div role="radiogroup" aria-readonly="true"><div role="radio" id="test2"></div></div>
+    <div role="radiogroup" aria-readonly="false"><div role="radio" id="test3"></div></div>
+  </div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This verifies ARIA radio buttons base their readonly value on the containing radio group.");
+    if (window.accessibilityController) {
+        for (var i = 1; i <= 3; i++) {
+            var axElement = accessibilityController.accessibleElementById("test" + i);
+            debug("test" + i + " AXValue is settable: : " + axElement.isAttributeSettable("AXValue"));
+        }
+
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

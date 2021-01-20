@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<meta http-equiv="Content-Security-Policy" content="sandbox">
+</head>
+<body>
+<p>This tests that the Content Security Policy <code>sandbox</code> directive is ignored when contained in a policy defined via an HTML meta element.</p>
+<script>alert("PASS executed script.")</script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test verification with HMAC SHA-512 using an imported key");
+
+jsTestIsAsync = true;
+
+var extractable = false;
+var text = asciiToUint8Array("Hello, World!");
+var hmacImportParams = {
+    name: "hmac",
+    hash: "sha-512",
+}
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+var signature = hexStringToUint8Array("74b22e7422bd3d8562294040b8e9ff08849cf694d3f7729e02a111647b290058af5e1ca8321e5d0f512b5a55a287b39762fae85bef73611d0bddd0b3ddf252ec");
+
+crypto.subtle.importKey("raw", rawKey, hmacImportParams, extractable, ["sign", "verify"]).then(function(key) {
+    return crypto.subtle.verify("hmac", key, signature, text);
+}).then(function(result) {
+    verified = result;
+
+    shouldBeTrue("verified");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

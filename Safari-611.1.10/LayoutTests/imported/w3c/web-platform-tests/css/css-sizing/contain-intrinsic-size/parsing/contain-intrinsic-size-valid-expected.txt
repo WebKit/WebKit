@@ -1,0 +1,6 @@
+
+FAIL e.style['contain-intrinsic-size'] = "auto" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['contain-intrinsic-size'] = "1px" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['contain-intrinsic-size'] = "2em 3px" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['contain-intrinsic-size'] = "5px 5px" should set the property value assert_not_equals: property should be set got disallowed value ""
+

@@ -1,0 +1,3 @@
+Test that the CSS parser accepts caps-lock-indicator as a -webkit-appearance value.
+
+PASS

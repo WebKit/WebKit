@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpResourceLoadCallbacks();
+    testRunner.waitUntilDone();
+}
+
+onload = function() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</head>
+<body>
+<p>Test passes if WebKit preserves the request fragment identifier after the redirection.</p>
+<iframe src="resources/redirect-preserves-fragment.php#foo"></iframe>
+</body>
+</html>

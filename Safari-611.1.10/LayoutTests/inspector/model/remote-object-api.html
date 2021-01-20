@@ -1,0 +1,178 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+window.testObject = {
+    1: true,
+    "name": "Favorites",
+    "size": 456,
+    "data": {x: 42, y: 50},
+};
+
+function test()
+{
+    let object;
+    let suite = InspectorTest.createAsyncSuite("RemoteObject.API");
+
+    suite.addTestCase({
+        name: "RemoteObject.getProperty.SuccessWithCallback.String",
+        async test() {
+            let finished = new WI.WrappedPromise;
+            object.getProperty("name", (error, result, wasThrown) => {
+                InspectorTest.assert(!error, "Should not have a protocol error.");
+
+                InspectorTest.expectFalse(wasThrown, "Should not have a thrown exception.");
+                InspectorTest.expectThat(result.hasValue(), "Fetched property should have a primitive value.");
+                InspectorTest.expectEqual(result.value, "Favorites", "Fetched property value should be as expected.");
+                error ? finished.reject(error) : finished.resolve();
+            });
+
+            await finished.promise;
+        }
+    });
+
+    suite.addTestCase({
+        name: "RemoteObject.getProperty.SuccessWithCallback.Number",
+        async test() {
+            let finished = new WI.WrappedPromise;
+            object.getProperty(1, (error, result, wasThrown) => {
+                InspectorTest.assert(!error, "Should not have a protocol error.");
+
+                InspectorTest.expectFalse(wasThrown, "Should not have a thrown exception.");
+                InspectorTest.expectThat(result.hasValue(), "Fetched property should have a primitive value.");
+                InspectorTest.expectEqual(result.value, true, "Fetched property value should be as expected.");
+                error ? finished.reject(error) : finished.resolve();
+            });
+
+            await finished.promise;
+        }
+    });
+
+    suite.addTestCase({
+        name: "RemoteObject.getProperty.NotFoundWithCallback",
+        async test() {
+            let finished = new WI.WrappedPromise;
+            object.getProperty("doesNotExist", (error, result, wasThrown) => {
+                InspectorTest.assert(!error, "Should not have a protocol error.");
+
+                InspectorTest.expectFalse(wasThrown, "Should not have a thrown exception.");
+                InspectorTest.expectThat(result.hasValue(), "Fetched property should have a primitive value.");
+                InspectorTest.expectEqual(result.value, undefined, "Fetched property value should be as expected.");
+                error ? finished.reject(error) : finished.resolve();
+            });
+
+            await finished.promise;
+        }
+    });
+
+    suite.addTestCase({
+        name: "RemoteObject.getProperty.FailureWithCallback",
+        async test() {
+            let finished = new WI.WrappedPromise;
+            object.getProperty({}, (error, result, wasThrown) => {
+                InspectorTest.assert(!error, "Should not have a protocol error.");
+
+                InspectorTest.expectThat(wasThrown, "Should have a thrown exception.");
+                InspectorTest.expectFalse(result.hasValue(), "Fetched property should not have a primitive value.");
+                InspectorTest.expectEqual(result.type, "object", "Fetched property value should have type `object`.");
+                InspectorTest.expectEqual(result.subtype, "error", "Fetched property value should have subtype `error`.");
+
+                error ? finished.reject(error) : finished.resolve();
+            });
+
+            await finished.promise;
+        }
+    });
+
+    suite.addTestCase({
+        name: "RemoteObject.getProperty.SuccessWithPromise.String",
+        async test() {
+            let result = await object.getProperty("name");
+            InspectorTest.expectThat(result.hasValue(), "Fetched property should have a primitive value.");
+            InspectorTest.expectEqual(result.value, "Favorites", "Fetched property value should be as expected.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "RemoteObject.getProperty.SuccessWithPromise.Number",
+        async test() {
+            let result = await object.getProperty(1);
+            InspectorTest.expectThat(result.hasValue(), "Fetched property should have a primitive value.");
+            InspectorTest.expectEqual(result.value, true, "Fetched property value should be as expected.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "RemoteObject.getProperty.FailureWithPromise",
+        async test() {
+            await InspectorTest.expectException(async () => {
+                await object.getProperty({});
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "RemoteObject.fetchProperties.Success",
+        async test() {
+            let keys = ["name", "size", "data"];
+            let result = await object.fetchProperties(keys);
+
+            InspectorTest.expectEqual(Object.keys(result).length, 3, "Result object should contain three keys.");
+            for (let key of keys)
+                InspectorTest.expectThat(key in result, `Result object should contain fetched property '${key}'.`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "RemoteObject.fetchProperties.SuccessWithDuplicateKey",
+        async test() {
+            let keys = ["name", "size", "data", "data"];
+            let result = await object.fetchProperties(keys);
+
+            InspectorTest.expectEqual(Object.keys(result).length, 3, "Result object should contain three keys.");
+            for (let key of new Set(keys))
+                InspectorTest.expectThat(key in result, `Result object should contain fetched property '${key}'.`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "RemoteObject.fetchProperties.SuccessWithOutputObject",
+        async test() {
+            let resultObject = {"existingKey": true};
+            let keys = ["name", "size", "data"];
+            let returnValue = await object.fetchProperties(keys, resultObject);
+            InspectorTest.expectEqual(returnValue, resultObject, "Resolved value should be the passed-in result object.");
+            for (let key of keys)
+                InspectorTest.expectThat(key in resultObject, `Result object should contain fetched property '${key}'.`);
+
+            let {name, size, data} = returnValue;
+            InspectorTest.expectEqual(name, "Favorites", `Fetched property 'name' should equal 'Favorites'.`);
+            InspectorTest.expectEqual(size, 456, `Fetched property 'size' should equal '456'.`);
+            InspectorTest.expectThat(data instanceof WI.RemoteObject, `Fetched property 'data' should be a WI.RemoteObject.`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "RemoteObject.fetchProperties.FailureWithInvalidKey",
+        async test() {
+            let keys = ["name", "size", {}];
+            await InspectorTest.expectException(async () => {
+                await object.fetchProperties(keys);
+            });
+        }
+    });
+
+    InspectorTest.evaluateInPage(`window.testObject`).then((result) => {
+        object = result;
+        InspectorTest.assert(object instanceof WI.RemoteObject, "Should get a remote object.");
+
+        suite.runTestCasesAndFinish();
+    }).catch(reportUnhandledRejection);
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing basic API and convenience methods of RemoteObject.</p>
+</body>
+</html>

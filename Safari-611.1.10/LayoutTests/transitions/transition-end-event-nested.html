@@ -1,0 +1,95 @@
+<html>
+<head>
+  <style>
+    .box {
+      position: relative;
+      left: 0;
+      height: 100px;
+      width: 100px;
+      margin: 10px;
+      background-color: blue;
+      -webkit-transition-property: width, left, background-color, height, top;
+      -webkit-transition-duration: 0.2s;
+    }
+    
+    .box1 {
+      left: 50px;
+    }
+    
+    .box2 {
+      background-color: red;
+    }
+    
+    .box3 {
+      width: 150px;
+      -webkit-transition-duration: 0.3s;
+    }
+    
+  </style>
+  <script src="transition-end-event-helpers.js"></script>
+  <script type="text/javascript">
+    
+    var expectedEndEvents = [
+      // [property-name, element-id, elapsed-time, listen]
+      ["background-color", "box2", 0.2, false],
+      ["left", "box1", 0.2, false],
+      ["width", "box3", 0.3, false],
+    ];
+    
+    function handleEndEvent2(event)
+    {
+      recordTransitionEndEvent(event);
+    }
+
+    function startTransition2()
+    {
+      var box = document.getElementById("box3");
+      box.addEventListener("webkitTransitionEnd", handleEndEvent2, false);
+      box.className = "box box3";
+    }
+
+    function handleEndEvent1(event)
+    {
+      recordTransitionEndEvent(event);
+      
+      setTimeout(startTransition2, 100);
+    }
+
+    function startTransition1()
+    {
+      var box = document.getElementById("box2");
+      box.addEventListener("webkitTransitionEnd", handleEndEvent1, false);
+      box.className = "box box2";
+    }
+
+    function handleEndEvent(event)
+    {
+      recordTransitionEndEvent(event);
+      
+      setTimeout(startTransition1, 100);
+    }
+
+    function setupTest()
+    {
+      var box = document.getElementById("box1");
+      box.addEventListener("webkitTransitionEnd", handleEndEvent, false);
+      box.className = "box box1";
+    }
+    
+    runTransitionTest(expectedEndEvents, setupTest);
+  </script>
+</head>
+<body>
+
+<p>Initiating transitions on various properties of all boxes.</p>
+
+<div id="container">
+  <div id="box1" class="box"></div>
+  <div id="box2" class="box"></div>
+  <div id="box3" class="box"></div>
+</div>
+
+<div id="result"></div>
+
+</body>
+</html>

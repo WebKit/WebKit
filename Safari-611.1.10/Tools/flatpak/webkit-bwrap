@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# Copyright (C) 2020 Igalia S.L.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+# Boston, MA 02110-1301, USA.
+
+import os
+import itertools
+import shlex
+import sys
+import tempfile
+
+scriptdir = os.path.abspath(os.path.dirname(__file__))
+
+def main(args: list) -> int:
+    tmpdir = tempfile.gettempdir()
+    source_root = os.path.normpath(os.path.abspath(os.path.join(scriptdir, '../../')))
+    bind_mounts = {
+        "/app/webkit":  source_root,
+        # Access to /run/host is required by the crash log reporter.
+        f"/run/host{tmpdir}": f"{tmpdir}",
+        "/run/shm": "/dev/shm",
+    }
+
+    flatpak_user_dir = os.environ.get("WEBKIT_FLATPAK_USER_DIR")
+    if flatpak_user_dir:
+        bind_mounts["/var/tmp"] = os.path.join(flatpak_user_dir, "var", "tmp")
+
+    try_bind_mounts = {
+        "/run/icecc": "/var/run/icecc"
+    }
+
+    build_path = os.environ.get("WEBKIT_BUILD_DIR_BIND_MOUNT")
+    if build_path:
+        dest, src = build_path.split(":")
+        try_bind_mounts[dest] = src
+
+    coredumps_dir = os.environ.get("WEBKIT_CORE_DUMPS_DIRECTORY")
+    if coredumps_dir:
+        try_bind_mounts[coredumps_dir] = coredumps_dir
+
+    xdg_runtime_dir = os.environ.get("XDG_RUNTIME_DIR")
+    if xdg_runtime_dir:
+        pw_socket = os.path.join(xdg_runtime_dir, "pipewire-0")
+        try_bind_mounts[pw_socket] = pw_socket
+
+    bwrap_args = ["bwrap", ]
+    for dst, src in bind_mounts.items():
+        bwrap_args.extend(("--bind", src, dst))
+
+    for dst, src in try_bind_mounts.items():
+        bwrap_args.extend(("--bind-try", src, dst))
+
+    for env in os.environ.keys():
+        if env.startswith("LC_") or env == "LANGUAGE":
+            bwrap_args.extend(("--unsetenv", env))
+    bwrap_args.extend(("--setenv", "LANG", "en_US.UTF-8"))
+
+    bwrap_args.extend(("--setenv", "PATH", "/usr/bin:/usr/lib/sdk/rust-stable/bin/"))
+
+    command_line = ' '.join(map(shlex.quote, itertools.chain(bwrap_args, args)))
+
+    # os.system return code behaves like os.wait. A 16 bit number with the
+    # signal in the lower byte and, if the signal is zero, the exit code in
+    # the high byte.
+    return os.system(command_line) >> 8
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

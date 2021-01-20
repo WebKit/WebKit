@@ -1,0 +1,47 @@
+<p>This tests that modifier keys are propagated to the fake mouse event created when you press return and a link has focus.</p>
+<p>If the test succeeds, you should see six "PASS" messages below.</p>
+<p>This is the <a id="link" href="#" onclick="checkKeyState(event)" onmousedown="checkKeyState(event)" onmouseuup="checkKeyState(event)">link</a> used for testing.</p>
+<pre id="console">
+</pre>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var link = document.getElementById("link");
+link.focus();
+
+var expectedCtrl;
+var expectedAlt;
+var expectedShift;
+var expectedMeta;
+
+function test(ctrlKey, altKey, shiftKey, metaKey)
+{
+    expectedCtrl = ctrlKey;
+    expectedAlt = altKey;
+    expectedShift = shiftKey;
+    expectedMeta = metaKey;
+    var event = document.createEvent("KeyboardEvents");
+    event.initKeyboardEvent("keydown", true, true, document.defaultView, "Enter", 0, ctrlKey, altKey, shiftKey, metaKey, false);
+    link.dispatchEvent(event);
+}
+
+function checkKeyState(event)
+{
+    if (event.ctrlKey == expectedCtrl && event.altKey == expectedAlt && event.shiftKey == expectedShift && event.metaKey == expectedMeta)
+        document.getElementById("console").innerHTML += "PASS: " + event.type + " event had all the right key state.\n";
+    else
+        document.getElementById("console").innerHTML += "FAIL: " + event.type + " event did not have the right key state.\n";
+}
+
+test(false, false, false, false);
+test(true, false, false, false);
+test(false, true, false, false);
+test(false, false, true, false);
+test(false, false, false, true);
+test(true, true, true, true);
+
+link.blur();
+
+</script>

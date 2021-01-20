@@ -1,0 +1,148 @@
+<html>
+    <head>
+        <title>Test for WebKit bug 15106: Dragging text inside an element with "user-drag: element" and "user-select: none" should initiate a drag</title>
+        <style type="text/css">
+            .test {
+                background-color: #ccc;
+                border: 1px solid #333;
+                width: 200px;
+                text-align: center;
+                margin: 10px;
+            }
+
+            .result {
+                float: right;
+            }
+
+            body > div {
+                clear: both;
+                padding-top: 15px;
+            }
+
+            #draggable {
+                -webkit-user-drag: element;
+            }
+
+            #unselectable {
+                -webkit-user-select: none;
+            }
+
+            #draggable-unselectable {
+                -webkit-user-drag: element;
+                -webkit-user-select: none;
+            }
+
+            .fail {
+                color: red;
+            }
+
+            .success {
+                color: green;
+            }
+        </style>
+
+        <script type="text/javascript">
+            function shouldBe(resultElement, expected, actual) {
+                var msg = document.createElement('p');
+                if (expected == actual) {
+                    msg.innerHTML = "<span class='success'>SUCCESS</span> Expected '" + expected + "' and got it.";
+                } else {
+                    msg.innerHTML = "<span class='fail'>FAIL</span> Expected '" + expected + "' but got '" + actual + "'.";
+                }
+                resultElement.appendChild(msg);
+            }
+
+            function compareResults(id, expectedResult, actualResult) {
+                var resultElement = document.getElementById(id + '-result');
+                shouldBe(resultElement, expectedResult.length, actualResult.length);
+                for (var i = 0; i < expectedResult.length; i++) {
+                    shouldBe(resultElement, expectedResult[i], actualResult[i]);
+                }
+            }
+
+            function registerEventListenersWithResults(resultArray) {
+                document.ondragstart = function() {
+                    resultArray.push('dragstart');
+                }
+
+                document.onmousedown = function(event) {
+                    resultArray.push('mousedown');
+                }
+
+                document.onmouseup = function(event) {
+                    resultArray.push('mouseup');
+                    resultArray.push(window.getSelection().toString() == '' ? 'No selection' : 'Selection');
+                }
+            }
+
+            function dragFromTopOfElement(element, dragOffset) {
+                var startX = element.offsetLeft + element.offsetWidth / 2;
+                var startY = element.offsetTop + 1.0;
+                eventSender.mouseMoveTo(startX, startY);
+                eventSender.mouseDown();
+                eventSender.mouseMoveTo(startX, startY);
+
+                var endX = startX + dragOffset.x;
+                var endY = startY + dragOffset.y;
+                eventSender.mouseMoveTo(endX, endY);
+
+                eventSender.mouseUp()
+            }
+
+            function runTest() {
+                if (!window.eventSender)
+                    return;
+
+                if (window.testRunner)
+                    testRunner.dumpAsText();
+
+                var draggableResults = [];
+                registerEventListenersWithResults(draggableResults);
+                var draggable = document.getElementById('draggable');
+                dragFromTopOfElement(draggable, {x: 0, y: draggable.offsetHeight / 2});
+                compareResults("draggable", ["mousedown", "mouseup", "Selection"], draggableResults);
+
+                var unselectableResults = [];
+                registerEventListenersWithResults(unselectableResults);
+                var unselectable = document.getElementById('unselectable');
+                dragFromTopOfElement(unselectable, {x: 0, y: unselectable.offsetHeight / 2});
+                compareResults("unselectable", ["mousedown", "mouseup", "No selection"], unselectableResults);
+
+                var draggableUnselectableResults = [];
+                registerEventListenersWithResults(draggableUnselectableResults);
+                var draggableUnselectable = document.getElementById('draggable-unselectable');
+                dragFromTopOfElement(draggableUnselectable, {x: 0, y: draggableUnselectable.offsetHeight / 2});
+
+                // <https://bugs.webkit.org/show_bug.cgi?id=26758>: eventSender.mouseUp during a drag can dispatch a duplicate mouseup event on Mac OS X
+                if (draggableUnselectableResults.length == 6 && draggableUnselectableResults[4] == "mouseup" && draggableUnselectableResults[5] == "No selection")
+                    draggableUnselectableResults = draggableUnselectableResults.slice(0, 4);
+
+                compareResults("draggable-unselectable", ["mousedown", "dragstart", "mouseup", "No selection"], draggableUnselectableResults);
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <h3>Test for <a href='https://bugs.webkit.org/show_bug.cgi?id=15106'>WebKit bug 15106</a>: Dragging text inside an element with "user-drag: element" and "user-select: none" should initiate a drag</h3>
+
+        <div>
+            <div id="draggable-result" class="result"></div>
+            <div id="draggable" class="test">
+                This element should be draggable, but initiating a drag from within the text should begin a selection.
+            </div>
+        </div>
+
+        <div>
+            <div id="unselectable-result" class="result"></div>
+            <div id="unselectable" class="test">
+                This element should not be draggable, and initiating a drag from within the text should not begin a selection.
+            </div>
+        </div>
+
+        <div>
+            <div id="draggable-unselectable-result" class="result"></div>
+            <div id="draggable-unselectable" class="test">
+                This element should be draggable, and initiating a drag from within the text should drag the element.
+            </div>
+        </div>
+    </body>
+</html>

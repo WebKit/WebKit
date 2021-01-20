@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 776x39
+          text run at (0,0) width 776: "This test validate rendering of emoji sequences and emoji with modifiers. Horse racing emoji no longer supports skin tone. Added"
+          text run at (0,20) width 99: "skin tone to spy."
+      RenderBlock {DIV} at (0,40) size 784x20
+        RenderText {#text} at (0,0) size 12x19
+          text run at (0,0) width 12: "\x{D83D}\x{DE01}"
+      RenderBlock {DIV} at (0,60) size 784x380
+        RenderText {#text} at (0,1) size 64x73
+          text run at (0,1) width 64: "\x{D83D}\x{DC66}\x{D83C}\x{DFFB}\x{D83D}\x{DC69}\x{D83C}\x{DFFC}\x{D83D}\x{DC66}\x{D83C}\x{DFFE}\x{2764}\x{FE0F}\x{D83D}\x{DC8B}\x{D83D}\x{DD75}\x{D83C}\x{DFFB}\x{D83C}\x{DFC7}\x{D83C}\x{DFFB}"
+        RenderBR {BR} at (64,59) size 0x0
+        RenderText {#text} at (0,77) size 48x73
+          text run at (0,77) width 48: "\x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC66} \x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC67} \x{D83D}\x{DC6A} \x{D83D}\x{DC66}\x{D83C}\x{DFFB}\x{D83D}\x{DC69}\x{D83C}\x{DFFC}\x{D83D}\x{DC66}\x{D83C}\x{DFFE}"
+        RenderBR {BR} at (48,135) size 0x0
+        RenderText {#text} at (0,153) size 64x73
+          text run at (0,153) width 64: "\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC66} \x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC67} \x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC67}\x{200D}\x{D83D}\x{DC66} \x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC66}\x{200D}\x{D83D}\x{DC66} \x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC67}\x{200D}\x{D83D}\x{DC67}"
+        RenderBR {BR} at (64,211) size 0x0
+        RenderText {#text} at (0,229) size 64x73
+          text run at (0,229) width 64: "\x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC66} \x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC67} \x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC67}\x{200D}\x{D83D}\x{DC66} \x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC66}\x{200D}\x{D83D}\x{DC66} \x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC67}\x{200D}\x{D83D}\x{DC67}"
+        RenderBR {BR} at (64,287) size 0x0
+        RenderText {#text} at (0,305) size 384x73
+          text run at (0,305) width 384: "\x{D83D}\x{DC69}\x{200D}\x{2764}\x{FE0F}\x{200D}\x{D83D}\x{DC69} \x{D83D}\x{DC68}\x{200D}\x{2764}\x{FE0F}\x{200D}\x{D83D}\x{DC68} \x{D83D}\x{DC69}\x{200D}\x{2764}\x{FE0F}\x{200D}\x{D83D}\x{DC8B}\x{200D}\x{D83D}\x{DC69} \x{D83D}\x{DC68}\x{200D}\x{2764}\x{FE0F}\x{200D}\x{D83D}\x{DC8B}\x{200D}\x{D83D}\x{DC68} \x{D83D}\x{DC69}\x{200D}\x{2764}\x{FE0F}\x{200D}\x{D83D}\x{DC69}"

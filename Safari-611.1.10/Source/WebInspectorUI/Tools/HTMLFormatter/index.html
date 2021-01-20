@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>HTMLFormatter Tool</title>
+
+    <style>:root { color-scheme: light dark; }</style>
+    <link rel="stylesheet" href="../../UserInterface/External/CodeMirror/codemirror.css">
+    <link rel="stylesheet" href="../../UserInterface/Views/Variables.css">
+    <link rel="stylesheet" href="../../UserInterface/Views/CodeMirrorOverrides.css">
+    <link rel="stylesheet" href="../../UserInterface/Views/SyntaxHighlightingDefaultTheme.css">
+    <link rel="stylesheet" href="styles.css">
+
+    <script src="../../UserInterface/External/CodeMirror/codemirror.js"></script>
+    <script src="../../UserInterface/External/CodeMirror/css.js"></script>
+    <script src="../../UserInterface/External/CodeMirror/htmlmixed.js"></script>
+    <script src="../../UserInterface/External/CodeMirror/javascript.js"></script>
+    <script src="../../UserInterface/External/CodeMirror/xml.js"></script>
+    <script src="../../UserInterface/Views/CodeMirrorLocalOverrideURLMode.js"></script>
+    <script src="../../UserInterface/Views/CodeMirrorRegexMode.js"></script>
+
+    <script src="HTMLTreeBuilderDebug.js"></script>
+    <script src="../../UserInterface/External/Esprima/esprima.js"></script>
+    <script src="../../UserInterface/Workers/Formatter/CSSFormatter.js"></script>
+    <script src="../../UserInterface/Workers/Formatter/ESTreeWalker.js"></script>
+    <script src="../../UserInterface/Workers/Formatter/FormatterContentBuilder.js"></script>
+    <script src="../../UserInterface/Workers/Formatter/FormatterUtilities.js"></script>
+    <script src="../../UserInterface/Workers/Formatter/HTMLFormatter.js"></script>
+    <script src="../../UserInterface/Workers/Formatter/HTMLParser.js"></script>
+    <script src="../../UserInterface/Workers/Formatter/HTMLTreeBuilderFormatter.js"></script>
+    <script src="../../UserInterface/Workers/Formatter/JSFormatter.js"></script>
+</head>
+<body>
+    <h1>Debug HTMLFormatter</h1>
+
+    <!-- Controls -->
+    <select id="populate">
+        <option value="html-simple">Simple HTML Document</option>
+        <option value="svg-simple">Simple SVG Document</option>
+        <option value="html-css-js">HTML with Styles and Script</option>
+        <option value="self">Self</option>
+    </select>
+    <select id="source-type">
+        <option value="text/html">HTML</option>
+        <option value="text/xml">XML</option>
+    </select>
+    <button id="format">Format</button>
+    <button id="select-output">Select Output</button>
+    <button id="save-as-url">Save URL</button>
+    <small id="time"></small>
+    <br><br>
+
+    <!-- Editor -->
+    <textarea id="code" name="code"></textarea>
+
+    <!-- Output -->
+    <h3>Formatted</h3>
+    <pre id="pretty"></pre>
+    <h3>Tree</h3>
+    <pre id="debug-tree"></pre>
+    <h3>Tokens</h3>
+    <pre id="debug"></pre>
+
+    <script>
+    // Elements.
+    const populatePicker = document.getElementById("populate");
+    const sourceTypePicker = document.getElementById("source-type");
+    const timeOutput = document.getElementById("time");
+    const prettyPre = document.getElementById("pretty");
+    const debugPre = document.getElementById("debug");
+    const debugTreePre = document.getElementById("debug-tree");
+
+    // Editor.
+    let cm = CodeMirror.fromTextArea(document.getElementById("code"), {lineNumbers: true});
+    cm.setOption("mode", "text/html");
+
+    // Refresh after changes after a short delay.
+    let timer = null;
+    cm.on("change", function(codeMirror, change) {
+        if (timer)
+            clearTimeout(timer)
+        timer = setTimeout(function() {
+            clearTimeout(timer);
+            timer = null;
+            refresh();
+        }, 500);
+    });
+
+    function refresh() {
+        if (timer)
+            clearTimeout(timer);
+
+        // Time the formatter.
+        let sourceType = sourceTypePicker.value === "text/html" ? HTMLFormatter.SourceType.HTML : HTMLFormatter.SourceType.XML;
+        let startTime = Date.now();
+        let formatter = new HTMLFormatter(cm.getValue(), sourceType);
+        let endTime = Date.now();
+
+        // Show debug parser info.
+        let debugText = "";
+        try {
+            let options = {isXML: sourceType === HTMLFormatter.SourceType.XML};
+            let parser = new HTMLParser;
+            let treeBuilder = new HTMLTreeBuilderDebug;
+            parser.parseDocument(cm.getValue(), treeBuilder, options);
+            debugText = treeBuilder.debugText;
+        } catch (error) {
+            debugText = "Parse error: " + JSON.stringify(error, null, 2);
+        }
+
+        // Show debug tree info.
+        let debugTreeText = "";
+        try {
+            let parser = new HTMLParser;
+            let treeBuilder = new HTMLTreeBuilderFormatter;
+            parser.parseDocument(cm.getValue(), treeBuilder);
+            console.log("TreeBuilder DOM", treeBuilder.dom);
+
+            let lines = [];
+            let indentString = "  ";
+            function filter(key, value) {
+                if (key === "children")
+                    return undefined;
+                return value;
+            }
+            function stringifyNode(node) {
+                switch (node.type) {
+                case HTMLTreeBuilderFormatter.NodeType.Text:
+                    return `TEXT: ${JSON.stringify(node.data)}`;
+                case HTMLTreeBuilderFormatter.NodeType.Comment:
+                    return `COMMENT: (${node.data})`;
+                case HTMLTreeBuilderFormatter.NodeType.Doctype:
+                    return `DOCTYPE: (${node.data})`;
+                case HTMLTreeBuilderFormatter.NodeType.CData:
+                    return `CDATA: (${node.data})`;
+                case HTMLTreeBuilderFormatter.NodeType.Error:
+                    return `ERROR: ${node.raw}`;
+                case HTMLTreeBuilderFormatter.NodeType.Node: {
+                    let implicitCloseString = node.implicitClose ? " <implicitClose>" : "";
+                    let attributesString = node.attributes ? " " + JSON.stringify(node.attributes) : "";
+                    return `NODE: ${node.name}${attributesString}${implicitCloseString}`;
+                }
+                }
+            }
+            function visit(node, indent) {
+                lines.push(indentString.repeat(indent) + stringifyNode(node));
+                if (node.children) {
+                    for (let child of node.children)
+                        visit(child, indent + 1);
+                }
+            }
+            for (let topLevelNode of treeBuilder.dom)
+                visit(topLevelNode, 0);
+
+            debugTreeText = lines.join("\n");
+        } catch (error) {
+            debugTreeText = "TreeBuilder error: " + JSON.stringify(error, null, 2);
+        }
+
+        // Output the results.
+        timeOutput.innerText = (endTime - startTime) + "ms";
+        prettyPre.innerText = formatter.formattedText;
+        debugPre.innerText = debugText;
+        debugTreePre.innerText = debugTreeText;
+    }
+
+    setTimeout(refresh);
+
+    // Format button.
+    document.getElementById("format").addEventListener("click", (event) => {
+        refresh();
+    });
+
+    // Select output button.
+    document.getElementById("select-output").addEventListener("click", function(event) {
+        let range = document.createRange();
+        range.selectNodeContents(prettyPre);
+        let selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+    });
+
+    // Save as URL button.
+    document.getElementById("save-as-url").addEventListener("click", (event) => {
+        let content = cm.getValue();
+        let populate = populatePicker.value;
+        let sourceType = sourceTypePicker.value;
+        window.location.search = `?content=${encodeURIComponent(content)}&populate=${encodeURIComponent(populate)}&sourceType=${encodeURIComponent(sourceType)}`;
+    });
+
+    const simpleHTML = `<!DOCTYPE html>
+<html>
+<head>
+<title>Test</title>
+<script src="js/script.js"></`+`script>
+</head>
+<body>
+<!-- Comment -->
+<div class="foo"><input type=text><br><p>Test</p></div>
+<p><![CDATA[ Test ]]></p>
+</body>
+</html>
+`;
+    const simpleSVG = `<?xml version="1.0"?>
+<!-- Copyright © 2014 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 13 14">
+<rect fill="none" stroke="currentColor" x="0.5" y="0.5" width="12" height="13" rx="2"/>
+<rect fill="none" stroke="currentColor" stroke-width="1" x="3" y="6" width="7" height="2" rx="0.5"/>
+</svg>
+`;
+
+    const htmlcssjs = `<!DOCTYPE html>
+<html>
+<head>
+<title>Test</title>
+<style>body,div,.foo{color:red}p{color:blue}</style>
+<script>(function(a,b,c){let sum = a; sum += b; sum += c; return sum;})()</`+`script>
+</head>
+<body>
+<!-- Comment -->
+<div class="foo"><input type=text><br><p>Test</p></div>
+</body>
+</html>
+`;
+
+    // Populate picker
+    function updateContentFromPicker() {
+        let value = populatePicker.value;
+        let content = simpleHTML;
+        switch (value) {
+        case "html-simple":
+            content = simpleHTML;
+            break;
+        case "svg-simple":
+            content = simpleSVG;
+            break;
+        case "html-css-js":
+            content = htmlcssjs;
+            break;
+        case "self":
+            content = document.documentElement.outerHTML;
+            break;
+        }
+        cm.setValue(content);
+    }
+
+    populatePicker.addEventListener("change", (event) => {
+        updateContentFromPicker();
+    });
+
+    // Parser mode picker.
+    sourceTypePicker.addEventListener("change", (event) => {
+        cm.setOption("mode", sourceTypePicker.value);
+        refresh();
+    });
+
+    // Restore better initial value from query string.
+    (function() {
+        let queryParams = {};
+        if (window.location.search.length > 0) {
+            let searchString = window.location.search.substring(1);
+            let groups = searchString.split("&");
+            for (let i = 0; i < groups.length; ++i) {
+                let pair = groups[i].split("=");
+                queryParams[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+            }
+        }
+        if (queryParams.populate) {
+            populatePicker.value = queryParams.populate;
+            updateContentFromPicker();
+        }
+        if (queryParams.sourceType) {
+            sourceTypePicker.value = queryParams.sourceType;
+            cm.setOption("mode", sourceTypePicker.value);
+        }
+        if (queryParams.content)
+            cm.setValue(queryParams.content);
+    })();
+    
+    if (!cm.getValue())
+        cm.setValue(simpleHTML);
+    </script>
+</body>
+</html>

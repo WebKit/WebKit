@@ -1,0 +1,45 @@
+<html>
+<head>
+    <title>Test case for Bugzilla 7790</title>
+	<style>
+		.testarea
+		{
+		    background:	red;
+			width: 100px;
+			height: 100px;
+			color: white;
+			text-align: center;
+			font-family: monospace;
+		}
+	</style>
+	<script>
+		function handler(event)
+		{
+            var elem = document.getElementById("click_area");
+			elem.setAttribute("style", "background: green");
+			elem.textContent = "SUCCESS";
+			event.stopPropagation();
+			event.preventDefault();
+		}
+		window.onload = function()
+		{
+			var elem = document.getElementById("click_area");
+            elem.addEventListener('dblclick', handler, false);
+            
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                eventSender.mouseMoveTo(50,50);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+            }
+		}
+	</script>
+</head>
+<body>
+<div id="click_area" class="testarea">FAILURE, no dblclick recieved</div>
+<br>
+<p>Double-click above to test.</p>
+</body>
+</html>

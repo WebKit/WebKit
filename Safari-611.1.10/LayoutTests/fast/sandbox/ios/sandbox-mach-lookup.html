@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description('Regression tests for mach lookup sandbox changes on iOS');
+
+if (window.internals) {
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToXPCServiceName(\"com.apple.WebKit.WebContent\", \"com.apple.apple-extension-service\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToXPCServiceName(\"com.apple.WebKit.WebContent\", \"com.apple.viewservice\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.TextInput\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.awdd\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.cookied\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.iohideventsystem\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.locationd.registration\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.nehelper\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.nesessionmanager\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.nesessionmanager.content-filter\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.pluginkit.pkd\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.powerlog.plxpclogger.xpc\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.system.logger\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.aggregated\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.tccd\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.uikit.viewservice\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.analyticsd\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.distributed_notifications@1v3\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.PowerManagement.control\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.mobileassetd\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.mobileassetd.v2\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.iconservices\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.lsd.mapdb\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.frontboard.systemappservices\")");
+    shouldBeFalse("internals.hasSandboxMachLookupAccessToGlobalName(\"com.apple.WebKit.WebContent\", \"com.apple.runningboard\")");
+}
+</script>
+</head>
+<body>
+</body>

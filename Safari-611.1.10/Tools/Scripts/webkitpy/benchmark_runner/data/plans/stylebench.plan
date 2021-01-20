@@ -1,0 +1,8 @@
+{
+    "timeout": 600,
+    "count": 4,
+    "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/StyleBench/@r227863",
+    "webserver_benchmark_patch": "data/patches/webserver/StyleBench.patch",
+    "entry_point": "index.html",
+    "output_file": "stylebench.result"
+}

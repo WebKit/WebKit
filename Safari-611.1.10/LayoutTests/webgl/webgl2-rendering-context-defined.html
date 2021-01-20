@@ -1,0 +1,8 @@
+<div id="result">PASS if WebGL2RenderingContext is defined.</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+if (typeof WebGL2RenderingContext === "undefined")
+    document.getElementById("result").innerHTML = "FAIL";
+</script>

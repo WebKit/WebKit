@@ -1,0 +1,19 @@
+.group > div {
+    display: inline-block;
+    overflow: hidden;
+    width: 100px;
+    height: 100px;
+    margin: 2px 10px;
+    border: 1px solid black;
+    background-color: gray;
+}
+
+.group img, .group canvas, .group video {
+    height: 100%; width: 100%;
+    display: block;
+}
+.group > *:nth-child(1) * { }
+.group > *:nth-child(2) * { margin-left: 20px; margin-top: 10px; }
+.group > *:nth-child(3) * { }
+.group > *:nth-child(4) * { margin-left: -10px; margin-top: -10px; }
+.group > *:nth-child(5) * { }

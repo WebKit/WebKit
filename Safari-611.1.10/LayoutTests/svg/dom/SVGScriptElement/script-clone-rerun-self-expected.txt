@@ -1,0 +1,2 @@
+This test runs a script that clones and inserts its script element. The script should run exactly once and print PASS:
+PASS

@@ -1,0 +1,30 @@
+
+EVENT(canplaythrough)
+EVENT(play)
+EXPECTED (video.duration == 'Infinity') OK
+-webkit-media-text-track-container: classes: [hidden]
+-webkit-media-show-controls: classes: []
+-webkit-media-controls-current-time-display: classes: [clone six-digit-time]
+-webkit-media-controls-time-remaining-display: classes: [clone six-digit-time]
+-webkit-media-controls-wireless-playback-status: classes: [hidden]
+-webkit-media-controls-wireless-playback-text: classes: []
+-webkit-media-controls-wireless-playback-text-top: classes: []
+-webkit-media-controls-wireless-playback-text-bottom: classes: []
+-webkit-media-controls-panel: classes: [show paused]
+-webkit-media-controls-panel-background-container: classes: []
+-webkit-media-controls-panel-background: classes: [show paused]
+-webkit-media-controls-panel-tint: classes: []
+-webkit-media-controls-play-button: classes: [paused]
+-webkit-media-controls-status-display: classes: []
+none: classes: [mute-box]
+-webkit-media-controls-volume-slider-container: classes: [volume-box uses-ltr-user-interface-layout-direction]
+-webkit-media-controls-volume-slider-container-background: classes: []
+-webkit-media-controls-volume-slider-container-tint: classes: []
+-webkit-media-controls-volume-slider: classes: []
+-webkit-media-controls-mute-button: classes: []
+-webkit-media-controls-wireless-playback-picker-button: classes: [hidden]
+-webkit-media-controls-toggle-closed-captions-button: classes: [hidden]
+-webkit-media-controls-fullscreen-button: classes: []
+TEST(timeline == null || timeline.disabled) OK
+END OF TEST
+

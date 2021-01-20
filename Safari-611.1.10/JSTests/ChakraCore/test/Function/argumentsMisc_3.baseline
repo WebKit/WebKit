@@ -1,0 +1,27 @@
+old.length       : 1
+arguments.length : 5
+Compare the two  : false
+[object Arguments]
+test2
+old.length       : 1
+arguments.length : 5
+Compare the two  : false
+1
+999
+bug1127540: false
+1
+undefined
+2
+undefined
+In Helper : arg1 arg2 arg3
+Arguments : arg1 arg2 arg3
+Formals   : assignToFormal arg2 arg3
+In Helper : arg1 arg2 arg3
+Arguments : arg1 arg2 arg3
+Formals   : assignToFormal arg2 arguments[2]
+First call
+First call
+Second call
+First call
+First call
+Second call

@@ -1,0 +1,13 @@
+This test ensures that the WebGL context has all the constants in the specification.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Canvas.getContext
+PASS All WebGL constants found to have correct values.
+PASS All constants removed from WebGL spec were absent from WebGL context.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+</head>
+<body>
+    <div>
+        <embed id=testPlugin type="application/x-webkit-test-netscape" src="data:text/plain," test="evaluate-js-after-removing-plugin-element"></embed>
+    </div>
+    <p>This tests that we don't crash when a plugin removes itself from the document and then executes JavaScript.</p>
+</body>
+</html>

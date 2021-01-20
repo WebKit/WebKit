@@ -1,0 +1,4 @@
+---
+test/fail.js:
+  default: 'Test262: This test fails.'
+  strict mode: 'Test262: This test fails.'

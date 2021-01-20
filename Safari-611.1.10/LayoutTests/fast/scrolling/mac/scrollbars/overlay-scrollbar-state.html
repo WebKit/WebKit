@@ -1,0 +1,66 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+        .scroller {
+            margin: 10px;
+            width: 100px;
+            height: 100px;
+        }
+        .contents {
+            width: 100%;
+            height: 200%;
+        }
+        .auto {
+            overflow: auto;
+        }
+        .scroll {
+            overflow: scroll;
+        }
+    </style>
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <script>
+        jsTestIsAsync = true;
+        
+        let autoScroller;
+        let scrollScroller;
+        
+        window.internals.setUsesOverlayScrollbars(true);
+
+        window.addEventListener('load', () => {
+            description('Test scrollbar state internals');
+            if (!window.internals)
+                return;
+            
+            debug('Document');
+            debug(internals.verticalScrollbarState());
+            debug(internals.horizontalScrollbarState());
+
+            autoScroller = document.querySelector('.auto.scroller')
+            scrollScroller = document.querySelector('.scroll.scroller')
+
+            debug('overflow:auto');
+            shouldBeEqualToString('internals.verticalScrollbarState(autoScroller)', 'enabled');
+            shouldBeEqualToString('internals.horizontalScrollbarState(autoScroller)', 'none');
+
+            debug('overflow:scroll');
+            shouldBeEqualToString('internals.verticalScrollbarState(scrollScroller)', 'enabled');
+            shouldBeEqualToString('internals.horizontalScrollbarState(scrollScroller)', 'none');
+
+            finishJSTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="auto scroller">
+        <div class="contents"></div>
+    </div>
+    <div class="scroll scroller">
+        <div class="contents"></div>
+    </div>
+    <script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

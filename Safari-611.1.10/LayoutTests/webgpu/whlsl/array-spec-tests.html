@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Test the WHLSL test harness.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.arrayRefToArrayRef = async () => {
+    let program = `
+        int foo()
+        {
+            int x;
+            thread int[] p = @x;
+            thread int[][] pp = @p;
+            int[]thread[]thread qq = pp;
+            int result = 0;
+            x = 42;
+            p[0] = 76;
+            result += x;
+            pp[0][0] = 39;
+            result += x;
+            qq[0][0] = 83;
+            result += x;
+            return result;
+        }
+    `;
+    await checkFail(program);
+}
+
+whlslTests.assignLength = async () => {
+    await checkFail(
+        `
+            void foo()
+            {
+                float[754] array;
+                (@array).length = 42;
+            }
+        `);
+        
+}
+
+whlslTests.assignLengthHelper = async () => {
+    await checkFail(
+        `
+            void bar(thread float[] array)
+            {
+                array.length = 42;
+            }
+            void foo()
+            {
+                float[754] array;
+                bar(@array);
+            }
+        `);
+}
+
+whlslTests.buildArrayThenSumIt = async () => {
+    let program = `
+        int foo()
+        {
+            int[42] array;
+            for (uint i = 0; i < 42; i = i + 1)
+                array[i] = int(i + 5);
+            int result;
+            for (uint i = 0; i < 42; i = i + 1)
+                result = result + array[i];
+            return result;
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", []), 42 * 5 + 42 * 41 / 2);
+}
+
+whlslTests.buildArrayThenSumItUsingArrayReference = async () => {
+    let program = `
+        int bar(thread int[] array)
+        {
+            for (uint i = 0; i < 42; i = i + 1)
+                array[i] = int(i + 5);
+            int result;
+            for (uint i = 0; i < 42; i = i + 1)
+                result = result + array[i];
+            return result;
+        }
+        int foo()
+        {
+            int[42] array;
+            return bar(@array);
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", []), 42 * 5 + 42 * 41 / 2);
+}
+
+whlslTests.passingArrayToFunction = async () =>
+{
+    let program = `
+        int foo()
+        {
+            int[10] arr;
+            for (uint i = 0; i < arr.length; i++)
+                arr[i] = int(i) + 1;
+            return sum(arr);
+        }
+
+        int sum(int[10] xs)
+        {
+            int t = 0;
+            for (uint i = 0; i < xs.length; i++)
+                t = t + xs[i];
+            return t;
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", []), 55);
+}
+
+runTests(whlslTests);
+</script>
+</html>

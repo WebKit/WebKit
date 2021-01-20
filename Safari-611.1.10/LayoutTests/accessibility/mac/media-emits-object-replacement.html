@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+
+<div id="content" tabindex="0">
+
+<div id="text1">
+a <video width=100 height=100 controls></video> b
+</div>
+
+<br>
+
+<div id="text2">
+a <audio width=100 height=100 controls></audio> b
+</div>
+
+</div>
+
+<div id="console"></div>
+<script>
+
+description("This tests ensures that if video or audio tags are used, they will emit an object replacement character in a range for string operation.")
+
+   if (window.accessibilityController) {
+       var text1 = accessibilityController.accessibleElementById("text1");
+       var textMarkerRange = text1.textMarkerRangeForElement(text1);
+       shouldBe("text1.textMarkerRangeLength(textMarkerRange)", "5");
+       debug("Video string for range: " + text1.stringForTextMarkerRange(textMarkerRange));
+
+       var text2 = accessibilityController.accessibleElementById("text2");
+       var textMarkerRange = text2.textMarkerRangeForElement(text2);
+       shouldBe("text1.textMarkerRangeLength(textMarkerRange)", "5");
+       debug("Audio string for range: " + text2.stringForTextMarkerRange(textMarkerRange));
+
+       document.getElementById("content").style.visibility = 'hidden';
+   }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

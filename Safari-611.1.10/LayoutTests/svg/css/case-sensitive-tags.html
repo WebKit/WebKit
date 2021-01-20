@@ -1,0 +1,191 @@
+
+<!doctype html>
+<html>
+    <head>
+        <style>
+            @namespace svg "http://www.w3.org/2000/svg";
+
+            .red-color {
+                color: red;
+            }
+
+            .green-color {
+                color: green;
+            }
+
+            .red-fill {
+                fill: red;
+            }
+
+            .green-fill {
+                fill: green;
+            }
+
+            .red-stop-color {
+                stop-color: red;
+            }
+
+            .green-stop-color {
+                stop-color: green;
+            }
+
+            .group0 div:nth-of-type(1),
+            .group0 DIV:nth-of-type(2),
+            .group0 Div:nth-of-type(3),
+            .group1 foreignObject:nth-of-type(3) {
+                color: green;
+            }
+
+            .group1 foreignobject:nth-of-type(1),
+            .group1 FOREIGNOBJECT:nth-of-type(2),
+            .group1 ForeignObject:nth-of-type(4)
+            { 
+                color: red;
+            }
+
+            .group2 circle:nth-of-type(1)
+            { 
+                fill: green;
+            }
+
+            .group2 CIRCLE:nth-of-type(2),
+            .group2 Circle:nth-of-type(3) {
+                /* Matching any of these selectors is bad as SVG should use case-sensitive matching. */
+                fill: red;
+            }
+
+            .group3 linearGradient:nth-of-type(3) stop {
+                stop-color: green;
+            }
+
+            .group3 lineargradient:nth-of-type(1) stop,
+            .group3 LINEARGRADIENT:nth-of-type(2) stop,
+            .group3 LinearGradient:nth-of-type(4) stop
+            {
+                /* Matching any of these selectors is bad as SVG should use case-sensitive matching. */
+                stop-color: red;
+            }
+
+            .group4 svg|linearGradient:nth-of-type(3) stop {
+                stop-color: green;
+            }
+
+            .group4 svg|lineargradient:nth-of-type(1) stop,
+            .group4 svg|LINEARGRADIENT:nth-of-type(2) stop,
+            .group4 svg|LinearGradient:nth-of-type(4) stop
+            {
+                /* Matching any of these selectors is bad as SVG should use case-sensitive matching. */
+                stop-color: red;
+            }
+        </style>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <div id="container">
+            <div class="group0">
+                <div id="div1" class="red-color">HTML element matched using lower case selector.</div>
+                <div id="div2" class="red-color">HTML element matched using upper case selector.</div>
+                <div id="div3" class="red-color">HTML element matched using mixed case selector.</div>
+            </div>
+
+            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="900" width="800">
+                <g class="group1" transform="translate(0, 10)">
+                    <foreignObject id="fo1" class="green-color" y="0" width="100%" height="20">
+                        SVG foreign object is NOT matched using lower case selector.
+                    </foreignObject>
+                    <foreignObject id="fo2" class="green-color" y="40" width="100%" height="20">
+                        SVG foreign object is NOT matched using upper case selector.
+                    </foreignObject>
+                    <foreignObject id="fo3" class="red-color" y="80" width="100%" height="20">
+                        SVG foreign object is matched using canonical form selector.
+                    </foreignObject>
+                    <foreignObject id="fo4" class="green-color" y="120" width="100%" height="20">
+                        SVG foreign object is NOT matched using mixed case selector.
+                    </foreignObject>
+                </g>
+
+                <g class="group2" transform="translate(25, 190)">
+                    <line x1="-25" y1="-30" x2="100%" y2="-30" stroke-width="2" stroke="gray"></line>
+
+                    <circle id="circle1" class="red-fill" cy="0" r="20" stroke="black" stroke-width="2" />
+                    <text x="50" y="0">Circle SVG element is matched using lower case / canonical form selector</text>
+
+                    <circle id="circle2" class="green-fill" cy="60" r="20" stroke="black" stroke-width="2" />
+                    <text x="50" y="60">Circle SVG element is NOT matched using upper case selector</text>
+
+                    <circle id="circle3" class="green-fill" cy="120" r="20" stroke="black" stroke-width="2" />
+                    <text x="50" y="120">Circle SVG element is NOT matched using mixed case selector</text>
+                </g>
+
+                <g class="group3" transform="translate(25, 370)">
+                    <line x1="-25" y1="-30" x2="100%" y2="-30" stroke-width="2" stroke="gray"></line>
+
+                    <linearGradient id="Gradient1">
+                        <stop id="stop1" offset="0%" class="green-stop-color" />
+                    </linearGradient>
+                    <circle cy="0" r="20" stroke="black" stroke-width="2" fill="url(#Gradient1)" />
+                    <text x="50" y="0">SVG LinearGradient fill element is NOT matched using lower case selector</text>
+
+                    <linearGradient id="Gradient2">
+                        <stop id="stop2" offset="0%" class="green-stop-color" />
+                    </linearGradient>
+                    <circle cy="60" r="20" stroke="black" stroke-width="2" fill="url(#Gradient2)" />
+                    <text x="50" y="60">SVG LinearGradient fill element is NOT matched using upper case selector</text>
+
+                    <linearGradient id="Gradient3">
+                        <stop id="stop3" offset="0%" class="red-stop-color" />
+                    </linearGradient>
+                    <circle cy="120" r="20" stroke="black" stroke-width="2" fill="url(#Gradient3)" />
+                    <text x="50" y="120">SVG LinearGradient fill element is matched using canonical form selector</text>
+
+                    <linearGradient id="Gradient4">
+                        <stop id="stop4" offset="0%" class="green-stop-color" />
+                    </linearGradient>
+                    <circle cy="180" r="20" stroke="black" stroke-width="2" fill="url(#Gradient4)" />
+                    <text x="50" y="180">SVG LinearGradient fill element is NOT matched using mixed case selector</text>
+                </g>
+
+                <g class="group4" transform="translate(25, 610)">
+                    <line x1="-25" y1="-30" x2="100%" y2="-30" stroke-width="2" stroke="gray"></line>
+
+                    <linearGradient id="Gradient5">
+                        <stop id="stop5" offset="0%" class="green-stop-color" />
+                    </linearGradient>
+                    <circle cy="0" r="20" stroke="black" stroke-width="2" fill="url(#Gradient5)" />
+                    <text x="50" y="0">SVG LinearGradient fill element is NOT matched using lower case selector + svg namespace</text>
+
+                    <linearGradient id="Gradient6">
+                        <stop id="stop6" offset="0%" class="green-stop-color" />
+                    </linearGradient>
+                    <circle cy="60" r="20" stroke="black" stroke-width="2" fill="url(#Gradient6)" />
+                    <text x="50" y="60">SVG LinearGradient fill element is NOT matched using upper case selector + svg namespace</text>
+
+                    <linearGradient id="Gradient7">
+                        <stop id="stop7" offset="0%" class="red-stop-color" />
+                    </linearGradient>
+                    <circle cy="120" r="20" stroke="black" stroke-width="2" fill="url(#Gradient7)" />
+                    <text x="50" y="120">SVG LinearGradient fill element is matched using canonical form selector + svg namespace</text>
+
+                    <linearGradient id="Gradient8">
+                        <stop id="stop8" offset="0%" class="green-stop-color" />
+                    </linearGradient>
+                    <circle cy="180" r="20" stroke="black" stroke-width="2" fill="url(#Gradient8)" />
+                    <text x="50" y="180">SVG LinearGradient fill element is NOT matched using mixed case selector + svg namespace</text>
+                </g>
+            </svg>
+        </div>
+        <script>
+            function checkStyle(prefix, count, property, value) {
+                for (var i = 1; i <= count; ++i)
+                    shouldBe("window.getComputedStyle(document.getElementById(\"" + prefix + i + "\"))." + property, "\"" + value + "\"");
+            }
+            checkStyle("div", 3, "color", "rgb(0, 128, 0)");
+            checkStyle("fo", 4, "color", "rgb(0, 128, 0)");
+            checkStyle("circle", 3, "fill", "rgb(0, 128, 0)");
+            checkStyle("stop", 8, "stopColor", "rgb(0, 128, 0)");
+
+            document.getElementById("container").style.display = "none";
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

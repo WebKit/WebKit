@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<style>
+    video {
+        width: 480px;
+        height: 320px;
+    }
+    #bar {
+        margin-top: 5000px;
+    }
+</style>
+<script>
+    function muteFirstVideoAndScrollToSecondVideo() {
+        document.querySelector("#foo").muted = true;
+        document.querySelector("#bar").scrollIntoView();
+        setTimeout(function() {
+            try {
+                window.webkit.messageHandlers.testHandler.postMessage("playing");
+            } catch(e) { }
+        }, 0);
+    }
+    function beganAutoplaying() {
+        setTimeout(function() {
+            try {
+                window.webkit.messageHandlers.testHandler.postMessage("autoplayed");
+            } catch(e) {
+            }
+        }, 0)
+    }
+</script>
+<body>
+    <video autoplay onplaying=beganAutoplaying() loop id="foo"><source src="large-video-with-audio.mp4"></video>
+    <br>
+    <video id="bar"><source src="large-video-with-audio.mp4"></video>
+</body>
+<html>

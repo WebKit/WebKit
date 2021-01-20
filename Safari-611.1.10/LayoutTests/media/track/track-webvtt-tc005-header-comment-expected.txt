@@ -1,0 +1,27 @@
+Tests that the optional comment area under the "WEBVTT" file header is properly ignored. Also, default settings and styling are currently ignored (treated as faulty cues).
+
+
+
+*** Testing text track 0
+EXPECTED (cues.length == '2') OK
+EXPECTED (cues[0].id == '1') OK
+EXPECTED (cues[0].startTime == '0') OK
+EXPECTED (cues[0].endTime == '30.5') OK
+EXPECTED (cues[0].text == 'Bear is Coming!!!!!') OK
+EXPECTED (cues[1].id == '2') OK
+EXPECTED (cues[1].startTime == '31') OK
+EXPECTED (cues[1].endTime == '1200.5') OK
+EXPECTED (cues[1].text == 'I said Bear is coming!!!!') OK
+
+*** Testing text track 1
+EXPECTED (cues.length == '2') OK
+EXPECTED (cues[0].id == '1') OK
+EXPECTED (cues[0].startTime == '0') OK
+EXPECTED (cues[0].endTime == '30.5') OK
+EXPECTED (cues[0].text == 'Bear is Coming!!!!!') OK
+EXPECTED (cues[1].id == '2') OK
+EXPECTED (cues[1].startTime == '31') OK
+EXPECTED (cues[1].endTime == '1200.5') OK
+EXPECTED (cues[1].text == 'I said Bear is coming!!!!') OK
+END OF TEST
+

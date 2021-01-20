@@ -1,0 +1,55 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # products: array of product objects
+  # showbugcounts: if defined, then bug counts should be included in the table
+  #%]
+
+[% PROCESS global/header.html.tmpl
+  title = "Edit components for which product?"
+  style_urls = ['skins/standard/admin.css']
+%]
+
+[% columns = [
+     { 
+       name => "name"
+       heading => "Edit components of..."
+       contentlink => "editcomponents.cgi?product=%%name%%" 
+     },
+     { 
+       name => "description"
+       heading => "Description" 
+       allow_html_content => 1
+     }
+   ]
+%]
+
+[% IF showbugcounts %]
+
+  [% columns.push({
+      name => 'bug_count'
+      heading => "$terms.Bugs"
+      class => "right"
+      contentlink => "buglist.cgi?product=%%name%%"
+    })
+  %]
+
+[% END %]
+
+[% PROCESS admin/table.html.tmpl
+     columns = columns
+     data = products
+%]
+
+[% IF !showbugcounts %]
+  <p><a href="editcomponents.cgi?showbugcounts=1">
+      Redisplay table with [% terms.bug %] counts (slower)</a></p>
+[% END %]
+
+[% PROCESS global/footer.html.tmpl %]

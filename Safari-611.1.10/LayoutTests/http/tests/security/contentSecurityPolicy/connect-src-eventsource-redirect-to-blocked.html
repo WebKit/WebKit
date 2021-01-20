@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="connect-src http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php">
+    <script src="/js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+    <script>
+        window.jsTestIsAsync = true;
+
+        var es;
+        try {
+            // Redirect to a different host, because as of CSP2 paths
+            // are ignored when matching after a redirect.
+            es = new EventSource("resources/redir.php?url=http://localhost:8000/eventsource/resources/simple-event-stream.asis");
+        } catch(e) {
+            testFailed("EventSource() should not throw an exception.");
+        }
+
+        es.onload = function () {
+            testFailed("EventSource() should fail to follow the disallowed redirect.");
+            finishJSTest();
+        };
+
+        es.onerror = function () {
+            testPassed("EventSource() did not follow the disallowed redirect.");
+            finishJSTest();
+        };
+    </script>
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

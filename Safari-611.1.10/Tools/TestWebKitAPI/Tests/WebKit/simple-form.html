@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<script>
+function submitForm()
+{
+    document.forms[0].submit();
+}
+
+function fillForm(data)
+{
+    document.getElementsByName("foo")[0].value = data;
+}
+
+function getFormData()
+{
+    return document.getElementsByName("foo")[0].value;
+}
+
+document.addEventListener("visibilitychange", function(event) {
+    // Send a signal to the test controller via alert.
+    alert('visibilitychange');
+});
+
+</script>
+<form method=post>
+<input name=foo value="Some unimportant data">
+<input type=submit>
+</form>

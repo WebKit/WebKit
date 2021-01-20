@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Testing MediaDevices addEventListener/removeEventListener</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script>
+    test(() => {
+        assert_true(!!navigator.mediaDevices.addEventListener, "addEventListener");
+        assert_true(!!navigator.mediaDevices.removeEventListener, "removeEventListener");
+    });
+
+    promise_test(async (test) => {
+        if (!window.testRunner)
+            return Promise.reject("test requires internal API");
+
+        test.add_cleanup(() => { testRunner.resetMockMediaDevices(); });
+
+        testRunner.setUserMediaPermission(true);
+
+        await navigator.mediaDevices.getUserMedia({ audio:true, video:true });
+
+        let devices = await navigator.mediaDevices.enumerateDevices();
+
+        assert_true(!!devices.length, "check there are some devices");
+
+        testRunner.clearMockMediaDevices();
+
+        devices = await navigator.mediaDevices.enumerateDevices();
+        assert_false(!!devices.length, "check there are no more devices");
+
+        await new Promise((resolve, reject) => {
+            navigator.mediaDevices.addEventListener('devicechange', resolve);
+            setTimeout(() => {
+                console.log("event 1 taking a long time");
+                resolve();
+            }, 5000);
+            testRunner.addMockCameraDevice("id1", "my camera");
+        });
+    }, "Capture 'devicechange' event with addEventListener");
+    </script>
+</head>
+<body>
+</body>
+</html>

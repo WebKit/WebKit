@@ -1,0 +1,17 @@
+Test ApplePayInstallmentConfiguration.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.mockPaymentCoordinator.installmentConfiguration.bindingTotalAmount is expectedBindingTotalAmount
+PASS internals.mockPaymentCoordinator.installmentConfiguration.currencyCode is expectedCurrencyCode
+PASS internals.mockPaymentCoordinator.installmentConfiguration.featureType is expectedFeatureType
+PASS internals.mockPaymentCoordinator.installmentConfiguration.isInStorePurchase is expectedIsInStorePurchase
+PASS internals.mockPaymentCoordinator.installmentConfiguration.merchandisingImageData is expectedMerchandisingImageData
+PASS internals.mockPaymentCoordinator.installmentConfiguration.merchantIdentifier is expectedMerchantIdentifier
+PASS internals.mockPaymentCoordinator.installmentConfiguration.openToBuyThresholdAmount is expectedOpenToBuyThresholdAmount
+PASS internals.mockPaymentCoordinator.installmentConfiguration.referrerIdentifier is expectedReferrerIdentifier
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

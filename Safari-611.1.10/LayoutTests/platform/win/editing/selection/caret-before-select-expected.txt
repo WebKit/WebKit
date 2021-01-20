@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x102 [border: (5px solid #FF0000)]
+        RenderMenuList {SELECT} at (39,39) size 80x24 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (4,2) size 55x20
+            RenderText at (8,2) size 24x15
+              text run at (8,2) width 24: "One"
+        RenderText {#text} at (121,41) size 26x18
+          text run at (121,41) width 26: "blaa"
+caret: position 0 of child 0 {SELECT} of child 0 {DIV} of body

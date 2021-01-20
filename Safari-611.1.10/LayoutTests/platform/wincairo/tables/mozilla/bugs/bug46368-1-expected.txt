@@ -1,0 +1,52 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 784x117 [bgcolor=#00FFFF] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x115
+          RenderTableRow {TR} at (0,2) size 782x111
+            RenderTableCell {TD} at (2,2) size 456x111 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 452x107 [bgcolor=#FF00FF] [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 450x105
+                  RenderTableRow {TR} at (0,2) size 450x101
+                    RenderTableCell {TD} at (2,2) size 446x101 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 188x19
+                        text run at (2,2) width 188: "Mozilla To Be Dually-Licensed"
+                      RenderBR {BR} at (190,17) size 0x0
+                      RenderText {#text} at (2,35) size 197x19
+                        text run at (2,35) width 197: "Plans are underway to make the "
+                      RenderInline {FONT} at (0,0) size 99x36 [color=#0000FF]
+                        RenderText {#text} at (199,22) size 99x36
+                          text run at (199,22) width 99: "Mozilla"
+                      RenderText {#text} at (298,35) size 435x63
+                        text run at (298,35) width 139: " code available under a"
+                        text run at (2,59) width 146: "dual MPL/GPL license. "
+                        text run at (148,59) width 230: "See the for more info. We're gathering"
+                        text run at (2,79) width 243: "contributor input now, in the newsgroup."
+                      RenderBR {BR} at (245,94) size 0x0
+            RenderTableCell {TD} at (459,25) size 322x65 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 303x60
+                text run at (2,3) width 251: "This status update contains information on"
+                text run at (2,23) width 303: "MailNews, XML/DOM, XPToolkit, Architecture,"
+                text run at (2,43) width 192: "Bidi, Necko/Imglib, and more..."
+      RenderBlock (anonymous) at (0,117) size 784x46
+        RenderBR {BR} at (0,0) size 0x19
+        RenderButton {INPUT} at (2,22) size 61x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+          RenderBlock (anonymous) at (8,3) size 45x16
+            RenderText at (0,0) size 45x16
+              text run at (0,0) width 45: "Reload"
+        RenderText {#text} at (65,23) size 8x19
+          text run at (65,23) width 8: "  "
+        RenderButton {INPUT} at (75,22) size 92x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+          RenderBlock (anonymous) at (8,3) size 76x16
+            RenderText at (0,0) size 76x16
+              text run at (0,0) width 76: "Change Font"
+        RenderText {#text} at (169,23) size 8x19
+          text run at (169,23) width 8: "  "
+        RenderTextControl {INPUT} at (179,22) size 150x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (0,0) size 0x0
+layer at (189,150) size 146x16
+  RenderBlock {DIV} at (2,3) size 146x16
+    RenderText {#text} at (0,0) size 7x16
+      text run at (0,0) width 7: "6"

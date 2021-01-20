@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script src="../resources/js-test-pre.js"></script>
+<script>
+    description('Construct a WebSocket in a detached frame. The test passes if there is no crash.');
+
+    window.jsTestIsAsync = true;
+
+    function detachIframe()
+    {
+        var testIframe = document.getElementById('testIframe');
+        testIframe.parentNode.remove(testIframe);
+    }
+
+    function done()
+    {
+        finishJSTest();
+    }
+</script>
+<iframe src="resources/construct-in-detached-frame.html" id="testIframe"></iframe>
+<script src="../resources/js-test-post.js"></script>

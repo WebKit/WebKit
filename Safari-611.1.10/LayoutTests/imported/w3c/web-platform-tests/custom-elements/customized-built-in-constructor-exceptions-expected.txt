@@ -1,0 +1,10 @@
+
+
+
+
+FAIL Appending children in customized built-in constructor should work assert_true: expected true got false
+FAIL Throwing exception in customized built-in constructor should not crash and should return correct element type (video) assert_true: expected true got false
+FAIL Throwing exception in customized built-in constructor should not crash and should return correct element type (form) assert_true: expected true got false
+FAIL Make sure customized <input> element doesnt crash assert_true: expected true got false
+FAIL Make sure customized <input> element that sets attributes doesnt crash assert_true: expected true got false
+

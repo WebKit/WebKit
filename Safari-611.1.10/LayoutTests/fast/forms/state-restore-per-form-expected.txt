@@ -1,0 +1,27 @@
+Confirm we can restore correctly even if the order of forms are changed:
+PASS $("form1-control1").value is "initial"
+PASS $("form1-control2").value is "form1-control2-modified"
+PASS $("form3-control2").value is "form3-control2-modified"
+
+Confirm we ignore the query part of action URLs:
+PASS $("form2-control1").value is "query-changed-control1-modified"
+
+Confirm an additional control in the previous form doesn't take a state for the next form:
+PASS $("form3-control1").value is "username-modified"
+PASS $("form2-added").value is "initial"
+
+Associated controls with form attributes are correctly handled:
+PASS $("form3-outer1").value is "form3-outer1-modified"
+FAIL $("form2-outer1").value should be form2-outer1-modified. Was noowner1-modified.
+FAIL $("noowner2").value should be initial. Was form3-outer2-modified.
+FAIL $("form3-outer2").value should be form3-outer2-modified. Was form2-outer2-modified.
+FAIL $("form2-outer2").value should be form2-outer2-modified. Was initial.
+
+Controls in forms with an identical action URL. These forms were reordered:
+PASS $("aaa_input1").value is "aaa_input1-modified"
+PASS $("ccc_input1").value is "ccc_input1-modified"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

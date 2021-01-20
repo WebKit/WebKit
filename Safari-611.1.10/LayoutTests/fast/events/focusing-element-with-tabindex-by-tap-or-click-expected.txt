@@ -1,0 +1,15 @@
+This tests tapping or clicking on an element with tabindex would focus the element.
+To manually test, tap or click on each element below. Each element should be focused
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "Activated contentEditableElement"; document.activeElement is contentEditableElement
+PASS "Activated elementWithTabIndexAndClickHandler"; document.activeElement is elementWithTabIndexAndClickHandler
+PASS "Activated elementWithTabIndex"; document.activeElement is elementWithTabIndex
+PASS successfullyParsed is true
+
+TEST COMPLETE
+An element with contenteditable attribute
+An element with click event handler and tabindex attribute
+An element with tabindex attribute

@@ -1,0 +1,35 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../resources/webgl_test_files/conformance/canvas/drawingbuffer-test.html
+[ 1: PASS ] context exists
+[ 2: PASS ] gl.drawingBufferWidth is gl.canvas.width
+[ 3: PASS ] gl.drawingBufferHeight is gl.canvas.height
+[ 4: PASS ] maxSize[0] > 0 is true
+[ 5: PASS ] maxSize[1] > 0 is true
+[ 6: PASS ] context exists
+[ 7: PASS ] gl.getParameter(gl.MAX_VIEWPORT_DIMS)[0] is maxSize[0]
+[ 8: PASS ] gl.getParameter(gl.MAX_VIEWPORT_DIMS)[1] is maxSize[1]
+[ 9: PASS ] gl.getParameter(gl.VIEWPORT)[0] is 0
+[ 10: PASS ] gl.getParameter(gl.VIEWPORT)[1] is 0
+[ 11: PASS ] gl.getParameter(gl.VIEWPORT)[2] is gl.drawingBufferWidth
+[ 12: PASS ] gl.getParameter(gl.VIEWPORT)[3] is gl.drawingBufferHeight
+[ 13: PASS ] gl.getParameter(gl.VIEWPORT)[0] is oldViewport[0]
+[ 14: PASS ] gl.getParameter(gl.VIEWPORT)[1] is oldViewport[1]
+[ 15: PASS ] gl.getParameter(gl.VIEWPORT)[2] is oldViewport[2]
+[ 16: PASS ] gl.getParameter(gl.VIEWPORT)[3] is oldViewport[3]
+[ 17: PASS ] gl.getError() is gl.NO_ERROR
+[ 18: PASS ] context exists
+[ 19: PASS ] gl.getParameter(gl.MAX_VIEWPORT_DIMS)[0] is maxSize[0]
+[ 20: PASS ] gl.getParameter(gl.MAX_VIEWPORT_DIMS)[1] is maxSize[1]
+[ 21: PASS ] gl.getParameter(gl.VIEWPORT)[0] is 0
+[ 22: PASS ] gl.getParameter(gl.VIEWPORT)[1] is 0
+[ 23: PASS ] gl.getParameter(gl.VIEWPORT)[2] is gl.drawingBufferWidth
+[ 24: PASS ] gl.getParameter(gl.VIEWPORT)[3] is gl.drawingBufferHeight
+[ 25: PASS ] gl.getParameter(gl.VIEWPORT)[0] is oldViewport[0]
+[ 26: PASS ] gl.getParameter(gl.VIEWPORT)[1] is oldViewport[1]
+[ 27: PASS ] gl.getParameter(gl.VIEWPORT)[2] is oldViewport[2]
+[ 28: PASS ] gl.getParameter(gl.VIEWPORT)[3] is oldViewport[3]
+[ 29: FAIL ] gl.getError() should be 0. Was 1281.
+[ 30: PASS ] successfullyParsed is true
+[ FAIL ] 1 failures reported
+

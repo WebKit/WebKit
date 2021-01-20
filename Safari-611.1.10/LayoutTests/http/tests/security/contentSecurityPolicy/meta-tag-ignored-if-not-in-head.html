@@ -1,0 +1,17 @@
+<!DOCTYPE>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<p>This tests that a &lt;meta http-equiv=&quot;Content-Security-Policy&quot;&gt; is ignored if it is not a descendent of &lt;head&gt;.</p>
+<meta http-equiv="Content-Security-Policy" content="script-src 'self'">
+<p id="result">FAIL Content Security Policy should have been ignored. But was honored.</p>
+<script>
+document.getElementById("result").textContent = 'PASS Content Security Policy was ignored.';
+</script>
+</body>
+</html>

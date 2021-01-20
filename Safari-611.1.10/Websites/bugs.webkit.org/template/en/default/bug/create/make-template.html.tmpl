@@ -1,0 +1,31 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # url: URL to a pre-filled bug entry form.
+  # short_desc: Bug summary as entered in the form.
+  #%]
+
+[% PROCESS global/header.html.tmpl
+  title = "Bookmark For $terms.Bug Entry"
+  header = "Template constructed"
+%]
+
+<p>
+  You can bookmark this link:
+  &ldquo;<a href="enter_bug.cgi?[% url FILTER html %]">
+  [% IF short_desc %]
+    [% short_desc FILTER html %]
+  [% ELSE %]
+    [% terms.Bug %] entry template
+  [% END %]</a>&rdquo;.
+  This bookmark will bring up the <em>Enter [% terms.Bug %]</em> page with the
+  fields initialized as you've requested.
+</p>
+
+[% PROCESS global/footer.html.tmpl %]

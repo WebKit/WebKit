@@ -1,0 +1,23 @@
+Put mouse next to the table labeled 'Scrollable Region' and flick downward. The scroll movement should come to a halt. Then flick again. The overall page should scroll.
+Scrollable Region
+
+A set of information at the bottom of the table.
+
+Tests that a scrollable div nested inside another scrollable div properly handles wheel events under sub-pixel conditions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+wrapperTarget = [object HTMLDivElement]
+First scroll event:
+PASS Page did not receive wheel events during the first gesture.
+PASS Wrapper received wheel events during the first gesture.
+PASS div did not receive wheel events during the first gesture.
+Second scroll event:
+PASS Page received wheel events during the second gesture.
+PASS Wrapper did not receive wheel events during the second gesture.
+PASS div did not receive wheel events during the second gesture.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

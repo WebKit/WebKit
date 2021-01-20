@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that simple and normal line layout produce the same lines with hyphenate-limit-lines</title>
+<style>
+div {
+  display: inline-block;
+  -webkit-hyphens: auto;
+  width: 40px;
+  border: 1px solid green;
+  margin-right: 100px;
+  vertical-align: top;
+}
+</style>
+<script>
+if (internal.settings)
+    internals.settings.setSimpleLineLayoutEnabled(false);
+</script>
+</head>
+<body>
+<div style="-webkit-hyphenate-limit-lines: 0;">foobarness foobarnessability</div>
+<div style="-webkit-hyphenate-limit-lines: 1;">foobarness foobarnessability</div>
+<div style="-webkit-hyphenate-limit-lines: 2;">foobarness foobarnessability</div>
+<div style="-webkit-hyphenate-limit-lines: 3;">foobarness foobarnessability</div>
+<div style="-webkit-hyphenate-limit-lines: 4;">foobarness foobarnessability</div>
+<div style="-webkit-hyphenate-limit-lines: 5;">foobarness foobarnessability</div>
+</body>
+</html>

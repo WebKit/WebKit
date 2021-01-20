@@ -1,0 +1,3 @@
+This test verifies that we don't crash when attempting to handle "contextmenu" events in a reentrant manner. This test passes if the green text "PASS" is present after page load.
+
+PASS

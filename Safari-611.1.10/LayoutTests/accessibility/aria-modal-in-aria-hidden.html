@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+
+<body id="body">
+
+<div id="bg">
+<p id="bgContent">Other page content with <a href="#">a dummy focusable element</a></p>
+</div>
+
+<div id="container">
+    <div role="dialog" aria-modal="false" id="box">
+        <h3 id="myDialog">Just an example.</h3>
+    </div>
+</div>
+
+
+<script>
+
+    description("This tests that when something is aria-modal inside an aria-hidden it is ignored.");
+    window.jsTestIsAsync = true;
+
+    if (window.accessibilityController) {
+        shouldBeFalse("accessibilityController.accessibleElementById('bgContent').isIgnored");
+        
+        document.getElementById("box").setAttribute("aria-modal", "true");
+
+        var backgroundContent = accessibilityController.accessibleElementById('bgContent');
+        shouldBeTrue("!backgroundContent || !backgroundContent.isValid()");
+
+        document.getElementById("container").setAttribute("aria-hidden", "true");
+
+        setTimeout(function() {
+            shouldBeFalse("accessibilityController.accessibleElementById('bgContent').isIgnored");
+            finishJSTest();
+        }, 0);
+    }    
+
+</script>
+
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

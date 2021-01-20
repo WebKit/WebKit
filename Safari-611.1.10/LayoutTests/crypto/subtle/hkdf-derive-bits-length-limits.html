@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script type="text/javascript">
+description("Test HKDF deriveBits operation for corner-case length values");
+
+jsTestIsAsync = true;
+
+var nonExtractable = false;
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+var info = asciiToUint8Array("jnOw99oO");
+var salt = asciiToUint8Array("jnOw99oO");
+
+crypto.subtle.importKey("raw", rawKey, "HKDF", nonExtractable, ["deriveBits"]).then(function(result) {
+    baseKey = result;
+
+    deriveBits = function(hash, length) {
+        return crypto.subtle.deriveBits({name: "HKDF", info: info, salt: salt, hash: hash}, baseKey, length);
+    };
+
+    // For each SHA algorithm and the corresponding HashLen length, we check that:
+    //   - deriving with zero length rejects,
+    //   - deriving with 8, HashLen * 8 and 255 * HashLen * 8 resolves,
+    //   - deriving with 256 * HashLen * 8 rejects.
+
+    return Promise.resolve().then(function(result) {
+        // SHA-1, hash output length is 20 bytes
+        return shouldReject('deriveBits("sha-1", 0)').then(function(result) {
+            return Promise.all([
+                deriveBits("sha-1", 8),
+                deriveBits("sha-1", 20 * 8),
+                deriveBits("sha-1", 255 * 20 * 8)
+            ]).then(function(result) {
+                testPassed("Bit derivations for SHA-1 with minimum, maximum and HashLen lengths all passed");
+                return shouldReject('deriveBits("sha-1", 256 * 20 * 8)');
+            });
+        });
+    }).then(function(result) {
+        // SHA-224, hash output length is 28 bytes
+        return shouldReject('deriveBits("sha-224", 0)').then(function(result) {
+            return Promise.all([
+                deriveBits("sha-224", 8),
+                deriveBits("sha-224", 28 * 8),
+                deriveBits("sha-224", 255 * 28 * 8)
+            ]).then(function(result) {
+                testPassed("Bit derivations for SHA-224 with minimum, maximum and HashLen lengths all passed");
+                return shouldReject('deriveBits("sha-224", 256 * 28 * 8)');
+            });
+        });
+    }).then(function(result) {
+        // SHA-256, hash output length is 32 bytes
+        return shouldReject('deriveBits("sha-256", 0)').then(function(result) {
+            return Promise.all([
+                deriveBits("sha-256", 8),
+                deriveBits("sha-256", 32 * 8),
+                deriveBits("sha-256", 255 * 32 * 8)
+            ]).then(function(result) {
+                testPassed("Bit derivations for SHA-256 with minimum, maximum and HashLen lengths all passed");
+                return shouldReject('deriveBits("sha-256", 256 * 32 * 8)');
+            });
+        });
+    }).then(function(result) {
+        // SHA-384, hash output length is 48 bytes
+        return shouldReject('deriveBits("sha-384", 0)').then(function(result) {
+            return Promise.all([
+                deriveBits("sha-384", 8),
+                deriveBits("sha-384", 48 * 8),
+                deriveBits("sha-384", 255 * 48 * 8)
+            ]).then(function(result) {
+                testPassed("Bit derivations for SHA-384 with minimum, maximum and HashLen lengths all passed");
+                return shouldReject('deriveBits("sha-384", 256 * 48 * 8)');
+            });
+        });
+    }).then(function(result) {
+        // SHA-512, hash output length is 64 bytes
+        return shouldReject('deriveBits("sha-512", 0)').then(function(result) {
+            return Promise.all([
+                deriveBits("sha-512", 8),
+                deriveBits("sha-512", 64 * 8),
+                deriveBits("sha-512", 255 * 64 * 8)
+            ]).then(function(result) {
+                testPassed("Bit derivations for SHA-512 with minimum, maximum and HashLen lengths all passed");
+                return shouldReject('deriveBits("sha-512", 256 * 64 * 8)');
+            });
+        });
+    });
+}).then(finishJSTest, finishJSTest);
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+This tests that the text insertion point is before the inserted text placeholder when it's inserted at the end of a word. This test can only be run in WebKitTestRunner or DumpRenderTree.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.getSelection().type is "Caret"
+PASS window.getSelection().baseOffset is 'Hello'.length
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

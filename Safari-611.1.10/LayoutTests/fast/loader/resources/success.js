@@ -1,0 +1,1 @@
+scriptSuccess = true;

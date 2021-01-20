@@ -1,0 +1,4 @@
+
+
+PASS Checks that ':focus' pseudo-class matches inside 'focus' event handler
+

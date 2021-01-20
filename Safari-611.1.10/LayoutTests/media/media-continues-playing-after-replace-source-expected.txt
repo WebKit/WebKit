@@ -1,0 +1,11 @@
+Test that media keeps playing when the source element is replaced.
+
+EVENT(canplaythrough)
+EXPECTED (testElement.currentTime == '0') OK
+EVENT(playing)
+EXPECTED (testElement.currentTime > '0') OK
+Replacing the media's source element:
+EXPECTED (testElement.currentTime == '0') OK
+EXPECTED (testElement.currentTime > '0') OK
+END OF TEST
+

@@ -1,0 +1,8 @@
+Tests for the Canvas.resolveContext command for WebGPU devices.
+
+
+== Running test suite: Canvas.resolveContextWebGPU
+-- Running test case: Canvas.resolveContextWebGPU.validIdentifier
+PASS: Payload should have type "object".
+PASS: Payload should have className "GPUDevice".
+

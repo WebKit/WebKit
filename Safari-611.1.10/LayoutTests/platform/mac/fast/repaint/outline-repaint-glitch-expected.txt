@@ -1,0 +1,52 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x510
+  RenderBlock {HTML} at (0,0) size 800x510
+    RenderBody {BODY} at (8,16) size 784x486
+      RenderBlock {P} at (0,0) size 784x18
+        RenderInline {B} at (0,0) size 62x18
+          RenderText {#text} at (0,0) size 62x18
+            text run at (0,0) width 62: "BUG ID:"
+        RenderText {#text} at (61,0) size 5x18
+          text run at (61,0) width 5: " "
+        RenderInline {A} at (0,0) size 119x18 [color=#0000EE]
+          RenderText {#text} at (65,0) size 119x18
+            text run at (65,0) width 119: "Bugzilla bug 8032"
+        RenderText {#text} at (183,0) size 530x18
+          text run at (183,0) width 530: " REGRESSION: Focus ring not completely redrawn after a Delete changes its size"
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 380x18
+          text run at (0,0) width 380: "Note that this bug (and the test) are just outline versions of "
+        RenderInline {A} at (0,0) size 119x18 [color=#0000EE]
+          RenderText {#text} at (379,0) size 119x18
+            text run at (379,0) width 119: "Bugzilla bug 6301"
+        RenderText {#text} at (497,0) size 59x18
+          text run at (497,0) width 59: " and test "
+        RenderInline {A} at (0,0) size 167x18 [color=#0000EE]
+          RenderText {#text} at (555,0) size 167x18
+            text run at (555,0) width 167: "border-repaint-glitch.html"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,68) size 784x24 [bgcolor=#98FB98]
+        RenderInline {B} at (0,0) size 88x18
+          RenderText {#text} at (3,3) size 88x18
+            text run at (3,3) width 88: "TEST PASS:"
+        RenderText {#text} at (90,3) size 454x18
+          text run at (90,3) width 5: " "
+          text run at (94,3) width 450: "The boxes will resize, maintaining their solid red rectangular outlines."
+      RenderBlock {P} at (0,108) size 784x60 [bgcolor=#FF3300]
+        RenderInline {B} at (0,0) size 88x18
+          RenderText {#text} at (3,3) size 88x18
+            text run at (3,3) width 88: "TEST FAIL:"
+        RenderText {#text} at (90,3) size 775x54
+          text run at (90,3) width 5: " "
+          text run at (94,3) width 681: "The boxes will resize, but the outlines will break. The first box will be missing small segments from either"
+          text run at (3,21) width 775: "side of its bottom outline. The second box will have small red horizontal segments protruding inwards from both sides of"
+          text run at (3,39) width 315: "the outline, where the bottom outline was before."
+      RenderBlock {DIV} at (0,184) size 222x142 [border: (1px solid #0000FF)]
+        RenderBlock {DIV} at (11,21) size 200x40 [bgcolor=#008080]
+          RenderBlock {DIV} at (10,0) size 180x40 [bgcolor=#C0C0C0]
+      RenderBlock (anonymous) at (0,326) size 784x18
+        RenderBR {BR} at (0,0) size 0x18
+      RenderBlock {DIV} at (0,344) size 222x142 [border: (1px solid #0000FF)]
+        RenderBlock {DIV} at (11,21) size 200x60 [bgcolor=#008080]
+          RenderBlock {DIV} at (10,0) size 180x60 [bgcolor=#C0C0C0]

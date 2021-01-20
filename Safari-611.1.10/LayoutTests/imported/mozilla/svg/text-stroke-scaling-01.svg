@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+
+  <title>Testcase for stroke-width of text with scaling</title>
+
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=595209 -->
+
+  <g transform="scale(2)">
+    <text x="10, 20, 30" y="30" rotate="0"
+          fill="black" stroke="black" stroke-width="1">abc</text>
+  </g>
+</svg>

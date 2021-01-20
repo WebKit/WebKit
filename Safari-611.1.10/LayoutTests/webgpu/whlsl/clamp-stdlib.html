@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Clamp.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+const epsilon = 0.0001;
+
+whlslTests.vectorClamp = async () => {
+    const program = `
+        float foo(float a, float b) {
+            float2 x;
+            x[0] = a;
+            x[1] = b;
+            float2 bottom = float2(1, 5);
+            float2 top = float2(10, 7);
+            x = clamp(x, bottom, top);
+            return x.x / x.y;
+        }
+    `;
+
+    assert_approx_equals(await callFloatFunction(program, "foo", [makeFloat(12), makeFloat(20)]), 10 / 7, epsilon);
+    assert_approx_equals(await callFloatFunction(program, "foo", [makeFloat(8), makeFloat(6)]), 8 / 6, epsilon);
+    assert_approx_equals(await callFloatFunction(program, "foo", [makeFloat(-10), makeFloat(6)]), 1 / 6, epsilon);
+};
+
+whlslTests.matrixClamp = async () => {
+    const program = `
+        float foo(float a, float b, float c, float d) {
+            float2x2 x;
+            x[0] = float2(a, b);
+            x[1] = float2(c, d);
+
+            float2x2 bottom = float2x2(float2(1, 2), float2(3, 4));
+            float2x2 top = float2x2(float2(10, 11), float2(12, 13));
+
+            x = clamp(x, bottom, top);
+
+            return x[0][0] / 1 + x[0][1] / 2 + x[1][0] / 3 + x[1][1] / 4;
+        }
+    `;
+
+    assert_approx_equals(await callFloatFunction(program, "foo", [makeFloat(2), makeFloat(-1), makeFloat(4), makeFloat(10)]), 2/1 + 2/2 + 4/3 + 10/4, epsilon);
+    assert_approx_equals(await callFloatFunction(program, "foo", [makeFloat(100), makeFloat(100), makeFloat(100), makeFloat(100)]), 10/1 + 11/2 + 12/3 + 13/4, epsilon);
+    assert_approx_equals(await callFloatFunction(program, "foo", [makeFloat(-100), makeFloat(-100), makeFloat(-100), makeFloat(-100)]), 1/1 + 2/2 + 3/3 + 4/4, epsilon);
+    assert_approx_equals(await callFloatFunction(program, "foo", [makeFloat(NaN), makeFloat(NaN), makeFloat(NaN), makeFloat(NaN)]), 1/1 + 2/2 + 3/3 + 4/4, epsilon);
+};
+
+runTests(whlslTests);
+</script>
+</html>

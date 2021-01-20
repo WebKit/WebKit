@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<script src="get-request-header.js"></script>
+<script>
+connectAndGetRequestHeader('origin').then(function(origin)
+{
+    window.parent.postMessage(origin, "*");
+}, function() { window.parent.postMessage("FAIL", "*"); });
+</script>

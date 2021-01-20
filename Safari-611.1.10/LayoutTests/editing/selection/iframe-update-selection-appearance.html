@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body { -webkit-user-modify: read-only; }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script>
+    function reconnectSubframe() {
+        document.body.appendChild(document.querySelector("iframe"));
+    }
+
+    function go() {
+        jsTestIsAsync = true;
+        if (window.finishJSTest)
+            setTimeout(() => setTimeout(finishJSTest));
+
+        getSelection().setPosition(document.body);
+
+        if (window.internals)
+            setTimeout(() => internals.setCaptionsStyleSheetOverride("* { }"));
+
+        reconnectSubframe();
+    }
+    </script>
+</head>
+
+<body onload="go()">
+    <iframe hidden="true"></iframe>
+    <embed type="foobar" onbeforeload="reconnectSubframe()"></embed>
+</body>
+</html>

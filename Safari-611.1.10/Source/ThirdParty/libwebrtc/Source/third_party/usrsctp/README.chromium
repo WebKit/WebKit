@@ -1,0 +1,21 @@
+Name: usrsctp
+URL: http://github.com/sctplab/usrsctp
+Version: 0
+CPEPrefix: cpe:/a:usrsctp_project:usrsctp:2019-12-20
+Date: Aug 28, 2020
+Revision: 995c0b84414466d77d52011e5b572cbe213b770a
+License: New BSD
+License File: LICENSE
+Security Critical: yes
+
+Description:
+The usrsctplib provides implementation of SCTP protocol which fully supports
+RFC 2960
+as well as updates and enhancements from the following Internet Drafts:
+   draft-ietf-tsvwg-sctpcsum-05.txt
+   draft-ietf-tsvwg-sctpimpguide-05.txt
+   draft-ietf-tsvwg-sctpsocket-04.txt
+   draft-ietf-tsvwg-addip-sctp-05.txt
+   draft-stewart-prsctp-00.txt
+   draft-stewart-tsvwg-sctpipv6-00.txt
+   draft-iyengar-sctp-cacc-00.txt

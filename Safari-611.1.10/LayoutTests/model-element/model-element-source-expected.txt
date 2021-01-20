@@ -1,0 +1,12 @@
+
+PASS The HTMLModelElement interface has a currentSrc property.
+PASS The currentSrc property is read-only.
+PASS The currentSrc property is the empty string when no <source> is provided.
+PASS The currentSrc property is the empty string when a <source> is provided with no src attribute.
+PASS The currentSrc property is the empty string when a <source> is provided.
+PASS Changing the src attribute of a <source> changes the currentSrc property.
+PASS Removing the <source> changes the currentSrc property.
+PASS currentSrc returns the src value for the first <source> element.
+PASS Removing a <source> element updates currentSrc.
+PASS Adding a <source> before the current <source> updates currentSrc.
+

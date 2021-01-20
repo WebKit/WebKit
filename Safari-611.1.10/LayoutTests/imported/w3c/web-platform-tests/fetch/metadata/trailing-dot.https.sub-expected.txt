@@ -1,0 +1,8 @@
+Blocked access to external URL https://localhost.:9443/fetch/metadata/resources/echo-as-json.py
+Blocked access to external URL https://www.localhost.:9443/fetch/metadata/resources/echo-as-json.py
+Blocked access to external URL https://www.127.0.0.1.:9443/fetch/metadata/resources/echo-as-json.py
+
+FAIL Fetching a resource from the same origin, but spelled with a trailing dot. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Fetching a resource from the same site, but spelled with a trailing dot. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Fetching a resource from a cross-site host, spelled with a trailing dot. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+

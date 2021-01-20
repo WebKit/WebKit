@@ -1,0 +1,12 @@
+This tests that when we access a text marker in a frame that is subsequently replaced by a different frame, we don't leave a hanging node in the cache that leads to a crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS string is 'hello'
+PASS string is 'test text'
+TEST PASSED: NO CRASH
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

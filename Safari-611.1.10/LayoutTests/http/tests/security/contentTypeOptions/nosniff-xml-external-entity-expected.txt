@@ -1,0 +1,24 @@
+CONSOLE MESSAGE: Did not parse external entity resource at 'http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=application/pdf' because only XML MIME types are allowed.
+CONSOLE MESSAGE: Did not parse external entity resource at 'http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=text/html' because only XML MIME types are allowed.
+CONSOLE MESSAGE: Did not parse external entity resource at 'http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=text/javascript' because only XML MIME types are allowed.
+CONSOLE MESSAGE: Did not parse external entity resource at 'http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?no-content-type-options=1&mime=application/pdf' because only XML MIME types are allowed.
+CONSOLE MESSAGE: Did not parse external entity resource at 'http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?no-content-type-options=1&mime=text/html' because only XML MIME types are allowed.
+CONSOLE MESSAGE: Did not parse external entity resource at 'http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?no-content-type-options=1&mime=text/javascript' because only XML MIME types are allowed.
+CONSOLE MESSAGE: Executed script with MIME type: 'application/xml'.
+CONSOLE MESSAGE: Executed script with MIME type: 'text/xml'.
+CONSOLE MESSAGE: Executed script with MIME type: 'application/xml-external-parsed-entity'.
+CONSOLE MESSAGE: Executed script with MIME type: 'text/xml-external-parsed-entity'.
+CONSOLE MESSAGE: Executed script with MIME type: 'application/xml'.
+CONSOLE MESSAGE: Executed script with MIME type: 'text/xml'.
+CONSOLE MESSAGE: Executed script with MIME type: 'application/xml-external-parsed-entity'.
+CONSOLE MESSAGE: Executed script with MIME type: 'text/xml-external-parsed-entity'.
+Check that xml external entity resources loaded are correctly accepted or blocked based on the MIME type.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.scriptsSuccessfullyLoaded is 8
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

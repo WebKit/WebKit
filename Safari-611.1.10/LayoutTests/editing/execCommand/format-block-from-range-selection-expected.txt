@@ -1,0 +1,42 @@
+This test uses FormatBlock to apply the dl tag to a range of paragraphs with different block tags.
+
+before FormatBlock:
+| "\n"
+| <pre>
+|   id="start"
+|   "Fo<#selection-anchor>o"
+| "\n"
+| <div>
+|   "bar"
+|   <br>
+|   <span>
+|     "baz"
+|   <br>
+|   "raz"
+| "\ndar\n"
+| <br>
+| "\n"
+| <address>
+|   id="end"
+|   "ya<#selection-focus>r"
+| "\n"
+
+after FormatBlock:
+| "\n"
+| <dl>
+|   "Fo<#selection-anchor>o"
+|   <br>
+|   "bar"
+|   <br>
+|   <span>
+|     "baz"
+|     <br>
+|   "raz"
+|   <br>
+|   "\ndar"
+|   <br>
+|   "\n"
+|   "yar<#selection-focus>"
+| "\n"
+| "\n"
+| "\n"

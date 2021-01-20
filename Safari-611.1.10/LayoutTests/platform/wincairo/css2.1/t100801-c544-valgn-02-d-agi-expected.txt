@@ -1,0 +1,84 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x360
+  RenderBlock {HTML} at (0,0) size 800x360
+    RenderBody {BODY} at (8,16) size 784x329
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 765x39
+          text run at (0,0) width 365: "Change your window size. However the lines wrap, the blue "
+          text run at (365,0) width 400: "rectanglues should always have their tops on the same alignment as"
+          text run at (0,20) width 193: "other blue rectangles on the line."
+      RenderBlock {P} at (15,56) size 754x273 [color=#0000FF] [bgcolor=#FFFFFF] [border: (1px solid #C0C0C0)]
+        RenderText {#text} at (8,26) size 61x16
+          text run at (8,26) width 61: "xxx "
+        RenderImage {IMG} at (68,26) size 31x31
+        RenderText {#text} at (98,26) size 16x16
+          text run at (98,26) width 16: " "
+        RenderInline {SPAN} at (0,0) size 115x39 [color=#C0C0C0]
+          RenderText {#text} at (113,8) size 115x39
+            text run at (113,8) width 115: "xxx"
+        RenderText {#text} at (227,26) size 16x16
+          text run at (227,26) width 16: " "
+        RenderImage {IMG} at (242,26) size 51x51
+        RenderText {#text} at (292,26) size 16x16
+          text run at (292,26) width 16: " "
+        RenderInline {BIG} at (0,0) size 61x21 [color=#C0C0C0]
+          RenderText {#text} at (307,22) size 61x21
+            text run at (307,22) width 61: "xxx"
+        RenderText {#text} at (367,26) size 16x16
+          text run at (367,26) width 16: " "
+        RenderImage {IMG} at (382,26) size 11x11
+        RenderText {#text} at (392,26) size 16x16
+          text run at (392,26) width 16: " "
+        RenderInline {SMALL} at (0,0) size 31x11 [color=#C0C0C0]
+          RenderText {#text} at (407,30) size 31x11
+            text run at (407,30) width 31: "xxx"
+        RenderText {#text} at (437,26) size 16x16
+          text run at (437,26) width 16: " "
+        RenderImage {IMG} at (452,26) size 21x21
+        RenderText {#text} at (472,26) size 76x16
+          text run at (472,26) width 16: " "
+          text run at (487,26) width 61: "xxx "
+        RenderImage {IMG} at (547,26) size 66x66
+        RenderText {#text} at (612,26) size 16x16
+          text run at (612,26) width 16: " "
+        RenderInline {SPAN} at (0,0) size 91x31 [color=#C0C0C0]
+          RenderText {#text} at (627,14) size 91x31
+            text run at (627,14) width 91: "xxx"
+        RenderText {#text} at (0,0) size 0x0
+        RenderImage {IMG} at (8,124) size 36x36
+        RenderText {#text} at (43,124) size 76x16
+          text run at (43,124) width 16: " "
+          text run at (58,124) width 61: "xxx "
+        RenderImage {IMG} at (118,124) size 31x31
+        RenderText {#text} at (148,124) size 16x16
+          text run at (148,124) width 16: " "
+        RenderInline {SPAN} at (0,0) size 353x24 [color=#C0C0C0]
+          RenderText {#text} at (163,118) size 93x24
+            text run at (163,118) width 93: "xxx "
+          RenderInline {SPAN} at (0,0) size 169x57
+            RenderText {#text} at (255,91) size 169x57
+              text run at (255,91) width 169: "xxx"
+          RenderText {#text} at (423,118) size 93x24
+            text run at (423,118) width 93: " xxx"
+        RenderText {#text} at (515,124) size 16x16
+          text run at (515,124) width 16: " "
+        RenderImage {IMG} at (530,124) size 51x51
+        RenderText {#text} at (580,124) size 16x16
+          text run at (580,124) width 16: " "
+        RenderInline {SMALL} at (0,0) size 31x11 [color=#C0C0C0]
+          RenderText {#text} at (595,128) size 31x11
+            text run at (595,128) width 31: "xxx"
+        RenderText {#text} at (625,124) size 16x16
+          text run at (625,124) width 16: " "
+        RenderImage {IMG} at (640,124) size 16x16
+        RenderText {#text} at (655,124) size 16x16
+          text run at (655,124) width 16: " "
+        RenderInline {BIG} at (0,0) size 61x21 [color=#C0C0C0]
+          RenderText {#text} at (670,120) size 61x21
+            text run at (670,120) width 61: "xxx"
+        RenderText {#text} at (0,0) size 0x0
+        RenderImage {IMG} at (8,174) size 91x91
+        RenderText {#text} at (98,174) size 61x16
+          text run at (98,174) width 16: " "
+          text run at (113,174) width 46: "xxx"

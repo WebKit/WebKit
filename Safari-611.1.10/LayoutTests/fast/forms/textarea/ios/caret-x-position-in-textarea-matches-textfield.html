@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div id="test-container"></div>
+<script>
+window.jsTestIsAsync = true;
+
+let textAreaCaretRect;
+let textFieldCaretRect;
+
+function createTextControlWithPlaceholder(tagName)
+{
+    let element = document.createElement(tagName);
+    element.placeholder = "placeholder";
+    return element;
+}
+
+function computeCaretRectForElement(element)
+{
+    return new Promise((resolved) => {
+        async function handleFocus() {
+            let caretRect = await UIHelper.getUICaretRect();
+            await UIHelper.deactivateFormControl(element);
+            resolved(caretRect);
+        }
+        element.addEventListener("focus", handleFocus, { once: true });
+        UIHelper.activateFormControl(element);
+    });
+}
+
+async function runTest()
+{
+    if (!window.testRunner) {
+        testFailed("Must be run in WebKitTestRunner.");
+        finishJSTest();
+        return;
+    }
+
+    let testContainer = document.getElementById("test-container");
+
+    // 1. Compute caret rect in empty textarea.
+    let textArea = createTextControlWithPlaceholder("textarea");
+    testContainer.appendChild(textArea);
+    textAreaCaretRect = await computeCaretRectForElement(textArea);
+    testContainer.removeChild(textArea);
+
+    // 2. Compute caret rect in empty text field.
+    let textField = createTextControlWithPlaceholder("input");
+    testContainer.appendChild(textField);
+    textFieldCaretRect = await computeCaretRectForElement(textField);
+    testContainer.removeChild(textField);
+
+    // 3. Compare
+    shouldBe("textAreaCaretRect.left", "textFieldCaretRect.left");
+
+    // 4. Clean up and finish test.
+    document.body.removeChild(testContainer);
+    finishJSTest();
+}
+
+description("Tests that the x-coordinate of the caret in an empty textarea is identical to the x-coordinate of the caret in an empty text field.");
+runTest();
+</script>
+</body>
+</html>

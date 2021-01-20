@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>OOB.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.oob = async () => {
+    const program = `
+        int foo()
+        {
+            int x = 3;
+            thread int[] a = @x;
+            a[424242] = 25;
+            return x;
+        }
+
+        int bar()
+        {
+            int[10] x;
+            thread int[] a = @x;
+            a[424242] = 25;
+            return x[0];
+        }
+
+        int baz()
+        {
+            int[10] x;
+            thread int[] a = @x;
+            a[424242] = 25;
+            return x[1];
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", []), 25);
+    assert_equals(await callIntFunction(program, "bar", []), 25);
+    assert_equals(await callIntFunction(program, "baz", []), 0);
+};
+
+runTests(whlslTests);
+</script>
+</html>

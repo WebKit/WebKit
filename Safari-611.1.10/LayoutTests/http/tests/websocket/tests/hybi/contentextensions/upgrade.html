@@ -1,0 +1,44 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<div id="log"></div>
+<script>
+
+function doLog(msg)
+{
+    log.innerHTML += msg + '<br>';
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function endTest() {
+    doLog("new url: " + ws.url);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+var ws = new WebSocket("ws://127.0.0.1/websocket/tests/hybi/simple");
+
+ws.onopen = function() { 
+    doLog("onopen");
+    ws.send("sent"); 
+}
+ws.onmessage = function(message) { 
+    doLog("onmessage " + message.data);
+}
+ws.onclose = function() {
+    doLog("onclose");
+    endTest();
+}
+ws.onerror = function(ev) { 
+    doLog("onerror"); 
+    endTest(); 
+}
+
+setTimeout(function() { 
+    doLog("timeout");
+    endTest();
+}, 3000);
+
+</script>

@@ -1,0 +1,21 @@
+
+Test that a <video> keeps playing after exiting fullscreen when the internal property "allowsInlineMediaPlaybackAfterFullscreen" is true.
+
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplaythrough)
+RUN(video.play().then(playing);)
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
+EXPECTED (video.webkitDisplayingFullscreen == 'true') OK
+RUN(video.webkitExitFullscreen())
+EVENT(webkitpresentationmodechanged)
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
+EXPECTED (video.webkitDisplayingFullscreen == 'false') OK
+EXPECTED (video.paused == 'false') OK
+RUN(video.pause())
+EVENT(pause)
+EXPECTED (video.paused == 'true') OK
+RUN(video.play().then(playingAgain))
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
+EXPECTED (video.webkitDisplayingFullscreen == 'true') OK
+END OF TEST
+

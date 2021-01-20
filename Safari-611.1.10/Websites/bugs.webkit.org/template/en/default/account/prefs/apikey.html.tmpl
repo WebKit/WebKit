@@ -1,0 +1,84 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # api_keys: array. Array of api keys this user has.
+  # any_revoked: boolean. True is any keys have been revoked.
+  #%]
+
+<p>
+  API keys are used to authenticate WebService API calls. You can create more than
+  one API key if required. Each API key has an optional description which can help
+  you record what each key is used for. Documentation on how to log in is
+  available from
+  <a href="[% docs_urlbase FILTER html %]api/core/v1/general.html#authentication">here</a>.
+</p>
+
+<h3>Existing API keys</h3>
+
+<p>You can update the description, and revoke or unrevoke existing API keys
+here.</p>
+
+<table id="email_prefs">
+  <tr class="column_header">
+    <th>API key</th>
+    <th>Description (optional)</th>
+    <th>Last used</th>
+    <th>Revoked</th>
+  </tr>
+
+  [% FOREACH api_key IN api_keys %]
+    <tr[% IF api_key.revoked %] class="apikey_revoked"[% END %]>
+      <td>[% api_key.api_key FILTER html %]</td>
+      <td>
+        <input name="description_[% api_key.id FILTER html %]"
+          id="description_[% api_key.id FILTER html %]"
+          value="[% api_key.description FILTER html %]">
+      </td>
+      [% IF api_key.last_used %]
+        <td>[% api_key.last_used FILTER time %]</td>
+      [% ELSE %]
+        <td class="center"><i>never used</i></td>
+      [% END %]
+      <td class="center">
+        <input type="checkbox" value="1"
+          name="revoked_[% api_key.id FILTER html %]"
+          id="revoked_[% api_key.id FILTER html %]"
+          [% IF api_key.revoked %] checked="checked" [% END %]>
+      </td>
+    </tr>
+  [% END %]
+  [% UNLESS api_keys.size %]
+    <tr><td colspan="4">You don't have any API keys.</td></tr>
+  [% END %]
+</table>
+
+[% IF any_revoked %]
+  <a id="apikey_revoked_controller" class="bz_default_hidden"
+     href="javascript:TUI_toggle_class('apikey_revoked')">Hide Revoked Keys</a>
+  [%# Show the link if the browser supports JS %]
+  <script type="text/javascript">
+    TUI_hide_default('apikey_revoked');
+    TUI_alternates['apikey_revoked'] = 'Show Revoked Keys';
+    YAHOO.util.Dom.removeClass('apikey_revoked_controller',
+                               'bz_default_hidden');
+  </script>
+[% END %]
+
+<h3>New API key</h3>
+
+<p>You can generate a new API key by ticking the check box below and optionally
+providing a description for the API key. The API key will be randomly
+generated for you.</p>
+
+<p>
+  <input type="checkbox" name="new_key" id="new_key">
+  Generate a new API key with optional description
+  <input name="new_description" id="new_description">
+</p>
+

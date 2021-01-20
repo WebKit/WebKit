@@ -1,0 +1,23 @@
+<script src="/resources/js-test-pre.js"></script>
+<script src="resources/url-blocking-test.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+description("Test basic cases of filter using a character set (e.g. [a-z]).");
+
+validTestSet = [
+    "http://127.0.0.1:8000/resources/square100.png",
+    "http://127.0.0.1:8000/resources/square100.png?casesEnsitive",
+    "http://127.0.0.1:8000/resources/square100.png?casesenSitive",
+];
+
+blockedTestSet = [
+    "http://127.0.0.1:8000/resources/square100.png?BaSiC-TeSt-cAsE",
+    "http://127.0.0.1:8000/resources/square100.png?any-scheme-matcher",
+    "http://127.0.0.1:8000/resources/square100.png?casesensitive",
+    "http://127.0.0.1:8000/resources/square100.png?caseSeNsitive",
+];
+
+runBlockingTest(validTestSet, blockedTestSet);
+</script>
+<script src="/resources/js-test-post.js"></script>

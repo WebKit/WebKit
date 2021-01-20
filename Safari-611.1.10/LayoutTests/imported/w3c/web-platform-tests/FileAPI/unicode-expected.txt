@@ -1,0 +1,6 @@
+
+PASS Test that strings are not NFC normalized by Blob constructor
+PASS Test that strings are not NFC normalized by File constructor
+PASS Test that unpaired surrogates are replaced by Blob constructor
+PASS Test that unpaired surrogates are replaced by File constructor
+

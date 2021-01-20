@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ modernMediaControls=true useFlexibleViewport=true ] -->
+<html>
+<body>
+<p>This tests changing the viewport after a video element. WebKit should not crash.</p>
+<video src="test.mp4" controls></video>
+<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+<script>
+if (window.internals)
+    testRunner.dumpAsText();
+document.write("<div>PASS. WebKit didn't crash</div>");
+</script>
+</body>
+</html>

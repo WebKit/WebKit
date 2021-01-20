@@ -1,0 +1,6 @@
+
+This tests that clicking on a standalone video will pause and double-clicking will play.
+
+PASS: video is paused.
+PASS: video is playing
+

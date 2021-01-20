@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <video src="content/audio-tracks.mp4" controls autoplay loop></video>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script>
+            description("Testing that muting a video element should result in page's audio playing state to become false");
+
+            jsTestIsAsync = true;
+
+            // Un-mute audio on the page before starting the test.
+            if (window.internals)
+                internals.setPageMuted("");
+
+            function testUnmutingVideo()
+            {
+                run("video.muted = false");
+                shouldBecomeEqual("window.internals.pageMediaState().includes('IsPlayingAudio')", "true", finishJSTest);
+            }
+
+            function testMutingVideo()
+            {
+                run("video.muted = true");
+                shouldBecomeEqual("window.internals.pageMediaState().includes('IsPlayingAudio')", "false", testUnmutingVideo);
+            }
+
+            shouldBecomeEqual("window.internals.pageMediaState().includes('IsPlayingAudio')", "true", testMutingVideo);
+        </script>
+        <script src="../resources/js-test-post.js"></script>
+    </body>
+</html>

@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>Service Worker Fetch Event</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+var scope1 = "resources/navigation-redirect-frame1.html";
+var scope2 = "resources/navigation-redirect-frame2.html";
+var registration1;
+var registration2;
+
+function withFrame(url)
+{
+    return new Promise((resolve) => {
+        let frame = document.createElement('iframe');
+        frame.src = url;
+        frame.onload = function() { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+}
+
+async function registerServiceWorker(scope)
+{
+    var registration = await navigator.serviceWorker.register("navigation-redirect-worker.js", { scope : scope });
+    var activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    return new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve(registration);
+        });
+    });
+}
+
+promise_test(async (test) => {
+    registration1 = await registerServiceWorker(scope1);
+}, "Setup worker 1");
+
+promise_test(async (test) => {
+    var frame = await withFrame(scope1);
+    assert_equals(frame.contentWindow.navigator.serviceWorker.controller, null);
+    frame.remove();
+}, "Frame redirecting to an unregistered scope");
+
+promise_test(async (test) => {
+    registration2 = await registerServiceWorker(scope2);
+}, "Setup worker 2");
+
+promise_test(async (test) => {
+    var frame = await withFrame(scope1);
+    assert_true(frame.contentWindow.navigator.serviceWorker.controller !== null);
+    frame.remove();
+}, "Frame redirecting to a registered scope");
+
+promise_test(async (test) => {
+    registration1.unregister();
+    registration2.unregister();
+}, "Clean-up");
+
+</script>
+</body>
+</html>

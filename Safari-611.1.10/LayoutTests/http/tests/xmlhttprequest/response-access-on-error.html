@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>XMLHttpRequest: ensure that response getters properly handle error cases</title>
+    <script src="/js-test-resources/testharness.js"></script>
+    <script src="/js-test-resources/testharnessreport.js"></script>
+</head>
+
+<body>
+    <div>XMLHttpRequest: ensure that response getters properly handle error cases (see <a href="https://bugs.webkit.org/show_bug.cgi?id=125840">bug 125840</a>)</div>
+    <div id="log"></div>
+
+    <script type="text/javascript">
+        // These two tests check response getters when error flag is set and state is DONE
+        var test1 = async_test("error test")
+        test1.step(function() {
+
+            var xhr = new XMLHttpRequest()
+            xhr.onerror = test1.step_func(function(e)
+            {
+                assert_response(xhr)
+                test1.done()
+            })
+            xhr.open("GET", "resources/infinite-loop.php", true)
+            xhr.send("")
+        })
+
+        var test2 = async_test("abort test")
+        test2.step(function() {
+            var xhr = new XMLHttpRequest()
+            xhr.upload.onloadend = function(e) {
+                xhr.abort()
+            }
+            xhr.onreadystatechange = test2.step_func(function(e) {
+                if (xhr.readyState == xhr.DONE) {
+                    assert_response(xhr)
+                    test2.done()
+                 }
+            })
+            xhr.open("POST", "resources/post-echo.cgi", true)
+            xhr.setRequestHeader("Content-Type","text/plain")
+            xhr.send("data")
+        })
+        
+        function assert_response(xhr) {
+            assert_equals(xhr.getAllResponseHeaders().trim(), "", "getAllResponseHeaders should return the empty string")
+            assert_equals(xhr.getResponseHeader("Content-Type"), null, "getResponseHeader should return null")
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+This tests global code recursion when the JS stack is full.
+<div id="result">PASS: Entering global code with a full JS stack did not crash, and did not allow continued recursion.</id>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var depth = 0;
+function f(a, b, c, d) {
+    var a, b;
+    try {
+        depth++;
+        f(a, b, c, d);
+    } catch(e) {
+        document.write('<script> f(); result.innerText = "FAILED: Attempting to call f() should throw due to stack exhaustion"; </'+'script> ');
+    }
+}
+
+f();
+</script>

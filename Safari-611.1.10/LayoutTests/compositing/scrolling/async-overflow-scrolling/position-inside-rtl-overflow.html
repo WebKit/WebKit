@@ -1,0 +1,63 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html dir="rtl">
+<head>
+    <style>
+        .scroller {
+            position: relative;
+            z-index: 0;
+            width: 200px;
+            height: 200px;
+            background-color: #eee;
+            border: 5px solid gray;
+            overflow-y: scroll;
+        }
+        
+        .contents {
+            width: 100%;
+            height: 200%;
+        }
+        
+        .box {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-color: green;
+            top: 80px;
+            left: 0;
+        }
+        
+        .composited {
+            transform: translateZ(0);
+        }
+        
+        ::-webkit-scrollbar {
+            width: 23px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: silver;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: gray;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', () => {
+            if (window.internals)
+                document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="contents">
+            <div class="composited box"></div>
+        </div>
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>

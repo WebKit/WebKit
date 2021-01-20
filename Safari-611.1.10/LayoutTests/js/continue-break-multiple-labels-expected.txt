@@ -1,0 +1,14 @@
+This test checks break and continue behaviour in the presence of multiple labels.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS test1() is '12356789'
+PASS test2() is '123'
+PASS test3() is 10
+PASS test4() is 1
+PASS test5() is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

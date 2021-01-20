@@ -1,0 +1,2 @@
+Exception: SyntaxError: Cannot declare a let variable twice: 'x'.
+at defer1.js:6

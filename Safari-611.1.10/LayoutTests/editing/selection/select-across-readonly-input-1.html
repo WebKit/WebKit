@@ -1,0 +1,12 @@
+<!DOCTYPE>
+<html>
+<body>
+<p>This test ensures selection that crosses the shadow DOM boundary of a readonly input element cannot be made by a mouse drag.</p>
+<p>To manually test, select text by a mouse drag starting in "hello" and ending in "world". Selection should only extend inside the input element.</p>
+<div id="test">
+<input id="from" type="text" value="hello" readonly>
+<span id="to">world</span>
+</div>
+<script src="resources/select-across-readonly-input.js"></script>
+</body>
+</html>

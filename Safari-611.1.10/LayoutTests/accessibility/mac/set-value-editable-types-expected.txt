@@ -1,0 +1,16 @@
+This tests that you can set the value of a contenteditable element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Contenteditable
+Role: AXRole: AXTextArea
+Value: AXValue: current1
+Writable: true
+Value change notification received
+Updated Value: AXValue:    leading and trailing spaces   
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

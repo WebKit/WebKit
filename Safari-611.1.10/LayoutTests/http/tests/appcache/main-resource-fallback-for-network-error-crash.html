@@ -1,0 +1,38 @@
+
+<!DOCTYPE html>
+<html manifest="resources/main-resource-fallback-for-network-error-crash.manifest">
+<body>
+<div>        Before you click the link that tests the appcache fallback, please make sure the server is down or disconnect your device from any data connection so the connection request to the server will fail.
+</div>
+
+<a id= "Link" href="/resources/network-simulator.php?test=appcache-main-resource-fallback-for-network-error-crash&path=does-not-exist" > click this link when the server is down or the client device doesn't have a data connection, this will verify if the fallback will cause the crash. </a>
+
+
+<script>
+
+function setNetworkEnabled(state)
+{
+    var req = new XMLHttpRequest;
+    req.open("GET", "/resources/network-simulator.php?test=appcache-main-resource-fallback-for-network-error-crash&command=" + (state ? "connect" : "disconnect"), false);
+    req.send("");
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function runTest()
+{
+    if (window.testRunner) {
+        setNetworkEnabled(false);
+        window.location="/resources/network-simulator.php?test=appcache-main-resource-fallback-for-network-error-crash&path=does-not-exist";
+    }
+}
+
+applicationCache.oncached = function () { runTest(); }
+applicationCache.onnoupdate = function () { runTest(); }
+
+</script>
+</body>
+</html>

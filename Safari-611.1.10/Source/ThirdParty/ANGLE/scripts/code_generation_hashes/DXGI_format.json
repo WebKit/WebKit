@@ -1,0 +1,12 @@
+{
+  "src/libANGLE/renderer/angle_format.py":
+    "32ba71942c0fd00e6807104f1bb80a3c",
+  "src/libANGLE/renderer/angle_format_map.json":
+    "aa4a0d3463b76858a75787b9cdec8e98",
+  "src/libANGLE/renderer/dxgi_format_data.json":
+    "3428e4761ccd05f960adffd6ccbd86c5",
+  "src/libANGLE/renderer/dxgi_format_map_autogen.cpp":
+    "974308ca798476dfaa076fb864478310",
+  "src/libANGLE/renderer/gen_dxgi_format_table.py":
+    "40ec74c693a846d2a180ff801a3845b9"
+}

@@ -1,0 +1,257 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # buglistbase: The base query for this table, in URL form
+  # col_field: string. Name of the field being plotted as columns.
+  # row_field: string. Name of the field being plotted as rows.
+  # tbl_field: string. Name of the field being plotted as tables.
+  # col_names: array. List of values for the field being plotted as columns.
+  # row_names: array. List of values for the field being plotted as rows.
+  # data: <depends on format>. Data to plot. Only data.$tbl is accessed. 
+  # tbl: Name of a hash in data which is the table to be plotted.
+  #%]
+
+[% col_field_disp = field_descs.$col_field || col_field %]
+[% row_field_disp = field_descs.$row_field || row_field %]
+
+[% urlbase = BLOCK %]buglist.cgi?[% buglistbase FILTER html %][% END %]
+[% IF tbl == "-total-" %]
+  [% IF tbl_vals %]
+    [% urlbase = urlbase _ "&amp;" _ tbl_vals %]
+  [% END %]
+[% ELSIF tbl_field %]
+  [% urlbase = BLOCK %][% urlbase %]&amp;[% tbl_field FILTER uri %]=[% tbl FILTER uri %][% END %]
+[% END %]
+
+<script type="text/javascript">
+function bz_encode (str, decode) {
+  // First decode HTML entities, if requested.
+  if (decode)
+    str = str.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"')
+             .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/\s+$/,"");
+
+  // encodeURIComponent() doesn't escape single quotes.
+  return encodeURIComponent(str).replace(/'/g, escape);
+};
+
+YAHOO.util.Event.addListener(window, "load", function() {
+  this.Linkify = function(elLiner, oRecord, oColumn, oData) {
+    if (oData == 0)
+      elLiner.innerHTML = ".";
+    else if (oRecord.getData("row_title") == "Total")
+      elLiner.innerHTML = '<a href="[% urlbase FILTER js %]&amp;[% col_field FILTER uri FILTER js %]='
+                          + bz_encode(oColumn.field)
+                          + '[% "&amp;" _ row_vals IF row_vals %]">' + oData + '</a>';
+    else
+      elLiner.innerHTML = '<a href="[% urlbase FILTER js %]&amp;[% row_field FILTER uri FILTER js %]='
+                          + bz_encode(oRecord.getData("row_title"), 1)
+                          + '&amp;[% col_field FILTER uri FILTER js %]='
+                          + bz_encode(oColumn.field) + '">' + oData + '</a>';
+  };
+
+  this.LinkifyTotal = function(elLiner, oRecord, oColumn, oData) {
+    if (oData == 0)
+      elLiner.innerHTML = ".";
+    else if (oRecord.getData("row_title") == "Total")
+      elLiner.innerHTML = '<a href="[% urlbase FILTER js %][% "&amp;" _ row_vals IF row_vals %]
+                          [%~ "&amp;" _ col_vals IF col_vals %]">'
+                          + oData + '</a>';
+    else
+      elLiner.innerHTML = '<a href="[% urlbase FILTER js %]&amp;[% row_field FILTER uri FILTER js %]='
+                          + bz_encode(oRecord.getData("row_title"), 1)
+                          + '[% "&amp;" _ col_vals IF col_vals %]">' + oData + '</a>';
+
+    YAHOO.util.Dom.addClass(elLiner.parentNode, "ttotal");
+  };
+
+  var totalRowFormatter = function( elTr, oRecord ) {
+      if ( oRecord.getData('row_title') == "Total" ) {
+          YAHOO.util.Dom.addClass( elTr, 'ttotal' );
+      }
+      return true;
+  };
+
+  var totalNumberSorter = function( a, b, desc, field ){
+    var a_value = a.getData(field);
+    var b_value = b.getData(field);
+    var a_total_test = a.getData("row_title");
+    var b_total_test = b.getData("row_title");
+    var comp_result = YAHOO.util.Sort.compare(a_value, b_value, desc);
+    if( a_total_test == "Total" ){
+      comp_result = 1;
+    }else if( b_total_test == "Total" ){
+      comp_result = -1;
+    }
+    return comp_result;
+  };
+
+
+  var myColumnDefs = [
+        {key:"row_title", label:"", sortable:true, sortOptions: { sortFunction:totalNumberSorter }},
+        [% FOREACH col = col_names %]
+          {key:"[% col FILTER js %]", label:"[% display_value(col_field, col) FILTER html FILTER js %]", sortable:true,
+           formatter:this.Linkify, sortOptions: { defaultDir: YAHOO.widget.DataTable.CLASS_DESC, sortFunction:totalNumberSorter }},
+        [% END %]
+        {key:"total", label:"Total", sortable:true, formatter:this.LinkifyTotal,
+         sortOptions: { defaultDir: YAHOO.widget.DataTable.CLASS_DESC, sortFunction:totalNumberSorter }}
+      ];
+  this.parseString = function(str) {
+    return YAHOO.lang.trim(str);
+  };
+
+  this.parseNumber = function(str) {
+    if (str.match(/^\s*\.\s*$/m))
+      return 0;
+
+    // Do not use <\/a>$. For some reason, IE6 doesn't understand it.
+    // We use [^\d]+$ instead.
+    var res = str.match(/>(\d+)[^\d]+$/m);
+    if (res && res[1])
+      return parseFloat(res[1]);
+  };
+
+  this.myDataSource = new YAHOO.util.DataSource(YAHOO.util.Dom.get("tabular_report_[% tbl FILTER html FILTER js %]"));
+  this.myDataSource.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE;
+  this.myDataSource.responseSchema = {
+    fields: [
+      {key:"row_title", parser:this.parseString},
+      [% FOREACH col = col_names %]
+        {key:"[% col FILTER js %]", parser:this.parseNumber},
+      [% END %]
+      {key:"total", parser:this.parseNumber}
+    ]
+  };
+  this.myDataTable = new YAHOO.widget.DataTable("tabular_report_container_
+                         [% tbl FILTER js %]", myColumnDefs, this.myDataSource, 
+                         {formatRow: totalRowFormatter});
+});
+</script>
+
+[% IF tbl_field %]
+  <h2>[% tbl_disp FILTER email FILTER html %]</h2>
+[% END %]
+
+<table class="tabular_report_container">
+  <tr>
+    <td>
+    </td>
+    <td class="center">
+      <strong>[% col_field_disp FILTER html %]</strong>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="middle">
+      <strong>[% row_field_disp FILTER html %]</strong>
+    </td>
+    <td>
+
+
+[% classes = [ [ "t1", "t2" ] , [ "t3", "t4" ] ] %]
+[% col_idx = 0 %]
+[% row_idx = 0 %]
+[% total_key = '-total-' %]
+<div id="tabular_report_container_[% tbl FILTER html %]">
+<table id="tabular_report_[% tbl FILTER html %]" class="tabular_report">
+  [% IF col_field %]
+    <thead>
+    <tr>
+      <th class="[% classes.$row_idx.$col_idx %]">
+      </th>
+      [% FOREACH col = col_names %]
+        [% NEXT IF col == "" %]
+        
+        [% col_idx = 1 - col_idx %]
+        <th class="[% classes.$row_idx.$col_idx %]">
+          [% PROCESS value_display value = col field = col_field %]
+        </th>
+      [% END %]
+      <th class="ttotal">
+        Total
+      </th>
+    </tr>
+    </thead>
+  [% END %]
+  <tbody>
+  [% FOREACH row = row_names %]
+    [% row_idx = 1 - row_idx %]
+    <tr>
+      <td class="[% classes.$row_idx.$col_idx %] right">
+        [% PROCESS value_display value = row field = row_field %]
+      </td>
+      [% FOREACH col = col_names %]
+        [% NEXT IF col == "" %]
+        
+        [% col_idx = 1 - col_idx %]
+        <td class="[% classes.$row_idx.$col_idx %]">
+          [% IF data.$tbl.$col.$row AND data.$tbl.$col.$row > 0 %]
+            <a href="[% urlbase %]&amp;
+              [% row_field FILTER uri %]=[% row FILTER uri %]&amp;
+              [% col_field FILTER uri %]=[% col FILTER uri %]">
+              [% data.$tbl.$col.$row %]</a>
+          [% ELSE %]
+            .
+          [% END %]
+        </td>
+      [% END %] 
+      <td class="ttotal right">
+        <a href="[% urlbase %]&amp;
+          [% row_field FILTER uri %]=[% row FILTER uri %]
+          [% "&amp;$col_vals" IF col_vals %]">
+        [% data.$tbl.$total_key.$row OR 0 FILTER html %]</a>
+      </td>
+    </tr>
+  [% END %]
+    <tr>
+      [% row_idx = 1 - row_idx %]
+      <td class="ttotal">
+        Total
+      </td>
+      [% FOREACH col = col_names %]
+        [% NEXT IF col == "" %]
+
+        <td class="ttotal">
+          <a href="[% urlbase %]&amp;
+            [% col_field FILTER uri %]=[% col FILTER uri %]
+            [% "&amp;$row_vals" IF row_vals %]">
+          [% data.$tbl.$col.$total_key OR 0 FILTER html %]</a>
+        </td>
+      [% END %]
+      <td class="ttotal right">
+        <strong>
+          <a href="[% urlbase %]
+            [% "&amp;$row_vals" IF row_vals %]
+            [% "&amp;$col_vals" IF col_vals %]">[% data.$tbl.$total_key.$total_key OR 0 FILTER html %]</a>
+        </strong>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+    </td>
+  </tr>
+</table>
+
+[% IF note_multi_select %]
+  <p class="extra_info">
+    NOTE: Axes contain multi-value fields, so the total numbers might not add up,
+    as a single [% terms.bug %] can match several rows or columns.
+  </p>
+[% END %]
+
+[% BLOCK value_display %]
+  [% SET disp_value = display_value(field, value) %]
+  [% IF field == 'assigned_to' OR field == 'reporter'
+           OR field == 'qa_contact'
+  %]
+    [% disp_value = value FILTER email %]
+  [% END %]
+  [% disp_value FILTER html FILTER replace('^ $','&nbsp;') %]
+[% END %] 

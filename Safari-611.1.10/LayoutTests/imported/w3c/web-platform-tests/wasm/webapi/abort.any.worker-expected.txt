@@ -1,0 +1,10 @@
+
+Harness Error (FAIL), message = Unhandled rejection: Request signal is aborted
+
+FAIL compileStreaming() on an already-aborted request should reject with AbortError promise_test: Unhandled rejection with value: object "TypeError: WebAssembly[method] is not a function. (In 'WebAssembly[method](request)', 'WebAssembly[method]' is undefined)"
+FAIL compileStreaming() synchronously followed by abort should reject with AbortError promise_test: Unhandled rejection with value: object "TypeError: WebAssembly[method] is not a function. (In 'WebAssembly[method](request)', 'WebAssembly[method]' is undefined)"
+FAIL compileStreaming() asynchronously racing with abort should succeed or reject with AbortError assert_equals: expected "AbortError" but got "TypeError"
+FAIL instantiateStreaming() on an already-aborted request should reject with AbortError promise_test: Unhandled rejection with value: object "TypeError: WebAssembly[method] is not a function. (In 'WebAssembly[method](request)', 'WebAssembly[method]' is undefined)"
+FAIL instantiateStreaming() synchronously followed by abort should reject with AbortError promise_test: Unhandled rejection with value: object "TypeError: WebAssembly[method] is not a function. (In 'WebAssembly[method](request)', 'WebAssembly[method]' is undefined)"
+FAIL instantiateStreaming() asynchronously racing with abort should succeed or reject with AbortError assert_equals: expected "AbortError" but got "TypeError"
+

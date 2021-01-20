@@ -1,0 +1,11 @@
+This test checks whether getters and setters work correctly with garbage collection.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS o.x is 242
+PASS o.x is 242
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,14 @@
+Testing the SkipBackButton class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS skipBackButton.element.localName is "button"
+PASS skipBackButton.element.classList.contains("skip-back") is true
+PASS skipBackButton.iconName is Icons.SkipBack
+PASS skipBackButton.image.element.style.webkitMaskImage.includes("macOS/SkipBack15.svg") became true
+PASS iOSSkipBackButton.image.element.style.webkitMaskImage.includes("iOS/SkipBack15.svg") became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

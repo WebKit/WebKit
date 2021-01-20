@@ -1,0 +1,7 @@
+ALERT: 0
+This tests that WebKit properly handles sub-frames with invalid URLs. It passes if it does not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+

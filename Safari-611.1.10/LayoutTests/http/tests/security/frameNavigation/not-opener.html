@@ -1,0 +1,45 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
+}
+
+function log(msg) {
+    var div = document.createElement("div");
+    div.appendChild(document.createTextNode(msg));
+    document.getElementById("console").appendChild(div);
+}
+
+var readyCount = 0;
+window.addEventListener("message", function(e) {
+    if (e.data == "ready") {
+        ++readyCount;
+        if (readyCount == 2) {
+            helper.postMessage("set", "*");
+        }
+    } else if (e.data == "pass") {
+        target.document.body.innerHTML = "Should have navigated this window.  It should be still be same-origin.";
+        log("PASS");
+        target.close();
+        helper.postMessage("cleanup", "*");
+    } else if (e.data == "done") {
+        helper.close();
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}, false);
+
+window.onload = function() {
+    target = window.open("resources/ready.html", "targetWindow");
+    helper = window.open("http://localhost:8000/security/frameNavigation/resources/not-opener-helper.html");
+}
+</script>
+</head>
+<body>
+<div id="console"></div>
+</body>
+</html>
+

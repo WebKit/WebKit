@@ -1,0 +1,20 @@
+CONSOLE MESSAGE: TypeError: 'application/json' is not a valid JavaScript MIME type.
+CONSOLE MESSAGE: TypeError: 'application/octet-stream' is not a valid JavaScript MIME type.
+CONSOLE MESSAGE: TypeError: 'application/xml' is not a valid JavaScript MIME type.
+CONSOLE MESSAGE: TypeError: 'image/png' is not a valid JavaScript MIME type.
+CONSOLE MESSAGE: TypeError: 'text/html' is not a valid JavaScript MIME type.
+CONSOLE MESSAGE: TypeError: 'text/plain' is not a valid JavaScript MIME type.
+CONSOLE MESSAGE: TypeError: 'text/vbs' is not a valid JavaScript MIME type.
+CONSOLE MESSAGE: TypeError: 'text/vbscript' is not a valid JavaScript MIME type.
+CONSOLE MESSAGE: TypeError: 'text/xml' is not a valid JavaScript MIME type.
+Test module rejects scripts with incorrect mime types.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Module is not executed yet.
+Module rejects scripts with incorrect mime types.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

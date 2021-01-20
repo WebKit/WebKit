@@ -1,0 +1,33 @@
+This test exercises the "unique" constraint of indexes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+Initial upgrade needed: Old version - 0 New version - 1
+First put success
+Value of 1 is: [object Object]
+Value of 2 is: undefined
+Value of 3 is: undefined
+Count in index 1 is: 1
+Count in index 2 is: 1
+Second put failure
+Value of 1 is: [object Object]
+Value of 2 is: undefined
+Value of 3 is: undefined
+Count in index 1 is: 1
+Count in index 2 is: 1
+Third put failure
+Value of 1 is: [object Object]
+Value of 2 is: undefined
+Value of 3 is: undefined
+Count in index 1 is: 1
+Count in index 2 is: 1
+Initial upgrade versionchange transaction complete
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

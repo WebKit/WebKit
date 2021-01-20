@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/getUserMedia-helper.js"></script>
+    </head>
+        <script>
+
+            var mediaStream = null;
+            var mediaStreamTrack = null;
+            var timer = null;
+
+            window.jsTestIsAsync = true;
+
+            description("This tests the constructor for the MediaStreamTrackEvent DOM class.");
+
+            function endTest()
+            {
+                clearTimeout(timer);
+                finishJSTest();
+            }
+
+            function testMediaStreamTrackEvent()
+            {
+                debug("<br>*** No initializer passed ***");
+                shouldThrowErrorName("new MediaStreamTrackEvent('MediaStreamTrackEvent')", "TypeError");
+
+                debug("<br>*** Bubbles and cancelable true, track is missing ***");
+                shouldThrowErrorName("new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancelable: true })", "TypeError");
+
+                debug("<br>*** Bubbles and cancelable true, invalid track ***");
+                shouldThrowErrorName("new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancelable: true, track: MediaStreamTrack })", "TypeError");
+    
+                debug("<br>*** Initialize 'track' with a invalid values ***");
+                shouldThrowErrorName("new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: 10 })", "TypeError");
+                shouldThrowErrorName("new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: \'string\' })", "TypeError");
+                emptyObject = { };
+                shouldThrowErrorName("new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: emptyObject })", "TypeError");
+                shouldThrowErrorName("new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: document })", "TypeError");
+
+                debug("<br>*** Bubbles and cancelable true, valid track ***");
+                shouldBe("new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancelable: true, track: mediaStreamTrack }).bubbles", "true");
+                shouldBe("new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancelable: true, track: mediaStreamTrack }).cancelable", "true");
+
+                debug("<br>*** Initialize 'track' with valid track object ***");
+                shouldBeNonNull("new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: mediaStreamTrack }).track");
+                shouldBe("new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: mediaStreamTrack }).track", "mediaStreamTrack");
+
+                debug("");
+                endTest();
+            }
+
+            function gotStream(stream)
+            {
+                clearTimeout(timer);
+
+                debug("<br>*** getUserMedia() succeeded, test stream ***");
+                mediaStream = stream;
+                shouldBeNonNull("mediaStream");
+                shouldBeNonNull("mediaStream.getVideoTracks()[0]");
+                mediaStreamTrack = mediaStream.getVideoTracks()[0];
+                testMediaStreamTrackEvent();
+            }
+
+            function primeTimeout(msg)
+            {
+                clearTimeout(timer);
+                timer = setTimeout(function() { testFailed(msg); endTest() }, 4000);
+            }
+
+            function test()
+            {
+                primeTimeout("Timeout waiting for getUserMedia()");
+                 getUserMedia("allow", {audio:true, video:true}, gotStream);
+            }
+
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+
+    <body onload="test()">
+    </body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+    <script>
+        window.addEventListener('load', async event => {
+            if (!window.internals) {
+                failTest('This test requires window.internals.');
+                return;
+            }
+
+            consoleWrite('');
+            run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
+            run('internals.setMockVideoPresentationModeEnabled(true)');
+
+            findMediaElement();
+            video.src = findMediaFile("video", "content/test");
+
+            await waitFor(video, 'canplaythrough');
+
+            runWithKeyDown(() => {
+                video.webkitSetPresentationMode('picture-in-picture');
+            });
+
+            waitForEventOnce('enterpictureinpicture', event => {
+                window.pipWindow = event.pictureInPictureWindow;
+                testExpected('pipWindow.width', 0, '>');
+                testExpected('pipWindow.height', 0, '>');
+
+                const observer = new MutationObserver(() => {
+                    consoleWrite('The video element has been removed from DOM.');
+                    setTimeout(endTest, 1000);
+                });
+                observer.observe(document.body, { childList: true });
+                waitForEvent('webkitpresentationmodechanged', () => {
+                    failTest('PiP window is closed!');
+                });
+                document.body.removeChild(video);
+            });
+        });
+    </script>
+</head>
+<body>
+    <div>Test that removing a video element from the DOM while the video is in the picture-in-picture mode does not close the PiP window.</div>
+    <video controls playsinline></video>
+</body>
+</html>

@@ -1,0 +1,10 @@
+Tests what would happen if you a throwing operation at the beginning of a finally blow that gets inlined inside a complicated catch/finally stack. The correct outcome is for this test to not crash during exception throwing.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS It worked.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

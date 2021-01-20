@@ -1,0 +1,16 @@
+Test exporting a 192 bits AES-CFB key with JWK format
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Generating a key...
+Exporting a key...
+PASS key.kty is 'oct'
+PASS key.key_ops is ['decrypt', 'encrypt', 'unwrapKey', 'wrapKey']
+PASS key.alg is 'A192CFB8'
+PASS key.ext is true
+PASS Base64URL.parse(key.k).byteLength is 24
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

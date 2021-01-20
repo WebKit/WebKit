@@ -1,0 +1,22 @@
+This tests some obvious failures that can happen while calling IDBCursor.advance() on object store cursors.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+Initial upgrade needed: Old version - 0 New version - 1
+Failed to advance object store cursor with undefined count argument
+Failed to advance object store cursor with '0' count argument
+Failed to advance object store cursor with negative count argument
+Failed to advance object store cursor after deleting object store
+Failed to advance an object store cursor when it is already fetching the next record
+Initial upgrade versionchange transaction complete
+Failed to advance object store cursor while transaction inactive
+readonly transaction complete
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

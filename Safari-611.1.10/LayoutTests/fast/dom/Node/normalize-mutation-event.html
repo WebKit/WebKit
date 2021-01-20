@@ -1,0 +1,18 @@
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function eventhandler() {
+        document.body.appendChild(document.body.firstChild);
+    }
+    function run() {
+        document.caretRangeFromPoint(0,0);
+        document.body.firstChild.after("abc")
+        document.body.firstChild.addEventListener("DOMSubtreeModified", eventhandler);
+        element.getRootNode().normalize();
+    }
+</script>
+<body onload=run()>
+    Test that normalize() behaves correctly in the presence of a mutation event that modifies the child order. PASS if test does not crash.
+    <div id="element"></div>
+</body>

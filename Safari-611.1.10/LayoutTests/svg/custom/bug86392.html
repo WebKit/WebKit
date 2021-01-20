@@ -1,0 +1,59 @@
+<html>
+<head>
+<style>
+#el1 {
+    border-left-style: double;
+}
+#el3 {
+    content: counter(c);
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function executeTest() {
+    el0=document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+    el0.setAttribute('marker-mid', 'url(#el4)')
+    document.body.appendChild(el0)
+    el1=document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+    el1.setAttribute('id','el1')
+    document.body.appendChild(el1)
+    el2=document.createElementNS('http://www.w3.org/2000/svg', 'path')
+    el2.setAttribute('d', 'M 0 0 s 0 0 0 0 C 0 0 0 0 0 400 c 0 0 0 400 400 0')
+    el0.appendChild(el2)
+    el3=document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+    el3.setAttribute('id','el3')
+    el1.appendChild(el3)
+    el4=document.createElementNS('http://www.w3.org/2000/svg', 'marker')
+    el4.setAttribute('id','el4')
+    el3.appendChild(el4)
+    scrollTo(0, 60)
+    document.body.style.zoom=0.1
+    document.designMode='on'
+    document.execCommand('selectall')
+    document.designMode='off'
+}
+
+window.onload = function(){
+    if (location.hash != "#2") {
+        if (location.hash)
+            location.hash = "#" + (parseInt(location.hash.slice(1)) + 1).toString();
+        else
+            location.hash = "#1";
+        executeTest();
+        setTimeout(function(){ location.reload() },0);
+    } else {
+        document.getElementById("div1").textContent = "PASS: WebKit did not crash.";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}
+</script>
+</head>
+<body>
+<div id="div1"></div>
+</body>
+</html>

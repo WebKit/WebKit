@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing basic video exchange from offerer to receiver</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay=""></video>
+        <canvas id="canvas" width="640" height="480"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+promise_test(async (test) => {
+    var pc = new RTCPeerConnection();
+    pc.addTransceiver("video");
+
+    let offer = await pc.createOffer();
+    assert_true(offer.sdp.indexOf("m=video") !== -1, "mid");
+    assert_true(offer.sdp.indexOf("a=sendrecv") !== -1, "recvonly");
+
+    pc.addTransceiver("audio");
+    offer = await pc.createOffer();
+    assert_true(offer.sdp.indexOf("m=audio") !== -1, "m=audio");
+}, "Setting up calls with addTransceiver but with no track");
+
+promise_test(async (test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    var pc = new RTCPeerConnection();
+    pc.addTransceiver("video", {direction:"recvonly"});
+    pc.getSenders()[0].replaceTrack(stream.getVideoTracks()[0]);
+
+    const offer = await pc.createOffer();
+    assert_true(offer.sdp.indexOf("m=video") !== -1, "m=video");
+    // Replacing the track is not done yet so we still set it as a recvonly.
+    assert_true(offer.sdp.indexOf("a=recvonly") !== -1, "a=recvonly");
+}, "Setting up calls with addTransceiver with a track");
+
+promise_test(async (test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    var pc = new RTCPeerConnection();
+    pc.addTransceiver(stream.getVideoTracks()[0]);
+    await pc.getSenders()[0].replaceTrack(null);
+    await pc.getSenders()[0].replaceTrack(stream.getVideoTracks()[0]);
+
+    const offer = await pc.createOffer();
+
+    const sdpLines = offer.sdp.split('\r\n').filter(line => {
+        return line.startsWith("m=video");
+    });
+    assert_equals(sdpLines.length, 1, "There should be 1 video m section");
+}, "Setting up calls with addTransceiver with a track and use replaceTrack several times");
+
+function testImage()
+{
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    imageData = canvas.getContext('2d').getImageData(10, 325, 250, 1);
+    data = imageData.data;
+
+    var index = 20;
+    assert_true(data[index] < 100);
+    assert_true(data[index + 1] < 100);
+    assert_true(data[index + 2] < 100);
+
+    index = 80;
+    assert_true(data[index] > 200);
+    assert_true(data[index + 1] > 200);
+    assert_true(data[index + 2] > 200);
+
+    index += 80;
+    assert_true(data[index] > 200);
+    assert_true(data[index + 1] > 200);
+    assert_true(data[index + 2] < 100);
+}
+
+promise_test(async (test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true});
+    const track = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            var track = stream.getVideoTracks()[0];
+            firstConnection.addTransceiver("video");
+            return firstConnection.getSenders()[0].replaceTrack(stream.getVideoTracks()[0]);
+        }, (secondConnection) => {
+            secondConnection.addTransceiver("video");
+            secondConnection.ontrack = (trackEvent) => {
+                resolve(trackEvent.track);
+            };
+        }, {
+            observeOffer : (desc) => {
+                const sdpLines = desc.sdp.split('\r\n').filter(line => {
+                    return line.startsWith("m=video");
+                });
+                assert_equals(sdpLines.length, 1, "There should be 1 video m section");
+            }
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+    video.srcObject = new MediaStream([track]);
+    await video.play();
+    testImage();
+}, "Basic video exchange set up with addTransceiver");
+
+promise_test(async (test) => {
+    let receivingConnection;
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    const stream = await navigator.mediaDevices.getUserMedia({audio: true, video: true});
+
+    const remoteStream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            firstConnection.addTrack(stream.getAudioTracks()[0], stream);
+            firstConnection.addTrack(stream.getVideoTracks()[0], stream);
+        }, (secondConnection) => {
+            secondConnection.ontrack = (trackEvent) => {
+                resolve(trackEvent.streams[0]);
+            };
+            receivingConnection = secondConnection;
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    video.srcObject = remoteStream;
+    await video.play();
+
+    const sources = receivingConnection.getReceivers()[0].getSynchronizationSources();
+    if (sources.length) {
+        assert_true(!!sources[0].audioLevel, "audioLevel");
+        assert_true(!!sources[0].source, "source");
+        assert_true(!!sources[0].timestamp, "timestamp");
+    }
+}, "Testing synchronization sources");
+        </script>
+    </body>
+</html>

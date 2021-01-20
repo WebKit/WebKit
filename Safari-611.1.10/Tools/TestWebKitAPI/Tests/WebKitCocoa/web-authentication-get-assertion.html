@@ -1,0 +1,14 @@
+<input type="text" id="input">
+<script>
+    if (window.internals)
+        internals.withUserGesture(() => { input.focus(); });
+
+    const options = {
+        publicKey: {
+            challenge: new Uint8Array(16),
+            timeout: 1
+        }
+    };
+
+    navigator.credentials.get(options);
+</script>

@@ -1,0 +1,7 @@
+
+
+
+FAIL form.reset() should trigger formResetCallback assert_true: expected true got false
+FAIL form.reset(): formResetCallback is called after reset of the last built-in form control and before the next statement. assert_true: expected true got false
+FAIL Clicking a reset button invokes formResetCallback in a microtask assert_true: expected true got false
+

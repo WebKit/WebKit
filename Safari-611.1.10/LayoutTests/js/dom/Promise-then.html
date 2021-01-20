@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description('Test Promise.');
+
+window.jsTestIsAsync = true;
+
+var resolve;
+
+var firstPromise = new Promise(function(newResolve) {
+  window.thisInInit = this;
+  resolve = newResolve;
+});
+
+var secondPromise = firstPromise.then(function(result) {
+  window.thisInFulfillCallback = this;
+  shouldBeFalse('thisInFulfillCallback === firstPromise');
+  shouldBeFalse('thisInFulfillCallback === secondPromise');
+  shouldBeTrue('thisInFulfillCallback === window');
+  window.result = result;
+  shouldBeEqualToString('result', 'hello');
+  return 'world';
+});
+
+shouldBeFalse('thisInInit === firstPromise');
+shouldBeTrue('thisInInit === window');
+shouldBeTrue('firstPromise instanceof Promise');
+shouldBeTrue('secondPromise instanceof Promise');
+
+secondPromise.then(null, 37).then(function(result) {
+  window.result = result;
+  shouldBeEqualToString('result', 'world');
+  throw 'exception'
+}).then(1, 2).then(function() {
+  testFailed('resolved');
+}, function(result) {
+  testPassed('rejected');
+  window.result = result;
+  shouldBeEqualToString('result', 'exception');
+}).then(function() {
+  testPassed('resolved');
+  finishJSTest();
+}, function() {
+  testFailed('rejected');
+  finishJSTest();
+});
+
+resolve('hello');
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script type="text/javascript">
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+    </script>
+</head>
+<body onload="initialize()">
+    <canvas id="canvas" style="width: 50px; height: 50px;"> </canvas>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script type="text/javascript">
+
+        description("Verify that expando properties are preserved on the 2d canvas context.");
+        let globalCtx;
+
+        function initialize() {
+            let canvas = document.getElementById("canvas");
+            let ctx = canvas.getContext("2d");
+            ctx.myProperty = 2;
+            requestAnimationFrame(runTest);
+        }
+
+        function collectGarbage() {
+            if (window.GCController)
+                window.GCController.collect();
+            else if (window.gc)
+                gc();
+            else if (window.$vm)
+                window.$vm.gc();
+            // $vm is exposed in WebKit's MiniBrowser with the following environment variables set:
+            //   export JSC_useDollarVM=1
+            //   export __XPC_JSC_useDollarVM=1
+        }
+
+        function runTest() {
+            collectGarbage();
+            let canvas = document.getElementById("canvas");
+            globalCtx = canvas.getContext("2d");
+            shouldBe('globalCtx.myProperty', '2');
+            let scriptElement = document.createElement("script");
+            scriptElement.src = "../../resources/js-test-post-async.js";
+            document.body.appendChild(scriptElement);
+        }
+    </script>
+</body>
+</html>

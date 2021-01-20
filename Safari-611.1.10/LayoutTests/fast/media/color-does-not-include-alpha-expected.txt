@@ -1,0 +1,2 @@
+This box should be green.
+PASS

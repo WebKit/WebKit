@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+
+<div id="item1" role="menuitemradio" aria-checked="false">1</div>
+<div id="item2" role="menuitemradio" aria-checked="true">2</div>
+<div id="item3" role="menuitemradio" aria-checked="mixed">3</div>   <!-- mixed should be the same as false for menu item radio -->
+<div id="item4" role="menuitemradio" aria-checked="">4</div>
+<div id="item5" role="menuitemradio" aria-checked="undefined">5</div>
+
+<div id="item6" role="menuitemcheckbox" aria-checked="false">1</div>
+<div id="item7" role="menuitemcheckbox" aria-checked="true">2</div>
+<div id="item8" role="menuitemcheckbox" aria-checked="mixed">3</div> <!-- mixed should be marked as mixed for menu item checkbox -->
+<div id="item9" role="menuitemcheckbox" aria-checked="">4</div>
+<div id="item10" role="menuitemcheckbox" aria-checked="undefined">5</div>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the proper value is reported for menu item radio types.");
+
+    if (window.accessibilityController) {
+
+          for (var k = 1; k < 11; k++) {
+              var item = accessibilityController.accessibleElementById("item" + k);
+              debug("Item " + k + " Value: " + item.stringValue);
+              var itemMark = item.stringAttributeValue('AXMenuItemMarkChar');
+              if (itemMark == null)
+                  itemMark = "";
+              debug("Item " + k + " Char mark: " + itemMark);
+              shouldBeTrue("item.isAttributeSupported('AXValue')");
+              debug("\n");
+          }
+
+          document.getElementById("content").style.visibility = "hidden";
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

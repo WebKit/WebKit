@@ -1,0 +1,10 @@
+
+FAIL tlsVersion is acceptable on data-only promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pc1.sctp.transport')"
+FAIL tlsVersion is acceptable on video-only promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'transport.state')"
+FAIL dtlsCipher is acceptable on data-only promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pc1.sctp.transport')"
+FAIL dtlsCipher is acceptable on video-only promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'transport.state')"
+FAIL srtpCipher is acceptable on data-only promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pc1.sctp.transport')"
+FAIL srtpCipher is acceptable on video-only promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'transport.state')"
+FAIL tlsGroup is acceptable on data-only promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pc1.sctp.transport')"
+FAIL tlsGroup is acceptable on video-only promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'transport.state')"
+

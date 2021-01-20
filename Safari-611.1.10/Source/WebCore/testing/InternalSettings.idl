@@ -1,0 +1,99 @@
+/*
+ * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+enum EditingBehaviorType { "mac", "windows", "unix", "ios" };
+enum FontLoadTimingOverride { "None", "Block", "Swap", "Failure" };
+enum ForcedAccessibilityValue { "system", "on", "off" };
+enum FrameFlatteningValue { "Disabled", "EnabledForNonFullScreenIFrames", "FullyEnabled" };
+enum PDFImageCachingPolicy { "Enabled", "BelowMemoryLimit", "Disabled", "ClipBoundsOnly" };
+enum StorageBlockingPolicy { "AllowAll", "BlockThirdParty", "BlockAll" };
+enum SystemLayoutDirection { "LTR", "RTL" };
+enum TrackKind { "Subtitles", "Captions", "TextDescriptions" };
+enum UserInterfaceDirectionPolicy { "Content", "System" };
+
+[
+    LegacyNoInterfaceObject,
+    JSGenerateToJSObject,
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+] interface InternalSettings : InternalSettingsGenerated {
+    // Settings
+    [MayThrowException] undefined setStandardFontFamily(DOMString family, DOMString script);
+    [MayThrowException] undefined setSerifFontFamily(DOMString family, DOMString script);
+    [MayThrowException] undefined setSansSerifFontFamily(DOMString family, DOMString script);
+    [MayThrowException] undefined setFixedFontFamily(DOMString family, DOMString script);
+    [MayThrowException] undefined setCursiveFontFamily(DOMString family, DOMString script);
+    [MayThrowException] undefined setFantasyFontFamily(DOMString family, DOMString script);
+    [MayThrowException] undefined setPictographFontFamily(DOMString family, DOMString script);
+    [MayThrowException] undefined setFontLoadTimingOverride(FontLoadTimingOverride override);
+    // Forwards to TextAutosizingWindowSizeOverrideHeight and TextAutosizingWindowSizeOverrideWidth.
+    [MayThrowException] undefined setTextAutosizingWindowSizeOverride(long width, long height);
+    [MayThrowException] undefined setTimeWithoutMouseMovementBeforeHidingControls(unrestricted double intervalInSeconds);
+    [MayThrowException] undefined setMinimumTimerInterval(unrestricted double intervalInSeconds);
+    [MayThrowException] undefined setEditingBehavior(EditingBehaviorType behavior);
+    [MayThrowException] undefined setStorageBlockingPolicy(StorageBlockingPolicy policy);
+    [MayThrowException] undefined setPDFImageCachingPolicy(PDFImageCachingPolicy policy);
+    [MayThrowException] undefined setFrameFlattening(FrameFlatteningValue frameFlattening);
+    [MayThrowException] undefined setUserInterfaceDirectionPolicy(UserInterfaceDirectionPolicy policy);
+    [MayThrowException] undefined setSystemLayoutDirection(SystemLayoutDirection direction);
+    attribute ForcedAccessibilityValue forcedColorsAreInvertedAccessibilityValue;
+    attribute ForcedAccessibilityValue forcedDisplayIsMonochromeAccessibilityValue;
+    attribute ForcedAccessibilityValue forcedPrefersContrastAccessibilityValue;
+    attribute ForcedAccessibilityValue forcedPrefersReducedMotionAccessibilityValue;
+    attribute ForcedAccessibilityValue forcedSupportsHighDynamicRangeValue;
+
+    // RuntimeEnabledFeatures.
+    [MayThrowException] undefined setWebGL2Enabled(boolean enabled);
+    [MayThrowException] undefined setWebGPUEnabled(boolean enabled);
+    [MayThrowException] undefined setFetchAPIKeepAliveEnabled(boolean enabled);
+    [MayThrowException] undefined setCustomPasteboardDataEnabled(boolean enabled);
+    [MayThrowException] undefined setWebRTCPlatformCodecsInGPUProcessEnabled(boolean enabled);
+
+    readonly attribute boolean vp9DecoderEnabled;
+
+    // DeprecatedGlobalSettings.
+    [MayThrowException] undefined setShouldManageAudioSessionCategory(boolean should);
+
+    // CaptionUserPreferences
+    [MayThrowException] undefined setShouldDisplayTrackKind(TrackKind kind, boolean enabled);
+    [MayThrowException] boolean shouldDisplayTrackKind(TrackKind kind);
+
+    // Page
+    [MayThrowException] undefined setCanStartMedia(boolean enabled);
+    [MayThrowException] undefined setEditableRegionEnabled(boolean enabled);
+    [MayThrowException] undefined setUseDarkAppearance(boolean enabled);
+
+    // ScrollView
+    [MayThrowException] undefined setAllowUnclampedScrollPosition(boolean allowUnclamped);
+
+    // PlatformMediaSessionManager.
+    [MayThrowException] undefined setShouldDeactivateAudioSession(boolean shouldDeactivate);
+
+    // RenderTheme/FontCache
+    [MayThrowException] undefined setShouldMockBoldSystemFontForAccessibility(boolean shouldMock);
+
+    // AudioContext
+    [MayThrowException] undefined setDefaultAudioContextSampleRate(float sampleRate);
+};

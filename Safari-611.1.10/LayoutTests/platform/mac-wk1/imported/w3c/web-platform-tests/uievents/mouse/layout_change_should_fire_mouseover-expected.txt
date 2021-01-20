@@ -1,0 +1,7 @@
+Test Description: Tests that the mouseover event is fired and the element has a hover effect when the element underneath the mouse cursor is changed.
+Put your mouse over the red rectangle
+Click the primary mouse button
+
+
+PASS Tests that the mouseover event is fired and the element has a hover effect when the element underneath the mouse cursor is changed.
+

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>video-user-gesture-tracking</title>
+    <script src=media-file.js></script>
+    <script src=video-test.js></script>
+    <script>
+    function runTest() {
+        run('window.internals.settings.setVideoPlaybackRequiresUserGesture(true);');
+        run('video = document.createElement("video")');
+        run('video.src = findMediaFile("video", "content/test")');
+        run('document.body.appendChild(video)');
+        testExpected("window.internals.pageMediaState().includes('HasUserInteractedWithMediaElement')", false);
+        runWithKeyDown(() => {
+            run('video.play()');
+        });
+        testExpected("window.internals.pageMediaState().includes('HasUserInteractedWithMediaElement')", true)
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

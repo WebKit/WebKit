@@ -1,0 +1,13 @@
+Blocked access to external URL https://www.localhost:9443/fetch/sec-metadata/resources/post-to-owner.py
+Blocked access to external URL https://www.not-web-platform.test:9443/fetch/sec-metadata/resources/post-to-owner.py
+
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Same-origin window, forced assert_not_equals: Empty Sec-Metadata header. got disallowed value ""
+TIMEOUT Same-site window, forced Test timed out
+TIMEOUT Cross-site window, forced Test timed out
+FAIL Same-origin window, user-activated Can't find variable: test_driver
+FAIL Same-site window, user-activated Can't find variable: test_driver
+FAIL Cross-site window, user-activated Can't find variable: test_driver
+

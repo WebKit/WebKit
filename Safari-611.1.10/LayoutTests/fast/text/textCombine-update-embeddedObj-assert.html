@@ -1,0 +1,18 @@
+<style>
+body {
+    -webkit-writing-mode: vertical-lr;
+    -webkit-text-combine: horizontal;
+}
+::selection {
+    color: red;
+}
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    function eventhandler() {
+        document.vlinkColor = "red";
+        document.createElement("object").style.color = "red";
+    }
+</script>
+<embed src="data:text/plain;" onbeforeload=eventhandler()>foo<span>Tests updating embedded objects in text-combine rendering. The test passes if WebKit doesn't crash or hit an assertion.</span>

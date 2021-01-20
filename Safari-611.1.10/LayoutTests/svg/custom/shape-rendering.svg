@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <rect transform="translate(50, 30) rotate(35, 50, 50)" fill="green" width="100" height="100"/>
+  <rect transform="translate(200, 30) rotate(35, 50, 50)" fill="green" width="100" height="100" shape-rendering="crispEdges"/>
+
+  <g>
+    <text y="180">The rectangle on the left should be anti-aliased.</text>
+    <text y="200">The rectangle on the right should not be anti-aliased, as it has the property shape-rendering="crispEdges". Bug 16182.</text>
+  </g>
+</svg>
+

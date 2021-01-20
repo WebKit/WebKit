@@ -1,0 +1,320 @@
+Stress test glyph-orientation SVG CSS properties
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Strings that fail to parse, and hence parse as "0" for horziontal and "auto" as vertical.
+
+Test angleValue: ' 0,1'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: ' 0,1'
+PASS computedStyle.getPropertyValue('glyph-orientation-vertical') is "auto"
+
+Test angleValue: '  0,00000.1'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '  0,00000.1'
+PASS computedStyle.getPropertyValue('glyph-orientation-vertical') is "auto"
+
+Test angleValue: '  0 1'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '  0 1'
+PASS computedStyle.getPropertyValue('glyph-orientation-vertical') is "auto"
+
+Test angleValue: '0.1 0.2'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '0.1 0.2'
+PASS computedStyle.getPropertyValue('glyph-orientation-vertical') is "auto"
+
+Test angleValue: ' 270,1'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: ' 270,1'
+PASS computedStyle.getPropertyValue('glyph-orientation-vertical') is "auto"
+
+Test angleValue: '  270,00000.1'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '  270,00000.1'
+PASS computedStyle.getPropertyValue('glyph-orientation-vertical') is "auto"
+
+Test angleValue: '  270 1'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '  270 1'
+PASS computedStyle.getPropertyValue('glyph-orientation-vertical') is "auto"
+
+Test angleValue: '270.1 0.2'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '270.1 0.2'
+PASS computedStyle.getPropertyValue('glyph-orientation-vertical') is "auto"
+
+This tests the rounding of glyph orientation values to the only allowed values 0, 90, 180, 270.
+
+Test angleValue: '-0.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '-0.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '-10.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '-10.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '-45.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '-45.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '0.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '0.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '10.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '10.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '45.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '45.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '-90.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: '-90.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: '-100.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: '-100.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: '-135.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: '-135.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: '90.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: '90.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: '100.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: '100.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: '135.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: '135.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: '-180.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 180
+
+Test angleValue: '-180.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 180
+
+Test angleValue: '-190.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 180
+
+Test angleValue: '-190.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 180
+
+Test angleValue: '-225.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 180
+
+Test angleValue: '-225.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 180
+
+Test angleValue: '180.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 180
+
+Test angleValue: '180.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 180
+
+Test angleValue: '190.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 180
+
+Test angleValue: '190.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 180
+
+Test angleValue: '225.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 180
+
+Test angleValue: '225.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 180
+
+Test angleValue: '-270.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 270
+
+Test angleValue: '-270.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 270
+
+Test angleValue: '-280.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 270
+
+Test angleValue: '-280.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 270
+
+Test angleValue: '-305.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 270
+
+Test angleValue: '-305.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 270
+
+Test angleValue: '270.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 270
+
+Test angleValue: '270.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 270
+
+Test angleValue: '280.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 270
+
+Test angleValue: '280.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 270
+
+Test angleValue: '305.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 270
+
+Test angleValue: '305.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 270
+
+Tests angles bigger than 360.
+
+Test angleValue: '449.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: '449.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: '450.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: '450.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: '451.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: '451.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: '539.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 180
+
+Test angleValue: '539.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 180
+
+Test angleValue: '540.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 180
+
+Test angleValue: '540.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 180
+
+Test angleValue: '541.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 180
+
+Test angleValue: '541.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 180
+
+Test angleValue: '629.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 270
+
+Test angleValue: '629.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 270
+
+Test angleValue: '630.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 270
+
+Test angleValue: '630.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 270
+
+Test angleValue: '631.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 270
+
+Test angleValue: '631.0'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 270
+
+Tests whitespace before/after angle value.
+
+Test angleValue: '  .0 '
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '  .0 '
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '   0  '
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '   0  '
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: ' 90.0 '
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: ' 90.0 '
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: ' 180.0    '
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 180
+
+Test angleValue: ' 180.0    '
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 180
+
+Test angleValue: '  270.0 '
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 270
+
+Test angleValue: '  270.0 '
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 270
+
+Tests rounding of fractional angle values.
+
+Test angleValue: '45.0000'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '45.0000'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 0
+
+Test angleValue: '45.0001'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: '45.0001'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: '135.000'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: '135.000'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 90
+
+Test angleValue: '135.001'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-horizontal').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 180
+
+Test angleValue: '135.001'
+PASS computedStyle.getPropertyCSSValue('glyph-orientation-vertical').getFloatValue(CSSPrimitiveValue.CSS_DEG) is 180
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

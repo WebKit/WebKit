@@ -1,0 +1,67 @@
+<html>
+<head>
+
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpDOMAsWebArchive();
+    testRunner.setCanOpenWindows();
+    testRunner.waitUntilDone();
+}
+
+var otherWindow = null;
+
+function startTest()
+{
+    otherWindow = window.open("resources/adopt-inline-styled-node-second-window.html", "TestWindow");
+    if (!otherWindow) {
+        alert("When running this test under Safari, popup blocking must be disabled.");
+        return;
+    }
+    tryAdoptNode();
+}
+
+function tryAdoptNode()
+{
+    var otherSpan = otherWindow.document.getElementById("otherSpan");
+    if (!otherSpan) {
+        setTimeout("tryAdoptNode()", 10);
+        return;
+    }
+    
+    var adoptedSpan = document.adoptNode(otherSpan);
+    document.getElementById("testSpan").appendChild(adoptedSpan);
+    otherWindow.close();
+    
+    procedeAfterClosedWindow();
+}
+
+function procedeAfterClosedWindow()
+{
+    if (!otherWindow.closed) {
+        setTimeout("procedeAfterClosedWindow()", 10);
+        return;
+    }
+    
+    otherWindow = null;
+    
+    if (window.GCController) {
+        GCController.collect();
+        if (window.testRunner)
+            testRunner.notifyDone();
+        else
+            alert("How strange - You have window.GCController, but no window.testRunner.  How did this happen?");
+    }
+    else
+        alert("Now wait for garbage collection to have occured, then save the current page as a WebArchive.");
+}
+
+</script>
+</head>
+
+<body onload="startTest();">
+<span id="testSpan">This test takes a node with inline style from a different document, moves it to this document, makes sure the other document has closed,
+then makes a WebArchive from this document.  The test passes if it doesn't crash.  If running the test in Safari then garbage collection might get in the
+way of fulling testing the bug.  One should wait "awhile" before making the WebArchive.<br></span>
+</body>
+</html>

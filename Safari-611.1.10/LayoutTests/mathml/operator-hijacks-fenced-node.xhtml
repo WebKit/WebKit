@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:m="http://www.w3.org/1998/Math/MathML">
+<body>
+    <p>
+        This tests that an anonymous operator created by mfenced does not
+        set itself as the mfenced node&#x2019;s renderer.
+    </p>
+    <p>
+        The test passes if it does not crash or cause an assertion failure.
+    </p>
+    <div id="container">
+        <m:math><span><m:mfenced id="target"><m:mo></m:mo></m:mfenced></span></m:math>
+    </div>
+    <script><![CDATA[
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        document.body.offsetTop;
+        document.getElementById("target").parentNode.insertBefore(document.createElement("div"), document.getElementById("target"));
+        document.body.offsetTop;
+        document.getElementById("container").style.display = "none";
+    ]]></script>
+</body>
+</html>

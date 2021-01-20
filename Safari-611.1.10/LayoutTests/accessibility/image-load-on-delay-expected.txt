@@ -1,0 +1,12 @@
+1  2
+This verifies that when an image loads its resource late, the AX tree is updated to re-add the image.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+BEFORE: Group count: 2
+AFTER: Group count: 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

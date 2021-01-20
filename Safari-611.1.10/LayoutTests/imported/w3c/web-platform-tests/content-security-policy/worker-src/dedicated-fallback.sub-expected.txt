@@ -1,0 +1,4 @@
+
+FAIL Same-origin dedicated worker allowed by host-source expression. The operation is insecure.
+FAIL blob: dedicated worker allowed by 'blob:'. The operation is insecure.
+

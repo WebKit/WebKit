@@ -1,0 +1,31 @@
+This test checks the SVGAnimatedNumber API - utilizing the surfaceScale property of SVGFESpecularLightingElement
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial surfaceScale value
+PASS feSpecularLightingElement.surfaceScale.toString() is "[object SVGAnimatedNumber]"
+PASS typeof(feSpecularLightingElement.surfaceScale.baseVal) is "number"
+PASS feSpecularLightingElement.surfaceScale.baseVal is 1
+
+Check that integers are static, caching value in a local variable and modifying it, should have no effect
+PASS numRef is 100
+PASS feSpecularLightingElement.surfaceScale.baseVal is 1
+
+Check assigning various valid and invalid values
+PASS feSpecularLightingElement.surfaceScale.baseVal = -1 is -1
+PASS feSpecularLightingElement.surfaceScale.baseVal = 300 is 300
+PASS feSpecularLightingElement.surfaceScale.baseVal = 'aString' is 'aString'
+PASS feSpecularLightingElement.surfaceScale.baseVal is NaN
+PASS feSpecularLightingElement.surfaceScale.baseVal = 0 is 0
+PASS feSpecularLightingElement.surfaceScale.baseVal = feSpecularLightingElement is feSpecularLightingElement
+PASS feSpecularLightingElement.surfaceScale.baseVal is NaN
+PASS feSpecularLightingElement.surfaceScale.baseVal = 300 is 300
+
+Check that the surfaceScale value remained 300
+PASS feSpecularLightingElement.surfaceScale.baseVal is 300
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

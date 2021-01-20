@@ -1,0 +1,11 @@
+This tests dragging text from an input element into a text area element.
+
+When the test is run, the follow text field should be empty:
+
+
+
+And the following text area should have text in it:
+
+
+
+Test succeeded!

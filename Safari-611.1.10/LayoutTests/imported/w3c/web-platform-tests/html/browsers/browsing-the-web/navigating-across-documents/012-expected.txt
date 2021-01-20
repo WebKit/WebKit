@@ -1,0 +1,3 @@
+
+FAIL Link with onclick navigation to javascript url with delayed document.write and href navigation  assert_equals: expected "href" but got "write"
+ Test write

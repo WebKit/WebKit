@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("Tests navigating a window whose opener is itself");
+jsTestIsAsync = true;
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
+onload = function() {
+    w = window.open("resources/window-opens-self.html", "foo");
+    shouldBe("w.opener", "self");
+    w.onload = function() {
+        w.setOpenerAsSelf();
+        shouldBe("w.opener", "w");
+
+        w = window.open("about:blank", "foo");
+        shouldBe("w.opener", "self");
+
+        finishJSTest();
+    }
+}
+</script>
+</body>
+</html>

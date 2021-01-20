@@ -1,0 +1,69 @@
+Default value of tabIndex IDL attribute
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS anchor.tabIndex is 0
+PASS iframe.tabIndex is 0
+PASS frame.tabIndex is 0
+PASS object.tabIndex is 0
+PASS button.tabIndex is 0
+PASS input.tabIndex is 0
+PASS select.tabIndex is 0
+PASS textarea.tabIndex is 0
+PASS keygen.tabIndex is 0
+PASS activeSummary.tabIndex is 0
+PASS editableDiv.tabIndex is -1
+PASS normalDiv.tabIndex is -1
+PASS output.tabIndex is -1
+PASS fieldset.tabIndex is -1
+PASS video.tabIndex is -1
+PASS videoWithControls.tabIndex is -1
+PASS summary.tabIndex is -1
+PASS bodyInDesignMode.tabIndex is -1
+PASS g.tabIndex is -1
+PASS mrow.tabIndex is -1
+PASS anchor.setAttribute("tabindex", "invalid"); anchor.tabIndex is 0
+PASS iframe.setAttribute("tabindex", "invalid"); iframe.tabIndex is 0
+PASS frame.setAttribute("tabindex", "invalid"); frame.tabIndex is 0
+PASS object.setAttribute("tabindex", "invalid"); object.tabIndex is 0
+PASS button.setAttribute("tabindex", "invalid"); button.tabIndex is 0
+PASS input.setAttribute("tabindex", "invalid"); input.tabIndex is 0
+PASS select.setAttribute("tabindex", "invalid"); select.tabIndex is 0
+PASS textarea.setAttribute("tabindex", "invalid"); textarea.tabIndex is 0
+PASS keygen.setAttribute("tabindex", "invalid"); keygen.tabIndex is 0
+PASS activeSummary.setAttribute("tabindex", "invalid"); activeSummary.tabIndex is 0
+PASS editableDiv.setAttribute("tabindex", "invalid"); editableDiv.tabIndex is -1
+PASS normalDiv.setAttribute("tabindex", "invalid"); normalDiv.tabIndex is -1
+PASS output.setAttribute("tabindex", "invalid"); output.tabIndex is -1
+PASS fieldset.setAttribute("tabindex", "invalid"); fieldset.tabIndex is -1
+PASS video.setAttribute("tabindex", "invalid"); video.tabIndex is -1
+PASS videoWithControls.setAttribute("tabindex", "invalid"); videoWithControls.tabIndex is -1
+PASS summary.setAttribute("tabindex", "invalid"); summary.tabIndex is -1
+PASS bodyInDesignMode.setAttribute("tabindex", "invalid"); bodyInDesignMode.tabIndex is -1
+PASS g.setAttribute("tabindex", "invalid"); g.tabIndex is -1
+PASS mrow.setAttribute("tabindex", "invalid"); mrow.tabIndex is -1
+PASS anchor.setAttribute("tabindex", "9999999999"); anchor.tabIndex is 0
+PASS iframe.setAttribute("tabindex", "9999999999"); iframe.tabIndex is 0
+PASS frame.setAttribute("tabindex", "9999999999"); frame.tabIndex is 0
+PASS object.setAttribute("tabindex", "invalid"); object.tabIndex is 0
+PASS button.setAttribute("tabindex", "9999999999"); button.tabIndex is 0
+PASS input.setAttribute("tabindex", "9999999999"); input.tabIndex is 0
+PASS select.setAttribute("tabindex", "9999999999"); select.tabIndex is 0
+PASS textarea.setAttribute("tabindex", "9999999999"); textarea.tabIndex is 0
+PASS keygen.setAttribute("tabindex", "9999999999"); keygen.tabIndex is 0
+PASS activeSummary.setAttribute("tabindex", "9999999999"); activeSummary.tabIndex is 0
+PASS editableDiv.setAttribute("tabindex", "9999999999"); editableDiv.tabIndex is -1
+PASS normalDiv.setAttribute("tabindex", "9999999999"); normalDiv.tabIndex is -1
+PASS output.setAttribute("tabindex", "9999999999"); output.tabIndex is -1
+PASS fieldset.setAttribute("tabindex", "9999999999"); fieldset.tabIndex is -1
+PASS video.setAttribute("tabindex", "9999999999"); video.tabIndex is -1
+PASS videoWithControls.setAttribute("tabindex", "9999999999"); videoWithControls.tabIndex is -1
+PASS summary.setAttribute("tabindex", "9999999999"); summary.tabIndex is -1
+PASS bodyInDesignMode.setAttribute("tabindex", "9999999999"); bodyInDesignMode.tabIndex is -1
+PASS g.setAttribute("tabindex", "9999999999"); g.tabIndex is -1
+PASS mrow.setAttribute("tabindex", "9999999999"); mrow.tabIndex is -1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

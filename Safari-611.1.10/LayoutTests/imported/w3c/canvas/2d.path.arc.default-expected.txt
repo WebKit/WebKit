@@ -1,0 +1,7 @@
+2d.path.arc.default
+arc() with missing last argument defaults to clockwise
+Spec references: 2d.path.arc.omitted
+Actual output:
+Expected output:
+
+Passed

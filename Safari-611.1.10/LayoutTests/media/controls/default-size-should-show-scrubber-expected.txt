@@ -1,0 +1,15 @@
+This tests that the scrubber shows on a default media element.
+
+This test only runs in DRT!
+
+
+EVENT: canplaythrough
+PASS: We are using the apple idiom
+Scrub to the end of the media
+EVENT: ended
+PASS: Video is paused
+PASS: Time Remaining is visible
+PASS: Current Time is visible
+
+Testing finished.
+

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<body>
+<script>
+    var link = document.createElement("link");
+    link.as = "image";
+    link.rel = "preload";
+    // Cache-busting is needed for slow resources.
+    link.href = "../resources/slow-image.php?rand=" + Math.random();
+    var downloadedImage = false;
+    document.body.appendChild(link);
+    link.href = "";
+    window.addEventListener("load", function() {
+        var entries = performance.getEntriesByType("resource");
+        for (var i = 0; i < entries.length; ++i) {
+            if (entries[i].name.indexOf("slow-image.php") != -1)
+                downloadedImage = true;
+        }
+        shouldBeFalse("downloadedImage");
+    });
+</script>
+</body>

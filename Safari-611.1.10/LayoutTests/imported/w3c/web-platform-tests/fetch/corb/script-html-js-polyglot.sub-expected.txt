@@ -1,0 +1,8 @@
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/html-js-polyglot.js
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/html-js-polyglot2.js
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT CORB cannot block polyglot HTML/JS: html-js-polyglot.js Test timed out
+TIMEOUT CORB cannot block polyglot HTML/JS: html-js-polyglot2.js Test timed out
+

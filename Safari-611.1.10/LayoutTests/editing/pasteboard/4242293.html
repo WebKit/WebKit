@@ -1,0 +1,17 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<p>This tests for a bug in createMarkup (markup for ancestors of the start of the selection wasn't being added to the pasteboard).  You should see the same thing in both regions below.</p>
+<p><b>This demonstrates a bug: 'foo' is pulled out of its bordered block.</b></p>
+<div id="copy" contenteditable="true"><div style="margin: 5px; border: 1px solid red;">foo<div style="margin: 5px; border: 1px solid blue;">bar</div></div>baz</div>
+
+<div id="paste" contenteditable="true"></div>
+
+<script>
+window.getSelection().setPosition(document.getElementById("copy"));
+document.execCommand("SelectAll");
+document.execCommand("Copy");
+window.getSelection().setPosition(document.getElementById("paste"));
+document.execCommand("Paste");
+</script>

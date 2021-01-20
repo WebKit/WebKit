@@ -1,0 +1,27 @@
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Verify that collecting a transferred port should not interfere with posting messages");
+
+if (window.testRunner)
+  window.testRunner.waitUntilDone();
+
+const worker = new Worker("./message-port-gc.js");
+let messageCount = 0;
+
+worker.onmessage = e => {
+  const {port} = e.data;
+  port.postMessage("ping");
+  port.onmessage = e => {
+    debug(e.data);
+    if (++messageCount == 16) {
+      if (window.testRunner)
+        window.testRunner.notifyDone();
+    } else setTimeout(() => port.postMessage("ping"), 50);
+  };
+};
+
+</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+# Copyright (c) 2019 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("generic_frame_descriptor") {
+  sources = [
+    "generic_frame_info.cc",
+    "generic_frame_info.h",
+  ]
+
+  deps = [
+    "../../api:array_view",
+    "../../api/transport/rtp:dependency_descriptor",
+    "../../api/video:video_codec_constants",
+    "../../rtc_base:checks",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/container:inlined_vector",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}

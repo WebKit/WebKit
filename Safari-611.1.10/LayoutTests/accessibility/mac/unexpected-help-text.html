@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<table border=0 summary="Table Summary">
+<tr><td>
+<input type="checkbox" tabindex=0 id="checkbox">This is a checkbox
+<div role="text" aria-label="text object" tabindex=0 id="textObject">text</div>
+</td></tr>
+</table>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that help text will not be appended by ancestor elements incorrectly. In this example, a table has a summary attribute. The checkbox's help attribute should not be the table summary.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("checkbox").focus();
+        shouldBe("accessibilityController.focusedElement.helpText", "'AXHelp: '");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

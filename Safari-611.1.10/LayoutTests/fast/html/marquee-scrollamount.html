@@ -1,0 +1,30 @@
+<body>
+<p>This is a regression test for https://bugs.webkit.org/show_bug.cgi?id=50434. It verifies that a marquee does not animate when scrollAmount is set to 0 by script.</p>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+onload = function()
+{
+    var marquee = document.createElement("marquee");
+    marquee.innerHTML = "Test";
+    marquee.width = "100px";
+    // We need a non-zero scroll delay and amount for marquee timer to start.
+    marquee.scrollAmount = 6;
+    marquee.scrollDelay = 100000;
+    document.body.appendChild(marquee);
+    // Force layout now, so that marquee starts its timer.
+    marquee.offsetTop;
+    // Verify that changing scrollAmount to 0 actually stops the marquee (the bug
+    // was that starting with 0 worked correctly, but changing to 0 did not).
+    marquee.scrollAmount = 0;
+    // Set the delay to a very low value, so that scrolling would have occured before notifyDone() if not stopped.
+    marquee.trueSpeed = true;
+    marquee.scrollDelay = 1;
+    if (window.testRunner) {
+        setTimeout(function() {
+            testRunner.notifyDone();
+        }, 10);
+    }
+}
+</script>

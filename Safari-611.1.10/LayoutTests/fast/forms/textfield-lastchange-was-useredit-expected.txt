@@ -1,0 +1,28 @@
+This test ensures WebKit returns correct values for HTMLInputElement.lastChangeWasUserEdit and HTMLTextAreaElement.lastChangeWasUserEdit, which are exposed via WebKit API.
+
+input
+PASS internals.wasLastChangeUserEdit(textField) is false
+PASS textField.value = "hello"; internals.wasLastChangeUserEdit(textField) is false
+PASS document.execCommand("InsertText", false, " world"); internals.wasLastChangeUserEdit(textField) is true
+PASS textField.style.display = "none"; internals.wasLastChangeUserEdit(textField) is true
+PASS textField.value = "WebKit"; internals.wasLastChangeUserEdit(textField) is false
+PASS textField.style.display = null; internals.wasLastChangeUserEdit(textField) is false
+PASS document.execCommand("SelectAll", false, null); internals.wasLastChangeUserEdit(textField) is false
+PASS document.execCommand("Delete", false, null); internals.wasLastChangeUserEdit(textField) is true
+
+textarea
+PASS internals.wasLastChangeUserEdit(textField) is false
+PASS textField.value = "hello"; internals.wasLastChangeUserEdit(textField) is false
+PASS document.execCommand("InsertText", false, " world"); internals.wasLastChangeUserEdit(textField) is true
+PASS textField.style.display = "none"; internals.wasLastChangeUserEdit(textField) is true
+PASS textField.value = "WebKit"; internals.wasLastChangeUserEdit(textField) is false
+PASS textField.style.display = null; internals.wasLastChangeUserEdit(textField) is false
+PASS document.execCommand("SelectAll", false, null); internals.wasLastChangeUserEdit(textField) is false
+PASS document.execCommand("Delete", false, null); internals.wasLastChangeUserEdit(textField) is true
+PASS textField.textContent = "hello\nworld"; internals.wasLastChangeUserEdit(textField) is false
+PASS document.execCommand("InsertText", false, "\nWebKit rocks"); internals.wasLastChangeUserEdit(textField) is true
+PASS textField.innerText = " WebKit "; internals.wasLastChangeUserEdit(textField) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

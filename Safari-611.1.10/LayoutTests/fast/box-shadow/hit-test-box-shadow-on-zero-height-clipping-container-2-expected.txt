@@ -1,0 +1,3 @@
+Hovering over the blue shadow area under the black bar should not make green go to red, for the whole width
+
+PASS: target element class is "first box"

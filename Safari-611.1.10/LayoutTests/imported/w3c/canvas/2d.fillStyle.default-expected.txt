@@ -1,0 +1,4 @@
+2d.fillStyle.default
+Spec references: 2d.colours.default
+Actual output:
+Passed

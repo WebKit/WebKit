@@ -1,0 +1,7 @@
+OPEN FILE PANEL
+This tests verifies the test file included in the multipart form data:
+
+PASS: File is present
+PASS: File upload was successful
+PASS: File size is greater than 0
+

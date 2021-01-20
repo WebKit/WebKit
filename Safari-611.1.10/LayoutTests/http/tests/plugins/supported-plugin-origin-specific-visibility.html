@@ -1,0 +1,35 @@
+<html>
+<body>
+<script src= "../resources/testharness.js"></script>
+<script src= "../resources/testharnessreport.js"></script>
+<script>
+function checkPlugins()
+{
+    return !!(navigator.plugins["WebKit Test PlugIn"] || navigator.plugins["WebKit built-in PDF"]);
+}
+
+function doTest()
+{
+    if (window.location.origin !== "http://localhost:8080") {
+        test(() => {
+            if (!window.testRunner) {
+                assert_not_reached("Needs test runnner");
+                return;
+            }
+            testRunner.setPluginSupportedMode("specificOrigin");
+
+            assert_false(checkPlugins());
+            window.location = "http://localhost:8080/plugins/supported-plugin-origin-specific-visibility.html";
+        }, "Ensure per-origin supported plugins origin - first");
+        return;
+    }
+    test(() => {
+        assert_true(checkPlugins());
+    }, "Ensure per-origin supported plugins origin");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+doTest();
+</script>
+</body>
+</html>

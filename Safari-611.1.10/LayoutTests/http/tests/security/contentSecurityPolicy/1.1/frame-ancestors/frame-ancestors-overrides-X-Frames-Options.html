@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("X-Frame-Options should be ignored if frame-ancestors directive is present");
+jsTestIsAsync = true;
+
+function finish() 
+{
+    if (testFrame.contentDocument && testFrame.contentDocument.URL === "http://127.0.0.1:8000/security/contentSecurityPolicy/resources/frame-ancestors-self-x-frame-options-deny.pl")
+        testPassed("X-Frame-Options was ignored");
+    else
+        testFailed("X-Frame-Options was not ignored");
+    finishJSTest();
+}
+</script>
+<iframe id="testFrame" src="../../resources/frame-ancestors-self-x-frame-options-deny.pl" onload="finish()" onerror="finish()"></iframe>
+</body>
+</html>

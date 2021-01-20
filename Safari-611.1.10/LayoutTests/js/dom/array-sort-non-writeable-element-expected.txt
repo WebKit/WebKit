@@ -1,0 +1,5 @@
+PASS array.sort((a, b) => a - b) threw exception TypeError: Attempted to assign to readonly property..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

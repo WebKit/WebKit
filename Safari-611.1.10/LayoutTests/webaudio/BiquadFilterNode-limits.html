@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests the limits of BiquadFilterNode's AudioParam attributes");
+
+context = new OfflineAudioContext({ sampleRate: 44100, length: 100 });
+node = new BiquadFilterNode(context);
+
+const FLT_MAX = 3.4028235e38;
+
+function diff(a, b)
+{
+    if (a > b)
+        return a - b;
+    return b - a;
+}
+
+shouldBe("node.frequency.defaultValue", "350");
+shouldBe("node.frequency.minValue", "0");
+shouldBe("node.frequency.maxValue", "0.5 * context.sampleRate");
+
+shouldBe("node.detune.defaultValue", "0");
+shouldBe("node.detune.minValue", "-153600");
+shouldBe("node.detune.maxValue", "153600");
+
+shouldBe("node.Q.defaultValue", "1");
+shouldBeTrue("diff(node.Q.minValue, -FLT_MAX) < 1e31");
+shouldBeTrue("diff(node.Q.maxValue, FLT_MAX) < 1e31");
+
+shouldBe("node.gain.defaultValue", "0");
+shouldBeTrue("diff(node.gain.minValue, -FLT_MAX) < 1e31");
+shouldBeTrue("diff(node.gain.maxValue, 1541) < 1");
+</script>
+</body>
+</html>

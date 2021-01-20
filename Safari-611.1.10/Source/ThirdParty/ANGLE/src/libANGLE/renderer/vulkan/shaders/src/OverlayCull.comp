@@ -1,0 +1,164 @@
+//
+// Copyright 2019 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
+// OverlayCull.comp: Cull overlay widgets.  A maximum of 32 text widgets and 32 graph widgets is
+// supported simultaneously.
+
+#version 450 core
+
+#extension GL_EXT_samplerless_texture_functions : require
+#if SupportsBallot
+#extension GL_KHR_shader_subgroup_ballot: require
+#elif SupportsArithmetic
+#extension GL_KHR_shader_subgroup_arithmetic: require
+#endif
+
+#if Is8x4
+#define WORKGROUP_WIDTH 32
+#define BLOCK_WIDTH 8
+#define BLOCK_HEIGHT 4
+#elif Is8x8
+#define WORKGROUP_WIDTH 64
+#define BLOCK_WIDTH 8
+#define BLOCK_HEIGHT 8
+#else
+#error "Not all subgroup sizes are accounted for"
+#endif
+
+// Limits:
+#define MAX_TEXT_WIDGETS 32
+#define MAX_GRAPH_WIDGETS 32
+
+layout (local_size_x = WORKGROUP_WIDTH, local_size_y = 1, local_size_z = 1) in;
+
+layout(set = 0, binding = 0, rgba32ui) uniform writeonly uimage2D culledWidgetsOut;
+
+layout (set = 0, binding = 1) uniform WidgetCoordinates
+{
+    uvec4 coordinates[MAX_TEXT_WIDGETS + MAX_GRAPH_WIDGETS];
+};
+
+#if SupportsNone
+shared uint intersectingWidgets[32];
+
+void accumulateWidgets(const uint localId)
+{
+    // Note: no barriers needed as the workgroup size is the same as hardware subgroup size.
+    if (localId < 16)
+    {
+        intersectingWidgets[localId] |= intersectingWidgets[localId + 16];
+        if (localId < 8)
+        {
+            intersectingWidgets[localId] |= intersectingWidgets[localId + 8];
+            if (localId < 4)
+            {
+                intersectingWidgets[localId] |= intersectingWidgets[localId + 4];
+                if (localId < 2)
+                {
+                    intersectingWidgets[localId] |= intersectingWidgets[localId + 2];
+                    if (localId < 1)
+                    {
+                        intersectingWidgets[localId] |= intersectingWidgets[localId + 1];
+                    }
+                }
+            }
+        }
+    }
+}
+#endif
+
+uvec2 cullWidgets(const uint offset, const uvec2 blockCoordLow, const uvec2 blockCoordHigh)
+{
+    const uint localId = gl_LocalInvocationID.x;
+    const uvec4 widgetCoords = coordinates[offset + localId];
+
+    const bool intersects = widgetCoords.x < widgetCoords.z &&
+                            all(lessThan(widgetCoords.xy, blockCoordHigh)) &&
+                            all(greaterThanEqual(widgetCoords.zw, blockCoordLow));
+
+#if SupportsBallot
+
+    return subgroupBallot(intersects).xy;
+
+#elif SupportsArithmetic
+
+#if Is8x8
+    const uint textWidgetBit =
+        localId < MAX_TEXT_WIDGETS ? uint(intersects) << localId : 0;
+    const uint graphWidgetBit =
+        localId >= MAX_TEXT_WIDGETS ? uint(intersects) << (localId - MAX_TEXT_WIDGETS) : 0;
+    return uvec2(subgroupOr(textWidgetBit), subgroupOr(graphWidgetBit));
+#elif Is8x4
+    return uvec2(subgroupOr(uint(intersects) << localId), 0);
+#else
+#error "Not all subgroup sizes are accounted for"
+#endif
+
+#elif SupportsNone
+
+    uvec2 ballot = uvec2(0, 0);
+#if Is8x8
+    if (localId < MAX_TEXT_WIDGETS)
+    {
+        intersectingWidgets[localId] = uint(intersects) << localId;
+        accumulateWidgets(localId);
+        if (localId == 0)
+        {
+            ballot.x = intersectingWidgets[0];
+        }
+    }
+    else
+    {
+        const uint graphLocalId = localId - MAX_TEXT_WIDGETS;
+        intersectingWidgets[graphLocalId] = uint(intersects) << graphLocalId;
+        accumulateWidgets(graphLocalId);
+    }
+    if (localId == 0)
+    {
+        ballot.y = intersectingWidgets[0];
+    }
+#elif Is8x4
+    intersectingWidgets[localId] = uint(intersects) << localId;
+    accumulateWidgets(localId);
+    if (localId == 0)
+    {
+        ballot.x = intersectingWidgets[0];
+    }
+#else
+#error "Not all subgroup sizes are accounted for"
+#endif
+
+    return ballot;
+
+#else
+#error "Not all subgroup operations are accounted for"
+#endif
+}
+
+void main()
+{
+    // There is one workgroup invocation per pixel in culledWidgetsOut.  Depending on the subgroup
+    // size, either all widgets and graphs are processed simultaneously (subgroup size 64) or
+    // separately (subgroup size 32).
+    const uvec2 outCoord = gl_WorkGroupID.xy;
+    const uvec2 blockCoordLow = outCoord * uvec2(BLOCK_WIDTH, BLOCK_HEIGHT);
+    const uvec2 blockCoordHigh = blockCoordLow + uvec2(BLOCK_WIDTH, BLOCK_HEIGHT);
+
+    uvec2 culledWidgets;
+
+#if Is8x8
+    culledWidgets = cullWidgets(0, blockCoordLow, blockCoordHigh);
+#elif Is8x4
+    culledWidgets.x = cullWidgets(0, blockCoordLow, blockCoordHigh).x;
+    culledWidgets.y = cullWidgets(MAX_TEXT_WIDGETS, blockCoordLow, blockCoordHigh).x;
+#else
+#error "Not all subgroup sizes are accounted for"
+#endif
+
+    if (gl_LocalInvocationID.x == 0)
+    {
+        imageStore(culledWidgetsOut, ivec2(outCoord), uvec4(culledWidgets, 0, 0));
+    }
+}

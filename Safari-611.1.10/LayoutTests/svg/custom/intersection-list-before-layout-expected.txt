@@ -1,0 +1,1 @@
+Number of intersected elements = 1.

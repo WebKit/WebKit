@@ -1,0 +1,21 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 339x19
+          text run at (0,0) width 339: "In the block below, the second 'bar ' should be selected."
+      RenderBlock {DIV} at (0,36) size 52x42 [border: (1px solid #000000)]
+        RenderText {#text} at (1,1) size 44x19
+          text run at (1,1) width 44: "foo bar"
+        RenderInline {SPAN} at (0,0) size 20x19
+          RenderText {#text} at (1,21) size 20x19
+            text run at (1,21) width 20: "bar"
+        RenderText {#text} at (21,21) size 25x19
+          text run at (21,21) width 25: " baz"
+selection start: position 0 of child 0 {#text} of child 1 {SPAN} of child 2 {DIV} of body
+selection end:   position 1 of child 2 {#text} of child 2 {DIV} of body

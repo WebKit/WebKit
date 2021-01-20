@@ -1,0 +1,4 @@
+
+PASS Same-origin request accepted
+PASS Cross-origin request denied
+

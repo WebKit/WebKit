@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Updating a CSS property set as a transition-property while a CSS Animation is already animating that property</title>
+<style>
+
+.target {
+    animation: animation 2s;
+    transition: margin-left 1s;
+}
+
+.target.in-flight {
+    margin-left: 200px;
+}
+
+@keyframes animation {
+    from { margin-left: 50px }
+    to   { margin-left: 100px }
+}
+
+</style>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+
+'use strict';
+
+test(test => {
+    const target = document.body.appendChild(document.createElement("div"));
+    target.classList.add("target");
+
+    let animations = target.getAnimations();
+    assert_equals(animations.length, 1, "There is one animation applied to the target after starting the test.");
+
+    const animation = animations[0];
+    assert_true(animation instanceof CSSAnimation, 1, "There is one CSS Animation applied to the target after starting the test.");
+
+    // Update opacity while the CSS Animation is running. This should not initiate a CSS Transition.
+    target.classList.add("in-flight");
+    animations = target.getAnimations();
+    assert_equals(animations.length, 1, "There is one animation applied to the target after updating the animated property.");
+    assert_equals(animations[0], animation, "The single running animation is the original CSS Animation.");
+
+    // Finish the animation and check there is no transition started then either.
+    animation.finish();
+
+    assert_equals(target.getAnimations().length, 0, "There is no animation running after finishing the CSS Animation.");
+
+    assert_equals(getComputedStyle(target).marginLeft, "200px", "The final value for the property is the one set during the animation.");
+
+    target.remove();
+}, `Updating a CSS property set as a transition-property while a CSS Animation is already animating that property.`);
+
+</script>
+</body>

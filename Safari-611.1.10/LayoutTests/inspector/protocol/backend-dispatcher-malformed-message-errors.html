@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Protocol.MalformedMessageErrors");
+
+    let errorCodes = {
+        ParseError: -32700,
+        InvalidRequest: -32600,
+        MethodNotFound: -32601,
+        InvalidParams: -32602,
+        InternalError: -32603,
+        ServerError: -32000,
+    };
+
+    function addErrorResponseTestCase(args)
+    {
+        let {name, description, message, expectedError} = args;
+
+        suite.addTestCase({
+            name,
+            description,
+            test(resolve, reject) {
+                let stringifiedMessage = (typeof message !== "string") ? JSON.stringify(message) : message;
+                ProtocolTest.log("Sending message: " + stringifiedMessage);
+                InspectorProtocol.awaitMessage(message)
+                .then(function resolved(response) {
+                    ProtocolTest.log("FAIL: the backend should send a protocol error when receiving for an invalid message.");
+                    reject();
+                }, function rejected(response) {
+                    ProtocolTest.log("PASS: the backend should send a protocol error when receiving for an invalid message.");
+                    ProtocolTest.expectThat(response.code === errorCodes[expectedError], `the reported error should be "${expectedError}" (${errorCodes[expectedError]})`);
+                    ProtocolTest.log("Actual error code: " + response.code);
+                    ProtocolTest.log("Actual error message: " + response.message);
+                    resolve();
+                })
+                .catch(reject);
+            }
+        });
+    }
+
+    addErrorResponseTestCase({
+        name: "UnparseableStringMessage",
+        description: "The backend should return an error if a message is not valid JSON.",
+        message: "not-a-json-object",
+        expectedError: "ParseError"
+    });
+
+    addErrorResponseTestCase({
+        name: "JSONObjectWithSyntaxError",
+        description: "The backend should return an error if a message is not valid JSON.",
+        message: "{name: 123,}",
+        expectedError: "ParseError"
+    });
+
+    addErrorResponseTestCase({
+        name: "EmptyJSONObject",
+        description: "The backend should return an error if a message lacks an 'id' field.",
+        message: {},
+        expectedError: "InvalidRequest"
+    });
+
+    addErrorResponseTestCase({
+        name: "MissingIdField",
+        description: "The backend should return an error if a message lacks an 'id' field.",
+        message: {lucky: 123},
+        expectedError: "InvalidRequest"
+    });
+
+    addErrorResponseTestCase({
+        name: "IdFieldWithArrayType",
+        description: "The backend should return an error if a message has a non-numeric 'id' field.",
+        message: {id: []},
+        expectedError: "InvalidRequest"
+    });
+
+    addErrorResponseTestCase({
+        name: "IdFieldWithStringType",
+        description: "The backend should return an error if a message has a non-numeric 'id' field.",
+        message: {id: "123"},
+        expectedError: "InvalidRequest"
+    });
+
+    addErrorResponseTestCase({
+        name: "MissingMethodField",
+        description: "The backend should return an error if a message lacks a 'method' field.",
+        message: {id: 123},
+        expectedError: "InvalidRequest"
+    });
+
+    addErrorResponseTestCase({
+        name: "MethodFieldWithArrayType",
+        description: "The backend should return an error if a message has a non-string 'method' field.",
+        message: {id: 123, method: []},
+        expectedError: "InvalidRequest"
+    });
+
+    addErrorResponseTestCase({
+        name: "MethodFieldWithNumberType",
+        description: "The backend should return an error if a message has a non-string 'method' field.",
+        message: {id: 123, method: 123},
+        expectedError: "InvalidRequest"
+    });
+
+    addErrorResponseTestCase({
+        name: "MethodFieldWithBadFormatting",
+        description: "The backend should return an error if a message has a 'method' field not formatted as 'Domain.Methodname'.",
+        message: {id: 123, method: "ThisIsDefinitelyNotADomainAndMethod"},
+        expectedError: "InvalidRequest"
+    });
+
+    addErrorResponseTestCase({
+        name: "MethodFieldWithBadFormatting2",
+        description: "The backend should return an error if a message has a 'method' field not formatted as 'Domain.Methodname'.",
+        message: {id: 123, method: "ThisIsDefinitelyNotADomainAndMethod."},
+        expectedError: "InvalidRequest"
+    });
+
+    addErrorResponseTestCase({
+        name: "MethodFieldWithBadFormatting3",
+        description: "The backend should return an error if a message has a 'method' field not formatted as 'Domain.Methodname'.",
+        message: {id: 123, method: ".ThisIsDefinitelyNotADomainAndMethod"},
+        expectedError: "InvalidRequest"
+    });
+
+    addErrorResponseTestCase({
+        name: "MethodFieldWithBadFormatting4",
+        description: "The backend should return an error if a message has a 'method' field not formatted as 'Domain.Methodname'.",
+        message: {id: 123, method: "."},
+        expectedError: "InvalidRequest"
+    });
+
+    addErrorResponseTestCase({
+        name: "MethodFieldWithBadFormatting5",
+        description: "The backend should return an error if a message has a 'method' field not formatted as 'Domain.Methodname'.",
+        message: {id: 123, method: ".FooBar."},
+        expectedError: "InvalidRequest"
+    });
+
+    addErrorResponseTestCase({
+        name: "MethodFieldWithBadFormatting6",
+        description: "The backend should return an error if a message has a 'method' field not formatted as 'Domain.Methodname'.",
+        message: {id: 123, method: "Foo.Bar.Baz"},
+        expectedError: "InvalidRequest"
+    });
+
+    addErrorResponseTestCase({
+        name: "MethodFieldWithFakeDomain",
+        description: "The backend should return an error if a message specifies a domain that doesn't exist.",
+        message: {id: 123, method: "DummyDomain.DummyMethod"},
+        expectedError: "MethodNotFound"
+    });
+
+    addErrorResponseTestCase({
+        name: "MethodFieldWithFakeMethod",
+        description: "The backend should return an error if a message specifies a method that doesn't exist.",
+        message: {id: 123, method: "Inspector.DummyMethod"},
+        expectedError: "MethodNotFound"
+    });
+
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing the inspector backend's error handling when sending invalid messages.</p>
+</body>
+</html>

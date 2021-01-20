@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+
+.grid {
+  grid: 25px 50px / 100px 60px;
+  margin: 1px 2px 3px 4px;
+  padding: 6px 3px 9px 12px;
+  border: solid;
+  border-width: 8px 2px 4px 6px;
+  font: 10px/1 Ahem;
+  float: left;
+  inline-size: 200px;
+  block-size: 100px;
+  justify-items: start;
+  align-items: start;
+}
+
+</style>
+
+<p>This test checks that the sizing of positioned grid items without specific dimensions or offsets is equivalent to the size of regular items.</p>
+<p>The test passes if it has the same output than the reference.</p>
+
+<div class="grid">
+  <div class="onlyFirstRowOnlyFirstColumn">XXX XX X XX XXX</div>
+  <div class="onlyFirstRowOnlySecondColumn">XXX XX X XX XXX</div>
+  <div class="onlySecondRowOnlyFirstColumn">XXX XX X XX XXX</div>
+  <div class="onlySecondRowOnlySecondColumn">XXX XX X XX XXX</div>
+</div>
+
+<div class="grid directionRTL">
+  <div class="onlyFirstRowOnlyFirstColumn">XXX XX X XX XXX</div>
+  <div class="onlyFirstRowOnlySecondColumn">XXX XX X XX XXX</div>
+  <div class="onlySecondRowOnlyFirstColumn">XXX XX X XX XXX</div>
+  <div class="onlySecondRowOnlySecondColumn">XXX XX X XX XXX</div>
+</div>
+
+<div class="grid verticalLR">
+  <div class="onlyFirstRowOnlyFirstColumn">XXX XX X XX XXX</div>
+  <div class="onlyFirstRowOnlySecondColumn">XXX XX X XX XXX</div>
+  <div class="onlySecondRowOnlyFirstColumn">XXX XX X XX XXX</div>
+  <div class="onlySecondRowOnlySecondColumn">XXX XX X XX XXX</div>
+</div>
+
+<div class="grid verticalLR directionRTL">
+  <div class="onlyFirstRowOnlyFirstColumn">XXX XX X XX XXX</div>
+  <div class="onlyFirstRowOnlySecondColumn">XXX XX X XX XXX</div>
+  <div class="onlySecondRowOnlyFirstColumn">XXX XX X XX XXX</div>
+  <div class="onlySecondRowOnlySecondColumn">XXX XX X XX XXX</div>
+</div>
+
+<div class="grid verticalRL">
+  <div class="onlyFirstRowOnlyFirstColumn">XXX XX X XX XXX</div>
+  <div class="onlyFirstRowOnlySecondColumn">XXX XX X XX XXX</div>
+  <div class="onlySecondRowOnlyFirstColumn">XXX XX X XX XXX</div>
+  <div class="onlySecondRowOnlySecondColumn">XXX XX X XX XXX</div>
+</div>
+
+<div class="grid verticalRL directionRTL">
+  <div class="onlyFirstRowOnlyFirstColumn">XXX XX X XX XXX</div>
+  <div class="onlyFirstRowOnlySecondColumn">XXX XX X XX XXX</div>
+  <div class="onlySecondRowOnlyFirstColumn">XXX XX X XX XXX</div>
+  <div class="onlySecondRowOnlySecondColumn">XXX XX X XX XXX</div>
+</div>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that the parameter to TextTrack.addCue() / removeCue() is not nullable.");
+var video = document.createElement('video');
+var track = video.addTextTrack('subtitles');
+
+shouldThrowErrorName("track.addCue(null)", "TypeError");
+shouldThrowErrorName("track.removeCue(null)", "TypeError");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

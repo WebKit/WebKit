@@ -1,0 +1,17 @@
+<script src="resources/ensure-hidpi.js"></script>
+<style>
+    div {
+        width: 200px;
+        height: 200px;
+        display: inline-block;
+        filter: url('#filter');
+    }
+</style>
+<body>
+    <div></div>
+    <svg>
+        <filter id="filter" x="0" y="0" width="100%" height="100%"> 
+            <feTurbulence type="fractalNoise" numOctaves="0" />
+        </filter>
+  </svg>
+</body>

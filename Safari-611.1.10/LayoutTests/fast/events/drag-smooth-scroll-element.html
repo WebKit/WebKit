@@ -1,0 +1,74 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ CSSOMViewSmoothScrollingEnabled=true ] -->
+<style>
+#scroller {
+    width: 200px;
+    height: 200px;
+    border: 1px solid black;
+    overflow: scroll;
+    scroll-behavior: smooth;
+}
+
+#innerDiv {
+    width: 400px;
+    height: 400px;
+}
+</style>
+
+<body style="margin:0" onload="startTest()">
+<div id="scroller">
+    <div id="innerDiv">
+
+    </div>
+</div>
+<div id="log"></div>
+</body>
+
+<script>
+var initialScrollTop;
+var startYPosition;
+var endYPosition;
+var scroller = document.getElementById('scroller');
+
+function log(msg)
+{
+    document.getElementById('log').appendChild(document.createTextNode(msg + '\n'));
+}
+function testDragScrollResult()
+{
+    if (window.eventSender) {
+        // Try to prevent momentum scroll
+        eventSender.mouseMoveTo(50, endYPosition - 50);
+        eventSender.mouseUp();
+    }
+    if (scroller.scrollTop > initialScrollTop)
+        log("PASS: Test drag scroll-behavior:smooth element");
+    else
+        log("FAIL: Test drag scroll-behavior:smooth element");
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function startTest() {
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    startYPosition = scroller.offsetHeight - 50;
+    endYPosition = scroller.offsetHeight + 100;
+    initialScrollTop = scroller.scrollTop;
+
+    if (window.eventSender) {
+        eventSender.dragMode = false;
+        eventSender.mouseMoveTo(50, startYPosition);
+        eventSender.mouseDown();
+        eventSender.mouseMoveTo(50, startYPosition + 20);
+        eventSender.mouseMoveTo(50, endYPosition);
+        setTimeout(testDragScrollResult, 100);
+    } else {
+        log("Test can't run without eventSender");
+    }
+}
+
+</script>

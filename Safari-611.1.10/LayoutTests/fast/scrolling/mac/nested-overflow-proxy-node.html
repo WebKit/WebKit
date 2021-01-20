@@ -1,0 +1,104 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .outer-abs-scroller {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 600px;
+            height: 500px;
+            overflow-y: auto;
+            border: 2px solid gray;
+        }
+        
+        .relative {
+            position: relative;
+        }
+
+        .horizontal-scroller {
+            overflow: auto;
+            border: 2px solid blue;
+        }
+        
+        .wide-content {
+            width: 200%;
+            height: 200px;
+            background-image: repeating-linear-gradient(to right, silver, white 200px);
+        }
+
+        .filler {
+            height: 200px;
+            width: 50px;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+        
+        #console {
+            margin-top: 400px;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        var horizontalScroller;
+        var verticalScroller;
+        var horizontalOverflowScrollEventCount = 0;
+        var verticalOverflowScrollEventCount = 0;
+        var windowScrollEventCount = 0;
+
+        async function testScrollOverContent()
+        {
+            await UIHelper.mouseWheelScrollAt(200, 300); // Over horizontal scroller.
+
+            shouldBe('horizontalOverflowScrollEventCount', '0');
+            shouldBeTrue('verticalOverflowScrollEventCount > 0', 'true');
+            shouldBe('windowScrollEventCount', '0');
+            
+            finishJSTest();
+        }
+
+        async function scrollTest()
+        {
+            await testScrollOverContent();
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            description('here');
+            horizontalScroller = document.querySelector('.horizontal-scroller');
+            verticalScroller = document.querySelector('.outer-abs-scroller');
+
+            horizontalScroller.addEventListener('scroll', () => {
+                ++horizontalOverflowScrollEventCount;
+            }, false);
+
+            verticalScroller.addEventListener('scroll', () => {
+                ++verticalOverflowScrollEventCount;
+            }, false);
+
+            window.addEventListener('scroll', () => {
+                ++windowScrollEventCount;
+            }, false);
+
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="outer-abs-scroller">
+        <div class="relative">
+            <div class="filler"></div>
+            <div class="horizontal-scroller">
+                <div class="wide-content">Horizontal scrolling content</div>
+            </div>
+            <div class="filler"></div>
+            <div class="filler"></div>
+        </div>
+    </div>
+    <div id="console"></div>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

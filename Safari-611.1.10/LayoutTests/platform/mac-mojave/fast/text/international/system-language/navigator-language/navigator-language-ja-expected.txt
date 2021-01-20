@@ -1,0 +1,6 @@
+FAIL navigator.language should be ja. Was ja-jp.
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

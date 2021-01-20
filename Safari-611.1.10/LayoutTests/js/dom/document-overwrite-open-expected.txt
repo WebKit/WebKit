@@ -1,0 +1,7 @@
+This page tests that the document function open() can be overwritten with a user provided function. If the test passes, you'll see PASS messages below.
+
+PASS: document.open was overwritten.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

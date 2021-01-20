@@ -1,0 +1,5 @@
+
+
+PASS Sanity check: this all works as expected synchronously
+FAIL Start function assert_equals: expected "http://localhost:8800/wasm/jsapi/functions/resources/incumbent-incumbent.html" but got "http://localhost:8800/wasm/jsapi/functions/resources/current/current.html"
+

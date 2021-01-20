@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x8
+  RenderBlock {HTML} at (0,0) size 800x8
+    RenderBody {BODY} at (8,8) size 784x0
+layer at (8,8) size 300x100
+  RenderBlock (positioned) {DIV} at (8,8) size 300x100 [bgcolor=#00FF00]
+layer at (108,38) size 94x30
+  RenderBlock (positioned) {DIV} at (100,30) size 94x30
+layer at (108,38) size 18x30
+  RenderBlock (positioned) {DIV} at (0,0) size 18x30
+layer at (127,38) size 18x30
+  RenderBlock (positioned) {DIV} at (19,0) size 18x30
+layer at (146,38) size 18x30
+  RenderBlock (positioned) {DIV} at (38,0) size 18x30
+layer at (165,38) size 18x30
+  RenderBlock (positioned) {DIV} at (57,0) size 18x30
+layer at (184,38) size 18x30
+  RenderBlock (positioned) {DIV} at (76,0) size 18x30

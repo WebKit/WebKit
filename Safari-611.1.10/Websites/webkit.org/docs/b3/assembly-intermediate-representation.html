@@ -1,0 +1,407 @@
+<html>
+<head>
+  <title>Assembly Intermediate Representation</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <div id="banner">
+    <a href="http://www.webkit.org/" class="banner-link">
+      <div id="logo" class="site-logo">
+        WebKit
+        <span class="tagline">Open Source Web Browser Engine</span>
+      </div>
+    </a>
+  </div>
+  <div id="contents">
+    <h1><a href="index.html">Bare Bones Backend</a> / Assembly Intermediate Representation</h1>
+    <p>The B3 compiler comprises two intermediate representations: a higher-level
+      <a href="https://en.wikipedia.org/wiki/Static_single_assignment_form">SSA</a>-based
+      representation called <a href="intermediate-representation.html">B3 IR</a> and a lower-level
+      representation that focuses of machine details, like registers. This lower-level form is called
+      Air (Assembly Intermediate Representation).</p>
+    
+    <p>Air programs are represented using a
+      <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirCode.h"><code>Air::Code</code></a>
+      object. <code>Code</code> comprises an array of
+      <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirBasicBlock.h">basic
+        blocks</a>. Each basic block comprises an array of
+      <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirInst.h"><code>Inst</code></a>s.
+      Air has an explicit control flow graph: each basic block has predecessor and successor blocks.
+      Execution always begins at the first basic block (<code>code[0]</code>). The <code>Inst</code>s
+      in each block are executed in order. Each <code>Inst</code> has an opcode, some flags, an
+      array of arguments
+      (<a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirArg.h"><code>Arg</code></a>s),
+      and an origin. The opcode and flags are wrapped in a <code>Kind</code>, to make it
+      convenient to carry them around together. The origin is simply a B3 IR
+      <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/B3Value.h"><code>Value</code></a>.
+      Some opcodes use the origin for additional meta-data. This works because Air code always
+      coexists with the B3 procedure from which it was generated.</p>
+    
+    <p>This document begins by describing the philosophy of Air. The behavior of <code>Arg</code>s is
+      central to Air's execution model, which is described in the section that follows. The last
+      section describes the way Air opcodes are defined.</p>
+    
+    <h2>Philosophy of Air</h2>
+    
+    <p>B3 is designed to be portable to many kinds of CPUs. Currently, it supports x86-64 and ARM64,
+      which are quite different from each other. In B3 IR, we expose very few instruction set
+      details. It's a goal of B3 IR to ensure that B3 values behave the same way except when the
+      alternative would be counterproductive (like with pointer size, the corner-case behaviors of
+      division, or calling convention customization). But to effectively compile code to different
+      CPUs, the compiler has to eventually make instruction set details explicit. This is where Air
+      comes in. B3 locks in most CPU-specific details at the moment of conversion to Air, and the Air
+      code is irreversibly tied to some specific CPU.</p>
+    
+    <p>Air is an instruction <i>superset</i>: it recognizes all of the instructions from all CPUs
+      that Air may target. In its lowest-level form, Air is simply a way of describing an assembly
+      instruction sequence, and this includes CPU concepts like registers and direct accesses to the
+      stack. Air also has a higher-level form in which the assembly has not yet undergone register
+      or stack allocation. Therefore, Air also supports abstract registers (called
+      <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirTmp.h"><code>Tmp</code></a>s)
+      and abstract
+      <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirStackSlot.h">stack
+        slots</a>. A <code>Tmp</code> object can either hold an unallocated temporary or a
+      register.</p>
+    
+    <h3>Air as an Instruction Superset</h3>
+    <p>Air has syntax to speak of all of the CPU instructions we know about. It is possible to speak
+      of an x86-64 instruction while compiling for ARM64, for example. Clients of Air, such as the B3
+      to Air lowering phase, are allowed to pick any Air opcode and ask if that opcode would be
+      valid on the current CPU. They are also allowed to check if specific forms of any given opcode
+      are valid. This allows clients to optimize for multiple instruction sets by cascading through
+      the possible opcodes that they know of, starting with the one they think is most efficient.
+      Some of those opcodes may only be available on one CPU while others are available
+      everywhere. Instruction selection does not need to know which instructions work on which CPUs;
+      Air will tell you if some instruction happens to not be valid right now for whatever reason.</p>
+    
+    <p>Air opcodes support overloading. For example, the Add32 opcode has both two-operand and
+      three-operand <i>overloads</i>, and those overloads have multiple <i>forms</i>: the first
+      operand may or may not be permitted to be an immediate and depending on the CPU and some of the
+      other operands may or may not be allowed to be memory addresses. We use <i>opcode overload</i>
+      to refer to all forms of an opcode that share the same number of arguments, and <i>opcode
+        form</i> to mean the number of arguments and their types. A fundamental Air operation is
+      <code>Inst::isValidForm()</code>, which tells the client if the instruction's current form is
+      valid on the current CPU. This may return false either because the Inst is not well-formed for
+      any CPU or because it is not valid for the current CPU even though it may be valid on some
+      other CPU. There is also <code>Air::isValidForm()</code>, which can answer if the form you are
+      intending to use will be valid even if you have not created an <code>Inst</code> yet. This
+      allows clients to generate Air by experimenting with different forms before settling on the one
+      that the current CPU supports.</p>
+    
+    <h3>Air as a High-Level Assembly</h3>
+    <p>Air doesn't require the client to perform register or stack allocation. Anywhere that Air
+      accepts a register it will also accept a <code>Tmp</code>. Anywhere that Air accepts an address
+      it will also accept a stack slot reference. Air code generation comprises a register allocator
+      and a stack allocator, which turn <code>Tmp</code>s into <code>Reg</code>s and stack slots into
+      addresses with the frame pointer (or stack pointer) as the base and some integer offset. Air
+      allows clients to speak of registers directly even while also using <code>Tmp</code>s, and the
+      register allocator will ensure that it avoids clobbering registers that the client code already
+      relies upon. This is possible because Air has precise modeling of how instructions use
+      registers, so it's always possible to determine which registers are live at any point in the
+      Air code.</p>
+    
+    <p>Air's philosophy allows B3 to use it for converting high-level, mostly-CPU-agnostic SSA
+      procedures into code for the current CPU. Air is an instruction superset that allows clients to
+      consider all available instructions on all possible CPUs and query which forms of those
+      instructions are available on the current CPU. Air also supports for high-level concepts like
+      <code>Tmp</code>s and stack slots, which allows B3 to Air lowering to focus on which
+      instructions to use without worrying about register allocation or stack layout.</p>
+    
+    <h2>Args and the Air Execution Model</h2>
+    <p>Air can be thought of as an
+      <a href="https://en.wikipedia.org/wiki/Orthogonal_instruction_set">orthogonal instruction
+        set</a>. It's possible to construct an <code>Inst</code> with any combination of opcode and
+      arguments. The opcode determines what Air will do to the arguments - it may read from them or
+      write to them, for example. Orthognality implies that any argument that is read may be either
+      a register (or <code>Tmp</code>), an address, or an immediate; while any argument that is
+      written may be either a register or an address. Air constrains orthognality where the target
+      CPU would. For example, none of Air's target CPUs would support an <code>Add32</code>
+      instruction that loads its sources from memory <i>and</i> stores its result into memory. Even
+      x86 doesn't go that far. Either before or after creating an <code>Inst</code>, the client can
+      query if a particular combination of arguments (for example, three memory addresses) would be
+      valid for a given opcode (for example, <code>Add32</code>).</p>
+    
+    <p>Air arguments are represented using the <code>Arg</code> object. <code>Arg</code> can
+      represent any of the following assembly operands:</p>
+    
+    <dl>
+      <dt>Tmp</dt>
+      <dd>A <code>Tmp</code> represents either a register or a temporary.</dd>
+      
+      <dt>Imm, BigImm, BitImm, and BitImm64</dt>
+      <dd>These are various kinds of immediates. We distinguish between big and small immediates
+        because some instructions only allow immediates within a certain range. We distinguish
+        between immediates for bit operations and immediates for all other operations because ARM
+        has different constraints on the values of immediates depending on whether they are used for
+        bit math.</dd>
+      
+      <dt>Addr, Stack, CallArg, and Index</dt>
+      <dd>These are all memory addresses. Addr is a base-offset address, which uses a <code>Tmp</code>
+        for the base and an immediate for the offset. Stack and CallArg are abstract stack offsets.
+        Index is a base-index address, which has a pair of <code>Tmp</code>s (base and index) as well
+        as an offset immediate and a scaling immediate for the index.</dd>
+      
+      <dt>RelCond, ResCond, and DoubleCond</dt>
+      <dd>These are condition codes for various kinds of branches.</dd>
+      
+      <dt>Special</dt>
+      <dd>Air allows certain <code>Inst</code>s to point to additional meta-data. The Special
+        argument type is used for such meta-data. It holds a <code>Arg::Special*</code>.</dd>
+      
+      <dt>WidthArg</dt>
+      <dd>Some special Air opcodes take operands that describe the width of the operation. Possible
+        values are <code>Width8</code>, <code>Width16</code>, <code>Width32</code>, and
+        <code>Width64</code>.</dd>
+    </dl>
+    
+    <p>The opcode of an <code>Inst</code> combined with the overload - i.e. the number of arguments
+      - determines what the <code>Inst</code> will do to each argument. The behavior of arguments
+      comes down to three dimensions that are determined by the opcode and overload:</p>
+    
+    <dl>
+      <dt>Role</dt>
+      <dd>The role of an argument is an enum that describes the timing of when the argument is
+        accessed, how it's accessed (use, a.k.a. read; or def, a.k.a write), how important that
+        access is for performance (either <i>warm</i> or <i>cold</i>), and how writes affect the top
+        bits (either ignores them or zero-fills them). The timing of an argument role is discussed
+        further below. The performance requirements of an argument are used for register allocation
+        prioritization. A warm argument is counted towards the register allocation priority
+        heuristic, while a cold one isn't.</dd>
+      
+      <dt>Type</dt>
+      <dd>Air recognizes two types, <code>GP</code> (general purpose) and <code>FP</code> (floating
+        point). Arguments also have type. It's important to remember that there is both a type for
+        the argument as determined by the opcode and overload, and a type of the argument itself.
+        Some arguments are untyped, which means that they may be used regardless of the type desired
+        by the opcode/overload. For example, addresses are untyped. Other arguments have specific
+        type, like registers and <code>Tmp</code>s. Except for <code>BigImm</code>, immediates are
+        <code>GP</code>.</dd>
+      
+      <dt>Width</dt>
+      <dd>The amount of bits, starting at lowest-order, that the instruction affects. Possible values
+        are <code>Width8</code>, <code>Width16</code>, <code>Width32</code>, and
+        <code>Width64</code>.</dd>
+    </dl>
+    
+    <p>The timing of an argument role is important, and brings us to the order of execution of an
+      <code>Inst</code>. Each <code>Inst</code> can be thought of as executing three
+      steps:</p>
+    
+    <ol>
+      <li>Perform <i>early</i> actions.</li>
+      <li>Perform <i>primary</i> actions.</li>
+      <li>Perform <i>late</i> actions.</li>
+    </ol>
+    
+    <p>The early actions of one instruction happen immediately after the late actions of
+      the instruction before it. However, many Air analyses view them as happening at the same time.
+      For example, any register usage in the early action of one instruction interferes with the
+      register usage in the late action of the instruction that came before it. All of Air's
+      liveness and interference analyses reason about the
+      <a href="https://en.wikipedia.org/wiki/Off-by-one_error#Fencepost_error"><i>fence posts</i></a>
+      between instructions, where the late actions of the previous instruction and the early actions
+      of the next form an interference clique.</p>
+    
+    <p>Let's consider a simple example, like <code>Add32</code> with two arguments. Let's say that
+      the first argument is a memory location and the second argument is a register. Air uses the
+      <a href="https://en.wikipedia.org/wiki/X86_assembly_language#Syntax">AT&amp;T style</a> of
+      placing the destination argument last for most instructions. This Add32 loads from memory and
+      adds the value to the register. Air writes this as:</p>
+    
+    <pre><code>Add32 42(%rax), %rcx</code></pre>
+    
+    <p>This instruction will proceed in three steps:</p>
+    
+    <ol>
+      <li>Load the value at offset 42 from the memory address in <code>%rax</code>. The result is
+        stored in an internal, hidden CPU location for the remainder of execution. Even if the
+        instruction later stores to memory and overwrites this value, <code>Add32</code> will still
+        use the original value it had loaded. We say that this is an <i>early use</i>. At the same
+        time, the CPU will load the value of <code>%rcx</code> and store it in a hidden CPU
+        location. This is also an early use.</li>
+      <li>Add the two values together. Store the result in hidden CPU location.</li>
+      <li>Zero-extend the resulting value and store it into <code>%rcx</code>. This is a <i>late
+          def with zero extension</i>.</li>
+    </ol>
+    
+    <p>Therefore, the two-argument overload of <code>Add32</code> ascribes the following to its
+      arguments:</p>
+    
+    <ul>
+      <li>The roles are <i>early warm use</i> for the first argument (<code>42(%rax)</code>) and
+        <i>early warm use with late warm def with zero extension</i> for the second argument
+        (<code>%rcx</code>). Early warm use is written as <code>Use</code> for short. Early warm
+        use with late warm def with zero extension is written as <code>UseZDef</code> for
+        short.</li>
+      <li>The types of both arguments are <code>GP</code>. This matches <code>42(%rax)</code> because
+        addresses match any type. This matches <code>%rcx</code> because it's a general-purpose
+        register.</li>
+      <li>The widths of both arguments are <code>Width32</code>. Combined with <code>UseZDef</code>,
+        this means that the instruction will read the low 32 bits of <code>%rcx</code> in the early
+        actions and it will store to <i>all</i> bits of <code>%rcx</code> in the late actions, but it
+        will ensure that all but the low 32 bits are zero.</li>
+    </ul>
+    
+    <p>Air can tell you what role, type, and width is ascribed to each argument by using the
+      <code>Inst::forEachArg(func)</code> operation. It takes a callback of type
+      <code>void(Arg&, Arg::Role, Arg::Type, Arg::Width)</code>. For our <code>Add32</code> example,
+      this callback would get called twice:</p>
+    
+    <ol>
+      <li><code>func(42(%rax), Use, GP, Width32)</code></li>
+      <li><code>func(%rcx, UseZDef, GP, Width32)</code></li>
+    </ol>
+    
+    <p>It's important to remember that Air's summaries of what instructions do to arguments are
+      not meant to be exhaustive. For example, if an instruction claims to use an address, this
+      tells you that the instruction will perform a load but it tells you nothing about how that
+      load will be performed. This means that unless you know exactly what it means to use/def an
+      argument, you cannot perform this transformation:</p>
+    
+    <ul>
+      <li>Before:
+        <pre><code>Foo32 (%rax)</code></pre></li>
+      <li>After:
+        <pre><code>Move32 (%rax), %tmp
+Foo32 %tmp</code></pre></li>
+    </ul>
+    
+    <p>Even if you know that Foo32 only uses its argument, you cannot do this because Move32 may
+      not load from the address using exactly the same kind of load that Foo32 would have done.
+      Memory accesses have many dimensions of options: alignment semantics (if you're lucky then
+      misaligned accesses run fast but sometimes they ignore low bits, trap if unaligned, or run
+      super slow when unaligned, and this behavior may depend on the opcode), temporality and
+      memory ordering, determinism of trapping, etc. Just seeing that an instruction uses an
+      address does not tell you what kind of load will happen, and currently Air does not have the
+      ability to answer such questions. Fortunately, Air does not have much need to move memory
+      accesses out of instructions. Uses and defs of temporaries, registers, immediates, and spill
+      slots don't have these caveats and so those arguments can be moved from one instruction to
+      another without worries.</p>
+    
+    <p>Air's introspection of <code>Inst</code>s tends to be quite fast thanks to the use of template
+      specialization and C++ lambdas. The <code>forEachArg()</code> template method uses an efficient
+      arrangement of switch statements to determine the opcode and overload. If <code>func</code> is
+      a C++ lambda, we expect <code>forEachArg()</code> to be specialized for that lambda. Therefore,
+      this idiom avoids virtual dispatch or memory allocation.</p>
+    
+    <p>Air supports exotic roles, such as late uses and early defs. There is even the
+      <code>Scratch</code> role, which means early def and late use. Speaking of a <code>Tmp</code>
+      in the <code>Scratch</code> role means that the <code>Tmp</code> will be assigned a register
+      that is guaranteed to not interfere with any of the other registers that the instruction
+      speaks of. Late uses and early defs are crucial for patchpoints, which may require
+      that one of the incoming values be given a register that does not interfere with whatever
+      register is used for the result. This can be expressed either as giving the inputs a late use
+      role or by giving the outputs an early def role. The full list of possible roles is:</p>
+    
+    <dl>
+      <dt>Use</dt>
+      <dd>Early warm use.</dd>
+      
+      <dt>ColdUse</dt>
+      <dd>Early cold use.</dd>
+      
+      <dt>LateUse</dt>
+      <dd>Late warm use.</dd>
+      
+      <dt>LateColdUse</dt>
+      <dd>Late cold use.</dd>
+      
+      <dt>Def</dt>
+      <dd>Late def. <i>Note that all defs are warm.</i></dd>
+      
+      <dt>ZDef</dt>
+      <dd>Late def with zero-extension.</dd>
+      
+      <dt>UseDef</dt>
+      <dd>Early warm use and late def.</dd>
+      
+      <dt>UseZDef</dt>
+      <dd>Early warm use and late def with zero extension.</dd>
+      
+      <dt>EarlyDef</dt>
+      <dd>Early def.</dd>
+      
+      <dt>Scratch</dt>
+      <dd>Early def and late warm use.</dd>
+      
+      <dt>UseAddr</dt>
+      <dd>Early warm use of the address's components.</dd>
+    </dl>
+    
+    <p><code>UseAddr</code> is interesting for the <code>Lea</code> (load effective address)
+      instruction, which evaluates the address and places the result into a temporary or register.
+      The argument must be an address, but <code>UseAddr</code> means that we don't actually read
+      from the address. Note that using an address in any of the other roles always implies that the
+      components of the address are used early and warm (i.e. <code>Use</code>).</p>
+    
+    <p>Air arguments are central to Air's execution model. The early and late actions of an
+      instruction have to do with arguments, and what happens to each argument during the early and
+      late actions is determined by the opcode and the number of arguments (i.e. the overload).
+      Clients of Air may create an <code>Inst</code> with any combination of opcode and arguments
+      and then query, using <code>isValidForm()</code> if the opcode, overload, and specific
+      arguments are valid for the current CPU.</p>
+    
+    <h2>Defining Air</h2>
+    <p>Air has many opcodes and the opcodes have many different overloads and forms. Air makes it
+      easy to reason about all of them with helpers like <code>isValidForm()</code> and
+      <code>forEachArg()</code>. It also provides a <code>Inst::generate()</code> function that will
+      generate code for the instruction, provided that it does not use any non-register
+      <code>Tmp</code>s or any abstract stack slots. If we wrote the
+      code for validating, iterating, and generating each form by hand, we would have a bad time.
+      For this reason, Air comes with an
+      <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/opcode_generator.rb">opcode code generator</a>
+      that uses a
+      <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirOpcode.opcodes">opcode definition file</a>
+      as input. The opcode definition file use a simple and concise syntax that lets us define many
+      opcodes at once and constrain them to the CPU kinds that support them. Additionally, Air
+      supports <i>custom</i> opcodes, where the code generator emits calls to
+      <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirCustom.h">hand-written
+        C++ code</a>. This section describes the opcode definition language.</p>
+    
+    <p>It's easiest to understand the opcode definitions with an example. Let's use the two-argument
+      overload of <code>Add32</code>.</p>
+    
+    <pre><code>Add32 U:G:32, UZD:G:32
+    Tmp, Tmp
+    x86: Imm, Addr
+    x86: Imm, Index
+    Imm, Tmp
+    x86: Addr, Tmp
+    x86: Tmp, Addr
+    x86: Tmp, Index</code></pre>
+    
+    <p>The first line defines the overload. It has two arguments. The first argument serves the
+      <code>Use</code> role, shorted as <code>U</code>. It is general-purpose, shortened as
+      <code>G</code>. It has a 32-bit width. Hence the string <code>U:G:32</code>. Similarly,
+      <code>UZD:G:32</code> means <code>UseZDef</code>, <code>GP</code>, <code>Width32</code>.</p>
+    
+    <p>The next lines list the available forms of the overload. A form is a list of possible kinds of
+      arguments. These use the same terminology for <code>Arg</code> kinds from the previous section,
+      with the caveat that <code>Addr</code> implies that <code>Addr</code>, <code>Stack</code>, or
+      <code>CallArg</code> would be accepted.</p>
+    
+    <p>Prefixing any line with <code>x86:</code> means that this form is only available on x86
+      CPUs, such as x86 or x86-64.</p>
+    
+    <p>Air opcodes are designed to work with JavaScriptCore's existing MacroAssembler. By default, an
+      opcode is automatically given a code generator that calls
+      <code>MacroAssembler::<i>opcodeName</i></code>, where <i>opcodeName</i> is derived by
+      lower-casing the first letter of the Air opcode name. <code>Add32</code> becomes
+      <code>MacroAssembler::add32</code>, for example.</p>
+    
+    <p>See the header of
+      <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirOpcode.opcodes">AirOpcode.opcodes</a>
+      for a complete list of shorthand used by Air's opcode definition language.</p>
+    
+    <h2>Summary</h2>
+    <p>Air is designed around JavaScriptCore's existing MacroAssembler. Air has Inst objects,
+      which each describe some method call to the MacroAssembler: an Inst's opcode indicates
+      which method name to use and its args indicate the arguments to pass to that method. We
+      use code generation to create a massive switch statement that turns the reflective Insts
+      into actual calls to MacroAssembler. Consequently, we can "add" new instructions to Air
+      usually by just editing the <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirOpcode.opcodes">AirOpcode.opcodes</a>
+      file.</p>
+  </div>
+</body>
+</html>
+

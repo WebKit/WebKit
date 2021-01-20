@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>mediacapabilities-types</title>
+</head>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description('Test basic dictionary and enum types of Media Capabilities API');
+jsTestIsAsync = true;
+
+(async function() {
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'file' });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'media-source' });
+    })
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { } });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'video/mp4; codecs="avc1"' } });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { } });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'audio/mp3', width: 640, height: 480, bitrate: 1000, framerate: 24 } });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs="avc1"', height: 480, bitrate: 1000, framerate: 24 } });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs="avc1,vp9"', width:640, height: 480, bitrate: 1000, framerate: 24 } });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4', width:640, height: 480, bitrate: 1000, framerate: 24 } });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs="avc1"', width: 640, height: 480, bitrate: 1000, framerate: 0 } });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs="avc1"', width: 640, height: 480, bitrate: 1000, framerate: "24/a" } });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs="avc1"', width: 640, height: 480, bitrate: 1000, framerate: "24/0" } });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'invalid', video: { contentType: 'video/mp4; codecs="avc1"', width: 640, height: 480, bitrate: 1000, framerate: 24 } });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.encodingInfo({ type: 'record' });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.encodingInfo({ type: 'record', audio: { } });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'record', audio: { } });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'record', audio: { contentType: 'video/mp4; codecs="avc1"' } });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'record', video: { } });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'record', video: { contentType: 'audio/mp3', width: 640, height: 480, bitrate: 1000, framerate: 24 } });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'record', video: { contentType: 'video/mp4; codecs="avc1"', height: 480, bitrate: 1000, framerate: 24 } });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'record', video: { contentType: 'video/mp4; codecs="avc1,vp9"', width:640, height: 480, bitrate: 1000, framerate: 24 } });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'record', video: { contentType: 'video/mp4', width:640, height: 480, bitrate: 1000, framerate: 24 } });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'record', video: { contentType: 'video/mp4; codecs="avc1"', width: 640, height: 480, bitrate: 1000, framerate: 0 } });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'record', video: { contentType: 'video/mp4; codecs="avc1"', width: 640, height: 480, bitrate: 1000, framerate: "24/a" } });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'record', video: { contentType: 'video/mp4; codecs="avc1"', width: 640, height: 480, bitrate: 1000, framerate: "24/-1" } });
+    });
+    await shouldReject(() => {
+        return navigator.mediaCapabilities.decodingInfo({ type: 'invalid', video: { contentType: 'video/mp4; codecs="avc1"', width: 640, height: 480, bitrate: 1000, framerate: 24 } });
+    });
+    finishJSTest();
+})()
+
+</script>
+<script src="../../resources/js-test.js"></script>
+</body>
+</html>

@@ -1,0 +1,1 @@
+"Tests changing name of an image element. The test passes if WebKit doesn't crash or hit an ssertion."

@@ -1,0 +1,62 @@
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="description"></p>
+<div id="console"></div>
+    
+    <input type="radio" name="r1" id="r1" title="TITLE">Test<br>
+    <label id="label1" for="r1">LABEL</label>
+
+    <input type="radio" id="r2" aria-labeledby="label2">Test<br>
+    <label for="r2">LABEL2</label>
+    <div id="label2">LABEL2a</div>
+
+    <input type="radio" name="r3" id="r3" aria-label="radio3">Test<br>
+    <label for="r3">LABEL3</label>
+
+    <script>
+
+        description("This test checks that radio buttons expose title ui elements correctly under a variety of cirmcumstances. In general, the <label> should NOT disappear and should be the titleUIElement for the checkbox.");
+
+        if (window.accessibilityController) {
+
+            // 1) Even though a checkbox has a title attribute, the title ui element should still be exposed.
+            var radio1 = accessibilityController.accessibleElementById("r1");
+            var titleUIElement = radio1.titleUIElement();
+            if (accessibilityController.platformName == "atk")
+                shouldBe("radio1.title", "'AXTitle: LABEL'");
+            else
+                shouldBe("radio1.title", "'AXTitle: '");
+            shouldBeTrue("titleUIElement.isEqual(accessibilityController.accessibleElementById('label1'))");
+
+            // 2) aria-labeledby should override the native label semantics and return a title for the radio button, instead of a title ui element.
+            var radio2 = accessibilityController.accessibleElementById("r2");
+            titleUIElement = radio2.titleUIElement();
+            if (accessibilityController.platformName == "atk") {
+                shouldBe("radio2.title", "'AXTitle: LABEL2a'");
+                shouldBe("radio2.description", "'AXDescription: '");
+            } else {
+                shouldBe("radio2.description", "'AXDescription: LABEL2a'");
+                shouldBe("radio2.title", "'AXTitle: '");
+            }
+            shouldBeTrue("!titleUIElement || titleUIElement.title == 'AXTitle: '");
+
+            // 3) If a radio button has an aria-label and a <label>, the aria-label should be the title.
+            var radio3 = accessibilityController.accessibleElementById("r3");
+            titleUIElement = radio3.titleUIElement();
+            if (accessibilityController.platformName == "atk") {
+                shouldBe("radio3.title", "'AXTitle: radio3'");
+                shouldBe("radio2.description", "'AXDescription: '");
+            } else {
+                shouldBe("radio3.description", "'AXDescription: radio3'");
+                shouldBe("radio3.title", "'AXTitle: '");
+            }
+            shouldBeTrue("!titleUIElement || titleUIElement.title == 'AXTitle: '");
+
+        }
+    </script>
+</body>
+</html>

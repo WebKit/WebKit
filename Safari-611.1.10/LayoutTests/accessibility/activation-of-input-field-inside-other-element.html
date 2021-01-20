@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="combobox" aria-expanded="false" aria-haspopup="listbox" id="combo" onclick="comboBoxClicked();">
+    <div role="none">
+        <input id="input-40" type="text" role="textbox" autocomplete="off" placeholder="Select an Option" aria-autocomplete="none" readonly="" disabled="">
+    </div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This test checks whether a simulated click will activate a combobox that contains a text field.");
+
+    function comboBoxClicked() {
+        debug("Combo box element WAS clicked with accessibility");
+        finishJSTest();
+    }
+
+    window.jsTestIsAsync = true;
+    if (window.accessibilityController) {
+        var element = accessibilityController.accessibleElementById("combo");
+        element.press();
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
+

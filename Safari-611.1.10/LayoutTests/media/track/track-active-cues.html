@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+    <head>
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+    
+        <script>
+            function clearSrc()
+            {
+                consoleWrite("<br>** Video and track loaded, one cue should be active **");
+                testExpected("trackElement.track.activeCues.length", 1);
+
+                consoleWrite("<br>** Clear video 'src' and force reload **");
+                run("video.src = ''");
+                consoleWrite("");
+            }
+
+            function videoError()
+            {
+                consoleWrite("** 'error' event, no cues should be active **)");
+                testExpected("event.target", video);
+                testExpected("video.error", null, "!=");
+                testExpected("video.error.code", MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
+                testExpected("video.networkState", HTMLMediaElement.NETWORK_NO_SOURCE);
+                testExpected("trackElement.track.activeCues.length", 0);
+
+                consoleWrite("");
+                endTest();
+            }
+
+            function setup() 
+            {
+                consoleWrite("");
+
+                findMediaElement();
+                trackElement = document.querySelector('track');
+
+                waitForEventsAndCall([[video, 'canplaythrough'], [trackElement, 'load'], [trackElement, 'cuechange']], clearSrc);
+
+                video.src = findMediaFile("video", "../content/test");
+            }
+
+            setCaptionDisplayMode('Automatic');
+            
+        </script>
+    </head>
+    <body onload="setup()">
+        <video controls onerror="videoError()">
+            <track src="captions-webvtt/captions-fast.vtt" kind="captions" default>
+        </video>
+
+        <p>Test to ensure that a no text track cues are active after the video is unloaded.</p>
+    
+    </body>
+</html>

@@ -1,0 +1,36 @@
+Test using setAttributeNode() behaves like setAttribute() to get the existing attribute, but like setAttributeNS() to set the new value."
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.documentElement.getAttribute("foobar") is null
+PASS document.documentElement.hasAttribute("foobar") is false
+PASS document.documentElement.getAttribute("FooBar") is "WebKit"
+PASS document.documentElement.hasAttribute("FooBar") is true
+PASS document.documentElement.getAttributeNS("", "foobar") is null
+PASS document.documentElement.hasAttributeNS("", "foobar") is false
+PASS document.documentElement.getAttributeNS("", "FooBar") is "WebKit"
+PASS document.documentElement.hasAttributeNS("", "FooBar") is true
+PASS document.documentElement.attributes.length is 3
+PASS camelCaseFoobar is not oldAttributeNode
+PASS document.documentElement.getAttribute("foobar") is null
+PASS document.documentElement.hasAttribute("foobar") is false
+PASS document.documentElement.getAttribute("FooBar") is "Rocks!"
+PASS document.documentElement.hasAttribute("FooBar") is true
+PASS document.documentElement.getAttributeNS("", "foobar") is null
+PASS document.documentElement.hasAttributeNS("", "foobar") is false
+PASS document.documentElement.getAttributeNS("", "FooBar") is "Rocks!"
+PASS document.documentElement.hasAttributeNS("", "FooBar") is true
+PASS oldAttributeNode2 is null
+PASS document.documentElement.getAttribute("foobar") is "WebKit2"
+PASS document.documentElement.hasAttribute("foobar") is true
+PASS document.documentElement.getAttribute("FooBar") is "Rocks!"
+PASS document.documentElement.hasAttribute("FooBar") is true
+PASS document.documentElement.getAttributeNS("", "foobar") is "WebKit2"
+PASS document.documentElement.hasAttributeNS("", "foobar") is true
+PASS document.documentElement.getAttributeNS("", "FooBar") is "Rocks!"
+PASS document.documentElement.hasAttributeNS("", "FooBar") is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

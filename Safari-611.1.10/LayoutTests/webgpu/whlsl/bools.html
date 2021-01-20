@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Bools.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.booleanMath = async () =>
+{
+    let program = `
+        bool foo()
+        {
+            return true && true;
+        }
+        bool foo2()
+        {
+            return true && false;
+        }
+        bool foo3()
+        {
+            return false && true;
+        }
+        bool foo4()
+        {
+            return false && false;
+        }
+        bool foo5()
+        {
+            return true || true;
+        }
+        bool foo6()
+        {
+            return true || false;
+        }
+        bool foo7()
+        {
+            return false || true;
+        }
+        bool foo8()
+        {
+            return false || false;
+        }
+    `;
+    assert_equals(await callBoolFunction(program, "foo", []), true);
+    assert_equals(await callBoolFunction(program, "foo2", []), false);
+    assert_equals(await callBoolFunction(program, "foo3", []), false);
+    assert_equals(await callBoolFunction(program, "foo4", []), false);
+    assert_equals(await callBoolFunction(program, "foo5", []), true);
+    assert_equals(await callBoolFunction(program, "foo6", []), true);
+    assert_equals(await callBoolFunction(program, "foo7", []), true);
+    assert_equals(await callBoolFunction(program, "foo8", []), false);
+}
+
+
+whlslTests.identityBool = async () => {
+    let program = "bool foo(bool x) { return x; }";
+    assert_equals(await callBoolFunction(program, "foo", [makeBool(true)]), true);
+    assert_equals(await callBoolFunction(program, "foo", [makeBool(false)]), false);
+}
+
+whlslTests.literalBool = async () => {
+    let program = "bool foo() { return true; }";
+    assert_equals(await callBoolFunction(program, "foo", []), true);
+}
+
+whlslTests.operatorBool = async () =>
+{
+    let program = `
+        bool boolFromUintFalse() { return bool(uint(0)); }
+        bool boolFromUintTrue() { return bool(uint(1)); }
+
+        bool boolFromIntFalse() { return bool(int(0)); }
+        bool boolFromIntTrue() { return bool(int(1)); }
+
+        bool boolFromFloatFalse() { return bool(float(0)); }
+        bool boolFromFloatTrue() { return bool(float(1)); }
+        bool boolFromFloatNaN(float arg) { return bool(arg); }
+    `;
+
+    assert_equals(await callBoolFunction(program, "boolFromUintFalse", []), false);
+    assert_equals(await callBoolFunction(program, "boolFromUintTrue", []), true);
+
+    assert_equals(await callBoolFunction(program, "boolFromIntFalse", []), false);
+    assert_equals(await callBoolFunction(program, "boolFromIntTrue", []), true);
+
+    assert_equals(await callBoolFunction(program, "boolFromFloatFalse", []), false);
+    assert_equals(await callBoolFunction(program, "boolFromFloatTrue", []), true);
+    assert_equals(await callBoolFunction(program, "boolFromFloatNaN", [makeFloat(program, NaN)]), true);
+
+    await checkFail(
+        `
+            void foo()
+            {
+                float3 x;
+                bool r = bool(x);
+            }
+        `);
+        
+
+    await checkFail(
+        `
+            void foo()
+            {
+                float3x3 x;
+                bool r = bool(x);
+            }
+        `);
+        
+}
+
+runTests(whlslTests);
+</script>
+</html>

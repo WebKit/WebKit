@@ -1,0 +1,4 @@
+This tests navigating a sibling iframe during beforeunload. The navigation should be prevented.
+
+PASS
+

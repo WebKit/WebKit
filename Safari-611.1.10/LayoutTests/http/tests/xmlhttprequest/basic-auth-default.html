@@ -1,0 +1,49 @@
+<body>
+<p>Test that Basic credentials are sent preemptively, without waiting for 401 response code. This is not a MUST level requirement in RFC 2616, but it's good to implement.</p>
+<p>No authentication dialogs should appear, and the below line should say "PASS".</p>
+<div id=result>Test didn't run.</div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function step1()
+{
+    // Remember credentials for a protection space.
+    var req = new XMLHttpRequest;
+    req.open("GET", "resources/basic-auth-default/dir1/basic-auth.php", true, "test", "test");
+    req.onload = step2;
+    document.getElementById("result").innerHTML = "Testing, step 1...";
+    req.send();
+}
+
+function step2()
+{
+    // Same protection space, another directory. The first request will go out without credentials
+    // (untested), and then we'll remember that this directory in the same protection space.
+    var req = new XMLHttpRequest;
+    req.open("GET", "resources/basic-auth-default/dir2/basic-auth.php", true);
+    req.onload = step3;
+    document.getElementById("result").innerHTML = "Testing, step 2...";
+    req.send();
+}
+
+function step3()
+{
+    // Same directory, so the very first request should carry basic credentials. If there are none,
+    // the script will return code 500.
+    var req = new XMLHttpRequest;
+    req.open("GET", "resources/basic-auth-default/dir2/catch.php", true);
+    req.onload = function() {
+        document.getElementById("result").innerHTML = req.status == 200 ? "PASS" : "FAIL";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+    document.getElementById("result").innerHTML = "Testing, step 3...";
+    req.send();
+}
+
+step1();
+</script>
+</body>

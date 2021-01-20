@@ -1,0 +1,2 @@
+Tests layer structure integrity when block flow is splitted and restructured dynamically. Should not crash.
+

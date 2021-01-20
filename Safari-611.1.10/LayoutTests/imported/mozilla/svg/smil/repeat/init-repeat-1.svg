@@ -1,0 +1,47 @@
+<!-- 
+  The following tests an anomaly in the SMIL Animation spec.
+
+  SMILANIM 3.6.8 says:
+
+    Thus the strict definition of the first acceptable interval for the element
+    is the first interval that ends after the document begins.
+
+  This is then demonstrated in pseudocode.
+
+  However, it is contradicted by a statement just before the first that says:
+
+    The element has one or more intervals defined that begin and end before the
+    document begins (before 0). These are filtered out of the model.
+
+  So there is some ambiguity about intervals that end at time zero. However, the
+  first statement seems more authorative ("the strict definition") and the
+  second statement does not explicitly say that intervals that end at t=0 are
+  not filtered. Furthermore, the pseudocode is in agreement with the first
+  statement so we conclude that if an interval finishes at time zero it is not
+  an acceptable interval and is filtered out.
+  
+  The following animation sets up such an interval, that, based on its
+  repeatCount has an active duration of 1s, producing an interval of (-1s, 0s).
+  Therefore this interval should be filtered out and no animation effect should
+  be produced. The circle should remain at position 0 (the first marker). If the
+  interval is not correctly filtered out it will be at position 100 (the second
+  marker).
+
+  We include this test as a regression test so that no one is tempted to "fix"
+  this behaviour.
+
+  Note that this behaviour persists even in SMIL 3 (including the ambiguity
+  noted above).
+  See http://www.w3.org/TR/SMIL3/smil-timing.html#Timing-BeginEnd-LC-Start
+ -->
+<svg xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(50 50)">
+    <circle r="40" style="fill: yellow; stroke: black; stroke-width: 1">
+      <animate attributeName="cx" attributeType="XML" fill="freeze"
+        values="0; 200" dur="2s" begin="-1s" repeatCount="0.5"/>
+    </circle>
+    <path d="M0 -10v20" stroke="blue"/>
+    <path d="M100 -10v20" stroke="blue"/>
+    <path d="M200 -10v20" stroke="blue"/>
+  </g>
+</svg>

@@ -1,0 +1,127 @@
+# Copyright (C) 2020 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+#if ENABLE(GPU_PROCESS)
+
+messages -> RemoteMediaPlayerProxy NotRefCounted {
+    PrepareForPlayback(bool privateMode, enum:uint8_t WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, float videoContentScale) -> (Optional<WebKit::LayerHostingContextID> inlineLayerHostingContextId) Async
+
+    Load(URL url, Optional<WebKit::SandboxExtension::Handle> sandboxExtension, WebCore::ContentType contentType, String keySystem) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration) Async
+#if ENABLE(MEDIA_SOURCE)
+    LoadMediaSource(URL url, WebCore::ContentType contentType, bool webMParserEnabled, WebKit::RemoteMediaSourceIdentifier mediaSourceIdentifier) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration) Async
+#endif
+    CancelLoad()
+
+    PrepareToPlay()
+
+    Play()
+    Pause()
+
+    SetVolume(double volume)
+    SetMuted(bool muted)
+
+    Seek(MediaTime time)
+    SeekWithTolerance(MediaTime time, MediaTime negativeTolerance, MediaTime positiveTolerance)
+
+    SetPreload(enum:uint8_t WebCore::MediaPlayerEnums::Preload preload)
+    SetPrivateBrowsingMode(bool privateMode)
+    SetPreservesPitch(bool preservesPitch)
+    SetPitchCorrectionAlgorithm(WebCore::MediaPlayer::PitchCorrectionAlgorithm algorithm)
+
+    PrepareForRendering()
+    SetVisible(bool visible)
+    SetShouldMaintainAspectRatio(bool maintainAspectRatio)
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    SetVideoFullscreenGravity(enum:uint8_t WebCore::MediaPlayerEnums::VideoGravity gravity)
+#endif
+    AcceleratedRenderingStateChanged(bool canBeAccelerated)
+    SetShouldDisableSleep(bool disable)
+    SetRate(double rate)
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    UpdateVideoFullscreenInlineImage()
+    SetVideoFullscreenMode(WebCore::MediaPlayer::VideoFullscreenMode mode)
+    VideoFullscreenStandbyChanged()
+#endif
+
+    SetBufferingPolicy(WebCore::MediaPlayer::BufferingPolicy policy)
+
+#if PLATFORM(COCOA)
+    SetVideoInlineSizeFenced(WebCore::IntSize size, MachSendRight machSendRight)
+#endif
+
+    # Paint
+    # PaintCurrentFrameInContext
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    SetWirelessVideoPlaybackDisabled(bool disabled)
+    # SetWirelessPlaybackTarget(WebCore::MediaPlaybackTarget)
+    SetShouldPlayToPlaybackTarget(bool shouldPlay)
+#endif
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    SetLegacyCDMSession(WebKit::RemoteLegacyCDMSessionIdentifier instanceId)
+    KeyAdded()
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    CdmInstanceAttached(WebKit::RemoteCDMInstanceIdentifier instanceId)
+    CdmInstanceDetached(WebKit::RemoteCDMInstanceIdentifier instanceId)
+    AttemptToDecryptWithInstance(WebKit::RemoteCDMInstanceIdentifier instanceId)
+#endif
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
+    SetShouldContinueAfterKeyNeeded(bool should)
+#endif
+
+    BeginSimulatedHDCPError()
+    EndSimulatedHDCPError()
+
+    NotifyActiveSourceBuffersChanged()
+
+    ApplicationWillResignActive()
+    ApplicationDidBecomeActive()
+
+    NotifyTrackModeChanged()
+    TracksChanged()
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    SetWirelessPlaybackTarget(WebCore::MediaPlaybackTargetContext target)
+#endif
+
+    PerformTaskAtMediaTime(MediaTime mediaTime, WallTime messageTime) -> (Optional<MediaTime> mediaTime) Async
+    WouldTaintOrigin(struct WebCore::SecurityOriginData origin) -> (Optional<bool> wouldTaint) Synchronous
+    SetShouldUpdatePlaybackMetrics(bool should)
+
+#if PLATFORM(IOS_FAMILY)
+    ErrorLog() -> (String errorLog) Synchronous
+    AccessLog() -> (String accessLog) Synchronous
+#endif
+
+#if ENABLE(WEB_AUDIO)
+    CreateAudioSourceProvider()
+    SetShouldEnableAudioSourceProvider(bool shouldEnable)
+#endif
+}
+
+#endif

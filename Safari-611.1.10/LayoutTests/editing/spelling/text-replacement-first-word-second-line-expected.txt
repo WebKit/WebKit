@@ -1,0 +1,26 @@
+To manually test, add an automatic text replacement mapping from the string '**' to 'stars'. Then, on the second line (this is imporatant, it must not be the first line) of a contenteditable, type the string '**'. It should not be immediately corrected to 'stars'. Type any other character, which should then change '**' to 'stars'.
+
+After typing possible replacment:
+| "\n        "
+| <div>
+|   <br>
+| <div>
+|   "**<#selection-caret>"
+| "\n        "
+| <div>
+|   <br>
+| "\n    "
+
+After pressing enter:
+| "\n        "
+| <div>
+|   <br>
+| <div>
+|   "stars"
+| <div>
+|   <#selection-caret>
+|   <br>
+| "\n        "
+| <div>
+|   <br>
+| "\n    "

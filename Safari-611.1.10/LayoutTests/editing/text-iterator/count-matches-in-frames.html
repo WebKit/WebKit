@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Text search from frames</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<link rel='stylesheet' href='../../resources/testharness.css'>
+</head>
+<body>
+
+<script>
+var count = 0;
+function findInFrame(frameHostStyle, shouldFindInFrame)
+{
+    var findString = "findme" + count++;
+    var textDiv = document.createElement("div");
+    textDiv.innerHTML = findString;
+    document.body.appendChild(textDiv)
+
+    var hostDiv = document.createElement("div");
+    hostDiv.setAttribute("style", frameHostStyle);
+    var frame = document.createElement("iframe");
+    hostDiv.appendChild(frame);
+    document.body.appendChild(hostDiv);
+
+    frame.contentDocument.body.innerHTML = findString;
+
+    assert_equals(internals.countFindMatches(findString, [], ''), shouldFindInFrame ? 2 : 1);
+}
+
+test(function () {
+    findInFrame("", true);
+}, "Search from frame in normal tree");
+
+test(function () {
+    findInFrame("display:none", false);
+}, "Search from frame in display:none subtree");
+
+test(function () {
+    findInFrame("position:relative; width:0px; height:0px", true);
+}, "Search from frame in zero sized subtree");
+
+test(function () {
+    findInFrame("position:relative; width:0px; height:0px; border: 2px solid red; overflow:hidden", false);
+}, "Search from frame in zero sized subtree with overflow:hidden");
+
+</script>
+</html>

@@ -1,0 +1,35 @@
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+    async function readUntilError(stream) {
+        const reader = stream.getReader();
+        try {
+            let read_value = await reader.read();
+            if (window.testRunner && window.testRunner.terminateNetworkProcess) {
+                alert("FAIL - successfully read from stream");
+            } else {
+                // WebKitLegacy can't terminate the network process.
+                alert("PASS");
+            }
+            if (window.testRunner) {
+                testRunner.notifyDone();
+            }
+        } catch (e) {
+            if (window.testRunner && window.testRunner.terminateNetworkProcess) {
+                alert("PASS");
+            } else {
+                alert("FAIL - error without terminating network process");
+            }
+            if (window.testRunner) {
+                testRunner.notifyDone();
+            }
+        }
+    }
+    var b = new Blob([1, 2, 3]);
+    if (window.testRunner && window.testRunner.terminateNetworkProcess) {
+        testRunner.terminateNetworkProcess();
+    }
+    readUntilError(b.stream());
+</script>

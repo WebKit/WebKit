@@ -1,0 +1,30 @@
+Some test cases identified by Waldemar Horwat in response to this bug: https://bugs.webkit.org/show_bug.cgi?id=48101
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS /(?:a*?){2,}/.exec("aa") is ["aa"]
+PASS /(?:a*?){2,}/.exec("a") is ["a"]
+PASS /(?:a*?){2,}/.exec("") is [""]
+PASS /(?:a*?)/.exec("aa") is [""]
+PASS /(?:a*?)/.exec("a") is [""]
+PASS /(?:a*?)/.exec("") is [""]
+PASS /(?:a*?)(?:a*?)(?:a*?)/.exec("aa") is [""]
+PASS /(?:a*?)(?:a*?)(?:a*?)/.exec("a") is [""]
+PASS /(?:a*?)(?:a*?)(?:a*?)/.exec("") is [""]
+PASS /(?:a*?){2}/.exec("aa") is [""]
+PASS /(?:a*?){2}/.exec("a") is [""]
+PASS /(?:a*?){2}/.exec("") is [""]
+PASS /(?:a*?){2,3}/.exec("aa") is ["a"]
+PASS /(?:a*?){2,3}/.exec("a") is ["a"]
+PASS /(?:a*?){2,3}/.exec("") is [""]
+PASS /(?:a*?)?/.exec("aa") is ["a"]
+PASS /(?:a*?)?/.exec("a") is ["a"]
+PASS /(?:a*?)?/.exec("") is [""]
+PASS /(?:a*?)*/.exec("aa") is ["aa"]
+PASS /(?:a*?)*/.exec("a") is ["a"]
+PASS /(?:a*?)*/.exec("") is [""]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

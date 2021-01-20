@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+</head>
+<body>
+    <div id="editable" contenteditable onbeforeinput=handleInput(event) oninput=handleInput(event)></div>
+    <script type="text/javascript">
+        description("This test verifies that input events of inputType 'insertLink' are dispatched when automatically replacing text with a link.");
+        if (window.internals)
+        {
+            internals.settings.setInputEventsEnabled(true);
+            internals.setAutomaticLinkDetectionEnabled(true);
+        }
+
+        document.getElementById("editable").focus();
+        document.execCommand("insertText", true, "www.apple.com ");
+        document.execCommand("insertParagraph");
+
+        function handleInput(event)
+        {
+            debug(`event.type = ${event.type}`);
+            debug(`event.inputType = ${event.inputType}`);
+            debug(`event.data = ${event.data}`);
+        }
+    </script>
+</body>
+</html>

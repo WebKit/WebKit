@@ -1,0 +1,7 @@
+Test case for bug 40952: Onloadend event is not supported in XMLHttpRequest
+
+Verify that a loadend ProgressEvent is dispatched after the load ProgressEvent when an async upload request completes normally.
+
+PASS should appear below:
+
+PASS

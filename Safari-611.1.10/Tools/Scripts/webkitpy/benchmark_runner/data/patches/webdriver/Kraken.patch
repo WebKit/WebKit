@@ -1,0 +1,32 @@
+diff --git a/hosted/kraken-1.1/driver.html b/hosted/kraken-1.1/driver2.html
+index bfb2c94..5ad1704 100644
+--- a/hosted/kraken-1.1/driver.html
++++ b/hosted/kraken-1.1/driver2.html
+@@ -117,20 +117,16 @@ function recordResult(time)
+ 
+ function finish()
+ {
+-    var outputString = "{";
+-    outputString += '"v": "kraken-1.1", ';
++    var tests = {};
+     for (var test in output[0]) {
+-        outputString += '"' + test + '":[';
+-        for (var i = 0; i < output.length; i++) {
+-             outputString += output[i][test] + ",";
+-        }
+-        outputString = outputString.substring(0, outputString.length - 1);
+-        outputString += "],";
++        var values = new Array(output.length);
++        for (var i = 0; i < output.length; i++)
++            values[i] = output[i][test];
++        tests[test] = {"metrics": {"Time": {"current": [values]}}}
+     }
+-    outputString = outputString.substring(0, outputString.length - 1);
+-    outputString += "}";
+ 
+-    location = "results.html?" + encodeURI(outputString);
++    var results = JSON.stringify({"Kraken": {"metrics": {"Time": ["Total"]}, "tests": tests}});
++    window.webdriver_results = results;
+ }
+ 
+ </script>

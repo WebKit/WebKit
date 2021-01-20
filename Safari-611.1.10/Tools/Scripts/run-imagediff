@@ -1,0 +1,85 @@
+#!/usr/bin/env python
+
+# Copyright (C) 2019 Igalia S.L.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import os
+import sys
+import optparse
+from webkitpy.common.host import Host
+from webkitpy.port.base import Port
+
+import logging
+from webkitpy.common.system.logutils import configure_logging
+
+_log = logging.getLogger(os.path.basename(__file__))
+configure_logging(logging.INFO)
+
+option_parser = optparse.OptionParser(usage='usage: %prog [options] [imageA] [imageB]')
+option_parser.add_option('--tolerance', action='store', dest='tolerance',
+                         help='Tolerance percent. Defaults to 0.1')
+option_parser.add_option('--platform', action='store',
+                         help='Platform to use (e.g., "gtk")')
+option_parser.add_option('--gtk', action='store_const', dest='platform', const='gtk',
+                         help='Alias for --platform=gtk')
+option_parser.add_option('--wpe', action='store_const', dest='platform', const='wpe',
+                         help='Alias for --platform=wpe')
+option_parser.add_option('--release', action='store_const', const='Release', dest="configuration",
+                         help='Set the configuration to Release')
+option_parser.add_option('--debug', action='store_const', const='Debug', dest="configuration",
+                        help='Set the configuration to Release')
+option_parser.add_option('--writediff', action='store', dest="destfile",
+                        help='Write the resulting image diff to DESTFILE')
+
+options, args = option_parser.parse_args()
+
+if len(args) < 2:
+    _log.error("Incorrect number of arguments. At least the path to two images is needed")
+    sys.exit(1)
+
+with open(args[0], mode='rb') as file:
+    imageContentA = file.read()
+with open(args[1], mode='rb') as file:
+    imageContentB = file.read()
+
+try:
+    port = Host().port_factory.get(options.platform, options)
+except NotImplementedError as e:
+    _log.error(str(e))
+    sys.exit(1)
+
+image_diff, diff_percent, error = port.diff_image(imageContentA, imageContentB, options.tolerance)
+
+if error is not None:
+    _log.error("ImageDiff returned the following error: %s" % error)
+    sys.exit(1)
+
+_log.info("The tolerance used is: %s" % options.tolerance)
+_log.info("The diff between the two images is: %s" % diff_percent)
+
+if options.destfile:
+    if image_diff is not None:
+        with open(options.destfile, mode='wb') as file:
+            file.write(image_diff)
+        _log.info("Wrote diff image to %s" % options.destfile)
+    else:
+        _log.warning("Not writing empty diff image")

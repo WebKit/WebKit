@@ -1,0 +1,6 @@
+2d.path.rect.basic
+Spec references: 2d.path.rect.subpath
+Actual output:
+Expected output:
+
+Passed

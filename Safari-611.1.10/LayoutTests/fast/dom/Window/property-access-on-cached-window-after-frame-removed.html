@@ -1,0 +1,31 @@
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/window-property-collector.js"></script>
+<script>
+var childWindow;
+var propertiesToVerify = [];
+
+function insertExpectedResult(path, expected)
+{
+    var propertyPath = path.join('.');
+    propertiesToVerify.push({'property': "childWindow." + propertyPath, 'expected': expected});
+}
+
+function runTest()
+{
+    var frame = document.getElementById("frame");
+    childWindow = frame.contentWindow;
+    // Have expected results assume that the frame has been closed (=> window.closed = true.)
+    collectProperties(true);
+    frame.parentNode.removeChild(frame);
+    for (var i = 0; i < propertiesToVerify.length; ++i)
+        shouldBe(propertiesToVerify[i].property, propertiesToVerify[i].expected);
+    document.write("Pass. WebKit didn't crash.");
+}
+</script>
+</head>
+<body>
+<iframe id="frame" src="about:blank" onload="runTest()"></iframe>
+</body>
+</html>

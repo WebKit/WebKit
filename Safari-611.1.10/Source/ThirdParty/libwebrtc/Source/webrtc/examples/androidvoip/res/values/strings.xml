@@ -1,0 +1,19 @@
+<resources>
+  <string name="app_name">androidvoip</string>
+  <string name="local_endpoint_text_view">Local Endpoint</string>
+  <string name="remote_endpoint_text_view">Remote Endpoint</string>
+  <string name="ip_address_text_view">IP Address:</string>
+  <string name="port_number_text_view">Port Number:</string>
+  <string name="encoder_text_view">Select Encoder</string>
+  <string name="decoder_text_view">Select Decoder</string>
+  <string name="decoder_selection_button">Configure Selection</string>
+  <string name="decoders_text_view_default">No decoders selected</string>
+  <string name="dialog_title">Choose Decoders</string>
+  <string name="ok_label">Ok</string>
+  <string name="dismiss_label">Dismiss</string>
+  <string name="clear_all_label">Clear All</string>
+  <string name="start_send_text_view">Start Sending</string>
+  <string name="start_playout_text_view">Start Playout</string>
+  <string name="session_button_text_off">Start Session</string>
+  <string name="session_button_text_on">Stop Session</string>
+</resources>

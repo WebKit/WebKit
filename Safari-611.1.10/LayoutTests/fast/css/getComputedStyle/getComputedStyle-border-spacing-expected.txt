@@ -1,0 +1,17 @@
+Test calling getPropertyValue on computed styles for -webkit-backround-size properties.
+
+getPropertyValue(border-spacing): 10px 20px
+getPropertyCSSValue(border-spacing): [object CSSValueList]
+getPropertyValue(border-spacing): 10px 10px
+getPropertyCSSValue(border-spacing): [object CSSValueList]
+
+Test getting border-spacing of 0.
+getPropertyValue(border-spacing): 0px 0px
+getPropertyCSSValue(border-spacing): [object CSSValueList]
+getPropertyValue(border-spacing): 0px 0px
+getPropertyCSSValue(border-spacing): [object CSSValueList]
+
+Test getting initial value of the background size.
+getPropertyValue(border-spacing): 0px 0px
+getPropertyCSSValue(border-spacing): [object CSSValueList]
+

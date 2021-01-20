@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: Load cannot follow more than 20 redirections
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/infinite-loop.php due to access control checks.
+Tests the properties of the exceptions related to XMLHttpRequest.
+
+PASS e.toString() is "NetworkError:  A network error occurred."
+PASS Object.prototype.toString.call(e) is "[object DOMException]"
+PASS Object.prototype.toString.call(e.__proto__) is "[object DOMException]"
+PASS e.constructor.toString() is "function DOMException() {
+    [native code]
+}"
+PASS e.constructor is window.DOMException
+PASS e.NETWORK_ERR is e.constructor.NETWORK_ERR
+PASS e.NETWORK_ERR is 19
+

@@ -1,0 +1,16 @@
+Bound Function Names
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Anonymous function bound name.
+PASS Function bound name should be foo.
+PASS Function bound name should be bar.
+PASS Function double bound name should be bar.
+Test InternalFunction names.
+PASS Function bound name should be Error.
+PASS Function bound name should be Function.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,24 @@
+
+<script src="../../../../resources/js-test-pre.js"></script>
+</head>
+<script>
+function runTest() {
+    plugin = document.getElementById('plugin');
+
+    testObject = plugin.testObject;
+    delete testObject.testProperty;
+    shouldBe("testObject.lastRemovedProperty", "'testProperty'")
+
+    delete testObject[242];
+    shouldBe("testObject.lastRemovedProperty", "242");
+}
+</script>
+<body onLoad="runTest()">
+<embed id="plugin" type="application/x-webkit-test-netscape" test="npruntime-remove-property"></embed>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test that 'delete object.property' ends up calling NP_RemoveProperty");
+
+</script>

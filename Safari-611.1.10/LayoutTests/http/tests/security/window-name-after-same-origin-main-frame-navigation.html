@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        console.log("window.name should equal \"test\" after a same-origin main frame navigation.");
+        document.location = "resources/window-name-test.html?127.0.0.1";
+    </script>
+</html>

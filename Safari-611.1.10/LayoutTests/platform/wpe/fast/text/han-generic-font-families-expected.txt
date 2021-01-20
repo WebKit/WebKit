@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x382
+  RenderBlock {HTML} at (0,0) size 800x382
+    RenderBody {BODY} at (8,8) size 784x366
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 574x17
+          text run at (0,0) width 574: "This test is designed to test WebKit's mappings for the generic font families for Han scripts."
+      RenderBlock {DIV} at (0,18) size 784x116
+        RenderText {#text} at (0,1) size 756x114
+          text run at (0,1) width 756: "\x{6B64}\x{6BB5}\x{4E2D}\x{6587}\x{7B80}\x{4F53}\x{6587}\x{672C}\x{7528}\x{4E8E}\x{6D4F}\x{89C8}\x{5668}\x{5E03}\x{5C40}\x{6D4B}"
+          text run at (0,59) width 39: "\x{8BD5}"
+      RenderBlock {DIV} at (0,134) size 784x116
+        RenderText {#text} at (0,1) size 750x114
+          text run at (0,1) width 750: "\x{6B64}\x{6BB5}\x{7E41}\x{9AD4}\x{4E2D}\x{6587}\x{6587}\x{672C}\x{7528}\x{65BC}\x{700F}\x{89BD}\x{5668}\x{4F48}\x{5C40}"
+          text run at (0,59) width 100: "\x{6E2C}\x{8A66}"
+      RenderBlock {DIV} at (0,250) size 784x58
+        RenderText {#text} at (0,1) size 700x56
+          text run at (0,1) width 700: "\x{5D6A}\x{5D6A}\x{50FA}\x{671C}\x{9A5D}\x{9AAA}\x{5E51}\x{8522}\x{54EC}\x{5EEB}\x{85BC}\x{61A0}\x{7641}\x{6F9A}"
+      RenderBlock {DIV} at (0,308) size 784x58
+        RenderText {#text} at (0,1) size 532x56
+          text run at (0,1) width 532: "\x{9FA9}\x{9FAF}\x{9FC7}\x{9FAA}\x{9FB0}\x{9FC8}\x{9FAB}\x{9FB1}\x{9FC9}\x{9FA6}\x{9FAC}\x{9FB2}\x{9FCA}\x{9FA7}"

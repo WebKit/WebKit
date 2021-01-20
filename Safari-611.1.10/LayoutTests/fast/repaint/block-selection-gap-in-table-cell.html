@@ -1,0 +1,21 @@
+<head>
+    <style>
+        ::selection { background-color: red; }
+    </style>
+    <script src="resources/repaint.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+    function repaintTest()
+    {
+        sel.empty();
+    }
+    </script>
+</head>
+<body onload="runRepaintTest()">
+<table><tr><td style="width: 100px; height: 100px;"></td></tr><tr><td style="background-color: green;">&nbsp;<div id="target" style="display: inline-block; height: 100px; width: 10px;"></div></td></tr></table>
+<script>
+    var sel = getSelection();
+    var target = document.getElementById("target");
+
+    sel.setBaseAndExtent(target.previousSibling, 1, target.parentElement.parentElement, 1);
+    document.body.offsetTop;
+</script>

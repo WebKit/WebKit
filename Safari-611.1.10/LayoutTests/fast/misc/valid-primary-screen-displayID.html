@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that the display ID of the primary screen is valid.</title>
+<script>
+function log(msg)
+{
+    document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
+}
+
+function onload()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    if (window.internals.primaryScreenDisplayID())
+        log("PASS: Valid primary screen display ID.");
+    else
+        log("FAIL: Invalid primary screen display ID.");
+}
+</script>
+</head>
+<body onLoad="onload()">
+<pre id="console"></pre>
+</body>
+</html>

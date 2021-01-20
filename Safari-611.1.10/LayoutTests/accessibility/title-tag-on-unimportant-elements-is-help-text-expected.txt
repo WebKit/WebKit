@@ -1,0 +1,18 @@
+a
+a
+
+This tests that if a semantically unimportant element has title text, that text is exposed as help text rather than descriptive text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS platformValueForW3CDescription(accessibilityController.accessibleElementById('div1')) is 'test1'
+PASS platformValueForW3CName(accessibilityController.accessibleElementById('div1')) is ''
+PASS platformValueForW3CDescription(accessibilityController.accessibleElementById('div2')) is ''
+PASS platformValueForW3CName(accessibilityController.accessibleElementById('div2')) is 'test2'
+PASS platformValueForW3CDescription(accessibilityController.accessibleElementById('button1')) is ''
+PASS platformValueForW3CName(accessibilityController.accessibleElementById('button1')) is 'test5'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

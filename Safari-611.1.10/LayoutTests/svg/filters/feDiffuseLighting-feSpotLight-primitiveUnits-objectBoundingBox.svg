@@ -1,0 +1,16 @@
+<svg width="500px" height="610px" xmlns="http://www.w3.org/2000/svg">
+<defs>
+    <filter id="filter" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox">
+        <feFlood/>
+        <feDiffuseLighting lighting-color="rgb(0, 255, 0)" x="-0.1" y="-0.16">
+            <feSpotLight x="-0.4" y="-0.6" z="1.7" pointsAtX="0.2" pointsAtY="0.2" pointsAtZ="0.5" limitingConeAngle="12" />
+        </feDiffuseLighting>
+        <feComponentTransfer>
+            <feFuncG type="discrete" tableValues="0 1"/>
+        </feComponentTransfer>
+    </filter>
+</defs>
+<rect x="110" y="150" width="400" height="320" fill="none" filter="url(#filter)"/>
+<!-- Mask off slight differences in point light radius -->
+<ellipse cx="298" cy="328" rx="152" ry="117" fill="none" stroke="gray" stroke-width="20" style="transform: rotate(48deg); transform-origin: 50% 50%; transform-box: fill-box;"/>
+</svg>

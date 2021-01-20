@@ -1,0 +1,42 @@
+<html>
+<head>
+
+<script type="text/javascript">
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+
+<style>
+body { margin: 0; padding: 0 }
+</style>
+
+<script type="text/javascript">
+
+function runTest()
+{
+    var target = document.getElementById("text");
+
+    var x = target.offsetParent.offsetLeft + target.offsetLeft;
+    var y = target.offsetParent.offsetTop + target.offsetTop +
+        target.offsetHeight / 2;
+
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseMoveTo(x, y + target.offsetHeight);
+    eventSender.mouseUp();
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseDown(1);
+    eventSender.mouseUp(1);
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<div id="text" contenteditable>Select me, select me, select me</div>
+
+<br/>
+<p>The original text was "Select me, select me, select me", after selecting and pasting the result should be "Select me, select me, select meSelect me, select me, select me"</p>
+</body>
+</html>

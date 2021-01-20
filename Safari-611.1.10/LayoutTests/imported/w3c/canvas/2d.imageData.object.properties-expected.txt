@@ -1,0 +1,5 @@
+2d.imageData.object.properties
+ImageData objects have the right properties
+Spec references: 2d.imageData.type
+Actual output:
+Passed

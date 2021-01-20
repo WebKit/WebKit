@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <div id="editable" contenteditable onbeforeinput=beforeinput(event)>foo barbaz garply</div>
+    <script type="text/javascript">
+        description("To manually test this, try deleting backwards/forwards at various text granularities and observe the output.");
+
+        editable.focus();
+
+        if (window.internals)
+            internals.settings.setInputEventsEnabled(true);
+
+        if (window.testRunner) {
+            select(0, 0);
+            testRunner.execCommand("deleteForward");
+
+            select(3, 3);
+            testRunner.execCommand("deleteForward");
+            testRunner.execCommand("deleteBackward");
+
+            select(17, 17);
+            testRunner.execCommand("deleteBackward");
+            testRunner.execCommand("deleteToBeginningOfLine");
+
+            select(7, 7);
+            testRunner.execCommand("deleteWordBackward");
+            testRunner.execCommand("deleteWordForward");
+
+            select(0, 10);
+            testRunner.execCommand("deleteBackward");
+        }
+
+        function beforeinput(event)
+        {
+            shouldBeTrue("event.inputType.startsWith('delete')");
+
+            window.deletionRange = event.getTargetRanges()[0];
+            shouldBe("deletionRange.startContainer", "deletionRange.endContainer");
+            debug(`Deleting text in range: [${deletionRange.startOffset}, ${deletionRange.endOffset}]`)
+            event.preventDefault();
+        }
+
+        function select(startOffset, endOffset)
+        {
+            let range = document.createRange();
+            let textNode = editable.childNodes[0];
+
+            getSelection().removeAllRanges();
+            range.setStart(textNode, startOffset);
+            range.setEnd(textNode, endOffset);
+            getSelection().addRange(range);
+        }
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

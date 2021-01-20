@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        var preventDefaultInputEvents = false;
+
+        function beginTest()
+        {
+            if (!window.eventSender || !window.internals || !window.testRunner)
+                return;
+
+            internals.settings.setInputEventsEnabled(true);
+            testRunner.dumpAsText();
+            let input = document.querySelector("#foo");
+            input.focus();
+
+            eventSender.keyDown("a", []);
+            eventSender.keyDown("b", []);
+            eventSender.keyDown("c", []);
+
+            preventDefaultInputEvents = true;
+
+            testRunner.execCommand("DeleteBackward");
+            debug(`The final value is: ${input.value}`);
+        }
+
+        function checkInputEvent(event)
+        {
+            if (preventDefaultInputEvents)
+                debug("FAIL: Did not expect to the `oninput` handler to fire.");
+        }
+
+        function checkBeforeInputEvent(event)
+        {
+            if (preventDefaultInputEvents) {
+                debug("Fired `onbeforeinput`: preventing default!");
+                event.preventDefault();
+            }
+        }
+    </script>
+</head>
+
+<body onload=beginTest()>
+    <input id="foo" contenteditable value="helloworld" oninput=checkInputEvent(event) onbeforeinput=checkBeforeInputEvent(event)></div>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+
+</html>

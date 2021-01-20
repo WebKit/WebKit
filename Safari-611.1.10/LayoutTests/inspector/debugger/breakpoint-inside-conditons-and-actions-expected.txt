@@ -1,0 +1,12 @@
+The debugger should not pause on exceptions thrown while executing the breakpoint actions.
+
+Found breakpoint.js
+inside breakpointWithCondition a:(1) b:(2) a+b:(3)
+Executing condition
+inside breakpointBasic
+Condition executed
+Executing action
+inside breakpointBasic
+Action executed
+PASS: Breakpoint condition and action executed, but the exception did not cause the debugger to pause.
+

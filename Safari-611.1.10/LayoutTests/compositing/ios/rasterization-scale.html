@@ -1,0 +1,80 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width">
+    <style>
+        .perspective-container {
+            perspective: 1500px;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid black;
+        }
+        
+        .container {
+            transform: translateZ(20px);
+        }
+        
+        .middle {
+            transform-style: preserve-3d;
+            perspective: 300px;
+        }
+        
+        #blurry-layer {
+            width: 100%;
+            height: 50px;
+            -webkit-backface-visibility: hidden;
+            transform: rotateX(20deg);
+            background-color: silver;
+            font-size: 24pt;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function getUIScript(layerID)
+        {
+            return `
+                (function() {
+                    uiController.doAfterPresentationUpdate(function() {
+                        var layerProperties = JSON.stringify(uiController.propertiesOfLayerWithID(${layerID}));
+                        uiController.uiScriptComplete(layerProperties);
+                    })
+                })();`
+        }
+
+        function doTest()
+        {
+            if (!window.testRunner)
+                return;
+
+            var layerID = internals.layerIDForElement(document.getElementById('blurry-layer'));
+
+            testRunner.runUIScript(getUIScript(layerID), function(layerProperties) {
+                var propertiesAsJSON = JSON.parse(layerProperties);
+                document.getElementById('layer-properties').textContent = 'rasterizationScale of layer is ' + propertiesAsJSON['rasterizationScale'];
+                testRunner.notifyDone();
+            });
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+<div class="perspective-container">
+    <div class="container">
+        <div class="middle">
+            <div id="blurry-layer">
+                This text should not be blurry
+            </div>
+        </div>
+    </div>
+</div>
+
+<pre id="layer-properties"></pre>
+</body>
+</html>

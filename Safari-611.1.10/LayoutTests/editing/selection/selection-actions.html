@@ -1,0 +1,60 @@
+<html> 
+<head>
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+
+
+<script>
+
+function editingTest() {
+    var start = document.getElementById("start");
+    
+    x = start.offsetLeft + 2;
+    y = start.offsetTop + 2;
+    
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseDown();
+    
+    y = y + 30;
+    
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseUp();
+    
+    testRunner.execCommand("MoveBackward");
+    testRunner.execCommand("MoveDown");
+    testRunner.execCommand("MoveForward");
+    testRunner.execCommand("MoveLeft");
+    testRunner.execCommand("MoveRight");
+    testRunner.execCommand("MoveToBeginningOfDocument");
+    testRunner.execCommand("MoveToBeginningOfLine");
+    testRunner.execCommand("MoveToBeginningOfParagraph");
+    testRunner.execCommand("MoveToEndOfDocument");
+    testRunner.execCommand("MoveToEndOfLine");
+    testRunner.execCommand("MoveToEndOfParagraph");
+    testRunner.execCommand("MoveUp");
+    testRunner.execCommand("MoveWordBackward");
+    testRunner.execCommand("MoveWordForward");
+    testRunner.execCommand("MoveWordLeft");
+    testRunner.execCommand("MoveWordRight");
+    testRunner.execCommand("PageDown");
+    testRunner.execCommand("PageUp");
+}
+
+</script>
+</head>
+<body style="overflow:hidden">
+This tests whether certain NSResponder methods that should only operate on editable regions modify a selection that is not in an editable region.<br>
+This is a para<span style="color:blue;" id="start">g</span>raph.<br>
+Some text<br>
+Some text<br>
+Some text<br>
+Some text<br>
+This is a paragraph.
+<script>
+editingTest();
+</script>
+</html>

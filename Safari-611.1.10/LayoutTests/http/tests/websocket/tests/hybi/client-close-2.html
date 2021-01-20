@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="/js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script type="text/javascript">
+description("WebSocket: Test client-initiated close with 1000.");
+
+window.jsTestIsAsync = true;
+
+var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/client-close");
+var closeEvent;
+var receivedMessage;
+
+ws.onopen = function()
+{
+    debug("Connected");
+    ws.close(1000);
+};
+
+ws.onmessage = function(messageEvent)
+{
+    debug("Message should have been ignored: " + messageEvent.data);
+    receivedMessage = messageEvent.data;
+};
+
+ws.onclose = function(event)
+{
+    debug("Closed");
+    closeEvent = event;
+    shouldBeUndefined("receivedMessage");
+    shouldBeEqualToString("closeEvent.reason", "close_frame[:2]='\\x88\\x82'");
+    finishJSTest();
+};
+
+</script>
+<script src="../../../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

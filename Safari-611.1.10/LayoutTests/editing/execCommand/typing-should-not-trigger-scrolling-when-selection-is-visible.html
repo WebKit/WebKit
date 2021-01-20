@@ -1,0 +1,81 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../editing.js"></script>
+<style>
+div[contenteditable] {
+    margin-top: 2000px;
+    font-size: 20px;
+    border: solid black 1px;
+    outline: none;
+}
+</style>
+</head>
+<body>
+<div id="output">
+    <div id="description"></div>
+    <div id="console"></div>
+</div>
+<div contenteditable>
+    <div>Try to delete the letters below.</div>
+    <div>A</div>
+    <div>B</div>
+    <div>C</div>
+    <div id="target"><br></div>
+</div>
+<script>
+description("This test verifies that typing text, then undoing, and then redoing does not cause the scroll position of the document to jump around. To run the test manually, load the page and wait for the test to complete.");
+jsTestIsAsync = true;
+
+async function presentationUpdate()
+{
+    if (window.testRunner)
+        await UIHelper.ensurePresentationUpdate();
+    else
+        await new Promise(resolve => setTimeout(resolve, 250));
+}
+
+addEventListener("load", async () => {
+    getSelection().setPosition(target, 1);
+    await presentationUpdate();
+
+    target.scrollIntoView();
+    await presentationUpdate();
+    scrollTopBeforeTyping = document.scrollingElement.scrollTop;
+
+    typeCharacterCommand("D");
+    await presentationUpdate();
+    scrollTopAfterTyping = document.scrollingElement.scrollTop;
+
+    deleteCommand();
+    await presentationUpdate();
+    scrollTopAfterDeleting = document.scrollingElement.scrollTop;
+
+    undoCommand();
+    await presentationUpdate();
+    scrollTopAfterUndoing = document.scrollingElement.scrollTop;
+
+    redoCommand();
+    await presentationUpdate();
+    scrollTopAfterRedoing = document.scrollingElement.scrollTop;
+
+    deleteCommand();
+    await presentationUpdate();
+    scrollTopAfterDeletingAgain = document.scrollingElement.scrollTop;
+
+    shouldBe("scrollTopAfterTyping", "scrollTopBeforeTyping");
+    shouldBe("scrollTopAfterDeleting", "scrollTopAfterTyping");
+    shouldBe("scrollTopAfterUndoing", "scrollTopAfterDeleting");
+    shouldBe("scrollTopAfterRedoing", "scrollTopAfterUndoing");
+    shouldBeTrue("scrollTopAfterDeletingAgain < scrollTopAfterRedoing");
+
+    document.scrollingElement.scrollTo(0, 0);
+    finishJSTest();
+});
+</script>
+</body>
+</html>
+</html>

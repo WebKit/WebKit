@@ -1,0 +1,22 @@
+PASS originalGetter.call(document.body) is document.body.id
+
+PASS getterCallCount is 0
+PASS setterCallCount is 0
+
+* Calling Getter
+PASS document.body.id is ""
+PASS getterCallCount is 1
+PASS setterCallCount is 0
+
+* Calling Setter
+document.body.id = "newid";
+PASS getterCallCount is 1
+PASS setterCallCount is 1
+
+PASS document.body.id is "newid"
+PASS Object.getOwnPropertyDescriptor(document.body.__proto__.__proto__.__proto__, "id").set is countingSet
+PASS Object.getOwnPropertyDescriptor(document.body.__proto__.__proto__.__proto__, "id").get is countingGet
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

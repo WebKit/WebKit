@@ -1,0 +1,6 @@
+Blocked access to external URL http://10.0.0.1/
+Test for rdar://problem/6525618 REGRESSION (r39566): NewsFire crashes in string hashing code when opening a Digg RSS article.
+
+This test cannot be run in the browser. In DumpRenderTree it should report that access to http://10.0.0.1/ was blocked and not crash.
+
+

@@ -1,0 +1,88 @@
+<html>
+<head>
+  <style>
+    html {
+      background: grey;
+    }
+    .parent1 {
+      width: 500px;
+      background: blue;
+    }
+    .child1 {
+      background: green;
+      width: 100px;
+    }
+
+    .parent2 {
+      width: 500px;
+      background: blue;
+    }
+    .child2 {
+      background: green;
+      width: 200px;
+    }
+
+    .parent3 {
+      width: 500px;
+      background: blue;
+    }
+    .child3 {
+      background: green;
+      width: 500px;
+    }
+
+    .parent4 {
+      width: 500px;
+      background: blue;
+    }
+    .child4 {
+      background: green;
+      width: 200px;
+    }
+
+    .parent5 {
+      width: 500px;
+      background: blue;
+    }
+    .child5 {
+      background: green;
+      width: 300px;
+    }
+
+    .parent6 {
+      width: 500px;
+      background: blue;
+    }
+    .child6 {
+      background: green;
+      width: 500px;
+    }
+
+    .parent7 {
+      width: 500px;
+      background: blue;
+    }
+    .child7 {
+      background: green;
+      width: 500px;
+    }
+  </style>
+</head>
+<body>
+  <p> Single values </p>
+  <p> Specified </p>
+  <div class="parent1"><div class="child1"><p>100px green</p></div> </div>
+  <p> Not specified, use initial value </p>
+  <div class="parent2"><div class="child2"><p>200px green</p></div> </div>
+  <p> Not specified, but not registered so use initial value for width </p>
+  <div class="parent3"><div class="child3"><p>500px green</p></div> </div>
+  <p> Has a fallback for registered property </p>
+  <div class="parent4"><div class="child4"><p>200px green</p></div> </div>
+  <p> Has a fallback for unregistered property </p>
+  <div class="parent5"><div class="child5"><p>300px green</p></div> </div>
+  <p> Having a fallback for a registered property that is a variable should not work</p>
+  <div class="parent6"><div class="child6"><p>500px green</p></div> </div>
+  <p> Having a variable in the initial value should not work</p>
+  <div class="parent7"><div class="child7"><p>500px green</p></div> </div>
+</body>
+</html>

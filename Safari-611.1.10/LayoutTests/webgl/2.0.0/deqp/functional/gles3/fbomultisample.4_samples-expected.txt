@@ -1,0 +1,4 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../../resources/webgl_test_files/deqp/functional/gles3/fbomultisample.4_samples.html
+[ PASS ] All tests passed

@@ -1,0 +1,134 @@
+Scrolling content
+Fixed background
+Scrolling content
+Fixed background
+Before toggle:
+
+(Frame scrolling node
+  (scrollable area size 785 600)
+  (contents size 785 665)
+  (scrollable area parameters
+    (horizontal scroll elasticity 2)
+    (vertical scroll elasticity 2)
+    (horizontal scrollbar mode 0)
+    (vertical scrollbar mode 0)
+    (allows vertical scrolling 1))
+  (Scrolling on main thread because: Has slow repaint objects)
+  (layout viewport at (0,0) size 785x600)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,65))
+  (behavior for fixed 0)
+  (children 2
+    (Overflow scrolling node
+      (scrollable area size 405 305)
+      (contents size 410 1020)
+      (scrollable area parameters
+        (horizontal scroll elasticity 0)
+        (vertical scroll elasticity 0)
+        (horizontal scrollbar mode 0)
+        (vertical scrollbar mode 0)
+        (allows horizontal scrolling 1)
+        (allows vertical scrolling 1))
+    )
+    (Overflow scrolling node
+      (scrollable area size 405 305)
+      (contents size 410 1020)
+      (scrollable area parameters
+        (horizontal scroll elasticity 0)
+        (vertical scroll elasticity 0)
+        (horizontal scrollbar mode 0)
+        (vertical scrollbar mode 0)
+        (allows horizontal scrolling 1)
+        (allows vertical scrolling 1))
+      (Scrolling on main thread because: Has slow repaint objects)
+    )
+  )
+)
+
+
+After toggle:
+
+(Frame scrolling node
+  (scrollable area size 785 600)
+  (contents size 785 665)
+  (scrollable area parameters
+    (horizontal scroll elasticity 2)
+    (vertical scroll elasticity 2)
+    (horizontal scrollbar mode 0)
+    (vertical scrollbar mode 0)
+    (allows vertical scrolling 1))
+  (Scrolling on main thread because: Has slow repaint objects)
+  (layout viewport at (0,0) size 785x600)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,65))
+  (behavior for fixed 0)
+  (children 2
+    (Overflow scrolling node
+      (scrollable area size 405 305)
+      (contents size 410 1020)
+      (scrollable area parameters
+        (horizontal scroll elasticity 0)
+        (vertical scroll elasticity 0)
+        (horizontal scrollbar mode 0)
+        (vertical scrollbar mode 0)
+        (allows horizontal scrolling 1)
+        (allows vertical scrolling 1))
+      (Scrolling on main thread because: Has slow repaint objects)
+    )
+    (Overflow scrolling node
+      (scrollable area size 405 305)
+      (contents size 410 1020)
+      (scrollable area parameters
+        (horizontal scroll elasticity 0)
+        (vertical scroll elasticity 0)
+        (horizontal scrollbar mode 0)
+        (vertical scrollbar mode 0)
+        (allows horizontal scrolling 1)
+        (allows vertical scrolling 1))
+    )
+  )
+)
+
+
+After removal:
+
+(Frame scrolling node
+  (scrollable area size 785 600)
+  (contents size 785 665)
+  (scrollable area parameters
+    (horizontal scroll elasticity 2)
+    (vertical scroll elasticity 2)
+    (horizontal scrollbar mode 0)
+    (vertical scrollbar mode 0)
+    (allows vertical scrolling 1))
+  (layout viewport at (0,0) size 785x600)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,65))
+  (behavior for fixed 0)
+  (children 2
+    (Overflow scrolling node
+      (scrollable area size 405 305)
+      (contents size 410 1020)
+      (scrollable area parameters
+        (horizontal scroll elasticity 0)
+        (vertical scroll elasticity 0)
+        (horizontal scrollbar mode 0)
+        (vertical scrollbar mode 0)
+        (allows horizontal scrolling 1)
+        (allows vertical scrolling 1))
+    )
+    (Overflow scrolling node
+      (scrollable area size 405 305)
+      (contents size 410 1020)
+      (scrollable area parameters
+        (horizontal scroll elasticity 0)
+        (vertical scroll elasticity 0)
+        (horizontal scrollbar mode 0)
+        (vertical scrollbar mode 0)
+        (allows horizontal scrolling 1)
+        (allows vertical scrolling 1))
+    )
+  )
+)
+
+

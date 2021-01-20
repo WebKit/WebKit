@@ -1,0 +1,16 @@
+Testing that WI.DOMNodeStyles.Event.Refreshed event dispatches with correct significantChange flag.
+
+
+== Running test suite: NodeStylesRefreshed
+-- Running test case: NodeStylesRefreshed.ClassAdded
+PASS: Adding '.baz' class should cause a significant change.
+
+-- Running test case: NodeStylesRefreshed.ClassRemoved
+PASS: Removing '.foo' class should cause a significant change.
+
+-- Running test case: NodeStylesRefreshed.IrrelevantClassAdded
+PASS: Adding '.blah' class shouldn't cause a significant change.
+
+-- Running test case: NodeStylesRefreshed.IrrelevantClassRemoved
+PASS: Removing '.blah' class shouldn't cause a significant change.
+

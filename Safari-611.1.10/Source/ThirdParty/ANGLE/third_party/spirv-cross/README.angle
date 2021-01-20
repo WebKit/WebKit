@@ -1,0 +1,10 @@
+Name: Khronos SPIRV-Cross
+Short Name: spirv-cross
+URL: https://github.com/KhronosGroup/SPIRV-Cross
+Version: N/A
+Security Critical: yes
+License: Apache 2.0
+License File: LICENSE
+
+Description:
+A tool designed for parsing and converting SPIR-V to other shader languages.

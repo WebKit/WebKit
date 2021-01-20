@@ -1,0 +1,61 @@
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>&lt;video&gt; and &lt;source&gt; error test</title>
+        <script src=video-test.js></script>
+
+        <script>
+
+            var sources = [];
+            var errorCount = 0;
+            var expectedErrorCount = 5;
+
+            function errorEvent(evt)
+            {
+                consoleWrite("");
+
+                var ndx;
+                for (ndx = 0; ndx < sources.length; ndx++) {
+                    if (sources[ndx] == evt.target)
+                        break;
+                }
+
+                var src = sources[ndx].getAttribute('src') == null ? "null" : "'" + relativeURL(evt.target.src) + "'";
+                if (sources[ndx] == evt.target)
+                    logResult(true, "EVENT(error) from &lt;source id='<em>" + evt.target.id + "</em>' src=<em>" + src + "</em>&gt;");
+                else
+                    logResult(false, "EVENT(error) from " + evt.target);
+
+                testExpected("video.error", null);
+                
+                if (++errorCount == expectedErrorCount) {
+                    consoleWrite("");
+                    setTimeout(endTest, 200);
+                }
+            }
+
+            function start()
+            {
+                document.addEventListener("error", errorEvent, true);
+
+                sources = document.getElementsByTagName('source');
+
+                findMediaElement();
+            }
+        </script>
+    </head>
+
+    <body>
+
+       <video onloadstart="start()" controls>
+            <source id=missing-src type="video/blahblah">
+            <source id=bogus-type src=content/test.mp4 type="video/blahblah">
+            <source id=unsupported-media-query src=content/test.mp4 media=print>
+            <source id=empty-src src="" type="video/mp4">
+            <source id=no-extension-no-type src=nonexistent>
+        </video>
+        
+        <p>Test that 'error' events are fired from &lt;source&gt; element when it can not be used.</p>
+
+    </body>
+</html>

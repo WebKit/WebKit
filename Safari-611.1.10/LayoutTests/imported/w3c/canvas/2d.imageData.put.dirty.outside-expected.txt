@@ -1,0 +1,7 @@
+2d.imageData.put.dirty.outside
+putImageData() handles dirty rectangles outside the canvas correctly
+Spec references: 2d.imageData.put.normal
+Actual output:
+Expected output:
+
+Passed

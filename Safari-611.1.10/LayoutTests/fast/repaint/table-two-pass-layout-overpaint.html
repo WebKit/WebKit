@@ -1,0 +1,25 @@
+<html>
+<head>
+    <style>
+        table { background-color: lightblue; height: 100px; }
+        td { width: 100px; height: 50px; }
+        div#target { height: 25px; background-color: lightgreen; }
+    </style>
+    <script src="resources/repaint.js"></script>
+    <script>
+        function repaintTest()
+        {
+            document.getElementById("target").style.width = "50px";
+        }
+    </script>
+</head>
+<body onload="runRepaintTest()">
+<table>
+    <tr>
+        <td>
+            <div id="target"></div>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

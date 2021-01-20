@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='resources/cookies-test-pre.js'></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+</head>
+<body>
+<script>
+description('Tests that setting a cookie with an expiration date in the past deletes the cookie');
+jsTestIsAsync = true;
+
+onload = () => {
+    shouldBeEqualToString("document.cookie", "");
+
+    var expiration = new Date(new Date() + 600000); // In 10 minutes.
+    document.cookie = "testDelete=testValue; expires=" + expiration.toUTCString() + "; path=/";
+    shouldBeEqualToString('document.cookie', 'testDelete=testValue');
+
+    var expiration = new Date(new Date() - 600000); // 10 minute ago.
+    document.cookie = "testDelete=testValue; expires=" + expiration.toUTCString() + "; path=/";
+    shouldBeEqualToString('document.cookie', ''); // Should have deleted cookie.
+    setTimeout(() => {
+        shouldBeEqualToString('document.cookie', ''); // Cookie should stay deleted.
+        finishJSTest();
+    }, 100);
+}
+</script>
+<script src='resources/cookies-test-post.js'></script>
+</body>
+</html>

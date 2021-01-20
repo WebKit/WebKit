@@ -1,0 +1,80 @@
+/*
+ * Copyright (C) 2020 Igalia S.L. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */ 
+
+[
+    EnabledAtRuntime=WebXR,
+    Conditional=WEBXR,
+    Exposed=Window,
+    InterfaceName=XRTest,
+    LegacyNoInterfaceObject
+] interface WebXRTest {
+    // Simulates connecting a device to the system.
+    // Used to instantiate a fake device for use in tests.
+    [CallWith=ScriptExecutionContext] Promise<WebFakeXRDevice> simulateDeviceConnection(FakeXRDeviceInit init);
+
+    // Simulates a user activation (aka user gesture) for the current scope.
+    // The activation is only guaranteed to be valid in the provided function and only applies to WebXR
+    // Device API methods.
+    [CallWith=Document] undefined simulateUserActivation(XRSimulateUserActivationFunction f);
+
+    // Disconnect all fake devices
+    Promise<undefined> disconnectAllDevices();
+};
+
+[
+    EnabledAtRuntime=WebXR,
+    Conditional=WEBXR,
+] dictionary FakeXRDeviceInit {
+    // Deprecated - use `supportedModes` instead.
+    required boolean supportsImmersive;
+    // Sequence of modes that should be supported by this device.
+    sequence<XRSessionMode> supportedModes;
+    required sequence<FakeXRViewInit> views;
+
+    // https://immersive-web.github.io/webxr/#feature-name
+    // The list of feature names that this device supports.
+    // Any requests for features not in this list should be rejected, with the exception of those
+    // that are guaranteed regardless of device availability (e.g. 'viewer').
+    // If not specified/empty, the device supports no features.
+    // NOTE: This is meant to emulate hardware support, not whether a feature is
+    // currently available (e.g. bounds not being tracked per below)
+    sequence<any> supportedFeatures;
+
+    // The bounds coordinates. If empty, no bounded reference space is currently tracked.
+    // If not, must have at least three elements.
+    sequence<FakeXRBoundsPoint> boundsCoordinates;
+
+    // A transform used to identify the physical position of the user's floor.
+    // If not set, indicates that the device cannot identify the physical floor.
+    FakeXRRigidTransformInit floorOrigin;
+
+    // native origin of the viewer
+    // If not set, the device is currently assumed to not be tracking, and xrFrame.getViewerPose should
+    // not return a pose.
+    //
+    // This sets the viewer origin *shortly after* initialization; since the viewer origin at initialization
+    // is used to provide a reference origin for all matrices.
+    FakeXRRigidTransformInit viewerOrigin;
+};

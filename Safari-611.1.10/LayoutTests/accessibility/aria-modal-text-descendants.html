@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+
+<body id="body">
+
+<div id="bg">
+<p id="bgContent">Other page content with <a href="#">a dummy focusable element</a></p>
+<p><a href="#" role="button" id="displayBtn">Display a dialog</a></p>
+</div>
+
+<div role="dialog" aria-modal="true" aria-labelledby="myDialog" id="box" class="box-hidden" tabindex="-1">
+    <h3 id="myDialog">Just an example.</h3>
+    <p id="text">text</p>
+</div>
+
+
+<script>
+
+    description("This tests text descendants of modal dialog are accessible.");
+
+    if (window.accessibilityController) {
+        // Background should be unaccessible after loading, since the 
+        // dialog is displayed and aria-modal=true.
+        shouldBeFalse("backgroundAccessible()");
+        
+        var text = accessibilityController.accessibleElementById("text").childAtIndex(0);
+        shouldBeFalse("text.isIgnored");
+    }
+    
+    function backgroundAccessible() {
+        var displayBtn = accessibilityController.accessibleElementById("displayBtn");
+        var bgContent = accessibilityController.accessibleElementById("bgContent");
+        
+        if (!displayBtn || !bgContent)
+            return false;
+        
+        return !displayBtn.isIgnored && !bgContent.isIgnored;
+    }
+
+
+</script>
+
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

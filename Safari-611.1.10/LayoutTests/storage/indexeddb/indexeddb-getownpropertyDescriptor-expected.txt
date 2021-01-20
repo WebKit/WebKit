@@ -1,0 +1,14 @@
+Tests using getOwnPropertyDescriptor() on window.indexedDB
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+desc = Object.getOwnPropertyDescriptor(window, 'indexedDB')
+PASS desc.get is an instance of Function
+PASS desc.set is undefined.
+PASS desc.enumerable is true
+PASS desc.configurable is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,3 @@
+
+FAIL Javascript URI document.contentType === 'text/html' assert_equals: expected "text/html" but got ""
+

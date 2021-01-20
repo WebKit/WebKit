@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/test.mp4" style="width: 320px; height: 240px;" controls></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing the <code>MediaController</code> resizing behavior.");
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+const mediaControls = shadowRoot.lastElementChild.lastElementChild;
+
+debug("Checking initial size");
+shouldBeEqualToString("mediaControls.style.width", "320px");
+shouldBeEqualToString("mediaControls.style.height", "240px");
+
+shadowRoot.addEventListener("resize", () => {
+    shouldBeEqualToString("mediaControls.style.width", "400px");
+    shouldBeEqualToString("mediaControls.style.height", "300px");
+    setTimeout(() => {
+        debug("");
+        media.remove();
+        finishJSTest();
+    });
+});
+
+debug("");
+debug("Resizing to 400x300");
+media.style.width = "400px";
+media.style.height = "300px";
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

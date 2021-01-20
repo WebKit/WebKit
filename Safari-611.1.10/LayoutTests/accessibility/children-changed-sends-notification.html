@@ -1,0 +1,74 @@
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<p id="description"></p>
+<p id="paragraph">Plain text paragraph <a id="testLink" href="#">with a link at the end</a></p>
+
+<div id="console"></div>
+
+<script>
+window.jsTestIsAsync = true;
+
+description("This test ensures that a notification is being emitted when children are added or removed for an accessibility object");
+
+function runTest() {
+    window.paragraphNotificationCount = 0;
+    window.globalNotificationCount = 0;
+
+    if (window.accessibilityController) {
+        var axWebArea = accessibilityController.rootElement.childAtIndex(0);
+
+        // Ensure the accessibility hierarchy is generated.
+        touchAccessibilityTree(axWebArea);
+
+        window.paragraph = axWebArea.childAtIndex(1);
+        paragraph.addNotificationListener(function(notification) {
+            paragraphNotificationCount++;
+            debug("PARAGRAPH notification: " + notification);
+        });
+
+        accessibilityController.addNotificationListener(function(element, notification) {
+            if (!element.isEqual(paragraph))
+                return;
+
+            globalNotificationCount++;
+            debug("GLOBAL notification: " + notification + " on element with role " + element.role);
+        });
+    }
+
+    var par = document.getElementById('paragraph');
+    window.newChild = document.createElement('button');
+    par.appendChild(newChild);
+
+    // Ensure the new child is added.
+    touchAccessibilityTree(axWebArea);
+
+    window.setTimeout(function() {
+        var link = document.getElementById('testLink');
+        link.style.display = 'none';
+
+        // Ensure the accessibility hierarchy is regenerated.
+        touchAccessibilityTree(axWebArea);
+
+        shouldBe("paragraphNotificationCount", "globalNotificationCount");
+        shouldBe("globalNotificationCount", "2");
+
+        if (window.accessibilityController) {
+            paragraph.removeNotificationListener();
+            accessibilityController.removeNotificationListener();
+        }
+
+        finishJSTest();
+    }, 0);
+}
+
+runTest();
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

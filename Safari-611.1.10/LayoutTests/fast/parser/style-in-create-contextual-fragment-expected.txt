@@ -1,0 +1,16 @@
+| <html>
+|   <head>
+|     <script>
+|       src="../../resources/dump-as-markup.js"
+|     "\n"
+|   <body>
+|     "\n"
+|     <script>
+|       "\nvar range = document.createRange();\nrange.selectNode(document.body);\nvar documentFragment = range.createContextualFragment("<title>hi</title><style></style><body>XXX<div>ttt</div></body>");\ndocument.body.appendChild(documentFragment);\n"
+|     <title>
+|       "hi"
+|     <style>
+|     "XXX"
+|     <div>
+|       "ttt"
+|     "\n\n"

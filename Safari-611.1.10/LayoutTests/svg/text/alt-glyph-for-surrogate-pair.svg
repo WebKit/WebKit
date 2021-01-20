@@ -1,0 +1,9 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <svg width="200" height="100" xmlns="http://www.w3.org/2000/svg">
+    <font>
+      <font-face font-family="xyzzy" units-per-em="10"/>
+      <glyph id="sekrit" horiz-adv-x="14" d="m0,0 l10,0 l0,10 l-10,0 z"/>
+    </font>
+    <text x="25" y="25" font-family="xyzzy" stroke-width="10"><altGlyph fill="green" xlink:href="#sekrit">ڠ&#xf62cd;</altGlyph>PASSED</text>
+  </svg>
+</html>

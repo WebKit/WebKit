@@ -1,0 +1,117 @@
+#!/usr/bin/env perl
+# Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+use strict;
+use warnings;
+use English;
+use File::Copy qw/ move /;
+use File::Temp qw/ tempdir tempfile /;
+use FindBin;
+use Getopt::Long qw(:config pass_through);
+use lib $FindBin::Bin;
+use webkitdirs;
+
+chdirWebKit();
+
+my $showHelp = 0;
+
+my $programName = basename($0);
+
+sub usage()
+{
+    my $usage = <<EOF;
+    Bundles up products created with build-webkit into a zip suitable for sharing as a root.
+    The archive is created in the top level webkit directory.
+
+    Usage: $programName [configuration options]
+      --help                            Show this help message
+      --sdk                             Specifies SDK for which the roots are staged
+                                        (Default: currently installed Base SDK)
+      --ios-device                      Use "iphoneos.internal" SDK if installed, else "iphoneos" SDK (iOS only)
+      --device                          DEPRECATED alias of --ios-device
+      --ios-simulator                   Use "iphonesimulator.internal" SDK if installed, else "iphonesimulator" SDK (iOS only)
+      --simulator                       DEPRECATED alias of --ios-simulator
+      --debug                           Package roots from Debug-<platform>
+      --release                         Package roots from Release-<platform>
+
+EOF
+
+    print $usage;
+    exit 0;
+}
+
+my %options = (
+    'help' => \$showHelp,
+);
+
+usage() if not @ARGV or not GetOptions(
+    'help' => \$showHelp,
+);
+usage() if $showHelp;
+
+setConfiguration();
+
+my @privateFrameworks = qw(WebCore WebKitLegacy WebKit2);
+my @publicFrameworks = qw(JavaScriptCore WebKit);
+my $privateInstallPath = "/System/Library/PrivateFrameworks";
+my $publicInstallPath = "/System/Library/Frameworks";
+
+my $configuration = configuration();
+my $platform = xcodeSDKPlatformName();
+my $productDir = productDir();
+my $stagingRoot = tempdir(CLEANUP => 1);
+my $stagingPrivatePath = "$stagingRoot$privateInstallPath";
+my $stagingPublicPath = "$stagingRoot$publicInstallPath";
+my $archiveName = "webkit-$configuration-$platform";
+my $archivePath = "$productDir/$archiveName.tar.gz";
+my ($fh, $tempArchiveName) = tempfile( "/tmp/$archiveName-XXXXXXX");
+
+system 'mkdir', '-p', $stagingPrivatePath;
+system 'mkdir', '-p', $stagingPublicPath;
+
+foreach my $framework (@privateFrameworks) {
+    print "Copying Private $framework from $productDir ...\n";
+    system 'cp', '-LpR', $productDir . "/$framework.framework", "$stagingPrivatePath/";
+    die "Check to see that you have built $framework for $configuration-$platform" if $? and $framework ne 'WebKit2';
+}
+
+foreach my $framework (@publicFrameworks) {
+    print "Copying Public $framework from $productDir ...\n";
+    system 'cp', '-LpR', $productDir . "/$framework.framework", "$stagingPublicPath/";
+    die "Check to see that you have built $framework for $configuration-$platform" if $?;
+}
+
+system 'ditto', "$productDir/usr", "$stagingRoot/usr";
+
+chdir $stagingRoot;
+print "Creating compressed archive ...\n";
+system 'ditto', '-cz', $stagingRoot, $tempArchiveName;
+
+chdirWebKit();
+my $moved = move($tempArchiveName, $archivePath);
+
+if ($moved) {
+    print "Your root is: $archivePath\n";
+} else {
+    print "Couldn't move temporary archive $tempArchiveName to $archivePath\n";
+}

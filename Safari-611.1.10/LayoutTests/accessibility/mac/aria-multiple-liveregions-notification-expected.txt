@@ -1,0 +1,15 @@
+changed text
+
+new text element
+This tests that ARIA live regions are sending out the correct notifications. We perform two operations to each aria region, at the end it should trigger two live region notifications
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS addedNotification1 is true
+PASS addedNotification2 is true
+PASS liveRegionChangeCount is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

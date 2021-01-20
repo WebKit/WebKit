@@ -1,0 +1,61 @@
+<html>
+<head>
+<style>
+body { margin: 10; padding: 0 }
+</style>
+</head>
+<body>
+<div contenteditable id='test'>Line 1<div>Line 2</div><p>Line <i>3</i></p></div>
+<p><ol id="console"></ol></p>
+<script type="text/javascript">
+
+    function log(message)
+    {
+        var item = document.createElement("li");
+        item.appendChild(document.createTextNode(message));
+        document.getElementById("console").appendChild(item);
+    }
+
+    if (window.testRunner) {
+        
+        try {
+        
+            testRunner.dumpAsText();
+        
+            window.getSelection().setPosition(document.getElementById("test"), 0);
+            log(textInputController.characterIndexForPoint(5, 600-5));
+            log(textInputController.characterIndexForPoint(5, 600-20));
+            log(textInputController.characterIndexForPoint(12, 600-16));
+            log(textInputController.characterIndexForPoint(16, 600-20));
+            log(textInputController.characterIndexForPoint(36, 600-17));
+            log(textInputController.characterIndexForPoint(40, 600-17));
+            log(textInputController.characterIndexForPoint(43, 600-17));
+            log(textInputController.characterIndexForPoint(46, 600-17));
+            log(textInputController.characterIndexForPoint(80, 600-17));
+            log(textInputController.characterIndexForPoint(5, 600-34));
+            log(textInputController.characterIndexForPoint(12, 600-34));
+            log(textInputController.characterIndexForPoint(15, 600-34));
+            log(textInputController.characterIndexForPoint(21, 600-34));
+            log(textInputController.characterIndexForPoint(63, 600-36));
+            log(textInputController.characterIndexForPoint(6, 600-53));
+            log(textInputController.characterIndexForPoint(25, 600-51));
+            log(textInputController.characterIndexForPoint(70, 600-55));
+            log(textInputController.characterIndexForPoint(3, 600-67));
+            log(textInputController.characterIndexForPoint(12, 600-67));
+            log(textInputController.characterIndexForPoint(28, 600-67));
+            log(textInputController.characterIndexForPoint(47, 600-67));
+            log(textInputController.characterIndexForPoint(73, 600-67));
+            log(textInputController.characterIndexForPoint(10, 600-87));
+            log(textInputController.characterIndexForPoint(28, 600-52));
+            log(textInputController.characterIndexForPoint(28, 600-61));
+            log(textInputController.characterIndexForPoint(27, 600-64));
+
+        } catch (ex) {
+            log("Exception: " + ex.description);
+        }
+    } else {
+        document.write("(cannot run interactively)");
+    }
+</script>
+</body>
+</html>

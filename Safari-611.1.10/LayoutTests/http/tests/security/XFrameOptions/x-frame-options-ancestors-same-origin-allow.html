@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<head>
+<iframe src="http://127.0.0.1:8000/resources/echo-iframe-src.php?src=http%3A//127.0.0.1%3A8000/security/XFrameOptions/resources/x-frame-options-frame-ancestors-same-origin-allow.cgi"></iframe>
+</head>
+</html>

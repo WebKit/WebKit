@@ -1,0 +1,37 @@
+<p>This tests that edited whitespaces aren't all nbsps.  When the region becomes non-editable, Hello and World should still be on different lines.  This demonstrates a bug: the div's focus halo doesn't go away when it becomes non-editable.</p>
+<div id="div" contenteditable="true" style="border: 1px solid black; width: 60px;"></div>
+<ol id="console"></ol>
+<script>
+function log(str) {
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(str));
+    var console = document.getElementById("console");
+    console.appendChild(li);
+}
+
+var div = document.getElementById("div");
+var sel = window.getSelection();
+sel.setPosition(div, 0);
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, "Hello");
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, "World");
+document.execCommand("InsertText", false, " ");
+
+var innerText = div.innerHTML;
+
+// Check the pattern produced.  This might change in the future.
+var expected = "&nbsp;Hello &nbsp; &nbsp; World&nbsp;";
+var nbsp = false;
+for (var i = 0; i < innerText.length; i++) {
+    if(innerText[i] != expected[i])
+       log("Error: Character " + i + " of the editable region was not what was expected.");
+}
+
+div.contentEditable = "false";
+// When we turn content editability off, we'll see Hello and World on the same line if editing is using all nbsps.
+</script>

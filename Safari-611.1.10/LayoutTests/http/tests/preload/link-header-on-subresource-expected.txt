@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Did not parse stylesheet at 'http://127.0.0.1:8000/preload/resources/dummy-preloads-subresource.css.php' because non CSS MIME types are not allowed in strict mode.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

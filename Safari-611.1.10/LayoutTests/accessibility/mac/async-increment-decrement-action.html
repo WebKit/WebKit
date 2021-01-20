@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<input type="range" min="0" max="100" value="25" step="25" id="range1"/>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that increment and decrement actions are async.");
+
+    if (window.accessibilityController) {
+
+        var obj = accessibilityController.accessibleElementById("range1");
+        
+        shouldBe("obj.intValue", "25");
+
+        // sync version
+        obj.increment();
+        shouldBe("obj.intValue", "50");
+        obj.decrement();
+        shouldBe("obj.intValue", "25");
+
+        // async version
+        // The increment/decrement actions are now async so that they won't 
+        // block the test run loop by changing the value.
+        obj.asyncIncrement();
+        shouldBe("obj.intValue", "25");
+        obj.asyncDecrement();
+        shouldBe("obj.intValue", "25");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

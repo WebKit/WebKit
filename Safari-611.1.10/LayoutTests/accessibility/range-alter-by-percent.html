@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<title>Range Alter by Percent</title>
+</head>
+<body>
+
+<!-- Range type input elements are altered by five percent if they have no step specified. -->
+
+<!-- Implicit step size of five when decrement/increment is called. -->
+<input id="largeRange" max="100" min="0" type="range" value="50">
+<!-- Implicit step size of one when decrement/increment is called (because five percent would give us less than one). -->
+<input id="smallRange" max="10" min="0" type="range" value="5">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that decrement and increment alter a range type input element by five percent or one (whichever is larger) when no step is specified.");
+    
+    if (window.accessibilityController) {
+        // Large range.
+        var largeRange = accessibilityController.accessibleElementById("largeRange");
+        shouldBe("largeRange.intValue", "50");
+        largeRange.increment();
+        shouldBe("largeRange.intValue", "55");
+        largeRange.increment();
+        shouldBe("largeRange.intValue", "60");
+        largeRange.decrement();
+        shouldBe("largeRange.intValue", "55");
+        largeRange.decrement();
+        shouldBe("largeRange.intValue", "50");
+        
+        // Small range.
+        var smallRange = accessibilityController.accessibleElementById("smallRange");
+        shouldBe("smallRange.intValue", "5");
+        smallRange.increment();
+        shouldBe("smallRange.intValue", "6");
+        smallRange.increment();
+        shouldBe("smallRange.intValue", "7");
+        smallRange.decrement();
+        shouldBe("smallRange.intValue", "6");
+        smallRange.decrement();
+        shouldBe("smallRange.intValue", "5");
+    }
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

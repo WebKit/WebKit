@@ -1,0 +1,21 @@
+Rich text
+{
+    "dragover": {
+        "text/plain": "",
+        "foo/🤔👌🙃": "",
+        "text/html": "",
+        "bar/מקור השם עברית": "",
+        "text/uri-list": "",
+        "baz/年年年": "",
+        "text/rtf": ""
+    },
+    "drop": {
+        "text/plain": "ben bitdiddle",
+        "foo/🤔👌🙃": "🤔👌🙃",
+        "text/html": "<b>年年年</b>",
+        "bar/מקור השם עברית": "<i>מקור השם עברית</i>",
+        "text/uri-list": "https://www.apple.com",
+        "baz/年年年": "https://www.webkit.org",
+        "text/rtf": "AAAAAAAAAAA"
+    }
+}

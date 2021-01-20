@@ -1,0 +1,21 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("PASS if it doesn't crash. See Bug 40158.");
+
+
+var inputForProgress = document.createElement("input");
+inputForProgress.setAttribute("style", "-webkit-appearance: progress-bar;");
+document.body.appendChild(inputForProgress);
+
+var inputForMeter = document.createElement("input");
+inputForMeter.setAttribute("style", "-webkit-appearance: meter;");
+document.body.appendChild(inputForMeter);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+This tests to make sure that placing the caret at the beginning of a paragraph of text just after a block image and pressing delete does not move the text. It cannot be made inline with the image since it's a block image. The editable region below should contain an image followed by a paragraph of text.
+
+<img src="../resources/abe.png" style="display:block; padding: 3px;">This text should be in its own paragraph.

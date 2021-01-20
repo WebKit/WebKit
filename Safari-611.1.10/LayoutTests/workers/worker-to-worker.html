@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Worker to worker communication via MessagePorts");
+
+if (window.testRunner)
+  window.testRunner.waitUntilDone();
+
+const worker = (port) => new Promise(resolve => {
+  const w = new Worker("worker-to-worker.js");
+  w.postMessage({ port }, [port]);
+  w.onmessage = (e) => {
+    debug(e.data);
+    resolve();
+  };
+});
+
+const mc = new MessageChannel();
+Promise.all([
+  worker(mc.port1),
+  worker(mc.port2),
+]).then(() => {
+  if (window.testRunner)
+    window.testRunner.notifyDone();
+});
+
+</script>
+</body>
+</html>
+

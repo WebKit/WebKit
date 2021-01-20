@@ -1,0 +1,4 @@
+NSSpellChecker recordResponseToCorrection: notationl -> notational (response: accepted)
+This test verifies that accepted candidates that were accepted immediately and unseen by the user still trigger NSSpellChecker reporting. A single "recordResponseToCorrection" logging should be output by this test, correcting "notationl" to "notational", and should be accepted.
+
+the notational 

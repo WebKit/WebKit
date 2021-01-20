@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/atk-helpers.js"></script>
+</head>
+
+<body>
+<p id="borked">This
+                          paragraph
+                                                      is
+                                                                                                                                                                                                                                                                                                                                                                            borked!</p>
+
+<div id="console"></div>
+
+<script>
+var caretMovedData;
+
+function globalListener(object, name, offset)
+{
+    var role = object.role.replace('AXRole: AX', '');
+    if (name == 'AXTextCaretMoved') {
+        caretMovedData += role + '|' + offset;
+    }
+}
+
+function resetCaretOffsetForObject(object, offset)
+{
+    caretMovedData = '';
+    setCaretOffset(object, offset);
+}
+
+if (window.testRunner && window.internals) {
+    internals.settings.setCaretBrowsingEnabled(true);
+    testRunner.dumpAsText();
+}
+
+if (window.accessibilityController) {
+    accessibilityController.addNotificationListener(globalListener);
+    borked = accessibilityController.accessibleElementById('borked');
+    prefix = 'AXValue: '
+    shouldBeTrueQuiet('borked.stringValue.substring(0, 9) == "' + prefix + '"');
+    borkedTextLength = borked.stringValue.length - prefix.length
+    shouldBe('borkedTextLength', '25');
+    resetCaretOffsetForObject(borked, borkedTextLength - 1);
+    shouldBeEqualToString('caretMovedData', 'Paragraph|24');
+    resetCaretOffsetForObject(borked, borkedTextLength);
+    shouldBeEqualToString('caretMovedData', 'Paragraph|25');
+}
+
+description("This test is replicated from old file testatk.c and tests text length, setting caret offset and receiving text-caret-moved signal on a paragraph with lots of whitespace.");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

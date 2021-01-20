@@ -1,0 +1,12 @@
+| <html>
+|   <head>
+|     <script>
+|       src="../../resources/dump-as-markup.js"
+|     "\n"
+|   <body>
+|     "This test passes if it doesn't crash.\n"
+|     <math math>
+|       <math option>
+|         <math option>
+|           <math option>
+|           "\n"

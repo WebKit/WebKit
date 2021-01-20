@@ -1,0 +1,10 @@
+This tests numerically sorting an array of non-numbers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS String(test) is '1,2,3'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

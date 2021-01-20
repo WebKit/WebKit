@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.target {
+    transform: translateX(100px);
+    transition: transform 100ms linear;
+}
+
+.target.in-flight {
+    transform: translateX(0);
+}
+
+.target.in-flight.retargeted {
+    transform: translateY(0);
+}
+
+</style>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+
+'use strict';
+
+promise_test(async test => {
+    const target = document.body.appendChild(document.createElement("div"));
+    target.classList.add("target");
+
+    const getAnimation = () => {
+        const animations = target.getAnimations();
+        assert_equals(animations.length, 1, "There is one animation applied to the target.");
+
+        const transition = animations[0];
+        assert_true(transition instanceof CSSTransition, "There is one transition applied to the target.");
+
+        return transition;
+    }
+
+    let initialTransition;
+    let retargetedTransition;
+
+    // Start the initial transition.
+    await new Promise(requestAnimationFrame);
+    target.classList.add("in-flight");
+    initialTransition = getAnimation();
+    
+    // Wait until the animation is complete and retarget the transition to the same value.
+    await(initialTransition.ready);
+    await(new Promise(resolve => setTimeout(resolve, 100)));
+    target.classList.add("retargeted");
+    retargetedTransition = getAnimation();
+
+    assert_not_equals(initialTransition, retargetedTransition, "Retargeting yielded a new transition.");
+
+    const transformAtKeyframeIndex = (animation, index) => new DOMMatrixReadOnly(animation.effect.getKeyframes()[index].transform).toString();
+    assert_not_equals(transformAtKeyframeIndex(initialTransition, 0), transformAtKeyframeIndex(retargetedTransition, 0), "The initial and retargeted transitions have different from values.");
+    assert_equals(transformAtKeyframeIndex(initialTransition, 1), transformAtKeyframeIndex(retargetedTransition, 1), "The initial and retargeted transitions have the same to values.");
+    assert_equals(transformAtKeyframeIndex(retargetedTransition, 0), transformAtKeyframeIndex(retargetedTransition, 1), "The retargeted transition from and to values are the same.");
+}, `A CSS transition that is retargeted upon completion based on a timer should not use its to style as its before-change style.`);
+
+</script>
+</body>

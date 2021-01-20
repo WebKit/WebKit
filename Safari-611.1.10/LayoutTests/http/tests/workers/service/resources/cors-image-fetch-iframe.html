@@ -1,0 +1,46 @@
+<html>
+<body>
+    <img id="image" onload="loadedImage()" onerror="erroredImage()"></img>
+    <script>
+function log(message)
+{
+    window.parent.postMessage(message, "*");
+}
+
+async function loadedImage()
+{
+    log("PASS: Loaded image");
+    await logStatus();
+    log("Image size: " + image.width + "x" + image.height);
+    log("end");
+}
+
+async function erroredImage()
+{
+    log("FAIL: image loading failed");
+    await logStatus();
+    log("end");
+}
+
+async function logStatus()
+{
+    var response = await fetch("status");
+    log("Status is " + response.statusText);
+}
+
+async function start(url, useCors)
+{
+    try {
+        await logStatus();
+        log("Loading image");
+        if (useCors)
+            image.crossOrigin = "anonymous";
+        image.src = url;
+    } catch(e) {
+        log("Got exception: " + e);
+        await logStatus();
+    }
+}
+    </script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer1 = source.addSourceBuffer("audio/mock; codecs=mock"))
+RUN(sourceBuffer2 = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer1.appendBuffer(initSegment))
+EVENT(updateend)
+RUN(sourceBuffer2.appendBuffer(initSegment))
+EVENT(loadedmetadata)
+EVENT(updateend)
+EXPECTED (source.activeSourceBuffers.length == '2') OK
+END OF TEST
+

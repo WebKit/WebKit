@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<body>
+<script>
+description('HTMLInputElement size attribute test');
+
+var input = document.createElement("input");
+
+shouldBe("input.size", "20");
+
+shouldBe("input.setAttribute('size', '-1'); input.size", "20");
+shouldBe("input.removeAttribute('size'); input.size", "20");
+shouldBe("input.setAttribute('size', '1'); input.size", "1");
+shouldBe("input.setAttribute('size', '2'); input.size", "2");
+shouldBe("input.removeAttribute('size'); input.size", "20");
+shouldBe("input.setAttribute('size', 'a'); input.size", "20");
+shouldBe("input.removeAttribute('size'); input.size", "20");
+shouldBe("input.setAttribute('size', '0'); input.size", "20");
+shouldBe("input.setAttribute('size', '10'); input.size", "10");
+
+shouldThrowErrorName("input.size = 0", "IndexSizeError");
+
+</script>
+</body>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

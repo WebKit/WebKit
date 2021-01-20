@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<style>
+p { color: green; }
+</style>
+<script>
+document.styleSheets[0].insertRule("p { color: red; } garbage", 1);
+</script>
+<p>This text should be green.</p>

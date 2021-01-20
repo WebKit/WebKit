@@ -1,0 +1,4 @@
+XThe test checks that we don't leave stale pointers into the internal grid representation.
+
+ This test has PASSED if it didn't crash under ASAN.
+

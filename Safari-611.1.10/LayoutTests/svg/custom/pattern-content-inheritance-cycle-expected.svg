@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g fill="none" stroke="black" stroke-width="1">
+        <circle cx="75" cy="75" fill="lime" r="50"/>
+        <circle cx="200" cy="75" fill="none" r="50"/>
+
+        <circle cx="75" cy="200" fill="lime" r="50"/>
+        <circle cx="200" cy="200" fill="none" r="50"/>
+        <circle cx="325" cy="200" fill="none" r="50"/>
+    
+        <circle cx="75" cy="325" fill="lime" r="50"/>
+        <circle cx="200" cy="325" fill="none" r="50"/>
+    
+        <circle cx="75" cy="450" fill="lime" r="50"/>
+        <circle cx="200" cy="450" fill="none" r="50"/>
+    </g>
+</svg>

@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/log-active-stack-trace.js"></script>
+<script src="resources/dom-breakpoint-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOMBreakpoint");
+
+    suite.addTestCase({
+        name: "DOMBreakpoint.Basic",
+        description: "Check that breakpoint is in a valid initial state.",
+        async test() {
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#basic-test");
+
+            let breakpoint = await InspectorTest.DOMBreakpoint.createBreakpoint(node, WI.DOMBreakpoint.Type.SubtreeModified);
+            InspectorTest.expectFalse(breakpoint.disabled, "Breakpoint should not be disabled.");
+            InspectorTest.expectEqual(breakpoint.domNode, node, "Breakpoint should have node identifier.");
+            InspectorTest.expectEqual(breakpoint.url, WI.networkManager.mainFrame.url, "Breakpoint URL should match document URL.");
+        },
+        teardown: InspectorTest.DOMBreakpoint.teardown,
+    });
+
+    suite.addTestCase({
+        name: "DOMBreakpoint.RemoveAllBreakpointsForNode",
+        description: "Check that debugger does not pause for removed breakpoints on node.",
+        async test() {
+            const types = Object.values(WI.DOMBreakpoint.Type);
+
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#remove-all-breakpoints-for-node-test");
+
+            let breakpointsBefore = await Promise.all(types.map((type) => InspectorTest.DOMBreakpoint.createBreakpoint(node, type)));
+            InspectorTest.expectEqual(breakpointsBefore.length, types.length, `Should have ${types.length} breakpoints.`);
+
+            InspectorTest.log("Removing all breakpoints for #multiple-breakpoints-test...");
+            WI.domDebuggerManager.removeDOMBreakpointsForNode(node);
+
+            let breakpointsAfter = WI.domDebuggerManager.domBreakpointsForNode(node);
+            InspectorTest.expectEqual(breakpointsAfter.length, 0, "Should remove all breakpoints.");
+        },
+        teardown: InspectorTest.DOMBreakpoint.teardown,
+    });
+
+    suite.addTestCase({
+        name: "DOMBreakpoint.SetBreakpointWithInvalidNodeId",
+        description: "Check that setting a breakpoint for a nonexistant node returns an error.",
+        async test() {
+            InspectorTest.log("Setting breakpoint...");
+            await InspectorTest.expectException(async () => {
+                await DOMDebuggerAgent.setDOMBreakpoint(0, WI.DOMBreakpoint.Type.SubtreeModified);
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "DOMBreakpoint.SetBreakpointWithInvalidType",
+        description: "Check that setting a breakpoint with an invalid type returns an error.",
+        async test() {
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("body");
+
+            InspectorTest.log("Setting breakpoint...");
+            await InspectorTest.expectException(async () => {
+                await DOMDebuggerAgent.setDOMBreakpoint(node.id, "custom-breakpoint-type");
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "DOMBreakpoint.RemoveBreakpointWithInvalidNodeId",
+        description: "Check that removing a breakpoint for a nonexistant node returns an error.",
+        async test() {
+            InspectorTest.log("Removing breakpoint...");
+            await InspectorTest.expectException(async () => {
+                await DOMDebuggerAgent.removeDOMBreakpoint(0, WI.DOMBreakpoint.Type.SubtreeModified);
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "DOMBreakpoint.RemoveBreakpointWithInvalidType",
+        description: "Check that removing a breakpoint with an invalid type returns an error.",
+        async test() {
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("body");
+
+            InspectorTest.log("Removing breakpoint...");
+            await InspectorTest.expectException(async () => {
+                await DOMDebuggerAgent.removeDOMBreakpoint(node.id, "custom-breakpoint-type");
+            });
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for DOM breakpoints.</p>
+<div id="test-container" style="display: none">
+    <div id="basic-test"></div>
+    <div id="remove-all-breakpoints-for-node-test"></div>
+</div>
+</body>
+</html>

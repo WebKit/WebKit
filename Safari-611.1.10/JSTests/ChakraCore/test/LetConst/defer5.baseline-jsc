@@ -1,0 +1,4 @@
+Exception: ReferenceError: Cannot access uninitialized variable.
+foo@defer5.js:11:12
+test@defer5.js:14:8
+global code@defer5.js:18:5

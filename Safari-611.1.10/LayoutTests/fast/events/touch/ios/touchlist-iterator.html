@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that TouchList objects have an iterator");
+
+var touch1 = new Touch(window, document.body, 1, 2, 3, 4);
+var touchList = new TouchList(touch1);
+shouldBeTrue("Symbol.iterator in touchList");
+for (var touch of touchList) {
+    shouldBe("touch", "touch1");
+}
+
+shouldBeFalse("'entries' in touchList");
+shouldBeFalse("'keys' in touchList");
+shouldBeFalse("'forEach' in touchList");
+shouldBeFalse("'values' in touchList");
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

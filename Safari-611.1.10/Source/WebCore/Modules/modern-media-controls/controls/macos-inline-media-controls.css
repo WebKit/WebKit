@@ -1,0 +1,34 @@
+
+/* Volume slider */
+
+.media-controls.mac.inline .volume-slider-container {
+    position: absolute;
+    bottom: calc(var(--inline-controls-bar-height) + var(--inline-controls-inside-margin));
+    width: 94px;
+    height: 31px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    --volume-slider-transform: rotate(-90deg) translate(26px, -30px);
+    transform: var(--volume-slider-transform);
+}
+
+.media-controls.mac.inline.audio .volume-slider-container {
+    transform: var(--volume-slider-transform) translateY(-8px);
+}
+
+.media-controls.mac.inline .volume-slider-container > .background-tint {
+    top: 0;
+    left: var(--inline-controls-inside-margin);
+    right: 0;
+    bottom: 0;
+    width: auto;
+}
+
+.media-controls.mac.inline .volume-slider-container > .background-tint > div {
+    border-radius: 8px;
+}
+
+.media-controls.mac.inline .volume-slider-container > .slider {
+    margin-left: 6px;
+}

@@ -1,0 +1,35 @@
+From 1d1a01452fb5df6c7cba1aff5a21636ab6cf838b Mon Sep 17 00:00:00 2001
+From: Carlos Alberto Lopez Perez <clopez@igalia.com>
+Date: Mon, 19 Oct 2020 21:09:57 +0200
+Subject: [PATCH] cmake: use add_definitions instead of add_compile_definitions
+
+* add_compile_definitions() requires CMake 3.12, but Ubuntu-18.04
+ships CMake 3.10. This fixes the build for old CMake versions.
+---
+ CMakeLists.txt | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 16741f0..6920aaf 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -45,11 +45,11 @@ find_package(Wayland REQUIRED client server egl)
+ find_package(WaylandScanner REQUIRED)
+ find_package(WPE 1.5.90 REQUIRED)
+ 
+-add_compile_definitions(
+-    WPE_FDO_COMPILATION
+-    G_LOG_DOMAIN=\"WPE-FDO\"
+-    _FILE_OFFSET_BITS=64
+-    _LARGEFILE64_SOURCE=1
++add_definitions(
++    -DWPE_FDO_COMPILATION
++    -DG_LOG_DOMAIN=\"WPE-FDO\"
++    -D_FILE_OFFSET_BITS=64
++    -D_LARGEFILE64_SOURCE=1
+ )
+ 
+ configure_file(include/wpe/version.h.cmake "${CMAKE_BINARY_DIR}/version.h" @ONLY)
+-- 
+2.20.1
+

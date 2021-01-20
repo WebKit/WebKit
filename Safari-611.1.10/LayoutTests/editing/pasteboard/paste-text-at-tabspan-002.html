@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space; ">
+<div contenteditable id="root" style="border: 2px solid red; padding: 12px; font-size: 24px">
+<span id="test">a<span class="Apple-tab-span" style="white-space:pre">			</span>z</span>
+</div>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+var test = document.getElementById('test');
+test.focus();
+window.getSelection().setPosition(test, 0);
+
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
+
+extendSelectionForwardByCharacterCommand();
+copyCommand();
+for (i = 0; i < 2; i++)
+	moveSelectionForwardByCharacterCommand();
+pasteCommand();
+typeCharacterCommand();
+
+Markup.dump('root', 'You should see a\\tax\\t\\tz below');
+
+</script>
+</body>
+</html>

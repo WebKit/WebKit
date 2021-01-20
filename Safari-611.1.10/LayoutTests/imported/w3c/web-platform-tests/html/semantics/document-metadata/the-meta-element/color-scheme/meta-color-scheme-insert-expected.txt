@@ -1,0 +1,5 @@
+
+FAIL Initial color-scheme assert_equals: expected "normal" but got "auto"
+FAIL Inserted meta color-scheme applies assert_equals: expected "light" but got "auto"
+FAIL Inserted meta color-scheme before existing in head applies assert_equals: expected "dark" but got "auto"
+

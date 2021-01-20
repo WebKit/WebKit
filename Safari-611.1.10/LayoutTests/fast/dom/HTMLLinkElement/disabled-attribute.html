@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<link id="test" type="text/css" rel="stylesheet" href="resources/htmllink-disable.css"/>
+<link id="test_nostyle" type="text/css" rel="stylesheet" />
+
+</head>
+<body>
+<script>
+description('This test checks HTMLLinkElement disabled conforms to HTML5 spec for the bug id #<a href="https://bugs.webkit.org/show_bug.cgi?id=45425">45425</a> .');
+
+
+var test = document.getElementById('test');
+var test_nostyle = document.getElementById('test_nostyle');
+// check initial value, should be false
+shouldBe('test.disabled', 'false');
+// set value to true
+test.disabled = true;
+shouldBe('test.disabled', 'true');
+// Updated value should be reflected in style.sheet.disabled, 'true' in this case
+shouldBe('test.sheet.disabled', 'true');
+// now set style.sheet.disabled to false
+test.sheet.disabled = false;
+shouldBe('test.sheet.disabled', 'false');
+// Updated value should be refectled in test.disabled
+shouldBe('test.disabled', 'false');
+debug('<br>');
+// verify link.sheet is null since it does not contain an href attribute
+shouldBe('test_nostyle.sheet', 'null');
+// if link.sheet = null link.disabled should be false
+shouldBe('test_nostyle.disabled', 'false');
+// setting it to true
+test_nostyle.disabled = true;
+// should do nothing on setting.
+shouldBe('test_nostyle.disabled', 'false');
+
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

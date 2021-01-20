@@ -1,0 +1,23 @@
+Test basic creation of an ApplePaySession object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing supportsVersion
+
+PASS ApplePaySession.supportsVersion(0) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS ApplePaySession.supportsVersion(1) is true
+PASS ApplePaySession.supportsVersion(2) is true
+PASS ApplePaySession.supportsVersion(3) is true
+PASS ApplePaySession.supportsVersion(4) is true
+PASS ApplePaySession.supportsVersion(5) is true
+
+Testing PaymentRequest (v5)
+
+PASS new ApplePaySession(5, { }) threw exception TypeError: Member ApplePayPaymentRequest.countryCode is required and must be an instance of DOMString.
+PASS new ApplePaySession(5, validRequest()) did not throw exception.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,50 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # group: The Bugzilla::Group being changed.
+  # regexp: the regexp according to which the update is performed.
+  #%]
+
+[% IF regexp %]
+  [% title = "Confirm: Remove Explicit Members in the Regular Expression?" %]
+[% ELSE %]
+  [% title = "Confirm: Remove All Explicit Members?" %]
+[% END %]
+
+[% PROCESS global/header.html.tmpl
+  title = title
+  doc_section = "administering/groups.html"
+%]
+
+[% IF regexp %]
+  <p>This option will remove all users from '[% group.name FILTER html %]'
+    whose login names match the regular expression:
+    '[% regexp FILTER html %]'</p>
+[% ELSE %]
+  <p>This option will remove all explicitly defined users
+    from '[% group.name FILTER html %].'</p>
+[% END %]
+  
+<p>Generally, you will only need to do this when upgrading groups
+  created with Bugzilla versions 2.16 and earlier. Use
+  this option with <b>extreme care</b> and consult the documentation
+  for further information.
+</p>
+    
+<form method="post" action="editgroups.cgi">
+  <input type="hidden" name="group_id" value="[% group.id FILTER html %]">
+  <input type="hidden" name="regexp" value="[% regexp FILTER html %]">
+  <input type="hidden" name="action" value="remove_regexp">
+  
+  <input name="token" type="hidden" value="[% token FILTER html %]">
+  <input id="confirm" name="confirm" type="submit" value="Confirm">
+  <p>Or <a href="editgroups.cgi">return to the Edit Groups page</a>.</p>
+</form>
+    
+[% PROCESS global/footer.html.tmpl %] 

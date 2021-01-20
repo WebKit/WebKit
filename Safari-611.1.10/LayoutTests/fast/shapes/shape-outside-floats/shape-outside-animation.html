@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .container {
+        width: 200px;
+        height: 200px;
+    }
+    .box {
+        height: 100px;
+        width: 100px;
+        margin: 50px;
+        float: left;
+    }
+
+    #inset-box {
+      -webkit-animation: inset-anim 2s linear
+    }
+
+    #circle-box {
+      -webkit-animation: circle-anim 2s linear
+    }
+
+    #ellipse-box {
+      -webkit-animation: ellipse-anim 2s linear
+    }
+
+    #polygon-box {
+      -webkit-animation: polygon-anim 2s linear
+    }
+
+    #polygon2-box {
+      -webkit-animation: polygon2-anim 2s linear
+    }
+
+    #circle-auto-box {
+      -webkit-animation: circle-auto-anim 2s linear
+    }
+
+    #circle-to-topleft-box {
+      -webkit-animation: circle-to-topleft-anim 2s linear
+    }
+
+    #circle-to-topleft-using-keyword-box {
+      -webkit-animation: circle-to-topleft-using-keyword-anim 2s linear
+    }
+
+    #circle-to-bottomright-box {
+      -webkit-animation: circle-to-bottomright-anim 2s linear
+    }
+
+    #circle-to-bottomright-using-keyword-box {
+      -webkit-animation: circle-to-bottomright-using-keyword-anim 2s linear
+    }
+
+    #circle-to-bottomright-extended-box {
+      -webkit-animation: circle-to-bottomright-extended-anim 2s linear
+    }
+
+    #circle-to-bottomright-extended-using-keyword-box {
+      -webkit-animation: circle-to-bottomright-extended-using-keyword-anim 2s linear
+    }
+
+    #circle-to-bottomright-extended-using-keyword-2-box {
+      -webkit-animation: circle-to-bottomright-extended-using-keyword-2-anim 2s linear
+    }
+
+    @-webkit-keyframes inset-anim {
+        from { -webkit-shape-outside: inset(0%); }
+        to   { -webkit-shape-outside: inset(20%); }
+    }
+
+    @-webkit-keyframes circle-anim {
+        from { -webkit-shape-outside: circle(50% at 50% 50%); }
+        to   { -webkit-shape-outside: circle(20% at 20% 20%); }
+    }
+
+    @-webkit-keyframes ellipse-anim {
+        from { -webkit-shape-outside: ellipse(50% 40% at 50% 50%); }
+        to   { -webkit-shape-outside: ellipse(20% 20% at 20% 20%); }
+    }
+
+    @-webkit-keyframes polygon-anim {
+        from { -webkit-shape-outside: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%); }
+        to   { -webkit-shape-outside: polygon(20% 20%, 80% 20%, 80% 80%, 20% 80%); }
+    }
+
+    @-webkit-keyframes polygon2-anim {
+        from { -webkit-shape-outside: polygon(evenodd, 0% 0%, 100% 0%, 100% 100%, 0% 100%); }
+        to   { -webkit-shape-outside: polygon(nonzero, 20% 20%, 80% 20%, 80% 80%, 20% 80%); }
+    }
+
+    @-webkit-keyframes circle-auto-anim {
+        from { -webkit-shape-outside: auto }
+        to   { -webkit-shape-outside: circle(50% at 50% 50%); }
+    }
+
+    @-webkit-keyframes circle-to-topleft-anim {
+        from { -webkit-shape-outside: circle(50% at 50% 50%); }
+        to   { -webkit-shape-outside: circle(20% at 0% 0%); }
+    }
+
+    @-webkit-keyframes circle-to-topleft-using-keyword-anim {
+        from { -webkit-shape-outside: circle(50% at 50% 50%); }
+        to   { -webkit-shape-outside: circle(20% at left top); }
+    }
+
+    @-webkit-keyframes circle-to-bottomright-anim {
+        from { -webkit-shape-outside: circle(50% at 50% 50%); }
+        to   { -webkit-shape-outside: circle(20% at 100% 100%); }
+    }
+
+    @-webkit-keyframes circle-to-bottomright-using-keyword-anim {
+        from { -webkit-shape-outside: circle(50% at 50% 50%); }
+        to   { -webkit-shape-outside: circle(20% at right bottom); }
+    }
+
+    @-webkit-keyframes circle-to-bottomright-extended-anim {
+        from { -webkit-shape-outside: circle(50% at 50% 50%); }
+        to   { -webkit-shape-outside: circle(20% at 100% 100%); }
+    }
+
+    @-webkit-keyframes circle-to-bottomright-extended-using-keyword-anim {
+        from { -webkit-shape-outside: circle(50% at 50% 50%); }
+        to   { -webkit-shape-outside: circle(20% at right 10% bottom 20px); }
+    }
+
+    @-webkit-keyframes circle-to-bottomright-extended-using-keyword-2-anim {
+        from { -webkit-shape-outside: circle(50% at 50% 50%) border-box; }
+        to   { -webkit-shape-outside: circle(20% at right 10% bottom 10px) border-box; }
+    }
+  </style>
+  <script src="../../../animations/resources/animation-test-helpers.js"></script>
+  <script type="text/javascript">
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["inset-anim",  1, "inset-box", "webkitShapeOutside", "inset(10%)", 0.05],
+      ["circle-anim",  1, "circle-box", "webkitShapeOutside", "circle(35% at 35% 35%)", 0.05],
+      ["ellipse-anim",  1, "ellipse-box", "webkitShapeOutside", "ellipse(35% 30% at 35% 35%)", 0.05],
+      ["polygon-anim",  1, "polygon-box", "webkitShapeOutside", "polygon(10% 10%, 90% 10%, 90% 90%, 10% 90%)", 0.05],
+      ["polygon2-anim",  1, "polygon2-box", "webkitShapeOutside", "polygon(20% 20%, 80% 20%, 80% 80%, 20% 80%)", 0.05],
+      ["circle-auto-anim",  1, "circle-auto-box", "webkitShapeOutside", "circle(50% at 50% 50%)", 0.05],
+      ["circle-to-topleft-anim",  1, "circle-to-topleft-box", "webkitShapeOutside", "circle(35% at 25% 25%)", 0.05],
+      ["circle-to-topleft-anim",  1, "circle-to-topleft-box", "webkitShapeOutside", "circle(35% at 25% 25%)", 0.05],
+      ["circle-to-bottomright-using-keyword-anim",  1, "circle-to-bottomright-using-keyword-box", "webkitShapeOutside", "circle(35% at calc((50% * 0.5) + ((100% - 0px) * 0.5)) calc((50% * 0.5) + ((100% - 0px) * 0.5)))", 0.05],
+      ["circle-to-bottomright-using-keyword-anim",  1, "circle-to-bottomright-using-keyword-box", "webkitShapeOutside", "circle(35% at calc((50% * 0.5) + ((100% - 0px) * 0.5)) calc((50% * 0.5) + ((100% - 0px) * 0.5)))", 0.05],
+      ["circle-to-bottomright-extended-anim",  1, "circle-to-bottomright-extended-box", "webkitShapeOutside", "circle(35% at 75% 75%)", 0.05],
+      ["circle-to-bottomright-extended-using-keyword-anim",  1, "circle-to-bottomright-extended-using-keyword-box", "webkitShapeOutside", "circle(35% at 70% calc((50% * 0.5) + ((100% - 20px) * 0.5)))", 0.01],
+      ["circle-to-bottomright-extended-using-keyword-2-anim",  1, "circle-to-bottomright-extended-using-keyword-2-box", "webkitShapeOutside", "circle(35% at 70% calc((50% * 0.5) + ((100% - 10px) * 0.5)))", 0.01],
+    ];
+    
+    runAnimationTest(expectedValues);
+  </script>
+</head>
+<body>
+
+<div class='container'>
+  <div class="box" id="inset-box"></div>
+  Moving Text
+</div>
+<div class='container'>
+  <div class="box" id="circle-box"></div>
+  Moving Text
+</div>
+<div class='container'>
+  <div class="box" id="ellipse-box"></div>
+  Moving Text
+</div>
+<div class='container'>
+  <div class="box" id="polygon-box"></div>
+  Moving Text
+</div>
+<div class='container'>
+  <div class="box" id="polygon2-box"></div>
+  Moving Text
+</div>
+<div class='container'>
+  <div class="box" id="circle-auto-box"></div>
+  Moving Text
+</div>
+<div class='container'>
+  <div class="box" id="circle-to-topleft-box"></div>
+  Moving Text
+</div>
+<div class='container'>
+  <div class="box" id="circle-to-topleft-using-keyword-box"></div>
+  Moving Text
+</div>
+<div class='container'>
+  <div class="box" id="circle-to-bottomright-box"></div>
+  Moving Text
+</div>
+<div class='container'>
+  <div class="box" id="circle-to-bottomright-using-keyword-box"></div>
+  Moving Text
+</div>
+<div class='container'>
+  <div class="box" id="circle-to-bottomright-extended-box"></div>
+  Moving Text
+</div>
+<div class='container'>
+  <div class="box" id="circle-to-bottomright-extended-using-keyword-box"></div>
+  Moving Text
+</div>
+<div class='container'>
+  <div class="box" id="circle-to-bottomright-extended-using-keyword-2-box"></div>
+  Moving Text
+</div>
+
+<div id="result">
+</div>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<html>
+<head>
+<script>
+    window.targetScaleFactor = 1;
+</script>
+<script src="../../resources/srcset-helper.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function updateSrc() {
+        var img = document.getElementById("foo");
+        // srcset must be set first, otherwise 'src' is loaded as well
+        img.srcset = "resources/green-200-px-square.png 2x";
+        img.src = "resources/blue-100-px-square.png"
+    }
+
+    addEventListener("DOMContentLoaded", function() {
+        updateSrc();
+    }, false);
+
+    function runTest()
+    {
+        if (internals)
+            shouldBeFalse('internals.isPreloaded("resources/green-200-px-square.png")');
+        shouldBeTrue('document.getElementById("foo").clientWidth==100');
+    }
+</script>
+</head>
+
+<body id="body">
+    <div>This test passes if this img tag below is a blue square when the scale factor is 1.
+      It ensures that attributes can be changed dynamically from javascript, and that only the correct resource is loaded.</div>
+    <img id="foo">
+</body>
+</html>

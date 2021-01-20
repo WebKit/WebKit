@@ -1,0 +1,13 @@
+<p>
+    Test for <i><a href="http://bugs.webkit.org/show_bug.cgi?id=15296">http://bugs.webkit.org/show_bug.cgi?id=15296</a>
+    REGRESSION (r19716-r19719): width not specified for &lt;marquee&gt; tag is causing the alignment issue</i>.
+</p>
+<p>
+    This should be a green 100&times;100px square:
+</p>
+<div style="background-color: red; width: 100px;">
+    <div style="float: left; width: 50px; height: 100px; background-color: green"></div>
+    <div>
+        <marquee style="height: 100px; background-color: green;"></marquee>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.dumpFrameLoadCallbacks();
+    testRunner.setCanOpenWindows();
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
+    testRunner.waitUntilDone();
+}
+
+window.addEventListener("message", function (messageEvent) {
+    document.getElementById("console").textContent = messageEvent.data + "\n";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, false);
+</script>
+</head>
+<body>
+<p>This test opens a window and loads insecure data via asynchronous XHR.  We should trigger a
+mixed content block because the main frame in the window has CSP directive block-all-mixed-content.</p>
+<pre id="console"></pre>
+<script>
+    window.open("https://127.0.0.1:8443/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-xhr.html?asynchronous");
+</script>
+</body>
+</html>

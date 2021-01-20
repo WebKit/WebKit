@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: bufferData: invalid buffer
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: bufferSubData: offset out of range
+PASS size is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

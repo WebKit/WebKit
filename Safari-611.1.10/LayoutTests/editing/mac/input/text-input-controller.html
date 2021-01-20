@@ -1,0 +1,67 @@
+<html>
+<head>
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+
+<style>
+body { margin: 0; padding: 0 }
+</style>
+</head>
+<body>
+<div id="test" contenteditable>FAILURE</div>
+<script type="text/javascript">
+
+    if (window.testRunner) {
+        
+        try {
+        
+            testRunner.dumpAsText();
+            document.getElementById("test").focus();
+            document.execCommand("SelectAll");
+        
+            textInputController.insertText("to be deleted");
+            textInputController.doCommand("selectAll:");
+            textInputController.doCommand("delete:");
+    
+            textInputController.setMarkedText("Failure", 0, 7);
+            if (textInputController.hasMarkedText() && textInputController.markedRange().toString() == "0,7")
+                textInputController.setMarkedText("Success", 0, 7);
+            
+            var textAttributes = textInputController.validAttributesForMarkedText();
+            textInputController.unmarkText();
+    
+            textInputController.doCommand("selectAll:");
+            if (textInputController.hasMarkedText() || textInputController.selectedRange().toString() != "0,7") {
+                textInputController.doCommand("delete:");
+                textInputController.insertText("Failure");
+            }
+    
+            var charRect = textInputController.firstRectForCharacterRange(0, 1);
+            textInputController.characterIndexForPoint(0, 0); // currently unimplemented
+            textInputController.substringFromRange(1, 1); // currently unimplemented
+            textInputController.conversationIdentifier(); // just an identifier...
+            
+            textAttributes = textAttributes.toString();
+            if (-1 == textAttributes.indexOf("NSUnderline"))
+                textInputController.insertText("Attribute NSUnderline is missing");
+
+            if (-1 == textAttributes.indexOf("NSUnderlineColor"))
+                textInputController.insertText("Attribute NSUnderlineColor is missing");
+
+            if (-1 == textAttributes.indexOf("NSMarkedClauseSegment"))
+                textInputController.insertText("Attribute NSMarkedClauseSegment is missing");
+
+            if (-1 == textAttributes.indexOf("NSTextInputReplacementRangeAttributeName"))
+                textInputController.insertText("Attribute NSTextInputReplacementRangeAttributeName is missing");
+
+        } catch (ex) {
+            document.write("Exception: " + ex.description);
+        }
+    } else {
+        document.write("(cannot run interactively)");
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function shouldBe(actual, expected, testName)
+{
+    var result = testName + ": ";
+    if (actual == expected)
+        result += "PASS";
+    else
+        result += "FAIL";
+
+    document.getElementById("results").innerHTML += result + "<br>";
+}
+
+function test()
+{
+    var FONT_AND_EXPECTATIONS = [
+        [ null, false, true ],
+        [ "MS PGothic", true, false ],
+        [ "MS Gothic", true, false ],
+        [ "MS PMincho", true, false ],
+        [ "MS Mincho", true, false ],
+        [ "Meiryo", true, false ],
+        [ "ＭＳ Ｐゴシック", true, false ],
+        [ "ＭＳ ゴシック", true, false ],
+        [ "ＭＳ Ｐ明朝", true, false ],
+        [ "ＭＳ 明朝", true, false ],
+        [ "メイリオ", true, false ],
+        [ "Times", false, true ],
+        [ "foobar", false, true ]
+    ];
+
+    var sandbox = document.getElementById("sandbox");
+
+    for (var i = 0; FONT_AND_EXPECTATIONS[i]; i++) {
+        var fontName = FONT_AND_EXPECTATIONS[i][0];
+        var isSearchableByYen = FONT_AND_EXPECTATIONS[i][1];
+        var isSearchableByBackslash = FONT_AND_EXPECTATIONS[i][2];
+        var element = document.createElement("div");
+        if (fontName)
+            element.style.fontFamily = fontName;
+        element.innerText = "\\";
+
+        sandbox.appendChild(element);
+
+        if (!fontName)
+            fontName = "No specified font";
+        shouldBe(document.execCommand("FindString", false, "¥"), isSearchableByYen, fontName + " + yen sign");
+        shouldBe(document.execCommand("FindString", false, "\\"), isSearchableByBackslash, fontName + " + backslash");
+
+        sandbox.removeChild(element);
+    }
+}
+
+</script>
+</head>
+
+<body onload="test()">
+<div id="sandbox"></div>
+<div id="results"></div>
+</body>
+
+</html>

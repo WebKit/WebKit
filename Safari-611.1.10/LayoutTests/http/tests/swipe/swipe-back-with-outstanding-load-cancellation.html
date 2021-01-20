@@ -1,0 +1,83 @@
+<head>
+<style>
+html {
+    font-size: 32pt;
+}
+</style>
+<script src="resources/swipe-test.js"></script>
+<script>
+function didBeginSwipeCallback()
+{
+    log("didBeginSwipe");
+
+    completeSwipeGesture();
+}
+
+function willEndSwipeCallback()
+{
+    log("willEndSwipe");
+
+    shouldBe(false, isFirstPage(), "The swipe should not yet have navigated away from the second page.");
+}
+
+function didEndSwipeCallback()
+{
+    log("didEndSwipe");
+
+    startMeasuringDuration("snapshotRemoval");
+}
+
+var hasRemovedSnapshot = false;
+
+function didRemoveSwipeSnapshotCallback()
+{
+    log("didRemoveSwipeSnapshot");
+
+    hasRemovedSnapshot = true;
+    
+    shouldBe(true, isFirstPage(), "The swipe should have navigated back to the first page.");
+
+    testComplete();
+}
+
+function isFirstPage()
+{
+    return window.location.href.indexOf("second") == -1;
+}
+
+window.onload = function () {
+    if (!window.eventSender || !window.testRunner) {
+        document.body.innerHTML = "This test must be run in WebKitTestRunner.";
+        return;
+    }
+
+    document.body.innerHTML = isFirstPage() ? "first" : "<iframe src='/resources/slow-image.php'>";
+
+    if (isFirstPage()) {
+        if (hasInitializedSwipeTest()) {
+            shouldBe(false, hasRemovedSnapshot, "The snapshot should not have been synchronously removed because of the cancelled forward load.");
+            return;
+        }
+
+        initializeSwipeTest();
+
+        testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
+        testRunner.installWillEndSwipeCallback(willEndSwipeCallback);
+        testRunner.installDidEndSwipeCallback(didEndSwipeCallback);
+        testRunner.installDidRemoveSwipeSnapshotCallback(didRemoveSwipeSnapshotCallback);
+
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+
+        setTimeout(function () { 
+            window.location.href = window.location.href + "?second";
+        }, 0);
+        return;
+    }
+
+    startSwipeGesture();
+};
+</script>
+</head>
+<body>
+</body>

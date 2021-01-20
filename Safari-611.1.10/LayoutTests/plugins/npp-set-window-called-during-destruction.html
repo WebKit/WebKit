@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    <embed type="application/x-webkit-test-netscape" test="npp-set-window-called-during-destruction"></embed>
+    <p>This tests whether a NPP_SetWindow is called during plugin destruction.</p>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+        var embed = document.getElementsByTagName("embed")[0];
+        embed.setWillBeDestroyed();
+        embed.parentNode.removeChild(embed);
+    </script>
+</body>
+</html>

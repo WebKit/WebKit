@@ -1,0 +1,2 @@
+
+This tests that a plugin's HWND is invalidated by NPN_InvalidateRect.

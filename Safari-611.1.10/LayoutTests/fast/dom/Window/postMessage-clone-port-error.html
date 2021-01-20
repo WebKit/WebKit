@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    description("This test checks if DataCloneError exception is thrown when postMessage's second parameter is the source port or the target port.");
+    var dataCloneErrorWasThrown = false;
+    var channel = new MessageChannel();
+    channel.port1.start();
+    try {
+        channel.port1.postMessage("ports", [channel.port1]);
+    } catch(ex) {
+        if (ex.name == "DataCloneError")
+            dataCloneErrorWasThrown = true;
+    }
+    shouldBeTrue("dataCloneErrorWasThrown")
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

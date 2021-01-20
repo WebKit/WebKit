@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <style>
+            blockquote {
+                color: blue;
+                border-left: 2px solid blue;
+                margin: 0px;
+                padding-left: 10px;
+            }
+            
+            blockquote #dq {
+                color: green;
+                border-color: green;
+            }
+            
+            
+        </style>
+        <script>
+            function test()
+            {
+                window.getSelection().setBaseAndExtent(document.getElementById('line'), 0, document.getElementById('dq'), 0);
+                document.execCommand("Delete");
+                document.execCommand("InsertNewlineInQuotedContent");
+                document.execCommand("InsertText", true, "black");
+            }
+        </script>
+    </head>
+    <body onload="test()">This tests that the blockquote's typing style doesn't remain after breaking the blockquote and typing in the unquoted area.<br><br>
+        <div contenteditable>
+            <blockquote type="cite">blue
+                <div id="line"><br></div>
+                <div>
+                    <blockquote type="cite" id="dq">green</blockquote>
+                </div>
+            </blockquote>
+        </div>
+    </body>
+</html>
+

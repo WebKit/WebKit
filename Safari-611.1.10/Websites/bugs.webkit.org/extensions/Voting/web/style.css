@@ -1,0 +1,30 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * This Source Code Form is "Incompatible With Secondary Licenses", as
+ * defined by the Mozilla Public License, v. 2.0.
+ */
+
+/* Highlight the row for the bug being voted on */
+tr.bz_bug_being_voted_on {
+    background-color: #e2e2e2;
+}
+
+tr.bz_bug_being_voted_on td {
+    border-style: solid none solid none;
+    border-width: thin;
+}
+
+#votes_container { 
+    white-space: nowrap; 
+}
+
+#user_votes th {
+    text-align: center;
+}
+
+#user_votes th, #user_votes td,
+#bug_votes th, #bug_votes td {
+    padding: 0.2em;
+}

@@ -1,0 +1,6 @@
+
+Harness Error (FAIL), message = Unhandled rejection: undefined is not an object (evaluating 'transport.state')
+
+FAIL An unconnected peerconnection must not have maxChannels set assert_equals: RTCSctpTransport must be null expected (object) null but got (undefined) undefined
+FAIL maxChannels gets instantiated after connecting promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pc1.sctp.maxChannels')"
+

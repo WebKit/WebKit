@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Make sure that windows opened via window.open can target their opener");
+jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.setCanOpenWindows();    
+ 
+onload = function() {
+    window.name = "opener";
+    w = open("resources/new-window-can-target-opener-win.html", "");
+}    
+</script>
+</body>
+</html>

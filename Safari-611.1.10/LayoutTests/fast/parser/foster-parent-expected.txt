@@ -1,0 +1,3 @@
+Otherwise, if there is a table element in the stack of open elements, but the last table element in the stack of open elements has no parent, or its parent node is not an element, then the foster parent element is the element before the last table element in the stack of open elements.
+
+success

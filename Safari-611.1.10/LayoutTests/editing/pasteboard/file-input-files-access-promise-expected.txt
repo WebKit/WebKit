@@ -1,0 +1,27 @@
+Tests for multi-file promise drag onto file input elements
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Dragging a real file to a file input control:
+PASS fileInput.value is "C:\\fakepath\\apple.gif"
+PASS fileInput.files.length is 1
+PASS fileInput.files[0].name is "apple.gif"
+PASS fileInput.files[0].type is "image/gif"
+PASS fileInput.files[0].size is 1476
+Dragging two files to a single-file input control:
+PASS fileInput.value is ""
+PASS fileInput.files.length is 0
+Dragging three files to a multi-file input control:
+PASS fileInput.value is "C:\\fakepath\\apple.gif"
+PASS fileInput.files.length is 2
+PASS fileInput.files[0].name is "apple.gif"
+PASS fileInput.files[0].type is "image/gif"
+PASS fileInput.files[0].size is 1476
+PASS fileInput.files[1].name is "mozilla.gif"
+PASS fileInput.files[1].type is "image/gif"
+PASS fileInput.files[1].size is 2593
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

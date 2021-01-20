@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText()
+        testRunner.waitUntilDone();
+    }
+</script>
+<script src="../../resources/js-test-pre.js"></script>
+<body>
+<img src="../../resources/square100.png">
+<style>
+    body { background: url("../../resources/square100.png"); }
+</style>
+<script>
+    var initiator;
+    var foundResources = 0;
+    var runTest = function() {
+        var resources = performance.getEntriesByType('resource');
+        for (var i = 0; i < resources.length; ++i) {
+            if (resources[i].name.indexOf("square") != -1) {
+                ++foundResources;
+                initiator = resources[i].initiatorType;
+                shouldBeEqualToString("initiator", "img");
+            }
+        };
+        shouldBe("foundResources", "1");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    };
+    window.addEventListener("load", function() {
+        runTest();
+    });
+</script>
+</body>
+</html>

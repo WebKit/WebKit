@@ -1,0 +1,18 @@
+Thist test checks that sparse and dense packing modes are supported in auto-placement for fixed rows/columns.
+
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS

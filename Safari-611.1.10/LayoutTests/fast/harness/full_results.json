@@ -1,0 +1,170 @@
+ADD_RESULTS({
+    "tests": {
+        "http": {
+            "wpt": {
+                "cache-storage": {
+                    "cache-put-stream.https.any.html": {
+                        "expected": "PASS FAIL",
+                        "actual": "PASS"
+                    },
+                    "cache-put-keys.https.any.worker.html": {
+                        "report": "REGRESSION",
+                        "expected": "PASS",
+                        "actual": "TEXT"
+                    },
+                    "image-fail-with-leak.html": {
+                        "report": "REGRESSION",
+                        "expected": "PASS",
+                        "actual": "IMAGE LEAK",
+                        "image_diff_percent": 0.26,
+                        "leaks": [{
+                            "document": "http://localhost:8800/WebKit/cache-storage/image-fail-with-leak.html",
+                        }]
+                    },
+                    "leaky-worker.html": {
+                        "report": "REGRESSION",
+                        "expected": "PASS",
+                        "actual": "LEAK",
+                        "has_stderr": true,
+                        "leaks": [{
+                            "document": "http://localhost:8800/WebKit/cache-storage/leaky-worker.html",
+                            }, {
+                            "document": "http://localhost:8800/WebKit/cache-storage/resources/leaky-worker-subframe.html"
+                        }]
+                    }
+                }
+            },
+            "tests": {
+                "contentextensions": {
+                    "async-xhr-onerror.html": {
+                        "expected": "PASS TIMEOUT",
+                        "actual": "PASS"
+                    },
+                    "top-url.html": {
+                        "report": "REGRESSION",
+                        "expected": "PASS",
+                        "actual": "CRASH",
+                        "has_stderr": true
+                    }
+                },
+                "storageAccess": {
+                    "request-storage-access-top-frame.html": {
+                        "report": "REGRESSION",
+                        "expected": "PASS TIMEOUT",
+                        "actual": "TEXT"
+                    }
+                }
+            }
+        },
+        "media": {
+            "video-loop.html": {
+                "report": "FLAKY",
+                "expected": "PASS TIMEOUT",
+                "actual": "TEXT PASS TIMEOUT"
+            },
+            "scale-transition-no-start.html": {
+                "expected": "FAIL MISSING",
+                "is_missing_text": true,
+                "actual": "MISSING"
+            }
+        },
+        "canvas": {
+            "philip": {
+                "tests": {
+                    "2d.gradient.interpolate.solid.html": {
+                        "expected": "FAIL",
+                        "actual": "PASS"
+                    }
+                }
+            }
+        },
+        "editing": {
+            "spelling": {
+                "spelling-marker-includes-hyphen.html": {
+                    "expected": "IMAGE",
+                    "actual": "PASS",
+                    "reftest_type": ["=="]
+                },
+                "spelling-markers-in-overlapping-lines.html": {
+                    "expected": "IMAGE",
+                    "actual": "PASS",
+                    "reftest_type": ["!="]
+                },
+                "spelling-leaky-ref.html": {
+                    "expected": "LEAK",
+                    "actual": "LEAK",
+                    "reftest_type": ["!="],
+                    "leaks": [{
+                        "document": "file:///Volumes/Data/slave/highsierra-release-tests-wk2/build/LayoutTests/editing/spelling/spelling-leaky-ref.html"
+                    }]
+                }
+            }
+        },
+        "webarchive": {
+            "test-css-url-resources-in-stylesheets.html": {
+                "expected": "FAIL",
+                "actual": "TEXT"
+            },
+            "loading": {
+                "object.html": {
+                    "expected": "PASS CRASH",
+                    "actual": "PASS"
+                },
+                "test-loading-archive-subresource-null-mimetype.html": {
+                    "expected": "CRASH",
+                    "actual": "PASS"
+                }
+            }
+        },
+        "css1": {
+            "font_properties": {
+                "font_family.html": {
+                    "report": "REGRESSION",
+                    "expected": "PASS",
+                    "actual": "TEXT MISSING",
+                    "is_missing_image": true
+                }
+            }
+        },
+        "svg": {
+            "batik": {
+                "smallFonts.svg": {
+                    "report": "MISSING",
+                    "expected": "PASS",
+                    "actual": "MISSING"
+                }
+            }
+        },
+        "platform": {
+            "mac": {
+                "media": {
+                    "audio-session-category-video-paused.html": {
+                        "report": "REGRESSION",
+                        "expected": "PASS",
+                        "actual": "TIMEOUT",
+                        "has_stderr": true
+                    }
+                }
+            }
+        }
+    },
+    "skipped": 5367,
+    "num_regressions": 7,
+    "other_crashes": {
+        "DumpRenderTree-54888": {},
+        "DumpRenderTree-56804": {},
+    },
+    "interrupted": false,
+    "num_missing": 1,
+    "layout_tests_dir": "/Volumes/Data/slave/highsierra-release-tests-wk2/build/LayoutTests",
+    "version": 4,
+    "num_passes": 49387,
+    "pixel_tests_enabled": false,
+    "date": "05:38PM on August 15, 2018",
+    "has_pretty_patch": true,
+    "fixable": 5,
+    "num_flaky": 0,
+    "uses_expectations_file": true,
+    "revision": "234905"
+});
+

@@ -1,0 +1,3 @@
+Test for bug 45563.
+
+PASS if no assertion failure.

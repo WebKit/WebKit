@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<style>
+    .container {
+        width: 300px;
+        font: 10px/1 Ahem;
+        -webkit-writing-mode: vertical-lr;
+    }
+    .float {
+        float: left;
+        width: 100px;
+        height: 200px;
+        padding: 20px;
+        border: 20px solid rgba(0, 0, 0, 0);
+        border-radius: 50px 70px 60px 40px / 40px 60px 70px 50px;
+        margin: 20px;
+        background-color: blue;
+        background-clip: padding-box;
+        -webkit-shape-outside: inset(40px round 30px 50px 40px 20px / 20px 40px 50px 20px);
+    }
+</style>
+<body>
+    <p>The black squares should follow the bottom side of the blue shape. They should not overlap the shape.</p>
+    <div class="container">
+        <div class="float"></div>
+        X<br>
+        X<br>
+        X<br>
+        X<br>
+        X<br>
+        X<br>
+        X<br>
+        X<br>
+        X<br>
+        X<br>
+        X<br>
+        X<br>
+        X<br>
+        X<br>
+        X<br>
+        X<br>
+        X<br>
+        X<br>
+        X<br>
+        X<br>
+        X<br>
+        X<br>
+        X<br>
+        X<br>
+    </div>
+</body>

@@ -1,0 +1,50 @@
+<!DOCTYPE>
+
+<html>
+<head>
+  <style>
+    .box {
+      height: 100px;
+      width: 100px;
+      margin: 50px;
+      border: 1px solid black;
+      text-align: center;
+      padding: 20px;
+      background-repeat: no-repeat;
+      -webkit-transition-duration: 1s;
+      -webkit-transition-timing-function: linear;
+      -webkit-transition-property: box-shadow;
+    }
+    
+    #box {
+      box-shadow: inset 10px 20px 4px gray;
+    }
+    
+    #box.final {
+      box-shadow: inset 20px 10px 4px gray, 10px 10px 6px black;
+    }
+
+  </style>
+  <script src="resources/transition-test-helpers.js"></script>
+  <script type="text/javascript">
+
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      [0.5, 'box', 'box-shadow', [15, 15, 5, 5], 4],
+    ];
+  
+    function setupTest()
+    {
+      document.getElementById('box').className = 'box final';
+    }
+  
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
+  </script>
+</head>
+<body>
+
+  <div id="box" class="box">BOX</div>
+  <div id="result"></div>
+
+</body>
+</html>

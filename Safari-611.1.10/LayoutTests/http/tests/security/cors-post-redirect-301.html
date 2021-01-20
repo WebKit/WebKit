@@ -1,0 +1,24 @@
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+</script>
+</head>
+<body>
+
+This test is designed to work only when loaded from http://127.0.0.1:8000
+
+<form id='testForm' method='POST'>
+<input id='redircode' type='hidden' name='redircode' value='301'>
+</form>
+
+<script>
+
+var form = document.getElementById('testForm');
+form.action = "/resources/redirect.php?code=301&url=http://localhost:8000/security/resources/cors-post-redirect-target.php";
+form.submit();
+ 
+</script>
+</body>

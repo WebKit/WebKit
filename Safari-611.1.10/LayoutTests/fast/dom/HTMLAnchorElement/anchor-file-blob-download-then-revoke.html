@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.setShouldLogDownloadCallbacks(true);
+  testRunner.waitUntilDownloadFinished();
+}
+</script>
+</head>
+<body>
+<p>The suggested filename above should be "foo.txt" and the download should succeed.</p>
+<a id="blob-url" download="foo">Memory backed blob URL</a>
+<script>
+function runTest()
+{
+    file = new File(["foo"], "foo.txt", {
+        type: "text/plain"
+    });
+    var link = document.getElementById("blob-url");
+    link.href = window.URL.createObjectURL(file);
+    link.click();
+    // Revoke the URL right away.
+    window.URL.revokeObjectURL(link.href);
+
+    // Make sure the URL was revoked.
+    xhr = new XMLHttpRequest();
+    xhr.open("GET", link.href, false);
+    try {
+        xhr.send(null);
+    } catch (e) {
+    }
+    if (xhr.status == 200)
+        console.log("FAIL: URL was not revoked");
+    else
+        console.log("PASS: URL was revoked");
+}
+runTest();
+</script>
+</body>
+</html>

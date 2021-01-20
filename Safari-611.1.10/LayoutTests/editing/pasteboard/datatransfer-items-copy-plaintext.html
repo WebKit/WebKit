@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+description('This tests copying plain text using dataTransfer.items. To manually test, click on "Copy text" and paste (Command+V on Mac Control+V elsewhere).');
+
+function copyText()
+{
+    document.getElementById('source').focus();
+    document.execCommand('SelectAll', false, null);
+    document.execCommand('Copy', false, null);
+}
+
+function copy(event)
+{
+    clipboardData = event.clipboardData;
+    shouldBe('clipboardData.items.length', '0');
+    shouldBe('clipboardData.setData("text/plain", "rock"); clipboardData.items.length', '1');
+    shouldBeEqualToString('initialItem = clipboardData.items[0]; initialItem.kind', 'string');
+    shouldBeEqualToString('initialItem.type', 'text/plain');
+    shouldBe('initialItem.getAsFile()', 'null');
+    shouldBe('initialItem.getAsString(checkContent(1, "rock"))', 'undefined');
+
+    shouldThrowErrorName('clipboardData.items.add("paper", "text/plain")', 'NotSupportedError');
+    shouldBe('clipboardData.items[0]', 'initialItem');
+    shouldBe('clipboardData.clearData(); clipboardData.items.length', '0');
+
+    shouldBe('clipboardData.items.add("scissors", "text/plain"); clipboardData.items.length', '1');
+    shouldNotBe('clipboardData.items[0]', 'initialItem');
+    shouldBeEqualToString('initialItem.kind', 'string');
+    shouldBeEqualToString('initialItem.type', '');
+    shouldBe('initialItem.getAsFile()', 'null');
+    shouldBe('initialItem.getAsString(() => testFailed("getAsString should exit immeidately if item is disabled"))', 'undefined');
+
+    shouldBeEqualToString('clipboardData.getData("text/plain")', 'scissors');
+    shouldBeEqualToString('clipboardData.items[0].kind', 'string');
+    shouldBeEqualToString('clipboardData.items[0].type', 'text/plain');
+    shouldBe('clipboardData.items[0].getAsFile()', 'null');
+    shouldBe('clipboardData.items[0].getAsString(checkContent(2, "scissors"))', 'undefined');
+
+    shouldBe('clipboardData.items.clear(); clipboardData.items.length', '0');
+    shouldBeEqualToString('clipboardData.getData("text/plain")', '');
+
+    shouldBe('clipboardData.items.add("WebKit", "text/plain"); clipboardData.items.length', '1');
+    shouldBeEqualToString('clipboardData.items[0].kind', 'string');
+    shouldBeEqualToString('clipboardData.items[0].type', 'text/plain');
+    shouldBe('clipboardData.items[0].getAsFile()', 'null');
+    shouldBe('clipboardData.items[0].getAsString(checkContent(3, "WebKit"))', 'undefined');
+
+    shouldThrowErrorName('clipboardData.items.remove(1)', 'IndexSizeError');
+    shouldBe('clipboardData.items.length', '1');
+    shouldBe('clipboardData.items.remove(0); clipboardData.items.length', '0');
+    shouldBeEqualToString('clipboardData.getData("text/plain")', '');
+}
+
+let count = 0;
+function checkContent(number, expectedContent)
+{
+    count++;
+    return (content) => {
+        const variableName = 'actualContent' + number;
+        window[variableName] = content;
+        shouldBeEqualToString(variableName, expectedContent);
+        count--;
+        if (!count) {
+            document.getElementById('container').style.display = 'none';
+            finishJSTest();
+        }
+    }
+}
+
+if (window.testRunner)
+    window.onload = copyText;
+jsTestIsAsync = true;
+successfullyParsed = true;
+
+</script>
+<div id="container">
+    <button onclick="copyText();">Copy text</button>
+    <div id="source" oncopy="copy(event)" contenteditable="true">hello, world</div>
+</div>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

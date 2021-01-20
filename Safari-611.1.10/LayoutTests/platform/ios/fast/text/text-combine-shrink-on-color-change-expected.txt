@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 55x200 [color=#008000]
+        RenderText {#text} at (9,0) size 37x34
+          text run at (9,0) width 34: "1 "
+        RenderInline {SPAN} at (0,0) size 37x37
+          RenderCombineText {#text} at (9,33) size 37x37
+            text run at (9,33) width 36: "\x{FFFC}"
+        RenderText {#text} at (9,69) size 37x34
+          text run at (9,69) width 34: " 2"

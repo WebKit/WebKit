@@ -1,0 +1,5 @@
+Test for http://bugs.webkit.org/show_bug.cgi?id=14516 crash loading multipart/x-mixed-replace data on windows safari
+
+If WebKit does not crash when loading this img, then it passed.
+
+

@@ -1,0 +1,1 @@
+PASS if blue scrollbar is at the bottom.

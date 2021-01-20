@@ -1,0 +1,7 @@
+Blocked access to external URL https://www.localhost:9443/xhr/resources/redirect.py?location=https://localhost:9443/fetch/sec-metadata/resources/record-header.py?file=redirect-multiple-same-site
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Same-Origin -> Same-Site -> Same-Origin redirect Test timed out
+

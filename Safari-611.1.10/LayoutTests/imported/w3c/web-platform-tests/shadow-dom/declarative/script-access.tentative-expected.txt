@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Error: assert_equals: Declarative template content should be null expected null but got DocumentFragment node with 3 children
+
+Harness Error (FAIL), message = Error: assert_equals: Declarative template content should be null expected null but got DocumentFragment node with 3 children
+
+

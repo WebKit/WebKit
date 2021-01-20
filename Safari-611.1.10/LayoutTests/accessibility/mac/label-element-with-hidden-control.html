@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<label for="control1">Test label1</label><input type="checkbox" name="control1" id="control1" style="visibility:hidden;">
+<label id="label2" for="control2">Test label2</label><input type="checkbox" name="control2" id="control2" >
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that if a label element references a hidden control, it is still visible to accessibility.");
+    if (window.accessibilityController) {
+
+        if (window.accessibilityController) {
+
+            var body = document.getElementById("body");
+            body.focus();
+            var container = accessibilityController.focusedElement.childAtIndex(0);
+            shouldBe("container.childAtIndex('0').role", "'AXRole: AXStaticText'");            
+            shouldBe("container.childAtIndex('0').childAtIndex(0).role", "'AXRole: AXStaticText'");            
+            shouldBe("container.childAtIndex('0').childAtIndex(0).stringValue", "'AXValue: Test label1'");            
+            shouldBe("container.childAtIndex('2').role", "'AXRole: AXCheckBox'");
+            var labelForCheckbox = accessibilityController.accessibleElementById("label2");
+            shouldBeTrue("container.childAtIndex('2').titleUIElement().isEqual(labelForCheckbox)");            
+        }
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<script>
+    function runTest() {
+        var observer = new MutationObserver(()=>{p1.replaceWith(p2)});
+        observer.observe(select,{childList:true});
+        select[2] = option;
+        document.head.appendChild(p2);
+        var object = document.createElement("object");
+        var frame = document.createElement("frame");
+        audio.appendChild(option);
+        p1.appendChild(object);
+        object.data = "abc";
+        document.all[9].appendChild(frame);
+		if (window.testRunner) {
+			testRunner.dumpAsText();
+			alert("test passed because nothing crashed");
+		}
+    }
+</script>
+<body onload=runTest()>
+    <p id="p1">
+        <p id="p2">
+            <audio id="audio">
+                <select id="select">
+                    <option id="option"></option>
+                </select>
+            </audio>
+        </p>
+    </p>
+</body>

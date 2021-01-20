@@ -1,0 +1,353 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # searchtype: string. Type of search - either "series", "saved" or undef.
+  # ...
+  # defaultsavename: string. The default name for saving the query.
+  #%]
+
+[%############################################################################%]
+[%# Template Initialization                                                  #%]
+[%############################################################################%]
+
+[% PROCESS "global/field-descs.none.tmpl" %]
+
+[% USE Bugzilla %]
+[% cgi = Bugzilla.cgi %]
+
+[% unfiltered_title = "$terms.Bug List" %]
+[% IF searchname || defaultsavename %]
+  [% unfiltered_title = unfiltered_title _ ": " _ (searchname OR defaultsavename) %]
+[% END %]
+[% title = unfiltered_title FILTER html %]
+
+[% qorder = order FILTER uri IF order %]
+
+[% javascript =  BLOCK %]
+  [% IF quicksearch %]
+    [% new_param = BLOCK ~%]
+      quicksearch=[% quicksearch FILTER uri %]
+      [%~ IF cgi.param('list_id') ~%]
+        &list_id=[% cgi.param('list_id') FILTER uri %]
+      [%~ END %]
+    [% END %]
+  [% ELSIF cgi.param('token') != '' %]
+    [% new_param = cgi.canonicalise_query('token', 'cmdtype', 'remtype') %]
+  [% ELSE %]
+    [% new_param = cgi.canonicalise_query %]
+  [% END %]
+
+  [% IF new_param.length + 12 < constants.CGI_URI_LIMIT %]
+    if (history && history.replaceState) {
+      history.replaceState(null, "[% unfiltered_title FILTER js %]",
+                           "buglist.cgi?[% new_param FILTER js %]");
+      document.title = "[% unfiltered_title FILTER js %]";
+    }
+  [% END %]
+  [% javascript FILTER none %]
+[% END %]
+
+[%############################################################################%]
+[%# Page Header                                                              #%]
+[%############################################################################%]
+
+[%# if WEBKIT_CHANGES #%]
+[% PROCESS global/header.html.tmpl
+  title = title
+  generate_api_token = dotweak
+  rsslink = "buglist.cgi?$urlquerypart&title=$title&ctype=rss"
+  yui = [ 'autocomplete', 'calendar' ]
+  javascript_urls = [ "js/util.js", "js/field.js", "js/TUI.js" ]
+  style_urls = [ "skins/standard/buglist.css" ]
+  doc_section = "using/finding.html"
+%]
+[%# endif // WEBKIT_CHANGES #%]
+
+<div class="bz_query_head">
+  <span class="bz_query_timestamp">
+    [% currenttime FILTER time('%a %b %e %Y %T %Z') FILTER html %]<br>
+  </span>
+
+  [% IF debug %]
+    <div class="bz_query_debug">
+      <p>Total execution time: [% query_time FILTER html %] seconds</p>
+      [% FOREACH query = queries %]
+        <pre>[% query.sql FILTER html %]</pre>
+        <p>Execution time: [% query.time FILTER html %] seconds</p>
+        [% IF query.explain %]
+          <pre>[% query.explain FILTER html %]</pre>
+        [% END %]
+      [% END %]
+    </div>
+  [% END %]
+
+  [% IF user.settings.display_quips.value == 'on' %]
+    [% DEFAULT quip = "Bugzilla would like to put a random quip here, but no one has entered any." %]
+    <span class="bz_quip">
+      <a href="quips.cgi"><em>[% quip FILTER html %]</em></a>
+    </span>
+  [% END %]
+
+</div>
+
+[% IF toolong %]
+  <h2 class="bz_smallminded">
+    This list is too long for Bugzilla's little mind; the
+    Next/Prev/First/Last buttons won't appear on individual [% terms.bugs %].
+  </h2>
+[% END %]
+
+[% SET shown_types = [
+  'notequals', 'regexp', 'notregexp', 'lessthan', 'lessthaneq', 
+  'greaterthan', 'greaterthaneq', 'changedbefore', 'changedafter', 
+  'changedfrom', 'changedto', 'changedby', 'notsubstring', 'nowords',
+  'nowordssubstr', 'notmatches', 'isempty', 'isnotempty'
+] %]
+<a id="search_description_controller" class="bz_default_hidden"
+   href="javascript:TUI_toggle_class('search_description')">Hide Search Description</a>
+[%# Show the link if the browser supports JS %]
+<script type="text/javascript">
+  TUI_alternates['search_description'] = 'Show Search Description';
+  YAHOO.util.Dom.removeClass('search_description_controller', 
+                             'bz_default_hidden');
+</script>
+
+<ul class="search_description">
+[% FOREACH desc_item = search_description %]
+  <li>
+    <strong>[% field_descs.${desc_item.field} FILTER html %]:</strong>
+    [% IF shown_types.contains(desc_item.type) || debug %]
+      ([% search_descs.${desc_item.type} FILTER html %])
+    [% END %]
+    [% FOREACH val IN desc_item.value.split(',') %]
+      [%+ display_value(desc_item.field, val) FILTER html %][% ',' UNLESS loop.last %]
+    [% END %]
+    [% IF debug %]
+      (<code>[% desc_item.term FILTER html %]</code>)
+   [% END %]
+  </li>
+[% END %]
+</ul>
+
+<hr>
+
+[%############################################################################%]
+[%# Preceding Status Line                                                    #%]
+[%############################################################################%]
+
+[% IF bugs.size > 9 %]
+  [% PROCESS num_results %]
+[% END %]
+
+[%############################################################################%]
+[%# Start of Change Form                                                     #%]
+[%############################################################################%]
+
+[% IF dotweak %]
+  <form name="changeform" method="post" action="process_bug.cgi">
+[% END %]
+
+[%############################################################################%]
+[%# Bug Table                                                                #%]
+[%############################################################################%]
+
+[% PROCESS list/table.html.tmpl %]
+
+[%############################################################################%]
+[%# Succeeding Status Line                                                   #%]
+[%############################################################################%]
+
+[% PROCESS num_results %]
+
+[% IF bugs.size == 0 %]
+  <ul class="zero_result_links">
+    <li>[% PROCESS enter_bug_link %]</li>
+    [% IF one_product.defined %]
+      <li><a href="enter_bug.cgi">File a new [% terms.bug %] in a
+        different product</a></li>
+    [% END %]
+    <li><a href="[% PROCESS edit_search_url %]">Edit this search</a></li>
+    <li><a href="query.cgi">Start a new search</a></li>
+  </ul>
+[% END %]
+
+[%############################################################################%]
+[%# Rest of Change Form                                                      #%]
+[%############################################################################%]
+
+[% IF dotweak %]
+  [% PROCESS "list/edit-multiple.html.tmpl" %]
+  </form>
+  <hr>
+[% END %]
+
+[%############################################################################%]
+[%# Navigation Bar                                                           #%]
+[%############################################################################%]
+
+  <div class="buglist_menu">
+    [% IF bugs.size > 0 %]
+      <div class="bz_query_buttons">
+        <form method="post" action="show_bug.cgi">
+          [% buglist_joined = buglist.join(",") %]
+          <input type="hidden" name="id" value="[% buglist_joined FILTER html %]">
+          <input type="hidden" name="format" value="multiple">
+          <input type="submit" id="long_format" value="Long Format">
+        </form>
+
+        [% IF user.is_timetracker %]
+          <form method="post" action="summarize_time.cgi">
+            <input type="hidden" name="id" value="[% buglist_joined FILTER html %]">
+            <input type="submit" id="timesummary" value="Time Summary">
+          </form>
+          [% IF time_summary_limited %]
+            <span class="bz_info">
+              Time Summary will only include the [% terms.bugs %] shown above.
+              In order to see a time summary for all [% terms.bugs %] found
+              by the search, you can
+              <a href="buglist.cgi?[% urlquerypart FILTER html %]
+                       [%- "&order=$qorder" FILTER html IF order %]&limit=0">
+                show all search results</a>.
+            </span>
+          [% END %]
+        [% END %]
+
+        <form method="post" action="show_bug.cgi">
+          <input type="hidden" name="ctype" value="xml">
+          [% FOREACH id = buglist %]
+            <input type="hidden" name="id" value="[% id FILTER html %]">
+          [% END %]
+          <input type="hidden" name="excludefield" value="attachmentdata">
+          <button type="submit" id="xml">
+            <img src="images/xml.png" width="24" height="24" alt="XML" title="XML Format">
+          </button>
+        </form>
+      </div>
+      <div class="bz_query_links">
+        <a href="buglist.cgi?[% urlquerypart FILTER html %]&amp;ctype=csv&amp;human=1"
+        ><img title="CSV Format" alt="CSV" src="images/csv.png" height="24" width="24"></a>
+        <a href="buglist.cgi?[% urlquerypart FILTER html %]&amp;title=
+[%# if WEBKIT_CHANGES %]
+           [%- title FILTER uri %]&amp;ctype=rss"
+[%# endif // WEBKIT_CHANGES %]
+        ><img title="Feed Format" alt="Feed" src="images/rss.png" height="24" width="24"></a>
+        <a href="buglist.cgi?[% urlquerypart FILTER html %]&amp;ctype=ics"
+        ><img title="iCal Format" alt="iCal" src="images/ical.png" height="24" width="24"></a>
+        <button type="button" id="change_columns"
+                onclick="document.location='colchange.cgi?[% urlquerypart FILTER html %]&amp;query_based_on=
+                         [%~ defaultsavename OR searchname FILTER uri FILTER js %]'">
+            Change Columns</button>
+
+
+        [% IF bugs.size > 1 && caneditbugs && !dotweak %]
+          <button type="button" id="mass_change"
+                  onclick="document.location='buglist.cgi?[% urlquerypart FILTER html %]
+                           [%- "&order=$qorder" FILTER html IF order %]&amp;tweak=1'">
+            Change Several [% terms.Bugs %] at Once</button>
+        [% END %]
+
+        [% IF bugowners && user.id %]
+          <button type="button" id="email_assignees"
+                  onclick="document.location='mailto:[% bugowners FILTER html %]'">
+            Send Mail to [% terms.Bug %] Assignees</button>
+        [% END %]
+
+        [%# Links to more things users can do with this bug list. %]
+        [% Hook.process("links") %]
+      </div>
+      <br>
+    [% END %]
+    <div class="bz_query_edit">
+      <button type="button" id="edit_search"
+              onclick="document.location='[% PROCESS edit_search_url FILTER js %]'">
+          Edit Search</button>
+    </div>
+
+    [% IF searchtype == "saved" %]
+      <div class="bz_query_forget">
+        <button type="button" id="forget_search"
+                onclick="document.location='buglist.cgi?cmdtype=dorem&amp;remaction=forget&amp;namedcmd=
+                         [%- searchname FILTER uri FILTER js %]&amp;token=
+                         [%- issue_hash_token([search_id, searchname]) FILTER uri %]'">
+          Forget Search '[% searchname FILTER html %]'</button>
+      </div>
+    [% ELSE %]
+      <div class="bz_query_remember">
+        <form method="get" action="buglist.cgi">
+          <input type="submit" id="remember" value="Remember search"> as
+          <input type="hidden" name="newquery"
+                 value="[% urlquerypart FILTER html %][% "&order=$qorder" FILTER html IF order %]">
+          <input type="hidden" name="cmdtype" value="doit">
+          <input type="hidden" name="remtype" value="asnamed">
+          <input type="hidden" name="token" value="[% issue_hash_token(['savedsearch']) FILTER html %]">
+          <input type="text" id="save_newqueryname" name="newqueryname" size="20"
+                 title="New query name" value="[% defaultsavename FILTER html %]">
+        </form>
+      </div>
+    [% END %]
+  </div>
+
+[% IF one_product.defined && bugs.size %]
+  <p class="bz_query_single_product">
+    [% PROCESS enter_bug_link %]
+  </p>
+[% END %]
+
+[%############################################################################%]
+[%# Page Footer                                                              #%]
+[%############################################################################%]
+
+[% PROCESS global/footer.html.tmpl %]
+
+[%##########%]
+[%# Blocks #%]
+[%##########%]
+
+[% BLOCK edit_search_url %]
+  [% editqueryname = searchname OR defaultsavename OR '' %]
+  query.cgi?[% urlquerypart FILTER html %]
+    [%- IF editqueryname != '' %]&amp;known_name=
+      [%- editqueryname FILTER uri %]
+    [% END %]
+[% END %]
+
+[% BLOCK enter_bug_link %]
+  <a href="enter_bug.cgi
+           [%- IF one_product.defined %]?product=
+             [%- one_product.name FILTER uri %]
+             [%- IF one_component.defined %]&amp;component=
+               [%- one_component FILTER uri %][% END %][% END %]">File
+    a new [% terms.bug %]
+   [% IF one_product.defined %]
+     in the
+     [% IF one_component.defined %]
+       "[% one_component FILTER html %]" component of the
+     [% END %]
+     "[% one_product.name FILTER html %]" product
+   [% END %]</a>
+[% END %]
+
+[% BLOCK num_results %]
+  <span class="bz_result_count">
+    [% IF bugs.size == 0 %]
+      <span class="zero_results">[% terms.zeroSearchResults %].</span>
+    [% ELSIF default_limited AND bugs.size >= Param('default_search_limit') %]
+      This result was limited to [% Param('default_search_limit') FILTER html %]
+      [%+ terms.bugs %].
+      <a href="buglist.cgi?[% urlquerypart FILTER html %]
+              [%- "&order=$qorder" FILTER html IF order %]&limit=0">See
+        all search results for this query</a>.
+      [% time_summary_limited = 1 %]
+    [% ELSIF bugs.size == 1 %]
+      One [% terms.bug %] found.
+    [% ELSE %]
+      [% bugs.size %] [%+ terms.bugs %] found.
+    [% END %]
+  </span>
+[% END %]

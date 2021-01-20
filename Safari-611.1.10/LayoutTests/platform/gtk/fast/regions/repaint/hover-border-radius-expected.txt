@@ -1,0 +1,17 @@
+This test passes if moving the cursor from one of the blue items to the other produces no repaint errors (such as cropping of one of the blue items).
+
+(repaint rects
+  (rect 49 82 350 215)
+  (rect 49 82 350 215)
+  (rect 49 82 350 215)
+  (rect 49 82 350 17)
+  (rect 49 82 350 215)
+  (rect 49 82 350 215)
+  (rect 49 82 350 215)
+  (rect 400 82 350 215)
+  (rect 400 82 350 215)
+  (rect 400 82 350 215)
+  (rect 49 82 350 17)
+  (rect 400 82 350 17)
+)
+

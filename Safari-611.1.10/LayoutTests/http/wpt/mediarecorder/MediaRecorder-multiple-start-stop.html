@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+    <title>MediaRecorder Dataavailable</title>
+    <link rel="help" href="https://w3c.github.io/mediacapture-record/MediaRecorder.html#mediarecorder">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="200" height="200">
+</canvas>
+<script>
+    promise_test(async t => {
+        const video = await navigator.mediaDevices.getUserMedia({ audio : true, video : true });
+        const recorder = new MediaRecorder(video);
+
+        assert_equals(recorder.stream, video);
+
+        let promise = new Promise(resolve => {
+            recorder.ondataavailable = t.step_func(blobEvent => {
+                if (blobEvent.data.size)
+                    resolve();
+            });
+        });
+
+        recorder.start();
+        let timer = setInterval(() => recorder.requestData(), 10);
+        await promise;
+        clearInterval(timer);
+
+        recorder.stop();
+
+        promise = new Promise(resolve => {
+            recorder.ondataavailable = t.step_func(blobEvent => {
+                if (blobEvent.data.size)
+                    resolve();
+            });
+        });
+
+        recorder.start();
+        timer = setInterval(() => recorder.requestData(), 10);
+        await promise;
+        clearInterval(timer);
+
+        recorder.stop();
+    }, 'Make sure that MediaRecorder can be used after stopping it once');
+</script>
+</body>
+</html>

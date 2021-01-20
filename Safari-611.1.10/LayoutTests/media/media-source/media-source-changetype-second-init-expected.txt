@@ -1,0 +1,13 @@
+
+EXPECTED (source.readyState == 'closed') OK
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+RUN(sourceBuffer.changeType("video/mock; codecs=kcom"))
+RUN(sourceBuffer.appendBuffer(initSegment2))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(initSegment2))
+EVENT(updateend)
+END OF TEST
+

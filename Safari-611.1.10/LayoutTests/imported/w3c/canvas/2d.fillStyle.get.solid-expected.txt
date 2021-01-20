@@ -1,0 +1,4 @@
+2d.fillStyle.get.solid
+Spec references: 2d.colours.getcolour 2d.serializecolour.solid
+Actual output:
+Passed

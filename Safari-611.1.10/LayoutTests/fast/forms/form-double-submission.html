@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Makes sure that the form submission causes a navigation, even if the script attempts to submit the form twice.");
+jsTestIsAsync = true;
+
+onload = () => {
+    frame1.form1.addEventListener('click', () => {
+        frame1.form1.submit();
+    });
+    document.getElementById("frame1").onload = () => {
+        clearInterval(handle);
+        testPassed("Frame was navigated");
+        finishJSTest();
+    }
+    handle = setTimeout(() => {
+        testFailed("Frame was not navigated");
+        finishJSTest();
+    }, 10000);
+    frame1.submitbutton.click();
+}
+</script>
+<iframe name="frame1" id="frame1" src="resources/form-double-submission-frame.html"></iframe>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<style>
+.box {
+    position: relative;
+    display: inline-block;
+    margin: 5px;
+    width: 40px;
+    height: 40px;
+}
+
+canvas {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    width: 20px;
+    height: 20px;
+    background-color: black;
+}
+</style>
+<script>
+
+function drawColorIntoCanvas(color, canvas) {
+    var gl = canvas.getContext("webgl");
+    gl.clearColor(color[0], color[1], color[2], 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+}
+
+function run() {
+    var boxes = document.querySelectorAll(".box");
+    for (var i = 0; i < boxes.length; i++) {
+        var box = boxes[i];
+        var canvas = document.createElement("canvas");
+        canvas.width = 20;
+        canvas.height = 20;
+
+        var backgroundColor = window.getComputedStyle(box).backgroundColor;
+        var matches = /rgb\((\d+),\s(\d+),\s(\d+)\)/.exec(backgroundColor);
+        drawColorIntoCanvas([matches[1] / 255, matches[2] / 255, matches[3] / 255], canvas);
+        box.appendChild(canvas);
+    }
+}
+
+window.addEventListener("load", run, false);
+</script>
+<body>
+<p>The boxes below should all be uniform in color. Any difference is likely to be extremely subtle.</p>
+<div class="box" style="background-color: red"></div>
+<div class="box" style="background-color: yellow"></div>
+<div class="box" style="background-color: green"></div>
+<div class="box" style="background-color: orange"></div>
+<div class="box" style="background-color: purple"></div>
+<div class="box" style="background-color: gray"></div>
+<div class="box" style="background-color: cornflowerblue"></div>
+<div class="box" style="background-color: rgb(98, 178, 23)"></div>
+<div class="box" style="background-color: rgb(111, 62, 198)"></div>
+<div class="box" style="background-color: rgb(232, 176, 101)"></div>
+</body>

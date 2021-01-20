@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Refused to load https://evil.com/img.png because it does not appear in the img-src directive of the Content Security Policy.
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Reported document URI does not contain fragments. Test timed out
+

@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-basic-denied.cgi due to access control checks.
+This test that the error event is fired for XMLHttpRequests
+
+PASS: error event fired.
+

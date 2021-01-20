@@ -1,0 +1,31 @@
+<style>
+    rect {
+        transition: transform 50ms;
+        transform-box: unset;
+        transform-origin: 0px 0px;
+        fill: green;
+    }
+
+    rect.animated {
+        transform: rotate(-180deg);
+    }
+</style>
+<body>
+    <svg>
+        <rect id="rect" x="-100" y="-100" width="100" height="100" />
+    </svg>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.addEventListener('load', () => {
+            const rect = document.querySelector('#rect');
+            rect.classList.add("animated");
+
+            rect.addEventListener('transitionend', () => {
+            if (window.testRunner)
+                testRunner.notifyDone();
+            });
+        });
+    </script>
+</body>

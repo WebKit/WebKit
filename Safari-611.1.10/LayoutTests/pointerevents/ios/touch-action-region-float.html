@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.container {
+    border: 1px solid black;
+    width: 300px;
+    height: 300px;
+}
+
+.box {
+    background-color: blue;
+    width: 50px;
+    height: 50px;
+    touch-action: none;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="box" style="float: left"></div>
+    <div class="box" style="float: right"></div>
+</div>
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+if (window.internals)
+    results.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+</script>
+</body>
+</html>

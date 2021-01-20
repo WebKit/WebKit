@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+window.onload = function() {
+    requestAnimationFrame(function() {
+        document.querySelector("svg").style.outline = "10px solid green";
+        if (window.testRunner)
+            window.testRunner.notifyDone();
+    });
+};
+</script>
+<svg width="100" height="100">
+    <rect width="100" height="100" fill="blue"/>
+</svg>

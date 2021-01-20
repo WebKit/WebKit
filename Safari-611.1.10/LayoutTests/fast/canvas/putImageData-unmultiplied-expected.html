@@ -1,0 +1,20 @@
+<style>
+    canvas {
+        width: 100px;
+        height: 100px;
+    }
+</style>
+<script>
+    function run() {
+        var c = document.querySelector("canvas");
+        c.width = 1;
+        c.height = 1;
+        var ctx = c.getContext("2d");
+
+        ctx.fillStyle = "rgba(255, 180, 0, " + 163/255 + ")";
+        ctx.fillRect(0, 0, 1, 1);
+    }
+
+    window.addEventListener("load", run, false);
+</script>
+<canvas></canvas>

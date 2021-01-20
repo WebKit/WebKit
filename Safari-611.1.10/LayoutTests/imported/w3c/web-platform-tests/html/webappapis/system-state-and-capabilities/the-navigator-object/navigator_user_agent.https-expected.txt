@@ -1,0 +1,4 @@
+
+FAIL navigator.userAgentData is exposed. assert_true: expected true got false
+FAIL navigator.userAgentData returns a UserAgentMetadata object. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'uaData.brands')"
+

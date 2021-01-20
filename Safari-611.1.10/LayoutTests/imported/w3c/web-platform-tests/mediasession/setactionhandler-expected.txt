@@ -1,0 +1,4 @@
+
+PASS Test that setActionHandler() can be executed for supported actions
+PASS Test that setActionHandler() throws exception for unsupported actions
+

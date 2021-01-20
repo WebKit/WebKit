@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+    async_test(function(t) {
+        if (window.internals) {
+            internals.setConsoleMessageListener(function() {
+                t.done();
+            });
+        } else {
+            setTimeout(function() { t.done(); }, 500);
+        }
+        let hostWithInvalidPort = "http://localhost:1";
+        assert_true(navigator.sendBeacon(hostWithInvalidPort, 'test'), "sendBeacon should return true");
+    }, "Should log an error message in the console");
+</script>
+</body>
+</html>

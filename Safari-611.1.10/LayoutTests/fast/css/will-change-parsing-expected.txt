@@ -1,0 +1,33 @@
+This tests checks that will-change parses correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testComputedStyle("will-change:;") is "auto"
+PASS testComputedStyle("will-change: contents, all;") is "auto"
+PASS testComputedStyle("will-change: contents;") is "contents"
+PASS test("will-change: inherit;") is "inherit"
+PASS test("will-change: initial;") is "initial"
+PASS test("will-change: all;") is ""
+PASS test("will-change: none;") is ""
+PASS test("will-change: default;") is ""
+PASS test("will-change: will-change;") is ""
+PASS test("will-change: auto;") is "auto"
+PASS test("will-change: auto, contents;") is ""
+PASS test("will-change: scroll-position;") is "scroll-position"
+PASS test("will-change: contents;") is "contents"
+PASS test("will-change: scroll-position, scroll-position;") is "scroll-position, scroll-position"
+PASS test("will-change: contents, scroll-position, transform;") is "contents, scroll-position, transform"
+PASS test("will-change: contents, transform, scroll-position, transform;") is "contents, transform, scroll-position, transform"
+PASS test("will-change: , background;") is ""
+PASS test("will-change: background, transform;") is "background, transform"
+PASS test("will-change: background transform;") is ""
+PASS test("will-change: background, all;") is ""
+PASS test("will-change: background, will-change;") is ""
+PASS test("will-change: unknown-property;") is "unknown-property"
+PASS test("will-change: transform, initial;") is ""
+PASS test("will-change: default;") is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

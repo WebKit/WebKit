@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="resources/file-icon-bytes.js"></script>
+<body>
+<p>Test that opening the file panel does not crash.</p>
+<input id=file1 type=file multiple=multiple>
+</form>
+<script>
+function openFilesInElement(element, files, icon) {
+    testRunner.setOpenPanelFiles(files);
+    testRunner.setOpenPanelFilesMediaIcon(icon);
+    var centerX = element.offsetLeft + element.offsetWidth / 2;
+    var centerY = element.offsetTop + element.offsetHeight / 2;
+    UIHelper.activateAt(centerX, centerY);
+}
+
+function handleChange() {
+    testRunner.notifyDone();
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var file1 = document.getElementById('file1');
+file1.addEventListener('change', handleChange);
+openFilesInElement(file1, ['foo.txt', 'bar.txt'], testIconBytes);
+</script>
+</body>

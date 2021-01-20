@@ -1,0 +1,29 @@
+
+Test that play() during interruption does nothing, ending interruption allows playback to resume.
+
+EVENT(canplaythrough)
+RUN(video.play())
+
+EVENT(playing)
+EXPECTED (video.paused == 'false') OK
+RUN(internals.beginMediaSessionInterruption('System'))
+
+100ms timer fired...
+EXPECTED (video.paused == 'true') OK
+RUN(internals.endMediaSessionInterruption('MayResumePlaying'))
+
+EVENT(playing)
+EXPECTED (video.paused == 'false') OK
+
+EXPECTED (video.paused == 'false') OK
+RUN(internals.beginMediaSessionInterruption('System'))
+
+100ms timer fired...
+EXPECTED (video.paused == 'true') OK
+RUN(internals.endMediaSessionInterruption('MayResumePlaying'))
+
+EVENT(playing)
+EXPECTED (video.paused == 'false') OK
+
+END OF TEST
+

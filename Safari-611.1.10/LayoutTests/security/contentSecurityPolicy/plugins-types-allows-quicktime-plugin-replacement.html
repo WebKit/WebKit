@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="plugin-types video/quicktime">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (window.internals)
+    window.internals.settings.setQuickTimePluginReplacementEnabled(true);
+</script>
+</head>
+<body>
+<embed id="embed" type="video/quicktime" width="640" height="480" src="../../plugins/resources/yellow.mov" qtsrc="../../plugins/resources/orange.mov" postdomevents=true>
+<script>
+document.getElementById("embed").addEventListener("qt_begin", function () {
+    alert("PASS did load plugin.");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, true);
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .fixed {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+    }
+  </style>
+
+  <script type="text/javascript">
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+
+      window.addEventListener("load", function() {
+        // Timeout required because setting up the fixed position layout rect is async.
+        window.setTimeout(function() {
+          document.getElementById("layertree").innerText = window.internals.layerTreeAsText(document);
+          testRunner.notifyDone();
+        }, 10);
+      }, false);
+    }
+  </script>
+</head>
+
+<body>
+  <div style="height: 1000px">
+    <pre id="layertree"></pre>
+  </div>
+
+  <!-- Neither of the following elements gets its own layer. -->
+  <div class="fixed" style="z-index: -1; top: -100px"></div>
+  <div class="fixed" style="z-index: -1; top: 0px; left: 1000px"></div>
+
+  <!-- This element gets its own layer because it intersects with the viewport. -->
+  <div class="fixed" style="top: 0px; left: 0px"></div>
+</body>
+</html>
+

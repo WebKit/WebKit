@@ -1,0 +1,11 @@
+The test passes if we avoid crashing when removing the editable root while restoring replaced text. This test requires WebKitTestRunner or DumpRenderTree.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Removed editor.
+PASS Changed back to original text without crashing.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

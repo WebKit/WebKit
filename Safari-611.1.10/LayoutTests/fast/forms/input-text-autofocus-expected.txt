@@ -1,0 +1,9 @@
+Test for <input autofocus>
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS inputFocusCount is 1
+PASS input.selectionStart is 0
+PASS input.selectionEnd is 0
+

@@ -1,0 +1,204 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "RenderTreeUpdaterGeneratedContent.h"
+
+#include "ContentData.h"
+#include "InspectorInstrumentation.h"
+#include "PseudoElement.h"
+#include "RenderDescendantIterator.h"
+#include "RenderElement.h"
+#include "RenderImage.h"
+#include "RenderQuote.h"
+#include "RenderTreeUpdater.h"
+#include "RenderView.h"
+#include "StyleTreeResolver.h"
+
+namespace WebCore {
+
+RenderTreeUpdater::GeneratedContent::GeneratedContent(RenderTreeUpdater& updater)
+    : m_updater(updater)
+{
+}
+
+void RenderTreeUpdater::GeneratedContent::updateRemainingQuotes()
+{
+    if (!m_updater.renderView().hasQuotesNeedingUpdate())
+        return;
+    updateQuotesUpTo(nullptr);
+    m_previousUpdatedQuote = nullptr;
+    m_updater.renderView().setHasQuotesNeedingUpdate(false);
+}
+
+void RenderTreeUpdater::GeneratedContent::updateQuotesUpTo(RenderQuote* lastQuote)
+{
+    auto quoteRenderers = descendantsOfType<RenderQuote>(m_updater.renderView());
+    auto it = m_previousUpdatedQuote ? ++quoteRenderers.at(*m_previousUpdatedQuote) : quoteRenderers.begin();
+    auto end = quoteRenderers.end();
+    for (; it != end; ++it) {
+        auto& quote = *it;
+        // Quote character depends on quote depth so we chain the updates.
+        quote.updateRenderer(m_updater.m_builder, m_previousUpdatedQuote.get());
+        m_previousUpdatedQuote = makeWeakPtr(quote);
+        if (&quote == lastQuote)
+            return;
+    }
+    ASSERT(!lastQuote);
+}
+
+static bool elementIsTargetedByKeyframeEffectRequiringPseudoElement(const Element* element, PseudoId pseudoId)
+{
+    if (is<PseudoElement>(element))
+        return elementIsTargetedByKeyframeEffectRequiringPseudoElement(downcast<PseudoElement>(*element).hostElement(), pseudoId);
+
+    if (element) {
+        if (auto* stack = element->keyframeEffectStack(pseudoId))
+            return stack->requiresPseudoElement();
+    }
+
+    return false;
+}
+
+static void createContentRenderers(RenderTreeBuilder& builder, RenderElement& pseudoRenderer, const RenderStyle& style, PseudoId pseudoId)
+{
+    if (auto* contentData = style.contentData()) {
+        for (const ContentData* content = contentData; content; content = content->next()) {
+            auto child = content->createContentRenderer(pseudoRenderer.document(), style);
+            if (pseudoRenderer.isChildAllowed(*child, style))
+                builder.attach(pseudoRenderer, WTFMove(child));
+        }
+    } else {
+        // The only valid scenario where this method is called without the "content" property being set
+        // is the case where a pseudo-element has animations set on it via the Web Animations API.
+        ASSERT_UNUSED(pseudoId, elementIsTargetedByKeyframeEffectRequiringPseudoElement(pseudoRenderer.element(), pseudoId));
+    }
+}
+
+static void updateStyleForContentRenderers(RenderElement& pseudoRenderer, const RenderStyle& style)
+{
+    for (auto& contentRenderer : descendantsOfType<RenderElement>(pseudoRenderer)) {
+        // We only manage the style for the generated content which must be images or text.
+        if (!is<RenderImage>(contentRenderer) && !is<RenderQuote>(contentRenderer))
+            continue;
+        contentRenderer.setStyle(RenderStyle::createStyleInheritingFromPseudoStyle(style));
+    }
+}
+
+void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, const Style::ElementUpdates& updates, PseudoId pseudoId)
+{
+    PseudoElement* pseudoElement = pseudoId == PseudoId::Before ? current.beforePseudoElement() : current.afterPseudoElement();
+
+    if (auto* renderer = pseudoElement ? pseudoElement->renderer() : nullptr)
+        m_updater.renderTreePosition().invalidateNextSibling(*renderer);
+
+    auto* update = [&]() -> const Style::ElementUpdate* {
+        auto iterator = updates.pseudoElementUpdates.find(pseudoId);
+        if (iterator != updates.pseudoElementUpdates.end())
+            return &iterator->value;
+        return nullptr;
+    }();
+
+    if (!needsPseudoElement(update) && (!pseudoElement || !elementIsTargetedByKeyframeEffectRequiringPseudoElement(pseudoElement, pseudoId))) {
+        if (pseudoElement) {
+            if (pseudoId == PseudoId::Before)
+                removeBeforePseudoElement(current, m_updater.m_builder);
+            else
+                removeAfterPseudoElement(current, m_updater.m_builder);
+        }
+        return;
+    }
+
+    if (!update || update->change == Style::Change::None)
+        return;
+
+    pseudoElement = &current.ensurePseudoElement(pseudoId);
+
+    if (update->style->display() == DisplayType::Contents) {
+        // For display:contents we create an inline wrapper that inherits its
+        // style from the display:contents style.
+        auto contentsStyle = RenderStyle::createPtr();
+        contentsStyle->setStyleType(pseudoId);
+        contentsStyle->inheritFrom(*update->style);
+        contentsStyle->copyContentFrom(*update->style);
+
+        Style::ElementUpdate contentsUpdate { WTFMove(contentsStyle), update->change, update->recompositeLayer };
+        Style::ElementUpdates contentsUpdates { WTFMove(contentsUpdate), Style::DescendantsToResolve::None, { } };
+        m_updater.updateElementRenderer(*pseudoElement, WTFMove(contentsUpdates));
+        pseudoElement->storeDisplayContentsStyle(RenderStyle::clonePtr(*update->style));
+    } else {
+        auto pseudoElementUpdateStyle = RenderStyle::clonePtr(*update->style);
+        Style::ElementUpdate pseudoElementUpdate { WTFMove(pseudoElementUpdateStyle), update->change, update->recompositeLayer };
+        Style::ElementUpdates pseudoElementUpdates { WTFMove(pseudoElementUpdate), Style::DescendantsToResolve::None, { } };
+        m_updater.updateElementRenderer(*pseudoElement, WTFMove(pseudoElementUpdates));
+        ASSERT(!pseudoElement->hasDisplayContents());
+    }
+
+    auto* pseudoElementRenderer = pseudoElement->renderer();
+    if (!pseudoElementRenderer)
+        return;
+
+    if (update->change == Style::Change::Renderer)
+        createContentRenderers(m_updater.m_builder, *pseudoElementRenderer, *update->style, pseudoId);
+    else
+        updateStyleForContentRenderers(*pseudoElementRenderer, *update->style);
+
+    if (m_updater.renderView().hasQuotesNeedingUpdate()) {
+        for (auto& child : descendantsOfType<RenderQuote>(*pseudoElementRenderer))
+            updateQuotesUpTo(&child);
+    }
+    m_updater.m_builder.updateAfterDescendants(*pseudoElementRenderer);
+}
+
+bool RenderTreeUpdater::GeneratedContent::needsPseudoElement(const Style::ElementUpdate* update)
+{
+    if (!update)
+        return false;
+    if (!m_updater.renderTreePosition().parent().canHaveGeneratedChildren())
+        return false;
+    if (!pseudoElementRendererIsNeeded(update->style.get()))
+        return false;
+    return true;
+}
+
+void RenderTreeUpdater::GeneratedContent::removeBeforePseudoElement(Element& element, RenderTreeBuilder& builder)
+{
+    auto* pseudoElement = element.beforePseudoElement();
+    if (!pseudoElement)
+        return;
+    tearDownRenderers(*pseudoElement, TeardownType::Full, builder);
+    element.clearBeforePseudoElement();
+}
+
+void RenderTreeUpdater::GeneratedContent::removeAfterPseudoElement(Element& element, RenderTreeBuilder& builder)
+{
+    auto* pseudoElement = element.afterPseudoElement();
+    if (!pseudoElement)
+        return;
+    tearDownRenderers(*pseudoElement, TeardownType::Full, builder);
+    element.clearAfterPseudoElement();
+}
+
+}

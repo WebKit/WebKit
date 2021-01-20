@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (16,21) size 784x185
+      RenderSVGText {text} at (10,13) size 526x22 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 526x21
+          chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 64 width 525.20: "Test getCurrentTime() and setCurrentTime() before timeline begin"
+      RenderSVGRect {rect} at (16,83) size 84x84 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=50.00] [width=50.00] [height=50.00]
+      RenderSVGRect {rect} at (350,83) size 84x84 [fill={[type=SOLID] [color=#008000]}] [x=210.00] [y=50.00] [width=50.00] [height=50.00]
+      RenderSVGContainer {g} at (16,176) size 507x30
+        RenderSVGText {text} at (10,106) size 105x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 105x18
+            chunk 1 text run 1 at (10.00,120.00) startOffset 0 endOffset 14 width 104.20: "getCurrentTime"
+        RenderSVGText {text} at (210,106) size 104x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 104x18
+            chunk 1 text run 1 at (210.00,120.00) startOffset 0 endOffset 14 width 103.36: "setCurrentTime"
+    RenderSVGContainer {g} at (16,517) size 381x62
+      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 229x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.2 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

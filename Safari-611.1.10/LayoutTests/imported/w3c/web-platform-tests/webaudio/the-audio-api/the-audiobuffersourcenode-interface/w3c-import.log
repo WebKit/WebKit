@@ -1,0 +1,35 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/active-processing.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-channels.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-ended.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-grain.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-multi-channels.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-null.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-one-sample-loop.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-playbackrate-zero.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-start.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiosource-onended.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiosource-time-limits.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/buffer-resampling.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/ctor-audiobuffersource.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/note-grain-on-play.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/note-grain-on-timing.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sample-accurate-scheduling.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-buffer-stitching.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-scheduling.html

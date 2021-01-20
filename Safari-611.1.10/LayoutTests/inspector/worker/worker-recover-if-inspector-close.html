@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+let worker;
+let expectingWorkerMessage = false;
+
+function createWorker() {
+    log("PAGE: Creating the worker.");
+    worker = new Worker("resources/worker-1.js");
+    worker.postMessage("hello");
+    worker.onmessage = function(event) {
+        if (expectingWorkerMessage) {
+            log("PASS: Worker recovered.");
+            testRunner.notifyDone();
+        } else {
+            log("FAIL: Worker should have been paused!");
+            log(event.data);
+            testRunner.notifyDone();
+        }
+    }
+}
+
+function closeInspectorFrontendAndCompleteTest() {
+    log("PAGE: Closing the inspector.");
+    expectingWorkerMessage = true;
+    window.internals.closeDummyInspectorFrontend();
+    setTimeout(() => {
+        log("FAIL: Never received message!");
+        testRunner.notifyDone();
+    }, 1000);
+}
+
+function test()
+{
+    let workerId;
+
+    let suite = ProtocolTest.createAsyncSuite("Worker.CreateAndTerminate");
+
+    suite.addTestCase({
+        name: "Worker.enable",
+        description: "Worker.enable informs the frontend of the two existing Workers",
+        test(resolve, reject) {
+            InspectorProtocol.awaitCommand({method: "Worker.enable", params: {}});
+            ProtocolTest.evaluateInPage("createWorker()");
+            InspectorProtocol.awaitEvent({event: "Worker.workerCreated"}).then((messageObject) => {
+                ProtocolTest.pass("Worker.workerCreated");
+
+                // Give the worker 50ms to prove it is waiting for Inspection initialization
+                // and is unable to message the page. Closing the inspector, the Worker should
+                // recover and resume execution.
+                setTimeout(() => {
+                    ProtocolTest.evaluateInPage("closeInspectorFrontendAndCompleteTest()");
+                }, 50);
+            }).catch(reject);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that a Worker recovers and resumes if Web Inspector closes before sending Worker.initialized.</p>
+</body>
+</html>

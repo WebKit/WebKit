@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that absolute positioned search/cancel button painting is not crashing</title>
+<style>
+#test {
+    border: 1px solid red;
+    padding-right: 20px;
+    padding-left: 50px;
+    -webkit-appearance: none;
+}
+
+#test::-webkit-search-cancel-button {
+    position: absolute;
+}
+</style>
+</head>
+<body>
+PASS if no crash.
+<input id="test" type="search">
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    document.getElementById("test").value = "foobar";
+</script>
+</body>
+</html>

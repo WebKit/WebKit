@@ -1,0 +1,66 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/allowany.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/array.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/attributes.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/callback.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/caller.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/constants.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/constructor.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/dictionary-inherits.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/dictionary.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/documentation-dos.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/documentation.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/enum.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/equivalent-decl.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/exception-inheritance.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/exception.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/getter-setter.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/identifier-qualified-names.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/implements.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/indexed-properties.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/inherits-getter.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/interface-inherits.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/iterator.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/module.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/namedconstructor.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/namespaceobject.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/nointerfaceobject.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/nullable.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/nullableobjects.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/operation-optional-arg.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/overloading.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/overridebuiltins.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/partial-interface.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/primitives.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/prototyperoot.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/putforwards.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/reg-operations.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/replaceable.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/sequence.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/serializer.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/special-omittable.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/static.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/stringifier-attribute.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/stringifier-custom.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/stringifier.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/treatasnull.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/treatasundefined.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/typedef.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/typesuffixes.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/uniontype.widlprocxml
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/valid/xml/variadic-operations.widlprocxml

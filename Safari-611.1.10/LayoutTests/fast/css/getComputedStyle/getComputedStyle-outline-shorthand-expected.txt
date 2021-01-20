@@ -1,0 +1,36 @@
+Test to make sure outline shorthand property returns CSSValueList properly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS computedStyle.getPropertyValue('outline') is 'rgb(255, 0, 0) solid 5px'
+PASS computedStyle.getPropertyCSSValue('outline').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('outline').length is 3
+PASS computedStyle.getPropertyCSSValue('outline').cssText is 'rgb(255, 0, 0) solid 5px'
+PASS computedStyle.getPropertyCSSValue('outline').item(0).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS computedStyle.getPropertyCSSValue('outline').item(0).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('outline').item(0).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('outline').item(1).getStringValue() is 'solid'
+PASS computedStyle.getPropertyCSSValue('outline').item(2).getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 5
+PASS computedStyle.getPropertyValue('outline') is 'rgb(0, 0, 0) solid 32px'
+PASS computedStyle.getPropertyCSSValue('outline').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('outline').length is 3
+PASS computedStyle.getPropertyCSSValue('outline').cssText is 'rgb(0, 0, 0) solid 32px'
+PASS computedStyle.getPropertyCSSValue('outline').item(0).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('outline').item(0).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('outline').item(0).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('outline').item(1).getStringValue() is 'solid'
+PASS computedStyle.getPropertyCSSValue('outline').item(2).getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 32
+PASS computedStyle.getPropertyValue('outline') is 'rgb(255, 0, 0) none 0px'
+PASS computedStyle.getPropertyCSSValue('outline').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('outline').length is 3
+PASS computedStyle.getPropertyCSSValue('outline').cssText is 'rgb(255, 0, 0) none 0px'
+PASS computedStyle.getPropertyCSSValue('outline').item(0).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS computedStyle.getPropertyCSSValue('outline').item(0).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('outline').item(0).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('outline').item(1).getStringValue() is 'none'
+PASS computedStyle.getPropertyCSSValue('outline').item(2).getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

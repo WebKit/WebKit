@@ -1,0 +1,12 @@
+
+FAIL Test toString exception propagated correctly. assert_throws: toString exception not propagagted function "function () {
+                    new SharedWorker({toString:function(){throw new Error()}}, "name") }" threw object "ReferenceError: Can't find variable: SharedWorker" ("ReferenceError") expected object "Error" ("Error")
+FAIL Test recursive worker creation results in exception. assert_throws: Trying to create workers recursively did not result in an exception. function "function () {
+                    var foo = {toString:function(){new Worker(foo)}}
+                    new SharedWorker(foo, name); }" threw object "ReferenceError: Can't find variable: SharedWorker" ("ReferenceError") expected object "RangeError" ("RangeError")
+FAIL Test SharedWorker creation without arguments results in exception. assert_throws: Invoking SharedWorker constructor without arguments did not result in an exception. function "function () { new SharedWorker(); }" threw object "ReferenceError: Can't find variable: SharedWorker" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL Test SharedWorker constructor without a name does not result in an exception. assert_unreached: Constructor failed when no name is passed: (ReferenceError: Can't find variable: SharedWorker) Reached unreachable code
+FAIL Test SharedWorker constructor with null name does not result in an exception. assert_unreached: Constructor failed when null name is passed: (ReferenceError: Can't find variable: SharedWorker) Reached unreachable code
+FAIL Test SharedWorker constructor with undefined name does not result in an exception. assert_unreached: Constructor failed when undefined name is passed: (ReferenceError: Can't find variable: SharedWorker) Reached unreachable code
+FAIL Test SharedWorker constructor suceeds. assert_unreached: Invoking SharedWorker constructor resulted in an exception: (ReferenceError: Can't find variable: SharedWorker) Reached unreachable code
+

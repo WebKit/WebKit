@@ -1,0 +1,10 @@
+Test ECDSA signing operation with a P-384 private key
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS signature.byteLength is 96
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

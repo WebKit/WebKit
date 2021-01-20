@@ -1,0 +1,5 @@
+
+PASS Property border-image-repeat value 'round'
+PASS Property border-image-repeat value 'stretch repeat'
+PASS Property border-image-repeat value 'round space'
+

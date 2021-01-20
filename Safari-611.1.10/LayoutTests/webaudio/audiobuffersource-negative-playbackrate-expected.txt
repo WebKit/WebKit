@@ -1,0 +1,5 @@
+PASS Test playback at -1 playbackRate
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

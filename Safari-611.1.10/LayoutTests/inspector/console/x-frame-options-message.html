@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="../../http/tests/inspector/resources/console-test.js"></script>
+<script>
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Console.XFrameOptionsMessages");
+
+    ProtocolTest.Console.addTestCase(suite, {
+        name: "XFrameOptionsDeny",
+        description: "Ensure that a console message is logged when enforcing an X-Frame-Options policy. In this case, setting X-Frame-Options: 'deny' means the iframe does not want to be embedded in the test page.",
+        expression: "triggerXFrameOptionDeny();",
+        expected: {source: 'security', level: 'error'}
+    });
+
+    InspectorProtocol.awaitCommand({
+        method: "Console.enable",
+        params: {}
+    })
+    .then(function() {
+        suite.runTestCasesAndFinish();
+    })
+    .catch(fatalError);
+
+    function fatalError(e) {
+        ProtocolTest.log("Test failed with fatal error: " + JSON.stringify(e));
+        ProtocolTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+  <iframe id="denied"></iframe>
+  <script>
+  function triggerXFrameOptionDeny()
+  {
+    let deniedFrame = document.getElementById('denied');
+    let deniedDocument = deniedFrame.contentWindow.document;
+    deniedDocument.write('<meta http-equiv="X-Frame-Options" content="deny"/>');
+  }
+  </script>
+</body>
+</html>

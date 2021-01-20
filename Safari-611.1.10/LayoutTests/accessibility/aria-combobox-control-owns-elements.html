@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+
+<!-- Example 1: controls a list -->
+<input type="text" role="combobox" id="combobox1" aria-controls="list1" aria-label="Combobox1">
+<div role="list" id="list1" aria-label="List1">
+<div role="listitem" id="item1_1">item1</div>
+<div role="listitem" id="item1_2">item2</div>
+</div>
+
+<!-- Example 2: owns a listbox -->
+<input type="text" role="combobox" id="combobox2" aria-owns="listbox2" aria-label="Combobox2">
+<div role="listbox" id="listbox2" aria-label="Listbox2">
+<div role="option" id="option2_1">item1</div>
+<div role="option" id="option2_2">item2</div>
+</div>
+
+<!-- Example 3: owns a grid -->
+<input type="text" role="combobox" id="combobox3" aria-owns="grid3" aria-label="Combobox3">
+<div role="grid" id="grid3" aria-label="Grid3">
+<div role="row" id="row3_1">
+<div role="gridcell" id="gridcell3_1">cell1</div>
+</div>
+</div>
+
+<!-- Example 3: owns a tree -->
+<input type="text" role="combobox" id="combobox4" aria-owns="tree4" aria-label="Combobox4">
+<div role="tree" id="tree4" aria-label="Tree4">
+<div role="treeitem" id="treeitem4_1">treeitem1</div>
+<div role="treeitem" id="treeitem4_2">treeitem2</div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests variations of the comboboxes and elements it can control and own. Then verifies the active-descendant is reflected correctly.");
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        var selectedChildrenChangeCount = 0;
+
+        window.accessibilityController.addNotificationListener(function (target, notification) {
+            if (notification == "AXSelectedChildrenChanged" || notification == "AXSelectedRowsChanged") {
+                selectedChildrenChangeCount++;
+                var targetString = platformValueForW3CName(target);
+                debug("Received " + notification + " for " + targetString);
+            }
+        });
+
+        // Example 1: aria-controls a list.
+        document.getElementById("combobox1").focus();
+        var list = accessibilityController.accessibleElementById("list1");
+        shouldBe("list.selectedChildrenCount", "0");
+        // Set active-descendant, verify notification is sent and that list has correct selected children.
+        document.getElementById("combobox1").setAttribute("aria-activedescendant", "item1_1");
+        var listitem1 = accessibilityController.accessibleElementById("item1_1");
+        setTimeout(async function() {
+            debug("list has " + list.selectedChildrenCount + " selected children");
+            debug(list.selectedChildAtIndex(0).isEqual(listitem1)
+                ? "PASS list.selectedChildAtIndex(0) is listitem1"
+                : "FAIL list.selectedChildAtIndex(0) is not listitem1");
+
+            // Example 2: aria-owns a listbox.
+            document.getElementById("combobox2").focus();
+            var listbox = accessibilityController.accessibleElementById("listbox2");
+            debug("listbox has " + listbox.selectedChildrenCount + " selected children");
+            // Set active-descendant, verify notification is sent and that list has correct selected children.
+            document.getElementById("combobox2").setAttribute("aria-activedescendant", "option2_1");
+            var option2_1 = accessibilityController.accessibleElementById("option2_1");
+            await waitFor(() => {
+                return selectedChildrenChangeCount == 2 && listbox.selectedChildrenCount;
+            });
+            debug("listbox has " + listbox.selectedChildrenCount + " selected children");
+            debug(listbox.selectedChildAtIndex(0).isEqual(option2_1)
+                ? "PASS listbox.selectedChildAtIndex(0) is option2_1"
+                : "FAIL listbox.selectedChildAtIndex(0) is not option2_1");
+
+            // Example 3: aria-owns a grid.
+            document.getElementById("combobox3").focus();
+            var grid = accessibilityController.accessibleElementById("grid3");
+            debug("grid has " + grid.selectedChildrenCount + " selected children");
+            // Set active-descendant, verify notification is sent and that list has correct selected children.
+            document.getElementById("combobox3").setAttribute("aria-activedescendant", "row3_1");
+            var row3_1 = accessibilityController.accessibleElementById("row3_1");
+            await waitFor(() => {
+                return selectedChildrenChangeCount == 3 && grid.selectedChildrenCount;
+            });
+            debug("grid has " + grid.selectedChildrenCount + " selected children");
+            debug(grid.selectedChildAtIndex(0).isEqual(row3_1)
+                ? "PASS grid.selectedChildAtIndex(0) is row3_1"
+                : "FAIL grid.selectedChildAtIndex(0) is not row3_1");
+
+            // Example 4: aria-owns a tree.
+            document.getElementById("combobox4").focus();
+            var tree = accessibilityController.accessibleElementById("tree4");
+            debug("tree has " + tree.selectedChildrenCount + " selected children");
+            // Set active-descendant, verify notification is sent and that list has correct selected children.
+            document.getElementById("combobox4").setAttribute("aria-activedescendant", "treeitem4_1");
+            var treeitem4_1 = accessibilityController.accessibleElementById("treeitem4_1");
+            await waitFor(() => {
+                return selectedChildrenChangeCount == 4 && tree.selectedChildrenCount;
+            });
+            debug("tree has " + tree.selectedChildrenCount + " selected children");
+            debug(tree.selectedChildAtIndex(0).isEqual(treeitem4_1)
+                ? "PASS tree.selectedChildAtIndex(0) is treeitem4_1"
+                : "FAIL tree.selectedChildAtIndex(0) is not treeitem4_1");
+
+            accessibilityController.removeNotificationListener();
+            finishJSTest();
+        }, 0);
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

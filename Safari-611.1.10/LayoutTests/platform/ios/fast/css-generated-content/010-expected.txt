@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x36
+  RenderBlock {HTML} at (0,0) size 800x36
+    RenderBody {BODY} at (8,8) size 784x20
+      RenderInline {A} at (0,0) size 119x19 [color=#0000EE]
+        RenderInline (generated) at (0,0) size 10x19
+          RenderImage at (0,5) size 10x10
+        RenderText {#text} at (10,0) size 109x19
+          text run at (10,0) width 109: "What's going on."
+      RenderText {#text} at (0,0) size 0x0

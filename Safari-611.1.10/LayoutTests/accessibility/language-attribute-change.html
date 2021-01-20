@@ -1,0 +1,34 @@
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<div id="content" lang="en">Hello World!</div>
+
+<div id="console"></div>
+
+<script>
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var content = document.getElementById("content");
+        var accessibleContent = accessibilityController.accessibleElementById("content");
+        shouldBe("accessibleContent.language", "'AXLanguage: en'");
+
+        content.innerText = "Hola Mundo!";
+        content.setAttribute("lang", "es");
+        setTimeout(async function() {
+            await waitFor(() => {
+                return accessibleContent.language == "AXLanguage: es";
+            });
+            shouldBe("accessibleContent.language", "'AXLanguage: es'");
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div tabindex="0" id="progressbar1" role="progressbar" aria-valuemin="35" aria-valuemax="100">X</div>
+<progress tabindex="0" id="progressbar2" role="progressbar" aria-valuemin="75" aria-valuemax="100"></progress>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that elements with progressbar role return 0 for min and max value, if indeterminate.");
+
+    if (window.accessibilityController) {
+          // Div element given progressbar role, with no value.
+          var prog1 = accessibilityController.accessibleElementById("progressbar1");
+          shouldBe("prog1.maxValue", "0");
+          shouldBe("prog1.minValue", "0");
+
+          // Indeterminate progress element.
+          var prog2 = accessibilityController.accessibleElementById("progressbar2");
+          shouldBe("prog2.maxValue", "0");
+          shouldBe("prog2.minValue", "0");
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

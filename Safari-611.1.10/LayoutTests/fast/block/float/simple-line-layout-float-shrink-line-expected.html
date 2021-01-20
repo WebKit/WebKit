@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.floating {
+    width: 40px;
+    height: 10px;
+    border: 1px solid blue;
+}
+
+.container { 
+    width: 150px;
+}
+</style>
+<script>
+if (window.internals)
+    internals.settings.setSimpleLineLayoutEnabled(false);
+</script>
+</head>
+<body>
+<div class=container>
+  <div class=floating style="float: left"></div>
+  <div class=floating style="float: right; clear: left"></div>
+  <div>Pass if "this" wraps to the second line.</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html style="font-family: ahem; font-size: 10px; -webkit-font-smoothing: none;">
+<body>
+<style>
+#test1 { -webkit-column-count: 2; }
+#test2 { -webkit-column-span: all; }
+#test3 { content: counter(c); }
+</style>
+<script>
+onload = function() {
+test1 = document.createElement('div');
+test1.setAttribute('id', 'test1');
+document.body.appendChild(test1);
+test2 = document.createElement('div');
+test2.setAttribute('id', 'test2');
+test1.appendChild(test2);
+test3 = document.createElement('div');
+test3.setAttribute('id', 'test3');
+test1.appendChild(test3);
+test4 = document.createElement('div');
+test1.appendChild(test4);
+test4.style.display = 'table-row-group';
+test3.appendChild(document.createTextNode('3'));
+test4.appendChild(document.createTextNode('4'));
+document.body.offsetTop;
+document.body.style.zoom = 2;
+}
+</script>
+</body>
+</html>

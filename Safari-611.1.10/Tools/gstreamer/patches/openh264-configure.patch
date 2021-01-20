@@ -1,0 +1,12 @@
+--- /dev/null	2015-06-05 15:20:34.000000000 +1000
++++ pseudo-configure	2015-06-05 15:20:37.000000000 +1000
+@@ -0,0 +1,8 @@
++#!/bin/sh
++
++X=Makefile
++sed -e "s:^PREFIX=.*:PREFIX=$JHBUILD_PREFIX:" ${X} > ${X}.tmp && mv ${X}.tmp ${X}
++sed -e "s:^SHAREDLIB_DIR=.*:SHAREDLIB_DIR=$CMAKE_LIBRARY_PATH:" ${X} > ${X}.tmp && mv ${X}.tmp ${X}
++
++X=build/x86-common.mk
++sed -e "s:^ASM =.*:ASM = yasm:" $X > ${X}.tmp && mv ${X}.tmp $X
+

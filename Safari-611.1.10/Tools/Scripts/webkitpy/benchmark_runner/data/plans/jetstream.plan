@@ -1,0 +1,10 @@
+{
+    "timeout": 1200,
+    "count": 5,
+    "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/JetStream/@r190897",
+    "webserver_benchmark_patch": "data/patches/webserver/JetStream.patch",
+    "webdriver_benchmark_patch": "data/patches/webdriver/JetStream.patch",
+    "create_script": ["ruby", "create.rb"],
+    "entry_point": "JetStream-1.1/index.html",
+    "output_file": "jetstream.result"
+}

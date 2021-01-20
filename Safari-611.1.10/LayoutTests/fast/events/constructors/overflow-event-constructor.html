@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("This tests the constructor for the OverflowEvent DOM class.");
+
+// No initializer is passed.
+shouldBe("new OverflowEvent('eventType').bubbles", "false");
+shouldBe("new OverflowEvent('eventType').cancelable", "false");
+shouldBe("new OverflowEvent('eventType').horizontalOverflow", "false");
+shouldBe("new OverflowEvent('eventType').verticalOverflow", "false");
+shouldBe("new OverflowEvent('eventType').orient", "0");
+
+// bubbles, cancelable, horizontalOverflow, verticalOverflow are passed.
+["bubbles", "cancelable", "horizontalOverflow", "verticalOverflow"].forEach(function(attr) {
+    shouldBe("new OverflowEvent('eventType', { " + attr + ": false })." + attr, "false");
+    shouldBe("new OverflowEvent('eventType', { " + attr + ": true })." + attr, "true");
+});
+
+// orient is passed.
+// Numbers within the unsigned short range.
+shouldBe("new OverflowEvent('eventType', { orient: 0 }).orient", "0");
+shouldBe("new OverflowEvent('eventType', { orient: 1 }).orient", "1");
+shouldBe("new OverflowEvent('eventType', { orient: 65534 }).orient", "65534");
+shouldBe("new OverflowEvent('eventType', { orient: 65535 }).orient", "65535");
+
+// Numbers out of the unsigned short range.
+// 2^{53}-1, the largest number that can be exactly represented by double.
+shouldBe("new OverflowEvent('eventType', { orient: 9007199254740991 }).orient", "65535");
+// 2^{64}-1
+shouldBe("new OverflowEvent('eventType', { orient: 18446744073709551615 }).orient", "0");
+shouldBe("new OverflowEvent('eventType', { orient: 12345678901234567890 }).orient", "2048");
+shouldBe("new OverflowEvent('eventType', { orient: -1 }).orient", "65535");
+shouldBe("new OverflowEvent('eventType', { orient: 123.45 }).orient", "123");
+shouldBe("new OverflowEvent('eventType', { orient: NaN }).orient", "0");
+
+// Non-numeric values.
+shouldBe("new OverflowEvent('eventType', { orient: undefined }).orient", "0");
+shouldBe("new OverflowEvent('eventType', { orient: null }).orient", "0");
+shouldBe("new OverflowEvent('eventType', { orient: '' }).orient", "0");
+shouldBe("new OverflowEvent('eventType', { orient: '12345' }).orient", "12345");
+shouldBe("new OverflowEvent('eventType', { orient: '12345a' }).orient", "0");
+shouldBe("new OverflowEvent('eventType', { orient: 'abc' }).orient", "0");
+shouldBe("new OverflowEvent('eventType', { orient: [] }).orient", "0");
+shouldBe("new OverflowEvent('eventType', { orient: [12345] }).orient", "12345");
+shouldBe("new OverflowEvent('eventType', { orient: [12345, 67890] }).orient", "0");
+shouldBe("new OverflowEvent('eventType', { orient: {} }).orient", "0");
+shouldBe("new OverflowEvent('eventType', { orient: {foo: 12345} }).orient", "0");
+shouldBe("new OverflowEvent('eventType', { orient: {valueOf: function () { return 12345; }} }).orient", "12345");
+
+// All initializers are passed.
+shouldBe("new OverflowEvent('eventType', { bubbles: true, cancelable: true, horizontalOverflow: true, verticalOverflow: true, orient: 12345 }).bubbles", "true");
+shouldBe("new OverflowEvent('eventType', { bubbles: true, cancelable: true, horizontalOverflow: true, verticalOverflow: true, orient: 12345 }).cancelable", "true");
+shouldBe("new OverflowEvent('eventType', { bubbles: true, cancelable: true, horizontalOverflow: true, verticalOverflow: true, orient: 12345 }).horizontalOverflow", "true");
+shouldBe("new OverflowEvent('eventType', { bubbles: true, cancelable: true, horizontalOverflow: true, verticalOverflow: true, orient: 12345 }).verticalOverflow", "true");
+shouldBe("new OverflowEvent('eventType', { bubbles: true, cancelable: true, horizontalOverflow: true, verticalOverflow: true, orient: 12345 }).orient", "12345");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

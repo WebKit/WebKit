@@ -1,0 +1,52 @@
+
+EXPECTED (window.internals.audioSessionCategory() == 'None') OK
+
+RUN(video.volume = 0.05)
+EVENT(volumechange)
+
+* Load first file.
+EVENT(sourceopen)
+EVENT(update)
+
+** append segments
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+
+** play
+RUN(video.play())
+EVENT(playing)
+
+EXPECTED (window.internals.audioSessionCategory() == 'MediaPlayback') OK
+
+* Load second file.
+EVENT(sourceopen)
+EVENT(update)
+
+** append segments
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+
+** play
+RUN(video.play())
+EVENT(playing)
+
+EXPECTED (window.internals.audioSessionCategory() == 'MediaPlayback') OK
+
+END OF TEST
+

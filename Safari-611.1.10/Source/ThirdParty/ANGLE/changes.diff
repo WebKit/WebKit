@@ -1,0 +1,361 @@
+diff --git a/.gitignore b/.gitignore
+index 6d9040a..c8c9b6c 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -58,7 +58,6 @@
+ /third_party/vulkan-tools/src
+ /third_party/vulkan-validation-layers/src
+ /third_party/vulkan_memory_allocator
+-/third_party/zlib
+ /tools/clang
+ /tools/flex-bison/linux/bison
+ /tools/flex-bison/linux/flex
+diff --git a/src/common/gl/cgl/FunctionsCGL.cpp b/src/common/gl/cgl/FunctionsCGL.cpp
+index b57f42b..3e5a37a 100644
+--- a/src/common/gl/cgl/FunctionsCGL.cpp
++++ b/src/common/gl/cgl/FunctionsCGL.cpp
+@@ -35,6 +35,7 @@ SOFT_LINK_FUNCTION_SOURCE(OpenGL, CGLDestroyContext, CGLError, (CGLContextObj ct
+ SOFT_LINK_FUNCTION_SOURCE(OpenGL, CGLDestroyPixelFormat, CGLError, (CGLPixelFormatObj pix), (pix))
+ SOFT_LINK_FUNCTION_SOURCE(OpenGL, CGLErrorString, const char *, (CGLError error), (error))
+ SOFT_LINK_FUNCTION_SOURCE(OpenGL, CGLReleaseContext, void, (CGLContextObj ctx), (ctx))
++SOFT_LINK_FUNCTION_SOURCE(OpenGL, CGLGetCurrentContext, CGLContextObj, (void), ())
+ SOFT_LINK_FUNCTION_SOURCE(OpenGL, CGLSetCurrentContext, CGLError, (CGLContextObj ctx), (ctx))
+ SOFT_LINK_FUNCTION_SOURCE(OpenGL,
+                           CGLSetVirtualScreen,
+diff --git a/src/common/gl/cgl/FunctionsCGL.h b/src/common/gl/cgl/FunctionsCGL.h
+index 9112659..39df6fe 100644
+--- a/src/common/gl/cgl/FunctionsCGL.h
++++ b/src/common/gl/cgl/FunctionsCGL.h
+@@ -57,6 +57,7 @@ SOFT_LINK_FUNCTION_HEADER(OpenGL,
+                           (GLuint display_mask, CGLRendererInfoObj *rend, GLint *nrend),
+                           (display_mask, rend, nrend))
+ SOFT_LINK_FUNCTION_HEADER(OpenGL, CGLReleaseContext, void, (CGLContextObj ctx), (ctx))
++SOFT_LINK_FUNCTION_HEADER(OpenGL, CGLGetCurrentContext, CGLContextObj, (void), ())
+ SOFT_LINK_FUNCTION_HEADER(OpenGL, CGLSetCurrentContext, CGLError, (CGLContextObj ctx), (ctx))
+ SOFT_LINK_FUNCTION_HEADER(OpenGL,
+                           CGLSetVirtualScreen,
+diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
+index c953ff9..63b3a59 100644
+--- a/src/common/utilities.cpp
++++ b/src/common/utilities.cpp
+@@ -6,6 +6,11 @@
+ 
+ // utilities.cpp: Conversion functions and other utility routines.
+ 
++// Older clang versions have a false positive on this warning here.
++#if defined(__clang__)
++#pragma clang diagnostic ignored "-Wglobal-constructors"
++#endif
++
+ #include "common/utilities.h"
+ #include "GLES3/gl3.h"
+ #include "common/mathutil.h"
+diff --git a/src/compiler/preprocessor/preprocessor_tab_autogen.cpp b/src/compiler/preprocessor/preprocessor_tab_autogen.cpp
+index 4711774..cf25e48 100644
+--- a/src/compiler/preprocessor/preprocessor_tab_autogen.cpp
++++ b/src/compiler/preprocessor/preprocessor_tab_autogen.cpp
+@@ -1,5 +1,7 @@
+ /* A Bison parser, made by GNU Bison 3.3.2.  */
+ 
++/* Apple Note: For the avoidance of doubt, Apple elects to distribute this file under the terms of the BSD license. */
++
+ /* Bison implementation for Yacc-like parsers in C
+ 
+    Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
+diff --git a/src/compiler/translator/glslang_tab_autogen.cpp b/src/compiler/translator/glslang_tab_autogen.cpp
+index 130b98a..33b83db 100644
+--- a/src/compiler/translator/glslang_tab_autogen.cpp
++++ b/src/compiler/translator/glslang_tab_autogen.cpp
+@@ -1,5 +1,7 @@
+ /* A Bison parser, made by GNU Bison 3.3.2.  */
+ 
++/* Apple Note: For the avoidance of doubt, Apple elects to distribute this file under the terms of the BSD license. */
++
+ /* Bison implementation for Yacc-like parsers in C
+ 
+    Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
+diff --git a/src/compiler/translator/glslang_tab_autogen.h b/src/compiler/translator/glslang_tab_autogen.h
+index 5306032..0250300 100644
+--- a/src/compiler/translator/glslang_tab_autogen.h
++++ b/src/compiler/translator/glslang_tab_autogen.h
+@@ -1,5 +1,7 @@
+ /* A Bison parser, made by GNU Bison 3.3.2.  */
+ 
++/* Apple Note: For the avoidance of doubt, Apple elects to distribute this file under the terms of the BSD license. */
++
+ /* Bison interface for Yacc-like parsers in C
+ 
+    Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
+diff --git a/src/gpu_info_util/SystemInfo.cpp b/src/gpu_info_util/SystemInfo.cpp
+index f748949..54c3db5 100644
+--- a/src/gpu_info_util/SystemInfo.cpp
++++ b/src/gpu_info_util/SystemInfo.cpp
+@@ -47,6 +47,8 @@ std::string VendorName(VendorID vendor)
+             return "Vivante";
+         case kVendorID_VMWare:
+             return "VMWare";
++        case kVendorID_Apple:
++            return "Apple";
+         default:
+             return "Unknown (" + std::to_string(vendor) + ")";
+     }
+@@ -160,6 +162,11 @@ bool IsVivante(VendorID vendorId)
+     return vendorId == kVendorID_Vivante;
+ }
+ 
++bool IsApple(VendorID vendorId)
++{
++    return vendorId == kVendorID_Apple;
++}
++
+ bool ParseAMDBrahmaDriverVersion(const std::string &content, std::string *version)
+ {
+     const size_t begin = content.find_first_of("0123456789");
+diff --git a/src/gpu_info_util/SystemInfo.h b/src/gpu_info_util/SystemInfo.h
+index ad17698..509a1e9 100644
+--- a/src/gpu_info_util/SystemInfo.h
++++ b/src/gpu_info_util/SystemInfo.h
+@@ -67,9 +67,8 @@ struct SystemInfo
+     bool isAMDSwitchable = false;
+     // Only true on dual-GPU Mac laptops.
+     bool isMacSwitchable = false;
+-    // Only true on Apple Silicon Macs when running iOS binaries.
+-    // See https://developer.apple.com/documentation/foundation/nsprocessinfo/3608556-iosapponmac
+-    bool isiOSAppOnMac = false;
++    // Only true on Apple Silicon Macs when running in macCatalyst.
++    bool needsEAGLOnMac   = false;
+ 
+     // Only available on Android
+     std::string machineManufacturer;
+@@ -99,6 +98,7 @@ constexpr VendorID kVendorID_Intel    = 0x8086;
+ constexpr VendorID kVendorID_NVIDIA   = 0x10DE;
+ constexpr VendorID kVendorID_Qualcomm = 0x5143;
+ constexpr VendorID kVendorID_VMWare   = 0x15ad;
++constexpr VendorID kVendorID_Apple    = 0x106B;
+ 
+ // Known non-PCI (i.e. Khronos-registered) vendor IDs
+ constexpr VendorID kVendorID_Vivante     = 0x10001;
+@@ -124,6 +124,7 @@ bool IsSwiftshader(VendorID vendorId);
+ bool IsVeriSilicon(VendorID vendorId);
+ bool IsVMWare(VendorID vendorId);
+ bool IsVivante(VendorID vendorId);
++bool IsApple(VendorID vendorId);
+ 
+ // Use a heuristic to attempt to find the GPU used for 3D graphics. Sets activeGPUIndex,
+ // isOptimus, and isAMDSwitchable.
+diff --git a/src/gpu_info_util/SystemInfo_apple.mm b/src/gpu_info_util/SystemInfo_apple.mm
+index c7756f6..a49dc52 100644
+--- a/src/gpu_info_util/SystemInfo_apple.mm
++++ b/src/gpu_info_util/SystemInfo_apple.mm
+@@ -19,25 +19,7 @@ namespace angle
+ 
+ bool GetSystemInfo(SystemInfo *info)
+ {
+-#    if defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64)
+-    static bool isiOSAppOnMac = false;
+-    static dispatch_once_t once;
+-    dispatch_once(&once, ^{
+-      isiOSAppOnMac = [[NSProcessInfo processInfo] isiOSAppOnMac];
+-    });
+-
+-    if (isiOSAppOnMac)
+-    {
+-        GetSystemInfo_ios(info);
+-        if (info)
+-        {
+-            info->isiOSAppOnMac = true;
+-        }
+-        return info;
+-    }
+-
+-    return GetSystemInfo_mac(info);
+-#    elif defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
++#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
+     return GetSystemInfo_mac(info);
+ #    else
+     return GetSystemInfo_ios(info);
+diff --git a/src/gpu_info_util/SystemInfo_ios.cpp b/src/gpu_info_util/SystemInfo_ios.cpp
+index 323af2c..e52ecb3 100644
+--- a/src/gpu_info_util/SystemInfo_ios.cpp
++++ b/src/gpu_info_util/SystemInfo_ios.cpp
+@@ -18,8 +18,9 @@ namespace angle
+ bool GetSystemInfo_ios(SystemInfo *info)
+ {
+     {
+-        // TODO(anglebug.com/4275): Get the actual system version.
++        // TODO(anglebug.com/4275): Get the actual system version and GPU info.
+         info->machineModelVersion = "0.0";
++        info->gpus.emplace_back().vendorId = kVendorID_Apple;
+     }
+ 
+     return true;
+diff --git a/src/gpu_info_util/SystemInfo_macos.mm b/src/gpu_info_util/SystemInfo_macos.mm
+index b1cd055..c5e039e 100644
+--- a/src/gpu_info_util/SystemInfo_macos.mm
++++ b/src/gpu_info_util/SystemInfo_macos.mm
+@@ -322,6 +322,10 @@ bool GetSystemInfo_mac(SystemInfo *info)
+         info->isMacSwitchable = true;
+     }
+     
++#if defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64)
++    info->needsEAGLOnMac = true;
++#endif
++
+     return true;
+ }
+ 
+diff --git a/src/libANGLE/Caps.cpp b/src/libANGLE/Caps.cpp
+index f906783..1dddd4d 100644
+--- a/src/libANGLE/Caps.cpp
++++ b/src/libANGLE/Caps.cpp
+@@ -630,7 +630,12 @@ static bool DetermineDepthTextureANGLESupport(const TextureCapsMap &textureCaps)
+ {
+     constexpr GLenum requiredFormats[] = {
+         GL_DEPTH_COMPONENT16,
++#if !defined(ANGLE_PLATFORM_IOS) && (!defined(ANGLE_PLATFORM_MACCATALYST) || !defined(ANGLE_CPU_ARM64))
++        // TODO(dino): Temporarily Removing the need for GL_DEPTH_COMPONENT32_OES
++        // because it is not supported on iOS.
++        // TODO(dino): I think this needs to be a runtime check when running an iOS app on Mac.
+         GL_DEPTH_COMPONENT32_OES,
++#endif
+         GL_DEPTH24_STENCIL8_OES,
+     };
+ 
+@@ -642,7 +647,12 @@ static bool DetermineDepthTextureOESSupport(const TextureCapsMap &textureCaps)
+ {
+     constexpr GLenum requiredFormats[] = {
+         GL_DEPTH_COMPONENT16,
++#if !defined(ANGLE_PLATFORM_IOS) && (!defined(ANGLE_PLATFORM_MACCATALYST) || !defined(ANGLE_CPU_ARM64))
++        // TODO(dino): Temporarily Removing the need for GL_DEPTH_COMPONENT32_OES
++        // because it is not supported on iOS.
++        // TODO(dino): I think this needs to be a runtime check when running an iOS app on Mac.
+         GL_DEPTH_COMPONENT32_OES,
++#endif
+     };
+ 
+     return GetFormatSupport(textureCaps, requiredFormats, true, true, true, true, false);
+diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
+index 7b08d8d..a804486 100644
+--- a/src/libANGLE/State.cpp
++++ b/src/libANGLE/State.cpp
+@@ -6,6 +6,9 @@
+ 
+ // State.cpp: Implements the State class, encapsulating raw GL state.
+ 
++// Older clang versions have a false positive on this warning here.
++#pragma clang diagnostic ignored "-Wglobal-constructors"
++
+ #include "libANGLE/State.h"
+ 
+ #include <string.h>
+diff --git a/src/libANGLE/formatutils.cpp b/src/libANGLE/formatutils.cpp
+index 3f9f37d..5e628f2 100644
+--- a/src/libANGLE/formatutils.cpp
++++ b/src/libANGLE/formatutils.cpp
+@@ -1034,7 +1034,7 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
+     angle::SystemInfo info;
+     if (angle::GetSystemInfo(&info))
+     {
+-        if (info.isiOSAppOnMac)
++        if (info.needsEAGLOnMac)
+         {
+             // Using OpenGLES.framework.
+             AddRGBAFormat(&map, GL_BGRA_EXT,       false,  8,  8,  8,  8, 0, GL_BGRA_EXT,       GL_UNSIGNED_BYTE,               GL_UNSIGNED_NORMALIZED, false, RequireES<2, 0>,                                  AlwaysSupported, RequireES<2, 0>,                                NeverSupported, NeverSupported);
+diff --git a/src/libANGLE/renderer/gl/apple/DisplayApple_api.cpp b/src/libANGLE/renderer/gl/apple/DisplayApple_api.cpp
+index de216fb..e63a8b6 100644
+--- a/src/libANGLE/renderer/gl/apple/DisplayApple_api.cpp
++++ b/src/libANGLE/renderer/gl/apple/DisplayApple_api.cpp
+@@ -37,7 +37,7 @@ DisplayImpl *CreateDisplayCGLOrEAGL(const egl::DisplayState &state)
+         break;
+     }
+ 
+-    if (info.isiOSAppOnMac)
++    if (info.needsEAGLOnMac)
+     {
+         return new rx::DisplayEAGL(state);
+     }
+diff --git a/src/libANGLE/renderer/gl/cgl/ContextCGL.cpp b/src/libANGLE/renderer/gl/cgl/ContextCGL.cpp
+index bdf5597..be99b85 100644
+--- a/src/libANGLE/renderer/gl/cgl/ContextCGL.cpp
++++ b/src/libANGLE/renderer/gl/cgl/ContextCGL.cpp
+@@ -13,6 +13,8 @@
+ #include "libANGLE/Display.h"
+ #include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
+ 
++#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
++
+ namespace rx
+ {
+ 
+@@ -63,3 +65,5 @@ void ContextCGL::onDestroy(const gl::Context *context)
+ }
+ 
+ }  // namespace rx
++
++#endif  // defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
+\ No newline at end of file
+diff --git a/src/libANGLE/renderer/gl/eagl/FunctionsEAGL.h b/src/libANGLE/renderer/gl/eagl/FunctionsEAGL.h
+index ece235a..ae0207b 100644
+--- a/src/libANGLE/renderer/gl/eagl/FunctionsEAGL.h
++++ b/src/libANGLE/renderer/gl/eagl/FunctionsEAGL.h
+@@ -17,7 +17,7 @@
+ #    import <OpenGLES/EAGLDrawable.h>
+ #    import <OpenGLES/EAGLIOSurface.h>
+ 
+-#    include "libANGLE/renderer/gl/apple/SoftLinking.h"
++#    include "common/apple/SoftLinking.h"
+ 
+ SOFT_LINK_FRAMEWORK_HEADER(OpenGLES)
+ 
+diff --git a/src/libANGLE/renderer/gl/eagl/FunctionsEAGL.mm b/src/libANGLE/renderer/gl/eagl/FunctionsEAGL.mm
+index 7779792..076d072 100644
+--- a/src/libANGLE/renderer/gl/eagl/FunctionsEAGL.mm
++++ b/src/libANGLE/renderer/gl/eagl/FunctionsEAGL.mm
+@@ -14,7 +14,7 @@
+ #    import <OpenGLES/EAGLDrawable.h>
+ #    import <OpenGLES/EAGLIOSurface.h>
+ 
+-#    include "libANGLE/renderer/gl/apple/SoftLinking.h"
++#    include "common/apple/SoftLinking.h"
+ 
+ SOFT_LINK_FRAMEWORK_SOURCE(OpenGLES)
+ 
+diff --git a/src/libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.mm b/src/libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.mm
+index f16c3e7..45e6d0f 100644
+--- a/src/libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.mm
++++ b/src/libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.mm
+@@ -206,7 +206,9 @@ egl::Error IOSurfaceSurfaceEAGL::bindTexImage(const gl::Context *context,
+         // TODO(kbr): possibly more state to be set here, including setting any
+         // pixel unpack buffer to 0 when using ES 3.0 contexts.
+         gl::PixelUnpackState defaultUnpackState;
+-        stateManager->setPixelUnpackState(defaultUnpackState);
++        if (IsError(stateManager->setPixelUnpackState(context, defaultUnpackState))) {
++            return egl::EglBadState() << "Failed to set pixel unpack state.";
++        }
+         textureData = IOSurfaceGetBaseAddress(mIOSurface);
+     }
+ 
+@@ -238,7 +240,9 @@ egl::Error IOSurfaceSurfaceEAGL::releaseTexImage(const gl::Context *context, EGL
+         gl::PixelPackState state;
+         state.rowLength = mRowStrideInPixels;
+         state.alignment = 1;
+-        stateManager->setPixelPackState(state);
++        if (IsError(stateManager->setPixelPackState(context, state))) {
++            return egl::EglBadState() << "Failed to set pixel unpack state.";
++        }
+         // TODO(kbr): possibly more state to be set here, including setting any
+         // pixel pack buffer to 0 when using ES 3.0 contexts.
+         const auto &format = kIOSurfaceFormats[mFormatIndex];
+diff --git a/src/libANGLE/renderer/gl/renderergl_utils.cpp b/src/libANGLE/renderer/gl/renderergl_utils.cpp
+index 99772c4..11f47e6 100644
+--- a/src/libANGLE/renderer/gl/renderergl_utils.cpp
++++ b/src/libANGLE/renderer/gl/renderergl_utils.cpp
+@@ -1358,7 +1358,7 @@ void GenerateCaps(const FunctionsGL *functions,
+ 
+ #if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
+     angle::SystemInfo info;
+-    if (angle::GetSystemInfo(&info) && !info.isiOSAppOnMac)
++    if (angle::GetSystemInfo(&info) && !info.needsEAGLOnMac)
+     {
+         VendorID vendor = GetVendorID(functions);
+         if ((IsAMD(vendor) || IsIntel(vendor)) && *maxSupportedESVersion >= gl::Version(3, 0))

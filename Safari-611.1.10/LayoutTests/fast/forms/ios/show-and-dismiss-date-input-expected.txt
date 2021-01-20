@@ -1,0 +1,11 @@
+Tests that repeatedly showing and dismissing a date picker on iOS does not result in a crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Presented and dismissed date picker (1/2)
+PASS Presented and dismissed date picker (2/2)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    function busyWait(millis) {
+        let start = performance.now();
+        while (performance.now() - start < millis) { }
+    }
+
+    function firstRequestAnimationFrame() {
+        return new Promise(resolve => {
+            window.requestAnimationFrame(timestamp => {
+                debug("In firstRequestAnimationFrame()");
+                busyWait(10);
+                resolve(timestamp);
+            });
+        });
+    }
+
+    function secondRequestAnimationFrame() {
+        return new Promise(resolve => {
+            window.requestAnimationFrame(timestamp => {
+                debug("In secondRequestAnimationFrame()");
+                resolve(timestamp);
+            });
+        });
+    }
+
+    description("Tests the timestamps provided to requestAnimationFrame callbacks");
+    window.jsTestIsAsync = true;
+
+    (async () => {
+        let timestamps = await Promise.all([firstRequestAnimationFrame(), secondRequestAnimationFrame()]);
+        firstTimestamp = timestamps[0];
+        secondTimestamp = timestamps[1];
+        shouldBe("firstTimestamp", "secondTimestamp");
+        finishJSTest();
+    })();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

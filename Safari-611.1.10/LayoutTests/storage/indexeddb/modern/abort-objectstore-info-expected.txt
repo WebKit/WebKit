@@ -1,0 +1,61 @@
+Explores the edge cases of what IDBObjectStore objects look like after a version change transaction that changed them aborts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+connection1 = event.target.result;
+objectStore1_1 = connection1.createObjectStore('objectStore1');
+objectStore1_2 = connection1.createObjectStore('objectStore2');
+objectStore1_2.createIndex('index', 'foo');
+
+PASS connection1.version is 1
+PASS connection1.objectStoreNames.length is 2
+PASS objectStore1_1.indexNames.length is 0
+PASS objectStore1_2.indexNames.length is 1
+
+connection1.close();
+secondRequest = indexedDB.open(dbname, 2);
+secondRequest.onupgradeneeded = secondUpgradeNeeded;
+connection2 = event.target.result;
+objectStore2_1 = secondRequest.transaction.objectStore('objectStore1');
+objectStore2_2 = secondRequest.transaction.objectStore('objectStore2');
+objectStore2_3 = connection2.createObjectStore('objectStore3');
+
+PASS connection2.version is 2
+PASS connection2.objectStoreNames.length is 3
+PASS objectStore2_1.indexNames.length is 0
+PASS objectStore2_2.indexNames.length is 1
+PASS objectStore2_3.indexNames.length is 0
+
+objectStore2_1.createIndex('index', 'foo');
+objectStore2_2.deleteIndex('index');
+objectStore2_3.createIndex('index', 'foo');
+
+PASS connection2.version is 2
+PASS connection2.objectStoreNames.length is 3
+PASS objectStore2_1.indexNames.length is 1
+PASS objectStore2_2.indexNames.length is 0
+PASS objectStore2_3.indexNames.length is 1
+
+secondRequest.transaction.abort();
+connection2.close()
+
+checkState():
+PASS connection1.version is 1
+PASS connection1.objectStoreNames.length is 2
+PASS objectStore1_1.indexNames.length is 0
+PASS objectStore1_2.indexNames.length is 1
+
+PASS connection2.version is 1
+PASS connection2.objectStoreNames.length is 2
+PASS objectStore2_1.indexNames.length is 0
+PASS objectStore2_2.indexNames.length is 1
+PASS objectStore2_3.indexNames.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

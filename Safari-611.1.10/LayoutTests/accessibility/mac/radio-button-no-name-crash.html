@@ -1,0 +1,28 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<input type="radio" id="r1">
+<label for="r1">Radio</label>
+
+<p id="description"></p>
+<div id="console"></div>
+
+    <script>
+
+        description("This test checks that accessing linkedUIElements of radio buttons without name attribute won't cause crash. ");
+
+        if (window.accessibilityController) {
+
+            var radio = accessibilityController.accessibleElementById("r1");
+            // Make sure this won't cause crash.
+            var radioGroupSibling = radio.linkedUIElementAtIndex(0);
+        }
+    </script>
+
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>

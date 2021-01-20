@@ -1,0 +1,27 @@
+This test makes sure that minimumFontSize affects line-height.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Math.round(parseFloat(window.getComputedStyle(document.getElementById('test1')).getPropertyValue('line-height'))) is comparisonLineHeight
+PASS Math.round(parseFloat(window.getComputedStyle(document.getElementById('test2')).getPropertyValue('line-height'))) is comparisonLineHeight
+PASS Math.round(parseFloat(window.getComputedStyle(document.getElementById('test3')).getPropertyValue('line-height'))) is 20 / 16 * 64
+PASS Math.round(parseFloat(window.getComputedStyle(document.getElementById('test4')).getPropertyValue('line-height'))) is 20 / 10 * 64
+PASS Math.round(parseFloat(window.getComputedStyle(document.getElementById('test5')).getPropertyValue('line-height'))) is 1.5 * 64
+PASS Math.round(parseFloat(window.getComputedStyle(document.getElementById('test6')).getPropertyValue('line-height'))) is 1.5 * 64
+PASS Math.round(parseFloat(window.getComputedStyle(document.getElementById('test7')).getPropertyValue('line-height'))) is 1.5 * 64
+PASS Math.round(parseFloat(window.getComputedStyle(document.getElementById('test8')).getPropertyValue('line-height'))) is 1.5 * 64
+PASS Math.round(parseFloat(window.getComputedStyle(document.getElementById('test9')).getPropertyValue('line-height'))) is 192
+PASS successfullyParsed is true
+
+TEST COMPLETE
+1: Hello World
+1: Hello World
+2: Hello World
+3: Hello World
+4: Hello World
+5: Hello World
+6: Hello World
+7: Hello World
+8: Hello World
+9: Hello World

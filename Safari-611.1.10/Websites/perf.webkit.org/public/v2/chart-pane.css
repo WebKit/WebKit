@@ -1,0 +1,506 @@
+.chart-pane header {
+    background: #fff;
+    margin: 0;
+    padding: 0.5rem;
+    color: #000;
+    border-bottom: 1px solid #bbb;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    position: relative;
+}
+.chart-pane h1 {
+    color: #333;
+    font-size: 1rem;
+    font-weight: normal;
+    line-height: 1rem;
+    margin: 0 0 0 1.5rem;
+    padding: 0;
+}
+.chart-pane:focus header {
+    background-color: rgba(204, 153, 51, 0.1);
+    color: #333;
+}
+
+.chart-pane .progress {
+    height: 100%;
+    position: relative;
+}
+
+.chart-pane .progress .spinner {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -1rem;
+    margin-top: -1rem;
+}
+
+.chart-pane a.close-button {
+    display: inline-block;
+    position: absolute;
+    left: 0.55rem;
+    top: 0.55rem;
+}
+
+.chart-pane a.stat-button {
+    display: inline-block;
+    position: absolute;
+    right: 4.45rem;
+    top: 0.55rem;
+}
+
+.chart-pane a.outlier-button {
+    display: inline-block;
+    position: absolute;
+    right: 3.25rem; /* Shifted to left by 0.1rem for better aesthetics */
+    top: 0.55rem;
+}
+
+a.outlier-button.hide g.show-outlier-icon {
+    fill: transparent;
+    stroke: transparent;
+}
+
+a.outlier-button.show g.hide-outlier-icon {
+    fill: transparent;
+    stroke: transparent;
+}
+
+.chart-pane a.analysis-button {
+    display: inline-block;
+    position: absolute;
+    right: 1.85rem;
+    top: 0.55rem;
+}
+
+.chart-pane a.search-button {
+    display: inline-block;
+    position: absolute;
+    right: 0.55rem;
+    top: 0.55rem;
+}
+
+.popup-pane {
+    position: absolute;
+    z-index: 10;
+    top: 1.7rem;
+    border: 1px solid #bbb;
+    font-size: 0.8rem;
+    padding: 0.2rem;
+    border-radius: 0.5rem;
+    display: table;
+    background: white;
+}
+
+.popup-pane.hidden {
+    display: none;
+}
+
+.stat-pane,
+.analysis-pane {
+    right: 2.6rem;
+    padding: 0;
+}
+
+.popup-pane > .caution {
+    margin: 0;
+    padding: 0.3rem 0.5rem;
+}
+
+.popup-pane > section {
+    margin: 0;
+    padding: 0;
+    font-size: 0.8rem;
+    max-width: 17rem;
+}
+
+.popup-pane > section > h1 {
+    font-size: inherit;
+    line-height: 0.8rem;
+    padding: 0.3rem 0.5rem;
+    margin: 0;
+    border-top: solid 1px #ccc;
+    border-bottom: solid 1px #ccc;
+}
+
+.popup-pane > section:first-child h1 {
+    border-top: none;
+}
+
+.popup-pane > section > * {
+    display: block;
+    margin: 0.1rem 0.5rem 0.1rem 1rem;
+}
+
+.stat-option input[type=number] {
+    width: 4rem;
+}
+
+.analysis-pane {
+    right: 1.3rem;
+}
+
+.search-pane {
+    right: 0rem;
+}
+
+.search-pane input {
+    display: table-cell;
+    vertical-align: middle;
+    outline: none;
+    border: none;
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    padding: 0.2rem;
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.search-pane .repositories {
+    display: table-cell;
+    vertical-align: middle;
+    padding: 0;
+}
+
+.search-pane input:focus {
+    background-color: rgb(249, 242, 228);
+}
+
+.chart-pane .body {
+    position: relative;
+    width: 100%;
+    height: 18rem;
+}
+.chart-pane .svg-container {
+    width: auto;
+    height: 100%;
+}
+.chart-pane .svg-container {
+    margin-right: 25rem;
+}
+
+.selection-toolbar {
+    display: inline-block;
+    background: white;
+    border: solid 1px #d9d9d9;
+    border-radius: 0.3rem;
+    z-index: 10;
+    position: absolute;
+    margin-top: -2rem;
+    margin-left: 0.5rem;
+    white-space: nowrap;
+}
+
+.selection-toolbar .button {
+    display: block;
+    float: left;
+    width: 1rem;
+    height: 1rem;
+    padding: 0.2rem;
+    margin: 0;
+    border-left: solid 1px #bbb;
+}
+
+.selection-toolbar .button:first-child {
+    border-left: none;
+}
+
+.selection-toolbar .button svg {
+    stroke: #666;
+    fill: #666;
+}
+
+.chart-pane .details {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 25rem;
+    height: 100%;
+    border-left: solid 1px #bbb;
+}
+
+.analysis-chart-pane {
+    height: 15rem;
+}
+
+.analysis-chart-pane table {
+    margin: 0.5rem;
+}
+
+.chart-pane .overview {
+    height: 5rem;
+    border-bottom: solid 0px #eee;
+}
+
+.chart-pane .details-table-container {
+    position: absolute;
+    top: 5rem;
+    width: 100%;
+    height: 13rem;
+    overflow: scroll;
+}
+.analysis-chart-pane .details-table-container {
+    position: static;
+    height: 15rem;
+}
+
+.chart-pane .details-table,
+.chart-pane .commits-viewer {
+    font-size: 0.8rem;
+    width: auto;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.chart-pane .commits-viewer {
+    width: 100%;
+}
+
+.chart-pane .details-table td:last-child {
+    padding-right: 1px;
+}
+
+.chart-pane .details-table th {
+    width: 30%;
+    text-align: right;
+    font-weight: normal;
+    padding: 0;
+}
+
+.chart-pane .details-table td {
+    width: 70%;
+}
+
+.chart-pane .details-table .bugs th {
+    font-weight: bold;
+}
+
+.chart-pane .details-table th:after {
+    content: " : ";
+}
+
+.chart-pane .details-table .status th {
+    visibility: hidden;
+}
+
+.chart-pane .details-table .status td {
+    font-size: 1rem;
+}
+
+.chart-pane .commits-viewer caption {
+    border-top: solid 1px #ccc;
+    font-weight: normal;
+    text-align: left;
+    padding: 0.2rem;
+    padding-left: 0.5rem;
+    cursor: pointer;
+}
+
+.chart-pane .commits-viewer caption:before,
+.analysis-group .results .summary .config-letter:before {
+    display: inline-block;
+    width: 0.8rem;
+    content: "\25BE"; /* Down arrow */
+}
+
+.chart-pane .commits-viewer.hidden caption:before,
+.analysis-group .results .hideRequests .summary .config-letter:before {
+    display: inline-block;
+    width: 0.8rem;
+    content: "\25B8"; /* Right arrow */
+}
+
+.chart-pane .commits {
+    border-bottom: solid 1px #ccc;
+    margin-bottom: 0.2rem;
+}
+
+.chart-pane .commits-viewer {
+    border-collapse: collapse;
+}
+
+.chart-pane .commits-viewer td,
+.chart-pane .commits-viewer th {
+    word-break: break-word;
+    border-top: solid 1px #ccc;
+    padding: 0.2rem;
+}
+
+.chart-pane .commits-viewer th {
+    width: 20%;
+    font-weight: normal;
+}
+
+.chart-pane .commits-viewer td {
+    width: 60%;
+}
+
+.chart-pane .chart {
+    height: 100%;
+}
+
+.chart-pane .chart svg {
+    height: 100%;
+}
+
+.chart {
+    position: relative;
+}
+
+.chart svg {
+    stroke: #666;
+    fill: #000;
+    color: #000;
+    font-size: 0.7rem;
+}
+
+.chart path {
+    fill: none;
+    stroke-width: 1.5px;
+}
+
+.chart .dot {
+    fill: #ccc;
+    stroke: none;
+    r: 2px;
+}
+
+.chart .dot.foreground {
+    fill: #666;
+}
+
+.chart path.area {
+    stroke: none;
+    fill: #ccc;
+    opacity: 0.8;
+}
+.chart path.area.foreground {
+}
+
+.chart path.current {
+    stroke: #ccc;
+}
+
+.chart path.current.foreground {
+    stroke: #999;
+}
+
+.chart path.movingAverage {
+    stroke: #363;
+    fill: none;
+    opacity: 0.8;
+}
+
+.chart path.envelope {
+    stroke: none;
+    fill: #6c6;
+    opacity: 0.4;
+}
+
+.chart path.baseline {
+    stroke: #f66;
+}
+.chart-pane .status .worse,
+.dashboard-status .worse {
+    color: #c33;
+}
+
+.chart path.target {
+    stroke: #66f;
+}
+.chart-pane .status .better,
+.dashboard-status .better {
+    color: #33c;
+}
+
+.dashboard-status .status-label {
+    margin-left: 1rem;
+}
+
+.chart .axis,
+.chart .domain {
+  fill: none;
+  stroke-width: 1px;
+  stroke: #ddd;
+  color: #000;
+  shape-rendering: crispEdges;
+}
+
+.chart .domain {
+    stroke: none;
+}
+
+.chart .current-item {
+    stroke: #f93;
+    stroke-width: 2px;
+    fill: #f93;
+}
+
+.chart .highlight {
+    stroke: #f93;
+    stroke-width: 2px;
+    fill: none;
+    r: 3.6px;
+}
+
+.chart .extent {
+    stroke: #f93;
+    stroke-width: 1px;
+    fill: #9c6;
+    fill-opacity: .125;
+    shape-rendering: crispEdges;
+}
+
+.chart .axis text {
+    fill: #333;
+    stroke: none;
+}
+
+.chart .axis.interactive text {
+    cursor: pointer;
+}
+
+.chart .rangeBar {
+    display: block;
+    background-color: #fc6;
+    position: absolute;
+}
+
+.chart .rangeBar.testingRange {
+    background-color: #333;
+}
+
+.chart-pane.in-charts {
+    margin-bottom: 2.5rem;
+}
+
+.alternative-pane-actions ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    left: 0.5rem;
+}
+
+.alternative-pane-actions li {
+    color: #666;
+    font-size: 0.8rem;
+    border: solid 1px #bbb;
+    border-top: none;
+    border-bottom-left-radius: 0.3rem;
+    border-bottom-right-radius: 0.3rem;
+    float: left;
+    list-style: none;
+    margin: 0;
+    margin-right: 0.2rem;
+    padding: 0.2rem 0.4rem;
+}
+
+.alternative-pane-actions li:hover {
+    background-color: rgba(204, 153, 51, 0.1);
+    padding-top: 0.5rem;
+}
+
+.alternative-pane-actions li a {
+    text-decoration: none;
+    color: inherit;
+}

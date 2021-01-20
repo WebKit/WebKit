@@ -1,0 +1,10 @@
+This test checks that calling `scheduleLayout()` multiple times with the same function yields a single call to that function.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS numberOfCalls is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<iframe></iframe>
+<script>
+description("This test should create a Headers, override the Headers property and try creating new Headers from it.");
+
+let array = [ [ 'hello', 'world' ] ];
+var headers = new Headers(array);
+shouldBeEqualToString("headers.get('hello')", "world");
+
+var OldHeaders = Headers;
+
+headers.constructor = null;
+Headers = {};
+window.Headers = {};
+
+var newHeaders = new OldHeaders(headers);
+shouldBeEqualToString("newHeaders.get('hello')", "world");
+
+var response = new Response("", {headers: headers});
+shouldBeEqualToString("response.headers.get('hello')", "world");
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

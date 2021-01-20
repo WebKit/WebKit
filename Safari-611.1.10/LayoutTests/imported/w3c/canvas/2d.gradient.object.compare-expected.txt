@@ -1,0 +1,4 @@
+2d.gradient.object.compare
+Spec references: 2d.gradient.object
+Actual output:
+Passed

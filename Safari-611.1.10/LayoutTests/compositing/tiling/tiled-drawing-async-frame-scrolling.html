@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Check whether scrollable iframes have tile backing</title>
+    <script>
+        if (window.internals)
+            window.internals.settings.setAsyncFrameScrollingEnabled(true);
+
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function doTest()
+        {
+            if (window.internals && window.testRunner) {
+                document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES | internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+                testRunner.notifyDone();
+            }
+        }
+
+	var frameToLoadCount = 3;
+	function newFrameLoaded() {
+	    frameToLoadCount--;
+	    if (frameToLoadCount === 0)
+	        doTest();
+        }
+    </script>
+    <style>
+        frame {
+            width: 200px;
+            height: 100px;
+        }
+    </style>
+  </head>
+  <body>
+    <iframe onload="newFrameLoaded()" scrolling="yes" srcdoc="<html style='
+            background: transparent;
+            height: 300px; width: 400px;'></html>"></iframe>
+    <iframe onload="newFrameLoaded()" scrolling="yes" srcdoc="<html style='
+            background: #ABCDEF;
+            height: 300px; width: 400px;'></html>"></iframe>
+    <iframe onload="newFrameLoaded()" scrolling="yes" srcdoc="<html style='
+            background-image: linear-gradient(45deg, black, white);
+            background-attachment: fixed;
+	    height: 300px; width: 400px;'></html>"></iframe>
+    <pre id="layers">Layer tree goes here</pre>
+  </body>
+</html>

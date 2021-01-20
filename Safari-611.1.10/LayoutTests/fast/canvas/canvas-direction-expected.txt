@@ -1,0 +1,16 @@
+Tests that canvas 2d context supports 'direction' attribute: PASS
+Tests that context.direction is 'ltr' with parent element having unspecified direction: PASS
+Tests that context.direction is 'rtl' with parent element having direction as rtl: PASS
+Tests that context.direction is overridden by 'rtl' with parent element having unspecified direction: PASS
+Tests that context.direction is overridden by 'ltr' with parent element having direction as rtl: PASS
+Tests that context.direction is overridden by 'inherit' with parent element having unspecified direction: PASS
+Tests that context.direction is overridden by 'inherit' with parent element having direction as rtl: PASS
+Tests that change in element's dir attribute is reflected in context.direction as rtl: PASS
+Tests that change in element's dir attribute is reflected in context.direction as ltr: PASS
+Tests that context.direction reflects the valid direction after save/restore context operations: PASS
+Tests that context.reset() sets the context.direction to ltr: PASS
+Tests that context.reset() sets the context.direction to rtl: PASS
+Tests that invalid direction value RTL has no effect on the context.direction: PASS
+Tests that invalid direction value LTR has no effect on the context.direction: PASS
+Tests that invalid direction value INHERIT has no effect on the context.direction: PASS
+

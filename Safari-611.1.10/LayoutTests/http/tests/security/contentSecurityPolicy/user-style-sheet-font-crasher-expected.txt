@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/example_font.woff because it does not appear in the font-src directive of the Content Security Policy.
+Blocked access to external URL http://webkit.org/report
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/example_font.woff because it does not appear in the font-src directive of the Content Security Policy.
+Blocked access to external URL http://webkit.org/report
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/example_font.woff because it does not appear in the font-src directive of the Content Security Policy.
+Blocked access to external URL http://webkit.org/report
+The iframe below triggers a violation report creating the initial empty document. It should not crash the web process.
+

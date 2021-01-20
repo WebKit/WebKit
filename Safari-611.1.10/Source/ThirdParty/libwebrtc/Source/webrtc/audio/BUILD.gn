@@ -1,0 +1,306 @@
+# Copyright (c) 2015 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../webrtc.gni")
+if (is_android) {
+  import("//build/config/android/config.gni")
+  import("//build/config/android/rules.gni")
+}
+
+rtc_library("audio") {
+  sources = [
+    "audio_level.cc",
+    "audio_level.h",
+    "audio_receive_stream.cc",
+    "audio_receive_stream.h",
+    "audio_send_stream.cc",
+    "audio_send_stream.h",
+    "audio_state.cc",
+    "audio_state.h",
+    "audio_transport_impl.cc",
+    "audio_transport_impl.h",
+    "channel_receive.cc",
+    "channel_receive.h",
+    "channel_receive_frame_transformer_delegate.cc",
+    "channel_receive_frame_transformer_delegate.h",
+    "channel_send.cc",
+    "channel_send.h",
+    "channel_send_frame_transformer_delegate.cc",
+    "channel_send_frame_transformer_delegate.h",
+    "conversion.h",
+    "null_audio_poller.cc",
+    "null_audio_poller.h",
+    "remix_resample.cc",
+    "remix_resample.h",
+  ]
+
+  deps = [
+    "../api:array_view",
+    "../api:call_api",
+    "../api:frame_transformer_interface",
+    "../api:function_view",
+    "../api:rtp_headers",
+    "../api:rtp_parameters",
+    "../api:scoped_refptr",
+    "../api:transport_api",
+    "../api/audio:aec3_factory",
+    "../api/audio:audio_frame_api",
+    "../api/audio:audio_mixer_api",
+    "../api/audio_codecs:audio_codecs_api",
+    "../api/crypto:frame_decryptor_interface",
+    "../api/crypto:frame_encryptor_interface",
+    "../api/crypto:options",
+    "../api/neteq:neteq_api",
+    "../api/rtc_event_log",
+    "../api/task_queue",
+    "../api/transport/rtp:rtp_source",
+    "../call:audio_sender_interface",
+    "../call:bitrate_allocator",
+    "../call:call_interfaces",
+    "../call:rtp_interfaces",
+    "../common_audio",
+    "../common_audio:common_audio_c",
+    "../logging:rtc_event_audio",
+    "../logging:rtc_stream_config",
+    "../modules/audio_coding",
+    "../modules/audio_coding:audio_coding_module_typedefs",
+    "../modules/audio_coding:audio_encoder_cng",
+    "../modules/audio_coding:audio_network_adaptor_config",
+    "../modules/audio_coding:red",
+    "../modules/audio_device",
+    "../modules/audio_processing",
+    "../modules/audio_processing:api",
+    "../modules/audio_processing:audio_frame_proxies",
+    "../modules/audio_processing:rms_level",
+    "../modules/pacing",
+    "../modules/remote_bitrate_estimator",
+    "../modules/rtp_rtcp",
+    "../modules/rtp_rtcp:rtp_rtcp_format",
+    "../modules/utility",
+    "../rtc_base",
+    "../rtc_base:audio_format_to_string",
+    "../rtc_base:checks",
+    "../rtc_base:rate_limiter",
+    "../rtc_base:rtc_base_approved",
+    "../rtc_base:rtc_task_queue",
+    "../rtc_base:safe_minmax",
+    "../rtc_base/experiments:field_trial_parser",
+    "../rtc_base/synchronization:mutex",
+    "../rtc_base/synchronization:sequence_checker",
+    "../rtc_base/system:no_unique_address",
+    "../rtc_base/task_utils:to_queued_task",
+    "../system_wrappers",
+    "../system_wrappers:field_trial",
+    "../system_wrappers:metrics",
+    "utility:audio_frame_operations",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+if (rtc_include_tests) {
+  rtc_library("audio_end_to_end_test") {
+    testonly = true
+
+    sources = [
+      "test/audio_end_to_end_test.cc",
+      "test/audio_end_to_end_test.h",
+    ]
+    deps = [
+      ":audio",
+      "../api:simulated_network_api",
+      "../api/task_queue",
+      "../call:fake_network",
+      "../call:simulated_network",
+      "../system_wrappers",
+      "../test:test_common",
+      "../test:test_support",
+    ]
+  }
+
+  rtc_library("audio_tests") {
+    testonly = true
+
+    sources = [
+      "audio_receive_stream_unittest.cc",
+      "audio_send_stream_tests.cc",
+      "audio_send_stream_unittest.cc",
+      "audio_state_unittest.cc",
+      "channel_receive_frame_transformer_delegate_unittest.cc",
+      "channel_send_frame_transformer_delegate_unittest.cc",
+      "mock_voe_channel_proxy.h",
+      "remix_resample_unittest.cc",
+      "test/audio_stats_test.cc",
+    ]
+    deps = [
+      ":audio",
+      ":audio_end_to_end_test",
+      "../api:libjingle_peerconnection_api",
+      "../api:mock_audio_mixer",
+      "../api:mock_frame_decryptor",
+      "../api:mock_frame_encryptor",
+      "../api/audio:audio_frame_api",
+      "../api/audio_codecs:audio_codecs_api",
+      "../api/audio_codecs/opus:audio_decoder_opus",
+      "../api/audio_codecs/opus:audio_encoder_opus",
+      "../api/rtc_event_log",
+      "../api/task_queue:default_task_queue_factory",
+      "../api/units:time_delta",
+      "../call:mock_bitrate_allocator",
+      "../call:mock_call_interfaces",
+      "../call:mock_rtp_interfaces",
+      "../call:rtp_interfaces",
+      "../call:rtp_receiver",
+      "../call:rtp_sender",
+      "../common_audio",
+      "../logging:mocks",
+      "../modules/audio_device:audio_device_impl",  # For TestAudioDeviceModule
+      "../modules/audio_device:mock_audio_device",
+      "../modules/audio_mixer:audio_mixer_impl",
+      "../modules/audio_mixer:audio_mixer_test_utils",
+      "../modules/audio_processing:audio_processing_statistics",
+      "../modules/audio_processing:mocks",
+      "../modules/pacing",
+      "../modules/rtp_rtcp:mock_rtp_rtcp",
+      "../modules/rtp_rtcp:rtp_rtcp_format",
+      "../modules/utility",
+      "../rtc_base:checks",
+      "../rtc_base:rtc_base_approved",
+      "../rtc_base:rtc_base_tests_utils",
+      "../rtc_base:safe_compare",
+      "../rtc_base:task_queue_for_test",
+      "../rtc_base:timeutils",
+      "../system_wrappers",
+      "../test:audio_codec_mocks",
+      "../test:field_trial",
+      "../test:mock_frame_transformer",
+      "../test:mock_transformable_frame",
+      "../test:mock_transport",
+      "../test:rtp_test_utils",
+      "../test:test_common",
+      "../test:test_support",
+      "utility:utility_tests",
+      "//testing/gtest",
+    ]
+  }
+
+  if (rtc_enable_protobuf) {
+    rtc_test("low_bandwidth_audio_test") {
+      testonly = true
+
+      sources = [
+        "test/low_bandwidth_audio_test.cc",
+        "test/low_bandwidth_audio_test_flags.cc",
+        "test/pc_low_bandwidth_audio_test.cc",
+      ]
+
+      deps = [
+        ":audio_end_to_end_test",
+        "../api:create_network_emulation_manager",
+        "../api:create_peerconnection_quality_test_fixture",
+        "../api:network_emulation_manager_api",
+        "../api:peer_connection_quality_test_fixture_api",
+        "../api:simulated_network_api",
+        "../api:time_controller",
+        "../call:simulated_network",
+        "../common_audio",
+        "../system_wrappers",
+        "../test:fileutils",
+        "../test:perf_test",
+        "../test:test_common",
+        "../test:test_main",
+        "../test:test_support",
+        "../test/pc/e2e:network_quality_metrics_reporter",
+        "//testing/gtest",
+        "//third_party/abseil-cpp/absl/flags:flag",
+      ]
+      if (is_android) {
+        deps += [ "//testing/android/native_test:native_test_native_code" ]
+      }
+      data = [
+        "../resources/voice_engine/audio_tiny16.wav",
+        "../resources/voice_engine/audio_tiny48.wav",
+      ]
+    }
+
+    group("low_bandwidth_audio_perf_test") {
+      testonly = true
+
+      deps = [
+        ":low_bandwidth_audio_test",
+        "//third_party/catapult/tracing/tracing/proto:histogram_proto",
+        "//third_party/protobuf:py_proto_runtime",
+      ]
+
+      data = [
+        "test/low_bandwidth_audio_test.py",
+        "../resources/voice_engine/audio_tiny16.wav",
+        "../resources/voice_engine/audio_tiny48.wav",
+        "${root_out_dir}/pyproto/tracing/tracing/proto/histogram_pb2.py",
+      ]
+
+      # TODO(http://crbug.com/1029452): Create a cleaner target with just the
+      # tracing python code. We don't need Polymer for instance.
+      data_deps = [ "//third_party/catapult/tracing:convert_chart_json" ]
+
+      if (is_win) {
+        data += [ "${root_out_dir}/low_bandwidth_audio_test.exe" ]
+      } else {
+        data += [ "${root_out_dir}/low_bandwidth_audio_test" ]
+      }
+
+      if (is_linux || is_chromeos || is_android) {
+        data += [
+          "../tools_webrtc/audio_quality/linux/PolqaOem64",
+          "../tools_webrtc/audio_quality/linux/pesq",
+        ]
+      }
+      if (is_win) {
+        data += [
+          "../tools_webrtc/audio_quality/win/PolqaOem64.dll",
+          "../tools_webrtc/audio_quality/win/PolqaOem64.exe",
+          "../tools_webrtc/audio_quality/win/pesq.exe",
+          "../tools_webrtc/audio_quality/win/vcomp120.dll",
+        ]
+      }
+      if (is_mac) {
+        data += [ "../tools_webrtc/audio_quality/mac/pesq" ]
+      }
+
+      write_runtime_deps = "${root_out_dir}/${target_name}.runtime_deps"
+    }
+  }
+
+  rtc_library("audio_perf_tests") {
+    testonly = true
+
+    sources = [
+      "test/audio_bwe_integration_test.cc",
+      "test/audio_bwe_integration_test.h",
+    ]
+    deps = [
+      "../api:simulated_network_api",
+      "../api/task_queue",
+      "../call:fake_network",
+      "../call:simulated_network",
+      "../common_audio",
+      "../rtc_base:rtc_base_approved",
+      "../rtc_base:task_queue_for_test",
+      "../system_wrappers",
+      "../test:field_trial",
+      "../test:fileutils",
+      "../test:test_common",
+      "../test:test_main",
+      "../test:test_support",
+      "//testing/gtest",
+    ]
+
+    data = [ "//resources/voice_engine/audio_dtx16.wav" ]
+  }
+}

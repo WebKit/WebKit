@@ -1,0 +1,39 @@
+<html>
+<head>
+<script src=../editing.js language="JavaScript" type="text/JavaScript"></script>
+<script>
+
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+
+function log(message) {
+    var console = document.getElementById("console");
+    var li = document.createElement("li");
+    var text = document.createTextNode(message);
+    li.appendChild(text);
+    console.appendChild(li);
+}
+
+function editingTest() {
+    var d = document.getElementById("test");
+    var html = d.innerHTML.toLowerCase();
+    
+    selectAllCommand();
+    deleteCommand();
+    insertHTMLCommand(html);
+    
+    log(d.innerHTML);
+}
+</script>
+</head>
+
+<body>
+<p>This is a test of execCommand(insertHTML, ...).  The contents of the editable div below should be the same before and after the test.</p>
+<div id="test" contenteditable="true">hello<table style="display:inline" border=1><tr><td>1</td><td>2</td></tr></table><b>world</b>!</div>
+<ul id="console"></ul>
+<script>
+runEditingTest();
+</script>
+</body>
+
+</html>

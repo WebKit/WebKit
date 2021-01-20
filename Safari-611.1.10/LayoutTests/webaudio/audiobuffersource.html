@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<!--
+See if we can load an AudioBuffer, create an AudioBufferSourceNode, attach the buffer to it, then play it.
+-->
+
+<html>
+<head>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+<script type="text/javascript" src="resources/buffer-loader.js"></script>
+
+<script>
+
+window.onload = init;
+
+var sampleRate = 44100.0;
+var lengthInSeconds = 2;
+
+var context = 0;
+var bufferLoader = 0;
+
+function init() {
+    if (!window.testRunner)
+        return;
+        
+    // Create offline audio context.
+    context = new OfflineAudioContext(2, sampleRate * lengthInSeconds, sampleRate);
+    
+    bufferLoader = new BufferLoader(
+        context,
+        [
+            "resources/hyper-reality/br-jam-loop.wav",
+        ],
+        finishedLoading
+    );
+    
+    bufferLoader.load();
+    testRunner.waitUntilDone();
+}
+
+function finishedLoading(bufferList) {
+    var bufferSource = context.createBufferSource();
+    bufferSource.buffer = bufferList[0];
+    
+    bufferSource.connect(context.destination);
+    bufferSource.start(0);
+    
+    context.oncomplete = finishAudioTest;
+    context.startRendering();    
+}
+
+</script>
+</head>
+<body>
+</body>
+</html>

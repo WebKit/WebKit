@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test passes if it does not crash.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    if (testRunner.setShouldDecideNavigationPolicyAfterDelay)
+        testRunner.setShouldDecideNavigationPolicyAfterDelay(true);
+    if (testRunner.setShouldDecideResponsePolicyAfterDelay)
+        testRunner.setShouldDecideResponsePolicyAfterDelay(true);
+}
+function createFrame(url) {
+    return new Promise((resolve) => {
+        let frame = document.createElement('iframe');
+        frame.src = url;
+        frame.onload = function() { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+}
+
+createFrame("/cache/resources/cacheable-random-text.php").then(function(frame) {
+    frame.remove();
+    internals.clearMemoryCache();
+    createFrame("/cache/resources/cacheable-random-text.php").then(function(frame) {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,1024 @@
+Test the parsing of :is(selectorList) for querySelector and style.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+3 :is(valid, valid, invalid) selectors
+selector ':is(foobar,foobar,) { }' parsed: YES
+selector ':is(foobar,foobar,    ) { }' parsed: YES
+selector ':is(foobar,foobar,,) { }' parsed: YES
+selector ':is(foobar,foobar,.123class) { }' parsed: YES
+selector ':is(foobar,foobar,#123id) { }' parsed: YES
+selector ':is(foobar,foobar,[]) { }' parsed: YES
+selector ':is(foobar,foobar,()) { }' parsed: YES
+selector ':is(foobar,foobar,)) { }' parsed: NO
+selector ':is(foobar,foobar,{}) { }' parsed: YES
+selector ':is(foobar,foobar,}) { }' parsed: YES
+selector ':is(foobar,foobar,:not() { }' parsed: NO
+selector ':is(foobar,foobar,:is() { }' parsed: NO
+selector ':is(foobar,foobar,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(foobar,.class,) { }' parsed: YES
+selector ':is(foobar,.class,    ) { }' parsed: YES
+selector ':is(foobar,.class,,) { }' parsed: YES
+selector ':is(foobar,.class,.123class) { }' parsed: YES
+selector ':is(foobar,.class,#123id) { }' parsed: YES
+selector ':is(foobar,.class,[]) { }' parsed: YES
+selector ':is(foobar,.class,()) { }' parsed: YES
+selector ':is(foobar,.class,)) { }' parsed: NO
+selector ':is(foobar,.class,{}) { }' parsed: YES
+selector ':is(foobar,.class,}) { }' parsed: YES
+selector ':is(foobar,.class,:not() { }' parsed: NO
+selector ':is(foobar,.class,:is() { }' parsed: NO
+selector ':is(foobar,.class,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(foobar,:last-child,) { }' parsed: YES
+selector ':is(foobar,:last-child,    ) { }' parsed: YES
+selector ':is(foobar,:last-child,,) { }' parsed: YES
+selector ':is(foobar,:last-child,.123class) { }' parsed: YES
+selector ':is(foobar,:last-child,#123id) { }' parsed: YES
+selector ':is(foobar,:last-child,[]) { }' parsed: YES
+selector ':is(foobar,:last-child,()) { }' parsed: YES
+selector ':is(foobar,:last-child,)) { }' parsed: NO
+selector ':is(foobar,:last-child,{}) { }' parsed: YES
+selector ':is(foobar,:last-child,}) { }' parsed: YES
+selector ':is(foobar,:last-child,:not() { }' parsed: NO
+selector ':is(foobar,:last-child,:is() { }' parsed: NO
+selector ':is(foobar,:last-child,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(foobar,::first-letter,) { }' parsed: YES
+selector ':is(foobar,::first-letter,    ) { }' parsed: YES
+selector ':is(foobar,::first-letter,,) { }' parsed: YES
+selector ':is(foobar,::first-letter,.123class) { }' parsed: YES
+selector ':is(foobar,::first-letter,#123id) { }' parsed: YES
+selector ':is(foobar,::first-letter,[]) { }' parsed: YES
+selector ':is(foobar,::first-letter,()) { }' parsed: YES
+selector ':is(foobar,::first-letter,)) { }' parsed: NO
+selector ':is(foobar,::first-letter,{}) { }' parsed: YES
+selector ':is(foobar,::first-letter,}) { }' parsed: YES
+selector ':is(foobar,::first-letter,:not() { }' parsed: NO
+selector ':is(foobar,::first-letter,:is() { }' parsed: NO
+selector ':is(foobar,::first-letter,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(foobar,::before,) { }' parsed: YES
+selector ':is(foobar,::before,    ) { }' parsed: YES
+selector ':is(foobar,::before,,) { }' parsed: YES
+selector ':is(foobar,::before,.123class) { }' parsed: YES
+selector ':is(foobar,::before,#123id) { }' parsed: YES
+selector ':is(foobar,::before,[]) { }' parsed: YES
+selector ':is(foobar,::before,()) { }' parsed: YES
+selector ':is(foobar,::before,)) { }' parsed: NO
+selector ':is(foobar,::before,{}) { }' parsed: YES
+selector ':is(foobar,::before,}) { }' parsed: YES
+selector ':is(foobar,::before,:not() { }' parsed: NO
+selector ':is(foobar,::before,:is() { }' parsed: NO
+selector ':is(foobar,::before,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(foobar,foobar#id.class,) { }' parsed: YES
+selector ':is(foobar,foobar#id.class,    ) { }' parsed: YES
+selector ':is(foobar,foobar#id.class,,) { }' parsed: YES
+selector ':is(foobar,foobar#id.class,.123class) { }' parsed: YES
+selector ':is(foobar,foobar#id.class,#123id) { }' parsed: YES
+selector ':is(foobar,foobar#id.class,[]) { }' parsed: YES
+selector ':is(foobar,foobar#id.class,()) { }' parsed: YES
+selector ':is(foobar,foobar#id.class,)) { }' parsed: NO
+selector ':is(foobar,foobar#id.class,{}) { }' parsed: YES
+selector ':is(foobar,foobar#id.class,}) { }' parsed: YES
+selector ':is(foobar,foobar#id.class,:not() { }' parsed: NO
+selector ':is(foobar,foobar#id.class,:is() { }' parsed: NO
+selector ':is(foobar,foobar#id.class,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(foobar,#id:empty,) { }' parsed: YES
+selector ':is(foobar,#id:empty,    ) { }' parsed: YES
+selector ':is(foobar,#id:empty,,) { }' parsed: YES
+selector ':is(foobar,#id:empty,.123class) { }' parsed: YES
+selector ':is(foobar,#id:empty,#123id) { }' parsed: YES
+selector ':is(foobar,#id:empty,[]) { }' parsed: YES
+selector ':is(foobar,#id:empty,()) { }' parsed: YES
+selector ':is(foobar,#id:empty,)) { }' parsed: NO
+selector ':is(foobar,#id:empty,{}) { }' parsed: YES
+selector ':is(foobar,#id:empty,}) { }' parsed: YES
+selector ':is(foobar,#id:empty,:not() { }' parsed: NO
+selector ':is(foobar,#id:empty,:is() { }' parsed: NO
+selector ':is(foobar,#id:empty,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(foobar,a b,) { }' parsed: YES
+selector ':is(foobar,a b,    ) { }' parsed: YES
+selector ':is(foobar,a b,,) { }' parsed: YES
+selector ':is(foobar,a b,.123class) { }' parsed: YES
+selector ':is(foobar,a b,#123id) { }' parsed: YES
+selector ':is(foobar,a b,[]) { }' parsed: YES
+selector ':is(foobar,a b,()) { }' parsed: YES
+selector ':is(foobar,a b,)) { }' parsed: NO
+selector ':is(foobar,a b,{}) { }' parsed: YES
+selector ':is(foobar,a b,}) { }' parsed: YES
+selector ':is(foobar,a b,:not() { }' parsed: NO
+selector ':is(foobar,a b,:is() { }' parsed: NO
+selector ':is(foobar,a b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(foobar,a ~ b,) { }' parsed: YES
+selector ':is(foobar,a ~ b,    ) { }' parsed: YES
+selector ':is(foobar,a ~ b,,) { }' parsed: YES
+selector ':is(foobar,a ~ b,.123class) { }' parsed: YES
+selector ':is(foobar,a ~ b,#123id) { }' parsed: YES
+selector ':is(foobar,a ~ b,[]) { }' parsed: YES
+selector ':is(foobar,a ~ b,()) { }' parsed: YES
+selector ':is(foobar,a ~ b,)) { }' parsed: NO
+selector ':is(foobar,a ~ b,{}) { }' parsed: YES
+selector ':is(foobar,a ~ b,}) { }' parsed: YES
+selector ':is(foobar,a ~ b,:not() { }' parsed: NO
+selector ':is(foobar,a ~ b,:is() { }' parsed: NO
+selector ':is(foobar,a ~ b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),) { }' parsed: YES
+selector ':is(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),    ) { }' parsed: YES
+selector ':is(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),,) { }' parsed: YES
+selector ':is(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),.123class) { }' parsed: YES
+selector ':is(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),#123id) { }' parsed: YES
+selector ':is(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),[]) { }' parsed: YES
+selector ':is(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),()) { }' parsed: YES
+selector ':is(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),)) { }' parsed: NO
+selector ':is(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),{}) { }' parsed: YES
+selector ':is(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),}) { }' parsed: YES
+selector ':is(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not() { }' parsed: NO
+selector ':is(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is() { }' parsed: NO
+selector ':is(foobar,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(foobar,:nth-child(even of a, b, c),) { }' parsed: YES
+selector ':is(foobar,:nth-child(even of a, b, c),    ) { }' parsed: YES
+selector ':is(foobar,:nth-child(even of a, b, c),,) { }' parsed: YES
+selector ':is(foobar,:nth-child(even of a, b, c),.123class) { }' parsed: YES
+selector ':is(foobar,:nth-child(even of a, b, c),#123id) { }' parsed: YES
+selector ':is(foobar,:nth-child(even of a, b, c),[]) { }' parsed: YES
+selector ':is(foobar,:nth-child(even of a, b, c),()) { }' parsed: YES
+selector ':is(foobar,:nth-child(even of a, b, c),)) { }' parsed: NO
+selector ':is(foobar,:nth-child(even of a, b, c),{}) { }' parsed: YES
+selector ':is(foobar,:nth-child(even of a, b, c),}) { }' parsed: YES
+selector ':is(foobar,:nth-child(even of a, b, c),:not() { }' parsed: NO
+selector ':is(foobar,:nth-child(even of a, b, c),:is() { }' parsed: NO
+selector ':is(foobar,:nth-child(even of a, b, c),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(foobar,:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(foobar,:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(foobar,:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(foobar,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(foobar,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(foobar,:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(foobar,:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(foobar,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(foobar,:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(foobar,:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(foobar,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(foobar,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(foobar,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(.class,.class,) { }' parsed: YES
+selector ':is(.class,.class,    ) { }' parsed: YES
+selector ':is(.class,.class,,) { }' parsed: YES
+selector ':is(.class,.class,.123class) { }' parsed: YES
+selector ':is(.class,.class,#123id) { }' parsed: YES
+selector ':is(.class,.class,[]) { }' parsed: YES
+selector ':is(.class,.class,()) { }' parsed: YES
+selector ':is(.class,.class,)) { }' parsed: NO
+selector ':is(.class,.class,{}) { }' parsed: YES
+selector ':is(.class,.class,}) { }' parsed: YES
+selector ':is(.class,.class,:not() { }' parsed: NO
+selector ':is(.class,.class,:is() { }' parsed: NO
+selector ':is(.class,.class,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(.class,:last-child,) { }' parsed: YES
+selector ':is(.class,:last-child,    ) { }' parsed: YES
+selector ':is(.class,:last-child,,) { }' parsed: YES
+selector ':is(.class,:last-child,.123class) { }' parsed: YES
+selector ':is(.class,:last-child,#123id) { }' parsed: YES
+selector ':is(.class,:last-child,[]) { }' parsed: YES
+selector ':is(.class,:last-child,()) { }' parsed: YES
+selector ':is(.class,:last-child,)) { }' parsed: NO
+selector ':is(.class,:last-child,{}) { }' parsed: YES
+selector ':is(.class,:last-child,}) { }' parsed: YES
+selector ':is(.class,:last-child,:not() { }' parsed: NO
+selector ':is(.class,:last-child,:is() { }' parsed: NO
+selector ':is(.class,:last-child,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(.class,::first-letter,) { }' parsed: YES
+selector ':is(.class,::first-letter,    ) { }' parsed: YES
+selector ':is(.class,::first-letter,,) { }' parsed: YES
+selector ':is(.class,::first-letter,.123class) { }' parsed: YES
+selector ':is(.class,::first-letter,#123id) { }' parsed: YES
+selector ':is(.class,::first-letter,[]) { }' parsed: YES
+selector ':is(.class,::first-letter,()) { }' parsed: YES
+selector ':is(.class,::first-letter,)) { }' parsed: NO
+selector ':is(.class,::first-letter,{}) { }' parsed: YES
+selector ':is(.class,::first-letter,}) { }' parsed: YES
+selector ':is(.class,::first-letter,:not() { }' parsed: NO
+selector ':is(.class,::first-letter,:is() { }' parsed: NO
+selector ':is(.class,::first-letter,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(.class,::before,) { }' parsed: YES
+selector ':is(.class,::before,    ) { }' parsed: YES
+selector ':is(.class,::before,,) { }' parsed: YES
+selector ':is(.class,::before,.123class) { }' parsed: YES
+selector ':is(.class,::before,#123id) { }' parsed: YES
+selector ':is(.class,::before,[]) { }' parsed: YES
+selector ':is(.class,::before,()) { }' parsed: YES
+selector ':is(.class,::before,)) { }' parsed: NO
+selector ':is(.class,::before,{}) { }' parsed: YES
+selector ':is(.class,::before,}) { }' parsed: YES
+selector ':is(.class,::before,:not() { }' parsed: NO
+selector ':is(.class,::before,:is() { }' parsed: NO
+selector ':is(.class,::before,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(.class,foobar#id.class,) { }' parsed: YES
+selector ':is(.class,foobar#id.class,    ) { }' parsed: YES
+selector ':is(.class,foobar#id.class,,) { }' parsed: YES
+selector ':is(.class,foobar#id.class,.123class) { }' parsed: YES
+selector ':is(.class,foobar#id.class,#123id) { }' parsed: YES
+selector ':is(.class,foobar#id.class,[]) { }' parsed: YES
+selector ':is(.class,foobar#id.class,()) { }' parsed: YES
+selector ':is(.class,foobar#id.class,)) { }' parsed: NO
+selector ':is(.class,foobar#id.class,{}) { }' parsed: YES
+selector ':is(.class,foobar#id.class,}) { }' parsed: YES
+selector ':is(.class,foobar#id.class,:not() { }' parsed: NO
+selector ':is(.class,foobar#id.class,:is() { }' parsed: NO
+selector ':is(.class,foobar#id.class,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(.class,#id:empty,) { }' parsed: YES
+selector ':is(.class,#id:empty,    ) { }' parsed: YES
+selector ':is(.class,#id:empty,,) { }' parsed: YES
+selector ':is(.class,#id:empty,.123class) { }' parsed: YES
+selector ':is(.class,#id:empty,#123id) { }' parsed: YES
+selector ':is(.class,#id:empty,[]) { }' parsed: YES
+selector ':is(.class,#id:empty,()) { }' parsed: YES
+selector ':is(.class,#id:empty,)) { }' parsed: NO
+selector ':is(.class,#id:empty,{}) { }' parsed: YES
+selector ':is(.class,#id:empty,}) { }' parsed: YES
+selector ':is(.class,#id:empty,:not() { }' parsed: NO
+selector ':is(.class,#id:empty,:is() { }' parsed: NO
+selector ':is(.class,#id:empty,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(.class,a b,) { }' parsed: YES
+selector ':is(.class,a b,    ) { }' parsed: YES
+selector ':is(.class,a b,,) { }' parsed: YES
+selector ':is(.class,a b,.123class) { }' parsed: YES
+selector ':is(.class,a b,#123id) { }' parsed: YES
+selector ':is(.class,a b,[]) { }' parsed: YES
+selector ':is(.class,a b,()) { }' parsed: YES
+selector ':is(.class,a b,)) { }' parsed: NO
+selector ':is(.class,a b,{}) { }' parsed: YES
+selector ':is(.class,a b,}) { }' parsed: YES
+selector ':is(.class,a b,:not() { }' parsed: NO
+selector ':is(.class,a b,:is() { }' parsed: NO
+selector ':is(.class,a b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(.class,a ~ b,) { }' parsed: YES
+selector ':is(.class,a ~ b,    ) { }' parsed: YES
+selector ':is(.class,a ~ b,,) { }' parsed: YES
+selector ':is(.class,a ~ b,.123class) { }' parsed: YES
+selector ':is(.class,a ~ b,#123id) { }' parsed: YES
+selector ':is(.class,a ~ b,[]) { }' parsed: YES
+selector ':is(.class,a ~ b,()) { }' parsed: YES
+selector ':is(.class,a ~ b,)) { }' parsed: NO
+selector ':is(.class,a ~ b,{}) { }' parsed: YES
+selector ':is(.class,a ~ b,}) { }' parsed: YES
+selector ':is(.class,a ~ b,:not() { }' parsed: NO
+selector ':is(.class,a ~ b,:is() { }' parsed: NO
+selector ':is(.class,a ~ b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),) { }' parsed: YES
+selector ':is(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),    ) { }' parsed: YES
+selector ':is(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),,) { }' parsed: YES
+selector ':is(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),.123class) { }' parsed: YES
+selector ':is(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),#123id) { }' parsed: YES
+selector ':is(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),[]) { }' parsed: YES
+selector ':is(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),()) { }' parsed: YES
+selector ':is(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),)) { }' parsed: NO
+selector ':is(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),{}) { }' parsed: YES
+selector ':is(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),}) { }' parsed: YES
+selector ':is(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not() { }' parsed: NO
+selector ':is(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is() { }' parsed: NO
+selector ':is(.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(.class,:nth-child(even of a, b, c),) { }' parsed: YES
+selector ':is(.class,:nth-child(even of a, b, c),    ) { }' parsed: YES
+selector ':is(.class,:nth-child(even of a, b, c),,) { }' parsed: YES
+selector ':is(.class,:nth-child(even of a, b, c),.123class) { }' parsed: YES
+selector ':is(.class,:nth-child(even of a, b, c),#123id) { }' parsed: YES
+selector ':is(.class,:nth-child(even of a, b, c),[]) { }' parsed: YES
+selector ':is(.class,:nth-child(even of a, b, c),()) { }' parsed: YES
+selector ':is(.class,:nth-child(even of a, b, c),)) { }' parsed: NO
+selector ':is(.class,:nth-child(even of a, b, c),{}) { }' parsed: YES
+selector ':is(.class,:nth-child(even of a, b, c),}) { }' parsed: YES
+selector ':is(.class,:nth-child(even of a, b, c),:not() { }' parsed: NO
+selector ':is(.class,:nth-child(even of a, b, c),:is() { }' parsed: NO
+selector ':is(.class,:nth-child(even of a, b, c),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(.class,:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(.class,:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(.class,:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(.class,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(.class,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(.class,:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(.class,:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(.class,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(.class,:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(.class,:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(.class,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(.class,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(.class,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:last-child,:last-child,) { }' parsed: YES
+selector ':is(:last-child,:last-child,    ) { }' parsed: YES
+selector ':is(:last-child,:last-child,,) { }' parsed: YES
+selector ':is(:last-child,:last-child,.123class) { }' parsed: YES
+selector ':is(:last-child,:last-child,#123id) { }' parsed: YES
+selector ':is(:last-child,:last-child,[]) { }' parsed: YES
+selector ':is(:last-child,:last-child,()) { }' parsed: YES
+selector ':is(:last-child,:last-child,)) { }' parsed: NO
+selector ':is(:last-child,:last-child,{}) { }' parsed: YES
+selector ':is(:last-child,:last-child,}) { }' parsed: YES
+selector ':is(:last-child,:last-child,:not() { }' parsed: NO
+selector ':is(:last-child,:last-child,:is() { }' parsed: NO
+selector ':is(:last-child,:last-child,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:last-child,::first-letter,) { }' parsed: YES
+selector ':is(:last-child,::first-letter,    ) { }' parsed: YES
+selector ':is(:last-child,::first-letter,,) { }' parsed: YES
+selector ':is(:last-child,::first-letter,.123class) { }' parsed: YES
+selector ':is(:last-child,::first-letter,#123id) { }' parsed: YES
+selector ':is(:last-child,::first-letter,[]) { }' parsed: YES
+selector ':is(:last-child,::first-letter,()) { }' parsed: YES
+selector ':is(:last-child,::first-letter,)) { }' parsed: NO
+selector ':is(:last-child,::first-letter,{}) { }' parsed: YES
+selector ':is(:last-child,::first-letter,}) { }' parsed: YES
+selector ':is(:last-child,::first-letter,:not() { }' parsed: NO
+selector ':is(:last-child,::first-letter,:is() { }' parsed: NO
+selector ':is(:last-child,::first-letter,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:last-child,::before,) { }' parsed: YES
+selector ':is(:last-child,::before,    ) { }' parsed: YES
+selector ':is(:last-child,::before,,) { }' parsed: YES
+selector ':is(:last-child,::before,.123class) { }' parsed: YES
+selector ':is(:last-child,::before,#123id) { }' parsed: YES
+selector ':is(:last-child,::before,[]) { }' parsed: YES
+selector ':is(:last-child,::before,()) { }' parsed: YES
+selector ':is(:last-child,::before,)) { }' parsed: NO
+selector ':is(:last-child,::before,{}) { }' parsed: YES
+selector ':is(:last-child,::before,}) { }' parsed: YES
+selector ':is(:last-child,::before,:not() { }' parsed: NO
+selector ':is(:last-child,::before,:is() { }' parsed: NO
+selector ':is(:last-child,::before,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:last-child,foobar#id.class,) { }' parsed: YES
+selector ':is(:last-child,foobar#id.class,    ) { }' parsed: YES
+selector ':is(:last-child,foobar#id.class,,) { }' parsed: YES
+selector ':is(:last-child,foobar#id.class,.123class) { }' parsed: YES
+selector ':is(:last-child,foobar#id.class,#123id) { }' parsed: YES
+selector ':is(:last-child,foobar#id.class,[]) { }' parsed: YES
+selector ':is(:last-child,foobar#id.class,()) { }' parsed: YES
+selector ':is(:last-child,foobar#id.class,)) { }' parsed: NO
+selector ':is(:last-child,foobar#id.class,{}) { }' parsed: YES
+selector ':is(:last-child,foobar#id.class,}) { }' parsed: YES
+selector ':is(:last-child,foobar#id.class,:not() { }' parsed: NO
+selector ':is(:last-child,foobar#id.class,:is() { }' parsed: NO
+selector ':is(:last-child,foobar#id.class,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:last-child,#id:empty,) { }' parsed: YES
+selector ':is(:last-child,#id:empty,    ) { }' parsed: YES
+selector ':is(:last-child,#id:empty,,) { }' parsed: YES
+selector ':is(:last-child,#id:empty,.123class) { }' parsed: YES
+selector ':is(:last-child,#id:empty,#123id) { }' parsed: YES
+selector ':is(:last-child,#id:empty,[]) { }' parsed: YES
+selector ':is(:last-child,#id:empty,()) { }' parsed: YES
+selector ':is(:last-child,#id:empty,)) { }' parsed: NO
+selector ':is(:last-child,#id:empty,{}) { }' parsed: YES
+selector ':is(:last-child,#id:empty,}) { }' parsed: YES
+selector ':is(:last-child,#id:empty,:not() { }' parsed: NO
+selector ':is(:last-child,#id:empty,:is() { }' parsed: NO
+selector ':is(:last-child,#id:empty,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:last-child,a b,) { }' parsed: YES
+selector ':is(:last-child,a b,    ) { }' parsed: YES
+selector ':is(:last-child,a b,,) { }' parsed: YES
+selector ':is(:last-child,a b,.123class) { }' parsed: YES
+selector ':is(:last-child,a b,#123id) { }' parsed: YES
+selector ':is(:last-child,a b,[]) { }' parsed: YES
+selector ':is(:last-child,a b,()) { }' parsed: YES
+selector ':is(:last-child,a b,)) { }' parsed: NO
+selector ':is(:last-child,a b,{}) { }' parsed: YES
+selector ':is(:last-child,a b,}) { }' parsed: YES
+selector ':is(:last-child,a b,:not() { }' parsed: NO
+selector ':is(:last-child,a b,:is() { }' parsed: NO
+selector ':is(:last-child,a b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:last-child,a ~ b,) { }' parsed: YES
+selector ':is(:last-child,a ~ b,    ) { }' parsed: YES
+selector ':is(:last-child,a ~ b,,) { }' parsed: YES
+selector ':is(:last-child,a ~ b,.123class) { }' parsed: YES
+selector ':is(:last-child,a ~ b,#123id) { }' parsed: YES
+selector ':is(:last-child,a ~ b,[]) { }' parsed: YES
+selector ':is(:last-child,a ~ b,()) { }' parsed: YES
+selector ':is(:last-child,a ~ b,)) { }' parsed: NO
+selector ':is(:last-child,a ~ b,{}) { }' parsed: YES
+selector ':is(:last-child,a ~ b,}) { }' parsed: YES
+selector ':is(:last-child,a ~ b,:not() { }' parsed: NO
+selector ':is(:last-child,a ~ b,:is() { }' parsed: NO
+selector ':is(:last-child,a ~ b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),) { }' parsed: YES
+selector ':is(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),    ) { }' parsed: YES
+selector ':is(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),,) { }' parsed: YES
+selector ':is(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),.123class) { }' parsed: YES
+selector ':is(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),#123id) { }' parsed: YES
+selector ':is(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),[]) { }' parsed: YES
+selector ':is(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),()) { }' parsed: YES
+selector ':is(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),)) { }' parsed: NO
+selector ':is(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),{}) { }' parsed: YES
+selector ':is(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),}) { }' parsed: YES
+selector ':is(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not() { }' parsed: NO
+selector ':is(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is() { }' parsed: NO
+selector ':is(:last-child,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:last-child,:nth-child(even of a, b, c),) { }' parsed: YES
+selector ':is(:last-child,:nth-child(even of a, b, c),    ) { }' parsed: YES
+selector ':is(:last-child,:nth-child(even of a, b, c),,) { }' parsed: YES
+selector ':is(:last-child,:nth-child(even of a, b, c),.123class) { }' parsed: YES
+selector ':is(:last-child,:nth-child(even of a, b, c),#123id) { }' parsed: YES
+selector ':is(:last-child,:nth-child(even of a, b, c),[]) { }' parsed: YES
+selector ':is(:last-child,:nth-child(even of a, b, c),()) { }' parsed: YES
+selector ':is(:last-child,:nth-child(even of a, b, c),)) { }' parsed: NO
+selector ':is(:last-child,:nth-child(even of a, b, c),{}) { }' parsed: YES
+selector ':is(:last-child,:nth-child(even of a, b, c),}) { }' parsed: YES
+selector ':is(:last-child,:nth-child(even of a, b, c),:not() { }' parsed: NO
+selector ':is(:last-child,:nth-child(even of a, b, c),:is() { }' parsed: NO
+selector ':is(:last-child,:nth-child(even of a, b, c),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:last-child,:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(:last-child,:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(:last-child,:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(:last-child,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(:last-child,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(:last-child,:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(:last-child,:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(:last-child,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(:last-child,:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(:last-child,:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(:last-child,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(:last-child,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(:last-child,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::first-letter,::first-letter,) { }' parsed: YES
+selector ':is(::first-letter,::first-letter,    ) { }' parsed: YES
+selector ':is(::first-letter,::first-letter,,) { }' parsed: YES
+selector ':is(::first-letter,::first-letter,.123class) { }' parsed: YES
+selector ':is(::first-letter,::first-letter,#123id) { }' parsed: YES
+selector ':is(::first-letter,::first-letter,[]) { }' parsed: YES
+selector ':is(::first-letter,::first-letter,()) { }' parsed: YES
+selector ':is(::first-letter,::first-letter,)) { }' parsed: NO
+selector ':is(::first-letter,::first-letter,{}) { }' parsed: YES
+selector ':is(::first-letter,::first-letter,}) { }' parsed: YES
+selector ':is(::first-letter,::first-letter,:not() { }' parsed: NO
+selector ':is(::first-letter,::first-letter,:is() { }' parsed: NO
+selector ':is(::first-letter,::first-letter,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::first-letter,::before,) { }' parsed: YES
+selector ':is(::first-letter,::before,    ) { }' parsed: YES
+selector ':is(::first-letter,::before,,) { }' parsed: YES
+selector ':is(::first-letter,::before,.123class) { }' parsed: YES
+selector ':is(::first-letter,::before,#123id) { }' parsed: YES
+selector ':is(::first-letter,::before,[]) { }' parsed: YES
+selector ':is(::first-letter,::before,()) { }' parsed: YES
+selector ':is(::first-letter,::before,)) { }' parsed: NO
+selector ':is(::first-letter,::before,{}) { }' parsed: YES
+selector ':is(::first-letter,::before,}) { }' parsed: YES
+selector ':is(::first-letter,::before,:not() { }' parsed: NO
+selector ':is(::first-letter,::before,:is() { }' parsed: NO
+selector ':is(::first-letter,::before,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::first-letter,foobar#id.class,) { }' parsed: YES
+selector ':is(::first-letter,foobar#id.class,    ) { }' parsed: YES
+selector ':is(::first-letter,foobar#id.class,,) { }' parsed: YES
+selector ':is(::first-letter,foobar#id.class,.123class) { }' parsed: YES
+selector ':is(::first-letter,foobar#id.class,#123id) { }' parsed: YES
+selector ':is(::first-letter,foobar#id.class,[]) { }' parsed: YES
+selector ':is(::first-letter,foobar#id.class,()) { }' parsed: YES
+selector ':is(::first-letter,foobar#id.class,)) { }' parsed: NO
+selector ':is(::first-letter,foobar#id.class,{}) { }' parsed: YES
+selector ':is(::first-letter,foobar#id.class,}) { }' parsed: YES
+selector ':is(::first-letter,foobar#id.class,:not() { }' parsed: NO
+selector ':is(::first-letter,foobar#id.class,:is() { }' parsed: NO
+selector ':is(::first-letter,foobar#id.class,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::first-letter,#id:empty,) { }' parsed: YES
+selector ':is(::first-letter,#id:empty,    ) { }' parsed: YES
+selector ':is(::first-letter,#id:empty,,) { }' parsed: YES
+selector ':is(::first-letter,#id:empty,.123class) { }' parsed: YES
+selector ':is(::first-letter,#id:empty,#123id) { }' parsed: YES
+selector ':is(::first-letter,#id:empty,[]) { }' parsed: YES
+selector ':is(::first-letter,#id:empty,()) { }' parsed: YES
+selector ':is(::first-letter,#id:empty,)) { }' parsed: NO
+selector ':is(::first-letter,#id:empty,{}) { }' parsed: YES
+selector ':is(::first-letter,#id:empty,}) { }' parsed: YES
+selector ':is(::first-letter,#id:empty,:not() { }' parsed: NO
+selector ':is(::first-letter,#id:empty,:is() { }' parsed: NO
+selector ':is(::first-letter,#id:empty,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::first-letter,a b,) { }' parsed: YES
+selector ':is(::first-letter,a b,    ) { }' parsed: YES
+selector ':is(::first-letter,a b,,) { }' parsed: YES
+selector ':is(::first-letter,a b,.123class) { }' parsed: YES
+selector ':is(::first-letter,a b,#123id) { }' parsed: YES
+selector ':is(::first-letter,a b,[]) { }' parsed: YES
+selector ':is(::first-letter,a b,()) { }' parsed: YES
+selector ':is(::first-letter,a b,)) { }' parsed: NO
+selector ':is(::first-letter,a b,{}) { }' parsed: YES
+selector ':is(::first-letter,a b,}) { }' parsed: YES
+selector ':is(::first-letter,a b,:not() { }' parsed: NO
+selector ':is(::first-letter,a b,:is() { }' parsed: NO
+selector ':is(::first-letter,a b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::first-letter,a ~ b,) { }' parsed: YES
+selector ':is(::first-letter,a ~ b,    ) { }' parsed: YES
+selector ':is(::first-letter,a ~ b,,) { }' parsed: YES
+selector ':is(::first-letter,a ~ b,.123class) { }' parsed: YES
+selector ':is(::first-letter,a ~ b,#123id) { }' parsed: YES
+selector ':is(::first-letter,a ~ b,[]) { }' parsed: YES
+selector ':is(::first-letter,a ~ b,()) { }' parsed: YES
+selector ':is(::first-letter,a ~ b,)) { }' parsed: NO
+selector ':is(::first-letter,a ~ b,{}) { }' parsed: YES
+selector ':is(::first-letter,a ~ b,}) { }' parsed: YES
+selector ':is(::first-letter,a ~ b,:not() { }' parsed: NO
+selector ':is(::first-letter,a ~ b,:is() { }' parsed: NO
+selector ':is(::first-letter,a ~ b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::first-letter,:-webkit-any(.selector,#tama,#hanayo,#midoriko),) { }' parsed: YES
+selector ':is(::first-letter,:-webkit-any(.selector,#tama,#hanayo,#midoriko),    ) { }' parsed: YES
+selector ':is(::first-letter,:-webkit-any(.selector,#tama,#hanayo,#midoriko),,) { }' parsed: YES
+selector ':is(::first-letter,:-webkit-any(.selector,#tama,#hanayo,#midoriko),.123class) { }' parsed: YES
+selector ':is(::first-letter,:-webkit-any(.selector,#tama,#hanayo,#midoriko),#123id) { }' parsed: YES
+selector ':is(::first-letter,:-webkit-any(.selector,#tama,#hanayo,#midoriko),[]) { }' parsed: YES
+selector ':is(::first-letter,:-webkit-any(.selector,#tama,#hanayo,#midoriko),()) { }' parsed: YES
+selector ':is(::first-letter,:-webkit-any(.selector,#tama,#hanayo,#midoriko),)) { }' parsed: NO
+selector ':is(::first-letter,:-webkit-any(.selector,#tama,#hanayo,#midoriko),{}) { }' parsed: YES
+selector ':is(::first-letter,:-webkit-any(.selector,#tama,#hanayo,#midoriko),}) { }' parsed: YES
+selector ':is(::first-letter,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not() { }' parsed: NO
+selector ':is(::first-letter,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is() { }' parsed: NO
+selector ':is(::first-letter,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::first-letter,:nth-child(even of a, b, c),) { }' parsed: YES
+selector ':is(::first-letter,:nth-child(even of a, b, c),    ) { }' parsed: YES
+selector ':is(::first-letter,:nth-child(even of a, b, c),,) { }' parsed: YES
+selector ':is(::first-letter,:nth-child(even of a, b, c),.123class) { }' parsed: YES
+selector ':is(::first-letter,:nth-child(even of a, b, c),#123id) { }' parsed: YES
+selector ':is(::first-letter,:nth-child(even of a, b, c),[]) { }' parsed: YES
+selector ':is(::first-letter,:nth-child(even of a, b, c),()) { }' parsed: YES
+selector ':is(::first-letter,:nth-child(even of a, b, c),)) { }' parsed: NO
+selector ':is(::first-letter,:nth-child(even of a, b, c),{}) { }' parsed: YES
+selector ':is(::first-letter,:nth-child(even of a, b, c),}) { }' parsed: YES
+selector ':is(::first-letter,:nth-child(even of a, b, c),:not() { }' parsed: NO
+selector ':is(::first-letter,:nth-child(even of a, b, c),:is() { }' parsed: NO
+selector ':is(::first-letter,:nth-child(even of a, b, c),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::first-letter,:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(::first-letter,:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(::first-letter,:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(::first-letter,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(::first-letter,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(::first-letter,:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(::first-letter,:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(::first-letter,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(::first-letter,:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(::first-letter,:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(::first-letter,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(::first-letter,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(::first-letter,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::before,::before,) { }' parsed: YES
+selector ':is(::before,::before,    ) { }' parsed: YES
+selector ':is(::before,::before,,) { }' parsed: YES
+selector ':is(::before,::before,.123class) { }' parsed: YES
+selector ':is(::before,::before,#123id) { }' parsed: YES
+selector ':is(::before,::before,[]) { }' parsed: YES
+selector ':is(::before,::before,()) { }' parsed: YES
+selector ':is(::before,::before,)) { }' parsed: NO
+selector ':is(::before,::before,{}) { }' parsed: YES
+selector ':is(::before,::before,}) { }' parsed: YES
+selector ':is(::before,::before,:not() { }' parsed: NO
+selector ':is(::before,::before,:is() { }' parsed: NO
+selector ':is(::before,::before,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::before,foobar#id.class,) { }' parsed: YES
+selector ':is(::before,foobar#id.class,    ) { }' parsed: YES
+selector ':is(::before,foobar#id.class,,) { }' parsed: YES
+selector ':is(::before,foobar#id.class,.123class) { }' parsed: YES
+selector ':is(::before,foobar#id.class,#123id) { }' parsed: YES
+selector ':is(::before,foobar#id.class,[]) { }' parsed: YES
+selector ':is(::before,foobar#id.class,()) { }' parsed: YES
+selector ':is(::before,foobar#id.class,)) { }' parsed: NO
+selector ':is(::before,foobar#id.class,{}) { }' parsed: YES
+selector ':is(::before,foobar#id.class,}) { }' parsed: YES
+selector ':is(::before,foobar#id.class,:not() { }' parsed: NO
+selector ':is(::before,foobar#id.class,:is() { }' parsed: NO
+selector ':is(::before,foobar#id.class,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::before,#id:empty,) { }' parsed: YES
+selector ':is(::before,#id:empty,    ) { }' parsed: YES
+selector ':is(::before,#id:empty,,) { }' parsed: YES
+selector ':is(::before,#id:empty,.123class) { }' parsed: YES
+selector ':is(::before,#id:empty,#123id) { }' parsed: YES
+selector ':is(::before,#id:empty,[]) { }' parsed: YES
+selector ':is(::before,#id:empty,()) { }' parsed: YES
+selector ':is(::before,#id:empty,)) { }' parsed: NO
+selector ':is(::before,#id:empty,{}) { }' parsed: YES
+selector ':is(::before,#id:empty,}) { }' parsed: YES
+selector ':is(::before,#id:empty,:not() { }' parsed: NO
+selector ':is(::before,#id:empty,:is() { }' parsed: NO
+selector ':is(::before,#id:empty,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::before,a b,) { }' parsed: YES
+selector ':is(::before,a b,    ) { }' parsed: YES
+selector ':is(::before,a b,,) { }' parsed: YES
+selector ':is(::before,a b,.123class) { }' parsed: YES
+selector ':is(::before,a b,#123id) { }' parsed: YES
+selector ':is(::before,a b,[]) { }' parsed: YES
+selector ':is(::before,a b,()) { }' parsed: YES
+selector ':is(::before,a b,)) { }' parsed: NO
+selector ':is(::before,a b,{}) { }' parsed: YES
+selector ':is(::before,a b,}) { }' parsed: YES
+selector ':is(::before,a b,:not() { }' parsed: NO
+selector ':is(::before,a b,:is() { }' parsed: NO
+selector ':is(::before,a b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::before,a ~ b,) { }' parsed: YES
+selector ':is(::before,a ~ b,    ) { }' parsed: YES
+selector ':is(::before,a ~ b,,) { }' parsed: YES
+selector ':is(::before,a ~ b,.123class) { }' parsed: YES
+selector ':is(::before,a ~ b,#123id) { }' parsed: YES
+selector ':is(::before,a ~ b,[]) { }' parsed: YES
+selector ':is(::before,a ~ b,()) { }' parsed: YES
+selector ':is(::before,a ~ b,)) { }' parsed: NO
+selector ':is(::before,a ~ b,{}) { }' parsed: YES
+selector ':is(::before,a ~ b,}) { }' parsed: YES
+selector ':is(::before,a ~ b,:not() { }' parsed: NO
+selector ':is(::before,a ~ b,:is() { }' parsed: NO
+selector ':is(::before,a ~ b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::before,:-webkit-any(.selector,#tama,#hanayo,#midoriko),) { }' parsed: YES
+selector ':is(::before,:-webkit-any(.selector,#tama,#hanayo,#midoriko),    ) { }' parsed: YES
+selector ':is(::before,:-webkit-any(.selector,#tama,#hanayo,#midoriko),,) { }' parsed: YES
+selector ':is(::before,:-webkit-any(.selector,#tama,#hanayo,#midoriko),.123class) { }' parsed: YES
+selector ':is(::before,:-webkit-any(.selector,#tama,#hanayo,#midoriko),#123id) { }' parsed: YES
+selector ':is(::before,:-webkit-any(.selector,#tama,#hanayo,#midoriko),[]) { }' parsed: YES
+selector ':is(::before,:-webkit-any(.selector,#tama,#hanayo,#midoriko),()) { }' parsed: YES
+selector ':is(::before,:-webkit-any(.selector,#tama,#hanayo,#midoriko),)) { }' parsed: NO
+selector ':is(::before,:-webkit-any(.selector,#tama,#hanayo,#midoriko),{}) { }' parsed: YES
+selector ':is(::before,:-webkit-any(.selector,#tama,#hanayo,#midoriko),}) { }' parsed: YES
+selector ':is(::before,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not() { }' parsed: NO
+selector ':is(::before,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is() { }' parsed: NO
+selector ':is(::before,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::before,:nth-child(even of a, b, c),) { }' parsed: YES
+selector ':is(::before,:nth-child(even of a, b, c),    ) { }' parsed: YES
+selector ':is(::before,:nth-child(even of a, b, c),,) { }' parsed: YES
+selector ':is(::before,:nth-child(even of a, b, c),.123class) { }' parsed: YES
+selector ':is(::before,:nth-child(even of a, b, c),#123id) { }' parsed: YES
+selector ':is(::before,:nth-child(even of a, b, c),[]) { }' parsed: YES
+selector ':is(::before,:nth-child(even of a, b, c),()) { }' parsed: YES
+selector ':is(::before,:nth-child(even of a, b, c),)) { }' parsed: NO
+selector ':is(::before,:nth-child(even of a, b, c),{}) { }' parsed: YES
+selector ':is(::before,:nth-child(even of a, b, c),}) { }' parsed: YES
+selector ':is(::before,:nth-child(even of a, b, c),:not() { }' parsed: NO
+selector ':is(::before,:nth-child(even of a, b, c),:is() { }' parsed: NO
+selector ':is(::before,:nth-child(even of a, b, c),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::before,:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(::before,:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(::before,:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(::before,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(::before,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(::before,:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(::before,:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(::before,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(::before,:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(::before,:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(::before,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(::before,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(::before,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(foobar#id.class,foobar#id.class,) { }' parsed: YES
+selector ':is(foobar#id.class,foobar#id.class,    ) { }' parsed: YES
+selector ':is(foobar#id.class,foobar#id.class,,) { }' parsed: YES
+selector ':is(foobar#id.class,foobar#id.class,.123class) { }' parsed: YES
+selector ':is(foobar#id.class,foobar#id.class,#123id) { }' parsed: YES
+selector ':is(foobar#id.class,foobar#id.class,[]) { }' parsed: YES
+selector ':is(foobar#id.class,foobar#id.class,()) { }' parsed: YES
+selector ':is(foobar#id.class,foobar#id.class,)) { }' parsed: NO
+selector ':is(foobar#id.class,foobar#id.class,{}) { }' parsed: YES
+selector ':is(foobar#id.class,foobar#id.class,}) { }' parsed: YES
+selector ':is(foobar#id.class,foobar#id.class,:not() { }' parsed: NO
+selector ':is(foobar#id.class,foobar#id.class,:is() { }' parsed: NO
+selector ':is(foobar#id.class,foobar#id.class,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(foobar#id.class,#id:empty,) { }' parsed: YES
+selector ':is(foobar#id.class,#id:empty,    ) { }' parsed: YES
+selector ':is(foobar#id.class,#id:empty,,) { }' parsed: YES
+selector ':is(foobar#id.class,#id:empty,.123class) { }' parsed: YES
+selector ':is(foobar#id.class,#id:empty,#123id) { }' parsed: YES
+selector ':is(foobar#id.class,#id:empty,[]) { }' parsed: YES
+selector ':is(foobar#id.class,#id:empty,()) { }' parsed: YES
+selector ':is(foobar#id.class,#id:empty,)) { }' parsed: NO
+selector ':is(foobar#id.class,#id:empty,{}) { }' parsed: YES
+selector ':is(foobar#id.class,#id:empty,}) { }' parsed: YES
+selector ':is(foobar#id.class,#id:empty,:not() { }' parsed: NO
+selector ':is(foobar#id.class,#id:empty,:is() { }' parsed: NO
+selector ':is(foobar#id.class,#id:empty,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(foobar#id.class,a b,) { }' parsed: YES
+selector ':is(foobar#id.class,a b,    ) { }' parsed: YES
+selector ':is(foobar#id.class,a b,,) { }' parsed: YES
+selector ':is(foobar#id.class,a b,.123class) { }' parsed: YES
+selector ':is(foobar#id.class,a b,#123id) { }' parsed: YES
+selector ':is(foobar#id.class,a b,[]) { }' parsed: YES
+selector ':is(foobar#id.class,a b,()) { }' parsed: YES
+selector ':is(foobar#id.class,a b,)) { }' parsed: NO
+selector ':is(foobar#id.class,a b,{}) { }' parsed: YES
+selector ':is(foobar#id.class,a b,}) { }' parsed: YES
+selector ':is(foobar#id.class,a b,:not() { }' parsed: NO
+selector ':is(foobar#id.class,a b,:is() { }' parsed: NO
+selector ':is(foobar#id.class,a b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(foobar#id.class,a ~ b,) { }' parsed: YES
+selector ':is(foobar#id.class,a ~ b,    ) { }' parsed: YES
+selector ':is(foobar#id.class,a ~ b,,) { }' parsed: YES
+selector ':is(foobar#id.class,a ~ b,.123class) { }' parsed: YES
+selector ':is(foobar#id.class,a ~ b,#123id) { }' parsed: YES
+selector ':is(foobar#id.class,a ~ b,[]) { }' parsed: YES
+selector ':is(foobar#id.class,a ~ b,()) { }' parsed: YES
+selector ':is(foobar#id.class,a ~ b,)) { }' parsed: NO
+selector ':is(foobar#id.class,a ~ b,{}) { }' parsed: YES
+selector ':is(foobar#id.class,a ~ b,}) { }' parsed: YES
+selector ':is(foobar#id.class,a ~ b,:not() { }' parsed: NO
+selector ':is(foobar#id.class,a ~ b,:is() { }' parsed: NO
+selector ':is(foobar#id.class,a ~ b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),) { }' parsed: YES
+selector ':is(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),    ) { }' parsed: YES
+selector ':is(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),,) { }' parsed: YES
+selector ':is(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),.123class) { }' parsed: YES
+selector ':is(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),#123id) { }' parsed: YES
+selector ':is(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),[]) { }' parsed: YES
+selector ':is(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),()) { }' parsed: YES
+selector ':is(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),)) { }' parsed: NO
+selector ':is(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),{}) { }' parsed: YES
+selector ':is(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),}) { }' parsed: YES
+selector ':is(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not() { }' parsed: NO
+selector ':is(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is() { }' parsed: NO
+selector ':is(foobar#id.class,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(foobar#id.class,:nth-child(even of a, b, c),) { }' parsed: YES
+selector ':is(foobar#id.class,:nth-child(even of a, b, c),    ) { }' parsed: YES
+selector ':is(foobar#id.class,:nth-child(even of a, b, c),,) { }' parsed: YES
+selector ':is(foobar#id.class,:nth-child(even of a, b, c),.123class) { }' parsed: YES
+selector ':is(foobar#id.class,:nth-child(even of a, b, c),#123id) { }' parsed: YES
+selector ':is(foobar#id.class,:nth-child(even of a, b, c),[]) { }' parsed: YES
+selector ':is(foobar#id.class,:nth-child(even of a, b, c),()) { }' parsed: YES
+selector ':is(foobar#id.class,:nth-child(even of a, b, c),)) { }' parsed: NO
+selector ':is(foobar#id.class,:nth-child(even of a, b, c),{}) { }' parsed: YES
+selector ':is(foobar#id.class,:nth-child(even of a, b, c),}) { }' parsed: YES
+selector ':is(foobar#id.class,:nth-child(even of a, b, c),:not() { }' parsed: NO
+selector ':is(foobar#id.class,:nth-child(even of a, b, c),:is() { }' parsed: NO
+selector ':is(foobar#id.class,:nth-child(even of a, b, c),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(foobar#id.class,:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(foobar#id.class,:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(foobar#id.class,:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(foobar#id.class,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(foobar#id.class,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(foobar#id.class,:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(foobar#id.class,:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(foobar#id.class,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(foobar#id.class,:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(foobar#id.class,:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(foobar#id.class,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(foobar#id.class,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(foobar#id.class,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(#id:empty,#id:empty,) { }' parsed: YES
+selector ':is(#id:empty,#id:empty,    ) { }' parsed: YES
+selector ':is(#id:empty,#id:empty,,) { }' parsed: YES
+selector ':is(#id:empty,#id:empty,.123class) { }' parsed: YES
+selector ':is(#id:empty,#id:empty,#123id) { }' parsed: YES
+selector ':is(#id:empty,#id:empty,[]) { }' parsed: YES
+selector ':is(#id:empty,#id:empty,()) { }' parsed: YES
+selector ':is(#id:empty,#id:empty,)) { }' parsed: NO
+selector ':is(#id:empty,#id:empty,{}) { }' parsed: YES
+selector ':is(#id:empty,#id:empty,}) { }' parsed: YES
+selector ':is(#id:empty,#id:empty,:not() { }' parsed: NO
+selector ':is(#id:empty,#id:empty,:is() { }' parsed: NO
+selector ':is(#id:empty,#id:empty,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(#id:empty,a b,) { }' parsed: YES
+selector ':is(#id:empty,a b,    ) { }' parsed: YES
+selector ':is(#id:empty,a b,,) { }' parsed: YES
+selector ':is(#id:empty,a b,.123class) { }' parsed: YES
+selector ':is(#id:empty,a b,#123id) { }' parsed: YES
+selector ':is(#id:empty,a b,[]) { }' parsed: YES
+selector ':is(#id:empty,a b,()) { }' parsed: YES
+selector ':is(#id:empty,a b,)) { }' parsed: NO
+selector ':is(#id:empty,a b,{}) { }' parsed: YES
+selector ':is(#id:empty,a b,}) { }' parsed: YES
+selector ':is(#id:empty,a b,:not() { }' parsed: NO
+selector ':is(#id:empty,a b,:is() { }' parsed: NO
+selector ':is(#id:empty,a b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(#id:empty,a ~ b,) { }' parsed: YES
+selector ':is(#id:empty,a ~ b,    ) { }' parsed: YES
+selector ':is(#id:empty,a ~ b,,) { }' parsed: YES
+selector ':is(#id:empty,a ~ b,.123class) { }' parsed: YES
+selector ':is(#id:empty,a ~ b,#123id) { }' parsed: YES
+selector ':is(#id:empty,a ~ b,[]) { }' parsed: YES
+selector ':is(#id:empty,a ~ b,()) { }' parsed: YES
+selector ':is(#id:empty,a ~ b,)) { }' parsed: NO
+selector ':is(#id:empty,a ~ b,{}) { }' parsed: YES
+selector ':is(#id:empty,a ~ b,}) { }' parsed: YES
+selector ':is(#id:empty,a ~ b,:not() { }' parsed: NO
+selector ':is(#id:empty,a ~ b,:is() { }' parsed: NO
+selector ':is(#id:empty,a ~ b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),) { }' parsed: YES
+selector ':is(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),    ) { }' parsed: YES
+selector ':is(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),,) { }' parsed: YES
+selector ':is(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),.123class) { }' parsed: YES
+selector ':is(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),#123id) { }' parsed: YES
+selector ':is(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),[]) { }' parsed: YES
+selector ':is(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),()) { }' parsed: YES
+selector ':is(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),)) { }' parsed: NO
+selector ':is(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),{}) { }' parsed: YES
+selector ':is(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),}) { }' parsed: YES
+selector ':is(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not() { }' parsed: NO
+selector ':is(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is() { }' parsed: NO
+selector ':is(#id:empty,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(#id:empty,:nth-child(even of a, b, c),) { }' parsed: YES
+selector ':is(#id:empty,:nth-child(even of a, b, c),    ) { }' parsed: YES
+selector ':is(#id:empty,:nth-child(even of a, b, c),,) { }' parsed: YES
+selector ':is(#id:empty,:nth-child(even of a, b, c),.123class) { }' parsed: YES
+selector ':is(#id:empty,:nth-child(even of a, b, c),#123id) { }' parsed: YES
+selector ':is(#id:empty,:nth-child(even of a, b, c),[]) { }' parsed: YES
+selector ':is(#id:empty,:nth-child(even of a, b, c),()) { }' parsed: YES
+selector ':is(#id:empty,:nth-child(even of a, b, c),)) { }' parsed: NO
+selector ':is(#id:empty,:nth-child(even of a, b, c),{}) { }' parsed: YES
+selector ':is(#id:empty,:nth-child(even of a, b, c),}) { }' parsed: YES
+selector ':is(#id:empty,:nth-child(even of a, b, c),:not() { }' parsed: NO
+selector ':is(#id:empty,:nth-child(even of a, b, c),:is() { }' parsed: NO
+selector ':is(#id:empty,:nth-child(even of a, b, c),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(#id:empty,:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(#id:empty,:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(#id:empty,:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(#id:empty,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(#id:empty,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(#id:empty,:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(#id:empty,:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(#id:empty,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(#id:empty,:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(#id:empty,:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(#id:empty,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(#id:empty,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(#id:empty,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(a b,a b,) { }' parsed: YES
+selector ':is(a b,a b,    ) { }' parsed: YES
+selector ':is(a b,a b,,) { }' parsed: YES
+selector ':is(a b,a b,.123class) { }' parsed: YES
+selector ':is(a b,a b,#123id) { }' parsed: YES
+selector ':is(a b,a b,[]) { }' parsed: YES
+selector ':is(a b,a b,()) { }' parsed: YES
+selector ':is(a b,a b,)) { }' parsed: NO
+selector ':is(a b,a b,{}) { }' parsed: YES
+selector ':is(a b,a b,}) { }' parsed: YES
+selector ':is(a b,a b,:not() { }' parsed: NO
+selector ':is(a b,a b,:is() { }' parsed: NO
+selector ':is(a b,a b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(a b,a ~ b,) { }' parsed: YES
+selector ':is(a b,a ~ b,    ) { }' parsed: YES
+selector ':is(a b,a ~ b,,) { }' parsed: YES
+selector ':is(a b,a ~ b,.123class) { }' parsed: YES
+selector ':is(a b,a ~ b,#123id) { }' parsed: YES
+selector ':is(a b,a ~ b,[]) { }' parsed: YES
+selector ':is(a b,a ~ b,()) { }' parsed: YES
+selector ':is(a b,a ~ b,)) { }' parsed: NO
+selector ':is(a b,a ~ b,{}) { }' parsed: YES
+selector ':is(a b,a ~ b,}) { }' parsed: YES
+selector ':is(a b,a ~ b,:not() { }' parsed: NO
+selector ':is(a b,a ~ b,:is() { }' parsed: NO
+selector ':is(a b,a ~ b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),) { }' parsed: YES
+selector ':is(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),    ) { }' parsed: YES
+selector ':is(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),,) { }' parsed: YES
+selector ':is(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),.123class) { }' parsed: YES
+selector ':is(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),#123id) { }' parsed: YES
+selector ':is(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),[]) { }' parsed: YES
+selector ':is(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),()) { }' parsed: YES
+selector ':is(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),)) { }' parsed: NO
+selector ':is(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),{}) { }' parsed: YES
+selector ':is(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),}) { }' parsed: YES
+selector ':is(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not() { }' parsed: NO
+selector ':is(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is() { }' parsed: NO
+selector ':is(a b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(a b,:nth-child(even of a, b, c),) { }' parsed: YES
+selector ':is(a b,:nth-child(even of a, b, c),    ) { }' parsed: YES
+selector ':is(a b,:nth-child(even of a, b, c),,) { }' parsed: YES
+selector ':is(a b,:nth-child(even of a, b, c),.123class) { }' parsed: YES
+selector ':is(a b,:nth-child(even of a, b, c),#123id) { }' parsed: YES
+selector ':is(a b,:nth-child(even of a, b, c),[]) { }' parsed: YES
+selector ':is(a b,:nth-child(even of a, b, c),()) { }' parsed: YES
+selector ':is(a b,:nth-child(even of a, b, c),)) { }' parsed: NO
+selector ':is(a b,:nth-child(even of a, b, c),{}) { }' parsed: YES
+selector ':is(a b,:nth-child(even of a, b, c),}) { }' parsed: YES
+selector ':is(a b,:nth-child(even of a, b, c),:not() { }' parsed: NO
+selector ':is(a b,:nth-child(even of a, b, c),:is() { }' parsed: NO
+selector ':is(a b,:nth-child(even of a, b, c),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(a b,:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(a b,:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(a b,:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(a b,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(a b,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(a b,:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(a b,:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(a b,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(a b,:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(a b,:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(a b,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(a b,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(a b,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(a ~ b,a ~ b,) { }' parsed: YES
+selector ':is(a ~ b,a ~ b,    ) { }' parsed: YES
+selector ':is(a ~ b,a ~ b,,) { }' parsed: YES
+selector ':is(a ~ b,a ~ b,.123class) { }' parsed: YES
+selector ':is(a ~ b,a ~ b,#123id) { }' parsed: YES
+selector ':is(a ~ b,a ~ b,[]) { }' parsed: YES
+selector ':is(a ~ b,a ~ b,()) { }' parsed: YES
+selector ':is(a ~ b,a ~ b,)) { }' parsed: NO
+selector ':is(a ~ b,a ~ b,{}) { }' parsed: YES
+selector ':is(a ~ b,a ~ b,}) { }' parsed: YES
+selector ':is(a ~ b,a ~ b,:not() { }' parsed: NO
+selector ':is(a ~ b,a ~ b,:is() { }' parsed: NO
+selector ':is(a ~ b,a ~ b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),) { }' parsed: YES
+selector ':is(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),    ) { }' parsed: YES
+selector ':is(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),,) { }' parsed: YES
+selector ':is(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),.123class) { }' parsed: YES
+selector ':is(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),#123id) { }' parsed: YES
+selector ':is(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),[]) { }' parsed: YES
+selector ':is(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),()) { }' parsed: YES
+selector ':is(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),)) { }' parsed: NO
+selector ':is(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),{}) { }' parsed: YES
+selector ':is(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),}) { }' parsed: YES
+selector ':is(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not() { }' parsed: NO
+selector ':is(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is() { }' parsed: NO
+selector ':is(a ~ b,:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(a ~ b,:nth-child(even of a, b, c),) { }' parsed: YES
+selector ':is(a ~ b,:nth-child(even of a, b, c),    ) { }' parsed: YES
+selector ':is(a ~ b,:nth-child(even of a, b, c),,) { }' parsed: YES
+selector ':is(a ~ b,:nth-child(even of a, b, c),.123class) { }' parsed: YES
+selector ':is(a ~ b,:nth-child(even of a, b, c),#123id) { }' parsed: YES
+selector ':is(a ~ b,:nth-child(even of a, b, c),[]) { }' parsed: YES
+selector ':is(a ~ b,:nth-child(even of a, b, c),()) { }' parsed: YES
+selector ':is(a ~ b,:nth-child(even of a, b, c),)) { }' parsed: NO
+selector ':is(a ~ b,:nth-child(even of a, b, c),{}) { }' parsed: YES
+selector ':is(a ~ b,:nth-child(even of a, b, c),}) { }' parsed: YES
+selector ':is(a ~ b,:nth-child(even of a, b, c),:not() { }' parsed: NO
+selector ':is(a ~ b,:nth-child(even of a, b, c),:is() { }' parsed: NO
+selector ':is(a ~ b,:nth-child(even of a, b, c),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(a ~ b,:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(a ~ b,:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(a ~ b,:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(a ~ b,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(a ~ b,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(a ~ b,:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(a ~ b,:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(a ~ b,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(a ~ b,:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(a ~ b,:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(a ~ b,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(a ~ b,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(a ~ b,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),    ) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),,) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),.123class) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),#123id) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),[]) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),()) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),)) { }' parsed: NO
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),{}) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),}) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not() { }' parsed: NO
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),:is() { }' parsed: NO
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),    ) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),,) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),.123class) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),#123id) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),[]) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),()) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),)) { }' parsed: NO
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),{}) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),}) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),:not() { }' parsed: NO
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),:is() { }' parsed: NO
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:nth-child(even of a, b, c),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(:-webkit-any(.selector,#tama,#hanayo,#midoriko),:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:nth-child(even of a, b, c),:nth-child(even of a, b, c),) { }' parsed: YES
+selector ':is(:nth-child(even of a, b, c),:nth-child(even of a, b, c),    ) { }' parsed: YES
+selector ':is(:nth-child(even of a, b, c),:nth-child(even of a, b, c),,) { }' parsed: YES
+selector ':is(:nth-child(even of a, b, c),:nth-child(even of a, b, c),.123class) { }' parsed: YES
+selector ':is(:nth-child(even of a, b, c),:nth-child(even of a, b, c),#123id) { }' parsed: YES
+selector ':is(:nth-child(even of a, b, c),:nth-child(even of a, b, c),[]) { }' parsed: YES
+selector ':is(:nth-child(even of a, b, c),:nth-child(even of a, b, c),()) { }' parsed: YES
+selector ':is(:nth-child(even of a, b, c),:nth-child(even of a, b, c),)) { }' parsed: NO
+selector ':is(:nth-child(even of a, b, c),:nth-child(even of a, b, c),{}) { }' parsed: YES
+selector ':is(:nth-child(even of a, b, c),:nth-child(even of a, b, c),}) { }' parsed: YES
+selector ':is(:nth-child(even of a, b, c),:nth-child(even of a, b, c),:not() { }' parsed: NO
+selector ':is(:nth-child(even of a, b, c),:nth-child(even of a, b, c),:is() { }' parsed: NO
+selector ':is(:nth-child(even of a, b, c),:nth-child(even of a, b, c),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(:nth-child(even of a, b, c),:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

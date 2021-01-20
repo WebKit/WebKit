@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<title>Circle shape-outside on floats center set using keywords and offsets</title>
+<style>
+.container {
+    font: 40px/1 Ahem, sans-serif;
+    line-height: 40px;
+    width: 110px;
+    height: 40px;
+    overflow: hidden;
+    white-space: nowrap;
+    background-color: red;
+    color: green;
+}
+
+.circle {
+    width: 80px;
+    height: 40px;
+    background-color: green;
+}
+
+.circle-right {
+    -webkit-shape-outside: circle(at top 20px left 20px) content-box;
+}
+
+.circle-left {
+    -webkit-shape-outside: circle(at bottom 20px right 20px) content-box;
+}
+</style>
+
+<body>
+    <p>You should see a green rectangle. You shouldn't see any red.</p>
+<div class="container">
+    <div style="float: left; margin-right: 40px;" class="circle circle-left"></div>
+X
+</div>
+
+<div class="container" style="text-align: right">
+<div style="float: right; margin-left: 40px;" class="circle circle-right"></div>
+X
+</div>
+</body>

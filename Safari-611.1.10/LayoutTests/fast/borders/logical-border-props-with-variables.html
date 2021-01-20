@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+        Test for https://bugs.webkit.org/show_bug.cgi?id=211672.  The intention of this test is to ensure variables are
+        usable as values in the `border-block-start`, `border-block-end`, `border-inline-start`, and `border-inline-end`
+        properties.
+    </title>
+    <link rel="author" title="Tyler Wilcock" href="mailto:twilco.o@protonmail.com"/>
+    <meta name="assert" content="There is a 50px solid green border line around all sides of the div." />
+    <style>
+        div {
+            width: 100px;
+            height: 100px;
+            --border-width-px: 50px;
+            --border-style: solid;
+            --border-color: green;
+            border-block-start: var(--border-width-px) var(--border-style) var(--border-color);
+            border-block-end: var(--border-width-px) var(--border-style) var(--border-color);
+            border-inline-start: var(--border-width-px) var(--border-style) var(--border-color);
+            border-inline-end: var(--border-width-px) var(--border-style) var(--border-color);
+        }
+    </style>
+</head>
+<body>
+    <div>
+    </div>
+</body>
+</html>

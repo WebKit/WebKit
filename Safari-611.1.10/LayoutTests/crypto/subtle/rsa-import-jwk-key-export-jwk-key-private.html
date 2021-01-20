@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a JWK RSA-OAEP public key with SHA-1 and then export it in JWK format");
+
+jsTestIsAsync = true;
+
+var jwkKey = {
+    kty: "RSA",
+    alg: "RSA-OAEP",
+    key_ops: ["decrypt", "unwrapKey"],
+    ext: true,
+    n: "v_dgJnIz-_l4noBUwEkMAc-TkUXOBXUb4homc5oLYbVKYee51acuc3m26xK-vPD7VMCwEt17ylKW6jiEIEG50cZxzvCnGn2AiaqzVeqmm79htT93aX74yD6lginrtSSky5pasjxLlIzvEEGCC3zuupFyxXmCztY3AXbfcTscgWgSiNrgNzuuxtG6tbigc9gEPQj8XgSecr8XXKTqVbwQwh8rOao2rHfe_IjiXwElsTaL2sl3IHIrHx6NVbj54_0HCuo5AZ4ZyJ_bkLVBFe4gO9pIlhVuAHr6adlM83-moDeowYKqU4me_2GR_JspZ3Kif-WEwSY6jJuIn7qXtD5jUw",
+    e: "AQAB",
+    d: "DxvDH4OBf-VkjuT-xpt5LHNP4_Egg-FxrlvshtCq8Ke6EPaR87TSvRfpQ5sYE_rLbSI1OWbhJU1Wv1xvWbKSk2YQ8v6RyE30XeFnd-2d60gmwoMaPN1Xazsy_4mZGYqmxbeCR-Di-fAVqKvfNlRA3cIwzEYB-5F0htL6Rwkl9zE8th1DTuBvqBLoTxYZKLnoCN8YdfTUr-CQOghMafCwi3ltAkZqxNNqP9RRSqfkNCqAKK_23jhXS9yZSes3QEO1LBxDNpdumIk4smpO_iFhxd5I68s8JCDogfNQulmErrYbAk6cAUXNMvpua9ipH-uIw8qgakzKfD6lIQmeFoM7MQ",
+    p: "7uKCNGo6nH5Kk6zz6H6n3LAkKr45IQb1CfyLi6Po-6lxHt2a5bi5CkRH7PNUz3QRYWAkYmlpfvoAqzXhOYIUewvcbzyzTUxpv-F1Xbw9KV6nc1LFe8W8733AzLtHBgjimwU9VYgsmV7DJDP7djODjskSGPC9O9rcq7jK_1atFy8",
+    q: "zbhQdf5AX_ssgZALSFhMmvR39c2XJXBLFuAF_c1EBRtch3X-_DgHiZ1srZrdIbnI7yjx7smJPg1Met1pHTgrk9jdlGwkzxFQWgo5XbhergrB7njOtWmkTUlpd01zidk0Nh138KTCchVe7h4JKy7wIomw9256B3ozh0DuP7eIrR0",
+    dp: "C5HAyJUUfZvINNq9fVcU_iUxuzg3QBg8Kd2nTH4FvJp6Ngp5hAKsQ4kHCrzGML3oUZT8bh-40kN9YM1dORHJuCPc6y4_aND4lihvLLj_JU_GQFmT4uiyu86VVdUEHZC0mNlqHQhZUJw8SzaRSSo5huLKE5clMw7ofRCYFEG4ZFU",
+    dq: "axFbpx2N6aZzUndit-Nk81z7Nk4rNUwNeLldxOtZVIMaFFKARErw-Vman3wzTQNBpd-ckxgHOul2_ZdQxuleHNPI9x-VxMORG1uo4bM8a76jkncDtn1mCueDYZlI4dzPBL8vlmpZ3UBsKOgvA2-pgYBCP3UbQ9sBCIrttPHTy60",
+    qi: "o3RcFTK_WfBFceq7ZG3u3imgQkIfRWZorEAKBffBNw0ggh7XjKKNx_dAinTmCE_UlNih-kO9UPTPEI3QyB3i_BIxcm122Ldzot-9Q7H-hsQ6p7AODSlc3xfYNQEG5PjEsDBBG_GlybmDeblhr67s2hDPEmMgAuoXNHxf4QMvmqM",
+};
+var extractable = true;
+
+debug("Importing a key...");
+crypto.subtle.importKey("jwk", jwkKey, {name: "RSA-OAEP", hash: "sha-1"}, extractable, ["decrypt", "unwrapKey"]).then(function(cryptoKey) {
+    debug("Exporting a key...");
+    return crypto.subtle.exportKey("jwk", cryptoKey);
+}).then(function(result) {
+    exportedJwkKey = result;
+
+    shouldBe("exportedJwkKey.kty", "jwkKey.kty");
+    shouldBe("exportedJwkKey.alg", "jwkKey.alg");
+    shouldBe("exportedJwkKey.key_ops", "jwkKey.key_ops");
+    shouldBe("exportedJwkKey.ext", "jwkKey.ext");
+    shouldBe("exportedJwkKey.n", "jwkKey.n");
+    shouldBe("exportedJwkKey.e", "jwkKey.e");
+    // FIXME: Since we actually recaculate the private exponent based on modulus, public exponent, first prime factor, and second prime factor,
+    // this exported private exponent may not match the imported one.
+    // shouldBe("exportedJwkKey.d", "jwkKey.d");
+    shouldBe("exportedJwkKey.p", "jwkKey.p");
+    shouldBe("exportedJwkKey.q", "jwkKey.q");
+    shouldBe("exportedJwkKey.dp", "jwkKey.dp");
+    shouldBe("exportedJwkKey.dq", "jwkKey.dq");
+    shouldBe("exportedJwkKey.qi", "jwkKey.qi");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

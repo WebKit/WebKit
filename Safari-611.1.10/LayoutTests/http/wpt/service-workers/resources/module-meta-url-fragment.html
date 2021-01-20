@@ -1,0 +1,12 @@
+<html>
+<head>
+<script>
+globalThis.metaURLs = [];
+</script>
+<script type="module" src="./module-meta-url.js#fragment"></script>
+<script type="module" src="./module-meta-url.js#1"></script>
+<script type="module" src="./module-meta-url.js#2"></script>
+<script type="module" src="./module-meta-url.js"></script>
+<script type="module">
+window.parent.postMessage(JSON.stringify(globalThis.metaURLs), "*");
+</script>

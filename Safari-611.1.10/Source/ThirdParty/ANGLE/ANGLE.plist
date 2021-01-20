@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>OpenSourceProject</key>
+		<string>ANGLE</string>
+		<key>OpenSourceVersion</key>
+		<string>e4acbac6a5b800152b9b0bfc79d674a54f34a474</string>
+		<key>OpenSourceWebsiteURL</key>
+		<string>http://code.google.com/p/angleproject/</string>
+		<key>OpenSourceSCM</key>
+		<string>git clone https://chromium.googlesource.com/angle/angle &amp;&amp; cd angle &amp;&amp; git checkout e4acbac6a5b800152b9b0bfc79d674a54f34a474</string>
+		<key>OpenSourceImportDate</key>
+		<string>2020-11-12</string>
+		<key>OpenSourceLicense</key>
+		<string>BSD</string>
+		<key>OpenSourceLicenseFile</key>
+		<string>LICENSE</string>
+	</dict>
+</array>
+</plist>

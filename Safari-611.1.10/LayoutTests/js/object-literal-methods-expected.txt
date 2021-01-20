@@ -1,0 +1,82 @@
+basic tests for object literal methods
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS o = { foo() { return 10; } }; did not throw exception.
+PASS o.foo() is 10
+PASS typeof o.foo is 'function'
+PASS o.foo.length is 0
+PASS o.foo.name is 'foo'
+PASS o.foo.toString() is 'function foo() { return 10; }'
+PASS Object.getOwnPropertyDescriptor(o, 'foo').value is o.foo
+PASS Object.getOwnPropertyDescriptor(o, 'foo').enumerable is true
+PASS Object.getOwnPropertyDescriptor(o, 'foo').configurable is true
+PASS Object.getOwnPropertyDescriptor(o, 'foo').writable is true
+PASS o = { add(x, y) { return x + y; } }; did not throw exception.
+PASS o.add(42, -10) is 32
+PASS typeof o.add is 'function'
+PASS o.add.length is 2
+PASS o.add.name is 'add'
+PASS o.add.toString() is 'function add(x, y) { return x + y; }'
+PASS o = { 'add'(a, b, c) { return a + b + c; } }; did not throw exception.
+PASS o.add(1, 2, 3) is 6
+PASS o = { 'a(d)d'(a, b, c) { return a + b + c; } }; did not throw exception.
+PASS o['a(d)d'](1, 2, 3) is 6
+PASS o = { 100() { return 100; } }; did not throw exception.
+PASS o[100]() is 100
+PASS o['100']() is 100
+PASS o = { 100.100() { return 100.100; } }; did not throw exception.
+PASS o[100.1]() is 100.1
+PASS o['100.1']() is 100.1
+PASS o = { 1e3() { return 1e3; } }; did not throw exception.
+PASS o[1e3]() is 1000
+PASS o['1000']() is 1000
+PASS o = { 0x11() { return 0x11; } }; did not throw exception.
+PASS o[0x11]() is 17
+PASS o['17']() is 17
+PASS o = { add([x, y]) { return x + y; } }; did not throw exception.
+PASS o.add([142, -100]) is 42
+PASS o = { foo() { return 10; }, }; did not throw exception.
+PASS o = { foo (  ) { return 10; } }; did not throw exception.
+PASS o = {true(){return true;}}; did not throw exception.
+PASS o = {NaN(){return NaN;}}; did not throw exception.
+PASS o = {eval(){return eval;}}; did not throw exception.
+PASS o = { a:1, foo() { return 10; }, bar() { return 20; }, b: 2 }; did not throw exception.
+PASS o = { a:1, foo() { return 10; }, bar() { return 20; }, b }; did not throw exception.
+PASS o = { a:1, foo() { return 10; }, b: b, bar() { return 20; }, c: 2 }; did not throw exception.
+PASS o = { a:1, foo() { return 10; }, b, bar() { return 20; }, c }; did not throw exception.
+PASS o = {inner:{method(){ return 100; }}}; did not throw exception.
+PASS o.inner.method() is 100
+PASS o = { foo() { return 10; }, foo() { return 20; } }; did not throw exception.
+PASS o.foo() is 20
+PASS o = { get(x, y) { return x + y; } }; did not throw exception.
+PASS o.get('hello', 'world') is 'helloworld'
+PASS o = { set(x, y) { return x + y; } }; did not throw exception.
+PASS o.set('hello', 'world') is 'helloworld'
+PASS ({get x(){ return true; }}).x is true
+PASS ({get 'x'(){ return true; }}).x is true
+PASS ({get 42(){ return true; }})['42'] is true
+PASS !!Object.getOwnPropertyDescriptor({set x(value){}}, 'x').set is true
+PASS !!Object.getOwnPropertyDescriptor({set 'x'(value){}}, 'x').set is true
+PASS !!Object.getOwnPropertyDescriptor({set 42(value){}}, '42').set is true
+PASS ({ (){} }) threw exception SyntaxError: Unexpected token '('. Expected a property name..
+PASS ({ foo(,,,){} }) threw exception SyntaxError: Unexpected token ','. Expected a parameter pattern or a ')' in parameter list..
+PASS ({ foo(a{}, bar(){} }) threw exception SyntaxError: Unexpected token '{'. Expected a ')' or a ',' after a parameter declaration..
+PASS ({ foo(a, b), bar(){} }) threw exception SyntaxError: Unexpected token ','. Expected an opening '{' at the start of a method body..
+PASS ({ foo(a, b) { if }, bar(){} }) threw exception SyntaxError: Unexpected token '}'. Expected '(' to start an 'if' condition..
+PASS ({__proto__: function(){}}) instanceof Function is true
+PASS ({__proto__(){}}) instanceof Function is false
+PASS ({__proto__(){}}).__proto__ instanceof Function is true
+PASS { f() { return super.f(); } }.f() threw exception SyntaxError: Unexpected token '{'.
+PASS new ({ f() { return super(); }.f) threw exception SyntaxError: super is not valid in this context..
+PASS o = { f() { } }; new ({ __proto__: o, f() { return super(); } }).f threw exception SyntaxError: super is not valid in this context..
+PASS ({ f() { return (() => super.f())(); } }).f() threw exception TypeError: super.f is not a function. (In 'super.f()', 'super.f' is undefined).
+PASS o = { f() { return true; } }; ({ __proto__: o, f() { return super.f(); } }).f() is true
+PASS o = { get p() { return true; } }; ({ __proto__: o, get p() { return super.p; } }).p is true
+PASS o = { set p(p2) { } }; ({ __proto__: o, set p(p2) { super.p = p2; } }).p = true is true
+PASS o = { f() { return true; } }; ({ __proto__: o, f() { return (() => super.f())(); } }).f() is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

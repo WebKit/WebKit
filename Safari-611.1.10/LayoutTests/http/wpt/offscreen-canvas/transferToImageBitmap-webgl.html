@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<link rel="help" href="https://html.spec.whatwg.org/#dom-offscreencanvas">
+<canvas id="c1" width="100" height="100"></canvas>
+<canvas id="c2" width="100" height="100"></canvas>
+<canvas id="c3" width="100" height="100"></canvas>
+<canvas id="c4" width="100" height="100"></canvas>
+<script>
+    const offscreenCanvas = new OffscreenCanvas(100, 100);
+    const gl = offscreenCanvas.getContext("webgl");
+
+    gl.clearColor(1, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    const c1 = document.getElementById("c1");
+    const bitmapContext1 = c1.getContext("bitmaprenderer");
+    bitmapContext1.transferFromImageBitmap(offscreenCanvas.transferToImageBitmap());
+
+    gl.clearColor(0, 1, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    const c2 = document.getElementById("c2");
+    const bitmapContext2 = c2.getContext("bitmaprenderer");
+    bitmapContext2.transferFromImageBitmap(offscreenCanvas.transferToImageBitmap());
+
+    gl.clearColor(0, 0, 1, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    const c3 = document.getElementById("c3");
+    const bitmapContext3 = c3.getContext("bitmaprenderer");
+    bitmapContext3.transferFromImageBitmap(offscreenCanvas.transferToImageBitmap());
+
+    const c4 = document.getElementById("c4");
+    const bitmapContext4 = c4.getContext("bitmaprenderer");
+    bitmapContext4.transferFromImageBitmap(offscreenCanvas.transferToImageBitmap());
+</script>

@@ -1,0 +1,10 @@
+Test the correctness of the backtracking optimizations with mixed case tag names in the selector.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelectorAll("CONTAINER.target > CONTAINER > container target").length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

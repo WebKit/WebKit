@@ -1,0 +1,220 @@
+{
+    "tags/tag-1": [
+        {
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601662100, 
+            "branch": "branch-a", 
+            "message": "3rd commit\n", 
+            "identifier": "2.1@branch-a", 
+            "revision": 3
+        }, 
+        {
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601666100, 
+            "branch": "branch-a", 
+            "message": "7th commit\n", 
+            "identifier": "2.2@branch-a", 
+            "revision": 7
+        }, 
+        {
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601668100, 
+            "branch": "tags/tag-1", 
+            "message": "9th commit\n", 
+            "identifier": "2.3@tags/tag-1", 
+            "revision": 9
+        }
+    ], 
+    "tags/tag-2": [
+        {
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601662100, 
+            "branch": "branch-a", 
+            "message": "3rd commit\n", 
+            "identifier": "2.1@branch-a", 
+            "revision": 3
+        }, 
+        {
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601664100, 
+            "branch": "branch-b", 
+            "message": "5th commit\n", 
+            "identifier": "2.2@branch-b", 
+            "revision": 5
+        }, 
+        {
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601667100, 
+            "branch": "branch-b", 
+            "message": "8th commit\n", 
+            "identifier": "2.3@branch-b", 
+            "revision": 8
+        }, 
+        {
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601669100, 
+            "branch": "tags/tag-2", 
+            "message": "10th commit\n", 
+            "identifier": "2.4@tags/tag-2", 
+            "revision": 10
+        }
+    ], 
+    "branch-b": [
+        {
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601662100, 
+            "branch": "branch-a", 
+            "message": "3rd commit\n", 
+            "identifier": "2.1@branch-a", 
+            "revision": 3
+        }, 
+        {
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601664100, 
+            "branch": "branch-b", 
+            "message": "5th commit\n", 
+            "identifier": "2.2@branch-b", 
+            "revision": 5
+        }, 
+        {
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601667100, 
+            "branch": "branch-b", 
+            "message": "8th commit\n", 
+            "identifier": "2.3@branch-b", 
+            "revision": 8
+        }
+    ], 
+    "branch-a": [
+        {
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601662100, 
+            "branch": "branch-a", 
+            "message": "3rd commit\n", 
+            "identifier": "2.1@branch-a", 
+            "revision": 3
+        }, 
+        {
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601666100, 
+            "branch": "branch-a", 
+            "message": "7th commit\n", 
+            "identifier": "2.2@branch-a", 
+            "revision": 7
+        }
+    ], 
+    "trunk": [
+        {
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601660100, 
+            "branch": "trunk", 
+            "message": "1st commit\n", 
+            "identifier": "1@trunk", 
+            "revision": 1
+        }, 
+        {
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601661100, 
+            "branch": "trunk", 
+            "message": "2nd commit\n", 
+            "identifier": "2@trunk", 
+            "revision": 2
+        }, 
+        {
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601663100, 
+            "branch": "trunk", 
+            "message": "4th commit\n", 
+            "identifier": "3@trunk", 
+            "revision": 4
+        }, 
+        {
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601665100, 
+            "branch": "trunk", 
+            "message": "6th commit\n", 
+            "identifier": "4@trunk", 
+            "revision": 6
+        }
+    ]
+}

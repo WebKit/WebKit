@@ -1,0 +1,17 @@
+<html>
+<head>
+<title>CSS4 media query test: prefers-contrast.</title>
+<style type="text/css">
+p { color: black; }
+
+@media (prefers-contrast) {
+    #a { color: green; }
+}
+</style>
+</head>
+<body>
+  <p id="a"></p>
+  <p>Before was: <span id="before">rgb(0, 0, 0)</span> - should be rgb(0, 0, 0)</p>
+  <p>After was: <span id="after">rgb(0, 128, 0)</span> - should be rgb(0, 128, 0)</p>
+</body>
+</html>

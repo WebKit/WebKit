@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+    var loaded = 0;
+</script>
+<link rel=preload referrerpolicy="no-referrer" href="/WebKit/preload/resources/referrer-img.py" as=image type="image/jpeg" onload="++loaded;">
+<script>
+    var t = async_test('Makes sure that preloaded resources take referrer-policy attribute into account.');
+    window.setInterval(t.step_func(function() {
+        function verifyDownloadNumber(url, number) {
+            var absolute_url = new URL(url, window.location.href);
+            assert_equals(performance.getEntriesByName(absolute_url).length, number, url);
+        }
+        if (loaded == 1) {
+            verifyDownloadNumber("/WebKit/preload/resources/referrer-img.py", 1);
+            t.done();
+        }
+    }), 200);
+</script>

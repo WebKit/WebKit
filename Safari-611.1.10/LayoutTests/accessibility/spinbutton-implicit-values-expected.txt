@@ -1,0 +1,21 @@
+Verifies the implicit values for aria-value* are correct for the spinbutton role.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS spinbutton1.minValue <= Number.MIN_SAFE_INTEGER is true
+PASS spinbutton1.intValue is 0
+PASS spinbutton1.maxValue >= Number.MAX_SAFE_INTEGER is true
+PASS spinbutton2.minValue is 1
+PASS spinbutton2.intValue is 0
+PASS spinbutton2.maxValue >= Number.MAX_SAFE_INTEGER is true
+PASS spinbutton3.minValue <= Number.MIN_SAFE_INTEGER is true
+PASS spinbutton3.intValue is 1
+PASS spinbutton3.maxValue >= Number.MAX_SAFE_INTEGER is true
+PASS spinbutton4.minValue <= Number.MIN_SAFE_INTEGER is true
+PASS spinbutton4.intValue is 0
+PASS spinbutton4.maxValue is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

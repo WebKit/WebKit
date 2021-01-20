@@ -1,0 +1,44 @@
+<head>
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+
+<script>
+function log(str) {
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(str));
+    var console = document.getElementById("console");
+    console.appendChild(li);
+}
+
+function assert(bool) {
+    if (!bool)
+        log("Failure");
+    else
+        log("Success");
+}
+</script>
+</head>
+<body>
+<p>This tests queryCommandState for InsertUnorderedList and InsertOrderedList.</p>
+<div id="div" contenteditable="true">foo</div>
+<ol id="console"></ol>
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+var sel = window.getSelection();
+var div = document.getElementById("div");
+sel.setPosition(div, 0);
+
+assert(!document.queryCommandState("InsertUnorderedList"));
+assert(!document.queryCommandState("InsertOrderedList"));
+document.execCommand("InsertUnorderedList");
+assert(document.queryCommandState("InsertUnorderedList"));
+assert(!document.queryCommandState("InsertOrderedList"));
+document.execCommand("InsertUnorderedList");
+document.execCommand("InsertOrderedList");
+assert(!document.queryCommandState("InsertUnorderedList"));
+assert(document.queryCommandState("InsertOrderedList"));
+</script>
+</body>

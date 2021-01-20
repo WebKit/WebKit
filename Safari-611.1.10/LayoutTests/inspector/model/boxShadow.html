@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("WI.BoxShadow");
+
+    suite.addTestCase({
+        name: "WI.BoxShadow.fromString",
+        description: "Test we can detect box shadows from strings.",
+        test() {
+            InspectorTest.expectEqual((new WI.BoxShadow).toString(), "none", `default value should be "none"`);
+            InspectorTest.newline();
+
+            function testGood(string) {
+                let boxShadow = WI.BoxShadow.fromString(string);
+                InspectorTest.assert(boxShadow instanceof WI.BoxShadow, `'${string}' should be detected`);
+                if (boxShadow)
+                    InspectorTest.log(`"${string}" resolves to "${boxShadow.toString()}"`);
+            }
+
+            // offsetX and offsetY
+            testGood("1px 2rem");
+            testGood("red 1px 2rem");
+            testGood("1px red 2rem");
+            testGood("1px 2rem red");
+            testGood("inset 1px 2rem");
+            testGood("1px inset 2rem");
+            testGood("1px 2rem inset");
+            testGood("inset 1px 2rem red");
+            testGood("1px inset 2rem red");
+            testGood("1px 2rem inset red");
+            testGood("1px 2rem red inset");
+            InspectorTest.newline();
+
+            // blurRadius
+            testGood("1px 2rem 3in");
+            testGood("red 1px 2rem 3in");
+            testGood("1px red 2rem 3in");
+            testGood("1px 2rem red 3in");
+            testGood("1px 2rem 3in red");
+            testGood("inset 1px 2rem 3in");
+            testGood("1px inset 2rem 3in");
+            testGood("1px 2rem inset 3in");
+            testGood("1px 2rem 3in inset");
+            testGood("inset 1px 2rem 3in red");
+            testGood("1px inset 2rem 3in red");
+            testGood("1px 2rem inset 3in red");
+            testGood("1px 2rem 3in inset red");
+            testGood("1px 2rem 3in red inset");
+            InspectorTest.newline();
+
+            // spreadRadius
+            testGood("1px 2rem 3in 4q");
+            testGood("red 1px 2rem 3in 4q");
+            testGood("1px red 2rem 3in 4q");
+            testGood("1px 2rem red 3in 4q");
+            testGood("1px 2rem 3in red 4q");
+            testGood("1px 2rem 3in 4q red");
+            testGood("inset 1px 2rem 3in 4q");
+            testGood("1px inset 2rem 3in 4q");
+            testGood("1px 2rem inset 3in 4q");
+            testGood("1px 2rem 3in inset 4q");
+            testGood("1px 2rem 3in 4q inset");
+            testGood("inset 1px 2rem 3in 4q red");
+            testGood("1px inset 2rem 3in 4q red");
+            testGood("1px 2rem inset 3in 4q red");
+            testGood("1px 2rem 3in inset 4q red");
+            testGood("1px 2rem 3in 4q inset red");
+            testGood("1px 2rem 3in 4q red inset");
+            InspectorTest.newline();
+
+            // 0 ignores unit
+            testGood("0 0 0 0 red inset");
+            testGood("0px 0px 0px 0px red inset");
+            testGood("0rem 0rem 0rem 0rem red inset");
+            testGood("0in 0in 0in 0in red inset");
+            testGood("0q 0q 0q 0q red inset");
+            InspectorTest.newline();
+
+            // keywords
+            testGood("none");
+            InspectorTest.newline();
+
+            // color with parenthesis
+            testGood("1px 2rem 3in 4q rgb(11, 12, 13) inset");
+            InspectorTest.newline();
+
+            function testBad(string) {
+                let boxShadow = WI.BoxShadow.fromString(string);
+                InspectorTest.expectNull(boxShadow, `'${string}' should not be detected`);
+            }
+
+            // missing unit
+            testBad("1");
+            InspectorTest.newline();
+
+            // invalid unit
+            testBad("1%");
+            testBad("1px 2%");
+            testBad("1px 2px 3%");
+            testBad("1px 2px 3px 4%");
+            InspectorTest.newline();
+
+            // missing or extra components
+            testBad("1px");
+            testBad("1px 2rem 3in 4q 5pt");
+            testBad("1px 2rem 3in 4q invalid");
+            testBad("1px 2rem 3in 4q red inset extra");
+            testBad("red");
+            testBad("inset");
+            InspectorTest.newline();
+
+            // duplicate components
+            testBad("red red");
+            testBad("inset inset");
+            InspectorTest.newline();
+
+            return true;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for the WI.BoxShadow model object.</p>
+</body>
+</html>

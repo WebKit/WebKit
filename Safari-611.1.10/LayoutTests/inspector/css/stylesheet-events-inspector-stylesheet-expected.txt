@@ -1,0 +1,11 @@
+Test for CSS.styleSheetAdded for Inspector stylesheets.
+
+
+== Running test suite: CSS.StyleSheetEvents.InspectorStyleSheet
+-- Running test case: CheckNoStyleSheets
+PASS: Should be no stylesheets.
+
+-- Running test case: CreateInspectorStyleSheet
+PASS: Should be one stylesheet.
+PASS: StyleSheet origin should be 'inspector'.
+

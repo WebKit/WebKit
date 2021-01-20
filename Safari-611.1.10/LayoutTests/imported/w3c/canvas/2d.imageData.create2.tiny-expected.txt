@@ -1,0 +1,5 @@
+2d.imageData.create2.tiny
+createImageData(sw, sh) works for sizes smaller than one pixel
+Spec references: 2d.imageData.create2.size 2d.imageData.one
+Actual output:
+Passed

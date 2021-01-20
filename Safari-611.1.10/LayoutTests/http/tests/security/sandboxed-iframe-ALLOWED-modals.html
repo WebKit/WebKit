@@ -1,0 +1,25 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<p>This test passes if opening modal dialogs is allowed and no error message is logged in the console.</p>
+<iframe sandbox="allow-scripts allow-modals"
+        src="data:text/html,<script>
+            alert('MESSAGE');
+            </script>"></iframe>
+<iframe sandbox="allow-scripts allow-modals"
+        src="data:text/html,<script>
+            confirm('MESSAGE?');
+            </script>"></iframe>
+<iframe sandbox="allow-scripts allow-modals"
+        src="data:text/html,<script>
+            prompt('MESSAGE:', 'DEFAULT');
+            </script>"></iframe>
+<iframe sandbox="allow-scripts allow-modals"
+        src="data:text/html,<script>
+            print();
+            </script>"></iframe>
+<iframe sandbox="allow-scripts allow-modals"
+        src="data:text/html,<script>
+            document.execCommand('print', true, null);
+            </script>"></iframe>

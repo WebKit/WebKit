@@ -1,0 +1,29 @@
+<html>
+    <head>
+        <script src=../../media-resources/video-test.js></script>
+        <script src=../../media-resources/media-file.js></script>
+        <script>
+            var frame;
+            function loadMediaFrame() 
+            {
+                var movie = findMediaFile('video', 'test');
+                var type = mimeTypeForExtension(movie.split('.').pop());
+                frame = document.createElement('iframe');
+                frame.addEventListener('load', function () {
+                    testExpected("frame.contentDocument.getElementsByTagName('video')[0].error", null);
+                    endTest();
+                });
+                waitForEventAndFail('error');
+                waitForEventAndEnd('canplay');
+                frame.src = 'resources/video-check-useragent.php?name=' + movie + '&type=' + type;
+                document.body.appendChild(frame);
+            }
+        </script>
+    </head>
+
+    <body onload="loadMediaFrame()">
+        <br>
+        Tests that a media document can open a media URL with an ambiguous extension.
+        <br>
+    </body>
+</html>

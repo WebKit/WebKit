@@ -1,0 +1,7 @@
+Clear all Geolocation permissions before running this test. If prompted for permission, please deny.
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT User denies access, check that error callback is called with correct code Test timed out
+

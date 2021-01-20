@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: Ahem;
+    src: url("../../resources/Ahem.ttf");
+}
+
+#expected {
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    font: 20px/1 Ahem;
+    width: 200px;
+    transform: translate(-90px, 90px) rotate(90deg);
+}
+</style>
+</head>
+<body>
+<div id="expected" contenteditable="true"></div>
+<script>
+if (window.internals)
+    internals.setContinuousSpellCheckingEnabled(true);
+
+var expected = document.getElementById("expected");
+expected.focus();
+document.execCommand("InsertText", false, "mispelled");
+document.execCommand("InsertText", false, " "); // Trigger spell checking
+expected.blur();
+</script>
+</body>
+</html>

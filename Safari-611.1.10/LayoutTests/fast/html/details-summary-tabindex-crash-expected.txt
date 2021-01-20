@@ -1,0 +1,4 @@
+This tests calling tabIndex on the summary element inside a details element. WebKit should not hit any assertions.
+
+summary content
+PASS

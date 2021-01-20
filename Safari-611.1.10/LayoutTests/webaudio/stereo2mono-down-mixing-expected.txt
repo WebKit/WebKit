@@ -1,0 +1,9 @@
+This test verifies whether down mixing from stereo to mono will cause assertion error.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Test no ASSERT error.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

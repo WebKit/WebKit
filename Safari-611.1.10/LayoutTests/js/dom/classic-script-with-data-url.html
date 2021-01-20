@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Classic script tags with crossorigin attribute must load data URLs</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script src="data:application/javascript;charset=utf-8,window.noCrossOrigin%20%3D%20true%3B"></script>
+<script crossorigin="anonymous" src="data:application/javascript;charset=utf-8,window.anonymous%20%3D%20true%3B"></script>
+<script crossorigin="use-credentials" src="data:application/javascript;charset=utf-8,window.credentials%20%3D%20true%3B"></script>
+<script>
+
+test(() => {
+    assert_equals(window.noCrossOrigin, true);
+    assert_equals(window.anonymous, true);
+    assert_equals(window.credentials, true);
+}, 'Classic script tags with crossorigin attribute must load data URLs');
+
+</script>
+</body>
+</html>

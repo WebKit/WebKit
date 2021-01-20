@@ -1,0 +1,62 @@
+Test for the Heap.getRemoteObject command.
+
+
+== Running test suite: Heap.getPreview
+-- Running test case: GetPreviewNoSnapshot
+PASS: Should get an error when no snapshot exists.
+PASS: No heap snapshot
+
+-- Running test case: GetPreviewForString
+PASS: Should not have an error creating a snapshot.
+PASS: Should not have an error getting preview.
+STRING: This is the test string.
+
+-- Running test case: GetPreviewForFunction
+PASS: Should not have an error creating a snapshot.
+PASS: Should not have an error getting preview.
+FUNCTION DETAILS: {
+    "location": {
+        "scriptId": "<filtered>",
+        "lineNumber": 10,
+        "columnNumber": 47
+    },
+    "name": "myFunctionName"
+}
+
+-- Running test case: GetPreviewForObject
+PASS: Should not have an error creating a snapshot.
+PASS: Should not have an error getting preview.
+OBJECT PREVIEW: {
+    "type": "object",
+    "description": "Map",
+    "lossless": true,
+    "subtype": "map",
+    "overflow": false,
+    "properties": [],
+    "size": 1,
+    "entries": [
+        {
+            "key": {
+                "type": "string",
+                "description": "key",
+                "lossless": true
+            },
+            "value": {
+                "type": "string",
+                "description": "value",
+                "lossless": true
+            }
+        }
+    ]
+}
+
+-- Running test case: GetPreviewBadIdentifier
+PASS: Should not have an error creating a snapshot.
+PASS: Should get an error when no object for identifier exists.
+PASS: No object for identifier, it may have been collected
+
+-- Running test case: GetRemoteObjectCollectedObject
+PASS: Should not have an error creating a snapshot.
+PASS: Should get an error when object has been collected.
+PASS: No object for identifier, it may have been collected
+

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<table><a><p><script>
+
+let oldBody = document.body;
+oldBody.remove();
+
+let a = oldBody.querySelector('a');
+document.documentElement.appendChild(a);
+/* html
+     + a
+       + p
+         + script */
+
+let iframe = document.createElement('iframe');
+a.firstChild.appendChild(iframe);
+/* html
+     + a
+       + p
+         + script
+         + iframe */
+
+let oldGlobal = iframe.contentWindow;
+
+window.onload = () => {
+    document.documentElement.appendChild(document.createElement('body'));
+    let test = async_test('An iframe removed by the adoption agency algorithm must be unloaded');
+    test.step(() => {
+        assert_not_equals(oldGlobal, iframe.contentWindow);
+    });
+    test.done();
+}
+
+</script></a></p>

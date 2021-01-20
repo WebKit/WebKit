@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (72,188) size 694x294
+    RenderSVGContainer {g} at (0,0) size 0x0
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceMarker {marker} [id="Start"] [markerUnits=strokeWidth] [ref at (0,5)] [angle=auto]
+        RenderSVGPath {path} at (2,0) size 16x15 [fill={[type=SOLID] [color=#008000]}] [data="M 0 0 L 10 5 L 0 10 Z"]
+      RenderSVGResourceMarker {marker} [id="Mid"] [markerUnits=strokeWidth] [ref at (0,5)] [angle=auto]
+        RenderSVGPath {path} at (2,0) size 16x15 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 0 L 10 5 L 0 10 Z"]
+      RenderSVGResourceMarker {marker} [id="End"] [markerUnits=strokeWidth] [ref at (0,5)] [angle=auto]
+        RenderSVGPath {path} at (2,0) size 16x15 [fill={[type=SOLID] [color=#0000FF]}] [data="M 0 0 L 10 5 L 0 10 Z"]
+    RenderSVGContainer {g} at (72,188) size 694x294 [start marker=Start] [middle marker=Mid] [end marker=End]
+      RenderSVGPath {path} at (72,188) size 294x44 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=Start] [middle marker=Mid] [end marker=End] [data="M 50 120 C 70 140 80 100 100 120 C 120 140 130 100 150 120 C 170 140 180 100 200 120"]
+      RenderSVGPath {path} at (72,238) size 294x44 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=Start] [middle marker=Mid] [end marker=End] [data="M 50 150 C 70 170 80 130 100 150 C 120 170 130 130 150 150 C 170 170 180 130 200 150"]
+      RenderSVGPath {path} at (72,368) size 294x64 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=Start] [middle marker=Mid] [end marker=End] [data="M 50 240 C 66.6667 256.667 83.3333 256.667 100 240 C 116.667 223.333 133.333 223.333 150 240 C 166.667 256.667 183.333 256.667 200 240"]
+      RenderSVGPath {path} at (72,418) size 294x64 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=Start] [middle marker=Mid] [end marker=End] [data="M 50 270 C 66.6667 286.667 83.3333 286.667 100 270 C 116.667 253.333 133.333 253.333 150 270 C 166.667 286.667 183.333 286.667 200 270"]
+      RenderSVGPath {path} at (472,188) size 294x44 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=Start] [middle marker=Mid] [end marker=End] [data="M 290 120 C 310 140 320 100 340 120 C 360 140 370 100 390 120 C 410 140 420 100 440 120"]
+      RenderSVGPath {path} at (472,238) size 294x44 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=Start] [middle marker=Mid] [end marker=End] [data="M 290 150 C 310 170 320 130 340 150 C 360 170 370 130 390 150 C 410 170 420 130 440 150"]
+      RenderSVGPath {path} at (472,368) size 294x64 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=Start] [middle marker=Mid] [end marker=End] [data="M 290 240 C 306.667 256.667 323.333 256.667 340 240 C 356.667 223.333 373.333 223.333 390 240 C 406.667 256.667 423.333 256.667 440 240"]
+      RenderSVGPath {path} at (472,418) size 294x64 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=Start] [middle marker=Mid] [end marker=End] [data="M 290 270 C 306.667 286.667 323.333 286.667 340 270 C 356.667 253.333 373.333 253.333 390 270 C 406.667 286.667 423.333 286.667 440 270"]

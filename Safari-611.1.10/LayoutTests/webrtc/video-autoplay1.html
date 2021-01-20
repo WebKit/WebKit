@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing autoplay with getUserMedia</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+        <script src=../media/media-file.js></script>
+        <script src=../media/video-test.js></script>
+    </head>
+    <body>
+        <video id="video1" loop autoplay playsInline></video>
+        <video id="video2" loop autoplay playsInline></video>
+        <script>
+promise_test(async (test) => {
+    if (window.internals)
+        internals.setMediaElementRestrictions(video1, "");
+
+    video1.src = findMediaFile("video", "../media/content/audio-tracks");
+    await video1.play();
+
+    await video1.pause();
+
+    video2.srcObject = await navigator.mediaDevices.getUserMedia({ video : true });
+
+    while (video2.paused)
+        await new Promise(resolve => setTimeout(resolve, 50));
+
+    assert_true(video1.paused, "paused video");
+
+    video1.remove();
+}, "Granting getUserMedia should not start paused video element");
+        </script>
+    </body>
+</html>

@@ -1,0 +1,15 @@
+Tests for the Debugger.scriptParsed messages the frontend receives when enabling the Debugger domain.
+
+
+== Running test suite: Debugger.scriptParsed.enable
+-- Running test case: EnableDebuggerDomainAndCheckInitialScripts
+Debugger Enabled - Initial Scripts Received
+PASS: Should have received some scriptParsed messages.
+PASS: Should find External Script.
+PASS: Should find Inline Script Tag Script.
+PASS: Should find Inline Attribute Event Listener Script.
+PASS: Should find Eval Script.
+PASS: Should find Inspector InjectedScriptSource Script.
+PASS: Should find Inspector CommandLineAPISource Script.
+PASS: Should not receive any unexpected scripts.
+

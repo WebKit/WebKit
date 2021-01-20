@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>correct pointer usage.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.noPointersInStructOrArray = async () => {
+    await checkFail(`
+        struct S { int x; thread int* ptr; }
+        void foo() { }
+    `);
+
+    await checkFail(`
+        typedef T = thread int*;
+        struct S { int x; T ptr; }
+        void foo() { }
+    `);
+
+    await checkFail(`
+        struct S { thread int*[42] arr; }
+        void foo() { }
+    `);
+
+
+    await checkFail(`
+        void foo() {
+            thread int*[42] arr;
+        }
+    `);
+
+    await checkFail(`
+        typedef T = thread int*;
+        void foo() {
+            T[42] arr;
+        }
+    `);
+
+    await checkFail(`
+        typedef T = thread int*[42];
+        void foo() { }
+    `);
+
+    await checkFail(`
+        void foo() {
+            int x;
+            thread int* ptr = &x;
+            (&ptr);
+        }
+    `);
+
+    await checkFail(`
+        typedef T = thread int*[];
+        void foo() { }
+    `);
+
+    await checkFail(`
+        typedef I = int;
+        typedef T = thread I*[];
+        void foo() { }
+    `);
+
+    await checkFail(`
+        typedef I = thread int*;
+        typedef T = thread I[];
+        void foo() { }
+    `);
+
+    await checkFail(`
+        typedef I = thread int[];
+        typedef T = thread I[];
+        void foo() { }
+    `);
+
+    await checkFail(`
+        typedef I = thread int*;
+        typedef T = thread I*;
+        void foo() { }
+    `);
+
+    await checkFail(`
+        void foo() {
+            int x;
+            thread int[] arr = @x;
+            (@arr);
+        }
+    `);
+
+    await checkFail(`
+        void foo() {
+            int x;
+            thread int[] arr = @x;
+            (&arr);
+        }
+    `);
+
+    await checkFail(`
+        typedef I = thread int[];
+        typedef T = thread I*;
+        void foo() { }
+    `);
+};
+
+runTests(whlslTests);
+</script>
+</html>

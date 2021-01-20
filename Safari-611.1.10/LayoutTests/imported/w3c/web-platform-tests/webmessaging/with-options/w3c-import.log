@@ -1,0 +1,25 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/with-options/broken-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/with-options/host-specific-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/with-options/message-channel-transferable.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/with-options/no-target-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/with-options/null-transfer.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/with-options/one-arg.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/with-options/slash-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/with-options/undefined-transferable.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/with-options/unknown-parameter.html

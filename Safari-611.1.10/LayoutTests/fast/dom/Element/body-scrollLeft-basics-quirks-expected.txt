@@ -1,0 +1,134 @@
+Test the "scrollLeft" properties on the body element in quirks mode.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial values
+PASS document.body.scrollLeft is 0
+PASS document.body.scrollTop is 0
+PASS document.documentElement.scrollLeft is 0
+PASS document.documentElement.scrollTop is 0
+PASS window.scrollX is 0
+PASS window.scrollY is 0
+
+Let set the scrollLeft value on the main body element (document.body), in quirks mode, this should change the main frame's scroll position.
+PASS document.body.scrollLeft = 42 is 42
+PASS document.body.scrollLeft is 42
+PASS document.body.scrollTop is 0
+PASS document.documentElement.scrollLeft is 0
+PASS document.documentElement.scrollTop is 0
+PASS window.scrollX is 42
+PASS window.scrollY is 0
+
+Change scrollX, this should have no effect on the horizontal scrolling
+PASS window.scrollBy(0, 21) is undefined
+PASS document.body.scrollLeft is 42
+PASS document.body.scrollTop is 21
+PASS document.documentElement.scrollLeft is 0
+PASS document.documentElement.scrollTop is 0
+PASS window.scrollX is 42
+PASS window.scrollY is 21
+
+Now we create a body element, completely detached from the DOM tree. This should not change the scroll position in any way.
+PASS floatingBody.scrollLeft is 0
+PASS floatingBody.scrollTop is 0
+PASS document.body.scrollLeft is 42
+PASS document.body.scrollTop is 21
+PASS document.documentElement.scrollLeft is 0
+PASS document.documentElement.scrollTop is 0
+PASS window.scrollX is 42
+PASS window.scrollY is 21
+
+Setting the scroll position on that detached body element should not affect the main frame since it is not the first body element of the document.
+PASS floatingBody.scrollLeft = 654 is 654
+PASS floatingBody.scrollLeft is 0
+PASS floatingBody.scrollTop is 0
+PASS document.body.scrollLeft is 42
+PASS document.body.scrollTop is 21
+PASS document.documentElement.scrollLeft is 0
+PASS document.documentElement.scrollTop is 0
+PASS window.scrollX is 42
+PASS window.scrollY is 21
+
+We add a new body element after the first body element, this should have no impact on the state.
+PASS secondSiblingBody.scrollLeft is 0
+PASS secondSiblingBody.scrollTop is 0
+PASS document.body.scrollLeft is 42
+PASS document.body.scrollTop is 21
+PASS document.documentElement.scrollLeft is 0
+PASS document.documentElement.scrollTop is 0
+PASS window.scrollX is 42
+PASS window.scrollY is 21
+
+Setting a "scrollTop" on secondSiblingBody should not affect the main frame.
+PASS secondSiblingBody.scrollLeft = 987 is 987
+PASS secondSiblingBody.scrollLeft is 0
+PASS secondSiblingBody.scrollTop is 0
+PASS document.body.scrollLeft is 42
+PASS document.body.scrollTop is 21
+PASS document.documentElement.scrollLeft is 0
+PASS document.documentElement.scrollTop is 0
+PASS window.scrollX is 42
+PASS window.scrollY is 21
+
+We add a new body element inside the first body element, this should have no impact on the state.
+PASS bodyChildOfMainBody.scrollLeft is 0
+PASS bodyChildOfMainBody.scrollTop is 0
+PASS document.body.scrollLeft is 42
+PASS document.body.scrollTop is 21
+PASS document.documentElement.scrollLeft is 0
+PASS document.documentElement.scrollTop is 0
+PASS window.scrollX is 42
+PASS window.scrollY is 21
+
+Setting a "scrollTop" on bodyChildOfMainBody should not affect the main frame.
+PASS bodyChildOfMainBody.scrollLeft = 57 is 57
+PASS bodyChildOfMainBody.scrollLeft is 0
+PASS bodyChildOfMainBody.scrollTop is 0
+PASS document.body.scrollLeft is 42
+PASS document.body.scrollTop is 21
+PASS document.documentElement.scrollLeft is 0
+PASS document.documentElement.scrollTop is 0
+PASS window.scrollX is 42
+PASS window.scrollY is 21
+
+Now we insert a new body element *before* the existing one. It will replace the existing element as the first body element of the document.
+PASS document.body === newMainBody is true
+PASS document.body !== oldBodyElement is true
+Since we are in quirks mode, the new body element gets the scroll position from the frame, and the old one lose its scroll position.
+PASS oldBodyElement.scrollLeft is 0
+PASS oldBodyElement.scrollTop is 0
+PASS document.body.scrollLeft is 42
+PASS document.body.scrollTop is 21
+PASS document.documentElement.scrollLeft is 0
+PASS document.documentElement.scrollTop is 0
+PASS window.scrollX is 42
+PASS window.scrollY is 21
+
+Scrolling that new body should work as expected.
+PASS document.body.scrollLeft = 68 is 68
+PASS oldBodyElement.scrollLeft = 894 is 894
+PASS oldBodyElement.scrollLeft is 0
+PASS oldBodyElement.scrollTop is 0
+PASS document.body.scrollLeft is 68
+PASS document.body.scrollTop is 21
+PASS document.documentElement.scrollLeft is 0
+PASS document.documentElement.scrollTop is 0
+PASS window.scrollX is 68
+PASS window.scrollY is 21
+
+Scrolling the main frame should not require a renderer.
+PASS document.body.style.display = 'none' is 'none'
+PASS document.body.scrollLeft = 54 is 54
+PASS oldBodyElement.scrollLeft is 0
+PASS oldBodyElement.scrollTop is 0
+PASS document.body.scrollLeft is 54
+PASS document.body.scrollTop is 21
+PASS document.documentElement.scrollLeft is 0
+PASS document.documentElement.scrollTop is 0
+PASS window.scrollX is 54
+PASS window.scrollY is 21
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

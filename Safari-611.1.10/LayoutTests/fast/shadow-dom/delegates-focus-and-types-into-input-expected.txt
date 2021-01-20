@@ -1,0 +1,16 @@
+This tests delegating focus in a shadow tree to an input element. WebKit should move the selection as well as the focus
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.activeElement is host
+PASS shadowRoot.querySelector("input") is target
+PASS shadowRoot.activeElement is target
+PASS target.value is ""
+PASS target.value is "hello"
+PASS target.selectionStart is 5
+PASS target.selectionEnd is 5
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,31 @@
+<html>
+<head>
+<title>CSS3 media query test: deleteMedium throwing exception.</title>
+<link rel="help" href="http://www.w3.org/TR/css3-mediaqueries/" />
+
+<style type="text/css">
+@media all and (color) {
+p#result { color: green;}
+}
+</style>
+
+<script language="javascript">
+function test() {
+    try {
+       document.styleSheets[0].cssRules[0].media.deleteMedium("all and (");
+    }
+    catch(e) {
+        document.getElementById("result").innerHTML = "Success."
+        document.getElementById("details").innerHTML = "Following exception was caught: " + e;
+    }
+}
+</script>
+
+
+</head>
+<body onload="test()">
+<p>The text below should read "Success." </p>
+<p id="result">Failure: test not run.</p>
+<p id="details"></p>
+</body>
+</html>

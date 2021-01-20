@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: TypeError: 'lookupNamespaceURI' property of callback interface should be callable
+SUCCESS

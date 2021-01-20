@@ -1,0 +1,11 @@
+Tests that latching is not recomputed between the scroll and momentum phases, which triggers a document scroll.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS targetScroller.scrollTop is targetScroller.clientHeight
+PASS document.scrollingElement.scrollTop is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

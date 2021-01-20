@@ -1,0 +1,4 @@
+
+
+PASS getUserMedia with decreasing frame rates
+

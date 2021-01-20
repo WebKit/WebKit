@@ -1,0 +1,3 @@
+This tests that in an isolated world an XHR request made from a worker is allowed to load even if the resource is not listed as a connect-src in the CSP of the worker.
+
+PASS

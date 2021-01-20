@@ -1,0 +1,10 @@
+Instructions:
+
+Click the Share button.
+Cancel the share dialog.
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT share with user cancellation Test timed out
+

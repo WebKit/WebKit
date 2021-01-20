@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+ <!-- This tests that we don't crash when overwriting the contents of page that has an SVG tree containing <use> elements
+ with references (i.e. xlink:href). You must run this test in DRT with Guard Malloc/MallocScribble (or the platform-
+ specific equivalent) enabled. -->
+<svg>
+    <defs>
+        <g id="bg1">
+            <use xlink:href="#fill-rgn"/>
+        </g>
+    </defs>
+    <use id="A" xlink:href="#bg1"/>
+    <text id="B" x="0" y="20">FAIL</text>
+</svg>
+<script>
+// Synchronous write; mark <use id="A"> as needing to be rebuilt because <g id="bg1"> is removed from the document.
+document.write("FAIL");
+window.setTimeout(crash, 0);
+
+function crash() {
+    document.designMode = "on";
+    document.execCommand("SelectAll");
+    document.execCommand("FontName", true, "H5"); // Rebuilds targets for SVG nodes.
+
+    // Remove the contents between <use id="A"> and <text id="B"> (inclusively). Notice that these nodes have already been
+    // removed by the synchronous document.write() call above.
+    var range = document.createRange();
+    range.setStartBefore(document.getElementById("A"));
+    range.setEndAfter(document.getElementById("B"));
+    range.deleteContents(); // Rebuilds targets for SVG nodes.
+
+    if (window.GCController)
+        GCController.collect();
+
+    // Crash; rebuilds targets for SVG nodes, including the "element" at the memory location formerly occupied by <use id="A">.
+    document.body.innerHTML = "PASS, did not crash";
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+self.jsTestIsAsync = true;
+
+// Silence unhandled rejection messages.
+window.onunhandledrejection = () => false;
+
+if (window.internals)
+    internals.useMockRTCPeerConnectionFactory("LibWebRTCReleasingWhileSettingDescription");
+
+(function() {
+    var pc = new RTCPeerConnection();
+    pc.addIceCandidate({ candidate : "2013266431 1 udp 2013266432 192.168.0.100 38838 typ host generation 0" });
+    pc.createOffer().then((offer) => {
+        setTimeout(function() {
+            if (window.GCController)
+                GCController.collect();
+            finishJSTest();
+        }, 0);
+        pc.setLocalDescription(offer);
+        pc.close();
+    });
+})();
+
+</script>
+<div style="font-family: WebFont;">This test makes sure that RTCPeerConnection backend will free itself correctly even if released from the network thread.</div>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

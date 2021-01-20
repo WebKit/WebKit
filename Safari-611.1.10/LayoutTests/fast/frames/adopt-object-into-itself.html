@@ -1,0 +1,14 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function test() {
+    try {
+        var frame = document.getElementById("f");
+        var childNode = frame.contentDocument.adoptNode(frame);
+    } catch(ex) {
+        alert(ex);
+    }
+}
+</script>
+<object id="f" onload="test();" data="data:text/html,<body></body>"></object>

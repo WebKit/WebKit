@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+  <div id="test1" role="button">X</div>
+  <div id="test2" role="button" aria-haspopup="true">X</div>
+  <div id="test3" role="button" aria-haspopup="false">X</div>
+  <div id="test4" role="button" aria-haspopup="dialog">X</div>
+  <div id="test5" role="button" aria-haspopup="grid">X</div>
+  <div id="test6" role="button" aria-haspopup="listbox">X</div>
+  <div id="test7" role="button" aria-haspopup="menu">X</div>
+  <div id="test8" role="button" aria-haspopup="tree">X</div>
+  <div id="test9" role="button" aria-haspopup="foo">X</div>
+  <div id="test10" role="button" aria-haspopup="">X</div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests the platform role exposed for buttons with aria-haspopup");
+    if (window.accessibilityController) {
+        for (var i = 1; i <= 10; i++) {
+            var element = document.getElementById("test" + i)
+            var popup = element.hasAttribute("aria-haspopup") ? "'" + element.getAttribute("aria-haspopup") + "'" : "(null)";
+            var axElement = accessibilityController.accessibleElementById("test" + i);
+            debug("test" + i + " " + axElement.role + " for aria-haspopup = " + popup)
+            // Check that accessibilityHasPopupValue returns the right value in each case.
+            debug("AX popupValue = " + "'" + axElement.popupValue + "'");
+        }
+
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
+

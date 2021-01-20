@@ -1,0 +1,23 @@
+To manually test, press and hold down 'a' and select one of the accented characters."
+You should observe a pair of beforeinput/input events for both 'a' and the replacement accented character."
+Importantly, the inputType of these four events should be 'insertReplacementText'."
+Then insert a single emoji character. You should observe beforeinput/input events for the inserted emoji."
+Importantly, the inputType of these two events should be 'insertText'."
+
+(1) Typing 'a'...
+(editable): type=beforeinput, inputType=insertText, data=a, dataTransfer=null
+(editable): type=input, inputType=insertText, data=a, dataTransfer=null
+The value of the input is now: a
+(2) Replacing 'a' with 'b'...
+(editable): type=beforeinput, inputType=insertReplacementText, data=b, dataTransfer=null
+(editable): type=input, inputType=insertReplacementText, data=b, dataTransfer=null
+The value of the input is now: b
+(3) Inserting 'c' after 'b'...
+(editable): type=beforeinput, inputType=insertText, data=c, dataTransfer=null
+(editable): type=input, inputType=insertText, data=c, dataTransfer=null
+The value of the input is now: bc
+(4) Selecting all and replacing with 'd'...
+(editable): type=beforeinput, inputType=insertReplacementText, data=d, dataTransfer=null
+(editable): type=input, inputType=insertReplacementText, data=d, dataTransfer=null
+The value of the input is now: d
+

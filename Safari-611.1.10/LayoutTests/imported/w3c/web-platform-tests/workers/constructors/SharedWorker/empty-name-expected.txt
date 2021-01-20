@@ -1,0 +1,3 @@
+
+FAIL creating a dummy shared worker with explicit name "" Can't find variable: SharedWorker
+

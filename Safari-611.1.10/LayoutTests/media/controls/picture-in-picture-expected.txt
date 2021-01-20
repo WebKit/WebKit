@@ -1,0 +1,33 @@
+This tests the picture-in-picture button.
+
+This test only runs in DRT!
+
+
+EVENT: error
+PASS: We are using the apple idiom
+
+Test the picture-in-picture button without video
+
+PASS: Picture-in-picture button should not be visible if there's no video
+EVENT: canplaythrough
+
+Test the picture-in-picture button with valid video
+
+PASS: Picture-in-picture button should be visible if there's video
+PASS: Picture-in-picture button should be in the dom if there's video
+PASS: Inline placeholder should not be visible at this point
+EVENT: webkitpresentationmodechanged
+
+Test for the pip placeholder visibility in pip mode
+
+PASS: Should be in pip mode
+PASS: Inline placeholder should be visible at this point
+
+Test for the pip placeholder visibility in pip mode without a 'controls' attribute
+
+PASS: Should still be in pip mode
+PASS: No controls attribute
+PASS: Inline placeholder should still be visible
+
+Testing finished.
+

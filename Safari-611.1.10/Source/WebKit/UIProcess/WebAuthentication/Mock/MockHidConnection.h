@@ -1,0 +1,77 @@
+/*
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(WEB_AUTHN)
+
+#include "HidConnection.h"
+#include <WebCore/FidoHidMessage.h>
+#include <WebCore/MockWebAuthenticationConfiguration.h>
+#include <wtf/WeakPtr.h>
+
+namespace WebKit {
+
+// The following basically simulates an external HID token that:
+//    1. Supports only one protocol, either CTAP2 or U2F.
+//    2. Doesn't support resident keys,
+//    3. Doesn't support user verification.
+// There are four stages for each CTAP request:
+// FSM: Info::Init => Info::Msg => Request::Init => Request::Msg
+// There are indefinite stages for each U2F request:
+// FSM: Info::Init => Info::Msg => [Request::Init => Request::Msg]+
+// According to different combinations of error and stages, error will manifest differently.
+class MockHidConnection final : public CanMakeWeakPtr<MockHidConnection>, public HidConnection {
+public:
+    MockHidConnection(IOHIDDeviceRef, const WebCore::MockWebAuthenticationConfiguration&);
+
+private:
+    // HidConnection
+    void initialize() final;
+    void terminate() final;
+    DataSent sendSync(const Vector<uint8_t>& data) final;
+    void send(Vector<uint8_t>&& data, DataSentCallback&&) final;
+    void registerDataReceivedCallbackInternal() final;
+
+    void assembleRequest(Vector<uint8_t>&&);
+    void parseRequest();
+    void feedReports();
+    bool stagesMatch() const;
+    void shouldContinueFeedReports();
+    void continueFeedReports();
+
+    WebCore::MockWebAuthenticationConfiguration m_configuration;
+    Optional<fido::FidoHidMessage> m_requestMessage;
+    WebCore::MockWebAuthenticationConfiguration::HidStage m_stage { WebCore::MockWebAuthenticationConfiguration::HidStage::Info };
+    WebCore::MockWebAuthenticationConfiguration::HidSubStage m_subStage { WebCore::MockWebAuthenticationConfiguration::HidSubStage::Init };
+    uint32_t m_currentChannel { fido::kHidBroadcastChannel };
+    bool m_requireResidentKey { false };
+    bool m_requireUserVerification  { false };
+    Vector<uint8_t> m_nonce;
+};
+
+} // namespace WebKit
+
+#endif // ENABLE(WEB_AUTHN)

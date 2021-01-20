@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="display:none" id="test">
+<div>
+    <p class="ng" id="target">Cocoa and Cappuccino make us happy.</p>
+</div>
+</div>
+</body>
+<script>
+description('This test makes sure that querySelector with pseudo-element inside functional pseudo class :-webkit-any doesn\'t match anything.');
+var target = document.getElementById('target');
+shouldBe('document.querySelectorAll("#test :-webkit-any(p)").length', '1');
+shouldBe('document.querySelector("#test :-webkit-any(p)")', 'target');
+shouldBe('document.querySelectorAll("#test :-webkit-any(p.ng)").length', '1');
+shouldBe('document.querySelector("#test :-webkit-any(p.ng)")', 'target');
+
+shouldBe('document.querySelectorAll("#test div :-webkit-any(p)").length', '1');
+shouldBe('document.querySelector("#test div :-webkit-any(p)")', 'target');
+shouldBe('document.querySelectorAll("#test div :-webkit-any(p.ng)").length', '1');
+shouldBe('document.querySelector("#test div :-webkit-any(p.ng)")', 'target');
+
+shouldBe('document.querySelectorAll("#test :-webkit-any(p:first-line)").length', '0');
+shouldBeNull('document.querySelector("#test :-webkit-any(p:first-line)")');
+
+shouldBe('document.querySelectorAll("#test :-webkit-any(div:first-line) p").length', '0');
+shouldBeNull('document.querySelector("#test :-webkit-any(div:first-line) p")');
+shouldBe('document.querySelectorAll("#test :-webkit-any(div:first-line) p.ng").length', '0');
+shouldBeNull('document.querySelector("#test :-webkit-any(div:first-line) p.ng")');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

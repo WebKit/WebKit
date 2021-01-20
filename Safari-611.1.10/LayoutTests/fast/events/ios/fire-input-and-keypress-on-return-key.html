@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="test" contenteditable="true" style="width:256px; height: 256px; border: 1px solid black"></div>
+<div id="console"></div>
+<script>
+window.jsTestIsAsync = true;
+
+function done()
+{
+    document.body.removeChild(document.getElementById("test"));
+    finishJSTest();
+}
+
+function checkInputEvent()
+{
+    shouldBeEqualToString("event.inputType", "insertParagraph");
+    done();
+}
+
+function checkKeypressAndDone()
+{
+    shouldBeEqualToString("event.key", "Enter");
+}
+
+function runTest()
+{
+    function handleFocus(event) {
+        event.target.addEventListener("input", checkInputEvent, { once: true });
+        event.target.addEventListener("keypress", checkKeypressAndDone, { once: true });
+        if (window.testRunner)
+            UIHelper.keyDown("return");
+    }
+    let test = document.getElementById("test");
+    test.addEventListener("focus", handleFocus, { once: true });
+    if (window.testRunner)
+        UIHelper.activateElement(test);
+}
+
+description("Tests that pressing the Return key in a content editable elemnent dispatches a DOM input event and DOM keypress event (in that order). To run this test by hand, focus the content editable element below and press the <key>Return<key> key.");
+runTest();
+</script>
+</body>
+</html>

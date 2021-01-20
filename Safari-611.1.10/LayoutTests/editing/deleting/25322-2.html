@@ -1,0 +1,26 @@
+<head>
+    <script>
+        function runTest() {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+            window.setTimeout(afterDelay, 20);
+        }
+        
+        function afterDelay() {
+            edit = document.getElementById("edit");
+            window.getSelection().setPosition(edit, edit.childNodes.length);
+            document.execCommand("Delete");            
+            if (window.testRunner) {
+                document.body.innerText = document.getElementById("description").innerText + "\n\n" + edit.innerHTML;
+                testRunner.notifyDone();
+            }
+        }
+    </script>
+</head>
+
+<body onLoad="runTest();">
+    <div id="description">This tests to make sure that placing the caret in an empty paragraph after a block image and pressing delete removes the empty paragraph. The editable region below should contain only an image followed by a caret.</div>
+    <div id="edit" contentEditable="true"><img src="../resources/abe.png" style="display:block; padding: 3px;"><br></div>
+</body>

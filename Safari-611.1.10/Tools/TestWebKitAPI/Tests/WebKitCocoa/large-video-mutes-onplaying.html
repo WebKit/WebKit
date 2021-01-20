@@ -1,0 +1,16 @@
+<html>
+<head>
+<script>
+    function handlePlaying() {
+        try {
+            window.webkit.messageHandlers.testHandler.postMessage("playing");
+        } catch(e) {
+        }
+        document.querySelector("video").muted = true;
+    }
+</script>
+</head>
+<body>
+    <video autoplay src="large-video-with-audio.mp4" width=640 height=480 onplaying=handlePlaying()></video>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div contenteditable id="editor">
+    <pre id="pre">Hello<ul><li id="foo">foo</li></ul>world</pre>
+</div>
+</body>
+<script>
+Markup.description("Verifies that 'InsertNestedUnorderedList' and 'InsertNestedOrderedList' work as expected with pre elements. This test requires WebKitTestRunner or DumpRenderTree.");
+
+editor.focus();
+getSelection().setPosition(foo.childNodes[0], 0);
+document.execCommand("InsertNestedOrderedList");
+Markup.dump("editor", "After inserting a list inside the pre");
+
+getSelection().setPosition(pre.childNodes[0], 0);
+document.execCommand("InsertNestedUnorderedList");
+Markup.dump("editor", "After inserting a list around the pre");
+</script>
+</html>

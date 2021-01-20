@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function createDetachedTest()
+{
+    let div = document.createElement("div");
+    div.id = "detached";
+    return div;
+}
+
+function testHTMLImageElement() {
+    // 2x2 red square
+    let image = document.createElement("img");
+    image.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=";
+    image.addEventListener("load", async (event) => {
+        console.screenshot(image);
+    });
+}
+
+function testHTMLPictureElement() {
+    let picture = document.createElement("picture");
+
+    // 2x2 red square
+    let image = picture.appendChild(document.createElement("img"));
+    image.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=";
+    image.addEventListener("load", async (event) => {
+        console.screenshot(picture);
+    });
+}
+
+function testHTMLCanvasElement() {
+    let canvas = document.createElement("canvas");
+    canvas.width = 2;
+    canvas.height = 2;
+
+    let context = canvas.getContext("2d");
+    context.fillStyle = "red";
+    context.fillRect(0, 0, 2, 2);
+
+    console.screenshot(canvas);
+}
+
+function testImageBitmap() {
+    // 2x2 red square
+    let image = document.createElement("img");
+    image.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=";
+    image.addEventListener("load", async (event) => {
+        let imageBitmap = await createImageBitmap(image);
+        console.screenshot(imageBitmap);
+    });
+}
+
+function createCanvas2DTest() {
+    let canvas = document.createElement("canvas");
+    canvas.width = 2;
+    canvas.height = 2;
+    return canvas.getContext("2d");
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("console.screenshot");
+
+    function addTest({name, expression, imageMessageAddedCallback, shouldCaptureViewport, shouldError}) {
+        suite.addTestCase({
+            name,
+            async test() {
+                let [event] = await Promise.all([
+                    WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                    InspectorTest.evaluateInPage(expression),
+                ]);
+
+                let {message} = event.data;
+
+                if (message.level === WI.ConsoleMessage.MessageLevel.Error) {
+                    InspectorTest.expectThat(shouldError, "Error: " + message.messageText);
+                    return;
+                }
+
+                InspectorTest.expectEqual(message.type, WI.ConsoleMessage.MessageType.Image, "The added message should be an image.");
+                InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
+
+                try {
+                    let image = new Image;
+                    await new Promise((resolve, reject) => {
+                        image.addEventListener("load", resolve);
+                        image.addEventListener("error", reject);
+                        image.src = message.messageText;
+                    });
+
+                    if (shouldCaptureViewport) {
+                        InspectorTest.expectGreaterThan(image.width, 2, "The image width should be greater than 2px.");
+                        InspectorTest.expectGreaterThan(image.height, 2, "The image height should be greater than 2px.");
+                    } else {
+                        InspectorTest.expectEqual(image.width, 2, "The image width should be 2px.");
+                        InspectorTest.expectEqual(image.height, 2, "The image height should be 2px.");
+                    }
+                } catch {
+                    InspectorTest.expectThat(shouldError, "The image should not load.");
+                }
+            },
+        });
+    }
+
+    addTest({
+        name: "console.screenshot.Node.SingleArgument",
+        expression: `console.screenshot(document.querySelector("#testNode"))`,
+    });
+
+    addTest({
+        name: "console.screenshot.Node.MultipleArguments",
+        expression: `console.screenshot(document.querySelector("#testNode"), "test")`,
+    });
+
+    addTest({
+        name: "console.screenshot.Node.DetachedScreenshotable.Image",
+        expression: `testHTMLImageElement()`,
+    });
+
+    addTest({
+        name: "console.screenshot.Node.DetachedScreenshotable.Picture",
+        expression: `testHTMLPictureElement()`,
+    });
+
+    addTest({
+        name: "console.screenshot.Node.DetachedScreenshotable.Canvas",
+        expression: `testHTMLCanvasElement()`,
+        async imageMessageAddedCallback(message) {
+            InspectorTest.expectNotEqual(message.messageText, "data:", "The image should not be empty.");
+
+            let img = await WI.ImageUtilities.promisifyLoad(message.messageText);
+            InspectorTest.expectEqual(img.width, 2, "The image width should be 2px.");
+            InspectorTest.expectEqual(img.height, 2, "The image height should be 2px.");
+        },
+    });
+
+    addTest({
+        name: "console.screenshot.Node.DetachedNonScreenshotable",
+        expression: `console.screenshot(createDetachedTest())`,
+        shouldError: true,
+    });
+
+    addTest({
+        name: "console.screenshot.ImageData",
+        expression: `console.screenshot(new ImageData(2, 2))`,
+    });
+
+    addTest({
+        name: "console.screenshot.ImageBitmap",
+        expression: `testImageBitmap()`,
+    });
+
+    addTest({
+        name: "console.screenshot.CanvasRenderingContext2D",
+        expression: `console.screenshot(createCanvas2DTest())`,
+    });
+
+    addTest({
+        name: "console.screenshot.String.Valid",
+        expression: `console.screenshot("test")`,
+        shouldCaptureViewport: true,
+    });
+
+    addTest({
+        name: "console.screenshot.String.dataURL.Valid",
+        expression: `console.screenshot("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=")`, // 2x2 red square
+    });
+
+    addTest({
+        name: "console.screenshot.String.dataURL.InvalidMIME",
+        expression: `console.screenshot("data:fake/mime")`,
+        shouldError: true,
+    });
+
+    addTest({
+        name: "console.screenshot.String.dataURL.InvalidContent",
+        expression: `console.screenshot("data:image/png;base64,<INVALID>")`,
+        shouldError: true,
+    });
+
+    addTest({
+        name: "console.screenshot.String.dataURL.InvalidNoContent",
+        expression: `console.screenshot("data:image/png;a1=b2;base64,")`,
+        shouldError: true,
+    });
+
+    addTest({
+        name: "console.screenshot.String.dataURL.ValidNoContent",
+        expression: `console.screenshot("data:")`,
+        shouldCaptureViewport: true,
+    });
+
+    addTest({
+        name: "console.screenshot.NonScreenshotableTarget",
+        expression: `console.screenshot(42)`,
+        shouldCaptureViewport: true,
+    });
+
+    addTest({
+        name: "console.screenshot.NoArguments",
+        expression: `console.screenshot()`,
+        shouldCaptureViewport: true,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the console.screenshot API.</p>
+    <div id="testNode"></div>
+    <style>
+    #testNode {
+        width: 2px;
+        height: 2px;
+        background-color: red;
+    }
+    #detached {
+        width: 2px;
+        height: 2px;
+        background-color: blue;
+    }
+    </style>
+</body>
+</html>

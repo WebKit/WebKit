@@ -1,0 +1,24 @@
+include_rules = [
+  "+call",
+  "+common_video",
+  "+logging/rtc_event_log",
+  "+modules/audio_coding",
+  "+modules/audio_device",
+  "+modules/audio_mixer",
+  "+modules/audio_processing",
+  "+modules/rtp_rtcp",
+  "+modules/video_capture",
+  "+modules/video_coding",
+  "+modules/video_coding/utility",
+  "+p2p",
+  "+sound",
+  "+system_wrappers",
+  "+usrsctplib",
+  "+third_party/libyuv",
+]
+
+specific_include_rules = {
+  "win32devicemanager\.cc": [
+    "+third_party/logitech/files/logitechquickcam.h",
+  ],
+}

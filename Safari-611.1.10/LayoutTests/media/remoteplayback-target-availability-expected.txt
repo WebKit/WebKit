@@ -1,0 +1,17 @@
+
+Test that 'RemotePlaybackAvailabilityCallback' callback is called when playback devices come and go.
+
+
+** test initial callback when device is unavailable
+CALLBACK( available=false )
+
+** simulate device becoming available
+CALLBACK( available=true )
+
+** test initial callback when device is available
+CALLBACK( available=true )
+
+** simulate device becoming unavailable
+CALLBACK( available=false )
+END OF TEST
+

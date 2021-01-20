@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+testcase {
+    background-color: white;
+}
+testcase:empty {
+    background-color: rgb(1, 2, 3);
+}
+</style>
+</head>
+<body>
+    <div style="display:none">
+        <!-- Success: No content -->
+        <testcase id="no-content"></testcase>
+
+        <!-- Success: Comments are not elment -->
+        <testcase id="comment"><!-- empty --></testcase>
+
+        <!-- Success: Empty text node are okay. -->
+        <testcase id="empty-textnodes"></testcase>
+
+        <!-- Success: The two above. -->
+        <testcase id="comments-and-empty-textnodes"></testcase>
+
+        <!-- Failure: Non empty text node, there is a space character. -->
+        <testcase id="space-character"> </testcase>
+
+        <!-- Failure: the <span> element inside makes the node non-empty. -->
+        <testcase id="element"><span></span></testcase>
+    </div>
+</body>
+<script>
+description('Check the basic features of the ":empty" pseudo class.');
+
+var emptyTextnodes = document.getElementById("empty-textnodes");
+for (var i = 0; i < 10; ++i)
+    emptyTextnodes.appendChild(document.createTextNode(""));
+
+var commentsAndEmptyTextnodes = document.getElementById("comments-and-empty-textnodes");
+for (var i = 0; i < 10; ++i) {
+    commentsAndEmptyTextnodes.appendChild(document.createTextNode(""));
+    commentsAndEmptyTextnodes.appendChild(document.createComment("WebKit!"));
+}
+
+shouldBe('document.querySelectorAll("testcase:empty").length', '4');
+shouldBe('document.querySelectorAll("testcase:empty")[0]', 'document.getElementById("no-content")');
+shouldBe('document.querySelectorAll("testcase:empty")[1]', 'document.getElementById("comment")');
+shouldBe('document.querySelectorAll("testcase:empty")[2]', 'document.getElementById("empty-textnodes")');
+shouldBe('document.querySelectorAll("testcase:empty")[3]', 'document.getElementById("comments-and-empty-textnodes")');
+
+shouldBeEqualToString('getComputedStyle(document.getElementById("no-content")).backgroundColor', 'rgb(1, 2, 3)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("comment")).backgroundColor', 'rgb(1, 2, 3)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("empty-textnodes")).backgroundColor', 'rgb(1, 2, 3)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("comments-and-empty-textnodes")).backgroundColor', 'rgb(1, 2, 3)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("space-character")).backgroundColor', 'rgb(255, 255, 255)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("element")).backgroundColor', 'rgb(255, 255, 255)');
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

@@ -1,0 +1,10 @@
+<body>
+<div id="d"><div></div></div>
+<script>
+const shadow = d.attachShadow({mode:"open"});
+shadow.innerHTML = `<slot></slot>`;
+d.offsetWidth;
+shadow.innerHTML = ``;
+d.innerHTML = "foo";
+shadow.innerHTML = `<slot></slot>`;
+</script>

@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ punchOutWhiteBackgrounds=true ] -->
+<html>
+    <head>
+        <title>Punch out White Backgrounds</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="punch-out-white-backgrounds-expected.html">
+
+        <style type="text/css">
+            body
+            {
+                background-color: #888;
+            }
+            .test
+            {
+                width: 100px;
+                height: 100px;
+                background-color: white;
+            }
+            .inline-test
+            {
+                background-color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="test"></div>
+        <p>Inline element test: <span class="inline-test">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+    </body>
+</html>

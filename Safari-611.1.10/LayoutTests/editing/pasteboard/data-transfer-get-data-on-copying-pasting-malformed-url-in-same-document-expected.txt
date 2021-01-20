@@ -1,0 +1,12 @@
+This tests calling getData returns the same malformed URL string set by setData
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.clipboardData.getData("text/URI-list") is "some bad URL"
+PASS JSON.stringify(event.clipboardData.types) is "[\"text/uri-list\"]"
+PASS JSON.stringify(Array.from(event.clipboardData.items).map((item) => ({kind: item.kind, type: item.type}))) is "[{\"kind\":\"string\",\"type\":\"text/uri-list\"}]"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

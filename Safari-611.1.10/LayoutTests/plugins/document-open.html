@@ -1,0 +1,20 @@
+<html>
+<head>
+<body>
+<embed id="testPlugin" 
+       type="application/x-webkit-test-netscape"
+       src="data:text/plain,"
+       test="document-open-in-destroy-stream">
+</embed>
+
+<div>
+    This tests that document.open invoked by a plugin via NPN_Invoke without a javascript context succeeds.
+</div>
+<script>
+  if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+  }
+</script>
+</body>
+</html>

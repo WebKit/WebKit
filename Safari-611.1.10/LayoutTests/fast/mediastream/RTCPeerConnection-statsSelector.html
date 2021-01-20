@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            description("Tests the RTCPeerConnection stats selector argument.");
+
+            var pc = null;
+            var result;
+            var timestamp;
+            var local;
+
+            function statsError()
+            {
+                testFailed("Error in getStats.")
+                finishJSTest();
+            }
+
+            function error() {
+                testFailed('Stream generation failed.');
+                finishJSTest();
+            }
+
+            async function gotStream(s) {
+                testPassed('Got a stream.');
+                stream = s;
+
+                const sender = pc.addTrack(stream.getVideoTracks()[0], stream);
+                var offer = await pc.createOffer();
+                await pc.setLocalDescription(offer);
+                // FIXME: Test getStats error callback: https://webkit.org/b/129860
+                pc.getStats(sender.track).then(statsHandler2, statsError);
+            }
+
+            function statsHandler2(r)
+            {
+                result = r;
+                testPassed("statsHandler2 was called");
+                shouldBeGreaterThanOrEqual('result.size', '1');
+                local = result.get(result.keys().next().value);
+                timestamp = local.timestamp;
+                shouldBeGreaterThanOrEqual('timestamp', 'startTime');
+                shouldBe('local.type', '"video"');
+                finishJSTest();
+            }
+
+            var startTime = new Date().getTime();
+            shouldNotThrow("pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]})");
+            shouldNotThrow('navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(gotStream, error)');
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

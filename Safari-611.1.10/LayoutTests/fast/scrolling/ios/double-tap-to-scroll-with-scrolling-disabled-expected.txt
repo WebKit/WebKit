@@ -1,0 +1,10 @@
+Verifies that double-tapping does not trigger mainframe scrolling when overflow: hidden is specified. To manually run the test, double tap the text below; the page should not scroll.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.scrollingElement.scrollTop is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Double tap here

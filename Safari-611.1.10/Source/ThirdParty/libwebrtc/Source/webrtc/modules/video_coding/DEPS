@@ -1,0 +1,23 @@
+include_rules = [
+  "+vpx",
+  "+call",
+  "+common_video",
+  "+sdk",
+  "+system_wrappers",
+  "+rtc_tools",
+  "+third_party/libyuv",
+  "+rtc_base/system/rtc_export.h",
+]
+
+specific_include_rules = {
+  "android_codec_factory_helper\.cc": [
+    "+base/android",
+  ],
+  "multiplex_encoder_adapter\.cc": [
+    "+media/base",
+  ],
+  ".*test.*\.cc": [
+     "+media/base",
+     "+media/engine",
+  ],
+}

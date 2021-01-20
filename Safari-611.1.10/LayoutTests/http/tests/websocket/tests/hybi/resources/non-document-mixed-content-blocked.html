@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+<head></head>
+<body>
+<p></p>
+<p>Plain http page trying to connect to a worker.</p>
+<pre id=log>
+</pre>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function log(message)
+{
+    document.getElementById("log").innerHTML += message + "\n";
+}
+
+function endTest()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+var worker = new Worker("non-document-mixed-content-blocked.js");
+worker.onmessage = function (event)
+{
+    log(event.data);
+    if (event.data == "DONE")
+        endTest();
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+Test exporting a RSAES-PKCS1-v1_5 public key with SPKI format.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Generating a key pair...
+Exporting the public key...
+PASS publicKey.byteLength is 294
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

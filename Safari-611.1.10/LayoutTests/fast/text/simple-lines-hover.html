@@ -1,0 +1,10 @@
+<script>
+function test() {
+    if (window.internals)
+        internals.settings.setLegacyLineLayoutVisualCoverageEnabled(true);
+    var target = document.getElementById("target");
+    eventSender.mouseMoveTo(target.offsetLeft + 5, target.offsetTop + 5);
+}
+</script>
+<body onload="test()">
+<div id="target">This text should not have legacy line layout visual indicator.</div>

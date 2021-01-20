@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<meta http-equiv="Content-Security-Policy" content="script-src http://127.0.0.1:8000/resources/slow-script.pl http://127.0.0.1:8000/resources/checkPreload.js 'nonce-check-for-preload'; style-src 'none'">
+<script src="http://127.0.0.1:8000/resources/slow-script.pl?delay=1000"></script>
+<script src="http://127.0.0.1:8000/resources/checkPreload.js"></script>
+<link rel="stylesheet" href="resources/small_mq.css" nonce="dummy">
+</head>
+<body>
+This test makes sure that the Preload scanner does not preload a stylesheet resource that is blocked by the Content Security Policy of the page.
+<br>
+<script nonce="check-for-preload">
+checkForPreload("resources/small_mq.css", false);
+</script>
+</body>
+</html>

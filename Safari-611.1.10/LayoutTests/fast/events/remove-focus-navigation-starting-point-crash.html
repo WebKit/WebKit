@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../forms/resources/common.js"></script>
+</head>
+
+<script>
+if (!window.eventSender)
+    document.body.textContent = 'This test requires window.eventSender.';
+
+function moveFocus(direction) { 
+    eventSender.keyDown('\t', direction == 'forward' ? [] : ['shiftKey']); 
+}
+
+function focusEnd() {
+    document.getElementById("end").focus();
+}
+
+function removeEnd() {
+    document.getElementById("body").removeChild(document.getElementById("end"));
+}
+
+function insertEnd() {
+    var input = document.createElement("input");
+    input.setAttribute('id', 'end');
+    insertAfter(input, document.getElementById("next"));
+}
+
+function insertAfter(newNode, referenceNode) {
+    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+}
+
+function runTest() {
+    debug("After removing a focused element at the end of tree, accessing focus navigation starting point shouldn't lead to crash.");
+    shouldBe("insertEnd(); focusEnd(); removeEnd(); moveFocus('forward'); document.activeElement.id", "'next'");
+    shouldBe("insertEnd(); focusEnd(); removeEnd(); moveFocus('backward'); document.activeElement.id", "'prev'");
+}
+
+</script>
+
+<body id="body" onload="runTest();">
+<div id="log"></div>
+<div id="container"></div>
+<input id="prev"><input id="next"></body>

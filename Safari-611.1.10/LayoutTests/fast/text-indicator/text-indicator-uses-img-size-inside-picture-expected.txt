@@ -1,0 +1,6 @@
+
+imageOnly: -2 -1 260 258
+picture: -2 -1 260 258
+clippedPicture: -2 -1 260 22
+deeperClippedPicture: -2 -1 260 22
+

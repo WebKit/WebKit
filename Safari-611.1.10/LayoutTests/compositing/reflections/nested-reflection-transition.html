@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <style>
+  .outer {
+    width: 120px;
+    height: 230px;
+    margin: 20px;
+    border: 1px solid black;
+    -webkit-box-reflect: right 10px;
+  }
+  
+  .reflected {
+    width: 100px;
+    height: 100px;
+    -webkit-box-reflect: below 10px;
+  }
+
+  #inner {
+    margin: 10px;
+    width: 100px;
+    height: 100px;
+    background-color: green;
+    text-align: center;
+    font-size: 50pt;
+    -webkit-transition: -webkit-transform 1s linear;
+  }
+  
+  .rotated {
+    -webkit-transform: rotate(90deg);
+  }
+  .composited {
+    -webkit-transform: translateZ(0);
+  }
+  </style>
+  <script src="../../transitions/resources/transition-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      [0.5, 'inner', '-webkit-transform.1', 0.76, 0.1],
+    ];
+
+    function setupTest()
+    {
+      document.getElementById('inner').className = 'rotated';
+    }
+    runTransitionTest(expectedValues, setupTest, true /* use pause API */, true /* pixel test */);
+  </script>
+  </head>
+<body>
+  <div class="outer composited">
+    <div class="reflected composited">
+      <div id="inner">
+        1
+      </div>
+    </div>
+  </div>
+  <div id="result"></div>
+</body>
+</html>

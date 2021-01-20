@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<style>
+p {
+  -webkit-animation-name: test;
+  -webkit-animation-fill-mode: backwards;
+  /* Approx 2^54 */
+  -webkit-animation-delay: 18000000000000000s;
+}
+@-webkit-keyframes test {
+  0% {
+  }
+}
+</style>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<body>
+<p>This tests an animation with zero duration and a very large start delay. See http:://crbug.com/324323.
+<p>This test passes if it doesn't crash.
+<body

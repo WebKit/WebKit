@@ -1,0 +1,3 @@
+This tests invoking deletion after attempting to extend selection to a disconnected node. WebKit should not crash.
+
+PASS.

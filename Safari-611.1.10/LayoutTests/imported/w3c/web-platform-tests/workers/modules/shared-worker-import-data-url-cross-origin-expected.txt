@@ -1,0 +1,6 @@
+
+FAIL static import data url from data: URL should be allowed. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+FAIL static import script from data: URL should be allowed. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+FAIL dynamic import data url from data: URL should be allowed. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+FAIL dynamic import script from data: URL should be blocked. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+

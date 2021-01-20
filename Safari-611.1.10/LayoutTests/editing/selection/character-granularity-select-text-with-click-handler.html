@@ -1,0 +1,29 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true, useCharacterSelectionGranularity=true ] -->
+<meta name=viewport content="width=device-width, initial-scale=1">
+<div id="target" style="font-size: 75px;">WEBKIT</div>
+<script>
+    function selectTextScript()
+    {
+        return `
+        (() => {
+            uiController.longPressAtPoint(100, 50, () => {
+                uiController.uiScriptComplete();
+            });
+        })();`
+    }
+
+    if (!window.testRunner)
+        document.body.appendChild(document.createTextNode("To test manually, enable character selection granularity and select WEB by long pressing."));
+
+    target.addEventListener("click", () => { });
+    document.addEventListener("selectionchange", () => {
+        if (window.testRunner && getSelection().toString() === "WEBKIT") {
+            document.body.appendChild(document.createTextNode("PASS: Successfully selected text."));
+            testRunner.notifyDone();
+        }
+    });
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.runUIScript(selectTextScript(), () => { });
+</script>

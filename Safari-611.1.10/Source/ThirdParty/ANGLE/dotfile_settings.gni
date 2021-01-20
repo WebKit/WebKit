@@ -1,0 +1,10 @@
+# Copyright 2018 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This file contains variables that can be imported into a repo's dotfile (.gn)
+# to make it easier to roll new versions of ANGLE in.
+
+angle_dotfile_settings = {
+  exec_script_whitelist = [ get_path_info("BUILD.gn", "abspath") ]
+}

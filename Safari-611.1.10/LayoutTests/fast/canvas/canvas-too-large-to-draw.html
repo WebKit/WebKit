@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+  canvas {
+      width: 100px;
+      height: 100px;
+      background-color: red;
+  }
+  </style>
+</head>
+<body>
+<p>This test requires Internals.</p>
+<canvas id="canvas1"></canvas>
+<canvas id="canvas2"></canvas>
+<script>
+    function run() {
+        if (!window.testRunner)
+            return;
+
+        window.testRunner.dumpAsText();
+
+        const MAX_WIDTH = 2000;
+        const MAX_HEIGHT = MAX_WIDTH;
+
+        function fillCanvas(id, width, height) {
+            const canvas = document.getElementById(id);
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext("2d");
+            if (!ctx)
+                return;
+
+            ctx.fillStyle = "lime";
+            ctx.fillRect(0, 0, width, height);
+        }
+    
+        // This one should always work.
+        fillCanvas("canvas2", 10, 10);
+
+        window.internals.setMaxCanvasPixelMemory(MAX_WIDTH * MAX_HEIGHT * 4);
+
+        // And this one should exceed the memory limit.
+        fillCanvas("canvas1", MAX_WIDTH + 1, MAX_HEIGHT + 1);
+    }
+    run();
+</script>
+</body>
+</html>

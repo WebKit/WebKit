@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/shaderProgram-utilities-webgpu.js"></script>
+<script>
+window.beforeTest = async function() {
+    await Promise.all([
+        createComputePipeline("INVALID"),
+        createRenderPipeline("INVALID"),
+    ]);
+};
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite(`Canvas.ShaderProgram.WebGPU`);
+
+    let canvases = Array.from(WI.canvasManager.canvasCollection);
+    InspectorTest.assert(canvases.length === 1, "There should only be one canvas.");
+
+    let canvas = canvases[0];
+    InspectorTest.assert(canvas, "There should be a canvas.");
+    InspectorTest.assert(canvas.contextType === WI.Canvas.ContextType.WebGPU, "Canvas should be WebGPU.");
+
+    async function awaitProgramAdded(programType) {
+        return new Promise((resolve, reject) => {
+            let listenerItemAdded = canvas.shaderProgramCollection.addEventListener(WI.Collection.Event.ItemAdded, (event) => {
+                let program = event.data.item;
+                if (program.programType !== programType)
+                    return;
+
+                InspectorTest.expectThat(program instanceof WI.ShaderProgram, `Added "${programType}" ShaderProgram.`);
+                InspectorTest.assert(program.canvas === canvas, "ShaderProgram should be for the known Canvas.");
+
+                resolve(program);
+            });
+        });
+    }
+
+    suite.addTestCase({
+        name: "Canvas.ShaderProgram.WebGPU.Existing",
+        description: "Check that ShaderProgramAdded is sent for a program created before CanvasAgent is enabled.",
+        async test() {
+            async function checkExists(programType) {
+                if (InspectorTest.ShaderProgram.programForType(programType)) {
+                    InspectorTest.pass(`Added "${programType}" ShaderProgram.`);
+                    return;
+                }
+
+                await awaitProgramAdded(programType);
+            }
+
+            await Promise.all([
+                checkExists(WI.ShaderProgram.ProgramType.Compute),
+                checkExists(WI.ShaderProgram.ProgramType.Render),
+            ]);
+
+            InspectorTest.expectEqual(canvas.shaderProgramCollection.size, 2, "There should be two ShaderProgram.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Canvas.ShaderProgram.WebGPU.Added.Compute.Valid",
+        description: "Check that added/removed events are sent.",
+        async test() {
+            await Promise.all([
+                awaitProgramAdded(WI.ShaderProgram.ProgramType.Compute),
+                InspectorTest.evaluateInPage(`createComputePipeline()`),
+            ]);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Canvas.ShaderProgram.WebGPU.Added.Compute.Invalid",
+        description: "Check that added/removed events are sent.",
+        async test() {
+            let shaderProgramAdded = false;
+
+            let listener = canvas.shaderProgramCollection.singleFireEventListener(WI.Collection.Event.ItemAdded, (event) => {
+                shaderProgramAdded = true;
+            });
+
+            await InspectorTest.evaluateInPage(`createComputePipeline("INVALID")`);
+
+            canvas.shaderProgramCollection.removeEventListener(WI.Collection.Event.ItemAdded, listener);
+            InspectorTest.expectFalse(shaderProgramAdded, "Should not create a ShaderProgram for an invalid descriptor.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Canvas.ShaderProgram.WebGPU.Added.Render.Valid",
+        description: "Check that added/removed events are sent.",
+        async test() {
+            await Promise.all([
+                awaitProgramAdded(WI.ShaderProgram.ProgramType.Render),
+                InspectorTest.evaluateInPage(`createRenderPipeline()`),
+            ]);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Canvas.ShaderProgram.WebGPU.Added.Render.Invalid",
+        description: "Check that added/removed events are sent.",
+        async test() {
+            let shaderProgramAdded = false;
+
+            let listener = canvas.shaderProgramCollection.singleFireEventListener(WI.Collection.Event.ItemAdded, (event) => {
+                shaderProgramAdded = true;
+            });
+
+            await InspectorTest.evaluateInPage(`createRenderPipeline("INVALID")`);
+
+            canvas.shaderProgramCollection.removeEventListener(WI.Collection.Event.ItemAdded, listener);
+            InspectorTest.expectFalse(shaderProgramAdded, "Should not create a ShaderProgram for an invalid descriptor.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Canvas.ShaderProgram.WebGPU.ParentDeviceRemoved",
+        description: "Check that the ShaderProgram is removed before it's parent Canvas.",
+        test(resolve, reject) {
+            let canvasRemoved = false;
+
+            WI.canvasManager.canvasCollection.singleFireEventListener(WI.Collection.Event.ItemRemoved, (event) => {
+                canvasRemoved = true;
+            });
+
+            let shaderProgramCount = canvas.shaderProgramCollection.size;
+            let listenerItemRemoved = canvas.shaderProgramCollection.addEventListener(WI.Collection.Event.ItemRemoved, (event) => {
+                if (--shaderProgramCount)
+                    return;
+
+                canvas.shaderProgramCollection.removeEventListener(WI.Collection.Event.ItemRemoved, listenerItemRemoved);
+                InspectorTest.expectFalse(canvasRemoved, "Removed ShaderProgram before Canvas.");
+                resolve();
+            });
+
+            InspectorTest.evaluateInPage(`deleteDevice()`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Test that CanvasManager tracks creation and destruction of WebGPU shader programs.</p>
+</body>
+</html>

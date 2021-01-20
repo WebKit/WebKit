@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Video exchange using GPU process</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay=""></video>
+        <canvas id="canvas" width="640" height="480"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+if (window.internals)
+    internals.setUseGPUProcessForWebRTC(true);
+
+video = document.getElementById("video");
+canvas = document.getElementById("canvas");
+
+function grabFrameData(x, y, w, h)
+{
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    canvas.getContext('2d').drawImage(video, x, y, w, h, x, y, w, h);
+    return canvas.getContext('2d').getImageData(x, y, w, h).data;
+}
+
+function testImage()
+{
+    const data = grabFrameData(10, 325, 250, 1);
+
+    var index = 20;
+    assert_true(data[index] < 100);
+    assert_true(data[index + 1] < 100);
+    assert_true(data[index + 2] < 100);
+
+    index = 80;
+    assert_true(data[index] > 200);
+    assert_true(data[index + 1] > 200);
+    assert_true(data[index + 2] > 200);
+
+    index += 80;
+    assert_true(data[index] > 200);
+    assert_true(data[index + 1] > 200);
+    assert_true(data[index + 2] < 100);
+}
+
+var pc1, pc2;
+promise_test(async (test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    const localStream = await navigator.mediaDevices.getUserMedia({video: {advanced: [{width:{min:640}}, {height:{min:480} } ]}});
+    if (window.internals)
+        assert_true(internals.pageMediaState().includes('HasActiveVideoCaptureDevice'), "Unexpected HasActiveVideoCaptureDevice");
+    const stream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            pc1 = firstConnection;
+            firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+        }, (secondConnection) => {
+            pc2 = secondConnection;
+            secondConnection.ontrack = (trackEvent) => {
+                assert_true(trackEvent.track instanceof MediaStreamTrack);
+                assert_true(trackEvent.receiver instanceof RTCRtpReceiver);
+                assert_true(Array.isArray(trackEvent.streams), "Array.isArray() should return true");
+                assert_true(Object.isFrozen(trackEvent.streams), "Object.isFrozen() should return true");
+                assert_equals(trackEvent.track.id, localStream.getVideoTracks()[0].id);
+                assert_equals(trackEvent.track, trackEvent.streams[0].getVideoTracks()[0]);
+                resolve(trackEvent.streams[0]);
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    video.srcObject = stream;
+    await video.play();
+
+    testImage();
+}, "Basic video exchange");
+
+function getCircleImageData()
+{
+    return grabFrameData(450, 100, 150, 100);
+}
+
+async function checkVideoIsUpdated(shouldBeUpdated, count, referenceData)
+{
+    if (count === undefined)
+        count = 0;
+    else if (count >= 20)
+        return Promise.reject("checkVideoIsUpdated timed out :" + shouldBeUpdated + " " + count);
+
+    if (referenceData === undefined)
+        referenceData = getCircleImageData();
+
+    await waitFor(200);
+    const newData = getCircleImageData();
+
+    if (shouldBeUpdated === (JSON.stringify(referenceData) !== JSON.stringify(newData)))
+        return;
+
+    await checkVideoIsUpdated(shouldBeUpdated, ++count, newData);
+}
+
+promise_test(async (test) => {
+    const sender = pc1.getSenders()[0];
+    let p = sender.getParameters();
+    p.encodings[0].active = false;
+    await sender.setParameters(p);
+
+    assert_false(sender.getParameters().encodings[0].active, "encodings[0].active should be false");
+
+    await checkVideoIsUpdated(false);
+}, "Call setParameters to disable sending a given encoding");
+
+promise_test(async (test) => {
+    const sender = pc1.getSenders()[0];
+    let p = sender.getParameters();
+    p.encodings[0].active = true;
+    await sender.setParameters(p);
+
+    assert_true(sender.getParameters().encodings[0].active, "encodings[0].active should be true");
+
+    await checkVideoIsUpdated(true);
+}, "Call setParameters to reenable sending a given encoding");
+        </script>
+    </body>
+</html>

@@ -1,0 +1,13 @@
+x: 3
+y: 5
+xd: 4.6
+yd: 9.2
+x + y: 8
+x - y: -2
+x * y: 15
+x / y: 0.6
+isFinite(xd): true
+isFinite(myInf): false
+isFinite(Infinity): false
+Math.abs(-2): 2
+Math.floor(1.5): 1

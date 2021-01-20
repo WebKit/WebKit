@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../editing.js"></script>
+</head>
+<body>
+    <div id="editor" contenteditable></div>
+    <div id="console"></div>
+    <script>
+        internals.settings.setUnifiedTextCheckerEnabled(true);
+        description("The test passes if we avoid crashing when removing the editable root while restoring replaced text. This test requires WebKitTestRunner or DumpRenderTree.");
+
+        let editor = document.getElementById("editor");
+        editor.focus();
+
+        for (let character of "hello ")
+            typeCharacterCommand(character);
+
+        let textNode = editor.childNodes[0];
+        getSelection().setBaseAndExtent(textNode, 0, textNode, 5);
+
+        editor.addEventListener("input", event => {
+            editor.remove();
+            testPassed("Removed editor.");
+        });
+
+        internals.changeBackToReplacedString("helo");
+        testPassed("Changed back to original text without crashing.");
+    </script>
+</body>
+</html>

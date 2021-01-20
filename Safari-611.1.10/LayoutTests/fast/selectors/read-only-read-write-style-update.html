@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+* {
+    background-color: white;
+}
+target:read-only {
+    background-color: red;
+}
+target:read-write {
+    background-color: lime;
+}
+</style>
+</head>
+<body>
+    <div style="display:none">
+        <target></target>
+        <target id="target"></target>
+        <target></target>
+    </div>
+</body>
+<script>
+description('Test that the style is invalidated and updated properly when properties causing :read-only/:read-write change.');
+
+function testStyle(expectReadOnly)
+{
+    shouldBeEqualToString('getComputedStyle(document.getElementById("target")).backgroundColor', expectReadOnly ? 'rgb(255, 0, 0)' : 'rgb(0, 255, 0)');
+}
+
+debug("Initially, the target should be read only.");
+testStyle(true);
+
+debug("Changing content editable via the API.");
+var target = document.getElementById('target');
+target.contentEditable = "true";
+testStyle(false);
+
+target.contentEditable = "false";
+testStyle(true);
+
+target.contentEditable = "plaintext-only";
+testStyle(false);
+
+target.contentEditable = false;
+testStyle(true);
+
+debug("Changing content editable via the attributes.");
+target.setAttribute("CoNtEnTeDiTaBlE", "true");
+testStyle(false);
+
+target.setAttribute("CoNtEnTeDiTaBlE", "false");
+testStyle(true);
+
+target.setAttribute("CoNtEnTeDiTaBlE", "");
+testStyle(false);
+
+target.removeAttribute("contenteditable");
+testStyle(true);
+
+debug("Changing content editable on the parent via the API.");
+var parent = target.parentElement;
+parent.contentEditable = "true";
+testStyle(false);
+
+parent.contentEditable = "false";
+testStyle(true);
+
+parent.contentEditable = "plaintext-only";
+testStyle(false);
+
+parent.contentEditable = false;
+testStyle(true);
+
+debug("Changing content editable via the attributes.");
+parent.setAttribute("CoNtEnTeDiTaBlE", "true");
+testStyle(false);
+
+parent.setAttribute("CoNtEnTeDiTaBlE", "false");
+testStyle(true);
+
+parent.setAttribute("CoNtEnTeDiTaBlE", "");
+testStyle(false);
+
+parent.removeAttribute("contenteditable");
+testStyle(true);
+
+debug("Moving the document to design mode.");
+document.designMode = "on";
+testStyle(false);
+
+debug("Setting the target's contenteditable to true should not change a thing now.");
+target.contentEditable = "true";
+testStyle(false);
+
+debug("Setting the target's contenteditable to false should still be respected in design mode.");
+target.contentEditable = "false";
+testStyle(true);
+
+debug("Let's remove the contenteditable attribute on the target, we should still be read-write because of design mode.");
+target.removeAttribute("contenteditable");
+testStyle(false);
+
+debug("Disabling design mode.");
+document.designMode = "off";
+testStyle(true);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

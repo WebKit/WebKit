@@ -1,0 +1,8 @@
+[
+    ["/js-test-resources", "resources"],
+    ["/media-resources", "media"],
+    ["/modern-media-controls", "../Source/WebCore/Modules/modern-media-controls"],
+    ["/resources/testharness.css", "resources/testharness.css"],
+    ["/resources/testharness.js", "resources/testharness.js"],
+    ["/resources/testharnessreport.js", "resources/testharnessreport.js"]
+]

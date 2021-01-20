@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>
+  <rect id="rect1" x="50" y="50" width="150" height="150"/>
+  <rect id="rect2" width="150" height="150"/>
+</defs>
+<clipPath id="clip2">
+  <use xlink:href="#rect2"/>
+</clipPath>
+<clipPath id="clip1" clip-path="url(#clip2)">
+  <use xlink:href="#rect1"/>
+</clipPath>
+<rect width="200" height="200" fill="green" clip-path="url(#clip1)"/>
+</svg>

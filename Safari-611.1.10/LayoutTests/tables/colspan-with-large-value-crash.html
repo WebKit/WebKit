@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we do not crash when colspan value is large.</title>
+</head>
+<body>
+PASS if no crash.
+<table>
+    <td colspan="53927142"></td>
+    <th>
+        <td></td>
+    </th>
+</table>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+Turn a column spanner into an absolutely positioned box.
+
+PASS if no crash or assertion failure.
+
+Text.
+Text.

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="connect-src http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php">
+    <script src="/js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+    <script>
+        window.jsTestIsAsync = true;
+        function log(msg) {
+            document.getElementById("console").appendChild(document.createTextNode(msg + "\n"));
+        }
+
+        var xhr = new XMLHttpRequest;
+        try {
+            // Redirect to a different host, because as of CSP2 paths
+            // are ignored when matching after a redirect.
+            xhr.open("GET", "resources/redir.php?url=http://localhost:8000/security/contentSecurityPolicy/resources/xhr-redirect-not-allowed.pl", true);
+        } catch(e) {
+            testFailed("XMLHttpRequest.open() should not throw an exception.");
+        }
+
+        xhr.onload = function () {
+            testFailed("XMLHttpRequest.send() should fail to follow the disallowed redirect.");
+            finishJSTest();
+        };
+
+        xhr.onerror = function () {
+            testPassed("XMLHttpRequest.send() did not follow the disallowed redirect.");
+            finishJSTest();
+        };
+
+        xhr.send();
+    </script>
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

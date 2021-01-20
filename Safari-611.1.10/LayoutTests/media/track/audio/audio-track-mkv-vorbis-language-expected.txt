@@ -1,0 +1,12 @@
+
+Check audio tracks' language attributes.
+
+EVENT(canplaythrough)
+
+** Check in-band kind attributes
+EXPECTED (video.audioTracks.length == '2') OK
+EXPECTED (video.audioTracks[0].language == 'la') OK
+EXPECTED (video.audioTracks[1].language == 'en') OK
+
+END OF TEST
+

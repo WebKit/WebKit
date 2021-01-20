@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+        
+        #scroller {
+            position: relative;
+            z-index: 0;
+            width: 400px;
+            height: 400px;
+            margin: 20px;
+            overflow: scroll;
+            padding: 20px;
+            border: 30px solid orange;
+            box-sizing: border-box;
+            border-radius: 80px 200px;
+            background-color: silver;
+        }
+
+        .negative {
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            z-index: -1;
+            padding: 20px;
+            background-color: gray;
+            transform: translateZ(0);
+        }
+        
+        .contents {
+            height: 1000px;
+            background: linear-gradient(green, blue);
+        }
+        
+        .masker {
+            position: absolute;
+            top: 49px;
+            left: 49px;
+            width: 342px;
+            height: 342px;
+            box-sizing: border-box;
+            border: 3px solid gray;
+            border-radius: 49px 170px;
+        }
+    </style>
+    <script>
+        window.addEventListener('load', () => {
+            scroller.scrollTo(0, 250);
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="scroller">
+        <div class="negative"></div>
+        <div class="contents"></div>
+    </div>
+    <div class="masker"></div>
+</body>
+</html>
+

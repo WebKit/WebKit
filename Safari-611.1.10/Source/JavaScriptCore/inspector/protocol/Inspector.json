@@ -1,0 +1,34 @@
+{
+    "domain": "Inspector",
+    "debuggableTypes": ["itml", "javascript", "page", "web-page"],
+    "targetTypes": ["itml", "javascript", "page"],
+    "commands": [
+        {
+            "name": "enable",
+            "description": "Enables inspector domain notifications."
+        },
+        {
+            "name": "disable",
+            "description": "Disables inspector domain notifications."
+        },
+        {
+            "name": "initialized",
+            "description": "Sent by the frontend after all initialization messages have been sent."
+        }
+    ],
+    "events": [
+        {
+            "name": "evaluateForTestInFrontend",
+            "parameters": [
+                { "name": "script", "type": "string" }
+            ]
+        },
+        {
+            "name": "inspect",
+            "parameters": [
+                { "name": "object", "$ref": "Runtime.RemoteObject" },
+                { "name": "hints", "type": "object" }
+            ]
+        }
+    ]
+}

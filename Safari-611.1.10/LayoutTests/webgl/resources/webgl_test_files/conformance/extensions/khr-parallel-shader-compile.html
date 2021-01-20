@@ -1,0 +1,93 @@
+<!--
+Copyright (c) 2020 The Khronos Group Inc.
+Use of this source code is governed by an MIT-style license that can be
+found in the LICENSE.txt file.
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../js/js-test-pre.js"></script>
+<script src="../../js/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+"use strict";
+description("Test KHR_parallel_shader_compile");
+
+const wtu = WebGLTestUtils;
+
+const gl = wtu.create3DContext();
+const loseContext = wtu.getExtensionWithKnownPrefixes(gl, "WEBGL_lose_context");
+
+let counter = 0;
+const vertexSource = () => `
+void main() {
+    gl_Position = vec4(${counter++}, 1, 1, 1);
+}`;
+const fragmentSource = () => `
+void main() {
+    gl_FragColor = vec4(0.${counter++}, 1, 1, 1);
+}`;
+
+const vs = gl.createShader(gl.VERTEX_SHADER);
+const fs = gl.createShader(gl.FRAGMENT_SHADER);
+const program = gl.createProgram();
+gl.attachShader(program, vs);
+gl.attachShader(program, fs);
+
+const COMPLETION_STATUS_KHR = 0x91B1;
+
+gl.shaderSource(vs, vertexSource());
+gl.compileShader(vs);
+let status = gl.getShaderParameter(vs, COMPLETION_STATUS_KHR);
+if (status !== null) testFailed('Extension disabled, status should be null');
+wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "extension disabled");
+
+gl.shaderSource(fs, fragmentSource());
+gl.compileShader(fs);
+
+gl.linkProgram(program);
+status = gl.getProgramParameter(program, COMPLETION_STATUS_KHR);
+if (status !== null) testFailed('Extension disabled, status should be null');
+wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "extension disabled");
+
+const ext = wtu.getExtensionWithKnownPrefixes(gl, "KHR_parallel_shader_compile");
+if (!ext) {
+    testPassed("No KHR_parallel_shader_compile support -- this is legal");
+} else {
+    testPassed("Successfully enabled KHR_parallel_shader_compile extension");
+
+    shouldBe("ext.COMPLETION_STATUS_KHR", "0x91B1");
+
+    debug("Checking that status is a boolean.");
+    gl.shaderSource(vs, vertexSource());
+    gl.compileShader(vs);
+    let status = gl.getShaderParameter(vs, COMPLETION_STATUS_KHR);
+    if (status !== true && status !== false) testFailed("status should be a boolean");
+
+    gl.linkProgram(program);
+    status = gl.getProgramParameter(program, COMPLETION_STATUS_KHR);
+    if (status !== true && status !== false) testFailed("status should be a boolean");
+
+    debug("Checking that status is true when context is lost.");
+    if (loseContext) {
+        loseContext.loseContext();
+        status = gl.getShaderParameter(vs, COMPLETION_STATUS_KHR);
+        if (status !== true) testFailed("status should be true when context is lost");
+        status = gl.getProgramParameter(program, COMPLETION_STATUS_KHR);
+        if (status !== true) testFailed("status should be true when context is lost");
+    }
+}
+
+const successfullyParsed = true;
+</script>
+
+<script src="../../js/js-test-post.js"></script>
+</body>
+</html>

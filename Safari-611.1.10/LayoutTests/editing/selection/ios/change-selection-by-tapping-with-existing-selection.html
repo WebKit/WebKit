@@ -1,0 +1,69 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<meta name=viewport content="width=device-width, initial-scale=1, user-scalable=no">
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+#editor {
+    width: 300px;
+    height: 320px;
+    font-size: 18px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+function selectionToString() {
+    const selection = getSelection();
+    if (!selection.rangeCount)
+        return "(no selection)";
+
+    const range = selection.getRangeAt(0);
+    return `(${range.startContainer.parentElement.id}#${range.startOffset}, ${range.endContainer.parentElement.id}#${range.endOffset})`;
+}
+
+function tapAndWaitForSelectionChange(x, y) {
+    return new Promise(resolve => {
+        const editor = document.getElementById("editor");
+        let doneCount = 0;
+        const checkDone = () => {
+            if (++doneCount != 2)
+                return;
+
+            document.removeEventListener("selectionchange", checkDone);
+            resolve();
+        }
+        document.addEventListener("selectionchange", checkDone);
+        UIHelper.activateAt(x, y).then(checkDone);
+    });
+}
+
+addEventListener("load", async () => {
+    description("Verifies that tapping to change selection works when we already have a selection in the same editable root but do not currently have a focused node in the UIKit sense.");
+
+    var target = document.getElementById("target");
+    window.getSelection().setBaseAndExtent(target, 0, target, 2);
+
+    document.querySelector("#selection-before").textContent = selectionToString();
+    await tapAndWaitForSelectionChange(5, 5);
+    document.querySelector("#selection-after").textContent = selectionToString();
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<p contenteditable id="editor">Here's to the crazy ones, the misfits, the rebels, the trouble makers, the round pegs in the square holes, the ones who see things differently. There not fond of rules, and they have no respect for the status quo, you can quote then, disagree with them, glorify or vilify them, about the only thing you can't do is ignore them.  Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world are the ones who <span id='target'>do</span>.</p>
+    <p id="description"></p>
+    <p id="console"></p>
+    <div>Selection before tap: <span id="selection-before"></span></div>
+    <div>Selection after tap: <span id="selection-after"></span></div>
+</body>
+</html>

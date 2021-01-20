@@ -1,0 +1,5 @@
+2d.imageData.put.unchanged
+putImageData(getImageData(...), ...) has no effect
+Spec references: 2d.imageData.unchanged
+Actual output:
+Passed

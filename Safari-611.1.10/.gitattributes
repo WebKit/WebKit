@@ -1,0 +1,31 @@
+# To enable automatic merging of ChangeLog files, use the following command:
+# git config merge.changelog.driver "resolve-ChangeLogs --merge-driver %O %A %B"
+ChangeLog* merge=changelog
+
+# To enable smart diffing of ObjC[++] files, run the following commands:
+# git config diff.objcpp.xfuncname "^[-+@a-zA-Z_].*$"
+# git config diff.objcppheader.xfuncname "^[@a-zA-Z_].*$"
+*.m diff=objc
+*.mm diff=objcpp
+mac/*.h diff=objcppheader
+*/mac/*.h diff=objcppheader
+*/*/mac/*.h diff=objcppheader
+objc/*.h diff=objcppheader
+*/objc/*.h diff=objcppheader
+*/*/objc/*.h diff=objcppheader
+
+# To enable smart diffing of *.strings files, run the following command:
+# git config diff.localizablestrings.textconv "iconv -f utf-16 -t utf-8"
+*.strings diff=localizablestrings
+
+*.vcproj eol=crlf
+*.vsprops eol=crlf
+*.sln eol=crlf
+
+# For best performance, place rules for deep paths in the parent directory.
+# For example: instead of "Source/WebCore/inspector/Inspector.json -crlf" here,
+# place "Inspector.json -crlf" in Source/WebCore/inspector/.gitattributes
+
+# Exclude these git specific files from archives created via git-archive.
+.gitignore      export-ignore
+.gitattributes  export-ignore

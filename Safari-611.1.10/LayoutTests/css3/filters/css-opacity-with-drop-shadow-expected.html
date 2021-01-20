@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>This test verifies that an element's drop shadow filter is not clipped when a CSS opacity property is applied.</title>
+    <!--
+        This is the reference file for the the test. 
+        If the associated test passes, you should see a gray square and a light green square.
+    -->
+    <style>
+        body {
+            margin: 0;
+        }
+        #filtered {
+            background-color: black;
+            opacity: 0.5;
+            width: 100px;
+            height: 100px;
+        }
+        #drop-shadow {
+            background-color: #0f0;
+            opacity: 0.5;
+            position: absolute;
+            top: 110px;
+            left: 110px;
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div id="filtered"></div>
+    <div id="drop-shadow"></div>
+</body>

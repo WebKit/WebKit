@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests copying the content inside a shadow tree.<br>
+To manually test, copy the selected content and paste it below:</p>
+<style>
+#source, #destination {
+    border: solid 1px #666;
+    margin: 1rem 0;
+}
+</style>
+<div id="source">
+    <b>hello,
+        <span id="host"><span slot="webkit">WebKit</span> <span slot="others">and other engines</slot></span>
+    </b>
+    <i>rocks</i>
+</div>
+<div id="destination" contenteditable><br></div>
+<script>
+
+document.getElementById('host').attachShadow({mode: 'closed'}).innerHTML = 'world <slot name="webkit"></slot>';
+getSelection().selectAllChildren(document.getElementById('source'));
+
+</script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<style>
+    div.test {
+        border: solid silver;
+        -webkit-border-before-width: 2px;
+        -webkit-border-end-width: 4px;
+        -webkit-border-after-width: 1px;
+        -webkit-border-start-width: 3px;
+        -webkit-logical-width: 64px;
+        -webkit-logical-height: 32px;
+        -webkit-column-count: 2;
+        -webkit-column-gap: 4px;
+        -webkit-column-rule: 2px solid orange;
+        -webkit-column-fill: auto;
+        -webkit-column-progression: reverse;
+        column-count: 2;
+        column-gap: 4px;
+        column-rule: 2px solid orange;
+        column-fill: auto;
+    }
+
+    .writing-mode-lr div.test {
+        -webkit-writing-mode: vertical-lr;
+    }
+
+    .writing-mode-rl div.test {
+        -webkit-writing-mode: vertical-rl;
+    }
+
+    .writing-mode-tb div.test {
+        -webkit-writing-mode: horizontal-tb;
+    }
+
+    .writing-mode-bt div.test {
+        -webkit-writing-mode: horizontal-bt;
+    }
+
+    div.axis-vertical {
+        -webkit-column-axis: vertical;
+    }
+
+    div.axis-horizontal {
+        -webkit-column-axis: horizontal;
+    }
+
+    .writing-mode-tb div.axis-vertical, .writing-mode-bt div.axis-vertical,
+    .writing-mode-lr div.axis-horizontal, .writing-mode-rl div.axis-horizontal {
+        -webkit-margin-after: 16px;
+        -webkit-margin-before: 96px;
+    }
+
+    .writing-mode-tb div.axis-horizontal, .writing-mode-bt div.axis-horizontal,
+    .writing-mode-lr div.axis-vertical, .writing-mode-rl div.axis-vertical {
+        -webkit-margin-start: 96px;
+        margin-bottom: 16px;
+        margin-top: 48px;
+    }
+
+    div.test > div {
+        -webkit-logical-height: 20px;
+        -webkit-border-before: 4px dotted;
+        -webkit-border-start: 2px dotted white;
+    }
+
+    div.test > div:nth-child(1) { background-color: #707; }
+    div.test > div:nth-child(2) { background-color: #00f; }
+    div.test > div:nth-child(3) { background-color: #0bf; }
+    div.test > div:nth-child(4) { background-color: #086; }
+</style>
+<div class="writing-mode-tb">
+    <div class="test axis-horizontal">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div class="test axis-vertical">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
+<div class="writing-mode-bt">
+    <div class="test axis-horizontal">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div class="test axis-vertical">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
+<div class="writing-mode-lr">
+    <div class="test axis-horizontal">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div class="test axis-vertical">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
+<div class="writing-mode-rl">
+    <div class="test axis-horizontal">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div class="test axis-vertical">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>

@@ -1,0 +1,22 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document toDOMRange:range from 6 of #text > DIV > BODY > HTML > #document to 6 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 734x39
+          text run at (0,0) width 734: "This tests non-smartmove drag/drop. The space should be deleted on move, but not reinserted on drop, resulting in"
+          text run at (0,20) width 87: "\"worldhello\"."
+      RenderBlock {DIV} at (0,56) size 784x20
+        RenderInline {SPAN} at (0,0) size 32x19
+          RenderText {#text} at (0,0) size 32x19
+            text run at (0,0) width 32: "hello"
+        RenderText {#text} at (31,0) size 43x19
+          text run at (31,0) width 43: " world"
+caret: position 6 of child 1 {#text} of child 3 {DIV} of body

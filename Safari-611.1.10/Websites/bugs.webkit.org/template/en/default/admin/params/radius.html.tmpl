@@ -1,0 +1,43 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+[%
+   title = "RADIUS"
+   desc = "Configure this first before choosing RADIUS as an authentication method"
+%]
+
+[% param_descs = {
+  RADIUS_server => "The name (and optionally port) of your RADIUS server " _
+                   "(e.g. <code>radius.company.com</code>, or " _
+                   "<code>radius.company.com:portnum</code>).<br>" _
+                   "Required only if " _
+                   "<a href=\"?section=auth#user_verify_class_desc\">the " _
+                   "<code>user_verify_class</code> parameter</a> contains " _
+                   "<code>RADIUS</code>.",
+
+  RADIUS_secret => "Your RADIUS server's secret.<br>" _
+                   "Required only if " _
+                   "<a href=\"?section=auth#user_verify_class_desc\">the " _
+                   "<code>user_verify_class</code> parameter</a> contains " _
+                   "<code>RADIUS</code>.",
+
+  RADIUS_NAS_IP => "The NAS-IP-Address attribute to be used when exchanging " _
+                   "data with your RADIUS server. " _
+                   "If unspecified, <code>127.0.0.1</code> will be used.<br>" _
+                   "Useful only if " _
+                   "<a href=\"?section=auth#user_verify_class_desc\">the " _
+                   "<code>user_verify_class</code> parameter</a> " _
+                   "contains <code>RADIUS</code>.",
+
+  RADIUS_email_suffix => "Suffix to append to a RADIUS user name to form an " _
+                         "e-mail address.<br>" _
+                         "Useful only if " _
+                         "<a href=\"?section=auth#user_verify_class_desc\">the " _
+                         "<code>user_verify_class</code> parameter</a> " _
+                         "contains <code>RADIUS</code>.",
+  }
+%]

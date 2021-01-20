@@ -1,0 +1,14 @@
+This test verifies that navigator.clipboard.writeText sanitizes 'image/png'. To manually run the test, click the buttons labeled (1), (2), and then (3)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Wrote a valid image to the clipboard.
+PASS doneWritingFirstImage became true
+PASS Did not write an invalid image to the clipboard.
+PASS doneWritingSecondImage became true
+PASS Did not write an invalid image to the clipboard.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

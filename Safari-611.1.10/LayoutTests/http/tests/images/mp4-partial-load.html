@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mp4-partial-load</title>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+    jsTestIsAsync = true;
+    if (window.internals && window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+        internals.clearMemoryCache();
+    }
+
+    function loadAndStall()
+    {
+        return "http://127.0.0.1:8000/resources/load-and-stall.php";
+    }
+
+    function mp4Image()
+    {
+        return "?name=../../../media/content/test.mp4&mimeType=video%2Fmp4";
+    }
+
+    function endTest()
+    {
+        if (window.timeoutID)
+            clearTimeout(timeoutID);
+        finishJSTest();
+    }
+
+    function errorReceived()
+    {
+        testFailed('Received an erorr loading image');
+        endTest();
+    }
+
+    function timedOut()
+    {
+        testFailed('Took too long');
+        endTest();
+    }
+
+    function runTest()
+    {
+        description('This tests that an mp4 loaded in a video tag does not cause a hang when the load stalls.')
+
+        setTimeout(() => {
+            img = document.querySelector('img');
+            img.addEventListener("error", errorReceived);
+            img.src = loadAndStall() + mp4Image() + "&stallAt=15799&stallFor=60";
+            window.timeoutID = setTimeout(timedOut, 5000);
+            shouldBecomeEqual('img.naturalWidth', '320', endTest);
+        });
+    }
+
+    window.addEventListener('load', runTest, {once: true});
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</head>
+<body>
+    <img>
+</body>
+</html>

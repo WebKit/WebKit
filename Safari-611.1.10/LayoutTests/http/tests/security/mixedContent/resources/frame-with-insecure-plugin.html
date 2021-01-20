@@ -1,0 +1,9 @@
+<script>
+window.onload = function() {
+  if (window.opener)
+    window.opener.postMessage('done', '*');
+}
+</script>
+<object name='plugin' type='application/x-webkit-test-netscape'>
+  <param name='movie' value='http://127.0.0.1:8000/security/mixedContent/resources/dummy.swf' />
+</object>

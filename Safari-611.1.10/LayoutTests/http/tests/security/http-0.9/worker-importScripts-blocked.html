@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<script>
+var script = [
+    'try {',
+    '   importScripts("http://127.0.0.1:8000/security/http-0.9/resources/nph-worker-fail.pl");',
+    '} catch (e) {',
+    '   postMessage("PASS");',
+    '}',
+].join("\n");
+
+var worker = new Worker(window.URL.createObjectURL(new Blob([script])));
+worker.onmessage = (messageEvent) => { alertAndDone(messageEvent.data); }
+
+function alertAndDone(message)
+{
+    alert(message);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</body>
+</html>

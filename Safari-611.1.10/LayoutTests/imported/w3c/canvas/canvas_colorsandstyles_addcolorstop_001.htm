@@ -1,0 +1,41 @@
+﻿<!doctype HTML> 
+<html>
+    <head>
+        <title>HTML5 Canvas Test: Invalid addColorStop() throws SYNTAX_ERR exception</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com" />
+        <link rel="help" href="http://www.w3.org/TR/2dcontext/#dom-canvasgradient-addcolorstop" />
+        <meta name="assert" content="addColorStop(offset, color) must throw a SYNTAX_ERR exception if the color passed cannot be parsed" />
+        <script type="text/javascript">
+            if (window.testRunner)
+	            testRunner.dumpAsText(true);
+
+            function runTest() 
+            {
+                var canvas = document.getElementById("canvas1");
+                var ctx = canvas.getContext("2d");
+
+                var lingrad = ctx.createLinearGradient(0, 0, 100, 0);
+
+                try 
+                {
+                    lingrad.addColorStop(0, "invalidColor");
+                }
+                catch (e) 
+                {
+                    // SYNTAX_ERR exception should be thrown if color cannot be parsed.
+                    if (e.code == DOMException.SYNTAX_ERR) 
+                    {
+                        document.getElementById("testresult").firstChild.data = "PASS";
+                    }
+                }
+
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <p>Description: addColorStop(offset, color) must throw a SYNTAX_ERR exception if the color passed cannot be parsed.</p>
+        <p>Test passes if the word "PASS" appears below.</p>
+        <div id="testresult">FAIL</div>
+        <canvas id="canvas1" width="300" height="150">Browser does not support HTML5 Canvas.</canvas>
+    </body>
+</html>

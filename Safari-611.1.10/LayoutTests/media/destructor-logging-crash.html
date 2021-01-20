@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../resources/js-test-pre.js"></script>
+        <script>
+            window.jsTestIsAsync = true;
+
+            window.requestAnimationFrame(() => {
+                let videos = [];
+                for (var i = 0; i < 500; i++)
+                    videos.push(document.createElement('video'));
+                
+                window.requestAnimationFrame(() => {
+                    videos.length = 0;
+
+                    window.requestAnimationFrame(() => {
+                        gc();
+
+                        window.requestAnimationFrame(() => {
+                            finishJSTest();
+                        });
+                    });
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <p>This tests that logging from the video element destructor does not crash.</p>
+        <script src="../resources/js-test-post.js"></script>
+    </body>
+</html>

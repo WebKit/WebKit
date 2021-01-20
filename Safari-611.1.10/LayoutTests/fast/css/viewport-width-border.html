@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script>
+            function runTest() {
+                description('Tests that vw unit works for border-width property');
+
+                shouldBeTrue("document.getElementById('borderDiv').offsetHeight > 100");
+                isSuccessfullyParsed();
+            }
+        </script>
+        <style>
+            #borderDiv{
+                width: 100px;
+                height: 100px;
+                background: green;
+                border: 5vw solid red;
+            }
+        </style>
+    </head>
+    <body onload="runTest()">
+        <div id="borderDiv"></div>
+    </body>
+</html>

@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: SyntaxError: Unexpected keyword 'new'
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT document.write in an imported module Test timed out
+

@@ -1,0 +1,3 @@
+
+PASS Test :is() uses highest possible specificity
+

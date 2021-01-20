@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<style>
+    canvas {
+        width: 100px;
+        height: 100px;
+    }
+</style>    
+<body>
+    <div>
+        <p>Frames of a 3-frame animated image with infinite loopCount:</p>
+        <canvas id="canvas-A"></canvas>
+        <canvas id="canvas-B"></canvas>
+        <canvas id="canvas-C"></canvas>
+        <canvas id="canvas-D"></canvas>
+        <canvas id="canvas-E"></canvas>
+        <canvas id="canvas-F"></canvas>
+        <canvas id="canvas-G"></canvas>
+    </div>
+    <script>
+        function drawFrame(image, canvasId) {
+            return new Promise((resolve) => {
+                let canvas = document.getElementById("canvas-" + canvasId);
+                let context = canvas.getContext("2d");
+                context.drawImage(image, 0, 0, canvas.width, canvas.height);
+                setTimeout(() => {
+                    resolve(String.fromCharCode(canvasId.charCodeAt() + 1));
+                }, 30);
+            });
+        }
+
+        function drawImage(image, canvasId, frameCount) {
+            let promise = drawFrame(image, canvasId);
+            for (let frame = 1; frame < frameCount; ++frame) {
+                promise = promise.then((canvasId) => {
+                    return drawFrame(image, canvasId);
+                });
+            }
+            return promise;
+        }
+
+        function loadImage(src, canvasId, frameCount) {
+            return new Promise((resolve) => {
+                let image = new Image;
+                image.onload = (() => {
+                    drawImage(image, canvasId, frameCount).then(resolve);
+                });
+                image.src = src;
+            });
+        }
+
+        (function() {
+            if (window.internals) {
+                internals.clearMemoryCache();
+                internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
+            }
+
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+
+            var imageSrc = "resources/animated-red-green-blue-repeat-infinite.gif";
+            var firstCanvasId = 'A';
+            var frameCount = 7;
+
+            loadImage(imageSrc, firstCanvasId, frameCount).then(() => {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        })();
+    </script>
+</body>
+</html>

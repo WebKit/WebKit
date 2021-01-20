@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" version="1.1">
+  <defs>
+    <filter id="colormatrix">
+      <feColorMatrix type="hueRotate" values="180"/>
+    </filter>
+    <filter id="morphology">
+      <feMorphology radius="10" operator="dilate"/>
+    </filter>
+    <filter id="componenttransfer">
+      <feComponentTransfer>
+        <feFuncR type="linear" slope="0.5">
+        <feFuncG type="linear" slope="0.5">
+        <feFuncB type="linear" slope="0.5">
+        <feFuncA type="identity">
+      </feComponentTransfer>
+    </filter>
+    <filter id="blurY">
+      <feGaussianBlur stdDeviation="0 5"/>
+    </filter>
+    <filter id="blend">
+      <feGaussianBlur stdDeviation="5 5"/>
+      <feBlend in2="SourceGraphic" mode="screen">
+    </filter>
+    <filter id="lighting">
+      <feSpecularLighting>
+        <feSpotLight pointsAtX="160" pointsAtY="130" pointsAtZ="0" specularExponent="1" limitingConeAngle="20" x="0" y="0" z="10"/>
+      </feSpecularLighting>
+      <feColorMatrix type="matrix" values="0 0 0 1 0  0 0 0 1 0  0 0 0 1 0  0 0 0 0 1"/>
+      <feBlend in2="SourceGraphic" mode="multiply"/>
+    </filter>
+    <filter id="offset" x="0%">
+      <feOffset dx="10" dy="10"/>
+    </filter>
+    <filter id="convolvematrix">
+      <feConvolveMatrix order="3 3" kernelMatrix="1 1 1   1 -7 1   1 1 1" bias ="0.3"/>
+    </filter>
+    <filter id="displacement">
+      <feDisplacementMap scale="10" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+<style>
+img {
+    margin: 10px;
+    -webkit-transform: translateZ(0);
+}
+</style>
+<img src="resources/reference.png">
+<img style="filter: url(#colormatrix); filter: url(#colormatrix);" src="resources/reference.png">
+<img style="filter: url(#morphology); filter: url(#morphology);" src="resources/reference.png">
+<img style="filter: url(#componenttransfer); filter: url(#componenttransfer);" src="resources/reference.png">
+<img style="filter: url(#blurY); filter: url(#blurY);" src="resources/reference.png">
+<img style="filter: url(#blend); filter: url(#blend);" src="resources/reference.png">
+<img style="filter: url(#lighting); filter: url(#lighting);" src="resources/reference.png">
+<img style="filter: url(#offset); filter: url(#offset);" src="resources/reference.png">
+<img style="filter: url(#convolvematrix); filter: url(#convolvematrix);" src="resources/reference.png">
+<img style="filter: url(#displacement); filter: url(#displacement);" src="resources/reference.png">

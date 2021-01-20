@@ -1,0 +1,31 @@
+This test checks the SVGAnimatedPreserveAspectRatio API - utilizing the preserveAspectRatio property of SVGSVGElement
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial preserveAspectRatio value
+PASS svgElement.preserveAspectRatio.toString() is "[object SVGAnimatedPreserveAspectRatio]"
+PASS svgElement.preserveAspectRatio.baseVal.toString() is "[object SVGPreserveAspectRatio]"
+PASS svgElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
+PASS svgElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
+
+Check that preserveAspectRatios are dynamic, caching value in a local variable and modifying it, should take effect
+PASS aspectRef.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMAXYMIN
+PASS aspectRef.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_SLICE
+PASS svgElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMAXYMIN
+PASS svgElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_SLICE
+
+Check that assigning to baseVal has no effect, as no setter is defined
+PASS svgElement.preserveAspectRatio.baseVal = -1 is -1
+PASS svgElement.preserveAspectRatio.baseVal = 'aString' is "aString"
+PASS svgElement.preserveAspectRatio.baseVal = svgElement is svgElement
+
+Check that the preserveAspectRatio align/meetOrSlice remained xMaxYMin/slice, and the baseVal type has not been changed
+PASS svgElement.preserveAspectRatio.baseVal.toString() is "[object SVGPreserveAspectRatio]"
+PASS svgElement.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMAXYMIN
+PASS svgElement.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_SLICE
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

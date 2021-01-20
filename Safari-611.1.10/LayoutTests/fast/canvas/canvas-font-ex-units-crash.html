@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Test that setting a font with size in 'ex' units doesn't crash.");
+
+ctx = document.createElement('canvas').getContext('2d');
+
+ctx.font = "5ex sans-serif";
+
+size = parseInt(ctx.font.substr(0, 2));
+family = ctx.font.substr(5);
+
+shouldBeCloseTo("size", 25, 10);
+shouldBe("family", "'sans-serif'");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+// Copyright 2020 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// See README.md for format.
+
+// Only tested on Vulkan currently
+
+// Conflict between "interpolateAtOffset()" and the viewport transformation for a default framebuffer
+3589 VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.interpolate_at_offset.no_qualifiers.default_framebuffer = FAIL
+3589 VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.interpolate_at_offset.centroid_qualifier.default_framebuffer = FAIL
+3589 VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.interpolate_at_offset.sample_qualifier.default_framebuffer = FAIL
+3589 VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.interpolate_at_offset.array_element.default_framebuffer = FAIL

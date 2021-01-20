@@ -1,0 +1,48 @@
+<html>
+<script>
+function runTest()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var plugin = document.getElementById("testPlugin");
+    var result = document.getElementById('result');
+
+    // First test NPN_Enumerate from the plugin's side
+    var testObject = { "one" : 1, "two" : 2, "three" : 3, 4 : 4 }
+    var outArray = [];    
+    plugin.testEnumerate(testObject, outArray);
+
+    if (outArray.sort().toString() != '4,one,three,two') {
+        result.innerHTML = 'FAILURE: Array returned from plugin was ' + outArray.toString();
+        return;
+    }
+    
+    // Now try enumerating a plugin object's properties
+    var propNames = [];
+    for (var v in plugin.testObject) {
+        propNames.push(v);
+    }
+    
+    if (propNames.sort().toString() != 'bar,foo') {
+        result.innerHTML = 'FAILURE: Plugin object properties was ' + propNames.toString();
+        return;
+    }
+
+    // Now try enumerating a plugin object's properties using Object.keys
+    var keys = Object.keys(plugin.testObject);
+    if (keys.sort().toString() != 'bar,foo') {
+        result.innerHTML = 'FAILURE: Plugin object properties returned by Object.keys were ' + keys.toString();
+        return;
+    }
+
+    result.innerHTML = 'SUCCESS';
+}
+</script>
+
+<body onload="runTest();">
+<embed id="testPlugin" type="application/x-webkit-test-netscape" width="200" height="200"></embed>
+This tests that a plugin can enumerate an object's properties using NPN_Enumerate. It also tests that JavaScript can enumerate a plugin object's properties. If this test is successful the text "SUCCESS" will be show below.
+<div id="result">FAILURE</div>
+</body>
+</html>

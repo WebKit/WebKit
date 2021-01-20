@@ -1,0 +1,62 @@
+diff --git a/resources/runner/motionmark.js b/resources/runner/motionmark.js
+index 65e8c54..1643e70 100644
+--- a/resources/runner/motionmark.js
++++ b/resources/runner/motionmark.js
+@@ -393,6 +393,48 @@ window.benchmarkRunnerClient = {
+     didFinishLastIteration: function()
+     {
+         benchmarkController.showResults();
++    },
++
++    _computeTestReport: function(testName, testResults)
++    {
++        return [testResults[Strings.json.score]];
++    },
++
++    _computeSuiteReports: function(suiteName, suiteResults)
++    {
++        var testsReports = {};
++        for (var testName in suiteResults) {
++            var testReports = this._computeTestReport(testName, suiteResults[testName]);
++            testsReports[testName] = { "metrics": { "Score": { "current": testReports } } };
++        }
++        return testsReports;
++    },
++
++    _computeIterationReports: function(iterationResults)
++    {
++        var suitesReports = {};
++        for (var suiteName in iterationResults[Strings.json.results.tests]) {
++            var testsReports = this._computeSuiteReports(suiteName, iterationResults[Strings.json.results.tests][suiteName]);
++            suitesReports[suiteName] = { "metrics": { "Score": ["Geometric"] }, "tests": testsReports };
++        }
++        return suitesReports;
++    },
++
++    _computeResultsReports: function()
++    {
++        var results = this.results.results[0];
++        var iterationReports = this._computeIterationReports(results);
++        iterationReports['debugOutput'] = {
++            options: benchmarkRunnerClient.results.options,
++            data: benchmarkRunnerClient.results.data,
++        }
++        return iterationReports;
++    },
++
++    didFinishLastIteration: function()
++    {
++        var results = JSON.stringify(this._computeResultsReports());
++        window.webdriver_results = results;
+     }
+ };
+
+@@ -436,7 +491,7 @@ window.sectionsManager =
+ window.benchmarkController = {
+     initialize: function()
+     {
+-        benchmarkController.addOrientationListenerIfNecessary();
++        setTimeout(benchmarkController.startBenchmark.bind(benchmarkController), 3000);
+     },
+
+     determineCanvasSize: function() {

@@ -1,0 +1,96 @@
+Test to make sure -webkit-text-decoration-style property returns CSSPrimitiveValue properly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Ancestor should not inherit 'dashed' value from parent (fallback to initial 'solid' value):
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style') is null
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'solid'
+PASS computedStyle.webkitTextDecorationStyle is 'solid'
+
+Parent should cointain 'dashed':
+PASS e.style.webkitTextDecorationStyle is 'dashed'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString() is '[object CSSPrimitiveValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'dashed'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'dashed'
+PASS computedStyle.webkitTextDecorationStyle is 'dashed'
+
+JavaScript setter tests for valid, initial, invalid and blank values:
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style') is null
+
+Valid value 'solid':
+PASS e.style.webkitTextDecorationStyle is 'solid'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString() is '[object CSSPrimitiveValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'solid'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'solid'
+PASS computedStyle.webkitTextDecorationStyle is 'solid'
+
+Valid value 'double':
+PASS e.style.webkitTextDecorationStyle is 'double'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString() is '[object CSSPrimitiveValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'double'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'double'
+PASS computedStyle.webkitTextDecorationStyle is 'double'
+
+Valid value 'dotted':
+PASS e.style.webkitTextDecorationStyle is 'dotted'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString() is '[object CSSPrimitiveValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'dotted'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'dotted'
+PASS computedStyle.webkitTextDecorationStyle is 'dotted'
+
+Valid value 'dashed':
+PASS e.style.webkitTextDecorationStyle is 'dashed'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString() is '[object CSSPrimitiveValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'dashed'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'dashed'
+PASS computedStyle.webkitTextDecorationStyle is 'dashed'
+
+Valid value 'wavy':
+PASS e.style.webkitTextDecorationStyle is 'wavy'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString() is '[object CSSPrimitiveValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'wavy'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'wavy'
+PASS computedStyle.webkitTextDecorationStyle is 'wavy'
+
+Initial value:
+PASS e.style.webkitTextDecorationStyle is 'initial'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString() is '[object CSSValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'initial'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'solid'
+PASS computedStyle.webkitTextDecorationStyle is 'solid'
+
+Invalid value (this property accepts one value at a time only):
+PASS e.style.webkitTextDecorationStyle is 'initial'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString() is '[object CSSValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'initial'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'solid'
+PASS computedStyle.webkitTextDecorationStyle is 'solid'
+
+Invalid value (ie. 'unknown'):
+PASS e.style.webkitTextDecorationStyle is 'initial'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').toString() is '[object CSSValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'initial'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'solid'
+PASS computedStyle.webkitTextDecorationStyle is 'solid'
+
+Empty value (resets the property):
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style') is null
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'solid'
+PASS computedStyle.webkitTextDecorationStyle is 'solid'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

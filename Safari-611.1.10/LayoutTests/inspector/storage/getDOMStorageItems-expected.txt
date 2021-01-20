@@ -1,0 +1,28 @@
+Tests for DOMStorage.getDOMStorageItems.
+
+
+== Running test suite: DOMStorage.getDOMStorageItems
+-- Running test case: DOMStorage.getDOMStorageItems.Session
+PASS: Should have a DOMStorageObject for sessionStorage.
+
+Getting DOM storage entries...
+[
+  [
+    "foo",
+    "bar"
+  ]
+]
+
+
+-- Running test case: DOMStorage.getDOMStorageItems.Local
+PASS: Should have a DOMStorageObject for localStorage.
+
+Getting DOM storage entries...
+[
+  [
+    "foo",
+    "bar"
+  ]
+]
+
+

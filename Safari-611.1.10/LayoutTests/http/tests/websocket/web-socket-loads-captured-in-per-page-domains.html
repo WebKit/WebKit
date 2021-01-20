@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<head>
+    <script src="../resources/js-test-pre.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
+</head>
+<body onload="runTest()">
+<script>
+    description('Ensure web socket loads are reported as loaded third party domains.');
+
+    window.jsTestIsAsync = true;
+    
+    if (window.testRunner)
+        testRunner.setAllowsAnySSLCertificate(true);
+
+    function askForLoadedSubresourceDomains() {
+        testRunner.loadedSubresourceDomains(function (arrayOfDomains) {
+            if (arrayOfDomains.length == 0) {
+                askForLoadedSubresourceDomains();
+                return;
+            }
+            if (arrayOfDomains.includes("localhost"))
+                testPassed("Loaded domain was successfully captured.");
+            else
+                testFailed("Loaded domain was not successfully captured.");
+            setEnableFeature(false, finishJSTest);
+        });
+    }
+
+    function runTest() {
+        new WebSocket('ws://localhost:8880/websocket/tests/hybi/simple');
+        setTimeout(askForLoadedSubresourceDomains, 0);
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>

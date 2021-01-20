@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test incorrect module tags.');
+
+// Module will be executed asynchronously.
+window.jsTestIsAsync = true;
+</script>
+<script>
+debug('Module is not executed yet.');
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+<script type="module ">
+testFail("This is not a module");
+</script>
+<script type=" module ">
+testFail("This is not a module");
+</script>
+<script type=" module">
+testFail("This is not a module");
+</script>
+<script type=" moduleXXX">
+testFail("This is not a module");
+</script>
+<script type="module">
+finishJSTest();
+</script>
+</body>
+</html>

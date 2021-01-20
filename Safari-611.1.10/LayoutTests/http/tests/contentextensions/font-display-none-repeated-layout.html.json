@@ -1,0 +1,54 @@
+[
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": "#hideme"
+        },
+        "trigger": {
+            "url-filter": ".*",
+            "resource-type": [
+                "font"
+            ]
+        }
+    },
+    {
+        "action": {
+            "type": "block"
+        },
+        "trigger": {
+            "url-filter": ".*",
+            "resource-type": [
+                "font"
+            ]
+        }
+    },
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": "#hideme"
+        },
+        "trigger": {
+            "url-filter": ".*",
+            "resource-type": [
+                "font"
+            ],
+            "load-type": [
+                "third-party"
+            ]
+        }
+    },
+    {
+        "action": {
+            "type": "block"
+        },
+        "trigger": {
+            "url-filter": ".*",
+            "resource-type": [
+                "font"
+            ],
+            "load-type": [
+                "third-party"
+            ]
+        }
+    }
+]

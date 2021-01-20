@@ -1,0 +1,12 @@
+<script>
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+</script>
+<style>
+@font-face {
+    font-family: "foo";
+    src: url("resources/font-bad-unitsperem.svg#foo") format(svg);
+}
+</style>
+<body style="-webkit-font-smoothing: none;">
+<div><span style="font: 50px foo;">AAA</span>AAA</div>

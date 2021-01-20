@@ -1,0 +1,18 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+    testRunner.waitUntilDone();
+}
+
+function log()
+{
+	alert("FAIL: This prompt should have been ignored.");
+}
+
+window.onunload = function() {
+	showModalDialog("resources/modal-dialog.html");
+}
+
+setTimeout(function() { window.location = "resources/prompt-landing-page.html" }, 0);
+</script>

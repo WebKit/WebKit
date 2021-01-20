@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<body>
+<style>
+#container {
+    width: 100px;
+    height: 100px;
+}
+</style>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<div id="container">
+<div id="host">
+    <span>a</span>
+    <span>b</span>
+</div>
+<div id="host2">
+    <span>a</span>
+    <span class="abs">b</span>
+</div>
+<div id="host3">
+    <span>a</span>
+    <span>b</span>
+</div>
+<div id="host4">
+    <span>a</span>
+    <span>b</span>
+</div>
+<div id="host5">
+    <span>a</span>
+    <span>b</span>
+</div>
+</div>
+<script>
+
+document.querySelector('#host').attachShadow({mode:'closed'}).innerHTML = `
+<style>
+:host {
+    width: 100%;
+    height: 20%;
+    display: flex;
+}
+::slotted(span) {
+    flex: 1;
+    color: green;
+    background: green;
+    height: 100%;
+}
+</style>
+<slot></slot>`;
+
+document.querySelector('#host2').attachShadow({mode:'closed'}).innerHTML = `
+<style>
+:host {
+    width: 150%;
+    height: 20%;
+    display: flex;
+}
+::slotted(span) {
+    flex: 2;
+    color: green;
+    background: green;
+    display: inline-block;
+    z-index: 10;
+    height: 100%;
+}
+::slotted(span.abs) {
+    flex: 1;
+    background: red;
+    z-index: 5;
+    left: -75px;
+    position: relative;
+}
+</style>
+<slot></slot>`;
+
+document.querySelector('#host3').attachShadow({mode:'closed'}).innerHTML = `
+<style>
+:host {
+    width: 100%;
+    height: 20%;
+}
+:host(.flex) {
+    display:flex;
+}
+::slotted(span) {
+    flex: 1;
+    color: green;
+    background: green;
+    height: 100%;
+}
+</style>
+<slot></slot>`;
+window.getComputedStyle(document.querySelector('#host3')).width;
+document.querySelector('#host3').className = "flex";
+
+const root4 = document.querySelector('#host4').attachShadow({mode:'closed'});
+root4.innerHTML = `
+<style>
+:host {
+    width: 100%;
+    height: 20%;
+}
+#deephost {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    background: red;
+}
+::slotted(span) {
+    flex: 1;
+    color: green;
+    background: green;
+    height: 100%;
+}
+</style>
+<div id="deephost">
+<slot></slot>
+</div>`;
+root4.querySelector('#deephost').attachShadow({mode:'closed'}).innerHTML = `<slot></slot>`;
+
+document.querySelector('#host5').attachShadow({mode:'closed'}).innerHTML = `
+<style>
+:host {
+    width: 100%;
+    height: 20%;
+}
+::slotted(span) {
+    flex: 1;
+    color: green;
+    background: green;
+    height: 100%;
+}
+slot {
+    display:flex;
+    width: 100%;
+    height: 100%;
+}
+</style>
+<slot></slot>`;
+
+</script>

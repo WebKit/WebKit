@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that border images sized and positioned properly on subpixels.</title>
+<style>
+  div {
+    border-width:0px 0px 0px 0.5px;
+    position: fixed;
+    -webkit-border-image: -webkit-linear-gradient(black, black) 1 100%;
+  }
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  var container = document.getElementById("container");
+  w=5; h=5;
+  for (i = 0; i < 15; ++i) {
+    b = 0;
+    for (j = 0; j < 15; ++j) {
+      var e = document.createElement("div");
+      e.style.top = ((w + 1) * i) + "px";
+      e.style.left = ((w + 1) * j) + "px";
+      e.style.width = w + "px";
+      e.style.height = h + "px";
+      e.style.borderLeftWidth = b + "px";
+      container.appendChild(e);
+      w+=0.1;
+      h+=0.1;
+      b+=0.5;
+    }
+  }
+</script>
+</body>
+</html>

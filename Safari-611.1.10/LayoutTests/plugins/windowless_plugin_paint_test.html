@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+
+        var paintCount = 0;
+
+        function onLoad() {
+            var pluginDiv = document.getElementById("pluginDiv");
+            // Create the plugin in the middle of the page.
+            pluginDiv.innerHTML = "<embed id=\"testPlugin\" type=\"application/x-webkit-test-netscape\" width=\"200\" height=\"200\" onpaintevent=\"didPaint()\" windowedPlugin=\"false\"></embed>";
+            if (window.internals)
+            internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+            testRunner.displayAndTrackRepaints();
+        }
+
+        function notifyDone() {
+            document.getElementById('result').innerHTML = "SUCCESS";
+            testRunner.notifyDone();
+        }
+
+        function didPaint() {
+            paintCount++;
+            setTimeout("notifyDone();", 50);
+        }
+        </script>
+    </head>
+    <body onload="setTimeout(onLoad(), 50);">
+        This tests that dynamically added windowless plugins receive paint events on creation.
+
+        <div id="result">FAILURE</div>
+        
+        <div id="pluginDiv" style="position: absolute; left: 300px; top: 300px; height: 400px; width: 400px; padding: 1em;">
+        </div>
+    </body>
+</html>

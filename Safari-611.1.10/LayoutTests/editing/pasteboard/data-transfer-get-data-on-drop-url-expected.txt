@@ -1,0 +1,11 @@
+Apple dot com
+{
+    "dragover": {
+        "text/uri-list": "",
+        "text/plain": ""
+    },
+    "drop": {
+        "text/uri-list": "https://www.apple.com/",
+        "text/plain": "https://www.apple.com/"
+    }
+}

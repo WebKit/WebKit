@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Copying.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.incrementAndDecrement = async () => {
+    let program = `
+        int foo1() { int x = 0; return x++; }
+        int foo2() { int x = 0; x++; return x; }
+        int foo3() { int x = 0; return ++x; }
+        int foo4() { int x = 0; ++x; return x; }
+        int foo5() { int x = 0; return x--; }
+        int foo6() { int x = 0; x--; return x; }
+        int foo7() { int x = 0; return --x; }
+        int foo8() { int x = 0; --x; return x; }
+    `;
+    assert_equals(await callIntFunction(program, "foo1", []), 0);
+    assert_equals(await callIntFunction(program, "foo2", []), 1);
+    assert_equals(await callIntFunction(program, "foo3", []), 1);
+    assert_equals(await callIntFunction(program, "foo4", []), 1);
+    assert_equals(await callIntFunction(program, "foo5", []), 0);
+    assert_equals(await callIntFunction(program, "foo6", []), -1);
+    assert_equals(await callIntFunction(program, "foo7", []), -1);
+    assert_equals(await callIntFunction(program, "foo8", []), -1);
+};
+
+runTests(whlslTests);
+</script>
+</html>
+

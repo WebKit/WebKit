@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/README.md
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/array.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/false.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/invalid-content-type.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/json-module-service-worker-test.https.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/module.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/module.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/non-object.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/null.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/parse-error.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/parse-error.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/serviceworker-dynamic-import.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/serviceworker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/string.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/true.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/utf8.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/utf8.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/valid-content-type.tentative.html

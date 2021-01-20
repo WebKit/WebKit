@@ -1,0 +1,11 @@
+This test makes sure that FontFace.load promises still fire when the src attribute of the @font-face rule changes during a load.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Initial then-block should succeed
+PASS loadedFont.family is "WebFont2"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+asdf

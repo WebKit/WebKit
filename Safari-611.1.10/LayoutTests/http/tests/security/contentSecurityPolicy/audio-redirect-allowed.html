@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/dump-as-text.js"></script>
+<script src="resources/wait-until-done.js"></script>
+<meta http-equiv="Content-Security-Policy" content="media-src http://127.0.0.1:8000/resources/redirect.php http://localhost:8000">
+</head>
+<body>
+<audio src="http://127.0.0.1:8000/resources/redirect.php?code=307&url=http%3A%2F%2Flocalhost%3A8000/resources/balls-of-the-orient.aif" onloadedmetadata="alertAndDone('PASS')" onerror="alertAndDone('FAIL')"></audio>
+</body>
+</html>

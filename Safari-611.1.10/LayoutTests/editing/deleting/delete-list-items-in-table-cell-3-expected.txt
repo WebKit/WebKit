@@ -1,0 +1,23 @@
+When deleting the last ordered list item in a table cell we must delete the whole ordered list:
+
+Before:
+| <table>
+|   border="1"
+|   <tbody>
+|     <tr>
+|       <td>
+|         <ol>
+|           <li>
+|             id="li"
+|             <#selection-caret>
+|             <br>
+
+After:
+| <table>
+|   border="1"
+|   <tbody>
+|     <tr>
+|       <td>
+|         <div>
+|           <#selection-caret>
+|           <br>

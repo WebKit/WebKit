@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x432
+        RenderBlock (floating) {DIV} at (0,0) size 554x24 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 310x19
+            text run at (2,2) width 310: "There should be a green border table below this:"
+        RenderTable {TABLE} at (0,24) size 784x408 [border: (2px solid #008000)]
+          RenderTableSection {TBODY} at (2,2) size 780x404
+            RenderTableRow {TR} at (0,2) size 780x400
+              RenderTableCell {TD} at (2,201) size 776x2 [r=0 c=0 rs=1 cs=1]

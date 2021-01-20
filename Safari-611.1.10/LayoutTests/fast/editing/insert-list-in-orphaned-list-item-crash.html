@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+function test() {
+    document.getSelection().collapse(target);;
+    document.execCommand("insertOrderedList");
+}
+</script>
+<body onload=test()>
+<li contenteditable="true">
+    <div id="target"></div>
+</li>
+<p>The test PASS if it does not crash.</p>
+</body>

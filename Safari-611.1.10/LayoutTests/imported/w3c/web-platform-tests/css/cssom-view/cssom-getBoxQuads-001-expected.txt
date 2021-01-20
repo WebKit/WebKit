@@ -1,0 +1,3 @@
+
+FAIL CSSOM View - getBoxQuads() returns proper border and margin boxes for block and flex bb.getBoxQuads is not a function. (In 'bb.getBoxQuads({box: "border"})', 'bb.getBoxQuads' is undefined)
+

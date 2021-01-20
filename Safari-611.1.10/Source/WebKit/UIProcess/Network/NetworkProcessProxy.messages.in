@@ -1,0 +1,81 @@
+# Copyright (C) 2012-2020 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+messages -> NetworkProcessProxy LegacyReceiver NotRefCounted {
+    DidReceiveAuthenticationChallenge(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier pageID, Optional<WebCore::SecurityOriginData> topOrigin, WebCore::AuthenticationChallenge challenge, bool negotiatedLegacyTLS, uint64_t challengeID)
+    NegotiatedLegacyTLS(WebKit::WebPageProxyIdentifier pageID)
+    DidNegotiateModernTLS(WebKit::WebPageProxyIdentifier pageID, WebCore::AuthenticationChallenge challenge)
+
+    DidFetchWebsiteData(WebKit::CallbackID callbackID, struct WebKit::WebsiteData websiteData)
+    DidDeleteWebsiteData(WebKit::CallbackID callbackID)
+    DidDeleteWebsiteDataForOrigins(WebKit::CallbackID callbackID)
+
+    TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebKit::WebPageProxyIdentifier pageID) -> (bool handled) Synchronous
+    TerminateUnresponsiveServiceWorkerProcesses(WebCore::ProcessIdentifier processIdentifier)
+
+    SetIsHoldingLockedFiles(bool isHoldingLockedFiles)
+
+    # Diagnostic messages logging
+    LogDiagnosticMessage(WebKit::WebPageProxyIdentifier pageID, String message, String description, enum:bool WebCore::ShouldSample shouldSample)
+    LogDiagnosticMessageWithResult(WebKit::WebPageProxyIdentifier pageID, String message, String description, uint32_t result, enum:bool WebCore::ShouldSample shouldSample)
+    LogDiagnosticMessageWithValue(WebKit::WebPageProxyIdentifier pageID, String message, String description, double value, unsigned significantFigures, enum:bool WebCore::ShouldSample shouldSample)
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    LogTestingEvent(PAL::SessionID sessionID, String event)
+    NotifyResourceLoadStatisticsProcessed()
+    NotifyWebsiteDataDeletionForRegistrableDomainsFinished()
+    NotifyWebsiteDataScanForRegistrableDomainsFinished()
+    RequestStorageAccessConfirm(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain) -> (bool userDidGrantAccess) Async
+    DeleteWebsiteDataInUIProcessForRegistrableDomains(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> dataTypes, OptionSet<WebKit::WebsiteDataFetchOption> fetchOptions, Vector<WebCore::RegistrableDomain> domains) -> (HashSet<WebCore::RegistrableDomain> domainsWithMatchingDataRecords) Async
+    DidCommitCrossSiteLoadWithDataTransferFromPrevalentResource(WebKit::WebPageProxyIdentifier pageID)
+    SetDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain> domains)
+    SetDomainsWithCrossPageStorageAccess(HashMap<WebCore::RegistrableDomain, WebCore::RegistrableDomain> domains) -> () Async
+#endif
+#if ENABLE(CONTENT_EXTENSIONS)
+    ContentExtensionRules(WebKit::UserContentControllerIdentifier identifier)
+#endif
+
+    RetrieveCacheStorageParameters(PAL::SessionID sessionID)
+
+    TerminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
+
+#if ENABLE(SERVICE_WORKER)
+    EstablishWorkerContextConnectionToNetworkProcess(WebCore::RegistrableDomain registrableDomain, PAL::SessionID sessionID) -> () Async
+    WorkerContextConnectionNoLongerNeeded(WebCore::ProcessIdentifier identifier)
+    RegisterServiceWorkerClientProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
+    UnregisterServiceWorkerClientProcess(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
+#endif
+
+    SetWebProcessHasUploads(WebCore::ProcessIdentifier processID, bool hasUpload)
+
+#if ENABLE(APP_BOUND_DOMAINS)
+    GetAppBoundDomains(PAL::SessionID sessionID) -> (HashSet<WebCore::RegistrableDomain> appBoundDomains) Async
+#endif
+
+    RequestStorageSpace(PAL::SessionID sessionID, struct WebCore::ClientOrigin origin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired) -> (Optional<uint64_t> newQuota) Async
+    
+    ResourceLoadDidSendRequest(WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::ResourceLoadInfo resourceLoadInfo, WebCore::ResourceRequest request, Optional<IPC::FormDataReference> httpBody)
+    ResourceLoadDidPerformHTTPRedirection(WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::ResourceLoadInfo resourceLoadInfo, WebCore::ResourceResponse resourceResponse, WebCore::ResourceRequest request)
+    ResourceLoadDidReceiveChallenge(WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::ResourceLoadInfo resourceLoadInfo, WebCore::AuthenticationChallenge challenge)
+    ResourceLoadDidReceiveResponse(WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::ResourceLoadInfo resourceLoadInfo, WebCore::ResourceResponse response)
+    ResourceLoadDidCompleteWithError(WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::ResourceLoadInfo resourceLoadInfo, WebCore::ResourceResponse response, WebCore::ResourceError error)
+}

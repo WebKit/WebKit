@@ -1,0 +1,7 @@
+Test that CanvasAgent.requestContent can retrieve a dataURL with the current content of the WebGL canvas.
+
+
+== Running test suite: Canvas.requestContentWebGL
+-- Running test case: Canvas.requestContentWebGL.validCanvasId
+PASS: Content should not be empty.
+

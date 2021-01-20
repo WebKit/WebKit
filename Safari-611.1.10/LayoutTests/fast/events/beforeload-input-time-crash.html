@@ -1,0 +1,18 @@
+<input id="t1" type="time">
+<script>
+var time1 = document.getElementById('t1');
+document.addEventListener('beforeload', function(event) {
+    time1.value = time1.value ? '' : '23:59';
+}, true);
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+setTimeout(function() {
+    document.body.innerHTML = 'PASS if not crashed.';
+    testRunner.notifyDone();
+}, 100);
+time1.focus();
+</script>
+<embed src="data:text/html,PASS"></embed>

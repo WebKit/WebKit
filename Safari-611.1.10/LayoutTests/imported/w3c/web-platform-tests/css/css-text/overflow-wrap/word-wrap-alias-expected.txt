@@ -1,0 +1,3 @@
+
+FAIL word-wrap should be defined as an alias of overflow-wrap assert_equals: Only overflow-wrap should appear when serializing the declaration. expected "overflow-wrap: break-word;" but got "word-wrap: break-word; overflow-wrap: break-word;"
+

@@ -1,0 +1,47 @@
+layer at (0,0) size 785x605
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x605
+  RenderBlock {HTML} at (0,0) size 785x605
+    RenderBody {BODY} at (8,8) size 769x589
+      RenderBlock {DIV} at (0,0) size 769x27
+        RenderText {#text} at (0,0) size 144x26
+          text run at (0,0) width 144: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
+      RenderBlock {DIV} at (0,27) size 108x194
+        RenderBlock {DIV} at (0,10) size 27x174
+          RenderText {#text} at (0,0) size 26x160
+            text run at (0,0) width 160: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
+        RenderBlock {DIV} at (27,10) size 27x174 [color=#0000FF]
+          RenderText {#text} at (0,0) size 26x174
+            text run at (0,0) width 174: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
+        RenderBlock {DIV} at (54,10) size 27x174 [color=#008080]
+          RenderText {#text} at (0,0) size 26x144
+            text run at (0,0) width 144: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
+        RenderBlock {DIV} at (81,10) size 27x174 [color=#A52A2A]
+          RenderText {#text} at (0,0) size 26x144
+            text run at (0,0) width 144: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
+      RenderBlock {DIV} at (0,221) size 108x194
+        RenderBlock {DIV} at (0,10) size 27x174
+          RenderText {#text} at (0,0) size 26x160
+            text run at (0,0) width 160: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
+        RenderBlock {DIV} at (27,10) size 27x174 [color=#0000FF]
+          RenderText {#text} at (0,0) size 26x174
+            text run at (0,0) width 174: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
+        RenderBlock {DIV} at (54,10) size 27x174 [color=#008080]
+          RenderText {#text} at (0,0) size 26x144
+            text run at (0,0) width 144: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
+        RenderBlock {DIV} at (81,10) size 27x174 [color=#A52A2A]
+          RenderText {#text} at (0,0) size 26x144
+            text run at (0,0) width 144: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
+      RenderBlock {DIV} at (0,415) size 108x174
+        RenderBlock {DIV} at (0,0) size 27x174
+          RenderText {#text} at (0,0) size 26x160
+            text run at (0,0) width 160: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
+        RenderBlock {DIV} at (27,0) size 27x174 [color=#0000FF]
+          RenderText {#text} at (0,0) size 26x174
+            text run at (0,0) width 174: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
+        RenderBlock {DIV} at (54,0) size 27x174 [color=#008080]
+          RenderText {#text} at (0,0) size 26x144
+            text run at (0,0) width 144: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
+        RenderBlock {DIV} at (81,0) size 27x174 [color=#A52A2A]
+          RenderText {#text} at (0,0) size 26x144
+            text run at (0,0) width 144: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"

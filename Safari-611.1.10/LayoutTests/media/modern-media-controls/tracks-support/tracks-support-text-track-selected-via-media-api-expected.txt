@@ -1,0 +1,30 @@
+This test checks that setting an embedded text track as selected via the HTMLMediaElement JS APIs will correctly show this track as selected, and that selecting the "Automatic (Recommended)" track will revert back to selecting that entry.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS shadowRoot.querySelector('button.tracks') became different from null
+PASS shadowRoot.querySelector('button.tracks').getBoundingClientRect().width became different from 0
+
+=== Initial state ===
+
+[-] Off
+[-] Auto (Recommended)
+[x] English Subtitles
+[-] French Subtitles
+[-] German Subtitles
+[-] Spanish Subtitles
+
+=== After picking auto track interactively ===
+
+[-] Off
+[x] Auto (Recommended)
+[-] English Subtitles
+[-] French Subtitles
+[-] German Subtitles
+[-] Spanish Subtitles
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

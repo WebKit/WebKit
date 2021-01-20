@@ -1,0 +1,15 @@
+PASS targetDiv.innerText is "TEST"
+PASS targetDiv.innerText is ""
+PASS targetDiv.innerText is "TEST"
+PASS targetDiv.innerText is "TEST"
+PASS targetDiv.innerText is ""
+PASS targetDiv.innerText is "TEST"
+PASS targetDiv.innerText is "TEST"
+PASS targetDiv.innerText is ""
+PASS targetDiv.innerText is "TEST"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+TEST
+TEST
+TEST

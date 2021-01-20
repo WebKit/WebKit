@@ -1,0 +1,22 @@
+To manually test, add an automatic text replacement mapping from the string 'YT?' to 'You there?', and then type the string 'YT?'. It should not be immediately corrected to 'You there?'. However, entering a newline should subsequently trigger autocorrection, and place the selection on the line after 'You there?'
+
+Before pressing enter:
+| "\n        "
+| <div>
+|   "YT?<#selection-caret>"
+| "\n        "
+| <div>
+|   <br>
+| "\n    "
+
+After pressing enter:
+| "\n        "
+| <div>
+|   "You there?"
+| <div>
+|   <#selection-caret>
+|   <br>
+| "\n        "
+| <div>
+|   <br>
+| "\n    "

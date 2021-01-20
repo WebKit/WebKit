@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>CSS Test: Omitted values for 'border-image-outset' property in the 'border-image' shorthand</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/" />
+        <link rel="help" href="http://www.w3.org/TR/css3-background/#the-border-image-shorthand" />
+        <meta name="flags" content="image" />
+        <meta name="assert" content="This test checks that the omitted 'border-image-outset' value in the shorthand property is set to the initial value." />
+        <style type="text/css">
+            #test
+            {
+                border: 20px double red;
+                border-image: url("../support/9grid40-30-20-10-lime.png") 40% 15% 20% 5% / 1 stretch;
+                height: 100px;
+                margin: 50px;
+                width: 100px;
+            }
+            #reference
+            {
+                border: 20px double red;
+                border-image-repeat: stretch;
+                border-image-slice: 40% 15% 20% 5%;
+                border-image-source: url("../support/9grid40-30-20-10-lime.png");
+                height: 100px;
+                margin: 50px;
+                width: 100px;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if there are two identical images visible on the page.</p>
+        <div id="test"></div>
+        <div id="reference"></div>
+    </body>
+</html>

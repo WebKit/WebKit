@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Test WebSocket.binaryType attribute.");
+
+var ws = new WebSocket("ws://localhost:8880/websocket/tests/hybi/simple");
+shouldBeEqualToString("ws.binaryType", "blob");
+
+ws.binaryType = "arraybuffer";
+shouldBeEqualToString("ws.binaryType", "arraybuffer");
+
+ws.binaryType = "blob";
+shouldBeEqualToString("ws.binaryType", "blob");
+
+shouldThrowErrorName("ws.binaryType = 'Blob'", "SyntaxError");
+shouldBeEqualToString("ws.binaryType", "blob");
+
+shouldThrowErrorName("ws.binaryType = 'ArrayBuffer'", "SyntaxError");
+shouldBeEqualToString("ws.binaryType", "blob");
+
+shouldThrowErrorName("ws.binaryType = ''", "SyntaxError");
+shouldBeEqualToString("ws.binaryType", "blob");
+
+</script>
+<script src="../../../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

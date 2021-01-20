@@ -1,0 +1,110 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (8,24) size 780x425
+      RenderSVGContainer {g} at (11,24) size 343x81 [transform={m=((0.60,0.00)(0.00,0.60)) t=(110.00,50.00)}]
+        RenderSVGText {text} at (-160,-59) size 17x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 17x36
+            chunk 1 text run 1 at (-160.00,-30.00) startOffset 0 endOffset 1 width 16.68: "0"
+        RenderSVGText {text} at (-50,-59) size 94x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 94x36
+            chunk 1 text run 1 at (-50.00,-30.00) startOffset 0 endOffset 7 width 93.40: "0.8-3.2"
+        RenderSVGText {text} at (140,-59) size 17x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 17x36
+            chunk 1 text run 1 at (140.00,-30.00) startOffset 0 endOffset 1 width 16.68: "4"
+        RenderSVGContainer {g} at (33,82) size 299x2
+          RenderSVGPath {polyline} at (33,82) size 299x2 [stroke={[type=SOLID] [color=#888888] [dash array={10.00, 6.00}]}] [points="-150 0 0 0 150 0"]
+        RenderSVGContainer {g} at (12,62) size 342x42
+          RenderSVGEllipse {circle} at (12,62) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=-150.00] [cy=0.00] [r=20.00]
+          RenderSVGEllipse {circle} at (162,62) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=0.00] [cy=0.00] [r=20.00]
+          RenderSVGEllipse {circle} at (312,62) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=150.00] [cy=0.00] [r=20.00]
+        RenderSVGEllipse {circle} at (11,61) size 44x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-150.00,0.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
+      RenderSVGContainer {g} at (445,24) size 343x81 [transform={m=((0.60,0.00)(0.00,0.60)) t=(370.00,50.00)}]
+        RenderSVGText {text} at (-160,-59) size 17x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 17x36
+            chunk 1 text run 1 at (-160.00,-30.00) startOffset 0 endOffset 1 width 16.68: "0"
+        RenderSVGText {text} at (-100,-59) size 17x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 17x36
+            chunk 1 text run 1 at (-100.00,-30.00) startOffset 0 endOffset 1 width 16.68: "2"
+        RenderSVGText {text} at (80,-59) size 17x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 17x36
+            chunk 1 text run 1 at (80.00,-30.00) startOffset 0 endOffset 1 width 16.68: "2"
+        RenderSVGText {text} at (140,-59) size 17x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 17x36
+            chunk 1 text run 1 at (140.00,-30.00) startOffset 0 endOffset 1 width 16.68: "4"
+        RenderSVGContainer {g} at (466,82) size 299x2
+          RenderSVGPath {polyline} at (466,82) size 59x2 [stroke={[type=SOLID] [color=#888888] [dash array={10.00, 6.00}]}] [points="-150 0 -90 0"]
+          RenderSVGPath {polyline} at (706,82) size 59x2 [stroke={[type=SOLID] [color=#888888] [dash array={10.00, 6.00}]}] [points="90 0 150 0"]
+        RenderSVGContainer {g} at (446,62) size 342x42
+          RenderSVGEllipse {circle} at (446,62) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=-150.00] [cy=0.00] [r=20.00]
+          RenderSVGEllipse {circle} at (506,62) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=-90.00] [cy=0.00] [r=20.00]
+          RenderSVGEllipse {circle} at (686,62) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=90.00] [cy=0.00] [r=20.00]
+          RenderSVGEllipse {circle} at (746,62) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=150.00] [cy=0.00] [r=20.00]
+        RenderSVGEllipse {circle} at (445,61) size 44x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-150.00,0.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
+      RenderSVGContainer {g} at (57,211) size 252x116 [transform={m=((0.60,0.00)(0.00,0.60)) t=(110.00,180.00)}]
+        RenderSVGText {text} at (-115,-59) size 17x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 17x36
+            chunk 1 text run 1 at (-115.00,-30.00) startOffset 0 endOffset 1 width 16.68: "3"
+        RenderSVGText {text} at (-85,-89) size 42x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 42x36
+            chunk 1 text run 1 at (-85.00,-60.00) startOffset 0 endOffset 3 width 41.70: "2.6"
+        RenderSVGText {text} at (60,-89) size 17x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 17x36
+            chunk 1 text run 1 at (60.00,-60.00) startOffset 0 endOffset 1 width 16.68: "0"
+        RenderSVGText {text} at (95,-59) size 17x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 17x36
+            chunk 1 text run 1 at (95.00,-30.00) startOffset 0 endOffset 1 width 16.68: "1"
+        RenderSVGText {text} at (-75,-9) size 17x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 17x36
+            chunk 1 text run 1 at (-75.00,20.00) startOffset 0 endOffset 1 width 16.68: "4"
+        RenderSVGText {text} at (40,-9) size 42x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 42x36
+            chunk 1 text run 1 at (40.00,20.00) startOffset 0 endOffset 3 width 41.70: "1.4"
+        RenderSVGContainer {g} at (78,239) size 211x62
+          RenderSVGPath {polyline} at (78,239) size 211x62 [stroke={[type=SOLID] [color=#888888] [dash array={10.00, 6.00}]}] [points="-105 0 -25 -60 25 -60 105 0"]
+        RenderSVGContainer {g} at (57,249) size 252x72
+          RenderSVGEllipse {circle} at (57,279) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=-105.00] [cy=0.00] [r=20.00]
+          RenderSVGEllipse {circle} at (97,249) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=-65.00] [cy=-30.00] [r=20.00]
+          RenderSVGEllipse {circle} at (227,249) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=65.00] [cy=-30.00] [r=20.00]
+          RenderSVGEllipse {circle} at (267,279) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=105.00] [cy=0.00] [r=20.00]
+        RenderSVGEllipse {circle} at (226,248) size 44x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(65.00,-30.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
+      RenderSVGContainer {g} at (471,208) size 292x116 [transform={m=((0.60,0.00)(0.00,0.60)) t=(370.00,160.00)}]
+        RenderSVGText {text} at (-135,-59) size 17x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 17x36
+            chunk 1 text run 1 at (-135.00,-30.00) startOffset 0 endOffset 1 width 16.68: "3"
+        RenderSVGText {text} at (-95,-59) size 42x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 42x36
+            chunk 1 text run 1 at (-95.00,-30.00) startOffset 0 endOffset 3 width 41.70: "2.6"
+        RenderSVGText {text} at (65,-59) size 17x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 17x36
+            chunk 1 text run 1 at (65.00,-30.00) startOffset 0 endOffset 1 width 16.68: "0"
+        RenderSVGText {text} at (115,-59) size 17x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 17x36
+            chunk 1 text run 1 at (115.00,-30.00) startOffset 0 endOffset 1 width 16.68: "1"
+        RenderSVGText {text} at (-85,21) size 17x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 17x36
+            chunk 1 text run 1 at (-85.00,50.00) startOffset 0 endOffset 1 width 16.68: "4"
+        RenderSVGText {text} at (50,21) size 42x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 42x36
+            chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 3 width 41.70: "1.4"
+        RenderSVGContainer {g} at (491,266) size 251x2
+          RenderSVGPath {polyline} at (491,266) size 251x2 [stroke={[type=SOLID] [color=#888888] [dash array={10.00, 6.00}]}] [points="-125 0 125 0"]
+        RenderSVGContainer {g} at (471,246) size 292x42
+          RenderSVGEllipse {circle} at (471,246) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=-125.00] [cy=0.00] [r=20.00]
+          RenderSVGEllipse {circle} at (521,246) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=-75.00] [cy=0.00] [r=20.00]
+          RenderSVGEllipse {circle} at (671,246) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=75.00] [cy=0.00] [r=20.00]
+          RenderSVGEllipse {circle} at (721,246) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=125.00] [cy=0.00] [r=20.00]
+        RenderSVGEllipse {circle} at (670,245) size 44x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(75.00,0.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
+      RenderSVGText {text} at (5,209) size 404x33 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 404x33
+          chunk 1 text run 1 at (5.00,235.00) startOffset 0 endOffset 31 width 403.16: "Test of keyPoints and keyTimes."
+      RenderSVGText {text} at (5,247) size 432x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 432x22
+          chunk 1 text run 1 at (5.00,265.00) startOffset 0 endOffset 54 width 431.63: "Number indicates the circle's passing time in seconds."
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.6 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

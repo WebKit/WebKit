@@ -1,0 +1,25 @@
+@namespace url('http://www.w3.org/1999/xhtml');
+@namespace m url('http://www.w3.org/1998/Math/MathML');
+
+@font-face {
+    font-family: LatinModernWOFF;
+    src: url('latinmodern-math.woff');
+}
+@font-face {
+    font-family: LibertinusWOFF;
+    src: url('libertinusmath-regular.woff');
+}
+@font-face {
+    font-family: AmiriWOFF;
+    src: url('amiri-regular.woff');
+}
+
+m|math, m|mtext {
+    font-family: LatinModernWOFF;
+}
+m|math.libertinus {
+    font-family: LibertinusWOFF;
+}
+m|math.arabic {
+    font-family: LatinModernWOFF, AmiriWOFF;
+}

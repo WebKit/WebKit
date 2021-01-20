@@ -1,0 +1,6 @@
+
+FAIL mandatory scroll-snap-type should snap as long as the element is visible. assert_equals: expected 1000 but got 625
+PASS proximity scroll-snap-type shouldn't snap if the snap position is too far away.
+FAIL proximity scroll-snap-type should snap if the snap position is close. assert_equals: expected 1000 but got 995
+PASS none scroll-snap-type shouldn't snap.
+

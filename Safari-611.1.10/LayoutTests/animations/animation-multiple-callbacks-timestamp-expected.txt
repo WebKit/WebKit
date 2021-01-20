@@ -1,0 +1,19 @@
+Test the timestamps of all the rAF callbacks are the same.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Math.round(timestamp1) is Math.round(timestamp2)
+PASS Math.round(timestamp1) is Math.round(timestamp2)
+PASS Math.round(timestamp1) is Math.round(timestamp2)
+PASS Math.round(timestamp1) is Math.round(timestamp2)
+PASS Math.round(timestamp1) is Math.round(timestamp2)
+PASS Math.round(timestamp1) is Math.round(timestamp2)
+PASS Math.round(timestamp1) is Math.round(timestamp2)
+PASS Math.round(timestamp1) is Math.round(timestamp2)
+PASS Math.round(timestamp1) is Math.round(timestamp2)
+PASS Math.round(timestamp1) is Math.round(timestamp2)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

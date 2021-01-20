@@ -1,0 +1,108 @@
+/*
+ * Copyright (C) 2006, 2007, 2009, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+[
+    CustomToJSObject,
+    DOMJIT,
+    JSCustomHeader,
+    JSGenerateToNativeObject,
+    ExportMacro=WEBCORE_EXPORT,
+    Exposed=Window
+] interface Element : Node {
+    readonly attribute DOMString? namespaceURI;
+    readonly attribute DOMString? prefix;
+    readonly attribute DOMString localName;
+    readonly attribute DOMString tagName;
+
+    [CEReactions, Reflect] attribute DOMString id;
+    [CEReactions, Reflect=class] attribute DOMString className;
+    [SameObject, PutForwards=value] readonly attribute DOMTokenList classList;
+    [CEReactions, Reflect, Unscopable] attribute DOMString slot;
+    [SameObject, PutForwards=value] readonly attribute DOMTokenList part;
+
+    [DOMJIT=ReadDOM] boolean hasAttributes();
+    [SameObject] readonly attribute NamedNodeMap attributes;
+    sequence<DOMString> getAttributeNames();
+    [DOMJIT=ReadDOM] DOMString? getAttribute(DOMString qualifiedName);
+    DOMString? getAttributeNS(DOMString? namespaceURI, DOMString localName);
+    [CEReactions, MayThrowException] undefined setAttribute(DOMString qualifiedName, DOMString value);
+    [CEReactions, MayThrowException] undefined setAttributeNS(DOMString? namespaceURI, DOMString qualifiedName, DOMString value);
+    [CEReactions] undefined removeAttribute(DOMString qualifiedName);
+    [CEReactions] undefined removeAttributeNS(DOMString? namespaceURI, DOMString localName);
+    [CEReactions, MayThrowException] boolean toggleAttribute(DOMString qualifiedName, optional boolean force);
+    boolean hasAttribute(DOMString qualifiedName);
+    boolean hasAttributeNS(DOMString? namespaceURI, DOMString localName);
+
+    [DOMJIT=ReadDOM] Attr? getAttributeNode(DOMString qualifiedName);
+    Attr? getAttributeNodeNS(DOMString? namespaceURI, DOMString localName);
+    [CEReactions, MayThrowException] Attr? setAttributeNode(Attr attr);
+    [CEReactions, MayThrowException] Attr? setAttributeNodeNS(Attr attr);
+    [CEReactions, MayThrowException] Attr removeAttributeNode(Attr attr);
+
+    [MayThrowException] ShadowRoot attachShadow(ShadowRootInit init);
+    [ImplementedAs=shadowRootForBindings, CallWith=GlobalObject] readonly attribute ShadowRoot? shadowRoot;
+
+    [MayThrowException] Element? closest(DOMString selectors);
+    [MayThrowException] boolean matches(DOMString selectors);
+    [ImplementedAs=matches, MayThrowException] boolean webkitMatchesSelector(DOMString selectors); // Historical alias of .matches.
+
+    [DOMJIT=ReadDOM] HTMLCollection getElementsByTagName(DOMString qualifiedName);
+    HTMLCollection getElementsByTagNameNS(DOMString? namespaceURI, DOMString localName);
+    HTMLCollection getElementsByClassName(DOMString name);
+
+    [CEReactions, MayThrowException] Element? insertAdjacentElement(DOMString where, Element element); // Historical.
+    [MayThrowException] undefined insertAdjacentText(DOMString where, DOMString data); // Historical.
+
+    
+    // FIXME: Most of the following non-standard event handlers probably make more sense as part of the GlobalEventHandlers mixin.
+
+    // Non-standard: Cannot find these in the latest specification (https://w3c.github.io/uievents/#events-focus-types).
+    [NotEnumerable] attribute EventHandler onfocusin;
+    [NotEnumerable] attribute EventHandler onfocusout;
+
+    // Non-standard: https://developer.apple.com/reference/webkitjs/gestureevent.
+    [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturechange;
+    [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongestureend;
+    [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturestart;
+
+    // Non-standard: https://developer.apple.com/reference/webkitjs/element/1633146-onbeforeload.
+    [NotEnumerable] attribute EventHandler onbeforeload;
+
+    // Non-standard: https://developer.apple.com/reference/webkitjs/element/1634205-onwebkitneedkey.
+    [NotEnumerable, Conditional=LEGACY_ENCRYPTED_MEDIA, EnabledBySetting=LegacyEncryptedMediaAPI] attribute EventHandler onwebkitneedkey;
+
+    // Non-standard: https://developer.apple.com/reference/webkitjs/element/1633943-onwebkitpresentationmodechanged.
+    [NotEnumerable, Conditional=VIDEO_PRESENTATION_MODE] attribute EventHandler onwebkitpresentationmodechanged;
+
+    // Non-standard: https://developer.apple.com/reference/webkitjs/element/1630042-onwebkitcurrentplaybacktargetisw.
+    [NotEnumerable, Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventHandler onwebkitcurrentplaybacktargetiswirelesschanged;
+
+    // Non-standard: https://developer.apple.com/reference/webkitjs/element/1629580-onwebkitplaybacktargetavailabili.
+    [NotEnumerable, Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventHandler onwebkitplaybacktargetavailabilitychanged;
+};
+
+Element includes AccessibilityRole;
+Element includes AriaAttributes;
+Element includes Animatable;
+Element includes ChildNode;
+Element includes NonDocumentTypeChildNode;
+Element includes ParentNode;
+Element includes Slotable;
+Element includes InnerHTML;

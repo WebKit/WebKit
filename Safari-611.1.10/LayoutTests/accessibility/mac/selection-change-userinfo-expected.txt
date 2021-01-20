@@ -1,0 +1,95 @@
+one two three. four five six.
+
+seven eight nine.
+
+This tests selection change notifications user info data.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS addedNotification is true
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularityCharacter
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionNext
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularityCharacter
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionPrevious
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularityWord
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionNext
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularityWord
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionPrevious
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularitySentence
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionNext
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularitySentence
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionPrevious
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularityLine
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionNext
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularityLine
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionPrevious
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularityParagraph
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionNext
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularityParagraph
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionPrevious
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularityLine
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionEnd
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularityLine
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionBeginning
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularitySentence
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionEnd
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularitySentence
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionBeginning
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularityParagraph
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionEnd
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularityParagraph
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionBeginning
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularityDocument
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionEnd
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionMove
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularityDocument
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionBeginning
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionExtend
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularityCharacter
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionNext
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionExtend
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularityWord
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionNext
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionExtend
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularitySentence
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionNext
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionExtend
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularityLine
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionNext
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionExtend
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularityParagraph
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionNext
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionExtend
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularityLine
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionEnd
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionExtend
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularitySentence
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionEnd
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionExtend
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularityParagraph
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionEnd
+PASS results[resultIndex]["AXTextStateChangeType"] is AXTextStateChangeTypeSelectionExtend
+PASS results[resultIndex]["AXTextSelectionGranularity"] is AXTextSelectionGranularityDocument
+PASS results[resultIndex]["AXTextSelectionDirection"] is AXTextSelectionDirectionEnd
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

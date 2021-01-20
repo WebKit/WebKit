@@ -1,0 +1,7 @@
+frame "<!--frame2-->" - has 1 onunload handler(s)
+ALERT: Subframe onload
+ALERT: Subframe onpageshow
+CONSOLE MESSAGE: Use of window.alert is not allowed while unloading a page.
+CONSOLE MESSAGE: Use of window.alert is not allowed while unloading a page.
+CONSOLE MESSAGE: Use of window.alert is not allowed while unloading a page.
+

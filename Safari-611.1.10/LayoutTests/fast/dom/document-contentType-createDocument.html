@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<title>document.contentType</title>
+<link rel="help" href="http://dom.spec.whatwg.org/#dom-document-contenttype">
+<script src="../../resources/js-test.js"></script>
+<body>
+<script>
+var doc = document.implementation.createHTMLDocument('f');
+shouldBe('doc.contentType', '"text/html"');
+
+doc = document.implementation.createDocument(null, 'root', null);
+shouldBe('doc.contentType', '"application/xml"');
+
+var foo = document.implementation.createDocumentType("foobar", "", "");
+doc = document.implementation.createDocument(null, null, foo);
+shouldBe('doc.contentType', '"application/xml"');
+
+doc = document.implementation.createDocument('http://www.w3.org/2000/svg', 'svg:svg', null);
+shouldBe('doc.contentType', '"image/svg+xml"');
+</script>

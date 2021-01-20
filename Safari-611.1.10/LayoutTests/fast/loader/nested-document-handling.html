@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script>
+"use strict";
+
+description('Check that we properly handle nested document loads during unload events. Passes if we do not debug assert.');
+
+window.jsTestIsAsync = true;
+
+function finishTest() {
+    testPassed('Load succeeded.');
+    finishJSTest();
+}
+
+function runTest() {
+    let topFrame = document.documentElement.appendChild(document.createElement("iframe"));
+    topFrame.id = 'topFrame';
+
+    let aFrame = topFrame.contentDocument.documentElement.appendChild(document.createElement("iframe"));
+    aFrame.id = 'aFrame';
+
+    aFrame.contentWindow.onunload = () => {
+        topFrame.src = "javascript:''";
+
+        let bFrame = topFrame.contentDocument.appendChild(document.createElement("iframe"));
+        bFrame.id = 'bFrame';
+
+        bFrame.contentWindow.onunload = () => {
+            topFrame.src = "javascript:''";
+
+            let doc = topFrame.contentDocument;
+
+            topFrame.onload = () => {
+                topFrame.onload = () => {
+                    topFrame.onload = null;
+                    let s = doc.createElement("form");
+                    s.action = "javascript:alert(location)";
+                    s.submit();
+                };
+
+                topFrame.src = "resources/subframe-success.html";
+            };
+
+        };
+    };
+
+    topFrame.src = "javascript:''";
+}
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

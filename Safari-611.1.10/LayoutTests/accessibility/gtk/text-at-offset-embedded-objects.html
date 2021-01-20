@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<p>This is one line containing two <img> embedded objects <img> in the middle.</p>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests the ability to get element text for different granularities and offsets.");
+    if (window.accessibilityController) {
+        document.getElementById("body").focus();
+        var webArea = accessibilityController.focusedElement;
+        var content = webArea.childAtIndex(0);
+
+        shouldBe("content.characterAtOffset(32)", "'\357\277\274, 32, 33'");
+        shouldBe("content.wordAtOffset(32)", "'two \357\277\274 , 28, 34'");
+        shouldBe("content.characterAtOffset(33)", "' , 33, 34'");
+        shouldBe("content.wordAtOffset(33)", "'two \357\277\274 , 28, 34'");
+        shouldBe("content.characterAtOffset(34)", "'e, 34, 35'");
+        shouldBe("content.wordAtOffset(34)", "'embedded , 34, 43'");
+        shouldBe("content.characterAtOffset(42)", "' , 42, 43'");
+        shouldBe("content.wordAtOffset(42)", "'embedded , 34, 43'");
+        shouldBe("content.characterAtOffset(51)", "'\357\277\274, 51, 52'");
+        shouldBe("content.wordAtOffset(51)", "'objects \357\277\274 , 43, 53'");
+        shouldBe("content.characterAtOffset(52)", "' , 52, 53'");
+        shouldBe("content.wordAtOffset(52)", "'objects \357\277\274 , 43, 53'");
+        shouldBe("content.characterAtOffset(53)", "'i, 53, 54'");
+        shouldBe("content.wordAtOffset(53)", "'in , 53, 56'");
+        shouldBe("content.characterAtOffset(55)", "' , 55, 56'");
+        shouldBe("content.wordAtOffset(55)", "'in , 53, 56'");
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

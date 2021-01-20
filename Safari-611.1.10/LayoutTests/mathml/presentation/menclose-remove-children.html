@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+    <head>   
+        <script type="text/javascript">
+            function runTest() {
+                var node=document.getElementById('testMenclose').firstChild;
+				document.getElementById('testMenclose').removeChild(node);
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <p>
+            <math><menclose id="testMenclose" notation="box"><mspace width="100px" height="50px" mathbackground="red"></mspace></menclose></math>
+		</p>
+    </body>
+</html>

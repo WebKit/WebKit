@@ -1,0 +1,3 @@
+
+FAIL Paced value animation doesn't overwrite keyTimes assert_approx_equals: expected 150 +/- 5 but got 120
+

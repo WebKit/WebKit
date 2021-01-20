@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style type="text/css" media="screen">
+        .box {
+            position: absolute;
+            height: 100px;
+            width: 100px;
+            left: 0px;
+            background-color: blue;
+        }
+
+        .box.transitioning {
+            transition: left 10s linear;
+            left: 100px;
+        }
+
+        .box.animating {
+            animation: move 0.1s linear;
+        }
+        
+        .box.retargeted {
+            left: 200px;
+        }
+        
+        @keyframes move {
+            from { left: 500px }
+            to   { left: 501px }
+        }
+        
+    </style>
+    <script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <div id="test" class="box"></div>
+    <script type="text/javascript" charset="utf-8">
+
+    description("Once animation has finished, box should be running left transition from 0px to 200px.");
+
+    window.jsTestIsAsync = true;
+
+    let animations;
+    const testElement = document.getElementById('test');
+
+    // Start the test by starting a transition from 0 to 100px.
+    window.setTimeout(() => testElement.classList.add("transitioning"));
+
+    // Then, once the transition has started, start an animation.
+    testElement.addEventListener("transitionstart", event => {
+        setTimeout(() => testElement.classList.add("animating"));
+    });
+
+    // Then wait for the animation to start and change the underlying left value.
+    testElement.addEventListener("animationstart", event => {
+        testElement.classList.add("retargeted");
+    });
+
+    // When the animation has ended, check that we're transitioning from ~0 > 200, and not 100 > 200.
+    testElement.addEventListener("animationend", event => {
+        animations = testElement.getAnimations();
+        shouldBe("animations.length", "1");
+        shouldBeTrue("animations[0] instanceof CSSTransition");
+        shouldNotBeEqualToString("animations[0].effect.getKeyframes()[0].left", "100px");
+        shouldBeEqualToString("animations[0].effect.getKeyframes()[1].left", "200px");
+        finishJSTest();
+    });
+
+    </script>
+    <script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/blank.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/constructor_convert_method_data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/historical.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/idlharness.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/onpaymentmethodchange-attribute.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-is-showing.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-abort-method.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-canmakepayment-method.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-constructor-thcrash.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-constructor.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-ctor-currency-code-checks.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-ctor-pmi-handling.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-hasenrolledinstrument-method-protection.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-hasenrolledinstrument-method.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-id-attribute.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-insecure.http.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-not-exposed.https.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-onshippingaddresschange-attribute.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-onshippingoptionchange-attribute.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-shippingAddress-attribute.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-shippingOption-attribute.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-shippingType-attribute.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-show-method.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/rejects_if_not_active.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/show-consume-activation.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/show-method-optional-promise-rejects.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/show-method-postmessage-iframe.html

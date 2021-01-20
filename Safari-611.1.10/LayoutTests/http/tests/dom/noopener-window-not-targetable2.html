@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Make sure that windows opened with 'noopener' via window.open are not targetable. If testing manually, you should see 2 tabs open.");
+jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.setCanOpenWindows();    
+
+onload = function() {
+    w = window.open("/navigation/resources/otherpage.html", "foo", "noopener");
+    shouldBeNull("w");
+
+    setTimeout(function() {
+        w = open("/navigation/resources/otherpage.html", "foo"); // Should create a new window.
+        shouldBeEqualToString("w.location.href", "about:blank");
+        w.onload = function() {
+            if (window.testRunner)
+                shouldBe("testRunner.windowCount()", "3");
+            finishJSTest();
+        }
+    }, 100);
+}    
+</script>
+</body>
+</html>

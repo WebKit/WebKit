@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+<div id="content">
+  <input id="test1" type="text" aria-labelledby="hidden" />
+  <input id="test2" type="text" aria-describedby="hidden" />
+  <div style="display:none;">
+    <div id="hidden">
+      <table>
+        <tr>
+	  <td>cell 1</td>
+          <td><div>cell 2</div></td>
+	  <td>cell 3</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests text alternative calculation from an unrendered table.");
+    if (window.accessibilityController) {
+        var test1 = accessibilityController.accessibleElementById("test1");
+        debug("Test 1 - W3C Name: " + platformValueForW3CName(test1));
+
+        var test2 = accessibilityController.accessibleElementById("test2");
+        debug("Test 2 - W3C Description: " + platformValueForW3CDescription(test2));
+    
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+[
+    {
+        "action": {
+            "type": "block"
+        },
+        "trigger": {
+            "url-filter": ".*test.mp4"
+        }
+    }
+]

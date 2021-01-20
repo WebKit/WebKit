@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.path.moveTo.newsubpath</title>
+<meta name="author" content="Philip Taylor">
+<script src="../common/canvas-tests.js"></script>
+<link rel="stylesheet" href="../common/canvas-tests.css">
+<body class="show_output">
+
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.path.html">path</a>.<a href="index.2d.path.moveTo.html">moveTo</a>.newsubpath</h1>
+<p class="desc"></p>
+
+<div class="refs">Spec references:
+<ul>
+<li><a href="../annotated-spec/canvas.html#testrefs.2d.path.moveTo">2d.path.moveTo</a>
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+<p class="output expectedtext">Expected output:<p><img src="../resources/green-100x50.png" class="output expected" id="expected" alt="">
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+ctx.fillStyle = '#0f0';
+ctx.fillRect(0, 0, 100, 50);
+ctx.beginPath();
+ctx.moveTo(0, 0);
+ctx.moveTo(100, 0);
+ctx.moveTo(100, 50);
+ctx.moveTo(0, 50);
+ctx.fillStyle = '#f00';
+ctx.fill();
+_assertPixel(canvas, 50,25, 0,255,0,255, "50,25", "0,255,0,255");
+
+
+});
+</script>
+

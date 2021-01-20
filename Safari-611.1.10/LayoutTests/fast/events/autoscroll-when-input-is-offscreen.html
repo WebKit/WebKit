@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/basic-gestures.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    async function runTest()
+    {
+        if (!testRunner.runUIScript)
+            return;
+    
+        var output = '';
+
+        await UIHelper.setHardwareKeyboardAttached(false);
+        await UIHelper.activateElementAndWaitForInputSession(document.getElementById('editable'));
+        
+        var programmaticScroll = 500;
+        document.scrollingElement.scrollTop = programmaticScroll;
+        await UIHelper.enterText("Test");
+        await UIHelper.ensurePresentationUpdate();
+        if (window.pageYOffset < programmaticScroll)
+            output += 'PASS: page has scrolled back to the top to show the element that has text being entered into it.';
+        else
+            output += 'FAIL: page has failed to scroll when entering text into a form that is offscreen.';
+        output += '<br>';
+
+        document.getElementById('testArea').innerHTML = output;
+        testRunner.notifyDone();
+    }
+
+    window.addEventListener('load', runTest, false);
+</script>
+<style>
+    #testArea {
+        height: 2000px;
+        width: 300px;
+        background-color: silver;
+        font-family: monospace;
+        font-size: 18px;
+    }
+    #editable {
+        font-family: monospace;
+        font-size: 18px;
+    }
+</style>
+</head>
+<body>
+This test focuses a form, them scrolls to the bottom of the page.
+Then text is entered in the form, and we check to make sure the page has scrolled
+so that the input is visible again.
+<div id="result"></div>
+<div id="testArea"><input id="editable" type="text"></input></div>
+</body>
+</html>
+
+
+
+

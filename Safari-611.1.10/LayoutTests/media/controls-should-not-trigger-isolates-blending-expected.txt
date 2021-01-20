@@ -1,0 +1,13 @@
+Tests that media controls don't trigger compositing on an ancestor via isolatesBlending
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS containsLayerWithSize(layers, 456, 50) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+

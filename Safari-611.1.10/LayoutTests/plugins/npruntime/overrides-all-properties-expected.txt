@@ -1,0 +1,21 @@
+
+
+Test that the plugin script object - in a non-standard world - can override any property on its owning node *except* for the properties that are built in to the node or its constructor/prototype chain.
+For example, it can override "madeUpProperty" but cannot override "getAttribute" or "className".
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+

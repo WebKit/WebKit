@@ -1,0 +1,193 @@
+<body>
+<p>Test Worker script error handling functionality. Should print a series of PASS messages, followed with DONE.</p>
+<div id=result></div>
+<script>
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+var testCases = [
+    "testInvalidScriptSyntax",
+    "testScriptErrorUnhandled",
+    "testScriptErrorAddEventListener",
+    "testErrorInHandlingScriptError",
+    "testScriptErrorBubbledAndHandledInWorker",
+    "testScriptErrorBubbledAndReportedToUser",
+    "testScriptErrorHandled",
+    "testExceptionInTimeoutCallback",
+    "testScriptErrorInWorkerAndSpawner",
+];
+var testIndex = 0;
+
+function runNextTest()
+{
+    if (testIndex < testCases.length) {
+        testIndex++;
+        window[testCases[testIndex - 1]]();
+    } else {
+        log("DONE");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}
+
+function testInvalidScriptSyntax()
+{
+    try {
+        var worker = new Worker("resources/worker-invalid-syntax.js");
+        worker.onerror = function() {
+            log("PASS: onerror invoked for a script that has invalid syntax.");
+            runNextTest();
+            return false;
+        }
+    } catch (ex) {
+        log("FAIL: unexpected exception " + ex);
+        runNextTest();
+    }
+}
+
+function testScriptErrorUnhandled()
+{
+    try {
+        var worker = new Worker("resources/worker-script-error-unhandled.js");
+        worker.onerror = function(evt) {
+            log("PASS: onerror invoked for a script that has script error '" + evt.message + "' at line " + evt.lineno + " and column " + evt.colno + ".");
+            runNextTest();
+            return false;
+        }
+    } catch (ex) {
+        log("FAIL: unexpected exception " + ex);
+        runNextTest();
+    }
+}
+
+function testScriptErrorAddEventListener()
+{
+    try {
+        var worker = new Worker("resources/worker-script-error-unhandled.js");
+        worker.addEventListener("error",
+            function(evt) {
+                log("PASS: event listener invoked for a script that has script error '" + evt.message + "' at line " + evt.lineno + " and column " + evt.colno + ".");
+                runNextTest();
+                evt.preventDefault();
+            }, false);
+    } catch (ex) {
+        log("FAIL: unexpected exception " + ex);
+        runNextTest();
+    }
+}
+
+function testErrorInHandlingScriptError()
+{
+    try {
+        var worker = new Worker("resources/worker-error-in-handling-script-error.js");
+        var errorCount = 0;
+        worker.onerror = function(evt) {
+            log("PASS: onerror invoked for a script that has script error '" + evt.message + "' at line " + evt.lineno + " and column " + evt.colno + ".");
+            ++errorCount;
+            // Second error happens in the onerror handler. Run next test only when it's reported.
+            if (errorCount == 2)
+                runNextTest();
+            return false;
+        }
+    } catch (ex) {
+        log("FAIL: unexpected exception " + ex);
+        runNextTest();
+    }
+}
+
+function testScriptErrorBubbledAndHandledInWorker()
+{
+    try {
+        var worker = new Worker("resources/worker-script-error-bubbled.js");
+        worker.onmessage = function(evt) {
+            log("message from worker: \"" + evt.data + "\".");
+        }
+        worker.onerror = function(evt) {
+            log("PASS: onerror invoked for a script that has script error '" + evt.message + "' at line " + evt.lineno + " and column " + evt.colno + ".");
+            runNextTest();
+            return false;
+        }
+    } catch (ex) {
+        log("FAIL: unexpected exception " + ex);
+        runNextTest();
+    }
+}
+
+function testScriptErrorBubbledAndReportedToUser()
+{
+    try {
+        var worker = new Worker("resources/worker-script-error-bubbled.js");
+        worker.onerror = function(evt) {
+            log("PASS: onerror invoked for a script that has script error '" + evt.message + "' at line " + evt.lineno + " and column " + evt.colno + ".");
+            runNextTest();
+            return true;
+        }
+    } catch (ex) {
+        log("FAIL: unexpected exception " + ex);
+        runNextTest();
+    }
+}
+
+function testScriptErrorHandled()
+{
+    try {
+        var worker = new Worker("resources/worker-script-error-handled.js");
+        worker.onerror = function(evt) {
+            log("FAIL: onerror invoked for a script that has script error '" + evt.message + "' at line " + evt.lineno + " and column " + evt.colno + ".");
+            runNextTest();
+            return false;
+        }
+        worker.onmessage = function(evt) {
+            log("PASS: message received from WorkerGlobalScope.onerror: " + evt.data + ".");
+            runNextTest();
+        }
+    } catch (ex) {
+        log("FAIL: unexpected exception " + ex);
+        runNextTest();
+    }
+}
+
+function testExceptionInTimeoutCallback()
+{
+    try {
+        var worker = new Worker("resources/worker-exception-in-timeout-callback.js");
+        worker.onerror = function() {
+            log("PASS: onerror invoked for an exception in setTimeout callback.");
+            runNextTest();
+            return false;
+        }
+    } catch (ex) {
+        log("FAIL: unexpected exception " + ex);
+        runNextTest();
+    }
+}
+
+function testScriptErrorInWorkerAndSpawner()
+{
+    try {
+        var worker = new Worker("resources/worker-script-error.js");
+        worker.addEventListener("message", function(event) {
+            log("PASS: message received from WorkerGlobalScope.onerror: " + event.data);
+        });
+        worker.addEventListener("error", function(event) {
+            log("PASS: Main World saw error event with: " + event.error);
+            runNextTest();
+        });
+    } catch (ex) {
+        log("FAIL: unexpected exception " + ex);
+        runNextTest();
+    }
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+runNextTest();
+
+</script>
+</body>
+

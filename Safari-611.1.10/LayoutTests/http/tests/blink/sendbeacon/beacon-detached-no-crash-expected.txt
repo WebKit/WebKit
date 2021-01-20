@@ -1,0 +1,12 @@
+main frame - has 1 onunload handler(s)
+Accessing Navigator sendBeacon methods on a closed window.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS otherNavigator.sendBeacon() threw exception TypeError: Not enough arguments.
+PASS otherNavigator.sendBeacon('resources/blank.txt') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

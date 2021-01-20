@@ -1,0 +1,51 @@
+Tests for the Runtime.getPreview command and associated RemoteObject.prototype.updatePreview.
+
+
+== Running test suite: Runtime.getPreview
+-- Running test case: RemoteObject.updatePreview.ObjectWithoutPreview
+PASS: RemoteObject should not have a preview.
+PASS: RemoteObject should be able to load a preview.
+PASS: RemoteObject.updatePreview should produce an ObjectPreview.
+PASS: RemoteObject.preview should be the same object as the callback.
+PASS: Preview should have 2 properties.
+
+-- Running test case: RemoteObject.updatePreview.ObjectWithPreview
+PASS: RemoteObject should have a preview.
+PASS: RemoteObject should be able to load a preview.
+PASS: Original preview should have 3 properties.
+PASS: RemoteObject.updatePreview should produce an ObjectPreview.
+PASS: RemoteObject.preview should be the same object as the callback.
+PASS: Preview should now have 4 properties.
+
+-- Running test case: RemoteObject.updatePreview.NonObject
+PASS: Should not be able to load a preview for a boolean RemoteObject.
+PASS: RemoteObject.updatePreview should return null for a boolean RemoteObject.
+PASS: Should not be able to load a preview for a number RemoteObject.
+PASS: RemoteObject.updatePreview should return null for a number RemoteObject.
+PASS: Should not be able to load a preview for a string RemoteObject.
+PASS: RemoteObject.updatePreview should return null for a string RemoteObject.
+PASS: Should not be able to load a preview for a fake object RemoteObject.
+PASS: RemoteObject.updatePreview should return null for a fake object RemoteObject.
+
+-- Running test case: RemoteObject.updatePreview.Symbol
+PASS: Should not be able to load a preview for a symbol RemoteObject.
+PASS: RemoteObject.updatePreview should return null for a symbol RemoteObject.
+
+-- Running test case: RemoteObject.updatePreview.Function
+PASS: Should not be able to load a preview for a function RemoteObject.
+PASS: RemoteObject.updatePreview should return null for a function RemoteObject.
+
+-- Running test case: RemoteObject.updatePreview.Null
+PASS: Should not be able to load a preview for a null RemoteObject.
+PASS: RemoteObject.updatePreview should return null for a null RemoteObject.
+
+-- Running test case: Runtime.getPreview.Symbol
+{"type":"symbol","description":"Symbol(Symbol.iterator)","lossless":true}
+
+-- Running test case: Runtime.getPreview.Function
+{"type":"function","description":"function f() {}","lossless":true}
+
+-- Running test case: Runtime.getPreview.InvalidObjectId
+PASS: Should produce an error.
+Error: Missing injected script for given objectId
+

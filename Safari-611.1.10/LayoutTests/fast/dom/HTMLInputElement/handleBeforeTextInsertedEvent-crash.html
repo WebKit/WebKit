@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test passes if it does not crash.</p>
+<input type="text" id="testInput" value="test value"/>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+document.getElementById("testInput").focus();
+for (var i = 0; i < 20; i++) {
+    document.execCommand("InsertText", true, "Arial");
+    document.execCommand("ContentReadOnly", true, null);
+    document.execCommand("FontSize", false, "6");
+}
+</script>
+</body>
+</html>

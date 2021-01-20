@@ -1,0 +1,10 @@
+Ensure web socket loads are reported as loaded third party domains.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Loaded domain was successfully captured.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

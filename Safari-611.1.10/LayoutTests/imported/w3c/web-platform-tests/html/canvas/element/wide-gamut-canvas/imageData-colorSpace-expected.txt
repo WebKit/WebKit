@@ -1,0 +1,8 @@
+
+FAIL Test default color settings: {undefined, undefined} -> {srgb, uint8} assert_array_equals: value is undefined, expected array
+FAIL Test default color space: {undefined, float32} -> {srgb, float32} assert_equals: expected "[object Float32Array]" but got "[object Undefined]"
+FAIL Test default storage format: {srgb, undefined} -> {srgb, uint8} assert_array_equals: value is undefined, expected array
+FAIL Test color settings: {srgb, uint8} assert_equals: expected "[object Uint8ClampedArray]" but got "[object Undefined]"
+FAIL Test color settings: {srgb, uint16} assert_equals: expected "[object Uint16Array]" but got "[object Undefined]"
+FAIL Test color settings: {srgb, float32} assert_equals: expected "[object Float32Array]" but got "[object Undefined]"
+

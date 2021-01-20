@@ -1,0 +1,25 @@
+From 180f91479e27eed40c4d7ed6fe1fc82468d4982f Mon Sep 17 00:00:00 2001
+From: Samuel Thibault <samuel.thibault@ens-lyon.org>
+Date: Sun, 25 Aug 2019 22:28:07 +0200
+Subject: [PATCH] tests: Replace common variable with usual external variable
+
+---
+ tests/atk_test_util.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tests/atk_test_util.h b/tests/atk_test_util.h
+index b2376d5..a81bedd 100644
+--- a/tests/atk_test_util.h
++++ b/tests/atk_test_util.h
+@@ -36,7 +36,7 @@
+ #include <locale.h>
+ #include "atk_suite.h"
+ 
+-pid_t child_pid;
++extern pid_t child_pid;
+ 
+ void run_app (const char *file_name);
+ AtspiAccessible *get_root_obj (const char *file_name);
+-- 
+2.26.2
+

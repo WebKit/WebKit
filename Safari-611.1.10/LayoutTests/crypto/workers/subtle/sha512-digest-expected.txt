@@ -1,0 +1,11 @@
+[Worker] Test digest with SHA-512 in workers
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/sha512-digest.js
+PASS [Worker] bytesToHexString(digest) is expectedDigest
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.internals)
+    internals.settings.setShouldMockBoldSystemFontForAccessibility(true);
+</script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body style="font: -apple-system-body;">
+<div id="target" style="font-size: 400%;">Hello</div>
+<script>
+description("This test makes sure that text using the accessibility bold functionality has the correct weight.");
+var target = document.getElementById("target");
+shouldBeEqualToString("window.getComputedStyle(target).getPropertyValue('font-weight')", "normal");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

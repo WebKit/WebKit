@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<button>start</button>
+
+<h1>first heading level 1</h1>
+<h1>second heading level 1</h1>
+<h2>heading level 2</h2>
+<h3>heading level 3</h3>
+<h4>heading level 4</h4>
+<h5>heading level 5</h5>
+<h6>heading level 6</h6>
+
+    
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests the ability to search for accessible elements by key or text.");
+    
+    if (window.accessibilityController) {
+        window.testRunner.keepWebHistory();
+        
+        var containerElement = accessibilityController.rootElement;
+        var startElement;
+        var resultElement;
+
+        // Heading level 1.
+        startElement = accessibilityController.focusedElement.childAtIndex(0);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXHeadingLevel1SearchKey", "", false);
+        shouldBe("resultElement.childAtIndex(0).description", "'AXLabel: first heading level 1'");
+        
+        // Heading level 2.
+        startElement = accessibilityController.focusedElement.childAtIndex(0);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXHeadingLevel2SearchKey", "", false);
+        shouldBe("resultElement.childAtIndex(0).description", "'AXLabel: heading level 2'");
+        
+        // Heading level 3.
+        startElement = accessibilityController.focusedElement.childAtIndex(0);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXHeadingLevel3SearchKey", "", false);
+        shouldBe("resultElement.childAtIndex(0).description", "'AXLabel: heading level 3'");
+        
+        // Heading level 4.
+        startElement = accessibilityController.focusedElement.childAtIndex(0);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXHeadingLevel4SearchKey", "", false);
+        shouldBe("resultElement.childAtIndex(0).description", "'AXLabel: heading level 4'");
+        
+        // Heading level 5.
+        startElement = accessibilityController.focusedElement.childAtIndex(0);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXHeadingLevel5SearchKey", "", false);
+        shouldBe("resultElement.childAtIndex(0).description", "'AXLabel: heading level 5'");
+        
+        // Heading level 6.
+        startElement = accessibilityController.focusedElement.childAtIndex(0);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXHeadingLevel6SearchKey", "", false);
+        shouldBe("resultElement.childAtIndex(0).description", "'AXLabel: heading level 6'");        
+    }
+    
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

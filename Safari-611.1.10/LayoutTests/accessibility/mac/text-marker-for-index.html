@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<script src="../../resources/js-test-pre.js"></script>
+<body id="body" tabindex="0">
+
+<div tabindex="0" id="text1">text</div>
+<br>
+text
+
+<div id="text2">
+audio <audio controls><source src="test.mp3" type="audio/mpeg"></audio>file.
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This verifies that textMarkerForIndex and indexForTextMarker are working correctly.");
+
+    if (window.accessibilityController) {
+        var text = accessibilityController.accessibleElementById("text1");
+        // Get the actual text node.
+        text = text.childAtIndex(0);
+        
+        var previous, current;
+        var textMarkerRange = text.textMarkerRangeForElement(text);
+        var startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+        var result = forward(3, previous, startMarker, text);
+        previous = result.previous;
+        current = result.current;
+        verifyMarkerIndex(previous, current, text); 
+        
+        // BR
+        result = forward(2, previous, current, text);
+        previous = result.previous;
+        current = result.current;
+        verifyMarkerIndex(previous, current, text); 
+        
+        // Attachment
+        text = accessibilityController.accessibleElementById("text2");
+        textMarkerRange = text.textMarkerRangeForElement(text);
+        startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+        result = forward(8, previous, startMarker, text);
+        previous = result.previous;
+        current = result.current;
+        verifyMarkerIndex(previous, current, text);
+    }
+    
+    
+    function forward(count, previousMarker, currentMarker, obj) {
+        for (var i = 0; i < count; i++) {
+            previousMarker = currentMarker;
+            currentMarker = obj.nextTextMarker(currentMarker);
+        }
+        return {
+            previous: previousMarker,
+            current: currentMarker
+        };
+    }
+    
+    function replaceLinebreakInString(str) {
+        var newline = '\n';
+        str = str.replace(newline, "'line break'");
+        return str;
+    }
+    
+    function verifyMarkerIndex(previousMarker, textMarker, obj) {
+        var markerRange = obj.textMarkerRangeForMarkers(previousMarker, textMarker);
+        var originalString = replaceLinebreakInString(obj.stringForTextMarkerRange(markerRange));
+        debug("Original marker string: " + originalString);
+        
+        var index = obj.indexForTextMarker(textMarker);
+        var newMarker = obj.textMarkerForIndex(index);
+        markerRange = obj.textMarkerRangeForMarkers(previousMarker, newMarker);
+        var newString = replaceLinebreakInString(obj.stringForTextMarkerRange(markerRange));
+        debug("Index is: " + index + "\nNew marker string: " + newString + "\n");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>

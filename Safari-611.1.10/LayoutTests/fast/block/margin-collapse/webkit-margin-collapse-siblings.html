@@ -1,0 +1,88 @@
+<html>
+	<head>
+		<style>
+		div {
+			margin: 0px;
+		}
+
+		.container {
+			border: thin solid blue;
+			width: 300px;
+		}
+
+		.block {
+			background-color: green;
+			margin-top: 4px;
+			margin-bottom: 6px;
+			border: 1px dashed black;
+		}
+
+		.self_collapse {
+			margin-top: 2px;
+			margin-bottom: 4px;
+			height: 0px;
+		}
+
+		.collapse_top {
+			-webkit-margin-top-collapse: collapse;
+		}
+
+		.collapse_bottom {
+			-webkit-margin-bottom-collapse: collapse;
+		}
+
+		.collapse_top:before, .collapse_bottom:after {
+			content: "Collapse";
+		}
+
+		.discard_top {
+			-webkit-margin-top-collapse: discard;
+		}
+
+		.discard_bottom {
+			-webkit-margin-bottom-collapse: discard;
+		}
+
+		.discard_top:before, .discard_bottom:after {
+			content: "Discard";
+		}
+
+		.separate_top {
+			-webkit-margin-top-collapse: separate;
+		}
+
+		.separate_bottom {
+			-webkit-margin-bottom-collapse: separate;
+		}
+
+		.separate_top:before, .separate_bottom:after {
+			content: "Separate";
+		}
+		</style>
+	</head>
+	<body>
+		<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=108168">Implement the -webkit-margin-collapse properties correct rendering</a>.</p>
+		<p>This ref test covers basic collapsing behavior between sibling boxes when using -webkit-margin-collapse. The blocks have lr-tb writing mode.</p>
+		<div class="container">
+			<div class="block collapse_top collapse_bottom"><br/></div>
+			<div class="self_collapse"></div>
+			<div class="block collapse_top collapse_bottom"><br/></div>
+			<div class="self_collapse"></div>
+			<div class="block separate_top collapse_bottom"><br/></div>
+			<div class="self_collapse"></div>
+			<div class="block discard_top discard_bottom"><br/></div>
+			<div class="self_collapse"></div>
+			<div class="block collapse_top discard_bottom"><br/></div>
+			<div class="self_collapse"></div>
+			<div class="block separate_top discard_bottom"><br/></div>
+			<div class="self_collapse"></div>
+			<div class="block discard_top separate_bottom"><br/></div>
+			<div class="self_collapse"></div>
+			<div class="block collapse_top separate_bottom"><br/></div>
+			<div class="self_collapse"></div>
+			<div class="block separate_top separate_bottom"><br/></div>
+			<div class="self_collapse"></div>
+			<div class="block discard_top collapse_bottom"><br/></div>
+		</div>
+	</body>
+</html>

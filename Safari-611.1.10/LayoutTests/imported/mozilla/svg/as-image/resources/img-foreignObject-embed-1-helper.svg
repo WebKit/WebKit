@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <foreignObject x="0" y="0" width="100px" height="100px">
+
+    <!-- lime background -->
+    <div xmlns="http://www.w3.org/1999/xhtml"
+         style="background:lime; width:100%; height:100%;">
+      <!-- Use an unrecognized media type, so that if we're honoring plugins,
+           the "download plugin" placeholder will be shown. -->
+      <embed xmlns="http://www.w3.org/1999/xhtml"
+             src="data:audio/hahaThisIsntReallyAFormat,"
+             width="100px" height="50px"/>
+      <!-- Also try a possibly-recognized media format, for completeness. -->
+      <embed xmlns="http://www.w3.org/1999/xhtml"
+             src="data:audio/wav,"
+             width="100px" height="50px"/>
+    </div>
+  </foreignObject>
+</svg>

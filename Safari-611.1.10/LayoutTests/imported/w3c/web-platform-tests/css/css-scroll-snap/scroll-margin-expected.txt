@@ -1,0 +1,4 @@
+
+FAIL Snaps to the positions adjusted by scroll-margin assert_equals: expected 200 but got 0
+FAIL scroll-margin doesn't contribute to the snap position of the element if it's outside of the scroll port assert_equals: expected 0 but got 150
+

@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../resources/js-test-pre.js"></script>
+
+<!-- ==================================================================================================== -->
+<!-- This tests ARIA table role and cell role work as intended                                            -->
+<!-- ==================================================================================================== -->
+
+<div role="grid" data-role="grid" class="ex">
+	<div role="gridcell" data-role="gridcell" class="ex">data</div>
+  	<div role="cell" data-role="cell" class="ex">data2</div>
+  	<div role="cell" data-role="cell" class="ex">data3</div>
+</div>
+
+<table role="table" data-role="table" class="ex">
+	<td role="gridcell" data-role="gridcell" class="ex">data</td>
+  	<td data-role="cell" class="ex">data2</td>
+  	<td role="cell" data-role="cell" class="ex">data3</td>
+</table>
+
+<div id="console"></div>
+<script>
+if (window.testRunner && window.accessibilityController) {
+    description("This tests that table and cell have the correct ARIA roles")
+    var examples = document.querySelectorAll(".ex");
+    var el, contentAttrRoleString, axElement, computedAriaRole, output, expectedRole, expectation, result, note;
+    for (var i = 0, c = examples.length; i < c; i++) {
+        el = examples[i];
+		el.id = "ex" + i
+
+        axElement = accessibilityController.accessibleElementById(el.id);
+        if (!axElement)
+        	continue;
+
+        computedAriaRole = axElement.computedRoleString;
+
+        contentAttrRoleString = el.getAttribute("role");
+        note = el.getAttribute("data-note")
+        output = el.tagName.toLowerCase() + (contentAttrRoleString ? ("[role=\""+contentAttrRoleString+"\"]") : "") + (note ? note : "");
+        output += " -> ";
+        output += computedAriaRole;
+        output += ". ";
+
+        expectedRole = "";
+        if (el.hasAttribute("data-role")) {
+            expectedRole = el.getAttribute("data-role");
+        }
+
+        expectation = expectedRole;
+        matchedResults = (computedAriaRole == expectedRole)
+
+        result = document.getElementById('console');
+        if (matchedResults) {
+            result.innerText += "PASS: " + output + "\n";
+        } else {
+            result.innerText += "FAIL: " + output + "Expected: " + expectation + ".\n";
+        }
+    }
+
+    // Once tests are complete, hide all the example markup.
+    examples = document.querySelectorAll(".ex");
+    for (var i = 0, c = examples.length; i < c; i++) {
+        el = examples[i];
+        el.style.display = "none";
+    }
+}
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

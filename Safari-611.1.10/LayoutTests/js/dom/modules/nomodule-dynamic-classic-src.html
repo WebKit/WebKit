@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test dynamic "src" classic script with nomodule.');
+window.executed = false;
+
+// Module will be executed asynchronously.
+window.jsTestIsAsync = true;
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+<script>
+(function () {
+    var element = document.createElement('script');
+    element.noModule = true;
+    element.src = './resources/error-classic-script.js';
+    document.body.appendChild(element);
+    setTimeout(function () {
+        shouldBeFalse(`executed`);
+        finishJSTest();
+    }, 100);
+}());
+</script>
+</body>
+</html>

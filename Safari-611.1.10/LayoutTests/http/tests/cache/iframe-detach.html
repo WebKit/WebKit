@@ -1,0 +1,27 @@
+<html>
+<body>
+<div id="shadow">
+<iframe src="resources/slow-iframe.php"></iframe>
+</div>
+
+<div id="empty"></div>
+</body>
+
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function set2() {
+  document.getElementById("shadow").innerHTML = "";
+}
+
+function set1() {
+  document.getElementById("empty").innerHTML = document.getElementById("shadow").innerHTML;
+  setTimeout(set2, 250);
+}
+
+setTimeout(set1, 250);
+</script>
+</html>

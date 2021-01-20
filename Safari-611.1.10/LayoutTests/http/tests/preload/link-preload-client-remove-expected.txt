@@ -1,0 +1,1 @@
+Test that restarting link preload doesn't assert or crash.

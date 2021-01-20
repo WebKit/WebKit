@@ -1,0 +1,72 @@
+/*
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+[
+    GenerateIsReachable=ReachableFromDOMWindow,
+    ExportMacro=WEBCORE_EXPORT,
+    Exposed=Window,
+    JSGenerateToNativeObject,
+] interface Range : AbstractRange {
+    [CallWith=Document] constructor();
+
+    readonly attribute Node commonAncestorContainer;
+
+    [MayThrowException] undefined setStart(Node node, unsigned long offset);
+    [MayThrowException] undefined setEnd(Node node, unsigned long offset);
+    [MayThrowException] undefined setStartBefore(Node node);
+    [MayThrowException] undefined setStartAfter(Node node);
+    [MayThrowException] undefined setEndBefore(Node node);
+    [MayThrowException] undefined setEndAfter(Node node);
+    undefined collapse(optional boolean toStart = false);
+    [MayThrowException] undefined selectNode(Node node);
+    [MayThrowException] undefined selectNodeContents(Node node);
+
+    const unsigned short START_TO_START = 0;
+    const unsigned short START_TO_END = 1;
+    const unsigned short END_TO_END = 2;
+    const unsigned short END_TO_START = 3;
+    [MayThrowException] short compareBoundaryPoints(unsigned short how, Range sourceRange);
+
+    [CEReactions, MayThrowException] undefined deleteContents();
+    [CEReactions, MayThrowException, NewObject] DocumentFragment extractContents();
+    [CEReactions, MayThrowException, NewObject] DocumentFragment cloneContents();
+    [CEReactions, MayThrowException] undefined insertNode(Node node);
+    [CEReactions, MayThrowException] undefined surroundContents(Node newParent);
+
+    [NewObject] Range cloneRange();
+    undefined detach();
+
+    [MayThrowException] boolean isPointInRange(Node node, unsigned long offset);
+    [MayThrowException] short comparePoint(Node node, unsigned long offset);
+
+    boolean intersectsNode(Node node);
+
+    stringifier;
+
+    // Non-standard: We should eventually drop this since no other browser supports it
+    [MayThrowException] undefined expand(optional DOMString unit);
+
+    // Non-standard: We should likely drop this since we added it for Firefox interoperability, but now no other browser supports it.
+    [MayThrowException] short compareNode(Node node);
+    const unsigned short NODE_BEFORE = 0;
+    const unsigned short NODE_AFTER = 1;
+    const unsigned short NODE_BEFORE_AND_AFTER = 2;
+    const unsigned short NODE_INSIDE = 3;
+};

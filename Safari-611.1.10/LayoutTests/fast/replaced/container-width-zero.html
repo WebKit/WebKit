@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('#video')">
+
+<p><a href="https://webkit.org/b/178073">Bug #178073</a> - Don't use intrinsic width if our container's width is zero</p>
+<p>The test passes if you see PASS and no red.<p>
+
+<div style="margin-right: 2500px;">
+  <video id="video" style="width: 100%; background-color: red;" data-expected-width=0></video>
+</div>
+
+</body>

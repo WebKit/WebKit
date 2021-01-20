@@ -1,0 +1,81 @@
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+
+const makeSource = src => {
+    const source = document.createElement("source");
+    source.src = src;
+    return source;
+}
+
+test(() => {
+    assert_idl_attribute(document.createElement("model"), "currentSrc");
+}, "The HTMLModelElement interface has a currentSrc property.");
+
+test(() => {
+    assert_readonly(document.createElement("model"), "currentSrc");
+}, "The currentSrc property is read-only.");
+
+test(() => {
+    assert_equals(document.createElement("model").currentSrc, "");
+}, "The currentSrc property is the empty string when no <source> is provided.");
+
+test(() => {
+    const model = document.createElement("model");
+    model.appendChild(makeSource(""));
+    assert_equals(model.currentSrc, "");
+}, "The currentSrc property is the empty string when a <source> is provided with no src attribute.");
+
+test(() => {
+    const model = document.createElement("model");
+    const source = model.appendChild(makeSource("model.usdz"));
+    assert_equals(model.currentSrc, source.src);
+}, "The currentSrc property is the empty string when a <source> is provided.");
+
+test(() => {
+    const model = document.createElement("model");
+    const source = model.appendChild(makeSource(""));
+    assert_equals(model.currentSrc, "");
+
+    source.src = "model.usdz";
+    assert_equals(model.currentSrc, source.src);
+}, "Changing the src attribute of a <source> changes the currentSrc property.");
+
+test(() => {
+    const model = document.createElement("model");
+    const source = model.appendChild(makeSource("model.usdz"));
+    assert_equals(model.currentSrc, source.src);
+
+    source.remove();
+    assert_equals(model.currentSrc, "");
+}, "Removing the <source> changes the currentSrc property.");
+
+test(() => {
+    const model = document.createElement("model");
+    const firstSource = model.appendChild(makeSource("model-1.usdz"));
+    const secondSource = model.appendChild(makeSource("model-2.usdz"));
+    assert_equals(model.currentSrc, firstSource.src);
+}, "currentSrc returns the src value for the first <source> element.");
+
+test(() => {
+    const model = document.createElement("model");
+    const firstSource = model.appendChild(makeSource("model-1.usdz"));
+    const secondSource = model.appendChild(makeSource("model-2.usdz"));
+    assert_equals(model.currentSrc, firstSource.src);
+
+    firstSource.remove();
+    assert_equals(model.currentSrc, secondSource.src);
+}, "Removing a <source> element updates currentSrc.");
+
+test(() => {
+    const model = document.createElement("model");
+    const initialSource = model.appendChild(makeSource("model-initial.usdz"));
+    assert_equals(model.currentSrc, initialSource.src);
+
+    const secondSource = model.insertBefore(makeSource("model-initial.usdz"), initialSource);
+    assert_equals(model.currentSrc, secondSource.src);
+}, "Adding a <source> before the current <source> updates currentSrc.");
+
+</script>
+</body>
+</html>

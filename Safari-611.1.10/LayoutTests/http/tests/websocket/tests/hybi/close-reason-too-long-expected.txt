@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: WebSocket close message is too long.
+Checks whether SyntaxError is thrown when attempting to send too long reason.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Connected.
+PASS SyntaxError was thrown.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

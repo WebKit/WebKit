@@ -1,0 +1,42 @@
+<html>
+
+<head>
+    <script>
+    function tryToCrash() {
+        var div = document.getElementById("test");
+        div.style.webkitTransform = "translateY(1px)";
+        div.style.webkitTransition = "1s ease-in-out";
+        setTimeout(function() {
+            div.style.webkitTransform = "none";
+            div.style.webkitTransition = "none";
+            setTimeout(function() {
+                window.close();
+                window.opener.finishJSTest();
+            }, 0);
+        }, 0);
+    }
+
+    function setup() {
+        if (window.testRunner) {
+            setTimeout(tryToCrash, 0);
+        } else {
+            document.write("This test must be run in DRT/WKTR.");
+        }
+    }
+    </script>
+
+    <style>
+    #test {
+        background-color: blue;
+        width: 10px;
+        height: 10px;
+    }
+    </style>
+<head>
+
+<body onload="setup()">
+    <div id="test"></div>
+    <p>If you are reading this, we managed to avoid crashing!</p>
+</body>
+
+</html>

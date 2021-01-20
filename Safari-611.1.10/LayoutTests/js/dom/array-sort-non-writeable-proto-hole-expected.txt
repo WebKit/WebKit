@@ -1,0 +1,5 @@
+PASS array.sort() threw exception TypeError: Attempted to assign to readonly property..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <title>semantics</title>
+  </head>
+  <body>
+
+    <!-- This verifies that annotations are not visible. -->
+    <math>
+      <semantics>
+        <mi>x</mi>
+        <annotation encoding="TeX">x</annotation>
+        <annotation encoding="StarMath 5.0">x</annotation>
+        <annotation-xml encoding="MathML-Content"><ci>x</ci></annotation-xml>
+      </semantics>
+   </math>
+   <br/>
+
+    <!-- This is not valid MathML but has become a standard hack to include SVG in MathML because of Gecko's initial implementation. -->
+  <math>
+    <semantics>
+      <annotation-xml encoding="SVG1.1">
+        <svg width="20px" height="20px">
+          <rect width="20px" height="20px" fill="red" stroke="none"/>
+        </svg>
+      </annotation-xml>
+    </semantics>
+  </math>
+
+  </body>
+</html>

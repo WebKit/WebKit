@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+    <script>
+        const shadowHost = document.body.appendChild(document.createElement('div'));
+        const shadowRoot = shadowHost.attachShadow({mode: 'closed'});
+        shadowRoot.textContent = 'hello';
+        const shadowNode = shadowRoot.firstChild;
+
+        function bodyRange()
+        {
+            const range = document.createRange();
+            range.selectNode(document.body);
+            return range;
+        }
+
+        function collapsedRangeNode(range)
+        {
+            return range.collapsed ? range.startContainer : "not collapsed";
+        }
+
+        function testRangeMutation(test)
+        {
+            range = bodyRange();
+            shouldBe("range." + test + "; collapsedRangeNode(range)", "shadowRoot");
+        }
+
+        testRangeMutation("setStart(shadowRoot, 0)");
+        testRangeMutation("setEnd(shadowRoot, 0)");
+        testRangeMutation("setStartBefore(shadowNode)");
+        testRangeMutation("setStartAfter(shadowNode)");
+        testRangeMutation("setEndBefore(shadowNode)");
+        testRangeMutation("setEndAfter(shadowNode)");
+
+        shouldBeFalse("bodyRange().isPointInRange(shadowNode, 0)");
+        shouldThrowErrorName("bodyRange().comparePoint(shadowNode, 0)", "WrongDocumentError");
+        shouldBeFalse("bodyRange().intersectsNode(shadowNode)");
+        shouldThrowErrorName("bodyRange().compareNode(shadowNode)", "WrongDocumentError");
+
+        // FIXME: These are Node methods, not Range, so we might want to move them into a separate test.
+
+        shouldBe("document.body.compareDocumentPosition(shadowNode) & Node.DOCUMENT_POSITION_DISCONNECTED", "Node.DOCUMENT_POSITION_DISCONNECTED");
+        shouldBeTrue("(document.body.compareDocumentPosition(shadowNode) & (Node.DOCUMENT_POSITION_PRECEDING | Node.DOCUMENT_POSITION_FOLLOWING)) != 0");
+        shouldBe("document.body.compareDocumentPosition(shadowNode) & Node.DOCUMENT_POSITION_CONTAINS", "0");
+        shouldBe("document.body.compareDocumentPosition(shadowNode) & Node.DOCUMENT_POSITION_CONTAINED_BY", "0");
+        shouldBe("document.body.compareDocumentPosition(shadowNode) & Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC", "Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC");
+        shouldBe("document.body.compareDocumentPosition(shadowNode) & ~(Node.DOCUMENT_POSITION_DISCONNECTED | Node.DOCUMENT_POSITION_PRECEDING | Node.DOCUMENT_POSITION_FOLLOWING | Node.DOCUMENT_POSITION_CONTAINS | Node.DOCUMENT_POSITION_CONTAINED_BY | Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC)", "0");
+
+        shouldBeFalse("document.body.contains(shadowNode)");
+
+        document.body.removeChild(shadowHost);
+
+        successfullyParsed = true;
+    </script>
+</html>

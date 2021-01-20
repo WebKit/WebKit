@@ -1,0 +1,32 @@
+Test for basic DOMNode pseudo element support.
+
+TEST ELEMENT: No Pseudo Elements
+TEST ELEMENT: Has Before Pseudo Element
+TEST ELEMENT: Has After Pseudo Element
+TEST ELEMENT: Has Before and After Pseudo Elements
+
+PASS: Got DOMNode for #none
+PASS: DOMNode has no pseudo elements
+
+PASS: Got DOMNode for #b
+PASS: DOMNode has pseudo elements
+PASS: DOMNode has 1 pseudo elements
+PASS: DOMNode has a before pseudo element
+PASS: DOMNode does not have an after pseudo element
+PASS: DOMNode for before pseudo element has the right type
+
+PASS: Got DOMNode for #a
+PASS: DOMNode has pseudo elements
+PASS: DOMNode has 1 pseudo elements
+PASS: DOMNode does not have a before pseudo element
+PASS: DOMNode has an after pseudo element
+PASS: DOMNode for after pseudo element has the right type
+
+PASS: Got DOMNode for #x
+PASS: DOMNode has pseudo elements
+PASS: DOMNode has 2 pseudo elements
+PASS: DOMNode has a before pseudo element
+PASS: DOMNode has an after pseudo element
+PASS: DOMNode for before pseudo element has the right type
+PASS: DOMNode for after pseudo element has the right type
+

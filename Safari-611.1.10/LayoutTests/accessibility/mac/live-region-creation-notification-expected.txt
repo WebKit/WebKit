@@ -1,0 +1,13 @@
+This tests that the AXLiveRegionCreated notification gets fired when live regions appear.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Received live region created notification: AXLiveRegionCreated: first
+PASS Received live region created notification: AXLiveRegionCreated: second
+PASS Received live region created notification: AXLiveRegionCreated: third
+PASS Received live region created notification: AXLiveRegionCreated: fourth
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

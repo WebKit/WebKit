@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+* {
+    background-color: white;
+    color: black;
+    fill-opacity: 1;
+    min-width: 0px;
+}
+foo[data-webkit]+padding+padding+padding+bar {
+    background-color: rgb(1, 2, 3);
+}
+foo[data-webkit]~bar {
+    fill-opacity: 0.5;
+}
+foo[data-webkit]+padding+padding+padding+bar baz {
+    color: rgb(4, 5, 6);
+}
+foo[data-webkit]~bar baz {
+    min-width: 1px;
+}
+</style>
+</head>
+<body>
+    <div>
+        <foo></foo>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <bar id="bar-with-renderer">
+            <baz id="baz-with-renderer"></baz>
+        </bar>
+    </div>
+    <div style="display:none;">
+        <foo></foo>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <bar id="bar-without-renderer">
+            <baz id="baz-without-renderer"></baz>
+        </bar>
+    </div>
+</body>
+<script>
+description('Test style update caused by attribute changes on a sibling.');
+
+function testColor(expectMatch) {
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-with-renderer")).backgroundColor', expectMatch ? 'rgb(1, 2, 3)' : 'rgb(255, 255, 255)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-with-renderer")).backgroundColor', 'rgb(255, 255, 255)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-without-renderer")).backgroundColor', expectMatch ? 'rgb(1, 2, 3)' : 'rgb(255, 255, 255)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-without-renderer")).backgroundColor', 'rgb(255, 255, 255)');
+
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-with-renderer")).fillOpacity', expectMatch ? '0.5' : '1');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-with-renderer")).fillOpacity', '1');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-without-renderer")).fillOpacity', expectMatch ? '0.5' : '1');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-without-renderer")).fillOpacity', '1');
+
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-with-renderer")).color', 'rgb(0, 0, 0)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-with-renderer")).color', expectMatch ? 'rgb(4, 5, 6)' : 'rgb(0, 0, 0)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-without-renderer")).color', 'rgb(0, 0, 0)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-without-renderer")).color', expectMatch ? 'rgb(4, 5, 6)' : 'rgb(0, 0, 0)');
+
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-with-renderer")).minWidth', '0px');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-with-renderer")).minWidth', expectMatch ? '1px': '0px');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-without-renderer")).minWidth', '0px');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-without-renderer")).minWidth', expectMatch ? '1px': '0px');
+}
+
+function setAttribute(attribute, value) {
+    var allFoos = document.querySelectorAll("foo");
+    for (var i = 0; i < allFoos.length; ++i)
+        allFoos[i].setAttribute(attribute, value);
+}
+
+function removeAttribute(attribute) {
+    var allFoos = document.querySelectorAll("foo");
+    for (var i = 0; i < allFoos.length; ++i)
+        allFoos[i].removeAttribute(attribute);
+}
+
+debug("Initial state does not match, the attribute is not there.");
+testColor(false);
+
+debug("Adding the attribute, the extra rules should match.");
+setAttribute("data-webkit", "awesome");
+testColor(true);
+
+debug("Emptying the attribute, the extra rules should still match.");
+setAttribute("data-webkit", "");
+testColor(true);
+
+debug("Removing the attribute, we should not longer match.");
+removeAttribute("data-webkit");
+testColor(false);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

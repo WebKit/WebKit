@@ -1,0 +1,5 @@
+2d.pattern.image.string
+Spec references: 2d.pattern.IDL
+Defined in "Web IDL" (draft)
+Actual output:
+Passed

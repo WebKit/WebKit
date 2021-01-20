@@ -1,0 +1,181 @@
+<!--
+
+/*
+** Copyright (c) 2018 The Khronos Group Inc.
+**
+** Permission is hereby granted, free of charge, to any person obtaining a
+** copy of this software and/or associated documentation files (the
+** "Materials"), to deal in the Materials without restriction, including
+** without limitation the rights to use, copy, modify, merge, publish,
+** distribute, sublicense, and/or sell copies of the Materials, and to
+** permit persons to whom the Materials are furnished to do so, subject to
+** the following conditions:
+**
+** The above copyright notice and this permission notice shall be included
+** in all copies or substantial portions of the Materials.
+**
+** THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+** EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+** MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+** IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+** CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+** TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+** MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
+*/
+
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Test clearBuffer with drawing</title>
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../js/js-test-pre.js"></script>
+<script src="../../js/webgl-test-utils.js"></script>
+</head>
+<body onload="runTest()">
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="canvas" width="64" height="64"> </canvas>
+<script>
+"use strict";
+description("This tests the operation of clearBuffer followed by a draw call.");
+
+debug("Verifies that these combined with preserveDrawingBuffer's implicit clears work properly together.");
+debug("Regression test for <a href='http://crbug.com/828262'>Chromium bug 828262</a>.");
+
+var wtu = WebGLTestUtils;
+var canvas = document.getElementById("canvas");
+var gl;
+var testIndex = 0;
+var iterations = 0;
+var maxIterations = 10;
+var prog;
+var tests;
+var blackUint8 = [0, 0, 0, 255];
+var redFloat = [1.0, 0.0, 0.0, 0.0];
+var redUint8 = [255, 0, 0, 255];
+var greenFloat = [0.0, 1.0, 0.0, 0.0];
+var greenUint8 = [0, 255, 0, 255];
+
+function verifyOnePixel(kind, x, y, readFormat, readType, arrayType, expectedColor) {
+  var buffer = new arrayType(4);
+  gl.readPixels(Math.floor(x), Math.floor(y), 1, 1, readFormat, readType, buffer);
+  if (buffer[0] == expectedColor[0] &&
+      buffer[1] == expectedColor[1] &&
+      buffer[2] == expectedColor[2] &&
+      buffer[3] == expectedColor[3]) {
+    testPassed(kind + " succeeded");
+  } else {
+    testFailed(kind + " failed. Expected: " + expectedColor + ", got: " + buffer);
+  }
+}
+
+function testClearBufferAndDraw(test) {
+  test['clear']();
+  wtu.setFloatDrawColor(gl, greenFloat);
+  wtu.drawUnitQuad(gl);
+  // Back buffer has no alpha channel.
+  let readFormat = gl.RGBA;
+  let readType = gl.UNSIGNED_BYTE;
+  verifyOnePixel("Clearing", 0, 0, readFormat, readType, Uint8Array, test['bgColor']);
+  verifyOnePixel("Drawing", canvas.width / 2, canvas.height / 2,
+                 readFormat, readType, Uint8Array, test['drawColor']);
+}
+
+function runNextTest() {
+  if (testIndex >= tests.length) {
+    finishTest();
+    return;
+  }
+
+
+  let test = tests[testIndex];
+  if (iterations == 0) {
+    debug('');
+    debug('Testing: ' + test['desc'])
+  }
+  testClearBufferAndDraw(test);
+
+  if (++iterations == maxIterations) {
+    iterations = 0;
+    ++testIndex;
+  }
+
+  wtu.waitForComposite(runNextTest);
+}
+
+function runTest() {
+  gl = wtu.create3DContext(canvas, { alpha:false }, 2);
+
+  if (!gl) {
+    testFailed("context does not exist");
+    return;
+  } else {
+    testPassed("context exists");
+  }
+
+  prog = wtu.setupColorQuad(gl, 0, { scale: 0.5 });
+
+  tests = [
+    {
+      desc: 'Implicit clear',
+      clear: function() {},
+      bgColor: blackUint8,
+      // The implicit clear clears depth to 1.0, and since the quad is
+      // drawn at a depth of 0.0, it's always discarded.
+      drawColor: blackUint8,
+    },
+    {
+      desc: 'clearBufferfi only',
+      clear: function() {
+        gl.clearBufferfi(gl.DEPTH_STENCIL, 0, 0.0, 0);
+      },
+      bgColor: blackUint8,
+      drawColor: greenUint8,
+    },
+    {
+      desc: 'clearBufferfv and clear',
+      clear: function() {
+        gl.clearBufferfv(gl.COLOR, 0, redFloat),
+        gl.clearDepth(0.0);
+        gl.clear(gl.DEPTH_BUFFER_BIT);
+      },
+      bgColor: redUint8,
+      drawColor: greenUint8,
+    },
+    {
+      desc: 'clearBuffer{fv} and {fi}',
+      clear: function() {
+        gl.clearBufferfv(gl.COLOR, 0, redFloat),
+        gl.clearBufferfi(gl.DEPTH_STENCIL, 0, 0.0, 0);
+      },
+      bgColor: redUint8,
+      drawColor: greenUint8,
+    },
+  ];
+
+  // Clear canvas to something other than black to start.
+  gl.clearColor(0.0, 0.0, 1.0, 1.0);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
+  gl.enable(gl.DEPTH_TEST);
+  // Unreal Engine's depth test is reversed from the
+  // default. Including the clear of the depth buffer in this test
+  // case highlights the rendering error more clearly, since neither
+  // the background nor any rendered object show up.
+  gl.depthFunc(gl.GEQUAL);
+
+  // Must run in a requestAnimationFrame loop to provoke implicit
+  // clears of the canvas.
+  wtu.waitForComposite(runNextTest);
+}
+
+debug("");
+var successfullyParsed = true;
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+Text before
+This is a test of Safari web selection
+Text after
+This tests that accessibility can pull out the selected text
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS focusedElement.stringForSelection is 'This'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

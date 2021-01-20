@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <!-- Testing that in SVG tags inside HTML documents match using case-insensitive mode. -->
+    <div id="content">
+        <div style="display: none">
+            <ul>
+                <li>
+                    <SPAN id="upper1"></SPAN>
+                    <svg xmlns="http://www.w3.org/2000/svg">
+                        <g id="group1"></g>
+                        <textPath id="textPath1"></textPath>
+                        <foreignObject id="foreignObject1"></foreignObject>
+                    </svg>
+                </li>
+            </ul>
+            <unknownTag id="unknownTag1"></unknownTag>
+        </div>
+    </div>
+    <script>
+        var content = document.getElementById("content");
+        function checkMatchingSelector(selector, elementId) {
+            shouldBe("content.querySelector('" + selector + "')", "document.getElementById('" + elementId + "')");
+            shouldBeTrue("document.getElementById('" + elementId + "').webkitMatchesSelector('" + selector + "')");
+        }
+
+        function checkNonMatchingSelector(selector) {
+            shouldBeNull("content.querySelector('" + selector + "')");
+        }
+
+        // Checking that tag name selectors still work on HTML elements when SVG is around.
+        checkMatchingSelector("SPAN", "upper1");
+        checkMatchingSelector("div ul li SPAN", "upper1");
+        checkMatchingSelector("unknownTag", "unknownTag1");
+        checkMatchingSelector("unknowntag", "unknownTag1");
+
+        checkMatchingSelector("g", "group1");
+        checkNonMatchingSelector("G");
+
+        checkMatchingSelector("textPath", "textPath1");
+        checkMatchingSelector("svg textPath", "textPath1");
+        checkNonMatchingSelector("textpath");
+        checkNonMatchingSelector("TextPath");
+
+        checkMatchingSelector("foreignObject", "foreignObject1");
+        checkMatchingSelector("svg foreignObject", "foreignObject1");
+        checkNonMatchingSelector("foreignobject");
+        checkNonMatchingSelector("ForeignObject");
+
+        checkMatchingSelector("textPath + foreignObject", "foreignObject1");
+        checkMatchingSelector("svg textPath + foreignObject", "foreignObject1");
+        checkNonMatchingSelector("textPath + foreignobject");
+        checkNonMatchingSelector("textPath + ForeignObject");
+        checkNonMatchingSelector("textpath + foreignObject");
+        checkNonMatchingSelector("TextPath + foreignObject");
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

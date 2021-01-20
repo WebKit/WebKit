@@ -1,0 +1,48 @@
+<html>
+<head>
+<title>Service Worker Extendable Event</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+var scope = "";
+var activeWorker;
+
+promise_test(async (test) => {
+    var registration = await navigator.serviceWorker.register("extendableEvent-worker.js", { scope : scope });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    return new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup worker");
+
+function doTest(name, title)
+{
+    promise_test(async (test) => {
+        var promise = new Promise((resolve, reject) => {
+            navigator.serviceWorker.addEventListener("message", (event) => {
+                resolve(event.data);
+            });
+            setTimeout(() => reject("No response message from service worker"), 5000);
+        });
+
+        activeWorker.postMessage(name);
+        var result = await promise;
+
+        assert_equals(result, "PASS");
+    }, title);
+}
+
+doTest("waitUntil-non-promise-parameters", "ExtendableEvent waitUntil should support non promise parameters");
+doTest("extendable-event", "Event constructors");
+
+</script>
+</body>
+</html>

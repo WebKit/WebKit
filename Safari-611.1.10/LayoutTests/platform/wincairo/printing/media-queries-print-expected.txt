@@ -1,0 +1,11 @@
+layer at (0,0) size 1000x136
+  RenderView at (0,0) size 1000x136
+layer at (0,0) size 1000x136
+  RenderBlock {HTML} at (0,0) size 1000x136
+    RenderBody {BODY} at (8,8) size 984x120
+      RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]
+      RenderBlock (anonymous) at (0,100) size 984x20
+        RenderInline {SPAN} at (0,0) size 523x19
+          RenderText {#text} at (0,0) size 523x19
+            text run at (0,0) width 523: "When printing, you should see a green square above and this text should be italic."
+        RenderText {#text} at (0,0) size 0x0

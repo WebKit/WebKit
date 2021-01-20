@@ -1,0 +1,46 @@
+<html>
+<head>
+<script>
+function log(msg) {
+    var element = document.createElement("div");
+    element.textContent = msg;
+    document.body.appendChild(element);
+    document.body.appendChild(document.createElement("br"));
+}
+
+var count = 0;
+function fastTimeoutHandler() {
+    ++count;
+    setTimeout(fastTimeoutHandler, 1);
+}
+
+function slowTimeoutHandler() {
+    // Note: the count threshold is tied somewhat to the
+    // maxTimerNestingLevel in DOMTimer.cpp.
+    if (count > 10)
+        log("PASS");
+    else
+        log("FAIL -- timeout ran " + count + " times");
+    testRunner.notifyDone();
+}
+
+function runTest() {
+    if (!window.testRunner) {
+        log("This test requires the LayoutTestController");
+        return;
+    }
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    // Timers should be running at full speed, not at the throttled
+    // rate set by part 1 of this test.
+
+    setTimeout(slowTimeoutHandler, 1000);
+    setTimeout(fastTimeoutHandler, 1);
+}
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

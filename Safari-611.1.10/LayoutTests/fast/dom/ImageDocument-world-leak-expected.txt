@@ -1,0 +1,4 @@
+Test that ImageDocuments don't leak their world.
+
+PASS: Less than 10 new documents since test began.
+

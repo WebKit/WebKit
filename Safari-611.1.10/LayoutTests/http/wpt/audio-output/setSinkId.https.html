@@ -1,0 +1,36 @@
+<!doctype html>
+<head>
+<title>Test setSinkId behavior </title>
+<link rel="author" title="Dominique Hazael-Massieux" href="mailto:dom@w3.org"/>
+<link rel="help" href="https://www.w3.org/TR/audio-output/#dom-htmlmediaelement-setsinkid">
+</head>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+"use strict";
+
+const audio = new Audio();
+
+promise_test(t => {
+    if (!window.internals)
+        return;
+    internals.settings.setSpeakerSelectionRequiresUserGesture(true);
+    t.add_cleanup(() => { internals.settings.setSpeakerSelectionRequiresUserGesture(false); });
+
+    return promise_rejects_dom(t, "NotAllowedError", audio.setSinkId(""));
+}, "setSinkId requires user gesture");
+
+
+promise_test(async t => {
+    await navigator.mediaDevices.getUserMedia({ audio : true });
+    const list = await navigator.mediaDevices.enumerateDevices();
+    const outputDevicesList = list.filter(({kind}) => kind == "audiooutput");
+    assert_not_equals(outputDevicesList.length, 0, "media device list includes at least one audio output device");
+
+    let promise = audio.setSinkId(outputDevicesList[0].deviceId);
+
+    assert_equals(audio.sinkId, "");
+    await promise;
+    assert_equals(audio.sinkId, outputDevicesList[0].deviceId);
+}, "setSinkId and sinkId");
+</script>

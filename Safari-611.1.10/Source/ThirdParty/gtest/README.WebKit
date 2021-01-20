@@ -1,0 +1,6 @@
+GTest v.1.8.1
+
+https://github.com/google/googletest/releases/tag/release-1.8.1/
+
+2016-01-02 Ting-Wei Lan (lantw44@gmail.com)
+      Remove usage of environ global variable to fix the build on FreeBSD.

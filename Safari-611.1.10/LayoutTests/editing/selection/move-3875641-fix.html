@@ -1,0 +1,37 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+.cell { 
+    padding: 12px; 
+    font-size: 24px;
+    height: 48px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    extendSelectionForwardByLineCommand();
+    moveSelectionForwardByLineCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body contenteditable id="root" class="editing">
+<div id="test">There is a tide</div><div>in the affairs of men</div><div>Which taken at the flood</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

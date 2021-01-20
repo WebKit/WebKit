@@ -1,0 +1,34 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
+<!DOCTYPE html>
+<html>
+<title>Checks that a user generated POST request does not circumvent third-party cookie rules</title>
+<script>
+document.cookie = "test_cookie=0; path=/; expires=Thu, 01-Jan-1970 00:00:01 GMT";
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.setAlwaysAcceptCookies(false);
+}
+
+function runTest()
+{
+    if (window.eventSender) {
+        // Click somewhere on the button!
+        var form = document.getElementById("form");
+        eventSender.mouseMoveTo(form.offsetLeft + 5, form.offsetTop + 5);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+</script>
+<body onload="runTest()">
+    <div>
+        <form id="form" action="http://localhost:8000/security/cookies/resources/set-a-cookie.php" method="POST" target="iframe">
+          <input type="submit" />
+        </form>
+        <iframe src="javascript:false" name="iframe"></iframe>
+    </div>
+</body>
+</html>

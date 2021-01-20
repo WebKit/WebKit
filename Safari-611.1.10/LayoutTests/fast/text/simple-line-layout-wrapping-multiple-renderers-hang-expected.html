@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that simple line layout manages text fragments when they overlap multiple renderers.</title>
+<style>
+pre {
+    width: 45px; 
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+</style>
+<script>
+    if (window.internals)
+        internals.settings.setSimpleLineLayoutEnabled(false);
+</script>
+</head>
+<body>
+The test passes if it does not hang or crash.
+<pre id=container></pre>
+<script>
+    var container = document.getElementById("container");
+    container.appendChild(document.createTextNode("A foo"));			
+    container.appendChild(document.createTextNode("bar foobar"));			
+    document.body.offsetWidth;			
+</script>
+</body>
+</html>

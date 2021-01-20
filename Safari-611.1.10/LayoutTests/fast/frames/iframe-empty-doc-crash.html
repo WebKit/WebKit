@@ -1,0 +1,9 @@
+<span>Test moving all elements in iframe. The test passes if WebKit doesn't crash or hit an assertion.</span><div id=newParent role="text"><iframe id=subframe></iframe></div>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    document.body.offsetHeight;
+    subframe.contentWindow.document.execCommand("selectAll", false);
+    newParent.appendChild(subframe.contentWindow.document.getElementsByTagName("HTML")[0]);
+</script>

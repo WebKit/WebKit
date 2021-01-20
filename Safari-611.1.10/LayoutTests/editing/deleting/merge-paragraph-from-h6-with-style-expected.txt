@@ -1,0 +1,18 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 5 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 0 of H6 > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > EM > DIV > BODY > HTML > #document to 5 of #text > EM > DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > EM > DIV > BODY > HTML > #document to 5 of #text > EM > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+This tests deleting line break before h6.
+WebKit should not cancel styles added by h6 by those of document's default style but still keep "hello" italicized and "world" in red.
+| "\n"
+| <em>
+|   "hello<#selection-caret>"
+| <span>
+|   style="color: red;"
+|   "world"
+| "\n"

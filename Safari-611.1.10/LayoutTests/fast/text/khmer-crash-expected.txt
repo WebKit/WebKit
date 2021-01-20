@@ -1,0 +1,2 @@
+This test checks that rendering of Khmer text does not crash. The test passes if it does not crash.
+ប្រឆាំង​នឹង​ភាព​ល្ងង់​ខ្លៅ​

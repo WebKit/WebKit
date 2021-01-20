@@ -1,0 +1,4 @@
+
+FAIL CanvasCaptureMediaStream-offscreencanvas canvas.transferControlToOffscreen is not a function. (In 'canvas.transferControlToOffscreen()', 'canvas.transferControlToOffscreen' is undefined)
+FAIL CanvasCaptureMediaStream-offscreencanvas 1 canvas.transferControlToOffscreen is not a function. (In 'canvas.transferControlToOffscreen()', 'canvas.transferControlToOffscreen' is undefined)
+

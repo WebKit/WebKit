@@ -1,0 +1,14 @@
+Tests basic use of requestAnimationFrame
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS requestAnimationFrame callback was called
+PASS requestAnimationFrame callback was called
+PASS requestAnimationFrame callback was called
+PASS requestAnimationFrame callback was called
+PASS requestAnimationFrame callback was called
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

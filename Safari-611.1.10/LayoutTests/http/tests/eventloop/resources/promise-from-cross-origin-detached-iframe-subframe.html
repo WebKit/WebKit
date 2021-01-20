@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+frame = document.createElement('iframe');
+document.body.appendChild(frame);
+frame.contentWindow.Promise.resolve("test").then(() => {
+     parent.postMessage("Promise was resolved", "*");
+});
+</script>
+</body>
+</html>

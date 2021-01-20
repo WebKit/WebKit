@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 190 44">
+
+  <!--
+    NOTE: THIS FILE IS NOT PART OF THE BUILD PROCESS. EDITS
+    HERE ARE NOT AUTOMATICALLY COPIED TO THE CSS FILES.
+
+    This file holds the raw assets used in mediaControlsApple.css.
+    This is not part of the build process at the moment, but manually
+    copied into the CSS. However, editing from CSS is a burden, so
+    the idea is that you develop here and then paste into CSS.
+  -->
+
+  <!-- PLAY -->
+
+  <g transform="translate(0 0)">
+    <rect width="44" height="44" fill="rgb(255, 255, 200)"/>
+    <svg width="44" height="44">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44">
+        <path fill="rgba(0, 0, 0, 0.8)" d="M10,11 32,22 10,33z"/>
+      </svg>
+    </svg>
+  </g>
+
+  <!-- PAUSE -->
+
+  <g transform="translate(46 0)">
+    <rect width="44" height="44" fill="rgb(255, 255, 200)"/>
+    <svg width="44" height="44">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44">
+        <g fill="rgba(0, 0, 0, 0.8)">
+        <rect x="13" y="11" width="6" height="22"/>
+        <rect x="24" y="11" width="6" height="22"/>
+        </g>
+      </svg>
+    </svg>
+  </g>
+
+  <!-- FULLSCREEN -->
+
+  <g transform="translate(92 0)">
+    <rect width="44" height="44" fill="rgb(255, 255, 200)"/>
+    <svg width="44" height="44">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44">
+        <g stroke="rgba(0, 0, 0, 0.8)" fill="none">
+          <path d="M 14,20 v -6 h 6 M 14,14 l 6,6"/>
+          <path d="M 30,24 v 6 h -6 M 30,30 l -6,-6"/>
+        </g>
+      </svg>
+    </svg>
+  </g>
+
+</svg>

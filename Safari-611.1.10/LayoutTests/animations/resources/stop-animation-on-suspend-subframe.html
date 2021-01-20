@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css" media="screen">
+    body { background-color:silver }
+    
+    .box {
+        height: 100px;
+        width: 100px;
+        margin: 35px;
+        background-color: blue;
+        overflow:hidden;
+        -webkit-animation: move 400ms alternate infinite linear;
+    }
+
+    @-webkit-keyframes move {
+        from { -webkit-transform: translate3d(0px, 0px, 0px); }
+        to   { -webkit-transform: translate3d(400px, 0px, 0px); }
+    }
+  </style>
+</head>
+<body>
+
+    <div id="subframe-box" class="box">
+    </div>
+    <div id="result"></div>
+
+</body>
+</html>

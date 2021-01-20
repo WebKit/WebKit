@@ -1,0 +1,10 @@
+Verify that objects with numeric named properties don't set length like an array.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Correct number of iterated keys: 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

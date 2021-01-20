@@ -1,0 +1,2 @@
+ This tests that we return the correct return value when a plug-in calls NPN_GetProperty.
+SUCCESS

@@ -1,0 +1,5 @@
+
+EVENT(loadedmetadata)
+Did load metadata without user gesture OK
+END OF TEST
+

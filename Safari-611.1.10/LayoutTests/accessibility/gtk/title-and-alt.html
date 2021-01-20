@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<img src="image.jpg" alt="Image alt attr" title="Image title attr" id="image">
+<form>
+<a href="" title="Link title attr" id="link">Functional label</a>:
+<input title="Entry title attr" type="text" id="entry" />
+<input value="Clear" type="reset" />
+<input value="Submit" title="Submit button title attr" type="submit" id="button" />
+</form>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests the exposure of alt and title information.");
+    if (window.accessibilityController) {
+        testRunner.dumpAsText();
+
+        var image = accessibilityController.accessibleElementById("image");
+        shouldBe("image.title", "'AXTitle: Image alt attr'");
+        shouldBe("image.description", "'AXDescription: Image title attr'");
+
+        var link = accessibilityController.accessibleElementById("link");
+        shouldBe("link.title", "'AXTitle: Functional label'");
+        shouldBe("link.description", "'AXDescription: Link title attr'");
+
+        var entry = accessibilityController.accessibleElementById("entry");
+        shouldBe("entry.title", "'AXTitle: Entry title attr'");
+        shouldBe("entry.description", "'AXDescription: '");
+
+        var button = accessibilityController.accessibleElementById("button");
+        shouldBe("button.title", "'AXTitle: Submit'");
+        shouldBe("button.description", "'AXDescription: Submit button title attr'");
+        }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

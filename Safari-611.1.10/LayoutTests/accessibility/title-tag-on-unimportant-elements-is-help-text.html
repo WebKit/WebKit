@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+
+<div id="div1" title="test1">a</div>
+<div id="div2" role="group" title="test2">a</div>
+
+<button id="button1" title="test5"></button>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that if a semantically unimportant element has title text, that text is exposed as help text rather than descriptive text.");
+
+    if (window.accessibilityController) {
+
+          // div1 is unimportant, so description should be blank.
+          shouldBe("platformValueForW3CDescription(accessibilityController.accessibleElementById('div1'))", "'test1'");
+          shouldBe("platformValueForW3CName(accessibilityController.accessibleElementById('div1'))", "''");
+
+          // div2 has an author applied role, so title tag should be used for description.
+          shouldBe("platformValueForW3CDescription(accessibilityController.accessibleElementById('div2'))", "''");
+          shouldBe("platformValueForW3CName(accessibilityController.accessibleElementById('div2'))", "'test2'");
+
+          // button is a meaningful element, so it should have a description.
+          shouldBe("platformValueForW3CDescription(accessibilityController.accessibleElementById('button1'))", "''");
+          shouldBe("platformValueForW3CName(accessibilityController.accessibleElementById('button1'))", "'test5'");
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

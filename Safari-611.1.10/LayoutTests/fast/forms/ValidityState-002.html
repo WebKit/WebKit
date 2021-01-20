@@ -1,0 +1,24 @@
+<html>
+<head>
+<title>patternMismatch and valueMissing</title>
+<script language="JavaScript" type="text/javascript">
+    function log(message) {
+        document.getElementById("console").innerHTML += "<li>"+message+"</li>";
+    }
+
+    function test() {
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        v = document.getElementsByName("victim");
+
+        log(!v[0].validity.patternMismatch && v[0].validity.valueMissing ? "SUCCESS" : "FAILURE");
+    }
+</script>
+</head>
+<body onload="test()">
+<input name="victim" type="text" pattern="[0-9][A-Z]{3}" required/>
+<hr>
+<ol id="console"></ol>
+</body>
+</html>

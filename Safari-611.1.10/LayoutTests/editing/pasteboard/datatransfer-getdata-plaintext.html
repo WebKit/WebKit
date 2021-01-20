@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+description('This tests peeks plain text using dataTransfer.getDAta. To manually test, click on "Copy text".');
+
+function copyText()
+{
+    document.getElementById('source').focus();
+    document.execCommand('SelectAll', false, null);
+    document.execCommand('Copy', false, null);
+}
+
+function copy(event)
+{
+    clipboardData = event.clipboardData;
+    shouldBeEqualToString('clipboardData.setData(" text/PLAIN ", "hello"); clipboardData.getData("text/plain")', 'hello');
+    shouldBeEqualToString('clipboardData.setData("   tEXT/pLaIN", "world"); clipboardData.getData("text/plain")', 'world');
+    shouldBeEqualToString('clipboardData.setData("text/plain; charset=utf-8", "hello"); clipboardData.getData("text/plain; charset=Shift_JIS")', 'hello');
+    shouldBeEqualToString('clipboardData.clearData("url"); clipboardData.getData("text/plain")', 'hello');
+    document.getElementById('container').style.display = 'none';
+    finishJSTest();
+}
+
+if (window.testRunner)
+    window.onload = copyText;
+jsTestIsAsync = true;
+successfullyParsed = true;
+
+</script>
+<div id="container">
+    <button onclick="copyText();">Copy text</button>
+    <div id="source" oncopy="copy(event)" contenteditable="true">hello, world</div>
+</div>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

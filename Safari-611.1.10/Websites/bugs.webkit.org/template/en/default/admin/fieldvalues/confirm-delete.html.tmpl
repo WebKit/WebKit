@@ -1,0 +1,154 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # value: Bugzilla::Field::Choice; The field value being deleted.
+  # value_count: number; The number of values available for this field.
+  # field: object; the field the value is being deleted from.
+  #%]
+
+[% title = BLOCK %]
+  Delete Value '[% value.name FILTER html %]' from the 
+  '[% field.description FILTER html %]' ([% field.name FILTER html %]) field
+[% END %]
+
+[% PROCESS global/header.html.tmpl
+  title = title
+  style_urls = ['skins/standard/admin.css']
+%]
+
+<table id="admin_table">
+  <tr class="column_header">
+    <th>Field</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td>Field Name</td>
+    <td>[% field.description FILTER html %]</td>
+  </tr>
+  <tr>
+    <td>Field Value</td>
+    <td>[% value.name FILTER html %]</td>
+  </tr>
+  <tr>
+    <td>[% terms.Bugs %]</td>
+    <td>
+      [% IF value.bug_count %]
+        <a title="List of [% terms.bugs %] where '
+                  [%- field.description FILTER html %]' is '
+                  [%- value.name FILTER html %]'"
+           href="buglist.cgi?[% field.name FILTER uri %]=
+                 [%- value.name FILTER uri %]">
+          [%- value.bug_count FILTER html %]</a>
+      [% ELSE %]
+        None
+      [% END %]
+    </td>
+  </tr>
+</table>
+
+<h2>Confirmation</h2>
+
+[% IF value.is_default || value.bug_count || (value_count == 1)
+      || value.controls_visibility_of_fields.size
+      || value.controlled_values_array.size 
+%]
+
+  <p>Sorry, but the '[% value.name FILTER html %]' value cannot be deleted
+    from the '[% field.description FILTER html %]' field for the following 
+    reason(s):</p>
+
+  <ul class="warningmessages">
+    [% IF value.is_default %]
+      <li>'[% value.name FILTER html %]' is the default value for
+        the '[% field.description FILTER html %]' field.
+        [% IF user.in_group('tweakparams') %]
+          You first have to <a href="editparams.cgi?section=bugfields">change
+          the default value</a> for this field before you can delete
+          this value.
+        [% END %]
+      </li>
+    [% END %]
+
+    [% IF value.bug_count %]
+      <li>
+        [% IF value.bug_count > 1 %]
+          There are [% value.bug_count FILTER html %] [%+ terms.bugs %] 
+          with this field value.
+        [% ELSE %]
+          There is 1 [% terms.bug %] with this field value.
+        [% END %]
+        You must change the field value on
+          <a title="List of [% terms.bugs %] where '
+                    [%- field.description FILTER html %]' is '
+                    [%- value.name FILTER html %]'"
+             href="buglist.cgi?[% field.name FILTER uri %]=
+                   [%- value.name FILTER uri %]">
+            [% IF value.bug_count > 1 %]
+              those [% terms.bugs %] 
+            [% ELSE %]
+              that [% terms.bug %]
+            [% END %]
+          </a>
+          to another value before you can delete this value.
+      </li>
+    [% END %]
+
+    [% IF value_count == 1 %]
+      <li>'[% value.name FILTER html %]' is the last value for
+        '[%- field.description FILTER html %]', and so it cannot be deleted.
+      </li>
+    [% END %]
+
+    [% IF value.controls_visibility_of_fields.size %]
+      <li>This value controls the visibility of the following fields:<br>
+        [% FOREACH field = value.controls_visibility_of_fields %]
+          <a href="editfields.cgi?action=edit&name=
+                   [%- field.name FILTER uri %]">
+            [%- field.description FILTER html %] 
+            ([% field.name FILTER html %])</a><br>
+        [% END %]
+      </li>
+    [% END %]
+
+    [% IF value.controlled_values_array.size %]
+      <li>This value controls the visibility of the following values in
+        other fields:<br>
+       [% FOREACH field_name = value.controlled_values.keys %]
+         [% FOREACH controlled = value.controlled_values.${field_name} %]
+           <a href="editvalues.cgi?action=edit&field=
+                    [%- controlled.field.name FILTER uri %]&value=
+                    [%- controlled.name FILTER uri %]">
+             [% controlled.field.description FILTER html %]
+             ([% controlled.field.name FILTER html %]):
+             [%+ controlled.name FILTER html %]</a><br>
+         [% END %]
+       [% END %]
+      </li>
+    [% END %]
+  </ul>
+
+[% ELSE %]
+
+  <p>Do you really want to delete this value?</p>
+
+  <form method="post" action="editvalues.cgi">
+    <input type="submit" value="Yes, delete" id="delete">
+    <input type="hidden" name="action" value="delete">
+    <input type="hidden" name="field" value="[% field.name FILTER html %]">
+    <input type="hidden" name="value" value="[% value.name FILTER html %]">
+    <input type="hidden" name="token" value="[% token FILTER html %]">
+  </form>
+
+[% END %]
+
+[% PROCESS admin/fieldvalues/footer.html.tmpl
+  no_edit_link = 1
+%]
+
+[% PROCESS global/footer.html.tmpl %] 

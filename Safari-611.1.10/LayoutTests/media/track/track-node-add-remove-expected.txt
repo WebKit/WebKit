@@ -1,0 +1,24 @@
+Adding tracks outside the DOM tree:
+PASS video.textTracks.length is 2
+PASS video.textTracks[0] is tracka.track
+PASS video.textTracks[1] is trackb.track
+Inserting the parent video element into the document.
+PASS video.textTracks.length is 2
+PASS video.textTracks[0] is tracka.track
+PASS video.textTracks[1] is trackb.track
+Inserting and removing another track in the document.
+PASS video.textTracks.length is 3
+PASS video.textTracks[2] is trackc.track
+PASS video.textTracks.length is 2
+PASS video.textTracks[0] is tracka.track
+PASS video.textTracks[1] is trackc.track
+Removing the video from the document.
+PASS video.textTracks.length is 2
+PASS video.textTracks[0] is tracka.track
+PASS video.textTracks[1] is trackc.track
+PASS video.textTracks.length is 1
+PASS video.textTracks[0] is trackc.track
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

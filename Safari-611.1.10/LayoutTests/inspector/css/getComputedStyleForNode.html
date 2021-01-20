@@ -1,0 +1,89 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<style>
+#test {
+    margin: 1px 2px 3px 4px;
+}
+</style>
+<script>
+function test()
+{
+    Promise.resolve()
+    .then(() => {
+        ProtocolTest.log("Enabling Page domain...");
+        return InspectorProtocol.awaitCommand({
+            method: "Page.enable",
+            params: {},
+        });
+    })
+    .then(() => {
+        ProtocolTest.log("Enabling CSS domain...");
+        return InspectorProtocol.awaitCommand({
+            method: "CSS.enable",
+            params: {},
+        });
+    })
+    .then(() => {
+        ProtocolTest.log("Requesting document...");
+        return InspectorProtocol.awaitCommand({
+            method: "DOM.getDocument",
+            params: {},
+        });
+    })
+    .then(({root}) => {
+        ProtocolTest.log("Querying for \"#test\"...");
+        return InspectorProtocol.awaitCommand({
+            method: "DOM.querySelector",
+            params: {
+                nodeId: root.nodeId,
+                selector: "#test",
+            },
+        });
+    })
+    .then(({nodeId}) => {
+        ProtocolTest.log("Getting matched styles for \"#test\"...");
+        return InspectorProtocol.awaitCommand({
+            method: "CSS.getComputedStyleForNode",
+            params: {
+                nodeId,
+            },
+        });
+    })
+    .then(({computedStyle}) => {
+        let map = new Map;
+        for (let {name, value} of computedStyle) {
+            ProtocolTest.assert(!map.has(name), `Should have only one value for "${name}": ${value} vs ${map.get(name)}.`);
+            map.set(name, value);
+        }
+
+        ProtocolTest.newline();
+
+        function checkProperty(property, expected) {
+            ProtocolTest.expectEqual(map.get(property), expected, `Property "${property}" should have value "${expected}".`);
+        }
+
+        checkProperty("display", "block");
+
+        ProtocolTest.newline();
+
+        checkProperty("margin", "1px 2px 3px 4px");
+        checkProperty("margin-top", "1px");
+        checkProperty("margin-right", "2px");
+        checkProperty("margin-bottom", "3px");
+        checkProperty("margin-left", "4px");
+    })
+    .catch((error) => {
+        ProtocolTest.log(error);
+    })
+    .finally(() => {
+        ProtocolTest.completeTest();
+    });
+}
+</script>
+</head>
+<body onLoad="runTest()">
+<p>Testing CSS.getComputedStyleForNode.</p>
+<div id="test"></div>
+</body>
+</html>

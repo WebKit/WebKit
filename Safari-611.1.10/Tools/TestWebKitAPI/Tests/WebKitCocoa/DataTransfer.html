@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <style>
+        body, html {
+            width: 100%;
+            height: 100%;
+            font-family: monospace;
+        }
+
+        .heading {
+            display: block;
+            width: 100%;
+            border-top: 2px gray dashed;
+            margin-top: 20px;
+            box-sizing: border-box;
+        }
+    </style>
+    <script>
+        function setup()
+        {
+            document.body.addEventListener("paste", event => {
+                dumpAsOutput(event.clipboardData);
+                event.preventDefault();
+            });
+            document.body.addEventListener("drop", event => {
+                dumpAsOutput(event.dataTransfer);
+                event.preventDefault();
+            });
+            document.body.addEventListener("beforeinput", event => event.preventDefault());
+            document.body.focus();
+        }
+
+        function dumpAsOutput(dataTransfer)
+        {
+            document.body.contentEditable = false;
+            types.textContent = dataTransfer.types.join(", ");
+            items.textContent = Array.from(dataTransfer.items).map(item => `(${item.kind.toUpperCase()}, ${item.type})`).join(", ");
+            files.textContent = Array.from(dataTransfer.files).map(file => `('${file.name}', ${file.type})`).join(", ");
+            urlData.textContent = dataTransfer.getData("text/uri-list");
+            textData.textContent = dataTransfer.getData("text/plain");
+            let markup = dataTransfer.getData("text/html");
+            htmlData.insertAdjacentHTML("beforeend", markup);
+            rawHTMLData.textContent = markup;
+        }
+
+        function reset()
+        {
+            Array.from(document.getElementsByClassName("output")).map(element => {
+                element.innerHTML = "";
+            });
+            document.body.contentEditable = true;
+        }
+    </script>
+</head>
+<body contenteditable onload=setup()>
+    <h3 class="heading">Types</h3>
+    <div class="output" id="types"></div>
+
+    <h3 class="heading">Items</h3>
+    <div class="output" id="items"></div>
+
+    <h3 class="heading">Files</h3>
+    <div class="output" id="files"></div>
+
+    <h3 class="heading">text/plain</h3>
+    <div class="output" id="textData"></div>
+
+    <h3 class="heading">text/uri-list</h3>
+    <div class="output" id="urlData"></div>
+
+    <h3 class="heading">text/html</h3>
+    <div class="output" id="htmlData"></div>
+    <div class="output" id="rawHTMLData"></div>
+</body>
+</html>

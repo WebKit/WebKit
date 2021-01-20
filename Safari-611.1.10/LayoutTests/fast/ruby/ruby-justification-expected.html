@@ -1,0 +1,27 @@
+This test makes sure that ruby inside text-align: justify has its contents justified.
+<div style="text-align: justify; font-size: 16px;">
+<div>
+abcdefg abcdefg mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+</div>
+<div>
+abcdefg abcdefg abcdefg mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+</div>
+<div>
+abcdefg <ruby>abcdefg<rt><span style="color: transparent;">a</span></ruby> abcdefg mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+</div>
+<div>
+abcdefg <ruby>a<rt><span style="color: transparent;">a</span></ruby> abcdefg mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+</div>
+<div>
+a<span">&#x685c;</span>b mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+</div>
+</div>
+<div style="font-family: Ahem; font-size: 16px;">
+<ruby>abcdefg&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;abcdefg<rt>a</ruby> mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+</div>
+<div style="text-align: right;">
+a
+</div>
+<div style="text-align: justify;">
+abcdefg abcdefg mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+</div>

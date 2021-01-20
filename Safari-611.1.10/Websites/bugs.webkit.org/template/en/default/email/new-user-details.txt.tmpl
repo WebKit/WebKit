@@ -1,0 +1,31 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # new_user: The Bugzilla::User object of the user being created
+  #%]
+
+From: [% Param('mailfrom') %]
+To: [% new_user.email %]
+Subject: [% terms.Bugzilla %]: New account created
+X-Bugzilla-Type: admin
+
+[This e-mail has been automatically generated]
+
+A new [% terms.Bugzilla %] user account has been created at [% urlbase %]:
+
+Login: [% new_user.login %]
+[% IF new_user.realname %]
+Real name: [% new_user.realname %]
+[% END %]
+
+For security reasons, we have not included your new password in this e-mail.
+If you have not being given it via other means, you can use the 'Forgot
+Password' link to set a new password.
+
+If you have any issues regarding your account, please contact [% Param('maintainer') %].

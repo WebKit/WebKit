@@ -1,0 +1,20 @@
+main frame - has 1 onunload handler(s)
+ALERT: LOADED
+ALERT: State popped - FirstEntry (type string)
+ALERT: hashChanged - Last path component of location is document-destroyed-navigate-back-with-fragment-scroll.html#FirstEntry
+ALERT: State popped - SecondEntry (type string)
+ALERT: hashChanged - Last path component of location is document-destroyed-navigate-back-with-fragment-scroll.html#SecondEntry
+ALERT: Navigating back...
+main frame - has 1 onunload handler(s)
+ALERT: LOADED
+ALERT: Last path component of location is document-destroyed-navigate-back-with-fragment-scroll.html#SecondEntryWillLaterBeReactivated
+ALERT: State popped - SecondEntryWillLaterBeReactivated (type string)
+ALERT: State popped - FirstEntryWillLaterBeReactivated (type string)
+ALERT: hashChanged - Last path component of location is document-destroyed-navigate-back-with-fragment-scroll.html#FirstEntryWillLaterBeReactivated
+ALERT: Test complete
+This test:
+-Builds up a list of state object entries with fragment URLs.
+-Navigates through them to verify that the popstate and hashchanged events are fired.
+-Navigates away to a new document, with the old document being destroyed.
+-Navigates back to the state object entries and verifies the popstate event is fired even on the new documents.
+

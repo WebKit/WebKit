@@ -1,0 +1,15 @@
+<video controls></video>
+<script src=media-file.js></script>
+<script src=video-test.js></script>
+<script>
+    waitForEvent('canplaythrough',  
+    function () { 
+        video.currentTime = 1.5; 
+        testExpected("video.currentTime.toFixed(1)", 1.5);
+        video.play();
+        video.currentTime = 3.1; 
+        testExpected("video.currentTime.toFixed(1)", 3.1);
+        endTest();
+    });
+    video.src = findMediaFile("video", "content/test");
+</script>

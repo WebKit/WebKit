@@ -1,0 +1,48 @@
+
+PASS Consume String request's body as text
+PASS Consume String request's body as blob
+PASS Consume String request's body as arrayBuffer
+PASS Consume String request's body as JSON
+PASS Consume ArrayBuffer request's body as text
+PASS Consume ArrayBuffer request's body as blob
+PASS Consume ArrayBuffer request's body as arrayBuffer
+PASS Consume ArrayBuffer request's body as JSON
+PASS Consume Uint8Array request's body as text
+PASS Consume Uint8Array request's body as blob
+PASS Consume Uint8Array request's body as arrayBuffer
+PASS Consume Uint8Array request's body as JSON
+PASS Consume Int8Array request's body as text
+PASS Consume Int8Array request's body as blob
+PASS Consume Int8Array request's body as arrayBuffer
+PASS Consume Int8Array request's body as JSON
+PASS Consume Float32Array request's body as text
+PASS Consume Float32Array request's body as blob
+PASS Consume Float32Array request's body as arrayBuffer
+PASS Consume Float32Array request's body as JSON
+PASS Consume DataView request's body as text
+PASS Consume DataView request's body as blob
+PASS Consume DataView request's body as arrayBuffer
+PASS Consume DataView request's body as JSON
+PASS Consume FormData request's body as FormData
+PASS Consume blob response's body as blob
+PASS Consume blob response's body as text
+PASS Consume blob response's body as json
+PASS Consume blob response's body as arrayBuffer
+PASS Consume blob response's body as blob (empty blob as input)
+PASS Consume JSON from text: '"null"'
+PASS Consume JSON from text: '"1"'
+PASS Consume JSON from text: '"true"'
+PASS Consume JSON from text: '"\"string\""'
+FAIL Trying to consume bad JSON text as JSON: 'undefined' promise_rejects_js: function "function () { throw e }" threw object "SyntaxError: The string did not match the expected pattern." ("SyntaxError") expected instance of function "function SyntaxError() {
+    [native code]
+}" ("SyntaxError")
+FAIL Trying to consume bad JSON text as JSON: '{' promise_rejects_js: function "function () { throw e }" threw object "SyntaxError: The string did not match the expected pattern." ("SyntaxError") expected instance of function "function SyntaxError() {
+    [native code]
+}" ("SyntaxError")
+FAIL Trying to consume bad JSON text as JSON: 'a' promise_rejects_js: function "function () { throw e }" threw object "SyntaxError: The string did not match the expected pattern." ("SyntaxError") expected instance of function "function SyntaxError() {
+    [native code]
+}" ("SyntaxError")
+FAIL Trying to consume bad JSON text as JSON: '[' promise_rejects_js: function "function () { throw e }" threw object "SyntaxError: The string did not match the expected pattern." ("SyntaxError") expected instance of function "function SyntaxError() {
+    [native code]
+}" ("SyntaxError")
+

@@ -1,0 +1,218 @@
+# Copyright (c) 2018 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Flags specified here must not impact ABI. Code compiled with and without these
+# opts will be linked together, and in some cases headers compiled with and
+# without these options will be part of the same program.
+
+import("//build/config/c++/c++.gni")
+import("//build/config/sanitizers/sanitizers.gni")
+import("//build/toolchain/toolchain.gni")
+import("//build_overrides/build.gni")
+import("//testing/test.gni")
+import("//third_party/abseil-cpp/absl.gni")
+
+config("absl_component_build") {
+  defines = [ "ABSL_CONSUME_DLL" ]
+}
+
+# TODO(mbonadei): WebRTC tests and binaries use absl flags but they are
+# marked testonly because we don't want them to be usable in Chromium.
+# Add an absl_flags component which depends on the main absl component.
+component("absl") {
+  public_deps = [ ":absl_component_deps" ]
+  if (is_component_build) {
+    public_configs = [ ":absl_component_build" ]
+
+    if (is_win && is_clang) {
+      if (current_cpu == "x64") {
+        if (is_debug) {
+          sources = [ "symbols_x64_dbg.def" ]
+        } else {
+          if (is_asan) {
+            sources = [ "symbols_x64_rel_asan.def" ]
+          } else {
+            sources = [ "symbols_x64_rel.def" ]
+          }
+        }
+      }
+      if (current_cpu == "x86") {
+        if (is_debug) {
+          sources = [ "symbols_x86_dbg.def" ]
+        } else {
+          sources = [ "symbols_x86_rel.def" ]
+        }
+      }
+      if (current_cpu == "arm64") {
+        if (is_debug) {
+          sources = [ "symbols_arm64_dbg.def" ]
+        } else {
+          sources = [ "symbols_arm64_rel.def" ]
+        }
+      }
+    }
+  }
+}
+
+group("absl_component_deps") {
+  public_deps = [
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/base",
+    "//third_party/abseil-cpp/absl/base:config",
+    "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/container:btree",
+    "//third_party/abseil-cpp/absl/container:fixed_array",
+    "//third_party/abseil-cpp/absl/container:flat_hash_map",
+    "//third_party/abseil-cpp/absl/container:flat_hash_set",
+    "//third_party/abseil-cpp/absl/container:inlined_vector",
+    "//third_party/abseil-cpp/absl/container:node_hash_map",
+    "//third_party/abseil-cpp/absl/container:node_hash_set",
+    "//third_party/abseil-cpp/absl/debugging:failure_signal_handler",
+    "//third_party/abseil-cpp/absl/debugging:stacktrace",
+    "//third_party/abseil-cpp/absl/debugging:symbolize",
+    "//third_party/abseil-cpp/absl/functional:bind_front",
+    "//third_party/abseil-cpp/absl/hash",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/meta:type_traits",
+    "//third_party/abseil-cpp/absl/numeric:int128",
+    "//third_party/abseil-cpp/absl/status",
+    "//third_party/abseil-cpp/absl/status:statusor",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/strings:str_format",
+    "//third_party/abseil-cpp/absl/synchronization",
+    "//third_party/abseil-cpp/absl/time",
+    "//third_party/abseil-cpp/absl/types:optional",
+    "//third_party/abseil-cpp/absl/types:span",
+    "//third_party/abseil-cpp/absl/types:variant",
+  ]
+
+  # The following dependencies currently don't build with NaCl.
+  # TODO(https://crbug.com/1114625): Fix build errors and remove this section.
+  if (is_nacl) {
+    public_deps -= [
+      "//third_party/abseil-cpp/absl/container:flat_hash_map",
+      "//third_party/abseil-cpp/absl/container:flat_hash_set",
+      "//third_party/abseil-cpp/absl/container:node_hash_map",
+      "//third_party/abseil-cpp/absl/container:node_hash_set",
+      "//third_party/abseil-cpp/absl/debugging:failure_signal_handler",
+    ]
+  }
+
+  visibility = [ ":absl" ]
+}
+
+group("default") {
+  deps = [
+    "absl/types:any",
+    "absl/types:bad_any_cast",
+    "absl/types:bad_optional_access",
+    "absl/types:optional",
+    "absl/types:span",
+  ]
+}
+
+config("absl_include_config") {
+  include_dirs = [ "." ]
+}
+
+config("absl_define_config") {
+  defines = [ "ABSL_ALLOCATOR_NOTHROW=1" ]
+
+  if (is_win && !use_custom_libcxx) {
+    defines += [
+      # See crbug.com/1101367: Acknowledge extended alignment when using
+      # MSVC's standard library.
+      "_ENABLE_EXTENDED_ALIGNED_STORAGE",
+    ]
+  }
+}
+
+config("absl_default_cflags_cc") {
+  cflags_cc = []
+  if (is_clang) {
+    cflags_cc += [
+      # TODO(crbug.com/588506): Explicitly enable conversion warnings.
+      "-Wbool-conversion",
+      "-Wconstant-conversion",
+      "-Wenum-conversion",
+      "-Wint-conversion",
+      "-Wliteral-conversion",
+      "-Wnon-literal-null-conversion",
+      "-Wnull-conversion",
+      "-Wobjc-literal-conversion",
+      "-Wno-sign-conversion",
+      "-Wstring-conversion",
+    ]
+    if (!is_nacl && !use_xcode_clang) {
+      cflags_cc += [ "-Wbitfield-enum-conversion" ]
+    }
+  }
+  if (is_win) {
+    cflags_cc += [
+      "/wd4005",  # macro-redefinition
+      "/wd4018",  # sign-compare
+      "/wd4068",  # unknown pragma
+      "/wd4702",  # unreachable code
+    ]
+  }
+}
+
+config("absl_test_cflags_cc") {
+  cflags_cc = []
+  if (is_clang || !is_win) {
+    cflags_cc += [
+      "-Wno-conversion-null",
+      "-Wno-missing-declarations",
+      "-Wno-sign-compare",
+      "-Wno-unused-function",
+      "-Wno-unused-parameter",
+      "-Wno-unused-private-field",
+    ]
+  }
+  if (is_win) {
+    cflags_cc += [
+      "/wd4018",  # signed/unsigned mismatch
+      "/wd4101",  # unreferenced local variable
+    ]
+  }
+}
+
+if (!is_component_build) {
+  test("absl_tests") {
+    testonly = true
+    deps = [
+      "absl/algorithm:algorithm_test",
+      "absl/algorithm:container_test",
+      "absl/base:config_test",
+      "absl/container:inlined_vector_test",
+      "absl/memory:memory_test",
+      "absl/meta:type_traits_test",
+      "absl/strings:ascii_test",
+      "absl/strings:match_test",
+      "absl/strings:str_replace_test",
+      "absl/strings:string_view_test",
+      "absl/types:optional_test",
+      "absl/types:variant_test",
+      "//third_party/googletest:gtest_main",
+    ]
+  }
+}
+
+if (build_with_chromium) {
+  test("absl_hardening_tests") {
+    testonly = true
+    sources = [ "absl_hardening_test.cc" ]
+    deps = [
+      "//base/test:run_all_unittests",
+      "//third_party/abseil-cpp/absl/base:config",
+      "//third_party/abseil-cpp/absl/container:fixed_array",
+      "//third_party/abseil-cpp/absl/container:inlined_vector",
+      "//third_party/abseil-cpp/absl/strings",
+      "//third_party/abseil-cpp/absl/types:optional",
+      "//third_party/abseil-cpp/absl/types:span",
+      "//third_party/abseil-cpp/absl/types:variant",
+      "//third_party/googletest:gtest",
+    ]
+  }
+}

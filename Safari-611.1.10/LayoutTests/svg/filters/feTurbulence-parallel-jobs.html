@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <p>You should see a line of black pixels at the botton of the gray square.</p>
+        <svg width="800px" height="800px" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="light" filterUnits="userSpaceOnUse" x="10" y="40" width="200" height="201">
+                    <feTurbulence seed="10" type="turbulence" baseFrequency="0.01" numOctaves="1" />
+                    <feComponentTransfer>
+                      <feFuncR type="discrete" tableValues="0 0 0 0 1" />
+                      <feFuncG type="discrete" tableValues="0 0 0 0 1" />
+                      <feFuncB type="discrete" tableValues="0 0 0 0 1" />
+                      <feFuncA type="discrete" tableValues="0 1 1 1 1" />
+                    </feComponentTransfer>
+                </filter>
+                <clipPath id="clip-out-middle">
+                  <rect x="10" y="240" width="200" height="4" />
+                </clipPath>
+            </defs>
+            <rect x="0" y="0" width="201" height="201" filter="url(#light)" clip-path="url(#clip-out-middle)"/>
+            <rect x="10" y="40" width="200" height="202" fill="none" stroke="gray" />
+        </svg>
+        </div>
+    </body>
+</html>

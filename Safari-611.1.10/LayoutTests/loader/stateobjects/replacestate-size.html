@@ -1,0 +1,66 @@
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(msg) {
+    document.getElementById("logger").innerHTML += msg + "<br>";
+}
+
+function loaded()
+{
+    // Make a 512k character string, which computes as 1mb of payload.
+    var object = "12345678";
+    for (var i = 0; i < 16; ++i)
+        object += object;
+    
+    log("Pushing 63+mb of state objects (but less than 64mb)");
+
+    try {
+        // Push 63+mb of state objects (while the string is exactly 1mb, it counts for a little more than 1mb)
+        for (var i = 1; i < 64; ++i)
+            history.pushState(0, 0, object);
+    } catch (e) {
+        log("Unexpected exception pushing > 63mb but < 64mb of state objects: " + e);  
+    }
+    
+    log ("Replacing the last state object with one that should fit");
+
+    try {
+        // replaceState with a 1mb state object.
+        // If replaceState counts against the global limit, this will cause an exception.
+        // But it should work.
+        history.replaceState(0, 0, object);
+        
+        log("It fit");
+    } catch (e) {
+        log("Unexpected exception replacing the last state object: " + e); 
+    }
+    
+    // Make the string be 1024k characters, which computes as 2mb of payload.
+    object += object;
+    
+    log ("Replacing the last state object with one that should not fit");
+
+    try {
+        // Replacing the 63rd 1mb string with a 2mb string *should* still trigger the limit.
+        history.replaceState(0, 0, object);
+        log("It fit, but should not have");
+    } catch (e) {
+        log("Expected exception replacing the last state object: " + e);  
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();    
+}
+
+window.onload = loaded;
+
+</script>
+<body>
+Test should not crash.<br>
+replaceState() should not always count against the global quota. Instead it should literally replace the most recent state object added.<br>
+<div id="logger"></div>
+</body>

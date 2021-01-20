@@ -1,0 +1,88 @@
+<p>Tests that asynchronous XMLHttpRequests handle redirects according to the CORS standard.</p>
+
+<pre id="console"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + '\n'));
+}
+
+function runTestAsync(url, credentials, addCustomHeader, expectSuccess) {
+    log("Testing " + url + (credentials ? " with " : " without ") + "credentials");
+    log("Expecting success: " + expectSuccess);
+
+    xhr = new XMLHttpRequest();
+    xhr.withCredentials = credentials;
+    xhr.open("GET", url, true);
+    if (addCustomHeader)
+        xhr.setRequestHeader("x-webkit", "foo");
+
+    xhr.onload = function() {
+        log((expectSuccess ? "PASS" : "FAIL") + ": " + xhr.responseText);
+        nextTest();
+    }
+    xhr.onerror = function() {
+        log((expectSuccess ? "FAIL" : "PASS") + ": " + xhr.status);
+        nextTest();
+    }
+    xhr.send(null);
+}
+
+var withoutCredentials = false;
+var withCredentials = true;
+var noCustomHeader = false;
+var addCustomHeader = true;
+var succeeds = true;
+var fails = false;
+
+var tests = [
+// Test simple same origin requests that receive cross origin redirects.
+
+// Request without credentials is redirected to a cross-origin response with Access-Control-Allow-Origin=*.
+// The redirect response passes the access check.
+["../resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi",
+  withoutCredentials, noCustomHeader, succeeds],
+
+// Request with credentials is redirected to a cross-origin response with Access-Control-Allow-Origin=*.
+// The redirect response fails the access check because credentials were sent.
+["../resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi",
+  withCredentials, noCustomHeader, fails],
+
+// Request without credentials is redirected to a cross-origin response with a specific Access-Control-Allow-Origin.
+// The redirect response passes the access check.
+["../resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi",
+  withoutCredentials, noCustomHeader, succeeds],
+
+// Request with credentials is redirected to a cross-origin response with a specific Access-Control-Allow-Origin.
+// The redirect response passes the access check.
+["../resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi",
+  withCredentials, noCustomHeader, succeeds],
+
+// Request without credentials is redirected to a cross-origin response with a specific Access-Control-Allow-Origin
+// forbidding credentials. The redirect response passes the access check.
+["../resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-no-credentials.cgi",
+  withoutCredentials, noCustomHeader, succeeds],
+
+// Request with credentials is redirected to a cross-origin response with a specific Access-Control-Allow-Origin
+// forbidding credentials. The redirect response fails the access check.
+["../resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-no-credentials.cgi",
+  withCredentials, noCustomHeader, fails],
+
+]
+
+var currentTest = 0;
+
+function nextTest() {
+    if (currentTest < tests.length)
+        runTestAsync.apply(null, tests[currentTest++]);
+    else if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+nextTest();
+</script>

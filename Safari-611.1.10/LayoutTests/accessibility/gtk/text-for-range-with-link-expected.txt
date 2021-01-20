@@ -1,0 +1,13 @@
+A paragraph with a link in the middle
+
+This tests the ability to get element text for a specified range.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS paragraph.stringForRange(0, -1) is 'A paragraph with a link in the middle'
+PASS link.stringForRange(0, -1) is 'a link'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

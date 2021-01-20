@@ -1,0 +1,16 @@
+This test checks the various use cases around sending multiple ports through WorkerGlobalScope.postMessage
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.ports is non-null and zero length when no port sent
+PASS event.ports is non-null and zero length when empty array sent
+PASS event.ports contains two ports when two ports sent
+PASS posting a null port did throw: TypeError: Type error
+PASS posting a non-port did throw: DataCloneError: The object can not be cloned.
+PASS event.ports contains two ports when two ports re-sent after error
+PASS posting a non-array did throw: TypeError: Type error
+PASS posting a non-sequence did throw: DataCloneError: The object can not be cloned.
+
+TEST COMPLETE
+

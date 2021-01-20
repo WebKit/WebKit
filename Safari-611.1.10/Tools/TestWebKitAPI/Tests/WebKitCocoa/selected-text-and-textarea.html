@@ -1,0 +1,29 @@
+<head>
+<meta name="viewport" content="width=device-width">
+<style>
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+#source, #destination {
+    width: 100%;
+    height: 200px;
+    font-size: 200px;
+    white-space: nowrap;
+}
+
+#destination {
+    border: black 1px solid;
+}
+</style>
+</head>
+<body>
+<div id="source">Hello world</div>
+<textarea id="destination"></textarea>
+<script>
+let text = source.childNodes[0];
+getSelection().setBaseAndExtent(text, 0, text, text.data.length);
+</script>
+</body>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that auto transition returns the proper computed value.</title>
+<style>
+#dropdown {
+    font-size: 16px;
+    font-family: ahem;
+    color: white;
+    overflow: hidden;
+    border: 1px solid red;
+    height: 0px;
+    transition: height 1s ease-out;
+}
+</style>
+</head>
+<body>
+<div id=dropdown>foobar</div>
+PASS if you can see foobar above.
+
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+setTimeout(function() {
+    var element = document.getElementById("dropdown");
+    element.style.height = 'auto';
+    var h = element.offsetHeight;
+    element.style.height = h + 'px';
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>
+</body>
+</html>

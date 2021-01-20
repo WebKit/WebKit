@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            width: 1200px;
+            height: 2000px;
+            overflow: hidden;
+        }
+        
+        .box {
+            height: 2500px;
+            width: 700px;
+            -webkit-transform: translateZ(1px);
+            background-color: silver;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function doTest()
+        {
+            if (window.eventSender)
+                eventSender.scalePageBy(1.6, 1.6);
+
+            if (window.internals) {
+                document.getElementById('layers').innerText = internals.layerTreeAsText(document,
+                    internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+            }
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="box">
+        
+    </div>
+<pre id="layers">Layer tree goes here</p>
+</body>
+</html>

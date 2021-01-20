@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            height: 100px;
+            width: 500px;
+            margin: 4px;
+            border: 1px solid black;
+        }
+        .box {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            background-color: green;
+        }
+        
+        .mover {
+            animation: move 0.25s linear;
+        }
+        
+        body.changed .mover {
+            animation-duration: 0.2s;
+        }
+
+        .slider {
+            animation: slide 0.25s linear;
+        }
+        
+        body.changed .slider {
+            animation-duration: 0.2s;
+        }
+
+        @keyframes move {
+            from { left: 100px; }
+            to   { left: 400px; }
+        }
+
+        @keyframes slide {
+            from { transform: translateX(100px); }
+            to   { transform: translateX(400px); }
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        function doTest()
+        {
+            var box = document.getElementById('box1');
+            box.addEventListener('animationend', function() {
+                window.setTimeout(function() {
+                    document.body.classList.add('changed');
+                    window.setTimeout(function() {
+                        if (window.testRunner)
+                            testRunner.notifyDone();
+                    }, 10);
+                }, 0);
+            }, false);
+            
+            box.classList.add('mover');
+            document.getElementById('box2').classList.add('slider');
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div id="box1" class="box"></div>
+    </div>
+    <div class="container">
+        <div id="box2" class="box"></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,34 @@
+
+== Running test suite: ObjectUtilities
+-- Running test case: Object.shallowEqual
+PASS: shallowEqual of empty object literals should be true.
+PASS: shallowEqual of empty array literals should be true.
+PASS: shallowEqual of empty array and object literals should be false.
+PASS: shallowEqual of an object with itself should be true.
+PASS: shallowEqual of equal objects should be true.
+PASS: shallowEqual of equal objects should be true.
+PASS: shallowEqual of unequal objects should be false.
+PASS: shallowEqual of unequal objects should be false.
+PASS: shallowEqual of objects with similar arrays at the same key should be true.
+PASS: shallowEqual of objects with similar arrays at the same key should be true.
+PASS: shallowEqual of objects with similar arrays at the same key should be true.
+PASS: shallowEqual of objects with dissimilar arrays at the same key should be false.
+PASS: shallowEqual of objects with dissimilar arrays at the same key should be false.
+PASS: shallowEqual of an object and null should be false.
+PASS: shallowEqual of an object and non-object should be false.
+PASS: shallowEqual of a non-object with itself should be false.
+PASS: shallowEqual of non-objects should be false.
+PASS: shallowEqual of objects with equal constructors should be true.
+PASS: shallowEqual of objects with different constructors should be false.
+PASS: shallowEqual of objects with different constructors should be false.
+
+-- Running test case: Object.filter
+PASS: filter should remove all entries where the key isn't in ["a","b","c"].
+PASS: filter should remove all entries where the key isn't in ["a"].
+PASS: filter should remove all entries where the key isn't in ["b"].
+PASS: filter should remove all entries where the key isn't in ["c"].
+PASS: filter should remove all entries where the value isn't in [1,2,3].
+PASS: filter should remove all entries where the value isn't in [1].
+PASS: filter should remove all entries where the value isn't in [2].
+PASS: filter should remove all entries where the value isn't in [3].
+

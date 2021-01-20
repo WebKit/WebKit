@@ -1,0 +1,31 @@
+Test HTML formatting.
+
+
+== Running test suite: HTMLFormatter
+-- Running test case: HTMLFormatter
+PASS: attributes.html
+PASS: auto-close-normal.html
+PASS: auto-close-special.html
+PASS: basic-1.html
+PASS: basic-2.html
+PASS: comments.html
+PASS: eof-1.html
+PASS: eof-2.html
+PASS: eof-3.html
+PASS: eof-4.html
+PASS: eof-5.html
+PASS: eof-6.html
+PASS: eof-7.html
+PASS: eof-8.html
+PASS: eof-9.html
+PASS: inline-script.html
+PASS: inline-style.html
+PASS: list.html
+PASS: not-well-formed-1.html
+PASS: not-well-formed-2.html
+PASS: not-well-formed-3.html
+PASS: p.html
+PASS: self-closing.html
+PASS: table.html
+PASS: tag-case.html
+

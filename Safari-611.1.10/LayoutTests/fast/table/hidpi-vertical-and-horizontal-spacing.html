@@ -1,0 +1,52 @@
+<html>
+<head>
+<title>This tests if border spacing works properly with subpixel values.</title>
+<style>
+    body {
+        margin: 0px;
+    }
+    
+    table {
+        border-spacing: 0.5px;
+    }
+
+    td {
+        background-color: green;
+        height: auto;
+        width: 10px;
+        height: 10px;
+    }
+</style>
+</head>
+<body>
+<table style="border-spacing: 0.5px 1.5px;">
+    <tr><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td></tr>
+</table>
+
+<table style="border-spacing: 1.5px 0.5px;">
+    <tr><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td></tr>
+</table>
+
+<table style="border-spacing: 2.5px 2.5px">
+    <tr><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td></tr>
+</table>
+
+<table style="border-spacing: 3.5px 3.5px;">
+    <tr><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td></tr>
+</table>
+
+<table style="border-spacing: 4.5px 0.5px;">
+    <tr><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td></tr>
+</table>
+</body>
+</html>

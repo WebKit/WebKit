@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This test checks the SVGAnimatedInteger API - utilizing the orderX property of feConvolveMatrix");
+
+var convolveMatrix = document.createElementNS("http://www.w3.org/2000/svg", "feConvolveMatrix");
+
+debug("");
+debug("Check initial filterResX value");
+shouldBeEqualToString("convolveMatrix.orderX.toString()", "[object SVGAnimatedInteger]");
+shouldBeEqualToString("typeof(convolveMatrix.orderX.baseVal)", "number");
+shouldBe("convolveMatrix.orderX.baseVal", "0");
+
+debug("");
+debug("Check that integers are static, caching value in a local variable and modifying it, should have no effect");
+var numRef = convolveMatrix.orderX.baseVal;
+numRef = 100;
+shouldBe("numRef", "100");
+shouldBe("convolveMatrix.orderX.baseVal", "0");
+
+debug("");
+debug("Check assigning various valid and invalid values");
+shouldBe("convolveMatrix.orderX.baseVal = -1", "-1"); // Negative values are allowed from SVG DOM, but should lead to an error when rendering (disable the filter)
+shouldBe("convolveMatrix.orderX.baseVal = 300", "300");
+// ECMA-262, 9.5, "ToInt32"
+shouldBe("convolveMatrix.orderX.baseVal = 'aString'", "'aString'");
+shouldBe("convolveMatrix.orderX.baseVal", "0");
+shouldBe("convolveMatrix.orderX.baseVal = convolveMatrix", "convolveMatrix");
+shouldBe("convolveMatrix.orderX.baseVal", "0");
+shouldBe("convolveMatrix.orderX.baseVal = 300", "300");
+
+debug("");
+debug("Check that the filterResX value remained 300");
+shouldBe("convolveMatrix.orderX.baseVal", "300");
+
+successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

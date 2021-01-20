@@ -1,0 +1,3 @@
+
+PASSED: the autoscroll has not happened.
+

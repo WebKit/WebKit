@@ -1,0 +1,11 @@
+Hi 😎
+This tests that CharacterOffset and VisiblePosition convert correctly when there are composed characters.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Hi 😎
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

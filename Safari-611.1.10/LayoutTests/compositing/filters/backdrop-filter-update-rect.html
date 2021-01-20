@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #box {
+            height: 100px;
+            width: 100px;
+            margin: 10px;
+            -webkit-backdrop-filter: blur(10px);
+            -webkit-box-reflect: below 10px;
+        }
+        
+        #box.changed {
+            width: 110px;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+            
+        function doTest()
+        {
+            setTimeout(() => {
+                document.getElementById('box').classList.add('changed');
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <p>This test should not crash.</p>
+    <div id="box">
+        box
+    </div>
+</body>
+</html>

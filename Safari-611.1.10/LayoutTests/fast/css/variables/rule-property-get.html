@@ -1,0 +1,15 @@
+<html>
+<head>
+<style>
+:root { --bgcolor: green; background: var(--bgcolor); }
+</style>
+<body>
+<script>
+/* https://www.w3.org/TR/css-variables/#variables-in-shorthands
+   "Pending-substitution values must be serialized as the empty string, if an API allows them to be observed."
+   This means getting the shorthand value for background directly from the style rule or element.style
+   should produce an empty string if the property contains a variable. */
+document.write(document.styleSheets[0].cssRules[0].style.getPropertyValue("background"))
+</script>
+</body>
+</html.

@@ -1,0 +1,11 @@
+This test ensures that we will call a custom setter when the setter is in the prototype chain
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testObject.input is 'testInput'
+PASS RegExp.input is 'testInput'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

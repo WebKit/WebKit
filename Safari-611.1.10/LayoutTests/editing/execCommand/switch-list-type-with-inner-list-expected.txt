@@ -1,0 +1,15 @@
+This tests switching an unordered list with a nested list to an ordered list.
+| "\n"
+| <ol>
+|   <li>
+|     "<#selection-anchor>hello"
+|   "\n    "
+|   <ol>
+|     "\n    "
+|     <li>
+|       "world"
+|     "\n    "
+|   "\n    "
+|   <li>
+|     "webkit<#selection-focus>"
+| "\n"

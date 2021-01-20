@@ -1,0 +1,40 @@
+<!--
+  Creates a canvas which is filled red, then attempts to
+  fill a number of 0 size rects, finally fills with green.
+
+  Fill of a 0-sized rect should not throw an exception, so 
+  we expected the output to be a green rect.
+-->
+<html>
+<head>
+<script type="text/javascript">
+window.onload = function() {
+	if (window.testRunner)
+	  testRunner.dumpAsText(true);
+	
+    var canvas = document.getElementById("test");
+    var context = canvas.getContext("2d");
+    context.fillStyle = '#f00';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    try {
+        context.fillRect(0, 0, 0, 0);
+        context.fillRect(0, 0, canvas.width, 0);
+        context.fillRect(0, 0, 0, canvas.height);
+    } catch (e) {
+        var node = document.createTextNode("FAIL -- an exception was thrown when drawing a 0 sized rect");
+        document.getElementById("body").appendChild(node);
+        return;
+    }
+    context.fillStyle = '#0f0';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    var node = document.createTextNode("PASS -- 0 sized rects did not trigger an exception");
+    document.getElementById("body").appendChild(node);
+}
+</script>
+<title>borkedness</title>
+</head>
+<body id="body">
+<canvas id="test" width="100" height="100"></canvas>
+<br>
+</body>
+</html>

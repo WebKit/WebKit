@@ -1,0 +1,56 @@
+# Copyright (C) 2019 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#if ENABLE(INDEXED_DATABASE)
+
+messages -> WebIDBServer {
+    DeleteDatabase(WebCore::IDBRequestData requestData)
+    OpenDatabase(WebCore::IDBRequestData requestData)
+    AbortTransaction(WebCore::IDBResourceIdentifier transactionIdentifier)
+    CommitTransaction(WebCore::IDBResourceIdentifier transactionIdentifier)
+    DidFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier transactionIdentifier)
+    CreateObjectStore(WebCore::IDBRequestData requestData, WebCore::IDBObjectStoreInfo info)
+    DeleteObjectStore(WebCore::IDBRequestData requestData, String objectStoreName)
+    RenameObjectStore(WebCore::IDBRequestData requestData, uint64_t objectStoreIdentifier, String newName)
+    ClearObjectStore(WebCore::IDBRequestData requestData, uint64_t objectStoreIdentifier)
+    CreateIndex(WebCore::IDBRequestData requestData, WebCore::IDBIndexInfo info)
+    DeleteIndex(WebCore::IDBRequestData requestData, uint64_t objectStoreIdentifier, String indexName)
+    RenameIndex(WebCore::IDBRequestData requestData, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, String newName)
+    PutOrAdd(WebCore::IDBRequestData requestData, WebCore::IDBKeyData key, WebCore::IDBValue value, WebCore::IndexedDB::ObjectStoreOverwriteMode overwriteMode)
+    GetRecord(WebCore::IDBRequestData requestData, struct WebCore::IDBGetRecordData getRecordData)
+    GetAllRecords(WebCore::IDBRequestData requestData, struct WebCore::IDBGetAllRecordsData getAllRecordsData)
+    GetCount(WebCore::IDBRequestData requestData, struct WebCore::IDBKeyRangeData range)
+    DeleteRecord(WebCore::IDBRequestData requestData, struct WebCore::IDBKeyRangeData range)
+    OpenCursor(WebCore::IDBRequestData requestData, WebCore::IDBCursorInfo info)
+    IterateCursor(WebCore::IDBRequestData requestData, struct WebCore::IDBIterateCursorData data)
+
+    EstablishTransaction(uint64_t databaseConnectionIdentifier, WebCore::IDBTransactionInfo info)
+    DatabaseConnectionPendingClose(uint64_t databaseConnectionIdentifier)
+    DatabaseConnectionClosed(uint64_t databaseConnectionIdentifier)
+    AbortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier transactionIdentifier)
+    DidFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier requestIdentifier, WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosedOnBehalfOfServer)
+    OpenDBRequestCancelled(WebCore::IDBRequestData requestData)
+
+    GetAllDatabaseNamesAndVersions(WebCore::IDBResourceIdentifier requestIdentifier, struct WebCore::ClientOrigin origin) WantsConnection
+}
+
+#endif // ENABLE(INDEXED_DATABASE)

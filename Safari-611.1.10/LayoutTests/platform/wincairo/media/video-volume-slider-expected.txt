@@ -1,0 +1,48 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 413x19
+        text run at (0,0) width 413: "Tests if the volume slider is rendererd properly. This test assumes the"
+      RenderBR {BR} at (413,15) size 0x0
+      RenderText {#text} at (0,20) size 430x19
+        text run at (0,20) width 430: "volume slider is implemented and mouse over the right bottom corner of"
+      RenderBR {BR} at (430,35) size 0x0
+      RenderText {#text} at (0,40) size 252x19
+        text run at (0,40) width 252: "video element will show the volume slider."
+      RenderBR {BR} at (252,55) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,68) size 200x150
+  RenderVideo {VIDEO} at (0,60) size 200x150
+layer at (8,68) size 200x150
+  RenderFlexibleBox {DIV} at (0,0) size 200x150
+layer at (8,173) size 200x45
+  RenderFlexibleBox {DIV} at (0,105) size 200x45
+layer at (8,173) size 200x45
+  RenderBlock (positioned) {DIV} at (0,0) size 200x45
+layer at (8,173) size 200x45
+  RenderBlock (positioned) {DIV} at (0,0) size 200x45 [bgcolor=#1E1E1E73]
+layer at (8,173) size 200x45
+  RenderBlock (positioned) {DIV} at (0,0) size 200x45 [bgcolor=#292929]
+layer at (16,198) size 12x15
+  RenderButton {BUTTON} at (8,25) size 12x15 [color=#FFFFFF]
+layer at (44,198) size 16x15
+  RenderButton {BUTTON} at (36,24) size 16x16 [color=#FFFFFF]
+layer at (154,193) size 14x25
+  RenderFlexibleBox {DIV} at (146,20) size 14x25
+layer at (129,97) size 63x116
+  RenderFlexibleBox {DIV} at (-25,-96) size 63x116
+layer at (129,97) size 63x116
+  RenderBlock (positioned) {DIV} at (0,0) size 63x116 [bgcolor=#1E1E1E73]
+layer at (129,97) size 63x116
+  RenderBlock (positioned) {DIV} at (0,0) size 63x116 [bgcolor=#292929]
+layer at (128,151) size 64x9 backgroundClip at (129,97) size 63x116 clip at (129,97) size 63x116
+  RenderSlider {INPUT} at (-1,53) size 64x10 [color=#C4C4C4]
+    RenderFlexibleBox {DIV} at (0,0) size 64x9
+      RenderBlock {DIV} at (0,1) size 64x7
+        RenderBlock {DIV} at (39,0) size 8x7
+layer at (154,198) size 14x15
+  RenderButton {BUTTON} at (0,5) size 14x15 [color=#FFFFFF]
+layer at (184,198) size 16x15
+  RenderButton {BUTTON} at (176,25) size 16x15 [color=#FFFFFF]

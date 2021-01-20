@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body id="body" onload="setTimeout('runTest();', 1)">
+
+<div id="content">
+<iframe src="data:text/html,<body><input type='search' placeholder=''><input type='search' placeholder=''>"></iframe>
+</div>
+
+<div role="group" id="console"></div>
+
+<script>
+
+    description("This tests that using an old text marker that references a removed container node won't crash.");
+
+    var cachedMarker1 = 0;
+    var cachedMarker2 = 0;
+    jsTestIsAsync = true;
+
+    function runTest() {
+
+        // Retrieve a marker for the search field in the iframe and cache it.
+        var searchField1 = accessibilityController.accessibleElementById("content").childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(0);
+        var range1 = searchField1.textMarkerRangeForElement(searchField1);
+        cachedMarker1 = searchField1.startTextMarkerForTextMarkerRange(range1);
+
+        var searchField2 = accessibilityController.accessibleElementById("content").childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(1);
+        var range2 = searchField2.textMarkerRangeForElement(searchField2);
+        cachedMarker2 = searchField2.startTextMarkerForTextMarkerRange(range2);
+
+        debug("Text marker 1 is valid: " + searchField1.isTextMarkerValid(cachedMarker1));
+        debug("Text marker 2 is valid: " + searchField2.isTextMarkerValid(cachedMarker2));
+
+        // Remove the iframe and the search field inside and then force cleanup.
+        document.getElementById("content").innerHTML = "";
+        gc();
+
+        setTimeout("accessCachedMarker()", "10");
+    }
+ 
+    function accessCachedMarker() {
+        var console = accessibilityController.accessibleElementById("console");
+  
+        // Don't crash accessing the text marker that references a stale Node.
+        var index1 = console.indexForTextMarker(cachedMarker1);
+        debug("Text marker 1 is valid: " + console.isTextMarkerValid(cachedMarker1));
+
+        var index2 = console.indexForTextMarker(cachedMarker2);
+        debug("Text marker 2 is valid: " + console.isTextMarkerValid(cachedMarker2));
+
+        finishJSTest();
+    }
+
+</script>
+</body>
+</html>

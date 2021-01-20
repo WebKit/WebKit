@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/change-scripthash-before-execute.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/change-scriptnonce-before-execute.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/empty.css
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/inject-script.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/inline-script-should-be-blocked.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/post-message.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-eval.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-eval.js.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-function-function.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-function-function.js.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-importscripts.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-importscripts.js.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-set-timeout.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-set-timeout.js.sub.headers

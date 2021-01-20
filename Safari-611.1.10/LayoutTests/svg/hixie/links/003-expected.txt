@@ -1,0 +1,3 @@
+The circle below is a link. When you activate the circle, nothing should happen. If the document scrolls or the image pans when you activate the link, the test has failed.
+
+PASS

@@ -1,0 +1,14 @@
+Test RSA-PSS signing using an imported key with salt length larger than hash size
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS crypto.subtle.sign({ name: "RSA-PSS", saltLength: 21 }, key, text) rejected promise  with OperationError: The operation failed for an operation-specific reason.
+PASS crypto.subtle.sign({ name: "RSA-PSS", saltLength: 29 }, key, text) rejected promise  with OperationError: The operation failed for an operation-specific reason.
+PASS crypto.subtle.sign({ name: "RSA-PSS", saltLength: 33 }, key, text) rejected promise  with OperationError: The operation failed for an operation-specific reason.
+PASS crypto.subtle.sign({ name: "RSA-PSS", saltLength: 49 }, key, text) rejected promise  with OperationError: The operation failed for an operation-specific reason.
+PASS crypto.subtle.sign({ name: "RSA-PSS", saltLength: 65 }, key, text) rejected promise  with OperationError: The operation failed for an operation-specific reason.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

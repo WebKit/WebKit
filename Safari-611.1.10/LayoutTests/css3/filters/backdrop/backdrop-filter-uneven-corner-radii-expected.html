@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.container {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 225px;
+    height: 225px;
+    background-image: repeating-linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25) 25px, transparent 25px, transparent 50px),
+            repeating-linear-gradient(to right, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25) 25px, transparent 25px, transparent 50px);
+}
+
+.container > div {
+    position: absolute;
+    left: calc((100% - 160px)/2);
+    top: calc((100% - 160px)/2);
+    width: 160px;
+    height: 160px;
+    background-color: rgba(0, 0, 128, 0.2);
+}
+
+.cover {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 147px;
+    height: 147px;
+    background-color: gray;
+}
+</style>
+
+</head>
+<body>
+    <div class="container">
+        <div style="border-top-left-radius: 100%"></div>
+    </div>
+    
+    <div class="cover" style="top: 88px; width: 225px;"></div>
+    <div class="cover" style="left: 88px; height: 225px;"></div>
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+<html>
+<head>
+<script>
+    window.targetScaleFactor = 2;
+</script>
+<script src="../../resources/srcset-helper.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    function runTest()
+    {
+        shouldBeTrue('document.getElementById("foo").clientWidth==200');
+    }
+</script>
+<style>
+    #foo { --image-set: -webkit-image-set(url(resources/blue-100-px-square.png) 1x, url(resources/deleteButton.png) 3x, url(resources/green-400-px-square.png) 2x); }
+</style>
+</head>
+
+<body id="body">
+    <div>This test passes if the image below says 1x with a reddish background when the deviceScaleFactor is 1, and if says 2x with a greenish background when the deviceScaleFactor is 2.</div>
+    <img id="foo" src="" style="content:var(--image-set)">
+</body>
+</html>

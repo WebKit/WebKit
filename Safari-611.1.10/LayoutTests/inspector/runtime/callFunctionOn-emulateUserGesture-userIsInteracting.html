@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function load() {
+    document.getElementById("test").addEventListener("click", (event) => {
+        if (!window.internals)
+            return;
+
+        TestPage.addResult(window.internals.userIsInteracting() ? "User is Interacting" : "User is NOT Interacting");
+    });
+
+    runTest();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Runtime.callFunctionOnUserGestureEmulation.userIsInteracting");
+
+    suite.addTestCase({
+        name: "CallFunctionOnWithoutEmulatingUserGesture.userIsInteracting",
+        description: "Check that callFunctionOn is not considered a user interaction when emulateUserGesture is false.",
+        async test() {
+            let testElement = await RuntimeAgent.evaluate.invoke({expression: `document.getElementById("test")`});
+            await RuntimeAgent.callFunctionOn.invoke({functionDeclaration: `function() { this.click(); }`, emulateUserGesture: false, objectId: testElement.result.objectId});
+        },
+    });
+
+    suite.addTestCase({
+        name: "CallFunctionOnWithEmulatingUserGesture.userIsInteracting",
+        description: "Check that callFunctionOn is considered a user interaction when emulateUserGesture is true.",
+        async test() {
+            let testElement = await RuntimeAgent.evaluate.invoke({expression: `document.getElementById("test")`});
+            await RuntimeAgent.callFunctionOn.invoke({functionDeclaration: `function() { this.click(); }`, emulateUserGesture: true, objectId: testElement.result.objectId});
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Tests for Runtime.callFunctionOn emulateUserGesture option.</p>
+    <a id="test"></a>
+</body>
+</html>

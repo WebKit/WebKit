@@ -1,0 +1,20 @@
+
+PASS :not(:is(#a)) matches expected elements
+PASS :not(:where(#b)) matches expected elements
+PASS :not(:where(:root #c)) matches expected elements
+PASS :not(:is(#a, #b)) matches expected elements
+PASS :not(:is(#b div)) matches expected elements
+PASS :not(:is(#a div, div + div)) matches expected elements
+PASS :not(:is(span)) matches expected elements
+PASS :not(:is(div)) matches expected elements
+PASS :not(:is(*|div)) matches expected elements
+PASS :not(:is(*|*)) matches expected elements
+PASS :not(:is(*)) matches expected elements
+PASS :not(:is(svg|div)) matches expected elements
+PASS :not(:is(:not(div))) matches expected elements
+PASS :not(:is(span, b, i)) matches expected elements
+PASS :not(:is(span, b, i, div)) matches expected elements
+PASS :not(:is(#b ~ div div, * + #c)) matches expected elements
+PASS :not(:is(div > :not(#e))) matches expected elements
+PASS :not(:is(div > :not(:where(#e, #f)))) matches expected elements
+

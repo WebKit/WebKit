@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+  <script xlink:href="util.js" type="text/javascript"/>
+  <script>
+    // This image has a preserveAspectRatio attribute (animated into
+    // existence), so the bonus image element will use that value
+    // because of the "defer" in its preserveAspectRatio.
+    var grid = generateImageGrid("resources/blueRect10x10-viewBox-animPAR.svg", 40, 20,
+                                 "defer xMinYMin");
+    grid.setAttribute("transform", "translate(10, 10)");
+    document.documentElement.appendChild(grid);
+  </script>
+</svg>

@@ -1,0 +1,3 @@
+Exception: ReferenceError: Can't find variable: obj3
+fieldhoist7.js:7:32
+global code@fieldhoist7.js:18:3

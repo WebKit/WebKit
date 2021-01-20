@@ -1,0 +1,96 @@
+<p></p>
+
+<pre id="console"></pre>
+
+<script>
+function $(id)
+{
+    return document.getElementById(id);
+}
+
+function log(s)
+{
+    $("console").appendChild(document.createTextNode(s + "\n"));
+}
+
+function shouldBeNoEval(aDescription, a, b)
+{
+    if (a === b) {
+        log("PASS: " + aDescription + " should be " + b + " and is.");
+        return;
+    }
+    
+    log("FAIL: " + aDescription + " should be " + b + " but instead is " + a + ".");
+}
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+// eval should lazily create 'arguments'.
+function f1() {
+    if (false)
+        return arguments;
+    return eval("arguments");
+}
+shouldBeNoEval("f1(1)[0]", f1(1)[0], 1);
+
+// 'arguments' created by eval should be live.
+function f2(x) {
+    var a = eval("arguments");
+    x = 0;
+    return a;
+}
+shouldBeNoEval("f2(1)[0]", f2(1)[0], 0);
+
+// overwriting 'arguments' after lazily creating it should succeed.
+function f3() {
+    var x = arguments;
+    var arguments = [0];
+    return arguments;
+}
+shouldBeNoEval("f3(1)[0]", f3(1)[0], 0);
+
+// overwriting 'arguments' before lazily creating it should succeed.
+function f4() {
+    var arguments = [0];
+    var x = arguments;
+    return arguments;
+}
+shouldBeNoEval("f4(1)[0]", f4(1)[0], 0);
+
+// eval should access local, shared 'arguments'.
+function f5() {
+    eval("arguments.x = 1");
+    return eval("arguments");
+}
+shouldBeNoEval("f5().x", f5().x, 1);
+
+// accessing another function's .arguments should not accidentally overwrite your own(!).
+function f6() {
+    return g6(1);
+}
+function g6() {
+    f6.arguments;
+    return g6.arguments;
+}
+shouldBeNoEval("f6()[0]", f6()[0], 1);
+
+// access to another function's .arguments should not produce a shared object.
+function f7() {
+    return g7();
+}
+function g7() {
+    return f7.arguments === f7.arguments;
+}
+shouldBeNoEval("f7()", f7(), false);
+
+// ...unless the other function uses 'arguments'.
+function f8() {
+    arguments;
+    return g8();
+}
+function g8() {
+    return f7.arguments === f7.arguments;
+}
+shouldBeNoEval("f8()", f8(), true);
+</script>

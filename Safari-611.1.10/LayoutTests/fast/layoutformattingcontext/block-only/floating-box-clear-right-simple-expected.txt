@@ -1,0 +1,15 @@
+layer at (0,0) size 785x1208
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x1208
+  RenderBlock {HTML} at (0,0) size 785x1208
+    RenderBody {BODY} at (8,8) size 769x700
+      RenderBlock {DIV} at (0,0) size 500x100
+        RenderBlock (floating) {DIV} at (450,0) size 50x250
+        RenderBlock (floating) {DIV} at (400,0) size 50x250
+        RenderBlock (floating) {DIV} at (350,0) size 50x250
+      RenderBlock (floating) {DIV} at (0,100) size 50x500
+      RenderBlock (floating) {DIV} at (300,100) size 50x350
+      RenderBlock (floating) {DIV} at (250,100) size 50x250
+      RenderBlock {DIV} at (0,600) size 10x100
+      RenderBlock (floating) {DIV} at (0,700) size 50x500
+      RenderBlock (floating) {DIV} at (719,700) size 50x350

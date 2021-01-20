@@ -1,0 +1,3 @@
+
+FAIL CSS Test: element style is correctly updated for rule with :host(..) assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+

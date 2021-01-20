@@ -1,0 +1,32 @@
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(msg) {
+    document.getElementById("logger").innerHTML += msg + "<br>";
+}
+
+window.onload = function() {
+    try {
+        for( var i = 0; i < 100000; ++i ) {
+            history.pushState(0, 0, i.toString());
+            log("Successfully added item: " + i);
+        }
+    } catch (e) {
+        log(e);
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+
+    log("Test complete");
+}
+
+</script>
+<body>
+Test should complete quickly and not crash.<br>
+<div id="logger"></div>
+</body>

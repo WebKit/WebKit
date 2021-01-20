@@ -1,0 +1,62 @@
+passed AssignmentExpression
+passed ArrayExpression
+passed BlockStatement
+passed BinaryExpression
+passed BreakStatement
+passed CallExpression
+passed TryStatement
+passed CatchClause
+passed ConditionalExpression
+passed ContinueStatement
+passed DoWhileStatement
+passed DebuggerStatement
+passed EmptyStatement
+passed ExpressionStatement
+passed ForStatement
+passed ForInStatement
+passed ForOfStatement
+passed FunctionDeclaration
+passed FunctionExpression
+passed Identifier
+passed IfStatement
+passed Literal
+passed TemplateLiteral, TemplateElement
+passed TaggedTemplateExpression
+passed LabeledStatement
+passed LogicalExpression
+passed MemberExpression
+passed NewExpression
+passed ObjectExpression
+passed Property
+passed RestElement
+passed ReturnStatement
+passed SequenceExpression
+passed SwitchStatement
+passed SwitchCase
+passed ThisExpression
+passed ThrowStatement
+passed UnaryExpression
+passed UpdateExpression
+passed VariableDeclaration
+passed VariableDeclarator
+passed WhileStatement
+passed WithStatement
+passed YieldExpression
+passed ClassStatement, Super, MetaProperty
+passed Import
+passed SpreadElement
+passed AssignmentPattern
+passed ArrowFunctionExpression
+passed Async Functions
+passed AwaitExpression
+passed ImportDeclaration, ImportSpecifier
+passed ImportDefaultSpecifier
+passed ImportNamespaceSpecifier
+passed ExportNamedDeclaration, ExportSpecifier
+passed ExportDefaultDeclaration
+passed ExportAllDeclaration
+passed computed method on object literal
+passed method on object literal
+passed computed method property on object literal
+passed ALL TESTS
+

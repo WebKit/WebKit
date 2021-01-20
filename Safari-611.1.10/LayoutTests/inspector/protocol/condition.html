@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Protocol.Condition");
+
+    suite.addTestCase({
+        name: "Protocol.Condition.Platform",
+        description: "Check that protocol domains/events/commands with a non-matching PLATFORM condition are not hooked up.",
+        async test() {
+            let platformIOSFamily = await InspectorTest.evaluateInPage(`testRunner.isIOSFamily`);
+            InspectorTest.expectEqual(InspectorBackend.hasCommand("DOM.setInspectModeEnabled", "showRulers"), !platformIOSFamily, "Should have a 'showRulers' parameter for the 'DOM.setInspectModeEnabled' command if not iOS.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Protocol.Condition.Enable",
+        description: "Check that protocol domains/events/commands with a non-matching ENABLE condition are not hooked up.",
+        async test() {
+            InspectorTest.expectFalse(InspectorBackend.hasCommand("DOM.getDataBindingsForNode"), "Should not have a 'DOM.getDataBindingsForNode' command.");
+
+            let enableWebGL = !!window.WebGLRenderingContext;
+            InspectorTest.expectEqual(InspectorBackend.hasCommand("Canvas.requestShaderSource"), enableWebGL, "Should have the 'Canvas.requestShaderSource' command if WebGL is enabled.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests to validate the condition property of protocol domains/events/commands.</p>
+</body>
+</html>

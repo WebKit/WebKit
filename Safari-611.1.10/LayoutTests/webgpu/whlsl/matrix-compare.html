@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>==.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+const epsilon = 0.0001;
+
+whlslTests.matrixLT = async () => {
+    const program = `
+        bool foo() {
+            float3x2 v = float3x2(10.0, 10.0, 10.0, 20.0, 20.0, 20.0);
+            float3x2 v2 = v;
+            v2 += 10.0;
+
+            return all(v < v2);
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.matrixLT2 = async () => {
+    const program = `
+        bool foo() {
+            float2x2 v;
+            float2x2 v2 = v;
+            v2 += 10.0;
+            v2[0][0] -= 11.0;
+
+            bool2x2 result = v < v2;
+            return !result[0][0] && result[0][1] && result[1][0]  && result[1][1];
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.matrixLTE = async () => {
+    const program = `
+        bool foo() {
+            float3x2 v = float3x2(10.0, 10.0, 10.0, 20.0, 20.0, 20.0);
+            float3x2 v2 = v;
+            v2 += 10.0;
+
+            return all(v <= v2);
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.matrixLTE2 = async () => {
+    const program = `
+        bool foo() {
+            float3x2 v = float3x2(10.0, 10.0, 10.0, 20.0, 20.0, 20.0);
+            float3x2 v2 = v;
+
+            return all(v <= v2);
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.matrixLTE3 = async () => {
+    const program = `
+        bool foo() {
+            float2x2 v;
+            float2x2 v2 = v;
+            v2[0][0] -= 1.0;
+
+            bool2x2 result = v <= v2;
+            return !result[0][0] && result[0][1] && result[1][0]  && result[1][1];
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.matrixGT = async () => {
+    const program = `
+        bool foo() {
+            float3x2 v = float3x2(10.0, 10.0, 10.0, 20.0, 20.0, 20.0);
+            float3x2 v2 = v;
+            v2 += 10.0;
+
+            return !any(v > v2);
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.matrixGT2 = async () => {
+    const program = `
+        bool foo() {
+            float2x2 v;
+            float2x2 v2 = v;
+            v2[0][0] += 1.0;
+            v2[0][1] -= 1.0;
+            v2[1][0] -= 1.0;
+            v2[1][1] -= 1.0;
+
+            bool2x2 result = v > v2;
+            return !result[0][0] && result[0][1] && result[1][0]  && result[1][1];
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.matrixGTE = async () => {
+    const program = `
+        bool foo() {
+            float3x2 v = float3x2(10.0, 10.0, 10.0, 20.0, 20.0, 20.0);
+            float3x2 v2 = v;
+            v2 += 10.0;
+
+            return !any(v >= v2);
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.matrixGTE2 = async () => {
+    const program = `
+        bool foo() {
+            float3x2 v = float3x2(10.0, 10.0, 10.0, 20.0, 20.0, 20.0);
+            float3x2 v2 = v;
+
+            return all(v >= v2);
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.matrixGTE3 = async () => {
+    const program = `
+        bool foo() {
+            float2x2 v;
+            float2x2 v2 = v;
+            v2[0][0] += 1.0;
+
+            bool2x2 result = v >= v2;
+            return !result[0][0] && result[0][1] && result[1][0]  && result[1][1];
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+runTests(whlslTests);
+</script>
+</html>

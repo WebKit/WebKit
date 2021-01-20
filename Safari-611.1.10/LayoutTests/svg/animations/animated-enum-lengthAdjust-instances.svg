@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <g font-face="sans-serif" font-size="3em">
+        <text id="text" x="20" y="50" textLength="600" lengthAdjust="spacing">
+            Passes if it does not crash.
+            <set attributeName="lengthAdjust" to="spacing"/>
+        </text>
+        <use href="#text" y="80"/>
+    </g>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+</svg>

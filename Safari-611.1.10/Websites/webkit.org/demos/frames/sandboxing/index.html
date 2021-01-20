@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Frame Sandboxing</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+
+    <h1>Frame Sandboxing</h1>
+
+    <p>This page contains some demos for the
+      <a href="https://html.spec.whatwg.org/multipage/iframe-embed-object.html#attr-iframe-sandbox">sandbox attribute of the iframe element</a>.
+      In order to run these demos, you might need to modify your
+      preference to allow javascript, popups and modal dialogs.</p>
+
+    <h2>Basic flags</h2>
+
+    <p>The following iframes contain a page to test some actions
+      (executing javascript, opening popups, opening modal dialogs, redirecting
+      the top frame). These actions are all permitted for unsandboxed frames
+      and (by default) all forbidden for sandboxed frames. You can use some
+      <code>allow-*</code> flags to relax these restrictions one by one.</p>
+
+    <ul>
+      <li>Unsandboxed frame: <iframe src="am-i-sandboxed.html"></iframe></li>
+      <li>Sandboxed frame: <iframe sandbox="" src="am-i-sandboxed.html"></iframe></li>
+      <li><code>allow-scripts</code>: <iframe sandbox="allow-scripts" src="am-i-sandboxed.html"></iframe></li>
+      <li><code>allow-popups</code>: <iframe sandbox="allow-popups" src="am-i-sandboxed.html"></iframe></li>
+      <li><code>allow-scripts allow-top-navigation</code>: <iframe sandbox="allow-scripts allow-top-navigation" src="am-i-sandboxed.html"></iframe></li>
+    </ul>
+
+    <h2>allow-popup-to-escape-sandbox</h2>
+
+    <p>By default, popups opened from a sandboxed frames have the
+      same restrictions as the frame.
+      This is sometimes not wanted e.g. for the landing page of trusted ads.
+      The <code>allow-popup-to-escape-sandbox</code> flag allows the popups
+      to be opened in a new unsandboxed context. Click the
+      "Open this page as a popup" links to see the effect of that flag:
+    </p>
+    <ul>
+      <li><code>allow-popups</code>: <iframe sandbox="allow-popups" src="am-i-sandboxed.html"></iframe></li>
+      <li><code>allow-popups allow-popups-to-escape-sandbox</code>: <iframe sandbox="allow-popups allow-popups allow-popups-to-escape-sandbox" src="am-i-sandboxed.html"></iframe></li>
+    </ul>
+
+    <h2>allow-top-navigation-by-user-activation</h2>
+
+    <p>The <code>allow-top-navigation</code> has been used to perform malicious
+      redirection of the top frame without the user's permission. The
+      <code>allow-top-navigation-by-user-activation</code> provides a safer flag
+      which only allows redirections triggered by user actions. The
+      "Navigate top frame" button should work in both cases but the
+      "Open a popup to test top navigation without user activation" should
+      be blocked for <code>allow-top-navigation-by-user-activation</code>.
+    </p>
+
+    <ul>
+      <li><code>allow-scripts allow-popups allow-top-navigation</code>: <iframe sandbox="allow-scripts allow-popups allow-top-navigation" src="am-i-sandboxed.html"></iframe></li>
+      <li><code>allow-scripts allow-popups allow-top-navigation-by-user-activation</code>: <iframe sandbox="allow-scripts allow-popups allow-top-navigation-by-user-activation" src="am-i-sandboxed.html"></iframe></li>
+    </ul>
+
+    <h2>allow-modals</h2>
+
+    <p>Opening modal dialogs used to always be permitted for sandboxed frames.
+      In more recent versions of the HTML specification, an
+      <code>allow-modals</code> flag is introduced to explicitly request
+      permission to open such modal dialogs, hence providing better safety by
+      default.</p>
+
+    <ul>
+      <li><code>allow-scripts</code>: <iframe sandbox="allow-scripts" src="am-i-sandboxed.html"></iframe></li>
+      <li><code>allow-scripts allow-modals</code>: <iframe sandbox="allow-scripts allow-modals" src="am-i-sandboxed.html"></iframe></li>
+    </ul>
+
+  </body>
+</html>

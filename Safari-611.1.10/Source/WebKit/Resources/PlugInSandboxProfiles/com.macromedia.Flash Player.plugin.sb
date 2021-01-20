@@ -1,0 +1,79 @@
+; Copyright (C) 2013 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+;    notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+;    notice, this list of conditions and the following disclaimer in the
+;    documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+
+(webkit-powerbox)
+(webkit-printing)
+(webkit-camera)
+(webkit-microphone)
+
+(allow ipc-posix-sem
+    (ipc-posix-name "MacromediaSemaphoreDig")
+    (ipc-posix-name "59918130"))
+
+(allow file-read*
+    (home-literal "/mm.cfg")
+    (home-literal "/mms.cfg"))
+
+(deny file-read-xattr (with no-log)
+    (home-library-literal "/Caches")
+    (home-library-preferences-literal "/"))
+
+(allow file-read* file-write-create file-write-mode file-write-owner
+    (home-library-literal "/Caches/Adobe")
+    (home-library-preferences-literal "/Macromedia"))
+
+(allow file-read* file-write*
+    (literal "/Library/Application Support/Macromedia/mms.cfg")
+    (home-library-literal "/Application Support/Macromedia/mms.cfg")
+    (home-library-subpath "/Caches/Adobe/Flash Player")
+    (home-library-preferences-subpath "/Macromedia/Flash Player"))
+
+(allow file-read*
+    (literal "/Library/PreferencePanes/Flash Player.prefPane")
+    (home-library-literal "/PreferencePanes/Flash Player.prefPane")
+    (home-library-regex "/Application Support/Macromedia/ss\.(cfg|cfn|sgn)$"))
+
+(allow file-read* file-write*
+    (mount-relative-regex #"^/\.TemporaryItems/"))
+
+(deny file-read* (with no-log)
+    (literal "/Library/Application Support/Macromedia/FlashAuthor.cfg")
+    (subpath "/Library/Application Support/Macromedia/FlashPlayerTrust"))
+
+(allow network-bind (local ip))
+
+;;;
+;;; Needed for Camera access
+;;;
+(allow iokit-get-properties
+    (iokit-property-regex #"^(Activation|Animation)Thresholds")
+    (iokit-property-regex #"^((Accurate|Extended)Max|Min)DigitizerPressureValue")
+    (iokit-property "IOPCITunnelCompatible")
+    (iokit-property "PowerControlSupported")
+    (iokit-property "Removable")
+    (iokit-property "ResetOnLockMs")
+    (iokit-property "ResetOnUnlockMs")
+    (iokit-property "ShouldResetOnButton")
+    (iokit-property-regex #"^Support(sSilentClick|TapToWake)")
+    (iokit-property "WirelessChargingNotificationSupported")
+)

@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Refused to load data:application/x-webkit-test-netscape,logifloaded because it does not appear in the object-src directive of the Content Security Policy.
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+

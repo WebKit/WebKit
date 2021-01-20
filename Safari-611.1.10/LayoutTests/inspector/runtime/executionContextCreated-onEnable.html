@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="../../http/tests/inspector/resources/stable-id-map.js"></script>
+<script>
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Runtime.executionContextCreated.OnEnable");
+
+    suite.addTestCase({
+        name: "Runtime.executionContextCreated.OnEnable.NoDuplicates",
+        description: "Test that Runtime.enable will send executionContextCreated events only for existng main world contexts",
+        async test() {
+            let contextIdMap = new StableIdMap;
+            let frameIdMap = new StableIdMap;
+            let contextCount = 0;
+
+            InspectorProtocol.addEventListener("Runtime.executionContextCreated", (messageObject) => {
+                let {id, type, frameId} = messageObject.params.context;
+                if (type === "internal")
+                    return;
+
+                ProtocolTest.log(`Execution context created: id=${contextIdMap.get(id)} frameId=${frameIdMap.get(frameId)} isPageContext=${type === "normal"}`)
+                ++contextCount;
+            });
+
+            await Promise.all([
+                InspectorProtocol.awaitCommand({method: "Page.enable"}),
+                InspectorProtocol.awaitCommand({method: "Runtime.enable"}),
+            ]);
+
+            ProtocolTest.expectEqual(contextCount, 2, "Should receive 2 executionContextCreated events (for main world in the main frame and the subframe).");
+            ProtocolTest.expectEqual(contextIdMap.size, 2, "Should have 2 unique contexts.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body>
+<iframe id="subframe" src="resources/change-execution-context-identifier-subframe.html" onload="runTest()"></iframe>
+<p>Test that exactly one Runtime.executionContextCreated event is fired for each existing context when Runtime.enable is called.</p>
+</body>
+</html>

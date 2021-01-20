@@ -1,0 +1,27 @@
+<html> 
+<body> 
+<pre id='console'></pre> 
+<script type="text/javascript"> 
+
+document.getElementById('console').innerHTML = (function() {
+    var xhr = new XMLHttpRequest; 
+ 
+ 
+    try { 
+        xhr.open("GET", "http://127.0.0.1:8000/xmlhttprequest/resources/access-control-sandboxed-iframe-denied.cgi", false); 
+    } catch(e) { 
+        return "FAIL: Exception thrown. Sandboxed iframe XHR access is not allowed in 'open'. [" + e.message + "]."; 
+    } 
+ 
+    try { 
+        xhr.send(); 
+    } catch(e) { 
+        return "PASS: Exception thrown. Sandboxed iframe XHR access was denied in 'send'. [" + e.message + "]."; 
+    }
+ 
+    return xhr.responseText; 
+})();
+  
+</script> 
+</body> 
+</html>

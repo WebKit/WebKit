@@ -1,0 +1,26 @@
+<style>
+td, tr {
+    border: 1px solid #bbb;
+}
+</style>
+
+<body>
+<p>This tests clicking to place a caret in the padding of an editable region.  The eventSender clicks in the bottom padding of the editable region and the caret should be placed at the end of that region.</p>
+<div style="border: 1px solid black; padding: 25px;" contenteditable="true">
+<div id="p1">Paragraph One.</div>
+<table id="t1" contenteditable="false" style="border: 1px solid #bbb;"><tr><td>&nbsp;</td><td contenteditable="true">ToDo One.</td></tr></table>
+<div id="p2">Paragraph Two.</div>
+</div>
+
+<script>
+if (window.testRunner) {
+    var o = document.getElementById("p2");
+    x = o.offsetParent.offsetLeft + o.offsetLeft + o.offsetWidth / 2;
+    y = o.offsetParent.offsetTop + o.offsetTop + o.offsetHeight + 10;
+    
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+</script>
+</body>

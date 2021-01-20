@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x212
+  RenderBlock {HTML} at (0,0) size 800x212
+    RenderBody {BODY} at (8,8) size 784x0
+      RenderBlock (floating) {DIV} at (0,0) size 204x102 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (1,1) size 202x52 [border: (1px solid #FF0000)]
+      RenderBlock (floating) {DIV} at (304,0) size 102x102 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (1,1) size 202x52 [border: (1px solid #FF0000)]
+      RenderBlock (floating) {DIV} at (0,102) size 302x102 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (1,1) size 202x52 [border: (1px solid #FF0000)]

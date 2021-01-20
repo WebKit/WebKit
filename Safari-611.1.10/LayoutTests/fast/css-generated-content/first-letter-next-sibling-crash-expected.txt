@@ -1,0 +1,2 @@
+WebKit Bug 85759 - Crash in RenderBlock::updateFirstLetterStyle.
+PASS if test does not crash.

@@ -1,0 +1,4 @@
+ALERT: Plugin Loaded!
+This tests that an object-src directive on a top-level page is not inherited by a PluginDocument embedded in an iframe on the page. This test passes if an alert pops up saying that the plugin loaded.
+
+

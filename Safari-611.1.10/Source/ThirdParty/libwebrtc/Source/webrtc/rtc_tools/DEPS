@@ -1,0 +1,32 @@
+include_rules = [
+  "+call",
+  "+common_audio",
+  "+common_video",
+  "+logging/rtc_event_log",
+  "+media",
+  "+modules/audio_device",
+  "+modules/audio_coding/audio_network_adaptor",
+  "+modules/audio_coding/neteq/include",
+  "+modules/audio_coding/neteq/tools",
+  "+modules/audio_processing",
+  "+modules/bitrate_controller",
+  "+modules/remote_bitrate_estimator",
+  "+modules/congestion_controller",
+  "+modules/pacing",
+  "+modules/rtp_rtcp",
+  "+system_wrappers",
+  "+p2p",
+  "+third_party/libyuv",
+]
+
+specific_include_rules = {
+  ".*ivf_converter\.cc": [
+    "+absl/debugging/failure_signal_handler.h",
+    "+absl/debugging/symbolize.h",
+    "+modules/video_coding/codecs/vp8/include/vp8.h",
+    "+modules/video_coding/codecs/vp9/include/vp9.h",
+    "+modules/video_coding/include/video_error_codes.h",
+    "+modules/video_coding/utility/ivf_file_writer.h",
+    "+modules/video_coding/codecs/h264/include/h264.h",
+  ],
+}

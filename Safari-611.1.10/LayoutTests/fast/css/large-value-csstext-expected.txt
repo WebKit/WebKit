@@ -1,0 +1,4 @@
+This test should not crash.
+
+1e+254%
+9e-249%

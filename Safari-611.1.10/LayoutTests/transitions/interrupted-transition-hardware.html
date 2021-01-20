@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+
+        div {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100px;
+            width: 100px;
+        }
+        
+        #test {
+            background-color: red;
+            transition: transform calc(24 * 60 * 60s) linear;
+            transition-delay: calc(-12 * 60 * 60s);
+            transform: none;
+        }
+
+        #test.transitions {
+            transform: translateX(100px);
+        }
+
+        #cover {
+            transform: translateX(25px);
+            background-color: green;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="test"></div>
+    <div id="cover"></div>
+
+    <script type="text/javascript">
+
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        const test = document.getElementById("test");
+
+        function waitForCompositedAnimationUpdate(callback)
+        {
+            setTimeout(callback, 500);
+        }
+
+        setTimeout(() => {
+            test.classList.add("transitions");
+            waitForCompositedAnimationUpdate(() => {
+                test.classList.remove("transitions");
+                waitForCompositedAnimationUpdate(() => {
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                });
+            });
+        });
+        
+    </script>
+
+</body>
+</html>

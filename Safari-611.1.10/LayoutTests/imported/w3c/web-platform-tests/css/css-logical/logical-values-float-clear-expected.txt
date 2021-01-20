@@ -1,0 +1,6 @@
+
+FAIL Test that 'clear: inline-start' is supported. assert_equals: logical values in inline style, clear expected "inline-start" but got ""
+FAIL Test that 'clear: inline-end' is supported. assert_equals: logical values in inline style, clear expected "inline-end" but got ""
+FAIL Test that 'float: inline-start' is supported. assert_equals: logical values in inline style, float expected "inline-start" but got ""
+FAIL Test that 'float: inline-end' is supported. assert_equals: logical values in inline style, float expected "inline-end" but got ""
+

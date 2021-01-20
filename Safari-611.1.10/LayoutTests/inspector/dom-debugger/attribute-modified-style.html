@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/breakpoint-options-utilities.js"></script>
+<script src="../debugger/resources/log-active-stack-trace.js"></script>
+<script src="resources/dom-breakpoint-utilities.js"></script>
+<script>
+
+function getProperty(name) {
+    let node = document.getElementById("test");
+    return node.style.getPropertyValue(name);
+}
+
+function setProperty(name, value) {
+    let node = document.getElementById("test");
+    if (value)
+        node.style.setProperty(name, value);
+    else
+        node.style.removeProperty(name);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOMBreakpoint.AttributeModified");
+
+    async function checkPropertyValue(name, expectedValue) {
+        InspectorTest.log(`Getting '${name}'...`);
+        let value = await InspectorTest.evaluateInPage(`getProperty("${name}")`);
+        InspectorTest.expectEqual(value, expectedValue, `'${name}' should have the value '${expectedValue}'.`);
+    }
+
+    function addTestCase({name, propertyName, propertyValueBefore, propertyValueAfter}) {
+        suite.addTestCase({
+            name,
+            async test() {
+                let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#test");
+                await InspectorTest.DOMBreakpoint.createBreakpoint(node, WI.DOMBreakpoint.Type.AttributeModified);
+
+                await checkPropertyValue(propertyName, propertyValueBefore);
+
+                let pausedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+
+                if (propertyValueAfter)
+                    InspectorTest.log(`Setting '${propertyName}: ${propertyValueAfter};'...`);
+                else
+                    InspectorTest.log(`Removing '${propertyName}'...`);
+                let evaluatePromise = InspectorTest.evaluateInPage(`setProperty("${propertyName}", "${propertyValueAfter}")`);
+
+                await pausedPromise;
+                InspectorTest.pass("Paused.");
+
+                await checkPropertyValue(propertyName, propertyValueBefore);
+
+                await WI.debuggerManager.resume();
+                InspectorTest.pass("Resumed.");
+
+                await evaluatePromise;
+
+                await checkPropertyValue(propertyName, propertyValueAfter);
+            },
+            teardown: InspectorTest.DOMBreakpoint.teardown,
+        });
+    }
+
+    addTestCase({
+        name: "DOMBreakpoint.AttributeModified.Style.Add",
+        propertyName: "display",
+        propertyValueBefore: "",
+        propertyValueAfter: "none",
+    });
+    addTestCase({
+        name: "DOMBreakpoint.AttributeModified.Style.ReplaceSame",
+        propertyName: "display",
+        propertyValueBefore: "none",
+        propertyValueAfter: "none",
+    });
+    addTestCase({
+        name: "DOMBreakpoint.AttributeModified.Style.ReplaceDifferent",
+        propertyName: "display",
+        propertyValueBefore: "none",
+        propertyValueAfter: "block",
+    });
+    addTestCase({
+        name: "DOMBreakpoint.AttributeModified.Style.Remove",
+        propertyName: "display",
+        propertyValueBefore: "block",
+        propertyValueAfter: "",
+    });
+
+    suite.addTestCase({
+        name: "DOMBreakpoint.AttributeModified.Style.Text",
+        async test() {
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#test");
+            await InspectorTest.DOMBreakpoint.createBreakpoint(node, WI.DOMBreakpoint.Type.AttributeModified);
+
+            await checkPropertyValue("display", "");
+
+            let pausedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+
+            InspectorTest.log(`Setting style text to ''...`);
+            let evaluatePromise = InspectorTest.evaluateInPage(`document.getElementById("test").style.cssText = "display: none;";`);
+
+            await pausedPromise;
+            InspectorTest.pass("Paused.");
+
+            await checkPropertyValue("display", "");
+
+            await WI.debuggerManager.resume();
+            InspectorTest.pass("Resumed.");
+
+            await evaluatePromise;
+
+            await checkPropertyValue("display", "none");
+        },
+        teardown: InspectorTest.DOMBreakpoint.teardown,
+    });
+
+    InspectorTest.BreakpointOptions.addTestCases(suite, {
+        testCaseNamePrefix: "Style.",
+        async createBreakpoint() {
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#test");
+            return InspectorTest.DOMBreakpoint.createBreakpoint(node, WI.DOMBreakpoint.Type.AttributeModified);
+        },
+        async triggerBreakpoint(breakpoint) {
+            return InspectorTest.evaluateInPage(`setProperty("--test", Math.random())`);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests functionality of attribute modified DOM breakpoints when modifying the inline style attribute.</p>
+    <div id="test"></div>
+</body>
+</html>

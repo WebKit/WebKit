@@ -1,0 +1,12 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=@LIB_INSTALL_DIR@
+includedir=${prefix}/include
+
+Name: WebKitGTK
+Description: Web content engine for GTK
+URL: https://webkitgtk.org
+Version: @PROJECT_VERSION@
+Requires: glib-2.0 gtk+-3.0 libsoup-2.4 javascriptcoregtk-@WEBKITGTK_API_VERSION@
+Libs: -L${libdir} -lwebkit2gtk-@WEBKITGTK_API_VERSION@
+Cflags: -I${includedir}/webkitgtk-@WEBKITGTK_API_VERSION@

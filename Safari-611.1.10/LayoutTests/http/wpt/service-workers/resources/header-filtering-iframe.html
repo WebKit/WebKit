@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function loadScript(url, mode)
+{
+    let script = document.createElement("script");
+    script.src = url;
+    if (mode)
+        script.crossOrigin = mode;
+    document.body.appendChild(script);
+}
+</script>
+</head>
+<body>
+Ready
+</body>
+</html>

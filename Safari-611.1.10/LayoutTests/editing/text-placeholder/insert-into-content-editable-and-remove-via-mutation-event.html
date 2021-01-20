@@ -1,0 +1,77 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<link rel="stylesheet" href="resources/test.css">
+</head>
+<body>
+<p id="description"></p>
+<div id="test" class="test" style="width: 200px; height: 200px; border: 1px solid black" contenteditable="true">Hello from Cupertino!</div>
+<p id="console"></p>
+<script>
+window.jsTestIsAsync = true;
+
+description("This tests that a text placeholder that is removed from the page via a mutation event callback after being inserted does not cause a crash. This test can only be run in WebKitTestRunner or DumpRenderTree.");
+
+let placeholderElement;
+
+function done()
+{
+    // Clean up to make the result pretty.
+    if (window.testRunner)
+        document.getElementById("test").remove();
+    finishJSTest();
+}
+
+function didRemovePlaceholder()
+{
+    debug("<br>After removing placeholder:");
+    // Number of child nodes should be 2 or fewer. It depends on how aggressively adjacent #text nodes are coalesced.
+    shouldBecomeDifferent('document.getElementById("test").childNodes.length', "3", () => {
+        shouldBeLessThanOrEqual('document.getElementById("test").childNodes.length', "2");
+        shouldBecomeEqual("placeholderElement.parentNode", "null", done);
+    });
+}
+
+function didInsertPlaceholder()
+{
+    debug("<br>After inserting placeholder:");
+    shouldBe('document.getElementById("test").childNodes.length', "3");
+
+    console.assert(document.getElementById("test").childNodes.length >= 2);
+    console.assert(document.getElementById("test").childNodes[1] instanceof Element);
+
+    document.addEventListener("DOMSubtreeModified", didRemovePlaceholder, { once: true });
+    placeholderElement = document.getElementById("test").childNodes[1];
+    shouldBeNonNull("placeholderElement.parentNode");
+    placeholderElement.remove();
+}
+
+async function runTest()
+{
+    let testElement = document.getElementById("test");
+    if (window.testRunner)
+        await UIHelper.activateElementAndWaitForInputSession(testElement);
+    else
+        await UIHelper.callFunctionAndWaitForEvent(() => testElement.focus(), testElement, "focus");
+
+    let positionOfFrom = testElement.textContent.indexOf("from");
+    window.getSelection().setBaseAndExtent(testElement.firstChild, positionOfFrom, testElement.firstChild, positionOfFrom);
+
+    debug("Before inserting placeholder:")
+    shouldBeEqualToNumber('document.getElementById("test").childNodes.length', 1);
+
+    // To allow for the control flow to be debugged on Mac, add the event listener here instead of right before insertTextPlaceholder.
+    document.addEventListener("DOMSubtreeModified", didInsertPlaceholder, { once: true });
+
+    if (window.internals) {
+        let lineHeight = parseInt(window.getComputedStyle(testElement, null).lineHeight, 10);
+        internals.insertTextPlaceholder(0 /* width */, lineHeight);
+    }
+}
+runTest();
+</script>
+</body>
+</html>

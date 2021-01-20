@@ -1,0 +1,1 @@
+Tests editing elements followed by other commands that remove those elements. The test passes if WebKit doesn't crash or hit an ssertion.

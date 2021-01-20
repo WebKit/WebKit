@@ -1,0 +1,33 @@
+<head>
+    <style>
+        video {
+            width: 800px;
+            height: 600px;
+        }
+    </style>
+    <script type="text/javascript">
+        function changeSource() {
+            var video = document.querySelector("video");
+            video.src = "large-video-with-audio.mp4";
+            video.play();
+            setTimeout(function() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage("changed");
+                } catch(e) {
+                }
+            });
+        }
+
+        function handlePlaying() {
+            setTimeout(function() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage("autoplayed");
+                } catch(e) {
+                }
+            }, 0);
+        }
+    </script>
+</head>
+<body>
+    <video autoplay onplaying=handlePlaying() onmousedown=changeSource() src="large-video-with-audio.mp4"></video>
+</body>

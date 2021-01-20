@@ -1,0 +1,35 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .container {
+            width: 300px;
+            height: 300px;
+            border: 1px solid black;
+            background-color: rgba(200, 200, 200, 0.5);
+        }
+        
+        .content {
+            height: 90%;
+        }
+        
+        .box {
+            margin-top: -120px;
+            margin-left: 50px;
+            width: 200px;
+            height: 200px;
+            background-color: blue;
+            
+        }
+        
+        .box:hover {
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <p>Blue box should be on top.</p>
+    <div class="container"></div>
+    <div class="box"></div>
+</body>
+</html>

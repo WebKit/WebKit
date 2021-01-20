@@ -1,0 +1,27 @@
+Test that setting the host and hostname attributes of URL objects uses IDNA2008.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS url.hostname is 'xn--bcher-kva.de'
+PASS url.hostname is 'xn--fa-hia.de'
+PASS url.hostname is 'xn--nxasmm1c.com'
+PASS url.hostname is 'xn--10cl1a0b660p.com'
+PASS url.hostname is 'xn--mgba3gch31f060k.com'
+PASS url.hostname is 'lookout.net'
+PASS url.hostname is 'google.com'
+PASS url.hostname is 'ss.com'
+PASS url.hostname is 'ss.foo.com'
+PASS url.host is 'xn--bcher-kva.de'
+PASS url.host is 'xn--fa-hia.de'
+PASS url.host is 'xn--nxasmm1c.com'
+PASS url.host is 'xn--10cl1a0b660p.com'
+PASS url.host is 'xn--mgba3gch31f060k.com'
+PASS url.host is 'lookout.net'
+PASS url.host is 'google.com'
+PASS url.host is 'ss.com'
+PASS url.host is 'ss.foo.com'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

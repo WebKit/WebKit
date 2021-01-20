@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Resource Timing - ResourceTiming for revalidation requests</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/rt-utilities.sub.js"></script>
+<script src="resources/rt-revalidate-utilities.sub.js"></script>
+</head>
+<body>
+<h1>Resource Timing: ResourceTiming for revalidation requests</h1>
+<div id="log"></div>
+<script>
+// Cross Origin (revalidation request) without Timing Allow.
+
+let crossOriginURLNoTao = createRevalidationURL({tao: false, crossOrigin: true});
+
+promise_test(function(t) {
+    let promise = observeResources(1).then(([entry]) => {
+        assertAlways(entry);
+        assertDisallowedTimingData(entry);
+    });
+    makeRequest(crossOriginURLNoTao);
+    return promise;
+}, "Cross Origin network load (no TimingAllow)");
+
+promise_test(function(t) {
+    let promise = observeResources(1).then(([entry]) => {
+        assertAlways(entry);
+        assertDisallowedTimingData(entry);
+    });
+    makeRequest(crossOriginURLNoTao, true);
+    return promise;
+}, "Cross Origin revalidation load (no TimingAllow)");
+</script>
+</body>
+</html>

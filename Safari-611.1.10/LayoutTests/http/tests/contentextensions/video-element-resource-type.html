@@ -1,0 +1,43 @@
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+var mediaLoadedCount = 0;
+function mediaLoaded()
+{
+    ++mediaLoadedCount;
+    if (mediaLoadedCount == 2 && window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+
+<!-- Filtered -->
+<img src="http://localhost:8000/media/resources/test.mp4">
+<img src="http://localhost:8000/media/resources/test-25fps.mp4">
+
+<!-- Filtered -->
+<link href="http://localhost:8000/media/resources/test.mp4" rel="stylesheet" type="text/css">
+<link href="http://localhost:8000/media/resources/test-25fps.mp4" rel="stylesheet" type="text/css">
+
+<!-- Filtered -->
+<script src="http://localhost:8000/media/resources/test.mp4"></script>
+<script src="http://localhost:8000/media/resources/test-25fps.mp4"></script>
+
+<!-- Filtered -->
+<video src="http://localhost:8000/media/resources/test.mp4"></video>
+
+<!-- Filtered -->
+<video>
+    <source src="http://localhost:8000/media/resources/test.mp4" type="video/mp4">
+</video>
+
+<!-- Ok -->
+<video src="http://localhost:8000/media/resources/test-25fps.mp4" oncanplay="mediaLoaded();"></video>
+
+<!-- Ok -->
+<video oncanplay="mediaLoaded();">
+    <source src="http://localhost:8000/media/resources/test-25fps.mp4" type="video/mp4">
+</video>

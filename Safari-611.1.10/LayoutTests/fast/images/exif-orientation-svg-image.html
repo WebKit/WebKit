@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<style>
+    div.container {
+        display: inline-block;
+        margin-right: 20px;
+        margin-bottom: 10px;
+        width: 100px;
+        vertical-align: top;
+    }
+
+    div.horizontal {
+        width: 102px;
+        height: 52px;
+    }
+    div.vertical {
+        width: 52px;
+        height: 102px;
+    }
+    svg {
+        border: 1px solid black;
+    }
+    svg.horizontal {
+        width: 100px;
+        height: 50px;
+    }
+    svg.vertical {
+        width: 50px;
+        height: 100px;
+    }
+</style>
+<body>
+    <b>The images of the SVG &lt;image&gt; elements should be rotated respecting their EXIF orientation.</b>
+    <br>
+    <br>
+    <div class="container">
+        <div class="horizontal">
+            <svg class="horizontal">
+                <image width="100%" height="100%" href="resources/exif-orientation-1-ul.jpg"/>
+            </svg>
+        </div>
+        <br>Normal
+    </div>
+    <div class="container">
+        <div class="horizontal">
+            <svg class="horizontal">
+                <image width="100%" height="100%" href="resources/exif-orientation-2-ur.jpg"/>
+            </svg>
+        </div>
+        <br>Flipped horizontally
+    </div>
+    <div class="container">
+        <div class="horizontal">
+            <svg class="horizontal">
+                <image width="100%" height="100%" href="resources/exif-orientation-3-lr.jpg"/>
+            </svg>
+        </div>
+        <br>Rotated 180&deg;
+    </div>
+    <div class="container">
+        <div class="horizontal">
+            <svg class="horizontal">
+                <image width="100%" height="100%" href="resources/exif-orientation-4-lol.jpg"/>
+            </svg>
+        </div>
+        <br>Flipped vertically
+    </div>
+    <br>
+    <div class="container">
+        <div class="vertical">
+            <svg class="vertical">
+                <image width="100%" height="100%" href="resources/exif-orientation-5-lu.jpg"/>
+            </svg>
+        </div>
+        <br>Rotated 90&deg; CCW and flipped vertically
+    </div>
+    <div class="container">
+        <div class="vertical">
+            <svg class="vertical">
+                <image width="100%" height="100%" href="resources/exif-orientation-6-ru.jpg"/>
+            </svg>
+        </div>
+        <br>Rotated 90&deg; CCW
+    </div>
+    <div class="container">
+        <div class="vertical">
+            <svg class="vertical">
+                <image width="100%" height="100%" href="resources/exif-orientation-7-rl.jpg"/>
+            </svg>
+        </div>
+        <br>Rotated 90&deg; CW and flipped vertically
+    </div>
+    <div class="container">
+        <div class="vertical">
+            <svg class="vertical">
+                <image width="100%" height="100%" href="resources/exif-orientation-8-llo.jpg"/>
+            </svg>
+        </div>
+        <br>Rotated 90&deg; CW
+    </div>
+    <br>
+    <div class="container">
+        <div class="horizontal">
+            <svg class="horizontal">
+                <image width="100%" height="100%" href="resources/exif-orientation-9-u.jpg"/>
+            </svg>
+        </div>
+        <br>Undefined (invalid value)
+    </div>
+</body>

@@ -1,0 +1,14 @@
+<style>
+    #SHADOW { initial; -webkit-user-select: text; }
+    #LABEL { -webkit-user-select: all; }
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    window.onload = () =>  {
+        window.getSelection().collapse(SHADOW);
+        document.execCommand("justifyCenter", false);
+    }
+</script>
+<span>Test changing style with draggable text. The test passes if WebKit doesn't crash or hit an assertion</span><label id=LABEL contenteditable="true"><shadow id=SHADOW></shadow><span draggable="true">a

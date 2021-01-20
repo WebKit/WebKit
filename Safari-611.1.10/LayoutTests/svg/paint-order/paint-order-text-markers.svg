@@ -1,0 +1,3 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<text stroke="green" stroke-width="3" fill="blue" x="20" y="100" font-size="36" font-weight="bold" paint-order="markers">paint-order</text>
+</svg>

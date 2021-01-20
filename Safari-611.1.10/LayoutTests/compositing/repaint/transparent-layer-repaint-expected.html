@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .container {
+        border: 1px solid black; /* Needed to disable simple color layer compositing. */
+        height: 200px;
+        width: 200px;
+        transform: translateZ(0);
+        background-color: rgba(0, 255, 0, 0.2);
+    }
+  </style>
+</head>
+<body>
+    <p>Test for repaint in a transparent composited layer. The two squares below should be identical, green @ 20% alpha.</p>
+  <div class="container"></div>
+  <div class="container"></div>
+</body>
+</html>

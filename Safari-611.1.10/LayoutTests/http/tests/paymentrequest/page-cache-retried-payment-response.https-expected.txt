@@ -1,0 +1,19 @@
+Tests that a page with a PaymentResponse in the Completed state goes into the back/forward cache.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Creating a PaymentResponse in the Created state with a retry promise.
+pageshow - not from cache
+pagehide - entering cache
+pageshow - from cache
+PASS Page did enter and was restored from the back/forward cache
+Testing that the promise returned by retry() was rejected with "AbortError".
+PASS retryPromise rejected promise  with AbortError: The operation was aborted..
+Testing that PaymentResponse is now in the Closed state.
+PASS response.complete() rejected promise  with AbortError: The operation was aborted..
+PASS response.retry() rejected promise  with AbortError: The operation was aborted..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

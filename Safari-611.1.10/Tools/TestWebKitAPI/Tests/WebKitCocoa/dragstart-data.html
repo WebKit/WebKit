@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width">
+<head>
+<style>
+body {
+    margin: 0;
+    padding: 0;
+}
+
+h1, a, p {
+    font-size: 20px;
+    font-family: system-ui;
+}
+
+h1 {
+    user-select: all;
+    -webkit-user-select: all;
+}
+
+a {
+    display: inline-block;
+    text-decoration: none;
+}
+
+a:active {
+    color: blue;
+}
+
+textarea {
+    margin: 1em;
+    width: calc(100% - 2em);
+    font-size: 16px;
+    font-family: monospace;
+}
+</style>
+</head>
+<body>
+    <h1 id="regular">Regular text</h1>
+    <h1 id="regular-url">Regular text + URL data</h1>
+    <h1 id="regular-custom">Regular text + custom data</h1>
+    <h1 id="url">URL data only</h1>
+    <h1 id="custom">Custom data only</h1>
+    <img id="image" src="sunset-in-cupertino-200px.png"></img>
+    <img id="image-text" src="sunset-in-cupertino-200px.png"></img>
+    <a id="link" href="https://www.apple.com/">Apple Homepage</a>
+    <a id="link-custom" href="https://www.apple.com/">Apple Homepage</a>
+    <textarea rows="20" readonly id="text-output"></textarea>
+</body>
+<script>
+window.allData = {};
+const textOutput = document.getElementById("text-output");
+
+function collectDataForEvent(event, element)
+{
+    allData = {};
+    for (let type of event.dataTransfer.types)
+        allData[type] = event.dataTransfer.getData(type);
+    textOutput.value = JSON.stringify(allData, null, 4);
+}
+
+const regular = document.getElementById("regular");
+regular.addEventListener("dragstart", event => collectDataForEvent(event, regular));
+
+const regularURL = document.getElementById("regular-url");
+regularURL.addEventListener("dragstart", event => {
+    event.dataTransfer.setData("text/uri-list", "https://www.google.com");
+    collectDataForEvent(event, regularURL);
+});
+
+const regularCustom = document.getElementById("regular-custom");
+regularCustom.addEventListener("dragstart", event => {
+    event.dataTransfer.setData("text/foo", "Hello world");
+    collectDataForEvent(event, regularCustom);
+});
+
+const url = document.getElementById("url");
+url.addEventListener("dragstart", event => {
+    event.dataTransfer.clearData();
+    event.dataTransfer.setData("text/uri-list", "https://www.google.com");
+    collectDataForEvent(event, url);
+});
+
+const custom = document.getElementById("custom");
+custom.addEventListener("dragstart", event => {
+    event.dataTransfer.clearData();
+    event.dataTransfer.setData("text/foo", "Hello world");
+    collectDataForEvent(event, custom);
+});
+
+const image = document.getElementById("image");
+image.addEventListener("dragstart", event => collectDataForEvent(event, image));
+
+const imageText = document.getElementById("image-text");
+imageText.addEventListener("dragstart", event => {
+    event.dataTransfer.setData("text/plain", "This is an image of Cupertino.");
+    collectDataForEvent(event, imageText);
+});
+
+const link = document.getElementById("link");
+link.addEventListener("dragstart", event => collectDataForEvent(event, link));
+
+const linkCustom = document.getElementById("link-custom");
+linkCustom.addEventListener("dragstart", event => {
+    event.dataTransfer.setData("text/foo", "bar");
+    collectDataForEvent(event, linkCustom);
+});
+</script>
+</html>

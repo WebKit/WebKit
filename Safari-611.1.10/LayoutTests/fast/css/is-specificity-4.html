@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+<style>
+    container > target {
+        border: 5px solid black;
+        color: blue;
+    }
+
+    .target {
+        color: white;
+    }
+
+    :is(foo, foo, container > target) {
+        background-color: green;
+        color: purple;
+        border: 25px solid red;
+    }
+
+    target {
+        background-color: red;
+    }
+    container > * {
+        color: black;
+    }
+
+    container > target {
+        border: none;
+    }
+</style>
+</head>
+<body>
+    <container>
+        <target class="target">Target</target>
+    </container>
+</body>
+</html>

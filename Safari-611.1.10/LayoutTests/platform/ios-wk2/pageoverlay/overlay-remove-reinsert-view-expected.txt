@@ -1,0 +1,98 @@
+CONSOLE MESSAGE: MockPageOverlayClient::drawRect dirtyRect (0, 0, 512, 512)
+CONSOLE MESSAGE: MockPageOverlayClient::drawRect dirtyRect (512, 0, 512, 512)
+CONSOLE MESSAGE: MockPageOverlayClient::drawRect dirtyRect (0, 512, 512, 512)
+CONSOLE MESSAGE: MockPageOverlayClient::drawRect dirtyRect (512, 512, 512, 512)
+Initial layers
+
+View-relative:
+(GraphicsLayer
+  (children 1
+    (GraphicsLayer
+      (anchor 0.00 0.00)
+      (bounds 800.00 600.00)
+      (drawsContent 1)
+      (backgroundColor #00000000)
+    )
+  )
+)
+
+
+Document-relative:
+(GraphicsLayer
+  (children 1
+    (GraphicsLayer
+      (anchor 0.00 0.00)
+      (bounds 5008.00 5016.00)
+      (usingTiledLayer 1)
+      (drawsContent 1)
+      (backgroundColor #00000000)
+      (tile cache coverage 0, 0 1024 x 1024)
+      (tile size 512 x 512)
+      (top left tile 0, 0 tiles grid 2 x 2)
+      (in window 1)
+    )
+  )
+)
+Layers after removal
+
+View-relative:
+(GraphicsLayer
+  (children 1
+    (GraphicsLayer
+      (anchor 0.00 0.00)
+      (bounds 800.00 600.00)
+      (drawsContent 1)
+      (backgroundColor #00000000)
+    )
+  )
+)
+
+
+Document-relative:
+(GraphicsLayer
+  (children 1
+    (GraphicsLayer
+      (anchor 0.00 0.00)
+      (bounds 5008.00 5016.00)
+      (usingTiledLayer 1)
+      (drawsContent 1)
+      (backgroundColor #00000000)
+      (tile cache coverage 0, 0 1024 x 1024)
+      (tile size 512 x 512)
+      (top left tile 0, 0 tiles grid 2 x 2)
+      (in window 1)
+    )
+  )
+)
+Layers after re-insertion
+
+View-relative:
+(GraphicsLayer
+  (children 1
+    (GraphicsLayer
+      (anchor 0.00 0.00)
+      (bounds 800.00 600.00)
+      (drawsContent 1)
+      (backgroundColor #00000000)
+    )
+  )
+)
+
+
+Document-relative:
+(GraphicsLayer
+  (children 1
+    (GraphicsLayer
+      (anchor 0.00 0.00)
+      (bounds 5008.00 5016.00)
+      (usingTiledLayer 1)
+      (drawsContent 1)
+      (backgroundColor #00000000)
+      (tile cache coverage 0, 0 1024 x 1024)
+      (tile size 512 x 512)
+      (top left tile 0, 0 tiles grid 2 x 2)
+      (in window 1)
+    )
+  )
+)
+

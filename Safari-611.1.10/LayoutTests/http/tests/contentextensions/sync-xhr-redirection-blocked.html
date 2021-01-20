@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(text) {
+    document.body.appendChild(document.createTextNode(text));
+    document.body.appendChild(document.createElement("br"));
+}
+
+function runTest() {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        log("Synchronous status: " + xhr.status + ", readyState:" + xhr.readyState + ", responseText: " + xhr.responseText);
+    }
+
+    xhr.open("GET", "/resources/redirect.php?url=/contentextensions/resources/url-blocking-test.js", false);
+    try {
+        xhr.send();
+    } catch (error) {
+        log("Synchronous error: " + error);
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</head>
+<body onload="runTest()">
+</body>

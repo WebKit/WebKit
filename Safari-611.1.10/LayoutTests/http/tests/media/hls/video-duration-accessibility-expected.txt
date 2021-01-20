@@ -1,0 +1,18 @@
+
+EVENT(canplaythrough)
+EVENT(play)
+EXPECTED (video.duration != Infinity == 'true') OK
+EVENT(seeked)
+EXPECTED (elapsedTimer.description.indexOf('1 Second') !== -1 == 'true') OK
+EVENT(seeked)
+EXPECTED (elapsedTimer.description.indexOf('2 Seconds') !== -1 == 'true') OK
+EVENT(seeked)
+EXPECTED (elapsedTimer.description.indexOf('1 Minute') !== -1 == 'true') OK
+EVENT(seeked)
+EXPECTED (elapsedTimer.description.indexOf('2 Minutes') !== -1 == 'true') OK
+EVENT(seeked)
+EXPECTED (elapsedTimer.description.indexOf('1 Hour') !== -1 == 'true') OK
+EVENT(seeked)
+EXPECTED (elapsedTimer.description.indexOf('2 Hours') !== -1 == 'true') OK
+END OF TEST
+

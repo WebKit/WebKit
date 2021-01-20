@@ -1,0 +1,28 @@
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+video {
+    width: 250px;
+    height: 200px;
+    background-color: rgb(136, 153, 85);
+    display: block;
+}
+
+video:nth-of-type(2) {
+    background-color: rgb(85, 85, 255);
+}
+</style>
+<script>
+if (window.testRunner) {
+    window.testRunner.waitUntilDone();
+
+    window.addEventListener("load", function () {
+        setTimeout(function () {
+            window.testRunner.notifyDone();
+        }, 3000);
+    }, false);
+}
+
+</script>
+
+<video controls src="content/counting.mp4"></video>
+<video controls src="content/counting.mp4"></video>

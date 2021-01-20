@@ -1,0 +1,59 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>Make sure remote peer reflexive candidates are not exposed in stats</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+  'use strict';
+const localPc = new RTCPeerConnection();
+const remotePc = new RTCPeerConnection();
+
+async function doSignalingHandshake(localPc, remotePc) {
+    const offer = await localPc.createOffer();
+    await localPc.setLocalDescription(offer);
+    await remotePc.setRemoteDescription(offer);
+
+    const answer = await remotePc.createAnswer();
+    await remotePc.setLocalDescription(answer);
+    await localPc.setRemoteDescription(answer);
+}
+
+function getRequiredStats(statsReport, type) {
+    for(const stats of statsReport.values()) {
+        if(stats.type === type)
+            return stats;
+    }
+}
+
+async function doTest()
+{
+    const promiseDataChannel = new Promise(resolve => {
+        remotePc.addEventListener('datachannel', (event) => {
+             resolve(event.channel);
+        });
+    });
+
+    const localDataChannel = localPc.createDataChannel('test');
+
+    localPc.addEventListener('icecandidate', event => {
+        remotePc.addIceCandidate(event.candidate);
+    });
+    doSignalingHandshake(localPc, remotePc);
+
+    const remoteDataChannel = await promiseDataChannel;
+
+    assert_true(!!remoteDataChannel, "remoteDataChannel is defined");
+    await new Promise(resolve => {
+        remoteDataChannel.onmessage = resolve;
+        localDataChannel.send("test");
+    });
+
+    const remoteCandidateStats = getRequiredStats(await localPc.getStats(), "remote-candidate");
+    assert_equals(remoteCandidateStats.address, undefined, "address should remain undefined");
+
+    done();
+}
+
+doTest();
+
+</script>

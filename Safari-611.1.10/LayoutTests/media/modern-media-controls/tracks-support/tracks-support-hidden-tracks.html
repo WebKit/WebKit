@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/CC+Subtitles.mov" style="position: absolute; left: 0; top: 0; width: 640px; height: 360px;" controls autoplay></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description(`This test checks that the tracks panel doesn't show any track as selected if all the text tracks for a media element are marked as "hidden".`);
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+
+media.addEventListener("play", () => {
+    media.pause();
+
+    shouldBecomeDifferent("shadowRoot.querySelector('button.tracks')", "null", () => {
+        shouldBecomeDifferent("shadowRoot.querySelector('button.tracks').getBoundingClientRect().width", "0", runTest);
+    });
+});
+
+async function runTest()
+{
+    // Start by making sure all tracks are marked as "hidden".
+    Array.from(media.textTracks).forEach(track => track.mode = "hidden");
+
+    // Next, bring up the tracks menu by clicking on the tracks button.
+    await clickOnTracksButton();
+    // Dump the state of the tracks menu for text tracks, which should show the first embedded text track as selected.
+    dumpTextTracksListNodes("Initial state");
+
+    finishTest();
+}
+
+function textTracksListNodes()
+{
+    return shadowRoot.querySelectorAll(".tracks-panel section:last-of-type > ul > li");
+}
+
+function dumpTextTracksListNodes(msg)
+{
+    debug("");
+    debug(`=== ${msg} ===`);
+    debug("");
+    Array.from(textTracksListNodes()).forEach(li => debug(`${li.classList.contains("selected") ? "[x]" : "[-]"} ${li.textContent}`));
+}
+
+async function clickOnTracksButton()
+{
+    await new Promise(requestAnimationFrame);
+    clickOnElement(shadowRoot.lastChild.querySelector("button.tracks"));
+    await new Promise(requestAnimationFrame);
+}
+
+function clickOnElement(element)
+{
+    const bounds = element.getBoundingClientRect();
+    eventSender.mouseMoveTo(bounds.left + 1, bounds.top + 1);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function finishTest()
+{
+    debug("");
+    media.remove();
+    finishJSTest();
+}
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

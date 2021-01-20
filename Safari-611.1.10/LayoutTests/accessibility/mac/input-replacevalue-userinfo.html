@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../editing/editing.js"></script>
+</head>
+<body id="body">
+
+    <input type="password" id="securevaluetest">
+
+    <input type="text" id="valuetest">
+
+    <p id="description"></p>
+    <div id="console"></div>
+    <div id="notifications"></div>
+
+    <script>
+
+        description("This tests value change notifications user info data when replacing the contents of an input field.");
+
+        var AXTextStateChangeTypeEdit = 1;
+
+        var AXTextEditTypeDelete = 1;
+        var AXTextEditTypeInsert = AXTextEditTypeDelete + 1;
+
+        var webArea = 0;
+        var count = 0;
+        var results = [];
+        var resultIndex = 0;
+        function notificationCallback(notification, userInfo) {
+            if (notification == "AXValueChanged") {
+                count++;
+                results.push(userInfo);
+                if (count == 2) {
+
+                    shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeEdit");
+                    shouldBe("results[resultIndex][\"AXTextChangeValues\"][0][\"AXTextChangeValue\"]", "\"0\"");
+                    shouldBe("results[resultIndex][\"AXTextChangeValues\"][0][\"AXTextEditType\"]", "AXTextEditTypeDelete");
+                    shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeEdit");
+                    shouldBe("results[resultIndex][\"AXTextChangeValues\"][1][\"AXTextChangeValue\"]", "\"1\"");
+                    shouldBe("results[resultIndex][\"AXTextChangeValues\"][1][\"AXTextEditType\"]", "AXTextEditTypeInsert");
+
+                    // Password notifications will be insert only and the value string will be whitespace
+                    resultIndex++;
+                    shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeEdit");
+                    shouldBe("results[resultIndex][\"AXTextChangeValues\"][0][\"AXTextChangeValue\"]", "\" \"");
+                    shouldBe("results[resultIndex][\"AXTextChangeValues\"][0][\"AXTextEditType\"]", "AXTextEditTypeInsert");
+
+                    webArea.removeNotificationListener();
+                    finishJSTest();
+                }
+            }
+        }
+
+        function setvalue() {
+            document.getElementById("valuetest").value = "1";
+        }
+
+        function setsecurevalue() {
+            document.getElementById("securevaluetest").value = "1";
+        }
+
+        document.getElementById("valuetest").value = "0";
+        document.getElementById("securevaluetest").value = "0";
+
+        if (window.accessibilityController) {
+            jsTestIsAsync = true;
+
+            accessibilityController.enableEnhancedAccessibility(true);
+
+            webArea = accessibilityController.rootElement.childAtIndex(0);
+            var addedNotification = webArea.addNotificationListener(notificationCallback);
+            shouldBe("addedNotification", "true");
+
+            setvalue();
+
+            setsecurevalue();
+        }
+    </script>
+</body>
+</html>

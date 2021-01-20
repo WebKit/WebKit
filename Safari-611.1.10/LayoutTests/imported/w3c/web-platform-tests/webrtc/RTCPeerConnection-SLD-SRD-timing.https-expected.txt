@@ -1,0 +1,3 @@
+
+FAIL setLocalDescription and setRemoteDescription are not racy promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+

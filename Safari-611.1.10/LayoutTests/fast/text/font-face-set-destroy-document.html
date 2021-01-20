@@ -1,0 +1,15 @@
+<html>
+This test makes sure FontFaceSets don't access deleted documents. The test passes if there is no crash when running under ASan.
+<script>
+
+d = document.implementation.createDocument(null, '');
+f = new FontFace('f', 'local(F)', {});
+ffs = d.fonts;
+delete d;
+// gc();
+GCController.collect();
+
+// trigger use after free
+ffs.add(f);
+</script>
+</html>

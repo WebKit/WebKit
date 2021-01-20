@@ -1,0 +1,30 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mf.arguments is expected[expno++]
+PASS mf.arguments[0] is expected[expno++]
+PASS mf.arguments[0] is expected[expno++]
+PASS mf.arguments[0] is expected[expno++]
+PASS mf.arguments[0] is expected[expno++]
+PASS mf.arguments[0] is expected[expno++]
+PASS mf.arguments[0] is expected[expno++]
+PASS mf.arguments[0] is expected[expno++]
+PASS mf.arguments[0] is expected[expno++]
+PASS mf.arguments is expected[expno++]
+PASS ReadOnlyOK is true
+PASS DontDeleteOK is true
+PASS DontEnumOK is true
+PASS arg0 is 1
+PASS arg1 is 2
+PASS arg2 is 3
+PASS arglength is 3
+PASS newarg0 is 1
+PASS newarg1 is 2
+PASS newarg2 is 999
+PASS newx is 888
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

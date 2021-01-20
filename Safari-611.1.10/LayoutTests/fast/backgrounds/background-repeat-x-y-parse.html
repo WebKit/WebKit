@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.test {
+    display: inline-block;
+    width: 150px;
+    height: 150px;
+    background-image: url('resources/map.jpg');
+    background-position: top left; 
+    border: 1px solid black;
+}
+</style>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="test1" class="test" style="background-repeat-y: no-repeat;"></div>
+<div id="test2" class="test" style="background-repeat-x: no-repeat; background-repeat-y: no-repeat;"></div>
+<div id="test3" class="test" style="background-repeat: repeat-y; background-repeat-y: no-repeat;"></div>
+<div id="test4" class="test" style="background-repeat: repeat-x; background-repeat-x: no-repeat;"></div>
+<script>
+description("This test checks that background-repeat-x/y are not parsed");
+
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test1')).getPropertyValue('background-repeat')", "repeat");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test2')).getPropertyValue('background-repeat')", "repeat");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test3')).getPropertyValue('background-repeat')", "repeat-y");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test4')).getPropertyValue('background-repeat')", "repeat-x");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

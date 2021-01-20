@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            video {
+                width: 480px;
+                height: 320px;
+            }
+            #second {
+                margin-top: 5000px;
+            }
+        </style>
+        <script>
+            function scrollToSecondView() {
+                document.querySelector("#second").scrollIntoView();
+                setTimeout(function() {
+                    window.webkit.messageHandlers.testHandler.postMessage("scrolled");
+                }, 0);
+            }
+            function beganAutoplaying() {
+                setTimeout(function() {
+                    try {
+                        window.webkit.messageHandlers.testHandler.postMessage("autoplayed");
+                    } catch(e) {
+                    }
+                }, 0)
+            }
+        </script>
+    </head>
+    <body>
+        <video autoplay onplaying=beganAutoplaying() loop id="first" src="large-video-with-audio.mp4"></video>
+        <br>
+        <video autoplay onplaying=beganAutoplaying() loop id="second" src="large-video-with-audio.mp4"></video>
+    </body>
+<html>

@@ -1,0 +1,21 @@
+
+Test that 'error' events are fired from <source> element when it can not be used.
+
+
+EVENT(error) from <source id='missing-src' src=null> OK
+EXPECTED (video.error == 'null') OK
+
+EVENT(error) from <source id='bogus-type' src='content/test.mp4'> OK
+EXPECTED (video.error == 'null') OK
+
+EVENT(error) from <source id='unsupported-media-query' src='content/test.mp4'> OK
+EXPECTED (video.error == 'null') OK
+
+EVENT(error) from <source id='empty-src' src='video-source-error-no-candidate.html'> OK
+EXPECTED (video.error == 'null') OK
+
+EVENT(error) from <source id='no-extension-no-type' src='nonexistent'> OK
+EXPECTED (video.error == 'null') OK
+
+END OF TEST
+

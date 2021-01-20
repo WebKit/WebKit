@@ -1,0 +1,7 @@
+
+PASS A non-closed stream on which read() has been called
+PASS A non-closed stream on which cancel() has been called
+PASS A closed stream on which read() has been called
+PASS An errored stream on which read() has been called
+PASS An errored stream on which cancel() has been called
+

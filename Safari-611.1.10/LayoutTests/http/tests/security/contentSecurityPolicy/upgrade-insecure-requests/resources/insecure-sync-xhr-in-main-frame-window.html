@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+</head>
+<body>
+<script>
+window.onload = function() {
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", "/resources/redirect.php?url=http://127.0.0.1:8443/", false);
+    xhr.send();
+    alert("PASS: upgraded sync XHR after redirection");
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>
+</body>
+</html>

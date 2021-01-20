@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="resources/promise-utils.js"></script>
+    </head>
+    <body>
+        <script>
+            let stream;
+            let track;
+
+            let sdpMLineIndex = 0;
+            let badSdpMLineIndex;
+            let sdpMid = null;
+            let badSdpMid;
+            const validCandidate = "candidate:1 1 UDP 2013266431 172.17.0.1 44474 typ host";
+
+            description("Test behavior of RTCPeerConnection.addIceCandidate");
+
+            if (window.testRunner)
+                testRunner.setUserMediaPermission(true);
+            else {
+                debug("This test can not be run without the testRunner");
+                finishJSTest();
+            }
+
+            const pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+            const remotePc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+
+            debug("<br>*** A remote description is needed before a candidate can be added");
+            shouldBe("pc.remoteDescription", "null");
+            promiseShouldReject("pc.addIceCandidate(new RTCIceCandidate({candidate: 'foo', sdpMid: 0}))").then(function () {
+                return navigator.mediaDevices.getUserMedia({ "audio": true, "video": true });
+            })
+            .then(function (s) {
+                stream = s;
+                track = stream.getTracks()[0];
+
+                remotePc.addTrack(track, stream);
+                return remotePc.createOffer();
+            })
+            .then(function (remoteOffer) {
+                return pc.setRemoteDescription(remoteOffer);
+            })
+            .then(function () {
+                testPassed("Remote description set");
+
+                debug("<br>*** Define sdpMid, badSdpMid, sdpMLineIndex and badSdpMLineIndex for testing");
+                badSdpMLineIndex = sdpMLineIndex + pc.getTransceivers().length + 10;
+                shouldNotBe("sdpMLineIndex", "badSdpMLineIndex");
+
+                sdpMid = pc.getTransceivers()[0] ? pc.getTransceivers()[0].mid : null;
+                shouldNotBe("sdpMid", "null");
+                badSdpMid = sdpMid + "_foo";
+                shouldNotBe("sdpMid", "badSdpMid");
+
+                sdpMid = 1;
+
+                return promiseShouldReject("pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMid: badSdpMid}))");
+            })
+            .then(function () {
+                return promiseShouldReject("pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMLineIndex: badSdpMLineIndex}))");
+            })
+            .then(function () {
+                debug("*** A (bad) sdpMid takes precedesce over valid sdpMLineIndex");
+                return promiseShouldReject("pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMid: badSdpMid, sdpMLineIndex: sdpMLineIndex}))");
+            })
+            .then(function () {
+                debug("*** Test bad candidate content with valid sdpMid");
+                return promiseShouldReject("pc.addIceCandidate(new RTCIceCandidate({candidate: 'bad content', sdpMid: sdpMid}))");
+            })
+            .then(function () {
+                debug("*** Test bad candidate content with valid sdpMLineIndex");
+                return promiseShouldReject("pc.addIceCandidate(new RTCIceCandidate({candidate: 'bad content', sdpMLineIndex: sdpMLineIndex}))");
+            })
+            .then(function () {
+                debug("*** Test valid candidate with no mid and mlineindex");
+                return promiseShouldReject("pc.addIceCandidate({candidate: validCandidate})");
+            })
+            .then(function () {
+                debug("<br>*** Test some OK input");
+                // Testing passing a RTCIceCandidateInit
+                return promiseShouldResolve("pc.addIceCandidate({candidate: validCandidate, sdpMid: sdpMid})");
+            })
+            .then(function () {
+                return promiseShouldResolve("pc.addIceCandidate({candidate: validCandidate, sdpMLineIndex: sdpMLineIndex})");
+            })
+            .then(function () {
+                return promiseShouldResolve("pc.addIceCandidate(undefined)");
+            })
+            .then(function () {
+                return promiseShouldResolve("pc.addIceCandidate(null)");
+            })
+            .then(function () {
+                // Testing passing a RTCIceCandidate
+                return promiseShouldResolve("pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMLineIndex: sdpMLineIndex}))");
+            })
+            .then(function () {
+                debug("*** A valid sdpMid takes precedesce over a bad sdpMLineIndex");
+                return promiseShouldResolve("pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMid: sdpMid, sdpMLineIndex: badSdpMLineIndex}))");
+            })
+            .then(function () {
+                testPassed("End of test promise chain");
+                finishJSTest();
+            })
+            .catch(function (error) {
+                testFailed("Error in promise chain: " + error);
+                finishJSTest();
+            });
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

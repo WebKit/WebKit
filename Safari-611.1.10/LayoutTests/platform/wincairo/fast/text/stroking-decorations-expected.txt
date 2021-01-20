@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x152 [textFillColor=#800080] [textStrokeWidth=2.00]
+        RenderText {#text} at (0,1) size 755x149
+          text run at (0,1) width 616: "Purple\x{300} fill, black stroke,"
+          text run at (0,77) width 755: "complex text, black underline"
+      RenderBlock {DIV} at (0,152) size 784x152 [textStrokeColor=#FFA500] [textStrokeWidth=1.33]
+        RenderText {#text} at (0,1) size 633x149
+          text run at (0,1) width 633: "Orange stroke, black fill,"
+          text run at (0,77) width 412: "orange overline."
+      RenderBlock {DIV} at (0,304) size 784x152 [textFillColor=#0000FF] [textStrokeWidth=1.33]
+        RenderText {#text} at (0,1) size 593x149
+          text run at (0,1) width 593: "No stroke, blue fill, red"
+          text run at (0,77) width 592: "shadow, blue underline"

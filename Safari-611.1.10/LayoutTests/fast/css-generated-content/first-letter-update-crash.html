@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<input value='foo'>
+This test passes if it doesn't assert or crash.
+</body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const head = document.getElementsByTagName("head")[0];
+let style = document.createElement("style");
+style.innerHTML = "::first-letter { color:blue; }";
+head.appendChild(style);
+
+document.body.offsetLeft;
+
+style = document.createElement("style");
+style.innerHTML = "* { position: absolute; }";
+head.appendChild(style);
+</script>
+</html>

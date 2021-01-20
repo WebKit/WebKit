@@ -1,0 +1,5 @@
+In accessibility, the following should be an incrementor:
+
+X
+
+This test PASSES in DumpRenderTree. The role is AXRole: AXIncrementor

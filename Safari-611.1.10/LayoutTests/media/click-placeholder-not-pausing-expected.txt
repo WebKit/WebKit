@@ -1,0 +1,10 @@
+Click on placeholder on a MediaDocument should not pause.
+
+
+Video frame loaded.
+Going into Picture-in-Picture
+EXPECTED (mediaElement.webkitPresentationMode == 'picture-in-picture') OK
+EXPECTED (placeholder.classList.contains('hidden') == 'false') OK
+EXPECTED (mediaElement.paused == 'false') OK
+END OF TEST
+

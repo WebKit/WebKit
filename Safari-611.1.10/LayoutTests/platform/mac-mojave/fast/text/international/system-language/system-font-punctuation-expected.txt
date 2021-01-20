@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x112
+  RenderBlock {HTML} at (0,0) size 800x112
+    RenderBody {BODY} at (8,8) size 784x96
+      RenderBlock (anonymous) at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 720x36
+          text run at (0,0) width 720: "This test makes sure punctuation laid out with the system font does not use vertical glyphs. The test passes if the"
+          text run at (0,18) width 527: "semicolon below looks like a regular horizontal semicolon (;) and is not sideways."
+      RenderBlock {DIV} at (0,36) size 784x60
+        RenderText {#text} at (0,0) size 14x59
+          text run at (0,0) width 14: ";"

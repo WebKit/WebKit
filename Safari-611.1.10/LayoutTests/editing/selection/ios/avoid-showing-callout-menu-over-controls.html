@@ -1,0 +1,76 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<meta name=viewport content="width=device-width, initial-scale=1">
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+iframe {
+    width: 320px;
+    height: 100px;
+}
+
+#controls {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+input[type=button] {
+    height: 1em;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+async function runTest() {
+    description("Verifies that we don't show the system callout menu over controls. To test manually: focus the editable document in the iframe, select some text, and confirm that the callout bar is shown beneath the selection instead of above the selection.");
+
+    centerX = rect => rect.left + rect.width / 2;
+    centerY = rect => rect.top + rect.height / 2;
+
+    await UIHelper.activateAndWaitForInputSessionAt(160, 100);
+
+    const iframeDocument = document.querySelector("iframe").contentDocument;
+    iframeDocument.getSelection().selectAllChildren(iframeDocument.body);
+
+    grabberRect = {};
+    while (!grabberRect.width && !grabberRect.height)
+        grabberRect = await UIHelper.getSelectionEndGrabberViewRect();
+
+    await UIHelper.activateAt(centerX(grabberRect), centerY(grabberRect));
+    await UIHelper.waitForMenuToShow();
+    menuRect = await UIHelper.menuRect();
+
+    document.activeElement.blur();
+
+    shouldBe("centerY(grabberRect) < centerY(menuRect)", "true");
+    finishJSTest();
+}
+
+addEventListener("load", runTest);
+</script>
+</head>
+<body>
+<div id="controls">
+    <input type="button" value="1"></input>
+    <input type="button" value="2"></input>
+    <input type="button" value="3"></input>
+    <input type="button" value="4"></input>
+    <input type="button" value="5"></input>
+    <input type="button" value="6"></input>
+    <input type="button" value="7"></input>
+    <input type="button" value="8"></input>
+</div>
+<div>
+    <iframe srcdoc="<body contenteditable>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod.</body>"></iframe>
+</div>
+<p id="description"></p>
+<p id="console"></p>
+</body>
+</html>

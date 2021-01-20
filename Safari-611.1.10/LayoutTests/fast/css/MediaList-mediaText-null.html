@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style media="screen and (min-width: 480px)">
+</style>
+</head>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that MediaList.mediaText is not nullable and treats null as the empty string.");
+
+var style = document.getElementsByTagName("style")[0];
+var mediaList = style.sheet.media;
+shouldBe("mediaList.__proto__", "MediaList.prototype");
+shouldBe("mediaList.length", "1");
+
+shouldBeEqualToString("mediaList.mediaText", "screen and (min-width: 480px)");
+shouldNotThrow("mediaList.mediaText = null");
+shouldBeEqualToString("mediaList.mediaText", "");
+shouldNotThrow("mediaList.mediaText = 'screen and (min-width: 480px)'");
+shouldBeEqualToString("mediaList.mediaText", "screen and (min-width: 480px)");
+shouldNotThrow("style.removeAttribute('media')");
+shouldBeEqualToString("mediaList.mediaText", "");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

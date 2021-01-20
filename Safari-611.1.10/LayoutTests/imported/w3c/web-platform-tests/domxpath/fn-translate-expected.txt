@@ -1,0 +1,4 @@
+^^^bar$$$^^^barfoo
+
+FAIL translate() arguments depending on the context node assert_equals: expected "^^^foo$$$" but got "bar$$$"
+

@@ -1,0 +1,9 @@
+PASS window.getComputedStyle(document.getElementById('test1')).webkitTextOrientation is "upright"
+PASS window.getComputedStyle(document.getElementById('test2')).webkitTextOrientation is "upright"
+PASS window.getComputedStyle(document.getElementById('test1')).textOrientation is "upright"
+PASS window.getComputedStyle(document.getElementById('test2')).textOrientation is "upright"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+你好ABC
+你好ABC

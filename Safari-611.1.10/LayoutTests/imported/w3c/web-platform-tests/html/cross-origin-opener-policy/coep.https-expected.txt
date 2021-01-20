@@ -1,0 +1,11 @@
+
+FAIL Same-origin popup with coop/coep Can't find variable: BroadcastChannel
+FAIL Same-site popup with coop/coep Can't find variable: BroadcastChannel
+FAIL Same-origin popup with coop unsafe-inherit/coep Can't find variable: BroadcastChannel
+FAIL Same-site popup with coop unsafe-inherit/coep Can't find variable: BroadcastChannel
+FAIL Same-origin popup with coop unsafe-inherit without coep Can't find variable: BroadcastChannel
+FAIL Same-site popup with coop unsafe-inherit without coep Can't find variable: BroadcastChannel
+FAIL Same-origin popup without coep Can't find variable: BroadcastChannel
+FAIL Same-site popup without coep Can't find variable: BroadcastChannel
+FAIL Bonus: window.crossOriginIsolated assert_true: expected true got undefined
+

@@ -1,0 +1,55 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/alternate.css
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/crossorigin-anon-style.css
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/crossorigin-anon-style.css.headers
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/crossorigin-creds-style.css
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/crossorigin-creds-style.css.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/crossorigin-ineligible-style.css
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-broken-signature.js
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-broken-signature.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-multi-signature-headers.js
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-multi-signature-headers.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-multi-signature.js
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-multi-signature.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-multi-signature2.js
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-multi-signature2.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-no-signature.js
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-signature.js
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-signature.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-signature2.js
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-signature2.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-style-multi-signature-headers.css
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-style-multi-signature-headers.css.headers
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-style-multi-signature.css
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-style-multi-signature.css.headers
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-style-multi-signature2.css
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-style-multi-signature2.css.headers
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-style-no-signature.css
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-style-wrong-signature.css
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-style-wrong-signature.css.headers
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-style.css
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/ed25519-style.css.headers
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/image.png
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/script.js
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/sri-test-helpers.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/style.css
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/subresource-css-ed25519.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/subresource-ed25519-with-csp.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/subresource-ed25519.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/subresource-integrity/subresource-integrity.html

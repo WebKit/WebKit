@@ -1,0 +1,4 @@
+2d.composite.operation.highlight
+Spec references: 2d.composite.operation.unrecognised
+Actual output:
+Passed

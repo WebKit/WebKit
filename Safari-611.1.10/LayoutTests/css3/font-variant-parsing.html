@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+function runTest(property, propertyText, expectedText) {
+    var element = document.createElement("span");
+    element.setAttribute("id", "testElement");
+    if (property != "")
+        element.setAttribute("style", property + ": " + propertyText + ";");
+    document.body.appendChild(element);
+    shouldBeEqualToString("window.getComputedStyle(document.getElementById('testElement')).getPropertyCSSValue('" + property + "').cssText", expectedText);
+    document.body.removeChild(element);
+}
+
+runTest("font-variant-ligatures", "", "normal");
+runTest("font-variant-ligatures", "normal", "normal");
+runTest("font-variant-ligatures", "normal common-ligatures", "normal");
+runTest("font-variant-ligatures", "notavalidvalue", "normal");
+runTest("font-variant-ligatures", "common-ligatures", "common-ligatures");
+runTest("font-variant-ligatures", "common-ligatures common-ligatures", "normal");
+runTest("font-variant-ligatures", "no-common-ligatures", "no-common-ligatures");
+runTest("font-variant-ligatures", "discretionary-ligatures", "discretionary-ligatures");
+runTest("font-variant-ligatures", "no-discretionary-ligatures", "no-discretionary-ligatures");
+runTest("font-variant-ligatures", "historical-ligatures", "historical-ligatures");
+runTest("font-variant-ligatures", "no-historical-ligatures", "no-historical-ligatures");
+runTest("font-variant-ligatures", "contextual", "contextual");
+runTest("font-variant-ligatures", "no-contextual", "no-contextual");
+runTest("font-variant-ligatures", "common-ligatures no-contextual", "common-ligatures no-contextual");
+runTest("font-variant-ligatures", "no-contextual common-ligatures", "common-ligatures no-contextual");
+runTest("font-variant-ligatures", "no-contextual common-ligatures notavalidvalue", "normal");
+runTest("font-variant-ligatures", "none", "none");
+runTest("font-variant-ligatures", "no-common-ligatures no-discretionary-ligatures no-historical-ligatures no-contextual", "none");
+
+runTest("font-variant-position", "", "normal");
+runTest("font-variant-position", "normal", "normal");
+runTest("font-variant-position", "notavalidvalue", "normal");
+runTest("font-variant-position", "sub", "sub");
+runTest("font-variant-position", "super", "super");
+runTest("font-variant-position", "sub super", "normal");
+
+runTest("font-variant-caps", "", "normal");
+runTest("font-variant-caps", "normal", "normal");
+runTest("font-variant-caps", "notavalidvalue", "normal");
+runTest("font-variant-caps", "normal notavalidvalue", "normal");
+runTest("font-variant-caps", "normal small-caps", "normal");
+runTest("font-variant-caps", "small-caps", "small-caps");
+runTest("font-variant-caps", "all-small-caps", "all-small-caps");
+runTest("font-variant-caps", "petite-caps", "petite-caps");
+runTest("font-variant-caps", "all-petite-caps", "all-petite-caps");
+runTest("font-variant-caps", "unicase", "unicase");
+runTest("font-variant-caps", "titling-caps", "titling-caps");
+runTest("font-variant-caps", "unicase titling-caps", "normal");
+runTest("font-variant-caps", "small-caps all-small-caps", "normal");
+
+runTest("font-variant-numeric", "", "normal");
+runTest("font-variant-numeric", "normal", "normal");
+runTest("font-variant-numeric", "notavalidvalue", "normal");
+runTest("font-variant-numeric", "normal notavalidvalue", "normal");
+runTest("font-variant-numeric", "normal lining-nums", "normal");
+runTest("font-variant-numeric", "lining-nums", "lining-nums");
+runTest("font-variant-numeric", "oldstyle-nums", "oldstyle-nums");
+runTest("font-variant-numeric", "proportional-nums", "proportional-nums");
+runTest("font-variant-numeric", "tabular-nums", "tabular-nums");
+runTest("font-variant-numeric", "diagonal-fractions", "diagonal-fractions");
+runTest("font-variant-numeric", "stacked-fractions", "stacked-fractions");
+runTest("font-variant-numeric", "ordinal", "ordinal");
+runTest("font-variant-numeric", "slashed-zero", "slashed-zero");
+runTest("font-variant-numeric", "lining-nums slashed-zero", "lining-nums slashed-zero");
+runTest("font-variant-numeric", "lining-nums oldstyle-nums", "normal");
+runTest("font-variant-numeric", "proportional-nums tabular-nums", "normal");
+runTest("font-variant-numeric", "diagonal-fractions stacked-fractions", "normal");
+runTest("font-variant-numeric", "lining-nums proportional-nums", "lining-nums proportional-nums");
+runTest("font-variant-numeric", "lining-nums diagonal-fractions", "lining-nums diagonal-fractions");
+runTest("font-variant-numeric", "ordinal slashed-zero", "ordinal slashed-zero");
+
+runTest("font-variant-alternates", "", "normal");
+runTest("font-variant-alternates", "normal", "normal");
+runTest("font-variant-alternates", "notavalidvalue", "normal");
+runTest("font-variant-alternates", "normal notavalidvalue", "normal");
+runTest("font-variant-alternates", "historical-forms", "historical-forms");
+runTest("font-variant-alternates", "normal historical-forms", "normal");
+
+runTest("font-variant-east-asian", "", "normal");
+runTest("font-variant-east-asian", "normal", "normal");
+runTest("font-variant-east-asian", "notavalidvalue", "normal");
+runTest("font-variant-east-asian", "normal notavalidvalue", "normal");
+runTest("font-variant-east-asian", "jis78", "jis78");
+runTest("font-variant-east-asian", "jis83", "jis83");
+runTest("font-variant-east-asian", "jis90", "jis90");
+runTest("font-variant-east-asian", "jis04", "jis04");
+runTest("font-variant-east-asian", "simplified", "simplified");
+runTest("font-variant-east-asian", "traditional", "traditional");
+runTest("font-variant-east-asian", "full-width", "full-width");
+runTest("font-variant-east-asian", "proportional-width", "proportional-width");
+runTest("font-variant-east-asian", "ruby", "ruby");
+runTest("font-variant-east-asian", "jis78 jis83", "jis83");
+runTest("font-variant-east-asian", "jis90 traditional", "traditional");
+runTest("font-variant-east-asian", "full-width traditional", "traditional full-width");
+runTest("font-variant-east-asian", "jis04 proportional-width", "jis04 proportional-width");
+runTest("font-variant-east-asian", "jis04 proportional-width ruby", "jis04 proportional-width ruby");
+runTest("font-variant-east-asian", "jis83 ruby", "jis83 ruby");
+runTest("font-variant-east-asian", "full-width proportional-width", "proportional-width");
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

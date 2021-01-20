@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test.js"></script>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        form {
+            overflow: hidden;
+        }
+
+        input, p {
+            font-size: 20px;
+            width: 300px;
+        }
+
+        .fixed {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: auto;
+        }
+
+        button {
+            position: absolute;
+            top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <form>
+        <div class="fixed">
+            <input type="search" />
+        </div>
+    </form>
+    <button>Click me</button>
+    <p id="description"></p>
+    <p id="console"></p>
+</body>
+<script>
+    jsTestIsAsync = true;
+
+    description("This test verifies platform selection UI is not incorrectly suppressed when the editable element is visible. To manually run the test, tap the button to focus the search field, and confirm that the caret view appears in the field.");
+
+    const button = document.querySelector("button");
+    button.addEventListener("click", () => document.querySelector("input").focus());
+
+    addEventListener("load", async () => {
+        if (!window.testRunner)
+            return;
+
+        await UIHelper.activateElementAndWaitForInputSession(button);
+
+        caretRect = null;
+        while (!caretRect || !caretRect.width || !caretRect.height)
+            caretRect = await UIHelper.getUICaretViewRect();
+
+        shouldBe("caretRect.top", "7");
+        shouldBe("caretRect.left", "11");
+        shouldBe("caretRect.width", "2");
+        shouldBe("caretRect.height", "25");
+        finishJSTest();
+    });
+</script>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.scrollable_region {
+    width: 680px;
+}
+.contents {
+    height: 1024px;
+    background-image: repeating-linear-gradient(silver, white 200px);
+}
+</style>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+    jsTestIsAsync = true;
+
+    var wrapperTarget;
+    var divTarget;
+    var pageScrollPositionBefore;
+    var wrapperScrollPositionBefore;
+    var divScrollPositionBefore;
+
+    function checkForSecondScroll()
+    {
+        // 'parent' should have scrolled, the content of 'target' should
+        // not have scrolled, and 'wrapper' should not have scrolled.
+        var pageScrollPositionAfter = document.scrollingElement.scrollTop;
+        var wrapperScrollPositionAfter = wrapperTarget.scrollTop;
+        var divScrollPositionAfter = divTarget.scrollTop;
+
+        debug("Second scroll event:");
+        if (pageScrollPositionBefore != pageScrollPositionAfter)
+            testPassed("Page received wheel events during the second gesture.");
+        else
+            testFailed("Page did not receive wheel events during the second gesture.");
+
+        if (wrapperScrollPositionBefore != wrapperScrollPositionAfter)
+            testFailed("Wrapper received wheel events during the second gesture.");
+        else
+            testPassed("Wrapper did not receive wheel events during the second gesture.");
+
+        if (divScrollPositionBefore != divScrollPositionAfter)
+            testFailed("div received wheel events during the second gesture.");
+        else
+            testPassed("div did not receive wheel events during the second gesture.");
+    }
+
+    async function doSecondScroll()
+    {
+        // 'parent' should not have scrolled, and the content of 'target' should
+        // not have moved. However, 'wrapper' should have moved.
+        var pageScrollPositionAfter = document.scrollingElement.scrollTop;
+        var wrapperScrollPositionAfter = wrapperTarget.scrollTop;
+        var divScrollPositionAfter = divTarget.scrollTop;
+
+        debug("First scroll event:");
+        if (pageScrollPositionBefore != pageScrollPositionAfter)
+            testFailed("Page received wheel events during the first gesture.");
+        else
+            testPassed("Page did not receive wheel events during the first gesture.");
+
+        if (wrapperScrollPositionBefore != wrapperScrollPositionAfter)
+            testPassed("Wrapper received wheel events during the first gesture.");
+        else
+            testFailed("Wrapper did not receive wheel events during the first gesture.");
+
+        if (divScrollPositionBefore != divScrollPositionAfter)
+            testFailed("div received wheel events during the first gesture.");
+        else
+            testPassed("div did not receive wheel events during the first gesture.");
+
+        wrapperScrollPositionBefore = wrapperTarget.scrollTop;
+
+        eventSender.monitorWheelEvents();
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+
+        await UIHelper.waitForScrollCompletion();
+    }
+
+    async function doFirstScroll()
+    {
+        pageScrollPositionBefore = document.scrollingElement.scrollTop;
+
+        divTarget = document.getElementById('target');
+        divTarget.scrollTop = divTarget.scrollHeight - divTarget.clientHeight - 100;
+
+        divScrollPositionBefore = divTarget.scrollTop;
+
+        wrapperTarget = document.getElementById('wrapper');
+        wrapperScrollPositionBefore = wrapperTarget.scrollTop;
+        debug("wrapperTarget = " + wrapperTarget);
+
+        // Move mouse to a position to the right side of the table, and near the bottom.
+        var startPosX = divTarget.offsetLeft + divTarget.clientWidth + 50;
+        var startPosY = Math.round(divTarget.offsetTop) - 42; // One wheel turn before end.
+
+        eventSender.monitorWheelEvents();
+        eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -5, 'none', 'begin');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'continue');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+        
+        await UIHelper.waitForScrollCompletion();
+    }
+
+    async function scrollTest()
+    {
+        await doFirstScroll();
+        await doSecondScroll();
+        checkForSecondScroll();
+        finishJSTest();
+    }
+
+    function setupTopLevel()
+    {
+        description("Tests that a scrollable div nested inside another scrollable div properly handles wheel events under sub-pixel conditions.");
+        if (window.eventSender) {
+            setTimeout(scrollTest, 0);
+            return;
+        }
+        
+        finishJSTest();
+    }
+
+    window.addEventListener('load', () => {
+        setupTopLevel();
+    }, false);
+</script>
+</head>
+<body>
+<div id="parent" style="height: 2000px; width: 800px;">
+    <div id="wrapper" style='overflow-y: auto; overflow-x: hidden; max-height: 600px;'>
+        <div id="source" style="height: 100px; width: 600px;">
+            Put mouse next to the table labeled 'Scrollable Region' and flick downward. The scroll movement
+            should come to a halt. Then flick again. The overall page should scroll.
+        </div>
+        <div class="scrollable_region">
+            <h3>Scrollable Region</h3>
+            <div id="target" style='overflow-y: auto; overflow-x: hidden; max-height: 485.55px;'>
+                <div class="contents">
+                </div>
+            </div>
+            <div id="bottom" style="height: 100px; width: 600px;">
+                <p>A set of information at the bottom of the table.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="console"></div>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

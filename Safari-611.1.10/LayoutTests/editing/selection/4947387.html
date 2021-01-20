@@ -1,0 +1,26 @@
+<p>This tests moveTo{Beginning, End}OfLineAndModifySelection.  It should operate on line boundaries and not paragraph boundaries.  To run it manually, click inside the first line of the editable region below and do Command+Shift+Left/Right Arrow, the selection should extend to the start/end of the line, not the start/end of the paragraph.  Also, moveTo{Beginning, End}OfParagraphAndModifySelection should work.</p>
+<div id="div" contenteditable="true" style="width: 200px;">The quick brown fox jumped over the lazy brown dog.</div>
+
+<script>
+
+if (window.testRunner) {
+
+    window.testRunner.dumpEditingCallbacks();
+    
+    var div = document.getElementById("div");
+    var text = div.firstChild;
+    var sel = window.getSelection();
+    
+    sel.setPosition(text, text.length);
+    testRunner.execCommand("MoveToBeginningOfLineAndModifySelection");
+    
+    sel.setPosition(text, 0);
+    testRunner.execCommand("MoveToEndOfLineAndModifySelection");
+
+    sel.setPosition(text, text.length);
+    testRunner.execCommand("MoveToBeginningOfParagraphAndModifySelection");
+    
+    sel.setPosition(text, 0);
+    testRunner.execCommand("MoveToEndOfParagraphAndModifySelection");
+}
+</script>

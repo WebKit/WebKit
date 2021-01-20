@@ -1,0 +1,10 @@
+Test sending WebAssembly.Memory via postMessage to a worker and fail.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS worker.postMessage(memory) threw exception DataCloneError: The object can not be cloned..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

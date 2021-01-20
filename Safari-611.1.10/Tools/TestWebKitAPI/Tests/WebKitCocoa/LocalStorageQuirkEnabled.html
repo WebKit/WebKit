@@ -1,0 +1,10 @@
+<script>
+
+try {
+    if (window.localStorage)
+        window.webkit.messageHandlers.testHandler.postMessage('PASS');
+} catch(e) {
+    window.webkit.messageHandlers.testHandler.postMessage('FAIL');
+}
+
+</script>

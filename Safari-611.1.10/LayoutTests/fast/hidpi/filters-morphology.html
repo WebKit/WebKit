@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="resources/ensure-hidpi.js"></script>
+  <style>
+    div {
+      width: 100px;
+      height: 100px;
+      margin: 20px 20px 20px 16px;
+      border: none;
+      display: inline-block;
+      background-color: lime;
+    }
+  </style>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="0" height="0">
+    <defs>
+	  <filter id="filter" primitiveUnits="userSpaceOnUse">
+		<feMorphology in="SourceGraphic" operator="dilate" radius="10"/>
+	  </filter>
+	</defs>
+  </svg>
+  <div style="-webkit-filter: url('#filter'); filter: url('#filter');"></div>
+</body>
+</html>

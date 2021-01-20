@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test import from javascript URL.');
+
+// Module will be executed asynchronously.
+window.jsTestIsAsync = true;
+</script>
+<script>
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+<a id="target" href="javascript:void((import(`./resources/module-src-simple.js`)).then(() => finishJSTest()))">MODULE</a>
+<script type="module">
+debug('Module is not executed yet.');
+let anchor = document.getElementById('target');
+anchor.dispatchEvent(new MouseEvent('click'));
+</script>
+</body>
+</html>

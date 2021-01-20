@@ -1,0 +1,24 @@
+{
+    "Description": [
+        "Copyright 2018 The ANGLE Project Authors. All rights reserved.",
+        "Use of this source code is governed by a BSD-style license that can be",
+        "found in the LICENSE file.",
+        "",
+        "ConvertVertex.comp.json: Build parameters for ConvertVertex.comp.",
+        "",
+        "Notes:",
+        " - Optimized ConvertVertex shaders crash old AMD drivers.  Optimization is tentatively",
+        "   disabled until ANGLE try bots are upgraded.  http://anglebug.com/4720"
+    ],
+    "Conversion": [
+        [ "SintToSint", "-Od" ],
+        [ "UintToUint", "-Od" ],
+        [ "SintToFloat", "-Od" ],
+        [ "UintToFloat", "-Od" ],
+        [ "SnormToFloat", "-Od" ],
+        [ "UnormToFloat", "-Od" ],
+        [ "FixedToFloat", "-Od" ],
+        [ "FloatToFloat", "-Od" ],
+        [ "FloatToHalf", "-Od" ]
+    ]
+}

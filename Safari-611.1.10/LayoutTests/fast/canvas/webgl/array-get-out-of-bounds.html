@@ -1,0 +1,37 @@
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+
+description("Verifies that calling the indexing operator on WebGLArrays with out-of-range indices returns undefined.");
+
+debug('Regression test for <a href="https://bugs.webkit.org/show_bug.cgi?id=38039">https://bugs.webkit.org/show_bug.cgi?id=38039</a>');
+
+// Global scope so shouldThrow can see it
+var webGLArray;
+
+function testGetWithOutOfRangeIndices(typeName) {
+    var type = window[typeName];
+    webGLArray = new type([2, 3]);
+    shouldBeUndefined("webGLArray[2]");
+    shouldBeUndefined("webGLArray[-1]");
+    shouldBeUndefined("webGLArray[0x20000000]");
+}
+
+testGetWithOutOfRangeIndices("Int8Array");
+testGetWithOutOfRangeIndices("Uint8Array");
+testGetWithOutOfRangeIndices("Int16Array");
+testGetWithOutOfRangeIndices("Uint16Array");
+testGetWithOutOfRangeIndices("Int32Array");
+testGetWithOutOfRangeIndices("Uint32Array");
+testGetWithOutOfRangeIndices("Float32Array");
+
+</script>
+</body>
+</html>

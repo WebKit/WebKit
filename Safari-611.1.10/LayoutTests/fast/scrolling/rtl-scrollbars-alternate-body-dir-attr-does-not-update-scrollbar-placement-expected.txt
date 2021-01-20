@@ -1,0 +1,6 @@
+ACTION : Drag the outermost frame LTR scrollbar.
+PASS scroller.scrollTop is not 0
+ACTION : Flip 'dir' from 'rtl' to 'ltr'.
+ACTION : Drag the outermost frame RTL scrollbar.
+PASS scroller.scrollTop is not 0
+

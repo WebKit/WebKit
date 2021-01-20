@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="img-src 'none'; script-src 'unsafe-inline'">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p>Tests that a HTML image element, in a user agent shadow tree, is allowed to load an image resource that has been temporarily moved when the page has CSP policy: <code>img-src 'none'</code>.</p>
+<div id="shadow-host"></div>
+<pre id="console"></pre>
+<script>
+function log(message)
+{
+    document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+}
+
+function runTest()
+{
+    if (!window.testRunner || !window.internals)
+        return;
+
+    var userAgentShadowRoot = internals.ensureUserAgentShadowRoot(document.getElementById("shadow-host"));
+    var image = new Image;
+    userAgentShadowRoot.appendChild(image);
+
+    image.onload = function () {
+        log("PASS image did load.");
+        testRunner.notifyDone();
+    }
+    image.onerror = function () {
+        log("FAIL image did not load.");
+        testRunner.notifyDone();
+    }
+    // HTTP 307 temporary redirect to <http://127.0.0.1:8000/security/resources/abe.png>.
+    image.src = "http://localhost:8000/resources/redirect.php?code=307&url=/security/resources/abe.png";
+}
+
+runTest();
+</script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style type="text/css" media="screen">
+    body {
+      margin: 0;
+    }
+
+    #box {
+      position: absolute;
+      left: 0px;
+      top: 100px;
+      height: 100px;
+      width: 100px;
+      margin: 0;
+      background-color: red;
+      -webkit-transform: translate(-2000px, 0px);
+      -webkit-animation-duration: 1s;
+      -webkit-animation-direction: normal;
+      -webkit-animation-timing-function: linear;
+      -webkit-animation-name: "anim";
+    }
+    @-webkit-keyframes "anim" {
+        0% { -webkit-transform: translate(100px, 0px); }
+      100% { -webkit-transform: translate(100px, 0px); }
+    }
+    #result {
+      color: white; /* hide from pixel results */
+    }
+  </style>
+  <script src="resources/animation-test-helpers.js" type="text/javascript"></script>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+        window.testRunner.dumpAsText(true);
+    }
+
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      ["anim",  0.5, "box", "webkitTransform", [1, 0, 0, 1, 100, 0], 0.002],
+    ];
+
+    const doPixelTest = true;
+    const disablePauseAnimationAPI = false;
+    runAnimationTest(expectedValues, null, null, disablePauseAnimationAPI, doPixelTest);
+  </script>
+</head>
+<body>
+
+<!-- This test checks that a compositing layer is rendered if the layer is originally transformed off the viewport. You should see red boxes. -->
+<div id="box"></div>
+<div id="result"></div>
+
+</body>
+</html>

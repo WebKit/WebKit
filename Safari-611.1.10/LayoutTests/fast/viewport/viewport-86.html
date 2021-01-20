@@ -1,0 +1,13 @@
+<head>
+    <title>.7 is a valid initial-scale</title>
+    <meta name="viewport" content="initial-scale=.7">
+    <script>
+        function test() {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                alert(internals.configurationForViewport(1, 320, 480, 320, 352));
+            }
+        }
+    </script>
+</head>
+<body onload="test();">

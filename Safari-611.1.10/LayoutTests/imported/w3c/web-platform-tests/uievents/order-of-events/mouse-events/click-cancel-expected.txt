@@ -1,0 +1,5 @@
+Check me!
+Button
+
+PASS Default action is canceled if the click event is canceled.
+

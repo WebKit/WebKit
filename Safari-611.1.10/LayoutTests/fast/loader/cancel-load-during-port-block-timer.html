@@ -1,0 +1,14 @@
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        testRunner.setCanOpenWindows();
+        testRunner.setCloseRemainingWindowsWhenComplete();
+    }
+
+    window.open("http://127.0.0.1:22").document.write('');
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+</script>
+If this does crash, the test has passed.

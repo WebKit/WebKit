@@ -1,0 +1,9 @@
+
+PASS MediaRecorder will stop recording and fire a stop event when all tracks are ended
+PASS MediaRecorder will stop recording and fire a stop event when stop() is called
+PASS MediaRecorder will not fire an exception when stopped after creation
+PASS MediaRecorder will not fire an exception when stopped after having just been stopped
+PASS MediaRecorder will not fire an exception when stopped after having just been spontaneously stopped
+PASS MediaRecorder will fire start event even if stopped synchronously
+PASS MediaRecorder will fire start event even if a track is removed synchronously
+

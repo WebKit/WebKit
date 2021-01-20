@@ -1,0 +1,126 @@
+<html>
+<head>
+    <style type="text/css">
+        .pass { color: green; }
+        .fail { color: red; }
+    </style>
+    <style type="text/css">
+        .foo { color: black; }
+        @media screen {
+            .bar { color: blue; }
+        }
+        </style>
+    <script>
+        function printOut(msg) {
+            var console = document.getElementById("console");
+            var span = document.createElement('span');
+            span.innerHTML = msg + '<br>';
+            console.appendChild(span);
+        }
+
+        function resultStringifier(result)
+        {
+            if (result === "")
+                return "<b>the empty string</b>";
+            else if (result === undefined)
+                return "<b>undefined</b>";
+            else if (result === null)
+                return "<b>null</b>";
+            return "the string '" + result + "'";
+        }
+
+        function nullTestElementAttribute(elementType, element, attr, expected)
+        {
+            element[attr] = null;
+
+            var result;
+            if (element[attr] === expected)
+                result = "<span class='pass'>TEST SUCCEEDED:</span> The value was " + resultStringifier(expected) + ".";
+            else
+                result = "<span class='fail'>TEST FAILED:</span> The value should have been " + resultStringifier(expected) + " but was " + resultStringifier(element[attr]) + ".";
+
+            result += " [tested " + elementType + "." + attr + "]";
+            printOut(result);
+        }
+
+        function runTests() {
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            var rules = document.getElementsByTagName('style')[1].sheet.cssRules;
+
+            var rule = rules.item(0);            
+            var style = rule.style;
+            var value = style.getPropertyCSSValue('color');
+            var mediaList = rules.item(1).media;
+
+
+            var listing = [
+                {
+                    type: 'CSSRule',
+                    elementToUse: rule,
+                    attributes: [
+                         // for now, setting cssText does not doing anything. When it gets implemented, the expectedNull
+                         // should become the empty string. 
+                        {name: 'cssText', expectedNull: '.foo { color: black; }'}
+                    ]
+                },
+                {
+                    type: 'CSSStyleRule',
+                    elementToUse: rule,
+                    attributes: [
+                         // for now, setting selectorText does not doing anything. When it gets implemented, the expectedNull
+                         // should become the empty string. 
+                        {name: 'selectorText', expectedNull: '.foo'}
+                    ]
+                },
+                {
+                    type: 'CSSStyleDeclaration',
+                    elementToUse: style,
+                    attributes: [
+                        // cssText detects syntax errors, such as JS null, and sets the value to the empty string.
+                        {name: 'cssText', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'CSSValue',
+                    elementToUse: value,
+                    attributes: [
+                        // for now, setting cssText does not doing anything. When it gets implemented, the expectedNull
+                        // should become the empty string. 
+                        {name: 'cssText', expectedNull: 'black'}
+                    ]
+                },
+                {
+                    type: 'MediaList',
+                    elementToUse: mediaList,
+                    attributes: [
+                        {name: 'mediaText', expectedNull: ''}
+                    ]
+                }
+                // ,{
+                //     type: 'PageRule',
+                //     elementToUse: mediaList,
+                //     attributes: [
+                //         {name: 'cssText', expectedNull: ''}
+                //     ]
+                // }
+            ];
+            
+            for (element in listing) {
+                var type = listing[element].type;
+                var elementToUse = listing[element].elementToUse;
+                var attrs = listing[element].attributes;
+                for (attr in attrs) {
+                    nullTestElementAttribute(type, elementToUse, attrs[attr].name, attrs[attr].expectedNull);
+                }
+                printOut('');
+            }
+        }
+    </script>
+</head>
+<body onload="runTests()">
+    <p>This test setting various attributes of a CSSOM elements to JavaScript null.</p>
+    <div id="console"></div>
+</body>
+</html>

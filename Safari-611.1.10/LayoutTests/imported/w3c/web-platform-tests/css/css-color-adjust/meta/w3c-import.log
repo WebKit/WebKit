@@ -1,0 +1,27 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/meta/meta-color-scheme-attribute-changes.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/meta/meta-color-scheme-empty-content-value.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/meta/meta-color-scheme-first-valid-applies.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/meta/meta-color-scheme-insert.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/meta/meta-color-scheme-no-content-value.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/meta/meta-color-scheme-presentational-hint.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/meta/meta-color-scheme-remove-head.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/meta/meta-color-scheme-remove.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/meta/meta-color-scheme-single-value-in-body.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/meta/meta-color-scheme-single-value-in-head.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/meta/meta-color-scheme-single-value-in-shadow-tree.html

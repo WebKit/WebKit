@@ -1,0 +1,47 @@
+This test checks that using the typeof operator on a JavaScript value and comparing it to a constant string works as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS isUndefined(undefined) is true
+PASS isUndefined(1) is false
+PASS isUndefinedStrict(undefined) is true
+PASS isUndefinedStrict(1) is false
+PASS isBoolean(true) is true
+PASS isBoolean(false) is true
+PASS isBoolean(1) is false
+PASS isBooleanStrict(true) is true
+PASS isBooleanStrict(false) is true
+PASS isBooleanStrict(1) is false
+PASS isNumber(1) is true
+PASS isNumber(undefined) is false
+PASS isNumberStrict(1) is true
+PASS isNumberStrict(undefined) is false
+PASS isString('string') is true
+PASS isString(1) is false
+PASS isStringStrict('string') is true
+PASS isStringStrict(1) is false
+PASS isObject({ }) is true
+PASS isObject(1) is false
+PASS isObjectStrict({ }) is true
+PASS isObjectStrict(1) is false
+PASS isFunction(function () { }) is true
+PASS isFunction(1) is false
+PASS isFunctionStrict(function () { }) is true
+PASS isFunctionStrict(1) is false
+PASS complexIsUndefinedTest() is 'PASS'
+PASS complexIsBooleanTest() is 'PASS'
+PASS complexIsNumberTest() is 'PASS'
+PASS complexIsStringTest() is 'PASS'
+PASS complexIsObjectTest() is 'PASS'
+PASS complexIsFunctionTest() is 'PASS'
+PASS complexIsUndefinedStrictTest() is 'PASS'
+PASS complexIsBooleanStrictTest() is 'PASS'
+PASS complexIsNumberStrictTest() is 'PASS'
+PASS complexIsStringStrictTest() is 'PASS'
+PASS complexIsObjectStrictTest() is 'PASS'
+PASS complexIsFunctionStrictTest() is 'PASS'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,93 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # products: array of Bugzilla::Product objects 
+  #
+  # classification: Bugzilla::Classification object; If classifications
+  #                         are enabled, then this is 
+  #                         the currently selected classification
+  # showbugcounts: boolean; true if bug counts should be included in the table
+  #%]
+
+[% IF classification %]
+  [% classification_url_part = BLOCK %]&amp;classification=
+    [%- classification.name FILTER uri %]
+  [%- END %]
+  [% classification_title = BLOCK %] 
+    in classification '[% classification.name FILTER html %]'
+  [% END %]
+[% END %]
+
+[% PROCESS global/header.html.tmpl
+  title = "Select product $classification_title"
+  style_urls = ['skins/standard/admin.css']
+%]
+
+[% columns = [
+     {
+       name => "name"
+       heading => "Edit product..."
+       contentlink => 'editproducts.cgi?action=edit&amp;product=%%name%%'
+     },
+     {
+       name => "description"
+       heading => "Description"
+       allow_html_content => 1
+     },
+     {
+       name => "is_active"
+       heading => "Open For New $terms.Bugs"
+       yesno_field => 1
+     },
+     {
+       name => "allows_unconfirmed"
+       heading => "Allow " _ display_value('bug_status', 'UNCONFIRMED') _
+                       " " _ terms.Bugs
+       yesno_field => 1
+     },
+] %]
+
+[% IF showbugcounts %]
+
+  [% columns.push({
+       name => "bug_count"
+       heading => "$terms.Bug Count"
+       class => 'right'
+       contentlink => 'buglist.cgi?product=%%name%%'
+     })
+  %]
+
+[% END %]
+
+[% columns.push({
+       heading => "Action"
+       content => "Delete"
+       contentlink => 'editproducts.cgi?action=del&amp;product=%%name%%'
+     })
+%]
+
+[% Hook.process('before_table') %]
+
+[% PROCESS admin/table.html.tmpl
+     columns = columns
+     data = products
+%]
+
+[% IF !showbugcounts %]
+
+  <p><a href="editproducts.cgi?showbugcounts=1[% classification_url_part %]">
+      Redisplay table with [% terms.bug %] counts (slower)</a></p>
+
+[% END %]
+
+[% PROCESS admin/products/footer.html.tmpl
+    no_edit_other_products_link = 1
+ %]
+
+[% PROCESS global/footer.html.tmpl %]

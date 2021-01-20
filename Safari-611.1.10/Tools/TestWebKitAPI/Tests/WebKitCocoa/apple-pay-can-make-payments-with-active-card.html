@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<body>
+<script>
+    internals.mockPaymentCoordinator.supportsUnrestrictedApplePay = false;
+    internals.mockPaymentCoordinator.setCanMakePaymentsWithActiveCard(window.location.search === "?false" ? false : true);
+    ApplePaySession.canMakePaymentsWithActiveCard("").then(() => {
+        window.webkit.messageHandlers.testApplePay.postMessage("done");
+    });
+</script>

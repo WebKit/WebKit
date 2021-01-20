@@ -1,0 +1,16 @@
+<html>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script type="text/javascript">
+        description("This test verifies that the namespace on a node gets serialized if present even if the node is not in the DOM tree.");
+
+        var s = new XMLSerializer();
+        var node = document.createElementNS("http://example.com/", "test")
+        shouldBeEqualToString("s.serializeToString(node).replace(/\"/g,\"'\")", "<test xmlns='http://example.com/'/>");
+
+        var doc = document.implementation.createDocument("", "", null);
+        doc.appendChild(document.createElementNS("http://example.com/", "test"))
+        shouldBeEqualToString("s.serializeToString(doc).replace(/\"/g,\"'\")", "<test xmlns='http://example.com/'/>");
+
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</html>

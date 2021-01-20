@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+      var source;
+      var request;
+
+      function playVideo()
+      {
+          document.getElementById('test-video').play();
+          request = new XMLHttpRequest();
+          request.responseType = 'arraybuffer';
+          request.open('GET', 'test-mse.mp4', true);
+          request.addEventListener('load', load);
+          request.send();
+      }
+
+      function load(event)
+      {
+          source = new MediaSource();
+          source.addEventListener('sourceopen', sourceopen);
+          var video = document.getElementById('test-video');
+          video.src = URL.createObjectURL(source);
+      }
+
+      function sourceopen(event)
+      {
+          var sourceBuffer = source.addSourceBuffer('video/mp4;codecs="avc1.4D4001,mp4a.40.2"');
+          sourceBuffer.appendBuffer(request.response);
+      }
+  </script>
+</head>
+<body>
+    <p>
+        <video id="test-video" controls></video>
+    </p>
+    <p>
+        <button onclick="playVideo()">Play video</button>
+    </p>
+</body>
+</html>

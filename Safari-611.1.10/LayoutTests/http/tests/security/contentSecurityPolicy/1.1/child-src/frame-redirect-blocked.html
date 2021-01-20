@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="child-src http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<p>This tests that the Content Security Policy of the page blocks an &lt;iframe&gt; from loading a document of a different origin through a redirect. This test PASSED if there is no JavaScript alert.</p>
+<iframe src="http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php?url=http://localhost:8000/security/contentSecurityPolicy/resources/alert-fail.html"></iframe>
+</body>
+</html>

@@ -1,0 +1,18 @@
+Summary
+some detail
+
+This tests that summary and detail elements have correct role description.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS summary.role is 'AXRole: AXButton'
+PASS details.role is 'AXRole: AXGroup'
+PASS summary.subrole is 'AXSubrole: AXSummary'
+PASS details.subrole is 'AXSubrole: AXDetails'
+PASS summary.roleDescription is 'AXRoleDescription: summary'
+PASS details.roleDescription is 'AXRoleDescription: details'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

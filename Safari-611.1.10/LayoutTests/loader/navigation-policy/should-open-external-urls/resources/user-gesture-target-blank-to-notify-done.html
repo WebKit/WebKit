@@ -1,0 +1,28 @@
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
+}
+
+function loaded()
+{
+    if (!window.eventSender)
+        return;
+
+    var a = document.getElementById("a");
+    var iframe = window.parent.document.getElementsByTagName("iframe")[0];
+
+    if (iframe)
+        eventSender.mouseMoveTo(a.offsetLeft + iframe.offsetLeft + 2, a.offsetTop + iframe.offsetTop + 2);
+    else
+        eventSender.mouseMoveTo(a.offsetLeft + 2, a.offsetTop + 2);
+
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+</script>
+<body onload="loaded();">
+<a id="a" href="notify-done.html" target="_blank">Click to open link in new window.</a>
+</body>

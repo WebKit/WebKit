@@ -1,0 +1,49 @@
+
+Unloaded video elements should not be considered main content.
+EXPECTED (internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager") == 'null') OK
+
+Large, autoplay videos with video and audio should be considered main content.
+RUN(video = createVideo({autoplay: true, type: "audio+video", size: "large"}))
+EVENT(playing)
+EXPECTED (internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager") == '[object HTMLVideoElement]') OK
+
+Small, autoplay videos with video and audio should be considered main content.
+RUN(video = createVideo({autoplay: true, type: "audio+video", size: "small"}))
+EVENT(playing)
+EXPECTED (internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager") == 'null') OK
+
+Muted autoplay videos should not be considered main content.
+RUN(video = createVideo({autoplay: true, muted: true, type: "audio+video", size: "large"}))
+EVENT(playing)
+EXPECTED (internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager") == 'null') OK
+
+Video-only autoplay videos should not be considered main content.
+RUN(video = createVideo({autoplay: true, type: "video", size: "large"}))
+EVENT(playing)
+EXPECTED (internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager") == 'null') OK
+
+Non-playing videos should not be considered main content.
+RUN(video = createVideo({type: "audio+video", size: "large"}))
+EVENT(canplaythrough)
+EXPECTED (internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager") == 'null') OK
+
+Large, autoplay videos outside fullscreen element should not be considered main content
+RUN(video = createVideo({autoplay: true, muted: true, type: "audio+video", size: "large"}))
+EVENT(playing)
+RUN(document.querySelector("#fullscreen").webkitRequestFullscreen())
+EVENT(webkitfullscreenchange)
+EXPECTED (internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager") == 'null') OK
+RUN(document.webkitExitFullscreen())
+EVENT(webkitfullscreenchange)
+
+Large, autoplay videos inside fullscreen element should be considered main content
+RUN(video = createVideo({autoplay: true, type: "audio+video", size: "large"}))
+EVENT(playing)
+RUN(document.querySelector("#target").webkitRequestFullscreen())
+EVENT(webkitfullscreenchange)
+EXPECTED (internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager") == '[object HTMLVideoElement]') OK
+RUN(document.webkitExitFullscreen())
+EVENT(webkitfullscreenchange)
+
+END OF TEST
+

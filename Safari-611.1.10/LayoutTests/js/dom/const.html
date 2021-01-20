@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Const test</title>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="bodyId">
+
+<script>
+description("This test checks that const variables can shadow global object's named properties.");
+</script>
+
+<script>
+const bodyId = 3;
+</script>
+
+<script>
+shouldBe("bodyId", "3");
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

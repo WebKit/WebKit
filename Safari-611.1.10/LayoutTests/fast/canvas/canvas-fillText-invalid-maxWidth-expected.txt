@@ -1,0 +1,11 @@
+Series of tests to ensure that fillText() does not display any text when maxWidth is invalid.
+
+On success, you will see no "FAIL" messages, followed by "TEST COMPLETE".
+
+
+Test canvas.fillText() with maxWidth zero
+Test canvas.fillText() with maxWidth -1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

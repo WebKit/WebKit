@@ -1,0 +1,14 @@
+Test proper tracking of script NPObjects
+
+Test 1: Ensure that script NPObjects are properly tracked (i.e. added to
+        the live objects map in V8).
+
+Test 2: Test tracking of derived NPObjects by invoking a method on a
+        script object and passing it an internally created NPObject.
+
+SUCCESS
+
+
+
+
+

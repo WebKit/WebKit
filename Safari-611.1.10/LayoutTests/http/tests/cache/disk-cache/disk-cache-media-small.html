@@ -1,0 +1,52 @@
+<body>
+<div id=logdiv></div>
+<script>
+if (window.internals) {
+    internals.settings.setVideoPlaybackRequiresUserGesture(false);
+    internals.settings.setRequiresUserGestureToLoadVideo(false);
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const random = Math.floor(Math.random()*10000000000);
+
+function loadTestMedia() {
+    return new Promise((resolve) => {
+        const media = document.createElement("video");
+        media.src = `/resources/test.mp4?${random}`;
+        media.oncanplaythrough = () => resolve(media);
+        media.autoplay = true;
+        document.body.appendChild(media);
+    });
+}
+
+function logResponses(media, expectedSource)
+{
+    let pass = true;
+    const ranges = internals.mediaResponseContentRanges(media);
+    const sources = internals.mediaResponseSources(media);
+    for (i = 0; i < ranges.length; ++i) {
+        if (sources[i] != expectedSource) {
+            logdiv.innerHTML += `FAIL: Range ${ranges[i]} from ${sources[i]} expected ${expectedSource}<br>`;
+            pass = false;
+        }
+    }
+    if (pass)
+        logdiv.innerHTML += `PASS: All response ranges from: ${expectedSource}<br>`;
+}
+
+async function test() {
+    logdiv.innerHTML += "First load<br>";
+    logResponses(await loadTestMedia(), "Network");
+
+    logdiv.innerHTML += "Second Load<br>";
+    logResponses(await loadTestMedia(), "Network");
+
+    testRunner.notifyDone();
+}
+
+test();
+</script>

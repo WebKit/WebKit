@@ -1,0 +1,17 @@
+<head>
+<script>
+function runTest() {
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+        
+    var textAlign = window.getComputedStyle(document.getElementById("div")).textAlign;
+    if (textAlign == "start")
+        document.body.innerText = "SUCCESS";
+    else
+        document.body.innerText = "FAILURE.  text-align was " + textAlign + ", it should have been start";
+}
+</script>
+</head>
+<body onLoad="runTest();">
+<div id="div" style="direction:rtl;">test</div>
+</body>

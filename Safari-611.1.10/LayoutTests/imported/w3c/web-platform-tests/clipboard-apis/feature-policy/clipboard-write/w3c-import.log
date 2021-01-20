@@ -1,0 +1,26 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-disabled-by-feature-policy.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-disabled-by-feature-policy.tentative.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-enabled-by-feature-policy-attribute-cross-origin-tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-enabled-by-feature-policy-attribute-tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-enabled-by-feature-policy-cross-origin-tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-enabled-by-feature-policy-cross-origin.tentative.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-enabled-by-feature-policy.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-enabled-by-feature-policy.tentative.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-enabled-on-self-origin-by-feature-policy.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-write/clipboard-write-enabled-on-self-origin-by-feature-policy.tentative.https.sub.html.headers

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests li inside ul with word-break: break-word.</title>
+<style>
+.container {
+    display: inline-block;
+    border: 1px solid green; 
+    font-size: 20px; 
+    width: 80px;
+}
+</style>
+</head>
+<body> 
+<div class=container>
+    <div><li>foobarfoo bar</li></div>
+    <ul><li>foob arfo obar</li></ul>
+</div>
+<div class=container>
+    <div><li>foobar-foobar</li></div>
+    <ul><li>foob ar-foob ar</li></ul>
+</div>
+<br>
+<div class=container>
+    <div><li>foobarfoo bar</li></div>
+    <ul><li>foob arfo o bar</li></ul>
+</div>
+<div class=container>
+    <div style="width: 40px"><li>foob arfo obar</li></div>
+    <ul><li style="width: 20px">fo ob ar fo ob ar</li></ul>
+</div>
+<br>
+<div class=container>
+    <div><li>foobarfoo bar</li></div>
+    <ul style="list-style: inside"><li>foob arfo obar</li></ul>
+</div>
+<div class=container>
+    <div><li>foobarfoo bar</li></div>
+    <ul style="list-style: none"><li>foob arfo obar</li></ul>
+</div>
+<body>
+</html>

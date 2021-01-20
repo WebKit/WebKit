@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests simple text with complex hyphen.</title>
+<style>
+body {
+    font-variant-caps: unicase;
+    -webkit-hyphens: auto;
+}
+</style>
+</head>
+<body>
+<br>
+<div>Pass if no crash.</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.execCommand("selectAll", false);
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.setAllowStorageQuotaIncrease(false);
+
+description("This test makes sure that storage of indexedDB  and Cache API do not grow unboundedly.");
+
+window.caches.open("test").then(cache => {
+    return cache.put(new Request("/test"), new Response(new Uint8Array(200 * 1024)));
+}).then(async() => {
+    // Let's terminate the network process so that all the opened quota users are gone for IDB quota check.
+    if (window.testRunner)
+        testRunner.terminateNetworkProcess();
+    while (true) {
+        try {
+            await fetch(".");
+            break;
+        } catch (e) { }
+    }
+    indexedDBTest(prepareDatabase, onOpenSuccess, {'suffix': '-1'});
+}).catch(e => {
+    testFailed("Cache API store operation failed: " + e);
+    finishJSTest();
+});
+
+function prepareDatabase(event)
+{
+    evalAndLog("db = event.target.result");
+    evalAndLog("store = db.createObjectStore('store')");
+}
+
+// Quota for test is 400ko, but IDB is eating some of it when initializing files.
+// Let's make sure that 200ko is fine but 300ko after 200ko is not fine.
+async function onOpenSuccess(event)
+{
+    evalAndLog("db = event.target.result");
+    evalAndLog("store = db.transaction('store', 'readwrite').objectStore('store')");
+    evalAndLog("request = store.add(new Uint8Array(300 * 1024), 'key')");
+    request.onerror = function(event) {
+        shouldBeTrue("'error' in request");
+        shouldBe("request.error.code", "DOMException.QUOTA_EXCEEDED_ERR");
+        shouldBeEqualToString("request.error.name", "QuotaExceededError");
+        finishJSTest();
+    }
+
+    request.onsuccess = function(event) {
+        testFailed("Add operation should fail because storage limit is reached, but succeeded.");
+        finishJSTest();
+    }
+}</script>
+</body>
+</html>

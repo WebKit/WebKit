@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/inspector-test.js"></script>
+<script>
+function triggerStylesheetResource() {
+    let link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "resources/stylesheet-with-sourcemap.css";
+    document.head.appendChild(link);
+}
+
+function triggerScriptResource() {
+    let script = document.createElement("script");
+    script.src = "resources/script-with-sourcemap.js";
+    document.body.appendChild(script);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.SourceMap");
+
+    suite.addTestCase({
+        name: "Network.SourceMap.Stylesheet",
+        description: "Ensure a source map loads for a stylesheet resource.",
+        async test(resolve, reject) {
+            InspectorTest.evaluateInPage(`triggerStylesheetResource()`);
+            let resourceEvent = await WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+            let resource = resourceEvent.data.resource;
+            InspectorTest.expectThat(resource.url.endsWith("stylesheet-with-sourcemap.css"), "Stylesheet Resource should be created.");
+            let sourceMapEvent = await resource.awaitEvent(WI.SourceCode.Event.SourceMapAdded);
+            InspectorTest.expectEqual(resource.sourceMaps.length, 1, "Resource should have loaded 1 SourceMap.");
+            InspectorTest.expectThat(resource.sourceMaps[0] instanceof WI.SourceMap, "SourceMap should be a WI.SourceMap instance.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Network.SourceMap.Script",
+        description: "Ensure a source map loads for a script resource.",
+        async test(resolve, reject) {
+            InspectorTest.evaluateInPage(`triggerScriptResource()`);
+            let resourceEvent = await WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+            let resource = resourceEvent.data.resource;
+            InspectorTest.expectThat(resource.url.endsWith("script-with-sourcemap.js"), "Script Resource should be created.");
+            let sourceMapEvent = await resource.awaitEvent(WI.SourceCode.Event.SourceMapAdded);
+            InspectorTest.expectEqual(resource.sourceMaps.length, 1, "Resource should have loaded 1 SourceMap.");
+            InspectorTest.expectThat(resource.sourceMaps[0] instanceof WI.SourceMap, "SourceMap should be a WI.SourceMap instance.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Ensure a source map loads for resources with sourceMappingURLs.</p>
+</body>
+</html>

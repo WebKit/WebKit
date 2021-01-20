@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Test that the toString() stringifier has the right attributes");
+
+function testStringifier(object, isUnforgeable)
+{
+    unforgeable = isUnforgeable;
+    descriptor = Object.getOwnPropertyDescriptor(unforgeable ? object : object.__proto__, "toString");
+    shouldBeType("descriptor.value", "Function");
+    shouldBe("descriptor.writable", "!unforgeable");
+    shouldBeTrue("descriptor.enumerable");
+    shouldBe("descriptor.configurable", "!unforgeable");
+}
+
+debug("* HTMLAnchorElement");
+var anchor = document.createElement("a");
+testStringifier(anchor, false);
+
+debug("");
+debug("* HTMLAreaElement");
+var area = document.createElement("area");
+testStringifier(area, false);
+
+debug("");
+debug("* Location");
+testStringifier(window.location, true);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

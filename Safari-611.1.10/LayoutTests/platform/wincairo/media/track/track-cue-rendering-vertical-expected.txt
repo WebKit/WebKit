@@ -1,0 +1,64 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x251
+  RenderBlock {HTML} at (0,0) size 800x251
+    RenderBody {BODY} at (8,8) size 784x235
+      RenderBlock (anonymous) at (0,0) size 784x155
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,155) size 784x80
+        RenderText {#text} at (0,0) size 349x19
+          text run at (0,0) width 349: "Rendering vertical line-positioned cues with Japanese text."
+        RenderBR {BR} at (349,0) size 0x19
+        RenderText {#text} at (0,20) size 151x19
+          text run at (0,20) width 151: "EVENT(canplaythrough)"
+        RenderBR {BR} at (151,20) size 0x19
+        RenderText {#text} at (0,40) size 103x19
+          text run at (0,40) width 103: "EVENT(seeked)"
+        RenderBR {BR} at (103,40) size 0x19
+        RenderText {#text} at (0,60) size 97x19
+          text run at (0,60) width 97: "END OF TEST"
+        RenderBR {BR} at (97,60) size 0x19
+layer at (8,8) size 200x150
+  RenderVideo {VIDEO} at (0,0) size 200x150
+layer at (8,8) size 200x150
+  RenderFlexibleBox {DIV} at (0,0) size 200x150
+layer at (8,8) size 200x150
+  RenderBlock (relative positioned) {DIV} at (0,0) size 200x150 [color=#FFFFFF]
+layer at (8,8) size 10x150
+  RenderBlock (positioned) {DIV} at (0,0) size 10x150
+    RenderBlock {DIV} at (0,39) size 10x72
+      RenderInline {SPAN} at (0,0) size 10x71 [bgcolor=#000000CC]
+        RenderText {#text} at (0,0) size 10x71
+          text run at (0,0) width 71: "Cue 1: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
+layer at (18,8) size 10x150
+  RenderBlock (positioned) {DIV} at (10,0) size 10x150
+    RenderBlock {DIV} at (0,39) size 10x72
+      RenderInline {SPAN} at (0,0) size 10x71 [bgcolor=#000000CC]
+        RenderText {#text} at (0,0) size 10x71
+          text run at (0,0) width 71: "Cue 2: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
+layer at (168,8) size 10x150
+  RenderBlock (positioned) {DIV} at (160,0) size 10x150
+    RenderBlock {DIV} at (0,39) size 10x72
+      RenderInline {SPAN} at (0,0) size 10x71 [bgcolor=#000000CC]
+        RenderText {#text} at (0,0) size 10x71
+          text run at (0,0) width 71: "Cue 3: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
+layer at (158,8) size 10x150
+  RenderBlock (positioned) {DIV} at (150,0) size 10x150
+    RenderBlock {DIV} at (0,39) size 10x72
+      RenderInline {SPAN} at (0,0) size 10x71 [bgcolor=#000000CC]
+        RenderText {#text} at (0,0) size 10x71
+          text run at (0,0) width 71: "Cue 4: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
+layer at (198,8) size 10x150
+  RenderBlock (positioned) {DIV} at (190,0) size 10x150
+    RenderBlock {DIV} at (0,39) size 10x72
+      RenderInline {SPAN} at (0,0) size 10x71 [bgcolor=#000000CC]
+        RenderText {#text} at (0,0) size 10x71
+          text run at (0,0) width 71: "Cue 5: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
+layer at (188,8) size 10x150
+  RenderBlock (positioned) {DIV} at (180,0) size 10x150
+    RenderBlock {DIV} at (0,39) size 10x72
+      RenderInline {SPAN} at (0,0) size 10x71 [bgcolor=#000000CC]
+        RenderText {#text} at (0,0) size 10x71
+          text run at (0,0) width 71: "Cue 6: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
+layer at (8,148) size 200x10
+  RenderButton {BUTTON} at (0,140) size 200x10

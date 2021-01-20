@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<script>
+
+function canvasTest() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var worker = new Worker('non-existent-file');
+    var imageWidth = 1;
+    var imageHeight = 1;
+    var image = new ImageData( imageWidth, imageHeight);
+    var context = document.getElementById("canvas").getContext("2d");
+    worker.postMessage({data: image.data.buffer}, [image.data.buffer]);
+    context.putImageData(image, 0, 0);
+}
+</script>
+
+<body onload=canvasTest()>
+<div>Test passes if it does not crash.</div>
+<canvas id=canvas></canvas>
+</body>
+</html>

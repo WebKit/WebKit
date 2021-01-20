@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<style>
+  body {
+    transform: translateZ(0);
+  }
+  #container {
+    height: 300px;
+    width: 300px;
+    background-color: green;
+    transform: translateZ(0);
+  }
+
+  #parent {
+    position: absolute;
+    left: 400px;
+    width: 300px;
+    height: 300px;
+    background-color: green;
+    -webkit-transform-style: preserve-3d;
+  }
+  
+  #child {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    z-index: -2;
+    background-color: red;
+    transform: translateZ(0);
+  }
+</style>
+<body>
+<div id="container">
+  <div id="parent">
+    <div id="child"></div>
+  </div>
+</div>
+<script>
+if (window.testRunner)
+  testRunner.waitUntilDone();
+
+requestAnimationFrame(function() {
+  requestAnimationFrame(function() {
+    document.getElementById('parent').style.webkitTransformStyle = 'flat';
+    setTimeout(function() {
+      testRunner.notifyDone();
+    });
+  });
+});
+</script>
+</body>

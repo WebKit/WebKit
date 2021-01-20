@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+<meta http-equiv="Content-Security-Policy" content="script-src 'nonce-A' 'nonce-C'">
+<meta http-equiv="Content-Security-Policy" content="script-src 'nonce-B' 'nonce-C'">
+</head>
+<body>
+<p>Tests that an inline script is allowed to execute only if its nonce appears in all policies. This test PASSED if there are two console warnings and a JavaScript alert with message PASS. Otherwise, it FAILED.</p>
+<script type="module" nonce="A">alert("FAIL did execute first script")</script>
+<script type="module" nonce="B">alert("FAIL did execute second script")</script>
+<script type="module" nonce="C">
+alert("PASS");
+if (window.testRunner)
+    testRunner.notifyDone();
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+Blocked access to external URL http://www2.localhost:8800/xhr/resources/corsenabled.py?delay=2&code=200
+
+FAIL XMLHttpRequest: timeout event and cross-origin request assert_true: timeout event should fire expected true got false
+

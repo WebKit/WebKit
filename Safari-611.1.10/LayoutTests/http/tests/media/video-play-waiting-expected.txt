@@ -1,0 +1,12 @@
+
+Test that a waiting event is sent when media loading stalls after having sent 'canplay'.
+
+EVENT(durationchange)
+EVENT(loadedmetadata)
+EVENT(loadeddata)
+EVENT(canplay)
+RUN(video.play())
+EVENT(timeupdate)
+EVENT(waiting)
+END OF TEST
+

@@ -1,0 +1,21 @@
+Start
+Trying different ways to access a password protected resource from another origin. The UA already has login and password for this protection space.
+
+You should see several PASS messages followed by a DONE
+
+SCRIPT SRC='...' Should succeed, since authorization is sent for cross-origin subresource loads.
+PASS: Loaded, user test
+Cross-origin XMLHttpRequest (sync), testing stored authorization.
+PASS
+Cross-origin XMLHttpRequest (sync), testing cookies.
+PASS
+Cross-origin XMLHttpRequest (async), testing stored authorization.
+PASS
+Cross-origin XMLHttpRequest (async), testing cookies.
+PASS
+Cross-origin XMLHttpRequest (sync), testing authorization with explicitly provided credentials that should be ignored.
+PASS
+Cross-origin XMLHttpRequest (async), testing authorization with explicitly provided credentials that should be ignored.
+PASS
+DONE
+

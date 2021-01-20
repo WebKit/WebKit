@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<style id="target">
+#dummy {
+}
+#dummy {
+    text-decoration-thickness: auto;
+}
+#dummy {
+    text-decoration-thickness: from-font;
+}
+#dummy {
+    text-decoration-thickness: auto 37px;
+}
+#dummy {
+    text-decoration-thickness: garbage;
+}
+#dummy {
+    text-decoration-thickness: 37px;
+}
+#dummy {
+    text-decoration-thickness: 2em;
+}
+</style>
+</head>
+<body>
+<div id="test1"></div>
+<div id="test2" style="text-decoration-thickness: auto;"></div>
+<div id="test3" style="text-decoration-thickness: from-font;"></div>
+<div id="test4" style="text-decoration-thickness: auto 37px;"></div>
+<div id="test5" style="text-decoration-thickness: garbage;"></div>
+<div id="test6" style="text-decoration-thickness: 37px;"></div>
+<div id="test7" style="font-size: 100px; text-decoration-thickness: 2em;"></div>
+<div style="font-size: 20px; text-decoration-thickness: 2em;"><div id="test8" style="font-size: 100px;"></div></div>
+<script>
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test1')).getPropertyValue('text-decoration-thickness')", "auto");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test2')).getPropertyValue('text-decoration-thickness')", "auto");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test3')).getPropertyValue('text-decoration-thickness')", "from-font");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test4')).getPropertyValue('text-decoration-thickness')", "auto");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test5')).getPropertyValue('text-decoration-thickness')", "auto");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test6')).getPropertyValue('text-decoration-thickness')", "37px");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test7')).getPropertyValue('text-decoration-thickness')", "200px");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test8')).getPropertyValue('text-decoration-thickness')", "40px");
+shouldBeEqualToString("document.getElementById('target').sheet.cssRules[0].style.textDecorationThickness", "");
+shouldBeEqualToString("document.getElementById('target').sheet.cssRules[1].style.textDecorationThickness", "auto");
+shouldBeEqualToString("document.getElementById('target').sheet.cssRules[2].style.textDecorationThickness", "from-font");
+shouldBeEqualToString("document.getElementById('target').sheet.cssRules[3].style.textDecorationThickness", "");
+shouldBeEqualToString("document.getElementById('target').sheet.cssRules[4].style.textDecorationThickness", "");
+shouldBeEqualToString("document.getElementById('target').sheet.cssRules[5].style.textDecorationThickness", "37px");
+shouldBeEqualToString("document.getElementById('target').sheet.cssRules[6].style.textDecorationThickness", "2em");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

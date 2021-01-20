@@ -1,0 +1,7 @@
+Tests Audit.VERSION value.
+
+
+== Running test suite: Audit.VERSION
+-- Running test case: Audit.VERSION.MatchesFrontend
+PASS: The audit system version should match the frontend version.
+

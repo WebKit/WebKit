@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<style>
+.block {
+   background: grey;
+   margin: 5px;
+   padding: 5px 10px 10px 5px;
+   width: 200px;
+   writing-mode: vertical-lr;
+   flex-flow: row;
+   align-items: baseline;
+}
+.block > :nth-child(1) { font-size:48px; }
+.block > :nth-child(2) { font-size:64px; }
+.block > :nth-child(3) { font-size:96px; }
+.block > :nth-child(4) { font-size:128px; }
+.block > div {
+   display: inline-block;
+   border-width: 4px 2px 2px 4px;
+   border-style: solid;
+   padding: 6px 4px 4px 6px;
+   margin: 10px 4px 4px 10px;
+}
+</style>
+
+<p>Vertical-LR flexbox with 1x4 with parallel items.<br>Items should use 'alphabetic' as dominant baseline for self-baseline alignment.</p>
+<div class="block verticalLR"><div>A</div><div>A</div><div>A</div><div>A</div></div>

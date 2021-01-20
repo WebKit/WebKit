@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+This test makes sure that starting border after a newline inside a box-decoration-break span correctly influences line breaking.
+<div style="width: 200px; background: yellow; font: 20px Ahem; color: blue;">
+<span style="border-left: 160px solid black; -webkit-box-decoration-break: clone;">a</span><br>
+<span style="border-left: 160px solid black; -webkit-box-decoration-break: clone;">a</span><br>
+<span style="border-left: 160px solid black; -webkit-box-decoration-break: clone;">a</span>
+</div>
+</body>
+</html>

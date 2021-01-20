@@ -1,0 +1,13 @@
+This tests if media controls shows up and timeline is accordingly updated after playing the video.
+
+
+EVENT(canplaythrough)
+EXPECTED (timeLineValue() == '0') OK
+RUN(video.fastSeek(video.duration - 1))
+EVENT(seeked)
+RUN(video.play())
+EVENT(play)
+EVENT(pause)
+TEST(Math.floor(video.currentTime * 100) / 100 == timeLineValue()) OK
+END OF TEST
+

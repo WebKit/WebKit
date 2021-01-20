@@ -1,0 +1,4 @@
+
+Test for bug 32399 This tests that middle clicking on an image within a link doesn't start to scroll.
+
+Success! Div with overflow was not scrolled

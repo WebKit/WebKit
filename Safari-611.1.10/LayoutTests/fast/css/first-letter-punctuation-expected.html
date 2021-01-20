@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style type="text/css">
+            .bigGreenText
+            {
+                color: green;
+                font-size: 36px;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if all the T and surrounding punctuation are green.</p>
+        <div><span class="bigGreenText">(T)</span>est</div>
+        <div><span class="bigGreenText">&ldquo;T&rdquo;</span>est</div>
+        <div><span class="bigGreenText">&laquo;&nbsp;T&nbsp;&raquo;</span>est</div>
+        <div><span class="bigGreenText">&laquo;&nbsp;T&nbsp;&raquo;</span>&nbsp;&nbsp;&nbsp;&nbsp;est</div>
+        <div><span class="bigGreenText">&#x10100;T&#x10100;</span>est</div>
+    </body>
+</html>

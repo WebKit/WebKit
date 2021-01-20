@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>SendBeacon CSP checking on redirect</title>
+    <script src=/resources/testharness.js></script>
+    <script src=/resources/testharnessreport.js></script>
+  </head>
+  <body>
+    <script src="/common/utils.js"></script>
+    <script src="/common/get-host-info.sub.js"></script>
+    <script>
+var RESOURCES_DIR = "/WebKit/beacon/resources/";
+    let metaElement = document.createElement("meta");
+    metaElement.httpEquiv = "Content-Security-Policy";
+    metaElement.content = "connect-src 'self' " + get_host_info().HTTP_REMOTE_ORIGIN;
+    document.head.appendChild(metaElement);
+
+function pollResult(test, id) {
+  var checkUrl = RESOURCES_DIR + "beacon-preflight.py?cmd=get&id=" + id;
+
+  return new Promise(resolve => {
+    step_timeout(test.step_func(() => {
+      fetch(checkUrl).then(response => {
+        response.json().then(body => {
+          resolve(body);
+        });
+      });
+    }), 1000);
+  });
+}
+
+function testCORSPreflightRedirectSuccess(what) {
+  var testBase = get_host_info().HTTP_REMOTE_ORIGIN + RESOURCES_DIR;
+  var id = self.token();
+  var target = encodeURIComponent(testBase + "beacon-preflight.py?allowCors=1&cmd=put&id=" + id);
+
+  // 307 & 308 redirections are the only ones that maintain the POST method.
+  var testUrl = RESOURCES_DIR + "redirect.py?redirect_status=307&location=" + target;
+
+  promise_test(function(test) {
+    assert_true(navigator.sendBeacon(testUrl, what), "SendBeacon Succeeded");
+    return pollResult(test, id) .then(result => {
+      assert_equals(result['preflight'], 0, "Did not receive preflight")
+      assert_equals(result['beacon'], 1, "Received beacon")
+    });
+  }, "Redirect is allowed by CSP");
+}
+
+testCORSPreflightRedirectSuccess("123");
+    </script>
+  </body>
+</html>

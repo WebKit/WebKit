@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="width: 800px; height: 600px;">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+target_test({ width: "200px", height: "200px" }, (target, test) => {
+    document.body.addEventListener("pointerup", event => {
+        assert_equals(event.target, event.currentTarget, "The pointerup event was fired at the body and not a child element.");
+        test.done();
+    });
+    target.addEventListener("pointerdown", event => target.releasePointerCapture(event.pointerId));
+    target.style.touchAction = "none";
+
+    // Start the touch sequence over the target element, which will release pointer capture, then move off
+    // of it before releasing the touch, which should fire the pointerup event at the body, not the target.
+    const one = ui.finger();
+    ui.sequence([
+        one.begin({ x: 50, y: 50 }),
+        one.move({ x: 250, y: 250 }),
+        one.end()
+    ]);
+}, "Releasing pointer capture during a touch interaction redirects further pointer events to the hit-testing element.");
+
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+Tests that check that sloppy getters and setters on the global object don't coerce undefined to their this.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS this.__proto__ accessed succesfully and stayed frozen.
+PASS Object.prototype.valueOf.call(3); did not throw exception.
+PASS Object.prototype.valueOf.call(null); threw exception TypeError: null is not an object (evaluating 'Object.prototype.valueOf.call(null)').
+PASS Object.getOwnPropertyDescriptor(Object.prototype,'__proto__').get() did not throw exception.
+PASS Object.getOwnPropertyDescriptor(Object.prototype,'__proto__').set(['foo']) did not throw exception.
+PASS (0,Object.getOwnPropertyDescriptor(Object.prototype,'__proto__').get)() threw exception TypeError: undefined is not an object (evaluating '(0,Object.getOwnPropertyDescriptor(Object.prototype,'__proto__').get)()').
+PASS (0,Object.getOwnPropertyDescriptor(Object.prototype,'__proto__').set)(['foo']) threw exception TypeError: Object.prototype.__proto__ called on null or undefined.
+PASS top_level_sloppy_getter(); threw exception TypeError: undefined is not an object (evaluating 'top_level_sloppy_getter()').
+PASS top_level_sloppy_setter(['foo']); threw exception TypeError: Object.prototype.__proto__ called on null or undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

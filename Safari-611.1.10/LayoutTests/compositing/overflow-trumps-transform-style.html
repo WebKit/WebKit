@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .box {
+      height: 100px;
+      width: 100px;
+      margin: 10px;
+      background-color: blue;
+    }
+  </style>
+  <script>
+    if (window.testRunner)
+      testRunner.dumpAsText();
+
+    function dumpResults()
+    {
+      var results = document.getElementById('layers');
+      
+      // Check the computed value.
+      results.innerText = window.getComputedStyle(document.getElementById('box1')).webkitTransformStyle + '\n';
+      results.innerText += window.getComputedStyle(document.getElementById('box2')).webkitTransformStyle + '\n';
+      
+      if (window.testRunner)
+        results.innerText += window.internals.layerTreeAsText(document);
+    }
+    window.addEventListener('load', dumpResults, false);
+  </script>
+</head>
+<body>
+<div class="box" id="box1" style="-webkit-transform: translateZ(1px); -webkit-transform-style: preserve-3d"></div>
+<div class="box" id="box2" style="-webkit-transform: translateZ(1px); -webkit-transform-style: preserve-3d; overflow: hidden"></div>
+<pre id="layers">Layer tree goes here in DRT</pre>
+</body>
+</html>

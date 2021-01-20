@@ -1,0 +1,16 @@
+Verify that certain DOM properties are configurable
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Object.getOwnPropertyDescriptor(HTMLElement.prototype, "innerText").configurable is true
+PASS Object.getOwnPropertyDescriptor(window, "onhashchange").configurable is true
+PASS HTMLElement.prototype.__defineGetter__("innerText", function() { return "NO!" }); is undefined
+PASS window.__defineGetter__("onhashchange", function() { return "WebKit!" }); is undefined
+PASS HTMLElement.prototype.innerText is "NO!"
+PASS document.documentElement.innerText is "NO!"
+PASS window.onhashchange is "WebKit!"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

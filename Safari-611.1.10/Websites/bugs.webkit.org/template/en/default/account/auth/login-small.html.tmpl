@@ -1,0 +1,81 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# Use the current script name. If an empty name is returned,
+  # then we are accessing the home page. %]
+
+[% USE Bugzilla %]
+[% cgi = Bugzilla.cgi %]
+
+[% login_target = cgi.url("-relative" => 1, "-query" => 1) %]
+[% IF !login_target OR login_target.match("^token.cgi") %]
+ [% login_target = "index.cgi" %]
+[% END %]
+
+<li id="mini_login_container[% qs_suffix %]">
+  <span class="separator">| </span>
+  [% connector = "?" %]
+  [% IF cgi.request_method == "GET" AND cgi.query_string %]
+    [% connector = "&" %]
+  [% END %]
+  [% script_url = login_target _ connector _ "GoAheadAndLogIn=1" %]
+  <a id="login_link[% qs_suffix %]" href="[% script_url FILTER html %]"
+     onclick="return show_mini_login_form('[% qs_suffix %]')">Log In</a>
+
+  <form action="[% login_target FILTER html %]" method="POST"
+        class="mini_login bz_default_hidden"
+        id="mini_login[% qs_suffix FILTER html %]">
+    <input id="Bugzilla_login[% qs_suffix FILTER html %]" required
+           name="Bugzilla_login" class="bz_login"
+      [% IF login_not_email %]
+        placeholder="Login"
+      [% ELSE %]
+        type="email" placeholder="Email Address"
+      [% END %]>
+    <input class="bz_password" name="Bugzilla_password" type="password"
+           id="Bugzilla_password[% qs_suffix FILTER html %]" required
+           placeholder="Password">
+    [% IF Param('rememberlogin') == 'defaulton' ||
+          Param('rememberlogin') == 'defaultoff' %]
+      <input type="checkbox" id="Bugzilla_remember[% qs_suffix %]" 
+             name="Bugzilla_remember" value="on" class="bz_remember"
+             [%+ "checked" IF Param('rememberlogin') == "defaulton" %]>
+      <label for="Bugzilla_remember[% qs_suffix %]">Remember</label>
+    [% END %]
+    <input type="hidden" name="Bugzilla_login_token"
+           value="[% get_login_request_token() FILTER html %]">
+    <input type="submit" name="GoAheadAndLogIn" value="Log in"
+            id="log_in[% qs_suffix %]">
+    <a href="#" onclick="return hide_mini_login_form('[% qs_suffix %]')">[x]</a>
+  </form>
+</li>
+
+[% Hook.process('additional_methods') %]
+
+[% IF user.authorizer.can_change_password %]
+  <li id="forgot_container[% qs_suffix %]">
+    <span class="separator">| </span>
+    <a id="forgot_link[% qs_suffix %]" href="[% script_url FILTER html %]#forgot"
+       onclick="return show_forgot_form('[% qs_suffix %]')">Forgot Password</a>
+    <form action="token.cgi" method="post" id="forgot_form[% qs_suffix %]"
+          class="mini_forgot bz_default_hidden">
+      <label for="login[% qs_suffix FILTER html %]">Login:</label>
+      <input name="loginname" size="20" id="login[% qs_suffix FILTER html %]" required
+        [% IF login_not_email %]
+          placeholder="Your Login"
+        [% ELSE %]
+          type="email" placeholder="Your Email Address"
+        [% END %]>
+      <input id="forgot_button[% qs_suffix %]" value="Reset Password" type="submit">
+      <input type="hidden" name="a" value="reqpw">
+      <input type="hidden" id="token[% qs_suffix FILTER html %]" name="token"
+             value="[% issue_hash_token(['reqpw']) FILTER html %]">
+      <a href="#" onclick="return hide_forgot_form('[% qs_suffix %]')">[x]</a>
+    </form>
+  </li>
+[% END %]

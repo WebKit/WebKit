@@ -1,0 +1,517 @@
+{
+    "contexts": [
+        "type",
+        "interface",
+        "attribute",
+        "operation",
+        "argument",
+        "callback-function",
+        "dictionary",
+        "dictionary-member",
+        "enum",
+        "constant",
+        "union-member",
+        "iterable",
+        "map-like",
+        "set-like",
+        "includes"
+    ],
+    "attributes": {
+        "ActiveDOMObject": {
+            "contextsAllowed": ["interface"]
+        },
+        "AllowShared": {
+            "contextsAllowed": ["type"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#AllowShared"
+            }
+        },
+        "AppleCopyright": {
+            "contextsAllowed": ["interface", "attribute", "operation"]
+        },
+        "AtomString": {
+            "contextsAllowed": ["type"]
+        },
+        "CEReactions": {
+            "contextsAllowed": ["attribute", "operation"],
+            "standard": {
+                "url": "https://html.spec.whatwg.org/multipage/custom-elements.html#cereactions"
+            }
+        },
+        "CachedAttribute": {
+            "contextsAllowed": ["attribute"]
+        },
+        "CallTracingCallback": {
+            "contextsAllowed": ["interface", "attribute", "operation"],
+            "values": ["*"]
+        },
+        "CallbackThisObject": {
+            "contextsAllowed": ["callback-function", "operation"]
+        },
+        "CallNamedSetterOnlyForSupportedProperties": {
+            "contextsAllowed": ["operation"]
+        },
+        "CallWith": {
+            "contextsAllowed": ["attribute", "operation"],
+            "values": ["Document", "ExecState", "ScriptExecutionContext", "GlobalObject", "ActiveWindow", "FirstWindow", "ResponsibleDocument", "World"],
+            "supportsConjunction": true
+        },
+        "CheckSecurity": {
+            "contextsAllowed": ["interface"]
+        },
+        "CheckSecurityForNode": {
+            "contextsAllowed": ["attribute", "operation"]
+        },
+        "Clamp": {
+            "contextsAllowed": ["type"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#Clamp"
+            }
+        },
+        "Conditional": {
+            "contextsAllowed": ["interface", "dictionary", "dictionary-member", "enum", "attribute", "operation", "constant", "callback-function", "includes"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
+        "ConditionallyReadWrite": {
+            "contextsAllowed": ["attribute"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
+        "ConstantsScope": {
+            "contextsAllowed": ["interface"],
+            "values": ["*"]
+        },
+        "ContextAllowsMediaDevices": {
+            "contextsAllowed": ["attribute"]
+        },
+        "Custom": {
+            "contextsAllowed": ["attribute", "operation"]
+        },
+        "CustomDefineOwnProperty": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomDeleteProperty": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomGetCallData": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomGetOwnPropertyNames": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomGetOwnPropertySlot": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomGetPrototype": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomGetter": {
+            "contextsAllowed": ["attribute"]
+        },
+        "CustomHeapSnapshot": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomIndexedSetter": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomIsReachable": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomPreventExtensions": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomProxyToJSObject": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomPushEventHandlerScope": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomPut": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomSetter": {
+            "contextsAllowed": ["attribute"]
+        },
+        "CustomToJSObject": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomEnabled": {
+            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "iterable"]
+        },
+        "DOMJIT": {
+            "contextsAllowed": ["interface", "attribute", "operation"],
+            "values": ["", "ReadDOM", "Getter"],
+            "supportsConjunction": true
+        },
+        "Default": {
+            "contextsAllowed": ["operation"]
+        },
+        "DefaultDefineOwnProperty": {
+            "contextsAllowed": ["interface"]
+        },
+        "DisabledByQuirk": {
+            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "dictionary-member", "includes"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
+        "DoNotCheckConstants": {
+            "contextsAllowed": ["interface"]
+        },
+        "DoNotCheckSecurity": {
+            "contextsAllowed": ["attribute", "operation"]
+        },
+        "DoNotCheckSecurityOnGetter": {
+            "contextsAllowed": ["attribute"]
+        },
+        "DoNotCheckSecurityOnSetter": {
+            "contextsAllowed": ["attribute"]
+        },
+        "DocumentEventHandler": {
+            "contextsAllowed": ["attribute"]
+        },
+        "EnabledByQuirk": {
+            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "dictionary-member", "includes"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
+        "EnabledAtRuntime": {
+            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "iterable", "includes"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
+        "EnabledBySetting": {
+            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "dictionary-member", "includes"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
+        "EnabledForContext": {
+            "contextsAllowed": ["attribute", "interface"]
+        },
+        "EnabledForWorld": {
+            "contextsAllowed": ["attribute", "operation"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
+        "EnforceRange": {
+            "contextsAllowed": ["type"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#EnforceRange"
+            }
+        },
+        "Exception": {
+            "contextsAllowed": ["interface"]
+        },
+        "ResultField": {
+            "contextsAllowed": ["operation"]
+        },
+        "ExportMacro": {
+            "contextsAllowed": ["interface", "dictionary", "enum", "callback-function"],
+            "values": ["WEBCORE_EXPORT", "WEBCORE_TESTSUPPORT_EXPORT"]
+        },
+        "ExportToWrappedFunction": {
+            "contextsAllowed": ["interface"]
+        },
+        "Exposed": {
+            "contextsAllowed": ["interface", "attribute", "operation", "constant"],
+            "values": ["*"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#Exposed"
+            }
+        },
+        "ForwardDeclareInHeader": {
+            "contextsAllowed": ["attribute", "operation"]
+        },
+        "GenerateIsReachable": {
+            "contextsAllowed": ["interface"],
+            "values": ["", "Impl", "ImplWebGLRenderingContext", "ImplCanvasBase", "ImplDocument", "ImplElementRoot", "ImplOwnerNodeRoot", "ImplScriptExecutionContext", "ReachableFromDOMWindow", "ReachableFromNavigator"]
+        },
+        "Global": {
+            "contextsAllowed": ["interface"],
+            "values": ["*"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#Global"
+            }
+        },
+        "HTMLConstructor": {
+            "contextsAllowed": ["operation"],
+            "standard": {
+                "url": "https://html.spec.whatwg.org/multipage/dom.html#htmlconstructor"
+            },
+            "unsupported": true
+        },
+        "ImplementedAs": {
+            "contextsAllowed": ["interface", "dictionary", "dictionary-member", "enum", "attribute", "operation"],
+            "values": ["*"]
+        },
+        "ImplementedBy": {
+            "contextsAllowed": ["interface", "dictionary", "dictionary-member", "attribute", "operation", "constant"],
+            "values": ["*"]
+        },
+        "ImplementationLacksVTable": {
+            "contextsAllowed": ["interface"]
+        },
+        "ImplicitThis": {
+            "contextsAllowed": ["interface"]
+        },
+        "InterfaceName": {
+            "contextsAllowed": ["interface"],
+            "values": ["*"]
+        },
+        "IsImmutablePrototypeExoticObject": {
+            "contextsAllowed": ["interface"]
+        },
+        "IsImmutablePrototypeExoticObjectOnPrototype": {
+            "contextsAllowed": ["interface"]
+        },
+        "IsWeakCallback": {
+            "contextsAllowed": ["callback-function", "interface"]
+        },
+        "JSBuiltin": {
+            "contextsAllowed": ["interface", "attribute", "operation"]
+        },
+        "JSBuiltinConstructor": {
+            "contextsAllowed": ["interface"]
+        },
+        "JSCustomFinalize": {
+            "contextsAllowed": ["interface"]
+        },
+        "JSCustomHeader": {
+            "contextsAllowed": ["interface"]
+        },
+        "JSCustomMarkFunction": {
+            "contextsAllowed": ["interface"]
+        },
+        "JSCustomToNativeObject": {
+            "contextsAllowed": ["interface"]
+        },
+        "JSGenerateToJSObject": {
+            "contextsAllowed": ["interface", "dictionary", "callback-function"]
+        },
+        "JSGenerateToNativeObject": {
+            "contextsAllowed": ["interface"]
+        },
+        "JSLegacyParent": {
+            "contextsAllowed": ["interface"],
+            "values": ["*"]
+        },
+        "LegacyFactoryFunction": {
+            "contextsAllowed": ["interface"],
+            "values": ["*"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#LegacyFactoryFunction"
+            }
+        },
+        "LegacyFactoryFunctionCallWith": {
+            "contextsAllowed": ["interface"],
+            "values": ["Document", "ExecState", "RuntimeFlags", "ScriptExecutionContext"],
+            "supportsConjunction": true
+        },
+        "LegacyFactoryFunctionEnabledBySetting": {
+            "contextsAllowed": ["attribute", "interface"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
+        "LegacyLenientSetter": {
+            "contextsAllowed": ["attribute"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#LegacyLenientSetter"
+            },
+            "unsupported": true
+        },
+        "LegacyLenientThis": {
+            "contextsAllowed": ["attribute"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#LegacyLenientThis"
+            }
+        },
+        "LegacyNamespace": {
+            "contextsAllowed": ["interface"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#LegacyNamespace"
+            },
+            "unsupported": true
+        },
+        "LegacyNoInterfaceObject": {
+            "contextsAllowed": ["interface"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#LegacyNoInterfaceObject"
+            }
+        },
+        "LegacyNullToEmptyString": {
+            "contextsAllowed": ["type"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#LegacyNullToEmptyString"
+            }
+        },
+        "LegacyOverrideBuiltIns": {
+            "contextsAllowed": ["interface"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#LegacyOverrideBuiltIns"
+            }
+        },
+        "LegacyTreatNonObjectAsNull": {
+            "contextsAllowed": ["callback-function"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#LegacyTreatNonObjectAsNull"
+            },
+            "unsupported": true
+        },
+        "LegacyUnenumerableNamedProperties": {
+            "contextsAllowed": ["interface"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#LegacyUnenumerableNamedProperties"
+            }
+        },
+        "LegacyUnforgeable": {
+            "contextsAllowed": ["attribute", "operation", "interface"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#LegacyUnforgeable"
+            }
+        },
+        "LegacyWindowAlias": {
+            "contextsAllowed": ["interface"],
+            "values": ["*"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#LegacyWindowAlias"
+            }
+        },
+        "MasqueradesAsUndefined": {
+            "contextsAllowed": ["interface"]
+        },
+        "MayThrowException": {
+            "contextsAllowed": ["attribute", "operation"]
+        },
+        "NewImpurePropertyFiresWatchpoints": {
+            "contextsAllowed": ["interface"]
+        },
+        "NewObject": {
+            "contextsAllowed": ["operation", "attribute"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#NewObject"
+            }
+        },
+        "NotEnumerable": {
+            "contextsAllowed": ["attribute", "operation"]
+        },
+        "OverrideIDLType": {
+            "contextsAllowed": ["type"],
+            "values": ["*"]
+        },
+        "PassContext": {
+            "contextsAllowed": ["operation"],
+            "notes" : "Only used by WebKitTestRunner and DumpRenderTree"
+        },
+        "Plugin": {
+            "contextsAllowed": ["interface"],
+            "notes" : "Should only be used by elements that forward to Netscape plug-ins"
+        },
+        "PrivateIdentifier": {
+            "contextsAllowed": ["interface", "attribute", "operation"]
+        },
+        "PromiseProxy": {
+            "contextsAllowed": ["operation"]
+        },
+        "PublicIdentifier": {
+            "contextsAllowed": ["interface", "attribute", "operation"]
+        },
+        "PutForwards": {
+            "contextsAllowed": ["attribute"],
+            "values": ["*"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#PutForwards"
+            }
+        },
+        "Reflect": {
+            "contextsAllowed": ["attribute", "constant"],
+            "values": ["*"]
+        },
+        "Replaceable": {
+            "contextsAllowed": ["attribute"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#Replaceable"
+            }
+        },
+        "ReportExtraMemoryCost": {
+            "contextsAllowed": ["interface"]
+        },
+        "ReportExternalMemoryCost": {
+            "contextsAllowed": ["interface"]
+        },
+        "RequiresExistingAtomString": {
+            "contextsAllowed": ["type"]
+        },
+        "RethrowException": {
+            "contextsAllowed": ["operation", "callback-function"]
+        },
+        "ReturnsOwnPromise": {
+            "contextsAllowed": ["operation"]
+        },
+        "ReturnValue": {
+            "contextsAllowed": ["argument"]
+        },
+        "RuntimeConditionallyReadWrite": {
+            "contextsAllowed": ["attribute"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
+        "SameObject": {
+            "contextsAllowed": ["attribute"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#SameObject"
+            },
+            "unsupported": true
+        },
+        "SecureContext": {
+            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#SecureContext"
+            }
+        },
+        "Serializable": {
+            "contextsAllowed": ["interface"],
+            "standard": {
+                "url": "https://html.spec.whatwg.org/multipage/structured-data.html#serializable"
+            },
+            "unsupported": true
+        },
+        "SetterCallWith": {
+            "contextsAllowed": ["attribute"],
+            "values": ["ExecState", "ScriptExecutionContext", "GlobalObject", "ActiveWindow", "FirstWindow"],
+            "supportsConjunction": true
+        },
+        "SettingsConditionallyReadWrite": {
+            "contextsAllowed": ["attribute"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
+        "SkipCallbackInvokeCheck": {
+            "contextsAllowed": ["operation", "callback-function"]
+        },
+        "SkipVTableValidation": {
+            "contextsAllowed": ["interface"]
+        },
+        "SuppressToJSObject": {
+            "contextsAllowed": ["interface"]
+        },
+        "Transferable": {
+            "contextsAllowed": ["interface"],
+            "standard": {
+                "url": "https://html.spec.whatwg.org/multipage/structured-data.html#transferable"
+            },
+            "unsupported": true
+        },
+        "URL": {
+            "contextsAllowed": ["attribute"]
+        },
+        "Unscopable": {
+            "contextsAllowed": ["attribute", "operation"],
+            "standard": {
+                "url": "https://heycam.github.io/webidl/#Unscopable"
+            }
+        },
+        "WindowEventHandler": {
+            "contextsAllowed": ["attribute"]
+        }
+    }
+}

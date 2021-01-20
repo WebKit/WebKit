@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div></div>
+<div></div>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Checks that Range.compareBoundaryPoints() throw if the compareHow parameter is invalid");
+
+var range = document.createRange();
+range.selectNode(document.getElementsByTagName("div")[0]);
+var sourceRange = document.createRange();
+sourceRange.selectNode(document.getElementsByTagName("div")[1]);
+
+// Valid values.
+shouldBe("range.compareBoundaryPoints(Range.START_TO_START, sourceRange)", "-1");
+shouldBe("range.compareBoundaryPoints(Range.START_TO_END, sourceRange)", "-1");
+shouldBe("range.compareBoundaryPoints(Range.END_TO_END, sourceRange)", "-1");
+shouldBe("range.compareBoundaryPoints(Range.END_TO_START, sourceRange)", "-1");
+shouldBe("range.compareBoundaryPoints(65536, sourceRange)", "-1"); // 65536 should wrap around to 0.
+
+// Invalid values.
+shouldThrowErrorName("range.compareBoundaryPoints(-1, sourceRange)", "NotSupportedError");
+shouldThrowErrorName("range.compareBoundaryPoints(4, sourceRange)", "NotSupportedError");
+shouldThrowErrorName("range.compareBoundaryPoints(100, sourceRange)", "NotSupportedError");
+shouldThrowErrorName("range.compareBoundaryPoints(65535, sourceRange)", "NotSupportedError");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

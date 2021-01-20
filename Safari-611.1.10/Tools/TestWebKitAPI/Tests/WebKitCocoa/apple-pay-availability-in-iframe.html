@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<body>
+<script>
+    internals.mockPaymentCoordinator.supportsUnrestrictedApplePay = window.location.search === "?unrestricted" ? true : false;
+    loadApplePayFrame = () => {
+        const iframe = document.createElement('iframe');
+        iframe.src = 'apple-pay-availability.html' + window.location.search;
+        document.body.appendChild(iframe);
+    };
+</script>

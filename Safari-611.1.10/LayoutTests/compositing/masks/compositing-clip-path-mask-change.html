@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .box {
+          width: 200px;
+          height: 200px;
+          margin: 10px;
+          background-color: blue;
+        }
+        
+        .composited {
+          -webkit-transform: translateZ(0);
+        }
+        
+        .clipped {
+            -webkit-clip-path: inset(0 30px);
+        }
+        
+        .masked {
+            -webkit-mask: linear-gradient(transparent, black);
+        }
+        
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        function doTest()
+        {
+            window.setTimeout(function() {
+                document.getElementById('gain-mask').classList.add('masked');
+                document.getElementById('lose-mask').classList.remove('masked');
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+<div id="gain-mask" class="clipped composited box"></div>
+<div id="lose-mask" class="masked clipped composited box"></div>
+
+</body>
+</html>

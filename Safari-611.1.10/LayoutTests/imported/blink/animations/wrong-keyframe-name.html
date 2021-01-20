@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<style>
+#test1 {
+    -webkit-animation-fill-mode: forwards;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-name: green;
+}
+#test2 {
+    -webkit-animation-fill-mode: forwards;
+    -webkit-animation-duration: 1s;
+}
+#test3 {
+    -webkit-animation-fill-mode: forwards;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-name: notredorgreen;
+}
+@-webkit-keyframes green {
+    from {
+      background-color: white;
+    }
+    to {
+      background-color: green;
+    }
+}
+@-webkit-keyframes red {
+    from {
+      background-color: white;
+    }
+    to {
+      background-color: red;
+    }
+}
+</style>
+Tests that an animation does not run when it specifies an incorrect name.
+<div id="result">FAIL - nothing happened</div>
+<div id="test1"></div>
+<div id="test2"></div>
+<div id="test3"></div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+var pass = true;
+test1.addEventListener('webkitAnimationStart', function() {
+    test2.style.webkitAnimationName = 'green';
+});
+test2.addEventListener('webkitAnimationStart', function() {
+    result.innerText = pass ? 'PASS' : 'FAIL';
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+test3.addEventListener('webkitAnimationStart', function() {
+    pass = false;
+});
+</script>

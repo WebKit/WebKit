@@ -1,0 +1,78 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ DOMPasteAllowed=false useFlexibleViewport=true AsyncClipboardAPIEnabled=true ] -->
+<html>
+    <meta charset="utf8">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script src="./resources/async-clipboard-helpers.js"></script>
+        <style>
+            button {
+                display: block;
+                margin: 40px 0;
+            }
+
+            iframe {
+                width: 240px;
+                height: 120px;
+            }
+        </style>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+        finishedCopying = false;
+
+        async function runTest() {
+            description("This test verifies that navigator.clipboard.writeText sanitizes 'text/html'. To manually run the test, click the button in the subframe below to copy HTML, and then click the paste button.");
+
+            const frame = document.querySelector("iframe");
+            const button = document.querySelector("button");
+            button.addEventListener("click", async () => {
+                try {
+                    items = await navigator.clipboard.read();
+                    testPassed("Read items from the clipboard.");
+                    shouldBe("items.length", "2");
+
+                    shouldBe("items[0].types", "['text/html']");
+                    fragment1 = await loadDocument(await items[0].getType("text/html"));
+                    shouldBeEqualToString("fragment1.documentElement.textContent", "Hello world 1");
+                    shouldBeNonNull("fragment1.querySelector('p')");
+                    shouldBeNull("fragment1.querySelector('script')");
+                    shouldBeNull("fragment1.querySelector('p').onclick");
+
+                    shouldBe("items[1].types", "['text/html']");
+                    fragment2 = await loadDocument(await items[1].getType("text/html"));
+                    shouldBeEqualToString("fragment2.documentElement.textContent", "Hello world 2");
+                    shouldBeNonNull("fragment2.querySelector('span')");
+                    shouldBeNull("fragment2.querySelector('p')");
+                } catch (exception) {
+                    testFailed("Did not write to or read from the clipboard.");
+                } finally {
+                    button.remove();
+                    frame.remove();
+                    finishJSTest();
+                }
+            });
+
+            addEventListener("message", event => {
+                testPassed("Wrote markup to the clipboard.");
+                finishedCopying = event.data === "finished-copying";
+            });
+
+            if (!window.testRunner)
+                return;
+
+            await UIHelper.activateElement(document.querySelector("iframe"));
+            await new Promise(resolve => shouldBecomeEqual("finishedCopying", "true", resolve));
+            await triggerProgrammaticPaste(button);
+        }
+
+        addEventListener("load", runTest);
+    </script>
+    <body>
+        <iframe src="resources/sanitize-when-reading-markup-iframe.html"></iframe>
+        <button>Click to paste</button>
+        <p id="description"></p>
+        <p id="console"></p>
+    </body>
+</html>

@@ -1,0 +1,4 @@
+Test that no more message events are fired after EventSource.close() is called, even if it means discarding events that were already processed. Passes if only one message is received.
+
+Got message #1
+

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script>
+            function runTest() {
+                description('Tests that subscriptshift works on msubsup. After adding subscriptshift the height of msubsup element should increase');
+
+                var rect = document.getElementById("msubsupEle").getBoundingClientRect();
+                height = rect.bottom - rect.top;
+
+                shouldBeTrue("height > 150");
+                isSuccessfullyParsed();
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <math>
+		    <msubsup subscriptshift="60px" id="msubsupEle">
+                <mspace width="50px" height="50px" mathbackground="green"/>
+                <mspace width="50px" height="50px" mathbackground="blue"/>
+                <mspace width="50px" height="50px" mathbackground="red"/>
+            </msubsup>
+        </math>
+    </body>
+</html>

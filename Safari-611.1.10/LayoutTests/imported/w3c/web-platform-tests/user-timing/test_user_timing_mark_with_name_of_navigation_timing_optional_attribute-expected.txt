@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: wp_test
+CONSOLE MESSAGE: ReferenceError: Can't find variable: test_true
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: wp_test
+
+Description
+
+This test validates exception scenarios of invoking performance.mark() with param of "secureConnectionStart".
+
+

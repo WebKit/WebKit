@@ -1,0 +1,12 @@
+
+This tests that when an auto fill element is removed we won't crash accessing an old value.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS accessibilityController.accessibleElementById('textfield').childrenCount is 3
+PASS accessibilityController.accessibleElementById('textfield').childrenCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,17 @@
+<style>
+* { counter-reset: c; }
+ol { display: contents; }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+onload = function fun() {
+    Q.style.setProperty("counter-increment", "c");
+}
+</script>
+<body>
+<p>This tests an element with CSS counter having a sibling with display: contents.</p>
+<p>The test passes if WebKit doesn't crash or hit an assertion.</p>
+</body>
+<select></select><ol><time></ol><q id="Q"></q>

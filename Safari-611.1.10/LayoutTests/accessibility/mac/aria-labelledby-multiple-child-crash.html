@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="hd">
+<div role="heading" id="heading" aria-level="7" aria-labelledby="hd">Header</div>
+<div role="heading" id="heading2" aria-level="7" aria-labelledby="hd">Header2</div>
+
+<p>Description text</p>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that when a node is labelling multiple child nodes it won't cause crash.");
+
+    if (window.accessibilityController) {
+    
+        var heading = accessibilityController.accessibleElementById("heading");
+        // Do not crash
+        debug(heading.description);
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+This tests ensures formatBlock removes a pre when formatting multiple paragraphs inside the pre.
+
+Formatting all paragraphs by h3 yields:
+| "\n"
+| <h3>
+|   "<#selection-anchor>hello"
+|   <br>
+|   "\n"
+|   "world"
+|   <br>
+|   "\n"
+|   "webkit<#selection-focus>"
+| "\n"
+
+Undo yields:
+| "\n"
+| <pre>
+|   "<#selection-anchor>hello\n\nworld\n\nwebkit<#selection-focus>\n"
+| "\n"
+
+Formatting all but the last paragraph by h3 yields:
+| "\n"
+| <pre>
+|   <h3>
+|     "<#selection-anchor>hello"
+|     "\n"
+|     "world"
+|     "\n"
+|   "<#selection-focus>webkit\n"
+| "\n"
+
+Undo yields:
+| "\n"
+| <pre>
+|   "<#selection-anchor>hello\n\nworld\n\n<#selection-focus>webkit\n"
+| "\n"
+
+Formatting all but the first paragraph by h3 yields:
+| "\n"
+| <pre>
+|   "hello\n"
+|   <h3>
+|     "<#selection-anchor>\n"
+|     "world"
+|     "\n"
+|     "webkit<#selection-focus>"
+| "\n"

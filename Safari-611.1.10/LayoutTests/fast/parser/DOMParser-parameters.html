@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Test that the parameters to DOMParser.parseFromString() are mandatory.");
+
+var parser = new DOMParser();
+shouldThrow("parser.parseFromString()", "'TypeError: Not enough arguments'");
+shouldThrow("parser.parseFromString('<html></html>')", "'TypeError: Not enough arguments'");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

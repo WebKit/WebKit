@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.installFakeHelvetica("Helvetica-500");
+</script>
+</head>
+<body>
+This test makes sure that user-installed fonts which have the same name as preinstalled fonts are used instead of the preinstalled fonts. The test passes if you see a black rectangle below.
+<div style="font: 500 100px 'Helvetica'; width: 96px; height: 50px; overflow: hidden; position: relative;"><div style="position: relative; top: -50px; left: -2px;">e</div></div>
+</body>
+</html>

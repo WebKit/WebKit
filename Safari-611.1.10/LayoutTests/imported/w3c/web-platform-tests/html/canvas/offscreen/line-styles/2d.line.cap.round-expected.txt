@@ -1,0 +1,7 @@
+2d.line.cap.round
+
+lineCap 'round' is rendered correctly
+
+
+PASS lineCap 'round' is rendered correctly
+

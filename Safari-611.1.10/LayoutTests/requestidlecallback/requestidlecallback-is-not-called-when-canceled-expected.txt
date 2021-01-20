@@ -1,0 +1,12 @@
+This tests that when requestIdleCallback is enabled, requestIdleCallback is eventaully called in the order.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS a3 is a2 + 1
+PASS logs.length is 3
+PASS logs.join(", ") is "1.A1, 3.A2, 4.A3"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

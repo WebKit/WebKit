@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="child-src http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php">
+<script src="/js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+window.jsTestIsAsync = true;
+
+description("This tests that the Content Security Policy of the page blocks loading a Web Worker's script from a different origin through a redirect.");
+
+var worker;
+shouldNotThrow('worker = new Worker("http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php?url=http://localhost:8000/security/contentSecurityPolicy/resources/alert-fail.js")');
+worker.onerror = function () {
+    testPassed("error event dispatched");
+    finishJSTest();
+};
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

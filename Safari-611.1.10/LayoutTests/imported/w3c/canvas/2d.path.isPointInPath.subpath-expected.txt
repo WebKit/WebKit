@@ -1,0 +1,5 @@
+2d.path.isPointInPath.subpath
+isPointInPath() uses the current path, not just the subpath
+Spec references: 2d.path.isPointInPath
+Actual output:
+Passed

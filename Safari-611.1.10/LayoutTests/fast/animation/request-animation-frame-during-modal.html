@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<script src="../../resources/js-test-pre.js"></script>
+<body>
+
+<script type="text/javascript">
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
+description('Tests that requestAnimationFrame callbacks are not invoked while modal dialogs are displayed.');
+
+onload = function()
+{
+    debug('Setting callback');
+    window.requestAnimationFrame(function() { debug('Callback fired'); }, document.body);
+    debug('Showing modal dialog');
+    var src = 'if (window.testRunner) {' +
+              '    testRunner.displayAndTrackRepaints();' +
+              '    window.close();' +
+              '} else {'+
+              '    window.setTimeout(window.close, 10);'+
+              '}';
+    showModalDialog('data:text/html,<script>' + src + '</' + 'script>');
+    debug('Returned from modal dialog');
+    if (window.testRunner) {;
+        testRunner.displayAndTrackRepaints();
+    }
+}
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+setTimeout(function() {
+    isSuccessfullyParsed();
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 200);
+
+</script>
+</body>
+</html>
+

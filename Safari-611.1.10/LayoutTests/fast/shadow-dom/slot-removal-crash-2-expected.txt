@@ -1,0 +1,5 @@
+Test that removing a slot element with text node does not result in an assertion failure.
+The test passes if WebKit does not hit an assertion.
+PASS.
+
+

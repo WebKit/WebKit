@@ -1,0 +1,7 @@
+
+This test passes if you do not see a CORS error.
+
+EVENT(playing)
+EVENT(playing)
+END OF TEST
+

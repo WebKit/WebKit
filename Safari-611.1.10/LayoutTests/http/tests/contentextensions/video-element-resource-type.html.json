@@ -1,0 +1,21 @@
+[
+    {
+        "action": {
+            "type": "block"
+        },
+        "trigger": {
+            "url-filter": ".*\\.mp4"
+        }
+    },
+    {
+      "trigger": {
+        "url-filter": ".*test-25fps\\.mp4",
+        "resource-type": [
+          "media"
+        ]
+      },
+      "action": {
+        "type": "ignore-previous-rules"
+      }
+    }
+]

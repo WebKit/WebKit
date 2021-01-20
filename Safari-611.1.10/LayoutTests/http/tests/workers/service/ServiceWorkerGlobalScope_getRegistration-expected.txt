@@ -1,0 +1,8 @@
+* Tests that serviceWorker.getRegistration() / getRegistrations() inside service workers
+
+PASS: Registration succeeded
+PASS: getRegistration() returned the right registration
+PASS: getRegistrations() returned 2 registrations
+PASS: getRegistrations()[0] is the right registration
+PASS: getRegistrations()[1] is the right registration
+

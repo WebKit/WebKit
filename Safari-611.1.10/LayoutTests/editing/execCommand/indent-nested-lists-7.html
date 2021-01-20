@@ -1,0 +1,42 @@
+<html>
+<body>
+<div>
+This tests indenting "three" and "four".  You should see 1 before "two", "three", and "five" but 2 before "four".
+Neither "two" nor "five" should be the part of new nested list since there is text between "two" and "three", and "five" is unordered.
+<ol id="e" contenteditable="true">
+<li>one</li>
+<ol><li>two</li></ol>
+aaa
+<li id="test3">three</li>
+<li id="test4">four</li>
+<ul><li>five</li></ul>
+</ol>
+</div>
+
+<ul>
+<li>Before:<span id="c1"></span></li>
+<li>After:<span id="c2"></span></li>
+</ul>
+
+<script type="text/javascript">
+
+if (window.testRunner) {
+    testRunner.dumpEditingCallbacks();
+    testRunner.dumpAsText();
+}
+
+var e = document.getElementById('e');
+
+document.getElementById('c1').appendChild(document.createTextNode(e.innerHTML));
+
+var s = window.getSelection();
+var r = document.createRange();
+r.setStart(document.getElementById('test3'),0);
+r.setEnd(document.getElementById('test4'),1);
+s.removeAllRanges();
+s.addRange(r);
+document.execCommand("Indent", false, "");
+
+document.getElementById('c2').appendChild(document.createTextNode(e.innerHTML));
+
+</script>

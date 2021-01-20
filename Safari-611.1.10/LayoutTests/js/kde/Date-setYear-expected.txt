@@ -1,0 +1,19 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Start Of Test
+PASS d.setYear(-1), d.getFullYear() is -1
+PASS d.setYear(0), d.getFullYear() is 1900
+PASS d.setYear(1), d.getFullYear() is 1901
+PASS d.setYear(99), d.getFullYear() is 1999
+PASS d.setYear(100), d.getFullYear() is 100
+PASS d.setYear(2050), d.getFullYear() is 2050
+PASS d.setYear(1899), d.getFullYear() is 1899
+PASS d.setYear(2000), d.getFullYear() is 2000
+PASS d.setYear(2100), d.getFullYear() is 2100
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

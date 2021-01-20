@@ -1,0 +1,6 @@
+
+FAIL @@toStringTag exists on the namespace object with the appropriate descriptor assert_own_property: expected property symbol "Symbol(Symbol.toStringTag)" missing
+FAIL Object.prototype.toString applied to the namespace object assert_equals: expected "[object CSS]" but got "function CSS() {\n    [native code]\n}"
+FAIL Object.prototype.toString applied after modifying the namespace object's @@toStringTag assert_own_property: Precondition: @@toStringTag on the namespace object expected property symbol "Symbol(Symbol.toStringTag)" missing
+FAIL Object.prototype.toString applied after deleting @@toStringTag assert_own_property: Precondition: @@toStringTag on the namespace object expected property symbol "Symbol(Symbol.toStringTag)" missing
+

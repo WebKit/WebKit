@@ -1,0 +1,4 @@
+2d.shadow.attributes.shadowOffset.initial
+Spec references: 2d.shadow.offset.initial
+Actual output:
+Passed

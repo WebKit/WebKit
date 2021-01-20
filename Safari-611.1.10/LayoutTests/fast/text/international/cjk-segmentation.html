@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Test for CJK segmentation</title>
+<script>
+function log(str)
+{
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(str));
+    var console = document.getElementById("console");
+    console.appendChild(li);
+}
+
+function assertEqual(test_name, actual, expected)
+{
+    if (actual != expected) {
+        log("==================================");
+        log("FAILED test " + test_name);
+        log("actual: " + actual);
+        log("expected: " + expected);
+    }
+}
+
+function test()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var range = document.createRange();
+    var divs = document.getElementsByClassName("zh-CN-div");
+    var pass = true;
+    for (var j = 0; j < divs.length; ++j) {
+        var div = divs[j];
+        var length = div.innerText.length;
+        var title = div.title.split(' ');
+        for (var i = 0; i < length; ++i) {
+            range.setStart(div.firstChild, i);
+            range.setEnd(div.firstChild, i);
+            range.expand('word');
+            var actual = range.toString();
+            assertEqual(" ", actual, title[i]);
+            if (actual != title[i])
+                pass = false;
+        }
+        div.style.display = "none";
+    }
+    if (pass == true)
+        log("ALL PASS");
+}
+</script>
+<body onload="test()">
+<p>Test Chinese Segmentation.
+<div class="zh-CN-div" title="国务院 务 国务院 关于 关于 《 土地 土地 房屋 房屋 管理 管理 条例 条例 》">国务院关于《土地房屋管理条例》</div>
+<div class="zh-CN-div" title="物价 物价 预期 预期 调控 调控 目标 目标 基本 基本 实现 实现">物价预期调控目标基本实现</div>
+<div class="zh-CN-div" title="俄罗斯 罗斯 俄罗斯 总统 总统 ： 机场 机场 爆炸 爆炸 是 恐怖 恐怖 袭击 袭击">俄罗斯总统：机场爆炸是恐怖袭击</div>
+<div class="zh-CN-div" title="春运 春运 5 天 ， 北京 北京 运送 运送 旅客 旅客 146 146 146 万">春运5天，北京运送旅客146万</div>
+<ul id="console"></ul>
+
+</body>
+</html>

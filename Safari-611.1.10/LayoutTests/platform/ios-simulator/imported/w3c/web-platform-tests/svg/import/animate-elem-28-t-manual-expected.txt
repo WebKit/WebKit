@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (145,45) size 510x510
+      RenderSVGContainer {g} at (145,45) size 510x510
+        RenderSVGEllipse {circle} at (145,45) size 510x510 [stroke={[type=SOLID] [color=#F1E900] [stroke width=5.00]}] [fill={[type=SOLID] [color=#F1E900]}] [cx=240.00] [cy=180.00] [r=150.00]
+        RenderSVGContainer {g} at (270,167) size 260x103
+          RenderSVGPath {path} at (429,167) size 101x103 [stroke={[type=SOLID] [color=#000077] [stroke width=5.00]}] [fill={[type=SOLID] [color=#F1E900]}] [data="M 260 131 C 260 116 272 103 288 103 C 303 103 315 116 315 131 C 315 146 303 159 288 159 C 272 159 260 146 260 131 Z"]
+          RenderSVGPath {path} at (270,167) size 101x103 [stroke={[type=SOLID] [color=#000077] [stroke width=5.00]}] [fill={[type=SOLID] [color=#F1E900]}] [data="M 165 131 C 165 116 177 103 193 103 C 208 103 220 116 220 131 C 220 146 208 159 193 159 C 177 159 165 146 165 131 Z"]
+        RenderSVGPath {path} at (248,375) size 314x95 [stroke={[type=SOLID] [color=#F1E900] [stroke width=5.00]}] [fill={[type=SOLID] [color=#F1E900]}] [data="M 151 227 C 197 279 289 279 335 227"]
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.7 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

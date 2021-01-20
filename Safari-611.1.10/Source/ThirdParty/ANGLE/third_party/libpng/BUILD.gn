@@ -1,0 +1,40 @@
+# Copyright 2017 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+config("libpng_config") {
+  include_dirs = [ "src" ]
+}
+
+static_library("libpng") {
+  sources = [
+    "src/png.c",
+    "src/pngerror.c",
+    "src/pngget.c",
+    "src/pngmem.c",
+    "src/pngpread.c",
+    "src/pngread.c",
+    "src/pngrio.c",
+    "src/pngrtran.c",
+    "src/pngrutil.c",
+    "src/pngset.c",
+    "src/pngtrans.c",
+    "src/pngwio.c",
+    "src/pngwrite.c",
+    "src/pngwtran.c",
+    "src/pngwutil.c",
+  ]
+  if (target_cpu == "arm" || target_cpu == "arm64") {
+    sources += [
+      "src/arm/arm_init.c",
+      "src/arm/filter_neon.S",
+      "src/arm/filter_neon_intrinsics.c",
+    ]
+  }
+  if (is_win) {
+    cflags = [ "/wd4028" ]
+  }
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  public_configs = [ ":libpng_config" ]
+  deps = [ "//third_party/zlib:zlib" ]
+}

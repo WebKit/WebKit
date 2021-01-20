@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: The Content Security Policy directive 'sandbox' is ignored when delivered via an HTML meta element.
+ALERT: PASS executed script.
+This tests that the Content Security Policy sandbox directive is ignored when contained in a policy defined via an HTML meta element.

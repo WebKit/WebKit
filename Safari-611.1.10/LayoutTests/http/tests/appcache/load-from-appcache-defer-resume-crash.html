@@ -1,0 +1,27 @@
+<html manifest="resources/load-from-appcache-defer-resume-crash.manifest">
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.setUseDeferredFrameLoading(true)
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+function finishIfNeeded() {
+    if (window.location.hash) {
+        document.getElementById('result').innerText = "SUCCESS";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}
+function run() {
+    window.location = "resources/load-from-appcache-defer-resume-bounce-back.html";
+}
+applicationCache.addEventListener('cached', run, false);
+</script>
+</head>
+<body onload="finishIfNeeded()">
+<p>This test loading the document itself with Application Cache, and deferred load, does not crash WebKit. The most reliable way to reproduce is in Debug where you hit assertions.</p>
+<div id="result">
+</div>
+</body>
+</html>

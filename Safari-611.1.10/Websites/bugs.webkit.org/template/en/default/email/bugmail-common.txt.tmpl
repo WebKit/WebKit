@@ -1,0 +1,25 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+  
+[% field_label = field_descs.${change.field_name} %]
+[% old_value = display_value(change.field_name, change.old) %]
+[% new_value = display_value(change.field_name, change.new) %]
+
+[% IF change.field_name == "estimated_time" || change.field_name == "remaining_time" %]
+  [% old_value = old_value FILTER format('%.2f') %]
+  [% new_value = new_value FILTER format('%.2f') %]
+[% END %]
+
+[% IF change.attach_id %]
+  [% field_label = field_label.replace('^(Attachment )?', "Attachment #${change.attach_id} ") %]
+[% END %]
+
+[% IF change.field_name == 'longdescs.isprivate' %]
+  [% field_label = field_label.replace('^(Comment )?', "Comment #${change.num} ") %]
+[% END %]
+  

@@ -1,0 +1,26 @@
+Correct:
+@charset "utf-8";    PASS
+
+Wrong Capitalization:
+@CHARSET "utf-8";    PASS
+@ChArSeT "utf-8";    PASS
+@cHaRsEt "utf-8";    PASS
+
+Wrong Whitespace:
+@charset"utf-8";     PASS
+@charset  "utf-8";   PASS
+@charset\9"utf-8";   PASS
+@charset\A"utf-8";   PASS
+@charset\C"utf-8";   PASS
+@charset\D"utf-8";   PASS
+@charset "utf-8" ;   PASS
+ @charset "utf-8";   PASS
+
+Wrong Quote character:
+@charset 'utf-8';    PASS
+@charset "utf-8';    PASS
+@charset 'utf-8";    PASS
+
+Wrong Semicolon:
+@charset "utf-8"     PASS
+

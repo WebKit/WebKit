@@ -1,0 +1,53 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (50,22) size 709x552
+      RenderSVGText {text} at (30,13) size 370x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 370x21
+          chunk 1 text run 1 at (30.00,30.00) startOffset 0 endOffset 42 width 369.60: "Testing SVGAnimationElement.getStartTime()"
+      RenderSVGText {text} at (340,323) size 116x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 116x21
+          chunk 1 text run 1 at (340.00,340.00) startOffset 0 endOffset 15 width 115.20: "Test running..."
+        RenderSVGInlineText {#text} at (0,0) size 0x0
+      RenderSVGHiddenContainer {g} at (0,0) size 0x0
+      RenderSVGContainer {g} at (50,66) size 42x393 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,-10.00)}]
+        RenderSVGRect {rect} at (50,66) size 42x43 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=50.00] [width=25.00] [height=25.00]
+        RenderSVGRect {rect} at (50,116) size 42x43 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=80.00] [width=25.00] [height=25.00]
+        RenderSVGRect {rect} at (50,166) size 42x43 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=110.00] [width=25.00] [height=25.00]
+        RenderSVGRect {rect} at (50,216) size 42x43 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=140.00] [width=25.00] [height=25.00]
+        RenderSVGRect {rect} at (50,266) size 42x43 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=170.00] [width=25.00] [height=25.00]
+        RenderSVGRect {rect} at (50,316) size 42x43 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=200.00] [width=25.00] [height=25.00]
+        RenderSVGRect {rect} at (50,366) size 42x43 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=230.00] [width=25.00] [height=25.00]
+        RenderSVGRect {rect} at (50,416) size 42x43 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=260.00] [width=25.00] [height=25.00]
+      RenderSVGContainer {g} at (116,74) size 548x376 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,-15.00)}]
+        RenderSVGText {text} at (0,59) size 211x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 211x16
+            chunk 1 text run 1 at (0.00,72.00) startOffset 0 endOffset 36 width 210.60: "Called before a lone interval starts"
+        RenderSVGText {text} at (0,89) size 245x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 245x16
+            chunk 1 text run 1 at (0.00,102.00) startOffset 0 endOffset 40 width 244.80: "Called on an animation with no intervals"
+        RenderSVGText {text} at (0,119) size 150x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 150x16
+            chunk 1 text run 1 at (0.00,132.00) startOffset 0 endOffset 25 width 150.00: "Called during an interval"
+        RenderSVGText {text} at (0,149) size 280x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 280x16
+            chunk 1 text run 1 at (0.00,162.00) startOffset 0 endOffset 48 width 279.00: "Called after a lone interval ends, fill=\"remove\""
+        RenderSVGText {text} at (0,179) size 272x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 272x16
+            chunk 1 text run 1 at (0.00,192.00) startOffset 0 endOffset 48 width 271.20: "Called after a lone interval ends, fill=\"freeze\""
+        RenderSVGText {text} at (0,209) size 202x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 202x16
+            chunk 1 text run 1 at (0.00,222.00) startOffset 0 endOffset 33 width 201.00: "Called with multiple begin values"
+        RenderSVGText {text} at (0,239) size 329x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 329x16
+            chunk 1 text run 1 at (0.00,252.00) startOffset 0 endOffset 56 width 328.20: "Called with multiple begin values including \"indefinite\""
+        RenderSVGText {text} at (0,269) size 207x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 207x16
+            chunk 1 text run 1 at (0.00,282.00) startOffset 0 endOffset 32 width 206.40: "Called with syncbase begin value"
+    RenderSVGContainer {g} at (16,518) size 409x60
+      RenderSVGText {text} at (10,311) size 245x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 245x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 244.80: "$Revision: 1.11 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

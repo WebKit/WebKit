@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../media/media-file.js"></script>
+        <script src="../../media/video-test.js"></script>
+        <script type="text/javascript">
+            var videoElement;
+            var standaloneMediaDocument;
+            var skipOnFirstEmptyLoad = 0;
+
+            function frameLoaded()
+            {
+                if (++skipOnFirstEmptyLoad == 1)
+                    return;
+
+                standaloneMediaDocument = document.getElementById("videoframe").contentDocument;
+                videoElement = standaloneMediaDocument.querySelector("video");
+
+                videoElement.addEventListener('click',function(){
+                    consoleWrite("*** Video element clicked.");
+                },false);
+
+                testFocus();
+                testFocusbyMouseClick();
+                consoleWrite("");
+                endTest();
+            }
+
+            function testFocus()
+            {
+                consoleWrite("<br>*** Should not focus video element by calling focus() method.");
+                videoElement.focus();
+                testExpected("standaloneMediaDocument.activeElement", videoElement, "!=");
+            }
+
+            function testFocusbyMouseClick()
+            {
+                // Simulate click event to try focus video element.
+                consoleWrite("<br>*** Should not focus video element by mouse click.");
+                var click = document.createEvent("MouseEvents");
+                click.initMouseEvent("click", true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, document);
+                videoElement.dispatchEvent(click);
+                testExpected("standaloneMediaDocument.activeElement", videoElement, "!=");
+            }
+        </script>
+    </head>
+    <body>
+        <p>
+            This tests that  media element in a standalone media document cannot be focused directly using focus() method or by mouse click.
+        </p>
+        <iframe id="videoframe" width=380 height=330 onload="frameLoaded()"></iframe>
+        <script type="text/javascript">
+            document.getElementById("videoframe").src = "../../media/" + findMediaFile("video", "content/test");
+        </script>
+    </body>
+</html>

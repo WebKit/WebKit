@@ -1,0 +1,14 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of OL > OL > DIV > BODY > HTML > #document to 6 of OL > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > LI > OL > DIV > BODY > HTML > #document to 4 of #text > LI > OL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+This tests outdenting ordered lists that contains an unordered-list. You should see 1 through 3 before numbers "two" through "four".
+one
+two
+three
+four
+Before: <ol><li>one</li> <li id="start">two</li></ol> <ul><li>three</li></ul> <ol><li id="end">four</li></ol>
+After: <ol><li>one</li> </ol><li>two</li> <li>three</li> <li>four</li>

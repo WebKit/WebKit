@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+const DoNotRunInlineScript = false;
+const RunInlineScript = true;
+
+var tests = [
+// Simple
+{
+    name: "Base64 encoded SHA-256 hash",
+    charset: "UTF8",
+    script: encodeURIComponent("didRunInlineScript = true;"),
+    hashSource: "'sha256-/vET2rVA6WWSNY8XYBl+BqAL0gTF0fzw7eovQQG+hNA='",
+    expectedResult: RunInlineScript,
+},
+{
+    name: "Base64 encoded SHA-256 hash with mixed case prefix",
+    charset: "UTF8",
+    script: encodeURIComponent("didRunInlineScript = true;"),
+    hashSource: "'SHa256-/vET2rVA6WWSNY8XYBl+BqAL0gTF0fzw7eovQQG+hNA='",
+    expectedResult: RunInlineScript,
+},
+{
+    name: "Base64url encoded SHA-256 hash",
+    charset: "UTF8",
+    script: encodeURIComponent("didRunInlineScript = true;"),
+    hashSource: "'SHa256-_vET2rVA6WWSNY8XYBl-BqAL0gTF0fzw7eovQQG-hNA='",
+    expectedResult: RunInlineScript,
+},
+{
+    name: "Base64 encoded SHA-384 hash",
+    charset: "UTF8",
+    script: encodeURIComponent("didRunInlineScript = true;"),
+    hashSource: "'sha384-+2z3lkISbDOt4AKFTEPrIPQK77NC7dumupDVevpcOzg5bsdmKh0tI9t6kDLJzEqH'",
+    expectedResult: RunInlineScript,
+},
+{
+    name: "Base64url encoded SHA-384 hash",
+    charset: "UTF8",
+    script: encodeURIComponent("didRunInlineScript = true;"),
+    hashSource: "'sha384--2z3lkISbDOt4AKFTEPrIPQK77NC7dumupDVevpcOzg5bsdmKh0tI9t6kDLJzEqH'",
+    expectedResult: RunInlineScript,
+},
+{
+    name: "Base64 encoded SHA-512 hash",
+    charset: "UTF8",
+    script: encodeURIComponent("didRunInlineScript = true;"),
+    hashSource: "'sha512-Qh1vKVk9nyoM8LWzH9RkfEBQNxky/6izE0GbZ2D7RkwwuTQPC2pIG+ReFxOfnijVvqeopfYZShxvpLIGWdpRwg=='",
+    expectedResult: RunInlineScript,
+},
+{
+    name: "Base64url encoded SHA-512 hash",
+    charset: "UTF8",
+    script: encodeURIComponent("didRunInlineScript = true;"),
+    hashSource: "'sha512-Qh1vKVk9nyoM8LWzH9RkfEBQNxky_6izE0GbZ2D7RkwwuTQPC2pIG-ReFxOfnijVvqeopfYZShxvpLIGWdpRwg=='",
+    expectedResult: RunInlineScript,
+},
+// HTML entity test case
+{
+    name: "Script that contains HTML entity &gt;",
+    charset: "UTF8",
+    script: "didRunInlineScript+%3D+true%3B+//+%26gt%3B",
+    hashSource: "'sha256-Wcu0hRB2z5RQ2pcRLxzsVob2mmIuW0Qt+xRwr5n6hKM='",
+    expectedResult: RunInlineScript,
+},
+// Unicode normalization test cases
+{
+    name: "Script that contains Unicode code point U+00C5",
+    charset: "UTF8",
+    script: "didRunInlineScript+%3D+true%3B+//+%C3%85", // %C3%85 is the URL encoded UTF-8 byte sequence for U+00C5.
+    hashSource: "'sha256-K3oo3dJj28X47TIh/UinhDWS3C5DfcQVCRzw4JM7SWE='",
+    expectedResult: RunInlineScript,
+},
+{
+    name: "Unicode code point U+00C5 is not equivalent to U+212B",
+    charset: "UTF8",
+    script: "didRunInlineScript+%3D+true%3B+//+%C3%85", // %C3%85 is the URL encoded UTF-8 byte sequence for U+00C5.
+    hashSource: "'sha256-rrdh0QCl46qqHxfnnk08ydh/rkhVi2JvD6DLuUP30MI='", // Hash of "didRunInlineScript+%3D+true%3B+//+%E2%84%AB"
+    expectedResult: DoNotRunInlineScript,
+},
+{
+    name: "Unicode code point U+212B is equivalent to U+00C5",
+    charset: "UTF8",
+    script: "didRunInlineScript+%3D+true%3B+//+%E2%84%AB", // %E2%84%AB is the URL encoded UTF-8 byte sequence for U+212B.
+    hashSource: "'sha256-K3oo3dJj28X47TIh/UinhDWS3C5DfcQVCRzw4JM7SWE='", // Intentionally not 'sha256-rrdh0QCl46qqHxfnnk08ydh/rkhVi2JvD6DLuUP30MI='
+    expectedResult: RunInlineScript,
+},
+// Big-5 encoding test cases
+{
+    name: "Big-5 page with Big-5 hash",
+    charset: "Big5",
+    script: "didRunInlineScript+%3D+true%3B+//+%A4%F4",
+    hashSource: "'sha256-J08nmORtZZyj86mnbklnHBObVEnsakqZcYsabqsSJmc='",
+    expectedResult: RunInlineScript,
+},
+{
+    name: "Big-5 page with UTF-8 hash",
+    charset: "Big5",
+    script: "didRunInlineScript+%3D+true%3B+//+%A4%F4",
+    hashSource: "'sha256-W4kKNfgvUMesHeVX1eGn6f3LfuntH7p4YjLeOauCA/I='",
+    expectedResult: DoNotRunInlineScript,
+},
+// Malformed and invalid test cases
+{
+    name: "Hash source with invalid prefix",
+    charset: "UTF8",
+    script: encodeURIComponent("didRunInlineScript = true;"),
+    hashSource: "'sha-/vET2rVA6WWSNY8XYBl+BqAL0gTF0fzw7eovQQG+hNA='",
+    expectedResult: DoNotRunInlineScript,
+},
+{
+    name: "Invalid prefix",
+    charset: "UTF8",
+    script: encodeURIComponent("didRunInlineScript = true;"),
+    hashSource: "'sha-dummy'",
+    expectedResult: DoNotRunInlineScript,
+},
+{
+    name: "Invalid hash and no prefix",
+    charset: "UTF8",
+    script: encodeURIComponent("didRunInlineScript = true;"),
+    hashSource: "'d&mmy'",
+    expectedResult: DoNotRunInlineScript,
+},
+{
+    name: "Hash without prefix",
+    charset: "UTF8",
+    script: encodeURIComponent("didRunInlineScript = true;"),
+    hashSource: "'/vET2rVA6WWSNY8XYBl+BqAL0gTF0fzw7eovQQG+hNA='",
+    expectedResult: DoNotRunInlineScript,
+},
+{
+    name: "SHA-256 hash with SHA-384 prefix",
+    charset: "UTF8",
+    script: encodeURIComponent("didRunInlineScript = true;"),
+    hashSource: "'sha384-/vET2rVA6WWSNY8XYBl+BqAL0gTF0fzw7eovQQG+hNA='",
+    expectedResult: DoNotRunInlineScript,
+},
+{
+    name: "SHA-256 hash with SHA-512 prefix",
+    charset: "UTF8",
+    script: encodeURIComponent("didRunInlineScript = true;"),
+    hashSource: "'sha512-/vET2rVA6WWSNY8XYBl+BqAL0gTF0fzw7eovQQG+hNA='",
+    expectedResult: DoNotRunInlineScript,
+},
+{
+    name: "Malformed SHA-256 hash (equal sign in disallowed position)",
+    charset: "UTF8",
+    script: encodeURIComponent("didRunInlineScript = true;"),
+    hashSource: "'sha256-/Vet2Rva6wwsny8xybL+=bQal0Gtf0FZW7EOVqqg+Hna='",
+    expectedResult: DoNotRunInlineScript,
+},
+{
+    name: "SHA-256 hash with one extraneous equal sign",
+    charset: "UTF8",
+    script: encodeURIComponent("didRunInlineScript = true;"),
+    hashSource: "'sha256-/vET2rVA6WWSNY8XYBl+BqAL0gTF0fzw7eovQQG+hNA=='",
+    expectedResult: DoNotRunInlineScript,
+},
+{
+    name: "SHA-256 hash with two extraneous equal signs",
+    charset: "UTF8",
+    script: encodeURIComponent("didRunInlineScript = true;"),
+    hashSource: "'sha256-/vET2rVA6WWSNY8XYBl+BqAL0gTF0fzw7eovQQG+hNA==='",
+    expectedResult: DoNotRunInlineScript,
+},
+{
+    name: "Malformed hash source",
+    charset: "UTF8",
+    script: encodeURIComponent("didRunInlineScript = true;"),
+    hashSource: "'sha256-",
+    expectedResult: DoNotRunInlineScript,
+},
+{
+    name: "Hash source without hash",
+    charset: "UTF8",
+    script: encodeURIComponent("didRunInlineScript = true;"),
+    hashSource: "'sha256-'",
+    expectedResult: DoNotRunInlineScript,
+},
+{
+    name: "Hash source without invalid hash",
+    charset: "UTF8",
+    script: encodeURIComponent("didRunInlineScript = true;"),
+    hashSource: "'sha256-#'",
+    expectedResult: DoNotRunInlineScript,
+},
+{
+    name: "Hash source without invalid hash2",
+    charset: "UTF8",
+    script: encodeURIComponent("didRunInlineScript = true;"),
+    hashSource: "'sha256-abc&='",
+    expectedResult: DoNotRunInlineScript,
+},
+{
+    name: "Hash source without invalid hash3",
+    charset: "UTF8",
+    script: encodeURIComponent("didRunInlineScript = true;"),
+    hashSource: "'sha256-abc&=='",
+    expectedResult: DoNotRunInlineScript,
+},
+{
+    name: "Hash that is larger that 64 bytes",
+    charset: "UTF8",
+    script: encodeURIComponent("didRunInlineScript = true;"),
+    hashSource: "'sha256-LyogVGhpcyBpcyBhIGxvbmcgY29tbWVudCB0aGF0IHdpbGwgYmUgZW5jb2RlZCB1c2luZyBCYXNlNjQgdG8gcHJvZHVjZSBhbiBlbmNvZGVkIHN0cmluZyBvdXRwdXQgdGhhdCBpcyBsb25nZXIgdGhhbiBhIFNlY3VyZSBIYXNoIEFsZ29yaXRobS01MTIgZGlnZXN0LiAqLw=='",
+    expectedResult: DoNotRunInlineScript,
+},
+];
+
+var indexOfCurrentTest = -1;
+var frame;
+
+function testsFinished()
+{
+    document.body.removeChild(frame);
+    finishJSTest();
+}
+
+function checkResult(didRunInlineScript)
+{
+    var test = tests[indexOfCurrentTest];
+    var expectedResult = test.expectedResult;
+    var message;
+    if (expectedResult === didRunInlineScript) {
+        if (expectedResult === RunInlineScript)
+            message = "did run inline script.";
+        else
+            message = "did not run inline script.";
+        testPassed('"' + test.name + '" ' + message);
+    } else {
+        if (expectedResult === RunInlineScript)
+            message = "should have run inline script. But did not.";
+        else
+            message = "should not have ran inline script. But did.";
+        testFailed('"' + test.name + '" ' + message);
+    }
+    runNextTest();
+}
+
+function runNextTest()
+{
+    if (++indexOfCurrentTest >= tests.length) {
+        testsFinished();
+        return;
+    }
+    var test = tests[indexOfCurrentTest];
+    var queryStringArguments = {
+        charset: encodeURIComponent(test.charset),
+        script: test.script, // The test is responsible for URL encoding this value.
+        hashSource: encodeURIComponent(test.hashSource),
+    };
+    var queryString = Object.keys(queryStringArguments).map(function (key) { return key + "=" + queryStringArguments[key]; }).join("&");
+    frame.src = "http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/resources/testScriptHash.php?" + queryString;
+}
+
+window.onload = function ()
+{
+    frame = document.getElementById("frame");
+    runNextTest();
+}
+</script>
+</head>
+<body>
+<script>
+    description("This tests that script hashes work and conform to the Content Security Policy 2.0 specification.");
+</script>
+<iframe id="frame"></iframe>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

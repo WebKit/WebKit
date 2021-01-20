@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>WebMainResource</key>
+	<dict>
+		<key>WebResourceData</key>
+		<string>&lt;?xml-stylesheet href="resources/test-xml-stylesheet.css" type="text/css"?&gt;&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+  &lt;script&gt;
+    if (window.testRunner)
+        testRunner.dumpDOMAsWebArchive();
+  &lt;/script&gt;
+  &lt;style&gt;
+    div { background: red; width: 100px; height: 100px; }
+  &lt;/style&gt;
+  &lt;div id="test"&gt;
+  &lt;/div&gt;
+&lt;/html&gt;</string>
+		<key>WebResourceFrameName</key>
+		<string></string>
+		<key>WebResourceMIMEType</key>
+		<string>application/xml</string>
+		<key>WebResourceTextEncodingName</key>
+		<string>UTF-8</string>
+		<key>WebResourceURL</key>
+		<string>file:///LayoutTests/webarchive/test-xml-stylesheet.xml</string>
+	</dict>
+	<key>WebSubresources</key>
+	<array>
+		<dict>
+			<key>WebResourceData</key>
+			<string>#test {
+  background: green;
+}
+</string>
+			<key>WebResourceMIMEType</key>
+			<string>text/css</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>text/css</string>
+				<key>URL</key>
+				<string>file:///LayoutTests/webarchive/resources/test-xml-stylesheet.css</string>
+				<key>expectedContentLength</key>
+				<integer>31</integer>
+			</dict>
+			<key>WebResourceURL</key>
+			<string>file:///LayoutTests/webarchive/resources/test-xml-stylesheet.css</string>
+		</dict>
+	</array>
+</dict>
+</plist>

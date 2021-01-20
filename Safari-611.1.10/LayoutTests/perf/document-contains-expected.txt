@@ -1,0 +1,5 @@
+Tests that document.contains is O(1).
+PASS
+PASS
+PASS
+

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+if (window.internals)
+    window.internals.settings.setWebGPUEnabled(true);
+
+const renderPipelineSource = `
+vertex float4 vertexShader(float4 position : attribute(0), float i : attribute(1)) : SV_Position {
+    return position;
+}
+
+fragment float4 fragmentShader(float4 position : SV_Position) : SV_Target 0 {
+    return position;
+}
+`;
+
+let device = null;
+let shaderModule = null;
+
+async function createRenderPipeline() {
+    if (!device) {
+        let adapter = await navigator.gpu.requestAdapter();
+        device = await adapter.requestDevice();
+    }
+
+    if (!shaderModule)
+        shaderModule = device.createShaderModule({code: renderPipelineSource});
+
+    // Copied from webgpu/whlsl/whlsl.html.
+    const vertexStage = {module: shaderModule, entryPoint: "vertexShader"};
+    const fragmentStage = {module: shaderModule, entryPoint: "fragmentShader"};
+    const primitiveTopology = "triangle-strip";
+    const rasterizationState = {frontFace: "cw", cullMode: "none"};
+    const alphaBlend = {};
+    const colorBlend = {};
+    const colorStates = [{format: "rgba8unorm", alphaBlend, colorBlend, writeMask: 15}]; // GPUColorWrite.ALL
+    const depthStencilState = null;
+    const attribute0 = {shaderLocation: 0, format: "float4"};
+    const attribute1 = {shaderLocation: 1, format: "float"};
+    const input0 = {stride: 16, attributeSet: [attribute0]};
+    const input1 = {stride: 4, attributeSet: [attribute1]};
+    const inputs = [input0, input1];
+    const vertexInput = {vertexBuffers: inputs};
+    const bindGroupLayoutDescriptor = {bindings: [{binding: 0, visibility: 7, type: "uniform-buffer"}]};
+    const bindGroupLayout = device.createBindGroupLayout(bindGroupLayoutDescriptor);
+    const pipelineLayoutDescriptor = {bindGroupLayouts: [bindGroupLayout]};
+    const pipelineLayout = device.createPipelineLayout(pipelineLayoutDescriptor);
+    device.createRenderPipeline({vertexStage, fragmentStage, primitiveTopology, rasterizationState, colorStates, depthStencilState, vertexInput, sampleCount: 1, layout: pipelineLayout});
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.updateShader.WebGPU.SharedVertexFragment");
+
+    async function awaitProgramCreated() {
+        InspectorTest.log("Creating render pipeline...");
+        let evalutePromise = InspectorTest.evaluateInPage(`createRenderPipeline()`);
+
+        if (!WI.canvasManager.canvasCollection.size)
+            await WI.canvasManager.canvasCollection.awaitEvent(WI.Collection.Event.ItemAdded);
+
+        let canvas = Array.from(WI.canvasManager.canvasCollection)[0];
+        InspectorTest.assert(canvas.contextType === WI.Canvas.ContextType.WebGPU, "Canvas should be WebGPU.");
+
+        let itemAddedEvent = await canvas.shaderProgramCollection.awaitEvent(WI.Collection.Event.ItemAdded);
+        let shaderProgram = itemAddedEvent.data.item;
+        InspectorTest.assert(shaderProgram.programType === WI.ShaderProgram.ProgramType.Render, "Shader program should be a render pipeline.");
+        InspectorTest.assert(shaderProgram.sharesVertexFragmentShader, "Shader program should have a shared vertex and fragment module.");
+
+        await evalutePromise;
+        return shaderProgram;
+    }
+
+    suite.addTestCase({
+        name: "Canvas.updateShader.WebGPU.SharedVertexFragment.SinglePipeline",
+        description: "Check that updating the vertex/fragment shader will also affect the fragment/vertex shader if they both use the same module.",
+        async test() {
+            let shaderProgram = await awaitProgramCreated();
+
+            let [originalVertexSource, originalFragmentSource] = await Promise.all([
+                CanvasAgent.requestShaderSource(shaderProgram.identifier, WI.ShaderProgram.ShaderType.Vertex),
+                CanvasAgent.requestShaderSource(shaderProgram.identifier, WI.ShaderProgram.ShaderType.Fragment),
+            ]);
+            InspectorTest.expectShallowEqual(originalVertexSource, originalFragmentSource, "Vertex and Fragment shader sources should be the same.");
+
+            InspectorTest.log("Updating vertex shader source...");
+            await CanvasAgent.updateShader(shaderProgram.identifier, WI.ShaderProgram.ShaderType.Vertex, "// MODIFIED VERTEX\n\n" + originalVertexSource.source);
+
+            let [vertexSourceAfterUpdatingVertex, fragmentSourceAfterUpdatingVertex] = await Promise.all([
+                CanvasAgent.requestShaderSource(shaderProgram.identifier, WI.ShaderProgram.ShaderType.Vertex),
+                CanvasAgent.requestShaderSource(shaderProgram.identifier, WI.ShaderProgram.ShaderType.Fragment),
+            ]);
+            InspectorTest.expectShallowEqual(vertexSourceAfterUpdatingVertex, fragmentSourceAfterUpdatingVertex, "Vertex and Fragment shader sources should be the same.");
+            InspectorTest.expectNotShallowEqual(vertexSourceAfterUpdatingVertex, originalVertexSource, "Vertex source should have changed.");
+
+            InspectorTest.log("Updating fragment shader source...");
+            await CanvasAgent.updateShader(shaderProgram.identifier, WI.ShaderProgram.ShaderType.Fragment, "// MODIFIED FRAGMENT\n\n" + originalFragmentSource.source);
+
+            let [vertexSourceAfterUpdatingFragment, fragmentSourceAfterUpdatingFragment] = await Promise.all([
+                CanvasAgent.requestShaderSource(shaderProgram.identifier, WI.ShaderProgram.ShaderType.Vertex),
+                CanvasAgent.requestShaderSource(shaderProgram.identifier, WI.ShaderProgram.ShaderType.Fragment),
+            ]);
+            InspectorTest.expectShallowEqual(vertexSourceAfterUpdatingFragment, fragmentSourceAfterUpdatingFragment, "Vertex and Fragment shader sources should be the same.");
+            InspectorTest.expectNotShallowEqual(fragmentSourceAfterUpdatingFragment, originalFragmentSource, "Fragment source should have changed.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Canvas.updateShader.WebGPU.SharedVertexFragment.MultiplePipelines",
+        description: "Check that updating one pipeline won't affect any other pipelines if they share the same module.",
+        async test() {
+            let shaderProgram1 = await awaitProgramCreated();
+            let shaderProgram2 = await awaitProgramCreated();
+
+            let [originalVertexSource1, originalVertexSource2] = await Promise.all([
+                CanvasAgent.requestShaderSource(shaderProgram1.identifier, WI.ShaderProgram.ShaderType.Vertex),
+                CanvasAgent.requestShaderSource(shaderProgram2.identifier, WI.ShaderProgram.ShaderType.Vertex),
+            ]);
+            InspectorTest.expectShallowEqual(originalVertexSource1, originalVertexSource2, "Both pipelines should have the same source.");
+
+            InspectorTest.log("Updating pipeline 1 vertex source...");
+            await CanvasAgent.updateShader(shaderProgram1.identifier, WI.ShaderProgram.ShaderType.Vertex, "// MODIFIED VERTEX\n\n" + originalVertexSource1.source);
+
+            let [newVertexSource1, newVertexSource2] = await Promise.all([
+                CanvasAgent.requestShaderSource(shaderProgram1.identifier, WI.ShaderProgram.ShaderType.Vertex),
+                CanvasAgent.requestShaderSource(shaderProgram2.identifier, WI.ShaderProgram.ShaderType.Vertex),
+            ]);
+            InspectorTest.expectNotShallowEqual(originalVertexSource1, newVertexSource1, "Source of pipeline 1 should have changed.");
+            InspectorTest.expectNotShallowEqual(newVertexSource1, newVertexSource2, "Both pipelines should have different sources.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>WebGPU tests for Canvas.updateShader command when the vertex and fragment shaders of a render pipeline share the same module.</p>
+</body>
+</html>

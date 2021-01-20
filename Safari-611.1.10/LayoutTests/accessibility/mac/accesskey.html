@@ -1,0 +1,28 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<a href="http://www.webkit.org" id='link1' accesskey="w">webkit</a><br>
+<input type='text' id='text1' accesskey='q'>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This test makes sure that elements return their accesskeys.");
+
+    if (window.accessibilityController) {
+        var link = window.accessibilityController.accessibleElementById("link1");
+        var linkAccessKey = "AXAccessKey: w";
+        shouldBeTrue("link.allAttributes().indexOf(linkAccessKey) != -1")
+
+        var text = window.accessibilityController.accessibleElementById("text1");
+        var inputAccessKey = "AXAccessKey: q";
+        shouldBeTrue("text.allAttributes().indexOf(inputAccessKey) != -1");
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

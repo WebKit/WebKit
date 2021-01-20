@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'unsafe-inline' 'self'".
+
+CONSOLE MESSAGE: [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'unsafe-inline' 'self'".
+
+CONSOLE MESSAGE: [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'unsafe-inline' 'self'".
+
+CONSOLE MESSAGE: [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'unsafe-inline' 'self'".
+
+CONSOLE MESSAGE: [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'unsafe-inline' 'self'".
+
+This tests that multiple violations on a page trigger multiple reports if and only if the violations are distinct. This test passes if only one. PingLoader callback is visible in the output.

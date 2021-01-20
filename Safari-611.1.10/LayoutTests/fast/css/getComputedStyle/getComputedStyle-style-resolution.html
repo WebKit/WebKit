@@ -1,0 +1,45 @@
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<container>
+<subcontainer>
+<target>Text</target>
+</subcontainer>
+</container>
+<script>
+var target = document.querySelector("target");
+var container = document.querySelector("container");
+var subcontainer = document.querySelector("subcontainer");
+test(() => {
+     target.offsetLeft;
+     internals.startTrackingStyleRecalcs();
+     assert_equals(getComputedStyle(target).backgroundColor, "rgba(0, 0, 0, 0)", "getComputedStyle color is correct");
+     assert_equals(internals.styleRecalcCount(), 0, "getComputedStyle didn't trigger style resolution");
+}, "No style resolution when style is valid.");
+
+test(() => {
+     target.offsetLeft;
+     internals.startTrackingStyleRecalcs();
+     container.style.backgroundColor = "blue";
+     assert_equals(getComputedStyle(target).backgroundColor, "rgba(0, 0, 0, 0)", "getComputedStyle color is correct");
+     assert_equals(internals.styleRecalcCount(), 0, "getComputedStyle didn't trigger style resolution");
+ }, "No style resolution when parent style is invalid and querying non-inherited property.");
+
+ test(() => {
+     target.style.backgroundColor = "inherit";
+     target.offsetLeft;
+     internals.startTrackingStyleRecalcs();
+     container.style.backgroundColor = "red";
+     assert_equals(getComputedStyle(target).backgroundColor, "rgba(0, 0, 0, 0)", "getComputedStyle color is correct");
+     assert_equals(internals.styleRecalcCount(), 0, "getComputedStyle didn't trigger style resolution");
+ }, "This still works with 'inherit'");
+
+test(() => {
+     target.style.backgroundColor = "inherit";
+     subcontainer.style.backgroundColor = "inherit";
+     target.offsetLeft;
+     internals.startTrackingStyleRecalcs();
+     container.style.backgroundColor = "green";
+     assert_equals(getComputedStyle(target).backgroundColor, "rgb(0, 128, 0)", "getComputedStyle color is correct");
+     assert_equals(internals.styleRecalcCount(), 1, "getComputedStyle did trigger style resolution");
+}, "Explicit 'inherit' chain triggers style resolution");
+</script>

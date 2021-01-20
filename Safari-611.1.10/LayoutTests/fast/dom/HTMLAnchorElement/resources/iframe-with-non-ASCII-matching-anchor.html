@@ -1,0 +1,41 @@
+<meta charset="utf-8">
+<script>
+
+function runTest()
+{
+    if (!window.testRunner)
+        return;
+    if (!window.eventSender)
+        return;
+
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    var anchor = document.getElementById("start");
+    var x = frameElement.offsetLeft + anchor.offsetLeft + 2;
+    var y = frameElement.offsetTop + anchor.offsetTop + 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    setTimeout(finish, 1000);
+}
+
+function finish()
+{
+    var result;
+    if (top.scrollY == 0)
+        result = "PASS";
+    else
+        result = "FAIL: should not match the anchor and should not trigger a scroll";
+
+    top.document.body.appendChild(document.createTextNode(result));
+
+    testRunner.notifyDone();
+}
+
+</script>
+<body onload="runTest();">
+    <a id="start" href="#scroll">Go to anchor</a>
+    <div style="height: 1000px"></div>
+    <a name="ſcroll">Anchor</a>
+</body>

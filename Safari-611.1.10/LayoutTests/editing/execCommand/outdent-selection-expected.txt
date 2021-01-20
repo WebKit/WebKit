@@ -1,0 +1,37 @@
+This test uses the execCommand to Outdent the text below.
+This demonstrates a bug: the content in the blockquote that's not in a list is pulled out of position.
+| "\n"
+| <span>
+|   id="item1"
+|   "<#selection-anchor>Lorem"
+| <br>
+| "\nmore Lorem!\n"
+| <blockquote>
+|   class="webkit-indent-blockquote"
+|   style="margin: 0 0 0 40px;"
+| "ipsum"
+| <br>
+| <blockquote>
+|   class="webkit-indent-blockquote"
+|   style="margin: 0 0 0 40px;"
+|   "\n\nFoo"
+|   <br>
+|   "Bar"
+|   <br>
+|   "Baz"
+|   <br>
+|   <ul>
+|     "\n"
+| "Dolor"
+| <br>
+| "\nDinner time?"
+| <br>
+| <ul>
+|   "\n"
+| "\nSum!"
+| <br>
+| "\n"
+| <span>
+|   id="item2"
+|   "Thing<#selection-focus>"
+| "\n"

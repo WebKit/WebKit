@@ -1,0 +1,124 @@
+<!DOCTYPE>
+
+<html>
+<head>
+  <style>
+    .init {
+      -webkit-transition-duration: 1s;
+      -webkit-transition-timing-function: linear;
+    }
+    
+    #cx {
+      -webkit-transition-property: cx;
+    }
+    #cx.final {
+      cx: 200px;
+    }
+
+    #cy {
+      -webkit-transition-property: cy;
+    }
+    #cy.final {
+      cy: 200px;
+    }
+
+    #r {
+      -webkit-transition-property: r;
+    }
+    #r.final {
+      r: 200px;
+    }
+
+    #rx {
+      -webkit-transition-property: rx;
+    }
+    #rx.final {
+      rx: 200px;
+    }
+
+    #ry {
+      -webkit-transition-property: ry;
+    }
+    #ry.final {
+      ry: 200px;
+    }
+
+    #x {
+      -webkit-transition-property: x;
+    }
+    #x.final {
+      x: 200px;
+    }
+
+    #y {
+      -webkit-transition-property: y;
+    }
+    #y.final {
+      y: 200px;
+    }
+
+    #width {
+      -webkit-transition-property: width;
+    }
+    #width.final {
+      width: 200px;
+    }
+
+    #height {
+      -webkit-transition-property: height;
+    }
+    #height.final {
+      height: 200px;
+    }
+    
+  </style>
+  <script src="resources/transition-test-helpers.js"></script>
+  <script type="text/javascript">
+
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      [0.5, 'cx', 'cx', 150, 20],
+      [0.5, 'cy', 'cy', 150, 20],
+      [0.5, 'r', 'r', 150, 20],
+      [0.5, 'rx', 'rx', 150, 20],
+      [0.5, 'ry', 'ry', 150, 20],
+      [0.5, 'x', 'x', 150, 20],
+      [0.5, 'y', 'y', 150, 20],
+      [0.5, 'width', 'width', 150, 20],
+      [0.5, 'height', 'height', 150, 20],
+    ];
+  
+    function setupTest()
+    {
+      document.getElementById('cx').setAttribute('class', 'init final');
+      document.getElementById('cy').setAttribute('class', 'init final');
+      document.getElementById('r').setAttribute('class', 'init final');
+      document.getElementById('rx').setAttribute('class', 'init final');
+      document.getElementById('ry').setAttribute('class', 'init final');
+      document.getElementById('x').setAttribute('class', 'init final');
+      document.getElementById('y').setAttribute('class', 'init final');
+      document.getElementById('width').setAttribute('class', 'init final');
+      document.getElementById('height').setAttribute('class', 'init final');
+    }
+  
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
+  </script>
+</head>
+<body>
+  <svg>
+    <circle cx="100" cy="100" r="100" class="init" id="cx"/>
+    <circle cx="100" cy="100" r="100" class="init" id="cy"/>
+    <circle cx="100" cy="100" r="100" class="init" id="r"/>
+    <ellipse cx="100" cy="100" rx="100" ry="100" class="init" id="rx"/>
+    <ellipse cx="100" cy="100" rx="100" ry="100" class="init" id="ry"/>
+    <rect x="100" y="100" width="100" height="100" class="init" id="x"/>
+    <rect x="100" y="100" width="100" height="100" class="init" id="y"/>
+    <rect x="100" y="100" width="100" height="100" class="init" id="width"/>
+    <rect x="100" y="100" width="100" height="100" class="init" id="height"/>
+  </svg>
+
+  <div id="result">
+  </div>
+
+</body>
+</html>

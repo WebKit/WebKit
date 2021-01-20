@@ -1,0 +1,17 @@
+Verify selector specifying extended filtering of :lang() pseudo class with string arguments
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelectorAll(':lang("en")').length is 1
+PASS document.querySelectorAll(':lang("de-1997")').length is 1
+PASS document.querySelectorAll(':lang("*-1997")').length is 1
+PASS document.querySelectorAll(":lang('')").length is 0
+PASS document.querySelectorAll(':lang("")').length is 0
+PASS document.querySelectorAll(':lang("en", "*-1997")').length is 2
+PASS document.querySelectorAll(':lang("", "*-1997")').length is 1
+PASS document.querySelectorAll(':lang("""")') threw exception SyntaxError: The string did not match the expected pattern..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

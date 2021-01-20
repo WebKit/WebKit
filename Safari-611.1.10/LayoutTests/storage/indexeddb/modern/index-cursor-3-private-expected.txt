@@ -1,0 +1,281 @@
+This tests that index cursors properly handle changing indexes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+Initial upgrade needed: Old version - 0 New version - 1
+Starting a new cursor: testCursorDirection(index, 'next')
+TestIndex1 count is: 18
+Success opening or iterating cursor
+Cursor direction is: next
+Cursor source is: TestIndex1
+Cursor key is: A
+Cursor primary key is: 1
+Cursor value is: [object Object]
+Success opening or iterating cursor
+Cursor direction is: next
+Cursor source is: TestIndex1
+Cursor key is: A
+Cursor primary key is: 2
+Cursor value is: [object Object]
+Deleted key 2 from object store
+Deleted key 3 from object store
+Success opening or iterating cursor
+Cursor direction is: next
+Cursor source is: TestIndex1
+Cursor key is: B
+Cursor primary key is: 4
+Cursor value is: [object Object]
+Deleted key 4 from object store
+Deleted key 5 from object store
+Success opening or iterating cursor
+Cursor direction is: next
+Cursor source is: TestIndex1
+Cursor key is: C
+Cursor primary key is: 6
+Cursor value is: [object Object]
+Deleted key 6 from object store
+Deleted key 7 from object store
+Success opening or iterating cursor
+Cursor direction is: next
+Cursor source is: TestIndex1
+Cursor key is: D
+Cursor primary key is: 8
+Cursor value is: [object Object]
+Deleted key 8 from object store
+Deleted key 9 from object store
+Success opening or iterating cursor
+Cursor direction is: next
+Cursor source is: TestIndex1
+Cursor key is: E
+Cursor primary key is: 10
+Cursor value is: [object Object]
+Deleted key 10 from object store
+Deleted key 11 from object store
+Success opening or iterating cursor
+Cursor direction is: next
+Cursor source is: TestIndex1
+Cursor key is: F
+Cursor primary key is: 12
+Cursor value is: [object Object]
+Deleted key 12 from object store
+Deleted key 13 from object store
+Success opening or iterating cursor
+Cursor direction is: next
+Cursor source is: TestIndex1
+Cursor key is: G
+Cursor primary key is: 14
+Cursor value is: [object Object]
+Deleted key 14 from object store
+Deleted key 15 from object store
+Success opening or iterating cursor
+Cursor direction is: next
+Cursor source is: TestIndex1
+Cursor key is: H
+Cursor primary key is: 16
+Cursor value is: [object Object]
+Deleted key 16 from object store
+Deleted key 17 from object store
+Success opening or iterating cursor
+Cursor direction is: next
+Cursor source is: TestIndex1
+Cursor key is: I
+Cursor primary key is: 18
+Cursor value is: [object Object]
+Deleted key 18 from object store
+Success opening or iterating cursor
+Starting a new cursor: testCursorDirection(index, 'prev')
+TestIndex1 count is: 18
+Success opening or iterating cursor
+Cursor direction is: prev
+Cursor source is: TestIndex1
+Cursor key is: I
+Cursor primary key is: 18
+Cursor value is: [object Object]
+Success opening or iterating cursor
+Cursor direction is: prev
+Cursor source is: TestIndex1
+Cursor key is: I
+Cursor primary key is: 17
+Cursor value is: [object Object]
+Deleted key 17 from object store
+Deleted key 16 from object store
+Success opening or iterating cursor
+Cursor direction is: prev
+Cursor source is: TestIndex1
+Cursor key is: H
+Cursor primary key is: 15
+Cursor value is: [object Object]
+Deleted key 15 from object store
+Deleted key 14 from object store
+Success opening or iterating cursor
+Cursor direction is: prev
+Cursor source is: TestIndex1
+Cursor key is: G
+Cursor primary key is: 13
+Cursor value is: [object Object]
+Deleted key 13 from object store
+Deleted key 12 from object store
+Success opening or iterating cursor
+Cursor direction is: prev
+Cursor source is: TestIndex1
+Cursor key is: F
+Cursor primary key is: 11
+Cursor value is: [object Object]
+Deleted key 11 from object store
+Deleted key 10 from object store
+Success opening or iterating cursor
+Cursor direction is: prev
+Cursor source is: TestIndex1
+Cursor key is: E
+Cursor primary key is: 9
+Cursor value is: [object Object]
+Deleted key 9 from object store
+Deleted key 8 from object store
+Success opening or iterating cursor
+Cursor direction is: prev
+Cursor source is: TestIndex1
+Cursor key is: D
+Cursor primary key is: 7
+Cursor value is: [object Object]
+Deleted key 7 from object store
+Deleted key 6 from object store
+Success opening or iterating cursor
+Cursor direction is: prev
+Cursor source is: TestIndex1
+Cursor key is: C
+Cursor primary key is: 5
+Cursor value is: [object Object]
+Deleted key 5 from object store
+Deleted key 4 from object store
+Success opening or iterating cursor
+Cursor direction is: prev
+Cursor source is: TestIndex1
+Cursor key is: B
+Cursor primary key is: 3
+Cursor value is: [object Object]
+Deleted key 3 from object store
+Deleted key 2 from object store
+Success opening or iterating cursor
+Cursor direction is: prev
+Cursor source is: TestIndex1
+Cursor key is: A
+Cursor primary key is: 1
+Cursor value is: [object Object]
+Deleted key 1 from object store
+Success opening or iterating cursor
+Starting a new cursor: testCursorDirection(index, 'nextunique')
+TestIndex1 count is: 18
+Success opening or iterating cursor
+Cursor direction is: nextunique
+Cursor source is: TestIndex1
+Cursor key is: A
+Cursor primary key is: 1
+Cursor value is: [object Object]
+Success opening or iterating cursor
+Cursor direction is: nextunique
+Cursor source is: TestIndex1
+Cursor key is: B
+Cursor primary key is: 3
+Cursor value is: [object Object]
+Deleted key 3 from object store
+Deleted key 4 from object store
+Deleted key 5 from object store
+Success opening or iterating cursor
+Cursor direction is: nextunique
+Cursor source is: TestIndex1
+Cursor key is: C
+Cursor primary key is: 6
+Cursor value is: [object Object]
+Deleted key 6 from object store
+Deleted key 7 from object store
+Deleted key 8 from object store
+Success opening or iterating cursor
+Cursor direction is: nextunique
+Cursor source is: TestIndex1
+Cursor key is: E
+Cursor primary key is: 9
+Cursor value is: [object Object]
+Deleted key 9 from object store
+Deleted key 10 from object store
+Deleted key 11 from object store
+Success opening or iterating cursor
+Cursor direction is: nextunique
+Cursor source is: TestIndex1
+Cursor key is: F
+Cursor primary key is: 12
+Cursor value is: [object Object]
+Deleted key 12 from object store
+Deleted key 13 from object store
+Deleted key 14 from object store
+Success opening or iterating cursor
+Cursor direction is: nextunique
+Cursor source is: TestIndex1
+Cursor key is: H
+Cursor primary key is: 15
+Cursor value is: [object Object]
+Deleted key 15 from object store
+Deleted key 16 from object store
+Deleted key 17 from object store
+Success opening or iterating cursor
+Cursor direction is: nextunique
+Cursor source is: TestIndex1
+Cursor key is: I
+Cursor primary key is: 18
+Cursor value is: [object Object]
+Deleted key 18 from object store
+Deleted key 1 from object store
+Success opening or iterating cursor
+Starting a new cursor: testCursorDirection(index, 'prevunique')
+TestIndex1 count is: 18
+Success opening or iterating cursor
+Cursor direction is: prevunique
+Cursor source is: TestIndex1
+Cursor key is: I
+Cursor primary key is: 17
+Cursor value is: [object Object]
+Success opening or iterating cursor
+Cursor direction is: prevunique
+Cursor source is: TestIndex1
+Cursor key is: H
+Cursor primary key is: 15
+Cursor value is: [object Object]
+Deleted key 15 from object store
+Deleted key 14 from object store
+Deleted key 13 from object store
+Success opening or iterating cursor
+Cursor direction is: prevunique
+Cursor source is: TestIndex1
+Cursor key is: F
+Cursor primary key is: 11
+Cursor value is: [object Object]
+Deleted key 11 from object store
+Deleted key 10 from object store
+Deleted key 9 from object store
+Success opening or iterating cursor
+Cursor direction is: prevunique
+Cursor source is: TestIndex1
+Cursor key is: D
+Cursor primary key is: 7
+Cursor value is: [object Object]
+Deleted key 7 from object store
+Deleted key 6 from object store
+Deleted key 5 from object store
+Success opening or iterating cursor
+Cursor direction is: prevunique
+Cursor source is: TestIndex1
+Cursor key is: B
+Cursor primary key is: 3
+Cursor value is: [object Object]
+Deleted key 3 from object store
+Deleted key 2 from object store
+Deleted key 1 from object store
+Success opening or iterating cursor
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

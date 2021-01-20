@@ -1,0 +1,7 @@
+2d.shadow.composite.3
+Areas outside shadows are drawn correctly with destination-out
+Spec references: 2d.shadow.render
+Actual output:
+Expected output:
+
+Passed

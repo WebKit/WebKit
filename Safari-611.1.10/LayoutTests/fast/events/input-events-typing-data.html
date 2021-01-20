@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <textarea id="plain" onbeforeinput=handlePlainInput(event) oninput=handlePlainInput(event)></textarea>
+    <div id="rich" contenteditable onbeforeinput=handleRichInput(event) oninput=handleRichInput(event)></div>
+    <script type="text/javascript">
+        description(`To manually test this, type in both the rich contenteditable and plain textarea and/or insert candidates/autocorrections.
+            Both elements should have data when typing normally, but only the plain textarea should have data when inserting a replacement.`);
+        (function() {
+            if (!window.internals || !window.eventSender || !window.testRunner)
+                return;
+
+            internals.settings.setInputEventsEnabled(true);
+
+            document.querySelector("#plain").focus();
+            simulateTypingWithReplacement(false);
+
+            document.querySelector("#rich").focus();
+            simulateTypingWithReplacement(true);
+        })();
+
+        function simulateTypingWithReplacement(isRich)
+        {
+            eventSender.keyDown("h", []);
+            eventSender.keyDown("e", []);
+            eventSender.keyDown("l", []);
+            eventSender.keyDown("o", []);
+            internals.handleAcceptedCandidate("hello", 0, 4);
+        }
+
+        function handleRichInput(event)
+        {
+            if (event.inputType === "insertText" || event.inputType === "insertReplacementText")
+                debug(`Rich contenteditable received '${event.type}' with inputType: '${event.inputType}' and data: '${event.data}'`);
+        }
+
+        function handlePlainInput(event)
+        {
+            if (event.inputType === "insertText" || event.inputType === "insertReplacementText")
+                debug(`Plain textarea received '${event.type}' with inputType: '${event.inputType}' and data: '${event.data}'`);
+        }
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+
+</html>

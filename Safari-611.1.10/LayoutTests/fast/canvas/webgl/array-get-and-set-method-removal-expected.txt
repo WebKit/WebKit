@@ -1,0 +1,37 @@
+Verifies that the get method, and the set method for individual elements, on the WebGLArray types no longer exist.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Regression test for https://bugs.webkit.org/show_bug.cgi?id=38039
+PASS webGLArray.get is undefined.
+PASS webGLArray[0] is 2
+PASS webGLArray[1] is 3
+PASS webGLArray.set(0, 1) is noop
+PASS webGLArray.get is undefined.
+PASS webGLArray[0] is 2
+PASS webGLArray[1] is 3
+PASS webGLArray.set(0, 1) is noop
+PASS webGLArray.get is undefined.
+PASS webGLArray[0] is 2
+PASS webGLArray[1] is 3
+PASS webGLArray.set(0, 1) is noop
+PASS webGLArray.get is undefined.
+PASS webGLArray[0] is 2
+PASS webGLArray[1] is 3
+PASS webGLArray.set(0, 1) is noop
+PASS webGLArray.get is undefined.
+PASS webGLArray[0] is 2
+PASS webGLArray[1] is 3
+PASS webGLArray.set(0, 1) is noop
+PASS webGLArray.get is undefined.
+PASS webGLArray[0] is 2
+PASS webGLArray[1] is 3
+PASS webGLArray.set(0, 1) is noop
+PASS webGLArray.get is undefined.
+PASS webGLArray[0] is 2
+PASS webGLArray[1] is 3
+PASS webGLArray.set(0, 1) is noop
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

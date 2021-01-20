@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<meta name="disabled-adaptations" content="">
+<meta charset="utf8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:title" content="Recipes Demo">
+<meta property="og:description" content="My wonderful list of recipes">
+<meta property="og:image" content="https://webkit.org/demos/extrazoom/recipes/salmon.jpg">
+<meta property="og:image:width" content="240px">
+<meta property="og:image:height" content="160px">
+<style>
+    @media (min-width: 320px) {
+        div.column {
+            width: 50%;
+        }
+
+        body {
+            display: flex;
+            background-color: #F0F0F0;
+        }
+
+        div.card {
+            background-color: white;
+            border-bottom: 1px #DDD solid;
+            border-right: 1px #DDD solid;
+        }
+    }
+
+    body, html {
+        margin: 0;
+        width: 100%;
+        -webkit-hyphens: auto;
+        font-family: system-ui;
+    }
+
+    div.column {
+        padding: 0;
+        box-sizing: border-box;
+        break-inside: avoid;
+    }
+
+    div.card {
+        margin: 0.5em 2px;
+        padding: 0.5em;
+        text-align: center;
+        break-inside: avoid;
+    }
+
+    div.card > .divider {
+        margin: 0.5em auto;
+        border-top: 1px rgb(90, 200, 250) solid;
+    }
+
+    div.card > img {
+        width: 100%;
+        display: block;
+    }
+
+    div.description {
+        text-align: left;
+        margin: 0.5em auto;
+        line-height: 1.5;
+    }
+</style>
+<html>
+<body>
+    <div class="column">
+        <div class="card">
+            <strong>Steamed salmon</strong>
+            <div class="divider"></div>
+            <img src="salmon.jpg"></img>
+            <div class="description">An innovative twist on a classic year-round dish. It’s simple, it’s quick, and it’s healthy.</div>
+        </div>
+        <div class="card">
+            <strong>Pizza Margherita</strong>
+            <div class="divider"></div>
+            <img src="pizza.jpg"></img>
+            <div class="description">Learn how to make a traditional Italian pizza.</div>
+        </div>
+        <div class="card">
+            <strong>Grilled steak</strong>
+            <div class="divider"></div>
+            <img src="steak.jpg"></img>
+            <div class="description">Served with home fries and roasted vegetables. A great choice for any occasion.</div>
+        </div>
+        <div class="card">
+            <strong>Traditional Greek hummus</strong>
+            <div class="divider"></div>
+            <img src="hummus.jpg"></img>
+            <div class="description">Perfect for parties and gatherings. Impress your loved ones with this delicious, authentic recipe.</div>
+        </div>
+    </div>
+    <div class="column">
+        <div class="card">
+            <strong>Clam chowder</strong>
+            <div class="divider"></div>
+            <img src="chowder.jpg"></img>
+            <div class="description">This delicious New England chowder is perfect for a cold Winter’s day.</div>
+        </div>
+        <div class="card">
+            <strong>Shrimp tacos</strong>
+            <div class="divider"></div>
+            <img src="tacos.jpg"></img>
+            <div class="description">Avocados, shrimp, and a hint of lime for added zest. A terrific summertime dish.</div>
+        </div>
+        <div class="card">
+            <strong>Pad Thai</strong>
+            <div class="divider"></div>
+            <img src="padthai.jpg"></img>
+            <div class="description">A national dish from Thailand. This traditional recipe is easy, and sure to delight your taste buds.</div>
+        </div>
+        <div class="card">
+            <strong>Butter chicken</strong>
+            <div class="divider"></div>
+            <img src="butterchicken.jpg"></img>
+            <div class="description">A traditional Indian dish with strong, mouthwatering flavors.</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

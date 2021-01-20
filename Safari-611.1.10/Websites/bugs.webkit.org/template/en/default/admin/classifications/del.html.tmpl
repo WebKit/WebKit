@@ -1,0 +1,51 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% PROCESS global/header.html.tmpl
+  title = "Delete classification"
+  style_urls = ['skins/standard/admin.css']
+%]
+
+<table id="admin_table">
+  <tr class="column_header">
+    <th>Field</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td>Classification</td>
+    <td>[% classification.name FILTER html %]</td>
+  </tr>
+  <tr>
+    <td>Description</td>
+    <td>
+      [% IF classification.description %]
+        [% classification.description FILTER html_light %]
+      [% ELSE %]
+        <span class="warning">description missing</span>
+      [% END %]
+    </td>
+  </tr>
+  <tr>
+    <td>Sortkey</td>
+    <td>[% classification.sortkey FILTER html %]</td>
+  </tr>
+</table>
+
+<h2>Confirmation</h2>
+
+<p>Do you really want to delete this classification?</p>
+<form method=post action="editclassifications.cgi">
+  <input type=submit value="Yes, delete">
+  <input type=hidden name="action" value="delete">
+  <input type=hidden name="classification" value="[% classification.name FILTER html %]">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+</form>
+
+[% PROCESS admin/classifications/footer.html.tmpl %] 
+
+[% PROCESS global/footer.html.tmpl %] 

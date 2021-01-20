@@ -1,0 +1,13 @@
+This tests that function inlining in the DFG JIT doesn't get confused by constants being reused between inliner and inlinee.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS bar(6, 0) is 10
+PASS bar(6, 1) is 15
+PASS bar(6, false) is 10
+PASS bar(6, true) is 15
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

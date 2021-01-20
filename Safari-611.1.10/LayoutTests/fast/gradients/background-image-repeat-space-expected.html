@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            width: 200px;
+            height: 200px;
+            display: inline-block;
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><rect fill='lime' width='100%' height='100%'/></svg>");
+        }
+        .fixed-tile {
+            background-size: 30px 30px;
+        }
+        .percentage-tile {
+            background-size: 15% 15%;
+        }
+        .space {
+            background-repeat: space;
+        }
+        .space-repeat {
+            background-repeat: space repeat;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div class="container fixed-tile space"></div>
+        <div class="container fixed-tile space-repeat"></div>
+    </div>
+    <div>
+        <div class="container percentage-tile space"></div>
+        <div class="container percentage-tile space-repeat"></div>
+    </div>
+</body>
+</html>

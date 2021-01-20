@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: border-image-source: url("shadow-border.png")
+This test should not crash

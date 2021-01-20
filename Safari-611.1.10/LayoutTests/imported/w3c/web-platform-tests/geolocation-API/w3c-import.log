@@ -1,0 +1,28 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/PositionOptions.https.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/clearWatch_TypeError.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/getCurrentPosition_IDL.https.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/getCurrentPosition_TypeError.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/getCurrentPosition_permission_allow.https.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/getCurrentPosition_permission_deny.https.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/idlharness.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/non-secure-contexts.http.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/support.js
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/watchPosition_TypeError.html
+/LayoutTests/imported/w3c/web-platform-tests/geolocation-API/watchPosition_permission_deny.https.html

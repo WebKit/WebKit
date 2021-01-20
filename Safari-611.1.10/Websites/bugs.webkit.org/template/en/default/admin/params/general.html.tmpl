@@ -1,0 +1,64 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% 
+   title = "General"
+   desc = "Miscellaneous general settings that are not required." 
+%]
+
+[% param_descs = {
+  maintainer => 
+    "The email address of the person who maintains this installation "
+    _ " of Bugzilla.",
+
+  utf8 => 
+    "Use UTF-8 (Unicode) encoding for all text in ${terms.Bugzilla}. New"
+    _ " installations should set this to true to avoid character encoding"
+    _ " problems. <strong>Existing databases should set this to true"
+    _ " only after the data has been converted from existing legacy"
+    _ " character encodings to UTF-8, using the <kbd>contrib/recode.pl</kbd>"
+    _ " script</strong>."
+    _ " <p>Note that if you turn this parameter from &quot;off&quot; to"
+    _ " &quot;on&quot;, you must re-run <kbd>checksetup.pl</kbd> immediately"
+    _ " afterward.</p>",
+
+  shutdownhtml => 
+    "If this field is non-empty, then Bugzilla will be completely"
+    _ " disabled and this text will be displayed instead of all the"
+    _ " $terms.Bugzilla pages.",
+
+  announcehtml => 
+    "If this field is non-empty, then Bugzilla will"
+    _ " display whatever is in this field at the top of every"
+    _ " HTML page. The HTML you put in this field is not wrapped or"
+    _ " enclosed in anything. You might want to wrap it inside a"
+    _ "<code>&lt;div&gt;</code>. Give the div <em>id=\"message\"</em> to get"
+    _ " green text inside a red box, or <em>class=\"bz_private\"</em> for"
+    _ " dark red on a red background.  Anything defined in "
+    _ " <code>skins/standard/global.css</code> or <code>skins/custom/global.css</code>"
+    _ " will work.  To get centered text, use <em>class=\"center\"</em>.",
+
+  upgrade_notification => 
+    "Bugzilla can inform you when a new release is available."
+    _ " The notification will appear on the $terms.Bugzilla homepage,"
+    _ " for administrators only."
+    _ " <ul><li>'development_snapshot' notifies you about the development "
+    _ " snapshot that has been released.</li>"
+    _ " <li>'latest_stable_release' notifies you about the most recent"
+    _ " release available on the most recent stable branch. This branch"
+    _ " may be different from the branch your installation is based on.</li>"
+    _ " <li>'stable_branch_release' notifies you only about new releases"
+    _ " corresponding to the branch your installation is based on."
+    _ " If you are running a release candidate, you will get a notification"
+    _ " for newer release candidates too.</li>"
+    _ " <li>'disabled' will never notify you about new releases and no"
+    _ " connection will be established to a remote server.</li></ul>"
+    _ " <p>Note that if your Bugzilla server requires a proxy to"
+    _ " access the Internet, you may also need to set the <var>proxy_url</var>"
+    _ " parameter in the Advanced section.</p>",
+} %]

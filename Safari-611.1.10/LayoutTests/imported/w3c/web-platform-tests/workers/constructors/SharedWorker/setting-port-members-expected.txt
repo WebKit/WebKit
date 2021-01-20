@@ -1,0 +1,11 @@
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: SharedWorker
+
+FAIL postMessage Can't find variable: worker
+FAIL start Can't find variable: worker
+FAIL close Can't find variable: worker
+FAIL onmessage Can't find variable: worker
+FAIL addEventListener Can't find variable: worker
+FAIL removeEventListener Can't find variable: worker
+FAIL despatchEvent Can't find variable: worker
+

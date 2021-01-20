@@ -1,0 +1,8 @@
+
+Test that passing an invalid id to cancelWatchAvailability will generate an error.
+
+** create initial callback
+** pass invalid id to cancelWatchAvailability
+EXPECTED ERROR: NotFoundError: The object can not be found here.
+END OF TEST
+

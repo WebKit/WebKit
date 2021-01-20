@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+jsTestIsAsync = true;
+
+function testCompleted()
+{
+    var scriptElement = document.createElement("script")
+    scriptElement.src = '../../../resources/js-test-post-async.js'
+    document.body.appendChild(scriptElement);
+}
+
+function computeResolution(resolution, imgResolutionDppx)
+{
+    if (!resolution)
+        return;
+    var fromImage = /from-image/.test(resolution);
+    var snap = /snap/.test(resolution);
+    var explicit = /(-?\d*(\.\d+)?)(dp(px|i|cm))/.exec(resolution);
+    var value = explicit && explicit[1] * 1;
+    var unit = explicit && explicit[3];
+    var dppx = 1;
+    if (!unit && !fromImage)
+        return;
+    if (unit && value <= 0)
+        return;
+    if (unit && value) {
+        var cssPxPerIn = 96;
+        var cmPerIn = 2.54;
+        if (unit == 'dppx')
+            dppx = value;
+        else if (unit === 'dpi')
+            dppx = value / cssPxPerIn;
+        else if (unit === 'dpcm')
+            dppx = value / (cssPxPerIn / cmPerIn);
+        else
+            return;
+    }
+    if (fromImage && imgResolutionDppx)
+        dppx = imgResolutionDppx;
+    if (snap)
+        dppx = Math.floor(dppx + 0.01);
+    if (dppx <= 0)
+        dppx = 1;
+    return dppx;
+}
+
+function permute3(rule) {
+    var s = rule.trim().split(' ');
+    if (s.length == 1)
+        return s;
+    if (s.length == 2)
+        return [s.join(' '), [s[1], s[0]].join(' ')];
+    return [[s[0], s[1], s[2]].join(' '), [s[0], s[2], s[1]].join(' '),
+            [s[1], s[0], s[2]].join(' '), [s[1], s[2], s[0]].join(' '),
+            [s[2], s[0], s[1]].join(' '), [s[2], s[1], s[0]].join(' ')];
+}
+
+function generateTests(resolutions) {
+    var tests = resolutions.slice();
+    resolutions.forEach(function(resolution) {
+        tests.push.apply(tests, permute3(resolution + ' from-image'));
+    });
+    resolutions.forEach(function(resolution) {
+        tests.push.apply(tests, permute3(resolution + ' snap'));
+    });
+    resolutions.forEach(function(resolution) {
+        tests.push.apply(tests, permute3(resolution + ' from-image snap'));
+    });
+    return tests;
+}
+
+var imgUrl = '../../images/resources/green.jpg';
+var imgWidthPx = 16;
+var imgHeightPx = 16;
+var imgResolutionDppx = 0; /* Embedded image resolution data not plumbed yet. */
+var dimensions = imgWidthPx + 'x' + imgHeightPx;
+
+description('Apply image-resolution property to a fixed image (' + dimensions + ').');
+
+var img = document.createElement('img');
+img.src = imgUrl;
+
+var resolutions = ['0dppx', '1dppx', '2dppx', '3dppx', '4dppx',
+                   '0dpi', '96dpi', '192dpi', '288dpi', '384dpi',
+                   '150dpi', '300dpi', '450dpi', '600dpi',
+                   '0dpcm', '37.7dpcm', '75.5dpcm', '113.3dpcm', '151.1dpcm', ''];
+
+img.onload = function() {
+    generateTests(resolutions).forEach(function(test) {
+        var dppx = computeResolution(test, imgResolutionDppx);
+        img.style.imageResolution = '';
+        img.style.imageResolution = test;
+        debug('<span class="pass">TEST</span> "' + test + '"');
+        if (!dppx) {
+            shouldBe('img.style.cssText', '""');
+            return;
+        }
+        shouldBe('img.style.cssText', '"image-resolution: ' + test + ';"');
+        var expectedWidth = Math.floor(imgWidthPx / dppx);
+        var expectedHeight = Math.floor(imgHeightPx / dppx);
+        shouldBe('img.offsetWidth', stringify(expectedWidth));
+        shouldBe('img.offsetHeight', stringify(expectedHeight));
+    });
+    document.body.removeChild(img);
+    finishJSTest();
+};
+
+document.body.appendChild(img);
+</script>
+</body>
+</html>

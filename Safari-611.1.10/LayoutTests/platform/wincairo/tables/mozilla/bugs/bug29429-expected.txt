@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 784x60 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x58
+          RenderTableRow {TR} at (0,2) size 782x54
+            RenderTableCell {TD} at (2,2) size 293x54 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 289x50 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 287x48
+                  RenderTableRow {TR} at (0,2) size 287x44
+                    RenderTableCell {TD} at (2,2) size 283x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 271x39
+                        text run at (2,2) width 271: "yyy yyy yyy yyy yyy yyy yyy yyy yyy yyy yyy"
+                        text run at (2,22) width 246: "yyy yyy yyy yyy yyy yyy yyy yyy yyy yyy"
+            RenderTableCell {TD} at (296,7) size 485x44 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 464x39
+                text run at (2,2) width 464: "text text text text text text text text text text text text text text text text text text"
+                text run at (2,22) width 412: "text text text text text text text text text text text text text text text text"

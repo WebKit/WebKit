@@ -1,0 +1,7 @@
+2d.fillRect.zero
+
+fillRect of zero pixels has no effect
+
+
+PASS fillRect of zero pixels has no effect
+

@@ -1,0 +1,33 @@
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
+}
+
+function loaded()
+{
+    if (!window.eventSender)
+        return;
+
+    var a = document.getElementById("a");
+    var iframe = window.parent.document.getElementsByTagName("iframe")[0];
+
+    if (iframe)
+        eventSender.mouseMoveTo(a.offsetLeft + iframe.offsetLeft + 2, a.offsetTop + iframe.offsetTop + 2);
+    else
+        eventSender.mouseMoveTo(a.offsetLeft + 2, a.offsetTop + 2);
+
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function clicked()
+{
+    window.open("notify-done.html");
+}
+
+</script>
+<body onload="loaded();">
+<a id="a" onclick="clicked();">Click to do a window.open</a>
+</body>

@@ -1,0 +1,56 @@
+Tests for DOMStorage.setDOMStorageItem.
+
+
+== Running test suite: DOMStorage.setDOMStorageItem
+-- Running test case: DOMStorage.setDOMStorageItem.Session
+PASS: Should have a DOMStorageObject for sessionStorage.
+
+Getting DOM storage entries...
+[
+  [
+    "foo",
+    "bar"
+  ]
+]
+
+Setting key 'asd' with value 'new'...
+
+Getting DOM storage entries...
+[
+  [
+    "foo",
+    "bar"
+  ],
+  [
+    "asd",
+    "new"
+  ]
+]
+
+
+-- Running test case: DOMStorage.setDOMStorageItem.Local
+PASS: Should have a DOMStorageObject for localStorage.
+
+Getting DOM storage entries...
+[
+  [
+    "foo",
+    "bar"
+  ]
+]
+
+Setting key 'asd' with value 'new'...
+
+Getting DOM storage entries...
+[
+  [
+    "foo",
+    "bar"
+  ],
+  [
+    "asd",
+    "new"
+  ]
+]
+
+

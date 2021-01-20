@@ -1,0 +1,6 @@
+2d.imageData.object.ctor.array
+ImageData has a usable constructor
+Actual output:
+
+FAIL ImageData has a usable constructor assert_equals: imgdata.data === array (got 0,0,0,0,0,0,0,0[object], expected 0,0,0,0,0,0,0,0[object]) expected object "0,0,0,0,0,0,0,0" but got object "0,0,0,0,0,0,0,0"
+

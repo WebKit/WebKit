@@ -1,0 +1,93 @@
+2021-01-07  Lauro Moura  <lmoura@igalia.com>
+
+        [Flatpak SDK] Update GTK4 to 4.0.0
+        https://bugs.webkit.org/show_bug.cgi?id=219983
+
+        Reviewed by Philippe Normand.
+
+        * elements/sdk/gtk.bst: Bump to 4.0.0
+
+2020-12-22  Lauro Moura  <lmoura@igalia.com>
+
+        [Flapak SDK] Allow setting custom SDK repository locations and other small fixes
+        https://bugs.webkit.org/show_bug.cgi?id=219884
+
+        Reviewed by Philippe Normand.
+
+        - Allow inheriting the RSYNC info from envvar for local testing.
+        - Add a 'dry-push-repo' command to be able to perform push-repo dry-runs.
+
+        * Makefile:
+
+2020-12-14  Lauro Moura  <lmoura@igalia.com>
+
+        [Flatpak SDK] Update GTK4 to 3.99.5
+        https://bugs.webkit.org/show_bug.cgi?id=219781
+
+        Reviewed by Philippe Normand.
+
+        Looks like there was a mishap tagging the GTK RC, as the tag present
+        in their repo is 3.99.5.1 instead of 3.99.5.
+
+        * elements/sdk/glib.bst: Bump to 2.66 to reflect the bumped
+        requirement by GTK.
+        * elements/sdk/gtk.bst: Bump to 3.99.5.1
+
+2020-11-27  Lauro Moura  <lmoura@igalia.com>
+
+        [Flatpak SDK] Update GTK4 to 3.99.4
+        https://bugs.webkit.org/show_bug.cgi?id=219269
+
+        Reviewed by Philippe Normand.
+
+        * elements/sdk/gtk.bst: Update to track tags instead of individual commits and
+        specify 3.99.4 as the latest tag. Also added new meson flags to disable the ffmpeg
+        media backend and cloud printing after GTK changed some more options into features[1]
+
+        [1] https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/2708
+
+2020-11-27  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Add clangd
+        https://bugs.webkit.org/show_bug.cgi?id=219302
+
+        Reviewed by Adrian Perez de Castro.
+
+        clangd can be used as an alternative to ccls in IDEs supporting the LSP protocol.
+
+        * elements/sdk-platform.bst:
+        * elements/sdk/clangd.bst: Added.
+        * project.conf:
+
+2020-11-27  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update ccls
+        https://bugs.webkit.org/show_bug.cgi?id=219303
+
+        Reviewed by Adrian Perez de Castro.
+
+        * elements/sdk/ccls.bst: Update to latest release, 0.20201025.
+
+2020-11-27  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Add cmake-lsp recipe
+        https://bugs.webkit.org/show_bug.cgi?id=219234
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add CMake LSP server for use in IDEs.
+        
+        * elements/sdk-platform.bst:
+        * elements/sdk/cmake-lsp.bst: Added.
+        * elements/sdk/pygls.bst: Added.
+        * project.conf:
+
+2020-11-16  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update rr
+        https://bugs.webkit.org/show_bug.cgi?id=218973
+
+        Reviewed by Žan Doberšek.
+
+        * elements/sdk/rr.bst: Update for new git repository location and bump to version 5.4.x.
+

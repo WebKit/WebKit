@@ -1,0 +1,41 @@
+webkitwebview > dimming {
+  background: alpha(#000, 0.12);
+}
+
+webkitwebview > shadow {
+  min-width: 56px;
+}
+
+webkitwebview > shadow.right {
+  background-image:
+    linear-gradient(to left,
+                    alpha(#000, 0.05),
+                    alpha(#000, 0.01) 40px,
+                    alpha(#000, 0) 56px),
+    linear-gradient(to left,
+                    alpha(#000, 0.03),
+                    alpha(#000, 0.01) 7px,
+                    alpha(#000, 0) 24px);
+}
+
+webkitwebview > shadow.left {
+  background-image:
+    linear-gradient(to right,
+                    alpha(#000, 0.05),
+                    alpha(#000, 0.01) 40px,
+                    alpha(#000, 0) 56px),
+    linear-gradient(to right,
+                    alpha(#000, 0.03),
+                    alpha(#000, 0.01) 7px,
+                    alpha(#000, 0) 24px);
+}
+
+webkitwebview > border {
+  min-width: 1px;
+  background: alpha(#000, 0.05);
+}
+
+webkitwebview > outline {
+  min-width: 1px;
+  background: alpha(#fff, 0.05);
+}

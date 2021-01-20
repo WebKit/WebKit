@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="resources/file-icon-bytes.js"></script>
+<body>
+<p>Resetting a file upload control by script should clear the icon.</p>
+<p>Manual test: Select a file for the file upload control, and confirm it has no icon.</p>
+<input id=file1 type=file multiple=multiple>
+</form>
+<script>
+function openFilesInElement(element, files, icon) {
+    testRunner.setOpenPanelFiles(files);
+    testRunner.setOpenPanelFilesMediaIcon(icon);
+    var centerX = element.offsetLeft + element.offsetWidth / 2;
+    var centerY = element.offsetTop + element.offsetHeight / 2;
+    UIHelper.activateAt(centerX, centerY);
+}
+
+function handleChange() {
+    file1.value = '';
+    // The change event can be fired before the mouse up, so use a timeout here to ensure the next mouse down happens after the pending mouse up.
+    window.setTimeout(function() {
+        UIHelper.activateAt(1, 1).then(function() {
+            testRunner.notifyDone();
+        });
+    }, 0);
+}
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var file1 = document.getElementById('file1');
+file1.addEventListener('change', handleChange);
+openFilesInElement(file1, ['foo.txt', 'bar.txt'], testIconBytes);
+</script>
+</body>

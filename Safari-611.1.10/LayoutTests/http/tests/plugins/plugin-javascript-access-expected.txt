@@ -1,0 +1,3 @@
+Test: A non-local file should not be able to iterate over the plugins.
+
+PASS! (Could not find the netscape test plugin on a non-local file!)

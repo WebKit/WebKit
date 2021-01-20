@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+window.jsTestIsAsync = true;
+
+description("This tests early Math.random values are not consistently nearly identical.");
+
+var seen = 0;
+var expected = 100;
+var framesWithSimiliarEarlyRandomValues = 0;
+var lastRandom1 = 0;
+
+window.addEventListener("message", function(event) {
+    if (event.data.similiar)
+        framesWithSimiliarEarlyRandomValues++;
+
+    if (event.data.random1 === lastRandom1)
+        testFailed("Random number should be different between frames");
+    lastRandom1 = event.data.random1;
+
+    if (++seen === expected) {
+        shouldBeTrue("framesWithSimiliarEarlyRandomValues <= 5");
+        if (framesWithSimiliarEarlyRandomValues > 5)
+            debug("framesWithSimiliarEarlyRandomValues: " + framesWithSimiliarEarlyRandomValues);
+        finishJSTest();
+    }
+});
+
+function createFrame() {
+    var iframe = document.createElement("iframe");
+    iframe.src = "../resources/math-random-initial-values-iframe.html";
+    document.body.appendChild(iframe);
+}
+
+for (var i = 0; i < expected; ++i)
+    createFrame();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

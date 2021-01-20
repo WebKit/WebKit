@@ -1,0 +1,152 @@
+Verify texImage2D and texSubImage2D code paths taking both HTML and user-specified data with all format/type combinations
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Testing texImage2D with Image at 256x1
+PASS RGBA/UNSIGNED_BYTE should maintain full precision of data
+Testing texImage2D with Image at 256x1
+PASS RGBA/UNSIGNED_SHORT_4_4_4_4 must drop low four bits of precision
+Testing texImage2D with Image at 256x1
+PASS RGBA/UNSIGNED_SHORT_5_5_5_1 must drop low three bits of precision
+Testing texImage2D with Image at 256x1
+PASS RGB/UNSIGNED_BYTE should maintain full precision of data
+Testing texImage2D with Image at 256x1
+PASS RGB/UNSIGNED_SHORT_5_6_5 must drop low two or three bits of precision
+Testing texImage2D with Image at 256x1
+PASS ALPHA/UNSIGNED_BYTE should maintain full precision of data
+Testing texImage2D with Image at 256x1
+PASS LUMINANCE/UNSIGNED_BYTE should maintain full precision of data
+Testing texImage2D with Image at 256x1
+PASS LUMINANCE_ALPHA/UNSIGNED_BYTE should maintain full precision of data
+Testing texSubImage2D with Image at 256x1
+PASS RGBA/UNSIGNED_BYTE should maintain full precision of data
+Testing texSubImage2D with Image at 256x1
+PASS RGBA/UNSIGNED_SHORT_4_4_4_4 must drop low four bits of precision
+Testing texSubImage2D with Image at 256x1
+PASS RGBA/UNSIGNED_SHORT_5_5_5_1 must drop low three bits of precision
+Testing texSubImage2D with Image at 256x1
+PASS RGB/UNSIGNED_BYTE should maintain full precision of data
+Testing texSubImage2D with Image at 256x1
+PASS RGB/UNSIGNED_SHORT_5_6_5 must drop low two or three bits of precision
+Testing texSubImage2D with Image at 256x1
+PASS ALPHA/UNSIGNED_BYTE should maintain full precision of data
+Testing texSubImage2D with Image at 256x1
+PASS LUMINANCE/UNSIGNED_BYTE should maintain full precision of data
+Testing texSubImage2D with Image at 256x1
+PASS LUMINANCE_ALPHA/UNSIGNED_BYTE should maintain full precision of data
+Testing texImage2D with ImageData at 256x1
+PASS RGBA/UNSIGNED_BYTE should maintain full precision of data
+Testing texImage2D with ImageData at 256x1
+PASS RGBA/UNSIGNED_SHORT_4_4_4_4 must drop low four bits of precision
+Testing texImage2D with ImageData at 256x1
+PASS RGBA/UNSIGNED_SHORT_5_5_5_1 must drop low three bits of precision
+Testing texImage2D with ImageData at 256x1
+PASS RGB/UNSIGNED_BYTE should maintain full precision of data
+Testing texImage2D with ImageData at 256x1
+PASS RGB/UNSIGNED_SHORT_5_6_5 must drop low two or three bits of precision
+Testing texImage2D with ImageData at 256x1
+PASS ALPHA/UNSIGNED_BYTE should maintain full precision of data
+Testing texImage2D with ImageData at 256x1
+PASS LUMINANCE/UNSIGNED_BYTE should maintain full precision of data
+Testing texImage2D with ImageData at 256x1
+PASS LUMINANCE_ALPHA/UNSIGNED_BYTE should maintain full precision of data
+Testing texSubImage2D with ImageData at 256x1
+PASS RGBA/UNSIGNED_BYTE should maintain full precision of data
+Testing texSubImage2D with ImageData at 256x1
+PASS RGBA/UNSIGNED_SHORT_4_4_4_4 must drop low four bits of precision
+Testing texSubImage2D with ImageData at 256x1
+PASS RGBA/UNSIGNED_SHORT_5_5_5_1 must drop low three bits of precision
+Testing texSubImage2D with ImageData at 256x1
+PASS RGB/UNSIGNED_BYTE should maintain full precision of data
+Testing texSubImage2D with ImageData at 256x1
+PASS RGB/UNSIGNED_SHORT_5_6_5 must drop low two or three bits of precision
+Testing texSubImage2D with ImageData at 256x1
+PASS ALPHA/UNSIGNED_BYTE should maintain full precision of data
+Testing texSubImage2D with ImageData at 256x1
+PASS LUMINANCE/UNSIGNED_BYTE should maintain full precision of data
+Testing texSubImage2D with ImageData at 256x1
+PASS LUMINANCE_ALPHA/UNSIGNED_BYTE should maintain full precision of data
+Testing texImage2D with Image at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_BYTE
+Testing texImage2D with Image at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_SHORT_4_4_4_4
+Testing texImage2D with Image at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_SHORT_5_5_5_1
+Testing texImage2D with Image at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGB/UNSIGNED_BYTE
+Testing texImage2D with Image at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGB/UNSIGNED_SHORT_5_6_5
+Testing texImage2D with Image at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with ALPHA/UNSIGNED_BYTE
+Testing texImage2D with Image at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with LUMINANCE/UNSIGNED_BYTE
+Testing texImage2D with Image at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with LUMINANCE_ALPHA/UNSIGNED_BYTE
+Testing texSubImage2D with Image at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_BYTE
+Testing texSubImage2D with Image at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_SHORT_4_4_4_4
+Testing texSubImage2D with Image at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_SHORT_5_5_5_1
+Testing texSubImage2D with Image at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGB/UNSIGNED_BYTE
+Testing texSubImage2D with Image at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGB/UNSIGNED_SHORT_5_6_5
+Testing texSubImage2D with Image at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with ALPHA/UNSIGNED_BYTE
+Testing texSubImage2D with Image at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with LUMINANCE/UNSIGNED_BYTE
+Testing texSubImage2D with Image at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with LUMINANCE_ALPHA/UNSIGNED_BYTE
+Testing texImage2D with ImageData at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_BYTE
+Testing texImage2D with ImageData at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_SHORT_4_4_4_4
+Testing texImage2D with ImageData at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_SHORT_5_5_5_1
+Testing texImage2D with ImageData at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGB/UNSIGNED_BYTE
+Testing texImage2D with ImageData at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGB/UNSIGNED_SHORT_5_6_5
+Testing texImage2D with ImageData at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with ALPHA/UNSIGNED_BYTE
+Testing texImage2D with ImageData at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with LUMINANCE/UNSIGNED_BYTE
+Testing texImage2D with ImageData at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with LUMINANCE_ALPHA/UNSIGNED_BYTE
+Testing texSubImage2D with ImageData at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_BYTE
+Testing texSubImage2D with ImageData at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_SHORT_4_4_4_4
+Testing texSubImage2D with ImageData at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_SHORT_5_5_5_1
+Testing texSubImage2D with ImageData at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGB/UNSIGNED_BYTE
+Testing texSubImage2D with ImageData at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGB/UNSIGNED_SHORT_5_6_5
+Testing texSubImage2D with ImageData at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with ALPHA/UNSIGNED_BYTE
+Testing texSubImage2D with ImageData at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with LUMINANCE/UNSIGNED_BYTE
+Testing texSubImage2D with ImageData at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with LUMINANCE_ALPHA/UNSIGNED_BYTE
+Testing texImage2D with raw data at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_BYTE
+Testing texImage2D with raw data at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_SHORT_4_4_4_4
+Testing texImage2D with raw data at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_SHORT_5_5_5_1
+Testing texImage2D with raw data at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with LUMINANCE_ALPHA/UNSIGNED_BYTE
+Testing texSubImage2D with raw data at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_BYTE
+Testing texSubImage2D with raw data at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_SHORT_4_4_4_4
+Testing texSubImage2D with raw data at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with RGBA/UNSIGNED_SHORT_5_5_5_1
+Testing texSubImage2D with raw data at 256x1
+PASS UNPACK_PREMULTIPLY_ALPHA_WEBGL with LUMINANCE_ALPHA/UNSIGNED_BYTE
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,15 @@
+<html>
+<head>
+<style>
+:root {
+  --one: calc(var(--two) + 20px);
+  --two: calc(var(--one) - 20px);
+}}
+</style>
+<body>
+<script>
+document.write("One: " + getComputedStyle(document.documentElement).getPropertyValue("--one") + "Two: " + getComputedStyle(document.documentElement).getPropertyValue("--two"))
+</script>
+</body>
+</html>
+

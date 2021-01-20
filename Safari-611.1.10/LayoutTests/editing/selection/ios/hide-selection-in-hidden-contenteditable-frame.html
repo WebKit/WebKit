@@ -1,0 +1,122 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, user-scalable=no">
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+.container {
+    width: 320px;
+    height: 320px;
+    border: solid 2px silver;
+    box-sizing: border-box;
+}
+
+iframe {
+    opacity: 0.001;
+    width: inherit;
+    height: inherit;
+    font-size: 24px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <iframe srcdoc="
+        <head>
+            <style>body, html { width: 100%; height: 100%; }</style>
+            <script>
+            function selectionToString() {
+                const selection = getSelection();
+                if (!selection.rangeCount)
+                    return '(no selection)';
+
+                const range = selection.getRangeAt(0);
+                return `(${range.startContainer}#${range.startOffset}, ${range.endContainer}#${range.endOffset})`;
+            }
+
+            function selectAll() {
+                document.execCommand('selectAll');
+            }
+
+            function collapseToEnd() {
+                getSelection().collapseToEnd();
+            }
+
+            document.addEventListener('selectionchange', () => parent.postMessage(selectionToString(), '*'));
+            </script>
+        </head>
+        <body contenteditable>
+            Here's to the crazy ones, the misfits, the rebels, the troublemakers, the round pegs in the square holes.
+            The ones who see things differently. They're not fond of rules. You can quote them, disagree with them, glorify or vilify them, but the only thing you can't do is ignore them because they change things.
+        </body>" onload="runTest()"></iframe>
+</div>
+<p>Verifies that selection UI is suppressed when the editable root is transparent. To manually test, focus the box above and verify that:</p>
+<ul>
+    <li>The caret is not shown.</li>
+    <li>Selection highlights are not shown.</li>
+    <li>The selection cannot be changed via gesture.</li>
+</ul>
+<div>Caret rect after focus: <span id="caret-rect"></span></div>
+<div>Selection rects after selecting all: <span id="selection-rects"></span></div>
+<div>Selection start grabber rect after selecting all: <span id="start-grabber-rect"></span></div>
+<div>Selection end grabber rect after selecting all: <span id="end-grabber-rect"></span></div>
+<div>Selection before tap: <span id="selection-before"></span></div>
+<div>Selection after tap: <span id="selection-after"></span></div>
+<script>
+currentSelectionAsString = "";
+currentSelectionChangeCount = 0;
+loadCount = 0;
+
+addEventListener("load", runTest);
+addEventListener("message", event => {
+    window.currentSelectionAsString = event.data;
+    currentSelectionChangeCount++;
+});
+
+function rectToString(rect) {
+    return `(left = ${Math.round(rect.left)}, top = ${Math.round(rect.top)}, width = ${Math.round(rect.width)}, height = ${Math.round(rect.height)})`;
+}
+
+async function waitForSelectionChangeInSubframe(actions)
+{
+    const previousSelectionChangeCount = currentSelectionChangeCount;
+    actions();
+    while (previousSelectionChangeCount == currentSelectionChangeCount)
+        await new Promise(requestAnimationFrame);
+}
+
+async function runTest() {
+    if (++loadCount < 2)
+        return;
+
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    await waitForSelectionChangeInSubframe(async () => await UIHelper.activateAndWaitForInputSessionAt(160, 160));
+    document.querySelector("#caret-rect").textContent = rectToString(await UIHelper.getUICaretViewRect());
+
+    await waitForSelectionChangeInSubframe(() => document.querySelector("iframe").contentWindow.selectAll());
+    document.querySelector("#start-grabber-rect").textContent = rectToString(await UIHelper.getSelectionStartGrabberViewRect());
+    document.querySelector("#end-grabber-rect").textContent = rectToString(await UIHelper.getSelectionEndGrabberViewRect());
+
+    await waitForSelectionChangeInSubframe(() => document.querySelector("iframe").contentWindow.collapseToEnd());
+    document.querySelector("#selection-before").textContent = currentSelectionAsString;
+
+    await UIHelper.tapAt(32, 32);
+    await new Promise(requestAnimationFrame);
+    document.querySelector("#selection-after").textContent = currentSelectionAsString;
+
+    testRunner.notifyDone();
+}
+</script>
+</body>
+</html>

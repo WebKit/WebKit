@@ -1,0 +1,11 @@
+Tests that AnalyserNode validates minDecibels, maxDecibels and smoothingTimeConstant values.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS analyser.minDecibels = -20 threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
+PASS analyser.maxDecibels = -120 threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
+PASS analyser.smoothingTimeConstant = 2 threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

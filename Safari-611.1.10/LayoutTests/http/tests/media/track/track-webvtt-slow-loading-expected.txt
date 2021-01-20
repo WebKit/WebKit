@@ -1,0 +1,6 @@
+Slow loading WebVTT file interrupted just after a cue text linebreak.
+
+EXPECTED (track.track.cues.length === '2') OK
+EXPECTED (track.track.cues[0].text === 'Lorem ipsum') OK
+END OF TEST
+

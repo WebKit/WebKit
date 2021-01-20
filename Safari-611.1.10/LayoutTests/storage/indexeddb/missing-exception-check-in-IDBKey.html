@@ -1,0 +1,9 @@
+<!DOCTYPE html><!-- webkit-test-runner [ jscOptions=--validateExceptionChecks=true,dumpSimulatedThrows=true ] -->
+
+<script>
+let a = [];
+Object.defineProperty(a, 0, {
+    get: Date.prototype.getSeconds
+});
+IDBKeyRange.only(a);
+</script>

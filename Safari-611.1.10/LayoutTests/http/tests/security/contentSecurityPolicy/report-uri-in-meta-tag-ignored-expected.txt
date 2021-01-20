@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: The Content Security Policy directive 'report-uri' is ignored when delivered via an HTML meta element.
+This tests that a console message is logged to explain that the Content Security Policy report-uri directive is ignored when contained in a policy defined via an HTML meta element.

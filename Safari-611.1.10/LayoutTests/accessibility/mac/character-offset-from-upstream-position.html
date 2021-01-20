@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<div id="container">
+
+<div id="text"  style="width:200px;" contenteditable="true">Lorem ipsum vivamus nibh urna mollis at aliquam taciti, etiam arcu mi semper nostra taciti nulla dolor</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that CharacterOffset that comes from an upstream VisiblePosition is correct.");
+    
+    if (window.accessibilityController) {
+        
+        var div = accessibilityController.accessibleElementById("text");
+        var text = div.childAtIndex(0);
+        var textRange = text.textMarkerRangeForElement(text);
+        
+        var start = text.startTextMarkerForTextMarkerRange(textRange);
+        var firstLine = text.lineTextMarkerRangeForTextMarker(start);
+        var firstEnd = text.endTextMarkerForTextMarkerRange(firstLine);
+        debug("First Line: " + text.stringForTextMarkerRange(firstLine));
+        
+        var next = text.nextTextMarker(firstEnd);
+        var secondLine = text.lineTextMarkerRangeForTextMarker(next);
+        var secondStart = text.startTextMarkerForTextMarkerRange(secondLine);
+        debug("Second Line: " + text.stringForTextMarkerRange(secondLine));
+        
+        // Here firstEnd should contain a upstream position.
+        // We need to make sure firstEnd does not equal to secondStart after
+        // converting to CharacterOffset.
+        var markerRange = text.textMarkerRangeForMarkers(secondStart, firstEnd);
+        var space = ' ';
+        debug("[firstEnd, secondStart]: " + text.stringForTextMarkerRange(markerRange).replace(space, "'space'"));        
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

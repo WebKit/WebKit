@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <style>
+        text {
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+
+    <text x='0' y='12'>This text should be sharp.</text>
+    <text x='0' y='36'>This text and the circles should also be sharp.</text>
+
+    <circle cx="25" cy="85" r="20"/>
+    <circle cx="25" cy="135" r="20"/>
+    <circle cx="25" cy="187" r="20"/>
+</svg>

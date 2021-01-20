@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Test the WHLSL test harness.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.pointerToPointer = async () =>
+{
+    let program = `
+        int foo()
+        {
+            int x;
+            thread int* p = &x;
+            thread int** pp = &p;
+            int*thread*thread qq = pp;
+            int result = 0;
+            x = 42;
+            *p = 76;
+            result += x;
+            **pp = 39;
+            result += x;
+            **qq = 83;
+            result += x;
+            return result;
+        }
+    `;
+    await checkFail(program);
+}
+
+whlslTests.pointerToMember = async () =>
+{
+    await checkFail(
+        `
+            void foo()
+            {
+                float3 x;
+                thread float* y = &x[1];
+            }
+        `);
+
+    await checkFail(
+        `
+            void foo()
+            {
+                float3x3 x;
+                thread float3* y = &x[1];
+            }
+        `);
+}
+
+runTests(whlslTests);
+</script>
+</html>

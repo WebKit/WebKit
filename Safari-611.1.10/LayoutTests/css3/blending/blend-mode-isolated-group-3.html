@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<!-- Test that an element having mix-blend-mode applied blends only with the contents of the parent stacking context.
+    Test that the contents of a blended element blend as a whole with the parent stacking context.-->
+
+<link rel="stylesheet" href="resources/blending-style.css">
+<style>
+    body {
+        background: blue;
+    }
+
+    div {
+        margin: 20px;
+        width: 60px;
+        height: 60px;
+    }
+
+    .parent {
+        position: relative;
+        z-index: -1;
+        float: left;
+        background: violet;
+    }
+
+    .blender {
+        background: url('resources/ducky.png') no-repeat 0 0 /100% 100%, green;
+        mix-blend-mode: multiply;
+    }
+
+    .child {
+        background: orange;
+        z-index: 0;
+        position: absolute;
+    }
+</style>
+
+<div class="parent">
+    <div class="blender">
+        <div class="child"></div>
+    </div>
+</div>
+
+<div class="parent composited">
+    <div class="blender">
+        <div class="child"></div>
+    </div>
+</div>
+
+<div class="parent">
+    <div class="blender composited">
+        <div class="child"></div>
+    </div>
+</div>
+
+<div class="parent composited">
+    <div class="blender composited">
+        <div class="child"></div>
+    </div>
+</div>
+
+<div class="parent">
+    <div class="blender">
+        <div class="child composited"></div>
+    </div>
+</div>
+
+<div class="parent composited">
+    <div class="blender">
+        <div class="child composited"></div>
+    </div>
+</div>
+
+<div class="parent">
+    <div class="blender composited">
+        <div class="child composited"></div>
+    </div>
+</div>
+
+<div class="parent composited">
+    <div class="blender composited">
+        <div class="child composited"></div>
+    </div>
+</div>

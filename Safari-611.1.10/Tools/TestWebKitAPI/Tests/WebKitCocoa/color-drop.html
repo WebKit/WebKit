@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<body style="width: 100vw; height: 100vh; margin: 0;">
+    <input type=color id="drag-target" style="width: 100px; height: 100px">
+    <input type=color id="drop-target" style="width: 100px; height: 100px;" value="#ff0000">
+</body>
+<script>
+let dropTarget = document.getElementById("drop-target");
+dropTarget.addEventListener("change", () => {
+    window.webkit.messageHandlers.testHandler.postMessage("change");
+});
+dropTarget.addEventListener("input", () => {
+    window.webkit.messageHandlers.testHandler.postMessage("input");
+});
+</script>

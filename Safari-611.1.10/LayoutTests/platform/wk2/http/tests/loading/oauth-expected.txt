@@ -1,0 +1,8 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+canAuthenticateAgainstProtectionSpace
+127.0.0.1:8000 - didReceiveAuthenticationChallenge - ProtectionSpaceAuthenticationSchemeOAuth - Simulating cancelled authentication sheet
+

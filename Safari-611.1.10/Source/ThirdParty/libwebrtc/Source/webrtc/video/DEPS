@@ -1,0 +1,18 @@
+include_rules = [
+  "+call",
+  "+common_video",
+  "+logging/rtc_event_log",
+  "+media/base",
+  "+media/engine",
+  "+modules/audio_device",
+  "+modules/audio_mixer",
+  "+modules/bitrate_controller",
+  "+modules/congestion_controller",
+  "+modules/pacing",
+  "+modules/remote_bitrate_estimator",
+  "+modules/rtp_rtcp",
+  "+modules/utility",
+  "+modules/video_coding",
+  "+modules/video_processing",
+  "+system_wrappers",
+]

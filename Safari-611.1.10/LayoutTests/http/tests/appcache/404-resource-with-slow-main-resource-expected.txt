@@ -1,0 +1,2 @@
+This tests that a manifest that contains a missing file will not crash the browser even if the main resource keeps loading after the error occurs.
+SUCCESS

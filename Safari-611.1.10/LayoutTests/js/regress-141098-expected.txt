@@ -1,0 +1,14 @@
+Regression test for https://webkit.org/b/141098. Make sure eval() properly handles running out of stack space. This test should run without crashing.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Initial setup
+Starting 1st probeAndRecurse
+PASS Exception: RangeError: Maximum call stack size exceeded.
+Starting 2nd probeAndRecurse
+PASS Exception: RangeError: Maximum call stack size exceeded.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,8 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS document.getElementById('frame').scrollWidth is outer.scrollWidth
+PASS document.getElementById('frame').contentDocument.getElementById('inner').scrollWidth is outer.scrollWidth
+Each time the viewport is resized, the outer div (green), iframe (orange) and inner div (pink) should take the full viewport width:
+
+

@@ -1,0 +1,12 @@
+
+This tests that a search field is returns its accessibilityValue correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS search.stringValue is 'AXValue: hello'
+PASS search.stringValue is 'AXValue: test'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

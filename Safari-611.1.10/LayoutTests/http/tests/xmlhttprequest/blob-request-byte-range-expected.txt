@@ -1,0 +1,5 @@
+Test an XMLHttpRequest of a Blob URL requesting a byte-range responds appropriately.
+
+PASS: "req.status" == "206"
+PASS: "req.getResponseHeader("Content-Range")" == "bytes 1-2/4"
+

@@ -1,0 +1,33 @@
+The 'prototype' property on interface objects should have attributes { [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]: false }
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Event
+PASS descriptor.writable is false
+PASS descriptor.enumerable is false
+PASS descriptor.configurable is false
+* Element
+PASS descriptor.writable is false
+PASS descriptor.enumerable is false
+PASS descriptor.configurable is false
+* Document
+PASS descriptor.writable is false
+PASS descriptor.enumerable is false
+PASS descriptor.configurable is false
+* Window
+PASS descriptor.writable is false
+PASS descriptor.enumerable is false
+PASS descriptor.configurable is false
+* HTMLOptionElement
+PASS descriptor.writable is false
+PASS descriptor.enumerable is false
+PASS descriptor.configurable is false
+* Option
+PASS descriptor.writable is false
+PASS descriptor.enumerable is false
+PASS descriptor.configurable is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

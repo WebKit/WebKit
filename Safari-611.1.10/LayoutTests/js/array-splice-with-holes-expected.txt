@@ -1,0 +1,13 @@
+Test to ensure correct behaviour of Array.prototype.splice when the array has holes in it.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS actualArray.toString() is expectedArray.toString()
+PASS actualArray.length is expectedArray.length
+PASS actualArray.toString() is expectedArray.toString()
+PASS actualArray.length is expectedArray.length
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

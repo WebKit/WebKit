@@ -1,0 +1,14 @@
+<iframe id="i"></iframe>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function() {
+    document.getElementById("i").srcdoc=">";
+}
+
+frames[0].onunload = function () {
+    document.open();
+    document.close();
+};
+</script>

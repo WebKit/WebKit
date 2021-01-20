@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we paint simple line layout text-decoration correctly.</title>
+</head>
+<body>
+<div style="text-decoration: underline;"><br>supported<br><br>supported<br></div>
+<div style="text-decoration: underline;"><br></div>
+<div style="text-decoration: underline;"><br><br></div>
+<div style="text-decoration: underline; -webkit-text-underline-position: under;">not supported</div>
+<div style="text-decoration: underline; -webkit-text-underline-position: auto;">supported</div>
+<div style="text-decoration: underline; -webkit-text-underline-position: alphabetic;">supported</div>
+<div style="text-decoration: line-through;">supported</div>
+<div style="text-decoration: overline;">supported</div>
+</body>

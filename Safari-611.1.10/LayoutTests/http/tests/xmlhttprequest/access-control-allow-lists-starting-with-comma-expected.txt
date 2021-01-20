@@ -1,0 +1,15 @@
+Allow lists starting with a comma should be parsed correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Sending GET request with custom headers.
+PASS xhr.send(null) is undefined.
+PASS response['x-print'] is "unicorn"
+PASS response['y-print'] is "narwhal"
+Sending PUT request.
+PASS xhr.send(null) is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

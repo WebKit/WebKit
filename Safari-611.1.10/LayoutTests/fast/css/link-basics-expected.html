@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test styling with the :link selector</title>
+    <style>
+        area, link {
+            display: block;
+        }
+        .webkit::before {
+            content: "WebKit";
+        }
+        .green::before {
+            content: "GREEN";
+        }
+    </style>
+</head>
+<body>
+    <p>Test styling with the :link selector. Any type the text is <em>GREEN</em>, its color should be green.</p>
+    <p><a>WebKit</a> <a style="color:lime" href=" ">GREEN</a> <a style="color:lime" href="http://www.webkit.org/notvisited.html">GREEN</a></p>
+    <p><link class="webkit"> <link class="green" style="color:lime" href=" "> <link class="green" style="color:lime" href="http://www.webkit.org/notvisited.html"></p>
+    <p><area class="webkit"> <area class="green" style="color:lime" href=" "> <area class="green" style="color:lime" href="http://www.webkit.org/notvisited.html"></p>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    html {
+        -webkit-writing-mode: vertical-lr;
+    }
+    p {
+        font-size: 30px;
+        font-style: italic;
+    }
+  </style>
+</head>
+<body>
+    <script>
+        if (window.internals)
+            window.internals.invalidateFontCache();
+    </script>
+    <p style="color: white;">ABC丹羽 亮介</p>
+    <p>ABC羽</p>
+</body>
+</html>

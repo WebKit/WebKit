@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="style-container">
+</style>
+</head>
+<body>
+</body>
+<script>
+description('Test the parsing of :nth-child(of) for querySelector and style.');
+
+function testValidSelector(selectorString, expectedSerializedSelector) {
+    shouldNotThrow('document.querySelector(":nth-child(' + selectorString.replace(/\\/g, '\\\\') + ')")');
+
+    var styleContainer = document.getElementById('style-container');
+    styleContainer.innerHTML = ':nth-child(' + selectorString + ') { }';
+    shouldBe("document.getElementById('style-container').sheet.cssRules.length", "1");
+    if (!expectedSerializedSelector)
+        expectedSerializedSelector = selectorString;
+    shouldBeEqualToString("document.getElementById('style-container').sheet.cssRules[0].selectorText", ':nth-child(' + expectedSerializedSelector + ')');
+    styleContainer.innerHTML = '';
+}
+
+// There are multiple ways of parsing :nth-child() based on the An+B part, we should test everything.
+var validNthAnPlusB = [
+    "even",
+    "odd",
+    "n",
+    "-n",
+    "3",
+    "-3",
+    "n+0",
+    "n-0",
+    "0n",
+    "3n+5",
+    "-3n+5",
+    "3n-5",
+    "-3n-5",
+];
+
+var expectedNthAnPlusB = [
+    "2n",
+    "2n+1",
+    "n",
+    "-n",
+    "3",
+    "-3",
+    "n",
+    "n",
+    "0",
+    "3n+5",
+    "-3n+5",
+    "3n-5",
+    "-3n-5",
+];
+
+debug("Test serizalization.");
+testValidSelector("2n+1 of a,b,c,d", "2n+1 of a, b, c, d"); // Space separated complex selector.
+testValidSelector("        2n+1           of             a, b          ", "2n+1 of a, b"); // Ignored extra spaces.
+testValidSelector("2n+1 of a>b, c    d, e~f, g+h", "2n+1 of a > b, c d, e ~ f, g + h"); // Combinators.
+
+// At the time of writing this test, the CSS Parser has a special mode for nth-*. Test it does not conflict with regular parsing.
+testValidSelector("2n+1 of n");
+testValidSelector("2n+1 of n-1"); // "n-1" is a perfectly valid element name.
+testValidSelector("2n+1 of .n");
+testValidSelector("2n+1 of .-n-1");
+testValidSelector("2n+1 of .n-1");
+testValidSelector("2n+1 of n+n", "2n+1 of n + n");
+
+// Test case sensitivity of the separator "of". CSS 2.1 defines that "All CSS syntax is case-insensitive within the ASCII range".
+for (var i = 0; i < validNthAnPlusB.length; ++i) {
+    testValidSelector(validNthAnPlusB[i] + " of .foobar", expectedNthAnPlusB[i] + " of .foobar");
+    testValidSelector(validNthAnPlusB[i] + " Of .foobar", expectedNthAnPlusB[i] + " of .foobar");
+    testValidSelector(validNthAnPlusB[i] + " oF .foobar", expectedNthAnPlusB[i] + " of .foobar");
+    testValidSelector(validNthAnPlusB[i] + " OF .foobar", expectedNthAnPlusB[i] + " of .foobar");
+}
+
+// CSS 2.1 "Characters and case" (http://www.w3.org/TR/CSS21/syndata.html#characters) section defines escaping for strings and identifiers:
+for (var i = 0; i < validNthAnPlusB.length; ++i) {
+    // There is no formal definition of escaping of regular characters, but there is a note saying: 'The identifier "te\st" is exactly the same identifier as "test".'.
+    testValidSelector(validNthAnPlusB[i] + " \\of .foobar", expectedNthAnPlusB[i] + " of .foobar");
+
+    // Full hexadecimal escape ('o' = 0x6f, 'f' = 0x66, 'O' = 0x4f, 'F' = 0x46.
+    testValidSelector(validNthAnPlusB[i] + " \\00006ff  .foobar", expectedNthAnPlusB[i] + " of .foobar");
+    testValidSelector(validNthAnPlusB[i] + " o\\000066  .foobar", expectedNthAnPlusB[i] + " of .foobar");
+    testValidSelector(validNthAnPlusB[i] + " \\00006F \\000066  .foobar", expectedNthAnPlusB[i] + " of .foobar");
+    testValidSelector(validNthAnPlusB[i] + " \\00004f \\000066  .foobar", expectedNthAnPlusB[i] + " of .foobar");
+    testValidSelector(validNthAnPlusB[i] + " \\00006F \\000046  .foobar", expectedNthAnPlusB[i] + " of .foobar");
+    testValidSelector(validNthAnPlusB[i] + " \\00004f \\000046  .foobar", expectedNthAnPlusB[i] + " of .foobar");
+
+    // Short syntax ('o' = 0x6f, 'f' = 0x66, 'O' = 0x4f, 'F' = 0x46.
+    testValidSelector(validNthAnPlusB[i] + " \\6f f .foobar", expectedNthAnPlusB[i] + " of .foobar");
+    testValidSelector(validNthAnPlusB[i] + " o\\66  .foobar", expectedNthAnPlusB[i] + " of .foobar");
+    testValidSelector(validNthAnPlusB[i] + " \\6F \\66  .foobar", expectedNthAnPlusB[i] + " of .foobar");
+    testValidSelector(validNthAnPlusB[i] + " \\4f \\66  .foobar", expectedNthAnPlusB[i] + " of .foobar");
+    testValidSelector(validNthAnPlusB[i] + " \\6F \\46  .foobar", expectedNthAnPlusB[i] + " of .foobar");
+    testValidSelector(validNthAnPlusB[i] + " \\4f \\46  .foobar", expectedNthAnPlusB[i] + " of .foobar");
+}
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

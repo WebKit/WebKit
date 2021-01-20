@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script src="../resources/js-test-pre.js"></script>
+	<style>
+	    #scrollable {
+    	    width: 100px;
+        	height: 100px;
+        	border: 1px solid black;
+        	overflow-y: auto;
+    	}
+    	#container {
+	        width: 100px;
+        	height: 200px;
+    	}
+    	#box {
+        	position: relative;
+        	top: 100px;
+        	width: 100px;
+        	height: 100px;
+        	background-color: green;
+    	}
+	</style>
+</head>
+<body>
+    <div id="scrollable">
+        <div id="container">
+            <div id="box"></div>
+        </div>
+    </div>
+    <script>
+        var animateTimestamp = 0;
+        var intersectTimestamp = 0;
+        var MaxFrames = 2;
+        var currentFrame = 0;
+
+        function scrollBox()
+        {
+            var scrollable = document.querySelector("#scrollable");
+            var height = scrollable.clientHeight;
+            scrollable.scroll(0, (height / MaxFrames) * currentFrame);
+            document.body.offsetHeight;
+        }
+
+        function handleAnimate(timestamp)
+        {
+            if (++currentFrame > MaxFrames) {
+                finishJSTest();
+                return;
+            }
+
+             animateTimestamp = timestamp;
+            scrollBox();
+            requestAnimationFrame(handleAnimate);
+        }
+
+        function handleIntersect(entries, observer)
+        {
+            entries.forEach((entry) => {
+                intersectTimestamp = entry.time;
+                shouldBe("Math.round(animateTimestamp)", "Math.round(intersectTimestamp)");
+            });
+        }
+
+        function buildThresholdList()
+        {
+            let thresholds = [];
+
+             for (let i = 1.0; i <= MaxFrames; i++) {
+                let ratio = i / MaxFrames;
+                thresholds.push(ratio);
+            }
+
+             return thresholds;
+        }
+
+        function createObserver()
+        {
+            let observer;
+
+             let options = {
+                root: document.querySelector("#scrollable"),
+                rootMargin: "0px",
+                threshold: buildThresholdList()
+            };
+
+             observer = new IntersectionObserver(handleIntersect, options);
+            observer.observe(document.querySelector("#box"));
+        }
+
+        window.jsTestIsAsync = true;
+
+        description("Test the IntersectionObserver timestamp is the same as the timestamp of the rAF callback.");
+        createObserver();
+        requestAnimationFrame(handleAnimate);
+    </script>
+    <script src="../resources/js-test-post.js"></script>
+</body>
+</html>

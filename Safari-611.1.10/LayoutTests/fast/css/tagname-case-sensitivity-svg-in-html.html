@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+<style>
+rect {
+    width: 100px;
+    height: 100px;
+    background-color: green;
+    border: 1px solid red;
+    display: block;
+    float: left;
+    stroke: purple;
+    fill: blue;
+}
+Rect {
+    stroke: purple;
+    border: 2px dashed lime;
+}
+RECT {
+    fill: yellow;
+    background-color: orange;
+}
+</style>
+</head>
+<body>
+    <p>Test styling of elements using their local name. Matching the name should be case-insensitive for HTML, case-sensitive for XML (specifically SVG in this case).</p>
+    <div id="test-cases">
+        <rect></rect>
+        <Rect></Rect>
+        <RECT></RECT>
+        <svg xmlns="http://www.w3.org/2000/svg">
+            <rect width="100" height="100"></rect>
+            <Rect x="100" width="100" height="100"></Rect>
+            <RECT x="200" width="100" height="100"></RECT>
+        </svg>
+    </div>
+</body>
+<script>
+    var svgDocument = new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100"></rect><Rect x="100" width="100" height="100"></Rect><RECT x="200" width="100" height="100"></RECT></svg>', 'text/xml');
+    var testCases = document.getElementById("test-cases");
+    testCases.appendChild(document.importNode(svgDocument.documentElement, true));
+</script>
+</html>

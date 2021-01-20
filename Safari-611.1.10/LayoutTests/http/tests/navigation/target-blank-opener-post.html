@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>Test that rel="noreferrer" is unsupported by form elements, and that window.opener is available when form submission opens a new window.</p>
+<form id="testForm" action="resources/target-blank-opener-post-window.php" target="_blank" rel="noreferrer" method="post">
+<input type="submit" value="Test"></input>
+<form>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows(true);
+}
+
+document.forms[0].submit();
+
+</script>
+</body>
+</html>

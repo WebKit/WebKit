@@ -1,0 +1,104 @@
+<html>
+    <head>
+        <script src='media-file.js'></script>
+        <script src='video-test.js'></script>
+        <script>
+
+            let usage;
+            let videoURL;
+
+            window.addEventListener('load', async event => {
+
+                if (!window.internals) {
+                    failTest(`<br>This test requires internals!`);
+                    return;
+                }
+
+                findMediaElement();
+
+                run('internals.setMediaElementRestrictions(video, "RequireUserGestureForAudioRateChange,RequireUserGestureForVideoRateChange,RequireUserGestureToControlControlsManager")');
+
+                videoURL = findMediaFile("video", "content/test");
+                video.src = videoURL;
+
+                await waitFor(video, 'canplaythrough');
+
+                consoleWrite("<br>** Check state before playback.")
+                usage = internals.mediaUsageState(video);
+                testExpected(`usage.mediaURL.indexOf('${videoURL}')`, -1, '>');
+                testExpected('usage.isPlaying', false);
+                testExpected('usage.canShowControlsManager', false);
+                testExpected('usage.canShowNowPlayingControls', false);
+                testExpected('usage.isSuspended', false);
+                testExpected('usage.isInActiveDocument', true);
+                testExpected('usage.isFullscreen', false);
+                testExpected('usage.isMuted', false);
+                testExpected('usage.isMediaDocumentInMainFrame', false);
+                testExpected('usage.isVideo', true);
+                testExpected('usage.isAudio', false);
+                testExpected('usage.hasVideo', true);
+                testExpected('usage.hasAudio', true);
+                testExpected('usage.hasRenderer', true);
+                testExpected('usage.audioElementWithUserGesture', false);
+                testExpected('usage.userHasPlayedAudioBefore', false);
+                testExpected('usage.isElementRectMostlyInMainFrame', true);
+                testExpected('usage.playbackPermitted', false);
+                testExpected('usage.pageMediaPlaybackSuspended', false);
+                testExpected('usage.isMediaDocumentAndNotOwnerElement', false);
+                testExpected('usage.pageExplicitlyAllowsElementToAutoplayInline', false);
+                testExpected('usage.requiresFullscreenForVideoPlaybackAndFullscreenNotPermitted', false);
+                testExpected('usage.hasHadUserInteractionAndQuirksContainsShouldAutoplayForArbitraryUserGesture', false);
+                testExpected('usage.isVideoAndRequiresUserGestureForVideoRateChange', true);
+                testExpected('usage.isAudioAndRequiresUserGestureForAudioRateChange', false);
+                testExpected('usage.isVideoAndRequiresUserGestureForVideoDueToLowPowerMode', false);
+                testExpected('usage.noUserGestureRequired', false);
+                testExpected('usage.requiresPlaybackAndIsNotPlaying', false);
+                testExpected('usage.hasEverNotifiedAboutPlaying', false);
+                testExpected('usage.outsideOfFullscreen', false);
+                testExpected('usage.isLargeEnoughForMainContent', false);
+
+                consoleWrite("<br>** Mute video.")
+                run('video.muted = true');
+                usage = internals.mediaUsageState(video);
+                testExpected('usage.isMuted', true);
+
+                consoleWrite("<br>** Unmute video.")
+                run('video.muted = false');
+                usage = internals.mediaUsageState(video);
+                testExpected('usage.isMuted', false);
+
+                consoleWrite("<br>** Try to play without user gesture, should reject and state should not change.")
+                await shouldReject(video.play());
+
+                usage = internals.mediaUsageState(video);
+                testExpected('usage.isPlaying', false);
+                testExpected('usage.canShowControlsManager', false);
+                testExpected('usage.userHasPlayedAudioBefore', false);
+                testExpected('usage.playbackPermitted', false);
+                testExpected('usage.isVideoAndRequiresUserGestureForVideoRateChange', true);
+                testExpected('usage.noUserGestureRequired', false);
+
+                consoleWrite("<br>** Try to play without user gesture, should succeed and state should change.")
+                runWithKeyDown(() => { 
+                    video.play(); 
+                });
+                await waitFor(video, 'playing');
+
+                usage = internals.mediaUsageState(video);
+                testExpected('usage.isPlaying', true);
+                testExpected('usage.canShowControlsManager', true);
+                testExpected('usage.userHasPlayedAudioBefore', true);
+                testExpected('usage.playbackPermitted', true);
+                testExpected('usage.isVideoAndRequiresUserGestureForVideoRateChange', false);
+                testExpected('usage.noUserGestureRequired', true);
+
+                endTest();
+            });
+
+        </script>
+    </head>
+    <body>
+        <video controls></video>
+        <p>Test mediaUsageState.</p>
+    </body>
+</html>

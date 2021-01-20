@@ -1,0 +1,31 @@
+
+Test that all enabled tracks are included in the track menu.
+
+EVENT(canplaythrough)
+
+*** Initially both tracks are disabled so neither should be selected.
+EXPECTED (video.textTracks[0].mode == 'disabled') OK
+EXPECTED (video.textTracks[1].mode == 'disabled') OK
+
+Track menu:
+0: "Off", checked
+1: "Auto (Recommended)"
+2: "English Captions 1"
+3: "English Captions 2"
+
+*** Enable both tracks.
+RUN(video.textTracks[0].mode = 'showing')
+RUN(video.textTracks[1].mode = 'showing')
+
+*** Both tracks are enabled so both should be selected.
+EXPECTED (video.textTracks[0].mode == 'showing') OK
+EXPECTED (video.textTracks[1].mode == 'showing') OK
+
+Track menu:
+0: "Off"
+1: "Auto (Recommended)"
+2: "English Captions 1", checked
+3: "English Captions 2", checked
+
+END OF TEST
+

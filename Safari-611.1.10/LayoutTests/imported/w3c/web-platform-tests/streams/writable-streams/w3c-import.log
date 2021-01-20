@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/aborting.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/bad-strategies.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/bad-underlying-sinks.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/byte-length-queuing-strategy.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/close.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/constructor.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/count-queuing-strategy.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/error.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/floating-point-total-queue-size.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/general.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/properties.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/reentrant-strategy.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/start.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/writable-streams/write.any.js

@@ -1,0 +1,16 @@
+Testing a TracksPanel calls preventDefault() on events it handles.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+mediaControls.showTracksPanel()
+
+Pressing the ArrowDown key
+PASS event.defaultPrevented is true
+Pressing the ArrowRight key
+PASS event.defaultPrevented is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

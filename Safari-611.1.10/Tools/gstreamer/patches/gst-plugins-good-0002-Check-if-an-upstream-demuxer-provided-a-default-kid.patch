@@ -1,0 +1,102 @@
+From a816d8dab6bb33770150289a4aede43e2f7ae478 Mon Sep 17 00:00:00 2001
+From: Charlie Turner <chturne@gmail.com>
+Date: Fri, 10 May 2019 23:34:43 +0200
+Subject: [PATCH] Check if an upstream demuxer provided a default kid.
+
+Smooth streaming demuxers do not send boxes containing metadata about
+the stream. They have to send metadata "out-of-band".
+
+For piff encoded streams, if no box has been found containing a default
+kid for the sample, check if an upstream demuxer has provided one via a
+protection event, and use this as a fallback.
+
+Signed-off-by: Xabier Rodriguez Calvar <calvaris@igalia.com>
+---
+ gst/isomp4/qtdemux.c | 43 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+
+diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
+index cf15fad46..e449b480c 100644
+--- a/gst/isomp4/qtdemux.c
++++ b/gst/isomp4/qtdemux.c
+@@ -451,6 +451,7 @@ struct _QtDemuxStream
+   guint32 protection_scheme_version;
+   gpointer protection_scheme_info;      /* specific to the protection scheme */
+   GQueue protection_scheme_event_queue;
++  GstBuffer *default_kid;
+ 
+   gint ref_count;               /* atomic */
+ };
+@@ -2008,6 +2009,7 @@ _create_stream (GstQTDemux * demux, guint32 track_id)
+   stream->stream_tags = gst_tag_list_new_empty ();
+   gst_tag_list_set_scope (stream->stream_tags, GST_TAG_SCOPE_STREAM);
+   g_queue_init (&stream->protection_scheme_event_queue);
++  stream->default_kid = NULL;
+   stream->ref_count = 1;
+   /* consistent default for push based mode */
+   gst_segment_init (&stream->segment, GST_FORMAT_TIME);
+@@ -2476,6 +2478,32 @@ gst_qtdemux_handle_sink_event (GstPad * sinkpad, GstObject * parent,
+     case GST_EVENT_PROTECTION:
+     {
+       const gchar *system_id = NULL;
++      GstBuffer *default_key_id = NULL;
++      const GstStructure *structure;
++      QtDemuxStream *stream = NULL;
++      GstMapInfo map;
++
++      structure = gst_event_get_structure (event);
++      if (gst_structure_has_field_typed (structure, "key_id", GST_TYPE_BUFFER)) {
++        gst_structure_get (structure, "key_id", GST_TYPE_BUFFER,
++            &default_key_id, NULL);
++        GST_DEBUG_OBJECT (demux,
++            "received a default key id of size %" G_GSIZE_FORMAT,
++            gst_buffer_get_size (default_key_id));
++
++        if (gst_debug_category_get_threshold (GST_CAT_DEFAULT) >=
++            GST_LEVEL_MEMDUMP) {
++          gst_buffer_map (default_key_id, &map, GST_MAP_READ);
++          GST_MEMDUMP_OBJECT (demux, "default key id", (guint8 *) map.data,
++              map.size);
++          gst_buffer_unmap (default_key_id, &map);
++        }
++
++        if (QTDEMUX_N_STREAMS (demux)) {
++          stream = QTDEMUX_NTH_STREAM (demux, 0);
++          stream->default_kid = default_key_id;
++        }
++      }
+ 
+       gst_event_parse_protection (event, &system_id, NULL, NULL);
+       GST_DEBUG_OBJECT (demux, "Received protection event for system ID %s",
+@@ -2688,6 +2716,8 @@ gst_qtdemux_stream_clear (QtDemuxStream * stream)
+   g_queue_foreach (&stream->protection_scheme_event_queue,
+       (GFunc) gst_event_unref, NULL);
+   g_queue_clear (&stream->protection_scheme_event_queue);
++  if (stream->default_kid)
++    gst_buffer_unref (stream->default_kid);
+   gst_qtdemux_stream_flush_segments_data (stream);
+   gst_qtdemux_stream_flush_samples_data (stream);
+ }
+@@ -2954,6 +2984,19 @@ qtdemux_parse_piff (GstQTDemux * qtdemux, const guint8 * buffer, gint length,
+     uses_sub_sample_encryption = TRUE;
+   }
+ 
++  // In the case of smooth streaming, we never get moov boxes and their
++  // default encryption metadata. Instead, the demuxer has to parse this
++  // information out of the playready specific payloads and make it availble
++  // somehow to us.
++  if (!gst_structure_has_field (ss_info->default_properties, "kid")) {
++    if (!stream->default_kid) {
++      GST_WARNING_OBJECT (qtdemux, "No available key id for sample");
++    } else {
++      gst_structure_set (ss_info->default_properties, "kid", GST_TYPE_BUFFER,
++          stream->default_kid, NULL);
++    }
++  }
++
+   if (!gst_structure_get_uint (ss_info->default_properties, "iv_size",
+           &iv_size)) {
+     GST_ERROR_OBJECT (qtdemux, "Error getting encryption IV size field");
+-- 
+2.20.1
+

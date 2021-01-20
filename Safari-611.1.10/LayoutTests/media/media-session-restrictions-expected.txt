@@ -1,0 +1,6 @@
+mediaSessionRestrictions["video"] = ""
+mediaSessionRestrictions["audio"] = ""
+mediaSessionRestrictions["videoaudio"] = ""
+mediaSessionRestrictions["webaudio"] = ""
+END OF TEST
+

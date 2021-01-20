@@ -1,0 +1,40 @@
+<html>
+<head>
+<script>
+    function dumpAccessibilityChildren(element, level) {
+        if (element.stringValue.indexOf('End of test') >= 0)
+            return false;
+
+        var indent = "";
+        for (var k = 0; k < level; k++) { indent += "  "; }
+        debug(indent + element.role + " " + element.title + " " + element.description);
+        var childrenCount = element.childrenCount;
+        for (var k = 0; k < childrenCount; k++) {
+            if (!dumpAccessibilityChildren(element.childAtIndex(k), level+1))
+                return false;
+        }
+        return true;
+    }
+</script>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+  <img src="myimg.png" width="100" height="100" usemap="#mymap" alt="foo bar baz" />
+  <map name="mymap">
+    <area shape="rect" coords="0, 0, 33, 100" alt="foo" href="#">
+    <area shape="rect" coords="33, 0, 66, 100" alt="bar" href="#">
+    <area shape="rect" coords="66, 0, 100, 100" alt="baz" href="#">
+  </map>
+<div>End of test</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests the hierarchy of an image with alt text and a map.");
+    if (window.accessibilityController) {
+        document.getElementById("body").focus();
+        dumpAccessibilityChildren(accessibilityController.focusedElement, 0);
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,1 @@
+This tests that an X-WebKit-CSP-Report-Only header is ignored if delivered in a meta element. This test PASSED if there are no console warnings.

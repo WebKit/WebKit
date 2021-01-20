@@ -1,0 +1,3 @@
+Test for bug 87314: Crash in RenderTableCol::nextColumn
+
+PASSED, this test didn't crash or ASSERT.

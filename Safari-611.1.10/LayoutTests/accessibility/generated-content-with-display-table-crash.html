@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<style>
+[class*="foo"]:after { content: "!"; }
+[class*="bar"]:after { content: "!"; display: table; }
+[class*="baz"]:after { display: table; }
+</style>
+</head>
+<body id="body">
+<div id="div1" class="foo">foo</div>
+<div id="div2" class="bar">bar</div>
+<div id="div3" class="baz">baz</div>
+<div id="stopElement">End of test</div>
+
+<pre id="tree"></pre>
+
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This verifies that getting content of an element with generated content in CSS table doesn't cause a crash.");
+    if (window.accessibilityController) {
+        document.body.focus();
+        var stopElement = accessibilityController.accessibleElementById("stopElement");
+        dumpAccessibilityTree(accessibilityController.focusedElement, stopElement, 0);
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

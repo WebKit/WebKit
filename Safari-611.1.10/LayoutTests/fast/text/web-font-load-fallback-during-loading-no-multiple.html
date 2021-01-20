@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+	testRunner.dumpResourceLoadCallbacks();
+	testRunner.dumpAsText();
+}
+if (window.internals) {
+	internals.clearMemoryCache();
+	internals.invalidateFontCache();
+}
+</script>
+<style>
+@font-face {
+	font-family: WebFont;
+	src: url("../../resources/Ahem.ttf") format("truetype"), url("../../resources/Ahem.otf") format("opentype"), local("Helvetica");
+}
+</style>
+</head>
+<body>
+This test makes sure that multiple remote fonts aren't requested concurrently due to timeouts. The test passes if only one remote font is requested.
+<div id="probe" style="font-family: WebFont;">Hello World</div>
+<script>
+var probe = document.getElementById("probe");
+probe.offsetTop;
+probe.style.fontSize = "20px;";
+probe.offsetTop;
+</script>
+</body>
+</html>

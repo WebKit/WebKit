@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id='sandbox'></div>
+<div id="console"></div>
+<script src="../resources/magnitude-perf.js"></script>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var table;
+var sandbox = document.getElementById('sandbox');
+
+// Check that table.rows.length is properly cached.
+
+function setupTableRows(magnitude)
+{
+    if (sandbox.firstChild)
+        sandbox.removeChild(sandbox.firstChild);
+    table = document.createElement('table');
+
+    for (var i = 0; i < magnitude; ++i) {
+        var tr = document.createElement('tr');
+        table.appendChild(tr);
+    }
+    sandbox.appendChild(table);
+
+    // Make sure we have cached the length before testing!
+    table.rows.length;
+}
+
+function testTableRows(magnitude)
+{
+    table.rows.length;
+}
+
+Magnitude.description('Tests that check that table.row.length is properly cached');
+Magnitude.run(setupTableRows, testTableRows, Magnitude.CONSTANT);
+sandbox.removeChild(sandbox.firstChild);
+</script>
+</body>
+</html>

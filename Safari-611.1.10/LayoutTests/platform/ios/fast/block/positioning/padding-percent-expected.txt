@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {OL} at (0,0) size 784x40
+        RenderListItem {LI} at (40,0) size 744x20
+          RenderListMarker at (-21,0) size 16x19: "1"
+          RenderText {#text} at (0,0) size 161x19
+            text run at (0,0) width 161: "Make text bigger/smaller"
+        RenderListItem {LI} at (40,20) size 744x20
+          RenderListMarker at (-21,0) size 16x19: "2"
+          RenderText {#text} at (0,0) size 219x19
+            text run at (0,0) width 219: "Make the window narrower/wider"
+layer at (8,64) size 132x26
+  RenderBlock (positioned) {DIV} at (8,64) size 132x26 [border: (3px solid #000000)]
+    RenderText {#text} at (43,3) size 86x19
+      text run at (43,3) width 86: "Lorem ipsum"

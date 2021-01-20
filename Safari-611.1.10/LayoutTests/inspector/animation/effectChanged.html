@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function load() {
+    window.animation = document.body.animate([{opacity: 0}]);
+
+    runTest();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Animation.effectChanged");
+
+    suite.addTestCase({
+        name: "Animation.effectChanged.NewEffect",
+        description: "Should return a valid object for the given animation identifier.",
+        async test() {
+            let animations = Array.from(WI.animationManager.animationCollection);
+            InspectorTest.assert(animations.length === 1, "There should only be one animation.");
+
+            let animation = animations[0];
+            if (!animation) {
+                throw `Missing animation.`;
+                return;
+            }
+
+            InspectorTest.assert(animation.animationType === WI.Animation.Type.WebAnimation, "Animation should be a web animation.");
+
+            let oldKeyframes = animation.keyframes;
+            InspectorTest.expectNotEmpty(oldKeyframes, "Animation should have an effect.");
+
+            InspectorTest.log("Changing effect...\n");
+            await Promise.all([
+                animation.awaitEvent(WI.Animation.Event.EffectChanged),
+                InspectorTest.evaluateInPage(`window.animation.effect = new KeyframeEffect(window.animation.effect.target, [{opacity: 1}], {})`),
+            ]);
+
+            let newKeyframes = animation.keyframes;
+            InspectorTest.expectNotEmpty(newKeyframes, "Animation should have an effect.");
+
+            InspectorTest.expectNotShallowEqual(newKeyframes, oldKeyframes, "Animation effect should have changed.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Animation.effectChanged.NullEffect",
+        description: "Should return a valid object for the given animation identifier.",
+        async test() {
+            let animations = Array.from(WI.animationManager.animationCollection);
+            InspectorTest.assert(animations.length === 1, "There should only be one animation.");
+
+            let animation = animations[0];
+            if (!animation) {
+                throw `Missing animation.`;
+                return;
+            }
+
+            InspectorTest.assert(animation.animationType === WI.Animation.Type.WebAnimation, "Animation should be a web animation.");
+
+            let oldKeyframes = animation.keyframes;
+            InspectorTest.expectNotEmpty(oldKeyframes, "Animation should have an effect.");
+
+            InspectorTest.log("Changing effect...\n");
+            await Promise.all([
+                animation.awaitEvent(WI.Animation.Event.EffectChanged),
+                InspectorTest.evaluateInPage(`window.animation.effect = null`),
+            ]);
+
+            let newKeyframes = animation.keyframes;
+            InspectorTest.expectEmpty(newKeyframes, "Animation should not have an effect.");
+
+            InspectorTest.expectNotShallowEqual(newKeyframes, oldKeyframes, "Animation effect should have changed.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Tests for the Animation.effectChanged event.</p>
+</body>
+</html>

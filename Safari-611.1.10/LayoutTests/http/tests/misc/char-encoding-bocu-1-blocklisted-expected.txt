@@ -1,0 +1,10 @@
+Test that character set BOCU-1 is not supported and we default to ISO-8859-1. With support for BOCU-1 the iframe renders a Cyrillic string. Without it renders garbage.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS charset is windows-1252
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

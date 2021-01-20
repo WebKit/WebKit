@@ -1,0 +1,6 @@
+Body needed for test_driver.click()
+Note: This is a manual test because it writes/reads to the shared system clipboard and thus cannot be run async with other tests that might interact with the clipboard.
+
+
+FAIL Verify write and read clipboard given 2 platform-neutral raw inputs promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ClipboardItem"
+

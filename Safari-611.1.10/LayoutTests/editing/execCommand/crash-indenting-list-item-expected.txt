@@ -1,0 +1,18 @@
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|       contenteditable=""
+|       <ul>
+|         <ul>
+|           <li>
+|             id="foo"
+|             <#selection-caret>
+|             "PASSED"
+|     "\n"
+|     <script>
+|       src="../../resources/dump-as-markup.js"
+|     "\n"
+|     <script>
+|       "\nwindow.getSelection().setBaseAndExtent(foo, 0, foo, 0);\n// This test passes if it does not crash.\ndocument.execCommand('indent', false, null);\ndocument.getElementById("foo").innerText = "PASSED";\n"
+|     "\n"

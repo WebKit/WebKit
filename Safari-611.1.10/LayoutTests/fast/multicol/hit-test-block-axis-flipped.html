@@ -1,0 +1,24 @@
+<div style="-webkit-writing-mode: horizontal-bt;">
+    <div style="
+        margin-top: 300px;
+        outline: dashed lightblue;
+        height: 100px;
+        width: 100px;
+        border-bottom: 25px solid;
+        -webkit-column-axis: vertical;
+        -webkit-column-gap: 50px;
+    ">
+        <div style="height: 100px; background-color: silver;"></div>
+        <div id="target" style="height: 100px; background-color: silver;"></div>
+        <div style="height: 100px; background-color: silver;"></div>
+    </div>
+</div>
+<p id="result">FAIL: Test did not run.</p>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var hitContainer = document.caretRangeFromPoint(208, 208).startContainer;
+    var target = document.getElementById("target");
+    document.getElementById("result").innerText = hitContainer === target ? "PASS" : "FAIL";
+</script>

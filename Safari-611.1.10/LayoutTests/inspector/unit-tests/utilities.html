@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("Utilities");
+
+    suite.addTestCase({
+        name: "xor",
+        test() {
+            InspectorTest.expectEqual(xor(0, undefined), false, "xor should explicitly return false when both values are falsy.");
+            InspectorTest.expectEqual(xor(42, undefined), 42, "xor should return the first value when the second value is falsy.");
+            InspectorTest.expectEqual(xor(undefined, "test"), "test", "xor should return the second value when the first value is falsy.");
+            InspectorTest.expectEqual(xor(42, "test"), false, "xor should explicitly return false when both values are truthy.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onLoad="runTest()">
+</body>
+</html>

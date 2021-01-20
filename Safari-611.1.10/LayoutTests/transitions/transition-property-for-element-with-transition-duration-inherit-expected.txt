@@ -1,0 +1,10 @@
+Test the effect of 'transition-duration: inherit' on 'transition-property'.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(document.querySelector('span')).transitionProperty is 'all'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

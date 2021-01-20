@@ -1,0 +1,12 @@
+PASS serialized.length is 26
+PASS serialized[4] is BigIntTag
+PASS result is 0n
+PASS result == 0 is true
+PASS serialized.length is 18
+PASS serialized[4] is BigIntTag
+PASS result is 0n
+PASS result == 0 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

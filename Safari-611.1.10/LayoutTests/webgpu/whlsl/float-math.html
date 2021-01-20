@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Test prefix/postfix.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.floatMath = async () => {
+    let program = `
+        bool foo()
+        {
+            return 42.5 == 42.5;
+        }
+        float bar(float x)
+        {
+            return x;
+        }
+        float foo6()
+        {
+            return bar(7.5);
+        }
+        float foo9()
+        {
+            return float(7.5);
+        }
+        float foo12()
+        {
+            return float(7);
+        }
+        float foo13()
+        {
+            float x = 7.5;
+            return float(x);
+        }
+        bool div()
+        {
+            return 0.5 / 2 == 0.25;
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+    assert_equals(await callFloatFunction(program, "foo6", []), 7.5);
+    assert_equals(await callFloatFunction(program, "foo9", []), 7.5);
+    assert_equals(await callFloatFunction(program, "foo12", []), 7);
+    assert_equals(await callFloatFunction(program, "foo13", []), 7.5);
+    assert_equals(await callBoolFunction(program, "div", []), true);
+
+    await checkFail(
+        `
+            int bar(int x)
+            {
+                return x;
+            }
+            int foo()
+            {
+                bar(4.0);
+            }
+        `);
+
+    await checkFail(
+        `
+            int bar(int x)
+            {
+                return x;
+            }
+            int foo()
+            {
+                bar(4.0f);
+            }
+        `);
+
+    await checkFail(
+        `
+            uint bar(uint x)
+            {
+                return x;
+            }
+            int foo()
+            {
+                bar(4.0);
+            }
+        `);
+
+    await checkFail(
+        `
+            uint bar(uint x)
+            {
+                return x;
+            }
+            int foo()
+            {
+                bar(4.0f);
+            }
+        `);
+}
+
+runTests(whlslTests);
+</script>
+</html>

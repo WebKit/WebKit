@@ -1,0 +1,100 @@
+From 6e503b6e34000a18a49d2966df2c01c2ef14bd5c Mon Sep 17 00:00:00 2001
+From: Thibault Saunier <tsaunier@igalia.com>
+Date: Tue, 3 Sep 2019 16:03:49 -0400
+Subject: [PATCH] playbin: Handle error message with redirection indication
+
+There are in the wild (mp4) streams that basically contain no tracks
+but do have a redirect info[0], in which case, qtdemux won't be able
+to expose any pad (there are no tracks) so can't post anything but
+an error on the bus, as:
+  - it can't send EOS downstream, it has no pad,
+  - posting an EOS message will be useless as PAUSED state can't be
+    reached and there is no sink in the pipeline meaning GstBin will
+    simply ignore it
+
+In that case, currently the application could try to handle that but it
+is pretty complex as it will get the REDIRECT message on the bus at
+which point it could set the URL but playbin will ignore it, as
+it will only be for the next EOS, it thus need to set the pipeline to
+NULL (READY won't do as it is already in READY at that point). And it
+needs to figure out the following ERROR message on the bus needs to be
+ignored, which is not really simple.
+
+The approach here is to allow element to add details to the ERROR
+message with a `redirect-location` field which elements like playbin handle
+and use right away.
+
+We could also use the element 'redirect' message in playbin, but the
+issue with that approach is that the element will still emit the ERROR
+message on the bus, leading to wrong behaviour. That can't be avoided
+since in the case the app/parent pipeline is not handling the redirect
+instruction, the ERROR message is necessary (and there is no way to
+detect that the message has been "handled" from the element emitting the
+redirect).
+
+[0]: http://movietrailers.apple.com/movies/paramount/terminator-dark-fate/terminator-dark-fate-trailer-2_480p.mov
+---
+ gst/playback/gstplaybin2.c | 40 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+
+diff --git a/gst/playback/gstplaybin2.c b/gst/playback/gstplaybin2.c
+index c8bfd388e..6997a957c 100644
+--- a/gst/playback/gstplaybin2.c
++++ b/gst/playback/gstplaybin2.c
+@@ -170,6 +170,10 @@
+  * type. The new location may be a relative or an absolute URI. Examples
+  * for such redirects can be found in many quicktime movie trailers.
+  *
++ * NOTE: playbin will internally handle the redirect messages in the case
++ * that the redirecting stream doesn't contain any tracks and thus
++ * needs to report an error message on the bus.
++ *
+  * ## Examples
+  * |[
+  * gst-launch-1.0 -v playbin uri=file:///path/to/somefile.mp4
+@@ -3025,6 +3029,42 @@ gst_play_bin_handle_message (GstBin * bin, GstMessage * msg)
+           no_more_pads_cb (NULL, group);
+         }
+       }
++    } else {
++      const GstStructure *details = NULL;
++
++      gst_message_parse_error_details (msg, &details);
++      if (details && gst_structure_has_field (details, "redirect-location")) {
++        gchar *uri = NULL;
++        const gchar *location =
++            gst_structure_get_string ((GstStructure *) details,
++            "redirect-location");
++
++        if (gst_uri_is_valid (location)) {
++          uri = g_strdup (location);
++        } else {
++          uri = gst_uri_join_strings (group->uri, location);
++        }
++
++        if (g_strcmp0 (uri, group->uri)) {
++          GST_PLAY_BIN_LOCK (playbin);
++          if (playbin->next_group && playbin->next_group->valid) {
++            GST_DEBUG_OBJECT (playbin,
++                "User already setup next uri %s, using it",
++                playbin->next_group->uri);
++          } else {
++            GST_DEBUG_OBJECT (playbin,
++                "Using newly configured redirect URI: %s", uri);
++            gst_play_bin_set_uri (playbin, uri);
++          }
++          GST_PLAY_BIN_UNLOCK (playbin);
++
++          setup_next_source (playbin, GST_STATE_PAUSED);
++          gst_message_unref (msg);
++          msg = NULL;
++        }
++
++        g_free (uri);
++      }
+     }
+   }
+ 
+-- 
+2.21.0
+

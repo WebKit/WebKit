@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            var stream;
+            var audioTrack;
+            var videoTrack;
+            var transceiver;
+            var expected;
+
+            description("Test basic behavior of RTCPeerConnection.addTransceiver");
+
+            if (window.testRunner)
+                testRunner.setUserMediaPermission(true);
+            else {
+                debug("This test can not be run without the testRunner");
+                finishJSTest();
+            }
+
+            var pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+
+            navigator.mediaDevices.getUserMedia({ "audio": true, "video": true })
+            .then(function (s) {
+                stream = s;
+                audioTrack = stream.getAudioTracks()[0];
+                videoTrack = stream.getVideoTracks()[0];
+
+                shouldBe("pc.getTransceivers().length", "0");
+                debug("");
+
+                debug("*** Test arguments");
+                debug("*** 'trackOrKind' argument is mandatory");
+                shouldThrow("pc.addTransceiver()");
+                shouldThrow("pc.addTransceiver({})");
+                debug("*** Bad type as first argument");
+                shouldThrow("pc.addTransceiver(null)");
+                shouldThrow("pc.addTransceiver(null, {})");
+                shouldThrow("pc.addTransceiver(stream)");
+                debug("*** Bad track kind");
+                shouldThrow("pc.addTransceiver('foo')");
+                debug("*** Bad direction value");
+                shouldThrow('pc.addTransceiver("audio", {"direction": "foo"})');
+                debug("");
+
+                function checkTranscevier(expectedArg) {
+                    expected = expectedArg;
+
+                    shouldBe("pc.getTransceivers().length", expected.transceiverCount);
+                    shouldBeTrue("pc.getTransceivers().includes(transceiver)");
+                    shouldBe("transceiver.direction", expected.direction);
+                    shouldBeNull("transceiver.mid");
+                    shouldBeFalse("transceiver.stopped");
+
+                    debug("*** Check sender");
+                    shouldBeType("transceiver.sender", "RTCRtpSender");
+                    shouldBe("transceiver.sender.track", expected.senderTrack);
+
+                    debug("*** Check receiver");
+                    shouldBeType("transceiver.receiver", "RTCRtpReceiver");
+                    shouldBeType("transceiver.receiver.track", "MediaStreamTrack");
+                    shouldBe("transceiver.receiver.track.kind", expected.receiverTrackType);
+                    debug("");
+                }
+
+                shouldNotThrow('transceiver = pc.addTransceiver("audio")');
+                checkTranscevier({
+                    "transceiverCount": "1",
+                    "direction": "'sendrecv'",
+                    "senderTrack": "null",
+                    "receiverTrackType": "'audio'"
+                });
+
+                shouldNotThrow('transceiver = pc.addTransceiver("video")');
+                checkTranscevier({
+                    "transceiverCount": "2",
+                    "direction": "'sendrecv'",
+                    "senderTrack": "null",
+                    "receiverTrackType": "'video'"
+                });
+
+                shouldNotThrow('transceiver = pc.addTransceiver(audioTrack)');
+                checkTranscevier({
+                    "transceiverCount": "3",
+                    "direction": "'sendrecv'",
+                    "senderTrack": "audioTrack",
+                    "receiverTrackType": "'audio'"
+                });
+
+                shouldNotThrow('transceiver = pc.addTransceiver(videoTrack)');
+                checkTranscevier({
+                    "transceiverCount": "4",
+                    "direction": "'sendrecv'",
+                    "senderTrack": "videoTrack",
+                    "receiverTrackType": "'video'"
+                });
+
+                ["sendrecv", "recvonly", "sendonly", "inactive"].forEach(function (direction, i) {
+                    shouldNotThrow(`transceiver = pc.addTransceiver("audio", {"direction": "${direction}"})`);
+                    checkTranscevier({
+                        "transceiverCount": String(5 + i),
+                        "direction": `'${direction}'`,
+                        "senderTrack": "null",
+                        "receiverTrackType": "'audio'"
+                    });
+                });
+
+                finishJSTest();
+            })
+            .catch(function (error) {
+                testFailed("Error caught in promise chain: " + error);
+                finishJSTest();
+            });
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

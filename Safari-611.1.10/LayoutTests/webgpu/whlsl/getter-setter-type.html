@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Test loops.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.getterType = async () => {
+    await checkFail(`
+        int operator.x(thread int[] foo)
+        {
+            return foo[0];
+        }
+    `); 
+    await checkFail(`
+        int operator.x(int[3] foo)
+        {
+            return foo[0];
+        }
+    `); 
+    await checkFail(`
+        int operator[](thread int[] foo, int index)
+        {
+            return foo[index];
+        }
+    `); 
+    await checkFail(`
+        int operator.x(int[3] foo)
+        {
+            return foo[0];
+        }
+    `); 
+    await checkFail(`
+        struct Foo {
+            int x;
+        }
+        int operator[](Foo foo, uint4 index)
+        {
+            return foo[index.x];
+        }
+    `); 
+};
+
+whlslTests.setterType = async () => {
+    await checkFail(`
+        thread int[] operator.x=(thread int[] foo, uint x)
+        {
+            return foo;
+        }
+    `); 
+    await checkFail(`
+        int[3] operator.x=(int[3] foo, uint x)
+        {
+            return foo;
+        }
+    `); 
+    await checkFail(`
+        thread int[] operator[]=(thread int[] foo, uint x, uint y)
+        {
+            return foo;
+        }
+    `); 
+    await checkFail(`
+        int[3] operator.x=(int[3] foo, uint x)
+        {
+            return foo;
+        }
+    `); 
+    await checkFail(`
+        struct Foo {
+            int x;
+        }
+        Foo operator[]=(Foo foo, float4 y, uint z)
+        {
+            return foo.x;
+        }
+    `); 
+    await checkFail(`
+        struct Foo {
+            int x;
+        }
+        int operator.y(Foo foo)
+        {
+            return foo.x;
+        }
+        Foo operator.y=(Foo foo, int4 x)
+        {
+            Foo result;
+            foo.x = x.x;
+            return result;
+        }
+    `); 
+};
+
+runTests(whlslTests);
+</script>
+</html>
+

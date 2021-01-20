@@ -1,0 +1,5 @@
+include_rules = [
+  "+logging/rtc_event_log/rtc_event_log_factory.h",
+  "+modules/utility/include",
+  "+sdk/android/native_api",
+]

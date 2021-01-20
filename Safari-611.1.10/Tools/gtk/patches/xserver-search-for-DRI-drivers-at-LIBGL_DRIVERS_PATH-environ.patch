@@ -1,0 +1,84 @@
+From fcbd29debee422bcb147057a089fd1da5e699656 Mon Sep 17 00:00:00 2001
+From: Carlos Alberto Lopez Perez <clopez@igalia.com>
+Date: Wed, 23 Mar 2016 03:47:58 +0100
+Subject: [PATCH xserver] Search for DRI drivers at LIBGL_DRIVERS_PATH
+ environment variable.
+
+  * The Mesa driver uses this environment variable to override the
+    default compiled search path for DRI drivers.
+
+  * This is useful for testing purposes when the user needs to
+    override the system default one at runtime.
+---
+ glx/glxdricommon.c | 40 ++++++++++++++++++++++++++++++----------
+ 1 file changed, 30 insertions(+), 10 deletions(-)
+
+diff --git a/glx/glxdricommon.c b/glx/glxdricommon.c
+index 62cce13..543f631 100644
+--- a/glx/glxdricommon.c
++++ b/glx/glxdricommon.c
+@@ -246,8 +246,6 @@ glxConvertConfigs(const __DRIcoreExtension * core,
+     return head.next;
+ }
+ 
+-static const char dri_driver_path[] = DRI_DRIVER_PATH;
+-
+ /* Temporary define to allow building without a dri_interface.h from
+  * updated Mesa.  Some day when we don't care about Mesa that old any
+  * more this can be removed.
+@@ -261,22 +259,44 @@ glxProbeDriver(const char *driverName,
+                void **coreExt, const char *coreName, int coreVersion,
+                void **renderExt, const char *renderName, int renderVersion)
+ {
+-    int i;
++    int i, len;
+     void *driver;
+     char filename[PATH_MAX];
+     char *get_extensions_name;
+     const __DRIextension **extensions = NULL;
++    const char *dri_driver_path, *p, *next;
+ 
+-    snprintf(filename, sizeof filename, "%s/%s_dri.so",
+-             dri_driver_path, driverName);
++    dri_driver_path = getenv("LIBGL_DRIVERS_PATH");
++
++    if (dri_driver_path == NULL)
++        dri_driver_path = DRI_DRIVER_PATH;
++
++    for (p = dri_driver_path; *p; p = next) {
++        next = strchr(p, ':');
++        if (next == NULL) {
++            len = strlen(p);
++            next = p + len;
++        }
++        else {
++            len = next - p;
++            next++;
++        }
++
++        snprintf(filename, sizeof filename, "%.*s/%s_dri.so",
++                len, p, driverName);
++
++        driver = dlopen(filename, RTLD_LAZY | RTLD_LOCAL);
++        if (driver == NULL)
++            LogMessage(X_ERROR, "AIGLX error: dlopen of %s failed (%s)\n",
++                    filename, dlerror());
++        else
++            break;
+ 
+-    driver = dlopen(filename, RTLD_LAZY | RTLD_LOCAL);
+-    if (driver == NULL) {
+-        LogMessage(X_ERROR, "AIGLX error: dlopen of %s failed (%s)\n",
+-                   filename, dlerror());
+-        goto cleanup_failure;
+     }
+ 
++    if (driver == NULL)
++        goto cleanup_failure;
++
+     if (asprintf(&get_extensions_name, "%s_%s",
+                  __DRI_DRIVER_GET_EXTENSIONS, driverName) != -1) {
+         const __DRIextension **(*get_extensions)(void);
+-- 
+2.1.4
+

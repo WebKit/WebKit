@@ -1,0 +1,2 @@
+PASS: Click fired on element with handler.
+This document doesn't have fast clicks because it sets a viewport width. It has a significant zoom since the viewport width is significantly bigger than the body width. However, since fast click everywhere is set to true, double tapping on the rectangle above should send a click event.

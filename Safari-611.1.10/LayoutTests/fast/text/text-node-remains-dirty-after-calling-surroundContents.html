@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that the span content gets properly laid out after calling surroundContents.</title>
+<style>
+span {
+	font-family: system-ui;
+	font-size: 12px;
+    margin-right: 2px;
+}
+
+.highlight {
+    text-decoration: underline;
+}
+</style>
+</head>
+<body>
+<span id=container>foobar </span>
+<br>PASS if foobar gets underlined while hovering.
+<script>
+    var container = document.getElementById("container");
+    var range = document.createRange();
+    var newspan = document.createElement("span");
+    newspan.className = "highlight"; 
+
+    range.selectNodeContents(document.getElementById("container").firstChild);
+    range.setEnd(document.getElementById("container").firstChild, 6);
+    range.surroundContents(newspan);
+</script>
+</body>
+</html>

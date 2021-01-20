@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: 0
+CONSOLE MESSAGE: Unhandled Promise Rejection: 1
+CONSOLE MESSAGE: Unhandled Promise Rejection: 2
+Test unhandled promise rejection event produces console messages. The test passes when you see 3 console messages for unhandled promise rejections.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

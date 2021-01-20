@@ -1,0 +1,110 @@
+/*
+ * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.tracks-panel {
+    position: absolute;
+    display: inline-block;
+}
+
+.tracks-panel > .scrollable-container {
+    border-radius: 8px;
+}
+
+.tracks-panel > .scrollable-container {
+    position: relative;
+    overflow-y: scroll;
+}
+
+.tracks-panel * {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.tracks-panel.fade-out {
+    transition-property: opacity;
+    transition-duration: 265ms;
+    opacity: 0;
+}
+
+.tracks-panel section {
+    border-top: 2px solid var(--secondary-glyph-color);
+    will-change: transform;
+}
+
+.tracks-panel section:first-of-type {
+    border-top: 0;
+}
+
+.tracks-panel section > h3 {
+    color: var(--primary-glyph-color);
+    mix-blend-mode: plus-lighter;
+    padding: 5px 20px 1px 21px;
+    margin: 0;
+}
+
+.tracks-panel section > ul {
+    list-style-type: none;
+    margin-top: 0;
+    padding: 0;
+}
+
+.tracks-panel section > ul > li {
+    position: relative;
+    padding: 1px 20px 1px 33px;
+    color: white;
+}
+
+.tracks-panel section > ul > li:focus {
+    background-color: rgb(20, 105, 209);
+    outline: none;
+}
+
+.tracks-panel section > ul > li.selected:before {
+    position: absolute;
+    top: 3px;
+    left: 12px;
+    width: 12px;
+    display: inline-block;
+    content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><polygon fill="white" points="252.301,4.477 126.667,194.104 43.358,108.3 6.868,161.408 132.515,290.814 297.732,49.926"/></svg>');
+}
+
+.tracks-panel section > ul > li.animated {
+    animation-name: tracks-panel-item-selection;
+    animation-duration: 150ms;
+    animation-timing-function: step-end;
+    animation-fill-mode: forwards;
+}
+
+@keyframes tracks-panel-item-selection {
+    0%, 55.55% {
+        background-color: rgba(26, 68, 243, 0.6);
+        -webkit-backdrop-filter: saturate(180%) blur(20px);
+    }
+
+    22.22% {
+        background: none;
+        -webkit-backdrop-filter: none;
+    }
+}

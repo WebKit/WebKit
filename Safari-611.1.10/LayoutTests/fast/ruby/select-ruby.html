@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    font-family: Ahem;
+    font-size: 16px;
+    -webkit-font-smoothing: none;
+    color: rgba(0, 0, 0, 0.1);
+}
+</style>
+</head>
+<body>
+<!-- All texts inside the ruby should be highlighted. -->
+a<ruby>1<rt>1</rt>2<rt>2</rt>3<rt>3</rt>4<rt>4</rt></ruby>b
+<script>
+var range = document.createRange();
+range.selectNodeContents(document.body);
+window.getSelection().addRange(range);
+</script>
+</body>
+</html>

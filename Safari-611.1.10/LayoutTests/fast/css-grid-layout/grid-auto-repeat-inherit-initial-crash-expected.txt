@@ -1,0 +1,3 @@
+The test PASS if it does not trigger an ASSERT on Debug builds.
+
+

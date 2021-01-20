@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Test various valid name for elements according to the definition of DOM Level 2.")
+
+var nameList = [
+                // Invalid first Char
+                '0ascii',
+                '.Ascii',
+                '-Ascii',
+                ' ascii',
+                '	ascii',
+                '֑sc.ii',
+                '⃣scii',
+                'िascii',
+                'ʳascii',
+                // Invalid other char
+                'asc i',
+                'asc	i',
+                'asciiⅦ'
+                ];
+
+for (var i in nameList)
+    shouldThrowErrorName("document.createElement('" + nameList[i] +"')", "InvalidCharacterError");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

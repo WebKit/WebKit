@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 500x500
+  RenderSVGRoot {svg} at (25,25) size 445x145
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceMarker {marker} [id="m1"] [markerUnits=userSpaceOnUse] [ref at (0,0)] [angle=0.00]
+        RenderSVGEllipse {circle} at (0,0) size 25x25 [fill={[type=SOLID] [color=#008000]}] [cx=0.00] [cy=0.00] [r=25.00]
+      RenderSVGResourceMarker {marker} [id="m2"] [markerUnits=userSpaceOnUse] [ref at (0,0)] [angle=0.00]
+        RenderSVGEllipse {circle} at (0,0) size 20x20 [opacity=0.90] [fill={[type=SOLID] [color=#87CEEB]}] [cx=0.00] [cy=0.00] [r=20.00]
+      RenderSVGResourceMarker {marker} [id="m3"] [markerUnits=userSpaceOnUse] [ref at (0,0)] [angle=0.00]
+        RenderSVGEllipse {circle} at (0,0) size 15x15 [opacity=0.85] [fill={[type=SOLID] [color=#800000]}] [cx=0.00] [cy=0.00] [r=15.00]
+    RenderSVGPath {path} at (25,25) size 445x145 [stroke={[type=SOLID] [color=#000000] [stroke width=10.00]}] [start marker=m1] [middle marker=m2] [end marker=m3] [data="M 50 50 L 150 50 L 150 150 Z M 200 50 L 300 50 L 300 150 Z M 350 50 L 450 50 L 450 150 Z"]

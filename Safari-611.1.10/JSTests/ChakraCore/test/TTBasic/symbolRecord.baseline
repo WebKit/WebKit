@@ -1,0 +1,10 @@
+typeof zs: symbol
+typeof symObj: object
+xs == ys: true
+xs == zs: false
+obj[x]: 1
+obj.Hello: 1
+obj[xs]: 2
+obj[ys]: 2
+obj[zs]: 3
+obj[symObj]: 3

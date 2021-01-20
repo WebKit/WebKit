@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>Test Error Scopes.</title>
+<body>
+<script src="js/webgpu-functions.js"></script>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+let tests = {};
+let eventWatcher;
+
+const causeUncapturedErrorEvent = device => {
+    device.createBuffer({ size: 4, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.MAP_WRITE });
+};
+
+tests["Fire an uncaptured GPUDevice error event at 'device'."] = async device => {
+    const asyncTest = async_test("GPUUncapturedErrorEvent async test.");
+    const eventWatcher = new EventWatcher(asyncTest, device, "uncapturederror");
+    const eventFired = eventWatcher.wait_for("uncapturederror").then(event => {
+        assert_true(event.error instanceof GPUValidationError, "Successfully fired GPUUncapturedErrorEvent.");
+        asyncTest.done();
+    });
+
+    const timeout = new Promise((_, reject) => {
+        setTimeout(() => { reject("Timed out waiting for error event!") }, 3000);
+    });
+
+    causeUncapturedErrorEvent(device);
+
+    return Promise.race([eventFired, timeout]);
+};
+
+tests["Intercept an uncaptured error with GPUDevice.onuncapturederror EventHandler."] = async device => {
+    const capturedErrorPromise = new Promise(resolve => {
+        device.onuncapturederror = event => {
+            assert_true(event.error instanceof GPUValidationError, "Successfully fired GPUUncapturedErrorEvent.");
+            resolve();
+        };
+
+        causeUncapturedErrorEvent(device);
+    });
+
+    const timeout = new Promise((_, reject) => {
+        setTimeout(() => { reject("Timed out waiting for error event!") }, 3000);
+    });
+
+    return Promise.race([capturedErrorPromise, timeout]);
+};
+
+runTestsWithDevice(tests);
+</script>
+</body>

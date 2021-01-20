@@ -1,0 +1,5 @@
+2d.imageData.get.range
+getImageData() returns values in the range [0, 255]
+Spec references: 2d.pixelarray.range 2d.pixelarray.retrieve
+Actual output:
+Passed

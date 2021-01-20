@@ -1,0 +1,35 @@
+<html>
+<head>
+<title>test with multiple controls having "autofocus" set</title>
+<style>
+ input, input#test:focus { background:lime }
+ input:focus, input#test { background:red }
+</style>
+<script language="JavaScript" type="text/javascript">
+    function log(message) {
+        document.getElementById("console").innerHTML += "<li>"+message+"</li>";
+    }
+
+    function test() {
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        if (document.activeElement == document.getElementById("test"))
+            log("SUCCESS");
+        else
+            log("FAILURE");
+    }
+</script>
+</head>
+<body onload="test()">
+<p>All form controls below should have a green background:</p>
+<p><input autofocus>
+<p><input autofocus>
+<p><input autofocus>
+<p><input>
+<p><input autofocus id="test">
+<p><input>
+<hr/>
+<ol id="console"></ol>
+</body>
+</html>

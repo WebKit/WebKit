@@ -1,0 +1,7 @@
+2d.shadow.offset.positiveY
+Shadows can be offset with positive y
+Spec references: 2d.shadow.render
+Actual output:
+Expected output:
+
+Passed

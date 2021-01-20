@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that subtree layout works fine with positioned elements.</title>
+<style>
+div {
+    width: 100px;
+    height: 100px;
+    background-color: green;
+}
+  
+.positionedParent {
+    position: absolute;
+}
+  
+.boundaryParent {
+    overflow: hidden;
+}
+  
+.positionedChild {
+    background-color: blue;
+    position: absolute;
+}
+  
+</style>
+</head>
+<body>
+<div>
+  <div class=positionedParent>
+    <div class=boundaryParent>
+	  <div id=sibling></div>
+	  <div class=positionedChild>PASS if no assert in debug.</div>
+    </div>
+  </div>
+</div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+setTimeout(function() {
+    document.getElementById("sibling").style.width = "10px";
+    setTimeout(function() {
+        document.getElementById("sibling").style.width = "20px";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}, 0);
+</script>
+</body>
+</html>

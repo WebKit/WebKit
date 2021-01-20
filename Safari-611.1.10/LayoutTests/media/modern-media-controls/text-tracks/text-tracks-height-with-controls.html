@@ -1,0 +1,37 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/test.mp4" controls style="width: 320px; height: 240px;"></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing that we leave room for the bottom controls bar when showing captions with controls on.");
+
+const media = document.querySelector("video");
+let bounds, textTrackContainer;
+
+let loadedMetadata = false;
+let timeupdate = false;
+
+media.addEventListener("loadedmetadata", () => {
+    loadedMetadata = true;
+    media.addTextTrack("captions", "regular captions track", "en");
+    media.textTracks[0].addCue(new VTTCue(2.00, 4.00, "test"));
+    media.textTracks[0].mode = "showing";
+
+    media.addEventListener("timeupdate", () => {
+        timeupdate = true;
+        bounds = media.getBoundingClientRect();
+        textTrackContainer = internals.shadowRoot(media).querySelector("div[pseudo=-webkit-media-text-track-container]");
+        shouldBe("textTrackContainer.getBoundingClientRect().height", "bounds.height - 37");
+        finishJSTest();
+    });
+
+    media.addEventListener("canplaythrough", () => {
+        media.currentTime = 3;
+    });
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

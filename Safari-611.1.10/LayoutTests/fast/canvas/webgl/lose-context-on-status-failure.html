@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<head>
+<style>
+canvas {
+    width: 200px;
+    height: 200px;
+}
+</style>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test.js"> </script>
+<script src="resources/webgl-test-utils.js"> </script>
+<script>
+
+var simpleColorVertexShader = [
+  'attribute vec4 vPosition;',
+  'void main() {',
+  '    gl_Position = vPosition;',
+  '}'].join('\n');
+
+var simpleColorFragmentShader = [
+  'precision mediump float;',
+  'uniform vec4 u_color;',
+  'void main() {',
+  '    gl_FragData[0] = u_color;',
+  '}'].join('\n');
+
+var wtu = WebGLTestUtils;
+var gl;
+
+if (window.initNonKhronosFramework)
+    window.initNonKhronosFramework(false);
+
+debug("Checks that a GPU status check failure will lose the context.");
+debug("NOTE: This only passes in the test harness because it requires Internals.");
+debug("");
+
+function makeCanvas() {
+    let canvas = document.createElement("canvas");
+    canvas.width = 200;
+    canvas.height = 200;
+    return canvas;
+}
+
+function runTest() {
+
+    debug("");
+    debug("Test drawArrays.");
+    debug("");
+
+    let canvas = makeCanvas();
+
+    gl = wtu.create3DContext(canvas);
+    wtu.setupColorQuad(gl);
+
+    gl.viewport(0, 0, canvas.width, canvas.height);
+
+    debug("Do five 'safe' drawArrays.")
+    for (let i = 0; i < 5; i++) {
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        shouldBeFalse("gl.isContextLost()");
+        shouldBe("gl.getError()", "gl.NO_ERROR");
+    }
+
+    debug("Now force failure after the next drawArrays.")
+    if (window.internals)
+        window.internals.failNextGPUStatusCheck(gl);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    shouldBeTrue("gl.isContextLost()");
+    shouldBe("gl.getError()", "gl.CONTEXT_LOST_WEBGL");
+
+    debug("");
+    debug("Test drawElements.");
+    debug("");
+
+    canvas = makeCanvas();
+
+    gl = wtu.create3DContext(canvas);
+    wtu.setupIndexedQuad(gl);
+
+    var program = wtu.setupProgram(
+        gl,
+        [simpleColorVertexShader, simpleColorFragmentShader],
+        ['vPosition'],
+        []);
+
+    gl.viewport(0, 0, canvas.width, canvas.height);
+
+    debug("Do two 'safe' drawElements.")
+    for (let i = 0; i < 2; i++) {
+        gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+        shouldBeFalse("gl.isContextLost()");
+        shouldBe("gl.getError()", "gl.NO_ERROR");
+    }
+
+    debug("Now force failure after the next drawElements.")
+    if (window.internals)
+        window.internals.failNextGPUStatusCheck(gl);
+    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+    shouldBeTrue("gl.isContextLost()");
+    shouldBe("gl.getError()", "gl.CONTEXT_LOST_WEBGL");
+
+    debug("");
+    debug("Test drawArraysInstanced.");
+    debug("");
+
+    canvas = makeCanvas();
+
+    gl = wtu.create3DContext(canvas);
+    ext = wtu.getExtensionWithKnownPrefixes(gl, "ANGLE_instanced_arrays");
+    wtu.setupColorQuad(gl);
+
+    gl.viewport(0, 0, canvas.width, canvas.height);
+
+    debug("Do four 'safe' drawArraysInstancedANGLE.")
+    for (let i = 0; i < 4; i++) {
+        ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, 6, 10);
+        shouldBeFalse("gl.isContextLost()");
+        shouldBe("gl.getError()", "gl.NO_ERROR");
+    }
+
+    debug("Now force failure after the next drawArraysInstancedANGLE.")
+    if (window.internals)
+        window.internals.failNextGPUStatusCheck(gl);
+    ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, 6, 10);
+    shouldBeTrue("gl.isContextLost()");
+    shouldBe("gl.getError()", "gl.CONTEXT_LOST_WEBGL");
+
+    debug("");
+    debug("Test drawElementsInstanced.");
+    debug("");
+
+    canvas = makeCanvas();
+
+    gl = wtu.create3DContext(canvas);
+    ext = wtu.getExtensionWithKnownPrefixes(gl, "ANGLE_instanced_arrays");
+    wtu.setupIndexedQuad(gl);
+
+    var program = wtu.setupProgram(
+        gl,
+        [simpleColorVertexShader, simpleColorFragmentShader],
+        ['vPosition'],
+        []);
+
+    gl.viewport(0, 0, canvas.width, canvas.height);
+
+    debug("Do seven 'safe' drawElementsInstancedANGLE.")
+    for (let i = 0; i < 7; i++) {
+        ext.drawElementsInstancedANGLE(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0, 8);
+        shouldBeFalse("gl.isContextLost()");
+        shouldBe("gl.getError()", "gl.NO_ERROR");
+    }
+
+    debug("Now force failure after the next drawElementsInstancedANGLE.")
+    if (window.internals)
+        window.internals.failNextGPUStatusCheck(gl);
+    ext.drawElementsInstancedANGLE(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0, 8);
+    shouldBeTrue("gl.isContextLost()");
+    shouldBe("gl.getError()", "gl.CONTEXT_LOST_WEBGL");
+
+    finishTest();
+}
+
+window.addEventListener("load", runTest, false);
+</script>
+<body>
+</body>

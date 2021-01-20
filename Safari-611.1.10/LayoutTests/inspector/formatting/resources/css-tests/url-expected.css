@@ -1,0 +1,27 @@
+body {
+    background: url(basic);
+    background: url(with space);
+    background: url('  single  ');
+    background: url("  double  ");
+    background: url('  nested  "  double  "  single  ');
+    background: url("  nested  '  single  '  double  ");
+    background: url('  escaped  \'  single  \'  single  ');
+    background: url("  escaped  \"  double  \"  double  ");
+    background: url('  escaped  \\\'  single  \\\'  single  ');
+    background: url("  escaped  \\\"  double  \\\"  double  ");
+    background: url('  nested  /*  comment  */  single  ');
+    background: url("  nested  /*  comment  */  dobule  ");
+    background: url( /*  before  */ '  single  ' /*  after  */);
+    background: url( /*  before  */ "  double  " /*  after  */);
+}
+
+body {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg clip-rule='evenodd' fill-rule='evenodd' stroke-linejoin='round' stroke-miterlimit='1.5' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3CclipPath id='a'%3E%3Cpath d='M0 0h200v200H0z'/%3E%3C/clipPath%3E%3Cg clip-path='url(%23a)' transform='scale(0.5)'%3E%3Cimage height='200' transform='scale(2 2)' width='200' xlink:href='data:image/jpeg;base64,abcdef'/%3E%3C/g%3E%3C/svg%3E")
+}
+
+body {
+    background-image: linear-gradient(180deg, white, rgba(0, 0, 0, 0) 200px);
+    min-height: 200px
+}

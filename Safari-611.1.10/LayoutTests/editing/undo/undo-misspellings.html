@@ -1,0 +1,18 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<div id="test" contenteditable="true"></div>
+
+<script>
+var s = window.getSelection();
+s.setPosition(document.getElementById("test"), 0);
+
+document.execCommand("InsertText", false, "sugare");
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, "sugari");
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, "sugarm");
+document.execCommand("InsertText", false, " ");
+document.execCommand("Undo");
+</script>

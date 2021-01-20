@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+
+import logging
+import sys
+
+from webkitpy.benchmark_runner.run_benchmark import main, format_logger
+
+
+_log = logging.getLogger()
+
+if __name__ == '__main__':
+    format_logger(_log)
+    sys.exit(main())

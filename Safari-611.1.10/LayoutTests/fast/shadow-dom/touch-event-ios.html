@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Tests for retargeting touch targets. This test requires touch events support and runUIScript.</p>
+<script>
+
+function block(width, height, color) {
+    return {display: 'block', width: width + 'px', height: height + 'px', backgroundColor: color};
+}
+
+function inlineBlock(width, height, color) {
+    return {display: 'inline-block', width: width + 'px', height: height + 'px', backgroundColor: color};
+}
+
+function addChildren(parent, children) {
+    for (var child of children) {
+        if (typeof(child) == 'string')
+            child = document.createTextNode(child);
+        parent.appendChild(child);
+    }
+}
+
+function element(name, children) {
+    var element = document.createElement(name);
+    element.treeName = name;
+    if (children)
+        addChildren(element, children);
+    return element;
+}
+
+function elementWithStyle(name, style, children) {
+    var newElement = element(name, children);
+    for (var name in style)
+        newElement.style[name] = style[name];
+    return newElement;
+}
+
+function attachShadow(name, element, shadowChildren) {
+    var shadowRoot = element.attachShadow({mode: 'closed'});
+    shadowRoot.treeName = name;
+    element.shadowTree = shadowRoot;
+    addChildren(shadowRoot, shadowChildren);
+    return shadowRoot;
+}
+
+/*
+parent
+ + left-host -- (left-shadow)
+ |               + left-shadow-target
+ + right-upper-host --------------------------------- (right-upper-shadow)
+ | + right-lower-host -- (right-lower-shadow)          + right-shadow-child
+ |   + right-target       + right-lower-shadow-child     + slot
+ |                          + slot
+ + bottomTarget
+*/
+
+var leftHost = elementWithStyle('left-host', block(200, 150, 'yellow'));
+var leftTarget = elementWithStyle('left-shadow-target', block(100, 100, 'red'));
+var leftShadowRoot = attachShadow('left-shadow', leftHost, [leftTarget]);
+
+var rightTarget = elementWithStyle('right-target', block(50, 50, 'blue'));
+var rightLowerHost = elementWithStyle('right-lower-host', block(100, 100, 'purple'), [rightTarget]);
+var rightLowerShadowRoot = attachShadow('right-lower-shadow', rightLowerHost, [
+    elementWithStyle('right-lower-shadow-child', block(100, 100, 'pink'), [
+        element('slot')
+    ])]);
+
+var rightUpperHost = elementWithStyle('right-upper-host', block(250, 250, 'green'), [rightLowerHost]);
+var rightUpperShadowRoot = attachShadow('right-upper-shadow', rightUpperHost, [
+    elementWithStyle('right-shadow-child', block(200, 200, 'purple'), [
+        element('slot')
+    ])]);
+
+var bottomTarget = elementWithStyle('bottom-target', block(100, 100, '#666'));
+
+document.body.appendChild(elementWithStyle('host-parent', block(500, 500, '#eee'), [leftHost, rightUpperHost, bottomTarget]));
+
+function getUIScript()
+{
+    function xCenter(element) { return element.offsetLeft + element.offsetWidth / 2; }
+    function yCenter(element) { return element.offsetTop + element.offsetHeight / 2; }
+
+    return `
+    (function() {
+        uiController.touchDownAtPoint(${xCenter(leftTarget)}, ${yCenter(leftTarget)}, 1, function() {
+            uiController.touchDownAtPoint(${xCenter(rightTarget)}, ${yCenter(rightTarget)}, 2, function() {
+                uiController.touchDownAtPoint(${xCenter(bottomTarget)}, ${yCenter(bottomTarget)}, 3, function() {
+                    uiController.liftUpAtPoint(${xCenter(leftTarget)}, ${yCenter(leftTarget)}, 2, function () {
+                        uiController.liftUpAtPoint(${xCenter(rightTarget)}, ${yCenter(rightTarget)}, 1, function () {
+                            uiController.liftUpAtPoint(${xCenter(bottomTarget)}, ${yCenter(bottomTarget)}, 0, function () {
+                                uiController.uiScriptComplete("Done");
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    })();`
+}
+
+window.onload = function runTest()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function formatTouchList(list) {
+        var text = '';
+        for (var i = 0; i < list.length; i++) {
+            if (text)
+                text += ', ';
+            text += `${i}: ${list[i].target.treeName}`;
+        }
+        return `[${text}]`;
+    }
+
+    var output = '';
+
+    function logger(event) {
+        output += `${event.type} at ${this.treeName} with
+    target: ${event.target.treeName}
+    touches: ${formatTouchList(event.touches)}
+    targetTouches: ${formatTouchList(event.targetTouches)}
+    changedTouches: ${formatTouchList(event.changedTouches)}
+
+`;
+    }
+
+    function attachLoggers(node) {
+        node.addEventListener('touchstart', logger);
+        node.addEventListener('touchmove', logger);
+        node.addEventListener('touchend', logger);
+    }
+
+    document.body.treeName = 'body';
+    document.treeName = 'document';
+    attachLoggers(document);
+    attachLoggers(leftShadowRoot);
+    attachLoggers(rightUpperShadowRoot);
+    attachLoggers(rightLowerShadowRoot);
+
+    if (window.testRunner && testRunner.runUIScript) {
+        testRunner.waitUntilDone();
+        testRunner.runUIScript(getUIScript(), function(result) {
+            var pre = document.createElement('pre');
+            pre.textContent = output;
+            document.body.appendChild(pre);
+            testRunner.notifyDone();
+        });
+    }
+}
+
+</script>
+</body>
+</html>

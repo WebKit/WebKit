@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<iframe id="testFrame1" srcdoc="<html><body></body></html>"></iframe>
+<iframe id="testFrame2" srcdoc="<html></html>"></iframe>
+<script>
+description("Tests setting document.body to another frame's body");
+
+var document1 = document.getElementById("testFrame1").contentDocument;
+var document2 = document.getElementById("testFrame2").contentDocument;
+if (document2.body)
+    document2.documentElement.removeChild(document2.body);
+
+shouldNotBe("document1.body", "null");
+shouldBeNull("document2.body");
+
+shouldNotThrow("document2.body = document1.body");
+
+shouldNotBe("document2.body", "null");
+shouldBeNull("document1.body");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

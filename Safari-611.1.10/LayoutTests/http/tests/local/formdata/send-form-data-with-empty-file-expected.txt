@@ -1,0 +1,10 @@
+Test that we correctly send forms with empty files
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS lines[0] + "--" is lines[lines.length - 1]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

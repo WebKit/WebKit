@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script>
+    eventSender.zoomPageIn();
+    eventSender.zoomPageIn();
+</script>
+<style>
+    body {
+        background: red;
+    }
+    @media (max-width: 700px) {
+        body {
+            background: green;
+        }
+    }
+</style>
+<p>
+    This page should have 144% full page zoom, hence the viewport width should
+    be 800 / 1.44 = 555.6px, which is less than 700 so the background should
+    go green.
+</p> 

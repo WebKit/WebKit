@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="text" contenteditable="true">text</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that we create a text marker range from a stale node won't lead to crash.");
+
+    if (window.accessibilityController) {
+        
+        var text = accessibilityController.accessibleElementById("text");
+        var textElement = document.getElementById("text");
+        var markerRange = text.textMarkerRangeForElement(text);
+        var startMarker = text.startTextMarkerForTextMarkerRange(markerRange);
+        var endMarker = text.endTextMarkerForTextMarkerRange(markerRange);
+        
+        markerRange = text.textMarkerRangeForMarkers(startMarker, endMarker);
+        shouldBe("text.textMarkerRangeLength(markerRange)", "4");
+        
+        // Change the node hierarchy.
+        textElement.innerHTML = "";
+        var textnode = document.createTextNode("someContent");
+        textElement.appendChild(textnode);
+        
+        // Making a range from the old markers won't crash.
+        markerRange = text.textMarkerRangeForMarkers(startMarker, endMarker);
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

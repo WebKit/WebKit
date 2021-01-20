@@ -1,0 +1,7 @@
+These next two lines should be the same width
+
+00:11:22.33
+
+11:11:11.11
+
+PASS: widths were the same

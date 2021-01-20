@@ -1,0 +1,5 @@
+2d.pattern.image.incomplete.empty
+Spec references: 2d.pattern.incomplete.image.nosrc
+Actual output:
+
+Passed

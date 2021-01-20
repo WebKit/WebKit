@@ -1,0 +1,32 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/target-origin/004-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/target-origin/005-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/target-origin/103-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/target-origin/104-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/target-origin/105-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/target-origin/106-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/target-origin/107-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/target-origin/108-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/target-origin/109-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/target-origin/110-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/target-origin/117-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/target-origin/118-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/target-origin/202.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/target-origin/HELPER-mustallow.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/target-origin/HELPER-mustblock.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/target-origin/HELPER-showorigin.html

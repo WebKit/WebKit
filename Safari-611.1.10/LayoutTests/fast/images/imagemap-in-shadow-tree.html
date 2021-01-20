@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/ui-helper.js"></script>
+<p>This tests activing an image map area inside a shadow tree. WebKit should not hit any assertions.<br>
+To manually test, click on green box on the left upper quadrant.</p>
+<div id="result"></div>
+<script>
+
+const host = document.createElement('div');
+document.body.appendChild(host);
+
+const shadowRoot = host.attachShadow({mode: 'closed'});
+shadowRoot.innerHTML = `
+<img src="resources/green-400x400.png" width="400" height="400" usemap="#imagemap" onload="startTest()">
+<map name="imagemap">
+    <area id="area" shape="rect" coords="0,0,200,200" href="#" onclick="didClick(event)" tabindex="0">
+</map>`;
+const rect = host.getBoundingClientRect();
+
+function startTest()
+{
+    if (!window.testRunner)
+        return;
+    UIHelper.activateAt(rect.x + 100, rect.y + 100).then(check);
+}
+
+let didClickWasCalled = false;
+function didClick(event)
+{
+    event.preventDefault();
+    didClickWasCalled = true;
+}
+
+function check()
+{
+    let result = '';
+    if (!didClickWasCalled)
+        result = 'FAIL - JavaScript was not executed';
+    else if (shadowRoot.activeElement != shadowRoot.getElementById('area'))
+        result = 'FAIL - The element was not focused';
+    else
+        result = 'PASS';
+    document.getElementById('result').textContent = result;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+if (window.testRunner) {
+    setTimeout(() => testRunner.notifyDone(), 3000);
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+} else {
+    host.onclick = (event) => {
+        event.preventDefault();
+
+        const isInUpperLeftQuadrant = rect.x < event.pageX && event.pageX < rect.x + 200
+            && rect.y < event.pageY && event.pageY < rect.y + 200;
+        if (!isInUpperLeftQuadrant) {
+            alert('Please click on the upper left quadrant of the green box.');
+            return;
+        }
+
+        check();
+    };
+}
+
+</script>
+</body>
+</head>
+</html>

@@ -1,0 +1,8 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 94x600
+  RenderBlock {HTML} at (0,0) size 94x600
+    RenderBody {BODY} at (30,8) size 34x584
+      RenderBlock {P} at (0,0) size 34x584
+        RenderText {#text} at (0,0) size 33x368
+          text run at (0,0) width 368: "ABC\x{4E39}\x{7FBD} \x{4EAE}\x{4ECB}ABC\x{4E39}\x{7FBD} \x{4EAE}\x{4ECB}"

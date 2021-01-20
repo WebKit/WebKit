@@ -1,0 +1,3 @@
+Should say SUCCESS: SUССЕSS
+
+The latter has some Cyrillic characters that look like Latin ones. This test verifies that decoding is correctly performed.

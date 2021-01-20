@@ -1,0 +1,13 @@
+This test verifies that when writing items to the clipboard while a previous call to write items is ongoing, we will end up writing the latter set of items to the clipboard. To manually test, click the 'Copy' button, followed by the 'Copy Again' button, followed by 'Paste'
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS doneWritingSecondItem became true
+PASS item.types is ['text/plain', 'text/uri-list']
+PASS getType("text/plain") resolved to "This is the second item."
+PASS getType("text/uri-list") resolved to "https://www.example.com/"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

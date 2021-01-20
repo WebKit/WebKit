@@ -1,0 +1,92 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x526
+  RenderBlock {HTML} at (0,0) size 800x526
+    RenderBody {BODY} at (8,8) size 784x510
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 652x17
+          text run at (0,0) width 652: "The text in the button, popup menu and list box should have the same case as in the accompanying text."
+      RenderBlock {DIV} at (0,18) size 784x82
+        RenderMenuList {SELECT} at (2,50) size 88x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 86x28
+            RenderText at (5,5) size 53x17
+              text run at (5,5) width 53: "HELLO"
+        RenderText {#text} at (92,56) size 4x17
+          text run at (92,56) width 4: " "
+        RenderListBox {SELECT} at (98,2) size 81x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderText {#text} at (181,56) size 4x17
+          text run at (181,56) width 4: " "
+        RenderInline {SPAN} at (0,0) size 118x17
+          RenderText {#text} at (185,56) size 118x17
+            text run at (185,56) width 118: "HELLO WORLD"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,100) size 784x82
+        RenderMenuList {SELECT} at (2,50) size 82x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 80x28
+            RenderText at (5,5) size 48x17
+              text run at (5,5) width 48: "HeLLo"
+        RenderText {#text} at (86,56) size 4x17
+          text run at (86,56) width 4: " "
+        RenderListBox {SELECT} at (92,2) size 75x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderText {#text} at (169,56) size 4x17
+          text run at (169,56) width 4: " "
+        RenderInline {SPAN} at (0,0) size 102x17
+          RenderText {#text} at (173,56) size 102x17
+            text run at (173,56) width 102: "HeLLo WoRLd"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,182) size 784x82
+        RenderMenuList {SELECT} at (2,50) size 67x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 65x28
+            RenderText at (5,5) size 35x17
+              text run at (5,5) width 35: "hello"
+        RenderText {#text} at (71,56) size 4x17
+          text run at (71,56) width 4: " "
+        RenderListBox {SELECT} at (77,2) size 60x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderText {#text} at (139,56) size 4x17
+          text run at (139,56) width 4: " "
+        RenderInline {SPAN} at (0,0) size 72x17
+          RenderText {#text} at (143,56) size 72x17
+            text run at (143,56) width 72: "hello world"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,264) size 784x82
+        RenderMenuList {SELECT} at (2,50) size 72x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 70x28
+            RenderText at (5,5) size 22x17
+              text run at (5,5) width 22: "SS"
+        RenderText {#text} at (76,56) size 4x17
+          text run at (76,56) width 4: " "
+        RenderListBox {SELECT} at (82,2) size 65x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderText {#text} at (149,56) size 4x17
+          text run at (149,56) width 4: " "
+        RenderInline {SPAN} at (0,0) size 58x17
+          RenderText {#text} at (153,56) size 58x17
+            text run at (153,56) width 58: "SS SSSS"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,346) size 784x82
+        RenderMenuList {SELECT} at (2,50) size 48x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 46x28
+            RenderText at (5,5) size 10x17
+              text run at (5,5) width 10: "\x{DF}"
+        RenderText {#text} at (52,56) size 4x17
+          text run at (52,56) width 4: " "
+        RenderListBox {SELECT} at (58,2) size 41x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderText {#text} at (101,56) size 4x17
+          text run at (101,56) width 4: " "
+        RenderInline {SPAN} at (0,0) size 28x17
+          RenderText {#text} at (105,56) size 28x17
+            text run at (105,56) width 28: "\x{DF} \x{DF}\x{DF}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,428) size 784x82
+        RenderMenuList {SELECT} at (2,50) size 48x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 46x28
+            RenderText at (5,5) size 10x17
+              text run at (5,5) width 10: "\x{DF}"
+        RenderText {#text} at (52,56) size 4x17
+          text run at (52,56) width 4: " "
+        RenderListBox {SELECT} at (58,2) size 41x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderText {#text} at (101,56) size 4x17
+          text run at (101,56) width 4: " "
+        RenderInline {SPAN} at (0,0) size 28x17
+          RenderText {#text} at (105,56) size 28x17
+            text run at (105,56) width 28: "\x{DF} \x{DF}\x{DF}"
+        RenderText {#text} at (0,0) size 0x0

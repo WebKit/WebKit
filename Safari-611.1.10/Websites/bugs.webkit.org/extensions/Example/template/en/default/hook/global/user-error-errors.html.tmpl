@@ -1,0 +1,14 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+[% IF error == "example_my_error" %]
+   [% title = "Example Error Title" %]
+   This is the error message! It contains <em>some html</em>.
+[% ELSIF error == "example_short_desc_invalid" %]
+  [% title = "Bad Summary" %]
+  The Summary must contain the word "example".
+[% END %]

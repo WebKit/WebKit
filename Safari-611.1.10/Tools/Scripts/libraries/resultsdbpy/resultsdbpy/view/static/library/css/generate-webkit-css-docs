@@ -1,0 +1,145 @@
+#!/usr/bin/python
+# Copyright (C) 2019 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+from argparse import ArgumentParser
+import jinja2
+import yaml
+import sys
+import codecs
+
+html_template = jinja2.Template("""
+<!-- This file is auto generated, please do not modify it directly -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>A Shared CSS library for webkit services</title>
+        <link rel="stylesheet" href="webkit.css"></link>
+        <link rel="shortcut icon" sizes="32x32" type="image/x-icon" href="https://webkit.org/favicon.ico">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+        <meta charset="UTF-8">
+    </head>
+    <body>
+    <!-- example topbar -->
+    <div id="topbar" class="topbar fixed" style="display:none">
+        <div class="title">
+            Topbar
+        </div>
+        <div class="actions">
+            <div class="list">
+                <div class="item">
+                    <a>item 1</a>
+                </div>
+                <div class="item">
+                    <a>item 2</a>
+                </div>
+                <div class="item">
+                    <a>item 3</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end of example topbar -->
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="header">
+            <div class="title">
+                <h2>Webkit.css</h2>
+            </div>
+        </div>
+        <div class="list">
+        {% for section in sections %}
+            <div class="item">
+                <h3><a href="#{{ section.title }}">{{ section.title }}</a></h3>
+            </div>
+            <div class="item">
+                <div class="list">
+                {% for sub in section.subs %}
+                    {% if sub.title %}
+                        <div class="item sub">
+                            <a href="#{{ section.title }}-{{ sub.title }}">{{ sub.title }}</a>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                </div>
+            </div>
+            <div class="divider"></div>
+        {% endfor %}
+        </div>
+    </div>
+    <!-- End of sidebar -->
+
+    <!-- content -->
+    <div class="main">
+        {% for section in sections %}
+            <div id="{{ section.title | replace(" ","-") }}" class="section article">
+                <div class="header">
+                    <div class="title">
+                        <h1>{{ section.title }}</h1>
+                    </div>
+                </div>
+                {% for sub in section.subs %}
+                    {% if sub.title %}
+                        <div class="header" id="{{ section.title | replace(" ","-") }}-{{ sub.title | replace(" ","-") }}">
+                            <div class="title">
+                              <h2>{{ sub.title }}</h2>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% for example in sub.examples %}
+                        {% if example.description %}
+                            <div class="content">
+                                {{ example.description }}
+                            </div>
+                        {% endif %}
+                        <div class="content">
+                            <pre><xmp>{{ example.html }}</xmp></pre>
+                        </div>
+                        <div class="content">
+                            {{ example.html }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endfor%}
+        <div class="placeholder"></div>
+    </div>
+    <!-- end of content-->
+  </body>
+</html>
+""")
+
+def main():
+    parser = ArgumentParser(description="Generate webkit.css documentation")
+    parser.add_argument("--yaml", default="docs.yaml")
+    parser.add_argument("--output", default="index.html")
+    args = parser.parse_args()
+
+    with open(args.yaml) as input_f:
+        docs_cfg = yaml.load(input_f)
+        with codecs.open(args.output, 'w', "utf-8") as output_f:
+            output_f.write(html_template.render(sections=docs_cfg));
+            print("Output to {}".format(args.output))
+
+if __name__ == '__main__':
+    sys.exit(main())

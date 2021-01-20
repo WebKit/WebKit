@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <linearGradient id="base-grad" x1="0.49" y1="0" x2="0.5" y2="0">
+        <stop stop-color="green" offset="0"/>
+        <stop stop-color="green" offset="0.5"/>
+        <stop stop-color="blue" offset="0.5"/>
+        <stop stop-color="blue" offset="1"/>
+    </linearGradient>
+
+    <linearGradient id="pad-grad" xlink:href="#base-grad" spreadMethod="pad" />
+    <linearGradient id="pad-reflect" xlink:href="#base-grad" spreadMethod="reflect" />
+    <linearGradient id="pad-repeat" xlink:href="#base-grad" spreadMethod="repeat" />
+
+    <rect x="10" y="35" width="100" height="55" fill="url(#pad-grad)"/>
+
+    <rect x="10" y="120" width="100" height="55" fill="url(#pad-reflect)"/>
+
+    <rect x="10" y="205" width="100" height="55" fill="url(#pad-repeat)"/>
+</svg>

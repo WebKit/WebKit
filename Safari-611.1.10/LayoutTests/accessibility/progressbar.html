@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<span tabindex="0" role="progressbar" id="progressbar1" aria-valuenow=7 aria-valuemin=0 aria-valuemax=10>X</span>
+<span tabindex="0" role="progressbar" id="progressbar2" aria-valuemax=10>X</span>
+
+<progress tabindex="0" id="progressbar3" value=7 max=10></progress>
+<progress tabindex="0" id="progressbar4"></progress>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test makes sure that progress element can be accessed by Accessibility FW.");
+
+    if (window.accessibilityController) {
+
+          // ARIA determinate progressbar
+          document.getElementById("progressbar1").focus();
+          var obj = accessibilityController.focusedElement;
+
+          shouldBe("obj.intValue", "7");
+
+          // ARIA indeterminate progressbar 
+          document.getElementById("progressbar2").focus();
+          var obj = accessibilityController.focusedElement;
+
+          shouldBe("obj.intValue", "5");
+
+          // determinate progress element
+          document.getElementById("progressbar3").focus();
+          var obj = accessibilityController.focusedElement;
+
+          shouldBe("obj.intValue", "7");
+          shouldBe("obj.role", "'AXRole: AXProgressIndicator'");
+
+          // indeterminate progress element
+          document.getElementById("progressbar4").focus();
+          var obj = accessibilityController.focusedElement;
+
+          shouldBe("obj.intValue", "0");
+          shouldBe("obj.role", "'AXRole: AXProgressIndicator'");
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

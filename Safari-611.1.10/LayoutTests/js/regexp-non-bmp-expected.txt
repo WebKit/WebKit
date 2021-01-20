@@ -1,0 +1,18 @@
+Tests that regular expressions treat non-BMP characters as two separate characters. From a Unicode correctness point of view this is wrong, but it is what other browsers do. And given that we store strings as UTF-16, it is also more efficient to implement. Also test some other cases related to UTF-8 and UTF-16.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS /./.exec(surrogatePair).toString().length is 1
+PASS /\D/.exec(surrogatePair).toString().length is 1
+PASS /\S/.exec(surrogatePair).toString().length is 1
+PASS /\W/.exec(surrogatePair).toString().length is 1
+PASS /[^x]/.exec(surrogatePair).toString().length is 1
+
+PASS /.{1,2}/.exec("!!" + String.fromCharCode(0xA1)).toString().length is 2
+PASS /./.exec("") is null
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

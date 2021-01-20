@@ -1,0 +1,82 @@
+<html>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<body id="body">
+    
+    <table id="testTable" align="center" border="1" cellpadding="5" cellspacing="0" 
+        summary="This is the summary text that should appear as a description">
+        <caption> Example #1: Nested Stubs </caption>
+    <thead><tr><th>1</th><th>a</th><td>b</td></tr></thead>
+    <tfoot><tr><td>1</td><td>e</td><td>f</td></tr></tfoot>
+    <tr><th>1</th><td>c</td><td>d</td></tr>
+    <tr><th>1</th><td>c1</td><td>d1</td></tr>
+    </table>
+    <br><br>
+
+    <table id="testTable2" align="center" border="1" cellpadding="5" cellspacing="0">
+    <thead><tr><th>1</th><th>a</th><td>b</td></tr></thead>
+    <tbody>
+    <tr><th>1</th><td>c</td><td>d</td></tr>
+    <tr><th>1</th><td>c1</td><td>d1</td></tr>
+    </tbody>
+    <tbody>
+    <tr><th>1</th><td>c</td><td>d</td></tr>
+    <tr><th>1</th><td>c1</td><td>d1</td></tr>
+    </tbody>
+    <tbody>
+    <tr><th>1</th><td>c</td><td>d</td></tr>
+    <tr><th>1</th><td>c1</td><td>d1</td></tr>
+    </tbody>
+    <tfoot><tr><td>1</td><td>e</td><td>f</td></tr></tfoot>
+    </table>
+    
+    <div id="result"></div>
+    
+    <script>
+        if (window.accessibilityController) {
+            var body = document.getElementById("body");
+            body.focus();
+            var table = accessibilityController.focusedElement.childAtIndex(0);
+            
+            result.innerText += "--------------------------\n"; 
+            result.innerText += "THEAD, TFOOT table\n"; 
+            result.innerText += "--------------------------\n\n"; 
+            result.innerText += table.attributesOfColumnHeaders() + "\n\n"; 
+            result.innerText += "--------------------------\n\n"; 
+            result.innerText += table.attributesOfRowHeaders() + "\n\n"; 
+            result.innerText += "--------------------------\n\n"; 
+            result.innerText += table.attributesOfColumns() + "\n\n"; 
+            result.innerText += "--------------------------\n\n"; 
+            result.innerText += table.attributesOfRows() + "\n\n"; 
+            result.innerText += "--------------------------\n\n"; 
+            result.innerText += table.attributesOfVisibleCells() + "\n\n"; 
+            result.innerText += "--------------------------\n\n"; 
+            result.innerText += table.attributesOfHeader() + "\n\n"; 
+            result.innerText += "--------------------------\n\n"; 
+
+            // second table
+            table1 = accessibilityController.focusedElement.childAtIndex(2);
+            
+            result.innerText += "--------------------------\n"; 
+            result.innerText += "Multi-TBODY table\n"; 
+            result.innerText += "--------------------------\n\n"; 
+            result.innerText += table.attributesOfColumnHeaders() + "\n\n"; 
+            result.innerText += "--------------------------\n\n"; 
+            result.innerText += table.attributesOfRowHeaders() + "\n\n"; 
+            result.innerText += "--------------------------\n\n"; 
+            result.innerText += table.attributesOfColumns() + "\n\n"; 
+            result.innerText += "--------------------------\n\n"; 
+            result.innerText += table.attributesOfRows() + "\n\n"; 
+            result.innerText += "--------------------------\n\n"; 
+            result.innerText += table.attributesOfVisibleCells() + "\n\n"; 
+            result.innerText += "--------------------------\n\n"; 
+            result.innerText += table.attributesOfHeader() + "\n\n"; 
+            result.innerText += "--------------------------\n\n"; 
+
+
+        }
+    </script>
+</body>
+</html>

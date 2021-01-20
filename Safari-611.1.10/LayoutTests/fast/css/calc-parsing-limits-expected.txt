@@ -1,0 +1,25 @@
+Tests parsing of various valid and invalid calc expressions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+testDiv.style["width"] = "calc((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((100px))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+PASS testDiv.style['width'] is "calc(100px)"
+PASS window.getComputedStyle(testDiv).getPropertyValue('width') is "100px"
+
+testDiv.style["width"] = "calc((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((100px))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))"
+PASS testDiv.style['width'] is "999px"
+PASS window.getComputedStyle(testDiv).getPropertyValue('width') is "999px"
+
+testDiv.style["width"] = "calc( 1000px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px - 1px)"
+PASS testDiv.style['width'] is "calc(898px)"
+PASS window.getComputedStyle(testDiv).getPropertyValue('width') is "898px"
+
+testDiv.style["width"] = "calc( 1000px / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01 / 1.01)"
+PASS testDiv.style['width'] is "calc(362.42644086767854px)"
+PASS window.getComputedStyle(testDiv).getPropertyValue('width') is "362.421875px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

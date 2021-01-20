@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: drawElements: attempt to access out of bounds arrays
+PASS: MAX_UINT index was unable to be simulated
+PASS: MAX_UINT index did not crash
+FAIL: Huge index did not fail validation
+PASS: Huge index did not crash
+

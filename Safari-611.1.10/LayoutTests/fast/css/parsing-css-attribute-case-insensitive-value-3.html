@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>@namespace WebKit url(http://www.webkit.org/rocks);</style>
+<style id="style-container"></style>
+</head>
+<body>
+</body>
+<script>
+description('Test the parsing of attribute selector with the case-insensitive value flag (e.g. [foo=bar i]). This test covers invalid selectors of the form [attr=value flags].');
+
+function testInvalidSelectorCSSOMSerialization(selectorString) {
+    var styleContainer = document.getElementById('style-container');
+    styleContainer.innerHTML = selectorString + ' { }';
+    shouldBe("document.getElementById('style-container').sheet.cssRules.length", "0");
+    styleContainer.innerHTML = '';
+}
+
+function testInvalidSelector(selectorString) {
+    shouldThrowErrorName('document.querySelector("' + selectorString.replace(/"/g, '\\"') + '")', 'SyntaxError');
+    shouldThrowErrorName('document.querySelector("' + selectorString.replace(/"/g, '\\"').replace('[', '[|') + '")', 'SyntaxError');
+    shouldThrowErrorName('document.querySelector("' + selectorString.replace(/"/g, '\\"').replace('[', '[*|') + '")', 'SyntaxError');
+    shouldThrowErrorName('document.querySelector("' + selectorString.replace(/"/g, '\\"').replace('[', '[WebKit|') + '")', 'SyntaxError');
+
+    testInvalidSelectorCSSOMSerialization(selectorString);
+    testInvalidSelectorCSSOMSerialization(selectorString.replace('[', '[|'));
+    testInvalidSelectorCSSOMSerialization(selectorString.replace('[', '[*|'));
+    testInvalidSelectorCSSOMSerialization(selectorString.replace('[', '[WebKit|'));
+}
+
+var invalidSelectors = [
+    // The flag is for the value part. It is invalid on a 'attribute-set' match.
+    "[foo i]",
+    "[foo I]",
+
+    // 'i' as a string instead of an identifier.
+    '[foo=bar "i"]',
+    '[foo="bar" "i"]',
+    '[foo~=bar "i"]',
+    '[foo~="bar" "i"]',
+    '[foo|=bar "i"]',
+    '[foo|="bar" "i"]',
+    '[foo^=bar "i"]',
+    '[foo^="bar" "i"]',
+    '[foo$=bar "i"]',
+    '[foo$="bar" "i"]',
+    '[foo*=bar "i"]',
+    '[foo*="bar" "i"]',
+
+    // Identifier starting by 'i' as a flag.
+    '[foo=bar invalid]',
+    '[foo="bar" invalid]',
+    '[foo~=bar invalid]',
+    '[foo~="bar" invalid]',
+    '[foo|=bar invalid]',
+    '[foo|="bar" invalid]',
+    '[foo^=bar invalid]',
+    '[foo^="bar" invalid]',
+    '[foo$=bar invalid]',
+    '[foo$="bar" invalid]',
+    '[foo*=bar invalid]',
+    '[foo*="bar" invalid]',
+
+    // Two 'i's.
+    '[foo=bar i i]',
+    '[foo="bar" i i]',
+    '[foo~=bar i i]',
+    '[foo~="bar" i i]',
+    '[foo|=bar i i]',
+    '[foo|="bar" i i]',
+    '[foo^=bar i i]',
+    '[foo^="bar" i i]',
+    '[foo$=bar i i]',
+    '[foo$="bar" i i]',
+    '[foo*=bar i i]',
+    '[foo*="bar" i i]',
+
+    // String or identifier after 'i'.
+    '[foo=bar i first-child]',
+    '[foo="bar" i first-child]',
+    '[foo~=bar i first-child]',
+    '[foo~="bar" i first-child]',
+    '[foo|=bar i first-child]',
+    '[foo|="bar" i first-child]',
+    '[foo^=bar i first-child]',
+    '[foo^="bar" i first-child]',
+    '[foo$=bar i first-child]',
+    '[foo$="bar" i first-child]',
+    '[foo*=bar i first-child]',
+    '[foo*="bar" i first-child]',
+
+    '[foo=bar i "empty"]',
+    '[foo="bar" i "empty"]',
+    '[foo~=bar i "empty"]',
+    '[foo~="bar" i "empty"]',
+    '[foo|=bar i "empty"]',
+    '[foo|="bar" i "empty"]',
+    '[foo^=bar i "empty"]',
+    '[foo^="bar" i "empty"]',
+    '[foo$=bar i "empty"]',
+    '[foo$="bar" i "empty"]',
+    '[foo*=bar i "empty"]',
+    '[foo*="bar" i "empty"]',
+
+    // String or identifier before 'i'.
+    '[foo=bar first-child i]',
+    '[foo="bar" first-child i]',
+    '[foo~=bar first-child i]',
+    '[foo~="bar" first-child i]',
+    '[foo|=bar first-child i]',
+    '[foo|="bar" first-child i]',
+    '[foo^=bar first-child i]',
+    '[foo^="bar" first-child i]',
+    '[foo$=bar first-child i]',
+    '[foo$="bar" first-child i]',
+    '[foo*=bar first-child i]',
+    '[foo*="bar" first-child i]',
+
+    '[foo=bar "empty" i]',
+    '[foo="bar" "empty" i]',
+    '[foo~=bar "empty" i]',
+    '[foo~="bar" "empty" i]',
+    '[foo|=bar "empty" i]',
+    '[foo|="bar" "empty" i]',
+    '[foo^=bar "empty" i]',
+    '[foo^="bar" "empty" i]',
+    '[foo$=bar "empty" i]',
+    '[foo$="bar" "empty" i]',
+    '[foo*=bar "empty" i]',
+    '[foo*="bar" "empty" i]',
+
+    // Test other characters than 'i'.
+    '[foo=bar l]',
+    '[foo="bar" l]',
+    '[foo~=bar l]',
+    '[foo~="bar" l]',
+    '[foo|=bar l]',
+    '[foo|="bar" l]',
+    '[foo^=bar l]',
+    '[foo^="bar" l]',
+    '[foo$=bar l]',
+    '[foo$="bar" l]',
+    '[foo*=bar l]',
+    '[foo*="bar" l]',
+];
+
+debug("Invalid selectors.");
+for (var selectorString of invalidSelectors) {
+    testInvalidSelector(selectorString);
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

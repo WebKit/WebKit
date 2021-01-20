@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            testRunner.dumpResourceLoadCallbacks();
+        }
+    
+        function loadCachedImageInIFrame()
+        {
+            var iframe = document.createElement("iframe");
+            document.body.appendChild(iframe);
+            iframe.onload = function() {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+            iframe.src = "resources/cached-image.html";
+        }
+    </script>
+</head>
+<body>
+    <img src="/misc/resources/compass.jpg" onload="loadCachedImageInIFrame()">
+</body>
+</html>

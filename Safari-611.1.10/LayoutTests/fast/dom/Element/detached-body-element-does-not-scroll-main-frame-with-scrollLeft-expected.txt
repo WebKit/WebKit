@@ -1,0 +1,32 @@
+Tests that, for Quirks mode, changing the scrollTop property of a fake body element does not scroll the viewport
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Initial state.
+PASS detachedBody.scrollTop is 0
+PASS detachedBody.scrollLeft is 0
+PASS document.body.scrollTop = 0 is 0
+PASS document.body.scrollLeft is 0
+PASS document.body.scrollTop is 0
+PASS document.documentElement.scrollLeft is 0
+PASS document.documentElement.scrollTop is 0
+PASS window.scrollX is 0
+PASS window.scrollY is 0
+
+Setting scrollTop on the detached body element should not change the main frame's scroll position.
+PASS detachedBody.scrollLeft = 542 is 542
+PASS detachedBody.scrollTop is 0
+PASS detachedBody.scrollLeft is 0
+PASS document.body.scrollTop = 0 is 0
+PASS document.body.scrollLeft is 0
+PASS document.body.scrollTop is 0
+PASS document.documentElement.scrollLeft is 0
+PASS document.documentElement.scrollTop is 0
+PASS window.scrollX is 0
+PASS window.scrollY is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

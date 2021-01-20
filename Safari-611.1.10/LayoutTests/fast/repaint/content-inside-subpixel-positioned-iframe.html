@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that subpixel positioned iframe content's repaint rect is properly calculated.</title>
+<script>jsTestIsAsync = true;</script>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+  if (window.testRunner && window.internals) {
+    testRunner.dumpAsText(false);
+    internals.startTrackingRepaints();
+  }
+
+var repaintRects;
+function test() {
+  setTimeout(function() {
+    var iframeDocument = window.frames["embeddedFrame"].document;
+    var divInsideIframe = iframeDocument.getElementById("foo"); 
+    divInsideIframe.style.left = "20px";
+    divInsideIframe.style.top = "20px";
+    iframeDocument.body.offsetWidth;
+    if (window.testRunner && window.internals) {
+        repaintRects = internals.repaintRectsAsText();
+        shouldNotBe("repaintRects.indexOf('rect 0 0 11 11')", "-1");
+        internals.stopTrackingRepaints();
+        finishJSTest();
+    }
+  }, 10);
+  }
+</script>
+</head>
+<body>
+  <iframe onload="test()" name="embeddedFrame" style="position:absolute; top: 0.5px; left: 0.5px; width: 200px; height: 200px" frameBorder=0; srcdoc='
+    <!DOCTYPE html>
+    <html>	
+    <head>
+    <style>
+      div {
+        position: absolute;
+        background: red;
+        height: 10px;
+        width: 10px;
+        top: 0px;
+        left: 0px;
+      }
+    </style>
+    </head>
+    <body>
+      <div id=foo></div>
+    </body>
+    </html>'>
+  </iframe>
+</body>
+<script src="../../resources/js-test-post.js"></script>
+</html>
+	

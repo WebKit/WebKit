@@ -1,0 +1,106 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+        /* non-stacking context scroller */
+        .scroller {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            height: 300px;
+            width: 300px;
+            border: 20px solid gray;
+            padding: 5px;
+            overflow: scroll;
+        }
+        .content {
+            width: 200%;
+            height: 300%;
+        }
+        
+        /* Stacking context is the root */
+        .transformed {
+            margin: 50px;
+            height: 200px;
+            width: 200px;
+            background-color: gray;
+            transform: translateZ(1px);
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        var scroller;
+        var overflowScrollEventCount = 0;
+        var windowScrollEventCount = 0;
+
+        async function resetScrollPositions()
+        {
+            window.scrollTo(0, 0);
+            scroller.scrollTop = 0;
+            
+            // Wait for scroll events to fire.
+            await UIHelper.renderingUpdate();
+
+            overflowScrollEventCount = 0;
+            windowScrollEventCount = 0;
+        }
+        
+        async function testScrollOverContent()
+        {
+            debug('');
+            debug('Test scroll over content');
+            await resetScrollPositions();
+            await UIHelper.mouseWheelScrollAt(50, 50);
+
+            shouldBe('overflowScrollEventCount > 0', 'true');
+            shouldBe('windowScrollEventCount == 0', 'true');
+        }
+
+        async function testScrollOverTransformed()
+        {
+            debug('');
+            debug('Test scroll over transformed element');
+            await resetScrollPositions();
+            await UIHelper.mouseWheelScrollAt(150, 150);
+            
+            shouldBe('overflowScrollEventCount > 0', 'true');
+            shouldBe('windowScrollEventCount == 0', 'true');
+        }
+
+        async function scrollTest()
+        {
+            await testScrollOverContent();
+            await testScrollOverTransformed();
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            scroller = document.querySelector('.scroller');
+            scroller.addEventListener('scroll', () => {
+                ++overflowScrollEventCount;
+            }, false);
+
+            window.addEventListener('scroll', () => {
+                ++windowScrollEventCount;
+            }, false);
+
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="content">
+            <div class="transformed"></div>
+        </div>
+    </div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

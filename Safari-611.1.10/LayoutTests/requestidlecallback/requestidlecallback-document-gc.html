@@ -1,0 +1,41 @@
+<!DOCTYPE html><!-- webkit-test-runner [ RequestIdleCallbackEnabled=true ] -->
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+
+description('This tests that documents with pending requestIdleCallback is eventually collected');
+
+const frame = document.createElement('iframe');
+document.body.appendChild(frame);
+
+if (!window.internals)
+    testFailed('This test requires internals');
+else {
+    jsTestIsAsync = true;
+    window.onload = runTest;
+}
+
+function enoughDocumentCollected()
+{
+    return initialCount + frameCount / 2 > internals.numberOfLiveDocuments();
+}
+
+function runTest() {
+    window.initialCount = internals.numberOfLiveDocuments();
+    window.frameCount = 20;
+    for (let i = 0; i < frameCount; ++i) {
+        const frame = document.createElement('iframe');
+        document.body.appendChild(frame);
+        frame.contentWindow.requestIdleCallback(() => testFailed('idleCallback called too early'));
+    }
+    document.querySelectorAll('iframe').forEach((frame) => frame.remove());
+    setInterval(() => {
+        GCController.collect();
+    }, 10);
+    shouldBecomeEqual("enoughDocumentCollected()", "true", finishJSTest);
+}
+
+</script>
+</body>
+</html>

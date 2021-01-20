@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<head>
+<title>Upgrade Insecure Requests: IFrames.</title>
+<script src="/js-test-resources/testharness.js"></script>
+<script src="/js-test-resources/testharnessreport.js"></script>
+
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+</head>
+<body>
+<script>
+// This test is a bit of a hack. UPGRADE doesn't upgrade the port number, so we
+// specify this non-existent URL ('http' over port 8443). If UPGRADE doesn't
+// work, it won't load.
+async_test(t => {
+    var iframe = document.createElement('iframe');
+    iframe.src = "HTtp://127.0.0.1:8443/security/resources/post-origin-to-parent.html";
+
+    window.addEventListener('message', t.step_func(e => {
+        if (e.source == iframe.contentWindow) {
+            assert_equals("https://127.0.0.1:8443", e.data.origin);
+            t.done();
+        }
+    }));
+
+    document.body.appendChild(iframe);
+}, "Same-host frames are upgraded.");
+
+async_test(t => {
+    var iframe = document.createElement('iframe');
+    iframe.src = "hTtP://localhost:8443/security/resources/post-origin-to-parent.html";
+
+    window.addEventListener('message', t.step_func(e => {
+        if (e.source == iframe.contentWindow) {
+            assert_equals("https://localhost:8443", e.data.origin);
+            t.done();
+        }
+    }));
+
+    document.body.appendChild(iframe);
+}, "Cross-host frames are upgraded.");
+
+async_test(t => {
+    var iframe = document.createElement('iframe');
+    iframe.srcdoc = "<a href='hTtP://127.0.0.1:8443/security/resources/post-origin-to-parent.html'>Navigate!</a>" +
+               "<script>document.querySelector('a').click()</scr" + "ipt>";
+
+    window.addEventListener('message', t.step_func(e => {
+        if (e.source == iframe.contentWindow) {
+            assert_equals("https://127.0.0.1:8443", e.data.origin);
+            t.done();
+        }
+    }));
+
+    document.body.appendChild(iframe);
+}, "Upgrade policy cascades to nested, same-host frames.");
+</script>
+</body>

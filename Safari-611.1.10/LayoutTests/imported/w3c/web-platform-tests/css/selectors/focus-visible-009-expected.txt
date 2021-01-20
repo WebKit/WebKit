@@ -1,0 +1,7 @@
+This test checks that any element focused via an autofocus attribute will have :focus-visible matching enabled.
+If the button that says "I will be focused automatically" has a red background, then the test result is FAILURE. If it has a green outline, then the test result is SUCCESS.
+
+I will be focused automatically.
+
+FAIL Autofocus should match :focus-visible assert_equals: expected "rgb(0, 100, 0)" but got "rgba(0, 0, 0, 0.847)"
+

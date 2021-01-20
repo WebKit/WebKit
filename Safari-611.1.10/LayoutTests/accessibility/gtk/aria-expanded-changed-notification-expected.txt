@@ -1,0 +1,17 @@
+This tests that changing the aria-expanded value results in a state-changed notification.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Setting aria-expanded to true on combobox1.
+Setting aria-expanded to false on combobox2.
+Setting aria-expanded to true on menu1.
+Setting aria-expanded to false on menu2.
+AXExpandedChanged true on combobox1
+AXExpandedChanged false on combobox2
+AXExpandedChanged true on menu1
+AXExpandedChanged false on menu2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

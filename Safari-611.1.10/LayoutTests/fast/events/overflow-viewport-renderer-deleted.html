@@ -1,0 +1,26 @@
+<script> 
+    function gc()
+    {
+        if (window.GCController)
+            return GCController.collect();
+
+        for (var i = 0; i < 10000; i++) {
+            var s = new String("");
+        }
+    }
+
+    onload = function()
+    {
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        document.getElementById('container').addEventListener('overflowchanged', function() { }, false);
+        document.body.offsetTop;
+        document.removeChild(document.firstChild);
+        gc();
+    }
+</script> 
+<body> 
+    Test passes if it does not crash.
+    <div id="container" style="height: 200%;"></div> 
+</body>

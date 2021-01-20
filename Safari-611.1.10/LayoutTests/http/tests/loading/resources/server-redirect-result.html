@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<script>
+if (parent.count == 0) {
+	parent.count = 1;
+	window.location = "server-redirect.php";
+}
+else if (parent.count == 1) {
+	if (parent.window.testRunner)
+		testRunner.notifyDone();
+}
+</script>

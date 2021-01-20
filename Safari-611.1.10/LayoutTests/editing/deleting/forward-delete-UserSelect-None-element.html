@@ -1,0 +1,8 @@
+<body><input id=input required draggable="true">
+<script>
+    input.focus();
+    document.execCommand("forwardDelete", false);
+    document.body.innerText = "Tests forward-deleting a UserSelect::None element. The test passes if WebKit doesn't crash or hit an ssertion.";
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>

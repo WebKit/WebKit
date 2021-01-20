@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/cookie-utilities.js"></script>
+<body>
+<script>
+async function runTest()
+{
+    await resetCookies();
+    await setCookie("strict", "19", {"SameSite": "Strict", "Max-Age": 100, "path": "/"});
+    await setCookie("implicit-strict", "19", {"SameSite": null, "Max-Age": 100, "path": "/"});
+    await setCookie("strict-because-invalid-SameSite-value", "19", {"SameSite": "invalid", "Max-Age": 100, "path": "/"});
+    await setCookie("lax", "19", {"SameSite": "Lax", "Max-Age": 100, "path": "/"});
+    window.location.href = "http://localhost:8000/resources/redirect.php?url=http://127.0.0.1:8000/cookies/same-site/resources/fetch-after-top-level-cross-origin-redirect.php";
+}
+runTest();
+</script>
+</body>
+</html>

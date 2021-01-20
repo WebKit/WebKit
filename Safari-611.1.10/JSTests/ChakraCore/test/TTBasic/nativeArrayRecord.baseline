@@ -1,0 +1,15 @@
+Array.isArray(xi): true
+xi.length: 3
+xi[1]: 1
+post update -- xi[1]: 5
+post update -- xi.length: 4
+post update -- xi[3]: 10
+post update -- xi[5]: undefined
+Array.isArray(xd): true
+xd.length: 3
+xd[1]: 1.5
+post update -- xd[1]: 5
+post update -- xd.length: 11
+post update -- xd[3]: 10
+post update -- xd[5]: undefined
+post update -- xd[10]: 10

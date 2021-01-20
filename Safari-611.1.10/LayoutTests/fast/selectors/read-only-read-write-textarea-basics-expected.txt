@@ -1,0 +1,278 @@
+Test the basic features of ":read-only", ":read-write" on the <textarea> element. The definition is that ":read-write" is matches for "textarea elements that do not have a readonly attribute, and that are not disabled"
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelectorAll("textarea:read-write").length is 1
+PASS document.querySelectorAll("textarea:read-write")[0].id is "initial-state"
+PASS document.querySelectorAll("textarea:read-only").length is 14
+PASS document.querySelectorAll("textarea:read-only")[0].id is "readonly-defined"
+PASS document.querySelectorAll("textarea:read-only")[1].id is "readonly-set-empty"
+PASS document.querySelectorAll("textarea:read-only")[2].id is "readonly-set-readonly"
+PASS document.querySelectorAll("textarea:read-only")[3].id is "readonly-set-true"
+PASS document.querySelectorAll("textarea:read-only")[4].id is "readonly-set-false"
+PASS document.querySelectorAll("textarea:read-only")[5].id is "readonly-set-disabled"
+PASS document.querySelectorAll("textarea:read-only")[6].id is "disabled-defined"
+PASS document.querySelectorAll("textarea:read-only")[7].id is "disabled-set-empty"
+PASS document.querySelectorAll("textarea:read-only")[8].id is "disabled-set-disabled"
+PASS document.querySelectorAll("textarea:read-only")[9].id is "disabled-set-true"
+PASS document.querySelectorAll("textarea:read-only")[10].id is "disabled-set-false"
+PASS document.querySelectorAll("textarea:read-only")[11].id is "disabled-set-readonly"
+PASS document.querySelectorAll("textarea:read-only")[12].id is "readonly-and-disabled-defined"
+PASS document.querySelectorAll("textarea:read-only")[13].id is "readonly-and-disabled-set-empty"
+PASS getComputedStyle(document.getElementById("initial-state")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("initial-state")).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(document.getElementById("readonly-defined")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("readonly-defined")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("readonly-set-empty")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("readonly-set-empty")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("readonly-set-readonly")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("readonly-set-readonly")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("readonly-set-true")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("readonly-set-true")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("readonly-set-false")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("readonly-set-false")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("readonly-set-disabled")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("readonly-set-disabled")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("disabled-defined")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("disabled-defined")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("disabled-set-empty")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("disabled-set-empty")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("disabled-set-disabled")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("disabled-set-disabled")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("disabled-set-true")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("disabled-set-true")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("disabled-set-false")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("disabled-set-false")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("disabled-set-readonly")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("disabled-set-readonly")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("readonly-and-disabled-defined")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("readonly-and-disabled-defined")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("readonly-and-disabled-set-empty")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("readonly-and-disabled-set-empty")).color is "rgb(0, 0, 0)"
+PASS testBlock.querySelectorAll(":read-write").length is 1
+PASS testBlock.querySelector(":read-write") is newTextArea
+PASS testBlock.querySelectorAll(":read-only").length is 0
+PASS testBlock.querySelector(":read-only") is null
+PASS getComputedStyle(newTextArea).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(255, 255, 255)"
+PASS testBlock.querySelectorAll(":read-write").length is 0
+PASS testBlock.querySelector(":read-write") is null
+PASS testBlock.querySelectorAll(":read-only").length is 1
+PASS testBlock.querySelector(":read-only") is newTextArea
+PASS getComputedStyle(newTextArea).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(1, 2, 3)"
+PASS testBlock.querySelectorAll(":read-write").length is 1
+PASS testBlock.querySelector(":read-write") is newTextArea
+PASS testBlock.querySelectorAll(":read-only").length is 0
+PASS testBlock.querySelector(":read-only") is null
+PASS getComputedStyle(newTextArea).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(255, 255, 255)"
+PASS testBlock.querySelectorAll(":read-write").length is 0
+PASS testBlock.querySelector(":read-write") is null
+PASS testBlock.querySelectorAll(":read-only").length is 1
+PASS testBlock.querySelector(":read-only") is newTextArea
+PASS getComputedStyle(newTextArea).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(1, 2, 3)"
+PASS testBlock.querySelectorAll(":read-write").length is 1
+PASS testBlock.querySelector(":read-write") is newTextArea
+PASS testBlock.querySelectorAll(":read-only").length is 0
+PASS testBlock.querySelector(":read-only") is null
+PASS getComputedStyle(newTextArea).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(255, 255, 255)"
+PASS testBlock.querySelectorAll(":read-write").length is 0
+PASS testBlock.querySelector(":read-write") is null
+PASS testBlock.querySelectorAll(":read-only").length is 1
+PASS testBlock.querySelector(":read-only") is newTextArea
+PASS getComputedStyle(newTextArea).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(1, 2, 3)"
+PASS testBlock.querySelectorAll(":read-write").length is 1
+PASS testBlock.querySelector(":read-write") is newTextArea
+PASS testBlock.querySelectorAll(":read-only").length is 0
+PASS testBlock.querySelector(":read-only") is null
+PASS getComputedStyle(newTextArea).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(255, 255, 255)"
+PASS testBlock.querySelectorAll(":read-write").length is 0
+PASS testBlock.querySelector(":read-write") is null
+PASS testBlock.querySelectorAll(":read-only").length is 1
+PASS testBlock.querySelector(":read-only") is newTextArea
+PASS getComputedStyle(newTextArea).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(1, 2, 3)"
+PASS testBlock.querySelectorAll(":read-write").length is 1
+PASS testBlock.querySelector(":read-write") is newTextArea
+PASS testBlock.querySelectorAll(":read-only").length is 0
+PASS testBlock.querySelector(":read-only") is null
+PASS getComputedStyle(newTextArea).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(255, 255, 255)"
+PASS testBlock.querySelectorAll(":read-write").length is 0
+PASS testBlock.querySelector(":read-write") is null
+PASS testBlock.querySelectorAll(":read-only").length is 1
+PASS testBlock.querySelector(":read-only") is newTextArea
+PASS getComputedStyle(newTextArea).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(1, 2, 3)"
+PASS testBlock.querySelectorAll(":read-write").length is 1
+PASS testBlock.querySelector(":read-write") is newTextArea
+PASS testBlock.querySelectorAll(":read-only").length is 0
+PASS testBlock.querySelector(":read-only") is null
+PASS getComputedStyle(newTextArea).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(255, 255, 255)"
+PASS testBlock.querySelectorAll(":read-write").length is 0
+PASS testBlock.querySelector(":read-write") is null
+PASS testBlock.querySelectorAll(":read-only").length is 1
+PASS testBlock.querySelector(":read-only") is newTextArea
+PASS getComputedStyle(newTextArea).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(1, 2, 3)"
+PASS testBlock.querySelectorAll(":read-write").length is 1
+PASS testBlock.querySelector(":read-write") is newTextArea
+PASS testBlock.querySelectorAll(":read-only").length is 0
+PASS testBlock.querySelector(":read-only") is null
+PASS getComputedStyle(newTextArea).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(255, 255, 255)"
+PASS testBlock.querySelectorAll(":read-write").length is 0
+PASS testBlock.querySelector(":read-write") is null
+PASS testBlock.querySelectorAll(":read-only").length is 1
+PASS testBlock.querySelector(":read-only") is newTextArea
+PASS getComputedStyle(newTextArea).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(1, 2, 3)"
+PASS testBlock.querySelectorAll(":read-write").length is 1
+PASS testBlock.querySelector(":read-write") is newTextArea
+PASS testBlock.querySelectorAll(":read-only").length is 0
+PASS testBlock.querySelector(":read-only") is null
+PASS getComputedStyle(newTextArea).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(255, 255, 255)"
+PASS testBlock.querySelectorAll(":read-write").length is 0
+PASS testBlock.querySelector(":read-write") is null
+PASS testBlock.querySelectorAll(":read-only").length is 1
+PASS testBlock.querySelector(":read-only") is newTextArea
+PASS getComputedStyle(newTextArea).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(1, 2, 3)"
+PASS testBlock.querySelectorAll(":read-write").length is 1
+PASS testBlock.querySelector(":read-write") is newTextArea
+PASS testBlock.querySelectorAll(":read-only").length is 0
+PASS testBlock.querySelector(":read-only") is null
+PASS getComputedStyle(newTextArea).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(255, 255, 255)"
+PASS testBlock.querySelectorAll(":read-write").length is 0
+PASS testBlock.querySelector(":read-write") is null
+PASS testBlock.querySelectorAll(":read-only").length is 1
+PASS testBlock.querySelector(":read-only") is newTextArea
+PASS getComputedStyle(newTextArea).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(1, 2, 3)"
+PASS testBlock.querySelectorAll(":read-write").length is 1
+PASS testBlock.querySelector(":read-write") is newTextArea
+PASS testBlock.querySelectorAll(":read-only").length is 0
+PASS testBlock.querySelector(":read-only") is null
+PASS getComputedStyle(newTextArea).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(255, 255, 255)"
+PASS testBlock.querySelectorAll(":read-write").length is 0
+PASS testBlock.querySelector(":read-write") is null
+PASS testBlock.querySelectorAll(":read-only").length is 1
+PASS testBlock.querySelector(":read-only") is newTextArea
+PASS getComputedStyle(newTextArea).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(1, 2, 3)"
+PASS testBlock.querySelectorAll(":read-write").length is 1
+PASS testBlock.querySelector(":read-write") is newTextArea
+PASS testBlock.querySelectorAll(":read-only").length is 0
+PASS testBlock.querySelector(":read-only") is null
+PASS getComputedStyle(newTextArea).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(255, 255, 255)"
+PASS testBlock.querySelectorAll(":read-write").length is 0
+PASS testBlock.querySelector(":read-write") is null
+PASS testBlock.querySelectorAll(":read-only").length is 1
+PASS testBlock.querySelector(":read-only") is newTextArea
+PASS getComputedStyle(newTextArea).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(1, 2, 3)"
+PASS testBlock.querySelectorAll(":read-write").length is 1
+PASS testBlock.querySelector(":read-write") is newTextArea
+PASS testBlock.querySelectorAll(":read-only").length is 0
+PASS testBlock.querySelector(":read-only") is null
+PASS getComputedStyle(newTextArea).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(255, 255, 255)"
+PASS testBlock.querySelectorAll(":read-write").length is 0
+PASS testBlock.querySelector(":read-write") is null
+PASS testBlock.querySelectorAll(":read-only").length is 1
+PASS testBlock.querySelector(":read-only") is newTextArea
+PASS getComputedStyle(newTextArea).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(1, 2, 3)"
+PASS testBlock.querySelectorAll(":read-write").length is 1
+PASS testBlock.querySelector(":read-write") is newTextArea
+PASS testBlock.querySelectorAll(":read-only").length is 0
+PASS testBlock.querySelector(":read-only") is null
+PASS getComputedStyle(newTextArea).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(255, 255, 255)"
+PASS testBlock.querySelectorAll(":read-write").length is 0
+PASS testBlock.querySelector(":read-write") is null
+PASS testBlock.querySelectorAll(":read-only").length is 1
+PASS testBlock.querySelector(":read-only") is newTextArea
+PASS getComputedStyle(newTextArea).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(1, 2, 3)"
+PASS testBlock.querySelectorAll(":read-write").length is 1
+PASS testBlock.querySelector(":read-write") is newTextArea
+PASS testBlock.querySelectorAll(":read-only").length is 0
+PASS testBlock.querySelector(":read-only") is null
+PASS getComputedStyle(newTextArea).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(255, 255, 255)"
+PASS testBlock.querySelectorAll(":read-write").length is 0
+PASS testBlock.querySelector(":read-write") is null
+PASS testBlock.querySelectorAll(":read-only").length is 1
+PASS testBlock.querySelector(":read-only") is newTextArea
+PASS getComputedStyle(newTextArea).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(1, 2, 3)"
+PASS testBlock.querySelectorAll(":read-write").length is 1
+PASS testBlock.querySelector(":read-write") is newTextArea
+PASS testBlock.querySelectorAll(":read-only").length is 0
+PASS testBlock.querySelector(":read-only") is null
+PASS getComputedStyle(newTextArea).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(255, 255, 255)"
+PASS testBlock.querySelectorAll(":read-write").length is 0
+PASS testBlock.querySelector(":read-write") is null
+PASS testBlock.querySelectorAll(":read-only").length is 1
+PASS testBlock.querySelector(":read-only") is newTextArea
+PASS getComputedStyle(newTextArea).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(1, 2, 3)"
+PASS testBlock.querySelectorAll(":read-write").length is 1
+PASS testBlock.querySelector(":read-write") is newTextArea
+PASS testBlock.querySelectorAll(":read-only").length is 0
+PASS testBlock.querySelector(":read-only") is null
+PASS getComputedStyle(newTextArea).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(255, 255, 255)"
+PASS testBlock.querySelectorAll(":read-write").length is 0
+PASS testBlock.querySelector(":read-write") is null
+PASS testBlock.querySelectorAll(":read-only").length is 1
+PASS testBlock.querySelector(":read-only") is newTextArea
+PASS getComputedStyle(newTextArea).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(1, 2, 3)"
+PASS testBlock.querySelectorAll(":read-write").length is 1
+PASS testBlock.querySelector(":read-write") is newTextArea
+PASS testBlock.querySelectorAll(":read-only").length is 0
+PASS testBlock.querySelector(":read-only") is null
+PASS getComputedStyle(newTextArea).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(255, 255, 255)"
+PASS testBlock.querySelectorAll(":read-write").length is 0
+PASS testBlock.querySelector(":read-write") is null
+PASS testBlock.querySelectorAll(":read-only").length is 1
+PASS testBlock.querySelector(":read-only") is newTextArea
+PASS getComputedStyle(newTextArea).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(1, 2, 3)"
+PASS testBlock.querySelectorAll(":read-write").length is 1
+PASS testBlock.querySelector(":read-write") is newTextArea
+PASS testBlock.querySelectorAll(":read-only").length is 0
+PASS testBlock.querySelector(":read-only") is null
+PASS getComputedStyle(newTextArea).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(255, 255, 255)"
+PASS testBlock.querySelectorAll(":read-write").length is 0
+PASS testBlock.querySelector(":read-write") is null
+PASS testBlock.querySelectorAll(":read-only").length is 1
+PASS testBlock.querySelector(":read-only") is newTextArea
+PASS getComputedStyle(newTextArea).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(1, 2, 3)"
+PASS testBlock.querySelectorAll(":read-write").length is 1
+PASS testBlock.querySelector(":read-write") is newTextArea
+PASS testBlock.querySelectorAll(":read-only").length is 0
+PASS testBlock.querySelector(":read-only") is null
+PASS getComputedStyle(newTextArea).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(newTextArea).backgroundColor is "rgb(255, 255, 255)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

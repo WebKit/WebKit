@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<body>
+    <div draggable="true" style="width: 200px; height: 200px" id="source">DRAG ME AND LET GO</div>
+</body>
+<script>
+function forceGarbageCollection() {
+    if (window.GCController)
+        GCController.collect();
+    else {
+        for (let i = 0; i < 1000; i++)
+            new ArrayBuffer(0x100000);
+    }
+}
+
+source.addEventListener("dragend", event => {
+    forceGarbageCollection();
+    event.dataTransfer.items.clear();
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+
+source.addEventListener("dragstart", event => {
+    event.dataTransfer.items.add(event.target.id, "text/plain");
+    event.dataTransfer.items.add("Test1", "text/html");
+    event.dataTransfer.items.add("Test2", "text/uri-list");
+});
+
+if (window.testRunner && window.eventSender && window.internals) {
+    internals.settings.setCustomPasteboardDataEnabled(true);
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    eventSender.mouseMoveTo(100, 100);
+    eventSender.mouseDown();
+    eventSender.leapForward(1000);
+    eventSender.mouseMoveTo(400, 400);
+    eventSender.mouseUp();
+}
+</script>

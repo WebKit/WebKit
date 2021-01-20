@@ -1,0 +1,8 @@
+
+EVENT(canplaythrough)
+EVENT(volumechange)
+EVENT(volumechange)
+EVENT(volumechange)
+EVENT(volumechange)
+END OF TEST
+

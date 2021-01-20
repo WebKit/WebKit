@@ -1,0 +1,14 @@
+<p>This tests for a crash when inserting into a tab into a tab span that contains a br.  You should no longer be able to get a br inside a tab span while editing but we should still avoid the crash.</p>
+<div id="div" contenteditable="true">
+<div>foo</div>
+<div><span id="span" class="Apple-tab-span"><br></span></div>
+<div>bar</div>
+
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+document.getElementById("div").focus();
+span = document.getElementById("span");
+window.getSelection().setPosition(span, 0);
+document.execCommand("InsertText", false, "\t");
+</script>

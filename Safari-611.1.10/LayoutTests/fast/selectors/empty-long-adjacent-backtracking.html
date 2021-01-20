@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+testcase {
+    background-color: white;
+}
+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty~:not(:empty) {
+    background-color: rgb(1, 2, 3);
+}
+</style>
+</head>
+<body>
+    <div style="display:none">
+        <!-- 20 empty -->
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+
+        <testcase id=target1><foobar></foobar></testcase>
+
+        <!-- 19 empty -->
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+
+        <testcase id=target2>Not Empty!</testcase>
+
+        <!-- 19 empty -->
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+        <testcase class=empty></testcase>
+
+        <testcase id="target3">
+            <target-child id="target4"></target-child>
+        </testcase>
+    </div>
+</body>
+<script>
+description('Test backtracking of a long chain of :empty siblings to catch any issue with register allocation.');
+
+shouldBe('document.querySelectorAll(":empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty~:not(:empty)").length', '3');
+shouldBe('document.querySelectorAll(":empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty~:not(:empty)")[0]', 'document.getElementById("target1")');
+shouldBe('document.querySelectorAll(":empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty~:not(:empty)")[1]', 'document.getElementById("target2")');
+shouldBe('document.querySelectorAll(":empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty~:not(:empty)")[2]', 'document.getElementById("target3")');
+
+shouldBe('document.querySelectorAll(":empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty~:not(:empty)>target-child").length', '1');
+shouldBe('document.querySelectorAll(":empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty+:empty~:not(:empty)>target-child")[0]', 'document.getElementById("target4")');
+
+shouldBe('document.querySelectorAll("testcase").length', '61')
+
+var allTestCases = document.querySelectorAll("testcase");
+for (var i = 0; i < 61; ++i)
+    shouldBeEqualToString('getComputedStyle(document.querySelectorAll("testcase")[' + i + ']).backgroundColor', allTestCases[i].classList.contains('empty') ? 'rgb(255, 255, 255)' : 'rgb(1, 2, 3)');
+
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

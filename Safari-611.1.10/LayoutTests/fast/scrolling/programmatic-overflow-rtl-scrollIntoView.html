@@ -1,0 +1,46 @@
+<html>
+<head>
+    <style>
+        #scrollable {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            overflow: hidden;
+            outline: 1px solid black;
+            margin: 20px;
+        }
+        
+        #lefty {
+            position: absolute;
+            left: -200px;
+            width: 100px;
+            height: 100px;
+            background-color: orange;
+        }
+    </style>
+    <script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function runTest()
+    {
+        document.getElementById('lefty').scrollIntoView();
+        var expectedScrollLeft = -200;
+        var actualScrollLeft = document.getElementById('scrollable').scrollLeft;
+        if (expectedScrollLeft == actualScrollLeft)
+            document.getElementById('result').textContent = "PASS: scrollLeft was " + actualScrollLeft;
+        else
+            document.getElementById('result').textContent = "FAIL: expected scrollLeft to be " + expectedScrollLeft + ", was " + actualScrollLeft;
+    }
+    
+    window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+    <div id="scrollable" dir="rtl">
+        <div id="lefty"></div>
+    </div>
+    <div id="result">
+    </div>
+</body>
+</html>

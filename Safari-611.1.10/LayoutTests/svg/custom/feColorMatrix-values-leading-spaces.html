@@ -1,0 +1,21 @@
+<!--This test verifies the leading spaces are ignored when parising the attribute of an SVG list property-->
+<style>
+    .box {
+        width: 100px;
+        height: 100px;
+        background-color: red;
+        filter: url(#f);
+    }
+</style>
+<body>
+    <svg height="0">
+        <filter id="f">
+            <feColorMatrix values="
+                0 0 0 0 0
+                1 1 1 0 0
+                0 0 0 0 0
+                0 0 0 1 0">
+        </filter>
+    </svg>
+    <div class="box"></div>
+</body>

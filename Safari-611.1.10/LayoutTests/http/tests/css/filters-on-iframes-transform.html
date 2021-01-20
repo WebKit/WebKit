@@ -1,0 +1,51 @@
+<style>
+body {
+    margin: 0;
+    padding: 0;
+}
+iframe {
+    border: none;
+    background-color: red;
+}
+div {
+    display: inline-block;
+}
+.filtered {
+    filter: url(#noop);
+}
+.wrapper {
+    width: 300px;
+    height: 150px;
+    overflow: hidden;
+}
+.scroll {
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+    transform: scale(20);
+}
+svg {
+    display: none;
+}
+</style>
+
+<p>Cross origin with transform (must have http server running)</p>
+<div class="wrapper">
+    <div class="scroll">
+        <iframe src="http://localhost:8000/css/resources/solid-green.html"></iframe>
+    </div>
+</div>
+
+<div class="wrapper filtered">
+    <div class="scroll">
+        <iframe style="background-color: white" src="http://localhost:8000/css/resources/solid-red.html"></iframe>
+    </div>
+</div>
+
+<svg>
+    <defs>
+        <filter id="noop">
+            <feMorphology operator="dilate" in="SourceGraphic" radius="0"/>
+        </filter>
+    </defs>
+</svg>

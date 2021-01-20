@@ -1,0 +1,1 @@
+Should see a 100px tall light green rect on a field of green.

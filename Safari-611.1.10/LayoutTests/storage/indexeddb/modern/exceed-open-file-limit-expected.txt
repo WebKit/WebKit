@@ -1,0 +1,10 @@
+This test makes sure that script gets an error if too many databases are opened.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Error opening database
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

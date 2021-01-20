@@ -1,0 +1,185 @@
+[
+  {
+    "evaluate": {
+      "obj": {
+        "#__proto__": {
+          "constructor": "function <large string>",
+          "hasOwnProperty": "function <large string>",
+          "propertyIsEnumerable": "function <large string>",
+          "isPrototypeOf": "function <large string>",
+          "toLocaleString": "function <large string>",
+          "toString": "function <large string>",
+          "valueOf": "function <large string>",
+          "#__proto__": "object null",
+          "__defineGetter__": "function <large string>",
+          "__defineSetter__": "function <large string>",
+          "__lookupGetter__": "function <large string>",
+          "__lookupSetter__": "function <large string>"
+        },
+        "a1": "undefined undefined",
+        "a2": "object null",
+        "a3": "boolean false",
+        "a4": {
+          "#__proto__": "Boolean false"
+        },
+        "a5": "number 1",
+        "a6": "number 1.2",
+        "a7": "number NaN",
+        "a8": "number Infinity",
+        "a9": "number -Infinity",
+        "a10": "number 0",
+        "a11": "number 0",
+        "a12": "string Hello World!",
+        "a13": "symbol Symbol(symbol)",
+        "a14": {
+          "#__proto__": "function <large string>",
+          "prototype": "Object {...}",
+          "name": "string func",
+          "caller": "object null",
+          "arguments": "object null",
+          "length": "number 0"
+        },
+        "a15": {
+          "#__proto__": "Array []",
+          "length": "number 0"
+        },
+        "a16": {
+          "#__proto__": "Array []",
+          "length": "number 3",
+          "[0]": "string 1",
+          "[1]": "string 2",
+          "[2]": "string 3"
+        },
+        "a17": {
+          "#__proto__": "Array []",
+          "length": "number 3",
+          "[0]": "string 1.1",
+          "[1]": "string 2.2",
+          "[2]": "string 3.3"
+        },
+        "a18": {
+          "#__proto__": "Object {...}"
+        },
+        "a19": {
+          "#__proto__": "RegExp ",
+          "lastIndex": "number 0",
+          "global": "boolean false",
+          "multiline": "boolean false",
+          "ignoreCase": "boolean false",
+          "source": "string Hello World!",
+          "options": "string ",
+          "unicode": "boolean false",
+          "sticky": "boolean false"
+        },
+        "a20": {
+          "#__proto__": "Error ",
+          "description": "string Hello World!",
+          "message": "string Hello World!",
+          "stack": "string <large string>"
+        },
+        "a21": {
+          "#__proto__": "Error ",
+          "message": "string Hello World!",
+          "stack": "string <large string>"
+        },
+        "a22": {
+          "#__proto__": "String \"\"",
+          "length": "number 12"
+        },
+        "a23": {
+          "#__proto__": "Number 0"
+        },
+        "a24": {
+          "#__proto__": "Number 0"
+        },
+        "a25": {
+          "#__proto__": "Object {...}",
+          "[Map]": "string size = 0"
+        },
+        "a26": {
+          "#__proto__": "Object {...}",
+          "[Set]": "string size = 0"
+        },
+        "a27": {
+          "#__proto__": "Object {...}",
+          "[WeakMap]": "string size = 0"
+        },
+        "a28": {
+          "#__proto__": "Object {...}",
+          "[WeakSet]": "string size = 0"
+        },
+        "a29": {
+          "#__proto__": "Object {...}"
+        },
+        "a30": {
+          "#__proto__": "Object {...}",
+          "[0]": "string 0"
+        },
+        "a31": {
+          "#__proto__": "Object {...}",
+          "[0]": "string 0"
+        },
+        "a32": {
+          "#__proto__": "Object {...}",
+          "[0]": "string 0"
+        },
+        "a33": {
+          "#__proto__": "Object {...}",
+          "[0]": "string 0"
+        },
+        "a34": {
+          "#__proto__": "Object {...}",
+          "[0]": "string 0"
+        },
+        "a35": {
+          "#__proto__": "Object {...}",
+          "[0]": "string 0"
+        },
+        "a36": {
+          "#__proto__": "Object {...}",
+          "[0]": "string 0"
+        },
+        "a37": {
+          "#__proto__": "Object {...}",
+          "[0]": "string 0"
+        },
+        "a38": {
+          "#__proto__": "Object {...}",
+          "[0]": "string 0"
+        },
+        "a39": {
+          "#__proto__": "Object {...}"
+        }
+      }
+    }
+  },
+  {
+    "evaluate": {
+      "obj2.a1": {
+        "#__proto__": {
+          "constructor": "function <large string>",
+          "hasOwnProperty": "function <large string>",
+          "propertyIsEnumerable": "function <large string>",
+          "isPrototypeOf": "function <large string>",
+          "toLocaleString": "function <large string>",
+          "toString": "function <large string>",
+          "valueOf": "function <large string>",
+          "#__proto__": "object null",
+          "__defineGetter__": "function <large string>",
+          "__defineSetter__": "function <large string>",
+          "__lookupGetter__": "function <large string>",
+          "__lookupSetter__": "function <large string>"
+        },
+        "[Proxy]": {
+          "[target]": "Object {...}",
+          "[handler]": "Object {...}"
+        }
+      }
+    }
+  },
+  {
+    "evaluate": {
+      "obj2.a2 = 1": "number 1"
+    }
+  }
+]

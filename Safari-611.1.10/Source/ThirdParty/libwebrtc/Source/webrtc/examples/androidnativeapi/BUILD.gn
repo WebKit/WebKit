@@ -1,0 +1,80 @@
+import("//webrtc.gni")
+
+if (is_android) {
+  rtc_android_apk("androidnativeapi") {
+    testonly = true
+    apk_name = "androidnativeapi"
+    android_manifest = "AndroidManifest.xml"
+    min_sdk_version = 21
+    target_sdk_version = 27
+
+    sources = [
+      "java/org/webrtc/examples/androidnativeapi/CallClient.java",
+      "java/org/webrtc/examples/androidnativeapi/MainActivity.java",
+    ]
+
+    deps = [
+      ":resources",
+      "//modules/audio_device:audio_device_java",
+      "//rtc_base:base_java",
+      "//sdk/android:camera_java",
+      "//sdk/android:surfaceviewrenderer_java",
+      "//sdk/android:video_api_java",
+      "//sdk/android:video_java",
+      "//third_party/android_deps:com_android_support_support_annotations_java",
+    ]
+
+    shared_libraries = [ ":examples_androidnativeapi_jni" ]
+  }
+
+  generate_jni("generated_jni") {
+    testonly = true
+    sources = [ "java/org/webrtc/examples/androidnativeapi/CallClient.java" ]
+    namespace = "webrtc_examples"
+    jni_generator_include = "//sdk/android/src/jni/jni_generator_helper.h"
+  }
+
+  rtc_shared_library("examples_androidnativeapi_jni") {
+    testonly = true
+    sources = [
+      "jni/android_call_client.cc",
+      "jni/android_call_client.h",
+      "jni/onload.cc",
+    ]
+
+    suppressed_configs += [ "//build/config/android:hide_all_but_jni_onload" ]
+    configs += [ "//build/config/android:hide_all_but_jni" ]
+
+    deps = [
+      ":generated_jni",
+      "../../api:scoped_refptr",
+      "../../rtc_base/synchronization:mutex",
+      "//api:libjingle_peerconnection_api",
+      "//api/rtc_event_log:rtc_event_log_factory",
+      "//api/task_queue:default_task_queue_factory",
+      "//media:rtc_audio_video",
+      "//media:rtc_internal_video_codecs",
+      "//media:rtc_media_engine_defaults",
+      "//modules/utility",
+      "//pc:libjingle_peerconnection",
+      "//rtc_base",
+      "//rtc_base:rtc_base_approved",
+      "//sdk/android:native_api_base",
+      "//sdk/android:native_api_jni",
+      "//sdk/android:native_api_video",
+    ]
+  }
+
+  android_resources("resources") {
+    testonly = true
+    custom_package = "org.webrtc.examples.androidnativeapi"
+    sources = [
+      "res/layout/activity_main.xml",
+      "res/values/strings.xml",
+    ]
+
+    # Needed for Bazel converter.
+    resource_dirs = [ "res" ]
+    assert(resource_dirs != [])  # Mark as used.
+  }
+}

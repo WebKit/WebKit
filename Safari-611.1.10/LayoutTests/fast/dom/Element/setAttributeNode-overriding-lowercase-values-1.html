@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <div id="test-container" style="display: none;"></div>
+</body>
+<script>
+description('Test using setAttributeNode() behaves like setAttribute() to get the existing attribute, but like setAttributeNS() to set the new value."');
+
+document.documentElement.setAttribute('FooBar', 'WebKit');
+
+shouldBeEqualToString('document.documentElement.getAttribute("foobar")', 'WebKit');
+shouldBeTrue('document.documentElement.hasAttribute("foobar")');
+shouldBeEqualToString('document.documentElement.getAttribute("FooBar")', 'WebKit');
+shouldBeTrue('document.documentElement.hasAttribute("FooBar")');
+
+shouldBeEqualToString('document.documentElement.getAttributeNS("", "foobar")', 'WebKit');
+shouldBeTrue('document.documentElement.hasAttributeNS("", "foobar")');
+shouldBe('document.documentElement.getAttributeNS("", "FooBar")', 'null');
+shouldBeFalse('document.documentElement.hasAttributeNS("", "FooBar")');
+
+
+shouldBe('document.documentElement.attributes.length', '1');
+
+// "FooBar" should nuke the "foobar" value and itself having the "foobar" name.
+var camelCaseFoobar = document.createAttribute("FooBar");
+camelCaseFoobar.value = 'Rocks!'
+var oldAttributeNode = document.documentElement.setAttributeNode(camelCaseFoobar);
+
+shouldNotBe('camelCaseFoobar', 'oldAttributeNode');
+
+shouldBeEqualToString('document.documentElement.getAttribute("foobar")', 'Rocks!');
+shouldBeTrue('document.documentElement.hasAttribute("foobar")');
+shouldBeEqualToString('document.documentElement.getAttribute("FooBar")', 'Rocks!');
+shouldBeTrue('document.documentElement.hasAttribute("FooBar")');
+
+shouldBeEqualToString('document.documentElement.getAttributeNS("", "foobar")', 'Rocks!');
+shouldBeTrue('document.documentElement.hasAttributeNS("", "foobar")');
+shouldBeNull('document.documentElement.getAttributeNS("", "FooBar")');
+shouldBeFalse('document.documentElement.hasAttributeNS("", "FooBar")');
+
+// "foobar" should exist alongside "FooBar".
+var lowerCaseFoobar = document.createAttribute("foobar");
+lowerCaseFoobar.value = 'WebKit2'
+var oldAttributeNode2 = document.documentElement.setAttributeNode(lowerCaseFoobar);
+
+shouldBe('oldAttributeNode2', 'camelCaseFoobar');
+
+shouldBeEqualToString('document.documentElement.getAttribute("foobar")', 'WebKit2');
+shouldBeTrue('document.documentElement.hasAttribute("foobar")');
+shouldBeEqualToString('document.documentElement.getAttribute("FooBar")', 'WebKit2');
+shouldBeTrue('document.documentElement.hasAttribute("FooBar")');
+
+shouldBeEqualToString('document.documentElement.getAttributeNS("", "foobar")', 'WebKit2');
+shouldBeTrue('document.documentElement.hasAttributeNS("", "foobar")');
+shouldBeNull('document.documentElement.getAttributeNS("", "FooBar")');
+shouldBeFalse('document.documentElement.hasAttributeNS("", "FooBar")');
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</html>

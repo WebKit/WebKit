@@ -1,0 +1,25 @@
+Test exporting a RSAES-PKCS1-v1_5 key pair with JWK format.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Generating a key pair...
+Exporting the public key...
+PASS publicKey.kty is 'RSA'
+PASS publicKey.key_ops is ['encrypt']
+PASS publicKey.alg is 'RSA1_5'
+PASS publicKey.ext is true
+PASS Base64URL.parse(publicKey.n).byteLength is 256
+PASS bytesToHexString(Base64URL.parse(publicKey.e)) is '010001'
+Exporting the private key...
+PASS privateKey.kty is 'RSA'
+PASS privateKey.key_ops is ['decrypt']
+PASS privateKey.alg is 'RSA1_5'
+PASS privateKey.ext is true
+PASS Base64URL.parse(privateKey.n).byteLength is 256
+PASS bytesToHexString(Base64URL.parse(privateKey.e)) is '010001'
+PASS privateKey.oth is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

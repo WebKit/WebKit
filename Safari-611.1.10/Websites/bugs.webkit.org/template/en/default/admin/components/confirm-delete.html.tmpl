@@ -1,0 +1,143 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # comp: object; Bugzilla::Component object representing the component the
+  #               user wants to delete.
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the component belongs.
+  #%]
+
+[% title = BLOCK %]Delete component '[% comp.name FILTER html %]'
+from '[% product.name FILTER html %]' product
+  [% END %]
+
+[% PROCESS global/header.html.tmpl
+  title = title
+  style_urls = ['skins/standard/admin.css']
+%]
+
+<table id="admin_table">
+  <tr class="column_header">
+    <th>Field</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td>Component</td>
+    <td>[% comp.name FILTER html %]</td>
+  </tr>
+  <tr>
+    <td>Component Description</td>
+    <td>[% comp.description FILTER html_light %]</td>
+  </tr>
+  <tr>
+    <td>Default assignee</td>
+    <td>[% comp.default_assignee.login FILTER html %]</td>
+  </tr>
+
+  [% IF Param('useqacontact') %]
+    <tr>
+      <td>Default QA contact</td>
+      <td>[% comp.default_qa_contact.login FILTER html %]</td>
+    </tr>
+  [% END %]
+
+  <tr>
+    <td>Component of Product</td>
+    <td>[% product.name FILTER html %]</td>
+  </tr>
+
+  [% IF product.description %]
+    <tr>
+      <td>Product Description</td>
+      <td>[% product.description FILTER html_light %]</td>
+    </tr>
+  [% END %]
+
+  [% IF Param('usetargetmilestone') %]
+    <tr>
+      <td>Product Milestone URL</td>
+      <td>
+        <a href="[% product.milestone_url FILTER html %]">
+          [% product.milestone_url FILTER html %]</a>
+      </td>
+    </tr>
+  [% END %]
+
+  <tr>
+    <td>Open for [% terms.bugs %]</td>
+    <td>[% IF product.is_active && comp.isactive %]Yes[% ELSE %]No[% END %]</td>
+  </tr>
+  <tr>
+    <td>[% terms.Bugs %]</td>
+    <td>
+      [% IF comp.bug_count %]
+        <a title="List of [% terms.bugs %] for component '[% comp.name FILTER html %]'"
+           href="buglist.cgi?component=[% comp.name FILTER uri %]&amp;product=
+                 [%- product.name FILTER uri %]">[% comp.bug_count %]</a>
+      [% ELSE %]
+        None
+      [% END %]
+    </td>
+  </tr>
+</table>
+
+<h2>Confirmation</h2>
+
+[% IF comp.bug_count %]
+
+  [% IF !Param("allowbugdeletion") %]
+    <p class="confirmation">
+      Sorry, there
+      [% IF comp.bug_count > 1 %]
+        are [% comp.bug_count %] [%+ terms.bugs %]
+      [% ELSE %]
+        is 1 [% terms.bug %]
+      [% END %]
+      outstanding for this component. You must reassign
+
+      [% IF comp.bug_count > 1 %]
+        those [% terms.bugs %]
+      [% ELSE %]
+        that [% terms.bug %]
+      [% END %]
+      to another component before you can delete this one.
+    </p>
+  [% ELSE %]
+    <p class="confirmation">
+      There
+      [% IF comp.bug_count > 1 %]
+        are [% comp.bug_count %] [%+ terms.bugs %] 
+      [% ELSE %]
+        is 1 [% terms.bug %]
+      [% END %]
+      entered for this component!  When you delete this
+      component, <b>ALL</b> stored [% terms.bugs %] and
+      their history will be deleted too.
+    </p>
+  [% END %]
+
+[% END %]
+
+[% IF comp.bug_count == 0 || Param('allowbugdeletion') %]
+
+  <p>Do you really want to delete this component?</p>
+  
+  <form method="post" action="editcomponents.cgi">
+  <input type="submit" id="delete" value="Yes, delete">
+  <input type="hidden" name="action" value="delete">
+  <input type="hidden" name="product" value="[% product.name FILTER html %]">
+  <input type="hidden" name="component" value="[% comp.name FILTER html %]">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+  </form>
+
+[% END %]
+
+[% PROCESS admin/components/footer.html.tmpl %]
+
+[% PROCESS global/footer.html.tmpl %] 

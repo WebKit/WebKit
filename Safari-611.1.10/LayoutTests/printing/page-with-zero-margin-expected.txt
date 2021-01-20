@@ -1,0 +1,7 @@
+layer at (0,0) size 1000x18
+  RenderView at (0,0) size 1000x18
+layer at (0,0) size 1000x18
+  RenderBlock {HTML} at (0,0) size 1000x18
+    RenderBody {BODY} at (0,0) size 1000x18
+      RenderText {#text} at (0,0) size 318x18
+        text run at (0,0) width 318: "Text should start at the top right edge of the page."

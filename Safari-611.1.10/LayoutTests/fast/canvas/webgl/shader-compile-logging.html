@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<body>
+<p>Tests that WebGL shader compile errors/warnings are logged to the console.</p>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText()
+
+let gl = document.createElement("canvas").getContext("webgl");
+
+let fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+gl.shaderSource(fragmentShader, `
+attribute vec4 position;
+void main() {
+    gl_Position = position;
+}
+
+FRAGMENT_SHADER
+`);
+gl.compileShader(fragmentShader);
+
+let vertexShader = gl.createShader(gl.VERTEX_SHADER);
+gl.shaderSource(vertexShader, `
+void main() {
+    gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+}
+
+VERTEX_SHADER
+`);
+gl.compileShader(vertexShader);
+</script>
+</body>
+

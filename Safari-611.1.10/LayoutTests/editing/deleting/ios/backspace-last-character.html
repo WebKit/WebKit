@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div id="test-container">
+    <textarea id="input"></textarea>
+    <textarea id="output" readonly></textarea>
+</div>
+<script>
+window.jsTestIsAsync = true;
+
+let input = document.getElementById("input");
+let inputDidFocus = false;
+let inputEventCount = 0;
+
+function appendANewline()
+{
+    let outputElement = document.getElementById("output");
+    outputElement.value = outputElement.value + "\n";
+}
+
+async function runTest()
+{
+    input.addEventListener("focus", () => inputDidFocus = true);
+    input.addEventListener("input", () => ++inputEventCount);
+
+    if (window.testRunner) {
+        await UIHelper.setHardwareKeyboardAttached(false);
+        console.log("Activating element and waiting for input session.");
+        await UIHelper.activateElementAndWaitForInputSession(input);
+    }
+
+    console.log("Waiting for element focus.");
+    await new Promise(resolve => shouldBecomeEqual("inputDidFocus", "true", resolve));
+
+    console.log("Typing 'w'.");
+    if (window.testRunner)
+        await UIHelper.keyDown("w");
+
+    console.log("Waiting for first input event.");
+    await new Promise(resolve => shouldBecomeEqual("inputEventCount", "1", resolve));
+    shouldBeEqualToString('document.getElementById("input").value', "w");
+
+    console.log("Hitting backspace.");
+    if (window.testRunner)
+        await UIHelper.keyDown("\b");
+
+    console.log("Waiting for second input event.");
+    await new Promise(resolve => shouldBecomeEqual("inputEventCount", "2", resolve));
+    shouldBeEqualToString('document.getElementById("input").value', "");
+
+    console.log("Test complete.");
+    document.body.removeChild(document.getElementById("test-container"));
+    finishJSTest();
+}
+
+description("This tests using the software keyboard and pressing 'w' then <kbd>backspace</kbd> deletes the 'w' and does not cause an assertion failure in a debug build.");
+input.addEventListener("keydown", appendANewline);
+
+runTest();
+</script>
+</body>
+</html>

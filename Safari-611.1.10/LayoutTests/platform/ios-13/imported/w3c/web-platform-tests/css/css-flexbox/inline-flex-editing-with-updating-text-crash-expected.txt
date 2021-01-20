@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x119
+  RenderBlock {HTML} at (0,0) size 800x119
+    RenderBody {BODY} at (8,21) size 784x77
+      RenderBlock {DIV} at (0,0) size 784x76
+        RenderBlock {H1} at (0,0) size 784x76
+          RenderInline {A} at (0,0) size 0x36
+            RenderImage {IMG} at (0,30) size 0x0
+            RenderBR {BR} at (0,1) size 0x36
+          RenderText {#text} at (0,39) size 72x36
+            text run at (0,39) width 47: "AA"
+            text run at (46,39) width 26: "\x{605}"
+        RenderBlock (anonymous) at (0,97) size 784x0
+          RenderInline {A} at (0,0) size 0x0
+            RenderText {#text} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+selection start: position 0 of child 0 {IMG} of child 0 {A} of child 1 {H1} of child 0 {DIV} of body
+selection end:   position 3 of child 1 {#text} of child 1 {H1} of child 0 {DIV} of body

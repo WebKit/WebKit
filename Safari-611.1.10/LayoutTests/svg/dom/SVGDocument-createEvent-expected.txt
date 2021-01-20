@@ -1,0 +1,12 @@
+Test SVGDocument.createEvent() operation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS svgDocument.createEvent() threw exception TypeError: Not enough arguments.
+PASS event = svgDocument.createEvent('mouseevent') did not throw exception.
+PASS event.__proto__ is MouseEvent.prototype
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

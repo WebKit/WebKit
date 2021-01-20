@@ -1,0 +1,7 @@
+XXX small YYY
+
+FAIL document.elementFromPoint finds container SPAN in the empty region above a child SPAN with a smaller font size assert_equals: expected Element node <span id="target">
+    XXX <span id="small" style="font-s... but got Element node <div style="font-size: 40px">
+  <span id="target">
+    XX...
+

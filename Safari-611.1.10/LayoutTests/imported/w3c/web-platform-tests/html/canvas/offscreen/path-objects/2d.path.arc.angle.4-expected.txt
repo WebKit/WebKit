@@ -1,0 +1,7 @@
+2d.path.arc.angle.4
+
+arc() draws a full circle when clockwise and end > start+2pi
+
+
+PASS arc() draws a full circle when clockwise and end > start+2pi
+

@@ -1,0 +1,69 @@
+<style>
+
+body {
+    background-color: green;
+}
+
+div {
+    position: absolute;
+    top: 0;
+    height: 100px;
+}
+
+#test {
+    left: 0;
+    width: 100px;
+    background-color: red;
+}
+
+#reference {
+    left: -1px;
+    width: 102px;
+    background-color: green;
+}
+
+</style>
+
+<div id="test"></div>
+<div id="reference"></div>
+
+<script src="../resources/ui-helper.js"></script>
+<script>
+
+(async () => {
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    const keyframes = { "transform": "translateX(700px)" };
+    const easing = "steps(10000)";
+    const duration = 10000;
+
+    // Create two animations, a test which will change easing during playback and a reference which
+    // will use the test animation's changed playback throughout its entire duration. The two animations
+    // should be in sync and the animated elements overlap, ensuring no red is visible after the update.
+    const test = document.getElementById("test").animate(keyframes, { easing: "linear", duration });
+    document.getElementById("reference").animate(keyframes, { easing, duration });
+
+    // Wait for the animations to be ready and then a frame before pausing them.
+    await Promise.all(document.getAnimations().map(animation => animation.ready));
+    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.renderingUpdate();
+    for (let animation of document.getAnimations())
+        animation.pause();
+
+    // Update the easing on the test animation to match the reference animation.
+    test.effect.updateTiming({ easing });
+
+    // Wait a frame and resume the animations.
+    await UIHelper.renderingUpdate();
+    for (let animation of document.getAnimations())
+        animation.play();
+
+    // Wait a frame and compare the rendering.
+    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.renderingUpdate();
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+
+</script>

@@ -1,0 +1,12 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=@LIB_INSTALL_DIR@
+includedir=${prefix}/include
+
+Name: WPE WebKit
+Description: Embeddable Web content engine
+URL: https://wpewebkit.org
+Version: @PROJECT_VERSION@
+Requires: glib-2.0 libsoup-2.4 wpe-1.0
+Libs: -L${libdir} -lWPEWebKit-@WPE_API_VERSION@
+Cflags: -I${includedir}/wpe-webkit-@WPE_API_VERSION@

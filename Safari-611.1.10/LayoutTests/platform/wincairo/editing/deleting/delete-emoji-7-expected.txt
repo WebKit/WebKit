@@ -1,0 +1,38 @@
+This test verifies that deletions are correct over emoji groups and emoji with variations
+
+Dump of markup 1:
+| "\n🏇🏻🏌🏾🤦🏻🤦‍♀️🤦🏻‍♀️🤦‍♂️🤦🏻‍♂️🤦‍♀🤦🏻‍♀🤦‍♂🤦🏻‍♂<#selection-caret>\n"
+
+Dump of markup 2:
+| "\n🏇🏻🏌🏾🤦🏻🤦‍♀️🤦🏻‍♀️🤦‍♂️🤦🏻‍♂️🤦‍♀🤦🏻‍♀🤦‍♂<#selection-caret>"
+
+Dump of markup 3:
+| "\n🏇🏻🏌🏾🤦🏻🤦‍♀️🤦🏻‍♀️🤦‍♂️🤦🏻‍♂️🤦‍♀🤦🏻‍♀<#selection-caret>"
+
+Dump of markup 4:
+| "\n🏇🏻🏌🏾🤦🏻🤦‍♀️🤦🏻‍♀️🤦‍♂️🤦🏻‍♂️🤦‍♀<#selection-caret>"
+
+Dump of markup 5:
+| "\n🏇🏻🏌🏾🤦🏻🤦‍♀️🤦🏻‍♀️🤦‍♂️🤦🏻‍♂️<#selection-caret>"
+
+Dump of markup 6:
+| "\n🏇🏻🏌🏾🤦🏻🤦‍♀️🤦🏻‍♀️🤦‍♂️<#selection-caret>"
+
+Dump of markup 7:
+| "\n🏇🏻🏌🏾🤦🏻🤦‍♀️🤦🏻‍♀️<#selection-caret>"
+
+Dump of markup 8:
+| "\n🏇🏻🏌🏾🤦🏻🤦‍♀️<#selection-caret>"
+
+Dump of markup 9:
+| "\n🏇🏻🏌🏾🤦🏻<#selection-caret>"
+
+Dump of markup 10:
+| "\n🏇🏻🏌🏾<#selection-caret>"
+
+Dump of markup 11:
+| "\n🏇🏻<#selection-caret>"
+
+Dump of markup 12:
+| <#selection-caret>
+| <br>

@@ -1,0 +1,3 @@
+
+FAIL '127.0.0.1' is not same-site with 'localhost', so strict samesite cookies are not sent. assert_equals: implicit-strict expected (string) "1" but got (undefined) undefined
+

@@ -1,0 +1,20 @@
+This test scrolls the page with extended backgrounds enabled and checks that the layout and visual viewports respond as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Scrolled to -123, -234
+JSON.stringify(layoutViewport) is {"x":-123,"y":-234,"width":785,"height":585,"top":-234,"right":662,"bottom":351,"left":-123}
+JSON.stringify(visualViewport) is {"x":-123,"y":-234,"width":785,"height":585,"top":-234,"right":662,"bottom":351,"left":-123}
+
+Scrolled to 475, 525
+JSON.stringify(layoutViewport) is {"x":475,"y":525,"width":785,"height":585,"top":525,"right":1260,"bottom":1110,"left":475}
+JSON.stringify(visualViewport) is {"x":475,"y":525,"width":785,"height":585,"top":525,"right":1260,"bottom":1110,"left":475}
+
+Scrolled to 1800, 1850
+JSON.stringify(layoutViewport) is {"x":1800,"y":1850,"width":785,"height":585,"top":1850,"right":2585,"bottom":2435,"left":1800}
+JSON.stringify(visualViewport) is {"x":1800,"y":1850,"width":785,"height":585,"top":1850,"right":2585,"bottom":2435,"left":1800}
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

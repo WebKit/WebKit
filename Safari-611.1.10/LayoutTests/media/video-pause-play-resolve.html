@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>video-pause-play-resolve</title>
+    <script src=media-file.js></script>
+    <script src=video-test.js></script>
+
+    <script>
+    var promise;
+    function runTest()
+    {
+        findMediaElement();
+        run("mediaElement.src = findMediaFile('video', 'content/test')");
+        waitForEvent('canplaythrough', canplaythrough);
+    }
+
+    function canplaythrough()
+    {
+        run("promise = video.play()");
+        shouldResolve(promise).then(playing, endTest);
+    }
+
+    function playing()
+    {
+        run("video.pause()");
+        run("promise = video.play()");
+        shouldResolve(promise).then(endTest, endTest);
+    }
+    </script>
+</head>
+
+<body onload="runTest()">
+    <video controls></video>
+</body>
+</html>
+

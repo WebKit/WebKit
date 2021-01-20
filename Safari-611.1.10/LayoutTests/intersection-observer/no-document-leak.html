@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/gc.js"></script>
+</head>
+<body>
+<iframe id="testFrame" src=></iframe>
+<script>
+description("Tests that using IntersectionObserver does not cause the document to get leaked.");
+window.jsTestIsAsync = true;
+
+let totalCount = 0;
+window.onload = function () {
+    testDocumentIsNotLeaked(
+        async function initAndRemove(frameCount)
+        {
+            totalCount = frameCount;
+            let frames = await new Promise((resolve, reject) => {
+                let frames = [];
+                let counter = 0;
+                function onLoad() {
+                    counter++;
+                    if (counter == frameCount)
+                        resolve(frames);
+                }
+                for (let i = 0; i < frameCount; ++i) {
+                    let frame = document.createElement('iframe');
+                    frame.src = "resources/no-document-leak-frame.html";
+                    frame.onload = onLoad;
+                    document.body.appendChild(frame);
+                    frames.push(frame);
+                }
+            });
+            totalCount = internals.numberOfIntersectionObservers(document);
+            let frameIdentifiers = [];
+            for (let i = 0; i < frameCount; ++i) {
+                let frame = frames[i];
+                frameIdentifiers.push(internals.documentIdentifier(frame.contentDocument));
+                frame.remove();
+            }
+            nukeArray(frames);
+            frames = null;
+            return frameIdentifiers;
+        },
+        {
+            additionalCheck: function()
+            {
+                let count = internals.numberOfIntersectionObservers(document);
+                return count < totalCount || count === 0;
+            }
+        }
+    ).then(
+        () => testPassed("Document did not leak"),
+        (error) => testFailed(error.message)
+    ).finally(finishJSTest);
+};
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+
+Test track order when using in-band and out-of-band text tracks.
+
+EVENT(canplaythrough)
+
+** Check initial in-band track states
+EXPECTED (video.textTracks.length == '3') OK
+RUN(inbandTrack1 = video.textTracks[0])
+RUN(inbandTrack2 = video.textTracks[1])
+RUN(inbandTrack3 = video.textTracks[2])
+
+** Add two tracks, check sort order
+RUN(addTrack = video.addTextTrack('captions', 'Caption Track', 'en'))
+RUN(trackElement = document.createElement('track'))
+RUN(video.appendChild(trackElement))
+EXPECTED (video.textTracks.length == '5') OK
+EXPECTED (video.textTracks[0] == 'trackElement.track') OK
+EXPECTED (video.textTracks[1] == 'addTrack') OK
+EXPECTED (video.textTracks[2] == 'inbandTrack1') OK
+EXPECTED (video.textTracks[3] == 'inbandTrack2') OK
+EXPECTED (video.textTracks[4] == 'inbandTrack3') OK
+
+** Unload video file, check track count
+RUN(video.src = '')
+EXPECTED (video.textTracks.length == '2') OK
+
+END OF TEST
+

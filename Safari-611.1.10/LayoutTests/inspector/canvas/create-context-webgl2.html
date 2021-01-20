@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="resources/create-context-utilities.css">
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/create-context-utilities.js"></script>
+<script>
+if (window.internals)
+    window.internals.settings.setWebGL2Enabled(true);
+
+function test() {
+    let suite = InspectorTest.CreateContextUtilities.initializeTestSuite("Canvas.CreateContextWebGL2");
+
+    InspectorTest.CreateContextUtilities.addSimpleTestCase({
+        name: "Attached",
+        expression: `createAttachedCanvas("webgl2")`,
+        contextType: WI.Canvas.ContextType.WebGL2,
+    });
+
+    InspectorTest.CreateContextUtilities.addSimpleTestCase({
+        name: "Detached",
+        expression: `createDetachedCanvas("webgl2")`,
+        contextType: WI.Canvas.ContextType.WebGL2,
+    });
+
+    InspectorTest.CreateContextUtilities.addCSSCanvasTestCase(WI.Canvas.ContextType.WebGL2);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test that CanvasManager tracks creation and destruction of WebGL2 canvases.</p>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("Page.getCookie");
+
+    suite.addTestCase({
+        name: "MatchCookiesAgainstResourceDomains",
+        description: "Test that Inspector properly detects whether a cookie matches a resource's domain or not.",
+        test(resolve, reject) {
+            let testcasesByCookieDomain = {
+                ".example.com": [
+                    // Unrelated top-level domain.
+                    {
+                        "input": "www.other.com",
+                        "output": false,
+                    },
+                    {
+                        "input": "stuff.other.com",
+                        "output": false,
+                    },
+                    {
+                        "input": "bad.stuff.other.com",
+                        "output": false,
+                    },
+
+                    // Same top-level domain, with 0+ subdomains.
+                    {
+                        "input": "www.example.com",
+                        "output": true,
+                    },
+                    {
+                        "input": "stuff.example.com",
+                        "output": true,
+                    },
+                    {
+                        "input": "good.stuff.example.com",
+                        "output": true,
+                    },
+                ],
+                "stuff.example.com": [
+                    // Unrelated top-level domain.
+                    {
+                        "input": "www.other.com",
+                        "output": false,
+                    },
+                    {
+                        "input": "stuff.other.com",
+                        "output": false,
+                    },
+                    {
+                        "input": "bad.stuff.other.com",
+                        "output": false,
+                    },
+
+                    // Same top-level domain, with 0+ subdomains.
+                    {
+                        "input": "www.example.com",
+                        "output": false,
+                    },
+                    {
+                        "input": "stuff.example.com",
+                        "output": true,
+                    },
+                    {
+                        "input": "good.stuff.example.com",
+                        "output": false,
+                    },
+                ],
+
+                ".stuff.example.com": [
+                    // Unrelated top-level domain.
+                    {
+                        "input": "www.other.com",
+                        "output": false,
+                    },
+                    {
+                        "input": "stuff.other.com",
+                        "output": false,
+                    },
+                    {
+                        "input": "bad.stuff.other.com",
+                        "output": false,
+                    },
+
+                    // Same top-level domain, with 0+ subdomains.
+                    {
+                        "input": "www.example.com",
+                        "output": false,
+                    },
+                    {
+                        "input": "stuff.example.com",
+                        "output": true,
+                    },
+                    {
+                        "input": "good.stuff.example.com",
+                        "output": true,
+                    },
+                ],
+
+                "good.stuff.example.com": [
+                    // Unrelated top-level domain.
+                    {
+                        "input": "www.other.com",
+                        "output": false,
+                    },
+                    {
+                        "input": "stuff.other.com",
+                        "output": false,
+                    },
+                    {
+                        "input": "bad.stuff.other.com",
+                        "output": false,
+                    },
+
+                    // Same top-level domain, with 0+ subdomains.
+                    {
+                        "input": "www.example.com",
+                        "output": false,
+                    },
+                    {
+                        "input": "stuff.example.com",
+                        "output": false,
+                    },
+                    {
+                        "input": "good.stuff.example.com",
+                        "output": true,
+                    },
+                ],
+
+                ".good.stuff.example.com": [
+                    // Unrelated top-level domain.
+                    {
+                        "input": "www.other.com",
+                        "output": false,
+                    },
+                    {
+                        "input": "stuff.other.com",
+                        "output": false,
+                    },
+                    {
+                        "input": "bad.stuff.other.com",
+                        "output": false,
+                    },
+
+                    // Same top-level domain, with 0+ subdomains.
+                    {
+                        "input": "www.example.com",
+                        "output": false,
+                    },
+                    {
+                        "input": "stuff.example.com",
+                        "output": false,
+                    },
+                    {
+                        "input": "good.stuff.example.com",
+                        "output": true,
+                    },
+                ]
+            };
+
+            for (let cookieDomain in testcasesByCookieDomain) {
+                for (let expected of testcasesByCookieDomain[cookieDomain]) {
+                    let output = WI.CookieStorageObject.cookieDomainMatchesResourceDomain(cookieDomain, expected.input);
+                    let verdictText = expected.output ? "should match" : "should not match";
+                    InspectorTest.expectThat(output === expected.output, `${cookieDomain} ${verdictText} ${expected.input}`);
+                }
+            }
+
+            return true;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for model code related to the Page.getCookie command.</p>
+</body>
+</html>

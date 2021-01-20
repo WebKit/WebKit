@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: wp_test
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: wp_test
+
+Description
+
+This test validates that the performance.mark() method is working properly. This test creates the following marks to test this method:
+
+"mark1": created using a normal mark() call
+"mark1": duplicate of the first mark, used to confirm names can be re-used
+After creating each mark, the existence of these marks is validated by calling performance.getEntriesByName() (both with and without the entryType parameter provided), performance.getEntriesByType(), and performance.getEntries()
+

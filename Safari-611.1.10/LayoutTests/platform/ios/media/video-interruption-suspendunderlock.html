@@ -1,0 +1,85 @@
+<html>
+    <head>
+        <script src="../../../media/media-file.js"></script>
+        <script src="../../../media/video-test.js"></script>
+        <script>
+            if (window.internals)
+                window.internals.settings.setAllowsPictureInPictureMediaPlayback(true);
+
+            function start()
+            {
+                if (!window.internals) {
+                    failTest('This test requires window.internals.');
+                    return;
+                }
+
+                findMediaElement();
+                waitForEvent('canplaythrough', canplaythrough);
+                waitForEvent('playing', playing);
+                video.src = findMediaFile("video", "content/test");
+                consoleWrite("Start");
+            }
+
+            function canplaythrough()
+            {
+                video.removeEventListener('canplaythrough', canplaythrough);
+                run("video.play()");
+            }
+
+            function playing()
+            {
+                video.removeEventListener('playing', playing);
+
+                if (!('webkitSupportsPresentationMode' in video && 'webkitPresentationMode' in video)) {
+                    failTest("Presentation mode is not supported in this video element.")
+                    return;
+                }
+                if (!video.webkitSupportsPresentationMode('picture-in-picture')) {
+                    failTest("picture-in-picture is not supported for this video element");
+                }
+                video.addEventListener('webkitpresentationmodechanged', onpresentationmodechanged);
+                runWithKeyDown(function() { run("video.webkitSetPresentationMode('picture-in-picture')"); });
+            }
+
+            function onpresentationmodechanged()
+            {
+                video.removeEventListener('webkitpresentationmodechanged', onpresentationmodechanged);
+                run("internals.beginMediaSessionInterruption('EnteringBackground')");
+                setTimeout(pipInBackground, 100);
+            }
+
+            function pipInBackground()
+            {
+                testExpected("video.paused", false);
+                run("internals.beginMediaSessionInterruption('SuspendedUnderLock')");
+                setTimeout(pipUnderLock, 100);
+            }
+
+            function pipUnderLock()
+            {
+                testExpected("video.paused", true);
+                run("internals.endMediaSessionInterruption('MayResumePlaying')");
+                setTimeout(pipUnlocked, 100);
+            }
+
+            function pipUnlocked()
+            {
+                testExpected("video.paused", true);
+                run("internals.endMediaSessionInterruption('')");
+                setTimeout(pipForeground, 100);
+            }
+
+            function pipForeground()
+            {
+                testExpected("video.paused", true);
+                endTest();
+            }
+
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video controls ></video>
+        <p>Test that playback is paused by an SuspendUnderLock, and that ending the interruption does not automatically resume playback.</p>
+    </body>
+</html>

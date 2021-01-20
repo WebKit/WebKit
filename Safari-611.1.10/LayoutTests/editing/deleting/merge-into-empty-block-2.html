@@ -1,0 +1,15 @@
+<p id="description">When a user puts the caret at the very beginning a list and hits delete into an empty line, the list should just move up.</p>
+<div contenteditable="true"><div><br></div><ul><li><span id="test">foo</span></li></ul></div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+
+var e = document.getElementById("test");
+window.getSelection().setPosition(e, 0);
+
+document.execCommand("Delete");
+
+Markup.description(document.getElementById('description').textContent);
+Markup.dump(document.querySelector('div'));
+</script>

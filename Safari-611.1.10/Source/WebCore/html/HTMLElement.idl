@@ -1,0 +1,64 @@
+/*
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+[
+    CustomPushEventHandlerScope,
+    ExportMacro=WEBCORE_EXPORT,
+    JSGenerateToNativeObject,
+    Exposed=Window
+] interface HTMLElement : Element {
+    [Custom] constructor();
+
+    // metadata attributes
+    [CEReactions, Reflect] attribute DOMString title;
+    [CEReactions, Reflect] attribute DOMString lang;
+    [CEReactions] attribute boolean translate;
+    [CEReactions] attribute DOMString dir;
+
+    // user interaction
+    [CEReactions, Reflect] attribute boolean hidden;
+    undefined click();
+    [CEReactions, Reflect] attribute DOMString accessKey;
+    readonly attribute DOMString accessKeyLabel;
+    [CEReactions] attribute boolean draggable;
+    [CEReactions] attribute boolean spellcheck;
+    // FIXME: 'autocapitalize' should not be [LegacyNullToEmptyString].
+    [Conditional=AUTOCAPITALIZE, CEReactions] attribute [LegacyNullToEmptyString] DOMString autocapitalize;
+
+    [CEReactions] attribute [LegacyNullToEmptyString] DOMString innerText;
+
+    // FIXME: Implement 'attachInternals'.
+    // ElementInternals attachInternals();
+
+    // Non-standard: IE extension. May get added to the specification (https://github.com/whatwg/html/issues/668).
+    [CEReactions] attribute [LegacyNullToEmptyString] DOMString outerText;
+
+    // Non-standard: iOS extension.
+    [Conditional=AUTOCORRECT, CEReactions] attribute boolean autocorrect;
+
+    // Non-standard: We are the only browser to support this now that Blink dropped it (http://crbug.com/688943).
+    [CEReactions, Reflect] attribute DOMString webkitdropzone;
+};
+
+HTMLElement includes GlobalEventHandlers;
+HTMLElement includes DocumentAndElementEventHandlers;
+HTMLElement includes ElementContentEditable;
+HTMLElement includes HTMLOrForeignElement;
+HTMLElement includes ElementCSSInlineStyle;

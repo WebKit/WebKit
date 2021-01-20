@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("IndexedDB.requestDatabaseNames");
+
+    suite.addTestCase({
+        name: "ClearDatabases",
+        description: "Remove any existing IndexedDB databases.",
+        test(resolve, reject) {
+            // FIXME: Remove any existing IndexedDB databases that might exist to workaround:
+            // <https://webkit.org/b/148006> Each test should run with its own clean data store
+            IndexedDBAgent.requestDatabaseNames(WI.networkManager.mainFrame.securityOrigin, (error, names) => {
+                InspectorTest.evaluateInPage("deleteDatabaseNames(" + JSON.stringify(names) + ")", resolve);
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "EnsureNoDatabases",
+        description: "Ensure no databases exist at the start.",
+        test(resolve, reject) {
+            IndexedDBAgent.requestDatabaseNames(WI.networkManager.mainFrame.securityOrigin, (error, names) => {
+                InspectorTest.expectNoError(error);
+                InspectorTest.expectThat(names.length === 0, "No IndexedDB databases should exist initially.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "CreateDatabase1",
+        description: "Create a first database.",
+        test(resolve, reject) {
+            InspectorTest.awaitEvent("DatabaseCreated")
+            .then((event) => {
+                IndexedDBAgent.requestDatabaseNames(WI.networkManager.mainFrame.securityOrigin, (error, names) => {
+                    InspectorTest.expectNoError(error);
+                    InspectorTest.expectThat(names.length === 1, "A single IndexedDB database should exist.");
+                    InspectorTest.log(JSON.stringify(names));
+                    resolve();
+                });
+            });
+
+            InspectorTest.evaluateInPage("createEmptyDatabase('Database1')");
+        }
+    });
+
+    suite.addTestCase({
+        name: "CreateDatabase2",
+        description: "Create a second database.",
+        test(resolve, reject) {
+            InspectorTest.awaitEvent("DatabaseCreated")
+            .then((event) => {
+                IndexedDBAgent.requestDatabaseNames(WI.networkManager.mainFrame.securityOrigin, (error, names) => {
+                    InspectorTest.expectNoError(error);
+                    names.sort();
+                    InspectorTest.expectThat(names.length === 2, "Two IndexedDB databases should exist.");
+                    InspectorTest.log(JSON.stringify(names));
+                    resolve();
+                });
+            });
+
+            InspectorTest.evaluateInPage("createEmptyDatabase('Database2')");
+        }
+    });
+
+    suite.addTestCase({
+        name: "CreateDatabase3",
+        description: "Create a third database with a unicode name.",
+        test(resolve, reject) {
+            InspectorTest.awaitEvent("DatabaseCreated")
+            .then((event) => {
+                IndexedDBAgent.requestDatabaseNames(WI.networkManager.mainFrame.securityOrigin, (error, names) => {
+                    InspectorTest.expectNoError(error);
+                    names.sort();
+                    InspectorTest.expectThat(names.length === 3, "Three IndexedDB databases should exist.");
+                    InspectorTest.log(JSON.stringify(names));
+                    resolve();
+                });
+            });
+
+            InspectorTest.evaluateInPage("createEmptyDatabase('\u124d')");
+        }
+    });
+
+    suite.addTestCase({
+        name: "CreateDatabase4",
+        description: "Create a fourth database with a unicode name.",
+        test(resolve, reject) {
+            InspectorTest.awaitEvent("DatabaseCreated")
+            .then((event) => {
+                IndexedDBAgent.requestDatabaseNames(WI.networkManager.mainFrame.securityOrigin, (error, names) => {
+                    InspectorTest.expectNoError(error);
+                    names.sort();
+                    InspectorTest.expectThat(names.length === 4, "Four IndexedDB databases should exist.");
+                    InspectorTest.log(JSON.stringify(names));
+                    resolve();
+                });
+            });
+
+            InspectorTest.evaluateInPage("createEmptyDatabase('\ud800\udf46')");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

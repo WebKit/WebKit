@@ -1,0 +1,18 @@
+Testing the MacOSFullscreenMediaControls right container buttonMargin.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+4 enabled buttons
+PASS rightContainer.buttonMargin is 16
+
+3 enabled buttons
+PASS rightContainer.buttonMargin is 24
+
+2 enabled buttons
+PASS rightContainer.buttonMargin is 24
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

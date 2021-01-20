@@ -1,0 +1,19 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     onload="setTimeAndSnapshot(2, true)">
+  <title>Testcase for animation of the "order" attribute of the "feConvolveMatrix" element</title>
+  <script xlink:href="smil-util.js" type="text/javascript"/>
+  <defs>
+    <filter id="f">
+      <feConvolveMatrix order="3" kernelMatrix="1 1 1 1 1 1 1 1 1" edgeMode="none"></feConvolveMatrix>
+    </filter>
+  </defs>
+  <g filter="url(#f)">
+    <rect x="10" y="10" width="50" height="100" fill="orange"/>
+    <rect x="60" y="10" width="50" height="100" fill="blue"/>
+  </g>
+</svg>

@@ -1,0 +1,24 @@
+Tests the behavior of indexed property getters returning a DOMString with regards to out-of-bounds access
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Indexed property getters returning a non-nullable DOMString
+DOMTokenList.item()
+PASS document.body.classList.item(666) is null
+PASS document.body.classList[666] is undefined.
+Storage.getItem()
+PASS localStorage.getItem(666) is null
+PASS localStorage[666] is undefined.
+MediaList.item()
+PASS stylesheet.media.item(666) is null
+PASS stylesheet.media[666] is undefined.
+
+* Indexed property getters returning a non-nullable DOMString
+CSSStyleDeclaration.item()
+PASS document.body.style.item(666) is ""
+PASS document.body.style[666] is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

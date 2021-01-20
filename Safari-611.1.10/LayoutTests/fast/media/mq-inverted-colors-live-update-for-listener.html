@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('This tests listeners on MediaQueryList get called when inverted color is turned on when there are no relevant style rules');
+
+jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+let didCallListener = false;
+let timer;
+
+window.onload = () => {
+    requestAnimationFrame(() => {
+        window.matchMedia('(inverted-colors)').addListener((event) => {
+            didCallListener = true;
+            finalize();
+        });
+
+        if (!window.internals || !testRunner.runUIScript) {
+            testFailed('This test requires runUIScript');
+            finishJSTest();
+            return;
+        }
+
+        window.internals.settings.forcedColorsAreInvertedAccessibilityValue = "on";
+        testRunner.runUIScript(`
+            uiController.simulateAccessibilitySettingsChangeNotification(() => {
+                uiController.uiScriptComplete("Done");
+            })`, () => {
+            if (!didCallListener)
+                timer = setTimeout(finalize, 1000);
+        });
+    });
+}
+
+function finalize() {
+    if (timer)
+        clearTimeout(timer);
+
+    shouldBeTrue('didCallListener');
+    shouldBeTrue('matchMedia("(inverted-colors)").matches');
+    finishJSTest();
+}
+
+</script>
+</body>
+</html>

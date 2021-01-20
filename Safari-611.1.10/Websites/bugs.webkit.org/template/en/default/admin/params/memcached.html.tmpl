@@ -1,0 +1,22 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+[%
+   title = "Memcached"
+   desc = "Set up Memcached integration"
+%]
+
+[% param_descs = {
+    memcached_servers =>
+      "If this option is set, Bugzilla will integrate with Memcached. " _
+      "Specify one or more servers, separated by spaces, using hostname:port " _
+      "notation (for example: 127.0.0.1:11211).",
+
+    memcached_namespace =>
+      "Specify a string to prefix to each key on Memcached.",
+  }
+%]

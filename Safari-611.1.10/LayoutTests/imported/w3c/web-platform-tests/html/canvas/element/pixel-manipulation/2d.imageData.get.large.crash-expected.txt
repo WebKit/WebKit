@@ -1,0 +1,6 @@
+2d.imageData.get.large.crash
+Test that canvas crash when image data cannot be allocated.
+Actual output:
+
+FAIL Test that canvas crash when image data cannot be allocated. assert_throws_js: function "function () { ctx.getImageData(10, 0xffffffff, 2147483647, 10); }" did not throw
+

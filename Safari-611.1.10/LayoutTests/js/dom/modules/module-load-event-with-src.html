@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test script.onload will be fired when the module tag with src loads and executes.');
+// Module will be executed asynchronously.
+window.jsTestIsAsync = true;
+debug('Module is not executed yet.');
+function onLoad()
+{
+    shouldBeTrue(`moduleExecuted`);
+    finishJSTest();
+}
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+<script type="module" onload="onLoad()" src="resources/module-load-event-with-src.js"></script>
+</body>
+</html>

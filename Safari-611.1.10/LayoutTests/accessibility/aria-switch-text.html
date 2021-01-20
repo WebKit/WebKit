@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div role="radiobuttongroup">
+        <div role="switch" id="switch1" aria-checked="true">One</div>
+        <div role="switch" id="switch2">Two</div>
+        <div role="switch" id="switch3" aria-label="foo">Three</div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that ARIA switches use accessible name computation and have no child text.");
+
+    if (window.accessibilityController) {
+        var widget = accessibilityController.accessibleElementById("switch1");
+        debug("widget.title is " + widget.title);
+        debug("widget.description is " + widget.description);
+        debug("widget.childrenCount is " + widget.childrenCount);
+
+        widget = accessibilityController.accessibleElementById("switch2");
+        debug("widget.title is " + widget.title);
+        debug("widget.description is " + widget.description);
+        debug("widget.childrenCount is " + widget.childrenCount);
+
+        widget = accessibilityController.accessibleElementById("switch3");
+        debug("widget.title is " + widget.title);
+        debug("widget.description is " + widget.description);
+        debug("widget.childrenCount is " + widget.childrenCount);
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

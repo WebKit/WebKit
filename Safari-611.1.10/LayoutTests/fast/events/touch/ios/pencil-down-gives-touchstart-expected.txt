@@ -1,0 +1,11 @@
+Test that an Apple Pencil is registered as a touchstart.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+    touchstart fired.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,7 @@
+2d.getcontext.extraargs
+
+The 2D context ignores extra getContext arguments
+
+
+PASS The 2D context ignores extra getContext arguments
+

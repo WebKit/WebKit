@@ -1,0 +1,2 @@
+When your cursor is after an empty blockquote, hitting delete should bring the cursor (and the content following the cursor) back into the blockquote, instead of deleting the empty blockquote.
+<blockquote type="cite">Quoted<br>This should be quoted too</blockquote>

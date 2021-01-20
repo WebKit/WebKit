@@ -1,0 +1,1 @@
+If this test passes, no crash occurs.

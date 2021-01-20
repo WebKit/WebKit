@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="resources/promise-utils.js"></script>
+    </head>
+    <body>
+        <script>
+            let stream;
+            let track;
+            let receiver;
+            let transceiver;
+
+            let evt;
+
+            description("This tests the constructor for the RTCTrackEvent DOM class.");
+
+            if (window.testRunner)
+                testRunner.setUserMediaPermission(true);
+            else {
+                debug("This test can not be run without the testRunner");
+                finishJSTest();
+            }
+
+            const pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+
+            navigator.mediaDevices.getUserMedia({ "audio": true, "video": true })
+            .then(function (s) {
+                stream = s;
+                track = stream.getAudioTracks()[0];
+                transceiver = pc.addTransceiver(track);
+                receiver = transceiver.receiver;
+
+                evalAndLog("evt = new RTCTrackEvent('eventType', { receiver: receiver, track: track, transceiver: transceiver})");
+
+                shouldBe("evt.bubbles", "false");
+                shouldBe("evt.cancelable", "false");
+                shouldBe("evt.receiver", "receiver");
+                shouldBe("evt.track", "track");
+                shouldBe("evt.streams", "[]");
+                shouldBe("evt.transceiver", "transceiver");
+                debug("");
+
+                shouldBe("new RTCTrackEvent('eventType', { receiver: receiver, track: track, streams: [], transceiver: transceiver}).streams", "[]");
+                shouldBe("new RTCTrackEvent('eventType', { receiver: receiver, track: track, streams: [stream], transceiver: transceiver}).streams", "[stream]");
+                debug("");
+
+                shouldThrowErrorName("new RTCTrackEvent('eventType', { receiver: track, track: track, streams: [stream, null], transceiver: transceiver})", "TypeError");
+                shouldThrowErrorName("new RTCTrackEvent('eventType', { receiver: track, track: track, streams: [null], transceiver: transceiver})", "TypeError");
+                shouldThrowErrorName("new RTCTrackEvent('eventType', { receiver: track, track: track, streams: [{}], transceiver: transceiver})", "TypeError");
+                shouldThrowErrorName("new RTCTrackEvent('eventType', { receiver: track, track: track, streams: [1], transceiver: transceiver})", "TypeError");
+                debug("");
+
+                debug("Dictionary members receiver, track and transceiver are not nullable");
+                shouldThrowErrorName("new RTCTrackEvent('eventType', { receiver: null, track: track, transceiver: transceiver})", "TypeError");
+                shouldThrowErrorName("new RTCTrackEvent('eventType', { receiver: receiver, track: null, transceiver: transceiver})", "TypeError");
+                shouldThrowErrorName("new RTCTrackEvent('eventType', { receiver: receiver, track: track, transceiver: null})", "TypeError");
+                debug("");
+
+                debug("Dictionary members receiver, track and transceiver are required");
+                shouldThrowErrorName("new RTCTrackEvent('eventType', { track: track, transceiver: transceiver})", "TypeError");
+                shouldThrowErrorName("new RTCTrackEvent('eventType', { receiver: receiver, transceiver: transceiver})", "TypeError");
+                shouldThrowErrorName("new RTCTrackEvent('eventType', { receiver: receiver, track: track})", "TypeError");
+                debug("");
+
+                finishJSTest();
+            })
+            .catch(function (error) {
+                testFailed("Error caught in promise chain: " + error);
+                finishJSTest();
+            });
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

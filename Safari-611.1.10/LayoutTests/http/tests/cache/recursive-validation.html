@@ -1,0 +1,24 @@
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script>
+jsTestIsAsync = true;
+
+description("Test that recursively loading resource that requires validation does not assert or crash");
+
+function load(completion) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', "resources/no-cache-with-validation.php");
+    xhr.onload = completion;
+    xhr.send();
+}
+
+window.onload = load(function () {
+    load(function () {
+        load(function () {
+            load(function () {
+                 finishJSTest();
+            });
+        });
+    });
+});
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>

@@ -1,0 +1,18 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+<p>
+  Type some short text in the field below. Whitespaces will be replaced
+  by colons.
+</p>
+
+<p>
+  <label for="example_pref">Short text:</label>
+  <input type="text" id="example_pref" name="example_pref" size="30"
+         maxlength="50" value="[% example_pref FILTER html %]">
+</p>

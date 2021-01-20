@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<script>
+  onload = function() {
+    if (window.eventSender) {
+      var selectList = document.getElementById("list");
+      var left = selectList.offsetLeft;
+      var top = selectList.offsetTop;
+
+      // scroll the list all the way down
+      eventSender.mouseMoveTo(left + 10, top + 10);
+      eventSender.continuousMouseScrollBy(0, -10000);
+      eventSender.mouseMoveTo(0, 0);
+    }
+  }
+</script>
+
+<body style="font: 16px/16px monospace;">
+    <p>Scrolling inside the list using the mouse wheel should work as expected<br/>
+    <select id="list" size="2">
+      <option>content1</option>
+      <option>content2</option>
+      <option>content3</option>
+      <option>content4</option>
+      <option>content5</option>
+      <option>content6</option>
+      <option>content7</option>
+      <option>content8</option>
+      <option>content9</option>
+      <option>content10</option>
+    </select>
+</body>

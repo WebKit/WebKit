@@ -1,0 +1,17 @@
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+
+test(() => {
+    assert_own_property(window, "HTMLModelElement");
+}, "HTMLModelElement is exposed on Window.");
+
+test(() => {
+    const model = document.createElement("model");
+    assert_true(model instanceof HTMLModelElement);
+    assert_class_string(model, "HTMLModelElement");
+}, "document.createElement('model') returns an HTMLModelElement object.");
+
+</script>
+</body>
+</html>

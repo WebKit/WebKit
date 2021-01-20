@@ -1,0 +1,4 @@
+
+Check that interactions between column gap, width, and scrollbar width don't cause crashes.
+
+PASS

@@ -1,0 +1,36 @@
+<html>
+<head>
+    <script src="../resources/js-test.js"></script>
+</head>
+
+<body id="body">
+
+<select id="selectElement" multiple title="selectElement">
+    <option SELECTED>Option 1</option>
+    <option>Option 2</option>
+    <option DISABLED>Option 3</option>
+</select>
+
+<p>This tests that we report the correct selection-related states.</p>
+
+<p id="notDRT">This test should only be run inside of DumpRenderTree.</p>
+
+<p id="console"></p>
+
+<script>
+    if (window.testRunner && window.accessibilityController) {
+        document.getElementById("notDRT").style.visibility = "hidden";
+
+        document.getElementById("selectElement").focus();
+
+        shouldBeTrue('accessibilityController.focusedElement.isMultiSelectable');
+        shouldBeTrue('accessibilityController.focusedElement.childAtIndex(0).isSelectable');
+        shouldBeTrue('accessibilityController.focusedElement.childAtIndex(0).isSelected');
+        shouldBeTrue('accessibilityController.focusedElement.childAtIndex(1).isSelectable');
+        shouldBeFalse('accessibilityController.focusedElement.childAtIndex(1).isSelected');
+        shouldBeFalse('accessibilityController.focusedElement.childAtIndex(2).isSelectable');
+        shouldBeFalse('accessibilityController.focusedElement.childAtIndex(2).isSelected');
+    }
+</script>
+</body>
+</html>

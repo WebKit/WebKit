@@ -1,0 +1,7 @@
+X legend
+Y
+legend
+X Y
+
+FAIL fieldset content before legend assert_equals: expected 34 but got 52
+

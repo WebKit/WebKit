@@ -1,0 +1,44 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+<?xml version="1.0"[% IF Param('utf8') %] encoding="UTF-8"[% END %]?>
+<!-- [% template_version %] -->
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:bz="http://www.bugzilla.org/rdf#"
+     xmlns:nc="http://home.netscape.com/NC-rdf#">
+
+<bz:result rdf:about="[% urlbase FILTER xml %]buglist.cgi?[% urlquerypart FILTER html %]">
+  <bz:installation rdf:resource="[% urlbase FILTER xml %]" />
+  <bz:query_timestamp>[% currenttime FILTER time('%Y-%m-%d %T %Z') FILTER html %]</bz:query_timestamp>
+  <bz:bugs>
+    <Seq>
+    [% FOREACH bug = bugs %]
+      <li>
+        
+        <bz:bug rdf:about="[% urlbase FILTER xml %]show_bug.cgi?id=[% bug.bug_id %]">
+          
+          <bz:id nc:parseType="Integer">[% bug.bug_id %]</bz:id>
+        
+        [% FOREACH column = displaycolumns %]
+          <bz:[% column %]>[% bug.$column FILTER html %]</bz:[% column %]>
+        [% END %]
+        
+        </bz:bug>
+      
+      </li>
+
+    [% END %]
+
+    </Seq>
+
+  </bz:bugs>
+
+</bz:result>
+
+</RDF>

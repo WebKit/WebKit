@@ -1,0 +1,18 @@
+This tests that the status display has the corrent error message.
+
+This test only runs in DRT!
+
+
+EVENT: error
+PASS: We are using the apple idiom
+
+Get the status label state
+
+PASS: Name is 'Status Display'
+PASS: Has empty class
+PASS: Content is 'Error'
+PASS: CSS display: block
+PASS: Displayed bounds is non-zero
+
+Testing finished.
+

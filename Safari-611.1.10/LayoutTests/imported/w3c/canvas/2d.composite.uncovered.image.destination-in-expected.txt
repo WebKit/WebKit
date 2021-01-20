@@ -1,0 +1,8 @@
+2d.composite.uncovered.image.destination-in
+drawImage() draws pixels not covered by the source object as (0,0,0,0), and does not leave the pixels unchanged.
+Spec references: 2d.composite.destination-in
+Actual output:
+Expected output:
+
+Passed
+

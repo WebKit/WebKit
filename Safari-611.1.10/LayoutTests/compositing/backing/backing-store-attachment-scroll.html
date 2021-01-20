@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.layerized {
+    transform: translateZ(0);
+    width: 300px;
+    height: 300px;
+}
+.vspace {
+    height: 1000px;
+}
+
+#out {
+    position: absolute;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = function() {
+    if (!window.testRunner)
+        return;
+
+    let beforeScrollLayers = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+    
+    requestAnimationFrame(() => {
+
+        window.scrollTo(0, 3000);
+        
+        let uiScript = `(function() {
+            uiController.doAfterNextStablePresentationUpdate(function() {
+                uiController.uiScriptComplete();
+            });
+        })()`
+        
+        testRunner.runUIScript(uiScript, () => {
+            let afterLayers = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+            let out = document.getElementById('out');
+            out.textContent = `Before\n${beforeScrollLayers}\n\nAfter\n${afterLayers}`
+            testRunner.notifyDone();
+        });
+    });
+};
+</script>
+</head>
+<body>
+<pre id="out"></pre>
+    <div class="layerized">First layer.</div>
+    <div class="vspace"></div>
+    <div class="layerized">Second layer.</div>
+    <div class="vspace"></div>
+    <div class="layerized">Third layer.</div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+
+PASS HTTP cache reuses a response with a future Expires
+PASS HTTP cache does not reuse a response with a past Expires
+PASS HTTP cache does not reuse a response with a present Expires
+PASS HTTP cache does not reuse a response with an invalid Expires
+PASS HTTP cache reuses a response with positive Cache-Control: max-age
+PASS HTTP cache does not reuse a response with Cache-Control: max-age=0
+PASS HTTP cache reuses a response with positive Cache-Control: max-age and a past Expires
+PASS HTTP cache reuses a response with positive Cache-Control: max-age and an invalid Expires
+PASS HTTP cache does not reuse a response with Cache-Control: max-age=0 and a future Expires
+PASS HTTP cache does not prefer Cache-Control: s-maxage over Cache-Control: max-age
+PASS HTTP cache does not reuse a response when the Age header is greater than its freshness lifetime
+PASS HTTP cache does not store a response with Cache-Control: no-store
+PASS HTTP cache does not store a response with Cache-Control: no-store, even with max-age and Expires
+PASS HTTP cache stores a response with Cache-Control: no-cache, but revalidates upon use
+PASS HTTP cache stores a response with Cache-Control: no-cache, but revalidates upon use, even with max-age and Expires
+

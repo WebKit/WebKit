@@ -1,0 +1,119 @@
+This tests the CSSKeyframeRule and CSSKeyframesRule interfaces.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS CSSKeyframeRule exists on Window object
+PASS CSSKeyframesRule exists on Window object
+PASS KEYFRAME_RULE exists on Window.CSSRule object
+PASS KEYFRAMES_RULE exists on Window.CSSRule object
+
+Check that the old values still work.
+PASS window.CSSRule.KEYFRAME_RULE is window.CSSRule.WEBKIT_KEYFRAME_RULE
+PASS window.CSSRule.KEYFRAMES_RULE is window.CSSRule.WEBKIT_KEYFRAMES_RULE
+
+PASS keyframes1.type is window.CSSRule.KEYFRAMES_RULE
+PASS keyframes1.name is 'test1'
+
+PASS rules1.length is 2
+PASS rules1.item(0).type is window.CSSRule.KEYFRAME_RULE
+PASS rules1.item(0).cssText is '0% { left: 10px; }'
+PASS rules1.item(1).cssText is '100% { left: 20px; }'
+
+Insert three new rules
+PASS rules1.length is 5
+PASS rules1.item(0).cssText is '0% { left: 10px; }'
+PASS rules1.item(1).cssText is '100% { left: 20px; }'
+PASS rules1.item(2).cssText is '30% { left: 30px; }'
+PASS rules1.item(3).cssText is '60% { left: 60px; }'
+PASS rules1.item(4).cssText is '20% { left: 50px; }'
+
+PASS keyframes2.type is window.CSSRule.KEYFRAMES_RULE
+PASS keyframes2.name is 'test2'
+
+PASS rules2.length is 3
+PASS rules2.item(0).type is window.CSSRule.KEYFRAME_RULE
+PASS rules2.item(0).keyText is '0%'
+PASS rules2.item(1).keyText is '50%'
+PASS rules2.item(2).keyText is '100%'
+PASS rules2.item(0).cssText is '0% { left: 10px; }'
+PASS rules2.item(1).cssText is '50% { left: 30px; }'
+PASS rules2.item(2).cssText is '100% { left: 20px; }'
+
+PASS rules2.item(0).style is an instance of CSSStyleDeclaration
+PASS rules2.item(0).style.length is 1
+
+Find a rule
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+PASS rule.cssText is '50% { left: 30px; }'
+
+Find a rule using from and to
+PASS keyframesFromTo.type is window.CSSRule.KEYFRAMES_RULE
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+PASS rule.cssText is '0% { left: 10px; }'
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+PASS rule.cssText is '100% { left: 20px; }'
+
+Try to find a rule that doesn't exist
+PASS Non-existent rule was not found
+
+Try to find a rule using a malformed key
+PASS rule is null
+
+Delete a rule
+PASS rules2.length is 2
+PASS rules2.item(0).type is window.CSSRule.KEYFRAME_RULE
+PASS rules2.item(0).keyText is '0%'
+PASS rules2.item(1).keyText is '100%'
+
+Delete a from rule
+PASS rulesFromTo.length is 2
+PASS rulesFromTo.item(0).type is window.CSSRule.KEYFRAME_RULE
+PASS rulesFromTo.item(0).keyText is '50%'
+PASS rulesFromTo.item(1).keyText is '100%'
+
+Delete a rule that doesn't exist
+PASS rules2.length is 2
+PASS rules2.item(0).type is window.CSSRule.KEYFRAME_RULE
+PASS rules2.item(0).keyText is '0%'
+PASS rules2.item(1).keyText is '100%'
+
+findRule matching order: from last to first specified
+PASS keyframesFindLast.type is window.CSSRule.KEYFRAMES_RULE
+PASS keyframesFindLast.name is 'test-find-last'
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+PASS rule.cssText is '10% { left: 10px; }'
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+PASS rule.cssText is '10% { left: 10px; }'
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+FAIL rule.cssText should be 10%,20%  { left: 10px; }. Was 10%,20% { left: 1020px; }.
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+FAIL rule.cssText should be 10%,20%  { left: 10px; }. Was 10%,20% { left: 1020px; }.
+PASS rule is null
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+PASS rule.cssText is '0% { left: 0px; }'
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+PASS rule.cssText is '100% { left: 100px; }'
+
+deleteRule matching order: from last to first specified
+PASS keyframesDeleteLast.type is window.CSSRule.KEYFRAMES_RULE
+PASS keyframesDeleteLast.name is 'test-delete-last'
+PASS rulesDeleteLast.length is 8
+PASS rulesDeleteLast.length is 7
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+PASS rule.cssText is '10% { left: 10px; }'
+PASS rulesDeleteLast.length is 6
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+PASS rule.cssText is '10%,20% { left: 1020px; }'
+PASS rulesDeleteLast.length is 6
+PASS rulesDeleteLast.length is 5
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+PASS rule.cssText is '0% { left: 0px; }'
+PASS rulesDeleteLast.length is 4
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+PASS rule.cssText is '100% { left: 100px; }'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

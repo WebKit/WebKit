@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+#test-block * {
+    background-color: white;
+    color: black;
+}
+#test-block :read-only {
+    background-color: red;
+}
+#test-block :read-write {
+    color: lime;
+}
+</style>
+</head>
+<body>
+    <div id="test-block" style="display:none;">
+        <svg id="svg-root-1" xmlns="http://www.w3.org/2000/svg" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+            <g id="fake-contenteditable-group-1" contenteditable xhtml:contenteditable>
+                <foreignObject id="foreign-object-1" x="10" y="10" width="800" height="150">
+                    <body xmlns="http://www.w3.org/1999/xhtml">
+                        <div id="non-editable-block-1">Not Editable</div>
+                        <div id="editing-host-1" contenteditable>
+                            <div id="editable-block-1">Editable</div>
+                        </div>
+                    </body>
+                </foreignObject>
+            </g>
+        </svg>
+        <div contenteditable id="editing-host-2">
+            <svg id="svg-root-2" xmlns="http://www.w3.org/2000/svg">
+                <g id="fake-contenteditable-group-2" contenteditable="false" xhtml:contenteditable="false">
+                    <foreignObject id="foreign-object-2" x="10" y="10" width="800" height="150">
+                        <body xmlns="http://www.w3.org/1999/xhtml">
+                            <div id="editable-block-2">Editable</div>
+                            <div id="nested-editing-host-2" contenteditable>
+                                <div id="editable-block-3">Editable</div>
+                            </div>
+                        </body>
+                    </foreignObject>
+                </g>
+            </svg>
+        </div>
+    </div>
+</body>
+<script>
+description('At the time of writing this test, there is no specification for contenteditable for SVG. Adding contenteditable on an SVG element does not create an editing host. This test verify that having a SVG or HTML attribute "contenteditable" does not interfere with the selectors :read-write and :read-only.');
+
+var editableElements = [
+    "editing-host-1",
+    "editable-block-1",
+    "editing-host-2",
+    "editable-block-2",
+    "nested-editing-host-2",
+    "editable-block-3",
+];
+
+var nonEditableElements = [
+    "svg-root-1",
+    "fake-contenteditable-group-1",
+    "foreign-object-1",
+    "non-editable-block-1",
+    "svg-root-2",
+    "fake-contenteditable-group-2",
+    "foreign-object-2",
+];
+
+function testQuerySelector(selector, expectedResults)
+{
+    shouldBe('document.querySelectorAll("' + selector + '").length', "" + expectedResults.length);
+    for (var i = 0; i < expectedResults.length; ++i)
+        shouldBeEqualToString('document.querySelectorAll("' + selector + '")[' + i + '].id', expectedResults[i]);
+}
+
+function testStyling(expectedReadOnlyElements)
+{
+    var allTestCases = document.querySelectorAll('#test-block *');
+    for (var i = 0; i < allTestCases.length; ++i) {
+        var isReadOnly = expectedReadOnlyElements.indexOf(allTestCases[i].id) >= 0;
+        shouldBeEqualToString('getComputedStyle(document.querySelectorAll("#test-block *")[' + i + ']).color', isReadOnly ? 'rgb(0, 0, 0)' : 'rgb(0, 255, 0)')
+        shouldBeEqualToString('getComputedStyle(document.querySelectorAll("#test-block *")[' + i + ']).backgroundColor', isReadOnly ? 'rgb(255, 0, 0)' : 'rgb(255, 255, 255)')
+    }
+}
+
+testStyling(nonEditableElements);
+
+testQuerySelector("#test-block :read-write", editableElements);
+testQuerySelector("#test-block :read-only", nonEditableElements);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<body/>
+<script src="../../../../../resources/testharness.js"></script>
+<script src="../../../../../resources/testharnessreport.js"></script>
+
+<script>
+
+function testCaptureValue(captureValue, expectedValue, test) {
+  var handlerPhase = undefined;
+  var handler = function handler(e) {
+      assert_equals(handlerPhase, undefined);
+      handlerPhase = e.eventPhase;
+  }
+  document.addEventListener('test', handler, captureValue);
+  document.body.dispatchEvent(new Event('test', {'bubbles': true}));
+  document.removeEventListener('test', handler, captureValue);
+  document.body.dispatchEvent(new Event('test', {'bubbles': true}));
+  assert_equals(handlerPhase, expectedValue);
+  test.done();
+}
+
+test(function(t) { testCaptureValue(true, Event.CAPTURING_PHASE, t); }, "True value");
+test(function(t) { testCaptureValue(false, Event.BUBBLING_PHASE, t); }, "False value");
+test(function(t) { testCaptureValue({}, Event.BUBBLING_PHASE, t); }, "Empty object");
+test(function(t) { testCaptureValue(null, Event.BUBBLING_PHASE, t); }, "Null object");
+test(function(t) { testCaptureValue(undefined, Event.BUBBLING_PHASE, t); }, "Undefined object");
+test(function(t) { testCaptureValue(2.3, Event.CAPTURING_PHASE, t); }, "Positive value");
+test(function(t) { testCaptureValue(-1000.3, Event.CAPTURING_PHASE, t); }, "Negative value");
+test(function(t) { testCaptureValue(NaN, Event.BUBBLING_PHASE, t); }, "NaN value");
+test(function(t) { testCaptureValue(+0.0, Event.BUBBLING_PHASE, t); }, "Postive zero value");
+test(function(t) { testCaptureValue(-0.0, Event.BUBBLING_PHASE, t); }, "Negative zero value");
+test(function(t) { testCaptureValue("", Event.BUBBLING_PHASE, t); }, "Empty string value");
+test(function(t) { testCaptureValue("AAAA", Event.CAPTURING_PHASE, t); }, "Non empty string value");
+</script>

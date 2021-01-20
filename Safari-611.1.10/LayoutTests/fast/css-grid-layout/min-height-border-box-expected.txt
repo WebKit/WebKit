@@ -1,0 +1,42 @@
+min-height: auto. grid height: auto
+
+XXXX
+PASS
+XXX
+PASS
+min-height: 0px. grid height: auto
+
+XXXX
+PASS
+XXX
+PASS
+NO STRETCH min-height: 0px. grid height: auto
+
+XXXX
+PASS
+XXX
+PASS
+min-height: 0px. grid height: 15px
+
+XXXX
+PASS
+XXX
+PASS
+NO STRETCH min-height: 0px. grid height: 15px
+
+XXXX
+PASS
+XXX
+PASS
+min-height: 30px. grid height: auto
+
+XXXX
+PASS
+XXX
+PASS
+NO STRETCH min-height: 30px. grid height: auto
+
+XXXX
+PASS
+XXX
+PASS

@@ -1,0 +1,19 @@
+<!doctype html>
+<head>
+<title>line-box-contain: none</title>
+<style>
+.test { -webkit-line-box-contain: none; line-box-contain: none; font: 64px/1em Ahem; background-color:red; margin-top:1em }
+.badline { color:red }
+.goodline { color: green }
+</style>
+</head>
+<body>
+You should see a green line below.  If you see any red, the test has failed.
+
+<div class="test">
+<span class="badline">xxxxx</span><br>
+<span class="badline">xxxxx</span><br>
+<span class="badline">xxxxx</span><br>
+<span class="badline">xxxxx</span><br>
+<span class="goodline">xxxxx</span>
+</div>

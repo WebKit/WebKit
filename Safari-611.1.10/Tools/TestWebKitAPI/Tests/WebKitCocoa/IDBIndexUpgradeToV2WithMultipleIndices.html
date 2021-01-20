@@ -1,0 +1,40 @@
+<script>
+
+var openRequest = indexedDB.open('index-upgrade-test');
+openRequest.onupgradeneeded = function(event) {
+    window.webkit.messageHandlers.testHandler.postMessage('Unexpected upgradeneeded');
+    return;
+
+    // The code below was used to generate database file IndexUpgradeWithMultipleIndices.sqlite3.
+    // It should not be reached during upgrade test because database file already exists.
+    let os1 = db.createObjectStore('colors');
+    os1.createIndex('name', 'name');
+    let os2 = db.createObjectStore('fruits');
+    os2.createIndex('color', 'color');
+    os2.createIndex('name', 'name');
+    os2.put({ name:'apple', color:'red' }, 1);
+}
+
+openRequest.onsuccess = function(event) {
+    let db = event.target.result;
+    try {
+        let transaction = db.transaction(['fruits']);
+        let colorIndex = transaction.objectStore('fruits').index('color');
+        let getRequest = colorIndex.get('red');
+        getRequest.onsuccess = (event) => {
+            window.webkit.messageHandlers.testHandler.postMessage("Get object: " +  JSON.stringify(event.target.result));
+        }
+        getRequest.onerror = (event) => {
+            window.webkit.messageHandlers.testHandler.postMessage('Unexpected get error');
+        }
+    } catch(e) {
+        window.webkit.messageHandlers.testHandler.postMessage("Unexpected error - " + e);
+    }
+}
+
+openRequest.onerror = function(event) {
+    window.webkit.messageHandlers.testHandler.postMessage("Unexpected database error- " + e);
+}
+
+</script>
+

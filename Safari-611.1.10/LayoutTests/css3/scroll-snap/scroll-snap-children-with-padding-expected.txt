@@ -1,0 +1,2 @@
+Scroll-snap offsets are: vertical = { 10, 625, 1240, 1660, 2275, 2890 }
+

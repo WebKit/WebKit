@@ -1,0 +1,21 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg">
+
+<title>Testcase for gradient on text</title>
+
+<!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=424586 -->
+
+    <defs>
+      <linearGradient id="grad" x1="0.0" y1="0.0" x2="1.0" y2="0.0">
+        <stop stop-color="green" offset="0.0"/>
+        <stop stop-color="blue" offset="1.0"/>
+      </linearGradient>
+    </defs>
+    <!-- check the gradient moves with the transform -->
+    <g transform="translate(100,100)">
+      <text font-size="3.5em" fill="url(#grad)">PASS</text>
+    </g>
+</svg>

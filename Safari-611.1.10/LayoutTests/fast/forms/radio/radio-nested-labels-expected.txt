@@ -1,0 +1,4 @@
+This tests our ability to correctly select radio buttons when we have nested label tags. This test only works in DumpRenderTree. It can be tested manually outside of DRT just by clicking around.
+
+one  two  three  four
+Test Succeeded!

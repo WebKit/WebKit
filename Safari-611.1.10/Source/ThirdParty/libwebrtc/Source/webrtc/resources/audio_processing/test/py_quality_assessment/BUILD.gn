@@ -1,0 +1,25 @@
+# Copyright (c) 2017 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../../webrtc.gni")
+
+if (rtc_include_tests) {
+  copy("noise_tracks") {
+    testonly = true
+    sources = [ "noise_tracks/city.wav" ]
+    outputs = [
+      "$root_build_dir/py_quality_assessment/noise_tracks/{{source_file_part}}",
+    ]
+  }  # noise_tracks
+
+  copy("probing_signals") {
+    testonly = true
+    sources = [ "probing_signals/tone-880.wav" ]
+    outputs = [ "$root_build_dir/py_quality_assessment/probing_signals/{{source_file_part}}" ]
+  }  # probing_signals
+}

@@ -1,0 +1,122 @@
+/*
+ * Copyright (C) 2016-2017 Apple Inc. All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+button {
+    position: absolute;
+    left: 0;
+    border: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent !important;
+    -webkit-appearance: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Icon */
+
+button > picture {
+    background-color: var(--secondary-glyph-color);
+    mix-blend-mode: plus-lighter;
+    -webkit-mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    transition: transform 150ms;
+    will-change: transform;
+    /* Work around webkit.org/b/174565 by making the shrinking button's icon non-interactive */
+    pointer-events: none;
+}
+
+button:focus {
+    outline: none;
+}
+
+button:focus > picture {
+    background-color: -webkit-focus-ring-color !important;
+    mix-blend-mode: normal !important;
+}
+
+button.skip-back > picture,
+button.play-pause > picture,
+button.skip-forward > picture {
+    background-color: var(--primary-glyph-color);
+}
+
+button.on > picture {
+    background-color: white !important;
+}
+
+button:active > picture {
+    transform: scale(0.89);
+}
+
+/* Corner style */
+
+button.corner {
+    width: 44px !important;
+    height: var(--inline-controls-bar-height) !important;
+}
+
+/* Center style */
+
+button.center,
+button.small-center {
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%);
+}
+
+button.center {
+    width: 60px !important;
+    height: 60px !important;
+}
+
+button.small-center {
+    width: 31px !important;
+    height: 31px !important;
+}
+
+button.center > .background-tint,
+button.small-center > .background-tint,
+button.center > .background-tint > div,
+button.small-center > .background-tint > div {
+    border-radius: 50%;
+}
+
+button.center > picture,
+button.small-center > picture {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    height: 100% !important;
+    transform: scale(0.4);
+}
+
+button.center:active > picture,
+button.small-center:active > picture {
+    transform: scale(0.4) scale(calc(8/9));
+}

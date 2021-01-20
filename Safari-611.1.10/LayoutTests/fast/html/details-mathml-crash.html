@@ -1,0 +1,10 @@
+This test passes if it doesn't crash.
+<div><br><summary><mrow></mrow><br>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.execCommand("SelectAll", false, null);
+var style = document.createElement("style");
+style.innerHTML="* { position: absolute; }";
+document.getElementsByTagName("head")[0].appendChild(style);
+</script>

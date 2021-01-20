@@ -1,0 +1,57 @@
+<html> 
+<head>
+
+<style>
+body {
+    font-size: 24px; 
+}
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+}
+p {
+    border: 2px solid blue; 
+    padding: 12px; 
+}
+br {
+    background-color: green; 
+}
+
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for (i = 0; i < 6; i++)
+        extendSelectionForwardByCharacterCommand();
+    boldCommand();
+    moveSelectionForwardByCharacterCommand();
+    insertParagraphCommand();
+    boldCommand();
+    for (i = 0; i < 3; i++)
+        typeCharacterCommand();
+    insertParagraphCommand();
+    insertParagraphCommand();
+    for (i = 0; i < 3; i++)
+        typeCharacterCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+
+Test inserting paragraphs and managing typing style correctly: Only "line 1" should be bold. Other lines should be non-bold. Fix for this bug:
+<a href="rdar://problem/3944492">&lt;rdar://problem/3944492&gt;</a> after pressing return twice, text is bold when it shouldn't be
+<div style="height: 12px"></div>
+
+<p id="test">line 1</p>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

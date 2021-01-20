@@ -1,0 +1,10 @@
+
+PASS share() rejects when URL is invalid
+PASS share() rejects file:// URLs
+PASS share() rejects wss: URLs
+PASS share() rejects about: URLs
+PASS share() rejects chrome: URLs
+PASS share() rejects javascript: URLs
+PASS share() rejects blob: URLs
+FAIL share() rejects data: URLs assert_unreached: Should have rejected: undefined Reached unreachable code
+

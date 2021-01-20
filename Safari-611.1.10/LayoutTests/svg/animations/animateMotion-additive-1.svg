@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG Tiny 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd">
+<svg viewBox="0 0 1000 1000"
+  xmlns="http://www.w3.org/2000/svg" version="1.1" baseProfile="tiny"
+  xmlns:xlink="http://www.w3.org/1999/xlink" onload="loaded()">
+
+<title>additive animateMotion</title>
+<desc>
+A circles is moved along some paths
+(two of them indicated in gray) with
+a duration of 30s using additive animateMotion.
+The superposition is no motion.
+The circle is positioned always at the bottom right.
+The colour of the circle switches from blue to gray after
+the animation is finished.
+If the red center of the circle becomes visible, an error is
+occured.
+</desc>
+<metadata>
+<rdf:RDF
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:cc="http://creativecommons.org/ns#" >
+ <rdf:Description rdf:about="">
+   <dc:title>additive animateMotion</dc:title>
+   <dc:creator>Dr. Olaf Hoffmann</dc:creator>
+   <dc:created>2007-05-06</dc:created>
+   <dc:language>en</dc:language>
+   <dc:description>
+SVG animation test:
+Additive animateMotion resulting in no motion.
+   </dc:description>
+   <dc:relation>http://hoffmann.bplaced.net/svgtest/</dc:relation>
+   <dc:rights>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+   </dc:rights>
+ </rdf:Description>
+</rdf:RDF>
+</metadata>
+<defs>
+<path id="p1"
+  d="M100,100C-300,200 2000,700 100,800" />
+<path id="p2"
+  d="M800,800C1200,700 -1100,200 800,100" />
+</defs>
+
+<g id="am1">
+<circle id="c1" cx="0" cy="0" r="40"
+stroke="#00f" stroke-width="60"
+fill="#f00">
+<set attributeName="stroke"
+        to="#888"
+    begin="30s" />
+</circle>
+
+<animateMotion
+    dur="30s"
+    fill="freeze"
+    path="M0,0Q-10,-10  -800,-800" />
+<animateMotion
+    dur="30s"
+    fill="freeze"
+    additive="sum">
+    <mpath xlink:href="#p1" />
+</animateMotion>
+<animateMotion
+    dur="30s"
+    fill="freeze"
+    additive="sum"
+    values="0,0;700,700;800,800" />
+<animateMotion
+    dur="30s"
+    fill="freeze"
+    additive="sum"
+    from="0,-800"
+    to="-800,0" />
+<animateMotion
+    dur="30s"
+    fill="freeze"
+    additive="sum">
+    <mpath xlink:href="#p2" />
+</animateMotion>
+<animateMotion
+    dur="30s"
+    fill="freeze"
+    additive="sum"
+    path="M0,800C1,799 790,10 800,0" />
+
+</g>
+
+<g fill="none" stroke-width="5"
+  stroke="#888" stroke-linecap="round" stroke-linejoin="round">
+<use xlink:href="#p1" />
+<use xlink:href="#p2" />
+</g>
+<circle id="c2" cx="900" cy="900" r="10" fill="#888" />
+
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function loaded() {
+    document.documentElement.setCurrentTime(31);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</svg>

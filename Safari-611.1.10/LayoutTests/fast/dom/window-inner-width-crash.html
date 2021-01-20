@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function runTest() {
+    button.autofocus = true;
+    body.appendChild(paragraph);
+    var testVal = window[0].innerWidth;
+}
+
+function fireSelect() {
+    input.select();
+}
+
+function appendToSelect() {
+    select.appendChild(frame);
+}
+</script>
+</head>
+<body id="body" onload="runTest()">
+    <p>This test passes if it does not crash.</p>
+    <iframe id="frame"></iframe>
+    <p id="paragraph">
+        <button id="button" onkeydown="appendToSelect()"></button>
+        <style onload="fireSelect()"></style>
+        <li></li>
+        <select id="select">
+            <input id="input" for="paragraph" onblur="appendToSelect()"></input>
+        </select>
+</body>
+</html>

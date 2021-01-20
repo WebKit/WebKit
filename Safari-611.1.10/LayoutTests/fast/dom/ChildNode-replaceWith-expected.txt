@@ -1,0 +1,183 @@
+Tests ChildNode.replaceWith((Node or DOMString)...)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test Element.replaceWith((Node or DOMString)...).
+Test with no arguments.
+PASS parent.childNodes.length is 0
+
+Test with a single element.
+PASS parent.childNodes.length is 1
+PASS parent.childNodes[0] is d1
+
+Test with a single string.
+PASS parent.childNodes.length is 1
+PASS parent.childNodes[0].data is 'hello'
+
+Test with a both strings and elements.
+PASS parent.childNodes.length is 2
+PASS parent.childNodes[0] is an instance of Text
+PASS parent.childNodes[0].data is 'hello'
+PASS parent.childNodes[1] is an instance of Element
+PASS parent.childNodes[1] is d1
+
+Test conversion to string
+PASS parent.childNodes.length is 3
+PASS parent.childNodes[0] is an instance of Text
+PASS parent.childNodes[0].data is 'null'
+PASS parent.childNodes[1] is an instance of Text
+PASS parent.childNodes[1].data is 'undefined'
+PASS parent.childNodes[2] is an instance of Text
+PASS parent.childNodes[2].data is '7'
+
+Test a child without a parent.
+PASS child.replaceWith(d1) did not throw exception.
+
+Test replacing with an existing sibling.
+PASS parent.childNodes.length is 2
+PASS parent.childNodes[0] is an instance of Element
+PASS parent.childNodes[0] is d1
+PASS parent.childNodes[1] is an instance of Element
+PASS parent.childNodes[1] is d2
+
+Test replacing a child with itself.
+PASS parent.childNodes.length is 1
+PASS parent.childNodes[0] is an instance of Element
+PASS parent.childNodes[0] is child
+
+Test replacing a child with itself and another node.
+PASS parent.childNodes.length is 2
+PASS parent.childNodes[0] is an instance of Element
+PASS parent.childNodes[0] is child
+PASS parent.childNodes[1] is an instance of Element
+PASS parent.childNodes[1] is d1
+
+Test replacing a child with itself and a sibling.
+PASS parent.childNodes.length is 2
+PASS parent.childNodes[0] is an instance of Element
+PASS parent.childNodes[0] is d1
+PASS parent.childNodes[1] is an instance of Element
+PASS parent.childNodes[1] is child
+
+
+Test Text.replaceWith((Node or DOMString)...).
+Test with no arguments.
+PASS parent.childNodes.length is 0
+
+Test with a single element.
+PASS parent.childNodes.length is 1
+PASS parent.childNodes[0] is d1
+
+Test with a single string.
+PASS parent.childNodes.length is 1
+PASS parent.childNodes[0].data is 'hello'
+
+Test with a both strings and elements.
+PASS parent.childNodes.length is 2
+PASS parent.childNodes[0] is an instance of Text
+PASS parent.childNodes[0].data is 'hello'
+PASS parent.childNodes[1] is an instance of Element
+PASS parent.childNodes[1] is d1
+
+Test conversion to string
+PASS parent.childNodes.length is 3
+PASS parent.childNodes[0] is an instance of Text
+PASS parent.childNodes[0].data is 'null'
+PASS parent.childNodes[1] is an instance of Text
+PASS parent.childNodes[1].data is 'undefined'
+PASS parent.childNodes[2] is an instance of Text
+PASS parent.childNodes[2].data is '7'
+
+Test a child without a parent.
+PASS child.replaceWith(d1) did not throw exception.
+
+Test replacing with an existing sibling.
+PASS parent.childNodes.length is 2
+PASS parent.childNodes[0] is an instance of Element
+PASS parent.childNodes[0] is d1
+PASS parent.childNodes[1] is an instance of Element
+PASS parent.childNodes[1] is d2
+
+Test replacing a child with itself.
+PASS parent.childNodes.length is 1
+PASS parent.childNodes[0] is an instance of Text
+PASS parent.childNodes[0] is child
+
+Test replacing a child with itself and another node.
+PASS parent.childNodes.length is 2
+PASS parent.childNodes[0] is an instance of Text
+PASS parent.childNodes[0] is child
+PASS parent.childNodes[1] is an instance of Element
+PASS parent.childNodes[1] is d1
+
+Test replacing a child with itself and a sibling.
+PASS parent.childNodes.length is 2
+PASS parent.childNodes[0] is an instance of Element
+PASS parent.childNodes[0] is d1
+PASS parent.childNodes[1] is an instance of Text
+PASS parent.childNodes[1] is child
+
+
+Test Comment.replaceWith((Node or DOMString)...).
+Test with no arguments.
+PASS parent.childNodes.length is 0
+
+Test with a single element.
+PASS parent.childNodes.length is 1
+PASS parent.childNodes[0] is d1
+
+Test with a single string.
+PASS parent.childNodes.length is 1
+PASS parent.childNodes[0].data is 'hello'
+
+Test with a both strings and elements.
+PASS parent.childNodes.length is 2
+PASS parent.childNodes[0] is an instance of Text
+PASS parent.childNodes[0].data is 'hello'
+PASS parent.childNodes[1] is an instance of Element
+PASS parent.childNodes[1] is d1
+
+Test conversion to string
+PASS parent.childNodes.length is 3
+PASS parent.childNodes[0] is an instance of Text
+PASS parent.childNodes[0].data is 'null'
+PASS parent.childNodes[1] is an instance of Text
+PASS parent.childNodes[1].data is 'undefined'
+PASS parent.childNodes[2] is an instance of Text
+PASS parent.childNodes[2].data is '7'
+
+Test a child without a parent.
+PASS child.replaceWith(d1) did not throw exception.
+
+Test replacing with an existing sibling.
+PASS parent.childNodes.length is 2
+PASS parent.childNodes[0] is an instance of Element
+PASS parent.childNodes[0] is d1
+PASS parent.childNodes[1] is an instance of Element
+PASS parent.childNodes[1] is d2
+
+Test replacing a child with itself.
+PASS parent.childNodes.length is 1
+PASS parent.childNodes[0] is an instance of Comment
+PASS parent.childNodes[0] is child
+
+Test replacing a child with itself and another node.
+PASS parent.childNodes.length is 2
+PASS parent.childNodes[0] is an instance of Comment
+PASS parent.childNodes[0] is child
+PASS parent.childNodes[1] is an instance of Element
+PASS parent.childNodes[1] is d1
+
+Test replacing a child with itself and a sibling.
+PASS parent.childNodes.length is 2
+PASS parent.childNodes[0] is an instance of Element
+PASS parent.childNodes[0] is d1
+PASS parent.childNodes[1] is an instance of Comment
+PASS parent.childNodes[1] is child
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

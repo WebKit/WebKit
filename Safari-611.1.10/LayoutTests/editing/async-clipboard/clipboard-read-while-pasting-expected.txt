@@ -1,0 +1,12 @@
+This test verifies that the clipboard is accessible while performing a paste from native UI. To manually run the test, click the 'Copy' button above, and then paste in the text field below using native UI (e.g. menu item or cmd+V on macOS, and the callout menu on iOS). The text 'The quick brown fox jumped over the lazy dog.' should be read via the clipboard API, without triggering an additional DOM paste menu.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS doneWritingText became true
+PASS Read text: 'The quick brown fox jumped over the lazy dog.'
+PASS doneReadingText became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Copy

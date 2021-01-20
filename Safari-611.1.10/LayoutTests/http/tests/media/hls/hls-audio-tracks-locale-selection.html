@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=../../media-resources/video-test.js></script>
+        <script src=../../media-resources/media-controls.js></script>
+        <script>
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+
+            function start() {
+                if (window.internals)
+                    run('internals.setUserPreferredLanguages(["jp", "fr", "es-EN", "en"])');
+                else
+                    consoleWrite('Change your system language to French, and check that the french audio track was selected by default.');
+
+                video = document.getElementById('video');
+                waitForEvent('canplaythrough', canplaythrough);
+                video.src = "../resources/hls/audio-tracks.m3u8";
+            }
+
+            function canplaythrough() {
+                testExpected("video.audioTracks.length", 3);
+                testExpected("video.audioTracks[0].enabled", false);
+                testExpected("video.audioTracks[1].enabled", true);
+                testExpected("video.audioTracks[2].enabled", false);
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <video id="video"></video>
+    </body>
+</html>

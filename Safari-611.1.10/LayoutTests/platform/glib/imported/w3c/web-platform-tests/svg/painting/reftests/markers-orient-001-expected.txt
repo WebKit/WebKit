@@ -1,0 +1,39 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (133,183) size 534x367
+    RenderSVGContainer {g} at (0,0) size 0x0
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGPath {path} at (0,0) size 17x5 [fill={[type=SOLID] [color=#000000]}] [data="M 0 0 L 0 -2.5 L 10 0 L 0 2.5 Z"]
+      RenderSVGResourceMarker {marker} [id="OrientAuto"] [markerUnits=strokeWidth] [ref at (0,0)] [angle=0.00]
+        RenderSVGContainer {use} at (0,0) size 17x5
+          RenderSVGPath {path} at (0,0) size 17x5 [fill={[type=SOLID] [color=#000000]}] [data="M 0 0 L 0 -2.5 L 10 0 L 0 2.5 Z"]
+      RenderSVGResourceMarker {marker} [id="OrientFixed"] [markerUnits=strokeWidth] [ref at (0,0)] [angle=45.00]
+        RenderSVGContainer {use} at (0,0) size 17x5
+          RenderSVGPath {path} at (0,0) size 17x5 [fill={[type=SOLID] [color=#000000]}] [data="M 0 0 L 0 -2.5 L 10 0 L 0 2.5 Z"]
+      RenderSVGResourceMarker {marker} [id="OrientAutoReverse"] [markerUnits=strokeWidth] [ref at (0,0)] [angle=auto]
+        RenderSVGContainer {use} at (0,0) size 17x5
+          RenderSVGPath {path} at (0,0) size 17x5 [fill={[type=SOLID] [color=#000000]}] [data="M 0 0 L 0 -2.5 L 10 0 L 0 2.5 Z"]
+    RenderSVGHiddenContainer {g} at (0,0) size 0x0
+      RenderSVGContainer {use} at (200,183) size 67x34 [transform={m=((4.00,0.00)(0.00,4.00)) t=(120.00,120.00)}]
+        RenderSVGPath {path} at (200,183) size 67x34 [fill={[type=SOLID] [color=#FF0000]}] [data="M 0 0 L 0 -2.5 L 10 0 L 0 2.5 Z"]
+      RenderSVGContainer {use} at (400,183) size 67x34 [transform={m=((4.00,0.00)(0.00,4.00)) t=(240.00,120.00)}]
+        RenderSVGPath {path} at (400,183) size 67x34 [fill={[type=SOLID] [color=#FF0000]}] [data="M 0 0 L 0 -2.5 L 10 0 L 0 2.5 Z"]
+      RenderSVGContainer {use} at (600,183) size 67x34 [transform={m=((4.00,0.00)(0.00,4.00)) t=(360.00,120.00)}]
+        RenderSVGPath {path} at (600,183) size 67x34 [fill={[type=SOLID] [color=#FF0000]}] [data="M 0 0 L 0 -2.5 L 10 0 L 0 2.5 Z"]
+      RenderSVGContainer {use} at (188,354) size 71x72 [transform={m=((2.83,2.83)(-2.83,2.83)) t=(120.00,220.00)}]
+        RenderSVGPath {path} at (188,354) size 71x72 [fill={[type=SOLID] [color=#FF0000]}] [data="M 0 0 L 0 -2.5 L 10 0 L 0 2.5 Z"]
+      RenderSVGContainer {use} at (388,354) size 71x72 [transform={m=((2.83,2.83)(-2.83,2.83)) t=(240.00,220.00)}]
+        RenderSVGPath {path} at (388,354) size 71x72 [fill={[type=SOLID] [color=#FF0000]}] [data="M 0 0 L 0 -2.5 L 10 0 L 0 2.5 Z"]
+      RenderSVGContainer {use} at (588,354) size 71x72 [transform={m=((2.83,2.83)(-2.83,2.83)) t=(360.00,220.00)}]
+        RenderSVGPath {path} at (588,354) size 71x72 [fill={[type=SOLID] [color=#FF0000]}] [data="M 0 0 L 0 -2.5 L 10 0 L 0 2.5 Z"]
+      RenderSVGContainer {use} at (133,516) size 67x34 [transform={m=((-4.00,0.00)(-0.00,-4.00)) t=(120.00,320.00)}]
+        RenderSVGPath {path} at (133,516) size 67x34 [fill={[type=SOLID] [color=#FF0000]}] [data="M 0 0 L 0 -2.5 L 10 0 L 0 2.5 Z"]
+      RenderSVGContainer {use} at (400,516) size 67x34 [transform={m=((4.00,0.00)(0.00,4.00)) t=(240.00,320.00)}]
+        RenderSVGPath {path} at (400,516) size 67x34 [fill={[type=SOLID] [color=#FF0000]}] [data="M 0 0 L 0 -2.5 L 10 0 L 0 2.5 Z"]
+      RenderSVGContainer {use} at (600,516) size 67x34 [transform={m=((4.00,0.00)(0.00,4.00)) t=(360.00,320.00)}]
+        RenderSVGPath {path} at (600,516) size 67x34 [fill={[type=SOLID] [color=#FF0000]}] [data="M 0 0 L 0 -2.5 L 10 0 L 0 2.5 Z"]
+    RenderSVGContainer {g} at (133,183) size 534x367
+      RenderSVGPath {path} at (200,183) size 467x34 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [start marker=OrientAuto] [middle marker=OrientAuto] [end marker=OrientAuto] [data="M 120 120 L 240 120 L 360 120"]
+      RenderSVGPath {path} at (188,354) size 471x72 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [start marker=OrientFixed] [middle marker=OrientFixed] [end marker=OrientFixed] [data="M 120 220 L 240 220 L 360 220"]
+      RenderSVGPath {path} at (133,516) size 534x34 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [start marker=OrientAutoReverse] [middle marker=OrientAutoReverse] [end marker=OrientAutoReverse] [data="M 120 320 L 240 320 L 360 320"]

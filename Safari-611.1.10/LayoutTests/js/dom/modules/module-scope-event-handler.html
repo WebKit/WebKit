@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="target"></div>
+<div id="target2" onclick="window.visibleAtATime = cocoa; shouldBeEqualToString('visibleAtATime', 'Global Scope'); finishJSTest();"></div>
+<script>
+description("Test relationship between module scope and event handlers");
+
+window.jsTestIsAsync = true;
+debug("Module is not executed yet.");
+window.cocoa = 'Global Scope'
+window.visibleAtATime = null;
+</script>
+<script type="module">
+var cocoa = 'Module Scope';
+window.visibleAtATime = cocoa;
+shouldBeEqualToString("visibleAtATime", "Module Scope");
+var target = document.getElementById('target');
+target.onclick = function () {
+    window.visibleAtATime = cocoa;
+    shouldBeEqualToString("visibleAtATime", "Module Scope");
+    var target2 = document.getElementById('target2');
+    target2.click();
+};
+target.click();
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests deleting DOMTimer inside another DOMTimer. WebKit should not hit any debug assertions.</p>
+<p id="result"></p>
+<script src="../../resources/gc.js"></script>
+<script>
+
+if (!window.testRunner)
+    document.getElementById('result').textContent = 'This test requires testRunner';
+else {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    setTimeout(() => {
+        for (let k = 0; k < 50; k++) {
+            const frames = [];
+            for (let i = 0; i < 1; i++)
+                frames[i] = createTimerInNewFrame();
+            for (const frame of frames)
+                frame.remove();
+            frames.length = 0;
+            gc();
+        }
+        self.postMessage('end', '*');
+    }, 0);
+
+    window.onmessage = () => {
+        document.getElementById('result').textContent = 'PASS';
+        testRunner.notifyDone();
+    }
+}
+
+function createTimerInNewFrame()
+{
+    const frame = document.createElement('iframe');
+    document.body.appendChild(frame);
+    frame.contentWindow.setTimeout(() => {}, 0);
+    return frame;
+}
+
+</script>
+</body>
+</html>

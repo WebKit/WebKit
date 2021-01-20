@@ -1,0 +1,344 @@
+<!doctype html>
+<html>
+<head>
+<title>One tab p2p</title>
+
+<style type="text/css">
+    video { width: 240px; height: 160px; border: black 1px dashed; }
+    input { margin: 2px }
+</style>
+
+<script>
+// Make use of prefixed APIs to run this test in Chrome and Firefox
+self.RTCPeerConnection = self.RTCPeerConnection || self.webkitRTCPeerConnection || self.mozRTCPeerConnection;
+navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+let legacyCheckBox;
+let closeButton;
+let pcA;
+let pcB;
+let localStream;
+
+const pcNames = {
+    first: "A",
+    second: "B"
+};
+
+// FIXME: We should be able to use an empty configuration (bug: http://webkit.org/b/158936)
+const configuration = { "iceServers": [{ "urls": "stun:mmt-stun.verkstad.net" }] };
+
+document.addEventListener("DOMContentLoaded", function () {
+    legacyCheckBox = document.querySelector("#legacy_check");
+    const audioCheckBox = document.querySelector("#audio_check");
+    const videoCheckBox = document.querySelector("#video_check");
+
+    const startButton = document.querySelector("#start_but");
+    closeButton = document.querySelector("#close_but");
+
+    const testButtons = {
+        "single": document.querySelector("#single_but"),
+        "mediaAtoB": document.querySelector("#media_A_to_B_but"),
+        "mediaBtoA": document.querySelector("#media_B_to_A_but")
+    };
+
+    function setTestButtonsDisabled(isDisabled) {
+        for (let p in testButtons)
+            testButtons[p].disabled = isDisabled;
+    }
+
+    startButton.onclick = function () {
+        navigator.getUserMedia({
+            "audio": audioCheckBox.checked,
+            "video": videoCheckBox.checked
+        }, function (stream) {
+            audioCheckBox.disabled = videoCheckBox.disabled = true;
+            localStream = stream;
+            startButton.disabled = true;
+            setTestButtonsDisabled(false);
+        }, logError);
+    };
+
+    closeButton.onclick = function (evt) {
+        evt.target.disabled = true;
+        console.log("Closing");
+        pcA.close();
+        pcB.close();
+        pcA = null;
+        pcB = null;
+
+        setTestButtonsDisabled(false);
+    }
+
+    testButtons.single.onclick = function (evt) {
+        setTestButtonsDisabled(true);
+        getTestFunction("singleDialog")();
+    }
+
+    testButtons.mediaAtoB.onclick = function (evt) {
+        setTestButtonsDisabled(true);
+        if (!pcA)
+            commonSetup();
+        getTestFunction("addOneWayMedia")(pcA, pcB, testButtons.mediaBtoA);
+    }
+
+    testButtons.mediaBtoA.onclick = function (evt) {
+        setTestButtonsDisabled(true);
+        if (!pcA)
+            commonSetup();
+        getTestFunction("addOneWayMedia")(pcB, pcA, testButtons.mediaAtoB);
+    }
+});
+
+function getTestFunction(name) {
+    const functionName = legacyCheckBox.checked ? name : `${name}Promise`;
+    return self[functionName];
+}
+
+function singleDialog() {
+    commonSetup();
+
+    renderStream(localStream, document.querySelector("#self_viewA"));
+    pcA.addStream(localStream);
+
+    pcA.createOffer(function (offer) {
+        pcA.setLocalDescription(offer, function () {
+            offerToB(pcA.localDescription);
+        }, logError);
+    }, logError);
+
+    function offerToB(offer) {
+        logSignalling(offer, pcA, pcB);
+        pcB.setRemoteDescription(offer, function () {
+            addStoredCandidates(pcB);
+            renderStream(localStream, document.querySelector("#self_viewB"));
+            pcB.addStream(localStream);
+
+            pcB.createAnswer(function (answer) {
+                pcB.setLocalDescription(answer, function () {
+                    answerToA(pcB.localDescription);
+                }, logError);
+            }, logError);
+        }, logError);
+    }
+
+    function answerToA(answer) {
+        logSignalling(answer, pcB, pcA);
+        pcA.setRemoteDescription(answer, function () {
+            console.log("Initiator got answer, O/A dialog completed");
+            addStoredCandidates(pcA);
+            closeButton.disabled = false;
+        }, logError);
+    }
+}
+
+function singleDialogPromise() {
+    commonSetup();
+
+    renderStream(localStream, document.querySelector("#self_viewA"));
+    localStream.getTracks().forEach(track => {
+        pcA.addTrack(track, localStream);
+    });
+
+    pcA.createOffer().then(function (offer) {
+        return pcA.setLocalDescription(offer);
+    })
+    .then(function () {
+        logSignalling(pcA.localDescription, pcA, pcB);
+        return pcB.setRemoteDescription(pcA.localDescription);
+    })
+    .then(function () {
+        addStoredCandidates(pcB);
+        renderStream(localStream, document.querySelector("#self_viewB"));
+        localStream.getTracks().forEach(track => {
+            pcB.addTrack(track, localStream);
+        });
+        return pcB.createAnswer();
+    })
+    .then(function (answer) {
+        return pcB.setLocalDescription(answer);
+    })
+    .then(function () {
+        logSignalling(pcB.localDescription, pcB, pcA);
+        return pcA.setRemoteDescription(pcB.localDescription);
+    })
+    .then(function () {
+        addStoredCandidates(pcA);
+        console.log("Initiator got answer, O/A dialog completed");
+        closeButton.disabled = false;
+    })
+    .catch(logError);
+}
+
+function addOneWayMedia(offeringPc, answeringPc, continueButton) {
+    renderStream(localStream, document.querySelector(`#self_view${offeringPc.name}`));
+    offeringPc.addStream(localStream);
+
+    offeringPc.createOffer(function (offer) {
+        offeringPc.setLocalDescription(offer, function () {
+            offerToAnsweringPc(offeringPc.localDescription);
+        }, logError);
+    }, logError);
+
+    function offerToAnsweringPc(offer) {
+        logSignalling(offer, offeringPc, answeringPc);
+        answeringPc.setRemoteDescription(offer, function () {
+            addStoredCandidates(answeringPc);
+            answeringPc.createAnswer(function (answer) {
+                answeringPc.setLocalDescription(answer, function () {
+                    answerToOfferingPc(answeringPc.localDescription);
+                }, logError);
+            }, logError);
+        }, logError);
+    }
+
+    function answerToOfferingPc(answer) {
+        logSignalling(answer, answeringPc, offeringPc);
+        offeringPc.setRemoteDescription(answer, function () {
+            console.log("Initiator side got answer, single way O/A dialog completed");
+            addStoredCandidates(offeringPc);
+            continueButton.disabled = false;
+            closeButton.disabled = false;
+        }, logError);
+    }
+}
+
+function addOneWayMediaPromise(offeringPc, answeringPc, continueButton) {
+    renderStream(localStream, document.querySelector(`#self_view${offeringPc.name}`));
+    localStream.getTracks().forEach(track => {
+        offeringPc.addTrack(track, localStream);
+    });
+
+    offeringPc.createOffer().then(function (offer) {
+        return offeringPc.setLocalDescription(offer);
+    })
+    .then(function () {
+        logSignalling(offeringPc.localDescription, offeringPc, answeringPc);
+        return answeringPc.setRemoteDescription(offeringPc.localDescription);
+    })
+    .then(function () {
+        addStoredCandidates(answeringPc);
+        return answeringPc.createAnswer();
+    })
+    .then(function (answer) {
+        return answeringPc.setLocalDescription(answer)
+    })
+    .then(function () {
+        logSignalling(answeringPc.localDescription, answeringPc, offeringPc);
+        return offeringPc.setRemoteDescription(answeringPc.localDescription)
+    })
+    .then(function () {
+        console.log("Initiator side got answer, single way O/A dialog completed");
+        addStoredCandidates(offeringPc);
+        continueButton.disabled = false;
+        closeButton.disabled = false;
+    })
+    .catch(logError);
+}
+
+function commonSetup() {
+    pcA = new RTCPeerConnection(configuration);
+    pcB = new RTCPeerConnection(configuration);
+
+    pcA.name = pcNames.first;
+    pcB.name = pcNames.second;
+
+    symetricSetup(pcA, pcB);
+    symetricSetup(pcB, pcA);
+}
+
+function addStoredCandidates(pc) {
+    if (!pc.storedCandidates)
+        return;
+
+    pc.storedCandidates.forEach(candidate => {
+        pc.addIceCandidate(candidate).catch(logError);
+    });
+
+    console.log(`Added ${pc.storedCandidates.length} stored candidates (arrived before remote description was set)`);
+    pc.storedCandidates = null;
+}
+
+function symetricSetup(pc, otherPc) {
+    pc.onicecandidate = function (evt) {
+        if (evt.candidate) {
+            logSignalling(evt.candidate, pc, otherPc);
+            // If the remote description isn't set yet, store the candidate
+            if (!otherPc.remoteDescription) {
+                if (!otherPc.storedCandidates)
+                    otherPc.storedCandidates = [];
+                otherPc.storedCandidates.push(evt.candidate);
+            } else
+                otherPc.addIceCandidate(evt.candidate).catch(logError);
+        }
+    };
+
+    pc.onaddstream = function (evt) {
+        renderStream(evt.stream, document.querySelector(`#remote_view${pc.name}`));
+    };
+}
+
+function renderStream(stream, video) {
+    if (typeof video.srcObject !== "undefined")
+        video.srcObject = stream;
+    else
+        video.src = URL.createObjectURL(stream);
+}
+
+function logSignalling(msg, fromPc, toPc) {
+    const type = msg.candidate ? "Candidate" : msg.type.replace(/^[a-z]/, s => s.toUpperCase());
+    let header = `${type} `;
+    header += fromPc.name == pcNames.first ? `${fromPc.name} -> ${toPc.name}` : `${toPc.name} <- ${fromPc.name}`;
+    console.groupCollapsed(header);
+    console.log(msg.candidate || msg.sdp);
+    console.groupEnd();
+}
+
+function logError(error) {
+    if (error) {
+        if (error.name || error.message)
+            console.error(`logError: ${error.name || "-"}: ${error.message || "-"}`);
+        else
+            console.error(`logError: ${error}`);
+    } else
+        console.error("logError: (no error message)");
+}
+</script>
+
+</head>
+<body>
+<h3>One Tab P2P - Test Different Signaling Schemas</h3>
+<p>Click start to request user media. The same stream is sent in both directions so a successful
+bidirectional media setup shows the same output in all four video elements. Open console to view
+signaling details. Some browsers only allow access to user media via a secure origin (e.g.
+localhost).</p>
+<input type="checkbox" id="legacy_check">Use Legacy APIs (Chrome compatible)<br>
+<input type="checkbox" id="audio_check">Audio<br>
+<input type="checkbox" id="video_check" checked>Video<br>
+
+<input type="button" id="start_but" value="Start">
+<input type="button" id="close_but" value="Close Connections" disabled>
+<br>
+Setup bidirectional media: <input type="button" id="single_but" value="Single SDP dialog" disabled>
+<br>
+Setup media in one direction at a time: <input type="button" id="media_A_to_B_but" value="Media A to B" disabled>
+<input type="button" id="media_B_to_A_but" value="Media B to A" disabled>
+<br>
+
+<table>
+    <tr>
+        <td>Local (A)</td><td>Remote (A)</td>
+    </tr>
+    <tr>
+        <td><video id="self_viewA" autoplay muted></video></td>
+        <td><video id="remote_viewA" autoplay></video></td>
+    </tr>
+    <tr>
+        <td>Local (B)</td><td>Remote (B)</td>
+    </tr>
+    <tr>
+        <td><video id="self_viewB" autoplay muted></video></td>
+        <td><video id="remote_viewB" autoplay></video></td>
+    </tr>
+</table>
+</body>
+</html>

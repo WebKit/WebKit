@@ -1,0 +1,65 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<video src="../../content/test.mp4" style="width: 320px; height: 240px;"></video>
+<div id="shadow"></div>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing the <code>MediaController</code> behavior when entering and leaving fullscreen.");
+
+const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "open" });
+const media = document.querySelector("video");
+const mediaController = createControls(shadowRoot, media, null);
+
+const button = document.body.appendChild(document.createElement("button"));
+button.textContent = "Enter Fullscreen";
+
+function enterFullscreen()
+{
+    if (!("eventSender" in window)) {
+        debug("This test is designed to run in DRT");
+        return;
+    }
+
+    // Click a button so we may enter fullscreen.
+    button.addEventListener("click", event => {
+        try {
+            media.webkitEnterFullscreen();
+        } catch(e) {
+            debug("Toggling fullscreen failed");
+            finishJSTest();
+        }
+    });
+
+    eventSender.mouseMoveTo(button.offsetLeft + 1, button.offsetTop + 1);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+media.addEventListener("webkitfullscreenchange", function() {
+    if (media.webkitDisplayingFullscreen) {
+        debug("Media entered fullscreen");
+        shouldBe("mediaController.layoutTraits", "LayoutTraits.macOS | LayoutTraits.Fullscreen");
+        shouldBeTrue("mediaController.controls instanceof MacOSFullscreenMediaControls");
+        debug("");
+        media.webkitExitFullscreen()
+    } else {
+        debug("Media exited fullscreen");
+        shouldBe("mediaController.layoutTraits", "LayoutTraits.macOS | LayoutTraits.Inline");
+        shouldBeTrue("mediaController.controls instanceof MacOSInlineMediaControls");
+
+        debug("");
+        shadowRoot.host.remove();
+        media.remove();
+        button.remove();
+        finishJSTest();
+    }
+});
+
+media.addEventListener("loadedmetadata", enterFullscreen);
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

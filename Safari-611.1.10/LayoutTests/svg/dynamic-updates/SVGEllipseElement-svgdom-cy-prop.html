@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="resources/SVGTestCase.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../fast/repaint/resources/repaint.js"></script>
+</head>
+<body onload="runRepaintTest()">
+<h1>SVG 1.1 dynamic update tests</h1>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+// [Name] SVGEllipseElement-svgdom-cy-prop.js
+// [Expected rendering result] unclipped green ellipse - and a series of PASS messages
+
+description("Tests dynamic updates of the 'cy' property of the SVGEllipseElement object")
+createSVGTestCase();
+
+var ellipseElement = createSVGElement("ellipse");
+ellipseElement.setAttribute("cx", "150");
+ellipseElement.setAttribute("cy", "-50");
+ellipseElement.setAttribute("rx", "100");
+ellipseElement.setAttribute("ry", "150");
+ellipseElement.setAttribute("fill", "green");
+
+rootSVGElement.appendChild(ellipseElement);
+shouldBe("ellipseElement.cy.baseVal.value", "-50");
+
+function repaintTest() {
+    ellipseElement.cy.baseVal.value = 150;
+    shouldBe("ellipseElement.cy.baseVal.value", "150");
+
+    completeTest();
+}
+
+var successfullyParsed = true;
+</script>
+</body>
+</html>

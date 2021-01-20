@@ -1,0 +1,9 @@
+This tests the ability of a TimeRanges object to return the time nearest its constituent ranges given a target time.
+EXPECTED (internals.closestTimeToTimeRanges( .5, timeRanges) == '1') OK
+EXPECTED (internals.closestTimeToTimeRanges(1.5, timeRanges) == '1.5') OK
+EXPECTED (internals.closestTimeToTimeRanges(2.1, timeRanges) == '2') OK
+EXPECTED (internals.closestTimeToTimeRanges(3.0, timeRanges) == '2') OK
+EXPECTED (internals.closestTimeToTimeRanges(3.9, timeRanges) == '4') OK
+EXPECTED (internals.closestTimeToTimeRanges(5.5, timeRanges) == '5') OK
+END OF TEST
+

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that event handlers are not called in detached documents. This test passes if you do not see a FAIL alert message.");
+jsTestIsAsync = true;
+
+const payloads = [
+    '<video src=x onerror=alert("FAIL1")>',
+    '<audio src=x onerror=alert("FAIL2")>'
+];
+
+for (let payload of payloads) {
+    document.implementation.createHTMLDocument().write(payload);
+
+    new DOMParser().parseFromString(payload,'text/html');
+
+    var xhr = new XMLHttpRequest;
+    xhr.responseType = 'document';
+    xhr.open('GET', 'data:text/html,', false);
+    xhr.send(null);
+    xhr.response.body.innerHTML = payload;
+}
+
+setTimeout(finishJSTest, 0);
+</script>
+</body>
+</html>

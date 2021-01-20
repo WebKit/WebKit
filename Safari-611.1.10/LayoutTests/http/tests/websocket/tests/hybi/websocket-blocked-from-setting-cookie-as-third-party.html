@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../../js-test-resources/js-test.js"></script>
+    <script src="../../../cookies/resources/cookie-utilities.js"></script>
+    <script>
+        window.jsTestIsAsync = true;
+
+        async function runTest()
+        {
+            testRunner.dumpChildFramesAsText();
+            shouldBeEqualToString("document.location.host", "127.0.0.1:8000");
+            debug("<br>Attempting to set third-party cookie 'foo' through cross-origin WebSocket handshake.");
+            await setCookieUsingWebSocketFromHost("localhost");
+            let iframeElement = document.createElement("iframe");
+            iframeElement.src = "http://localhost:8000/cookies/resources/echo-cookies.php";
+            iframeElement.onload = finishJSTest;
+            debug("<br>Opening localhost third-party iframe to check its cookies.");
+            document.getElementById("output").appendChild(iframeElement);
+        }
+    </script>
+</head>
+<body>
+<div id="output"></div>
+<script>
+    description("Tests WebSocket Set-Cookie behavior for third-parties without existing cookies.");
+    runTest();
+</script>
+</body>
+</html>

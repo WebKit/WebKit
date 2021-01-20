@@ -1,0 +1,588 @@
+# Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+messages -> WebPageProxy {
+    # UI messages
+    CreateNewPage(struct WebKit::FrameInfoData originatingFrameInfoData, WebKit::WebPageProxyIdentifier originatingPageID, WebCore::ResourceRequest request, struct WebCore::WindowFeatures windowFeatures, struct WebKit::NavigationActionData navigationActionData) -> (Optional<WebCore::PageIdentifier> newPageID, Optional<WebKit::WebPageCreationParameters> newPageParameters) Synchronous
+    ShowPage()
+    ClosePage()
+    RunJavaScriptAlert(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, String message) -> () Synchronous
+    RunJavaScriptConfirm(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, String message) -> (bool result) Synchronous
+    RunJavaScriptPrompt(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, String message, String defaultValue) -> (String result) Synchronous
+    MouseDidMoveOverElement(struct WebKit::WebHitTestResultData hitTestResultData, uint32_t modifiers, WebKit::UserData userData)
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    UnavailablePluginButtonClicked(uint32_t pluginUnavailabilityReason, String mimeType, String pluginURLString, String pluginspageAttributeURLString, String frameURLString, String pageURLString)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
+#if ENABLE(WEBGL)
+    WebGLPolicyForURL(URL url) -> (enum:uint8_t WebCore::WebGLLoadPolicy loadPolicy) Synchronous
+    ResolveWebGLPolicyForURL(URL url) -> (enum:uint8_t WebCore::WebGLLoadPolicy loadPolicy) Synchronous
+#endif // ENABLE(WEBGL)
+    DidChangeViewportProperties(struct WebCore::ViewportAttributes attributes)
+    DidReceiveEvent(uint32_t type, bool handled)
+    SetCursor(WebCore::Cursor cursor)
+    SetCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
+    SetStatusText(String statusText)
+    SetFocus(bool focused)
+    TakeFocus(uint8_t direction)
+    FocusedFrameChanged(Optional<WebCore::FrameIdentifier> frameID)
+    SetRenderTreeSize(uint64_t treeSize)
+    SetToolbarsAreVisible(bool toolbarsAreVisible)
+    GetToolbarsAreVisible() -> (bool toolbarsAreVisible) Synchronous
+    SetMenuBarIsVisible(bool menuBarIsVisible)
+    GetMenuBarIsVisible() -> (bool menuBarIsVisible) Synchronous
+    SetStatusBarIsVisible(bool statusBarIsVisible)
+    GetStatusBarIsVisible() -> (bool statusBarIsVisible) Synchronous
+    SetIsResizable(bool isResizable)
+    SetWindowFrame(WebCore::FloatRect windowFrame)
+    GetWindowFrame() -> (WebCore::FloatRect windowFrame) Synchronous
+    ScreenToRootView(WebCore::IntPoint screenPoint) -> (WebCore::IntPoint windowPoint) Synchronous
+    RootViewToScreen(WebCore::IntRect rect) -> (WebCore::IntRect screenFrame) Synchronous
+    AccessibilityScreenToRootView(WebCore::IntPoint screenPoint) -> (WebCore::IntPoint windowPoint) Synchronous
+    RootViewToAccessibilityScreen(WebCore::IntRect rect) -> (WebCore::IntRect screenFrame) Synchronous
+
+#if PLATFORM(COCOA)
+    ShowValidationMessage(WebCore::IntRect anchorRect, String message)
+    HideValidationMessage()
+#endif
+
+    RunBeforeUnloadConfirmPanel(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, String message) -> (bool shouldClose) Synchronous
+    PageDidScroll()
+    RunOpenPanel(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, struct WebCore::FileChooserSettings parameters)
+    ShowShareSheet(struct WebCore::ShareDataWithParsedURL shareData) -> (bool granted) Async
+    ShowContactPicker(struct WebCore::ContactsRequestData requestData) -> (Optional<Vector<WebCore::ContactInfo>> info) Async
+    PrintFrame(WebCore::FrameIdentifier frameID) -> () Synchronous
+    RunModal()
+    NotifyScrollerThumbIsVisibleInRect(WebCore::IntRect scrollerThumb)
+    RecommendedScrollbarStyleDidChange(int32_t newStyle)
+    DidChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar)
+    DidChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSide, bool pinnedToRightSide, bool pinnedToTopSide, bool pinnedToBottomSide)
+    DidChangePageCount(unsigned pageCount)
+    PageExtendedBackgroundColorDidChange(WebCore::Color backgroundColor)
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    DidFailToInitializePlugin(String mimeType, String frameURLString, String pageURLString)
+    DidBlockInsecurePluginVersion(String mimeType, String pluginURLString, String frameURLString, String pageURLString, bool replacementObscured)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
+    SetCanShortCircuitHorizontalWheelEvents(bool canShortCircuitHorizontalWheelEvents)
+
+    DidChangeContentSize(WebCore::IntSize newSize)
+    DidChangeIntrinsicContentSize(WebCore::IntSize newIntrinsicContentSize)
+
+#if ENABLE(INPUT_TYPE_COLOR)
+    ShowColorPicker(WebCore::Color initialColor, WebCore::IntRect elementRect, Vector<WebCore::Color> suggestions);
+    SetColorPickerColor(WebCore::Color color);
+    EndColorPicker();
+#endif
+
+#if ENABLE(DATALIST_ELEMENT)
+    ShowDataListSuggestions(struct WebCore::DataListSuggestionInformation suggestionInformation);
+    HandleKeydownInDataList(String key);
+    EndDataListSuggestions();
+#endif
+
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+    ShowDateTimePicker(struct WebCore::DateTimeChooserParameters params);
+    EndDateTimePicker();
+#endif
+
+    # Policy messages
+    DecidePolicyForResponse(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::PolicyCheckIdentifier policyCheckIdentifier, uint64_t navigationID, WebCore::ResourceResponse response, WebCore::ResourceRequest request, bool canShowMIMEType, String downloadAttribute, uint64_t listenerID, WebKit::UserData userData)
+    DecidePolicyForNavigationActionAsync(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::PolicyCheckIdentifier policyCheckIdentifier, uint64_t navigationID, struct WebKit::NavigationActionData navigationActionData, struct WebKit::FrameInfoData originatingFrameInfoData, Optional<WebKit::WebPageProxyIdentifier> originatingPageID, WebCore::ResourceRequest originalRequest, WebCore::ResourceRequest request, IPC::FormDataReference requestBody, WebCore::ResourceResponse redirectResponse, WebKit::UserData userData, uint64_t listenerID)
+    DecidePolicyForNavigationActionSync(WebCore::FrameIdentifier frameID, bool isMainFrame, struct WebKit::FrameInfoData frameInfo, WebCore::PolicyCheckIdentifier policyCheckIdentifier, uint64_t navigationID, struct WebKit::NavigationActionData navigationActionData, struct WebKit::FrameInfoData originatingFrameInfoData, Optional<WebKit::WebPageProxyIdentifier> originatingPageID, WebCore::ResourceRequest originalRequest, WebCore::ResourceRequest request, IPC::FormDataReference requestBody, WebCore::ResourceResponse redirectResponse, WebKit::UserData userData) -> (struct WebKit::PolicyDecision PolicyDecision) Synchronous
+    DecidePolicyForNewWindowAction(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::PolicyCheckIdentifier policyCheckIdentifier, struct WebKit::NavigationActionData navigationActionData, WebCore::ResourceRequest request, String frameName, uint64_t listenerID, WebKit::UserData userData)
+    UnableToImplementPolicy(WebCore::FrameIdentifier frameID, WebCore::ResourceError error, WebKit::UserData userData)
+
+    # Progress messages
+    DidChangeProgress(double value)
+    DidFinishProgress()
+    DidStartProgress()
+
+    SetNetworkRequestsInProgress(bool networkRequestsInProgress)
+
+    # Frame lifetime messages
+    DidCreateMainFrame(WebCore::FrameIdentifier frameID)
+    DidCreateSubframe(WebCore::FrameIdentifier frameID)
+
+    DidCreateWindow(WebCore::FrameIdentifier frameID, struct WebCore::GlobalWindowIdentifier windowIdentifier)
+
+    # Frame load messages
+    DidStartProvisionalLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, uint64_t navigationID, URL url, URL unreachableURL, WebKit::UserData userData)
+    DidReceiveServerRedirectForProvisionalLoadForFrame(WebCore::FrameIdentifier frameID, uint64_t navigationID, WebCore::ResourceRequest request, WebKit::UserData userData)
+    WillPerformClientRedirectForFrame(WebCore::FrameIdentifier frameID, String url, double delay, enum:bool WebCore::LockBackForwardList lockBackForwardList)
+    DidCancelClientRedirectForFrame(WebCore::FrameIdentifier frameID)
+    DidChangeProvisionalURLForFrame(WebCore::FrameIdentifier frameID, uint64_t navigationID, URL url)
+    DidFailProvisionalLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, uint64_t navigationID, String provisionalURL, WebCore::ResourceError error, enum:bool WebCore::WillContinueLoading willContinueLoading, WebKit::UserData userData)
+    DidCommitLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, uint64_t navigationID, String mimeType, bool hasCustomContentProvider, enum:uint8_t WebCore::FrameLoadType loadType, WebCore::CertificateInfo certificateInfo, bool usedLegacyTLS, bool containsPluginDocument, Optional<WebCore::HasInsecureContent> forcedHasInsecureContent, enum:uint8_t WebCore::MouseEventPolicy mouseEventPolicy, WebKit::UserData userData)
+    DidFailLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, uint64_t navigationID, WebCore::ResourceError error, WebKit::UserData userData)
+    DidFinishDocumentLoadForFrame(WebCore::FrameIdentifier frameID, uint64_t navigationID, WebKit::UserData userData)
+    DidFinishLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, uint64_t navigationID, WebKit::UserData userData)
+    DidFirstLayoutForFrame(WebCore::FrameIdentifier frameID, WebKit::UserData userData)
+    DidFirstVisuallyNonEmptyLayoutForFrame(WebCore::FrameIdentifier frameID, WebKit::UserData userData)
+    DidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone> layoutMilestones)
+    DidReceiveTitleForFrame(WebCore::FrameIdentifier frameID, String title, WebKit::UserData userData)
+    DidDisplayInsecureContentForFrame(WebCore::FrameIdentifier frameID, WebKit::UserData userData)
+    DidRunInsecureContentForFrame(WebCore::FrameIdentifier frameID, WebKit::UserData userData)
+    DidDetectXSSForFrame(WebCore::FrameIdentifier frameID, WebKit::UserData userData)
+    DidSameDocumentNavigationForFrame(WebCore::FrameIdentifier frameID, uint64_t navigationID, uint32_t type, URL url, WebKit::UserData userData)
+    DidChangeMainDocument(WebCore::FrameIdentifier frameID)
+    DidExplicitOpenForFrame(WebCore::FrameIdentifier frameID, URL url, String mimeType)
+    DidDestroyNavigation(uint64_t navigationID)
+
+    MainFramePluginHandlesPageScaleGestureDidChange(bool mainFramePluginHandlesPageScaleGesture)
+
+    # History client messages.
+    DidNavigateWithNavigationData(struct WebKit::WebNavigationDataStore store, WebCore::FrameIdentifier frameID)
+    DidPerformClientRedirect(String sourceURLString, String destinationURLString, WebCore::FrameIdentifier frameID)
+    DidPerformServerRedirect(String sourceURLString, String destinationURLString, WebCore::FrameIdentifier frameID)
+    DidUpdateHistoryTitle(String title, String url, WebCore::FrameIdentifier frameID)
+
+    # Custom representations
+    DidFinishLoadingDataForCustomContentProvider(String suggestedFilename, IPC::DataReference data)
+
+    # Forms messages
+    WillSubmitForm(WebCore::FrameIdentifier frameID, WebCore::FrameIdentifier sourceFrameID, Vector<std::pair<String, String>> textFieldValues, uint64_t listenerID, WebKit::UserData userData)
+
+    # Callback messages
+    VoidCallback(WebKit::CallbackID callbackID)
+    DataCallback(IPC::SharedBufferDataReference resultData, WebKit::CallbackID callbackID)
+    ImageCallback(WebKit::ShareableBitmap::Handle bitmapHandle, WebKit::CallbackID callbackID)
+    StringCallback(String resultString, WebKit::CallbackID callbackID)
+    BoolCallback(bool result, WebKit::CallbackID callbackID)
+    InvalidateStringCallback(WebKit::CallbackID callbackID)
+    ComputedPagesCallback(Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::RectEdges<float> computedPageMargin, WebKit::CallbackID callbackID)
+    UnsignedCallback(uint64_t result, WebKit::CallbackID callbackID)
+#if ENABLE(APPLICATION_MANIFEST)
+    ApplicationManifestCallback(Optional<WebCore::ApplicationManifest> manifest, WebKit::CallbackID callbackID)
+#endif
+#if PLATFORM(IOS_FAMILY)
+    InterpretKeyEvent(struct WebKit::EditorState state, bool isCharEvent) -> (bool handled) Synchronous
+    DidReceivePositionInformation(struct WebKit::InteractionInformationAtPosition information)
+    SaveImageToLibrary(WebKit::SharedMemory::IPCHandle handle)
+    ShowPlaybackTargetPicker(bool hasVideo, WebCore::IntRect elementRect, enum:uint8_t WebCore::RouteSharingPolicy policy, String routingContextUID)
+    CommitPotentialTapFailed()
+    DidNotHandleTapAsClick(WebCore::IntPoint point)
+    DidCompleteSyntheticClick()
+    DisableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID)
+    HandleSmartMagnificationInformationForPotentialTap(uint64_t requestID, WebCore::FloatRect renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale, bool nodeIsRootLevel)
+#endif
+#if ENABLE(DATA_DETECTION)
+    SetDataDetectionResult(struct WebKit::DataDetectionResult dataDetectionResult)
+#endif
+#if PLATFORM(GTK)
+    PrintFinishedCallback(WebCore::ResourceError error, WebKit::CallbackID callbackID)
+#endif
+#if PLATFORM(COCOA)
+    DrawToPDFCallback(IPC::DataReference pdfData, WebKit::CallbackID callbackID)
+    NowPlayingInfoCallback(bool active, bool registeredAsNowPlayingApplication, String title, double duration, double elapsedTime, uint64_t uniqueIdentifier, WebKit::CallbackID callbackID)
+#endif
+
+    PageScaleFactorDidChange(double scaleFactor)
+    PluginScaleFactorDidChange(double zoomFactor)
+    PluginZoomFactorDidChange(double zoomFactor)
+
+#if USE(ATK)
+    # Support for connecting the Accessibility worlds of the UI and the Web processes
+    BindAccessibilityTree(String plugID)
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    SetInputMethodState(Optional<WebKit::InputMethodState> state);
+#endif
+
+    # BackForward messages
+    BackForwardAddItem(struct WebKit::BackForwardListItemState itemState)
+    BackForwardGoToItem(struct WebCore::BackForwardItemIdentifier itemID) -> (struct WebKit::WebBackForwardListCounts counts) Synchronous
+    BackForwardItemAtIndex(int32_t itemIndex) -> (Optional<WebCore::BackForwardItemIdentifier> itemID) Synchronous
+    BackForwardListCounts() -> (struct WebKit::WebBackForwardListCounts counts) Synchronous
+    BackForwardClear()
+    WillGoToBackForwardListItem(struct WebCore::BackForwardItemIdentifier itemID, bool inBackForwardCache)
+
+    # Undo/Redo messages
+    RegisterEditCommandForUndo(uint64_t commandID, String label)
+    ClearAllEditCommands()
+    RegisterInsertionUndoGrouping()
+    CanUndoRedo(enum:bool WebKit::UndoOrRedo undoOrRedo) -> (bool result) Synchronous
+    ExecuteUndoRedo(enum:bool WebKit::UndoOrRedo undoOrRedo) -> () Synchronous
+
+    # Diagnostic messages logging
+    LogDiagnosticMessage(String message, String description, enum:bool WebCore::ShouldSample shouldSample)
+    LogDiagnosticMessageWithResult(String message, String description, uint32_t result, enum:bool WebCore::ShouldSample shouldSample)
+    LogDiagnosticMessageWithValue(String message, String description, double value, unsigned significantFigures, enum:bool WebCore::ShouldSample shouldSample)
+    LogDiagnosticMessageWithEnhancedPrivacy(String message, String description, enum:bool WebCore::ShouldSample shouldSample)
+    LogDiagnosticMessageWithValueDictionary(String message, String description, WebCore::DiagnosticLoggingClient::ValueDictionary value, enum:bool WebCore::ShouldSample shouldSample)
+
+    # Performance logging
+    LogScrollingEvent(uint32_t eventType, MonotonicTime timestamp, uint64_t data)
+
+    # Editor notifications
+    EditorStateChanged(struct WebKit::EditorState editorState)
+    CompositionWasCanceled()
+    SetHasHadSelectionChangesFromUserInteraction(bool hasHadUserSelectionChanges)
+
+#if HAVE(TOUCH_BAR)
+    SetIsTouchBarUpdateSupressedForHiddenContentEditable(bool isTouchBarUpdateSupressed)
+    SetIsNeverRichlyEditableForTouchBar(bool isNeverRichlyEditable)
+#endif
+
+    RequestDOMPasteAccess(WebCore::IntRect elementRect, String originIdentifier) -> (enum:uint8_t WebCore::DOMPasteAccessResponse response) Synchronous
+
+    # Find messages
+    DidCountStringMatches(String string, uint32_t matchCount)
+    SetTextIndicator(struct WebCore::TextIndicatorData indicator, uint64_t lifetime)
+    ClearTextIndicator()
+    DidFindString(String string, Vector<WebCore::IntRect> matchRect, uint32_t matchCount, int32_t matchIndex, bool didWrapAround)
+    DidFailToFindString(String string)
+    DidFindStringMatches(String string, Vector<Vector<WebCore::IntRect>> matches, int32_t firstIndexAfterSelection)
+    DidGetImageForFindMatch(WebKit::ShareableBitmap::Handle contentImageHandle, uint32_t matchIndex)
+
+    # PopupMenu messages
+    ShowPopupMenu(WebCore::IntRect rect, uint64_t textDirection, Vector<WebKit::WebPopupItem> items, int32_t selectedIndex, struct WebKit::PlatformPopupMenuData data)
+    HidePopupMenu()
+
+#if ENABLE(CONTEXT_MENUS)
+    ShowContextMenu(WebKit::ContextMenuContextData contextMenuContextData, WebKit::UserData userData)
+#endif
+
+    # Database messages
+    ExceededDatabaseQuota(WebCore::FrameIdentifier frameID, String originIdentifier, String databaseName, String databaseDisplayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage) -> (uint64_t newQuota) Synchronous
+
+    # Application cache messages
+    ReachedApplicationCacheOriginQuota(String originIdentifier, uint64_t currentQuota, uint64_t totalBytesNeeded) -> (uint64_t newQuota) Synchronous
+
+    # Geolocation messages
+    RequestGeolocationPermissionForFrame(WebKit::GeolocationIdentifier geolocationID, struct WebKit::FrameInfoData frameInfo)
+    RevokeGeolocationAuthorizationToken(String authorizationToken);
+
+#if ENABLE(MEDIA_STREAM)
+    # MediaSteam messages
+    RequestUserMediaPermissionForFrame(uint64_t userMediaID, WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, struct WebCore::SecurityOriginData topLevelDocumentOriginIdentifier, struct WebCore::MediaStreamRequest request)
+    EnumerateMediaDevicesForFrame(WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, struct WebCore::SecurityOriginData topLevelDocumentOriginIdentifier) -> (Vector<WebCore::CaptureDevice> devices, String mediaDeviceIdentifierHashSalt) Async
+    BeginMonitoringCaptureDevices()
+#endif
+
+    # Notification messages
+    RequestNotificationPermission(uint64_t requestID, String originIdentifier)
+    ShowNotification(String title, String body, String iconURL, String tag, String lang, enum:uint8_t WebCore::NotificationDirection dir, String originIdentifier, uint64_t notificationID)
+    CancelNotification(uint64_t notificationID)
+    ClearNotifications(Vector<uint64_t> notificationIDs)
+    DidDestroyNotification(uint64_t notificationID)
+
+    # Spelling and grammar messages
+#if USE(UNIFIED_TEXT_CHECKING)
+    CheckTextOfParagraph(String text, OptionSet<WebCore::TextCheckingType> checkingTypes, int32_t insertionPoint) -> (Vector<WebCore::TextCheckingResult> results) Synchronous
+#endif
+    CheckSpellingOfString(String text) -> (int32_t misspellingLocation, int32_t misspellingLength) Synchronous
+    CheckGrammarOfString(String text) -> (Vector<WebCore::GrammarDetail> results, int32_t badGrammarLocation, int32_t badGrammarLength) Synchronous
+    SpellingUIIsShowing() -> (bool isShowing) Synchronous
+    UpdateSpellingUIWithMisspelledWord(String misspelledWord)
+    UpdateSpellingUIWithGrammarString(String badGrammarPhrase, struct WebCore::GrammarDetail grammarDetail)
+    GetGuessesForWord(String word, String context, int32_t insertionPoint) -> (Vector<String> guesses) Synchronous
+    LearnWord(String word)
+    IgnoreWord(String word)
+    RequestCheckingOfString(uint64_t requestID, WebCore::TextCheckingRequestData request, int32_t insertionPoint)
+
+    # Drag and drop messages
+#if ENABLE(DRAG_SUPPORT)
+    DidPerformDragControllerAction(Optional<WebCore::DragOperation> dragOperation, enum:uint8_t WebCore::DragHandlingMethod dragHandlingMethod, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted, WebCore::IntRect insertionRect, WebCore::IntRect editableElementRect)
+    DidEndDragging();
+#endif
+#if PLATFORM(COCOA) && ENABLE(DRAG_SUPPORT)
+    StartDrag(struct WebCore::DragItem dragItem, WebKit::ShareableBitmap::Handle dragImage)
+    SetPromisedDataForImage(String pasteboardName, WebKit::SharedMemory::IPCHandle imageHandle, String filename, String extension, String title, String url, String visibleURL, WebKit::SharedMemory::IPCHandle archiveHandle)
+#endif
+#if PLATFORM(GTK) && ENABLE(DRAG_SUPPORT)
+    StartDrag(WebCore::SelectionData selectionData, OptionSet<WebCore::DragOperation> dragOperationMask, WebKit::ShareableBitmap::Handle dragImage)
+#endif
+
+#if ENABLE(DRAG_SUPPORT)
+    DidPerformDragOperation(bool handled)
+#endif
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
+    DidHandleDragStartRequest(bool started)
+    DidHandleAdditionalDragItemsRequest(bool added)
+    WillReceiveEditDragSnapshot()
+    DidReceiveEditDragSnapshot(Optional<WebCore::TextIndicatorData> textIndicator)
+#endif
+
+#if PLATFORM(COCOA)
+    # Dictionary support.
+    DidPerformDictionaryLookup(struct WebCore::DictionaryPopupInfo dictionaryPopupInfo)
+
+    # Keyboard input support messages
+    ExecuteSavedCommandBySelector(String selector) -> (bool handled) Synchronous
+
+    # Remote accessibility messages
+    RegisterWebProcessAccessibilityToken(IPC::DataReference data)
+
+    # Plug-in complex text input support messages
+    PluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus)
+    SetPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, uint64_t complexTextInputState)
+
+    # Speech messages
+    GetIsSpeaking() -> (bool isSpeaking) Synchronous
+    Speak(String string)
+    StopSpeaking()
+
+    MakeFirstResponder()
+    AssistiveTechnologyMakeFirstResponder()
+
+    # Spotlight
+    SearchWithSpotlight(String string)
+
+    SearchTheWeb(String string)
+#endif
+
+#if HAVE(TOUCH_BAR)
+    TouchBarMenuDataChanged(WebKit::TouchBarMenuData touchBarMenuData)
+    TouchBarMenuItemDataAdded(struct WebKit::TouchBarMenuItemData touchBarMenuItemData)
+    TouchBarMenuItemDataRemoved(struct WebKit::TouchBarMenuItemData touchBarMenuItemData)
+#endif
+
+#if USE(APPKIT)
+    SubstitutionsPanelIsShowing() -> (bool isShowing) Synchronous
+#endif
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
+    toggleSmartInsertDelete()
+    toggleAutomaticQuoteSubstitution()
+    toggleAutomaticLinkDetection()
+    toggleAutomaticDashSubstitution()
+    toggleAutomaticTextReplacement()
+#endif
+#if PLATFORM(MAC)
+    # Autocorrection messages
+    ShowCorrectionPanel(int32_t panelType, WebCore::FloatRect boundingBoxOfReplacedString, String replacedString, String replacementString, Vector<String> alternativeReplacementStrings)
+    DismissCorrectionPanel(int32_t reason)
+    DismissCorrectionPanelSoon(int32_t reason) -> (String result) Synchronous
+    RecordAutocorrectionResponse(int32_t response, String replacedString, String replacementString);
+
+    SetEditableElementIsFocused(bool editableElementIsFocused)
+#endif
+
+#if USE(DICTATION_ALTERNATIVES)
+    ShowDictationAlternativeUI(WebCore::FloatRect boundingBoxOfDictatedText, WebCore::DictationContext dictationContext)
+    RemoveDictationAlternatives(WebCore::DictationContext dictationContext)
+    DictationAlternatives(WebCore::DictationContext dictationContext) -> (Vector<String> alternatives) Synchronous
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    CouldNotRestorePageState()
+    RestorePageState(Optional<WebCore::FloatPoint> scrollPosition, WebCore::FloatPoint scrollOrigin, WebCore::RectEdges<float> obscuredInsetsOnSave, double scale)
+    RestorePageCenterAndScale(Optional<WebCore::FloatPoint> unobscuredCenter, double scale)
+    DidGetTapHighlightGeometries(uint64_t requestID, WebCore::Color color, Vector<WebCore::FloatQuad> geometries, WebCore::IntSize topLeftRadius, WebCore::IntSize topRightRadius, WebCore::IntSize bottomLeftRadius, WebCore::IntSize bottomRightRadius, bool nodeHasBuiltInClickHandling)
+
+    ElementDidFocus(struct WebKit::FocusedElementInformation information, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState::Flag> activityStateChanges, WebKit::UserData userData)
+    ElementDidBlur()
+    UpdateInputContextAfterBlurringAndRefocusingElement()
+    FocusedElementDidChangeInputMode(enum:uint8_t WebCore::InputMode mode)
+    ScrollingNodeScrollWillStartScroll()
+    ScrollingNodeScrollDidEndScroll()
+    ShowInspectorHighlight(struct WebCore::InspectorOverlay::Highlight highlight)
+    HideInspectorHighlight()
+
+    ShowInspectorIndication()
+    HideInspectorIndication()
+
+    EnableInspectorNodeSearch()
+    DisableInspectorNodeSearch()
+
+    UpdateStringForFind(String findString)
+    HandleAutocorrectionContext(struct WebKit::WebAutocorrectionContext context)
+
+    ShowDataDetectorsUIForPositionInformation(struct WebKit::InteractionInformationAtPosition information)
+#endif
+
+    DidChangeInspectorFrontendCount(uint64_t count)
+
+    CreateInspectorTarget(String targetId, enum:uint8_t Inspector::InspectorTargetType type)
+    DestroyInspectorTarget(String targetId)
+    SendMessageToInspectorFrontend(String targetId, String message)
+
+    # Search popup menus
+    SaveRecentSearches(String name, Vector<WebCore::RecentSearch> searchItems)
+    LoadRecentSearches(String name) -> (Vector<WebCore::RecentSearch> result) Synchronous
+
+#if ENABLE(PDFKIT_PLUGIN) && !ENABLE(UI_PROCESS_PDF_HUD)
+    SavePDFToFileInDownloadsFolder(String suggestedFilename, URL originatingURL, IPC::DataReference data)
+    SavePDFToTemporaryFolderAndOpenWithNativeApplication(String suggestedFilename, struct WebKit::FrameInfoData sourceFrameInfo, IPC::DataReference data, String pdfUUID)
+    OpenPDFFromTemporaryFolderWithNativeApplication(struct WebKit::FrameInfoData sourceFrameInfo, String pdfUUID)
+#endif
+
+#if ENABLE(PDFKIT_PLUGIN)
+    ShowPDFContextMenu(struct WebKit::PDFContextMenu contextMenu, WebKit::PDFPluginIdentifier identifier) -> (Optional<int32_t> selectedItem) Synchronous
+#endif
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    FindPlugin(String mimeType, String urlString, String frameURLString, String pageURLString, bool allowOnlyApplicationPlugins) -> (uint64_t pluginProcessToken, String newMIMEType, uint32_t pluginLoadPolicy, String unavailabilityDescription, bool isUnsupported) Synchronous
+#endif
+
+    DidUpdateActivityState()
+
+#if ENABLE(WEB_CRYPTO)
+    WrapCryptoKey(Vector<uint8_t> key) -> (bool succeeded, Vector<uint8_t> wrappedKey) Synchronous
+    UnwrapCryptoKey(Vector<uint8_t> wrappedKey) -> (bool succeeded, Vector<uint8_t> key) Synchronous
+#endif
+
+
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+#if PLATFORM(MAC)
+    ShowTelephoneNumberMenu(String telephoneNumber, WebCore::IntPoint point)
+#endif
+#endif
+
+#if USE(QUICK_LOOK)
+    DidStartLoadForQuickLookDocumentInMainFrame(String fileName, String uti)
+    DidFinishLoadForQuickLookDocumentInMainFrame(WebKit::ShareableResource::Handle resource)
+    RequestPasswordForQuickLookDocumentInMainFrame(String fileName) -> (String password) Async
+#endif
+
+#if ENABLE(CONTENT_FILTERING)
+    ContentFilterDidBlockLoadForFrame(WebCore::ContentFilterUnblockHandler unblockHandler, WebCore::FrameIdentifier frameID)
+#endif
+
+    IsPlayingMediaDidChange(unsigned state, uint64_t sourceElementID)
+    HandleAutoplayEvent(enum:uint8_t WebCore::AutoplayEvent event, OptionSet<WebCore::AutoplayEventFlags> flags)
+
+#if PLATFORM(MAC)
+    DidPerformImmediateActionHitTest(struct WebKit::WebHitTestResultData result, bool contentPreventsDefault, WebKit::UserData userData)
+#endif
+    HandleMessage(String messageName, WebKit::UserData messageBody) WantsConnection
+    HandleSynchronousMessage(String messageName, WebKit::UserData messageBody) -> (WebKit::UserData returnData) Synchronous WantsConnection
+
+    HandleAutoFillButtonClick(WebKit::UserData userData)
+
+    DidResignInputElementStrongPasswordAppearance(WebKit::UserData userData)
+
+    ContentRuleListNotification(URL url, struct WebCore::ContentRuleListResults results)
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
+    AddPlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier contextId)
+    RemovePlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier contextId)
+    ShowPlaybackTargetPicker(WebCore::PlaybackTargetClientContextIdentifier contextId, WebCore::FloatRect pickerLocation, bool hasVideo)
+    PlaybackTargetPickerClientStateDidChange(WebCore::PlaybackTargetClientContextIdentifier contextId, unsigned mediaState)
+    SetMockMediaPlaybackTargetPickerEnabled(bool enabled)
+    SetMockMediaPlaybackTargetPickerState(String name, unsigned pickerState)
+    MockMediaPlaybackTargetPickerDismissPopup()
+#endif
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    SetMockVideoPresentationModeEnabled(bool enabled)
+#endif
+
+#if ENABLE(POINTER_LOCK)
+    RequestPointerLock()
+    RequestPointerUnlock()
+#endif
+
+    DidFailToSuspendAfterProcessSwap()
+    DidSuspendAfterProcessSwap()
+
+    ImageOrMediaDocumentSizeChanged(WebCore::IntSize newSize)
+
+    UseFixedLayoutDidChange(bool useFixedLayout)
+    FixedLayoutSizeDidChange(WebCore::IntSize fixedLayoutSize)
+
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    RequestInstallMissingMediaPlugins(String details, String description)
+#endif
+
+    DidRestoreScrollPosition()
+
+    GetLoadDecisionForIcon(struct WebCore::LinkIcon icon, WebKit::CallbackID callbackID)
+    FinishedLoadingIcon(WebKit::CallbackID callbackID, IPC::SharedBufferDataReference data);
+
+#if PLATFORM(MAC)
+    DidHandleAcceptedCandidate()
+#endif
+
+    SetIsUsingHighPerformanceWebGL(bool isUsingHighPerformanceWebGL)
+
+    StartURLSchemeTask(struct WebKit::URLSchemeTaskParameters parameters)
+    StopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier)
+    LoadSynchronousURLSchemeTask(struct WebKit::URLSchemeTaskParameters parameters) -> (WebCore::ResourceResponse response, WebCore::ResourceError error, Vector<char> data) Synchronous
+
+#if ENABLE(DEVICE_ORIENTATION)
+    ShouldAllowDeviceOrientationAndMotionAccess(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, bool mayPrompt) -> (enum:uint8_t WebCore::DeviceOrientationOrMotionPermissionState permissionState) Async
+#endif
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    RegisterAttachmentIdentifierFromData(String identifier, String contentType, String preferredFileName, IPC::SharedBufferCopy data)
+    RegisterAttachmentIdentifierFromFilePath(String identifier, String contentType, String filePath)
+    RegisterAttachmentIdentifier(String identifier)
+    RegisterAttachmentsFromSerializedData(Vector<WebCore::SerializedAttachmentData> data)
+    CloneAttachmentData(String fromIdentifier, String toIdentifier)
+    DidInsertAttachmentWithIdentifier(String identifier, String source, bool hasEnclosingImage)
+    DidRemoveAttachmentWithIdentifier(String identifier)
+    SerializedAttachmentDataForIdentifiers(Vector<String> identifiers) -> (Vector<WebCore::SerializedAttachmentData> seralizedData) Synchronous
+    WritePromisedAttachmentToPasteboard(struct WebCore::PromisedAttachmentInfo info)
+#endif
+
+    SignedPublicKeyAndChallengeString(unsigned keySizeIndex, String challengeString, URL url) -> (String result) Synchronous
+
+#if ENABLE(SPEECH_SYNTHESIS)
+    SpeechSynthesisVoiceList() -> (Vector<WebKit::WebSpeechSynthesisVoice> voiceList) Synchronous
+    SpeechSynthesisSpeak(String text, String lang, float volume, float rate, float pitch, MonotonicTime startTime, String voiceURI, String voiceName, String voiceLang, bool localService, bool defaultVoice) -> () Async
+    SpeechSynthesisSetFinishedCallback() -> () Async
+    SpeechSynthesisCancel()
+    SpeechSynthesisPause() -> () Async
+    SpeechSynthesisResume() -> () Async
+#endif
+
+#if ENABLE(UI_PROCESS_PDF_HUD)
+    CreatePDFHUD(WebKit::PDFPluginIdentifier identifier, WebCore::IntRect boundingBox)
+    UpdatePDFHUDLocation(WebKit::PDFPluginIdentifier identifier, WebCore::IntRect boundingBox)
+    RemovePDFHUD(WebKit::PDFPluginIdentifier identifier)
+#endif
+
+    ConfigureLoggingChannel(String channelName, enum:uint8_t WTFLogChannelState state, enum:uint8_t WTFLogLevel level)
+
+#if PLATFORM(GTK)
+    ShowEmojiPicker(WebCore::IntRect caretRect) -> (String result) Async
+#endif
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    DidCreateContextForVisibilityPropagation(WebKit::LayerHostingContextID contextID);
+#endif
+
+#if ENABLE(WEB_AUTHN)
+    SetMockWebAuthenticationConfiguration(struct WebCore::MockWebAuthenticationConfiguration configuration);
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    SendMessageToWebView(struct WebKit::UserMessage userMessage)
+    SendMessageToWebViewWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage) Async
+#endif
+
+    DidFindTextManipulationItems(Vector<WebCore::TextManipulationController::ManipulationItem> items)
+
+#if ENABLE(MEDIA_USAGE)
+    AddMediaUsageManagerSession(WebCore::MediaSessionIdentifier identifier, String bundleIdentifier, URL pageURL);
+    UpdateMediaUsageManagerSessionState(WebCore::MediaSessionIdentifier identifier, struct WebCore::MediaUsageInfo info);
+    RemoveMediaUsageManagerSession(WebCore::MediaSessionIdentifier identifier);
+#endif
+
+    SetHasExecutedAppBoundBehaviorBeforeNavigation()
+    
+#if PLATFORM(MAC)
+    ChangeUniversalAccessZoomFocus(WebCore::IntRect viewRect, WebCore::IntRect caretRect)
+#endif
+}

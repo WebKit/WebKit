@@ -1,0 +1,19 @@
+
+Test 'volume' attribute
+
+EXPECTED (compareWithTolerance(video.volume, 1.0) == 'true') OK
+RUN(video.volume = 0.5)
+EXPECTED (compareWithTolerance(video.volume, 0.5) == 'true') OK
+RUN(video.volume = 0)
+EXPECTED (compareWithTolerance(video.volume, 0) == 'true') OK
+TEST(video.volume = 1.5) THROWS(DOMException.INDEX_SIZE_ERR) OK
+TEST(video.volume = -0.5) THROWS(DOMException.INDEX_SIZE_ERR) OK
+RUN(video.load())
+EVENT(canplaythrough)
+EXPECTED (compareWithTolerance(video.volume, 0) == 'true') OK
+RUN(video.volume = 0.5)
+EXPECTED (compareWithTolerance(video.volume, 0.5) == 'true') OK
+TEST(video.volume = 1.5) THROWS(DOMException.INDEX_SIZE_ERR) OK
+TEST(video.volume = -0.5) THROWS(DOMException.INDEX_SIZE_ERR) OK
+END OF TEST
+

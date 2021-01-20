@@ -1,0 +1,1 @@
+This tests that removing an interval timer inside of its timeout handler does not cause a crash. Success, didn't crash!

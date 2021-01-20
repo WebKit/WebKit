@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ OverscrollBehaviorEnabled=false ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Test overscrollBehavior should be invalidated if overscrollBehaviorEnabled is disabled");
+
+shouldBeFalse("'overscrollBehavior' in document.documentElement.style");
+shouldBeFalse("'overscroll-behavior' in getComputedStyle(document.documentElement)");
+
+</script>
+</body>
+</html>

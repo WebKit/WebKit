@@ -1,0 +1,4 @@
+
+
+FAIL programatic focus() scrolls selection into view including ancestors assert_not_equals: Should've scrolled ancestor to show the selection got disallowed value 0
+

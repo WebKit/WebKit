@@ -1,0 +1,15 @@
+Test for `Resource.ResponseSource.DiskCache`.
+
+
+== Running test suite: Resource.ResponseSource.DiskCache
+-- Running test setup.
+-- Running test case: PossibleNetworkLoad
+PASS: Resource should be created.
+PASS: Resource should receive a Response.
+
+-- Running test case: Resource.ResponseSource.DiskCache
+PASS: Resource should be created.
+PASS: Resource should receive a Response.
+PASS: statusCode should be 200
+PASS: responseSource should be Symbol(disk-cache)
+

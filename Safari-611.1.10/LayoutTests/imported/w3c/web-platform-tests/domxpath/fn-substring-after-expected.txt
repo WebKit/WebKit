@@ -1,0 +1,4 @@
+^^^bar$$$bar^bar
+
+FAIL substring-after() arguments depending on the context node assert_equals: expected "$$$" but got "^^bar$$$"
+

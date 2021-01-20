@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<body>
+<input type="file" name="file" id="file" onchange="onInputFileChange()">
+<pre id='console'></pre>
+
+<script>
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
+}
+
+function sendXMLHttpRequest(method, url)
+{
+    var xhr = new XMLHttpRequest();
+    xhr.open(method, url, false);
+    try {
+        xhr.send();
+        log("Status: " + xhr.status);
+        log("Response: " + xhr.responseText);
+    } catch (error) {
+        log("Received exception " + error.code + ": " + error.name);
+    }
+}
+
+function onInputFileChange()
+{
+    var file = document.getElementById("file").files[0];
+    var fileURL = window.URL.createObjectURL(file);
+
+    log("Test that XMLHttpRequest GET succeeds.");
+    sendXMLHttpRequest("GET", fileURL);
+
+    log("Test that XMLHttpRequest POST fails.");
+    sendXMLHttpRequest("POST", fileURL);
+
+    log("Test that XMLHttpRequest GET fails after the blob URL is revoked.");
+    window.URL.revokeObjectURL(fileURL);
+    sendXMLHttpRequest("GET", fileURL);
+
+    log("DONE");
+    if (testRunner.notifyDone)
+        testRunner.notifyDone();
+}
+
+function runTests()
+{
+    eventSender.beginDragWithFiles(['resources/UTF8.txt']);
+    eventSender.mouseMoveTo(10, 10);
+    eventSender.mouseUp();
+}
+
+if (window.eventSender) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    window.onload = runTests;
+}
+</script>
+</body>
+</html>

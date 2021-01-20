@@ -1,0 +1,566 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../resources/webgl_test_files/conformance/renderbuffers/framebuffer-object-attachment.html
+[ 1: PASS ] gl = wtu.create3DContext() is non-null.
+[ 2: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36053
+[ 3: PASS ] gl.getParameter(gl.RED_BITS) + gl.getParameter(gl.GREEN_BITS) + gl.getParameter(gl.BLUE_BITS) + gl.getParameter(gl.ALPHA_BITS) >= 16 is true
+[ 4: PASS ] gl.getParameter(gl.DEPTH_BITS) == 0 is true
+[ 5: PASS ] gl.getParameter(gl.STENCIL_BITS) == 0 is true
+[ 6: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36053
+[ 7: PASS ] gl.getParameter(gl.RED_BITS) + gl.getParameter(gl.GREEN_BITS) + gl.getParameter(gl.BLUE_BITS) + gl.getParameter(gl.ALPHA_BITS) >= 16 is true
+[ 8: PASS ] gl.getParameter(gl.DEPTH_BITS) >= 16 is true
+[ 9: PASS ] gl.getParameter(gl.STENCIL_BITS) == 0 is true
+[ 10: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36053
+[ 11: PASS ] gl.getParameter(gl.RED_BITS) + gl.getParameter(gl.GREEN_BITS) + gl.getParameter(gl.BLUE_BITS) + gl.getParameter(gl.ALPHA_BITS) >= 16 is true
+[ 12: PASS ] gl.getParameter(gl.DEPTH_BITS) >= 16 is true
+[ 13: PASS ] gl.getParameter(gl.STENCIL_BITS) >= 8 is true
+[ 14: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 15: PASS ] getError was expected value: NO_ERROR :
+[ 16: PASS ] depthBuffer = gl.createRenderbuffer() is non-null.
+[ 17: PASS ] getError was expected value: NO_ERROR :
+[ 18: PASS ] stencilBuffer = gl.createRenderbuffer() is non-null.
+[ 19: PASS ] getError was expected value: NO_ERROR :
+[ 20: PASS ] depthStencilBuffer = gl.createRenderbuffer() is non-null.
+[ 21: PASS ] getError was expected value: NO_ERROR :
+[ 22: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 23: PASS ] getError was expected value: NO_ERROR :
+[ 24: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 25: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 26: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 27: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 28: PASS ] getError was expected value: NO_ERROR :
+[ 29: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 30: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 31: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 32: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 33: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION :
+[ 34: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 35: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 36: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 37: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 38: PASS ] getError was expected value: NO_ERROR :
+[ 39: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 40: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 41: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 42: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 43: PASS ] getError was expected value: NO_ERROR :
+[ 44: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 45: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 46: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 47: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 48: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION :
+[ 49: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 50: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 51: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 52: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 53: PASS ] getError was expected value: NO_ERROR :
+[ 54: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 55: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 56: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 57: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 58: PASS ] getError was expected value: NO_ERROR :
+[ 59: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 60: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 61: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 62: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 63: PASS ] getError was expected value: NO_ERROR :
+[ 64: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 65: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 66: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 67: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 68: PASS ] getError was expected value: NO_ERROR :
+[ 69: PASS ] getError was expected value: NO_ERROR :
+[ 70: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 71: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 72: PASS ] getError was expected value: NO_ERROR :
+[ 73: PASS ] getError was expected value: NO_ERROR :
+[ 74: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 75: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 76: PASS ] getError was expected value: NO_ERROR :
+[ 77: PASS ] getError was expected value: NO_ERROR :
+[ 78: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 79: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 80: PASS ] getError was expected value: NO_ERROR :
+[ 81: PASS ] getError was expected value: NO_ERROR :
+[ 82: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 83: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 84: PASS ] getError was expected value: NO_ERROR :
+[ 85: PASS ] getError was expected value: NO_ERROR :
+[ 86: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 87: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 88: PASS ] getError was expected value: NO_ERROR :
+[ 89: PASS ] getError was expected value: NO_ERROR :
+[ 90: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 91: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 92: PASS ] getError was expected value: NO_ERROR :
+[ 93: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 94: PASS ] getError was expected value: NO_ERROR :
+[ 95: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 96: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 97: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 98: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 99: PASS ] getError was expected value: NO_ERROR :
+[ 100: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 101: PASS ] getError was expected value: NO_ERROR :
+[ 102: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 103: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 104: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 105: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 106: PASS ] getError was expected value: NO_ERROR :
+[ 107: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 108: PASS ] getError was expected value: NO_ERROR :
+[ 109: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 110: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 111: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 112: PASS ] depthStencilBuffer = gl.createRenderbuffer() is non-null.
+[ 113: PASS ] getError was expected value: NO_ERROR :
+[ 114: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_WIDTH) is width
+[ 115: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_HEIGHT) is height
+[ 116: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_INTERNAL_FORMAT) is gl.DEPTH_STENCIL
+[ 117: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_RED_SIZE) is 0
+[ 118: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_GREEN_SIZE) is 0
+[ 119: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_BLUE_SIZE) is 0
+[ 120: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_ALPHA_SIZE) is 0
+[ 121: PASS ] getError was expected value: NO_ERROR :
+[ 122: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 123: PASS ] getError was expected value: NO_ERROR :
+[ 124: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 125: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 126: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 127: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 128: PASS ] getError was expected value: NO_ERROR :
+[ 129: PASS ] depthBuffer = gl.createRenderbuffer() is non-null.
+[ 130: PASS ] getError was expected value: NO_ERROR :
+[ 131: PASS ] stencilBuffer = gl.createRenderbuffer() is non-null.
+[ 132: PASS ] getError was expected value: NO_ERROR :
+[ 133: PASS ] depthStencilBuffer = gl.createRenderbuffer() is non-null.
+[ 134: PASS ] getError was expected value: NO_ERROR :
+[ 135: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 136: PASS ] getError was expected value: NO_ERROR :
+[ 137: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 138: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 139: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 140: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 141: PASS ] getError was expected value: NO_ERROR :
+[ 142: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 143: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 144: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 145: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 146: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION :
+[ 147: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 148: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 149: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 150: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 151: PASS ] getError was expected value: NO_ERROR :
+[ 152: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 153: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 154: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 155: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 156: PASS ] getError was expected value: NO_ERROR :
+[ 157: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 158: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 159: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 160: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 161: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION :
+[ 162: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 163: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 164: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 165: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 166: PASS ] getError was expected value: NO_ERROR :
+[ 167: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 168: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 169: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 170: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 171: PASS ] getError was expected value: NO_ERROR :
+[ 172: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 173: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 174: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 175: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 176: PASS ] getError was expected value: NO_ERROR :
+[ 177: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 178: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 179: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 180: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 181: PASS ] getError was expected value: NO_ERROR :
+[ 182: PASS ] getError was expected value: NO_ERROR :
+[ 183: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 184: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 185: PASS ] getError was expected value: NO_ERROR :
+[ 186: PASS ] getError was expected value: NO_ERROR :
+[ 187: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 188: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 189: PASS ] getError was expected value: NO_ERROR :
+[ 190: PASS ] getError was expected value: NO_ERROR :
+[ 191: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 192: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 193: PASS ] getError was expected value: NO_ERROR :
+[ 194: PASS ] getError was expected value: NO_ERROR :
+[ 195: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 196: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 197: PASS ] getError was expected value: NO_ERROR :
+[ 198: PASS ] getError was expected value: NO_ERROR :
+[ 199: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 200: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 201: PASS ] getError was expected value: NO_ERROR :
+[ 202: PASS ] getError was expected value: NO_ERROR :
+[ 203: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 204: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 205: PASS ] getError was expected value: NO_ERROR :
+[ 206: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 207: PASS ] getError was expected value: NO_ERROR :
+[ 208: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 209: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 210: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 211: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 212: PASS ] getError was expected value: NO_ERROR :
+[ 213: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 214: PASS ] getError was expected value: NO_ERROR :
+[ 215: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 216: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 217: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 218: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 219: PASS ] getError was expected value: NO_ERROR :
+[ 220: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 221: PASS ] getError was expected value: NO_ERROR :
+[ 222: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 223: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 224: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 225: PASS ] depthStencilBuffer = gl.createRenderbuffer() is non-null.
+[ 226: PASS ] getError was expected value: NO_ERROR :
+[ 227: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_WIDTH) is width
+[ 228: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_INTERNAL_FORMAT) is gl.DEPTH_STENCIL
+[ 229: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_RED_SIZE) is 0
+[ 230: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_GREEN_SIZE) is 0
+[ 231: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_BLUE_SIZE) is 0
+[ 232: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_ALPHA_SIZE) is 0
+[ 233: PASS ] getError was expected value: NO_ERROR :
+[ 234: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 235: PASS ] getError was expected value: NO_ERROR :
+[ 236: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 237: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 238: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 239: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 240: PASS ] getError was expected value: NO_ERROR :
+[ 241: PASS ] depthBuffer = gl.createRenderbuffer() is non-null.
+[ 242: PASS ] getError was expected value: NO_ERROR :
+[ 243: PASS ] stencilBuffer = gl.createRenderbuffer() is non-null.
+[ 244: PASS ] getError was expected value: NO_ERROR :
+[ 245: PASS ] depthStencilBuffer = gl.createRenderbuffer() is non-null.
+[ 246: PASS ] getError was expected value: NO_ERROR :
+[ 247: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 248: PASS ] getError was expected value: NO_ERROR :
+[ 249: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 250: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 251: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 252: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 253: PASS ] getError was expected value: NO_ERROR :
+[ 254: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 255: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 256: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 257: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 258: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION :
+[ 259: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 260: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 261: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 262: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 263: PASS ] getError was expected value: NO_ERROR :
+[ 264: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 265: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 266: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 267: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 268: PASS ] getError was expected value: NO_ERROR :
+[ 269: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 270: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 271: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 272: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 273: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION :
+[ 274: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 275: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 276: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 277: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 278: PASS ] getError was expected value: NO_ERROR :
+[ 279: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 280: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 281: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 282: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 283: PASS ] getError was expected value: NO_ERROR :
+[ 284: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 285: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 286: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 287: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 288: PASS ] getError was expected value: NO_ERROR :
+[ 289: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 290: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 291: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 292: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 293: PASS ] getError was expected value: NO_ERROR :
+[ 294: PASS ] getError was expected value: NO_ERROR :
+[ 295: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 296: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 297: PASS ] getError was expected value: NO_ERROR :
+[ 298: PASS ] getError was expected value: NO_ERROR :
+[ 299: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 300: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 301: PASS ] getError was expected value: NO_ERROR :
+[ 302: PASS ] getError was expected value: NO_ERROR :
+[ 303: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 304: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 305: PASS ] getError was expected value: NO_ERROR :
+[ 306: PASS ] getError was expected value: NO_ERROR :
+[ 307: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 308: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 309: PASS ] getError was expected value: NO_ERROR :
+[ 310: PASS ] getError was expected value: NO_ERROR :
+[ 311: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 312: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 313: PASS ] getError was expected value: NO_ERROR :
+[ 314: PASS ] getError was expected value: NO_ERROR :
+[ 315: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 316: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 317: PASS ] getError was expected value: NO_ERROR :
+[ 318: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 319: PASS ] getError was expected value: NO_ERROR :
+[ 320: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 321: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 322: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 323: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 324: PASS ] getError was expected value: NO_ERROR :
+[ 325: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 326: PASS ] getError was expected value: NO_ERROR :
+[ 327: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 328: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 329: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 330: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 331: PASS ] getError was expected value: NO_ERROR :
+[ 332: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 333: PASS ] getError was expected value: NO_ERROR :
+[ 334: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 335: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 336: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 337: PASS ] depthStencilBuffer = gl.createRenderbuffer() is non-null.
+[ 338: PASS ] getError was expected value: NO_ERROR :
+[ 339: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_HEIGHT) is height
+[ 340: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_INTERNAL_FORMAT) is gl.DEPTH_STENCIL
+[ 341: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_RED_SIZE) is 0
+[ 342: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_GREEN_SIZE) is 0
+[ 343: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_BLUE_SIZE) is 0
+[ 344: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_ALPHA_SIZE) is 0
+[ 345: PASS ] getError was expected value: NO_ERROR :
+[ 346: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 347: PASS ] getError was expected value: NO_ERROR :
+[ 348: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 349: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 350: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 351: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 352: PASS ] getError was expected value: NO_ERROR :
+[ 353: PASS ] depthBuffer = gl.createRenderbuffer() is non-null.
+[ 354: PASS ] getError was expected value: NO_ERROR :
+[ 355: PASS ] stencilBuffer = gl.createRenderbuffer() is non-null.
+[ 356: PASS ] getError was expected value: NO_ERROR :
+[ 357: PASS ] depthStencilBuffer = gl.createRenderbuffer() is non-null.
+[ 358: PASS ] getError was expected value: NO_ERROR :
+[ 359: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 360: PASS ] getError was expected value: NO_ERROR :
+[ 361: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36053
+[ 362: PASS ] gl.getParameter(gl.RED_BITS) + gl.getParameter(gl.GREEN_BITS) + gl.getParameter(gl.BLUE_BITS) + gl.getParameter(gl.ALPHA_BITS) >= 16 is true
+[ 363: PASS ] gl.getParameter(gl.DEPTH_BITS) >= 16 is true
+[ 364: PASS ] gl.getParameter(gl.STENCIL_BITS) == 0 is true
+[ 365: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 366: PASS ] getError was expected value: NO_ERROR :
+[ 367: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 368: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 369: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 370: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 371: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION :
+[ 372: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 373: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 374: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 375: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 376: PASS ] getError was expected value: NO_ERROR :
+[ 377: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36053
+[ 378: PASS ] gl.getParameter(gl.RED_BITS) + gl.getParameter(gl.GREEN_BITS) + gl.getParameter(gl.BLUE_BITS) + gl.getParameter(gl.ALPHA_BITS) >= 16 is true
+[ 379: PASS ] gl.getParameter(gl.DEPTH_BITS) == 0 is true
+[ 380: PASS ] gl.getParameter(gl.STENCIL_BITS) >= 8 is true
+[ 381: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 382: PASS ] getError was expected value: NO_ERROR :
+[ 383: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 384: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 385: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 386: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 387: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION :
+[ 388: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 389: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 390: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 391: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 392: PASS ] getError was expected value: NO_ERROR :
+[ 393: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36053
+[ 394: PASS ] gl.getParameter(gl.RED_BITS) + gl.getParameter(gl.GREEN_BITS) + gl.getParameter(gl.BLUE_BITS) + gl.getParameter(gl.ALPHA_BITS) >= 16 is true
+[ 395: PASS ] gl.getParameter(gl.DEPTH_BITS) >= 16 is true
+[ 396: PASS ] gl.getParameter(gl.STENCIL_BITS) >= 8 is true
+[ 397: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 398: PASS ] getError was expected value: NO_ERROR :
+[ 399: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 400: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 401: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 402: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 403: PASS ] getError was expected value: NO_ERROR :
+[ 404: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36054
+[ 405: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 406: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION :
+[ 407: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 408: PASS ] getError was expected value: NO_ERROR :
+[ 409: PASS ] getError was expected value: NO_ERROR :
+[ 410: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36061
+[ 411: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 412: PASS ] getError was expected value: NO_ERROR :
+[ 413: PASS ] getError was expected value: NO_ERROR :
+[ 414: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36061
+[ 415: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 416: PASS ] getError was expected value: NO_ERROR :
+[ 417: PASS ] getError was expected value: NO_ERROR :
+[ 418: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36061
+[ 419: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 420: PASS ] getError was expected value: NO_ERROR :
+[ 421: PASS ] getError was expected value: NO_ERROR :
+[ 422: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36061
+[ 423: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 424: PASS ] getError was expected value: NO_ERROR :
+[ 425: PASS ] getError was expected value: NO_ERROR :
+[ 426: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36061
+[ 427: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 428: PASS ] getError was expected value: NO_ERROR :
+[ 429: PASS ] getError was expected value: NO_ERROR :
+[ 430: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36061
+[ 431: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 432: PASS ] getError was expected value: NO_ERROR :
+[ 433: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 434: PASS ] getError was expected value: NO_ERROR :
+[ 435: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36053
+[ 436: PASS ] gl.getParameter(gl.RED_BITS) + gl.getParameter(gl.GREEN_BITS) + gl.getParameter(gl.BLUE_BITS) + gl.getParameter(gl.ALPHA_BITS) >= 16 is true
+[ 437: PASS ] gl.getParameter(gl.DEPTH_BITS) == 0 is true
+[ 438: PASS ] gl.getParameter(gl.STENCIL_BITS) == 0 is true
+[ 439: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 440: PASS ] getError was expected value: NO_ERROR :
+[ 441: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 442: PASS ] getError was expected value: NO_ERROR :
+[ 443: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36053
+[ 444: PASS ] gl.getParameter(gl.RED_BITS) + gl.getParameter(gl.GREEN_BITS) + gl.getParameter(gl.BLUE_BITS) + gl.getParameter(gl.ALPHA_BITS) >= 16 is true
+[ 445: PASS ] gl.getParameter(gl.DEPTH_BITS) == 0 is true
+[ 446: PASS ] gl.getParameter(gl.STENCIL_BITS) == 0 is true
+[ 447: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 448: PASS ] getError was expected value: NO_ERROR :
+[ 449: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 450: PASS ] getError was expected value: NO_ERROR :
+[ 451: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36053
+[ 452: PASS ] gl.getParameter(gl.RED_BITS) + gl.getParameter(gl.GREEN_BITS) + gl.getParameter(gl.BLUE_BITS) + gl.getParameter(gl.ALPHA_BITS) >= 16 is true
+[ 453: PASS ] gl.getParameter(gl.DEPTH_BITS) == 0 is true
+[ 454: PASS ] gl.getParameter(gl.STENCIL_BITS) == 0 is true
+[ 455: PASS ] depthStencilBuffer = gl.createRenderbuffer() is non-null.
+[ 456: PASS ] getError was expected value: NO_ERROR :
+[ 457: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_WIDTH) is width
+[ 458: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_HEIGHT) is height
+[ 459: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_INTERNAL_FORMAT) is gl.DEPTH_STENCIL
+[ 460: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_RED_SIZE) is 0
+[ 461: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_GREEN_SIZE) is 0
+[ 462: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_BLUE_SIZE) is 0
+[ 463: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_ALPHA_SIZE) is 0
+[ 464: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_DEPTH_SIZE) > 0 is true
+[ 465: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_STENCIL_SIZE) > 0 is true
+[ 466: PASS ] getError was expected value: NO_ERROR :
+[ 467: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 468: PASS ] getError was expected value: NO_ERROR :
+[ 469: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36053
+[ 470: PASS ] gl.getParameter(gl.RED_BITS) + gl.getParameter(gl.GREEN_BITS) + gl.getParameter(gl.BLUE_BITS) + gl.getParameter(gl.ALPHA_BITS) >= 16 is true
+[ 471: PASS ] gl.getParameter(gl.DEPTH_BITS) >= 16 is true
+[ 472: PASS ] gl.getParameter(gl.STENCIL_BITS) >= 8 is true
+[ 473: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 474: PASS ] should be green
+[ 475: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 476: PASS ] getError was expected value: NO_ERROR :
+[ 477: PASS ] should be green
+[ 478: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 479: PASS ] should be green
+[ 480: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 481: PASS ] getError was expected value: NO_ERROR :
+[ 482: FAIL ] at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 483: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 484: PASS ] should be green
+[ 485: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 486: PASS ] getError was expected value: NO_ERROR :
+[ 487: PASS ] should be green
+[ 488: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 489: PASS ] should be green
+[ 490: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 491: PASS ] getError was expected value: NO_ERROR :
+[ 492: FAIL ] at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 493: PASS ] getError was expected value: NO_ERROR :
+[ 494: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 495: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 496: PASS ] depthBuffer = gl.createRenderbuffer() is non-null.
+[ 497: PASS ] getError was expected value: NO_ERROR :
+[ 498: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 499: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 500: PASS ] depthBuffer = gl.createRenderbuffer() is non-null.
+[ 501: PASS ] getError was expected value: NO_ERROR :
+[ 502: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be FRAMEBUFFER_COMPLETE was FRAMEBUFFER_COMPLETE
+[ 503: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be FRAMEBUFFER_INCOMPLETE_DIMENSIONS was FRAMEBUFFER_INCOMPLETE_DIMENSIONS or FRAMEBUFFER_UNSUPPORTED
+[ 504: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be FRAMEBUFFER_COMPLETE was FRAMEBUFFER_COMPLETE
+[ 505: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be FRAMEBUFFER_INCOMPLETE_DIMENSIONS was FRAMEBUFFER_INCOMPLETE_DIMENSIONS or FRAMEBUFFER_UNSUPPORTED
+[ 506: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be FRAMEBUFFER_COMPLETE was FRAMEBUFFER_COMPLETE
+[ 507: PASS ] getError was expected value: NO_ERROR :
+[ 508: PASS ] getError was expected value: NO_ERROR :
+[ 509: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be FRAMEBUFFER_INCOMPLETE_DIMENSIONS was FRAMEBUFFER_INCOMPLETE_DIMENSIONS or FRAMEBUFFER_UNSUPPORTED
+[ 510: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be FRAMEBUFFER_COMPLETE was FRAMEBUFFER_COMPLETE
+[ 511: PASS ] getError was expected value: NO_ERROR :
+[ 512: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 513: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 514: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be FRAMEBUFFER_COMPLETE was FRAMEBUFFER_COMPLETE
+[ 515: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be FRAMEBUFFER_INCOMPLETE_ATTACHMENT was FRAMEBUFFER_INCOMPLETE_ATTACHMENT or FRAMEBUFFER_UNSUPPORTED
+[ 516: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be FRAMEBUFFER_COMPLETE was FRAMEBUFFER_COMPLETE
+[ 517: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be FRAMEBUFFER_INCOMPLETE_ATTACHMENT was FRAMEBUFFER_INCOMPLETE_ATTACHMENT or FRAMEBUFFER_UNSUPPORTED
+[ 518: PASS ] getError was expected value: NO_ERROR :
+[ 519: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 520: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT was FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT or FRAMEBUFFER_UNSUPPORTED
+[ 521: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 522: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be FRAMEBUFFER_COMPLETE was FRAMEBUFFER_COMPLETE
+[ 523: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT was FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT or FRAMEBUFFER_UNSUPPORTED
+[ 524: PASS ] getError was expected value: NO_ERROR :
+[ 525: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 526: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 527: PASS ] depthBuffer = gl.createRenderbuffer() is non-null.
+[ 528: PASS ] getError was expected value: NO_ERROR :
+[ 529: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be FRAMEBUFFER_COMPLETE was FRAMEBUFFER_COMPLETE
+[ 530: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be FRAMEBUFFER_INCOMPLETE_DIMENSIONS was FRAMEBUFFER_INCOMPLETE_DIMENSIONS or FRAMEBUFFER_UNSUPPORTED
+[ 531: PASS ] getError was expected value: NO_ERROR :
+[ 532: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : drawArrays with incomplete framebuffer
+[ 533: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : readPixels from incomplete framebuffer
+[ 534: PASS ] getError was one of: INVALID_FRAMEBUFFER_OPERATION or INVALID_OPERATION : copyTexImage2D from incomplete framebuffer
+[ 535: PASS ] getError was one of: INVALID_FRAMEBUFFER_OPERATION or INVALID_OPERATION : copyTexSubImage2D from incomplete framebuffer
+[ 536: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : clear with incomplete framebuffer
+[ 537: PASS ] fbo2 = gl.createFramebuffer() is non-null.
+[ 538: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT was FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT or FRAMEBUFFER_UNSUPPORTED
+[ 539: PASS ] getError was expected value: NO_ERROR :
+[ 540: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : drawArrays with incomplete framebuffer
+[ 541: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : readPixels from incomplete framebuffer
+[ 542: PASS ] getError was one of: INVALID_FRAMEBUFFER_OPERATION or INVALID_OPERATION : copyTexImage2D from incomplete framebuffer
+[ 543: PASS ] getError was one of: INVALID_FRAMEBUFFER_OPERATION or INVALID_OPERATION : copyTexSubImage2D from incomplete framebuffer
+[ 544: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : clear with incomplete framebuffer
+[ 545: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 546: PASS ] getError was expected value: NO_ERROR :
+[ 547: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : drawArrays with incomplete framebuffer
+[ 548: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : readPixels from incomplete framebuffer
+[ 549: PASS ] getError was one of: INVALID_FRAMEBUFFER_OPERATION or INVALID_OPERATION : copyTexImage2D from incomplete framebuffer
+[ 550: PASS ] getError was one of: INVALID_FRAMEBUFFER_OPERATION or INVALID_OPERATION : copyTexSubImage2D from incomplete framebuffer
+[ 551: PASS ] getError was expected value: INVALID_FRAMEBUFFER_OPERATION : clear with incomplete framebuffer
+[ 552: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 553: PASS ] depthBuffer = gl.createRenderbuffer() is non-null.
+[ 554: PASS ] getError was expected value: NO_ERROR : After depth renderbuffer setup
+[ 555: PASS ] getError was expected value: NO_ERROR : Before ReadPixels from missing attachment
+[ 556: PASS ] getError was expected value: INVALID_OPERATION : After ReadPixels from missing attachment
+[ 557: PASS ] getError was expected value: NO_ERROR : Before CopyTexImage2D from missing attachment
+[ 558: PASS ] getError was expected value: INVALID_OPERATION : After CopyTexImage2D from missing attachment
+[ 559: PASS ] getError was expected value: NO_ERROR : Before CopyTexSubImage2D from missing attachment
+[ 560: PASS ] getError was expected value: INVALID_OPERATION : After CopyTexSubImage2D from missing attachment
+[ 561: PASS ] successfullyParsed is true
+[ FAIL ] 10 failures reported
+

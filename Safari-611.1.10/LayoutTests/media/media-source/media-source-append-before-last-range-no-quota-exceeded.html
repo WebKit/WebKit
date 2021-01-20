@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var exception;
+
+    function bufferedRanges() {
+        var bufferedRanges = '[ ';
+        var timeRanges = sourceBuffer.buffered;
+        for (var i = 0 ; i < timeRanges.length ; i++) {
+            if (i)
+                bufferedRanges += ', ';
+            bufferedRanges += timeRanges.start(i) + '...' + timeRanges.end(i);
+        }
+        bufferedRanges += ' ]';
+        return bufferedRanges;
+    }
+
+    async function appendPtsRange(firstPts, lastPts) {
+        var resultException = null;
+        for (var pts = firstPts; pts <= lastPts; pts++) {
+            try {
+                consoleWrite('Appending PTS='+pts);
+                sourceBuffer.appendBuffer(makeASample(pts, pts, 1, 1, 1, SAMPLE_FLAG.SYNC, 1));
+                await waitFor(sourceBuffer, 'updateend');
+            } catch (e) {
+                resultException = e;
+                sourceBuffer.abort();
+                break;
+            }
+        }
+        return resultException;
+    }
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    window.addEventListener('load', async() => {
+        findMediaElement();
+        source = new MediaSource();
+
+        const videoSource = document.createElement('source');
+        videoSource.type = 'video/mock; codecs=mock';
+        videoSource.src = URL.createObjectURL(source);
+        video.appendChild(videoSource);
+
+        await waitFor(source, 'sourceopen');
+        sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock");
+        initSegment = makeAInit(350, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        sourceBuffer.appendBuffer(initSegment);
+        await waitFor(sourceBuffer, 'updateend');
+        waitFor(sourceBuffer, 'error');
+
+        video.currentTime = 120;
+        testExpected('video.currentTime', 120, '==');
+
+        // This should allow bufering up to 175 (empirically tested).
+        internals.settings.setMaximumSourceBufferSize(4000);
+
+        // Append data from 120..176. The SourceBuffer will be filled after 175, so the last iteration should throw QuotaExceededError.
+        exception = await appendPtsRange(120, 176);
+
+        testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '==');
+        testExpected('bufferedRanges()', '[ 120...176 ]', '==');
+
+        video.currentTime = 115;
+        testExpected('video.currentTime', 115, '==');
+
+        // Now try to append from 115..118. Should free samples from the end and therefore succeed. Should never throw QuotaExceededError.
+        exception = await appendPtsRange(115, 118);
+
+        testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '!=');
+        testExpected('bufferedRanges()', '[ 115...119, 120...170 ]', '==');
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

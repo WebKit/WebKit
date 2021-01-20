@@ -1,0 +1,12 @@
+Check that resources from presentation attributes are loaded with the referrer and referrer policy from the document.
+
+
+FAIL Styling SVG from presentation attributes fill promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Styling SVG from presentation attributes stroke promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Styling SVG from presentation attributes filter promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Styling SVG from presentation attributes clip-path promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Styling SVG from presentation attributes marker-start promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Styling SVG from presentation attributes marker-mid promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Styling SVG from presentation attributes marker-end promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Styling SVG from presentation attributes mask promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+

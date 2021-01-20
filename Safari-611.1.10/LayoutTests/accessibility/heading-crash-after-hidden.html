@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../resources/js-test-pre.js"></script>
+
+<h1 id="heading">X</h1>
+
+<div id="console"></div>
+<script>
+if (window.testRunner && window.accessibilityController) {
+    description("This tests that we don't get a crash when trying to retrieve textual information for a heading after hiding it.");
+    var heading = document.getElementById("heading");
+    var axHeading = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
+    debug(axHeading.title);
+    debug(axHeading.role);
+
+    // Hide the heading now.
+    heading.style.display = 'none';
+
+    // Forcing a retrieval of text associated to the object
+    // should not crash after hiding the heading.
+    axHeading.title;
+    axHeading.description;
+}
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

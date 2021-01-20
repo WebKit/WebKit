@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Check whether scrollable iframes require compositing when async frame scrolling is enabled</title>
+    <script>
+      if (window.internals)
+          window.internals.settings.setAsyncFrameScrollingEnabled(true);
+    </script>
+  </head>
+  <body>
+    <iframe id="frame" style="width: 100px; height: 200px; border: 1px solid black;" src="data:text/html,<div style='width: 300px; height: 400px; background: gray;'></div>"></iframe>
+  </body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+        }
+        #stage {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            border: 1px solid black;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            height: 20px;
+            width: 20px;
+            background-color: blue;
+            border-radius: 50%;
+            animation: horizontal infinite 2s alternate ease-in-out, vertical infinite 2s alternate ease-in-out;
+        }
+        
+        @keyframes horizontal {
+            from {
+                left: 0;
+            }
+            50% {
+                left: 300px;
+            }
+            to {
+                left: 0;
+            }
+        }
+
+        @keyframes vertical {
+            from {
+                top: 0;
+            }
+            50% {
+                top: 300px;
+            }
+            to {
+                top: 0;
+            }
+        }
+    </style>
+    <script>
+
+        var animationDuration = 2;
+
+        function randomInt(min, max)
+        {
+            return Math.round(this.random(min, max));
+        }
+
+        function random(min, max)
+        {
+            return (Math.random() * (max - min)) + min;
+        }
+
+        function randomColor()
+        {
+            var min = 32;
+            var max = 256 - 32;
+            return "#"
+                + this.randomInt(min, max).toString(16)
+                + this.randomInt(min, max).toString(16)
+                + this.randomInt(min, max).toString(16);
+        }
+        
+        function Point(x, y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+
+        Point.pointOnCircle = function(angle, radius)
+        {
+            return new Point(radius * Math.cos(angle), radius * Math.sin(angle));
+        }
+
+        Point.prototype =
+        {
+            add: function(other)
+            {
+                if(isNaN(other.x))
+                    return new Point(this.x + other, this.y + other);
+                return new Point(this.x + other.x, this.y + other.y);
+            },
+
+            subtract: function(other)
+            {
+                if(isNaN(other.x))
+                    return new Point(this.x - other, this.y - other);
+                return new Point(this.x - other.x, this.y - other.y);
+            },
+
+            move: function(angle, velocity, timeDelta)
+            {
+                return this.add(Point.pointOnCircle(angle, velocity * (timeDelta / 1000)));
+            },
+
+            multiply: function(other)
+            {
+                if(isNaN(other.x))
+                    return new Point(this.x * other, this.y * other);
+                return new Point(this.x * other.x, this.y * other.y);
+            },
+
+            length: function() {
+                return Math.sqrt( this.x * this.x + this.y * this.y );
+            },
+
+            normalize: function() {
+                var l = Math.sqrt( this.x * this.x + this.y * this.y );
+                this.x /= l;
+                this.y /= l;
+                return this;
+            }
+        }
+
+        function Particle(maxPosition)
+        {
+            this.element = document.createElement('div');
+            this.element.className = 'particle';
+            this.element.style.backgroundColor = randomColor();
+            var slop = 0.2;
+            this.element.style.animationDuration = random(animationDuration - slop, animationDuration + slop) + 's, ' + random(animationDuration - slop, animationDuration + slop) + 's';
+            this.element.style.animationDelay = '-' + random(0, animationDuration) + 's';
+            this.maxPosition = maxPosition;
+            this.reset();
+            this.move();
+        }
+
+        Particle.prototype =
+        {
+            reset: function()
+            {
+                this.size = new Point(20, 20);
+                this.maxLocation = this.maxPosition.subtract(this.size);
+                this.position = new Point(0, 0);
+            },
+
+            move: function()
+            {
+                this.element.style.transform = "translate(" + this.position.x + "px," + this.position.y + "px) ";
+            }
+        }
+
+        var numParticles = 20;
+        var particles = [];
+
+        function makeParticles()
+        {
+            var stage = document.getElementById('stage');
+            var maxPosition = new Point(320, 320);
+            for (var i = 0; i < numParticles; ++i) {
+                particles.push(new Particle(maxPosition));
+                stage.appendChild(particles[i].element);
+            }
+        }
+                
+        function setupAnimation()
+        {
+            makeParticles();
+        }
+        
+        window.addEventListener('load', setupAnimation, false);
+    </script>
+</head>
+<body>
+
+<div id="stage">
+</div>
+
+</body>
+</html>

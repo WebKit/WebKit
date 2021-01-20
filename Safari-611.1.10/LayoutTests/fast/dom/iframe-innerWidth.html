@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+        description("This tests that innerWidth/innerHeight on an frame window are valid in the load event handler.");
+        function runTest() {
+            frame = document.getElementById('iframe');
+            shouldBe("frame.contentWindow.innerWidth", "300");
+            shouldBe("frame.contentWindow.innerHeight", "150");
+            finishJSTest();
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+    <iframe id="iframe"></iframe>
+    <script src="../../resources/js-test-post.js"></script>
+</html>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>org.webrtc.video_loopback</string>
+	<key>CFBundleName</key>
+	<string>video_loopback</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Camera access needed for video calling</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Microphone access needed for video calling</string>
+</dict>
+</plist>

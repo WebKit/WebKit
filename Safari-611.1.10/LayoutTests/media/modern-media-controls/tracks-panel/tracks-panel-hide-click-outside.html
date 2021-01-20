@@ -1,0 +1,33 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing a <code>TracksPanel</code> is hidden upon clicking outside of it.");
+
+const mediaControls = new MacOSInlineMediaControls({ width: 680, height: 300 });
+document.body.appendChild(mediaControls.element);
+
+debug("mediaControls.showTracksPanel()");
+mediaControls.showTracksPanel();
+
+shouldBecomeEqual("document.body.contains(mediaControls.tracksPanel.element)", "true", () => {
+    shouldBeTrue("mediaControls.tracksPanel.presented");
+    debug("");
+    debug("Clicking outside of the panel");
+    eventSender.mouseMoveTo(10, 10);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    shouldBecomeEqual("document.body.contains(mediaControls.tracksPanel.element)", "false", () => {
+        shouldBeFalse("mediaControls.tracksPanel.presented");
+        debug("");
+        mediaControls.element.remove();
+        finishJSTest();
+    });
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

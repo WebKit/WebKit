@@ -1,0 +1,2 @@
+PASS: bounding box is (80, 80, 100, 100)
+

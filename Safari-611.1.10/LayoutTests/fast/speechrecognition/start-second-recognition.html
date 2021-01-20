@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Verify that starting a second recognition aborts ongoing one.");
+
+if (window.testRunner) {
+    jsTestIsAsync = true;
+}
+
+shouldNotThrow("recognition = new webkitSpeechRecognition();");
+receivedStart = false;
+recognition.onstart = (event) => {
+    receivedStart = true;
+}
+
+recognition.onerror = (event) => {
+    shouldBeTrue("receivedStart");
+    shouldBeEqualToString("event.error", "aborted");
+    shouldBeEqualToString("event.message", "Another request is started");
+
+    finishJSTest();
+}
+
+shouldNotThrow("recognition.start()");
+shouldNotThrow("secondRecognition = new webkitSpeechRecognition();");
+shouldNotThrow("secondRecognition.start()");
+
+</script>
+</body>
+</html>

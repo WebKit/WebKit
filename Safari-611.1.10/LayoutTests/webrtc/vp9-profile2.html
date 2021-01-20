@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>VP9 in WebRTC</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay playsInline width="320" height="240"></video>
+        <canvas id="canvas1" width="320" height="240"></canvas>
+        <canvas id="canvas2" width="320" height="240"></canvas>
+        <canvas id="canvas3" width="320" height="240"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+let vp9Profile2;
+test(() => {
+    codecs = RTCRtpSender.getCapabilities("video").codecs;
+    vp9Profiles = codecs.filter(codec => { return codec.mimeType === "video/VP9" && codec.sdpFmtpLine === "profile-id=2"; });
+    assert_equals(vp9Profiles.length, 1);
+    vp9Profile2 = vp9Profiles[0];
+}, "VP9 profile 2 in getCapabilities");
+
+if (vp9Profile2) {
+    promise_test(async (test) => {
+        const pc = new RTCPeerConnection();
+        const transceiver = pc.addTransceiver("video");
+        transceiver.setCodecPreferences([vp9Profile2]);
+        const description = await pc.createOffer();
+        pc.close();
+        assert_true(description.sdp.indexOf("VP9") !== -1, "VP9 codec is in the SDP");
+    }, "Verify VP9 activation")
+
+    var track;
+    var remoteTrack;
+    var receivingConnection;
+    var sendingConnection;
+    promise_test((test) => {
+        return navigator.mediaDevices.getUserMedia({video: {width: 320, height: 240, facingMode: "environment"}}).then((localStream) => {
+            return new Promise((resolve, reject) => {
+                track = localStream.getVideoTracks()[0];
+
+                createConnections((firstConnection) => {
+                    sendingConnection = firstConnection;
+                    firstConnection.addTrack(track, localStream);
+                    firstConnection.getTransceivers()[0].setCodecPreferences([vp9Profile2]);
+                }, (secondConnection) => {
+                    receivingConnection = secondConnection;
+                    secondConnection.ontrack = (trackEvent) => {
+                        remoteTrack = trackEvent.track;
+                        resolve(trackEvent.streams[0]);
+                    };
+                });
+                setTimeout(() => reject("Test timed out"), 5000);
+            });
+        }).then((remoteStream) => {
+            video.srcObject = remoteStream;
+            return video.play();
+        });
+    }, "Setting video exchange");
+
+    promise_test(() => {
+        if (receivingConnection.connectionState === "connected")
+            return Promise.resolve();
+        return new Promise((resolve, reject) => {
+            receivingConnection.onconnectionstatechange = () => {
+                if (receivingConnection.connectionState === "connected")
+                    resolve();
+            };
+            setTimeout(() => reject("Test timed out"), 5000);
+        });
+    }, "Ensuring connection state is connected");
+
+    promise_test((test) => {
+        return checkVideoBlack(false, canvas1, video);
+    }, "Track is enabled, video should not be black");
+
+    promise_test((test) => {
+        track.enabled = false;
+        return checkVideoBlack(true, canvas2, video);
+    }, "Track is disabled, video should be black");
+
+    promise_test((test) => {
+        track.enabled = true;
+        return checkVideoBlack(false, canvas2, video);
+    }, "Track is enabled, video should not be black 2");
+}
+        </script>
+    </body>
+</html>

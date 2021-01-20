@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<canvas width="200" height="100" id="canvas"><noscript><img id='hidden-image' src='resources/cake.png'></noscript></canvas>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that elements inside noscript are ignored when making the accessible canvas children.");
+
+    var c = document.getElementById("canvas");
+    var ctx = c.getContext("2d");
+    ctx.fillStyle = "#FF0000";
+    ctx.fillRect(0, 0, 150, 75);
+
+    if (window.accessibilityController) {
+        var canvas = accessibilityController.accessibleElementById("canvas");
+        shouldBe("canvas.childrenCount", "0");
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

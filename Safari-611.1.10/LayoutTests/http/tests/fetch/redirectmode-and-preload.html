@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Fetch: retrieve response's body progressively</title>
+    <meta name="help" href="https://fetch.spec.whatwg.org/#main-fetch">
+    <meta name="help" href="https://fetch.spec.whatwg.org/#http-fetch">
+    <meta name="author" title="Canon Research France" href="https://www.crf.canon.fr">
+    <script src="/js-test-resources/testharness.js"></script>
+    <script src="/js-test-resources/testharnessreport.js"></script>
+    <link rel=preload as=fetch onload="startTests()" href="./resources/redirect-with-cache.php?enableCaching&url=http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=alert-fail.js&contentType=text/ascii">
+  </head>
+  <body>
+    <script>
+function startTests()
+{
+    var preloadUrl = "./resources/redirect-with-cache.php?enableCaching&url=http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=alert-fail.js&contentType=text/ascii";
+
+    promise_test(function(test) {
+        return fetch(preloadUrl, {redirect: "manual", mode: "cors", credentials: "include"}).then((response) => {
+            assert_equals(response.type, "opaqueredirect", "Response's type should be opaqueRedirect");
+            return response.text();
+        }).then((text) => {
+            assert_equals(text, "");
+        });
+    }, "Fetch should check for redirections even if resource is preloaded (different fetch mode, different redirect mode)");
+
+    promise_test(function(test) {
+        return promise_rejects(test, new TypeError(), fetch(preloadUrl, {redirect: "error", mode: "cors", credentials: "include"}));
+    }, "Fetch should check for redirections even if resource is preloaded (different fetch mode, different redirect mode) 2");
+}
+    </script>
+  </body>
+</html>

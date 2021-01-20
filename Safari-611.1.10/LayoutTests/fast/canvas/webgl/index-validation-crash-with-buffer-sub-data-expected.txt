@@ -1,0 +1,9 @@
+Verifies that the index validation code which is within bufferSubData does not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS bufferSubData, when buffer object was initialized with null, did not crash
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

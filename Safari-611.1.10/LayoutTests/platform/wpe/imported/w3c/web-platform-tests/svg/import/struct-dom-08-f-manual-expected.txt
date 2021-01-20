@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (16,56) size 586x128
+      RenderSVGText {text} at (10,33) size 351x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 351x21
+          chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 41 width 351.00: "Test that unsuspendRedraw() doesn't throw"
+      RenderSVGRect {rect} at (16,100) size 84x84 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=60.00] [width=50.00] [height=50.00]
+    RenderSVGContainer {g} at (16,518) size 380x60
+      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.8 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

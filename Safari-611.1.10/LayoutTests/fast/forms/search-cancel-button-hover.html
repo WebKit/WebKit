@@ -1,0 +1,34 @@
+<html>
+<head>
+<style>
+input[type="search"] {
+    color: transparent;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    background-color: blue;
+    height: 1em;
+    width: 1em;
+}
+
+input[type="search"]::-webkit-search-cancel-button:hover {
+    background-color: red;
+}
+</style>
+<script src="resources/common.js"></script>
+</head>
+<body>
+<input type="search" id="search" value="foo"/>
+<script>
+if (window.testRunner) {
+    var input = document.getElementById("search");
+    var position = searchCancelButtonPosition(input);
+    eventSender.mouseMoveTo(position.x, position.y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseMoveTo(position.x + 1, position.y);
+}
+</script>
+</body>
+</html>

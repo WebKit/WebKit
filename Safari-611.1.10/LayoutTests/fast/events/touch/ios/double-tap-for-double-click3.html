@@ -1,0 +1,55 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width initial-scale=1 user-scalable=no">
+<title>This tests that we do not fire dblclick event on double tap on node with touch-action: none</title>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+#doubleTapthis {
+    width: 400px;
+    height: 400px;
+    border: 1px solid green;
+    touch-action: none;
+}
+#finishTest {
+    width: 200px;
+    height: 200px;
+    border: 1px solid green;
+}
+</style>
+<script>
+async function test() {
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    await UIHelper.waitForDoubleTapDelay();
+    await UIHelper.humanSpeedDoubleTapAt(doubleTapthis.offsetLeft, doubleTapthis.offsetTop);
+    await UIHelper.waitForDoubleTapDelay();
+    await UIHelper.humanSpeedDoubleTapAt(finishTest.offsetLeft + 100, finishTest.offsetTop + 100);
+}
+</script>
+</head>
+<body onload="test()">
+<div id=doubleTapthis>PASS if 'double click' text is NOT shown below.</div>
+<div id=finishTest></div>
+<pre id=result></pre>
+<script>
+
+doubleTapthis.addEventListener("click", function( event ) {   
+    result.innerHTML = result.innerHTML + "[click]";
+}, false);
+
+doubleTapthis.addEventListener("dblclick", function( event ) {   
+    result.innerHTML = result.innerHTML + "[double click]";
+}, false);
+
+finishTest.addEventListener("dblclick", function( event ) {   
+    if (window.testRunner)
+        setTimeout("testRunner.notifyDone()", 0);
+}, false);
+</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x104
+  RenderBlock {HTML} at (0,0) size 800x104
+    RenderBody {BODY} at (8,8) size 784x88
+      RenderTable {TABLE} at (0,0) size 400x88 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 398x86
+          RenderTableRow {TR} at (0,0) size 398x86
+            RenderTableCell {TD} at (0,0) size 302x86 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderTable {TABLE} at (1,1) size 300x84 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 298x82
+                  RenderTableRow {TR} at (0,0) size 298x82
+                    RenderTableCell {TD} at (0,0) size 298x82 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 294x79
+                        text run at (1,1) width 287: "Presidential candidates George W. Bush and Al"
+                        text run at (1,21) width 294: "Gore are expected to show a kinder, gentler side"
+                        text run at (1,41) width 265: "Wednesday in the second of three nationally"
+                        text run at (1,61) width 111: "televised debates. "
+                      RenderBR {BR} at (112,61) size 0x19
+            RenderTableCell {TD} at (302,2) size 96x82 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderBlock (anonymous) at (1,1) size 94x80
+                RenderInline {FONT} at (0,0) size 92x79 [color=#CC3333]
+                  RenderText {#text} at (0,0) size 92x79
+                    text run at (0,0) width 92: "Avon.com: Fall"
+                    text run at (0,20) width 79: "makeup sale."
+                    text run at (0,40) width 65: "Save up to"
+                    text run at (0,60) width 33: "47%."
+              RenderBlock (anonymous) at (1,81) size 94x0 [color=#CC3333]
+                RenderBlock {FORM} at (0,0) size 94x0
+              RenderBlock (anonymous) at (1,81) size 94x0
+                RenderInline {FONT} at (0,0) size 0x0 [color=#CC3333]

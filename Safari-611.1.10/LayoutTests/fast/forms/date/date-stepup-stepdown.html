@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description('Check stepUp() and stepDown() bahevior for type=date.');
+
+var input = document.createElement('input');
+
+function setInputAttributes(min, max, step, value) {
+    input.min = min;
+    input.max = max;
+    input.step = step;
+    input.value = value;
+}
+
+function stepUp(value, step, max, optionalStepCount) {
+    setInputAttributes(null, max, step, value);
+    if (typeof optionalStepCount != "undefined")
+        input.stepUp(optionalStepCount);
+    else
+        input.stepUp();
+    return input.value;
+}
+
+function stepDown(value, step, min, optionalStepCount) {
+    setInputAttributes(min, null, step, value);
+    if (typeof optionalStepCount != "undefined")
+        input.stepDown(optionalStepCount);
+    else
+        input.stepDown();
+    return input.value;
+}
+
+input.type = 'date';
+debug('Invalid value');
+shouldThrowErrorName('stepUp("", null, null)', "InvalidStateError");
+shouldThrowErrorName('stepDown("", null, null)', "InvalidStateError");
+debug('Non-number arguments');
+shouldBe('stepUp("2010-02-10", null, null, "0")', '"2010-02-10"');
+shouldBe('stepDown("2010-02-10", null, null, "0")', '"2010-02-10"');
+shouldBe('stepUp("2010-02-10", null, null, "foo")', '"2010-02-10"');
+shouldBe('stepDown("2010-02-10", null, null, "foo")', '"2010-02-10"');
+shouldBe('stepUp("2010-02-10", null, null, null)', '"2010-02-10"');
+shouldBe('stepDown("2010-02-10", null, null, null)', '"2010-02-10"');
+debug('Normal cases');
+shouldBe('stepUp("2010-02-10", null, null)', '"2010-02-11"');
+shouldBe('stepDown("2010-02-10", null, null)', '"2010-02-09"');
+shouldBe('stepUp("2010-02-10", null, null, 10)', '"2010-02-20"');
+shouldBe('stepDown("2010-02-10", null, null, 11)', '"2010-01-30"');
+shouldBe('stepUp("1970-01-01", "4", null, 2)', '"1970-01-09"');
+shouldBe('stepDown("1970-01-01", "4", null, 3)', '"1969-12-20"');
+debug('Step=any');
+shouldThrowErrorName('stepUp("2010-02-10", "any", null)', "InvalidStateError");
+shouldThrowErrorName('stepDown("2010-02-10", "any", null)', "InvalidStateError");
+debug('Overflow/underflow');
+shouldThrowErrorName('stepUp("2010-02-10", "3.40282346e+38", null)', "InvalidStateError");
+shouldThrowErrorName('stepDown("2010-02-10", "3.40282346e+38", null)', "InvalidStateError");
+shouldThrowErrorName('stepUp("2010-02-10", "1", "2010-02-10")', "InvalidStateError");
+shouldThrowErrorName('stepDown("2010-02-10", "1", "2010-02-10")', "InvalidStateError");
+
+debug('');
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

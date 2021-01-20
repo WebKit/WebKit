@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests that the AutoFill button does not render in a non-empty read only field. It can only be tested in the test tool.</p>
+<input type="password" id="password" value="read only" readonly autofocus>
+<script>
+if (window.internals)
+    internals.setShowAutoFillButton(document.getElementById("password"), "Credentials");
+</script>
+</body>
+</html>

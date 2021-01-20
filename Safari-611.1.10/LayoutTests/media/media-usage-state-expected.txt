@@ -1,0 +1,66 @@
+
+Test mediaUsageState.
+
+RUN(internals.setMediaElementRestrictions(video, "RequireUserGestureForAudioRateChange,RequireUserGestureForVideoRateChange,RequireUserGestureToControlControlsManager"))
+EVENT(canplaythrough)
+
+** Check state before playback.
+EXPECTED (usage.mediaURL.indexOf('content/test.mp4') > '-1') OK
+EXPECTED (usage.isPlaying == 'false') OK
+EXPECTED (usage.canShowControlsManager == 'false') OK
+EXPECTED (usage.canShowNowPlayingControls == 'false') OK
+EXPECTED (usage.isSuspended == 'false') OK
+EXPECTED (usage.isInActiveDocument == 'true') OK
+EXPECTED (usage.isFullscreen == 'false') OK
+EXPECTED (usage.isMuted == 'false') OK
+EXPECTED (usage.isMediaDocumentInMainFrame == 'false') OK
+EXPECTED (usage.isVideo == 'true') OK
+EXPECTED (usage.isAudio == 'false') OK
+EXPECTED (usage.hasVideo == 'true') OK
+EXPECTED (usage.hasAudio == 'true') OK
+EXPECTED (usage.hasRenderer == 'true') OK
+EXPECTED (usage.audioElementWithUserGesture == 'false') OK
+EXPECTED (usage.userHasPlayedAudioBefore == 'false') OK
+EXPECTED (usage.isElementRectMostlyInMainFrame == 'true') OK
+EXPECTED (usage.playbackPermitted == 'false') OK
+EXPECTED (usage.pageMediaPlaybackSuspended == 'false') OK
+EXPECTED (usage.isMediaDocumentAndNotOwnerElement == 'false') OK
+EXPECTED (usage.pageExplicitlyAllowsElementToAutoplayInline == 'false') OK
+EXPECTED (usage.requiresFullscreenForVideoPlaybackAndFullscreenNotPermitted == 'false') OK
+EXPECTED (usage.hasHadUserInteractionAndQuirksContainsShouldAutoplayForArbitraryUserGesture == 'false') OK
+EXPECTED (usage.isVideoAndRequiresUserGestureForVideoRateChange == 'true') OK
+EXPECTED (usage.isAudioAndRequiresUserGestureForAudioRateChange == 'false') OK
+EXPECTED (usage.isVideoAndRequiresUserGestureForVideoDueToLowPowerMode == 'false') OK
+EXPECTED (usage.noUserGestureRequired == 'false') OK
+EXPECTED (usage.requiresPlaybackAndIsNotPlaying == 'false') OK
+EXPECTED (usage.hasEverNotifiedAboutPlaying == 'false') OK
+EXPECTED (usage.outsideOfFullscreen == 'false') OK
+EXPECTED (usage.isLargeEnoughForMainContent == 'false') OK
+
+** Mute video.
+RUN(video.muted = true)
+EXPECTED (usage.isMuted == 'true') OK
+
+** Unmute video.
+RUN(video.muted = false)
+EXPECTED (usage.isMuted == 'false') OK
+
+** Try to play without user gesture, should reject and state should not change.
+Promise rejected correctly OK
+EXPECTED (usage.isPlaying == 'false') OK
+EXPECTED (usage.canShowControlsManager == 'false') OK
+EXPECTED (usage.userHasPlayedAudioBefore == 'false') OK
+EXPECTED (usage.playbackPermitted == 'false') OK
+EXPECTED (usage.isVideoAndRequiresUserGestureForVideoRateChange == 'true') OK
+EXPECTED (usage.noUserGestureRequired == 'false') OK
+
+** Try to play without user gesture, should succeed and state should change.
+EVENT(playing)
+EXPECTED (usage.isPlaying == 'true') OK
+EXPECTED (usage.canShowControlsManager == 'true') OK
+EXPECTED (usage.userHasPlayedAudioBefore == 'true') OK
+EXPECTED (usage.playbackPermitted == 'true') OK
+EXPECTED (usage.isVideoAndRequiresUserGestureForVideoRateChange == 'false') OK
+EXPECTED (usage.noUserGestureRequired == 'true') OK
+END OF TEST
+

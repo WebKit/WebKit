@@ -1,0 +1,27 @@
+This tests a letter with :first-letter applied is present in innerText.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById('divFirst').innerText is document.getElementById('divNormal').innerText
+PASS document.getElementById('pFirst').innerText is document.getElementById('pNormal').innerText
+PASS document.getElementById('collapsedSpaceFirst').innerText is document.getElementById('collapsedSpaceNormal').innerText
+PASS document.getElementById('collapsedSpacePreFirst').innerText is document.getElementById('collapsedSpacePreNormal').innerText
+PASS document.getElementById('preLineFirst').innerText is document.getElementById('preLineNormal').innerText
+PASS document.getElementById('preWrapFirst').innerText is document.getElementById('preWrapNormal').innerText
+PASS document.getElementById('preSpaceFirst').innerText is document.getElementById('preSpaceNormal').innerText
+PASS document.getElementById('collapsedSpaceDivFirst').innerText is document.getElementById('collapsedSpaceDivNormal').innerText
+PASS document.getElementById('firstCollapsedDivFirst').innerText is document.getElementById('firstCollapsedDivNormal').innerText
+PASS document.getElementById('collapsedSpaceCollapsedDivFirst').innerText is document.getElementById('collapsedSpaceCollapsedDivNormal').innerText
+PASS document.getElementById('collapsedSpaceCollapsedDivFirst').innerText is 'foo\nabc\n'
+PASS document.getElementById('collapsedSpacePunctDivFirst').innerText is document.getElementById('collapsedSpacePunctDivNormal').innerText
+PASS document.getElementById('collapsedSpacePunctDivFirst').innerText is 'foo\n| abc\n'
+PASS document.getElementById('divSpanFirst').innerText is document.getElementById('divSpanNormal').innerText
+PASS document.getElementById('invisiblePre').innerText is ''
+PASS document.getElementById('invisiblePreFirst').innerText is 't\n'
+PASS document.getElementById('invisible').innerText is 'test\n'
+PASS document.getElementById('floatDt').innerText is 'Ab Cd E'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

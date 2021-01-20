@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description('Tests that declaring a const "location" variable in a worker does not throw.');
+jsTestIsAsync = true;
+
+function runTest() {
+    var worker = new Worker('resources/worker-const-location.js');
+    worker.onmessage = function(event) {
+        if (event.data == 'DONE')
+            finishJSTest();
+        else
+            debug(event.data);
+    }
+    worker.postMessage('');
+}
+
+window.onload = runTest;
+</script>
+<script src="../../resources/js-test-post.js"></script>

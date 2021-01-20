@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    Markup.description('This tests running the foster parent algorithm under a template element. WebKit should not hit any debug assertions.');
+    Markup.dump(document.body);
+});
+</script>
+</head>
+<body>
+<template></template>
+<table>
+    <script>
+        document.querySelector('template').appendChild(document.querySelector('table'));
+    </script><caption>hello</caption>
+    <tr>
+        <th><shadow>hello</shadow></th>
+    </tr>
+    <tr>
+        hello
+    </tr>
+</table>
+</body>
+</html>

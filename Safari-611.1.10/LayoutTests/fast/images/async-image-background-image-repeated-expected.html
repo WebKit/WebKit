@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<style>
+    .box {
+        height: 50px;
+        display: inline-block;
+        zoom: 2;
+    }
+    .green-box {
+        width: 100px;
+    }
+    .repeat-box {
+        width: 400px;
+    }
+    .green-background {
+        background-color: green;
+    }
+    .rgb-background {
+        background: linear-gradient(
+            to right,
+            red,
+            red 12.5%,
+            green 12.5%,
+            green 37.5%,
+            blue 37.5%,
+            blue 50%,
+            red 50%,
+            red 62.5%,
+            green 62.5%,
+            green 87.5%,
+            blue 87.5%
+        );
+    }
+</style>
+<body>
+    <div class="box green-box green-background"></div>
+    <br>
+    <div class="box repeat-box rgb-background"></div>
+</body>
+</html>

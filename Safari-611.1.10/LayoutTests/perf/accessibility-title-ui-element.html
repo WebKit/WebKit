@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/magnitude-perf.js"></script>
+<script>
+
+var parentContainer;
+var axControl;
+
+function endsWith(str, suffix) {
+    return str.substr(str.length - suffix.length) == suffix;
+}
+
+function setup(magnitude) {
+    if (parentContainer)
+        document.body.removeChild(parentContainer);
+    parentContainer = document.createElement('div');
+    document.body.appendChild(parentContainer);
+
+    var junkContainer = document.createElement('div');
+    parentContainer.appendChild(junkContainer);
+
+    var label = document.createElement('label');
+    label.setAttribute('for', 'control');
+    label.innerText = 'Label';
+    parentContainer.appendChild(label);
+
+    var control = document.createElement('input');
+    control.type = 'text';
+    control.id = 'control';
+    parentContainer.appendChild(control);
+
+    parentContainer.offsetLeft;
+    axControl = accessibilityController.accessibleElementById('control');
+
+    for (var i = 0; i < 10 * magnitude; ++i) {
+        var div = document.createElement('div');
+        div.innerHTML = "<p></p><p></p><p></p><p></p><p></p>";
+        junkContainer.appendChild(div);
+    }
+    parentContainer.offsetLeft;
+}
+
+function test(magnitude) {
+    for (var i = 0; i < 100; i++) {
+        axControl.titleUIElement();
+    }
+}
+
+Magnitude.description("Tests that titleUIElement on an accessibility element runs in amortized constant time.");
+Magnitude.run(setup, test, Magnitude.CONSTANT);
+</script>
+</body>
+</html>

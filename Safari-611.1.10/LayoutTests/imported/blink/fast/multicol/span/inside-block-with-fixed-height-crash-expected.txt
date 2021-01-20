@@ -1,0 +1,13 @@
+Spanner inside block with fixed height. There's unused space in the column where the spanner occurs.
+
+PASS if no crash or assertion failure.
+
+
+
+
+
+
+
+
+
+

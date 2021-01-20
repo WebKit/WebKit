@@ -1,0 +1,3 @@
+non-ascii.vert
+non-ascii-comments.vert
+

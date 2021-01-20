@@ -1,0 +1,17 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg">
+  <style>
+    g { font: 32px sans-serif; }
+  </style>
+  <defs>
+    <g>
+      <mask id="m" x="0" y="0" width="600" height="400">
+        <text x="100" y="100" fill="white"><tspan>abc</tspan><tspan>def</tspan></text>
+      </mask>
+    </g>
+  </defs>
+  <rect width="600" height="400" fill="blue" mask="url(#m)"/>
+</svg>

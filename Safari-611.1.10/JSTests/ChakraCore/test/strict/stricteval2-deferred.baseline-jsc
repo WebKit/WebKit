@@ -1,0 +1,2 @@
+Exception: SyntaxError: Cannot declare a variable named eval in strict mode.
+at stricteval2-deferred.js:8

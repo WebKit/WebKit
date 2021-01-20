@@ -1,0 +1,17 @@
+<script>
+window.onload = function() {
+  if (!sessionStorage.beganTest) {
+    sessionStorage.beganTest = true; 
+    top.opener.windowLoaded();
+  }
+}
+
+window.onunload = function() {
+  // No page cache
+}
+
+window.onpopstate = function(e) {
+  alert("onpopstate");
+  top.opener.notifyDone(window == parent ? "FAIL" : "PASS");
+}
+</script>

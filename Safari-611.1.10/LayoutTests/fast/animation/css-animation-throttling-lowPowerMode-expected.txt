@@ -1,0 +1,14 @@
+Tests that CSS animations are throttled in low power mode.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.animationsInterval is 0.015
+internals.setLowPowerModeEnabled(true)
+PASS internals.animationsInterval is 0.030
+internals.setLowPowerModeEnabled(false)
+PASS internals.animationsInterval is 0.015
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Test text

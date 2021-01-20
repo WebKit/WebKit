@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Dereference ordering.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.callArgumentsAreCopiedImmediatelyAfterEvaluation = async () => {
+    let program = `
+        int foo()
+        {
+            return *bar(5) + *bar(7);
+        }
+
+        thread int* bar(int value)
+        {
+            int x = value;
+            return &x;
+        }
+    `;
+
+    assert_equals(await callIntFunction(program, "foo", []), 12);
+};
+
+runTests(whlslTests);
+</script>
+</html>

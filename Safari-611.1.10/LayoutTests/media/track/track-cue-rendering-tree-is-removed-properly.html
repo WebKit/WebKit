@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../media-controls.js></script>
+        <script src=../video-test.js></script>
+
+        <script>
+        function emptyVideoTextContent()
+        {
+                consoleWrite("");
+                consoleWrite("** Empty the contents of the video element when it is ready to play **");
+                video.textContent = "";
+
+                consoleWrite("");
+                consoleWrite("** Text track should not be rendered anymore **");
+                try {
+                    var textTrackCueBox = textTrackDisplayElement(video, 'display');
+                } catch (e) {
+                    consoleWrite(e);
+                }
+
+                consoleWrite("");
+                consoleWrite("No crash. PASS.");
+                consoleWrite("");
+
+                endTest();
+        }
+
+        function initElements()
+        {
+            consoleWrite("** Set the mode of the text track to showing **");
+            testTrack = document.querySelector('track');
+            testTrack.track.mode = "showing";
+
+            consoleWrite("");
+            consoleWrite("** Initialize the video element **");
+            findMediaElement();
+            video.src = findMediaFile('video', '../content/test');
+
+            video.play();
+            waitForEvent('canplaythrough', emptyVideoTextContent);
+        }
+
+        </script>
+    </head>
+    <body onload="initElements()">
+        <p>Tests that the cue display tree has been removed properly and no crash happens.</p>
+        <video controls>
+            <track src="captions-webvtt/captions.vtt" kind="captions">
+        </video>
+    </body>
+</html>

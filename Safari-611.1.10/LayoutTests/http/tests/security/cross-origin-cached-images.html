@@ -1,0 +1,77 @@
+<html>
+<body>
+<p>Tests source origin difference for cached resources.</p
+<p>Trying to load sequentially the same image from different origins.</p>
+<div id="console"></div>
+<div>
+    <iframe id="iframe1"></iframe>
+    <iframe id="iframe2"></iframe>
+    <iframe id="iframe3"></iframe>
+    <iframe id="iframe4"></iframe>
+</div>
+<div>
+    <iframe id="iframe5"></iframe>
+    <iframe id="iframe6"></iframe>
+    <iframe id="iframe7"></iframe>
+    <iframe id="iframe8"></iframe>
+</div>
+<script>
+if (window.testRunner) {
+   testRunner.dumpAsText();
+   testRunner.waitUntilDone();
+}
+
+window.addEventListener("message", function(event) {
+    document.getElementById('console').innerHTML += event.data + "<br/>";
+    loadNextFrame();
+});
+
+var iframeURL8000 = "http://localhost:8000/security/resources/cross-origin-cached-resource-iframe.html";
+var iframeURL8080 = "http://localhost:8080/security/resources/cross-origin-cached-resource-iframe.html";
+
+var allowAllImage1 = "http://127.0.0.1:8000/security/resources/abe-allow-star.php?allowCache";
+var allow8000Image1 = "http://127.0.0.1:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8000";
+
+var allowAllImage2 = "http://127.0.0.1:8080/security/resources/abe-allow-star.php?allowCache";
+var allow8000Image2 = "http://127.0.0.1:8080/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8000";
+
+var counter = 0;
+function loadNextFrame()
+{
+    counter++;
+    // Four first tests try to load an image with a given origin and then the same image (in cache) with a different origin.
+    if (counter == 1)
+        document.getElementById('iframe1').src = iframeURL8000 + "#" +
+            encodeURIComponent(JSON.stringify({node: "img", url: allowAllImage1, shouldPass:true, crossOrigin: "anonymous", id: 1}));
+    else if (counter == 2)
+        document.getElementById('iframe2').src = iframeURL8080 + "#" +
+            encodeURIComponent(JSON.stringify({node: "img", url: allowAllImage1, shouldPass: true, crossOrigin: "anonymous", id: 2}));
+    else if (counter == 3)
+        document.getElementById('iframe3').src = iframeURL8000 + "#" +
+            encodeURIComponent(JSON.stringify({node: "img", url: allow8000Image1, shouldPass: true, crossOrigin: "anonymous", id: 3}));
+    // Fourth image load should fail since requesting image from localhost:8080 while only allowed from localhost:8000.
+    else if (counter == 4)
+        document.getElementById('iframe4').src = iframeURL8080 + "#" +
+            encodeURIComponent(JSON.stringify({node: "img", url: allow8000Image1, shouldPass: false, crossOrigin: "anonymous", id: 4}));
+
+    // Four next tests try to load a cross-origin image without cors and then with cors.
+    else if (counter == 5)
+        document.getElementById('iframe5').src = iframeURL8000 + "#" +
+            encodeURIComponent(JSON.stringify({node: "img", url: allowAllImage2, shouldPass:true, id: 5}));
+    else if (counter == 6)
+        document.getElementById('iframe6').src = iframeURL8000 + "#" +
+            encodeURIComponent(JSON.stringify({node: "img", url: allowAllImage2, shouldPass:true, crossOrigin: "anonymous", id: 6}));
+    else if (counter == 7)
+        document.getElementById('iframe7').src = iframeURL8080 + "#" +
+            encodeURIComponent(JSON.stringify({node: "img", url: allow8000Image2, shouldPass:true, id: 7}));
+    else if (counter == 8)
+        document.getElementById('iframe8').src = iframeURL8080 + "#" +
+            encodeURIComponent(JSON.stringify({node: "img", url: allow8000Image2, shouldPass:false, crossOrigin: "anonymous", id: 8}));
+    else if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+loadNextFrame();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: testError: special target must be one of: _self, _parent, _top
+
+Harness Error (FAIL), message = testError: special target must be one of: _self, _parent, _top
+
+

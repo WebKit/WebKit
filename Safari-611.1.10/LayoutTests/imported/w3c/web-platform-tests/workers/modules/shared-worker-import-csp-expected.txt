@@ -1,0 +1,28 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
+
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
+
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
+
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
+
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+
+FAIL worker-src 'self' directive should disallow cross origin static import. assert_array_equals: value is object "[object Object]", expected array
+FAIL worker-src * directive should allow cross origin static import. assert_array_equals: value is object "[object Object]", expected array
+FAIL script-src 'self' directive should disallow cross origin static import. assert_array_equals: value is object "[object Object]", expected array
+FAIL script-src * directive should allow cross origin static import. assert_array_equals: value is object "[object Object]", expected array
+FAIL worker-src * directive should override script-src 'self' directive and allow cross origin static import. assert_array_equals: value is object "[object Object]", expected array
+FAIL worker-src 'self' directive should override script-src * directive and disallow cross origin static import. assert_array_equals: value is object "[object Object]", expected array
+FAIL script-src 'self' directive should disallow cross origin dynamic import. assert_array_equals: value is object "[object Object]", expected array
+FAIL script-src * directive should allow cross origin dynamic import. assert_array_equals: value is object "[object Object]", expected array
+FAIL worker-src 'self' directive should not take effect on dynamic import. assert_array_equals: value is object "[object Object]", expected array
+

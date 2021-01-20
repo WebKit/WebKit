@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<div id="select">Hello world.</div>
+<div id="insert"></div>
+<ul id="console"></ul>
+<script>
+description("This tests for HIERARCHY_REQUEST_ERRs when calling Range.surroundContents().");
+
+var select = document.getElementById("select");
+var text = select.firstChild;
+var insert = document.getElementById("insert");
+
+var range = document.createRange();
+range.setStart(text, 0);
+range.setEnd(text, text.length);
+
+shouldThrowErrorName("range.surroundContents(select)", "HierarchyRequestError");
+shouldNotThrow("range.surroundContents(insert)");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+<div id="content">
+  <math id="math">
+    <mfenced open="{" close="}" separators=",;">
+      <mi>2</mi>
+      <mi>a</mi>
+      <mi>e</mi>
+    </mfenced>
+  </math>
+</div>
+<p id="description"></p>
+<pre id="tree"></pre>
+<div id="console"></div>
+<script>
+    description("This verifies the expected roles and values are exposed for mfenced.");
+
+    if (window.accessibilityController) {
+        dumpAccessibilityTree(accessibilityController.accessibleElementById("math"), null, 0, false, false, true);
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

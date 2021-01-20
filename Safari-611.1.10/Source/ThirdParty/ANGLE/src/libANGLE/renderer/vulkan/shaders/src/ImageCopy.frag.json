@@ -1,0 +1,28 @@
+{
+    "Description": [
+        "Copyright 2018 The ANGLE Project Authors. All rights reserved.",
+        "Use of this source code is governed by a BSD-style license that can be",
+        "found in the LICENSE file.",
+        "",
+        "ImageCopy.frag.json: Build parameters for ImageCopy.frag.",
+        "",
+        "Notes:",
+        " - Optimized ImageCopy shaders crash old AMD drivers.  Optimization is tentatively",
+        "   disabled until ANGLE try bots are upgraded.  http://anglebug.com/4720"
+    ],
+    "SrcType": [
+        "SrcIs2D",
+        "SrcIs2DArray",
+        "SrcIs3D"
+    ],
+    "SrcFormat": [
+        [ "SrcIsFloat", "-Od" ],
+        [ "SrcIsSint", "-Od" ],
+        [ "SrcIsUint", "-Od" ]
+    ],
+    "DestFormat": [
+        "DestIsFloat",
+        "DestIsSint",
+        "DestIsUint"
+    ]
+}

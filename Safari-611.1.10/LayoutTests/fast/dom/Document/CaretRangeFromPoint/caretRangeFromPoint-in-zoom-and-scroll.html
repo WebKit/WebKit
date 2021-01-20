@@ -1,0 +1,112 @@
+<div id="first" style="width: 4000px; height: 1000px">A long text to test document caretRangeFromPoint. Test scroll, zoom, zoomAndScroll .................................... The End </div>
+<ul id="console"></ul>
+
+<script src="../../../../resources/js-test-pre.js"></script>
+<script>
+    function sendClick(x, y)
+    {
+        if (window.eventSender) {
+            eventSender.mouseMoveTo(x, y);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+        }
+    }
+    
+    // 29 is the character offset in the div text "A long text to test document caretRangeFromPoint".
+    var expectedOffset = 29;
+    var succeed = true;
+    
+    function checkNodeAndOffsetFromCaretRangeFromPoint(message, event)
+    {
+        var range = document.caretRangeFromPoint(event.clientX, event.clientY);
+        var offset = 0;
+        if (range)
+          offset = range.startOffset;
+        else {
+          alert("range is null");
+          return;
+        }
+
+        var node = document.getElementById("first").firstChild;
+        if (range.startContainer != node) {
+            testFailed(message + " node should be div's child text node");
+            succeed = false;
+        }
+        if (offset != expectedOffset) {
+            testFailed(message + " offset actual: " + offset + "; expected: " + expectedOffset);
+            succeed = false;
+        }
+    }
+    
+    function checkBase(event)
+    {
+        checkNodeAndOffsetFromCaretRangeFromPoint("check base", event);
+    }
+    
+    function checkScroll(event)
+    {
+        checkNodeAndOffsetFromCaretRangeFromPoint("check scroll", event);
+    }
+    
+    function checkZoom(event)
+    {
+        checkNodeAndOffsetFromCaretRangeFromPoint("check zoom", event);
+    }
+    
+    function checkZoomScroll(event)
+    {
+        checkNodeAndOffsetFromCaretRangeFromPoint("check zoom and scroll", event);
+    }
+    
+    function scrollPage(x, y)
+    {
+        window.scrollTo(x, y);
+    }
+    
+    onload = function()
+    {
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    
+        var range = document.createRange();
+        var node = document.getElementById("first");
+        // Set range in the middle of word "document".
+        range.setStart(node.firstChild, expectedOffset);
+        range.setEnd(node.firstChild, expectedOffset + 1);
+
+        // Base test.
+        window.addEventListener("click", checkBase, false);
+        rects = range.getClientRects();
+        var x = Math.round(rects[0].left);
+        var y = Math.round(rects[0].top + rects[0].width / 2);
+        sendClick(x, y);
+        window.removeEventListener("click", checkBase, false);
+    
+        // Test scroll.
+        window.addEventListener("click", checkScroll, false);
+        scrollPage(x / 2, 0);
+        sendClick(x / 2, y);
+        scrollPage(0, 0);
+        window.removeEventListener("click", checkScroll, false);
+    
+        // Test zoom.
+        window.addEventListener("click", checkZoom, false);
+        node.style.zoom = 2.0;
+        rects = range.getClientRects();
+        var x = Math.round(rects[0].left);
+        var y = Math.round(rects[0].top + rects[0].width / 2);
+        sendClick(x * 2, y);
+        window.removeEventListener("click", checkZoom, false);
+    
+        // Test scroll and Zoom.
+        window.addEventListener("click", checkZoomScroll, false);
+        scrollPage(x, 0);
+        sendClick(x, y);
+        scrollPage(0, 0);
+        node.style.zoom = 1.0;
+        window.removeEventListener("click", checkZoomScroll, false);
+    
+        if (succeed == true)
+            testPassed("Test completed successfully");
+    }
+</script>

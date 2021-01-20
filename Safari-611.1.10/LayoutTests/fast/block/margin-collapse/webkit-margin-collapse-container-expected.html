@@ -1,0 +1,159 @@
+<html>
+	<head>
+		<style>
+		div {
+			margin: 0px;
+		}
+
+		.container {
+			border: thin solid blue;
+			width: 350px;
+			float: left;
+		}
+
+		.level1 {
+			margin-top: 10px;
+			margin-bottom: 10px;
+			border: 1px dashed black;
+			background-color: green;
+		}
+
+		.level2 {
+			margin-top: 25px;
+			margin-bottom: 20px;
+			background-color: orange;
+		}
+
+		.level3 {
+			margin-top: 30px;
+			margin-bottom: 30px;
+			background-color: pink;
+		}
+
+		#t1 .level2 {
+			margin-top: 0px;
+		}
+
+		#t1 .level3 {
+			margin-top: 0px;
+		}
+
+		#t2 .level2 {
+			margin-bottom: 0px;
+		}
+
+		#t2 .level3 {
+			margin-bottom: 0px;
+		}
+
+		#t3 .level2 {
+			margin-top: 0px;
+		}
+
+		#t3 .level3 {
+			margin-top: 0px;
+		}
+
+		#t4 .level2 {
+			margin-bottom: 0px;
+		}
+
+		#t4 .level3 {
+			margin-bottom: 0px;
+		}
+
+		#t5 .level2 {
+			margin-top: 0px;
+			margin-bottom: 0px;
+		}
+
+		#t5 .level3 {
+			margin-top: 0px;
+			margin-bottom: 0px;
+		}
+
+		#t6 .level2 {
+			margin-top: 0px;
+			margin-bottom: 0px;
+		}
+
+		#t6 .level3 {
+			margin-top: 0px;
+			margin-bottom: 0px;
+		}
+
+		#t7 .level3 {
+			margin-top: 0px;
+		}
+
+		#t8 .level3 {
+			margin-bottom: 0px;
+		}
+
+		#t9 .level2 {
+			margin-top: 0px;
+			padding-top: 30px;
+		}
+
+		#t9 .level3 {
+			margin-top: 0px;
+		}
+
+		#t10 .level2 {
+			margin-bottom: 0px;
+			padding-bottom: 30px;
+		}
+
+		#t10 .level3 {
+			margin-bottom: 0px;
+		}
+
+		#t11 .level2 {
+			margin-top: 0px;
+			padding-top: 30px;
+		}
+
+		#t11 .level3 {
+			margin-top: 0px;
+		}
+
+		#t11 {
+			padding-top: 25px;
+		}
+
+		#t12 .level2 {
+			margin-bottom: 0px;
+			padding-bottom: 30px;
+		}
+
+		#t12 .level3 {
+			margin-bottom: 0px;
+		}
+
+		#t12 {
+			padding-bottom: 20px;
+		}
+
+		</style>
+	</head>
+	<body>
+		<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=108168">Implement the -webkit-margin-collapse properties correct rendering</a>.</p>
+		<p>This ref test covers basic collapsing behavior between a box and its container when using -webkit-margin-collapse.</p>
+		<div class="container">
+			<div id="t1" class="level1"><div class="level2"><div class="level3">Pink: discard top</div></div></div>
+			<div id="t2" class="level1"><div class="level2"><div class="level3">Pink: discard bottom</div></div></div>
+			<div id="t3" class="level1"><div class="level2"><div class="level3">Orange: discard top</div></div></div>
+			<div id="t4" class="level1"><div class="level2"><div class="level3">Orange: discard bottom</div></div></div>
+			<div id="t5" class="level1"><div class="level2"><div class="level3">Orange: discard top, discard bottom</div></div></div>
+			<div id="t6" class="level1"><div class="level2"><div class="level3">Pink: discard top, discard bottom</div></div></div>
+			<div id="t7" class="level1"><div class="level2"><div class="level3">Orange: separate top, Pink: discard top</div></div></div>
+			<div id="t8" class="level1"><div class="level2"><div class="level3">Orange: separate bottom, Pink: discard bottom</div></div></div>
+		</div>
+		<div class="container">
+			<div id="t9" class="level1"><div class="level2"><div class="level3">Orange: discard top, Pink: separate top</div></div></div>
+			<div id="t10" class="level1"><div class="level2"><div class="level3">Orange: discard bottom, Pink: separate bottom</div></div></div>
+			<div id="t11" class="level1"><div class="level2"><div class="level3">Orange: separate top, Pink: separate top</div></div></div>
+			<div id="t12" class="level1"><div class="level2"><div class="level3">Orange: separate bottom, Pink: separate bottom</div></div></div>
+		</div>
+	</body>
+</html>

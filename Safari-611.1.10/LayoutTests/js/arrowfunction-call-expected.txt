@@ -1,0 +1,11 @@
+Tests for ES6 arrow function, this should be overwritten during invoke call&apply
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS d.y().call(e) is 'foo'
+PASS d.y().apply(e) is 'foo'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+This tests that the application cache works for video retrieved by sync XMLHttpRequest
+SUCCESS

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.foo, .bar { color: red; }
+</style>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+// Insert a rule at the beginning of the inline stylesheet above that would shift all rule ordinals down.
+document.styleSheets[0].insertRule("body { padding: 10px; }", 0);
+
+function test() {
+    var nodeStyles;
+
+    function validateSelectors()
+    {
+        for (var i = 0; i < nodeStyles.matchedRules.length; ++i) {
+            var rule = nodeStyles.matchedRules[i];
+            if (rule.type !== WI.CSSStyleSheet.Type.Author)
+                continue;
+
+            for (var selector of rule.selectors)
+                InspectorTest.log(selector.text);
+        }
+
+        InspectorTest.completeTest();
+    }
+
+    function onStylesRefreshed()
+    {
+        nodeStyles.removeEventListener(WI.DOMNodeStyles.Event.Refreshed, onStylesRefreshed, this);
+        validateSelectors();
+    }
+
+    WI.domManager.requestDocument(function(documentNode) {
+        documentNode.querySelector(".bar", function(contentNodeId) {
+            if (contentNodeId) {
+                var domNode = WI.domManager.nodeForId(contentNodeId);
+                nodeStyles = WI.cssManager.stylesForNode(domNode);
+
+                if (nodeStyles.needsRefresh)
+                    nodeStyles.addEventListener(WI.DOMNodeStyles.Event.Refreshed, onStylesRefreshed, this);
+                else
+                    validateSelectors();
+            } else {
+                InspectorTest.log("DOM node not found.");
+                InspectorTest.completeTest();
+            }
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that we get expected values for selectors after a stylesheet has mutations.</p>
+    <div class="bar"></div>
+</body>
+</html>

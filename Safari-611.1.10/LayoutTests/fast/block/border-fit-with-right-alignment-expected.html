@@ -1,0 +1,43 @@
+<html>
+<head>
+<style>
+chatitem {
+	width: 500px;
+    display: -webkit-box;
+    -webkit-box-orient:vertical;
+}
+[text-direction="ltr"] {
+    direction: ltr !important;
+}
+
+message {
+	display:block;
+	position: relative;
+}
+messagetext {
+	display:inline-block;
+    max-width:90%;
+	word-wrap:break-word;
+	text-align:left;
+    border-top:10px;
+    border-bottom:12px;
+	cursor: auto;
+    background-color: cyan;
+    -webkit-border-fit: lines;
+}
+
+
+[from-me="yes"] {
+    text-align:right
+}
+
+
+</style>
+</head>
+
+<body>
+<chatitem><message from-me="yes"><messagetext><messagebody text-direction="ltr">
+<span">https://tools.usps.com/go/TrackConfirmAction_input?
+strOrigTrackNum=9405510200882644026532</span>
+</messagebody></messagetext></message></chatitem>
+</body></html>

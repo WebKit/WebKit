@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script>
+  if (window.testRunner)
+    testRunner.waitUntilDone();
+
+  // Called from resources/image-with-remote-image.svg when loaded inside <object>.
+  function notifyDidLoadSVG() 
+  {
+    function done() 
+    {
+      if (window.testRunner)
+        testRunner.notifyDone();
+    }
+    var image = document.getElementById("non-interactive-SVG");
+    image.onload = done;
+    image.src = "resources/image-with-remote-image.svg";
+  }
+</script>
+</head>
+<body>
+  <p>SVG loaded in &lt;img&gt; (should not see head of Abe Lincoln)</p>
+  <img id="non-interactive-SVG" src="" width="100" height="100">
+  <br>
+  <p>SVG loaded in &lt;object&gt; (should see head of Abe Lincoln)</p>
+  <object id="interactive-SVG" data="resources/image-with-remote-image.svg" width="100" height="100"></object>
+</body>
+</html>

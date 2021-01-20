@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+
+<body>
+<div id="container" contenteditable >
+    <p id="paragraph1">Paragraph one.</p>
+    <p id="paragraph2">Paragraph two.</p>
+</div>
+</body>
+
+<script>
+    document.getElementById('container').focus();
+    getSelection().modify('Extend', 'Forward', 'Line');
+    document.execCommand('JustifyCenter', false, null);
+
+    Markup.description('This test is for a bug when selection extends complete line on first paragraph and applying justifyCenter command will be applied to next paragraph also. Only first Paragraph with id "paragraph1" should have attribute style="text-align: center"');
+    Markup.dump('container');
+</script>
+</html>

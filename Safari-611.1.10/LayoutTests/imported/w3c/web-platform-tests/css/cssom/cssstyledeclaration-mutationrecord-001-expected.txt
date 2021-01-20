@@ -1,0 +1,3 @@
+
+PASS CSSStyleDeclaration.setPropertyValue queues a mutation record when serialization is changed
+

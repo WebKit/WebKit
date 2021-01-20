@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (0,0) size 760x600
+      RenderSVGViewportContainer {svg} at (0,0) size 289x240
+        RenderSVGEllipse {circle} at (80,80) size 160x160 [fill={[type=SOLID] [color=#000000]}] [cx=96.00] [cy=96.00] [r=48.00]
+        RenderSVGEllipse {ellipse} at (80,80) size 160x160 [fill={[type=SOLID] [color=#000000]}] [cx=96.00] [cy=96.00] [rx=48.00] [ry=48.00]
+        RenderSVGPath {line} at (15,16) size 3x151 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=10.00] [x2=10.00] [y2=100.00]
+        RenderSVGPath {path} at (0,12) size 167x9 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [data="M 0 10 L 100 10"]
+        RenderSVGPath {polyline} at (0,0) size 201x200 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [points="0 0 120 100 120 120"]
+        RenderSVGPath {polygon} at (0,0) size 168x168 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [points="0 0 100 100"]
+        RenderSVGRect {rect} at (0,0) size 160x160 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=96.00] [height=96.00]
+        RenderSVGContainer {use} at (0,0) size 160x160
+          RenderSVGRect {rect} at (0,0) size 160x160 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=96.00] [height=96.00]
+        RenderSVGImage {image} at (0,0) size 167x167
+        RenderSVGText {text} at (100,82) size 74x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 74x22
+            chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 11 width 73.01: "Filler text"
+      RenderSVGText {text} at (350,303) size 106x59 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 106x59
+          chunk 1 text run 1 at (350.00,350.00) startOffset 0 endOffset 4 width 105.80: "FAIL"
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.4 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGContainer {g} at (0,0) size 800x39
+      RenderSVGRect {rect} at (0,0) size 800x36 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
+      RenderSVGText {text} at (205,-1) size 70x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 69x24
+          chunk 1 (middle anchor) text run 1 at (205.95,18.00) startOffset 0 endOffset 5 width 68.10: "DRAFT"

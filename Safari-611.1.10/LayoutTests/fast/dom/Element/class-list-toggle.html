@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="help" href="https://dom.spec.whatwg.org/#dom-domtokenlist-toggle"/>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests the behavior of DOMTokenList.toggle()");
+
+var div = document.createElement('div');
+
+debug("* Not enough parameters");
+shouldThrow("div.classList.toggle()", "'TypeError: Not enough arguments'");
+
+debug("");
+debug("* Token is an empty string");
+shouldThrowErrorName("div.classList.toggle('')", "SyntaxError");
+
+debug("");
+debug("Token contains an ASCII white space");
+var stringWithSpace = "a b";
+shouldThrowErrorName("div.classList.toggle(stringWithSpace)", "InvalidCharacterError");
+stringWithSpace = "a\nb";
+shouldThrowErrorName("div.classList.toggle(stringWithSpace)", "InvalidCharacterError");
+stringWithSpace = "a\tb";
+shouldThrowErrorName("div.classList.toggle(stringWithSpace)", "InvalidCharacterError");
+stringWithSpace = "a\rb";
+shouldThrowErrorName("div.classList.toggle(stringWithSpace)", "InvalidCharacterError");
+stringWithSpace = "a\fb";
+shouldThrowErrorName("div.classList.toggle(stringWithSpace)", "InvalidCharacterError");
+
+debug("");
+debug("* 'force' parameter omitted, token does not exist");
+evalAndLog("div.classList.toggle('a')");
+shouldBeEqualToString("div.classList[0]", "a"); // Should add the class.
+
+debug("");
+debug("* 'force' parameter omitted, token exists");
+evalAndLog("div.classList.toggle('a')");
+shouldBe("div.classList.length", "0"); // Should remove the class.
+
+debug("");
+debug("* 'force' parameter is undefined, token does not exist");
+evalAndLog("div.classList.toggle('a', undefined)");
+shouldBeEqualToString("div.classList[0]", "a"); // Should add the class.
+
+debug("");
+debug("* 'force' parameter is undefined, token exists");
+evalAndLog("div.classList.toggle('a', undefined)");
+shouldBe("div.classList.length", "0"); // Should remove the class.
+
+debug("");
+debug("* 'force' parameter is false, token does not exist");
+evalAndLog("div.classList.toggle('a', false)");
+shouldBe("div.classList.length", "0"); // Should not add the class.
+
+debug("");
+debug("* 'force' parameter is true, token does not exist");
+evalAndLog("div.classList.toggle('a', true)");
+shouldBeEqualToString("div.classList[0]", "a"); // Should add the class.
+
+debug("");
+debug("* 'force' parameter is true, token exists");
+evalAndLog("div.classList.toggle('a', true)");
+shouldBeEqualToString("div.classList[0]", "a"); // Should not remove the class.
+
+debug("");
+debug("* 'force' parameter is false, token exists");
+evalAndLog("div.classList.toggle('a', false)");
+shouldBe("div.classList.length", "0"); // Should remove the class.
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

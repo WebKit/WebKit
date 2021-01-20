@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<style id="inlineStyleId">
+@import url(resources/import-level-1.css);
+body { color: blue; }
+</style>
+<script>
+function disableStyleSheet() {
+    document.styleSheets[0].disabled = true;
+}
+
+function enableStyleSheet() {
+    document.styleSheets[0].disabled = false;
+}
+
+function removeImport() {
+    document.getElementById("inlineStyleId").sheet.deleteRule(0);
+}
+
+function test()
+{
+    function collectEvents(n, then) {
+        let remaining = n;
+        let collection = [];
+        return function(event) {
+            collection.push(event);
+            remaining--;
+            if (!remaining)
+                then(collection);
+        }
+    }
+
+    let currentStyleSheetAddedHandler, currentStyleSheetRemovedHandler;
+    WI.cssManager.addEventListener(WI.CSSManager.Event.StyleSheetAdded, (event) => { currentStyleSheetAddedHandler(event); });
+    WI.cssManager.addEventListener(WI.CSSManager.Event.StyleSheetRemoved, (event) => { currentStyleSheetRemovedHandler(event); });
+
+    let suite = InspectorTest.createAsyncSuite("CSS.StyleSheetEvents.Imports");
+
+    suite.addTestCase({
+        name: "CheckStyleSheets",
+        description: "Ensure there are currently two stylesheets.",
+        test(resolve, reject) {
+            let styleSheets = WI.cssManager.styleSheets;
+            InspectorTest.expectThat(styleSheets.length === 3, "Should be 3 stylesheets.");
+            for (let styleSheet of styleSheets)
+                InspectorTest.log(sanitizeURL(styleSheet.url));
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "DisablePropagatesThroughImports",
+        description: "Disabling the top stylesheet containing imports will remove all stylesheets.",
+        test(resolve, reject) {
+            currentStyleSheetRemovedHandler = collectEvents(3, function(events) {
+                events.map((e) => sanitizeURL(e.data.styleSheet.url))
+                    .sort()
+                    .forEach((url) => { InspectorTest.log("StyleSheetRemoved: " + url); });
+                currentStyleSheetRemovedHandler = null;
+                resolve();
+            });
+            InspectorTest.evaluateInPage("disableStyleSheet()");
+        }
+    });
+
+    suite.addTestCase({
+        name: "EnablePropagatesThroughImports",
+        description: "Enabling the top stylesheet containing imports will add all stylesheets.",
+        test(resolve, reject) {
+            currentStyleSheetAddedHandler = collectEvents(3, function(events) {
+                events.map((e) => sanitizeURL(e.data.styleSheet.url))
+                    .sort()
+                    .forEach((url) => { InspectorTest.log("StyleSheetAdded: " + url); });
+                currentStyleSheetAddedHandler = null;
+                resolve();
+            });
+            InspectorTest.evaluateInPage("enableStyleSheet()");
+        }
+    });
+
+    suite.addTestCase({
+        name: "DeleteImportRemovesStyleSheet",
+        description: "Deleting the @import rule should remove that stylesheet and its imports.",
+        test(resolve, reject) {
+            currentStyleSheetRemovedHandler = collectEvents(2, function(events) {
+                events.map((e) => sanitizeURL(e.data.styleSheet.url))
+                    .sort()
+                    .forEach((url) => { InspectorTest.log("StyleSheetRemoved: " + url); });
+                currentStyleSheetRemovedHandler = null;
+                resolve();
+            });
+            InspectorTest.evaluateInPage("removeImport()");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test for CSS.styleSheetAdded and CSS.styleSheetRemoved events with @import rules.</p>
+</body>
+</html>

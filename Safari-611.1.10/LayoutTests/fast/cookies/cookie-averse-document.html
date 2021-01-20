@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that cookie-averse documents cannot return or set cookies.");
+jsTestIsAsync = true;
+
+shouldBe("document.cookie.indexOf('ppkcookie1=testcookie')", "-1");
+shouldNotThrow("document.cookie = 'ppkcookie1=testcookie'");
+shouldBeTrue("document.cookie.indexOf('ppkcookie1=testcookie') >= 0");
+
+debug("");
+debug("* Frameless document cases");
+const framelessDocument1 = document.implementation.createHTMLDocument("test");
+shouldBeEqualToString("framelessDocument1.cookie", "");
+shouldNotThrow("framelessDocument1.cookie = 'ppkcookie2=testcookie'");
+shouldBeEqualToString("framelessDocument1.cookie", "");
+
+const framelessDocument2 = new DOMParser().parseFromString("<body></body>", "text/html");
+shouldBeEqualToString("framelessDocument2.cookie", "");
+shouldNotThrow("framelessDocument2.cookie = 'ppkcookie3=testcookie'");
+shouldBeEqualToString("framelessDocument2.cookie", "");
+
+debug("");
+debug("* Frame with about:blank URL");
+let frame = document.createElement("iframe");
+frame.src = "about:blank";
+document.body.appendChild(frame);
+let frameDocument = frame.contentDocument;
+shouldBeTrue("frameDocument.cookie.indexOf('ppkcookie1=testcookie') >= 0");
+shouldNotThrow("frameDocument.cookie = 'ppkcookie4=testcookie'");
+shouldBeTrue("frameDocument.cookie.indexOf('ppkcookie4=testcookie') >= 0");
+frame.remove();
+frame = null;
+gc();
+shouldBeEqualToString("frameDocument.cookie", "");
+shouldNotThrow("frameDocument.cookie = 'ppkcookie4=testcookie'");
+shouldBeEqualToString("frameDocument.cookie", "");
+
+function runDataURLTest()
+{
+    return new Promise((resolve) => {
+        debug("");
+        debug("* Frame using data: scheme");
+        frame = document.createElement("iframe");
+        frame.src = "data:text/html,<body></body>";
+
+        frame.onload = function() {
+            frameDocument = frame.contentDocument;
+            shouldBeEqualToString("frameDocument.cookie", "");
+            shouldNotThrow("frameDocument.cookie = 'ppkcookie5=testcookie'");
+            shouldBeEqualToString("frameDocument.cookie", "");
+
+            frame.remove();
+            frame = null;
+            resolve();
+        }
+        document.body.appendChild(frame);
+    });
+}
+
+function runFileURLTest()
+{
+    return new Promise((resolve) => {
+        debug("");
+        debug("* Frame using file:// scheme");
+        frame = document.createElement("iframe");
+        frame.src = "../loader/resources/empty-subframe.html";
+        frame.onload = function() {
+            frameDocument = frame.contentDocument;
+            shouldNotThrow("frameDocument.cookie = 'ppkcookie6=testcookie'");
+            shouldBeTrue("frameDocument.cookie.indexOf('ppkcookie6=testcookie') >= 0");
+            evalAndLog("frame.remove()");
+            frame = null;
+            gc();
+            shouldBeEqualToString("frameDocument.cookie", "");
+            shouldNotThrow("frameDocument.cookie = 'ppkcookie7=testcookie'");
+            shouldBeEqualToString("frameDocument.cookie", "");
+
+            resolve();
+        }
+        document.body.appendChild(frame);
+    });
+}
+
+runDataURLTest().then(() => {
+    runFileURLTest().then(() => {
+        finishJSTest();
+    })
+});
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+<html>

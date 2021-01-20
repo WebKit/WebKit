@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="host"><span onclick="checkFocusFired()">Click here</span></div>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+
+description(`This tests clicking on a slotted content would focus the ancestor of the slot element it belongs.<br>
+To manaully test, click on "Click here" below.`);
+
+const shadowRoot = host.attachShadow({mode: 'closed'});
+shadowRoot.innerHTML = '<span tabindex="0"><slot></slot></span>';
+
+window.focusableSlotParent = shadowRoot.querySelector('[tabindex]');
+window.focusEventTarget = null;
+focusableSlotParent.addEventListener('focus', (event) => {
+    window.focusEventTarget = event.target;
+});
+
+function checkFocusFired()
+{
+    shouldBe('focusEventTarget', 'focusableSlotParent');
+    host.remove();
+    finishJSTest();
+}
+
+if (window.testRunner && !window.eventSender)
+    document.write('This test requires eventSender');
+else {
+    if (window.eventSender)
+        window.onload = async () => await UIHelper.activateAt(host.offsetLeft + 5, host.offsetTop + 5);
+    jsTestIsAsync = true;
+}
+
+</script>
+</body>
+</html>

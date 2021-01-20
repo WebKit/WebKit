@@ -1,0 +1,13 @@
+This tests that media element in a standalone media document cannot be focused directly using focus() method or by mouse click.
+
+
+
+*** Should not focus video element by calling focus() method.
+EXPECTED (standaloneMediaDocument.activeElement != '[object HTMLVideoElement]') OK
+
+*** Should not focus video element by mouse click.
+*** Video element clicked.
+EXPECTED (standaloneMediaDocument.activeElement != '[object HTMLVideoElement]') OK
+
+END OF TEST
+

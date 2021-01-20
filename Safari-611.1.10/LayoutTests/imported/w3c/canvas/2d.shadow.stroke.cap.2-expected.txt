@@ -1,0 +1,7 @@
+2d.shadow.stroke.cap.2
+Shadows are drawn for stroke caps
+Spec references: 2d.shadow.render
+Actual output:
+Expected output:
+
+Passed

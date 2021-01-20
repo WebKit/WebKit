@@ -1,0 +1,47 @@
+<html>
+<head>
+<script>
+    function rAF() {
+        return new Promise(resolve => requestAnimationFrame(resolve));
+    }
+
+    async function test() {
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        var ta = document.getElementById('ta');
+
+        // Send caret to bottom of textarea
+        ta.focus();
+        ta.setSelectionRange(ta.value.length, ta.value.length);
+        await rAF();
+        ta.blur();
+
+        await rAF();
+        ta.focus();
+        await rAF();
+        ta.blur();
+        await rAF();
+
+        document.getElementById('res').innerHTML = ta.scrollTop != 0 ? "Test Passed" : "Test Failed";
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="test()">
+This tests that we don't scroll back to the top when leaving a textarea
+<br>
+<textarea id="ta">
+1
+2
+3
+4
+5
+</textarea>
+<div id="res"></div>
+</body>
+</html>

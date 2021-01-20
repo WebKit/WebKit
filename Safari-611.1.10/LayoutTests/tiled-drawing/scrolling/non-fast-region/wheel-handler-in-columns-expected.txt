@@ -1,0 +1,50 @@
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (443,-1060) width=124 height=360)
+        (rect (305,-700) width=123 height=360)
+        (rect (443,-700) width=124 height=360)
+        (rect (166,-340) width=124 height=340)
+        (rect (305,-340) width=123 height=340)
+        (rect (443,-340) width=124 height=340)
+        (rect (0,0) width=800 height=600)
+        (rect (28,600) width=123 height=336)
+        (rect (166,600) width=124 height=336)
+        (rect (28,936) width=123 height=360)
+      (wheel event listener region
+        (rect (305,-380) width=123 height=360)
+        (rect (166,-20) width=124 height=166)
+        (rect (305,-20) width=123 height=166)
+        (rect (166,146) width=124 height=194)
+        (rect (28,340) width=123 height=166)
+        (rect (166,340) width=124 height=166)
+        (rect (28,506) width=123 height=360)
+        (non-passive
+          (rect (305,-380) width=123 height=360)
+          (rect (166,-20) width=124 height=166)
+          (rect (305,-20) width=123 height=166)
+          (rect (166,146) width=124 height=194)
+          (rect (28,340) width=123 height=166)
+          (rect (166,340) width=124 height=166)
+          (rect (28,506) width=123 height=360)
+        )
+      )
+      )
+    )
+  )
+)
+

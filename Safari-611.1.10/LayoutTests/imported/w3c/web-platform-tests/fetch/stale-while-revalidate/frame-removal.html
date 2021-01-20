@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Test that frame removal cancels its revalidations</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
+<body>
+<script>
+function wait25ms(test) {
+  return new Promise(resolve => {
+    test.step_timeout(() => {
+      resolve();
+    }, 25);
+  });
+}
+
+async_test(function(t) {
+  var request_token = token();
+  const url = `resources/stale-frame.py?token=` + request_token
+
+  // first frame load
+  let frame = document.createElement("iframe");
+  frame.src = url;
+  frame.onload = () => {
+    // second frame load, triggers revalidation
+    let frame2 = document.createElement("iframe");
+    frame2.src = url;
+    frame2.onload = async () => {
+      while (true) {
+        const revalidation_check = await fetch(`resources/stale-frame.py?query&token=` + request_token);
+        if (revalidation_check.headers.get('Count') == '1')
+          break;
+        await wait25ms(t);
+      }
+      // remove frame, canceling revalidation
+      frame2.remove();
+      // third frame load, triggers new revalidation
+      let frame3 = document.createElement("iframe");
+      frame3.src = url;
+      frame3.onload = async () => {
+        while (true) {
+          const revalidation_check = await fetch(`resources/stale-frame.py?query&token=` + request_token);
+          if (revalidation_check.headers.get('Count') == '2')
+            t.done();
+          await wait25ms(t);
+        }
+      }
+      document.body.appendChild(frame3);
+    }
+    document.body.appendChild(frame2);
+  }
+  document.body.appendChild(frame);
+}, 'Frame removal should cancel its revalidations');
+</script>
+</body>

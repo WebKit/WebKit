@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<title>Canvas test: size.attributes.idl.set.zero</title>
+<meta name="author" content="Philip Taylor">
+<script src="../common/canvas-tests.js"></script>
+<link rel="stylesheet" href="../common/canvas-tests.css">
+<body class="show_output">
+
+<h1><a href="index.size.html">size</a>.<a href="index.size.attributes.html">attributes</a>.<a href="index.size.attributes.idl.html">idl</a>.<a href="index.size.attributes.idl.set.html">set</a>.zero</h1>
+<p class="desc">Setting width/height IDL attributes to 0</p>
+
+<div class="refs">Spec references:
+<ul>
+<li><a href="../annotated-spec/canvas.html#testrefs.size.width">size.width</a>
+<li><a href="../annotated-spec/canvas.html#testrefs.size.height">size.height</a>
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+canvas.width = 0;
+canvas.height = 0;
+_assertSame(canvas.width, 0, "canvas.width", "0");
+_assertSame(canvas.height, 0, "canvas.height", "0");
+
+
+});
+</script>
+

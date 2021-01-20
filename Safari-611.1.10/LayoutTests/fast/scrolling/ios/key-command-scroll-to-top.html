@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.green {
+    background-color: green;
+}
+
+.red {
+    background-color: red;
+}
+
+.hidden {
+    display: none;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+//  UIKit hides the scroll indicator after 1 second.
+const ScrollIndicatorFlashHideDelay = 1000; // milliseconds
+
+function done()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function swapRedGreenBackground(element)
+{
+    if (element.classList.contains("red")) {
+        element.classList.remove("red");
+        element.classList.add("green");
+    } else if (element.classList.contains("green")) {
+        element.classList.remove("green");
+        element.classList.add("red");
+    }
+}
+
+function didEndScroll()
+{
+    window.onscroll = null;
+    // FIXME: Disable flashing of scroll indicator or find a way know when the flash has finished.
+    window.setTimeout(done, ScrollIndicatorFlashHideDelay);
+}
+
+function handleScroll(event)
+{
+    if (!window.scrollY)
+        didEndScroll();
+}
+
+function runTest()
+{
+    let secondSquare = document.getElementById("secondSquare");
+    secondSquareMaxY = secondSquare.offsetTop + secondSquare.offsetHeight;
+
+    function scrollToTop() {
+        console.assert(window.scrollY + window.innerHeight >= secondSquareMaxY);
+        swapRedGreenBackground(document.getElementById("firstSquare"));
+        swapRedGreenBackground(document.getElementById("secondSquare"));
+        window.onscroll = handleScroll;
+        if (window.testRunner)
+            UIHelper.keyDown("upArrow", ["metaKey"]);
+
+    }
+    window.scrollTo(0, secondSquareMaxY);
+    window.setTimeout(scrollToTop, 0);
+}
+
+window.onload = function ()
+{
+    if (!window.testRunner) {
+        // Show manual instructions.
+        document.getElementById("manual-instructions").classList.remove("hidden");
+        return;
+    }
+    runTest();
+}
+</script>
+</head>
+<body>
+<p id="description">Tests that pressing <key>Command</key> + <key>&#x2191;</key> scrolls to the bottom of the page. This test PASSED if you see a green square. Otherwise, it FAILED.</p>
+<p id="manual-instructions" class="hidden">To run this test by hand, click <button onclick="runTest()">Run test</button> to first scroll to the bottom of the page. Then press <key>Command</key> + <key>&#x2191;</key>.</p>
+<div id="firstSquare" style="width: 256px; height: 256px" class="red"></div>
+<div style="height: 2000px"></div>
+<div id="secondSquare" style="width: 256px; height: 256px" class="green"></div>
+</body>
+</html>

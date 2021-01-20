@@ -1,0 +1,50 @@
+<html>
+<head>
+<script src="../../resources/dump-as-markup.js" type="text/javascript"></script>
+<script>
+Markup.description("This tests drag and drop into a form element that is removed in its onfocus handler.  Safari shouldn't crash and the dropped content shouldn't appear anywhere because there's no editable region left over underneath the mouse when the input element is removed on drop.");
+
+function focusHandler() {
+    var input = document.getElementById("input");
+    input.parentNode.removeChild(input);
+}
+
+function runTest() {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpEditingCallbacks();
+    
+    var x, y;
+    var span = document.getElementById("span");
+    x = span.offsetParent.offsetLeft + span.offsetLeft + span.offsetWidth / 2;
+    y = span.offsetParent.offsetTop + span.offsetTop + span.offsetHeight / 2;
+    
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    
+    eventSender.leapForward(1000);
+    
+    eventSender.mouseDown();
+    
+    eventSender.leapForward(500);
+    
+    var input = document.getElementById("input");
+    x = input.offsetParent.offsetLeft + input.offsetLeft + input.offsetWidth / 2;
+    y = input.offsetParent.offsetTop + input.offsetTop + input.offsetHeight / 2;
+    
+    eventSender.mouseMoveTo(x, y);
+    eventSender.leapForward(500);
+    eventSender.mouseUp();
+
+    Markup.dump(document.body);
+}
+</script>
+</head>
+<body>
+<span id="span">Dragme</span><input type="text" id="input" onfocus="focusHandler()">
+<script>runTest();</script>
+</body>

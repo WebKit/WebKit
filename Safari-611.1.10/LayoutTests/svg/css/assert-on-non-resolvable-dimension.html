@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we don't assert on non-resolvable values.</title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+PASS if no assert in debug.
+<svg>
+    <rect style="width: -webkit-fit-content;"></rect>
+    <rect sstyle="width: max-content;">foobar</rect>
+    <rect sstyle="width: min-content;">foobar</rect>
+    <rect sstyle="width: fit-content;">foobar</rect>
+    <rect sstyle="width: intrinsic;">foobar</rect>
+    <rect sstyle="width: min-intrinsic;">foobar</rect>
+    <rect sstyle="width: relative;">foobar</rect>
+    <rect sstyle="width: undefined;">foobar</rect>
+</svg>
+</body>
+</html>

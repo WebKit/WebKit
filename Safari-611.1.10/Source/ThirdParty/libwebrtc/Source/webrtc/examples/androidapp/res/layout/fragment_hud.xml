@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageButton
+        android:id="@+id/button_toggle_debug"
+        android:background="@android:drawable/ic_menu_info_details"
+        android:contentDescription="@string/toggle_debug"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_width="48dp"
+        android:layout_height="48dp"/>
+
+    <TextView
+        android:id="@+id/encoder_stat_call"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:textStyle="bold"
+        android:textColor="#C000FF00"
+        android:textSize="12sp"
+        android:layout_margin="8dp"/>
+
+    <TableLayout
+           android:id="@+id/hudview_container"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent">
+
+           <TableRow>
+              <TextView
+                 android:id="@+id/hud_stat_bwe"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:alpha="0.4"
+                 android:padding="2dip"
+                 android:background="@android:color/white"
+                 android:textColor="@android:color/black" />
+
+              <TextView
+                 android:id="@+id/hud_stat_connection"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:alpha="0.4"
+                 android:padding="2dip"
+                 android:background="@android:color/white"
+                 android:textColor="@android:color/black" />
+
+           </TableRow>
+
+           <TableRow>
+              <TextView
+                 android:id="@+id/hud_stat_video_send"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:alpha="0.4"
+                 android:padding="2dip"
+                 android:background="@android:color/white"
+                 android:textColor="@android:color/black" />
+
+              <TextView
+                 android:id="@+id/hud_stat_video_recv"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:padding="2dip"
+                 android:alpha="0.4"
+                 android:background="@android:color/white"
+                 android:textColor="@android:color/black" />
+            </TableRow>
+    </TableLayout>
+
+</RelativeLayout>

@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (68,168) size 681x264
+    RenderSVGContainer {g} at (0,0) size 0x0
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceMarker {marker} [id="Start"] [markerUnits=strokeWidth] [ref at (0,5)] [angle=auto]
+        RenderSVGPath {path} at (2,0) size 16x15 [fill={[type=SOLID] [color=#008000]}] [data="M 0 0 L 10 5 L 0 10 Z"]
+      RenderSVGResourceMarker {marker} [id="Mid"] [markerUnits=strokeWidth] [ref at (0,5)] [angle=auto]
+        RenderSVGPath {path} at (2,0) size 16x15 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 0 L 10 5 L 0 10 Z"]
+      RenderSVGResourceMarker {marker} [id="End"] [markerUnits=strokeWidth] [ref at (0,5)] [angle=auto]
+        RenderSVGPath {path} at (2,0) size 16x15 [fill={[type=SOLID] [color=#0000FF]}] [data="M 0 0 L 10 5 L 0 10 Z"]
+    RenderSVGContainer {g} at (68,168) size 681x264 [start marker=Start] [middle marker=Mid] [end marker=End]
+      RenderSVGPath {path} at (68,168) size 281x110 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=Start] [middle marker=Mid] [end marker=End] [data="M 50 120 C 50 140.711 61.1929 157.5 75 157.5 C 88.8071 157.5 100 140.711 100 120 M 150 120 C 150 140.711 161.193 157.5 175 157.5 C 188.807 157.5 200 140.711 200 120"]
+      RenderSVGPath {path} at (68,322) size 281x110 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=Start] [middle marker=Mid] [end marker=End] [data="M 50 240 C 50 219.289 61.1929 202.5 75 202.5 C 88.8071 202.5 100 219.289 100 240 M 150 240 C 150 219.289 161.193 202.5 175 202.5 C 188.807 202.5 200 219.289 200 240"]
+      RenderSVGPath {path} at (468,168) size 281x110 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=Start] [middle marker=Mid] [end marker=End] [data="M 290 120 C 290 140.711 301.193 157.5 315 157.5 C 328.807 157.5 340 140.711 340 120 M 390 120 C 390 140.711 401.193 157.5 415 157.5 C 428.807 157.5 440 140.711 440 120"]
+      RenderSVGPath {path} at (468,322) size 281x110 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=Start] [middle marker=Mid] [end marker=End] [data="M 290 240 C 290 219.289 301.193 202.5 315 202.5 C 328.807 202.5 340 219.289 340 240 M 390 240 C 390 219.289 401.193 202.5 415 202.5 C 428.807 202.5 440 219.289 440 240"]

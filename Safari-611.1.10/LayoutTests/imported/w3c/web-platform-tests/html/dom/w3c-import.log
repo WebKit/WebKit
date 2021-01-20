@@ -1,0 +1,44 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-embedded.js
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-forms.js
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-grouping.js
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-metadata.js
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-misc.js
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-obsolete.js
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-sections.js
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-tabular.js
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-text.js
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/historical.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/idlharness.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/idlharness.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/new-harness.js
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/original-harness.js
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-embedded.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-forms.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-grouping.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-metadata.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-misc.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-obsolete.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-original.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-sections.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-tabular.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection-text.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/reflection.js
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/self-origin.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/self-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/usvstring-reflection.https.html

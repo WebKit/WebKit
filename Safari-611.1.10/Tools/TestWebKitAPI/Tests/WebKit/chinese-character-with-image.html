@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv='content-type' content='text/html; charset=utf-8'>
+<body>
+<div contenteditable>
+<p><br></p>
+<p style="text-align: center; font-size: 15px;"><img src="icon.png">你</p>
+<p>hello, world</p>
+</div>
+<script>
+document.querySelector('div').focus();
+getSelection().setPosition(document.querySelector('img').parentNode, 1);
+</script>
+</body>
+</html>

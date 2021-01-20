@@ -1,0 +1,83 @@
+<body>
+This is a test for custom CSS cursors on retina displays.
+Move the mouse over the green pixel in each red square and the left should match the right.
+Note that NSCursor has bugs with precise sub-pixel positioning on retina displays but if you zoom in using the control+scroll shortcut then the cursor will shift to the correct position.
+See https://bugs.webkit.org/show_bug.cgi?id=120783.
+<script>
+
+if (window.devicePixelRatio !== 2) {
+  document.write('<h1>Note: This test only makes sense on a retina display.</h1>');
+}
+
+var demoWidth = 64;
+var demoHeight = 64;
+
+function createCheckerboard(width, height) {
+  var c = document.createElement('canvas').getContext('2d');
+  var imageData = c.createImageData(width, height);
+  var data = imageData.data;
+  c.canvas.width = width;
+  c.canvas.height = height;
+  for (var y = 0; y < height; y++) {
+    for (var x = 0; x < width; x++) {
+      var i = x + y * width << 2;
+      data[i] = data[i + 1] = data[i + 2] = (x ^ y) & 1 ? 255 : 0;
+      data[i + 3] = 255;
+    }
+  }
+  c.putImageData(imageData, 0, 0);
+  return c.canvas;
+}
+
+function createRender(x, y, width, height, scale) {
+  var c = document.createElement('canvas').getContext('2d');
+  var checkerboard = createCheckerboard(width, height);
+  c.canvas.width = demoWidth * 2;
+  c.canvas.height = demoHeight * 2;
+  c.canvas.style.width = demoWidth + 'px';
+  c.canvas.style.height = demoHeight + 'px';
+  c.fillStyle = '#F00'; c.fillRect(0, 0, demoWidth * 2, demoHeight * 2);
+  c.fillStyle = '#D00'; c.fillRect(0, 0, demoWidth, demoHeight);
+  c.fillStyle = '#0F0'; c.fillRect(demoWidth, demoHeight, 2, 2);
+  c.drawImage(checkerboard, demoWidth - 2 * x, demoHeight - 2 * y, checkerboard.width * 2 / scale, checkerboard.height * 2 / scale);
+  return c.canvas;
+}
+
+var number = 0;
+
+function createCursorDemo(x, y, width, height, scale) {
+  var cursor = '-webkit-image-set(url(' + createCheckerboard(width, height).toDataURL() + ') ' + scale + 'x) ' + x + ' ' + y + ', help';
+  document.write('<h3 style="margin-bottom:0;">Test ' + ++number + '</h3>' +
+    '<div style="position:relative;width:' + demoWidth + 'px;height:' + demoHeight + 'px;background:#F00;display:inline-block;margin-right:20px;">' +
+      '<div style="position:absolute;width:' + demoWidth / 2 + 'px;height:' + demoHeight / 2 + 'px;background:#D00;"></div>' +
+      '<div style="position:absolute;left:' + demoWidth / 2 + 'px;top:' + demoHeight / 2 + 'px;width:1px;height:1px;background:#0F0;cursor:' + cursor + ';"></div>' +
+    '</div>');
+  document.body.appendChild(createRender(x, y, width, height, scale));
+}
+
+document.write('<h2>Size tests</h2>');
+createCursorDemo(0, 0, 64, 64, 2);
+createCursorDemo(0, 0, 63, 64, 2);
+createCursorDemo(0, 0, 64, 63, 2);
+createCursorDemo(0, 0, 63, 63, 2);
+createCursorDemo(0, 0, 5, 4, 2);
+createCursorDemo(0, 0, 5, 3, 2);
+createCursorDemo(0, 0, 4, 3, 2);
+createCursorDemo(0, 0, 2, 2, 2);
+createCursorDemo(0, 0, 1, 1, 2);
+
+document.write('<h2>Hot spot tests</h2>');
+createCursorDemo(15, 15, 64, 64, 2);
+createCursorDemo(15, 15, 32, 32, 1);
+createCursorDemo(31, 31, 64, 64, 2);
+createCursorDemo(31, 31, 32, 32, 1);
+createCursorDemo(1, 1, 9, 9, 2);
+createCursorDemo(16, 0, 64, 64, 2);
+createCursorDemo(0, 16, 64, 64, 2);
+createCursorDemo(3, 4, 8, 10, 2);
+createCursorDemo(2, 3, 7, 9, 2);
+createCursorDemo(1, 0, 5, 3, 2);
+createCursorDemo(2, 1, 5, 3, 2);
+
+</script>
+</body>

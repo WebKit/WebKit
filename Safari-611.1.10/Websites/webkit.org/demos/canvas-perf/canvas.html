@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<body onload="doTest()">
+<pre id="output">
+</pre>
+<img src="kraken.jpg" id="image">
+<canvas id="original" style="width: 3264px; height: 2448px"></canvas>
+<canvas id="copy" style="width: 3264px; height: 2448px"></canvas>
+<canvas id="indirectCopy" style="width: 3264px; height: 2448px"></canvas>
+<canvas id="scaledUp" style="width: 6528px; height: 4896px"></canvas>
+<canvas id="scaledDown" style="width: 1632px; height: 1224px"></canvas>
+<canvas id="rotated" style="width: 2448px; height: 3264px; border: 1px solid red;"></canvas>
+<script>
+var width = 3264;
+var height = 2448;
+var original = document.getElementById("original");
+var originalContext = original.getContext("2d");
+var idleTimer = 20;
+
+function log(text) {
+    if (typeof text != "string" )
+        text = text.toString();
+    var span = document.createElement("span");
+    document.getElementById("output").appendChild(span);
+    span.innerHTML = text.replace(/</g, "&lt;").replace("/>/g", "&gt;").replace("/&/g", "&amp")+ "<br>";
+}
+
+function shouldBe(_a, _b) {
+    if (typeof _a != "string" || typeof _b != "string")
+        log("WARNING: shouldBe() expects string arguments.");
+    var _aValue = eval(_a);
+    var _bValue = eval(_b);
+    if (_aValue !== _bValue)
+        log("FAILURE: " + _a + "should have been " + _bValue + ". Instead it was " + _aValue + ".");
+}
+
+function flushOperation(context) {
+   var imageData = context.getImageData(0, 0, context.canvas.width, context.canvas.height);
+}
+
+function timeCanvasOperation(context, canvasOperation) {
+    var repetitions = 2;
+    var startDate = new Date();
+
+    for (var i = 0; i < repetitions; ++i) {
+        canvasOperation();
+        flushOperation(context);
+    }
+    var finishDate = new Date();
+    var timeWithOverhead = finishDate - startDate;
+
+    for (var i = 0; i < repetitions; ++i) {
+        flushOperation(context);
+    }
+    var overheadTime = new Date() - finishDate;
+    return (timeWithOverhead - overheadTime) / repetitions;
+}
+
+function doTest() {
+    var image =  document.getElementById("image");
+    image.width = width;
+    image.height = height;
+    
+    original.width = width;
+    original.height = height;
+    original.getContext("2d").drawImage(image, 0, 0);
+    window.setTimeout(doCopy, idleTimer);
+}
+
+function doCopy() {
+    log("===== Copy/Scale/Rotate Tests =====");
+
+    var copy =  document.getElementById("copy");
+    copy.width = width;
+    copy.height = height;
+    var copyContext = copy.getContext("2d");
+    copyContext.globalCompositeOperation = "copy";
+    var time = timeCanvasOperation(copyContext,
+        function () {
+            copyContext.drawImage(original, 0, 0);
+        });
+    log("Direct image copy: " + time + "ms");
+    window.setTimeout(doIndirectCopy, idleTimer);
+}
+
+function doIndirectCopy() {
+    var indirectCopy =  document.getElementById("indirectCopy");
+    indirectCopy.width = width;
+    indirectCopy.height = height;
+    var indirectCopyContext = indirectCopy.getContext("2d");
+    indirectCopyContext.globalCompositeOperation = "copy";
+    time = timeCanvasOperation(indirectCopyContext,
+        function () {
+            var imageData = originalContext.getImageData(0, 0, width, height);
+            indirectCopyContext.putImageData(imageData, 0, 0);
+        });
+    log("Indirect copy with (via ImageData): " + time + "ms");
+    window.setTimeout(doScaleUp, idleTimer);
+}
+
+function doScaleUp() {
+    var scaledUp =  document.getElementById("scaledUp");
+    scaledUp.width = width * 2;
+    scaledUp.height = height * 2;
+    var scaledUpContext = scaledUp.getContext("2d");
+    scaledUpContext.globalCompositeOperation = "copy";
+    time = timeCanvasOperation(scaledUpContext,
+        function () {
+            scaledUpContext.drawImage(original, 0, 0, width * 2, height * 2);
+        });
+    log("Copy with 2x scale: " + time + "ms");
+    shouldBe("document.getElementById('scaledUp').width", "width * 2");
+    shouldBe("document.getElementById('scaledUp').height", "height * 2");
+    window.setTimeout(doScaleDown, idleTimer);
+}
+
+function doScaleDown() {
+    var scaledDown =  document.getElementById("scaledDown");
+    scaledDown.width = width / 2;
+    scaledDown.height = height / 2;
+    var scaledDownContext = scaledDown.getContext("2d");
+    scaledDownContext.globalCompositeOperation = "copy";
+    time = timeCanvasOperation(scaledDownContext,
+        function () {
+            scaledDownContext.drawImage(original, 0, 0, width / 2, height / 2);
+        });
+    log("Copy with 0.5x scale: " + time + "ms");
+    shouldBe("document.getElementById('scaledDown').width", "width / 2");
+    shouldBe("document.getElementById('scaledDown').height", "height / 2");
+    window.setTimeout(doRotation, idleTimer);
+}
+
+function doRotation() {
+    var rotated = document.getElementById("rotated");
+    rotated.width = height;
+    rotated.height = width;
+    var rotatedContext = rotated.getContext("2d");
+    rotatedContext.globalCompositeOperation = "copy";
+    rotatedContext.rotate(Math.PI / 2);
+
+    time = timeCanvasOperation(rotatedContext,
+        function () {
+            rotatedContext.drawImage(original, 0, -original.height);
+        });
+    log("Copy with rotate: " + time + "ms");
+    shouldBe("document.getElementById('rotated').width", "height");
+    shouldBe("document.getElementById('rotated').height", "width");
+    log("");
+    window.setTimeout(doStrokeTextTests, idleTimer);
+}
+
+function doStrokeTextTests() {
+    log("===== StrokeText Tests =====");
+    var strokeTextFunc = function(canvas, str, x, y) { canvas.strokeText(str, x, y); };
+    doNextTextTest(strokeTextFunc, doFillTextTests, 1);
+}
+
+function doFillTextTests() {
+    log("===== FillText Tests =====");
+    var fillTextFunc = function(obj, str, x, y) { obj.fillText(str, x, y); };
+    doNextTextTest(fillTextFunc, doSmallStrokeLineTests, 1);
+}
+
+function doNextTextTest(writeText, nextFunc, numStrings) {
+    var canvas = document.createElement('canvas');
+    canvas.width = 100;
+    canvas.height = 550;
+    document.body.appendChild(canvas);
+    var ctx = canvas.getContext('2d');
+
+    var time = timeCanvasOperation(ctx,
+        function () {
+            for (var i = 0; i < 10; i++)
+                for (var j = 0; j < numStrings; j++)
+                    writeText(ctx, "Printing text!", 25, 500 * j / numStrings + 25);
+        });
+    log(numStrings + " strings: " + (time / 10) + "ms");
+
+    numStrings *= 10;
+    if (numStrings < 1001)
+        window.setTimeout(function () {
+                              doNextTextTest(writeText, nextFunc, numStrings);
+                          }, idleTimer);
+    else {
+        log("");
+        window.setTimeout(nextFunc, idleTimer);
+    }
+}
+
+function doSmallStrokeLineTests() {
+    log("===== StrokeLine Tests =====");
+    doNextStrokeLineTest(doLargeStrokeLineTests, 1, 150, 150);
+}
+
+function doLargeStrokeLineTests() {
+    doNextStrokeLineTest(null, 1, 1000, 1000);
+}
+
+function doNextStrokeLineTest(nextFunc, numLines, xSize, ySize) {
+    var canvas = document.createElement('canvas');
+    canvas.width = xSize;
+    canvas.height = ySize;
+    document.body.appendChild(canvas);
+    var ctx = canvas.getContext('2d');
+
+    var time = timeCanvasOperation(ctx,
+        function() {
+            for (var i = 0; i < 10; i++) {
+                ctx.beginPath();
+                if (numLines == 1) {
+                    ctx.moveTo(5, 5);
+                    ctx.lineTo(xSize - 1, ySize - 1);
+                } else {
+                    for (var j = 0; j < numLines; j++) {
+                        ctx.moveTo(j * xSize / numLines, j * ySize / numLines);
+                        ctx.lineTo(xSize - 5, 5);
+                    }
+                }
+                ctx.stroke();
+                ctx.closePath();
+            }
+        });
+    log("Stroking " + numLines + " lines in " + xSize + "x" + ySize + ": " + (time / 10) + "ms");
+    
+    numLines *= 10;
+    if (numLines < 1001)
+        window.setTimeout(function () {
+                              doNextStrokeLineTest(nextFunc, numLines, xSize, ySize);
+                          }, idleTimer);
+    else {
+        log("");
+        if (nextFunc)
+            window.setTimeout(nextFunc, idleTimer);
+        else
+            log("DONE!");
+    }
+}
+</script>
+
+</body>

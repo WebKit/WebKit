@@ -1,0 +1,19 @@
+<script>
+function removePlugin() {
+    var plugin = document.getElementById('plugin');
+    plugin.parentNode.removeChild(plugin);
+
+    document.getElementById('console').innerText = 'SUCCESS';
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+<body>
+<embed id="plugin" type="application/x-webkit-test-netscape" test="get-url-with-javascript-url-destroying-plugin" width=100 height=100></embed>
+<p id="description">This tests that evaluating JS that calls NPN_GetURL to evaluate a javascript: URL that destroys the plug-in doesn't crash.</p>
+<div id="console">FAILURE</div>

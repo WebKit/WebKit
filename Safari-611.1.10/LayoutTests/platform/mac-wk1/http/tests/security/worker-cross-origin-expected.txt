@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: Unsafe attempt to load URL http://localhost:8000/security/resources/worker-message-pass.js from origin http://127.0.0.1:8000. Domains, protocols and ports must match.
+
+This tests that Web Worker script redirects are blocked if cross origin.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS worker = new Worker("http://127.0.0.1:8000/resources/redirect.php?url=http://localhost:8000/security/resources/worker-message-pass.js") did not throw exception.
+PASS Blocked cross origin Worker script load
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

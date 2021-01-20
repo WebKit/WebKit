@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test nomodule does not have any effect on module script.');
+
+// Module will be executed asynchronously.
+window.jsTestIsAsync = true;
+</script>
+<script>
+debug('Module is not executed yet.');
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+<script nomodule type="module">
+import Cocoa from "./resources/module-inline-simple.js";
+var cocoa = new Cocoa();
+
+debug("Module execution is confined in the module environment.");
+shouldBeEqualToString("typeof cocoa", "undefined");
+
+window.exportedCocoa = cocoa;
+shouldBeEqualToString("typeof exportedCocoa", "object");
+shouldBeEqualToString("exportedCocoa.taste()", "awesome");
+finishJSTest();
+</script>
+</body>
+</html>

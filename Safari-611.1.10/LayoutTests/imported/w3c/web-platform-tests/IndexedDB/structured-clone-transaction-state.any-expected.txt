@@ -1,0 +1,11 @@
+
+FAIL Transaction inactive during structured clone in IDBObjectStore.add() assert_throws_dom: transaction should not be active during structured clone function "() => {
+        objectStore.get('key');
+      }" did not throw
+FAIL Transaction inactive during structured clone in IDBObjectStore.put() assert_throws_dom: transaction should not be active during structured clone function "() => {
+        objectStore.get('key');
+      }" did not throw
+FAIL Transaction inactive during structured clone in IDBCursor.update() assert_throws_dom: transaction should not be active during structured clone function "() => {
+        objectStore.get('key');
+      }" did not throw
+

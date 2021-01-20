@@ -1,0 +1,3 @@
+
+FAIL Mutation of the 'end' attribute changes current interval end assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+

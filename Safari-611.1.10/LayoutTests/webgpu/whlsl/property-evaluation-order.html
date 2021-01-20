@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>evaluation order and times.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.dontEvaluateTwice = async () => {
+    const program = `
+        uint bar(thread uint* ptr) {
+            uint old = *ptr;
+            *ptr = *ptr + 1;
+            return old;
+        }
+
+        bool foo() {
+            uint x = 0;
+            int[42] arr;
+            arr[0] = 42;
+
+            int result = arr[bar(&x)];
+            return result == 42 && x == 1;
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.dontEvaluateTwice2 = async () => {
+    const program = `
+        uint bar(thread uint[] arr, uint index, thread uint* ptr) {
+            uint old = *ptr;
+            arr[index] = old;
+            *ptr = *ptr + 1;
+            return 0;
+        }
+
+        bool foo() {
+            uint x = 1;
+
+            uint[3] indices;
+
+            uint[4][4][4] arr;
+
+            arr[bar(@indices, 0, &x)][bar(@indices, 1, &x)][bar(@indices, 2, &x)] = 42;
+            return arr[0][0][0] == 42
+                && indices[0] == 1 
+                && indices[1] == 2 
+                && indices[2] == 3
+                && x == 4;
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.dontEvaluateTwice3 = async () => {
+    const program = `
+        uint[2][2] base(thread uint[] arr, uint index, thread uint* ptr) {
+            uint old = *ptr;
+            arr[index] = old;
+            *ptr = *ptr + 1;
+            uint[2][2] result;
+            result[0][0] = 42;
+            return result;
+        }
+
+        uint bar(thread uint[] arr, uint index, thread uint* ptr) {
+            uint old = *ptr;
+            arr[index] = old;
+            *ptr = *ptr + 1;
+            return 0;
+        }
+
+        bool foo() {
+            uint x = 1;
+
+            uint[3] indices;
+
+            uint result = base(@indices, 0, &x)[bar(@indices, 1, &x)][bar(@indices, 2, &x)];
+
+            return result == 42
+                && indices[0] == 1
+                && indices[1] == 2 
+                && indices[2] == 3
+                && x == 4;
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.dontEvaluateTwice4 = async () => {
+    const program = `
+        uint bar(thread uint* ptr) {
+            uint old = *ptr;
+            *ptr = *ptr + 1;
+            return old;
+        }
+
+        bool foo() {
+            uint[2] arr;
+
+            uint x = 1;
+
+            arr[bar(&x)] += 666;
+
+            return arr[1] == 666 && x == 2;
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.dontEvaluateTwice5 = async () => {
+    const program = `
+        thread uint* getPtr(thread uint* ptr) {
+            *ptr = *ptr + 1;
+            return ptr;
+        }
+
+        bool foo() {
+            uint x = 1;
+            uint result = (*getPtr(&x))++;
+            return x == 3 && result == 2;
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.dontEvaluateTwice6 = async () => {
+    const program = `
+        thread uint* getPtr(thread uint* ptr) {
+            *ptr = *ptr + 1;
+            return ptr;
+        }
+
+        bool foo() {
+            uint x = 1;
+            uint result = ++(*getPtr(&x));
+            return x == 3 && result == 3;
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.dontEvaluateTwice7 = async () => {
+    const program = `
+        thread uint[] getArr(thread uint[] value, thread uint[] indices, uint index, thread uint* ptr) {
+            indices[index] = *ptr;
+            *ptr = *ptr + 1;
+            return value;
+        }
+
+        uint getValue(uint ret, thread uint[] indices, uint index, thread uint* ptr) {
+            indices[index] = *ptr;
+            *ptr = *ptr + 1;
+            return ret;
+        }
+
+        bool foo() {
+            uint x = 1;
+            uint[3] arr;
+            uint[1] value;
+            value[0] = 1;
+
+            getArr(@value, @arr, 0, &x)[getValue(0, @arr, 1, &x)] += getValue(665, @arr, 2, &x);
+            return x == 4
+                && arr[0] == 1
+                && arr[1] == 2
+                && arr[2] == 3
+                && value[0] == 666;
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.dontEvaluateTwice8 = async () => {
+    const program = `
+        uint getValue(uint ret, thread uint[] indices, uint index, thread uint* ptr) {
+            indices[index] = *ptr;
+            *ptr = *ptr + 1;
+            return ret;
+        }
+
+        thread uint[] getArr(thread uint[] value, thread uint[] indices, uint index, thread uint* ptr) {
+            indices[index] = *ptr;
+            *ptr = *ptr + 1;
+            return value;
+        }
+
+        bool foo() {
+            uint x = 1;
+            uint[3] arr;
+            uint[1] value;
+            value[0] = 1;
+
+            getArr(@value, @arr, 0, &x)[arr[getValue(0, @arr, 1, &x)]] += getValue(665, @arr, 2, &x);
+
+            return x == 4
+                && arr[0] == 1
+                && arr[1] == 2
+                && arr[2] == 3
+                && value[0] == 666;
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.dontEvaluateTwice9 = async () => {
+    const program = `
+        thread uint[1]* getValue(thread uint[1]* arr, thread uint[] indices, uint index, thread uint* ptr) {
+            indices[index] = *ptr;
+            *ptr = *ptr + 1;
+            return arr;
+        }
+
+        bool foo() {
+            uint x = 1;
+            uint[1] arr;
+            uint[1] value;
+            value[0] = 1;
+
+            (*getValue(&value, @arr, 0, &x))[0] += 665;
+
+            return x == 2
+                && arr[0] == 1
+                && value[0] == 666;
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+runTests(whlslTests);
+</script>
+</html>

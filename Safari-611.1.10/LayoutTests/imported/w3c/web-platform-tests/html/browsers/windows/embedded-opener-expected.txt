@@ -1,0 +1,3 @@
+
+FAIL opener and embedded documents; using window.open() assert_equals: opener before setting it to null via directly invoking the getter expected object "[object Window]" but got null
+

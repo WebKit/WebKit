@@ -1,0 +1,19 @@
+<!DOCYTPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function log(msg) {
+    var console = document.getElementById("console");
+    console.innerText = msg;
+}
+</script>
+</head>
+<body>
+<p>The text box should have focus console should print PASS</p>
+<div id="console"></div>
+<p><input type="text" name="test" id="test" readonly autofocus onfocus='log("PASS")'></p>
+</body>
+</html>

@@ -1,0 +1,10 @@
+
+TEST(source.addSourceBuffer("invalid")) THROWS(DOMException.NOT_SUPPORTED_ERR) OK
+EXPECTED (MediaSource.isTypeSupported("invalid") == 'false') OK
+EXPECTED (MediaSource.isTypeSupported("video/mock; codecs=mock") == 'true') OK
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+EXPECTED (source.sourceBuffers[0] == '[object SourceBuffer]') OK
+END OF TEST
+

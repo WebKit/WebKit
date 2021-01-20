@@ -1,0 +1,44 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            body {
+                margin: 0;
+                overflow: hidden;
+                height: 200vh;
+            }
+
+            #target {
+                width: 100%;
+                height: 100px;
+                background-color: red;
+                font-size: 80px;
+                text-align: center;
+                position: absolute;
+                top: 75vh;
+                color: white;
+            }
+        </style>
+        <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+        <script>
+            addEventListener("load", async () => {
+                jsTestIsAsync = true;
+                description("Verifies that double-tapping does not trigger mainframe scrolling when <code>overflow: hidden</code> is specified. To manually run the test, double tap the text below; the page should not scroll.");
+
+                if (!window.testRunner)
+                    return;
+
+                const rect = target.getBoundingClientRect();
+                await UIHelper.doubleTapAt(rect.left + rect.width / 2, rect.top + rect.height / 2);
+                await UIHelper.delayFor(100);
+                shouldBe("document.scrollingElement.scrollTop", "0");
+                finishJSTest();
+            });
+        </script>
+    </head>
+    <body>
+        <div id="target">Double tap here</div>
+    </body>
+</html>

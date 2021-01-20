@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 53x17
+          text run at (0,0) width 53: "Test for "
+        RenderInline {I} at (0,0) size 781x35
+          RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
+            RenderText {#text} at (53,0) size 301x17
+              text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=13072"
+          RenderText {#text} at (354,0) size 781x35
+            text run at (354,0) width 4: " "
+            text run at (358,0) width 423: "REGRESSION (r15617): white-space: pre-wrap breaks off the last"
+            text run at (0,18) width 160: "character of a wide word"
+        RenderText {#text} at (160,18) size 4x17
+          text run at (160,18) width 4: "."
+      RenderBlock {P} at (0,52) size 784x18
+        RenderText {#text} at (0,0) size 227x17
+          text run at (0,0) width 227: "The following line should not wrap."
+      RenderBlock {DIV} at (0,86) size 150x18 [bgcolor=#D3D3D3]
+        RenderText {#text} at (0,0) size 188x17
+          text run at (0,0) width 188: "abcdefghijklmnopqrstuvwxyz"

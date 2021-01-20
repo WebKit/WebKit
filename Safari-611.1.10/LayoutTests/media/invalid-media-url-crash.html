@@ -1,0 +1,32 @@
+<html>
+    <body>
+        <p>Tests that invalid media src url does not result in crash.</p>
+        <script src=video-test.js></script>
+        <script>
+            var invalid_url = "!:/" + String.fromCharCode(0) + "%aa#aa";
+            var error_count = 0;
+
+            function errorEvent()
+            {
+                error_count++;
+                if (error_count == 2)
+                {
+                    testExpected("audio.error.code", MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
+                    testExpected("video.error.code", MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
+                    testExpected("audio.networkState", HTMLMediaElement.NETWORK_NO_SOURCE);
+                    testExpected("video.networkState", HTMLMediaElement.NETWORK_NO_SOURCE);
+                    endTest();
+                }
+            }
+
+            var audio = document.createElement('audio');
+            var video = document.createElement('video');
+            audio.src = invalid_url;
+            video.src = invalid_url;
+            audio.onerror = errorEvent;
+            video.onerror = errorEvent;
+            document.body.appendChild(audio);
+            document.body.appendChild(video);
+        </script>
+    </body>
+</html>

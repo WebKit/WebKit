@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+</head>
+<body id="body">
+<p id="description">This tests that if aria-labelledby is used, then aria-label attributes are not used.</p>
+
+<button id="using-none">Alpha</button>
+<button id="using-label" aria-label="Gamma">Beta</button>
+<button id="using-labelledby" aria-labelledby="epsilon" aria-label="Zeta">Delta</button>
+<button id="using-labeledby" aria-labeledby="theta" aria-label="Iota">Eta</button>
+<span id="epsilon">Epsilon</span>
+<span id="theta">Theta</span>
+
+<ul id="results"></ul>
+<div id="console"></div>
+
+<script>
+    function getAccessibilityObject(id) {
+        var element = document.getElementById(id);
+        element.focus();
+        return accessibilityController.focusedElement;
+    }
+
+    function output(str) {
+        var results = document.getElementById("results");
+        var li = document.createElement("li");
+        li.appendChild(document.createTextNode(str));
+        results.appendChild(li);
+    }
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    if (window.accessibilityController) {
+        var usingNone = getAccessibilityObject("using-none");
+        output("usingNone.title: [" + usingNone.title + "]");
+        output("usingNone.description:  [" + usingNone.description + "]");
+
+        var usingLabel = getAccessibilityObject("using-label");
+        output("usingLabel.title: [" + usingLabel.title + "]");
+        output("usingLabel.description:  [" + usingLabel.description + "]");
+
+        var usingLabelledby = getAccessibilityObject("using-labelledby");
+        output("usingLabelledby.title: [" + usingLabelledby.title + "]");
+        output("usingLabelledby.description:  [" + usingLabelledby.description + "]");
+
+        var usingLabeledby = getAccessibilityObject("using-labeledby");
+        output("usingLabeledby.title: [" + usingLabeledby.title + "]");
+        output("usingLabeledby.description:  [" + usingLabeledby.description + "]");
+    }
+
+    successfullyParsed = true;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Length.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+const epsilon = 0.0001;
+
+whlslTests.vectorIndexAssign = async () => {
+    const program = `
+        float foo(float a, float b) {
+            float2 x;
+            x[0] = a;
+            x[1] = b;
+            return length(x);
+        }
+    `;
+
+    const data = [
+        [NaN, 10],
+        [10, NaN],
+        [20, 10],
+        [0, 0],
+    ];
+
+    for (const [x, y] of data) {
+        const result = await callFloatFunction(program,  "foo", [makeFloat(x), makeFloat(y)]);
+        if (isNaN(x) || isNaN(y)) {
+            if (!isNaN(result))
+                throw new Error("Result should be NaN.");
+        } else
+            assert_approx_equals(result, Math.sqrt(x*x + y*y), epsilon);
+    }
+};
+
+runTests(whlslTests);
+</script>
+</html>

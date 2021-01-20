@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests pasting a table into a position that would normally result in an end merge.</p>
+<div id="test1" contenteditable="true">xx</div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script src="../editing.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
+
+var e = document.getElementById("test1");
+var s = window.getSelection();
+
+Markup.description(document.querySelector('p').textContent);
+Markup.dump(e, 'Before insertion');
+
+setSelectionCommand(e, 0, e, 0);
+moveSelectionForwardByCharacterCommand();
+insertHTMLCommand("<table border='1'><tr><td>1</td><td>2</td></tr></table>");
+
+Markup.dump(e, 'After insertion');
+</script>
+</body>
+</html>

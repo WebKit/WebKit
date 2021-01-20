@@ -1,0 +1,6 @@
+2d.gradient.interpolate.multiple
+Spec references: 2d.gradient.interpolate.linear
+Actual output:
+Expected output:
+
+Passed

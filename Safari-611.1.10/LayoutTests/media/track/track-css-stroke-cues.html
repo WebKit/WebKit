@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-controls.js></script>
+
+        <style>
+
+        video::cue { stroke-width: 4px; stroke-color: black; paint-order: stroke; stroke-linecap: round; stroke-linejoin: round;}
+
+        </style>
+
+        <script>
+
+        function seeked()
+        {
+            testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).strokeWidth", "4px");
+            testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).strokeColor", "rgb(0, 0, 0)");
+            testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).paintOrder", "stroke");
+            testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).strokeLinejoin", "round");
+            testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).strokeLinecap", "round");
+            testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).overflow", "visible");
+            endTest();
+        }
+
+        function loaded()
+        {
+            consoleWrite("Test that style to all cues is applied correctly.");
+            findMediaElement();
+            video.src = findMediaFile('video', '../content/test');
+            waitForEvent('seeked', seeked);
+            waitForEvent('canplaythrough', function() { video.currentTime = .5; });
+        }
+
+        setCaptionDisplayMode('Automatic');
+        </script>
+    </head>
+    <body onload="loaded()">
+        <video controls >
+            <track src="captions-webvtt/styling.vtt" kind="captions" default>
+        </video>
+    </body>
+</html>

@@ -1,0 +1,7 @@
+2d.transformation.scale.basic
+scale() works
+Spec references: 2d.transformation.scale
+Actual output:
+Expected output:
+
+Passed

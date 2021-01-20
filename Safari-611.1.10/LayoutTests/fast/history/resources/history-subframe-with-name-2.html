@@ -1,0 +1,14 @@
+<body onload="runTest()">
+<script> 
+  function runTest()
+  {
+      // The parent has two frames. Do not run the test until both finished loading.
+      if (parent.document.readyState != "complete") {
+          setTimeout(runTest, 0);
+          return;
+      }
+      parent.opener.onFrameLoaded(2);
+  }
+</script>
+FAIL: frame 2
+</body>

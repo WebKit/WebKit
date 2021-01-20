@@ -1,0 +1,13 @@
+Basic Interface test for paint-timing APIs.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PerformancePaintTiming
+PASS PerformancePaintTiming is defined.
+PASS PerformancePaintTiming.prototype.toJSON is defined.
+PASS new PerformancePaintTiming() threw exception TypeError: Illegal constructor.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

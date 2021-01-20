@@ -1,0 +1,16 @@
+Test for the Console.messagesCleared event.
+
+
+== Running test suite: Console.messagesCleared
+-- Running test case: ClearViaConsoleClearMessagesAPI
+PASS: Cleared event should fire.
+
+-- Running test case: ClearViaConsoleAPI
+PASS: Cleared event should fire.
+
+-- Running test case: ClearViaCommandLineAPI
+PASS: Cleared event should fire.
+
+-- Running test case: ClearViaPageReload
+PASS: Cleared event should fire.
+

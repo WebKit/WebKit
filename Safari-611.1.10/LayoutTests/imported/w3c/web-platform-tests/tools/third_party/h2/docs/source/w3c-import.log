@@ -1,0 +1,37 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/docs/source/advanced-usage.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/docs/source/api.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/docs/source/asyncio-example.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/docs/source/basic-usage.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/docs/source/conf.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/docs/source/contributors.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/docs/source/curio-example.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/docs/source/eventlet-example.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/docs/source/examples.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/docs/source/index.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/docs/source/installation.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/docs/source/low-level.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/docs/source/negotiating-http2.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/docs/source/release-notes.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/docs/source/release-process.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/docs/source/testimonials.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/docs/source/tornado-example.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/docs/source/twisted-example.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/docs/source/twisted-head-example.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/docs/source/twisted-post-example.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/docs/source/wsgi-example.rst

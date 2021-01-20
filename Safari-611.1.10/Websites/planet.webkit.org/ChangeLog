@@ -1,0 +1,431 @@
+2017-03-21  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [Planet WebKit] Use HTTPS instead of HTTP for Igalia blog
+
+        Unreviewed patch just updating the Igalia WebKit blog configuration.
+
+        * config.ini:
+
+2016-05-15  Frederic Wang  <fred.wang@free.fr>
+
+        Remove Frédéric Wang's blog from the planet
+        https://bugs.webkit.org/show_bug.cgi?id=157724
+
+        Reviewed by Philippe Normand.
+
+        * config.ini: Remove my feed url since my homepage changed and it is included twice after r169566.
+
+2015-07-10  Gabor Loki  <loki@webkit.org>
+
+        [Planet WebKit] Update the feed url of the University of Szeged's blog.
+        https://bugs.webkit.org/show_bug.cgi?id=146835
+
+        Reviewed by Csaba Osztrogonác.
+
+        * config.ini:
+
+2014-12-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [Planet WebKit] Raise the number of posts per feed to import.
+        https://bugs.webkit.org/show_bug.cgi?id=139579
+
+        Reviewed by Csaba Osztrogonác.
+
+        * config.ini: Raise the number of posts to import for each feed to 6.
+
+2014-06-03  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Add Igalia WebKit blog to the planet
+        https://bugs.webkit.org/show_bug.cgi?id=133446
+
+        Reviewed by Bem Jones-Bey.
+
+        * config.ini: Add Igalia WebKit blog to the planet and remove Martin's
+        and Xan's blogs as they will be included there.
+
+2013-10-09  Frédéric Wang  <fred.wang@free.fr>
+
+        Add Frédéric Wang's blog to the planet
+        https://bugs.webkit.org/show_bug.cgi?id=122541
+
+        Reviewed by Martin Robinson.
+
+        * config.ini: Add my blog to the planet.
+
+2013-06-12  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct URL *again* for webkit.org RSS feed.
+
+        * config.ini: See above.
+
+2013-06-12  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct URL for webkit.org RSS feed.
+
+        * config.ini: See above.
+
+2013-07-10  Peter Beverloo  <peter@chromium.org>
+
+        [Planet WebKit] Remove my website from the list of feeds
+        https://bugs.webkit.org/show_bug.cgi?id=118510
+
+        Reviewed by Andreas Kling.
+
+        With various awesome folks at Apple having taken over the Last
+        Week in WebKit series and my blog now featuring Last Week in
+        Blink, there's no reason for it to be included on the Planet
+        anymore.
+
+        * config.ini:
+
+2013-06-12  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove irrelevant blog from Planet WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=117572
+
+        Reviewed by Mark Rowe.
+
+        * config.ini: Remove Chromium blog from planet.webkit.org
+
+2013-05-11  Benjamin Poulain  <benjamin@webkit.org>
+
+        Remove irrelevant blogs from Planet WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=115620
+
+        Reviewed by Ryosuke Niwa.
+
+        * config.ini:
+
+2013-02-27  Martin Robinson  <mrobinson@igalia.com>
+
+        Add Martin Robinson's blog to the planet
+        https://bugs.webkit.org/show_bug.cgi?id=110990
+
+        Reviewed by Eric Seidel.
+
+        * config.ini: Add my blog to the planet.
+
+2012-08-08  Peter Beverloo  <peter@chromium.org>
+
+        Remove several non-updated blogs from Planet WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=92973
+
+        Reviewed by Eric Seidel.
+
+        Adam Treat's blog was last updated in 2009.
+        Justin Haygood's blog was last updated in 2008.
+        Mike Smith seems to have moved to Google+ entirely.
+        Pierre-Luc Beaudoin's blog is unavailable, cached copy says the last (non-WebKit specific update) was in 2010.
+        Cameron Zwarich' summer of JSC no longer exists.
+        Anthony Ricaud's blog was last updated in 2009.
+
+        * config.ini:
+
+2012-08-07  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        Add Bruno Abinader's blog feed to Planet WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=92985
+
+        Reviewed by Eric Seidel.
+
+        * config.ini:
+
+2012-07-16  Michelangelo De Simone  <michelangelo@webkit.org>
+
+        Adobe Web Platform Team Blog is missing from Planet WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=91407
+
+        Reviewed by Andreas Kling.
+
+        Adding Adobe Web Platform Team Blog feed to Planet WebKit.
+
+        * config.ini:
+
+2011-10-30  Anthony Ricaud  <rik@webkit.org>
+
+        Add Peter Beverloo's feed to Planet WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=70316
+
+        Reviewed by Andreas Kling.
+
+        * config.ini:
+
+2011-01-26  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Rubber-stamped by Andreas Kling.
+
+        Fix my blog's feed URL, since it seems to have changed with the
+        new version of Wordpress causing unwanted posts to appear in
+        Planet WebKit.
+
+        * config.ini:
+
+2010-11-22  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Andreas Kling.
+
+        Add Leandro Pereira's blog to Planet WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=49910
+
+        * config.ini:
+
+2010-11-19  Adam Roben  <aroben@apple.com>
+
+        Add Lucas De Marchi's blog to Planet WebKit
+
+        Reviewed by Jon Honeycutt.
+
+        * config.ini:
+
+2010-09-15  Adam Roben  <aroben@apple.com>
+
+        Use Qt Labs' WebKit category feed instead of filtering on "webkit"
+
+        Looks like the URL of the WebKit category feed changed since this blog
+        was first added to Planet WebKit.
+
+        Rubber-stamped by David Kilzer.
+
+        * config.ini:
+
+2010-09-15  Adam Roben  <aroben@apple.com>
+
+        Only include Qt Labs posts that mention WebKit
+
+        All other feeds are either WebKit-specific or are filtered on
+        "webkit". This makes Qt Labs match all the others. This should help
+        keep off-topic posts off of Planet WebKit.
+
+        Fixes <http://webkit.org/b/45818> Planet WebKit contains many
+        off-topic posts from Qt Labs
+
+        Reviewed by David Kilzer.
+
+        * config.ini: Filter the Qt Labs feed on "webkit" like we do for all
+        other non-WebKit-specific feeds.
+
+2010-08-30  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Renamed Trolltech Labs to Qt Labs.
+
+        * config.ini:
+
+2009-08-14  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        Add the blog of University of Szeged.
+        https://bugs.webkit.org/show_bug.cgi?id=28301
+
+        * config.ini:
+
+2009-08-06  Brent Fulgham  <bfulgham@webkit.org>
+
+        Rubber-stamped by Adam Barth.
+
+        Update my blog's address.
+
+        * config.ini:  Update Blog address.
+
+2009-03-15  Xan Lopez  <xlopez@igalia.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        * config.ini: fix my blog's feed address.
+
+2009-03-13  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24591
+        Add my blog to Planet WebKit
+
+        Add my blog to the planet.
+
+        * config.ini:
+
+2009-02-09  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Fix Bug 23851: Add my blog's webkit category to Planet
+
+        <https://bugs.webkit.org/show_bug.cgi?id=23851>
+
+        Reviewed by Mark Rowe.
+
+        * config.ini: Add Gustavo Noronha's blog webkit category.
+
+2009-02-10  Adam Roben  <aroben@apple.com>
+
+        Add Michael(tm) Smith's blog to Planet WebKit
+
+        Rubberstamped by Alexey Proskuryakov.
+
+        * config.ini:
+
+2008-09-07  Robert Blaut  <webkit@blaut.biz>
+
+        Reviewed by Tim Hatcher.
+
+        * config.ini: Add The Chromium Blog
+
+2008-08-20  Anthony Ricaud  <rik24d@gmail.com>
+
+        Reviewed by Tim Hatcher.
+
+        * config.ini: Add Anthony Ricaud's blog.
+
+2008-06-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        * wwwroot/planetwebkit.css: Reduced text shadow offsets.
+
+2008-06-02  Maciej Stachowiak  <mjs@apple.com>
+
+        * config.ini: Correct URL for just-added blog.
+
+2008-06-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Mark.
+
+        * config.ini: Add Cameron's Summer of JavaScriptCore blog.
+
+2008-02-11  Pierre-Luc Beaudoin  <pierre-luc.beaudoin@collabora.co.uk>
+
+        Reviewed by Alp Toker.
+
+        Add my blog's WebKit category, English only posts.
+
+        * config.ini:
+
+2008-02-11  Adam Roben  <aroben@apple.com>
+
+        Add Brent Fulgham's blog
+
+        Rubberstamped by Alp.
+
+        * config.ini:
+
+2008-02-09  Alp Toker  <alp@atoker.com>
+
+        Only syndicate Jan's WebKit posts, not his entire blog.
+
+        * config.ini:
+
+2007-12-27  Mark Rowe  <mrowe@apple.com>
+
+        Add another feed.
+
+        * config.ini:
+
+2007-12-03  Matt Lilek  <webkit@mattlilek.com>
+
+        Rubberstamped by Tim.
+
+        Make the bullets lickable.
+
+        * wwwroot/planetwebkit.css:
+
+2007-12-03  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Adam.
+
+        Make it sexy with awesome icon and tweaks from Tim.
+
+        * templates/index.html.tmpl:
+        * wwwroot/ie.css: Added.
+        * wwwroot/images/ie-nav-blue.png: Added.
+        * wwwroot/planetwebkit.css: Added.
+
+2007-12-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        * config.ini: Correct blog name.
+
+2007-11-30  Adam Roben  <aroben@apple.com>
+
+        Add another feed
+
+        * config.ini:
+
+2007-11-30  Adam Roben  <aroben@apple.com>
+
+        Add a simple script to update the site
+
+        * update.pl: Added.
+
+2007-11-30  Adam Roben  <aroben@apple.com>
+
+        Include all WebKit posts from Trolltech Labs
+
+        * config.ini:
+
+2007-11-30  Adam Roben  <aroben@apple.com>
+
+        Initial checkin of Planet WebKit
+
+        Rubberstamped by Sam.
+
+        * README: Added.
+        * config.ini: Added.
+        * planet/AUTHORS: Added.
+        * planet/INSTALL: Added.
+        * planet/LICENCE: Added.
+        * planet/NEWS: Added.
+        * planet/PKG-INFO: Added.
+        * planet/README: Added.
+        * planet/THANKS: Added.
+        * planet/TODO: Added.
+        * planet/examples/atom.xml.tmpl: Added.
+        * planet/examples/basic/config.ini: Added.
+        * planet/examples/basic/index.html.tmpl: Added.
+        * planet/examples/fancy/config.ini: Added.
+        * planet/examples/fancy/index.html.tmpl: Added.
+        * planet/examples/foafroll.xml.tmpl: Added.
+        * planet/examples/opml.xml.tmpl: Added.
+        * planet/examples/output/images/edd.png: Added.
+        * planet/examples/output/images/evolution.png: Added.
+        * planet/examples/output/images/feed-icon-10x10.png: Added.
+        * planet/examples/output/images/jdub.png: Added.
+        * planet/examples/output/images/keybuk.png: Added.
+        * planet/examples/output/images/logo.png: Added.
+        * planet/examples/output/images/opml.png: Added.
+        * planet/examples/output/images/planet.png: Added.
+        * planet/examples/output/images/thom.png: Added.
+        * planet/examples/output/planet.css: Added.
+        * planet/examples/rss10.xml.tmpl: Added.
+        * planet/examples/rss20.xml.tmpl: Added.
+        * planet/planet-cache.py: Added.
+        * planet/planet.py: Added.
+        * planet/planet/__init__.py: Added.
+        * planet/planet/atomstyler.py: Added.
+        * planet/planet/cache.py: Added.
+        * planet/planet/compat_logging/__init__.py: Added.
+        * planet/planet/compat_logging/config.py: Added.
+        * planet/planet/compat_logging/handlers.py: Added.
+        * planet/planet/feedparser.py: Added.
+        * planet/planet/htmltmpl.py: Added.
+        * planet/planet/sanitize.py: Added.
+        * planet/planet/tests/__init__.py: Added.
+        * planet/planet/tests/data/simple.tmpl: Added.
+        * planet/planet/tests/data/simple2.tmpl: Added.
+        * planet/planet/tests/test_channel.py: Added.
+        * planet/planet/tests/test_main.py: Added.
+        * planet/planet/tests/test_sanitize.py: Added.
+        * planet/planet/tests/test_sub.py: Added.
+        * planet/planet/timeoutsocket.py: Added.
+        * planet/runtests.py: Added.
+        * planet/setup.py: Added.
+        * templates/atom.xml.tmpl: Added.
+        * templates/foafroll.xml.tmpl: Added.
+        * templates/index.html.tmpl: Added.
+        * templates/opml.xml.tmpl: Added.
+        * templates/rss10.xml.tmpl: Added.
+        * templates/rss20.xml.tmpl: Added.
+        * wwwroot/images/feed-icon-10x10.png: Added.
+        * wwwroot/images/planet.png: Added.
+        * wwwroot/planet.css: Added.
+

@@ -1,0 +1,111 @@
+body {
+    font-family: "Helvetica Neue", Helvetica, Verdana, sans-serif;
+    font-size: 14px;
+    line-height: 19px;
+    -webkit-user-select: none;
+}
+
+::selection {
+    background-color: rgb(200, 0, 0);
+    color: white;
+}
+
+img {
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+}
+
+main {
+    max-width: 800px;
+    margin: auto;
+    text-align: center;
+    padding: 10px;
+}
+
+.benchmarks {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.benchmarks a {
+    display: block;
+    flex: 1;
+    width: 370px;
+}
+
+#logo {
+    font-family: "Gill Sans", sans-serif;
+    margin-top: 60px;
+    line-height: 50px;
+    font-size: 50px;
+    color: color: rgb(50, 50, 50);
+}
+
+#logo span {
+    margin: 0 2px;
+    padding: 0 2px;
+}
+
+#logo .normal {
+    background-color: rgb(200, 0, 0);
+    color: white;
+}
+
+#logo .light {
+    color: rgb(100, 100, 100);
+    font-family: GillSans-Light, sans-serif;
+}
+
+#logo .highlight {
+    color: rgb(200, 0, 0);
+    font-weight: bold;
+    padding-right: 0;
+    margin-right: 0;
+}
+
+hr {
+    border: 2px solid rgb(200, 0, 0);
+    border-radius: 2px;
+    margin: 20px 0;
+}
+
+.benchmark {
+    display: block;
+    text-decoration: none;
+    margin-top: 20px;
+    padding: 30px 0 10px 0;
+    cursor: pointer;
+    outline: none;
+    border: 4px solid transparent;
+    transition: background-color 0.3s ease-out, transform 0.25s ease-in;
+}
+
+.benchmark:focus {
+    border: 4px solid rgb(200, 0, 0);
+}
+
+.benchmark p {
+    color: rgb(128, 128, 128);
+    -webkit-user-select: text;
+}
+
+.benchmark:hover img {
+    -moz-filter: brightness(0) invert(100%);
+    -webkit-filter: brightness(0) invert(100%);
+    filter: brightness(0) invert(100%);
+}
+
+.benchmark:hover {
+    background-color: rgb(200, 0, 0);
+    transform: scale(1.05);
+}
+
+.benchmark:hover * {
+    color: white !important;
+}
+
+.benchmark img {
+    max-width: 300px;
+    height: auto;
+}

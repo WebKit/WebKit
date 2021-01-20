@@ -1,0 +1,15 @@
+This test verifies that enabling or disabling platform spell checking preferences influences the presence of spelling markers in the document. Requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Turned continuous spell checking off.
+PASS internals.hasSpellingMarker(0, 3) is false
+PASS Turned continuous spell checking on.
+PASS internals.hasSpellingMarker(0, 3) is true
+PASS Turned continuous spell checking off again.
+PASS internals.hasSpellingMarker(0, 3) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,15 @@
+Some text in a textbox
+Some text in a
+multiline textbox.
+This tests that the AXSelection property is correctly reported for non-native text boxes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.getSelection().setBaseAndExtent(ariaTextBox.childNodes[0], 0, ariaTextBox.childNodes[0], 0); axElement.insertionPointLineNumber is 0
+PASS window.getSelection().setBaseAndExtent(multilineAriaTextBox.childNodes[0], 1, multilineAriaTextBox.childNodes[0], 1); axElement.insertionPointLineNumber is 0
+PASS window.getSelection().setBaseAndExtent(multilineAriaTextBox.childNodes[1], 1, multilineAriaTextBox.childNodes[1], 1); axElement.insertionPointLineNumber is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

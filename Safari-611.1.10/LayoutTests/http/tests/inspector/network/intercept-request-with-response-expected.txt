@@ -1,0 +1,130 @@
+ALERT: DEFAULT override.js TEXT
+Test request interception with response.
+
+
+== Running test suite: Network.interceptRequestWithResponse
+-- Running test case: Network.interceptRequestWithResponse.Text
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Triggering load...
+Resource Loaded:
+  URL: http://127.0.0.1:8000/inspector/network/resources/override.txt
+  MIME Type: text/plain
+  Status: 987 Override Status Text
+  Response Source: Symbol(inspector-override)
+  Response Headers:
+    Content-Type: text/plain
+    X-Override-Header-1: Override-Header-Value-1
+    X-Override-Header-2: Override-Header-Value-2
+  Content: PASS - OVERRIDDEN TEXT
+
+-- Running test case: Network.interceptRequestWithResponse.JavaScript
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Triggering load...
+Resource Loaded:
+  URL: http://127.0.0.1:8000/inspector/network/resources/override.txt
+  MIME Type: application/javascript
+  Status: 200 Super OK
+  Response Source: Symbol(inspector-override)
+  Response Headers:
+    Content-Type: application/javascript
+    X-Custom-Header: Header value
+  Content: /* PASS */ (function() { /* OVERRIDDEN */ })();
+
+-- Running test case: Network.interceptRequestWithResponse.Image
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Triggering load...
+Resource Loaded:
+  URL: http://127.0.0.1:8000/inspector/network/resources/override.txt
+  MIME Type: image/png
+  Status: 200 OK
+  Response Source: Symbol(inspector-override)
+  Response Headers:
+    Content-Type: image/png
+  Content: [base64] PGRhdGE+
+
+-- Running test case: Network.interceptRequestWithResponse.URL.QueryString
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Triggering load...
+Resource Loaded:
+  URL: http://127.0.0.1:8000/inspector/network/resources/override.txt?s=2
+  MIME Type: text/plain
+  Status: 200 OK
+  Response Source: <not-InspectorOverride>
+  Response Headers:
+    Accept-Ranges: <filtered>
+    Connection: <filtered>
+    Content-Length: 29
+    Content-Type: text/plain
+    Date: <filtered>
+    ETag: <filtered>
+    Keep-Alive: <filtered>
+    Last-Modified: <filtered>
+    Server: <filtered>
+  Content: default override.txt content
+
+
+-- Running test case: Network.interceptRequestWithResponse.URL.Fragment
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Triggering load...
+Resource Loaded:
+  URL: http://127.0.0.1:8000/inspector/network/resources/override.txt#frag
+  MIME Type: text/plain
+  Status: 200 OK
+  Response Source: Symbol(inspector-override)
+  Response Headers:
+    Content-Type: text/plain
+    X-Expected: PASS
+  Content: PASS
+
+-- Running test case: Network.interceptRequestWithResponse.URL.CaseSensitive
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt?case=sensitive
+Triggering load...
+Resource Loaded:
+  URL: http://127.0.0.1:8000/inspector/network/resources/override.txt?CaSe=SeNsItIvE
+  MIME Type: text/plain
+  Status: 200 OK
+  Response Source: Symbol(inspector-override)
+  Response Headers:
+    Content-Type: text/plain
+    X-Expected: PASS
+  Content: PASS
+
+-- Running test case: Network.interceptRequestWithResponse.URL.IsRegex
+Creating Local Resource Override for: \/override\.txt\?t=\d+
+Triggering load...
+Resource Loaded:
+  URL: http://127.0.0.1:8000/inspector/network/resources/override.txt?t=123456789
+  MIME Type: text/plain
+  Status: 200 OK
+  Response Source: Symbol(inspector-override)
+  Response Headers:
+    Content-Type: text/plain
+    X-Expected: PASS
+  Content: PASS
+
+-- Running test case: Network.interceptRequestWithResponse.URL.IsCaseSensitiveRegex
+Creating Local Resource Override for: \/OvErRiDe\.TxT\?t=\d+
+Triggering load...
+Resource Loaded:
+  URL: http://127.0.0.1:8000/inspector/network/resources/override.txt?t=123456789
+  MIME Type: text/plain
+  Status: 200 OK
+  Response Source: Symbol(inspector-override)
+  Response Headers:
+    Content-Type: text/plain
+    X-Expected: PASS
+  Content: PASS
+
+-- Running test case: Network.interceptRequestWithResponse.404
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Triggering load...
+Resource Loaded:
+  URL: http://127.0.0.1:8000/inspector/network/resources/override.txt
+  MIME Type: text/plain
+  Status: 404 Not Found
+  Response Source: Symbol(inspector-override)
+  Response Headers:
+    Content-Type: text/plain
+    X-Expected: PASS
+  Content: PASS
+

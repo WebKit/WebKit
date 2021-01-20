@@ -1,0 +1,5 @@
+The following line should say "parent", meaning that the proper window object was used.
+
+parent
+
+

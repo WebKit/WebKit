@@ -1,0 +1,72 @@
+Test the parsing of the cursor property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test a bunch of cursor rules which should round-trip exactly.
+PASS style.cssText is "cursor: auto;"
+PASS style.cssText is "cursor: default;"
+PASS style.cssText is "cursor: none;"
+PASS style.cssText is "cursor: context-menu;"
+PASS style.cssText is "cursor: help;"
+PASS style.cssText is "cursor: pointer;"
+PASS style.cssText is "cursor: progress;"
+PASS style.cssText is "cursor: wait;"
+PASS style.cssText is "cursor: cell;"
+PASS style.cssText is "cursor: crosshair;"
+PASS style.cssText is "cursor: text;"
+PASS style.cssText is "cursor: vertical-text;"
+PASS style.cssText is "cursor: alias;"
+PASS style.cssText is "cursor: copy;"
+PASS style.cssText is "cursor: move;"
+PASS style.cssText is "cursor: no-drop;"
+PASS style.cssText is "cursor: not-allowed;"
+PASS style.cssText is "cursor: grab;"
+PASS style.cssText is "cursor: grabbing;"
+PASS style.cssText is "cursor: e-resize;"
+PASS style.cssText is "cursor: n-resize;"
+PASS style.cssText is "cursor: ne-resize;"
+PASS style.cssText is "cursor: nw-resize;"
+PASS style.cssText is "cursor: s-resize;"
+PASS style.cssText is "cursor: se-resize;"
+PASS style.cssText is "cursor: sw-resize;"
+PASS style.cssText is "cursor: w-resize;"
+PASS style.cssText is "cursor: ew-resize;"
+PASS style.cssText is "cursor: ns-resize;"
+PASS style.cssText is "cursor: nesw-resize;"
+PASS style.cssText is "cursor: nwse-resize;"
+PASS style.cssText is "cursor: col-resize;"
+PASS style.cssText is "cursor: row-resize;"
+PASS style.cssText is "cursor: all-scroll;"
+PASS style.cssText is "cursor: zoom-in;"
+PASS style.cssText is "cursor: zoom-out;"
+PASS style.cssText is "cursor: -webkit-grab;"
+PASS style.cssText is "cursor: -webkit-grabbing;"
+PASS style.cssText is "cursor: -webkit-zoom-in;"
+PASS style.cssText is "cursor: -webkit-zoom-out;"
+PASS style.cssText is "cursor: url(\"file:///foo.png\"), crosshair;"
+PASS style.cssText is "cursor: url(\"file:///foo.png\"), url(\"file:///foo2.png\"), pointer;"
+PASS style.cssText is "cursor: url(\"file:///foo.png\") 12 3, pointer;"
+PASS style.cssText is "cursor: url(\"file:///foo.png\") 0 0, pointer;"
+PASS style.cssText is "cursor: url(\"file:///foo.png\") 12 3, url(\"file:///foo2.png\"), url(\"file:///foo3.png\") 6 7, crosshair;"
+PASS style.cssText is "cursor: url(\"file:///foo.png\") -2 3, pointer;"
+PASS style.cssText is "cursor: url(\"file:///foo.png\") 2 -3, pointer;"
+PASS style.cssText is "cursor: url(\"file:///foo.png\") -1 -1, pointer;"
+
+Test a bunch of invalid cursor rules which shouldn't parse at all.
+PASS roundtripCssRule("cursor: nonexistent;").cssText is ""
+PASS roundtripCssRule("cursor: ltr;").cssText is ""
+PASS roundtripCssRule("cursor: inline;").cssText is ""
+PASS roundtripCssRule("cursor: url(file:///foo.png), url(file:///foo2.png);").cssText is ""
+PASS roundtripCssRule("cursor: url(file:///foo.png) 12;").cssText is ""
+PASS roundtripCssRule("cursor: url(file:///foo.png) 12 3 5;").cssText is ""
+PASS roundtripCssRule("cursor: url(file:///foo.png) x y;").cssText is ""
+PASS roundtripCssRule("cursor: url(file:///foo.png) auto;").cssText is ""
+
+Test a bunch of cursor rules with generated images.
+PASS roundtripCssRule("cursor: linear-gradient(red, white) -1 -1, pointer;").cssText is ""
+PASS roundtripCssRule("cursor: image-set(linear-gradient(red, white) 1x) -1 -1, pointer;").cssText is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

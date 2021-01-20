@@ -1,0 +1,8 @@
+Blocked access to external URL http://www1.localhost:8800/FileAPI/url/resources/revoke-helper.html
+
+Harness Error (TIMEOUT), message = null
+
+FAIL It is possible to revoke same-origin blob URLs from different frames. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL It is possible to revoke same-origin blob URLs from a different worker global. assert_unreached: Should have rejected: undefined Reached unreachable code
+TIMEOUT It is not possible to revoke cross-origin blob URLs. Test timed out
+

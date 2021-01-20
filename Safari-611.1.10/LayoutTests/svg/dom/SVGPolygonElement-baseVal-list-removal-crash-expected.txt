@@ -1,0 +1,2 @@
+ALERT: Accessing old oSVGPoint1.x: 0
+This test passes if it doesn't crash.

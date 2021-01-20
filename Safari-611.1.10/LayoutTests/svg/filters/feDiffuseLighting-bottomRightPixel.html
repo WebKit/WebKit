@@ -1,0 +1,17 @@
+<canvas id="canvas" width="200" height="200"></canvas>
+<img id="image" src="resources/feDiffuseLighting-rect.svg" onload="drawIntoCanvas()" style="visibility:hidden">
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function drawIntoCanvas()
+{
+    var ctx = document.getElementById('canvas').getContext("2d");
+    var image = document.getElementById('image');
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(image, 0, 0, 200, 200);
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>

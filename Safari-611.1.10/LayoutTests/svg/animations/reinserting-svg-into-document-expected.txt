@@ -1,0 +1,5 @@
+Reinserting SVG animation into document should continue the animation
+
+PASS rect.x.animVal.value is 30
+PASS rect.x.animVal.value is 60
+

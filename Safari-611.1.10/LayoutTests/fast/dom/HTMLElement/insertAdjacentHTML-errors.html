@@ -1,0 +1,20 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test insertAdjacentHTML exceptions to make sure they match HTML5');
+
+var div = document.createElement("div");
+
+shouldThrow("div.insertAdjacentHTML('beforeBegin', 'text')");
+shouldThrow("div.insertAdjacentHTML('afterEnd', 'text')");
+
+shouldThrowErrorName("div.insertAdjacentHTML('FOO', 'text')", 'SyntaxError');
+shouldThrowErrorName("document.documentElement.insertAdjacentHTML('afterEnd', 'text')", 'NoModificationAllowedError');
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

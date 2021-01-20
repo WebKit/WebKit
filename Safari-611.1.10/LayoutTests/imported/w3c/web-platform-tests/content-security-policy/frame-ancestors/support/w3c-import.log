@@ -1,0 +1,28 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/content-security-policy-report-only.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/content-security-policy-report-only.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/content-security-policy.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/content-security-policy.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/frame-ancestors-and-x-frame-options.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/frame-ancestors-and-x-frame-options.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/frame-ancestors-test.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/frame-ancestors.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/frame-ancestors.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/frame-in-frame.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/frame-in-frame.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/support/service-worker.js

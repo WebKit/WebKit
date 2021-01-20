@@ -1,0 +1,29 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/doc/Makefile
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/doc/changes.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/doc/conf.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/doc/html5lib.filters.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/doc/html5lib.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/doc/html5lib.treeadapters.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/doc/html5lib.treebuilders.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/doc/html5lib.treewalkers.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/doc/index.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/doc/license.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/doc/make.bat
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/doc/modules.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/doc/movingparts.rst

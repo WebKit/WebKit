@@ -1,0 +1,73 @@
+<!doctype html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
+<script>
+function loadIFrame(src) {
+    return new Promise(function(resolve, reject) {
+        var iframe = document.createElement('iframe');
+        iframe.onload = function() { resolve(iframe); };
+
+        iframe.src = src;
+
+        document.documentElement.appendChild(iframe);
+    });
+}
+
+function resetIFrame(iframe)
+{
+    const promise = new Promise(resolve => { iframe.onload = resolve; });
+    iframe.src = "about:blank";
+    return promise;
+}
+
+function navigateIFrame(iframe, src)
+{
+    const promise = new Promise(resolve => window.resolveToken = resolve);
+    iframe.src = "resources/xhr-and-fetch.html#xhr";
+    return promise;
+}
+
+function reloadIFrame(iframe, src)
+{
+    const promise = new Promise(resolve => window.resolveToken = resolve);
+    iframe.contentWindow.location.reload();
+    return promise;
+}
+
+promise_test(async (test) => {
+    window.uuid = token();
+    window.fetchTest = true;
+    const iframe = await loadIFrame("about:blank");
+
+    const token1 = await navigateIFrame(iframe, "resources/xhr-and-fetch.html?fetch");
+    await resetIFrame(iframe);
+    const token2 = await navigateIFrame(iframe, "resources/xhr-and-fetch.html?fetch");
+    const token3 = await reloadIFrame(iframe);
+
+    assert_equals(token1, "0", "navigating to");
+    assert_equals(token2, "0", "after reload");
+    // token2 revalidation + token3 reload hence two loads.
+    assert_equals(token3, "2", "after reload");
+
+    iframe.remove();
+}, "Ensure fetch is not speculatively loaded");
+
+promise_test(async (test) => {
+    window.uuid = token();
+    window.fetchTest = false;
+    const iframe = await loadIFrame("about:blank");
+
+    const token1 = await navigateIFrame(iframe, "resources/xhr-and-fetch.html?xhr");
+    await resetIFrame(iframe);
+    const token2 = await navigateIFrame(iframe, "resources/xhr-and-fetch.html?xhr");
+    const token3 = await reloadIFrame(iframe);
+
+    assert_equals(token1, "0", "navigating to");
+    assert_equals(token2, "0", "after reload");
+    // token2 revalidation + token3 reload hence two loads.
+    assert_equals(token3, "2", "after reload");
+
+    iframe.remove();
+}, "Ensure XHR is not speculatively loaded");
+</script>

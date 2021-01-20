@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("WI.DOMNode");
+
+    suite.addTestCase({
+        name: "WI.DOMNode.attributes",
+        description: "Test getting the attributes of a node.",
+        test(resolve, reject) {
+            WI.domManager.requestDocument((documentNode) => {
+                documentNode.querySelector("#test-id", (nodeId) => {
+                    let domNode = WI.domManager.nodeForId(nodeId);
+                    InspectorTest.assert(domNode, "DOMNode exists");
+
+                    for (let attribute of domNode.attributes())
+                        InspectorTest.log(attribute.name + "=\"" + attribute.value + "\"");
+
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the WI.DOMNode model object.</p>
+    <div id="test-id" class="test-class" data-item="test-data"></div>
+</body>
+</html>

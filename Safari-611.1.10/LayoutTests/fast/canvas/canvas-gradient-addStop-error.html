@@ -1,0 +1,18 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("A couple of tests to ensure that adding a stop with an invalid color to a gradient throws exceptions normally.");
+debug("Ensure exceptions are thrown in normal pages");
+var ctx = document.createElement('canvas').getContext('2d');
+var gradient = ctx.createLinearGradient(0, 0, 0, 100);
+shouldThrow("gradient.addColorStop(1, 'rgb(NaN%, NaN%, NaN%)')");
+var gradient = ctx.createRadialGradient(0, 0, 0, 100, 0, 0);
+shouldThrow("gradient.addColorStop(1, 'rgb(NaN%, NaN%, NaN%)')");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

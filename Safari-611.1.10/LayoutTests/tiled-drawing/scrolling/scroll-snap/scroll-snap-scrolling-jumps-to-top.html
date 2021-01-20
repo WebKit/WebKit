@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body {
+                overflow: hidden;
+                margin: 0;
+            }
+
+            #container {
+                width: 300px;
+                height: 300px;
+                display: inline-block;
+                overflow-x: hidden;
+                overflow-y: auto;
+                scroll-snap-type: y mandatory;
+            }
+
+            .child {
+                height: 300px;
+                width: 300px;
+                float: left;
+                scroll-snap-align: start;
+            }
+        </style>
+        <script>
+        let write = s => output.innerHTML += s + "<br>";
+        function run() {
+            container.scrollTop = 300;
+            write(`The scroll position is: ${container.scrollTop}`);
+            if (!window.eventSender || !window.testRunner)
+                return;
+
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            eventSender.monitorWheelEvents();
+            internals.setPlatformMomentumScrollingPredictionEnabled(false);
+            eventSender.mouseMoveTo(container.offsetLeft + container.clientWidth / 2, container.offsetTop + container.clientHeight / 2);
+
+            write("Scrolling without momentum to the same position several times")
+            for (let i = 0; i < 10; i++) {
+                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "began", "none");
+                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 1, "changed", "none");
+                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none");
+                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "changed", "none");
+                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+            }
+
+            setTimeout(() => {
+                eventSender.callAfterScrollingCompletes(() => {
+                    write(`The scroll position is now: ${container.scrollTop}`);
+                    testRunner.notifyDone();
+                });
+            }, 0);
+        }
+        </script>
+    </head>
+    <body onload=run()>
+        <p>To manually test, scroll so the green box exactly fills the container, and let go.</p>
+        <p>The scroll position should not jump to the top.</p>
+        <div id="container">
+            <div style="background-color: red;" class="child"></div>
+            <div style="background-color: green;" class="child"></div>
+        </div>
+        <div id="output"></div>
+    </body>
+</html>

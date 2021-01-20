@@ -1,0 +1,49 @@
+Tiles when window is visible:
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 3008.00 3092.00)
+  (visible rect 0.00, 0.00 785.00 x 585.00)
+  (coverage rect 0.00, 0.00 785.00 x 585.00)
+  (intersects coverage rect 1)
+  (contentsScale 1.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 3008.00 3092.00)
+      (contentsOpaque 1)
+      (visible rect 0.00, 0.00 785.00 x 585.00)
+      (coverage rect 0.00, 0.00 1570.00 x 1755.00)
+      (intersects coverage rect 1)
+      (contentsScale 1.00)
+      (tile cache coverage 0, 0 2048 x 2048)
+      (tile size 512 x 512)
+      (top left tile 0, 0 tiles grid 4 x 4)
+      (in window 1)
+    )
+  )
+)
+Tiles when window is not visible:
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 3008.00 3438.00)
+  (visible rect 0.00, 0.00 785.00 x 585.00)
+  (coverage rect 0.00, 0.00 785.00 x 585.00)
+  (intersects coverage rect 1)
+  (contentsScale 1.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 3008.00 3438.00)
+      (contentsOpaque 1)
+      (visible rect 0.00, 0.00 785.00 x 585.00)
+      (coverage rect 0.00, 0.00 785.00 x 585.00)
+      (intersects coverage rect 1)
+      (contentsScale 1.00)
+      (tile cache coverage 0, 0 1024 x 1024)
+      (tile size 512 x 512)
+      (top left tile 0, 0 tiles grid 2 x 2)
+      (in window 1)
+    )
+  )
+)
+

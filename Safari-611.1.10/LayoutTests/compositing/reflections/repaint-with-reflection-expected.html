@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .box {
+          width: 100px;
+          height: 100px;
+          background-color: silver;
+          border: 2px solid black;
+          -webkit-box-reflect: below 5px;
+        }
+        
+        .box.changed {
+            background-color: orange;
+        }
+        
+        .composited {
+          -webkit-transform: translateZ(0);
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div id="box" class="composited changed box">
+    </div>
+</body>
+</html>

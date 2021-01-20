@@ -1,0 +1,8 @@
+PASS getByClassName('a') is "a"
+PASS getByClassName('A') is "A"
+PASS getByClassName('ä') is "ä"
+PASS getByClassName('Ä') is "Ä"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script>
+
+var iterationCount = 10;
+
+// Delete all databases for the test ahead of time.
+var databaseName = "objectstore-cursor-DB";
+indexedDB.deleteDatabase(databaseName).onsuccess = function() {
+    startIteration();
+}
+
+var testGenerator = null;
+var db = null;
+var currentIteration = 0;
+
+PerfTestRunner.prepareToMeasureValuesAsync({
+    customIterationCount: iterationCount,
+    unit: 'ms',
+    done: function () {
+        db = null;
+        testGenerator = null;
+        PerfTestRunner.gc();
+        ++currentIteration;
+    }
+});
+
+function startIteration()
+{
+    testGenerator = runIteration();
+    nextStep();
+}
+
+function nextStep()
+{
+    testGenerator.next();
+}
+
+function *runIteration()
+{
+    var openRequest = indexedDB.open(databaseName);
+    openRequest.onupgradeneeded = function(event) {
+        db = event.target.result;
+        var objectStore = db.createObjectStore('store');
+        for (var i = 0; i < 25000; ++i) {
+            var suffix = ("0000000" + i).slice(-7);
+            objectStore.put("bar_value_" + suffix, "foo_key_" + suffix);
+        }
+    }
+    openRequest.onsuccess = nextStep;
+
+    yield;
+
+    var startTime = PerfTestRunner.now();
+    var cursorRequest = db.transaction('store').objectStore('store').openCursor();
+    var cursorIteration = 0;
+    cursorRequest.onsuccess = function(event) {
+        var cursor = event.target.result;
+        if (cursor) {
+            var suffix = ("0000000" + cursorIteration).slice(-7);
+            if (cursor.key != "foo_key_" + suffix)
+                alert("Incorrect value retrieved: " + cursor.key);
+            if (cursor.value != "bar_value_" + suffix)
+                alert("Incorrect value retrieved: " + cursor.key);
+            ++cursorIteration;
+            cursor.continue();
+        } else
+            nextStep();
+    };
+
+    yield;
+
+    if (!PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime))
+        return;
+
+    setTimeout(startIteration, 0);
+}
+</script>
+</body>
+</html>

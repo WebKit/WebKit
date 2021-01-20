@@ -1,0 +1,21 @@
+<body>
+<p>This test shows the following bugs with text-orientation.  The far right test mis-renders differently in both the simple and complex text paths.
+The simple text path mis-renders because <tt>CTFontGetVerticalTranslationsForGlyphs</tt> returns incorrect values for horizontal glyphs that have vertical
+counterparts.  The complex text code path mis-renders because of API deficiency.  There is no way to tell CoreText to use upright horizontal glyphs when
+rendering a vertical line.
+</p>
+<div style="-webkit-writing-mode:vertical-lr; height:600px; font-size:36px">
+<div style="display:inline-block; border:1px solid green">
+<span style="font-family:'Times New Roman'">Hello world</span><br>
+<span style="font-family:'Times New Roman'; -webkit-text-orientation:upright">Hello world</span><br>
+<span style="font-family:'Hiragino Kaku Gothic Pro'">Hello world</span><br>
+<span style="font-family:'Hiragino Kaku Gothic Pro'; -webkit-text-orientation:upright">Hello world</span><br>
+</div>
+
+<div style="display:inline-block; border:1px solid green; text-rendering:optimizeLegibility">
+<span style="font-family:'Times New Roman'">Hello world</span><br>
+<span style="font-family:'Times New Roman'; -webkit-text-orientation:upright">Hello world</span><br>
+<span style="font-family:'Hiragino Kaku Gothic Pro'">Hello world</span><br>
+<span style="font-family:'Hiragino Kaku Gothic Pro'; -webkit-text-orientation:upright">Hello world</span><br>
+</div>
+</div>

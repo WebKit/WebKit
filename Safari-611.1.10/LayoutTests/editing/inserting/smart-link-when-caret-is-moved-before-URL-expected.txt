@@ -1,0 +1,10 @@
+This test demonstrates that smart link doesn't erroneously trigger when the user moves the caret immediately before an URL.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+To manually run this test, disable "Check Spelling While Typing" and enable "Smart Link". The caret should be shown immediately after "zz" below:
+
+PASS editor.selectionStart is 3
+PASS editor.selectionEnd is 3
+

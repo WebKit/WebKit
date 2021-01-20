@@ -1,0 +1,2 @@
+Range::nodeWillBeRemoved() might be called with removed node, when DOMNodeRemovedFromDocument event handler calls removeChild(), for node being removed.
+PASS; NOT CRASHED

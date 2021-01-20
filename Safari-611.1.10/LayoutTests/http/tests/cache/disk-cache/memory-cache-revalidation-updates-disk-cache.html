@@ -1,0 +1,34 @@
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script src="resources/cache-test.js"></script>
+<body>
+<script>
+
+var tests =
+[
+ { responseHeaders: {'Expires': 'now(0)', 'ETag': 'match' }, expiresInFutureIn304: true },
+];
+
+description("Tests that revalidations from the memory cache update the disk cache.");
+
+debug("running " + tests.length + " tests");
+debug("");
+
+function runTests(tests)
+{
+    debug("Warming up cache...");
+    loadResources(tests, function () {
+        debug("Load trough the Memory Cache...");
+        loadResourcesWithOptions(tests, { "SubresourceValidationPolicy": true }, function () {
+            debug("Clear the memory cache and load again, it should load from the disk cache *without* revalidation.");
+            loadResourcesWithOptions(tests, { "ClearMemoryCache" : true }, function () {
+                printResults(tests);
+                finishJSTest();
+            });
+        });
+    });
+}
+
+runTests(tests);
+
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>

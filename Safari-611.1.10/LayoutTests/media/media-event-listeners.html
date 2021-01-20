@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+
+        <script>
+        function start() {
+            findMediaElement();
+
+            video.onloadedmetadata = eventListenerFired;
+            video.onloadeddata = eventListenerFired;
+            video.oncanplay = eventListenerFired;
+            video.oncanplaythrough = eventListenerFired;
+            video.onplaying = eventListenerFired;
+            video.onended = eventListenerFired;
+            video.ondurationchange = eventListenerFired;
+            video.ontimeupdate = eventListenerFired;
+            video.onplay = eventListenerFired;
+            video.onpause = eventListenerFired;
+            video.onratechange = eventListenerFired;
+            video.onvolumechange = eventListenerFired;
+
+            video.addEventListener('playing', playing);
+            video.src = findMediaFile('video', 'content/test');
+        }
+
+        function eventListenerFired(event) {
+            consoleWrite('LISTENER(' + event.type + ')');
+            event.target['on' + event.type] = null;
+        }
+
+        function playing() {
+            video.addEventListener('ratechange', rateChange)
+            video.playbackRate = 2;
+        }
+
+        function rateChange() {
+            video.addEventListener('ended', ended);
+            video.currentTime = video.duration - .1;
+        }
+
+        function ended() {
+            video.addEventListener('volumechange', volumeChange);
+            video.volume = 0;
+        }
+
+        function volumeChange() {
+            endTest();
+        }
+
+        </script>
+    </head>
+    <body onload="start()">
+        <video controls autoplay></video>
+    </body>
+</html>

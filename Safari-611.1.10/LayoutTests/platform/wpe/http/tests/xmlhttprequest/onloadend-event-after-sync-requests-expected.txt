@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Load cannot follow more than 20 redirections
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/infinite-loop.php due to access control checks.
+Test case for bug 40952: Onloadend event is not supported in XMLHttpRequest
+
+Verify that a loadend ProgressEvent is dispatched after a load, error, or abort ProgressEvent when a synchronous request completes normally, fails, or is aborted respectively.
+
+PASS PASS PASS should appear below:
+
+PASS PASS PASS

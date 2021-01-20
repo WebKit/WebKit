@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: 'Litherum';
+    src: url("resources/svg-font-general.svg#Litherum2") format(svg);
+}
+@font-face {
+    font-family: 'Litherum4';
+    src: url("resources/svg-font-general.svg#Litherum4") format(svg);
+}
+@font-face {
+    font-family: 'Litherum8';
+    src: url("resources/svg-font-general.svg#Litherum8") format(svg);
+}
+.a {
+    font-family: 'Litherum4';
+}
+</style>
+</head>
+<body style="-webkit-font-smoothing: none;">
+These tests test horiz-origin, fallback of horiz-adv property, glyph rendering, ligatures, svg -&gt; native fallback, and units-per-em, respectively.
+<div><span style="font: 50px Litherum;">AAA</span><span style="position: relative; left: 50px;">AAA</span></div>
+<div><span style="font: 50px Litherum4;">AAA</span>AAA</div>
+<div><div style="display: inline-block; width: 150px; height: 52px; position: relative;"><div style="position: absolute; width: 25px; height: 30px; left: 0px; bottom: 0px; background: black;"></div><div style="position: absolute; width: 25px; height: 30px; left: 50px; bottom: 0px; background: black;"></div><div style="position: absolute; width: 25px; height: 30px; left: 100px; bottom: 0px; background: black;"></div></div>AAA</div>
+<div><span style="font: 50px Litherum4;">D</span><span style="font-size: 50px;">A</span></div>
+<div style="font-size: 50px;"><span class="a">A</span>Z<span class="a">A</span>Z<span class="a">A</span></span><span class="a">&#x672c;</span>N<span class="a">&#x672c;</span>N<span class="a">&#x672c;</span></span></div>
+<div style="display: inline-block; position: relative; width: 200px; height: 206px;"><div style="position: absolute; top: 2px; left: 0px; width: 50px; height: 100px; background: black;"></div><div style="position: absolute; top: 2px; left: 50px; width: 50px; height: 50px; background: black;"></div><div style="position: absolute; bottom: -1px; left: 0px; width: 50px; height: 100px; background: black;"></div><div style="position: absolute; bottom: 49px; left: 50px; width: 50px; height: 50px; background: black;"></div></div>
+<div style="font: 50px Litherum8; position: absolute; left: 400px; top: 100px;">A</div>
+</body>
+</html>

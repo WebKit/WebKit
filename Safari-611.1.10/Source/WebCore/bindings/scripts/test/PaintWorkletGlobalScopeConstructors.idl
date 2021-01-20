@@ -1,0 +1,3 @@
+partial interface PaintWorkletGlobalScope {
+    attribute PaintWorkletGlobalScopeConstructor PaintWorkletGlobalScope;
+};

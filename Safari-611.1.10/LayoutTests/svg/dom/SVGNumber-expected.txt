@@ -1,0 +1,32 @@
+This test checks the SVGNumber API
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial number value
+PASS num.value is 0
+
+Check assigning number
+PASS num.value = 100 is 100
+PASS num.value = -100 is -100
+PASS num.value = 12345678 is 12345678
+PASS num.value = -num.value is -12345678
+
+Check that numbers are static, caching value in a local variable and modifying it, should have no effect
+PASS numRef is 1000
+PASS num.value is -12345678
+
+Check assigning invalid number, number should be 0 afterwards
+PASS num.value = num is num
+PASS num.value = 'aString' is 'aString'
+PASS num.value = svgElement is svgElement
+PASS num.value is NaN
+PASS num.value = null is null
+
+Check that the number is now null
+PASS num.value is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

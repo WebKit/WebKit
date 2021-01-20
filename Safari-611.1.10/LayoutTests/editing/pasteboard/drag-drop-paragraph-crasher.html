@@ -1,0 +1,35 @@
+<html>
+<body>
+<p>This tests text selection drag including a &lt;p&gt; tag, where its parent &lt;p&gt; tag is not editable.</p>
+To test this by hand, select the relevant text in this editable span:
+    <div id=source>Select
+        <p>me</p>
+    </div>
+    <p id=destination contenteditable>and drag it here</p>
+<br><br>If there is no crash, then the test passed.
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+function selectAllOfSource() {
+    var selection = window.getSelection();
+    var range = document.createRange();
+    range.selectNodeContents(document.getElementById("source"));
+    selection.removeAllRanges();
+    selection.addRange(range);
+}
+if (window.testRunner) {
+    Markup.description(document.querySelector('p').innerText);
+    selectAllOfSource();
+
+    eventSender.mouseMoveTo(source.offsetLeft + 10, source.offsetTop + source.offsetHeight / 2);
+    eventSender.mouseDown();
+    var destination = document.getElementById("destination");
+    eventSender.leapForward(500);
+    eventSender.mouseMoveTo(destination.offsetLeft + 700, destination.offsetTop + destination.offsetHeight / 2);
+    eventSender.mouseUp();
+
+    Markup.dump("destination");
+} else
+    Markup.noAutoDump();
+</script>
+</body>
+</html>

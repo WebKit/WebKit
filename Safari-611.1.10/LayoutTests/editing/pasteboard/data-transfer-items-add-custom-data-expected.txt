@@ -1,0 +1,41 @@
+Copy me
+
+*** Handling copy ***
+
+Types => data
+text/html => "HTML data written using setData"
+text/plain => "plain text data written using items.add"
+text/uri-list => "https://www.webkit.org/"
+using setdata => "data written using DataTransfer.setData"
+using add => "data written using DataTransferItemList.add"
+text => "plain text data written using items.add"
+url => "https://www.webkit.org/"
+Item list
+[0] => (type = "text/html", string = "<i>HTML data written using setData</i>")
+[1] => (type = "text/plain", string = "plain text data written using items.add")
+[2] => (type = "text/uri-list", string = "https://www.webkit.org/")
+[3] => (type = "using setdata", string = "data written using DataTransfer.setData")
+[4] => (type = "using add", string = "data written using DataTransferItemList.add")
+[5] => (type = "text", string = "this should be custom data")
+[6] => (type = "url", string = "this should also be custom data")
+File list
+
+*** Handling paste ***
+
+Types => data
+text/html => "HTML data written using setData"
+text/plain => "plain text data written using items.add"
+text/uri-list => "https://www.webkit.org/"
+using setdata => "data written using DataTransfer.setData"
+using add => "data written using DataTransferItemList.add"
+text => "plain text data written using items.add"
+url => "https://www.webkit.org/"
+Item list
+[0] => (type = "text/html", string = "<i>HTML data written using setData</i>")
+[1] => (type = "text/plain", string = "plain text data written using items.add")
+[2] => (type = "text/uri-list", string = "https://www.webkit.org/")
+[3] => (type = "using setdata", string = "data written using DataTransfer.setData")
+[4] => (type = "using add", string = "data written using DataTransferItemList.add")
+[5] => (type = "text", string = "this should be custom data")
+[6] => (type = "url", string = "this should also be custom data")
+File list

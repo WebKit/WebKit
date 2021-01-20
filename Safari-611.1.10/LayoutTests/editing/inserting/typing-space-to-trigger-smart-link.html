@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function runTest()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    if (window.internals)
+        internals.setAutomaticLinkDetectionEnabled(true);
+
+    var testTypeSpaceDiv = document.getElementById('testTypeSpace');
+    var targetText = testTypeSpaceDiv.firstChild;
+    window.getSelection().setPosition(targetText, 15);
+    pressKey(" ");
+    var expectedContents = "The <a href=\"http://www.foo.com\">www.foo.com</a> should be underlined and there is an anchor node created for it.";
+    if (expectedContents == testTypeSpaceDiv.innerHTML)
+        document.getElementById('log').textContent = "PASS: the anchor for 'www.foo.com' has been created.\n"
+    else
+        document.getElementById('log').textContent = "Failed: the expected content was '" + expectedContents + "', but the actual result was '" + testTypeSpaceDiv.innerHTML + "'.\n"
+    
+    var testTypeLinkDiv = document.getElementById('testTypeLink');
+    targetText = testTypeLinkDiv.firstChild;
+    window.getSelection().setPosition(targetText, 4);
+    pressKey("w");
+    pressKey("w");
+    pressKey("w");
+    pressKey(".");
+    pressKey("b");
+    pressKey("a");
+    pressKey("r");
+    pressKey(".");
+    pressKey("c");
+    pressKey("o");
+    pressKey("m");
+    pressKey(" ");
+    expectedContents = "The <a href=\"http://www.bar.com\">www.bar.com</a> should be underlined and there is an anchor node created for it.";
+    if (expectedContents == testTypeLinkDiv.innerHTML)
+        document.getElementById('log').textContent += "PASS: the anchor for 'www.bar.com' has been created."
+    else
+        document.getElementById('log').textContent += "Failed: the expected content was '" + expectedContents + "', but the actual result was '" + testTypeLinkDiv.innerHTML + "'."
+
+    if (window.internals)
+        internals.setAutomaticLinkDetectionEnabled(false);
+}
+
+function pressKey(key)
+{
+    if (window.KeyEvent) {
+        var ev = document.createEvent("KeyboardEvent");
+        ev.initKeyEvent("keypress", true, true, window,  0,0,0,0, 0, key.charCodeAt(0));
+        document.body.dispatchEvent(ev);
+    } else {
+        var ev = document.createEvent("TextEvent");
+        ev.initTextEvent('textInput', true, true, null, key.charAt(0));
+        document.body.dispatchEvent(ev);
+    }
+}
+</script>
+</head>
+<body>
+<div id="testTypeSpace" contenteditable>The www.foo.comshould be underlined and there is an anchor node created for it.</div>
+<div id="testTypeLink" contenteditable>The should be underlined and there is an anchor node created for it.</div>
+<pre id="log"></pre>
+</body>
+<script>
+runTest()
+</script>
+</html>

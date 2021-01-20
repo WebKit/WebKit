@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that the compatMode property getter is on Document and not HTMLDocument");
+
+shouldBeUndefined("Object.getOwnPropertyDescriptor(HTMLDocument.prototype, 'compatMode')");
+shouldBeType("Object.getOwnPropertyDescriptor(Document.prototype, 'compatMode').get", "Function");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

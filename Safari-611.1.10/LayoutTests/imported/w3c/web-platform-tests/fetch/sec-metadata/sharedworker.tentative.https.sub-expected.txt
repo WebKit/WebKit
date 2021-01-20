@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+
+FAIL Untitled ReferenceError: Can't find variable: SharedWorker
+

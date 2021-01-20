@@ -1,0 +1,29 @@
+<head>
+<script>
+var observer = new MutationObserver(function(mutations) {
+    function foo() {
+        throw "Exception to trigger unwinding in MutationObserver";
+    }
+    mutations.forEach(function(mutation) {
+        foo();
+    });
+});
+
+function test()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var node = document.getElementById('res');
+    var config = { attribute: true, childList: true, characterData: true };
+    observer.observe(node, config);
+
+    node.innerText += "Mutate that node";
+    throw "Pending exception before MutationObservers are called.";
+}
+</script>
+</head>
+<body onload="test();">
+<p>Regression test for https://webkit.org/b/131530. This test should not crash.<form>
+<div id="res"></div>
+</body>

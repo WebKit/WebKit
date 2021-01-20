@@ -1,0 +1,71 @@
+{
+    "domain": "Target",
+    "debuggableTypes": ["web-page"],
+    "targetTypes": ["web-page"],
+    "types": [
+        {
+            "id": "TargetInfo",
+            "type": "object",
+            "description": "Description of a target.",
+            "properties": [
+                { "name": "targetId", "type": "string", "description": "Unique identifier for the target." },
+                { "name": "type", "type": "string", "enum": ["page", "service-worker", "worker"] },
+                { "name": "isProvisional", "type": "boolean", "optional": true, "description": "Whether this is a provisional page target." },
+                { "name": "isPaused", "type": "boolean", "optional": true, "description": "Whether the target is paused on start and has to be explicitely resumed by inspector." }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "setPauseOnStart",
+            "description": "If set to true, new targets will be paused on start waiting for resume command. Other commands can be dispatched on the target before it is resumed.",
+            "parameters": [
+                { "name": "pauseOnStart", "type": "boolean", "description": "If set to true, new targets will be paused on start waiting for resume command." }
+            ]
+        },
+        {
+            "name": "resume",
+            "description": "Will resume target if it was paused on start.",
+            "parameters": [
+                { "name": "targetId", "type": "string" }
+            ]
+        },
+        {
+            "name": "sendMessageToTarget",
+            "description": "Send an Inspector Protocol message to be dispatched to a Target's agents.",
+            "parameters": [
+                { "name": "targetId", "type": "string" },
+                { "name": "message", "type": "string", "description": "JSON Inspector Protocol message (command) to be dispatched on the backend." }
+            ]
+        }
+    ],
+    "events": [
+        {
+            "name": "targetCreated",
+            "parameters": [
+                { "name": "targetInfo", "$ref": "TargetInfo" }
+            ]
+        },
+        {
+            "name": "targetDestroyed",
+            "parameters": [
+                { "name": "targetId", "type": "string" }
+            ]
+        },
+        {
+            "name": "didCommitProvisionalTarget",
+            "description": "This event is fired when provisional load is committed. Provisional target swaps with the current target.",
+            "parameters": [
+                { "name": "oldTargetId", "type": "string", "description": "ID of the old target that is swapped with the committed one." },
+                { "name": "newTargetId", "type": "string", "description": "ID of the committed target." }
+            ]
+        },
+        {
+            "name": "dispatchMessageFromTarget",
+            "parameters": [
+                { "name": "targetId", "type": "string" },
+                { "name": "message", "type": "string", "description": "JSON Inspector Protocol message (response or event) to be dispatched on the frontend." }
+            ]
+        }
+    ]
+}

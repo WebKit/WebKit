@@ -1,0 +1,2 @@
+This should be 40px tall.
+PASS

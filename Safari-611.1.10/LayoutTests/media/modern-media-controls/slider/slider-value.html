@@ -1,0 +1,73 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<style type="text/css" media="screen">
+    .slider { position: absolute; }
+</style>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>Slider</code> value property.");
+
+window.jsTestIsAsync = true;
+
+const KNOB_WIDTH = 9;
+
+const slider = new Slider;
+slider.x = 10;
+slider.y = 32;
+slider.width = 200 + KNOB_WIDTH;
+
+slider.uiDelegate = {
+
+    controlValueWillStartChanging: function()
+    {
+        debug(`controlValueWillStartChanging`);
+    },
+
+    controlValueDidChange: function()
+    {
+        debug(`controlValueDidChange, value = ${slider.value}`);
+    },
+
+    controlValueDidStopChanging: function()
+    {
+        debug(`controlValueDidStopChanging`);
+        slider.uiDelegate = null;
+        finishJSTest();
+    }
+
+};
+
+const input = slider.children[1].element;
+
+function dragSlider(fromPx, toPx) {
+    const bounds = input.getBoundingClientRect();
+    const minX = bounds.left + KNOB_WIDTH / 2;
+    const centerY = bounds.top + bounds.height / 2;
+
+    eventSender.mouseMoveTo(minX + fromPx, centerY);
+    eventSender.mouseDown();
+
+    const delta = toPx - fromPx;
+    const iterations = Math.abs(delta);
+    for (let i = 1; i <= iterations; ++i)
+        eventSender.mouseMoveTo(minX + fromPx + i * Math.sign(delta), centerY);
+
+    eventSender.mouseUp();
+}
+
+scheduler.frameDidFire = function()
+{
+    document.body.appendChild(slider.element);
+
+    shouldBe("slider.value", "0");
+    debug("");
+    debug("Now we'll drag to the slider thumb from 10px to 30px within the slider's bounds");
+    dragSlider(10, 30);
+    
+    scheduler.frameDidFire = null;
+}
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

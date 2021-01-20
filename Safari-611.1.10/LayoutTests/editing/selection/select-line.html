@@ -1,0 +1,14 @@
+<p>This tests for a crash when performing selectLine: inside an empty editable div.  It cannot be run manually.</p>
+<div id="div" contenteditable="true"></div>
+
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+    
+var div = document.getElementById("div");
+var sel = window.getSelection();
+
+sel.setPosition(div, 0);
+if (window.testRunner)
+    testRunner.execCommand("SelectLine");
+</script>

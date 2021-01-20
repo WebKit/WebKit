@@ -1,0 +1,4 @@
+Tests for tapping on a text node assigned to a slot. touchstart should fire on the slot.
+
+Tap here
+PASS

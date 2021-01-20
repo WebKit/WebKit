@@ -1,0 +1,13 @@
+<a contentEditable=true href=""><span>Test inserting image in anchor element that has uneditable parent. The test passes if WebKit doesn't crash or hit an assertion.</span><br id=BR></br>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    window.onload = () => {
+        window.getSelection().collapse(BR);
+        document.execCommand("selectAll", false);
+        document.execCommand("fontName", false, "Times Roman");
+        document.getSelection().collapseToStart();
+        window.document.execCommand("insertImage", "#foo");
+    }
+</script>

@@ -1,0 +1,41 @@
+Checks that __lookupGetter__ / __lookupSetter__() works for native bindings.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Element.prototype.__lookupGetter__('tagName') is an instance of Function
+PASS Element.prototype.__lookupSetter__('tagName') is undefined.
+PASS Element.prototype.__lookupGetter__('tagName') is Object.getOwnPropertyDescriptor(Element.prototype, 'tagName').get
+PASS Element.prototype.__lookupSetter__('tagName') is Object.getOwnPropertyDescriptor(Element.prototype, 'tagName').set
+PASS testDiv.tagName is "DIV"
+PASS Element.prototype.__lookupGetter__('tagName').call(testDiv) is "DIV"
+
+PASS Element.prototype.__lookupGetter__('nodeName') is an instance of Function
+PASS Element.prototype.__lookupSetter__('nodeName') is undefined.
+PASS Element.prototype.__lookupGetter__('nodeName') is Object.getOwnPropertyDescriptor(Node.prototype, 'nodeName').get
+PASS Element.prototype.__lookupSetter__('nodeName') is Object.getOwnPropertyDescriptor(Node.prototype, 'nodeName').set
+PASS testDiv.nodeName is "DIV"
+PASS Element.prototype.__lookupGetter__('nodeName').call(testDiv) is "DIV"
+
+PASS HTMLElement.prototype.__lookupGetter__('innerText') is an instance of Function
+PASS HTMLElement.prototype.__lookupSetter__('innerText') is an instance of Function
+PASS HTMLDivElement.prototype.__lookupGetter__('innerText') is an instance of Function
+PASS HTMLDivElement.prototype.__lookupSetter__('innerText') is an instance of Function
+PASS testDiv.__proto__.__lookupGetter__('innerText') is an instance of Function
+PASS testDiv.__proto__.__lookupSetter__('innerText') is an instance of Function
+PASS testDiv.__proto__.__proto__.__lookupGetter__('innerText') is an instance of Function
+PASS testDiv.__proto__.__proto__.__lookupSetter__('innerText') is an instance of Function
+PASS HTMLElement.prototype.__lookupGetter__('innerText') is Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'innerText').get
+PASS HTMLElement.prototype.__lookupSetter__('innerText') is Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'innerText').set
+PASS testDiv.innerText is ""
+PASS HTMLElement.prototype.__lookupGetter__('innerText').call(testDiv) is ""
+testDiv.innerText = 'TEST1'
+PASS testDiv.innerText is "TEST1"
+PASS HTMLElement.prototype.__lookupGetter__('innerText').call(testDiv) is "TEST1"
+HTMLElement.prototype.__lookupSetter__('innerText').call(testDiv, '')
+PASS testDiv.innerText is ""
+PASS HTMLElement.prototype.__lookupGetter__('innerText').call(testDiv) is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

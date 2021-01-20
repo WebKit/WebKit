@@ -1,0 +1,17 @@
+Test IndexedDB readonly properties
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+objectStore = db.createObjectStore('foo');
+trying to set readonly property objectStore.transaction
+objectStore.transaction = this
+PASS objectStore.transaction is still [object IDBTransaction]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,13 @@
+Tests assigning a calculated value to 'column-width' CSS property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+0px is not a valid value
+testDiv.style['column-width'] = 'calc(0px * 2)'
+PASS testDiv.style['column-width'] is "calc(0px)"
+PASS window.getComputedStyle(testDiv).getPropertyValue('column-width') is "0px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

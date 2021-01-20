@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>object-fit, video</title>
+    <style>
+      video {
+        width: 120px;
+        height: 120px;
+        border: 1px solid blue;
+        background-color: gray;
+        margin: 10px;
+      }
+    </style>
+    <script src=media-file.js></script>
+    <script>
+        if (window.testRunner)
+          testRunner.waitUntilDone();
+
+        function init()
+        {
+            setSrcByTagName("video", findMediaFile("video", "content/test"));
+
+            var totalCount = document.getElementsByTagName('video').length;
+            var count = totalCount;
+            document.addEventListener("canplaythrough", function () {
+                if (!--count) {
+                    if (window.testRunner)
+                        setTimeout(function() { testRunner.notifyDone(); }, totalCount * 150);
+                }
+            }, true);
+        }
+    </script>
+
+  </head>
+  <body onload="init();">
+    <video style="object-fit: fill"></video>
+    <video style="object-fit: contain"></video>
+    <video style="object-fit: cover"></video>
+    <video style="object-fit: none"></video>
+    <video style="object-fit: scale-down"></video>
+  </body>
+</html>

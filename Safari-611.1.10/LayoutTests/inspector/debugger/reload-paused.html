@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/break-on-exception-tests.js"></script>
+<script>
+function unloadHandler()
+{
+    debugger;
+}
+
+function test()
+{
+    WI.debuggerManager.allExceptionsBreakpoint.disabled = false;
+
+    let suite = InspectorTest.createAsyncSuite("ReloadPaused");
+
+    suite.addTestCase({
+       name: "ReloadPausedNoCrash",
+       async test() {
+           InspectorTest.reloadPage();
+           await WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+           await WI.debuggerManager.resume();
+       }
+   });
+
+   suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()" onunload="unloadHandler()">
+<p>Test that reloading a paused page doesn't crash.</p>
+</body>
+</html>

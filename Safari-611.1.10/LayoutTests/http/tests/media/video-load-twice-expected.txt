@@ -1,0 +1,12 @@
+RUN(video.src = file)
+EVENT(loadedmetadata)
+EVENT(loadeddata)
+EVENT(canplay)
+EVENT(canplaythrough)
+RUN(video.src = file)
+EVENT(loadedmetadata)
+EVENT(loadeddata)
+EVENT(canplay)
+EVENT(canplaythrough)
+END OF TEST
+

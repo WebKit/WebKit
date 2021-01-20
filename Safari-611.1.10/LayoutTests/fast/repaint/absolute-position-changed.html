@@ -1,0 +1,22 @@
+<html>
+<head>
+    <link rel="stylesheet" href="resources/default.css">
+    <script type="text/javascript">
+        if (window.testRunner)
+          testRunner.waitUntilDone();
+
+        function repaintTest() {
+          window.scrollTo(0, 500);
+          document.getElementById('absoluteDiv').style.top = '700px';
+          document.body.offsetHeight;
+          if (window.testRunner)
+            testRunner.notifyDone();
+        }
+    </script>
+</head>
+<body style="height:2000px;" onload="setTimeout(repaintTest, 0);">
+    <!-- You should see 1 green rectangle in the output and no red. -->
+    <div style="top: 200px; left: 100px;" class="fixed red"></div>
+    <div id="absoluteDiv" style="top: 500px; left:100px;" class="absolute green"></div>
+</body>
+</html>

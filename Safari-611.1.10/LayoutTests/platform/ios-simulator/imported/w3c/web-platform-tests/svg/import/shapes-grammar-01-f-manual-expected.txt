@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (211,193) size 500x173
+      RenderSVGContainer {g} at (211,193) size 500x173 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,400.00)}]
+        RenderSVGContainer {g} at (211,193) size 500x173
+          RenderSVGPath {polyline} at (442,193) size 269x172 [stroke={[type=SOLID] [color=#007700] [stroke width=8.00]}] [fill={[type=SOLID] [color=#339966]}] [points="270 -225 300 -245 320 -225 340 -245 280 -280 390 -280 420 -240 280 -185"]
+          RenderSVGPath {polygon} at (211,193) size 177x173 [stroke={[type=SOLID] [color=#007700] [stroke width=8.00]}] [fill={[type=SOLID] [color=#55FF99]}] [points="179 -185 218 -203 228 -245 202 -279 159 -280 131 -247 139 -205"]
+        RenderSVGContainer {g} at (215,197) size 489x165
+          RenderSVGPath {polyline} at (448,197) size 256x164 [stroke={[type=SOLID] [color=#33CC66] [stroke width=3.00]}] [points="270 -225 300 -245 320 -225 340 -245 280 -280 390 -280 420 -240 280 -185"]
+          RenderSVGPath {polygon} at (215,197) size 168x165 [stroke={[type=SOLID] [color=#33CC66] [stroke width=3.00]}] [points="179 -185 218 -203 228 -245 202 -279 159 -280 131 -247 139 -205"]
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.2 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

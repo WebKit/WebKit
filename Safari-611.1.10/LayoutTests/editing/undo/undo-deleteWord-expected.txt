@@ -1,0 +1,3 @@
+Tests:
+Undo a delete word after a series of insertText does not wipe out the entire content.
+one two three four

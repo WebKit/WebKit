@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/shaderProgram-utilities-webgl.js"></script>
+<script id="vertex-shader" type="x-shader/x-vertex">
+    void main(void) {
+        gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+    }
+</script>
+<script id="fragment-shader" type="x-shader/x-fragment">
+    precision mediump float;
+
+    void main(void) {
+        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    }
+</script>
+<script>
+function load() {
+    createProgram("webgl");
+    linkProgram("vertex-shader", "fragment-shader");
+
+    runTest();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.updateShader.WebGL");
+
+    function validSourceTest({name, shaderType, source}) {
+        suite.addTestCase({
+            name,
+            test(resolve, reject) {
+                let shaderProgram = WI.canvasManager.shaderPrograms[0];
+                if (!shaderProgram) {
+                    reject("Missing shader program")
+                    return;
+                }
+
+                let programId = shaderProgram.identifier;
+
+                CanvasAgent.updateShader(programId, shaderType, source)
+                .then(() => CanvasAgent.requestShaderSource(programId, shaderType))
+                .then(({source}) => InspectorTest.log(source))
+                .then(resolve, reject);
+            }
+        });
+    }
+
+    validSourceTest({
+        name: "Canvas.updateShader.WebGL.Vertex.Valid",
+        shaderType: WI.ShaderProgram.ShaderType.Vertex,
+        source: `
+    void main(void) {
+        gl_Position = vec4(1, 2, 3, 4);
+    }
+`,
+    });
+
+    validSourceTest({
+        name: "Canvas.updateShader.WebGL.Fragment.Valid",
+        shaderType: WI.ShaderProgram.ShaderType.Fragment,
+        source: `
+    precision mediump float;
+
+    void main(void) {
+        gl_FragColor = vec4(0.1, 0.2, 0.3, 0.4);
+    }
+`,
+    });
+
+    function invalidSourceTest({name, shaderType, source}) {
+        suite.addTestCase({
+            name,
+            test(resolve, reject) {
+                let shaderProgram = WI.canvasManager.shaderPrograms[0];
+                if (!shaderProgram) {
+                    reject("Missing shader program")
+                    return;
+                }
+
+                CanvasAgent.updateShader(shaderProgram.identifier, shaderType, source, (error) => {
+                    InspectorTest.expectThat(error, "Should produce error.");
+                    InspectorTest.log("Error: " + error);
+                    resolve();
+                });
+            }
+        });
+    }
+
+    invalidSourceTest({
+        name: "Canvas.updateShader.WebGL.Vertex.Invalid",
+        shaderType: WI.ShaderProgram.ShaderType.Vertex,
+        source: "INVALID",
+    });
+
+    invalidSourceTest({
+        name: "Canvas.updateShader.WebGL.Fragment.Invalid",
+        shaderType: WI.ShaderProgram.ShaderType.Fragment,
+        source: "INVALID",
+    });
+
+    suite.addTestCase({
+        name: "Canvas.updateShader.WebGL.ShaderType.Invalid",
+        description: "Invalid shader types should cause an error.",
+        test(resolve, reject) {
+            let shaderProgram = WI.canvasManager.shaderPrograms[0];
+            if (!shaderProgram) {
+                reject("Missing shader program")
+                return;
+            }
+
+            const shaderType = "INVALID_SHADER_TYPE";
+            const source = "INVALID_SOURCE";
+            CanvasAgent.updateShader(shaderProgram.identifier, shaderType, source, (error) => {
+                InspectorTest.expectThat(error, "Should produce an error.");
+                InspectorTest.log("Error: " + error);
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+<p>WebGL tests for Canvas.updateShader command.</p>
+</body>
+</html>

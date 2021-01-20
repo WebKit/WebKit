@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/payment-request.js"></script>
+</head>
+<body>
+<script>
+
+description("Test PaymentMethodChangeEvent with Apple Pay.");
+
+window.jsTestIsAsync = true;
+
+function validPaymentMethod() {
+    return {
+        supportedMethods: 'https://apple.com/apple-pay',
+        data: {
+            version: 2,
+            merchantIdentifier: '',
+            countryCode: 'US',
+            supportedNetworks: ['visa', 'masterCard'],
+            merchantCapabilities: ['supports3DS'],
+        },
+    }
+}
+
+function validPaymentDetails() {
+    return {
+        total: {
+            label: 'Total',
+            amount: {
+                currency: 'USD',
+                value: '10.00',
+            },
+        },
+        displayItems: [{
+            label: 'Item',
+            amount: {
+                currency: 'USD',
+                value: '10.00',
+            },
+        }],
+    }
+}
+
+async function runTests() {
+    await new Promise((resolve, reject) => {
+        debug("Testing that PaymentMethodChangeEvent fires after selecting a 'credit' payment method type.");
+
+        activateThen(() => {
+            var paymentRequest = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+            try {
+                paymentRequest.onpaymentmethodchange = (event) => {
+                    shouldBe("event.methodName", "'https://apple.com/apple-pay'");
+                    shouldBe("event.methodDetails.type", "'credit'");
+                    paymentRequest.abort();
+                    resolve();
+                };
+
+                paymentRequest.show();
+                internals.mockPaymentCoordinator.changePaymentMethod({ type: 'credit' });
+            } catch (error) {
+            }
+        });
+    });
+    debug("");
+
+    await new Promise((resolve, reject) => {
+        debug("Testing that PaymentMethodChangeEvent.updateWith() updates payment details after selecting a 'credit' payment method type.");
+
+        activateThen(() => {
+            var paymentRequest = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+
+            paymentRequest.onpaymentmethodchange = (event) => {
+                shouldBe("event.methodName", "'https://apple.com/apple-pay'");
+                shouldBe("event.methodDetails.type", "'credit'");
+
+                var detailsUpdate = validPaymentDetails();
+                detailsUpdate.total.amount.value = '15.00';
+                event.updateWith(detailsUpdate);
+                internals.mockPaymentCoordinator.acceptPayment();
+            };
+
+            paymentRequest.show().then((response) => {
+                shouldBe("internals.mockPaymentCoordinator.total.label", "'Total'");
+                shouldBe("internals.mockPaymentCoordinator.total.amount", "'15.00'");
+                shouldBe("internals.mockPaymentCoordinator.lineItems.length", "1");
+                shouldBe("internals.mockPaymentCoordinator.lineItems[0].label", "'Item'");
+                shouldBe("internals.mockPaymentCoordinator.lineItems[0].amount", "'10.00'");
+                response.complete("success");
+                resolve();
+            });
+
+            internals.mockPaymentCoordinator.changePaymentMethod({ type: 'credit' });
+        });
+    });
+    debug("");
+
+    await new Promise((resolve, reject) => {
+        debug("Testing that PaymentMethodChangeEvent.updateWith() applies modifiers after selecting a 'credit' payment method type.");
+
+        activateThen(() => {
+            var paymentRequest = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+
+            paymentRequest.onpaymentmethodchange = (event) => {
+                shouldBe("event.methodName", "'https://apple.com/apple-pay'");
+                shouldBe("event.methodDetails.type", "'credit'");
+
+                var detailsUpdate = validPaymentDetails();
+                detailsUpdate.total.amount.value = '15.00';
+                detailsUpdate.modifiers = [{
+                    supportedMethods: 'https://apple.com/apple-pay',
+                    total: {
+                        label: 'Credit total override',
+                        amount: {
+                            currency: 'USD',
+                            value: '20.00',
+                        },
+                    },
+                    additionalDisplayItems: [{
+                        label: 'Credit surcharge',
+                        amount: {
+                            currency: 'USD',
+                            value: '10.00',
+                        },
+                    }],
+                    data: {
+                        paymentMethodType: 'credit',
+                    },
+                }];
+
+                event.updateWith(detailsUpdate);
+                internals.mockPaymentCoordinator.acceptPayment();
+            };
+
+            paymentRequest.show().then((response) => {
+                shouldBe("internals.mockPaymentCoordinator.total.label", "'Credit total override'");
+                shouldBe("internals.mockPaymentCoordinator.total.amount", "'20.00'");
+                shouldBe("internals.mockPaymentCoordinator.lineItems.length", "2");
+                shouldBe("internals.mockPaymentCoordinator.lineItems[0].label", "'Item'");
+                shouldBe("internals.mockPaymentCoordinator.lineItems[0].amount", "'10.00'");
+                shouldBe("internals.mockPaymentCoordinator.lineItems[1].label", "'Credit surcharge'");
+                shouldBe("internals.mockPaymentCoordinator.lineItems[1].amount", "'10.00'");
+                response.complete("success");
+                resolve();
+            });
+
+            internals.mockPaymentCoordinator.changePaymentMethod({ type: 'credit' });
+        });
+    });
+    debug("");
+
+    finishJSTest();
+}
+
+runTests();
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

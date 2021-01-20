@@ -1,0 +1,23 @@
+Test PerformanceObserver handling of entries added while in callback.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS PerformanceObserver 1 callback fired
+PASS list.getEntries().length is 1
+ - mark1
+PASS PerformanceObserver 2 callback fired
+PASS list.getEntries().length is 2
+ - mark1
+ - mark2
+PASS PerformanceObserver 1 callback fired
+PASS list.getEntries().length is 2
+ - mark2
+ - mark3
+PASS PerformanceObserver 2 callback fired
+PASS list.getEntries().length is 1
+ - mark3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

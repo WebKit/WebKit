@@ -1,0 +1,11 @@
+This tests that toString() works correctly on NPObject.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS plugin.toString() is "TestObject"
+PASS [plugin, ''].join('') is "TestObject"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,6 @@
+
+
+PASS: <iframe allow=''> got "deny"
+PASS: <iframe allow='camera'> got "deny"
+PASS: <iframe allow='display-capture'> got "allow"
+PASS: <iframe allow='microphone'> got "deny"

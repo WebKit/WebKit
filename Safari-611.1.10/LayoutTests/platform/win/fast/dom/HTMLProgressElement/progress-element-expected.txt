@@ -1,0 +1,9 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderProgress {PROGRESS} at (0,-1) size 160x17
+      RenderInline {SMALL} at (0,0) size 134x15
+        RenderProgress {PROGRESS} at (160,1) size 134x14
+      RenderText {#text} at (0,0) size 0x0

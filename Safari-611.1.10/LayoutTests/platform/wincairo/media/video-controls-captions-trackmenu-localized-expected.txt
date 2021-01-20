@@ -1,0 +1,26 @@
+Test that captions and subtitles menu items are localized.
+
+
+EVENT(canplaythrough)
+
+*** Set the user language preference.
+RUN(internals.setUserPreferredLanguages(['en']))
+Heading should be labelled 'Subtitles'
+EXPECTED (trackListSection.textContent == 'Subtitles') OK
+
+First item in captions menu should be labelled 'Off'
+EXPECTED (item.textContent == 'Off') OK
+
+Second item in captions menu should be labelled 'Auto (Recommended)'
+EXPECTED (item.textContent == 'Auto (Recommended)') OK
+
+Third item in captions menu should be labelled 'English CC'
+EXPECTED (item.textContent == 'English CC'), OBSERVED 'Laugh Track' FAIL
+
+Fourth item in captions menu should be labelled 'Laugh Track (English-United States)'
+EXPECTED (item.textContent == 'Laugh Track (English-United States)'), OBSERVED 'Unknown' FAIL
+
+Fifth item in captions menu should be labelled 'Unknown'
+TypeError: undefined is not an object (evaluating 'item.textContent')
+END OF TEST
+

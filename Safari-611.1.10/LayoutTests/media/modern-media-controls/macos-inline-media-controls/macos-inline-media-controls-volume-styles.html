@@ -1,0 +1,41 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>MacOSInlineMediaControls</code> computed styles.");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new MacOSInlineMediaControls({ width: 680, height: 300 });
+document.body.appendChild(mediaControls.element);
+
+let volumeSliderContainerStyle, volumeSliderStyle;
+
+shouldBecomeEqual("mediaControls.volumeSlider.parent.element.parentNode", "mediaControls.element", () => {
+    volumeSliderContainerStyle = window.getComputedStyle(mediaControls.volumeSlider.parent.element);
+    shouldBeEqualToString("volumeSliderContainerStyle.position", "absolute");
+    shouldBeEqualToString("volumeSliderContainerStyle.left", "566px");
+    shouldBeEqualToString("volumeSliderContainerStyle.top", "226px");
+    shouldBeEqualToString("volumeSliderContainerStyle.width", "94px");
+    shouldBeEqualToString("volumeSliderContainerStyle.height", "31px");
+    shouldBeEqualToString("volumeSliderContainerStyle.transform", "matrix(6.123233995736766e-17, -1, 1, 6.123233995736766e-17, -30, -26.000000000000004)");
+
+    volumeSliderStyle = window.getComputedStyle(mediaControls.volumeSlider.element);
+    shouldBeEqualToString("volumeSliderStyle.marginLeft", "6px");
+    shouldBeEqualToString("volumeSliderStyle.width", "60px");
+    shouldBeEqualToString("volumeSliderStyle.height", "16px");
+
+    mediaControls.element.remove();
+
+    debug("");
+    finishMediaControlsTest();
+});
+
+// Simulate the mouse entering the volume button.
+window.requestAnimationFrame(() => mediaControls.muteButton.element.dispatchEvent(new MouseEvent("mouseenter")));
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

@@ -1,0 +1,46 @@
+Insert list items in all the cells of a table:
+
+Before:
+| <table>
+|   border="1"
+|   <tbody>
+|     id="element"
+|     <tr>
+|       <td>
+|         "<#selection-anchor>fsdf"
+|       <td>
+|         "fsdf"
+|     <tr>
+|       <td>
+|         "gghfg"
+|       <td>
+|         "fsfg"
+| <#selection-focus>
+
+After:
+| <table>
+|   border="1"
+|   <tbody>
+|     id="element"
+|     <tr>
+|       <td>
+|         <ol>
+|           <li>
+|             "<#selection-anchor>fsdf"
+|             <br>
+|       <td>
+|         <ol>
+|           <li>
+|             "fsdf"
+|             <br>
+|     <tr>
+|       <td>
+|         <ol>
+|           <li>
+|             "gghfg"
+|             <br>
+|       <td>
+|         <ol>
+|           <li>
+|             "fsfg<#selection-focus>"
+|             <br>

@@ -1,0 +1,61 @@
+<html>
+<body>
+<p>Tests source origin difference for cached resources.</p
+<p>Trying to load sequentially the same script from various origins.</p>
+<div id="console"></div>
+<div>
+    <iframe id="iframe1"></iframe>
+    <iframe id="iframe2"></iframe>
+</div>
+<div>
+    <iframe id="iframe3"></iframe>
+    <iframe id="iframe4"></iframe>
+</div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var counter = 0;
+var messages = [];
+window.addEventListener("message", function(event) {
+    messages.push(event.data);
+    if (messages.length == 2)
+        secondTest();
+    else if (messages.length == 4) {
+        messages.sort();
+        messages.forEach((message) => {
+            document.getElementById('console').innerHTML += message + "<br/>";
+        })
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+});
+
+var iframeURL8000 = "http://localhost:8000/security/resources/cross-origin-cached-resource-iframe.html";
+var iframeURL8080 = "http://localhost:8080/security/resources/cross-origin-cached-resource-iframe.html";
+
+var allow8000Script1 = "http://127.0.0.1:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8000&name=notify-loaded.js&delay=1000&contentType=text/javascript";
+var allow8000Script2 = "http://127.0.0.1:8080/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8000&name=notify-loaded.js&delay=1000&contentType=text/javascript";
+
+function firstTest()
+{
+    document.getElementById('iframe1').src = iframeURL8000 + "#" +
+        encodeURIComponent(JSON.stringify({node: "script", url: allow8000Script1, shouldPass: true, crossOrigin: "anonymous", id: 1}));
+    document.getElementById('iframe2').src = iframeURL8080 + "#" +
+        encodeURIComponent(JSON.stringify({node: "script", url: allow8000Script1, shouldPass: false, crossOrigin: "anonymous", id: 2}));
+}
+
+function secondTest()
+{
+    document.getElementById('iframe3').src = iframeURL8080 + "#" +
+        encodeURIComponent(JSON.stringify({node: "script", url: allow8000Script2, shouldPass:true, id: 3}));
+    document.getElementById('iframe4').src = iframeURL8080 + "#" +
+        encodeURIComponent(JSON.stringify({node: "script", url: allow8000Script2, shouldPass:false, crossOrigin: "anonymous", id: 4}));
+}
+
+firstTest();
+</script>
+</body>
+</html>

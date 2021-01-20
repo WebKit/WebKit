@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+
+<menu id="toolbar" type="toolbar">menu toolbar</menu>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that menu type toolbar should be mapped correctly.");
+
+    if (window.accessibilityController) {
+          var toolbar = accessibilityController.accessibleElementById("toolbar");
+          shouldBe("toolbar.role", "'AXRole: AXToolbar'");
+          shouldBe("toolbar.roleDescription", "'AXRoleDescription: toolbar'");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

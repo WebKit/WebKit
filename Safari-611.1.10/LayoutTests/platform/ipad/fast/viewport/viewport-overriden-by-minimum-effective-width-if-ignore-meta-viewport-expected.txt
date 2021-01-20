@@ -1,0 +1,41 @@
+setMinimumEffectiveWidth(640.00)
+window size: [768, 1004]
+square size: [77, 100]
+zoom scale: 1.00
+
+setMinimumEffectiveWidth(768.00)
+window size: [768, 1004]
+square size: [77, 100]
+zoom scale: 1.00
+
+setMinimumEffectiveWidth(834.00)
+window size: [834, 1090]
+square size: [83, 109]
+zoom scale: 0.92
+
+setMinimumEffectiveWidth(980.00)
+window size: [980, 1281]
+square size: [98, 128]
+zoom scale: 0.78
+
+setMinimumEffectiveWidth(1024.00)
+window size: [1024, 1339]
+square size: [102, 134]
+zoom scale: 0.75
+
+setMinimumEffectiveWidth(1112.00)
+window size: [1112, 1454]
+square size: [111, 145]
+zoom scale: 0.69
+
+setMinimumEffectiveWidth(1280.00)
+window size: [1280, 1673]
+square size: [128, 167]
+zoom scale: 0.60
+
+setMinimumEffectiveWidth(1336.00)
+window size: [1336, 1747]
+square size: [134, 175]
+zoom scale: 0.57
+
+

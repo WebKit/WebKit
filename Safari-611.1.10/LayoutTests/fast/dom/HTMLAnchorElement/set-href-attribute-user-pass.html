@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test setting the username / password attributes of the URL in HTMLAnchorElement.');
+
+var a = document.createElement('a');
+
+a.href = "https://www.mydomain.com:8080/path/testurl.html#middle";
+a.username = "user";
+shouldBe("a.href", "'https://user@www.mydomain.com:8080/path/testurl.html#middle'");
+
+a.password = "password";
+shouldBe("a.href", "'https://user:password@www.mydomain.com:8080/path/testurl.html#middle'");
+
+a.username = null;
+shouldBe("a.href", "'https://null:password@www.mydomain.com:8080/path/testurl.html#middle'");
+
+a.password = null;
+shouldBe("a.href", "'https://null:null@www.mydomain.com:8080/path/testurl.html#middle'");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

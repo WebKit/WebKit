@@ -1,0 +1,6 @@
+2d.fillStyle.parse.rgb-eof
+Spec references: 2d.colours.parse
+Actual output:
+Expected output:
+
+Passed

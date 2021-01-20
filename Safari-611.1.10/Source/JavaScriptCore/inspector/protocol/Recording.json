@@ -1,0 +1,52 @@
+{
+    "domain": "Recording",
+    "description": "General types used for recordings of actions performed in the inspected page.",
+    "debuggableTypes": ["page", "web-page"],
+    "targetTypes": ["page"],
+    "version": 1,
+    "types": [
+        {
+            "id": "Type",
+            "type": "string",
+            "enum": ["canvas-2d", "canvas-bitmaprenderer", "canvas-webgl", "canvas-webgl2"],
+            "description": "The type of the recording."
+        },
+        {
+            "id": "Initiator",
+            "type": "string",
+            "enum": ["frontend", "console", "auto-capture"]
+        },
+        {
+            "id": "InitialState",
+            "type": "object",
+            "description": "Information about the initial state of the recorded object.",
+            "properties": [
+                { "name": "attributes", "type": "object", "optional": true, "description": "Key-value map for each attribute of the state." },
+                { "name": "states", "type": "array", "items": { "type": "object" }, "optional": true, "description": "Array of saved states of the context." },
+                { "name": "parameters", "type": "array", "items": { "type": "any" }, "optional": true, "description": "Array of values that were used to construct the recorded object." },
+                { "name": "content", "type": "string", "optional": true, "description": "Current content at the start of the recording." }
+            ]
+        },
+        {
+            "id": "Frame",
+            "type": "object",
+            "description": "Container object for a single frame of the recording.",
+            "properties": [
+                { "name": "actions", "type": "array", "items": { "type": "any" }, "description": "Information about an action made to the recorded object. Follows the structure [name, parameters, swizzleTypes, trace], where name is a string, parameters is an array, swizzleTypes is an array, and trace is an array."},
+                { "name": "duration", "type": "number", "optional": true, "description": "Total execution time of all actions recorded in this frame in milliseconds. " },
+                { "name": "incomplete", "type": "boolean", "optional": true, "description": "Flag indicating if the recording was stopped before this frame ended." }
+            ]
+        },
+        {
+            "id": "Recording",
+            "type": "object",
+            "properties": [
+                { "name": "version", "type": "integer", "description": "Used for future/backwards compatibility." },
+                { "name": "type", "$ref": "Type" },
+                { "name": "initialState", "$ref": "InitialState", "description": "JSON data of inital state of object before recording." },
+                { "name": "data", "type": "array", "items": { "type": "any" }, "description": "Array of objects that can be referenced by index. Used to avoid duplicating objects." },
+                { "name": "name", "type": "string", "optional": true }
+            ]
+        }
+    ]
+}

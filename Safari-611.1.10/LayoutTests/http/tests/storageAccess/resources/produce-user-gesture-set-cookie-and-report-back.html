@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script>
+        let intervalID;
+        function setCookieAndPostMessage() {
+            internals.withUserGesture(function() {
+                intervalID = setInterval(function() {
+                    var promise = document.hasStorageAccess();
+                    promise.then(
+                        function (hasAccess) {
+                            if (hasAccess) {
+                                clearInterval(intervalID);
+                                document.cookie = "firstPartyCookie=value";
+                                window.opener.postMessage("PASS Cookie created.", "http://127.0.0.1:8000");
+                            }
+                        },
+                        function (reason) {
+                            window.opener.postMessage("FAIL Promise was rejected, reason: " + reason, "http://127.0.0.1:8000");
+                        }
+                    );
+                }, 100);
+
+            });
+        }
+    </script>
+</head>
+<body onload="setCookieAndPostMessage()">
+</body>
+</html>

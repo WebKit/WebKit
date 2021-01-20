@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing audio/video element playing</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <audio id="audio" controls autoplay=""></audio>
+        <video id="video" controls autoplay=""></video>
+        <script>
+promise_test(async (t) => {
+    const pc1 = new RTCPeerConnection();
+    const pc2 = new RTCPeerConnection();
+    t.add_cleanup(() => {
+        pc1.close();
+        pc2.close();
+    });
+
+    const localStream = await navigator.mediaDevices.getUserMedia({ audio : true });
+    pc1.addTrack(localStream.getAudioTracks()[0], localStream);
+    pc1.addTransceiver("video", { streams : [localStream] });
+
+    let promise = new Promise(resolve => pc2.ontrack = resolve);
+
+    const offer = await pc1.createOffer();
+    await pc1.setLocalDescription(offer);
+
+    await pc2.setRemoteDescription(offer);
+    const answer = await pc2.createAnswer();
+    await pc2.setLocalDescription(answer);
+
+    await pc1.setRemoteDescription(answer);
+
+    // We do not pass any ICE candidate 
+    let remoteTrackEvent = await promise;
+
+    let remoteStream = new MediaStream([remoteTrackEvent.streams[0].getVideoTracks()[0], localStream.getAudioTracks()[0]]);
+    audio.srcObject = remoteStream;
+    video.srcObject = remoteStream;
+
+    audio.play();
+    video.play();
+
+    let counter = 0;
+    do {
+        await new Promise(resolve => t.step_timeout(resolve, 100));
+    } while (audio.currentTime === 0 && ++counter < 20)
+
+   assert_not_equals(audio.currentTime, 0);
+   assert_equals(video.currentTime, 0);
+}, "Verify that, contrary to video elements, audio elements are playing even if video tracks have not started generated any video frame");
+        </script>
+    </body>
+</html>

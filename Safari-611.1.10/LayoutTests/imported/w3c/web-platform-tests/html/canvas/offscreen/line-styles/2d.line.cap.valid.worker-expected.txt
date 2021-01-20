@@ -1,0 +1,3 @@
+
+PASS Setting lineCap to valid values works
+

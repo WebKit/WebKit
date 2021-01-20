@@ -1,0 +1,32 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/test.mp4" style="width: 320px; height: 240px;"></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing that we don't leave room for the bottom controls bar when showing captions without the controls attribute.");
+
+const media = document.querySelector("video");
+let bounds, textTrackContainer;
+
+media.addEventListener("loadedmetadata", () => {
+    media.addTextTrack("captions", "regular captions track", "en");
+    media.textTracks[0].addCue(new VTTCue(2.00, 4.00, "test"));
+    media.textTracks[0].mode = "showing";
+
+    media.addEventListener("timeupdate", () => {
+        bounds = media.getBoundingClientRect();
+        textTrackContainer = internals.shadowRoot(media).querySelector("div[pseudo=-webkit-media-text-track-container]");
+        shouldBe("textTrackContainer.getBoundingClientRect().height", "bounds.height");
+        finishJSTest();
+    });
+
+    media.addEventListener("canplaythrough", () => {
+        media.currentTime = 3;
+    });
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

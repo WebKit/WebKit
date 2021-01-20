@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+#test-root * {
+    background-color: red;
+}
+</style>
+<style id="style">
+</style>
+</head>
+<body>
+    <div style="display:none" id="test-root">
+        <parent1>
+            <testcaseA id="target1"></testcaseA>
+            <testcaseB id="target2"></testcaseB>
+            <testcaseA id="target3"></testcaseA>
+            <testcaseB id="target4"></testcaseB>
+            <testcaseA id="target5"></testcaseA>
+            <testcaseB id="target6"></testcaseB>
+            <testcaseA id="target7"></testcaseA>
+            <testcaseB id="target8"></testcaseB>
+            <testcaseA id="target9"></testcaseA>
+            <testcaseB id="target10"></testcaseB>
+        </parent1>
+        <parent2>
+            <testcaseA class="foo" id="target11"></testcaseA>
+            <testcaseA class="bar" id="target12"></testcaseA>
+            <testcaseA class="foo" id="target13"></testcaseA>
+            <testcaseA class="bar" id="target14"></testcaseA>
+            <testcaseA class="foo" id="target15"></testcaseA>
+            <testcaseA class="bar" id="target16"></testcaseA>
+            <testcaseA class="foo" id="target17"></testcaseA>
+            <testcaseA class="bar" id="target18"></testcaseA>
+            <testcaseA class="foo" id="target19"></testcaseA>
+            <testcaseA class="bar" id="target20"></testcaseA>
+        </parent2>
+    </div>
+</body>
+<script>
+description('Check ":nth-child(An+B of selectorList)" with complex selectors.');
+
+function testQuerySelector(selector, expectedIds) {
+    shouldBe("document.querySelectorAll('" + selector + "').length", '' + expectedIds.length);
+    for (var i = 0; i < expectedIds.length; ++i)
+        shouldBeEqualToString("document.querySelectorAll('" + selector + "')[" + i + "].id", expectedIds[i]);
+}
+
+function testStyling(selector, expectedIds) {
+    var stylingElement = document.getElementById("style");
+    stylingElement.innerHTML = '' + selector + ' { background-color: rgb(10, 100, 200); }';
+
+    var allTestCases = document.querySelectorAll("#test-root *");
+    for (var i = 0; i < allTestCases.length; ++i) {
+        var expectMatch = expectedIds.indexOf(allTestCases[i].id) >= 0;
+        shouldBeEqualToString('getComputedStyle(document.querySelectorAll("#test-root *")[' + i + ']).backgroundColor', expectMatch ? 'rgb(10, 100, 200)' : 'rgb(255, 0, 0)');
+    }
+
+    stylingElement.innerHTML = '';
+}
+
+function testSelector(selector, expectedIds) {
+    debug("Testing \"" + selector + "\"");
+    testQuerySelector("#test-root " + selector, expectedIds);
+    testStyling("#test-root " + selector, expectedIds);
+    debug("");
+}
+
+testSelector(':nth-child(2n of :root parent1>testcaseA)', ["target3", "target7"]);
+
+testSelector(':nth-child(2n of :root parent2>.foo)', ["target13", "target17"]);
+
+// Since the two above are disjoint sets, the combined selector should match the combined results.
+testSelector(':nth-child(2n of :root parent2>.foo, :root parent1>testcaseA)', ["target3", "target7", "target13", "target17"]);
+
+
+testSelector('> * > *:nth-child(2n + 1 of html div testcaseA~testcaseA + *)', ["target4", "target8", "target13", "target15", "target17", "target19"]);
+
+testSelector('> * > *:nth-child(2n+1 of html .foo)', ["target11", "target15", "target19"]);
+
+testSelector('> * > *:nth-child(2n+1 of html div testcaseA~testcaseA + *, html .foo)', ["target4", "target8", "target11", "target14", "target16", "target18", "target20"]);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

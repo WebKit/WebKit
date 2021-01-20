@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>==.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+const epsilon = 0.0001;
+
+whlslTests.vectorLT = async () => {
+    const program = `
+        bool foo() {
+            float2 v = float2(10.0, 20.0);
+            float2 v2 = v;
+            v2 += 10.0;
+
+            return all(v < v2);
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.vectorLT2 = async () => {
+    const program = `
+        bool foo() {
+            int2 v = int2(10, 20);
+            int2 v2 = v;
+            v2 -= 10;
+
+            return !any(v < v2);
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.vectorLT3 = async () => {
+    const program = `
+        bool foo() {
+            int2 v = int2(10, 20);
+            int2 v2 = v;
+            v2.y += 10;
+
+            bool2 result = v < v2;
+            return !result.x && result.y;
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.vectorLTE = async () => {
+    const program = `
+        bool foo() {
+            float2 v = float2(10.0, 20.0);
+            float2 v2 = v;
+            v2 += 10.0;
+
+            return all(v <= v2);
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.vectorLTE2 = async () => {
+    const program = `
+        bool foo() {
+            float2 v = float2(10.0, 20.0);
+            float2 v2 = v;
+
+            return all(v <= v2);
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.vectorLTE3 = async () => {
+    const program = `
+        bool foo() {
+            float2 v = float2(10.0, 20.0);
+            float2 v2 = v;
+            v2.y -= 1.0;
+
+            bool2 result = v <= v2;
+            return result.x && !result.y;
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.vectorGT = async () => {
+    const program = `
+        bool foo() {
+            float2 v = float2(10.0, 20.0);
+            float2 v2 = v;
+            v2 += 10.0;
+
+            return !any(v > v2);
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.vectorGTE = async () => {
+    const program = `
+        bool foo() {
+            float2 v = float2(10.0, 20.0);
+            float2 v2 = v;
+            v2 += 10.0;
+
+            return !any(v >= v2);
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.vectorGTE2 = async () => {
+    const program = `
+        bool foo() {
+            int2 v = int2(10, 20);
+            int2 v2 = v;
+
+            return all(v >= v2);
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.vectorGTE3 = async () => {
+    const program = `
+        bool foo() {
+            int2 v = int2(10, 20);
+            int2 v2 = v;
+            v2.y += 10;
+
+            bool2 result = v >= v2;
+            return result.x && !result.y;
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+runTests(whlslTests);
+</script>
+</html>

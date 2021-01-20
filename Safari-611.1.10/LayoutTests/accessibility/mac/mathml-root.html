@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+
+<math id="root"><mroot><mn>8</mn> <mn>3</mn></mroot></math>
+
+<div id="console"></div>
+<script>
+
+description("This tests ensures that both root index and radicand work in this case.")
+
+if (window.testRunner && window.accessibilityController) {
+
+   // Generic root
+   var root = accessibilityController.accessibleElementById("root").childAtIndex(0);
+   shouldBe("root.role", "'AXRole: AXGroup'");
+   shouldBe("root.subrole", "'AXSubrole: AXMathRoot'");
+   var rootIndex = root.uiElementAttributeValue("AXMathRootIndex");
+   var rootRadicand = root.uiElementAttributeValue("AXMathRootRadicand");
+   shouldBe("rootRadicand.childAtIndex(0).stringValue", "'AXValue: 8'");
+   shouldBe("rootIndex.childAtIndex(0).stringValue", "'AXValue: 3'");
+}
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

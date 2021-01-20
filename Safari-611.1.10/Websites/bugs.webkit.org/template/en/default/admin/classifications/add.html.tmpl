@@ -1,0 +1,28 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% PROCESS global/header.html.tmpl
+  title = "Add new classification"
+  style_urls = ['skins/standard/admin.css']
+%]
+
+<form method=post action="editclassifications.cgi">
+  <table id="admin_table_edit">
+
+    [% PROCESS "admin/classifications/edit-common.html.tmpl" %]
+
+  </table>
+  <hr>
+  <input type=submit value="Add">
+  <input type=hidden name="action" value="new">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+</FORM>
+
+[% PROCESS admin/classifications/footer.html.tmpl %] 
+
+[% PROCESS global/footer.html.tmpl %] 

@@ -1,0 +1,8 @@
+Test that resolving auto tracks on grid items works properly.
+
+XXXXX XXXXX XXXXX
+PASS
+XXXXX XXXXX XXXXX
+PASS
+XXXXX XXXXX XXXXX XXXXX XXXXX XXXXX
+PASS

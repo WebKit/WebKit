@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Test passes if you see a single 200px by 200px green box below.</p>
+<div id="container" style="width: 200px; height: 200px; background: green;"></div>
+<script>
+
+function style(pseudoClasses) {
+    return `<style>
+    .match, .not-match { display: block; float: left; width: 100px; height: 15px; color: green; font-size: 12px; overflow: hidden; }
+    .match { background: red; }
+    .not-match { background: green; }
+    .match${pseudoClasses} { background: green; }
+    .not-match${pseudoClasses} { background: red; }
+</style>`;
+}
+
+function test(markup, action) {
+    const host = document.createElement('div');
+    const shadowRoot = host.attachShadow({mode: 'closed'});
+    document.getElementById('container').appendChild(host);
+    shadowRoot.innerHTML = markup;
+    return () => action(shadowRoot);
+}
+
+const tests = [
+    test(`<old-first></old-first><new-first class="match">newly first ${style(':first-child')}</new-first>`,
+        shadowRoot => shadowRoot.querySelector('old-first').remove()),
+    test(`<old-first class="not-match">old first ${style(':first-child')}</old-first>`,
+        shadowRoot => shadowRoot.prepend(document.createElement('div'))),
+
+    test(`<new-last class="match">newly last ${style(':last-child')}</new-last><old-last></old-last>`,
+        shadowRoot => shadowRoot.querySelector('old-last').remove()),
+    test(`<old-last class="not-match">old last ${style(':last-child')}</old-last>`,
+        shadowRoot => shadowRoot.append(document.createElement('div'))),
+
+    test(`<div></div><div class="match">only child 1 ${style(':only-child')}</div>`,
+        shadowRoot => shadowRoot.firstChild.remove()),
+    test(`<div class="match">only child 2 ${style(':only-child')}</div><div></div>`,
+        shadowRoot => shadowRoot.lastChild.remove()),
+    test(`<div class="not-match">only child 3 ${style(':only-child')}</div>`,
+        shadowRoot => shadowRoot.prepend(document.createElement('div'))),
+    test(`<div class="not-match">only child 4 ${style(':only-child')}</div>`,
+        shadowRoot => shadowRoot.append(document.createElement('div'))),
+
+    test(`<div></div><div class="match">1st child ${style(':nth-child(1)')}</div>`,
+        shadowRoot => shadowRoot.firstChild.remove()),
+    test(`<div></div><div class="not-match">2nd child ${style(':nth-child(2)')}</div>`,
+        shadowRoot => shadowRoot.prepend(document.createElement('div'))),
+
+    test(`<div class="match">3rd last child ${style(':nth-last-child(3)')}</div><div></div><div></div><div></div>`,
+        shadowRoot => shadowRoot.lastChild.remove()),
+    test(`<div></div><div class="not-match">4th last child ${style(':nth-last-child(4)')}</div><div></div><div></div><div></div>`,
+        shadowRoot => shadowRoot.append(document.createElement('div'))),
+
+    test(`<new-first></new-first><div></div><new-first class="match">first type 1 ${style(':first-of-type')}</new-first>`,
+        shadowRoot => shadowRoot.querySelector('new-first').remove()),
+    test(`<div></div><old-first class="not-match">first type 2 ${style(':first-of-type')}</old-first>`,
+        shadowRoot => shadowRoot.prepend(document.createElement('old-first'))),
+
+    test(`<new-last class="match">last of type 1 ${style(':last-of-type')}</new-last><div></div><new-last></new-last>`,
+        shadowRoot => shadowRoot.lastChild.remove()),
+    test(`<old-last class="not-match">last of type 2 ${style(':last-of-type')}</old-last><div></div>`,
+        shadowRoot => shadowRoot.append(document.createElement('old-last'))),
+
+    test(`<div></div><section></section><div class="match">only of type 1 ${style(':only-of-type')}</div>`,
+        shadowRoot => shadowRoot.firstChild.remove()),
+    test(`<section></section><div class="match">only of type 2 ${style(':only-of-type')}</div><div></div>`,
+        shadowRoot => shadowRoot.lastChild.remove()),
+    test(`<a-b></a-b><div class="not-match">only of type 3 ${style(':only-of-type')}</div><section></section>`,
+        shadowRoot => shadowRoot.insertBefore(document.createElement('div'), shadowRoot.childNodes[2])),
+    test(`<div class="not-match">only of type 4 ${style(':only-of-type')}</div><c-d></c-d>`,
+        shadowRoot => shadowRoot.append(document.createElement('div'))),
+
+    test(`<div></div><section></section><div class="match">1st of type ${style(':nth-of-type(1)')}</div>`,
+        shadowRoot => shadowRoot.firstChild.remove()),
+    test(`<div></div><section></section><div class="not-match">2nd of type ${style(':nth-of-type(2)')}</div>`,
+        shadowRoot => shadowRoot.prepend(document.createElement('div'))),
+
+    test(`<div class="match">3rd last of type ${style(':nth-last-of-type(3)')}</div><div></div><div></div><section></section><div></div>`,
+        shadowRoot => shadowRoot.querySelector('section').previousSibling.remove()),
+    test(`<div></div><div class="not-match">4th last of type ${style(':nth-last-of-type(4)')}</div><div></div><div></div><section></section><div></div>`,
+        shadowRoot => shadowRoot.append(document.createElement('div'))),
+
+    test(`<div></div><div class="match">1st, 3rd last of type ${style(':first-child:nth-last-of-type(3)')}</div><div></div><div></div><section></section><div></div>`,
+        shadowRoot => { shadowRoot.querySelector('section').previousSibling.remove(); shadowRoot.firstChild.remove(); }),
+
+    test(`<div></div><div class="match">2nd, 2rd last of type ${style(':nth-child(3):nth-of-type(2)')}</div>`,
+        shadowRoot => { shadowRoot.prepend(document.createElement('a-b')); shadowRoot.append(document.createElement('div')); }),
+];
+
+if (window.internals)
+    internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+else
+    window.rect = document.body.getBoundingClientRect();
+
+for (const test of tests)
+    test();
+
+</script>
+</body>
+</html>

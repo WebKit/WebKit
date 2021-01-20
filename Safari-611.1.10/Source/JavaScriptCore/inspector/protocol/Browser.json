@@ -1,0 +1,46 @@
+{
+    "domain": "Browser",
+    "description": "The Browser domain contains commands and events related to getting information about the browser ",
+    "debuggableTypes": ["web-page"],
+    "targetTypes": ["web-page"],
+    "types": [
+        {
+            "id": "ExtensionId",
+            "type": "string",
+            "description": "Unique extension identifier."
+        },
+        {
+            "id": "Extension",
+            "type": "object",
+            "description": "Information about an extension.",
+            "properties": [
+                { "name": "extensionId", "$ref": "ExtensionId", "description": "Extension identifier." },
+                { "name": "name", "type": "string", "description": "The display name for the extension." }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "enable",
+            "description": "Enables Browser domain events."
+        },
+        {
+            "name": "disable",
+            "description": "Disables Browser domain events."
+        }
+    ],
+    "events": [
+        {
+            "name": "extensionsEnabled",
+            "parameters": [
+                { "name": "extensions", "type": "array", "items": { "$ref": "Extension" }, "description": "Information about the enabled extensions." }
+            ]
+        },
+        {
+            "name": "extensionsDisabled",
+            "parameters": [
+                { "name": "extensionIds", "type": "array", "items": { "$ref": "ExtensionId" }, "description": "Disabled extension identifiers." }
+            ]
+        }
+    ]
+}

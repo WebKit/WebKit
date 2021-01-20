@@ -1,0 +1,8 @@
+.sort(comparator):
+get [2]
+set [2] with a
+c,b,hole,d,undefined,undefined,undefined,hole
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

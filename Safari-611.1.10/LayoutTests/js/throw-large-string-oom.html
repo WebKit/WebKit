@@ -1,0 +1,21 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description(
+    "This test makes sure we don't crash when throwing an error with a very large message"
+);
+var thrown = false;
+try {
+    throw 'a'.repeat(2 ** 31 - 100);
+} catch(e) {
+    console.log(e);
+}
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

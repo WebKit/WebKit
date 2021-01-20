@@ -1,0 +1,3 @@
+Dismissing the keyboard and then bringing it back again should not clear the editing styles that were previously applied.
+
+PASS: Underline still set as expected

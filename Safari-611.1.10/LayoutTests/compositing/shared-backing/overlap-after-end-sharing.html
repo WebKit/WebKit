@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		body {
+			margin: 0;
+		}
+		.backdrop {
+			position: fixed;
+			top: 10px;
+			left: 10px;
+			width: 500px;
+			height: 300px;
+			background-color: silver;
+		}
+		
+		.container {
+			position: relative;
+			top: 20px;
+			left: 20px;
+			width: 480px;
+			height: 280px;
+			border: 1px solid black;
+			padding: 10px;
+			box-sizing: border-box;
+		}
+		
+		.header {
+			position: relative;
+			z-index: 1;
+			overflow: hidden;
+			width: 460px;
+			height: 260px;
+			background-color: lightblue;
+		}
+
+		.target {
+			position: relative;
+			top: 10px;
+			left: 10px;
+			width: 200px;
+			height: 100px;
+			background-color: green;
+		}
+		
+		.animating {
+			position: relative;
+			background-color: orange;
+			top: auto;
+			left: 250px;
+			width: 180px;
+			height: 100px;
+			opacity: 0.6;
+			transition: opacity 500s;
+			padding: 10px;
+		}
+		
+		.animating.changed {
+			opacity: 1;
+			top: 20px;
+		}
+	</style>
+    <script>
+		if (window.testRunner)
+			testRunner.waitUntilDone();
+
+		window.addEventListener('load', () => {
+			setTimeout(() => {
+				document.querySelector('.animating').classList.add('changed');
+				if (window.testRunner)
+					testRunner.notifyDone();
+			}, 0);
+		}, false);
+    </script>
+</head>
+<body>
+	<div class="backdrop"></div>
+	<div class="container">
+		<div class="header">
+			<div class="target"></div>
+			<div class="animating"></div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+Test that captions and subtitles are sorted in the menu according to user preferences.
+
+
+EVENT(canplaythrough)
+
+*** Set the user language preference.
+RUN(internals.setUserPreferredLanguages(['en']))
+clickCCButton failed with exception: "undefined: FAIL
+END OF TEST
+

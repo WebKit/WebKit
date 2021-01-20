@@ -1,0 +1,5 @@
+Test replacing global constructors in a worker context.
+
+self.MessageEvent = 'PASS'; MessageEvent;: PASS
+DONE
+

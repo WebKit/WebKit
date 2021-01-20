@@ -1,0 +1,75 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # This template has no interface. It's a list of the available report
+  # types in Bugzilla.
+  #%]
+
+[% PROCESS global/header.html.tmpl
+  title = "Reporting and Charting Kitchen"
+  doc_section = "using/reports-and-charts.html"
+  style_urls = ['skins/standard/buglist.css']
+%]
+
+<p>
+  Bugzilla allows you to view and track the state of the [% terms.bug %] database in
+  all manner of exciting ways.
+</p>
+
+<h2>Current State</h2>
+
+<ul>
+  <li id="report_search">
+    <strong><a href="query.cgi">Search</a></strong> -
+    list sets of [% terms.bugs %].
+  </li>
+  <li id="report_tabular">
+    <strong>
+      <a href="query.cgi?format=report-table">Tabular reports</a>
+    </strong> -
+    tables of [% terms.bug %] counts in 1, 2 or 3 dimensions, as HTML or CSV.
+  </li>
+  [% IF feature_enabled('graphical_reports') %]
+    <li id="report_graphical">
+      <strong>
+        <a href="query.cgi?format=report-graph">Graphical reports</a>
+      </strong> -
+      line graphs, bar and pie charts.
+    </li>
+  [% END %]
+  <li id="report_duplicates">
+    <strong><a href="duplicates.cgi">Duplicates</a></strong> -
+    list of most frequently reported [% terms.bugs %].
+  </li>
+  [% Hook.process('current_state') %]
+</ul>
+
+[% IF feature_enabled('new_charts') OR feature_enabled('old_charts') %]
+  <h2>Change Over Time</h2>
+
+  <ul>
+    [% IF feature_enabled('old_charts') %]
+      <li id="old_charts">
+        <strong><a href="reports.cgi">Old Charts</a></strong> - 
+        plot the status and/or resolution of [% terms.bugs %] against
+        time, for each product in your database.
+      </li>
+    [% END %]
+    [% IF feature_enabled('new_charts') AND user.in_group(Param("chartgroup")) %]
+      <li id="new_charts">
+        <strong><a href="chart.cgi">New Charts</a></strong> - 
+        plot any arbitrary search against time. Far more powerful.
+      </li>
+    [% END %]
+  </ul>
+[% END %]
+
+[% Hook.process('end') %]
+
+[% PROCESS global/footer.html.tmpl %]

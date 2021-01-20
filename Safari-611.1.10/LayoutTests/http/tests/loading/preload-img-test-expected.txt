@@ -1,0 +1,9 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+
+This test is to test whether preload image will require 2 more requests or not.
+
+PASSED

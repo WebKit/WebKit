@@ -1,0 +1,70 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-000-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-000.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-010-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-011-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-012-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-012.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-013-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-013.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-014-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-014.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-016-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-016.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-017-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-017.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-018-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-018.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-020-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-020.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-021-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-021.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-022-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-022.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-023-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-023.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-024-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-024.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-025-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-025.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-arabic-diacritics-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-arabic-diacritics-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-arabic-diacritics-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping-arabic-diacritics-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping_lig-000-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/shaping_lig-000.html

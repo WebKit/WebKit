@@ -1,0 +1,60 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2019 Apple Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+# OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+# This script generates .xcfilelist files to be used as input and output
+# specifications of Run Script build phases.
+#
+# Currently, this script looks at the Generate Derived Sources and Generate
+# Unified Sources build phases. For the former, it invokes the
+# DerivedSources.make makefile, passing in options that print out the
+# dependency tree and using that information to form the associated input and
+# output .xcfilelist files. For the latter, it invokes the same
+# generate-unified-bundles.rb script that generates the actual
+# UnifiedSources*.cpp/mm files, albeit in a mode that produces .xcfilelist
+# files instead.
+#
+# This script not only generates .xcfilelists, but -- when given a "check"
+# command -- it also checks that they are up-to-date. In this mode, the
+# .xcfilelist files are created in a temporary location and are then compared
+# to the versions checked into the repository. If there are differences, the
+# user is notified so that they know that the .xcfilelist files need to be
+# regenerated. This facility can be incorporated into a build phase, a check-in
+# hook, or into the EWS (perhaps as part of check-webkit-style).
+#
+# As part of its operation, this script can sub-launch itself under Xcode. It
+# does this in order to establish the context in which builds occur. In
+# particular, it does this in order to set needed environment variables.
+
+import sys
+
+from webkitpy.generate_xcfilelists_lib.application import Application
+from webkitpy.port.config import apple_additions
+
+if __name__ == "__main__":
+    application_class = apple_additions().get_generate_xcfilelists_application() if apple_additions() else Application
+    sys.exit(application_class(__file__).run())

@@ -1,0 +1,38 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
+}
+
+function log(msg) {
+    var div = document.createElement("div");
+    div.appendChild(document.createTextNode(msg));
+    document.getElementById("console").appendChild(div);
+}
+
+window.addEventListener("message", function(e) {
+    if (e.data == "ready") {
+        win.location = "resources/pass.html";
+    } else if (e.data == "pass") {
+        win.document.body.innerHTML = "Frame navigated back on-domain";
+        win.close();
+        log("PASS");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}, false);
+
+window.onload = function() {
+    win = window.open("http://localhost:8000/security/frameNavigation/resources/ready.html", "targetFrame");
+}
+
+</script>
+</head>
+<body>
+<div id="console"></div>
+</body>
+</html>
+

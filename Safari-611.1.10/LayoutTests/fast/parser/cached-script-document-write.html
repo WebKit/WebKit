@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<body>
+<script src="resources/cached-script-document-write.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+window.isTestScriptCached = true;
+document.write("<script src='resources/cached-script-document-write.js'></" + "script>");
+</script>
+</body>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<title>CSP violation reports should not be CSP checked</title>
+<body>
+<script>
+setup({ single_test: true });
+document.addEventListener("securitypolicyviolation", async () => {
+    let counter = 0;
+    let text;
+    while (++counter <= 20) {
+        const response = await fetch("/WebKit/fetch/resources/store-csp-report.py?retrieve=true&file=reports-bypass-csp-checks");
+        text = await response.text();
+        // Let's check whether we have a CSP report.
+        if (text.startsWith("{"))
+            break;
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    let results = JSON.parse(text);
+    const report = results["csp-report"];
+    if (report["effective-directive"] === "connect-src") {
+        assert_equals(report["blocked-uri"], "http://localhost:8888");
+        done();
+    }
+});
+
+fetch("http://localhost:8888/test").catch(() => {});
+</script>
+</body>

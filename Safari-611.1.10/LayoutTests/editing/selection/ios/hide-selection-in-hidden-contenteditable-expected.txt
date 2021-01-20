@@ -1,0 +1,12 @@
+Here's to the crazy ones, the misfits, the rebels, the troublemakers, the round pegs in the square holes. The ones who see things differently. They're not fond of rules. You can quote them, disagree with them, glorify or vilify them, but the only thing you can't do is ignore them because they change things.
+Verifies that selection UI is suppressed when the editable root is transparent. To manually test, focus the box above and verify that:
+
+The caret is not shown.
+Selection highlights are not shown.
+The selection cannot be changed via gesture.
+Caret rect after focus: (left = 0, top = 0, width = 0, height = 0)
+Selection rects after selecting all:
+Selection start grabber rect after selecting all: (left = 0, top = 0, width = 0, height = 0)
+Selection end grabber rect after selecting all: (left = 0, top = 0, width = 0, height = 0)
+Selection before tap: ([object Text]#325, [object Text]#325)
+Selection after tap: ([object Text]#325, [object Text]#325)

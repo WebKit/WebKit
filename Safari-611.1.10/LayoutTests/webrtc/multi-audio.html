@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing multi audio with multiple volumes</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video1" autoplay=""></video>
+        <video id="video2" autoplay=""></video>
+        <canvas id="canvas" width="640" height="480"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+var pc1, pc2;
+promise_test(async (test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    let remoteStream1, remoteStream2;
+    let counter = 0;
+    const localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video : true });
+    const stream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            pc1 = firstConnection;
+            firstConnection.addTrack(localStream.getAudioTracks()[0], localStream);
+            firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+
+            const clone = localStream.clone();
+            firstConnection.addTrack(clone.getAudioTracks()[0], clone);
+            firstConnection.addTrack(clone.getVideoTracks()[0], clone);
+        }, (secondConnection) => {
+            pc2 = secondConnection;
+            secondConnection.ontrack = (trackEvent) => {
+                if (!remoteStream1)
+                    remoteStream1 = trackEvent.streams[0];
+                else if (trackEvent.streams[0] !== remoteStream1)
+                    remoteStream2 = trackEvent.streams[0];
+
+                if (++counter >= 4)
+                    resolve();
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    video1.volume = 0.01;
+    video1.srcObject = remoteStream1;
+    video2.volume = 1;
+    video2.srcObject = remoteStream2;
+    await video1.play();
+    await video2.play();
+
+    video1.volume = 0.1;
+}, "Multi audio with different volumes");
+        </script>
+    </body>
+</html>

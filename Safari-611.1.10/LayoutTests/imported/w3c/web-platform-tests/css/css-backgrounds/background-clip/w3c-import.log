@@ -1,0 +1,33 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-box.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-box_with_position.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-box_with_radius.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-box_with_size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-content-box.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-content-box_with_position.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-content-box_with_radius.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-content-box_with_size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-padding-box.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-padding-box_with_position.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-padding-box_with_radius.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-padding-box_with_size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-rounded-corner-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-rounded-corner.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-dynamic-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-dynamic-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/list.txt

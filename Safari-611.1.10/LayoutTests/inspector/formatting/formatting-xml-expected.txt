@@ -1,0 +1,13 @@
+Test XML formatting.
+
+
+== Running test suite: HTMLFormatter.XML
+-- Running test case: HTMLFormatter.XML
+PASS: atom.xml
+PASS: basic.xml
+PASS: rss.xml
+PASS: self-closing.xml
+PASS: tag-case.xml
+PASS: valid-html-invalid-xml.xml
+PASS: xslt.xml
+

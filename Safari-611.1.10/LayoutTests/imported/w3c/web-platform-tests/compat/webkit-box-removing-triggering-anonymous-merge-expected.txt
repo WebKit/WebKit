@@ -1,0 +1,4 @@
+text
+
+PASS -webkit-box: removal of child
+

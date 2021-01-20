@@ -1,0 +1,11 @@
+Make sure the background image of the html element is animated if the html element has 0 height
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS htmlHeight is "0px"
+PASS isBackgroundAnimated is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

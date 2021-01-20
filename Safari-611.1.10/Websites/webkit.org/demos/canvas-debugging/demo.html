@@ -1,0 +1,85 @@
+<html>
+<body>
+<style>
+canvas {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+</style>
+<script>
+"use strict";
+
+let context = document.body.appendChild(document.createElement("canvas")).getContext("2d");
+let canvasWidth = 0;
+let canvasHeight = 0;
+
+function handleResize() {
+    canvasWidth = context.canvas.width = context.canvas.offsetWidth;
+    canvasHeight = context.canvas.height = context.canvas.offsetHeight;
+}
+handleResize();
+window.addEventListener("resize", handleResize);
+
+class Star {
+    constructor()
+    {
+        this._initialize();
+    }
+
+    draw()
+    {
+        // if (this._x > -this._s && this._x < canvasWidth + this._s && this._y > -this._s && this._y < canvasHeight + this._s) {
+            context.moveTo(this._x, this._y);
+            context.arc(this._x, this._y, this._s, 0, 2 * Math.PI);
+        // }
+
+        this._x += this._vx;
+        this._y += this._vy;
+        if (this._x > canvasWidth + this._s || this._y < -this._s)
+            this._initialize();
+    }
+
+    _initialize()
+    {
+        this._s = this._randomFromInterval(0.5, 3);
+
+        this._x = this._randomFromInterval(-canvasWidth, 0);
+        this._y = this._randomFromInterval(canvasHeight, canvasHeight * 2);
+
+        this._vx = this._randomFromInterval(0.5, 3);
+        this._vy = this._randomFromInterval(-0.5, -3);
+    }
+
+    _randomFromInterval(min, max)
+    {
+        return Math.random() * (max - min + 1) + min;
+    }
+}
+
+let stars = [];
+for (let i = 0; i < 10000; ++i)
+    stars.push(new Star);
+
+window.requestAnimationFrame(function frame(timestamp) {
+    context.fillStyle = "hsla(0, 0%, 10%, 0.5)";
+    context.fillRect(0, 0, canvasWidth, canvasHeight);
+
+    for (let i = 0; i < 10; ++i) {
+        context.beginPath();
+
+        for (let j = 0; j < stars.length / 10; ++j)
+            stars[(i * stars.length / 10) + j].draw();
+
+        context.fillStyle = "white";
+        context.fill();
+    }
+
+    window.requestAnimationFrame(frame);
+});
+
+</script>

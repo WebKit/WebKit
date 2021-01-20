@@ -1,0 +1,58 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+
+<head>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <meta name="viewport" content="initial-scale=1.5, user-scalable=no">
+    <script id="ui-script" type="text/plain">
+        (function() {
+            // FIXME (151264): Need to tap to focus so that key events go through.
+            uiController.singleTapAtPoint(50, 25, function() {
+                uiController.typeCharacterUsingHardwareKeyboard(" ", function() {
+                uiController.didEndScrollingCallback = function() {
+                    uiController.uiScriptComplete();
+                };
+            });
+            });
+        })();
+    </script>
+
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function getUIScript()
+        {
+            return document.getElementById("ui-script").text;
+        }
+
+        function runTest()
+        {
+            if (!window.testRunner || !testRunner.runUIScript)
+                return;
+
+            debug("Before pressing the spacebar, window.scrollY = " + window.scrollY);
+            testRunner.runUIScript(getUIScript(), function(result) {
+                debug("After pressing the spacebar, window.scrollY = " + window.scrollY);
+                testRunner.notifyDone();
+            });
+        }
+    </script>
+    <style>
+    #placeholder {
+        width: 100px;
+        height: 5000px;
+    }
+    </style>
+</head>
+
+<body style="margin: 0;" onload="runTest()">
+    <div id="placeholder">
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+
+</html>

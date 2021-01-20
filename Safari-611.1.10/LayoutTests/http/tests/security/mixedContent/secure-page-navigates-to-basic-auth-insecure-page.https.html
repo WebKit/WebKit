@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setHandlesAuthenticationChallenges(true);
+    testRunner.setAuthenticationUsername("testUser");
+    testRunner.setAuthenticationPassword("testPassword");
+    testRunner.waitUntilDone();
+}
+window.location.href = "http://127.0.0.1:8000/security/mixedContent/resources/subresource/protected-page.php";
+</script>
+</head>
+</html>

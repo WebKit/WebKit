@@ -1,0 +1,14 @@
+
+36 to 45
+This tests that asking for the path from a SVG element that does not have one will not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Start Path
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

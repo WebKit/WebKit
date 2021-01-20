@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html contenteditable="true">
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="resources/hit-test-utilities.js"></script>
+</head>
+<body>
+<script>
+window.jsTestIsAsync = true;
+
+if (window.internals)
+    internals.settings.setEditableRegionEnabled(true);
+
+async function runTest()
+{
+    if (!window.testRunner) {
+        testFailed("Must be run in WebKitTestRunner.");
+        return;
+    }
+    await shouldHaveEditableElementsInRectForElement(document.documentElement);
+    finishJSTest();
+}
+
+description("Hit test an editable document.");
+runTest();
+</script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../resources/webgl_test_files/conformance/context/premultiplyalpha-test.html
+[ 1: PASS ] gl.getContextAttributes().premultipliedAlpha is true
+[ 2: PASS ] gl.getContextAttributes().preserveDrawingBuffer is true
+[ 3: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 4: PASS ] getError was expected value: NO_ERROR : Should be no errors from drawing.
+[ 5: PASS ] getError was expected value: NO_ERROR : Should be no errors from creating copy.
+[ 6: PASS ] getError was expected value: NO_ERROR : Should be no errors from 2nd drawing.
+[ 7: PASS ] should draw with 64,128,255,128
+[ 8: PASS ] gl.getContextAttributes().premultipliedAlpha is true
+[ 9: PASS ] gl.getContextAttributes().preserveDrawingBuffer is true
+[ 10: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 11: PASS ] getError was expected value: NO_ERROR : Should be no errors from drawing.
+[ 12: PASS ] getError was expected value: NO_ERROR : Should be no errors from creating copy.
+[ 13: PASS ] getError was expected value: NO_ERROR : Should be no errors from 2nd drawing.
+[ 14: PASS ] should draw with 64,128,255,128
+[ 15: PASS ] gl.getContextAttributes().premultipliedAlpha is true
+[ 16: PASS ] gl.getContextAttributes().preserveDrawingBuffer is true
+[ 17: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 18: PASS ] getError was expected value: NO_ERROR : Should be no errors from drawing.
+[ 19: PASS ] getError was expected value: NO_ERROR : Should be no errors from creating copy.
+[ 20: PASS ] getError was expected value: NO_ERROR : Should be no errors from 2nd drawing.
+[ 21: PASS ] should draw with 64,128,255,128
+[ 22: PASS ] gl.getContextAttributes().premultipliedAlpha is true
+[ 23: PASS ] gl.getContextAttributes().preserveDrawingBuffer is true
+[ 24: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 25: PASS ] getError was expected value: NO_ERROR : Should be no errors from drawing.
+[ 26: PASS ] getError was expected value: NO_ERROR : Should be no errors from creating copy.
+[ 27: PASS ] getError was expected value: NO_ERROR : Should be no errors from 2nd drawing.
+[ 28: PASS ] should draw with 64,128,255,128
+[ 29: PASS ] gl.getContextAttributes().premultipliedAlpha is false
+[ 30: PASS ] gl.getContextAttributes().preserveDrawingBuffer is true
+[ 31: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 32: PASS ] getError was expected value: NO_ERROR : Should be no errors from drawing.
+[ 33: PASS ] getError was expected value: NO_ERROR : Should be no errors from creating copy.
+[ 34: PASS ] getError was expected value: NO_ERROR : Should be no errors from 2nd drawing.
+[ 35: FAIL ] should draw with 255,192,128,1 at (0, 0) expected: 255,192,128,1 was 255,0,0,1
+[ 36: PASS ] gl.getContextAttributes().premultipliedAlpha is false
+[ 37: PASS ] gl.getContextAttributes().preserveDrawingBuffer is true
+[ 38: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 39: PASS ] getError was expected value: NO_ERROR : Should be no errors from drawing.
+[ 40: PASS ] getError was expected value: NO_ERROR : Should be no errors from creating copy.
+[ 41: PASS ] getError was expected value: NO_ERROR : Should be no errors from 2nd drawing.
+[ 42: FAIL ] should draw with 255,192,128,1 at (0, 0) expected: 255,192,128,1 was 255,0,0,1
+[ 43: PASS ] gl.getContextAttributes().premultipliedAlpha is false
+[ 44: PASS ] gl.getContextAttributes().preserveDrawingBuffer is true
+[ 45: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 46: PASS ] getError was expected value: NO_ERROR : Should be no errors from drawing.
+[ 47: PASS ] getError was expected value: NO_ERROR : Should be no errors from creating copy.
+[ 48: PASS ] getError was expected value: NO_ERROR : Should be no errors from 2nd drawing.
+[ 49: PASS ] should draw with 255,192,128,1
+[ 50: PASS ] gl.getContextAttributes().premultipliedAlpha is false
+[ 51: PASS ] gl.getContextAttributes().preserveDrawingBuffer is true
+[ 52: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 53: PASS ] getError was expected value: NO_ERROR : Should be no errors from drawing.
+[ 54: PASS ] getError was expected value: NO_ERROR : Should be no errors from creating copy.
+[ 55: PASS ] getError was expected value: NO_ERROR : Should be no errors from 2nd drawing.
+[ 56: PASS ] should draw with 255,192,128,1
+[ 57: PASS ] gl.getContextAttributes().premultipliedAlpha is false
+[ 58: PASS ] gl.getContextAttributes().preserveDrawingBuffer is true
+[ 59: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 60: PASS ] getError was expected value: NO_ERROR : Should be no errors from drawing.
+[ 61: PASS ] gl.getContextAttributes().premultipliedAlpha is false
+[ 62: PASS ] gl.getContextAttributes().preserveDrawingBuffer is true
+[ 63: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 64: PASS ] getError was expected value: NO_ERROR : Should be no errors from drawing.
+[ 65: PASS ] gl.getContextAttributes().premultipliedAlpha is true
+[ 66: PASS ] gl.getContextAttributes().preserveDrawingBuffer is true
+[ 67: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 68: PASS ] getError was expected value: NO_ERROR : Should be no errors from drawing.
+[ 69: PASS ] gl.getContextAttributes().premultipliedAlpha is true
+[ 70: PASS ] gl.getContextAttributes().preserveDrawingBuffer is true
+[ 71: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
+[ 72: PASS ] getError was expected value: NO_ERROR : Should be no errors from drawing.
+[ 73: PASS ] successfullyParsed is true
+[ FAIL ] 2 failures reported
+

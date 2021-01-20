@@ -1,0 +1,12 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+(repaint rects
+(rect 0 49.50 22 152.50)
+(rect 0 48.50 22 1)
+(rect 0 49.50 800 152.50)
+(rect 0 49.50 800 152.50)
+(rect 1 1 1 47.50)
+(rect 1 1 1 200)
+)
+

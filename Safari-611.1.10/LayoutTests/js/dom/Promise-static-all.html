@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description('Test Promise.all');
+
+// Silence unhandled rejection messages.
+window.onunhandledrejection = () => false;
+
+window.jsTestIsAsync = true;
+result = undefined;
+
+var p1 = new Promise(function(resolve) { resolve('p1'); });
+var p2 = new Promise(function(resolve) { resolve('p2'); });
+var p3 = new Promise(function(resolve) { resolve('p3'); });
+var p4 = new Promise(function() {});
+var p5 = new Promise(function() {});
+var p6 = new Promise(function(_, reject) { reject('p6'); });
+var p7 = new Promise(function(_, reject) { reject('p7'); });
+var p8 = new Promise(function(_, reject) { reject('p8'); });
+var p9 = new Promise(function(resolve) { resolve(p2); });
+
+Promise.all([p1, p2, p5]).then(function(result) {
+  testFailed('Promise.all([p1, p2, p5]) is fulfilled.');
+}, function() {
+  testFailed('Promise.all([p1, p2, p5]) is rejected.');
+});
+
+Promise.all().then(function(result) {
+  testFailed('Promise.all() is fulfilled.');
+}, function() {
+  testPassed('Promise.all() is rejected.');
+}).then(function() {
+  return Promise.all([p1, p2, p3]).then(function(result) {
+    testPassed('Promise.all([p1, p2, p3]) is fulfilled.');
+    window.result = result;
+    shouldBe('result.length', '3');
+    shouldBeEqualToString('result[0]', 'p1');
+    shouldBeEqualToString('result[1]', 'p2');
+    shouldBeEqualToString('result[2]', 'p3');
+  }, function() {
+    testFailed('Promise.all([p1, p2, p3]) is rejected.');
+  });
+}).then(function() {
+  return Promise.all([p1, p6, p5]).then(function(result) {
+    testFailed('Promise.all([p1, p6, p5]) is fulfilled.');
+  }, function(result) {
+    testPassed('Promise.all([p1, p6, p5]) is rejected.');
+    window.result = result;
+    shouldBeEqualToString('result', 'p6');
+  });
+}).then(function() {
+  return Promise.all([p9]).then(function(result) {
+    testPassed('Promise.all([p9]) is fulfilled.');
+    window.result = result;
+    shouldBe('result.length', '1');
+    shouldBeEqualToString('result[0]', 'p2');
+  }, function(result) {
+    testFailed('Promise.all([p9]) is rejected.');
+  });
+}).then(function() {
+  // Array hole should not be skipped.
+  return Promise.all([p9,,,]).then(function(result) {
+    testPassed('Promise.all([p9,,,]) is fulfilled.');
+    window.result = result;
+    shouldBe('result.length', '3');
+    shouldBeEqualToString('result[0]', 'p2');
+    shouldBe('result[1]', 'undefined');
+    shouldBe('result[2]', 'undefined');
+  }, function(result) {
+    testFailed('Promise.all([p9,,,]) is rejected.');
+  });
+}).then(function() {
+  // Immediate value should be converted to a promise object by the
+  // ToPromise operation.
+  return Promise.all([p9,42]).then(function(result) {
+    testPassed('Promise.all([p9,42]) is fulfilled.');
+    window.result = result;
+    shouldBe('result.length', '2');
+    shouldBeEqualToString('result[0]', 'p2');
+    shouldBe('result[1]', '42');
+  }, function(result) {
+    testFailed('Promise.all([p9,42]) is rejected.');
+  });
+}).then(function() {
+  // Not iterable object case.
+  return Promise.all({}).then(function(result) {
+    testFailed('Promise.all({}) is fulfilled.');
+  }, function(result) {
+    testPassed('Promise.all({}) is rejected.');
+  });
+}).then(finishJSTest, finishJSTest);
+
+shouldBe('result', 'undefined');
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

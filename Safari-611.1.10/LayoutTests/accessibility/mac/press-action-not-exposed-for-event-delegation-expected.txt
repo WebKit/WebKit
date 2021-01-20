@@ -1,0 +1,40 @@
+
+
+This tests whether static text has the press action supported. If the handler is on an element that has more than one child, then we assume that event delegation is being used. In that case we do not expose press supported.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS text1.role is 'AXRole: AXStaticText'
+PASS text2.role is 'AXRole: AXStaticText'
+When a click handler is on the HTML tag, AXPress should not be supported on static text children elements automatically.
+PASS text1.isPressActionSupported() is false
+PASS text2.isPressActionSupported() is false
+
+When a click handler is on the BODY tag, AXPress should not be supported on static text children elements automatically.
+
+PASS text1.isPressActionSupported() is false
+PASS text2.isPressActionSupported() is false
+
+When a click handler is on a parent tag, AXPress should be supported on static text children elements automatically.
+
+PASS text1.isPressActionSupported() is true
+PASS text2.isPressActionSupported() is false
+
+When a click handler is on the parent, using role=text should expose AXPress.
+
+PASS text2.isPressActionSupported() is true
+
+When a click handler is on a parent that has more than one descendant, do not expose press.
+
+PASS text3.isPressActionSupported() is false
+PASS text3.isPressActionSupported() is false
+
+When a click handler is on a parent that has one direct descendant, but then sub-descendants below that, do not expose press.
+
+PASS text4.isPressActionSupported() is false
+PASS text4.isPressActionSupported() is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

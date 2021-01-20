@@ -1,0 +1,36 @@
+<!-- This test passes if it doesn't crash - https://bugs.webkit.org/show_bug.cgi?id=132625 -->
+
+<style>
+  .f::first-letter { color: green }
+</style>
+
+<script>
+  window.onload = function() 
+  {
+    var lst = document.getElementsByClassName("d");
+    for (var i = 0; i < lst.length; ++i)
+      lst[i].insertBefore(document.createTextNode("Text"), lst[i].firstChild);
+  }
+</script>
+
+<table class="test" style="visibility:hidden">
+  <tr>
+    <td class="f d">More Text</td>
+  </tr>
+</table>
+
+<script>
+  var head = document.getElementsByTagName("head")[0];
+  var style = document.createElement("style");
+  style.innerHTML="* { \n\
+    -webkit-animation-name: name5; \n\
+    -webkit-animation-duration: 4s; \n\
+    } \n\
+    @-webkit-keyframes name5 { \n\
+      from { \n\
+      } \n\
+      to { \n\
+        -webkit-columns: 1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111; \n\
+    ";
+  head.appendChild(style);
+</script>

@@ -1,0 +1,18 @@
+<html>
+<head>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpResourceLoadCallbacks(true);
+    testRunner.setWillSendRequestReturnsNullOnRedirect(true);
+}
+
+</script>
+</head>
+<body>
+https://bugs.webkit.org/show_bug.cgi?id=27595<br>
+This test checks to make sure that things behave as expected when the resource load delegate returns null in response to willSendRequest.<br>
+<iframe src="resources/redirect-to-http-url.php"></iframe>
+</body>
+</html>

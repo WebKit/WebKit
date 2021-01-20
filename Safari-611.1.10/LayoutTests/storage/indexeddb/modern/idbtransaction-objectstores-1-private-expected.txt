@@ -1,0 +1,33 @@
+This tests the IDBTransaction.objectStoreNames API
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+Upgrade needed: Old version - 0 New version - 1
+List has 1 entries
+Entry 0: ObjectStore1
+List has 2 entries
+Entry 0: ObjectStore1
+Entry 1: ObjectStore2
+List has 1 entries
+Entry 0: ObjectStore2
+List has 3 entries
+Entry 0: ObjectStore2
+Entry 1: ObjectStore3
+Entry 2: ObjectStore4
+Version change transaction complete
+List has 3 entries
+Entry 0: ObjectStore2
+Entry 1: ObjectStore3
+Entry 2: ObjectStore4
+List has 2 entries
+Entry 0: ObjectStore2
+Entry 1: ObjectStore4
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

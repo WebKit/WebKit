@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Cache Storage: third party iframes</title>
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
+    </head>
+<body>
+    <script>
+if (window.testRunner) {
+    // Log user interaction for this domain to avoid deleting its
+    // website data (including caches) when a frame navigation occurs.
+    testRunner.setStatisticsHasHadUserInteraction("https://127.0.0.1:9443", true);
+}
+
+function load_iframe(url) {
+    return new Promise(function(resolve) {
+        var frame = document.createElement('iframe');
+        frame.src = url;
+        window.onmessage = (event) => resolve(event.data);
+        document.body.appendChild(frame);
+    });
+}
+
+promise_test(async () => {
+    assert_equals(await load_iframe("resources/quota-third-party-iframe.html"), "PASS");
+}, "same origin iframe has regular quota");
+
+promise_test(async () => {
+    assert_equals(await load_iframe("https://127.0.0.1:9443/WebKit/cache-storage/resources/quota-third-party-iframe.html"), "FAIL");
+}, "cross origin iframe has reduced quota");
+
+promise_test(async () => {
+    // Clear DOMCaches to reset quotas.
+    if (window.testRunner)
+        testRunner.clearDOMCaches();
+
+    assert_equals(await load_iframe("https://127.0.0.1:9443/WebKit/cache-storage/resources/quota-third-party-iframe.html"), "FAIL");
+}, "cross origin iframe has reduced quota after resetting quota");
+    </script>
+</body>
+</html>
+

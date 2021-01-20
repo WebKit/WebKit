@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../video-test.js></script>
+    <script type="text/javascript">
+    var promise;
+    var info;
+
+    async function doTest()
+    {
+        if (!window.internals) {
+            failTest("Internals is required for this test.")
+            return;
+        }
+
+        run('internals.enableMockMediaCapabilities()');
+        run('internals.settings.setMediaCapabilitiesExtensionsEnabled(true)');
+        run('internals.settings.setHDRMediaCapabilitiesEnabled(true)');
+
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs=\"mock-with-hdr\"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5 }});");
+        info = await shouldResolve(promise);
+        testExpected('info.supported', true);
+        testExpected('info.supportedConfiguration.video.colorGamut', null);
+
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs=\"mock-with-hdr\"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5, colorGamut: 'rec2020' }});");
+        info = await shouldResolve(promise);
+        testExpected('info.supported', true);
+        testExpected('info.supportedConfiguration.video.colorGamut', 'rec2020');
+
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs=\"mock\"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5, colorGamut: 'rec2020' }});");
+        info = await shouldResolve(promise);
+        testExpected('info.supported', false);
+        testExpected('info.supportedConfiguration.video.colorGamut', 'rec2020');
+
+        endTest();
+    }
+    </script>
+</head>
+<body onload="doTest()" />
+</html>

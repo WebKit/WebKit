@@ -1,0 +1,42 @@
+<style>
+    div#tests { -webkit-user-modify: read-write; font-family: Lucida Grande; font-size: 24px; }
+</style>
+<div id="tests">
+    <div>
+        abc&#x05d0;&#x05d1;&#x05d2;123&#x05d3;&#x05d4;&#x05d5;def
+    </div>
+    <div>
+        &#x05d0;&#x05d1;&#x05d2;123&#x05d3;&#x05d4;&#x05d5;
+    </div>
+    <div>
+        &#x05d0;&#x05d1;&#x05d2;<select></select><select></select>&#x05d3;&#x05d4;&#x05d5;
+    </div>
+    <div>
+        &#x05d0;&#x05d1;&#x05d2;abc&#x05d3;&#x05d4;&#x05d5;
+    </div>
+    <div style="direction: rtl;">
+        abc&#x05d0;&#x05d1;&#x05d2;123&#x05d3;&#x05d4;&#x05d5;def
+    </div>
+    <div style="direction: rtl;">
+        &#x05d0;&#x05d1;&#x05d2;123&#x05d3;&#x05d4;&#x05d5;
+    </div>
+    <div style="direction: rtl;">
+        &#x05d0;&#x05d1;&#x05d2;<select></select><select></select>&#x05d3;&#x05d4;&#x05d5;
+    </div>
+    <div style="direction: rtl;">
+        abc&#x05d0;&#x05d1;&#x05d2;def
+    </div>
+</div>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+
+        var log = "";
+
+        for (var i = 0; i < 86; ++i)
+            log += i + ": " + textInputController.firstRectForCharacterRange(i, 0) + "\n";
+
+        document.body.appendChild(document.createElement("pre")).appendChild(document.createTextNode(log));
+        document.getElementById("tests").style.display = "none";
+    }
+</script>

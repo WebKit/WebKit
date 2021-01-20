@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+textarea, #target {
+    width: 100%;
+    height: 100px;
+}
+
+#target {
+    background-color: tomato;
+    opacity: 0.25;
+}
+</style>
+</head>
+<body>
+    <textarea></textarea>
+    <div id="target"></div>
+    <pre id="description"></pre>
+    <pre id="console"></pre>
+</body>
+<script>
+    jsTestIsAsync = true;
+    textarea = document.querySelector("textarea");
+    target = document.getElementById("target");
+    target.addEventListener("touchstart", event => event.preventDefault());
+
+    description("Verifies that the keyboard does not show up even after preventing default on touchstart when a regular input field is focused. To manually test, tap the red box; the keyboard should not appear.");
+
+    addEventListener("load", async () => {
+        textarea.focus();
+        await UIHelper.activateElement(target);
+        await UIHelper.ensurePresentationUpdate();
+        hasInputSession = await UIHelper.hasInputSession();
+        shouldBe("hasInputSession", "false");
+        shouldBe("document.activeElement", "textarea");
+        finishJSTest();
+    });
+</script>
+</html>

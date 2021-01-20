@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Testing ICE candidate filtering when using data channel</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+promise_test((test) => {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => { reject("Test timed out"); }, 5000);
+
+        if (window.internals)
+            internals.setICECandidateFiltering(true);
+
+        var counter = 0;
+        var pc = new RTCPeerConnection();
+        pc.createDataChannel('sendDataChannel');
+        pc.onicecandidate = (event) => {
+            if (event.candidate) {
+                counter++;
+                return;
+            }
+            assert_equals(pc.localDescription.sdp.indexOf("a=candidate"), -1);
+            assert_true(pc.localDescription.sdp.indexOf("c=IN IP4 0.0.0.0\r\n") != -1 || pc.localDescription.sdp.indexOf("c=IN IP6 ::\r\n") != -1);
+            if (counter === 0) {
+                pc.createOffer().then((offer) => {
+                    assert_true(offer.sdp.indexOf("c=IN IP4 0.0.0.0\r\n") != -1 || pc.localDescription.sdp.indexOf("c=IN IP6 ::\r\n") != -1);
+                    assert_equals(offer.sdp.indexOf("a=candidate"), -1);
+                    resolve();
+                });
+            } else
+                reject("No candidate should be found");
+        };
+        pc.createOffer().then((offer) => {
+            assert_equals(offer.sdp.indexOf("a=candidate"), -1);
+            pc.setLocalDescription(offer);
+        });
+    });
+}, "Gathering ICE candidates from a data channel peer connection with ICE candidate filtering on");
+
+promise_test((test) => {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => { reject("Test timed out"); }, 5000);
+
+	if (window.internals)
+            internals.setICECandidateFiltering(false);
+
+        var counter = 0;
+        var pc = new RTCPeerConnection();
+        pc.createDataChannel('sendDataChannel');
+        pc.onicecandidate = (event) => {
+            if (event.candidate) {
+                counter++;
+                return;
+            }
+            assert_true(pc.localDescription.sdp.indexOf("c=IN IP4 0.0.0.0\r\n") === -1 && pc.localDescription.sdp.indexOf("c=IN IP6 ::\r\n") === -1);
+            assert_false(pc.localDescription.sdp.indexOf("a=candidate") === -1);
+            if (counter !== 0) {
+                // Redoing an offer now that we have some candidates.
+                pc.createOffer().then((offer) => {
+                    assert_true(offer.sdp.indexOf("c=IN IP4 0.0.0.0\r\n") === -1 && pc.localDescription.sdp.indexOf("c=IN IP6 ::\r\n") === -1);
+                    assert_false(offer.sdp.indexOf("a=candidate") === -1);
+                    resolve();
+                });
+            } else
+                reject("Host candidates should be found");
+        };
+        pc.createOffer().then((offer) => { pc.setLocalDescription(offer); });
+    });
+}, "Gathering ICE candidates from a data channel peer connection with ICE candidate filtering off");
+    </script>
+  </body>
+</html>

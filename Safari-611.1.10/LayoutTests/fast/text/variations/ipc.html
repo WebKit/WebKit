@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "Boxis";
+    src: url("resources/Boxis-VF.ttf") format("truetype");
+}
+</style>
+<script>
+function test() {
+    let target = document.getElementById("target");
+    let x = target.offsetLeft + target.offsetWidth / 2;
+    let y = target.offsetTop + target.offsetHeight / 2;
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</head>
+<body>
+This makes sure that variable fonts can be sent across IPC. The test passes if there is no crash.
+<div style="font: 48px 'Boxis'; font-variation-settings: 'hght' 600, 'wdth' 600;"><span id="target">Hello</span></div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+window.addEventListener("load", test);
+</script>
+</body>
+</html>

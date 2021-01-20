@@ -1,0 +1,8 @@
+
+FAIL importScripts() on module worker should throw an exception. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+FAIL Worker construction for non-existent script should dispatch an ErrorEvent. Can't find variable: SharedWorker
+FAIL Static import for non-existent script should dispatch an ErrorEvent. Can't find variable: SharedWorker
+FAIL Dynamic import for non-existent script should throw an exception. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+FAIL SharedWorker construction for an invalid URL should throw an exception. assert_throws_dom: function "() => new SharedWorker(scriptURL, { type: 'module' })" threw object "ReferenceError: Can't find variable: SharedWorker" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+FAIL SharedWorker construction for a file URL should throw an exception. assert_throws_dom: function "() => new SharedWorker(scriptURL, { type: 'module' })" threw object "ReferenceError: Can't find variable: SharedWorker" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
+

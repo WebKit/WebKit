@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Capture source ended and muted.</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+ </head>
+<body>
+<script>
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+    const track = stream.getAudioTracks()[0];
+    if (!window.internals)
+        return;
+
+    const clone = track.clone();
+
+    let promise = new Promise((resolve, reject) => { track.onmute = resolve; setTimeout(() => reject("no mute"), 5000) });
+    internals.setMediaStreamSourceInterrupted(track, true);
+    await promise;
+
+    track.stop();
+    assert_false(internals.isMediaStreamSourceEnded(track));
+    clone.stop();
+    assert_true(internals.isMediaStreamSourceEnded(track));
+}, "Stopping a muted source should end it");
+</script>
+</body>
+</html>

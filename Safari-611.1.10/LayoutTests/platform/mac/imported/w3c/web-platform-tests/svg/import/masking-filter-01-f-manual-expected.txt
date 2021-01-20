@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (16,30) size 406x220
+      RenderSVGContainer {g} at (16,30) size 406x220
+        RenderSVGText {text} at (10,18) size 243x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 243x21
+            chunk 1 text run 1 at (10.00,35.00) startOffset 0 endOffset 34 width 242.85: "Testing 'filter' applied to 'mask'"
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+          RenderSVGResourceFilter {filter} [id="f"] [filterUnits=userSpaceOnUse] [primitiveUnits=userSpaceOnUse]
+            [feOffset dx="100.00" dy="100.00"]
+              [SourceGraphic]
+          RenderSVGResourceMasker {mask} [id="m"] [maskUnits=userSpaceOnUse] [maskContentUnits=userSpaceOnUse]
+            RenderSVGRect {rect} at (0,0) size 167x167 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+        RenderSVGContainer {g} at (16,83) size 168x167 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,50.00)}]
+          [masker="m"] RenderSVGResourceMasker {mask} at (0,0) size 100x100
+          RenderSVGRect {rect} at (16,83) size 168x167 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+          RenderSVGRect {rect} at (185,251) size 165x166 [fill={[type=SOLID] [color=#FF0000]}] [x=101.00] [y=101.00] [width=99.00] [height=99.00]
+    RenderSVGContainer {g} at (16,517) size 381x62
+      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 229x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.7 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

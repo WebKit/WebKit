@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<script>
+var request = window.indexedDB.open("TestIndexedDB");
+request.onsuccess = (event) => {
+    db = event.target.result;
+    var secondRequest = window.indexedDB.open("TestIndexedDB", db.version + 1);
+    secondRequest.onsuccess = (event) => {
+        window.webkit.messageHandlers.testHandler.postMessage("Second Open Succeeded Unexpectedly");
+    }
+    secondRequest.onerror = (event) => {
+        window.webkit.messageHandlers.testHandler.postMessage("Second Open Failed Unexpectedly");
+    }
+    window.webkit.messageHandlers.testHandler.postMessage("First Open Succeeded");
+}
+request.onerror = () => {
+    window.webkit.messageHandlers.testHandler.postMessage("First Open Failed");
+}
+</script>

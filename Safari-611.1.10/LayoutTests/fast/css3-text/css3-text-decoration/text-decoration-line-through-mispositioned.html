@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that line-through is positioned properly.</title>
+<style>
+  body {
+  	font-family: Ahem; 
+  	font-size: 48px;
+  	color: white;
+  } 
+  #blue-underline {
+    text-decoration: underline;
+    -webkit-text-decoration-color: white;
+  }
+ 
+  #green-line-through {
+    text-decoration: line-through;
+    -webkit-text-decoration-color: green;
+  }
+  
+  div {
+  	position: relative;
+  	top: 0px;
+  	left: 0px;
+  }
+  
+</style>
+</head>
+<body>
+<div id="blue-underline">
+  <div id="green-line-through">foo</div>
+</div>
+<div style="position: absolute; left: 0px; top: 20px; width: 20px; height: 20px; background-color: white"></div>
+<div style="position: absolute; left: 140px; top: 20px; width: 20px; height: 20px; background-color: white"></div>
+</body>
+</html>

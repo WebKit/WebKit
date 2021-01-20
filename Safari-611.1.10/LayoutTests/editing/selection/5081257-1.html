@@ -1,0 +1,10 @@
+<html>
+<body contenteditable="true">
+<p>This tests for setting the selection at a position inside the document when the document node is non-editable and the document's body element *is* editable.  The expected behavior is to create a selection at [body, 0]. There should be a caret at the start of this paragraph.</p>
+
+</body>                
+<script>
+var sel = window.getSelection();
+sel.setPosition(document, 0);
+</script>
+</html>

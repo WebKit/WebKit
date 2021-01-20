@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+Test that online allowlist wildcard flag is implemented.
+
+SUCCESS

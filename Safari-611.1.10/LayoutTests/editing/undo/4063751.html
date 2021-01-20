@@ -1,0 +1,42 @@
+<html> 
+<head>
+
+<link rel=stylesheet href="../editingStyle.css" type="text/css">
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    moveSelectionForwardByCharacterCommand();
+    moveSelectionForwardByCharacterCommand();
+    
+    var string = "this is a test. ";
+    for (var i = 0; i < string.length; i++)
+        typeCharacterCommand(string[i]);
+    undoCommand();
+    redoCommand();
+    undoCommand();
+    redoCommand();
+}
+
+</script>
+
+<title>Redo Typing can add extra space characters</title> 
+</head> 
+<body>
+
+<p>This tests RebalanceWhitespace's ability to Undo.</p>
+<p>You should see "( this is a test. )", minus the quotes.</p>
+
+<hr>
+
+<div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+<div id="test" class="editing">( )</div>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

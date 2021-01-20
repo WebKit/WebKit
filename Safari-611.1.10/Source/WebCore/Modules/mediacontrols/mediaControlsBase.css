@@ -1,0 +1,758 @@
+/*
+ * Copyright (C) 2013, 2014 Apple Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+audio {
+    width: 200px;
+    height: 25px;
+}
+
+body:-webkit-full-page-media {
+    background-color: rgb(38, 38, 38);
+}
+
+video:-webkit-full-page-media {
+    margin: auto;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+video:-webkit-full-page-media::-webkit-media-controls-panel {
+    bottom: 0px;
+}
+
+video:-webkit-full-page-media::-webkit-media-controls-panel.no-video {
+    opacity: 1;
+}
+
+::-webkit-media-controls {
+    width: inherit;
+    height: inherit;
+    position: relative;
+    display: -webkit-flex;
+    -webkit-align-items: stretch;
+    -webkit-justify-content: flex-end;
+    -webkit-flex-direction: column;
+}
+
+video::-webkit-media-text-track-container,
+audio::-webkit-media-text-track-container {
+    position: relative;
+    -webkit-flex: 1 1 auto;
+}
+
+video::-webkit-media-controls-panel-composited-parent {
+    -webkit-transform: translateZ(0);
+    width: 100%;
+}
+
+video::-webkit-media-controls-panel,
+audio::-webkit-media-controls-panel {
+    box-sizing: border-box;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    padding-top: 1px;
+    min-height: 25px;
+    height: 25px;
+    line-height: 25px;
+    -webkit-user-select: none;
+    background-color: transparent;
+    background-image: -webkit-linear-gradient(top,
+        rgba(0,  0,  0,  .92) 0,
+        rgba(0,  0,  0,  .92) 1px,
+        rgba(89, 89, 89, .92) 1px,
+        rgba(89, 89, 89, .92) 2px,
+        rgba(60, 60, 60, .92) 2px,
+        rgba(35, 35, 35, .92) 12px,
+        rgba(30, 30, 30, .92) 12px,
+        rgba(30, 30, 30, .92) 13px,
+        rgba(25, 25, 25, .92) 13px,
+        rgba(17, 17, 17, .92) 100%
+    );
+
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
+    -webkit-user-select: none;
+
+    direction: ltr;
+
+    transition: opacity 0.25s linear;
+}
+
+video::-webkit-media-controls-panel {
+    cursor: none;
+    opacity: 0;
+}
+
+video::-webkit-media-controls-panel.show,
+video::-webkit-media-controls-panel.paused,
+video::-webkit-media-controls-panel:hover {
+    cursor: inherit;
+    opacity: 1;
+}
+
+video::-webkit-media-controls-panel button,
+audio::-webkit-media-controls-panel button {
+    -webkit-appearance: none;
+    display: block;
+    padding: 0;
+    border: 0;
+    height: 16px;
+    width: 16px;
+    background-color: transparent;
+    color: white;
+    background-origin: content-box;
+    background-repeat: no-repeat;
+    background-position: center;
+    -webkit-filter: drop-shadow(black 0 1px 1px);
+}
+
+video::-webkit-media-controls-panel button:active,
+audio::-webkit-media-controls-panel button:active {
+    -webkit-filter: drop-shadow(white 0 0 10px);
+}
+
+video::-webkit-media-controls-rewind-button,
+audio::-webkit-media-controls-rewind-button {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 17"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.44444" stop-color="rgb(216, 216, 216)"/><stop offset="0.44444" stop-color="rgb(208, 208, 208)"/><stop offset="0.55555" stop-color="rgb(208, 208, 208)"/><stop offset="0.55555" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="m 7.9131,2 0,-1.548 -2.586,2.155 0,-2.171 -2.582,2.208 2.582,2.175 0,-2.139 2.586,2.155 0,-1.276 c 3.138,0.129 5.491,2.681 5.543,5.838 l -1.031,0 0.016,0.215 1.015,0 c -0.06,3.19 -2.629,5.765 -5.819,5.833 l 0,-1.018 -0.214,0 0,1.021 c -3.21,-0.047 -5.801,-2.631 -5.862,-5.836 l 1.045,0 -0.016,-0.215 -1.045,0 c -0.052,-0.288 -0.318,-0.654 -0.766,-0.654 -0.538,0 -0.755,0.484 -0.755,0.75 0,4.146 3.331,7.506 7.476,7.506 4.146,0 7.506,-3.36 7.506,-7.506 0,-4.059 -3.066,-7.357 -7.093,-7.493" fill="url(#gradient)"/><path d="m 5.1729,11.0518 c -0.38,0 -0.668,-0.129 -0.945,-0.366 -0.083,-0.071 -0.186,-0.134 -0.338,-0.134 -0.277,0 -0.511,0.238 -0.511,0.521 0,0.154 0.083,0.301 0.179,0.383 0.394,0.346 0.911,0.563 1.601,0.563 1.077,0 1.739,-0.681 1.739,-1.608 l 0,-0.013 c 0,-0.911 -0.641,-1.265 -1.296,-1.376 l 0.945,-0.919 c 0.193,-0.19 0.317,-0.337 0.317,-0.604 0,-0.294 -0.228,-0.477 -0.538,-0.477 l -2.354,0 c -0.248,0 -0.455,0.21 -0.455,0.464 0,0.253 0.207,0.463 0.455,0.463 l 1.485,0 -0.939,0.961 c -0.166,0.169 -0.228,0.295 -0.228,0.444 0,0.25 0.207,0.463 0.455,0.463 l 0.166,0 c 0.594,0 0.945,0.222 0.945,0.624 l 0,0.012 c 0,0.367 -0.282,0.599 -0.683,0.599" fill="url(#gradient)"/><path d="m 10.354,9.5342 c 0,0.876 -0.379,1.525 -0.979,1.525 -0.599,0 -0.992,-0.655 -0.992,-1.539 l 0,-0.012 c 0,-0.884 0.388,-1.527 0.979,-1.527 0.592,0 0.992,0.663 0.992,1.539 l 0,0.014 z m -0.979,-2.512 c -1.197,0 -2.008,1.097 -2.008,2.498 l 0,0.014 c 0,1.401 0.792,2.484 1.995,2.484 1.205,0 2.01,-1.097 2.01,-2.498 l 0,-0.012 c 0,-1.402 -0.805,-2.486 -1.997,-2.486" fill="url(#gradient)"/></svg>');
+    width: 16px;
+    height: 18px;
+    margin-bottom: 1px;
+    margin-left: 6px;
+    margin-right: 4px;
+}
+
+video::-webkit-media-controls-play-button,
+audio::-webkit-media-controls-play-button {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="M 0,0 v 16 h 6 v -16 h -6 z" fill="url(#gradient)"/><path d="M 9,0 v 16 h 6 v -16 h -6 z" fill="url(#gradient)"/></svg>');
+    margin-left: 6px;
+    margin-right: 1px;
+}
+
+video::-webkit-media-controls-play-button.paused,
+audio::-webkit-media-controls-play-button.paused {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="M 0,0 15,7 0,15 z" fill="url(#gradient)"/></svg>');
+}
+
+video::-webkit-media-controls-panel .mute-box,
+audio::-webkit-media-controls-panel .mute-box {
+    width: 22px;
+    height: 22px;
+    margin-right: 2px;
+
+    position: relative;
+    display: -webkit-flex;
+    -webkit-flex-direction: column;
+    -webkit-justify-content: center;
+    -webkit-align-items: center;
+}
+
+video::-webkit-media-controls-mute-button,
+audio::-webkit-media-controls-mute-button,
+video::-webkit-media-controls-volume-max-button {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="m 0,9 0,-4 3,0 3,-3 0,10 -3,-3 -3,0 z" style="fill:url(#gradient) "/><path d="m 10.449,1.087 c 1.963,1.055 3.322,3.291 3.322,5.881 0,2.642 -1.402,4.913 -3.424,5.945" style="fill:none;stroke:url(#gradient);stroke-width:1.25;stroke-linecap:round;"/><path d="m 9.13,3.134 c 1.289,0.681 2.181,2.142 2.181,3.835 0,1.743001 -0.939,3.24 -2.285,3.897" style="fill:none;stroke:url(#gradient);stroke-width:1.25;stroke-linecap:round;"/><path d="M 7.794,5.175 C 8.403001,5.491 8.827001,6.167 8.827001,6.971 8.827001,7.818 8.356,8.537001 7.688,8.826" style="fill:none;stroke:url(#gradient);stroke-width:1.25;stroke-linecap:round;"/></svg>');
+    width: 14px;
+}
+
+video::-webkit-media-controls-panel .volume-box,
+audio::-webkit-media-controls-panel .volume-box {
+    position: absolute;
+    box-sizing: border-box;
+    height: 22px;
+    bottom: 0;
+    left: 0;
+
+    -webkit-transform: rotate(-90deg);
+    -webkit-transform-origin: 11px 11px;
+
+    background-color: transparent;
+    background-image: -webkit-linear-gradient(
+        left,
+        rgba(17, 17, 17,  0.92),
+        rgba(42, 42, 42, 0.92)
+    );
+    border: 1px solid rgba(0, 0, 0, 0.95);
+    border-radius: 12px;
+
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
+    -webkit-justify-content: flex-end;
+
+    opacity: 0;
+    /* make zero width (rather than display:none) for AX and FKA */
+    width: 0; /* will become 114px when shown */
+
+}
+
+/* FIXME: needs CSS4 !subject selector to show when slider inside .volume-box is focused */
+video::-webkit-media-controls-panel .mute-box:hover .volume-box,
+video::-webkit-media-controls-panel .volume-box:hover,
+video::-webkit-media-controls-panel .volume-box:active,
+audio::-webkit-media-controls-panel .mute-box:hover .volume-box,
+audio::-webkit-media-controls-panel .volume-box:hover,
+audio::-webkit-media-controls-panel .volume-box:active {
+    opacity: 1;
+    /* resize to usable amount (rather than display:none) for AX and FKA */
+    width: 114px;
+}
+
+audio::-webkit-media-controls-volume-slider,
+video::-webkit-media-controls-volume-slider {
+    -webkit-appearance: none !important;
+    box-sizing: border-box !important;
+    height: 10px !important;
+    width: 80px !important;
+    padding: 0 !important;
+    margin-right: 6px !important;
+
+    border-radius: 5px !important;
+    background-color: transparent !important;
+    background-image: -webkit-linear-gradient(
+        top,
+        rgba(15, 15, 15, .85) 0,
+        rgba(23, 23, 23, .85) 50%,
+        rgba(15, 15, 15, .85) 100%
+    ) !important;
+    border: 1px solid rgba(0, 0, 0, 0.875) !important;
+}
+
+video::-webkit-media-controls-volume-slider::-webkit-slider-thumb,
+audio::-webkit-media-controls-volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 4px !important;
+    background-color: transparent !important;
+
+    /* rotateZ() forces the layer into compositing mode.
+    Slider thumbs are small, so forcing a compositing layer is inexpensive,
+       and it keeps the slider from having to repaint while sliding. */
+    -webkit-transform: rotateZ(0) !important;
+    background-image: -webkit-linear-gradient(
+        left,
+        rgba(99, 99, 99, 1),
+        rgba(144, 144, 144, 1)
+    ) !important;
+    box-shadow: inset -1px 0 0 rgba(255, 255, 255, .5), 0 1px rgba(255, 255, 255, .14) !important;
+}
+video::-webkit-media-controls-volume-slider::-webkit-slider-thumb::-webkit-slider-thumb:active,
+video::-webkit-media-controls-volume-slider::-webkit-slider-thumb:active::-webkit-slider-thumb,
+audio::-webkit-media-controls-volume-slider::-webkit-slider-thumb::-webkit-slider-thumb:active,
+audio::-webkit-media-controls-volume-slider::-webkit-slider-thumb:active::-webkit-slider-thumb {
+    background-image: -webkit-linear-gradient(
+        right top,
+        rgba(160, 160, 160, 1),
+        rgba(221, 221, 221, 1)
+    ) !important;
+}
+
+video::-webkit-media-controls-mute-button.muted,
+audio::-webkit-media-controls-mute-button.muted,
+video::-webkit-media-controls-volume-min-button {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="m 0,9 0,-4 3,0 3,-3 0,10 -3,-3 -3,0 z" fill="url(#gradient)"/></svg>');
+}
+
+video::-webkit-media-controls-toggle-closed-captions-button,
+audio::-webkit-media-controls-toggle-closed-captions-button {
+    width: 16px;
+    height: 16px;
+    margin: 0 7px;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 102 105"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.46875" stop-color="rgb(216, 216, 216)"/><stop offset="0.46875" stop-color="rgb(208, 208, 208)"/><stop offset="0.53125" stop-color="rgb(208, 208, 208)"/><stop offset="0.53125" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="M98.766,43.224c0-23.163-21.775-41.94-48.637-41.94c-26.859,0-48.635,18.777-48.635,41.94c0,18.266,13.546,33.796,32.444,39.549c1.131,8.356,26.037,24.255,22.864,19.921c-4.462-6.096-5.159-13.183-5.07-17.566C77.85,84.397,98.766,65.923,98.766,43.224z" fill="url(#gradient)"/></svg>');
+    outline: 0;
+}
+
+video::-webkit-media-controls-closed-captions-container,
+audio::-webkit-media-controls-closed-captions-container {
+    -webkit-appearance: media-closed-captions-container;
+    position: absolute;
+    display: block;
+    right: 38px;
+    bottom: 29px;
+    max-width: calc(100% - 48px); /* right + 10px */
+    max-height: calc(100% - 39px); /* bottom + 10px */
+    overflow-x: hidden;
+    overflow-y: scroll;
+    background-color: rgba(0, 0, 0, 0.85);
+    border: 3px solid rgba(128, 128, 128, 0.75);
+    border-radius: 10px;
+    cursor: default;
+    z-index: 2;
+    text-align: initial;
+}
+
+video::-webkit-media-controls-closed-captions-container .list,
+audio::-webkit-media-controls-closed-captions-container .list {
+    display: block;
+    font-family: "Helvetica Bold", Helvetica, sans-serif;
+    font-size: 10pt;
+    -webkit-user-select: none;
+}
+
+video::-webkit-media-controls-closed-captions-container h3,
+audio::-webkit-media-controls-closed-captions-container h3 {
+    margin: 0;
+    color: rgb(117, 117, 117);
+    text-shadow: 0 1px 0 black;
+    -webkit-margin-start: 23px;
+    padding-top: 4px;
+    font-weight: bold;
+    font-size: 10pt;
+}
+
+video::-webkit-media-controls-closed-captions-container ul,
+audio::-webkit-media-controls-closed-captions-container ul {
+    list-style-type: none;
+    margin: 0 0 4px 0;
+    padding: 0;
+    font-weight: bold;
+}
+
+video::-webkit-media-controls-closed-captions-container li,
+audio::-webkit-media-controls-closed-captions-container li {
+    position: relative;
+    color: white;
+    background-image: none;
+    text-shadow: 0 1px 0 black;
+    margin: 0;
+    padding-left: 37px;
+    padding-right: 35px;
+    padding-top: 0.15em;
+    padding-bottom: 0.2em;
+    box-sizing: border-box;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+}
+
+video::-webkit-media-controls-closed-captions-container li:focus,
+audio::-webkit-media-controls-closed-captions-container li:focus {
+    outline: 0;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, rgba(255, 255, 255, 0.3)), color-stop(1, rgba(255, 255, 255, 0.2)));
+}
+
+video::-webkit-media-controls-closed-captions-container li:hover,
+audio::-webkit-media-controls-closed-captions-container li:hover {
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, rgb(79, 112, 246)), color-stop(1, rgb(26, 68, 243)));
+    border-top: 1px solid rgb(70, 103, 234);
+    border-bottom: 1px solid rgb(3, 54, 229);
+}
+
+video::-webkit-media-controls-closed-captions-container li.selected::before,
+audio::-webkit-media-controls-closed-captions-container li.selected::before {
+    display: block;
+    content: "";
+    position: absolute;
+    top: 0.25em;
+    width: 1.1em;
+    height: 1.1em;
+    -webkit-margin-start: -20px;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><polygon fill="rgb(163, 163, 163)" points="252.301,4.477 126.667,194.104 43.358,108.3 6.868,161.408 132.515,290.814 297.732,49.926"/></svg>');
+    background-repeat: no-repeat;
+}
+
+video::-webkit-media-controls-closed-captions-container li.selected:hover::before,
+audio::-webkit-media-controls-closed-captions-container li.selected:hover::before {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><polygon fill="white" points="252.301,4.477 126.667,194.104 43.358,108.3 6.868,161.408 132.515,290.814 297.732,49.926"/></svg>');
+}
+
+video::-webkit-media-controls-fullscreen-button,
+audio::-webkit-media-controls-fullscreen-button {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15" transform="rotate(90,0,0)"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="M 14,1 m 0,6 -2,-2 -2,2 c 0,0 -1,1 -2,0 -1,-1 0,-2 0,-2 l 2,-2 -2,-2 6,0 z" style="fill:url(#gradient) "/><path d="M 1,14 m 0,-6 2,2 2,-2 c 0,0 1,-1 2,0 1,1 0,2 0,2 l -2,2 2,2 -6,0 z" style="fill:url(#gradient) "/></svg>');
+    margin: 0 7px;
+}
+video::-webkit-media-controls-fullscreen-button.exit,
+audio::-webkit-media-controls-fullscreen-button.exit {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15" transform="rotate(90,0,0)"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="M 7,8 m 0,6 -2,-2 -2,2 c 0,0 -1,1 -2,0 -1,-1 0,-2 0,-2 l 2,-2 -2,-2 6,0 z" style="fill:url(#gradient) "/><path d="M 8,7 m 0,-6 2,2 2,-2 c 0,0 1,-1 2,0 1,1 0,2 0,2 l -2,2 2,2 -6,0 z" style="fill:url(#gradient) "/></svg>');
+}
+video::-webkit-media-controls-status-display,
+audio::-webkit-media-controls-status-display {
+    cursor: default;
+    font: -webkit-small-control;
+    font-size: 9px;
+    overflow: hidden;
+    color: white;
+    text-shadow: black 0px 1px 1px;
+
+    letter-spacing: normal;
+    word-spacing: normal;
+    line-height: 25px;
+    text-transform: none;
+    text-indent: 0;
+    text-decoration: none;
+    text-align: left;
+
+    padding: 0 12px;
+
+    -webkit-flex: 1 1 0;
+}
+video::-webkit-media-controls-timeline,
+audio::-webkit-media-controls-timeline {
+    -webkit-appearance: none !important;
+    -webkit-flex: 1 1 0 !important;
+    height: 9px !important;
+    margin: 0 !important;
+
+    border-radius: 4.5px !important;
+    background-color: rgb(74, 74, 74) !important;
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .68), 0 1px rgba(255, 255, 255, .08) !important;
+}
+video::-webkit-media-controls-timeline::-webkit-slider-thumb,
+audio::-webkit-media-controls-timeline::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    width:6px !important;
+    height: 6px !important;
+    background-color: white !important;
+
+    /* rotateZ() forces the layer into compositing mode.
+    Slider thumbs are small, so forcing a compositing layer is inexpensive,
+       and it keeps the slider from having to repaint while sliding. */
+    -webkit-transform: translateY(1px) rotateZ(-45deg) !important;
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        right top,
+        color-stop(0, rgba(99,  99,  99,  1)),
+        color-stop(1, rgba(144, 144, 144, 1))
+    ) !important;
+}
+video::-webkit-media-controls-timeline::-webkit-slider-thumb:active,
+video::-webkit-media-controls-timeline:active::-webkit-slider-thumb,
+audio::-webkit-media-controls-timeline::-webkit-slider-thumb:active,
+audio::-webkit-media-controls-timeline:active::-webkit-slider-thumb,
+ {
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        right top,
+        color-stop(0, rgba(160, 160, 160, 1)),
+        color-stop(1, rgba(221, 221, 221, 1))
+    ) !important;
+}
+video::-webkit-media-controls-current-time-display,
+video::-webkit-media-controls-time-remaining-display,
+audio::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-time-remaining-display {
+    -webkit-user-select: none;
+    -webkit-flex: 0 0 0;
+    display: -webkit-flex;
+    -webkit-justify-content: center;
+    -webkit-align-items: center;
+    cursor: default;
+    font: -webkit-small-control;
+    font-size: 9px;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    width: 45px;
+    min-width: 45px;
+    color: white;
+    text-shadow: black 0px 1px 1px;
+    letter-spacing: normal;
+    word-spacing: normal;
+    line-height: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-decoration: none;
+}
+
+video::-webkit-media-controls-timeline-container .hour-long-time,
+audio::-webkit-media-controls-timeline-container .hour-long-time {
+    min-width: 67px;
+}
+
+video::-webkit-media-controls-timeline-container,
+audio::-webkit-media-controls-timeline-container {
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
+    -webkit-user-select: none;
+    -webkit-flex: 1 1 0;
+    position: relative;
+    padding: 0;
+}
+
+video::-webkit-media-controls-panel .thumbnail-track,
+audio::-webkit-media-controls-panel .thumbnail-track {
+    position: relative;
+    -webkit-flex: 1 1 0;
+    height: 9px;
+    margin: 0 2px;
+    display: -webkit-flex;
+    -webkit-align-items: stretch;
+    -webkit-flex-direction: column;
+}
+
+video::-webkit-media-controls-panel .thumbnail,
+audio::-webkit-media-controls-panel .thumbnail {
+    position: absolute;
+    opacity: 0;
+    transition: opacity 0.25s linear;
+    bottom: 15px;
+    width: 100px;
+    height: 58px;
+    margin-left: -50px;
+    border: 5px solid black;
+    box-shadow: 0 0 3px white;
+    border-radius: 3px;
+}
+
+video::-webkit-media-controls-panel .thumbnail-image,
+audio::-webkit-media-controls-panel .thumbnail-image {
+    width: 100%;
+    height: 100%;
+}
+
+video::-webkit-media-controls-panel .thumbnail.show,
+audio::-webkit-media-controls-panel .thumbnail.show {
+    opacity: 1;
+}
+
+video::-webkit-media-controls-panel .hidden,
+audio::-webkit-media-controls-panel .hidden {
+    display: none;
+}
+
+/* Full Screen */
+
+/* 
+    Page stylesheets are not allowed to override the style of media
+    controls while in full screen mode, so many if not all the rules
+    defined in this section will be marked as !important to enforce
+    this restriction 
+*/
+
+video:-webkit-full-screen::-webkit-media-controls-panel {
+    -webkit-align-items: flex-start !important;
+    -webkit-justify-content: flex-end !important;
+
+    width: 440px !important;
+    height: 60px !important;
+    margin: 0 auto 50px auto !important;
+    padding-top: 10px !important;
+
+    background: -webkit-linear-gradient(top,
+        rgba(45, 45, 45, .97) 0,
+        rgba(30, 30, 30, .97) 19px,
+        rgba(25, 25, 25, .97) 19px,
+        rgba(25, 25, 25, .97) 20px,
+        rgba(19, 19, 19, .97) 20px,
+        rgba(12, 12, 12, .97) 100%
+    ) !important;
+
+    box-shadow: 
+        inset 0 -1px 1px rgba(0, 0, 0, 0.5),
+        inset 0  1px 0 0px   rgba(255, 255, 255, 0.15),
+        inset 0 -1px 0 0px   rgba(202, 202, 202, 0.09),
+        0  0   0 1px rgba(0, 0, 0, 0.5);
+    border-radius: 8px !important;
+
+    transition: opacity 0.3s linear !important;
+}
+
+video:-webkit-animating-full-screen-transition::-webkit-media-controls-panel {
+    opacity: 0 ! important;
+    transition: opacity 0 ! important;
+}
+
+video:-webkit-full-screen::-webkit-media-controls-panel .volume-box {
+    -webkit-transform: none;
+    opacity: 1;
+    left: 11px;
+    top: 13px;
+    width: 90px;
+    height: 14px;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
+    background-image: none;
+    border: none;
+}
+
+video:-webkit-full-screen::-webkit-media-controls-volume-slider {
+    height: 6px !important;
+    border-radius: 3px !important;
+    background-image: -webkit-linear-gradient(top,
+        rgba(16, 16, 16, .300) 0,
+        rgba(9,  9,  9,  .629) 100%
+    ) !important;
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .68), 0 1px rgba(255, 255, 255, .08) !important;
+}
+
+video:-webkit-full-screen::-webkit-media-controls-volume-slider::-webkit-slider-thumb {
+    width: 10px !important;
+    height: 10px !important;
+    border-radius: 5px !important;
+
+    /* rotateZ() forces the layer into compositing mode.
+    Slider thumbs are small, so forcing a compositing layer is inexpensive,
+       and it keeps the slider from having to repaint while sliding. */
+    -webkit-transform: rotateZ(270deg) !important;
+}
+
+video:-webkit-full-screen::-webkit-media-controls-play-button {
+    position: absolute;
+    
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 22"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.478" stop-color="rgb(216, 216, 216)"/><stop offset="0.478" stop-color="rgb(208, 208, 208)"/><stop offset="0.522" stop-color="rgb(208, 208, 208)"/><stop offset="0.522" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="M 0,0 0,22 8,22 8,0 z" fill="url(#gradient)"/><path d="M 13,0 13,22 21,22 21,0 z" fill="url(#gradient)"/></svg>');
+
+    width: 22px;
+    height: 23px;
+    left: 209px;
+    top: 9px;
+    margin: 0;
+    padding: 0;
+}
+
+video:-webkit-full-screen::-webkit-media-controls-play-button.paused {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 22"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.478" stop-color="rgb(216, 216, 216)"/><stop offset="0.478" stop-color="rgb(208, 208, 208)"/><stop offset="0.522" stop-color="rgb(208, 208, 208)"/><stop offset="0.522" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="M 0,0 21,11 0,22 z" fill="url(#gradient)"/></svg>');
+}
+
+video:-webkit-full-screen::-webkit-media-controls-rewind-button {
+    position: absolute;
+    left: 162px;
+    top: 13px;
+    width: 18px;
+    height: 18px;
+}
+
+video:-webkit-full-screen::-webkit-media-controls-seek-back-button {
+    position: absolute;
+
+
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 15"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="M 22,0 11,7 22,15 z" fill="url(#gradient)"/><path d="M 11,0 0,7 11,15 z" fill="url(#gradient)"/></svg>');
+
+    width: 23px;
+    height: 16px;
+    left: 156px;
+    top: 13px;
+}
+
+video:-webkit-full-screen::-webkit-media-controls-return-to-realtime-button {
+    position: absolute;
+    display: -webkit-flex;
+    width: 29px;
+    height: 16px;
+    left: 262px;
+    top: 13px;
+}
+
+video:-webkit-full-screen::-webkit-media-controls-seek-forward-button {
+    position: absolute;
+
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 15"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="M 0,0 11,7 0,15 z" fill="url(#gradient)"/><path d="M 11,0 22,7 11,15 z" fill="url(#gradient)"/></svg>');
+
+    width: 23px;
+    height: 16px;
+    left: 256px;
+    top: 13px;
+}
+
+video:-webkit-full-screen::-webkit-media-controls-timeline-container {
+    height: auto;
+    width: 420px;
+    position: absolute;
+    bottom: 9px;
+    left: 8px;
+    right: 8px;
+}
+
+video:-webkit-full-screen::-webkit-media-controls-status-display {
+    width: 420px;
+    position: absolute;
+    bottom: 7px;
+    left: 8px;
+    right: 8px;
+}
+
+video:-webkit-full-screen::-webkit-media-controls-closed-captions-container {
+    bottom: 114px;
+    right: calc(50% - 183px); /* 183px is 221px (half the media controller's width) minus 38px (the right position of the captions icon). */
+    max-width: calc(50% + 173px); /* right + 10px */
+    max-height: calc(100% - 124px); /* bottom + 10px */
+}
+
+video::-webkit-media-text-track-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding-bottom: 5px;
+
+    text-align: center;
+    color: rgba(255, 255, 255, 1);
+
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0;
+    text-decoration: none;
+    pointer-events: none;
+    -webkit-user-select: none;
+
+    -webkit-flex: 1 1;
+
+    -webkit-line-box-contain: block inline-box replaced;
+}
+
+video::cue {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+video::-webkit-media-text-track-display {
+    position: absolute;
+    overflow: hidden;
+    white-space: pre-wrap;
+    -webkit-box-sizing: border-box;
+    font: 22px sans-serif;
+}
+
+video::-webkit-media-text-track-display-backdrop {
+    display: inline-block;
+}
+
+video::cue(:future) {
+    color: gray;
+}
+
+video::-webkit-media-text-track-container b {
+    font-weight: bold;
+}
+
+video::-webkit-media-text-track-container u {
+    text-decoration: underline;
+}
+
+video::-webkit-media-text-track-container i {
+    font-style: italic;
+}
+
+video::-webkit-media-text-track-container .hidden,
+audio::-webkit-media-text-track-container .hidden {
+    display: none;
+}

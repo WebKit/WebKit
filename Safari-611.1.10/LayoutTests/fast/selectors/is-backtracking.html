@@ -1,0 +1,234 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+#test-root * {
+    background-color: red;
+}
+</style>
+<style id="style">
+</style>
+</head>
+<body>
+    <div style="display:none" id="test-root">
+        <aa>
+            <aa>
+                <aa>
+                    <bb>
+                        <aa>
+                            <aa>
+                                <bb>
+                                    <cc></cc>
+                                    <cc></cc>
+                                    <cc></cc>
+                                    <cc></cc>
+                                    <dd></dd>
+                                    <cc></cc>
+                                    <cc></cc>
+                                    <cc></cc>
+                                    <dd></dd>
+                                    <cc></cc>
+                                    <cc></cc>
+                                    <dd></dd>
+                                    <cc></cc>
+                                    <dd></dd>
+                                    <testcase id="testcase1">
+                                        <ee>
+                                            <ee>
+                                                <ee>
+                                                    <ff>
+                                                        <ee>
+                                                            <ee>
+                                                                <ff>
+                                                                    <gg>
+                                                                        <testcase id="testcase2"></testcase>
+                                                                    </gg>
+                                                                </ff>
+                                                            </ee>
+                                                        </ee>
+                                                    </ff>
+                                                </ee>
+                                            </ee>
+                                        </ee>
+                                    </testcase>
+                                </bb>
+                            </aa>
+                        </aa>
+                    </bb>
+                </aa>
+            </aa>
+        </aa>
+        <bb>
+            <aa>
+                <aa>
+                    <bb>
+                        <aa>
+                            <aa>
+                                <bb>
+                                    <dd></dd>
+                                    <dd></dd>
+                                    <dd></dd>
+                                    <cc></cc>
+                                    <dd></dd>
+                                    <dd></dd>
+                                    <dd></dd>
+                                    <cc></cc>
+                                    <dd></dd>
+                                    <dd></dd>
+                                    <cc></cc>
+                                    <dd></dd>
+                                    <cc></cc>
+                                    <testcase id="testcase3">
+                                        <ee>
+                                            <ee>
+                                                <ff>
+                                                    <ee>
+                                                        <ee>
+                                                            <ff>
+                                                                <gg>
+                                                                    <testcase id="testcase4"></testcase>
+                                                                </gg>
+                                                            </ff>
+                                                        </ee>
+                                                    </ee>
+                                                </ff>
+                                            </ee>
+                                        </ee>
+                                    </testcase>
+                                </bb>
+                            </aa>
+                        </aa>
+                    </bb>
+                </aa>
+            </aa>
+        </bb>
+    </div>
+</body>
+<script>
+description('Check backtracking with :is(selectorList).');
+
+function testQuerySelector(selector, expectedIds) {
+    shouldBe("document.querySelectorAll('" + selector + "').length", '' + expectedIds.length);
+    for (var i = 0; i < expectedIds.length; ++i)
+        shouldBeEqualToString("document.querySelectorAll('" + selector + "')[" + i + "].id", 'testcase' + expectedIds[i]);
+}
+
+function testStyling(selector, expectedIds) {
+    var stylingElement = document.getElementById("style");
+    stylingElement.innerHTML = '' + selector + ' { background-color: rgb(10, 100, 200); }';
+
+    var allTestCases = document.querySelectorAll("#test-root *");
+    for (var i = 0; i < allTestCases.length; ++i) {
+        var expectMatch = expectedIds.indexOf(Number(allTestCases[i].id.substring(8))) >= 0;
+        shouldBeEqualToString('getComputedStyle(document.querySelectorAll("#test-root *")[' + i + ']).backgroundColor', expectMatch ? 'rgb(10, 100, 200)' : 'rgb(255, 0, 0)');
+    }
+
+    stylingElement.innerHTML = '';
+}
+
+function testSelector(selector, expectedIds) {
+    debug("Testing \"" + selector + "\"");
+    testQuerySelector("#test-root " + selector, expectedIds);
+    testStyling("#test-root " + selector, expectedIds);
+    debug("");
+}
+
+// Internal backtracking, backtracking inside :is().
+testSelector("testcase:is(bb > aa > aa > bb testcase)", [1, 2, 3, 4]);
+testSelector("testcase:is(bb > aa > aa > bb > aa testcase)", [3, 4]);
+testSelector("testcase:is(bb > * > aa > bb > aa testcase)", [3, 4]);
+testSelector("testcase:is(bb > aa > * > bb > aa testcase)", [3, 4]);
+testSelector("testcase:is(bb > * > * > bb > aa testcase)", [3, 4]);
+testSelector("testcase:is(* > * > * > bb > aa testcase)", [1, 2, 3, 4]);
+
+testSelector("testcase:is(aa > aa > aa > bb testcase)", [1, 2]);
+testSelector("testcase:is(aa > aa > * > bb testcase)", [1, 2]);
+testSelector("testcase:is(aa > * > * > bb testcase)", [1, 2]);
+testSelector("testcase:is(aa > aa > aa > * testcase)", [1, 2]);
+
+testSelector("testcase:is(aa > * > * > * testcase)", [1, 2, 3, 4]);
+testSelector("testcase:is(* > * > * > bb testcase)", [1, 2, 3, 4]);
+testSelector("testcase:is(* > * > * > * testcase)", [1, 2, 3, 4]);
+
+testSelector("testcase:is(dd + dd + cc + dd ~ testcase)", [3]);
+testSelector("testcase:is(dd + dd + cc + * ~ testcase)", [3]);
+testSelector("testcase:is(dd + dd + * + dd ~ testcase)", [3]);
+testSelector("testcase:is(dd + dd + * + * ~ testcase)", [3]);
+testSelector("testcase:is(dd + * + cc + dd ~ testcase)", [1, 3]);
+testSelector("testcase:is(* + dd + cc + dd ~ testcase)", [1, 3]);
+testSelector("testcase:is(* + * + cc + dd ~ testcase)", [1, 3]);
+
+testSelector("testcase:is(cc + cc + cc + cc + dd ~ testcase)", [1]);
+testSelector("testcase:is(cc + cc + cc + cc + * ~ testcase)", [1]);
+testSelector("testcase:is(cc + cc + cc + * + dd ~ testcase)", [1]);
+testSelector("testcase:is(cc + cc + cc + * + * ~ testcase)", [1]);
+testSelector("testcase:is(cc + cc + * + * + * ~ testcase)", [1]);
+testSelector("testcase:is(cc + * + * + * + * ~ testcase)", [1, 3]);
+testSelector("testcase:is(* + cc + * + * + * ~ testcase)", [1, 3]);
+testSelector("testcase:is(* + * + * + * + * ~ testcase)", [1, 3]);
+
+// External backtracking, backtracking outside :is().
+testSelector(":is(ee) > ee > ee > ee > ff testcase", []);
+testSelector(":is(testcase) > ee > ee > ee > ff testcase", [2]);
+testSelector(":is(ee, foo, bar, baz) > ee > ee > ee > ff testcase", []);
+testSelector(":is(foo, bar, baz, testcase) > ee > ee > ee > ff testcase", [2]);
+
+testSelector(":is(ee) > ee > * > ee > ff testcase", []);
+testSelector(":is(testcase) > ee > * > ee > ff testcase", [2]);
+testSelector(":is(ee, foo, bar, baz) > ee > * > ee > ff testcase", []);
+testSelector(":is(foo, bar, baz, testcase) > ee > * > ee > ff testcase", [2]);
+
+testSelector(":is(ee) > ee > ee > * > ff testcase", []);
+testSelector(":is(testcase) > ee > ee > * > ff testcase", [2]);
+testSelector(":is(ee, foo, bar, baz) > ee > ee > * > ff testcase", []);
+testSelector(":is(foo, bar, baz, testcase) > ee > ee > * > ff testcase", [2]);
+
+testSelector(":is(ee) > * > ee > ee > ff testcase", [2, 4]);
+testSelector(":is(testcase) > * > ee > ee > ff testcase", [2]);
+testSelector(":is(ee, foo, bar, baz) > * > ee > ee > ff testcase", [2, 4]);
+testSelector(":is(foo, bar, baz, testcase) > * > ee > ee > ff testcase", [2]);
+
+testSelector(":is(ee) > * > * > ee > ff testcase", [2, 4]);
+testSelector(":is(testcase) > * > * > ee > ff testcase", [2]);
+testSelector(":is(ee, foo, bar, baz) > * > * > ee > ff testcase", [2, 4]);
+testSelector(":is(foo, bar, baz, testcase) > * > * > ee > ff testcase", [2]);
+
+testSelector(":is(ee) > * > * > ee > * testcase", [2, 4]);
+testSelector(":is(testcase) > * > * > ee > * testcase", [2]);
+testSelector(":is(ee, foo, bar, baz) > * > * > ee > * testcase", [2, 4]);
+testSelector(":is(foo, bar, baz, testcase) > * > * > ee > * testcase", [2]);
+
+testSelector(":is(ee) > * > * > * > * testcase", [2, 4]);
+testSelector(":is(testcase) > * > * > * > * testcase", [2, 4]);
+testSelector(":is(ee, foo, bar, baz) > * > * > * > * testcase", [2, 4]);
+testSelector(":is(foo, bar, baz, testcase) > * > * > * > * testcase", [2, 4]);
+
+// Both external and internal backtracking.
+testSelector(":is(bb > * > * > bb > aa testcase, foo, bar, baz) > ee > ee > ee > ff testcase", []);
+testSelector(":is(aa > * > * > bb > aa testcase, foo, bar, baz) > ee > ee > ee > ff testcase", [2]);
+testSelector(":is(bb > * > * > bb > aa testcase, foo, bar, baz) > ee > * > ee > ff testcase", []);
+testSelector(":is(aa > * > * > bb > aa testcase, foo, bar, baz) > ee > * > ee > ff testcase", [2]);
+testSelector(":is(bb > * > * > bb > aa testcase, foo, bar, baz) > ee > ee > * > ff testcase", []);
+testSelector(":is(aa > * > * > bb > aa testcase, foo, bar, baz) > ee > ee > * > ff testcase", [2]);
+
+testSelector(":is(bb > * > * > bb > aa * + * + cc + dd ~ testcase, foo, bar, baz) > ee > ee > ee > ff testcase", []);
+testSelector(":is(aa > * > * > bb > aa * + * + cc + dd ~ testcase, foo, bar, baz) > ee > ee > ee > ff testcase", [2]);
+testSelector(":is(bb > * > * > bb > aa * + * + cc + dd ~ testcase, foo, bar, baz) > ee > * > ee > ff testcase", []);
+testSelector(":is(aa > * > * > bb > aa * + * + cc + dd ~ testcase, foo, bar, baz) > ee > * > ee > ff testcase", [2]);
+testSelector(":is(bb > * > * > bb > aa * + * + cc + dd ~ testcase, foo, bar, baz) > ee > ee > * > ff testcase", []);
+testSelector(":is(aa > * > * > bb > aa * + * + cc + dd ~ testcase, foo, bar, baz) > ee > ee > * > ff testcase", [2]);
+
+testSelector(":is(bb > * > * > bb > aa dd + dd + * + * ~ testcase, foo, bar, baz) > ee > ee > ee > ff testcase", []);
+testSelector(":is(aa > * > * > bb > aa cc + dd + * + * ~ testcase, foo, bar, baz) > ee > ee > ee > ff testcase", [2]);
+testSelector(":is(bb > * > * > bb > aa dd + dd + * + * ~ testcase, foo, bar, baz) > ee > * > ee > ff testcase", []);
+testSelector(":is(aa > * > * > bb > aa cc + dd + * + * ~ testcase, foo, bar, baz) > ee > * > ee > ff testcase", [2]);
+testSelector(":is(bb > * > * > bb > aa dd + dd + * + * ~ testcase, foo, bar, baz) > ee > ee > * > ff testcase", []);
+testSelector(":is(aa > * > * > bb > aa cc + dd + * + * ~ testcase, foo, bar, baz) > ee > ee > * > ff testcase", [2]);
+
+testSelector(":is(* > * > * > * testcase, foo, bar, baz) > * > * > * > * testcase", [2, 4]);
+testSelector(":is(* > * > * > bb testcase, foo, bar, baz) > * > * > * > * testcase", [2, 4]);
+testSelector("bb > :is(* > * > * > * testcase, foo, bar, baz) > * > * > * > * testcase", [2, 4]);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

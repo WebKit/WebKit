@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#test {
+    font-size: 300%;
+    text-align: left;
+    direction: rtl;
+    unicode-bidi: bidi-override;
+}
+</style>
+</head>
+<body>
+The composition underline should be under "XYZ".
+<div id=test contenteditable></div>
+
+<script>
+document.getElementById('test').focus();
+if (window.testRunner) {
+    textInputController.insertText("abc");
+    textInputController.setMarkedText("XYZ", 3, 0);
+}
+</script>
+</body>
+</html>

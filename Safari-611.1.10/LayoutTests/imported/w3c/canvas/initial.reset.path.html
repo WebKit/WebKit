@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<title>Canvas test: initial.reset.path</title>
+<meta name="author" content="Philip Taylor">
+<script src="../common/canvas-tests.js"></script>
+<link rel="stylesheet" href="../common/canvas-tests.css">
+<body class="show_output">
+
+<h1><a href="index.initial.html">initial</a>.<a href="index.initial.reset.html">reset</a>.path</h1>
+<p class="desc">Resetting the canvas state resets the current path</p>
+
+<div class="refs">Spec references:
+<ul>
+<li><a href="../annotated-spec/canvas.html#testrefs.initial.reset">initial.reset</a>
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+<p class="output expectedtext">Expected output:<p><img src="resources/initial.reset.path.png" class="output expected" id="expected" alt="">
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+canvas.width = 100;
+ctx.rect(0, 0, 100, 50);
+canvas.width = 100;
+ctx.fillStyle = '#f00';
+ctx.fill();
+_assertPixel(canvas, 20,20, 0,0,0,0, "20,20", "0,0,0,0");
+
+
+});
+</script>
+

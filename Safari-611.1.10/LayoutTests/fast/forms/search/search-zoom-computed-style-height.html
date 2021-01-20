@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <style>
+    body {
+        zoom: 2;
+        background: yellow;
+    }
+    </style>
+</head>
+<body>
+    <input id="field" type="search" autofocus>
+    <div>
+        <span>Computed style height: </span>
+        <span id="output"></span>
+    </div>
+    <script>
+        description('Test for computed style height of a zoomed-in search field');
+
+        const input = document.getElementById('field');
+        const style = window.getComputedStyle(input);
+
+        const output = document.getElementById('output');
+        output.innerHTML = style.height;
+    </script>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

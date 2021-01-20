@@ -1,0 +1,3 @@
+
+FAIL WebSockets: setting HttpOnly cookies in ws response, checking document.cookie assert_unreached: error Reached unreachable code
+

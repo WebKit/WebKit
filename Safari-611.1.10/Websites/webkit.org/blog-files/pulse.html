@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+  "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>Pulsing Box example</title>
+    <style type="text/css" media="screen">
+      @-webkit-keyframes pulse {
+       0% {
+         background-color: red;
+         opacity: 1.0;
+         -webkit-transform: scale(1.0) rotate(0deg);
+       }
+       33% {
+         background-color: blue;
+         opacity: 0.75;
+         -webkit-transform: scale(1.1) rotate(-5deg);
+       }
+       67% {
+         background-color: green;
+         opacity: 0.5;
+         -webkit-transform: scale(1.1) rotate(5deg);
+       }
+       100% {
+         background-color: red;
+         opacity: 1.0;
+         -webkit-transform: scale(1.0) rotate(0deg);
+       }
+      }
+
+      .pulsedbox {
+       -webkit-animation-name: pulse;
+       -webkit-animation-duration: 4s;
+       -webkit-animation-iteration-count: infinite;
+       -webkit-animation-timing-function: ease-in-out;
+      }
+      
+      div {
+        background-color: red;
+        width: 40%;
+        padding: 0.2em 1em;
+        margin: 6em;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <h1>An example of a pulsing box</h1>
+    
+    <div class="pulsedbox">
+      <p>
+        This paragraph should pulse. Pulsing is the new blink.
+        You heard it here first.
+      </p>
+    </div>
+    
+  </body>
+</html>

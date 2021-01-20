@@ -1,0 +1,5 @@
+2d.pattern.image.nonexistent
+Actual output:
+
+FAIL Canvas test: 2d.pattern.image.nonexistent assert_throws_dom: function "function () { ctx.createPattern(img, 'repeat'); }" did not throw
+

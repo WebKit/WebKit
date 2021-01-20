@@ -1,0 +1,3 @@
+
+PASS Callback is invoked with |this| value of IntersectionObserver and two arguments
+

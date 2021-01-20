@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
+<script>
+    const RESOURCES_DIR = "/WebKit/beacon/resources/";
+
+    test(function() {
+    assert_false(navigator.sendBeacon(RESOURCES_DIR + "beacon-preflight.py"), "sendBeacon should return false");
+    }, "Content extensions should be able to block beacons");
+</script>

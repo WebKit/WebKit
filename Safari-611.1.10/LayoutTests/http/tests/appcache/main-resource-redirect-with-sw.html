@@ -1,0 +1,52 @@
+<html manifest="resources/main-resource-redirect-with-sw.manifest">
+<body>
+<p>Test that application cache and service worker do not mess with each other in case of redirections.</p>
+<div id="result">Testing...</div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.setShouldDecideNavigationPolicyAfterDelay(true);
+}
+
+var serviceWorkerIframe;
+function prepareTest()
+{
+    serviceWorkerIframe = document.createElement("iframe");
+    serviceWorkerIframe.setAttribute("src", "/appcache/resources/register-resources-service-worker.html");
+    document.body.appendChild(serviceWorkerIframe);
+    serviceWorkerIframe.onload = async (e) => {
+        try {
+            await serviceWorkerIframe.contentWindow.registerServiceWorker();
+        } catch (e) {
+            console.log(e);
+        }
+        test();
+    };
+}
+
+function test()
+{
+    applicationCache.oncached = null;
+    applicationCache.onnoupdate = null;
+    var iframe = document.createElement("iframe");
+    iframe.setAttribute("src", "/resources/redirect.php?url=http://127.0.0.1:8000/appcache/resources/simple.txt");
+    document.body.appendChild(iframe);
+    iframe.onload = done;
+}
+
+function done()
+{
+    applicationCache.onerror = null;
+    // We wait some small time to ensure that the frame loading does not trigger two concurrent loads.
+    setTimeout(() => {
+        window.document.body.innerHTML = "PASS";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 10);
+}
+
+applicationCache.oncached=prepareTest;
+applicationCache.onnoupdate=prepareTest;
+</script>
+</body>

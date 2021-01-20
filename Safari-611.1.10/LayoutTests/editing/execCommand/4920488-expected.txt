@@ -1,0 +1,13 @@
+This tests for a bug in GMail's Editor, they try to extract the contents of a range that has had it's contents removed from the document by an editing command.  Since the bug 43017 requires WebKit does not remove anchor elements, div should be empty after the extraction. We currently leave anchor element in the div due to the Bug 47916.
+
+After removeFormat:
+| "<#selection-anchor>dog"
+| <a>
+|   href="http://www.google.com/"
+|   "food<#selection-focus>"
+
+After extractContents():
+| "<#selection-anchor>"
+| <a>
+|   href="http://www.google.com/"
+|   <#selection-focus>

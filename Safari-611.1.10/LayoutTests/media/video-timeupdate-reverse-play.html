@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+
+        <script>
+
+            var startedPlayback = 0;
+            var seekTime = 0.3;
+
+            function canplaythrough()
+            {
+                testExpected("video.currentTime", 0);
+                run("video.currentTime = " + seekTime);
+                consoleWrite("");
+            }
+
+            function seeked()
+            {
+                // Play backwards
+                testExpected("video.currentTime.toFixed(1)", seekTime);
+                run("video.play()");
+                run("video.playbackRate = -1");
+                startedPlayback = true;
+                consoleWrite("");
+            }
+
+            function timeupdate()
+            {
+                if (startedPlayback && video.currentTime == 0) {
+                    consoleWrite("EVENT(timeupdate) fired at time 0");
+                    testExpected("video.ended", false);
+                    consoleWrite("");
+                    endTest();
+                }
+            }
+
+            function start()
+            {
+                findMediaElement();
+
+                waitForEvent("error");
+                waitForEvent('canplaythrough', canplaythrough);
+                waitForEvent('seeked', seeked);
+                video.addEventListener("timeupdate", timeupdate);
+
+                video.src = findMediaFile("video", "content/test");
+            }
+
+        </script>
+    </head>
+    <body>
+        <video controls autobuffer></video>
+        <p>Tests that a 'timeupdate' event is fired when a movie plays<br> in reverse to time zero.</p>
+        <script>start()</script>
+        <pre id="console"></pre>
+    </body>
+</html>
+
+

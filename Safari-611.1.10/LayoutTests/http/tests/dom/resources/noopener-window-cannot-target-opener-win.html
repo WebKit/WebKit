@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
+onload = function() {
+    if (window.opener)
+        console.log("FAIL: New window should not have an opener");
+    else
+        console.log("PASS: New window should not have an opener");
+
+    opener = open("", "opener"); // Should open a new window.
+    if (opener.location.href == "about:blank")
+        console.log("PASS: New window should have URL 'about:blank'");
+    else
+        console.log("FAIL: New window should have URL 'about:blank' but got '" + opener.location.href + "'");
+
+    finishJSTest();
+};
+</script>
+</body>
+</html>

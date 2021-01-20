@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>CSS Test: Absolutely positioned, non-replaced elements, 'top' set to static position</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/">
+        <link rel="help" href="http://www.w3.org/TR/CSS21/visudet.html#abs-non-replaced-height">
+        <meta name="flags" content="">
+        <meta name="assert" content="When 'top' is set to the static position and any 'auto' values for top and bottom margin are set to '0', when 'top' and 'bottom' are 'auto' and 'height' is not 'auto'.">
+        <style type="text/css">
+            #div1
+            {
+                background: blue;
+                height: 3in;
+                position: relative;
+                width: 1in;
+            }
+            div div
+            {
+                background: orange;
+                bottom: auto;
+                height: 1in;
+                margin-bottom: auto;
+                margin-top: auto;
+                position: absolute;
+                top: auto;
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if there are two boxes below, a blue box below an orange box.</p>
+        <div id="div1">
+            <div></div>
+        </div>
+    </body>
+</html>

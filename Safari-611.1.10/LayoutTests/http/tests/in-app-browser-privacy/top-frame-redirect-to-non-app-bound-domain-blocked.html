@@ -1,0 +1,27 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableInAppBrowserPrivacy=true applicationBundleIdentifier=inAppBrowserPrivacyTestIdentifier isAppBoundWebView=true ] -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body>
+<script>
+    description("Test top frame redirects block non-app-bound domains");
+    jsTestIsAsync = true;
+    onload = () => {
+        if (document.location.hash == "") {
+            // Load this test again with a random dummy value to avoid caching.
+            document.location.href = "http://127.0.0.1:8000/in-app-browser-privacy/top-frame-redirect-to-non-app-bound-domain-blocked?dummyParam=" + Math.random() + "#notempty";
+        } else {
+            document.location.href = "http://127.0.0.1:8000/in-app-browser-privacy/resources/redirect.php?step=1";
+            setTimeout(() => {
+                testPassed("Redirect to non app-bound domain failed");
+                finishJSTest();
+            }, 500);
+        }
+    }
+</script>
+
+</body>
+</html>

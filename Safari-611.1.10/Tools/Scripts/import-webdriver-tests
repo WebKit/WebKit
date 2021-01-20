@@ -1,0 +1,117 @@
+#!/usr/bin/env python
+
+# Copyright (C) 2017 Igalia S.L.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1. Redistributions of source code must retain the above
+#    copyright notice, this list of conditions and the following
+#    disclaimer.
+# 2. Redistributions in binary form must reproduce the above
+#    copyright notice, this list of conditions and the following
+#    disclaimer in the documentation and/or other materials
+#    provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+# OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+# TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+# THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+
+import json
+import logging
+import optparse
+import os
+import sys
+
+from webkitpy.common.host import Host
+from webkitpy.common.system.filesystem import FileSystem
+from webkitpy.common.system.logutils import configure_logging
+from webkitpy.common.webkit_finder import WebKitFinder
+from webkitpy.common.checkout.scm.git import Git
+
+_log = logging.getLogger(__name__)
+
+host = Host()
+host.initialize_scm()
+webkit_finder = WebKitFinder(host.filesystem)
+
+class Importer(object):
+
+    def __init__(self, config_path, download_path, destination_path):
+        self.config = json.loads(host.filesystem.read_text_file(config_path))
+        self.download_path = download_path
+        self.destination_path = destination_path
+
+    def download_tests(self):
+        host.filesystem.maybe_make_directory(host.filesystem.dirname(self.download_path))
+        needs_clone = not host.filesystem.exists(self.download_path)
+        if needs_clone:
+            _log.info('Cloning %s into %s...' % (self.config['repository'], self.download_path))
+            Git.clone(self.config['repository'], self.download_path, host.executive)
+        git = Git(self.download_path, None, executive=host.executive, filesystem=host.filesystem)
+        if not needs_clone:
+            _log.info('Fetching %s...' % self.config['repository'])
+            git.fetch()
+
+        _log.info('Checking out revision %s' % self.config['revision'])
+        git.checkout(self.config['revision'], False)
+
+    def import_tests(self):
+        def should_skip_file(source_path, full_paths_to_skip):
+            for path in full_paths_to_skip:
+                if source_path.startswith(path):
+                    return True
+            return False
+
+        _log.info('Importing tests')
+        full_paths_to_skip = [host.filesystem.join(self.download_path, path) for path in self.config['paths_to_skip']]
+        for path in self.config['paths_to_import']:
+            source_directory = host.filesystem.join(self.download_path, path)
+            for source_path in host.filesystem.files_under(source_directory):
+                if should_skip_file(source_path, full_paths_to_skip):
+                    continue
+                destination_path = host.filesystem.join(self.destination_path, host.filesystem.relpath(source_path, self.download_path))
+                host.filesystem.maybe_make_directory(host.filesystem.dirname(destination_path))
+                host.filesystem.copyfile(source_path, destination_path)
+
+
+option_parser = optparse.OptionParser(usage='usage: %prog [options]')
+option_parser.add_option('--w3c', action='store_true', dest='w3c',
+                         help='Import W3C tests')
+option_parser.add_option('--selenium', action='store_true', dest='selenium',
+                         help='Import Selenium tests')
+options, _ = option_parser.parse_args()
+
+# Not giving any option means import all.
+if not options.w3c and not options.selenium:
+    options.w3c = options.selenium = True
+
+configure_logging()
+
+importers = []
+
+if options.w3c:
+    importer_config_path = webkit_finder.path_from_webkit_base('WebDriverTests', 'imported', 'w3c', 'importer.json')
+    download_path = webkit_finder.path_from_webkit_base('WebKitBuild', 'w3c-tests', 'web-platform-tests')
+    import_path = webkit_finder.path_from_webkit_base('WebDriverTests', 'imported', 'w3c')
+    importers.append(Importer(importer_config_path, download_path, import_path))
+
+if options.selenium:
+    importer_config_path = webkit_finder.path_from_webkit_base('WebDriverTests', 'imported', 'selenium', 'importer.json')
+    download_path = webkit_finder.path_from_webkit_base('WebKitBuild', 'selenium-tests', 'selenium')
+    import_path = webkit_finder.path_from_webkit_base('WebDriverTests', 'imported', 'selenium')
+    importers.append(Importer(importer_config_path, download_path, import_path))
+
+for importer in importers:
+    importer.download_tests()
+    importer.import_tests()

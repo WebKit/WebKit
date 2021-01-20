@@ -1,0 +1,20 @@
+<video controls></video>
+<p>Test 'controls' attribute<p>
+<script src=media-file.js></script>
+<script src=video-test.js></script>
+<script>
+    testExpected("video.controls", null, '!=');
+    waitForEvent('canplaythrough', function () {
+        testExpected("video.controls", null, '!=');
+        run("video.removeAttribute('controls')");
+        testExpected("video.controls", false, '==');
+        run("video.controls = true");
+        testExpected("video.getAttribute('controls')", "");
+        run("video.controls = false");
+        testExpected("video.controls", false, '==');
+        run("video.setAttribute('controls','controls')");
+        testExpected("video.controls", null, '!=');
+        endTest();
+    } );
+    video.src = findMediaFile("video", "content/test");
+</script>

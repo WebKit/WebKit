@@ -1,0 +1,4 @@
+
+PASS setting timeout attribute on sync request
+PASS open() with async false when timeout is set
+

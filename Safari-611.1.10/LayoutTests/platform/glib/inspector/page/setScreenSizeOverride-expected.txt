@@ -1,0 +1,12 @@
+
+== Running test suite: Page.setScreenSizeOverride
+-- Running test case: ScreenSizeOverrideOverride
+PASS: Body should be white.
+Overriding screen size to 1000x500
+PASS: Default screen width should be 1000.
+PASS: Default screen height should be 500.
+PASS: Body should be red.
+Removing screen size override
+PASS: Screen width override should be removed.
+PASS: Screen height override should be removed.
+

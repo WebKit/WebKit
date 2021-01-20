@@ -1,0 +1,10 @@
+Tests that the page is not scrolled to the current selection when an unfocused text field is laid out.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.scrollY is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

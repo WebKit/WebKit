@@ -1,0 +1,4 @@
+
+FAIL SVGAnimationElement exceptions, getStartTime throws with unresolved interval. assert_throws_dom: function "function () { animationElement.getStartTime() }" did not throw
+FAIL SVGAnimationElement exceptions, getSimpleDuration throws with undefined simple duration. assert_throws_dom: function "function () { animationElement.getSimpleDuration() }" did not throw
+

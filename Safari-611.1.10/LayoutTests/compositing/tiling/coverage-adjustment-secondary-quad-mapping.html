@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            transform: translateZ(0px);
+        }
+
+        .scroller {
+            position: relative;
+            margin: 20px;
+            width: 600px;
+            height: 580px;
+            overflow-x: hidden;
+            overflow-y: auto;
+            perspective-origin: right bottom;
+            perspective: 1px;
+            border: 1px solid black;
+        }
+        
+        .preserve3d {
+            transform-origin: top left;
+            transform-style: preserve-3d;
+        }
+
+        .box {
+            height: 12000px;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .parallax {
+            background-size: cover;
+            box-sizing: border-box;
+            width: 80%;
+            margin-left: 20px;
+            height: 1300px;;
+            /* Since the parallax elements still consume space, we set the margin to undo
+            the height of this parallax element making it essentially consume 0 space.
+            */
+            margin-bottom: -1300px;
+        }
+
+        .tester {
+            position: relative;
+            z-index: 1;
+            background-color: green;
+            margin-top: 200px;
+            height: 600px;
+            width: 100%;
+            will-change: transform;
+        }
+
+        .filler {
+            background-color: silver;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                let scroller = document.querySelector('.scroller');
+                scroller.scrollTop = 400;
+
+                if (window.internals)
+                    document.getElementById('layers').innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="preserve3d">
+            <div class="parallax" style="transform: translate3d(0px, -220px, -2px);"></div>
+            <div class="box tester">&nbsp;</div>
+            <div class="box filler"></div>
+        </div>
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>

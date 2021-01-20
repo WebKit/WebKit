@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>This tests that autosize uses the content-width as the base for resolving viewport unit values</title>
+<style>
+body {
+    margin: 0px;
+}
+#w100 {
+    width: 100vw;
+    height: 10px;
+}
+
+#w50 {
+    width: 50vw;
+    height: 10px;
+}
+
+#w10 {
+    width: 10vw;
+    height: 10px;
+}
+
+#w0 {
+    width: 0vw;
+    height: 10px;
+}
+</style>
+<script>
+if (window.internals)
+    internals.enableSizeToContentAutoSizeMode(true, 2000, 600);
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<div id=w100></div>
+<div id=w50></div>
+<div id=w10></div>
+<div id=w0></div>
+<div style="width: 350px; height: 350px; background-color: green;"></div>
+<pre id=result></pre>
+<script>
+document.body.offsetWidth;
+result.textContent = window.getComputedStyle(w100, null).getPropertyValue("width") + " "
+    + window.getComputedStyle(w50, null).getPropertyValue("width") + " "
+    + window.getComputedStyle(w10, null).getPropertyValue("width") + " "  
+	+ window.getComputedStyle(w0, null).getPropertyValue("width");  
+if (window.internals)
+    internals.enableSizeToContentAutoSizeMode(false, 0, 0, 0, 0);
+</script>
+</body>
+</html>

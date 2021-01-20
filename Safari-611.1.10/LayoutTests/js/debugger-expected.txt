@@ -1,0 +1,9 @@
+This file tests whether the 'debugger' statement throws a syntax error. (IE respects 'debugger' as a statement that behaves like a breakpoint).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

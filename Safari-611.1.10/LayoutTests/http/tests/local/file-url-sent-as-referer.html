@@ -1,0 +1,16 @@
+<html>
+<head>
+    <script>
+        function getImage()
+        {
+            var frameObj = document.getElementById("myFrame");
+            frameObj.contentWindow.document.write("<img src=\"http://127.0.0.1:8000/security/resources/showRefererImage.php\"/>");
+        }
+    </script>
+</head>
+<body>
+<br>This is a test to see if a file:// url is sent out as the referrer for a subresource load<br>
+<iframe id="myFrame" src="about:blank" onLoad="getImage();"></iframe>
+<br>The above image will tell you success or failure - green or red<br>
+</body>
+</html>

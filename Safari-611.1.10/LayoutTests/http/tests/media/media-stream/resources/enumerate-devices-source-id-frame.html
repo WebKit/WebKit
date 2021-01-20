@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            iframe { border: 1px solid black; }
+        </style>
+        <script>
+            function log(msg)
+            {
+                document.getElementById("console").innerHTML += msg + "<br>";
+            }
+
+            async function test(event)
+            {
+                await navigator.mediaDevices.getUserMedia({video: true, audio: true });
+                let devices = await navigator.mediaDevices.enumerateDevices();
+                let result = {
+                    origin: self.origin, 
+                    devices: devices.map(device => { return {deviceId: device.deviceId, kind: device.kind} }),
+                };
+
+                parent.postMessage(result, "*");
+                
+                let parentPage = document.referrer.split('/').pop();
+                if (parentPage != "enumerate-devices-source-id.html")
+                    return;
+
+                let iframe = document.createElement('iframe');
+                iframe.src = location.href;
+                document.body.appendChild(iframe);
+            }
+
+            function handler(event) 
+            {
+                let result = {
+                    origin: `${event.data.origin}`, 
+                    devices: event.data.devices
+                };
+
+                parent.postMessage(result, "*");
+            }
+
+            addEventListener("message", handler, false);
+
+        </script> 
+    </head>
+    <body onload="test()">
+        <pre id="console"></pre>
+    </body>
+</html>

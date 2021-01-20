@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+< [index] >
+security.drawImage.canvas
+drawImage of unclean canvas makes the canvas origin-unclean
+References: security.drawImage.canvas
+Actual output:
+Passed
+

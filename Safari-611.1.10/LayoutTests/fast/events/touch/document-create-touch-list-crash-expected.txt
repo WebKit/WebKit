@@ -1,0 +1,21 @@
+This test ensures that WebKit doesn't crash when the document.createTouchList API is called with non-Touch parameters
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.createTouchList(document).item(0) threw exception TypeError: Type error.
+PASS document.createTouchList({"a":1}).item(0) threw exception TypeError: Type error.
+PASS document.createTouchList(new Array(5)).item(0) threw exception TypeError: Type error.
+PASS document.createTouchList("string").item(0) threw exception TypeError: Type error.
+PASS document.createTouchList(null).item(0) threw exception TypeError: Type error.
+PASS document.createTouchList(undefined).item(0) threw exception TypeError: Type error.
+PASS document.createTouchList() did not throw exception.
+PASS document.createTouchList().length is 0
+PASS document.createTouchList(t, document, t2); threw exception TypeError: Type error.
+PASS tl.length is 2
+PASS tl.item(0) is non-null.
+PASS tl.item(1) is non-null.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

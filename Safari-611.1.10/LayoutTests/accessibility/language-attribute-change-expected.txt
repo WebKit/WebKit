@@ -1,0 +1,7 @@
+Hola Mundo!
+PASS accessibleContent.language is 'AXLanguage: en'
+PASS accessibleContent.language is 'AXLanguage: es'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

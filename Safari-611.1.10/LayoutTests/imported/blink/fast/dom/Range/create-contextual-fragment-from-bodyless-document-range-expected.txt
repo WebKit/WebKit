@@ -1,0 +1,3 @@
+Test of createContextualFragment from a Range whose context is an HTML document without a body. If the test succeeds you will see the word "PASS" below.
+
+PASS

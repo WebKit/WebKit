@@ -1,0 +1,64 @@
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/get-host-info.sub.js"></script>
+<title>ICE candidate filtering for third party iframes</title>
+</head>
+<body>
+<script>
+if (self.internals && internals.setICECandidateFiltering)
+    internals.setICECandidateFiltering(true);
+
+async function withFrame(scopeURL)
+{
+    return new Promise((resolve) => {
+        let frame = document.createElement('iframe');
+        frame.src = scopeURL;
+        frame.allow= "camera;microphone";
+        frame.onload = function() { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+}
+
+function doIFrameTest(frame, name)
+{
+    return new Promise((resolve, reject) => {
+        frame.contentWindow.postMessage(name, "*");
+        window.onmessage = (event) => {
+            window.onmessage = undefined;
+            resolve(event.data);
+        }
+        setTimeout(() => reject("no message from frame"), 5000);
+    });
+}
+
+var host = get_host_info();
+var frame1, frame2, frame2b, frame3;
+promise_test(async (test) => {
+    frame1 = await withFrame("resources/third-party-frame-ice-candidate-filtering-iframe.html");
+    frame2 = await withFrame(host.HTTP_REMOTE_ORIGIN + "/WebKit/webrtc/resources/third-party-frame-ice-candidate-filtering-iframe.html");
+    frame2b = await withFrame(host.HTTP_REMOTE_ORIGIN + "/WebKit/webrtc/resources/third-party-frame-ice-candidate-filtering-iframe.html");
+    frame3 = await withFrame(host.HTTP_REMOTE_ORIGIN_WITH_DIFFERENT_PORT + "/WebKit/webrtc/resources/third-party-frame-ice-candidate-filtering-iframe.html");
+}, "Setup test");
+
+promise_test(async (test) => {
+    assert_true(await doIFrameTest(frame2, "capture"), "iframe is capturing");
+    assert_false(await doIFrameTest(frame2, "checkFiltering"), "iframe is not filtering");
+}, "getUserMedia on third party iframe and check same frame filtering");
+
+promise_test(async (test) => {
+    assert_false(await doIFrameTest(frame1, "checkFiltering"));
+}, "Check same origin filtering as top frame");
+
+promise_test(async (test) => {
+    assert_false(await doIFrameTest(frame2b, "checkFiltering"));
+}, "Check same origin filtering as capturing frame");
+
+promise_test(async (test) => {
+    assert_true(await doIFrameTest(frame3, "checkFiltering"));
+}, "Check filtering of frame with different origin as top and capturing frame origins");
+
+</script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+{
+  'stderr' => 'mismatched comment found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css:21
+mismatched comment found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css:25
+mismatched comment found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css:29
+mismatched opening brace found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css:33
+mismatched closing brace found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css:34
+mismatched opening brace found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css:37
+mismatched closing brace found in Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests_warning.css:42
+',
+  'stdout' => '',
+  'ranges' => [
+    [
+      '20',
+      '22',
+      'element1'
+    ],
+    [
+      '24',
+      '26',
+      'element2'
+    ],
+    [
+      '28',
+      '30',
+      'element3'
+    ],
+    [
+      '32',
+      '33',
+      'element4'
+    ],
+    [
+      '36',
+      '38',
+      'element5'
+    ],
+    [
+      '40',
+      '41',
+      'element6'
+    ],
+    [
+      '45',
+      '47',
+      'element7'
+    ]
+  ]
+}

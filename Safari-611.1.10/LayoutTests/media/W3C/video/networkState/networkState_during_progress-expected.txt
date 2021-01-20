@@ -1,0 +1,12 @@
+videoElement.networkState should be NETWORK_LOADING during progress event
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "2" is "2"
+
+TEST COMPLETE
+spec reference
+
+
+

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html charset="utf-8">
+<body>
+<p>This tests clicking on the left of RTL text puts the caret at the end of the line.</p>
+<pre id="console"></pre>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var tests = [
+    {content: "&#1498; &#1500;&#1499;", expected: [2, 4]},
+    {content: "&#1499; &#1499;&#1499; &#1499;&#1499;&#1499;", expected: [2, 5, 8]},
+    {content: "&#1490;&#1499; &#1497;&#1490;&#1499; &#1497;&#1490;&#1499; &#1497;&#1490;&#1499; &#1497;&#1490;&#1499;",
+        expected: [3, 6, 10, 14, 18]},
+];
+
+function failed(message) {
+    console.innerHTML += 'FAIL: ' + message + '\n';
+}
+
+function passed(message) {
+    console.innerHTML += 'PASS: ' + message + '\n';
+}
+
+function runTest(container, test) {
+    container.style.width = '100%';
+    container.innerHTML = test.content;
+
+    // Starting from 5px, slowly increase the width until each word fits in one line.
+    var heightOfLine = container.offsetHeight;
+    var width = 5;
+    do {
+        container.style.width = width + 'px';
+        width++;
+    } while (container.offsetHeight > heightOfLine * test.expected.length);        
+    container.style.width = (width + 1) + 'px';
+
+    var lines = ['st', 'nd', 'rd', 'th'];
+    window.getSelection().setPosition(container.lastChild, container.lastChild.length);
+
+    for (var i = 0; i < test.expected.length; i++) {
+        if (!window.getSelection().isCollapsed)
+            return failed('the selection was not collapsed');
+
+        var range = window.getSelection().getRangeAt(0);
+        if (range.startContainer != container.firstChild)
+            return failed('caret was at a wrong container');
+
+        var action = 'on ' + test.content + ', caret is at ' + range.startOffset;
+        if (i == 0) action += ' initially';
+        else if (i == 1) action += ' after moving upwards once';
+        else if (i == 2) action += ' after moving upwards twice';
+        else action += ' after moving upwards ' + i + ' times';
+        if (range.startOffset != test.expected[test.expected.length - i - 1])
+            return failed(action + ' but expected at ' + test.expected[i]);
+        passed(action);
+        window.getSelection().modify('move', 'backward', 'line')
+    }
+}
+
+var console = document.getElementById('console');
+
+var container = document.createElement('div');
+container.contentEditable = true;
+container.setAttribute('dir', 'rtl');
+document.body.appendChild(container);
+
+for (var i = 0; i < tests.length; i++)
+    runTest(container, tests[i]);
+//container.innerHTML = '';
+
+</script>
+</body>
+</html>

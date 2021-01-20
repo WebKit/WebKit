@@ -1,0 +1,53 @@
+<style>
+    .box {
+        width: 300px;
+        height: 300px;
+        background-color: red;
+        background-position: 50px 50px; 
+        background-size: 50px 50px;
+        background-repeat: repeat;
+}
+</style>
+<body>
+    <h1>This test ensures drawPattern() decodes a new image frame when new encoded data is received.</h1>
+    <div class="box"></div>
+    <script>
+        // The maximum buffering interval for ImageResource is 500ms. Choose stallFor
+        // such that the image buffering is disabled in the network process.
+        function slowLargeImageSourceURL() {
+            return "http://127.0.0.1:8000/resources/load-and-stall.php"
+                 + "?name=../../../fast/images/resources/green-400x400.png" 
+                 + "&mimeType=image%2Fpng"
+                 + "&stallAt=512"
+                 + "&stallFor=0.6"
+                 + "&stallRepeat=True";
+        }
+
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        var image = new Image;
+        var box = document.querySelector(".box");
+
+        image.src = slowLargeImageSourceURL();
+
+        // Disable the CachedImage buffering as well. This has to happen after setting
+        // the src to make sure the Image element has created its CachedImage
+        if (window.internals)
+            internals.setForceUpdateImageDataEnabledForTesting(image, true);
+
+        box.style.backgroundImage = "url(" + image.src + ")";
+
+        var interval = setInterval(function() {
+            if (image.complete) {
+                clearInterval(interval);
+                testRunner.notifyDone();
+            }
+            else if (window.testRunner) {
+                // Force layout and drawing eveny 100ms.
+                document.body.offsetHeight;
+                testRunner.display();
+            }
+        }, 100);
+    </script>
+</body>

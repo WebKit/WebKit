@@ -1,0 +1,2 @@
+This test verifies that no crash occurs.
+PASS

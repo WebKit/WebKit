@@ -1,0 +1,81 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_library("cascaded_biquad_filter") {
+  sources = [
+    "cascaded_biquad_filter.cc",
+    "cascaded_biquad_filter.h",
+  ]
+  deps = [
+    "../../../api:array_view",
+    "../../../rtc_base:checks",
+  ]
+}
+
+rtc_library("legacy_delay_estimator") {
+  sources = [
+    "delay_estimator.cc",
+    "delay_estimator.h",
+    "delay_estimator_internal.h",
+    "delay_estimator_wrapper.cc",
+    "delay_estimator_wrapper.h",
+  ]
+  deps = [ "../../../rtc_base:checks" ]
+}
+
+rtc_library("pffft_wrapper") {
+  visibility = [ "../*" ]
+  sources = [
+    "pffft_wrapper.cc",
+    "pffft_wrapper.h",
+  ]
+  deps = [
+    "../../../api:array_view",
+    "../../../rtc_base:checks",
+    "//third_party/pffft",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("cascaded_biquad_filter_unittest") {
+    testonly = true
+
+    sources = [ "cascaded_biquad_filter_unittest.cc" ]
+    deps = [
+      ":cascaded_biquad_filter",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../test:test_support",
+      "//testing/gtest",
+    ]
+  }
+
+  rtc_library("legacy_delay_estimator_unittest") {
+    testonly = true
+
+    sources = [ "delay_estimator_unittest.cc" ]
+    deps = [
+      ":legacy_delay_estimator",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../test:test_support",
+      "//testing/gtest",
+    ]
+  }
+
+  rtc_library("pffft_wrapper_unittest") {
+    testonly = true
+    sources = [ "pffft_wrapper_unittest.cc" ]
+    deps = [
+      ":pffft_wrapper",
+      "../../../test:test_support",
+      "//testing/gtest",
+      "//third_party/pffft",
+    ]
+  }
+}

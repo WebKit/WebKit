@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Test int bit math.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.ternaryExpression = async () => {
+    let program = `
+        int foo(int x)
+        {
+            return x < 3 ? 4 : 5;
+        }
+        int bar(int x)
+        {
+            return x < 10 ? 11 : x < 12 ? 14 : 15;
+        }
+        int baz(int x)
+        {
+            return 3 < 4 ? x : 5;
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", [makeInt(767)]), 5);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(2)]), 4);
+    assert_equals(await callIntFunction(program, "bar", [makeInt(8)]), 11);
+    assert_equals(await callIntFunction(program, "bar", [makeInt(9)]), 11);
+    assert_equals(await callIntFunction(program, "bar", [makeInt(10)]), 14);
+    assert_equals(await callIntFunction(program, "bar", [makeInt(11)]), 14);
+    assert_equals(await callIntFunction(program, "bar", [makeInt(12)]), 15);
+    assert_equals(await callIntFunction(program, "bar", [makeInt(13)]), 15);
+    assert_equals(await callIntFunction(program, "baz", [makeInt(14)]), 14);
+    await checkFail(
+        `
+            int foo()
+            {
+                int x;
+                (4 < 5 ? x : 7) = 8;
+            }
+        `);
+    await checkFail(
+        `
+            int foo()
+            {
+                int x;
+                int y;
+                (0 < 1 ? x : y) = 42;
+                return x;
+            }
+        `);
+    await checkFail(
+        `
+            int foo()
+            {
+                int x;
+                int y;
+                thread int* z = &(0 < 1 ? x : y);
+                return *z;
+            }
+        `);
+    await checkFail(
+        `
+            int foo()
+            {
+                int x;
+                int y;
+                thread int[] z = @(0 < 1 ? x : y);
+                return *z;
+            }
+        `);
+    await checkFail(
+        `
+            int foo()
+            {
+                int x;
+                float y;
+                return 4 < 5 ? x : y;
+            }
+        `);
+    await checkFail(
+        `
+            int foo()
+            {
+                return 4 < 5 ? 6 : 7.0;
+            }
+        `);
+}
+
+runTests(whlslTests);
+</script>
+</html>

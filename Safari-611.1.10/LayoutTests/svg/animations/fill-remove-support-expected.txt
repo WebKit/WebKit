@@ -1,0 +1,60 @@
+SVG 1.1 dynamic animation tests
+
+
+This tests fill=remove for animate and animateMotion
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check state before/after animation
+PASS animateMotionRect.getBoundingClientRect().x is 10
+PASS animateMotionRect.getBBox().x is 10
+PASS animateRect.getBBox().x is 10
+PASS animateRect.getBoundingClientRect().x is 10
+PASS animateRect.x.animVal.value is 10
+PASS animateRect.x.baseVal.value is 10
+
+Check state right after the beginning of the animation
+PASS animateMotionRect.getBoundingClientRect().x is 20
+PASS animateMotionRect.getBBox().x is 10
+PASS animateRect.getBBox().x is 20
+PASS animateRect.getBoundingClientRect().x is 20
+PASS animateRect.x.animVal.value is 20
+PASS animateRect.x.baseVal.value is 10
+
+Check state in the middle of the animation
+PASS animateMotionRect.getBoundingClientRect().x is 115
+PASS animateMotionRect.getBBox().x is 10
+PASS animateRect.getBBox().x is 115
+PASS animateRect.getBoundingClientRect().x is 115
+PASS animateRect.x.animVal.value is 115
+PASS animateRect.x.baseVal.value is 10
+
+Check state just before the end of the animation
+PASS animateMotionRect.getBoundingClientRect().x is 210
+PASS animateMotionRect.getBBox().x is 10
+PASS animateRect.getBBox().x is 210
+PASS animateRect.getBoundingClientRect().x is 210
+PASS animateRect.x.animVal.value is 210
+PASS animateRect.x.baseVal.value is 10
+
+Check state before/after animation
+PASS animateMotionRect.getBoundingClientRect().x is 10
+PASS animateMotionRect.getBBox().x is 10
+PASS animateRect.getBBox().x is 10
+PASS animateRect.getBoundingClientRect().x is 10
+PASS animateRect.x.animVal.value is 10
+PASS animateRect.x.baseVal.value is 10
+
+Check state before/after animation
+PASS animateMotionRect.getBoundingClientRect().x is 10
+PASS animateMotionRect.getBBox().x is 10
+PASS animateRect.getBBox().x is 10
+PASS animateRect.getBoundingClientRect().x is 10
+PASS animateRect.x.animVal.value is 10
+PASS animateRect.x.baseVal.value is 10
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

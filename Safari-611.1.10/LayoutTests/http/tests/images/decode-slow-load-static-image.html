@@ -1,0 +1,46 @@
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <div></div>
+    <script>
+        function rejectedImageSourceURL() {
+            return "http://127.0.0.1:8000/resources/load-and-stall.php"
+                 + "?name=../../../fast/images/resources/100x100-red.psd" 
+                 + "&mimeType=image%2Fvnd.adobe.photoshop"
+                 + "&stallAt=1024";
+                 + "&stallFor=1";
+        }
+
+        function resolvedImageSourceURL() {
+            return "http://127.0.0.1:8000/resources/load-and-stall.php"
+                 + "?name=../../../fast/images/resources/green-400x400.png" 
+                 + "&mimeType=image%2Fpng"
+                 + "&stallAt=1024";
+                 + "&stallFor=1";
+        }
+
+        function loadImages(imageSourceURL) {
+            var promises = [];
+            for (var index = 0; index < 5; ++index) {
+                var image = new Image;
+                image.src = imageSourceURL();    
+                promises.push(image.decode());
+            }
+            return promises;
+        }
+
+        description("Test rejecting/resolving multiple decode() promises issued for the same image source.");
+        jsTestIsAsync = true;
+
+        Promise.all(loadImages(rejectedImageSourceURL)).catch(reason => {
+            debug("Decoding an image with unsupported format failed. Result is: " + reason);
+
+            Promise.all(loadImages(resolvedImageSourceURL)).then(() => {
+                debug("Decoding the image succeeded.");
+                finishJSTest();
+            });
+        });
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>

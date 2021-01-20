@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+</head>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+target_test((target, test) => {
+    const eventTracker = new EventTracker(target, ["pointerdown", "mousedown"]);
+
+    // Press the mouse once without calling preventDefault().
+    eventSender.mouseMoveTo(50, 50);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
+    // Press it again and call preventDefault().
+    target.addEventListener("pointerdown", event => event.preventDefault());
+    eventSender.mouseMoveTo(50, 50);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
+    eventTracker.assertMatchesEvents([
+        { type: "pointerdown", x: 50, y: 50 },
+        { type: "mousedown", x: 50, y: 50 },
+        { type: "pointerdown", x: 50, y: 50 },
+    ]);
+    test.done();
+}, `Testing that calling preventDefault() when handling a "pointerdown" event does not dispatch a "mousedown" event.`);
+
+</script>
+</body>
+</html>

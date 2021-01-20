@@ -1,0 +1,1 @@
+Tests geometry map with saturated offset. The test passes if WebKit doesn't crash or hit an assertion.

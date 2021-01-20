@@ -1,0 +1,10 @@
+Verify that we don't hang while handling an exception for an undefined native function.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Properly handled undefined native function
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

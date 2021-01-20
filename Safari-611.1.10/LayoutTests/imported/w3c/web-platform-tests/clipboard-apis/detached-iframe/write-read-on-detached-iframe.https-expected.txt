@@ -1,0 +1,4 @@
+
+
+FAIL Verify read and write fail on detached iframe promise_test: Unhandled rejection with value: object "Error: unimplemented"
+

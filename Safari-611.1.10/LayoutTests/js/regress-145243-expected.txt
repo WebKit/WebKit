@@ -1,0 +1,10 @@
+Verify that we don't use our caller's arguments object in an inlined function.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Correctly accessed inlined callee's own arguments
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

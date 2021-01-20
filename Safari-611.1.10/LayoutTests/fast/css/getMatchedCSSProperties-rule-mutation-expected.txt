@@ -1,0 +1,20 @@
+Test that CSSStyleRules returned by getMatchedCSSRules can't be mutated
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS rules.length is 2
+PASS rules[0].selectorText is originalText
+PASS rules[1].selectorText is originalText
+PASS rules[0].style.cssText is originalText
+PASS rules[1].style.cssText is originalText
+PASS rules[0].style.color is originalText
+PASS rules[1].style.color is originalText
+PASS rules[0].style.getPropertyValue('color') is originalText
+PASS rules[1].style.getPropertyValue('color') is originalText
+PASS rules[0].style.color is originalText
+PASS rules[1].style.color is originalText
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

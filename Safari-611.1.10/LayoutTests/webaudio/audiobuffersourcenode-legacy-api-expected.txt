@@ -1,0 +1,31 @@
+Testing that the legacy AudioBufferSourceNode API is not exposed on the unprefixed AudioBufferSourceNode
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS AudioBufferSourceNode.prototype.playbackState is undefined.
+PASS AudioBufferSourceNode.prototype.gain is undefined.
+PASS AudioBufferSourceNode.UNSCHEDULED_STATE is undefined.
+PASS AudioBufferSourceNode.SCHEDULED_STATE is undefined.
+PASS AudioBufferSourceNode.PLAYING_STATE is undefined.
+PASS AudioBufferSourceNode.FINISHED_STATE is undefined.
+PASS AudioBufferSourceNode.prototype.UNSCHEDULED_STATE is undefined.
+PASS AudioBufferSourceNode.prototype.SCHEDULED_STATE is undefined.
+PASS AudioBufferSourceNode.prototype.PLAYING_STATE is undefined.
+PASS AudioBufferSourceNode.prototype.FINISHED_STATE is undefined.
+PASS bufferSource.playbackState is undefined.
+PASS bufferSource.gain is undefined.
+PASS bufferSource.UNSCHEDULED_STATE is undefined.
+PASS bufferSource.SCHEDULED_STATE is undefined.
+PASS bufferSource.PLAYING_STATE is undefined.
+PASS bufferSource.FINISHED_STATE is undefined.
+PASS bufferSource.__proto__.playbackState is undefined.
+PASS bufferSource.__proto__.gain is undefined.
+PASS bufferSource.__proto__.UNSCHEDULED_STATE is undefined.
+PASS bufferSource.__proto__.SCHEDULED_STATE is undefined.
+PASS bufferSource.__proto__.PLAYING_STATE is undefined.
+PASS bufferSource.__proto__.FINISHED_STATE is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

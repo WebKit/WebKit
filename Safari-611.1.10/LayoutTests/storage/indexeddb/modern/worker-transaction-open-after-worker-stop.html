@@ -1,0 +1,25 @@
+<script type="text/javascript">
+if (testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function finishTest()
+{	
+    if (testRunner)
+        testRunner.notifyDone();
+}
+
+var w = new Worker('resources/worker-transaction-open-after-worker-stop.js');
+w.onmessage = function() {
+	w.terminate();
+	
+	// Queue up an "open" that will necessarily queue up behind the many 
+	// transactions that the Worker queued up.
+    indexedDB.open('test').onsuccess = function (event) {
+		finishTest();
+    };
+}
+
+</script>
+If this test completes without crashing, it passed.

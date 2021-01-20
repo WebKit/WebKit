@@ -1,0 +1,39 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/000.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/002.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/003.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/004.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/005.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/006.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/007.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/008.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/009.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/010.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/011.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/012.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/013.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/014.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/015.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/016.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/017.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/018.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/019.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/020.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/021.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/microdata/test

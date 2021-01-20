@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<!--
+    This test creates a situation where the child transform layer's position
+    needs to take into account the rounding that is applied to m_graphicsLayer.
+-->
+<style>
+#animDiv {
+  position: absolute;
+  width: 176px;
+  height: 91px;
+  background-image: none;
+  background-color: #cc3500;
+  left: -164.5px;
+  top: 184.5px;
+}
+
+#clipper {
+  overflow: hidden;
+  width: 700px;
+  height: 700px;
+  margin: -10px;
+}
+
+#shake {
+  position:absolute;
+  width:200px;
+  height:64px;
+  left:51px;
+  top:121px;
+  border-style:solid;border-width:1px;
+  transform:translateZ(0);
+}
+
+#container {
+  perspective: 1400px;
+  /* Without this, container will paint into composited ancestor, and prevent
+     us from seeing the bug. */
+  transform: translateZ(0);
+}
+</style>
+<div id="clipper">
+  <div id="container">
+    <div id="animDiv"></div>
+    <div id="shake"></div>
+  </div>
+</div>

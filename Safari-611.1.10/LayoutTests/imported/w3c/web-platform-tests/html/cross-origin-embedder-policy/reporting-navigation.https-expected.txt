@@ -1,0 +1,132 @@
+
+FAIL parent: (none), target: (none), with empty frame: false undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: (none), target: (none), with empty frame: true undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: (none), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: false undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: (none), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: true undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: false undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: true undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: |header(cross-origin-embedder-policy,require-corp), target: (none), with empty frame: false undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: |header(cross-origin-embedder-policy,require-corp), target: (none), with empty frame: true undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: (none), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: false undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: (none), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: true undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: false undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: true undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: (none), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: false undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: (none), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: true undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: false undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: true undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: false undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: true undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: (none), with empty frame: false undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: (none), with empty frame: true undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: false undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: true undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: false undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: true undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy-report-only,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: false undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+FAIL parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy-report-only,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: true undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+

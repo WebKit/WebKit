@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<style>
+html, body {
+    margin: 0;
+    font-family: -apple-system;
+}
+
+#source, #destination {
+    width: 100%;
+    margin: 0;
+}
+
+#destination {
+    border: 1px blue green;
+    height: 1024px;
+}
+
+#source {
+    font-size: 150px;
+    white-space: nowrap;
+    height: 200px;
+}
+</style>
+<body>
+    <div id="source"><strong style="color: purple">Rich text</strong></div>
+    <div id="destination" contenteditable></div>
+    <pre id="output"></pre>
+</body>
+<script>
+
+// The contents of this `result` dictionary will contain a map of {event type => {MIME type => data}}.
+result = {};
+
+function updateResultWithEvent(event) {
+    const eventData = {};
+    for (const type of event.dataTransfer.types)
+        eventData[type] = event.dataTransfer.getData(type);
+    result[event.type] = eventData;
+    if (event.type === "drop")
+        output.textContent = JSON.stringify(result, null, "    ");
+    event.preventDefault();
+}
+
+destination.addEventListener("dragover", updateResultWithEvent);
+destination.addEventListener("drop", updateResultWithEvent);
+
+getSelection().setBaseAndExtent(source, 0, source, 1);
+
+if (window.testRunner && window.eventSender && window.internals) {
+    internals.settings.setCustomPasteboardDataEnabled(true);
+    testRunner.dumpAsText();
+    eventSender.mouseMoveTo(100, 100);
+    eventSender.mouseDown();
+    eventSender.leapForward(500);
+    eventSender.mouseMoveTo(100, 400);
+    eventSender.mouseUp();
+}
+</script>
+</html>

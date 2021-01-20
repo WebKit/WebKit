@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that document.importNode(null) throws a TypeError");
+
+shouldThrowErrorName("document.importNode(null)", "TypeError");
+shouldThrowErrorName("document.importNode()", "TypeError");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

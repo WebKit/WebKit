@@ -1,0 +1,24 @@
+Test request interception in combination with fragments.
+
+
+== Running test suite: Network.interceptWithRequest
+-- Running test case: Network.interceptRequest.URLWithoutFragmentBaseline
+Triggering load...
+Request URL: http://127.0.0.1:8000/inspector/network/resources/stylesheet-with-sourcemap.css?one
+Response URL: http://127.0.0.1:8000/inspector/network/resources/stylesheet-with-sourcemap.css?one
+
+-- Running test case: Network.interceptRequest.URLWithFragmentBaseline
+Triggering load...
+Request URL: http://127.0.0.1:8000/inspector/network/resources/stylesheet-with-sourcemap.css?two#fragment
+Response URL: http://127.0.0.1:8000/inspector/network/resources/stylesheet-with-sourcemap.css?two#fragment
+
+-- Running test case: Network.interceptRequest.URLAddFragment
+Triggering load...
+Request URL: http://127.0.0.1:8000/inspector/network/resources/stylesheet.css
+Response URL: http://127.0.0.1:8000/inspector/network/resources/stylesheet.css#fragment
+
+-- Running test case: Network.interceptRequest.URLRemoveFragment
+Triggering load...
+Request URL: http://127.0.0.1:8000/inspector/network/resources/stylesheet.css#fragment
+Response URL: http://127.0.0.1:8000/inspector/network/resources/stylesheet.css
+

@@ -1,0 +1,7 @@
+Blocked access to external URL http://www.opengl.org/img/opengl_logo.jpg
+Blocked access to external URL http://www.opengl.org/img/opengl_logo.jpg
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: resources/webgl_test_files/conformance/textures/origin-clean-conformance.html
+FAIL
+

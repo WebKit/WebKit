@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<style>
+    div {
+        font-size: 200px;
+    }
+</style>
+<script>
+    onload = () => {
+        const textNode = document.querySelector('div').childNodes[0];
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.setStart(textNode, 0);
+        range.setEnd(textNode, 4);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+</script>
+
+<div>&#x628;-&#x0628;&#x0651;-&#x628;</div>

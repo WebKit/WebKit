@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test encrypting using AES-CBC with an imported 128bit key");
+
+jsTestIsAsync = true;
+
+var extractable = false;
+
+var aesCbcParams = {
+    name: "aes-cbc",
+    iv: asciiToUint8Array("jnOw99oOZFLIEPMr"),
+}
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+
+// Test 0 ~ 33 bytes plain text data.
+// It covers the boundary values where the padding size are changed, namely, 0, 1, 15, 16, 17, 31, 32, and 33.
+// 16 comes from the AES-CBC block size, which is 128bit = 16 bytes.
+
+// Pair of plain text and expected cipher text
+var testCases = [
+  [
+    "",
+    "54695f2b49d2c35b5f4675c59669c7d5"
+  ],
+  [
+    "A",
+    "7f3224da4b207bd3b55a3ba55f95c8dd"
+  ],
+  [
+    "AB",
+    "05b7b4caa28897ff5fa0b8cac9821070"
+  ],
+  [
+    "ABC",
+    "c5fcd82c93ca70630e77871408cb60a5"
+  ],
+  [
+    "ABCD",
+    "8c68b0ba2952761877f30e26eb43e98b"
+  ],
+  [
+    "ABCDE",
+    "6e5845ce085801492ecdb3da47e54e0d"
+  ],
+  [
+    "ABCDEF",
+    "a2bf7011f0560504fd2d3f6f4fa85179"
+  ],
+  [
+    "ABCDEFG",
+    "bfbe3717d97b8e8dbb362aa32a5d6715"
+  ],
+  [
+    "ABCDEFGH",
+    "ac55dadf6d3d1be1fede0e33e9de021a"
+  ],
+  [
+    "ABCDEFGHI",
+    "f5adfd70b6a907441aa1e1b8d03138b8"
+  ],
+  [
+    "ABCDEFGHIJ",
+    "b4a2d688f3a9bd307efe62643d80ead0"
+  ],
+  [
+    "ABCDEFGHIJK",
+    "d5cce76a9416b3c00c4d2e0bb2879134"
+  ],
+  [
+    "ABCDEFGHIJKL",
+    "7b87f2b55433d595ed02cd3417c510a4"
+  ],
+  [
+    "ABCDEFGHIJKLM",
+    "29f5af157bda78fdde9550aaadfc467d"
+  ],
+  [
+    "ABCDEFGHIJKLMN",
+    "bd86ff3b780b56d4faf98bd7f818de59"
+  ],
+  [
+    "ABCDEFGHIJKLMNO",
+    "8f7d4ffd08155e67b2f936aa7eedd918"
+  ],
+  [
+    "ABCDEFGHIJKLMNOP",
+    "bb57e6bd078639a31e3762035652ddba8b641840a083e33027a0aea305e95a64"
+  ],
+  [
+    "ABCDEFGHIJKLMNOPQ",
+    "bb57e6bd078639a31e3762035652ddbaad705f7fda061c4486fbce2b3a470b59"
+  ],
+  [
+    "ABCDEFGHIJKLMNOPQR",
+    "bb57e6bd078639a31e3762035652ddbad5c1de41aa0a5d2f03dd129e419b99b9"
+  ],
+  [
+    "ABCDEFGHIJKLMNOPQRS",
+    "bb57e6bd078639a31e3762035652ddba9ca7c65d2137e0e4e1b752d7d5a7619a"
+  ],
+  [
+    "ABCDEFGHIJKLMNOPQRST",
+    "bb57e6bd078639a31e3762035652ddba946ca5063ae30b7b068b7a0ddb573143"
+  ],
+  [
+    "ABCDEFGHIJKLMNOPQRSTU",
+    "bb57e6bd078639a31e3762035652ddba3e53d6b22634ba2d0033aa1f74984017"
+  ],
+  [
+    "ABCDEFGHIJKLMNOPQRSTUV",
+    "bb57e6bd078639a31e3762035652ddba9be121a85ec7b87d14d069821f241817"
+  ],
+  [
+    "ABCDEFGHIJKLMNOPQRSTUVW",
+    "bb57e6bd078639a31e3762035652ddbaeb91126c4649fbf256d2698a8b3cd108"
+  ],
+  [
+    "ABCDEFGHIJKLMNOPQRSTUVWX",
+    "bb57e6bd078639a31e3762035652ddba5fda70f10d9c190691a58c8014226b09"
+  ],
+  [
+    "ABCDEFGHIJKLMNOPQRSTUVWXY",
+    "bb57e6bd078639a31e3762035652ddbaca22ea606b337f0e549bd6c8134026c2"
+  ],
+  [
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "bb57e6bd078639a31e3762035652ddbac5883abd9ff470ad8d5aefe0726131b8"
+  ],
+  [
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZA",
+    "bb57e6bd078639a31e3762035652ddba0ba1680b7ca9ca18f9bdc30a2213e138"
+  ],
+  [
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZAB",
+    "bb57e6bd078639a31e3762035652ddba34795f08b688add2ac28d579c1e4a735"
+  ],
+  [
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZABC",
+    "bb57e6bd078639a31e3762035652ddba5e6174bbd7d9848e19dadc7316a51905"
+  ],
+  [
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZABCD",
+    "bb57e6bd078639a31e3762035652ddba758897c9b84584efaf7bba27e80e2971"
+  ],
+  [
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDE",
+    "bb57e6bd078639a31e3762035652ddba23aecf5b5981c3a0b9967c6d5faf2f44"
+  ],
+  [
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEF",
+    "bb57e6bd078639a31e3762035652ddbace7c8364cc84b579dbb16765cba58de65123694ddc958e0c9436f6687338fc6e"
+  ],
+  [
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFG",
+    "bb57e6bd078639a31e3762035652ddbace7c8364cc84b579dbb16765cba58de659650a237cd9a2764e9b92749843fd22"
+  ]
+];
+
+Promise.all(testCases.map(function(testCase){
+    var plainText = testCase[0];
+    var expectedCipherText = testCase[1];
+    return crypto.subtle.importKey("raw", rawKey, "aes-cbc", extractable, ["encrypt"]).then(function(key) {
+        return crypto.subtle.encrypt(aesCbcParams, key, asciiToUint8Array(plainText));
+    }).then(function(cipherText) {
+        return {
+            plainText: plainText,
+            cipherText: cipherText,
+            expectedCipherText: expectedCipherText
+        };
+    });
+})).then(function(results) {
+    for (var result of results) {
+        plainText = result.plainText;
+        cipherText = result.cipherText;
+        expectedCipherText = result.expectedCipherText;
+        debug("Plain text: " + plainText);
+        shouldBe("bytesToHexString(cipherText)", "expectedCipherText");
+    }
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

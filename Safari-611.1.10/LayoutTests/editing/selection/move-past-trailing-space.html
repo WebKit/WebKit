@@ -1,0 +1,33 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for (i = 0; i < 12; i++) {
+        moveSelectionForwardByCharacterCommand();
+    }
+}
+
+</script>
+</head> 
+<body>
+<div id="root" class="editing" style="-webkit-user-modify: read-write; -webkit-line-break: normal; width: 200px; direction: rtl; font-family: Lucida Grande;">
+<span id="test">before &#x05d0;&#x05d7;&#x05e8;&#x05d9; &#x05d0;&#x05e0;&#x05e6;&#x05d9;&#x05e7;&#x05dc;&#x05d5;&#x05e4;&#x05d3;&#x05d9;&#x05d4;</span>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

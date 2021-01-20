@@ -1,0 +1,5 @@
+Blocked access to external URL http://www1.localhost:8801/content-security-policy/frame-ancestors/support/frame-ancestors.sub.html?policy=&#x27;self&%23x27;
+
+
+FAIL A 'frame-ancestors' CSP directive with a value 'same' should block render in same-origin nested frames. assert_unreached: Inner IFrame msg: The IFrame should have been blocked (or cross-origin). It wasn't. Reached unreachable code
+

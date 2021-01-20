@@ -1,0 +1,672 @@
+Checking pause locations when stepping with "stepInto".
+
+
+== Running test suite: Debugger.stepInto
+-- Running test case: Debugger.stepInto.statements
+PAUSED (debugger-statement)
+PAUSE AT testStatements:12:5
+      8    function c() { return "c"; }
+      9
+     10    function testStatements() {
+ ->  11        |debugger;
+     12        let x = 1;
+     13        let y = 2;
+     14    }
+
+PAUSE AT testStatements:13:5
+      9
+     10    function testStatements() {
+     11        debugger;
+ ->  12        |let x = 1;
+     13        let y = 2;
+     14    }
+     15
+
+PAUSE AT testStatements:14:5
+     10    function testStatements() {
+     11        debugger;
+     12        let x = 1;
+ ->  13        |let y = 2;
+     14    }
+     15
+     16    function testFunctions() {
+
+PAUSE AT testStatements:15:2
+     11        debugger;
+     12        let x = 1;
+     13        let y = 2;
+ ->  14    }|
+     15
+     16    function testFunctions() {
+     17        debugger;
+
+RESUMED
+
+-- Running test case: Debugger.stepInto.functions
+PAUSED (debugger-statement)
+PAUSE AT testFunctions:18:5
+     14    }
+     15
+     16    function testFunctions() {
+ ->  17        |debugger;
+     18        let before = 1;
+     19        a();
+     20        let after = 2;
+
+PAUSE AT testFunctions:19:5
+     15
+     16    function testFunctions() {
+     17        debugger;
+ ->  18        |let before = 1;
+     19        a();
+     20        let after = 2;
+     21    }
+
+PAUSE AT testFunctions:20:5
+     16    function testFunctions() {
+     17        debugger;
+     18        let before = 1;
+ ->  19        |a();
+     20        let after = 2;
+     21    }
+     22
+
+PAUSE AT a:7:16
+      3    <script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+ ->   6    function a() { |return "a"; }
+      7    function b() { return "b"; }
+      8    function c() { return "c"; }
+      9
+
+PAUSE AT a:7:29
+      3    <script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+ ->   6    function a() { return "a"; }|
+      7    function b() { return "b"; }
+      8    function c() { return "c"; }
+      9
+
+PAUSE AT testFunctions:21:5
+     17        debugger;
+     18        let before = 1;
+     19        a();
+ ->  20        |let after = 2;
+     21    }
+     22
+     23    function testEval() {
+
+PAUSE AT testFunctions:22:2
+     18        let before = 1;
+     19        a();
+     20        let after = 2;
+ ->  21    }|
+     22
+     23    function testEval() {
+     24        debugger;
+
+RESUMED
+
+-- Running test case: Debugger.stepInto.eval
+PAUSED (debugger-statement)
+PAUSE AT testEval:25:5
+     21    }
+     22
+     23    function testEval() {
+ ->  24        |debugger;
+     25        let before = 1;
+     26        eval("1 + 1");
+     27        let after = 2;
+
+PAUSE AT testEval:26:5
+     22
+     23    function testEval() {
+     24        debugger;
+ ->  25        |let before = 1;
+     26        eval("1 + 1");
+     27        let after = 2;
+     28    }
+
+PAUSE AT testEval:27:5
+     23    function testEval() {
+     24        debugger;
+     25        let before = 1;
+ ->  26        |eval("1 + 1");
+     27        let after = 2;
+     28    }
+     29
+
+PAUSE AT Eval Code:1:1
+--- Source Unavailable ---
+
+PAUSE AT Eval Code:1:6
+--- Source Unavailable ---
+
+PAUSE AT testEval:28:5
+     24        debugger;
+     25        let before = 1;
+     26        eval("1 + 1");
+ ->  27        |let after = 2;
+     28    }
+     29
+     30    function testAnonymousFunction() {
+
+PAUSE AT testEval:29:2
+     25        let before = 1;
+     26        eval("1 + 1");
+     27        let after = 2;
+ ->  28    }|
+     29
+     30    function testAnonymousFunction() {
+     31        (function() {
+
+RESUMED
+
+-- Running test case: Debugger.stepInto.anonymousFunction
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:33:9
+     29
+     30    function testAnonymousFunction() {
+     31        (function() {
+ ->  32            |debugger;
+     33            let inner = 1;
+     34        })();
+     35        let outer = 2;
+
+PAUSE AT <anonymous>:34:9
+     30    function testAnonymousFunction() {
+     31        (function() {
+     32            debugger;
+ ->  33            |let inner = 1;
+     34        })();
+     35        let outer = 2;
+     36    }
+
+PAUSE AT <anonymous>:35:6
+     31        (function() {
+     32            debugger;
+     33            let inner = 1;
+ ->  34        }|)();
+     35        let outer = 2;
+     36    }
+     37
+
+PAUSE AT testAnonymousFunction:36:5
+     32            debugger;
+     33            let inner = 1;
+     34        })();
+ ->  35        |let outer = 2;
+     36    }
+     37
+     38    function testCommas() {
+
+PAUSE AT testAnonymousFunction:37:2
+     33            let inner = 1;
+     34        })();
+     35        let outer = 2;
+ ->  36    }|
+     37
+     38    function testCommas() {
+     39        debugger;
+
+RESUMED
+
+-- Running test case: Debugger.stepInto.commas
+PAUSED (debugger-statement)
+PAUSE AT testCommas:40:5
+     36    }
+     37
+     38    function testCommas() {
+ ->  39        |debugger;
+     40        let x = 1,
+     41            y = 2,
+     42            z = 3;
+
+PAUSE AT testCommas:41:5
+     37
+     38    function testCommas() {
+     39        debugger;
+ ->  40        |let x = 1,
+     41            y = 2,
+     42            z = 3;
+     43        a(), b(), c();
+
+PAUSE AT testCommas:42:9
+     38    function testCommas() {
+     39        debugger;
+     40        let x = 1,
+ ->  41            |y = 2,
+     42            z = 3;
+     43        a(), b(), c();
+     44        true && (a(), b(), c()) && true;
+
+PAUSE AT testCommas:43:9
+     39        debugger;
+     40        let x = 1,
+     41            y = 2,
+ ->  42            |z = 3;
+     43        a(), b(), c();
+     44        true && (a(), b(), c()) && true;
+     45    }
+
+PAUSE AT testCommas:44:5
+     40        let x = 1,
+     41            y = 2,
+     42            z = 3;
+ ->  43        |a(), b(), c();
+     44        true && (a(), b(), c()) && true;
+     45    }
+     46
+
+PAUSE AT a:7:16
+      3    <script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+ ->   6    function a() { |return "a"; }
+      7    function b() { return "b"; }
+      8    function c() { return "c"; }
+      9
+
+PAUSE AT a:7:29
+      3    <script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+ ->   6    function a() { return "a"; }|
+      7    function b() { return "b"; }
+      8    function c() { return "c"; }
+      9
+
+PAUSE AT testCommas:44:10
+     40        let x = 1,
+     41            y = 2,
+     42            z = 3;
+ ->  43        a(), |b(), c();
+     44        true && (a(), b(), c()) && true;
+     45    }
+     46
+
+PAUSE AT b:8:16
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+      6    function a() { return "a"; }
+ ->   7    function b() { |return "b"; }
+      8    function c() { return "c"; }
+      9
+     10    function testStatements() {
+
+PAUSE AT b:8:29
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+      6    function a() { return "a"; }
+ ->   7    function b() { return "b"; }|
+      8    function c() { return "c"; }
+      9
+     10    function testStatements() {
+
+PAUSE AT testCommas:44:15
+     40        let x = 1,
+     41            y = 2,
+     42            z = 3;
+ ->  43        a(), b(), |c();
+     44        true && (a(), b(), c()) && true;
+     45    }
+     46
+
+PAUSE AT c:9:16
+      5    <script>
+      6    function a() { return "a"; }
+      7    function b() { return "b"; }
+ ->   8    function c() { |return "c"; }
+      9
+     10    function testStatements() {
+     11        debugger;
+
+PAUSE AT c:9:29
+      5    <script>
+      6    function a() { return "a"; }
+      7    function b() { return "b"; }
+ ->   8    function c() { return "c"; }|
+      9
+     10    function testStatements() {
+     11        debugger;
+
+PAUSE AT testCommas:45:5
+     41            y = 2,
+     42            z = 3;
+     43        a(), b(), c();
+ ->  44        |true && (a(), b(), c()) && true;
+     45    }
+     46
+     47    function testChainedExpressions() {
+
+PAUSE AT a:7:16
+      3    <script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+ ->   6    function a() { |return "a"; }
+      7    function b() { return "b"; }
+      8    function c() { return "c"; }
+      9
+
+PAUSE AT a:7:29
+      3    <script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+ ->   6    function a() { return "a"; }|
+      7    function b() { return "b"; }
+      8    function c() { return "c"; }
+      9
+
+PAUSE AT testCommas:45:19
+     41            y = 2,
+     42            z = 3;
+     43        a(), b(), c();
+ ->  44        true && (a(), |b(), c()) && true;
+     45    }
+     46
+     47    function testChainedExpressions() {
+
+PAUSE AT b:8:16
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+      6    function a() { return "a"; }
+ ->   7    function b() { |return "b"; }
+      8    function c() { return "c"; }
+      9
+     10    function testStatements() {
+
+PAUSE AT b:8:29
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+      6    function a() { return "a"; }
+ ->   7    function b() { return "b"; }|
+      8    function c() { return "c"; }
+      9
+     10    function testStatements() {
+
+PAUSE AT testCommas:45:24
+     41            y = 2,
+     42            z = 3;
+     43        a(), b(), c();
+ ->  44        true && (a(), b(), |c()) && true;
+     45    }
+     46
+     47    function testChainedExpressions() {
+
+PAUSE AT c:9:16
+      5    <script>
+      6    function a() { return "a"; }
+      7    function b() { return "b"; }
+ ->   8    function c() { |return "c"; }
+      9
+     10    function testStatements() {
+     11        debugger;
+
+PAUSE AT c:9:29
+      5    <script>
+      6    function a() { return "a"; }
+      7    function b() { return "b"; }
+ ->   8    function c() { return "c"; }|
+      9
+     10    function testStatements() {
+     11        debugger;
+
+PAUSE AT testCommas:46:2
+     42            z = 3;
+     43        a(), b(), c();
+     44        true && (a(), b(), c()) && true;
+ ->  45    }|
+     46
+     47    function testChainedExpressions() {
+     48        debugger;
+
+RESUMED
+
+-- Running test case: Debugger.stepInto.chainedExpressions
+PAUSED (debugger-statement)
+PAUSE AT testChainedExpressions:49:5
+     45    }
+     46
+     47    function testChainedExpressions() {
+ ->  48        |debugger;
+     49        a() && b() && c();
+     50    }
+     51
+
+PAUSE AT testChainedExpressions:50:5
+     46
+     47    function testChainedExpressions() {
+     48        debugger;
+ ->  49        |a() && b() && c();
+     50    }
+     51
+     52    function testDeclarations() {
+
+PAUSE AT a:7:16
+      3    <script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+ ->   6    function a() { |return "a"; }
+      7    function b() { return "b"; }
+      8    function c() { return "c"; }
+      9
+
+PAUSE AT a:7:29
+      3    <script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+ ->   6    function a() { return "a"; }|
+      7    function b() { return "b"; }
+      8    function c() { return "c"; }
+      9
+
+PAUSE AT testChainedExpressions:50:12
+     46
+     47    function testChainedExpressions() {
+     48        debugger;
+ ->  49        a() && |b() && c();
+     50    }
+     51
+     52    function testDeclarations() {
+
+PAUSE AT b:8:16
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+      6    function a() { return "a"; }
+ ->   7    function b() { |return "b"; }
+      8    function c() { return "c"; }
+      9
+     10    function testStatements() {
+
+PAUSE AT b:8:29
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+      6    function a() { return "a"; }
+ ->   7    function b() { return "b"; }|
+      8    function c() { return "c"; }
+      9
+     10    function testStatements() {
+
+PAUSE AT testChainedExpressions:50:19
+     46
+     47    function testChainedExpressions() {
+     48        debugger;
+ ->  49        a() && b() && |c();
+     50    }
+     51
+     52    function testDeclarations() {
+
+PAUSE AT c:9:16
+      5    <script>
+      6    function a() { return "a"; }
+      7    function b() { return "b"; }
+ ->   8    function c() { |return "c"; }
+      9
+     10    function testStatements() {
+     11        debugger;
+
+PAUSE AT c:9:29
+      5    <script>
+      6    function a() { return "a"; }
+      7    function b() { return "b"; }
+ ->   8    function c() { return "c"; }|
+      9
+     10    function testStatements() {
+     11        debugger;
+
+PAUSE AT testChainedExpressions:51:2
+     47    function testChainedExpressions() {
+     48        debugger;
+     49        a() && b() && c();
+ ->  50    }|
+     51
+     52    function testDeclarations() {
+     53        debugger;
+
+RESUMED
+
+-- Running test case: Debugger.stepInto.declarations
+PAUSED (debugger-statement)
+PAUSE AT testDeclarations:54:5
+     50    }
+     51
+     52    function testDeclarations() {
+ ->  53        |debugger;
+     54        let x = a(),
+     55            y = b(),
+     56            z = c();
+
+PAUSE AT testDeclarations:55:5
+     51
+     52    function testDeclarations() {
+     53        debugger;
+ ->  54        |let x = a(),
+     55            y = b(),
+     56            z = c();
+     57    }
+
+PAUSE AT a:7:16
+      3    <script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+ ->   6    function a() { |return "a"; }
+      7    function b() { return "b"; }
+      8    function c() { return "c"; }
+      9
+
+PAUSE AT a:7:29
+      3    <script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+ ->   6    function a() { return "a"; }|
+      7    function b() { return "b"; }
+      8    function c() { return "c"; }
+      9
+
+PAUSE AT testDeclarations:56:9
+     52    function testDeclarations() {
+     53        debugger;
+     54        let x = a(),
+ ->  55            |y = b(),
+     56            z = c();
+     57    }
+     58
+
+PAUSE AT b:8:16
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+      6    function a() { return "a"; }
+ ->   7    function b() { |return "b"; }
+      8    function c() { return "c"; }
+      9
+     10    function testStatements() {
+
+PAUSE AT b:8:29
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+      6    function a() { return "a"; }
+ ->   7    function b() { return "b"; }|
+      8    function c() { return "c"; }
+      9
+     10    function testStatements() {
+
+PAUSE AT testDeclarations:57:9
+     53        debugger;
+     54        let x = a(),
+     55            y = b(),
+ ->  56            |z = c();
+     57    }
+     58
+     59    function testInnerFunction() {
+
+PAUSE AT c:9:16
+      5    <script>
+      6    function a() { return "a"; }
+      7    function b() { return "b"; }
+ ->   8    function c() { |return "c"; }
+      9
+     10    function testStatements() {
+     11        debugger;
+
+PAUSE AT c:9:29
+      5    <script>
+      6    function a() { return "a"; }
+      7    function b() { return "b"; }
+ ->   8    function c() { return "c"; }|
+      9
+     10    function testStatements() {
+     11        debugger;
+
+PAUSE AT testDeclarations:58:2
+     54        let x = a(),
+     55            y = b(),
+     56            z = c();
+ ->  57    }|
+     58
+     59    function testInnerFunction() {
+     60        function alpha() {
+
+RESUMED
+
+-- Running test case: Debugger.stepInto.innerFunction
+PAUSED (debugger-statement)
+PAUSE AT beta:65:9
+     61            beta();
+     62        }
+     63        function beta() {
+ ->  64            |debugger;
+     65        }
+     66        alpha();
+     67    }
+
+PAUSE AT beta:66:6
+     62        }
+     63        function beta() {
+     64            debugger;
+ ->  65        }|
+     66        alpha();
+     67    }
+     68
+
+PAUSE AT alpha:63:6
+     59    function testInnerFunction() {
+     60        function alpha() {
+     61            beta();
+ ->  62        }|
+     63        function beta() {
+     64            debugger;
+     65        }
+
+PAUSE AT testInnerFunction:68:2
+     64            debugger;
+     65        }
+     66        alpha();
+ ->  67    }|
+     68
+     69    // ---------
+     70
+
+RESUMED
+

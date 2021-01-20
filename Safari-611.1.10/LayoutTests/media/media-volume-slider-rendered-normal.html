@@ -1,0 +1,71 @@
+<html>
+<head>
+    <title>Test rendering of volume slider of video tag</title>
+    <script src=media-file.js></script>
+    <script src=media-controls.js></script>
+    <script src=video-test.js></script>
+    <script>
+        var video;
+        var panel;
+        var threshold = 2;
+
+        var muteButtonCoordinates;
+        var volumeSliderCoordinates;
+
+        var volumeSliderElement;
+        var muteButtonElement;
+
+        function init()
+        {
+            internals.suspendAnimations(); // Volumebar can be animated and we would need a timeout to have it shown.
+            video = document.getElementsByTagName("video")[0];
+            video.src = findMediaFile("video", "content/test");
+        }
+
+        function test()
+        {
+            if (window.eventSender) {
+                try {
+                    muteButtonCoordinates = mediaControlsButtonCoordinates(video, "mute-button");
+                    volumeSliderCoordinates = mediaControlsButtonCoordinates(video, "volume-slider-container");
+                } catch (exception) {
+                    testRunner.notifyDone();
+                    return;
+                }
+            }
+
+            panel = mediaControlsElement(internals.shadowRoot(video).firstChild, "-webkit-media-controls-panel");
+            volumeSliderElement = mediaControlsElement(internals.shadowRoot(video).firstChild, "-webkit-media-controls-volume-slider-container");
+            muteButtonElement = mediaControlsElement(internals.shadowRoot(video).firstChild, "-webkit-media-controls-mute-button");
+
+            // Ensure paint without controls.
+            video.controls = false;
+            document.body.offsetTop;
+
+            // Ensure (re)paint with controls displayed.
+            video.controls = true;
+            document.body.offsetTop;
+
+            // Move the mouse back over the mute button.
+            eventSender.mouseMoveTo(muteButtonCoordinates[0], muteButtonCoordinates[1]);
+
+            // Test that the left offset of both controls is equal.
+            consoleWrite("");
+            consoleWrite("** The volume slider should have almost the same left offset as the mute button **");
+            testExpected("volumeSliderElement.offsetLeft >= muteButtonElement.offsetLeft - threshold", true);
+            testExpected("volumeSliderElement.offsetLeft <= muteButtonElement.offsetLeft + threshold", true);
+
+            consoleWrite("");
+            consoleWrite("** The volume slider should be on top of the mute button **");
+            testExpected("volumeSliderElement.offsetTop < muteButtonElement.offsetTop", true);
+
+            testRunner.notifyDone();
+        }
+    </script>
+</head>
+<body onload="init()">
+    Tests that the video controls are properly rendered when the display none is set and unset.<br>
+
+    <video oncanplaythrough="test()" controls preload="true"></video>
+</body>
+</html>

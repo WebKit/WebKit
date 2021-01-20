@@ -1,0 +1,38 @@
+<head>
+    <style>
+        img {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            top: 200px;
+            }
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <img src="resources/annotation.pdf">
+    <script>
+        description("Test the cached ImageBuffer of a PDF docoument image won't be thrown away if the image moves.");
+        jsTestIsAsync = true;
+
+        function moveImageLoop(image, stepDistance, stepCount) {
+            var step = 0;
+            function loop() {
+                image.style.left = step * stepDistance + 'px';
+                if (++step < stepCount) {
+                    requestAnimationFrame(loop);
+                    return;
+                }
+
+                if (window.internals) {
+                    window.image = image;
+                    shouldBe("internals.pdfDocumentCachingCount(window.image)", "1");
+                }
+                finishJSTest();
+            }
+            loop();
+        }
+        moveImageLoop(document.querySelector("img"), 50, 10);
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>

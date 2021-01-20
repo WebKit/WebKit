@@ -1,0 +1,10 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <use xlink:href="#rect-group" transform="translate(110, 0)"></use>
+    <g id="rect-group">
+        <symbol id="rect-symbol"> 
+            <rect x="0" y="0" width="100" height="100" fill="currentColor"/>
+        </symbol>
+        <use xlink:href="#rect-symbol" color="green" transform="translate(10,10)"/>
+    </g>
+    <use xlink:href="#rect-group" transform="translate(220, 0)"/>
+</svg>

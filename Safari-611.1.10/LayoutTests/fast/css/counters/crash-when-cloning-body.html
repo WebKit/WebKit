@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>			
+*:first-child {
+	display: table;
+	counter-increment: foo2;
+}
+
+* {
+	display: inline;
+	-webkit-appearance: unset;
+	visibility: hidden;
+}
+			
+:nth-last-child(1) {
+	counter-reset: foo1;
+}
+</style>
+</head>
+<body>
+<div id=firstDiv></div>
+<div id=secondDiv></div>
+<div style="visibility: visible">Pass if no crash.</div>
+</body>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+    
+document.body.offsetHeight;
+
+let div = document.createElement('div');
+div.appendChild(document.body.cloneNode(true))
+
+document.styleSheets[0].addRule('#firstDiv::after','content: counter(foobar)');
+
+secondDiv.appendChild(document.createElement('input'))
+firstDiv.appendChild(div);
+</script>
+</html>

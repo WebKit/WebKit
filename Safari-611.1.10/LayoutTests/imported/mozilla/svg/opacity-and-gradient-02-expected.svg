@@ -1,0 +1,34 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+
+  <title>Testcase for opacity on elements referencing a gradient</title>
+
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=539165 -->
+
+  <defs>
+    <linearGradient id="lime" gradientUnits="userSpaceOnUse">
+      <stop stop-color="lime"/>
+    </linearGradient>
+    <!-- OS X doesn't draw solid gradients as a solid color so we need to use
+         a gradient fill below
+      -->
+    <linearGradient id="red" gradientUnits="userSpaceOnUse">
+      <stop stop-color="red"/>
+    </linearGradient>
+ </defs>
+
+  <rect width="100%" height="100%" fill="url(#lime)"/>
+
+  <!-- test 'opacity' -->
+  <rect width="25%" height="100%" fill="url(#red)" opacity="1"/>
+  
+  <!-- test 'fill-opacity' -->
+  <rect x="25%" width="25%" height="100%" fill="url(#red)" opacity="0.5"/>
+
+  <!-- test 'fill-opacity' -->
+  <rect x="50%" width="25%" height="100%" fill="url(#red)" opacity="0.5"/>
+
+</svg>

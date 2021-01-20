@@ -1,0 +1,65 @@
+{
+   "abstract" : "Create a module Makefile",
+   "author" : [
+      "Michael G Schwern <schwern@pobox.com>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "ExtUtils::MakeMaker version 7.32, CPAN::Meta::Converter version 2.143240",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "ExtUtils-MakeMaker",
+   "no_index" : {
+      "directory" : [
+         "t",
+         "inc",
+         "bundled",
+         "my"
+      ],
+      "package" : [
+         "DynaLoader",
+         "in",
+         "version"
+      ]
+   },
+   "prereqs" : {
+      "build" : {
+         "requires" : {}
+      },
+      "configure" : {
+         "requires" : {}
+      },
+      "runtime" : {
+         "requires" : {
+            "Data::Dumper" : "0",
+            "Encode" : "0",
+            "File::Basename" : "0",
+            "File::Spec" : "0.8",
+            "Pod::Man" : "0",
+            "perl" : "5.006"
+         }
+      },
+      "test" : {
+         "requires" : {}
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "http://rt.cpan.org/NoAuth/Bugs.html?Dist=ExtUtils-MakeMaker"
+      },
+      "homepage" : "https://metacpan.org/release/ExtUtils-MakeMaker",
+      "license" : [
+         "http://dev.perl.org/licenses/"
+      ],
+      "repository" : {
+         "url" : "http://github.com/Perl-Toolchain-Gang/ExtUtils-MakeMaker"
+      },
+      "x_MailingList" : "makemaker@perl.org"
+   },
+   "version" : "7.32"
+}

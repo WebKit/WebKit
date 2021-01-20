@@ -1,0 +1,2 @@
+This test requires layout test runner.
+PASS

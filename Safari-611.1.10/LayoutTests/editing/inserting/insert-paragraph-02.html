@@ -1,0 +1,20 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<p>This tests inserting a paragraph separator after a table.  There should be an empty paragraph between the table and 'bar' and the caret should be in the empty paragraph.</p>
+<div contenteditable="true" id="div"><table border="1"><tr><td>foo</td></tr></table>bar</div>
+
+<script>
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
+var sel = window.getSelection();
+var div = document.getElementById("div");
+sel.setPosition(div, 0);
+sel.modify("move", "forward", "character");
+sel.modify("move", "forward", "character");
+sel.modify("move", "forward", "character");
+sel.modify("move", "forward", "character");
+sel.modify("move", "forward", "character");
+document.execCommand("InsertParagraph");
+</script>

@@ -1,0 +1,4 @@
+Test EventTarget methods on workers. Should print "SUCCESS".
+
+SUCCESS
+

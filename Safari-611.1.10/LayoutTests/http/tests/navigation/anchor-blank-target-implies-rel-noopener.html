@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Tests that a new window opened via target=_blank does not have an opener</p>
+<a id="testAnchor" href="resources/anchor-blank-target-implies-rel-noopener-win.html" target="_blank"></a>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
+}
+
+onload = function() {
+    setTimeout(() => {
+        testAnchor.click();
+    }, 0);
+}
+</script>
+</body>
+</html>

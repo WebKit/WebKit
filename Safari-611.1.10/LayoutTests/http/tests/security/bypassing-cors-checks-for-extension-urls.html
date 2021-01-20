@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+</head>
+<body>
+<p>
+    This test ensures that XHR/Fetch will bypass CORS for user extension URLS in case the page is running user scripts.
+</p>
+<script>
+    if (!window.internals)
+        alert("This test requires WebKit internals API to work properly");
+
+    test(() => {
+        xhr = new XMLHttpRequest();
+        xhr.open("GET", "safari-extension://test1", false);
+        assert_throws({name: "NetworkError"}, () => { xhr.send() });
+    }, "Bypassing CORS on synchronous XHR - should trigger a CORS error message");
+
+    test(() => {
+        internals.setAsRunningUserScripts();
+
+        xhr = new XMLHttpRequest();
+        xhr.open("GET", "safari-extension://test3", false);
+        assert_throws({name: "NetworkError"}, () => { xhr.send() });
+    }, "Bypassing CORS on synchronous XHR - should not trigger a CORS error message");
+
+    promise_test((test) => {
+        return promise_rejects(test, new TypeError, fetch("safari-extension://test4"));
+    }, "Bypassing CORS on asynchronous fetch - should not trigger a CORS error message");
+</script>
+</body>
+</html>

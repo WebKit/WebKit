@@ -1,0 +1,27 @@
+<html>
+<script>
+function streamDestroyed()
+{
+    plg.getURL("data:text/html,Stream data");
+}
+
+function runTest() {
+    plg.getURL("/plugins/resources/slow-resource.pl");
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    var url = 'data:text/html,<scri' + 'pt>if (window.testRunner) testRunner.notifyDone();</scri' + 'pt>';
+    url += '<div>This tests that a plug-in that calls NPP_GetURLNotify from its NPP_DestroyStream during teardown '
+    url += 'will not cause a crash.</div><div>SUCCESS! Did not crash!</div>';
+
+    setTimeout(function() { window.location.href = url; }, 100);
+}
+
+</script>
+<body onload="runTest()">
+<embed name="plg" type="application/x-webkit-test-netscape" onstreamdestroy="streamDestroyed()"></embed>
+</body>
+</html>

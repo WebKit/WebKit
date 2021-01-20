@@ -1,0 +1,35 @@
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<p id="description">This test makes sure that an element with a display of table-cell doesn't cause a crash when accessibility code assumes it must be a TD or TH element.</p>
+
+<div id="console"></div>
+
+<table></table>
+
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    // Ensure AX is loaded.
+    if (window.accessibilityController) {
+        accessibilityController.accessibleElementById("description");
+    }
+    var table = document.querySelector('table');
+    var span = document.createElement('span');
+    table.appendChild(span);
+    var div = document.createElement('div');
+    div.style.display = 'table-cell';
+    table.appendChild(div);
+    var input = document.createElement('input');
+    input.setAttribute('autofocus', 'autofocus');
+    div.appendChild(input);
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+
+</body>
+</html>

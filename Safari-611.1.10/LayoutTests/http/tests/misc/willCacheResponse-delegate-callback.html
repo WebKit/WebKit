@@ -1,0 +1,22 @@
+<html>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function runTest() {
+        testRunner.dumpResourceLoadCallbacks();
+        testRunner.dumpWillCacheResponse();
+
+        var f = document.createElement('iframe');
+        f.src = "resources/willCacheResponse-success.html";
+        f.onload = function() { if (window.testRunner) testRunner.notifyDone(); }
+        document.body.appendChild(f);    
+    }
+</script>
+<body onLoad="setTimeout(runTest, 10);">
+This tests for the willCacheResponse resource delegate callback as added for radar 5008925.<br>
+The test is only meaningful if you are running it under DumpRenderTree<br>
+</body>
+</html>

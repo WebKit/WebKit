@@ -1,0 +1,2 @@
+Bug 91160: Crash in WebCore::RenderTable::cellBefore
+PASS. WebKit didn't crash

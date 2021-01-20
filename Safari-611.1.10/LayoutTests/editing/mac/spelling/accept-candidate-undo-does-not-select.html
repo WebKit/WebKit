@@ -1,0 +1,48 @@
+<html>
+<head>
+<script src=../../editing.js></script>
+<script src="../../../resources/js-test.js"></script>
+<script>
+
+function editingTest() {
+    jsTestIsAsync = true;
+
+    edit = document.getElementById('edit');
+    edit.focus();
+    typeCharacterCommand('g');
+    typeCharacterCommand('o');
+    typeCharacterCommand('o');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('d');
+    typeCharacterCommand('i');
+    typeCharacterCommand('d');
+    typeCharacterCommand('e');
+    typeCharacterCommand('a');    
+
+    // Wait a bit before swapping in the candidate, because otherwise 
+    // AppKit can combine the undo of the candidate insertion with the other text.
+    setTimeout(function () {
+        if (window.internals)
+            internals.handleAcceptedCandidate("good idea ", 0, 9);
+
+        undoCommand();
+
+        // If the undo wrongly left "goo didea" selected, this will replace it.
+        typeCharacterCommand('.');
+
+        finishJSTest();
+    }, 100);
+}
+
+</script>
+</head>
+<body>
+<p>This test verifies that undoing an accepted candidate replacement doesn't select the original text.</p>
+<div style="border:1px solid black;">
+    <div contenteditable="true" id="edit"></div>
+</div>
+<script>
+runEditingTest();
+</script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<video controls></video>
+<p>Test that playback can be resumed by seeking backwards after load stalls.</p>
+<script src=../../media-resources/media-file.js></script>
+<script src=../../media-resources/video-test.js></script>
+<script>
+
+    var waitingCount = 0;
+
+    video.addEventListener('waiting', function () {
+
+        // Skip the first 'waiting' event because it is fired when we call play() 
+        // and there isn't enough media to begin playback immediately.
+        if (++waitingCount == 1)
+            return;
+
+        consoleWrite("EVENT(waiting)");
+
+        // now that playback has paused to wait for data, seek back and verify that we
+        // get a 'canplay' event
+        waitForEvent('canplay' , function () {
+            testExpected("video.readyState", HTMLMediaElement.HAVE_CURRENT_DATA, ">=");
+            testExpected("video.networkState", HTMLMediaElement.NETWORK_LOADING);
+            endTest();
+        } );
+        testExpected("video.readyState", HTMLMediaElement.HAVE_CURRENT_DATA);
+        
+        run("video.currentTime = 0.1");
+    } );
+
+    // Find a supported media file.
+    var mediaFile = findMediaFile("video", "content/test");
+    var mimeType = mimeTypeForFile(mediaFile);
+
+    video.src = "http://127.0.0.1:8000/resources/load-and-stall.cgi?name=../../../media/" + mediaFile + "&mimeType=" + mimeType + "&stallAt=100000";
+    run("video.play()");
+</script>

@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+
+<style>
+.box-hidden {
+    display: none;
+}
+</style>
+
+<body id="body">
+
+<div id="bg">
+<p id="bgContent">Other page content with <a href="#">a dummy focusable element</a></p>
+<p><a onclick="toggleDialog(document.getElementById('box'),'show'); return false;" href="#" role="button" id="displayBtn">Display a dialog</a></p>
+</div>
+
+<div role="dialog" aria-labelledby="myDialog" id="box" class="box-hidden" tabindex="-1">
+    <h3 id="myDialog">Just an example.</h3>
+    <button id="ok" onclick="toggleDialog(document.getElementById('box'),'hide');" class="close-button">OK</button>
+    <button onclick="toggleDialog(document.getElementById('box2'),'show');" id="new">New</button>
+</div>
+
+<div role="dialog" aria-labelledby="myDialog2" id="box2" class="box-hidden" tabindex="-1">
+    <h3 id="myDialog2">Another dialog.</h3>
+    <button id="close" onclick="toggleDialog(document.getElementById('box2'),'hide');" class="close-button">Close</button>
+</div>
+
+
+<script>
+
+    description("This tests that aria-modal works correctly on multiple dialogs");
+
+    if (window.accessibilityController) {
+        // Background should be accessible after loading.
+        shouldBeTrue("backgroundAccessible()");
+        
+        // Click the display button, dialog1 shows and background becomes unaccessible.
+        document.getElementById("displayBtn").click();
+        shouldBeFalse("backgroundAccessible()");
+        shouldBeTrue("dialog1Accessible()");
+        
+        // Click the new button, dialog2 shows and background/dialog1 should both be unaccessible.
+        document.getElementById("new").click();
+        shouldBeFalse("backgroundAccessible()");
+        shouldBeFalse("dialog1Accessible()");
+        var closeBtn = accessibilityController.accessibleElementById("close");
+        shouldBeFalse("closeBtn.isIgnored");
+        
+        // Close dialog2, dialog1 should become accessible but not the background
+        document.getElementById("close").click();
+        shouldBeFalse("backgroundAccessible()");
+        shouldBeTrue("dialog1Accessible()");
+        
+        // Close dialog1, background should be accessible.
+        document.getElementById("ok").click();
+        shouldBeTrue("backgroundAccessible()");
+    }
+    
+    function backgroundAccessible() {
+        var displayBtn = accessibilityController.accessibleElementById("displayBtn");
+        var bgContent = accessibilityController.accessibleElementById("bgContent");
+        if (!displayBtn || !bgContent)
+            return false;
+        return !displayBtn.isIgnored && !bgContent.isIgnored;
+    }
+    
+    function dialog1Accessible() {
+         var okBtn = accessibilityController.accessibleElementById("ok");
+         var newBtn = accessibilityController.accessibleElementById("new");
+         if (!okBtn || !newBtn)
+             return false;
+         return !okBtn.isIgnored && !newBtn.isIgnored;
+    }
+    
+    function toggleDialog(dialog, sh) {
+    if (sh == "show") {
+        // show the dialog 
+        dialog.style.display = 'block';
+        dialog.setAttribute("aria-modal", "true");
+    } else {
+        dialog.style.display = 'none';
+        dialog.setAttribute("aria-modal", "false"); 
+    }
+}
+
+</script>
+
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+
+PASS Test Description: stopImmediatePropagation() prevents other event listeners from being triggered and, unlike Event.stopPropagation(), its effect must be immediate. Once it has been called, further calls to this method have no additional effect.
+

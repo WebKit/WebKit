@@ -1,0 +1,37 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script>window.enablePixelTesting = true;</script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<svg id="svg" xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+    <text id="text1" x="50 100 150" y="50">ABC</text>
+</svg>
+
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+<![CDATA[
+    description("This is a test of the SVGLengthList::getItem() API.");
+
+    var svg = document.getElementById("svg");
+    var text1 = document.getElementById("text1");
+
+    debug("Check lengths of text x item lists");
+    shouldBe("text1.x.baseVal.numberOfItems", "3");
+
+    debug("");
+    debug("Test with various index parameters");
+    shouldThrow("text1.x.baseVal.getItem(-100)");
+    shouldThrow("text1.x.baseVal.getItem(-1)");
+    shouldBe("text1.x.baseVal.getItem(0).value", "50");
+    shouldBe("text1.x.baseVal.getItem(1).value", "100");
+    shouldBe("text1.x.baseVal.getItem(2).value", "150");
+    shouldThrow("text1.x.baseVal.getItem(3)");
+    shouldThrow("text1.x.baseVal.getItem(100)");
+
+]]>
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

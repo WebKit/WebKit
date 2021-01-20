@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script src="../resources/stable-id-map.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Target.PSON");
+
+    suite.addTestCase({
+        name: "ProvisionalPagePaused",
+        description: "Check that new provisional page can be paused before navigation.",
+        test(resolve, reject) {
+            let targetIdMap = new StableIdMap;
+            InspectorTest.log(`Current target is ${targetIdMap.get(WI.mainTarget.identifier)}.`);
+            const url = "http://localhost:8000/inspector/target/provisional-load-cancels-previous-load.html";
+            let navigatedTwice = false;
+
+            let originalResumeIfPaused = WI.Target.prototype._resumeIfPaused;
+            // Keep first provisional navigation paused.
+            WI.Target.prototype._resumeIfPaused = () => {};
+
+            WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
+                let target = event.data.target;
+                let targetId = targetIdMap.get(target.identifier);
+                InspectorTest.pass(`Should receive TargetAdded event for target ${targetId}.`);
+                InspectorTest.expectTrue(target.isProvisional, `Target ${targetId} should be provisional.`);
+                InspectorTest.expectTrue(target.isPaused, `Target ${targetId} should be paused on start.`);
+                if (!navigatedTwice) {
+                    navigatedTwice = true;
+                    WI.Target.prototype._resumeIfPaused = originalResumeIfPaused;
+
+                    InspectorTest.deferOutputUntilTestPageIsReloaded();
+
+                    // Send two consequtive navigation requests. The latter will cancel provisional
+                    // load of the former.
+                    WI.mainTarget.PageAgent.navigate(url);
+                }
+            });
+
+            WI.targetManager.addEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, (event) => {
+                let {previousTargetId, target} = event.data;
+                InspectorTest.pass(`Should receive DidCommitProvisionalTarget event ${targetIdMap.get(previousTargetId)} => ${targetIdMap.get(target.identifier)}.`);
+            });
+
+            WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, (event) =>{
+                let targetId = targetIdMap.get(event.data.target.identifier);
+                InspectorTest.pass(`Should receive TargetRemoved event for target ${targetId}`);
+            });
+
+            // Wait for page reload event to avoid race between test results flushing and the test completion.
+            InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad)
+            .then(() => {
+                InspectorTest.expectEqual(targetIdMap.size, 3, `Should have seen 3 different targets.`);
+            })
+            .then(resolve);
+
+            WI.mainTarget.PageAgent.navigate(url);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that two consequtive cross domain navigation requests will result in two
+provisional targets being created, first of which is later destroyed and the second
+is committed.</p>
+</body>
+</html>

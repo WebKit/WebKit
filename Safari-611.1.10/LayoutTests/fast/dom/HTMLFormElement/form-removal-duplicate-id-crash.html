@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<div id="placeholder"></div>
+<script>
+description("Tests that we do not crash when removing a form with an associated child when there is another form with the same id in the document.");
+jsTestIsAsync = true;
+
+onload = function() {
+    var placeholder = document.getElementById("placeholder");
+
+    form1 = document.createElement("form");
+    form2 = document.createElement("form");
+    form1.id = "form1";
+    form2.id = "form2";
+    placeholder.appendChild(form1);
+    placeholder.appendChild(form2);
+
+    control = document.createElement("button");
+    control.setAttribute("form", "form1");
+    form1.appendChild(control);
+    shouldBe("control.form", "form1");
+
+    form2.id = "form1";
+    shouldBe("control.form", "form1");
+
+    form1.parentNode.appendChild(form2);
+    shouldBe("control.form", "form1");
+
+    placeholder.removeChild(placeholder.firstChild);
+    finishJSTest();
+}
+</script>
+</body>
+</html>

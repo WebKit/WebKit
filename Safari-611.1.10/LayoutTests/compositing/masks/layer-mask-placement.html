@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .box {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      margin: 10px;
+      background-color: green;
+    }
+    
+    .test {
+      -webkit-mask-image: -webkit-canvas(viewport-mask);
+      -webkit-mask-position: 50% 50%;
+    }
+
+    .composited {
+      -webkit-transform: translateZ(0);
+    }
+
+    .indicator {
+      background-color: red;
+    }
+    
+    .outlined {
+      outline: 40px solid transparent;
+    }
+  </style>
+  <script>
+    if (window.testRunner)
+      testRunner.dumpAsText(true);
+
+    function drawMask()
+    {
+      var canvasWidth = 100;
+      var canvasHeight = 100;
+      var ctx = document.getCSSCanvasContext('2d', 'viewport-mask', canvasWidth, canvasHeight)
+      ctx.fillStyle = "rgba(0, 0, 0, 1)";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    }
+    
+    window.addEventListener('load', drawMask, false);
+  </script>
+</head>
+<body>
+  <!-- You should see two green boxes side by side, and no red. -->
+  <div class="indicator box" style="left: 10px;"></div>
+  <div class="indicator box" style="left: 120px;"></div>
+
+  <div class="test box" style="left: 10px;"></div>
+  <div class="composited test box" style="left: 120px"></div>
+
+  <div class="outlined"></div>
+</body>
+</html>

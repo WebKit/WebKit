@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<head>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/js-test-pre.js"></script>
+<style>
+    body {
+        margin: 0;
+    }
+
+    .target {
+        position: absolute;
+        width: 14px;
+        height: 15px;
+        right: 0px;
+        border: 0;
+    }
+
+    .hidden {
+        visibility: hidden;
+    }
+
+    #touch-target {
+        position: relative;
+        width: 30px;
+        height: 30px;
+    }
+
+    #alternate-click-target {
+        bottom: 0px;
+    }
+
+    #finish-target {
+        width: 30px;
+        height: 30px;
+    }
+</style>
+</head>
+<body>
+<div id="touch-target">
+    <iframe id="click-target" class="target hidden"></iframe>
+    <div id="alternate-click-target" class="target"></div>
+</div>
+<div id="finish-target"></div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("Test that a synthesized mouse event is restricted to the origin that handled its underlying touch event.");
+    window.jsTestIsAsync = true;
+
+    (async () => {
+        const runTest = async (description, clickTargetSrc, shouldHandleTouchEvents, frameWasClickedExpected, alternateWasClickedExpected) => {
+            debug(description);
+
+            const clickTarget = document.querySelector("#click-target");
+            const alternateClickTarget = document.querySelector("#alternate-click-target");
+            const touchTarget = document.querySelector("#touch-target");
+
+            var frameWasClicked = false;
+            window.onmessage = () => frameWasClicked = true;
+
+            var alternateWasClicked = false;
+            alternateClickTarget.onclick = () => alternateWasClicked = true;
+
+            if (shouldHandleTouchEvents)
+                touchTarget.ontouchstart = () => { clickTarget.classList.toggle("hidden") };
+            else
+                clickTarget.classList.toggle("hidden");
+
+            await new Promise((resolve) => {
+                clickTarget.onload = () => resolve();
+                clickTarget.src = clickTargetSrc;
+            });
+
+            await UIHelper.activateElement(touchTarget);
+
+            await new Promise((resolve) => {
+                const finishTarget = document.querySelector("#finish-target");
+                finishTarget.onclick = () => resolve();
+                UIHelper.activateElement(finishTarget);
+            });
+
+            shouldBe(() => frameWasClicked, () => frameWasClickedExpected);
+            shouldBe(() => alternateWasClicked, () => alternateWasClickedExpected);
+
+            clickTarget.classList.toggle("hidden");
+            touchTarget.ontouchstart = null;
+            debug('');
+        };
+
+        await runTest("Clicks are dispatched to a frame in the same origin as the touch event handler.", "resources/click-target.html", true, true, false);
+        await runTest("Clicks are dispatched to a frame in a different origin when the touch event target frame has no touch event handlers.", "https://localhost:8443/events/touch/ios/resources/click-target.html", false, true, false);
+        await runTest("Clicks are not dispatched to a frame in a different origin than the touch event handler.", "https://localhost:8443/events/touch/ios/resources/click-target.html", true, false, true);
+        finishJSTest();
+    })();
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>

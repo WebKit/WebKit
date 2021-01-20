@@ -1,0 +1,15 @@
+<script>
+window.addEventListener("message", function(e) {
+    if (e.data == "set") {
+        win = window.open("http://127.0.0.1:8000/security/frameNavigation/resources/ready.html", "targetWindow");
+    } else if (e.data == "ready") {
+        opener.postMessage("pass", "*");
+    } else if (e.data == "cleanup") {
+        win.close();
+        opener.postMessage("done", "*");
+    }
+}, false);
+
+opener.postMessage("ready", "*");
+</script>
+Helper window.

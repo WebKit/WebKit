@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+<template id="tmpl"><div>text</div></template>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    function assertResponse(response, message) {
+        InspectorProtocol.checkForError(response);
+        ProtocolTest.log("PASS: " + message);
+    }
+
+    function evaluate$0() {
+        InspectorProtocol.sendCommand("Runtime.evaluate", {"expression": "$0.nodeName", "includeCommandLineAPI": true}, (response) => {
+            assertResponse(response, "Evaluate $0.");
+            ProtocolTest.expectEqual(response.result.result.value, "DIV", "Value of $0 is a <div> element.");
+            ProtocolTest.completeTest();
+        });
+    }
+
+    function setInspectedNode(nodeId) {
+        InspectorProtocol.sendCommand("DOM.setInspectedNode", {nodeId}, (response) => {
+            assertResponse(response, "Set $0 to the template element.");
+            evaluate$0();
+        });
+    }
+
+    function resolveNode(objectId) {
+        InspectorProtocol.sendCommand("DOM.requestNode", {objectId}, (response) => {
+            assertResponse(response, "Resolved js object id to DOM node id.");
+            setInspectedNode(response.result.nodeId);
+        });
+    }
+
+    InspectorProtocol.sendCommand("DOM.getDocument", {});
+    InspectorProtocol.sendCommand("Runtime.evaluate", {"expression": "document.getElementById('tmpl').content.firstChild", "includeCommandLineAPI": true}, (response) => {
+        assertResponse(response, "Evaluate an element in a template.");
+        resolveNode(response.result.result.objectId);
+    });
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that document inside a template node can be passed to inspect() function in the console and referenced as $0.</p>
+</body>
+</html>

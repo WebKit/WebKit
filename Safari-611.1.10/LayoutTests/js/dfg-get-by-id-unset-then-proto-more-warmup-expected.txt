@@ -1,0 +1,13 @@
+Tests what happens when the first attempt to cache an access goes down the unset route and then subsequently it tries to cache using a proto (more warmup).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS foo(true, o) is 42
+PASS foo(true, o) is 42
+PASS foo(true, o) is 42
+PASS foo(true, new Blah()) is 23
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

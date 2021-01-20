@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    #clear-left {
+        clear: left;
+        font: 20px/1 Ahem, sans-serif;
+        color: green;
+    }
+
+    #clear-left > div {
+        float: left;
+        width: 200px;
+        height: 20px;
+    }
+
+    /* OK Tests: image resource loading should succeed */
+    /* Cross-origin request is OK because the "Access-Control-Allow-Origin: *" is returned for the resource (no redirection). */
+    #ok-shape-outside-allow-url {
+        -webkit-shape-outside: url("http://localhost:8080/security/resources/image-access-control.php?file=../../resources/square100.png&allow=true");
+    }
+
+    /* Cross-origin request is OK because the "Access-Control-Allow-Origin: *" is returned for the final resource and the redirection is same origin. */
+    #ok-shape-outside-same-origin-redirection-allow-url {
+        -webkit-shape-outside: url("/resources/redirect.php?url=http%3A%2F%2Flocalhost%3A8080%2Fsecurity%2Fresources%2Fimage-access-control.php%3Ffile%3D..%2F..%2Fresources%2Fsquare100.png%26allow%3Dtrue");
+    }
+
+    /* Cross-origin request is OK because the "Access-Control-Allow-Origin: *" is returned for both redirection and final resource. */
+    #ok-shape-outside-allow-redirection-allow-url {
+        -webkit-shape-outside: url("http://localhost:8080/security/resources/redirect-allow-star.php?url=http%3A%2F%2Flocalhost%3A8080%2Fsecurity%2Fresources%2Fimage-access-control.php%3Ffile%3D..%2F..%2Fresources%2Fsquare100.png%26allow%3Dtrue");
+    }
+
+    /* Not OK Tests: image resource loading should fail */
+    /* Cross-origin request is not OK because the HTTP header "Access-Control-Allow-Origin:" header is not returned for the final resource when the redirection was initiated from the same origin as the page. */
+    #notok-shape-outside-same-origin-redirection-disallow-url {
+        -webkit-shape-outside: url("/resources/redirect.php?url=http%3A%2F%2Flocalhost%3A8080%2Fsecurity%2Fresources%2Fimage-access-control.php%3Ffile%3D..%2F..%2Fresources%2Fsquare100.png%26allow%3Dfalse");
+    }
+
+    /* Cross-origin request is not OK because a "Access-Control-Allow-Origin:" header is not returned for the final resource. */
+    #notok-shape-outside-allow-redirection-disallow-url {
+        -webkit-shape-outside: url("http://localhost:8080/security/resources/redirect-allow-star.php?url=http%3A%2F%2Flocalhost%3A8080%2Fsecurity%2Fresources%2Fimage-access-control.php%3Ffile%3D..%2F..%2Fresources%2Fsquare100.png%26allow%3Dfalse");
+    }
+
+    /* Cross-origin request is not OK because the "Access-Control-Allow-Origin: *" is not returned for the redirection */
+    #notok-shape-outside-disallow-redirection-allow-url {
+        -webkit-shape-outside: url("http://localhost:8080/resources/redirect.php?url=http%3A%2F%2Flocalhost%3A8080%2Fsecurity%2Fresources%2Fimage-access-control.php%3Ffile%3D..%2F..%2Fresources%2Fsquare100.png%26allow%3Dtrue");
+    }
+</style>
+</head>
+<body>
+    <p>Verify that images not allowed by CORS don't affect the layout and that images (and any redirection) with a "Access-Control-Allow-Origin: *" header do define the layout.</p>
+    <div id="clear-left"><div id="ok-shape-outside-allow-url"></div>X</div>
+    <div id="clear-left"><div id="ok-shape-outside-same-origin-redirection-allow-url"></div>X</div>
+    <div id="clear-left"><div id="ok-shape-outside-allow-redirection-allow-url"></div>X</div>
+    <div id="clear-left"><div id="notok-shape-outside-same-origin-redirection-disallow-url"></div>X</div>
+    <div id="clear-left"><div id="notok-shape-outside-allow-redirection-disallow-url"></div>X</div>
+    <div id="clear-left"><div id="notok-shape-outside-disallow-redirection-allow-url"></div>X</div>
+</body>
+</html>

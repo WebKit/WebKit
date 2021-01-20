@@ -1,0 +1,42 @@
+
+FAIL Property scroll-padding-top value 'auto' assert_true: 'auto' is a supported value for scroll-padding-top. expected true got false
+PASS Property scroll-padding-top value '0'
+PASS Property scroll-padding-top value '10px'
+PASS Property scroll-padding-top value '20%'
+PASS Property scroll-padding-top value 'calc(10px + 0.5em)'
+FAIL Property scroll-padding-top value 'calc(10px - 0.5em)' assert_equals: expected "0px" but got "-10px"
+PASS Property scroll-padding-top value 'calc(50% + 60px)'
+FAIL Property scroll-padding-right value 'auto' assert_true: 'auto' is a supported value for scroll-padding-right. expected true got false
+PASS Property scroll-padding-right value '0'
+PASS Property scroll-padding-right value '10px'
+PASS Property scroll-padding-right value '20%'
+PASS Property scroll-padding-right value 'calc(10px + 0.5em)'
+FAIL Property scroll-padding-right value 'calc(10px - 0.5em)' assert_equals: expected "0px" but got "-10px"
+PASS Property scroll-padding-right value 'calc(50% + 60px)'
+FAIL Property scroll-padding-bottom value 'auto' assert_true: 'auto' is a supported value for scroll-padding-bottom. expected true got false
+PASS Property scroll-padding-bottom value '0'
+PASS Property scroll-padding-bottom value '10px'
+PASS Property scroll-padding-bottom value '20%'
+PASS Property scroll-padding-bottom value 'calc(10px + 0.5em)'
+FAIL Property scroll-padding-bottom value 'calc(10px - 0.5em)' assert_equals: expected "0px" but got "-10px"
+PASS Property scroll-padding-bottom value 'calc(50% + 60px)'
+FAIL Property scroll-padding-left value 'auto' assert_true: 'auto' is a supported value for scroll-padding-left. expected true got false
+PASS Property scroll-padding-left value '0'
+PASS Property scroll-padding-left value '10px'
+PASS Property scroll-padding-left value '20%'
+PASS Property scroll-padding-left value 'calc(10px + 0.5em)'
+FAIL Property scroll-padding-left value 'calc(10px - 0.5em)' assert_equals: expected "0px" but got "-10px"
+PASS Property scroll-padding-left value 'calc(50% + 60px)'
+FAIL Property scroll-padding value 'auto' assert_true: 'auto' is a supported value for scroll-padding. expected true got false
+PASS Property scroll-padding value '10px'
+PASS Property scroll-padding value '0'
+PASS Property scroll-padding value '20%'
+PASS Property scroll-padding value 'calc(10px + 0.5em)'
+FAIL Property scroll-padding value 'calc(10px - 0.5em)' assert_equals: expected "0px" but got "-10px"
+PASS Property scroll-padding value '1px 2px'
+PASS Property scroll-padding value '1px 2px 3%'
+PASS Property scroll-padding value '1px 2px 3% 4px'
+FAIL Property scroll-padding value '1px auto' assert_true: '1px auto' is a supported value for scroll-padding. expected true got false
+PASS Property scroll-padding value '0 0 0 0'
+FAIL Property scroll-padding value 'auto auto auto auto' assert_true: 'auto auto auto auto' is a supported value for scroll-padding. expected true got false
+

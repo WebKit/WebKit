@@ -1,0 +1,6 @@
+
+== Running test suite: ScriptProfiler.Samples.ExpressionLocation
+-- Running test case: Sampling Profiler Expression Location
+PASS: Should have seen line 19, column 14.
+PASS: Should have seen line 25, column 14.
+

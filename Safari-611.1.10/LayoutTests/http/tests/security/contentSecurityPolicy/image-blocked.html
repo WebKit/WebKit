@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="img-src 'none'; script-src 'unsafe-inline'">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+This test passes if it doesn't alert FAIL and does alert PASS.
+<img src="../resources/abe.png" onload="alert('FAIL')" onerror="alert('PASS')">
+</body>
+</html>

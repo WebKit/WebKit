@@ -1,0 +1,3 @@
+This directory contains sample iOS and mac clients for http://apprtc.appspot.com
+
+See ../../app/webrtc/objc/README for information on how to use it.

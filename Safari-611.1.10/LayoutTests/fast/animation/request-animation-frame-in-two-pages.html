@@ -1,0 +1,55 @@
+<html>
+<head>
+<script>
+function onload()
+{
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.setCanOpenWindows(true);
+        testRunner.waitUntilDone();
+    }
+
+    function log(msg)
+    {
+        document.getElementById("logger").innerHTML += msg + "<br>";
+    }
+
+    function checkWindow()
+    {
+        if(newWindow.closed) {
+            log("Window closed.");
+            clearInterval(timer);
+            if (window.testRunner)
+                testRunner.setPageVisibility("visible");
+        }
+    }
+
+    log("This test succeeds if RAF is resumed in a page from where another page with RAF was opened and then closed.");
+
+    c = 0;
+
+    function raf()
+    {
+        requestAnimationFrame(raf);
+        if (c == 10) {
+            src = "data:text/html, <script> c = 0; function raf() { requestAnimationFrame(raf); if (c++ == 10) window.close(); } requestAnimationFrame(raf); <\/script>";
+            newWindow = window.open(src, "_blank");
+            timer = setInterval(checkWindow, 100);
+            if (window.testRunner)
+                testRunner.setPageVisibility("hidden");
+        }
+        if (c == 20) {
+            log("PASS");
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        c++;
+    }
+    requestAnimationFrame(raf)
+}
+</script>
+</head>
+<body onload="onload();">
+    <div id="logger"></div>
+</body>
+</html>

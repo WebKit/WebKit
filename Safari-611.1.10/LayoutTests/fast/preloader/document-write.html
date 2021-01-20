@@ -1,0 +1,29 @@
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpResourceResponseMIMETypes();
+    // Prevent networking layer from reordering loads.
+    testRunner.setSerializeHTTPLoads();
+    testRunner.waitUntilDone();
+}
+function done() {
+    if (window.testRunner)
+        setTimeout(function(){ testRunner.notifyDone() }, 1000);
+}
+</script>
+<style>
+plaintext { display: none }
+</style>
+<body onload="done()")
+<br><br>
+This test requires DumpRenderTree to see the log of what resources are loaded.
+<br><br>
+The first script document.writes a plaintext tag so the main parser will not load
+the subsequent resources. Preload scanner won't know this so it will still kick off the loads,
+allowing us to verify that preloading is working as expected.
+<script>
+    document.write('<script src="resources/document-write-plaintext.js"></sc'+'ript>');
+    document.write('<script src="resources/script1.js"></sc'+'ript>');
+</script>
+

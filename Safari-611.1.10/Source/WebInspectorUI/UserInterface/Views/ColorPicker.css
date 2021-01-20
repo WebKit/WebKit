@@ -1,0 +1,98 @@
+/*
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.color-picker {
+    position: relative;
+    width: var(--color-picker-width);
+    height: 236px;
+    padding: 5px;
+
+    --color-picker-hue-offset-start: 41px;
+    --color-picker-opacity-offset-start: 18px;
+}
+
+.color-picker.hide-inputs {
+    height: 210px;
+}
+
+.color-picker .wrapper {
+    white-space: nowrap;
+}
+
+.color-picker :matches(.color-square, .slider) {
+    display: inline-block;
+}
+
+.color-picker .slider {
+    height: 200px;
+    margin-inline-start: 10px;
+}
+
+.color-picker .hue {
+    background-image: linear-gradient(to top,
+        red 0%,
+        yellow 16.6%,
+        lime 33.2%,
+        cyan 50%,
+        blue 66.6%,
+        fuchsia 83.2%,
+        red 100%
+    );
+}
+
+@media (color-gamut: p3) {
+    .color-picker.gamut-p3 > .hue {
+        background-image: linear-gradient(to top,
+            color(display-p3 1 0 0) 0%,
+            color(display-p3 1 1 0) 16.6%,
+            color(display-p3 0 1 0) 33.2%,
+            color(display-p3 0 1 1) 50%,
+            color(display-p3 0 0 1) 66.6%,
+            color(display-p3 1 0 1) 83.2%,
+            color(display-p3 1 0 0) 100%
+        );
+    }
+}
+
+.color-picker > .color-inputs {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+}
+
+.color-picker > .color-inputs > div {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.color-picker > .color-inputs > div + div {
+    margin-inline-start: 4px;
+}
+
+.color-picker > .color-inputs input {
+    width: 100%;
+    margin: 0 0.25em;
+}

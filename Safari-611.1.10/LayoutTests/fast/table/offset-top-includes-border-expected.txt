@@ -1,0 +1,3 @@
+webkit.org/b/11582: The offsetTop of tbody, rows and cells should include the table's border. The tbody should include border-spacing in its offsetTop and offsetLeft too but that is a separate and more involved bug (webkit.org/b/119020) which when it's resolved should change the offsets from 14 to 19 for the tbody in this test. The offsetLeft for the row is also wrong (webkit.org/b/119021), fixing it will require a lot of rebaselining.
+
+PASS

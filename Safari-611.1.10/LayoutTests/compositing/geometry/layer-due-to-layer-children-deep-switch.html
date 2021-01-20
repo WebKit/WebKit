@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css" media="screen">
+    body {
+      position: relative;
+    }
+    #parent {
+      position: relative;
+      width: 300px;
+      height: 250px;
+      padding: 20px;
+      border: 1px solid black;
+      -webkit-transform: translate(0px, 0px);
+    }
+    
+    #child {
+      position: relative;
+      left: 10px;
+      width: 250px;
+      height: 220px;
+      background-color: blue;
+      -webkit-transform: translate(0px, 0px);
+    }
+    
+   #grandchild {
+      position: relative;
+      top: 10px;
+      left: 10px;
+      width: 200px;
+      height: 200px;
+      background-color: yellow;
+      -webkit-transform: rotate(30deg);
+    }
+    
+   #greatgrandchild {
+      position: relative;
+      left: 100px;
+      width: 250px;
+      height: 100px;
+      background-color: green;
+    }
+    
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    
+    var text = "";
+    function showTree(which)
+    {
+        setTimeout(function() {
+            if (window.testRunner) {
+                text += "\n" + which + " dump layer tree:\n";
+                text += window.internals.layerTreeAsText(document);
+                document.getElementById('layers').innerText = text;
+            }
+        }, 0);
+    }
+
+    function doTest()
+    {
+        if (window.testRunner)
+            //document.getElementById('layers').innerText = "";
+        showTree("First");
+
+        //Put child in compositing mode
+        setTimeout(function() {
+            document.getElementById("greatgrandchild").style.webkitTransform = "perspective(400)  translate3D(-30px, 30px, 100px) rotateY(60deg)";
+            showTree("Second");
+            
+            // Take it back out of compositing mode
+            setTimeout(function() {
+                document.getElementById("greatgrandchild").style.webkitTransform = "";
+                showTree("Third");
+                
+                setTimeout(function() {
+                    testRunner.notifyDone();
+                }, 0);
+            }, 100);
+        }, 100);
+    }
+
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+
+<body>
+  
+  <!-- Normally we skip making a compositing layer on a parent, even if its children are composited -->
+  <!-- But if the parent has a 2D transform it should get a compositing layer -->
+  <!-- Here we test that the entire hierarchy gets layers when some elements are transformed and others arent -->
+  <!-- Should see a box containing a blue box containing a rotated yellow box containing a green box in perspective -->
+  <div id="parent">
+      This content is in the parent
+      <div id="child">
+          <div id="grandchild">
+              <div id="greatgrandchild">
+                  Box should switch between perspective and flat
+              </div>
+          </div>
+      </div>
+  </div>
+  
+  <pre id="layers">Layer tree goes here in DRT</pre>
+</body>
+</html>
+

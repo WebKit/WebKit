@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+* {
+    background-color: white;
+    color: black;
+    fill-opacity: 1;
+}
+[lowercase] {
+    background-color: rgb(1, 2, 3);
+}
+[UPPERCASE] {
+    border: 1px black solid;
+}
+[CamelCase] {
+    color: pink;
+}
+</style>
+</head>
+<body>
+    <p>This test checks the styling of elements based on their attributes. Since HTML processes attribute as case-insensitive, any case varation should work. This test passes if every triplet looks the same in both series and if it matches the reference.</p>
+    <div id="initial">
+        <target>No attribute</target>
+        <target lowercase>lowercase initial attribute</target>
+        <target LOWERCASE>LOWERCASE initial attribute</target>
+        <target LowerCase>LowerCase initial attribute</target>
+
+        <target UPPERCASE>UPPERCASE initial attribute</target>
+        <target uppercase>uppercase initial attribute</target>
+        <target UpperCase>UpperCase initial attribute</target>
+
+        <target CamelCase>CamelCase initial attribute</target>
+        <target camelcase>camelcase initial attribute</target>
+        <target CAMELCASE>CAMELCASE initial attribute</target>
+
+        <target lowercase UPPERCASE CamelCase>LowerCase UpperCase CAMELCASE initial attributes</target>
+        <target LOWERCASE uppercase camelcase>LowerCase UpperCase CAMELCASE initial attributes</target>
+        <target LowerCase UpperCase CAMELCASE>LowerCase UpperCase CAMELCASE initial attributes</target>
+    </div>
+    <div id="dynamic">
+        <target>No attribute</target>
+        <target>lowercase dynamic attribute</target>
+        <target>LOWERCASE dynamic attribute</target>
+        <target>LowerCase dynamic attribute</target>
+
+        <target>UPPERCASE dynamic attribute</target>
+        <target>uppercase dynamic attribute</target>
+        <target>UpperCase dynamic attribute</target>
+
+        <target>CamelCase dynamic attribute</target>
+        <target>camelcase dynamic attribute</target>
+        <target>CAMELCASE dynamic attribute</target>
+
+        <target>LowerCase UpperCase CAMELCASE dynamic attributes</target>
+        <target>LowerCase UpperCase CAMELCASE dynamic attributes</target>
+        <target>LowerCase UpperCase CAMELCASE dynamic attributes</target>
+    </div>
+</body>
+<script>
+window.addEventListener("load", function() {
+    forcedLayout = document.documentElement.offsetTop;
+
+    var allDynamicTargets = document.querySelectorAll("#dynamic>target");
+    allDynamicTargets[1].setAttribute("lowercase", "");
+    allDynamicTargets[2].setAttribute("LOWERCASE", "");
+    allDynamicTargets[3].setAttribute("LowerCase", "");
+
+    allDynamicTargets[4].setAttribute("UPPERCASE", "");
+    allDynamicTargets[5].setAttribute("uppercase", "");
+    allDynamicTargets[6].setAttribute("UpperCase", "");
+
+    allDynamicTargets[7].setAttribute("CamelCase", "");
+    allDynamicTargets[8].setAttribute("camelcase", "");
+    allDynamicTargets[9].setAttribute("CAMELCASE", "");
+
+    allDynamicTargets[10].setAttribute("lowercase", "");
+    allDynamicTargets[10].setAttribute("UPPERCASE", "");
+    allDynamicTargets[10].setAttribute("CamelCase", "");
+    allDynamicTargets[11].setAttribute("LOWERCASE", "");
+    allDynamicTargets[11].setAttribute("uppercase", "");
+    allDynamicTargets[11].setAttribute("camelcase", "");
+    allDynamicTargets[12].setAttribute("LowerCase", "");
+    allDynamicTargets[12].setAttribute("UpperCase", "");
+    allDynamicTargets[12].setAttribute("CAMELCASE", "");
+});
+</script>
+</html>

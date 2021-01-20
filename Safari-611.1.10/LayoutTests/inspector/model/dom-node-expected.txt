@@ -1,0 +1,9 @@
+Tests for the WI.DOMNode model object.
+
+
+== Running test suite: WI.DOMNode
+-- Running test case: WI.DOMNode.attributes
+id="test-id"
+class="test-class"
+data-item="test-data"
+

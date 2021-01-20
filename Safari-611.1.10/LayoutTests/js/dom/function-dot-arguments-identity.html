@@ -1,0 +1,103 @@
+<p>This tests verifies the identity of function.arguments vs 'arguments' used locally.
+</p>
+<pre id="console"></pre>
+
+<script>
+function log(s)
+{
+	document.getElementById("console").appendChild(document.createTextNode(s + "\r\n"));
+}
+
+function shouldBe(a, aDescription, b)
+{
+	if (a == b) {
+		log("PASS: " + aDescription + " should be " + b + " and is.");
+		return;
+	}
+	log("FAIL: " + aDescription + " should be " + b + " but instead is " + a + ".");
+}
+
+if (window.testRunner) {
+	testRunner.dumpAsText();
+}
+
+function getArguments() { return arguments.callee.caller.arguments; }
+
+(function() {
+	shouldBe(
+		getArguments() == arguments,
+		"getArguments() == arguments",
+		false
+	);
+})();
+
+(function() {
+	shouldBe(
+		getArguments() == eval('arguments'),
+		"getArguments() == eval('arguments')",
+		false
+	);
+})();
+
+(function() {
+	eval("");
+	shouldBe(
+		getArguments() == arguments,
+		"getArguments() == arguments {eval present}",
+		false
+	);
+})();
+
+(function() {
+	var f = function() { };
+	shouldBe(
+		getArguments() == arguments,
+		"getArguments() == arguments {function present}",
+		false
+	);
+})();
+
+(function(x) {
+	var f = function() { return x; };
+	shouldBe(
+		getArguments() == arguments,
+		"getArguments() == arguments {closure present}",
+		false
+	);
+})(0);
+
+(function() {
+	with ({ }) { };
+	shouldBe(
+		getArguments() == arguments,
+		"getArguments() == arguments {with present}",
+		false
+	);
+})();
+
+(function() {
+	try { } catch(e) { };
+	shouldBe(
+		getArguments() == arguments,
+		"getArguments() == arguments {catch present}",
+		false
+	);
+})();
+(function() {
+	var arguments; 
+	shouldBe(
+		getArguments() == arguments,
+		"getArguments() == arguments {var declaration}",
+		false
+	);
+})();
+
+(function() {
+	function arguments() { };
+	shouldBe(
+		getArguments() == arguments,
+		"getArguments() == arguments {function declaration}",
+		false
+	);
+})();
+</script>

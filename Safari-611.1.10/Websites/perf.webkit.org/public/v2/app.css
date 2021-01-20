@@ -1,0 +1,602 @@
+html {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    padding: 0;
+    margin: 0 1rem;
+    min-width: 60rem;
+}
+
+
+.popup {
+    margin: 0;
+    position: relative;
+    display: inline-block;
+}
+
+.popup h1 {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+.popup .popup-button,
+.control-button,
+.start-time-slider {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
+    color: #666;
+    text-decoration: none;
+    cursor: pointer;
+
+    border: solid 1px #999;
+    border-radius: 0.3rem;
+    padding: 0.2rem 0.5rem;
+}
+
+#header ul.controls li:not(:first-child) .control-button {
+    border-left: none;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+#header ul.controls li:not(:last-child) .control-button {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.popup .popup-button:after {
+    content: " \25BE";
+}
+
+.popup .popup {
+    display: block;
+    margin: 0;
+}
+
+.popup .popup .popup-button:after {
+    content: " \25B8";
+}
+
+.popup ul {
+    display: block;
+    position: absolute;
+    left: 0rem;
+    top: 0rem;
+    z-index: 999;
+    background: #fff;
+    box-shadow: rgba(0, 0, 0, 0.03) 1px 1px 10px 3px;
+/*    box-shadow: rgba(0, 0, 0, 0.03) 1px 1px 0px 0px;*/
+    margin: 0.2rem 0;
+    padding: 0.5rem 0;
+    list-style: none;
+    border: solid 1px #999;
+    border-radius: 0.3rem;
+    white-space: nowrap;
+    text-align: left;
+}
+
+.popup .popup ul {
+    top: 0rem;
+    margin: 0;
+    margin-top: -0.5rem;
+    margin-left: -0.7rem;
+}
+
+.popup li .label {
+    display: block;
+    font-size: 0.8rem;
+    max-width: 15rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.popup .popup a {
+    display: block;
+    width: auto;
+    padding: 0.2rem 0.5rem;
+    border: none;
+}
+
+.popup a {
+    color: #333;
+    text-decoration: none;
+}
+
+.popup a:active,
+.popup a:focus {
+    background: #eef;
+}
+
+.popup li:hover {
+    background: #eee;
+}
+
+
+.icon-button {
+    width: 1rem;
+    height: 1rem;
+}
+.icon-button g {
+    stroke: #ccc;
+    fill: #ccc;
+}
+.icon-button:hover g {
+    stroke: #666;
+    fill: #666;
+}
+.disabled .icon-button:hover g {
+    stroke: #ccc;
+    fill: #ccc;
+}
+
+
+#header {
+    margin: 0 0 1rem 0;
+    border: 1px solid #999;
+    border-radius: 0.3rem;
+    background: #fff;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 3px 0px;
+    border-top: none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    color: #888;
+    position: relative;
+}
+
+#navigation {
+    display: inline-block;
+}
+
+#navigation h1,
+#navigation ul,
+#navigation li,
+#header ul.controls {
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
+    line-height: 3rem;
+}
+#navigation a {
+    text-decoration: none;
+    color: inherit;
+}
+#navigation h1 {
+    font-size: 1.3rem;
+    margin-left: 0.5rem;
+    display: inline;
+    color: #c93;
+}
+#navigation ul,
+#header ul.controls {
+    display: inline-block;
+    list-style: none;
+}
+#navigation ul {
+    vertical-align: bottom;
+    margin-left: 4rem;
+    margin-right: 2.5rem;
+}
+#header ul.controls {
+    margin: 0 1.5rem;
+    vertical-align: top;
+    padding-top: 0.95rem;
+    font-size: 0.8rem;
+    line-height: 1rem;
+}
+#navigation li,
+#header ul.controls > li {
+    display: block;
+    float: left;
+    margin: 0;
+    padding: 0;
+}
+#navigation li a {
+    display: block;
+    border: solid 1px #999;
+    border-bottom: 0px;
+    border-radius: 0.3rem;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    padding: 0.5rem;
+    margin: 0;
+    line-height: 1rem;
+}
+#navigation li:not(:last-of-type) a {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: 0;
+}
+#navigation li:not(:first-of-type) a {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+#navigation li.active a,
+#header ul.controls li.active .control-button {
+    border-color: inherit;
+    color: #000;
+}
+
+#navigation li:not(.active) a:hover,
+#navigation li:not(.active) a:active,
+#header ul.controls > li:not(.active) > a:hover,
+#header ul.controls > li:not(.active) > a:active {
+    background-color: rgba(204, 153, 51, 0.1);
+}
+
+
+
+.start-time-slider {
+    line-height: 1em;
+}
+
+.start-time-slider label {
+    display: block;
+}
+
+.start-time-slider input {
+    vertical-align: middle;
+    height: 0.8rem;
+}
+
+.start-time-slider .numberOfDays {
+    display: inline-block;
+    text-align: right;
+    width: 1.5rem;
+}
+
+
+
+
+.spinner {
+    width: 2rem;
+    height: 2rem;
+    -webkit-transform: translateZ(0);
+}
+.spinner line {
+    animation: spinner-animation 1.6s linear infinite;
+    -webkit-animation: spinner-animation 1.6s linear infinite;
+    opacity: 0.1;
+}
+.spinner line:nth-child(0) {
+    -webkit-animation-delay: 0.0s;
+    animation-delay: 0.0s;
+}
+.spinner line:nth-child(1) {
+    -webkit-animation-delay: 0.2s;
+    animation-delay: 0.2s;
+}
+.spinner line:nth-child(2) {
+    -webkit-animation-delay: 0.4s;
+    animation-delay: 0.4s;
+}
+.spinner line:nth-child(3) {
+    -webkit-animation-delay: 0.6s;
+    animation-delay: 0.6s;
+}
+.spinner line:nth-child(4) {
+    -webkit-animation-delay: 0.8s;
+    animation-delay: 0.8s;
+}
+.spinner line:nth-child(5) {
+    -webkit-animation-delay: 1s;
+    animation-delay: 1s;
+}
+.spinner line:nth-child(6) {
+    -webkit-animation-delay: 1.2s;
+    animation-delay: 1.2s;
+}
+.spinner line:nth-child(7) {
+    -webkit-animation-delay: 1.4s;
+    animation-delay: 1.4s;
+}
+.spinner line:nth-child(8) {
+    -webkit-animation-delay: 1.6s;
+    animation-delay: 1.6s;
+}
+@-webkit-keyframes spinner-animation {
+    0% { opacity: 0.9; }
+    50% { opacity: 0.1; }
+    100% { opacity: 0.1; }
+}
+
+
+table.dashboard {
+    border-collapse: collapse;
+    table-layout: fixed;
+    color: #999;
+    width: 100%;
+}
+
+table.dashboard th,
+table.dashboard td {
+    border: solid 0px #d9d9d9;
+    padding: 0.2rem 0.5rem;
+    text-align: center;
+    position: relative;
+}
+
+table.dashboard thead th,
+table.dashboard thead td {
+    padding: 0.5rem;
+}
+/*
+table.dashboard thead th:nth-child(odd),
+table.dashboard tbody td:nth-child(even) {
+}
+*/
+table.dashboard input {
+    font-size: 1rem;
+    width: 12rem;
+    height: 1rem;
+    text-align: center;
+    margin: 0.5rem 0.3rem;
+}
+
+table.dashboard th {
+    font-weight: normal;
+    font-size: 1rem;
+    white-space: nowrap;
+    color: #f96;
+}
+
+table.dashboard thead th {
+    height: 1rem;
+}
+
+table.dashboard.readonly thead td,
+table.dashboard.readonly tbody th {
+    width: 1rem;
+    padding: 0.2rem 0.5rem;
+}
+
+table.dashboard tbody th {
+    height: 12rem;
+}
+
+table.dashboard.readonly tbody th .label {
+    position: absolute;
+    left: 0;
+    right: 0;
+    display: block;
+    width: 12.4rem;
+    height: 2rem;
+    line-height: 2rem;
+    vertical-align: middle;
+    -webkit-transform: rotate(-90deg) translate(-50%, 0);
+    -webkit-transform-origin: 0 0;
+    transform: rotate(-90deg) translate(-50%, 0);
+    transform-origin: 0 0;
+}
+
+table.dashboard.editMode a {
+    text-decoration: none;
+    vertical-align: middle;
+}
+
+table.dashboard.editMode tbody th a {
+    margin-left: 0.3rem;
+}
+
+table.dashboard.editMode input {
+    box-shadow: inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+    border: solid 1px #999;
+    padding: 0.2rem;
+    border-radius: 0.2rem;
+}
+
+table.dashboard tbody td a.reset {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+}
+table.dashboard.editMode tbody td {
+    padding-left: 2rem;
+}
+table.dashboard tbody td a.reset svg {
+    background: white;
+}
+
+table.dashboard tbody td .chart {
+    border: solid 0px #ddd;
+    border-radius: 0.5rem;
+    margin: 0.5rem 0.5rem;
+}
+
+table.dashboard tbody td .chart,
+table.dashboard tbody td .progress {
+    display: inline-block;
+    width: 100%;
+    height: 12rem;
+    line-height: 12rem;
+    vertical-align: middle;
+}
+
+table.dashboard tbody td .failure {
+    display: table-cell;
+    width: 100%;
+    height: 12rem;
+    vertical-align: middle;
+}
+
+.chart-pane,
+.analysis-group {
+    border: 1px solid #bbb;
+    border-radius: 0.5rem;
+    box-shadow: rgba(0, 0, 0, 0.03) 1px 1px 0px 0px;
+    padding: 0;
+    margin-bottom: 1rem;
+    outline: none;
+    position: relative;
+}
+
+form .analysis-group > * {
+    margin: 0.5rem;
+}
+
+form .analysis-group [name=customValue] {
+    display: block;
+}
+
+#analysis-tasks,
+.analysis-group table {
+    border: solid 0px #999;
+    border-collapse: collapse;
+}
+
+#analysis-tasks thead,
+.analysis-group table thead {
+    color: #c93;
+}
+
+#analysis-tasks th,
+.analysis-group table th {
+    font-weight: normal;
+}
+
+#analysis-tasks td,
+#analysis-tasks th,
+.analysis-group table td,
+.analysis-group table th {
+    padding: 0.2rem 0.5rem;
+}
+
+#analysis-tasks .status,
+#analysis-tasks .author,
+#analysis-tasks .created-at,
+#analysis-tasks .platform-name {
+    white-space: nowrap;
+}
+
+#analysis-tasks .test-name {
+}
+
+#analysis-tasks tbody td,
+#analysis-tasks tbody th,
+.analysis-group table tbody td,
+.analysis-group table tbody th {
+    border-top: solid 1px #ddd;
+}
+
+.analysis-group table .summary td {
+    vertical-align: top;
+}
+
+.analysis-group table thead td {
+    text-align: center;
+}
+
+.analysis-group table .config-letter,
+.analysis-group table .summary {
+    cursor: pointer;
+}
+
+.analysis-group .results .request .config-letter {
+    border-color: transparent;
+}
+
+.analysis-group .results .hideRequests .request {
+    display: none;
+}
+
+.analysis-group .table-container {
+    margin: 0.5rem;
+    margin-right: 19rem;
+    overflow: scroll;
+}
+
+.analysis-group .reference-chart {
+    position: absolute;
+    top: 1.8rem;
+    right: 0rem;
+    width: 19rem;
+    height: 5rem;
+}
+
+.analysis-group .reference-chart .chart {
+    width: 100%;
+    height: 100%;
+}
+
+.box-plot {
+    display: inline-block;
+    width: 100px;
+    height: 0.6rem;
+    border: solid 1px #ddd;
+    padding: 1px;
+    vertical-align: middle;
+}
+
+.box-plot .percentage {
+    fill: #ccc;
+}
+
+.box-plot .delta {
+    fill: #333;
+    opacity: 0.5;
+}
+
+.box-plot svg {
+    display: block;
+}
+
+#analysis-task-title {
+    font-weight: normal;
+    font-size: 1.2rem;
+    margin: 0 0 0 0.5rem;
+    padding: 0;
+}
+
+#analysis-task-testname {
+    font-weight: normal;
+    font-size: 1rem;
+    margin: 0 0 1rem 0.5rem;
+    padding: 0;
+    color: #333;
+}
+
+.analysis-group > h1 {
+    font-size: 1.1rem;
+    font-weight: normal;
+    text-align: left;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid #bbb;
+    margin: 0;
+    padding: 0.2rem 0.5rem;
+}
+
+.analysis-group h1 > input {
+    font-size: 1rem;
+    min-width: 20rem;
+    margin: 0.2rem 0;
+}
+
+.analysis-bugs {
+    margin: 0;
+    padding: 0;
+}
+
+.analysis-bugs th {
+    font-weight: normal;
+    text-align: right;
+    width: 8rem;
+}
+
+.analysis-bugs td {
+    font-weight: normal;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+.analysis-bugs .icon-button {
+    margin-left: 0.2rem;
+    width: 0.8rem;
+    height: 0.8rem;
+}
+
+.analysis-bugs .hidden {
+    display: none;
+}

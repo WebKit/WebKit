@@ -1,0 +1,597 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * This Source Code Form is "Incompatible With Secondary Licenses", as
+ * defined by the Mozilla Public License, v. 2.0.
+ */
+
+/* enter_bug.cgi (start) */
+
+/* These are specified using the class instead of the id so that they
+   don't override the YUI CSS. */
+.enter_bug_form table {
+    border-spacing: 0;
+    border-width: 0;
+}
+
+.enter_bug_form td, .enter_bug_form th {
+    padding: .25em;
+}
+
+.enter_bug_form th {
+    text-align: right;
+}
+
+/* This makes the "component" column as small as possible (since it
+ * contains only fixed-width content) and the Reporter column
+ * as large as possible, which makes the form not jump around
+ * when the Component Description changes size. This works
+ * pretty well on all browsers except IE 8.
+ */
+#Create #field_container_component {
+    width: 1px;
+}
+
+#Create #field_container_reporter {
+    width: 100%;
+}
+
+#Create .comment, #guided_form #description {
+    vertical-align: top;
+    overflow: auto;
+    color: green;
+}
+
+#guided_form #description {
+    display: inline;
+    margin-left: 10px;
+}
+
+#Create #comp_desc_container td {
+    padding: 0;
+}
+
+#Create #comp_desc {
+    height: 11ex;
+}
+
+#Create #os_guess_note {
+    padding-top: 0;
+}
+
+#Create #os_guess_note div {
+    max-width: 35em;
+}
+
+#Create .field_value .text_input {
+    max-width: 50em;
+}
+
+#possible_duplicates th {
+    text-align: center;
+    background: none;
+    border-collapse: collapse;
+}
+
+#possible_duplicates td {
+    vertical-align: middle;
+}
+
+/* Make the Add Me to CC button never wrap. */
+#possible_duplicates .yui-dt-col-update_token {
+    white-space: nowrap;
+}
+
+table#flags th, table#flags td,
+table#bug_flags th, table#bug_flags td,
+table#attachment_flags th, table#attachment_flags td {
+    text-align: left;
+    vertical-align: baseline;
+    font-size: small;
+}
+
+/* CSS rules for the guided form. */
+
+.guided_form_field {
+    background-color: #ffc;
+}
+
+#somebugs {
+    width: 100%;
+    height: 500px;
+}
+
+.good {
+    color: #090;
+}
+
+.bad {
+    color: #900;
+}
+
+/* enter_bug.cgi (end) */
+
+/* show_bug.cgi (start) */
+
+.bz_short_desc_container {
+    margin: 8px 0;
+    padding: 0.3em;
+    background-color: rgb(208, 208, 208);
+    border-radius: 0.5em;
+    font-size: 125%;
+    font-weight: bold;
+}
+
+.bz_bug .edit_form {
+  width: 100%;
+}
+.bz_bug .edit_form table {
+  width: 100%;
+}
+.bz_bug #alias {
+    min-width: 0;
+    width: 10em;
+}
+
+table#flags {
+    width: auto;
+}
+
+.bz_column_spacer {
+    width: 0.5em;
+}
+
+.related_actions {
+    font-size: 0.85em;
+    float: right;
+    list-style-type: none;
+    white-space: nowrap;
+    margin: 0;
+    padding: 0;
+}
+
+.related_actions li {
+    display: inline;
+}
+
+.navigation_link {
+    color: #777;
+    font-style: italic;
+}
+
+.bz_show_bug_column {
+  vertical-align: top;
+}
+
+.bz_section_spacer {
+    height: 1em;
+}
+
+#duplicate_settings {
+    white-space: nowrap;
+}
+
+#bz_big_form_parts td {
+    vertical-align: top;
+}
+
+.bz_group_visibility_section {
+    margin-left: 1em;
+}
+
+.bz_group_visibility_section .instructions {
+    font-style: italic;
+}
+
+#bz_restrict_group_visibility_help .instructions {
+    margin-top: 0;
+}
+
+#bz_enable_role_visibility_help {
+    margin-top: 1em;
+}
+
+.bz_time_tracking_table {
+    border-collapse: collapse;
+}
+
+.bz_time_tracking_table th {
+    text-align: center;
+}
+
+.bz_time_tracking_table td {
+    text-align: center;
+}
+
+.bz_time_tracking_table th,
+.bz_time_tracking_table td {
+    padding: 4px;
+}
+
+.bz_time_tracking_table .bz_summarize_time {
+    text-align: right;
+}
+.bz_time_tracking_table #deadline {
+    width: 7em;
+}
+
+#summary tr td {
+    vertical-align:top;
+}
+
+#status {
+    margin-bottom: 3ex;
+}
+
+.knob-buttons {
+    float: right;
+}
+
+.text_input, .bz_userfield, #keywords_container, #tag_container {
+    width: 100%;
+}
+.bz_bug .bz_short_desc_container {
+    width: inherit;
+}
+
+.bz_comment_tags {
+    margin-top: 3px;
+}
+
+.bz_comment_tag {
+    border: 1px solid #c8c8ba;
+    padding: 1px 3px;
+    margin-right: 2px;
+    border-radius: 0.5em;
+    background-color: #eee;
+    color: #000;
+}
+
+#bz_ctag_div {
+    display: inline-block;
+}
+
+#bz_ctag_error {
+    border: 1px solid #ff6666;
+    padding: 0px 2px;
+    border-radius: 0.5em;
+    margin: 2px;
+    display: inline-block;
+}
+
+#comment_tags_collapse_expand_container {
+    padding-top: 1em;
+}
+
+#comment_tags_collapse_expand {
+    list-style-type: none;
+    padding-left: 1em;
+}
+
+#comment_tags_collapse_expand li {
+    margin-bottom: 0px;
+}
+
+/* show_bug.cgi (end) */
+
+/* showdependencytree.cgi (start) */
+
+ul.tree {
+    padding-left: 0em;
+    margin-left: 1em;
+    display: block;
+}
+
+ul.tree ul {
+    padding-top: 3px;
+    display: block;
+}
+
+ul.tree li {
+    /* see http://www.kryogenix.org/code/browser/aqlists/ for idea */
+    padding-top: 3px;
+    text-indent: -1.2em;
+    padding-left: 0.5em;
+    padding-bottom: 3px;
+    list-style-type: none;
+    background: url("dependency-tree/bug-item.png") no-repeat;
+}
+
+ul.tree li a.b {
+    padding-left: 30px;
+    margin-right: -14px;
+    text-decoration: none;
+}
+
+ul.tree li a.b_open {
+    background: url("dependency-tree/tree-open.png") center no-repeat;
+    cursor: pointer;
+}
+
+ul.tree li a.b_closed {
+    background: url("dependency-tree/tree-closed.png") center no-repeat;
+    cursor: pointer;
+}
+
+ul.tree a.tree_link img {
+    border: 0;
+}
+
+.summ_info {
+    /* change to inline if you would like to see the full bug details
+     * displayed in the list */
+    display: none;
+    font-size: 75%;
+}
+
+.hint {
+    font-size: 90%;
+    margin: 0.2em;
+    padding: 0.1em;
+}
+
+.hint h3, .hint ul {
+    margin-top: 0.1em;
+    margin-bottom: 0.1em;
+}
+
+.summ A, .summ_deep A {
+    text-decoration: none;
+    color: darkblue;
+}
+
+.summ_h A {
+    background-color: #ffffaa;
+    color: #333;
+    font-weight: bold;
+}
+
+.dependency_tree_controls input[type=submit] {
+    min-width: 3em;
+}
+
+/* showdependencytree.cgi (end) */
+
+/* attachment.cgi (start) */
+
+table.attachment_entry th {
+    text-align: right;
+    vertical-align: baseline;
+    white-space: nowrap;
+}
+
+table.attachment_entry td {
+    text-align: left;
+    vertical-align: baseline;
+    padding-bottom: 5px;
+}
+
+/* Rules used to view patches in diff mode. */
+
+.file_head {
+    font-weight: bold;
+    font-size: 1em;
+    background-color: #c3c3c3;
+    border: 1px solid black;
+}
+
+.file_head a {
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 1.1em;
+}
+
+.file_collapse {
+    display: none;
+}
+
+.section_head {
+    background-color: #f0f0f0;
+    border: 1px solid black;
+    text-align: left;
+    padding: 0.2em;
+}
+
+.section_head .link_here {
+    float: right;
+    padding-left: 1em;
+    padding-right: 0.5em;
+}
+
+.lines_count a {
+    padding-left: 0.5em;
+    padding-right: 1em;
+}
+
+table.file_table {
+    table-layout: fixed;
+    width: 100%;
+    empty-cells: show;
+    border-spacing: 0px;
+    border-collapse: collapse;
+    /* draw border below last open context section in listing */
+    border-bottom: 1px solid black;
+}
+
+tbody.file pre {
+    display: inline;
+    font-size: 0.9em;
+}
+
+tbody.file pre:empty {
+    display: block;
+}
+
+.changed {
+    background-color: lightblue;
+}
+
+.added {
+    background-color: lightgreen;
+}
+
+.removed {
+    background-color: #FFCC99;
+}
+
+.num {
+    background-color: #ffe9ae;
+    text-align:right;
+    padding: 0 0.3em;
+    width: 3em;
+}
+
+table.attachment_info th {
+    text-align: right;
+    vertical-align: top;
+}
+
+table.attachment_info td {
+    text-align: left;
+    vertical-align: top;
+}
+
+/* Text displayed when the attachment is not viewable by the web browser */
+#noview {
+    text-align: left;
+    vertical-align: middle;
+}
+
+#attachment_attributes div {
+    padding-bottom: 0.4em;
+}
+
+#attachment_attributes label {
+    font-weight: bold;
+}
+
+#attachment_attributes .block {
+    display: block;
+}
+
+#smallCommentFrame, #attachment_flags {
+    float: left;
+}
+
+#smallCommentFrame {
+    margin-right: 1.5em;
+}
+
+#attachment_comments_and_flags, #attachment_actions {
+    clear: both;
+    margin-bottom: 1ex;
+}
+
+#attachment_information_read_only .title {
+    font-weight: bold;
+    font-size: 1.5em;
+    padding: 0;
+    margin: 0;
+}
+
+#attachment_information_read_only .title #bz_edit {
+    font-size: 0.7em;
+}
+
+#attachment_information_read_only .details {
+    font-size: 90%;
+}
+
+#attachment_info.read #attachment_information_edit {
+    display: none;
+}
+
+#attachment_info.edit #attachment_information_read_only {
+    display: none;
+}
+
+#attachment_info.edit #attachment_view_window {
+    float: left;
+    width: 80%;
+}
+
+#attachment_info.edit #attachment_information_edit {
+    width: 20%;
+}
+
+#attachment_info.edit #attachment_information_edit input.text,
+#attachment_info.edit #attachment_information_edit textarea {
+    width: 90%;
+}
+
+#attachment_isobsolete {
+    padding-right: 1em;
+}
+
+#attachment_information_edit {
+    float: left;
+}
+
+#smallCommentFrame textarea {
+    display: block;
+}
+
+textarea.bz_private {
+    border: 1px solid #F8C8BA;
+}
+
+#update {
+    clear: both;
+    display: block;
+}
+
+div#update_container {
+    clear: both;
+    padding: 1.5em 0;
+}
+
+#attachment_flags {
+    margin-bottom: 1em;
+}
+
+#attachment_flags p {
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+#editFrame, #viewDiffFrame, #viewFrame {
+    height: 400px;
+    width: 95%;
+    margin-left: 2%;
+}
+
+.viewall_frame_container {
+    width: 75%;
+    margin: 2em auto;
+}
+
+.viewall_desc {
+    width: 100%;
+    border: 1px solid black;
+    border-spacing: 0px;
+    border-collapse: collapse;
+}
+
+.viewall_desc th, .viewall_desc td {
+    border: 1px solid black;
+    padding: 0.3em;
+}
+
+.viewall_frame {
+    width: 100%;
+    height: 350px;
+}
+
+.no_javascript .bz_hide, .no_javascript .bz_edit {
+    display: none;
+}
+
+#hidden_obsolete_message {
+   text-align: left;
+   width: 75%;
+   margin: 0  auto;
+   font-weight: bold;
+}
+
+/* attachment.cgi (end) */

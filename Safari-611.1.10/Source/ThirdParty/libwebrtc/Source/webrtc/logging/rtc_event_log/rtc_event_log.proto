@@ -1,0 +1,415 @@
+syntax = "proto2";
+option optimize_for = LITE_RUNTIME;
+package webrtc.rtclog;
+
+enum MediaType {
+  ANY = 0;
+  AUDIO = 1;
+  VIDEO = 2;
+  DATA = 3;
+}
+
+// This is the main message to dump to a file, it can contain multiple event
+// messages, but it is possible to append multiple EventStreams (each with a
+// single event) to a file.
+// This has the benefit that there's no need to keep all data in memory.
+message EventStream {
+  repeated Event stream = 1;
+}
+
+message Event {
+  // required - Elapsed wallclock time in us since the start of the log.
+  optional int64 timestamp_us = 1;
+
+  // The different types of events that can occur, the UNKNOWN_EVENT entry
+  // is added in case future EventTypes are added, in that case old code will
+  // receive the new events as UNKNOWN_EVENT.
+  enum EventType {
+    UNKNOWN_EVENT = 0;
+    LOG_START = 1;
+    LOG_END = 2;
+    RTP_EVENT = 3;
+    RTCP_EVENT = 4;
+    AUDIO_PLAYOUT_EVENT = 5;
+    LOSS_BASED_BWE_UPDATE = 6;
+    DELAY_BASED_BWE_UPDATE = 7;
+    VIDEO_RECEIVER_CONFIG_EVENT = 8;
+    VIDEO_SENDER_CONFIG_EVENT = 9;
+    AUDIO_RECEIVER_CONFIG_EVENT = 10;
+    AUDIO_SENDER_CONFIG_EVENT = 11;
+    AUDIO_NETWORK_ADAPTATION_EVENT = 16;
+    BWE_PROBE_CLUSTER_CREATED_EVENT = 17;
+    BWE_PROBE_RESULT_EVENT = 18;
+    ALR_STATE_EVENT = 19;
+    ICE_CANDIDATE_PAIR_CONFIG = 20;
+    ICE_CANDIDATE_PAIR_EVENT = 21;
+  }
+
+  // required - Indicates the type of this event
+  optional EventType type = 2;
+
+  oneof subtype {
+    // required if type == RTP_EVENT
+    RtpPacket rtp_packet = 3;
+
+    // required if type == RTCP_EVENT
+    RtcpPacket rtcp_packet = 4;
+
+    // required if type == AUDIO_PLAYOUT_EVENT
+    AudioPlayoutEvent audio_playout_event = 5;
+
+    // required if type == LOSS_BASED_BWE_UPDATE
+    LossBasedBweUpdate loss_based_bwe_update = 6;
+
+    // required if type == DELAY_BASED_BWE_UPDATE
+    DelayBasedBweUpdate delay_based_bwe_update = 7;
+
+    // required if type == VIDEO_RECEIVER_CONFIG_EVENT
+    VideoReceiveConfig video_receiver_config = 8;
+
+    // required if type == VIDEO_SENDER_CONFIG_EVENT
+    VideoSendConfig video_sender_config = 9;
+
+    // required if type == AUDIO_RECEIVER_CONFIG_EVENT
+    AudioReceiveConfig audio_receiver_config = 10;
+
+    // required if type == AUDIO_SENDER_CONFIG_EVENT
+    AudioSendConfig audio_sender_config = 11;
+
+    // required if type == AUDIO_NETWORK_ADAPTATION_EVENT
+    AudioNetworkAdaptation audio_network_adaptation = 16;
+
+    // required if type == BWE_PROBE_CLUSTER_CREATED_EVENT
+    BweProbeCluster probe_cluster = 17;
+
+    // required if type == BWE_PROBE_RESULT_EVENT
+    BweProbeResult probe_result = 18;
+
+    // required if type == ALR_STATE_EVENT
+    AlrState alr_state = 19;
+
+    // required if type == ICE_CANDIDATE_PAIR_CONFIG
+    IceCandidatePairConfig ice_candidate_pair_config = 20;
+
+    // required if type == ICE_CANDIDATE_PAIR_EVENT
+    IceCandidatePairEvent ice_candidate_pair_event = 21;
+  }
+}
+
+message RtpPacket {
+  // required - True if the packet is incoming w.r.t. the user logging the data
+  optional bool incoming = 1;
+
+  optional MediaType type = 2 [deprecated = true];
+
+  // required - The size of the packet including both payload and header.
+  optional uint32 packet_length = 3;
+
+  // required - The RTP header only.
+  optional bytes header = 4;
+
+  // optional - The probe cluster id.
+  optional int32 probe_cluster_id = 5;
+
+  // Do not add code to log user payload data without a privacy review!
+}
+
+message RtcpPacket {
+  // required - True if the packet is incoming w.r.t. the user logging the data
+  optional bool incoming = 1;
+
+  optional MediaType type = 2 [deprecated = true];
+
+  // required - The whole packet including both payload and header.
+  optional bytes packet_data = 3;
+}
+
+message AudioPlayoutEvent {
+  // TODO(ivoc): Rename, we currently use the "remote" ssrc, i.e. identifying
+  // the receive stream, while local_ssrc identifies the send stream, if any.
+  // required - The SSRC of the audio stream associated with the playout event.
+  optional uint32 local_ssrc = 2;
+}
+
+message LossBasedBweUpdate {
+  // required - Bandwidth estimate (in bps) after the update.
+  optional int32 bitrate_bps = 1;
+
+  // required - Fraction of lost packets since last receiver report
+  // computed as floor( 256 * (#lost_packets / #total_packets) ).
+  // The possible values range from 0 to 255.
+  optional uint32 fraction_loss = 2;
+
+  // TODO(terelius): Is this really needed? Remove or make optional?
+  // required - Total number of packets that the BWE update is based on.
+  optional int32 total_packets = 3;
+}
+
+message DelayBasedBweUpdate {
+  enum DetectorState {
+    BWE_NORMAL = 0;
+    BWE_UNDERUSING = 1;
+    BWE_OVERUSING = 2;
+  }
+
+  // required - Bandwidth estimate (in bps) after the update.
+  optional int32 bitrate_bps = 1;
+
+  // required - The state of the overuse detector.
+  optional DetectorState detector_state = 2;
+}
+
+// TODO(terelius): Video and audio streams could in principle share SSRC,
+// so identifying a stream based only on SSRC might not work.
+// It might be better to use a combination of SSRC and media type
+// or SSRC and port number, but for now we will rely on SSRC only.
+message VideoReceiveConfig {
+  // required - Synchronization source (stream identifier) to be received.
+  optional uint32 remote_ssrc = 1;
+  // required - Sender SSRC used for sending RTCP (such as receiver reports).
+  optional uint32 local_ssrc = 2;
+
+  // Compound mode is described by RFC 4585 and reduced-size
+  // RTCP mode is described by RFC 5506.
+  enum RtcpMode {
+    RTCP_COMPOUND = 1;
+    RTCP_REDUCEDSIZE = 2;
+  }
+  // required - RTCP mode to use.
+  optional RtcpMode rtcp_mode = 3;
+
+  // required - Receiver estimated maximum bandwidth.
+  optional bool remb = 4;
+
+  // Map from video RTP payload type -> RTX config.
+  repeated RtxMap rtx_map = 5;
+
+  // RTP header extensions used for the received stream.
+  repeated RtpHeaderExtension header_extensions = 6;
+
+  // List of decoders associated with the stream.
+  repeated DecoderConfig decoders = 7;
+}
+
+// Maps decoder names to payload types.
+message DecoderConfig {
+  // required
+  optional string name = 1;
+
+  // required
+  optional int32 payload_type = 2;
+}
+
+// Maps RTP header extension names to numerical IDs.
+message RtpHeaderExtension {
+  // required
+  optional string name = 1;
+
+  // required
+  optional int32 id = 2;
+}
+
+// RTX settings for incoming video payloads that may be received.
+// RTX is disabled if there's no config present.
+message RtxConfig {
+  // required - SSRC to use for the RTX stream.
+  optional uint32 rtx_ssrc = 1;
+
+  // required - Payload type to use for the RTX stream.
+  optional int32 rtx_payload_type = 2;
+}
+
+message RtxMap {
+  // required
+  optional int32 payload_type = 1;
+
+  // required
+  optional RtxConfig config = 2;
+}
+
+message VideoSendConfig {
+  // Synchronization source (stream identifier) for outgoing stream.
+  // One stream can have several ssrcs for e.g. simulcast.
+  // At least one ssrc is required.
+  repeated uint32 ssrcs = 1;
+
+  // RTP header extensions used for the outgoing stream.
+  repeated RtpHeaderExtension header_extensions = 2;
+
+  // List of SSRCs for retransmitted packets.
+  repeated uint32 rtx_ssrcs = 3;
+
+  // required if rtx_ssrcs is used - Payload type for retransmitted packets.
+  optional int32 rtx_payload_type = 4;
+
+  // required - Encoder associated with the stream.
+  optional EncoderConfig encoder = 5;
+}
+
+// Maps encoder names to payload types.
+message EncoderConfig {
+  // required
+  optional string name = 1;
+
+  // required
+  optional int32 payload_type = 2;
+}
+
+message AudioReceiveConfig {
+  // required - Synchronization source (stream identifier) to be received.
+  optional uint32 remote_ssrc = 1;
+
+  // required - Sender SSRC used for sending RTCP (such as receiver reports).
+  optional uint32 local_ssrc = 2;
+
+  // RTP header extensions used for the received audio stream.
+  repeated RtpHeaderExtension header_extensions = 3;
+}
+
+message AudioSendConfig {
+  // required - Synchronization source (stream identifier) for outgoing stream.
+  optional uint32 ssrc = 1;
+
+  // RTP header extensions used for the outgoing audio stream.
+  repeated RtpHeaderExtension header_extensions = 2;
+}
+
+message AudioNetworkAdaptation {
+  // Bit rate that the audio encoder is operating at.
+  optional int32 bitrate_bps = 1;
+
+  // Frame length that each encoded audio packet consists of.
+  optional int32 frame_length_ms = 2;
+
+  // Packet loss fraction that the encoder's forward error correction (FEC) is
+  // optimized for.
+  optional float uplink_packet_loss_fraction = 3;
+
+  // Whether forward error correction (FEC) is turned on or off.
+  optional bool enable_fec = 4;
+
+  // Whether discontinuous transmission (DTX) is turned on or off.
+  optional bool enable_dtx = 5;
+
+  // Number of audio channels that each encoded packet consists of.
+  optional uint32 num_channels = 6;
+}
+
+message BweProbeCluster {
+  // required - The id of this probe cluster.
+  optional int32 id = 1;
+
+  // required - The bitrate in bps that this probe cluster is meant to probe.
+  optional int32 bitrate_bps = 2;
+
+  // required - The minimum number of packets used to probe the given bitrate.
+  optional uint32 min_packets = 3;
+
+  // required - The minimum number of bytes used to probe the given bitrate.
+  optional uint32 min_bytes = 4;
+}
+
+message BweProbeResult {
+  // required - The id of this probe cluster.
+  optional int32 id = 1;
+
+  enum ResultType {
+    SUCCESS = 0;
+    INVALID_SEND_RECEIVE_INTERVAL = 1;
+    INVALID_SEND_RECEIVE_RATIO = 2;
+    TIMEOUT = 3;
+  }
+
+  // required - The result of this probing attempt.
+  optional ResultType result = 2;
+
+  // optional - but required if result == SUCCESS. The resulting bitrate in bps.
+  optional int32 bitrate_bps = 3;
+}
+
+message AlrState {
+  // required - If we are in ALR or not.
+  optional bool in_alr = 1;
+}
+
+message IceCandidatePairConfig {
+  enum IceCandidatePairConfigType {
+    ADDED = 0;
+    UPDATED = 1;
+    DESTROYED = 2;
+    SELECTED = 3;
+  }
+
+  enum IceCandidateType {
+    LOCAL = 0;
+    STUN = 1;
+    PRFLX = 2;
+    RELAY = 3;
+    UNKNOWN_CANDIDATE_TYPE = 4;
+  }
+
+  enum Protocol {
+    UDP = 0;
+    TCP = 1;
+    SSLTCP = 2;
+    TLS = 3;
+    UNKNOWN_PROTOCOL = 4;
+  }
+
+  enum AddressFamily {
+    IPV4 = 0;
+    IPV6 = 1;
+    UNKNOWN_ADDRESS_FAMILY = 2;
+  }
+
+  enum NetworkType {
+    ETHERNET = 0;
+    LOOPBACK = 1;
+    WIFI = 2;
+    VPN = 3;
+    CELLULAR = 4;
+    UNKNOWN_NETWORK_TYPE = 5;
+  }
+
+  // required
+  optional IceCandidatePairConfigType config_type = 1;
+
+  // required
+  optional uint32 candidate_pair_id = 2;
+
+  // required
+  optional IceCandidateType local_candidate_type = 3;
+
+  // required
+  optional Protocol local_relay_protocol = 4;
+
+  // required
+  optional NetworkType local_network_type = 5;
+
+  // required
+  optional AddressFamily local_address_family = 6;
+
+  // required
+  optional IceCandidateType remote_candidate_type = 7;
+
+  // required
+  optional AddressFamily remote_address_family = 8;
+
+  // required
+  optional Protocol candidate_pair_protocol = 9;
+}
+
+message IceCandidatePairEvent {
+  enum IceCandidatePairEventType {
+    CHECK_SENT = 0;
+    CHECK_RECEIVED = 1;
+    CHECK_RESPONSE_SENT = 2;
+    CHECK_RESPONSE_RECEIVED = 3;
+  }
+
+  // required
+  optional IceCandidatePairEventType event_type = 1;
+
+  // required
+  optional uint32 candidate_pair_id = 2;
+}

@@ -1,0 +1,63 @@
+Test for CSS.getComputedPrimaryFontForNode.
+
+Fallback Test 1
+Fallback Test 2
+Fallback Test 3
+Webfont Test 1
+Webfont Test 2
+¥Yen
+¥Yen
+Variable Font Test 1
+
+== Running test suite: CSS.getComputedPrimaryFontForNode
+-- Running test case: CSS.getComputedPrimaryFontForNode.Fallback1
+PASS: Name should be 'Helvetica Neue'.
+
+-- Running test case: CSS.getComputedPrimaryFontForNode.Fallback2
+PASS: Name should be 'Times'.
+
+-- Running test case: CSS.getComputedPrimaryFontForNode.Fallback3
+PASS: Name should be 'Times'.
+
+-- Running test setup.
+PASS: Font should be loaded.
+-- Running test case: CSS.getComputedPrimaryFontForNode.Webfont1
+PASS: Name should be 'Times'.
+
+-- Running test setup.
+PASS: Font should be loaded.
+-- Running test case: CSS.getComputedPrimaryFontForNode.Webfont2
+PASS: Name should be 'Ahem'.
+
+-- Running test setup.
+PASS: Font should be loaded.
+-- Running test case: CSS.getComputedPrimaryFontForNode.WebfontCJK1
+PASS: Name should be 'Ahem'.
+
+-- Running test setup.
+PASS: Font should be loaded.
+-- Running test case: CSS.getComputedPrimaryFontForNode.WebfontCJK2
+PASS: Name should be 'Times'.
+
+-- Running test setup.
+PASS: Font should be loaded.
+-- Running test case: CSS.getComputedPrimaryFontForNode.VariableFont1
+PASS: Name should be 'Boxis'.
+PASS: Expect exactly 4 available variation axes.
+PASS: Descent axis name should be 'Descent'.
+PASS: Descent axis minimum should be '0'.
+PASS: Descent axis maximum should be '250'.
+PASS: Descent axis default should be '0'.
+PASS: Height axis name should be 'Height'.
+PASS: Height axis minimum should be '0'.
+PASS: Height axis maximum should be '1000'.
+PASS: Height axis default should be '750'.
+PASS: Tracking axis name should be 'Tracking'.
+PASS: Tracking axis minimum should be '0'.
+PASS: Tracking axis maximum should be '1000'.
+PASS: Tracking axis default should be '0'.
+PASS: Width axis name should be 'Width'.
+PASS: Width axis minimum should be '0'.
+PASS: Width axis maximum should be '1000'.
+PASS: Width axis default should be '750'.
+

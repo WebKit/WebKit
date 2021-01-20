@@ -1,0 +1,76 @@
+<html>
+    <head>
+        <style>
+            body {
+                height: 10000px;
+            }
+            #top-bar {
+                position: fixed;
+                width: 100%;
+                height: 200px;
+                background-color: green;
+                top: -150px;
+                left: 0;
+            }
+            /* This fixed element does not cover the entire width and should be ignored. */
+            #ignored-left {
+                position: fixed;
+                width: 20px;
+                height: 5000px;
+                background-color: red;
+                left: 0;
+                top: 0;
+            }
+            /* This fixed element does not cover an edge and should be ignored. */
+            #ignored-center {
+                position: fixed;
+                width: 100%;
+                height: 150px;
+                background-color: red;
+                left: 0;
+                top: 50%;
+            }
+        </style>
+        <script src="../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <div id="top-bar"></div>
+        <div id="ignored-left"></div>
+        <div id="ignored-center"></div>
+        <script>
+            description("Test scrolling with page granularity by using the space bar excludes the height of fixed element covering the full page width. In this case, the top fixed element starts above the page, but the overlap should still be accounted for.");
+
+            jsTestIsAsync = true;
+
+            var maxOverlapBetweenPages = 40;
+            var failTimeoutId;
+            function test() {
+                if (window.eventSender) {
+                    // Force the first layout to avoid the suppressed scrollbar cases.
+                    scratch = document.documentElement.offsetWidth;
+
+                    // Avoid special cases for being "onload".
+                    setTimeout(function() {
+                        eventSender.keyDown(' ');
+                    } , 0);
+
+                    failTimeoutId = setTimeout(function() {
+                        testFailed("The scrollview failed to scroll in response to the event.");
+                        debug("window.scrollY = " + window.scrollY + " excepted value around " + (window.innerHeight - 50 - maxOverlapBetweenPages));
+                        finishJSTest();
+                    }, 1000);
+                }
+            }
+
+            window.addEventListener("scroll", function() {
+                if (window.scrollY == window.innerHeight - 50 - maxOverlapBetweenPages) {
+                    testPassed("Scrolled to " + window.scrollY);
+                    clearTimeout(failTimeoutId);
+                    finishJSTest();
+                }
+            })
+            window.addEventListener("load", test);
+        </script>
+        <script src="../resources/js-test-post.js"></script>
+    </body>
+</html>

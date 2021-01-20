@@ -1,0 +1,5 @@
+2d.imageData.get.type
+getImageData() returns an ImageData object containing a Uint8ClampedArray object
+Spec references: 2d.imageData.get.object
+Actual output:
+Passed

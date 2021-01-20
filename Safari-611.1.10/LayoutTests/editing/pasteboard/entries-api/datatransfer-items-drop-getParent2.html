@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../editing.js"></script>
+</head>
+<body>
+<div id="dropzone" style="width: 200px; height: 200px; background-color: grey;"></div>
+<script>
+description("Basic test coverage for fileSystemEntry.getParent()");
+jsTestIsAsync = true;
+
+var dropzone = document.getElementById('dropzone');
+dropzone.ondrop = function(e) {
+    e.preventDefault();
+    dataTransfer = e.dataTransfer;
+
+    directoryEntry = dataTransfer.items[0].webkitGetAsEntry();
+    shouldBeEqualToString("directoryEntry.name", "testFiles");
+    shouldBeEqualToString("directoryEntry.fullPath", "/testFiles");
+    shouldBeTrue("directoryEntry.isDirectory");
+    shouldBeFalse("directoryEntry.isFile");
+
+    let directoryReader = directoryEntry.createReader();
+    directoryReader.readEntries(function(entries) {
+        entries[0].getParent(function(parent) {
+            entryParent = parent;
+            shouldBeEqualToString("entryParent.name", "testFiles");
+            shouldBeEqualToString("entryParent.fullPath", "/testFiles");
+            shouldBeTrue("entryParent.isDirectory");
+            shouldBeFalse("entryParent.isFile");
+
+            finishJSTest();
+        }, function(e) {
+            testFailed("getParent() call failed: " + e);
+            finishJSTest();
+        });
+    }, function(e) {
+        testFailed("readEntries() call failed: " + e);
+        finishJSTest();
+    });
+};
+
+dropzone.ondragover = function(ev) {
+    ev.preventDefault();
+}
+
+onload = function() {
+    dragFilesOntoElement(dropzone, ['../../../fast/forms/file/entries-api/resources/testFiles']);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<html>
+<body>
+<p>Test that an XMLHttpRequest with Content-Type: gzip is properly uncompressed.</p>
+<pre id="console"></pre>
+<script>
+const max = 2048;
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const log = text => {
+    let console = document.getElementById('console');
+    console.appendChild(document.createTextNode(text + '\n'));
+};
+
+const xhr = new XMLHttpRequest();
+xhr.open('GET', 'resources/gzip-lorem-no-content-encoding.php.gz');
+xhr.responseType = 'arraybuffer';
+xhr.onerror = e => log(`FAILED: ${xhr.status} ${xhr.statusText}`);
+xhr.onreadystatechange = () => {
+    switch (xhr.readyState) {
+    case xhr.HEADERS_RECEIVED: 
+        log(`Content Type: ${xhr.getResponseHeader('Content-Type')}`);
+        log(`Content Encoding: ${xhr.getResponseHeader('Content-Encoding')}`);
+        log(`Content Length: ${xhr.getResponseHeader('Content-Length')}`);
+        break;
+    case xhr.DONE:
+        log(`RESPONSE ${xhr.status}: ${xhr.response}`);
+        const array = new Uint8Array(xhr.response);
+        log(`LENGTH: ${array.length}`);
+        let content = '"';
+        let i = 0;
+        while (i < max && i < array.length) {
+            const c = array[i];
+            content += (0x20 <= c && c <= 0x7e) ? String.fromCodePoint(c) : `\\x${c.toString(16).padStart(2, '0')}`;
+            ++i;
+        }
+        content += '"';
+        log(`CONTENT: ${content}`);
+        if (array.length > i)
+            log('Output truncated to ${max} characters');
+        if (window.testRunner)
+            testRunner.notifyDone();
+        break;
+    }
+};
+xhr.send(null);
+</script>
+</body>
+</html>

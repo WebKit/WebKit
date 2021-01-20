@@ -1,0 +1,3 @@
+This test checks various characters that should always be zero width to ensure that they are. The WebKit text system ensures this in a way that's independent of the fonts installed on the system.
+
+PASS: All the characters had zero width.

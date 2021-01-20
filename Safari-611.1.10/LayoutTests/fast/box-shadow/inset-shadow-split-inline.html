@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .container {
+        width: 500px;
+        margin: 4px;
+        font-family: Ahem;
+        font-size: 64px;
+        line-height: 1.5;
+        overflow: hidden;
+        clip-path: inset(120px calc(100% - 40px) 0px 0px);
+    }
+
+    span {
+        color: transparent;
+        border: 15px solid gray;
+        box-shadow: 20px 20px 0px blue inset;        
+    }
+    
+    .rounded span {
+        border-radius: 50px;
+    }
+
+    .keep_windows_happy {
+        position: absolute;
+        left: 12px;
+        width: 40px;
+        height: 4px;
+        background-color: black;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <span>
+        000000<br>000000<br>000000
+    </span>
+</div>
+
+<div class="rounded container">
+    <span>
+        000000<br>000000<br>000000
+    </span>
+</div>
+<div class="keep_windows_happy" style="top: 138px;"></div>
+<div class="keep_windows_happy" style="top: 234px;"></div>
+<div class="keep_windows_happy" style="top: 430px;"></div>
+</body>
+</html>

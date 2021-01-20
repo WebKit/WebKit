@@ -1,0 +1,25 @@
+Verify that events are received corretly when start and stop recognition normally.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS recognition = new webkitSpeechRecognition() did not throw exception.
+PASS recognition.start() did not throw exception.
+Received start event
+Received audiostart event
+Received speechstart event
+Received result event
+PASS event.resultIndex is 0
+PASS event.results.length is 1
+PASS event.results.item(0).isFinal is true
+PASS event.results.item(0).length is 1
+PASS event.results.item(0).item(0).transcript is "Test"
+PASS event.results.item(0).item(0).confidence is 1
+PASS recognition.stop() did not throw exception.
+Received audioend event
+Received speechend event
+Received end event
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

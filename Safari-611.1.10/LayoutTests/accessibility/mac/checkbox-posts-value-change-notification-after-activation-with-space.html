@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<input type="checkbox" id="checkbox">checkbox<br>
+
+<input type="radio" id="radio">radio
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that if a radio or checkbox has its state changed with a space bar, then a value change notification is sent");
+
+    var callbackCount = 0;
+    function notificationCallback(notification) {
+        if (notification == "AXValueChanged") {
+           debug("Received " + notification);
+
+           if (callbackCount == 1)
+               finishJSTest();
+           callbackCount++;
+        }
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var checkbox = accessibilityController.accessibleElementById("checkbox");
+        checkbox.addNotificationListener(notificationCallback);
+
+        var radio = accessibilityController.accessibleElementById("radio");
+        radio.addNotificationListener(notificationCallback);
+
+        document.getElementById("checkbox").focus();
+        eventSender.keyDown(' ', new Array());
+
+        document.getElementById("radio").focus();
+        eventSender.keyDown(' ', new Array());
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

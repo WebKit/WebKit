@@ -1,0 +1,29 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    description("Tests the history.scrollRestoration attribute");
+
+    if (window.testRunner)
+        testRunner.clearBackForwardList();
+
+    shouldBeTrue("'scrollRestoration' in history");
+
+    history.scrollRestoration = 'auto';
+    shouldBeEqualToString('history.scrollRestoration', 'auto');
+
+    history.scrollRestoration = 'manual';
+    shouldBeEqualToString('history.scrollRestoration', 'manual');
+
+    history.scrollRestoration = 'bananas';
+    shouldBeEqualToString('history.scrollRestoration', 'manual');
+
+    history.scrollRestoration = 'auto';
+    shouldBeEqualToString('history.scrollRestoration', 'auto');
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

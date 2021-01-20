@@ -1,0 +1,7 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg">
+  <line x1="100" y1="100" x2="100" y2="200" stroke="blue" stroke-width="10"/>
+</svg>

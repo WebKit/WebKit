@@ -1,0 +1,4 @@
+
+EXPECTED (volumeSliderCoordinates[0] <= muteButtonCoordinates[0] && volumeSliderCoordinates[1] <= muteButtonCoordinates[1] == 'true') OK
+END OF TEST
+

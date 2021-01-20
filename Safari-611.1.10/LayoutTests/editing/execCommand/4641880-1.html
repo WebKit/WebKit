@@ -1,0 +1,16 @@
+<p>This tests InsertUnorderedList on a selection that ends at the start of a paragraph.  Since we don't paint the gap before the paragraph for most selections like this, we don't perform InsertUnorderedList on the paragraph that the selection ends in.</p>
+<div id="div" contenteditable="true">
+This paragraph should be in a list.<br>
+This paragraph should not be in a list.</br>
+</div>
+
+<script>
+if (window.testRunner)
+    window.testRunner.dumpEditingCallbacks();
+
+var div = document.getElementById("div");
+var sel = window.getSelection();
+sel.setPosition(div, 0);
+sel.modify("extend", "forward", "line");
+document.execCommand("InsertUnorderedList");
+</script>

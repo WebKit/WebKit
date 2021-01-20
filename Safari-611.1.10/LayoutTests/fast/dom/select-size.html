@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<select id="test1"></select>
+<select id="test2" size=2></select>
+<select id="test3" multiple></select>
+<select id="test4" multiple size=1></select>
+<script>
+description('Test HTMLSelectElement::size behavior.');
+
+var select = document.getElementById('test1');
+shouldBe('select.size', '0');
+shouldBe('select.setAttribute("size", "1"); select.size', '1');
+shouldBe('select.setAttribute("size", "2"); select.size', '2');
+shouldBe('select.setAttribute("size", "3"); select.size', '3');
+shouldBe('select.setAttribute("size", "4"); select.size', '4');
+shouldBe('select.setAttribute("size", "0"); select.size', '0');
+shouldBe('select.setAttribute("size", "-1"); select.size', '0');
+shouldBe('select.setAttribute("size", "abc"); select.size', '0');
+shouldBe('select.setAttribute("size", "3.14"); select.size', '3');
+
+var select = document.getElementById('test2');
+shouldBe('select.size', '2');
+shouldBe('select.setAttribute("size", "1"); select.size', '1');
+shouldBe('select.setAttribute("size", "0"); select.size', '0');
+shouldBe('select.setAttribute("size", "-1"); select.size', '0');
+shouldBe('select.setAttribute("size", "abc"); select.size', '0');
+shouldBe('select.setAttribute("size", "3.14"); select.size', '3');
+
+var select = document.getElementById('test3');
+shouldBe('select.size', '0');
+shouldBe('select.setAttribute("size", "1"); select.size', '1');
+shouldBe('select.setAttribute("size", "0"); select.size', '0');
+shouldBe('select.setAttribute("size", "-1"); select.size', '0');
+shouldBe('select.setAttribute("size", "abc"); select.size', '0');
+shouldBe('select.setAttribute("size", "3.14"); select.size', '3');
+
+var select = document.getElementById('test4');
+shouldBe('select.size', '1');
+shouldBe('select.setAttribute("size", "2"); select.size', '2');
+shouldBe('select.setAttribute("size", "0"); select.size', '0');
+shouldBe('select.setAttribute("size", "-1"); select.size', '0');
+shouldBe('select.setAttribute("size", "abc"); select.size', '0');
+shouldBe('select.setAttribute("size", "3.14"); select.size', '3');
+
+</script>
+</body>
+</html>

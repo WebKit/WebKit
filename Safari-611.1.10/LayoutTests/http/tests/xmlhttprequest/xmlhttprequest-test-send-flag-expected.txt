@@ -1,0 +1,7 @@
+Test bug 16989 : Add send() flag checks in XmlHttpRequest
+
+You should see PASS two times
+
+PASS
+PASS
+

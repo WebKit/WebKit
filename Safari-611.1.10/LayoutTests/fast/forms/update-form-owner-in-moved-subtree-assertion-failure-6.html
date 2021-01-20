@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="container">
+    <form id="test"></form>
+    <form id="test"></form>
+    <input form="test">
+</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+container.remove();
+document.write(`This tests removing a subtree containing a form associated element with two form elements with matching ID.<br>
+The test passses if WebKit doesn't hit a debug assertion.<br>
+PASS.`);
+</script>
+</body>
+</html>

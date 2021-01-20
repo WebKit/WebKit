@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Confirm WebKit does not report versions above the frozen maximums.");
+</script>
+</head>
+<body>
+<script>
+function testVersion(userAgent)
+{
+    var start = userAgent.indexOf("AppleWebKit/");
+    if (start < 0) {
+        testFailed("User agent did not contain WebKit version.");
+        return;
+    }
+
+    start += 12;
+
+    var end = userAgent.indexOf(" ", start);
+    if (end < 0) {
+        testFailed("Couldn't find end of the version string.");
+        return;
+    }
+
+    var version = userAgent.substr(start, end - start);
+    if (version == "") {
+        testFailed("Malformed version string.");
+        return;
+    }
+    
+    var versionComponents = version.split('.');
+    if (versionComponents[0] <= 605)
+        testPassed("Major version number is within bounds.");
+    else
+        testFailed("Major version number is " + versionComponents[0]);
+
+    if (versionComponents.length < 2)
+        return;
+
+    if (versionComponents[0] < 605 || versionComponents[1] <= 1)
+        testPassed("Minor version number is within bounds.");
+    else
+        testFailed("Minor version number is " + versionComponents[1]);
+
+    if (versionComponents.length < 3)
+        return;
+
+    if (versionComponents[0] < 605 || versionComponents[1] < 1 || versionComponents[2] <= 15)
+        testPassed("Tiny version number is within bounds.");
+    else
+        testFailed("Tiny version number is " + versionComponents[2]);
+}
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+testVersion(navigator.userAgent);
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+2d.line.cap.open
+Line caps are drawn at the corners of an unclosed rectangle
+Spec references: 2d.lineCap.end
+Actual output:
+Expected output:
+
+Passed

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        var svg = new Image();
+        svg.src = "resources/svg-with-image-with-link.svg";
+
+        svg.onload = function() {
+            var canvas = document.createElement("canvas");
+            window.ctx = canvas.getContext("2d");
+
+            ctx.getImageData(0, 0, 1, 1);
+
+            // Wait for the data uri in the image to load.
+            setTimeout(function() {
+                ctx.drawImage(svg, 0, 0);
+
+                shouldThrow("window.ctx.getImageData(0, 0, 1, 1)");
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 50);
+        };
+    </script>
+</body>
+</html>

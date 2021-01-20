@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+    var scriptLoaded = false;
+</script>
+<script src="../resources/slow-script.pl?delay=200" onload="scriptLoaded = true;"></script>
+<script>
+     addEventListener("load", function() {
+         shouldBeTrue("scriptLoaded");
+     });
+</script>
+

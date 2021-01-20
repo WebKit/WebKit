@@ -1,0 +1,12 @@
+Testing that we only show appropriate controls for a video element with only audio tracks.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaControls.querySelector('button.fullscreen') is null
+PASS mediaControls.querySelector('.controls-bar').classList.contains('faded') is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

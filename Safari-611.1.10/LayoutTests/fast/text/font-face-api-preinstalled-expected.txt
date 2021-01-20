@@ -1,0 +1,11 @@
+This test makes sure that preinstalled fonts are never returned from the CSS Font Loading API.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result.length is 0
+PASS result.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

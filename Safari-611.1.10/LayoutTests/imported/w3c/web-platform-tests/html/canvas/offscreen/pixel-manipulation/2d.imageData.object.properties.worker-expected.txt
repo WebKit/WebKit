@@ -1,0 +1,3 @@
+
+PASS ImageData objects have the right properties
+

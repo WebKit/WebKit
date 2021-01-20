@@ -1,0 +1,5 @@
+
+FAIL getting name Can't find variable: SharedWorker
+FAIL getting name 1 Can't find variable: SharedWorker
+FAIL getting name 2 Can't find variable: SharedWorker
+

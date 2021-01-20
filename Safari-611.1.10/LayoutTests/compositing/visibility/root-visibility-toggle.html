@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        html {
+            visibility: hidden;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function doTest()
+        {
+            requestAnimationFrame(() => {
+                document.documentElement.style.visibility = 'visible';
+
+                if (window.internals)
+                    document.getElementById('layers').textContent = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<p>This text should be visible.</p>
+<pre id="layers"></pre>
+</body>
+</html>

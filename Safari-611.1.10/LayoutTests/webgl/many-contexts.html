@@ -1,0 +1,16 @@
+<div id="result">PASS if this test did not crash.</div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+let canvii = new Array();
+for (let i = 0; i < 1000; i++) {
+    canvii[i] = document.createElement("canvas");
+    canvii[i].width = 1;
+    canvii[i].height = 1;
+    canvii[i].getContext("webgl");
+}
+if (window.testRunner)
+    testRunner.notifyDone();
+</script>

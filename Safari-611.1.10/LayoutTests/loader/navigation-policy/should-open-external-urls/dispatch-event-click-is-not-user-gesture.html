@@ -1,0 +1,22 @@
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpPolicyDelegateCallbacks();
+    testRunner.waitUntilDone();
+}
+
+function runTest()
+{
+    var event = top.document.createEvent('MouseEvent');
+    event.initEvent('click', true, true);
+    document.getElementById('a').dispatchEvent(event);
+}
+
+</script>
+
+<body onload="runTest();">
+This test "clicks" a link using dispatchEvent and checks the "should open external URLs" flag.<br>
+Since the fake click is not a user gesture, the flag should be false.<br>
+<a id="a" href="resources/notify-done.html">Click me to finish</a>
+</body>

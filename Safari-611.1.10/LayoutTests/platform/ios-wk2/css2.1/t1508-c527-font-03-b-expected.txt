@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x156
+  RenderBlock {HTML} at (0,0) size 800x156
+    RenderBody {BODY} at (8,13) size 784x130 [color=#000080]
+      RenderBlock {P} at (0,0) size 784x130
+        RenderText {#text} at (0,5) size 334x15
+          text run at (0,5) width 334: "This text should be small and cursive, with double line spacing. "
+        RenderInline {SPAN} at (0,0) size 768x119 [color=#C0C0C0]
+          RenderText {#text} at (333,5) size 768x119
+            text run at (333,5) width 373: "dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (705,5) width 63: "text dummy"
+            text run at (0,31) width 329: "text dummy text dummy text dummy text dummy text dummy "
+            text run at (328,31) width 395: "text dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (722,31) width 21: "text"
+            text run at (0,57) width 372: "dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (371,57) width 392: "text dummy text dummy text dummy text dummy text dummy text dummy"
+            text run at (0,83) width 395: "text dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (394,83) width 349: "text dummy text dummy text dummy text dummy text dummy text"
+            text run at (0,109) width 43: "dummy "
+            text run at (42,109) width 350: "text dummy text dummy text dummy text dummy text dummy text"
+        RenderText {#text} at (0,0) size 0x0

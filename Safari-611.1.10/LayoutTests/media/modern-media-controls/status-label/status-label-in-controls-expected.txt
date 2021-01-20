@@ -1,0 +1,16 @@
+Testing StatusLabel properties when used inside InlineMediaControls.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.body.contains(mediaControls.statusLabel.element) became true
+PASS style.mixBlendMode is "plus-lighter"
+PASS rgba(style.color).r is 255
+PASS rgba(style.color).g is 255
+PASS rgba(style.color).b is 255
+PASS rgba(style.color).a is within 0.001 of 0.54902
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

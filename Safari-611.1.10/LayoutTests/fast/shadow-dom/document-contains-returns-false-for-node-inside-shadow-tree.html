@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('Tests for document.contains. It should return false on connected nodes within a shadow root');
+
+const shadowHost = document.createElement("div");
+const shadowRoot = shadowHost.attachShadow({mode: 'closed'});
+const shadowRootChild = shadowRoot.appendChild(document.createElement('div'));
+
+shouldBeFalse('shadowHost.isConnected');
+shouldBeFalse('shadowRoot.isConnected');
+shouldBeFalse('shadowRootChild.isConnected');
+shouldBeFalse('document.contains(shadowHost)');
+shouldBeFalse('document.contains(shadowRoot)');
+shouldBeFalse('document.contains(shadowRootChild)');
+
+shouldBeTrue('document.body.appendChild(shadowHost); shadowHost.isConnected');
+shouldBeTrue('shadowRoot.isConnected');
+shouldBeTrue('shadowRootChild.isConnected');
+shouldBeTrue('document.contains(shadowHost)');
+shouldBeFalse('document.contains(shadowRoot)');
+shouldBeFalse('document.contains(shadowRootChild)');
+
+</script>
+</body>
+</html>

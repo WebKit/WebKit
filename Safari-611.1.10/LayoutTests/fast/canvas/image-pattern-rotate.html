@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<script>
+var img;
+
+function imageLoaded() {
+    var NUM_IMAGE = 16;
+    for (var i = 0; i < NUM_IMAGE; i++) {
+        var canvases = document.getElementById('canvases');
+        var canvas = document.createElement('canvas');
+        canvas.width = 3;
+        canvas.height = 3;
+        var ctx = canvas.getContext('2d');
+
+        var pattern = ctx.createPattern(img, 'no-repeat');
+        ctx.fillStyle = pattern;
+        ctx.translate(img.width / 2, img.height / 2);
+        var angle = 2 * Math.PI * i / NUM_IMAGE;
+        ctx.rotate(angle);
+        ctx.translate(- img.width / 2, - img.height / 2);
+        ctx.fillRect(0, 0, img.width, img.height);
+
+        var div = document.createElement('div');
+        div.appendChild(canvas);
+        canvases.appendChild(div);
+    }
+
+    if (window.testRunner) {
+        testRunner.notifyDone();
+    }
+}
+
+function runTests() {
+    if (window.testRunner) {
+		testRunner.dumpAsText(true);
+        testRunner.waitUntilDone();
+    }
+
+    img = new Image();
+    img.onload = imageLoaded;
+    img.src = ('data:image/png;base64,' +
+               'iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAIAAADZSiLoAAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9kHEAcrAR/kt7IAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAAFElEQVQI12P4//8/AwMDhIQBuBgAs2oL9bpyMd8AAAAASUVORK5CYII=');
+
+}
+</script>
+</head>
+<body onload="runTests();">
+You should see (almost) straight vertical line below.
+<div id="canvases"></div>
+</pre>
+</body>
+</html>

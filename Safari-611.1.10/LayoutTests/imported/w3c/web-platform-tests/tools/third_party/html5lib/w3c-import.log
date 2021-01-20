@@ -1,0 +1,33 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/AUTHORS.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/CHANGES.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/CONTRIBUTING.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/LICENSE
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/MANIFEST.in
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/README.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/debug-info.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/flake8-run.sh
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/parse.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/pytest.ini
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/requirements-install.sh
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/requirements-optional.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/requirements-test.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/requirements.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/setup.cfg
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/setup.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/html5lib/tox.ini

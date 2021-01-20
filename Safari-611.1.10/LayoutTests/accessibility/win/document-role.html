@@ -1,0 +1,22 @@
+<html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+onload = function()
+{
+    if (window.accessibilityController) {
+        var result = document.getElementById("result");
+        result.innerText += "Test for role attribute of document \n";
+        result.innerText += "----------------------------------- \n";
+        result.innerText += "role of Document    : " +
+                            accessibilityController.focusedElement.role +
+                            " \n";
+    }
+}
+</script>
+<body>
+<div id="result">
+</div>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .set {
+      position: absolute;
+      top: 8px;
+    }
+    .box {
+      height: 100px;
+      width: 100px;
+      background-color: lightblue;
+    }
+    .squashed {
+      height: 40px;
+      width: 40px;
+      background-color: lightgreen;
+      position: absolute;
+      left: 16px;
+    }
+    .composited {
+      transform: translateZ(0px);
+    }
+    .rotated { rotate(10deg);
+    }
+  </style>
+</head>
+<body>
+    <!-- This div will be the "owner" of the squashing layer -->
+    <div class="composited rotated box"></div>
+    <div id="target" class="squashed" style="top: 4px"></div>
+    <div class="squashed" style="top: 54px"></div>
+</body>
+</html>

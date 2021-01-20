@@ -1,0 +1,3 @@
+
+FAIL performance.now() exists in shared workers and reports reasonable times Can't find variable: SharedWorker
+

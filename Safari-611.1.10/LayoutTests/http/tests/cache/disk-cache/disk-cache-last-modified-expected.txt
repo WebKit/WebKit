@@ -1,0 +1,41 @@
+Covers uses of 'Last-Modified' header to compute heuristic freshness.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+running 3 tests
+
+--------Testing loads from disk cache--------
+response headers: {"Last-Modified":"Thu, 01 Jan 2000 00:00:00 GMT"}
+response source: Disk cache
+
+response headers: {"Last-Modified":"Thu, 01 Jan 1970 00:00:00 GMT"}
+response source: Network
+
+response headers: {"Last-Modified":"invalid"}
+response source: Network
+
+--------Testing loads through memory cache (XHR behavior)--------
+response headers: {"Last-Modified":"Thu, 01 Jan 2000 00:00:00 GMT"}
+response source: Memory cache
+
+response headers: {"Last-Modified":"Thu, 01 Jan 1970 00:00:00 GMT"}
+response source: Network
+
+response headers: {"Last-Modified":"invalid"}
+response source: Network
+
+--------Testing loads through memory cache (subresource behavior)--------
+response headers: {"Last-Modified":"Thu, 01 Jan 2000 00:00:00 GMT"}
+response source: Memory cache
+
+response headers: {"Last-Modified":"Thu, 01 Jan 1970 00:00:00 GMT"}
+response source: Network
+
+response headers: {"Last-Modified":"invalid"}
+response source: Network
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

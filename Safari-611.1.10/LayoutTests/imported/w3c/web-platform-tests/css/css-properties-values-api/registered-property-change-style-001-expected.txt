@@ -1,0 +1,4 @@
+
+FAIL New registered property declaration The given initial value does not parse for the given syntax.
+FAIL Registered property overrides a previous declaration  The given initial value does not parse for the given syntax.
+

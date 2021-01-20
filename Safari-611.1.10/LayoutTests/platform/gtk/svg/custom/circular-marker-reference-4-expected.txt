@@ -1,0 +1,9 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (108,281) size 460x94
+    RenderSVGResourceMarker {marker} [id="mark1"] [markerUnits=strokeWidth] [ref at (4,4)] [angle=0.00]
+      RenderSVGPath {path} at (303,266) size 160x18 [stroke={[type=SOLID] [color=#000000] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [start marker=mark2] [middle marker=mark2] [end marker=mark2] [data="M -5 -2 L 0 -2 L 5 -2"]
+    RenderSVGResourceMarker {marker} [id="mark2"] [markerUnits=strokeWidth] [ref at (4,4)] [angle=0.00]
+      RenderSVGPath {path} at (338,316) size 124x13 [stroke={[type=SOLID] [color=#000000] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [start marker=mark1] [middle marker=mark1] [end marker=mark1] [data="M -5 2 L 0 2 L 5 2"]
+    RenderSVGPath {path} at (108,281) size 460x94 [stroke={[type=SOLID] [color=#000000] [line cap=ROUND]}] [fill={[type=SOLID] [color=#000000]}] [start marker=mark1] [middle marker=mark1] [end marker=mark1] [data="M -5 2 L 0 2 L 5 2"]

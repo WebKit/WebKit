@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<div id="playground">
+    <!-- with no attribute -->
+    <span></span>
+
+    <!-- with `id` attribute -->
+    <span id=''></span>
+    <span id='some-id'></span>
+    <span id='some-id'></span><!-- to ensure no duplicates -->
+
+    <!-- with `name` attribute -->
+    <span name=''></span>
+    <span name='some-name'></span>
+    <span name='some-name'></span><!-- to ensure no duplicates -->
+
+    <!-- with `name` and `id` attribute -->
+    <span id='another-id' name='another-name'></span>
+</div>
+<script>
+description("Tests that HTMLCollection's named properties returned by Object.getOwnPropertyNames() but not enumerable.");
+
+var playground = document.getElementById("playground");
+var elements = playground.getElementsByTagName("span");
+
+debug("* Own properties");
+var ownProperties = Object.getOwnPropertyNames(elements);
+var result = "[";
+var isFirst = true;
+for (var i = 0; i < ownProperties.length; i++) {
+    if (isFirst)
+        isFirst = false;
+    else
+       result += ", ";
+    result += "'" + ownProperties[i] + "'";
+}
+result += "]";
+debug("Actual:   " + result);
+debug("Expected: ['0', '1', '2', '3', '4', '5', '6', '7', 'some-id', 'some-name', 'another-id', 'another-name']");
+
+debug("");
+debug("* Enumerated properties");
+result = "[";
+isFirst = true;
+for (var property in elements) {
+    if (isFirst)
+        isFirst = false;
+    else
+       result += ", ";
+    result += "'" + property + "'";
+}
+result += "]";
+debug("Actual:   " + result);
+debug("Expected: ['0', '1', '2', '3', '4', '5', '6', '7', 'length', 'item', 'namedItem']");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

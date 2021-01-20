@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<input id="testCheckbox" type="checkbox" checked>
+<script>
+description("Tests that setting the 'checked' content attribute does not set its dirty checkedness flag.");
+shouldBeTrue("testCheckbox.checked");
+evalAndLog("testCheckbox.removeAttribute('checked')");
+shouldBeFalse("testCheckbox.checked");
+evalAndLog("testCheckbox.setAttribute('checked', '')");
+shouldBeTrue("testCheckbox.checked");
+</script>
+</body>
+</html>

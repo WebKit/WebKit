@@ -1,0 +1,4 @@
+This tests enqueuing a custom element reaction inside an API with CEReaction=NotNeeded. WebKit should not hit a debug assertion.
+
+PASS - WebKit did not hit an assertion
+

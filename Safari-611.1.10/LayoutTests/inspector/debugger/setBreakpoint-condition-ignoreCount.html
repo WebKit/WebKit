@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/condition-ignoreCount.js"></script>
+<script>
+function test() {
+    function isHelperScript(script) {
+        return /resources\/condition-ignoreCount\.js/.test(script.url);
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Debugger.setBreakpoint");
+
+    suite.addTestCase({
+        name: "Debugger.setBreakpoint.ConditionIgnoreCount",
+        description: "Check that `condition` is evaluated before `ignoreCount`.",
+        async test() {
+            let pauseCount = 0;
+
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                ++pauseCount;
+                WI.debuggerManager.resume();
+            });
+
+            let debuggerData = WI.debuggerManager.dataForTarget(WI.mainTarget);
+
+            let script = debuggerData.scripts.filter(isHelperScript)[0];
+            if (!script) {
+                await new Promise((resolve, reject) => {
+                    let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, (event) => {
+                        script = event.data.script;
+                        if (isHelperScript(script)) {
+                            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ScriptAdded, listener);
+                            resolve();
+                        }
+                    });
+                });
+            }
+
+            let breakpoint = new WI.JavaScriptBreakpoint(new WI.SourceCodeLocation(script, 4, 0), {
+                condition: `window.CONDITION_TEST > 2`,
+                ignoreCount: 2,
+            });
+
+            InspectorTest.log("Adding breakpoint...");
+            await Promise.all([
+                breakpoint.awaitEvent(WI.JavaScriptBreakpoint.Event.ResolvedStateDidChange),
+                WI.debuggerManager.addBreakpoint(breakpoint),
+            ]);
+
+            for (let i = 1; i <= 6; ++i) {
+                InspectorTest.newline();
+
+                InspectorTest.log("Triggering breakpoint...");
+                await Promise.all([
+                    InspectorTest.awaitEvent("TestPage_trigger"),
+                    InspectorTest.evaluateInPage(`trigger()`),
+                ]);
+
+                if (i <= 4)
+                    InspectorTest.expectEqual(pauseCount, 0, "Should not pause.");
+                else
+                    InspectorTest.expectEqual(pauseCount, i - 4, "Should pause.");
+            }
+
+            breakpoint.remove();
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for Debugger.setBreakpoint.</p>
+</body>
+</html>

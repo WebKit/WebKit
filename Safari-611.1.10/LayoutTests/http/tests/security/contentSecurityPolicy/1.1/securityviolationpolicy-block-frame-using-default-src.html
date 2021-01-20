@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'">
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script src="../resources/securitypolicyviolation-test.js"></script>
+<script>
+description("Check that a SecurityPolicyViolationEvent is fired upon blocking an frame by the default-src directive.");
+
+var expectations = {
+    "documentURI": document.location.toString(),
+    "referrer": document.referrer,
+    "blockedURI": "http://127.0.0.1:8000/security/contentSecurityPolicy/resources/alert-fail.html",
+    "violatedDirective": "default-src 'none'",
+    "effectiveDirective": "child-src",
+    "originalPolicy": "default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'",
+    "sourceFile": document.location.toString(),
+    "lineNumber": 27,
+    "columnNumber": 30,
+    "statusCode": document.location.protocol === "http:" ? 200 : 0,
+};
+
+function run()
+{
+    var frame = document.createElement("iframe");
+    frame.src = "http://127.0.0.1:8000/security/contentSecurityPolicy/resources/alert-fail.html";
+    document.body.appendChild(frame);
+}
+</script>
+</head>
+<body>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

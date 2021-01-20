@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WebKit Performance Test Results</title>
+<style type="text/css">
+
+section {
+    background: white;
+    padding: 10px;
+    position: relative;
+}
+
+.time-plots {
+    padding-left: 25px;
+}
+
+.time-plots > div {
+    display: inline-block;
+    width: 90px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+section h1 {
+    text-align: center;
+    font-size: 1em;
+}
+
+section .tooltip {
+    position: absolute;
+    text-align: center;
+    background: #ffcc66;
+    border-radius: 5px;
+    padding: 0px 5px;
+}
+
+body {
+    padding: 0px;
+    margin: 0px;
+    font-family: sans-serif;
+}
+
+table {
+    background: white;
+    width: 100%;
+}
+
+table, td, th {
+    border-collapse: collapse;
+    padding: 5px;
+}
+
+tr.even {
+    background: #f6f6f6;
+}
+
+table td {
+    position: relative;
+    font-family: monospace;
+}
+
+th, td {
+    cursor: pointer;
+    cursor: hand;
+}
+
+th {
+    background: #e6eeee;
+    background: -webkit-gradient(linear, left top, left bottom, from(rgb(244, 244, 244)), to(rgb(217, 217, 217)));
+    border: 1px solid #ccc;
+}
+
+th:after {
+    content: ' \25B8';
+}
+
+th.headerSortUp:after {
+    content: ' \25BE';
+}
+
+th.headerSortDown:after {
+    content: ' \25B4';
+}
+
+td.comparison, td.result {
+    text-align: right;
+}
+
+td.better {
+    color: #6c6;
+}
+
+td.worse {
+    color: #c66;
+}
+
+td.missing {
+    text-align: center;
+}
+
+.checkbox {
+    display: inline-block;
+    background: #eee;
+    background: -webkit-gradient(linear, left bottom, left top, from(rgb(220, 220, 220)), to(rgb(200, 200, 200)));
+    border: inset 1px #ddd;
+    border-radius: 5px;
+    margin: 10px;
+    font-size: small;
+    cursor: pointer;
+    cursor: hand;
+    -webkit-user-select: none;
+    font-weight: bold;
+}
+
+.checkbox span {
+    display: inline-block;
+    line-height: 100%;
+    padding: 5px 8px;
+    border: outset 1px transparent;
+}
+
+.checkbox .checked {
+    background: #e6eeee;
+    background: -webkit-gradient(linear, left top, left bottom, from(rgb(255, 255, 255)), to(rgb(235, 235, 235)));
+    border: outset 1px #eee;
+    border-radius: 5px;
+}
+
+</style>
+</head>
+<body>
+<div style="padding: 0 10px;">
+Result <span id="time-memory" class="checkbox"><span class="checked">Time</span><span>Memory</span></span>
+Reference <span id="reference" class="checkbox"></span>
+<span title="Confidence Interval Delta">CI&#916;</span> <span id="confidenceIntervalDelta" class="checkbox"><span class="checked">Show</span><span>Hide</span></span>
+</div>
+<table id="container"></table>
+<script>
+
+(function () {
+    var jQuery = 'PerformanceTests/Dromaeo/resources/dromaeo/web/lib/jquery-1.6.4.js';
+    var plugins = ['PerformanceTests/resources/jquery.flot.min.js', 'PerformanceTests/resources/jquery.tablesorter.min.js',
+        'PerformanceTests/resources/statistics.js'];
+    var localPath = '%AbsolutePathToWebKitTrunk%';
+    var remotePath = 'https://svn.webkit.org/repository/webkit/trunk';
+    var numberOfFailures = 0;
+    var startedLoadingPlugins = false;
+    var numberOfLoadedPlugins = 0;
+
+    function loadScript(src, loaded, failed) {
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = src;
+        script.onload = loaded;
+        if (failed)
+            script.onerror = failed;
+        document.body.appendChild(script);
+    }
+
+    function loadPlugins(trunkPath) {
+        for (var i = 0; i < plugins.length; i++)
+            loadScript(trunkPath + '/' + plugins[i], loadedPlugin, createFailedToLoadPlugin(plugins[i]));
+    }
+
+    function loadedPlugin() {
+        numberOfLoadedPlugins++;
+        if (numberOfLoadedPlugins == plugins.length)
+            setTimeout(init, 0);            
+    }
+
+    function createFailedToLoadPlugin(plugin) {
+        return function () { alert("Failed to load " + plugin); }
+    }
+
+    function createLoadedJQuery(trunkPath) {
+        return function () { loadPlugins(trunkPath); }
+    }
+
+    loadScript(localPath + '/' + jQuery,
+        createLoadedJQuery(localPath),
+        function () {
+            loadScript(remotePath + '/' + jQuery,
+                createLoadedJQuery(remotePath),
+                function () { alert("Failed to load jQuery."); });
+        });
+})();
+
+function TestResult(metric, values, associatedRun) {
+    if (values[0] instanceof Array) {
+        var flattenedValues = [];
+        for (var i = 0; i < values.length; i++)
+            flattenedValues = flattenedValues.concat(values[i]);
+        values = flattenedValues;
+    }
+
+    this.test = function () { return metric; }
+    this.values = function () { return values.map(function (value) { return metric.scalingFactor() * value; }); }
+    this.unscaledMean = function () { return Statistics.sum(values) / values.length; }
+    this.mean = function () { return metric.scalingFactor() * this.unscaledMean(); }
+    this.min = function () { return metric.scalingFactor() * Statistics.min(values); }
+    this.max = function () { return metric.scalingFactor() * Statistics.max(values); }
+    this.confidenceIntervalDelta = function () {
+        return metric.scalingFactor() * Statistics.confidenceIntervalDelta(0.95, values.length,
+            Statistics.sum(values), Statistics.squareSum(values));
+    }
+    this.confidenceIntervalDeltaRatio = function () { return this.confidenceIntervalDelta() / this.mean(); }
+    this.percentDifference = function(other) { return (other.unscaledMean() - this.unscaledMean()) / this.unscaledMean(); }
+    this.isStatisticallySignificant = function (other) {
+        var diff = Math.abs(other.mean() - this.mean());
+        return diff > this.confidenceIntervalDelta() && diff > other.confidenceIntervalDelta();
+    }
+    this.run = function () { return associatedRun; }
+}
+
+function TestRun(entry) {
+    this.description = function () { return entry['description']; }
+    this.webkitRevision = function () { return entry['revisions']['WebKit']['revision']; }
+    this.label = function () {
+        var label = 'r' + this.webkitRevision();
+        if (this.description())
+            label += ' &dash; ' + this.description();
+        return label;
+    }
+}
+
+function PerfTestMetric(name, metric) {
+    var testResults = [];
+    var cachedUnit = null;
+    var cachedScalingFactor = null;
+    var unit = {'FrameRate': 'fps', 'Runs': 'runs/s', 'Score': 'pt', 'Time': 'ms', 'Malloc': 'bytes', 'JSHeap': 'bytes'}[metric];
+
+    // We can't do this in TestResult because all results for each test need to share the same unit and the same scaling factor.
+    function computeScalingFactorIfNeeded() {
+        // FIXME: We shouldn't be adjusting units on every test result.
+        // We can only do this on the first test.
+        if (!testResults.length || cachedUnit)
+            return;
+
+        var mean = testResults[0].unscaledMean(); // FIXME: We should look at all values.
+        var kilo = unit == 'bytes' ? 1024 : 1000;
+        if (mean > 10 * kilo * kilo && unit != 'ms') {
+            cachedScalingFactor = 1 / kilo / kilo;
+            cachedUnit = 'M ' + unit;
+        } else if (mean > 10 * kilo) {
+            cachedScalingFactor = 1 / kilo;
+            cachedUnit = unit == 'ms' ? 's' : ('K ' + unit);
+        } else {
+            cachedScalingFactor = 1;
+            cachedUnit = unit;
+        }
+    }
+
+    this.name = function () { return name + ':' + metric; }
+    this.isMemoryTest = function () { return metric == 'JSHeap' || metric == 'Malloc'; }
+    this.addResult = function (newResult) {
+        testResults.push(newResult);
+        cachedUnit = null;
+        cachedScalingFactor = null;
+    }
+    this.results = function () { return testResults; }
+    this.scalingFactor = function() {
+        computeScalingFactorIfNeeded();
+        return cachedScalingFactor;
+    }
+    this.unit = function () {
+        computeScalingFactorIfNeeded();
+        return cachedUnit;
+    }
+    this.smallerIsBetter = function () { return unit == 'ms' || unit == 'bytes'; }
+}
+
+var plotColor = 'rgb(230,50,50)';
+var subpointsPlotOptions = {
+    lines: {show:true, lineWidth: 0},
+    color: plotColor,
+    points: {show: true, radius: 1},
+    bars: {show: false}};
+
+var mainPlotOptions = {
+    xaxis: {
+        min: -0.5,
+        tickSize: 1,
+    },
+    crosshair: { mode: 'y' },
+    series: { shadowSize: 0 },
+    bars: {show: true, align: 'center', barWidth: 0.5},
+    lines: { show: false },
+    points: { show: true },
+    grid: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        backgroundColor: '#fff',
+        hoverable: true,
+        autoHighlight: false,
+    }
+};
+
+var timePlotOptions = {
+    yaxis: { show: false },
+    xaxis: { show: false },
+    lines: { show: true },
+    grid: { borderWidth: 1, borderColor: '#ccc' },
+    colors: [ plotColor ]
+};
+
+function createPlot(container, test) {
+    var section = $('<section><div class="plot"></div><div class="time-plots"></div>'
+        + '<span class="tooltip"></span></section>');
+    section.children('.plot').css({'width': (100 * test.results().length + 25) + 'px', 'height': '300px'});
+    $(container).append(section);
+
+    var plotContainer = section.children('.plot');
+    var minIsZero = true;
+    attachPlot(test, plotContainer, minIsZero);
+
+    attachTimePlots(test, section.children('.time-plots'));
+
+    var tooltip = section.children('.tooltip');
+    plotContainer.bind('plothover', function (event, position, item) {
+        if (item) {
+            var postfix = item.series.id ? ' (' + item.series.id + ')' : '';
+            tooltip.html(item.datapoint[1].toPrecision(4) + postfix);
+            var sectionOffset = $(section).offset();
+            tooltip.css({left: item.pageX - sectionOffset.left - tooltip.outerWidth() / 2, top: item.pageY - sectionOffset.top + 10});
+            tooltip.fadeIn(200);
+        } else
+            tooltip.hide();
+    });
+    plotContainer.mouseout(function () {
+        tooltip.hide();
+    });
+    plotContainer.click(function (event) {
+        event.preventDefault();
+        minIsZero = !minIsZero;
+        attachPlot(test, plotContainer, minIsZero);
+    });
+
+    return section;
+}
+
+function attachTimePlots(test, container) {
+    var results = test.results();
+    var attachedPlot = false;
+    for (var i = 0; i < results.length; i++) {
+        container.append('<div></div>');
+        var values = results[i].values();
+        if (!values)
+            continue;
+        attachedPlot = true;
+
+        $.plot(container.children().last(), [values.map(function (value, index) { return [index, value]; })],
+            $.extend(true, {}, timePlotOptions, {yaxis: {min: Math.min.apply(Math, values) * 0.9, max: Math.max.apply(Math, values) * 1.1},
+                xaxis: {min: -0.5, max: values.length - 0.5}}));
+    }
+    if (!attachedPlot)
+        container.children().remove();
+}
+
+function attachPlot(test, plotContainer, minIsZero) {
+    var results = test.results();
+
+    var values = results.reduce(function (values, result, index) {
+        var newValues = result.values();
+        return newValues ? values.concat(newValues.map(function (value) { return [index, value]; })) : values;
+    }, []);
+
+    var plotData = [$.extend(true, {}, subpointsPlotOptions, {data: values})];
+    plotData.push({id: '&mu;', data: results.map(function (result, index) { return [index, result.mean()]; }), color: plotColor});
+
+    var overallMax = Statistics.max(results.map(function (result, index) { return result.max(); }));
+    var overallMin = Statistics.min(results.map(function (result, index) { return result.min(); }));
+    var margin = (overallMax - overallMin) * 0.1;
+    var currentPlotOptions = $.extend(true, {}, mainPlotOptions, {yaxis: {
+        min: minIsZero ? 0 : overallMin - margin,
+        max: minIsZero ? overallMax * 1.1 : overallMax + margin}});
+
+    currentPlotOptions.xaxis.max = results.length - 0.5;
+    currentPlotOptions.xaxis.ticks = results.map(function (result, index) { return [index, result.run().label()]; });
+
+    $.plot(plotContainer, plotData, currentPlotOptions);
+}
+
+function toFixedWidthPrecision(value) {
+    var decimal = value.toFixed(2);
+    return decimal;
+}
+
+function formatPercentage(fraction) {
+    var percentage = fraction * 100;
+    return (fraction * 100).toFixed(2) + '%';
+}
+
+function createTable(tests, runs, shouldIgnoreMemory, referenceIndex, hideConfidenceIntervalDelta) {
+    $('#container').html('<thead><tr><th>Test</th><th>Unit</th>' + runs.map(function (run, index) {
+        var colspan = 2;
+        if (index != referenceIndex)
+            colspan = 3;
+        if (hideConfidenceIntervalDelta)
+            colspan--;
+        return '<th colspan="' + colspan + '" class="{sorter: \'comparison\'}">' + run.label() + '</th>';
+    }).reduce(function (markup, cell) { return markup + cell; }, '') + '</tr></head><tbody></tbody>');
+
+    var testNames = [];
+    for (testName in tests)
+        testNames.push(testName);
+
+    testNames.sort().map(function (testName) {
+        var test = tests[testName];
+        if (test.isMemoryTest() != shouldIgnoreMemory)
+            createTableRow(runs, test, referenceIndex, hideConfidenceIntervalDelta);
+    });
+
+    $('#container').tablesorter({widgets: ['zebra']});
+}
+
+function linearRegression(points) {
+    // Implement http://www.easycalculation.com/statistics/learn-correlation.php.
+    // x = magnitude
+    // y = iterations
+    var sumX = 0;
+    var sumY = 0;
+    var sumXSquared = 0;
+    var sumYSquared = 0;
+    var sumXTimesY = 0;
+
+    for (var i = 0; i < points.length; i++) {
+        var x = i;
+        var y = points[i];
+        sumX += x;
+        sumY += y;
+        sumXSquared += x * x;
+        sumYSquared += y * y;
+        sumXTimesY += x * y;
+    }
+
+    var r = (points.length * sumXTimesY - sumX * sumY) /
+        Math.sqrt((points.length * sumXSquared - sumX * sumX) *
+                  (points.length * sumYSquared - sumY * sumY));
+
+    if (isNaN(r) || r == Math.Infinity)
+        r = 0;
+
+    var slope = (points.length * sumXTimesY - sumX * sumY) / (points.length * sumXSquared - sumX * sumX);
+    var intercept = sumY / points.length - slope * sumX / points.length;
+    return {slope: slope, intercept: intercept, rSquared: r * r};
+}
+
+var warningSign = '<svg viewBox="0 0 100 100" style="width: 18px; height: 18px; vertical-align: bottom;" version="1.1">'
+    + '<polygon fill="red" points="50,10 90,80 10,80 50,10" stroke="red" stroke-width="10" stroke-linejoin="round" />'
+    + '<polygon fill="white" points="47,30 48,29, 50, 28.7, 52,29 53,30 50,60" stroke="white" stroke-width="10" stroke-linejoin="round" />'
+    + '<circle cx="50" cy="73" r="6" fill="white" />'
+    + '</svg>';
+
+function createTableRow(runs, test, referenceIndex, hideConfidenceIntervalDelta) {
+    var tableRow = $('<tr><td class="test">' + test.name() + '</td><td class="unit">' + test.unit() + '</td></tr>');
+
+    function markupForRun(result, referenceResult) {
+        var comparisonCell = '';
+        var hiddenValue = '';
+        var shouldCompare = result !== referenceResult;
+        if (shouldCompare && referenceResult) {
+            var percentDifference = referenceResult.percentDifference(result);
+            var better = test.smallerIsBetter() ? percentDifference < 0 : percentDifference > 0;
+            var comparison = '';
+            var className = 'comparison';
+            if (referenceResult.isStatisticallySignificant(result)) {
+                comparison = formatPercentage(Math.abs(percentDifference)) + (better ? ' Better' : ' Worse&nbsp;');
+                className += better ? ' better' : ' worse';
+            }
+            hiddenValue = '<span style="display: none">|' + comparison + '</span>';
+            comparisonCell = '<td class="' + className + '">' + comparison + '</td>';
+        } else if (shouldCompare)
+            comparisonCell = '<td class="comparison"></td>';
+
+        var values = result.values();
+        var warning = '';
+        var regressionAnalysis = '';
+        if (values && values.length > 3) {
+            regressionResult = linearRegression(values);
+            regressionAnalysis = 'slope=' + toFixedWidthPrecision(regressionResult.slope)
+                + ', R^2=' + toFixedWidthPrecision(regressionResult.rSquared);
+            if (regressionResult.rSquared > 0.6 && Math.abs(regressionResult.slope) > 0.01) {
+                warning = ' <span class="regression-warning" title="Detected a time dependency with ' + regressionAnalysis + '">' + warningSign + ' </span>';
+            }
+        }
+
+        var statistics = '&sigma;=' + toFixedWidthPrecision(result.confidenceIntervalDelta()) + ', min=' + toFixedWidthPrecision(result.min())
+            + ', max=' + toFixedWidthPrecision(result.max()) + '\n' + regressionAnalysis;
+
+        var confidenceIntervalDeltaCell = '';
+        if (!hideConfidenceIntervalDelta) {
+            confidenceIntervalDeltaCell = '<td class="confidenceIntervalDelta" title="' + statistics + '">&plusmn; '
+                + formatPercentage(result.confidenceIntervalDeltaRatio()) + warning + '</td>';
+        }
+
+        // Tablesorter doesn't know about the second cell so put the comparison in the invisible element.
+        return '<td class="result" title="' + statistics + '">' + toFixedWidthPrecision(result.mean()) + hiddenValue
+            + '</td>' + confidenceIntervalDeltaCell + comparisonCell;
+    }
+
+    function markupForMissingRun(isReference) {
+        return '<td colspan="' + (isReference ? 2 : 3) + '" class="missing">Missing</td>';
+    }
+
+    var runIndex = 0;
+    var results = test.results();
+    var referenceResult = undefined;
+    var resultIndexMap = {};
+    for (var i = 0; i < results.length; i++) {
+        while (runs[runIndex] !== results[i].run())
+            runIndex++;
+        if (runIndex == referenceIndex)
+            referenceResult = results[i];
+        resultIndexMap[runIndex] = i;
+    }
+    for (var i = 0; i < runs.length; i++) {
+        var resultIndex = resultIndexMap[i];
+        if (resultIndex == undefined)
+            tableRow.append(markupForMissingRun(i == referenceIndex));
+        else
+            tableRow.append(markupForRun(results[resultIndex], referenceResult));
+    }
+
+    $('#container').children('tbody').last().append(tableRow);
+
+    tableRow.click(function (event) {
+        if (event.target != tableRow[0] && event.target.parentNode != tableRow[0])
+            return;
+
+        event.preventDefault();
+
+        var firstCell = tableRow.children('td').first();
+        if (firstCell.children('section').length) {
+            firstCell.children('section').remove();
+            tableRow.children('td').css({'padding-bottom': ''});
+        } else {
+            var plot = createPlot(firstCell, test);
+            plot.css({'position': 'absolute', 'z-index': 2});
+            var offset = tableRow.offset();
+            offset.left += 1;
+            offset.top += tableRow.outerHeight();
+            plot.offset(offset);
+            tableRow.children('td').css({'padding-bottom': plot.outerHeight() + 5});
+        }
+
+        return false;
+    });
+}
+
+function init() {
+    $.tablesorter.addParser({
+        id: 'comparison',
+        is: function(s) {
+            return s.indexOf('|') >= 0;
+        },
+        format: function(s) {
+            var parsed = parseFloat(s.substring(s.indexOf('|') + 1));
+            return isNaN(parsed) ? 0 : parsed;
+        },
+        type: 'numeric',
+    });
+
+    var runs = [];
+    var metrics = {};
+    $.each(JSON.parse(document.getElementById('json').textContent), function (index, entry) {
+        var run = new TestRun(entry);
+        runs.push(run);
+
+        function addTests(tests, parentFullName) {
+            for (var testName in tests) {
+                var fullTestName = parentFullName + '/' + testName;
+                var rawMetrics = tests[testName].metrics;
+
+                for (var metricName in rawMetrics) {
+                    var fullMetricName = fullTestName + ':' + metricName;
+                    var metric = metrics[fullMetricName];
+                    if (!metric) {
+                        metric = new PerfTestMetric(fullTestName, metricName);
+                        metrics[fullMetricName] = metric;
+                    }
+                    metric.addResult(new TestResult(metric, rawMetrics[metricName].current, run));
+                }
+
+                if (tests[testName].tests)
+                    addTests(tests[testName].tests, fullTestName);
+            }
+        }
+
+        addTests(entry.tests, '');
+    });
+
+    var shouldIgnoreMemory= true;
+    var referenceIndex = 0;
+    var hideConfidenceIntervalDelta = false;
+
+    createTable(metrics, runs, shouldIgnoreMemory, referenceIndex);
+
+    $('#time-memory').bind('change', function (event, checkedElement) {
+        shouldIgnoreMemory = checkedElement.textContent == 'Time';
+        createTable(metrics, runs, shouldIgnoreMemory, referenceIndex, hideConfidenceIntervalDelta);
+    });
+
+    runs.map(function (run, index) {
+        $('#reference').append('<span value="' + index + '"' + (index == referenceIndex ? ' class="checked"' : '') + '>' + run.label() + '</span>');
+    })
+
+    $('#reference').bind('change', function (event, checkedElement) {
+        referenceIndex = parseInt(checkedElement.getAttribute('value'));
+        createTable(metrics, runs, shouldIgnoreMemory, referenceIndex, hideConfidenceIntervalDelta);
+    });
+
+    $('#confidenceIntervalDelta').bind('change', function (event, checkedElement) {
+        hideConfidenceIntervalDelta = checkedElement.textContent == 'Hide';
+        createTable(metrics, runs, shouldIgnoreMemory, referenceIndex, hideConfidenceIntervalDelta);
+    });
+
+    $('.checkbox').each(function (index, checkbox) {
+        $(checkbox).children('span').click(function (event) {
+            if ($(this).hasClass('checked'))
+                return;
+            $(checkbox).children('span').removeClass('checked');
+            $(this).addClass('checked');
+            $(checkbox).trigger('change', $(this));
+        });
+    });
+}
+
+</script>
+<script id="json" type="application/json">%PeformanceTestsResultsJSON%</script>
+</body>
+</html>

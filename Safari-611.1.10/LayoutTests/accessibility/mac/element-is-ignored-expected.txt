@@ -1,0 +1,12 @@
+test test
+This tests that if you access an element that has been removed, it return the correct value for isIgnored (true, that is, it is ignored).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS element1.isIgnored is false
+PASS element1.isIgnored is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,87 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (8,38) size 776x561
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGRect {rect} at (0,0) size 100x67 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=60.00] [height=40.00]
+      RenderSVGContainer {g} at (155,38) size 629x561
+        RenderSVGContainer {g} at (400,100) size 384x334 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,100.00)}]
+          RenderSVGContainer {g} at (400,100) size 384x334 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,20.00)}]
+            RenderSVGRect {rect} at (550,233) size 167x167 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#FFFF00]}] [x=10.00] [y=10.00] [width=50.00] [height=50.00]
+            RenderSVGRect {rect} at (533,216) size 167x168 [fill={[type=SOLID] [color=#FFFF00]}] [x=10.00] [y=10.00] [width=100.00] [height=100.00]
+            RenderSVGContainer {g} at (400,100) size 384x334 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,20.00)}]
+              RenderSVGRect {rect} at (533,250) size 251x84 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=10.00] [width=150.00] [height=50.00]
+              RenderSVGEllipse {circle} at (400,100) size 334x334 [fill={[type=SOLID] [color=#FFFF00]}] [cx=20.00] [cy=20.00] [r=100.00]
+          RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=10.00] [width=400.00] [height=0.00]
+          RenderSVGContainer {use} at (450,133) size 100x67 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-30.00,-20.00)}]
+            RenderSVGRect {rect} at (450,133) size 100x67 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=60.00] [height=40.00]
+          RenderSVGContainer {g} at (0,0) size 0x0
+          RenderSVGPath {line} at (500,158) size 167x17 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=10.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=100.00] [y2=0.00]
+        RenderSVGText {text} at (93,22) size 294x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 294x22
+            chunk 1 (middle anchor) text run 1 at (93.43,40.00) startOffset 0 endOffset 35 width 293.14: "SVGLocatable.getBBox() - basic test"
+        RenderSVGRect {rect} at (549,524) size 219x69 [stroke={[type=SOLID] [color=#0000FF]}] [x=330.00] [y=315.00] [width=130.00] [height=40.00]
+        RenderSVGContainer {g} at (555,521) size 159x78
+          RenderSVGText {text} at (333,313) size 96x47 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 96x47
+              chunk 1 text run 1 at (333.00,350.00) startOffset 0 endOffset 6 width 95.39: "failed"
+      RenderSVGText {text} at (5,70) size 45x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 45x12
+          chunk 1 text run 1 at (5.00,80.00) startOffset 0 endOffset 9 width 44.02: "getBBox()"
+      RenderSVGText {text} at (5,82) size 109x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 109x12
+          chunk 1 text run 1 at (5.00,92.00) startOffset 0 endOffset 24 width 108.98: "[group1] -70 -60 230 200"
+      RenderSVGText {text} at (5,94) size 83x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 83x12
+          chunk 1 text run 1 at (5.00,104.00) startOffset 0 endOffset 19 width 82.56: "[rect1] 10 10 50 50"
+      RenderSVGText {text} at (5,106) size 94x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 94x12
+          chunk 1 text run 1 at (5.00,116.00) startOffset 0 endOffset 21 width 93.57: "[rect2] 10 10 100 100"
+      RenderSVGText {text} at (5,118) size 109x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 109x12
+          chunk 1 text run 1 at (5.00,128.00) startOffset 0 endOffset 24 width 108.98: "[group2] -80 -80 230 200"
+      RenderSVGText {text} at (5,130) size 83x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 83x12
+          chunk 1 text run 1 at (5.00,140.00) startOffset 0 endOffset 19 width 82.56: "[rect3] 0 10 150 50"
+      RenderSVGText {text} at (5,142) size 107x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 107x12
+          chunk 1 text run 1 at (5.00,152.00) startOffset 0 endOffset 25 width 106.76: "[circle1] -80 -80 200 200"
+      RenderSVGText {text} at (5,154) size 243x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 243x12
+          chunk 1 text run 1 at (5.00,164.00) startOffset 0 endOffset 55 width 242.69: "Results do not match expected values ( 10, 10, 400, 0 )"
+      RenderSVGText {text} at (5,166) size 61x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 61x12
+          chunk 1 text run 1 at (5.00,176.00) startOffset 0 endOffset 15 width 60.54: "[rect4] 0 0 0 0"
+      RenderSVGText {text} at (5,178) size 250x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 250x12
+          chunk 1 text run 1 at (5.00,188.00) startOffset 0 endOffset 57 width 249.28: "Results do not match expected values ( -30, -20, 60, 40 )"
+      RenderSVGText {text} at (5,190) size 81x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 81x12
+          chunk 1 text run 1 at (5.00,200.00) startOffset 0 endOffset 17 width 80.34: "[myUse] 0 0 60 40"
+      RenderSVGText {text} at (5,202) size 89x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 89x12
+          chunk 1 text run 1 at (5.00,212.00) startOffset 0 endOffset 21 width 88.61: "[thickLine] 0 0 100 0"
+      RenderSVGText {text} at (5,214) size 244x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 244x12
+          chunk 1 text run 1 at (5.00,224.00) startOffset 0 endOffset 54 width 243.80: "node removed from tree, should still have bounding box"
+      RenderSVGText {text} at (5,226) size 261x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 261x12
+          chunk 1 text run 1 at (5.00,236.00) startOffset 0 endOffset 59 width 260.30: "Results do not match expected values ( -80, -80, 200, 200 )"
+      RenderSVGText {text} at (5,238) size 70x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 70x12
+          chunk 1 text run 1 at (5.00,248.00) startOffset 0 endOffset 18 width 69.88: "[circle2]: 0 0 0 0"
+      RenderSVGText {text} at (5,250) size 193x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 193x12
+          chunk 1 text run 1 at (5.00,260.00) startOffset 0 endOffset 43 width 192.05: "Results do not match expected values (null)"
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.1 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGContainer {g} at (0,0) size 800x39
+      RenderSVGRect {rect} at (0,0) size 800x36 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
+      RenderSVGText {text} at (205,-1) size 70x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 69x24
+          chunk 1 (middle anchor) text run 1 at (205.95,18.00) startOffset 0 endOffset 5 width 68.10: "DRAFT"

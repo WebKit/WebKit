@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style id="test-styles">
+.icon {
+    position: absolute;
+}
+.icon::before {
+    content: url('data:image/svg+xml,<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" height="727px"></svg>');
+}
+</style>
+</head>
+<body>
+<div class="icon"></div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function nodesInRect(x, y, width, height)
+{
+    if (!window.internals)
+        return;
+
+    let leftPadding = Math.floor(width / 2);
+    let topPadding = Math.floor(height / 2);
+    let centerX = Math.floor(x + leftPadding);
+    let centerY = Math.floor(y + topPadding);
+    // FIXME: When nodesFromRect is changed to not add 1 to width and height, remove the correction here.
+    let bottomPadding = Math.floor((height - 1) - topPadding);
+    let rightPadding = Math.floor((width - 1) - leftPadding);
+
+    const ignoreClipping = false;
+    const allowUserAgentShadowContent = false;
+    const allowChildFrameContent = false;
+    return internals.nodesFromRect(document, centerX, centerY, topPadding, rightPadding, bottomPadding, leftPadding, ignoreClipping, allowUserAgentShadowContent, allowChildFrameContent);
+}
+
+function runTest()
+{
+    if (!window.internals) {
+        alert("This test requires window.internals");
+        return ;
+    }
+
+    function handleStylesheetLoaded() {
+        function actualRunTest() {
+            nodesInRect(0, 0, 1061, 552);
+
+            alert("PASS: This test did not trigger an ASSERT.");
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        // Need to use a zero-timer as the ::before content may not have loaded, yet.
+        window.setTimeout(actualRunTest, 0);
+    }
+    document.getElementById("test-styles").addEventListener("load", handleStylesheetLoaded, false);
+}
+
+runTest();
+</script>
+</body>
+</html>

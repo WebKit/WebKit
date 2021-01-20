@@ -1,0 +1,16 @@
+<script>
+    if (window.testRunner) {
+        window.testRunner.dumpAsText();
+    }
+    function eventhandler() {
+        var animation = element.animate({ "padding-left": [0, 1] }, 0.5);
+        animation.reverse();
+        animation.effect = null;
+    }
+    window.requestAnimationFrame(eventhandler);
+</script>
+<body>
+    <div id="element"></div>
+    <p>Ensure removing the effect from an active animation is handled correctly.</p>
+    <p>PASS if test does not crash.</p>
+</body>

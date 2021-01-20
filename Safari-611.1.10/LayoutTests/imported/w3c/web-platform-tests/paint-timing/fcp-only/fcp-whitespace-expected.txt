@@ -1,0 +1,3 @@
+
+FAIL Whitespace should not count as contentful. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: assert_precondition"
+

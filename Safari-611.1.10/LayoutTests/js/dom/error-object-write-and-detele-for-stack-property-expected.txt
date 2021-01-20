@@ -1,0 +1,9 @@
+This test verifies that the stack property able to be deleted and written to by the developer.
+
+Creating new Error e
+PASS  typeof(e.stack) == "string" is true
+Deleting the stack property should make it undefined.
+PASS e.stack is undefined.
+Writing to the stack property.
+PASS e.stack == "Brand new stack!" is true
+

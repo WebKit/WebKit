@@ -1,0 +1,34 @@
+<html>
+<!-- This test passes if there is no crash or assert -->
+<style type="text/css">
+    body {
+        overflow: hidden;
+    }
+</style>
+<script>
+    function testCrash() {
+        q = document.getElementById('root');
+        r = document.createRange();
+        r.selectNodeContents( q.getElementById('t') );
+        window.getSelection().addRange(r)
+        document.designMode='on';
+        document.execCommand('delete');
+        document.execCommand('delete');
+      }
+
+      if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<body onload="testCrash()">
+<svg id="root" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g>
+        <rect filter="url(#x)"/>
+        <text>aa</text>
+        <rect id="t"/>
+        <style></style>
+        <text>bb</text>
+    </g>
+    <filter id="x"></filter>
+</svg>
+</body>
+</html>

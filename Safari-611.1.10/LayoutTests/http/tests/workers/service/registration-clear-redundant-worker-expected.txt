@@ -1,0 +1,6 @@
+PASS: Unregistration was successful
+PASS: Worker became redundant after unregistering
+PASS: registration.installing is null
+PASS: registration.waiting is null
+PASS: registration.active is null
+

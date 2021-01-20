@@ -1,0 +1,45 @@
+diff --git a/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/user_mbuf.c b/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/user_mbuf.c
+index 7a1aaba855e..3ebd8a27b6b 100644
+--- a/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/user_mbuf.c
++++ b/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/user_mbuf.c
+@@ -232,7 +232,8 @@ static int clust_constructor_dup(caddr_t m_clust, struct mbuf* m)
+ 		m->m_ext.ext_size = size;
+ 		m->m_ext.ext_type = type;
+ 		m->m_ext.ref_cnt = refcnt;
+-	}
++	} else
++		SCTP_ZONE_FREE(zone_ext_refcnt, refcnt);
+ 
+ 	return (0);
+ }
+@@ -527,7 +528,8 @@ mb_ctor_clust(void *mem, void *arg, int flgs)
+ 		m->m_ext.ext_size = size;
+ 		m->m_ext.ext_type = type;
+ 		m->m_ext.ref_cnt = refcnt;
+-	}
++	} else
++		SCTP_ZONE_FREE(zone_ext_refcnt, refcnt);
+ #endif
+ 	return (0);
+ }
+diff --git a/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/user_socket.c b/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/user_socket.c
+index a54996efdd8..b94e1e5c24a 100644
+--- a/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/user_socket.c
++++ b/Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/usrsctplib/user_socket.c
+@@ -2131,11 +2131,14 @@ done1:
+ 
+ int usrsctp_connect(struct socket *so, struct sockaddr *name, int namelen)
+ {
+-	struct sockaddr *sa;
++	struct sockaddr *sa = NULL;
+ 
+ 	errno = getsockaddr(&sa, (caddr_t)name, namelen);
+-	if (errno)
++	if (errno) {
++		if (sa)
++			FREE(sa, M_SONAME);
+ 		return (-1);
++	}
+ 
+ 	errno = user_connect(so, sa);
+ 	FREE(sa, M_SONAME);

@@ -1,0 +1,3 @@
+This test makes sure an iframe whose document is being closed to be replaced by a javascript: url doesn't fire a readystatechange event.
+You should see no alerts.
+

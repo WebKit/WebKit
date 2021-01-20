@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<label for="progress">label</label>
+<progress id="progress" title="title" value="22" max="100"></progress>
+
+<label>label wrapping output<progress id="progress2" value="22" max="100"></progress></label>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that for progress elements, label should be used as accessible name and title should be used as accessible description.");
+
+    if (window.accessibilityController) {
+
+          var prog1 = accessibilityController.accessibleElementById("progress");
+          shouldBe("prog1.title", "'AXTitle: label'");
+          shouldBe("prog1.helpText", "'AXHelp: title'");
+
+          var prog2 = accessibilityController.accessibleElementById("progress2");
+          shouldBe("prog2.title", "'AXTitle: label wrapping output'");
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

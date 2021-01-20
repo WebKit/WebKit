@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+This test makes sure that rendering Arabic with Georgia (which doesn't support Arabic) has a sensible result (e.g. not .notdef boxes)
+<div style="font: 50px Georgia;">&#x62f;&#x64a;&#x645;&#x648;&#x63a;&#x631;&#x627;&#x641;&#x64a;&#x627;&#x62a;</div>
+<div style="font: 50px 'Times New Roman';">&#x62f;&#x64a;&#x645;&#x648;&#x63a;&#x631;&#x627;&#x641;&#x64a;&#x627;&#x62a;</div>
+</body>
+</html>

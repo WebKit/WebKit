@@ -1,0 +1,10 @@
+This test calls deleteDatabase on window.indexedDB and verifies that an IDBOpenDBRequest object is returned.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+[object IDBOpenDBRequest]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

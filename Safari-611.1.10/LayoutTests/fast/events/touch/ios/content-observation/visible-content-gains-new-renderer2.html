@@ -1,0 +1,58 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<title>This tests the case when visible content gets removed and later added back and should not be considered as new content</title>
+<script src="../../../../../resources/ui-helper.js"></script>
+<style>
+#tapThis {
+    width: 400px;
+    height: 400px;
+    border: 1px solid green;
+}
+
+#alreadyVisible {
+    display: block;
+    width: 100px;
+    height: 100px;
+    background-color: green;
+}
+</style>
+<script>
+async function test() {
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+    if (window.internals)
+        internals.settings.setContentChangeObserverEnabled(true);
+
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    await UIHelper.activateElement(tapThis);
+}
+</script>
+</head>
+<body onload="test()">
+<div id=tapThis>PASS if 'clicked' text is shown below.</div>
+<div id=alreadyVisible></div>
+<pre id=result></pre>
+<script>
+tapThis.addEventListener("touchstart", function( event ) {
+    alreadyVisible.style.display = "none";
+}, false);
+
+tapThis.addEventListener("mouseover", function( event ) {
+    alreadyVisible.style.display = "block";
+}, false);
+
+alreadyVisible.addEventListener("click", function( event ) {
+    result.innerHTML = "clicked alreadyVisible";
+}, false);
+
+tapThis.addEventListener("click", function( event ) {   
+    result.innerHTML = "clicked";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, false);
+</script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+This test checks that grid items alignment works as expected with HORIZONTAL-TB vs VERTICAL-RL orthogonal flows.
+
+Orthogonal flows: HORIZONTAL-TB vs VERTICAL-RL
+
+Direction: LTR vs LTR
+
+end
+center
+start
+s-end
+s-start
+default
+Direction: RTL vs LTR
+
+end
+center
+start
+s-end
+s-start
+default
+Direction: LTR vs RTL
+
+end
+center
+start
+s-end
+s-start
+default
+Direction: RTL vs RTL
+
+end
+center
+start
+s-end
+s-start
+default
+Orthogonal flows: HORIZONTAL-TB vs VERTICAL-LR
+
+Direction: LTR vs LTR
+
+end
+center
+start
+s-end
+s-start
+default
+Direction: RTL vs LTR
+
+end
+center
+start
+s-end
+s-start
+default
+Direction: RTL vs RTL
+
+end
+center
+start
+s-end
+s-start
+default
+
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+PASS .grid 4
+PASS .grid 5
+PASS .grid 6
+PASS .grid 7
+

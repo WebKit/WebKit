@@ -1,0 +1,10 @@
+Test that ApplePayPaymentAuthorizationResults with non-empty errors are considered non-final results, regardless of result status or error codes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS did not crash
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

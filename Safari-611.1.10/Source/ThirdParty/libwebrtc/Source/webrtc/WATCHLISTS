@@ -1,0 +1,189 @@
+# Copyright (c) 2011 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+# Inspired by chromium.org:
+# http://dev.chromium.org/developers/contributing-code/watchlists
+
+{
+  'WATCHLIST_DEFINITIONS': {
+    'this_file': {
+      'filepath': '^WATCHLISTS$',
+    },
+    'all_webrtc': {
+      # NOTE: if you like this you might like webrtc-reviews@webrtc.org!
+      'filepath': '^.*',
+    },
+    'root_files': {
+      # Non-recursive contents of ./
+      'filepath': '^[^/]*$',
+    },
+    'build_files': {
+      'filepath': '\.gni$|\.gn$',
+    },
+    'java_files': {
+      'filepath': '\.java$|\.xml$',
+    },
+    'api': {
+      'filepath': 'api/.*',
+    },
+    'audio': {
+      'filepath': 'audio/.*',
+    },
+    'base': {
+      'filepath': 'rtc_base/.*',
+    },
+    'call': {
+      'filepath': 'call/.*',
+    },
+    'media_engine': {
+      'filepath': 'media/engine/.*',
+    },
+    'video': {
+      'filepath': 'video/.*',
+    },
+    'common_audio': {
+      'filepath': 'common_audio/.*',
+    },
+    'common_video': {
+      'filepath': 'common_video/.*',
+    },
+    'video_capture': {
+      'filepath': 'modules/video_capture/.*',
+    },
+    'audio_device': {
+      'filepath': 'modules/audio_device/.*',
+    },
+    'audio_coding': {
+      'filepath': 'modules/audio_coding/.*',
+    },
+    'neteq': {
+      'filepath': 'modules/audio_coding/neteq/.*',
+    },
+    'audio_mixer': {
+      'filepath': 'modules/audio_mixer/.*',
+    },
+    'audio_processing': {
+      'filepath': 'modules/audio_processing/.*',
+    },
+    'video_coding': {
+      'filepath': 'modules/video_coding/.*',
+    },
+    'video_processing': {
+      'filepath': 'modules/video_processing/.*',
+    },
+    'bitrate_controller': {
+      'filepath': 'modules/bitrate_controller/.*'
+    },
+    'congestion_controller': {
+      'filepath': 'modules/congestion_controller/.*'
+    },
+    'remote_bitrate_estimator': {
+      'filepath': 'modules/remote_bitrate_estimator/.*'
+    },
+    'pacing': {
+      'filepath': 'modules/pacing/.*'
+    },
+    'rtp_rtcp': {
+      'filepath': 'modules/rtp_rtcp/.*'
+    },
+    'system_wrappers': {
+      'filepath': 'system_wrappers/.*',
+    },
+    'pc': {
+      'filepath': '^pc/.*',
+    },
+  },
+
+  'WATCHLISTS': {
+    'this_file': [],
+    'all_webrtc': [],
+    'root_files': ['peah@webrtc.org',
+                   'qiang.lu@intel.com',
+                   'yujie.mao@webrtc.org'],
+    'build_files': ['mbonadei@webrtc.org'],
+    'common_audio': ['alessiob@webrtc.org',
+                     'aluebs@webrtc.org',
+                     'audio-team@agora.io',
+                     'minyue@webrtc.org',
+                     'peah@webrtc.org',
+                     'saza@webrtc.org'],
+    'audio': ['peah@webrtc.org'],
+    'api': ['kwiberg@webrtc.org','peah@webrtc.org'],
+    'base': ['kwiberg@webrtc.org'],
+    'call': ['mflodman@webrtc.org',
+             'stefan@webrtc.org'],
+    'video': ['mflodman@webrtc.org',
+              'stefan@webrtc.org',
+              'video-team@agora.io',
+              'yujie.mao@webrtc.org',
+              'zhengzhonghou@agora.io'],
+    'video_capture': ['mflodman@webrtc.org',
+                      'perkj@webrtc.org',
+                      'sdk-team@agora.io',
+                      'zhengzhonghou@agora.io'],
+    'audio_device': ['audio-team@agora.io',
+                     'henrika@webrtc.org',
+                     'peah@webrtc.org',
+                     'saza@webrtc.org',
+                     'sdk-team@agora.io'],
+    'audio_coding': ['alessiob@webrtc.org',
+                     'audio-team@agora.io',
+                     'henrik.lundin@webrtc.org',
+                     'kwiberg@webrtc.org',
+                     'minyue@webrtc.org',
+                     'peah@webrtc.org',
+                     'saza@webrtc.org'],
+    'neteq': ['alessiob@webrtc.org',
+              'audio-team@agora.io',
+              'henrik.lundin@webrtc.org',
+              'minyue@webrtc.org',
+              'saza@webrtc.org'],
+    'audio_mixer': ['aleloi@webrtc.org',
+                    'henrik.lundin@webrtc.org',
+                    'peah@webrtc.org',
+                    'saza@webrtc.org'],
+    'audio_processing': ['alessiob@webrtc.org',
+                         'aluebs@webrtc.org',
+                         'audio-team@agora.io',
+                         'fhernqvist@webrtc.org',
+                         'henrik.lundin@webrtc.org',
+                         'kwiberg@webrtc.org',
+                         'minyue@webrtc.org',
+                         'peah@webrtc.org',
+                         'saza@webrtc.org'],
+    'video_coding': ['mflodman@webrtc.org',
+                     'stefan@webrtc.org',
+                     'video-team@agora.io',
+                     'zhengzhonghou@agora.io'],
+    'video_processing': ['stefan@webrtc.org',
+                         'video-team@agora.io',
+                         'zhengzhonghou@agora.io'],
+    'bitrate_controller': ['mflodman@webrtc.org',
+                           'stefan@webrtc.org',
+                           'srte@webrtc.org',
+                           'zhuangzesen@agora.io'],
+    'congestion_controller': ['srte@webrtc.org'],
+    'remote_bitrate_estimator': ['mflodman@webrtc.org',
+                                 'stefan@webrtc.org',
+                                 'zhuangzesen@agora.io'],
+    'pacing': ['mflodman@webrtc.org',
+               'srte@webrtc.org',
+               'stefan@webrtc.org',
+               'zhuangzesen@agora.io'],
+    'rtp_rtcp': ['mflodman@webrtc.org',
+                 'stefan@webrtc.org',
+                 'danilchap@webrtc.org',
+                 'zhuangzesen@agora.io'],
+    'system_wrappers': ['fengyue@agora.io',
+                        'henrika@webrtc.org',
+                        'mflodman@webrtc.org',
+                        'peah@webrtc.org',
+                        'zhengzhonghou@agora.io'],
+    'pc': ['steveanton+watch@webrtc.org'],
+  },
+}

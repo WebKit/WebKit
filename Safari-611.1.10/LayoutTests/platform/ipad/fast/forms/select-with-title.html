@@ -1,0 +1,58 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+<style>
+    body, html {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+    }
+    select {
+        width: 200px;
+        height: 200px;
+    }
+</style>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<script src="../../../../resources/basic-gestures.js"></script>
+<script>
+    async function run()
+    {
+        if (!window.testRunner)
+            return;
+
+        await tapAtPoint(100, 100);
+        popoverTitle = await UIHelper.selectFormPopoverTitle();
+        await UIHelper.selectFormAccessoryPickerRow(1);
+        checkDone();
+    }
+
+    function checkDone()
+    {
+        doneCount = 1 + (window.doneCount ? doneCount : 0);
+        if (doneCount == 2 && window.testRunner) {
+            shouldBe("popoverTitle", "document.getElementById('select').title");
+            testRunner.notifyDone();
+        }
+    }
+</script>
+</head>
+<body onload="run()">
+    <select title="This is a title" id="select">
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+    </select>
+    <pre id="output"></pre>
+</body>
+<script>
+    select.addEventListener("blur", checkDone);
+    select.addEventListener("change", () => select.blur());
+
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+</script>
+</html>

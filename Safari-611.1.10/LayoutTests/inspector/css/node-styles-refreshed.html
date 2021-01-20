@@ -1,0 +1,84 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let nodeStyles = null;
+    let suite = InspectorTest.createAsyncSuite("NodeStylesRefreshed");
+
+    suite.addTestCase({
+        name: "NodeStylesRefreshed.ClassAdded",
+        async test() {
+            nodeStyles.singleFireEventListener(WI.DOMNodeStyles.Event.Refreshed, (event) => {
+                InspectorTest.expectTrue(event.data.significantChange, `Adding '.baz' class should cause a significant change.`);
+            });
+
+            InspectorTest.evaluateInPage(`document.body.classList.add("baz")`);
+            await nodeStyles.refresh();
+        }
+    });
+
+    suite.addTestCase({
+        name: "NodeStylesRefreshed.ClassRemoved",
+        async test() {
+            nodeStyles.singleFireEventListener(WI.DOMNodeStyles.Event.Refreshed, (event) => {
+                InspectorTest.expectTrue(event.data.significantChange, `Removing '.foo' class should cause a significant change.`);
+            });
+
+            InspectorTest.evaluateInPage(`document.body.classList.remove("foo")`);
+            await nodeStyles.refresh();
+        }
+    });
+
+    suite.addTestCase({
+        name: "NodeStylesRefreshed.IrrelevantClassAdded",
+        async test() {
+            nodeStyles.singleFireEventListener(WI.DOMNodeStyles.Event.Refreshed, (event) => {
+                InspectorTest.expectFalse(event.data.significantChange, `Adding '.blah' class shouldn't cause a significant change.`);
+            });
+
+            InspectorTest.evaluateInPage(`document.body.classList.add("blah")`);
+            await nodeStyles.refresh();
+        }
+    });
+
+    suite.addTestCase({
+        name: "NodeStylesRefreshed.IrrelevantClassRemoved",
+        async test() {
+            nodeStyles.singleFireEventListener(WI.DOMNodeStyles.Event.Refreshed, (event) => {
+                InspectorTest.expectFalse(event.data.significantChange, `Removing '.blah' class shouldn't cause a significant change.`);
+            });
+
+            InspectorTest.evaluateInPage(`document.body.classList.remove("blah")`);
+            await nodeStyles.refresh();
+        }
+    });
+
+    WI.domManager.requestDocument((documentNode) => {
+        documentNode.querySelector("body", (contentNodeId) => {
+            if (contentNodeId) {
+                let domNode = WI.domManager.nodeForId(contentNodeId);
+                nodeStyles = WI.cssManager.stylesForNode(domNode);
+
+                nodeStyles.refreshIfNeeded().then(function() {
+                    suite.runTestCasesAndFinish();
+                });
+            } else {
+                InspectorTest.fail("DOM node not found.");
+                InspectorTest.completeTest();
+            }
+        });
+    });
+}
+</script>
+</head>
+<body onLoad="runTest()" class="foo bar">
+<p>Testing that WI.DOMNodeStyles.Event.Refreshed event dispatches with correct significantChange flag.</p>
+<style>
+.foo {font-size: 12px;}
+.bar {background: lightyellow;}
+.baz {color: darkgreen;}
+</style>
+</body>
+</html>

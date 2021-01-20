@@ -1,0 +1,27 @@
+Test that Mac numpad keys are mapped to the correct Windows virtual keycodes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getKeyCode('.') is 0x6E
+PASS getKeyCode('*') is 0x6A
+PASS getKeyCode('+') is 0x6B
+PASS getKeyCode('clear') is 0x0C
+PASS getKeyCode('/') is 0x6F
+PASS getKeyCode('enter') is 0x0D
+PASS getKeyCode('-') is 0x6D
+PASS getKeyCode('=') is 0xBB
+PASS getKeyCode('0') is 0x60
+PASS getKeyCode('1') is 0x61
+PASS getKeyCode('2') is 0x62
+PASS getKeyCode('3') is 0x63
+PASS getKeyCode('4') is 0x64
+PASS getKeyCode('5') is 0x65
+PASS getKeyCode('6') is 0x66
+PASS getKeyCode('7') is 0x67
+PASS getKeyCode('8') is 0x68
+PASS getKeyCode('9') is 0x69
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

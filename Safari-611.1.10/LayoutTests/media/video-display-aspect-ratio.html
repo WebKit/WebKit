@@ -1,0 +1,15 @@
+<video controls></video>
+<script src=media-file.js></script>
+<script src=video-test.js></script>
+<script>
+    testExpected("video.videoWidth", 0, "==");
+    testExpected("video.videoHeight", 0, "==");
+
+    waitForEvent('loadedmetadata', function () {
+        testExpected("video.videoWidth", 426, "==");
+        testExpected("video.videoHeight", 240, "==");
+        endTest();
+    } );
+
+    video.src = findMediaFile("video", "content/test-par-16-9");
+</script>

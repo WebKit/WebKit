@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HTML Test: element.outerHTML to verify HTML fragment serialization algorithm</title>
+    <link rel="author" title="Intel" href="http://www.intel.com/">
+    <link rel="help" href="https://html.spec.whatwg.org/multipage/#html-fragment-serialization-algorithm">
+    <link rel="help" href="https://dvcs.w3.org/hg/innerhtml/raw-file/tip/index.html#widl-Element-outerHTML">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <script src="../html-element-list.js"></script>
+  </head>
+  <body>
+    <div id="log"></div>
+    <script>
+      test(function() {
+        elements_with_end_tag.forEach(function(ele) {
+          test(function() {
+            var e = document.createElement(ele);
+            assert_equals(e.outerHTML, "<" + ele + "></" + ele + ">", ele + " node created." );
+          }, "Node for " + ele);
+        });
+        elements_without_end_tag.forEach(function(ele) {
+          test(function() {
+            var e = document.createElement(ele);
+            assert_equals(e.outerHTML, "<" + ele + ">", ele + " node created." );
+          }, "Node for " + ele);
+        });
+      }, document.title);
+    </script>
+  </body>
+</html>

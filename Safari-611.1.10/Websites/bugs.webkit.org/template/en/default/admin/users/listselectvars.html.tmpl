@@ -1,0 +1,26 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  #
+  # listselectionvalues: selection values to recreate the current user list.
+  #%]
+
+[% BLOCK listselectionurlparams %]
+  [% FOREACH field = listselectionvalues.keys %]&amp;
+    [% field FILTER uri %]=
+    [% listselectionvalues.$field FILTER uri %]
+  [% END %]
+[% END %]
+
+[% BLOCK listselectionhiddenfields %]
+  [% FOREACH field = listselectionvalues.keys %]
+    <input type="hidden" name="[% field FILTER html %]"
+           value="[% listselectionvalues.$field FILTER html %]">
+  [% END %]
+[% END %]

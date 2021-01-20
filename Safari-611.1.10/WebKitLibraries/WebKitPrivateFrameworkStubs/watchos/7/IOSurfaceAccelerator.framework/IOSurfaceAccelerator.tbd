@@ -1,0 +1,28 @@
+--- !tapi-tbd-v2
+archs:
+  - armv7
+  - armv7s
+  - armv7k
+  - arm64
+  - i386
+  - x86_64
+  - arm64_32
+exports:
+  -
+    archs:
+      - armv7
+      - armv7s
+      - armv7k
+      - arm64
+      - i386
+      - x86_64
+      - arm64_32
+    symbols:
+      - _IOSurfaceAcceleratorCreate
+      - _IOSurfaceAcceleratorGetRunLoopSource
+      - _IOSurfaceAcceleratorTransformSurface
+      - _kIOSurfaceAcceleratorUnwireSurfaceKey
+install-name: /System/Library/PrivateFrameworks/IOSurfaceAccelerator.framework/IOSurfaceAccelerator
+objc-constraint: none
+platform: watchos
+...

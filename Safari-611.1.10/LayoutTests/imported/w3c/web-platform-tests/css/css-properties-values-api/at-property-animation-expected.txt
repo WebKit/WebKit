@@ -1,0 +1,14 @@
+
+FAIL @keyframes works with @property assert_equals: expected "150px" but got ""
+FAIL @keyframes picks up the latest @property in the document assert_equals: expected "rgb(150, 150, 150)" but got ""
+FAIL Ongoing animation picks up redeclared custom property assert_equals: expected "0px" but got ""
+FAIL Ongoing animation matches new keyframes against the current registration assert_equals: expected "0px" but got ""
+FAIL Ongoing animation picks up redeclared intial value assert_equals: expected "200px" but got ""
+FAIL Ongoing animation picks up redeclared inherits flag assert_equals: expected "200px" but got " 100px"
+FAIL Ongoing animation picks up redeclared meaning of 'unset' assert_equals: expected "200px" but got " 100px"
+FAIL Transitioning from initial value assert_equals: expected "rgb(255, 0, 0)" but got ""
+FAIL Transitioning from specified value assert_equals: expected "rgb(0, 0, 255)" but got " blue"
+FAIL Transition triggered by initial value change assert_equals: expected "100px" but got ""
+FAIL No transition when changing types assert_equals: expected "100px" but got ""
+FAIL No transition when removing @property rule assert_equals: expected "100px" but got " 100px"
+

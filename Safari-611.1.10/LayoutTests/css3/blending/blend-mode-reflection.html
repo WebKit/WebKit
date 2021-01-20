@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<head>
+    <link rel="stylesheet" href="resources/blending-style.css">
+    <style>
+        img {
+            width: 130px;
+            height: 130px;
+            -webkit-box-reflect:below 5px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.5, transparent), to(white));
+        }
+
+        li {
+            margin: 5px;
+            width: 130px;
+            height: 260px;
+            background: -webkit-gradient(linear, left top, right top, color-stop(0%,#00ffff), color-stop(24%,#0000ff), color-stop(50%,#ff0000), color-stop(75%,#ffff00), color-stop(100%,#00ff00));
+            display: block;
+            float: left;
+        }
+     </style>
+ </head>
+
+<!-- This file should contain two images of a duck on top of a gradient with reflection.
+Both the duck and the reflection should blend.  -->
+<body>
+    <ul><li><img class="multiply" src="resources/ducky.png"></li></ul>
+    <ul><li><img class="composited multiply" src="resources/ducky.png"></li></ul>
+</body>

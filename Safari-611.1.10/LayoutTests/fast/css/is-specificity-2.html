@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+<style>
+    * {
+        background-color: blue;
+        color: black;
+        border: 5px solid black;
+    }
+    html, body, p {
+        background-color: white;
+        color: black;
+    }
+    target {
+        background-color: green;
+    }
+
+    :is(#foo, .bar, target.notthere, *, foo>bar) {
+        background-color: white;
+        color: blue;
+        border: none;
+    }
+    * {
+        color: white;
+    }
+</style>
+</head>
+<body>
+    <target>Target</target>
+</body>
+</html>

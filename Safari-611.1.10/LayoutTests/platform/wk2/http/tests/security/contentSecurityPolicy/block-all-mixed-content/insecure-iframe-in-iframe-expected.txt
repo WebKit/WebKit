@@ -1,0 +1,25 @@
+main frame - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didCommitLoadForFrame
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
+frame "<!--frame2-->" - didStartProvisionalLoadForFrame
+CONSOLE MESSAGE: Blocked mixed content http://127.0.0.1:8000/security/contentSecurityPolicy/block-all-mixed-content/resources/fail.html because 'block-all-mixed-content' appears in the Content Security Policy.
+frame "<!--frame1-->" - didHandleOnloadEventsForFrame
+main frame - didHandleOnloadEventsForFrame
+frame "<!--frame2-->" - didFailProvisionalLoadWithError
+frame "<!--frame1-->" - didFinishLoadForFrame
+main frame - didFinishLoadForFrame
+This test loads a secure iframe that loads an insecure iframe. We should trigger a mixed content block because the child frame has CSP directive block-all-mixed-content.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+
+
+
+--------
+Frame: '<!--frame2-->'
+--------
+

@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 459x17
+          text run at (0,0) width 459: "This test validate rendering of emoji sequences and emoji with modifiers."
+      RenderBlock {DIV} at (0,17) size 784x17
+        RenderText {#text} at (0,0) size 0x17
+          text run at (0,0) width 0: "\x{D83D}\x{DE01}"
+      RenderBlock {DIV} at (0,34) size 784x200
+        RenderText {#text} at (0,0) size 121x40
+          text run at (0,0) width 121: "\x{D83D}\x{DC66}\x{D83C}\x{DFFB}\x{D83D}\x{DC69}\x{D83C}\x{DFFC}\x{D83D}\x{DC66}\x{D83C}\x{DFFE}\x{2764}\x{FE0F}\x{D83D}\x{DC8B}"
+        RenderBR {BR} at (121,32) size 0x0
+        RenderText {#text} at (0,40) size 196x40
+          text run at (0,40) width 196: "\x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC66} \x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC67} \x{D83D}\x{DC6A} \x{D83D}\x{DC66}\x{D83C}\x{DFFB}\x{D83D}\x{DC69}\x{D83C}\x{DFFC}\x{D83D}\x{DC66}\x{D83C}\x{DFFE}"
+        RenderBR {BR} at (196,72) size 0x0
+        RenderText {#text} at (0,80) size 270x40
+          text run at (0,80) width 270: "\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC66} \x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC67} \x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC67}\x{200D}\x{D83D}\x{DC66} \x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC66}\x{200D}\x{D83D}\x{DC66} \x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC69}\x{200D}\x{D83D}\x{DC67}\x{200D}\x{D83D}\x{DC67}"
+        RenderBR {BR} at (270,112) size 0x0
+        RenderText {#text} at (0,120) size 270x40
+          text run at (0,120) width 270: "\x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC66} \x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC67} \x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC67}\x{200D}\x{D83D}\x{DC66} \x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC66}\x{200D}\x{D83D}\x{DC66} \x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC68}\x{200D}\x{D83D}\x{DC67}\x{200D}\x{D83D}\x{DC67}"
+        RenderBR {BR} at (270,152) size 0x0
+        RenderText {#text} at (0,160) size 342x40
+          text run at (0,160) width 342: "\x{D83D}\x{DC69}\x{200D}\x{2764}\x{FE0F}\x{200D}\x{D83D}\x{DC69} \x{D83D}\x{DC68}\x{200D}\x{2764}\x{FE0F}\x{200D}\x{D83D}\x{DC68} \x{D83D}\x{DC69}\x{200D}\x{2764}\x{FE0F}\x{200D}\x{D83D}\x{DC8B}\x{200D}\x{D83D}\x{DC69} \x{D83D}\x{DC68}\x{200D}\x{2764}\x{FE0F}\x{200D}\x{D83D}\x{DC8B}\x{200D}\x{D83D}\x{DC68} \x{D83D}\x{DC69}\x{200D}\x{2764}\x{FE0F}\x{200D}\x{D83D}\x{DC69}"

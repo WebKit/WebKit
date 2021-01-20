@@ -1,0 +1,11 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>Window is a constructor, and throwing TypeError when it is called.</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+test(() => {
+    assert_equals((class A extends Window { }).prototype.__proto__, Window.prototype);
+    assert_throws_js(TypeError, () => new (class A extends Window { }));
+}, "Window is a constructor, and throwing TypeError when it is called.");
+</script>

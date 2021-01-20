@@ -1,0 +1,7 @@
+gas-token.c svn-properties=allow-tabs=on
+nasm-token.c svn-properties=allow-tabs=on
+x86cpu.c svn-properties=allow-tabs=on
+x86insn_gas.c svn-properties=allow-tabs=on
+x86insn_gas.c svn-properties=allow-tabs=on
+x86insn_nasm.c svn-properties=allow-tabs=on
+x86regtmod.c svn-properties=allow-tabs=on

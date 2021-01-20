@@ -1,0 +1,5 @@
+
+PASS Test that playbackState is initialized as "none"
+PASS Test that playbackState is read/write
+PASS Test that warning is thrown when setting invalid playbackState
+

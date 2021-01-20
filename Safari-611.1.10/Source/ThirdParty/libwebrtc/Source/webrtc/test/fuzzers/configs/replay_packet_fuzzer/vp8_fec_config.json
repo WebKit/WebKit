@@ -1,0 +1,73 @@
+[
+   {
+      "decoders" : [
+         {
+            "codec_params" : [],
+            "payload_name" : "VP8",
+            "payload_type" : 96
+         }
+      ],
+      "render_delay_ms" : 10,
+      "rtp" : {
+         "extensions" : [
+            {
+               "encrypt" : false,
+               "id" : 5,
+               "uri" : "http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01"
+            },
+            {
+               "encrypt" : false,
+               "id" : 3,
+               "uri" : "http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time"
+            },
+            {
+               "encrypt" : false,
+               "id" : 6,
+               "uri" : "http://www.webrtc.org/experiments/rtp-hdrext/playout-delay"
+            },
+            {
+               "encrypt" : false,
+               "id" : 7,
+               "uri" : "http://www.webrtc.org/experiments/rtp-hdrext/video-content-type"
+            },
+            {
+               "encrypt" : false,
+               "id" : 8,
+               "uri" : "http://www.webrtc.org/experiments/rtp-hdrext/video-timing"
+            },
+            {
+               "encrypt" : false,
+               "id" : 4,
+               "uri" : "urn:3gpp:video-orientation"
+            },
+            {
+               "encrypt" : false,
+               "id" : 2,
+               "uri" : "urn:ietf:params:rtp-hdrext:toffset"
+            }
+         ],
+         "local_ssrc" : 1,
+         "lntf" : {
+            "enabled": false,
+         },
+         "nack" : {
+            "rtp_history_ms" : 1000
+         },
+         "red_payload_type" : -1,
+         "remb" : true,
+         "remote_ssrc" : 2672243158,
+         "rtcp_mode" : "RtcpMode::kReducedSize",
+         "rtx_payload_types" : [
+            {
+               "97" : 96
+            },
+            {
+               "99" : 98
+            }
+         ],
+         "rtx_ssrc" : 1807563126,
+         "transport_cc" : true
+      },
+      "target_delay_ms" : 0
+   }
+]

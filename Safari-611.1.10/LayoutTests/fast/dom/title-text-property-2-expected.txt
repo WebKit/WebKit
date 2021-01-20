@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: Setting document.title to TITLE1
+TITLE CHANGED: 'TITLE1'
+CONSOLE MESSAGE: Setting title element's text to TITLE2
+TITLE CHANGED: 'TITLE2'
+CONSOLE MESSAGE: Should not set title
+CONSOLE MESSAGE: Should reset title to the empty string
+TITLE CHANGED: ''
+

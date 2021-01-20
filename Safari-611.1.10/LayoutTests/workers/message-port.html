@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Sends ArrayBuffers through MessagePorts.");
+window.jsTestIsAsync = true;
+
+function test(data, postMessage, checkResult) {
+    return new Promise(function (resolve) {
+        const channel = new MessageChannel();
+
+        channel.port1.onmessage = event => {
+            if (!event.data)
+                debug("message data null!");
+            postMessage(event.data, event.target);
+        };
+
+        channel.port2.onmessage = event => {
+            checkResult(event.data);
+            resolve();
+        };
+
+        postMessage(data, channel.port2);
+    });
+}
+
+function testEmptyArray(buf) {
+    const array = new Float64Array(buf);
+    if (!array.length)
+        testPassed(`successfully transferred array of length 0`);
+    else
+        testFailed(`${array} should be a Float64Array of length 0`);
+}
+
+const array = new Float64Array([Math.PI]);
+const emptyArray = new Float64Array();
+const emptyArray2 = new Float64Array();
+
+test(
+    { buf: [array.buffer, emptyArray.buffer] },
+    (data, port) => port.postMessage({ buf: data.buf }, data.buf),
+    data => {
+        const array = new Float64Array(data.buf[0]);
+        if (array[0] === Math.PI)
+            testPassed(`array[0] contains ${Math.PI}`);
+        else
+            testFailed(`${array[0]} should be ${Math.PI}`);
+
+        testEmptyArray(data.buf[1]);
+    }
+).then(() =>
+    test(
+        { buf: emptyArray2.buffer },
+        (data, port) => port.postMessage({ buf: data.buf }, [data.buf]),
+        data => testEmptyArray(data.buf)
+    ),
+).then(finishJSTest);
+</script>
+</body>
+</html>

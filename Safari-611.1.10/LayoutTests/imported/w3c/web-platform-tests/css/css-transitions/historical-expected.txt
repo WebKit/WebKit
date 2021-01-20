@@ -1,0 +1,5 @@
+
+FAIL Historical CSS features must be removed: WebKitTransitionEvent assert_equals: expected (undefined) undefined but got (function) function "function WebKitTransitionEvent() {
+    [native code]
+}"
+

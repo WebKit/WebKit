@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+
+description('Test that setting the host and hostname attributes of URL objects uses IDNA2008.');
+
+// These cases are ones we conform to from idna2008.html
+cases = [
+    // For IDNA Compatibility test material see
+    // http://www.unicode.org/reports/tr46/
+    // http://www.unicode.org/Public/idna/latest/IdnaMappingTable.txt
+    // Deviant character tests (deviant processing behavior from IDNA2003)
+    ["B\u00FCcher.de","xn--bcher-kva.de"],
+    // The ß U+00DF LATIN SMALL LETTER SHARP S does NOT normalize to "ss" like it does during IDNA2003's mapping phase
+    ["fa\u00DF.de","xn--fa-hia.de"],
+    // The ς U+03C2 GREEK SMALL LETTER FINAL SIGMA using βόλος.com
+    ["\u03B2\u03CC\u03BB\u03BF\u03C2.com","xn--nxasmm1c.com"],
+    // The ZWJ U+200D ZERO WIDTH JOINER
+    ["\u0DC1\u0DCA\u200D\u0DBB\u0DD3.com","xn--10cl1a0b660p.com"],
+    // The ZWNJ U+200C ZERO WIDTH NON-JOINER
+    ["\u0646\u0627\u0645\u0647\u200C\u0627\u06CC.com","xn--mgba3gch31f060k.com"],
+    // Ignored characters should be removed * security risk
+    // U+034F COMBINING GRAPHEME JOINER
+    ["look\u034Fout.net","lookout.net"],
+    // Mapped characters
+    ["gOoGle.com","google.com"],
+    // 1E9E; mapped; 0073 0073
+    ["\u1E9E.com","ss.com"],
+    ["\u1E9E.foo.com","ss.foo.com"],
+];
+
+var url = new URL("http://www.webkit.org");
+
+for (var i = 0; i < cases.length; ++i) {
+    test_vector = cases[i][0];
+    expected_result = cases[i][1];
+    url.hostname = test_vector;
+    shouldBe("url.hostname", "'" + expected_result + "'");
+}
+
+for (var i = 0; i < cases.length; ++i) {
+    test_vector = cases[i][0];
+    expected_result = cases[i][1];
+    url.host = test_vector;
+    shouldBe("url.host", "'" + expected_result + "'");
+}
+
+</script>
+</body>
+</html>

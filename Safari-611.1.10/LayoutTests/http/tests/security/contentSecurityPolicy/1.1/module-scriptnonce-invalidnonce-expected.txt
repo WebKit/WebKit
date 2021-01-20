@@ -1,0 +1,53 @@
+None of these scripts should execute, as all the nonces are invalid. Update: Since we no longer support X-WebKit-CSP all the scripts should run.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame2-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame3-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame4-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame5-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame6-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame7-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame8-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame9-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame10-->'
+--------
+PASS

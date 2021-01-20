@@ -1,0 +1,7 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+postProgressFinishedNotification
+main frame - didFinishLoadForFrame
+This is a test of progress finished callback ordering in relation to frame loader callbacks. It is only useful inside the regression test tool.

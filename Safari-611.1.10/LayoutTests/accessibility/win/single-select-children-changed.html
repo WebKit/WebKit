@@ -1,0 +1,38 @@
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+</head>
+
+<body id="body">
+
+<select id="selectElement" title="selectElement">
+    <option SELECTED>Option 1</option>
+</select>
+
+<p>This tests that non-multiple select elements expose their updated children if they change.</p>
+
+<p id="notDRT">This test should only be run inside of DumpRenderTree.</p>
+
+<p id="console"></p>
+
+<script>
+    if (window.testRunner && window.accessibilityController) {
+        document.getElementById("notDRT").style.visibility = "hidden";
+
+        document.getElementById("selectElement").focus();
+        var selectElement = accessibilityController.focusedElement;
+        var list = accessibilityController.focusedElement.childAtIndex(0);
+
+        var option = list.childAtIndex(0);
+        shouldBeTrue('option.title === "Option 1"');
+
+        var newOption = document.createElement("option");
+        newOption.innerHTML = "Option 2";
+        document.getElementById("selectElement").appendChild(newOption);
+
+        var option2 = list.childAtIndex(1);
+        shouldBeTrue('option2.title === "Option 2"');
+    }
+</script>
+</body>
+</html>

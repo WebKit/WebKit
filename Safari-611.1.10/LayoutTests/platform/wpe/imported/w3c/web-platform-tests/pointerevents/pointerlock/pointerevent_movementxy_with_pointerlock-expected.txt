@@ -1,0 +1,16 @@
+Pointer Events movement with pointerlock test
+
+Follow the test instructions with mouse. If you don't have the device skip it.
+
+Test Description: This test checks pointerevent movementX/Y value with pointerlock. It checks whether movement X/Y matches event.screenX/Y - last_event.screenX/Y when pointer is not locked; And if pointermove.movementX/Y matches mousemove.movementX/Y when pointer is locked.
+Move the mouse inside the green rectangle.
+Click left button on the green rectangle.(Enter pointerlock)
+Move the mouse around.
+Click left button again
+Move the mouse inside the green rectangle.
+Click left button again to end the test.
+Test passes if the proper behavior of the events is observed.
+
+
+FAIL mouse pointerevent movementX/Y with pointerlock test assert_equals: expected (undefined) undefined but got (number) 10
+

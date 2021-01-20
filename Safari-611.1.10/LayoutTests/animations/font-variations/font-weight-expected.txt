@@ -1,0 +1,5 @@
+Hello
+PASS - "font-weight" property for "box" element at 0.5s saw something close to: 166.6666
+PASS - "font-weight" property for "box" element at 1s saw something close to: 233.3333
+PASS - "font-weight" property for "box" element at 2s saw something close to: 366.6666
+

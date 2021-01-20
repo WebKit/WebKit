@@ -1,0 +1,16 @@
+RST files:
+
+* Produce simple style guide and canonicalise usages to follow it
+* Get rid of, or use proper Sphinx markup for, glossary
+
+HTML Output:
+
+* Styling for Cautions and Tips
+* Stop replacement of "--" with em-dash
+* Auto-highlighter thinks # in "bash#" is a comment char
+* Style definition lists to have the term in bold
+* Fix bug lifecycle image original doc link
+
+Topics to cover:
+
+* email_in.pl

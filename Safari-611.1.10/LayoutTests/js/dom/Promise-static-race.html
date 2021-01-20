@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description('Test Promise.race');
+
+// Silence unhandled rejection messages.
+window.onunhandledrejection = () => false;
+
+window.jsTestIsAsync = true;
+result = undefined;
+
+var p1 = new Promise(function(resolve) { resolve('p1'); });
+var p2 = new Promise(function(resolve) { resolve('p2'); });
+var p3 = new Promise(function(resolve) { resolve('p3'); });
+var p4 = new Promise(function() {});
+var p5 = new Promise(function() {});
+var p6 = new Promise(function(_, reject) { reject('p6'); });
+var p7 = new Promise(function(_, reject) { reject('p7'); });
+var p8 = new Promise(function(_, reject) { reject('p8'); });
+var p9 = new Promise(function(resolve) { resolve(p2); });
+
+Promise.race([p4, p5]).then(function(result) {
+  testFailed('Promise.race([p4, p5]) is fulfilled.');
+}, function() {
+  testFailed('Promise.race([p4, p5]) is rejected.');
+});
+
+Promise.race().then(function(result) {
+  testFailed('Promise.race() is fulfilled.');
+}, function() {
+  testPassed('Promise.race() is rejected.');
+});
+
+Promise.race({}).then(function(result) {
+  testFailed('Promise.race({}) is fulfilled.');
+}, function() {
+  testPassed('Promise.race({}) is rejected.');
+});
+
+// If the argument is an empty array, the result promise won't be fulfilled.
+Promise.race([]).then(function(result) {
+  testFailed('Promise.race([]) is fulfilled.');
+}, function() {
+  testFailed('Promise.race([]) is rejected.');
+});
+
+Promise.race([p4, p1, p6]).then(function(result) {
+  testPassed('Promise.race([p4, p1, p6]) is fulfilled.');
+  window.result = result;
+  shouldBeEqualToString('result', 'p1');
+}, function() {
+  testFailed('Promise.race([p4, p1, p6]) is rejected.');
+}).then(function() {
+  return Promise.race([p4, p6, p1]).then(function(result) {
+    testFailed('Promise.race([p4, p6, p1]) is fulfilled.');
+  }, function(result) {
+    testPassed('Promise.race([p4, p6, p1]) is rejected.');
+    window.result = result;
+    shouldBeEqualToString('result', 'p6');
+  });
+}).then(function() {
+  return Promise.race([p9]).then(function(result) {
+    testPassed('Promise.race([p9]) is fulfilled.');
+    window.result = result;
+    shouldBeEqualToString('result', 'p2');
+  }, function() {
+    testFailed('Promise.race([p9]) is rejected.');
+  });
+}).then(function() {
+  // Array hole should not be skipped.
+  return Promise.race([p4,,]).then(function(result) {
+    testPassed('Promise.race([p4,,]) is fulfilled.');
+    window.result = result;
+    shouldBe('result', 'undefined');
+  }, function() {
+    testFailed('Promise.race([p4,,]) is rejected.');
+  });
+}).then(function() {
+  // Immediate value should be converted to a promise object by the
+  // ToPromise operation.
+  return Promise.race([p4,42]).then(function(result) {
+    testPassed('Promise.race([p4,42]) is fulfilled.');
+    window.result = result;
+    shouldBe('result', '42');
+  }, function() {
+    testFailed('Promise.race([p4,42]) is rejected.');
+  });
+}).then(finishJSTest, finishJSTest);
+
+shouldBe('result', 'undefined');
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

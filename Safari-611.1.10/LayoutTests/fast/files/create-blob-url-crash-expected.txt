@@ -1,0 +1,4 @@
+Test that createObjectURL with no argument should throw an exception.
+PASS: Not enough arguments
+DONE
+

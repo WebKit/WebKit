@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing P-256, P-384 and P-521 SPKI ECDH keys that are using the ecDH algorithm identifier");
+
+jsTestIsAsync = true;
+
+var spkiP256Key = hexStringToUint8Array("3057301106052b8104010c06082a8648ce3d03010703420004c3ee3a2c3380072b9b2a59fed2cada65121806e22c4f4f8a25e740fc3e54d75d86c200298e6dfc1611d185eedbdb3c2661b0eb0441f7fd57c90d08112e9ae71c");
+var spkiP384Key = hexStringToUint8Array("3074300e06052b8104010c06052b81040022036200044fe8f479a01b2d524d0f637add0391b733344a9eca4702359d42ad42acfd0632e77c855534e896828fec76318b3aa7f9745ed94a19a55152a4418cfdf277d3d706ddf3d443ee0710ac717ce85ba60e8fe29e7d8b3dfe0797c7eb47d2c19a86ca");
+var spkiP521Key = hexStringToUint8Array("30819b301006072a8648ce3d020106052b81040023038186000400e9a76aed2acda29ba2a5dbdc1f04c6160bc16c6d16b737a557f9dcbc8efb79dd1b9eabfc0a911ea3fd574176e2cbf32caa9babb505b04f30ecf369e6bec91d1ac201a8aa718c0c293b085d7902a314cab6e8048e458cc28c7da4fff2fcbf3da6d42fee94de5e0a3fb34342780e3f9df7b424911d6efb8628079566b50efe6971271eea");
+var extractable = true;
+
+Promise.resolve().then(function(result) {
+    debug("Importing a P-256 key that uses the ecDH algorithm identifier ...");
+    return crypto.subtle.importKey("spki", spkiP256Key, {name: "ECDH", namedCurve: "P-256"}, extractable, [ ]);
+}).then(function(result) {
+    publicKey = result;
+
+    shouldBe("publicKey.toString()", "'[object CryptoKey]'");
+    shouldBe("publicKey.type", "'public'");
+    shouldBe("publicKey.extractable", "true");
+    shouldBe("publicKey.algorithm.name", "'ECDH'");
+    shouldBe("publicKey.algorithm.namedCurve", "'P-256'");
+    shouldBe("publicKey.usages", "[ ]");
+
+    debug("Importing a P-384 key that uses the ecDH algorithm identifier ...");
+    return crypto.subtle.importKey("spki", spkiP384Key, {name: "ECDH", namedCurve: "P-384"}, extractable, [ ]);
+}).then(function(result) {
+    publicKey = result;
+
+    shouldBe("publicKey.toString()", "'[object CryptoKey]'");
+    shouldBe("publicKey.type", "'public'");
+    shouldBe("publicKey.extractable", "true");
+    shouldBe("publicKey.algorithm.name", "'ECDH'");
+    shouldBe("publicKey.algorithm.namedCurve", "'P-384'");
+    shouldBe("publicKey.usages", "[ ]");
+
+    debug("Importing a P-521 key that uses the ecDH algorithm identifier ...");
+    return crypto.subtle.importKey("spki", spkiP521Key, {name: "ECDH", namedCurve: "P-521"}, extractable, [ ]);
+}).then(function(result) {
+    publicKey = result;
+
+    shouldBe("publicKey.toString()", "'[object CryptoKey]'");
+    shouldBe("publicKey.type", "'public'");
+    shouldBe("publicKey.extractable", "true");
+    shouldBe("publicKey.algorithm.name", "'ECDH'");
+    shouldBe("publicKey.algorithm.namedCurve", "'P-521'");
+    shouldBe("publicKey.usages", "[ ]");
+
+    finishJSTest();
+}, function(result) {
+    debug("Importing EC P-521 key failed, likely due to missing P-521 support.");
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

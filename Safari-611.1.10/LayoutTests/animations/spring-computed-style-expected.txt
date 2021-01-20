@@ -1,0 +1,60 @@
+Test the computed style of the spring() function on the transition-timing-function property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Valid spring tests
+
+
+Basic : spring(1 100 10 0)
+PASS springStyle.cssText is 'spring(1 100 10 0)'
+
+Negative Velocity : spring(1 100 10 -10)
+PASS springStyle.cssText is 'spring(1 100 10 -10)'
+
+Positive Velocity : spring(1 100 10 10)
+PASS springStyle.cssText is 'spring(1 100 10 10)'
+
+Zero Damping : spring(1 100 0 10)
+PASS springStyle.cssText is 'spring(1 100 0 10)'
+
+Minimum Values : spring(1 1 0 -999999)
+PASS springStyle.cssText is 'spring(1 1 0 -999999)'
+
+Floating Point Values : spring(1.5 2.3 3.7 -1.8)
+PASS springStyle.cssText is 'spring(1.5 2.3 3.7 -1.8)'
+
+Invalid spring tests
+
+
+No parameters : spring()
+PASS springStyle.cssText is 'ease'
+
+Not enough parameters : spring(1 100 10)
+PASS springStyle.cssText is 'ease'
+
+Too many parameters : spring(1 100 10 0 0)
+PASS springStyle.cssText is 'ease'
+
+Non-numeric parameters : spring(a b c d)
+PASS springStyle.cssText is 'ease'
+
+Illegal Mass (< 0) : spring(-1 100 10 0)
+PASS springStyle.cssText is 'ease'
+
+Illegal Mass (== 0) : spring(0 100 10 0)
+PASS springStyle.cssText is 'ease'
+
+Illegal Stiffness (< 0) : spring(1 -1 10 0)
+PASS springStyle.cssText is 'ease'
+
+Illegal Stiffness (== 0) : spring(1 0 10 0)
+PASS springStyle.cssText is 'ease'
+
+Illegal Damping (< 0) : spring(1 100 -1 0)
+PASS springStyle.cssText is 'ease'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

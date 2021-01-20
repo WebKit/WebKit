@@ -1,0 +1,14 @@
+
+This tests that aria-hidden will affect the visibility of the web area and scroll view.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS body.childrenCount is 3
+PASS body.childAtIndex(0).childrenCount is 0
+PASS body.childrenCount is 4
+PASS body.childAtIndex(0).childAtIndex(0).childAtIndex(0).role is 'AXRole: AXWebArea'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

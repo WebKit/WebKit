@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+
+<form>
+    <fieldset id="fieldset">
+        <legend>Not link <a href="http://www.apple.com">Link</a></legend>
+        <label for="green">Green</label>
+        <input type="radio" name="color" id="green">
+    </fieldset>
+</form>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that children of a <legend> will be visible to the AX hierarchy (so that in case a control element is inside, it can be reached)");
+
+    if (window.accessibilityController) {
+          var fieldset = accessibilityController.accessibleElementById("fieldset");
+          var legendChild1 = fieldset.childAtIndex(0);
+          var legendChild2 = fieldset.childAtIndex(1);
+          debug("fieldset description: " + fieldset.description);
+          debug("legend child 1: string value: " + legendChild1.stringValue);
+          debug("legend child 2: title: " + legendChild2.title);
+
+          document.getElementById("content").style.visibility = "hidden";
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

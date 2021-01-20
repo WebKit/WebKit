@@ -1,0 +1,9 @@
+Test that a malformed mp4 media file loaded as an image should not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

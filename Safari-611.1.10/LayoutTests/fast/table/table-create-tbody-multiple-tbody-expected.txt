@@ -1,0 +1,16 @@
+| "\n  "
+| <thead>
+|   "\n  "
+| "\n  "
+| <tfoot>
+|   "\n  "
+| "\n  "
+| <tbody>
+|   title="tbody1"
+|   "\n  "
+| "\n  "
+| <tbody>
+|   title="tbody2"
+|   "\n  "
+| <tbody>
+| "\n"

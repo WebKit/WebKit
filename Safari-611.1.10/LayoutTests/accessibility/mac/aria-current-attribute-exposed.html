@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<div id="container">
+<a id="link1" href="/">Link</a>
+<a id="link2" aria-current="true" href="/">Current Link</a>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that aria-current attribute is correctly exposed.");
+    
+    if (window.accessibilityController) {
+        var link1 = accessibilityController.accessibleElementById("link1");
+        var link2 = accessibilityController.accessibleElementById("link2");
+        
+        // Attributes of link1 shouldn't contain AXARIACurrent
+        shouldBeFalse("link1.allAttributes().includes('AXARIACurrent: true')");
+        // Attributes of link2 should contain AXARIACurrent
+        shouldBeTrue("link2.allAttributes().includes('AXARIACurrent: true')");
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

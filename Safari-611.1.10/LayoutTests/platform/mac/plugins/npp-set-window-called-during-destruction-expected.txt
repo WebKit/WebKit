@@ -1,0 +1,1 @@
+This tests whether a NPP_SetWindow is called during plugin destruction.

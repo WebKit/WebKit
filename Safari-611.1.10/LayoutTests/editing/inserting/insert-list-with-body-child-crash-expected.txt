@@ -1,0 +1,1 @@
+Test inserting list with a body child. The test passes if WebKit doesn't crash or hit an assertion.

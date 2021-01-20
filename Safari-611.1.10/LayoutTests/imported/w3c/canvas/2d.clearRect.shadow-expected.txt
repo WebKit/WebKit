@@ -1,0 +1,7 @@
+2d.clearRect.shadow
+clearRect does not draw shadows
+Spec references: 2d.clearRect
+Actual output:
+Expected output:
+
+Passed

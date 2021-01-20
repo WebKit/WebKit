@@ -1,0 +1,3 @@
+
+FAIL Animating 'stop-color' from 'currentcolor' assert_equals: expected "rgb(0, 128, 0)" but got "rgba(0, 64, 0, 0.5)"
+

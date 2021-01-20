@@ -1,0 +1,25 @@
+Tests for Debugger.setBreakpoint.
+
+
+== Running test suite: Debugger.setBreakpoint
+-- Running test case: Debugger.setBreakpoint.ConditionIgnoreCount
+Adding breakpoint...
+
+Triggering breakpoint...
+PASS: Should not pause.
+
+Triggering breakpoint...
+PASS: Should not pause.
+
+Triggering breakpoint...
+PASS: Should not pause.
+
+Triggering breakpoint...
+PASS: Should not pause.
+
+Triggering breakpoint...
+PASS: Should pause.
+
+Triggering breakpoint...
+PASS: Should pause.
+

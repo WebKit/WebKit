@@ -1,0 +1,5 @@
+PASS document.getElementsByTagName("META")[0].content is "text/xml"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

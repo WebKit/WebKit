@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Checks that trying to do a synchronous XHR in a unload event handler is not allowed.");
+jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
+onload = () => {
+    w = open("resources/sync-xhr-in-unload-window.html");
+    w.onload = () => {
+        setTimeout(() => {
+            w.close();
+        }, 0);
+    };
+}
+</script>
+</body>
+</html>

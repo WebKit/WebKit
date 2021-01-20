@@ -1,0 +1,14 @@
+Tests that Event.initEvent()'s first parameter is mandatory.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.initEvent() threw exception TypeError: Not enough arguments.
+PASS event.initEvent('click') did not throw exception.
+PASS event.type is "click"
+PASS event.bubbles is false
+PASS event.cancelable is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

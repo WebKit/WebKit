@@ -1,0 +1,5 @@
+
+FAIL fetching "top.txt" without ACAO should be rejected. promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL fetching "top.txt" with CORS allowing null origin should be allowed. promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL fetching data url script should be allowed. promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+

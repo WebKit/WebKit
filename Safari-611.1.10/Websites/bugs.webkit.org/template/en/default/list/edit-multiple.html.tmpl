@@ -1,0 +1,455 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% dontchange = "--do_not_change--" %]
+<input type="hidden" name="dontchange" value="[% dontchange FILTER html %]">
+<input type="hidden" name="token" value="[% token FILTER html %]">
+
+<input type="button" id="uncheck_all" value="Uncheck All"
+       class="bz_default_hidden" onclick="SetCheckboxes(false);">
+<input type="button" id="check_all" value="Check All"
+       class="bz_default_hidden" onclick="SetCheckboxes(true);">
+
+<script type="text/javascript">
+  function SetCheckboxes(value) {
+      var elements = document.forms.changeform.getElementsByTagName('input'),
+          numelements = elements.length,
+          item, i;
+      for (i = 0; i < numelements; i++) {
+          item = elements[i];
+          if (item.type === 'checkbox' && item.name.match(/^id_/)) {
+            item.checked = value;
+          }
+      }
+  }
+  YAHOO.util.Dom.removeClass("check_all", "bz_default_hidden");
+  YAHOO.util.Dom.removeClass("uncheck_all", "bz_default_hidden");
+</script>
+
+<hr>
+
+<div class="bz_info">
+  To change multiple [% terms.bugs %]:
+  <ol>
+    <li>Check the [% terms.bugs %] you want to change above.</li>
+    <li>Make your changes in the form fields below.  If the change
+        you are making requires an explanation, include it in
+        the comments box.</li>
+    <li>Click the <em>Commit</em> button.</li>
+  </ol>
+</div>
+
+[% IF excluded_values %]
+  <p class="extra_info">Only values that are available for all products of the above
+  [%+ terms.bugs %] are shown.</p>
+[% END %]
+
+<table id="form">
+  <tr>
+
+    <th><label for="product">Product:</label></th>
+    <td>
+      [% INCLUDE "global/product-select.html.tmpl"
+         id         => "product"
+         name       => "product"
+         dontchange => dontchange
+       %]
+    </td>
+
+    <th><label for="version">Version:</label></th>
+    <td>
+      [% PROCESS selectmenu menuname = "version"
+                            menuitems = versions
+                            property = "" %]
+    </td>
+
+  </tr>
+  <tr>
+
+    <th><label for="component">Component:</label></th>
+    <td>
+      [% PROCESS selectmenu menuname = "component"
+                            menuitems = components %]
+    </td>
+
+    <th>
+      <label for="priority">
+        <a href="page.cgi?id=fields.html#priority">Priority</a>:
+      </label>
+    </th>
+    <td>
+      [% PROCESS selectmenu menuname = "priority"
+                            menuitems = priorities %]
+    </td>
+
+  </tr>
+  <tr>
+
+    <th>
+      <label for="rep_platform">
+        <a href="page.cgi?id=fields.html#rep_platform">
+          [% field_descs.rep_platform FILTER html %]</a>:
+      </label>
+    </th>
+    <td>
+      [% PROCESS selectmenu menuname = "rep_platform"
+                            menuitems = platforms %]
+    </td>
+
+    <th>
+      <label for="bug_severity">
+        <a href="page.cgi?id=fields.html#bug_severity">
+          [% field_descs.bug_severity FILTER html %]</a>:
+      </label>
+    </th>
+    <td>
+      [% PROCESS selectmenu menuname = "bug_severity"
+                            menuitems = severities %]
+    </td>
+
+  </tr>
+
+  <tr>
+    <th>
+      <label for="op_sys">
+        <a href="page.cgi?id=fields.html#op_sys">[% field_descs.op_sys FILTER html %]</a>:
+      </label>
+    </th>
+    <td [% " colspan=\"3\"" IF !Param("usetargetmilestone") %]>
+      [% PROCESS selectmenu menuname = "op_sys"
+                            menuitems = op_sys %]
+    </td>
+
+    [% IF Param("usetargetmilestone") %]
+      <th><label for="target_milestone">Target Milestone:</label></th>
+      <td>
+        [% PROCESS selectmenu menuname = "target_milestone"
+                              menuitems = milestones %]
+      </td>
+    [% END %]
+  </tr>
+  
+  <tr>
+    <th><label for="bug_status">Status:</label></th>
+    <td colspan="3">[% PROCESS status_section %]</td>
+  </tr>
+  [% IF user.is_timetracker %]
+    <tr>
+      [% INCLUDE "bug/field-label.html.tmpl"
+         field = bug_fields.estimated_time, editable = 1
+      %]
+      <td>
+        <input id="estimated_time"
+               name="estimated_time"
+               value="[% dontchange FILTER html %]"
+               size="6">
+      </td>
+      [% PROCESS bug/field.html.tmpl 
+          field = bug_fields.deadline, value = dontchange
+          editable = 1, allow_dont_change = 1 %]
+    </tr>
+    <tr>
+      [% INCLUDE "bug/field-label.html.tmpl"
+         field = bug_fields.remaining_time, editable = 1
+      %]
+      <td>
+        <input id="remaining_time"
+               name="remaining_time"
+               value="[% dontchange FILTER html %]"
+               size="6">
+      </td>
+      <th>&nbsp;</th>
+      <td>&nbsp;</td>
+    </tr>
+  [% END %]
+
+  <tr>
+    <th><label for="assigned_to">Assignee:</label></th>
+    <td colspan="3">
+      [% INCLUDE global/userselect.html.tmpl
+           id => "assigned_to"
+           name => "assigned_to"
+           value => dontchange
+           size => 40
+      %]
+      <input type="checkbox" id="set_default_assignee" name="set_default_assignee" value="1">
+      <label for="set_default_assignee">Reset Assignee to default</label>
+    </td>
+  </tr>
+
+  [% IF Param("useqacontact") %]
+    <tr>
+      <th><label for="qa_contact">QA Contact:</label></th>
+      <td colspan="3">
+        [% INCLUDE global/userselect.html.tmpl
+             id => "qa_contact"
+             name => "qa_contact"
+             value => dontchange
+             size => 40
+        %]
+        <input type="checkbox" id="set_default_qa_contact" name="set_default_qa_contact" value="1">
+        <label for="set_default_qa_contact">Reset QA Contact to default</label>
+      </td>
+    </tr>
+  [% END %]
+
+  <tr>
+
+    <th><label for="masscc">CC List:</label></th>
+    <td colspan="3">
+      [% INCLUDE global/userselect.html.tmpl
+           id => "masscc"
+           name => "masscc"
+           value => ""
+           size => 40
+           multiple => 5
+      %]
+      <select name="ccaction">
+        <option value="add">Add these to the CC List</option>
+        <option value="remove">Remove these from the CC List</option>
+      </select>
+    </td>
+
+  </tr>
+
+  [% IF use_keywords %]
+    <tr>
+
+      [% INCLUDE "bug/field-label.html.tmpl"
+         field = bug_fields.keywords, editable = 1
+         desc_url = "describekeywords.cgi"
+      %]
+      <td colspan="3">
+        [% INCLUDE bug/field.html.tmpl
+           field = bug_fields.keywords, editable = 1, value = keywords
+           possible_values = all_keywords
+           no_tds = 1
+        %]
+        <select name="keywordaction">
+          <option value="add">Add these keywords</option>
+          <option value="remove">Delete these keywords</option>
+          <option value="set">Make the keywords be exactly this list</option>
+        </select>
+      </td>
+
+    </tr>
+  [% END %]
+
+  <tr>
+    <th>
+      <label for="dependson">
+          Depends On:
+      </label>
+    </th>
+    <td colspan="3">
+      <input id="dependson" name="dependson" size="40">
+      <select name="dependson_action">
+          <option value="add">Add these IDs</option>
+          <option value="remove">Delete these IDs</option>
+      </select>
+    </td>
+  </tr>
+
+  <tr>
+    <th>
+      <label for="blocked">
+          Blocks:
+      </label>
+    </th>
+    <td colspan="3">
+      <input id="blocked" name="blocked" size="40">
+      <select name="blocked_action">
+          <option value="add">Add these IDs</option>
+          <option value="remove">Delete these IDs</option>
+      </select>
+    </td>
+  </tr>
+
+  [% IF Param('usestatuswhiteboard') %]
+    <tr>
+      <th>
+        <label for="status_whiteboard">Status Whiteboard:</label>
+      </th>
+      <td colspan="7">
+        <input name="status_whiteboard" id="status_whiteboard"
+               value="[% dontchange FILTER html %]" size="60">
+      </td>
+    </tr>
+  [% END %]
+
+  [% USE Bugzilla %]
+  [%# Show all legal values and all fields, ignoring visibility controls. %]
+  [% bug = 0 %]
+  [% FOREACH field = Bugzilla.active_custom_fields %]
+    <tr>
+      [% PROCESS bug/field.html.tmpl value = dontchange
+                                     editable = 1
+                                     allow_dont_change = 1 %]
+    </tr>
+  [% END %]
+
+  [% Hook.process("after_custom_fields") %]
+
+</table>
+
+<b><label for="comment">Additional Comments:</label></b>
+[% IF user.is_insider %]
+  <input type="checkbox" name="comment_is_private" value="1"
+         id="newcommentprivacy"
+         onClick="updateCommentTagControl(this, 'comment')">
+   <label for="newcommentprivacy">
+     Make comment private (visible only to members of the
+     <strong>[% Param('insidergroup') FILTER html %]</strong> group)
+   </label>
+[% END %]
+<br>
+[% INCLUDE global/textarea.html.tmpl
+  name    = 'comment'
+  id      = 'comment'
+  minrows = 5
+  maxrows = 25
+  cols    = constants.COMMENT_COLS
+%]<br>
+[% IF user.is_insider %]
+  <script>
+     updateCommentTagControl(document.getElementById('newcommentprivacy'), 'comment');
+  </script>
+[% END %]
+
+[% IF flag_types %]
+<b><label for="flags">Flags:</label></b><br>
+[% PROCESS "flag/list.html.tmpl"
+           edit_multiple_bugs = 1
+           flag_no_header = 1 %]
+[% END %]
+
+[% Hook.process('before_groups') %]
+
+[% IF groups.size > 0 %]
+
+  <script type="text/javascript">
+    function turn_off(myself, id) {
+        var other_checkbox = document.getElementById(id);
+        if (myself.checked && other_checkbox) {
+            other_checkbox.checked = false;
+        }
+    }
+  </script>
+
+  <b>Groups:</b><br>
+  <table id="groups_edit_multiple">
+    <tr>
+      <th class="narrow_column">Remove [% terms.bugs %] from this group</th>
+      <th class="narrow_column">Add [% terms.bugs %] to this group</th>
+      <th>Group Name</th>
+    </tr>
+
+    [% FOREACH group = groups %]
+    <tr>
+      <td class="center">
+        <input type="checkbox" name="defined_groups" 
+               id="defined_group_[% group.id %]"
+               value="[% group.name FILTER html %]"
+               onchange="turn_off(this, 'group_[% group.id %]')">
+      </td>
+      [% IF group.is_active %]
+        <td class="center">
+          <input type="checkbox" name="groups" 
+                 id="group_[% group.id FILTER html %]"
+                 value="[% group.name FILTER html %]"
+                 onchange="turn_off(this, 'defined_group_[% group.id %]')">
+        </td>
+      [% ELSE %]
+        <td>&nbsp;</td>
+        [% foundinactive = 1 %]
+      [% END %]
+
+      <td>
+        [% SET inactive = !group.is_active %]
+        [% group.description FILTER html_light FILTER inactive(inactive) %]
+      </td>
+
+    </tr>
+    [% END %]
+
+  </table>
+
+  [% IF foundinactive %]
+    <p class="bz_info">(Note: [% terms.Bugs %] may not be added to [% FILTER inactive %]inactive
+    groups[% END %], only removed.)</p>
+  [% END %]
+
+[% END %]
+
+[%+ Hook.process('after_groups') %]
+
+<input type="submit" id="commit" value="Commit">
+
+[%############################################################################%]
+[%# Select Menu Block                                                        #%]
+[%############################################################################%]
+
+[% BLOCK selectmenu %]
+  <select id="[% menuname %]" name="[% menuname %]">
+    <option value="[% dontchange FILTER html %]" selected="selected">
+      [% dontchange FILTER html %]
+    </option>
+    [% FOREACH menuitem = menuitems %]
+      [% IF property %][% menuitem = menuitem.$property %][% END %]
+      <option value="[% menuitem FILTER html %]">[% display_value(menuname, menuitem) FILTER html %]</option>
+    [% END %]
+  </select>
+[% END %]
+
+[%############################################################################%]
+[%# Status Block                                                             #%]
+[%############################################################################%]
+
+[% BLOCK status_section %]
+  [% all_open_bugs = !current_bug_statuses.containsany(closedstates) %]
+  [% all_closed_bugs = !current_bug_statuses.containsany(openstates) %]
+  [% closed_status_array = [] %]
+  
+  <select name="bug_status" id="bug_status"> 
+    <option value="[% dontchange FILTER html %]" selected="selected">[% dontchange FILTER html %]</option>
+  
+    [% FOREACH bug_status = new_bug_statuses %]
+      <option value="[% bug_status.name FILTER html %]">
+        [% display_value("bug_status", bug_status.name) FILTER html %]
+      </option>
+      [% IF !bug_status.is_open %]
+        [% filtered_status =  bug_status.name FILTER js %]
+        [% closed_status_array.push( filtered_status ) %]
+      [% END %]
+    [% END %]
+  
+  [%# If all the bugs being changed are closed, allow the user to change their resolution. %]
+  [% IF all_closed_bugs %]
+    [% filtered_status = dontchange FILTER js %]
+    [% closed_status_array.push( filtered_status ) %]
+  [% END %]
+  </select>
+  
+  <span id="resolution_settings">
+  <select id="resolution" name="resolution">
+      <option value="[% dontchange FILTER html %]" selected >[% dontchange FILTER html %]</option>
+    [% FOREACH r = resolutions %]
+      [% NEXT IF !r %]
+      [% NEXT IF r == "DUPLICATE" || r == "MOVED" %]
+      <option value="[% r FILTER html %]">[% display_value("resolution", r) FILTER html %]</option>
+    [% END %]
+  </select>
+  </span>
+
+  <script type="text/javascript">
+  var close_status_array = new Array("[% closed_status_array.join('", "') FILTER none %]");
+    YAHOO.util.Event.addListener('bug_status', "change", showHideStatusItems, '[% "is_duplicate" IF bug.dup_id %]');
+    YAHOO.util.Event.onDOMReady( showHideStatusItems );
+  </script>
+
+[% END %]

@@ -1,0 +1,12 @@
+Test media queries to make sure only ASCII case is folded, and other non-ASCII case folding is not performed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS matchMedia('screen').matches is true
+PASS matchMedia('SCREEN').matches is true
+PASS matchMedia('ſcreen').matches is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

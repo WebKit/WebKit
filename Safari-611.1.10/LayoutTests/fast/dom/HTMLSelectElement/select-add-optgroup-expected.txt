@@ -1,0 +1,23 @@
+Test select.add() with optgroup
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+list elements are = 0,1,2
+PASS testAdd3(createGroup("Y1", "Y2"), null) is "0,1,2,Y1,Y2"
+PASS testAdd3(createGroup("Y3", "Y4"), 0) is "Y3,Y4,0,1,2"
+PASS testAdd3(createGroup("Y5", "Y6"), 2) is "0,1,Y5,Y6,2"
+PASS testAdd1(createGroup("Y7", "Y8")) is "0,1,2,Y7,Y8"
+PASS testAdd1(createOption("Y9")) is "0,1,2,Y9"
+list elements are = 0,1,2
+PASS testAdd2(createOption("Y10"), mySelect.options[2]) is "0,1,Y10,2"
+PASS testAdd2(createOption("Y11"), mySelect.options[1]) is "0,Y11,1,Y10,2"
+list elements are = 0,1,2
+PASS testAdd2(createGroup("Y12", "Y13"), mySelect.options[1]) is "0,Y12,Y13,1,2"
+PASS testAdd2(createGroup("Y14", "Y15"), mySelect.options[3]) is "0,Y12,Y13,Y14,Y15,1,2"
+list elements are = 0,1,2
+PASS testAdd2(createOption("Y16"), createOption("Y17")) threw exception NotFoundError: The object can not be found here..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

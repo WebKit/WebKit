@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>video-duration-seekable</title>
+	<script src="video-test.js"></script>
+	<script src="media-file.js"></script>
+	<script>
+	window.addEventListener('load', async e => {
+		findMediaElement();
+
+		consoleWrite('Tests that the video has a non-empty seekable range when the first "durationchange" event is fired.')
+
+		run('video.src = findMediaFile("video", "content/test")');
+		await waitFor(video, 'durationchange');
+
+		testExpected('video.seekable.length', '0', '!=');
+		testExpected('video.seekable.end(0)', '0', '!=');
+
+		endTest();
+	});
+	</script>
+</head>
+<body>
+	<video></video>
+</body>
+</html>

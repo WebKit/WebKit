@@ -1,0 +1,7 @@
+2d.text.drawing.style.fontKerning.with.uppercase
+
+Testing basic functionalities of fontKerning for canvas
+
+
+FAIL Testing basic functionalities of fontKerning for canvas assert_equals: ctx.fontKerning === "Auto" (got [undefined], expected Auto[string]) expected (string) "Auto" but got (undefined) undefined
+

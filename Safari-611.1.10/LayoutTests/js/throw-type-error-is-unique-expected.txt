@@ -1,0 +1,10 @@
+Tests ES6 %ThrowTypeError% intrinsic is unique
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS %ThrowTypeError% intrinsic is unique
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

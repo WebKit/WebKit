@@ -1,0 +1,20 @@
+CONSOLE MESSAGE: Refused to load data:application/javascript;base64,dmFyIHJlc3VsdCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyZXN1bHQnKTtyZXN1bHQuZmlyc3RDaGlsZC5ub2RlVmFsdWUgPSByZXN1bHQuYXR0cmlidXRlcy5nZXROYW1lZEl0ZW0oJ3RleHQnKS52YWx1ZTs= because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load data:application/javascript;base64,dmFyIHJlc3VsdCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyZXN1bHQnKTtyZXN1bHQuZmlyc3RDaGlsZC5ub2RlVmFsdWUgPSByZXN1bHQuYXR0cmlidXRlcy5nZXROYW1lZEl0ZW0oJ3RleHQnKS52YWx1ZTs= because it does not appear in the script-src directive of the Content Security Policy.
+Test proper handling of data: URLs.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame2-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame3-->'
+--------
+PASS

@@ -1,0 +1,579 @@
+<html id="webtest0">
+<head id="webtest1">
+<style id="webtest2">
+body * {
+    -webkit-writing-mode: vertical-lr;
+    -webkit-text-combine: horizontal;
+}
+#test {
+    height: 7px;
+    white-space: pre-wrap;
+}
+</style>
+<script id="webtest3">
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function runTest() {
+    document.body.offsetTop;
+    var testContainer = document.getElementById('test');
+    testContainer.parentNode.removeChild(testContainer);
+}
+</script>
+</head>
+<body class="wf_class2" id="webtest4" onload='runTest()'><p id="webtest5">Test passes if there's no crash.</p>
+<!-- The empty scripts tags are needed<script>
+function webtest_fn_12() {
+try {
+var head = document.getElementsByTagName("head")[0];
+var style = document.createElement("style");
+style.innerHTML="@media speech {<script>
+function webtest_fn_34() {
+document.getElementById("webtest6").appendChild(document.createElementNS("http://www.w3.org/TR/html5/", "u")).name=document.applets[0].lookupNamespacePrefix("nonzero", document.body);
+}
+webtest_fn_34();
+</script>
+-webkit-flex-order:1024;max-zoom:9223372036854775808%;}";
+head.appendChild(style);
+} catch(e) {
+  document.write("Errlog webtest_fn_12: " + e.name + ": " + e.message + "<br>");
+}
+}
+webtest_fn_12();
+</script>
+ to split the RenderCombineText and reproduce the bug. -->
+<div id="test"><p id="webtest6">foo   <script id="webtest7"></script>
+  <script id="webtest8"></script>
+</p>
+</div>
+</body><script>
+function webtest_fn_1() {
+try {
+document.applets[0].addEventListener("decrypt", decodeURIComponent, true);
+} catch(e) {
+  document.write("Errlog webtest_fn_1: " + e.name + ": " + e.message + "<br>");
+}
+}
+webtest_fn_1();
+</script>
+<script>
+function webtest_fn_2() {
+try {
+var range = document.createRange();
+
+range.setStartBefore(document.links[2]);
+range.setEndAfter(document.links[2]);
+range.deleteContents();
+range.surroundContents(document.body);
+var frag = range.cloneContents();
+range.setStartAfter(document.getElementById("webtest1"));
+range.detach();
+range.setEndBefore(document.scripts[1]);
+range.commonAncestorContainer;} catch(e) {
+  document.write("Errlog webtest_fn_2: " + e.name + ": " + e.message + "<br>");
+}
+}
+webtest_fn_2();
+</script>
+<script>
+function webtest_fn_3() {
+try {
+document.designMode = "off";
+document.images[2].contentEditable="true";
+document.images[2].contentDocument.execCommand("Italic", true, "&#x02ae;&#x0101;&#x012c;&#x01dd;&#x02ea;&#x01ed;&#x0032;&#x95fe;&#x016b;&#x00b2;&#x00cf;&#x0004;&#x006f;&#x01b0;&#x00a8;&#x00f3;&#x00b4;&#x8571;");
+document.getElementById("webtest4").contentEditable="true";
+document.getElementById("webtest4").contentDocument.execCommand("DecreaseFontSize", false, "Arial");
+document.getElementById("webtest1").appendChild(document.createComment("comment")).contentEditable="true";
+document.getElementById("webtest1").appendChild(document.createComment("comment")).contentDocument.execCommand("Redo", false, null);
+document.execCommand("Subscript", false, null);
+document.execCommand("RemoveFormat", false, null);
+document.forms[2].contentEditable="true";
+document.forms[2].contentDocument.execCommand("JustifyRight", true, null);
+document.execCommand("Cut", false, null);
+} catch(e) {
+  document.write("Errlog webtest_fn_3: " + e.name + ": " + e.message + "<br><hgroup/>");
+}
+}
+webtest_fn_3();
+</script>
+<script>
+function webtest_fn_4() {
+var head = document.getElementsByTagName("head")[0];
+var style = document.createElement("style");
+style.innerHTML="#test {-webkit-box-reflect:above -1073741824pt url(javascript:function(){location.reload()}()) 2147483519mm 0xffffffffpt 4611686018427387904% -4294967295cm round stretch;-webkit-line-break:loose;z-index:-32768;-webkit-text-justify:&#x0270;&#x02c8;;}";
+head.appendChild(style);
+}
+webtest_fn_4();
+</script>
+<script>
+function webtest_fn_5() {
+try {
+var elem = document.getElementById("webtest4");
+var rnd = [57,98,39,50,83,30,84,18,73,85];
+var modified = false;
+for (var i = 0; i < elem.attributes.length; i++)  {
+  if (elem.attributes[i].specified && elem.attributes[i].name != "id") { 
+    if (rnd[i] < 20) {
+      elem.removeAttribute(elem.attributes[i].name);
+      i--;
+      modified = true;
+    } else if (rnd[i] < 40) {
+      elem.setAttribute(elem.attributes[i].name, '1024');
+      modified = true;
+    }
+  }
+} 
+
+if (! modified) {
+  elem.setAttribute('onmouseup', 'function() {document.applets[0].compareDocumentPosition(false);}');
+}
+
+} catch(e) {
+  document.write("Errlog webtest_fn_5: " + e.name + ": " + e.message + "<br>");
+}
+}
+webtest_fn_5();
+</script>
+<script>
+function webtest_fn_6() {
+var head = document.getElementsByTagName("head")[0];
+style = document.createElement("style");
+var rule = document.createTextNode("* {-webkit-flex-wrap:no-wrap;-webkit-mask-repeat-y:left ! important;-webkit-transition-duration:65536;}");
+style.appendChild(rule);
+head.appendChild(style);
+}
+webtest_fn_6();
+</script>
+<script>
+function webtest_fn_7() {
+delete document.forms[2].__lookupGetter__("frameRate");
+}
+webtest_fn_7();
+</script>
+<script>
+function webtest_fn_8() {
+try {
+for (wf_i=0;wf_i<78;wf_i++) {
+var lis = document.querySelector(":nth-last-of-type(65536n-1024)");
+for (var i = 0; i < lis.length; i++) {
+  lis.item(i).parentNode.removeChild(lis.item(i));
+}
+}
+} catch(e) {
+  document.write("Errlog webtest_fn_8: " + e.name + ": " + e.message + "<br><cite></cite>");
+}
+}
+webtest_fn_8();
+</script>
+<script>
+function webtest_fn_9() {
+try {
+document.anchors[4].setAttribute("style", "overflow: scroll");
+document.anchors[4].scrollLeft = 32769;
+document.anchors[4].scrolltop = 1024;
+} catch(e) {
+  document.write("Errlog webtest_fn_9: " + e.name + ": " + e.message + "<br>");
+}
+}
+webtest_fn_9();
+</script>
+<script>
+function webtest_fn_10() {
+try {
+var range = document.createRange();
+
+range.setStartBefore(document.body);
+range.setEndAfter(document.body);
+range.collapse(false);
+range.collapse(false);
+range.setStartAfter(document.forms[2]);
+} catch(e) {
+  document.write("Errlog webtest_fn_10: " + e.name + ": " + e.message + "<br><em></em>");
+}
+}
+webtest_fn_10();
+</script>
+<script>
+function webtest_fn_11() {
+try {
+document.hasChildNodes();
+} catch(e) {
+  document.write("Errlog webtest_fn_11: " + e.name + ": " + e.message + "<br><form/>");
+}
+}
+webtest_fn_11();
+</script>
+<script>
+function webtest_fn_13() {
+for (wf_i=0;wf_i<43;wf_i++) {
+var elem = document.getElementById("webtest6").appendChild(document.createElementNS("http://www.w3.org/TR/html5/", "u"));
+var rnd = [72,67,25,48,94,4,25,25,71,47];
+var modified = false;
+for (var i = 0; i < elem.attributes.length; i++)  {
+  if (elem.attributes[i].specified && elem.attributes[i].name != "id") { 
+    if (rnd[i] < 20) {
+      elem.removeAttribute(elem.attributes[i].name);
+      i--;
+      modified = true;
+    } else if (rnd[i] < 40) {
+      elem.setAttribute(elem.attributes[i].name, '\u68b0\ue9ad');
+      modified = true;
+    }
+  }
+} 
+
+if (! modified) {
+  elem.setAttribute('nohref', 'nohref');
+}
+
+}
+}
+webtest_fn_13();
+</script>
+<script>
+function webtest_fn_14() {
+try {
+var elem = document.getElementById("webtest7");
+for (i in elem.childNodes) {
+  if (elem.childNodes[i].nodeType == Node.TEXT_NODE) {
+    elem.removeChild(elem.childNodes[i]);
+  }
+}
+elem.appendChild(document.createTextNode('&#x020e;&#xc148;&#x0222;&#x0270;&#x0270;&#x0142;&#x013c;&#x0268;&#x0157;&#x0255;&#x02ef;&#x0091;&#x025f;&#x00e4;&#x0181;&#x01b7;'));
+} catch(e) {
+  document.write("Errlog webtest_fn_14: " + e.name + ": " + e.message + "<br><main></main>");
+}
+}
+webtest_fn_14();
+</script>
+<script>
+function webtest_fn_15() {
+try {
+for (wf_i=0;wf_i<71;wf_i++) {
+document.designMode = "off";
+document.execCommand("SelectAll");
+document.execCommand("Delete", true, 0);
+var range = document.createRange();
+range.setStart(document.applets[0], 4);
+range.setEnd(document.getElementById("webtest0"), 2);
+range.execCommand("Indent", true, false);
+range = document.createRange();
+range.setStart(document.appendChild(document.createElement("style")).nextSibling, 8);
+range.setEnd(document.getElementById("webtest5"), 8);
+range.execCommand("FormatBlock", false, null);
+document.execCommand("InsertBrOnReturn", false, null);
+document.getElementById("webtest6").appendChild(document.createElementNS("http://www.w3.org/TR/html5/", "u")).contentEditable="true";
+document.getElementById("webtest6").appendChild(document.createElementNS("http://www.w3.org/TR/html5/", "u")).contentDocument.execCommand("styleWithCSS", true, "Arial");
+document.execCommand("InsertParagraph", true, null);
+document.execCommand("InsertOrderedList", true, null);
+range = document.createRange();
+range.setStart(document.getElementById("webtest1"), 0);
+range.setEnd(document.getElementById("webtest1").appendChild(document.createComment("comment")), 7);
+range.execCommand("Unlink", false, null);
+document.contentEditable="true";
+document.contentDocument.execCommand("Undo", false, null);
+}
+} catch(e) {
+  document.write("Errlog webtest_fn_15: " + e.name + ": " + e.message + "<br>");
+}
+}
+webtest_fn_15();
+</script>
+<script>
+function webtest_fn_16() {
+try {
+var elem = document.links[2];
+elem.parentNode.removeChild(elem);
+document.styleSheets[2].insertBefore(elem, document.styleSheets[2].childNodes[5]);
+} catch(e) {
+  document.write("Errlog webtest_fn_16: " + e.name + ": " + e.message + "<br><q/>");
+}
+}
+webtest_fn_16();
+</script>
+<script>
+function webtest_fn_17() {
+try {
+for (var i = 0; i < 10000; i++) {
+  var s = new String("AAAA" + Math.random());
+}
+var elems = document.querySelectorAll("*");
+a=[];
+for (i = 0; i < elems.length; i++) {
+  elems[i];
+}
+} catch(e) {
+  document.write("Errlog webtest_fn_17: " + e.name + ": " + e.message + "<br>");
+}
+}
+webtest_fn_17();
+</script>
+<script>
+function webtest_fn_18() {
+try {
+document.designMode = "off";
+document.execCommand("SelectAll");
+document.applets[0].contentEditable="true";
+document.applets[0].contentDocument.execCommand("CreateLink", true, null);
+document.getElementById("webtest3").contentEditable="true";
+document.getElementById("webtest3").contentDocument.execCommand("Cut", true, null);
+document.execCommand("InsertNewlineInQuotedContent", true, true);
+document.execCommand("BackColor", false, "Arial");
+} catch(e) {
+  document.write("Errlog webtest_fn_18: " + e.name + ": " + e.message + "<br>");
+}
+}
+webtest_fn_18();
+</script>
+<script>
+function webtest_fn_19() {
+document.getElementById("webtest8").setAttribute("style","-webkit-animation-direction:alternate;-webkit-margin-top-collapse:separate;-webkit-column-width:auto;");
+}
+webtest_fn_19();
+</script>
+<script>
+function webtest_fn_20() {
+var new_elem = document.createElement("image");
+new_elem.setAttribute("id", "webtest12");
+new_elem.setAttribute('width', '1073741823');
+document.getElementById("webtest7").appendChild(document.createTextNode("data")).parentNode.insertBefore(new_elem, document.getElementById("webtest7").appendChild(document.createTextNode("data")).nextSibling);
+}
+webtest_fn_20();
+</script>
+<script>
+function webtest_fn_21() {
+try {
+var scroll_84 = document.createElement("bgsound");
+scroll_84.setAttribute("id", "webtest13");
+document.anchors[4].appendChild(scroll_84);
+scroll_84.setAttribute("style", "overflow: scroll; direction: rtl");
+scroll_84.scrollLeft = -2147483519;
+scroll_84.scrolltop = 4611686018427387904;
+} catch(e) {
+  document.write("Errlog webtest_fn_21: " + e.name + ": " + e.message + "<br><br>");
+}
+}
+webtest_fn_21();
+</script>
+<script>
+function webtest_fn_22() {
+try {
+var new_elem = document.createElement("acronym");
+new_elem.setAttribute("id", "webtest14");
+new_elem.setAttribute('aria-valuetext', '2x');
+new_elem.setAttribute('prompt', 'D3{o2]X');
+new_elem.setAttribute('itemid', 'http://&#x02de;&#x0116;');
+new_elem.setAttribute('aria-expanded', 'aria-expanded');
+document.documentElement.insertBefore(new_elem, document.documentElement.childNodes[6]);
+} catch(e) {
+  document.write("Errlog webtest_fn_22: " + e.name + ": " + e.message + "<br><noframes>");
+}
+}
+webtest_fn_22();
+</script>
+<script>
+function webtest_fn_23() {
+try {
+scroll_21 = document.createElement("iframe");
+scroll_21.setAttribute("id", "webtest15");
+document.getElementById("webtest6").appendChild(document.createElementNS("http://www.w3.org/TR/html5/", "u")).insertBefore(scroll_21, document.getElementById("webtest6").appendChild(document.createElementNS("http://www.w3.org/TR/html5/", "u")).childNodes[6]);
+scroll_21.scrollLeft = 128;
+scroll_21.scrolltop = 1073741824;
+} catch(e) {
+  document.write("Errlog webtest_fn_23: " + e.name + ": " + e.message + "<br><nav>");
+}
+}
+webtest_fn_23();
+</script>
+<script>
+function webtest_fn_24() {
+try {
+node_16 = document.getElementById("webtest5").appendChild(document.createAttribute("wfattr"));
+} catch(e) {
+  document.write("Errlog webtest_fn_24: " + e.name + ": " + e.message + "<br><fieldset>");
+}
+}
+webtest_fn_24();
+</script>
+<script>
+function webtest_fn_25() {
+try {
+var range = document.createRange();
+
+range.setStartBefore(document.body);
+range.setEndAfter(document.body);
+range.insertNode(document.getElementById("webtest5"));
+range.setStartAfter(node_16);
+range.commonAncestorContainer;range.selectNodeContents(document.appendChild(document.createElement("style")).nextSibling);
+range.setEndAfter(document.getElementById("webtest13"));
+range.setStartBefore(document.getElementById("webtest6"));
+range.detach();
+} catch(e) {
+  document.write("Errlog webtest_fn_25: " + e.name + ": " + e.message + "<br><applet>");
+}
+}
+webtest_fn_25();
+</script>
+<script>
+function webtest_fn_26() {
+try {
+var elem = document.getElementById("webtest2");
+var rnd = [12,72,16,20,5,39,62,33,54,8];
+var modified = false;
+for (var i = 0; i < elem.attributes.length; i++)  {
+  if (elem.attributes[i].specified && elem.attributes[i].name != "id") { 
+    if (rnd[i] < 20) {
+      elem.removeAttribute(elem.attributes[i].name);
+      i--;
+      modified = true;
+    } else if (rnd[i] < 40) {
+      elem.setAttribute(elem.attributes[i].name, '-11111111111111111111111.1');
+      modified = true;
+    }
+  }
+} 
+
+if (! modified) {
+  elem.setAttribute('wrap', 'soft');
+}
+
+} catch(e) {
+  document.write("Errlog webtest_fn_26: " + e.name + ": " + e.message + "<br>");
+}
+}
+webtest_fn_26();
+</script>
+<script>
+function webtest_fn_27() {
+try {
+document.designMode = "on";
+document.body.contentEditable="true";
+document.body.contentDocument.execCommand("Underline", true, "Arial");
+document.execCommand("FontSize", false, "red");
+document.execCommand("FormatBlock", true, null);
+} catch(e) {
+  document.write("Errlog webtest_fn_27: " + e.name + ": " + e.message + "<br>");
+}
+}
+webtest_fn_27();
+</script>
+<script>
+function webtest_fn_28() {
+try {
+document.getElementById("webtest12").hasOwnProperty("secureConnectionStart");
+} catch(e) {
+  document.write("Errlog webtest_fn_28: " + e.name + ": " + e.message + "<br><col/>");
+}
+}
+webtest_fn_28();
+</script>
+<script>
+function webtest_fn_29() {
+try {
+for (var i = 0; i < 10000; i++) {
+  var s = new String("AAAA" + Math.random());
+}
+var elems = document.querySelectorAll("*|*");
+a=[];
+for (i = 0; i < elems.length; i++) {
+  elems[i].setAttribute("name", "name" + i);
+}
+} catch(e) {
+  document.write("Errlog webtest_fn_29: " + e.name + ": " + e.message + "<br><th></th>");
+}
+}
+webtest_fn_29();
+</script>
+<script>
+function webtest_fn_30() {
+try {
+document.getElementById("webtest15").setAttribute("style","text-rendering:optimizeSpeed;");
+document.getElementById("webtest15").appendChild(document.createTextNode('description'));
+} catch(e) {
+  document.write("Errlog webtest_fn_30: " + e.name + ": " + e.message + "<br>");
+}
+}
+webtest_fn_30();
+</script>
+<script>
+function webtest_fn_31() {
+try {
+var evt = document.createEvent("ProgressEvent");
+evt.initProgressEvent("loadstart", false, true, true, 0xffffffff, -16384);
+document.dispatchEvent(evt);
+} catch(e) {
+  document.write("Errlog webtest_fn_31: " + e.name + ": " + e.message + "<br><dcol>");
+}
+}
+webtest_fn_31();
+</script>
+<script>
+function webtest_fn_32() {
+try {
+var lis = window.frames[2].querySelectorAll(":in-range");
+for (var i = 0; i < lis.length; i++) {
+  lis.item(i).cloneNode(true);
+}
+} catch(e) {
+  document.write("Errlog webtest_fn_32: " + e.name + ": " + e.message + "<br><button>");
+}
+}
+webtest_fn_32();
+</script>
+<script>
+function webtest_fn_33() {
+try {
+var range = document.createRange();
+
+range.setStartBefore(document.querySelector(":first + :first-of-type > th:horizontal"));
+range.setEndAfter(document.getElementById("webtest5").appendChild(document.createAttribute("wfattr")));
+range.setEnd(document.getElementById("webtest3"), 4);
+var frag = range.cloneContents();
+range.insertNode(document.styleSheets[2]);
+range.setEndAfter(document.getElementById("webtest14"));
+range.detach();
+range.toString();
+range.toString();
+var frag = range.extractContents();
+range.toString();
+range.setStart(document.anchors[4], 6);
+} catch(e) {
+  document.write("Errlog webtest_fn_33: " + e.name + ": " + e.message + "<br><textarea>");
+}
+}
+webtest_fn_33();
+</script>
+<script>
+function webtest_fn_35() {
+try {
+elem = document.appendChild(document.createElement("style")).nextSibling;
+for (i in elem.childNodes) {
+  if (elem.childNodes[i].nodeType == Node.TEXT_NODE) {
+    elem.removeChild(elem.childNodes[i]);
+  }
+}
+elem.appendChild(document.createTextNode('1023'));
+} catch(e) {
+  document.write("Errlog webtest_fn_35: " + e.name + ": " + e.message + "<br>");
+}
+}
+webtest_fn_35();
+</script>
+<script>
+function webtest_fn_36() {
+try {
+document.getElementById("webtest14").style.background="-webkit-canvas(webtest17)";
+var ctx = document.getCSSCanvasContext("2d", "webtest17", 8192, 6166);
+ctx.arcTo(1431655766, -1073741824, -0xffffffff, 65535, 32768);
+ctx.isPointInStroke(new DOMPath(), 11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111.1, 11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111.1);
+ctx.bezierCurveTo(document.applets[0].appendChild(document.createElement("style")).compareDocumentPosition(document.getElementById("webtest1").appendChild(document.createElement("col")).appendChild(document.createElement("legend")).translate), -65535, 1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111, 1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111, 32769, 4611686018427387904);
+ctx.miterLimit = 128;
+ctx.drawFocusRing(document.getElementById("test").appendChild(document.createElement("object")).nextElementSibling, Infinity, window.frames[2].appendChild(document.createElement("fedistantlight")).clientTop, document.querySelector(":first + :first-of-type > th:horizontal").appendChild(document.createElement("path")).ownerDocument.hasOwnProperty("secureConnectionStart"));
+ctx.lineTo(-32767, document.getElementById("webtest5").appendChild(document.createElement("textcontent")).scrollLeft);
+ctx.setLineJoin(String.fromCharCode(-16384));
+} catch(e) {
+  document.write("Errlog webtest_fn_36: " + e.name + ": " + e.message + "<br>");
+}
+}
+webtest_fn_36();
+</script>

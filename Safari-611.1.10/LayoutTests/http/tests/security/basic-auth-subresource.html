@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.setHandlesAuthenticationChallenges(true);
+    testRunner.setAuthenticationUsername("testUser");
+    testRunner.setAuthenticationPassword("testPassword");
+}
+
+window.jsTestIsAsync = true;
+
+var indexOfIFrameTest = 0;
+var testContainer;
+
+function handleMessage(messageEvent)
+{
+    let framePrefix = "[Frame]";
+    let message = event.data;
+    let indexOfSeparator = message.indexOf(":");
+    if (indexOfSeparator == -1) {
+        debug(framePrefix + message);
+        return;
+    }
+    let command = message.substr(0, indexOfSeparator);
+    let description = message.substr(indexOfSeparator + 1);
+    if (command == "PASS") {
+        testPassed(description);
+        debug("");
+    } else if (command == "FAIL") {
+        testFailed(description);
+        debug("");
+    } else if (command == "DEBUG")
+        debug(description);
+    else if (command == "DONE")
+        runNextIFrameTest();
+    else
+        debug(framePrefix + message);
+}
+
+function pass(image, messagePrefix)
+{
+    testPassed(`${messagePrefix} with origin ${(new URL(image.src)).origin}.`);
+    debug("");
+    runNextImageTest();
+}
+
+function fail(image, messagePrefix)
+{
+    testFailed(`${messagePrefix} with origin ${(new URL(image.src)).origin}.`);
+    debug("");
+    runNextImageTest();
+}
+
+function done()
+{
+    if (window.testRunner)
+        document.body.removeChild(testContainer);
+    finishJSTest();
+}
+
+function testBasicAuthImagesInCrossOriginIframe()
+{
+    debug("Images loaded from cross-origin iframe:");
+    let iframe = document.createElement("iframe");
+    iframe.src = "http://localhost:8000/security/resources/basic-auth-subresource.html?top-origin=" + window.top.location.origin;
+    testContainer.appendChild(iframe);
+}
+
+function testBasicAuthImagesInSandboxedSameOriginIFrame()
+{
+    debug("Images loaded from sandboxed same-origin iframe:");
+    let iframe = document.createElement("iframe");
+    iframe.sandbox = "allow-scripts";
+    iframe.src = "http://127.0.0.1:8000/security/resources/basic-auth-subresource.html?top-origin=" + window.top.location.origin;
+    testContainer.appendChild(iframe);
+}
+
+function testBasicAuthImagesInSandboxedCrossOriginIFrame()
+{
+    debug("Images loaded from sandboxed cross-origin iframe:");
+    let iframe = document.createElement("iframe");
+    iframe.sandbox = "allow-scripts";
+    iframe.src = "http://localhost:8000/security/resources/basic-auth-subresource.html?top-origin=" + window.top.location.origin;
+    testContainer.appendChild(iframe);
+}
+
+function runNextIFrameTest()
+{
+    if (indexOfIFrameTest >= NumberOfIFrameTests) {
+        done();
+        return;
+    }
+    var testNumber = indexOfIFrameTest++;
+    switch (testNumber) {
+    case 0:
+        testBasicAuthImagesInCrossOriginIframe();
+        return;
+    case 1:
+        testBasicAuthImagesInSandboxedSameOriginIFrame();
+        return;
+    case 2:
+        testBasicAuthImagesInSandboxedCrossOriginIFrame();
+        return;
+    }
+}
+
+function runNextImageTest()
+{
+    var test = imageTests.shift();
+    if (!test) {
+        runNextIFrameTest();
+        return;
+    }
+    var image = new Image;
+    image.onload = () => test.onload(image);
+    image.onerror = () => test.onerror(image);
+    image.src = test.src;
+    testContainer.appendChild(image);
+}
+
+window.onload = () => {
+    testContainer = document.getElementById("test-container");
+    window.onmessage = handleMessage;
+
+    debug("Images loaded from top-level frame:");
+    runNextImageTest();
+};
+
+// Tests
+
+const DidLoadImage = "did load image";
+const DidNotLoadImage = "did not load image";
+
+const NumberOfIFrameTests = 3;
+
+var imageTests = [
+{
+    src: "resources/subresource1/protected-image.php",
+    onload: (image) => pass(image, DidLoadImage),
+    onerror: (image) => fail(image, DidNotLoadImage),
+},
+{
+    src: "http://localhost:8000/security/resources/subresource1/protected-image.php",
+    onload: (image) => fail(image, DidLoadImage),
+    onerror: (image) => pass(image, DidNotLoadImage),
+},
+{
+    src: "https://localhost:8443/security/resources/subresource1/protected-image.php",
+    onload: (image) => fail(image, DidLoadImage),
+    onerror: (image) => pass(image, DidNotLoadImage),
+},
+];
+</script>
+</head>
+<body>
+<script>
+description("Tests whether credentials are requested for protected subresources. Credentials should be requested if and only if the origin of the subresource matches the origin of the top-most frame.");
+</script>
+<div id="test-container"></div>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<style>
+.flexBox {
+    display: -webkit-flex;
+    width: min-content;
+    writing-mode: vertical-lr;
+    -webkit-flex-direction: column-reverse;    
+}
+.flexItem {
+    flex: 0 0 50%;
+    text-anchor: middle; 
+}
+</style>
+Pass if no crash or assert.
+<div class=flexBox><input class=flexItem><div class=flexItem></div></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>

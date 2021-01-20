@@ -1,0 +1,4 @@
+This test verifies that an active timeout that didn't yet fire does not prevent a Document from releasing (bug https://bugs.webkit.org/show_bug.cgi?id=22710). Test can only run in DumpRenderTree since it needs GCController. Test is successful if it prints 'PASS'.
+
+PASS
+

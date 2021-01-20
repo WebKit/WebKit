@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="resource-use.css">
+<!-- these first few elements will get a backdrop layer -->
+<div></div>
+<div><div></div></div>
+<div></div>
+<div><div><div><div></div></div></div></div>
+<div></div>
+<div></div>
+<!-- and by here we're exceeding the limits, so they won't get a backdrop layer -->
+<div><div></div></div>
+<div></div>
+<script src="layer-tree-as-text.js"></script>

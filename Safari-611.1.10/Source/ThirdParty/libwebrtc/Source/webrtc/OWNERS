@@ -1,0 +1,22 @@
+henrika@webrtc.org
+juberti@webrtc.org
+kwiberg@webrtc.org
+mflodman@webrtc.org
+stefan@webrtc.org
+tommi@webrtc.org
+per-file .gitignore=*
+per-file .gn=mbonadei@webrtc.org
+per-file *.gn=mbonadei@webrtc.org
+per-file *.gni=mbonadei@webrtc.org
+per-file AUTHORS=*
+per-file DEPS=*
+per-file pylintrc=phoglund@webrtc.org
+per-file WATCHLISTS=*
+per-file abseil-in-webrtc.md=danilchap@webrtc.org
+per-file abseil-in-webrtc.md=kwiberg@webrtc.org
+per-file abseil-in-webrtc.md=mbonadei@webrtc.org
+per-file style-guide.md=danilchap@webrtc.org
+per-file style-guide.md=kwiberg@webrtc.org
+per-file native-api.md=kwiberg@webrtc.org
+
+# COMPONENT: Internals>WebRTC

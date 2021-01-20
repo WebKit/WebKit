@@ -1,0 +1,21 @@
+<style>
+     tspan {
+        float: right;
+        display: block;
+    }
+</style>
+<body>
+    <p>This test passes if it doesn't crash.</p>
+    <input id="input">
+    <svg>
+        <text>
+            <tspan id="tspan" />
+        </text>
+    </svg>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+        input.setSelectionRange(0, 1);
+        tspan.style.float = "none";
+    </script>
+</body>

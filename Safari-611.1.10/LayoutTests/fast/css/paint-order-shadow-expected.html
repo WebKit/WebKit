@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        div {
+            font-size: 100px;
+            color: gray;
+            width: 200px;
+        }
+
+        .test-stroke {
+            text-shadow: 100px 0 0 rgba(0, 0, 0, 0.5);
+            -webkit-text-stroke: 70px red;
+            
+            /* Clip used to isolate the stroke */
+            -webkit-clip-path: inset(50px 40px 50px 140px);
+        }
+        .bg-color-gray {
+            background-color: rgba(0, 0, 0, 0.5);
+
+            /* Clip used to isolate a part of the shadow */
+            -webkit-clip-path: inset(50px 40px 50px 140px);
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-color-gray" style="paint-order: fill;">&#x25fc;</div>
+<div class="bg-color-gray" style="paint-order: fill markers;">&#x25fc;</div>
+<div class="bg-color-gray" style="paint-order: stroke;">&#x25fc;</div>
+<div class="bg-color-gray" style="paint-order: stroke markers;">&#x25fc;</div>
+<div class="bg-color-gray" style="paint-order: markers;">&#x25fc;</div>
+<div class="bg-color-gray" style="paint-order: markers stroke;">&#x25fc;</div>
+
+</body>
+</html>

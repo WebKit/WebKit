@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+</script>
+</head>
+<body id="body">
+
+<div id="hidden" style="display:none">hidden label</div>
+
+<span id="heading1" role="heading" aria-label="test label">visible text</span>
+<span id="heading2" role="heading">visible text</span>
+<span id="heading3" role="heading" aria-labelledby="hidden">visible text</span>
+
+<h2 id="heading4"><span>text1</span><a id="link" href="">link</a></h2>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that if heading has aria-label, it will override the visible text as necessary.");
+
+    if (window.accessibilityController) {
+
+        var heading1Text = accessibilityController.accessibleElementById("heading1").childAtIndex(0);
+        var heading2Text = accessibilityController.accessibleElementById("heading2").childAtIndex(0);
+        var heading3Text = accessibilityController.accessibleElementById("heading3").childAtIndex(0);
+        
+        // Get the trait so that the label will be set.
+        shouldBeTrue("heading1Text.traits == heading2Text.traits");
+        shouldBeTrue("heading3Text.traits == heading2Text.traits");
+        
+        shouldBe("heading1Text.description", "'AXLabel: test label'");
+        shouldBe("heading2Text.description", "'AXLabel: visible text'");
+        shouldBe("heading3Text.description", "'AXLabel: hidden label'");
+        
+        // When a heading has multiple children, ensure the children's
+        // labels are correct if aria-label is NOT set.
+        var heading4 = accessibilityController.accessibleElementById("heading4");
+        var heading4Text1 = heading4.childAtIndex(0);
+        var linkText = accessibilityController.accessibleElementById("link").childAtIndex(0);
+        
+        shouldBe("heading4Text1.description", "'AXLabel: text1'");
+        shouldBe("linkText.description", "'AXLabel: link'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

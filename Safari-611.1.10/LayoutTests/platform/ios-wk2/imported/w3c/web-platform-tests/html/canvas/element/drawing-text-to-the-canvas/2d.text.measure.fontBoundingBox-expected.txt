@@ -1,0 +1,6 @@
+2d.text.measure.fontBoundingBox
+Testing fontBoundingBox
+Actual output:
+
+FAIL Testing fontBoundingBox assert_equals: ctx.measureText('A').fontBoundingBoxAscent === 85 (got 86[number], expected 85[number]) expected 85 but got 86
+

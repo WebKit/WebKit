@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     onload="setTimeAndSnapshot(101, true)">
+  <script xlink:href="../smil-util.js" type="text/javascript"/>
+  <!-- no animation -->
+  <g transform="translate(50 50) rotate(90)">
+    <path d="M-2 50h4v -90h4l -6 -10 -6 10h4z" fill="blue"/>
+  </g>
+  <!-- accumulate: sum -->
+  <g transform="translate(150 50)">
+    <path d="M-2 50h4v -90h4l -6 -10 -6 10h4z" fill="blue">
+      <animateTransform attributeName="transform"
+        type="rotate" from="0" to="45" begin="100s" dur="0.5s" fill="freeze"
+        repeatCount="4" accumulate="sum"/>
+    </path>
+  </g>
+  <!-- accumulate: none -->
+  <g transform="translate(250 50)">
+    <path d="M-2 50h4v -90h4l -6 -10 -6 10h4z" fill="blue">
+      <animateTransform attributeName="transform"
+        type="rotate" from="0" to="270" begin="100s" dur="0.75s" fill="freeze"
+        repeatCount="2"/>
+    </path>
+  </g>
+  <!-- additive: replace -->
+  <g transform="translate(50 150)">
+    <path d="M-2 50h4v -90h4l -6 -10 -6 10h4z" fill="blue"
+    transform="rotate(-90)">
+      <animateTransform attributeName="transform"
+        type="rotate" from="0" to="180" begin="100s" dur="2s" fill="freeze"/>
+    </path>
+  </g>
+  <!-- additive: sum (adding to base value) -->
+  <g transform="translate(150 150)">
+    <path d="M-2 50h4v -90h4l -6 -10 -6 10h4z" fill="blue"
+    transform="rotate(-90)">
+      <animateTransform attributeName="transform"
+        type="rotate" from="0" to="270" begin="100s" dur="1.5s" fill="freeze"
+        additive="sum"/>
+    </path>
+  </g>
+  <!-- additive: sum (adding to other animations) -->
+  <g transform="translate(250 150)">
+    <path d="M-2 50h4v -90h4l -6 -10 -6 10h4z" fill="blue">
+      <animateTransform attributeName="transform"
+        type="rotate" from="0" to="60" begin="100s" dur="2s" fill="freeze"/>
+      <animateTransform attributeName="transform"
+        type="rotate" from="0" to="60" begin="100s" dur="2s" fill="freeze"
+        additive="sum"/>
+      <animateTransform attributeName="transform"
+        type="rotate" from="0" to="60" begin="100s" dur="2s" fill="freeze"
+        additive="sum"/>
+    </path>
+  </g>
+  <!-- to animation -->
+  <g transform="translate(50 250)">
+    <path d="M-2 50h4v -90h4l -6 -10 -6 10h4z" fill="blue"
+    transform="rotate(45)">
+      <animateTransform attributeName="transform"
+        type="rotate" to="135" begin="100s" dur="2s" fill="freeze"/>
+    </path>
+  </g>
+  <!-- by animation -->
+  <g transform="translate(150 250)">
+    <path d="M-2 50h4v -90h4l -6 -10 -6 10h4z" fill="blue"
+    transform="rotate(45)">
+      <animateTransform attributeName="transform"
+        type="rotate" by="90" begin="100s" dur="2s" fill="freeze"/>
+    </path>
+  </g>
+  <!-- values animation -->
+  <g transform="translate(250 250)">
+    <path d="M-2 50h4v -90h4l -6 -10 -6 10h4z" fill="blue">
+      <animateTransform attributeName="transform"
+        type="rotate" values="0; 135; 0" begin="100s" dur="1.5s" fill="freeze"/>
+    </path>
+  </g>
+</svg>

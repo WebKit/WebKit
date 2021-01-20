@@ -1,0 +1,123 @@
+
+-----------------------------------------------------
+EXPRESSION: error = null; try { [].x.x; } catch (e) { error = e; }; error
+{
+  "_type": "object",
+  "_subtype": "error",
+  "_objectId": "<filtered>",
+  "_description": "TypeError: undefined is not an object (evaluating '[].x.x')",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "error",
+    "_description": "TypeError: undefined is not an object (evaluating '[].x.x')",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "message",
+        "_type": "string",
+        "_value": "undefined is not an object (evaluating '[].x.x')"
+      },
+      {
+        "_name": "line",
+        "_type": "number",
+        "_value": "3"
+      },
+      {
+        "_name": "column",
+        "_type": "number",
+        "_value": "25"
+      },
+      {
+        "_name": "stack",
+        "_type": "string",
+        "_value": "global code\nevaluateWithScopeExtension@[native code]\n\n_wrapCall"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: error = null; try { eval("if()"); } catch (e) { error = e; }; error
+{
+  "_type": "object",
+  "_subtype": "error",
+  "_objectId": "<filtered>",
+  "_description": "SyntaxError: Unexpected token ')'",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "error",
+    "_description": "SyntaxError: Unexpected token ')'",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "message",
+        "_type": "string",
+        "_value": "Unexpected token ')'"
+      },
+      {
+        "_name": "line",
+        "_type": "number",
+        "_value": "3"
+      },
+      {
+        "_name": "column",
+        "_type": "number",
+        "_value": "25"
+      },
+      {
+        "_name": "stack",
+        "_type": "string",
+        "_value": "eval@[native code]\nglobal code\nevaluateWithScopeExtension@[native code]\n\n_wrapCall"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: error = null; try { document.createTextNode("").splitText(100); } catch (e) { error = e; }; error
+{
+  "_type": "object",
+  "_subtype": "error",
+  "_objectId": "<filtered>",
+  "_description": "IndexSizeError: The index is not in the allowed range.",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "error",
+    "_description": "IndexSizeError: The index is not in the allowed range.",
+    "_lossless": false,
+    "_overflow": true,
+    "_properties": [
+      {
+        "_name": "line",
+        "_type": "number",
+        "_value": "3"
+      },
+      {
+        "_name": "column",
+        "_type": "number",
+        "_value": "58"
+      },
+      {
+        "_name": "stack",
+        "_type": "string",
+        "_value": "splitText@[native code]\nglobal code\nevaluateWithScopeExtension@[native code]\n\n_wrapCall"
+      },
+      {
+        "_name": "code",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "name",
+        "_type": "string",
+        "_value": "IndexSizeError"
+      }
+    ],
+    "_entries": null
+  }
+}
+

@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/getUserMedia-helper.js"></script>
+    </head>
+    <body>
+        <p id="description"></p>
+        <div id="console"></div>
+        <script>
+            description("Tests MediaStream.");
+
+            var undefined;
+            var stream;
+            var newStream;
+            var nAudio;
+            var nVideo;
+            var idArray = new Array();
+
+            function checkIdAttribute(id) {
+                if (id.length != 36)
+                    return false;
+                for (var i = 0; i < id.length; i++) {
+                    charCode = id.charCodeAt(i);
+                    if (charCode == 0x21
+                        || (charCode >= 0x23 && charCode <= 0x27)
+                        || (charCode >= 0x2A && charCode <= 0x2B)
+                        || (charCode >= 0x2D && charCode <= 0x2E)
+                        || (charCode >= 0x30 && charCode <= 0x39)
+                        || (charCode >= 0x41 && charCode <= 0x5A)
+                        || (charCode >= 0x5E && charCode <= 0x7E))
+                        continue;
+                    return false;
+                }
+                for (var i = 0; i < idArray.length; i++) {
+                    if (id === idArray[i])
+                        return false;
+                }
+                idArray.push(id);
+
+                return true;
+            }
+
+            function gotStream(s) {
+                localStream = s;
+                testPassed('Got local stream.');
+                shouldBe('localStream.getAudioTracks().length', '1');
+                shouldBe('localStream.getVideoTracks().length', '1');
+
+                shouldBeTrue("typeof MediaStream === 'function'");
+                shouldBeTrue('checkIdAttribute(localStream.id)');
+                testConstructor(localStream);
+            }
+
+            function testConstructor(s) {
+                stream = s;
+                shouldThrow('new MediaStream(document)');
+                shouldThrow('new MediaStream([document])');
+                shouldThrow('new MediaStream([stream.getAudioTracks()[0], document])');
+                shouldThrow('new MediaStream([null])');
+                shouldThrow('new MediaStream([undefined])');
+                shouldThrow('new MediaStream(null)');
+                shouldThrow('new MediaStream(undefined)');
+
+                verifyStream("new MediaStream()", 0, 0);
+                verifyStream("new MediaStream([])", 0, 0);
+
+                verifyStream("new MediaStream(stream)", s.getAudioTracks().length, s.getVideoTracks().length);
+
+                verifyStream("new MediaStream([stream.getAudioTracks()[0]])", 1, 0);
+                verifyStream("new MediaStream([stream.getVideoTracks()[0]])", 0, 1);
+                verifyStream("new MediaStream([stream.getAudioTracks()[0], stream.getVideoTracks()[0]])", 1, 1);
+                verifyStream("new MediaStream([stream.getVideoTracks()[0], stream.getAudioTracks()[0], stream.getVideoTracks()[0]])", 1, 1);
+
+                finishJSTest();
+            }
+
+            function verifyStream(script, numAudioTracks, numVideoTracks) {
+                debug("<br>*** testing \"" + script + "\"");
+                newStream = eval(script);
+                nAudio = numAudioTracks;
+                nVideo = numVideoTracks;
+
+                testPassed('Stream constructed');
+                shouldBeNonNull(newStream);
+                shouldBeDefined(newStream);
+                shouldBeEqualToString("newStream.constructor.toString()", "function MediaStream() {\n    [native code]\n}");
+                shouldBe('newStream.getAudioTracks().length', 'nAudio');
+                shouldBe('newStream.getVideoTracks().length', 'nVideo');
+
+                shouldBeTrue('checkIdAttribute(newStream.id)');
+            }
+
+            getUserMedia("allow", {video:true, audio:true}, gotStream);
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

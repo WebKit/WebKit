@@ -1,0 +1,6 @@
+
+FAIL Opaque response: compileStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](response)', 'WebAssembly[method]' is undefined)
+FAIL Opaque redirect response: compileStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](response)', 'WebAssembly[method]' is undefined)
+FAIL Opaque response: instantiateStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](response)', 'WebAssembly[method]' is undefined)
+FAIL Opaque redirect response: instantiateStreaming WebAssembly[method] is not a function. (In 'WebAssembly[method](response)', 'WebAssembly[method]' is undefined)
+

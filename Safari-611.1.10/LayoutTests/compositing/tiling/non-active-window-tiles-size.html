@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Tiles when window is active:</p>
+<pre id="activeResult"></pre>
+<p>Tiles when window is not active:</p>
+<pre id="nonActiveResult"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (window.internals)
+    internals.disableTileSizeUpdateDelay();
+
+onload = function() {
+    document.getElementById("activeResult").innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+    if (window.testRunner)
+        testRunner.setWindowIsKey(false);
+    
+    setTimeout(function() {
+        document.getElementById("nonActiveResult").innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}
+</script>
+</body>
+</html>

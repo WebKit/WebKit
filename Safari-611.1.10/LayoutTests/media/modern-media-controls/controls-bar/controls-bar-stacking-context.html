@@ -1,0 +1,14 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing <code>ControlsBar</code> establishes a stacking context.");
+
+const controlsBar = new ControlsBar;
+document.body.appendChild(controlsBar.element);
+shouldBeEqualToString("getComputedStyle(controlsBar.element).willChange", "z-index");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

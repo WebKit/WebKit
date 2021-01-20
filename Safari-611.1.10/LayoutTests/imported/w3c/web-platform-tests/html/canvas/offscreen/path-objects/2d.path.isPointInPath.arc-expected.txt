@@ -1,0 +1,7 @@
+2d.path.isPointInPath.arc
+
+isPointInPath() works on arcs
+
+
+PASS isPointInPath() works on arcs
+

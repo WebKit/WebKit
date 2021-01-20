@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests invoking updateLayout durign a live region update from the style recalc.<br>
+WebKit should not hit a release assertion.</p>
+<section style="display: none">
+    <label for="input"><input id="input" type="text" aria-labelledby="hello"><div id="in-label" aria-live="polite"></div></label>
+    <span id="hello">hello</span>
+</section>
+<script>
+function runTest()
+{
+    document.querySelector('section').style.display = null;
+    document.body.getBoundingClientRect();
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    document.body.getBoundingClientRect();
+    const webArea = accessibilityController.rootElement.childAtIndex(0);
+    runTest();
+    document.querySelector('section').style.display = 'none';
+    document.write('PASS. WebKit did not crash.');
+} else
+    document.write('<button onclick="runTest()">Go</button>');
+
+</script>
+</body>
+</html>

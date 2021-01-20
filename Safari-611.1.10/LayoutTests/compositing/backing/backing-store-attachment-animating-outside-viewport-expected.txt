@@ -1,0 +1,24 @@
+An in-view element animating off-screen should not have backing store.
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 785.00 2200.00)
+  (backingStoreAttached 1)
+  (children 1
+    (GraphicsLayer
+      (bounds 785.00 2200.00)
+      (contentsOpaque 1)
+      (backingStoreAttached 1)
+      (children 1
+        (GraphicsLayer
+          (position 100.00 100.00)
+          (bounds 100.00 100.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (backingStoreAttached 0)
+        )
+      )
+    )
+  )
+)
+Some text here to force backing store.

@@ -1,0 +1,333 @@
+Test basic creation of a PaymentRequest object with an Apple Pay payment method.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing PaymentRequest
+
+PASS new PaymentRequest(null, null) threw exception TypeError: Value is not a sequence.
+PASS new PaymentRequest([validPaymentMethod()], validPaymentDetails()) did not throw exception.
+
+Testing ApplePayRequest.version
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.version = 0; request = new PaymentRequest([paymentMethod], validPaymentDetails())
+PASS request.show() rejected promise  with InvalidAccessError: "0" is not a supported version..
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.version = 1000; request = new PaymentRequest([paymentMethod], validPaymentDetails())
+PASS request.show() rejected promise  with InvalidAccessError: "1000" is not a supported version..
+
+Testing ApplePayRequest.countryCode
+
+SETUP: paymentMethod = validPaymentMethod(); delete paymentMethod.data.countryCode;
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Member ApplePayRequest.countryCode is required and must be an instance of DOMString.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.countryCode = undefined;
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Member ApplePayRequest.countryCode is required and must be an instance of DOMString.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.countryCode = 'invalid'; request = new PaymentRequest([paymentMethod], validPaymentDetails())
+PASS request.show() rejected promise  with TypeError: "invalid" is not a valid country code..
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.countryCode = ''; request = new PaymentRequest([paymentMethod], validPaymentDetails())
+PASS request.show() rejected promise  with TypeError: "" is not a valid country code..
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.countryCode = null; request = new PaymentRequest([paymentMethod], validPaymentDetails())
+PASS request.show() rejected promise  with TypeError: "null" is not a valid country code..
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.countryCode = 7; request = new PaymentRequest([paymentMethod], validPaymentDetails())
+PASS request.show() rejected promise  with TypeError: "7" is not a valid country code..
+
+Testing ApplePayRequest.supportedNetworks
+
+SETUP: paymentMethod = validPaymentMethod(); delete paymentMethod.data.supportedNetworks;
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Member ApplePayRequest.supportedNetworks is required and must be an instance of sequence.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.supportedNetworks = '';
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Value is not a sequence.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.supportedNetworks = null;
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Value is not a sequence.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.supportedNetworks = undefined;
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Member ApplePayRequest.supportedNetworks is required and must be an instance of sequence.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.supportedNetworks = 7;
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Value is not a sequence.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.supportedNetworks = []; request = new PaymentRequest([paymentMethod], validPaymentDetails())
+PASS request.show() rejected promise  with TypeError: At least one supported network must be provided..
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.supportedNetworks = ['invalidNetwork']; request = new PaymentRequest([paymentMethod], validPaymentDetails())
+PASS request.show() rejected promise  with TypeError: "invalidNetwork" is not a valid payment network..
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.supportedNetworks = ['invalidNetwork', 'visa']; request = new PaymentRequest([paymentMethod], validPaymentDetails())
+PASS request.show() rejected promise  with TypeError: "invalidNetwork" is not a valid payment network..
+
+Testing ApplePayRequest.merchantCapabilities
+
+SETUP: paymentMethod = validPaymentMethod(); delete paymentMethod.data.merchantCapabilities;
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Member ApplePayRequest.merchantCapabilities is required and must be an instance of sequence.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.merchantCapabilities = '';
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Value is not a sequence.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.merchantCapabilities = null;
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Value is not a sequence.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.merchantCapabilities = undefined;
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Member ApplePayRequest.merchantCapabilities is required and must be an instance of sequence.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.merchantCapabilities = 7;
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Value is not a sequence.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.merchantCapabilities = ['invalidCapability'];
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Type error.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.merchantCapabilities = ['invalidCapability', 'supports3DS'];
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Type error.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.merchantCapabilities = []; request = new PaymentRequest([paymentMethod], validPaymentDetails())
+PASS request.show() rejected promise  with TypeError: At least one merchant capability must be provided..
+
+Testing ApplePayRequest.requiredBillingContactFields
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredBillingContactFields = '';
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Value is not a sequence.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredBillingContactFields = null;
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Value is not a sequence.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredBillingContactFields = 7;
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Value is not a sequence.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredBillingContactFields = { };
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Type error.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredBillingContactFields = [''];
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Type error.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredBillingContactFields = [null];
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Type error.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredBillingContactFields = [undefined];
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Type error.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredBillingContactFields = [{}];
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Type error.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredBillingContactFields = ['invalid'];
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Type error.
+
+
+Testing ApplePayRequest.billingContact
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.billingContact = '';
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Type error.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.billingContact = 7;
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Type error.
+
+
+Testing ApplePayRequest.requiredShippingContactFields
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = '';
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Value is not a sequence.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = null;
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Value is not a sequence.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = 7;
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Value is not a sequence.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = { };
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Type error.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = [''];
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Type error.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = [null];
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Type error.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = [undefined];
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Type error.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = [{}];
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Type error.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = ['invalid'];
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Type error.
+
+
+Testing ApplePayRequest.shippingContact
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.shippingContact = '';
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Type error.
+
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.shippingContact = 7;
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Type error.
+
+
+Testing PaymentDetails.total
+
+SETUP: paymentDetails = validPaymentDetails(); delete paymentDetails.total;
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Member PaymentDetailsInit.total is required and must be an instance of PaymentItem.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.total = '';
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Type error.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.total = null;
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Member PaymentItem.amount is required and must be an instance of PaymentCurrencyAmount.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.total = undefined;
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Member PaymentDetailsInit.total is required and must be an instance of PaymentItem.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.total = 7;
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Type error.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.total = [];
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Member PaymentItem.amount is required and must be an instance of PaymentCurrencyAmount.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.total = { };
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Member PaymentItem.amount is required and must be an instance of PaymentCurrencyAmount.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label' };
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Member PaymentItem.amount is required and must be an instance of PaymentCurrencyAmount.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: 'amount' };
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Type error.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: '', value: '0' } };
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception RangeError: "" is not a valid currency code..
+
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: 'USD', value:'-10.00'} };
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Total currency values cannot be negative..
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: 'USD', value: '10000000000.00' } }; request = new PaymentRequest([validPaymentMethod()], paymentDetails)
+PASS request.show() rejected promise  with TypeError: Total amount is too big..
+
+Testing PaymentDetails.displayItems
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.displayItems = '';
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Value is not a sequence.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.displayItems = null;
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Value is not a sequence.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.displayItems = 7;
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Value is not a sequence.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.displayItems = { };
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Type error.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [''];
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Type error.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [null];
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Member PaymentItem.amount is required and must be an instance of PaymentCurrencyAmount.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [undefined];
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Member PaymentItem.amount is required and must be an instance of PaymentCurrencyAmount.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{}];
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Member PaymentItem.amount is required and must be an instance of PaymentCurrencyAmount.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{ label: 'label' }];
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Member PaymentItem.amount is required and must be an instance of PaymentCurrencyAmount.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{ label: 'label', amount: '' }];
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Type error.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{ label: 'label', amount: '10.00', type: 'invalid' }];
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Type error.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{ label: 'label', amount: { currency: 'EUR', value: '10.00' } }]; request = new PaymentRequest([validPaymentMethod()], paymentDetails)
+PASS request.show() rejected promise  with TypeError: "EUR" does not match the expected currency of "USD". Apple Pay requires all PaymentCurrencyAmounts to use the same currency code..
+Testing PaymentDetails.shippingOptions
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = '';
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Value is not a sequence.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = 'invalid';
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Value is not a sequence.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = null;
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Value is not a sequence.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = 7;
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Value is not a sequence.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = { };
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Type error.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ }];
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Member PaymentShippingOption.amount is required and must be an instance of PaymentCurrencyAmount.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '', }];
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Type error.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '', detail: '' }];
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Type error.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '', detail: '', identifier: '' }];
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Type error.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '', detail: '', identifier: '', label: '' }];
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Type error.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '-1', detail: '', identifier: '', label: '' }];
+PASS new PaymentRequest([validPaymentMethod()], paymentDetails) threw exception TypeError: Type error.
+
+SETUP: paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: { currency: 'EUR', value: '10.00' }, id: '', label: '' }]; request = new PaymentRequest([validPaymentMethod()], paymentDetails)
+PASS request.show() rejected promise  with TypeError: "EUR" does not match the expected currency of "USD". Apple Pay requires all PaymentCurrencyAmounts to use the same currency code..
+Testing PaymentOptions
+
+SETUP: paymentOptions = {}; paymentOptions.shippingType = '';
+PASS new PaymentRequest([validPaymentMethod()], validPaymentDetails(), paymentOptions) threw exception TypeError: Type error.
+
+SETUP: paymentOptions = {}; paymentOptions.shippingType = 'invalid';
+PASS new PaymentRequest([validPaymentMethod()], validPaymentDetails(), paymentOptions) threw exception TypeError: Type error.
+
+SETUP: paymentOptions = {}; paymentOptions.shippingType = null;
+PASS new PaymentRequest([validPaymentMethod()], validPaymentDetails(), paymentOptions) threw exception TypeError: Type error.
+
+SETUP: paymentOptions = {}; paymentOptions.shippingType = 7;
+PASS new PaymentRequest([validPaymentMethod()], validPaymentDetails(), paymentOptions) threw exception TypeError: Type error.
+
+SETUP: paymentOptions = {}; paymentOptions.shippingType = { };
+PASS new PaymentRequest([validPaymentMethod()], validPaymentDetails(), paymentOptions) threw exception TypeError: Type error.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

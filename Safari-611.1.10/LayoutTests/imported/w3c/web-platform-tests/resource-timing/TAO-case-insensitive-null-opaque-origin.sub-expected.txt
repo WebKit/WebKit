@@ -1,0 +1,7 @@
+Description
+
+This test validates that for a cross origin resource, the timing allow check algorithm will fail when the value of Timing-Allow-Origin is a case-insensitive match to null and the origin is an opaque origin.
+
+
+FAIL Test case-insensitive null TAO value with opaque origins assert_equals: expected "PASS" but got "FAIL"
+

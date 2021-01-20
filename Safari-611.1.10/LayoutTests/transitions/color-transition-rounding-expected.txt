@@ -1,0 +1,5 @@
+This test will probably fail when run manually; it requires the pause API for accurate results.
+PASS - "color" property for "test" element at 0.4998s saw something close to: 127,0,128
+PASS - "color" property for "test" element at 0.5s saw something close to: 128,0,128
+PASS - "color" property for "test" element at 0.5002s saw something close to: 128,0,127
+

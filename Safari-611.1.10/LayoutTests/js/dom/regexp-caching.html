@@ -1,0 +1,108 @@
+<html>
+<head>
+<script>
+function print(message)
+{
+    var block = document.createElement("div");
+    block.appendChild(document.createTextNode(message));
+    block.appendChild(document.createElement("br"));
+    document.getElementById("console").appendChild(block);
+}
+
+function isReadOnly(object, property)
+{
+    var oldValue = object[property];
+    object[property] = !object[property];
+    var result = (object[property] == oldValue);
+    object[property] = oldValue;
+    return result;
+}
+
+function printPropertiesWithReadOnly(object)
+{
+    var array = new Array;
+    for (var property in object) {
+        array.push(property);
+    }
+    array.sort();
+    for (var i = 0; i < array.length; i++) {
+        var property = array[i];
+        print(property + ": {" + object[property] + "} " + (isReadOnly(object, property) ? "(read-only)" : "(read-write)"));
+    }
+}
+
+function printProperties(object)
+{
+    var array = new Array;
+    for (var property in object) {
+        array.push(property);
+    }
+    array.sort();
+    for (var i = 0; i < array.length; i++) {
+        var property = array[i];
+        print(property + ": {" + object[property] + "}");
+    }
+}
+
+function test() {
+    if (window.testRunner)  
+        testRunner.dumpAsText();
+
+    print("Properties of RegExp at startup:");
+    printPropertiesWithReadOnly(RegExp);
+    
+    var r = /(1)(2)(3)(4)(5)(6)(7)(8)(9)(0)/;
+    var matchingString = "<1234567890>";
+    var unmatchingString = "XXX";
+
+    var dummyRegExp = new RegExp();
+    var dummyString = "";
+    
+    print("");
+    r.exec(matchingString);
+    print("Properties of RegExp after " + r + ".exec(" + matchingString + "):");
+    printProperties(RegExp);
+
+    print("");
+    print("RegExp.$0 " + (RegExp.$0 ? "exists" : "does not exist"));
+    print("RegExp.$10 " + (RegExp.$10 ? "exists" : "does not exist"));
+    print("RegExp " + (r.test() ? "uses" : "doesn't use") + " RegExp.input");
+    
+    RegExp.multiline = "foo";
+    print("RegExp.multiline " + (typeof RegExp.multiline == typeof Boolean() ? "coerces" : "doesn't coerce") + " values to booleans");
+    RegExp.input = Number();
+    print("RegExp.input " + (typeof RegExp.input == typeof String() ? "coerces" : "doesn't coerce") + " values to strings");
+
+    print("");
+    r.exec(unmatchingString);
+    print("Properties of RegExp after " + r + ".exec(" + unmatchingString + "):");
+    printProperties(RegExp);
+
+    print("");
+    print("---------- [Cleared RegExp values] ----------");
+    dummyRegExp.exec(dummyString);
+    if (RegExp.lastMatch != "")
+        print("Clear failed");
+
+    matchingString.search(r);
+    print("Properties of RegExp after " + matchingString + ".search(" + r + "):");
+    printProperties(RegExp);
+
+    print("");
+    print("---------- [Cleared RegExp values] ----------");
+    dummyRegExp.exec(dummyString);
+
+    matchingString.replace(r);
+    print("Properties of RegExp after " + matchingString + ".replace(" + r + "):");
+    printProperties(RegExp);
+}
+</script>
+</head>
+<body onload="test();">
+<p>
+This test checks our implementation of the special RegExp member variables.
+</p>
+<hr>
+<div id='console'/ style="font-family: courier; font-size: 12">
+</body>
+</html>

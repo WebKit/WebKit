@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            height: 1200px;
+        }
+        .box {
+          width: 100px;
+          height: 100px;
+          margin: 50px;
+          background-color: blue;
+          border: 2px solid black;
+        }
+        
+        #box {
+            background-image: linear-gradient(to top, white, black);
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+        
+        #box.loaded {
+            background: transparent;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function doTest()
+        {
+            var box = document.getElementById('box');
+            box.classList.add('loaded');
+            
+            if (window.internals)
+                document.getElementById('reasons').textContent = window.internals.mainThreadScrollingReasons();
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+    <div id="box" class="box"></div>
+    <p>Test passes if there are no reasons for slow scrolling below.</p>
+<pre id="reasons"></pre>
+</body>
+</html>

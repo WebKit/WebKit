@@ -1,0 +1,7 @@
+This test checks that any element focused programmatically on page load will have :focus-visible matching enabled.
+If the element that says "I will be focused automatically" has a red background, then the test result is FAILURE. If the element has a green outline, then the test result is SUCCESS.
+
+I will be focused automatically.
+
+FAIL Programmatic focus on page load should match :focus-visible assert_equals: expected "rgb(0, 100, 0)" but got "rgb(0, 0, 0)"
+

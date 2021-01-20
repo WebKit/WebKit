@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+div.speech-normal { speak-as: normal; }
+div.speech-spellout { speak-as: spell-out; }
+div.speech-digits { speak-as: digits; }
+div.speech-literalpunc { speak-as: literal-punctuation; }
+div.speech-nopunc { speak-as: no-punctuation; }
+div.digits-and-literal { speak-as: digits literal-punctuation; }
+div.spell-and-literal { speak-as: spell-out literal-punctuation; }
+</style>
+</head>
+<body id="body">
+
+
+<div tabindex="0" id="initial" >Initial</div>
+<div tabindex="0" id="speech-normal" class="speech-normal">Normal</div>
+<div tabindex="0" id="speech-spellout" class="speech-spellout">Spellout</div>
+<div tabindex="0" id="speech-digits" class="speech-digits">Digits</div>
+<div tabindex="0" id="speech-literalpunc" class="speech-literalpunc">Literal</div>
+<div tabindex="0" id="speech-nopunc" class="speech-nopunc">No punctuation</div>
+<div tabindex="0" id="speech-digits-and-literal" class="digits-and-literal">Digits and Literal</div>
+<div tabindex="0" id="speech-spell-and-literal" class="spell-and-literal">Spell and Literal</div>
+
+<div style='speak-as: digits;'>
+ <div>
+  <div>
+    <a id="testlink" tabindex="0" href="#">test</a>
+  </div>
+ </div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that using the CSS3-speech property 'speak-as' works as from a WebCore level (not a platform level, that is up to the platforms)");
+
+    if (window.accessibilityController) {
+
+          document.getElementById("initial").focus();
+          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'normal'");
+
+          document.getElementById("speech-normal").focus();
+          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'normal'");
+
+          document.getElementById("speech-spellout").focus();
+          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'spell-out'");
+
+          document.getElementById("speech-digits").focus();
+          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'normal, digits'");
+
+          document.getElementById("speech-literalpunc").focus();
+          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'normal, literal-punctuation'");
+
+          document.getElementById("speech-nopunc").focus();
+          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'normal, no-punctuation'");
+
+          document.getElementById("speech-digits-and-literal").focus();
+          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'normal, digits, literal-punctuation'");
+
+          document.getElementById("speech-spell-and-literal").focus();
+          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'spell-out, literal-punctuation'");
+
+          document.getElementById("testlink").focus();
+          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'normal, digits'");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

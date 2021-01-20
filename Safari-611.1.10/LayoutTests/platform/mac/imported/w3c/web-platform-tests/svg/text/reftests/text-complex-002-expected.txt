@@ -1,0 +1,37 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 768x600
+    RenderSVGContainer {g} at (0,0) size 0x0
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGEllipse {circle} at (433,133) size 334x334 [fill={[type=SOLID] [color=#000000]}] [cx=360.00] [cy=180.00] [r=100.00]
+      RenderSVGEllipse {circle} at (33,233) size 334x334 [fill={[type=SOLID] [color=#000000]}] [cx=120.00] [cy=240.00] [r=100.00]
+      RenderSVGRect {rect} at (200,133) size 400x134 [fill={[type=SOLID] [color=#000000]}] [x=120.00] [y=80.00] [width=240.00] [height=80.00]
+      RenderSVGRect {rect} at (200,433) size 400x134 [fill={[type=SOLID] [color=#000000]}] [x=120.00] [y=260.00] [width=240.00] [height=80.00]
+      RenderSVGEllipse {circle} at (466,166) size 268x268 [fill={[type=SOLID] [color=#000000]}] [cx=360.00] [cy=180.00] [r=80.00]
+      RenderSVGEllipse {circle} at (66,266) size 268x268 [fill={[type=SOLID] [color=#000000]}] [cx=120.00] [cy=240.00] [r=80.00]
+      RenderSVGRect {rect} at (166,100) size 468x200 [fill={[type=SOLID] [color=#000000]}] [x=100.00] [y=60.00] [width=280.00] [height=120.00]
+      RenderSVGRect {rect} at (166,400) size 468x200 [fill={[type=SOLID] [color=#000000]}] [x=100.00] [y=240.00] [width=280.00] [height=120.00]
+    RenderSVGContainer {g} at (32,132) size 736x436
+      RenderSVGContainer {use} at (199,132) size 402x136
+        RenderSVGRect {rect} at (199,132) size 402x136 [stroke={[type=SOLID] [color=#ADD8E6]}] [x=120.00] [y=80.00] [width=240.00] [height=80.00]
+      RenderSVGContainer {use} at (199,432) size 402x136
+        RenderSVGRect {rect} at (199,432) size 402x136 [stroke={[type=SOLID] [color=#ADD8E6]}] [x=120.00] [y=260.00] [width=240.00] [height=80.00]
+      RenderSVGContainer {use} at (432,132) size 336x336
+        RenderSVGEllipse {circle} at (432,132) size 336x336 [stroke={[type=SOLID] [color=#ADD8E6]}] [cx=360.00] [cy=180.00] [r=100.00]
+      RenderSVGContainer {use} at (32,232) size 336x336
+        RenderSVGEllipse {circle} at (32,232) size 336x336 [stroke={[type=SOLID] [color=#ADD8E6]}] [cx=120.00] [cy=240.00] [r=100.00]
+    RenderSVGContainer {g} at (65,99) size 670x501
+      RenderSVGContainer {use} at (165,99) size 470x202
+        RenderSVGRect {rect} at (165,99) size 470x202 [stroke={[type=SOLID] [color=#ADD8E6] [dash array={5.00, 5.00}]}] [x=100.00] [y=60.00] [width=280.00] [height=120.00]
+      RenderSVGContainer {use} at (165,399) size 470x201
+        RenderSVGRect {rect} at (165,399) size 470x201 [stroke={[type=SOLID] [color=#ADD8E6] [dash array={5.00, 5.00}]}] [x=100.00] [y=240.00] [width=280.00] [height=120.00]
+      RenderSVGContainer {use} at (465,165) size 270x270
+        RenderSVGEllipse {circle} at (465,165) size 270x270 [stroke={[type=SOLID] [color=#ADD8E6] [dash array={5.00, 5.00}]}] [cx=360.00] [cy=180.00] [r=80.00]
+      RenderSVGContainer {use} at (65,265) size 270x270
+        RenderSVGEllipse {circle} at (65,265) size 270x270 [stroke={[type=SOLID] [color=#ADD8E6] [dash array={5.00, 5.00}]}] [cx=120.00] [cy=240.00] [r=80.00]
+    RenderSVGContainer {g} at (0,0) size 0x0
+      RenderSVGText {text} at (-671,-15) size 671x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 671x19
+          chunk 1 text run 1 at (-670.52,0.00) startOffset 0 endOffset 51 width 316.26 RTL: "\x{627}\x{644}\x{646}\x{634}\x{648}\x{629} \x{648}\x{62A}\x{645}\x{62C}\x{64A}\x{62F} \x{627}\x{644}\x{623}\x{644}\x{645} \x{646}\x{634}\x{623}\x{62A} \x{628}\x{627}\x{644}\x{641}\x{639}\x{644}\x{60C} \x{648}\x{633}\x{623}\x{639}\x{631}\x{636} \x{644}\x{643} \x{627}\x{644}\x{62A}\x{641}\x{627}\x{635}\x{64A}\x{644}"
+          chunk 1 text run 1 at (-354.26,0.00) startOffset 0 endOffset 60 width 354.26 RTL: "\x{644}\x{643}\x{646} \x{644}\x{627} \x{628}\x{62F} \x{623}\x{646} \x{623}\x{648}\x{636}\x{62D} \x{644}\x{643} \x{623}\x{646} \x{643}\x{644} \x{647}\x{630}\x{647} \x{627}\x{644}\x{623}\x{641}\x{643}\x{627}\x{631} \x{627}\x{644}\x{645}\x{63A}\x{644}\x{648}\x{637}\x{629} \x{62D}\x{648}\x{644} \x{627}\x{633}\x{62A}\x{646}\x{643}\x{627}\x{631} "

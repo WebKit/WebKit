@@ -1,0 +1,12 @@
+# Copyright 2019 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//gni/angle.gni")
+
+vulkan_headers_dir = "//third_party/vulkan-headers/src"
+vvl_spirv_tools_dir = "//third_party/spirv-tools/src"
+vvl_glslang_dir = "//third_party/glslang/src"
+
+vulkan_data_subdir = angle_data_dir
+vulkan_gen_subdir = "angle/vulkan"

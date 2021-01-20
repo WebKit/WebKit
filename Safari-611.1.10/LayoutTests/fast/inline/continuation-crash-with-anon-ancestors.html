@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests </title>
+<script>
+function swapElements(element1, element2) {
+    var parent1 = element1.parentElement;
+    var previousSibling1 = element1.previousSibling;
+    element2.parentElement.insertBefore(element1, element2);
+    parent1.insertBefore(element2, previousSibling1);
+}
+
+function runTest() {
+    var tr = document.createElement("tr");
+    div2.parentElement.insertBefore(tr, div2);
+    document.body.offsetHeight;
+    div1.style.display = "inline";
+    document.body.offsetHeight;
+    swapElements(div2, span1);
+    swapElements(tr, span2);
+    document.body.offsetHeight;
+}
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body onload="runTest()">
+PASS if no crash or assert.
+<span id=span1></span><span id=span2></span><span><body style="display: inline-table"><div id=div1></div><div id=div2></div>
+<body>
+</html>

@@ -1,0 +1,65 @@
+From 5cf27388fcdc934bcf3b50d5756148261dc50068 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Sun, 29 Mar 2020 18:19:15 +0100
+Subject: [PATCH] sccache: no selenium
+
+---
+ Cargo.lock | 14 --------------
+ Cargo.toml |  2 +-
+ 2 files changed, 1 insertion(+), 15 deletions(-)
+
+diff --git a/Cargo.lock b/Cargo.lock
+index 4670f68..5ad5ee9 100644
+--- a/Cargo.lock
++++ b/Cargo.lock
+@@ -1833,7 +1833,6 @@ dependencies = [
+  "retry 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+  "ring 0.14.6 (registry+https://github.com/rust-lang/crates.io-index)",
+  "rouille 2.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+- "selenium-rs 0.1.1 (git+https://github.com/saresend/selenium-rs.git?rev=0314a2420da78cce7454a980d862995750771722)",
+  "serde 1.0.103 (registry+https://github.com/rust-lang/crates.io-index)",
+  "serde_derive 1.0.103 (registry+https://github.com/rust-lang/crates.io-index)",
+  "serde_json 1.0.44 (registry+https://github.com/rust-lang/crates.io-index)",
+@@ -1900,18 +1899,6 @@ dependencies = [
+  "core-foundation-sys 0.6.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ ]
+ 
+-[[package]]
+-name = "selenium-rs"
+-version = "0.1.1"
+-source = "git+https://github.com/saresend/selenium-rs.git?rev=0314a2420da78cce7454a980d862995750771722#0314a2420da78cce7454a980d862995750771722"
+-dependencies = [
+- "reqwest 0.9.22 (registry+https://github.com/rust-lang/crates.io-index)",
+- "serde 1.0.103 (registry+https://github.com/rust-lang/crates.io-index)",
+- "serde_derive 1.0.103 (registry+https://github.com/rust-lang/crates.io-index)",
+- "serde_json 1.0.44 (registry+https://github.com/rust-lang/crates.io-index)",
+- "url 1.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
+-]
+-
+ [[package]]
+ name = "semver"
+ version = "0.9.0"
+@@ -3121,7 +3108,6 @@ dependencies = [
+ "checksum scopeguard 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "b42e15e59b18a828bbf5c58ea01debb36b9b096346de35d941dcb89009f24a0d"
+ "checksum security-framework 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)" = "8ef2429d7cefe5fd28bd1d2ed41c944547d4ff84776f5935b456da44593a16df"
+ "checksum security-framework-sys 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)" = "e31493fc37615debb8c5090a7aeb4a9730bc61e77ab10b9af59f1a202284f895"
+-"checksum selenium-rs 0.1.1 (git+https://github.com/saresend/selenium-rs.git?rev=0314a2420da78cce7454a980d862995750771722)" = "<none>"
+ "checksum semver 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)" = "1d7eb9ef2c18661902cc47e535f9bc51b78acd254da71d375c2f6720d9a40403"
+ "checksum semver-parser 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)" = "388a1df253eca08550bef6c72392cfe7c30914bf41df5269b68cbd6ff8f570a3"
+ "checksum serde 1.0.103 (registry+https://github.com/rust-lang/crates.io-index)" = "1217f97ab8e8904b57dd22eb61cde455fa7446a9c1cf43966066da047c1f3702"
+diff --git a/Cargo.toml b/Cargo.toml
+index d5ff8a8..a8633a7 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -102,7 +102,7 @@ escargot = "0.3"
+ itertools = "0.7"
+ predicates = "0.9.0"
+ # Waiting for #15 to make it into a release
+-selenium-rs = { git = "https://github.com/saresend/selenium-rs.git", rev = "0314a2420da78cce7454a980d862995750771722" }
++#selenium-rs = { git = "https://github.com/saresend/selenium-rs.git", rev = "0314a2420da78cce7454a980d862995750771722" }
+ 
+ [target.'cfg(unix)'.dependencies]
+ daemonize = "0.3"
+-- 
+2.25.1
+

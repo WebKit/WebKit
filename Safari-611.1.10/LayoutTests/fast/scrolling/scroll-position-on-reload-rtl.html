@@ -1,0 +1,66 @@
+<html dir="rtl">
+<head>
+    <style>
+        .wide {
+            width: 2000px;
+            height: 10px;
+            background-color: silver;
+        }
+        .origin {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 10px;
+            height: 10px;
+            background-color: blue;
+        }
+        
+        #lefty {
+            position: absolute;
+            left: -200px;
+            width: 100px;
+            height: 100px;
+            background-color: orange;
+        }
+    </style>
+    <script>
+    var desiredScrollOffset = -200;
+    function runTest()
+    {
+        if (!window.sessionStorage)
+            return;
+
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        if (sessionStorage.testCompleted) {
+            window.setTimeout(function() {
+                var currentOffset = document.scrollingElement.scrollLeft;
+                if (currentOffset == desiredScrollOffset)
+                    document.getElementById('result').textContent = 'PASS: scrollLeft after reload is ' + desiredScrollOffset;
+                else
+                    document.getElementById('result').textContent = 'FAIL: scrollLeft after reload is ' + currentOffset + ', should be' + desiredScrollOffset;
+
+                delete sessionStorage.testCompleted;
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        } else {
+            document.scrollingElement.scrollLeft = desiredScrollOffset;
+            sessionStorage.testCompleted = true;
+            document.location.reload(true);
+        }
+    }
+
+    window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+    <div class="wide"></div>
+    <div class="origin"></div>
+    <div id="lefty"></div>
+    <div id="result"></div>
+</body>
+</html>

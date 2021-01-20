@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <script>
+        function loadImageAndDraw(image, src, forceAsyncImageDrawing) {
+            return new Promise((resolve) => {
+                image.onload = (() => {
+                    if (window.internals && window.testRunner && forceAsyncImageDrawing) {
+                        // Force async image decoding for this image.
+                        internals.setLargeImageAsyncDecodingEnabledForTesting(image, true);
+
+                        // Force layout and display so the image gets drawn.
+                        document.body.offsetHeight;
+                        if (window.testRunner)
+                            testRunner.display();
+
+                        image.addEventListener("webkitImageFrameReady", function() {
+                            internals.setLargeImageAsyncDecodingEnabledForTesting(image, false);
+                            setTimeout(function() {
+                                // Force redraw to get the red image drawn.
+                                testRunner.display();
+                                resolve();
+                            }, 0);
+                        }, false);
+                    } else {
+                        resolve();                        
+                    }
+                });
+                image.src = src;
+            });
+        }
+ 
+        (function() {
+            if (window.internals && window.testRunner) {
+                internals.clearMemoryCache();
+                internals.settings.setWebkitImageReadyEventEnabled(true);
+                internals.settings.setLargeImageAsyncDecodingEnabled(true);
+                testRunner.waitUntilDone();
+            }
+ 
+            var image = new Image;
+            document.body.appendChild(image);
+ 
+            // Load a large (400x400) red image to force sync image decoding and drawing.
+            loadImageAndDraw(image, "resources/red-400x400.png", true).then(() => {
+                // Replace the large red image with a large (400x400) green image.
+                // Sync image decoding and drawing have to be forced in this case.
+                return loadImageAndDraw(image, "resources/green-400x400.png", false);
+            }).then(() => {
+                // A single paint is needed to draw the large (400x400) green image.
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        })();
+    </script>
+ </body>
+ </html>

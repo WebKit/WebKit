@@ -1,0 +1,36 @@
+Tests for model code related to the Page.getCookie command.
+
+
+== Running test suite: Page.getCookie
+-- Running test case: MatchCookiesAgainstResourceDomains
+PASS: .example.com should not match www.other.com
+PASS: .example.com should not match stuff.other.com
+PASS: .example.com should not match bad.stuff.other.com
+PASS: .example.com should match www.example.com
+PASS: .example.com should match stuff.example.com
+PASS: .example.com should match good.stuff.example.com
+PASS: stuff.example.com should not match www.other.com
+PASS: stuff.example.com should not match stuff.other.com
+PASS: stuff.example.com should not match bad.stuff.other.com
+PASS: stuff.example.com should not match www.example.com
+PASS: stuff.example.com should match stuff.example.com
+PASS: stuff.example.com should not match good.stuff.example.com
+PASS: .stuff.example.com should not match www.other.com
+PASS: .stuff.example.com should not match stuff.other.com
+PASS: .stuff.example.com should not match bad.stuff.other.com
+PASS: .stuff.example.com should not match www.example.com
+PASS: .stuff.example.com should match stuff.example.com
+PASS: .stuff.example.com should match good.stuff.example.com
+PASS: good.stuff.example.com should not match www.other.com
+PASS: good.stuff.example.com should not match stuff.other.com
+PASS: good.stuff.example.com should not match bad.stuff.other.com
+PASS: good.stuff.example.com should not match www.example.com
+PASS: good.stuff.example.com should not match stuff.example.com
+PASS: good.stuff.example.com should match good.stuff.example.com
+PASS: .good.stuff.example.com should not match www.other.com
+PASS: .good.stuff.example.com should not match stuff.other.com
+PASS: .good.stuff.example.com should not match bad.stuff.other.com
+PASS: .good.stuff.example.com should not match www.example.com
+PASS: .good.stuff.example.com should not match stuff.example.com
+PASS: .good.stuff.example.com should match good.stuff.example.com
+

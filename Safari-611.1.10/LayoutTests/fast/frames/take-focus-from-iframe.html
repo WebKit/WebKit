@@ -1,0 +1,33 @@
+<body onload="test()">
+<iframe src="data:text/html,<body><input><script>document.getElementsByTagName('input')[0].focus()</script></body>" height=40 width=200></iframe>
+<p>This field should look and act focused. Try to type into it: <input></p>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function test()
+{
+    document.getElementsByTagName("iframe")[0].focus();
+    frames[0].focus();
+    setTimeout('test2()', 10);
+}
+
+function test2()
+{
+    focus();
+    document.getElementsByTagName("input")[0].focus()
+
+    if (window.eventSender) {
+        eventSender.keyDown('A');
+
+        var input = document.getElementsByTagName("input")[0];
+        if (input.value == "A")
+            input.value = "PASS";
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+
+}
+</script>
+</body>

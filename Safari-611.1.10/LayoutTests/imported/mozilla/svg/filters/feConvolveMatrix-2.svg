@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500">
+
+<filter id="f1" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse">
+  <feConvolveMatrix style="color-interpolation-filters:sRGB"
+   order="3" kernelMatrix="0 1 0   1 -4 1   0 1 0" in="SourceGraphic"/>
+</filter>
+<g filter="url(#f1)">
+  <rect x="49" y="0" width="2" height="10000" fill="#00ff00"/>
+</g>
+
+</svg>

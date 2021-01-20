@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    #image-shape {
+        float: left;
+        -webkit-shape-outside: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200px' height='100px'><rect x='0' y='0' width='200' height='50' fill='blue'/></svg>");
+        -webkit-shape-margin: 0px;
+        -webkit-shape-image-threshold: 0;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200px' height='100px'><rect x='0' y='0' width='200' height='50' fill='blue'/></svg>");
+        background-repeat: no-repeat;
+        width: 500px; 
+        height: 100px; 
+    }
+
+    #content {
+        font: 25px/1 Ahem, sans-serif;
+        color: green;
+    }
+</style>
+</head>
+<body>
+  <p>This test requires the Ahem font. The green content should wrap around the blue rectangle.</p>
+  <div id="content">
+      <div id="image-shape"></div>
+      X<br>X<br>X
+  </div>
+</body>
+</html>

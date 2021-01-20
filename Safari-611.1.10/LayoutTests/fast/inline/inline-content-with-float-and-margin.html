@@ -1,0 +1,22 @@
+<style>
+.inlineRoot {
+	border: 1px solid green;
+	width: 100px;
+	height: 50px;
+	overflow: hidden;
+	font-size: 12px;
+}
+
+span {
+	height: 20px;
+	border: 1px solid blue;
+}
+</style>
+
+<div class=inlineRoot>foobar foobar <span style="float: left; margin: 10px;">2</span>foobar foobar</div>
+<div class=inlineRoot>foobar foobar <span style="float: left; margin-left: 10px;">2</span>foobar foobar</div>
+<div class=inlineRoot>foobar foobar <span style="float: left; margin-right: 10px;">2</span>foobar foobar</div>
+
+<div class=inlineRoot>foobar foobar <span style="float: right; margin: 10px;">2</span>foobar foobar </div>
+<div class=inlineRoot>foobar foobar <span style="float: right; margin-left: 10px;">2</span>foobar foobar</div>
+<div class=inlineRoot>foobar foobar <span style="float: right; margin-right: 10px;">2</span>foobar foobar</div>

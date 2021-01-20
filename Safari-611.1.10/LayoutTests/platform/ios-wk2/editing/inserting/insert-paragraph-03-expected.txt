@@ -1,0 +1,31 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 775x39
+          text run at (0,0) width 425: "This tests inserting a paragraph separator before a horizontal rule. "
+          text run at (424,0) width 351: "You should see 'foo', empty paragraph, horizontal rule,"
+          text run at (0,20) width 379: "'bar', and the caret should be just before the horizontal rule."
+      RenderBlock {DIV} at (0,56) size 784x78
+        RenderBlock (anonymous) at (0,0) size 784x20
+          RenderText {#text} at (0,0) size 22x19
+            text run at (0,0) width 22: "foo"
+        RenderBlock {HR} at (0,28) size 784x2 [border: (1px inset #000000)]
+        RenderBlock (anonymous) at (0,38) size 784x20
+          RenderText {#text} at (0,0) size 8x19
+            text run at (0,0) width 8: "b"
+        RenderBlock {DIV} at (0,58) size 784x20
+          RenderText {#text} at (0,0) size 13x19
+            text run at (0,0) width 13: "ar"
+caret: position 0 of child 0 {#text} of child 3 {DIV} of child 2 {DIV} of body

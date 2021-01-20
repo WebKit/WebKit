@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x312
+  RenderBlock {HTML} at (0,0) size 800x312
+    RenderBody {BODY} at (8,16) size 784x288
+      RenderBlock {P} at (0,0) size 784x72
+        RenderText {#text} at (0,0) size 90x18
+          text run at (0,0) width 90: "Test passes if:"
+        RenderBR {BR} at (89,0) size 1x18
+        RenderText {#text} at (0,18) size 543x18
+          text run at (0,18) width 543: "1. the rectangle 1, 2, 3 show up in a row in a red rectangle and no gap between them."
+        RenderBR {BR} at (542,18) size 1x18
+        RenderText {#text} at (0,36) size 348x18
+          text run at (0,36) width 348: "2. the rectangle 1, 2, 3 appear in right of red rectangle."
+        RenderBR {BR} at (347,36) size 1x18
+        RenderText {#text} at (0,54) size 473x18
+          text run at (0,54) width 16: "3. "
+          text run at (16,54) width 457: "3. the height of the 1, 2, 3 is the same as the height of the red rectangle."
+      RenderFlexibleBox {DIV} at (0,88) size 200x200 [bgcolor=#FF0000]
+        RenderBlock {DIV} at (110,0) size 30x200 [bgcolor=#7FFF00]
+          RenderText {#text} at (10,0) size 10x23
+            text run at (10,0) width 10: "1"
+        RenderBlock {DIV} at (140,0) size 30x200 [bgcolor=#00FFFF]
+          RenderText {#text} at (10,0) size 10x23
+            text run at (10,0) width 10: "2"
+        RenderBlock {DIV} at (170,0) size 30x200 [bgcolor=#4169E1]
+          RenderText {#text} at (10,0) size 10x23
+            text run at (10,0) width 10: "3"

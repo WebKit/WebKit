@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="resource-use.css">
+<!-- start with a large number of backdrop filters, so we exceed the limit -->
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<!-- then remove some from the start, getting us back under the limit -->
+<script>
+const doNotAutomaticallyCallLayerTree = true;
+
+window.addEventListener("load", () => {
+    for (let i = 0; i < 10; i++) {
+        const firstDiv = document.querySelector("div");
+        firstDiv.remove();
+    }
+    setTimeout(() => {
+        addLayerTreeAndFinish();
+    }, 0);
+}, false);
+</script>
+<script src="layer-tree-as-text.js"></script>

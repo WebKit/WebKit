@@ -1,0 +1,17 @@
+Tests support for Geolocation's floorLevel
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS coords.latitude is mockLatitude
+PASS coords.longitude is mockLongitude
+PASS coords.accuracy is mockAccuracy
+PASS coords.altitude is mockAltitude
+PASS coords.altitudeAccuracy is mockAltitudeAccuracy
+PASS coords.heading is mockHeading
+PASS coords.speed is mockSpeed
+PASS coords.floorLevel is mockFloorLevel
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

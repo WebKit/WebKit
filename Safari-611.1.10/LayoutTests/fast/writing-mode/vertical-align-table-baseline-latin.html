@@ -1,0 +1,14 @@
+<!DOCTYPE HTML>
+<style>
+td {
+  font-size: 50px;
+  vertical-align: baseline;
+  padding: 0px;
+  transform-origin: 0px 0px;
+}
+.large { font-size: 100px; }
+</style>
+<p>This test passes if text in both columns are aligned using their alhabetic baseline, like it happens in horizontal mode.</p>
+<table style="writing-mode: vertical-lr; border-spacing: 0px;">
+  <td>foo</td><td class="large">foo</td>
+</table>

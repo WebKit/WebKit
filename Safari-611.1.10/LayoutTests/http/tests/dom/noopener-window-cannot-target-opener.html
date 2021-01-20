@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Make sure that windows opened with 'noopener' via window.open cannot target their opener.");
+jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.setCanOpenWindows();    
+ 
+onload = function() {
+    window.name = "opener";
+    w = open("resources/noopener-window-cannot-target-opener-win.html", "", "noopener");
+    shouldBeNull("w");
+}    
+</script>
+</body>
+</html>

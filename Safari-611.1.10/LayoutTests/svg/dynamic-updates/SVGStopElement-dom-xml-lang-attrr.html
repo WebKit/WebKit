@@ -1,0 +1,21 @@
+<body>
+    <p>Passes if no crash happens.</p>
+    <svg>
+        <linearGradient id="gradient">
+            <stop id="stop1" offset="0%" stop-color="green" />
+            <stop id="stop2" offset="50%" stop-color="green" />
+        </linearGradient>
+        <rect fill="url(#gradient)" x="10" y="10" width="200" height="100"/>
+    </svg>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        setTimeout(function(){ 
+            stop1.setAttributeNS("http://www.w3.org/XML/1998/namespace", "xml:lang", "jw");
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    </script>
+</body>

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+function startPlaying()
+{
+    let context = new AudioContext();
+    let oscillator = new OscillatorNode(context);
+    oscillator.connect(context.destination);
+    oscillator.start();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<script src="../resources/plugin.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    runAfterPluginLoad(null, NotifyDone);
+</script>
+<p>
+This test checks that <a href="https://bugs.webkit.org/show_bug.cgi?id=50657">bug 50568</a>
+is fixed. It runs logSrc test as found in the test plugin which prints the src attribute
+to stdout. If the bug is present, the logSrc attrbitute that triggers the test will be lost
+and nothing will be displayed on screen. Upon success, this test should display the src
+attribute.
+</p>
+<!-- Embed tag with missing type="" parameter -->
+<embed id="plugin" name="plugin" src="resources/test.testnetscape" logSrc="1">

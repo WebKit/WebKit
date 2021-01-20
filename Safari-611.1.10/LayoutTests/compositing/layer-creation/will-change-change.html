@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .box {
+            width: 100px;
+            height: 100px;
+            margin: 20px;
+            background-color: blue;
+            position: relative;
+            z-index: 0; /* Avoid changes in stacking triggering compositing */
+        }
+        
+        .removal {
+            will-change: transform;
+        }
+
+        body.changed .addition {
+            will-change: transform;
+        }
+
+        body.changed .removal {
+            will-change: auto;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function doTest()
+        {
+            window.setTimeout(function() {
+                document.body.classList.add('changed');
+                if (window.testRunner) {
+                    document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+                    testRunner.notifyDone();
+                }
+            }, 0)
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+<div class="addition box"></div>
+<div class="removal box"></div>
+<pre id="layers"></pre>
+</body>
+</html>

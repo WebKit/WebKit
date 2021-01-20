@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-erase-after-last-append</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+        var source;
+        var sourceBuffer;
+        var initSegment;
+
+        if (window.internals)
+            internals.initializeMockMediaSource();
+
+        function syncSampleRun(start, end) {
+            const samples = [];
+            for (let time = start; time < end; time++)
+                samples.push(makeASample(time, time, 1, 1, 1, time === start ? SAMPLE_FLAG.SYNC : SAMPLE_FLAG.NONE));
+            return concatenateSamples(samples);
+        }
+
+        window.addEventListener('load', async () => {
+            findMediaElement();
+            source = new MediaSource();
+            testExpected('source.readyState', 'closed');
+            const sourceOpened = waitFor(source, 'sourceopen');
+
+            const videoSource = document.createElement('source');
+            videoSource.type = 'video/mock; codecs=mock';
+            videoSource.src = URL.createObjectURL(source);
+            video.appendChild(videoSource);
+
+            await sourceOpened;
+            run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+
+            initSegment = makeAInit(30, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+
+            run('sourceBuffer.appendBuffer(initSegment)');
+            await waitFor(sourceBuffer, 'updateend');
+
+            run('sourceBuffer.appendBuffer(syncSampleRun(0, 10))');
+            await waitFor(sourceBuffer, 'updateend');
+
+            run('sourceBuffer.remove(5, Infinity)');
+            await waitFor(sourceBuffer, 'updateend');
+
+            run('source.endOfStream()');
+
+            // Samples with PTS >= 5 should have been deleted and not reach playback.
+            internals.enqueuedSamplesForTrackID(sourceBuffer, 1).forEach(consoleWrite);
+            endTest();
+        });
+    </script>
+</head>
+<body>
+<video controls></video>
+</body>
+</html>

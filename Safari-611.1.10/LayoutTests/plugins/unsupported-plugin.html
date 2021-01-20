@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src= "../resources/testharness.js"></script>
+<script src= "../resources/testharnessreport.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.setPluginSupportedMode("none");
+</script>
+<p>A console log message should appear stating the plugin is unsupported.</p>
+<embed id="plugin" type="application/x-webkit-test-netscape"></embed>
+
+<script>
+var test = async_test("Testing unsupported plug-in");
+test.step(() => {
+    if (!window.internals) {
+       test.done();
+       return;
+    }
+    var counter = 0;
+    setInterval(test.step_func(() => {
+        assert_true(++counter < 20, "Test timed out");
+        let text = internals.unavailablePluginReplacementText(plugin);
+        if (!text)
+            return;
+        assert_equals(text, "Unsupported Plug-in");
+        test.done();
+    }), 50);
+});
+</script>
+</body>
+</html>

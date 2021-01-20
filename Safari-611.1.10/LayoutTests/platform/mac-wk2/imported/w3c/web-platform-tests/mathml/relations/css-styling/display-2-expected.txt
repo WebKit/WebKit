@@ -1,0 +1,19 @@
+
+FAIL block display assert_approx_equals: block size expected 47 +/- 1 but got 18
+FAIL block display with contrained width assert_approx_equals: block size expected 76 +/- 1 but got 18
+FAIL list display inside display block assert_approx_equals: block size expected 105 +/- 1 but got 28.78125
+FAIL inline display assert_approx_equals: block size expected 29 +/- 1 but got 18
+FAIL inline-block display assert_approx_equals: block size expected 29 +/- 1 but got 18
+FAIL table display (math) assert_approx_equals: block size expected 76 +/- 1 but got 21
+FAIL table display (mrow) assert_approx_equals: block size expected 76 +/- 1 but got 21
+FAIL inline-table display (math) assert_approx_equals: block size expected 58 +/- 1 but got 18
+FAIL inline-table display (mrow) assert_approx_equals: block size expected 76 +/- 1 but got 21
+FAIL flexbox display (math) assert_approx_equals: block size expected 93 +/- 1 but got 18
+FAIL flexbox display (mrow) assert_approx_equals: block size expected 93 +/- 1 but got 18
+FAIL grid display (math) assert_approx_equals: block size expected 97 +/- 1 but got 18
+FAIL grid display (mrow) assert_approx_equals: block size expected 97 +/- 1 but got 18
+FAIL ruby display (math) assert_approx_equals: block size expected 76 +/- 1 but got 18
+FAIL ruby display (mrow) assert_approx_equals: block size expected 76 +/- 1 but got 18
+FAIL block display with column width (math) assert_approx_equals: block size expected 76 +/- 1 but got 18
+FAIL block display with column width (mrow) assert_approx_equals: block size expected 76 +/- 1 but got 18
+

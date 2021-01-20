@@ -1,0 +1,16 @@
+Checks that touches work on elements that are taller than the view.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+touchstart fired.
+PASS event.touches.length is 1
+PASS event.touches[0].clientX is 113
+PASS event.touches[0].clientY is 138
+touchend fired.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Test
+
+

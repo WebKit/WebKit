@@ -1,0 +1,10 @@
+This test calls deleteDatabase on window.indexedDB with a null database name, making sure there is an exception.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+TypeError: Not enough arguments
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

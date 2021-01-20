@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<script>
+    function startTest() {
+      if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.setBackingScaleFactor(2, finishTest);
+      }
+    }
+
+    function finishTest() {
+      const canvas = document.getElementById('paint');
+      canvas.width = 150 * window.devicePixelRatio;
+      canvas.height = 150 * window.devicePixelRatio;
+
+      const ctx = canvas.getContext('2d');
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+      for (var i = 0; i < 6; i++){
+        for (var j = 0; j < 6; j++){
+          ctx.fillStyle = 'rgb(' + Math.floor(255 - 42.5 * i) + ',' +
+                           Math.floor(255 - 42.5 * j) + ',0)';
+          ctx.fillRect(j * 25, i * 25, 25, 25);
+        }
+      }
+      setTimeout(function() { testRunner.notifyDone(); }, 0);
+    }
+</script>
+<body onload="startTest();">
+<canvas id="paint" style="width: 150px; height: 150px;" width=150 height=150 ></canvas>
+
+</body>

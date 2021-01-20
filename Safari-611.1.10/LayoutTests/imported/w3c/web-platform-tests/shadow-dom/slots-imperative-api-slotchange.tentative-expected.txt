@@ -1,0 +1,19 @@
+
+FAIL slotchange event must not fire synchronously. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1])', 'tTree.s1.assign' is undefined)
+FAIL slotchange event should not fire when assignments do not change assignedNodes. assert_throws_dom: function "() => { tTree.s1.assign([tTree.c4]); }" threw object "TypeError: tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c4])', 'tTree.s1.assign' is undefined)" that is not a DOMException NotAllowedError: property "code" is equal to undefined, expected 0
+FAIL slotchange event should not fire when same node is assigned. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1, tTree.c2])', 'tTree.s1.assign' is undefined)
+FAIL Fire slotchange event when slot's assigned nodes changes. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1])', 'tTree.s1.assign' is undefined)
+FAIL Fire slotchange event on previous slot and new slot when node is reassigned. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1])', 'tTree.s1.assign' is undefined)
+FAIL Fire slotchange event on node assignment and when assigned node is removed. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1])', 'tTree.s1.assign' is undefined)
+FAIL Fire slotchange event when order of assigned nodes changes. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1, tTree.c2])', 'tTree.s1.assign' is undefined)
+FAIL Fire slotchange event when slot's fallback content changes. assert_array_equals: lengths differ, expected array [Element node <div id="fb">fallback</div>] length 1, got [Text node "
+    ", Text node "
+    ", Element node <div id="c1"></div>, Text node "
+    ", Element node <div id="c2"></div>, Text node "
+  "] length 6
+FAIL Fire slotchange event when assigned node is removed. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1])', 'tTree.s1.assign' is undefined)
+FAIL Fire slotchange event when removing a slot from Shadows Root that changes its assigned nodes. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1])', 'tTree.s1.assign' is undefined)
+FAIL No slotchange event when adding or removing an empty slot. assert_equals: expected 0 but got 1
+FAIL No slotchange event when adding another slotable. assert_equals: expected 0 but got 1
+FAIL Fire slotchange event when assign node to nested slot, ensure event bubbles ups. tTree.s3.assign is not a function. (In 'tTree.s3.assign([tTree.s1])', 'tTree.s3.assign' is undefined)
+

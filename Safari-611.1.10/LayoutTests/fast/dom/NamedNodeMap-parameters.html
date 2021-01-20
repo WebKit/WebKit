@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests related to parameters of the NamedNodeMap API");
+
+var namedNodeMap = document.body.attributes;
+shouldBe("namedNodeMap.__proto__", "NamedNodeMap.prototype");
+
+debug("");
+debug("* Not enough parameters");
+shouldThrow("namedNodeMap.getNamedItem()", "'TypeError: Not enough arguments'");
+shouldThrow("namedNodeMap.setNamedItem()", "'TypeError: Not enough arguments'");
+shouldThrow("namedNodeMap.removeNamedItem()", "'TypeError: Not enough arguments'");
+shouldThrow("namedNodeMap.item()", "'TypeError: Not enough arguments'");
+shouldThrow("namedNodeMap.getNamedItemNS()", "'TypeError: Not enough arguments'");
+shouldThrow("namedNodeMap.getNamedItemNS(null)", "'TypeError: Not enough arguments'");
+shouldThrow("namedNodeMap.setNamedItemNS()", "'TypeError: Not enough arguments'");
+shouldThrow("namedNodeMap.removeNamedItemNS()", "'TypeError: Not enough arguments'");
+shouldThrow("namedNodeMap.removeNamedItemNS(null)", "'TypeError: Not enough arguments'");
+
+debug("");
+debug("* Wrong parameter type");
+var notAnAttr = document.body;
+shouldThrow("namedNodeMap.setNamedItem(notAnAttr)", "'TypeError: Argument 1 (\\'attr\\') to NamedNodeMap.setNamedItem must be an instance of Attr'");
+shouldThrow("namedNodeMap.setNamedItemNS(notAnAttr)", "'TypeError: Argument 1 (\\'attr\\') to NamedNodeMap.setNamedItemNS must be an instance of Attr'");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

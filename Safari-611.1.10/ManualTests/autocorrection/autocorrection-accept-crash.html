@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<ol>
+<li>Type "word loadp" in the first box.</li>
+<li>When the suggestion popup appears, click in the second box.</li>
+</ol>
+<p>
+This test triggers a codepath when we are trying to determine a range around
+the new correction word. We were remembering the location for the new word
+by creating a Range from the beginning of the document to the beginning of
+the new word. However, since the word is inside a shadow root, this Range
+would collapse and be meaningless. Further processing using the range would
+trigger ASSERTs and crash.
+</p>
+<p>
+The test is successful if there is no crash.
+</p>
+<input id="t" type="text" spellCheck="true">
+<textarea id="a"></textarea>
+</body>
+</html>

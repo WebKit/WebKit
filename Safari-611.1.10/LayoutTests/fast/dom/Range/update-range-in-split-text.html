@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<div id="container" style="display: none;"></div>
+<script>
+
+function createTextWithParent()
+{
+    var container = document.getElementById('container');
+
+    var element = document.createElement('div');
+    element.textContent = 'hello';
+    container.appendChild(element);
+
+    return element.firstChild;
+}
+
+function createTextWithParentAndSiblings()
+{
+    var container = document.getElementById('container');
+
+    var element = document.createElement('div');
+    element.textContent = 'hello';
+    container.appendChild(element);
+
+    var sibling = document.createElement('b');
+    element.insertBefore(sibling, element.firstChild);
+
+    var sibling = document.createElement('i');
+    element.appendChild(sibling);
+
+    return element.childNodes[1];
+}
+
+function createRange(startContainer, startOffset, endContainer, endOffset) {
+    var range = document.createRange();
+    range.setStart(startContainer, startOffset);
+    range.setEnd(endContainer, endOffset);
+    return range;
+}
+
+debug('');
+evalAndLog('text = createTextWithParent(); range = createRange(text.parentNode, 0, text.parentNode, 0); text.splitText(0)');
+shouldBe('range.startContainer', 'text.parentNode');
+shouldBe('range.startOffset', '0');
+shouldBe('range.endContainer', 'text.parentNode');
+shouldBe('range.endOffset', '0');
+
+debug('');
+evalAndLog('text = createTextWithParent(); range = createRange(text.parentNode, 1, text.parentNode, 1); text.splitText(0)');
+shouldBe('range.startContainer', 'text.parentNode');
+shouldBe('range.startOffset', '2');
+shouldBe('range.endContainer', 'text.parentNode');
+shouldBe('range.endOffset', '2');
+
+debug('');
+evalAndLog('text = createTextWithParent(); range = createRange(text.parentNode, 0, text.parentNode, 1); text.splitText(0)');
+shouldBe('range.startContainer', 'text.parentNode');
+shouldBe('range.startOffset', '0');
+shouldBe('range.endContainer', 'text.parentNode');
+shouldBe('range.endOffset', '2');
+
+debug('');
+evalAndLog('text = createTextWithParentAndSiblings(); range = createRange(text.parentNode, 1, text.parentNode, 1); text.splitText(0)');
+shouldBe('range.startContainer', 'text.parentNode');
+shouldBe('range.startOffset', '1');
+shouldBe('range.endContainer', 'text.parentNode');
+shouldBe('range.endOffset', '1');
+
+debug('');
+evalAndLog('text = createTextWithParentAndSiblings(); range = createRange(text.parentNode, 2, text.parentNode, 2); text.splitText(0)');
+shouldBe('range.startContainer', 'text.parentNode');
+shouldBe('range.startOffset', '3');
+shouldBe('range.endContainer', 'text.parentNode');
+shouldBe('range.endOffset', '3');
+
+debug('');
+evalAndLog('text = createTextWithParentAndSiblings(); range = createRange(text.parentNode, 1, text.parentNode, 2); text.splitText(0)');
+shouldBe('range.startContainer', 'text.parentNode');
+shouldBe('range.startOffset', '1');
+shouldBe('range.endContainer', 'text.parentNode');
+shouldBe('range.endOffset', '3');
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

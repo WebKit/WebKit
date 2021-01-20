@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Check that manipulating input type while focusing is handled. Passes if we do not crash.");
+
+window.jsTestIsAsync = true;
+
+function finishTest() {
+    testPassed('Input manipulation succeeded.');
+    finishJSTest();
+}
+
+function changeType() {
+    input.type = "foo";
+}
+
+function setSelection() {
+    input.selectionStart = 25;
+    finishJSTest();
+}
+</script>
+</head>
+<body>
+    <input id="input" onfocus="changeType()" autofocus="autofocus" type="tel">
+    <iframe onload="setSelection()"></iframe>
+</body>
+</html>

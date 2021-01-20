@@ -1,0 +1,75 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "0:curve=2,duration=300"
+PASS Executing "1:curve=3,duration=300"
+PASS Executing "2:curve=16,duration=300"
+PASS Executing "3:curve=100,duration=300"
+PASS Executing "4:curve=2,duration=0.25"
+PASS Executing "5:curve=2,duration=2"
+PASS Executing "6:curve=8,duration=2"
+PASS Executing "7:curve=1000,duration=12800"
+PASS Executing "crbug-441471"
+PASS Audit report
+PASS > [0:curve=2,duration=300]
+PASS   Length 2, duration 0.011719: Check: Curve end time is less than or equal to 1.
+PASS   Length 2, duration 0.011719: Check: Full gain start time is less than or equal to 1.
+PASS   Length 2, duration 0.011719: Check: Full gain start time is greater than or equal to 0.021719.
+PASS   Curve length 2, duration 0.011719: SNR is greater than or equal to 171.206.
+PASS   Curve length 2, duration 0.011719: Max difference is less than or equal to 5.9605e-8.
+PASS < [0:curve=2,duration=300] All assertions passed. (total 5 assertions)
+PASS > [1:curve=3,duration=300]
+PASS   Length 3, duration 0.011719: Check: Curve end time is less than or equal to 1.
+PASS   Length 3, duration 0.011719: Check: Full gain start time is less than or equal to 1.
+PASS   Length 3, duration 0.011719: Check: Full gain start time is greater than or equal to 0.021719.
+PASS   Curve length 3, duration 0.011719: SNR is greater than or equal to 171.206.
+PASS   Curve length 3, duration 0.011719: Max difference is less than or equal to 5.9605e-8.
+PASS < [1:curve=3,duration=300] All assertions passed. (total 5 assertions)
+PASS > [2:curve=16,duration=300]
+PASS   Length 16, duration 0.011719: Check: Curve end time is less than or equal to 1.
+PASS   Length 16, duration 0.011719: Check: Full gain start time is less than or equal to 1.
+PASS   Length 16, duration 0.011719: Check: Full gain start time is greater than or equal to 0.021719.
+PASS   Curve length 16, duration 0.011719: SNR is greater than or equal to 170.892.
+PASS   Curve length 16, duration 0.011719: Max difference is less than or equal to 5.9605e-8.
+PASS < [2:curve=16,duration=300] All assertions passed. (total 5 assertions)
+PASS > [3:curve=100,duration=300]
+PASS   Length 100, duration 0.011719: Check: Curve end time is less than or equal to 1.
+PASS   Length 100, duration 0.011719: Check: Full gain start time is less than or equal to 1.
+PASS   Length 100, duration 0.011719: Check: Full gain start time is greater than or equal to 0.021719.
+PASS   Curve length 100, duration 0.011719: SNR is greater than or equal to 168.712.
+PASS   Curve length 100, duration 0.011719: Max difference is less than or equal to 1.1921e-7.
+PASS < [3:curve=100,duration=300] All assertions passed. (total 5 assertions)
+PASS > [4:curve=2,duration=0.25]
+PASS   Length 2, duration 0.000010: Check: Curve end time is less than or equal to 1.
+PASS   Length 2, duration 0.000010: Check: Full gain start time is less than or equal to 1.
+PASS   Length 2, duration 0.000010: Check: Full gain start time is greater than or equal to 0.010010.
+PASS   Curve length 2, duration 0.000010: SNR is greater than or equal to 10000.
+PASS   Curve length 2, duration 0.000010: Max difference is less than or equal to 0.
+PASS < [4:curve=2,duration=0.25] All assertions passed. (total 5 assertions)
+PASS > [5:curve=2,duration=2]
+PASS   Length 2, duration 0.000078: Check: Curve end time is less than or equal to 1.
+PASS   Length 2, duration 0.000078: Check: Full gain start time is less than or equal to 1.
+PASS   Length 2, duration 0.000078: Check: Full gain start time is greater than or equal to 0.010078.
+PASS   Curve length 2, duration 0.000078: SNR is greater than or equal to 10000.
+PASS   Curve length 2, duration 0.000078: Max difference is less than or equal to 0.
+PASS < [5:curve=2,duration=2] All assertions passed. (total 5 assertions)
+PASS > [6:curve=8,duration=2]
+PASS   Length 8, duration 0.000078: Check: Curve end time is less than or equal to 1.
+PASS   Length 8, duration 0.000078: Check: Full gain start time is less than or equal to 1.
+PASS   Length 8, duration 0.000078: Check: Full gain start time is greater than or equal to 0.010078.
+PASS   Curve length 8, duration 0.000078: SNR is greater than or equal to 10000.
+PASS   Curve length 8, duration 0.000078: Max difference is less than or equal to 0.
+PASS < [6:curve=8,duration=2] All assertions passed. (total 5 assertions)
+PASS > [7:curve=1000,duration=12800]
+PASS   Length 1000, duration 0.5: Check: Curve end time is less than or equal to 1.
+PASS   Length 1000, duration 0.5: Check: Full gain start time is less than or equal to 1.
+PASS   Length 1000, duration 0.5: Check: Full gain start time is greater than or equal to 0.51.
+PASS   Curve length 1000, duration 0.5: SNR is greater than or equal to 152.784.
+PASS   Curve length 1000, duration 0.5: Max difference is less than or equal to 5.9605e-8.
+PASS < [7:curve=1000,duration=12800] All assertions passed. (total 5 assertions)
+PASS > [crbug-441471]
+PASS   Curve value at time 0.7 is equal to -1.
+PASS   Curve value at time 0.800000 is 0 within an error of 4.440892e-16.
+PASS   Curve value at time 0.900000 is equal to 1.
+PASS < [crbug-441471] All assertions passed. (total 3 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 9 tasks ran successfully.
+

@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x116
+  RenderBlock {HTML} at (0,0) size 800x116
+    RenderBody {BODY} at (8,16) size 784x92
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 512x18
+          text run at (0,0) width 512: "Test passes if there are two pairs of black and blue 'Filler Text' instances on page."
+      RenderBlock {DIV} at (0,34) size 784x29
+        RenderText {#text} at (678,0) size 106x29
+          text run at (678,0) width 106: "Filler Text"
+      RenderBlock {DIV} at (0,63) size 784x29
+        RenderText {#text} at (678,0) size 106x29
+          text run at (678,0) width 106: "Filler Text"

@@ -1,0 +1,5 @@
+This test whether a script can read the rules from a cross-origin style sheet using getMatchedCSSRules.
+
+Test begins.
+cssRules: null
+Test ends.

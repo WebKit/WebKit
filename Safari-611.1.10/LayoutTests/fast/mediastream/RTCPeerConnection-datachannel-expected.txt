@@ -1,0 +1,17 @@
+Tests RTCDataChannel.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL dc = pc.createDataChannel("label", {maxRetransmitTime:0, maxRetransmits:0}); should throw an exception. Was [object RTCDataChannel].
+PASS dc = pc.createDataChannel("label1"); did not throw exception.
+PASS dc = pc.createDataChannel("label2", {}); did not throw exception.
+PASS dc = pc.createDataChannel("label3", {ordered:true}); did not throw exception.
+PASS dc = pc.createDataChannel("label3", {ordered:false}); did not throw exception.
+PASS dc = pc.createDataChannel("label3", {maxRetransmits:0}); did not throw exception.
+PASS dc = pc.createDataChannel("label3", {maxRetransmitTime:0}); did not throw exception.
+FAIL Test timed out
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

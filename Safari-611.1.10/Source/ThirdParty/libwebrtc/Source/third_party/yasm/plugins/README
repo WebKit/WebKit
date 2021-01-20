@@ -1,0 +1,22 @@
+These directories contain example yasm plugins.
+Yasm is only capable of loading plugins when it was built using cmake.
+To build yasm with cmake on Unix, from the yasm source tree, do:
+  mkdir objdir
+  cd objdir
+  cmake ..
+  make
+
+The plugins are written to be compiled against an *installed* yasm.
+Plugins may be loaded on the yasm command line using the -N command line
+option, e.g.:
+  yasm -N ./libdbgmod.so
+  yasm -N Release/dbgmod.dll
+  yasm -N /usr/local/lib/libx86mod
+(the .so will be automatically appended)
+If no directory path is specified, yasm will search in standard library
+locations (e.g. LD_LIBRARY_PATH, the rpath of the yasm executable, etc) to
+try to load the plugin.  Thus the last example (after installing the plugin)
+could likely be written:
+  yasm -N x86mod
+
+Plugins may override builtin modules like x86.

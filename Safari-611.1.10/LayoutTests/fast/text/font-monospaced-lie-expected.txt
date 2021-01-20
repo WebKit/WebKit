@@ -1,0 +1,5 @@
+PASS 180 is >= document.getElementById('target').offsetWidth
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello World

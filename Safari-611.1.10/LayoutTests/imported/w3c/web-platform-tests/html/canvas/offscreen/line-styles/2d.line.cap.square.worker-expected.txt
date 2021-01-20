@@ -1,0 +1,3 @@
+
+PASS lineCap 'square' is rendered correctly
+

@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/getUserMedia-helper.js"></script>
+        <script>
+
+
+            var stream1;
+            var audioTrack;
+
+            function tryAddTrack(stream, track)
+            {
+                try {
+                    stream.addTrack(track);
+                } catch (exception) {
+                    testFailed("addTrack threw an exception.");
+                    finishJSTest();
+                }
+            }
+
+            function createStreamAndAddTracks()
+            {
+                stream2 = new MediaStream();
+                debug("MediaStream without tracks created.");
+                shouldBe('stream2.getAudioTracks().length', '0');
+                audioTrack = stream1.getAudioTracks()[0];
+                debug("Adding tracks to inactive stream");
+                tryAddTrack(stream2, audioTrack);
+                shouldBe('stream2.getAudioTracks().length', '1');
+                finishJSTest();
+            }
+
+            function gotStream1(s)
+            {
+                stream1 = s;
+                createStreamAndAddTracks();
+            }
+
+            function startMedia()
+            {
+                description("Test adding tracks to inactive MediaStream.");
+                getUserMedia("allow", {audio:true, video:true}, gotStream1);
+            }
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </head>
+    <body onload="startMedia()">
+        <p id="description"></p>
+        <div id="console"></div>
+    </body>
+</html>

@@ -1,0 +1,11 @@
+This test verifies that programmatically focusing a newly displayed input field changes the active element. To test manually, tap or click the input field below.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.activeElement is passwordInput
+PASS didFinishActivatingElement became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

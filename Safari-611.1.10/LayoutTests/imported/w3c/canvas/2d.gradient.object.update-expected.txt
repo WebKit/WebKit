@@ -1,0 +1,6 @@
+2d.gradient.object.update
+Spec references: 2d.gradient.update
+Actual output:
+Expected output:
+
+Passed

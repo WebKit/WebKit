@@ -1,0 +1,4 @@
+
+Test for bug 7708: REGRESSION: Flash callback to JavaScript function not working.
+
+SUCCESS

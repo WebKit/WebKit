@@ -1,0 +1,15 @@
+This page tests iteration of properties on a string object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS stringProperties.length is 5
+PASS stringProperties[0] is "0"
+PASS stringProperties[1] is "1"
+PASS stringProperties[2] is "2"
+PASS stringProperties[3] is "3"
+PASS stringProperties[4] is "4"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

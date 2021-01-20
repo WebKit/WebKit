@@ -1,0 +1,4 @@
+include_rules = [
+  # Histogram C++ API, used by perf tests.
+  "+third_party/catapult/tracing/tracing/value"
+]

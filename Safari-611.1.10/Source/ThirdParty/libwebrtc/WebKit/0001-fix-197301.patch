@@ -1,0 +1,25 @@
+From cc826ae8baabae99a147d57ee2216e4cc4c2eaf6 Mon Sep 17 00:00:00 2001
+From: Youenn Fablet <youenn@apple.com>
+Date: Thu, 25 Apr 2019 16:39:31 -0700
+Subject: [PATCH] fix-197301
+
+---
+ .../libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc    | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc
+index 7448a7e0427..91cb7da8366 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc
+@@ -1424,6 +1424,8 @@ bool PhysicalSocketServer::WaitSelect(int cmsWait, bool process_io) {
+         // "select"ing a file descriptor that is equal to or larger than
+         // FD_SETSIZE will result in undefined behavior.
+         RTC_DCHECK_LT(fd, FD_SETSIZE);
++        if (fd < 0 || fd >= FD_SETSIZE)
++            continue;
+         if (fd > fdmax)
+           fdmax = fd;
+ 
+-- 
+2.20.1 (Apple Git-116)
+

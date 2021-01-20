@@ -1,0 +1,84 @@
+<html>
+<head>
+  <script>
+    function setupTest() {
+        var horizontalOverflow = testResults[currentTest][1];
+        if (horizontalOverflow) {
+            document.getElementById('child').style.width = '200px';
+        } else {
+            document.getElementById('child').style.width = '50px';
+        }
+
+        var verticalOverflow = testResults[currentTest][2];
+        if (verticalOverflow) {
+            document.getElementById('child').style.height = '200px';
+        } else {
+            document.getElementById('child').style.height = '50px';
+        }
+    }
+
+    function finished(result)
+    {
+        document.getElementById('result').innerHTML = result;
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+
+    function nextTest() {
+        if (currentTest == testResults.length) {
+            finished("SUCCESS");
+            return;
+        }
+
+        forceLayout();
+        setupTest();
+        forceLayout();
+    }
+
+    function overflowChanged(event) {
+        var result = [event.orient, event.horizontalOverflow, event.verticalOverflow];
+
+        if ('' + result == testResults[currentTest]) {
+            currentTest++;
+            nextTest();
+        } else
+            finished("FAILURE: expected " + testResults[currentTest] + " got " + result);
+    }
+
+    function forceLayout() {
+        document.body.offsetTop;
+    }
+
+    function runTest() {
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        testResults = [[OverflowEvent.HORIZONTAL, true, false],
+                       [OverflowEvent.HORIZONTAL, false, false],
+                       [OverflowEvent.VERTICAL, false, true],
+                       [OverflowEvent.VERTICAL, false, false],
+                       [OverflowEvent.BOTH, true, true],
+                       [OverflowEvent.BOTH, false, false],
+                       [OverflowEvent.VERTICAL, false, true],
+                       [OverflowEvent.BOTH, true, false],
+                       [OverflowEvent.BOTH, false, true]];
+
+        currentTest = 0;
+
+        var c = document.getElementById('container');
+        c.addEventListener('overflowchanged', overflowChanged, false);
+        nextTest();
+    }
+  </script>
+</head>
+<body onload="runTest()">
+    <div id="container" style="width:100; height:100px; border: solid red 2px; overflow: hidden">
+        <div id="child" style="margin-top: 30px; margin-left: 30px; width:50px; height:50px; border: solid blue 2px;"></div>
+    </div>
+    This tests that overflowchanged events are fired correctly. If the test is successful, the text "SUCCESS" should be shown below.
+    <div id="result">FAILURE</div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests when the gap between the graphics layer and its associated renderer changes dynamically.</title>
+<style>
+div {
+  width: 20px;
+  height: 20px;
+  background-color: green;
+  position: absolute;
+}
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  var subpixel = 0;
+  var container = document.getElementById("container");
+  for (i = 0; i < 20; ++i) {
+    for (j = 0; j < 20; ++j) {
+      var outer = document.createElement("div");
+      outer.style.top = 25 * i + subpixel + "px";
+      outer.style.left = 25 * j + subpixel + "px";
+      container.appendChild(outer);
+      subpixel += 0.1;
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test that importing P-521 EC keys for the ECDH algorithm through PKCS#8 fails in case of incorrect curve identifier or public key used in the ECPrivateKey structure");
+
+jsTestIsAsync = true;
+
+// Valid P-521 key that has matching named curve identifiers in ECParameters structures under
+// both AlgorithmIdentifier parameters and under ECPrivateKey parameters in the PKCS#8 structure,
+// as well as a valid public key under ECPrivateKey.
+var pkcs8P521ValidKey = hexStringToUint8Array("3081f7020100301006072a8648ce3d020106052b810400230481df3081dc02010104420160ccf72d28b6df9768c30f67e77a000ecdb6e20381d8ee6f5474d6a612c39b7f3d361e1e9901f4cc573dcfc7da3eeadcb3e10532ca12d39df5ed39a5156c3e3ceba00706052b81040023a18189038186000400e9a76aed2acda29ba2a5dbdc1f04c6160bc16c6d16b737a557f9dcbc8efb79dd1b9eabfc0a911ea3fd574176e2cbf32caa9babb505b04f30ecf369e6bec91d1ac201a8aa718c0c293b085d7902a314cab6e8048e458cc28c7da4fff2fcbf3da6d42fee94de5e0a3fb34342780e3f9df7b424911d6efb8628079566b50efe6971271eea");
+
+// Invalid P-521 key that has mismatched named curve identifiers in the mentioned ECParameters structures.
+var pkcs8P521KeyMismatchedCurveIdentifiers = hexStringToUint8Array("3081f7020100301006072a8648ce3d020106052b810400230481df3081dc02010104420160ccf72d28b6df9768c30f67e77a000ecdb6e20381d8ee6f5474d6a612c39b7f3d361e1e9901f4cc573dcfc7da3eeadcb3e10532ca12d39df5ed39a5156c3e3ceba00706052b81040022a18189038186000400e9a76aed2acda29ba2a5dbdc1f04c6160bc16c6d16b737a557f9dcbc8efb79dd1b9eabfc0a911ea3fd574176e2cbf32caa9babb505b04f30ecf369e6bec91d1ac201a8aa718c0c293b085d7902a314cab6e8048e458cc28c7da4fff2fcbf3da6d42fee94de5e0a3fb34342780e3f9df7b424911d6efb8628079566b50efe6971271eea");
+
+// Invalid P-521 key that has a public key of invalid length (its last byte is clipped).
+var pkcs8P521KeyInvalidPublicKeyLength = hexStringToUint8Array("3081f6020100301006072a8648ce3d020106052b810400230481de3081db02010104420160ccf72d28b6df9768c30f67e77a000ecdb6e20381d8ee6f5474d6a612c39b7f3d361e1e9901f4cc573dcfc7da3eeadcb3e10532ca12d39df5ed39a5156c3e3ceba00706052b81040023a18188038185000400e9a76aed2acda29ba2a5dbdc1f04c6160bc16c6d16b737a557f9dcbc8efb79dd1b9eabfc0a911ea3fd574176e2cbf32caa9babb505b04f30ecf369e6bec91d1ac201a8aa718c0c293b085d7902a314cab6e8048e458cc28c7da4fff2fcbf3da6d42fee94de5e0a3fb34342780e3f9df7b424911d6efb8628079566b50efe6971271eea");
+
+// Invalid P-521 key that has a public key of invalid EC point format (leading 0x05 byte instead of 0x04).
+var pkcs8P521KeyInvalidPublicKeyECPointFormat= hexStringToUint8Array("3081f7020100301006072a8648ce3d020106052b810400230481df3081dc02010104420160ccf72d28b6df9768c30f67e77a000ecdb6e20381d8ee6f5474d6a612c39b7f3d361e1e9901f4cc573dcfc7da3eeadcb3e10532ca12d39df5ed39a5156c3e3ceba00706052b81040023a18189038186000500e9a76aed2acda29ba2a5dbdc1f04c6160bc16c6d16b737a557f9dcbc8efb79dd1b9eabfc0a911ea3fd574176e2cbf32caa9babb505b04f30ecf369e6bec91d1ac201a8aa718c0c293b085d7902a314cab6e8048e458cc28c7da4fff2fcbf3da6d42fee94de5e0a3fb34342780e3f9df7b424911d6efb8628079566b50efe6971271eea");
+
+// Invalid P-521 key that has a public key of invalid value (0xabad1dea).
+var pkcs8P521KeyInvalidPublicKey = hexStringToUint8Array("3081f7020100301006072a8648ce3d020106052b810400230481df3081dc02010104420160ccf72d28b6df9768c30f67e77a000ecdb6e20381d8ee6f5474d6a612c39b7f3d361e1e9901f4cc573dcfc7da3eeadcb3e10532ca12d39df5ed39a5156c3e3ceba00706052b81040023a1818903818600040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000abad1dea");
+
+function importKey(keyData)
+{
+    return crypto.subtle.importKey("pkcs8", keyData, { name: "ECDH", namedCurve: "P-521" }, true, [ "deriveKey", "deriveBits" ]);
+}
+
+Promise.resolve().then(function(result) {
+    debug("ECDH: importing P-521 key that uses matching curve identifiers and valid public key in ECParameters structures in PKCS#8 ...");
+    return importKey(pkcs8P521ValidKey);
+}).then(function(result) {
+    testPassed("Successfully imported a P-521 key.");
+
+    debug("ECDH: importing P-521 key whose curve identifiers in ECParameters structures in PKCS#8 don't match ...");
+    return shouldReject('importKey(pkcs8P521KeyMismatchedCurveIdentifiers)');
+}).then(function(result) {
+    debug("ECDH: importing P-521 key that has a public key in PKCS#8 of invalid length ...");
+    return shouldReject('importKey(pkcs8P521KeyInvalidPublicKeyLength)');
+}).then(function(result) {
+    debug("ECDH: importing P-521 key that has a public key in PKCS#8 of invalid EC point format ...");
+    return shouldReject('importKey(pkcs8P521KeyInvalidPublicKeyECPointFormat)');
+}).then(function(result) {
+    debug("ECDH: importing P-521 key that has an invalid public key in PKCS#8 ...");
+    return shouldReject('importKey(pkcs8P521KeyInvalidPublicKey)');
+}).then(function(result) {
+    finishJSTest();
+});;
+
+</script>
+
+</body>
+</html>

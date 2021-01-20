@@ -1,0 +1,59 @@
+<script>
+function sayHello()
+{
+    alert("Hello");
+}
+if (window.testRunner)
+     testRunner.dumpAsText();
+</script>
+<div id="description">
+This test copies all the elements containing event handlers and javascript urls, pastes them
+in an editable area and verifies that no script, handlers or javascript urls are copied.
+</div>
+<div id="test" >
+<button id="button1" onclick="sayHello()" ondblclick="sayHello()" style="width: 100px;">Hello</button>
+<br>
+<a id="anchor1" href="http://www.cnn.com/">CNN</a>
+<a id="anchor2" href="javascript:sayHello()">Hello</a>
+<iframe id="iframe1" src="javascript:var x = 1;" style="width: 200px; height: 100px; background-color:#cee;"></iframe>
+<iframe id="iframe2" srcdoc="<script>var x = 1;</script>" style="width: 200px; height: 100px; background-color:#cee;"></iframe>
+<form id="form1" action="javascript:sayHello()" formaction="javascript:sayHello()" style="width: 200px; height: 150px; background-color:#cee;">This is a form<br><img src="../resources/abe.png"></img><button formaction="javascript:sayHello()">Submit.</button></form>
+</div>
+<div id="pastehere" contenteditable="true">
+</div>
+<ul id="console"></ul>
+<script>
+var s = window.getSelection();
+var p1 = document.getElementById("test");
+s.setPosition(p1, 0);
+s.setBaseAndExtent(p1, 0, p1, 14);
+document.execCommand("Copy");
+p1 = document.getElementById("pastehere");
+s.setPosition(p1, 0);
+document.execCommand("Paste");
+
+log(document.getElementById("button1").outerHTML);
+log(document.getElementById("pastehere").childNodes[0].outerHTML);
+
+log(document.getElementById("anchor1").outerHTML);
+log(document.getElementById("pastehere").childNodes[3].outerHTML);
+
+log(document.getElementById("anchor2").outerHTML);
+log(document.getElementById("pastehere").childNodes[5].outerHTML);
+
+log(document.getElementById("iframe1").outerHTML);
+log(document.getElementById("pastehere").childNodes[7].outerHTML);
+
+log(document.getElementById("iframe2").outerHTML);
+log(document.getElementById("pastehere").childNodes[9].outerHTML);
+
+log(document.getElementById("form1").outerHTML);
+log(document.getElementById("pastehere").childNodes[10].outerHTML);
+
+function log(str) {
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(str));
+    var console = document.getElementById("console");
+    console.appendChild(li);
+}
+</script>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <div id="editable" contenteditable onbeforeinput=handleInput(event) oninput=handleInput(event)><div id="text">WebKit</div></div>
+    <script type="text/javascript">
+        description("To manually test this, change the text alignment and check the resulting debug messages.");
+
+        let range = document.createRange();
+        range.setStartBefore(text);
+        range.setEndAfter(text);
+        getSelection().addRange(range);
+
+        if (window.testRunner) {
+            preventDefaultForBeforeInputEvents = false;
+
+            execCommandAndLogComputedTextAlignmentStyle("AlignCenter");
+            execCommandAndLogComputedTextAlignmentStyle("AlignRight");
+            execCommandAndLogComputedTextAlignmentStyle("AlignLeft");
+            execCommandAndLogComputedTextAlignmentStyle("AlignJustified");
+
+            preventDefaultForBeforeInputEvents = true;
+
+            execCommandAndLogComputedTextAlignmentStyle("AlignCenter");
+            execCommandAndLogComputedTextAlignmentStyle("AlignRight");
+            execCommandAndLogComputedTextAlignmentStyle("AlignLeft");
+            execCommandAndLogComputedTextAlignmentStyle("AlignJustified");
+        }
+
+        function handleInput(event)
+        {
+            debug(`${event.type} (inputType = ${event.inputType})`);
+            if (window.preventDefaultForBeforeInputEvents && event.type === "beforeinput") {
+                event.preventDefault();
+                debug("Prevented default");
+            }
+        }
+
+        function execCommandAndLogComputedTextAlignmentStyle(command) {
+            testRunner.execCommand(command);
+            debug(`getComputedStyle(text).textAlign = '${getComputedStyle(text).textAlign}'`);
+        }
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

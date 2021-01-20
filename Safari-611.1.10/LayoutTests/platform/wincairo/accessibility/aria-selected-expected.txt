@@ -1,0 +1,13 @@
+This tests that items with aria-selected are reported as selected children of the parent container.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXRole: AXTabGroup has 0 selected child(ren)
+AXRole: outline has 0 selected child(ren)
+AXRole: AXTable has 0 selected child(ren)
+AXRole: outline has 0 selected child(ren)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

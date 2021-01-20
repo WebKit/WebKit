@@ -1,0 +1,88 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+        select {
+            display: block;
+            font-size: 12pt;
+            margin: 10px;
+            border: 1px solid black;
+        }
+    </style>
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    
+    <script>
+        jsTestIsAsync = true;
+
+        if (window.internals)
+            internals.setUsesOverlayScrollbars(true);
+
+        async function doTest()
+        {
+            description('Test hover over the overlay scrollbar of a scrolling list');
+            if (!window.internals) {
+                finishJSTest();                
+                return;
+            }
+            
+            const select = document.getElementsByTagName('select')[0];
+            const selectBounds = select.getBoundingClientRect();
+            const x = selectBounds.right - 8;
+            const y = selectBounds.top + 10;
+
+            debug('Initial state');
+            debug(internals.verticalScrollbarState(select));
+
+            debug('Hovering vertical scrollbar should show expanded scrollbar');
+            await UIHelper.mouseWheelScrollAt(x, y);
+            await UIHelper.waitForCondition(() => {
+                let state = internals.verticalScrollbarState(select);
+                let expanded = state.indexOf('expanded') != -1;
+                if (expanded)
+                    testPassed('Scrollbar state: ' + state);
+                return expanded;
+            });
+
+            debug('Unhovering vertical scrollbar should hide it');
+            await UIHelper.moveMouseAndWaitForFrame(x - 10, y);
+            await UIHelper.moveMouseAndWaitForFrame(x - 20, y);
+            await UIHelper.waitForCondition(() => {
+                let state = internals.verticalScrollbarState(select);
+                let thumbHidden = state.indexOf('visible_thumb') == -1;
+                let trackHidden = state.indexOf('visible_track') == -1;
+                if (thumbHidden && trackHidden)
+                    testPassed('Thumb and track hidden');
+                return thumbHidden && trackHidden;
+            });
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            doTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <select size="5">
+        <option>January</option>
+        <option>February</option>
+        <option>March</option>
+        <option>April</option>
+        <option>May</option>
+        <option>June</option>
+        <option>July</option>
+        <option>August</option>
+        <option>September</option>
+        <option>October</option>
+        <option>November</option>
+        <option>December</option>
+    </select>
+    <div id="console"></div>
+    <script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

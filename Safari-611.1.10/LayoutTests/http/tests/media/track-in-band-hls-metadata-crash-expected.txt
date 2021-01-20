@@ -1,0 +1,17 @@
+
+Test that seeking HLS streams containing metadata tracks does not crash.
+
+
+** Set video.src, wait for media data to load
+RUN(video.src = 'http://127.0.0.1:8000/media/resources/hls/metadata/prog_index.m3u8')
+
+EVENT(addtrack)
+RUN(track = video.textTracks[0])
+RUN(track.mode = 'hidden')
+EVENT(cuechange)
+
+** Seek, should not crash.
+RUN(video.currentTime = 5)
+EVENT(seeked)
+END OF TEST
+

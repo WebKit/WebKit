@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+Markup.description('This tests inserting an ordered list inside a shadow tree. WebKit should not hang.');
+
+const host = document.createElement('div');
+document.body.appendChild(host);
+const shadowRoot = host.attachShadow({mode: 'closed'});
+shadowRoot.innerHTML = `<div id="editor" contenteditable>
+    one<br>
+    two<br>
+</div>`;
+
+shadowRoot.querySelector('#editor').focus();
+document.execCommand('selectAll', false, null);
+Markup.dump(shadowRoot, 'Before');
+
+document.execCommand('insertOrderedList', false, null);
+Markup.dump(shadowRoot, 'After');
+
+</script>
+</body>
+</html>

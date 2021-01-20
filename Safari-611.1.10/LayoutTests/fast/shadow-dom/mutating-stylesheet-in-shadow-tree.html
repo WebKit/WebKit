@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<style>
+
+div {
+    width: 100px;
+    height: 25px;
+    background: red;
+}
+
+</style>
+<script>
+
+function appendShadowHost(container, template, callback) {
+    var host = document.createElement('div');
+    container.appendChild(host);
+    var shadow = host.attachShadow({mode: 'closed'});
+    shadow.innerHTML = template;
+    callback(shadow);
+    return host;
+}
+
+appendShadowHost(document.body, `
+    <style></style>
+    <div>FAIL</div>
+`, function (shadow) {
+    var style = shadow.querySelector('style');
+    style.sheet.insertRule('div { width: 100%; height: 100%; background: green; color: green; }', 0);    
+});
+appendShadowHost(document.body, `
+    <style media="aural"> div { width: 100%; height: 100%; color: green; background: green; } </style>
+    <div>FAIL</div>
+`, function (shadow) {
+    var style = shadow.querySelector('style');
+    style.removeAttribute('media');
+});
+appendShadowHost(document.body, `
+    <style> div { width: 100%; height: 100%; color: green; background: green; } </style>
+    <style> div { color: black; background: red; } </style>
+    <div>FAIL</div>
+`, function (shadow) {
+    var style = shadow.querySelectorAll('style')[1];
+    style.disabled = true;
+});
+appendShadowHost(document.body, `
+    <style> div { width: 100%; height: 100%; color: green; background: green; } </style>
+    <style> div { color: black; background: red; } </style>
+    <div>FAIL</div>
+`, function (shadow) {
+    shadow.querySelectorAll('style')[1].remove();
+});
+
+</script>
+</body>
+</html>

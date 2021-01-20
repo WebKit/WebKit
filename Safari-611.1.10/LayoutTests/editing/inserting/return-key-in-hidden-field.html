@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests to make sure that inserting a line break in a hidden textarea doesn't crash.
+To repro manually, press enter or return in the textarea.  We pass if we don't crash.</p>
+<div id="d">
+  <textarea id="textarea"></textarea>
+</div>
+<div id="d2" contenteditable="true">
+</div>
+<script>
+document.addEventListener("keydown", function(e) {
+    if (e.keyCode == 13)
+        document.getElementById("d").style.visibility = "hidden";
+}, false);
+
+function runTest()
+{
+    document.getElementById("textarea").focus();
+
+    if (!window.testRunner)
+        return;
+    testRunner.dumpAsText();
+    document.execCommand('InsertParagraph', false, null);
+
+    document.getElementById("d2").focus();
+    document.getElementById("d2").style.visibility = "";
+
+    testRunner.dumpAsText();
+    document.execCommand('InsertParagraph', false, null);
+}
+runTest();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+  var resizeEventCounter = 0;
+  var resizeCounter = 0;
+  var currentTimerID;
+  var timerScheduleTimes = [];
+  
+  window.onresize = function(event) {
+    resizeEventCounter++;
+  }
+
+  function getRandomArbitrary(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  function resizeMe() {
+    document.getElementById('contentToResize').style.height = getRandomArbitrary(50, 500) + 'px';
+    document.body.offsetHeight;
+  
+    if (++resizeCounter < 100) {
+      currentTimerID = setTimeout('resizeMe();', 10);
+      if (window.performance)
+          timerScheduleTimes.push(performance.now());
+      if (window.internals && internals.isTimerThrottled(currentTimerID))
+        console.log("Timer " + currentTimerID + " is throttled, resizeCounter = " + resizeCounter);
+    } else {
+      parent.document.getElementById('result').innerHTML = resizeEventCounter > 100 ? "FAILED. Too many resize events" : "PASS";
+      if (window.testRunner)
+        testRunner.notifyDone();
+    }
+  }
+
+  setTimeout(function() {
+    console.log("Test timed out. Resized " + resizeCounter + " times, got " + resizeEventCounter + " events.");
+    if (window.internals && internals.isTimerThrottled(currentTimerID))
+      console.log("Timer was throttled.");
+    if (window.performance)
+      console.log("Timers were scheduled at: " + timerScheduleTimes);
+    console.log("document.hidden = " + document.hidden + "; document.visibilityState = " + document.visibilityState);
+    if (window.testRunner)
+      testRunner.notifyDone();
+  }, 20000);
+
+</script>
+</head>
+<body onload='resizeMe();'>
+    <p id='contentToResize'></p>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+        #scroller {
+            width: 300px;
+            height: 300px;
+            overflow-x: hidden;
+            overflow-y: auto;
+            margin: 20px;
+            scroll-snap-type: y mandatory;
+        }
+        #scroller > div {
+            height: 100%;
+            width: 100%;
+            scroll-snap-align: start;
+        }
+    </style>
+    <script src="../../../resources/js-test.js"></script>
+    <script>
+    jsTestIsAsync = true;
+
+    var targetScroller;
+
+    function checkEndState()
+    {
+        shouldBe('targetScroller.scrollTop', 'targetScroller.clientHeight');
+        shouldBe('document.scrollingElement.scrollTop', '0');
+        finishJSTest();
+    }
+
+    function scrollTest()
+    {
+        targetScroller = document.getElementById('scroller');
+
+        var targetRect = targetScroller.getBoundingClientRect();
+
+        var dx = 0;
+        var dy = -1;
+        var startPosX = targetRect.left + 50;
+        var startPosY = targetRect.top + 50;
+        eventSender.monitorWheelEvents();
+        eventSender.mouseMoveTo(startPosX, startPosY);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'began', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'none', 'begin');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'none', 'continue');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+        eventSender.callAfterScrollingCompletes(checkEndState);
+    }
+
+    function startTest()
+    {
+        description('Tests that latching is not recomputed between the scroll and momentum phases, which triggers a document scroll.');
+        if (window.eventSender) {
+            internals.setPlatformMomentumScrollingPredictionEnabled(false);
+            setTimeout(scrollTest, 0);
+            return;
+        } 
+        
+        debug('This test requires eventSender');
+        finishJSTest();
+    }
+    
+    window.addEventListener('load', startTest, false);
+    </script>
+</head>
+<body>
+    <div id="scroller">
+        <div style="background-color: orange"></div>
+        <div style="background-color: green"></div>
+        <div style="background-color: blue"></div>
+        <div style="background-color: aqua"></div>
+        <div style="background-color: yellow"></div>
+        <div style="background-color: fuchsia"></div>
+    </div>
+    <div id="console"></div>
+</body>
+</html>

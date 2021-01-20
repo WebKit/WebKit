@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function createFetchForPHP200() {
+    fetch("resources/fetch-cachable.php", { headers: { 'X-Status-Code-Needed': '200' } });
+}
+
+function createFetchForPHP304() {
+    fetch("resources/fetch-cachable.php", { headers: { 'X-Status-Code-Needed': '304' } });
+}
+
+function createFetchForFile200() {
+    fetch("resources/fetch-cachable.txt");
+}
+
+function createFetchForFile304() {
+    fetch("resources/fetch-cachable.txt", { headers: { 'If-Modified-Since': new Date().toUTCString() } });
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.getResponseBody.Fetch304");
+
+    function addTestCase({name, description, setup, expression, contentHandler}) {
+        suite.addTestCase({
+            name,
+            description,
+            setup,
+            test(resolve, reject) {
+                InspectorTest.evaluateInPage(expression);
+                WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded)
+                    .then((event) => {
+                        let resource = event.data.resource;
+                        InspectorTest.expectEqual(resource.type, WI.Resource.Type.Fetch, "Resource should be Fetch type.");
+                        return resource.requestContent();
+                    })
+                    .then(contentHandler)
+                    .then(resolve, reject);
+            }
+        });
+    }
+
+    addTestCase({
+        name: "Network.getResponseBody.Fetch304.PHP304NotCached",
+        description: "Try and get cached body for 304 response, which will not exist.",
+        async setup() {
+            return InspectorTest.evaluateInPage(`internals.clearMemoryCache()`);
+        },
+        expression: `createFetchForPHP304()`,
+        contentHandler({error, sourceCode, content, rawBase64Encoded}) {
+            InspectorTest.expectEqual(sourceCode.mimeType, "", "MIME type should be empty.");
+            InspectorTest.expectEqual(sourceCode.statusCode, 304, "Status code should be 304.");
+            InspectorTest.expectEqual(sourceCode.responseSource, WI.Resource.ResponseSource.Network, "responseSource should be WI.Resource.ResponseSource.Network");
+            InspectorTest.expectEqual(content, undefined, "Text content should be undefined.");
+        }
+    });
+
+    addTestCase({
+        name: "Network.getResponseBody.Fetch304.PHP200NotCached",
+        description: "Get body for 200 response from network.",
+        expression: `createFetchForPHP200()`,
+        contentHandler({error, sourceCode, content, rawBase64Encoded}) {
+            InspectorTest.expectEqual(sourceCode.responseHeaders["Cache-Control"], "public, max-age=31556926", "Should see caching header.");
+            InspectorTest.expectEqual(sourceCode.mimeType, "text/plain", "MIME type should be 'text/plain'.");
+            InspectorTest.expectEqual(sourceCode.statusCode, 200, "Status code should be 200.");
+            InspectorTest.expectEqual(sourceCode.responseSource, WI.Resource.ResponseSource.Network, "responseSource should be WI.Resource.ResponseSource.Network");
+            InspectorTest.expectEqual(content, "Plain text resource.", "Text content should be 'Plain text resource.'.");
+        }
+    });
+
+    addTestCase({
+        name: "Network.getResponseBody.Fetch304.PHP200Cached",
+        description: "Get body for 200 response from cache.",
+        expression: `createFetchForPHP200()`,
+        contentHandler({error, sourceCode, content, rawBase64Encoded}) {
+            InspectorTest.expectEqual(sourceCode.mimeType, "text/plain", "MIME type should be 'text/plain'.");
+            InspectorTest.expectEqual(sourceCode.statusCode, 200, "Status code should be 200.");
+            InspectorTest.expectEqual(sourceCode.responseSource, WI.Resource.ResponseSource.DiskCache, "responseSource should be WI.Resource.ResponseSource.DiskCache");
+            InspectorTest.expectEqual(content, "Plain text resource.", "Text content should be 'Plain text resource.'.");
+        }
+    });
+
+    addTestCase({
+        name: "Network.getResponseBody.Fetch304.PHP304Cached",
+        description: "Get cached body for 304 response.",
+        expression: `createFetchForPHP304()`,
+        contentHandler({error, sourceCode, content, rawBase64Encoded}) {
+            InspectorTest.expectEqual(sourceCode.mimeType, "text/plain", "MIME type should be 'text/plain'.");
+            InspectorTest.expectEqual(sourceCode.statusCode, 200, "Status code should be 200.");
+            InspectorTest.expectEqual(sourceCode.responseSource, WI.Resource.ResponseSource.DiskCache, "responseSource should be WI.Resource.ResponseSource.DiskCache");
+            InspectorTest.expectEqual(content, "Plain text resource.", "Text content should be 'Plain text resource.'.");
+        }
+    });
+
+    addTestCase({
+        name: "Network.getResponseBody.Fetch304.File304NotCached",
+        description: "Try and get cached body for 304 response, which will not exist.",
+        async setup() {
+            return InspectorTest.evaluateInPage(`internals.clearMemoryCache()`);
+        },
+        expression: `createFetchForFile304()`,
+        contentHandler({error, sourceCode, content, rawBase64Encoded}) {
+            InspectorTest.expectEqual(sourceCode.mimeType, "", "MIME type should be empty.");
+            InspectorTest.expectEqual(sourceCode.statusCode, 304, "Status code should be 304.");
+            InspectorTest.expectEqual(sourceCode.responseSource, WI.Resource.ResponseSource.Network, "responseSource should be WI.Resource.ResponseSource.Network");
+            InspectorTest.expectEqual(content, undefined, "Text content should be undefined.");
+        }
+    });
+
+    addTestCase({
+        name: "Network.getResponseBody.Fetch304.File200NotCached",
+        description: "Get body for 200 response from network.",
+        expression: `createFetchForFile200()`,
+        contentHandler({error, sourceCode, content, rawBase64Encoded}) {
+            InspectorTest.expectEqual(sourceCode.responseHeaders["Cache-Control"], "public, max-age=31556926", "Should see caching header.");
+            InspectorTest.expectEqual(sourceCode.mimeType, "text/plain", "MIME type should be 'text/plain'.");
+            InspectorTest.expectEqual(sourceCode.statusCode, 200, "Status code should be 200.");
+            InspectorTest.expectEqual(sourceCode.responseSource, WI.Resource.ResponseSource.Network, "responseSource should be WI.Resource.ResponseSource.Network");
+            InspectorTest.expectEqual(content, "Plain text resource.", "Text content should be 'Plain text resource.'.");
+        }
+    });
+
+    addTestCase({
+        name: "Network.getResponseBody.Fetch304.File200Cached",
+        description: "Get body for 200 response from cache.",
+        expression: `createFetchForFile200()`,
+        contentHandler({error, sourceCode, content, rawBase64Encoded}) {
+            InspectorTest.expectEqual(sourceCode.mimeType, "text/plain", "MIME type should be 'text/plain'.");
+            InspectorTest.expectEqual(sourceCode.statusCode, 200, "Status code should be 200.");
+            InspectorTest.expectEqual(sourceCode.responseSource, WI.Resource.ResponseSource.DiskCache, "responseSource should be WI.Resource.ResponseSource.DiskCache");
+            InspectorTest.expectEqual(content, "Plain text resource.", "Text content should be 'Plain text resource.'.");
+        }
+    });
+
+    addTestCase({
+        name: "Network.getResponseBody.Fetch304.File304Cached",
+        description: "Get cached body for 304 response.",
+        expression: `createFetchForFile304()`,
+        contentHandler({error, sourceCode, content, rawBase64Encoded}) {
+            InspectorTest.expectEqual(sourceCode.mimeType, "text/plain", "MIME type should be 'text/plain'.");
+            InspectorTest.expectEqual(sourceCode.statusCode, 200, "Status code should be 200.");
+            InspectorTest.expectEqual(sourceCode.responseSource, WI.Resource.ResponseSource.DiskCache, "responseSource should be WI.Resource.ResponseSource.DiskCache");
+            InspectorTest.expectEqual(content, "Plain text resource.", "Text content should be 'Plain text resource.'.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for getting the content of Fetch requests with the "304 Not Modified" response status.</p>
+</body>
+</html>

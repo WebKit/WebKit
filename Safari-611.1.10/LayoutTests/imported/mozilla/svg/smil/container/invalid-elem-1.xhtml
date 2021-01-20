@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<html xmlns="http://www.w3.org/1999/xhtml" class="reftest-wait">
+  <head>
+    <title>Valid, invalid, valid</title>
+    <!--
+    PURPOSE: When manipulating the DOM tree it is quite likely that at some
+    instant the document will be invalid such as during a chain of
+    operations. SVG 1.1, section F.2 states:
+
+      "Because of situations where a block of scripting changes might cause
+      a given SVG document fragment to go into and out of error, error
+      processing shall occur only at times when document presentation (e.g.,
+      rendering to the display device) is updated"
+
+    A similar requirement exists regarding unsuspend / suspend redraw.
+    This test checks that behaviour.
+
+    OPERATION: There is a box and a circle. Initially the circle is animated and
+    should move to the right. The animation element is moved to the rectangle.
+    At this point the animation points to an invalid attribute. This attribute
+    is then updated to be valid again.
+
+    EXPECTED RESULTS: The circle is moved and then the rectangle is moved. There
+    should not be any errors reported in the Javascript console or assertions
+    etc.
+
+    After the animation is removed from the circle it should reset (I think).
+
+    Currently this hasn't been implemented (we need to make use of
+    mLastCompositors table in nsSMILAnimationController), so this test is
+    disabled for now. As the code stands now you'll normally get the correct
+    result but under other conditions the circle moves a fraction before the
+    call to pauseAnimations and this effect is not then cleared.
+    -->
+    <script>
+        function moveAnimation()
+        {
+          var svg = document.getElementsByTagName('svg')[0];
+          svg.pauseAnimations();
+          svg.setCurrentTime(0.5);
+          doMove();
+          svg.setCurrentTime(1.0);
+          setTimeout('document.documentElement.removeAttribute("class")', 0);
+        }
+
+        function doMove()
+        {
+          var anim = document.getElementById('animation-to-move');
+          anim.parentNode.removeChild(anim);
+          var rect = document.getElementById('target');
+          rect.appendChild(anim);
+          // The animation is now in error
+          anim.setAttribute('attributeName', 'x');
+          // Now it's fixed
+        }
+    </script>
+  </head>
+
+  <body onload="moveAnimation()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="200px" height="200px">
+      <rect x="0" y="0" width="199" height="199"
+        style="fill: none; stroke: black"/>
+      <!-- rect to be animated second -->
+      <rect x="-20" y="80" width="40" height="40" fill="royalblue"
+        stroke="black" stroke-width="1" id="target"/>
+      <!-- circle to be animated first -->
+      <circle cx="0" cy="100" r="15" fill="skyblue" stroke="black"
+        stroke-width="1">
+        <animate attributeName="cx" from="0" to="200" begin="0s" dur="2s"
+          fill="freeze" id="animation-to-move"/>
+      </circle>
+    </svg>
+  </body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("This test checks the implementation of the element traversal APIs on DocumentFragment as part of the ParentNode interface.");
+
+debug('Test with no children');
+var noChildren = document.createDocumentFragment();
+shouldBe("noChildren.firstElementChild", "null");
+shouldBe("noChildren.lastElementChild", "null");
+shouldBe("noChildren.childElementCount", "0");
+
+debug('Test with no element children');
+var noElementChildren = document.createDocumentFragment();
+noElementChildren.appendChild(document.createComment("comment but not an element"));
+noElementChildren.appendChild(document.createTextNode("no elements here"));
+
+shouldBe("noElementChildren.firstElementChild", "null");
+shouldBe("noElementChildren.lastElementChild", "null");
+shouldBe("noElementChildren.childElementCount", "0");
+
+debug('Test with elements');
+var children = document.createDocumentFragment();
+children.appendChild(document.createComment("first comment"));
+var first = document.createElement('p');
+children.appendChild(first);
+children.appendChild(document.createComment("a comment"));
+var last = document.createElement('p');
+children.appendChild(last);
+children.appendChild(document.createComment("last comment"));
+
+shouldBe("children.firstElementChild", "first");
+shouldBe("children.lastElementChild", "last");
+shouldBe("children.childElementCount", "2");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

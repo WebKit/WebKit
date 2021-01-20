@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+var password;
+var event;
+
+window.onload = function ()
+{
+    password = document.getElementById("password");
+    password.onclick = checkEventAndDone;
+
+    runTest();
+};
+
+function runTest()
+{
+    if (!window.internals || !window.eventSender)
+        return;
+
+    internals.setShowAutoFillButton(password, "Credentials");
+
+    var autoFillButton = getElementByPseudoId(internals.shadowRoot(password), "-webkit-credentials-auto-fill-button");
+    autoFillButton.onclick = checkEventAndDone;
+
+    eventSender.mouseMoveTo(password.offsetLeft + 10, password.offsetTop + password.offsetHeight / 2);
+    eventSender.mouseDown();
+    eventSender.leapForward(100);
+    eventSender.mouseMoveTo(autoFillButton.offsetLeft + autoFillButton.offsetWidth / 2, autoFillButton.offsetTop + autoFillButton.offsetHeight / 2);
+    eventSender.mouseUp();
+}
+
+function checkEventAndDone(e)
+{
+    event = e;
+    shouldBeEqualToString("event.type", "click");
+    shouldBe("event.target", 'document.getElementById("password")');
+    finishJSTest();
+}
+</script>
+</head>
+<body>
+<p id="description"></p>
+<input type="password" id="password">
+<div id="console"></div>
+<script>
+description("This test checks that pressing the mouse in an password field and releasing the mouse on the AutoFill " +
+            "button dispatches a DOM click event at the password field and not at the AutoFill button. This test " +
+            "can only be run in the test tool.");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

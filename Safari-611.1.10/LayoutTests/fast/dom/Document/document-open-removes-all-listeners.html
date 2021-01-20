@@ -1,0 +1,21 @@
+<DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("Event listeners are to be removed with immediate effect by document.open()");
+
+const frame = document.body.appendChild(document.createElement("iframe"));
+let once = false;
+frame.contentDocument.addEventListener("x", () => {
+    frame.contentDocument.open();
+    once = true;
+});
+frame.contentDocument.addEventListener("x", function() {
+    testFailed("second event listener not removed")
+});
+frame.contentDocument.dispatchEvent(new Event("x"));
+shouldBeTrue("once");
+frame.contentDocument.close();
+</script>
+</html>

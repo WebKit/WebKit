@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'navigator.userActivation.isActive')
+Post-navigation activation state in child
+
+Tests that navigating a same-origin child frame resets its activation states.
+
+Click inside the yellow area.
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Post-navigation state reset. Test timed out
+

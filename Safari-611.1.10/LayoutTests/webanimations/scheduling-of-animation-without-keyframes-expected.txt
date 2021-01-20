@@ -1,0 +1,6 @@
+
+PASS Computing the time until the next tick for an effect with null keyframes parameter.
+PASS Computing the time until the next tick for an effect with {} keyframes parameter.
+PASS Computing the time until the next tick for an effect with [] keyframes parameter.
+PASS Computing the time until the next tick for an effect with invalid CSS property keyframes parameter.
+

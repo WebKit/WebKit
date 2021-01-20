@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<script>
+    var check = 0;
+    function iframeLoaded() {
+        check = 1;
+    }
+    function documentLoaded() {
+        if (check == 1)
+            document.write("Fail: A cross partition resource was loaded");
+        else
+            document.write("Pass: A cross partition resource was blocked from loading");
+    }
+</script>
+<body onload="documentLoaded()">
+    <iframe src="file:///Volumes/resources/CrossPartitionFileSchemeAccess.html" onload="iframeLoaded();"></iframe>
+</body>
+</html>

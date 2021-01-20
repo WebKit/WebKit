@@ -1,0 +1,20 @@
+﻿<html>
+<head>
+    <style type="text/css">
+    <!--
+        .b:before {
+            content: '[before]';
+        }
+        .a:after {
+            content: '[after]';
+        }
+    -->
+    </style>
+</head>
+<body>
+<p>Tests that CSS-generated :before or :after content doesn't intrude into ruby bases.</p>
+</p>Foo <ruby class="b">b<rt>long text</rt></ruby> Bar<br></p>
+</p>Foo <ruby class="a">b<rt>long text</rt></ruby> Bar<br></p>
+</p>Foo <ruby class="b a">b<rt>long text</rt></ruby> Bar<br></p>
+</body>
+</html>

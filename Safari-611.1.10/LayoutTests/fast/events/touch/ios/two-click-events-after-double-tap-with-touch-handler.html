@@ -1,0 +1,43 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1, user-scalable=no, width=device-width">
+<html>
+<head>
+    <script src="../../../../resources/js-test.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    <style>
+        button {
+            width: 100%;
+            height: 100px;
+            position: absolute;
+            top: 100px;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+<button>Double tap here</button>
+</body>
+<script>
+jsTestIsAsync = true;
+touchStartCount = 0;
+clickCount = 0;
+
+const button = document.querySelector("button");
+button.addEventListener("touchstart", () => ++touchStartCount);
+button.addEventListener("click", () => {
+    testPassed("Clicked");
+    ++clickCount;
+});
+
+addEventListener("load", async () => {
+    description("This test verifies that double-tapping a button dispatches two click events when fast-clicking is active. To manually run the test, double tap the button; two 'Clicked' messages should appear.");
+
+    await UIHelper.humanSpeedDoubleTapAt(50, 150);
+    await new Promise(resolve => shouldBecomeEqual("clickCount", "2", resolve));
+    shouldBe("touchStartCount", "2");
+    finishJSTest();
+});
+</script>
+</html>

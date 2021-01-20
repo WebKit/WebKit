@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    InspectorTest.suppressStackTraces = true;
+
+    let suite = InspectorTest.createAsyncSuite("ReportUnhandledRejection");
+    suite.addTestCase({
+        name: "CatchRejectedPromise",
+        description: "window.reportUnhandledRejection should dump the unhandled exception and quit testing.",
+        test(resolve, reject) {
+            let rejectedPromise = Promise.reject(new Error("This promise is rejected with an Error object."));
+            rejectedPromise.catch(reportUnhandledRejection);
+        }
+    })
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that the unhandled promise rejection hook will immediately terminate the test and print the associated exception and stack trace.</p>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function print(message, color)
+{
+    var paragraph = document.createElement("div");
+    paragraph.appendChild(document.createTextNode(message));
+    paragraph.style.fontFamily = "monospace";
+    if (color)
+        paragraph.style.color = color;
+    document.getElementById("console").appendChild(paragraph);
+}
+
+function test()
+{
+    // must be last because the exception ends JavaScript execution
+    window.onerror = function (msg, url, line, column, error) {
+        url = url ? url.match( /[^\/]+\/?$/ )[0] : url;
+        print("PASS: caught global error: " + msg + " at " + url + ", line: " + line + ", column: " + column + ", error " + error, "green");
+        return true;
+    };
+    hahaha_good_luck_finding_me(); // caught by window.onerror
+}
+</script>
+</head>
+<body onload="test();">
+<p>This page tests setting onerror handlers through the DOM. If it passes, you will
+   see "PASS" messages below.<a href="https://bugs.webkit.org/show_bug.cgi?id=8519">Bug 8519</a>.</p>
+<hr>
+<div id='console'></div>
+</body>
+</html>

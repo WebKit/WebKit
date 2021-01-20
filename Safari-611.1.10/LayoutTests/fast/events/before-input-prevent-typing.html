@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <div id="editable" contenteditable onbeforeinput=handleBeforeInput(event)>def</div>
+    <script src="../../resources/dump-as-markup.js"></script>
+    <script type="text/javascript">
+        Markup.description(`To manually test this, ensure that typing or attempting to delete text via the Delete key does not change the DOM.`);
+
+        var allowTyping = !!window.eventSender;
+        (function() {
+            if (!window.internals || !window.eventSender || !window.testRunner)
+                return;
+
+            internals.settings.setInputEventsEnabled(true);
+            document.querySelector("#editable").focus();
+
+            Markup.dump("editable", "initially");
+
+            eventSender.keyDown("a", []);
+            eventSender.keyDown("b", []);
+            eventSender.keyDown("c", []);
+            Markup.dump("editable", "after attempting to type (typing is allowed)");
+
+            allowTyping = false;
+            eventSender.keyDown("d", []);
+            eventSender.keyDown("e", []);
+            eventSender.keyDown("f", []);
+            Markup.dump("editable", "after attempting to type (typing is prohibited)");
+
+            testRunner.execCommand("DeleteForward");
+            testRunner.execCommand("DeleteBackward");
+            testRunner.execCommand("DeleteForward");
+            Markup.dump("editable", "after attempting to delete (deleting is prohibited)");
+            allowTyping = true;
+
+            testRunner.execCommand("DeleteBackward");
+            testRunner.execCommand("DeleteForward");
+            testRunner.execCommand("DeleteBackward");
+            Markup.dump("editable", "after attempting to delete (deleting is allowed)");
+        })();
+
+        function handleBeforeInput(event)
+        {
+            if (allowTyping)
+                return;
+
+            if (event.inputType === "insertText" || event.inputType === "deleteContentBackward" || event.inputType === "deleteContentForward")
+                event.preventDefault();
+        }
+    </script>
+</body>
+
+</html>

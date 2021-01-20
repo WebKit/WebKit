@@ -1,0 +1,19 @@
+<svg onload="loaded()" xmlns="http://www.w3.org/2000/svg">
+<rect id="rect" x="0" y="0" width="50" height="50" fill="red">
+    <animate id="anim" attributeName="visibility" to="visible" begin="1s" end="2s" />
+</rect>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    function loaded() {
+        document.getElementById("anim").addEventListener("beginEvent", function(event) {
+            document.getElementById("rect").setAttribute("fill", "green");
+            testRunner.notifyDone();
+        });
+
+        document.documentElement.setCurrentTime(1);
+    }
+
+</script>
+</svg>

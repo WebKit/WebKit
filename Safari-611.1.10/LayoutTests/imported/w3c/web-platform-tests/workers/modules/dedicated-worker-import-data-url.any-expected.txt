@@ -1,0 +1,9 @@
+
+FAIL Static import. promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL Nested static import. promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL Static import and then dynamic import. promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL Dynamic import. promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL Nested dynamic import. promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL Dynamic import and then static import. promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL eval(import()). promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+

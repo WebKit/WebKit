@@ -1,0 +1,4 @@
+
+
+FAIL Text input should become contentful when its value is non-empty promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: assert_precondition"
+

@@ -1,0 +1,70 @@
+; Copyright (C) 2013 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+;    notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+;    notice, this list of conditions and the following disclaimer in the
+;    documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+
+(webkit-printing)
+
+(allow signal network-inbound)
+(allow process-fork)
+(allow process-exec
+    (subpath "/System/Library/Java/JavaVirtualMachines")
+    (subpath "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin"))
+
+(allow mach-lookup
+    (global-name "com.apple.coreservices.launchservicesd")
+    (global-name-regex #"^PlaceHolderServerName-"))
+
+(allow file-read*
+    (literal "/dev/fd")
+    (literal "/usr/bin")
+    (literal "/private/etc/hosts")
+    (subpath "/Library/Java")
+    (subpath "/System/Library/Java"))
+
+(shared-preferences-read
+    "com.apple.java.JavaPreferences"
+    "net.java.openjdk.cmd")
+
+(shared-preferences-read-write
+    "com.apple.java.util.prefs"
+    "com.oracle.javadeployment")
+
+(allow file-read* file-write*
+    (home-library-subpath "/Saved Application State/net.java.openjdk.cmd.savedState")
+    (home-library-subpath "/Application Support/Oracle/Java/Deployment")
+    (home-library-subpath "/Caches/Java"))
+
+(allow file-write-create
+    (home-library-literal "/Application Support/Oracle")
+    (home-library-literal "/Application Support/Oracle/Java"))
+
+(allow file-read*
+    (subpath "/Library/Application Support/Java/PublicFiles")
+    (subpath "/Library/Application Support/Oracle/Java/Deployment"))
+
+(allow network-bind network-outbound (subpath (param "DARWIN_USER_TEMP_DIR")))
+(allow network-bind (local ip))
+
+(deny file-write* (with no-log) (subpath "/Library/Application Support/Oracle"))
+(deny file-write* (with no-log) (subpath (param "WEBKIT2_FRAMEWORK_DIR")))
+
+(deny job-creation (with no-log))

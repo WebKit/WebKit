@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+    body {
+        line-height: 20px;
+    }
+
+    .grid-first-letter::first-letter {
+        line-height: 100px;
+        color: red;
+    }
+
+    .container-first-letter::first-letter {
+        line-height: 200px;
+        color: green;
+    }
+
+    .float {
+        float: left;
+    }
+
+    .grid-before::before {
+        content: "Anonymous item.";
+        display: grid;
+    }
+
+    .grid-after::before {
+        content: "Anonymous item.";
+        display: grid;
+    }
+
+    .inline-grid-before::before {
+        content: "Anonymous item.";
+        display: inline-grid;
+    }
+
+    .inline-grid-after::before {
+        content: "Anonymous item.";
+        display: inline-grid;
+    }
+
+    .before-after-first-letter::first-letter {
+        line-height: 50px;
+        color: blue;
+    }
+</style>
+
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.container');">
+<p>This test grid item should ignore grid container's first-letter pseudo-element.</p>
+
+<div class="container">
+    <div class="grid grid-first-letter">
+        <div class="item" data-expected-height=20>The first item.</div>
+        <div class="item" data-expected-height=20>The second item.</div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="inline-grid grid-first-letter">
+        <div class="item" data-expected-height=20>The first item.</div>
+        <div class="item" data-expected-height=20>The second item.</div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="grid grid-first-letter" data-expected-height=20>
+        Anonymous item.
+    </div>
+</div>
+
+<div class="container">
+    <div class="inline-grid grid-first-letter" data-expected-height=20>
+        Anonymous item.
+    </div>
+</div>
+
+<div class="container container-first-letter">
+    <div class="grid grid-first-letter">
+        <div class="item" data-expected-height=20>The first item.</div>
+        <div class="item" data-expected-height=20>The second item.</div>
+    </div>
+    <div data-expected-height=200>Out of grid.</div>
+</div>
+
+<div class="container container-first-letter">
+    <div class="inline-grid grid-first-letter">
+        <div class="item" data-expected-height=20>The first item.</div>
+        <div class="item" data-expected-height=20>The second item.</div>
+    </div>
+    <div data-expected-height=20>Out of grid.</div>
+</div>
+
+<div class="container container-first-letter">
+    <div class="grid grid-first-letter float">
+        <div class="item" data-expected-height=20>The first item.</div>
+        <div class="item" data-expected-height=20>The second item.</div>
+    </div>
+    <div data-expected-height=200>Out of grid.</div>
+</div>
+
+<div class="container container-first-letter">
+    <div class="inline-grid grid-first-letter float">
+        <div class="item" data-expected-height=20>The first item.</div>
+        <div class="item" data-expected-height=20>The second item.</div>
+    </div>
+    <div data-expected-height=200>Out of grid.</div>
+</div>
+
+<div class="container container-first-letter">
+    <div class="grid grid-first-letter" data-expected-height=20>
+        Anonymous item.
+    </div>
+    <div data-expected-height=200>Out of grid.</div>
+</div>
+
+<div class="container container-first-letter">
+    <div class="inline-grid grid-first-letter" data-expected-height=20>
+        Anonymous item.
+    </div>
+    <div data-expected-height=20>Out of grid.</div>
+</div>
+
+<div class="container container-first-letter">
+    <div class="grid">
+        <div class="item" data-expected-height=20>The first item.</div>
+        <div class="item" data-expected-height=20>The second item.</div>
+    </div>
+    <div data-expected-height=200>Out of grid.</div>
+</div>
+
+<div class="container container-first-letter">
+    <div class="inline-grid">
+        <div class="item" data-expected-height=20>The first item.</div>
+        <div class="item" data-expected-height=20>The second item.</div>
+    </div>
+    <div data-expected-height=20>Out of grid.</div>
+</div>
+
+<div class="container container-first-letter">
+    <div class="grid float">
+        <div class="item" data-expected-height=20>The first item.</div>
+        <div class="item" data-expected-height=20>The second item.</div>
+    </div>
+    <div data-expected-height=200>Out of grid.</div>
+</div>
+
+<div class="container container-first-letter">
+    <div class="inline-grid float">
+        <div class="item" data-expected-height=20>The first item.</div>
+        <div class="item" data-expected-height=20>The second item.</div>
+    </div>
+    <div data-expected-height=200>Out of grid.</div>
+</div>
+
+<div class="container container-first-letter">
+    <div class="grid" data-expected-height=20>
+        Anonymous item.
+    </div>
+    <div data-expected-height=200>Out of grid.</div>
+</div>
+
+<div class="container container-first-letter">
+    <div class="inline-grid" data-expected-height=20>
+        Anonymous item.
+    </div>
+    <div data-expected-height=20>Out of grid.</div>
+</div>
+
+<div class="container container-first-letter">
+    <div class="grid-before" data-expected-height=220>Out of grid.</div>
+</div>
+
+<div class="container">
+    <div class="grid-before before-after-first-letter" data-expected-height=70>Out of grid.</div>
+</div>
+
+<div class="container container-first-letter">
+    <div class="grid-before before-after-first-letter" data-expected-height=70>Out of grid.</div>
+</div>
+
+<div class="container container-first-letter">
+    <div class="grid-after" data-expected-height=220>Out of grid.</div>
+</div>
+
+<div class="container container-first-letter">
+    <div class="grid-after before-after-first-letter" data-expected-height=70>Out of grid.</div>
+</div>
+
+<div class="container">
+    <div class="grid-after before-after-first-letter" data-expected-height=70>Out of grid.</div>
+</div>
+
+<div class="container container-first-letter">
+    <div class="inline-grid-before" data-expected-height=20>Out of grid.</div>
+</div>
+
+<div class="container">
+    <div class="inline-grid-before before-after-first-letter" data-expected-height=20>Out of grid.</div>
+</div>
+
+<div class="container container-first-letter">
+    <div class="inline-grid-before before-after-first-letter" data-expected-height=20>Out of grid.</div>
+</div>
+
+<div class="container container-first-letter">
+    <div class="inline-grid-after" data-expected-height=20>Out of grid.</div>
+</div>
+
+<div class="container container-first-letter">
+    <div class="inline-grid-after before-after-first-letter" data-expected-height=20>Out of grid.</div>
+</div>
+
+<div class="container">
+    <div class="inline-grid-after before-after-first-letter" data-expected-height=20>Out of grid.</div>
+</div>
+
+</body>
+</html>

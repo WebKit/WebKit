@@ -1,0 +1,13 @@
+<style>
+dir { -webkit-user-modify: read-write; }
+ul { -webkit-user-modify: read-only;}
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    onload = function fun() {
+        window.getSelection().setBaseAndExtent(LI,0,LI,0);
+        document.execCommand("insertOrderedList", false);
+    }
+</script>
+<body><dir><li id=LI><span>Tests inserting ol when user-modify is read-only, with an orphaned li. The test passes if WebKit doesn't crash or hit an assertion.</span>

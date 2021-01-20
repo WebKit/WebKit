@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<input type="file" onchange="changed(event)" multiple></input>
+<script>
+description("Tests dragging a folder onto a file input without webkitdirectory set and querying input.webkitEntries.");
+jsTestIsAsync = true;
+
+function runTest()
+{
+    inputElement = document.getElementsByTagName('input')[0];
+    shouldBeFalse("inputElement.webkitdirectory");
+    dragFilesOntoInput(inputElement, ['../../resources/test.txt', 'resources/testFiles']);
+}
+
+function moveMouseToCenterOfElement(element) {
+    var centerX = element.offsetLeft + element.offsetWidth / 2;
+    var centerY = element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(centerX, centerY);
+}
+
+function dragFilesOntoInput(input, files) {
+    eventSender.beginDragWithFiles(files);
+    moveMouseToCenterOfElement(input);
+    eventSender.mouseUp();
+}
+
+function changed(event)
+{
+    entries = event.target.webkitEntries;
+    shouldBe("entries.length", "2");
+    shouldBeEqualToString("entries[0].name", "test.txt");
+    shouldBeEqualToString("entries[0].fullPath", "/test.txt");
+    shouldBeTrue("entries[0].isFile");
+
+    shouldBeEqualToString("entries[1].name", "testFiles");
+    shouldBeEqualToString("entries[1].fullPath", "/testFiles");
+    shouldBeTrue("entries[1].isDirectory");
+
+    files = event.target.files;
+    shouldBe("files.length", "2");
+    shouldBeEqualToString("files[0].name", "test.txt");
+    shouldBe("files[0].size", "5");
+    shouldBeEqualToString("files[0].type", "text/plain");
+
+    shouldBeEqualToString("files[1].name", "testFiles");
+    shouldBeOneOfValues("files[1].size", [272, 256]);
+    shouldBeEqualToString("files[1].type", "");
+
+    finishJSTest();
+}
+
+runTest();
+
+</script>
+</body>
+</html>

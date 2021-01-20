@@ -1,0 +1,15 @@
+<html>
+<head>
+<title>JavaScript Redirect</title>
+
+<script>
+if (window.testRunner) {
+    testRunner.clearBackForwardList();
+    testRunner.waitUntilDone();
+}
+setTimeout(function () { location.replace("resources/redirect-target.html#1"); }, 0);
+</script>
+</head>
+
+<body>This page is a JavaScript redirect on a 0 second delay.</body>
+</html>

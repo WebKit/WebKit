@@ -1,0 +1,4 @@
+
+
+FAIL Check that sandboxed iframe can not navigate their ancestors assert_unreached: no pop state Reached unreachable code
+

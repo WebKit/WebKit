@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+var count = 0;
+
+if (window.testRunner) {
+	testRunner.dumpAsText();
+	testRunner.dumpResourceLoadCallbacks();
+	testRunner.waitUntilDone();
+}
+</script>
+</head>
+<p>Test passes if the second redirection which is loaded from the cache dispatches didReceiveServerRedirectForProvisionalLoadForFrame.</p>
+<iframe src="./resources/server-redirect.php"></iframe>
+</html>

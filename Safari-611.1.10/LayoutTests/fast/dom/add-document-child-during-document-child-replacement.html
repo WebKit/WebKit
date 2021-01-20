@@ -1,0 +1,12 @@
+<body dir="rtl"></body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    document.body.offsetHeight;
+    document.addEventListener("DOMSubtreeModified", function() {
+        document.execCommand("SelectAll");
+        let svg = document.createElementNS("http://www.w3.org/2000/svg", "desc");
+        document.appendChild(svg);
+    });
+
+    shouldThrowErrorName("document.replaceChild(document.body, document.documentElement)", "HierarchyRequestError");
+</script>

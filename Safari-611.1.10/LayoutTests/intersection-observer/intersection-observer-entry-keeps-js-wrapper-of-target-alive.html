@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests that JS wrappers of targets in an IntersectionObserverEntry do not get collected.</p>
+<pre id="log"></pre>
+<script src="../resources/gc.js"></script>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const targetCount = 5;
+const iterationCount = 5;
+
+async function observe() {
+    for (let i = 0; i < targetCount; ++i) {
+        let target = document.createElement('div');
+        target.myState = 'live';
+        document.body.appendChild(target);
+    }
+
+    return new Promise((resolve) => {
+        const observer = new IntersectionObserver(entries => {
+            resolve(entries);
+            observer.disconnect();
+        });
+        document.querySelectorAll('div').forEach(target => { observer.observe(target); });
+    });
+}
+
+function check(entries) {
+    let deadCount = 0;
+    for (const entry of entries) {
+        if (entry.target.myState != 'live')
+            deadCount++;
+    }
+    document.getElementById('log').textContent += (deadCount ? `FAIL - ${deadCount} targets lost JS wrappers` : 'PASS') + '\n';
+}
+
+async function runAll() {
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    for (let j = 0; j < iterationCount; ++j) {
+        const entries = await observe();
+        document.querySelectorAll('div').forEach(target => { target.remove(); });
+        await Promise.resolve();
+        gc();
+        check(entries);
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+runAll();
+
+</script>
+</body>
+</html>

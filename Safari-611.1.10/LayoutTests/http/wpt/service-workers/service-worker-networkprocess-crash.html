@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cache Storage: network process crash</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+var scope = "/WebKit/service-workers/resources";
+
+function withFrame(url)
+{
+    return new Promise((resolve) => {
+        let frame = document.createElement('iframe');
+        frame.src = url;
+        frame.onload = function() { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+}
+
+async function registerServiceWorker()
+{
+    var registration = await navigator.serviceWorker.register("fetchEvent-worker.js", { scope : scope });
+    var activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    return new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve(registration);
+        });
+    });
+}
+
+promise_test(async (test) => {
+    await registerServiceWorker();
+}, "Setup worker");
+
+promise_test(async (test) => {
+    const frame = await withFrame(scope + "/empty.html");
+    assert_not_equals(frame.contentWindow.navigator.serviceWorker.controller, null);
+    frame.remove();
+}, "Frame being controlled");
+
+promise_test(async (test) => {
+    if (window.internals)
+        await internals.storeRegistrationsOnDisk();
+
+    if (window.testRunner && window.testRunner.terminateNetworkProcess)
+        testRunner.terminateNetworkProcess();
+
+    let count = 0;
+    while (count++ < 20) {
+        const frame = await withFrame(scope + "/empty.html");
+        if (frame.contentWindow.navigator.serviceWorker.controller)
+            break;
+        frame.remove();
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    assert_true(count < 20);
+}, "Frame being controlled after network process crash");
+</script>
+</body>
+</html>
+

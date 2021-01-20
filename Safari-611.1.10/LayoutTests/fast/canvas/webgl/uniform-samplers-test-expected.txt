@@ -1,0 +1,17 @@
+Tests that only Uniform1i and Uniform1iv can be used to setsampler uniforms.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS getError was expected value: NO_ERROR : uniform1i can set a sampler uniform
+PASS getError was expected value: NO_ERROR : uniform1iv can set a sampler uniform
+PASS getError was expected value: NO_ERROR : uniform1iv can set a sampler uniform
+PASS getError was expected value: INVALID_OPERATION : uniform1f returns INVALID_OPERATION if attempting to set a sampler uniform
+PASS getError was expected value: INVALID_OPERATION : uniform1fv returns INVALID_OPERATION if attempting to set a sampler uniform
+PASS uniform1i works for any valid texture unit
+PASS uniform1iv works for any valid texture unit
+PASS uniform1i generates INVALID_VALUE for invalid texture units
+PASS uniform1iv generates INVALID_VALUE for invalid texture units
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

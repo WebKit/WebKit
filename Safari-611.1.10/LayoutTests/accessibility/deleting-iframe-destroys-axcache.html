@@ -1,0 +1,81 @@
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<script>
+    jsTestIsAsync = true;
+
+    function runTest()
+    {
+        description("This tests that deleting an iframe doesn't cause the accessibility cache to be destroyed and recreated.");
+
+        if (window.accessibilityController) {
+            window.root = accessibilityController.rootElement;
+            window.stopElement = accessibilityController.accessibleElementById("stopElement");
+
+            window.body = root.childAtIndex(0);
+            window.before = body.childAtIndex(0);
+            window.iframe = body.childAtIndex(1).childAtIndex(0);
+            window.after = body.childAtIndex(2);
+
+            window.frameBody = window.iframe.childAtIndex(0);
+            window.frameBodyRole = window.frameBody.role;
+            window.frameGroup = window.frameBody.childAtIndex(0);
+            window.frameGroupRole = window.frameGroup.role;
+            window.frameButton = window.frameGroup.childAtIndex(0);
+            window.frameButtonRole = window.frameButton.role;
+
+            document.getElementById("tree").innerText += "\nBefore:\n";
+            dumpAccessibilityTree(root, stopElement, 0, true);
+
+            // Remove the iframe.
+            document.body.removeChild(document.getElementById("iframe"));
+
+            window.newRoot = accessibilityController.rootElement;
+            window.newBody = newRoot.childAtIndex(0);
+            window.newBefore = newBody.childAtIndex(0);
+            window.newAfter = newBody.childAtIndex(1);
+
+            document.getElementById("tree").innerText += "\nAfter:\n";
+            dumpAccessibilityTree(newRoot, stopElement, 0, true);
+            document.getElementById("tree").innerText += "\n";
+
+            // Make sure that the accessibility objects from the iframe's nodes
+            // are now invalid by checking that their role is changed - this
+            // is because they've been deleted.
+            shouldBeFalse("frameBodyRole == frameBody.role");
+            shouldBeFalse("frameGroupRole == frameGroup.role");
+            shouldBeFalse("frameButtonRole == frameButton.role");
+
+            // Make sure that the other nodes are unchanged.
+            shouldBeTrue("root.isEqual(newRoot)");
+            shouldBeTrue("body.isEqual(newBody)");
+            shouldBeTrue("before.isEqual(newBefore)");
+            shouldBeTrue("after.isEqual(newAfter)");
+        }
+
+        finishJSTest();
+    }
+    
+    window.addEventListener('load', function() {
+        setTimeout(runTest, 10);
+    }, false);
+    
+  </script>
+</head>
+<body>
+
+<p>Before</p>
+
+<iframe id="iframe" src="data:text/html,<body><button>Click me</button></body>"></iframe>
+
+<p>After</p>
+
+<p id="stopElement">End of test</p>
+
+<p id="description"></p>
+<pre id="tree"></pre>
+<div id="console"></div>
+
+</body>
+</html>

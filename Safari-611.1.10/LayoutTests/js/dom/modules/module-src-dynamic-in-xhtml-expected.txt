@@ -1,0 +1,11 @@
+Test dynamically added module with "src" attribute does not work in XHTML document.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Module is not executed yet.
+PASS window.exportedCocoa is undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,63 @@
+Test basic creation of an ApplePaySession object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing supportsVersion
+
+PASS ApplePaySession.supportsVersion(0) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS ApplePaySession.supportsVersion(1) is true
+PASS ApplePaySession.supportsVersion(2) is true
+PASS ApplePaySession.supportsVersion(3) is true
+
+Testing PaymentRequest (v3)
+
+PASS new ApplePaySession(3, { }) threw exception TypeError: Member ApplePayPaymentRequest.countryCode is required and must be an instance of DOMString.
+PASS new ApplePaySession(3, validRequest()) did not throw exception.
+
+Testing PaymentRequest.supportedCountries
+
+SETUP: request = validRequest(); request.supportedCountries = ['invalid'];
+PASS new ApplePaySession(3, request) threw exception TypeError: "invalid" is not a valid country code..
+
+SETUP: request = validRequest(); request.supportedCountries = ['US', 'invalid'];
+PASS new ApplePaySession(3, request) threw exception TypeError: "invalid" is not a valid country code..
+
+SETUP: request = validRequest(); request.supportedCountries = ['US', 7];
+PASS new ApplePaySession(3, request) threw exception TypeError: "7" is not a valid country code..
+
+SETUP: request = validRequest(); request.supportedCountries = '';
+PASS new ApplePaySession(3, request) threw exception TypeError: Value is not a sequence.
+
+SETUP: request = validRequest(); request.supportedCountries = 7;
+PASS new ApplePaySession(3, request) threw exception TypeError: Value is not a sequence.
+
+SETUP: request = validRequest(); request.supportedCountries = null;
+PASS new ApplePaySession(3, request) threw exception TypeError: Value is not a sequence.
+
+SETUP: request = validRequest(); delete request.supportedCountries;
+PASS new ApplePaySession(3, request) did not throw exception.
+
+SETUP: request = validRequest(); request.supportedCountries = undefined;
+PASS new ApplePaySession(3, request) did not throw exception.
+
+SETUP: request = validRequest(); request.supportedCountries = [];
+PASS new ApplePaySession(3, request) did not throw exception.
+
+SETUP: request = validRequest(); request.supportedCountries = ['US'];
+PASS new ApplePaySession(3, request) did not throw exception.
+
+SETUP: request = validRequest(); request.supportedCountries = ['US', 'US'];
+PASS new ApplePaySession(3, request) did not throw exception.
+
+SETUP: request = validRequest(); request.requiredBillingContactFields = ['phoneticName'];
+PASS new ApplePaySession(3, request) did not throw exception.
+
+SETUP: request = validRequest(); request.requiredShippingContactFields = ['phoneticName'];
+PASS new ApplePaySession(3, request) did not throw exception.
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

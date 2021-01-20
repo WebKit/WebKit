@@ -1,0 +1,24 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hyper/hyper/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hyper/hyper/certs.pem
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hyper/hyper/cli.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hyper/hyper/compat.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hyper/hyper/contrib.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hyper/hyper/httplib_compat.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hyper/hyper/ssl_compat.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/hyper/hyper/tls.py

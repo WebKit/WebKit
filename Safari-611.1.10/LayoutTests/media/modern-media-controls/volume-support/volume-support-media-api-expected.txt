@@ -1,0 +1,12 @@
+Testing the VolumeSupport behavior by using the media API.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaController.controls.volumeSlider.value is 1
+PASS mediaController.controls.volumeSlider.value is 0.5
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

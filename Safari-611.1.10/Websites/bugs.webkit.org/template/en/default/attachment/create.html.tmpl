@@ -1,0 +1,135 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# Define strings that will serve as the title and header of this page %]
+[% title = BLOCK %]Create New Attachment for [% terms.Bug %] #[% bug.bug_id %][% END %]
+[% header = BLOCK %]Create New Attachment for
+  [%+ "$terms.Bug $bug.bug_id" FILTER bug_link(bug) FILTER none %][% END %]
+[% subheader = BLOCK %][% bug.short_desc FILTER html %][% END %]
+
+[% PROCESS global/header.html.tmpl
+  title = title
+  header = header
+  subheader = subheader
+  generate_api_token = 1
+  style_urls = ['skins/standard/bug.css']
+  yui = [ 'autocomplete' ]
+  javascript_urls = [ "js/attachment.js", 'js/field.js', "js/util.js", "js/TUI.js" ]
+  doc_section = "using/editing.html#attachments"
+%]
+
+<script type="text/javascript">
+<!--
+TUI_hide_default('attachment_text_field');
+-->
+</script>
+
+<form name="entryform" method="post" action="attachment.cgi"
+      enctype="multipart/form-data"
+      onsubmit="return validateAttachmentForm(this)">
+  <input type="hidden" name="bugid" value="[% bug.bug_id %]">
+  <input type="hidden" name="action" value="insert">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+
+  <table class="attachment_entry">
+    [% PROCESS attachment/createformcontents.html.tmpl %]
+
+    [%# Additional fields for attachments on existing bugs: %]
+    [% IF attachments.size %]
+      <tr>
+        <th>Obsoletes:</th>
+        <td>
+          <em>(optional) Check each existing attachment made obsolete by your new attachment.</em><br>
+          [% FOREACH attachment = attachments %]
+            <input type="checkbox" id="[% attachment.id %]"
+                 name="obsolete" value="[% attachment.id %]">
+            <a href="attachment.cgi?id=[% attachment.id %]&amp;action=edit">[% attachment.id %]: [% attachment.description FILTER html %]</a><br>
+          [% END %]
+        </td>
+      </tr>
+    [% END %]
+
+    [% IF (user.id != bug.assigned_to.id) AND user.in_group("editbugs", bug.product_id) %]
+      <tr>
+        <th>Reassignment:</th>
+        <td>
+          <em>If you want to assign this [% terms.bug %] to yourself,
+              check the box below.</em><br>
+          <input type="checkbox" id="takebug" name="takebug" value="1">
+          <label for="takebug">take [% terms.bug %]</label>
+          [% bug_statuses = [] %]
+          [% FOREACH bug_status = bug.status.can_change_to %]
+            [% NEXT IF bug_status.name == "UNCONFIRMED" 
+                       && !bug.product_obj.allows_unconfirmed %]
+            [% bug_statuses.push(bug_status) IF bug_status.is_open %]
+          [% END %]
+          [% IF bug_statuses.size %]
+            <label for="takebug">and set the [% terms.bug %] status to</label>
+            <select id="bug_status" name="bug_status">
+              <option value="[% bug.status.name FILTER html %]">[% display_value("bug_status", bug.status.name) FILTER html %] (current)</option>
+              [% FOREACH bug_status = bug_statuses %]
+                [% NEXT IF bug_status.id == bug.status.id %]
+                <option value="[% bug_status.name FILTER html %]">[% display_value("bug_status", bug_status.name) FILTER html %]</option>
+              [% END %]
+            </select>
+          [% END %]
+        </td>
+      </tr>
+    [% END %]
+    <tr>
+      <th><label for="comment">Comment:</label></th>
+      <td>
+        <em>(optional) Add a comment about this attachment to the [% terms.bug %].</em><br>
+        [% INCLUDE bug/comment.html.tmpl
+           minrows = 6
+           maxrows = 15
+           cols    = constants.COMMENT_COLS
+           wrap    = 'soft'
+        %]
+        [% IF NOT bug.cc.contains(user.login) %]
+          <br>
+          <input type="checkbox" id="addselfcc" name="addselfcc"
+            [%~ ' checked="checked"'
+                IF user.settings.state_addselfcc.value == 'always'
+                   || (!bug.user.has_any_role
+                       && user.settings.state_addselfcc.value == 'cc_unless_role') %]>
+          <label for="addselfcc">Add me to CC list</label>
+        [% END %]
+      </td>
+    </tr>
+    [% IF user.is_insider %]
+      <tr>
+        <th>Privacy:</th>
+        <td>
+          <input type="checkbox" name="isprivate" id="isprivate"
+          value="1" onClick="updateCommentPrivacy(this)">
+          <label for="isprivate">
+            Make attachment and comment private (visible only to members of
+            the <strong>[% Param('insidergroup') FILTER html %]</strong>
+            group)
+          </label>
+        </td>
+      </tr>
+    [% END %]
+
+    [% Hook.process('form_before_submit') %]
+[%# if WEBKIT_CHANGES %]
+[% PROCESS attachment/patchlegalese.html.tmpl product = bug.product %]
+[%# endif // WEBKIT_CHANGES %]
+
+    <tr>
+      <th>&nbsp;</th>
+      <td><input type="submit" id="create" value="Submit"></td>
+    </tr>
+  </table>
+
+</form>
+
+[% Hook.process('end') %]
+
+[% PROCESS global/footer.html.tmpl %]

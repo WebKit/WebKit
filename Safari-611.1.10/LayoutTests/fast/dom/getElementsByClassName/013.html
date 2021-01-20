@@ -1,0 +1,17 @@
+<!doctype html>
+<html class="a">
+ <head>
+  <title>element.getElementsByClassName(): adding an element</title>
+  <script src="resources/common.js"></script>
+ </head>
+ <body class="a">
+  <p id="r">FAIL (script did not run)</p>
+  <script>
+   var collection = document.body.getElementsByClassName("a"),
+       ele = document.createElement("x-y-z")
+   ele.className = "a"
+   document.body.appendChild(ele) 
+   t(collection, [ele])
+  </script>
+ </body>
+</html>

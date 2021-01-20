@@ -1,0 +1,9 @@
+
+PASS getAnimations for non-animated content
+PASS getAnimations for CSS Transitions
+PASS getAnimations for CSS Transitions sort by property name
+PASS getAnimations for CSS Transitions sort by transition generation
+PASS CSS Transitions targetting (pseudo-)elements should have correct order after sorting
+PASS CSS Transitions targetting (pseudo-)elements should have correct order after sorting (::marker)
+PASS Transitions are not returned after they have finished
+

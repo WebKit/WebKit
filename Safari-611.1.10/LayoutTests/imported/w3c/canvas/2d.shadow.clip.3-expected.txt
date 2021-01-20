@@ -1,0 +1,7 @@
+2d.shadow.clip.3
+Shadows of clipped shapes are still drawn within the clipping region
+Spec references: 2d.shadow.render
+Actual output:
+Expected output:
+
+Passed

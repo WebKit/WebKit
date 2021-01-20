@@ -1,0 +1,20 @@
+Test IDBObjectStore.getKey()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+Initial upgrade needed: Old version - 0 New version - 1
+getKey(6) result is: undefined
+getKey(3) result is: 3
+getKey(IDBKeyRange.only(5)) result is: 5
+getKey(IDBKeyRange.lowerBound(2)) result is: 2
+getKey(IDBKeyRange.upperBound(2)) result is: 1
+getKey(IDBKeyRange.bound(2, 4)) result is: 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

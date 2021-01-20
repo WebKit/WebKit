@@ -1,0 +1,26 @@
+Wheel event rect:
+
+
+(GraphicsLayer
+  (position 0.00 46.00)
+  (anchor 0.00 0.00)
+  (bounds 800.00 540.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 540.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=800 height=540)
+      (wheel event listener region
+        (rect (28,50) width=100 height=100)
+        (non-passive
+          (rect (28,50) width=100 height=100)
+        )
+      )
+      )
+    )
+  )
+)
+

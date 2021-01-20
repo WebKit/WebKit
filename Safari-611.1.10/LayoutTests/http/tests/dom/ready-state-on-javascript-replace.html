@@ -1,0 +1,26 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = () => {
+    frame = document.createElement('iframe');
+    frame.src = location;
+    document.body.appendChild(frame);
+
+    frame.contentDocument.open();
+    frame.contentDocument.onreadystatechange = () => {
+        alert("Outer handler: " + frame.contentDocument.readyState);
+        frame.contentWindow.addEventListener('readystatechange', () => {
+            alert("Inner handler: " + frame.contentDocument.readyState);
+        }, {capture: true, once: true});
+    }
+    frame.src = 'javascript:"<script>function endIt() { if (window.top.testRunner) window.top.testRunner.notifyDone(); }; setTimeout(endIt, 0);</scr' + 'ipt>"';
+}
+
+</script>
+<body>
+This test makes sure an iframe whose document is being closed to be replaced by a javascript: url doesn't fire a readystatechange event.<br>
+You should see no alerts.<br>
+</body>

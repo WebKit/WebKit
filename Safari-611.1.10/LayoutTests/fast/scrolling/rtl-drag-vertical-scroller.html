@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body style="margin: 0px;">
+<div id="scrollMe" style="direction: rtl; width: 100px; height: 100px; position: absolute; left: 0px; top: 0px; overflow: scroll;">
+<div style="position: absolute; right: 300px; top: 300px;">Hello</div>
+<div id="probe" style="position: absolute; right: 0px; top: 0px; width: 1px; height: 1px;"></div>
+</div>
+<script>
+description("This test makes sure that dragging the vertical scrollbar of an RTL scrollable div doesn't cause a horizontal scroll.");
+function detectRTLScrollbar() {
+    var probe = document.getElementById("probe");
+    return probe.getBoundingClientRect().left >= 91;
+}
+
+var rtl = detectRTLScrollbar();
+
+var x;
+if (rtl)
+    x = 4;
+else
+    x = 96;
+
+if (window.eventSender) {
+    eventSender.mouseMoveTo(x, 2);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(x, 102);
+    eventSender.mouseUp();
+}
+var scrollMe = document.getElementById("scrollMe");
+shouldBe("scrollMe.scrollLeft", "0");
+shouldNotBe("scrollMe.scrollTop", "0");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+This test passes if it doesn't crash.
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+xhr = new XMLHttpRequest();
+xhr.open('GET', 'resources/onclick.html', false);
+xhr.responseType = 'document';
+xhr.onload = function () { r = this.responseXML; }
+xhr.send();
+td = r.getElementById('foo');
+td.children[0].onclick;
+</script>

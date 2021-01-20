@@ -1,0 +1,45 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+    width: 599px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for (i = 0; i < 23; i++) {
+        moveSelectionForwardByCharacterCommand();
+    }
+    deleteCommand();
+    deleteCommand();
+    
+    // This should not be necessary, but due to the following bug, the caret
+    // does not repaint in the proper position. Changing the size of the DIV
+    // is a workaround. The bug:
+    // <rdar://problem/3608445>: Garbage characters rendered after doing delete. Resize makes them go away.
+    changeRootSize();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<div contenteditable id="root" class="editing">
+<span id="test">Fourscore 
+and   seven <br><br><br>years ago</span>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+Test that uiController.zoomToScale() works.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.pageScaleFactor() is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

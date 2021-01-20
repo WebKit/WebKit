@@ -1,0 +1,13 @@
+Test that innerHTML does not mangle javascript: urls.
+r.innerHTML = r.innerHTML.replace(/&37;3C!--D--&37;3E/g, 123)
+PASS: r.innerHTML.indexOf('javascript:test(123)') > -1 should be true and is.
+r.firstChild.setAttribute('href', 'javascript:test("text<")')
+PASS: r.innerHTML.indexOf('javascript:test("text<")') > -1 should be true and is.
+r.firstChild.setAttribute("href", "javascript:test('text>')")
+PASS: r.innerHTML.indexOf("javascript:test('text>')") > -1 should be true and is.
+testString = javascript:test('text&',"test2&")
+r.firstChild.setAttribute("href", testString)
+PASS: r.innerHTML.indexOf("javascript:test('text&',&quot;test2&&quot;)") > 1 should be true and is.
+r.firstChild.setAttribute('href', 'http://www.google.fi/search?q=scarlett johansson&meta=&btnG=Google-haku')
+<a href="http://www.google.fi/search?q=scarlett johansson&amp;meta=&amp;btnG=Google-haku">link</a>
+link

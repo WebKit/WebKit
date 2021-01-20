@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Framebusting without user activation</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+    <p>If you see this message, then framebusting without user activation failed!</p>
+    <iframe srcdoc="<p>This frame tries to navigate its top context...</p><script>top.location='data:text/html,Framebusting without user activation succeeded!'</script>"></iframe>
+  </body>
+</html>

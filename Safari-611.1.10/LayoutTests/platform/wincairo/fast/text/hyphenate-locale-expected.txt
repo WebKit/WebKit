@@ -1,0 +1,37 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 130x215
+        RenderBlock {DIV} at (0,0) size 130x43
+          RenderText {#text} at (0,1) size 156x41
+            text run at (0,1) width 156: "throughout"
+        RenderBlock {DIV} at (0,43) size 130x43
+          RenderText {#text} at (0,1) size 156x41
+            text run at (0,1) width 156: "throughout"
+        RenderBlock {DIV} at (0,86) size 130x43
+          RenderText {#text} at (0,1) size 156x41
+            text run at (0,1) width 156: "throughout"
+        RenderBlock {DIV} at (0,129) size 130x43
+          RenderText {#text} at (0,1) size 156x41
+            text run at (0,1) width 156: "throughout"
+        RenderBlock {DIV} at (0,172) size 130x43
+          RenderText {#text} at (0,1) size 156x41
+            text run at (0,1) width 156: "throughout"
+      RenderBlock {DIV} at (0,215) size 135x215
+        RenderBlock {DIV} at (0,0) size 135x43
+          RenderText {#text} at (0,1) size 153x41
+            text run at (0,1) width 153: "reciprocity"
+        RenderBlock {DIV} at (0,43) size 135x43
+          RenderText {#text} at (0,1) size 153x41
+            text run at (0,1) width 153: "reciprocity"
+        RenderBlock {DIV} at (0,86) size 135x43
+          RenderText {#text} at (0,1) size 153x41
+            text run at (0,1) width 153: "reciprocity"
+        RenderBlock {DIV} at (0,129) size 135x43
+          RenderText {#text} at (0,1) size 153x41
+            text run at (0,1) width 153: "reciprocity"
+        RenderBlock {DIV} at (0,172) size 135x43
+          RenderText {#text} at (0,1) size 153x41
+            text run at (0,1) width 153: "reciprocity"

@@ -1,0 +1,6 @@
+
+FAIL e.style['text-justify'] = "auto" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['text-justify'] = "none" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['text-justify'] = "inter-word" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['text-justify'] = "inter-character" should set the property value assert_not_equals: property should be set got disallowed value ""
+

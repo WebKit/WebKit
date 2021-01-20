@@ -1,0 +1,5 @@
+
+PASS Call getCurrentPosition with wrong type for enableHighAccuracy. No exception expected.
+PASS Call watchPosition with wrong type for enableHighAccuracy. No exception expected.
+FAIL PositionOptions tests promise_test: Unhandled rejection with value: object "Error: unimplemented"
+

@@ -1,0 +1,45 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 684x334
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceFilter {filter} [id="drop-shadow-1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feDropShadow stdDeviation="2.00, 2.00" dx="2.00" dy="2.00" flood-color="#008000" flood-opacity="1.00]
+          [SourceGraphic]
+      RenderSVGResourceFilter {filter} [id="drop-shadow-2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feDropShadow stdDeviation="0.00, 0.00" dx="0.00" dy="0.00" flood-color="#008000" flood-opacity="1.00]
+          [SourceGraphic]
+      RenderSVGResourceFilter {filter} [id="drop-shadow-3"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feDropShadow stdDeviation="0.00, 10.00" dx="5.00" dy="5.00" flood-color="#008000" flood-opacity="1.00]
+          [SourceGraphic]
+      RenderSVGResourceFilter {filter} [id="drop-shadow-4"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feDropShadow stdDeviation="10.00, 0.00" dx="5.00" dy="5.00" flood-color="#008000" flood-opacity="1.00]
+          [SourceGraphic]
+      RenderSVGResourceFilter {filter} [id="drop-shadow-5"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feDropShadow stdDeviation="10.00, 10.00" dx="5.00" dy="5.00" flood-color="#008000" flood-opacity="1.00]
+          [SourceGraphic]
+      RenderSVGResourceFilter {filter} [id="drop-shadow-6"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feDropShadow stdDeviation="10.00, 10.00" dx="-5.00" dy="-5.00" flood-color="#008000" flood-opacity="1.00]
+          [SourceGraphic]
+      RenderSVGResourceFilter {filter} [id="drop-shadow-7"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feDropShadow stdDeviation="128.00, 128.00" dx="0.00" dy="0.00" flood-color="#008000" flood-opacity="1.00]
+          [SourceGraphic]
+      RenderSVGResourceFilter {filter} [id="drop-shadow-8"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feDropShadow stdDeviation="10.00, 10.00" dx="5.00" dy="5.00" flood-color="#008000" flood-opacity="0.50]
+          [SourceGraphic]
+    RenderSVGEllipse {circle} at (0,0) size 159x159 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=75.00] [cy=75.00] [r=70.00]
+      [filter="drop-shadow-1"] RenderSVGResourceFilter {filter} at (-9,-9) size 168x168
+    RenderSVGEllipse {circle} at (166,0) size 168x159 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=250.00] [cy=75.00] [r=70.00]
+      [filter="drop-shadow-2"] RenderSVGResourceFilter {filter} at (166,-9) size 168x168
+    RenderSVGEllipse {circle} at (341,0) size 168x159 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=425.00] [cy=75.00] [r=70.00]
+      [filter="drop-shadow-3"] RenderSVGResourceFilter {filter} at (341,-9) size 168x168
+    RenderSVGEllipse {circle} at (516,0) size 168x159 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=600.00] [cy=75.00] [r=70.00]
+      [filter="drop-shadow-4"] RenderSVGResourceFilter {filter} at (516,-9) size 168x168
+    RenderSVGEllipse {circle} at (0,166) size 159x168 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=75.00] [cy=250.00] [r=70.00]
+      [filter="drop-shadow-5"] RenderSVGResourceFilter {filter} at (-9,166) size 168x168
+    RenderSVGEllipse {circle} at (166,166) size 168x168 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=250.00] [cy=250.00] [r=70.00]
+      [filter="drop-shadow-6"] RenderSVGResourceFilter {filter} at (166,166) size 168x168
+    RenderSVGEllipse {circle} at (341,166) size 168x168 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=425.00] [cy=250.00] [r=70.00]
+      [filter="drop-shadow-7"] RenderSVGResourceFilter {filter} at (341,166) size 168x168
+    RenderSVGEllipse {circle} at (516,166) size 168x168 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=600.00] [cy=250.00] [r=70.00]
+      [filter="drop-shadow-8"] RenderSVGResourceFilter {filter} at (516,166) size 168x168

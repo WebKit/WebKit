@@ -1,0 +1,145 @@
+Blocked access to external URL http://example.org/image.jpg
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (16,80) size 691x386
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGRect {rect} at (0,0) size 2x2 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=1.00] [height=1.00]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
+        RenderSVGImage {image} at (0,0) size 2x2
+        RenderSVGResourceRadialGradient {radialGradient} [id="g"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50] [focalRadius=0.00]
+        RenderSVGText {text}
+        RenderSVGText {text} at (0,-18) size 74x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 74x22
+            chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 8 width 73.03: "sometext"
+        RenderSVGResourceMarker {marker} [id="m"] [markerUnits=strokeWidth] [ref at (0,0)] [angle=0.00]
+        RenderSVGViewportContainer {svg} at (0,0) size 0x0
+        RenderSVGResourceFilter {filter} [id="f"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        RenderSVGPath {polygon} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [points=""]
+      RenderSVGContainer {g} at (16,80) size 236x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,50.00)}]
+        RenderSVGRect {rect} at (16,85) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 132x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 132x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 30 width 131.07: "r.x.baseVal.value == 0: PASSED"
+      RenderSVGContainer {g} at (16,97) size 486x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,60.00)}]
+        RenderSVGRect {rect} at (16,101) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 281x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 281x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 57 width 280.60: "r.x.baseVal.unitType == 1 (SVG_LENGTHTYPE_NUMBER): PASSED"
+      RenderSVGContainer {g} at (16,113) size 391x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,70.00)}]
+        RenderSVGRect {rect} at (16,118) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 225x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 225x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 52 width 224.13: "v.width.baseVal.valueInSpecifiedUnits == 100: PASSED"
+      RenderSVGContainer {g} at (16,130) size 554x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,80.00)}]
+        RenderSVGRect {rect} at (16,135) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 322x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 322x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 65 width 321.62: "v.width.baseVal.unitType == 2 (SVG_LENGTHTYPE_PERCENTAGE): PASSED"
+      RenderSVGContainer {g} at (16,147) size 481x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,90.00)}]
+        RenderSVGRect {rect} at (16,151) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 279x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 279x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 65 width 278.17: "tt.textLength.baseVal.value == tt.getComputedTextLength(): PASSED"
+      RenderSVGContainer {g} at (16,163) size 228x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,100.00)}]
+        RenderSVGRect {rect} at (16,168) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 127x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 127x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 29 width 126.07: "s.offset.baseVal == 0: PASSED"
+      RenderSVGContainer {g} at (16,180) size 311x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,110.00)}]
+        RenderSVGRect {rect} at (16,185) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 177x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 177x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 40 width 176.10: "c.preserveAlpha.baseVal == false: PASSED"
+      RenderSVGContainer {g} at (16,197) size 268x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,120.00)}]
+        RenderSVGRect {rect} at (16,201) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 150x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 150x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 33 width 149.95: "c.className.baseVal == \"\": PASSED"
+      RenderSVGContainer {g} at (16,213) size 215x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,130.00)}]
+        RenderSVGRect {rect} at (16,218) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 119x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 119x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 28 width 118.45: "i.href.baseVal == \"\": PASSED"
+      RenderSVGContainer {g} at (16,230) size 350x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,140.00)}]
+        RenderSVGRect {rect} at (16,235) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 200x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 200x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 45 width 199.59: "i.requiredFeatures.numberOfItems == 0: PASSED"
+      RenderSVGContainer {g} at (16,247) size 380x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,150.00)}]
+        RenderSVGRect {rect} at (16,251) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 218x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 218x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 49 width 217.59: "c.kernelMatrix.baseVal.numberOfItems == 0: PASSED"
+      RenderSVGContainer {g} at (16,263) size 303x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,160.00)}]
+        RenderSVGRect {rect} at (16,268) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 172x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 172x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 38 width 171.08: "t.x.baseVal.numberOfItems == 0: PASSED"
+      RenderSVGContainer {g} at (16,280) size 281x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,170.00)}]
+        RenderSVGRect {rect} at (16,285) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 159x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 159x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 35 width 158.08: "p.points.numberOfItems == 0: PASSED"
+      RenderSVGContainer {g} at (16,297) size 597x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,180.00)}]
+        RenderSVGRect {rect} at (16,301) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 348x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 348x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 70 width 347.63: "g.gradientUnits.baseVal == 2 (SVG_UNIT_TYPE_OBJECTBOUNDINGBOX): PASSED"
+      RenderSVGContainer {g} at (16,313) size 245x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,190.00)}]
+        RenderSVGRect {rect} at (16,318) size 9x9 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 137x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 137x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 33 width 136.06: "f.filterResX.baseVal == 0: FAILED"
+      RenderSVGContainer {g} at (16,330) size 312x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,200.00)}]
+        RenderSVGRect {rect} at (16,335) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 177x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 177x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 40 width 176.60: "m.orientAngle.baseVal.value == 0: PASSED"
+      RenderSVGContainer {g} at (16,347) size 587x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,210.00)}]
+        RenderSVGRect {rect} at (16,351) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 342x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 342x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 71 width 341.64: "m.orientAngle.baseVal.unitType == 1 (SVG_ANGLETYPE_UNSPECIFIED): PASSED"
+      RenderSVGContainer {g} at (16,363) size 363x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,220.00)}]
+        RenderSVGRect {rect} at (16,368) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 208x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 208x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 49 width 207.11: "v.viewBox.baseVal.[x,y,width,height] == 0: PASSED"
+      RenderSVGContainer {g} at (16,380) size 359x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,230.00)}]
+        RenderSVGRect {rect} at (16,385) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 205x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 205x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 46 width 204.59: "t.transform.baseVal.numberOfItems == 0: PASSED"
+      RenderSVGContainer {g} at (16,397) size 691x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,240.00)}]
+        RenderSVGRect {rect} at (16,401) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 405x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 405x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 83 width 404.15: "v.preserveAspectRatio.baseVal.align == 6 (SVG_PRESERVEASPECTRATIO_XMIDYMID): PASSED"
+      RenderSVGContainer {g} at (16,413) size 629x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,250.00)}]
+        RenderSVGRect {rect} at (16,418) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 367x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 367x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 77 width 366.64: "v.preserveAspectRatio.baseVal.meetOrSlice == 1 (SVG_MEETORSLICE_MEET): PASSED"
+      RenderSVGContainer {g} at (16,430) size 461x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,260.00)}]
+        RenderSVGRect {rect} at (16,435) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 267x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 267x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 50 width 266.08: "v.zoomAndPan == 2 (SVG_ZOOMANDPAN_MAGNIFY): PASSED"
+      RenderSVGContainer {g} at (16,447) size 152x19 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,270.00)}]
+        RenderSVGRect {rect} at (16,451) size 9x9 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,-2) size 81x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 81x11
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 19 width 80.53: "Test status: FAILED"
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.9 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGContainer {g} at (0,0) size 800x39
+      RenderSVGRect {rect} at (0,0) size 800x36 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
+      RenderSVGText {text} at (205,-1) size 70x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 69x24
+          chunk 1 (middle anchor) text run 1 at (205.95,18.00) startOffset 0 endOffset 5 width 68.10: "DRAFT"

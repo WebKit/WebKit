@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<a id="a" rel="a b c"></a>
+<area id="area" rel="a b c"></area>
+<link id="link" rel="a b c">
+<script>
+description('Tests that relList works on anchor, area and link elements');
+
+var element;
+var type;
+var observer;
+
+function createElement(rel)
+{
+    element = document.createElement(type);
+    element.rel = rel;
+}
+
+function test() 
+{
+    element = document.getElementById(type);
+    shouldBeFalse('element.relList == null');
+    shouldBeFalse('element.relList == undefined');
+    shouldBeTrue('element.relList instanceof DOMTokenList');
+    shouldBe('element.relList.length', '3');
+    shouldBeTrue('element.relList.contains("a")');
+    shouldBeTrue('element.relList.contains("b")');
+    shouldBeTrue('element.relList.contains("c")');
+    shouldBeFalse('element.relList.contains("d")');
+
+    createElement("foo bar chocolate");
+    shouldBe('element.relList.length', '3');
+    shouldBeTrue('element.relList.contains("foo")');
+    shouldBeTrue('element.relList.contains("bar")');
+    shouldBeTrue('element.relList.contains("chocolate")');
+    shouldBeFalse('element.relList.contains("orange")');
+
+    element.removeAttribute('rel');
+    shouldBe('element.relList.length', '0');
+    
+    element.setAttribute('rel', '');
+    shouldBe('element.relList.length', '0');
+
+    element.setAttribute('rel', 'marshmallow chips');
+    shouldBe('element.relList.length', '2');
+    shouldBeTrue('element.relList.contains("marshmallow")');
+    shouldBeTrue('element.relList.contains("chips")');
+    shouldBeFalse('element.relList.contains("orange")');
+
+    createElement('x');
+    element.relList = 'y';
+    shouldBeEqualToString('String(element.relList)', 'y');
+
+    createElement('');
+    shouldEvaluateTo('element.relList.length', 0);
+
+    createElement('x');
+    shouldEvaluateTo('element.relList.length', 1);
+
+    createElement('x x');
+    shouldEvaluateTo('element.relList.length', 1);
+
+    createElement('x y');
+    shouldEvaluateTo('element.relList.length', 2);
+
+    createElement('');
+    element.relList.add('x');
+    shouldBeEqualToString('element.rel', 'x');
+
+    createElement('x');
+    element.relList.add('x');
+    shouldBeEqualToString('element.rel', 'x');
+
+    createElement('x  x');
+    element.relList.add('x');
+    shouldBeEqualToString('element.rel', 'x');
+
+    createElement('y');
+    element.relList.add('x');
+    shouldBeEqualToString('element.rel', 'y x');
+
+    createElement('');
+    element.relList.remove('x');
+    shouldBeEqualToString('element.rel', '');
+
+    createElement('x');
+    element.relList.remove('x');
+    shouldBeEqualToString('element.rel', '');
+
+    createElement(' y x  y ');
+    element.relList.remove('x');
+    shouldBeEqualToString('element.rel', 'y');
+
+    createElement(' x y  x ');
+    element.relList.remove('x');
+    shouldBeEqualToString('element.rel', 'y');
+
+    debug('Ensure that we can handle empty rel correctly');
+    element = document.createElement(type);
+    shouldBeTrue("element.relList.toggle('x')");
+    shouldBeEqualToString('element.rel', 'x');
+    shouldBeFalse("element.relList.toggle('x')");
+    shouldBeEqualToString('element.rel', '');
+
+    element = document.createElement(type);
+    shouldBeFalse('element.relList.contains("x")');
+    shouldBeUndefined('element.relList[1]');
+    element.relList.remove('x');
+    shouldBeFalse('element.relList.contains("x")');
+    element.relList.add('x');
+    shouldBeTrue('element.relList.contains("x")');
+
+    debug('Test toggle with force argument');
+    createElement('');
+    shouldBeTrue("element.relList.toggle('x', true)");
+    shouldBeEqualToString('element.rel', 'x');
+    shouldBeTrue("element.relList.toggle('x', true)");
+    shouldBeEqualToString('element.rel', 'x');
+    shouldBeFalse("element.relList.toggle('x', false)");
+    shouldBeEqualToString('element.rel', '');
+    shouldBeFalse("element.relList.toggle('x', false)");
+    shouldBeEqualToString('element.rel', '');
+    shouldThrow('element.relList.toggle("", true)');
+    shouldThrow('element.relList.toggle("x y", false)');
+
+    debug('Testing add in presence of trailing white spaces.');
+    createElement('x ');
+    element.relList.add('y');
+    shouldBeEqualToString('element.rel', 'x y');
+
+    createElement('x\t');
+    element.relList.add('y');
+    shouldBeEqualToString('element.rel', 'x y');
+
+    createElement(' ');
+    element.relList.add('y');
+    shouldBeEqualToString('element.rel', 'y');
+
+    debug('Test invalid tokens');
+
+    createElement('x');
+    shouldBeFalse('element.relList.contains("")');
+
+    createElement('x y');
+    shouldBeFalse('element.relList.contains("x y")');
+
+    createElement('');
+    shouldThrow('element.relList.add("")');
+
+    createElement('');
+    shouldThrow('element.relList.add("x y")');
+
+    createElement('');
+    shouldThrow('element.relList.remove("")');
+
+    createElement('');
+    shouldThrow('element.relList.remove("x y")');
+
+    createElement('');
+    shouldThrow('element.relList.toggle("")');
+
+    debug('Indexing');
+    createElement('x');
+    shouldBeEqualToString('element.relList[0]', 'x');
+    shouldBeEqualToString('element.relList.item(0)', 'x');
+
+    createElement('x x');
+    shouldBeUndefined('element.relList[1]');
+    shouldBeNull('element.relList.item(1)');
+
+    createElement('x y');
+    shouldBeEqualToString('element.relList[1]', 'y');
+    shouldBeEqualToString('element.relList.item(1)', 'y');
+
+    createElement('');
+    shouldBeUndefined('element.relList[0]');
+    shouldBeNull('element.relList.item(0)');
+
+    createElement('x y z');
+    shouldBeUndefined('element.relList[4]');
+    shouldBeNull('element.relList.item(4)');
+    shouldBeUndefined('element.relList[-1]');
+    shouldBeNull('element.relList.item(-1)');
+    shouldThrow('element.relList.item()');
+
+    debug('Test case since DOMTokenList is case sensitive');
+    createElement('x');
+    shouldBeTrue('element.relList.contains("x")');
+    shouldBeFalse('element.relList.contains("X")');
+    shouldBeEqualToString('element.relList[0]', 'x');
+    shouldThrow('element.relList.contains()');
+
+    createElement('X');
+    shouldBeTrue('element.relList.contains("X")');
+    shouldBeFalse('element.relList.contains("x")');
+    shouldBeEqualToString('element.relList[0]', 'X');
+
+    debug('Testing whitespace');
+    createElement('x\u0020y');
+    shouldEvaluateTo('element.relList.length', 2);
+
+    createElement('x\u0009y');
+    shouldEvaluateTo('element.relList.length', 2);
+
+    createElement('x\u000Ay');
+    shouldEvaluateTo('element.relList.length', 2);
+
+    createElement('x\u000Cy');
+    shouldEvaluateTo('element.relList.length', 2);
+
+    createElement('x\u000Dy');
+    shouldEvaluateTo('element.relList.length', 2);
+
+    debug('DOMTokenList presence and type');
+    shouldBeTrue('\'undefined\' != typeof DOMTokenList');
+
+    shouldBeEqualToString('typeof DOMTokenList.prototype', 'object');
+
+    createElement('x');
+    shouldBeEqualToString('typeof element.relList', 'object');
+    shouldEvaluateTo('element.relList.constructor', 'DOMTokenList');
+    shouldBeTrue('element.relList === element.relList');
+
+    debug('Variadic calls');
+
+    createElement('');
+    element.relList.add('a', 'b');
+    shouldBeEqualToString('element.rel', 'a b');
+
+    element.relList.add('a', 'b', 'c');
+    shouldBeEqualToString('element.rel', 'a b c');
+
+    element.relList.add(null, {toString: function() { return 'd' }}, undefined, 0, false);
+    shouldBeEqualToString('element.rel', 'a b c null d undefined 0 false');
+
+    createElement('');
+    element.relList.add('a', 'b', 'a');
+    shouldBeEqualToString('element.rel', 'a b');
+
+    createElement('');
+    shouldThrow('element.relList.add("a", "b", "")');
+    shouldBeEqualToString('element.rel', '');
+    shouldThrow('element.relList.add("a", "b", "c d")');
+    shouldBeEqualToString('element.rel', '');
+    shouldThrow('element.relList.add("a", {toString: function() { throw new Error("user error"); }}, "b")', '"Error: user error"');
+    shouldBeEqualToString('element.rel', '');
+
+    createElement('');
+    shouldNotThrow('element.relList.add()');
+
+    createElement('');
+    observer = new WebKitMutationObserver(function() {});
+    observer.observe(element, {attributes: true});
+    element.relList.add('a', 'c');
+    shouldBe('observer.takeRecords().length', '1');
+
+    createElement('a b c d  ');
+    element.relList.remove('a', 'c');
+    shouldBeEqualToString('element.rel', 'b d');
+
+    element.relList.remove('b', 'b');
+    shouldBeEqualToString('element.rel', 'd');
+
+    createElement('a b c null d undefined 0 false');
+    element.relList.remove(null, {toString: function() { return 'd' }}, undefined, 0, false);
+    shouldBeEqualToString('element.rel', 'a b c');
+
+    createElement('a b');
+    shouldThrow('element.relList.remove("a", "b", "")');
+
+    shouldBeEqualToString('element.rel', 'a b');
+    shouldThrow('element.relList.remove("a", {toString: function() { throw new Error("user error"); }}, "b")', '"Error: user error"');
+    shouldBeEqualToString('element.rel', 'a b');
+
+    shouldThrow('element.relList.remove("a", "b", "c d")');
+    shouldBeEqualToString('element.rel', 'a b');
+    shouldNotThrow('element.relList.remove()');
+
+    createElement('a b c');
+    observer = new WebKitMutationObserver(function() {});
+    observer.observe(element, {attributes: true});
+    element.relList.remove('a', 'c');
+    shouldBe('observer.takeRecords().length', '1');
+}
+
+debug('Tests relList for anchor element');
+type = 'a';
+test();
+debug('Tests relList for area element');
+type = 'area';
+test();
+debug('Tests relList for link element');
+type = 'link';
+test();
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

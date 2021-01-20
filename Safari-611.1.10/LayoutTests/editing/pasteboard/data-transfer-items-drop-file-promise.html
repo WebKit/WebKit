@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+html, body {
+    width: 100%;
+    height: 100%;
+}
+</style>
+<body contenteditable>
+    <pre id="output">
+        This test is best run under DumpRenderTree. To manually test, drop a file anywhere in the body.
+        This will dump the contents of the DataTransfer on drop as output text.
+        You should see an item of kind "file" in the resulting item list, as well as an entry in the item list.
+        There should <i>not</i> be an item of kind "string" and type "file".
+    </pre>
+</body>
+<script>
+
+function write(markup) {
+    output.insertAdjacentHTML("beforeend", markup);
+}
+
+function outputForFile(file) {
+    return file ? `(name = '${file.name}', size = ${file.size} bytes, type = '${file.type}')` : "(null)";
+}
+
+function writeOutputForEvent(event) {
+    output.textContent = "";
+
+    write(`<br><h3>*** Handling ${event.type} ***</h3>`);
+    const pasteboard = event.dataTransfer || event.clipboardData;
+    write(`<div><strong>Types => data</strong></div>`);
+    for (const type of pasteboard.types)
+        write(`<div>${type} => "${pasteboard.getData(type)}"</div>`);
+    let index = 0;
+    write(`<div><strong>Item list</strong></div>`);
+    for (const item of pasteboard.items) {
+        if (item.kind === "file")
+            write(`<div>[${index++}] => ${outputForFile(item.getAsFile())}</div>`);
+        else
+            write(`<div>[${index++}] => (kind = ${item.kind}, type = ${item.type})</div>`);
+    }
+    write(`<div><strong>File list</strong></div>`);
+    index = 0;
+    for (const file of pasteboard.files)
+        write(`<div>[${index++}] => ${outputForFile(file)}</div>`);
+}
+
+document.body.addEventListener("drop", event => {
+    event.preventDefault();
+    writeOutputForEvent(event);
+    testRunner.notifyDone();
+});
+
+if (window.testRunner && window.internals && window.eventSender) {
+    internals.settings.setCustomPasteboardDataEnabled(true);
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    eventSender.beginDragWithFilePromises(["resources/apple.gif"]);
+    eventSender.mouseMoveTo(100, 100);
+    eventSender.mouseUp();
+}
+</script>

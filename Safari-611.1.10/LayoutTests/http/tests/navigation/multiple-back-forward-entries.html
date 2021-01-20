@@ -1,0 +1,24 @@
+<html>
+<head>
+<title>Multiple Back/Forward Entries</title>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpBackForwardList();
+        testRunner.waitUntilDone();
+    }
+    function loadDone() {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body>
+This test creates an iFrame via document.write(), then immediately changes the source of that iframe while the main document is still being parsed.  The src change should not result in a new back/forward list entry.<br>
+    <script>
+        document.write('<iframe id="frame" src="http://127.0.0.1:8000/navigation/resources/slow-resource.pl?delay=250" width="500" height="500"></iframe>');
+        document.getElementById('frame').src = "http://127.0.0.1:8000/navigation/resources/slow-resource.pl?delay=250";
+        document.getElementById('frame').onload = loadDone;
+    </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x158
+  RenderBlock {HTML} at (0,0) size 800x158
+    RenderBody {BODY} at (8,16) size 784x134
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 332x19
+          text run at (0,0) width 332: "All of the table rows and cells below should be rotated."
+      RenderTable {TABLE} at (0,36) size 188x98
+        RenderTableSection {TBODY} at (0,0) size 188x98
+          RenderTableRow {TR} at (0,50) size 188x22
+          RenderTableRow {TR} at (0,74) size 188x22
+layer at (8,54) size 188x22
+  RenderTableRow {TR} at (0,2) size 188x22
+    RenderTableCell {TD} at (2,2) size 184x22 [r=0 c=0 rs=1 cs=1]
+      RenderText {#text} at (1,1) size 105x19
+        text run at (1,1) width 105: "Transformed row"
+layer at (8,78) size 188x22
+  RenderTableRow {TR} at (0,26) size 188x22
+    RenderTableCell {TD} at (2,26) size 184x22 [r=1 c=0 rs=1 cs=1]
+      RenderText {#text} at (1,1) size 182x19
+        text run at (1,1) width 182: "Transformed row with opacity"
+layer at (10,102) size 184x22
+  RenderTableCell {TD} at (2,50) size 184x22 [r=2 c=0 rs=1 cs=1]
+    RenderText {#text} at (1,1) size 101x19
+      text run at (1,1) width 101: "Transformed cell"
+layer at (10,126) size 184x22
+  RenderTableCell {TD} at (2,74) size 184x22 [r=3 c=0 rs=1 cs=1]
+    RenderText {#text} at (1,1) size 178x19
+      text run at (1,1) width 178: "Transformed cell with opacity"

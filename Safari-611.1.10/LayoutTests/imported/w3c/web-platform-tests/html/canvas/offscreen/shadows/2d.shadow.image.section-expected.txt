@@ -1,0 +1,7 @@
+2d.shadow.image.section
+
+Shadows are not drawn for areas outside image source rectangles
+
+
+PASS Shadows are not drawn for areas outside image source rectangles
+

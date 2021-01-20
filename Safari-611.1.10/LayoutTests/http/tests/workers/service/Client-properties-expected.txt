@@ -1,0 +1,5 @@
+client.url: http://127.0.0.1:8000/workers/service/Client-properties.html
+client.frameType: top-level
+client.type: window
+client.id is non empty: YES
+

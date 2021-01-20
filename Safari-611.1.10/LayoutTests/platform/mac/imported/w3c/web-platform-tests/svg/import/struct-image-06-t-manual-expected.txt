@@ -1,0 +1,57 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (16,36) size 709x381
+      RenderSVGContainer {g} at (16,36) size 709x381
+        RenderSVGText {text} at (10,21) size 39x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 39x11
+            chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 10 width 38.51: "SVG to fit"
+        RenderSVGContainer {g} at (33,66) size 84x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,40.00)}]
+          RenderSVGImage {image} at (33,66) size 84x84
+        RenderSVGText {text} at (10,101) size 43x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 43x11
+            chunk 1 text run 1 at (10.00,110.00) startOffset 0 endOffset 10 width 42.52: "Viewport 1"
+        RenderSVGContainer {g} at (16,200) size 84x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,120.00)}]
+          RenderSVGRect {rect} at (16,200) size 84x50 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+        RenderSVGText {text} at (10,171) size 43x12 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 43x11
+            chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 10 width 42.52: "Viewport 2"
+        RenderSVGContainer {g} at (33,316) size 51x101 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,190.00)}]
+          RenderSVGRect {rect} at (33,316) size 51x101 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+        RenderSVGContainer {g} at (166,36) size 143x98 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,50.00)}]
+          RenderSVGText {text} at (0,-29) size 85x12 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 85x11
+              chunk 1 text run 1 at (0.00,-20.00) startOffset 0 endOffset 26 width 84.95: "---------- meet ----------"
+          RenderSVGContainer {g} at (216,61) size 84x73 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}]
+            RenderSVGText {text} at (0,-14) size 23x12 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 23x11
+                chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 22.50: "xMid*"
+            RenderSVGRect {rect} at (216,83) size 84x51 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+            RenderSVGImage {image} at (216,83) size 84x51
+        RenderSVGContainer {g} at (383,36) size 142x148 [transform={m=((1.00,0.00)(0.00,1.00)) t=(230.00,50.00)}]
+          RenderSVGText {text} at (0,-29) size 85x12 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 85x11
+              chunk 1 text run 1 at (0.00,-20.00) startOffset 0 endOffset 26 width 84.95: "---------- meet ----------"
+          RenderSVGContainer {g} at (433,61) size 51x123 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}]
+            RenderSVGText {text} at (0,-14) size 25x12 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 25x11
+                chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 24.01: "*YMid"
+            RenderSVGRect {rect} at (433,83) size 51x101 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+            RenderSVGImage {image} at (433,83) size 51x101
+        RenderSVGContainer {g} at (583,36) size 142x148 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,50.00)}]
+          RenderSVGText {text} at (0,-29) size 85x12 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 85x11
+              chunk 1 text run 1 at (0.00,-20.00) startOffset 0 endOffset 26 width 84.95: "---------- meet ----------"
+          RenderSVGContainer {g} at (633,61) size 51x123 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}]
+            RenderSVGText {text} at (0,-14) size 24x12 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 24x11
+                chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 23.52: "*none"
+            RenderSVGRect {rect} at (633,83) size 51x101 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+            RenderSVGImage {image} at (633,83) size 51x101
+    RenderSVGContainer {g} at (16,517) size 381x62
+      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 229x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.6 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

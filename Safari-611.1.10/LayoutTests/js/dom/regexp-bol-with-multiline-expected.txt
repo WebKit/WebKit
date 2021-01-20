@@ -1,0 +1,14 @@
+Test for beginning of line (BOL or ^) matching in a multiline string
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS s.match(/^abc/) is null
+PASS s.match(/^abc/m) is ["abc"]
+PASS s.match(/(^|X)abc/) is null
+PASS s.match(/(^|X)abc/m) is ["abc",""]
+PASS s.match(/(^a|Xa)bc/m) is ["abc","a"]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

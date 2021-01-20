@@ -1,0 +1,9 @@
+ALERT: PASS
+ALERT: PASS
+CONSOLE MESSAGE: [blocked] The page at https://127.0.0.1:8443/security/contentSecurityPolicy/upgrade-insecure-requests/resources/nested-nested-window.html was not allowed to run insecure content from http://localhost:8443/security/contentSecurityPolicy/resources/alert-pass.js.
+
+This test causes a new window to open performing a secure navigation to a document with the 'upgrade-insecure-requests' header. The secure document has an insecure script reference, which will get upgraded. The secure document does an insecure navigation to a new window. This new navigation should not be upgraded.
+
+The new document does an insecure navigation to a host we have visited before. This navigation should be upgraded, even though the site does not have the 'update-insecure-requests' header. The new document also does an insecure navigation to a second domain, which has not been upgraded before. This navigation should not be upgraded, and will fail (in this test) because we only provide the resource to load under the HTTPS server.
+
+If upgrades are working as expected, there should be two PASS entries in the test output. If there are five entires, the insecure load to a new host is being improperly upgraded.

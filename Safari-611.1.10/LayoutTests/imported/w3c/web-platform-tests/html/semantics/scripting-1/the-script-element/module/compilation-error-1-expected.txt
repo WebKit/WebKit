@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: SyntaxError: Unexpected token '%'
+CONSOLE MESSAGE: SyntaxError: Unexpected token '%'
+CONSOLE MESSAGE: SyntaxError: Unexpected token '%'
+CONSOLE MESSAGE: SyntaxError: Unexpected token '%'
+CONSOLE MESSAGE: SyntaxError: Unexpected token '%'
+
+FAIL Test that syntax errors lead to SyntaxError events on window, and that exceptions are remembered. assert_equals: expected function "function SyntaxError() {
+    [native code]
+}" but got function "function String() {
+    [native code]
+}"
+

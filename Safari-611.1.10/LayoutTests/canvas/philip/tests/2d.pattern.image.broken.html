@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.pattern.image.broken</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<body>
+<p id="passtext">Pass</p>
+<p id="failtext">Fail</p>
+<p class="output">These images should be identical:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+var img = document.getElementById('broken.png');
+_assertSame(img.complete, true, "img.complete", "true");
+var _thrown = undefined;
+try{
+  ctx.createPattern(img, 'repeat');
+}catch(e) {
+  _thrown = e;
+}
+_assert(_thrown && _thrown.name == "InvalidStateError" && _thrown.code == DOMException.INVALID_STATE_ERR, "should throw InvalidStateError");
+
+
+});
+</script>
+<img src="missing.png" id="broken.png" class="resource">
+

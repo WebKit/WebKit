@@ -1,0 +1,60 @@
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+var scope = "/WebKit/service-workers/useragent.https.html";
+var activeWorker;
+var userAgent;
+
+promise_test(async (test) => {
+    var registration = await navigator.serviceWorker.getRegistration(scope);
+    if (registration && registration.scope === scope)
+        await registration.unregister();
+
+    var response = await fetch("/fetch/api/resources/inspect-headers.py?headers=User-Agent")
+    userAgent = response.headers.get("x-request-user-agent");
+
+    var registration = await navigator.serviceWorker.register("useragent-worker.js", { scope : scope });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    return new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup worker");
+
+promise_test(async (test) => {
+    var promise = new Promise((resolve, reject) => {
+        navigator.serviceWorker.addEventListener("message", (event) => {
+            resolve(event.data);
+        });
+    });
+
+    activeWorker.postMessage("USERAGENT-NAVIGATOR");
+    var serviceWorkerUserAgent = await promise;
+
+    assert_equals(serviceWorkerUserAgent, navigator.userAgent);
+}, "Test service worker navigator.userAgent");
+
+promise_test(async (test) => {
+    var promise = new Promise((resolve, reject) => {
+        navigator.serviceWorker.addEventListener("message", (event) => {
+            resolve(event.data);
+        });
+    });
+
+    activeWorker.postMessage("USERAGENT-FETCH");
+    var serviceWorkerUserAgent = await promise;
+
+    assert_equals(serviceWorkerUserAgent, userAgent);
+}, "Test service worker User-Agent header");
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+
+Harness Error (FAIL), message = Unhandled rejection: undefined is not an object (evaluating 'transport.state')
+
+FAIL SctpTransport objects are created at appropriate times assert_equals: expected (undefined) undefined but got (object) null
+FAIL SctpTransport reaches connected and closed state promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'transport.state')"
+

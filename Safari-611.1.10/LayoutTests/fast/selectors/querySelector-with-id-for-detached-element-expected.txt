@@ -1,0 +1,20 @@
+Test #ID selector matching over detached tree
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS root.querySelectorAll("#Cocoa").length is 1
+PASS root.querySelectorAll("#Cocoa")[0].getAttribute("data") is "pass1"
+PASS root.querySelectorAll("#Cappuccino").length is 1
+PASS root.querySelectorAll("#Cappuccino")[0].getAttribute("data") is "pass2"
+PASS root.querySelectorAll("#Cocoa > div").length is 1
+PASS root.querySelectorAll("#Cocoa > div")[0].getAttribute("data") is "pass2"
+PASS root.querySelectorAll("#Cocoa").length is 2
+PASS root.querySelectorAll("#Cocoa")[0].getAttribute("data") is "pass1"
+PASS root.querySelectorAll("#Cocoa")[1].getAttribute("data") is "pass2"
+PASS root.querySelectorAll("#Cocoa > div").length is 1
+PASS root.querySelectorAll("#Cocoa > div")[0].getAttribute("data") is "pass2"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

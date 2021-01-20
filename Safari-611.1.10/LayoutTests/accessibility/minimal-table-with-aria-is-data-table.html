@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+<table><tr><td id="cell1" aria-colspan="1">x</td></tr></table>
+<table><tr><td id="cell2" aria-rowspan="1">x</td></tr></table>
+<table><tr><td id="cell3" aria-colindex="1">x</td></tr></table>
+<table><tr><td id="cell4" aria-rowindex="1">x</td></tr></table>
+<table><tr aria-rowindex="1"><td id="cell5">x</td></tr></table>
+<table aria-rowcount="1"><tr><td id="cell6">x</td></tr></table>
+<table aria-colcount="1"><tr><td id="cell7">x</td></tr></table>
+<table><tr><td id="cell8">x</td></tr></table>
+</div>
+<script>
+
+    description("This tests that minimal tables are treated as data tables if they have ARIA table-related properties.");
+    if (window.accessibilityController) {
+        for (var i = 1; i <= 8; i++) {
+            var axElement = accessibilityController.accessibleElementById("cell" + i);
+            var result = !axElement ? "(not exposed)" : axElement.role;
+            debug("cell" + i + ": " + result);
+        }
+        document.getElementById("content").style.visibility = "hidden";
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

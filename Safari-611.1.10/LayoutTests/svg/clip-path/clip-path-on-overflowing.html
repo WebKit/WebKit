@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+  <div style="clip-path: url(#clipper); width:500px; height:200px; background:lime; margin: 123px">
+    <div style="height:200px;"></div>
+    <div style="height:200px; background:blue;"></div>
+  </div>
+
+  <svg height="0">
+    <clipPath id="clipper">
+      <rect x="0" y="0" width="100" height="150"/>
+      <rect x="100" y="0" width="100" height="300"/>
+    </clipPath>
+  </svg>
+</body>
+</html>

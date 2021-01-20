@@ -1,0 +1,8 @@
+
+PASS window.event for constructors from another global: EventTarget
+PASS window.event for constructors from another global: XMLHttpRequest
+PASS window.event and element from another document
+PASS window.event and moving an element post-dispatch
+PASS window.event should not be affected by nodes moving post-dispatch
+PASS Listener from a different global
+

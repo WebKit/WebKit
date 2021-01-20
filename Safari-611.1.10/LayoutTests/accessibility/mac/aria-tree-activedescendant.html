@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<ul id="tree0" role="tree" aria-labelledby="treelabel" aria-activedescendant="tree0_item0" tabindex="0">
+<li id="tree0_item0" role="treeitem" aria-level="1" aria-expanded="true">
+<span><span class="expander"></span>Animals</span>
+<ul role="group">
+<li id="tree0_item0_0" role="treeitem" aria-level="2"><span>Birds</span></li>
+<li id="tree0_item0_1" role="treeitem" aria-level="2" aria-expanded="false">
+<span><span class="expander"></span>Cats</span>
+<ul role="group">
+<li id="tree0_item0_1_0" role="treeitem"aria-level="3"><span>Siamese</span></li>
+<li id="tree0_item0_1_1" role="treeitem" aria-level="3"><span>Tabby</span></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the ARIA drag and drop attributes work as intended.");
+
+    if (window.accessibilityController) {
+
+          var axtree = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
+
+          var activeDescendant = axtree.childAtIndex(0);
+          shouldBe("axtree.selectedRowAtIndex(0).isEqual(activeDescendant)", "true");
+
+          var newActiveDescendant = axtree.childAtIndex(2);
+          document.getElementById("tree0").setAttribute("aria-activedescendant", "tree0_item0_1");
+
+          shouldBe("axtree.selectedRowAtIndex(0).isEqual(newActiveDescendant)", "true");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (33,124) size 601x217
+      RenderSVGPath {polyline} at (33,124) size 601x2 [stroke={[type=SOLID] [color=#999999]}] [fill={[type=SOLID] [color=#000000]}] [points="20 75 380 75"]
+      RenderSVGPath {polyline} at (33,207) size 601x3 [stroke={[type=SOLID] [color=#999999]}] [fill={[type=SOLID] [color=#000000]}] [points="20 125 380 125"]
+      RenderSVGRect {rect} at (83,125) size 501x84 [fill={[type=SOLID] [color=#FF0000]}] [x=50.00] [y=75.00] [width=300.00] [height=50.00]
+      RenderSVGPath {polyline} at (83,125) size 167x84 [stroke={[type=SOLID] [color=#66FF33] [stroke width=50.00]}] [fill={[type=SOLID] [color=#000000]}] [points="50 100 150 100"]
+      RenderSVGPath {polyline} at (250,125) size 167x84 [stroke={[type=SOLID] [color=#66CC66] [stroke width=50.00]}] [fill={[type=SOLID] [color=#000000]}] [points="150 100 250 100"]
+      RenderSVGPath {polyline} at (416,125) size 168x84 [stroke={[type=SOLID] [color=#3399FF] [stroke width=50.00]}] [fill={[type=SOLID] [color=#000000]}] [points="250 100 350 100"]
+      RenderSVGText {text} at (50,182) size 320x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 320x23
+          chunk 1 text run 1 at (50.00,200.00) startOffset 0 endOffset 36 width 319.20: "Different forms of the <number> type"
+      RenderSVGContainer {g} at (148,153) size 384x38
+        RenderSVGText {text} at (89,92) size 22x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 22x23
+            chunk 1 (middle anchor) text run 1 at (89.20,110.00) startOffset 0 endOffset 2 width 21.60: "50"
+        RenderSVGText {text} at (183,92) size 34x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 33x23
+            chunk 1 (middle anchor) text run 1 at (183.80,110.00) startOffset 0 endOffset 3 width 32.40: "5e1"
+        RenderSVGText {text} at (281,92) size 38x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 38x23
+            chunk 1 (middle anchor) text run 1 at (281.10,110.00) startOffset 0 endOffset 4 width 37.80: ".5e2"
+    RenderSVGContainer {g} at (16,518) size 380x60
+      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.5 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

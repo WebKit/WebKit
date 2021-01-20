@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>   
+
+<div role="tree" id="goodtree">
+<div role="treeitem">text</div>
+<div role="group"><div role="group"><div role="treeitem">treeitem</div></div></div>
+</div>
+        
+<ul id="malformedTree1" role="tree">
+<li role="treeitem">
+<span><a id="ITEM_A" href="http://apple.com">Entry A</a></span>
+</li>
+<li id="list1"><input id="ITEM_B"></li>
+</ul>
+
+<ul id="malformedTree2" role="tree">
+<li><input id="ITEM_C"></li>
+<li id="ITEM_D">text</li>
+</ul>
+
+<ul id="malformedTree3">
+<li role="treeitem"><input id="ITEM_E"></li>
+<li role="treeitem" id="ITEM_F">text</li>
+</ul>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+description("This tests that a malformed tree is accessible.")
+
+if (window.accessibilityController) {
+
+    var tree = accessibilityController.accessibleElementById("goodtree");
+    shouldBe("tree.role", "'AXRole: AXOutline'");
+    var tree1 = accessibilityController.accessibleElementById("malformedTree1");
+    shouldBe("tree1.role", "'AXRole: AXGroup'");
+    var tree2 = accessibilityController.accessibleElementById("malformedTree2");
+    shouldBe("tree2.role", "'AXRole: AXGroup'");
+
+    var itemA = accessibilityController.accessibleElementById("ITEM_A");
+    var itemB = accessibilityController.accessibleElementById("ITEM_B");
+    var itemC = accessibilityController.accessibleElementById("ITEM_C");
+    var itemD = accessibilityController.accessibleElementById("ITEM_D");
+    var itemE = accessibilityController.accessibleElementById("ITEM_E");
+    var itemF = accessibilityController.accessibleElementById("ITEM_F");
+    
+    shouldBeTrue("itemA != null");
+    shouldBeTrue("itemB != null");
+    shouldBeTrue("itemC != null");
+    shouldBeTrue("itemD != null");
+    shouldBeTrue("itemE != null");
+    shouldBeTrue("itemF != null");
+}
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

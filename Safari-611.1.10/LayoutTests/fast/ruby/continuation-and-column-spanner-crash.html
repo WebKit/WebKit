@@ -1,0 +1,10 @@
+PASS if no crash or assert.
+<ruby><rtc><span><details open="false"><span id=span2></span></details></span><div id=div3></div></rtc><rt id=rt2></rt></ruby><script>
+document.body.offsetHeight;
+rt2.remove();
+span2.remove();
+document.body.offsetHeight;
+div3.style.cssText = "column-span: all";
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>

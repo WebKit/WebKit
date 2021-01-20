@@ -1,0 +1,3 @@
+PASS - [object SVGUseElement] was clicked.
+PASS - [object HTMLDivElement] was clicked.
+

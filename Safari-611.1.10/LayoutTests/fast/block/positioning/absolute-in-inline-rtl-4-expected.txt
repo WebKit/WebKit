@@ -1,0 +1,1 @@
+This test checks that an absolute element inside inlined element should not cause crash. If this file opens successfully that means the test passed.

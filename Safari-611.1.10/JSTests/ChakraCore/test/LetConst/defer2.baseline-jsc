@@ -1,0 +1,4 @@
+Exception: TypeError: Attempted to assign to readonly property.
+g@defer2.js:7:15
+f@defer2.js:11:6
+global code@defer2.js:13:2

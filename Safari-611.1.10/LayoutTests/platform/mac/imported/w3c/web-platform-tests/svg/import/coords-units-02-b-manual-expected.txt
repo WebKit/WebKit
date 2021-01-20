@@ -1,0 +1,45 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (1,31) size 741x428
+      RenderSVGContainer {g} at (1,31) size 741x428
+        RenderSVGText {text} at (60,19) size 361x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 361x20
+            chunk 1 text run 1 at (60.00,35.00) startOffset 0 endOffset 45 width 360.76: "CSS pixel coordinate to user space conversion"
+        RenderSVGContainer {g} at (41,33) size 34x34 [transform={m=((4.00,0.00)(0.00,4.00)) t=(5.00,0.00)}]
+          RenderSVGEllipse {circle} at (41,33) size 34x34 [fill={[type=SOLID] [color=#000000]}] [cx=7.50] [cy=7.50] [r=2.50]
+          RenderSVGEllipse {circle} at (48,40) size 21x20 [fill={[type=SOLID] [color=#FF00FF]}] [cx=7.50] [cy=7.50] [r=1.50]
+        RenderSVGText {text} at (60,69) size 383x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 383x20
+            chunk 1 text run 1 at (60.00,85.00) startOffset 0 endOffset 47 width 382.06: "Percentage coordinates to user space conversion"
+        RenderSVGContainer {g} at (41,116) size 34x34 [transform={m=((4.00,0.00)(0.00,4.00)) t=(5.00,50.00)}]
+          RenderSVGEllipse {circle} at (41,116) size 34x34 [fill={[type=SOLID] [color=#000000]}] [cx=7.50] [cy=7.50] [r=2.50]
+          RenderSVGEllipse {circle} at (48,123) size 21x21 [fill={[type=SOLID] [color=#FF00FF]}] [cx=7.50] [cy=7.50] [r=1.50]
+        RenderSVGText {text} at (60,124) size 332x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 332x20
+            chunk 1 text run 1 at (60.00,140.00) startOffset 0 endOffset 41 width 331.75: "CSS width/height to user space conversion"
+        RenderSVGContainer {g} at (16,191) size 68x68 [transform={m=((4.00,0.00)(0.00,4.00)) t=(30.00,115.00)}]
+          RenderSVGRect {rect} at (16,191) size 68x34 [fill={[type=SOLID] [color=#000000]}] [x=-5.00] [y=0.00] [width=10.00] [height=5.00]
+          RenderSVGRect {rect} at (16,225) size 68x34 [fill={[type=SOLID] [color=#FF00FF]}] [x=-5.00] [y=5.00] [width=10.00] [height=5.00]
+        RenderSVGText {text} at (60,184) size 385x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 385x20
+            chunk 1 text run 1 at (60.00,200.00) startOffset 0 endOffset 48 width 384.97: "Percentage width/height to user space conversion"
+        RenderSVGContainer {g} at (16,291) size 68x68 [transform={m=((4.00,0.00)(0.00,4.00)) t=(30.00,175.00)}]
+          RenderSVGRect {rect} at (16,291) size 68x34 [fill={[type=SOLID] [color=#000000]}] [x=-5.00] [y=0.00] [width=10.00] [height=5.00]
+          RenderSVGRect {rect} at (16,325) size 68x34 [fill={[type=SOLID] [color=#FF00FF]}] [x=-5.00] [y=5.00] [width=10.00] [height=5.00]
+        RenderSVGText {text} at (140,249) size 303x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 303x20
+            chunk 1 text run 1 at (140.00,265.00) startOffset 0 endOffset 36 width 302.77: "CSS and percentage length conversion"
+        RenderSVGContainer {g} at (1,408) size 241x51 [transform={m=((4.00,0.00)(4.00,4.00)) t=(30.00,260.00)}]
+          RenderSVGEllipse {circle} at (2,409) size 96x48 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.54]
+          RenderSVGEllipse {circle} at (69,409) size 95x48 [fill={[type=SOLID] [color=#FF00FF]}] [cx=10.00] [cy=0.00] [r=3.54]
+          RenderSVGEllipse {circle} at (136,409) size 95x48 [fill={[type=SOLID] [color=#008000]}] [cx=20.00] [cy=0.00] [r=3.54]
+          RenderSVGPath {line} at (1,408) size 194x4 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=0.50]}] [x1=-3.54] [y1=-3.54] [x2=25.00] [y2=-3.54]
+          RenderSVGPath {line} at (48,455) size 194x4 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=0.50]}] [x1=-3.54] [y1=3.54] [x2=25.00] [y2=3.54]
+    RenderSVGContainer {g} at (16,517) size 381x62
+      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 229x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.8 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

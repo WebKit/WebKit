@@ -1,0 +1,285 @@
+PASS document.createElement("a").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("a").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("abbr").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("abbr").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("acronym").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("acronym").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("address").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("address").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("applet").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("applet").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("area").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("area").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("article").attachShadow({mode: "open"}) instanceof ShadowRoot is true
+PASS document.createElement("article").attachShadow({mode: "closed"}) instanceof ShadowRoot is true
+PASS document.createElement("aside").attachShadow({mode: "open"}) instanceof ShadowRoot is true
+PASS document.createElement("aside").attachShadow({mode: "closed"}) instanceof ShadowRoot is true
+PASS document.createElement("attachment").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("attachment").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("audio").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("audio").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("b").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("b").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("base").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("base").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("basefont").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("basefont").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("bdi").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("bdi").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("bdo").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("bdo").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("bgsound").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("bgsound").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("big").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("big").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("blockquote").attachShadow({mode: "open"}) instanceof ShadowRoot is true
+PASS document.createElement("blockquote").attachShadow({mode: "closed"}) instanceof ShadowRoot is true
+PASS document.createElement("body").attachShadow({mode: "open"}) instanceof ShadowRoot is true
+PASS document.createElement("body").attachShadow({mode: "closed"}) instanceof ShadowRoot is true
+PASS document.createElement("br").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("br").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("button").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("button").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("canvas").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("canvas").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("caption").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("caption").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("center").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("center").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("cite").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("cite").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("code").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("code").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("col").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("col").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("colgroup").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("colgroup").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("command").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("command").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("data").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("data").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("datalist").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("datalist").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("dd").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("dd").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("del").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("del").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("details").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("details").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("dfn").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("dfn").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("dialog").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("dialog").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("dir").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("dir").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("div").attachShadow({mode: "open"}) instanceof ShadowRoot is true
+PASS document.createElement("div").attachShadow({mode: "closed"}) instanceof ShadowRoot is true
+PASS document.createElement("dl").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("dl").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("dt").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("dt").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("em").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("em").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("embed").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("embed").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("fieldset").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("fieldset").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("figcaption").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("figcaption").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("figure").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("figure").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("font").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("font").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("footer").attachShadow({mode: "open"}) instanceof ShadowRoot is true
+PASS document.createElement("footer").attachShadow({mode: "closed"}) instanceof ShadowRoot is true
+PASS document.createElement("form").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("form").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("frame").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("frame").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("frameset").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("frameset").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("h1").attachShadow({mode: "open"}) instanceof ShadowRoot is true
+PASS document.createElement("h1").attachShadow({mode: "closed"}) instanceof ShadowRoot is true
+PASS document.createElement("h2").attachShadow({mode: "open"}) instanceof ShadowRoot is true
+PASS document.createElement("h2").attachShadow({mode: "closed"}) instanceof ShadowRoot is true
+PASS document.createElement("h3").attachShadow({mode: "open"}) instanceof ShadowRoot is true
+PASS document.createElement("h3").attachShadow({mode: "closed"}) instanceof ShadowRoot is true
+PASS document.createElement("h4").attachShadow({mode: "open"}) instanceof ShadowRoot is true
+PASS document.createElement("h4").attachShadow({mode: "closed"}) instanceof ShadowRoot is true
+PASS document.createElement("h5").attachShadow({mode: "open"}) instanceof ShadowRoot is true
+PASS document.createElement("h5").attachShadow({mode: "closed"}) instanceof ShadowRoot is true
+PASS document.createElement("h6").attachShadow({mode: "open"}) instanceof ShadowRoot is true
+PASS document.createElement("h6").attachShadow({mode: "closed"}) instanceof ShadowRoot is true
+PASS document.createElement("head").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("head").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("header").attachShadow({mode: "open"}) instanceof ShadowRoot is true
+PASS document.createElement("header").attachShadow({mode: "closed"}) instanceof ShadowRoot is true
+PASS document.createElement("hgroup").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("hgroup").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("hr").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("hr").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("html").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("html").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("i").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("i").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("iframe").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("iframe").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("image").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("image").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("img").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("img").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("input").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("input").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("ins").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("ins").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("kbd").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("kbd").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("keygen").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("keygen").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("label").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("label").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("layer").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("layer").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("legend").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("legend").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("li").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("li").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("link").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("link").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("listing").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("listing").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("main").attachShadow({mode: "open"}) instanceof ShadowRoot is true
+PASS document.createElement("main").attachShadow({mode: "closed"}) instanceof ShadowRoot is true
+PASS document.createElement("map").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("map").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("mark").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("mark").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("marquee").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("marquee").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("menu").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("menu").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("menuitem").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("menuitem").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("meta").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("meta").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("meter").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("meter").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("nav").attachShadow({mode: "open"}) instanceof ShadowRoot is true
+PASS document.createElement("nav").attachShadow({mode: "closed"}) instanceof ShadowRoot is true
+PASS document.createElement("nobr").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("nobr").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("noembed").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("noembed").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("noframes").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("noframes").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("nolayer").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("nolayer").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("object").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("object").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("ol").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("ol").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("optgroup").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("optgroup").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("option").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("option").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("output").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("output").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("p").attachShadow({mode: "open"}) instanceof ShadowRoot is true
+PASS document.createElement("p").attachShadow({mode: "closed"}) instanceof ShadowRoot is true
+PASS document.createElement("param").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("param").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("picture").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("picture").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("plaintext").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("plaintext").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("pre").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("pre").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("progress").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("progress").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("q").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("q").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("rb").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("rb").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("rp").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("rp").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("rt").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("rt").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("rtc").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("rtc").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("ruby").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("ruby").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("s").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("s").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("samp").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("samp").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("script").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("script").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("section").attachShadow({mode: "open"}) instanceof ShadowRoot is true
+PASS document.createElement("section").attachShadow({mode: "closed"}) instanceof ShadowRoot is true
+PASS document.createElement("select").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("select").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+FAIL document.createElement("slot ").attachShadow({mode: "open"}) should throw a NotSupportedError. Threw a InvalidCharacterError.
+FAIL document.createElement("slot ").attachShadow({mode: "closed"}) should throw a NotSupportedError. Threw a InvalidCharacterError.
+PASS document.createElement("small").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("small").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("source").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("source").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("span").attachShadow({mode: "open"}) instanceof ShadowRoot is true
+PASS document.createElement("span").attachShadow({mode: "closed"}) instanceof ShadowRoot is true
+PASS document.createElement("strike").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("strike").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("strong").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("strong").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("style").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("style").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("sub").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("sub").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("summary").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("summary").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("sup").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("sup").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("table").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("table").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("tbody").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("tbody").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("td").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("td").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("template").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("template").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("textarea").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("textarea").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("tfoot").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("tfoot").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("th").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("th").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("thead").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("thead").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("time").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("time").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("title").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("title").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("tr").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("tr").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("track").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("track").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("tt").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("tt").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("u").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("u").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("ul").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("ul").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("var").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("var").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("video").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("video").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("wbr").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("wbr").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("xmp").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("xmp").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("noscript").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("noscript").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

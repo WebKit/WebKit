@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            position: relative;
+            margin: 20px;
+            width: 300px;
+            height: 300px;
+            border: 1px solid black;
+        }
+        .box {
+            position: absolute;
+            left: 50px;
+            top: 50px;
+            z-index: 0;
+            width: 200px;
+            height: 200px;
+        }
+        .middle {
+            background-color: red;
+        }
+        .child {
+            background-color: green;
+            top: 0;
+            left: 0;
+        }
+        .composited {
+            transform: translateZ(0);
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.addEventListener('load', () => {
+            requestAnimationFrame(() => {
+                document.getElementById('target').classList.remove('composited');
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="composited container">
+        <div id="target" class="middle composited box">
+            <div class="child composited box"></div>
+        </div>
+    </div>
+</body>
+</html>

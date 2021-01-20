@@ -1,0 +1,14 @@
+header 1header2	header 3
+cell1	cell2	cell3
+This tests confirms even when a th tag is hidden, it will still be returned as a column header (unless it is hidden).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS colHeaders.length is 2
+PASS colHeaders[0].childAtIndex(0).childAtIndex(0).stringValue is 'AXValue: header 1'
+PASS colHeaders[1].childAtIndex(0).stringValue is 'AXValue: header 3'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

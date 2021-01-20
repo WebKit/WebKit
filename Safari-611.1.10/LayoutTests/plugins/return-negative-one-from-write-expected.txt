@@ -1,0 +1,12 @@
+This tests that NPP_DestroyStream is called with NPRES_NETWORK_ERR not called if a plug-in returns -1 its NPP_Write callback.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS plugin.returnNegativeOneFromWrite is true
+PASS newStreamCalled is false
+PASS newStreamCalled is true
+PASS reason is 1
+
+TEST COMPLETE
+

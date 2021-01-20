@@ -1,0 +1,31 @@
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+
+<div id=test><div></div></div>
+
+<script>
+var testDiv = document.querySelector('#test');
+var testDivChild = testDiv.firstChild;
+
+function testInvalidation(cssText, shouldInvalidate, name)
+{
+    test(() => {
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+
+        testDiv.style.cssText = cssText;
+
+        assert_equals(internals.styleChangeType(testDiv), shouldInvalidate ? "InlineStyleChange" : "NoStyleChange");
+        assert_equals(internals.styleChangeType(testDivChild), "NoStyleChange");
+    }, name);
+}
+
+testInvalidation("color:red", true, "Setting cssText invalidates style");
+testInvalidation("color:red; transform: scale3d(0, 0, 1);", true, "Adding more properties to cssText invalidates style");
+testInvalidation("color:blue; transform: scale3d(0, 0, 1);", true, "Changing a property value invalidates style");
+testInvalidation("color:blue; transform: scale3d(0, 1, 1);", true, "Changing another property value invalidates style");
+testInvalidation("color:blue; transform: scale3d(0, 1, 1);", false, "Setting cssText without changing it doesn't invalidate style");
+testInvalidation(" color:blue; transform: scale3d(0,1,1)", false, "Non-semantic change to cssText doesn't invalidate style");
+testInvalidation("transform: scale3d(0,1,1)", true, "Removing a property invalidates style");
+testInvalidation("", true, "Clearing cssText invalidates style");
+
+</script>

@@ -1,0 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+  <div id="test1" role="button" aria-pressed="mixed"></div>
+  <div id="test2" role="button" aria-pressed="true"></div>
+  <div id="test3" role="button" aria-pressed="false"></div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("Verifies the exposure of a mixed value of aria-pressed.");
+    if (window.accessibilityController) {
+        for (var i = 1; i <= 3; i++) {
+            var axElement = accessibilityController.accessibleElementById("test" + i);
+            debug("test" + i + ": " + axElement.role + " is indeterminate: " + axElement.isIndeterminate);
+        }
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+This tests that loading a page with a manifest, navigating away from the page, and then back does not cause a crash.
+SUCCESS

@@ -1,0 +1,3 @@
+Test for bug Crash in WebCore::Node::getFlag
+
+This test passes if it doesn't crash.

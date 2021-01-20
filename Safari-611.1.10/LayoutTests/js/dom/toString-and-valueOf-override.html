@@ -1,0 +1,90 @@
+<html>
+<head>
+    <script>
+        function print(msg)
+        {
+            document.getElementById('console').innerHTML += msg + "<br>";
+        }
+
+        function printTests(type, object)
+        {
+            try { print(type + ' : ' + object); } catch(e) { print(e); }
+            try { print('[' + type + '] : ' + [object]); } catch(e) { print(e); }
+            try { print('String(' + type + ') : ' + String(object)); } catch(e) { print(e); }
+            try { print('String([' + type + ']) : ' + String([object])); } catch(e) { print(e); }
+            try { print(type + '.toString : ' + object.toString); } catch(e) { print(e); }
+            try { var toString = object.toString; print(type + '.toString() (cached in variable) : ' + toString()); } catch(e) { print(e); }
+            try { print(type + '.toString() : ' + object.toString()); } catch(e) { print(e); }
+            try { print('[' + type + '].toString() : ' + [object].toString()); } catch(e) { print(e); }
+            try { print(type + '.valueOf() : ' + object.valueOf()); } catch(e) { print(e); }
+            try { print('[' + type + '].valueOf() : ' + [object].valueOf()); } catch(e) { print(e); }
+        }
+
+        function test(type, object)
+        {
+            print('<b>Unmodified ' + type + '</b>');
+            printTests(type, object);
+
+            print('');
+            print('<b>' + type + ' with modified toString and valueOf</b>');
+            object.toString = function() { return "toString" }
+            object.valueOf = function() { return "valueOf" }
+            printTests(type, object);
+
+            print('');
+            print('<b>' + type + ' with modified toString that returns an Object</b>');
+            object.toString = function() { return new Object(); }
+            printTests(type, object);
+
+            print('');
+            print('<b>' + type + ' with modified valueOf that returns an Object</b>');
+            object.toString = function() { return 'toString'; }
+            object.valueOf = function() { return new Object(); }
+            printTests(type, object);
+
+            print('');
+            print('<b>' + type + ' with modified toString and valueOf that returns an Object</b>');
+            object.toString = function() { return new Object(); }
+            printTests(type, object);
+
+            print('');
+            print('<b>' + type + ' with modified toString that throws an exception</b>');
+            object.toString = function() { throw "Exception"; }
+            object.valueOf = function() { return "valueOf"; }
+            printTests(type, object);
+
+            print('');
+            print('<b>' + type + ' with modified valueOf that throws an exception</b>');
+            object.toString = function() { return 'toString'; }
+            object.valueOf = function() { throw "Exception"; }
+            printTests(type, object);
+
+            print('');
+            print('<b>' + type + ' with modified toString an valueOf that throw exceptions</b>');
+            object.toString = function() { throw "Exception"; }
+            object.valueOf = function() { throw "Exception"; }
+            printTests(type, object);
+
+            print('');
+            print('<hr>');
+        }
+
+        function runTests()
+        {
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            test('span', document.createElement('span'));
+
+            test('window', window);
+            test('Navigator', window.navigator);
+            test('History', window.history);
+            test('Selection', window.getSelection());
+        }
+    </script>
+</head>
+<body onload="runTests();">
+<div id="console">
+</div>
+</body>
+</html>

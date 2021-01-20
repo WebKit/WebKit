@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="media-file.js"></script>
+    <script src="video-test.js"></script>
+    <script>
+        var video;
+
+        function runTest() 
+        {
+            consoleWrite("Waiting for Content media to begin playing.")
+            video = document.getElementById("video");
+            video.addEventListener("canplaythrough", beginPlaying);
+            video.addEventListener("playing", beganPlaying);
+            video.src = findMediaFile("video", "content/test");
+            video.volume = 0;
+        }
+        
+        function beginPlaying(event)
+        {
+            video.play();
+        }
+
+        function onVisibilityChange()
+        {
+            if (document.hidden) {
+                setTimeout(function() {
+                    testExpected('video.paused', true);
+                    setTimeout(function() {
+                        testExpected('video.paused', true);
+                        consoleWrite("* Setting page visibility to visible");
+                        if (window.testRunner)
+                            testRunner.setPageVisibility("visible");
+                    }, 10);
+                }, 0);
+            } else {
+                setTimeout(function() {
+                    testExpected('video.paused', false);
+                    endTest();
+                }, 0);
+            }
+        }
+
+        function beganPlaying(event)
+        {
+            video.removeEventListener("playing", beganPlaying);
+
+            consoleWrite("Media began playing.");
+
+            if (window.internals) {
+                testExpected('video.paused', false);
+                testExpected('video.volume', 0);
+
+                document.addEventListener("visibilitychange", onVisibilityChange, false);
+
+                consoleWrite("* Setting page visibility to hidden");
+                if (window.testRunner)
+                    testRunner.setPageVisibility("hidden");
+            }
+        }
+    </script>
+</head>
+<body onload="runTest()">
+    <p>Media elements should be paused while in the background.</p>
+    <video id="video" />
+</body>
+</html>

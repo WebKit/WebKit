@@ -1,0 +1,13 @@
+This tests the exposure of the value of aria-keyshortcuts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXPlatformAttributes: computed-role:button, xml-roles:button, html-id:test1, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:button, xml-roles:button, html-id:test2, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: keyshortcuts:Shift+Space, computed-role:button, xml-roles:button, html-id:test3, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: keyshortcuts:Shift+Space Alt+Space, computed-role:button, xml-roles:button, html-id:test4, tag:div, toolkit:WebKitGtk
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

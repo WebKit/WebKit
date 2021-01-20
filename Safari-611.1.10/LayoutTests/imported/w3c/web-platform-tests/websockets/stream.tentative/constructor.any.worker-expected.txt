@@ -1,0 +1,16 @@
+
+FAIL constructing with no URL should throw assert_throws_js: constructor should throw function "() => new WebSocketStream()" threw object "ReferenceError: Can't find variable: WebSocketStream" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL constructing with an invalid URL should throw assert_throws_dom: constructor should throw function "() => new WebSocketStream('invalid:')" threw object "ReferenceError: Can't find variable: WebSocketStream" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+FAIL constructing with invalid options should throw assert_throws_js: constructor should throw function "() => new WebSocketStream(`${BASEURL}/`, true)" threw object "ReferenceError: Can't find variable: WebSocketStream" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL protocols should be required to be a list assert_throws_js: constructor should throw function "() => new WebSocketStream(`${BASEURL}/`, {protocols: 'hi'})" threw object "ReferenceError: Can't find variable: WebSocketStream" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL constructing with a valid URL should work promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: WebSocketStream"
+FAIL setting a protocol in the constructor should work promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: WebSocketStream"
+FAIL connection failure should reject the promises Can't find variable: WebSocketStream
+FAIL wss.connection should resolve to the right types promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: WebSocketStream"
+

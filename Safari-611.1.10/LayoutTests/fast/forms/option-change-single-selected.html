@@ -1,0 +1,31 @@
+<body>
+<p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=13278">bug 13278</a>: REGRESSION: cannot change SELECT option.</p>
+<form>
+<select size="1">
+  <option>FAILURE: script didn't run</option>
+  <option>FAILURE</option>
+  <option>SUCCESS</option>
+</select>
+<select size="3">
+  <option>FAILURE: script didn't run</option>
+  <option>FAILURE</option>
+  <option>SUCCESS</option>
+</select>
+</form>
+<div id=result></div>
+<script>
+
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+document.forms[0].elements[0].options[1].selected = true;
+document.forms[0].elements[1].options[1].selected = true;
+
+document.forms[0].elements[0].options[2].selected = true;
+document.forms[0].elements[1].options[2].selected = true;
+if (document.forms[0].elements[0].value != "SUCCESS" || document.forms[0].elements[1].options[1].selected)
+  document.getElementById("result").innerHTML = "FAILURE";
+ else
+  document.getElementById("result").innerHTML = "SUCCESS";
+</script>
+</body>

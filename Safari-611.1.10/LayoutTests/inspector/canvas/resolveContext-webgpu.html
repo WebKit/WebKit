@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+if (window.internals)
+    window.internals.settings.setWebGPUEnabled(true);
+
+function createDevice() {
+    navigator.gpu.requestAdapter().then(function adapterRequested(adapter) {
+        adapter.requestDevice().then(function deviceRequested(device) {
+            window.contextWebGPU = device;
+        });
+    });
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Canvas.resolveContextWebGPU");
+
+    suite.addTestCase({
+        name: `Canvas.resolveContextWebGPU.validIdentifier`,
+        description: "Should return a valid object for the given canvas identifier.",
+        async test() {
+            InspectorTest.assert(!WI.canvasManager.canvasCollection.size, "There should be no canvases.");
+
+            let [canvasCollectionItemAddedEvent] = await Promise.all([
+                WI.canvasManager.canvasCollection.awaitEvent(WI.Collection.Event.ItemAdded),
+                InspectorTest.evaluateInPage(`createDevice()`),
+            ]);
+
+            let canvas = canvasCollectionItemAddedEvent.data.item;
+            InspectorTest.assert(canvas.contextType, WI.Canvas.ContextType.WebGPU, "Added canvas should be a WebGPU device.");
+
+            const objectGroup = "test";
+            let {object} = await CanvasAgent.resolveContext(canvas.identifier, objectGroup)
+            InspectorTest.expectEqual(object.type, "object", `Payload should have type "object".`);
+            InspectorTest.expectEqual(object.className, "GPUDevice", `Payload should have className "GPUDevice".`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the Canvas.resolveContext command for WebGPU devices.</p>
+</body>
+</html>

@@ -1,0 +1,10 @@
+
+Test that video elements pause during system sleep.
+
+EVENT(playing)
+RUN(internals.simulateSystemSleep())
+EVENT(pause)
+RUN(internals.simulateSystemWake())
+EVENT(playing)
+END OF TEST
+

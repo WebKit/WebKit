@@ -1,0 +1,1 @@
+PASS: Right width and height of bbox of rect within symbol.

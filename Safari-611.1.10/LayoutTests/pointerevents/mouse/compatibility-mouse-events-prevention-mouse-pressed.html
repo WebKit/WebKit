@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+</head>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+function runMouseSequence()
+{
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(25, 25);
+    eventSender.mouseMoveTo(75, 75);
+    eventSender.mouseUp();
+}
+
+target_test({ x: "50px", y: "50px", width: "100px", height: "100px" }, (target, test) => {
+    const eventTracker = new EventTracker(target, ["mousedown", "mouseover", "mouseenter", "mousemove", "mouseout", "mouseleave", "mouseup"]);
+
+    // First, move the mouse over the element to start in that state.
+    eventSender.mouseMoveTo(75, 75);
+    eventTracker.clear();
+    
+    // Then, press the mouse, don't call preventDefault() while handling "pointerdown", move the mouse out, then back over and finally release.
+    runMouseSequence();
+
+    eventTracker.assertMatchesEvents([
+        {"type": "mousedown" },
+        {"type": "mouseout" },
+        {"type": "mouseleave" },
+        {"type": "mouseover" },
+        {"type": "mouseenter" },
+        {"type": "mousemove" },
+        {"type": "mouseup" }
+    ]);
+
+    eventTracker.clear();
+
+    // Then do the same thing but calling preventDefault() while handling "pointerdown".
+    target.addEventListener("pointerdown", event => event.preventDefault());
+    runMouseSequence();
+
+    eventTracker.assertMatchesEvents([
+        {"type": "mouseout" },
+        {"type": "mouseleave" },
+        {"type": "mouseover" },
+        {"type": "mouseenter" },
+    ]);
+    test.done();
+}, `Testing that calling preventDefault() when handling a "pointerdown" event only blocks expected events.`);
+
+</script>
+</body>
+</html>

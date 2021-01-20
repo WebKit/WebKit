@@ -1,0 +1,14 @@
+Test Promise with Promise A+ tests 2.1.2.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS 2.1.2.1: When fulfilled, a promise: must not transition to any other state. already-fulfilled
+PASS 2.1.2.1: When fulfilled, a promise: must not transition to any other state. immediately-fulfilled
+PASS 2.1.2.1: When fulfilled, a promise: must not transition to any other state. eventually-fulfilled
+PASS 2.1.2.1: When fulfilled, a promise: must not transition to any other state. trying to fulfill then immediately reject
+PASS 2.1.2.1: When fulfilled, a promise: must not transition to any other state. trying to fulfill then reject, delayed
+PASS 2.1.2.1: When fulfilled, a promise: must not transition to any other state. trying to fulfill immediately then reject delayed
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

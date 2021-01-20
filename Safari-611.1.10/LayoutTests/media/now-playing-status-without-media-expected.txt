@@ -1,0 +1,16 @@
+
+NowPlaying status should not be updated when no media is active.
+
+
+** Check state initially.
+EXPECTED (state.haveEverRegisteredAsNowPlayingApplication == 'false') OK
+
+** Suspend process.
+RUN(internals.applicationWillBecomeInactive())
+EXPECTED (state.haveEverRegisteredAsNowPlayingApplication == 'false') OK
+
+** Activate process.
+RUN(internals.applicationDidBecomeActive())
+EXPECTED (state.haveEverRegisteredAsNowPlayingApplication == 'false') OK
+END OF TEST
+

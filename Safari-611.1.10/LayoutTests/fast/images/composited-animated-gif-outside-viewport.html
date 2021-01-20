@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html style="width: 1600px; height: 1200px">
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body onload="runTest()">
+<img id="testImage" src="resources/animated.gif" style="-webkit-transform: translatez(0);">
+<script>
+description("Make sure directly-composited animated GIFs properly get suspended / resumed based on visibility inside viewport.");
+jsTestIsAsync = true;
+
+var testImage = document.getElementById("testImage");
+var frameIndexImageWasPausedAt = 0;
+
+function isImageAnimated()
+{
+  return !internals.hasPausedImageAnimations(testImage);
+}
+
+function checkFrameIndexAndFinish()
+{
+  // Actually make sure that the frame index changes.
+  shouldBecomeDifferent("internals.imageFrameIndex(testImage)", "frameIndexImageWasPausedAt", finishJSTest);
+}
+
+function scrollUp()
+{
+  frameIndexImageWasPausedAt = internals.imageFrameIndex(testImage);
+  
+  debug("Animation was paused, scroll up so that the image is visible again");
+  window.scrollBy(0, -600);
+
+  shouldBecomeEqual("isImageAnimated()", "true", checkFrameIndexAndFinish);
+}
+
+function scrollDown()
+{
+  debug("Scroll down so that the image is no longer visible");
+  window.scrollBy(0, 600);
+  shouldBecomeEqual("isImageAnimated()", "false", scrollUp);
+}
+
+function runTest()
+{
+  if (!window.internals)
+    return;
+
+  shouldBecomeEqual("isImageAnimated()", "true", scrollDown);
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

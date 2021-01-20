@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+promise_test(async (test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(false);
+
+    await navigator.mediaDevices.getUserMedia({audio:false, video:true}).then(assert_unreached, (e) => { });
+    await navigator.mediaDevices.getUserMedia({audio:true, video:false}).then(assert_unreached, (e) => { });
+    await navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(assert_unreached, (e) => { });
+
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    await navigator.mediaDevices.getUserMedia({audio:false, video:true}).then(assert_unreached, (e) => {
+        assert_equals(e.name, "NotAllowedError");
+    });
+
+    let promise;
+    internals.withUserGesture(() => {
+        promise = navigator.mediaDevices.getUserMedia({audio:false, video:true});
+    });
+    await promise;
+    internals.withUserGesture(() => {
+        promise = navigator.mediaDevices.getUserMedia({audio:true, video:false});
+    });
+    await promise;
+
+    internals.withUserGesture(() => {
+        promise = navigator.mediaDevices.getUserMedia({audio:true, video:true});
+    });
+    await promise;
+
+    await navigator.mediaDevices.getUserMedia({audio:false, video:true}).then(assert_unreached, (e) => { });
+    await navigator.mediaDevices.getUserMedia({audio:true, video:false}).then(assert_unreached, (e) => { });
+    await navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(assert_unreached, (e) => { });
+}, "Testing getUserMedia with and without user gesture after user denied access");
+        </script>
+    </body>
+</html>

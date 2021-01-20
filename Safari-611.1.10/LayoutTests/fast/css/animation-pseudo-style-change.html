@@ -1,0 +1,38 @@
+<style>
+@keyframes slidein {
+    from {
+        width: 50px;
+    }
+
+    to {
+        width: 200px;
+    }
+}
+
+.animate::after {
+    animation-duration: 0.01s;
+    animation-name: slidein;
+    animation-fill-mode: forwards;
+}
+
+child::after {
+    display: block;
+    border: 2px solid green;
+    width: 50px;
+    height: 50px;
+    content: "after";
+}
+</style>
+
+<container>
+<child>
+</child>
+</container>
+<script>
+var child = document.querySelector("child");
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    child.addEventListener("animationend", function () { testRunner.notifyDone(); }, false);
+}
+child.className = "animate";
+</script>

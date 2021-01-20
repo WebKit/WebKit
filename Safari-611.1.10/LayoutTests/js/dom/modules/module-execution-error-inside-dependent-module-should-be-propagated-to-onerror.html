@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test window.onerror will be fired when the dependent module throw an error.');
+// Module will be executed asynchronously.
+window.jsTestIsAsync = true;
+debug('Module is not executed yet.');
+window.onerror = function () {
+    finishJSTest();
+}
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+<script type="module">
+import "./resources/module-execution-error-inside-dependent-module-should-be-propagated-to-onerror.js"
+testFailed("executed");
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+PASS: f1(1)[0] should be 1 and is.
+PASS: f2(1)[0] should be 0 and is.
+PASS: f3(1)[0] should be 0 and is.
+PASS: f4(1)[0] should be 0 and is.
+PASS: f5().x should be 1 and is.
+PASS: f6()[0] should be 1 and is.
+PASS: f7() should be false and is.
+PASS: f8() should be true and is.
+

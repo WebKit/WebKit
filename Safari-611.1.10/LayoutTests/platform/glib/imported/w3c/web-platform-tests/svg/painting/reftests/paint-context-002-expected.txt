@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (87,187) size 626x226
+    RenderSVGContainer {g} at (0,0) size 0x0
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGRect {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=120.00] [height=120.00]
+    RenderSVGContainer {g} at (87,187) size 626x226
+      RenderSVGContainer {use} at (87,187) size 226x226 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,120.00)}]
+        RenderSVGRect {rect} at (87,187) size 226x226 [stroke={[type=SOLID] [color=#00FF00] [stroke width=15.00]}] [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=120.00] [height=120.00]
+      RenderSVGContainer {use} at (487,187) size 226x226 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,120.00)}]
+        RenderSVGRect {rect} at (487,187) size 226x226 [stroke={[type=SOLID] [color=#ADD8E6] [stroke width=15.00]}] [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=120.00] [height=120.00]

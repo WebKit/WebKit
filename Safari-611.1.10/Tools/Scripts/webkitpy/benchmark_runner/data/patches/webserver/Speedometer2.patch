@@ -1,0 +1,80 @@
+diff --git a/index.html b/index.html
+index 486eb634870..79ae7bb4f50 100644
+--- a/index.html
++++ b/index.html
+@@ -7,7 +7,6 @@
+     <script src="resources/main.js" defer></script>
+     <script src="resources/benchmark-runner.js" defer></script>
+     <script src="resources/benchmark-report.js" defer></script>
+-    <script src="../resources/statistics.js" defer></script>
+     <script src="resources/tests.js" defer></script>
+ </head>
+ <body>
+diff --git a/resources/benchmark-report.js b/resources/benchmark-report.js
+index c4b4c64f83d..71cca53a388 100644
+--- a/resources/benchmark-report.js
++++ b/resources/benchmark-report.js
+@@ -1,5 +1,63 @@
+ // This file can be customized to report results as needed.
+ 
++(function () {
++    window.onload = function () {
++        startBenchmark();
++        showSection('running');
++    }
++
++    originalDidFinishLastIteration = window.benchmarkClient.didFinishLastIteration;
++
++    window.benchmarkClient.didFinishLastIteration = function () {
++        originalDidFinishLastIteration.apply(this);
++
++        const scores = [];
++        const resultsSuites = {};
++        const results = {'Speedometer-2': {
++            'metrics': {
++                'Score': {'current': [scores]},
++                'Time': ['Total', 'Geometric']},
++                'tests': resultsSuites}};
++
++        for (const measuredValues of this._measuredValuesList) {
++            scores.push(measuredValues.score);
++            for (const suiteName in measuredValues.tests) {
++                const measuredTests = measuredValues.tests[suiteName].tests;
++                if (!(suiteName in resultsSuites))
++                    resultsSuites[suiteName] = {'metrics': {'Time': ['Total']}, 'tests': {}};
++                const resultsTests = resultsSuites[suiteName].tests;
++                for (const testName in measuredTests) {
++                    const measuredSubtests = measuredTests[testName].tests;
++                    if (!(testName in resultsTests))
++                        resultsTests[testName] = {'metrics': {'Time': ['Total']}, 'tests': {}};
++                    const resultsSubtests = resultsTests[testName].tests;
++                    for (const subtestName in measuredSubtests) {
++                        if (!(subtestName in resultsSubtests))
++                            resultsSubtests[subtestName] = {'metrics': {'Time': {'current': [[]]}}};
++                        resultsSubtests[subtestName].metrics.Time.current[0].push(measuredSubtests[subtestName]);
++                    }
++                }
++            }
++        }
++
++        const xhr = new XMLHttpRequest();
++        xhr.open("POST", "/report");
++
++        xhr.setRequestHeader("Content-type", "application/json");
++        xhr.setRequestHeader("Content-length", results.length);
++        xhr.setRequestHeader("Connection", "close");
++
++        xhr.onreadystatechange = function() {
++            if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
++                const closeRequest = new XMLHttpRequest();
++                closeRequest.open("GET", "/shutdown");
++                closeRequest.send();
++            }
++        }
++        xhr.send(JSON.stringify(results));
++    }
++})();
++
+ (function () {
+     if (!window.testRunner && location.search != '?webkit' && location.hash != '#webkit')
+         return;

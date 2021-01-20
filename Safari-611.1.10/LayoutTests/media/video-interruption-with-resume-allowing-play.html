@@ -1,0 +1,65 @@
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var state = 0;
+            var resumeCount = 0;
+
+            function checkState()
+            {
+                switch (state) {
+                case "playing":
+                    testExpected("video.paused", false);
+                    state = "interrupted";
+                    run("internals.beginMediaSessionInterruption('System')");;
+                    setTimeout(checkState, 100);
+                    consoleWrite("");
+                    break;
+
+                case "interrupted":
+                    consoleWrite("100ms timer fired...");
+                    testExpected("video.paused", true);
+                    state = "resuming";
+                    run("internals.endMediaSessionInterruption('MayResumePlaying')");
+                    consoleWrite("");
+                    break;
+
+                case "resuming":
+                    testExpected("video.paused", false);
+                    consoleWrite("");
+                    if (++resumeCount == 2)
+                        endTest();
+                    state = "playing";
+                    setTimeout(checkState, 100);
+                    break;
+                }
+            }
+
+            function canplaythrough()
+            {
+                state = "playing";
+                run("video.play()");
+                consoleWrite("");
+            }
+
+            function start()
+            {
+                if (!window.internals) {
+                    failTest('This test requires window.internals.');
+                    return;
+                }
+
+                findMediaElement();
+                waitForEvent('canplaythrough', canplaythrough);
+                waitForEvent('playing', checkState);
+                video.src = findMediaFile("video", "content/test");
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video controls ></video>
+        <p>Test that play() during interruption does nothing, ending interruption allows playback to resume.</p>
+    </body>
+</html>

@@ -1,0 +1,13 @@
+This test verifies that ClipboardItem.getType() can be used to get clipboard data written using DataTransfer APIs. To test manually, click the top button to write to the pasteboard, and then click the bottom button to paste.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS items.length is 1
+PASS item.types.length is 3
+PASS text is "Apple, Inc."
+PASS url is "https://www.apple.com/"
+PASS doc.querySelector('a').href is "https://www.apple.com/"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

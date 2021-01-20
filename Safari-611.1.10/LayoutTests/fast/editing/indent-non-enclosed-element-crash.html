@@ -1,0 +1,12 @@
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    onload = function fun() {
+        outer.prepend(inner);
+        TH.insertAdjacentText("beforeBegin","Tests indenting a non-enclosed element. The test passes if WebKit doesn't crash or hit an assertion.");
+        document.getSelection().setPosition(CG);
+        document.execCommand("indent", false);
+        document.execCommand("indent", false);
+    }
+</script>
+<body><div><div id=outer><span></span></div><span></span></div><span></span><div id=inner><table id=TABLE contenteditable=true></div><colgroup id=CG></colgroup><thead id=TH></thead>

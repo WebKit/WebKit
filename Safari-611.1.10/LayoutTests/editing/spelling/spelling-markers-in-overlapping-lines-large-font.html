@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: Ahem;
+    src: url("../../resources/Ahem.ttf");
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font: 40px/1 Ahem;
+}
+
+#first {
+    line-height: 20px;
+}
+</style>
+</head>
+<body>
+<div id="first" contenteditable="true"></div>
+<div id="second" contenteditable="true"></div>
+<script>
+if (window.internals)
+    internals.setContinuousSpellCheckingEnabled(true);
+
+var first = document.getElementById("first");
+var second = document.getElementById("second");
+
+for (var element of [first, second]) {
+    element.focus();
+    document.execCommand("InsertText", false, "mispelled");
+    document.execCommand("InsertText", false, " "); // Trigger spell checking
+    element.blur();
+}
+</script>
+</body>
+</html>

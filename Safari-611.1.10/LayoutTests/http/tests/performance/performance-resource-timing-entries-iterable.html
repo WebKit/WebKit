@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<script>
+    function resolve(path) {
+        var a = document.createElement("a");
+        a.href = path;
+        return a.href;
+    }
+    var url = resolve("../resources/square100.png?" + Math.random());
+    document.write("<img src='" + url + "'>");
+</script>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    window.jsTestIsAsync = true;
+
+    description("Test that PerformanceEntryList (window.performance.getEntries()) is iterable.");
+
+    var resources, entryType;
+    window.addEventListener("load", function() {
+        resources = performance.getEntriesByName(url);
+        shouldBeType("resources", "Array");
+        shouldBeDefined("resources.length");
+        shouldBe("resources.length", "1");
+        shouldBeDefined("resources[0]");
+        entryTypes = resources.map((entry) => entry.entryType);
+        shouldBeEqualToString("entryTypes[0]", "resource");
+        finishJSTest();
+    });
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

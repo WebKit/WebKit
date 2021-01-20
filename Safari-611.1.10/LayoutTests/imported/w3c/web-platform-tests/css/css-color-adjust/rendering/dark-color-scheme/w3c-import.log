@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-change-checkbox-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-change-checkbox-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-change-checkbox.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-color-property.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-alpha-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-alpha.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-opaque-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-opaque.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-root-background.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-visited-link-initial-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-visited-link-initial.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/svg-as-image.html

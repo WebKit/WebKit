@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            function finish()
+            {
+                logResult(event.type == "loadeddata", "MediaPlayer extracted extension from src url.");
+                consoleWrite("");
+                endTest();
+            }
+
+
+            function start()
+            {
+                findMediaElement();
+                waitForEventAndEnd('loadeddata', finish);
+                waitForEvent('error', finish);
+                video.src = findMediaFile("video", "content/test") + "#01.00.xyz";
+            }
+        </script>
+
+    </head>
+    <body onload="start()">
+
+        <video controls ></video>
+
+    </body>
+</html>

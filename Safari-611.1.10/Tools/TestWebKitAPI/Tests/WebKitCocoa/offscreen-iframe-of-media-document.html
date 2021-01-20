@@ -1,0 +1,17 @@
+<html>
+<head>
+<script>
+    function loaded() {
+        try {
+            window.webkit.messageHandlers.testHandler.postMessage("loaded");
+       } catch(e) { }
+    }
+</script>
+</head>
+<body onload="loaded()">
+    
+<div style="width:25px; height:800px;"></div>
+<iframe width="320" height="240" src="test.mp4" />
+
+</body>
+</html>

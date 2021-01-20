@@ -1,0 +1,2 @@
+This test passes if the web content process does not crash.
+

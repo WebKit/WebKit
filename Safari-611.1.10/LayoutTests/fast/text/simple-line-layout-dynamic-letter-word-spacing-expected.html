@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div {
+    width: 200px;
+}
+</style>
+</head>
+<body>
+<div id=letterSpacing>foobar foobar foobar foobar</div>
+<div id=wordSpacing>foobar foobar foobar foobar</div>
+<script>
+if (window.internals)
+    internals.settings.setSimpleLineLayoutEnabled(false);
+document.body.offsetHeight;
+letterSpacing.style.letterSpacing = "10px";
+wordSpacing.style.wordSpacing = "20px";
+</script>
+</body>
+</html>

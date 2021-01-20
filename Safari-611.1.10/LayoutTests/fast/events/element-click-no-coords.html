@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<div id="testDiv">Test Div</div>
+<script>
+description("Tests that the MouseEvent's coordinates are 0 for a simulated click.");
+jsTestIsAsync = true;
+
+var testDiv = document.getElementById("testDiv");
+
+testDiv.onclick = function(e) {
+    event = e;
+    shouldBe("event.screenX", "0");
+    shouldBe("event.screenY", "0");
+    shouldBe("event.clientX", "0");
+    shouldBe("event.clientY", "0");
+    shouldBe("event.pageX", "0");
+    shouldBe("event.pageY", "0");
+
+    finishJSTest();
+};
+
+testDiv.click();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

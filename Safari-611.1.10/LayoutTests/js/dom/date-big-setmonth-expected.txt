@@ -1,0 +1,10 @@
+This test checks for a regression against Date.setMonth fails with big values due to overflow.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS d.valueOf() is new Date(1980, 8, 1).valueOf()
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

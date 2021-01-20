@@ -1,0 +1,25 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/openee-accessed_openee-coop-ro.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/openee-accessed_openee-coop.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/openee-accessed_opener-coop-ro.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/openee-accessed_opener-coop.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/opener-accessed_openee-coop-ro.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/opener-accessed_openee-coop.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/opener-accessed_opener-coop-ro.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/opener-accessed_opener-coop.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property.https.html

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>WebGL2RenderingContext: IDL bindings</title>
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/testharnessreport.js"></script>
+<div id="log"></div>
+<script>
+let context, error_methods = [];
+setup(function() {
+  window.internals.settings.setWebGL2Enabled(true);
+
+  context = document.createElement("canvas").getContext("webgl2");
+  if (!context) {
+    throw new Error("Could not create webgl2 context");
+  }
+
+  for (let i = 1; i <= 4; ++i) {
+    error_methods.push([`uniform${i}uiv`, [null, null], `uniform${i}uiv with null data`]);
+  }
+  for (let dim of ["2x3", "3x2", "2x4", "4x2", "3x4", "4x3"]) {
+    error_methods.push([`uniformMatrix${dim}fv`, [null, false, null], `uniformMatrix${dim}fv with null data`]);
+  }
+  for (let type of ["i", "ui"]) {
+    error_methods.push([`vertexAttribI4${type}v`, [0, null], `vertexAttribI4${type}v with null values`]);
+  }
+  for (let type of ["i", "ui", "f"]) {
+    error_methods.push([`clearBuffer${type}v`, [context.COLOR, 0, null], `clearBuffer${type}v with null values`]);
+  }
+  for (let type of ["i", "f"]) {
+    error_methods.push([`samplerParameter${type}`, [null, 0, 0], `samplerParameter${type} with null sampler`]);
+  }
+  error_methods.push(["framebufferTextureLayer", [0, 0, 0, 0, 0], "framebufferTextureLayer with integer texture"]);
+  error_methods.push(["beginQuery", [0, null], "beginQuery with null query"]);
+  error_methods.push(["getQueryParameter", [null, 0], "getQueryParameter with null query"]);
+  error_methods.push(["getSamplerParameter", [null, 0], "getSamplerParameter with null sampler"]);
+  error_methods.push(["clientWaitSync", [null, 0, 0], "clientWaitSync with null sync"]);
+  error_methods.push(["waitSync", [null, 0, 0], "waitSync with null sync"]);
+  error_methods.push(["getSyncParameter", [null, 0], "getSyncParameter with null sync"]);
+  error_methods.push(["transformFeedbackVaryings", [null, [], 0], "transformFeedbackVaryings with null program"]);
+  error_methods.push(["getTransformFeedbackVarying", [null, 0], "getTransformFeedbackVarying with null program"]);
+  error_methods.push(["getUniformIndices", [null, []], "getUniformIndices with null program"]);
+  error_methods.push(["getUniformBlockIndex", [null, ""], "getUniformBlockIndex with null program"]);
+  error_methods.push(["getActiveUniformBlockParameter", [null, 0, 0], "getActiveUniformBlockParameter with null program"]);
+  error_methods.push(["getActiveUniformBlockName", [null, 0], "getActiveUniformBlockName with null program"]);
+  error_methods.push(["uniformBlockBinding", [null, 0, 0], "uniformBlockBinding with null program"]);
+  error_methods.push(["getFragDataLocation", [null, ""], "getFragDataLocation with null program"]);
+});
+
+for (var [method, args, name] of error_methods) {
+  test(function() {
+    assert_throws(new TypeError(), () => context[method](...args));
+  }, name);
+}
+</script>

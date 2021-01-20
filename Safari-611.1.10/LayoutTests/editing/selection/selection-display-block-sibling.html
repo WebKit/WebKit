@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Test for https://bugs.webkit.org/show_bug.cgi?id=209822: Background color of selected text is painted correctly for children of a `display: block` div</title>
+    <link rel="author" title="Tyler Wilcock" href="mailto:twilco.o@protonmail.com"/>
+    <meta name="assert" content="Background color of selected immediate-child text is green, background color of selected sibling-div text is the default selection color." />
+    <script type="text/javascript">
+        function selectTarget() {
+            let target = document.getElementById("target");
+            getSelection().setBaseAndExtent(target, 0, target, 2);
+        };
+    </script>
+    <style type="text/css">
+        #target {
+            display: block;
+        }
+        #target::selection {
+            background: green !important;
+        }
+    </style>
+</head>
+<body onload="selectTarget();">
+<div id="target">
+    Test for https://bugs.webkit.org/show_bug.cgi?id=209822 -- should have green background when selected.
+    <div>
+        Sibling div.  Should have default selection background color when selected.
+    </div>
+</div>
+</body>
+</html>

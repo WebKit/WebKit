@@ -1,0 +1,70 @@
+Verifies that find and replace fires input events of type "insertReplacementText". This test requires WebKitTestRunner.
+
+Pineapple
+
+Kiwi watermelon pear.
+
+
+(field):
+        type=beforeinput,
+        inputType=insertReplacementText,
+        range=null,
+        data=watermelon,
+        dataTransfer=null
+(field):
+        type=input,
+        inputType=insertReplacementText,
+        range=null,
+        data=watermelon,
+        dataTransfer=null
+(editor):
+        type=beforeinput,
+        inputType=insertReplacementText,
+        range=([object Text]#5,[object Text]#11),
+        data=null,
+        dataTransfer=[object DataTransfer]
+(editor):
+        type=input,
+        inputType=insertReplacementText,
+        range=null,
+        data=null,
+        dataTransfer=[object DataTransfer]
+(editor):
+        type=beforeinput,
+        inputType=insertReplacementText,
+        range=([object Text]#6,[object Text]#12),
+        data=null,
+        dataTransfer=[object DataTransfer]
+(editor):
+        type=input,
+        inputType=insertReplacementText,
+        range=null,
+        data=null,
+        dataTransfer=[object DataTransfer]
+---
+(editor):
+        type=beforeinput,
+        inputType=insertReplacementText,
+        range=([object Text]#0,[object Text]#24),
+        data=null,
+        dataTransfer=[object DataTransfer]
+(editor):
+        type=input,
+        inputType=insertReplacementText,
+        range=null,
+        data=null,
+        dataTransfer=[object DataTransfer]
+---
+(field):
+        type=beforeinput,
+        inputType=insertText,
+        range=null,
+        data=Guava,
+        dataTransfer=null
+(field):
+        type=input,
+        inputType=insertText,
+        range=null,
+        data=Guava,
+        dataTransfer=null
+

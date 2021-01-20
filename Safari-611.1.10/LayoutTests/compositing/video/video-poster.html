@@ -1,0 +1,80 @@
+<!DOCTYPE>
+<html>
+    <head>
+        <title>Video with poster</title>
+        <script>
+
+            function log(str)
+            {
+                document.getElementById('result').innerHTML += str + "<br>";
+            }
+
+            function hasLayers()
+            {
+                if (window.testRunner)
+                    return window.internals.layerTreeAsText(document) != "";
+                
+                return false;
+            }
+
+            async function checkLayers(prefix, wantsLayers)
+            {
+                return new Promise(async resolve => {
+                    let layers;
+                    let count = 0;
+                    while (true) {
+
+                        layers = hasLayers();
+                        if (layers == wantsLayers)
+                            break;
+
+                        await new Promise(resolve => { setTimeout(resolve, 10); });
+                        if (++count > 10)
+                            break;
+                    }
+
+                    log(`${prefix} <br>&nbsp;&nbsp;${wantsLayers == layers ? "PASS" : "FAIL"}: wants layers = ${wantsLayers}, has layers = ${layers}<br>`);
+                    resolve();
+                });
+            }
+
+            async function layerTest()
+            {
+                var video = document.getElementsByTagName('video')[0];
+
+                switch (event.type)
+                {
+                    case "load":
+                        await checkLayers("No src, no poster", false);
+                        video.src = "../resources/video." + (video.canPlayType("video/ogg") ? "ogv" : "mp4");
+                        video.poster = "../resources/apple.jpg";
+                        break;
+                    case "canplaythrough":
+                        await checkLayers("Displaying poster", false);
+                        video.currentTime = 0.5;
+                        break;
+                    case "seeked":
+                        await checkLayers("Displaying movie", true);
+                        if (window.testRunner)
+                            testRunner.notifyDone();
+                        break;
+                }
+            }
+
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+            window.addEventListener('load', layerTest, false);
+        </script>
+    </head>
+    <body>
+    
+        <video oncanplaythrough="layerTest()" onseeked="layerTest()"></video>
+        
+        <p>A &lt;video&gt; should not have a layer until playback begins.<br>
+        This test can not be run manually, it requires testRunner.layerTreeAsText.</p>
+        <p id="result"></p>
+    
+    </body>
+</html>

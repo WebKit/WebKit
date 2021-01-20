@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x97
+  RenderBlock {html} at (0,0) size 800x97
+    RenderBody {body} at (8,16) size 784x73
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 386x18
+          text run at (0,0) width 386: "There should be no red below, except for antialiasing issues."
+layer at (8,50) size 784x39
+  RenderBlock (relative positioned) {div} at (0,34) size 784x39
+layer at (8,50) size 784x39
+  RenderBlock (relative positioned) zI: 1 {div} at (0,0) size 784x39 [color=#FF0000]
+    RenderInline {span} at (0,0) size 69x37
+      RenderText {#text} at (0,0) size 0x0
+      RenderInline {span} at (0,0) size 15x37
+        RenderText {#text} at (1,1) size 15x37
+          text run at (1,1) width 15: "a"
+      RenderTable at (15,30) size 0x0
+        RenderBlock {span} at (0,0) size 0x0
+      RenderInline {span} at (0,0) size 55x37
+        RenderText {#text} at (15,1) size 55x37
+          text run at (15,1) width 55: "bc d"
+      RenderText {#text} at (0,0) size 0x0
+    RenderText zI: 1 {#text} at (0,0) size 0x0
+layer at (8,50) size 70x39
+  RenderBlock (positioned) zI: 2 {div} at (0,0) size 71x39 [color=#008000]
+    RenderText zI: 2 {#text} at (1,1) size 69x37
+      text run at (1,1) width 69: "abc d"

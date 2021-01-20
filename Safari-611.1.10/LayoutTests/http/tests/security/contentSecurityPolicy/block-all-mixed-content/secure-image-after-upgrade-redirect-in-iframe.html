@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.dumpFrameLoadCallbacks();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p>This test loads a secure iframe that loads an insecure image via a redirect.  We should *not* trigger
+a mixed content block even though the child frame has CSP directive block-all-mixed-content because the
+redirected insecure image is upgraded to a secure image as the child frame has CSP directive upgrade-insecure-requests.</p>
+<iframe src="https://127.0.0.1:8443/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-secure-image-after-upgrade-redirect.html" height="300"></iframe>
+</body>
+</html>

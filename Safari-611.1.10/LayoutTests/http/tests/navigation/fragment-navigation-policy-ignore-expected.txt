@@ -1,0 +1,11 @@
+Policy delegate: attempt to load http://127.0.0.1:8000/navigation/fragment-navigation-policy-ignore.html#test with navigation type 'other'
+Checks that the client can prevent a fragment navigation via the decidePolicyForNavigationAction delegate.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.location.href is "http://127.0.0.1:8000/navigation/fragment-navigation-policy-ignore.html"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

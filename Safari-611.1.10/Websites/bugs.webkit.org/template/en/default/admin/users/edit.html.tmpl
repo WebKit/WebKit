@@ -1,0 +1,173 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  #
+  # message:             message tag specifying a global/messages.html.tmpl
+  #                      message
+  # listselectionvalues: selection values to recreate the current user list.
+  # editusers:           is viewing user member of editusers?
+  # otheruser:           Bugzilla::User object of viewed user.
+  # groups:              array of group information (name, grant type,
+  #                      canbless) for viewed user.
+  #%]
+
+[% title = BLOCK %]Edit user [% otheruser.identity FILTER html %][% END %]
+
+[% PROCESS global/header.html.tmpl
+  title = title
+  message = message
+  style_urls = ['skins/standard/admin.css']
+  doc_section = "administering/users.html#modifying-users"
+  javascript_urls = [ 'js/field.js' ]
+%]
+
+[% PROCESS admin/users/listselectvars.html.tmpl
+  listselectionvalues = listselectionvalues
+%]
+
+<form method="post" action="editusers.cgi">
+<table id="admin_table_edit">
+  [% PROCESS admin/users/userdata.html.tmpl
+    editform  = 1
+    editusers = editusers
+    otheruser = otheruser
+  %]
+  [% IF groups.size %]
+    <tr>
+      <th>Group access:</th>
+      <td>
+        <table id="group_membership">
+          <tr>
+            [% IF editusers %]
+              <th colspan="3">
+                Can turn these bits on for other users
+              </th>
+            [% END %]
+          </tr>
+          <tr>
+            [% IF editusers %]
+              <th class="checkbox">|</th>
+            [% END %]
+            <th colspan="2">User is a member of these groups</th>
+          </tr>
+          [% FOREACH group = groups %]
+            [% perms = permissions.${group.id} %]
+            <tr class="[% 'in' IF perms.regexpmember || perms.derivedmember %]direct">
+              [% IF editusers %]
+                <td class="checkbox">
+                  [% '[' IF perms.indirectbless %]
+                  [% %]<input type="checkbox"
+                              name="bless_[% group.id %]"
+                              value="1"
+                              [% ' checked="checked"' IF perms.directbless %]>
+                  [% ']' IF perms.indirectbless %]</td>
+              [% END %]
+              <td class="checkbox">
+                [% '[' IF perms.derivedmember %]
+                [% '*' IF perms.regexpmember %]
+                [%%]<input type="checkbox"
+                           id="group_[% group.id %]"
+                           name="group_[% group.id %]"
+                           value="1"
+                           [% ' checked="checked"' IF perms.directmember %]>
+                [% '*' IF perms.regexpmember %]
+                [% ']' IF perms.derivedmember %]</td>
+              <td class="groupname">
+                <label for="group_[% group.id %]">
+                  <strong>[% group.name FILTER html %]:</strong>
+                  [%+ group.description FILTER html_light %]
+                </label>
+              </td>
+            </tr>
+          [% END %]
+        </table>
+      </td>
+    </tr>
+  [% END %]
+
+  <tr>
+    <th>Product responsibilities:</th>
+    <td>
+      [% IF otheruser.product_responsibilities.size %]
+        [% PROCESS admin/users/responsibilities.html.tmpl otheruser = otheruser %]
+      [% ELSE %]
+        <em>none</em>
+      [% END %]
+    </td>
+  </tr>
+
+  <tr>
+    <th>Last Login:</th>
+    <td>
+      [% IF otheruser.last_seen_date %]
+        [% otheruser.last_seen_date FILTER html %]
+      [% ELSE %]
+        <em>never</em>
+      [% END %]
+    </td>
+  </tr>
+</table>
+
+<p>
+  <input type="submit" id="update" value="Save Changes">
+  <input type="hidden" name="userid" value="[% otheruser.id %]">
+  <input type="hidden" name="action" value="update">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+  [% INCLUDE listselectionhiddenfields %]
+
+  or <a href="editusers.cgi?action=activity&amp;userid=[% otheruser.id %]"
+        title="View Account History for '
+        [%- otheruser.login FILTER html %]'">View Account History</a>
+</p>
+</form>
+<p>
+  User is a member of all groups shown with a check or grey bar.
+  A grey bar indicates indirect membership, either derived from other
+  groups (marked with square brackets) or via regular expression
+  (marked with '*').
+</p>
+[% IF editusers %]
+  <p>
+    Square brackets around the bless checkbox indicate the ability
+    to bless users (grant them membership in the group) as a result
+    of membership in another group.
+  </p>
+[% END %]
+
+[% IF Param('allowuserdeletion') && editusers %]
+  <form method="post" action="editusers.cgi">
+  <p>
+    <input type="submit" id="delete" value="Delete User">
+    <input type="hidden" name="action" value="del">
+    <input type="hidden" name="userid" value="[% otheruser.id %]">
+    [% INCLUDE listselectionhiddenfields %]
+  </p>
+  </form>
+[% END %]
+
+<p>
+  You can also
+  [% IF editusers %]
+    <a href="editusers.cgi?action=add[% INCLUDE listselectionurlparams %]">add
+    a new user</a>
+    [% IF listselectionvalues %],
+    [% END %]
+  [% END %]
+  [% IF listselectionvalues.matchtype != 'exact' %]
+    go
+    <a href="editusers.cgi?action=list[% INCLUDE listselectionurlparams %]">back
+    to the user list</a>,
+  [% END %]
+  [% IF editusers OR listselectionvalues %]
+    or
+  [% END %]
+  <a href="editusers.cgi">find other users</a>.
+</p>
+
+[% PROCESS global/footer.html.tmpl %]

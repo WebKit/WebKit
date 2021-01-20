@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 240x155 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 238x153
+          RenderTableRow {TR} at (0,2) size 238x51
+            RenderTableCell {TD} at (2,2) size 234x51 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderBlock {H2} at (2,2) size 230x27
+                RenderText {#text} at (0,0) size 175x26
+                  text run at (0,0) width 175: "Personal Friends"
+          RenderTableRow {TR} at (0,54) size 238x97
+            RenderTableCell {TD} at (2,54) size 180x97 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (2,2) size 176x0
+                RenderInline {FONT} at (0,0) size 0x0
+                RenderText {#text} at (0,0) size 0x0
+              RenderBlock {P} at (2,2) size 176x20
+                RenderText {#text} at (0,0) size 176x19
+                  text run at (0,0) width 176: "Alisha - Password-Protected"
+              RenderBlock {P} at (2,38) size 176x20
+                RenderText {#text} at (0,0) size 42x19
+                  text run at (0,0) width 42: "Arlesia"
+              RenderBlock {P} at (2,74) size 176x20
+                RenderText {#text} at (0,0) size 34x19
+                  text run at (0,0) width 34: "Asale"
+            RenderTableCell {TD} at (184,54) size 52x97 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (2,2) size 48x20
+                RenderText {#text} at (0,0) size 31x19
+                  text run at (0,0) width 31: "Ernie"
+              RenderBlock {P} at (2,38) size 48x20
+                RenderText {#text} at (0,0) size 48x19
+                  text run at (0,0) width 48: "Melanie"
+              RenderBlock {P} at (2,74) size 48x20
+                RenderText {#text} at (0,0) size 46x19
+                  text run at (0,0) width 46: "Tamara"

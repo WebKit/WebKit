@@ -1,0 +1,5 @@
+NAME=WebKit
+VERSION="__RUNTIME_VERSION__ (Flatpak runtime)"
+VERSION_ID=__RUNTIME_VERSION__
+ID=org.webkit.Platform
+PRETTY_NAME="WebKit SDK __RUNTIME_VERSION__ (Flatpak runtime)"

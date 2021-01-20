@@ -1,0 +1,12 @@
+Test document.currentScript should be null when executing the inlined module.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Module is not executed yet.
+Module execution is confined in the module environment.
+PASS document.currentScript is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

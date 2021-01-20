@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<style>
+canvas {
+    width: 200px;
+    height: 200px;
+}
+</style>
+<canvas></canvas>
+<script>
+function paint() {
+    const canvas = document.querySelector("canvas");
+    canvas.width = 200;
+    canvas.height = 200;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "rgb(0, 255, 0)";
+    ctx.fillRect(0, 0, 200, 200);
+}
+window.addEventListener("load", paint, false);
+</script>

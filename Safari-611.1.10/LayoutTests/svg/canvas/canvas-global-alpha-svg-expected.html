@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    div {
+      border-width: 25px;
+      border-style: solid;
+      border-color: green;
+    }
+    .main {
+      width: 100px;
+      height: 100px;
+    }
+    .sub {
+      width: 50px;
+      height: 50px;
+    }
+    .sub-sub {
+      width: 0px;
+      height: 0px;
+    }
+    .low-opacity {
+      opacity: 0.2;   
+    }
+  </style>
+</head>
+<body>
+  <div class="main">
+    <div class="sub low-opacity">
+      <div class="sub-sub low-opacity"></div>
+    </div>
+  </div>
+</body>
+</html>

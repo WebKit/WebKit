@@ -1,0 +1,6 @@
+This tests that the input element does not get the focus when dragging mouse over it even when document has a selectstart event listener which prevents default.
+To manually test, drag a mouse cursor over the input element. The input element should not gain focus.
+
+
+selectstart event
+PASS - input element was not focused

@@ -1,0 +1,34 @@
+Test to make sure a <source> moved after the media element begins processing is handled correctly.
+
+Moving previous <source> element to end of list, it should be processed again.
+EXPECTED ([object HTMLSourceElement] != 'null') OK
+<source> moved was processed a second time. OK
+
+Moving current <source> element, it should be processed again.
+EXPECTED ([object HTMLSourceElement] != 'null') OK
+<source> moved was processed a second time. OK
+
+Moving next <source> element, it should be processed again.
+EXPECTED ([object HTMLSourceElement] != 'null') OK
+<source> moved was processed a second time. OK
+
+Moving current <source> element to beginning of list, it should not be processed again.
+EXPECTED ([object HTMLSourceElement] != 'null') OK
+<source> moved was not processed OK
+
+Moving next <source> element to beginning of list, it should never processed.
+EXPECTED ([object HTMLSourceElement] != 'null') OK
+<source> moved was not processed OK
+
+<span> inserted after current <source> element before it is removed, processing should proceed normally.
+EXPECTED ([object HTMLSourceElement] != 'null') OK
+<source> moved was not processed OK
+
+<span> inserted after next <source> element before it is removed, processing should proceed normally.
+EXPECTED ([object HTMLSourceElement] != 'null') OK
+<source> moved was not processed OK
+
+PASS
+
+END OF TEST
+

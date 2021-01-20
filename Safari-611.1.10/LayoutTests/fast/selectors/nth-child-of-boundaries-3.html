@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+#test-root * {
+    background-color: red;
+}
+</style>
+<style id="style">
+</style>
+</head>
+<body>
+    <div style="display:none" id="test-root">
+    </div>
+</body>
+<script>
+description('Test boundaries of :nth-child(An+B).');
+
+// First, let's generate a giant DOM tree to have something to match.
+
+function generateSubtree(parent, level) {
+    if (level < 0)
+        return;
+
+    for (var i = 0; i < level; ++i) {
+        var testCase = document.createElement("testcase");
+        testCase.className="testclass"
+        generateSubtree(testCase, level - 1);
+        parent.appendChild(testCase);
+    }
+}
+
+var testRoot = document.getElementById('test-root');
+generateSubtree(testRoot, 7);
+
+// Test backtracking nesting. This does not test backtracking correctness, just compilation and execution.
+var siblingBacktracking = ':nth-child(n+2 of .testclass:nth-child(n+2 of .testclass$$>.testclass>.testclass .testclass)>.testclass>.testclass .testclass)';
+var previousChain = ':nth-child(n+2 of .testclass>.testclass>.testclass .testclass)'
+for (var i = 0; i < 20; ++i) {
+    previousChain = siblingBacktracking.replace('$$', previousChain)
+    shouldBe('document.querySelectorAll("' + previousChain + '").length', '0');
+    shouldBe('document.querySelectorAll("' + previousChain + '+.testclass+.testclass~testcase").length', '0');
+    shouldBe('document.querySelectorAll("' + previousChain + '>.testclass>.testclass testcase").length', '0');
+    shouldBe('document.querySelectorAll("' + previousChain + '+.testclass+.testclass~testcase>.testclass>.testclass testcase").length', '0');
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

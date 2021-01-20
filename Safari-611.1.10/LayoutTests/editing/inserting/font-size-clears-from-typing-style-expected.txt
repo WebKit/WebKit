@@ -1,0 +1,3 @@
+Tests that we don't serialize redundant font-size in typingStyle. There should be no span or style attribute around A or B below.See https://bugs.webkit.org/show_bug.cgi?id=26279.
+| "B<#selection-caret>A"
+| <br>

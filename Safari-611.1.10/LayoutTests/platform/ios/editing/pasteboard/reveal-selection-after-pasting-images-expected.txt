@@ -1,0 +1,16 @@
+This test verifies that we scroll to reveal the selection after pasting images in an editable area. To run the test manually, copy the selected images and paste into the red editable container above. The container should scroll to reveal the caret after the last image.
+
+Scrolled after pasting:
+| <div>
+|   style="-webkit-text-size-adjust: auto;"
+|   <img>
+|     src="resources/mozilla.gif"
+| <div>
+|   style="-webkit-text-size-adjust: auto;"
+|   <img>
+|     src="resources/apple.gif"
+| <div>
+|   style="-webkit-text-size-adjust: auto;"
+|   <img>
+|     src="../resources/abe.png"
+|   <#selection-caret>

@@ -1,0 +1,7 @@
+Description
+
+This test checks for the presence of camera in navigator.mediaDevices.enumerateDevices() method.
+
+
+FAIL Camera is not exposed in mediaDevices.enumerateDevices() assert_in_array: value "videoinput" not in array ["audioinput", "audiooutput"]
+

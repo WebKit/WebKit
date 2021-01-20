@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>displaystyle/mathvariant on anonymous mfenced operators</title>
+    <meta charset="utf-8"/>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+  </head>
+  <body>
+
+    <p>This test passes if it does not crash</p>
+
+    <math mathvariant="fraktur">
+      <mfenced open="A" separators="B" close="C">
+        <mn>0</mn>
+        <mn>1</mn>
+        <mn>2</mn>
+      </mfenced>
+    </math>
+
+    <math displaystyle="true">
+      <mfenced open="∑" separators="∫" close="∏">
+        <mn>0</mn>
+        <mn>1</mn>
+        <mn>2</mn>
+      </mfenced>
+    </math>
+
+  </body>
+</html>

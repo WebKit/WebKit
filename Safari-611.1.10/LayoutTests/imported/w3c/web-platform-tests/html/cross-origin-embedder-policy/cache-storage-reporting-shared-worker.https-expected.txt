@@ -1,0 +1,4 @@
+
+FAIL COEP support on SharedWorker. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+FAIL COEP-Report-Only support on SharedWorker. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+

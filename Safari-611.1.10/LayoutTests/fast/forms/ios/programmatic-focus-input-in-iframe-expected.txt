@@ -1,0 +1,4 @@
+Tests that a programmatic focus should not scroll into view
+
+PASS: page did not scroll.
+

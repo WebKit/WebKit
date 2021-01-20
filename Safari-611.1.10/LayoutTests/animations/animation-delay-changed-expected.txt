@@ -1,0 +1,5 @@
+starts after 1s
+starts after 1.5s
+PASS - "left" property for "box1" element at 1s saw something close to: 200
+PASS - "left" property for "box2" element at 1s saw something close to: 100
+

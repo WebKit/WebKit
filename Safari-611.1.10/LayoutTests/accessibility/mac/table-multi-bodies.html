@@ -1,0 +1,73 @@
+<html>
+    
+    <head>
+        <script>
+            if (window.testRunner)
+            testRunner.dumpAsText();
+            </script>
+    </head>
+    
+    <body id="body">
+        
+        <table class="tborder" cellpadding="6" cellspacing="1" border="1" width="100%" align="center">
+            <thead>
+                <tr align="center">
+                    <td class="thead">&nbsp;</td>
+                    <td class="thead" width="100%" align="left">Forum</td>
+                    <td class="thead">Last Post</td>
+                    <td class="thead">Threads</td>
+                    <td class="thead">Posts</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="tcat" colspan="5"><a style="float:right" href="#top" ><img id="collapseimg_forumbit_71" alt="" border="0" /></a>
+                        <a href="forumdisplay.php?f=71">English Forums</a>
+                    </td>
+                </tr>
+            </tbody>
+            <tbody id="collapseobj_forumbit_71" style="">
+                <tr>
+                    <td class="tcat"><span class="smallfont">&nbsp;</span></td>
+                    <td class="tcat" colspan="4">
+                        <a href="forumdisplay.php?f=30">Main Discussion</a>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td class="alt2"><img  alt="" border="0" id="forum_statusicon_23" /></td>
+                    <td class="alt1Active" align="left" id="f23">
+                        Want to communicate with other local fans? Do it here, too!
+                    </td>
+                    <td class="alt2" nowrap="nowrap">
+                        Today <span class="time">03:52pm</span>
+                    </td>
+                    <td class="alt1">381</td>
+<td class="alt2">23,437</td>
+</tr>
+</table>
+<BR><BR><BR>
+<div id="result">
+</div>
+
+<script>
+        if (window.accessibilityController) {
+
+            var body = document.getElementById("body");
+            body.focus();
+            var table = accessibilityController.focusedElement.childAtIndex(0);
+            
+            result.innerText += "------------------------\n";
+            var axCellKey = "AXCell";
+         
+            var tableCell1 = table.cellForColumnAndRow(2,0);
+            if (tableCell1.allAttributes().indexOf(axCellKey) != -1) {
+                result.innerText += "Pass";
+            } 
+            else {
+                result.innerText += "Fail";
+            }
+        }
+</script>
+
+</body>
+</html>

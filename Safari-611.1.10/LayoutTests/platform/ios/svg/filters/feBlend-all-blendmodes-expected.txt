@@ -1,0 +1,106 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 400x100
+    RenderSVGResourceFilter {filter} [id="f0"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+      [feBlend mode="normal"]
+        [feFlood flood-color="#FF0000" flood-opacity="0.50"]
+        [feFlood flood-color="#00FF00" flood-opacity="0.50"]
+    RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+      [filter="f0"] RenderSVGResourceFilter {filter} at (0,0) size 50x50
+    RenderSVGResourceFilter {filter} [id="f1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+      [feBlend mode="multiply"]
+        [feFlood flood-color="#FF0000" flood-opacity="0.50"]
+        [feFlood flood-color="#00FF00" flood-opacity="0.50"]
+    RenderSVGRect {rect} at (50,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=50.00] [y=0.00] [width=50.00] [height=50.00]
+      [filter="f1"] RenderSVGResourceFilter {filter} at (50,0) size 50x50
+    RenderSVGResourceFilter {filter} [id="f2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+      [feBlend mode="screen"]
+        [feFlood flood-color="#FF0000" flood-opacity="0.50"]
+        [feFlood flood-color="#00FF00" flood-opacity="0.50"]
+    RenderSVGRect {rect} at (100,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=100.00] [y=0.00] [width=50.00] [height=50.00]
+      [filter="f2"] RenderSVGResourceFilter {filter} at (100,0) size 50x50
+    RenderSVGResourceFilter {filter} [id="f3"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+      [feBlend mode="darken"]
+        [feFlood flood-color="#FF0000" flood-opacity="0.50"]
+        [feFlood flood-color="#00FF00" flood-opacity="0.50"]
+    RenderSVGRect {rect} at (150,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=150.00] [y=0.00] [width=50.00] [height=50.00]
+      [filter="f3"] RenderSVGResourceFilter {filter} at (150,0) size 50x50
+    RenderSVGResourceFilter {filter} [id="f4"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+      [feBlend mode="lighten"]
+        [feFlood flood-color="#FF0000" flood-opacity="0.50"]
+        [feFlood flood-color="#00FF00" flood-opacity="0.50"]
+    RenderSVGRect {rect} at (200,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=200.00] [y=0.00] [width=50.00] [height=50.00]
+      [filter="f4"] RenderSVGResourceFilter {filter} at (200,0) size 50x50
+    RenderSVGResourceFilter {filter} [id="f5"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+      [feBlend mode="overlay"]
+        [feFlood flood-color="#FF0000" flood-opacity="0.50"]
+        [feFlood flood-color="#00FF00" flood-opacity="0.50"]
+    RenderSVGRect {rect} at (250,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=250.00] [y=0.00] [width=50.00] [height=50.00]
+      [filter="f5"] RenderSVGResourceFilter {filter} at (250,0) size 50x50
+    RenderSVGResourceFilter {filter} [id="f6"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+      [feBlend mode="color-dodge"]
+        [feFlood flood-color="#FF0000" flood-opacity="0.50"]
+        [feFlood flood-color="#00FF00" flood-opacity="0.50"]
+    RenderSVGRect {rect} at (300,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=300.00] [y=0.00] [width=50.00] [height=50.00]
+      [filter="f6"] RenderSVGResourceFilter {filter} at (300,0) size 50x50
+    RenderSVGResourceFilter {filter} [id="f7"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+      [feBlend mode="color-burn"]
+        [feFlood flood-color="#FF0000" flood-opacity="0.50"]
+        [feFlood flood-color="#00FF00" flood-opacity="0.50"]
+    RenderSVGRect {rect} at (350,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=350.00] [y=0.00] [width=50.00] [height=50.00]
+      [filter="f7"] RenderSVGResourceFilter {filter} at (350,0) size 50x50
+    RenderSVGResourceFilter {filter} [id="f8"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+      [feBlend mode="hard-light"]
+        [feFlood flood-color="#FF0000" flood-opacity="0.50"]
+        [feFlood flood-color="#00FF00" flood-opacity="0.50"]
+    RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+      [filter="f8"] RenderSVGResourceFilter {filter} at (0,0) size 50x50
+    RenderSVGResourceFilter {filter} [id="f9"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+      [feBlend mode="soft-light"]
+        [feFlood flood-color="#FF0000" flood-opacity="0.50"]
+        [feFlood flood-color="#00FF00" flood-opacity="0.50"]
+    RenderSVGRect {rect} at (50,50) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=50.00] [y=50.00] [width=50.00] [height=50.00]
+      [filter="f9"] RenderSVGResourceFilter {filter} at (50,50) size 50x50
+    RenderSVGResourceFilter {filter} [id="f10"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+      [feBlend mode="difference"]
+        [feFlood flood-color="#FF0000" flood-opacity="0.50"]
+        [feFlood flood-color="#00FF00" flood-opacity="0.50"]
+    RenderSVGRect {rect} at (100,50) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=100.00] [y=50.00] [width=50.00] [height=50.00]
+      [filter="f10"] RenderSVGResourceFilter {filter} at (100,50) size 50x50
+    RenderSVGResourceFilter {filter} [id="f11"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+      [feBlend mode="exclusion"]
+        [feFlood flood-color="#FF0000" flood-opacity="0.50"]
+        [feFlood flood-color="#00FF00" flood-opacity="0.50"]
+    RenderSVGRect {rect} at (150,50) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=150.00] [y=50.00] [width=50.00] [height=50.00]
+      [filter="f11"] RenderSVGResourceFilter {filter} at (150,50) size 50x50
+    RenderSVGResourceFilter {filter} [id="f12"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+      [feBlend mode="hue"]
+        [feFlood flood-color="#FF0000" flood-opacity="0.50"]
+        [feFlood flood-color="#00FF00" flood-opacity="0.50"]
+    RenderSVGRect {rect} at (200,50) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=200.00] [y=50.00] [width=50.00] [height=50.00]
+      [filter="f12"] RenderSVGResourceFilter {filter} at (200,50) size 50x50
+    RenderSVGResourceFilter {filter} [id="f13"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+      [feBlend mode="saturation"]
+        [feFlood flood-color="#FF0000" flood-opacity="0.50"]
+        [feFlood flood-color="#00FF00" flood-opacity="0.50"]
+    RenderSVGRect {rect} at (250,50) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=250.00] [y=50.00] [width=50.00] [height=50.00]
+      [filter="f13"] RenderSVGResourceFilter {filter} at (250,50) size 50x50
+    RenderSVGResourceFilter {filter} [id="f14"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+      [feBlend mode="color"]
+        [feFlood flood-color="#FF0000" flood-opacity="0.50"]
+        [feFlood flood-color="#00FF00" flood-opacity="0.50"]
+    RenderSVGRect {rect} at (300,50) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=300.00] [y=50.00] [width=50.00] [height=50.00]
+      [filter="f14"] RenderSVGResourceFilter {filter} at (300,50) size 50x50
+    RenderSVGResourceFilter {filter} [id="f15"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+      [feBlend mode="luminosity"]
+        [feFlood flood-color="#FF0000" flood-opacity="0.50"]
+        [feFlood flood-color="#00FF00" flood-opacity="0.50"]
+    RenderSVGRect {rect} at (350,50) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=350.00] [y=50.00] [width=50.00] [height=50.00]
+      [filter="f15"] RenderSVGResourceFilter {filter} at (350,50) size 50x50
+    RenderSVGResourceFilter {filter} [id="f16"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+      [feBlend mode="normal"]
+        [feFlood flood-color="#FF0000" flood-opacity="0.50"]
+        [feFlood flood-color="#00FF00" flood-opacity="0.50"]
+    RenderSVGRect {rect} at (0,50) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=50.00] [width=50.00] [height=50.00]
+      [filter="f16"] RenderSVGResourceFilter {filter} at (0,50) size 50x50

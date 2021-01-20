@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x37
+  RenderBlock {HTML} at (0,0) size 800x37
+    RenderBody {BODY} at (8,8) size 784x21
+layer at (8,8) size 784x21
+  RenderBlock {DIV} at (0,0) size 784x21
+    RenderText {#text} at (19,2) size 4x18
+      text run at (19,2) width 4: " "
+    RenderBlock {SPAN} at (23,16) size 20x0
+    RenderText {#text} at (43,2) size 4x18
+      text run at (43,2) width 4: " "
+    RenderText {#text} at (0,0) size 0x0
+layer at (10,11) size 15x15
+  RenderBlock (relative positioned) {INPUT} at (2,3) size 15x15
+layer at (57,11) size 15x15
+  RenderBlock (relative positioned) {INPUT} at (49,3) size 15x15

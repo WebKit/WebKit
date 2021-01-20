@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/payment-request.js"></script>
+</head>
+<body>
+<script>
+
+description("Test basic creation of a PaymentRequest object with an Apple Pay payment method.");
+
+window.jsTestIsAsync = true;
+
+function validPaymentMethod() {
+    return {
+        supportedMethods: 'https://apple.com/apple-pay',
+        data: {
+            version: 2,
+            merchantIdentifier: '',
+            countryCode: 'US',
+            supportedNetworks: ['visa', 'masterCard'],
+            merchantCapabilities: ['supports3DS'],
+        },
+    }
+}
+
+function validPaymentDetails() {
+    return {
+        total: { label: 'Your label', amount: { currency: 'USD', value: '10.00' } },
+    }
+}
+
+function logAndShouldThrow(setup, test) {
+    return activateThen(() => {
+        debug("SETUP: " + setup);
+        eval(setup);
+        shouldThrow(test);
+        debug("");
+    });
+}
+
+function logAndShouldReject(setup, test) {
+    return activateThen(() => {
+        debug("SETUP: " + setup)
+        eval(setup)
+        return shouldReject(test)
+    });
+}
+
+async function go() {
+    debug("Testing PaymentRequest")
+    debug("")
+    shouldThrow("new PaymentRequest(null, null)")
+    shouldNotThrow("new PaymentRequest([validPaymentMethod()], validPaymentDetails())")
+    debug("")
+    
+    debug("Testing ApplePayRequest.version")
+    debug("")
+    await logAndShouldReject("paymentMethod = validPaymentMethod(); paymentMethod.data.version = 0; request = new PaymentRequest([paymentMethod], validPaymentDetails())", "request.show()")
+    await logAndShouldReject("paymentMethod = validPaymentMethod(); paymentMethod.data.version = 1000; request = new PaymentRequest([paymentMethod], validPaymentDetails())", "request.show()")
+    debug("")
+
+    debug("Testing ApplePayRequest.countryCode")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); delete paymentMethod.data.countryCode;", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.countryCode = undefined;", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldReject("paymentMethod = validPaymentMethod(); paymentMethod.data.countryCode = 'invalid'; request = new PaymentRequest([paymentMethod], validPaymentDetails())", "request.show()")
+    debug("")
+    await logAndShouldReject("paymentMethod = validPaymentMethod(); paymentMethod.data.countryCode = ''; request = new PaymentRequest([paymentMethod], validPaymentDetails())", "request.show()")
+    debug("")
+    await logAndShouldReject("paymentMethod = validPaymentMethod(); paymentMethod.data.countryCode = null; request = new PaymentRequest([paymentMethod], validPaymentDetails())", "request.show()")
+    debug("")
+    await logAndShouldReject("paymentMethod = validPaymentMethod(); paymentMethod.data.countryCode = 7; request = new PaymentRequest([paymentMethod], validPaymentDetails())", "request.show()")
+    debug("")
+
+    debug("Testing ApplePayRequest.supportedNetworks")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); delete paymentMethod.data.supportedNetworks;", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.supportedNetworks = '';", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.supportedNetworks = null;", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.supportedNetworks = undefined;", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.supportedNetworks = 7;", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldReject("paymentMethod = validPaymentMethod(); paymentMethod.data.supportedNetworks = []; request = new PaymentRequest([paymentMethod], validPaymentDetails())", "request.show()")
+    debug("")
+    await logAndShouldReject("paymentMethod = validPaymentMethod(); paymentMethod.data.supportedNetworks = ['invalidNetwork']; request = new PaymentRequest([paymentMethod], validPaymentDetails())", "request.show()")
+    debug("")
+    await logAndShouldReject("paymentMethod = validPaymentMethod(); paymentMethod.data.supportedNetworks = ['invalidNetwork', 'visa']; request = new PaymentRequest([paymentMethod], validPaymentDetails())", "request.show()")
+    debug("")
+
+    debug("Testing ApplePayRequest.merchantCapabilities")
+    debug("");
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); delete paymentMethod.data.merchantCapabilities;", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.merchantCapabilities = '';", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.merchantCapabilities = null;", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.merchantCapabilities = undefined;", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.merchantCapabilities = 7;", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.merchantCapabilities = ['invalidCapability'];", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.merchantCapabilities = ['invalidCapability', 'supports3DS'];", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldReject("paymentMethod = validPaymentMethod(); paymentMethod.data.merchantCapabilities = []; request = new PaymentRequest([paymentMethod], validPaymentDetails())", "request.show()")
+    debug("")
+
+    debug("Testing ApplePayRequest.requiredBillingContactFields")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.requiredBillingContactFields = '';", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.requiredBillingContactFields = null;", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.requiredBillingContactFields = 7;", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.requiredBillingContactFields = { };", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.requiredBillingContactFields = [''];", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.requiredBillingContactFields = [null];", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.requiredBillingContactFields = [undefined];", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.requiredBillingContactFields = [{}];", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.requiredBillingContactFields = ['invalid'];", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+
+    debug("Testing ApplePayRequest.billingContact")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.billingContact = '';", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.billingContact = 7;", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+
+    debug("Testing ApplePayRequest.requiredShippingContactFields")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = '';", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = null;", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = 7;", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = { };", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = [''];", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = [null];", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = [undefined];", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = [{}];", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = ['invalid'];", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+
+    debug("Testing ApplePayRequest.shippingContact")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.shippingContact = '';", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.shippingContact = 7;", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    debug("")
+
+    debug("Testing PaymentDetails.total")
+    debug("")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); delete paymentDetails.total;", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = '';", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = null;", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = undefined;", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = 7;", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = [];", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = { };", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label' };", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: 'amount' };", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: '', value: '0' } };", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    debug("")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: 'USD', value:'-10.00'} };", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldReject("paymentDetails = validPaymentDetails(); paymentDetails.total = { label: 'label', amount: { currency: 'USD', value: '10000000000.00' } }; request = new PaymentRequest([validPaymentMethod()], paymentDetails)", "request.show()")
+    debug("")
+
+    debug("Testing PaymentDetails.displayItems")
+    debug("");
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = '';", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = null;", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = 7;", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = { };", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [''];", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [null];", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [undefined];", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{}];", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{ label: 'label' }];", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{ label: 'label', amount: '' }];", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{ label: 'label', amount: '10.00', type: 'invalid' }];", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldReject("paymentDetails = validPaymentDetails(); paymentDetails.displayItems = [{ label: 'label', amount: { currency: 'EUR', value: '10.00' } }]; request = new PaymentRequest([validPaymentMethod()], paymentDetails)", "request.show()")
+
+    debug("Testing PaymentDetails.shippingOptions")
+    debug("");
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = '';", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = 'invalid';", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = null;", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = 7;", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = { };", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ }];", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '', }];", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '', detail: '' }];", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '', detail: '', identifier: '' }];", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '', detail: '', identifier: '', label: '' }];", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldThrow("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: '-1', detail: '', identifier: '', label: '' }];", "new PaymentRequest([validPaymentMethod()], paymentDetails)")
+    await logAndShouldReject("paymentDetails = validPaymentDetails(); paymentDetails.shippingOptions = [{ amount: { currency: 'EUR', value: '10.00' }, id: '', label: '' }]; request = new PaymentRequest([validPaymentMethod()], paymentDetails)", "request.show()")
+
+    debug("Testing PaymentOptions")
+    debug("");
+    await logAndShouldThrow("paymentOptions = {}; paymentOptions.shippingType = '';", "new PaymentRequest([validPaymentMethod()], validPaymentDetails(), paymentOptions)")
+    await logAndShouldThrow("paymentOptions = {}; paymentOptions.shippingType = 'invalid';", "new PaymentRequest([validPaymentMethod()], validPaymentDetails(), paymentOptions)")
+    await logAndShouldThrow("paymentOptions = {}; paymentOptions.shippingType = null;", "new PaymentRequest([validPaymentMethod()], validPaymentDetails(), paymentOptions)")
+    await logAndShouldThrow("paymentOptions = {}; paymentOptions.shippingType = 7;", "new PaymentRequest([validPaymentMethod()], validPaymentDetails(), paymentOptions)")
+    await logAndShouldThrow("paymentOptions = {}; paymentOptions.shippingType = { };", "new PaymentRequest([validPaymentMethod()], validPaymentDetails(), paymentOptions)")
+
+    document.querySelector("button").remove();
+
+    finishJSTest();
+}
+
+function clickElement(element) {
+    let x = element.offsetLeft + 2;
+    let y = element.offsetTop + 2;
+
+    var supportsTouchEvents = "TouchEvent" in window;
+    if (supportsTouchEvents && window.testRunner && testRunner.runUIScript) {
+        testRunner.runUIScript(`(function() { uiController.singleTapAtPoint(${x}, ${y}, function() { }); })();`, function () { });
+    } else if (window.eventSender) {
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+
+window.onload = function() {
+    clickElement(document.querySelector("button"));
+}
+
+</script>
+<button onclick='go()'>Go</button>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

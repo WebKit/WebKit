@@ -1,0 +1,17 @@
+Verifies that idempotent text autosizing does not cause computed font size to thrash indefinitely. To run the test manually, open this page on an iPad.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS computedSizeAfterLoad is >= 13
+PASS computedSizeAfterLoad is computedSizeAfterWaitingFor100Milliseconds
+PASS computedSizeAfterLoad is computedSizeAfterWaitingFor200Milliseconds
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog.
+
+
+
+

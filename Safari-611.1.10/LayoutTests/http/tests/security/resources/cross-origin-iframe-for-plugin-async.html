@@ -1,0 +1,13 @@
+<html>
+<head>
+<script>
+window.onmessage = function() {
+	document.write(plg.privateBrowsingEnabled);
+	window.parent.postMessage('complete', '*');
+}
+</script>
+</head>
+<body>
+<embed name="plg" type="application/x-webkit-test-netscape" test="private-browsing"></embed>
+</body>
+</html>

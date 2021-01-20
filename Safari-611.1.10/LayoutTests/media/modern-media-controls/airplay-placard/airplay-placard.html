@@ -1,0 +1,17 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>AirplayPlacard</code> class.");
+
+debug("Placard with all parameters");
+const placard = new AirplayPlacard({ layoutTraits: LayoutTraits.macOS });
+
+shouldBe("placard.children[0].children[0].iconName", "Icons.AirplayPlacard");
+shouldBeEqualToString("placard.children[0].children[1].element.innerText", "AirPlay");
+shouldBeEqualToString("placard.children[0].children[2].element.innerText", "This video is playing on the TV.");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

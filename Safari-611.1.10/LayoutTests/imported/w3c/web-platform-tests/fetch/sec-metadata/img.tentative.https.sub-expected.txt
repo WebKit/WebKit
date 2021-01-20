@@ -1,0 +1,5 @@
+
+FAIL Same-origin image Can't find variable: loadImageInWindow
+FAIL Same-site image Can't find variable: loadImageInWindow
+FAIL Cross-site image Can't find variable: loadImageInWindow
+

@@ -1,0 +1,22 @@
+This test verifies that certain aliases for UTF-32 are not supported.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+The following encodings should not be supported
+PASS new TextDecoder("ISO-10646-UCS-4").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("ibm-1236").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("ibm-1237").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("csUCS4").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("ucs-4").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("UTF32_LittleEndian").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("ibm-1234").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("ibm-1235").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("UTF32_BigEndian").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("ibm-1232").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("ibm-1233").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("ibm-9424").encoding threw exception RangeError: Bad value.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

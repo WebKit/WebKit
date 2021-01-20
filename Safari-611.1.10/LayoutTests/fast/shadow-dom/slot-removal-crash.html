@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests inserting or removing shadow tree with slot elements do not cause a crash.</p>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function addShadowWithSlot() {
+    var host = document.createElement('div');
+    var shadowRoot = host.attachShadow({mode: 'open'});
+    var slot = document.createElement('slot');
+    shadowRoot.appendChild(slot);
+    document.body.appendChild(host);
+
+    slot.remove();
+    slot.setAttribute('name', 'foo');
+}
+
+function removeShadowWithSlot() {
+    var container = document.createElement('div');
+    document.body.appendChild(container);
+
+    var host = document.createElement('div');
+    container.appendChild(host);
+
+    var shadowRoot = host.attachShadow({mode: 'open'});
+    var slot = document.createElement('slot');
+    shadowRoot.appendChild(slot);
+
+    container.remove();
+    host.remove();
+}
+
+function removeNestedShadowsWithSlot() {
+    var outerHost = document.createElement('div');
+    document.body.appendChild(outerHost);
+    
+    var outerShadow = outerHost.attachShadow({mode: 'open'});
+    var innerHost = document.createElement('div');
+    outerShadow.appendChild(innerHost);
+
+    var innerShadow = innerHost.attachShadow({mode: 'open'});
+    var slot = document.createElement('slot');
+    innerShadow.appendChild(slot);
+
+    outerHost.remove();
+    innerHost.remove();
+}
+
+addShadowWithSlot();
+removeShadowWithSlot();
+removeNestedShadowsWithSlot()
+document.write('PASS');
+
+</script>
+</body>
+</html>

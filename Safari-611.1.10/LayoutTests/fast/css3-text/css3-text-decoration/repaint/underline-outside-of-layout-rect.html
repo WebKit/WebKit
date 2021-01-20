@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: 'Litherum';
+    src: url("./resources/Litherum.svg") format(svg)
+}
+div {
+    font-family: 'Litherum';
+    -webkit-text-decoration-skip: none;
+    -webkit-text-decoration-color: green;
+    width: 1px;
+    height: 1px;
+}
+</style>
+</head>
+<body>
+This test makes sure that underlines contribute to visual overflow.
+The SVG font has a descent of 0, which means that underlines will
+lie outside of the glyph boundaries. The test makes sure that
+drawing underlined text ends up the same as drawing text that has
+had the underline retroactively applied to it with javascript.
+<div style="position: relative; height: 45px;">
+<div id="underline" style="position: absolute; left: 0px; top: 0px;">|</div>
+<div id="underlineunder" style="position: absolute; left: 20px; top: 0px; -webkit-text-underline-position: under;">|</div>
+<div id="linethrough" style="position: absolute; left: 40px; top: 0px;">|</div>
+<div id="overline" style="position: absolute; left: 60px; top: 0px;">|</div>
+
+<div id="wavyunderline" style="position: absolute; left: 0px; top: 20px; -webkit-text-decoration-style: wavy;">|</div>
+<div id="wavyunderlineunder" style="position: absolute; left: 20px; top: 20px; -webkit-text-underline-position: under; -webkit-text-decoration-style: wavy;">|</div>
+<div id="wavylinethrough" style="font-size: 1px; position: absolute; left: 40px; top: 20px; -webkit-text-decoration-style: wavy;">-</div>
+<div id="wavyoverline" style="position: absolute; left: 60px; top: 20px; -webkit-text-decoration-style: wavy;">|</div>
+</div>
+<script>
+function applyUnderline() {
+    document.getElementById('underline').style.textDecoration = "underline";
+    document.getElementById('underlineunder').style.textDecoration = "underline";
+    document.getElementById('linethrough').style.textDecoration = "line-through";
+    document.getElementById('overline').style.textDecoration = "overline";
+    document.getElementById('wavyunderline').style.textDecoration = "underline";
+    document.getElementById('wavyunderlineunder').style.textDecoration = "underline";
+    document.getElementById('wavylinethrough').style.textDecoration = "line-through";
+    document.getElementById('wavyoverline').style.textDecoration = "overline";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+window.setTimeout(applyUnderline, 17);
+</script>
+</body>
+</html>

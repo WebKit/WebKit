@@ -1,0 +1,13 @@
+include_rules = [
+  "+common_audio",
+  "+system_wrappers",
+]
+
+specific_include_rules = {
+  "ensure_initialized\.cc": [
+    "+base/android",
+  ],
+  "audio_device_impl\.cc": [
+    "+sdk/objc",
+  ],
+}

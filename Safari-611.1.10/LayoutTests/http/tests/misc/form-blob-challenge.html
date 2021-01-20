@@ -1,0 +1,20 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var formData = new FormData();
+formData.append("data", new Blob(["blobdata"]));
+
+var xhr = new XMLHttpRequest();
+xhr.onreadystatechange = function () {
+   if (xhr.readyState === 4) {
+        alert("Response: " + xhr.responseText);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+};
+xhr.open("POST", "resources/basic-echo-post.php", true, "testuser", "testpassword");
+xhr.send(formData);
+</script>

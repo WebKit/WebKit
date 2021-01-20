@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+    <style>
+        /* Pack them to fit everything in 800*600 */
+        div > * {
+            padding: 5px;
+            width: 100px;
+            float: left;
+        }
+        :matches([type]) > * {
+            background-color: red;
+        }
+        :matches([type=foobar]) > * {
+            background-color: blue;
+        }
+    </style>
+</head>
+<body>
+    <p>Verify style sharing does not ignore the "type" attribute.</p>
+    <div>
+        <div>
+            Padding
+            <span>No type<span>
+            <span>No type<span>
+            <span>No type<span>
+            Padding
+        </div>
+        <div type>
+            Padding
+            <span>Type defined<span>
+            <span>Type defined<span>
+            <span>Type defined<span>
+            Padding
+        </div>
+        <div type="">
+            Padding
+            <span>Type defined empty<span>
+            <span>Type defined empty<span>
+            <span>Type defined empty<span>
+            Padding
+        </div>
+        <div type="foobar">
+            Padding
+            <span>Type is foobar<span>
+            <span>Type is foobar<span>
+            <span>Type is foobar<span>
+            Padding
+        </div>
+    </div>
+    <div>
+        <span>
+            Padding
+            <span>No type<span>
+            <span>No type<span>
+            <span>No type<span>
+            Padding
+        </span>
+        <span type>
+            Padding
+            <span>Type defined<span>
+            <span>Type defined<span>
+            <span>Type defined<span>
+            Padding
+        </span>
+        <span type="">
+            Padding
+            <span>Type defined empty<span>
+            <span>Type defined empty<span>
+            <span>Type defined empty<span>
+            Padding
+        </span>
+        <span type="foobar">
+            Padding
+            <span>Type is foobar<span>
+            <span>Type is foobar<span>
+            <span>Type is foobar<span>
+            Padding
+        </span>
+    </div>
+    <div>
+        <input value="No type">
+        <input type value="Type defined">
+        <input type="" value="Type defined empty">
+        <input type="foobar" value="Type is foobar">
+    </div>
+</body>
+</html>

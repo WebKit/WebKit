@@ -1,0 +1,4 @@
+
+FAIL scroll-snap-stop for areas on HTML should control snapping behavior and changing it takes effect assert_equals: scrollBy should not skip area with stop always expected 100 but got 500
+FAIL scroll-snap-stop for areas on DIV should control snapping behavior and changing it takes effect assert_equals: scrollBy should not skip area with stop always expected 100 but got 500
+

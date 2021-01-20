@@ -1,0 +1,17 @@
+Tests that the 2 first parameters of addEventListener() / removeEventListener() are mandatory.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS addEventListener() threw exception TypeError: Not enough arguments.
+PASS addEventListener('load') threw exception TypeError: Not enough arguments.
+PASS removeEventListener() threw exception TypeError: Not enough arguments.
+PASS removeEventListener('load') threw exception TypeError: Not enough arguments.
+PASS addEventListener('load', null) did not throw exception.
+PASS addEventListener('load', undefined) did not throw exception.
+PASS removeEventListener('load', null) did not throw exception.
+PASS removeEventListener('load', undefined) did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

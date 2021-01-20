@@ -1,0 +1,12 @@
+
+FAIL instantiateStreaming using resolved response promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.instantiateStreaming is not a function. (In 'WebAssembly.instantiateStreaming(response)', 'WebAssembly.instantiateStreaming' is undefined)"
+FAIL instantiateStreaming using resolved response and check instantiate promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.instantiateStreaming is not a function. (In 'WebAssembly.instantiateStreaming(response)', 'WebAssembly.instantiateStreaming' is undefined)"
+FAIL instantiateStreaming using promise response from fetch and check instantiate promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.instantiateStreaming is not a function. (In 'WebAssembly.instantiateStreaming(result)', 'WebAssembly.instantiateStreaming' is undefined)"
+FAIL instantiateStreaming raise error if wrong mime type assert_true: expected true got false
+FAIL instantiateStreaming raise error if no mime type assert_true: expected true got false
+FAIL instantiateStreaming raise error if 404 status assert_equals: expected "Response has not returned OK status" but got "WebAssembly.instantiateStreaming is not a function. (In 'WebAssembly.instantiateStreaming(result)', 'WebAssembly.instantiateStreaming' is undefined)"
+FAIL instantiateStreaming check CORS promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.instantiateStreaming is not a function. (In 'WebAssembly.instantiateStreaming(result)', 'WebAssembly.instantiateStreaming' is undefined)"
+FAIL instantiateStreaming raise error if no-cors assert_equals: expected "Response is not CORS-same-origin" but got "WebAssembly.instantiateStreaming is not a function. (In 'WebAssembly.instantiateStreaming(result)', 'WebAssembly.instantiateStreaming' is undefined)"
+FAIL instantiateStreaming receive promise with response created from ArrayBuffer promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.instantiateStreaming is not a function. (In 'WebAssembly.instantiateStreaming(new Response(v, { headers: { "Content-Type" : "application/wasm" }}))', 'WebAssembly.instantiateStreaming' is undefined)"
+FAIL instantiateStreaming receive response that deliver data by chunks as bufferArray promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.instantiateStreaming is not a function. (In 'WebAssembly.instantiateStreaming(new Response(stream, { headers: { "Content-Type" : "application/wasm" }}))', 'WebAssembly.instantiateStreaming' is undefined)"
+

@@ -1,0 +1,12 @@
+
+This tests that the text of a button is exposed to Assistive Technologies.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS axButton.role is 'AXRole: AXButton'
+PASS axButton.title is 'AXTitle: The Button'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

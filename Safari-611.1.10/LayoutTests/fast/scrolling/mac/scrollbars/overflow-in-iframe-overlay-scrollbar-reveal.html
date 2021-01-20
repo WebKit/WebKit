@@ -1,0 +1,101 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+        iframe {
+            width: 400px;
+            height: 250px;
+            border: 1px solid gray;
+        }
+    </style>
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    
+    <script>
+        jsTestIsAsync = true;
+
+        if (window.internals)
+            internals.setUsesOverlayScrollbars(true);
+
+        async function doTest()
+        {
+            description('Test maybegin and cancelled on overflow inside an iframe');
+            
+            const iframe = document.getElementsByTagName('iframe')[0];
+            const iframeWindow = iframe.contentWindow;
+            const iframeBounds = iframe.getBoundingClientRect();
+
+            const scroller = iframe.contentDocument.querySelector('.scroller');
+            const scrollerBounds = scroller.getBoundingClientRect();
+
+            const x = iframeBounds.left + scrollerBounds.left + 10;
+            const y = iframeBounds.top + scrollerBounds.top + 10;
+
+            if (!window.internals) {
+                finishJSTest();
+                return;
+            }
+
+            iframeWindow.internals.setUsesOverlayScrollbars(true);
+
+            debug('Initial state');
+            debug(iframeWindow.internals.verticalScrollbarState(scroller));
+
+            debug('MayBegin should show the scrollbar');
+            await UIHelper.mouseWheelMayBeginAt(x, y);
+            await UIHelper.waitForCondition(() => {
+                let state = iframeWindow.internals.verticalScrollbarState(scroller);
+                let visible = state.indexOf('visible_thumb') != -1;
+                if (visible)
+                    testPassed('Scrollbar state: ' + state);
+                return visible;
+            });
+
+            debug('Cancelled should hide the scrollbar');
+            await UIHelper.mouseWheelCancelAt(x, y);
+
+            await UIHelper.waitForCondition(() => {
+                let state = iframeWindow.internals.verticalScrollbarState(scroller);
+                let hidden = state.indexOf('visible_thumb') == -1;
+                if (hidden)
+                    testPassed('Scrollbar state: ' + state);
+                return hidden;
+            });
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            doTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <iframe srcdoc="
+        <style>
+        body {
+            height: 1000px;
+        }
+        .scroller {
+            margin: 10px;
+            width: 200px;
+            height: 200px;
+            border: 1px solid black;
+            overflow: auto;
+        }
+        .contents {
+            width: 100%;
+            height: 200%;
+        }
+        </style>
+        <div class='scroller'>
+            <div class='contents'></div>
+        </div>
+    "></iframe>
+    <div id="console"></div>
+    <script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

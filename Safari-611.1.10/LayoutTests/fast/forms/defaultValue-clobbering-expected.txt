@@ -1,0 +1,8 @@
+PASS numberinput.value == "12" is true
+PASS numberinput.value == "" is true
+PASS numberinput.validity.valid is false
+PASS numberinput.validity.valid is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

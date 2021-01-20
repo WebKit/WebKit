@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="toNukeAfterTest">
+* {
+    background-color: white;
+    color: black;
+}
+:read-only {
+    background-color: red;
+}
+:read-write {
+    color: lime;
+}
+</style>
+</head>
+<body>
+    <div style="display:none;" id="test-block">
+        <!-- Default is true -->
+        <div contenteditable>
+            <div>Editable</div>
+            <div id="non-editable-block-1" contenteditable=false>
+                <div id="non-editable-subblock-1">Not editable</div>
+            </div>
+        </div>
+        <!-- True is true :) -->
+        <div contenteditable=true>
+            <div>Editable</div>
+            <div id="non-editable-block-2" contenteditable=false>
+                <div id="non-editable-subblock-2">Not editable</div>
+            </div>
+        </div>
+        <!-- The case of the attribute's value is irrelevant. -->
+        <div contenteditable="TrUe">
+            <div>Editable</div>
+            <div id="non-editable-block-3" contenteditable="FaLsE">
+                <div id="non-editable-subblock-3">Not editable</div>
+            </div>
+        </div>
+        <!-- The value "plaintext-only" is a WebKit extension, it defines an editing host too. -->
+        <div contenteditable="plaintext-only">
+            <div>Editable</div>
+            <div id="non-editable-block-4" contenteditable="false">
+                <div id="non-editable-subblock-4">Not editable</div>
+            </div>
+        </div>
+
+        <!-- Per definition, the rules for editing host and editable elements do not apply do <input> elements. -->
+        <div contenteditable=true>
+            <input type="text" id="read-write-input" value="read-write input">
+            <input type="text" disabled id="read-only-input-1" value="read-only input">
+            <input type="text" readonly id="read-only-input-2" value="read-only input">
+        </div>
+        <input type="text" contenteditable=true disabled id="read-only-input-3" value="read-only input">
+        <input type="text" contenteditable=true readonly id="read-only-input-4" value="read-only input">
+
+        <!-- Same story for <textarea>, it has its own definition of :read-write/:read-only. The rules for editing host and editable elements do not apply must be ignored. -->
+        <div contenteditable=true>
+            <textarea id="read-write-textarea">Editable text area</textarea>
+            <textarea disabled id="read-only-textarea-1">Non editable text area</textarea>
+            <textarea readonly id="read-only-textarea-2">Non editable text area</textarea>
+        </div>
+        <textarea contenteditable=true disabled id="read-only-textarea-3">Non editable text area</textarea>
+        <textarea contenteditable=true readonly id="read-only-textarea-4">Non editable text area</textarea>
+    </div>
+</body>
+<script>
+description('Test the basic features of ":read-only", ":read-write" on elements with the design mode enabled. The definition is that ":read-write" is matches for "elements that are editing hosts or editable and are neither input elements nor textarea elements"');
+
+// This test is derivative from the contenteditable test. Unlike that one, here designMode is enabled, everything is editable unless explicitely disabled.
+document.designMode = "on";
+
+var nonEditableElements = [
+    "non-editable-block-1",
+    "non-editable-subblock-1",
+    "non-editable-block-2",
+    "non-editable-subblock-2",
+    "non-editable-block-3",
+    "non-editable-subblock-3",
+    "non-editable-block-4",
+    "non-editable-subblock-4",
+    "read-only-input-1",
+    "read-only-input-2",
+    "read-only-input-3",
+    "read-only-input-4",
+    "read-only-textarea-1",
+    "read-only-textarea-2",
+    "read-only-textarea-3",
+    "read-only-textarea-4"
+];
+
+// Since altering the DOM changes the results, everything needs to be done prior to showing the results.
+function testQuerySelector()
+{
+    var allReadWrite = document.querySelectorAll(":read-write");
+    for (var i = 0; i < allReadWrite.length; ++i) {
+        if (nonEditableElements.indexOf(allReadWrite[i].id) >= 0) {
+            debug("Element i = " + i + " id = " + allReadWrite[i].id + "was expected to be read-write.");
+            return false;
+        }
+    }
+
+    var allReadOnly = document.querySelectorAll(":read-only");
+    for (var i = 0; i < allReadOnly.length; ++i) {
+        if (nonEditableElements.indexOf(allReadOnly[i].id) === -1) {
+            debug("Element i = " + i + " id = " + allReadWrite[i].id + "was expected to be read-only.");
+            return false;
+        }
+    }
+    return true;
+}
+shouldBeTrue("testQuerySelector()");
+
+function testStyling()
+{
+    var allTestCases = document.querySelectorAll('*');
+    for (var i = 0; i < allTestCases.length; ++i) {
+        var isReadOnly = nonEditableElements.indexOf(allTestCases[i].id) >= 0;
+        var expectedColor = isReadOnly ? 'rgb(0, 0, 0)' : 'rgb(0, 255, 0)';
+        if (getComputedStyle(allTestCases[i]).color != expectedColor) {
+            debug("Expected color " + expectedColor + " on element i = " + i + " id = \"" + allTestCases[i].id + "\". Got " + getComputedStyle(allTestCases[i]).color);
+            return false;
+        }
+
+        var expectedBackgroundColor = isReadOnly ? 'rgb(255, 0, 0)' : 'rgb(255, 255, 255)';
+        if (getComputedStyle(allTestCases[i]).backgroundColor != expectedBackgroundColor) {
+            debug("Expected background color " + expectedBackgroundColor + "on element i = " + i + " id = " + allTestCases[i].id + ". Got " + getComputedStyle(allTestCases[i]).backgroundColor);
+            return false;
+        }
+    }
+    return true;
+}
+shouldBeTrue("testStyling()");
+
+document.getElementById("toNukeAfterTest").innerHTML = ""; // To style the results properly.
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

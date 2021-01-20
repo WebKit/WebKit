@@ -1,0 +1,22 @@
+<html manifest="manifest-if-cookie.php">
+<script>
+function cached()
+{
+    document.body.innerHTML = "PASS"
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function error()
+{
+    document.body.innerHTML = "FAIL";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+applicationCache.addEventListener('cached', cached, false);
+applicationCache.addEventListener('noupdate', cached, false);
+applicationCache.addEventListener('error', error, false);
+applicationCache.addEventListener('obsolete', error, false);
+</script>
+</html>

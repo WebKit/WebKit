@@ -1,0 +1,5 @@
+
+FAIL CSSStyleSheet.replaceSync throws NotAllowedError for non-constructed sheets assert_throws_dom: replaceSync on non-constructed sheet should throw function "() => sheet.replaceSync(":root { background-color: red }")" threw object "TypeError: sheet.replaceSync is not a function. (In 'sheet.replaceSync(":root { background-color: red }")', 'sheet.replaceSync' is undefined)" that is not a DOMException NotAllowedError: property "code" is equal to undefined, expected 0
+FAIL CSSStyleSheet.replace returns a rejected promise for non-constructed sheets promise_test: Unhandled rejection with value: object "TypeError: sheet.replace is not a function. (In 'sheet.replace(":root { background-color: red }")', 'sheet.replace' is undefined)"
+FAIL CSSStyleSheet.replace returns a rejected promise for non-constructed sheets that have no associated document promise_test: Unhandled rejection with value: object "TypeError: sheet.replace is not a function. (In 'sheet.replace(":root { background-color: red }")', 'sheet.replace' is undefined)"
+

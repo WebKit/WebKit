@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+</head>
+<body>
+    <pre id="log"></pre>
+    <div id="target" style="width: 300px; display: none; font-family: 'Zapfino';">
+    </div>
+    <script>
+        var target = document.getElementById("target");
+        var style = target.style;
+        var locales = ["ar", "hy", "as", "iu", "ab", "hi", "am", "ka", "el", "gu", "pa", "ko", "ko", "he", "kn", "ja", "km", "lo", "aa", "ml", "my", "or", "si", "ta", "te", "dv", "th", "bo", "zh_hk", "ii"];
+
+        for (var i = 0; i < locales.length; ++i) {
+            var span = document.createElement("span");
+            span.className = "tester";
+            var joiner = document.createTextNode(String.fromCharCode(0x2060));
+            span.appendChild(joiner);
+            target.appendChild(span);
+        }
+
+        function updateLanguages() {
+            if (window.internals)
+                internals.invalidateFontCache();
+            var testers = document.getElementsByClassName("tester");
+            for (var i = 0; i < testers.length; ++i) {
+                testers[i].lang = locales[i];
+            }
+        }
+
+        updateLanguages();
+
+        function test() {
+            style.display = "block";
+            updateLanguages();
+            var testers = document.getElementsByClassName("tester");
+            testers[testers.length - 1].getClientRects();
+            style.display = "none";
+        }
+
+        PerfTestRunner.measureRunsPerSecond({ run: test });
+    </script>
+</body>
+</html>

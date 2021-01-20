@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+<div id="content">
+  <p>
+    <a href='foo'>
+       <span style='display:block;'>Block span in a link in a paragraph</span>
+       <span>Inline span in a link in a paragraph</span>
+    </a>
+  </p>
+  <p>
+    <span style='display:block;'>Block span in a paragraph</span>
+    <span>Inline span in a paragraph</span>
+  </p>
+  <p>
+    <a href='foo'>
+       <span>Inline span in a link in a paragraph</span>
+       <span style='display:block;'>Block span in a link in a paragraph</span>
+    </a>
+  </p>
+  <p>
+    <span>Inline span in a paragraph</span>
+    <span style='display:block;'>Block span in a paragraph</span>
+  </p>
+  <div>
+    <a href='foo'>
+       <span style='display:block;'>Block span in a link in a div</span>
+       <span>Inline span in a link in a div</span>
+    </a>
+  </div>
+  <div>
+    <span style='display:block;'>Block span in a div</span>
+    <span>Inline span in a div</span>
+  </div>
+  <div>
+    <a href='foo'>
+       <span>Inline span in a link in a div</span>
+       <span style='display:block;'>Block span in a link in a div</span>
+    </a>
+  </div>
+  <div>
+    <span>Inline span in a div</span>
+    <span style='display:block;'>Block span in a div</span>
+  </div>
+
+<div id="stopElement">End of test</div>
+</div>
+<pre id="tree"></pre>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This verifies the accessibility tree of spans, paragraphs, and divs.");
+    if (window.accessibilityController) {
+        document.body.focus();
+        var stopElement = accessibilityController.accessibleElementById("stopElement");
+        dumpAccessibilityTree(accessibilityController.focusedElement, stopElement, 0);
+    }
+    document.getElementById("content").style.visibility = "hidden";
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

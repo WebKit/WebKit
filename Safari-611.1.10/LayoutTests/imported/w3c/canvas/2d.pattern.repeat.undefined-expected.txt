@@ -1,0 +1,4 @@
+2d.pattern.repeat.undefined
+Spec references: 2d.pattern.unrecognised
+Actual output:
+Passed

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+* {
+    color: black;
+}
+target#Case1 {
+    color: rgb(0, 1, 2);
+}
+target:matches(foo, #Case2, bar) {
+    color: rgb(3, 4, 5);
+}
+target:matches(foo1, :matches(foo2, #Case3, bar1), bar2) {
+    color: rgb(6, 7, 8);
+}
+target:matches(foo1, :matches(foo2, :matches(foo3, #Case4, bar1), bar2), bar3) {
+    color: rgb(9, 10, 11);
+}
+</style>
+</head>
+<body>
+    <div>
+        <!-- With renderer -->
+        <target></target>
+    </div>
+    <div style="display:none;">
+        <!-- Without renderer -->
+        <target></target>
+    </div>
+</body>
+<script>
+
+description('Test that we do not invalidate the style of an element if we are changing an #id that is not used by the stylesheet.');
+
+function shouldNeedStyleRecalc(expected) {
+    var testFunction = expected ? shouldBeTrue : shouldBeFalse;
+    testFunction("window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(\"target\")[0])");
+    testFunction("window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(\"target\")[1])");
+}
+
+function setId(name) {
+    var allTargets = document.querySelectorAll("target");
+    allTargets[0].id = name;
+    allTargets[1].id = name;
+}
+
+function checkStyle(expectedColor) {
+    var allTargets = document.querySelectorAll("target");
+    shouldBeEqualToString('getComputedStyle(document.querySelectorAll("target")[0]).color', expectedColor);
+    shouldBeEqualToString('getComputedStyle(document.querySelectorAll("target")[1]).color', expectedColor);
+}
+// Force a layout to ensure we don't have dirty styles.
+var offsetTop = document.documentElement.offsetTop;
+shouldNeedStyleRecalc(false);
+
+setId('NotThere');
+shouldNeedStyleRecalc(false);
+
+setId('Case1');
+shouldNeedStyleRecalc(true);
+checkStyle('rgb(0, 1, 2)');
+shouldNeedStyleRecalc(false);
+
+setId('Case2');
+shouldNeedStyleRecalc(true);
+checkStyle('rgb(3, 4, 5)');
+shouldNeedStyleRecalc(false);
+
+setId('Case3');
+shouldNeedStyleRecalc(true);
+checkStyle('rgb(6, 7, 8)');
+shouldNeedStyleRecalc(false);
+
+setId('Case4');
+shouldNeedStyleRecalc(true);
+checkStyle('rgb(9, 10, 11)');
+shouldNeedStyleRecalc(false);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

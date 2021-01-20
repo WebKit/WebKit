@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<p>Checks that when going back to a page that frames that were navigated, that the final URL of the frames is loaded directly, instead the initial URL. Four alerts should appear, in this order:</p>
+
+<ol>
+    <li>Initial URL loaded.</li>
+    <li>Final URL loaded.</li>
+    <li>Going back.</li>
+    <li>Final URL loaded.</li>
+</ol>
+
+<iframe a width="200" height="200" onunload="" src="resources/frame-initial-url.html"></iframe>
+
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+    testRunner.dumpBackForwardList();
+} else {
+    // Disable page cache when not running under the DRT.
+    onunload = function() {};
+}
+
+function runTest() 
+{
+    if (sessionStorage.didNav) {
+        delete sessionStorage.didNav;
+        if (window.testRunner)
+            testRunner.notifyDone();
+    } else {
+        // Navigate a timeout to make sure we generate a history entry that we can go back to.
+        setTimeout(function() {location.href = 'data:text/html,<script>alert("Going back.");history.back();</' + 'script>';}, 0);
+        sessionStorage.didNav = true;
+    }
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function videoCanPlay()
+{
+    console.log("Video can play");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function videoError()
+{
+    console.log("Video error");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+The following video should not load.<br>
+<video onerror="videoError();" oncanplay="videoCanPlay();" src="http://localhost:8000/media/resources/test.mp4" autoplay></video>

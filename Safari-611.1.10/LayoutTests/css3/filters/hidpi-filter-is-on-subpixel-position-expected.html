@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that filter effects don't push content to different position when RenderLayer is present.</title>
+<style>
+  p {
+    position: fixed;
+    display: -webkit-flex;
+    -webkit-align-items: center;
+  }
+  
+  div {
+    width: 10px;
+    height: 10px;
+    background: black;
+    border: 2px solid white;
+    -webkit-filter: drop-shadow(black 0 0px 0px);
+ }
+</style>
+</head>
+<body>
+<span id="container"></span>
+<script>
+  var container = document.getElementById("container");
+  w = 15; h = 15;
+  for (i = 0; i < 10; ++i) {
+    for (j = 0; j < 10; ++j) {
+      var e = document.createElement("p");
+      e.style.top = ((w + 1) * i) + "px";
+      e.style.left = ((w + 1) * j) + "px";
+      e.style.height = h + "px";
+      e.appendChild(document.createElement("div"));
+      container.appendChild(e);
+      w+=1;
+      h+=1;
+    }
+  }
+</script>
+</body>
+</html>

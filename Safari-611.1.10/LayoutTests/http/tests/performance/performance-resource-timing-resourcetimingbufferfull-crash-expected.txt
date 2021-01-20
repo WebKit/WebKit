@@ -1,0 +1,36 @@
+This tests causing resource timing buffer to be full during a style recalc.
+WebKit should not hit a release assertion by dispatching an event synchronously.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+loadImagesInAnotherFrame(7)
+container.innerHTML = ""; resourcetimingbufferfullFired = false
+performance.setResourceTimingBufferSize(3); performance.clearResourceTimings()
+PASS performance.getEntriesByType("resource").length is 0
+divsWithBackgroundImages(7); container.getBoundingClientRect()
+PASS resources = performance.getEntriesByType("resource"); resources.length is 3
+PASS resources[0].initiatorType is "css"
+PASS new URL(resources[0].name).search is "?resource=0"
+PASS new URL(resources[1].name).search is "?resource=1"
+PASS new URL(resources[2].name).search is "?resource=2"
+PASS resourcetimingbufferfullEventCount is 0
+
+Inside resourcetimingbufferfull 1
+PASS performance.clearResourceTimings(); performance.getEntriesByType("resource").length is 0
+
+Inside resourcetimingbufferfull 2
+PASS resources = performance.getEntriesByType("resource"); resources.length is 3
+PASS new URL(resources[0].name).search is "?resource=3"
+PASS new URL(resources[1].name).search is "?resource=4"
+PASS new URL(resources[2].name).search is "?resource=5"
+PASS performance.clearResourceTimings(); performance.getEntriesByType("resource").length is 0
+
+After resourcetimingbufferfull
+PASS resources = performance.getEntriesByType("resource"); resources.length is 1
+PASS resources[0].initiatorType is "css"
+PASS new URL(resources[0].name).search is "?resource=6"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

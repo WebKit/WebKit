@@ -1,0 +1,7 @@
+
+FAIL Property list-style value 'none' assert_equals: expected "outside none none" but got "none outside none"
+FAIL Property list-style value 'inside' assert_equals: expected "inside none disc" but got "disc inside none"
+FAIL Property list-style value 'url("https://localhost/")' assert_equals: expected "outside url(\"https://localhost/\") disc" but got "disc outside url(\"https://localhost/\")"
+FAIL Property list-style value 'square' assert_equals: expected "outside none square" but got "square outside none"
+FAIL Property list-style value 'inside url("https://localhost/") square' assert_equals: expected "inside url(\"https://localhost/\") square" but got "square inside url(\"https://localhost/\")"
+

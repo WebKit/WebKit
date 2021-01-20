@@ -1,0 +1,8 @@
+layer at (0,0) size 904x585
+  RenderView at (0,0) size 800x585
+layer at (0,0) size 800x585
+  RenderBlock {HTML} at (0,0) size 800x585
+    RenderBody {BODY} at (8,8) size 784x569
+      RenderBlock {DIV} at (0,0) size 154x22 [border: (2px solid #FF0000)]
+        RenderText {#text} at (2,2) size 894x17
+          text run at (2,2) width 894: "Even though this div is white-space pre, the text inside should still wrap to multiple lines because of the word-wrap:break-word CSS property."

@@ -1,0 +1,446 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Scroll Snapping Examples</title>
+        <style>
+        body {
+            line-height: 1.5;
+            margin: 2em 2em;
+            padding: 0;
+            background-color: #E2E6F5;
+        }
+
+        pre {
+            padding: 1em 3em;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #ddd;
+        }
+
+        code {
+            font-size: 115%;
+            font-weight: bold;
+            color: #0F5426;
+        }
+
+        p > span {
+            color: #6666FF;
+        }
+
+        h1, h3, p {
+            font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+            font-size: 120%;
+        }
+
+        h1 {
+            font-size: 40px;
+        }
+
+        p {
+            font-size: 20px;
+        }
+
+        h3 {
+            font-size: 25px;
+            margin-top: 10vh;
+        }
+
+        .corner {
+            fill: black;
+            background: transparent;
+            position: absolute;
+            width: 50px;
+            height: 50px;
+        }
+
+        .child {
+            width: 400px;
+            height: 400px;
+            position: relative;
+            background-color: #F0F0F0;
+            display: inline-block;
+            margin-right: -4px;
+            border: 1px solid black;
+        }
+
+        .label {
+            width: 200px;
+            height: 200px;
+            border-radius: 25%;
+            background-color: white;
+            margin: 100px auto 0 auto;
+        }
+
+        .label > h1 {
+            font-size: 80px;
+            padding-left: calc(50% - 22px);
+            padding-top: calc(50% - 60px);
+        }
+
+        .top-right {
+            left: 350px;
+            -ms-transform: rotate(90deg);
+            -webkit-transform: rotate(90deg);
+            transform: rotate(90deg);
+        }
+
+        .bottom-left {
+            top: 350px;
+            -ms-transform: rotate(270deg);
+            -webkit-transform: rotate(270deg);
+            transform: rotate(270deg);
+        }
+
+        .bottom-right {
+            top: 350px;
+            left: 350px;
+            -ms-transform: rotate(180deg);
+            -webkit-transform: rotate(180deg);
+            transform: rotate(180deg);
+        }
+
+        .child-thin {
+            width: 300px;
+        }
+
+        .child-thin > .top-right {
+            left: 250px;
+        }
+        
+        .child-thin > .bottom-right {
+            left: 250px;
+        }
+
+        .container {
+            width: 402px;
+            height: 410px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            margin: 10vh auto 0 auto;
+        }
+
+        #snap-scroll-container {
+            -webkit-scroll-snap-type: mandatory;
+            scroll-snap-type: x mandatory;
+            -webkit-scroll-snap-points-x: repeat(100%);
+            scroll-snap-points-x: repeat(100%);
+        }
+
+        #snap-scroll-container > .child {
+            scroll-snap-align: start;
+        }
+
+        #snap-scroll-container-coordinates {
+            -webkit-scroll-snap-type: mandatory;
+            scroll-snap-type: x mandatory;
+        }
+
+        #snap-scroll-container-coordinates > .child {
+            -webkit-scroll-snap-coordinate: 0% 0%;
+            scroll-snap-coordinate: 0% 0%;
+            scroll-snap-align: start;
+        }
+
+        #snap-scroll-container-coordinates-centered {
+            width: 402px;
+            -webkit-scroll-snap-type: mandatory;
+            scroll-snap-type: x mandatory;
+            -webkit-scroll-snap-destination: 50% 50%;
+            scroll-snap-destination: 50% 50%;
+        }
+
+        #snap-scroll-container-coordinates-centered > .child {
+            -webkit-scroll-snap-coordinate: 50% 50%;
+            scroll-snap-coordinate: 50% 50%;
+            scroll-snap-align: center;
+        }
+
+        .snap-destination,
+        .snap-destination-centered {
+            width: 25px;
+            height: 25px;
+            z-index: 1;
+            position: absolute;
+        }
+
+        .snap-destination {
+            margin: -10px 0 0 -10px;
+        }
+
+        .snap-destination-centered {
+            margin: 187px 0 0 187px;
+        }
+
+        .snap-point {
+            width: 25px;
+            height: 25px;
+            -ms-transform: rotate(45deg);
+            -webkit-transform: rotate(45deg);
+            transform: rotate(45deg);
+            z-index: 1;
+            position: absolute;
+            margin: -10px 0 0 -10px;
+        }
+
+        #snap-scroll-container-2D,
+        #snap-scroll-container-2D-rotated {
+            -webkit-scroll-snap-type: mandatory;
+            scroll-snap-type: both mandatory;
+            -webkit-scroll-snap-destination: 50% 50%;
+            scroll-snap-destination: 50% 50%;
+            overflow: scroll;
+            width: 500px;
+            height: 500px;
+            border-radius: 50px;
+        }
+
+        #snap-scroll-container-2D > img,
+        #snap-scroll-container-2D-rotated > img {
+            -webkit-scroll-snap-coordinate: 50% 50%;
+            scroll-snap-coordinate: 50% 50%;
+            width: 400px;
+            height: 400px;
+            scroll-snap-align: center;
+        }
+
+        #snap-scroll-container-2D-rotated {
+            margin-top: 20vh;
+            margin-bottom: 20vh;
+            -ms-transform: rotate(30deg);
+            -webkit-transform: rotate(30deg);
+            transform: rotate(30deg);
+        }
+
+        #nasa {
+            font-size: 16px;
+        }
+        </style>
+    </head>
+
+    <body>
+        <h1>The <code>scroll-snap-*</code> Properties.</h1>
+        <p id="subtext">The following examples are overflow-scrolling <code>div</code>s. In the second, third and fourth examples, the <span>blue</span> cross represents the location of each container&rsquo;s scroll snap destination.</p>
+        <!-- Normal scrolling container (no snapping) -->
+        <a name="scroll-normal"></a>
+        <h3 style="margin-top: 5vh;">This first container does not have any scroll snapping behavior.</h3>
+        <div class="container">
+            <div class="child">
+                <img class="corner top-left" src="images/corner.svg"></img>
+                <img class="corner top-right" src="images/corner.svg"></img>
+                <img class="corner bottom-left" src="images/corner.svg"></img>
+                <img class="corner bottom-right" src="images/corner.svg"></img>
+                <div class="label"><h1>1</h1></div>
+            </div>
+            <div class="child">
+                <img class="corner top-left" src="images/corner.svg"></img>
+                <img class="corner top-right" src="images/corner.svg"></img>
+                <img class="corner bottom-left" src="images/corner.svg"></img>
+                <img class="corner bottom-right" src="images/corner.svg"></img>
+                <div class="label"><h1>2</h1></div>
+            </div>
+            <div class="child">
+                <img class="corner top-left" src="images/corner.svg"></img>
+                <img class="corner top-right" src="images/corner.svg"></img>
+                <img class="corner bottom-left" src="images/corner.svg"></img>
+                <img class="corner bottom-right" src="images/corner.svg"></img>
+                <div class="label"><h1>3</h1></div>
+            </div>
+            <div class="child">
+                <img class="corner top-left" src="images/corner.svg"></img>
+                <img class="corner top-right" src="images/corner.svg"></img>
+                <img class="corner bottom-left" src="images/corner.svg"></img>
+                <img class="corner bottom-right" src="images/corner.svg"></img>
+                <div class="label"><h1>4</h1></div>
+            </div>
+        </div>
+
+        <!-- Simple scroll snapping container (using repeat) -->
+        <a name="scroll-snap-1"></a>
+        <h3>This second container shows what basic scroll snapping can do for us.</h3>
+        <div class="container" id="snap-scroll-container">
+            <img src="images/bluecross.svg" class="snap-destination"></img>
+            <div class="child">
+                <img class="corner top-left" src="images/corner.svg"></img>
+                <img class="corner top-right" src="images/corner.svg"></img>
+                <img class="corner bottom-left" src="images/corner.svg"></img>
+                <img class="corner bottom-right" src="images/corner.svg"></img>
+                <div class="label"><h1>1</h1></div>
+            </div>
+            <div class="child">
+                <img class="corner top-left" src="images/corner.svg"></img>
+                <img class="corner top-right" src="images/corner.svg"></img>
+                <img class="corner bottom-left" src="images/corner.svg"></img>
+                <img class="corner bottom-right" src="images/corner.svg"></img>
+                <div class="label"><h1>2</h1></div>
+            </div>
+            <div class="child">
+                <img class="corner top-left" src="images/corner.svg"></img>
+                <img class="corner top-right" src="images/corner.svg"></img>
+                <img class="corner bottom-left" src="images/corner.svg"></img>
+                <img class="corner bottom-right" src="images/corner.svg"></img>
+                <div class="label"><h1>3</h1></div>
+            </div>
+            <div class="child">
+                <img class="corner top-left" src="images/corner.svg"></img>
+                <img class="corner top-right" src="images/corner.svg"></img>
+                <img class="corner bottom-left" src="images/corner.svg"></img>
+                <img class="corner bottom-right" src="images/corner.svg"></img>
+                <div class="label"><h1>4</h1></div>
+            </div>
+        </div>
+        <p>The CSS for the above container is:</p>
+        <pre>-webkit-scroll-snap-type: mandatory;<br>-webkit-scroll-snap-points-x: repeat(100%);</pre>
+
+        <!-- Scroll snapping container using coordinates -->
+        <a name="scroll-snap-2"></a>
+        <h3>This next container snaps to elements of different sizes when scrolling.</h3>
+        <div class="container" id="snap-scroll-container-coordinates">
+            <img src="images/bluecross.svg" class="snap-destination"></img>
+            <div class="child">
+                <img class="corner top-left" src="images/corner.svg"></img>
+                <img class="corner top-right" src="images/corner.svg"></img>
+                <img class="corner bottom-left" src="images/corner.svg"></img>
+                <img class="corner bottom-right" src="images/corner.svg"></img>
+                <div class="label"><h1>1</h1></div>
+            </div>
+            <div class="child child-thin">
+                <img class="corner top-left" src="images/corner.svg"></img>
+                <img class="corner top-right" src="images/corner.svg"></img>
+                <img class="corner bottom-left" src="images/corner.svg"></img>
+                <img class="corner bottom-right" src="images/corner.svg"></img>
+                <div class="label"><h1>2</h1></div>
+            </div>
+            <div class="child">
+                <img class="corner top-left" src="images/corner.svg"></img>
+                <img class="corner top-right" src="images/corner.svg"></img>
+                <img class="corner bottom-left" src="images/corner.svg"></img>
+                <img class="corner bottom-right" src="images/corner.svg"></img>
+                <div class="label"><h1>3</h1></div>
+            </div>
+            <div class="child child-thin">
+                <img class="corner top-left" src="images/corner.svg"></img>
+                <img class="corner top-right" src="images/corner.svg"></img>
+                <img class="corner bottom-left" src="images/corner.svg"></img>
+                <img class="corner bottom-right" src="images/corner.svg"></img>
+                <div class="label"><h1>4</h1></div>
+            </div>
+            <div class="child">
+                <img class="corner top-left" src="images/corner.svg"></img>
+                <img class="corner top-right" src="images/corner.svg"></img>
+                <img class="corner bottom-left" src="images/corner.svg"></img>
+                <img class="corner bottom-right" src="images/corner.svg"></img>
+                <div class="label"><h1>5</h1></div>
+            </div>
+            <div class="child child-thin">
+                <img class="corner top-left" src="images/corner.svg"></img>
+                <img class="corner top-right" src="images/corner.svg"></img>
+                <img class="corner bottom-left" src="images/corner.svg"></img>
+                <img class="corner bottom-right" src="images/corner.svg"></img>
+                <div class="label"><h1>6</h1></div>
+            </div>
+            <div class="child">
+                <img class="corner top-left" src="images/corner.svg"></img>
+                <img class="corner top-right" src="images/corner.svg"></img>
+                <img class="corner bottom-left" src="images/corner.svg"></img>
+                <img class="corner bottom-right" src="images/corner.svg"></img>
+                <div class="label"><h1>7</h1></div>
+            </div>
+        </div>
+        <p>The CSS for the above container is:</p>
+        <pre>-webkit-scroll-snap-type: mandatory;</pre>
+        <p>The CSS for each of the container&rsquo;s children is:</p>
+        <pre>-webkit-scroll-snap-coordinate: 0% 0%;</pre>
+
+        <!-- Centered scroll snapping container using coordinates -->
+        <a name="scroll-snap-3"></a>
+        <h3>Here, we snap elements of different sizes to the center of the container.</h3>
+        <div class="container" id="snap-scroll-container-coordinates-centered">
+            <img src="images/bluecross.svg" class="snap-destination-centered"></img>
+            <div class="child">
+                <img class="corner top-left" src="images/corner.svg"></img>
+                <img class="corner top-right" src="images/corner.svg"></img>
+                <img class="corner bottom-left" src="images/corner.svg"></img>
+                <img class="corner bottom-right" src="images/corner.svg"></img>
+                <div class="label"><h1>1</h1></div>
+            </div>
+            <div class="child child-thin">
+                <img class="corner top-left" src="images/corner.svg"></img>
+                <img class="corner top-right" src="images/corner.svg"></img>
+                <img class="corner bottom-left" src="images/corner.svg"></img>
+                <img class="corner bottom-right" src="images/corner.svg"></img>
+                <div class="label"><h1>2</h1></div>
+            </div>
+            <div class="child">
+                <img class="corner top-left" src="images/corner.svg"></img>
+                <img class="corner top-right" src="images/corner.svg"></img>
+                <img class="corner bottom-left" src="images/corner.svg"></img>
+                <img class="corner bottom-right" src="images/corner.svg"></img>
+                <div class="label"><h1>3</h1></div>
+            </div>
+            <div class="child child-thin">
+                <img class="corner top-left" src="images/corner.svg"></img>
+                <img class="corner top-right" src="images/corner.svg"></img>
+                <img class="corner bottom-left" src="images/corner.svg"></img>
+                <img class="corner bottom-right" src="images/corner.svg"></img>
+                <div class="label"><h1>4</h1></div>
+            </div>
+            <div class="child">
+                <img class="corner top-left" src="images/corner.svg"></img>
+                <img class="corner top-right" src="images/corner.svg"></img>
+                <img class="corner bottom-left" src="images/corner.svg"></img>
+                <img class="corner bottom-right" src="images/corner.svg"></img>
+                <div class="label"><h1>5</h1></div>
+            </div>
+            <div class="child child-thin">
+                <img class="corner top-left" src="images/corner.svg"></img>
+                <img class="corner top-right" src="images/corner.svg"></img>
+                <img class="corner bottom-left" src="images/corner.svg"></img>
+                <img class="corner bottom-right" src="images/corner.svg"></img>
+                <div class="label"><h1>6</h1></div>
+            </div>
+            <div class="child">
+                <img class="corner top-left" src="images/corner.svg"></img>
+                <img class="corner top-right" src="images/corner.svg"></img>
+                <img class="corner bottom-left" src="images/corner.svg"></img>
+                <img class="corner bottom-right" src="images/corner.svg"></img>
+                <div class="label"><h1>7</h1></div>
+            </div>
+        </div>
+        <p>The CSS for the above container is:</p>
+        <pre>-webkit-scroll-snap-type: mandatory;<br>-webkit-scroll-snap-destination: 50% 50%;</pre>
+        <p>The CSS for each of the container&rsquo;s children is:</p>
+        <pre>-webkit-scroll-snap-coordinate: 50% 50%;</pre>
+
+        <!-- Centered scroll snapping container in 2D -->
+        <a name="scroll-snap-4"></a>
+        <h3>This container shows centered scroll snapping in a 2D grid.</h3>
+        <div class="container" id="snap-scroll-container-2D">
+            <img src="images/1.png"/><img src="images/2.png"/><img src="images/3.png"/><img src="images/4.png"/><br>
+            <img src="images/5.png"/><img src="images/6.png"/><img src="images/7.png"/><img src="images/8.png"/><br>
+            <img src="images/9.png"/><img src="images/10.png"/><img src="images/11.png"/><img src="images/12.png"/><br>
+            <img src="images/13.png"/><img src="images/14.png"/><img src="images/15.png"/><img src="images/16.png"/>
+        </div>
+        <p>The CSS for the above container is:</p>
+        <pre>-webkit-scroll-snap-type: mandatory;<br>-webkit-scroll-snap-destination: 50% 50%;</pre>
+        <p>The CSS for each of the container&rsquo;s children is:</p>
+        <pre>-webkit-scroll-snap-coordinate: 50% 50%;</pre>
+
+        <!-- Centered scroll snapping container in 2D, rotated -->
+        <a name="scroll-snap-5"></a>
+        <h3>This example takes the 2D scroll snapping grid above and rotates it by 30 degrees.</h3>
+        <div class="container" id="snap-scroll-container-2D-rotated">
+            <img src="images/1.png"/><img src="images/2.png"/><img src="images/3.png"/><img src="images/4.png"/><br>
+            <img src="images/5.png"/><img src="images/6.png"/><img src="images/7.png"/><img src="images/8.png"/><br>
+            <img src="images/9.png"/><img src="images/10.png"/><img src="images/11.png"/><img src="images/12.png"/><br>
+            <img src="images/13.png"/><img src="images/14.png"/><img src="images/15.png"/><img src="images/16.png"/>
+        </div>
+        <p>The CSS for the above container is:</p>
+        <pre>-webkit-scroll-snap-type: mandatory;<br>-webkit-scroll-snap-destination: 50% 50%;<br>-webkit-transform: rotate(30deg);</pre>
+        <p>The CSS for each of the container&rsquo;s children is:</p>
+        <pre>-webkit-scroll-snap-coordinate: 50% 50%;</pre>
+
+        <p id="nasa">Images from <a target="_blank" href="https://www.nasa.gov/multimedia/imagegallery/iotd.html">NASA&rsquo;s image of the day gallery</a>.</p>
+    </body>
+</html>

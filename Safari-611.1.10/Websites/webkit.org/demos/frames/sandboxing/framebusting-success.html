@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Framebusting Success</title>
+    <meta charset="utf-8"/>
+  </head>
+
+  <body>
+
+    <p>Framebusting succeeded!</p>
+
+    <p>You will be redirected to <a href="index.html">the sandboxing demo page</a>.</p>
+
+    <script>
+        setTimeout(function() { location = 'index.html'; }, 3000);
+    </script>
+
+  </body>
+</html>

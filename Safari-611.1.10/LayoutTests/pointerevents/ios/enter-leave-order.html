@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+
+div.test-container {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100px;
+    height: 100px;
+}
+
+#top {
+    left: 50px;
+    top: 50px;
+}
+
+</style>
+</head>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+const events = [];
+
+function logEvent(event)
+{
+    events.push(`${event.type}@${event.target.id}`);
+}
+
+function makeDiv(id)
+{
+    const div = document.createElement("div");
+    div.addEventListener("pointerenter", logEvent);
+    div.addEventListener("pointerleave", logEvent);
+    div.className = "test-container";
+    div.id = id;
+    return div;
+}
+
+document.body.appendChild(makeDiv("top")).appendChild(makeDiv("middle")).appendChild(makeDiv("bottom"));
+
+async_test(test => {
+    const tapped = ui.tap({ x: 100, y: 100 }).then(() => {
+        assert_array_equals(events, [
+            "pointerenter@top",
+            "pointerenter@middle",
+            "pointerenter@bottom",
+            "pointerleave@bottom",
+            "pointerleave@middle",
+            "pointerleave@top"
+        ]);
+        test.done();
+    });
+}, `Testing that "pointerenter" events are dispatched from top to bottom and "pointerleave" events are dispatched bottom to top.`);
+
+</script>
+</body>
+</html>

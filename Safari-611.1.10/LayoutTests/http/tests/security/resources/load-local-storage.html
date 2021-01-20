@@ -1,0 +1,25 @@
+<html>
+<head>
+<script>
+try {
+	var c = window.localStorage;
+	var value = c['test'];
+	if (value) {
+		c.clear();
+		document.write('Got value: ' + value);
+	} else {
+		document.write('No value');
+	}
+} catch (exception) {
+	document.write(exception.name);
+}
+
+if (window.testRunner) {
+	internals.settings.setStorageBlockingPolicy('AllowAll');
+	testRunner.notifyDone();
+}
+</script>
+</head>
+<body>
+</body>
+</head>

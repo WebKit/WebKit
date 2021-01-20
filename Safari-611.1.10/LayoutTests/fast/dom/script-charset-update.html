@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Test that we do not crash when a script is reloaded with a different encoding.");
+jsTestIsAsync = true;
+
+s = document.createElement("script");
+s.setAttribute("charset", "ISO-8859-1");
+s.src = "resources/script-with-unicode.js";
+s.onload = function() {
+    shouldBeFalse("v === '你好'");
+    s.remove();
+    s = null;
+    gc();
+    setTimeout(function() {
+        s = document.createElement("script");
+        s.setAttribute("charset", "UTF-8");
+        s.src = "resources/script-with-unicode.js";
+        s.onload = function() {
+            shouldBeTrue("v === '你好'");
+            finishJSTest();
+        };
+        document.body.appendChild(s);
+    }, 0);
+};
+document.body.appendChild(s);
+</script>
+</body>
+</html>

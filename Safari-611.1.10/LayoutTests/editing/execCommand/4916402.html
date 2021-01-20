@@ -1,0 +1,10 @@
+<p>This tests to see that creating an ordered list item from the last list item in an unordered list creates a new list that is not a sublist of the original one.</p>
+<div contenteditable="true"><ul><li>foo</li><li id="li">bar</li></ul></div>
+
+<script>
+var li = document.getElementById("li");
+var sel = window.getSelection();
+
+sel.setPosition(li, 0);
+document.execCommand("InsertOrderedList");
+</script>

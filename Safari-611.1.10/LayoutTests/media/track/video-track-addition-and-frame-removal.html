@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests removing a frame immediately after inserting a new track element.<br>
+WebKit should not hit any assertions.</p>
+<script src=../../resources/gc.js></script>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function startTest()
+{
+    const doc = frame.contentDocument;
+    const trackElement = doc.createElement('track');
+    doc.querySelector('video').appendChild(trackElement);
+
+    frame.remove();
+    gc();
+    setTimeout(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();        
+    }, 100);
+}
+
+</script>
+<iframe id="frame" src="./video-track-add-remove.html"></iframe>
+</body>
+</html>

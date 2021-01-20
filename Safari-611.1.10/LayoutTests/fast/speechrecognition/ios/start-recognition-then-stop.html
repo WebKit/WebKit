@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("Verify that events are received corretly when start and stop recognition normally.");
+
+if (window.testRunner) {
+    jsTestIsAsync = true;
+}
+
+var hasReceivedResult = false;
+shouldNotThrow("recognition = new webkitSpeechRecognition()");
+recognition.continuous = true;
+
+recognition.onstart = (event) => {
+    debug("Received start event");
+}
+
+recognition.onaudiostart = (event) => {
+    debug("Received audiostart event");
+}
+
+recognition.onspeechstart = (event) => {
+    debug("Received speechstart event");
+}
+
+recognition.onresult = (event) => {
+    if (hasReceivedResult)
+        return;
+    hasReceivedResult = true;
+
+    debug("Received result event");
+    shouldBe("event.resultIndex", "0");
+    shouldBe("event.results.length", "1");
+    shouldBeTrue("event.results.item(0).isFinal");
+    shouldBe("event.results.item(0).length", "1");
+    shouldBeEqualToString("event.results.item(0).item(0).transcript", "Test");
+    shouldBe("event.results.item(0).item(0).confidence", "1");
+
+    shouldNotThrow("recognition.stop()");
+}
+
+recognition.onaudioend = (event) => {
+    debug("Received audioend event");
+}
+
+recognition.onspeechend = (event) => {
+    debug("Received speechend event");
+}
+
+recognition.onend = (event) => {
+    debug("Received end event");
+
+    finishJSTest();
+}
+
+shouldNotThrow("recognition.start()");
+
+</script>
+</body>
+</html>

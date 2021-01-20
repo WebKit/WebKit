@@ -1,0 +1,21 @@
+Test that 'click' events in the media controls don't propogate to the page.
+
+This test only runs in DRT!
+
+
+EVENT(canplaythrough)
+
+clicking in the play button
+
+EVENT(playing)
+
+clicking in mute button
+
+EVENT(volumechange)
+
+clicking in closed caption button
+
+100ms timer fired
+
+END OF TEST
+

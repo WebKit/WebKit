@@ -1,0 +1,3 @@
+Test the behavior of a sync XMLHttpRequest that encounters an infinite redirection loop.
+
+Exception NetworkError; code=19; number=undefined (0); message=' A network error occurred.'

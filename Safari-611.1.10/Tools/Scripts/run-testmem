@@ -1,0 +1,291 @@
+#!/usr/bin/env ruby
+
+# Copyright (C) 2018 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+require 'fileutils'
+require 'pathname'
+require 'open3'
+require "JSON"
+require 'getoptlong'
+
+def usage
+    puts "run-testmem [options]"
+    puts "--build-dir   (-b)   Pass in a path to your build directory, e.g, WebKitBuild/Release"
+    puts "--verbose     (-v)   Print more information as the benchmark runs"
+    puts "--count       (-c)   Number of outer iterations to run the benchmark for"
+    puts "--dry         (-d)   Print shell output that can be run as a bash script on a different device. When using this option, provide the --script-path and --build-dir options"
+    puts "--script-path (-s)   The path to the directory where you expect the testmem tests to live. Use this when doing a dry run with --dry"
+    puts "--parse       (-p)   After executing the dry run, capture its stdout and write it to a file. Pass the path to that file for this option and run-testmem will compute the results of the benchmark run"
+    puts "--help        (-h)   Print this message"
+end
+
+THIS_SCRIPT_PATH = Pathname.new(__FILE__).realpath
+SCRIPTS_PATH = THIS_SCRIPT_PATH.dirname
+
+$buildDir = nil
+$verbose = false
+$outerIterations = 3
+$dryRun = false
+$scriptPath = nil
+$parsePath = nil
+
+GetoptLong.new(["--build-dir", "-b", GetoptLong::REQUIRED_ARGUMENT],
+               ["--verbose", "-v", GetoptLong::NO_ARGUMENT],
+               ["--count", "-c", GetoptLong::REQUIRED_ARGUMENT],
+               ["--dry", "-d", GetoptLong::NO_ARGUMENT],
+               ["--script-path", "-s", GetoptLong::REQUIRED_ARGUMENT],
+               ["--parse", "-p", GetoptLong::REQUIRED_ARGUMENT],
+               ["--help", "-h", GetoptLong::NO_ARGUMENT],
+               ).each {
+    | opt, arg |
+    case opt
+    when "--build-dir"
+        $buildDir = arg 
+    when "--verbose"
+        $verbose = true
+    when "--count"
+        $outerIterations = arg.to_i
+        if $outerIterations < 1
+            puts "--count must be > 0"
+            exit 1
+        end
+    when "--dry"
+        $dryRun = true
+    when "--script-path"
+        $scriptPath = arg
+    when "--parse"
+        $parsePath = arg
+    when "--help"
+        usage
+        exit 1
+    end
+}
+
+if $scriptPath && !$dryRun
+    puts "--script-path is only supported when you are doing a --dry run"
+    exit 1
+end
+
+def getBuildDirectory
+    if $buildDir != nil
+        return $buildDir
+    end
+
+    command = SCRIPTS_PATH.join("webkit-build-directory").to_s
+    command += " --release"
+    command += " --executablePath"
+
+    output = `#{command}`.split("\n")
+    if !output.length
+        puts "Error: could not find release WebKitBuild"
+        exit 1
+    end
+    output = output[0]
+
+    $buildDir = Pathname.new(output).to_s
+    $buildDir
+end
+
+def getTestmemPath
+    path = Pathname.new(getBuildDirectory).join("testmem").to_s
+    if !File.exists?(path) && !$dryRun
+        puts "Error: no testmem binary found in <build>/Release"
+        exit 1
+    end
+    path
+end
+
+def iterationCount(path)
+    iterationMap = {
+        "air" => 4,
+        "basic" => 5,
+        "splay" => 10,
+        "hash-map" => 5,
+        "box2d" => 3,
+    }
+    name = File.basename(path, ".js")
+    iterationMap[name] || 20
+end
+
+def getTests
+    dirPath = Pathname.new(SCRIPTS_PATH).join("../../PerformanceTests/testmem")
+    files = []
+    Dir.foreach(dirPath) {
+        | filename |
+        next unless filename =~ /\.js$/
+        filePath = dirPath.join(filename).to_s
+        filePath = Pathname.new($scriptPath).join(filename).to_s if $scriptPath
+        files.push([filePath, iterationCount(filePath)])
+    }
+
+    files.sort_by { | (path) | File.basename(path) }
+end
+
+def processRunOutput(stdout, path)
+    time, peakFootprint, footprintAtEnd = stdout.split("\n")
+    raise unless time.slice!("time:")
+    raise unless peakFootprint.slice!("peak footprint:")
+    raise unless footprintAtEnd.slice!("footprint at end:")
+    time = time.to_f
+    peakFootprint = peakFootprint.to_f
+    footprintAtEnd = footprintAtEnd.to_f
+
+    if $verbose
+        puts path
+        puts "time: #{time}"
+        puts "peak footprint: #{peakFootprint/1024/1024} MB"
+        puts "end footprint:  #{footprintAtEnd/1024/1024} MB\n"
+    end
+
+    {"time"=>time, "peak"=>peakFootprint, "end"=>footprintAtEnd}
+end
+
+def runTest(path, iters)
+    command = "#{getTestmemPath} #{path} #{iters}"
+    environment = {
+        "DYLD_FRAMEWORK_PATH" => getBuildDirectory,
+        "JSC_useJIT" => "false",
+        "JSC_useRegExpJIT" => "false",
+    }
+
+    if $dryRun
+        environment.each { | key, value |
+            command = "#{key}=#{value} #{command}"
+        }
+        puts "echo \"#{command}\""
+        puts command
+        return
+    end
+
+    stdout, stderr, exitCode = Open3.capture3(environment, command)
+
+    if $verbose
+        puts stdout
+        puts stderr
+    end
+
+    if exitCode != 0
+        puts "testmem failed to run"
+        puts stdout
+        puts stderr
+        exit 1
+    end
+
+    processRunOutput(stdout, path)
+end
+
+def geomean(arr)
+    score = arr.inject(1.0, :*)
+    score ** (1.0 / arr.length)
+end
+
+def mean(arr)
+    sum = arr.inject(0.0, :+)
+    sum / arr.length
+end
+
+def processScores(scores)
+    peakScore = []
+    endScore = []
+    timeScore = []
+    scores.each { | key, value |
+        endAvg = mean(value.map { | element | element["end"] })
+        peakAvg = mean(value.map { | element | element["peak"] })
+        timeAvg = mean(value.map { | element | element["time"] })
+
+        peakScore.push(peakAvg)
+        endScore.push(endAvg)
+        timeScore.push(timeAvg)
+
+        puts File.basename(key, ".js")
+        puts "   end: #{(endAvg/1024/1024).round(4)} MB"
+        puts "   peak: #{(peakAvg/1024/1024).round(4)} MB"
+        puts "   time: #{(timeAvg*1000).round(2)} ms\n"
+    }
+
+    endScore = geomean(endScore)
+    peakScore = geomean(peakScore)
+    timeScore = geomean(timeScore)
+
+    puts
+    puts "end score:           #{(endScore/1024/1024).round(4)} MB"
+    puts "peak score:          #{(peakScore/1024/1024).round(4)} MB\n"
+    puts "total memory score:  #{(geomean([endScore, peakScore])/1024/1024).round(4)} MB"
+    puts "time score:          #{(timeScore*1000).round(2)} ms\n\n"
+
+    puts JSON.pretty_generate(scores) if $verbose
+end
+
+def run
+    tests = getTests
+    scores = {}
+    tests.each { | (path) | scores[path] = [] }
+    count = $outerIterations
+
+    if $dryRun
+        (0..(count-1)).each { | currentIter |
+            tests.each { | (path, iters) | 
+                runTest(path, iters)
+            }
+        }
+        return
+    end
+
+    (0..(count-1)).each { | currentIter |
+        tests.each { | (path, iters) | 
+            statusToPrint = "iteration #{currentIter + 1}: #{File.basename(path, ".js")}"
+            print "#{statusToPrint}\r"
+            scores[path].push(runTest(path, iters))
+            print "#{" ".rjust(statusToPrint.length)}\r"
+        }
+    }
+
+    processScores(scores)
+end
+
+def parseResultOfDryRun(path)
+    contents = IO.read(path).split("\n")
+    if !contents.length || contents.length % 4 != 0
+        puts "Bad input, expect multiple of 4 number of lines from output of running the result of --dry"
+        exit 1
+    end
+
+    scores = {}
+    i = 0
+    while i < contents.length
+        path = contents[i + 0].split(" ")[-2]
+        scores[path] = [] if !scores[path]
+        stdout = [contents[i + 1], contents[i + 2], contents[i + 3]].join("\n")
+        scores[path].push(processRunOutput(stdout, path))
+        i += 4
+    end
+
+    processScores(scores)
+end
+
+if $parsePath
+    parseResultOfDryRun($parsePath)
+else
+    run
+end

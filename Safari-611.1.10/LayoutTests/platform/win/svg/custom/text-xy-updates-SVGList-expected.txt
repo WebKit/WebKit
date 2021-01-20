@@ -1,0 +1,10 @@
+layer at (0,0) size 808x620
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x620
+  RenderBlock {html} at (0,0) size 785x620
+    RenderBody {body} at (8,8) size 769x604
+      RenderSVGRoot {svg:svg} at (208,14) size 166x18
+        RenderSVGText {text} at (200,6) size 166x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 166x18
+            chunk 1 text run 1 at (200.00,20.00) startOffset 0 endOffset 28 width 166.00: "Passes, if text is at 200x20"
+      RenderText {#text} at (0,0) size 0x0

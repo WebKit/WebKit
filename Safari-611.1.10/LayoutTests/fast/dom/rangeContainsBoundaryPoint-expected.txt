@@ -1,0 +1,28 @@
+Test the contains function that checks if a range contains a boundary point.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS body.childNodes.length is 4
+PASS internals.rangeContainsBoundaryPoint(contentsRange(document), document, 0, 'ComposedTree') is true
+PASS internals.rangeContainsBoundaryPoint(contentsRange(document), document, 1, 'ComposedTree') is true
+PASS internals.rangeContainsBoundaryPoint(contentsRange(document), document, 2, 'ComposedTree') is false
+PASS internals.rangeContainsBoundaryPoint(contentsRange(document), body, 0, 'ComposedTree') is true
+PASS internals.rangeContainsBoundaryPoint(contentsRange(document), body, 1, 'ComposedTree') is true
+PASS internals.rangeContainsBoundaryPoint(contentsRange(document), body, 10, 'ComposedTree') is true
+PASS internals.rangeContainsBoundaryPoint(range(document, 0, documentElement, 0), body, 0, 'ComposedTree') is false
+PASS internals.rangeContainsBoundaryPoint(range(document, 0, body, 0), body, 0, 'ComposedTree') is true
+PASS internals.rangeContainsBoundaryPoint(contentsRange(document), a, 0, 'ComposedTree') is false
+PASS internals.rangeContainsBoundaryPoint(contentsRange(body), a, 0, 'ComposedTree') is false
+PASS internals.rangeContainsBoundaryPoint(contentsRange(document), a, 0, 'ComposedTree') is true
+PASS internals.rangeContainsBoundaryPoint(range(document, 0, a, 0), a, 0, 'ComposedTree') is true
+PASS internals.rangeContainsBoundaryPoint(range(document, 0, body, 0), a, 0, 'ComposedTree') is false
+PASS internals.rangeContainsBoundaryPoint(range(document, 0, body, 5), a, 0, 'ComposedTree') is true
+PASS internals.rangeContainsBoundaryPoint(range(body, 5, document, 1), a, 0, 'ComposedTree') is false
+PASS internals.rangeContainsBoundaryPoint(range(body, 0, document, 1), a, 0, 'ComposedTree') is true
+PASS internals.rangeContainsBoundaryPoint(contentsRange(body), f, 0, 'ComposedTree') is false
+PASS internals.rangeContainsBoundaryPoint(contentsRange(body), h, 0, 'ComposedTree') is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

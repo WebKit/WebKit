@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runRepaintTest()">
+<script xlink:href="../../fast/repaint/resources/repaint.js"/>
+<image id="image" xlink:href="resources/green-checker.png" x="-100" width="75" height="75" />
+<script>
+function repaintTest() {
+    document.getElementById("image").setAttribute("x", "0");
+}
+</script>
+</svg>

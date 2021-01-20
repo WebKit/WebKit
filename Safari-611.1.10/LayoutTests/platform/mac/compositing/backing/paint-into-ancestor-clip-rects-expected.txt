@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x116
+  RenderBlock {HTML} at (0,0) size 800x116
+    RenderBody {BODY} at (8,8) size 784x100
+layer at (8,8) size 100x100
+  RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#C0C0C0]
+    RenderBlock {DIV} at (0,0) size 100x36
+      RenderText {#text} at (0,0) size 99x36
+        text run at (0,0) width 99: "This test should"
+        text run at (0,18) width 63: "not assert."

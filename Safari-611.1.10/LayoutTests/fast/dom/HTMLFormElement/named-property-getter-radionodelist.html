@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<form name="f">
+ <input type="radio" id="radio1" name="r" value="value1" />
+ <input type="radio" id="radio2" name="r" value="value2" checked />
+ <input type="radio" id="radio3" name="r" value="value3" />
+</form>
+<script>
+description("Tests that HTMLFormElement's named property getter returns a RadioNodeList if there are several matching elements.");
+
+var radio1 = document.getElementById("radio1");
+var radio2 = document.getElementById("radio2");
+var radio3 = document.getElementById("radio3");
+
+var radioNodeList = document.f.r;
+shouldBe("radioNodeList.__proto__", "RadioNodeList.prototype");
+shouldBe("radioNodeList.length", "3");
+shouldBe("radioNodeList[0]", "radio1");
+shouldBe("radioNodeList[1]", "radio2");
+shouldBe("radioNodeList[2]", "radio3");
+shouldBeEqualToString("radioNodeList.value", "value2");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

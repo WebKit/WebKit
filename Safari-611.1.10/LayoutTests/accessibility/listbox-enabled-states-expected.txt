@@ -1,0 +1,14 @@
+
+This tests that we report the correct enabled state on a listbox.
+
+
+PASS accessibilityController.focusedElement.isEnabled is true
+PASS accessibilityController.focusedElement.childAtIndex(0).isEnabled is true
+PASS accessibilityController.focusedElement.childAtIndex(1).isEnabled is true
+PASS accessibilityController.focusedElement.childAtIndex(2).isEnabled is false
+PASS accessibilityController.focusedElement.childAtIndex(3).isEnabled is false
+PASS accessibilityController.focusedElement.childAtIndex(4).isEnabled is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

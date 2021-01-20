@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cache Storage: testing open and delete in parallel</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(async test => {
+    await caches.delete("test");
+
+    var result = "FAIL";
+    caches.open("test").then(()=> result = "PASS");
+    await caches.open("test");
+
+    assert_equals(result, "PASS", "Open resolution order");
+}, "Testing ordering of opening cache promises resolution");
+
+promise_test(async test => {
+    await caches.open("test");
+
+    var result = "FAIL";
+    caches.delete("test").then((value)=> {
+        result = value ? "PASS" : "FAIL: delete did not return true";
+    });
+    assert_false(await caches.delete("test"));
+
+    assert_equals(result, "PASS", "Delete resolution order");
+}, "Testing ordering of deleting cache promises resolution");
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests iframe with visibility hidden</title>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var iframe1IsVisible = false;
+var iframe2IsVisible = false;
+
+function makeiframe1Visible()
+{
+    document.getElementById("iframe1").style.visibility = "visible";
+    iframe1IsVisible = true;
+    elementIsVisibleNow();
+}
+
+function makeiframe2Visible()
+{
+    document.getElementById("iframe2").style.visibility = "visible";
+    iframe2IsVisible = true;
+    elementIsVisibleNow();
+}
+
+function elementIsVisibleNow()
+{
+    if (!iframe1IsVisible || !iframe2IsVisible)
+        return;
+    document.body.offsetHeight;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<style>
+#iframe2 {
+    position: absolute;
+    left: 80px;
+    top: 8px;
+}
+</style>
+</head>
+<body>
+<iframe frameborder=no id=iframe1 onload="makeiframe1Visible()" width="80" height="80" style="visibility: hidden"
+    srcdoc="<div style='will-change: transform; width: 50px; height: 50px; background-color: green;'>
+          <div style='visibility: visible;'></div>
+        </div>">
+</iframe>
+<iframe frameborder=no id=iframe2 onload="makeiframe2Visible()" width="80" height="80" style="visibility: hidden"
+    srcdoc="
+        <video style='width: 50px; height: 50px; background-color: green;'>
+            <source src='movie.mp4' type='video/mp4'>
+        </video>">
+</iframe>
+<iframe frameborder=no width="80" height="80" style="visibility: hidden"
+    srcdoc="<div style='will-change: transform; width: 50px; height: 50px; background-color: red;'>
+          <div style='visibility: visible;'></div>
+        </div>">
+</iframe>
+</body>
+</html>

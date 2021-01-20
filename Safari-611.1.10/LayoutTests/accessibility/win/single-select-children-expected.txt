@@ -1,0 +1,171 @@
+
+This tests that non-multiple select elements expose their list options.
+
+
+PASS selectElement.role is "combo box"
+PASS selectElement.isMultiSelectable is false
+PASS selectElement.isCollapsed is true
+PASS selectElement.hasPopup is true
+
+PASS list.role is "list"
+PASS list.isVisible is false
+PASS list.isOffScreen is true
+
+option.title: Option 1
+option.role: list item
+option.width: 78
+option.height: 22
+option.x: -790
+option.y: -591
+option.isOffScreen: false
+option.isEnabled: true
+option.isVisible: true
+option.isSelected: true
+option.isSelectable: true
+
+option.title: Option 2
+option.role: list item
+option.width: 78
+option.height: 22
+option.x: -790
+option.y: -591
+option.isOffScreen: true
+option.isEnabled: true
+option.isVisible: false
+option.isSelected: false
+option.isSelectable: true
+
+option.title: Option 3
+option.role: list item
+option.width: 78
+option.height: 22
+option.x: -790
+option.y: -591
+option.isOffScreen: true
+option.isEnabled: false
+option.isVisible: false
+option.isSelected: false
+option.isSelectable: false
+
+---
+
+option.title: Option 1
+option.role: list item
+option.width: 78
+option.height: 22
+option.x: -790
+option.y: -591
+option.isOffScreen: true
+option.isEnabled: true
+option.isVisible: false
+option.isSelected: false
+option.isSelectable: true
+
+option.title: Option 2
+option.role: list item
+option.width: 78
+option.height: 22
+option.x: -790
+option.y: -591
+option.isOffScreen: false
+option.isEnabled: true
+option.isVisible: true
+option.isSelected: true
+option.isSelectable: true
+
+option.title: Option 3
+option.role: list item
+option.width: 78
+option.height: 22
+option.x: -790
+option.y: -591
+option.isOffScreen: true
+option.isEnabled: false
+option.isVisible: false
+option.isSelected: false
+option.isSelectable: false
+
+---
+
+option.title: Option 1
+option.role: list item
+option.width: 78
+option.height: 22
+option.x: -790
+option.y: -591
+option.isOffScreen: false
+option.isEnabled: true
+option.isVisible: true
+option.isSelected: true
+option.isSelectable: true
+
+option.title: Option 2
+option.role: list item
+option.width: 78
+option.height: 22
+option.x: -790
+option.y: -591
+option.isOffScreen: true
+option.isEnabled: true
+option.isVisible: false
+option.isSelected: false
+option.isSelectable: true
+
+option.title: Option 3
+option.role: list item
+option.width: 78
+option.height: 22
+option.x: -790
+option.y: -591
+option.isOffScreen: true
+option.isEnabled: false
+option.isVisible: false
+option.isSelected: false
+option.isSelectable: false
+
+---
+
+PASS selectElement.isCollapsed is false
+PASS list.isOffScreen is false
+
+option.title: Option 1
+option.role: list item
+option.width: 78
+option.height: 22
+option.x: -790
+option.y: -591
+option.isOffScreen: false
+option.isEnabled: true
+option.isVisible: true
+option.isSelected: true
+option.isSelectable: true
+
+option.title: Option 2
+option.role: list item
+option.width: 78
+option.height: 22
+option.x: -790
+option.y: -591
+option.isOffScreen: false
+option.isEnabled: true
+option.isVisible: true
+option.isSelected: false
+option.isSelectable: true
+
+option.title: Option 3
+option.role: list item
+option.width: 78
+option.height: 22
+option.x: -790
+option.y: -591
+option.isOffScreen: false
+option.isEnabled: false
+option.isVisible: true
+option.isSelected: false
+option.isSelectable: false
+
+---
+
+PASS option.width != 0 is true
+PASS option.width == 0 is true
+

@@ -1,0 +1,12 @@
+This tests deferred parsing of CSS style rules.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+PASS internals.deferredStyleRulesCount(document.styleSheets[0]) is 2
+PASS internals.deferredStyleRulesCount(document.styleSheets[0]) is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

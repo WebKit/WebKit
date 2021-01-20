@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 32 32">
+   <defs>
+       <style>
+           rect {
+               display: none;
+           }
+           rect:target {
+               display: inline;
+           }
+       </style>
+   </defs>
+   <rect id="red-icon" fill="red" width="32" height="32"/>
+   <rect id="green-icon" fill="green" width="32" height="32"/>
+   <rect id="blue-icon" fill="blue" width="32" height="32"/>
+</svg>

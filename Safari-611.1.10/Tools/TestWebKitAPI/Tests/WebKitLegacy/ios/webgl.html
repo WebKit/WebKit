@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<head>
+<title>WebGL drawing</title>
+<style>
+canvas {
+    width: 100px;
+    height: 100px;
+}
+</style>
+</head>
+<script id="vertexShaderSource" type="text/glsl">
+attribute vec4 a_position;
+varying vec2 v_texturePosition;
+
+void main() {
+    v_texturePosition = vec2((a_position.x + 1.0) / 2.0, (a_position.y + 1.0) / 2.0);
+    gl_Position = a_position;
+}
+</script>
+<script id="fragmentShaderSource" type="text/glsl">
+precision mediump float;
+
+varying vec2 v_texturePosition;
+
+uniform sampler2D texture;
+
+void main() {
+  gl_FragColor = texture2D(texture, v_texturePosition);
+}
+</script>
+<script>
+let texture;
+let gl;
+let textureUniform;
+let NUMBER_OF_PAINTS_REMAINING = 60;
+
+function signalReady() {
+    window.location = "callback:isReady";
+}
+
+function signalFinished() {
+    window.location = "callback:didFinishPainting";
+}
+
+function loadColorIntoTexture(r, g, b, a) {
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([r, g, b, a]));
+}
+
+function draw() {
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+    if (NUMBER_OF_PAINTS_REMAINING--) {
+        window.requestAnimationFrame(draw);
+    } else {
+        signalFinished();
+    }
+};
+
+function run() {
+
+    let canvas = document.querySelector("canvas");
+    canvas.width = 100;
+    canvas.height = 100;
+
+    gl = canvas.getContext("webgl");
+
+    gl.clearColor(0, 0, 1, 1);
+
+    let vertexShader = gl.createShader(gl.VERTEX_SHADER);
+
+    gl.shaderSource(vertexShader, document.getElementById("vertexShaderSource").textContent);
+
+    gl.compileShader(vertexShader);
+    if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
+        // We failed to compile. Output to the console and quit.
+        console.error("Vertex Shader failed to compile.");
+        console.log(gl.getShaderInfoLog(vertexShader));
+        return;
+    }
+
+    let fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fragmentShader, document.getElementById("fragmentShaderSource").textContent);
+    gl.compileShader(fragmentShader);
+    if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
+        console.error("Fragment Shader failed to compile.");
+        console.log(gl.getShaderInfoLog(fragmentShader));
+        return;
+    }
+
+    let program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.error("Unable to link shaders into program.");
+        return;
+    }
+
+    gl.useProgram(program);
+
+    let textureUniform = gl.getUniformLocation(program, "texture");
+
+    let positionAttribute = gl.getAttribLocation(program, "a_position");
+    gl.enableVertexAttribArray(positionAttribute);
+
+    let vertices = new Float32Array([
+       -1, -1,
+       1, -1,
+       1, 1,
+       1, 1,
+       -1, 1,
+       -1, -1
+    ]);
+
+    let quadBuffer = gl.createBuffer();
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+    texture = gl.createTexture();
+    loadColorIntoTexture(0, 128, 255, 255);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
+    gl.vertexAttribPointer(positionAttribute, 2, gl.FLOAT, false, 0, 0);
+
+    gl.uniform1i(textureUniform, 0);
+
+    signalReady();
+}
+
+window.addEventListener("load", run, false);
+</script>
+<body>
+    <canvas></canvas>
+</body>

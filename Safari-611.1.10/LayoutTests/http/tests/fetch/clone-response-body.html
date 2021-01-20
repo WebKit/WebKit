@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Response clone after load is finished</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+promise_test(function(t) {
+    var clone;
+    return fetch('/resources/testharnessreport.js').then(function(res) {
+        assert_equals(res.status, 200);
+        var resolveFunction;
+        var promise = new Promise((resolve) => {
+            resolveFunction = resolve;
+        });
+        setTimeout(() => {
+            // Load should be finished by now
+            clone = res.clone();
+            var string;
+            return res.text().then((value) => {
+                 string = value;
+                 return clone.text();
+            }).then((value) => {
+                assert_equals(value, string);
+                resolveFunction();
+            });
+        }, 1000);
+        return promise;
+    });
+}, 'Ensure that cloning works when load is finished');
+
+promise_test(function(t) {
+    var clone;
+    return fetch('/resources/download-json-with-delay.php?iteration=2&delay=100').then(function(res) {
+        assert_equals(res.status, 200);
+        // All data should not be enqueued yet.
+        clone = res.clone();
+        var string;
+        return res.text().then((value) => {
+            string = value;
+            return clone.text();
+        }).then((value) => {
+            assert_equals(value, string);
+        });
+    });
+}, 'Ensure that cloning works when load is ongoing');
+
+    </script>
+  </body>
+</html>

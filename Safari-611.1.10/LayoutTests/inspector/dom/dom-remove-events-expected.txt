@@ -1,0 +1,6 @@
+Testing that DOM.childNodeRemoved is correctly triggered only when the element is actually going to be removed from the DOM.
+
+PASS: onChildNodeRemoved called for #target_element
+PASS: onChildNodeInserted called for parent node #final_container
+PASS: onChildNodeInserted called for child node #target_element
+

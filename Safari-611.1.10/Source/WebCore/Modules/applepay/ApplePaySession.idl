@@ -1,0 +1,68 @@
+/*
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+[
+    ActiveDOMObject,
+    Conditional=APPLE_PAY,
+    EnabledBySetting=ApplePay,
+    EnabledForContext,
+    Exposed=Window
+] interface ApplePaySession : EventTarget {
+    [CallWith=Document] constructor(unsigned long version, ApplePayPaymentRequest paymentRequest);
+
+    const unsigned short STATUS_SUCCESS = 0;
+    const unsigned short STATUS_FAILURE = 1;
+    const unsigned short STATUS_INVALID_BILLING_POSTAL_ADDRESS = 2;
+    const unsigned short STATUS_INVALID_SHIPPING_POSTAL_ADDRESS = 3;
+    const unsigned short STATUS_INVALID_SHIPPING_CONTACT = 4;
+    const unsigned short STATUS_PIN_REQUIRED = 5;
+    const unsigned short STATUS_PIN_INCORRECT = 6;
+    const unsigned short STATUS_PIN_LOCKOUT = 7;
+
+    [CallWith=Document, MayThrowException] static boolean supportsVersion(unsigned long version);
+    [CallWith=Document, MayThrowException] static boolean canMakePayments();
+    [CallWith=Document, MayThrowException] static Promise<boolean> canMakePaymentsWithActiveCard(DOMString merchantIdentifier);
+    [CallWith=Document, MayThrowException] static Promise<boolean> openPaymentSetup(DOMString merchantIdentifier);
+
+    [CallWith=Document, MayThrowException] undefined begin();
+    [MayThrowException] undefined abort();
+    [MayThrowException, CallWith=GlobalObject] undefined completeMerchantValidation(any merchantSession);
+    [MayThrowException] undefined completeShippingMethodSelection(ApplePayShippingMethodUpdate update);
+    [MayThrowException] undefined completeShippingContactSelection(ApplePayShippingContactUpdate update);
+    [MayThrowException] undefined completePaymentMethodSelection(ApplePayPaymentMethodUpdate update);
+    [MayThrowException] undefined completePayment(ApplePayPaymentAuthorizationResult result);
+
+    [MayThrowException] undefined completeShippingMethodSelection(unsigned short status, ApplePayLineItem newTotal, sequence<ApplePayLineItem> newLineItems);
+    [MayThrowException] undefined completeShippingContactSelection(unsigned short status, sequence<ApplePayShippingMethod> newShippingMethods, ApplePayLineItem newTotal, sequence<ApplePayLineItem> newLineItems);
+    [MayThrowException] undefined completePaymentMethodSelection(ApplePayLineItem newTotal, sequence<ApplePayLineItem> newLineItems);
+    [MayThrowException] undefined completePayment(unsigned short status);
+
+    attribute EventHandler onvalidatemerchant;
+    attribute EventHandler onpaymentmethodselected;
+    attribute EventHandler onpaymentauthorized;
+    attribute EventHandler onshippingmethodselected;
+    attribute EventHandler onshippingcontactselected;
+    attribute EventHandler oncancel;
+};

@@ -1,0 +1,53 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
+<html>
+    <head>
+        <script src='media-file.js'></script>
+        <script src='video-test.js'></script>
+        <script>
+
+            let usage;
+            let videoURL;
+
+            window.addEventListener('load', async event => {
+
+                if (!window.internals) {
+                    failTest(`<br>This test requires internals!`);
+                    return;
+                }
+
+                findMediaElement();
+
+                videoURL = findMediaFile("video", "content/test");
+                video.src = videoURL;
+
+                await waitFor(video, 'canplaythrough');
+
+                consoleWrite("<br>** Check state before playback, there should be no usage state.");
+			    testExpected('internals.mediaUsageState(video)', "NotSupportedError");
+
+                consoleWrite("<br>** Mute video, there should still be no usage state.");
+                run('video.muted = true');
+			    testExpected('internals.mediaUsageState(video)', "NotSupportedError");
+
+                consoleWrite("<br>** Unmute video, there should still be no usage state.");
+                run('video.muted = false');
+			    testExpected('internals.mediaUsageState(video)', "NotSupportedError");
+
+                consoleWrite("<br>** Try to play without user gesture, there should still be no usage state.")
+                runWithKeyDown(() => { 
+                    video.play(); 
+                });
+                await waitFor(video, 'playing');
+
+			    testExpected('internals.mediaUsageState(video)', "NotSupportedError");
+
+                endTest();
+            });
+
+        </script>
+    </head>
+    <body>
+        <video controls></video>
+        <p>Test mediaUsageState.</p>
+    </body>
+</html>

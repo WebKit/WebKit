@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/dump-as-markup.js"></script>
+<style>
+    *[contenteditable="true"] {
+        border: 3px green solid;
+    }
+
+    *[contenteditable="false"] {
+        border: 1px red dashed;
+        background-color: rgba(200, 0, 0, 0.25);
+    }
+</style>
+</head>
+<body>
+    <div contenteditable="true" id="editor">
+        <p contenteditable="false">alpha beta.</p>
+        <p>gamma beta phi.</p>
+        <div contenteditable="false">
+            <p>alpha kappa eta.</p>
+            <p contenteditable="true">eta kappa nu.</p>
+        </div>
+        <p>beta phi delta.</p>
+    </div>
+</body>
+<script>
+Markup.description("Verifies that find and replace does not change matches in noneditable content. This test requires WebKitTestRunner.");
+testRunner.findStringMatchesInPage("eta", []);
+testRunner.replaceFindMatchesAtIndices([0, 1, 2, 3, 4], "_eta_", false);
+Markup.dump("editor", "After replacing 'eta' with '_eta_'");
+</script>
+</html>

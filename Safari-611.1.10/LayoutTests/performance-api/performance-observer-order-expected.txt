@@ -1,0 +1,21 @@
+Ensure PerformanceObservers are notified in order of registration (observe).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS PerformanceObserver 1 callback fired
+PASS count is 1
+PASS PerformanceObserver 2 callback fired
+PASS count is 2
+PASS PerformanceObserver 3 callback fired
+PASS count is 3
+PASS PerformanceObserver 4 callback fired
+PASS count is 4
+PASS PerformanceObserver 5 callback fired
+PASS count is 5
+PASS PerformanceObserver 6 callback fired
+PASS count is 6
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

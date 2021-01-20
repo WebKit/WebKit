@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .box {
+            height: 100px;
+            width: 200px;
+            margin: 10px;
+            background-color: green;
+            -webkit-clip-path: inset(20px 2px 0px 0px);
+        }
+
+        .second {
+            box-shadow: 0 0 20px black;
+        }
+        
+        .third {
+            -webkit-writing-mode: vertical-rl;
+        }
+        
+        .blob {
+            height: 40px;
+            width: 40px;
+        }
+        
+        .composited {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 50px;
+            height: 400px;
+            border: 1px solid blue;
+        }
+        
+        .composited:hover {
+            -webkit-transform: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="composited">
+</div>
+
+<div class="box" style="top: 50px;">
+    <div class="blob" style="background-color: orange"></div>
+    <div class="blob" style="background-color: blue"></div>
+</div>
+<div class="second box" style="top: 150px;">
+    <div class="blob" style="background-color: orange"></div>
+    <div class="blob" style="background-color: blue"></div>
+</div>
+
+<div class="third box" style="top: 250px;">
+    <div class="blob" style="background-color: orange"></div>
+    <div class="blob" style="background-color: blue"></div>
+</div>
+
+
+</body>
+</html>

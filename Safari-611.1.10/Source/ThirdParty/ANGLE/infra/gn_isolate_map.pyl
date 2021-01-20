@@ -1,0 +1,136 @@
+# Copyright 2020 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This is a .pyl, or "Python Literal", file. You can treat it just like a
+# .json file, with the following exceptions:
+# * all keys must be quoted (use single quotes, please);
+# * comments are allowed, using '#' syntax; and
+# * trailing commas are allowed.
+
+# gn_isolate_map.pyl - A mapping of Ninja build target names to GN labels and
+# test type classifications for the tests that are run on the bots.
+#
+# This mapping is used by MB so that we can uniformly refer to test binaries
+# by their Ninja target names in the recipes and not need to worry about how
+# they are referred to in GN or GYP specifically (the GYP target name is pretty
+# much always the same as the Ninja target name, since GYP target names are not
+# hierarchical).
+
+# TODO(crbug.com/816629): Remove the need for this file altogether :). Also,
+# see the canonical Chromium copy:
+# https://chromium.googlesource.com/chromium/src/+/refs/heads/master/testing/buildbot/gn_isolate_map.pyl
+
+{
+  "angle_apks": {
+    "label": "//:angle_apks",
+    "type": "additional_compile_target",
+  },
+  "angle_deqp_egl_tests": {
+    "label": "//src/tests:angle_deqp_egl_tests",
+    "script": "//scripts/run_gtest_angle_test.py",
+    "type": "script",
+  },
+  "angle_deqp_gles2_tests": {
+    "label": "//src/tests:angle_deqp_gles2_tests",
+    "script": "//scripts/run_gtest_angle_test.py",
+    "type": "script",
+  },
+  "angle_deqp_gles31_tests": {
+    "label": "//src/tests:angle_deqp_gles31_tests",
+    "script": "//scripts/run_gtest_angle_test.py",
+    "type": "script",
+  },
+  "angle_deqp_gles3_tests": {
+    "label": "//src/tests:angle_deqp_gles3_tests",
+    "script": "//scripts/run_gtest_angle_test.py",
+    "type": "script",
+  },
+  "angle_deqp_khr_gles2_tests": {
+    "label": "//src/tests:angle_deqp_khr_gles2_tests",
+    "script": "//scripts/run_gtest_angle_test.py",
+    "type": "script",
+  },
+  "angle_deqp_khr_gles3_tests": {
+    "label": "//src/tests:angle_deqp_khr_gles3_tests",
+    "script": "//scripts/run_gtest_angle_test.py",
+    "type": "script",
+  },
+  "angle_deqp_khr_gles31_tests": {
+    "label": "//src/tests:angle_deqp_khr_gles31_tests",
+    "script": "//scripts/run_gtest_angle_test.py",
+    "type": "script",
+  },
+  "angle_deqp_gles3_rotate180_tests": {
+    "label": "//src/tests:angle_deqp_gles3_rotate180_tests",
+    "script": "//scripts/run_gtest_angle_test.py",
+    "type": "script",
+  },
+  "angle_deqp_gles3_rotate270_tests": {
+    "label": "//src/tests:angle_deqp_gles3_rotate270_tests",
+    "script": "//scripts/run_gtest_angle_test.py",
+    "type": "script",
+  },
+  "angle_deqp_gles3_rotate90_tests": {
+    "label": "//src/tests:angle_deqp_gles3_rotate90_tests",
+    "script": "//scripts/run_gtest_angle_test.py",
+    "type": "script",
+  },
+  "angle_deqp_gles31_rotate180_tests": {
+    "label": "//src/tests:angle_deqp_gles31_rotate180_tests",
+    "script": "//scripts/run_gtest_angle_test.py",
+    "type": "script",
+  },
+  "angle_deqp_gles31_rotate270_tests": {
+    "label": "//src/tests:angle_deqp_gles31_rotate270_tests",
+    "script": "//scripts/run_gtest_angle_test.py",
+    "type": "script",
+  },
+  "angle_deqp_gles31_rotate90_tests": {
+    "label": "//src/tests:angle_deqp_gles31_rotate90_tests",
+    "script": "//scripts/run_gtest_angle_test.py",
+    "type": "script",
+  },
+  "angle_end2end_tests": {
+    "label": "//src/tests:angle_end2end_tests",
+    "script": "//scripts/run_gtest_angle_test.py",
+    "type": "script",
+  },
+  "angle_gles1_conformance_tests": {
+    "label": "//src/tests:angle_gles1_conformance_tests",
+    "script": "//scripts/run_gtest_angle_test.py",
+    "type": "script",
+  },
+  "angle_perftests": {
+    "args": [
+      "angle_perftests",
+      "--non-telemetry=true",
+      "--test-launcher-print-test-stdio=always",
+      "--test-launcher-jobs=1",
+      "--test-launcher-retry-limit=0",
+    ],
+    "label": "//src/tests:angle_perftests",
+    "script": "//testing/scripts/run_performance_tests.py",
+    "type": "script",
+  },
+  "angle_restricted_trace_gold_tests": {
+    "type": "script",
+    "label": "//src/tests/restricted_traces:angle_restricted_trace_gold_tests",
+    "script": "//src/tests/restricted_traces/restricted_trace_gold_tests.py",
+  },
+  "angle_unittests": {
+    "label": "//src/tests:angle_unittests",
+    "script": "//scripts/run_gtest_angle_test.py",
+    "type": "script",
+  },
+  "angle_white_box_perftests": {
+    "label": "//src/tests:angle_white_box_tests",
+    "script": "//scripts/run_gtest_angle_test.py",
+    "type": "script",
+  },
+  "angle_white_box_tests": {
+    "label": "//src/tests:angle_white_box_tests",
+    "script": "//scripts/run_gtest_angle_test.py",
+    "type": "script",
+  },
+}

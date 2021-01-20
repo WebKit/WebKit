@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        document.addEventListener('webkitfullscreenchange', function(event) {
+            // Send a signal to the test controller via alert.
+            alert('visibilitychange');
+        });
+        document.addEventListener('mousedown', function(event) {
+            // Toggle fullscreen
+            var target = document.getElementById('target');
+            if (document.webkitFullscreenElement == target)
+                document.webkitExitFullscreen();
+            else
+                target.webkitRequestFullScreen();
+        });
+    </script>
+    <style>
+    #target {
+        background-color: red;
+        width: 150px;
+        height: 150px;
+    }
+    #target:-webkit-full-screen {
+        width: 400px;
+        height: 400px;
+    }
+    </style>
+</head>
+<body>
+    <div id="target"></div>
+</body>
+</html>

@@ -1,0 +1,53 @@
+# Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+import("../../webrtc.gni")
+
+group("utility") {
+  deps = [ ":audio_frame_operations" ]
+}
+
+rtc_library("audio_frame_operations") {
+  visibility = [ "*" ]
+  sources = [
+    "audio_frame_operations.cc",
+    "audio_frame_operations.h",
+    "channel_mixer.cc",
+    "channel_mixer.h",
+    "channel_mixing_matrix.cc",
+    "channel_mixing_matrix.h",
+  ]
+
+  deps = [
+    "../../api/audio:audio_frame_api",
+    "../../common_audio",
+    "../../rtc_base:checks",
+    "../../rtc_base:deprecation",
+    "../../rtc_base:rtc_base_approved",
+    "../../system_wrappers:field_trial",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("utility_tests") {
+    testonly = true
+    sources = [
+      "audio_frame_operations_unittest.cc",
+      "channel_mixer_unittest.cc",
+      "channel_mixing_matrix_unittest.cc",
+    ]
+    deps = [
+      ":audio_frame_operations",
+      "../../api/audio:audio_frame_api",
+      "../../rtc_base:checks",
+      "../../rtc_base:rtc_base_approved",
+      "../../test:field_trial",
+      "../../test:test_support",
+      "//testing/gtest",
+    ]
+  }
+}

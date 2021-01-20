@@ -1,0 +1,24 @@
+<!-- This test passes if there is no crash. -->
+<!-- It was created by the fuzzer and has been reduced. -->
+<script>
+    function go() {
+
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        q = document.getElementById('root').contentDocument;
+
+        r = document.createRange();
+        s = window.getSelection();
+
+        r.selectNodeContents( q.getElementById('g') );
+        s.addRange( r );
+
+        document.designMode = 'on';
+        q.execCommand('formatBlock', 1, 'h1');
+        q.execCommand('formatBlock', 1, 'h1');
+        q.execCommand('formatBlock', 1, 'h1');
+        document.open();
+    }
+</script>
+<object data="resources/bug79798.svg" id="root" onload="go()"/</object>

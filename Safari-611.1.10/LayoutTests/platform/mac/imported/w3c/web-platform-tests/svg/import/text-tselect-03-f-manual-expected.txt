@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (16,191) size 741x209
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGContainer {g} at (16,191) size 741x209 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,60.00)}]
+        RenderSVGText {text} at (10,55) size 197x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 197x19
+            chunk 1 text run 1 at (10.00,70.00) startOffset 0 endOffset 26 width 196.28: "StartIndex: 0. NumChars: 9"
+        RenderSVGText {text} at (10,76) size 445x72 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 445x71
+            chunk 1 text run 1 at (10.00,128.00) startOffset 0 endOffset 4 width 89.95: "abc "
+            chunk 1 text run 1 at (99.95,128.00) startOffset 0 endOffset 4 width 97.27 RTL: " \x{5D3}\x{5D4}\x{5D5}"
+            chunk 1 text run 1 at (197.22,128.00) startOffset 0 endOffset 3 width 79.80: "123"
+            chunk 1 text run 1 at (277.02,128.00) startOffset 0 endOffset 4 width 94.31 RTL: "\x{5D0}\x{5D1}\x{5D2} "
+            chunk 1 text run 1 at (371.34,128.00) startOffset 0 endOffset 4 width 82.80: " def"
+        RenderSVGContainer {g} at (16,366) size 718x34
+          RenderSVGRect {rect} at (16,366) size 168x34 [fill={[type=SOLID] [color=#0000FF]}] [x=10.00] [y=160.00] [width=100.00] [height=20.00]
+          RenderSVGText {text} at (21,162) size 78x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 77x16
+              chunk 1 (middle anchor) text run 1 at (21.64,175.00) startOffset 0 endOffset 12 width 76.72: "startIndex++"
+          RenderSVGRect {rect} at (200,366) size 167x34 [fill={[type=SOLID] [color=#0000FF]}] [x=120.00] [y=160.00] [width=100.00] [height=20.00]
+          RenderSVGText {text} at (135,162) size 70x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 70x16
+              chunk 1 (middle anchor) text run 1 at (135.11,175.00) startOffset 0 endOffset 12 width 69.79: "startIndex--"
+          RenderSVGRect {rect} at (383,366) size 167x34 [fill={[type=SOLID] [color=#0000FF]}] [x=230.00] [y=160.00] [width=100.00] [height=20.00]
+          RenderSVGText {text} at (240,162) size 80x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 80x16
+              chunk 1 (middle anchor) text run 1 at (240.11,175.00) startOffset 0 endOffset 10 width 79.77: "numChars++"
+          RenderSVGRect {rect} at (566,366) size 168x34 [fill={[type=SOLID] [color=#0000FF]}] [x=340.00] [y=160.00] [width=100.00] [height=20.00]
+          RenderSVGText {text} at (353,162) size 74x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 73x16
+              chunk 1 (middle anchor) text run 1 at (353.58,175.00) startOffset 0 endOffset 10 width 72.85: "numChars--"
+    RenderSVGContainer {g} at (16,517) size 381x62
+      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 229x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.5 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+selection start: position 8 of child 0 {#text} of child 3 {text} of child 3 {g} of child 25 {g} of child 0 {svg} of document
+selection end:   position 17 of child 0 {#text} of child 3 {text} of child 3 {g} of child 25 {g} of child 0 {svg} of document

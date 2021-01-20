@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/dump-as-markup.js"></script>
+<style>
+#test {
+    border: 1px solid black;
+    height: 500px;
+    width: 500px;
+}
+
+.hidden {
+    display: none;
+}
+</style>
+</head>
+<body>
+<p id="description">Tests that pressing Command + I in a rich editing field italizes the selection.</p>
+<p id="manual-instructions" class="hide">To run this test by hand, select all the text below and press Command + I. This test PASSED if the text becomes italic. Otherwise, it FAILED.</p>
+<div id="test" contenteditable="true">This text should be italicized.</div>
+<script>
+let testElement = document.getElementById("test");
+let mutationObserver = null;
+
+function handleChildListModified()
+{
+    mutationObserver.disconnect();
+    Markup.dump(testElement);
+    Markup.notifyDone();
+}
+
+function runTest()
+{
+    if (!window.testRunner) {
+        document.getElementById("manual-instructions").classList.remove("hidden");
+        return;
+    }
+
+    Markup.description(document.getElementById("description").textContent);
+
+    mutationObserver = new MutationObserver(handleChildListModified);
+    mutationObserver.observe(testElement, { childList: true });
+
+    function handleFocus() {
+        window.getSelection().selectAllChildren(testElement);
+        UIHelper.keyDown("i", ["metaKey"]);
+    }
+    testElement.addEventListener("focus", handleFocus, { once: true });
+    UIHelper.activateElement(testElement);
+}
+
+Markup.waitUntilDone();
+runTest();
+</script>
+</body>
+</html>

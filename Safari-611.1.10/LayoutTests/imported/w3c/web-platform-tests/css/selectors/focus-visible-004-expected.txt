@@ -1,0 +1,21 @@
+This test checks that :focus-visible is not triggered by mouse focus on <input> elements which do not take text input, even if appearance: none is used.
+If the user-agent does not claim to support the :focus-visible pseudo-class then SKIP this test.
+Click each element element below to focus it.
+If the element has a red outline, then the test result is FAILURE. If the element has a green background, then the test result is SUCCESS.
+
+Focus me
+Focus me
+Focus me
+Focus me
+
+
+
+
+ Focus me.
+ Focus me.
+
+ Focus me.
+ Focus me.
+
+FAIL Mouse focus on input elements which do not show a virtual keyboard should NOT match :focus-visible - not affected by -webkit-appearance assert_equals: expected "none" but got "auto"
+

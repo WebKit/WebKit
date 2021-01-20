@@ -1,0 +1,41 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div>
+    <div id="Cocoa" data="pass1">
+        <div id="Cappuccino" data="pass2">
+        </div>
+    </div>
+</div>
+<div>
+    <div id="Matcha" data="pass3">
+        <div id="Matcha" data="pass4">
+        </div>
+    </div>
+</div>
+</body>
+<script>
+description('Test #ID selector matching in quirks mode');
+
+var root = document.getElementsByTagName('body')[0];
+
+shouldBe('root.querySelectorAll("#Cocoa").length', '1');
+shouldBeEqualToString('root.querySelectorAll("#Cocoa")[0].getAttribute("data")', 'pass1');
+
+shouldBe('root.querySelectorAll("#Cappuccino").length', '1');
+shouldBeEqualToString('root.querySelectorAll("#Cappuccino")[0].getAttribute("data")', 'pass2');
+
+shouldBe('root.querySelectorAll("#Cocoa > div").length', '1');
+shouldBeEqualToString('root.querySelectorAll("#Cocoa > div")[0].getAttribute("data")', 'pass2');
+
+shouldBe('root.querySelectorAll("#Matcha").length', '2');
+shouldBeEqualToString('root.querySelectorAll("#Matcha")[0].getAttribute("data")', 'pass3');
+shouldBeEqualToString('root.querySelectorAll("#Matcha")[1].getAttribute("data")', 'pass4');
+shouldBe('root.querySelectorAll("#Matcha > div").length', '1');
+shouldBeEqualToString('root.querySelectorAll("#Matcha > div")[0].getAttribute("data")', 'pass4');
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

@@ -1,0 +1,38 @@
+<html> 
+<head>
+
+<style>
+body { 
+    font-size: 24px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    moveSelectionForwardByCharacterCommand(); 
+    for (i = 0; i < 15; i++)
+        extendSelectionForwardByCharacterCommand(); 
+    deleteCommand(); 
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body contenteditable id="root">
+<div id="test">There is a tide</div><br>in the affairs of men
+
+<!-- Do not fall into the trap represented by this bug:
+     <rdar://problem/3890955> 8A314: Forward delete sometimes fails to delete the selected quoted text
+     
+     Delete the whole selection and not just the trailing <br>.
+-->
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

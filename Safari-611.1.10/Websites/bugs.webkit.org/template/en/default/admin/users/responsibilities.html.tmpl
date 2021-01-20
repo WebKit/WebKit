@@ -1,0 +1,57 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% hidden_products = 0 %]
+<table id="user_responsibilities">
+  [% FOREACH item = otheruser.product_responsibilities %]
+    [% IF !user.can_see_product(item.product.name) %]
+      [% hidden_products = 1 %]
+      [% NEXT %]
+    [% END %]
+    <tbody>
+    <tr>
+      <th colspan="4" class="product">Product: [% item.product.name FILTER html %]</th>
+    </tr>
+    <tr>
+      <th>Component</th>
+      <th>Default Assignee</th>
+      <th>Default QA Contact</th>
+      <th>Default CC</th>
+    </tr>
+    [% FOREACH comp = item.components %]
+      <tr>
+        <td>
+          [% IF user.in_group("editcomponents", comp.product_id) %]
+            <a href="editcomponents.cgi?action=edit&amp;product=
+                     [% item.product.name FILTER uri %]&amp;component=
+                     [% comp.name FILTER uri %]">
+          [% END %]
+          [% comp.name FILTER html %]
+          [% IF user.in_group("editcomponents", comp.product_id) %]
+            </a>
+          [% END %]
+        </td>
+        [% FOREACH responsibility = ['default_assignee', 'default_qa_contact'] %]
+          <td class="center">
+            [% comp.$responsibility.id == otheruser.id ? "X" : "&nbsp;" %]
+          </td>
+        [% END %]
+        <td class="center">
+          [% comp.initial_cc.contains(otheruser) ? "X" : "&nbsp;" %]
+        </td>
+      </tr>
+    [% END %]
+    </tbody>
+  [% END %]
+</table>
+
+[% IF hidden_products %]
+  <p class="criticalmessages">The user is involved in at least one product which you cannot
+  see (and so is not listed above). You have to ask an administrator with enough
+  privileges to edit this user's roles for these products.</p>
+[% END %]

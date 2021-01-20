@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>menclose equivalence of notation values</title>
+  </head>
+  <body>
+    <!-- Order does not matter -->
+    <math><mrow><menclose notation="horizontalstrike circle top "><mspace width="100px" height="50px" mathbackground="red"/></menclose></mrow></math>
+
+    <!-- Duplicate does not matter -->
+    <math><mrow><menclose notation="top longdiv circle actuarial left"><mspace width="100px" height="50px" mathbackground="red"/></menclose></mrow></math>
+
+    <!-- Invalid values are ignored -->
+    <math><mrow><menclose notation="circle box"><mspace width="100px" height="50px" mathbackground="red"/></menclose></mrow></math>
+
+    <!-- box is like left right top bottom -->
+    <math><mrow><menclose notation="left right top bottom"><mspace width="100px" height="50px" mathbackground="red"/></menclose></mrow></math>
+
+    <!-- actuarial is like right top -->
+    <math><mrow><menclose notation="right top"><mspace width="100px" height="50px" mathbackground="red"/></menclose></mrow></math>
+
+    <!-- madruwb is like right bottom -->
+    <math><mrow><menclose notation="right bottom"><mspace width="100px" height="50px" mathbackground="red"/></menclose></mrow></math>
+
+    <!-- menclose notations are independent of overall directionality -->
+    <math><mrow><menclose notation="left updiagonalstrike"><mspace width="100px" height="50px" mathbackground="red"/></menclose></mrow></math>
+
+    <!-- menclose notations can be separated by any sequence of whitespace. -->
+    <p>
+      <math><mrow><menclose notation=""><mspace width="100px" height="50px" mathbackground="red"/></menclose></mrow></math>
+      <math><mrow><menclose notation="top"><mspace width="100px" height="50px" mathbackground="red"/></menclose></mrow></math>
+      <math><mrow><menclose notation="top circle"><mspace width="100px" height="50px" mathbackground="red"/></menclose></mrow></math>
+      <math><mrow><menclose notation="top circle horizontalstrike"><mspace width="100px" height="50px" mathbackground="red"/></menclose></mrow></math>
+    </p>
+
+  </body>
+</html>

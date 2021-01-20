@@ -1,0 +1,49 @@
+<!doctype html>
+<head>
+<style>
+table  {
+    border-collapse: collapse;
+    -webkit-writing-mode: vertical-rl;
+}
+#tbody1  {
+    border: solid 20px rgba(0,0,255,0.5); 
+}
+td  {
+    height: 20px;
+    width: 20px;
+}
+</style>
+</head>
+<body>
+<table>
+    <!-- webkit.org/b/119759: Collapsed borders on adjoining table sections should not overpaint each other. 
+         The painting here, though still wrong, is a progression on the behaviour prior to bug 11759 where
+         the left border was painted twice. The painting can be resolved completely when we no longer paint
+         twice at the border joins.-->
+	<tbody id="tbody1">
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tbody>
+	<tbody id="tbody2">
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+</body
+</html>

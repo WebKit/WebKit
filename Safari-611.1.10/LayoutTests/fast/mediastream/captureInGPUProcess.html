@@ -1,0 +1,24 @@
+<!-- webkit-test-runner [ CaptureAudioInGPUProcessEnabled=true CaptureVideoInGPUProcessEnabled=true ] -->
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Capture Audio in GPU process</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay=""></video>
+        <script>
+promise_test(async (test) => {
+    video.srcObject = await navigator.mediaDevices.getUserMedia({ audio: true });
+    await video.play();
+}, "Play audio captured in GPU process");
+
+promise_test(async (test) => {
+    video.srcObject = await navigator.mediaDevices.getUserMedia({ video: true });
+    await video.play();
+}, "Play video captured in GPU process");
+        </script>
+    </body>
+</html>

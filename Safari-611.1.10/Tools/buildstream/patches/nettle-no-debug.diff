@@ -1,0 +1,14 @@
+diff --git a/elements/components/nettle.bst b/elements/components/nettle.bst
+index 026050dd..4f174374 100644
+--- a/elements/components/nettle.bst
++++ b/elements/components/nettle.bst
+@@ -12,6 +12,9 @@ variables:
+   # /bin/sh: line 1: ./desdata: Text file busy
+   notparallel: true
+ 
++  # Work around for crashing qemu when stripping cross-built aarch64 libraries.
++  optimize-debug: "false"
++
+ public:
+   bst:
+     split-rules:

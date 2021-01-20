@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>WebMainResource</key>
+	<dict>
+		<key>WebResourceData</key>
+		<string>&lt;html&gt;&lt;head&gt;
+&lt;script&gt;
+    if (window.testRunner)
+        testRunner.dumpDOMAsWebArchive();
+&lt;/script&gt;
+&lt;link rel="stylesheet" href="resources/test-style.css" type="text/css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div&gt;
+This text should be red sans-serif.
+&lt;/div&gt;
+
+
+&lt;/body&gt;&lt;/html&gt;</string>
+		<key>WebResourceFrameName</key>
+		<string></string>
+		<key>WebResourceMIMEType</key>
+		<string>text/html</string>
+		<key>WebResourceTextEncodingName</key>
+		<string>UTF-8</string>
+		<key>WebResourceURL</key>
+		<string>file:///LayoutTests/webarchive/test-link-href.html</string>
+	</dict>
+	<key>WebSubresources</key>
+	<array>
+		<dict>
+			<key>WebResourceData</key>
+			<string>div { font-family: Arial, Helvetica, sans-serif; color: red; }
+</string>
+			<key>WebResourceMIMEType</key>
+			<string>text/css</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>text/css</string>
+				<key>URL</key>
+				<string>file:///LayoutTests/webarchive/resources/test-style.css</string>
+				<key>expectedContentLength</key>
+				<integer>63</integer>
+			</dict>
+			<key>WebResourceURL</key>
+			<string>file:///LayoutTests/webarchive/resources/test-style.css</string>
+		</dict>
+	</array>
+</dict>
+</plist>

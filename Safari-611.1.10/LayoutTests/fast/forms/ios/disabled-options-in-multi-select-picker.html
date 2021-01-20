@@ -1,0 +1,82 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <style>
+        select {
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <select id="select-multiple" multiple>
+        <option value="1">One</option>
+        <option value="2" disabled>Two</option>
+        <option value="3">Three</option>
+        <option value="4" disabled>Four</option>
+    </select>
+
+    <select id="select-optgroup">
+        <option value="1">One</option>
+        <option value="2" disabled>Two</option>
+        <optgroup label="Group">
+            <option value="3">Three</option>
+            <option value="4" disabled>Four</option>
+        </optgroup>
+    </select>
+</body>
+<script>
+jsTestIsAsync = true;
+
+async function attemptSelectForElementAndRow(element, row) {
+    selectElement = element;
+    option = element.getElementsByTagName("*")[row];
+    previousValue = element.value;
+
+    await UIHelper.selectFormAccessoryPickerRow(row);
+    selected = await UIHelper.selectFormAccessoryHasCheckedItemAtRow(row);
+
+    if (option instanceof HTMLOptGroupElement || option.disabled) {
+        expectedValue = previousValue;
+        shouldBeFalse("selected");
+    } else {
+        expectedValue = option.value;
+        shouldBeTrue("selected");
+    }
+
+    // <select multiple> does not update the value until the accessory is
+    // dismissed. In that case, the previous assertion on `selected` is
+    // enough for this test.
+    if (!selectElement.multiple)
+        shouldBeEqualToString("selectElement.value", expectedValue);
+}
+
+async function testAllItemsInSelectElement(element) {
+    await UIHelper.activateElementAndWaitForInputSession(element);
+
+    for (i = 0; i < element.getElementsByTagName("*").length; i++)
+        await attemptSelectForElementAndRow(element, i);
+
+    element.blur();
+    await UIHelper.waitForKeyboardToHide();
+}
+
+addEventListener("load", async () => {
+    description("This test verifies that disabled options cannot be selected in the multi-select picker on iPhones.");
+
+    debug("Test select multiple\n");
+    const selectMultiple = document.getElementById("select-multiple");
+    await testAllItemsInSelectElement(selectMultiple);
+
+    // <select> with an <optgroup> displays the multi-select picker on iPhones.
+    debug("\nTest select with optgroup\n");
+    const selectWithGroup = document.getElementById("select-optgroup");
+    await testAllItemsInSelectElement(selectWithGroup);
+
+    finishJSTest();
+});
+</script>
+</html>

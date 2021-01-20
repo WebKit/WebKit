@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.fillRect.transform</title>
+<meta name="author" content="Philip Taylor">
+<script src="../common/canvas-tests.js"></script>
+<link rel="stylesheet" href="../common/canvas-tests.css">
+<body class="show_output">
+
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.fillRect.html">fillRect</a>.transform</h1>
+<p class="desc">fillRect is affected by transforms</p>
+
+<div class="refs">Spec references:
+<ul>
+<li><a href="../annotated-spec/canvas.html#testrefs.2d.fillRect">2d.fillRect</a>
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+<p class="output expectedtext">Expected output:<p><img src="../resources/green-100x50.png" class="output expected" id="expected" alt="">
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+ctx.scale(10, 10);
+ctx.translate(0, 5);
+ctx.fillStyle = '#0f0';
+ctx.fillRect(0, -5, 10, 5);
+_assertPixel(canvas, 50,25, 0,255,0,255, "50,25", "0,255,0,255");
+
+
+});
+</script>
+

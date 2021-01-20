@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: SyntaxError: Unexpected keyword 'import'
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN Test evaluation order of modules
+

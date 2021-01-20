@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x31
+  RenderBlock {HTML} at (0,0) size 800x31
+    RenderBody {BODY} at (0,0) size 800x30 [bgcolor=#000000]
+      RenderBlock {A} at (0,0) size 800x30 [color=#0000EE] [bgcolor=#FF0000]
+        RenderText {#text} at (10,5) size 40x19
+          text run at (10,5) width 40: "Home"
+layer at (55,190) size 50x50
+  RenderImage {IMG} at (55,190) size 50x50
+layer at (55,190) size 50x50
+  RenderBlock (positioned) {DIV} at (55,190) size 50x50 [bgcolor=#008000]

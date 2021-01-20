@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100" height="100">
+<script>
+    <![CDATA[
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() { parent.contentLoaded() }, 0);
+        }, false);
+    ]]>
+</script>
+<defs>
+    <font-face font-family="name">
+        <font-face-src>
+            <font-face-uri xlink:href="http://127.0.0.1:8000/misc/resources/hang-connection.php"/>
+        </font-face-src>
+    </font-face>
+</defs>
+</svg>

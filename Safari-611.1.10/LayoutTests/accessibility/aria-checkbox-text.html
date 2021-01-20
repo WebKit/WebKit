@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="radiobuttongroup">
+        <div role="checkbox" id="check1" tabindex="0" aria-checked="true">One</div>
+        <div role="checkbox" id="check2" tabindex="0">Two</div>
+        <div role="checkbox" id="check3" tabindex="0" id="foo" aria-labelledby="foo">Three</div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that ARIA checkboxes use accessible name computation.");
+
+    if (window.accessibilityController) {
+
+          var checkbox = document.getElementById("check1");
+          checkbox.focus();
+          checkbox = accessibilityController.focusedElement;
+          debug("checkbox.title is " + checkbox.title);
+
+          checkbox = document.getElementById("check2");
+          checkbox.focus();
+          checkbox = accessibilityController.focusedElement;
+          debug("checkbox.title is " + checkbox.title);
+
+          checkbox = document.getElementById("check3");
+          checkbox.focus();
+          checkbox = accessibilityController.focusedElement;
+          debug("checkbox.title is " + checkbox.title);
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

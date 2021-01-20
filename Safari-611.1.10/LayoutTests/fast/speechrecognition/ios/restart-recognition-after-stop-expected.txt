@@ -1,0 +1,23 @@
+Verify that recognition can be restarted after being stopped.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS recognition = new webkitSpeechRecognition() did not throw exception.
+PASS recognition.start() did not throw exception.
+Received start event
+Received audiostart event
+Received speechstart event
+PASS recognition.stop() did not throw exception.
+Received end event
+(Will restart recognition)
+PASS recognition.start() did not throw exception.
+Received start event
+Received audiostart event
+Received speechstart event
+PASS recognition.stop() did not throw exception.
+Received end event
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <rect id="rect-1" x="10" y="10" width="50" height="100" fill="green"/>
+    <rect id="rect-2" x="110" y="10" width="50" height="100" fill="green"/>
+    <rect id="rect-3" x="210" y="10" width="50" height="100" fill="green"/>
+    <rect id="rect-4" x="310" y="10" width="50" height="100" fill="green"/>
+    <use y="110" href="#rect-1"/>
+    <use y="110" href="#rect-2"/>
+    <use y="110" href="#rect-3"/>
+    <use y="110" href="#rect-4"/>
+</svg>

@@ -1,0 +1,7 @@
+2d.state.saverestore.transformation
+save()/restore() affects the current transformation matrix
+Spec references: 2d.state.transformation
+Actual output:
+Expected output:
+
+Passed

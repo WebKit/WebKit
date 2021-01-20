@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="firstDiv"></div>
+<div id="secondDiv"></div>
+<script>
+description("Tests calling property setter on a different object.");
+
+var firstDiv = document.getElementById("firstDiv");
+var secondDiv = document.getElementById("secondDiv");
+
+shouldBeEqualToString('firstDiv.innerText', '');
+shouldBeEqualToString('secondDiv.innerText', '');
+
+evalAndLog('Object.getOwnPropertyDescriptor(firstDiv.__proto__.__proto__, "innerText").set.call(secondDiv, "test")');
+
+shouldBeEqualToString('firstDiv.innerText', '');
+shouldBeEqualToString('Object.getOwnPropertyDescriptor(secondDiv.__proto__.__proto__, "innerText").get.call(firstDiv)', '');
+shouldBeEqualToString('secondDiv.innerText', 'test');
+shouldBeEqualToString('Object.getOwnPropertyDescriptor(firstDiv.__proto__.__proto__, "innerText").get.call(secondDiv)', 'test');
+
+</script>
+</body>
+<script src="../../resources/js-test-post.js"></script>
+</html>

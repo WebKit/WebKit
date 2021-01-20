@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="../resources/cookie-utilities.js"></script>
+<body>
+<script id="srcdoc-script" type="text/plain">
+async function runTest()
+{
+    document.body.appendChild(document.createTextNode(window.name)); // For debugging
+
+    window.top.invalidateCachedCookies();
+
+    window.top.debug("<br>Cookies sent with HTTP request:");
+    await window.top.shouldHaveCookieWithValue("strict", "8");
+    await window.top.shouldHaveCookieWithValue("implicit-strict", "8");
+    await window.top.shouldHaveCookieWithValue("strict-because-invalid-SameSite-value", "8");
+    await window.top.shouldHaveCookieWithValue("lax", "8");
+
+    window.top.debug("<br>Cookies visible in DOM:");
+    window.top.shouldHaveDOMCookieWithValue("strict", "8");
+    window.top.shouldHaveDOMCookieWithValue("implicit-strict", "8");
+    window.top.shouldHaveDOMCookieWithValue("strict-because-invalid-SameSite-value", "8");
+    window.top.shouldHaveDOMCookieWithValue("lax", "8");
+}
+</script>
+<script>
+window.jsTestIsAsync = true;
+
+description("Tests that Same-Site cookies for 127.0.0.1 can be retrieved from a srcdoc iframe.");
+
+const SrcdocScript = `<script>${document.getElementById("srcdoc-script").text}</` + "script>";
+
+function appendSrcdocIframeToBodyOfDocument(document, name, content, callback)
+{
+    let iframe = document.createElement("iframe");
+    iframe.name = name;
+    iframe.onload = () => callback(iframe);
+    iframe.srcdoc = content;
+    document.body.appendChild(iframe);
+}
+
+async function testRetrieveCookiesFromSrcdocIframe()
+{
+    let appendIFrameAndWaitUntilLoaded = new Promise((resolved) => appendSrcdocIframeToBodyOfDocument(document, "A", SrcdocScript, resolved));
+    let iframe = await appendIFrameAndWaitUntilLoaded;
+    await iframe.contentWindow.runTest();
+}
+
+async function testRetrieveCookiesFromNestedSrcdocIframe()
+{
+    let appendIFrameAndWaitUntilLoaded = new Promise((resolved) => appendSrcdocIframeToBodyOfDocument(document, "B", "<body></body>", resolved));
+    let iframe = await appendIFrameAndWaitUntilLoaded;
+    let appendInnerIFrameAndWaitUntilLoaded = new Promise((resolved) => appendSrcdocIframeToBodyOfDocument(iframe.contentDocument, "B_1", SrcdocScript, resolved));
+    let innerIframe = await appendInnerIFrameAndWaitUntilLoaded;
+    await innerIframe.contentWindow.runTest();
+}
+
+async function runTest()
+{
+    await resetCookies();
+    await setCookie("strict", "8", {"SameSite": "Strict", "Max-Age": 100, "path": "/"});
+    await setCookie("implicit-strict", "8", {"SameSite": null, "Max-Age": 100, "path": "/"});
+    await setCookie("strict-because-invalid-SameSite-value", "8", {"SameSite": "invalid", "Max-Age": 100, "path": "/"});
+    await setCookie("lax", "8", {"SameSite": "Lax", "Max-Age": 100, "path": "/"});
+
+    debug("Retrieve cookies from srcdoc iframe:");
+    await testRetrieveCookiesFromSrcdocIframe();
+
+    debug("<br>Retrieve cookies from srcdoc iframe inside srcdoc iframe:")
+    await testRetrieveCookiesFromNestedSrcdocIframe();
+
+    for(let iframe of document.querySelectorAll("iframe"))
+        document.body.removeChild(iframe);
+
+    await resetCookies();
+    finishJSTest();
+}
+runTest();
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+This tests that in a standalone media document with audio content, the media element has visible controls.
+
+
+EXPECTED (panel.offsetWidth > '1') OK
+EXPECTED (panel.offsetHeight > '1') OK
+END OF TEST
+

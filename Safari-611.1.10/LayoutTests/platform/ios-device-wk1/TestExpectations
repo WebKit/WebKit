@@ -1,0 +1,9 @@
+# These are the layout test expectations for Apple's iOS device port of WebKit1
+#
+# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+#
+
+webkit.org/b/196286 fast/events/touch/ios/content-observation/remove-subframe-while-observing.html [ Failure ]
+
+# Skip IsLoggedIn
+http/tests/is-logged-in/ [ Skip ]

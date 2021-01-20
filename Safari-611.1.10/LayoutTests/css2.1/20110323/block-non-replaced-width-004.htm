@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>CSS Test: Solving over-constrained situation for block-level non-replaced elements in normal flow and direction is right-to-left</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/">
+        <link rel="help" href="http://www.w3.org/TR/CSS21/visudet.html#blockwidth">
+        <meta name="flags" content="">
+        <meta name="assert" content="When direction is right-to-left, margin-left is ignored in an over-constrained situation.">
+        <style type="text/css">
+            div
+            {
+                direction: rtl;
+                position: relative;
+            }
+            #div1
+            {
+                background: orange;
+                width: 100px;
+            }
+            #div1 div
+            {
+                background-color: orange;
+                border-left: 10px solid orange;
+                border-right: 10px solid orange;
+                height: 30px;
+                margin-left: 10px;
+                margin-right: 10px;
+                padding-left: 10px;
+                padding-right: 10px;
+                width: 100px;
+            }
+            #div2
+            {
+                background-color: blue;
+                height: 30px;
+                position: absolute;
+                width: 150px;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if the orange and blue boxes below are the same width.</p>
+        <div>
+            <div id="div1">
+                <div></div>
+            </div>
+            <div id="div2"></div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,6 @@
+Viewport:
+
+scale	0.78376
+maxScale	5.00000
+minScale	0.78376
+visibleRect	{"left":"0.00000","top":"0.00000","width":"979.88843","height":"1281.00000"}

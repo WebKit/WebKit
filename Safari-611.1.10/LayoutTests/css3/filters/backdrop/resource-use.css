@@ -1,0 +1,11 @@
+/* The total backdrop filter limit is 1242 * 2208 * 10, so make each div 1/10th of that */
+div {
+      -webkit-backdrop-filter: blur(1px);
+      width: 1242px;
+      height: 2208px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      border: 1px solid blue;
+      box-sizing: border-box;
+}

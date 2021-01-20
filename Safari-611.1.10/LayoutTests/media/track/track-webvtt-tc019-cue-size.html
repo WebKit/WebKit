@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>            
+
+            var numberOfTrackTests = 2;
+            
+            function trackLoaded()
+            {
+                numberOfTracksLoaded++;
+                if (numberOfTracksLoaded == numberOfTrackTests) {
+                    testTrack(0);
+                    testTrackError(1);
+                }
+            }
+            
+            function testTrack(i)
+            {
+                findMediaElement();
+                var expected = 
+                {
+                    length : 3,
+                    tests:
+                    [
+                        {
+                            property : "size",
+                            values : [100, 10, 0],
+                        },
+                    ],
+                };
+                testCues(i, expected);
+                
+                allTestsEnded();
+            }
+
+            function testTrackError(i)
+            {
+                findMediaElement();
+                var expected = 
+                {
+                    length : 3,
+                    tests:
+                    [
+                        {
+                            property : "size",
+                            values : [100, 100, 100],
+                        },
+                    ],
+                };
+                testCues(i, expected);
+                
+                allTestsEnded();
+            }
+        </script>
+    </head>
+    <body onload="enableAllTextTracks()">
+        <p>Tests cue size from settings.</p>
+        <video>
+            <track src="captions-webvtt/tc019-cue-size.vtt" onload="trackLoaded()">
+            <track src="captions-webvtt/tc019-cue-size-bad.vtt" onload="trackLoaded()">
+        </video>
+    </body>
+</html>

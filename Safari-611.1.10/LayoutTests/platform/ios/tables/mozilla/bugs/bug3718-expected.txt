@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 122x52 [border: (3px outset #808080)]
+        RenderTableSection {TBODY} at (3,3) size 116x46
+          RenderTableRow {TR} at (0,0) size 116x46
+            RenderTableCell {TD} at (0,0) size 116x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (1,1) size 114x20
+                RenderText {#text} at (0,0) size 114x19
+                  text run at (0,0) width 114: "Family Essentials"
+              RenderTable {TABLE} at (1,21) size 26x24 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 24x22
+                  RenderTableRow {TR} at (0,0) size 24x22
+                    RenderTableCell {TD} at (0,0) size 24x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 22x19
+                        text run at (1,1) width 22: "foo"

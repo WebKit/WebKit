@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="../../../../resources/basic-gestures.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+    
+        async function runTest()
+        {
+            if (!testRunner.runUIScript)
+                return;
+
+            var output = '';
+            var firstTargetRect = document.getElementById('firstSelection').getBoundingClientRect();
+            var secondTargetRect = document.getElementById('secondSelection').getBoundingClientRect();
+        
+            var pressPointX = firstTargetRect.x + firstTargetRect.width / 2;
+            var pressPointY = firstTargetRect.y + firstTargetRect.height / 2;
+            var dragX = secondTargetRect.x + secondTargetRect.width / 2;
+            var dragY = secondTargetRect.y + secondTargetRect.height / 2;
+        
+            await longPressAndHoldAtPoint(pressPointX, pressPointY);
+            if (document.getSelection().toString() == "magna")
+                output += 'PASS: Correct Selection';
+            else
+                output += 'FAIL: failed to select a word as a result of a long press. Incorrect Selection: ' + document.getSelection().toString();
+            output += '<br>';
+
+            var result = await continueTouchAndDragFromPointToPoint(pressPointX, pressPointY, dragX, dragY);
+            if (document.getSelection().toString() == "eiusmod tempor incididunt ut labore et dolore magna")
+                output += 'PASS: Correct Selection';
+            else
+                output += 'FAIL: failed to reduce selection to a single character by dragging down. Incorrect Selection: ' + document.getSelection().toString();
+            output += '<br>';
+            output += result;
+            document.getElementById('target').innerHTML = output;
+            testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+    <style>
+        #target {
+            height: 400px;
+            width: 300px;
+            background-color: silver;
+            font-family: monospace;
+            font-size: 18px;
+        }
+    </style>
+    <meta name="viewport" content="initial-scale=1">
+</head>
+<body>
+    <div id="target">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut <span id="secondSelection">labore</span> et dolore <span id="firstSelection">magna</span> aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+        
+        This test requires UIScriptController to run.
+    </div>
+</body>
+</html>

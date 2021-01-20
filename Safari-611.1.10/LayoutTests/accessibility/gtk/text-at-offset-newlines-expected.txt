@@ -1,0 +1,19 @@
+This is a test. This is the second sentence. And this the third.
+
+This tests the ability to get element text for different granularities and offsets.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS content.characterAtOffset(0) is 'T, 0, 1'
+PASS content.wordAtOffset(0) is 'This , 0, 5'
+PASS content.wordAtOffset(4) is 'This , 0, 5'
+PASS content.wordAtOffset(10) is 'test. , 10, 16'
+PASS content.wordAtOffset(58) is 'third., 58, 64'
+PASS content.sentenceAtOffset(0) is 'This is a test. , 0, 16'
+PASS content.sentenceAtOffset(15) is 'This is a test. , 0, 16'
+PASS content.lineAtOffset(0) is 'This is a test. This is the second sentence. And this the third., 0, 64'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

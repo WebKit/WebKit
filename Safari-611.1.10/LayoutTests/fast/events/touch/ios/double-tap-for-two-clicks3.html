@@ -1,0 +1,53 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width initial-scale=1 user-scalable=no">
+<title>This tests that we fire two click events on double tap when multiple dblclick handlers are present.</title>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+#doubleTapthis {
+    position: relative;
+    left: 10px;
+    top: 10px;
+    width: 400px;
+    height: 400px;
+    border: 1px solid green;
+}
+</style>
+</head>
+<body onload="test()">
+<div id=doubleTapthis>PASS if '[click][click][double click]' text is shown below.</div>
+<pre id=result></pre>
+<script>
+
+doubleTapthis.addEventListener("click", function( event ) {   
+    result.innerHTML = result.innerHTML + "[click]";
+}, false);
+
+function dblclickHandler(event) {
+    result.innerHTML = result.innerHTML + "[double click]";
+    if (window.testRunner)
+        setTimeout("testRunner.notifyDone()", 0);
+}
+
+function dblclickHandlerForResult(event) {
+    result.innerHTML = result.innerHTML + "[should not double click]";
+}
+
+doubleTapthis.addEventListener("dblclick", dblclickHandler, false);
+result.addEventListener("dblclick", dblclickHandlerForResult, false);
+
+async function test() {
+    doubleTapthis.removeEventListener("result", dblclickHandler, false);
+
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    await UIHelper.humanSpeedDoubleTapAt(doubleTapthis.offsetLeft, doubleTapthis.offsetTop);
+}
+</script>
+</body>
+</html>

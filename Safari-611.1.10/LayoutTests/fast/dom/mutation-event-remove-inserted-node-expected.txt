@@ -1,0 +1,3 @@
+This test verifies that a mutation event that removes inserted nodes from the document doesn't crash upon the insertion of a new node into the document.
+
+PASS: You didn't crash.

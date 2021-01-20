@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+function runTest()
+{
+    if (!window.testRunner || !window.internals) {
+        testFailed("You must run this test in the test tool.");
+        finishJSTest();
+        return;
+    }
+    testRunner.clearAllDatabases();
+    internals.setPageDefersLoading(true);
+
+    var database = openDatabase("DatabaseTest", "1.0", "Test", 1024 /* bytes */);
+    database.transaction(new Function(), new Function(), function () { testPassed("Callback invoked."); finishJSTest(); });
+}
+</script>
+</head>
+<body>
+<script>
+description("This tests that a SQL success callback completes when the page defers loading.");
+runTest();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

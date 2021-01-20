@@ -1,0 +1,36 @@
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function gc() {
+        if (window.GCController)
+            return GCController.collect();
+
+        // Force garbage collection.
+        for(var i=0;i<100;i++)
+            a = new Uint8Array(1024*1024);
+    }
+
+    function onNodeInsertedTspan() {
+        switchElement.setAttribute("y", "0 1 100");
+        document.execCommand("justifyCenter", false);
+        gc();
+    }
+
+    function onLoadUseElement() {
+        tspanElement.addEventListener("DOMNodeInserted", onNodeInsertedTspan);
+        document.execCommand("hiliteColor", false, "red");
+    }
+</script>
+<body>
+    <p>This test passes if it doesn't crash.</p>
+    <svg id="svgElement">
+        <switch id="switchElement">
+            <tref id="terfElement_1" xlink:href="#terfElement_2" />
+            <tref id="terfElement_2">
+                <tspan id="tspanElement" />
+            </tref>
+            <use id="useElement_1" xlink:href="#svgElement" onload="onLoadUseElement()" />
+        </switch>
+    </svg>
+</body>

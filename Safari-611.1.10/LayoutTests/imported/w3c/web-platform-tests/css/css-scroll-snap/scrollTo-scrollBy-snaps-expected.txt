@@ -1,0 +1,42 @@
+
+FAIL assign scrollLeft and scrollTop for {left: 800} on div lands on (1000, 0) assert_equals: expected 1000 but got 800
+FAIL assign scrollLeft and scrollTop for {left: 800} on viewport-defining element lands on (1000, 0) assert_equals: expected 1000 but got 800
+FAIL scrollTo({left: 800}) on div lands on (1000, 0) assert_equals: expected 1000 but got 800
+FAIL scrollBy({left: 800}) on div lands on (1000, 0) assert_equals: expected 1000 but got 800
+FAIL scrollTo({left: 800}) on viewport-defining element lands on (1000, 0) assert_equals: expected 1000 but got 800
+FAIL scrollBy({left: 800}) on viewport-defining element lands on (1000, 0) assert_equals: expected 1000 but got 800
+FAIL scrollTo({left: 800}) on window lands on (1000, 0) assert_equals: expected 1000 but got 800
+FAIL scrollBy({left: 800}) on window lands on (1000, 0) assert_equals: expected 1000 but got 800
+FAIL assign scrollLeft and scrollTop for {top: 900} on div lands on (0, 1000) assert_equals: expected 1000 but got 900
+FAIL assign scrollLeft and scrollTop for {top: 900} on viewport-defining element lands on (0, 1000) assert_equals: expected 1000 but got 900
+FAIL scrollTo({top: 900}) on div lands on (0, 1000) assert_equals: expected 1000 but got 900
+FAIL scrollBy({top: 900}) on div lands on (0, 1000) assert_equals: expected 1000 but got 900
+FAIL scrollTo({top: 900}) on viewport-defining element lands on (0, 1000) assert_equals: expected 1000 but got 900
+FAIL scrollBy({top: 900}) on viewport-defining element lands on (0, 1000) assert_equals: expected 1000 but got 900
+FAIL scrollTo({top: 900}) on window lands on (0, 1000) assert_equals: expected 1000 but got 900
+FAIL scrollBy({top: 900}) on window lands on (0, 1000) assert_equals: expected 1000 but got 900
+FAIL assign scrollLeft and scrollTop for {left: 900, top: 800} on div lands on (1000, 1000) assert_equals: expected 1000 but got 900
+FAIL assign scrollLeft and scrollTop for {left: 900, top: 800} on viewport-defining element lands on (1000, 1000) assert_equals: expected 1000 but got 900
+FAIL scrollTo({left: 900, top: 800}) on div lands on (1000, 1000) assert_equals: expected 1000 but got 900
+FAIL scrollBy({left: 900, top: 800}) on div lands on (1000, 1000) assert_equals: expected 1000 but got 900
+FAIL scrollTo({left: 900, top: 800}) on viewport-defining element lands on (1000, 1000) assert_equals: expected 1000 but got 900
+FAIL scrollBy({left: 900, top: 800}) on viewport-defining element lands on (1000, 1000) assert_equals: expected 1000 but got 900
+FAIL scrollTo({left: 900, top: 800}) on window lands on (1000, 1000) assert_equals: expected 1000 but got 900
+FAIL scrollBy({left: 900, top: 800}) on window lands on (1000, 1000) assert_equals: expected 1000 but got 900
+FAIL assign scrollLeft and scrollTop for {left: 800, top: -100} on div lands on (1000, 0) assert_equals: expected 1000 but got 800
+FAIL assign scrollLeft and scrollTop for {left: 800, top: -100} on viewport-defining element lands on (1000, 0) assert_equals: expected 1000 but got 800
+FAIL scrollTo({left: 800, top: -100}) on div lands on (1000, 0) assert_equals: expected 1000 but got 800
+FAIL scrollBy({left: 800, top: -100}) on div lands on (1000, 0) assert_equals: expected 1000 but got 800
+FAIL scrollTo({left: 800, top: -100}) on viewport-defining element lands on (1000, 0) assert_equals: expected 1000 but got 800
+FAIL scrollBy({left: 800, top: -100}) on viewport-defining element lands on (1000, 0) assert_equals: expected 1000 but got 800
+FAIL scrollTo({left: 800, top: -100}) on window lands on (1000, 0) assert_equals: expected 1000 but got 800
+FAIL scrollBy({left: 800, top: -100}) on window lands on (1000, 0) assert_equals: expected 1000 but got 800
+FAIL assign scrollLeft and scrollTop for {left: 10000, top: -100} on div lands on (1000, 0) assert_equals: expected 1000 but got 3215
+FAIL assign scrollLeft and scrollTop for {left: 10000, top: -100} on viewport-defining element lands on (1000, 0) assert_equals: expected 1000 but got 3215
+FAIL scrollTo({left: 10000, top: -100}) on div lands on (1000, 0) assert_equals: expected 1000 but got 3215
+FAIL scrollBy({left: 10000, top: -100}) on div lands on (1000, 0) assert_equals: expected 1000 but got 3215
+FAIL scrollTo({left: 10000, top: -100}) on viewport-defining element lands on (1000, 0) assert_equals: expected 1000 but got 3215
+FAIL scrollBy({left: 10000, top: -100}) on viewport-defining element lands on (1000, 0) assert_equals: expected 1000 but got 3215
+FAIL scrollTo({left: 10000, top: -100}) on window lands on (1000, 0) assert_equals: expected 1000 but got 3215
+FAIL scrollBy({left: 10000, top: -100}) on window lands on (1000, 0) assert_equals: expected 1000 but got 3215
+

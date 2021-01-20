@@ -1,0 +1,36 @@
+<html manifest="resources/simple-video-sync.manifest">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText()
+    testRunner.waitUntilDone();
+}
+
+function finishTest(message) {
+    document.getElementById('result').innerHTML = message;
+    testRunner.notifyDone();
+}
+
+function cached()
+{
+    try {
+        var req = new XMLHttpRequest();
+        req.open("GET", "resources/fake-video.mp4", false);
+        req.send();
+        if (req.getResponseHeader("Content-Type") != "video/mp4")
+            finishTest("FAILURE: Did not get correct content type from cached resource");
+        if (req.responseText.trim() != "This is a fake video")
+            finishTest("FAILURE: Did not get correct data from cached resource");
+        finishTest("SUCCESS");
+    } catch (e) {
+        finishTest("FAILURE: Could not load video data from cache");
+    }
+}
+
+applicationCache.addEventListener('cached', cached, false);
+applicationCache.addEventListener('noupdate', cached, false);
+
+</script>
+<div>This tests that the application cache works for video retrieved by sync XMLHttpRequest</div>
+
+<div id="result">FAILURE</div>
+</html>

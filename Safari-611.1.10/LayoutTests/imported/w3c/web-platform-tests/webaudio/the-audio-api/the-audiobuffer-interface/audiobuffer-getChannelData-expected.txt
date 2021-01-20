@@ -1,0 +1,15 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "buffer-eq"
+PASS Executing "buffer-not-eq"
+PASS Audit report
+PASS > [buffer-eq]
+PASS   buffer.getChannelData(0) === buffer.getChannelData(0) is equal to true.
+PASS   buffer.getChannelData(1) === buffer.getChannelData(1) is equal to true.
+PASS < [buffer-eq] All assertions passed. (total 2 assertions)
+PASS > [buffer-not-eq]
+PASS   buffer1.getChannelData(0) === buffer2.getChannelData(0) is equal to false.
+PASS   buffer1.getChannelData(1) === buffer2.getChannelData(1) is equal to false.
+PASS < [buffer-not-eq] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
+

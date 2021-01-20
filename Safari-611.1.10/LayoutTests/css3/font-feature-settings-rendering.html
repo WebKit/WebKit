@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "FontFeaturesTestOTF";
+    src: url("resources/FontWithFeatures.otf") format("opentype");
+}
+@font-face {
+    font-family: "FontFeaturesTestTTF";
+    src: url("resources/FontWithFeatures.ttf") format("truetype");
+}
+</style>
+</head>
+<body>
+This tests that font features are able to be turned on and off as desired. It uses a special font
+designed specifically for this purpose. The test passes if you see a sequence of alternating check
+marks and X below.
+<div style="font-family: FontFeaturesTestOTF;">AB</div>
+<div style="font-family: FontFeaturesTestTTF;">AB</div>
+<div id="insertionPoint"></div>
+<div id="insertionPoint2"></div>
+<div id="insertionPoint3"></div>
+<div id="insertionPoint4"></div>
+<script>
+var insertionPoint = document.getElementById("insertionPoint");
+var insertionPoint2 = document.getElementById("insertionPoint2");
+var insertionPoint3 = document.getElementById("insertionPoint3");
+var insertionPoint4 = document.getElementById("insertionPoint4");
+function addElement(placeToInsert, familyName, feature, c) {
+    ["0", "1"].map(function(state) {
+        var element = document.createElement("span");
+        element.textContent = c;
+        element.style.fontFamily = familyName;
+        element.style.fontFeatureSettings = '"' + feature + '" ' + state;
+        placeToInsert.appendChild(element);
+    });
+    placeToInsert.appendChild(document.createTextNode(" "));
+}
+
+addElement(insertionPoint, "FontFeaturesTestOTF", "liga", "C");
+addElement(insertionPoint, "FontFeaturesTestOTF", "clig", "D");
+addElement(insertionPoint, "FontFeaturesTestOTF", "dlig", "E");
+addElement(insertionPoint, "FontFeaturesTestOTF", "hlig", "F");
+addElement(insertionPoint, "FontFeaturesTestOTF", "calt", "G");
+addElement(insertionPoint, "FontFeaturesTestOTF", "subs", "H");
+addElement(insertionPoint, "FontFeaturesTestOTF", "sups", "I");
+addElement(insertionPoint, "FontFeaturesTestOTF", "smcp", "J");
+addElement(insertionPoint, "FontFeaturesTestOTF", "c2sc", "K");
+addElement(insertionPoint, "FontFeaturesTestOTF", "pcap", "L");
+addElement(insertionPoint, "FontFeaturesTestOTF", "c2pc", "M");
+addElement(insertionPoint, "FontFeaturesTestOTF", "unic", "N");
+addElement(insertionPoint, "FontFeaturesTestOTF", "titl", "O");
+addElement(insertionPoint, "FontFeaturesTestOTF", "lnum", "P");
+addElement(insertionPoint, "FontFeaturesTestOTF", "onum", "Q");
+addElement(insertionPoint, "FontFeaturesTestOTF", "pnum", "R");
+addElement(insertionPoint, "FontFeaturesTestOTF", "tnum", "S");
+addElement(insertionPoint, "FontFeaturesTestOTF", "frac", "T");
+//addElement(insertionPoint, "FontFeaturesTestOTF", "afrc", "U");
+addElement(insertionPoint, "FontFeaturesTestOTF", "ordn", "V");
+addElement(insertionPoint, "FontFeaturesTestOTF", "zero", "W");
+addElement(insertionPoint, "FontFeaturesTestOTF", "hist", "X");
+addElement(insertionPoint, "FontFeaturesTestOTF", "jp78", "Y");
+addElement(insertionPoint, "FontFeaturesTestOTF", "jp83", "Z");
+addElement(insertionPoint, "FontFeaturesTestOTF", "jp90", "a");
+addElement(insertionPoint, "FontFeaturesTestOTF", "jp04", "b");
+addElement(insertionPoint, "FontFeaturesTestOTF", "smpl", "c");
+addElement(insertionPoint, "FontFeaturesTestOTF", "trad", "d");
+addElement(insertionPoint, "FontFeaturesTestOTF", "fwid", "e");
+addElement(insertionPoint, "FontFeaturesTestOTF", "pwid", "f");
+addElement(insertionPoint, "FontFeaturesTestOTF", "ruby", "g");
+
+addElement(insertionPoint2, "FontFeaturesTestTTF", "liga", "C");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "liga", "D");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "clig", "C");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "clig", "D");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "dlig", "G");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "hlig", "I");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "calt", "L");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "subs", "O");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "sups", "P");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "smcp", "S");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "c2sc", "V");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "pcap", "T");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "c2pc", "W");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "unic", "Y");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "titl", "a");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "lnum", "c");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "onum", "d");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "pnum", "f");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "tnum", "g");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "frac", "i");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "afrc", "j");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "ordn", "Q");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "zero", "k");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "hist", "K");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "jp78", "m");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "jp83", "n");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "jp90", "o");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "jp04", "p");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "smpl", "q");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "trad", "r");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "fwid", "t");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "pwid", "u");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "ruby", "v");
+
+addElement(insertionPoint3, "FontWithFeaturesOTF", "liga", "C");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "clig", "D");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "dlig", "E");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "hlig", "F");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "calt", "G");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "subs", "H");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "sups", "I");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "smcp", "J");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "c2sc", "K");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "pcap", "L");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "c2pc", "M");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "unic", "N");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "titl", "O");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "lnum", "P");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "onum", "Q");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "pnum", "R");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "tnum", "S");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "frac", "T");
+//addElement(insertionPoint3, "FontWithFeaturesOTF", "afrc", "U");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "ordn", "V");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "zero", "W");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "hist", "X");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "jp78", "Y");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "jp83", "Z");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "jp90", "a");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "jp04", "b");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "smpl", "c");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "trad", "d");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "fwid", "e");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "pwid", "f");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "ruby", "g");
+
+addElement(insertionPoint4, "FontWithFeaturesTTF", "liga", "C");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "liga", "D");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "clig", "C");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "clig", "D");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "dlig", "G");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "hlig", "I");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "calt", "L");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "subs", "O");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "sups", "P");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "smcp", "S");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "c2sc", "V");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "pcap", "T");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "c2pc", "W");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "unic", "Y");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "titl", "a");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "lnum", "c");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "onum", "d");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "pnum", "f");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "tnum", "g");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "frac", "i");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "afrc", "j");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "ordn", "Q");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "zero", "k");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "hist", "K");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "jp78", "m");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "jp83", "n");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "jp90", "o");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "jp04", "p");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "smpl", "q");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "trad", "r");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "fwid", "t");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "pwid", "u");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "ruby", "v");
+</script>
+</body>
+</html>

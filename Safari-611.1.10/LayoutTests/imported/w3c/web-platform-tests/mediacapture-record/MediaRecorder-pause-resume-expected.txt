@@ -1,0 +1,3 @@
+
+PASS MediaRecorder handles pause() and resume() calls appropriately in state and events
+

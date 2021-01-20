@@ -1,0 +1,49 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (50,5) size 689x506
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGText {text} at (30,3) size 414x46 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 414x45
+          chunk 1 text run 1 at (30.00,40.00) startOffset 0 endOffset 25 width 413.17: "'onload' event attribute."
+      RenderSVGContainer {g} at (79,75) size 607x436
+        RenderSVGContainer {g} at (79,75) size 184x215 [transform={m=((1.00,0.00)(0.00,1.00)) t=(77.50,45.00)}]
+          RenderSVGRect {rect} at (129,75) size 134x134 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=80.00] [height=80.00]
+          RenderSVGText {text} at (-30,83) size 97x46 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 97x45
+              chunk 1 text run 1 at (-30.00,120.00) startOffset 0 endOffset 5 width 96.08: "1: No"
+        RenderSVGContainer {g} at (287,75) size 191x215 [transform={m=((1.00,0.00)(0.00,1.00)) t=(202.50,45.00)}]
+          RenderSVGRect {rect} at (337,75) size 134x134 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=80.00] [height=80.00]
+          RenderSVGText {text} at (-30,83) size 114x46 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 114x45
+              chunk 1 text run 1 at (-30.00,120.00) startOffset 0 endOffset 6 width 113.97: "2: Yes"
+        RenderSVGContainer {g} at (495,75) size 191x215 [transform={m=((1.00,0.00)(0.00,1.00)) t=(327.50,45.00)}]
+          RenderSVGContainer {g} at (545,75) size 135x134
+            RenderSVGRect {rect} at (545,75) size 135x134 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=80.00] [height=80.00]
+          RenderSVGText {text} at (-30,83) size 114x46 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 114x45
+              chunk 1 text run 1 at (-30.00,120.00) startOffset 0 endOffset 6 width 113.97: "3: Yes"
+        RenderSVGContainer {g} at (79,296) size 191x215 [transform={m=((1.00,0.00)(0.00,1.00)) t=(77.50,178.00)}]
+          RenderSVGViewportContainer {svg} at (129,296) size 134x134
+            RenderSVGRect {rect} at (129,296) size 134x134 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=80.00] [height=80.00]
+          RenderSVGText {text} at (-30,83) size 114x46 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 114x45
+              chunk 1 text run 1 at (-30.00,120.00) startOffset 0 endOffset 6 width 113.97: "4: Yes"
+        RenderSVGContainer {g} at (287,296) size 184x215 [transform={m=((1.00,0.00)(0.00,1.00)) t=(202.50,178.00)}]
+          RenderSVGContainer {g} at (337,296) size 134x134
+            RenderSVGRect {rect} at (337,296) size 134x134 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=80.00] [height=80.00]
+          RenderSVGText {text} at (-30,83) size 97x46 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 97x45
+              chunk 1 text run 1 at (-30.00,120.00) startOffset 0 endOffset 5 width 96.08: "5: No"
+        RenderSVGContainer {g} at (495,296) size 191x215 [transform={m=((1.00,0.00)(0.00,1.00)) t=(327.50,178.00)}]
+          RenderSVGRect {rect} at (545,296) size 135x134 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=80.00] [height=80.00]
+          RenderSVGText {text} at (-30,83) size 114x46 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 114x45
+              chunk 1 text run 1 at (-30.00,120.00) startOffset 0 endOffset 6 width 113.97: "6: Yes"
+    RenderSVGContainer {g} at (16,517) size 381x62
+      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 229x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.6 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

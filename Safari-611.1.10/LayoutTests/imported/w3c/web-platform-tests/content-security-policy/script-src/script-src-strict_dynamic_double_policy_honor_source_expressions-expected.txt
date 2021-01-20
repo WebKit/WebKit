@@ -1,0 +1,8 @@
+Source expressions in a separate policy are honored with `strict-dynamic` in the script-src directive.
+
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Script injected via `appendChild` is permitted with `strict-dynamic` + a nonce+allowed double policy. assert_unreached: Error should not be triggered. Reached unreachable code
+TIMEOUT Non-allowed script injected via `appendChild` is not permitted with `strict-dynamic` + a nonce+allowed double policy. Test timed out
+

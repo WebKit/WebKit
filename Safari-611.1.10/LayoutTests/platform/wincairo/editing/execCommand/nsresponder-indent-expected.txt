@@ -1,0 +1,20 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document toDOMRange:range from 0 of BLOCKQUOTE > DIV > BODY > HTML > #document to 0 of BLOCKQUOTE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 510x19
+          text run at (0,0) width 269: "This tests the NSResponder method indent:. "
+          text run at (269,0) width 241: "You should see an indented 'foo' below."
+      RenderBlock {DIV} at (0,36) size 784x20
+        RenderBlock {BLOCKQUOTE} at (40,0) size 744x20
+          RenderText {#text} at (0,0) size 20x19
+            text run at (0,0) width 20: "foo"
+caret: position 0 of child 0 {#text} of child 0 {BLOCKQUOTE} of child 2 {DIV} of body

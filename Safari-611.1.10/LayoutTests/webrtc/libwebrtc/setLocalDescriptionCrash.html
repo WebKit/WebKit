@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing erroneous setLocalDescription calls</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+function badifyAnswer(answer)
+{
+    return {type: answer.type, sdp: answer.sdp.replace("v=0", "v")};
+}
+
+promise_test((test) => {
+    var pc1 = new RTCPeerConnection;
+    var pc2 = new RTCPeerConnection;
+    var badAnswer;
+
+    pc1.addTransceiver("video");
+    return pc1.createOffer().then((offer) => {
+        return pc1.setLocalDescription(offer);
+    }).then(() => {
+        return pc2.setRemoteDescription(pc1.localDescription);
+    }).then(() => {
+        return pc2.createAnswer();
+    }).then((answer) => {
+        badAnswer = badifyAnswer(answer);
+        return pc2.setLocalDescription(badAnswer);
+    }).then(assert_unreached, (e) => {
+        assert_equals(e.message, "Expect line: v=");
+        return pc2.setLocalDescription(badAnswer).then(assert_unreached, (e) => {
+            assert_equals(e.message, "Expect line: v=");
+        });
+    });
+}, "Testing calling twice setLocalDescription with a bad SDP");
+        </script>
+    </body>
+</html>

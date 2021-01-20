@@ -1,0 +1,16 @@
+This test checks that percentages are properly resolved for grid items' children.
+
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS

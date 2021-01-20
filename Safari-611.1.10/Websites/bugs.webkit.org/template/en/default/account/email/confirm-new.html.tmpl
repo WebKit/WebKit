@@ -1,0 +1,82 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # token: string. The token to be used in the user account creation.
+  # email: email address of the user account.
+  # expiration_ts: expiration date of the token.
+  #%]
+
+[% title = BLOCK %]Create a new user account for '[% email FILTER html %]'[% END %]
+[% PROCESS "global/header.html.tmpl"
+           title = title
+%]
+
+[% password_complexity = Param('password_complexity') %]
+
+<p>
+  To create your account, you must enter a password in the form below.
+  Your email address and Real Name (if provided) will be shown with
+  changes you make.
+</p>
+
+<form id="confirm_account_form" method="post" action="token.cgi">
+  <input type="hidden" name="t" value="[% token FILTER html %]">
+  <input type="hidden" name="a" value="confirm_new_account">
+  <table>
+    <tr>
+      <th>Email Address:</th>
+      <td>[% email FILTER html %]</td>
+    </tr>
+    <tr>
+      <th><small><i>(OPTIONAL)</i></small> <label for="realname">Real Name</label>:</th>
+      <td><input id="realname" name="realname" autofocus></td>
+    </tr>
+    <tr>
+      <th><label for="passwd1">Type your password</label>:</th>
+      <td>
+        <input type="password" id="passwd1" name="passwd1" value="" required>
+        (Password should be a minimum of [% constants.USER_PASSWORD_MIN_LENGTH FILTER none %] characters long
+        [% IF password_complexity == "mixed_letters" %]
+          and must contain at least one UPPER and one lowercase letter
+        [% ELSIF password_complexity == "letters_numbers" %]
+          and must contain at least one UPPER and one lowercase letter and a number
+        [% ELSIF password_complexity == "letters_numbers_specialchars" %] 
+          and must contain at least one letter, a number and a special character
+        [% END ~%]
+        .)
+      </td>
+    </tr>
+    <tr>
+      <th><label for="passwd2">Confirm your password</label>:</th>
+      <td><input type="password" id="passwd2" name="passwd2" value="" required></td>
+    </tr>
+    <tr>
+      <th>&nbsp;</th>
+      <td><input type="submit" id="confirm" value="Create"></td>
+    </tr>
+  </table>
+</form>
+
+<p>
+  This account will not be created if this form is not completed by
+  <b>[% expiration_ts FILTER time("%B %e, %Y at %H:%M %Z") %]</b>.
+</p>
+
+<p>
+  If you do not wish to create an account with this email click the
+  cancel account button below and your details will be forgotten.
+</p>
+
+<form id="cancel_account_form" method="post" action="token.cgi">
+  <input type="hidden" name="t" value="[% token FILTER html %]">
+  <input type="hidden" name="a" value="cancel_new_account">
+  <input type="submit" id="confirm" value="Cancel Account">
+</form>
+
+[% PROCESS global/footer.html.tmpl %]

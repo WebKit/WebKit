@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN"
+  "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>Visibility composited animation</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style type="text/css">
+      .parentDivStyle {
+        width: 100px;
+        height: 100px;
+        background-color: #0000FF;
+
+        -webkit-animation-iteration-count: infinite;
+        -webkit-animation-timing-function: linear;
+
+        -webkit-animation-name: y-spin;
+        -webkit-animation-duration: 5s;
+      }
+
+      @-webkit-keyframes y-spin {
+        0%    { -webkit-transform: rotateY(0deg); }
+        50%   { -webkit-transform: rotateY(180deg); }
+        100%  { -webkit-transform: rotateY(360deg); }
+      }
+    </style>
+
+    <script type="text/javascript">
+      if (window.testRunner) {
+        testRunner.dumpAsText(true);
+        document.write("<span style='position:absolute; top:-5000px'>This test is only useful as a pixel test.</span>");
+      }
+      window.addEventListener('load', init, false);
+
+      function init ()
+      {
+        var parentDiv = document.getElementById("parentDiv");
+        var childDiv = document.createElement('div');
+        parentDiv.appendChild(childDiv);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="parentDiv" class="parentDivStyle"></div>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+layer at (0,0) size 785x628
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x628
+  RenderBlock {HTML} at (0,0) size 785x628
+    RenderBody {BODY} at (8,8) size 769x584
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+    RenderBlock (anonymous) at (0,600) size 785x28
+      RenderTextControl {INPUT} at (2,2) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+layer at (5,605) size 186x18
+  RenderBlock {DIV} at (3,3) size 186x18
+caret: position 1 of body

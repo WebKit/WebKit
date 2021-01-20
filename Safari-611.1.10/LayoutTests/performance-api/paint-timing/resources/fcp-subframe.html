@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script>
+    const observer = new PerformanceObserver(list => {
+        list.getEntries().forEach(entry => {
+            window.parent.postMessage(JSON.stringify({type: 'received', entry}), '*');
+        });
+    });
+
+    observer.observe({entryTypes: ["paint"]});
+    window.onmessage = e => {
+        window.parent.postMessage(JSON.stringify({supported: PerformanceObserver.supportedEntryTypes, type: 'supported'}), '*');
+        document.body.innerText = "TEXT";
+    }
+</script>
+</head>
+<body>
+</body>
+</html>

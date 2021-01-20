@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>var requirePixelDump = true;</script>
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-controls.js></script>
+
+        <style>
+
+        .obscurer {
+            width: 500px;
+            height: 500px;
+            position: absolute;
+            background-color: white;
+        }
+        </style>
+        <script>
+        function seeked()
+        {
+            endTest();
+        }
+
+        function loaded()
+        {
+            consoleWrite("Test that line position is applied correctly.");
+            findMediaElement();
+            video.src = findMediaFile('video', '../content/test');
+            waitForEvent('seeked', seeked);
+            waitForEvent('canplaythrough', function() { video.currentTime = .5; });
+        }
+
+        setCaptionDisplayMode('Automatic');
+        </script>
+    </head>
+    <body onload="loaded()">
+        <video style="position: absolute; left: 0px; top: 0px;" controls ></video>
+        <div class="obscurer" style="left: 0px; top: 100px;"></div>
+    </body>
+</html>

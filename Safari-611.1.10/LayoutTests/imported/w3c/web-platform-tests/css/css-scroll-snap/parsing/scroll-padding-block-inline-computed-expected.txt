@@ -1,0 +1,44 @@
+
+FAIL Property scroll-padding-block-start value 'auto' assert_true: scroll-padding-block-start doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-block-start value '10px' assert_true: scroll-padding-block-start doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-block-start value '20%' assert_true: scroll-padding-block-start doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-block-start value 'calc(10px + 0.5em)' assert_true: scroll-padding-block-start doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-block-start value 'calc(10px - 0.5em)' assert_true: scroll-padding-block-start doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-block-start value 'calc(50% + 60px)' assert_true: scroll-padding-block-start doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-block-end value 'auto' assert_true: scroll-padding-block-end doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-block-end value '10px' assert_true: scroll-padding-block-end doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-block-end value '20%' assert_true: scroll-padding-block-end doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-block-end value 'calc(10px + 0.5em)' assert_true: scroll-padding-block-end doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-block-end value 'calc(10px - 0.5em)' assert_true: scroll-padding-block-end doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-block-end value 'calc(50% + 60px)' assert_true: scroll-padding-block-end doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline-start value 'auto' assert_true: scroll-padding-inline-start doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline-start value '10px' assert_true: scroll-padding-inline-start doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline-start value '20%' assert_true: scroll-padding-inline-start doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline-start value 'calc(10px + 0.5em)' assert_true: scroll-padding-inline-start doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline-start value 'calc(10px - 0.5em)' assert_true: scroll-padding-inline-start doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline-start value 'calc(50% + 60px)' assert_true: scroll-padding-inline-start doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline-end value 'auto' assert_true: scroll-padding-inline-end doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline-end value '10px' assert_true: scroll-padding-inline-end doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline-end value '20%' assert_true: scroll-padding-inline-end doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline-end value 'calc(10px + 0.5em)' assert_true: scroll-padding-inline-end doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline-end value 'calc(10px - 0.5em)' assert_true: scroll-padding-inline-end doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline-end value 'calc(50% + 60px)' assert_true: scroll-padding-inline-end doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-block value 'auto' assert_true: scroll-padding-block doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-block value '10px' assert_true: scroll-padding-block doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-block value '20%' assert_true: scroll-padding-block doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-block value 'calc(10px + 0.5em)' assert_true: scroll-padding-block doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-block value 'calc(10px - 0.5em)' assert_true: scroll-padding-block doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-block value 'calc(50% + 60px)' assert_true: scroll-padding-block doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-block value '1px 2px' assert_true: scroll-padding-block doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-block value '1px auto' assert_true: scroll-padding-block doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-block value 'auto auto' assert_true: scroll-padding-block doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline value 'auto' assert_true: scroll-padding-inline doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline value '10px' assert_true: scroll-padding-inline doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline value '20%' assert_true: scroll-padding-inline doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline value 'calc(10px + 0.5em)' assert_true: scroll-padding-inline doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline value 'calc(10px - 0.5em)' assert_true: scroll-padding-inline doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline value 'calc(50% + 60px)' assert_true: scroll-padding-inline doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline value '1px 2px' assert_true: scroll-padding-inline doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline value '1px auto' assert_true: scroll-padding-inline doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-padding-inline value 'auto auto' assert_true: scroll-padding-inline doesn't seem to be supported in the computed style expected true got false
+

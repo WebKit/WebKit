@@ -1,0 +1,48 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+  <title>Testing that dynamic changes to mask attributes are reflected in the mask</title>
+
+  <defs>
+    <mask id="mask1" width="1" height="1">
+      <rect width="1" height="1" fill="white"/>
+    </mask>
+    <mask id="mask2" width="1" height="1">
+      <rect width="1" height="1" fill="white"/>
+    </mask>
+    <mask id="mask3" width="1" height="1">
+      <rect width="1" height="1" fill="white"/>
+    </mask>
+  </defs>
+
+  <rect width="100%" height="100%" fill="lime"/>
+
+  <g transform="scale(500)">
+    <rect x=".2" y=".2" width=".2" height=".2" fill="red" mask="url(#mask1)"/>
+    <rect x=".4" y=".2" width=".2" height=".2" fill="red" mask="url(#mask2)"/>
+    <rect x=".2" y=".4" width=".2" height=".2" fill="red" mask="url(#mask3)" />
+  </g>
+
+  <script>
+  function doTest() {
+    var mask1 = document.getElementById("mask1");
+    mask1.width.baseVal.value = 0;
+    var mask2 = document.getElementById("mask2");
+    mask2.height.baseVal.value = 0;
+    var mask3 = document.getElementById("mask3");
+    mask3.maskUnits.baseVal = SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE;
+
+    document.documentElement.removeAttribute("class");
+    if (window.testRunner)
+      testRunner.notifyDone();
+  }
+
+  if (window.testRunner)
+    testRunner.waitUntilDone();
+
+  setTimeout(doTest, 100);
+  </script>
+</svg>

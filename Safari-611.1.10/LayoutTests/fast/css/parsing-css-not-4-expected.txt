@@ -1,0 +1,1000 @@
+Test the parsing of :not(selectorList) for querySelector and style.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+3 valid selectors
+PASS document.querySelector(":not(foobar, foobar, foobar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar, foobar)"
+PASS document.querySelector(":not(foobar, foobar, foobar    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar, foobar)"
+PASS document.querySelector(":not(foobar, foobar, .class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar, .class)"
+PASS document.querySelector(":not(foobar, foobar, .class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar, .class)"
+PASS document.querySelector(":not(foobar, foobar, :last-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar, :last-child)"
+PASS document.querySelector(":not(foobar, foobar, :last-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar, :last-child)"
+PASS document.querySelector(":not(foobar, foobar, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar, foobar#id.class)"
+PASS document.querySelector(":not(foobar, foobar, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar, foobar#id.class)"
+PASS document.querySelector(":not(foobar, foobar, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar, #id:empty)"
+PASS document.querySelector(":not(foobar, foobar, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar, #id:empty)"
+PASS document.querySelector(":not(foobar, foobar, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar, a b)"
+PASS document.querySelector(":not(foobar, foobar, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar, a b)"
+PASS document.querySelector(":not(foobar, foobar, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar, a ~ b)"
+PASS document.querySelector(":not(foobar, foobar, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar, a ~ b)"
+PASS document.querySelector(":not(foobar, foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar, foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar, foobar, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar, foobar, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar, .class, .class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, .class, .class)"
+PASS document.querySelector(":not(foobar, .class, .class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, .class, .class)"
+PASS document.querySelector(":not(foobar, .class, :last-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, .class, :last-child)"
+PASS document.querySelector(":not(foobar, .class, :last-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, .class, :last-child)"
+PASS document.querySelector(":not(foobar, .class, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, .class, foobar#id.class)"
+PASS document.querySelector(":not(foobar, .class, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, .class, foobar#id.class)"
+PASS document.querySelector(":not(foobar, .class, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, .class, #id:empty)"
+PASS document.querySelector(":not(foobar, .class, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, .class, #id:empty)"
+PASS document.querySelector(":not(foobar, .class, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, .class, a b)"
+PASS document.querySelector(":not(foobar, .class, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, .class, a b)"
+PASS document.querySelector(":not(foobar, .class, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, .class, a ~ b)"
+PASS document.querySelector(":not(foobar, .class, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, .class, a ~ b)"
+PASS document.querySelector(":not(foobar, .class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, .class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar, .class, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, .class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar, .class, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, .class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar, .class, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, .class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar, :last-child, :last-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, :last-child, :last-child)"
+PASS document.querySelector(":not(foobar, :last-child, :last-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, :last-child, :last-child)"
+PASS document.querySelector(":not(foobar, :last-child, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, :last-child, foobar#id.class)"
+PASS document.querySelector(":not(foobar, :last-child, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, :last-child, foobar#id.class)"
+PASS document.querySelector(":not(foobar, :last-child, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, :last-child, #id:empty)"
+PASS document.querySelector(":not(foobar, :last-child, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, :last-child, #id:empty)"
+PASS document.querySelector(":not(foobar, :last-child, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, :last-child, a b)"
+PASS document.querySelector(":not(foobar, :last-child, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, :last-child, a b)"
+PASS document.querySelector(":not(foobar, :last-child, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, :last-child, a ~ b)"
+PASS document.querySelector(":not(foobar, :last-child, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, :last-child, a ~ b)"
+PASS document.querySelector(":not(foobar, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar, :last-child, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, :last-child, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar, :last-child, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, :last-child, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar, foobar#id.class, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar#id.class, foobar#id.class)"
+PASS document.querySelector(":not(foobar, foobar#id.class, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar#id.class, foobar#id.class)"
+PASS document.querySelector(":not(foobar, foobar#id.class, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar#id.class, #id:empty)"
+PASS document.querySelector(":not(foobar, foobar#id.class, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar#id.class, #id:empty)"
+PASS document.querySelector(":not(foobar, foobar#id.class, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar#id.class, a b)"
+PASS document.querySelector(":not(foobar, foobar#id.class, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar#id.class, a b)"
+PASS document.querySelector(":not(foobar, foobar#id.class, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar#id.class, a ~ b)"
+PASS document.querySelector(":not(foobar, foobar#id.class, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar#id.class, a ~ b)"
+PASS document.querySelector(":not(foobar, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar, foobar#id.class, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar#id.class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar, foobar#id.class, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, foobar#id.class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar, #id:empty, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, #id:empty, #id:empty)"
+PASS document.querySelector(":not(foobar, #id:empty, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, #id:empty, #id:empty)"
+PASS document.querySelector(":not(foobar, #id:empty, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, #id:empty, a b)"
+PASS document.querySelector(":not(foobar, #id:empty, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, #id:empty, a b)"
+PASS document.querySelector(":not(foobar, #id:empty, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, #id:empty, a ~ b)"
+PASS document.querySelector(":not(foobar, #id:empty, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, #id:empty, a ~ b)"
+PASS document.querySelector(":not(foobar, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar, #id:empty, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar, #id:empty, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar, a b, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, a b, a b)"
+PASS document.querySelector(":not(foobar, a b, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, a b, a b)"
+PASS document.querySelector(":not(foobar, a b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, a b, a ~ b)"
+PASS document.querySelector(":not(foobar, a b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, a b, a ~ b)"
+PASS document.querySelector(":not(foobar, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar, a b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar, a b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar, a ~ b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, a ~ b, a ~ b)"
+PASS document.querySelector(":not(foobar, a ~ b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, a ~ b, a ~ b)"
+PASS document.querySelector(":not(foobar, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar, a ~ b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar, a ~ b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(.class, .class, .class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, .class, .class)"
+PASS document.querySelector(":not(.class, .class, .class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, .class, .class)"
+PASS document.querySelector(":not(.class, .class, :last-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, .class, :last-child)"
+PASS document.querySelector(":not(.class, .class, :last-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, .class, :last-child)"
+PASS document.querySelector(":not(.class, .class, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, .class, foobar#id.class)"
+PASS document.querySelector(":not(.class, .class, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, .class, foobar#id.class)"
+PASS document.querySelector(":not(.class, .class, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, .class, #id:empty)"
+PASS document.querySelector(":not(.class, .class, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, .class, #id:empty)"
+PASS document.querySelector(":not(.class, .class, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, .class, a b)"
+PASS document.querySelector(":not(.class, .class, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, .class, a b)"
+PASS document.querySelector(":not(.class, .class, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, .class, a ~ b)"
+PASS document.querySelector(":not(.class, .class, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, .class, a ~ b)"
+PASS document.querySelector(":not(.class, .class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, .class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(.class, .class, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, .class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(.class, .class, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, .class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(.class, .class, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, .class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(.class, :last-child, :last-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, :last-child, :last-child)"
+PASS document.querySelector(":not(.class, :last-child, :last-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, :last-child, :last-child)"
+PASS document.querySelector(":not(.class, :last-child, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, :last-child, foobar#id.class)"
+PASS document.querySelector(":not(.class, :last-child, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, :last-child, foobar#id.class)"
+PASS document.querySelector(":not(.class, :last-child, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, :last-child, #id:empty)"
+PASS document.querySelector(":not(.class, :last-child, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, :last-child, #id:empty)"
+PASS document.querySelector(":not(.class, :last-child, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, :last-child, a b)"
+PASS document.querySelector(":not(.class, :last-child, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, :last-child, a b)"
+PASS document.querySelector(":not(.class, :last-child, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, :last-child, a ~ b)"
+PASS document.querySelector(":not(.class, :last-child, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, :last-child, a ~ b)"
+PASS document.querySelector(":not(.class, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(.class, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(.class, :last-child, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, :last-child, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(.class, :last-child, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, :last-child, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(.class, foobar#id.class, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, foobar#id.class, foobar#id.class)"
+PASS document.querySelector(":not(.class, foobar#id.class, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, foobar#id.class, foobar#id.class)"
+PASS document.querySelector(":not(.class, foobar#id.class, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, foobar#id.class, #id:empty)"
+PASS document.querySelector(":not(.class, foobar#id.class, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, foobar#id.class, #id:empty)"
+PASS document.querySelector(":not(.class, foobar#id.class, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, foobar#id.class, a b)"
+PASS document.querySelector(":not(.class, foobar#id.class, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, foobar#id.class, a b)"
+PASS document.querySelector(":not(.class, foobar#id.class, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, foobar#id.class, a ~ b)"
+PASS document.querySelector(":not(.class, foobar#id.class, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, foobar#id.class, a ~ b)"
+PASS document.querySelector(":not(.class, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(.class, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(.class, foobar#id.class, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, foobar#id.class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(.class, foobar#id.class, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, foobar#id.class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(.class, #id:empty, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, #id:empty, #id:empty)"
+PASS document.querySelector(":not(.class, #id:empty, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, #id:empty, #id:empty)"
+PASS document.querySelector(":not(.class, #id:empty, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, #id:empty, a b)"
+PASS document.querySelector(":not(.class, #id:empty, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, #id:empty, a b)"
+PASS document.querySelector(":not(.class, #id:empty, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, #id:empty, a ~ b)"
+PASS document.querySelector(":not(.class, #id:empty, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, #id:empty, a ~ b)"
+PASS document.querySelector(":not(.class, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(.class, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(.class, #id:empty, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(.class, #id:empty, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(.class, a b, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, a b, a b)"
+PASS document.querySelector(":not(.class, a b, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, a b, a b)"
+PASS document.querySelector(":not(.class, a b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, a b, a ~ b)"
+PASS document.querySelector(":not(.class, a b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, a b, a ~ b)"
+PASS document.querySelector(":not(.class, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(.class, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(.class, a b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(.class, a b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(.class, a ~ b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, a ~ b, a ~ b)"
+PASS document.querySelector(":not(.class, a ~ b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, a ~ b, a ~ b)"
+PASS document.querySelector(":not(.class, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(.class, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(.class, a ~ b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(.class, a ~ b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(.class, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(.class, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(:last-child, :last-child, :last-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, :last-child, :last-child)"
+PASS document.querySelector(":not(:last-child, :last-child, :last-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, :last-child, :last-child)"
+PASS document.querySelector(":not(:last-child, :last-child, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, :last-child, foobar#id.class)"
+PASS document.querySelector(":not(:last-child, :last-child, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, :last-child, foobar#id.class)"
+PASS document.querySelector(":not(:last-child, :last-child, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, :last-child, #id:empty)"
+PASS document.querySelector(":not(:last-child, :last-child, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, :last-child, #id:empty)"
+PASS document.querySelector(":not(:last-child, :last-child, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, :last-child, a b)"
+PASS document.querySelector(":not(:last-child, :last-child, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, :last-child, a b)"
+PASS document.querySelector(":not(:last-child, :last-child, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, :last-child, a ~ b)"
+PASS document.querySelector(":not(:last-child, :last-child, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, :last-child, a ~ b)"
+PASS document.querySelector(":not(:last-child, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(:last-child, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(:last-child, :last-child, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, :last-child, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(:last-child, :last-child, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, :last-child, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(:last-child, foobar#id.class, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, foobar#id.class, foobar#id.class)"
+PASS document.querySelector(":not(:last-child, foobar#id.class, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, foobar#id.class, foobar#id.class)"
+PASS document.querySelector(":not(:last-child, foobar#id.class, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, foobar#id.class, #id:empty)"
+PASS document.querySelector(":not(:last-child, foobar#id.class, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, foobar#id.class, #id:empty)"
+PASS document.querySelector(":not(:last-child, foobar#id.class, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, foobar#id.class, a b)"
+PASS document.querySelector(":not(:last-child, foobar#id.class, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, foobar#id.class, a b)"
+PASS document.querySelector(":not(:last-child, foobar#id.class, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, foobar#id.class, a ~ b)"
+PASS document.querySelector(":not(:last-child, foobar#id.class, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, foobar#id.class, a ~ b)"
+PASS document.querySelector(":not(:last-child, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(:last-child, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(:last-child, foobar#id.class, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, foobar#id.class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(:last-child, foobar#id.class, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, foobar#id.class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(:last-child, #id:empty, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, #id:empty, #id:empty)"
+PASS document.querySelector(":not(:last-child, #id:empty, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, #id:empty, #id:empty)"
+PASS document.querySelector(":not(:last-child, #id:empty, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, #id:empty, a b)"
+PASS document.querySelector(":not(:last-child, #id:empty, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, #id:empty, a b)"
+PASS document.querySelector(":not(:last-child, #id:empty, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, #id:empty, a ~ b)"
+PASS document.querySelector(":not(:last-child, #id:empty, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, #id:empty, a ~ b)"
+PASS document.querySelector(":not(:last-child, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(:last-child, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(:last-child, #id:empty, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(:last-child, #id:empty, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(:last-child, a b, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, a b, a b)"
+PASS document.querySelector(":not(:last-child, a b, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, a b, a b)"
+PASS document.querySelector(":not(:last-child, a b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, a b, a ~ b)"
+PASS document.querySelector(":not(:last-child, a b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, a b, a ~ b)"
+PASS document.querySelector(":not(:last-child, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(:last-child, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(:last-child, a b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(:last-child, a b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(:last-child, a ~ b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, a ~ b, a ~ b)"
+PASS document.querySelector(":not(:last-child, a ~ b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, a ~ b, a ~ b)"
+PASS document.querySelector(":not(:last-child, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(:last-child, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(:last-child, a ~ b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(:last-child, a ~ b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(:last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(:last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(:last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(:last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(:last-child, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(:last-child, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar#id.class, foobar#id.class, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, foobar#id.class, foobar#id.class)"
+PASS document.querySelector(":not(foobar#id.class, foobar#id.class, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, foobar#id.class, foobar#id.class)"
+PASS document.querySelector(":not(foobar#id.class, foobar#id.class, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, foobar#id.class, #id:empty)"
+PASS document.querySelector(":not(foobar#id.class, foobar#id.class, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, foobar#id.class, #id:empty)"
+PASS document.querySelector(":not(foobar#id.class, foobar#id.class, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, foobar#id.class, a b)"
+PASS document.querySelector(":not(foobar#id.class, foobar#id.class, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, foobar#id.class, a b)"
+PASS document.querySelector(":not(foobar#id.class, foobar#id.class, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, foobar#id.class, a ~ b)"
+PASS document.querySelector(":not(foobar#id.class, foobar#id.class, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, foobar#id.class, a ~ b)"
+PASS document.querySelector(":not(foobar#id.class, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar#id.class, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar#id.class, foobar#id.class, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, foobar#id.class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar#id.class, foobar#id.class, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, foobar#id.class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar#id.class, #id:empty, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, #id:empty, #id:empty)"
+PASS document.querySelector(":not(foobar#id.class, #id:empty, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, #id:empty, #id:empty)"
+PASS document.querySelector(":not(foobar#id.class, #id:empty, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, #id:empty, a b)"
+PASS document.querySelector(":not(foobar#id.class, #id:empty, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, #id:empty, a b)"
+PASS document.querySelector(":not(foobar#id.class, #id:empty, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, #id:empty, a ~ b)"
+PASS document.querySelector(":not(foobar#id.class, #id:empty, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, #id:empty, a ~ b)"
+PASS document.querySelector(":not(foobar#id.class, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar#id.class, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar#id.class, #id:empty, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar#id.class, #id:empty, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar#id.class, a b, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, a b, a b)"
+PASS document.querySelector(":not(foobar#id.class, a b, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, a b, a b)"
+PASS document.querySelector(":not(foobar#id.class, a b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, a b, a ~ b)"
+PASS document.querySelector(":not(foobar#id.class, a b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, a b, a ~ b)"
+PASS document.querySelector(":not(foobar#id.class, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar#id.class, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar#id.class, a b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar#id.class, a b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar#id.class, a ~ b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, a ~ b, a ~ b)"
+PASS document.querySelector(":not(foobar#id.class, a ~ b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, a ~ b, a ~ b)"
+PASS document.querySelector(":not(foobar#id.class, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar#id.class, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar#id.class, a ~ b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar#id.class, a ~ b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar#id.class, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(foobar#id.class, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(#id:empty, #id:empty, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, #id:empty, #id:empty)"
+PASS document.querySelector(":not(#id:empty, #id:empty, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, #id:empty, #id:empty)"
+PASS document.querySelector(":not(#id:empty, #id:empty, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, #id:empty, a b)"
+PASS document.querySelector(":not(#id:empty, #id:empty, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, #id:empty, a b)"
+PASS document.querySelector(":not(#id:empty, #id:empty, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, #id:empty, a ~ b)"
+PASS document.querySelector(":not(#id:empty, #id:empty, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, #id:empty, a ~ b)"
+PASS document.querySelector(":not(#id:empty, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(#id:empty, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(#id:empty, #id:empty, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(#id:empty, #id:empty, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(#id:empty, a b, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, a b, a b)"
+PASS document.querySelector(":not(#id:empty, a b, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, a b, a b)"
+PASS document.querySelector(":not(#id:empty, a b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, a b, a ~ b)"
+PASS document.querySelector(":not(#id:empty, a b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, a b, a ~ b)"
+PASS document.querySelector(":not(#id:empty, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(#id:empty, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(#id:empty, a b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(#id:empty, a b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(#id:empty, a ~ b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, a ~ b, a ~ b)"
+PASS document.querySelector(":not(#id:empty, a ~ b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, a ~ b, a ~ b)"
+PASS document.querySelector(":not(#id:empty, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(#id:empty, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(#id:empty, a ~ b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(#id:empty, a ~ b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(#id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(#id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(#id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(#id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(#id:empty, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(#id:empty, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(a b, a b, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a b, a b, a b)"
+PASS document.querySelector(":not(a b, a b, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a b, a b, a b)"
+PASS document.querySelector(":not(a b, a b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a b, a b, a ~ b)"
+PASS document.querySelector(":not(a b, a b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a b, a b, a ~ b)"
+PASS document.querySelector(":not(a b, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a b, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(a b, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a b, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(a b, a b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a b, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(a b, a b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a b, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(a b, a ~ b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a b, a ~ b, a ~ b)"
+PASS document.querySelector(":not(a b, a ~ b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a b, a ~ b, a ~ b)"
+PASS document.querySelector(":not(a b, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a b, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(a b, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a b, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(a b, a ~ b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a b, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(a b, a ~ b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a b, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(a b, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a b, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(a b, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a b, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(a ~ b, a ~ b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a ~ b, a ~ b, a ~ b)"
+PASS document.querySelector(":not(a ~ b, a ~ b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a ~ b, a ~ b, a ~ b)"
+PASS document.querySelector(":not(a ~ b, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a ~ b, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(a ~ b, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a ~ b, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(a ~ b, a ~ b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a ~ b, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(a ~ b, a ~ b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a ~ b, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(a ~ b, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a ~ b, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(a ~ b, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a ~ b, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(:nth-child(2n of a, b, c), :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:nth-child(2n of a, b, c), :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(:nth-child(2n of a, b, c), :nth-child(2n of a, b, c), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:nth-child(2n of a, b, c), :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

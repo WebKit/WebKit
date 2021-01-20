@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This thats that underline is painted when the text box is on a subpixel position.</title>
+<script>jsTestIsAsync = true;</script>
+<script src="../../../../resources/js-test-pre.js"></script>
+<style>
+body {
+    font-family: monospace;
+    font-size: 10px;
+}
+
+div {
+    padding-top: 0.1px;
+}
+
+.no-decoration {
+    text-decoration: none;
+}
+</style>
+</head>
+<body>
+<div><div><a class=no-decoration href="#">foobar</a></div></div>
+<div><div class=no-decoration>foobar</div></div>
+<script>
+setTimeout(function() {
+    if (window.internals)
+	    internals.startTrackingRepaints();
+    var elements = document.getElementsByClassName("no-decoration");
+    for (var i = 0; i < elements.length; ++i)
+      elements[i].style.textDecoration = "underline";
+    document.body.offsetHeight;
+    if (window.internals) {
+        shouldNotBe("window.internals.repaintRectsAsText().indexOf('8 8 784 13')", "-1");
+        shouldNotBe("window.internals.repaintRectsAsText().indexOf('8 20 784 13')", "-1");
+        internals.stopTrackingRepaints();
+    }
+    finishJSTest();
+}, 10);
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

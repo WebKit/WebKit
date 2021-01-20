@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Tests that an element with an animation whose keyframes affect stacking context creates stacking context throughout the animation.</title>
+    <style>
+        .box {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100px;
+            width: 100px;
+        }
+
+        #animating {
+            animation: move 2s 1;
+            background-color: orange;
+        }
+
+        @keyframes move {
+            from { z-index: 1; }
+            10%  { z-index: auto; }
+            90%  { z-index: auto; }
+            to   { z-index: 2; }
+        }
+
+        .behind {
+            background-color: blue;
+            top: 25px;
+            left: 50px;
+            z-index: 1;
+        }
+
+        .front {
+            top: 50px;
+            left: 25px;
+            background-color: green;
+            z-index: 2;
+        }
+        
+        #result {
+            opacity: 0;
+        }
+    </style>
+    <script src="resources/animation-test-helpers.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        const expectedValues = [
+            // [animation-name, time, element-id, property, expected-value, tolerance]
+            ["move", 0.5, "animating", "z-index", 0, 0],
+        ];
+
+        var doPixelTest = true;
+        var disablePauseAPI = false;
+        runAnimationTest(expectedValues, null, undefined, disablePauseAPI, doPixelTest);
+    </script>
+</head>
+<body>
+
+<div class="behind box"></div>
+<div id="animating" class="box">
+    <div class="front box"></div>
+</div>
+<div id="result"></div>
+</body>
+</html>

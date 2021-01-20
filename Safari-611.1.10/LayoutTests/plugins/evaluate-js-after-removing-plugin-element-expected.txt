@@ -1,0 +1,3 @@
+This tests that we don't crash when a plugin removes itself from the document and then executes JavaScript.
+
+Executing script after removing the plugin element from the document succeeded.

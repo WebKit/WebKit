@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test passes if there is no crash.</p>
+<div id="container">
+    <iframe id="frame"></iframe>
+    <input id="input" name=" " type="radio">
+</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+frame.onload = () => input.defaultChecked = true;
+document.body.appendChild(container);
+</script>
+</body>
+</html>

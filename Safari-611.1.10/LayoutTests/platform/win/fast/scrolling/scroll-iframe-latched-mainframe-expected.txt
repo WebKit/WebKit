@@ -1,0 +1,15 @@
+Put mouse here and flick downwards
+
+Tests that iframe doesn't consume wheel events when scroll
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Mouse moved to (28, 66)
+Page before: 0, IFrame before: 0
+Page after:  70, IFrame after: 0
+PASS IFrame did not receive wheel events.
+

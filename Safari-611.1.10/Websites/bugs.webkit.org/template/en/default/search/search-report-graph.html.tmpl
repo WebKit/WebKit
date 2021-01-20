@@ -1,0 +1,120 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # This template has no interface. However, to use it, you need to fulfill
+  # the interfaces of the templates it contains.
+  #%]
+
+[% js_data = BLOCK %]
+var queryform = "reportform"
+[% END %]
+
+[% PROCESS global/header.html.tmpl
+  title = "Generate Graphical Report"
+  onload = "doOnSelectProduct(0); chartTypeChanged()"
+  yui = [ 'autocomplete', 'calendar' ]
+  javascript = js_data
+  javascript_urls = [ "js/util.js", "js/TUI.js", "js/field.js" ]
+  style_urls = ['skins/standard/buglist.css']
+  doc_section = "using/reports-and-charts.html#reports"
+%]
+
+[% PROCESS "search/search-report-select.html.tmpl" %]
+
+<p>
+  Choose one or more fields as your axes, and then refine your set of 
+  [% terms.bugs %] using the rest of the form.
+</p>
+
+<script type="text/javascript"><!--
+  [%# The Y-axis fields are not used for pie charts %]
+  function chartTypeChanged() {
+    // format[2] is the pie chart radio button
+    if (document.reportform.format[2].checked == true) {
+      document.reportform.y_axis_field.disabled = true;
+      document.reportform.cumulate[0].disabled = true;
+      document.reportform.cumulate[1].disabled = true;
+    } else {
+      document.reportform.y_axis_field.disabled = false;
+      document.reportform.cumulate[0].disabled = false;
+      document.reportform.cumulate[1].disabled = false;
+    }
+  }
+// -->
+</script>
+
+[% button_name = "Generate Report" %]
+
+<form method="get" action="report.cgi" name="reportform" id="reportform">
+  <table id="graphical_reports_menu">
+    <tr>
+      <th id="reports_menu_vertical_axis">
+        Vertical Axis:<br>
+        [% PROCESS select name = 'y_axis_field' %]<br>
+        <br>
+        Plot Data Sets:<br>
+        <input type="radio" id="cumulate_indiv" name="cumulate" value="0"
+        [%+ 'checked="checked"' IF default.cumulate.0 != "1" %]>
+        <label for="cumulate_indiv">Individually</label><br>
+        <input type="radio" id="cumulate_stacked" name="cumulate" value="1"
+        [%+ 'checked="checked"' IF default.cumulate.0 == "1" %]>
+        <label for="cumulate_stacked">Stacked</label>
+      </th>
+      <th id="reports_menu_multiple_tables">
+        Multiple Images:<br>
+        [% PROCESS select name = 'z_axis_field' %]
+      </th>
+      <th id="reports_menu_format">
+        Format:<br>
+        [% chart_formats = [
+             { name => "line", description => "Line Graph" },
+             { name => "bar",  description => "Bar Chart" },
+             { name => "pie",  description => "Pie Chart" } ] %]
+        [% default.chart_format.0 = default.chart_format.0 || "bar" %]
+
+        [% FOREACH chart_format = chart_formats %]
+          <input type="radio" id="format_[% chart_format.name FILTER html %]"
+                 name="format" value="[% chart_format.name FILTER html %]"
+                 onchange="chartTypeChanged()"
+                 [%+ 'checked="checked"' IF default.chart_format.0 == chart_format.name %]>
+          <label for="format_[% chart_format.name FILTER html %]">
+            [% chart_format.description FILTER html %]
+          </label><br>
+        [% END %]
+      </th>
+    </tr>
+
+    <tr>
+      <th></th>
+      <th id="reports_menu_horizontal_axis">
+        Horizontal Axis:<br>
+        [% PROCESS select name = 'x_axis_field' %]<br>
+        <input type="checkbox" name="x_labels_vertical" id="x_labels_vertical"
+               value="1"
+               [%+ 'checked="checked"' IF default.x_labels_vertical.0 == "1" %]>
+        <label for="x_labels_vertical">Vertical labels</label>
+      </th>
+      <th></th>
+    </tr>
+  </table>
+
+  <hr>
+
+  [% PROCESS search/form.html.tmpl %]
+
+  [% PROCESS "search/boolean-charts.html.tmpl" %]
+
+  <div id="knob">
+    <input type="submit" id="[% button_name FILTER css_class_quote %]"
+           value="[% button_name FILTER html %]">
+    <input type="hidden" name="action" value="wrap">
+  </div>
+</form>
+
+[% PROCESS global/footer.html.tmpl %]

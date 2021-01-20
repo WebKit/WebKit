@@ -1,0 +1,10 @@
+This test checks to see if focus methods work on a couple types of elements.
+
+If the test passes, you should see a line saying "focused 1", then 2, then 3.
+
+Legend
+
+Label2 Label3
+focused 1
+focused 2
+focused 3

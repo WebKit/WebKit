@@ -1,0 +1,13 @@
+Tests the value of xhr.response.constructor
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* In child frame
+PASS xhr.response.constructor is top.Object
+* In top frame
+PASS xhr.response.constructor is top.Object
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

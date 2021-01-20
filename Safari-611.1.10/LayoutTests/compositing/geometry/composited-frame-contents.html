@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+        iframe {
+            border: 20px solid blue;
+            padding: 12px;
+            height: 400px;
+            width: 500px;
+            margin: 20px;
+            background-color: orange;
+            outline: 12px solid rgba(0, 0, 0, 0.25);
+        }
+        .scrollbar-obscurer {
+            position: absolute;
+            height: 400px;
+            width: 18px;
+            top: 52px;
+            left: 534px;
+            background-color: gray;
+        }
+    </style>
+    <script>
+        if (window.internals)
+            internals.settings.setAsyncFrameScrollingEnabled(true);
+    </script>
+</head>
+<body>
+    <iframe srcdoc="
+        <style>
+        body {
+            height: 1000px;
+            background-color: silver;
+            margin: 10px;
+        }
+        .box {
+            width: 200px;
+            height: 200px;
+            background-color: green;
+        }
+        
+        </style>
+        <body>
+            <div class=box></div>
+        </body>
+    "></iframe>
+    <div class="scrollbar-obscurer"></div>
+</body>
+</html>

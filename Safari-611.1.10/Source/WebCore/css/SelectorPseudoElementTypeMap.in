@@ -1,0 +1,23 @@
+after
+before
+#if ENABLE(VIDEO)
+cue
+#endif
+first-letter
+first-line
+highlight
+marker
+part
+file-selector-button, PseudoElementWebKitCustom
+placeholder, PseudoElementWebKitCustom
+-webkit-input-placeholder, PseudoElementWebKitCustomLegacyPrefixed
+-webkit-file-upload-button, PseudoElementWebKitCustomLegacyPrefixed
+-webkit-resizer
+-webkit-scrollbar
+-webkit-scrollbar-button
+-webkit-scrollbar-corner
+-webkit-scrollbar-thumb
+-webkit-scrollbar-track
+-webkit-scrollbar-track-piece
+selection
+slotted

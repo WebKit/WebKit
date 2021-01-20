@@ -1,0 +1,7 @@
+
+FAIL Initial value of math-depth assert_equals: expected "0" but got ""
+FAIL Inherited values of math-depth assert_equals: expected "11" but got ""
+FAIL Specified math-depth: auto-add assert_equals: expected "10" but got ""
+FAIL Specified math-depth: <integer> assert_equals: expected "11" but got ""
+FAIL Specified math-depth: add(<integer>) assert_equals: expected "15" but got ""
+

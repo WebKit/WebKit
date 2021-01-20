@@ -1,0 +1,17 @@
+PASS fontFaceRule.style.getPropertyValue('font-display') is ""
+PASS fontFace.display is "auto"
+PASS fontFaceRule.style.getPropertyValue('font-display') is ""
+PASS fontFace.display is "auto"
+PASS fontFaceRule.style.getPropertyValue('font-display') is "block"
+PASS fontFace.display is "block"
+PASS fontFaceRule.style.getPropertyValue('font-display') is "swap"
+PASS fontFace.display is "swap"
+PASS fontFaceRule.style.getPropertyValue('font-display') is "fallback"
+PASS fontFace.display is "fallback"
+PASS fontFaceRule.style.getPropertyValue('font-display') is "optional"
+PASS fontFace.display is "optional"
+PASS fontFace.display = 'garbage' threw exception SyntaxError: The string did not match the expected pattern..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

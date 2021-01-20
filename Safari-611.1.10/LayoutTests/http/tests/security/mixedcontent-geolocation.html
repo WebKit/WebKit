@@ -1,0 +1,22 @@
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
+}
+window.addEventListener("message", function (e) {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, false);
+</script>
+<p>This test loads a secure frame with mixed content that tries to access geolocation.  Access to geolocation is blocked over secure connections with mixed content.</p>
+<script>
+onload = function() {
+    window.open("https://127.0.0.1:8443/security/resources/geolocation-over-mixed-content.html");
+}
+</script>
+</body>
+</html>

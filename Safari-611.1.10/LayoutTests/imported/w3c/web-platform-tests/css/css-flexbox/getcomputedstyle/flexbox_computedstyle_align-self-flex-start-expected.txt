@@ -1,0 +1,3 @@
+
+PASS flexbox | computed style | align-self: flex-start
+

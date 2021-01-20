@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<input type="search" value="hello" id="search">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that a search field is returns its accessibilityValue correctly.");
+
+    if (window.accessibilityController) {
+
+        var search = accessibilityController.accessibleElementById("search");
+        shouldBe("search.stringValue", "'AXValue: hello'");
+        document.getElementById('search').value = 'test';
+        shouldBe("search.stringValue", "'AXValue: test'");
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

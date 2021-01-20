@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+description('This tests dataTransfer.items. To manually test, click on "Copy text" and paste (Command+V on Mac Control+V elsewhere).');
+
+function copyText()
+{
+    document.getElementById('source').style.display = null;
+    document.getElementById('source').focus();
+    document.execCommand('SelectAll', false, null);
+    document.execCommand('Copy', false, null);
+    document.getElementById('source').style.display = 'none';
+    document.getElementById('target').focus();
+    if (window.testRunner)
+        testRunner.execCommand('Paste', null);
+}
+
+function copy(event)
+{
+    event.preventDefault();
+    event.clipboardData.setData('text/plain', 'hello, world');
+}
+
+function paste(event)
+{
+    clipboardData = event.clipboardData;
+    shouldBe('clipboardData.items.length', '1');
+    shouldBeEqualToString('clipboardData.items[0].kind', 'string');
+    shouldBeEqualToString('clipboardData.items[0].type', 'text/plain');
+    shouldBe('clipboardData.items[0].getAsFile()', 'null');
+    shouldBe('clipboardData.items[0].getAsString(checkContent)', 'undefined');
+}
+
+function checkContent(content)
+{
+    shouldBeEqualToString('"' + content + '"', 'hello, world');
+    document.getElementById('container').style.display = 'none';
+    finishJSTest();
+}
+
+if (window.testRunner)
+    window.onload = copyText;
+jsTestIsAsync = true;
+successfullyParsed = true;
+
+</script>
+<div id="container">
+    <button onclick="copyText();">Copy text</button>
+    <div id="source" contenteditable="true" oncopy="copy(event)" style="display: none">hello, world</div>
+    <div id="target" contenteditable="true" onpaste="paste(event)"></div>
+</div>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

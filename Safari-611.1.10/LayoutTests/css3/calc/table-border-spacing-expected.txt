@@ -1,0 +1,6 @@
+PASS document.getElementById("stimulus").offsetWidth is 416
+PASS document.getElementById("stimulus").offsetHeight is 205
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,48 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x256
+  RenderBlock {HTML} at (0,0) size 800x256
+    RenderBody {BODY} at (8,8) size 784x232
+      RenderBlock {DIV} at (0,0) size 784x120
+        RenderBlock {DIV} at (0,0) size 784x20
+          RenderInline (generated) at (0,0) size 38x19
+            RenderText at (0,0) size 38x19
+              text run at (0,0) width 38: "PASS"
+        RenderBlock {DIV} at (0,20) size 784x20
+          RenderInline (generated) at (0,0) size 38x19
+            RenderText at (0,0) size 38x19
+              text run at (0,0) width 38: "PASS"
+        RenderBlock {DIV} at (0,40) size 784x20
+          RenderInline (generated) at (0,0) size 38x19
+            RenderText at (0,0) size 38x19
+              text run at (0,0) width 38: "PASS"
+        RenderBlock {DIV} at (0,60) size 784x20
+          RenderInline (generated) at (0,0) size 38x19
+            RenderText at (0,0) size 38x19
+              text run at (0,0) width 38: "PASS"
+        RenderBlock {DIV} at (0,80) size 784x20
+          RenderInline (generated) at (0,0) size 38x19
+            RenderText at (0,0) size 38x19
+              text run at (0,0) width 38: "PASS"
+        RenderBlock {DIV} at (0,100) size 784x20
+          RenderInline (generated) at (0,0) size 38x19
+            RenderText at (0,0) size 38x19
+              text run at (0,0) width 38: "PASS"
+      RenderBlock {DIV} at (0,136) size 784x96
+        RenderBlock {P} at (0,0) size 784x20
+          RenderInline {A} at (0,0) size 646x19 [color=#0000EE]
+            RenderText {#text} at (0,0) size 646x19
+              text run at (0,0) width 646: "Bug 23741: StyleRareNonInheritedData::operator==() should not compare ContentData objects by pointer"
+        RenderBlock {OL} at (0,36) size 784x60
+          RenderListItem {LI} at (40,0) size 744x20
+            RenderListMarker at (-21,0) size 16x19: "1"
+            RenderText {#text} at (0,0) size 322x19
+              text run at (0,0) width 322: "All lines above should be \"PASS\" on initial page load."
+          RenderListItem {LI} at (40,20) size 744x20
+            RenderListMarker at (-21,0) size 16x19: "2"
+            RenderText {#text} at (0,0) size 135x19
+              text run at (0,0) width 135: "Reload the page once."
+          RenderListItem {LI} at (40,40) size 744x20
+            RenderListMarker at (-21,0) size 16x19: "3"
+            RenderText {#text} at (0,0) size 229x19
+              text run at (0,0) width 229: "All lines above should still be \"PASS\"."

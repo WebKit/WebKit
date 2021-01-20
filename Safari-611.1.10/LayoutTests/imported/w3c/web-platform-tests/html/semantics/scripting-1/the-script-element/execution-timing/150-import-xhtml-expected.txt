@@ -1,0 +1,4 @@
+FAILED (This TC requires JavaScript enabled)
+
+FAIL Stylesheet in XHTML BODY with @import blocking scripts assert_equals: expected "fixed" but got "static"
+Test

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Module integrity check is ignored if target module is already cached</title>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(() => {
+    return new Promise(function (resolve, reject) {
+        var script = document.createElement('script');
+        script.type = 'module';
+        script.src = './script-tests/module-integrity-bad-value-success-with-cache.js';
+        script.integrity = 'sha256-7iiaipciOq3/cXnCpuOPyoC9GgCQw2F6y84mH4CJrGk=';
+        script.onload = function () {
+            assert_equals(window.moduleIsLoaded, true);
+            var scriptWithBadValue = document.createElement('script');
+            scriptWithBadValue.type = 'module';
+            scriptWithBadValue.src = './script-tests/module-integrity-bad-value-success-with-cache.js';
+            scriptWithBadValue.integrity = 'sha256-badbeef';
+            scriptWithBadValue.onload = resolve;
+            scriptWithBadValue.onerror = reject;
+            document.body.appendChild(scriptWithBadValue);
+        };
+        script.onerror = reject;
+        document.body.appendChild(script);
+    });
+}, 'Module integrity check is ignored if target module is already cached');
+</script>
+</body>
+</html>

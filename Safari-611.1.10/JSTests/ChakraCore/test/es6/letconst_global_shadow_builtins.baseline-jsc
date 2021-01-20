@@ -1,0 +1,20 @@
+[object Math]
+ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access uninitialized variable.
+[object Math]
+3.141592653589793
+undefined
+[object Object]
+undefined
+delicious
+[object JSON]
+ReferenceError: Cannot access uninitialized variable.
+ReferenceError: Cannot access uninitialized variable.
+[object JSON]
+function stringify() {
+    [native code]
+}
+undefined
+[object Object]
+undefined
+no dice

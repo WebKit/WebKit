@@ -1,0 +1,53 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/alttab.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/cancel-middle-click.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/cancel-right-click.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/close-drag-001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/close-drag-002.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/close-drag-003.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/close-drag-004.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/close-drag-005.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/close-drag-006.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/drag-keypress.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/drag-link.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/drag-to-title.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/file-drop-position.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/file-os-to-os.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/file-to-system.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/html-to-os-HELPER-FILE.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/html-to-os.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/html-unicode-to-os.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/inputs-no-js.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/keyboardshortcuts.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/moving-window.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/overlappingwindows.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/placeholderposition1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/placeholderposition2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugindrop.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/selection-between-ui.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/selection-from-os.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/selection-from-ui.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/selection-to-os.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/selection-to-ui-via.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/selection-to-ui.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/selection-ui-to-self.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/selection-unicode-to-os.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/taskbardrop.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/taskbarminimise.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/text-os-to-os.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/text-to-os.html

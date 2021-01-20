@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html id="webtest0">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<head id="webtest1">
+<link id="webtest2" rel="stylesheet" href="resources/svg_tests.css">
+</head>
+<body>
+This test passes if it doesn't crash or assert.
+<a id="webtest4" href="http://www.w3.org/html/wg/drafts/srcset/w3c-srcset"></a>
+<br id="webtest12" clear="all"/>
+</body>
+
+<script>
+document.getElementById("webtest4").setAttribute("style","page-break-before:always;-webkit-mask-image:url(data:image/gif;base64,R0lGODdhAQACAPABAAD/AP///ywAAAAAAQACAAACAkQKADs=);");
+try {
+document.getElementById("webtest12").appendChild(document.createElement("applet")).setAttributeNodeNS(document.getElementById("webtest10"));
+} catch(e) {
+}
+document.getElementById("webtest4").setAttribute("style","text-rendering:auto;");
+</script>
+</html>

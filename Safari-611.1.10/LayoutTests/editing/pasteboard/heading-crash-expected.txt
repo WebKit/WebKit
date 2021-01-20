@@ -1,0 +1,6 @@
+The following test does a copy and a paste from one heading to another heading. The test is successful if there is no crash.
+
+Destination should say Copy This Text:
+| <span>
+|   id="source"
+|   "Copy This Text<#selection-caret>"

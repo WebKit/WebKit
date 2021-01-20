@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+
+'use strict';
+
+target_test({ name: "img", width: "200px", height: "200px" }, async (target, test) => {
+    const eventTracker = new EventTracker(target, ["pointerdown"]);
+    await UIHelper.longPressAtPoint(100, 100);
+    eventTracker.assertMatchesEvents([ { type: "pointerdown" } ]);
+    test.done();
+}, `Testing that a long press yields a single pointerdown event.`);
+
+</script>
+</body>
+</html>

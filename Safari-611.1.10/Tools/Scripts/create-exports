@@ -1,0 +1,7 @@
+#!/usr/bin/env perl
+
+use warnings;
+
+while (<>) {
+    print "$1\n" if /^\s*\"(.+)\", referenced from:$/;
+}

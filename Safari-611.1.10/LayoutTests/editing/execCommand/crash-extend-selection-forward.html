@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src=../editing.js></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function editingTest() {        
+    var s = window.getSelection();
+    d = document.getElementById("test1");
+    s.setPosition(d, 0);
+    extendSelectionForwardByLineCommand();
+
+    test1.innerHTML = "PASS. WebKit didn't crash.";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<pre id="console"></pre>
+<div id=test1>(required to cause a crash)<object style='content: counters(c, ".") "-"; ' type=text/vbs></object></div>
+<script>
+runEditingTest();
+</script>
+</body>
+</html>

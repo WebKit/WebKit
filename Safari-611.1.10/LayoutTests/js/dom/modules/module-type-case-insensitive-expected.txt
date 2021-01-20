@@ -1,0 +1,11 @@
+Test that type="module" should be case-insensitive.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Module is not executed yet.
+Module is loaded.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

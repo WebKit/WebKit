@@ -1,0 +1,13 @@
+This tests that changing the aria-required value results in a state-changed notification.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Setting aria-required to true on textbox1.
+Setting aria-required to false on textbox2.
+AXRequiredStatusChanged true on textbox1
+AXRequiredStatusChanged false on textbox2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

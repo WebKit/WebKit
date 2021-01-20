@@ -1,0 +1,40 @@
+
+text = createTextWithParent(); range = createRange(text.parentNode, 0, text.parentNode, 0); text.splitText(0)
+PASS range.startContainer is text.parentNode
+PASS range.startOffset is 0
+PASS range.endContainer is text.parentNode
+PASS range.endOffset is 0
+
+text = createTextWithParent(); range = createRange(text.parentNode, 1, text.parentNode, 1); text.splitText(0)
+PASS range.startContainer is text.parentNode
+PASS range.startOffset is 2
+PASS range.endContainer is text.parentNode
+PASS range.endOffset is 2
+
+text = createTextWithParent(); range = createRange(text.parentNode, 0, text.parentNode, 1); text.splitText(0)
+PASS range.startContainer is text.parentNode
+PASS range.startOffset is 0
+PASS range.endContainer is text.parentNode
+PASS range.endOffset is 2
+
+text = createTextWithParentAndSiblings(); range = createRange(text.parentNode, 1, text.parentNode, 1); text.splitText(0)
+PASS range.startContainer is text.parentNode
+PASS range.startOffset is 1
+PASS range.endContainer is text.parentNode
+PASS range.endOffset is 1
+
+text = createTextWithParentAndSiblings(); range = createRange(text.parentNode, 2, text.parentNode, 2); text.splitText(0)
+PASS range.startContainer is text.parentNode
+PASS range.startOffset is 3
+PASS range.endContainer is text.parentNode
+PASS range.endOffset is 3
+
+text = createTextWithParentAndSiblings(); range = createRange(text.parentNode, 1, text.parentNode, 2); text.splitText(0)
+PASS range.startContainer is text.parentNode
+PASS range.startOffset is 1
+PASS range.endContainer is text.parentNode
+PASS range.endOffset is 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

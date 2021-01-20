@@ -1,0 +1,12 @@
+PASS inputEventAfterInsertingText.type is 'input'
+PASS inputEventAfterInsertingText.inputType is 'insertText'
+PASS inputEventAfterInsertingText.data is 'testing'
+PASS valueAfterInsertingText is 'testing'
+PASS inputEventAfterDeletingText.type is 'input'
+PASS inputEventAfterDeletingText.inputType is 'deleteContent'
+PASS inputEventAfterDeletingText.data is null
+PASS valueAfterDeletingText is ''
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

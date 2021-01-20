@@ -1,0 +1,23 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<ul id="listbox" role="listbox">
+    <li role="option">Option 1</li>
+    <li role="option">Option 2</li>
+</ul>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description("Tests that attempting to clear the selection in an ARIA listbox doesn't cause a crash.");
+    if (window.accessibilityController) {
+        var listbox = accessibilityController.accessibleElementById("listbox");
+        listbox.clearSelectedChildren();
+        shouldBe("listbox.selectedChildrenCount", "0");
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

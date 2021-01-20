@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+        function removeActiveCue()
+        {
+            testExpected("video.textTracks[0].activeCues.length", 1);
+
+            consoleWrite("");
+            consoleWrite("** Remove the cue while it is active **");
+            video.textTracks[0].removeCue(video.textTracks[0].activeCues[0]);
+
+            consoleWrite("");
+            consoleWrite("No crash. PASS.");
+            consoleWrite("");
+
+            endTest();
+        }
+
+        function startTest()
+        {
+            findMediaElement();
+            video.src = findMediaFile('video', '../content/test');
+
+            consoleWrite("** Add a text track to the video element **");
+            video.addTextTrack("captions", "regular captions track", "en");
+
+            consoleWrite("** Add a cue to the track with enter event listener. **");
+            var cue = new VTTCue(0.00, 4.00, "Random");
+            cue.addEventListener("enter", removeActiveCue);
+            video.textTracks[0].addCue(cue);
+
+            consoleWrite("");
+            consoleWrite("** Play the video and remove cue when it becomes active.  **");
+            run("video.play()");
+
+            video.textTracks[0].mode = "showing";
+          }
+        </script>
+    </head>
+
+    <body onload="startTest()">
+        <p>Tests that removing an active cue does not crash the browser.</p>
+        <video controls />
+    </body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        testExpected('MediaSource.isTypeSupported("video/mock; codecs=mock")', true);
+        testExpected('MediaSource.isTypeSupported("video/MOCK; codecs=mock")', true);
+        testExpected('MediaSource.isTypeSupported("video/mock; codecs=MOCK")', false);
+        testExpected('MediaSource.isTypeSupported("video/MOCK; codecs=MOCK")', false);
+        endTest();
+    }
+
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

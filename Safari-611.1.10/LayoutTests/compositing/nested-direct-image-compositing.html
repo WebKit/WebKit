@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Check to disappear the afterimage after changing the style of an img tag.</title>
+<style type="text/css">
+div.cell
+{
+    -webkit-transform: translate3d(0, 0, 0);
+}
+
+img
+{
+    position: absolute;
+    -webkit-transform: translate3d(0, 0, 0);
+}
+
+div.magnify img
+{
+    -webkit-transform: scale(2.0);
+}
+</style>
+</head>
+<body>
+
+
+<div class="cell magnify" id="cell">
+    <img src="resources/simple_image.png">
+</div>
+
+
+<script type="text/javascript">
+function updateStack()
+{
+    var cell = document.getElementById("cell");
+    cell.className = "cell";
+
+    setTimeout(function() {
+        if (window.testRunner) {
+            window.testRunner.notifyDone();
+        }
+    }, 10);
+}
+
+window.onload = function ()
+{
+    if (window.testRunner) {
+        window.testRunner.dumpAsText(true);
+        window.testRunner.waitUntilDone();
+    }
+
+    setTimeout(function() {
+        updateStack();
+    }, 200);
+}
+</script>
+
+</body>
+</html>
+

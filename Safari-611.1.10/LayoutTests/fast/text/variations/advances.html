@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+	font-family: "Boxis";
+	src: url("resources/Boxis-VF.ttf");
+}
+</style>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div><span id="regular" style="font: 100px 'Boxis';">ham</span></div>
+<div><span id="wide" style="font: 100px 'Boxis'; font-variation-settings: 'wdth' 900;">ham</span></div>
+<div><span id="specifiedregular" style="font: 100px 'Boxis'; font-variation-settings: 'wdth' 750;">ham</span></div>
+<div><span id="narrow" style="font: 100px 'Boxis'; font-variation-settings: 'wdth' 500;">ham</span></div>
+<script>
+window.jsTestIsAsync = true;
+
+var promises = [];
+
+document.fonts.forEach(function(f) {
+	promises.push(f.loaded);
+});
+
+Promise.all(promises).then(function() {
+	var regular = document.getElementById("regular");
+	var wide = document.getElementById("wide");
+	var specifiedregular = document.getElementById("specifiedregular");
+	var narrow = document.getElementById("narrow");
+
+	shouldNotBe("specifiedregular.offsetWidth", "wide.offsetWidth");
+	shouldNotBe("specifiedregular.offsetWidth", "narrow.offsetWidth");
+	shouldNotBe("narrow.offsetWidth", "wide.offsetWidth");
+	finishJSTest();
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

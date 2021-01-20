@@ -1,0 +1,9 @@
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
+
+FAIL 'textLength' on <textPath> with 'text-anchor' adjustments assert_approx_equals: width, text-anchor=start expected 25 +/- 0.5 but got 38.75
+

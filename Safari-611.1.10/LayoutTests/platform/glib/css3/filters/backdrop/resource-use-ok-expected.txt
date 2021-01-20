@@ -1,0 +1,36 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 1243.00 2209.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 1243.00 2209.00)
+      (contentsOpaque 1)
+      (children 3
+        (GraphicsLayer
+          (bounds 1242.00 2208.00)
+          (drawsContent 1)
+          (backdrop layer 0.00, 0.00 1242.00 x 2208.00)
+        )
+        (GraphicsLayer
+          (bounds 1242.00 2208.00)
+          (drawsContent 1)
+          (backdrop layer 0.00, 0.00 1242.00 x 2208.00)
+          (children 1
+            (GraphicsLayer
+              (position 1.00 1.00)
+              (bounds 1242.00 2208.00)
+              (drawsContent 1)
+              (backdrop layer 0.00, 0.00 1242.00 x 2208.00)
+            )
+          )
+        )
+        (GraphicsLayer
+          (bounds 1242.00 2208.00)
+          (drawsContent 1)
+          (backdrop layer 0.00, 0.00 1242.00 x 2208.00)
+        )
+      )
+    )
+  )
+)
+

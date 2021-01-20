@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="87.5 115.5 514.532 377" width="514.532" height="377">
+  <defs>
+    <font-face font-family="Monaco" font-size="12" units-per-em="1000" underline-position="-37.597656" underline-thickness="75.68359" slope="0" x-height="545.41016" cap-height="757.8125" ascent="1e3" descent="-250" font-weight="400">
+      <font-face-src>
+        <font-face-name name="Monaco"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="13" panose-1="2 0 5 3 0 0 0 9 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="-923.0769" x-height="517" cap-height="714" ascent="957.0007" descent="-212.99744" font-style="italic" font-weight="400">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-Italic"/>
+      </font-face-src>
+    </font-face>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="black">
+      <g>
+        <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <font-face font-family="Helvetica Neue" font-size="16" panose-1="2 0 4 3 0 0 0 9 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="-750" x-height="523" cap-height="721" ascent="951.004" descent="-212.99744" font-style="italic" font-weight="300">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-LightItalic"/>
+      </font-face-src>
+    </font-face>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="StickArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="#a5a5a5">
+      <g>
+        <path d="M 8 0 L 0 0 M 0 -3 L 8 0 L 0 3" fill="none" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.14.1 
+    <dc:date>2020-03-31 04:45:33 +0000</dc:date>
+  </metadata>
+  <g id="Canvas_1" stroke-opacity="1" stroke="none" fill-opacity="1" stroke-dasharray="none" fill="none">
+    <title>Canvas 1</title>
+    <rect fill="white" x="87.5" y="115.5" width="514.532" height="377"/>
+    <g id="Canvas_1: Layer 1">
+      <title>Layer 1</title>
+      <g id="Graphic_2">
+        <rect x="176" y="116" width="146.5" height="36" fill="white"/>
+        <rect x="176" y="116" width="146.5" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(181 125.99902)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="3.439453" y="12">Branch(isInt32(x))</tspan>
+        </text>
+      </g>
+      <g id="Graphic_3">
+        <rect x="88" y="184" width="146.5" height="36" fill="white"/>
+        <rect x="88" y="184" width="146.5" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(93 194.318)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="400" fill="black" x="12.1355" y="12">… fast int32 add …</tspan>
+        </text>
+      </g>
+      <g id="Graphic_4">
+        <rect x="273" y="184" width="146.5" height="36" fill="white"/>
+        <rect x="273" y="184" width="146.5" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(278 193.99902)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="14.241211" y="12">Call(slow path)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_5">
+        <rect x="176" y="252" width="146.5" height="36" fill="white"/>
+        <rect x="176" y="252" width="146.5" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(181 262.318)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="400" fill="black" x="34.06" y="12">… things …</tspan>
+        </text>
+      </g>
+      <g id="Graphic_10">
+        <rect x="176" y="320" width="146.5" height="36" fill="white"/>
+        <rect x="176" y="320" width="146.5" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(181 329.99902)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="3.439453" y="12">Branch(isInt32(x))</tspan>
+        </text>
+      </g>
+      <g id="Graphic_9">
+        <rect x="88" y="388" width="146.5" height="36" fill="white"/>
+        <rect x="88" y="388" width="146.5" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(93 398.318)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="400" fill="black" x="12.1355" y="12">… fast int32 add …</tspan>
+        </text>
+      </g>
+      <g id="Graphic_8">
+        <rect x="273" y="388" width="146.5" height="36" fill="white"/>
+        <rect x="273" y="388" width="146.5" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(278 397.999)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x="14.241211" y="12">Call(slow path)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_7">
+        <rect x="176" y="456" width="146.5" height="36" fill="white"/>
+        <rect x="176" y="456" width="146.5" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(181 466.318)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="400" fill="black" x="17.446" y="12">… more things …</tspan>
+        </text>
+      </g>
+      <g id="Line_12">
+        <line x1="225.95588" y1="152" x2="192.37784" y2="177.94667" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_13">
+        <line x1="274.92647" y1="152" x2="312.46706" y2="178.31712" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_14">
+        <line x1="184.54412" y1="220" x2="218.12216" y2="245.94667" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_15">
+        <line x1="320.57353" y1="220" x2="283.03294" y2="246.31712" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_16">
+        <line x1="249.25" y1="288" x2="249.25" y2="310.1" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_17">
+        <line x1="225.95588" y1="356" x2="192.37784" y2="381.94667" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_18">
+        <line x1="274.92647" y1="356" x2="312.46706" y2="382.3171" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_19">
+        <line x1="184.54412" y1="424" x2="218.12216" y2="449.94667" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_20">
+        <line x1="320.57353" y1="424" x2="283.03294" y2="450.3171" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_21">
+        <text transform="translate(493 234.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" font-style="italic" font-weight="300" fill="black" x="0" y="15">Not redundant!</tspan>
+        </text>
+      </g>
+      <g id="Line_22">
+        <path d="M 541.80814 229.5 C 535.2751 209.6522 515.6534 173.65505 457.28125 152 C 418.86564 137.74848 371.94844 132.78117 332.39955 131.58064" marker-end="url(#StickArrow_Marker)" stroke="#a5a5a5" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_23">
+        <path d="M 541.3074 257.948 C 534.5467 273.30442 515.4635 297.86656 461.60156 315.03516 C 422.41127 327.52714 373.428 333.3575 332.3852 336.025" marker-end="url(#StickArrow_Marker)" stroke="#a5a5a5" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+    </g>
+  </g>
+</svg>

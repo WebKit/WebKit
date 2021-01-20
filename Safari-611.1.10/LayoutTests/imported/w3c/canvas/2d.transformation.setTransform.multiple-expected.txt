@@ -1,0 +1,6 @@
+2d.transformation.setTransform.multiple
+Spec references: 2d.transformation.setTransform.identity
+Actual output:
+Expected output:
+
+Passed

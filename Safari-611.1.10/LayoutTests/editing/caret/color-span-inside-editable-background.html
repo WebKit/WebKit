@@ -1,0 +1,8 @@
+This test makes sure that carets in content editable divs with a background color specified remain black even if there is a span inside them with a foreground color specified.
+<div style="width: 505px; height: 505px; overflow: hidden;">
+<div id="edit" contenteditable="true" style="background: #fff; -webkit-transform-origin: left top; -webkit-transform: scale(50, 50); outline: none; font-family: Ahem; font-size: 10px;"><span id="spn" style="color: red;">&nbsp;&nbsp;</span></div>
+</div>
+<script>
+var edit = document.getElementById("edit");
+edit.focus();
+</script>

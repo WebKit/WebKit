@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (158,109) size 577x233
+      RenderSVGContainer {g} at (158,158) size 142x184 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,100.00)}]
+        RenderSVGRect {rect} at (158,158) size 142x184 [stroke={[type=SOLID] [color=#FFA500] [stroke width=10.00]}] [x=0.00] [y=0.00] [width=75.00] [height=100.00]
+        RenderSVGPath {line} at (158,158) size 142x17 [stroke={[type=SOLID] [color=#000000] [stroke width=10.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=75.00] [y2=0.00]
+        RenderSVGPath {line} at (158,158) size 17x184 [stroke={[type=SOLID] [color=#000000] [stroke width=10.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=100.00]
+      RenderSVGContainer {g} at (439,109) size 296x208 [transform={m=((0.87,-0.50)(0.82,0.68)) t=(100.00,100.00)}]
+        RenderSVGRect {rect} at (439,109) size 296x208 [stroke={[type=SOLID] [color=#FFA500] [stroke width=5.00]}] [x=100.00] [y=100.00] [width=100.00] [height=100.00]
+        RenderSVGPath {line} at (439,192) size 151x125 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000]}] [x1=100.00] [y1=100.00] [x2=100.00] [y2=200.00]
+        RenderSVGPath {line} at (439,109) size 160x94 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000]}] [x1=100.00] [y1=100.00] [x2=200.00] [y2=100.00]
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.3 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

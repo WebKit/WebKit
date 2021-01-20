@@ -1,0 +1,12 @@
+Tests that setting .length on an HTMLSelectElement works in the presence of mutation listeners that remove option elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS sel.length is 200
+PASS sel.length is 100
+PASS sel.length is 180
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

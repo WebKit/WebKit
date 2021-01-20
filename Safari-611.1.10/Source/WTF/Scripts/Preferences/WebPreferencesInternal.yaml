@@ -1,0 +1,850 @@
+# Copyright (c) 2020 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+# For internal features:
+# The type should be boolean.
+# They must include a humanReadableName and humanReadableDescription. This is
+#   the text exposed to the user from the WebKit client.
+
+# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
+AllowViewportShrinkToFitContent:
+  type: bool
+  humanReadableName: "Allow Viewport Shrink to Fit Content"
+  humanReadableDescription: "Allow the viewport shrink to fit content heuristic when appropriate"
+  condition: PLATFORM(IOS_FAMILY)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
+AlwaysZoomOnDoubleTap:
+  type: bool
+  humanReadableName: "DTTZ always"
+  humanReadableDescription: "Double taps zoom, even if we dispatched a click anywhere"
+  webcoreBinding: none
+  condition: PLATFORM(IOS_FAMILY)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+      
+AppHighlightsEnabled:
+  type: bool
+  humanReadableName: "App Highlights"
+  humanReadableDescription: "Enable persistent highlights for apps"
+  condition: ENABLE(APP_HIGHLIGHTS)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: WebKit::defaultAppHighlightsEnabled()
+    WebCore:
+      default: false
+
+# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
+ApplePayRemoteUIEnabled:
+  type: bool
+  humanReadableDescription: "Enable Apple Pay Remote UI"
+  humanReadableName: "Apple Pay Remote UI"
+  condition: ENABLE(APPLE_PAY_REMOTE_UI)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
+AriaReflectionEnabled:
+  type: bool
+  humanReadableName: "ARIA Reflection"
+  humanReadableDescription: "ARIA Reflection support"
+  webcoreBinding: RuntimeEnabledFeatures
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+
+AsyncFrameScrollingEnabled:
+  type: bool
+  webcoreOnChange: setNeedsRelayoutAllFrames
+  humanReadableName: "Async Frame Scrolling"
+  humanReadableDescription: "Perform frame scrolling off the main thread"
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "USE(NICOSIA)": true
+      "PLATFORM(IOS_FAMILY)": true
+      default: WebKit::defaultAsyncFrameScrollingEnabled()
+    WebCore:
+      default: false
+
+AsyncOverflowScrollingEnabled:
+  type: bool
+  webcoreOnChange: setNeedsRelayoutAllFrames
+  humanReadableName: "Async Overflow Scrolling"
+  humanReadableDescription: "Perform overflow scrolling off the main thread"
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "USE(NICOSIA)": true
+      "PLATFORM(IOS_FAMILY)": true
+      default: WebKit::defaultAsyncFrameScrollingEnabled()
+    WebCore:
+      default: false
+
+CSSLogicalEnabled:
+  type: bool
+  humanReadableName: "CSS Logical Properties and Values"
+  humanReadableDescription: "Enable CSS Logical Properties and Values"
+  webcoreBinding: RuntimeEnabledFeatures
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+CSSOMViewScrollingAPIEnabled:
+  type: bool
+  humanReadableName: "CSSOM View Scrolling API"
+  humanReadableDescription: "Implement standard behavior for scrollLeft, scrollTop, scrollWidth, scrollHeight, scrollTo, scrollBy and scrollingElement."
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      "PLATFORM(IOS_FAMILY)": WebKit::defaultCSSOMViewScrollingAPIEnabled()
+      default: true
+    WebCore:
+      default: false
+
+CaptureAudioInGPUProcessEnabled:
+  type: bool
+  humanReadableName: "GPU Process: Audio Capture"
+  humanReadableDescription: "Enable audio capture in GPU Process"
+  webcoreBinding: none
+  condition: ENABLE(MEDIA_STREAM)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: WebKit::defaultCaptureAudioInGPUProcessEnabled()
+
+CaptureAudioInUIProcessEnabled:
+  type: bool
+  humanReadableName: "Capture audio in UI Process"
+  humanReadableDescription: "Enable audio capture in UI Process"
+  webcoreBinding: none
+  condition: ENABLE(MEDIA_STREAM)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: WebKit::defaultCaptureAudioInUIProcessEnabled()
+
+CaptureVideoInGPUProcessEnabled:
+  type: bool
+  humanReadableName: "GPU Process: Video Capture"
+  humanReadableDescription: "Enable video capture in GPU Process"
+  webcoreBinding: none
+  condition: ENABLE(MEDIA_STREAM)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: WebKit::defaultCaptureVideoInGPUProcessEnabled()
+
+CaptureVideoInUIProcessEnabled:
+  type: bool
+  humanReadableName: "Capture video in UI Process"
+  humanReadableDescription: "Enable video capture in UI Process"
+  webcoreBinding: none
+  condition: ENABLE(MEDIA_STREAM)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+
+DOMPasteAccessRequestsEnabled:
+  type: bool
+  humanReadableName: "DOM Paste Access Requests"
+  humanReadableDescription: "Enable DOM Paste Access Requests"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "PLATFORM(IOS) || PLATFORM(MAC)": true
+      default: false
+    WebCore:
+      default: false
+
+# FIXME: This is on by default in WebKit2 (for everything but WatchOS). Perhaps we should consider turning it on for WebKitLegacy as well.
+DataListElementEnabled:
+  type: bool
+  humanReadableName: "DataList Element"
+  humanReadableDescription: "Enable datalist elements"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(DATALIST_ELEMENT)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "PLATFORM(WATCHOS)": false
+      default: true
+
+# FIXME: This is on by default in WebKit2 (for macOS at least). Perhaps we should consider turning it on for WebKitLegacy as well.
+DateTimeInputsEditableComponentsEnabled:
+  type: bool
+  humanReadableName: "Date/Time inputs have editable components"
+  humanReadableDescription: "Enable multiple editable components in date/time inputs"
+  condition: ENABLE(DATE_AND_TIME_INPUT_TYPES)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "PLATFORM(MAC)": true
+      default: false
+    WebCore:
+      default: false
+
+EnterKeyHintEnabled:
+  type: bool
+  humanReadableName: "Enter Key Hint"
+  humanReadableDescription: "Enable the enterKeyHint HTML attribute"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "PLATFORM(COCOA)": true
+      default: false
+    WebCore:
+      default: false
+
+# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
+ExperimentalPlugInSandboxProfilesEnabled:
+  type: bool
+  humanReadableName: "Sandbox Plug-Ins"
+  humanReadableDescription: "Enable Plug-In sandboxing"
+  webcoreBinding: RuntimeEnabledFeatures
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+FasterClicksEnabled:
+  type: bool
+  humanReadableName: "Fast clicks"
+  humanReadableDescription: "Support faster clicks on zoomable pages"
+  webcoreBinding: none
+  condition: PLATFORM(IOS_FAMILY)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: true
+
+# FIXME: This should be reconciled with 'FrameFlattening' in WebPreferences.yaml .
+FrameFlatteningEnabled:
+  type: bool
+  humanReadableName: "Frame flattening"
+  humanReadableDescription: "Enable frame flattening, which adjusts the height of an iframe to fit its contents"
+  webcoreBinding: custom
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      "PLATFORM(IOS_FAMILY)": true
+      default: false
+
+FullScreenEnabled:
+  type: bool
+  humanReadableName: "Fullscreen API"
+  humanReadableDescription: "Fullscreen API"
+  condition: ENABLE(FULLSCREEN_API)
+  hidden: EXPERIMENTAL_FULLSCREEN_API_HIDDEN
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+ICECandidateFilteringEnabled:
+  type: bool
+  webcoreOnChange: iceCandidateFilteringEnabledChanged
+  inspectorOverride: true
+  humanReadableName: "Enable ICE Candidate Filtering"
+  humanReadableDescription: "Enable ICE Candidate Filtering"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
+IOSFormControlRefreshEnabled:
+  type: bool
+  humanReadableName: "iOS Form Control Refresh"
+  humanReadableDescription: "Enable the new appearance for form controls on iOS"
+  condition: ENABLE(IOS_FORM_CONTROL_REFRESH)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+IPCTestingAPIEnabled:
+  type: bool
+  humanReadableName: "IPC Testing API"
+  humanReadableDescription: "Enable IPC Testing API for JavaScript"
+  webcoreBinding: none
+  condition: ENABLE(IPC_TESTING_API)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+
+InputTypeColorEnabled:
+  type: bool
+  humanReadableName: "Color Inputs"
+  humanReadableDescription: "Enable input elements of type color"
+  condition: ENABLE(INPUT_TYPE_COLOR)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "PLATFORM(WATCHOS)": false
+      default: true
+    WebCore:
+      default: false
+
+InputTypeDateEnabled:
+  type: bool
+  humanReadableName: "Date Input"
+  humanReadableDescription: "Enable input elements of type date"
+  condition: ENABLE(INPUT_TYPE_DATE)
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(IOS_FAMILY)": true
+      default: false
+    WebKit:
+      "PLATFORM(MACCATALYST) || PLATFORM(APPLETV)": false
+      default: true
+    WebCore:
+      default: false
+
+InputTypeDateTimeLocalEnabled:
+  type: bool
+  humanReadableName: "datetime-local Inputs"
+  humanReadableDescription: "Enable input elements of type datetime-local"
+  condition: ENABLE(INPUT_TYPE_DATETIMELOCAL)
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(IOS_FAMILY)": true
+      default: false
+    WebKit:
+      "PLATFORM(MACCATALYST) || PLATFORM(APPLETV)": false
+      default: true
+    WebCore:
+      default: false
+
+InputTypeMonthEnabled:
+  type: bool
+  humanReadableName: "Month Input"
+  humanReadableDescription: "Enable input elements of type month"
+  condition: ENABLE(INPUT_TYPE_MONTH)
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(IOS_FAMILY)": true
+      default: false
+    WebKit:
+      "!PLATFORM(MAC) && !PLATFORM(MACCATALYST) && !PLATFORM(APPLETV)": true
+      default: false
+    WebCore:
+      default: false
+
+InputTypeTimeEnabled:
+  type: bool
+  humanReadableName: "Time Input"
+  humanReadableDescription: "Enable input elements of type time"
+  condition: ENABLE(INPUT_TYPE_TIME)
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(IOS_FAMILY)": true
+      default: false
+    WebKit:
+      "PLATFORM(MACCATALYST) || PLATFORM(APPLETV)": false
+      default: true
+    WebCore:
+      default: false
+
+InputTypeWeekEnabled:
+  type: bool
+  humanReadableName: "Week Input"
+  humanReadableDescription: "Enable input elements of type week"
+  condition: ENABLE(INPUT_TYPE_WEEK)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "!PLATFORM(MAC) && !PLATFORM(MACCATALYST) && !PLATFORM(APPLETV)": true
+      default: false
+    WebCore:
+      default: false
+
+# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
+IsFirstPartyWebsiteDataRemovalLiveOnTestingEnabled:
+  type: bool
+  humanReadableName: "[ITP Live-On] 1 Hour Timeout For Non-Cookie Data Removal"
+  humanReadableDescription: "Remove all non-cookie website data after just one hour of no user interaction when Intelligent Tracking Prevention is enabled"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
+IsFirstPartyWebsiteDataRemovalReproTestingEnabled:
+  type: bool
+  humanReadableName: "[ITP Repro] 30 Second Timeout For Non-Cookie Data Removal"
+  humanReadableDescription: "Remove all non-cookie website data after just 30 seconds of no user interaction when Intelligent Tracking Prevention is enabled"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+KeygenElementEnabled:
+  type: bool
+  webKitLegacyPreferenceKey: WebKitKeygenElementEnabledPreferenceKey
+  webcoreBinding: RuntimeEnabledFeatures
+  humanReadableName: "HTMLKeygenElement"
+  humanReadableDescription: "Enables the deprecated and disabled-by-default HTML keygen element."
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+LayoutFormattingContextEnabled:
+  type: bool
+  humanReadableName: "Full next-generation layout (LFC)"
+  humanReadableDescription: "Enable full next-generation layout (LFC)"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(LAYOUT_FORMATTING_CONTEXT)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+LayoutFormattingContextIntegrationEnabled:
+  type: bool
+  humanReadableName: "Next-generation line layout integration (LFC)"
+  humanReadableDescription: "Enable next-generation line layout integration (LFC)"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(LAYOUT_FORMATTING_CONTEXT)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+
+LegacyOverflowScrollingTouchEnabled:
+  type: bool
+  webcoreOnChange: setNeedsRelayoutAllFrames
+  humanReadableName: "Legacy -webkit-overflow-scrolling property"
+  humanReadableDescription: "Support the legacy -webkit-overflow-scrolling CSS property"
+  condition: ENABLE(OVERFLOW_SCROLLING_TOUCH)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
+LineHeightUnitsEnabled:
+  type: bool
+  humanReadableName: "lh / rlh units"
+  humanReadableDescription: "Enable the lh and lhr units"
+  webcoreBinding: RuntimeEnabledFeatures
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+LiveRangeSelectionEnabled:
+  type: bool
+  humanReadableName: "Live Ranges in Selection"
+  humanReadableDescription: "Live range behavior for ranges in the Selection object"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+MediaCaptureRequiresSecureConnection:
+  type: bool
+  inspectorOverride: true
+  humanReadableName: "Limit Media Capture to Secure Sites"
+  humanReadableDescription: "Limit Media Capture to Secure Sites"
+  condition: ENABLE(MEDIA_STREAM)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
+MockCaptureDevicesEnabled:
+  type: bool
+  webcoreOnChange: mockCaptureDevicesEnabledChanged
+  inspectorOverride: true
+  condition: ENABLE(MEDIA_STREAM)
+  humanReadableName: "Enable Mock Capture Devices"
+  humanReadableDescription: "Enable Mock Capture Devices"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "PLATFORM(IOS_FAMILY_SIMULATOR)": true
+      default: false
+    WebCore:
+      default: false
+
+MouseEventsSimulationEnabled:
+  type: bool
+  humanReadableName: "Mouse events simulation"
+  humanReadableDescription: "Enable mouse events dispatch along with touch events on iOS"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(TOUCH_EVENTS)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+OffscreenCanvasEnabled:
+  type: bool
+  humanReadableName: "OffscreenCanvas"
+  humanReadableDescription: "Support for the OffscreenCanvas APIs"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(OFFSCREEN_CANVAS)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))": true
+      default: false
+
+PreferFasterClickOverDoubleTap:
+  type: bool
+  humanReadableName: "Fast clicks beat DTTZ"
+  humanReadableDescription: "Prefer a faster click over a double tap"
+  webcoreBinding: none
+  condition: PLATFORM(IOS_FAMILY)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      "PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS)": true
+      default: false
+
+PrefixedWebAudioEnabled:
+  type: bool
+  humanReadableName: "Prefixed WebAudio API"
+  humanReadableDescription: "Prefixed WebAudio API"
+  condition: ENABLE(WEB_AUDIO)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
+RestrictedHTTPResponseAccess:
+  type: bool
+  humanReadableName: "Filter HTTP Response for Web Processes"
+  humanReadableDescription: "Enable HTTP Response filtering for Web Processes"
+  webcoreBinding: RuntimeEnabledFeatures
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+
+ScrollingPerformanceTestingEnabled:
+  type: bool
+  humanReadableName: "Scroll Performance Testing Enabled"
+  humanReadableDescription: "Enable behaviors used by scrolling performance tests"
+  webcoreOnChange: scrollingPerformanceTestingEnabledChanged
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+SecureContextChecksEnabled:
+  type: bool
+  humanReadableName: "Secure Context Checks"
+  humanReadableDescription: "Allow access to HTTPS-only Web APIs over HTTP"
+  webcoreBinding: RuntimeEnabledFeatures
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+
+SelectionAcrossShadowBoundariesEnabled:
+  type: bool
+  humanReadableName: "Selection across shadow DOM"
+  humanReadableDescription: "Allow user-initiated selection across shadow DOM boundaries"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
+# FIXME: This is not implemented for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
+ServiceWorkersEnabled:
+  type: bool
+  humanReadableName: "Service Workers"
+  humanReadableDescription: "Enable Service Workers"
+  webcoreBinding: RuntimeEnabledFeatures
+  webcoreName: serviceWorkerEnabled
+  condition: ENABLE(SERVICE_WORKER)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "ENABLE(EXPERIMENTAL_FEATURES) || PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)": true
+      default: false
+
+SimpleLineLayoutEnabled:
+  type: bool
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
+  humanReadableName: "Simple line layout"
+  humanReadableDescription: "Enable simple line layout path (SLL)"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
+# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
+SpeakerSelectionRequiresUserGesture:
+  type: bool
+  humanReadableName: "Require a user gesture for speaker selection"
+  humanReadableDescription: "Require a user gesture for speaker selection"
+  condition: ENABLE(MEDIA_STREAM)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
+# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
+TextAutosizingUsesIdempotentMode:
+  type: bool
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
+  humanReadableName: "Idempotent Text Autosizing"
+  humanReadableDescription: "Use idempotent text autosizing mode"
+  condition: ENABLE(TEXT_AUTOSIZING)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "PLATFORM(IOS_FAMILY)": defaultTextAutosizingUsesIdempotentMode()
+      default: false
+    WebCore:
+      default: false
+
+# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
+UndoManagerAPIEnabled:
+  type: bool
+  humanReadableName: "UndoManager DOM API"
+  humanReadableDescription: "Enable the UndoManager DOM API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+UseGPUProcessForCanvasRenderingEnabled:
+  type: bool
+  humanReadableName: "GPU Process: Canvas Rendering"
+  humanReadableDescription: "Enable canvas rendering in GPU Process"
+  webcoreBinding: none
+  condition: ENABLE(GPU_PROCESS)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: defaultUseGPUProcessForCanvasRenderingEnabled()
+
+UseGPUProcessForDOMRenderingEnabled:
+  type: bool
+  humanReadableName: "GPU Process: DOM Rendering"
+  humanReadableDescription: "Enable DOM rendering in GPU Process"
+  webcoreBinding: none
+  condition: ENABLE(GPU_PROCESS)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: defaultUseGPUProcessForDOMRenderingEnabled()
+
+UseGPUProcessForMediaEnabled:
+  type: bool
+  humanReadableName: "GPU Process: Media"
+  humanReadableDescription: "Do all media loading and playback in the GPU Process"
+  webcoreBinding: none
+  condition: ENABLE(GPU_PROCESS)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: defaultUseGPUProcessForMediaEnabled()
+
+UseGPUProcessForWebGLEnabled:
+  type: bool
+  humanReadableName: "GPU Process: WebGL"
+  humanReadableDescription: "Enable WebGL in GPU Process"
+  webcoreBinding: none
+  condition: ENABLE(GPU_PROCESS)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: defaultUseGPUProcessForWebGLEnabled()
+
+WebAPIStatisticsEnabled:
+  type: bool
+  humanReadableName: "Web API Statistics"
+  humanReadableDescription: "Enable Web API Statistics"
+  webcoreBinding: RuntimeEnabledFeatures
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+WebGLUsingMetal:
+  type: bool
+  humanReadableName: "WebGL via Metal"
+  humanReadableDescription: "Use the Metal backend for ANGLE"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEBGL)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
+WebRTCDTMFEnabled:
+  type: bool
+  humanReadableName: "WebRTC DTMF"
+  humanReadableDescription: "Enable WebRTC DTMF"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEB_RTC)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+
+# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
+WebRTCH264HardwareEncoderEnabled:
+  type: bool
+  humanReadableName: "WebRTC H264 Hardware encoder"
+  humanReadableDescription: "Enable H264 Hardware encoder"
+  webcoreBinding: none
+  condition: ENABLE(WEB_RTC)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+
+# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
+WebRTCH264SimulcastEnabled:
+  type: bool
+  humanReadableName: "WebRTC H264 Simulcast"
+  humanReadableDescription: "Enable WebRTC H264 Simulcast"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEB_RTC)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+
+# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
+WebRTCMDNSICECandidatesEnabled:
+  type: bool
+  humanReadableName: "WebRTC mDNS ICE candidates"
+  humanReadableDescription: "Enable WebRTC mDNS ICE candidates"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEB_RTC)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: true
+
+ZoomOnDoubleTapWhenRoot:
+  type: bool
+  condition: PLATFORM(IOS_FAMILY)
+  humanReadableName: "DTTZ also when root"
+  humanReadableDescription: "Double taps zoom, even if we dispatched a click on the root nodes"
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false

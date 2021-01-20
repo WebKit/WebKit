@@ -1,0 +1,9 @@
+PASS getComputedStyle(testElement).backgroundColor is 'rgb(255, 0, 0)'
+PASS testElement.offsetWidth is 0
+PASS getComputedStyle(testElement).backgroundColor is 'rgb(255, 0, 0)'
+PASS testElement.offsetWidth is 0
+PASS getComputedStyle(testElement).backgroundColor is 'rgb(0, 128, 0)'
+PASS testElement.offsetWidth is 100
+This test requires testRunner and window.internals.
+
+

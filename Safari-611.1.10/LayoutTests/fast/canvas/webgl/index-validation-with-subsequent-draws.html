@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<script id='2d-vertex-shader' type='x-shader/x-vertex'>
+    attribute vec4 a_Position; 
+    void main() { gl_Position = a_Position; }
+</script>
+<script id='2d-fragment-shader' type='x-shader/x-fragment'>
+    void main( void ) {}
+</script>
+<body>
+<canvas id="canvas1" width="20" height="20"></canvas>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+// Boilerplate set-up.
+let canvas = document.getElementById('canvas1');
+let gl = canvas.getContext('webgl');
+
+let vShader = gl.createShader(gl.VERTEX_SHADER);
+let vShaderScript = document.getElementById('2d-vertex-shader');
+gl.shaderSource(vShader, vShaderScript.text);
+gl.compileShader(vShader);
+
+let fShader = gl.createShader(gl.FRAGMENT_SHADER);
+let fShaderScript = document.getElementById('2d-fragment-shader');
+gl.shaderSource(fShader, fShaderScript.text);
+gl.compileShader(fShader);
+
+let program = gl.createProgram();
+gl.attachShader(program, vShader);
+gl.attachShader(program, fShader);
+gl.linkProgram(program);
+gl.useProgram(program);
+
+gl.getExtension("OES_element_index_uint");
+let ext = gl.getExtension('ANGLE_instanced_arrays');
+
+// Execute a draw that is valid, if strange.
+let buffer = gl.createBuffer();
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8ClampedArray([256, 256, 256, 256]), gl.STATIC_DRAW);
+ext.drawElementsInstancedANGLE(gl.TRIANGLES, 2, gl.UNSIGNED_SHORT, 0, gl.UNSIGNED_SHORT);
+
+// Execute a draw that is invalid because an element index is too large.
+buffer = gl.createBuffer();
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([65536, 137413, 65536, 65536, 65536, 65536, 65536, 65536, 65536, 65536, 65536, 65536, 65536, 65536, 65536]), gl.STATIC_DRAW);
+gl.bufferSubData(gl.ELEMENT_ARRAY_BUFFER, 10, new Uint8ClampedArray([256, 256, 256, 256, 256, 256]));
+gl.drawElements(gl.TRIANGLES, 1, gl.UNSIGNED_INT, 0);
+
+// Now execute a similarly invalid call, that uses a smaller simulated buffer than the previous invalid call.
+buffer = gl.createBuffer();
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8ClampedArray([256, 256, 256, 256, 256, 256]), gl.STATIC_DRAW);
+gl.drawElements(gl.TRIANGLES, 1, gl.UNSIGNED_SHORT, 0);
+</script>
+</html>

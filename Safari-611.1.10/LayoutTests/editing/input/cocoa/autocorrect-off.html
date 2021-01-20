@@ -1,0 +1,77 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, width=device-width, user-scalable=no">
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test.js"></script>
+    <style>
+    div[contenteditable], textarea {
+        width: 200px;
+        height: 100px;
+        font-size: 24px;
+        border: 1px solid tomato;
+        margin: 10px;
+    }
+    </style>
+</head>
+<body>
+    <div contenteditable autocorrect="off"></div>
+    <textarea autocorrect="off"></textarea>
+    <pre id="description"></pre>
+    <pre id="console"></pre>
+    <script>
+    const stringToType = "Tset.";
+    window.jsTestIsAsync = true;
+    description("This test verifies that autocorrect=off disables autocorrection. To manually test, type 'Tset' into both editable areas and a period, and verify that it is not autocorrected.");
+
+    async function runTestForElement(element, stringToType)
+    {
+        if (window.testRunner)
+            await UIHelper.activateElementAndWaitForInputSession(element);
+
+        for (let character of [...stringToType]) {
+            await UIHelper.callFunctionAndWaitForEvent(() => {
+                return window.testRunner ? UIHelper.typeCharacter(character) : Promise.resolve();
+            }, element, "input");
+        }
+
+        element.blur();
+
+        if (window.testRunner)
+            await UIHelper.waitForKeyboardToHide();
+    }
+
+    addEventListener("load", async () => {
+        if (window.testRunner) {
+            await UIHelper.setContinuousSpellCheckingEnabled(true);
+            await UIHelper.setSpellCheckerResults({
+                "Tset.": [
+                    {
+                        "replacement": "Test",
+                        "type": "correction",
+                        "from": 0,
+                        "to": 4
+                    }
+                ]
+            });
+
+            internals.setAutomaticTextReplacementEnabled(true);
+            internals.setAutomaticSpellingCorrectionEnabled(true);
+        }
+
+        contenteditable = document.querySelector("div[contenteditable]");
+        textarea = document.querySelector("textarea");
+
+        await runTestForElement(contenteditable, stringToType);
+        shouldBeEqualToString("contenteditable.textContent", stringToType);
+
+        await runTestForElement(textarea, stringToType);
+        shouldBeEqualToString("textarea.value", stringToType);
+
+        contenteditable.remove();
+        textarea.remove();
+        finishJSTest();
+    });
+    </script>
+</body>
+</html>

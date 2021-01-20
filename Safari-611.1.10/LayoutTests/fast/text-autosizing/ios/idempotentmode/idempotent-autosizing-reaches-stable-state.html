@@ -1,0 +1,43 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true contentMode=desktop ] -->
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<script>
+if (window.internals) {
+    internals.settings.setTextAutosizingEnabled(true);
+    internals.settings.setTextAutosizingUsesIdempotentMode(true);
+    jsTestIsAsync = true;
+}
+</script>
+<style>
+body {
+    font-size: 12px;
+    font-family: monospace;
+    white-space: pre;
+    margin-bottom: 200vh;
+}
+</style>
+</head>
+<body>
+<span>The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog.</span>
+<script>
+addEventListener("load", async () => {
+    description("Verifies that idempotent text autosizing does not cause computed font size to thrash indefinitely. To run the test manually, open this page on an iPad.");
+
+    computedSizeAfterLoad = getComputedStyle(document.querySelector("span")).fontSize;
+
+    await UIHelper.delayFor(100);
+    computedSizeAfterWaitingFor100Milliseconds = getComputedStyle(document.querySelector("span")).fontSize;
+
+    await UIHelper.delayFor(100);
+    computedSizeAfterWaitingFor200Milliseconds = getComputedStyle(document.querySelector("span")).fontSize;
+
+    shouldBeGreaterThanOrEqual("computedSizeAfterLoad", "13");
+    shouldBe("computedSizeAfterLoad", "computedSizeAfterWaitingFor100Milliseconds");
+    shouldBe("computedSizeAfterLoad", "computedSizeAfterWaitingFor200Milliseconds");
+    finishJSTest();
+});
+</script>
+</body>
+</html>

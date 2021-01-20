@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" onload="runTest()">
+<script type="text/javascript"><![CDATA[
+function runTest() {
+    var path = 'M0,0L0,1000L1000,1000L1000,0z';
+    document.getElementById('glyph').setAttribute('d', path);
+}
+]]></script>
+<defs>
+  <font horiz-adv-x="500" id="t">
+    <font-face font-family="test" units-per-em="1000" ascent="700" descent="300" />
+    <missing-glyph d="M100,100V900H400V100zM120,120V880H380V120z" />
+    <glyph unicode="a" d="M100,100H400L250,1000z" id="glyph" />
+  </font>
+</defs>
+<text font-family="test" font-size="150" x="10" y="160" fill="green" fill-rule="evenodd" >a</text>
+</svg>

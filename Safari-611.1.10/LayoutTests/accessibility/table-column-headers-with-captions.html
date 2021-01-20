@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<table id="table" width="100%" border="0" cellspacing="2" cellpadding="1">
+    <caption>caption</caption>
+    <colgroup width="100%" span="2"><col width="50%"><col width="50%"></colgroup>
+    <tbody>
+        <tr><th>header1</th><th>header2</th></tr>
+        <tr><td>a</td><td>b</td></tr>
+    </tbody>
+</table>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that a table with a caption and an empty colgroup will still correctly report its headers.");
+
+    if (window.accessibilityController) {
+
+        var table = accessibilityController.accessibleElementById("table");
+        var colHeaders = table.columnHeaders();
+        if (accessibilityController.platformName == "atk") {
+            shouldBeTrue("colHeaders[0].isEqual(table.cellForColumnAndRow(0,0))");
+            shouldBeTrue("colHeaders[1].isEqual(table.cellForColumnAndRow(1,0))");
+        } else {
+            shouldBeTrue("colHeaders[0].isEqual(table.rowAtIndex(0).childAtIndex(0))");
+            shouldBeTrue("colHeaders[1].isEqual(table.rowAtIndex(0).childAtIndex(1))");
+        }
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

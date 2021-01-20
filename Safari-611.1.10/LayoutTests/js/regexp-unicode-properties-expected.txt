@@ -1,0 +1,41 @@
+Test for of RegExp Unicode properties
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS matchResult1[0] is src1
+PASS re2.test(src2) is true
+PASS /\p{Any-Old-Property}/u.test(src2) threw exception SyntaxError: Invalid regular expression: invalid property expression.
+PASS /\p{Script=Hebrew/u.test("Testing") threw exception SyntaxError: Invalid regular expression: invalid property expression.
+PASS /\p{Hebrew/u.test("Testing") threw exception SyntaxError: Invalid regular expression: invalid property expression.
+PASS /\p{Hebrew}/u.test("Testing") threw exception SyntaxError: Invalid regular expression: invalid property expression.
+PASS /\p{Letter/u.test("Testing") threw exception SyntaxError: Invalid regular expression: invalid property expression.
+PASS /\p{Cc/u.test("Testing") threw exception SyntaxError: Invalid regular expression: invalid property expression.
+PASS src3.match(re3a)[0] is src3
+PASS src3.match(re3b)[0] is src3
+PASS src4.match(re4a) is exp4
+PASS src4.match(re4c) is exp4
+PASS src4.match(re4d) is exp4
+PASS src4.match(re4e) is exp4
+PASS src4.match(re4f) is exp4
+PASS src5.match(re5a)[0] is "abdudtrjſºⅇꜹ𑣄"
+PASS src5.match(re5b)[0] is "abdudtrjſ"
+PASS src5.match(re5c)[0] is "SOME LOWER CASE: "
+PASS re6a.exec(src6)[0] is "λόγος"
+PASS re6b.exec(src6)[0] is "The Greek word "
+PASS re6c.exec(src6)[0] is "The Greek word λόγος means "
+PASS re7a.exec(src7a)[0] is "+"
+PASS re7b.exec(src7a)[0] is "+"
+PASS re7c.exec(src7a)[0] is "2"
+PASS re7d.exec(src7a)[0] is "2 + 2 = 4"
+PASS re7d.exec(src7b)[0] is "2 ^ "
+PASS re7e.exec(src7b)[0] is "2 ^ .5 = 1.4142135"
+PASS re7e.exec(src7c)[0] is "2 ÷ 3 = ~0.666666"
+PASS re7f.exec(src7d)[0] is "5³ + 3² = 134"
+PASS src7d.match(re7g) is ["+", "="]
+PASS re8a.exec(src8)[0] is "வணக்கம்"
+PASS re8b.exec(src8)[0] is "Hello is வணக்கம் in Tamil"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

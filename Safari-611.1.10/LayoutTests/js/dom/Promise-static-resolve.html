@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description('Test Promise.resolve');
+
+window.jsTestIsAsync = true;
+result = undefined;
+result2 = undefined;
+
+var resolve;
+var value = new Promise(function (r) { resolve = r;} );
+var promise = Promise.resolve(value);
+
+// If [[IsPromise]] is true, Promise.resolve simply returns argument.
+shouldBeTrue('promise === value');
+
+promise.then(function(res) {
+  result = res;
+  shouldBeEqualToString('result', 'hello');
+
+  return Promise.resolve(42).then(function (res) {
+      result2 = res;
+      shouldBe('result2', '42');
+  });
+}).then(function () {
+  testPassed('fulfilled');
+  finishJSTest();
+}, function() {
+  testFailed('rejected');
+  finishJSTest();
+});
+
+resolve('hello');
+shouldBe('result', 'undefined');
+shouldBe('result2', 'undefined');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

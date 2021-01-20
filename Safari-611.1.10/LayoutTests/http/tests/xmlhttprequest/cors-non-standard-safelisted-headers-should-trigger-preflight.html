@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Non-Standard Safelisted Headers SHOULD Trigger a Preflight</title>
+    <script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<!-- https://fetch.spec.whatwg.org/#cors-safelisted-request-header -->
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    var xhr;
+    var url = 'http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php';
+
+    function createOnLoadHandler (description, testNumber, isExpected) {
+        return function handler (e) {
+            if (isExpected)
+                testPassed(description);
+            else
+                testFailed(description);
+            e.preventDefault();
+            nextStep(testNumber);
+        }
+    }
+
+    function createOnErrorHandler (description, testNumber, isExpected) {
+        return function handler (e) {
+            if (isExpected)
+                testPassed(description);
+            else
+                testFailed(description);
+            e.preventDefault();
+            nextStep(testNumber);
+        }
+    }
+
+    var abnormalSimpleCorsHeaderValue = "() { :;};"
+    var allAllowedDelimiterCharactersForAcceptHeader = ",/;="
+    var allDisallowedDelimiterCharactersForAcceptHeader = ['"', '(', ')', ':', '<', '>', '?', '@', '[', '\\', ']', '{', '}'];
+    var allDisallowedCharactersForAcceptHeader = ['\x19', '\x0B', '\x08', '\x7F'];
+    var allAllowedNonAlphanumericCharactersForAcceptAndContentLanguageHeader = "\x20 *,-.;= ";
+    var allAllowedNonAlphanumericCharactersForAcceptHeader = "\x20 *,-.;= \x7E\x80";
+    var testCases = [
+        // Positive test cases with normal headers
+        {
+            headersToAdd: [{ name : "Accept", value: "application/json,text/*,*/*" }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: false,
+            description: "Accept header value 'application/json,text/*,*/*' SHOULD NOT cause a preflight"
+        }
+        ,{
+            headersToAdd: [{ name : "Accept", value: "application/vnd.api+json" }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: false,
+            description: "Accept header with normal value 'application/vnd.api+json' SHOULD NOT cause a preflight"
+        }
+        ,{
+            headersToAdd: [{ name : "Accept", value: "text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c" }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: false,
+            description: "Accept header with normal value 'text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c' SHOULD NOT cause a preflight"
+        }
+        ,{
+            headersToAdd: [{ name : "Accept", value: "text/*;q=0.3, text/html;q=0.7, text/html;level=1, text/html;level=2;q=0.4, */*;q=0.5" }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: false,
+            description: "Accept header with normal value 'text/*;q=0.3, text/html;q=0.7, text/html;level=1, text/html;level=2;q=0.4, */*;q=0.5' SHOULD NOT cause a preflight"
+        }
+        ,{
+            headersToAdd: [{ name : "Accept", value: allAllowedDelimiterCharactersForAcceptHeader }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: false,
+            description: "Accept header value with all allowed delimiter characters SHOULD NOT cause a preflight"
+        }
+        ,{
+            headersToAdd: [{ name : "Accept-Language", value: "en-US,en;q=0.8" }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: false,
+            description: "Accept-Language header value 'en-US,en;q=0.8' SHOULD NOT cause a preflight"
+        }
+        ,{
+            headersToAdd: [{ name : "Accept-Language", value: "zh-Latn-CN-variant1-a-extend1-x-wadegile-private1" }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: false,
+            description: "Accept-Language header value 'zh-Latn-CN-variant1-a-extend1-x-wadegile-private1' SHOULD NOT cause a preflight"
+        }
+        ,{
+            headersToAdd: [{ name : "Accept", value: allAllowedNonAlphanumericCharactersForAcceptHeader }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: false,
+            description: "Accept header value with all allowed non-alphanumeric characters SHOULD NOT cause a preflight"
+        }
+        ,{
+            headersToAdd: [{ name : "Accept-Language", value: allAllowedNonAlphanumericCharactersForAcceptAndContentLanguageHeader }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: false,
+            description: "Accept-Language header value with all allowed non-alphanumeric characters SHOULD NOT cause a preflight"
+        }
+        ,{
+            headersToAdd: [{ name : "Content-Language", value: "en-US,en;q=0.8" }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: false,
+            description: "Content-Language header value 'en-US,en;q=0.8' SHOULD NOT cause a preflight"
+        }
+        ,{
+            headersToAdd: [{ name : "Content-Language", value: "zh-Latn-CN-variant1-a-extend1-x-wadegile-private1" }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: false,
+            description: "Content-Language header value 'zh-Latn-CN-variant1-a-extend1-x-wadegile-private1' SHOULD NOT cause a preflight"
+        }
+        ,{
+            headersToAdd: [{ name : "Content-Language", value: allAllowedNonAlphanumericCharactersForAcceptAndContentLanguageHeader }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: false,
+            description: "Content-Language header value with all allowed non-alphanumeric characters SHOULD NOT cause a preflight"
+        }
+        // Negative test cases with abnormal headers
+        ,{
+            headersToAdd: [{ name : "Accept", value: abnormalSimpleCorsHeaderValue }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: true,
+            description: "Accept header with abnormal value SHOULD cause a preflight"
+        }
+        ,{
+            headersToAdd: [{ name : "Accept-Language", value: abnormalSimpleCorsHeaderValue }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: true,
+            description: "Accept-Language header with abnormal value SHOULD cause a preflight"
+        }
+        ,{
+            headersToAdd: [{ name : "Content-Language", value: abnormalSimpleCorsHeaderValue }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: true,
+            description: "Content-Language header with abnormal value SHOULD cause a preflight"
+        }
+        ,{
+            headersToAdd: [{ name : "Accept", value: "text/*" }, { name : "Accept-Language", value: "en" }, { name : "Content-Language", value: abnormalSimpleCorsHeaderValue }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: true,
+            description: "Accept header with normal value, Accept-Language header with normal value, and Content-Language header with abnormal value SHOULD cause a preflight"
+        }
+        ,{
+            headersToAdd: [{ name : "Accept", value: "text/*" }, { name : "Accept", value: abnormalSimpleCorsHeaderValue }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: true,
+            description: "Accept header with normal value and then another Accept header with abnormal value SHOULD cause a preflight"
+        }
+        // Positive test cases with abnormal headers
+        ,{
+            headersToAdd: [{ name : "Accept", value: abnormalSimpleCorsHeaderValue }],
+            explicitlyAllowHeaders: true,
+            shouldCausePreflight: true,
+            description: "Accept header with abnormal value and explicitly allowed headers SHOULD be allowed"
+        }
+        ,{
+            headersToAdd: [{ name : "Content-Language", value: abnormalSimpleCorsHeaderValue }],
+            explicitlyAllowHeaders: true,
+            shouldCausePreflight: true,
+            description: "Content-Language header with abnormal value and explicitly allowed headers SHOULD be allowed"
+        }
+        ,{
+            headersToAdd: [{ name : "Accept", value: "text/*" }, { name : "Accept-Language", value: "en" }, { name : "Content-Language", value: abnormalSimpleCorsHeaderValue }],
+            explicitlyAllowHeaders: true,
+            shouldCausePreflight: true,
+            description: "Accept header with normal value, Accept-Language header with normal value, Content-Language header with abnormal value, and explicitly allowed headers SHOULD be allowed"
+        }
+        ,{
+            headersToAdd: [{ name : "Accept", value: "text/*" }, { name : "Accept", value: abnormalSimpleCorsHeaderValue }],
+            explicitlyAllowHeaders: true,
+            shouldCausePreflight: true,
+            description: "Accept header with normal value, then another Accept header with abnormal value, and explicitly allowed headers SHOULD be allowed"
+        }
+    ];
+
+    // Individual negative test cases for each disallowed delimiter character in Accept header values.
+    for (var i = 0; i < allDisallowedDelimiterCharactersForAcceptHeader.length; i++) {
+        var disallowedDelimiter = allDisallowedDelimiterCharactersForAcceptHeader[i];
+        testCases.push(
+            {
+                headersToAdd: [{ name : "Accept", value: disallowedDelimiter }],
+                explicitlyAllowHeaders: false,
+                shouldCausePreflight: true,
+                description: "Accept header with disallowed delimiter '" + disallowedDelimiter + "' SHOULD cause a preflight"
+            }
+        );
+    }
+    for (var i = 0; i < allDisallowedCharactersForAcceptHeader.length; i++) {
+        var disallowedCharacter = allDisallowedCharactersForAcceptHeader[i];
+        testCases.push(
+            {
+                headersToAdd: [{ name : "Accept", value: disallowedCharacter }],
+                explicitlyAllowHeaders: false,
+                shouldCausePreflight: true,
+                description: "Accept header with disallowed character '" + disallowedCharacter + "' SHOULD cause a preflight"
+            }
+        );
+        testCases.push(
+            {
+                headersToAdd: [{ name : "Accept-Language", value: disallowedCharacter }],
+                explicitlyAllowHeaders: false,
+                shouldCausePreflight: true,
+                description: "Accept-Language header with disallowed character '" + disallowedCharacter + "' SHOULD cause a preflight"
+            }
+        );
+        testCases.push(
+            {
+                headersToAdd: [{ name : "Content-Language", value: disallowedCharacter }],
+                explicitlyAllowHeaders: false,
+                shouldCausePreflight: true,
+                description: "Content-Language header with disallowed character '" + disallowedCharacter + "' SHOULD cause a preflight"
+            }
+        );
+    }
+
+    function runTestCase(testNumber) {
+        var testCase = testCases[testNumber];
+        xhr = new XMLHttpRequest();
+        let query = "/?";
+        if (testCase.explicitlyAllowHeaders)
+            query += "explicitlyAllowHeaders&";
+        if (testCase.shouldCausePreflight)
+            query += "shouldPreflight";
+        xhr.open('GET', url + query, true);
+        for (var i = 0; i < testCase.headersToAdd.length; i++) {
+            xhr.setRequestHeader(testCase.headersToAdd[i].name, testCase.headersToAdd[i].value);
+        }
+        let shouldFail = testCase.shouldCausePreflight && !testCase.explicitlyAllowHeaders;
+        xhr.onerror = createOnErrorHandler(testCase.description, testNumber, shouldFail);
+        xhr.onload = createOnLoadHandler(testCase.description, testNumber, !shouldFail);
+        xhr.send();
+    }
+
+    function nextStep (testNumber) {
+        if (testNumber === (testCases.length - 1)) {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        } else
+            runTestCase(testNumber + 1);
+    }
+
+    runTestCase(0);
+</script>
+</body>
+</html>

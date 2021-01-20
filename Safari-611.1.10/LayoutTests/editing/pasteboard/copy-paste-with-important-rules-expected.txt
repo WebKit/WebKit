@@ -1,0 +1,32 @@
+This test ensures copying and paste respects !important in style rules.
+To test manually, copy and paste the content in the first box to the second box. All text should remain in blue and should remain unboldened.
+
+Original content:
+| "\n"
+| <p>
+|   "<#selection-anchor>hello "
+|   <span>
+|     style="color: red; font-weight: bold;"
+|     "world"
+| "\n"
+| <p>
+|   <span>
+|     class="Apple-style-span"
+|     style="color: red; font-weight: bold;"
+|     "WebKit<#selection-focus>"
+| "\n"
+
+Pasted content:
+| "\n"
+| <p>
+|   "hello "
+|   <span>
+|     style="color: red; font-weight: bold;"
+|     "world"
+| "\n"
+| <p>
+|   <span>
+|     class="Apple-style-span"
+|     style="color: red; font-weight: bold;"
+|     "WebKit"
+| "\n"

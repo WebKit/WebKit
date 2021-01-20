@@ -1,0 +1,21 @@
+
+This should display inline
+EVENT(canplaythrough)
+EVENT(seeked)
+
+
+Test that only allowed for the ::cue pseudo-element properties are applied to WebVTT node objects.
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).padding == '0px') OK
+EXPECTED (getComputedStyle(cueNode).wordSpacing == '0px') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).padding == '0px') OK
+EXPECTED (getComputedStyle(cueNode).wordSpacing == '0px') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).padding == '0px') OK
+EXPECTED (getComputedStyle(cueNode).wordSpacing == '0px') OK
+
+Test that filtering doesn't apply to elements which class equals 'cue' outside WebVTT scope.
+EXPECTED (getComputedStyle(cueNode).display == 'inline') OK
+END OF TEST
+

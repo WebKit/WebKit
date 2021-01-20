@@ -1,0 +1,21 @@
+This test starts two read-only transactions to an object store followed by a read-write transaction. It verifies that the read-write doesn't start until both read-onlys have finished.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+Upgrade needed: Old version - 0 New version - 1
+versionchange transaction completed
+Starting a readonly transaction
+Starting a readonly transaction
+readonly transaction completed
+readonly transaction completed
+Write in readwrite transaction succeeded
+readwrite transaction completed
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

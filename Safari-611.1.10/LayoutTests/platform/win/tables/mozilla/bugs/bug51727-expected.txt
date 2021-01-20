@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x92
+  RenderBlock {HTML} at (0,0) size 800x92
+    RenderBody {BODY} at (8,8) size 784x76
+      RenderBlock {FORM} at (0,0) size 784x50
+        RenderButton {INPUT} at (2,2) size 162x21 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+          RenderBlock (anonymous) at (8,3) size 146x15
+            RenderText at (0,0) size 146x15
+              text run at (0,0) width 146: "(1) Fill cell with long string"
+        RenderBR {BR} at (166,3) size 0x18
+        RenderButton {INPUT} at (2,27) size 167x21 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+          RenderBlock (anonymous) at (8,3) size 151x15
+            RenderText at (0,0) size 151x15
+              text run at (0,0) width 151: "(2) Fill cell with short string"
+        RenderBR {BR} at (171,28) size 0x18
+      RenderTable {TABLE} at (0,50) size 83x26
+        RenderTableSection {TBODY} at (0,0) size 83x26
+          RenderTableRow {TR} at (0,2) size 83x22
+            RenderTableCell {TD} at (2,2) size 79x22 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 14x18
+                text run at (2,2) width 14: "aa"

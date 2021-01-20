@@ -1,0 +1,5 @@
+[index]
+2d.clearRect
+fillRect preceded by a clearRect on the same area should show no side effects
+References: 2d.clearRect
+Passed

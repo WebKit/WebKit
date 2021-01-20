@@ -1,0 +1,173 @@
+<!doctype html>
+<html id="html">
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="style">
+* {
+    background-color: white;
+    color: rgb(2, 3, 4);
+}
+:matches(:root, :nth-of-type(n), :not(#specificity-trick), :nth-last-of-type(n)):focus-within {
+    background-color: rgb(1, 2, 3);
+}
+:matches(:root, :nth-last-of-type(n), :not(#specificity-trick)):focus-within {
+    color: rgb(5, 6, 7);
+}
+</style>
+</head>
+<body id="body">
+    <div id="webkit-test">
+        <div id="container1">
+            <div id="sibling1"></div>
+            <div id="sibling2">
+                <input id="target1">
+            </div>
+            <div id="sibling3"></div>
+        </div>
+        <div id="container2">
+            <div id="sibling4"></div>
+            <div id="sibling5">
+                <textarea id="target2"></textarea>
+            </div>
+            <div id="sibling6"></div>
+        </div>
+    </div>
+</body>
+<script>
+"use strict";
+description('Test :focus-within with selectors not compiled by CSS JIT');
+
+function elementsStyledWithFocusWithinSelector() {
+    let elements = [];
+    for (let element of document.querySelectorAll("*")) {
+        let computedStyle = getComputedStyle(element);
+        if (computedStyle.backgroundColor === 'rgb(1, 2, 3)' && computedStyle.color === 'rgb(5, 6, 7)') {
+            elements.push(element.id);
+        }
+    }
+    return elements;
+}
+
+function elementsMatchingFocusWithinSelector() {
+    let elements = [];
+    for (let element of document.querySelectorAll(":matches(:root, :nth-of-type(n), :not(#specificity-trick), :nth-last-of-type(n)):focus-within")) {
+        elements.push(element.id);
+    }
+    return elements;
+}
+
+debug("Initial State");
+shouldBe('elementsStyledWithFocusWithinSelector()', '[]');
+shouldBe('elementsMatchingFocusWithinSelector()', '[]');
+
+debug("Focus target1");
+var target1 = document.getElementById("target1");
+target1.focus();
+shouldBe('elementsStyledWithFocusWithinSelector()', '["html", "body", "webkit-test", "container1", "sibling2", "target1"]');
+shouldBe('elementsMatchingFocusWithinSelector()', '["html", "body", "webkit-test", "container1", "sibling2", "target1"]');
+
+debug("Focus target2");
+var target2 = document.getElementById("target2");
+target2.focus();
+shouldBe('elementsStyledWithFocusWithinSelector()', '["html", "body", "webkit-test", "container2", "sibling5", "target2"]');
+shouldBe('elementsMatchingFocusWithinSelector()', '["html", "body", "webkit-test", "container2", "sibling5", "target2"]');
+
+debug("Set display none on target2");
+target2.style.display = "none";
+shouldBe('elementsStyledWithFocusWithinSelector()', '["html", "body", "webkit-test", "container2", "sibling5", "target2"]');
+shouldBe('elementsMatchingFocusWithinSelector()', '["html", "body", "webkit-test", "container2", "sibling5", "target2"]');
+shouldBeTrue('target2.matches(":focus")');
+
+debug("Focus target1");
+target1.focus();
+shouldBe('elementsStyledWithFocusWithinSelector()', '["html", "body", "webkit-test", "container1", "sibling2", "target1"]');
+shouldBe('elementsMatchingFocusWithinSelector()', '["html", "body", "webkit-test", "container1", "sibling2", "target1"]');
+
+debug("Try to focus target2");
+target2.focus();
+shouldBe('elementsStyledWithFocusWithinSelector()', '["html", "body", "webkit-test", "container1", "sibling2", "target1"]');
+shouldBe('elementsMatchingFocusWithinSelector()', '["html", "body", "webkit-test", "container1", "sibling2", "target1"]');
+shouldBeTrue('target1.matches(":focus")');
+shouldBeFalse('target2.matches(":focus")');
+
+debug("Set display back on target2");
+target2.style.display = "revert";
+shouldBe('elementsStyledWithFocusWithinSelector()', '["html", "body", "webkit-test", "container1", "sibling2", "target1"]');
+shouldBe('elementsMatchingFocusWithinSelector()', '["html", "body", "webkit-test", "container1", "sibling2", "target1"]');
+
+debug("Focus target2");
+target2.focus();
+shouldBe('elementsStyledWithFocusWithinSelector()', '["html", "body", "webkit-test", "container2", "sibling5", "target2"]');
+shouldBe('elementsMatchingFocusWithinSelector()', '["html", "body", "webkit-test", "container2", "sibling5", "target2"]');
+
+debug("Set display none on container2");
+var container2 = document.getElementById("container2");
+container2.style.display = "none";
+shouldBe('elementsStyledWithFocusWithinSelector()', '["html", "body", "webkit-test", "container2", "sibling5", "target2"]');
+shouldBe('elementsMatchingFocusWithinSelector()', '["html", "body", "webkit-test", "container2", "sibling5", "target2"]');
+shouldBeTrue('target2.matches(":focus")');
+
+debug("Focus target1");
+target1.focus();
+shouldBe('elementsStyledWithFocusWithinSelector()', '["html", "body", "webkit-test", "container1", "sibling2", "target1"]');
+shouldBe('elementsMatchingFocusWithinSelector()', '["html", "body", "webkit-test", "container1", "sibling2", "target1"]');
+
+debug("Try to focus target2");
+target2.focus();
+shouldBe('elementsStyledWithFocusWithinSelector()', '["html", "body", "webkit-test", "container1", "sibling2", "target1"]');
+shouldBe('elementsMatchingFocusWithinSelector()', '["html", "body", "webkit-test", "container1", "sibling2", "target1"]');
+shouldBeTrue('target1.matches(":focus")');
+shouldBeFalse('target2.matches(":focus")');
+
+debug("Set display back on container2");
+var container2 = document.getElementById("container2");
+container2.style.display = "revert";
+shouldBe('elementsStyledWithFocusWithinSelector()', '["html", "body", "webkit-test", "container1", "sibling2", "target1"]');
+shouldBe('elementsMatchingFocusWithinSelector()', '["html", "body", "webkit-test", "container1", "sibling2", "target1"]');
+
+debug("Detach container1 from the document");
+var container1 = document.getElementById("container1");
+container1.parentElement.removeChild(container1);
+shouldBe('elementsStyledWithFocusWithinSelector()', '[]');
+shouldBe('elementsMatchingFocusWithinSelector()', '[]');
+shouldBe('container1.querySelectorAll(":focus-within").length', '0');
+shouldBeFalse('target1.matches(":focus")');
+shouldBeFalse('target2.matches(":focus")');
+
+debug("Try to focus target1");
+target1.focus();
+shouldBe('elementsStyledWithFocusWithinSelector()', '[]');
+shouldBe('elementsMatchingFocusWithinSelector()', '[]');
+shouldBe('container1.querySelectorAll(":focus-within").length', '0');
+shouldBeFalse('target1.matches(":focus")');
+shouldBeFalse('target2.matches(":focus")');
+
+debug("Focus target2");
+target2.focus();
+shouldBe('elementsStyledWithFocusWithinSelector()', '["html", "body", "webkit-test", "container2", "sibling5", "target2"]');
+shouldBe('elementsMatchingFocusWithinSelector()', '["html", "body", "webkit-test", "container2", "sibling5", "target2"]');
+
+debug("Attach container1 in container2");
+container2.appendChild(container1);
+shouldBe('elementsStyledWithFocusWithinSelector()', '["html", "body", "webkit-test", "container2", "sibling5", "target2"]');
+shouldBe('elementsMatchingFocusWithinSelector()', '["html", "body", "webkit-test", "container2", "sibling5", "target2"]');
+
+debug("Focus target1");
+target1.focus();
+shouldBe('elementsStyledWithFocusWithinSelector()', '["html", "body", "webkit-test", "container2", "container1", "sibling2", "target1"]');
+shouldBe('elementsMatchingFocusWithinSelector()', '["html", "body", "webkit-test", "container2", "container1", "sibling2", "target1"]');
+
+debug("Move target1 in container2");
+container2.appendChild(target1);
+shouldBe('elementsStyledWithFocusWithinSelector()', '[]');
+shouldBe('elementsMatchingFocusWithinSelector()', '[]');
+shouldBeFalse('target1.matches(":focus")');
+shouldBeFalse('target2.matches(":focus")');
+
+// Clean up the test.
+document.getElementById("webkit-test").style.display = "none";
+document.getElementById("style").innerHTML = "";
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

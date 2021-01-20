@@ -1,0 +1,21 @@
+An open connection blocks a separate connection's setVersion call
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+seen_blocked_event = true
+PASS blocked_event.oldVersion is 1
+PASS blocked_event.newVersion is 2
+PASS blocked_event.target.readyState is 'pending'
+connection.close()
+in setVersion.onsuccess
+PASS seen_blocked_event is true
+Deleted all object stores.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

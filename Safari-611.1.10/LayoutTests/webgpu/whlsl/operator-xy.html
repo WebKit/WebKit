@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>xy.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+const epsilon = 0.0001;
+
+whlslTests.operatorXY = async () => {
+    const program = `
+        int foo() {
+            if (bool2(true, false).xy.x)
+                return 42;
+            return 0;
+        }
+        int bar() {
+            if (bool2(true, false).yx.y)
+                return 24;
+            return 0;
+        }
+        int baz() {
+            int2 x = int2(20, 10);
+            x = x.xy;
+            return x.x - x.y;
+        }
+    `;
+
+    assert_equals(await callIntFunction(program, "foo", []), 42);
+    assert_equals(await callIntFunction(program, "bar", []), 24);
+    assert_equals(await callIntFunction(program, "baz", []), 10);
+};
+
+whlslTests.assignOperatorXY = async () => {
+    const program = `
+        int foo(int a, int b) {
+            int2 x;
+            x.xy = int2(a, b);
+            return x.x - x.y;
+        }
+    `;
+
+    assert_equals(await callIntFunction(program, "foo", [makeInt(20), makeInt(10)]), 10);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(10), makeInt(20)]), -10);
+};
+
+runTests(whlslTests);
+</script>
+</html>

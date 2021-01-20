@@ -1,0 +1,10 @@
+Tests that pressing the forward delete key in an editable element deletes the next character. To run this test manually, press the forward delete key and then click Check Result.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById("input").value is "ext"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

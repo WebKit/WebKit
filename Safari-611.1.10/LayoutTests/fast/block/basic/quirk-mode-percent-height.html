@@ -1,0 +1,23 @@
+<style>
+.top {
+	border: 1px solid green;
+	width: 200px;
+	overflow: hidden;
+}
+
+.main {
+	width: 300px;
+}
+
+.nested {
+	border: 1px solid red;
+	display: block;
+	height: 50%;
+	width: 200px;
+}
+
+</style>
+
+<div class=top><div class=main><div class=nested>This nested div has percent height value and the closest block level containing block box is the ICB.</div></div></div>
+
+<div class=top style="height: 200px"><div class=main><div class=nested>This nested div has percent height value and the closest block level containing block box is 2 containing blocks away.</div></div></div>

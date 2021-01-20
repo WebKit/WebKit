@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../resources/plugin.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+        runAfterPluginLoad(null, NotifyDone);
+    </script>
+</head>
+<body>
+    <div>
+        <embed id=testPlugin type="application/x-webkit-test-netscape" test="get-user-agent-with-null-npp-from-npp-new"></embed>
+    </div>
+    <p>This tests that we can get a user agent when calling NPN_UserAgent with a null NPP from NPP_New.</p>
+</body>
+</html>

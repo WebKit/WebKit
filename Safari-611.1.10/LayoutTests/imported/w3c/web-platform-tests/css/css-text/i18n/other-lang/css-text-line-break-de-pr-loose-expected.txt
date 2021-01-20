@@ -1,0 +1,41 @@
+
+FAIL 00B1  PLUS-MINUS SIGN may NOT appear at line start if de and loose assert_true: expected true got false
+FAIL 20AC  EURO SIGN may NOT appear at line start if de and loose assert_true: expected true got false
+FAIL 2116  NUMERO SIGN may NOT appear at line start if de and loose assert_true: expected true got false
+FAIL FE69  SMALL DOLLAR SIGN may NOT appear at line start if de and loose assert_true: expected true got false
+FAIL FF04  FULLWIDTH DOLLAR SIGN may NOT appear at line start if de and loose assert_true: expected true got false
+FAIL FFE1  FULLWIDTH POUND SIGN may NOT appear at line start if de and loose assert_true: expected true got false
+FAIL FFE5  FULLWIDTH YEN SIGN may NOT appear at line start if de and loose assert_true: expected true got false
+FAIL FFE6  FULLWIDTH WON SIGN may NOT appear at line start if de and loose assert_true: expected true got false
+00B1
+文文文文文文±字字
+文文文文文
+文±字字
+20AC
+文文文文文文€字字
+文文文文文
+文€字字
+2116
+文文文文文文№字字
+文文文文文
+文№字字
+FE69
+文文文文文文﹩字字
+文文文文文
+文﹩字字
+FF04
+文文文文文文＄字字
+文文文文文
+文＄字字
+FFE1
+文文文文文文￡字字
+文文文文文
+文￡字字
+FFE5
+文文文文文文￥字字
+文文文文文
+文￥字字
+FFE6
+文文文文文文￦字字
+文文文文文
+文￦字字

@@ -1,0 +1,279 @@
+/*
+
+File: FancyToolbar.css
+
+Abstract: CSS stylesheet for the FancyToolbar
+
+Version: 1.0 beta (works with Safari 3 and Firefox only)
+
+Disclaimer: IMPORTANT:  This Apple software is supplied to you by 
+Apple Inc. ("Apple") in consideration of your agreement to the
+following terms, and your use, installation, modification or
+redistribution of this Apple software constitutes acceptance of these
+terms.  If you do not agree with these terms, please do not use,
+install, modify or redistribute this Apple software.
+
+In consideration of your agreement to abide by the following terms, and
+subject to these terms, Apple grants you a personal, non-exclusive
+license, under Apple's copyrights in this original Apple software (the
+"Apple Software"), to use, reproduce, modify and redistribute the Apple
+Software, with or without modifications, in source and/or binary forms;
+provided that if you redistribute the Apple Software in its entirety and
+without modifications, you must retain this notice and the following
+text and disclaimers in all such redistributions of the Apple Software. 
+Neither the name, trademarks, service marks or logos of Apple Inc. 
+may be used to endorse or promote products derived from the Apple
+Software without specific prior written permission from Apple.  Except
+as expressly stated in this notice, no other rights or licenses, express
+or implied, are granted by Apple herein, including but not limited to
+any patent rights that may be infringed by your derivative works or by
+other works in which the Apple Software may be incorporated.
+
+The Apple Software is provided by Apple on an "AS IS" basis.  APPLE
+MAKES NO WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
+THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS
+FOR A PARTICULAR PURPOSE, REGARDING THE APPLE SOFTWARE OR ITS USE AND
+OPERATION ALONE OR IN COMBINATION WITH YOUR PRODUCTS.
+
+IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL
+OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) ARISING IN ANY WAY OUT OF THE USE, REPRODUCTION,
+MODIFICATION AND/OR DISTRIBUTION OF THE APPLE SOFTWARE, HOWEVER CAUSED
+AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE),
+STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+Copyright (C) 2007 Apple Inc. All Rights Reserved.
+
+*/
+
+.fancy-toolbar-bezel {
+    position: absolute;
+    height: 26px;
+    z-index: 10000;
+    -webkit-user-select: none;
+}
+
+.fancy-toolbar-bezel-top {
+    position: absolute;
+    top: 0;
+    left: 26px;
+    right: 26px;
+    background-image: url(FancyToolbarImages/toolbarOutlineTop.png);
+    background-repeat: repeat-x;
+    height: 55px;
+}
+
+.fancy-toolbar-bezel-left {
+    position: absolute;
+    top: 55px;
+    left: 0;
+    background-image: url(FancyToolbarImages/toolbarOutlineLeft.png);
+    background-repeat: repeat-y;
+    width: 26px;
+}
+
+.fancy-toolbar-bezel-right {
+    position: absolute;
+    top: 55px;
+    right: 0;
+    background-image: url(FancyToolbarImages/toolbarOutlineRight.png);
+    background-repeat: repeat-y;
+    width: 26px;
+}
+
+.fancy-toolbar-bezel-top-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-image: url(FancyToolbarImages/toolbarOutlineTopRight.png);
+    background-repeat: no-repeat;
+    width: 26px;
+    height: 55px;
+}
+
+.fancy-toolbar-bezel-top-left {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-image: url(FancyToolbarImages/toolbarOutlineTopLeft.png);
+    background-repeat: no-repeat;
+    width: 26px;
+    height: 55px;
+}
+
+.fancy-toolbar-bezel-bottom {
+    position: absolute;
+    right: 26px;
+    left: 26px;
+    background-image: url(FancyToolbarImages/toolbarOutlineBottom.png);
+    background-repeat: repeat-x;
+    height: 26px;
+}
+
+.fancy-toolbar-bezel-bottom-right {
+    position: absolute;
+    right: 0;
+    background-image: url(FancyToolbarImages/toolbarOutlineBottomRight.png);
+    background-repeat: no-repeat;
+    width: 26px;
+    height: 26px;
+}
+
+.fancy-toolbar-bezel-bottom-left {
+    position: absolute;
+    left: 0;
+    background-image: url(FancyToolbarImages/toolbarOutlineBottomLeft.png);
+    background-repeat: no-repeat;
+    width: 26px;
+    height: 26px;
+}
+
+.fancy-toolbar-area {
+    position: absolute;
+    left: 26px;
+    right: 26px;
+    top: 16px;
+    height: 26px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.fancy-toolbar-area > * {
+    float: left;
+}
+
+.fancy-toolbar-button {
+    height: 26px;
+    width: 29px;
+    border: none;
+    background-image: url(FancyToolbarImages/button.png);
+    background-repeat: no-repeat;
+    margin-right: 5px;
+    text-align: center;
+    font-family: Times;
+    font-size: 13px;
+    line-height: 22px;
+    text-indent: -2px;
+    -webkit-user-select: none;
+    vertical-align: middle;
+}
+
+.fancy-toolbar-button > * {
+    vertical-align: middle;
+}
+
+.fancy-toolbar-button:active, .fancy-toolbar-button.fancy-toolbar-button-selected {
+    background-image: url(FancyToolbarImages/buttonPressed.png);
+}
+
+.fancy-toolbar-button-segment {
+    height: 26px;
+    border: none;
+    background-color: transparent;
+    vertical-align: middle;
+    padding: 0;
+    margin: 0;
+}
+
+.fancy-toolbar-button-segment.fancy-toolbar-button-segment-start .fancy-toolbar-button-segment-cap {
+    background-image: url(FancyToolbarImages/buttonLeft.png);
+    background-repeat: no-repeat;
+    height: 25px;
+    width: 11px;
+    float: left;
+}
+
+.fancy-toolbar-button-segment.fancy-toolbar-button-segment-start:active .fancy-toolbar-button-segment-cap, .fancy-toolbar-button-segment.fancy-toolbar-button-segment-start.fancy-toolbar-button-selected .fancy-toolbar-button-segment-cap {
+    background-image: url(FancyToolbarImages/buttonPressedLeft.png);
+}
+
+.fancy-toolbar-button-segment.fancy-toolbar-button-segment-end {
+    margin-right: 5px;
+}
+
+.fancy-toolbar-button-segment.fancy-toolbar-button-segment-end .fancy-toolbar-button-segment-cap {
+    background-image: url(FancyToolbarImages/buttonRight.png);
+    background-repeat: no-repeat;
+    height: 26px;
+    width: 14px;
+    float: left;
+}
+
+.fancy-toolbar-button-segment.fancy-toolbar-button-segment-end:active .fancy-toolbar-button-segment-cap, .fancy-toolbar-button-segment.fancy-toolbar-button-segment-end.fancy-toolbar-button-selected .fancy-toolbar-button-segment-cap {
+    background-image: url(FancyToolbarImages/buttonPressedRight.png);
+}
+
+.fancy-toolbar-button-segment.fancy-toolbar-button-segment-start .fancy-toolbar-button-segment-middle, .fancy-toolbar-button-segment.fancy-toolbar-button-segment-end .fancy-toolbar-button-segment-middle {
+    width: 14px;
+}
+
+.fancy-toolbar-button-segment-middle {
+    background-image: url(FancyToolbarImages/buttonMiddle.png);
+    background-repeat: repeat-x;
+    height: 26px;
+    width: 20px;
+    float: left;
+}
+
+.fancy-toolbar-button-segment:active .fancy-toolbar-button-segment-middle, .fancy-toolbar-button-segment.fancy-toolbar-button-selected .fancy-toolbar-button-segment-middle {
+    background-image: url(FancyToolbarImages/buttonPressedMiddle.png);
+}
+
+.fancy-toolbar-button-segment-divider {
+    background-image: url(FancyToolbarImages/buttonPressedMiddle.png);
+    background-repeat: repeat-x;
+    height: 26px;
+    width: 1px;
+    float: left;
+}
+
+.fancy-toolbar-button-bold {
+    font-weight: bold;
+}
+
+.fancy-toolbar-button-underline {
+    text-decoration: underline;
+}
+
+.fancy-toolbar-button-italic {
+    font-style: italic;
+}
+
+.fancy-toolbar-button-link img {
+    margin-top: 7px;
+}
+
+.fancy-toolbar-button-image img {
+    margin-top: 5px;
+}
+
+.fancy-toolbar-button-text-align {
+    margin-top: 6px;
+    width: 10px;
+    height: 9px;
+}
+
+.fancy-toolbar-button-text-align.fancy-toolbar-button-text-align-left {
+    background-image: url(FancyToolbarImages/textAlign.png);
+    background-position: 0 0;
+}
+
+.fancy-toolbar-button-text-align.fancy-toolbar-button-text-align-center {
+    background-image: url(FancyToolbarImages/textAlign.png);
+    background-position: 0 9px;
+    margin-left: 5px;
+}
+
+.fancy-toolbar-button-text-align.fancy-toolbar-button-text-align-justify {
+    background-image: url(FancyToolbarImages/textAlign.png);
+    background-position: 0 17px;
+    margin-left: 5px;
+}
+
+.fancy-toolbar-button-text-align.fancy-toolbar-button-text-align-right {
+    background-image: url(FancyToolbarImages/textAlign.png);
+    background-position: 0 25px;
+    margin-left: 4px;
+}

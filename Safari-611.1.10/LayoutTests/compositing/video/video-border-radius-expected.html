@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .wrapper {
+        position: absolute;
+        clip: rect(0, 20px, 50px, 0);
+        background-color: gray;
+        width: 300px;
+        height: 250px;
+        margin: 5px;
+        border: 1px solid black;
+        -webkit-box-reflect: right 10px;
+    }
+
+    .wrapper.non-uniform {
+        clip: rect(0, 50px, 20px, 0);
+    }
+
+    .wrapper > .obscurer {
+        border-radius: 50%;
+    }
+    .non-uniform.wrapper > .obscurer {
+        border-top-left-radius: 300px 100px;
+        border-bottom-right-radius: 250px 10px;
+    }
+    
+    .obscurer {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: green;
+    }
+    
+    .composited {
+      -webkit-transform: translateZ(0);
+    }
+    
+    .box {
+        position: absolute;
+        top: 100px;
+        left: 100px;
+        width: 100px;
+        height: 100px;
+        background-color: blue;
+    }
+</style>
+</head>
+<body>
+    
+    <div class="wrapper">
+        <div class="composited box"></div>
+        <div class="obscurer"></div>
+    </div>
+
+    <div class="wrapper non-uniform" style="top: 100px;">
+        <div class="composited box"></div>
+        <div class="obscurer"></div>
+    </div>
+</body>
+</html>

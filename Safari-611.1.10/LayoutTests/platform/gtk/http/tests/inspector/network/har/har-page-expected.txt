@@ -1,0 +1,743 @@
+HAR Page Test.
+
+
+== Running test suite: HAR.Page
+-- Running test case: HAR.Basic.Page
+{
+  "log": {
+    "version": "1.2",
+    "creator": {
+      "name": "WebKit Web Inspector",
+      "version": "<filtered>"
+    },
+    "pages": [
+      {
+        "startedDateTime": "<filtered>",
+        "id": "page_0",
+        "title": "http://127.0.0.1:8000/inspector/network/har/har-page.html",
+        "pageTimings": {
+          "onContentLoad": "<filtered>",
+          "onLoad": "<filtered>"
+        }
+      }
+    ],
+    "entries": [
+      {
+        "pageref": "page_0",
+        "startedDateTime": "<filtered>",
+        "time": "<filtered>",
+        "request": {
+          "method": "GET",
+          "url": "http://127.0.0.1:8000/inspector/network/har/har-page.html",
+          "httpVersion": "<filtered>",
+          "cookies": [],
+          "headers": "<filtered>",
+          "queryString": [],
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "httpVersion": "<filtered>",
+          "cookies": [],
+          "headers": "<filtered>",
+          "content": {
+            "size": "<filtered>",
+            "compression": 0,
+            "mimeType": "text/html",
+            "text": "<filtered>"
+          },
+          "redirectURL": "",
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "cache": {},
+        "timings": {
+          "blocked": "<filtered>",
+          "dns": "<filtered>",
+          "connect": "<filtered>",
+          "ssl": -1,
+          "send": "<filtered>",
+          "wait": "<filtered>",
+          "receive": "<filtered>"
+        }
+      },
+      {
+        "pageref": "page_0",
+        "startedDateTime": "<filtered>",
+        "time": "<filtered>",
+        "request": {
+          "method": "GET",
+          "url": "http://127.0.0.1:8000/inspector/resources/inspector-test.js",
+          "httpVersion": "<filtered>",
+          "cookies": [],
+          "headers": "<filtered>",
+          "queryString": [],
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "httpVersion": "<filtered>",
+          "cookies": [],
+          "headers": "<filtered>",
+          "content": {
+            "size": "<filtered>",
+            "compression": 0,
+            "mimeType": "application/x-javascript",
+            "text": "<filtered>"
+          },
+          "redirectURL": "",
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "cache": {},
+        "timings": {
+          "blocked": "<filtered>",
+          "dns": "<filtered>",
+          "connect": "<filtered>",
+          "ssl": -1,
+          "send": "<filtered>",
+          "wait": "<filtered>",
+          "receive": "<filtered>"
+        }
+      },
+      {
+        "pageref": "page_0",
+        "startedDateTime": "<filtered>",
+        "time": "<filtered>",
+        "request": {
+          "method": "GET",
+          "url": "http://127.0.0.1:8000/cookies/resources/cookie-utilities.js",
+          "httpVersion": "<filtered>",
+          "cookies": [],
+          "headers": "<filtered>",
+          "queryString": [],
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "httpVersion": "<filtered>",
+          "cookies": [],
+          "headers": "<filtered>",
+          "content": {
+            "size": "<filtered>",
+            "compression": 0,
+            "mimeType": "application/x-javascript",
+            "text": "<filtered>"
+          },
+          "redirectURL": "",
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "cache": {},
+        "timings": {
+          "blocked": "<filtered>",
+          "dns": "<filtered>",
+          "connect": "<filtered>",
+          "ssl": -1,
+          "send": "<filtered>",
+          "wait": "<filtered>",
+          "receive": "<filtered>"
+        }
+      },
+      {
+        "pageref": "page_0",
+        "startedDateTime": "<filtered>",
+        "time": "<filtered>",
+        "request": {
+          "method": "GET",
+          "url": "http://127.0.0.1:8000/cookies/resources/setCookies.cgi",
+          "httpVersion": "<filtered>",
+          "cookies": [],
+          "headers": "<filtered>",
+          "queryString": [],
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "httpVersion": "<filtered>",
+          "cookies": [
+            {
+              "name": "simple",
+              "value": "simple",
+              "expires": "",
+              "httpOnly": false,
+              "secure": false
+            }
+          ],
+          "headers": "<filtered>",
+          "content": {
+            "size": "<filtered>",
+            "compression": 0,
+            "mimeType": "text/plain"
+          },
+          "redirectURL": "",
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "cache": {},
+        "timings": {
+          "blocked": "<filtered>",
+          "dns": "<filtered>",
+          "connect": "<filtered>",
+          "ssl": -1,
+          "send": "<filtered>",
+          "wait": "<filtered>",
+          "receive": "<filtered>"
+        }
+      },
+      {
+        "pageref": "page_0",
+        "startedDateTime": "<filtered>",
+        "time": "<filtered>",
+        "request": {
+          "method": "GET",
+          "url": "http://127.0.0.1:8000/cookies/resources/setCookies.cgi",
+          "httpVersion": "<filtered>",
+          "cookies": [
+            {
+              "name": "simple",
+              "value": "simple"
+            }
+          ],
+          "headers": "<filtered>",
+          "queryString": [],
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "httpVersion": "<filtered>",
+          "cookies": [
+            {
+              "name": "path",
+              "value": "path",
+              "path": "/A/B/C",
+              "expires": "",
+              "httpOnly": false,
+              "secure": false
+            }
+          ],
+          "headers": "<filtered>",
+          "content": {
+            "size": "<filtered>",
+            "compression": 0,
+            "mimeType": "text/plain"
+          },
+          "redirectURL": "",
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "cache": {},
+        "timings": {
+          "blocked": "<filtered>",
+          "dns": "<filtered>",
+          "connect": "<filtered>",
+          "ssl": -1,
+          "send": "<filtered>",
+          "wait": "<filtered>",
+          "receive": "<filtered>"
+        }
+      },
+      {
+        "pageref": "page_0",
+        "startedDateTime": "<filtered>",
+        "time": "<filtered>",
+        "request": {
+          "method": "GET",
+          "url": "http://127.0.0.1:8000/cookies/resources/setCookies.cgi",
+          "httpVersion": "<filtered>",
+          "cookies": [
+            {
+              "name": "simple",
+              "value": "simple"
+            }
+          ],
+          "headers": "<filtered>",
+          "queryString": [],
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "httpVersion": "<filtered>",
+          "cookies": [
+            {
+              "name": "secure",
+              "value": "secure",
+              "expires": "",
+              "httpOnly": false,
+              "secure": true
+            }
+          ],
+          "headers": "<filtered>",
+          "content": {
+            "size": "<filtered>",
+            "compression": 0,
+            "mimeType": "text/plain"
+          },
+          "redirectURL": "",
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "cache": {},
+        "timings": {
+          "blocked": "<filtered>",
+          "dns": "<filtered>",
+          "connect": "<filtered>",
+          "ssl": -1,
+          "send": "<filtered>",
+          "wait": "<filtered>",
+          "receive": "<filtered>"
+        }
+      },
+      {
+        "pageref": "page_0",
+        "startedDateTime": "<filtered>",
+        "time": "<filtered>",
+        "request": {
+          "method": "GET",
+          "url": "http://127.0.0.1:8000/cookies/resources/setCookies.cgi",
+          "httpVersion": "<filtered>",
+          "cookies": [
+            {
+              "name": "simple",
+              "value": "simple"
+            }
+          ],
+          "headers": "<filtered>",
+          "queryString": [],
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "httpVersion": "<filtered>",
+          "cookies": [
+            {
+              "name": "secure-and-http-only",
+              "value": "secure-and-http-only",
+              "expires": "",
+              "httpOnly": true,
+              "secure": true
+            }
+          ],
+          "headers": "<filtered>",
+          "content": {
+            "size": "<filtered>",
+            "compression": 0,
+            "mimeType": "text/plain"
+          },
+          "redirectURL": "",
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "cache": {},
+        "timings": {
+          "blocked": "<filtered>",
+          "dns": "<filtered>",
+          "connect": "<filtered>",
+          "ssl": -1,
+          "send": "<filtered>",
+          "wait": "<filtered>",
+          "receive": "<filtered>"
+        }
+      },
+      {
+        "pageref": "page_0",
+        "startedDateTime": "<filtered>",
+        "time": "<filtered>",
+        "request": {
+          "method": "GET",
+          "url": "http://127.0.0.1:8000/cookies/resources/setCookies.cgi",
+          "httpVersion": "<filtered>",
+          "cookies": [
+            {
+              "name": "simple",
+              "value": "simple"
+            }
+          ],
+          "headers": "<filtered>",
+          "queryString": [],
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "httpVersion": "<filtered>",
+          "cookies": [
+            {
+              "name": "with-expiration",
+              "value": "with-expiration",
+              "expires": "5000-01-04T08:00:00.000Z",
+              "httpOnly": false,
+              "secure": false
+            }
+          ],
+          "headers": "<filtered>",
+          "content": {
+            "size": "<filtered>",
+            "compression": 0,
+            "mimeType": "text/plain"
+          },
+          "redirectURL": "",
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "cache": {},
+        "timings": {
+          "blocked": "<filtered>",
+          "dns": "<filtered>",
+          "connect": "<filtered>",
+          "ssl": -1,
+          "send": "<filtered>",
+          "wait": "<filtered>",
+          "receive": "<filtered>"
+        }
+      },
+      {
+        "pageref": "page_0",
+        "startedDateTime": "<filtered>",
+        "time": "<filtered>",
+        "request": {
+          "method": "GET",
+          "url": "http://127.0.0.1:8000/cookies/resources/setCookies.cgi",
+          "httpVersion": "<filtered>",
+          "cookies": [
+            {
+              "name": "simple",
+              "value": "simple"
+            },
+            {
+              "name": "with-expiration",
+              "value": "with-expiration"
+            }
+          ],
+          "headers": "<filtered>",
+          "queryString": [],
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "httpVersion": "<filtered>",
+          "cookies": [
+            {
+              "name": "http-only",
+              "value": "http-only",
+              "expires": "",
+              "httpOnly": true,
+              "secure": false
+            }
+          ],
+          "headers": "<filtered>",
+          "content": {
+            "size": "<filtered>",
+            "compression": 0,
+            "mimeType": "text/plain"
+          },
+          "redirectURL": "",
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "cache": {},
+        "timings": {
+          "blocked": "<filtered>",
+          "dns": "<filtered>",
+          "connect": "<filtered>",
+          "ssl": -1,
+          "send": "<filtered>",
+          "wait": "<filtered>",
+          "receive": "<filtered>"
+        }
+      },
+      {
+        "pageref": "page_0",
+        "startedDateTime": "<filtered>",
+        "time": "<filtered>",
+        "request": {
+          "method": "GET",
+          "url": "http://127.0.0.1:8000/cookies/resources/setCookies.cgi",
+          "httpVersion": "<filtered>",
+          "cookies": [
+            {
+              "name": "http-only",
+              "value": "http-only"
+            },
+            {
+              "name": "simple",
+              "value": "simple"
+            },
+            {
+              "name": "with-expiration",
+              "value": "with-expiration"
+            }
+          ],
+          "headers": "<filtered>",
+          "queryString": [],
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "httpVersion": "<filtered>",
+          "cookies": [
+            {
+              "name": "same-site-strict",
+              "value": "same-site-strict",
+              "path": "/",
+              "expires": "",
+              "httpOnly": false,
+              "secure": false,
+              "sameSite": "Strict"
+            }
+          ],
+          "headers": "<filtered>",
+          "content": {
+            "size": "<filtered>",
+            "compression": 0,
+            "mimeType": "text/plain"
+          },
+          "redirectURL": "",
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "cache": {},
+        "timings": {
+          "blocked": "<filtered>",
+          "dns": "<filtered>",
+          "connect": "<filtered>",
+          "ssl": -1,
+          "send": "<filtered>",
+          "wait": "<filtered>",
+          "receive": "<filtered>"
+        }
+      },
+      {
+        "pageref": "page_0",
+        "startedDateTime": "<filtered>",
+        "time": "<filtered>",
+        "request": {
+          "method": "GET",
+          "url": "http://127.0.0.1:8000/cookies/resources/setCookies.cgi",
+          "httpVersion": "<filtered>",
+          "cookies": [
+            {
+              "name": "http-only",
+              "value": "http-only"
+            },
+            {
+              "name": "same-site-strict",
+              "value": "same-site-strict"
+            },
+            {
+              "name": "simple",
+              "value": "simple"
+            },
+            {
+              "name": "with-expiration",
+              "value": "with-expiration"
+            }
+          ],
+          "headers": "<filtered>",
+          "queryString": [],
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "httpVersion": "<filtered>",
+          "cookies": [
+            {
+              "name": "same-site-ignored-because-no-value",
+              "value": "same-site-ignored-because-no-value",
+              "path": "/",
+              "expires": "",
+              "httpOnly": false,
+              "secure": false
+            }
+          ],
+          "headers": "<filtered>",
+          "content": {
+            "size": "<filtered>",
+            "compression": 0,
+            "mimeType": "text/plain"
+          },
+          "redirectURL": "",
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "cache": {},
+        "timings": {
+          "blocked": "<filtered>",
+          "dns": "<filtered>",
+          "connect": "<filtered>",
+          "ssl": -1,
+          "send": "<filtered>",
+          "wait": "<filtered>",
+          "receive": "<filtered>"
+        }
+      },
+      {
+        "pageref": "page_0",
+        "startedDateTime": "<filtered>",
+        "time": "<filtered>",
+        "request": {
+          "method": "GET",
+          "url": "http://127.0.0.1:8000/cookies/resources/setCookies.cgi",
+          "httpVersion": "<filtered>",
+          "cookies": [
+            {
+              "name": "http-only",
+              "value": "http-only"
+            },
+            {
+              "name": "same-site-ignored-because-no-value",
+              "value": "same-site-ignored-because-no-value"
+            },
+            {
+              "name": "same-site-strict",
+              "value": "same-site-strict"
+            },
+            {
+              "name": "simple",
+              "value": "simple"
+            },
+            {
+              "name": "with-expiration",
+              "value": "with-expiration"
+            }
+          ],
+          "headers": "<filtered>",
+          "queryString": [],
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "httpVersion": "<filtered>",
+          "cookies": [
+            {
+              "name": "same-site-ignored-because-unknown-value",
+              "value": "same-site-ignored-because-unknown-value",
+              "path": "/",
+              "expires": "",
+              "httpOnly": false,
+              "secure": false
+            }
+          ],
+          "headers": "<filtered>",
+          "content": {
+            "size": "<filtered>",
+            "compression": 0,
+            "mimeType": "text/plain"
+          },
+          "redirectURL": "",
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "cache": {},
+        "timings": {
+          "blocked": "<filtered>",
+          "dns": "<filtered>",
+          "connect": "<filtered>",
+          "ssl": -1,
+          "send": "<filtered>",
+          "wait": "<filtered>",
+          "receive": "<filtered>"
+        }
+      },
+      {
+        "pageref": "page_0",
+        "startedDateTime": "<filtered>",
+        "time": "<filtered>",
+        "request": {
+          "method": "GET",
+          "url": "http://127.0.0.1:8000/cookies/resources/setCookies.cgi",
+          "httpVersion": "<filtered>",
+          "cookies": [
+            {
+              "name": "http-only",
+              "value": "http-only"
+            },
+            {
+              "name": "same-site-ignored-because-no-value",
+              "value": "same-site-ignored-because-no-value"
+            },
+            {
+              "name": "same-site-ignored-because-unknown-value",
+              "value": "same-site-ignored-because-unknown-value"
+            },
+            {
+              "name": "same-site-strict",
+              "value": "same-site-strict"
+            },
+            {
+              "name": "simple",
+              "value": "simple"
+            },
+            {
+              "name": "with-expiration",
+              "value": "with-expiration"
+            }
+          ],
+          "headers": "<filtered>",
+          "queryString": [],
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "httpVersion": "<filtered>",
+          "cookies": [
+            {
+              "name": "same-site-lax",
+              "value": "same-site-lax",
+              "path": "/",
+              "expires": "",
+              "httpOnly": false,
+              "secure": false,
+              "sameSite": "Lax"
+            }
+          ],
+          "headers": "<filtered>",
+          "content": {
+            "size": "<filtered>",
+            "compression": 0,
+            "mimeType": "text/plain"
+          },
+          "redirectURL": "",
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "cache": {},
+        "timings": {
+          "blocked": "<filtered>",
+          "dns": "<filtered>",
+          "connect": "<filtered>",
+          "ssl": -1,
+          "send": "<filtered>",
+          "wait": "<filtered>",
+          "receive": "<filtered>"
+        }
+      }
+    ]
+  }
+}
+

@@ -1,0 +1,5 @@
+Tests that elements panel search is not crashing on documentElement-less cases.
+
+
+PASS: Test passes if it doesn't crash.
+

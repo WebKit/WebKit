@@ -1,0 +1,20 @@
+<script>
+if (window.testRunner) {
+     testRunner.dumpEditingCallbacks();
+     testRunner.dumpAsText();
+}
+</script>
+<p>This tests the pruning that delete does when the it merges two paragraphs when the selection to delete spans multiple blocks.</p>
+<p>You should see:<br>b<b>ar<br>baz</b></p>
+<div id="test" contenteditable="true">boo<b><div>bar</div><div>baz</div></b></div>
+
+<script>
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+s.setPosition(e, 0);
+s.modify("move", "forward", "character");
+s.modify("extend", "forward", "line");
+
+document.execCommand("Delete");
+</script>

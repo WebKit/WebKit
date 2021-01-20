@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<script src="../resources/magnitude-perf.js"></script>
+<body>
+<script>
+
+var doc, node, expected;
+
+function appendDeepTree(magnitude)
+{
+    for (var i = 0; i < magnitude; i++) {
+        node = node.appendChild(doc.createElement('div'));
+    }
+}
+
+
+// Tests that contains is O(1) for document where the test |node| is in the document.
+
+function setup1(magnitude)
+{
+    node = document.body;
+    doc = document;
+    expected = true;
+    appendDeepTree(magnitude);
+}
+
+// Tests that contains is O(1) for document when the test |node| is not in the document.
+
+function setup2(magnitude)
+{
+    node = document.createElement('div');  // Not added to the document
+    doc = document;
+    expected = false;
+    appendDeepTree(magnitude);
+}
+
+// Tests that contains is O(1) for document when the test |node| is in a different document.
+
+function setup3(magnitude)
+{
+    var iframe = document.body.appendChild(document.createElement('iframe'));
+    doc = iframe.contentDocument;
+    node = doc.body;  // Different document.
+    expected = false;
+    appendDeepTree(magnitude);
+}
+
+function test(magnitude)
+{
+    var actual = document.contains(node);
+    if (actual !== expected)
+        throw 'Unexpected return value: ' + actual + ', expected: ' + expected;
+}
+
+Magnitude.description('Tests that document.contains is O(1).');
+Magnitude.run(setup1, test, Magnitude.CONSTANT);
+Magnitude.run(setup2, test, Magnitude.CONSTANT);
+Magnitude.run(setup3, test, Magnitude.CONSTANT);
+
+</script>
+</body>

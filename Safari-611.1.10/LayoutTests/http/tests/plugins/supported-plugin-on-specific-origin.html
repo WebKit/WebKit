@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src= "../resources/testharness.js"></script>
+<script src= "../resources/testharnessreport.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+</script>
+<p>On WebKitTestRunner, no console log message should appear stating the plugin is unsupported.</p>
+<div id="pluginPlaceholder"></div>
+
+<script>
+function doTest()
+{
+    if (window.location.origin !== "http://localhost:8080") {
+        if (!window.testRunner) {
+            assert_not_reached("Needs test runnner");
+            return;
+        }
+        testRunner.setPluginSupportedMode("specificOrigin");
+        window.location = "http://localhost:8080/plugins/supported-plugin-on-specific-origin.html";
+        return;
+    }
+    pluginPlaceholder.innerHTML = '<embed id="plugin" type="application/x-webkit-test-netscape"></embed>';
+    var test = async_test("Testing unsupported plug-in");
+    test.step(() => {
+        if (!window.internals) {
+           test.done();
+           return;
+        }
+        var counter = 0;
+        setInterval(test.step_func(() => {
+            let text = internals.unavailablePluginReplacementText(plugin);
+            assert_equals(text, "");
+            if (++counter > 5)
+                test.done();
+        }), 50);
+    });
+}
+doTest();
+</script>
+</body>
+</html>

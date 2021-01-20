@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body id="body">
+
+<div role="group" tabindex=0 id="liveregion" aria-live="polite" aria-relevant="additions">
+<h3 id="innerlive">text</h3>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+<div id="notifications"></div>
+
+<script>
+
+    description("This tests that when you change text in a live region, the proper notification is sent.");
+
+    var liveRegionText = 0;
+    function ariaCallbackText(notification) {
+        if (notification == "AXLiveRegionChanged") {
+           document.getElementById("notifications").innerHTML += "Successfully received " + notification;
+           liveRegionText.removeNotificationListener();
+           finishJSTest();
+        }
+    }
+
+    if (window.accessibilityController) {
+        jsTestIsAsync = true;
+
+        liveRegionText = accessibilityController.accessibleElementById("liveregion");
+
+        var addedNotification = liveRegionText.addNotificationListener(ariaCallbackText);
+        shouldBe("addedNotification", "true");
+
+        // this should trigger our live region callback for a text change.
+        document.getElementById("innerlive").innerText = "changed text";
+    }
+
+</script>
+</body>
+</html>

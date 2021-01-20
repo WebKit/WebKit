@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+  <head>
+    <title>bug 95015</title>
+    <meta charset="utf-8"/>
+  </head>    
+  <body>
+
+    
+    <!-- The msubsup should be in a supscript and so it should be hidden by the
+         red rectangle. -->
+    <div style="position: absolute; left: 10px; top: 0;">
+      <math>
+        <mrow>
+          <mspace height="50px" depth="50px"/>
+          <msup>
+            <mphantom><mi>X</mi></mphantom>
+            <mspace/>
+          </msup>
+        </mrow>
+      </math>
+    </div>
+    <div style="position: absolute; left: 10px; top: -.1em;">
+      <math>
+        <mrow>
+          <mspace height="50px" depth="50px"/>
+          <mspace width="100px" height="2em" depth="0" mathbackground="red"/>
+        </mrow>
+      </math>
+    </div>
+
+</body>
+</html>

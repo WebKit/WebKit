@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style id=style>
+html {
+    position: fixed; 
+    column-count: 2;
+}
+
+summary {
+    column-span: all;
+}
+
+details {
+    content: url();
+}
+
+table {
+    writing-mode: vertical-rl;
+}
+
+span {
+    display: grid;
+}
+</style>
+</head>
+<body>
+<details>
+  <summary>PASS if no</summary>
+</details>
+
+<span>
+  <table>
+    <caption>crash</caption>
+  </table>
+</span>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.offsetHeight;
+style.appendChild(document.createElement("span"));
+</script>
+</body>
+</html>

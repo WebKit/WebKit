@@ -1,0 +1,4 @@
+This test ensures WebKit fires mousedown event on a disabled input element.
+
+
+PASS

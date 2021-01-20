@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="resources/promise-utils.js"></script>
+    </head>
+    <body>
+        <script>
+            var stream;
+            var audioTrack;
+            var audioTrack2;
+            var videoTrack;
+            var sender;
+            var offer;
+
+            description("Test basic behavior of RTCRtpSender.replaceTrack()");
+
+            if (window.testRunner)
+                testRunner.setUserMediaPermission(true);
+            else {
+                debug("This test can not be run without the testRunner");
+                finishJSTest();
+            }
+
+            var pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+
+            navigator.mediaDevices.getUserMedia({ "audio": true, "video": true })
+            .then(function (s) {
+                stream = s;
+                audioTrack = stream.getAudioTracks()[0];
+                videoTrack = stream.getVideoTracks()[0];
+
+                audioTrack2 = audioTrack.clone();
+                audioTrack3 = audioTrack.clone();
+
+                shouldBe("pc.getSenders().length", "0");
+
+                shouldNotThrow("sender = pc.addTrack(audioTrack, stream)");
+                shouldBeType("sender", "RTCRtpSender");
+                shouldBe("sender.track", "audioTrack");
+
+                promiseShouldReject("sender.replaceTrack()")
+                .then(function () {
+                    return promiseShouldReject("sender.replaceTrack(null)");
+                })
+                .then(function () {
+                    return promiseShouldReject("sender.replaceTrack({})");
+                })
+                .then(function () {
+                    debug("Test mismatching track kind");
+                    return promiseShouldReject("sender.replaceTrack(videoTrack)");
+                })
+                .then(function () {
+                    return promiseShouldResolve("sender.replaceTrack(audioTrack2)");
+                })
+                .then(function () {
+                    testPassed("Track successfully replaced");
+                    shouldBe("sender.track", "audioTrack2");
+
+                    debug("Sender should still use old track (audioTrack) id in negotiation.");
+                    return pc.createOffer();
+                })
+                .then(function (o) {
+                    offer = o;
+                    testPassed("offer created");
+                    shouldNotBe("offer.sdp.indexOf(audioTrack.id)", "-1");
+                    shouldBe("offer.sdp.indexOf(audioTrack2.id)", "-1");
+
+                    debug("Stop sender, and try replacing the track");
+                    pc.removeTrack(sender);
+                    return promiseShouldReject("sender.replaceTrack(audioTrack2)");
+                })
+                .then(function () {
+                    debug("Create a new sender");
+                    shouldNotThrow("sender = pc.addTrack(audioTrack2, stream)");
+                    debug("Close pc and try replacing the track");
+                    pc.close();
+                    return promiseShouldReject("sender.replaceTrack(audioTrack3)");
+                })
+                .then(function () {
+                    debug("End of promise chain");
+                    finishJSTest();
+                })
+                .catch(function (error) {
+                    testFailed("Error in promise chain: " + error);
+                    finishJSTest();
+                });
+            })
+            .catch(function (error) {
+                testFailed("getUserMedia error: " + error);
+                finishJSTest();
+            });
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

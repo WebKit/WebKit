@@ -1,0 +1,727 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+# This is the root build file for GN. GN will start processing by loading this
+# file, and recursively load all dependencies until all dependencies are either
+# resolved or known not to exist (which will cause the build to fail). So if
+# you add a new build file, there must be some path of dependencies from this
+# file to your new one or GN won't know about it.
+
+import("//build/config/linux/pkg_config.gni")
+import("//build/config/sanitizers/sanitizers.gni")
+import("webrtc.gni")
+if (rtc_enable_protobuf) {
+  import("//third_party/protobuf/proto_library.gni")
+}
+if (is_android) {
+  import("//build/config/android/config.gni")
+  import("//build/config/android/rules.gni")
+}
+
+if (!build_with_chromium) {
+  # This target should (transitively) cause everything to be built; if you run
+  # 'ninja default' and then 'ninja all', the second build should do no work.
+  group("default") {
+    testonly = true
+    deps = [ ":webrtc" ]
+    if (rtc_build_examples) {
+      deps += [ "examples" ]
+    }
+    if (rtc_build_tools) {
+      deps += [ "rtc_tools" ]
+    }
+    if (rtc_include_tests) {
+      deps += [
+        ":rtc_unittests",
+        ":slow_tests",
+        ":video_engine_tests",
+        ":voip_unittests",
+        ":webrtc_nonparallel_tests",
+        ":webrtc_perf_tests",
+        "common_audio:common_audio_unittests",
+        "common_video:common_video_unittests",
+        "examples:examples_unittests",
+        "media:rtc_media_unittests",
+        "modules:modules_tests",
+        "modules:modules_unittests",
+        "modules/audio_coding:audio_coding_tests",
+        "modules/audio_processing:audio_processing_tests",
+        "modules/remote_bitrate_estimator:rtp_to_text",
+        "modules/rtp_rtcp:test_packet_masks_metrics",
+        "modules/video_capture:video_capture_internal_impl",
+        "pc:peerconnection_unittests",
+        "pc:rtc_pc_unittests",
+        "rtc_tools:rtp_generator",
+        "rtc_tools:video_replay",
+        "stats:rtc_stats_unittests",
+        "system_wrappers:system_wrappers_unittests",
+        "test",
+        "video:screenshare_loopback",
+        "video:sv_loopback",
+        "video:video_loopback",
+      ]
+      if (!is_asan) {
+        # Do not build :webrtc_lib_link_test because lld complains on some OS
+        # (e.g. when target_os = "mac") when is_asan=true. For more details,
+        # see bugs.webrtc.org/11027#c5.
+        deps += [ ":webrtc_lib_link_test" ]
+      }
+      if (is_android) {
+        deps += [
+          "examples:android_examples_junit_tests",
+          "sdk/android:android_instrumentation_test_apk",
+          "sdk/android:android_sdk_junit_tests",
+        ]
+      } else {
+        deps += [ "modules/video_capture:video_capture_tests" ]
+      }
+      if (rtc_enable_protobuf) {
+        deps += [
+          "audio:low_bandwidth_audio_test",
+          "logging:rtc_event_log_rtp_dump",
+          "tools_webrtc/perf:webrtc_dashboard_upload",
+        ]
+      }
+    }
+  }
+}
+
+# Abseil Flags by default doesn't register command line flags on mobile
+# platforms, WebRTC tests requires them (e.g. on simualtors) so this
+# config will be applied to testonly targets globally (see webrtc.gni).
+config("absl_flags_configs") {
+  defines = [ "ABSL_FLAGS_STRIP_NAMES=0" ]
+}
+
+config("library_impl_config") {
+  # Build targets that contain WebRTC implementation need this macro to
+  # be defined in order to correctly export symbols when is_component_build
+  # is true.
+  # For more info see: rtc_base/build/rtc_export.h.
+  defines = [ "WEBRTC_LIBRARY_IMPL" ]
+}
+
+# Contains the defines and includes in common.gypi that are duplicated both as
+# target_defaults and direct_dependent_settings.
+config("common_inherited_config") {
+  defines = []
+  cflags = []
+  ldflags = []
+
+  if (rtc_enable_symbol_export || is_component_build) {
+    defines = [ "WEBRTC_ENABLE_SYMBOL_EXPORT" ]
+  }
+
+  if (build_with_mozilla) {
+    defines += [ "WEBRTC_MOZILLA_BUILD" ]
+  }
+
+  if (!rtc_builtin_ssl_root_certificates) {
+    defines += [ "WEBRTC_EXCLUDE_BUILT_IN_SSL_ROOT_CERTS" ]
+  }
+
+  if (rtc_disable_check_msg) {
+    defines += [ "RTC_DISABLE_CHECK_MSG" ]
+  }
+
+  if (rtc_enable_avx2) {
+    defines += [ "WEBRTC_ENABLE_AVX2" ]
+  }
+
+  # Some tests need to declare their own trace event handlers. If this define is
+  # not set, the first time TRACE_EVENT_* is called it will store the return
+  # value for the current handler in an static variable, so that subsequent
+  # changes to the handler for that TRACE_EVENT_* will be ignored.
+  # So when tests are included, we set this define, making it possible to use
+  # different event handlers in different tests.
+  if (rtc_include_tests) {
+    defines += [ "WEBRTC_NON_STATIC_TRACE_EVENT_HANDLERS=1" ]
+  } else {
+    defines += [ "WEBRTC_NON_STATIC_TRACE_EVENT_HANDLERS=0" ]
+  }
+  if (build_with_chromium) {
+    defines += [ "WEBRTC_CHROMIUM_BUILD" ]
+    include_dirs = [
+      # The overrides must be included first as that is the mechanism for
+      # selecting the override headers in Chromium.
+      "../webrtc_overrides",
+
+      # Allow includes to be prefixed with webrtc/ in case it is not an
+      # immediate subdirectory of the top-level.
+      ".",
+
+      # Just like the root WebRTC directory is added to include path, the
+      # corresponding directory tree with generated files needs to be added too.
+      # Note: this path does not change depending on the current target, e.g.
+      # it is always "//gen/third_party/webrtc" when building with Chromium.
+      # See also: http://cs.chromium.org/?q=%5C"default_include_dirs
+      # https://gn.googlesource.com/gn/+/master/docs/reference.md#target_gen_dir
+      target_gen_dir,
+    ]
+  }
+  if (is_posix || is_fuchsia) {
+    defines += [ "WEBRTC_POSIX" ]
+  }
+  if (is_ios) {
+    defines += [
+      "WEBRTC_MAC",
+      "WEBRTC_IOS",
+    ]
+  }
+  if (is_linux || is_chromeos) {
+    defines += [ "WEBRTC_LINUX" ]
+  }
+  if (is_mac) {
+    defines += [ "WEBRTC_MAC" ]
+  }
+  if (is_fuchsia) {
+    defines += [ "WEBRTC_FUCHSIA" ]
+  }
+  if (is_win) {
+    defines += [ "WEBRTC_WIN" ]
+  }
+  if (is_android) {
+    defines += [
+      "WEBRTC_LINUX",
+      "WEBRTC_ANDROID",
+    ]
+
+    if (build_with_mozilla) {
+      defines += [ "WEBRTC_ANDROID_OPENSLES" ]
+    }
+  }
+  if (is_chromeos) {
+    defines += [ "CHROMEOS" ]
+  }
+
+  if (rtc_sanitize_coverage != "") {
+    assert(is_clang, "sanitizer coverage requires clang")
+    cflags += [ "-fsanitize-coverage=${rtc_sanitize_coverage}" ]
+    ldflags += [ "-fsanitize-coverage=${rtc_sanitize_coverage}" ]
+  }
+
+  if (is_ubsan) {
+    cflags += [ "-fsanitize=float-cast-overflow" ]
+  }
+}
+
+# TODO(bugs.webrtc.org/9693): Remove the possibility to suppress this warning
+# as soon as WebRTC compiles without it.
+config("no_exit_time_destructors") {
+  if (is_clang) {
+    cflags = [ "-Wno-exit-time-destructors" ]
+  }
+}
+
+# TODO(bugs.webrtc.org/9693): Remove the possibility to suppress this warning
+# as soon as WebRTC compiles without it.
+config("no_global_constructors") {
+  if (is_clang) {
+    cflags = [ "-Wno-global-constructors" ]
+  }
+}
+
+config("rtc_prod_config") {
+  # Ideally, WebRTC production code (but not test code) should have these flags.
+  if (is_clang) {
+    cflags = [
+      "-Wexit-time-destructors",
+      "-Wglobal-constructors",
+    ]
+  }
+}
+
+config("common_config") {
+  cflags = []
+  cflags_c = []
+  cflags_cc = []
+  cflags_objc = []
+  defines = []
+
+  if (rtc_enable_protobuf) {
+    defines += [ "WEBRTC_ENABLE_PROTOBUF=1" ]
+  } else {
+    defines += [ "WEBRTC_ENABLE_PROTOBUF=0" ]
+  }
+
+  if (rtc_include_internal_audio_device) {
+    defines += [ "WEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE" ]
+  }
+
+  if (rtc_libvpx_build_vp9) {
+    defines += [ "RTC_ENABLE_VP9" ]
+  }
+
+  if (rtc_enable_sctp) {
+    defines += [ "HAVE_SCTP" ]
+  }
+
+  if (rtc_enable_external_auth) {
+    defines += [ "ENABLE_EXTERNAL_AUTH" ]
+  }
+
+  if (rtc_use_h264) {
+    defines += [ "WEBRTC_USE_H264" ]
+  }
+
+  if (rtc_use_absl_mutex) {
+    defines += [ "WEBRTC_ABSL_MUTEX" ]
+  }
+
+  if (rtc_disable_logging) {
+    defines += [ "RTC_DISABLE_LOGGING" ]
+  }
+
+  if (rtc_disable_trace_events) {
+    defines += [ "RTC_DISABLE_TRACE_EVENTS" ]
+  }
+
+  if (rtc_disable_metrics) {
+    defines += [ "RTC_DISABLE_METRICS" ]
+  }
+
+  if (rtc_exclude_transient_suppressor) {
+    defines += [ "WEBRTC_EXCLUDE_TRANSIENT_SUPPRESSOR" ]
+  }
+
+  if (rtc_exclude_audio_processing_module) {
+    defines += [ "WEBRTC_EXCLUDE_AUDIO_PROCESSING_MODULE" ]
+  }
+
+  cflags = []
+
+  if (build_with_chromium) {
+    defines += [
+      # NOTICE: Since common_inherited_config is used in public_configs for our
+      # targets, there's no point including the defines in that config here.
+      # TODO(kjellander): Cleanup unused ones and move defines closer to the
+      # source when webrtc:4256 is completed.
+      "HAVE_WEBRTC_VIDEO",
+      "LOGGING_INSIDE_WEBRTC",
+    ]
+  } else {
+    if (is_posix || is_fuchsia) {
+      cflags_c += [
+        # TODO(bugs.webrtc.org/9029): enable commented compiler flags.
+        # Some of these flags should also be added to cflags_objc.
+
+        # "-Wextra",  (used when building C++ but not when building C)
+        # "-Wmissing-prototypes",  (C/Obj-C only)
+        # "-Wmissing-declarations",  (ensure this is always used C/C++, etc..)
+        "-Wstrict-prototypes",
+
+        # "-Wpointer-arith",  (ensure this is always used C/C++, etc..)
+        # "-Wbad-function-cast",  (C/Obj-C only)
+        # "-Wnested-externs",  (C/Obj-C only)
+      ]
+      cflags_objc += [ "-Wstrict-prototypes" ]
+      cflags_cc = [
+        "-Wnon-virtual-dtor",
+
+        # This is enabled for clang; enable for gcc as well.
+        "-Woverloaded-virtual",
+      ]
+    }
+
+    if (is_clang) {
+      cflags += [
+        "-Wc++11-narrowing",
+        "-Wimplicit-fallthrough",
+        "-Wthread-safety",
+        "-Winconsistent-missing-override",
+        "-Wundef",
+      ]
+
+      # use_xcode_clang only refers to the iOS toolchain, host binaries use
+      # chromium's clang always.
+      if (!is_nacl &&
+          (!use_xcode_clang || current_toolchain == host_toolchain)) {
+        # Flags NaCl (Clang 3.7) and Xcode 7.3 (Clang clang-703.0.31) do not
+        # recognize.
+        cflags += [ "-Wunused-lambda-capture" ]
+      }
+    }
+
+    if (is_win && !is_clang) {
+      # MSVC warning suppressions (needed to use Abseil).
+      # TODO(bugs.webrtc.org/9274): Remove these warnings as soon as MSVC allows
+      # external headers warning suppression (or fix them upstream).
+      cflags += [ "/wd4702" ]  # unreachable code
+
+      # MSVC 2019 warning suppressions for C++17 compiling
+      cflags +=
+          [ "/wd5041" ]  # out-of-line definition for constexpr static data
+                         # member is not needed and is deprecated in C++17
+    }
+  }
+
+  if (current_cpu == "arm64") {
+    defines += [ "WEBRTC_ARCH_ARM64" ]
+    defines += [ "WEBRTC_HAS_NEON" ]
+  }
+
+  if (current_cpu == "arm") {
+    defines += [ "WEBRTC_ARCH_ARM" ]
+    if (arm_version >= 7) {
+      defines += [ "WEBRTC_ARCH_ARM_V7" ]
+      if (arm_use_neon) {
+        defines += [ "WEBRTC_HAS_NEON" ]
+      }
+    }
+  }
+
+  if (current_cpu == "mipsel") {
+    defines += [ "MIPS32_LE" ]
+    if (mips_float_abi == "hard") {
+      defines += [ "MIPS_FPU_LE" ]
+    }
+    if (mips_arch_variant == "r2") {
+      defines += [ "MIPS32_R2_LE" ]
+    }
+    if (mips_dsp_rev == 1) {
+      defines += [ "MIPS_DSP_R1_LE" ]
+    } else if (mips_dsp_rev == 2) {
+      defines += [
+        "MIPS_DSP_R1_LE",
+        "MIPS_DSP_R2_LE",
+      ]
+    }
+  }
+
+  if (is_android && !is_clang) {
+    # The Android NDK doesn"t provide optimized versions of these
+    # functions. Ensure they are disabled for all compilers.
+    cflags += [
+      "-fno-builtin-cos",
+      "-fno-builtin-sin",
+      "-fno-builtin-cosf",
+      "-fno-builtin-sinf",
+    ]
+  }
+
+  if (use_fuzzing_engine && optimize_for_fuzzing) {
+    # Used in Chromium's overrides to disable logging
+    defines += [ "WEBRTC_UNSAFE_FUZZER_MODE" ]
+  }
+
+  if (!build_with_chromium && rtc_win_undef_unicode) {
+    cflags += [
+      "/UUNICODE",
+      "/U_UNICODE",
+    ]
+  }
+}
+
+config("common_objc") {
+  frameworks = [ "Foundation.framework" ]
+
+  if (rtc_use_metal_rendering) {
+    defines = [ "RTC_SUPPORTS_METAL" ]
+  }
+}
+
+if (!build_with_chromium) {
+  # Target to build all the WebRTC production code.
+  rtc_static_library("webrtc") {
+    # Only the root target and the test should depend on this.
+    visibility = [
+      "//:default",
+      "//:webrtc_lib_link_test",
+    ]
+
+    sources = []
+    complete_static_lib = true
+    suppressed_configs += [ "//build/config/compiler:thin_archive" ]
+    defines = []
+
+    deps = [
+      "api:create_peerconnection_factory",
+      "api:libjingle_peerconnection_api",
+      "api:rtc_error",
+      "api:transport_api",
+      "api/crypto",
+      "api/rtc_event_log:rtc_event_log_factory",
+      "api/task_queue",
+      "api/task_queue:default_task_queue_factory",
+      "audio",
+      "call",
+      "common_audio",
+      "common_video",
+      "logging:rtc_event_log_api",
+      "media",
+      "modules",
+      "modules/video_capture:video_capture_internal_impl",
+      "p2p:rtc_p2p",
+      "pc:libjingle_peerconnection",
+      "pc:peerconnection",
+      "pc:rtc_pc",
+      "pc:rtc_pc_base",
+      "rtc_base",
+      "sdk",
+      "video",
+    ]
+
+    if (rtc_include_builtin_audio_codecs) {
+      deps += [
+        "api/audio_codecs:builtin_audio_decoder_factory",
+        "api/audio_codecs:builtin_audio_encoder_factory",
+      ]
+    }
+
+    if (rtc_include_builtin_video_codecs) {
+      deps += [
+        "api/video_codecs:builtin_video_decoder_factory",
+        "api/video_codecs:builtin_video_encoder_factory",
+      ]
+    }
+
+    if (build_with_mozilla) {
+      deps += [
+        "api/video:video_frame",
+        "api/video:video_rtp_headers",
+      ]
+    } else {
+      deps += [
+        "api",
+        "logging",
+        "p2p",
+        "pc",
+        "stats",
+      ]
+    }
+
+    if (rtc_enable_protobuf) {
+      deps += [ "logging:rtc_event_log_proto" ]
+    }
+  }
+
+  if (rtc_include_tests && !is_asan) {
+    rtc_executable("webrtc_lib_link_test") {
+      testonly = true
+
+      sources = [ "webrtc_lib_link_test.cc" ]
+      deps = [
+        # NOTE: Don't add deps here. If this test fails to link, it means you
+        # need to add stuff to the webrtc static lib target above.
+        ":webrtc",
+      ]
+    }
+  }
+}
+
+if (use_libfuzzer || use_afl) {
+  # This target is only here for gn to discover fuzzer build targets under
+  # webrtc/test/fuzzers/.
+  group("webrtc_fuzzers_dummy") {
+    testonly = true
+    deps = [ "test/fuzzers:webrtc_fuzzer_main" ]
+  }
+}
+
+if (rtc_include_tests) {
+  rtc_test("rtc_unittests") {
+    testonly = true
+
+    deps = [
+      "api:compile_all_headers",
+      "api:rtc_api_unittests",
+      "api/audio/test:audio_api_unittests",
+      "api/audio_codecs/test:audio_codecs_api_unittests",
+      "api/numerics:numerics_unittests",
+      "api/transport:stun_unittest",
+      "api/video/test:rtc_api_video_unittests",
+      "api/video_codecs/test:video_codecs_api_unittests",
+      "call:fake_network_pipe_unittests",
+      "p2p:libstunprober_unittests",
+      "p2p:rtc_p2p_unittests",
+      "rtc_base:robo_caller_unittests",
+      "rtc_base:rtc_base_approved_unittests",
+      "rtc_base:rtc_base_unittests",
+      "rtc_base:rtc_json_unittests",
+      "rtc_base:rtc_numerics_unittests",
+      "rtc_base:rtc_operations_chain_unittests",
+      "rtc_base:rtc_task_queue_unittests",
+      "rtc_base:sigslot_unittest",
+      "rtc_base:untyped_function_unittest",
+      "rtc_base:weak_ptr_unittests",
+      "rtc_base/experiments:experiments_unittests",
+      "rtc_base/synchronization:sequence_checker_unittests",
+      "rtc_base/task_utils:pending_task_safety_flag_unittests",
+      "rtc_base/task_utils:to_queued_task_unittests",
+      "sdk:sdk_tests",
+      "test:rtp_test_utils",
+      "test:test_main",
+      "test/network:network_emulation_unittests",
+    ]
+
+    if (rtc_enable_protobuf) {
+      deps += [ "logging:rtc_event_log_tests" ]
+    }
+
+    if (is_android) {
+      # Do not use Chromium's launcher. native_unittests defines its own JNI_OnLoad.
+      use_default_launcher = false
+
+      deps += [
+        "sdk/android:native_unittests",
+        "sdk/android:native_unittests_java",
+        "//testing/android/native_test:native_test_support",
+      ]
+      shard_timeout = 900
+    }
+
+    if (is_ios || is_mac) {
+      deps += [ "sdk:rtc_unittests_objc" ]
+    }
+  }
+
+  rtc_test("benchmarks") {
+    testonly = true
+    deps = [
+      "rtc_base/synchronization:mutex_benchmark",
+      "test:benchmark_main",
+    ]
+  }
+
+  # This runs tests that must run in real time and therefore can take some
+  # time to execute. They are in a separate executable to avoid making the
+  # regular unittest suite too slow to run frequently.
+  rtc_test("slow_tests") {
+    testonly = true
+    deps = [
+      "rtc_base/task_utils:repeating_task_unittests",
+      "test:test_main",
+    ]
+  }
+
+  # TODO(pbos): Rename test suite, this is no longer "just" for video targets.
+  video_engine_tests_resources = [
+    "resources/foreman_cif_short.yuv",
+    "resources/voice_engine/audio_long16.pcm",
+  ]
+
+  if (is_ios) {
+    bundle_data("video_engine_tests_bundle_data") {
+      testonly = true
+      sources = video_engine_tests_resources
+      outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
+    }
+  }
+
+  rtc_test("video_engine_tests") {
+    testonly = true
+    deps = [
+      "audio:audio_tests",
+
+      # TODO(eladalon): call_tests aren't actually video-specific, so we
+      # should move them to a more appropriate test suite.
+      "call:call_tests",
+      "call/adaptation:resource_adaptation_tests",
+      "test:test_common",
+      "test:test_main",
+      "test:video_test_common",
+      "video:video_tests",
+      "video/adaptation:video_adaptation_tests",
+    ]
+    data = video_engine_tests_resources
+    if (is_android) {
+      deps += [ "//testing/android/native_test:native_test_native_code" ]
+      shard_timeout = 900
+    }
+    if (is_ios) {
+      deps += [ ":video_engine_tests_bundle_data" ]
+    }
+  }
+
+  webrtc_perf_tests_resources = [
+    "resources/ConferenceMotion_1280_720_50.yuv",
+    "resources/audio_coding/speech_mono_16kHz.pcm",
+    "resources/audio_coding/speech_mono_32_48kHz.pcm",
+    "resources/audio_coding/testfile32kHz.pcm",
+    "resources/difficult_photo_1850_1110.yuv",
+    "resources/foreman_cif.yuv",
+    "resources/paris_qcif.yuv",
+    "resources/photo_1850_1110.yuv",
+    "resources/presentation_1850_1110.yuv",
+    "resources/voice_engine/audio_long16.pcm",
+    "resources/web_screenshot_1850_1110.yuv",
+  ]
+
+  if (is_ios) {
+    bundle_data("webrtc_perf_tests_bundle_data") {
+      testonly = true
+      sources = webrtc_perf_tests_resources
+      outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
+    }
+  }
+
+  rtc_test("webrtc_perf_tests") {
+    testonly = true
+    deps = [
+      "audio:audio_perf_tests",
+      "call:call_perf_tests",
+      "modules/audio_coding:audio_coding_perf_tests",
+      "modules/audio_processing:audio_processing_perf_tests",
+      "pc:peerconnection_perf_tests",
+      "test:test_main",
+      "video:video_full_stack_tests",
+      "video:video_pc_full_stack_tests",
+    ]
+
+    data = webrtc_perf_tests_resources
+    if (is_android) {
+      deps += [ "//testing/android/native_test:native_test_native_code" ]
+      shard_timeout = 4500
+    }
+    if (is_ios) {
+      deps += [ ":webrtc_perf_tests_bundle_data" ]
+    }
+  }
+
+  rtc_test("webrtc_nonparallel_tests") {
+    testonly = true
+    deps = [ "rtc_base:rtc_base_nonparallel_tests" ]
+    if (is_android) {
+      deps += [ "//testing/android/native_test:native_test_support" ]
+      shard_timeout = 900
+    }
+  }
+
+  rtc_test("voip_unittests") {
+    testonly = true
+    deps = [
+      "api/voip:voip_engine_factory_unittests",
+      "audio/voip/test:audio_channel_unittests",
+      "audio/voip/test:audio_egress_unittests",
+      "audio/voip/test:audio_ingress_unittests",
+      "audio/voip/test:voip_core_unittests",
+      "test:test_main",
+    ]
+  }
+}
+
+# ---- Poisons ----
+#
+# Here is one empty dummy target for each poison type (needed because
+# "being poisonous with poison type foo" is implemented as "depends on
+# //:poison_foo").
+#
+# The set of poison_* targets needs to be kept in sync with the
+# `all_poison_types` list in webrtc.gni.
+#
+group("poison_audio_codecs") {
+}
+
+group("poison_default_task_queue") {
+}
+
+group("poison_rtc_json") {
+}
+
+group("poison_software_video_codecs") {
+}

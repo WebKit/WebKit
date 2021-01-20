@@ -1,0 +1,15 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS count is 10
+PASS count is 5
+PASS count is 10
+PASS properties is 'a=11;b=22;'
+PASS list is '[0]=100;[1]=101;'
+PASS list is '123'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

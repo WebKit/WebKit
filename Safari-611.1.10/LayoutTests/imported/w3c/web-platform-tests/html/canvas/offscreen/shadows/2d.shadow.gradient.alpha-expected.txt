@@ -1,0 +1,7 @@
+2d.shadow.gradient.alpha
+
+Shadows are drawn correctly for partially-transparent gradient fills
+
+
+PASS Shadows are drawn correctly for partially-transparent gradient fills
+

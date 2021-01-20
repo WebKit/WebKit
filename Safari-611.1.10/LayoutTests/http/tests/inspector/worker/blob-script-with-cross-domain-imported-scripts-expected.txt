@@ -1,0 +1,14 @@
+Test for Resources in a Worker started with a Blob URL that imports cross origin scripts.
+
+
+== Running test suite: Worker.Resources
+-- Running test case: Worker.Resource.Start
+PASS: Added Target should have Worker type.
+RESOURCES:
+http://localhost:8000/inspector/worker/resources/worker-blob-script.js
+http://localhost:8000/inspector/worker/resources/worker-blob-import-script.js
+SCRIPTS:
+http://localhost:8000/inspector/worker/resources/worker-blob-script.js
+http://localhost:8000/inspector/worker/resources/worker-blob-import-script.js
+blob:<sanitized>
+

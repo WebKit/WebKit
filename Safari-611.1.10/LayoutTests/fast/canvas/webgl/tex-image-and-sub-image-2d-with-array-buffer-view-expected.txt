@@ -1,0 +1,488 @@
+Verifies texImage2D and texSubImage2D code paths taking ArrayBufferView
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Testing texImage2D with type=UNSIGNED_BYTE, unpackAlignment=1, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_BYTE, unpackAlignment=1, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texImage2D with type=UNSIGNED_BYTE, unpackAlignment=1, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_BYTE, unpackAlignment=1, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texSubImage2D with type=UNSIGNED_BYTE, unpackAlignment=1, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_BYTE, unpackAlignment=1, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texSubImage2D with type=UNSIGNED_BYTE, unpackAlignment=1, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_BYTE, unpackAlignment=1, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texImage2D with type=UNSIGNED_BYTE, unpackAlignment=2, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_BYTE, unpackAlignment=2, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texImage2D with type=UNSIGNED_BYTE, unpackAlignment=2, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_BYTE, unpackAlignment=2, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texSubImage2D with type=UNSIGNED_BYTE, unpackAlignment=2, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_BYTE, unpackAlignment=2, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texSubImage2D with type=UNSIGNED_BYTE, unpackAlignment=2, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_BYTE, unpackAlignment=2, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texImage2D with type=UNSIGNED_BYTE, unpackAlignment=4, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_BYTE, unpackAlignment=4, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texImage2D with type=UNSIGNED_BYTE, unpackAlignment=4, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_BYTE, unpackAlignment=4, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texSubImage2D with type=UNSIGNED_BYTE, unpackAlignment=4, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_BYTE, unpackAlignment=4, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texSubImage2D with type=UNSIGNED_BYTE, unpackAlignment=4, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_BYTE, unpackAlignment=4, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texImage2D with type=UNSIGNED_BYTE, unpackAlignment=8, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_BYTE, unpackAlignment=8, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texImage2D with type=UNSIGNED_BYTE, unpackAlignment=8, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_BYTE, unpackAlignment=8, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texSubImage2D with type=UNSIGNED_BYTE, unpackAlignment=8, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_BYTE, unpackAlignment=8, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texSubImage2D with type=UNSIGNED_BYTE, unpackAlignment=8, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_BYTE, unpackAlignment=8, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=1, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=1, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=1, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=1, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=1, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=1, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=1, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=1, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=2, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=2, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=2, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=2, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=2, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=2, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=2, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=2, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=4, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=4, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=4, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=4, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=4, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=4, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=4, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=4, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=8, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=8, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=8, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=8, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=8, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=8, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=8, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_5_5_5_1, unpackAlignment=8, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=1, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=1, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=1, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=1, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=1, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=1, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=1, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=1, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=2, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=2, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=2, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=2, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=2, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=2, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=2, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=2, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=4, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=4, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=4, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=4, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=4, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=4, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=4, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=4, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=8, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=8, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=8, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=8, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=8, flipY=true, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=8, flipY=false, premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=8, flipY=true, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with type=UNSIGNED_SHORT_4_4_4_4, unpackAlignment=8, flipY=false, premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

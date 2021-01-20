@@ -1,0 +1,100 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="../../http/tests/inspector/resources/probe-test.js"></script>
+<script src="resources/breakpoint.js"></script>
+<script>
+function test()
+{
+    InspectorProtocol.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
+
+    var samples = [];
+    const expectedSampleCount = 4;
+
+    function receivedAllExpectedSamples() {
+        return samples.length === expectedSampleCount;
+    }
+
+    function dumpSamples() {
+        for (var i = 0; i < samples.length; i++)
+            ProtocolTest.log("Sample " + (i + 1) + ": " + JSON.stringify(samples[i]));
+    }
+
+    var tests = [
+        {
+            message: "Samples from different probe actions should have unique action identifiers.",
+            predicate: function samplesHaveUniqueActionIds() {
+                return samples[0].probeId !== samples[1].probeId;
+            },
+            error: dumpSamples
+        },
+        {
+            message: "Samples from probe actions on the same breakpoint should have the same batch identifiers.",
+            predicate: function samplesHaveEqualBatchIds() {
+                return samples[0].batchId === samples[1].batchId;
+            },
+            error: dumpSamples
+        },
+        {
+            message: "SampleIds from a any probe are sequential and start counting from one.",
+            predicate: function samplesHaveSequentialIds() {
+                let initialSampleId = samples[0].sampleId;
+                for (let i = 0; i < samples.length; ++i) {
+                    let expectedSampleId = initialSampleId + i;
+                    if (samples[i].sampleId !== expectedSampleId)
+                        return false;
+                }
+                return true;
+            },
+            error: dumpSamples
+        },
+    ];
+
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
+            ProtocolTest.log("Found breakpoint.js");
+            var scriptIdentifier = messageObject.params.scriptId;
+            var location = {scriptId: scriptIdentifier, lineNumber: 18, columnNumber: 0};
+            var options = {
+                autoContinue: true,
+                actions: [
+                    {"type": "probe", "data": "a", "id": 1},
+                    {"type": "probe", "data": "a", "id": 2}
+                ]
+            };
+
+            InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location, options}, function(responseObject) {
+                InspectorProtocol.checkForError(responseObject);
+
+                ProtocolTest.log("Running breakpointActions to trigger probe samples.");
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointActions(12, {x:1,y:2})"});
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointActions(12, {x:1,y:2})"});
+            });
+        }
+    }
+
+    InspectorProtocol.eventHandler["Debugger.didSampleProbe"] = function(messageObject)
+    {
+        var sample = ProtocolTest.Probe.sanitizeProbeSample(messageObject);
+        samples.push(sample);
+        ProtocolTest.log("Received probe sample payload: " + JSON.stringify(sample.payload));
+
+        if (receivedAllExpectedSamples()) {
+            tests.forEach(function(test) {
+                var result = test.predicate();
+                ProtocolTest.expectThat(result, test.message);
+                if (!result)
+                    test.error();
+            });
+            ProtocolTest.completeTest();
+        }
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Debugger.setBreakpoint with multiple probe actions at the same breakpoint. Test Debugger.didSampleProbe events for the probe samples.</p>
+</body>
+</html>

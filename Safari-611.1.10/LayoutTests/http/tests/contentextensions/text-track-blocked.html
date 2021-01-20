@@ -1,0 +1,33 @@
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function vttLoaded()
+{
+    console.log("vttLoaded");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function vttError()
+{
+    console.log("vttError");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function videoLoaded()
+{
+	console.log("video loaded");
+	var video = document.getElementById("video");
+	video.textTracks[0].mode = "showing";
+}
+
+</script>
+The following text track should not load.<br>
+<video id="video" src="/media-resources/content/test.mp4" autoplay oncanplay="videoLoaded();">
+<track id="track" src="/media-resources/track/captions-webvtt/captions-fast.vtt" kind="captions" srclang="en" onload="vttLoaded();" onerror="vttError();"></track>
+</video>
+	
+	
+</video>

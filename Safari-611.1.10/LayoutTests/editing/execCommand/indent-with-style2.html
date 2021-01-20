@@ -1,0 +1,43 @@
+<html>
+<body>
+This tests indenting paragraphs with different inline styles combinations.
+<p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=32233">Bug 32233</a>
+<a href="rdar://problem/7442387"> Radar 7442387</a>
+<br>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=32843">Bug 32843</a>
+<a href="rdar://problem/7489326"> Radar 7489326</a>
+</p>
+<div id="e" contenteditable="true">
+    one
+    <div id="test1"><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">two</span> three</div>
+    <div id="test2">four<span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">five</span></div>
+    <div><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">four</span></div>
+    <ul><li><b>foo</b>bar</li></ul>
+    <span class="Apple-style-span" style="background-color: rgb(255, 0, 0);"><font class="Apple-style-span" color="#3333FF">five</font></span> six <b><i>seven</i></b> 
+</div>
+<ul id="console"></ul>
+
+<script type="text/javascript">
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+}
+var elem = document.getElementById("e");
+var selection = window.getSelection();
+selection.setPosition(elem, 0);
+
+log("Before: " + elem.innerHTML);
+document.execCommand("SelectAll");
+document.execCommand("Indent");
+log("After: " + elem.innerHTML);
+
+function log(str) {
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(str));
+    var console = document.getElementById("console");
+    console.appendChild(li);
+}
+</script>
+</body>
+</html>

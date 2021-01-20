@@ -1,0 +1,111 @@
+Test the style update with the :in-range and :out-of-range pseudo classes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial state.
+PASS inRange() is ['range-with-renderer', 'range-without-renderer']
+PASS outOfRange() is []
+Set a valid minimum on number.
+PASS inRange() is ['number-with-renderer', 'range-with-renderer', 'number-without-renderer', 'range-without-renderer']
+PASS outOfRange() is []
+Set a valid minimum on range.
+PASS inRange() is ['number-with-renderer', 'range-with-renderer', 'number-without-renderer', 'range-without-renderer']
+PASS outOfRange() is []
+Set a value above minimum on number.
+PASS inRange() is ['number-with-renderer', 'range-with-renderer', 'number-without-renderer', 'range-without-renderer']
+PASS outOfRange() is []
+Set a value above minimum on range.
+PASS inRange() is ['number-with-renderer', 'range-with-renderer', 'number-without-renderer', 'range-without-renderer']
+PASS outOfRange() is []
+Set a value under minimum on number.
+PASS inRange() is ['range-with-renderer', 'range-without-renderer']
+PASS outOfRange() is ['number-with-renderer', 'number-without-renderer']
+Set a value under minimum on range.
+PASS inRange() is ['range-with-renderer', 'range-without-renderer']
+PASS outOfRange() is ['number-with-renderer', 'number-without-renderer']
+Set an invalid minimum on number.
+PASS inRange() is ['range-with-renderer', 'range-without-renderer']
+PASS outOfRange() is []
+Set an invalid minimum on range.
+PASS inRange() is ['range-with-renderer', 'range-without-renderer']
+PASS outOfRange() is []
+Set a valid maximum on number.
+PASS inRange() is ['number-with-renderer', 'range-with-renderer', 'number-without-renderer', 'range-without-renderer']
+PASS outOfRange() is []
+Set a valid maximum on range.
+PASS inRange() is ['number-with-renderer', 'range-with-renderer', 'number-without-renderer', 'range-without-renderer']
+PASS outOfRange() is []
+Set a value under maximum on number.
+PASS inRange() is ['number-with-renderer', 'range-with-renderer', 'number-without-renderer', 'range-without-renderer']
+PASS outOfRange() is []
+Set a value under maximum on range.
+PASS inRange() is ['number-with-renderer', 'range-with-renderer', 'number-without-renderer', 'range-without-renderer']
+PASS outOfRange() is []
+Set a value over maximum on number.
+PASS inRange() is ['range-with-renderer', 'range-without-renderer']
+PASS outOfRange() is ['number-with-renderer', 'number-without-renderer']
+Set a value over maximum on range.
+PASS inRange() is ['range-with-renderer', 'range-without-renderer']
+PASS outOfRange() is ['number-with-renderer', 'number-without-renderer']
+Set an invalid maximum on number.
+PASS inRange() is ['range-with-renderer', 'range-without-renderer']
+PASS outOfRange() is []
+Set an invalid maximum on range.
+PASS inRange() is ['range-with-renderer', 'range-without-renderer']
+PASS outOfRange() is []
+Set values, min and max in range on both
+PASS inRange() is ['number-with-renderer', 'range-with-renderer', 'number-without-renderer', 'range-without-renderer']
+PASS outOfRange() is []
+Disable range
+PASS inRange() is ['number-with-renderer', 'number-without-renderer']
+PASS outOfRange() is []
+Disable number
+PASS inRange() is []
+PASS outOfRange() is []
+Set number out of range
+PASS inRange() is []
+PASS outOfRange() is []
+Set range out of range
+PASS inRange() is []
+PASS outOfRange() is []
+Re-enable range
+PASS inRange() is ['range-with-renderer', 'range-without-renderer']
+PASS outOfRange() is []
+Re-enable number
+PASS inRange() is ['range-with-renderer', 'range-without-renderer']
+PASS outOfRange() is ['number-with-renderer', 'number-without-renderer']
+Make number read-only
+PASS inRange() is ['range-with-renderer', 'range-without-renderer']
+PASS outOfRange() is []
+Make range read-only
+PASS inRange() is []
+PASS outOfRange() is []
+Set range in range
+PASS inRange() is []
+PASS outOfRange() is []
+Set number in range
+PASS inRange() is []
+PASS outOfRange() is []
+Remove read-only from number
+PASS inRange() is ['number-with-renderer', 'number-without-renderer']
+PASS outOfRange() is []
+Remove read-only from range
+PASS inRange() is ['number-with-renderer', 'range-with-renderer', 'number-without-renderer', 'range-without-renderer']
+PASS outOfRange() is []
+Remove min from number
+PASS inRange() is ['number-with-renderer', 'range-with-renderer', 'number-without-renderer', 'range-without-renderer']
+PASS outOfRange() is []
+Remove max from number
+PASS inRange() is ['range-with-renderer', 'range-without-renderer']
+PASS outOfRange() is []
+Remove min from range
+PASS inRange() is ['range-with-renderer', 'range-without-renderer']
+PASS outOfRange() is []
+Remove max from range
+PASS inRange() is ['range-with-renderer', 'range-without-renderer']
+PASS outOfRange() is []
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

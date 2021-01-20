@@ -1,0 +1,27 @@
+This tests backreferences
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS /^(.)\1{3}/.exec('=====') is ["====", "="]
+PASS /^(.)\1*/.exec('=====') is ["=====", "="]
+PASS /^(.)\1*?/.exec('=====') is ["=", "="]
+PASS /^(.)\1*?$/.exec('=====') is ["=====", "="]
+PASS /(.*)\1/.exec('======') is ["======", "==="]
+PASS /(.*)\1{2}/.exec('======') is ["======", "=="]
+PASS /(.*)\1{4}/.exec('======') is ["=====", "="]
+PASS /(.*)\1{5}/.exec('======') is ["======", "="]
+PASS /(=).\1{3}/.exec('=a==b===') is ["=b===", "="]
+PASS /(===).\1*X/.exec('===a==X===b======X') is ["===b======X", "==="]
+PASS /\w*?(\w*) (c\1) is a f\1 \2/.exec('That cat is a fat cat') is ["That cat is a fat cat", "at", "cat"]
+PASS /(\w)(\w)(\w)e\3\2\1/i.exec('Racecar') is ["Racecar", "R", "a", "c"]
+PASS /^(?<equals>=*)\k<equals>+?$/.exec('======') is ["======", "==="]
+PASS /^(\u{10123}*)x\1?$/u.exec('\u{10123}x\u{10123}') is ["\u{10123}x\u{10123}", "\u{10123}"]
+PASS /(.{4})\1/i.exec('ABcdAbCd') is ["ABcdAbCd", "ABcd"]
+PASS /(.{4})\1/i.exec('ABc\u{fd}AbC\u{dd}') is ["ABc\u{fd}AbC\u{dd}", "ABc\u{fd}"]
+PASS /(.{4})\1/i.exec('ABc\u{b5}AbC\u{b5}') is ["ABc\u{b5}AbC\u{b5}", "ABc\u{b5}"]
+PASS /(.{4})\1/i.exec('ABc\u{ff}AbC\u{ff}') is ["ABc\u{ff}AbC\u{ff}", "ABc\u{ff}"]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

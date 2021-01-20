@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+
+  <title>Test for bug 549797 - Removing href attribute doesn't remove link styling</title>
+
+  <style type="text/css">
+  <![CDATA[
+a {
+  fill: blue;
+}
+a:link, a:visited {
+  fill: red;
+}
+  ]]>
+  </style>
+
+  <a>
+    <text x="10" y="100">Test anchor 1</text>
+  </a>
+
+  <a xlink:href="http://example.com/1">
+    <text x="10" y="200">Test anchor 2</text>
+  </a>
+
+  <a xlink:href="">
+    <text x="10" y="300">Test anchor 3</text>
+  </a>
+
+</svg>

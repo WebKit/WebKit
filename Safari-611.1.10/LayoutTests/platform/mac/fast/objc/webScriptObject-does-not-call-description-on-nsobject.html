@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+var obj = objCController.testObject();
+if (/: 0x[0-9|a-f]*/.test(obj + ""))
+    throw "bad";
+
+var array = objCController.testArrayOfObjects();
+if (/: 0x[0-9|a-f]*/.test(obj + ""))
+    throw "bad";
+
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

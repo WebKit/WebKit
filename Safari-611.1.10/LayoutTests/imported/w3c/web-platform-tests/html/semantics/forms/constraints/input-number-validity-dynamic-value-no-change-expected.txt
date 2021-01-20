@@ -1,0 +1,4 @@
+
+
+FAIL number input number validation is updated correctly after value attribute change which doesn't change input value assert_true: Input should be valid because step base is @value expected true got false
+

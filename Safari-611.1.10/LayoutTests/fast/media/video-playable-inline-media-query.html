@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function log(m) {
+    var results = document.getElementById('results');
+    results.innerHTML += m + '<br>';
+}
+
+function testQuery(query, expected) {
+    var isTrue = window.styleMedia.matchMedium(query);
+    var message = '\"' + query + '\" evaluates to ' + (isTrue ? 'true' : 'false');
+    message = ((isTrue === expected) ? 'PASS: ' : 'FAIL: ') + message;
+    log(message);
+}
+
+function runTests() {
+    log("Enabling Inline Media Playback");
+    internals.settings.setAllowsInlineMediaPlayback(true);
+    testQuery('(-webkit-video-playable-inline)', true);
+
+    log("Disabling Inline Media Playback");
+    internals.settings.setAllowsInlineMediaPlayback(false);
+    testQuery('(-webkit-video-playable-inline)', false);
+}
+</script>
+</head>
+<body onload="runTests()">
+<p>Tests the (-webkit-video-playable-inline) media query.</p>
+<div id="results"></div>
+</body>
+</html>

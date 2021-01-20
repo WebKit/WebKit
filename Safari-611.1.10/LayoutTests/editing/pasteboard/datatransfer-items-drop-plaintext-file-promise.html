@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<body onload="runTest()">
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+description('This tests accessing DataTransferItemList when dropping a file promise.'
+    + ' To manually test, drag and drop <a href="../resources/text-pasteboard-data.txt">LayoutTests/editing/resources/text-pasteboard-data.txt</a> from another app (e.g. Finder) to the box below.');
+
+function runTest()
+{
+    if (!window.testRunner)
+        return;
+    if (!window.eventSender || !eventSender.beginDragWithFilePromises) {
+        testFailed('This test requires eventSender.beginDragWithFilePromises');
+        finishJSTest();
+        return;
+    }
+
+    eventSender.beginDragWithFilePromises(["../resources/text-pasteboard-data.txt"]);
+    const target = document.getElementById('target');
+    eventSender.mouseMoveTo(target.offsetLeft + 5, target.offsetTop + 5);
+    eventSender.mouseUp();
+}
+
+function drop(event)
+{
+    event.preventDefault();
+    dataTransfer = event.dataTransfer;
+    shouldBe('dataTransfer.items.length', '1');
+    shouldBeEqualToString('dataTransfer.items[0].kind', 'file');
+    shouldBeEqualToString('dataTransfer.items[0].type', 'text/plain');
+    shouldNotBe('file = dataTransfer.items[0].getAsFile(); file', 'null');
+    shouldBeEqualToString('file.name', 'text-pasteboard-data.txt');
+    shouldNotThrow('reader = new FileReader(); reader.onload = () => checkFileContent(reader.result); reader.readAsText(file);');
+}
+
+function checkFileContent(content)
+{
+    shouldBeEqualToString('"' + content + '"', 'hello, world.');
+    shouldBe('dataTransfer.items[0].getAsFile()', 'null');
+    finishJSTest();
+}
+
+jsTestIsAsync = true;
+successfullyParsed = true;
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+<div id="target" contenteditable="true" ondrop="drop(event)" style="width: 100px; height: 100px; border: solid 1px black;"></div>
+</body>
+</html>

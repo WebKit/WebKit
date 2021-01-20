@@ -1,0 +1,4 @@
+2d.gradient.object.invalidcolour
+Spec references: 2d.gradient.invalidcolour
+Actual output:
+Passed

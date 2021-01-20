@@ -1,0 +1,24 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/resources/child-message-event-api.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/resources/child-one.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/resources/child-two.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/resources/consumption-crossorigin-child.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/resources/consumption-sameorigin-child.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/resources/propagation-crossorigin-child.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/resources/propagation-sameorigin-child.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/resources/utils.js

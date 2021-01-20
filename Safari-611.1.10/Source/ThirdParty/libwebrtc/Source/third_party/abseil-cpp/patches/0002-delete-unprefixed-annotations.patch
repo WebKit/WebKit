@@ -1,0 +1,27 @@
+diff --git a/third_party/abseil-cpp/absl/base/dynamic_annotations.h b/third_party/abseil-cpp/absl/base/dynamic_annotations.h
+index 1444dc48e283..6687291cade3 100644
+--- a/third_party/abseil-cpp/absl/base/dynamic_annotations.h
++++ b/third_party/abseil-cpp/absl/base/dynamic_annotations.h
+@@ -49,9 +49,6 @@
+ 
+ #include "absl/base/config.h"
+ 
+-// TODO(rogeeff): Remove after the backward compatibility period.
+-#include "absl/base/internal/dynamic_annotations.h"  // IWYU pragma: export
+-
+ // -------------------------------------------------------------------------
+ // Decide which features are enabled
+ 
+diff --git a/third_party/abseil-cpp/absl/base/thread_annotations.h b/third_party/abseil-cpp/absl/base/thread_annotations.h
+index 5f51c0c2d2d5..10b9bde551a7 100644
+--- a/third_party/abseil-cpp/absl/base/thread_annotations.h
++++ b/third_party/abseil-cpp/absl/base/thread_annotations.h
+@@ -35,8 +35,6 @@
+ #define ABSL_BASE_THREAD_ANNOTATIONS_H_
+ 
+ #include "absl/base/config.h"
+-// TODO(mbonadei): Remove after the backward compatibility period.
+-#include "absl/base/internal/thread_annotations.h"  // IWYU pragma: export
+ 
+ #if defined(__clang__)
+ #define ABSL_INTERNAL_THREAD_ANNOTATION_ATTRIBUTE(x) __attribute__((x))

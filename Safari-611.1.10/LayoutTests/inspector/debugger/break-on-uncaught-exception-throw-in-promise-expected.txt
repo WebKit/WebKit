@@ -1,0 +1,44 @@
+CONSOLE MESSAGE: testThrowingInPromise
+CONSOLE MESSAGE: in promise
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: Unhandled Promise Rejection: TestError
+CONSOLE MESSAGE: testThrowingInPromiseThen
+CONSOLE MESSAGE: in promise
+CONSOLE MESSAGE: in promise.then
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: Unhandled Promise Rejection: TestError
+CONSOLE MESSAGE: testThrowingInPromiseThenWithCatch
+CONSOLE MESSAGE: in promise
+CONSOLE MESSAGE: in promise.then
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: in promise.catch
+CONSOLE MESSAGE: DONE
+CONSOLE MESSAGE: testThrowingInPromiseWithCatch
+CONSOLE MESSAGE: in promise
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: in promise.catch
+CONSOLE MESSAGE: DONE
+CONSOLE MESSAGE: testThrowingInPromiseWithRethrowInCatch
+CONSOLE MESSAGE: in promise
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: in promise.catch
+CONSOLE MESSAGE: Unhandled Promise Rejection: TestError
+Checking no pauses within Promises when pausing on uncaught exceptions.
+
+
+== Running test suite: BreakOnUncaughtException.Promise
+-- Running test case: BreakOnUncaughtException.Promise.ExceptionInPromiseConstructor
+PASS: Should not pause, exception is 'caught' by Promise.
+
+-- Running test case: BreakOnUncaughtException.Promise.ExceptionInPromiseThenWithoutCatch
+PASS: Should not pause, exception is 'caught' by Promise.
+
+-- Running test case: BreakOnUncaughtException.Promise.ExceptionInPromiseThenWithCatch
+PASS: Should not pause, exception is 'caught' by Promise.
+
+-- Running test case: BreakOnUncaughtException.Promise.ExceptionInPromiseCatch
+PASS: Should not pause, exception is 'caught' by Promise.
+
+-- Running test case: BreakOnUncaughtException.Promise.ExceptionInPromiseThenAndRethrownInCatch
+PASS: Should not pause, exception is 'caught' by Promise.
+

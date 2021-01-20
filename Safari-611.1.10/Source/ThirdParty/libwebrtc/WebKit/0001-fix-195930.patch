@@ -1,0 +1,25 @@
+From b6477d2493b4cf0875838ddcd725ed40a8725cc2 Mon Sep 17 00:00:00 2001
+From: Youenn Fablet <youenn@apple.com>
+Date: Tue, 28 May 2019 09:58:04 -0700
+Subject: [PATCH] fix-195930
+
+---
+ Source/ThirdParty/libwebrtc/Source/webrtc/media/base/codec.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/media/base/codec.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/media/base/codec.cc
+index 0a1c7156af8..c4cd02d8db4 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/media/base/codec.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/media/base/codec.cc
+@@ -383,7 +383,7 @@ bool IsSameCodec(const std::string& name1,
+     return false;
+   // For every format besides H264 and VP9, comparing names is enough.
+   if (absl::EqualsIgnoreCase(name1, kH264CodecName))
+-    return webrtc::H264::IsSameH264Profile(params1, params2);
++      return webrtc::H264::IsSameH264Profile(params1, params2) && IsSameH264PacketizationMode(params1, params2);
+   if (absl::EqualsIgnoreCase(name1, kVp9CodecName))
+     return webrtc::IsSameVP9Profile(params1, params2);
+   return true;
+-- 
+2.20.1 (Apple Git-117)
+

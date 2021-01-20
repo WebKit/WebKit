@@ -1,0 +1,69 @@
+Test sending multiple crypto keys via postMessage to a worker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS All checks passed in worker: 0
+PASS key.type is 'secret'
+PASS key.extractable is true
+PASS key.algorithm.name is 'AES-CBC'
+PASS key.algorithm.length is 128
+PASS key.usages is ['decrypt', 'encrypt']
+PASS All checks passed in worker: 1
+PASS key.type is 'secret'
+PASS key.extractable is true
+PASS key.algorithm.name is 'AES-CBC'
+PASS key.algorithm.length is 128
+PASS key.usages is ['decrypt', 'encrypt']
+PASS All checks passed in worker: 2
+PASS key.type is 'secret'
+PASS key.extractable is true
+PASS key.algorithm.name is 'AES-CBC'
+PASS key.algorithm.length is 128
+PASS key.usages is ['decrypt', 'encrypt']
+PASS All checks passed in worker: 3
+PASS key.type is 'secret'
+PASS key.extractable is true
+PASS key.algorithm.name is 'AES-CBC'
+PASS key.algorithm.length is 128
+PASS key.usages is ['decrypt', 'encrypt']
+PASS All checks passed in worker: 4
+PASS key.type is 'secret'
+PASS key.extractable is true
+PASS key.algorithm.name is 'AES-CBC'
+PASS key.algorithm.length is 128
+PASS key.usages is ['decrypt', 'encrypt']
+PASS All checks passed in worker: 5
+PASS key.type is 'secret'
+PASS key.extractable is true
+PASS key.algorithm.name is 'AES-CBC'
+PASS key.algorithm.length is 128
+PASS key.usages is ['decrypt', 'encrypt']
+PASS All checks passed in worker: 6
+PASS key.type is 'secret'
+PASS key.extractable is true
+PASS key.algorithm.name is 'AES-CBC'
+PASS key.algorithm.length is 128
+PASS key.usages is ['decrypt', 'encrypt']
+PASS All checks passed in worker: 7
+PASS key.type is 'secret'
+PASS key.extractable is true
+PASS key.algorithm.name is 'AES-CBC'
+PASS key.algorithm.length is 128
+PASS key.usages is ['decrypt', 'encrypt']
+PASS All checks passed in worker: 8
+PASS key.type is 'secret'
+PASS key.extractable is true
+PASS key.algorithm.name is 'AES-CBC'
+PASS key.algorithm.length is 128
+PASS key.usages is ['decrypt', 'encrypt']
+PASS All checks passed in worker: 9
+PASS key.type is 'secret'
+PASS key.extractable is true
+PASS key.algorithm.name is 'AES-CBC'
+PASS key.algorithm.length is 128
+PASS key.usages is ['decrypt', 'encrypt']
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

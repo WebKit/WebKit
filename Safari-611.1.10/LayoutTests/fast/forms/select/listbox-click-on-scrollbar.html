@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<select id="selectElement" multiple size="4">
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+<option>6</option>
+<option>7</option>
+<option>8</option>
+</select>
+
+<script>
+description('Click on a listbox scrollbar should not dispatch change evnet.');
+jsTestIsAsync = true;
+var selectElement = document.getElementById('selectElement');
+var changeEventCounter = 0;
+selectElement.onchange = function() {
+    debug('A change event was dispatched.');
+    ++changeEventCounter;
+}
+
+window.onload = function() {
+    if (!window.eventSender)
+        debug('Click on the scrollbar. The test passes if nothing is printed.');
+    else {
+        debug('Click on the scrollbar. No change event should be fired.')
+        eventSender.mouseMoveTo(selectElement.offsetLeft + selectElement.offsetWidth - 2, selectElement.offsetTop + selectElement.offsetHeight - 2);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        shouldBe('selectElement.selectedIndex', '-1');
+        shouldBe('changeEventCounter', '0');
+
+        debug('');
+        debug('Click on the first option. A change event should be fired.');
+        eventSender.mouseMoveTo(selectElement.offsetLeft + 4, selectElement.offsetTop + 4);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        shouldBe('selectElement.selectedIndex', '0');
+        shouldBe('changeEventCounter', '1');
+
+        debug('');
+        debug('Add an option item and then click on the scrollbar again. No change event should be fired.');
+        selectElement.appendChild(new Option('9'));
+        eventSender.mouseMoveTo(selectElement.offsetLeft + selectElement.offsetWidth - 2, selectElement.offsetTop + selectElement.offsetHeight - 2);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        shouldBe('selectElement.selectedIndex', '0');
+        shouldBe('changeEventCounter', '1');
+
+        debug('');
+        finishJSTest();
+    }
+};
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</html>

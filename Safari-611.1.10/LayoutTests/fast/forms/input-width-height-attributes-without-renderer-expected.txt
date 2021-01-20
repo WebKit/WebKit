@@ -1,0 +1,6 @@
+PASS inputElement.width is 50
+PASS inputElement.height is 50
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

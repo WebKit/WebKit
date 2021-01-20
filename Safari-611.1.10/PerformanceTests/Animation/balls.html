@@ -1,0 +1,238 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<!--
+    Copyright (c) 2012 Cameron Adams. All rights reserved.
+    Copyright (c) 2012 Code Aurora Forum. All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are
+    met:
+        * Redistributions of source code must retain the above copyright
+          notice, this list of conditions and the following disclaimer.
+        * Redistributions in binary form must reproduce the above
+          copyright notice, this list of conditions and the following
+          disclaimer in the documentation and/or other materials provided
+          with the distribution.
+        * Neither the name of Code Aurora Forum, Inc. nor the names of its
+          contributors may be used to endorse or promote products derived
+          from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
+    WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
+    ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
+    BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+    BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+    OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+    IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+    This test is based on code written by Cameron Adams and imported from
+      http://themaninblue.com/experiment/AnimationBenchmark/html
+-->
+
+<head>
+
+    <title>Benchmark - HTML &amp; JavaScript</title>
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="author" content="The Man in Blue" />
+    <meta name="robots" content="all" />
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+
+    <style type="text/css">
+
+    html {
+        height: 100%;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+    }
+
+    span {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        overflow: hidden;
+        -webkit-border-radius: 6px;
+        -moz-border-radius: 6px;
+        border-radius: 6px;
+        background-color: #000000;
+    }
+
+    .shadows span {
+        -webkit-box-shadow: 4px 4px 3px rgba(0,0,0,0.33);
+        -moz-box-shadow: 4px 4px 3px rgba(0,0,0,0.33);
+        box-shadow: 4px 4px 3px rgba(0,0,0,0.33);
+    }
+
+    #frameRate {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        z-index: 100;
+        font-size: 25px;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    </style>
+
+    <script type="text/javascript">
+
+    var FRAMES_PER_TIMER_READING = 10;
+    var MAX_PARTICLES = 2500;
+    var MAX_VELOCITY = 50;
+    var PARTICLE_RADIUS = 6;
+    var STAGE_WIDTH = 600;
+    var STAGE_HEIGHT = 600;
+    var COLORS = ["#cc0000", "#ffcc00", "#aaff00", "#0099cc", "#194c99", "#661999"];
+
+    var frameTimes = [];
+    var iteration = 0;
+    var run = 0;
+    var animateIntervalId = 0;
+    var statistics = [];
+    var frameRates = [];
+    var particles = [];
+
+    window.onload = function () {
+        PerfTestRunner.prepareToMeasureValuesAsync({done: onCompletedRun, unit: 'fps'});
+
+        // Create the particles
+        for (var i = 0; i < MAX_PARTICLES; i++)
+            particles.push(new Particle());
+
+        // Start the animation
+        animateIntervalId = setInterval(animate, 1);
+    }
+
+    function animate()
+    {
+        var currTime = PerfTestRunner.now();
+        var timeDelta = currTime - frameTimes[frameTimes.length - 1];
+
+        if (isNaN(timeDelta))
+            timeDelta = 0;
+
+        // Draw each particle
+        for (var particle in particles)
+            particles[particle].draw(timeDelta);
+
+        if ((iteration++ % FRAMES_PER_TIMER_READING) == 0) {
+            // Limit the frame time array to the last 30 frames
+            if (frameTimes.length > 30)
+                frameTimes.splice(0, 1);
+
+            frameTimes.push(currTime);
+
+            // Calculate the framerate based upon the difference between the absolute times of the oldest and newest frames, subdivided by how many frames were drawn inbetween
+            var frameRate = document.getElementById("frameRate");
+            var frameRateVal = FRAMES_PER_TIMER_READING * 1000 / ((currTime - frameTimes[0]) / (frameTimes.length - 1));
+
+            if (!isNaN(frameRateVal))
+                PerfTestRunner.measureValueAsync(frameRateVal);
+        }
+    }
+
+    function Particle()
+    {
+        var angle = Math.PI * 2 * PerfTestRunner.random();
+        var velocity = MAX_VELOCITY / 8 * 7 * PerfTestRunner.random() + MAX_VELOCITY / 8;
+        var x = STAGE_WIDTH / 2 - PARTICLE_RADIUS;
+        var y = STAGE_HEIGHT / 2 - PARTICLE_RADIUS;
+
+        // Create visual element for the particle
+        var domNode = document.createElement('span');
+        document.body.appendChild(domNode);
+
+        // Set initial position to middle of screen
+        domNode.style.left = x + "px";
+        domNode.style.top = y + "px";
+
+        // Set colour of element
+        domNode.style.backgroundColor = COLORS[Math.floor(Math.random() * COLORS.length)];
+
+        function destroy()
+        {
+            document.body.removeChild(domNode);
+            return;
+        }
+
+        function draw(timeDelta)
+        {
+            // Calculate next position of particle
+            var nextX = x + Math.cos(angle) * velocity * (timeDelta / 1000);
+            var nextY = y + Math.sin(angle) * velocity * (timeDelta / 1000);
+
+            // If particle is going to move off right side of screen
+            if (nextX + PARTICLE_RADIUS * 2 > STAGE_WIDTH)
+                // If angle is between 3 o'clock and 6 o'clock
+                if ((angle >= 0 && angle < Math.PI / 2))
+                    angle = Math.PI - angle;
+                // If angle is between 12 o'clock and 3 o'clock
+                else if (angle > Math.PI / 2 * 3)
+                    angle = angle - (angle - Math.PI / 2 * 3) * 2
+
+            // If particle is going to move off left side of screen
+            if (nextX < 0)
+                // If angle is between 6 o'clock and 9 o'clock
+                if ((angle > Math.PI / 2 && angle < Math.PI))
+                    angle = Math.PI - angle;
+                // If angle is between 9 o'clock and 12 o'clock
+                else if (angle > Math.PI && angle < Math.PI / 2 * 3)
+                    angle = angle + (Math.PI / 2 * 3 - angle) * 2
+
+            // If particle is going to move off bottom side of screen
+            if (nextY + PARTICLE_RADIUS * 2 > STAGE_HEIGHT)
+                // If angle is between 3 o'clock and 9 o'clock
+                if ((angle > 0 && angle < Math.PI))
+                    angle = Math.PI * 2 - angle;
+
+            // If particle is going to move off top side of screen
+            if (nextY < 0)
+                // If angle is between 9 o'clock and 3 o'clock
+                if ((angle > Math.PI && angle < Math.PI * 2))
+                    angle = angle - (angle - Math.PI) * 2;
+
+            domNode.style.left = nextX + "px";
+            domNode.style.top = nextY + "px";
+
+            x = nextX;
+            y = nextY;
+        }
+
+        return { draw: draw, destroy: destroy }
+    }
+
+    function onCompletedRun() {
+        clearInterval(animateIntervalId);
+
+        for (var particle in particles) {
+            var p = particles[particle];
+            particles[particle] = 0;
+            p.destroy();
+        }
+        particles = [];
+
+        frameRate.innerHTML = "";
+    }
+    </script>
+    <script src="../resources/runner.js"></script>
+</head>
+
+<body>
+    <div id="frameRate">
+    </div>
+</body>
+
+</html>

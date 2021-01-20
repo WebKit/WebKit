@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/getUserMedia-helper.js"></script>
+    </head>
+    <body>
+        <p id="description"></p>
+        <div id="console"></div>
+        <script>
+            description("Test adding and removing tracks.");
+
+            var stream1;
+            var streamCopy;
+            var stream2;
+            var audioTrack;
+            var videoTrack;
+
+            function tryAddTrack(stream, track) {
+                try {
+                    stream.addTrack(track);
+                } catch (exception) {
+                    testFailed("addTrack threw an exception.");
+                    finishJSTest();
+                }
+            }
+
+            function tryRemoveTrack(stream, track) {
+                try {
+                    stream.removeTrack(track);
+                } catch (exception) {
+                    testFailed("removeTrack threw an exception.");
+                    finishJSTest();
+                }
+            }
+
+            function shouldNotFire() {
+                testFailed("\"addtrack\" or \"removetrack\" events should not fire as a result of local addTrack() or removeTrack() operations.");
+            }
+
+            function gotStream2(s) {
+                stream2 = s;
+
+                shouldBe('stream1.active', 'true');
+                shouldBe('stream1.getAudioTracks().length', '1');
+                shouldBe('stream1.getVideoTracks().length', '1');
+
+                shouldBe('stream2.active', 'true');
+                shouldBe('stream2.getAudioTracks().length', '1');
+                shouldBe('stream2.getVideoTracks().length', '1');
+
+                stream1.onaddtrack = shouldNotFire;
+                stream1.onremovetrack = shouldNotFire;
+
+                setTimeout(() => {
+                    shouldBe('stream2.active', 'false');
+                    finishJSTest();
+                }, 1000);
+
+                audioTrack = stream1.getAudioTracks()[0];
+                videoTrack = stream1.getVideoTracks()[0];
+
+                debug("<br>*** remove an audio track");
+                tryRemoveTrack(stream1, audioTrack);
+                shouldBe('stream1.getAudioTracks().length', '0');
+                shouldBeNull('stream1.getTrackById(audioTrack.id)');
+
+                debug("<br>*** remove a non-existent (already removed) track (should not throw)");
+                tryRemoveTrack(stream1, audioTrack);
+
+                debug("<br>*** add the track back to the stream");
+                tryAddTrack(stream1, audioTrack);
+
+                debug("<br>*** remove a video track");
+                tryRemoveTrack(stream1, videoTrack);
+                shouldBe('stream1.getVideoTracks().length', '0');
+                shouldBeNull('stream1.getTrackById(videoTrack.id)');
+
+                debug("<br>*** remove a non-existent (already removed) track (should not throw)");
+                tryRemoveTrack(stream1, videoTrack);
+
+                debug("<br>*** add the track back to the stream");
+                tryAddTrack(stream1, videoTrack);
+
+                debug("<br>*** verify added tracks");
+                shouldBe('stream1.getAudioTracks().length', '1');
+                shouldBe('stream1.getVideoTracks().length', '1');
+                shouldBe('stream1.getAudioTracks()[0].kind', 'audioTrack.kind');
+                shouldBe('stream1.getAudioTracks()[0].label', 'audioTrack.label');
+                shouldBe('stream1.getVideoTracks()[0].kind', 'videoTrack.kind');
+                shouldBe('stream1.getVideoTracks()[0].label', 'videoTrack.label');
+
+                debug("<br>*** try adding a stream's own tracks again (nothing should happen)");
+                tryAddTrack(stream1, stream1.getAudioTracks()[0]);
+                tryAddTrack(stream1, stream1.getVideoTracks()[0]);
+                shouldBe('stream1.getAudioTracks().length', '1');
+                shouldBe('stream1.getVideoTracks().length', '1');
+
+                debug("<br>*** add tracks from another stream");
+                tryAddTrack(stream1, stream2.getAudioTracks()[0]);
+                tryAddTrack(stream1, stream2.getVideoTracks()[0]);
+
+                debug("<br>*** verify added tracks");
+                shouldBe('stream1.getAudioTracks().length', '2');
+                shouldBe('stream1.getVideoTracks().length', '2');
+
+                debug("<br>*** remove all tracks, stream will become inactive");
+                tryRemoveTrack(stream2, stream2.getAudioTracks()[0]);
+                tryRemoveTrack(stream2, stream2.getVideoTracks()[0]);
+                shouldBe('stream2.getAudioTracks().length', '0');
+                shouldBe('stream2.getVideoTracks().length', '0');
+
+                shouldBe('stream2.active', 'false');
+            }
+
+            function gotStream1(s) {
+                stream1 = s;
+
+                streamCopy = new MediaStream();
+                shouldBe('streamCopy.active', 'false');
+                streamCopy.addTrack(stream1.getVideoTracks()[0]);
+                shouldBe('streamCopy.active', 'true');
+
+                getUserMedia("allow", {audio:true, video:true}, gotStream2);
+            }
+
+            getUserMedia("allow", {audio:true, video:true}, gotStream1);
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

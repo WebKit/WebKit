@@ -1,0 +1,40 @@
+<style>
+.hidden { display: none; }
+</style>
+<script src="../resources/magnitude-perf.js"></script>
+<body>
+<div></div>
+<script>
+
+function setupFunction(magnitude)
+{
+    var html = '<table>';
+    for (var i = 0; i < magnitude; ++i)
+        html += '<tr><td>A</td><td>B</td><td>C</td><td>D</td><td>E</td><td>F</td></tr>\n';
+    html += '</table>';
+    document.querySelector('div').innerHTML = html;
+}
+
+function forEachRow(what)
+{
+    Array.prototype.forEach.call(document.querySelectorAll("tr"), what);
+}
+
+function test(magnitude)
+{
+    forEachRow(function(tr) {
+        tr.className = 'hidden';
+    });
+    document.body.offsetWidth;
+    forEachRow(function(tr) {
+        tr.className = '';
+    });
+    document.body.offsetWidth;
+}
+
+Magnitude.description("Tests that hiding/showing of table rows is linear.");
+Magnitude.millisecondsPerIteration = 100;
+Magnitude.run(setupFunction, test, Magnitude.LINEAR);
+document.querySelector('div').textContent = '';
+</script>
+</body>

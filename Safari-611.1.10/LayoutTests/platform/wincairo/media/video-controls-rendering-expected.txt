@@ -1,0 +1,115 @@
+layer at (0,0) size 785x672
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x600
+  RenderBlock {HTML} at (0,0) size 785x600
+    RenderBody {BODY} at (8,8) size 769x584
+      RenderBlock {P} at (0,0) size 769x20
+        RenderText {#text} at (0,0) size 147x19
+          text run at (0,0) width 147: "Test controls placement."
+      RenderBlock {DIV} at (0,36) size 769x150
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,186) size 769x239
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,425) size 769x0
+layer at (8,44) size 200x150
+  RenderVideo {VIDEO} at (0,0) size 200x150
+layer at (8,44) size 200x150
+  RenderFlexibleBox {DIV} at (0,0) size 200x150
+layer at (8,149) size 200x45
+  RenderFlexibleBox {DIV} at (0,105) size 200x45
+layer at (8,149) size 200x45
+  RenderBlock (positioned) {DIV} at (0,0) size 200x45
+layer at (8,149) size 200x45
+  RenderBlock (positioned) {DIV} at (0,0) size 200x45 [bgcolor=#1E1E1E73]
+layer at (8,149) size 200x45
+  RenderBlock (positioned) {DIV} at (0,0) size 200x45 [bgcolor=#292929]
+layer at (16,174) size 12x15
+  RenderButton {BUTTON} at (8,25) size 12x15 [color=#FFFFFF]
+layer at (44,174) size 16x15
+  RenderButton {BUTTON} at (36,24) size 16x16 [color=#FFFFFF]
+layer at (154,169) size 14x25
+  RenderFlexibleBox {DIV} at (146,20) size 14x25
+layer at (154,174) size 14x15
+  RenderButton {BUTTON} at (0,5) size 14x15 [color=#FFFFFF]
+layer at (184,174) size 16x15
+  RenderButton {BUTTON} at (176,25) size 16x15 [color=#FFFFFF]
+layer at (8,194) size 320x239
+  RenderVideo {VIDEO} at (0,0) size 320x239
+layer at (8,194) size 320x239
+  RenderFlexibleBox {DIV} at (0,0) size 320x239
+layer at (8,388) size 320x45
+  RenderFlexibleBox {DIV} at (0,194) size 320x45
+layer at (8,388) size 320x45
+  RenderBlock (positioned) {DIV} at (0,0) size 320x45
+layer at (8,388) size 320x45
+  RenderBlock (positioned) {DIV} at (0,0) size 320x45 [bgcolor=#1E1E1E73]
+layer at (8,388) size 320x45
+  RenderBlock (positioned) {DIV} at (0,0) size 320x45 [bgcolor=#292929]
+layer at (16,413) size 12x15
+  RenderButton {BUTTON} at (8,25) size 12x15 [color=#FFFFFF]
+layer at (44,413) size 16x15
+  RenderButton {BUTTON} at (36,24) size 16x16 [color=#FFFFFF]
+layer at (68,412) size 198x17
+  RenderFlexibleBox {DIV} at (60,24) size 198x17
+layer at (76,413) size 32x14
+  RenderFlexibleBox {DIV} at (8,1) size 32x15 [color=#FFFFFF]
+    RenderBlock (anonymous) at (5,0) size 27x14
+      RenderText {#text} at (0,0) size 27x14
+        text run at (0,0) width 27: "00:00"
+layer at (118,412) size 93x17
+  RenderFlexibleBox {DIV} at (50,0) size 93x17
+    RenderSlider {INPUT} at (0,0) size 93x17 [color=#C4C4C4]
+      RenderFlexibleBox {DIV} at (0,0) size 93x17
+        RenderBlock {DIV} at (0,1) size 93x15
+          RenderBlock {DIV} at (0,0) size 4x15
+layer at (221,413) size 37x14
+  RenderFlexibleBox {DIV} at (153,1) size 37x15 [color=#FFFFFF]
+    RenderBlock (anonymous) at (0,0) size 31x14
+      RenderText {#text} at (0,0) size 31x14
+        text run at (0,0) width 31: "-00:06"
+layer at (274,408) size 14x25
+  RenderFlexibleBox {DIV} at (266,20) size 14x25
+layer at (274,413) size 14x15
+  RenderButton {BUTTON} at (0,5) size 14x15 [color=#FFFFFF]
+layer at (304,413) size 16x15
+  RenderButton {BUTTON} at (296,25) size 16x15 [color=#FFFFFF]
+layer at (8,433) size 320x239
+  RenderVideo {VIDEO} at (8,433) size 320x239
+layer at (8,433) size 320x239
+  RenderFlexibleBox {DIV} at (0,0) size 320x239
+layer at (8,627) size 320x45
+  RenderFlexibleBox {DIV} at (0,194) size 320x45
+layer at (8,627) size 320x45
+  RenderBlock (positioned) {DIV} at (0,0) size 320x45
+layer at (8,627) size 320x45
+  RenderBlock (positioned) {DIV} at (0,0) size 320x45 [bgcolor=#1E1E1E73]
+layer at (8,627) size 320x45
+  RenderBlock (positioned) {DIV} at (0,0) size 320x45 [bgcolor=#292929]
+layer at (16,652) size 12x15
+  RenderButton {BUTTON} at (8,25) size 12x15 [color=#FFFFFF]
+layer at (44,652) size 16x15
+  RenderButton {BUTTON} at (36,24) size 16x16 [color=#FFFFFF]
+layer at (68,651) size 198x17
+  RenderFlexibleBox {DIV} at (60,24) size 198x17
+layer at (76,652) size 32x14
+  RenderFlexibleBox {DIV} at (8,1) size 32x15 [color=#FFFFFF]
+    RenderBlock (anonymous) at (5,0) size 27x14
+      RenderText {#text} at (0,0) size 27x14
+        text run at (0,0) width 27: "00:00"
+layer at (118,651) size 93x17
+  RenderFlexibleBox {DIV} at (50,0) size 93x17
+    RenderSlider {INPUT} at (0,0) size 93x17 [color=#C4C4C4]
+      RenderFlexibleBox {DIV} at (0,0) size 93x17
+        RenderBlock {DIV} at (0,1) size 93x15
+          RenderBlock {DIV} at (0,0) size 4x15
+layer at (221,652) size 37x14
+  RenderFlexibleBox {DIV} at (153,1) size 37x15 [color=#FFFFFF]
+    RenderBlock (anonymous) at (0,0) size 31x14
+      RenderText {#text} at (0,0) size 31x14
+        text run at (0,0) width 31: "-00:05"
+layer at (274,647) size 14x25
+  RenderFlexibleBox {DIV} at (266,20) size 14x25
+layer at (274,652) size 14x15
+  RenderButton {BUTTON} at (0,5) size 14x15 [color=#FFFFFF]
+layer at (304,652) size 16x15
+  RenderButton {BUTTON} at (296,25) size 16x15 [color=#FFFFFF]

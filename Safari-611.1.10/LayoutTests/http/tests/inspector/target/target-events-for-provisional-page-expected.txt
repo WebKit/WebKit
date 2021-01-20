@@ -1,0 +1,16 @@
+Test that cross domain navigation results in the following sequence of events in Target domain:
+1. Target.targetCreated for provisional page.
+2. Target.didCommitProvisionalTarget when provisional load is committed.
+3. Target.targetDestroyed for the old target after the navigation request is committed.
+
+
+== Running test suite: Target.PSON
+-- Running test case: ProvisionalPageTarget
+PASS: Should receive TargetAdded event.
+PASS: Target should be provisional.
+PASS: Should receive TargetRemoved event.
+PASS: Destroyed target should be previous target.
+PASS: Should receive DidCommitProvisionalTarget event.
+PASS: Previous target should be the current one.
+PASS: Committed target should match provisional target.
+

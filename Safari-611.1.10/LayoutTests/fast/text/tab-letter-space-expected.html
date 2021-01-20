@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="zh-hk">
+<head>
+<meta charset="utf-8">
+<style>
+pre {
+    margin: 0px;
+}
+</style>
+</head>
+<body>
+This test makes sure that tab characters get the appropriate amount of letter-spacing.
+The test passes if the left edge of the "c" below is 158 pixels from the left edge of the "a" below.
+<pre style="position: relative;"><pre style="position: absolute; left: 0px;">a</pre><pre style="position: absolute; left: 158px;">c</pre></pre>
+</body>
+</html>

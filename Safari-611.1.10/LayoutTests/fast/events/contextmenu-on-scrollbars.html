@@ -1,0 +1,52 @@
+
+<style>
+    #scrollme {
+        width: 100px;
+        height: 100px;
+        overflow: auto;
+    }
+    #scrollme p {
+        height: 1000px;
+    }
+</style>
+<body style="min-height: 5000px">
+<p>This is a test for <a href="https://bugs.webkit.org/show_bug.cgi?id=153493">https://bugs.webkit.org/show_bug.cgi?id=153493</a></p>
+<div id="scrollme"><p></p></div>
+<pre id="log"></pre>
+<div style="height: 150%"></div>
+<script>
+    function log(msg)
+    {
+        document.getElementById('log').appendChild(document.createTextNode(msg + "\n"));
+    }
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var didSendContextMenu = false;
+
+    document.oncontextmenu = function() { didSendContextMenu = true; }
+
+    if (window.eventSender) {
+        var failed = false;
+
+        eventSender.mouseMoveTo(window.innerWidth - 4, window.innerHeight - 4);
+        eventSender.contextClick();
+        if (didSendContextMenu) {
+            log('FAILED: context menu event received on main frame scrollbar');
+            failed = true;
+            didSendContextMenu = false;
+        }
+
+        var div = document.querySelector('#scrollme');
+        eventSender.mouseMoveTo(div.offsetLeft + div.offsetWidth - 4, div.offsetTop + 1);
+        eventSender.contextClick();
+        if (didSendContextMenu) {
+            log('FAILED: context menu event received on div scrollbar');
+            failed = true;
+        }
+        if (!failed)
+            log('SUCCESS');
+    }
+</script>
+</body>

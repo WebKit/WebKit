@@ -1,0 +1,70 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<title>This tests the case when the tap target node is not part of the fullscreen content -> hidden -> click</title>
+<script src="../../../../../resources/ui-helper.js"></script>
+<script src="../../../../../fullscreen/full-screen-test.js"></script>
+<style>
+#becomesVisible {
+    visibility: hidden;
+    width: 100px;
+    height: 100px;
+    background-color: green;
+}
+#tapThis {
+    width: 50px;
+    height: 50px;
+    background-color: blue;
+}
+</style>
+<script>
+async function test() {
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+    if (window.internals) {
+        internals.settings.setContentChangeObserverEnabled(true);
+        internals.settings.setFullScreenEnabled(true);
+    }
+
+    testRunner.dumpAsText();
+
+    if ("webkitRequestFullScreen" in Element.prototype) {
+        var fullscreenChanged = async function(event) {
+            fullscreen.offsetHeight;
+
+            await UIHelper.activateElement(tapThis);
+        };
+        document.addEventListener('webkitfullscreenchange', fullscreenChanged);
+
+        runWithKeyDown(function () {
+            fullscreen.webkitRequestFullScreen();
+        });
+    } else {
+        consoleWrite("FAILED, couldn't find webkitRequestFullScreen.");
+        endTest();
+    }
+
+}
+</script>
+</head>
+<body onload="test()">
+PASS if 'clicked' text is shown below.<br>
+<div id=fullscreen><div id=tapThis></div></div>
+<div id=becomesVisible></div>
+<pre id=result></pre>
+<script>
+tapThis.addEventListener("mousemove", function( event ) {
+    becomesVisible.style.visibility = "visible";
+}, false);
+
+becomesVisible.addEventListener("click", function( event ) {   
+    result.innerHTML = "clicked hidden";
+}, false);
+
+tapThis.addEventListener("click", function( event ) {   
+    result.innerHTML = "clicked";
+    endTest();
+}, false);
+</script>
+</body>
+</html>

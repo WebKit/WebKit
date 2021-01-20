@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+    var loaded = 0;
+    var expectedToLoad = 3;
+</script>
+<script src="/WebKit/preload/resources/classic.js?simple" onload="++loaded;"></script>
+<script nomodule src="/WebKit/preload/resources/classic.js?nomodule"></script>
+<script type="module" src="/WebKit/preload/resources/module.js?simple" onload="++loaded;"></script>
+<script nomodule type="module" src="/WebKit/preload/resources/module.js?nomodule" onload="++loaded;"></script> <!-- nomodule does not affect on module tag -->
+<script src="/WebKit/preload/resources/dummy.js?pipe=trickle(d0.5)"></script>
+<script>
+    var t = async_test('Makes sure that preloaded resources are not downloaded when the script is attributed with nomodule.');
+    window.setInterval(t.step_func(function() {
+        function verifyDownloadNumber(url, number) {
+            var absolute_url = new URL(url, window.location.href);
+            assert_equals(performance.getEntriesByName(absolute_url).length, number, url);
+        }
+        if (loaded == expectedToLoad) {
+            verifyDownloadNumber("/WebKit/preload/resources/classic.js?simple", 1);
+            verifyDownloadNumber("/WebKit/preload/resources/classic.js?nomodule", 0);
+            verifyDownloadNumber("/WebKit/preload/resources/module.js?simple", 1);
+            verifyDownloadNumber("/WebKit/preload/resources/module.js?nomodule", 1);
+            t.done();
+        }
+    }), 200);
+</script>
+<span>foo</span>

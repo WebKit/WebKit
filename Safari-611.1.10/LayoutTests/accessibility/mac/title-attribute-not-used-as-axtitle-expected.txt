@@ -1,0 +1,12 @@
+text
+This tests that the title attribute is not used as the AXTitle (only as the AXHelp)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS accessibilityController.focusedElement.title is 'AXTitle: text'
+PASS accessibilityController.focusedElement.helpText is 'AXHelp: TITLE'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

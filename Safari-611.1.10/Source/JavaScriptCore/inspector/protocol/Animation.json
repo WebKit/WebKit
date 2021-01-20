@@ -1,0 +1,175 @@
+{
+    "domain": "Animation",
+    "description": "Domain for tracking/modifying Web Animations, as well as CSS (declarative) animations and transitions.",
+    "debuggableTypes": ["page", "web-page"],
+    "targetTypes": ["page"],
+    "types": [
+        {
+            "id": "AnimationId",
+            "type": "string",
+            "description": "Unique Web Animation identifier."
+        },
+        {
+            "id": "AnimationState",
+            "type": "string",
+            "enum": ["ready", "delayed", "active", "canceled", "done"]
+        },
+        {
+            "id": "PlaybackDirection",
+            "type": "string",
+            "enum": ["normal", "reverse", "alternate", "alternate-reverse"]
+        },
+        {
+            "id": "FillMode",
+            "type": "string",
+            "enum": ["none", "forwards", "backwards", "both", "auto"]
+        },
+        {
+            "id": "Animation",
+            "type": "object",
+            "properties": [
+                { "name": "animationId", "$ref": "AnimationId" },
+                { "name": "name", "type": "string", "optional": true, "description": "Equal to `Animation.prototype.get id`." },
+                { "name": "cssAnimationName", "type": "string", "optional": true, "description": "Equal to the corresponding `animation-name` CSS property. Should not be provided if `transitionProperty` is also provided." },
+                { "name": "cssTransitionProperty", "type": "string", "optional": true, "description": "Equal to the corresponding `transition-property` CSS property. Should not be provided if `animationName` is also provided." },
+                { "name": "effect", "$ref": "Effect", "optional": true },
+                { "name": "backtrace", "type": "array", "items": { "$ref": "Console.CallFrame" }, "optional": true, "description": "Backtrace that was captured when this `WebAnimation` was created." }
+            ]
+        },
+        {
+            "id": "Effect",
+            "type": "object",
+            "properties": [
+                { "name": "startDelay", "type": "number", "optional": true },
+                { "name": "endDelay", "type": "number", "optional": true },
+                { "name": "iterationCount", "type": "number", "optional": true, "description": "Number of iterations in the animation. <code>Infinity</code> is represented as <code>-1</code>." },
+                { "name": "iterationStart", "type": "number", "optional": true, "description": "Index of which iteration to start at." },
+                { "name": "iterationDuration", "type": "number", "optional": true, "description": "Total time of each iteration, measured in milliseconds." },
+                { "name": "timingFunction", "type": "string", "optional": true, "description": "CSS timing function of the overall animation." },
+                { "name": "playbackDirection", "$ref": "PlaybackDirection", "optional": true },
+                { "name": "fillMode", "$ref": "FillMode", "optional": true },
+                { "name": "keyframes", "type": "array", "items": { "$ref": "Keyframe" }, "optional": true }
+            ]
+        },
+        {
+            "id": "Keyframe",
+            "type": "object",
+            "properties": [
+                { "name": "offset", "type": "number", "description": "Decimal percentage [0,1] representing where this keyframe is in the entire duration of the animation." },
+                { "name": "easing", "type": "string", "optional": true, "description": "CSS timing function for how the `style` is applied." },
+                { "name": "style", "type": "string", "optional": true, "description": "CSS style declaration of the CSS properties that will be animated." }
+            ]
+        },
+        {
+            "id": "TrackingUpdate",
+            "type": "object",
+            "properties": [
+                { "name": "trackingAnimationId", "$ref": "AnimationId" },
+                { "name": "animationState", "$ref": "AnimationState" },
+                { "name": "nodeId", "$ref": "DOM.NodeId", "optional": true },
+                { "name": "animationName", "type": "string", "optional": true, "description": "Equal to the corresponding `animation-name` CSS property. Should not be provided if `transitionProperty` is also provided." },
+                { "name": "transitionProperty", "type": "string", "optional": true, "description": "Equal to the corresponding `transition-property` CSS property. Should not be provided if `animationName` is also provided." }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "enable",
+            "description": "Enables Canvas domain events."
+        },
+        {
+            "name": "disable",
+            "description": "Disables Canvas domain events."
+        },
+        {
+            "name": "requestEffectTarget",
+            "description": "Gets the `DOM.NodeId` for the target of the effect of the animation with the given `AnimationId`.",
+            "parameters": [
+                { "name": "animationId", "$ref": "AnimationId" }
+            ],
+            "returns": [
+                { "name": "nodeId", "$ref": "DOM.NodeId" }
+            ]
+        },
+        {
+            "name": "resolveAnimation",
+            "description": "Resolves JavaScript `WebAnimation` object for given `AnimationId`.",
+            "parameters": [
+                { "name": "animationId", "$ref": "AnimationId" },
+                { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." }
+            ],
+            "returns": [
+                { "name": "object", "$ref": "Runtime.RemoteObject" }
+            ]
+        },
+        {
+            "name": "startTracking",
+            "description": "Start tracking animations. This will produce a `trackingStart` event."
+        },
+        {
+            "name": "stopTracking",
+            "description": "Stop tracking animations. This will produce a `trackingComplete` event."
+        }
+    ],
+    "events": [
+        {
+            "name": "animationCreated",
+            "description": "Dispatched whenever a `WebAnimation` is created.",
+            "parameters": [
+                { "name": "animation", "$ref": "Animation" }
+            ]
+        },
+        {
+            "name": "nameChanged",
+            "description": "Dispatched whenever `Animation.prototype.set id` is called.",
+            "parameters": [
+                { "name": "animationId", "$ref": "AnimationId" },
+                { "name": "name", "type": "string", "optional": true, "description": "Equal to `Animation.prototype.get id`." }
+            ]
+        },
+        {
+            "name": "effectChanged",
+            "description": "Dispatched whenever the effect of any animation is changed in any way.",
+            "parameters": [
+                { "name": "animationId", "$ref": "AnimationId" },
+                { "name": "effect", "$ref": "Effect", "optional": true, "description": "This is omitted when the effect is removed without a replacement." }
+            ]
+        },
+        {
+            "name": "targetChanged",
+            "description": "Dispatched whenever the target of any effect of any animation is changed in any way.",
+            "parameters": [
+                { "name": "animationId", "$ref": "AnimationId" }
+            ]
+        },
+        {
+            "name": "animationDestroyed",
+            "description": "Dispatched whenever a `WebAnimation` is destroyed.",
+            "parameters": [
+                { "name": "animationId", "$ref": "AnimationId" }
+            ]
+        },
+        {
+            "name": "trackingStart",
+            "description": "Dispatched after `startTracking` command.",
+            "parameters": [
+                { "name": "timestamp", "type": "number" }
+            ]
+        },
+        {
+            "name": "trackingUpdate",
+            "description": "Fired for each phase of Web Animation.",
+            "parameters": [
+                { "name": "timestamp", "type": "number" },
+                { "name": "event", "$ref": "TrackingUpdate" }
+            ]
+        },
+        {
+            "name": "trackingComplete",
+            "description": "Dispatched after `stopTracking` command.",
+            "parameters": [
+                { "name": "timestamp", "type": "number" }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 178x19
+          text run at (0,0) width 178: "Only 'bar' should be selected."
+      RenderBlock {DIV} at (0,36) size 52x42 [border: (1px solid #000000)]
+        RenderText {#text} at (1,1) size 45x39
+          text run at (1,1) width 44: "foo bar"
+          text run at (1,21) width 45: "baz foo"
+selection start: position 4 of child 0 {#text} of child 2 {DIV} of body
+selection end:   position 7 of child 0 {#text} of child 2 {DIV} of body

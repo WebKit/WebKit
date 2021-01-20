@@ -1,0 +1,5 @@
+
+This tests that file URLs can embed plugins which can successfully load other File URLs from the Plugin. (Via the NPN_GetURL API)
+
+SUCCESS
+

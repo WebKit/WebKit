@@ -1,0 +1,4 @@
+
+PASS about:client referrer
+PASS url referrer
+

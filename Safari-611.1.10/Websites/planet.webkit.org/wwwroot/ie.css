@@ -1,0 +1,17 @@
+#icon {
+    background-image: none !important;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=crop, src='images/planet-icon.png');
+}
+
+.sidebar {
+    background-image: url('images/ie-nav-blue.png') !important;
+}
+
+img {
+    behavior: url('http://webkit.org/pngbehavior.htc');
+}
+
+h2 {
+    font-size: 18px;
+    margin: 0;
+}

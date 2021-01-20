@@ -1,0 +1,5 @@
+layer at (0,0) size 785x601
+  RenderView at (0,0) size 785x600
+layer at (10,10) size 102x102
+  RenderBlock (positioned) {HTML} at (10,10) size 102x102 [border: (1px solid #008000)]
+    RenderBody {BODY} at (9,9) size 84x582 [border: (1px solid #0000FF)]

@@ -1,0 +1,8 @@
+2d.text.draw.space.collapse.space
+Space characters are converted to U+0020, and collapsed (per CSS)
+Actual output:
+Expected output:
+
+
+FAIL Space characters are converted to U+0020, and collapsed (per CSS) assert_approx_equals: Red channel of the pixel at (25, 25) expected 0 +/- 2 but got 255
+

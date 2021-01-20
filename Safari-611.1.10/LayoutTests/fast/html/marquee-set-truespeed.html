@@ -1,0 +1,23 @@
+<body>
+<p>Verify that setting trueSpeed attribute works.</p>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+onload = function()
+{
+    var marquee = document.createElement("marquee");
+    marquee.innerHTML = "Test";
+    marquee.width = "100px";
+    marquee.behavior = "slide";
+    marquee.trueSpeed = true;
+    marquee.scrollAmount = 100;
+    marquee.scrollDelay = 1;
+    document.body.appendChild(marquee);
+    marquee.offsetTop; // Force layout now, so that marquee 1 ms timer starts before notifyDone 10 ms one, and doesn't race.
+    setTimeout(function() {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 20);
+}
+</script>

@@ -1,0 +1,3 @@
+
+FAIL sync XMLHttpRequest in shared worker Can't find variable: SharedWorker
+

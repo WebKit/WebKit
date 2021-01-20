@@ -1,0 +1,107 @@
+<!DOCTYPE>
+<html>
+<script src="../../resources/js-test-pre.js"></script>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Table test</title>
+    <style>
+    table {border: 1px solid;}
+    table th {background-color: #eeeeee;}
+    table td {background-color: #dddddd;}
+    .table thead {display:block;}
+    .table tbody {display:block;}
+    .table2 thead {display:block;}
+    .table2 tbody {display:block;}
+    </style>
+</head>
+<body id="body">
+
+<table role="grid" class="table" id="table">
+    <caption>Table with CSS and ARIA</caption>
+    <thead>
+        <tr role="row">
+            <th role="gridcell">Heading one</th>
+            <th role="gridcell">Heading two</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr role="row">
+            <td role="gridcell">a</td>
+            <td role="gridcell">b</td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="table2" id="table2">
+    <caption>Table with CSS and no ARIA</caption>
+    <thead>
+        <tr>
+            <th>Heading one</th>
+            <th>Heading two</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>a</td>
+            <td>b</td>
+        </tr>
+    <tbody>
+</table>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that contents in malformed tables are accessible.");
+
+    if (window.accessibilityController) {
+        var table1 = accessibilityController.accessibleElementById("table");
+        var table2 = accessibilityController.accessibleElementById("table2");
+        var tableArray = [table1, table2];
+        // check for table role
+        shouldBe("table1.role", "'AXRole: AXTable'");
+        shouldBe("table2.role", "'AXRole: AXTable'");
+
+        // check for correct column and row count
+        var table1ColumnCount = table1.numberAttributeValue("AXColumnCount");
+        var table1RowCount = table1.numberAttributeValue("AXRowCount");
+        var table2ColumnCount = table2.numberAttributeValue("AXColumnCount");
+        var table2RowCount = table2.numberAttributeValue("AXRowCount");
+        shouldBe("table1ColumnCount", "2");
+        shouldBe("table1RowCount", "2");
+        shouldBe("table2ColumnCount", "2");
+        shouldBe("table2RowCount", "2");
+
+        // check rows
+        for (var tableIndex = 0; tableIndex < 2; tableIndex++) {
+            debug("\nCheck rows for Table" + (tableIndex+1));
+            var table = tableArray[tableIndex];
+            for (var i = 0; i < 2; i++) {
+                var rowa = table.rowAtIndex(i);
+                var rowb = table.childAtIndex(i);
+                shouldBeTrue("rowa.isEqual(rowb)");
+                shouldBe("rowa.role", "'AXRole: AXRow'");
+            }
+        }
+
+        // check cells
+        for (var tableIndex = 0; tableIndex < 2; tableIndex++) {
+            debug("\nCheck cells for Table" + (tableIndex+1));
+            var table = tableArray[tableIndex];
+            for (var i = 0; i < 2; i++) {
+                for (var j = 0; j < 2; j++) {
+                    var cella = table.cellForColumnAndRow(i, j);
+                    var cellb = table.childAtIndex(j).childAtIndex(i);
+                    shouldBeTrue("cella.isEqual(cellb)");
+                    shouldBe("cella.role", "'AXRole: AXCell'");
+                }
+            }
+        }
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

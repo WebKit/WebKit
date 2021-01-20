@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>smaller than 32-bit types should not parse.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.smallTypesShouldFail = async () => {
+    await checkFail(`
+        void foo()
+        {
+            uchar x;
+        }
+    `); 
+
+    await checkFail(`
+        void foo()
+        {
+            char x;
+        }
+    `); 
+
+    await checkFail(`
+        void foo()
+        {
+            short x;
+        }
+    `); 
+
+    await checkFail(`
+        void foo()
+        {
+            ushort x;
+        }
+    `); 
+
+    await checkFail(`
+        void foo()
+        {
+            half x;
+        }
+    `); 
+};
+
+runTests(whlslTests);
+</script>
+</html>
+
+

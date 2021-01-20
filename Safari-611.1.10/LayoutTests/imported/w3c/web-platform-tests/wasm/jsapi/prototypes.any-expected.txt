@@ -1,0 +1,7 @@
+
+PASS _Module
+PASS _Instance
+PASS _Memory
+PASS _Table
+PASS _Global
+

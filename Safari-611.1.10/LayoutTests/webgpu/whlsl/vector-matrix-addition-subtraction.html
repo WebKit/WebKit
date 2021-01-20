@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Test prefix/postfix.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+const epsilon = 0.0001;
+
+whlslTests.vectorAddition = async () => {
+    let program = `
+        float a()
+        {
+            float2 v = float2(3, 4);
+            float2 u = v + 7;
+            return u.x;
+        }
+        float b()
+        {
+            float2 v = float2(3, 4);
+            float2 u = v + 7;
+            return u.y;
+        }
+        float c()
+        {
+            float2 v = float2(3, 4);
+            float2 u = 7 + v;
+            return u.x;
+        }
+        float d()
+        {
+            float2 v = float2(3, 4);
+            float2 u = 7 + v;
+            return u.y;
+        }
+        float e()
+        {
+            float2 v = float2(3, 4);
+            float2 u = +v;
+            return u.x;
+        }
+        float f()
+        {
+            float2 v = float2(3, 4);
+            float2 u = +v;
+            return u.y;
+        }
+    `;
+
+    assert_approx_equals(await callFloatFunction(program,  "a", []), 10, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "b", []), 11, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "c", []), 10, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "d", []), 11, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "e", []), 3, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "f", []), 4, epsilon);
+};
+
+whlslTests.vectorSubtraction = async () => {
+    let program = `
+        float a()
+        {
+            float2 v = float2(3, 4);
+            float2 u = v - 7;
+            return u.x;
+        }
+        float b()
+        {
+            float2 v = float2(3, 4);
+            float2 u = v - 7;
+            return u.y;
+        }
+        float c()
+        {
+            float2 v = float2(3, 4);
+            float2 u = 7 - v;
+            return u.x;
+        }
+        float d()
+        {
+            float2 v = float2(3, 4);
+            float2 u = 7 - v;
+            return u.y;
+        }
+        float e()
+        {
+            float2 v = float2(3, 4);
+            float2 u = -v;
+            return u.x;
+        }
+        float f()
+        {
+            float2 v = float2(3, 4);
+            float2 u = -v;
+            return u.y;
+        }
+    `;
+
+    assert_approx_equals(await callFloatFunction(program,  "a", []), -4, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "b", []), -3, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "c", []), 4, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "d", []), 3, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "e", []), -3, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "f", []), -4, epsilon);
+};
+
+whlslTests.matrixAddition = async () => {
+    let program = `
+        float a()
+        {
+            float2x2 m = float2x2(float2(3, 4), float2(5, 6));
+            float2x2 n = m + 7;
+            return n[0][0];
+        }
+        float b()
+        {
+            float2x2 m = float2x2(float2(3, 4), float2(5, 6));
+            float2x2 n = m + 7;
+            return n[0][1];
+        }
+        float c()
+        {
+            float2x2 m = float2x2(float2(3, 4), float2(5, 6));
+            float2x2 n = 7 + m;
+            return n[0][0];
+        }
+        float d()
+        {
+            float2x2 m = float2x2(float2(3, 4), float2(5, 6));
+            float2x2 n = 7 + m;
+            return n[0][1];
+        }
+        float e()
+        {
+            float2x2 m = float2x2(float2(3, 4), float2(5, 6));
+            float2x2 n = +m;
+            return n[0][0];
+        }
+        float f()
+        {
+            float2x2 m = float2x2(float2(3, 4), float2(5, 6));
+            float2x2 n = +m;
+            return n[0][1];
+        }
+    `;
+
+    assert_approx_equals(await callFloatFunction(program,  "a", []), 10, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "b", []), 11, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "c", []), 10, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "d", []), 11, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "e", []), 3, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "f", []), 4, epsilon);
+};
+
+whlslTests.matrixSubtraction = async () => {
+    let program = `
+        float a()
+        {
+            float2x2 m = float2x2(float2(3, 4), float2(5, 6));
+            float2x2 n = m - 7;
+            return n[0][0];
+        }
+        float b()
+        {
+            float2x2 m = float2x2(float2(3, 4), float2(5, 6));
+            float2x2 n = m - 7;
+            return n[0][1];
+        }
+        float c()
+        {
+            float2x2 m = float2x2(float2(3, 4), float2(5, 6));
+            float2x2 n = 7 - m;
+            return n[0][0];
+        }
+        float d()
+        {
+            float2x2 m = float2x2(float2(3, 4), float2(5, 6));
+            float2x2 n = 7 - m;
+            return n[0][1];
+        }
+        float e()
+        {
+            float2x2 m = float2x2(float2(3, 4), float2(5, 6));
+            float2x2 n = -m;
+            return n[0][0];
+        }
+        float f()
+        {
+            float2x2 m = float2x2(float2(3, 4), float2(5, 6));
+            float2x2 n = -m;
+            return n[0][1];
+        }
+    `;
+
+    assert_approx_equals(await callFloatFunction(program,  "a", []), -4, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "b", []), -3, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "c", []), 4, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "d", []), 3, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "e", []), -3, epsilon);
+    assert_approx_equals(await callFloatFunction(program,  "f", []), -4, epsilon);
+};
+
+runTests(whlslTests);
+</script>
+</html>

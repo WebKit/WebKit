@@ -1,0 +1,104 @@
+# Copyright (c) 2020 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("video_adaptation") {
+  sources = [
+    "balanced_constraint.cc",
+    "balanced_constraint.h",
+    "bitrate_constraint.cc",
+    "bitrate_constraint.h",
+    "encode_usage_resource.cc",
+    "encode_usage_resource.h",
+    "overuse_frame_detector.cc",
+    "overuse_frame_detector.h",
+    "quality_rampup_experiment_helper.cc",
+    "quality_rampup_experiment_helper.h",
+    "quality_scaler_resource.cc",
+    "quality_scaler_resource.h",
+    "video_stream_encoder_resource.cc",
+    "video_stream_encoder_resource.h",
+    "video_stream_encoder_resource_manager.cc",
+    "video_stream_encoder_resource_manager.h",
+  ]
+
+  deps = [
+    "../../api:rtp_parameters",
+    "../../api:scoped_refptr",
+    "../../api/adaptation:resource_adaptation_api",
+    "../../api/task_queue:task_queue",
+    "../../api/units:data_rate",
+    "../../api/video:video_adaptation",
+    "../../api/video:video_frame",
+    "../../api/video:video_stream_encoder",
+    "../../api/video_codecs:video_codecs_api",
+    "../../call/adaptation:resource_adaptation",
+    "../../modules/video_coding:video_coding_utility",
+    "../../rtc_base:checks",
+    "../../rtc_base:logging",
+    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:rtc_event",
+    "../../rtc_base:rtc_numerics",
+    "../../rtc_base:rtc_task_queue",
+    "../../rtc_base:timeutils",
+    "../../rtc_base/experiments:balanced_degradation_settings",
+    "../../rtc_base/experiments:field_trial_parser",
+    "../../rtc_base/experiments:quality_rampup_experiment",
+    "../../rtc_base/experiments:quality_scaler_settings",
+    "../../rtc_base/synchronization:mutex",
+    "../../rtc_base/synchronization:sequence_checker",
+    "../../rtc_base/system:no_unique_address",
+    "../../rtc_base/task_utils:repeating_task",
+    "../../rtc_base/task_utils:to_queued_task",
+    "../../system_wrappers:field_trial",
+    "../../system_wrappers:system_wrappers",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("video_adaptation_tests") {
+    testonly = true
+
+    defines = []
+    sources = [
+      "overuse_frame_detector_unittest.cc",
+      "quality_scaler_resource_unittest.cc",
+    ]
+    deps = [
+      ":video_adaptation",
+      "../../api:scoped_refptr",
+      "../../api/task_queue:task_queue",
+      "../../api/video:encoded_image",
+      "../../api/video:video_adaptation",
+      "../../api/video:video_frame_i420",
+      "../../api/video_codecs:video_codecs_api",
+      "../../call/adaptation:resource_adaptation",
+      "../../call/adaptation:resource_adaptation_test_utilities",
+      "../../modules/video_coding:video_coding_utility",
+      "../../rtc_base:checks",
+      "../../rtc_base:logging",
+      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:rtc_base_tests_utils",
+      "../../rtc_base:rtc_event",
+      "../../rtc_base:rtc_numerics",
+      "../../rtc_base:rtc_task_queue",
+      "../../rtc_base:task_queue_for_test",
+      "../../test:field_trial",
+      "//test:rtc_expect_death",
+      "//test:test_support",
+      "//testing/gtest",
+    ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+  }
+}

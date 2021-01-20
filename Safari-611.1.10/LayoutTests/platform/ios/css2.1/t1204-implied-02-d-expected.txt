@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x100
+  RenderBlock {HTML} at (0,0) size 800x100
+    RenderBody {BODY} at (8,16) size 784x76
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 283x19
+          text run at (0,0) width 283: "The following two lines should be identical:"
+      RenderBlock {DIV} at (0,36) size 784x20
+        RenderInline {SPAN} at (0,0) size 35x19
+          RenderInline (generated) at (0,0) size 11x19
+            RenderText at (0,0) size 11x19
+              text run at (0,0) width 11: "B"
+          RenderInline {SPAN} at (0,0) size 13x19
+            RenderInline (generated) at (0,0) size 13x19
+              RenderCounter at (10,0) size 9x19
+                text run at (10,0) width 9: "1"
+              RenderText at (18,0) size 5x19
+                text run at (18,0) width 5: " "
+          RenderInline {SPAN} at (0,0) size 13x19
+            RenderInline {SPAN} at (0,0) size 13x19
+              RenderInline (generated) at (0,0) size 13x19
+                RenderCounter at (22,0) size 9x19
+                  text run at (22,0) width 9: "0"
+                RenderText at (30,0) size 5x19
+                  text run at (30,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 33x19
+          RenderInline {SPAN} at (0,0) size 13x19
+            RenderInline (generated) at (0,0) size 13x19
+              RenderCounter at (34,0) size 9x19
+                text run at (34,0) width 9: "1"
+              RenderText at (42,0) size 5x19
+                text run at (42,0) width 5: " "
+          RenderInline {SPAN} at (0,0) size 21x19
+            RenderInline {SPAN} at (0,0) size 21x19
+              RenderInline (generated) at (0,0) size 21x19
+                RenderCounter at (46,0) size 21x19
+                  text run at (46,0) width 21: "1.0"
+                RenderText at (0,0) size 0x0
+      RenderBlock {DIV} at (0,56) size 784x20
+        RenderText {#text} at (0,0) size 67x19
+          text run at (0,0) width 67: "B1 0 1 1.0"

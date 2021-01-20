@@ -1,0 +1,17 @@
+If this renders correctly you should see one big friendly green square.
+<canvas id="canvas" width="200" height="200" ></canvas>
+<canvas id="canvas2" width="200" height="200" style="display:none" ></canvas>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText(true);
+
+var canvas = document.getElementById("canvas");
+var canvas2 = document.getElementById("canvas2");
+var context = canvas.getContext("2d");
+var context2 = canvas2.getContext("2d");
+context2.fillStyle = 'red';
+context2.fillRect(0,0,200,200);
+context2.fillStyle = 'green';
+context2.fillRect(50,50,100,100);
+context.drawImage(canvas2, 50, 50, 100, 100, 0, 0, 200, 200);
+</script>

@@ -1,0 +1,28 @@
+From f200f2f37cf732d96d3b7e5de537840c570516fa Mon Sep 17 00:00:00 2001
+From: Samuel Thibault <samuel.thibault@ens-lyon.org>
+Date: Tue, 27 Aug 2019 13:07:26 +0200
+Subject: [PATCH] tests: fix child_pid reference
+
+180f91479e27 ("tests: Replace common variable with usual external
+variable") fixed the variable declaration, but there was no definition
+either. This adds it.
+---
+ tests/atk_test_util.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/tests/atk_test_util.c b/tests/atk_test_util.c
+index c932df8..7a73c2b 100644
+--- a/tests/atk_test_util.c
++++ b/tests/atk_test_util.c
+@@ -23,6 +23,8 @@
+ #include <signal.h>
+ #include "atk_test_util.h"
+ 
++pid_t child_pid;
++
+ static void assert_clean_exit (int sig)
+ {
+   kill (child_pid, SIGTERM);
+-- 
+2.26.2
+

@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+  <table border="1">
+    <tr>
+      <th id="columnheader1" role="columnheader" rowspan="3" colspan="2" aria-rowspan="10" aria-colspan="10">header 1</th>
+      <th id="columnheader2" role="columnheader" aria-rowspan="10" aria-colspan="10">header 2</th>
+      <th id="columnheader3" role="columnheader" colspan="3" aria-rowspan="10" aria-colspan="10">header 3</th>
+    </tr>
+    <tr>
+      <td id="cell1" rowspan="2" colspan="2" aria-rowspan="10" aria-colspan="10">cell 1</td>
+      <td id="cell2" aria-rowspan="10" aria-colspan="10">cell 2</td>
+      <td id="cell3" rowspan="3" aria-rowspan="10" aria-colspan="10">cell 3</td>
+    </tr>
+    <tr>
+      <td>cell 4</td>
+    </tr>
+    <tr>
+      <td>cell 5</td>
+      <td>cell 6</td>
+      <td>cell 7</td>
+      <td>cell 8</td>
+      <td>cell 9</td>
+    </tr>
+  </table>
+</div>
+
+<script>
+    description("This verifies that ARIA cell spans are ignored when native cell spans are set.");
+
+    function span(rangeString) {
+        return rangeString.split(/\D/).filter(function(x){ return x != ""; })[1];
+    }
+
+    function outputSpans(id) {
+        var axElement = accessibilityController.accessibleElementById(id);
+        var rowSpan = span(axElement.rowIndexRange());
+        var columnSpan = span(axElement.columnIndexRange());
+        debug(id + " spans " + rowSpan + " row(s) and " + columnSpan + " column(s).");
+    }
+
+    if (window.accessibilityController) {
+        ids = ["columnheader1", "columnheader2", "columnheader3", "cell1", "cell2", "cell3"];
+        idCount = ids.length;
+        for (var i = 0; i < idCount; i++)
+            outputSpans(ids[i]);
+
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

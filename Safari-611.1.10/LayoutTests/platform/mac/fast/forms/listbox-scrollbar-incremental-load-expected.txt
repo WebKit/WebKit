@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 54x18
+          text run at (0,0) width 54: "Test for "
+        RenderInline {I} at (0,0) size 775x36
+          RenderInline {A} at (0,0) size 305x18 [color=#0000EE]
+            RenderText {#text} at (53,0) size 305x18
+              text run at (53,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=13500"
+          RenderText {#text} at (357,0) size 775x36
+            text run at (357,0) width 5: " "
+            text run at (361,0) width 414: "REGRESSION: Listbox scrollbar does not reflect actual scrolled"
+            text run at (0,18) width 326: "position when selected option is added after layout"
+        RenderText {#text} at (325,18) size 5x18
+          text run at (325,18) width 5: "."
+      RenderBlock {P} at (0,52) size 784x36
+        RenderText {#text} at (0,0) size 744x36
+          text run at (0,0) width 501: "The list box should be scrolled all the way down, showing the selected option "
+          text run at (500,0) width 244: "\x{201C}Seven\x{201D}. The scroller should be at the"
+          text run at (0,18) width 155: "bottom of the scroll bar "
+          text run at (154,18) width 88: "to reflect this."
+      RenderBlock (anonymous) at (0,104) size 784x61
+        RenderListBox {SELECT} at (2,2) size 49x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderText {#text} at (0,0) size 0x0

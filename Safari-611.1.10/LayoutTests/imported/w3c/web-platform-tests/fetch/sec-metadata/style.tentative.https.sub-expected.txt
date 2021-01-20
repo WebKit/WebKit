@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: Did not parse stylesheet at 'https://localhost:9443/fetch/sec-metadata/resources/record-header.py?file=style-same-origin' because non CSS MIME types are not allowed in strict mode.
+Blocked access to external URL https://www.localhost:9443/fetch/sec-metadata/resources/record-header.py?file=style-same-site
+Blocked access to external URL https://www.not-web-platform.test:9443/fetch/sec-metadata/resources/record-header.py?file=style-cross-site
+
+FAIL Same-Origin style assert_not_equals: Empty Sec-Metadata header. got disallowed value ""
+FAIL Same-Site style assert_equals: destination expected (string) "style" but got (undefined) undefined
+FAIL Cross-Site style assert_equals: destination expected (string) "style" but got (undefined) undefined
+

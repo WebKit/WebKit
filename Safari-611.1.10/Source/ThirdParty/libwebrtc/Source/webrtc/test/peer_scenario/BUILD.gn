@@ -1,0 +1,62 @@
+# Copyright (c) 2019 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+if (rtc_include_tests) {
+  rtc_library("peer_scenario") {
+    testonly = true
+    sources = [
+      "peer_scenario.cc",
+      "peer_scenario.h",
+      "peer_scenario_client.cc",
+      "peer_scenario_client.h",
+      "scenario_connection.cc",
+      "scenario_connection.h",
+      "sdp_callbacks.cc",
+      "sdp_callbacks.h",
+      "signaling_route.cc",
+      "signaling_route.h",
+    ]
+    deps = [
+      "..:fake_video_codecs",
+      "..:fileutils",
+      "..:test_support",
+      "../:video_test_common",
+      "../../api:create_time_controller",
+      "../../api:libjingle_peerconnection_api",
+      "../../api:network_emulation_manager_api",
+      "../../api:rtc_stats_api",
+      "../../api:time_controller",
+      "../../api/audio_codecs:builtin_audio_decoder_factory",
+      "../../api/audio_codecs:builtin_audio_encoder_factory",
+      "../../api/rtc_event_log:rtc_event_log_factory",
+      "../../api/task_queue:default_task_queue_factory",
+      "../../api/transport:field_trial_based_config",
+      "../../api/video_codecs:builtin_video_decoder_factory",
+      "../../api/video_codecs:builtin_video_encoder_factory",
+      "../../media:rtc_audio_video",
+      "../../media:rtc_media_base",
+      "../../modules/audio_device:audio_device_impl",
+      "../../modules/rtp_rtcp:rtp_rtcp_format",
+      "../../p2p:rtc_p2p",
+      "../../pc:pc_test_utils",
+      "../../pc:rtc_pc_base",
+      "../../rtc_base",
+      "../../rtc_base:stringutils",
+      "../logging:log_writer",
+      "../network:emulated_network",
+      "../scenario",
+      "../time_controller",
+    ]
+    absl_deps = [
+      "//third_party/abseil-cpp/absl/flags:flag",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "setup-buffer-and-worklet"
+PASS Executing "verify-rendered-buffer"
+PASS Audit report
+PASS > [setup-buffer-and-worklet]
+PASS < [setup-buffer-and-worklet] All assertions passed. (total 0 assertions)
+PASS > [verify-rendered-buffer]
+PASS   First half of Channel #0 contains only the constant 0.
+PASS   Second half of Channel #0 contains only the constant 1.
+PASS   First half of Channel #1 contains only the constant 0.
+PASS   Second half of Channel #1 contains only the constant 2.
+PASS   First half of Channel #2 contains only the constant 0.
+PASS   Second half of Channel #2 contains only the constant 3.
+PASS < [verify-rendered-buffer] All assertions passed. (total 6 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
+

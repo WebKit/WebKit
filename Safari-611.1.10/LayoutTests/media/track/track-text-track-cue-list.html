@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>           
+
+            function trackLoaded()
+            {
+                var testTrack = document.getElementById('testTrack');
+                cues = testTrack.track.cues;
+
+                consoleWrite("<br>*** Testing TextTrackCueList length");
+
+                testExpected("cues.length", 4);
+
+                consoleWrite("<br>*** Testing TextTrackCueList [] operator");
+
+                testExpected("cues[0].id", "1");
+                testExpected("cues[3].id", "4");
+                testExpected("cues[4]", undefined);
+
+                consoleWrite("<br>*** Testing TextTrackCueList getCueById()");                                               
+
+                testExpected("cues.getCueById('1').startTime", 0);
+                testExpected("cues.getCueById('4').startTime", 121);
+                testExpected("cues.getCueById('junk')", undefined);
+
+                endTest();
+            }
+
+            setCaptionDisplayMode('Automatic');
+        </script>
+    </head>
+    <body>
+        <p>Tests TextTrackCueList functionality: length, operator[], and getCueById()</p>
+        <video>
+            <track id="testTrack" src="captions-webvtt/tc013-settings.vtt" kind="captions" onload="trackLoaded()" default>
+        </video>
+    </body>
+</html>

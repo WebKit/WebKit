@@ -1,0 +1,33 @@
+{
+    "survey":[
+        {
+            "question":"How often do you use WebKit Nightly builds?",
+            "responses":[
+                "It’s my default browser",
+                "Once a day",
+                "Once or twice a week",
+                "Maybe once a month"
+            ]
+        },
+        {
+            "question":"How do you use WebKit Nightly builds?",
+            "responses":[
+                "Testing and verifying bugs or fixes for the WebKit team",
+                "Testing new features to provide feedback to the WebKit team",
+                "Finding new bugs in WebKit",
+                "Finding new features in WebKit",
+                "Other:"
+            ]
+        },
+        {
+            "question":"What type of development work do you do?",
+            "responses":[
+                "I'm a WebKit developer",
+                "I'm a web developer",
+                "I contribute to Web Standards",
+                "I do iOS development",
+                "Other:"
+            ]
+        }
+    ]
+}

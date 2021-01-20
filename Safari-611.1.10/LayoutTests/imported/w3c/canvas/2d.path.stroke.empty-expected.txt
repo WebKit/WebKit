@@ -1,0 +1,7 @@
+2d.path.stroke.empty
+Empty subpaths are not stroked
+Spec references: 2d.path.stroke.empty
+Actual output:
+Expected output:
+
+Passed

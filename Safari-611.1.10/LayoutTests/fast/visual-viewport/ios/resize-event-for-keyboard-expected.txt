@@ -1,0 +1,19 @@
+This tests "resize" event on window.visualViewport and height getting updated upon keyboard showing up on iOS
+To manually test, tap the text field below to show the software keyboard then dismiss it.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS resizeCount is 0
+PASS resizeCount is 1
+PASS originalWidth is window.visualViewport.width
+PASS window.visualViewport.height is not originalHeight
+PASS window.visualViewport.height < originalHeight is true
+PASS resizeCount is 2
+PASS originalWidth is window.visualViewport.width
+PASS window.visualViewport.height is originalHeight
+PASS window.visualViewport.height < originalHeight is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

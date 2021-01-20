@@ -1,0 +1,5 @@
+Referrer Policy: iframes correctly inherit the ancestor's referrer
+
+
+FAIL iframes correctly inherit the ancestor's referrer assert_equals: expected (string) "http://localhost:8800/" but got (undefined) undefined
+

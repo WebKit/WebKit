@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+    <iframe id="none" src="http://localhost:8000/media/media-stream/resources/enumerate-devices-iframe.html"></iframe>
+    <iframe id="microphone" allow="microphone" src="http://localhost:8000/media/media-stream/resources/enumerate-devices-iframe.html"></iframe>
+    <iframe id="camera" allow="camera" src="http://localhost:8000/media/media-stream/resources/enumerate-devices-iframe.html"></iframe>
+    <iframe id="camera+microphone" allow="camera;microphone" src="http://localhost:8000/media/media-stream/resources/enumerate-devices-iframe.html"></iframe>
+    <iframe id="microphone+speakerselection" allow="microphone;speaker-selection" src="http://localhost:8000/media/media-stream/resources/enumerate-devices-iframe.html"></iframe>
+    <iframe id="camera+microphone+speakerselection" allow="camera;microphone;speaker-selection" src="http://localhost:8000/media/media-stream/resources/enumerate-devices-iframe.html"></iframe>
+    <iframe id="same-origin" src="http://127.0.0.1:8000/media/media-stream/resources/enumerate-devices-iframe.html"></iframe>
+    <script>
+    const iFrameTests = [
+    ['none', ''],
+    ['microphone', 'microphone'],
+    ['camera', 'camera'],
+    ['camera+microphone', 'camera+microphone'],
+    ['microphone+speakerselection', 'microphone+speakerselection'],
+    ['camera+microphone+speakerselection', 'camera+microphone+speakerselection'],
+    ['same-origin', 'camera+microphone+speakerselection']
+    ];
+
+    promise_test(() => {
+        return Promise.all(iFrameTests.map((iFrameTest) => {
+            const frame = document.getElementById(iFrameTest[0]);
+            return new Promise(resolve => frame.onload = resolve);
+        }));
+    }, "Wait for frames to be loaded");
+
+    iFrameTests.forEach((iFrameTest) => {
+        promise_test(async () => {
+            const promise = new Promise((resolve, reject) => {
+                window.onmessage = resolve;
+                setTimeout(() => reject('test timed out'), 5000);
+            });
+            document.getElementById(iFrameTest[0]).contentWindow.postMessage('', '*');
+            const event = await promise;
+            assert_equals(event.data, iFrameTest[1]);
+        }, iFrameTest[0]);
+    });
+    </script>
+</body>
+</html>

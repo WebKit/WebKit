@@ -1,0 +1,10 @@
+
+FAIL Property text-align-last value 'auto' assert_true: text-align-last doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-align-last value 'start' assert_true: text-align-last doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-align-last value 'end' assert_true: text-align-last doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-align-last value 'left' assert_true: text-align-last doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-align-last value 'right' assert_true: text-align-last doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-align-last value 'center' assert_true: text-align-last doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-align-last value 'justify' assert_true: text-align-last doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-align-last value 'match-parent' assert_true: text-align-last doesn't seem to be supported in the computed style expected true got false
+

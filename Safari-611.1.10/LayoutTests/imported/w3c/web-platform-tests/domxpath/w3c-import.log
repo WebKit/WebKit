@@ -1,0 +1,38 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/domxpath/001.html
+/LayoutTests/imported/w3c/web-platform-tests/domxpath/002.html
+/LayoutTests/imported/w3c/web-platform-tests/domxpath/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/domxpath/README.md
+/LayoutTests/imported/w3c/web-platform-tests/domxpath/booleans.html
+/LayoutTests/imported/w3c/web-platform-tests/domxpath/callback-interface.html
+/LayoutTests/imported/w3c/web-platform-tests/domxpath/document.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/domxpath/evaluator-constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/domxpath/fn-concat.html
+/LayoutTests/imported/w3c/web-platform-tests/domxpath/fn-contains.html
+/LayoutTests/imported/w3c/web-platform-tests/domxpath/fn-lang.html
+/LayoutTests/imported/w3c/web-platform-tests/domxpath/fn-normalize-space.html
+/LayoutTests/imported/w3c/web-platform-tests/domxpath/fn-starts-with.html
+/LayoutTests/imported/w3c/web-platform-tests/domxpath/fn-substring-after.html
+/LayoutTests/imported/w3c/web-platform-tests/domxpath/fn-substring-before.html
+/LayoutTests/imported/w3c/web-platform-tests/domxpath/fn-substring.html
+/LayoutTests/imported/w3c/web-platform-tests/domxpath/fn-translate.html
+/LayoutTests/imported/w3c/web-platform-tests/domxpath/helpers.js
+/LayoutTests/imported/w3c/web-platform-tests/domxpath/lexical-structure.html
+/LayoutTests/imported/w3c/web-platform-tests/domxpath/node-sets.html
+/LayoutTests/imported/w3c/web-platform-tests/domxpath/numbers.html
+/LayoutTests/imported/w3c/web-platform-tests/domxpath/predicates.html

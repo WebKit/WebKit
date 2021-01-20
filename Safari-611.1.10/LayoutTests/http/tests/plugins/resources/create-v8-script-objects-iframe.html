@@ -1,0 +1,17 @@
+<html>
+<head>
+<script type="text/javascript">
+function runTest() {
+    document.plugin.remember(window.top);
+    window.top.onSubframeLoaded();
+}
+
+function outputResult() {
+    window.top.document.getElementById('result').innerHTML = 'FAILURE';
+}
+</script>
+</head>
+<body onload="runTest();">
+<embed name="plugin" type="application/x-webkit-test-netscape"></embed>
+</body>
+</html>

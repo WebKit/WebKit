@@ -1,0 +1,29 @@
+Test that CSSProperty.prototype.overridden is set correctly.
+
+
+== Running test suite: OverriddenProperty
+-- Running test case: OverriddenProperty.effectivePropertyRemoved
+color: green;
+color: red; overridden
+
+OverriddenStatusChanged event fired.
+REMOVED
+color: red;
+
+
+-- Running test case: OverriddenProperty.OverriddenByShorthand
+PASS: border-top-color is overridden.
+PASS: border-color is NOT overridden.
+
+-- Running test case: OverriddenProperty.OverriddenByImportantShorthand
+PASS: border-color is NOT overridden.
+PASS: border-top-color is overridden.
+
+-- Running test case: OverriddenProperty.NotOverriddenByImportantLonghand
+PASS: border-top-color is NOT overridden.
+PASS: border-color is NOT overridden.
+
+-- Running test case: OverriddenProperty.NotOverriddenByLonghand
+PASS: border-color is NOT overridden.
+PASS: border-top-color is NOT overridden.
+

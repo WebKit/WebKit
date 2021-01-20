@@ -1,0 +1,10 @@
+This test makes sure that lang='zh' round-trips through getComputedStyle.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.getComputedStyle(target).getPropertyValue('-webkit-locale') is "zh"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

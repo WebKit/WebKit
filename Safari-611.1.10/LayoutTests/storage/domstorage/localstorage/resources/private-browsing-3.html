@@ -1,0 +1,23 @@
+<html>
+<head>
+<script>
+
+function log(a)
+{
+    alert(a + "");
+}
+
+function runTest()
+{
+    log("Final window, localStorage's length is: " + localStorage.length);
+    log("Final window, item is: " + localStorage.getItem("testItem"));
+
+    if (testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+</head>
+<body onload="runTest();">
+</body>
+</html>

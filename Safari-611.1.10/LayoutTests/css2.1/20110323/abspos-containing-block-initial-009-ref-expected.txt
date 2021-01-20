@@ -1,0 +1,7 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x0
+  RenderBlock {HTML} at (0,0) size 800x0
+    RenderBody {BODY} at (0,0) size 800x0
+layer at (50,50) size 420x320
+  RenderBlock (positioned) {DIV} at (50,50) size 420x320 [border: (10px solid #000000)]

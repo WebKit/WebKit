@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/sw-test-pre.js"></script>
+<script>
+log("* Tests that serviceWorker.getRegistration() / getRegistrations() inside service workers");
+log("");
+
+navigator.serviceWorker.addEventListener("message", function(event) {
+    if (event.data === "DONE") {
+        finishSWTest();
+        return;
+    }
+    log(event.data);
+});
+
+navigator.serviceWorker.register("resources/ServiceWorkerGlobalScope_getRegistration-worker.js", { }).then(function(registration) {
+    registration.installing.postMessage("runTest");
+});
+</script>
+</body>
+</html>

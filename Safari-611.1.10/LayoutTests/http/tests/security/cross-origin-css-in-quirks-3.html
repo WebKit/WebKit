@@ -1,0 +1,39 @@
+<html>
+<!--
+    Note the lack of doctype above: That is intentional. This test
+    MUST be in quirks mode to have any real testing power.
+-->
+<head>
+<title>Cross-origin CSS</title>
+
+<script>
+// Prune memory cache to make sure we don't use a cached parsed stylesheet, in which case
+// the console warning would not be shown and the test would be flaky.
+internals.pruneMemoryCacheToSize(0);
+</script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<link rel="stylesheet"
+      href="/resources/redirect.php?url=http://localhost:8000/security/resources/xorigincss1.css"></link>
+
+<script>
+function getBackgroundColorForId(id) {
+    return window.getComputedStyle(document.getElementById(id), null).getPropertyValue('background-color')
+}
+
+var onloadTest = async_test("Testing cross-origin and MIME behavior for CSS.");
+
+window.onload = function () {
+    test(function () {
+        assert_equals(getBackgroundColorForId('id3'), 'rgb(255, 255, 0)');
+    }, 'xorigincss1.css should be loaded via &lt;link&gt;');
+
+    onloadTest.done();
+};
+</script>
+</head>
+<body>
+    <div id="id3" class="id3"></div>
+</body>
+</html>

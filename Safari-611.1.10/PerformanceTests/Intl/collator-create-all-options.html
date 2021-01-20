@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+var count = 0;
+PerfTestRunner.measureRunsPerSecond({run() {
+    new Intl.Collator('en-US-u-co-dict-kn-false-kf-upper', {
+        localeMatcher: 'best fit',
+        usage: count % 2 ? 'sort' : 'search',
+        sensitivity: 'variant',
+        ignorePunctuation: true,
+        numeric: true,
+        caseFirst: false
+    });
+    count++;
+}});
+</script>
+</body>

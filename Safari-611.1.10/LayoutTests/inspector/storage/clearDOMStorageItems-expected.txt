@@ -1,0 +1,38 @@
+Tests for DOMStorage.clearDOMStorageItems.
+
+
+== Running test suite: DOMStorage.clearDOMStorageItems
+-- Running test case: DOMStorage.clearDOMStorageItems.Session
+PASS: Should have a DOMStorageObject for sessionStorage.
+
+Getting DOM storage entries...
+[
+  [
+    "foo",
+    "bar"
+  ]
+]
+
+Clearing storage...
+
+Getting DOM storage entries...
+[]
+
+
+-- Running test case: DOMStorage.clearDOMStorageItems.Local
+PASS: Should have a DOMStorageObject for localStorage.
+
+Getting DOM storage entries...
+[
+  [
+    "foo",
+    "bar"
+  ]
+]
+
+Clearing storage...
+
+Getting DOM storage entries...
+[]
+
+

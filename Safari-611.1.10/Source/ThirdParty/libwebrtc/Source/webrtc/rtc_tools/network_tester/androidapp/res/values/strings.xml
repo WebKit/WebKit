@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">NetworkTester</string>
+    <string name="start_test">Start test</string>
+    <string name="interrupt_test">Interrupt test</string>
+    <string name="test_status">Status</string>
+</resources>

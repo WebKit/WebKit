@@ -1,0 +1,14 @@
+This test verifies that the value in the time picker is updated on the second presentation of the form. To manually run the test, tap the time input and change the time to 9:41, then dismiss the picker, and select it again and verify that it says 9:41.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Handled change event
+PASS Handled blur event
+PASS pickerValues.hour is 9
+PASS pickerValues.minute is 41
+PASS Handled blur event
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

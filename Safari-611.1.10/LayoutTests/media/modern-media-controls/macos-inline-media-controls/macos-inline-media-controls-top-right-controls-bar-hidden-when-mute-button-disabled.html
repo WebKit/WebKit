@@ -1,0 +1,25 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the top right controls bar isn't visible when the mute button is disabled.");
+
+const mediaControls = new MacOSInlineMediaControls({ width: 250, height: 250 });
+
+debug("Mute button is enabled");
+shouldBe("mediaControls.muteButton.parent.parent", "mediaControls.topRightControlsBar");
+shouldBe("mediaControls.topRightControlsBar.parent", "mediaControls");
+
+debug("")
+debug("Mute button is disabled");
+mediaControls.muteButton.enabled = false;
+shouldBe("mediaControls.muteButton.parent.parent", "mediaControls.bottomControlsBar");
+shouldBeNull("mediaControls.topRightControlsBar.parent");
+
+debug("");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

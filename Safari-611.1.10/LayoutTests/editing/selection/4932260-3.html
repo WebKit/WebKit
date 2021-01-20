@@ -1,0 +1,12 @@
+<p>This tests for a bug where images would act as word boundaries.</p>
+<div id="div" contenteditable="true">The caret should be just before the second to last word in this<img src="../resources/abe.png">sentence.</div>
+
+<script>
+if (window.testRunner)
+    window.testRunner.dumpEditingCallbacks();
+var sel = window.getSelection();
+var div = document.getElementById("div");
+sel.setPosition(div, div.childNodes.length);
+sel.modify("move", "backward", "word");
+sel.modify("move", "backward", "word");
+</script>

@@ -1,0 +1,13 @@
+<style>
+body { -webkit-user-modify: read-write; background-image: url(); }
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    onload = function fun() {
+        document.getSelection().setPosition(HR);
+        HR.appendChild(document.createElement("option"));
+        document.execCommand("insertOrderedList", false);
+    }
+</script>
+<body><hr id=HR contenteditable="false"></hr><span>Tests inserting ol at an uneditable element with non-li child. The test passes if WebKit doesn't crash or hit an assertion.</span>

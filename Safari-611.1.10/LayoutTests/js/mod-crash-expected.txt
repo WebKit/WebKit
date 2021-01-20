@@ -1,0 +1,14 @@
+This test checks that n % 0 doesn't crash with a floating-point exception.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 2 % 0 is NaN
+PASS n % 0 is NaN
+PASS f() is NaN
+PASS g() is NaN
+PASS nonSpeculativeModReuse(0.5) is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

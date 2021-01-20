@@ -1,0 +1,11 @@
+Tests RTCPeerConnection createAnswer.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pc.createAnswer().then(requestSucceeded1, requestFailed1); did not throw exception.
+FAIL createAnswer request failed.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

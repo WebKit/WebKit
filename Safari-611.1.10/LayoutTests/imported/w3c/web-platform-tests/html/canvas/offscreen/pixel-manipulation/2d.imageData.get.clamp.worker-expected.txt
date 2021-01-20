@@ -1,0 +1,3 @@
+
+PASS getImageData() clamps colours to the range [0, 255]
+

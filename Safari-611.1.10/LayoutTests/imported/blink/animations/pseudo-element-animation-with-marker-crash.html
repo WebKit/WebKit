@@ -1,0 +1,9 @@
+<style>
+@keyframes test { 0% { marker: url("crash"); } }
+body:before { animation-name: test; }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+Test passes if it doesn't crash.

@@ -1,0 +1,8 @@
+@import url("/security/resources/imported-loading-subresources.css");
+@font-face {
+    font-family:ahem;
+    src: url("/resources/Ahem.woff");
+}
+#mydiv {
+  cursor: url("/security/resources/abe-allow-star.php?cursor"), auto;
+}

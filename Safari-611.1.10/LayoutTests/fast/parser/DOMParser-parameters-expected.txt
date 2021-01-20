@@ -1,0 +1,11 @@
+Test that the parameters to DOMParser.parseFromString() are mandatory.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS parser.parseFromString() threw exception TypeError: Not enough arguments.
+PASS parser.parseFromString('<html></html>') threw exception TypeError: Not enough arguments.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

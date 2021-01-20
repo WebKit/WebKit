@@ -1,0 +1,47 @@
+<script>
+
+var framesLoaded = 0;
+var redirectCodes = new Array();
+redirectCodes[0] = "301";
+redirectCodes[1] = "302";
+redirectCodes[2] = "303";
+redirectCodes[3] = "307";
+
+function frameLoaded()
+{
+    if (++framesLoaded == 4) {
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+    
+    appendFrame(redirectCodes[framesLoaded]);
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.setHandlesAuthenticationChallenges(true);
+    testRunner.setAuthenticationUsername("testUser");
+    testRunner.setAuthenticationPassword("testPassword");
+}
+
+function appendFrame(code)
+{
+    i = document.createElement("iframe"); 
+    i.setAttribute("src", "http://localhost:8000/misc/authentication-redirect-1/resources/auth-then-redirect.php?redirect=" + code); 
+    i.setAttribute("onload", "frameLoaded()");
+    document.body.appendChild(i);
+}
+
+</script>
+
+<body onload="appendFrame('301');">
+https://bugs.webkit.org/show_bug.cgi?id=40138<br>
+You should load this page at 127.0.0.1:8000 so localhost:8000 is considered a different security origin.<br>
+This test loads a php script which demands http authentication, then uses it to redirect to another script in a different origin that shows what authentication headers were sent with the final request.<br>
+It does this once each for HTTP 301, 302, 303, and 307 redirects.<br>
+If not running under DRT, enter any credentials when asked.<br>
+</body>
+

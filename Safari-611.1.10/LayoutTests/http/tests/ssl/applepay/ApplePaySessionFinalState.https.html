@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/payment-request.js"></script>
+</head>
+<body>
+<script>
+
+description("Test that ApplePayPaymentAuthorizationResults with non-empty errors are considered non-final results, regardless of result status or error codes.");
+
+window.jsTestIsAsync = true;
+
+function validRequest()
+{
+    return {
+        countryCode: 'US',
+        currencyCode: 'USD',
+        supportedNetworks: ['visa', 'masterCard'],
+        merchantCapabilities: ['supports3DS'],
+        total: { label: 'Your Label', amount: '10.00' },
+    }
+}
+
+activateThen(() => {
+    var session = new ApplePaySession(2, validRequest());
+    var results = null;
+    if (window.ApplePayError) {
+        var unknownError = new ApplePayError("unknown");
+        results = [
+            { status: ApplePaySession.STATUS_SUCCESS, errors: [unknownError] },
+            { status: ApplePaySession.STATUS_FAILURE, errors: [unknownError] },
+            { status: ApplePaySession.STATUS_SUCCESS, errors: [] },
+        ];
+    } else {
+        results = [
+            ApplePaySession.STATUS_INVALID_SHIPPING_POSTAL_ADDRESS,
+            ApplePaySession.STATUS_INVALID_SHIPPING_CONTACT,
+            ApplePaySession.STATUS_SUCCESS,
+        ];
+    }
+    session.onpaymentauthorized = (event) => {
+        session.completePayment(results.splice(0, 1)[0]);
+        if (results.length)
+            internals.mockPaymentCoordinator.acceptPayment();
+        else {
+            testPassed("did not crash");
+            finishJSTest();
+        }
+    };
+    
+    session.begin();
+    internals.mockPaymentCoordinator.acceptPayment();
+});
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
+}
+
+</script>
+<p>This test opens a HTTPS window that loads insecure data via XHR.  We should upgrade
+this request and thereby avoid a mixed content callback.</p>
+<script>
+onload = function() {
+    window.open("https://127.0.0.1:8443/security/contentSecurityPolicy/upgrade-insecure-requests/resources/insecure-sync-xhr-in-main-frame-window.html");
+}
+</script>
+</body>
+</html>

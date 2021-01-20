@@ -1,0 +1,9 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+test label 4
+Label text should be missing: ""
+Label text should use the placeholder: "test label 1"
+Label text should use the title: "test label 2"
+Label text should use the accessibility label: "test label 3"
+Label text should use the associated label: "test label 4"

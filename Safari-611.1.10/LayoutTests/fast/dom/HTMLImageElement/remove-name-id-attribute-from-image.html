@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("This test checks that there's no crash when removing the name or id attribute from a HTMLImageElement.");
+
+var doc = document.implementation.createHTMLDocument( '' );
+doc.body.innerHTML = '<img name="bar" id="foo">';
+shouldBe("doc.body.firstChild.getAttribute('name')", "'bar'");
+shouldBe("doc.body.firstChild.getAttribute('id')", "'foo'");
+debug("Removing name and id attributes...");
+doc.body.firstChild.removeAttribute("name");
+doc.body.firstChild.removeAttribute("id");
+shouldBe("doc.body.firstChild.getAttribute('name')", "null");
+shouldBe("doc.body.firstChild.getAttribute('id')", "null");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

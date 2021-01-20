@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tests that scrollIntoView() works properly on a target nested inside a scrollable container with a border</title>
+    <style>
+        body {
+          margin: 0;
+        }
+        .container {
+          width: 100px;
+          height: 100px;
+          overflow: hidden;
+          border: solid rgba(0, 0, 0, 0) 100px;
+        }
+
+        .spacer {
+          height: 1000px;
+        }
+
+        #target {
+          width: 50px;
+          height: 50px;
+          background: green;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+      <div class="spacer"></div>
+      <div id="target"></div>
+      <div class="spacer"></div>
+    </div>
+
+    <script>
+        function doTest() {
+            document.getElementById('target').scrollIntoView();
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</body>
+</html>

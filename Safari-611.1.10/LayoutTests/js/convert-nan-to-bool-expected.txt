@@ -1,0 +1,74 @@
+This test ensures that NaN is handled correctly when converting numeric expressions to booleans.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS NaN ? true : false is false
+PASS 1 ? true : false is true
+PASS 0 ? true : false is false
+PASS -1 ? true : false is true
+PASS 1 * -1 ? true : false is true
+PASS 1 * 0 ? true : false is false
+PASS 1 * 1 ? true : false is true
+PASS 1 / -1 ? true : false is true
+PASS 1 / 0 ? true : false is true
+PASS 1 / 1 ? true : false is true
+PASS 1 % 2 ? true : false is true
+PASS 1 % 1 ? true : false is false
+PASS 1 + -1 ? true : false is false
+PASS 1 + 0 ? true : false is true
+PASS 1 + 1 ? true : false is true
+PASS 1 - -1 ? true : false is true
+PASS 1 - 0 ? true : false is true
+PASS 1 - 1 ? true : false is false
+PASS 1 & -1 ? true : false is true
+PASS 1 & 0 ? true : false is false
+PASS 1 & 1 ? true : false is true
+PASS 1 | -1 ? true : false is true
+PASS 1 | 0 ? true : false is true
+PASS 1 | 1 ? true : false is true
+PASS 1 ^ -1 ? true : false is true
+PASS 1 ^ 0 ? true : false is true
+PASS 1 ^ 1 ? true : false is false
+PASS NaN * -1 ? true : false is false
+PASS NaN * 0? true : false is false
+PASS NaN * 1? true : false is false
+PASS NaN / -1 ? true : false is false
+PASS NaN / 0? true : false is false
+PASS NaN / 1? true : false is false
+PASS NaN % -1 ? true : false is false
+PASS NaN % 0? true : false is false
+PASS NaN % 1? true : false is false
+PASS NaN + -1 ? true : false is false
+PASS NaN + 0? true : false is false
+PASS NaN + 1? true : false is false
+PASS NaN - -1 ? true : false is false
+PASS NaN - 0? true : false is false
+PASS NaN - 1? true : false is false
+PASS NaN & -1 ? true : false is false
+PASS NaN & 0? true : false is false
+PASS NaN & 1? true : false is false
+PASS NaN | -1 ? true : false is true
+PASS NaN | 0? true : false is false
+PASS NaN | 1? true : false is true
+PASS NaN ^ -1 ? true : false is true
+PASS NaN ^ 0? true : false is false
+PASS NaN ^ 1? true : false is true
+PASS +NaN ? true : false is false
+PASS -NaN ? true : false is false
+PASS NaN && true ? true : false is false
+PASS NaN && false ? true : false is false
+PASS NaN || true ? true : false is true
+PASS NaN || false ? true : false is false
+PASS (function(){var nan = NaN; return nan-- ? true : false})() is false
+PASS (function(){var nan = NaN; return nan++ ? true : false})() is false
+PASS (function(){var nan = NaN; return --nan ? true : false})() is false
+PASS (function(){var nan = NaN; return ++nan ? true : false})() is false
+PASS (function(){var Undefined = undefined; return Undefined-- ? true : false})() is false
+PASS (function(){var Undefined = undefined; return Undefined++ ? true : false})() is false
+PASS (function(){var Undefined = undefined; return --Undefined ? true : false})() is false
+PASS (function(){var Undefined = undefined; return ++Undefined ? true : false})() is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

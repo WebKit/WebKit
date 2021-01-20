@@ -1,0 +1,60 @@
+
+This tests the behaviour of a number of the DOM Canvas drawing methods when
+given 0, Infinity, or NaN as parameters.
+
+PASS called fillRect 0*0 fillRect without throwing an exception.
+PASS called fillRect with Infinity*Infinity fillRect without throwing an exception.
+PASS did not throw exception with NaN*NaN fillRect.
+PASS called clearRect 0*0 clearRect without throwing an exception.
+PASS called clearRect with Infinity*Infinity clearRect without throwing an exception.
+PASS did not throw exception with NaN*NaN clearRect.
+PASS called rect 0*0 rect without throwing an exception.
+PASS called rect with Infinity*Infinity rect without throwing an exception.
+PASS did not throw exception with NaN*NaN rect.
+PASS called fill with an empty path without throwing an exception.
+PASS did not throw exception on arc with zero-length radius
+PASS threw exception code 1 on arc with negative-length radius
+PASS did not throw exception on arc with infinite radius
+PASS did not throw exception on arc with NaN-length radius
+PASS did not throw exception on arcTo with zero-length radius
+PASS threw exception code 1 on arcTo with negative-length radius
+PASS did not throw exception on arcTo with infinite radius
+PASS did not throw exception on arcTo with NaN-length radius
+PASS did not throw exception on lineTo(Infinity, Infinity).
+PASS did not throw exception on lineTo(Infinity, 20).
+PASS did not throw exception on lineTo(20, Infinity).
+PASS did not throw exception on lineTo(NaN, NaN).
+PASS did not throw exception on lineTo(20, NaN).
+PASS did not throw exception on lineTo(NaN, 20).
+PASS did not throw exception on quadraticCurveTo(20, 20, Infinity, Infinity).
+PASS did not throw exception on quadraticCurveTo(Infinity, Infinity, 20, 20).
+PASS did not throw exception on quadraticCurveTo(Infinity, 20, 20, 20).
+PASS did not throw exception on quadraticCurveTo(20, Infinity, 20, 20).
+PASS did not throw exception on quadraticCurveTo(20, 20, Infinity, 20).
+PASS did not throw exception on quadraticCurveTo(20, 20, 20, Infinity).
+PASS did not throw exception on quadraticCurveTo(20, 20, NaN, NaN).
+PASS did not throw exception on quadraticCurveTo(NaN, NaN, 20, 20).
+PASS did not throw exception on quadraticCurveTo(NaN, 20, 20, 20).
+PASS did not throw exception on quadraticCurveTo(20, NaN, 20, 20).
+PASS did not throw exception on quadraticCurveTo(20, 20, Nan, 20).
+PASS did not throw exception on quadraticCurveTo(20, 20, 20, NaN).
+PASS did not throw exception on bezierCurveTo(20, 20, 30, 30, Infinity, Infinity).
+PASS did not throw exception on bezierCurveTo(20, 20, 30, 30, 30, Infinity).
+PASS did not throw exception on bezierCurveTo(20, 20, 30, 30, Infinity, 30).
+PASS did not throw exception on bezierCurveTo(20, 20, Infinity, Infinity, 30, 30).
+PASS did not throw exception on bezierCurveTo(20, 20, 30, Infinity, 30, 30).
+PASS did not throw exception on bezierCurveTo(20, 20, Infinity, 30, 30, 30).
+PASS did not throw exception on bezierCurveTo(Infinity, Infinity, 20, 20, 30, 30).
+PASS did not throw exception on bezierCurveTo(30, Infinity, 20, 20, 30, 30).
+PASS did not throw exception on bezierCurveTo(Infinity, 30, 20, 20, 30, 30).
+PASS did not throw exception on bezierCurveTo(20, 20, 30, 30, NaN, NaN).
+PASS did not throw exception on bezierCurveTo(20, 20, 30, 30, 0, NaN).
+PASS did not throw exception on bezierCurveTo(20, 20, 30, 30, NaN, 0).
+PASS did not throw exception on bezierCurveTo(20, 20, NaN, NaN, 30, 30).
+PASS did not throw exception on bezierCurveTo(20, 20, 30, NaN, 30, 30).
+PASS did not throw exception on bezierCurveTo(20, 20, NaN, 30, 30, 30).
+PASS did not throw exception on bezierCurveTo(NaN, NaN, 20, 20, 30, 30).
+PASS did not throw exception on bezierCurveTo(20, NaN, 20, 20, 30, 30).
+PASS did not throw exception on bezierCurveTo(NaN, 20, 20, 20, 30, 30).
+PASS threw exception code undefined on createPattern with 0x0 canvas.
+

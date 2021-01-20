@@ -1,0 +1,13 @@
+<body>
+<iframe src="data:text/html,"></iframe>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function() {
+    var f = window.frames[0];
+    document.body.innerHTML = 'PASS';
+    f.location = "about:blank";
+}
+</script>
+</body>

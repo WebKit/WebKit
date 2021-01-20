@@ -1,0 +1,32 @@
+<div>PASS if no assert or crash in debug build.</div>
+<div id="a"><span id="x"></span><span id="b"></span></div>
+<style>
+#a {
+  background: pink;
+  display: inline-block;
+  position: absolute;
+  width: auto;
+  top: -300px;
+  left: -400px;
+}
+#b {
+  display: inline-block;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  overflow: scroll
+}
+#x {
+  display: inline-block;
+  height: 30px;
+  width: 100.5px;
+}
+</style>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById('a').offsetWidth;
+  }, false);
+</script>

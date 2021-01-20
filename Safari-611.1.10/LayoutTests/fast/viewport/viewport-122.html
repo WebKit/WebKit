@@ -1,0 +1,13 @@
+<head>
+    <title>Check that form feed is not a separator space</title>
+    <meta name="viewport" content="width=&#x0c;device-width">
+    <script>
+        function test() {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                alert(internals.configurationForViewport(1, 320, 480, 320, 352));
+            }
+        }
+    </script>
+</head>
+<body onload="test();">

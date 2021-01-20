@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+#test-root * {
+    background-color: red;
+}
+</style>
+<style id="style">
+</style>
+</head>
+<body>
+    <div style="display:none" id="test-root">
+        <testcase id="testcase1"></testcase>
+        <testcase id="testcase2"></testcase>
+        <testcase id="testcase3"></testcase>
+        <testcase id="testcase4"></testcase>
+        <testcase id="testcase5"></testcase>
+        <testcase id="testcase6"></testcase>
+        <testcase id="testcase7"></testcase>
+        <testcase id="testcase8"></testcase>
+        <testcase id="testcase9"></testcase>
+        <testcase id="testcase10"></testcase>
+        <testcase id="testcase11"></testcase>
+    </div>
+</body>
+<script>
+description('Test basic uses cases of :nth-last-child().');
+
+function testQuerySelector(selector, expectedIds) {
+    shouldBe("document.querySelectorAll('" + selector + "').length", '' + expectedIds.length);
+    for (var i = 0; i < expectedIds.length; ++i)
+        shouldBeEqualToString("document.querySelectorAll('" + selector + "')[" + i + "].id", expectedIds[i]);
+}
+
+function testStyling(selector, expectedIds) {
+    var stylingElement = document.getElementById("style");
+    stylingElement.innerHTML = '' + selector + ' { background-color: rgb(10, 100, 200); }';
+
+    var allTestCases = document.querySelectorAll("#test-root *");
+    for (var i = 0; i < allTestCases.length; ++i) {
+        var expectMatch = expectedIds.indexOf(allTestCases[i].id) >= 0;
+        shouldBeEqualToString('getComputedStyle(document.querySelectorAll("#test-root *")[' + i + ']).backgroundColor', expectMatch ? 'rgb(10, 100, 200)' : 'rgb(255, 0, 0)');
+    }
+
+    stylingElement.innerHTML = '';
+}
+
+function testSelector(selector, expectedIds) {
+    debug("Testing \"" + selector + "\"");
+    testQuerySelector("#test-root " + selector, expectedIds);
+    testStyling("#test-root " + selector, expectedIds);
+    debug("");
+}
+
+// Test cases presented on http://nthmaster.com/ to have a simple baseline.
+testSelector(":nth-last-child(8)", ["testcase4"]);
+testSelector(":nth-last-child(n+6)", ["testcase1", "testcase2", "testcase3", "testcase4", "testcase5", "testcase6"]);
+testSelector(":nth-last-child(-n+9)", ["testcase3", "testcase4", "testcase5", "testcase6", "testcase7", "testcase8", "testcase9", "testcase10", "testcase11"]);
+testSelector(":nth-last-child(n+4):nth-last-child(-n+8)", ["testcase4", "testcase5", "testcase6", "testcase7", "testcase8"]);
+testSelector(":nth-last-child(-n+8):nth-last-child(n+4)", ["testcase4", "testcase5", "testcase6", "testcase7", "testcase8"]);
+testSelector(":nth-last-child(n+2):nth-last-child(odd):nth-last-child(-n+9)", ["testcase3", "testcase5", "testcase7", "testcase9"]);
+testSelector(":nth-last-child(3n+1):nth-last-child(even)", ["testcase2", "testcase8"]);
+testSelector(":nth-last-child(even):nth-last-child(3n+1)", ["testcase2", "testcase8"]);
+
+// The following was using :nth-last-child() on http://nthmaster.com/. It is adapted here for completness.
+testSelector(":nth-last-child(3)", ["testcase9"]);
+testSelector(":nth-last-child(4)", ["testcase8"]);
+testSelector(":nth-last-child(3):nth-last-child(4)", []);
+testSelector(":nth-last-child(4):nth-last-child(3)", []);
+
+testSelector(":nth-last-child(n+3)", ["testcase1", "testcase2", "testcase3", "testcase4", "testcase5", "testcase6", "testcase7", "testcase8", "testcase9"]);
+testSelector(":nth-last-child(2n+2)", ["testcase2", "testcase4", "testcase6", "testcase8", "testcase10"]);
+testSelector(":nth-last-child(n+3):nth-last-child(2n+2)", ["testcase2", "testcase4", "testcase6", "testcase8"]);
+testSelector(":nth-last-child(2n+2):nth-last-child(n+3)", ["testcase2", "testcase4", "testcase6", "testcase8"]);
+
+testSelector(":nth-last-child(-n+4)", ["testcase8", "testcase9", "testcase10", "testcase11"]);
+testSelector(":nth-last-child(-n+5)", ["testcase7", "testcase8", "testcase9", "testcase10", "testcase11"]);
+testSelector(":nth-last-child(-n+4):nth-last-child(-n+5)", ["testcase8", "testcase9", "testcase10", "testcase11"]);
+testSelector(":nth-last-child(-n+5):nth-last-child(-n+4)", ["testcase8", "testcase9", "testcase10", "testcase11"]);
+
+testSelector(":nth-last-child(n+3):nth-last-child(-n+6)", ["testcase6", "testcase7", "testcase8", "testcase9"]);
+testSelector(":nth-last-child(-n+6):nth-last-child(n+3)", ["testcase6", "testcase7", "testcase8", "testcase9"]);
+testSelector(":nth-last-child(n+1):nth-last-child(-n+3)", ["testcase9", "testcase10", "testcase11"]);
+testSelector(":nth-last-child(-n+3):nth-last-child(n+1)", ["testcase9", "testcase10", "testcase11"]);
+testSelector(":nth-last-child(n+3):nth-last-child(-n+6):nth-last-child(n+1):nth-last-child(-n+3)", ["testcase9"]);
+testSelector(":nth-last-child(-n+6):nth-last-child(n+3):nth-last-child(-n+3):nth-last-child(n+1)", ["testcase9"]);
+
+testSelector(":nth-last-child(n+3):nth-last-child(odd):nth-last-child(-n+6)", ["testcase7", "testcase9"]);
+testSelector(":nth-last-child(-n+6):nth-last-child(odd):nth-last-child(n+3)", ["testcase7", "testcase9"]);
+testSelector(":nth-last-child(odd):nth-last-child(n+3):nth-last-child(-n+6)", ["testcase7", "testcase9"]);
+testSelector(":nth-last-child(odd):nth-last-child(-n+6):nth-last-child(n+3)", ["testcase7", "testcase9"]);
+testSelector(":nth-last-child(n+3):nth-last-child(-n+6):nth-last-child(odd)", ["testcase7", "testcase9"]);
+testSelector(":nth-last-child(-n+6):nth-last-child(n+3):nth-last-child(odd)", ["testcase7", "testcase9"]);
+
+testSelector(":nth-last-child(n+1):nth-last-child(even):nth-last-child(-n+3)", ["testcase10"]);
+testSelector(":nth-last-child(-n+3):nth-last-child(even):nth-last-child(n+1)", ["testcase10"]);
+testSelector(":nth-last-child(even):nth-last-child(n+1):nth-last-child(-n+3)", ["testcase10"]);
+testSelector(":nth-last-child(even):nth-last-child(-n+3):nth-last-child(n+1)", ["testcase10"]);
+testSelector(":nth-last-child(-n+3):nth-last-child(n+1):nth-last-child(even)", ["testcase10"]);
+testSelector(":nth-last-child(n+1):nth-last-child(-n+3):nth-last-child(even)", ["testcase10"]);
+
+testSelector(":nth-last-child(n+3):nth-last-child(odd):nth-last-child(-n+6):nth-last-child(n+1):nth-last-child(-n+3):nth-last-child(even)", []);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

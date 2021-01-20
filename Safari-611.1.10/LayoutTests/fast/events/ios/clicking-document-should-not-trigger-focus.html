@@ -1,0 +1,49 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+    <meta name="viewport" content="user-scalable  = no, width = device-width">
+    <head>
+        <script id="ui-script" type="text/plain">
+            (function() {
+                uiController.singleTapAtPoint(100, 300, function() {
+                    uiController.uiScriptComplete("");
+                });
+            })();
+        </script>
+        <script>
+            var uiScriptHasCompleted = false;
+            var clickHasBeenHandled = false;
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+
+            function getUIScript()
+            {
+                return document.getElementById("ui-script").text;
+            }
+
+            function setup()
+            {
+                document.addEventListener("click", function() {
+                    document.body.appendChild(document.createTextNode("The currently focused element is of type " + document.activeElement.tagName));
+                    document.body.appendChild(document.createElement("br"));
+                    clickHasBeenHandled = true;
+                    if (window.testRunner && uiScriptHasCompleted)
+                        testRunner.notifyDone();
+                });
+                if (window.testRunner && testRunner.runUIScript) {
+                    testRunner.runUIScript(getUIScript(), function() {
+                        uiScriptHasCompleted = true;
+                        if (clickHasBeenHandled)
+                            testRunner.notifyDone();
+                    });
+                }
+            }
+        </script>
+    </head>
+    <body onload="setup()" style="height: 50px;">
+        <p>This test is best run using WKTR. To test manually, click anywhere near the bottom of the page and verify that the input is not focused.</p>
+        <input style="display: block;">
+    </body>
+</html>

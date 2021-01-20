@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.updateShader");
+
+    suite.addTestCase({
+        name: "Canvas.updateShader.ProgramId.Invalid",
+        description: "Invalid program identifiers should cause an error.",
+        test(resolve, reject) {
+            const programId = "INVALID_PROGRAM_ID";
+            const shaderType = "INVALID_SHADER_TYPE";
+            const source = "INVALID_SOURCE";
+            CanvasAgent.updateShader(programId, shaderType, source, (error) => {
+                InspectorTest.expectThat(error, "Should produce an error.");
+                InspectorTest.log("Error: " + error);
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Common tests for Canvas.updateShader command.</p>
+</body>
+</html>

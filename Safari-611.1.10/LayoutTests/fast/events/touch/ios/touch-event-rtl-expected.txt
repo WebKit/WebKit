@@ -1,0 +1,3 @@
+Tap me
+Received event touchstart at 58, 50
+Done

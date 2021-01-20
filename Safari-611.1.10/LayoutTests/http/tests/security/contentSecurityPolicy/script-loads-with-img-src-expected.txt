@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'script-img'.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS

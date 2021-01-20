@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Minus.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+const epsilon = 0.0001;
+
+whlslTests.vectorMinus = async () => {
+    const program = `
+        int foo() {
+            int2 x = int2(10, 25);
+            int2 y = int2(20, 30);
+            int2 r = y - x;
+            return r.x / r.y;
+        }
+    `;
+    assert_equals(await callIntFunction(program,  "foo", []), 2);
+};
+
+whlslTests.vectorNegate = async () => {
+    const program = `
+        int foo() {
+            int2 x = int2(10, 25);
+            x = -x;
+            return x.x + x.y;
+        }
+    `;
+    assert_equals(await callIntFunction(program,  "foo", []), -35);
+};
+
+whlslTests.vectorMinusScalar = async () => {
+    const program = `
+        float foo() {
+            float2 x = float2(10.0, 25.0);
+            x = x - 5.0;
+            return x.y / x.x;
+        }
+    `;
+    assert_approx_equals(await callFloatFunction(program,  "foo", []), 20/5, epsilon);
+};
+
+whlslTests.vectorMinusScalar2 = async () => {
+    const program = `
+        float foo() {
+            float2 x = float2(-10.0, -25.0);
+            x = 5.0 - x;
+            return x.y / x.x;
+        }
+    `;
+    assert_approx_equals(await callFloatFunction(program,  "foo", []), 30/15, epsilon);
+};
+
+whlslTests.matrixMinus = async () => {
+    const program = `
+        bool foo() {
+            float2x2 m;
+            m[0] = float2(20, 30);
+            m[1] = float2(40, 50);
+            m = m - m;
+            if (m[0][0] == 0 && m[0][1] == 0 && m[1][0] == 0 && m[1][1] == 0)
+                return true;
+            return false;
+        }
+    `;
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.matrixMinusScalar = async () => {
+    const program = `
+        bool foo() {
+            float2x2 m;
+            m[0] = float2(20, 30);
+            m[1] = float2(40, 50);
+
+            m = m - 1.0;
+
+            if (m[0][0] == 19.0 && m[0][1] == 29.0 && m[1][0] == 39.0 && m[1][1] == 49.0)
+                return true;
+            return false;
+        }
+    `;
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.matrixMinusScalar2 = async () => {
+    const program = `
+        bool foo() {
+            float2x2 m;
+            m[0] = float2(20, 30);
+            m[1] = float2(40, 50);
+
+            m = 0.0 - m;
+
+            if (m[0][0] == -20.0 && m[0][1] == -30.0 && m[1][0] == -40.0 && m[1][1] == -50.0)
+                return true;
+            return false;
+        }
+    `;
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.matrixNegate = async () => {
+    const program = `
+        bool foo() {
+            float2x2 m;
+            m[0] = float2(20, 30);
+            m[1] = float2(40, 50);
+
+            m = -m;
+
+            if (m[0][0] == -20.0 && m[0][1] == -30.0 && m[1][0] == -40.0 && m[1][1] == -50.0)
+                return true;
+            return false;
+        }
+    `;
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+runTests(whlslTests);
+</script>
+</html>

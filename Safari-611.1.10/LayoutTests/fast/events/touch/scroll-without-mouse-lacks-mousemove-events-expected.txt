@@ -1,0 +1,2 @@
+This test passes if it doesn't alert a message containing the word "fail".
+

@@ -1,0 +1,51 @@
+<html>
+<head>
+<style>
+html {
+    height: 2000px;
+    overflow: scroll;
+}
+</style>
+
+<script>
+function checkForScroll()
+{
+    var pageScrollPositionAfter = document.scrollingElement.scrollTop;
+    var finishLog = document.getElementById("finishLog");
+    if (pageScrollPositionAfter > 50)
+        finishLog.innerHTML = "Success!";
+    else
+        finishLog.innerHTML = "Failure. Try running the test manually. If this proves to be flakey, and we might have to skip it.";
+    testRunner.notifyDone();
+}
+
+function scrollTest()
+{
+    eventSender.mouseMoveTo(50, 50);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'continue');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+    eventSender.callAfterScrollingCompletes(checkForScroll);
+}
+
+function onLoad() {
+    window.addEventListener('mousewheel', function() { }, false);
+
+    if (window.eventSender) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        eventSender.monitorWheelEvents();
+        setTimeout(scrollTest, 0);
+    }
+}
+</script>
+</head>
+
+<body onload="onLoad();">
+    <pre id="finishLog">This test passes if you can scroll the page.</pre>
+</body>
+</html>

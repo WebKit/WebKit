@@ -1,0 +1,48 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <style>
+        select {
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <select id="first">
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+        <option value="D">D</option>
+    </select>
+
+    <select id="second">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+    </select>
+</body>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies changing the value of one select element using the picker and then focusing another select element only changes the value of the first element.");
+
+    // Activate first select element and change the value using the picker.
+    await UIHelper.activateElementAndWaitForInputSession(first);
+    await UIHelper.selectFormAccessoryPickerRow(1);
+
+    // Activate second select element without dismissing the picker.
+    await UIHelper.activateFormControl(second);
+
+    shouldBeEqualToString("first.value", "B");
+    shouldBeEqualToString("second.value", "1");
+
+    finishJSTest();
+});
+</script>
+</html>

@@ -1,0 +1,13 @@
+Tests passing a vec4 to a uniform and a canvas to texImage2D
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS gl.useProgram(floatProgram) is undefined.
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.uniform4fv(fval4Loc, new Float32Array([0.1, 0.2, 0.4, 1.0])); is undefined.
+PASS gl.bindTexture(gl.TEXTURE_2D, texture) is undefined.
+PASS gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tmpcanvas) is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

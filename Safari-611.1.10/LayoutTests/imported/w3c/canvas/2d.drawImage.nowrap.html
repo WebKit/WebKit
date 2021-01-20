@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.drawImage.nowrap</title>
+<meta name="author" content="Philip Taylor">
+<script src="../common/canvas-tests.js"></script>
+<link rel="stylesheet" href="../common/canvas-tests.css">
+<body class="show_output">
+
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.drawImage.html">drawImage</a>.nowrap</h1>
+<p class="desc">Stretched images do not get pixels wrapping around the edges</p>
+
+<div class="refs">Spec references:
+<ul>
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+<p class="output expectedtext">Expected output:<p><img src="../resources/green-100x50.png" class="output expected" id="expected" alt="">
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+ctx.fillStyle = '#0f0';
+ctx.fillRect(0, 0, 100, 50);
+ctx.drawImage(document.getElementById('redtransparent.png'), -1950, 0, 2000, 50);
+_assertPixelApprox(canvas, 45,25, 0,255,0,255, "45,25", "0,255,0,255", 2);
+_assertPixelApprox(canvas, 50,25, 0,255,0,255, "50,25", "0,255,0,255", 2);
+_assertPixelApprox(canvas, 55,25, 0,255,0,255, "55,25", "0,255,0,255", 2);
+
+
+});
+</script>
+<img src="../resources/redtransparent.png" id="redtransparent.png" class="resource">
+

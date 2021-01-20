@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/dump-as-markup.js"></script>
+<style>
+    p[contenteditable] {
+        border: 1px solid red;
+    }
+</style>
+</head>
+<body>
+    <div id="container">
+        <span contenteditable>apple ap</span><span>ple apple</span>
+    </div>
+</body>
+<script>
+Markup.description("Verifies that find and replace ignores matches that span editing boundaries. This test requires WebKitTestRunner.");
+testRunner.findStringMatchesInPage("apple", []);
+testRunner.replaceFindMatchesAtIndices([0], "pear", false);
+Markup.dump("container", "After replacing 'apple' with 'pear'");
+</script>
+</html>

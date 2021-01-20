@@ -1,0 +1,15 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<p>This tests the NSResponder method indent:.  You should see an indented 'foo' below.</p>
+<div id="div" contenteditable="true">foo</div>
+
+<script>
+var div = document.getElementById("div");
+var sel = window.getSelection();
+
+sel.setPosition(div, 0);
+
+document.execCommand("Indent");
+</script>

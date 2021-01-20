@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" 
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<!-- Tests that patterns are live to fill attribute changes. -->
+
+<pattern patternUnits="userSpaceOnUse" id="pat1" width="20" height="20">
+	<rect x="10" y="10" width="10" height="10" fill="red" id="red" />
+</pattern>
+
+<rect x="25" y="25" width="430" height="60" stroke="black" fill="url(#pat1)" />
+
+<script type="application/javascript">
+  function doTest() {
+    document.getElementById('red').setAttribute('fill', 'green');
+    document.documentElement.removeAttribute('class');
+    if (window.testRunner)
+        testRunner.notifyDone();
+  }
+  if (window.testRunner)
+    testRunner.waitUntilDone();
+
+  setTimeout(doTest, 100);
+</script>
+
+</svg>

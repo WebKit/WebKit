@@ -1,0 +1,91 @@
+// Copyright (C) 2017 Igalia S.L.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+
+accessibility/atk/AXObjectCacheAtk.cpp
+accessibility/atk/AccessibilityObjectAtk.cpp
+accessibility/atk/WebKitAccessible.cpp
+accessibility/atk/WebKitAccessibleHyperlink.cpp
+accessibility/atk/WebKitAccessibleInterfaceAction.cpp @no-unify
+accessibility/atk/WebKitAccessibleInterfaceComponent.cpp
+accessibility/atk/WebKitAccessibleInterfaceDocument.cpp
+accessibility/atk/WebKitAccessibleInterfaceEditableText.cpp
+accessibility/atk/WebKitAccessibleInterfaceHyperlinkImpl.cpp
+accessibility/atk/WebKitAccessibleInterfaceHypertext.cpp
+accessibility/atk/WebKitAccessibleInterfaceImage.cpp
+accessibility/atk/WebKitAccessibleInterfaceSelection.cpp
+accessibility/atk/WebKitAccessibleInterfaceTable.cpp
+accessibility/atk/WebKitAccessibleInterfaceTableCell.cpp
+accessibility/atk/WebKitAccessibleInterfaceText.cpp
+accessibility/atk/WebKitAccessibleInterfaceValue.cpp
+accessibility/atk/WebKitAccessibleUtil.cpp
+
+editing/atk/FrameSelectionAtk.cpp
+editing/libwpe/EditorLibWPE.cpp
+
+loader/soup/ResourceLoaderSoup.cpp
+
+page/linux/ResourceUsageOverlayLinux.cpp
+page/linux/ResourceUsageThreadLinux.cpp
+
+page/scrolling/nicosia/ScrollingCoordinatorNicosia.cpp
+page/scrolling/nicosia/ScrollingStateNodeNicosia.cpp
+page/scrolling/nicosia/ScrollingTreeFixedNode.cpp
+page/scrolling/nicosia/ScrollingTreeFrameScrollingNodeNicosia.cpp
+page/scrolling/nicosia/ScrollingTreeNicosia.cpp
+page/scrolling/nicosia/ScrollingTreeOverflowScrollProxyNode.cpp
+page/scrolling/nicosia/ScrollingTreeOverflowScrollingNodeNicosia.cpp
+page/scrolling/nicosia/ScrollingTreePositionedNode.cpp
+page/scrolling/nicosia/ScrollingTreeStickyNode.cpp
+
+platform/ScrollAnimationKinetic.cpp
+platform/UserAgentQuirks.cpp
+
+platform/adwaita/ScrollbarThemeAdwaita.cpp
+platform/adwaita/ThemeAdwaita.cpp
+
+platform/generic/ScrollAnimatorGeneric.cpp
+
+platform/graphics/GLContext.cpp
+platform/graphics/PlatformDisplay.cpp
+
+platform/graphics/egl/GLContextEGL.cpp
+platform/graphics/egl/GLContextEGLLibWPE.cpp
+
+platform/graphics/libwpe/PlatformDisplayLibWPE.cpp
+
+platform/graphics/opentype/OpenTypeVerticalData.cpp
+
+platform/libwpe/PasteboardLibWPE.cpp
+platform/libwpe/PlatformKeyboardEventLibWPE.cpp
+platform/libwpe/PlatformPasteboardLibWPE.cpp
+
+platform/text/Hyphenation.cpp
+platform/text/LocaleICU.cpp
+
+platform/unix/LoggingUnix.cpp
+
+platform/wpe/PlatformScreenWPE.cpp
+
+platform/xdg/MIMETypeRegistryXdg.cpp
+
+rendering/RenderThemeAdwaita.cpp

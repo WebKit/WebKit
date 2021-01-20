@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (101,2) size 4x19
+        text run at (101,2) width 4: " "
+      RenderText {#text} at (0,0) size 0x0
+layer at (10,10) size 97x22 clip at (11,11) size 95x20
+  RenderFlexibleBox {INPUT} at (2,2) size 97x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+    RenderBlock {DIV} at (6,4) size 57x14
+      RenderText {#text} at (0,0) size 57x14
+        text run at (0,0) width 57: "Apr 1, 1976"
+layer at (115,10) size 97x22 clip at (116,11) size 95x20
+  RenderFlexibleBox {INPUT} at (107,2) size 97x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+    RenderBlock {DIV} at (16,4) size 57x14
+      RenderText {#text} at (0,0) size 57x14
+        text run at (0,0) width 57: "Apr 1, 1976"

@@ -1,0 +1,64 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGText {text} at (10,304) size 269x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 269x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 268.20: "$Revision: 1.5 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGText {text} at (226,12) size 28x23 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 27x22
+        chunk 1 (middle anchor) text run 1 at (226.50,30.00) startOffset 0 endOffset 3 width 27.00: "dur"
+    RenderSVGContainer {g} at (193,154) size 382x276 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,100.00)}]
+      RenderSVGContainer {g} at (193,187) size 107x243 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,25.00)}]
+        RenderSVGText {text} at (-64,-13) size 64x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 64x16
+            chunk 1 (end anchor) text run 1 at (-63.60,0.00) startOffset 0 endOffset 11 width 63.60: "clock value"
+        RenderSVGText {text} at (-53,52) size 53x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 53x16
+            chunk 1 (end anchor) text run 1 at (-52.80,65.00) startOffset 0 endOffset 10 width 52.80: "indefinite"
+        RenderSVGText {text} at (-34,117) size 34x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 34x16
+            chunk 1 (end anchor) text run 1 at (-33.60,130.00) startOffset 0 endOffset 5 width 33.60: "media"
+      RenderSVGContainer {g} at (390,154) size 185x243 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,5.00)}]
+        RenderSVGText {text} at (-12,-13) size 24x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 24x16
+            chunk 1 (middle anchor) text run 1 at (-12.00,0.00) startOffset 0 endOffset 4 width 24.00: "> 2s"
+        RenderSVGText {text} at (65,-13) size 30x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 31x16
+            chunk 1 (middle anchor) text run 1 at (65.00,0.00) startOffset 0 endOffset 5 width 30.00: "0s-2s"
+        RenderSVGContainer {g} at (390,262) size 180x27 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,65.00)}]
+          RenderSVGText {text} at (-16,-13) size 32x16 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 32x16
+              chunk 1 (middle anchor) text run 1 at (-15.60,0.00) startOffset 0 endOffset 5 width 31.20: "never"
+          RenderSVGText {text} at (68,-13) size 24x16 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 24x16
+              chunk 1 (middle anchor) text run 1 at (68.00,0.00) startOffset 0 endOffset 4 width 24.00: "> 0s"
+        RenderSVGContainer {g} at (390,371) size 180x26 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,130.00)}]
+          RenderSVGText {text} at (-16,-13) size 32x16 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 32x16
+              chunk 1 (middle anchor) text run 1 at (-15.60,0.00) startOffset 0 endOffset 5 width 31.20: "never"
+          RenderSVGText {text} at (68,-13) size 24x16 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 24x16
+              chunk 1 (middle anchor) text run 1 at (68.00,0.00) startOffset 0 endOffset 4 width 24.00: "> 0s"
+      RenderSVGContainer {g} at (405,189) size 156x239 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,20.00)}]
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+          RenderSVGRect {rect} at (405,189) size 23x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+        RenderSVGContainer {g} at (405,189) size 156x22
+          RenderSVGContainer {use} at (405,189) size 23x22
+            RenderSVGRect {rect} at (405,189) size 23x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+          RenderSVGContainer {use} at (539,189) size 22x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,0.00)}]
+            RenderSVGRect {rect} at (539,189) size 22x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+          RenderSVGRect {rect} at (539,189) size 22x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [x=74.00] [y=-6.00] [width=12.00] [height=12.00]
+        RenderSVGContainer {g} at (405,297) size 156x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,65.00)}]
+          RenderSVGContainer {use} at (405,297) size 23x23
+            RenderSVGRect {rect} at (405,297) size 23x23 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+          RenderSVGContainer {use} at (539,297) size 22x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,0.00)}]
+            RenderSVGRect {rect} at (539,297) size 22x23 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+          RenderSVGRect {rect} at (539,297) size 22x23 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [x=74.00] [y=-6.00] [width=12.00] [height=12.00]
+        RenderSVGContainer {g} at (405,405) size 156x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,130.00)}]
+          RenderSVGContainer {use} at (405,405) size 23x23
+            RenderSVGRect {rect} at (405,405) size 23x23 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+          RenderSVGContainer {use} at (539,405) size 22x23 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,0.00)}]
+            RenderSVGRect {rect} at (539,405) size 22x23 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+          RenderSVGRect {rect} at (539,405) size 22x23 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [x=74.00] [y=-6.00] [width=12.00] [height=12.00]

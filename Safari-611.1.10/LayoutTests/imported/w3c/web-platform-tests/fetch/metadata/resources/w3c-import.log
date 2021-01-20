@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/dedicatedWorker.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/echo-as-json.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/echo-as-script.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/fetch-via-serviceworker--fallback--frame.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/fetch-via-serviceworker--fallback--sw.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/fetch-via-serviceworker--respondWith--frame.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/fetch-via-serviceworker--respondWith--sw.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/go-back.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/helper.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/post-to-owner.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/record-header.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/redirectTestHelper.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/sharedWorker.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/unload-with-beacon.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/xslt-test.sub.xml

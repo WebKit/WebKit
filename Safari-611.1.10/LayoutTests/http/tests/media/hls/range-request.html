@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=../../media-resources/video-test.js></script>
+        <script src=../../media-resources/media-controls.js></script>
+        <script>
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.setAlwaysAcceptCookies(true);
+                testRunner.waitUntilDone();
+            }
+
+            function playing() {
+                testRunner.notifyDone();
+            }
+
+            function start() {
+                video = document.getElementById('video');
+                video.autoplay = true
+                waitForEvent("playing", playing);
+                video.src = "../resources/hls/range-request-playlist.m3u8";
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <video id="video"></video>
+    </body>
+</html>

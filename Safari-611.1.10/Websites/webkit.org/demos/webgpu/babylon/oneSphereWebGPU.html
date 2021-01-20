@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>One Sphere WebGPU</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.typekit.net/cta4xsb.css">
+
+    <style>
+        html,
+        body {
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            background-color: #2a2342;
+            color: #ffffff;
+            font-family: "acumin-pro";
+        }
+
+        #renderCanvas {
+            width: 1024px;
+            height: 768px;
+            display: block;
+            font-size: 0;
+            margin: auto;
+            border:none !important;
+            outline:none !important;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: auto 170px 754px 100px auto;
+            grid-template-rows: 60px 768px;
+        }
+
+        .headerLogo {
+            grid-column-start: 2;
+            grid-column-end: 2;
+            grid-row-start: 1;
+            grid-row-end: 1;
+            background-color: #201936;
+        }
+
+        .headerLogo > a > img {
+            width: auto;
+            height: 60px;
+            margin-left: 10px;
+        }
+
+        .headerText {
+            grid-column-start: 3;
+            grid-column-end: 3;
+            grid-row-start: 1;
+            grid-row-end: 1;
+            font-size: 35px;
+            line-height: 60px;
+            text-align: center;
+            background-color: #201936;
+            font-family: "acumin-pro-extra-condensed";
+        }
+
+        .headerFPS {
+            grid-column-start: 4;
+            grid-column-end: 4;
+            grid-row-start: 1;
+            grid-row-end: 1;
+            font-size: 15px;
+            line-height: 60px;
+            text-align: center;
+            background-color: #BB464B;
+        }
+
+        .content {
+            grid-column-start: 2;
+            grid-column-end: 4;
+            grid-row-start: 2;
+            grid-row-end: 2;
+        }
+
+        a {
+            color: #FFFFFF;
+            text-decoration: unset;
+        }
+        a:hover {
+            color: #FFFFFF;
+        }
+        a:visited {
+            color: #FFFFFF;
+        }
+        a:focus {
+            color: #FFFFFF;
+        }
+    </style>
+
+    <script src="https://code.jquery.com/pep/0.4.2/pep.min.js"></script>
+
+    <script src="babylonWebGpu.max.js"></script>
+    <script src="babylonjs.loaders.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="headerLogo">
+            <a href="https://doc.babylonjs.com/extensions/WebGPU">
+                <img src="logo.svg"></img>
+            </a>
+        </div>
+        <div class="headerText">
+            <a href="https://doc.babylonjs.com/extensions/WebGPU">
+                WebGPU Experiment
+            </a>
+        </div>
+        <div class="headerFPS" id="fps">0</div>
+        <div class="content">
+            <canvas id="renderCanvas" width="1024" height="768"></canvas>
+        </div>
+    <div>
+
+    <script src="oneSphereWebGPUGLSLShaders.js"></script>
+    <script src="oneSphereWebGPUWSLShaders.js"></script>
+
+    <script>
+
+    const ShaderKind = {
+        vertex: "Vertex",
+        fragment: "Fragment",
+        compute: "Compute"
+    };
+
+    class CompileResult {
+        constructor(result) {
+            this.result = result;
+        }
+
+        GetErrorMessage() {
+            return null;
+        }
+
+        GetBinary() {
+            return this.result;
+        }
+    }
+
+    class CompileOptions {
+        constructor() {
+        }
+    }
+
+    class Compiler {
+        constructor() {
+        }
+
+        CompileGlslToSpv(source, kind, something, entryPointName, options) {
+            let wslSource;
+            switch (source) {
+            case vertexShaderGLSL1:
+                wslSource = vertexShaderWSL1;
+                break;
+            case fragmentShaderGLSL1:
+                wslSource = fragmentShaderWSL1;
+                break;
+            case vertexShaderGLSL2:
+                wslSource = vertexShaderWSL2;
+                break;
+            case fragmentShaderGLSL2:
+                wslSource = fragmentShaderWSL2;
+                break;
+            default:
+                throw new Error("Unexpected shader!");
+            }
+            return new CompileResult(wslSource);
+        }
+    }
+
+    let Shaderc = {Compiler, CompileOptions, shader_kind: ShaderKind};
+
+    (async function() {
+        if (!navigator.gpu || GPUBufferUsage.COPY_SRC === undefined) {
+            alert("WebGPU is not enabled. Are you using Safari Technology Preview 92 or above?");
+            return;
+        }
+        const canvas = document.getElementById("renderCanvas");
+        const divFps = document.getElementById("fps");
+
+        const engine = new BABYLON.WebGPUEngine(canvas, {antialiasing: false});
+        await engine.initAsync({shaderc: Shaderc});
+
+        const scene = new BABYLON.Scene(engine);
+        scene.environmentTexture = new BABYLON.CubeTexture("https://assets.babylonjs.com/environments/environmentSpecular.env", scene);
+
+        var material = new BABYLON.PBRMetallicRoughnessMaterial("pbr", scene);
+        material.roughness = 0;
+        material.metallic = 0;
+
+        var ico = BABYLON.Mesh.CreateIcoSphere("ico", {
+            flat: true,
+            subdivisions: 3
+        }, scene);
+        ico.material = material;
+
+        scene.createDefaultCamera(true, true, true);
+        scene.createDefaultSkybox(scene.environmentTexture, true, undefined, 0.3);
+
+        engine.runRenderLoop(() => {
+            scene.render();
+            divFps.innerHTML = engine.getFps().toFixed() + " fps";
+        });
+    })();
+    </script>
+</body>
+
+</html>

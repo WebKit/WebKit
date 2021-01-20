@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+* {
+    background-color: white;
+    color: black;
+}
+foo[data-webkit]+padding+padding+padding+bar {
+    background-color: rgb(1, 2, 3);
+}
+foo[data-webkit]+padding+padding+padding+bar baz {
+    color: rgb(4, 5, 6);
+}
+</style>
+</head>
+<body>
+    <div>
+        <foo></foo>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <bar id="bar-with-renderer">
+            <baz id="baz-with-renderer"></baz>
+        </bar>
+    </div>
+    <div style="display:none;">
+        <foo></foo>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <bar id="bar-without-renderer">
+            <baz id="baz-without-renderer"></baz>
+        </bar>
+    </div>
+</body>
+<script>
+description('Test style update caused by attribute changes on a direct adjacent. This test does not use any sibling "~" combinator to avoid its more generic marking.');
+
+function testColor(expectMatch) {
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-with-renderer")).backgroundColor', expectMatch ? 'rgb(1, 2, 3)' : 'rgb(255, 255, 255)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-with-renderer")).backgroundColor', 'rgb(255, 255, 255)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-without-renderer")).backgroundColor', expectMatch ? 'rgb(1, 2, 3)' : 'rgb(255, 255, 255)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-without-renderer")).backgroundColor', 'rgb(255, 255, 255)');
+
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-with-renderer")).color', 'rgb(0, 0, 0)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-with-renderer")).color', expectMatch ? 'rgb(4, 5, 6)' : 'rgb(0, 0, 0)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-without-renderer")).color', 'rgb(0, 0, 0)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-without-renderer")).color', expectMatch ? 'rgb(4, 5, 6)' : 'rgb(0, 0, 0)');
+}
+
+function setAttribute(attribute, value) {
+    var allFoos = document.querySelectorAll("foo");
+    for (var i = 0; i < allFoos.length; ++i)
+        allFoos[i].setAttribute(attribute, value);
+}
+
+function removeAttribute(attribute) {
+    var allFoos = document.querySelectorAll("foo");
+    for (var i = 0; i < allFoos.length; ++i)
+        allFoos[i].removeAttribute(attribute);
+}
+
+debug("Initial state does not match, the attribute is not there.");
+testColor(false);
+
+debug("Adding the attribute, the extra rules should match.");
+setAttribute("data-webkit", "awesome");
+testColor(true);
+
+debug("Emptying the attribute, the extra rules should still match.");
+setAttribute("data-webkit", "");
+testColor(true);
+
+debug("Removing the attribute, we should not longer match.");
+removeAttribute("data-webkit");
+testColor(false);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

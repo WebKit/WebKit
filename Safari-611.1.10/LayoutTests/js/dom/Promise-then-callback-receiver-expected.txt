@@ -1,0 +1,16 @@
+Test Promise.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS fulfilled
+PASS thisInOnFulfilledSloppy is window
+PASS rejected
+PASS thisInOnRejectedSloppy is window
+PASS fulfilled
+PASS thisInOnFulfilledStrict is undefined
+PASS rejected
+PASS thisInOnRejectedStrict is undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

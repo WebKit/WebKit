@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+    div {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .button {
+        background-color: blue;
+    }
+
+    .icon {
+        background-color: black;
+    }
+
+    .button:active .icon {
+        transform: scale(0.25);
+    }
+</style>
+</head>
+<body>
+<div id="parentDiv" class="button" onclick="alert('clicked')">
+    <div id="childDiv" class="icon"></div>
+</div>
+<script>
+description("Tests that the click event is fired at the common ancestor if the mouseDown / mouseUp nodes differ.");
+jsTestIsAsync = true;
+
+parentGotClickEvent = false;
+childGotClickEvent = false;
+
+document.getElementById("parentDiv").onclick = function() {
+    parentGotClickEvent = true;
+};
+
+document.getElementById("childDiv").onclick = function() {
+    childGotClickEvent = true;
+};
+
+onload = function() {
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(10, 300);
+        eventSender.mouseDown();
+        eventSender.mouseUp();    
+    }
+
+    setTimeout(function() {
+        shouldBeTrue("parentGotClickEvent");
+        shouldBeFalse("childGotClickEvent");
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

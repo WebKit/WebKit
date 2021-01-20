@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/frame-ancestors-test.js"></script>
+</head>
+<body>
+<p>A 'frame-ancestors' CSP directive with a value 'same' should block render in same-origin nested frames. This test PASSED if you do not see any content in the inner-most nested iframe below. Otherwise, it FAILED.</p>
+<script>
+    testNestedIFrame("'self'", CROSS_ORIGIN, CROSS_ORIGIN, EXPECT_BLOCK);
+</script>
+</body>
+</html>

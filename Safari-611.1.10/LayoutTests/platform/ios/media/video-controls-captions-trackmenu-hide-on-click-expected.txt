@@ -1,0 +1,10 @@
+Test that we are able to trigger the list of captions, and then click elsewhere to hide it.
+
+
+EVENT(canplaythrough)
+
+*** Set the user language preference.
+RUN(internals.setUserPreferredLanguages(['en']))
+clickCCButton failed with exception: "undefined: FAIL
+END OF TEST
+

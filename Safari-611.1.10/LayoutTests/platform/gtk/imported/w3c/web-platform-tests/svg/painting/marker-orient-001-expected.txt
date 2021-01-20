@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 500x500
+  RenderSVGRoot {svg} at (4,4) size 481x452
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceMarker {marker} [id="arrow"] [markerUnits=userSpaceOnUse] [ref at (0,0)] [angle=auto]
+        RenderSVGPath {path} at (0,0) size 25x25 [fill={[type=SOLID] [color=#008000]}] [data="M 25 0 L 0 -25 L 0 25 Z"]
+    RenderSVGPath {path} at (4,4) size 452x452 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [start marker=arrow] [middle marker=arrow] [end marker=arrow] [data="M 40 40 L 180 180 L 420 420"]
+    RenderSVGPath {path} at (4,164) size 272x272 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [start marker=arrow] [middle marker=arrow] [end marker=arrow] [data="M 40 400 L 140 300 L 240 200"]
+    RenderSVGPath {path} at (135,15) size 90x90 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=arrow] [middle marker=arrow] [end marker=arrow] [data="M 160 40 C 200 40 200 40 200 80"]
+    RenderSVGPath {path} at (235,14) size 250x251 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=arrow] [middle marker=arrow] [end marker=arrow] [data="M 260 140 C 260 84.7715 304.772 40 360 40 C 415.228 40 460 84.7715 460 140 C 460 195.228 415.228 240 360 240"]
+    RenderSVGPath {path} at (310,70) size 116x116 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=arrow] [middle marker=arrow] [end marker=arrow] [data="M 340 100 L 390 100 L 390 150 L 340 150 Z"]

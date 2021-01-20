@@ -1,0 +1,29 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>MacOSFullscreenMediaControls</code> computed styles.");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new MacOSFullscreenMediaControls;
+document.body.appendChild(mediaControls.element);
+
+shouldBecomeEqualToString("window.getComputedStyle(mediaControls.timeControl.element).width", "448px", () => {
+    shouldBeEqualToString("window.getComputedStyle(mediaControls.timeControl.element).left", "10px");
+    shouldBeEqualToString("window.getComputedStyle(mediaControls.timeControl.element).top", "49px");
+    shouldBeEqualToString("window.getComputedStyle(mediaControls.timeControl.scrubber.element).top", "0px");
+    shouldBeEqualToString("window.getComputedStyle(mediaControls.timeControl.elapsedTimeLabel.element).fontSize", "12px");
+    shouldBeEqualToString("window.getComputedStyle(mediaControls.timeControl.remainingTimeLabel.element).fontSize", "12px");
+    debug("");
+
+    mediaControls.element.remove();
+
+    finishMediaControlsTest();
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+
+        iframe {
+            width: 500px;
+            height: 400px;
+            border: 2px solid gray;
+            margin: 50px 10px;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        var iframeTarget;
+        var overflowInIframeElement;
+
+        async function scrollTest()
+        {
+            iframeTarget = document.getElementById('target');
+            overflowInIframeElement = iframeTarget.contentDocument.getElementById('scroller');
+
+            window.scrollTo(0, 20);
+            iframeTarget.contentWindow.scrollTo(0, 100);
+
+            shouldBe('iframeTarget.contentWindow.pageYOffset', '100');
+            shouldBe('overflowInIframeElement.scrollTop', '0');
+            shouldBe('window.pageYOffset', '20');
+
+            if (!window.eventSender) {
+                finishJSTest();
+                return;
+            }
+
+            eventSender.mouseMoveTo(200, 350); // Over the overflow.
+            eventSender.monitorWheelEvents();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+            await UIHelper.waitForScrollCompletion();
+
+            debug('After scroll');
+            shouldBe('iframeTarget.contentWindow.pageYOffset', '0');
+            shouldBe('overflowInIframeElement.scrollTop', '0');
+            shouldBe('window.pageYOffset', '20');
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            description("Scrolls over a scrolled-to-top overflow inside a scrolled iframe, testing that the iframe scrolls.");
+            setTimeout(scrollTest, 0);
+            
+        }, false);
+    </script>
+
+</head>
+<body>
+    <iframe id="target"
+     srcdoc= "
+        <style>
+            body {
+                height: 1200px;
+            }
+            #scroller {
+                width: 400px;
+                height: 400px;
+                border: 1px solid black;
+                margin: 10px;
+                margin-top: 200px;
+                overflow: scroll;
+            }
+            .contents {
+                height: 300%;
+                background-image: repeating-linear-gradient(silver, white 200px);
+            }
+        </style>
+
+        <p>iframe contents</p>
+        <div id='scroller'>
+            <div class='contents'>
+                <p>Overflow contents</p>
+            </div>
+        </div>">
+    </iframe>
+</div>
+
+<div id="console"></div>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

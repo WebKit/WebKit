@@ -1,0 +1,29 @@
+Test that it is not possible to set the prototype of Window or Location.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Object.getPrototypeOf(window) is Window.prototype
+PASS Object.setPrototypeOf(window, Node.prototype) threw exception TypeError: Cannot set prototype of immutable prototype object.
+PASS Object.getPrototypeOf(window) is Window.prototype
+PASS Object.getPrototypeOf(window) is Window.prototype
+PASS protoSetter.call(window, Node.prototype) threw exception TypeError: Cannot set prototype of immutable prototype object.
+PASS Object.getPrototypeOf(window) is Window.prototype
+PASS Object.getPrototypeOf(window) is Window.prototype
+PASS window.__proto__ = Node.prototype threw exception TypeError: Cannot set prototype of immutable prototype object.
+PASS Object.getPrototypeOf(window) is Window.prototype
+PASS Object.getPrototypeOf(window.location) is Location.prototype
+PASS Object.setPrototypeOf(window.location, Node.prototype) threw exception TypeError: Cannot set prototype of immutable prototype object.
+PASS Object.getPrototypeOf(window.location) is Location.prototype
+PASS Object.getPrototypeOf(window.location) is Location.prototype
+PASS protoSetter.call(window.location, Node.prototype) threw exception TypeError: Cannot set prototype of immutable prototype object.
+PASS Object.getPrototypeOf(window.location) is Location.prototype
+PASS Object.getPrototypeOf(window.location) is Location.prototype
+PASS window.location.__proto__ = Node.prototype threw exception TypeError: Cannot set prototype of immutable prototype object.
+PASS Object.getPrototypeOf(window.location) is Location.prototype
+PASS Object.setPrototypeOf(window, window.__proto__) did not throw exception.
+PASS Object.setPrototypeOf(window.location, window.location.__proto__) did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

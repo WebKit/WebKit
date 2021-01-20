@@ -1,0 +1,1 @@
+If this test completes without crashing, it passed.

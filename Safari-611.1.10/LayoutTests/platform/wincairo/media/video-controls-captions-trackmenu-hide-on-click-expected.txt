@@ -1,0 +1,13 @@
+Test that we are able to trigger the list of captions, and then click elsewhere to hide it.
+
+
+EVENT(canplaythrough)
+
+*** Set the user language preference.
+RUN(internals.setUserPreferredLanguages(['en']))
+*** Track menu should be visible flex
+EXPECTED (displayStyle == 'block'), OBSERVED 'flex' FAIL
+*** Track menu should be invisible flex
+EXPECTED (displayStyle == 'none'), OBSERVED 'flex' FAIL
+END OF TEST
+

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+  <!-- This test confirms that images with filters get drawn.
+       (This test uses a no-op filter, for simplicity).
+    -->
+  <style>
+    image { filter: url(#noop); }
+  </style>
+  <defs>
+    <filter id="noop" x="0%" y="0%" width="100%" height="100%">
+      <feConvolveMatrix order="1" kernelMatrix="1"/>
+    </filter>
+  </defs>
+
+  <g transform="translate(2, 2)">
+    <image x="0"  y="0"  width="10" height="10" xlink:href="resources/blueRect10x10.png"/>
+    <image x="20" y="0"  width="10" height="10" xlink:href="resources/blueRect10x10.png"/>
+    <image x="0"  y="20" width="10" height="10" xlink:href="resources/blueRect10x10.png"/>
+    <image x="20" y="20" width="10" height="10" xlink:href="resources/blueRect10x10.png"/>
+  </g>
+</svg>

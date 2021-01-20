@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/remote-object-utilities.js"></script>
+<script>
+function test()
+{
+    let steps = [
+        // Event
+        {expression: "window.loadEvent"}, // window.loadEvent is set inside of <body onload="..."> below.
+
+        // Node
+        {expression: `document.body`},
+        {expression: `div = document.createElement("div"); div.className = "foo bar"; div`},
+        {expression: `span = document.createElement("span"); span.id = "foo"; span`},
+        {expression: `input = document.createElement("input"); input.type = "password"; input`},
+        {expression: `text = document.createTextNode("text content"); text`},
+        {expression: `comment = document.createComment("comment content"); comment`},
+        {expression: `svgElement = document.createElementNS("http://www.w3.org/2000/svg", "rect"); svgElement.classList.add("test"); svgElement`},
+        {expression: `[document.body, div, span, input, text, comment, svgElement]`},
+
+        // Node Collections (NodeLists / Collections)
+        {expression: `document.all`, browserOnly: true}, // HTMLAllCollection
+        {expression: `document.head.children`}, // HTMLCollection
+        {expression: `document.getElementsByClassName("my-test")`}, // NodeList
+        {expression: `document.querySelectorAll(".my-test")`}, // Non-Live NodeList
+    ];
+
+    if (!window.WI) {
+        window.steps = steps;
+        return;
+    }
+
+    runSteps(steps);
+}
+</script>
+</head>
+<body onload="window.loadEvent = event; runTest(); runInBrowserTest();">
+    <p class="my-test"></p><p class="my-test"></p><p class="my-test"></p>
+</body>
+</html>

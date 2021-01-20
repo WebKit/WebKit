@@ -1,0 +1,1 @@
+../resources/pending-spec-changes.dat: PASS

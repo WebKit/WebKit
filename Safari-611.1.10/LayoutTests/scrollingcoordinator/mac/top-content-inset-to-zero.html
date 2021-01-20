@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        function doTest()
+        {
+            requestAnimationFrame(() => {
+                if (window.internals)
+                    internals.setTopContentInset(50);
+
+                requestAnimationFrame(() => {
+                    if (window.internals)
+                        internals.setTopContentInset(0);
+
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                });
+            });
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+    <style>
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+        }
+        
+        .fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="fixed box"></div>
+</body>
+</html>

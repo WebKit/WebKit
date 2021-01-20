@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .bg {
+        height: 100px;
+        width: 100px;
+        margin: 10px;
+        position: relative;
+        background-image: url('../resources/reference.png');
+        display: inline-block;
+        -webkit-transform: translateZ(0);
+        -webkit-animation-duration:2s !important;
+    }
+
+    .box {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100px;
+        width: 100px;
+        -webkit-transform: translateZ(0);
+        -webkit-animation-duration: 2s !important;
+        -webkit-backdrop-filter: invert(0);
+    }
+
+    #grayscale-box {
+      -webkit-animation: grayscale-anim 2s linear
+    }
+
+    #sepia-box {
+      -webkit-animation: sepia-anim 2s linear
+    }
+
+    #saturate-box {
+      -webkit-animation: saturate-anim 2s linear
+    }
+
+    #huerotate-box {
+      -webkit-animation: huerotate-anim 2s linear
+    }
+
+    #invert-box {
+      -webkit-animation: invert-anim 2s linear
+    }
+
+    #opacity-box {
+      -webkit-animation: opacity-anim 2s linear
+    }
+
+    #brightness-box {
+      -webkit-animation: brightness-anim 2s linear
+    }
+
+    #contrast-box {
+      -webkit-animation: contrast-anim 2s linear
+    }
+
+    #blur-box {
+      -webkit-animation: blur-anim 2s linear
+    }
+
+    #dropshadow-box {
+      -webkit-animation: dropshadow-anim 2s linear
+    }
+
+
+    @-webkit-keyframes grayscale-anim {
+        from { -webkit-backdrop-filter: grayscale(0); }
+        to   { -webkit-backdrop-filter: grayscale(1); }
+    }
+
+    @-webkit-keyframes sepia-anim {
+        from { -webkit-backdrop-filter: sepia(0); }
+        to   { -webkit-backdrop-filter: sepia(1); }
+    }
+
+    @-webkit-keyframes saturate-anim {
+        from { -webkit-backdrop-filter: saturate(0); }
+        to   { -webkit-backdrop-filter: saturate(1); }
+    }
+
+    @-webkit-keyframes huerotate-anim {
+        from { -webkit-backdrop-filter: hue-rotate(0); }
+        to   { -webkit-backdrop-filter: hue-rotate(180deg); }
+    }
+
+    @-webkit-keyframes invert-anim {
+        from { -webkit-backdrop-filter: invert(0); }
+        to   { -webkit-backdrop-filter: invert(1); }
+    }
+
+    @-webkit-keyframes opacity-anim {
+        from { -webkit-backdrop-filter: opacity(1); }
+        to   { -webkit-backdrop-filter: opacity(0); }
+    }
+
+    @-webkit-keyframes brightness-anim {
+        from { -webkit-backdrop-filter: brightness(1); }
+        to   { -webkit-backdrop-filter: brightness(0); }
+    }
+
+    @-webkit-keyframes contrast-anim {
+        from { -webkit-backdrop-filter: contrast(1); }
+        to   { -webkit-backdrop-filter: contrast(0); }
+    }
+
+    @-webkit-keyframes blur-anim {
+        from { -webkit-backdrop-filter: blur(0); }
+        to   { -webkit-backdrop-filter: blur(20px); }
+    }
+
+  </style>
+  <script src="../../../animations/resources/animation-test-helpers.js"></script>
+  <script type="text/javascript">
+    var expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["grayscale-anim",  1, "grayscale-box", "webkitBackdropFilter", 'grayscale(0.5)', 0.1],
+      ["sepia-anim",  1, "sepia-box", "webkitBackdropFilter", 'sepia(0.5)', 0.1],
+      ["saturate-anim",  1, "saturate-box", "webkitBackdropFilter", 'saturate(0.5)', 0.1],
+      ["huerotate-anim",  1, "huerotate-box", "webkitBackdropFilter", 'hue-rotate(90deg)', 10],
+      ["invert-anim",  1, "invert-box", "webkitBackdropFilter", 'invert(0.5)', 0.1],
+      ["opacity-anim",  1, "opacity-box", "webkitBackdropFilter", 'opacity(0.5)', 0.1],
+      ["brightness-anim",  1, "brightness-box", "webkitBackdropFilter", 'brightness(0.5)', 0.1],
+      ["contrast-anim",  1, "contrast-box", "webkitBackdropFilter", 'contrast(0.5)', 0.1],
+      ["blur-anim",  1, "blur-box", "webkitBackdropFilter", 'blur(10px)', 2],
+    ];
+
+    runAnimationTest(expectedValues);
+  </script>
+</head>
+<body>
+
+<div class="bg"><div class="box" id="grayscale-box"></div></div>
+<div class="bg"><div class="box" id="sepia-box"></div></div>
+<div class="bg"><div class="box" id="saturate-box"></div></div>
+<div class="bg"><div class="box" id="huerotate-box"></div></div>
+<div class="bg"><div class="box" id="invert-box"></div></div>
+<div class="bg"><div class="box" id="opacity-box"></div></div>
+<div class="bg"><div class="box" id="brightness-box"></div></div>
+<div class="bg"><div class="box" id="contrast-box"></div></div>
+<div class="bg"><div class="box" id="blur-box"></div></div>
+
+<div id="result">
+</div>
+</body>
+</html>

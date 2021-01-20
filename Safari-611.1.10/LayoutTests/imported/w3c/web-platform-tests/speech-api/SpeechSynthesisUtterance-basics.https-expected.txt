@@ -1,0 +1,10 @@
+
+PASS new SpeechSynthesisUtterance() default text
+PASS new SpeechSynthesisUtterance() default lang
+PASS new SpeechSynthesisUtterance() default voice
+PASS new SpeechSynthesisUtterance() default volume
+PASS new SpeechSynthesisUtterance() default rate
+PASS new SpeechSynthesisUtterance() default pitch
+PASS new SpeechSynthesisUtterance("hello") text and defaults
+PASS SpeechSynthesisUtterance text setter
+

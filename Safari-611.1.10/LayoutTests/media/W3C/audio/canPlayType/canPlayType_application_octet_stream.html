@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+ <head>
+  <title>audio.canPlayType() - application/octet-stream must always return the empty string</title>
+  <script src="../../w3cwrapper.js"></script>
+ </head>
+ <body>
+  <p><a href="http://dev.w3.org/html5/spec/Overview.html#dom-navigator-canplaytype">spec reference</a></p>
+  <audio id="a">
+  </audio>
+  <div id="log"></div>
+  <script>
+test(function() {
+ assert_true(
+  document.getElementById("a").canPlayType("application/octet-stream") == "",
+  "audioElement.canPlayType('application/octet-stream') should return the empty string");
+});
+  </script>
+ </body>
+</html>

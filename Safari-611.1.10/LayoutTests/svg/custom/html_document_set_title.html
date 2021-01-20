@@ -1,0 +1,16 @@
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script>
+  function runTest()
+  {
+    shouldBe('document.title', '""');
+  }
+</script>
+</head>
+<body onload="runTest()">
+<svg>
+<title>Should not be set on HTML Document</title>
+</svg>
+</body>
+</html>

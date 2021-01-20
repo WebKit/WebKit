@@ -1,0 +1,36 @@
+<html>
+<body>
+<p>Test Blob.size of response blob received for XMLHttpRequest</p>
+<pre id="console"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(text)
+{
+    var console = document.getElementById('console');
+    console.appendChild(document.createTextNode(text + '\n'));
+}
+
+function test(expect, actual)
+{
+    log((expect == actual ? 'PASS' : 'FAIL') + ': "' + expect + '" == "' + actual + '"');
+}
+
+var req = new XMLHttpRequest;
+req.responseType = 'blob';
+req.open('GET', '../resources/test.ogv', true);
+req.onreadystatechange = function() {
+    if (req.readyState == 4) {
+        test(200, req.status);
+        test(103746, req.response.size)
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+};
+req.send(null);
+
+</script>
+</body>

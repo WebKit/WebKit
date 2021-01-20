@@ -1,0 +1,23 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+  
+[% PROCESS "global/reason-descs.none.tmpl" %]
+[% isnew = bug.lastdiffed ? 0 : 1 %]
+[% show_new = isnew
+              && (to_user.settings.bugmail_new_prefix.value == 'on') %]
+
+From: [% Param('mailfrom') %]
+To: [% to_user.email %]
+Subject: [[% terms.Bug %] [%+ bug.id %]] [% 'New: ' IF show_new %][%+ bug.short_desc %]
+Date: [% date %]
+X-Bugzilla-Reason: [% reasonsheader %]
+X-Bugzilla-Type: [% bugmailtype %]
+X-Bugzilla-Watch-Reason: [% reasonswatchheader %]
+[%+ INCLUDE "email/header-common.txt.tmpl" %]
+X-Bugzilla-Changed-Fields: [% changedfields.join(" ") %]
+[%+ threadingmarker %]

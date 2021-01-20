@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Request URL handling</title>
+    <meta name="help" href="https://fetch.spec.whatwg.org/#request">
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+    <base id="base">
+  </head>
+  <body>
+    <script>
+function executeTests(urls)
+{
+    for (url of urls) {
+        if (url.input) {
+            test(function() {
+                document.getElementById("base").setAttribute("href", url.base);
+                if (url.username || url.password || url.failure)
+                    assert_throws(new TypeError(), function() {  new Request(url.input); });
+                else {
+                    var request = new Request(url.input);
+                    assert_equals(request.url, url.href);
+                }
+            }, "Testing Request url '" + url.input + "' with base '" + url.base + "'");
+         }
+    }
+}
+    </script>
+    <script src="fetch-urls.json"></script>
+  </body>
+</html>

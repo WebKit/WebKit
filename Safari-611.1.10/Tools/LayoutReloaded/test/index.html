@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+iframe {
+    border: 0px;
+}
+</style>
+<script>
+let testFiles = [
+    "simple-incremental-layout-with-static-content.html",
+    "relative-simple.html",
+    "relative-bottom.html",
+    "relative-right.html",
+    "relative-auto.html",
+    "relative-auto-with-parent-offset.html",
+    "relative-position-when-containing-block-is-not-in-the-formatting-context.html",
+    "relative-siblings.html",
+    "padding-simple.html",
+    "padding-nested.html",
+    "border-simple.html",
+    "margin-simple.html",
+    "margin-sibling-collapse-propagated.html",
+    "margin-propagation-simple-content-height.html",
+    "margin-left-right-sizing.html",
+    "margin-left-right-sizing-out-of-flow.html",
+    "margin-collapse-with-block-formatting-context2.html",
+    "margin-collapse-with-block-formatting-context.html",
+    "margin-collapse-when-child-has-padding-border.html",
+    "margin-collapse-top-nested.html",
+    "margin-collapse-simple.html",
+    "margin-collapse-first-last-are-floating.html",
+    "margin-collapse-bottom-nested.html",
+    "margin-collapse-bottom-bottom.html",
+    "absolute-auto-with-sibling-margin-bottom.html",
+    "absolute-bottom.html",
+    "absolute-height-stretch.html",
+    "absolute-left-auto.html",
+    "absolute-left-right-top-bottom-auto.html",
+    "absolute-nested.html",
+    "absolute-nested2.html",
+    "absolute-simple.html",
+    "absolute-width-shrink-to-fit.html",
+    "absolute-width-stretch.html",
+    "absolute-with-static-block-position-nested.html",
+    "absolute-position-when-containing-block-is-not-in-the-formatting-context.html",
+    "absolute-position-when-containing-block-is-not-in-the-formatting-context2.html",
+    "fixed-nested.html",
+    "floating-box-left-and-right-multiple.html",
+    "floating-box-right-simple.html",
+    "floating-left-right-simple.html",
+    "floating-left-right-with-all-margins.html",
+    "floating-multiple-lefts-in-body.html",
+    "floating-multiple-lefts-multiple-lines.html",
+    "floating-multiple-lefts.html",
+    "floating-box-with-relative-positioned-sibling.html",
+    "floating-lefts-and-rights-simple.html",
+    "floating-with-new-block-formatting-context.html",
+    "floating-box-clear-right-simple.html",
+    "floating-box-with-clear-simple.html",
+    "floating-box-with-clear-siblings.html",
+    "floating-box-clear-both-simple.html",
+    "almost-intruding-left-float-simple.html",
+    "negative-margin-simple.html",
+    "intruding-left-float-simple.html",
+    "simple-inline-text.html",
+    "simple-multiline-text.html",
+    "inline-formatting-context-with-floats.html",
+    "inline-with-floats-right-left-simple.html",
+    "inline-formatting-context-with-floats2.html",
+    "float-is-inside-inline-formatting-context-simple.html",
+    "multiple-left-floats-on-line-simple.html",
+    "multiple-left-floats-on-line-from-parent-formatting-context.html",
+    "inline-with-floats-when-they-dont-fit.html",
+    "inline-with-right-float-simple.html",
+    "inline-with-right-floats2.html",
+    "inline-with-right-floats3.html",
+    "inline-content-simple2.html",
+    "inline-floating1.html",
+    "inline-formatting-context-floats1.html",
+    "inline-formatting-context-floats2.html",
+    "inline-with-padding-border-margin-offsets.html",
+    "inline-block-with-fixed-width-height.html",
+    "inline-with-relative-positioning.html",
+    "inline-with-out-of-flow-descendant.html",
+    "inline-simple-replaced.html"
+];
+
+let debugThis = [];
+
+function addJS(fileName) {
+    let script = document.currentScript.src;
+    let imported = document.createElement('script');
+    imported.src = fileName;
+    document.head.appendChild(imported);
+}
+
+addJS("./TestHarness.js");
+addJS("../Utils.js");
+addJS("../Layout.js");
+addJS("../TreeBuilder.js");
+addJS("../LayoutState.js");
+addJS("../LayoutTree/Box.js");
+addJS("../LayoutTree/Container.js");
+addJS("../LayoutTree/BlockContainer.js");
+addJS("../LayoutTree/InlineContainer.js");
+addJS("../LayoutTree/InlineBox.js");
+addJS("../LayoutTree/Text.js");
+addJS("../DisplayTree/Box.js");
+addJS("../FormattingState/FormattingState.js");
+addJS("../FormattingState/BlockFormattingState.js");
+addJS("../FormattingState/InlineFormattingState.js");
+addJS("../FormattingState/FloatingState.js");
+addJS("../FormattingContext/FormattingContext.js");
+addJS("../FormattingContext/FloatingContext.js");
+addJS("../FormattingContext/BlockFormatting/BlockFormattingContext.js");
+addJS("../FormattingContext/BlockFormatting/BlockMarginCollapse.js");
+addJS("../FormattingContext/InlineFormatting/InlineFormattingContext.js");
+addJS("../FormattingContext/InlineFormatting/Line.js");
+
+let failedTests = new Array();
+
+let isRunningAsyncTest = false;
+let tests;
+let testsPassed = 0;
+let currentTestIndex = 0;
+let subTests = 0;
+let subTestPassed = true;
+let layoutState = null;
+
+function runAndVerifyLayout(window) {
+    layoutState = runLayout(window, layoutState);
+    return verifyLayout(window.simplifiedRenderTree);
+}
+
+class TestRunner {
+    waitUntilDone() {
+        isRunningAsyncTest = true;
+    }
+
+    notifyDone() {
+        let testFrame = document.getElementById("testFrame");
+        ASSERT(subTests);
+        finishAndMoveToNextTest(subTestPassed);
+    }
+
+    forceLayout() {
+        let testFrame = document.getElementById("testFrame");
+        let needsLayoutRenderers = testFrame.contentWindow.collectRenderersWithNeedsLayout();
+        testFrame.contentWindow.document.body.offsetWidth;
+        if (layoutState) {
+            // Finding box by id won't work unless this is ICB's layout state.
+            ASSERT(!layoutState.rootContainer().parent());
+            for (let rendererId of needsLayoutRenderers) {
+                let layoutBox = Utils.layoutBoxById(rendererId, layoutState.rootContainer());
+                layoutState.markNeedsLayout(layoutBox);
+            }
+        }
+        let passed = runAndVerifyLayout(testFrame.contentWindow);
+        ++subTests;
+        if (!passed) {
+            subTestPassed = false;
+            if (failedTests.indexOf(currentTestIndex) == -1)
+                failedTests.push(currentTestIndex);
+        }
+        printIntermediateResult();
+    }
+
+}
+
+function printFinalResult() {
+    let resultContent = "Number of tests: " + tests.length;
+    resultContent += "<br><br>Passed: " + (tests.length - failedTests.length) + "<br>Failed: " + failedTests.length;
+    if (failedTests.length > 0) {
+        resultContent += "<br><br>Failed cases:"
+        failedTests.forEach(function(item) {
+            resultContent += "<br><a href=\"" + tests[item] + "\">" + tests[item] + "</a>";
+        });
+    }
+    result.innerHTML = resultContent;
+}
+
+function printIntermediateResult() {
+    let resultContent = "Testing..." + (currentTestIndex + 1) + (subTests > 0 ? "(" + subTests + ")" : "") + " out of " + tests.length;
+    resultContent += "<br><br>Passed: " + testsPassed + "<br>Failed: " + failedTests.length;
+    if (failedTests.length > 0) {
+        resultContent += "<br><br>Failed cases:"
+        failedTests.forEach(function(item) {
+            resultContent += "<br><a href=\"" + tests[item] + "\">" + tests[item] + "</a>";
+        });
+    }
+    result.innerHTML = resultContent;
+}
+
+function finishAndMoveToNextTest(passed) {
+    let testFrame = document.getElementById("testFrame");
+    testFrame.remove();
+    initialContainingBlock = null;
+    layoutState = null;
+    subTests = 0;
+    isRunningAsyncTest = false;
+    if (passed)
+        ++testsPassed;
+    else if (failedTests.indexOf(currentTestIndex) == -1)
+        failedTests.push(currentTestIndex);
+    setTimeout(function() {
+        if (currentTestIndex < tests.length - 1) {
+            printIntermediateResult();
+            ++currentTestIndex;
+            runTest(tests);
+            return;
+        }
+        printFinalResult();
+    }, 0);
+}
+
+function runTest() {
+    let iframe = document.createElement("iframe");
+    iframe.src = tests[currentTestIndex];
+    iframe.id = "testFrame";
+    iframe.width = window.innerWidth;
+    iframe.height = window.innerHeight;
+    iframe.onload = function() {
+        if (isRunningAsyncTest)
+            return;
+        let testFrame = document.getElementById("testFrame");
+        let passed = runAndVerifyLayout(testFrame.contentWindow);
+        finishAndMoveToNextTest(passed, tests);
+    };
+    document.body.appendChild(iframe);
+    iframe.contentWindow.testRunner = new TestRunner();
+}
+
+function runTests() {
+    tests = debugThis.length ? debugThis : testFiles;
+    runTest();
+}
+</script>
+</head>
+<body onload="runTests()">
+<pre id=result></pre>
+</body>
+</html>

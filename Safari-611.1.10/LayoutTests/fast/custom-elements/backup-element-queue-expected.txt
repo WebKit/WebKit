@@ -1,0 +1,15 @@
+This tests the existence of the backup element queue. To manually test, press the delete key once the page is loaded.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS constructed is false
+PASS editor.innerHTML = "a<test-element>b</test-element>c"; constructed is true
+PASS editor.focus(); getSelection().selectAllChildren(editor); disconnected is false
+PASS "Before the end of the micro task"; disconnected is false
+PASS "At the end of the micro task"; disconnected is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

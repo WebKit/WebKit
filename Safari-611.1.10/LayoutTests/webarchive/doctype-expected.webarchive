@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>WebMainResource</key>
+	<dict>
+		<key>WebResourceData</key>
+		<string>&lt;!DOCTYPE HTML&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Test for Bug 15290: REGRESSION (r14184-r14216): Duplicate DOCTYPE definitions when saving files as webarchives&lt;/title&gt;
+&lt;/head&gt;
+&lt;script&gt;
+    if (window.testRunner)
+        testRunner.dumpSourceAsWebArchive();
+&lt;/script&gt;
+&lt;body&gt;
+&lt;div&gt;
+&lt;a href="https://bugs.webkit.org/show_bug.cgi?id=15290"&gt;Bug 15290: REGRESSION (r14184-r14216): Duplicate DOCTYPE definitions when saving files as webarchives&lt;/a&gt;
+&lt;/div&gt;
+&lt;div&gt;
+This test checks that only one &amp;lt;!DOCTYPE&amp;gt; tag is written to a webarchive.
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</string>
+		<key>WebResourceFrameName</key>
+		<string></string>
+		<key>WebResourceMIMEType</key>
+		<string>text/html</string>
+		<key>WebResourceURL</key>
+		<string>file:///LayoutTests/webarchive/doctype.html</string>
+	</dict>
+</dict>
+</plist>

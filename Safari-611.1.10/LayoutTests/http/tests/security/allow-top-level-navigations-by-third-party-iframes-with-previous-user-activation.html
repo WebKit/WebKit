@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Test that top-level navigations by a third-party iframe are allowed with a previous user gesture.");
+jsTestIsAsync = true;
+onload = () => {
+    setTimeout(() => {
+        document.getElementById('testFrame').src = "http://localhost:8000/security/resources/navigate-top-level-frame-to-success-page-with-previous-user-gesture.html";
+        setTimeout(() => {
+            testFailed("Navigation by subframe should not have been blocked");
+            finishJSTest();
+        }, 5000);
+    }, 10);
+}
+</script>
+<iframe id="testFrame"></iframe>
+</body>
+</html>

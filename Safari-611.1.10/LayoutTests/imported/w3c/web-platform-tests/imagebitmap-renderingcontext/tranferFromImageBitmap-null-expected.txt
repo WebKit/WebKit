@@ -1,0 +1,3 @@
+
+PASS Test that transferFromImageBitmap(null) discards the previously transferred image
+

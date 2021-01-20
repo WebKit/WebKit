@@ -1,0 +1,15 @@
+<head>
+<script>
+function test()
+{
+    const link = document.createElement("link");
+    link.setAttribute("rel", "stylesheet");
+    link.setAttribute("href", "data:text/css,body { background:white !important; }");
+    document.head.appendChild(link);
+    const count = document.styleSheets.length;
+    document.body.innerHTML = (count == 1) ? `PASS` : `FAIL: document.styleSheets.length == ${count}`
+}
+</script>
+<link rel=stylesheet href="data:text/css,body { color:black !important; }">
+</head>
+<body onload="test()" style="color:blue; background:red">

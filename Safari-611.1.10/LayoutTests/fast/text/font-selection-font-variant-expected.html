@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "Test1";
+    src: url("../writing-mode/resources/MakibaFont13.ttf") format("truetype");
+}
+@font-face {
+    font-family: "Test2";
+    src: url("../../resources/Ahem.ttf") format("truetype");
+}
+.test {
+    display: inline-block;
+    font-size: 40px;
+}
+</style>
+</head>
+<body>
+<p>This test makes sure that font-variant is not consulted when performing font selection.</p>
+<div class="test" style="font-family: Test2;">Hello</div>
+<div class="test" style="font-family: Test2;">Hello</div>
+<div class="test" style="font-family: Test2; font-variant: small-caps;">Hello</div>
+<div class="test" style="font-family: Test2; font-variant: small-caps;">Hello</div>
+<div class="test" style="font-family: Test2;">Hello</div>
+<div class="test" style="font-family: Test2;">Hello</div>
+<div class="test" style="font-family: Test2; font-variant: small-caps;">Hello</div>
+<div class="test" style="font-family: Test2; font-variant: small-caps;">Hello</div>
+<div class="test" style="font-family: Test1;">Hello</div>
+<div class="test" style="font-family: Test1;">Hello</div>
+<div class="test" style="font-family: Test1; font-variant: small-caps;">Hello</div>
+<div class="test" style="font-family: Test1; font-variant: small-caps;">Hello</div>
+<div class="test" style="font-family: Times;">Hello</div>
+<div class="test" style="font-family: Times; font-variant: small-caps;">Hello</div>
+</body>
+</html>

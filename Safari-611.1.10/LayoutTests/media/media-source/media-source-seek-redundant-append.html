@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-seek-redundant-append</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function waitSilentlyFor(element, type) {
+        return new Promise(resolve => {
+            element.addEventListener(type, event => {
+                resolve(event);
+            }, { once: true });
+        });
+    }
+
+    function waitForVideoToReach(time) {
+        return new Promise(resolve => {
+            consoleWrite(`START waitForVideoToReach(${time})`);
+            function timeupdateHandler() {
+                if (video.currentTime >= time) {
+                    video.removeEventListener("timeupdate", timeupdateHandler);
+                    consoleWrite(`SUCCESS waitForVideoToReach(${time})`);
+                    resolve();
+                }
+            }
+            video.addEventListener("timeupdate", timeupdateHandler);
+        });
+    }
+
+    async function seekAndAppend(time, startSegment, endSegment) {
+        // Note: "seeked" and "update" can occur in any order because we may have noticed enough data to complete the
+        // seek before the whole append has been demuxed (demuxing occurs in a background thread and the main thread
+        // may be notified of new samples before the demuxer has finished the append).
+        // Therefore, we need to wait silently for these events in order for the test to have a reliable (non-flaky)
+        // output.
+
+        consoleWrite(`START seekAndAppend: time=${time}, segments=[${startSegment}, ${endSegment})`);
+        const seeked = waitSilentlyFor(mediaElement, "seeked");
+        mediaElement.currentTime = time;
+        for (let segmentNumber = startSegment; segmentNumber < endSegment; segmentNumber++) {
+            run(`sourceBuffer.appendBuffer(loader.mediaSegment(${segmentNumber}))`);
+            await waitSilentlyFor(sourceBuffer, 'update');
+            consoleWrite("Successful append");
+        }
+        await seeked;
+        consoleWrite(`SUCCESS seekAndAppend: time=${time}, segments=[${startSegment}, ${endSegment})`);
+    }
+
+    window.addEventListener('load', () => {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-48khz-manifest.json');
+        loader.onload = async () => {
+            source = new MediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            await waitFor(source, 'sourceopen');
+
+            const offset = 300;
+
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+            run(`source.duration = ${offset + 10}`);
+            run(`sourceBuffer.timestampOffset = ${offset}`);
+
+            run('video.play()');
+            await seekAndAppend(offset, 0, 3); // Segment A
+            await waitForVideoToReach(offset + 0.2);
+
+            await seekAndAppend(offset + 9.2, 9, 10); // Segment C
+            await waitForVideoToReach(offset + 9.7);
+
+            run(`video.currentTime = ${offset + 8.9}`);
+            // Appending C again is redundant, but it should work.
+            await seekAndAppend(offset + 8.9, 8, 10); // Segment B+C
+            run('source.endOfStream()');
+            // After this point playback should finish in ~1.1 seconds (well under the timeout), not get stuck.
+            await waitFor(video, 'ended');
+
+            endTest();
+        };
+        loader.onerror = () => {
+            failTest('Media data loading failed');
+        };
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

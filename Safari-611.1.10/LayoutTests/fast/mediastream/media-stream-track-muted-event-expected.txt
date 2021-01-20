@@ -1,0 +1,3 @@
+
+PASS Muted attribute value should not change before the corresponding event is fired
+

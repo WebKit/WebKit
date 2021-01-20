@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>CSS Test: Empty line box influence</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/">
+        <link rel="help" href="http://www.w3.org/TR/CSS21/visudet.html#propdef-line-height">
+        <link rel="help" href="http://www.w3.org/TR/CSS21/visudet.html#leading">
+        <meta name="flags" content="ahem">
+        <meta name="assert" content="Empty inline elements still influence calculation just like elements with content.">
+        <style type="text/css">
+            div, span
+            {
+                font: 1in/1em Ahem;
+            }
+            #div1
+            {
+                margin-top: 1in;
+            }
+            #div2, #div3
+            {
+                width: 5in;
+            }
+            #div2
+            {
+                border: 0.25in solid green;
+            }
+            span
+            {
+                background: green;
+                border: 0.25in solid green;
+                margin: 1in;
+                padding: 1in;
+            }
+            #div3
+            {
+                border: 0.25in solid red;
+                height: 1in;
+                position: relative;
+                top: -1.5in;
+                z-index: -1;
+            }
+            #div3 div
+            {
+                background: red;
+                border: 0.25in solid red;
+                height: 3in;
+                margin: 0 1in;
+                position: relative;
+                top: -1.25in;
+                width: 2in;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if there is no red visible on the page.</p>
+        <div id="div1">
+            <div id="div2">
+                <span></span>
+            </div>
+            <div id="div3">
+                <div></div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,4 @@
+Test to clone details and summary elements
+
+PASS targetMarkerPseudoId is clonedMarkerPseudoId
+

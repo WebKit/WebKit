@@ -1,0 +1,7 @@
+2d.composite.clip.source-over
+
+fill() does not affect pixels outside the clip region.
+
+
+PASS fill() does not affect pixels outside the clip region.
+

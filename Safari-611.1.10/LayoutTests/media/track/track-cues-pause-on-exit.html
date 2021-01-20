@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+    </head>
+    <body onload="bodyLoaded()">
+        <p>Tests that the video is paused after cues that have pause-on-exit flag are processed</p>
+        <video controls>
+            <track id="testTrack" src="captions-webvtt/simple-captions.vtt" onload="loaded()" default>
+        </video>
+        <script>
+            var videoCanPlayThrough = false;
+            var trackLoaded = false;
+
+            var currentCue;
+            var currentCueNumber = 0;
+
+            function runTests()
+            {
+                if (!trackLoaded || !videoCanPlayThrough)
+                    return;
+
+                testTrack = document.getElementById("testTrack");
+                testExpected("testTrack.track.cues.length", 4);
+
+                consoleWrite("");
+
+                for (var i = 0; i < testTrack.track.cues.length; ++i) {
+                    testTrack.track.cues[i].pauseOnExit = (i % 2 == 0);
+                }
+
+                run("video.play()");
+                testExpected("video.paused", false);
+                consoleWrite("");
+
+                waitForEvent('pause', function() {
+                    waitForEvent('exit', cueExited, false, true, testTrack.track.cues[currentCueNumber]);
+                });
+            }
+
+            function cueExited(evt)
+            {
+                currentCue = evt.target;
+
+
+                testExpected("currentCue.id", currentCueNumber);
+                testExpected("video.paused", true);
+
+                run("video.play()");
+
+                if (currentCueNumber == 2)
+                    endTest();
+
+                currentCueNumber += 2;
+
+                consoleWrite("");
+            }
+
+            function loaded()
+            {
+                trackLoaded = true;
+
+                runTests();
+            }
+
+            function bodyLoaded()
+            {
+                findMediaElement();
+                video.src = findMediaFile("video", "../content/test");
+            }
+
+            waitForEvent('canplaythrough', function() {
+                video.currentTime = 4.00;
+                videoCanPlayThrough = true;
+
+                runTests();
+            });
+
+            setCaptionDisplayMode('Automatic');
+        </script>
+    </body>
+</html>

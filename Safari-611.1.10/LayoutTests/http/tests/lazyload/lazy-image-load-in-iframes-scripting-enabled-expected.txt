@@ -1,0 +1,3 @@
+
+PASS Verify that iframe's with sandbox='allow-scripts' allow lazy image loading.
+

@@ -1,0 +1,5 @@
+This is a dialog
+
+
+FAIL Test that removing dialog unblocks the document. assert_equals: expected false but got true
+

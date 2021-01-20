@@ -1,0 +1,33 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" class="reftest-wait">
+
+  <title>Test that selectors detect changes to the 'd' attribute</title>
+
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=610990 -->
+
+  <style>
+    path[d="M0,0 V100 H100 V0 Z"] {
+      fill: lime;
+    }
+  </style>
+
+  <rect width="100%" height="100%" fill="lime"/>
+  <path id="path" fill="red" d="M0,0 H100 V100 H0 Z"/>
+
+  <script>
+    function doTest() {
+      document.getElementById('path').setAttribute('d', 'M0,0 V100 H100 V0 Z');
+      document.documentElement.removeAttribute('class');
+      if (window.testRunner)
+        testRunner.notifyDone();
+    }
+    if (window.testRunner)
+      testRunner.waitUntilDone();
+
+    setTimeout(doTest, 100);
+  </script>
+
+</svg>

@@ -1,0 +1,1 @@
+Failed assertion: got pixel [0,0,0,0] at (50,25), expected [0,255,0,255]

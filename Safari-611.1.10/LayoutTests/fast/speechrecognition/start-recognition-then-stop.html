@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Verify that events are received corretly when start and stop recognition normally.");
+
+if (window.testRunner) {
+    jsTestIsAsync = true;
+}
+
+shouldNotThrow("recognition = new webkitSpeechRecognition();");
+recognition.onstart = (event) => {
+    debug("Received start event");
+}
+
+recognition.onaudiostart = (event) => {
+    debug("Received audiostart event");
+
+    shouldNotThrow("recognition.stop()");
+}
+
+recognition.onaudioend = (event) => {
+    debug("Received audioend event");
+}
+
+recognition.onend = (event) => {
+    debug("Received end event");
+
+    finishJSTest();
+}
+
+shouldNotThrow("recognition.start()");
+
+</script>
+</body>
+</html>

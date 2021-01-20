@@ -1,0 +1,55 @@
+<!doctype html>
+<meta charset="utf8">
+<link rel="help" href="https://w3c.github.io/payment-request/#dom-paymentresponse-payername">
+<title>
+  PaymentResponse.prototype.payerName attribute
+</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/helpers.js"></script>
+<script>
+  setUpAndSmokeTest({ explicit_done: true, explicit_timeout: true });
+</script>
+<ol>
+  <li>
+    <button id="button1">
+      payerName attribute is null when option is undefined.
+    </button>
+  </li>
+  <li>
+    <button id="button2">
+      payerName attribute is null when requestPayerName is undefined.
+    </button>
+  </li>
+  <li>
+    <button id="button3">
+      payerName attribute is null when requestPayerName is false.
+    </button>
+  </li>
+  <li>
+    <button id="button4">
+      payerName attribute is 'web platform test' when requestPayerName is true.
+    </button>
+  </li>
+  <li>
+    <button id="button5">
+      payerName attribute is 'web platform test' when requestPayerName is truthy.
+    </button>
+  </li>
+</ol>
+<script>
+    internals.mockPaymentCoordinator.setShippingAddress({ localizedName: 'web platform test' });
+    
+    async function runTests()
+    {
+        await runTest(document.getElementById("button1"), undefined, { payerName: null });
+        await runTest(document.getElementById("button2"), { requestPayerName: undefined }, { payerName: null });
+        await runTest(document.getElementById("button3"), { requestPayerName: false }, { payerName: null });
+        await runTest(document.getElementById("button4"), { requestPayerName: true }, { payerName: 'web platform test' });
+        await runTest(document.getElementById("button5"), { requestPayerName: 'yep' }, { payerName: 'web platform test' });
+        done();
+    }
+    runTests();
+</script>

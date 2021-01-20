@@ -1,0 +1,371 @@
+/*
+ * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+[
+    Conditional=WEB_RTC,
+    EnabledAtRuntime=PeerConnection,
+    ImplementationLacksVTable,
+    Exposed=Window
+] interface RTCStatsReport {
+    readonly maplike<DOMString, object>;
+};
+
+enum RTCStatsType {
+    "candidate-pair",
+    "certificate",
+    "codec",
+    "data-channel",
+    "inbound-rtp",
+    "local-candidate",
+    "media-source",
+    "outbound-rtp",
+    "peer-connection",
+    "remote-candidate",
+    "remote-inbound-rtp",
+    "track",
+    "transport"
+};
+
+typedef double DOMHighResTimeStamp;
+
+dictionary RTCStats {
+    DOMHighResTimeStamp timestamp;
+    RTCStatsType type;
+    DOMString id;
+
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCRtpStreamStats : RTCStats {
+    required unsigned long ssrc;
+    required DOMString kind;
+    // We should obsolete this field
+    required DOMString mediaType;
+    DOMString transportId;
+    DOMString codecId;
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCReceivedRtpStreamStats : RTCRtpStreamStats {
+    unsigned long long packetsReceived;
+    long long packetsLost;
+    double jitter;
+    unsigned long long packetsDiscarded;
+    unsigned long long packetsRepaired;
+    unsigned long long burstPacketsLost;
+    unsigned long long burstPacketsDiscarded;
+    unsigned long burstLossCount;
+    unsigned long burstDiscardCount;
+    double burstLossRate;
+    double burstDiscardRate;
+    double gapLossRate;
+    double gapDiscardRate;
+    unsigned long framesDropped;
+    unsigned long partialFramesLost;
+    unsigned long fullFramesLost;
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCInboundRtpStreamStats : RTCReceivedRtpStreamStats {
+    // required DOMString receiverId;
+    DOMString remoteId;
+    unsigned long framesDecoded;
+    unsigned long keyFramesDecoded;
+    unsigned long frameWidth;
+    unsigned long frameHeight;
+    unsigned long frameBitDepth;
+    double framesPerSecond;
+    unsigned long long qpSum;
+    double totalDecodeTime;
+    double totalInterFrameDelay;
+    double totalSquaredInterFrameDelay;
+    boolean voiceActivityFlag;
+    DOMHighResTimeStamp lastPacketReceivedTimestamp;
+    double averageRtcpInterval;
+    unsigned long long headerBytesReceived;
+    unsigned long long fecPacketsReceived;
+    unsigned long long fecPacketsDiscarded;
+    unsigned long long bytesReceived;
+    unsigned long long packetsFailedDecryption;
+    unsigned long long packetsDuplicated;
+    // record<USVString, unsigned long long> perDscpPacketsReceived;
+    unsigned long nackCount;
+    unsigned long firCount;
+    unsigned long pliCount;
+    unsigned long sliCount;
+    DOMHighResTimeStamp estimatedPlayoutTimestamp;
+    double jitterBufferDelay;
+    unsigned long long jitterBufferEmittedCount;
+    unsigned long long totalSamplesReceived;
+    unsigned long long samplesDecodedWithSilk;
+    unsigned long long samplesDecodedWithCelt;
+    unsigned long long concealedSamples;
+    unsigned long long silentConcealedSamples;
+    unsigned long long concealmentEvents;
+    unsigned long long insertedSamplesForDeceleration;
+    unsigned long long removedSamplesForAcceleration;
+    double audioLevel;
+    double totalAudioEnergy;
+    double totalSamplesDuration;
+    unsigned long framesReceived;
+    // DOMString decoderImplementation;
+
+    // To be removed as obsolete.
+    DOMString trackId;
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCRemoteInboundRtpStreamStats : RTCReceivedRtpStreamStats {
+    DOMString localId;
+    double roundTripTime;
+    double totalRoundTripTime;
+    double fractionLost;
+    unsigned long long reportsReceived;
+    unsigned long long roundTripTimeMeasurements;
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCSentRtpStreamStats : RTCRtpStreamStats {
+    unsigned long packetsSent;
+    unsigned long long bytesSent;
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCOutboundRtpStreamStats : RTCSentRtpStreamStats {
+    unsigned long rtxSsrc;
+    DOMString mediaSourceId;
+    DOMString senderId;
+    DOMString remoteId;
+    DOMString rid;
+    DOMHighResTimeStamp lastPacketSentTimestamp;
+    unsigned long long headerBytesSent;
+    unsigned long packetsDiscardedOnSend;
+    unsigned long long bytesDiscardedOnSend;
+    unsigned long fecPacketsSent;
+    unsigned long long retransmittedPacketsSent;
+    unsigned long long retransmittedBytesSent;
+    double targetBitrate;
+    unsigned long long totalEncodedBytesTarget;
+    unsigned long frameWidth;
+    unsigned long frameHeight;
+    unsigned long frameBitDepth;
+    double framesPerSecond;
+    unsigned long framesSent;
+    unsigned long hugeFramesSent;
+    unsigned long framesEncoded;
+    unsigned long keyFramesEncoded;
+    unsigned long framesDiscardedOnSend;
+    unsigned long long qpSum;
+    unsigned long long totalSamplesSent;
+    unsigned long long samplesEncodedWithSilk;
+    unsigned long long samplesEncodedWithCelt;
+    boolean voiceActivityFlag;
+    double totalEncodeTime;
+    double totalPacketSendDelay;
+    double averageRtcpInterval;
+    // RTCQualityLimitationReason qualityLimitationReason;
+    // record<DOMString, double> qualityLimitationDurations;
+    unsigned long qualityLimitationResolutionChanges;
+    // record<USVString, unsigned long long> perDscpPacketsSent;
+    unsigned long nackCount;
+    unsigned long firCount;
+    unsigned long pliCount;
+    unsigned long sliCount;
+    // DOMString encoderImplementation;
+
+    // To be removed as obsolete.
+    DOMString trackId;
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCMediaStreamTrackStats : RTCStats {
+    DOMString trackIdentifier;
+    boolean remoteSource;
+    boolean ended;
+    boolean detached;
+    // FIXME: Add sequence<DOMString> ssrcIds;
+    unsigned long frameWidth;
+    unsigned long frameHeight;
+    double framesPerSecond;
+    unsigned long framesSent;
+    unsigned long framesReceived;
+    unsigned long framesDecoded;
+    unsigned long framesDropped;
+    unsigned long framesCorrupted;
+    unsigned long partialFramesLost;
+    unsigned long fullFramesLost;
+    double audioLevel;
+    double echoReturnLoss;
+    double echoReturnLossEnhancement;
+
+    // FIXME: Introduce RTCVideoReceiverStats
+    unsigned long freezeCount;
+    unsigned long pauseCount;
+    double totalFreezesDuration;
+    double totalPausesDuration;
+    double totalFramesDuration;
+    double sumOfSquaredFramesDuration;
+    // FIXME: Introduce RTCAudioReceiverStats
+    unsigned long long jitterBufferFlushes;
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCDataChannelStats : RTCStats {
+    DOMString label;
+    DOMString protocol;
+    long datachannelid;
+    // FIXME: Switch state to RTCDataChannelState
+    DOMString state;
+    unsigned long messagesSent;
+    unsigned long long bytesSent;
+    unsigned long messagesReceived;
+    unsigned long long bytesReceived;
+};
+
+enum RTCStatsIceCandidatePairState {
+    "frozen",
+    "waiting",
+    "inprogress",
+    "failed",
+    "succeeded",
+    "cancelled"
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCIceCandidatePairStats : RTCStats {
+    DOMString transportId;
+    DOMString localCandidateId;
+    DOMString remoteCandidateId;
+    RTCStatsIceCandidatePairState state;
+    unsigned long long priority;
+    boolean nominated;
+    boolean writable;
+    boolean readable;
+    unsigned long long bytesSent;
+    unsigned long long bytesReceived;
+    double totalRoundTripTime;
+    double currentRoundTripTime;
+    double availableOutgoingBitrate;
+    double availableIncomingBitrate;
+    unsigned long long requestsReceived;
+    unsigned long long requestsSent;
+    unsigned long long responsesReceived;
+    unsigned long long responsesSent;
+    // FIXME: Expose other fields once libwebrtc support them.
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCIceCandidateStats : RTCStats {
+    DOMString transportId;
+    // FIXME: decide whether to expose networkType
+    // FIXME: Expose relayProtocol
+    DOMString address;
+    long port;
+    DOMString protocol;
+    RTCIceCandidateType candidateType;
+    long priority;
+    DOMString url;
+    boolean deleted = false;
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCCertificateStats : RTCStats {
+    DOMString fingerprint;
+    DOMString fingerprintAlgorithm;
+    DOMString base64Certificate;
+    DOMString issuerCertificateId;
+};
+
+enum RTCCodecType {
+    "encode",
+    "decode"
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCCodecStats : RTCStats {
+    unsigned long payloadType;
+    RTCCodecType codecType;
+    DOMString transportId;
+    DOMString mimeType;
+    unsigned long clockRate;
+    unsigned long channels;
+    DOMString sdpFmtpLine;
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCTransportStats : RTCStats {
+    // FIXME 169662: Support more fields.
+    // unsigned long packetsSent;
+    // unsigned long packetsReceived;
+    unsigned long long bytesSent;
+    unsigned long long bytesReceived;
+    DOMString rtcpTransportStatsId;
+    // RTCIceRole iceRole;
+    // DOMString iceLocalUsernameFragment;
+    required DOMString dtlsState;
+    // RTCIceTransportState iceState;
+    DOMString selectedCandidatePairId;
+    DOMString localCertificateId;
+    DOMString remoteCertificateId;
+    DOMString tlsVersion;
+    DOMString dtlsCipher;
+    DOMString srtpCipher;
+    // DOMString tlsGroup;
+    // unsigned long selectedCandidatePairChanges;
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCPeerConnectionStats : RTCStats {
+    // FIXME 169662: Support more fields.
+    unsigned long dataChannelsOpened;
+    unsigned long dataChannelsClosed;
+    // unsigned long dataChannelsRequested;
+    // unsigned long dataChannelsAccepted;
+};
+
+[ JSGenerateToJSObject ]
+dictionary RTCMediaSourceStats : RTCStats {
+    required DOMString  trackIdentifier;
+    required DOMString  kind;
+    boolean relayedSource;
+};
+
+dictionary RTCAudioSourceStats : RTCMediaSourceStats {
+    double audioLevel;
+    double totalAudioEnergy;
+    double totalSamplesDuration;
+    double echoReturnLoss;
+    double echoReturnLossEnhancement;
+};
+
+dictionary RTCVideoSourceStats : RTCMediaSourceStats {
+    unsigned long width;
+    unsigned long height;
+    unsigned long bitDepth;
+    unsigned long frames;
+    double framesPerSecond;
+};
+
+// FIXME 169662: missing RTCMediaStreamStats

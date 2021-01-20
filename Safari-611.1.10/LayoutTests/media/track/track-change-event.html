@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            var track;
+
+            function changed()
+            {
+                consoleWrite("EVENT(" + event.type + ")");
+
+                testExpected("event.target", video.textTracks);
+                testExpected("event instanceof window.Event", true);
+                testExpected("event.track", undefined);
+
+                consoleWrite("");
+                endTest();
+            }
+
+            function start()
+            {
+                findMediaElement();
+
+                consoleWrite("** Test a TextTrack created with addTextTrack().");
+                run("track = video.addTextTrack('subtitles', 'test', 'en')");
+
+                /* addTextTrack() defaults to "hidden", so "showing" should trigger
+                 * a "change" event. */
+                run("track.mode = 'showing'");
+                testExpected("video.textTracks.length", 1);
+
+                video.textTracks.addEventListener("change", changed);
+            }
+
+        </script>
+    </head>
+    <body onload="start()">
+        <p>Tests that the 'change' event is fired when a TextTrack's mode changes.</p>
+        <video>
+        </video>
+    </body>
+</html>

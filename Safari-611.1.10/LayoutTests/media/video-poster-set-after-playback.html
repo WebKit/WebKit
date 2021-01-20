@@ -1,0 +1,38 @@
+
+<html>
+<head>
+    <title>Setting poster after playing</title>
+    <script src=video-test.js></script>
+    <script src=media-file.js></script>
+    <script>
+
+        window.addEventListener('load', async () => {
+            failTestIn(15000);
+
+            findMediaElement();
+            video.src = findMediaFile("video", "content/test");
+
+            video.play();
+            await waitFor(video, 'playing');
+
+            await testExpectedEventually('internals.elementShouldDisplayPosterImage(video)', false);
+
+            video.pause();
+            await waitFor(video, 'pause');
+
+            video.poster = 'content/green.png';
+
+            if (window.internals)
+                await testExpectedEventually('internals.elementShouldDisplayPosterImage(video)', false);
+            else
+                consoleWrite("video should not be blank")
+
+            endTest();
+        });
+
+    </script>
+</head>
+<body>
+    <video controls muted></video>
+</body>
+</html>
