@@ -1,3 +1,21 @@
+2021-01-20  Youenn Fablet  <youenn@apple.com>
+
+        On page close, make sure to notify of capture state immediately
+        https://bugs.webkit.org/show_bug.cgi?id=220588
+
+        Reviewed by Geoffrey Garen.
+
+        If page is getting closed or reset (for instance in case of process swap), we immediately notify the client of the capture state,
+        instead of waiting for 3 seconds if capture just started.
+
+        Covered by API test.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isPlayingMediaDidChange):
+        (WebKit::WebPageProxy::updatePlayingMediaDidChange):
+        (WebKit::WebPageProxy::updateReportedMediaCaptureState):
+        * UIProcess/WebPageProxy.h:
+
 2021-01-19  Sihui Liu  <sihui_liu@appe.com>
 
         Update media state for active speech recognition as it uses audio capture

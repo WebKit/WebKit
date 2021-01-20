@@ -9033,13 +9033,26 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags newSta
 #endif
 
     if (!m_isClosed)
-        updatePlayingMediaDidChange(newState);
+        updatePlayingMediaDidChange(newState, CanDelayNotification::Yes);
 }
 
-void WebPageProxy::updatePlayingMediaDidChange(MediaProducer::MediaStateFlags newState)
+void WebPageProxy::updatePlayingMediaDidChange(MediaProducer::MediaStateFlags newState, CanDelayNotification canDelayNotification)
 {
-    if (newState == m_mediaState)
+#if ENABLE(MEDIA_STREAM)
+    auto updateMediaCaptureStateImmediatelyIfNeeded = [&] {
+        if (canDelayNotification == CanDelayNotification::No && m_updateReportedMediaCaptureStateTimer.isActive()) {
+            m_updateReportedMediaCaptureStateTimer.stop();
+            updateReportedMediaCaptureState();
+        }
+    };
+#endif
+
+    if (newState == m_mediaState) {
+#if ENABLE(MEDIA_STREAM)
+        updateMediaCaptureStateImmediatelyIfNeeded();
+#endif
         return;
+    }
 
 #if PLATFORM(MACCATALYST)
     // When the page starts playing media for the first time, make sure we register with
@@ -9074,6 +9087,7 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducer::MediaStateFlags ne
         if (m_userMediaPermissionRequestManager)
             m_userMediaPermissionRequestManager->captureStateChanged(oldMediaCaptureState, newMediaCaptureState);
     }
+    updateMediaCaptureStateImmediatelyIfNeeded();
 #endif
 
     activityStateDidChange({ ActivityState::IsAudible, ActivityState::IsCapturingMedia });
@@ -9102,6 +9116,8 @@ void WebPageProxy::updateReportedMediaCaptureState()
 
     if (!haveReportedCapture && willReportCapture)
         m_updateReportedMediaCaptureStateTimer.startOneShot(m_mediaCaptureReportingDelay);
+
+    RELEASE_LOG_IF_ALLOWED(WebRTC, "updateReportedMediaCaptureState: from %d to %d", m_reportedMediaCaptureState, activeCaptureState);
 
     m_reportedMediaCaptureState = activeCaptureState;
     m_uiClient->mediaCaptureStateDidChange(m_mediaState);
