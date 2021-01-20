@@ -68,6 +68,7 @@ protected:
 private:
     bool isPlugInImageElement() const final { return true; }
 
+    bool shouldBypassCSPForPDFPlugin(const String&) const;
     bool canLoadPlugInContent(const String& relativeURL, const String& mimeType) const;
     bool canLoadURL(const URL&) const;
 

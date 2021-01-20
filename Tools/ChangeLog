@@ -1,3 +1,16 @@
+2021-01-20  Kate Cheney  <katherine_cheney@apple.com>
+
+        Safari says "Blocked Plug-in" instead showing a PDF
+        https://bugs.webkit.org/show_bug.cgi?id=220665
+        <rdar://problem/64372944>
+
+        Reviewed by Darin Adler.
+
+        API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKPDFView.mm:
+        (TEST):
+
 2021-01-20  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Support alternative default pypi url on macOS (Follow-up fix)

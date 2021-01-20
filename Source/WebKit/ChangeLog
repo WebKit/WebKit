@@ -1,3 +1,20 @@
+2021-01-20  Kate Cheney  <katherine_cheney@apple.com>
+
+        Safari says "Blocked Plug-in" instead showing a PDF
+        https://bugs.webkit.org/show_bug.cgi?id=220665
+        <rdar://problem/64372944>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::shouldUsePDFPlugin const):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::shouldUsePDFPlugin const):
+
 2021-01-20  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] Ensure URI scheme handler is not registered multiple times

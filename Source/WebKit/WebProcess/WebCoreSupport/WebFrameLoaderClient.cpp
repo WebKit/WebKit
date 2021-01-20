@@ -1948,6 +1948,14 @@ void WebFrameLoaderClient::notifyPageOfAppBoundBehavior()
 }
 #endif
 
+#if ENABLE(PDFKIT_PLUGIN)
+bool WebFrameLoaderClient::shouldUsePDFPlugin(const String& contentType, StringView path) const
+{
+    auto* page = m_frame->page();
+    return page && page->shouldUsePDFPlugin(contentType, path);
+}
+#endif
+
 } // namespace WebKit
 
 #undef PREFIX_PARAMETERS

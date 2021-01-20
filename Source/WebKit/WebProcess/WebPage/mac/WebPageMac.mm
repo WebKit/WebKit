@@ -196,9 +196,13 @@ NSObject *WebPage::accessibilityObjectForMainFramePlugin()
     return nil;
 }
 
-bool WebPage::shouldUsePDFPlugin() const
+bool WebPage::shouldUsePDFPlugin(const String& contentType, StringView path) const
 {
-    return pdfPluginEnabled() && classFromPDFKit(@"PDFLayerController");
+    return pdfPluginEnabled()
+        && classFromPDFKit(@"PDFLayerController")
+        && (MIMETypeRegistry::isPDFOrPostScriptMIMEType(contentType)
+            || (contentType.isEmpty()
+                && (path.endsWithIgnoringASCIICase(".pdf") || path.endsWithIgnoringASCIICase(".ps"))));
 }
 
 typedef HashMap<String, String> SelectorNameMap;

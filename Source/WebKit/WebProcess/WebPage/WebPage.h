@@ -1083,7 +1083,6 @@ public:
     void setArtificialPluginInitializationDelayEnabled(bool enabled) { m_artificialPluginInitializationDelayEnabled = enabled; }
 
 #if PLATFORM(COCOA)
-    bool shouldUsePDFPlugin() const;
     bool pdfPluginEnabled() const { return m_pdfPluginEnabled; }
     void setPDFPluginEnabled(bool enabled) { m_pdfPluginEnabled = enabled; }
 
@@ -1378,6 +1377,10 @@ public:
 #endif
 
     void dispatchWheelEventWithoutScrolling(const WebWheelEvent&, CompletionHandler<void(bool)>&&);
+
+#if ENABLE(PDFKIT_PLUGIN)
+    bool shouldUsePDFPlugin(const String& contentType, StringView path) const;
+#endif
 
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);

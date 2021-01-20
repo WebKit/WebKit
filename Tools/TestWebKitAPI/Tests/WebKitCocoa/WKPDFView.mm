@@ -33,6 +33,7 @@
 #import "TestUIDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
@@ -357,6 +358,18 @@ TEST(PDFHUD, MultipleIFrames)
     }
     EXPECT_TRUE(hadLeftFrame);
     EXPECT_TRUE(hadRightFrame);
+}
+
+TEST(PDFHUD, LoadPDFTypeWithPluginsBlocked)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setOverrideContentSecurityPolicy:@"object-src 'none'"];
+    TestWKWebView *webView = [[[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()] autorelease];
+    [webView loadData:pdfData() MIMEType:@"application/pdf" characterEncodingName:@"" baseURL:[NSURL URLWithString:@"https://www.apple.com/testPath"]];
+    EXPECT_EQ(webView._pdfHUDs.count, 0u);
+    [webView _test_waitForDidFinishNavigation];
+    EXPECT_EQ(webView._pdfHUDs.count, 1u);
+    checkFrame(webView._pdfHUDs.anyObject.frame, 0, 0, 800, 600);
 }
 
 #endif
