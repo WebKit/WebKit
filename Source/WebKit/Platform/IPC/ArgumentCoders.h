@@ -89,7 +89,12 @@ template<typename T> struct ArgumentCoder<ArrayReference<T, arrayReferenceDynami
             return WTF::nullopt;
         if (!size)
             return ArrayReferenceType();
-        const uint8_t* data = decoder.decodeFixedLengthReference(size * sizeof(T), alignof(T));
+
+        auto dataSize = CheckedSize { size } * sizeof(T);
+        if (UNLIKELY(dataSize.hasOverflowed()))
+            return WTF::nullopt;
+
+        const uint8_t* data = decoder.decodeFixedLengthReference(dataSize.unsafeGet(), alignof(T));
         if (!data)
             return WTF::nullopt;
         return ArrayReferenceType(reinterpret_cast<const T*>(data), static_cast<size_t>(size));
