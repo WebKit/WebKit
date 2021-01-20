@@ -39,6 +39,7 @@ public:
             return adoptRef(*new DummySpeechRecognitionConnection());
         }
         void registerClient(SpeechRecognitionConnectionClient&) final { }
+        void unregisterClient(SpeechRecognitionConnectionClient&) final { }
         void start(SpeechRecognitionConnectionClientIdentifier, const String&, bool, bool, uint64_t, ClientOrigin&&) final { }
         void stop(SpeechRecognitionConnectionClientIdentifier) final { }
         void abort(SpeechRecognitionConnectionClientIdentifier) final { }

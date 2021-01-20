@@ -99,6 +99,15 @@ const char* SpeechRecognition::activeDOMObjectName() const
     return "SpeechRecognition";
 }
 
+void SpeechRecognition::stop()
+{
+    abortRecognition();
+    m_connection->unregisterClient(*this);
+
+    auto& document = downcast<Document>(*scriptExecutionContext());
+    document.setActiveSpeechRecognition(nullptr);
+}
+
 void SpeechRecognition::didStart()
 {
     if (m_state == State::Starting)
@@ -109,6 +118,9 @@ void SpeechRecognition::didStart()
 
 void SpeechRecognition::didStartCapturingAudio()
 {
+    auto& document = downcast<Document>(*scriptExecutionContext());
+    document.setActiveSpeechRecognition(this);
+
     queueTaskToDispatchEvent(*this, TaskSource::Speech, Event::create(eventNames().audiostartEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
@@ -134,6 +146,9 @@ void SpeechRecognition::didStopCapturingSound()
 
 void SpeechRecognition::didStopCapturingAudio()
 {
+    auto& document = downcast<Document>(*scriptExecutionContext());
+    document.setActiveSpeechRecognition(nullptr);
+
     queueTaskToDispatchEvent(*this, TaskSource::Speech, Event::create(eventNames().audioendEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 

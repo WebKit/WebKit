@@ -1,3 +1,14 @@
+2021-01-19  Sihui Liu  <sihui_liu@appe.com>
+
+        Update media state for active speech recognition as it uses audio capture
+        https://bugs.webkit.org/show_bug.cgi?id=220667
+
+        Reviewed by Youenn Fablet.
+
+        * WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.cpp:
+        (WebKit::WebSpeechRecognitionConnection::unregisterClient):
+        * WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.h:
+
 2021-01-19  Chris Dumez  <cdumez@apple.com>
 
         [Hardening] Protect against overflows in ArgumentCoder<ArrayReference<T, arrayReferenceDynamicExtent>>::decode()
