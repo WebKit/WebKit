@@ -602,4 +602,16 @@ void ImageLoader::resetLazyImageLoading(Document& document)
     m_lazyImageLoadState = LazyImageLoadState::None;
 }
 
+VisibleInViewportState ImageLoader::imageVisibleInViewport(const Document& document) const
+{
+    if (&element().document() != &document)
+        return VisibleInViewportState::No;
+
+    auto* renderer = element().renderer();
+    if (!is<RenderReplaced>(renderer))
+        return VisibleInViewportState::No;
+
+    return downcast<RenderReplaced>(*renderer).isContentLikelyVisibleInViewport() ? VisibleInViewportState::Yes : VisibleInViewportState::No;
+}
+
 }

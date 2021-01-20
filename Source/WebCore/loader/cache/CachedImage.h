@@ -97,6 +97,8 @@ public:
     bool stillNeedsLoad() const override { return !errorOccurred() && status() == Unknown && !isLoading(); }
     bool canSkipRevalidation(const CachedResourceLoader&, const CachedResourceRequest&) const;
 
+    bool isVisibleInViewport(const Document&) const;
+
 private:
     void clear();
 

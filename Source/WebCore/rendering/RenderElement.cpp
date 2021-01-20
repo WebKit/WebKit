@@ -1308,13 +1308,21 @@ bool RenderElement::mayCauseRepaintInsideViewport(const IntRect* optionalViewpor
     return visibleRect.intersects(enclosingIntRect(absoluteClippedOverflowRect()));
 }
 
-bool RenderElement::isVisibleInDocumentRect(const IntRect& documentRect) const
+bool RenderElement::isVisibleIgnoringGeometry() const
 {
     if (document().activeDOMObjectsAreSuspended())
         return false;
     if (style().visibility() != Visibility::Visible)
         return false;
     if (view().frameView().isOffscreen())
+        return false;
+
+    return true;
+}
+
+bool RenderElement::isVisibleInDocumentRect(const IntRect& documentRect) const
+{
+    if (!isVisibleIgnoringGeometry())
         return false;
 
     // Use background rect if we are the root or if we are the body and the background is propagated to the root.
@@ -1328,7 +1336,6 @@ bool RenderElement::isVisibleInDocumentRect(const IntRect& documentRect) const
         ASSERT(is<HTMLHtmlElement>(rootRenderer.element()));
         // FIXME: Should share body background propagation code.
         backgroundIsPaintedByRoot = !rootRenderer.hasBackground();
-
     }
 
     LayoutRect backgroundPaintingRect = backgroundIsPaintedByRoot ? view().backgroundRect() : absoluteClippedOverflowRect();
@@ -1392,6 +1399,14 @@ VisibleInViewportState RenderElement::imageFrameAvailable(CachedImage& image, Im
         element()->dispatchWebKitImageReadyEventForTesting();
 
     return isVisible ? VisibleInViewportState::Yes : VisibleInViewportState::No;
+}
+
+VisibleInViewportState RenderElement::imageVisibleInViewport(const Document& document) const
+{
+    if (&this->document() != &document)
+        return VisibleInViewportState::No;
+
+    return isVisibleInViewport() ? VisibleInViewportState::Yes : VisibleInViewportState::No;
 }
 
 void RenderElement::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)

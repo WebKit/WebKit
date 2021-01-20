@@ -43,6 +43,8 @@ public:
     LayoutSize intrinsicSize() const final { return m_intrinsicSize; }
     
     RoundedRect roundedContentBoxRect() const;
+    
+    bool isContentLikelyVisibleInViewport();
 
 protected:
     RenderReplaced(Element&, RenderStyle&&);

@@ -115,6 +115,8 @@ private:
     
     void timerFired();
 
+    VisibleInViewportState imageVisibleInViewport(const Document&) const override;
+
     Element& m_element;
     CachedResourceHandle<CachedImage> m_image;
     Timer m_derefElementTimer;

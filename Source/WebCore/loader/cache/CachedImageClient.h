@@ -28,6 +28,7 @@
 namespace WebCore {
 
 class CachedImage;
+class Document;
 class IntRect;
 
 enum class VisibleInViewportState { Unknown, Yes, No };
@@ -46,6 +47,7 @@ public:
 
     // Called when a new decoded frame for a large image is available or when an animated image is ready to advance to the next frame.
     virtual VisibleInViewportState imageFrameAvailable(CachedImage& image, ImageAnimatingState, const IntRect* changeRect) { imageChanged(&image, changeRect); return VisibleInViewportState::No; }
+    virtual VisibleInViewportState imageVisibleInViewport(const Document&) const { return VisibleInViewportState::No; }
 
     virtual void didRemoveCachedImageClient(CachedImage&) { }
 

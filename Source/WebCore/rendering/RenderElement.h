@@ -131,6 +131,7 @@ public:
     bool repaintAfterLayoutIfNeeded(const RenderLayerModelObject* repaintContainer, const LayoutRect& oldBounds, const LayoutRect& oldOutlineBox, const LayoutRect* newBoundsPtr = nullptr, const LayoutRect* newOutlineBoxPtr = nullptr);
 
     bool borderImageIsLoadedAndCanBeRendered() const;
+    bool isVisibleIgnoringGeometry() const;
     bool mayCauseRepaintInsideViewport(const IntRect* visibleRect = nullptr) const;
     bool isVisibleInDocumentRect(const IntRect& documentRect) const;
 
@@ -295,7 +296,7 @@ protected:
 
     void removeFromRenderFragmentedFlowIncludingDescendants(bool shouldUpdateState);
     void adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded();
-    
+
     bool isVisibleInViewport() const;
 
 private:
@@ -327,6 +328,7 @@ private:
 
     bool canDestroyDecodedData() final { return !isVisibleInViewport(); }
     VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect* changeRect) final;
+    VisibleInViewportState imageVisibleInViewport(const Document&) const final;
     void didRemoveCachedImageClient(CachedImage&) final;
     void scheduleRenderingUpdateForImage(CachedImage&) final;
 

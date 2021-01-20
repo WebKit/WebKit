@@ -192,14 +192,9 @@ static CachedResourceHandle<CachedResource> createResource(CachedResourceRequest
 }
 
 CachedResourceLoader::CachedResourceLoader(DocumentLoader* documentLoader)
-    : m_document(nullptr)
-    , m_documentLoader(documentLoader)
-    , m_requestCount(0)
+    : m_documentLoader(documentLoader)
     , m_unusedPreloadsTimer(*this, &CachedResourceLoader::warnUnusedPreloads)
     , m_garbageCollectDocumentResourcesTimer(*this, &CachedResourceLoader::garbageCollectDocumentResources)
-    , m_autoLoadImages(true)
-    , m_imagesEnabled(true)
-    , m_allowStaleResources(false)
 {
 }
 
@@ -1524,6 +1519,31 @@ void CachedResourceLoader::clearPreloads(ClearPreloadsMode mode)
             MemoryCache::singleton().remove(*resource);
     }
     m_preloads = WTFMove(remainingLinkPreloads);
+}
+
+Vector<CachedResource*> CachedResourceLoader::visibleResourcesToPrioritize()
+{
+    if (!document())
+        return { };
+
+    Vector<CachedResource*> toPrioritize;
+
+    for (auto& resource : m_documentResources.values()) {
+        if (!is<CachedImage>(resource.get()))
+            continue;
+        auto& cachedImage = downcast<CachedImage>(*resource);
+        if (!cachedImage.isLoading())
+            continue;
+        if (!cachedImage.url().protocolIsInHTTPFamily())
+            continue;
+        if (!cachedImage.loader())
+            continue;
+        if (!cachedImage.isVisibleInViewport(*document()))
+            continue;
+        toPrioritize.append(&cachedImage);
+    }
+
+    return toPrioritize;
 }
 
 const ResourceLoaderOptions& CachedResourceLoader::defaultCachedResourceOptions()
