@@ -113,6 +113,7 @@ private:
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
     void doneDeferringTouchStart(bool preventNativeGestures) override;
+    void doneDeferringTouchEnd(bool preventNativeGestures) override;
 #endif
     RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
     Ref<WebCore::ValidationBubble> createValidationBubble(const String& message, const WebCore::ValidationBubble::Settings&) final;

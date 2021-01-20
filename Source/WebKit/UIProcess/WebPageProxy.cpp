@@ -2892,10 +2892,15 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
         didReleaseAllTouchPoints();
     });
 
+    bool isTouchStart = event.type() == WebEvent::TouchStart;
+    bool isTouchEnd = event.type() == WebEvent::TouchEnd;
+
     TrackingType touchEventsTrackingType = touchEventTrackingType(event);
     if (touchEventsTrackingType == TrackingType::NotTracking) {
-        if (!isHandlingPreventableTouchStart())
+        if (isTouchStart)
             pageClient().doneDeferringTouchStart(false);
+        if (isTouchEnd)
+            pageClient().doneDeferringTouchEnd(false);
         return;
     }
 
@@ -2909,18 +2914,30 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
         event.setCanPreventNativeGestures(false);
         handleUnpreventableTouchEvent(event);
         didReceiveEvent(event.type(), false);
-        if (!isHandlingPreventableTouchStart())
+        if (isTouchStart)
             pageClient().doneDeferringTouchStart(false);
+        if (isTouchEnd)
+            pageClient().doneDeferringTouchEnd(false);
         return;
     }
 
-    if (event.type() == WebEvent::TouchStart) {
-        ++m_handlingPreventableTouchStartCount;
+    if (isTouchStart || isTouchEnd) {
+        if (isTouchStart)
+            ++m_handlingPreventableTouchStartCount;
+
+        if (isTouchEnd)
+            ++m_handlingPreventableTouchEndCount;
+
         Function<void(bool, CallbackBase::Error)> completionHandler = [this, protectedThis = makeRef(*this), event](bool handled, CallbackBase::Error error) {
             bool didFinishDeferringTouchStart = false;
             ASSERT_IMPLIES(event.type() == WebEvent::TouchStart, m_handlingPreventableTouchStartCount);
             if (event.type() == WebEvent::TouchStart && m_handlingPreventableTouchStartCount)
                 didFinishDeferringTouchStart = !--m_handlingPreventableTouchStartCount;
+
+            bool didFinishDeferringTouchEnd = false;
+            ASSERT_IMPLIES(event.type() == WebEvent::TouchEnd, m_handlingPreventableTouchEndCount);
+            if (event.type() == WebEvent::TouchEnd && m_handlingPreventableTouchEndCount)
+                didFinishDeferringTouchEnd = !--m_handlingPreventableTouchEndCount;
 
             bool handledOrFailedWithError = handled || error != CallbackBase::Error::None || m_handledSynchronousTouchEventWhileDispatchingPreventableTouchStart;
             if (!isHandlingPreventableTouchStart())
@@ -2934,6 +2951,9 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
 
             if (didFinishDeferringTouchStart)
                 pageClient().doneDeferringTouchStart(handledOrFailedWithError);
+
+            if (didFinishDeferringTouchEnd)
+                pageClient().doneDeferringTouchEnd(handledOrFailedWithError);
         };
 
         auto callbackID = m_callbacks.put(WTFMove(completionHandler), m_process->throttler().backgroundActivity("WebPageProxy::handlePreventableTouchEvent"_s));

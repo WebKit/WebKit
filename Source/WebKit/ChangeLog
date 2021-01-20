@@ -1,3 +1,71 @@
+2021-01-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] "touchend" events should be dispatched and handled asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=220256
+        <rdar://problem/64912551>
+
+        Reviewed by Tim Horton.
+
+        Allow active "touchend" event listeners to send asynchronous (non-blocking) IPC messages to the web process by
+        augmenting the content view's deferring gesture recognizers. See below for more details.
+
+        Test: fast/events/touch/ios/click-event-after-touchend.html
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handlePreventableTouchEvent):
+
+        Send both "touchstart" and "touchend" events asynchronously.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isHandlingPreventableTouchEnd const):
+
+        In a similar way to how we defer "touchstart", add a counter to keep track of when we're handling an active
+        (preventable) touchend, such that we can defer all native gestures that can be prevented by touchend until after
+        the page is done handling the event.
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::doneDeferringTouchEnd):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setUpInteraction]):
+
+        Add a new set of deferring gesture recognizers that can be used to defer all tap gestures on the content view,
+        due to active "touchend" event listeners. This works because currently, the only default gestures in WebKit
+        that can be prevented by calling `preventDefault()` on "touchend" events are tap gestures.
+
+        (-[WKContentView cleanUpInteraction]):
+        (-[WKContentView _removeDefaultGestureRecognizers]):
+        (-[WKContentView _addDefaultGestureRecognizers]):
+        (-[WKContentView _webTouchEventsRecognized:]):
+        (-[WKContentView _deferringGestures]):
+        (-[WKContentView _touchEndDeferringGestures]):
+        (-[WKContentView _doneDeferringTouchEnd:]):
+
+        Add a hook to "lift" the gesture gate upon touchend, which allows all deferred tap gestures to either fail (in
+        the case where the page prevented default), or recognize (in the case where the page did not prevent default).
+
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+
+        Replace `_touchStartDeferringGestures` with `_deferringGestures` in several call sites that need to iterate over
+        all deferring gestures on the content view.
+
+        (-[WKContentView _singleTapDidReset:]):
+
+        When resetting the single tap gesture, ensure that the tap highlight view is removed by calling
+        `-_finishInteraction`; this is because an active touchend event handler may now defer `-_singleTapRecognized:`
+        until after the ending the touch, which causes `-_showTapHighlight` to be called without a matching call to
+        remove the highlight. Since we know that the synthetic tap gesture must eventually be reset after recognition,
+        this is a more suitable catch-all for removing the tap highlight.
+
+        (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+
+        For the "touchend" deferring gesture recognizers, partition all tap gestures on the content view into three
+        subgraphs that mirror the extant gesture subgraphs currently used for the "touchstart" deferring gestures. This
+        ensures that synthetic clicks always remain fast when the blocking double tap gesture is disabled, and that
+        other tap gestures (such as the text interaction multi-tap gesture) are still immediately reset.
+
 2021-01-20  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Netflix controls do not fade out after entering fullscreen

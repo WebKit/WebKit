@@ -452,6 +452,11 @@ void PageClientImpl::doneDeferringTouchStart(bool preventNativeGestures)
     [m_contentView _doneDeferringTouchStart:preventNativeGestures];
 }
 
+void PageClientImpl::doneDeferringTouchEnd(bool preventNativeGestures)
+{
+    [m_contentView _doneDeferringTouchEnd:preventNativeGestures];
+}
+
 #endif // ENABLE(IOS_TOUCH_EVENTS)
 
 RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy&)

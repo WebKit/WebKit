@@ -1742,6 +1742,7 @@ public:
     void setOrientationForMediaCapture(uint64_t);
 
     bool isHandlingPreventableTouchStart() const { return m_handlingPreventableTouchStartCount; }
+    bool isHandlingPreventableTouchEnd() const { return m_handlingPreventableTouchEndCount; }
 
     bool hasQueuedKeyEvent() const;
     const NativeWebKeyboardEvent& firstQueuedKeyEvent() const;
@@ -2620,6 +2621,7 @@ private:
 
     bool m_handledSynchronousTouchEventWhileDispatchingPreventableTouchStart { false };
     uint64_t m_handlingPreventableTouchStartCount { 0 };
+    uint64_t m_handlingPreventableTouchEndCount { 0 };
 
 #if ENABLE(INPUT_TYPE_COLOR)
     RefPtr<WebColorPicker> m_colorPicker;

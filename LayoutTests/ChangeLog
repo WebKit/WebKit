@@ -1,3 +1,18 @@
+2021-01-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] "touchend" events should be dispatched and handled asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=220256
+        <rdar://problem/64912551>
+
+        Reviewed by Tim Horton.
+
+        Add a layout test to verify that calling `preventDefault()` in an active `touchend` event listener prevents a
+        click event from being dispatched, and that a click event is dispatched when there is an active `touchend` event
+        listener which does not prevent default.
+
+        * fast/events/touch/ios/click-event-after-touchend-expected.txt: Added.
+        * fast/events/touch/ios/click-event-after-touchend.html: Added.
+
 2021-01-20  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (Big Sur): Some tests in http/tests/security/http-0.9 flakily fail

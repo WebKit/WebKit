@@ -245,6 +245,9 @@ private:
     RetainPtr<WKDeferringGestureRecognizer> _touchStartDeferringGestureRecognizerForImmediatelyResettableGestures;
     RetainPtr<WKDeferringGestureRecognizer> _touchStartDeferringGestureRecognizerForDelayedResettableGestures;
     RetainPtr<WKDeferringGestureRecognizer> _touchStartDeferringGestureRecognizerForSyntheticTapGestures;
+    RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForImmediatelyResettableGestures;
+    RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForDelayedResettableGestures;
+    RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForSyntheticTapGestures;
 #endif
     RetainPtr<UIWebTouchEventsGestureRecognizer> _touchEventGestureRecognizer;
 
@@ -544,6 +547,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
 - (void)_doneDeferringTouchStart:(BOOL)preventNativeGestures;
+- (void)_doneDeferringTouchEnd:(BOOL)preventNativeGestures;
 #endif
 - (void)_commitPotentialTapFailed;
 - (void)_didNotHandleTapAsClick:(const WebCore::IntPoint&)point;

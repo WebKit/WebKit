@@ -773,7 +773,16 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _touchStartDeferringGestureRecognizerForSyntheticTapGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
     [_touchStartDeferringGestureRecognizerForSyntheticTapGestures setName:@"Touch start deferrer (synthetic tap)"];
 
-    for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures) {
+    _touchEndDeferringGestureRecognizerForImmediatelyResettableGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
+    [_touchEndDeferringGestureRecognizerForImmediatelyResettableGestures setName:@"Touch end deferrer (immediate reset)"];
+
+    _touchEndDeferringGestureRecognizerForDelayedResettableGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
+    [_touchEndDeferringGestureRecognizerForDelayedResettableGestures setName:@"Touch end deferrer (delayed reset)"];
+
+    _touchEndDeferringGestureRecognizerForSyntheticTapGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
+    [_touchEndDeferringGestureRecognizerForSyntheticTapGestures setName:@"Touch end deferrer (synthetic tap)"];
+
+    for (WKDeferringGestureRecognizer *gesture in self._deferringGestures) {
         gesture.delegate = self;
         [self addGestureRecognizer:gesture];
     }
@@ -949,7 +958,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self removeGestureRecognizer:_touchEventGestureRecognizer.get()];
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures) {
+    for (WKDeferringGestureRecognizer *gesture in self._deferringGestures) {
         gesture.delegate = nil;
         [self removeGestureRecognizer:gesture];
     }
@@ -1080,7 +1089,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 - (void)_removeDefaultGestureRecognizers
 {
 #if ENABLE(IOS_TOUCH_EVENTS)
-    for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures)
+    for (WKDeferringGestureRecognizer *gesture in self._deferringGestures)
         [self removeGestureRecognizer:gesture];
 #endif
     [self removeGestureRecognizer:_touchEventGestureRecognizer.get()];
@@ -1107,7 +1116,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 - (void)_addDefaultGestureRecognizers
 {
 #if ENABLE(IOS_TOUCH_EVENTS)
-    for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures)
+    for (WKDeferringGestureRecognizer *gesture in self._deferringGestures)
         [self addGestureRecognizer:gesture];
 #endif
     [self addGestureRecognizer:_touchEventGestureRecognizer.get()];
@@ -1546,12 +1555,18 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
             [self.window makeKeyWindow];
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-        if (!_page->isHandlingPreventableTouchStart()) {
-            for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures) {
+        auto stopDeferringNativeGesturesIfNeeded = [] (NSArray<WKDeferringGestureRecognizer *> *deferringGestures) {
+            for (WKDeferringGestureRecognizer *gesture in deferringGestures) {
                 if (gesture.state == UIGestureRecognizerStatePossible)
                     gesture.state = UIGestureRecognizerStateFailed;
             }
-        }
+        };
+
+        if (!_page->isHandlingPreventableTouchStart())
+            stopDeferringNativeGesturesIfNeeded(self._touchStartDeferringGestures);
+
+        if (!_page->isHandlingPreventableTouchEnd())
+            stopDeferringNativeGesturesIfNeeded(self._touchEndDeferringGestures);
 #endif // ENABLE(IOS_TOUCH_EVENTS)
     }
 #endif // ENABLE(TOUCH_EVENTS)
@@ -1732,6 +1747,14 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 
+- (NSArray<WKDeferringGestureRecognizer *> *)_deferringGestures
+{
+    auto gestures = [NSMutableArray arrayWithCapacity:6];
+    [gestures addObjectsFromArray:self._touchStartDeferringGestures];
+    [gestures addObjectsFromArray:self._touchEndDeferringGestures];
+    return gestures;
+}
+
 - (NSArray<WKDeferringGestureRecognizer *> *)_touchStartDeferringGestures
 {
     WKDeferringGestureRecognizer *recognizers[3];
@@ -1746,9 +1769,29 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
     return [NSArray arrayWithObjects:recognizers count:count];
 }
 
+- (NSArray<WKDeferringGestureRecognizer *> *)_touchEndDeferringGestures
+{
+    WKDeferringGestureRecognizer *recognizers[3];
+    NSUInteger count = 0;
+    auto add = [&] (const RetainPtr<WKDeferringGestureRecognizer>& recognizer) {
+        if (recognizer)
+            recognizers[count++] = recognizer.get();
+    };
+    add(_touchEndDeferringGestureRecognizerForImmediatelyResettableGestures);
+    add(_touchEndDeferringGestureRecognizerForDelayedResettableGestures);
+    add(_touchEndDeferringGestureRecognizerForSyntheticTapGestures);
+    return [NSArray arrayWithObjects:recognizers count:count];
+}
+
 - (void)_doneDeferringTouchStart:(BOOL)preventNativeGestures
 {
     for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures)
+        [gesture setDefaultPrevented:preventNativeGestures];
+}
+
+- (void)_doneDeferringTouchEnd:(BOOL)preventNativeGestures
+{
+    for (WKDeferringGestureRecognizer *gesture in self._touchEndDeferringGestures)
         [gesture setDefaultPrevented:preventNativeGestures];
 }
 
@@ -2149,7 +2192,7 @@ static Class tapAndAHalfRecognizerClass()
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer*)otherGestureRecognizer
 {
 #if ENABLE(IOS_TOUCH_EVENTS)
-    for (WKDeferringGestureRecognizer *gesture in self._touchStartDeferringGestures) {
+    for (WKDeferringGestureRecognizer *gesture in self._deferringGestures) {
         if (isSamePair(gestureRecognizer, otherGestureRecognizer, _touchEventGestureRecognizer.get(), gesture))
             return YES;
     }
@@ -2841,6 +2884,8 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     auto actionsToPerform = std::exchange(_actionsToPerformAfterResettingSingleTapGestureRecognizer, { });
     for (const auto& action : actionsToPerform)
         action();
+
+    [self _finishInteraction];
 }
 
 - (void)_doubleTapDidFail:(UITapGestureRecognizer *)gestureRecognizer
@@ -7339,10 +7384,23 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
         return NO;
     };
 
-    if ([gestureRecognizer isKindOfClass:WKSyntheticTapGestureRecognizer.class])
+    BOOL isSyntheticTap = [gestureRecognizer isKindOfClass:WKSyntheticTapGestureRecognizer.class];
+    BOOL mayDelayReset = mayDelayResetOfContainingSubgraph(gestureRecognizer);
+    if ([gestureRecognizer isKindOfClass:UITapGestureRecognizer.class]) {
+        if (deferringGestureRecognizer == _touchEndDeferringGestureRecognizerForSyntheticTapGestures)
+            return isSyntheticTap;
+
+        if (deferringGestureRecognizer == _touchEndDeferringGestureRecognizerForDelayedResettableGestures)
+            return !isSyntheticTap && mayDelayReset;
+
+        if (deferringGestureRecognizer == _touchEndDeferringGestureRecognizerForImmediatelyResettableGestures)
+            return !isSyntheticTap && !mayDelayReset;
+    }
+
+    if (isSyntheticTap)
         return deferringGestureRecognizer == _touchStartDeferringGestureRecognizerForSyntheticTapGestures;
 
-    if (mayDelayResetOfContainingSubgraph(gestureRecognizer))
+    if (mayDelayReset)
         return deferringGestureRecognizer == _touchStartDeferringGestureRecognizerForDelayedResettableGestures;
 
     return deferringGestureRecognizer == _touchStartDeferringGestureRecognizerForImmediatelyResettableGestures;
