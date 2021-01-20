@@ -2259,5 +2259,3 @@ webkit.org/b/220332 [ BigSur+ ] imported/w3c/web-platform-tests/mimesniff/mime-t
 webkit.org/b/220554 [ BigSur+ ] imported/w3c/web-platform-tests/beacon/beacon-cors.sub.window.html [ Pass Failure ]
 
 webkit.org/b/220552 [ BigSur+ ] media/media-source/media-source-webm-init-inside-segment.html [ Failure ]
-
-webkit.org/b/220551 [ BigSur+ ] platform/mac/fast/text/international/bidi-fallback-font-weight.html [ Failure ]

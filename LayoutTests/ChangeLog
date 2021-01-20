@@ -1,3 +1,18 @@
+2021-01-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [ Big Sur ] platform/mac/fast/text/international/bidi-fallback-font-weight.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=220756
+        <rdar://problem/73048055>
+
+        Unreviewed test gardening.
+
+        * platform/mac-catalina/fast/text/international/bidi-fallback-font-weight-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/bidi-fallback-font-weight-expected.txt.
+        * platform/mac-catalina/platform/mac/fast/text/international/bidi-fallback-font-weight-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/bidi-fallback-font-weight-expected.txt.
+        * platform/mac-mojave/fast/text/international/bidi-fallback-font-weight-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/bidi-fallback-font-weight-expected.txt.
+        * platform/mac-mojave/platform/mac/fast/text/international/bidi-fallback-font-weight-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/bidi-fallback-font-weight-expected.txt.
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/text/international/bidi-fallback-font-weight-expected.txt:
+
 2021-01-20  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [WPE] focus-visible-003.html and focus-visible-004.html are timing out in input tags
