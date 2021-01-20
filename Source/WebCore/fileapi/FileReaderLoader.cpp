@@ -279,11 +279,6 @@ RefPtr<ArrayBuffer> FileReaderLoader::arrayBufferResult() const
     return ArrayBuffer::create(*m_rawData);
 }
 
-RefPtr<JSC::ArrayBuffer> FileReaderLoader::takeRawData()
-{
-    return std::exchange(m_rawData, nullptr);
-}
-
 String FileReaderLoader::stringResult()
 {
     ASSERT(m_readType != ReadAsArrayBuffer && m_readType != ReadAsBlob);
