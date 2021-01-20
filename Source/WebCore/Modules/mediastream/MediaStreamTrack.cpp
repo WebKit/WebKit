@@ -106,7 +106,8 @@ MediaStreamTrack::~MediaStreamTrack()
 
     allCaptureTracks().remove(this);
 
-    ASSERT(m_private->type() != RealtimeMediaSource::Type::Audio || !PlatformMediaSessionManager::sharedManager().hasAudioCaptureSource(*this));
+    if (m_private->type() == RealtimeMediaSource::Type::Audio)
+        PlatformMediaSessionManager::sharedManager().removeAudioCaptureSource(*this);
 }
 
 const AtomString& MediaStreamTrack::kind() const

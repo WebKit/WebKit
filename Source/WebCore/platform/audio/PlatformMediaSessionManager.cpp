@@ -578,7 +578,6 @@ void PlatformMediaSessionManager::addAudioCaptureSource(PlatformMediaSession::Au
 
 void PlatformMediaSessionManager::removeAudioCaptureSource(PlatformMediaSession::AudioCaptureSource& source)
 {
-    ASSERT(m_audioCaptureSources.contains(source));
     m_audioCaptureSources.remove(source);
     scheduleUpdateSessionState();
 }
