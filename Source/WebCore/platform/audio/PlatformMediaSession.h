@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "DocumentIdentifier.h"
+#include "MediaSessionGroupIdentifier.h"
 #include "MediaSessionIdentifier.h"
 #include "Timer.h"
 #include <wtf/LoggerHelper.h>
@@ -252,7 +252,7 @@ public:
 
     virtual bool isPlayingOnSecondScreen() const { return false; }
 
-    virtual DocumentIdentifier hostingDocumentIdentifier() const = 0;
+    virtual MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const = 0;
 
     virtual bool hasMediaStreamSource() const { return false; }
 

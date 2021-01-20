@@ -3063,6 +3063,11 @@ MediaPlayer::MovieLoadType HTMLMediaElement::movieLoadType() const
     return m_player ? m_player->movieLoadType() : MediaPlayer::MovieLoadType::Unknown;
 }
 
+MediaSessionGroupIdentifier HTMLMediaElement::mediaSessionGroupIdentifier() const
+{
+    return document().page() ? document().page()->mediaSessionGroupIdentifier() : MediaSessionGroupIdentifier { };
+}
+
 bool HTMLMediaElement::hasAudio() const
 {
     return m_player ? m_player->hasAudio() : false;

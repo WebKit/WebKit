@@ -26,7 +26,6 @@
 #ifndef PlatformMediaSessionManager_h
 #define PlatformMediaSessionManager_h
 
-#include "DocumentIdentifier.h"
 #include "GenericTaskQueue.h"
 #include "MediaSessionIdentifier.h"
 #include "PlatformMediaSession.h"
@@ -94,14 +93,14 @@ public:
     WEBCORE_EXPORT void processWillSuspend();
     WEBCORE_EXPORT void processDidResume();
 
-    bool mediaPlaybackIsPaused(DocumentIdentifier);
-    void pauseAllMediaPlaybackForDocument(DocumentIdentifier);
+    bool mediaPlaybackIsPaused(MediaSessionGroupIdentifier);
+    void pauseAllMediaPlaybackForGroup(MediaSessionGroupIdentifier);
     WEBCORE_EXPORT void stopAllMediaPlaybackForProcess();
 
-    void suspendAllMediaPlaybackForDocument(DocumentIdentifier);
-    void resumeAllMediaPlaybackForDocument(DocumentIdentifier);
-    void suspendAllMediaBufferingForDocument(DocumentIdentifier);
-    void resumeAllMediaBufferingForDocument(DocumentIdentifier);
+    void suspendAllMediaPlaybackForGroup(MediaSessionGroupIdentifier);
+    void resumeAllMediaPlaybackForGroup(MediaSessionGroupIdentifier);
+    void suspendAllMediaBufferingForGroup(MediaSessionGroupIdentifier);
+    void resumeAllMediaBufferingForGroup(MediaSessionGroupIdentifier);
 
     enum SessionRestrictionFlags {
         NoRestrictions = 0,
@@ -161,7 +160,7 @@ protected:
     virtual void removeSession(PlatformMediaSession&);
 
     void forEachSession(const Function<void(PlatformMediaSession&)>&);
-    void forEachDocumentSession(DocumentIdentifier, const Function<void(PlatformMediaSession&)>&);
+    void forEachSessionInGroup(MediaSessionGroupIdentifier, const Function<void(PlatformMediaSession&)>&);
     bool anyOfSessions(const Function<bool(const PlatformMediaSession&)>&) const;
 
     bool isApplicationInBackground() const { return m_isApplicationInBackground; }

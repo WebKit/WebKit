@@ -455,10 +455,10 @@ void AudioContext::suspendPlayback()
     });
 }
 
-DocumentIdentifier AudioContext::hostingDocumentIdentifier() const
+MediaSessionGroupIdentifier AudioContext::mediaSessionGroupIdentifier() const
 {
     auto* document = downcast<Document>(m_scriptExecutionContext);
-    return document ? document->identifier() : DocumentIdentifier { };
+    return document && document->page() ? document->page()->mediaSessionGroupIdentifier() : MediaSessionGroupIdentifier { };
 }
 
 bool AudioContext::isSuspended() const

@@ -1120,16 +1120,6 @@ public:
     void registerForVisibilityStateChangedCallbacks(VisibilityChangeClient&);
     void unregisterForVisibilityStateChangedCallbacks(VisibilityChangeClient&);
 
-#if ENABLE(VIDEO)
-    bool mediaPlaybackExists();
-    bool mediaPlaybackIsPaused();
-    void pauseAllMediaPlayback();
-    void suspendAllMediaPlayback();
-    void resumeAllMediaPlayback();
-    void suspendAllMediaBuffering();
-    void resumeAllMediaBuffering();
-#endif
-
     WEBCORE_EXPORT void setShouldCreateRenderers(bool);
     bool shouldCreateRenderers();
 

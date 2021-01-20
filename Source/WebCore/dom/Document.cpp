@@ -756,10 +756,6 @@ Document::~Document()
     if (m_cachedResourceLoader->document() == this)
         m_cachedResourceLoader->setDocument(nullptr);
 
-#if ENABLE(VIDEO)
-    pauseAllMediaPlayback();
-#endif
-
     // We must call clearRareData() here since a Document class inherits TreeScope
     // as well as Node. See a comment on TreeScope.h for the reason.
     if (hasRareData())
@@ -1858,50 +1854,6 @@ void Document::forEachMediaElement(const Function<void(HTMLMediaElement&)>& func
         elements.append(*element);
     for (auto& element : elements)
         function(element);
-}
-
-bool Document::mediaPlaybackExists()
-{
-    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        return !platformMediaSessionManager->hasNoSession();
-    return false;
-}
-
-bool Document::mediaPlaybackIsPaused()
-{
-    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        return platformMediaSessionManager->mediaPlaybackIsPaused(identifier());
-    return false;
-}
-
-void Document::pauseAllMediaPlayback()
-{
-    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        platformMediaSessionManager->pauseAllMediaPlaybackForDocument(identifier());
-}
-
-void Document::suspendAllMediaPlayback()
-{
-    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        platformMediaSessionManager->suspendAllMediaPlaybackForDocument(identifier());
-}
-
-void Document::resumeAllMediaPlayback()
-{
-    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        platformMediaSessionManager->resumeAllMediaPlaybackForDocument(identifier());
-}
-
-void Document::suspendAllMediaBuffering()
-{
-    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        platformMediaSessionManager->suspendAllMediaBufferingForDocument(identifier());
-}
-
-void Document::resumeAllMediaBuffering()
-{
-    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
-        platformMediaSessionManager->resumeAllMediaBufferingForDocument(identifier());
 }
 
 #endif

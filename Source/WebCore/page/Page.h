@@ -30,6 +30,7 @@
 #include "LayoutRect.h"
 #include "LengthBox.h"
 #include "MediaProducer.h"
+#include "MediaSessionGroupIdentifier.h"
 #include "Pagination.h"
 #include "PlaybackTargetClientContextIdentifier.h"
 #include "RTCController.h"
@@ -694,6 +695,7 @@ public:
     WEBCORE_EXPORT void setMuted(MediaProducer::MutedStateFlags);
     WEBCORE_EXPORT void stopMediaCapture();
 
+    MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const;
     WEBCORE_EXPORT bool mediaPlaybackExists();
     WEBCORE_EXPORT bool mediaPlaybackIsPaused();
     WEBCORE_EXPORT void pauseAllMediaPlayback();
@@ -1137,6 +1139,7 @@ private:
     MonotonicTime m_lastRenderingUpdateTimestamp;
     
     bool m_textInteractionEnabled { true };
+    mutable MediaSessionGroupIdentifier m_mediaSessionGroupIdentifier;
 };
 
 inline PageGroup& Page::group()

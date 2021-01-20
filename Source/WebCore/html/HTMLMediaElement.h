@@ -197,7 +197,7 @@ public:
     
     bool inActiveDocument() const { return m_inActiveDocument; }
 
-    DocumentIdentifier hostingDocumentIdentifier() const final { return document().identifier(); }
+    MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const final;
 
 // DOM API
 // error state
