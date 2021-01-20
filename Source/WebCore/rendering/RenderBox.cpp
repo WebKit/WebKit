@@ -648,9 +648,8 @@ LayoutUnit RenderBox::constrainLogicalWidthInFragmentByMinMax(LayoutUnit logical
     const RenderStyle& styleToUse = style();
 
     if (shouldComputeLogicalHeightFromAspectRatio()) {
-        LayoutUnit logicalMinWidth, logicalMaxWidth;
-        std::tie(logicalMinWidth, logicalMaxWidth) = computeMinMaxLogicalWidthFromAspectRatio();
-        logicalWidth = std::max(logicalMinWidth, std::min(logicalWidth, logicalMaxWidth));
+        auto [logicalMinWidth, logicalMaxWidth] = computeMinMaxLogicalWidthFromAspectRatio();
+        logicalWidth = std::clamp(logicalWidth, logicalMinWidth, logicalMaxWidth);
     }
 
     if (!styleToUse.logicalMaxWidth().isUndefined())
