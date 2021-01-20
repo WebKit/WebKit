@@ -864,7 +864,11 @@ bool Quirks::shouldEnableLegacyGetUserMediaQuirk() const
     if (!needsQuirks())
         return false;
 
-    return m_document->url().protocolIs("https") && equalLettersIgnoringASCIICase(m_document-> url().host(), "www.baidu.com");
+    if (!m_shouldEnableLegacyGetUserMediaQuirk) {
+        auto host = m_document->securityOrigin().host();
+        m_shouldEnableLegacyGetUserMediaQuirk = host == "www.baidu.com" || host == "www.warbyparker.com";
+    }
+    return m_shouldEnableLegacyGetUserMediaQuirk.value();
 }
 #endif
 

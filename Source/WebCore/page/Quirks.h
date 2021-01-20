@@ -173,6 +173,9 @@ private:
     mutable Optional<bool> m_needsHDRPixelDepthQuirk;
     mutable Optional<bool> m_needsBlackFullscreenBackgroundQuirk;
     mutable Optional<bool> m_requiresUserGestureToPauseInPictureInPicture;
+#if ENABLE(MEDIA_STREAM)
+    mutable Optional<bool> m_shouldEnableLegacyGetUserMediaQuirk;
+#endif
     mutable Optional<bool> m_blocksReturnToFullscreenFromPictureInPictureQuirk;
     mutable Optional<bool> m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk;
 };
