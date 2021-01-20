@@ -1,3 +1,13 @@
+2021-01-20  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE][GTK] Ensure URI scheme handler is not registered multiple times
+        https://bugs.webkit.org/show_bug.cgi?id=220363
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkit_web_context_register_uri_scheme):
+
 2021-01-20  Youenn Fablet  <youenn@apple.com>
 
         On page close, make sure to notify of capture state immediately
