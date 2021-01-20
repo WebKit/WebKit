@@ -400,6 +400,9 @@ public:
     void willDestroyDocumentInFrame();
     void frameDestroyed();
 
+    bool wasWrappedWithoutInitializedSecurityOrigin() const { return m_wasWrappedWithoutInitializedSecurityOrigin; }
+    void setAsWrappedWithoutInitializedSecurityOrigin() { m_wasWrappedWithoutInitializedSecurityOrigin = true; }
+
 private:
     explicit DOMWindow(Document&);
 
@@ -481,6 +484,7 @@ private:
     // value is positive infinity.
     MonotonicTime m_lastActivationTimestamp { MonotonicTime::infinity() };
 
+    bool m_wasWrappedWithoutInitializedSecurityOrigin { false };
 #if ENABLE(USER_MESSAGE_HANDLERS)
     mutable RefPtr<WebKitNamespace> m_webkitNamespace;
 #endif

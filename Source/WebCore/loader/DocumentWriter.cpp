@@ -138,15 +138,17 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
 
     // FIXME: Do we need to consult the content security policy here about blocked plug-ins?
 
-    bool shouldReuseDefaultView = m_frame->loader().stateMachine().isDisplayingInitialEmptyDocument() && m_frame->document()->isSecureTransitionTo(url);
+    bool shouldReuseDefaultView = m_frame->loader().stateMachine().isDisplayingInitialEmptyDocument()
+        && m_frame->document()->isSecureTransitionTo(url)
+        && (!m_frame->window() || !m_frame->window()->wasWrappedWithoutInitializedSecurityOrigin());
 
     // Temporarily extend the lifetime of the existing document so that FrameLoader::clear() doesn't destroy it as
     // we need to retain its ongoing set of upgraded requests in new navigation contexts per <http://www.w3.org/TR/upgrade-insecure-requests/>
     // and we may also need to inherit its Content Security Policy below.
     RefPtr<Document> existingDocument = m_frame->document();
 
-    WTF::Function<void()> handleDOMWindowCreation = [this, document, url] {
-        if (m_frame->loader().stateMachine().isDisplayingInitialEmptyDocument() && m_frame->document()->isSecureTransitionTo(url))
+    Function<void()> handleDOMWindowCreation = [this, document, shouldReuseDefaultView] {
+        if (shouldReuseDefaultView)
             document->takeDOMWindowFrom(*m_frame->document());
         else
             document->createDOMWindow();

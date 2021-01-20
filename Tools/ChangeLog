@@ -1,5 +1,15 @@
 2021-01-20  Youenn Fablet  <youenn@apple.com>
 
+        A DOMWindow should not be reused if its JSDOMWindow has been created
+        https://bugs.webkit.org/show_bug.cgi?id=220658
+        <rdar://problem/70335075>
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEvaluateJavaScript.mm:
+
+2021-01-20  Youenn Fablet  <youenn@apple.com>
+
         On page close, make sure to notify of capture state immediately
         https://bugs.webkit.org/show_bug.cgi?id=220588
 
