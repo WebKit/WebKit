@@ -200,6 +200,10 @@ void InsertParagraphSeparatorCommand::doApply()
     bool isLastInBlock = isEndOfBlock(visiblePos);
     bool nestNewBlock = false;
 
+    // FIXME: <http://webkit.org/b/211864> If insertionPosition is not editable, we should compute a position that is.
+    if (!isEditablePosition(insertionPosition))
+        return;
+
     // Create block to be inserted.
     RefPtr<Element> blockToInsert;
     if (startBlock->isRootEditableElement()) {
@@ -298,10 +302,6 @@ void InsertParagraphSeparatorCommand::doApply()
     // it if visiblePos is at the start of a paragraph so that the 
     // content will move down a line.
     if (isStartOfParagraph(visiblePos)) {
-        // FIXME: <http://webkit.org/b/211864> If insertionPosition is not editable, we should compute a position that is.
-        if (!isEditablePosition(insertionPosition))
-            return;
-
         auto br = HTMLBRElement::create(document());
         auto* brPtr = br.ptr();
         insertNodeAt(WTFMove(br), insertionPosition);

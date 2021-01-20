@@ -1,3 +1,17 @@
+2021-01-19  Megan Gardner  <megan_gardner@apple.com>
+
+        Elements in a table are incorrectly selected in JavaScript.
+        https://bugs.webkit.org/show_bug.cgi?id=220607
+
+        Reviewed by Wenson Hsieh.
+
+        * editing/execCommand/null_calc_primitive_value_for_css_property.html:
+        Added ending tag that was missing and does not affect the issue the test was verifying.
+        * editing/inserting/insert-list-in-table-cell-07-expected.txt:
+        Restored expected text file to original output.
+        * editing/selection/editable-table-cell-selection-expected.txt: Added.
+        * editing/selection/editable-table-cell-selection.html: Added.
+
 2021-01-19  Sergio Villar Senin  <svillar@igalia.com>
 
         REGRESSION(r266695) Range control with custom track width sized incorrectly
