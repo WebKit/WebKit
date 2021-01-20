@@ -1,3 +1,12 @@
+2021-01-20  Youenn Fablet  <youenn@apple.com>
+
+        Enable WebRTC VP9 profile 0 by default
+        https://bugs.webkit.org/show_bug.cgi?id=219390
+
+        Reviewed by Geoffrey Garen.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-01-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] StringImpl::removeCharacters should be inlined
