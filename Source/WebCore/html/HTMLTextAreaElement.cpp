@@ -110,8 +110,7 @@ Ref<HTMLTextAreaElement> HTMLTextAreaElement::create(Document& document)
 
 void HTMLTextAreaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 {
-    root.appendChild(TextControlInnerTextElement::create(document()));
-    updateInnerTextElementEditability();
+    root.appendChild(TextControlInnerTextElement::create(document(), isInnerTextElementEditable()));
 }
 
 const AtomString& HTMLTextAreaElement::formControlType() const

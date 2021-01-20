@@ -35,8 +35,9 @@
 namespace WebCore {
 
 class TextInputType final : public BaseTextInputType {
+    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
-    explicit TextInputType(HTMLInputElement& element) : BaseTextInputType(element) { }
+    explicit TextInputType(HTMLInputElement& element) : BaseTextInputType(Type::Text, element) { }
 
 private:
     const AtomString& formControlType() const override;

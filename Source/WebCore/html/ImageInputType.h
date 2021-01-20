@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class ImageInputType final : public BaseButtonInputType {
+    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     explicit ImageInputType(HTMLInputElement&);
 

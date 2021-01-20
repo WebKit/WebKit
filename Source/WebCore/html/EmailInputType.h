@@ -35,8 +35,9 @@
 namespace WebCore {
 
 class EmailInputType final : public BaseTextInputType {
+    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
-    explicit EmailInputType(HTMLInputElement& element) : BaseTextInputType(element) { }
+    explicit EmailInputType(HTMLInputElement& element) : BaseTextInputType(Type::Email, element) { }
 
 private:
     const AtomString& formControlType() const override;

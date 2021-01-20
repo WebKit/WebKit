@@ -135,7 +135,7 @@ private:
 
     void didRemovePendingStylesheet();
 
-    enum class UpdateType { ActiveSet, ContentsOrInterpretation };
+    enum class UpdateType : uint8_t { ActiveSet, ContentsOrInterpretation };
     void updateActiveStyleSheets(UpdateType);
     void scheduleUpdate(UpdateType);
 
@@ -183,13 +183,14 @@ private:
     HashSet<const Element*> m_elementsInHeadWithPendingSheets;
     HashSet<const Element*> m_elementsInBodyWithPendingSheets;
 
-    Optional<UpdateType> m_pendingUpdate;
-    bool m_hasDescendantWithPendingUpdate { false };
 
     ListHashSet<Node*> m_styleSheetCandidateNodes;
 
     String m_preferredStylesheetSetName;
 
+    Optional<UpdateType> m_pendingUpdate;
+
+    bool m_hasDescendantWithPendingUpdate { false };
     bool m_usesStyleBasedEditability { false };
     bool m_isUpdatingStyleResolver { false };
 };

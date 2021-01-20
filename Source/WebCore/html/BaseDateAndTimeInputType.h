@@ -58,7 +58,7 @@ protected:
         HasMeridiem = 1 << 7,
     };
 
-    BaseDateAndTimeInputType(HTMLInputElement& element) : InputType(element) { }
+    BaseDateAndTimeInputType(Type type, HTMLInputElement& element) : InputType(type, element) { }
     ~BaseDateAndTimeInputType();
 
     Decimal parseToNumber(const String&, const Decimal&) const override;
@@ -67,6 +67,9 @@ protected:
 
     bool shouldHaveSecondField(const DateComponents&) const;
     bool shouldHaveMillisecondField(const DateComponents&) const;
+    bool typeMismatchFor(const String&) const final;
+    bool typeMismatch() const final;
+    bool valueMissing(const String&) const final;
 
 private:
     class DateTimeFormatValidator final : public DateTimeFormat::TokenHandler {
@@ -96,11 +99,8 @@ private:
     ExceptionOr<void> setValueAsDate(double) const override;
     double valueAsDouble() const final;
     ExceptionOr<void> setValueAsDecimal(const Decimal&, TextFieldEventBehavior) const final;
-    bool typeMismatchFor(const String&) const final;
-    bool typeMismatch() const final;
-    bool valueMissing(const String&) const final;
     Decimal defaultValueForStepUp() const override;
-    bool isSteppable() const final;
+    bool isSteppableSlow() const final;
     String localizeValue(const String&) const final;
     bool supportsReadOnly() const final;
     bool shouldRespectListAttribute() final;
@@ -108,7 +108,7 @@ private:
     bool isMouseFocusable() const final;
 
     void handleDOMActivateEvent(Event&) override;
-    void createShadowSubtree() final;
+    void createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source, bool) final;
     void destroyShadowSubtree() final;
     void updateInnerTextValue() final;
     bool hasCustomFocusLogic() const final;

@@ -37,9 +37,10 @@
 namespace WebCore {
 
 class WeekInputType final : public BaseDateAndTimeInputType {
+    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     explicit WeekInputType(HTMLInputElement& element)
-        : BaseDateAndTimeInputType(element)
+        : BaseDateAndTimeInputType(Type::Week, element)
     {
     }
 

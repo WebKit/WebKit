@@ -106,7 +106,7 @@ UploadButtonElement::UploadButtonElement(Document& document)
 }
 
 FileInputType::FileInputType(HTMLInputElement& element)
-    : BaseClickableWithKeyInputType(element)
+    : BaseClickableWithKeyInputType(Type::File, element)
     , m_fileList(FileList::create())
 {
 }
@@ -278,7 +278,7 @@ bool FileInputType::isFileUpload() const
     return true;
 }
 
-void FileInputType::createShadowSubtree()
+void FileInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source, bool)
 {
     ASSERT(element());
     ASSERT(element()->shadowRoot());

@@ -58,13 +58,21 @@ private:
 class TextControlInnerTextElement final : public HTMLDivElement {
     WTF_MAKE_ISO_ALLOCATED(TextControlInnerTextElement);
 public:
-    static Ref<TextControlInnerTextElement> create(Document&);
+    static Ref<TextControlInnerTextElement> create(Document&, bool isEditable);
 
     void defaultEventHandler(Event&) override;
 
     RenderTextControlInnerBlock* renderer() const;
 
+    inline void updateInnerTextElementEditability(bool isEditable)
+    {
+        constexpr bool initialization = false;
+        updateInnerTextElementEditabilityImpl(isEditable, initialization);
+    }
+
 private:
+    void updateInnerTextElementEditabilityImpl(bool isEditable, bool initialization);
+
     TextControlInnerTextElement(Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     Optional<Style::ElementStyle> resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle) override;

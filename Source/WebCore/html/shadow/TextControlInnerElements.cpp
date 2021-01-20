@@ -138,9 +138,24 @@ inline TextControlInnerTextElement::TextControlInnerTextElement(Document& docume
     setHasCustomStyleResolveCallbacks();
 }
 
-Ref<TextControlInnerTextElement> TextControlInnerTextElement::create(Document& document)
+Ref<TextControlInnerTextElement> TextControlInnerTextElement::create(Document& document, bool isEditable)
 {
-    return adoptRef(*new TextControlInnerTextElement(document));
+    auto result = adoptRef(*new TextControlInnerTextElement(document));
+    constexpr bool initialization = true;
+    result->updateInnerTextElementEditabilityImpl(isEditable, initialization);
+    return result;
+}
+
+void TextControlInnerTextElement::updateInnerTextElementEditabilityImpl(bool isEditable, bool initialization)
+{
+    static MainThreadNeverDestroyed<const AtomString> plainTextOnlyName("plaintext-only", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> falseName("false", AtomString::ConstructFromLiteral);
+    const auto& value = isEditable ? plainTextOnlyName.get() : falseName.get();
+    if (initialization) {
+        Vector<Attribute> attributes { Attribute(contenteditableAttr, value) };
+        parserSetAttributes(attributes);
+    } else
+        setAttributeWithoutSynchronization(contenteditableAttr, value);
 }
 
 void TextControlInnerTextElement::defaultEventHandler(Event& event)
