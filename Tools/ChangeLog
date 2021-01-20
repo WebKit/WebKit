@@ -1,3 +1,20 @@
+2021-01-19  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        REGRESSION(r271506): webkit-patch keyring integration is broken on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=220736
+
+        Reviewed by Jonathan Bedard.
+
+        r271506 updated python-keyring to the last version to support python2, but unfortunately
+        this version seems to be somehow incompatible with python-secretstorage, which is required
+        for system keyring support on Linux. This bug is fixed in newer versions of python-keyring
+        that do not support python2, but we still support python2, so we cannot upgrade. I've tested
+        several versions of python-keyring and found that version 11.1.0 is the most recent version
+        that supports python2 and works properly on Linux, so let's stick with that until we are
+        ready to give up on python2.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py:
+
 2021-01-19  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Support alternative default pypi url on macOS
