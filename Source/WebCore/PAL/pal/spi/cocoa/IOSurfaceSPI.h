@@ -88,6 +88,22 @@ WTF_EXTERN_C_END
 
 #import <IOSurface/IOSurfaceTypes.h>
 
+WTF_EXTERN_C_BEGIN
+
+#if HAVE(IOSURFACE_SET_OWNERSHIP)
+typedef CF_ENUM(int, IOSurfaceMemoryLedgerTags) {
+    kIOSurfaceMemoryLedgerTagDefault     = 0x00000001,
+    kIOSurfaceMemoryLedgerTagNetwork     = 0x00000002,
+    kIOSurfaceMemoryLedgerTagMedia       = 0x00000003,
+    kIOSurfaceMemoryLedgerTagGraphics    = 0x00000004,
+    kIOSurfaceMemoryLedgerTagNeural      = 0x00000005,
+};
+
+IOReturn IOSurfaceSetOwnership(IOSurfaceRef buffer, task_t newOwner, int newLedgerTag, uint32_t newLedgerOptions);
+#endif // HAVE(IOSURFACE_SET_OWNERSHIP)
+
+WTF_EXTERN_C_END
+
 #endif
 
 WTF_EXTERN_C_BEGIN
