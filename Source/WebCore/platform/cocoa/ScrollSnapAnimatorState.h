@@ -54,22 +54,27 @@ class ScrollSnapAnimatorState {
 public:
     const Vector<LayoutUnit>& snapOffsetsForAxis(ScrollEventAxis axis) const
     {
-        return axis == ScrollEventAxis::Horizontal ? m_snapOffsetsX : m_snapOffsetsY;
+        return axis == ScrollEventAxis::Horizontal ? m_snapOffsetsInfo.horizontalSnapOffsets : m_snapOffsetsInfo.verticalSnapOffsets;
     }
 
     const Vector<ScrollOffsetRange<LayoutUnit>>& snapOffsetRangesForAxis(ScrollEventAxis axis) const
     {
-        return axis == ScrollEventAxis::Horizontal ? m_snapOffsetRangesX : m_snapOffsetRangesY;
+        return axis == ScrollEventAxis::Horizontal ? m_snapOffsetsInfo.horizontalSnapOffsetRanges : m_snapOffsetsInfo.verticalSnapOffsetRanges;
+    }
+
+    void setSnapOffsetInfo(const ScrollSnapOffsetsInfo<LayoutUnit>& newInfo)
+    {
+        m_snapOffsetsInfo = newInfo;
     }
 
     void setSnapOffsetsAndPositionRangesForAxis(ScrollEventAxis axis, const Vector<LayoutUnit>& snapOffsets, const Vector<ScrollOffsetRange<LayoutUnit>>& snapOffsetRanges)
     {
         if (axis == ScrollEventAxis::Horizontal) {
-            m_snapOffsetsX = snapOffsets;
-            m_snapOffsetRangesX = snapOffsetRanges;
+            m_snapOffsetsInfo.horizontalSnapOffsets = snapOffsets;
+            m_snapOffsetsInfo.horizontalSnapOffsetRanges = snapOffsetRanges;
         } else {
-            m_snapOffsetsY = snapOffsets;
-            m_snapOffsetRangesY = snapOffsetRanges;
+            m_snapOffsetsInfo.verticalSnapOffsets = snapOffsets;
+            m_snapOffsetsInfo.verticalSnapOffsetRanges = snapOffsetRanges;
         }
     }
 
@@ -103,11 +108,9 @@ private:
 
     ScrollSnapState m_currentState { ScrollSnapState::UserInteraction };
 
-    Vector<LayoutUnit> m_snapOffsetsX;
-    Vector<ScrollOffsetRange<LayoutUnit>> m_snapOffsetRangesX;
+    ScrollSnapOffsetsInfo<LayoutUnit> m_snapOffsetsInfo;
+
     unsigned m_activeSnapIndexX { 0 };
-    Vector<LayoutUnit> m_snapOffsetsY;
-    Vector<ScrollOffsetRange<LayoutUnit>> m_snapOffsetRangesY;
     unsigned m_activeSnapIndexY { 0 };
 
     MonotonicTime m_startTime;

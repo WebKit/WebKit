@@ -1316,11 +1316,14 @@ bool ScrollAnimatorMac::isPinnedForScrollDelta(const FloatSize& delta) const
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
-static bool gestureShouldBeginSnap(const PlatformWheelEvent& wheelEvent, const Vector<LayoutUnit>* snapOffsets)
+static bool gestureShouldBeginSnap(const PlatformWheelEvent& wheelEvent, ScrollEventAxis axis, const ScrollSnapOffsetsInfo<LayoutUnit>* offsetInfo)
 {
-    if (!snapOffsets)
+    if (!offsetInfo)
         return false;
-    
+
+    if (offsetInfo->offsetsForAxis(axis).isEmpty())
+        return false;
+
     if (wheelEvent.phase() != PlatformWheelEventPhase::Ended && !wheelEvent.isEndOfMomentumScroll())
         return false;
 
@@ -1338,7 +1341,7 @@ bool ScrollAnimatorMac::allowsVerticalStretching(const PlatformWheelEvent& wheel
         bool eventPreventsStretching = m_scrollableArea.hasScrollableOrRubberbandableAncestor() && wheelEvent.isGestureStart() && m_scrollableArea.isPinnedForScrollDeltaOnAxis(-wheelEvent.deltaY(), ScrollEventAxis::Vertical);
 #if ENABLE(CSS_SCROLL_SNAP)
         if (!eventPreventsStretching)
-            eventPreventsStretching = gestureShouldBeginSnap(wheelEvent, m_scrollableArea.verticalSnapOffsets());
+            eventPreventsStretching = gestureShouldBeginSnap(wheelEvent, ScrollEventAxis::Vertical, m_scrollableArea.snapOffsetInfo());
 #endif
         return scrollbarsAllowStretching && !eventPreventsStretching;
     }
@@ -1362,7 +1365,7 @@ bool ScrollAnimatorMac::allowsHorizontalStretching(const PlatformWheelEvent& whe
         bool eventPreventsStretching = m_scrollableArea.hasScrollableOrRubberbandableAncestor() && wheelEvent.isGestureStart() && m_scrollableArea.isPinnedForScrollDeltaOnAxis(-wheelEvent.deltaX(), ScrollEventAxis::Horizontal);
 #if ENABLE(CSS_SCROLL_SNAP)
         if (!eventPreventsStretching)
-            eventPreventsStretching = gestureShouldBeginSnap(wheelEvent, m_scrollableArea.horizontalSnapOffsets());
+            eventPreventsStretching = gestureShouldBeginSnap(wheelEvent, ScrollEventAxis::Horizontal, m_scrollableArea.snapOffsetInfo());
 #endif
         return scrollbarsAllowStretching && !eventPreventsStretching;
     }

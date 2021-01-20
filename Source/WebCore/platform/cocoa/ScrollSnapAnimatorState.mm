@@ -51,8 +51,8 @@ void ScrollSnapAnimatorState::setupAnimationForState(ScrollSnapState state, cons
 
     m_momentumCalculator = ScrollingMomentumCalculator::create(viewportSize, contentSize, initialOffset, initialDelta, initialVelocity);
     auto predictedScrollTarget = m_momentumCalculator->predictedDestinationOffset();
-    float targetOffsetX = targetOffsetForStartOffset(m_snapOffsetsX, m_snapOffsetRangesX, contentSize.width() - viewportSize.width(), initialOffset.x(), predictedScrollTarget.width(), pageScale, initialDelta.width(), m_activeSnapIndexX);
-    float targetOffsetY = targetOffsetForStartOffset(m_snapOffsetsY, m_snapOffsetRangesY, contentSize.height() - viewportSize.height(), initialOffset.y(), predictedScrollTarget.height(), pageScale, initialDelta.height(), m_activeSnapIndexY);
+    float targetOffsetX = targetOffsetForStartOffset(m_snapOffsetsInfo.horizontalSnapOffsets, m_snapOffsetsInfo.horizontalSnapOffsetRanges, contentSize.width() - viewportSize.width(), initialOffset.x(), predictedScrollTarget.width(), pageScale, initialDelta.width(), m_activeSnapIndexX);
+    float targetOffsetY = targetOffsetForStartOffset(m_snapOffsetsInfo.verticalSnapOffsets, m_snapOffsetsInfo.verticalSnapOffsetRanges, contentSize.height() - viewportSize.height(), initialOffset.y(), predictedScrollTarget.height(), pageScale, initialDelta.height(), m_activeSnapIndexY);
     m_momentumCalculator->setRetargetedScrollOffset({ targetOffsetX, targetOffsetY });
     m_startTime = MonotonicTime::now();
     m_currentState = state;

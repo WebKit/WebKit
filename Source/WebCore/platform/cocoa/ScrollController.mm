@@ -823,21 +823,20 @@ void ScrollController::scrollSnapTimerFired()
 
 void ScrollController::updateScrollSnapState(const ScrollableArea& scrollableArea)
 {
-    if (auto* snapOffsets = scrollableArea.horizontalSnapOffsets()) {
-        if (auto* snapOffsetRanges = scrollableArea.horizontalSnapOffsetRanges())
-            updateScrollSnapPoints(ScrollEventAxis::Horizontal, *snapOffsets, *snapOffsetRanges);
-        else
-            updateScrollSnapPoints(ScrollEventAxis::Horizontal, *snapOffsets, { });
-    } else
-        updateScrollSnapPoints(ScrollEventAxis::Horizontal, { }, { });
+    const auto* snapOffsetInfo = scrollableArea.snapOffsetInfo();
+    if (!snapOffsetInfo || snapOffsetInfo->isEmpty()) {
+        m_scrollSnapState = nullptr;
+        return;
+    }
 
-    if (auto* snapOffsets = scrollableArea.verticalSnapOffsets()) {
-        if (auto* snapOffsetRanges = scrollableArea.verticalSnapOffsetRanges())
-            updateScrollSnapPoints(ScrollEventAxis::Vertical, *snapOffsets, *snapOffsetRanges);
-        else
-            updateScrollSnapPoints(ScrollEventAxis::Vertical, *snapOffsets, { });
-    } else
-        updateScrollSnapPoints(ScrollEventAxis::Vertical, { }, { });
+    bool shouldComputeCurrentSnapIndices = !m_scrollSnapState;
+    if (!m_scrollSnapState)
+        m_scrollSnapState = makeUnique<ScrollSnapAnimatorState>();
+
+    m_scrollSnapState->setSnapOffsetInfo(*snapOffsetInfo);
+
+    if (shouldComputeCurrentSnapIndices)
+        setActiveScrollSnapIndicesForOffset(roundedIntPoint(m_client.scrollOffset()));
 
     LOG_WITH_STREAM(ScrollSnap, stream << "ScrollController " << this << " updateScrollSnapState for " << scrollableArea << " new state " << ValueOrNull(m_scrollSnapState.get()));
 }

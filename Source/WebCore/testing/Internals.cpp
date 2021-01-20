@@ -4668,22 +4668,19 @@ ExceptionOr<String> Internals::scrollSnapOffsets(Element& element)
     if (!scrollableArea)
         return Exception { InvalidAccessError };
 
+    auto* offsetInfo = scrollableArea->snapOffsetInfo();
     StringBuilder result;
-    if (auto* offsets = scrollableArea->horizontalSnapOffsets()) {
-        if (offsets->size()) {
-            result.appendLiteral("horizontal = ");
-            appendOffsets(result, *offsets);
-        }
+    if (offsetInfo && !offsetInfo->horizontalSnapOffsets.isEmpty()) {
+        result.appendLiteral("horizontal = ");
+        appendOffsets(result, offsetInfo->horizontalSnapOffsets);
     }
 
-    if (auto* offsets = scrollableArea->verticalSnapOffsets()) {
-        if (offsets->size()) {
-            if (result.length())
-                result.appendLiteral(", ");
+    if (offsetInfo && !offsetInfo->verticalSnapOffsets.isEmpty()) {
+        if (result.length())
+            result.appendLiteral(", ");
 
-            result.appendLiteral("vertical = ");
-            appendOffsets(result, *offsets);
-        }
+        result.appendLiteral("vertical = ");
+        appendOffsets(result, offsetInfo->verticalSnapOffsets);
     }
 
     return result.toString();

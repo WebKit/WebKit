@@ -89,10 +89,7 @@ public:
     bool usesScrollSnap() const;
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    WEBCORE_EXPORT const Vector<LayoutUnit>* horizontalSnapOffsets() const;
-    WEBCORE_EXPORT const Vector<LayoutUnit>* verticalSnapOffsets() const;
-    WEBCORE_EXPORT const Vector<ScrollOffsetRange<LayoutUnit>>* horizontalSnapOffsetRanges() const;
-    WEBCORE_EXPORT const Vector<ScrollOffsetRange<LayoutUnit>>* verticalSnapOffsetRanges() const;
+    WEBCORE_EXPORT const ScrollSnapOffsetsInfo<LayoutUnit>* snapOffsetInfo() const;
     virtual void updateSnapOffsets() { };
     void setHorizontalSnapOffsets(const Vector<LayoutUnit>&);
     void setVerticalSnapOffsets(const Vector<LayoutUnit>&);

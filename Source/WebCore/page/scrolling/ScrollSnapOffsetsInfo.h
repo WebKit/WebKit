@@ -28,6 +28,7 @@
 #if ENABLE(CSS_SCROLL_SNAP)
 
 #include "LayoutUnit.h"
+#include "ScrollTypes.h"
 #include "StyleScrollSnapPoints.h"
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
@@ -57,6 +58,21 @@ struct ScrollSnapOffsetsInfo {
     // where the snap port fits within the snap area are considered to be valid snap positions.
     Vector<ScrollOffsetRange<T>> horizontalSnapOffsetRanges;
     Vector<ScrollOffsetRange<T>> verticalSnapOffsetRanges;
+
+    bool isEmpty() const
+    {
+        return horizontalSnapOffsets.isEmpty() && verticalSnapOffsets.isEmpty();
+    }
+
+    Vector<T> offsetsForAxis(ScrollEventAxis axis) const
+    {
+        return axis == ScrollEventAxis::Vertical ? verticalSnapOffsets : horizontalSnapOffsets;
+    }
+
+    Vector<ScrollOffsetRange<T>> offsetRangesForAxis(ScrollEventAxis axis) const
+    {
+        return axis == ScrollEventAxis::Vertical ? verticalSnapOffsetRanges : horizontalSnapOffsetRanges;
+    }
 };
 
 const unsigned invalidSnapOffsetIndex = UINT_MAX;
