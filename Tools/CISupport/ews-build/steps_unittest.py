@@ -49,7 +49,7 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    ReRunWebKitTests, RunAPITests, RunAPITestsWithoutPatch, RunBindingsTests, RunBuildWebKitOrgUnitTests,
                    RunEWSBuildbotCheckConfig, RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests,
                    RunJSCTestsWithoutPatch, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
-                   RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsWithoutPatch, TestWithFailureCount,
+                   RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsWithoutPatch, TestWithFailureCount, ShowIdentifier,
                    Trigger, TransferToS3, UnApplyPatchIfRequired, UpdateWorkingDirectory, UploadBuiltProduct,
                    UploadTestResults, ValidateCommiterAndReviewer, ValidatePatch)
 
@@ -3764,6 +3764,44 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
             2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
+        return self.runStep()
+
+
+class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(ShowIdentifier())
+        self.setProperty('ews_revision', '51a6aec9f664')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command=['python', 'Tools/Scripts/git-webkit', '-C', 'https://github.com/WebKit/Webkit', 'find', '51a6aec9f664']) +
+            ExpectShell.log('stdio', stdout='Identifier: 233175@main') +
+            0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Identifier: 233175@main')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('identifier'), '233175@main')
+        return rc
+
+    def test_failure(self):
+        self.setupStep(ShowIdentifier())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command=['python', 'Tools/Scripts/git-webkit', '-C', 'https://github.com/WebKit/Webkit', 'find', 'HEAD']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') +
+            2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to find identifier')
         return self.runStep()
 
 

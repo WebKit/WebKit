@@ -1,3 +1,26 @@
+2021-01-20  Aakash Jain  <aakash_jain@apple.com>
+
+        EWS should display commit identifier in builds
+        https://bugs.webkit.org/show_bug.cgi?id=220769
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/factories.py:
+        (Factory.__init__): Added ShowIdentifier build step.
+        (StyleFactory.__init__):
+        (WatchListFactory.__init__):
+        (CommitQueueFactory.__init__):
+        * CISupport/ews-build/steps.py:
+        (ShowIdentifier): build-step to show commit identifier.
+        (ShowIdentifier.start):
+        (ShowIdentifier.evaluateCommand):
+        (ShowIdentifier.getLastBuildStepByName):
+        (ShowIdentifier.url_for_identifier):
+        (ShowIdentifier.getResultSummary): Display custom failure message.
+        (ShowIdentifier.hideStepIf): Hide this step if successful.
+        * CISupport/ews-build/steps_unittest.py: Added unit-tests.
+        * CISupport/ews-build/factories_unittest.py:
+
 2021-01-20  Youenn Fablet  <youenn@apple.com>
 
         Two pages in the same process should not be able to play media stream backed video elements at the same time

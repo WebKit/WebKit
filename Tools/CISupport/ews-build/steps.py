@@ -39,6 +39,7 @@ import requests
 import socket
 
 BUG_SERVER_URL = 'https://bugs.webkit.org/'
+COMMITS_INFO_URL = 'https://commits.webkit.org/'
 S3URL = 'https://s3-us-west-2.amazonaws.com/'
 S3_RESULTS_URL = 'https://ews-build.s3-us-west-2.amazonaws.com/'
 CURRENT_HOSTNAME = socket.gethostname().strip()
@@ -162,6 +163,64 @@ class CheckOutSpecificRevision(shell.ShellCommand):
         self.setCommand(['git', 'checkout', self.getProperty('ews_revision')])
         return shell.ShellCommand.start(self)
 
+
+class ShowIdentifier(shell.ShellCommand):
+    name = 'show-identifier'
+    identifier_re = '^Identifier: (.*)$'
+    flunkOnFailure = False
+    haltOnFailure = False
+
+    def __init__(self, **kwargs):
+        shell.ShellCommand.__init__(self, timeout=5 * 60, logEnviron=False, **kwargs)
+
+    def start(self):
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
+        revision = self.getProperty('ews_revision', self.getProperty('got_revision'))
+        if not revision:
+            revision = 'HEAD'
+        self.setCommand(['python', 'Tools/Scripts/git-webkit', '-C', 'https://github.com/WebKit/Webkit', 'find', revision])
+        return shell.ShellCommand.start(self)
+
+    def evaluateCommand(self, cmd):
+        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+        if rc != SUCCESS:
+            return rc
+
+        log_text = self.log_observer.getStdout()
+        match = re.search(self.identifier_re, log_text, re.MULTILINE)
+        if match:
+            identifier = match.group(1)
+            self.setProperty('identifier', identifier)
+            ews_revision = self.getProperty('ews_revision')
+            if ews_revision:
+                step = self.getLastBuildStepByName(CheckOutSpecificRevision.name)
+            else:
+                step = self.getLastBuildStepByName(CheckOutSource.name)
+            if not step:
+                step = self
+            step.addURL('Updated to {}'.format(identifier), self.url_for_identifier(identifier))
+            self.descriptionDone = 'Identifier: {}'.format(identifier)
+        else:
+            self.descriptionDone = 'Failed to find identifier'
+        return rc
+
+    def getLastBuildStepByName(self, name):
+        for step in reversed(self.build.executedSteps):
+            if name in step.name:
+                return step
+        return None
+
+    def url_for_identifier(self, identifier):
+        return '{}{}'.format(COMMITS_INFO_URL, identifier)
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {u'step': u'Failed to find identifier'}
+        return shell.ShellCommand.getResultSummary(self)
+
+    def hideStepIf(self, results, step):
+        return results == SUCCESS
 
 class CleanWorkingDirectory(shell.ShellCommand):
     name = 'clean-working-directory'
