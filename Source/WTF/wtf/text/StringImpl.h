@@ -34,6 +34,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/ASCIIFastPath.h>
 #include <wtf/text/ConversionMode.h>
+#include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringCommon.h>
 #include <wtf/text/StringHasher.h>
 #include <wtf/text/UTF8ConversionError.h>
@@ -423,7 +424,7 @@ public:
     Ref<StringImpl> simplifyWhiteSpace(CodeUnitMatchFunction);
 
     Ref<StringImpl> stripLeadingAndTrailingCharacters(CodeUnitMatchFunction);
-    Ref<StringImpl> removeCharacters(CodeUnitMatchFunction);
+    template<typename Predicate> Ref<StringImpl> removeCharacters(const Predicate&);
 
     bool isAllASCII() const;
     bool isAllLatin1() const;
@@ -515,7 +516,7 @@ private:
     template<CaseConvertType, typename CharacterType> static Ref<StringImpl> convertASCIICase(StringImpl&, const CharacterType*, unsigned);
 
     template<class CodeUnitPredicate> Ref<StringImpl> stripMatchedCharacters(CodeUnitPredicate);
-    template<typename CharacterType> ALWAYS_INLINE Ref<StringImpl> removeCharacters(const CharacterType* characters, CodeUnitMatchFunction);
+    template<typename CharacterType, typename Predicate> ALWAYS_INLINE Ref<StringImpl> removeCharactersImpl(const CharacterType* characters, const Predicate&);
     template<typename CharacterType, class CodeUnitPredicate> Ref<StringImpl> simplifyMatchedCharactersToSpace(CodeUnitPredicate);
     template<typename CharacterType> static Ref<StringImpl> constructInternal(StringImpl&, unsigned);
     template<typename CharacterType> static Ref<StringImpl> createUninitializedInternal(unsigned, CharacterType*&);
@@ -1280,6 +1281,44 @@ template<unsigned length> inline bool equalLettersIgnoringASCIICase(const String
 template<unsigned length> inline bool equalLettersIgnoringASCIICase(const StringImpl* string, const char (&lowercaseLetters)[length])
 {
     return string && equalLettersIgnoringASCIICase(*string, lowercaseLetters);
+}
+
+template<typename CharacterType, typename Predicate> ALWAYS_INLINE Ref<StringImpl> StringImpl::removeCharactersImpl(const CharacterType* characters, const Predicate& findMatch)
+{
+    auto* from = characters;
+    auto* fromEnd = from + m_length;
+
+    // Assume the common case will not remove any characters
+    while (from != fromEnd && !findMatch(*from))
+        ++from;
+    if (from == fromEnd)
+        return *this;
+
+    StringBuffer<CharacterType> data(m_length);
+    auto* to = data.characters();
+    unsigned outc = from - characters;
+
+    if (outc)
+        copyCharacters(to, characters, outc);
+
+    do {
+        while (from != fromEnd && findMatch(*from))
+            ++from;
+        while (from != fromEnd && !findMatch(*from))
+            to[outc++] = *from++;
+    } while (from != fromEnd);
+
+    data.shrink(outc);
+
+    return adopt(WTFMove(data));
+}
+
+template<typename Predicate>
+inline Ref<StringImpl> StringImpl::removeCharacters(const Predicate& findMatch)
+{
+    if (is8Bit())
+        return removeCharactersImpl(characters8(), findMatch);
+    return removeCharactersImpl(characters16(), findMatch);
 }
 
 } // namespace WTF

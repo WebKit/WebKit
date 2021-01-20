@@ -1,3 +1,24 @@
+2021-01-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] StringImpl::removeCharacters should be inlined
+        https://bugs.webkit.org/show_bug.cgi?id=220742
+
+        Reviewed by Saam Barati.
+
+        removeCharacters is used in WebCore's HTMLInputElement's critical path. And since String relatively has many elements (characters),
+        non-inlined StringImpl::removeCharacters causes significant number of indirect function calls of `findMatch` argument since it is
+        passed function pointer. We should make them templatized function to allow inlining of `findMatch` function to avoid repeated indirect calls.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::removeCharacters): Deleted.
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::removeCharactersImpl):
+        (WTF::StringImpl::removeCharacters):
+        * wtf/text/WTFString.cpp:
+        (WTF::String::removeCharacters const): Deleted.
+        * wtf/text/WTFString.h:
+        (WTF::String::removeCharacters const):
+
 2021-01-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Add JSC API configuring GC signals in Linux
