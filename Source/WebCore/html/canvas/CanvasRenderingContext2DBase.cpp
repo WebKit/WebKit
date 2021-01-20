@@ -1308,11 +1308,6 @@ void CanvasRenderingContext2DBase::setShadow(float width, float height, float bl
     setShadow(FloatSize(width, height), blur, convertToComponentBytes(SRGBA { r, g, b, a }));
 }
 
-void CanvasRenderingContext2DBase::setShadow(float width, float height, float blur, float c, float m, float y, float k, float a)
-{
-    setShadow(FloatSize(width, height), blur, convertToComponentBytes(toSRGBA(CMYKA { c, m, y, k, a })));
-}
-
 void CanvasRenderingContext2DBase::clearShadow()
 {
     setShadow(FloatSize(), 0, Color::transparentBlack);

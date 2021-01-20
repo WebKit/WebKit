@@ -785,8 +785,8 @@ frames:
         0: setShadow
         1: (anonymous function)
         2: executeFrameFunction
-    5: setShadow(24, 25, 26, 27, 28, 29, 30, 31)
-      swizzleTypes: [Number, Number, Number, Number, Number, Number, Number, Number]
+    5: setShadow(24, 25, 26, 27, 28, 29, 30)
+      swizzleTypes: [Number, Number, Number, Number, Number, Number, Number]
       trace:
         0: setShadow
         1: (anonymous function)
