@@ -83,19 +83,18 @@ class BuildbotTriggerable {
 
         const buildRequests = await BuildRequest.fetchForTriggerable(this._name);
         const validRequests = this._validateRequests(buildRequests);
-        const buildReqeustsByGroup = BuildbotTriggerable._testGroupMapForBuildRequests(buildRequests);
-        let updates = await this._pullBuildbotOnAllSyncers(buildReqeustsByGroup);
+        const buildRequestsByGroup = BuildbotTriggerable._testGroupMapForBuildRequests(buildRequests);
+        let updates = await this._pullBuildbotOnAllSyncers(buildRequestsByGroup);
         let rootReuseUpdates = {}
         this._logger.log('Scheduling builds');
-        const promiseList = [];
-        const testGroupList = Array.from(buildReqeustsByGroup.values()).sort(function (a, b) { return a.groupOrder - b.groupOrder; });
+        const testGroupList = Array.from(buildRequestsByGroup.values()).sort(function (a, b) { return a.groupOrder - b.groupOrder; });
 
         await Promise.all(testGroupList.map((group) => [group, this._nextRequestInGroup(group, updates)])
             .filter(([group, request]) => validRequests.has(request))
             .map(([group, request]) => this._scheduleRequest(group, request, rootReuseUpdates)));
 
         // Pull all buildbots for the second time since the previous step may have scheduled more builds
-        updates = await this._pullBuildbotOnAllSyncers(buildReqeustsByGroup);
+        updates = await this._pullBuildbotOnAllSyncers(buildRequestsByGroup);
 
         // rootReuseUpdates will be overridden by status fetched from buildbot.
         updates = {
@@ -166,60 +165,63 @@ class BuildbotTriggerable {
         return validatedRequests;
     }
 
-    _pullBuildbotOnAllSyncers(buildReqeustsByGroup)
+    async _pullBuildbotOnAllSyncers(buildRequestsByGroup)
     {
         let updates = {};
         let associatedRequests = new Set;
-        return Promise.all(this._syncers.map((syncer) => {
-            return syncer.pullBuildbot(this._lookbackCount).then((entryList) => {
-                for (const entry of entryList) {
-                    const request = BuildRequest.findById(entry.buildRequestId());
-                    if (!request)
-                        continue;
+        await Promise.all(this._syncers.map(async (syncer) => {
+            const entryList = await syncer.pullBuildbot(this._lookbackCount);
+            for (const entry of entryList) {
+                const request = BuildRequest.findById(entry.buildRequestId());
+                if (!request)
+                    continue;
 
-                    const info = buildReqeustsByGroup.get(request.testGroupId());
-                    if (!info) {
-                        assert(request.testGroup().hasFinished());
-                        continue;
-                    }
-
-                    associatedRequests.add(request);
-
-                    if (request.isBuild()) {
-                        assert(!info.buildSyncer || info.buildSyncer == syncer);
-                        if (entry.slaveName()) {
-                            assert(!info.buildSlaveName || info.buildSlaveName == entry.slaveName());
-                            info.buildSlaveName = entry.slaveName();
-                        }
-                        info.buildSyncer = syncer;
-                    } else {
-                        assert(!info.testSyncer || info.testSyncer == syncer);
-                        if (entry.slaveName()) {
-                            assert(!info.testSlaveName || info.testSlaveName == entry.slaveName());
-                            info.testSlaveName = entry.slaveName();
-                        }
-                        info.testSyncer = syncer;
-                    }
-
-                    const newStatus = entry.buildRequestStatusIfUpdateIsNeeded(request);
-                    if (newStatus) {
-                        this._logger.log(`Updating the status of build request ${request.id()} from ${request.status()} to ${newStatus}`);
-                        updates[entry.buildRequestId()] = {status: newStatus, url: entry.url(), statusDescription: entry.statusDescription()};
-                    } else if (!request.statusUrl() || request.statusDescription() != entry.statusDescription()) {
-                        this._logger.log(`Updating build request ${request.id()} status URL to ${entry.url()} and status detail from ${request.statusDescription()} to ${entry.statusDescription()}`);
-                        updates[entry.buildRequestId()] = {status: request.status(), url: entry.url(), statusDescription: entry.statusDescription()};
-                    }
+                const info = buildRequestsByGroup.get(request.testGroupId());
+                if (!info) {
+                    assert(request.testGroup().hasFinished());
+                    continue;
                 }
-            });
-        })).then(() => {
-            for (const request of BuildRequest.all()) {
+
+                associatedRequests.add(request);
+
+                if (request.isBuild()) {
+                    assert(!info.buildSyncer || info.buildSyncer == syncer);
+                    if (entry.slaveName()) {
+                        assert(!info.buildSlaveName || info.buildSlaveName == entry.slaveName());
+                        info.buildSlaveName = entry.slaveName();
+                    }
+                    info.buildSyncer = syncer;
+                } else {
+                    assert(!info.testSyncer || info.testSyncer == syncer);
+                    if (entry.slaveName()) {
+                        assert(!info.testSlaveName || info.testSlaveName == entry.slaveName());
+                        info.testSlaveName = entry.slaveName();
+                    }
+                    info.testSyncer = syncer;
+                }
+
+                const newStatus = entry.buildRequestStatusIfUpdateIsNeeded(request);
+                if (newStatus) {
+                    this._logger.log(`Updating the status of build request ${request.id()} from ${request.status()} to ${newStatus}`);
+                    updates[entry.buildRequestId()] = {status: newStatus, url: entry.url(), statusDescription: entry.statusDescription()};
+                } else if (!request.statusUrl() || request.statusDescription() != entry.statusDescription()) {
+                    this._logger.log(`Updating build request ${request.id()} status URL to ${entry.url()} and status detail from ${request.statusDescription()} to ${entry.statusDescription()}`);
+                    updates[entry.buildRequestId()] = {status: request.status(), url: entry.url(), statusDescription: entry.statusDescription()};
+                }
+            }
+        }));
+
+        for (const group of buildRequestsByGroup.values()) {
+            for (const request of group.requests) {
                 if (request.hasStarted() && !request.hasFinished() && !associatedRequests.has(request)) {
                     this._logger.log(`Updating the status of build request ${request.id()} from ${request.status()} to failedIfNotCompleted`);
                     assert(!(request.id() in updates));
                     updates[request.id()] = {status: 'failedIfNotCompleted'};
                 }
             }
-        }).then(() => updates);
+        }
+
+        return updates;
     }
 
     _nextRequestInGroup(groupInfo, pendingUpdates)

@@ -1042,4 +1042,21 @@ describe('/api/build-requests', function () {
             });
         });
     });
+
+    it('should not update url or status_description if either is not specified while updating a build request with "failedIfNotCompleted"', async () => {
+        const updates = {'700': {status: 'failedIfNotCompleted'}};
+        const url = 'http://build.webkit.org/someBuilder/builds';
+        await MockData.addMockData(TestServer.database(), ['running', 'pending', 'pending', 'pending']);
+        await TestServer.database().query(`UPDATE build_requests SET request_url = '${url}' WHERE request_id = 700`);
+        const response = await TestServer.remoteAPI().postJSONWithStatus('/api/build-requests/build-webkit', {
+            'slaveName': 'sync-slave',
+            'slavePassword': 'password',
+            'buildRequestUpdates': updates
+        });
+        assert.equal(response['status'], 'OK');
+
+        assert.equal(response['buildRequests'].length, 4);
+        assert.deepEqual(response['buildRequests'][0].id, 700);
+        assert.deepEqual(response['buildRequests'][0].url, url);
+    });
 });

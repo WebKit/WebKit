@@ -1,3 +1,26 @@
+2021-01-20  Dewei Zhu  <dewei_zhu@apple.com>
+
+        BuildbotTriggerable should not update build requests from another triggerable.
+        https://bugs.webkit.org/show_bug.cgi?id=220762
+
+        Reviewed by Ryosuke Niwa.
+
+        BuildbotTriggerable._pullBuildbotOnAllSyncers assumes 'BuildRequest.all()' returns all build requests under current triggerable.
+        However, this assumption got broken when root reuse change was introduced because build requests under same analysis task are
+        fetched. Thus, 'BuildRequest.all()' may contain build requests those are not under current triggerable. And those build requests
+        will be updated to 'failedIfNotCompleted'.
+        Update 'api/build-requests' so that 'url' and 'status_description' fields are not cleared if update does not specify them.
+
+        * public/api/build-requests.php: Added logic to avoid updating 'url' and 'status_description' if they are not specified.
+        * server-tests/api-build-requests-tests.js: Added an unit test.
+        * server-tests/resources/mock-data.js:
+        (MockData.async set addMockBuildRequestsForTwoTriggerablesUnderOneAnalysisTask):
+        * server-tests/tools-buildbot-triggerable-tests.js: Added an unit test.
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype.async syncOnce): Fixed a typo.
+        (BuildbotTriggerable._pullBuildbotOnAllSyncers): Instead of iterating over 'BuildRequest.all()', only set 'failedIfNotCompleted'
+        for build requests those are under current triggerable and satisfy the condition.
+
 2020-12-09  Dewei Zhu  <dewei_zhu@apple.com>
 
         'AnalysisTask._commitSetsInSamePlatformGroup' should not fetch an invalid platform and metric config for a MeasurementSet.
