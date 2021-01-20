@@ -1,3 +1,15 @@
+2021-01-20  Youenn Fablet  <youenn@apple.com>
+
+        Two pages in the same process should not be able to play media stream backed video elements at the same time
+        https://bugs.webkit.org/show_bug.cgi?id=220504
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/getUserMedia2.html: Added.
+
 2021-01-20  Kate Cheney  <katherine_cheney@apple.com>
 
         Safari says "Blocked Plug-in" instead showing a PDF

@@ -348,8 +348,23 @@ void PlatformMediaSession::clientCharacteristicsChanged()
     m_manager->clientCharacteristicsChanged(*this);
 }
 
+static inline bool isPlayingAudio(PlatformMediaSession::MediaType mediaType)
+{
+    return mediaType == MediaElementSession::MediaType::VideoAudio || mediaType == MediaElementSession::MediaType::Audio;
+}
+
 bool PlatformMediaSession::canPlayConcurrently(const PlatformMediaSession& otherSession) const
 {
+    auto mediaType = this->mediaType();
+    auto otherMediaType = otherSession.mediaType();
+    if (otherMediaType != mediaType && (!isPlayingAudio(mediaType) || !isPlayingAudio(otherMediaType)))
+        return true;
+
+    auto groupID = client().mediaSessionGroupIdentifier();
+    auto otherGroupID = otherSession.client().mediaSessionGroupIdentifier();
+    if (!groupID || !otherGroupID || groupID != otherGroupID)
+        return false;
+
     return m_client.hasMediaStreamSource() && otherSession.m_client.hasMediaStreamSource();
 }
 

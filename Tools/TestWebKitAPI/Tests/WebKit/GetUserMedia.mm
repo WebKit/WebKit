@@ -301,6 +301,46 @@ TEST(WebKit2, GetCapabilities)
     TestWebKitAPI::Util::run(&done);
 }
 
+TEST(WebKit, InterruptionBetweenSameProcessPages)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+#if PLATFORM(IOS_FAMILY)
+    [configuration setAllowsInlineMediaPlayback:YES];
+#endif
+
+    auto preferences = [configuration preferences];
+    preferences._mediaCaptureRequiresSecureConnection = NO;
+    configuration.get()._mediaCaptureEnabled = YES;
+    preferences._mockCaptureDevicesEnabled = YES;
+
+    auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
+
+    done = false;
+    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    auto delegate = adoptNS([[GetUserMediaCaptureUIDelegate alloc] init]);
+    webView1.get().UIDelegate = delegate.get();
+    [webView1 loadTestPageNamed:@"getUserMedia2"];
+    TestWebKitAPI::Util::run(&done);
+
+    configuration.get()._relatedWebView = webView1.get();
+
+    done = false;
+    auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    webView2.get().UIDelegate = delegate.get();
+    [webView2 loadTestPageNamed:@"getUserMedia2"];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+#if PLATFORM(IOS)
+    [webView1 stringByEvaluatingJavaScript:@"checkIsNotPlaying()"];
+#else
+    [webView1 stringByEvaluatingJavaScript:@"checkIsPlaying()"];
+#endif
+    TestWebKitAPI::Util::run(&done);
+}
+
 #if WK_HAVE_C_SPI
 TEST(WebKit, WebAudioAndGetUserMedia)
 {

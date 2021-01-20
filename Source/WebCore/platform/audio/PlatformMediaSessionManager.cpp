@@ -243,9 +243,8 @@ bool PlatformMediaSessionManager::sessionWillBeginPlayback(PlatformMediaSession&
         endInterruption(PlatformMediaSession::NoFlags);
 
     if (restrictions & ConcurrentPlaybackNotPermitted) {
-        forEachMatchingSession([&session, sessionType](auto& oneSession) {
+        forEachMatchingSession([&session](auto& oneSession) {
             return &oneSession != &session
-                && oneSession.mediaType() == sessionType
                 && oneSession.state() == PlatformMediaSession::Playing
                 && !oneSession.canPlayConcurrently(session);
         }, [](auto& oneSession) {
