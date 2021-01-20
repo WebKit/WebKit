@@ -1,3 +1,23 @@
+2021-01-20  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Netflix controls do not fade out after entering fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=220472
+        <rdar://70602577>
+
+        Reviewed by Eric Carlson.
+
+        Test: TestWebKitAPI/Tests/mac/FullscreenPointerLeave.mm
+
+        Netflix uses a "pointerleave" event over their playback controls to trigger setting their "fade out controls"
+        timer, but a "pointerleave" event isn't fired when the element moves out from under the pointer (either due to
+        style changes, or the window screen location moving due to entering fullscreen).
+
+        Work around this behavior by sending a synthetic mouse event after entering fullscreen, which causes the
+        "pointerleave" event to be fired if, indeed, the pointer is no longer over the element in question.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]):
+
 2021-01-20  Kate Cheney  <katherine_cheney@apple.com>
 
         Safari says "Blocked Plug-in" instead showing a PDF
