@@ -898,6 +898,10 @@
 
 (media-capture-support)
 
+(allow mach-lookup
+  (global-name "com.apple.audio.AudioQueueServer" "com.apple.audio.AudioComponentRegistrar")
+)
+
 ;; These services have been identified as unused during living-on.
 ;; This list overrides some definitions above and in common.sb.
 ;; FIXME: remove overridden rules once the final list has been
