@@ -525,7 +525,7 @@ void CurlHandle::setHttpCustomRequest(const String& method)
 void CurlHandle::enableAcceptEncoding()
 {
     // enable all supported built-in compressions (gzip and deflate) through Accept-Encoding:
-    curl_easy_setopt(m_handle, CURLOPT_ENCODING, "");
+    curl_easy_setopt(m_handle, CURLOPT_ACCEPT_ENCODING, "");
 }
 
 void CurlHandle::enableAllowedProtocols()
