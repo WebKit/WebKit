@@ -1,3 +1,13 @@
+2021-01-21  Youenn Fablet  <youenn@apple.com>
+
+        Check for TURN username/credentials sizes in RTCPeerConnection constructor
+        https://bugs.webkit.org/show_bug.cgi?id=220789
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/stun-server-filtering-expected.txt:
+        * webrtc/stun-server-filtering.html:
+
 2021-01-21  Sam Weinig  <weinig@apple.com>
 
         Rework color clamping logic to be more consistent and clear
