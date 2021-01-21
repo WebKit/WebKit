@@ -1,3 +1,16 @@
+2021-01-21  Aditya Keerthi  <akeerthi@apple.com>
+
+        Unreviewed, reverting r271691.
+        https://bugs.webkit.org/show_bug.cgi?id=220812
+
+        Introduced crash, and failing API tests.
+
+        Reverted changeset:
+
+        "[macOS] Titlebar separator doesn't show when WKWebView is scrolled"
+        https://bugs.webkit.org/show_bug.cgi?id=220633
+        https://trac.webkit.org/changeset/271691
+
 2021-01-21  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Remove ENABLE_USERSELECT_ALL macro which is enabled for all ports

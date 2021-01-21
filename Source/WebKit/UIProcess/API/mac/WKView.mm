@@ -31,7 +31,6 @@
 #import "APIHitTestResult.h"
 #import "APIIconLoadingClient.h"
 #import "APIPageConfiguration.h"
-#import "AppKitSPI.h"
 #import "WKBrowsingContextGroupPrivate.h"
 #import "WKNSData.h"
 #import "WKProcessGroupPrivate.h"
@@ -65,11 +64,6 @@
 
 #if HAVE(TOUCH_BAR)
 @interface WKView () <NSTouchBarProvider>
-@end
-#endif
-
-#if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
-@interface WKView() <NSScrollViewSeparatorTrackingAdapter>
 @end
 #endif
 
@@ -1132,34 +1126,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 }
 
 #endif // HAVE(TOUCH_BAR)
-
-#if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
-
-- (NSRect)scrollViewFrame
-{
-    if (!_data->_impl)
-        return NSZeroRect;
-    return _data->_impl->scrollViewFrame();
-}
-
-- (BOOL)hasScrolledContentsUnderTitlebar
-{
-    if (!_data->_impl)
-        return NO;
-    return _data->_impl->hasScrolledContentsUnderTitlebar();
-}
-
-- (BOOL)_web_registerScrollViewSeparatorTrackingAdapter
-{
-    return [self.window registerScrollViewSeparatorTrackingAdapter:self];
-}
-
-- (void)_web_unregisterScrollViewSeparatorTrackingAdapter
-{
-    [self.window unregisterScrollViewSeparatorTrackingAdapter:self];
-}
-
-#endif // HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
 
 #if ENABLE(DRAG_SUPPORT)
 

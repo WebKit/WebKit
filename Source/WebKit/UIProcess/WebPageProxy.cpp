@@ -5851,11 +5851,9 @@ void WebPageProxy::didChangeViewportProperties(const ViewportAttributes& attr)
     pageClient().didChangeViewportProperties(attr);
 }
 
-void WebPageProxy::pageDidScroll(const WebCore::IntPoint& scrollPosition)
+void WebPageProxy::pageDidScroll()
 {
     m_uiClient->pageDidScroll(this);
-
-    pageClient().pageDidScroll(scrollPosition);
 
 #if PLATFORM(IOS_FAMILY)
     // Do not hide the validation message if the scrolling was caused by the keyboard showing up.
