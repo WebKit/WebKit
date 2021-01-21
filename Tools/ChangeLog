@@ -1,3 +1,54 @@
+2021-01-20  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Add TaskPool
+        https://bugs.webkit.org/show_bug.cgi?id=220547
+        <rdar://problem/73043887>
+
+        Reviewed by Dewei Zhu.
+
+        The TaskPool object is a Python 3.8 compatible multiprocessing tool. Notable features are forwarding stdout,
+        stderr and logging to the parent process, exception propagation between processes, and graceful clean-up when
+        exceptions in the parent process are encountered
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump version, add tblib.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/task_pool.py: Added.
+        (Message): Base class for message passed between processes.
+        (Task): Message including function and arguments to that function.
+        (Result): Return value of a task passed to the parent process.
+        (Log): Pass log message from child process to parent process.
+        (Print): Pass stdout or stderr line from child process to parent process.
+        (State): Notify parent process that the child process has changed state.
+        (ChildException): Pass exception and stack trace from
+        (BiDirectionalQueue): Pair for multiprocess queues allowing for messages to be passed between processes.
+        (Process): Scoping class managing child-process logic.
+        (Process.LogHandler): Logging handler that passes log lines from the child process to it's parent.
+        (Process.Stream): Writable stream which passes content from the child process to the standard out or error
+        of that process's parent.
+        (Process.handler): SIGTERM should prevent future processing but allow currently in-flight tasks to complete.
+        (Process.main): Entry-point to child process.
+        (TaskPool): Managing allocation of tasks to child processes and clean up those child processes.
+        (TaskPool.Exception): Exception owned by TaskPool object.
+        (TaskPool.__init__):
+        (TaskPool.__enter__):
+        (TaskPool.do): Pass task to child processes.
+        (TaskPool.wait): Wait until all processes are completed.
+        (TaskPool.__exit__): Teardown all child processes.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/task_pool_unittest.py: Added.
+        (setup):
+        (teardown):
+        (action):
+        (log):
+        (wait):
+        (exception):
+        (TaskPoolUnittest):
+        (TaskPoolUnittest.test_single):
+        (TaskPoolUnittest.test_multiple):
+        (TaskPoolUnittest.test_callback):
+        (TaskPoolUnittest.test_exception):
+        (TaskPoolUnittest.test_setup):
+        (TaskPoolUnittest.test_teardown):
+        (TaskPoolUnittest.test_invalid_shutdown):
+
 2021-01-20  Aakash Jain  <aakash_jain@apple.com>
 
         EWS should display commit identifier in builds
