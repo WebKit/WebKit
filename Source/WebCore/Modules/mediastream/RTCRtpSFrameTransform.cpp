@@ -159,10 +159,8 @@ void transformFrame(JSC::ArrayBuffer& value, JSDOMGlobalObject& globalObject, RT
     source.enqueue(toJS(&globalObject, &globalObject, buffer->tryCreateArrayBuffer().get()));
 }
 
-void RTCRtpSFrameTransform::createStreams()
+void RTCRtpSFrameTransform::createStreams(JSC::JSGlobalObject& globalObject)
 {
-    auto& globalObject = *scriptExecutionContext()->globalObject();
-
     m_readableStreamSource = SimpleReadableStreamSource::create();
     auto readable = ReadableStream::create(globalObject, m_readableStreamSource.copyRef());
     if (readable.hasException())
@@ -203,8 +201,12 @@ ExceptionOr<RefPtr<ReadableStream>> RTCRtpSFrameTransform::readable()
     if (!context)
         return Exception { InvalidStateError };
 
+    auto* globalObject = context->globalObject();
+    if (!globalObject)
+        return Exception { InvalidStateError };
+
     if (!m_readable)
-        createStreams();
+        createStreams(*globalObject);
 
     return m_readable.copyRef();
 }
@@ -215,8 +217,12 @@ ExceptionOr<RefPtr<WritableStream>> RTCRtpSFrameTransform::writable()
     if (!context)
         return Exception { InvalidStateError };
 
+    auto* globalObject = context->globalObject();
+    if (!globalObject)
+        return Exception { InvalidStateError };
+
     if (!m_writable)
-        createStreams();
+        createStreams(*globalObject);
 
     return m_writable.copyRef();
 }

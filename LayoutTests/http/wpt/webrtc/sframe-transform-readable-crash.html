@@ -1,0 +1,11 @@
+<iframe src="." id="frame"></iframe>
+<script>
+onload = async () => {
+if (window.testRunner)
+    testRunner.dumpAsText();
+const transform = new frame.contentWindow.SFrameTransform;
+frame.remove();
+transform.readable;
+}
+</script>
+<p>This test should not crash.</p>

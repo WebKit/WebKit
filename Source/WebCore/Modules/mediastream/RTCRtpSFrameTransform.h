@@ -31,6 +31,10 @@
 #include "JSDOMPromiseDeferred.h"
 #include "RTCRtpSFrameTransformer.h"
 
+namespace JSC {
+class JSGlobalObject;
+};
+
 namespace WebCore {
 
 class CryptoKey;
@@ -70,7 +74,7 @@ private:
 
     enum class Side { Sender, Receiver };
     void initializeTransformer(RTCRtpTransformBackend&, Side);
-    void createStreams();
+    void createStreams(JSC::JSGlobalObject&);
 
     bool m_isAttached { false };
     Ref<RTCRtpSFrameTransformer> m_transformer;
