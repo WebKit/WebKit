@@ -1,3 +1,13 @@
+2021-01-21  Alex Christensen  <achristensen@webkit.org>
+
+        Add experimental feature to use network loader
+        https://bugs.webkit.org/show_bug.cgi?id=220521
+        <rdar://problem/69394713>
+
+        Reviewed by Geoff Garen.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+
 2021-01-21  Sam Weinig  <weinig@apple.com>
 
         Add experimental support for separated layers

@@ -1,3 +1,27 @@
+2021-01-21  Alex Christensen  <achristensen@webkit.org>
+
+        Add experimental feature to use network loader
+        https://bugs.webkit.org/show_bug.cgi?id=220521
+        <rdar://problem/69394713>
+
+        Reviewed by Geoff Garen.
+
+        Manually verified that the setting is correctly appearing in Safari and being given to CFNetwork.
+
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::experimentalFeatureEnabled):
+        (WebKit::WebsiteDataStore::http3Enabled):
+        (WebKit::WebsiteDataStore::useNetworkLoader):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2021-01-21  Aditya Keerthi  <akeerthi@apple.com>
 
         Unreviewed, reverting r271691.

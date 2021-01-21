@@ -239,6 +239,9 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 #if HAVE(HSTS_STORAGE)
 @property (nullable, retain) _NSHSTSStorage *_hstsStorage;
 #endif
+#if HAVE(NETWORK_LOADER)
+@property BOOL _usesNWLoader;
+#endif
 @end
 
 @interface NSURLSessionTask ()

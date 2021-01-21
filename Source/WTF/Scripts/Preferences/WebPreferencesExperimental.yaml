@@ -102,6 +102,17 @@ BlankAnchorTargetImpliesNoOpenerEnabled:
     WebCore:
       default: true
 
+CFNetworkNetworkLoaderEnabled:
+  type: bool
+  humanReadableName: "Experimental network loader"
+  humanReadableDescription: "Enable experimental network loader"
+  webcoreBinding: none
+  condition: HAVE(NETWORK_LOADER)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+
 CSSCustomPropertiesAndValuesEnabled:
   type: bool
   humanReadableName: "CSS Custom Properties and Values API"

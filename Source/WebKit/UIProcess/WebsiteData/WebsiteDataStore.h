@@ -268,6 +268,8 @@ public:
 #if PLATFORM(COCOA)
     void sendNetworkProcessXPCEndpointToWebProcess(WebProcessProxy&);
     void sendNetworkProcessXPCEndpointToAllWebProcesses();
+    
+    static bool useNetworkLoader();
 #endif
 
 #if USE(CURL)

@@ -197,15 +197,31 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
         SandboxExtension::createHandleForReadWriteDirectory(FileSystem::directoryName(cookieFile), parameters.cookieStoragePathExtensionHandle);
 }
 
-bool WebsiteDataStore::http3Enabled()
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE) || HAVE(NETWORK_LOADER)
+static bool experimentalFeatureEnabled(const String& key)
 {
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
 #if PLATFORM(MAC)
     NSString *format = @"Experimental%@";
 #else
     NSString *format = @"WebKitExperimental%@";
 #endif
-    return [[NSUserDefaults standardUserDefaults] boolForKey:[NSString stringWithFormat:format, (NSString *)WebPreferencesKey::http3EnabledKey()]];
+    return [[NSUserDefaults standardUserDefaults] boolForKey:[NSString stringWithFormat:format, static_cast<NSString *>(key)]];
+}
+#endif
+
+bool WebsiteDataStore::http3Enabled()
+{
+#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+    return experimentalFeatureEnabled(WebPreferencesKey::http3EnabledKey());
+#else
+    return false;
+#endif
+}
+
+bool WebsiteDataStore::useNetworkLoader()
+{
+#if HAVE(NETWORK_LOADER)
+    return experimentalFeatureEnabled(WebPreferencesKey::cFNetworkNetworkLoaderEnabledKey());
 #else
     return false;
 #endif

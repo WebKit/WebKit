@@ -84,6 +84,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << requiresSecureHTTPSProxyConnection;
     encoder << preventsSystemHTTPProxyAuthentication;
     encoder << appHasRequestedCrossWebsiteTrackingPermission;
+    encoder << useNetworkLoader;
     encoder << resourceLoadStatisticsParameters;
 }
 
@@ -276,6 +277,11 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     if (!appHasRequestedCrossWebsiteTrackingPermission)
         return WTF::nullopt;
 
+    Optional<bool> useNetworkLoader;
+    decoder >> useNetworkLoader;
+    if (!useNetworkLoader)
+        return WTF::nullopt;
+
     Optional<ResourceLoadStatisticsParameters> resourceLoadStatisticsParameters;
     decoder >> resourceLoadStatisticsParameters;
     if (!resourceLoadStatisticsParameters)
@@ -326,6 +332,7 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(*requiresSecureHTTPSProxyConnection)
         , WTFMove(*preventsSystemHTTPProxyAuthentication)
         , WTFMove(*appHasRequestedCrossWebsiteTrackingPermission)
+        , WTFMove(*useNetworkLoader)
         , WTFMove(*resourceLoadStatisticsParameters)
     }};
 }

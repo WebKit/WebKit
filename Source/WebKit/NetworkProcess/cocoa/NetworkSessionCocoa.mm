@@ -1234,6 +1234,10 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     }
 #endif
 
+#if HAVE(NETWORK_LOADER)
+    configuration._usesNWLoader = parameters.useNetworkLoader;
+#endif
+
 #if HAVE(APP_SSO) || PLATFORM(MACCATALYST)
     configuration._preventsAppSSO = true;
 #endif

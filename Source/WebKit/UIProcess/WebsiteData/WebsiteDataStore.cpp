@@ -2218,6 +2218,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     platformSetNetworkParameters(parameters);
 #if PLATFORM(COCOA)
     parameters.networkSessionParameters.appHasRequestedCrossWebsiteTrackingPermission = hasRequestedCrossWebsiteTrackingPermission();
+    parameters.networkSessionParameters.useNetworkLoader = useNetworkLoader();
 #endif
     
     return parameters;
