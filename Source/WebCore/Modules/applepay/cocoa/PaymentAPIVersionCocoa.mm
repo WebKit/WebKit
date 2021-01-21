@@ -35,7 +35,9 @@ namespace WebCore {
 unsigned PaymentAPIVersion::current()
 {
     static unsigned current = [] {
-#if HAVE(PASSKIT_NEW_BUTTON_TYPES)
+#if ENABLE(APPLE_PAY_SESSION_V11)
+        return 11;
+#elif HAVE(PASSKIT_NEW_BUTTON_TYPES)
         return 10;
 #elif HAVE(PASSKIT_INSTALLMENTS)
         if (PAL::getPKPaymentInstallmentConfigurationClass()) {
