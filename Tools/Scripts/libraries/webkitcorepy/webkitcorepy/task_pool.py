@@ -27,7 +27,6 @@ import multiprocessing
 import signal
 import sys
 
-from six import reraise
 from webkitcorepy import OutputCapture, Timeout, log
 
 
@@ -120,6 +119,7 @@ class ChildException(Message):
         self.exc_info = exc_info or sys.exc_info()
 
     def __call__(self, caller):
+        from six import reraise
         _, exception, trace = sys.exc_info()
         if exception:
             log.critical("Exception in flight, '{}' ignored".format(self.exc_info[1]))
@@ -335,6 +335,7 @@ class TaskPool(object):
             self.queue.receive()(self)
 
     def __exit__(self, *args, **kwargs):
+        from six import reraise
         try:
             inflight = sys.exc_info()
 

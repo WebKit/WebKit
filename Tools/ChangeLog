@@ -1,3 +1,19 @@
+2021-01-21  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [webkitcorepy] Don't import six at the top level
+        https://bugs.webkit.org/show_bug.cgi?id=220795
+
+        Reviewed by Aakash Jain.
+
+        Instead, do the import after the module has been loaded, when
+        AutoInstall has been set up properly. Fixes a regression after
+        1d342a5067e22ac8069ff3ff337b2d58e1d06517, where task_pool.py uses
+        the six module without it being installed.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/task_pool.py:
+        (ChildException.__call__):
+        (TaskPool.__exit__):
+
 2021-01-21  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Titlebar separator doesn't show when WKWebView is scrolled
