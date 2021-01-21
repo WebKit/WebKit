@@ -1,3 +1,12 @@
+2021-01-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove ENABLE_USERSELECT_ALL macro which is enabled for all ports
+        https://bugs.webkit.org/show_bug.cgi?id=100424
+
+        Reviewed by Don Olmstead.
+
+        * wtf/PlatformEnableCocoa.h:
+
 2021-01-21  Sam Weinig  <weinig@apple.com>
 
         Add experimental support for separated layers

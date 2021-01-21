@@ -428,10 +428,8 @@ static inline bool dispatchSelectStart(Node* node)
 
 static Node* nodeToSelectOnMouseDownForNode(Node& targetNode)
 {
-#if ENABLE(USERSELECT_ALL)
     if (Node* rootUserSelectAll = Position::rootUserSelectAllForNode(&targetNode))
         return rootUserSelectAll;
-#endif
 
     if (targetNode.shouldSelectOnMouseDown())
         return &targetNode;
@@ -965,7 +963,6 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
         newSelection = VisibleSelection(targetPosition);
     }
 
-#if ENABLE(USERSELECT_ALL)
     Node* rootUserSelectAllForMousePressNode = Position::rootUserSelectAllForNode(m_mousePressNode.get());
     if (rootUserSelectAllForMousePressNode && rootUserSelectAllForMousePressNode == Position::rootUserSelectAllForNode(target)) {
         newSelection.setBase(positionBeforeNode(rootUserSelectAllForMousePressNode).upstream(CanCrossEditingBoundary));
@@ -983,9 +980,6 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
         else
             newSelection.setExtent(targetPosition);
     }
-#else
-    newSelection.setExtent(targetPosition);
-#endif
 
     if (m_frame.selection().granularity() != TextGranularity::CharacterGranularity)
         newSelection.expandUsingGranularity(m_frame.selection().granularity());

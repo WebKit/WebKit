@@ -515,9 +515,6 @@ my @features = (
     { option => "unified-builds", desc => "Toggle unified builds",
       define => "ENABLE_UNIFIED_BUILDS", value => \$unifiedBuildsSupport },
 
-    { option => "userselect-all", desc => "Toggle user-select:all support",
-      define => "ENABLE_USERSELECT_ALL", value => \$userselectAllSupport },
-
     { option => "user-message-handlers", desc => "Toggle user script message handler support",
       define => "ENABLE_USER_MESSAGE_HANDLERS", value => \$userMessageHandlersSupport },
 

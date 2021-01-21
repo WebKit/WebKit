@@ -1,3 +1,12 @@
+2021-01-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove ENABLE_USERSELECT_ALL macro which is enabled for all ports
+        https://bugs.webkit.org/show_bug.cgi?id=100424
+
+        Reviewed by Don Olmstead.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2021-01-21  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Handle machines that cannot import keyring

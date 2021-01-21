@@ -737,13 +737,11 @@ VisiblePosition FrameSelection::nextWordPositionForPlatform(const VisiblePositio
     return positionAfterCurrentWord;
 }
 
-#if ENABLE(USERSELECT_ALL)
 static void adjustPositionForUserSelectAll(VisiblePosition& pos, bool isForward)
 {
     if (Node* rootUserSelectAll = Position::rootUserSelectAllForNode(pos.deepEquivalent().anchorNode()))
         pos = isForward ? positionAfterNode(rootUserSelectAll).downstream(CanCrossEditingBoundary) : positionBeforeNode(rootUserSelectAll).upstream(CanCrossEditingBoundary);
 }
-#endif
 
 VisiblePosition FrameSelection::modifyExtendingRight(TextGranularity granularity)
 {
@@ -786,9 +784,7 @@ VisiblePosition FrameSelection::modifyExtendingRight(TextGranularity granularity
         ASSERT_NOT_REACHED();
         break;
     }
-#if ENABLE(USERSELECT_ALL)
     adjustPositionForUserSelectAll(pos, directionOfEnclosingBlock() == TextDirection::LTR);
-#endif
     return pos;
 }
 
@@ -831,9 +827,7 @@ VisiblePosition FrameSelection::modifyExtendingForward(TextGranularity granulari
             pos = endOfDocument(pos);
         break;
     }
-#if ENABLE(USERSELECT_ALL)
     adjustPositionForUserSelectAll(pos, directionOfEnclosingBlock() == TextDirection::LTR);
-#endif
     return pos;
 }
 
@@ -1002,9 +996,7 @@ VisiblePosition FrameSelection::modifyExtendingLeft(TextGranularity granularity)
         ASSERT_NOT_REACHED();
         break;
     }
-#if ENABLE(USERSELECT_ALL)
     adjustPositionForUserSelectAll(pos, !(directionOfEnclosingBlock() == TextDirection::LTR));
-#endif
     return pos;
 }
        
@@ -1052,9 +1044,7 @@ VisiblePosition FrameSelection::modifyExtendingBackward(TextGranularity granular
         ASSERT_NOT_REACHED();
         break;
     }
-#if ENABLE(USERSELECT_ALL)
     adjustPositionForUserSelectAll(pos, !(directionOfEnclosingBlock() == TextDirection::LTR));
-#endif
     return pos;
 }
 

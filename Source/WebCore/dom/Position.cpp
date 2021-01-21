@@ -931,7 +931,6 @@ bool Position::nodeIsUserSelectNone(Node* node)
     return node && node->renderer() && node->renderer()->style().userSelect() == UserSelect::None;
 }
 
-#if ENABLE(USERSELECT_ALL)
 bool Position::nodeIsUserSelectAll(const Node* node)
 {
     return node && node->renderer() && node->renderer()->style().userSelect() == UserSelect::All;
@@ -958,7 +957,6 @@ Node* Position::rootUserSelectAllForNode(Node* node)
     }
     return candidateRoot;
 }
-#endif
 
 bool Position::isCandidate() const
 {

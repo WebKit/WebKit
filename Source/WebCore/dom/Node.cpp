@@ -760,14 +760,10 @@ static Node::Editability computeEditabilityFromComputedStyle(const Node& startNo
             continue;
         if (style->display() == DisplayType::None)
             continue;
-#if ENABLE(USERSELECT_ALL)
         // Elements with user-select: all style are considered atomic
         // therefore non editable.
         if (treatment == Node::UserSelectAllIsAlwaysNonEditable && style->userSelect() == UserSelect::All)
             return Node::Editability::ReadOnly;
-#else
-        UNUSED_PARAM(treatment);
-#endif
         switch (style->userModify()) {
         case UserModify::ReadOnly:
             return Node::Editability::ReadOnly;
