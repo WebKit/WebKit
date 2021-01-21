@@ -51,30 +51,10 @@ promise_test(async (test) => {
     video3.src = findMediaFile('video', '../media/content/audio-tracks');
     await video3.play();
 
-    let counter = 0;
-    while (!video1.paused && ++counter < 20)
-        await new Promise(resolve => setTimeout(resolve, 50));
-
-    assert_true(video1.paused, "video1 paused");
-    assert_true(video2.paused, "video2 paused");
-    assert_false(video3.paused, "video3 paused");
-}, "Play regular video content should pause MediaStream backed video elements");
-
-promise_test(async (test) => {
-    await video1.play();
-
-    assert_true(video3.paused, "video3 paused");
-
-    await video2.play();
-
-    let counter = 0;
-    while (!video3.paused && ++counter < 20)
-        await new Promise(resolve => setTimeout(resolve, 50));
-
     assert_false(video1.paused, "video1 paused");
     assert_false(video2.paused, "video2 paused");
-    assert_true(video3.paused, "video3 paused");
-}, "Play MediaStream backed video elements should pause regular video content");
+    assert_false(video3.paused, "video3 paused");
+}, "Play regular video content should not pause MediaStream backed video elements");
         </script>
     </body>
 </html>

@@ -1,5 +1,18 @@
 2021-01-21  Youenn Fablet  <youenn@apple.com>
 
+        Allow MediaStream and non MediaStream backed videos to play together
+        https://bugs.webkit.org/show_bug.cgi?id=199661
+        <rdar://problem/68622411>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/concurrentVideoPlayback-expected.txt:
+        * webrtc/concurrentVideoPlayback.html:
+        * webrtc/concurrentVideoPlayback2-expected.txt: Added.
+        * webrtc/concurrentVideoPlayback2.html: Added.
+
+2021-01-21  Youenn Fablet  <youenn@apple.com>
+
         Check for TURN username/credentials sizes in RTCPeerConnection constructor
         https://bugs.webkit.org/show_bug.cgi?id=220789
 
