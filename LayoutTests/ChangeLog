@@ -1,3 +1,12 @@
+2021-01-21  Rini Patel  <rini_patel@apple.com>
+
+        [GPU Process] Add Layout tests timeouts and failures to TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=220803
+
+        Reviewed by Simon Fraser.
+
+        * gpu-process/TestExpectations:
+
 2021-01-21  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (?): Scroll stutters/blocked with nested scrolling
