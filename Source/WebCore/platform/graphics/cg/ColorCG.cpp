@@ -102,13 +102,16 @@ static CGColorRef leakCGColor(const Color& color)
 
     // Some CG ports don't support all the color spaces required and return
     // sRGBColorSpaceRef() for unsupported color spaces. In those cases, we
-    // need to eagerly and potentially lossily convert the color into sRGB
-    // ourselves before creating the CGColorRef.
+    // need to eagerly convert the color into extended sRGB ourselves before
+    // creating the CGColorRef.
+    // FIXME: This is not a good way to indicate lack of support. Make this
+    // more explicit.
     if (colorSpace != ColorSpace::SRGB && cgColorSpace == sRGBColorSpaceRef()) {
-        auto colorConvertedToSRGBA = callWithColorType(components, colorSpace, [] (const auto& color) {
-            return toSRGBA(color);
+        auto colorConvertedToExtendedSRGBA = callWithColorType(components, colorSpace, [] (const auto& color) {
+            return toExtendedSRGBA(color);
         });
-        components = asColorComponents(colorConvertedToSRGBA);
+        components = asColorComponents(colorConvertedToExtendedSRGBA);
+        cgColorSpace = extendedSRGBColorSpaceRef();
     }
 
     auto [r, g, b, a] = components;

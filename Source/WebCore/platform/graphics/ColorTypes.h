@@ -49,6 +49,7 @@ template<typename T> struct ColorComponentRange {
 };
 
 template<typename> struct RGBModel;
+template<typename> struct ExtendedRGBModel;
 template<typename> struct LabModel;
 template<typename> struct LCHModel;
 template<typename> struct HSLModel;
@@ -71,6 +72,15 @@ template<> struct RGBModel<float> {
         { 0, 1 }
     } };
     static constexpr bool isInvertible = true;
+};
+
+template<> struct ExtendedRGBModel<float> {
+    static constexpr std::array<ColorComponentRange<float>, 3> ranges { {
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() },
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() },
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() }
+    } };
+    static constexpr bool isInvertible = false;
 };
 
 template<> struct LabModel<float> {
@@ -311,6 +321,45 @@ template<typename T> constexpr bool operator!=(const SRGBA<T>& a, const SRGBA<T>
 }
 
 
+template<typename T> struct ExtendedSRGBA : ColorWithAlphaHelper<ExtendedSRGBA<T>> {
+    using ComponentType = T;
+    using Model = ExtendedRGBModel<T>;
+
+    constexpr ExtendedSRGBA(T red, T green, T blue, T alpha = AlphaTraits<T>::opaque)
+        : red { red }
+        , green { green }
+        , blue { blue }
+        , alpha { alpha }
+    {
+    }
+
+    constexpr ExtendedSRGBA()
+        : ExtendedSRGBA { 0, 0, 0, 0 }
+    {
+    }
+
+    T red;
+    T green;
+    T blue;
+    T alpha;
+};
+
+template<typename T> constexpr ColorComponents<T> asColorComponents(const ExtendedSRGBA<T>& c)
+{
+    return { c.red, c.green, c.blue, c.alpha };
+}
+
+template<typename T> constexpr bool operator==(const ExtendedSRGBA<T>& a, const ExtendedSRGBA<T>& b)
+{
+    return asColorComponents(a) == asColorComponents(b);
+}
+
+template<typename T> constexpr bool operator!=(const ExtendedSRGBA<T>& a, const ExtendedSRGBA<T>& b)
+{
+    return !(a == b);
+}
+
+
 template<typename T> struct LinearSRGBA : ColorWithAlphaHelper<LinearSRGBA<T>> {
     using ComponentType = T;
     using Model = RGBModel<T>;
@@ -347,6 +396,45 @@ template<typename T> constexpr bool operator==(const LinearSRGBA<T>& a, const Li
 }
 
 template<typename T> constexpr bool operator!=(const LinearSRGBA<T>& a, const LinearSRGBA<T>& b)
+{
+    return !(a == b);
+}
+
+
+template<typename T> struct LinearExtendedSRGBA : ColorWithAlphaHelper<LinearExtendedSRGBA<T>> {
+    using ComponentType = T;
+    using Model = ExtendedRGBModel<T>;
+
+    constexpr LinearExtendedSRGBA(T red, T green, T blue, T alpha = AlphaTraits<T>::opaque)
+        : red { red }
+        , green { green }
+        , blue { blue }
+        , alpha { alpha }
+    {
+    }
+
+    constexpr LinearExtendedSRGBA()
+        : LinearExtendedSRGBA { 0, 0, 0, 0 }
+    {
+    }
+
+    T red;
+    T green;
+    T blue;
+    T alpha;
+};
+
+template<typename T> constexpr ColorComponents<T> asColorComponents(const LinearExtendedSRGBA<T>& c)
+{
+    return { c.red, c.green, c.blue, c.alpha };
+}
+
+template<typename T> constexpr bool operator==(const LinearExtendedSRGBA<T>& a, const LinearExtendedSRGBA<T>& b)
+{
+    return asColorComponents(a) == asColorComponents(b);
+}
+
+template<typename T> constexpr bool operator!=(const LinearExtendedSRGBA<T>& a, const LinearExtendedSRGBA<T>& b)
 {
     return !(a == b);
 }

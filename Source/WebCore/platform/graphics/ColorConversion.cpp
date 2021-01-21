@@ -76,6 +76,8 @@ static constexpr ColorMatrix<3, 3> D65ToD50Matrix {
     -0.0092345f, 0.0150436f,  0.7521316f
 };
 
+// Gamma conversions.
+
 float linearToRGBColorComponentClamping(float c)
 {
     if (c < 0.0031308f)
@@ -92,7 +94,27 @@ float rgbToLinearColorComponentClamping(float c)
     return clampTo<float>(std::pow((c + 0.055f) / 1.055f, 2.4f), 0, 1);
 }
 
-// Gamma conversions.
+float linearToRGBColorComponentNonClamping(float c)
+{
+    float sign = c > 0 ? 1.0f : -1.0f;
+    c = std::abs(c);
+
+    if (c < 0.0031308f)
+        return 12.92f * c * sign;
+
+    return (1.055f * std::pow(c, 1.0f / 2.4f) - 0.055f) * sign;
+}
+
+float rgbToLinearColorComponentNonClamping(float c)
+{
+    float sign = c > 0 ? 1.0f : -1.0f;
+    c = std::abs(c);
+
+    if (c <= 0.04045f)
+        return c / 12.92f * sign;
+
+    return std::pow((c + 0.055f) / 1.055f, 2.4f) * sign;
+}
 
 LinearSRGBA<float> toLinearSRGBA(const SRGBA<float>& color)
 {
@@ -104,12 +126,32 @@ LinearSRGBA<float> toLinearSRGBA(const SRGBA<float>& color)
     };
 }
 
+LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const ExtendedSRGBA<float>& color)
+{
+    return {
+        rgbToLinearColorComponentNonClamping(color.red),
+        rgbToLinearColorComponentNonClamping(color.green),
+        rgbToLinearColorComponentNonClamping(color.blue),
+        color.alpha
+    };
+}
+
 SRGBA<float> toSRGBA(const LinearSRGBA<float>& color)
 {
     return {
         linearToRGBColorComponentClamping(color.red),
         linearToRGBColorComponentClamping(color.green),
         linearToRGBColorComponentClamping(color.blue),
+        color.alpha
+    };
+}
+
+ExtendedSRGBA<float> toExtendedSRGBA(const LinearExtendedSRGBA<float>& color)
+{
+    return {
+        linearToRGBColorComponentNonClamping(color.red),
+        linearToRGBColorComponentNonClamping(color.green),
+        linearToRGBColorComponentNonClamping(color.blue),
         color.alpha
     };
 }
@@ -142,6 +184,16 @@ LinearSRGBA<float> toLinearSRGBA(const XYZA<float>& color)
 }
 
 XYZA<float> toXYZA(const LinearSRGBA<float>& color)
+{
+    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(linearSRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
+}
+
+LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const XYZA<float>& color)
+{
+    return makeFromComponentsClampingExceptAlpha<LinearExtendedSRGBA<float>>(xyzToLinearSRGBMatrix.transformedColorComponents(asColorComponents(color)));
+}
+
+XYZA<float> toXYZA(const LinearExtendedSRGBA<float>& color)
 {
     return makeFromComponentsClampingExceptAlpha<XYZA<float>>(linearSRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
@@ -388,6 +440,16 @@ XYZA<float> toXYZA(const SRGBA<float>& color)
 SRGBA<float> toSRGBA(const XYZA<float>& color)
 {
     return toSRGBA(toLinearSRGBA(color));
+}
+
+XYZA<float> toXYZA(const ExtendedSRGBA<float>& color)
+{
+    return toXYZA(toLinearExtendedSRGBA(color));
+}
+
+ExtendedSRGBA<float> toExtendedSRGBA(const XYZA<float>& color)
+{
+    return toExtendedSRGBA(toLinearExtendedSRGBA(color));
 }
 
 XYZA<float> toXYZA(const DisplayP3<float>& color)

@@ -32,6 +32,8 @@ namespace WebCore {
 // These are the standard sRGB <-> LinearRGB / DisplayP3 <-> LinearDisplayP3 conversion functions (https://en.wikipedia.org/wiki/SRGB).
 float linearToRGBColorComponentClamping(float);
 float rgbToLinearColorComponentClamping(float);
+float linearToRGBColorComponentNonClamping(float);
+float rgbToLinearColorComponentNonClamping(float);
 
 // All color types must at least implement the following conversions to and from the XYZA color space:
 //    XYZA<float> toXYZA(const ColorType<float>&);
@@ -49,11 +51,23 @@ WEBCORE_EXPORT LinearSRGBA<float> toLinearSRGBA(const SRGBA<float>&);
 WEBCORE_EXPORT HSLA<float> toHSLA(const SRGBA<float>&);
 WEBCORE_EXPORT CMYKA<float> toCMYKA(const SRGBA<float>&);
 
+// ExtendedSRGBA
+WEBCORE_EXPORT XYZA<float> toXYZA(const ExtendedSRGBA<float>&);
+WEBCORE_EXPORT ExtendedSRGBA<float> toExtendedSRGBA(const XYZA<float>&);
+// Additions
+WEBCORE_EXPORT LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const ExtendedSRGBA<float>&);
+
 // LinearSRGBA
 WEBCORE_EXPORT XYZA<float> toXYZA(const LinearSRGBA<float>&);
 WEBCORE_EXPORT LinearSRGBA<float> toLinearSRGBA(const XYZA<float>&);
 // Additions
 WEBCORE_EXPORT SRGBA<float> toSRGBA(const LinearSRGBA<float>&);
+
+// LinearExtendedSRGBA
+WEBCORE_EXPORT XYZA<float> toXYZA(const LinearExtendedSRGBA<float>&);
+WEBCORE_EXPORT LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const XYZA<float>&);
+// Additions
+WEBCORE_EXPORT ExtendedSRGBA<float> toExtendedSRGBA(const LinearExtendedSRGBA<float>&);
 
 // DisplayP3
 WEBCORE_EXPORT XYZA<float> toXYZA(const DisplayP3<float>&);
@@ -95,7 +109,9 @@ WEBCORE_EXPORT SRGBA<float> toSRGBA(const CMYKA<float>&);
 // Identity conversions (useful for generic contexts).
 
 constexpr SRGBA<float> toSRGBA(const SRGBA<float>& color) { return color; }
+constexpr ExtendedSRGBA<float> toExtendedSRGBA(const ExtendedSRGBA<float>& color) { return color; }
 constexpr LinearSRGBA<float> toLinearSRGBA(const LinearSRGBA<float>& color) { return color; }
+constexpr LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const LinearExtendedSRGBA<float>& color) { return color; }
 constexpr DisplayP3<float> toDisplayP3(const DisplayP3<float>& color) { return color; }
 constexpr LinearDisplayP3<float> toLinearDisplayP3(const LinearDisplayP3<float>& color) { return color; }
 constexpr Lab<float> toLab(const Lab<float>& color) { return color; }
@@ -115,9 +131,19 @@ template<typename T> SRGBA<float> toSRGBA(const T& color)
     return toSRGBA(toXYZA(color));
 }
 
+template<typename T> ExtendedSRGBA<float> toExtendedSRGBA(const T& color)
+{
+    return toExtendedSRGBA(toXYZA(color));
+}
+
 template<typename T> LinearSRGBA<float> toLinearSRGBA(const T& color)
 {
     return toLinearSRGBA(toXYZA(color));
+}
+
+template<typename T> LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const T& color)
+{
+    return toLinearExtendedSRGBA(toXYZA(color));
 }
 
 template<typename T> DisplayP3<float> toDisplayP3(const T& color)
