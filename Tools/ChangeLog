@@ -1,3 +1,12 @@
+2021-01-21  Aakash Jain  <aakash_jain@apple.com>
+
+        Update setup-commit-queue.sh for github repo
+        https://bugs.webkit.org/show_bug.cgi?id=220750
+
+        Reviewed by Jonathan Bedard.
+
+        * EWSTools/setup-commit-queue.sh:
+
 2021-01-21  Aditya Keerthi  <akeerthi@apple.com>
 
         Unreviewed, reverting r271691.
