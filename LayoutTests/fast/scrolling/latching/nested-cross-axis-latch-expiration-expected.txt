@@ -1,0 +1,7 @@
+PASS innerOverflowScrollEventCount > 0 is true
+PASS outerOverflowScrollEventCount is 0
+PASS windowScrollEventCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

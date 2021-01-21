@@ -252,7 +252,14 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
                     } else
                         m_overflowScrollDelta.setWidth(m_overflowScrollDelta.width() + deltaX);
                 }
-                shouldStretch = true;
+
+                if (!m_client.allowsHorizontalStretching(wheelEvent))
+                    deltaX = 0;
+
+                if (!m_client.allowsVerticalStretching(wheelEvent))
+                    deltaY = 0;
+
+                shouldStretch = deltaX || deltaY;
             }
         }
 

@@ -283,7 +283,7 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
     if (!box)
         return;
 
-    LOG_WITH_STREAM(Scrolling, stream << "RenderLayerScrollableArea::scrollTo " << position << " from " << m_scrollPosition << " (is user scroll " << (currentScrollType() == ScrollType::User) << ")");
+    LOG_WITH_STREAM(Scrolling, stream << "RenderLayerScrollableArea  [" << scrollingNodeID() << "] scrollTo " << position << " from " << m_scrollPosition << " (is user scroll " << (currentScrollType() == ScrollType::User) << ")");
 
     ScrollPosition newPosition = position;
     if (!box->isHTMLMarquee()) {

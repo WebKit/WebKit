@@ -1,3 +1,16 @@
+2021-01-21  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (?): Scroll stutters/blocked with nested scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=219923
+        <rdar://72390196>
+
+        Reviewed by Sam Weinig.
+
+        * fast/scrolling/latching/nested-cross-axis-latch-expiration-expected.txt: Added.
+        * fast/scrolling/latching/nested-cross-axis-latch-expiration.html: Added.
+        * fast/scrolling/latching/overflow-hidden-on-one-axis-expected.txt: Added.
+        * fast/scrolling/latching/overflow-hidden-on-one-axis.html: Added.
+
 2021-01-21  Alex Christensen  <achristensen@webkit.org>
 
         Add logs to HTTP/0.9 test
