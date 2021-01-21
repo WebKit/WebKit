@@ -1262,10 +1262,9 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(const Position& start, 
             // Move lastNode up in the tree as much as node was moved up in the
             // tree by NodeTraversal::nextSkippingChildren, so that the relative depth between
             // node and the original start node is maintained in the clone.
-            while (startNode->parentNode() && startNode->parentNode() != node->parentNode()) {
+            while (startNode->parentNode() && lastNode->parentNode() && startNode->parentNode() != node->parentNode()) {
                 startNode = startNode->parentNode();
                 lastNode = lastNode->parentNode();
-                ASSERT(lastNode);
             }
 
             auto clonedNode = node->cloneNode(true);
