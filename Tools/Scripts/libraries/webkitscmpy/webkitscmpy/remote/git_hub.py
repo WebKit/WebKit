@@ -76,7 +76,11 @@ class GitHub(Scm):
         username_prompted = False
         password_prompted = False
         if not username:
-            username = keyring.get_password(self.api_url, 'username')
+            try:
+                username = keyring.get_password(self.api_url, 'username')
+            except RuntimeError:
+                pass
+
             if not username and required:
                 if not sys.stderr.isatty() or not sys.stdin.isatty():
                     raise OSError('No tty to prompt user for username')
@@ -87,7 +91,11 @@ class GitHub(Scm):
                 username_prompted = True
 
         if not access_token and required:
-            access_token = keyring.get_password(self.api_url, username)
+            try:
+                access_token = keyring.get_password(self.api_url, username)
+            except RuntimeError:
+                pass
+
             if not access_token:
                 if not sys.stderr.isatty() or not sys.stdin.isatty():
                     raise OSError('No tty to prompt user for username')

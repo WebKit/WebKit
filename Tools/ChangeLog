@@ -1,3 +1,15 @@
+2021-01-20  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Gracefully handle missing keyring backend
+        https://bugs.webkit.org/show_bug.cgi?id=220784
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.credentials): Handle RuntimeErrors from keyring.
+
 2021-01-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Include an origin identifier when writing promised image data to the drag pasteboard
