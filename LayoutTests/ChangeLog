@@ -1,5 +1,17 @@
 2021-01-21  Rob Buis  <rbuis@igalia.com>
 
+        Null check in WebTextIndicatorView::initWithFrame
+        https://bugs.webkit.org/show_bug.cgi?id=220491
+
+        Reviewed by Youenn Fablet.
+
+        Add test for this.
+
+        * ipc/set-text-indicator-expected.txt: Added.
+        * ipc/set-text-indicator.html: Added.
+
+2021-01-21  Rob Buis  <rbuis@igalia.com>
+
         Null check in RTCRtpSFrameTransform::createStreams
         https://bugs.webkit.org/show_bug.cgi?id=220396
 

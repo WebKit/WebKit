@@ -159,13 +159,16 @@ static bool indicatorWantsManualAnimation(const TextIndicator& indicator)
     self.wantsLayer = YES;
     self.layer.anchorPoint = CGPointZero;
 
-    FloatSize contentsImageLogicalSize = _textIndicator->contentImage()->size();
-    contentsImageLogicalSize.scale(1 / _textIndicator->contentImageScaleFactor());
     RefPtr<NativeImage> contentsImage;
-    if (indicatorWantsContentCrossfade(*_textIndicator))
-        contentsImage = _textIndicator->contentImageWithHighlight()->nativeImage();
-    else
-        contentsImage = _textIndicator->contentImage()->nativeImage();
+    FloatSize contentsImageLogicalSize { 1, 1 };
+    if (auto* contentImage = _textIndicator->contentImage()) {
+        contentsImageLogicalSize = contentImage->size();
+        contentsImageLogicalSize.scale(1 / _textIndicator->contentImageScaleFactor());
+        if (indicatorWantsContentCrossfade(*_textIndicator) && _textIndicator->contentImageWithHighlight())
+            contentsImage = _textIndicator->contentImageWithHighlight()->nativeImage();
+        else
+            contentsImage = contentImage->nativeImage();
+    }
 
     RetainPtr<NSMutableArray> bounceLayers = adoptNS([[NSMutableArray alloc] init]);
 
@@ -229,7 +232,8 @@ static bool indicatorWantsManualAnimation(const TextIndicator& indicator)
         [textLayer setBorderColor:borderColor.get()];
         [textLayer setBorderWidth:borderWidth];
         [textLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
-        [textLayer setContents:(__bridge id)contentsImage->platformImage().get()];
+        if (contentsImage)
+            [textLayer setContents:(__bridge id)contentsImage->platformImage().get()];
 
         RetainPtr<CAShapeLayer> maskLayer = adoptNS([[CAShapeLayer alloc] init]);
         [maskLayer setPath:translatedPath.platformPath()];
