@@ -54,6 +54,10 @@ AutoInstall.register(Package('keyring', Version(11, 1, 0)))
 AutoInstall.register(Package('monotonic', Version(1, 5)))
 AutoInstall.register(Package('xmltodict', Version(0, 12, 0)))
 
+# This is needed for python-keyring.
+if sys.platform == 'linux':
+    AutoInstall.register(Package('secretstorage', Version(2, 3, 1)))
+
 from webkitscmpy.contributor import Contributor
 from webkitscmpy.commit import Commit
 from webkitscmpy.scm_base import ScmBase

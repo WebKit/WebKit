@@ -149,7 +149,6 @@ function installDependenciesWithApt {
     # These are dependencies necessary for using webkit-patch
     packages="$packages \
         git-svn \
-        python3-secretstorage \
         subversion"
 
     # These are GStreamer plugins needed to play different media files.
@@ -274,7 +273,6 @@ function installDependenciesWithPacman {
 
     # These are dependencies necessary for using webkit-patch
     packages="$packages \
-        python-secretstorage \
         svn"
 
     # These are GStreamer plugins needed to play different media files.
@@ -405,7 +403,6 @@ function installDependenciesWithDnf {
     # These are dependencies necessary for using webkit-patch
     packages="$packages
         git-svn \
-        python3-secretstorage \
         subversion"
 
     # These are GStreamer plugins needed to play different media files.
