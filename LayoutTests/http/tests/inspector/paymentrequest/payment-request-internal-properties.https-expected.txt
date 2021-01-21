@@ -96,8 +96,6 @@ INTERNAL PROPERTY: details: {
     },
     "pending": false
   },
-  "displayItems": [],
-  "shippingOptions": [],
   "modifiers": []
 }
 INTERNAL PROPERTY: options: {
@@ -120,8 +118,6 @@ INTERNAL PROPERTY: details: {
     },
     "pending": false
   },
-  "displayItems": [],
-  "shippingOptions": [],
   "modifiers": []
 }
 INTERNAL PROPERTY: options: {
@@ -144,8 +140,6 @@ INTERNAL PROPERTY: details: {
     },
     "pending": false
   },
-  "displayItems": [],
-  "shippingOptions": [],
   "modifiers": []
 }
 INTERNAL PROPERTY: options: {

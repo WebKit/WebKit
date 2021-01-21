@@ -1,3 +1,21 @@
+2021-01-21  Devin Rousso  <drousso@apple.com>
+
+        Payment Request API - response.shippingOption is always null
+        https://bugs.webkit.org/show_bug.cgi?id=220566
+        <rdar://problem/73204387>
+
+        Reviewed by Andy Estes.
+
+        * http/tests/inspector/paymentrequest/payment-request-internal-properties.https-expected.txt:
+        * http/tests/paymentrequest/updateWith-displayItems.https.html: Added.
+        * http/tests/paymentrequest/updateWith-displayItems.https-expected.txt: Added.
+        * http/tests/paymentrequest/updateWith-modifiers.https.html: Added.
+        * http/tests/paymentrequest/updateWith-modifiers.https-expected.txt: Added.
+        * http/tests/paymentrequest/updateWith-shippingOptions.https.html: Added.
+        * http/tests/paymentrequest/updateWith-shippingOptions.https-expected.txt: Added.
+        * http/tests/paymentrequest/updateWith-total.https.html: Added.
+        * http/tests/paymentrequest/updateWith-total.https-expected.txt: Added.
+
 2021-01-21  Rini Patel  <rini_patel@apple.com>
 
         [GPU Process] Add Layout tests timeouts and failures to TestExpectations

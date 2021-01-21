@@ -35,9 +35,9 @@
 namespace WebCore {
 
 struct PaymentDetailsBase {
-    Vector<PaymentItem> displayItems;
-    Vector<PaymentShippingOption> shippingOptions;
-    Vector<PaymentDetailsModifier> modifiers;
+    Optional<Vector<PaymentItem>> displayItems;
+    Optional<Vector<PaymentShippingOption>> shippingOptions;
+    Optional<Vector<PaymentDetailsModifier>> modifiers;
 };
 
 } // namespace WebCore
