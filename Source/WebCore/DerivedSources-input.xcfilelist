@@ -1018,6 +1018,7 @@ $(PROJECT_DIR)/html/canvas/WebGLDepthTexture.idl
 $(PROJECT_DIR)/html/canvas/WebGLDrawBuffers.idl
 $(PROJECT_DIR)/html/canvas/WebGLFramebuffer.idl
 $(PROJECT_DIR)/html/canvas/WebGLLoseContext.idl
+$(PROJECT_DIR)/html/canvas/WebGLMultiDraw.idl
 $(PROJECT_DIR)/html/canvas/WebGLProgram.idl
 $(PROJECT_DIR)/html/canvas/WebGLQuery.idl
 $(PROJECT_DIR)/html/canvas/WebGLRenderbuffer.idl

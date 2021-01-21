@@ -69,6 +69,7 @@ public:
         EXTFloatBlendName,
         WebGLColorBufferFloatName,
         EXTColorBufferFloatName,
+        WebGLMultiDrawName,
     };
 
     WebGLRenderingContextBase* context() { return m_context; }

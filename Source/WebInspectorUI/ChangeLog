@@ -1,3 +1,15 @@
+2021-01-20  Kenneth Russell  <kbr@chromium.org>
+
+        Support WEBGL_multi_draw extension
+        https://bugs.webkit.org/show_bug.cgi?id=219139
+
+        Reviewed by Dean Jackson.
+
+        Tell the Inspector about the method signatures in the
+        WEBGL_multi_draw extension.
+
+        * UserInterface/Models/NativeFunctionParameters.js:
+
 2021-01-19  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Font Details sidebar - Fractional variation axis ranges/default values are rounded.

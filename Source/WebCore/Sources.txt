@@ -1345,6 +1345,7 @@ html/canvas/WebGLDrawBuffers.cpp
 html/canvas/WebGLExtension.cpp
 html/canvas/WebGLFramebuffer.cpp
 html/canvas/WebGLLoseContext.cpp
+html/canvas/WebGLMultiDraw.cpp
 html/canvas/WebGLObject.cpp
 html/canvas/WebGLProgram.cpp
 html/canvas/WebGLQuery.cpp
@@ -3658,6 +3659,7 @@ JSWebGLDepthTexture.cpp
 JSWebGLDrawBuffers.cpp
 JSWebGLFramebuffer.cpp
 JSWebGLLoseContext.cpp
+JSWebGLMultiDraw.cpp
 JSWebGLProgram.cpp
 JSWebGLQuery.cpp
 JSWebGLRenderbuffer.cpp

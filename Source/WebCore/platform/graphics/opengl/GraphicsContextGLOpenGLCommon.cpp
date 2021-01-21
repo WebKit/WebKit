@@ -2885,6 +2885,26 @@ void GraphicsContextGLOpenGL::compressedTexSubImage3D(GCGLenum, GCGLint, GCGLint
 {
 }
 
+void GraphicsContextGLOpenGL::multiDrawArraysANGLE(GCGLenum, GCGLSpan<const GCGLint>, GCGLSpan<const GCGLsizei>, GCGLsizei)
+{
+    synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
+}
+
+void GraphicsContextGLOpenGL::multiDrawArraysInstancedANGLE(GCGLenum, GCGLSpan<const GCGLint>, GCGLSpan<const GCGLsizei>, GCGLSpan<const GCGLsizei>, GCGLsizei)
+{
+    synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
+}
+
+void GraphicsContextGLOpenGL::multiDrawElementsANGLE(GCGLenum, GCGLSpan<const GCGLsizei>, GCGLenum, GCGLSpan<const GCGLint>, GCGLsizei)
+{
+    synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
+}
+
+void GraphicsContextGLOpenGL::multiDrawElementsInstancedANGLE(GCGLenum, GCGLSpan<const GCGLsizei>, GCGLenum, GCGLSpan<const GCGLint>, GCGLSpan<const GCGLsizei>, GCGLsizei)
+{
+    synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
+}
+
 }
 
 #endif // ENABLE(WEBGL) && !USE(ANGLE)

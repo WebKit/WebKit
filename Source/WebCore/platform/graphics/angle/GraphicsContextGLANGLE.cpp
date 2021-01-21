@@ -2783,6 +2783,47 @@ void GraphicsContextGLOpenGL::getActiveUniformBlockiv(GCGLuint program, GCGLuint
     gl::GetActiveUniformBlockivRobustANGLE(program, uniformBlockIndex, pname, params.bufSize, nullptr, params.data);
 }
 
+void GraphicsContextGLOpenGL::multiDrawArraysANGLE(GCGLenum mode, GCGLSpan<const GCGLint> firsts, GCGLSpan<const GCGLsizei> counts, GCGLsizei drawcount)
+{
+    if (!makeContextCurrent())
+        return;
+
+    gl::MultiDrawArraysANGLE(mode, firsts.data, counts.data, drawcount);
+}
+
+void GraphicsContextGLOpenGL::multiDrawArraysInstancedANGLE(GCGLenum mode, GCGLSpan<const GCGLint> firsts, GCGLSpan<const GCGLsizei> counts, GCGLSpan<const GCGLsizei> instanceCounts, GCGLsizei drawcount)
+{
+    if (!makeContextCurrent())
+        return;
+
+    gl::MultiDrawArraysInstancedANGLE(mode, firsts.data, counts.data, instanceCounts.data, drawcount);
+}
+
+void GraphicsContextGLOpenGL::multiDrawElementsANGLE(GCGLenum mode, GCGLSpan<const GCGLsizei> counts, GCGLenum type, GCGLSpan<const GCGLint> offsets, GCGLsizei drawcount)
+{
+    if (!makeContextCurrent())
+        return;
+
+    // Must perform conversion from integer offsets to void* pointers before passing down to ANGLE.
+    Vector<void*> pointers;
+    for (size_t i = 0; i < offsets.bufSize; ++i)
+        pointers.append(reinterpret_cast<void*>(offsets[i]));
+
+    gl::MultiDrawElementsANGLE(mode, counts.data, type, pointers.data(), drawcount);
+}
+
+void GraphicsContextGLOpenGL::multiDrawElementsInstancedANGLE(GCGLenum mode, GCGLSpan<const GCGLsizei> counts, GCGLenum type, GCGLSpan<const GCGLint> offsets, GCGLSpan<const GCGLsizei> instanceCounts, GCGLsizei drawcount)
+{
+    if (!makeContextCurrent())
+        return;
+
+    // Must perform conversion from integer offsets to void* pointers before passing down to ANGLE.
+    Vector<void*> pointers;
+    for (size_t i = 0; i < offsets.bufSize; ++i)
+        pointers.append(reinterpret_cast<void*>(offsets[i]));
+
+    gl::MultiDrawElementsInstancedANGLE(mode, counts.data, type, pointers.data(), instanceCounts.data, drawcount);
+}
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 GraphicsContextGLCV* GraphicsContextGLOpenGL::asCV()

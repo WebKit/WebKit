@@ -1,3 +1,20 @@
+2021-01-20  Kenneth Russell  <kbr@chromium.org>
+
+        Support WEBGL_multi_draw extension
+        https://bugs.webkit.org/show_bug.cgi?id=219139
+
+        Reviewed by Dean Jackson.
+
+        Add conformance test for the multi-draw extension, which is
+        expected to pass. Temporarily suppress the test due to failures on
+        Intel GPUs on macOS caused by recently-discovered OpenGL driver
+        bugs, which are currently being investigated.
+
+        * TestExpectations:
+        * webgl/conformance/extensions/webgl-multi-draw-expected.txt: Added.
+        * webgl/conformance/extensions/webgl-multi-draw.html: Added.
+        * webgl/resources/webgl_test_files/conformance/extensions/webgl-multi-draw.html: Added.
+
 2021-01-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [ Big Sur ] platform/mac/fast/text/international/bidi-fallback-font-weight.html is failing

@@ -109,6 +109,7 @@ class WebGLDepthTexture;
 class WebGLDrawBuffers;
 class WebGLExtension;
 class WebGLLoseContext;
+class WebGLMultiDraw;
 class WebGLObject;
 class WebGLShader;
 class WebGLSharedObject;
@@ -444,6 +445,7 @@ protected:
     friend class WebGLCompressedTexturePVRTC;
     friend class WebGLCompressedTextureS3TC;
     friend class WebGLCompressedTextureS3TCsRGB;
+    friend class WebGLMultiDraw;
     friend class WebGLRenderingContextErrorMessageCallback;
     friend class WebGLVertexArrayObjectOES;
     friend class WebGLVertexArrayObject;
@@ -712,6 +714,7 @@ protected:
     RefPtr<EXTFloatBlend> m_extFloatBlend;
     RefPtr<WebGLColorBufferFloat> m_webglColorBufferFloat;
     RefPtr<EXTColorBufferFloat> m_extColorBufferFloat;
+    RefPtr<WebGLMultiDraw> m_webglMultiDraw;
 
     bool m_areWebGL2TexImageSourceFormatsAndTypesAdded { false };
     bool m_areOESTextureFloatFormatsAndTypesAdded { false };

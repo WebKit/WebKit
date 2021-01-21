@@ -2351,6 +2351,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLFramebuffer.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLFramebuffer.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLLoseContext.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLLoseContext.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLMultiDraw.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLMultiDraw.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLProgram.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLProgram.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLQuery.cpp

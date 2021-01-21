@@ -58,6 +58,7 @@
 #include "WebGLDebugRendererInfo.h"
 #include "WebGLDebugShaders.h"
 #include "WebGLLoseContext.h"
+#include "WebGLMultiDraw.h"
 #include "WebGLQuery.h"
 #include "WebGLSampler.h"
 #include "WebGLSync.h"
@@ -2698,6 +2699,7 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
     ENABLE_IF_REQUESTED(EXTColorBufferHalfFloat, m_extColorBufferHalfFloat, "EXT_color_buffer_half_float", EXTColorBufferHalfFloat::supported(*this));
     ENABLE_IF_REQUESTED(EXTFloatBlend, m_extFloatBlend, "EXT_float_blend", EXTFloatBlend::supported(*this));
     ENABLE_IF_REQUESTED(KHRParallelShaderCompile, m_khrParallelShaderCompile, "KHR_parallel_shader_compile", KHRParallelShaderCompile::supported(*this));
+    ENABLE_IF_REQUESTED(WebGLMultiDraw, m_webglMultiDraw, "WEBGL_multi_draw", true);
     return nullptr;
 }
 
@@ -2746,6 +2748,8 @@ Optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
         result.append("EXT_float_blend"_s);
     if (KHRParallelShaderCompile::supported(*this))
         result.append("KHR_parallel_shader_compile"_s);
+    if (WebGLMultiDraw::supported(*this))
+        result.append("WEBGL_multi_draw"_s);
 
     return result;
 }

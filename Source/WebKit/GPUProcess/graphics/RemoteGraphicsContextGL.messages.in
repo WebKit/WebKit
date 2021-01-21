@@ -289,6 +289,10 @@ messages -> RemoteGraphicsContextGL NotRefCounted {
     void DrawElementsInstancedANGLE(uint32_t mode, int32_t count, uint32_t type, uint64_t offset, int32_t primcount)
     void VertexAttribDivisorANGLE(uint32_t index, uint32_t divisor)
     void GetInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, uint64_t paramsSize) -> (IPC::ArrayReference<int32_t> params) Synchronous
+    void MultiDrawArraysANGLE(uint32_t mode, IPC::ArrayReference<int32_t> firsts, IPC::ArrayReference<int32_t> counts, int32_t drawcount)
+    void MultiDrawArraysInstancedANGLE(uint32_t mode, IPC::ArrayReference<int32_t> firsts, IPC::ArrayReference<int32_t> counts, IPC::ArrayReference<int32_t> instanceCounts, int32_t drawcount)
+    void MultiDrawElementsANGLE(uint32_t mode, IPC::ArrayReference<int32_t> counts, uint32_t type, IPC::ArrayReference<int32_t> offsets, int32_t drawcount)
+    void MultiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReference<int32_t> counts, uint32_t type, IPC::ArrayReference<int32_t> offsets, IPC::ArrayReference<int32_t> instanceCounts, int32_t drawcount)
 }
 
 #endif

@@ -68,6 +68,7 @@
 #include "WebGLDepthTexture.h"
 #include "WebGLDrawBuffers.h"
 #include "WebGLLoseContext.h"
+#include "WebGLMultiDraw.h"
 #include "WebGLVertexArrayObjectOES.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/HeapInlines.h>
@@ -204,6 +205,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
     ENABLE_IF_REQUESTED(EXTColorBufferHalfFloat, m_extColorBufferHalfFloat, "EXT_color_buffer_half_float", EXTColorBufferHalfFloat::supported(*this));
     ENABLE_IF_REQUESTED(EXTFloatBlend, m_extFloatBlend, "EXT_float_blend", EXTFloatBlend::supported(*this));
     ENABLE_IF_REQUESTED(WebGLColorBufferFloat, m_webglColorBufferFloat, "WEBGL_color_buffer_float", WebGLColorBufferFloat::supported(*this));
+    ENABLE_IF_REQUESTED(WebGLMultiDraw, m_webglMultiDraw, "WEBGL_multi_draw", WebGLMultiDraw::supported(*this));
     return nullptr;
 }
 
@@ -279,6 +281,8 @@ Optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
         result.append("WEBGL_color_buffer_float"_s);
     if (KHRParallelShaderCompile::supported(*this))
         result.append("KHR_parallel_shader_compile");
+    if (WebGLMultiDraw::supported(*this))
+        result.append("WEBGL_multi_draw"_s);
 
     return result;
 }

@@ -1546,6 +1546,7 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLExtension.cpp
         html/canvas/WebGLFramebuffer.cpp
         html/canvas/WebGLLoseContext.cpp
+        html/canvas/WebGLMultiDraw.cpp
         html/canvas/WebGLObject.cpp
         html/canvas/WebGLProgram.cpp
         html/canvas/WebGLQuery.cpp
@@ -1605,6 +1606,7 @@ list(APPEND WebCore_IDL_FILES
     html/canvas/WebGLDrawBuffers.idl
     html/canvas/WebGLFramebuffer.idl
     html/canvas/WebGLLoseContext.idl
+    html/canvas/WebGLMultiDraw.idl
     html/canvas/WebGLProgram.idl
     html/canvas/WebGLQuery.idl
     html/canvas/WebGLRenderbuffer.idl

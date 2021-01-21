@@ -3448,6 +3448,9 @@ webgl/2.0.0/conformance/textures/misc/texture-size-limit.html [ Slow ]
 webgl/2.0.0/conformance/textures/misc/texture-npot-video.html [ Skip ]
 webgl/2.0.0/conformance2/misc/uninitialized-test-2.html [ Skip ]
 
+# Failing on certain hardware configurations: macOS with Intel GPUs. Also slow.
+webkit.org/b/220753 webgl/conformance/extensions/webgl-multi-draw.html [ Pass Failure Slow ]
+
 # pre-wrap progression. Other rendering engines agree with the result.
 webkit.org/b/206168 [ Debug ] fast/dom/insert-span-into-long-text-bug-28245.html [ Skip ]
 
