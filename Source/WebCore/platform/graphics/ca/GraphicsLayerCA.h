@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -95,6 +95,9 @@ public:
     WEBCORE_EXPORT void setAcceleratesDrawing(bool) override;
     WEBCORE_EXPORT void setUsesDisplayListDrawing(bool) override;
     WEBCORE_EXPORT void setUserInteractionEnabled(bool) override;
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    WEBCORE_EXPORT void setSeparated(bool) override;
+#endif
 
     WEBCORE_EXPORT void setBackgroundColor(const Color&) override;
 
@@ -441,6 +444,10 @@ private:
     void updateShape();
     void updateWindRule();
 
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    void updateSeparated();
+#endif
+
     enum StructuralLayerPurpose {
         NoStructuralLayer = 0,
         StructuralLayerForPreserves3D,
@@ -546,6 +553,9 @@ private:
         EventRegionChanged                      = 1LLU << 40,
 #if ENABLE(SCROLLING_THREAD)
         ScrollingNodeChanged                    = 1LLU << 41,
+#endif
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+        SeparatedChanged                        = 1LLU << 42,
 #endif
     };
     typedef uint64_t LayerChangeFlags;

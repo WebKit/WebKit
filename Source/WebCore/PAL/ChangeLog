@@ -1,3 +1,13 @@
+2021-01-21  Sam Weinig  <weinig@apple.com>
+
+        Add experimental support for separated layers
+        https://bugs.webkit.org/show_bug.cgi?id=220734
+
+        Reviewed by Simon Fraser.
+
+        * pal/spi/cocoa/QuartzCoreSPI.h:
+        Add forward declaration for CALayer's separated property.
+
 2021-01-19  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess] Claim ownership of IOSurface backing for ImageBufferBackends in the WebProcess

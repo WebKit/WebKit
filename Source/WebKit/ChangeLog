@@ -1,5 +1,28 @@
 2021-01-21  Sam Weinig  <weinig@apple.com>
 
+        Add experimental support for separated layers
+        https://bugs.webkit.org/show_bug.cgi?id=220734
+
+        Reviewed by Simon Fraser.
+
+        Plumb a "separated" bit through the graphics layer infrastructure. Currently unused 
+        but will be used for optimization experimentation.
+
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::RemoteLayerTreePropertyApplier::applyPropertiesToLayer):
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.h:
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::LayerProperties):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode const):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        (WebKit::dumpChangedLayers):
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::isSeparated const):
+        (WebKit::PlatformCALayerRemote::setSeparated):
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.h:
+
+2021-01-21  Sam Weinig  <weinig@apple.com>
+
         Rework color clamping logic to be more consistent and clear
         https://bugs.webkit.org/show_bug.cgi?id=220716
 

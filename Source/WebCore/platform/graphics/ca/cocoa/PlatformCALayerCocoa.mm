@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1036,6 +1036,20 @@ void PlatformCALayerCocoa::setEventRegion(const EventRegion& eventRegion)
 {
     m_eventRegion = eventRegion;
 }
+
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+bool PlatformCALayerCocoa::isSeparated() const
+{
+    return m_layer.get().isSeparated;
+}
+
+void PlatformCALayerCocoa::setSeparated(bool value)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [m_layer setSeparated:value];
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+#endif
 
 static NSString *layerContentsFormat(bool acceleratesDrawing, bool wantsDeepColor, bool supportsSubpixelAntialiasedFonts)
 {

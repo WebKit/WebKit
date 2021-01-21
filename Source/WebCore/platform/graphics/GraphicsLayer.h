@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -393,6 +393,11 @@ public:
     bool usesDisplayListDrawing() const { return m_usesDisplayListDrawing; }
     virtual void setUsesDisplayListDrawing(bool b) { m_usesDisplayListDrawing = b; }
 
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    bool isSeparated() const { return m_separated; }
+    virtual void setSeparated(bool b) { m_separated = b; }
+#endif
+
     bool needsBackdrop() const { return !m_backdropFilters.isEmpty(); }
 
     // The color used to paint the layer background. Pass an invalid color to remove it.
@@ -721,6 +726,9 @@ protected:
     bool m_isTrackingDisplayListReplay : 1;
     bool m_userInteractionEnabled : 1;
     bool m_canDetachBackingStore : 1;
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    bool m_separated : 1;
+#endif
 
     int m_repaintCount { 0 };
 

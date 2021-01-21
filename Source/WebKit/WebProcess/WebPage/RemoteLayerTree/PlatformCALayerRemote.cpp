@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -867,6 +867,22 @@ void PlatformCALayerRemote::setEventRegion(const WebCore::EventRegion& eventRegi
     m_properties.eventRegion = eventRegion;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::EventRegionChanged);
 }
+
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+bool PlatformCALayerRemote::isSeparated() const
+{
+    return m_properties.isSeparated;
+}
+
+void PlatformCALayerRemote::setSeparated(bool value)
+{
+    if (m_properties.isSeparated == value)
+        return;
+
+    m_properties.isSeparated = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::SeparatedChanged);
+}
+#endif
 
 Ref<PlatformCALayer> PlatformCALayerRemote::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const
 {

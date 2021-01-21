@@ -1,3 +1,13 @@
+2021-01-21  Sam Weinig  <weinig@apple.com>
+
+        Add experimental support for separated layers
+        https://bugs.webkit.org/show_bug.cgi?id=220734
+
+        Reviewed by Simon Fraser.
+
+        * wtf/PlatformHave.h:
+        Define HAVE_CORE_ANIMATION_SEPARATED_LAYERS for supported configurations.
+
 2021-01-21  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Titlebar separator doesn't show when WKWebView is scrolled
