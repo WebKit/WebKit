@@ -1105,6 +1105,7 @@
 		E3EFB02F25506503003C2F96 /* SystemBeep.mm in Sources */ = {isa = PBXBuildFile; fileRef = E3EFB02E25506503003C2F96 /* SystemBeep.mm */; };
 		E3F8AB92241AB9CE003E2A7E /* AccessibilityRemoteUIApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = E3F8AB91241AB9CE003E2A7E /* AccessibilityRemoteUIApp.mm */; };
 		E5036F78211BC25400BFDBE2 /* color-drop.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = E5036F77211BC22800BFDBE2 /* color-drop.html */; };
+		E520A36B25AFB76C00526CB9 /* WKWebViewTitlebarSeparatorTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = E520A36A25AFB76C00526CB9 /* WKWebViewTitlebarSeparatorTests.mm */; };
 		E589183C252BC90A0041DED5 /* DateTimeInputsAccessoryViewTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = E589183B252BC90A0041DED5 /* DateTimeInputsAccessoryViewTests.mm */; };
 		E5AA42F2259128AE00410A3D /* UserInterfaceIdiomUpdate.mm in Sources */ = {isa = PBXBuildFile; fileRef = E5AA42F1259128AE00410A3D /* UserInterfaceIdiomUpdate.mm */; };
 		E5AA8D1D25151CC60051CC45 /* DateInputTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = E5AA8D1C25151CC60051CC45 /* DateInputTests.mm */; };
@@ -2859,6 +2860,7 @@
 		E4A757D3178AEA5B00B5D7A4 /* Deque.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Deque.cpp; sourceTree = "<group>"; };
 		E4C9ABC71B3DB1710040A987 /* RunLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoop.cpp; sourceTree = "<group>"; };
 		E5036F77211BC22800BFDBE2 /* color-drop.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "color-drop.html"; sourceTree = "<group>"; };
+		E520A36A25AFB76C00526CB9 /* WKWebViewTitlebarSeparatorTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewTitlebarSeparatorTests.mm; sourceTree = "<group>"; };
 		E589183B252BC90A0041DED5 /* DateTimeInputsAccessoryViewTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DateTimeInputsAccessoryViewTests.mm; sourceTree = "<group>"; };
 		E5AA42F1259128AE00410A3D /* UserInterfaceIdiomUpdate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UserInterfaceIdiomUpdate.mm; sourceTree = "<group>"; };
 		E5AA8D1C25151CC60051CC45 /* DateInputTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DateInputTests.mm; sourceTree = "<group>"; };
@@ -4576,6 +4578,7 @@
 				A5E2027215B2181900C13E14 /* WindowlessWebViewWithMedia.mm */,
 				F425831524F07CA5006B985D /* WKWebViewCoders.mm */,
 				F4FA917F1E61849B007B8C1D /* WKWebViewMacEditingTests.mm */,
+				E520A36A25AFB76C00526CB9 /* WKWebViewTitlebarSeparatorTests.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -5687,6 +5690,7 @@
 				93F56DA91E5F919D003EDE84 /* WKWebViewSnapshot.mm in Sources */,
 				CD7F89DC22A86CDA00D683AE /* WKWebViewSuspendAllMediaPlayback.mm in Sources */,
 				9984FACC1CFFAF60008D198C /* WKWebViewTextInput.mm in Sources */,
+				E520A36B25AFB76C00526CB9 /* WKWebViewTitlebarSeparatorTests.mm in Sources */,
 				7C74C8FA22DFBA9600DA2DAB /* WTFStringUtilities.cpp in Sources */,
 				C14D304624B4C3BA00480387 /* XPCEndpoint.mm in Sources */,
 				9C64DC321D76198A004B598E /* YouTubePluginReplacement.cpp in Sources */,

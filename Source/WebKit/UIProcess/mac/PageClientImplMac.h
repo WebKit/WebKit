@@ -263,6 +263,7 @@ private:
     void refView() override;
     void derefView() override;
 
+    void pageDidScroll(const WebCore::IntPoint&) override;
     void didRestoreScrollPosition() override;
     bool windowIsFrontWindowUnderMouse(const NativeWebMouseEvent&) override;
 

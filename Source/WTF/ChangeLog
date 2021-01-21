@@ -1,3 +1,13 @@
+2021-01-21  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Titlebar separator doesn't show when WKWebView is scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=220633
+        <rdar://problem/71094055>
+
+        Reviewed by Tim Horton.
+
+        * wtf/PlatformHave.h: Defined HAVE_NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER.
+
 2021-01-20  Youenn Fablet  <youenn@apple.com>
 
         Enable WebRTC VP9 profile 0 by default

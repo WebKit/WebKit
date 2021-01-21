@@ -1,3 +1,102 @@
+2021-01-21  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Titlebar separator doesn't show when WKWebView is scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=220633
+        <rdar://problem/71094055>
+
+        Reviewed by Tim Horton.
+
+        Starting in Big Sur, NSWindows with a titlebar display a separator if
+        there is a scrolled NSScrollView adjacent to the titlebar. Since
+        WKWebViews are scrollable views, but not backed by NSScrollView, we
+        need to adopt SPI to support this functionality.
+
+        This patch updates WKWebView to conform to the NSScrollViewSeparatorTrackingAdapter
+        protocol, ensuring the titlebar separator is displayed when
+        necessary. Note that since WKWebViews are not actually NSScrollView's we
+        don't already have the scroll position of the view in the UIProcess. To
+        determine whether or not the view is scrolled, this patch adds plumbing
+        so that the WebProcess can tell the UIProcess the new scroll position
+        when a page is scrolled.
+
+        Tests: WKWebViewTitlebarSeparatorTests.BackForwardCache
+               WKWebViewTitlebarSeparatorTests.ChangeTitlebarAdjacency
+               WKWebViewTitlebarSeparatorTests.ChangeViewVisibility
+               WKWebViewTitlebarSeparatorTests.NavigationResetsTitlebarAppearance
+               WKWebViewTitlebarSeparatorTests.ScrollWithTitlebarAdjacency
+               WKWebViewTitlebarSeparatorTests.ScrollWithoutTitlebarAdjacency
+
+        * Platform/spi/mac/AppKitSPI.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView scrollViewFrame]):
+        (-[WKView hasScrolledContentsUnderTitlebar]):
+        (-[WKView _web_registerScrollViewSeparatorTrackingAdapter]):
+        (-[WKView _web_unregisterScrollViewSeparatorTrackingAdapter]):
+        * UIProcess/API/mac/WKWebViewMac.mm:
+        (-[WKWebView scrollViewFrame]):
+        (-[WKWebView hasScrolledContentsUnderTitlebar]):
+        (-[WKWebView _web_registerScrollViewSeparatorTrackingAdapter]):
+        (-[WKWebView _web_unregisterScrollViewSeparatorTrackingAdapter]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::updateWindowAndViewFrames):
+
+        If the WKWebView's frame changes, update the titlebar adjacency
+        state and notify observers of the change.
+
+        (WebKit::WebViewImpl::viewWillMoveToWindowImpl):
+
+        Unregister the WKWebView as an NSScrollViewSeparatorTrackingAdapter if
+        it is removed from the window.
+
+        (WebKit::WebViewImpl::viewDidHide):
+
+        Hidden views are not adjacent to the titlebar.
+
+        (WebKit::WebViewImpl::viewDidUnhide):
+
+        An unhidden view may be adjacent to the titlebar.
+
+        (WebKit::WebViewImpl::pageDidScroll):
+
+        Use the scroll position of the page to determine whether or not the
+        WKWebView is scrolled.
+
+        (WebKit::WebViewImpl::scrollViewFrame):
+
+        Needed to conform to NSScrollViewSeparatorTrackingAdapter.
+
+        (WebKit::WebViewImpl::hasScrolledContentsUnderTitlebar):
+
+        Needed to conform to NSScrollViewSeparatorTrackingAdapter. Returns true
+        if the view is registered as an NSScrollViewSeparatorTrackingAdapter
+        and is scrolled.
+
+        (WebKit::WebViewImpl::updateTitlebarAdjacencyState):
+
+        The WKWebView needs to be registered as an NSScrollViewSeparatorTrackingAdapter
+        if it's adjacent to the titlebar and unregistered otherwise.
+
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::pageDidScroll):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::pageDidScroll):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame):
+
+        Reset the scroll position upon navigation, as pageDidScroll does not get
+        called when navigating.
+
+        (WebKit::PageClientImpl::pageDidScroll):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::pageDidScroll):
+
+        Pass the current scroll position when the page is scrolled, so that the
+        UIProcess knows whether or not the page has a non-zero scroll position.
+
 2021-01-21  Dave Blanchard  <dave@grow.game>
 
         Missing header gtk/gtk.h in PointerLockManagerX11.cpp

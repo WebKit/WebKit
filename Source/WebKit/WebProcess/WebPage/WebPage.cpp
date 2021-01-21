@@ -2575,7 +2575,8 @@ void WebPage::pageDidScroll()
 
     m_pageScrolledHysteresis.impulse();
 
-    send(Messages::WebPageProxy::PageDidScroll());
+    auto scrollPosition = m_page->mainFrame().view()->scrollPosition();
+    send(Messages::WebPageProxy::PageDidScroll(scrollPosition));
 }
 
 void WebPage::pageStoppedScrolling()

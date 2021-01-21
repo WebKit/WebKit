@@ -115,6 +115,7 @@
 #import <pal/spi/cocoa/NSTouchBarSPI.h>
 #import <pal/spi/mac/DataDetectorsSPI.h>
 #import <pal/spi/mac/LookupSPI.h>
+#import <pal/spi/mac/NSAppearanceSPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
@@ -1804,6 +1805,11 @@ void WebViewImpl::updateWindowAndViewFrames()
     if (clipsToVisibleRect())
         updateViewExposedRect();
 
+#if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
+    [m_view didChangeValueForKey:@"scrollViewFrame"];
+    updateTitlebarAdjacencyState();
+#endif
+
     if (m_didScheduleWindowAndViewFrameUpdate)
         return;
 
@@ -2303,6 +2309,15 @@ void WebViewImpl::viewWillMoveToWindowImpl(NSWindow *window)
     NSWindow *stopObservingWindow = m_targetWindowForMovePreparation ? m_targetWindowForMovePreparation.get() : [m_view window];
     [m_windowVisibilityObserver stopObserving:stopObservingWindow];
     [m_windowVisibilityObserver startObserving:window];
+
+#if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
+    if (m_isRegisteredScrollViewSeparatorTrackingAdapter) {
+        if ([m_view respondsToSelector:@selector(_web_unregisterScrollViewSeparatorTrackingAdapter)]) {
+            [m_view _web_unregisterScrollViewSeparatorTrackingAdapter];
+            m_isRegisteredScrollViewSeparatorTrackingAdapter = false;
+        }
+    }
+#endif
 }
 
 void WebViewImpl::viewWillMoveToWindow(NSWindow *window)
@@ -2384,12 +2399,18 @@ void WebViewImpl::viewDidHide()
 {
     LOG(ActivityState, "WebViewImpl %p (page %llu) viewDidHide", this, m_page->identifier().toUInt64());
     m_page->activityStateDidChange(WebCore::ActivityState::IsVisible);
+#if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
+    updateTitlebarAdjacencyState();
+#endif
 }
 
 void WebViewImpl::viewDidUnhide()
 {
     LOG(ActivityState, "WebViewImpl %p (page %llu) viewDidUnhide", this, m_page->identifier().toUInt64());
     m_page->activityStateDidChange(WebCore::ActivityState::IsVisible);
+#if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
+    updateTitlebarAdjacencyState();
+#endif
 }
 
 void WebViewImpl::activeSpaceDidChange()
@@ -2397,6 +2418,57 @@ void WebViewImpl::activeSpaceDidChange()
     LOG(ActivityState, "WebViewImpl %p (page %llu) activeSpaceDidChange", this, m_page->identifier().toUInt64());
     m_page->activityStateDidChange(WebCore::ActivityState::IsVisible);
 }
+
+void WebViewImpl::pageDidScroll(const WebCore::IntPoint& scrollPosition)
+{
+#if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
+    if (!m_isRegisteredScrollViewSeparatorTrackingAdapter)
+        return;
+
+    if ((scrollPosition.y() > 0 && !m_pageIsScrolled) || (scrollPosition.y() <= 0 && m_pageIsScrolled)) {
+        [m_view willChangeValueForKey:@"hasScrolledContentsUnderTitlebar"];
+        m_pageIsScrolled = !m_pageIsScrolled;
+        [m_view didChangeValueForKey:@"hasScrolledContentsUnderTitlebar"];
+    }
+#endif
+}
+
+#if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
+
+NSRect WebViewImpl::scrollViewFrame()
+{
+    return [m_view convertRect:[m_view bounds] toView:nil];
+}
+
+bool WebViewImpl::hasScrolledContentsUnderTitlebar()
+{
+    return m_isRegisteredScrollViewSeparatorTrackingAdapter && m_pageIsScrolled;
+}
+
+void WebViewImpl::updateTitlebarAdjacencyState()
+{
+    BOOL wantsScrollViewSeparatorTrackingAdapterRegistration = false;
+
+    NSWindow *window = [m_view window];
+    BOOL visible = ![m_view isHiddenOrHasHiddenAncestor];
+    NSRect windowContentLayoutRectInSelf = [m_view convertRect:[window contentLayoutRect] fromView:nil];
+    BOOL topOfWindowContentLayoutRectAdjacent = (NSMinY([m_view bounds]) <= NSMinY(windowContentLayoutRectInSelf));
+
+    if (topOfWindowContentLayoutRectAdjacent && visible && [[m_view effectiveAppearance] _usesMetricsAppearance])
+        wantsScrollViewSeparatorTrackingAdapterRegistration = YES;
+
+    if (wantsScrollViewSeparatorTrackingAdapterRegistration && !m_isRegisteredScrollViewSeparatorTrackingAdapter) {
+        if ([m_view respondsToSelector:@selector(_web_registerScrollViewSeparatorTrackingAdapter)])
+            m_isRegisteredScrollViewSeparatorTrackingAdapter = [m_view _web_registerScrollViewSeparatorTrackingAdapter];
+    } else if (!wantsScrollViewSeparatorTrackingAdapterRegistration && m_isRegisteredScrollViewSeparatorTrackingAdapter) {
+        if ([m_view respondsToSelector:@selector(_web_unregisterScrollViewSeparatorTrackingAdapter)]) {
+            [m_view _web_unregisterScrollViewSeparatorTrackingAdapter];
+            m_isRegisteredScrollViewSeparatorTrackingAdapter = false;
+        }
+    }
+}
+
+#endif // HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
 
 NSView *WebViewImpl::hitTest(CGPoint point)
 {

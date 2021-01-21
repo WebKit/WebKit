@@ -286,6 +286,7 @@ void PageClientImpl::didCommitLoadForMainFrame(const String&, bool)
     m_impl->updateSupportsArbitraryLayoutModes();
     m_impl->dismissContentRelativeChildWindowsWithAnimation(true);
     m_impl->clearPromisedDragImage();
+    m_impl->pageDidScroll({0, 0});
 }
 
 void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference& dataReference)
@@ -937,6 +938,11 @@ NSView *PageClientImpl::inspectorAttachmentView()
 _WKRemoteObjectRegistry *PageClientImpl::remoteObjectRegistry()
 {
     return m_impl->remoteObjectRegistry();
+}
+
+void PageClientImpl::pageDidScroll(const WebCore::IntPoint& scrollPosition)
+{
+    m_impl->pageDidScroll(scrollPosition);
 }
 
 void PageClientImpl::didRestoreScrollPosition()

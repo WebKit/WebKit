@@ -66,7 +66,7 @@ messages -> WebPageProxy {
 #endif
 
     RunBeforeUnloadConfirmPanel(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, String message) -> (bool shouldClose) Synchronous
-    PageDidScroll()
+    PageDidScroll(WebCore::IntPoint scrollPosition)
     RunOpenPanel(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, struct WebCore::FileChooserSettings parameters)
     ShowShareSheet(struct WebCore::ShareDataWithParsedURL shareData) -> (bool granted) Async
     ShowContactPicker(struct WebCore::ContactsRequestData requestData) -> (Optional<Vector<WebCore::ContactInfo>> info) Async

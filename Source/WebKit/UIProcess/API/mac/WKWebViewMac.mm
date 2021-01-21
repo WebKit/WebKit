@@ -84,6 +84,9 @@ Optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayScrollba
     , NSFilePromiseProviderDelegate
     , NSDraggingSource
 #endif
+#if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
+    , NSScrollViewSeparatorTrackingAdapter
+#endif
     >
 @end
 
@@ -993,6 +996,36 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 }
 
 #endif // HAVE(TOUCH_BAR)
+
+#pragma mark - NSScrollViewSeparatorTrackingAdapter
+
+#if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
+
+- (NSRect)scrollViewFrame
+{
+    if (!_impl)
+        return NSZeroRect;
+    return _impl->scrollViewFrame();
+}
+
+- (BOOL)hasScrolledContentsUnderTitlebar
+{
+    if (!_impl)
+        return NO;
+    return _impl->hasScrolledContentsUnderTitlebar();
+}
+
+- (BOOL)_web_registerScrollViewSeparatorTrackingAdapter
+{
+    return [self.window registerScrollViewSeparatorTrackingAdapter:self];
+}
+
+- (void)_web_unregisterScrollViewSeparatorTrackingAdapter
+{
+    [self.window unregisterScrollViewSeparatorTrackingAdapter:self];
+}
+
+#endif // HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
 
 @end
 
