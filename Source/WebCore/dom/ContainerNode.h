@@ -103,6 +103,8 @@ public:
     };
     virtual void childrenChanged(const ChildChange&);
 
+    ExceptionOr<void> appendChild(ChildChange::Source, Node& newChild);
+
     void disconnectDescendantFrames();
 
     RenderElement* renderer() const;
