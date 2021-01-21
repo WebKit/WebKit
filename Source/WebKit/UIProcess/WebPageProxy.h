@@ -1173,7 +1173,7 @@ public:
 #if PLATFORM(COCOA)
     void startDrag(const WebCore::DragItem&, const ShareableBitmap::Handle& dragImageHandle);
     void setPromisedDataForImage(const String& pasteboardName, const SharedMemory::IPCHandle& imageHandle, const String& filename, const String& extension,
-        const String& title, const String& url, const String& visibleURL, const SharedMemory::IPCHandle& archiveHandle);
+        const String& title, const String& url, const String& visibleURL, const SharedMemory::IPCHandle& archiveHandle, const String& originIdentifier);
 #endif
 #if PLATFORM(GTK)
     void startDrag(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, const ShareableBitmap::Handle& dragImage);

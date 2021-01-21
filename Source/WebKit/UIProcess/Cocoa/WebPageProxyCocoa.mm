@@ -210,7 +210,7 @@ void WebPageProxy::startDrag(const DragItem& dragItem, const ShareableBitmap::Ha
 // FIXME: Move these functions to WebPageProxyIOS.mm.
 #if PLATFORM(IOS_FAMILY)
 
-void WebPageProxy::setPromisedDataForImage(const String&, const SharedMemory::IPCHandle&, const String&, const String&, const String&, const String&, const String&, const SharedMemory::IPCHandle&)
+void WebPageProxy::setPromisedDataForImage(const String&, const SharedMemory::IPCHandle&, const String&, const String&, const String&, const String&, const String&, const SharedMemory::IPCHandle&, const String&)
 {
     notImplemented();
 }

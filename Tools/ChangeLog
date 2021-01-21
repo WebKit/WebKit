@@ -1,3 +1,15 @@
+2021-01-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Include an origin identifier when writing promised image data to the drag pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=220782
+
+        Reviewed by Megan Gardner.
+
+        Make a slight adjustment to an existing API test, to verify that custom pasteboard data is serialized when
+        dragging an image element.
+
+        * TestWebKitAPI/Tests/mac/DragAndDropTestsMac.mm:
+
 2021-01-20  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Add TaskPool

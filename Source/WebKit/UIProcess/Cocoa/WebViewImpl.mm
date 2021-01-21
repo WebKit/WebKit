@@ -4329,13 +4329,21 @@ void WebViewImpl::setFileAndURLTypes(NSString *filename, NSString *extension, NS
     m_promisedURL = url;
 }
 
-void WebViewImpl::setPromisedDataForImage(WebCore::Image* image, NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, WebCore::SharedBuffer* archiveBuffer, NSString *pasteboardName)
+void WebViewImpl::setPromisedDataForImage(WebCore::Image* image, NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, WebCore::SharedBuffer* archiveBuffer, NSString *pasteboardName, NSString *originIdentifier)
 {
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:pasteboardName];
     RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] initWithObjects:WebCore::legacyFilesPromisePasteboardType(), nil]);
 
     if (image && !image->uti().isEmpty() && image->data() && !image->data()->isEmpty())
         [types addObject:image->uti()];
+
+    RetainPtr<NSData> customDataBuffer;
+    if (originIdentifier.length) {
+        [types addObject:@(PasteboardCustomData::cocoaType())];
+        PasteboardCustomData customData;
+        customData.setOrigin(originIdentifier);
+        customDataBuffer = customData.createSharedBuffer()->createNSData();
+    }
 
     [types addObjectsFromArray:archiveBuffer ? PasteboardTypes::forImagesWithArchive() : PasteboardTypes::forImages()];
     [pasteboard declareTypes:types.get() owner:m_view.getAutoreleased()];
@@ -4348,6 +4356,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
         [pasteboard setData:nsData.get() forType:PasteboardTypes::WebArchivePboardType];
     }
+
+    if (customDataBuffer)
+        [pasteboard setData:customDataBuffer.get() forType:@(PasteboardCustomData::cocoaType())];
 
     m_promisedImage = image;
 }

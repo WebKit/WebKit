@@ -28,6 +28,7 @@
 #import "DragAndDropSimulator.h"
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
+#import <WebCore/PasteboardCustomData.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 
@@ -188,6 +189,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     EXPECT_EQ(imageFromUniquePasteboard.TIFFRepresentation.length, imageFromDragPasteboard.TIFFRepresentation.length);
     EXPECT_TRUE(NSEqualSizes(imageFromDragPasteboard.size, imageFromUniquePasteboard.size));
     EXPECT_FALSE(NSEqualSizes(NSZeroSize, imageFromUniquePasteboard.size));
+    EXPECT_GT([dragPasteboard dataForType:@(WebCore::PasteboardCustomData::cocoaType())].length, 0u);
 }
 
 TEST(DragAndDropTests, ProvideImageDataAsTypeIdentifiers)

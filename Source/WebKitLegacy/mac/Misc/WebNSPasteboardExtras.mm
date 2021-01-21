@@ -43,6 +43,7 @@
 #import <WebCore/Image.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebCore/PasteboardCustomData.h>
 #import <WebCore/RenderAttachment.h>
 #import <WebCore/RenderImage.h>
 #import <WebKitLegacy/DOMExtensions.h>
@@ -282,6 +283,15 @@ static CachedImage* imageFromElement(DOMElement *domElement)
 
     NSString *extension = @"";
     RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] initWithObjects:legacyFilesPromisePasteboardType(), nil]);
+    NSString *originIdentifier = core(element)->document().originIdentifierForPasteboard();
+    RetainPtr<NSData> customDataBuffer;
+    if (originIdentifier.length) {
+        [types addObject:@(PasteboardCustomData::cocoaType())];
+        PasteboardCustomData customData;
+        customData.setOrigin(originIdentifier);
+        customDataBuffer = customData.createSharedBuffer()->createNSData();
+    }
+
     if (auto* renderer = core(element)->renderer()) {
         if (is<RenderImage>(*renderer)) {
             if (auto* image = downcast<RenderImage>(*renderer).cachedImage()) {
@@ -304,6 +314,8 @@ static CachedImage* imageFromElement(DOMElement *domElement)
     }
 
     [self _web_writeImage:nil element:element URL:URL title:title archive:archive types:types.get() source:source];
+    if (customDataBuffer)
+        [self setData:customDataBuffer.get() forType:@(PasteboardCustomData::cocoaType())];
 
     NSArray *extensions = [[NSArray alloc] initWithObjects:extension, nil];
     [self setPropertyList:extensions forType:legacyFilesPromisePasteboardType()];

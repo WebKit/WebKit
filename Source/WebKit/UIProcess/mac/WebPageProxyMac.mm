@@ -262,7 +262,7 @@ void WebPageProxy::replaceSelectionWithPasteboardData(const Vector<String>& type
 #if ENABLE(DRAG_SUPPORT)
 
 void WebPageProxy::setPromisedDataForImage(const String& pasteboardName, const SharedMemory::IPCHandle& imageHandle, const String& filename, const String& extension,
-    const String& title, const String& url, const String& visibleURL, const SharedMemory::IPCHandle& archiveHandle)
+    const String& title, const String& url, const String& visibleURL, const SharedMemory::IPCHandle& archiveHandle, const String& originIdentifier)
 {
     MESSAGE_CHECK_URL(url);
     MESSAGE_CHECK_URL(visibleURL);
@@ -281,7 +281,7 @@ void WebPageProxy::setPromisedDataForImage(const String& pasteboardName, const S
             return;
         archiveBuffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryArchive->data()), static_cast<size_t>(archiveHandle.dataSize));
     }
-    pageClient().setPromisedDataForImage(pasteboardName, WTFMove(imageBuffer), ResourceResponseBase::sanitizeSuggestedFilename(filename), extension, title, url, visibleURL, WTFMove(archiveBuffer));
+    pageClient().setPromisedDataForImage(pasteboardName, WTFMove(imageBuffer), ResourceResponseBase::sanitizeSuggestedFilename(filename), extension, title, url, visibleURL, WTFMove(archiveBuffer), originIdentifier);
 }
 
 #endif
