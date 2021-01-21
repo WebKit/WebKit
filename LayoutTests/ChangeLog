@@ -1,3 +1,13 @@
+2021-01-21  Frederic Wang  <fwang@igalia.com>
+
+        Update font when resolving letter-spacing: calc(...) values
+        https://bugs.webkit.org/show_bug.cgi?id=216659
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/css/letter-spacing-calc-with-font-relative-lengths-crash-expected.txt: Added.
+        * fast/css/letter-spacing-calc-with-font-relative-lengths-crash.html: Added.
+
 2021-01-20  Kenneth Russell  <kbr@chromium.org>
 
         Support WEBGL_multi_draw extension

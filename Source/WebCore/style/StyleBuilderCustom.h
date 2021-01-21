@@ -654,8 +654,11 @@ void maybeUpdateFontForLetterSpacing(BuilderState& builderState, CSSValue& value
     // actually a font-relative unit passed to letter-spacing, and 2. updateFont() internally has logic
     // to only do work if the font is actually dirty.
 
-    if (is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).isFontRelativeLength())
-        builderState.updateFont();
+    if (is<CSSPrimitiveValue>(value)) {
+        auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+        if (primitiveValue.isFontRelativeLength() || primitiveValue.isCalculated())
+            builderState.updateFont();
+    }
 }
 
 inline void BuilderCustom::applyValueLetterSpacing(BuilderState& builderState, CSSValue& value)
