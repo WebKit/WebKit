@@ -30,6 +30,7 @@ import sys
 
 from datetime import datetime
 from requests.auth import HTTPBasicAuth
+from subprocess import CalledProcessError
 from webkitcorepy import OutputCapture, decorators
 from webkitscmpy import Commit, Contributor
 from webkitscmpy.remote.scm import Scm
@@ -71,13 +72,17 @@ class GitHub(Scm):
             return username, access_token
 
         with OutputCapture():
-            import keyring
+            try:
+                import keyring
+            except (CalledProcessError, ImportError):
+                keyring = None
 
         username_prompted = False
         password_prompted = False
         if not username:
             try:
-                username = keyring.get_password(self.api_url, 'username')
+                if keyring:
+                    username = keyring.get_password(self.api_url, 'username')
             except RuntimeError:
                 pass
 
@@ -92,7 +97,8 @@ class GitHub(Scm):
 
         if not access_token and required:
             try:
-                access_token = keyring.get_password(self.api_url, username)
+                if keyring:
+                    access_token = keyring.get_password(self.api_url, username)
             except RuntimeError:
                 pass
 
@@ -105,7 +111,7 @@ class GitHub(Scm):
         if username and access_token:
             self._cached_credentials = (username, access_token)
 
-        if username_prompted or password_prompted:
+        if keyring and (username_prompted or password_prompted):
             sys.stderr.write('Store username and access token in system keyring for {}? (Y/N): '.format(self.api_url))
             response = (input if sys.version_info > (3, 0) else raw_input)()
             if response.lower() in ['y', 'yes', 'ok']:

@@ -1,3 +1,16 @@
+2021-01-21  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Handle machines that cannot import keyring
+        https://bugs.webkit.org/show_bug.cgi?id=220800
+        <rdar://problem/73454666>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.credentials): Make keyring optional.
+
 2021-01-21  Sam Weinig  <weinig@apple.com>
 
         Rework color clamping logic to be more consistent and clear
