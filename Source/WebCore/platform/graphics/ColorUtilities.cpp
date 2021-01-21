@@ -78,7 +78,7 @@ SRGBA<uint8_t> premultipliedFlooring(SRGBA<uint8_t> color)
         return { 0, 0, 0, 0 };
     if (a == 255)
         return color;
-    return clampToComponentBytes<SRGBA>(fastDivideBy255(r * a), fastDivideBy255(g * a), fastDivideBy255(b * a), a);
+    return makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(fastDivideBy255(r * a), fastDivideBy255(g * a), fastDivideBy255(b * a), a);
 }
 
 SRGBA<uint8_t> premultipliedCeiling(SRGBA<uint8_t> color)
@@ -88,7 +88,7 @@ SRGBA<uint8_t> premultipliedCeiling(SRGBA<uint8_t> color)
         return { 0, 0, 0, 0 };
     if (a == 255)
         return color;
-    return clampToComponentBytes<SRGBA>(fastDivideBy255(r * a + 254), fastDivideBy255(g * a + 254), fastDivideBy255(b * a + 254), a);
+    return makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(fastDivideBy255(r * a + 254), fastDivideBy255(g * a + 254), fastDivideBy255(b * a + 254), a);
 }
 
 static inline uint16_t unpremultipliedComponentByte(uint8_t c, uint8_t a)
@@ -101,7 +101,7 @@ SRGBA<uint8_t> unpremultiplied(SRGBA<uint8_t> color)
     auto [r, g, b, a] = color;
     if (!a || a == 255)
         return color;
-    return clampToComponentBytes<SRGBA>(unpremultipliedComponentByte(r, a), unpremultipliedComponentByte(g, a), unpremultipliedComponentByte(b, a), a);
+    return makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(unpremultipliedComponentByte(r, a), unpremultipliedComponentByte(g, a), unpremultipliedComponentByte(b, a), a);
 }
 
 } // namespace WebCore

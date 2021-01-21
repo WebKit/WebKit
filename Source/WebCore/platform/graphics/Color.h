@@ -101,8 +101,8 @@ public:
 
     bool isOpaque() const { return isExtended() ? asExtended().alpha() == 1.0 : asInline().alpha == 255; }
     bool isVisible() const { return isExtended() ? asExtended().alpha() > 0.0 : asInline().alpha > 0; }
-    uint8_t alphaByte() const { return isExtended() ? convertToComponentByte(asExtended().alpha()) : asInline().alpha; }
-    float alphaAsFloat() const { return isExtended() ? asExtended().alpha() : convertToComponentFloat(asInline().alpha); }
+    uint8_t alphaByte() const { return isExtended() ? convertFloatAlphaTo<uint8_t>(asExtended().alpha()) : asInline().alpha; }
+    float alphaAsFloat() const { return isExtended() ? asExtended().alpha() : convertByteAlphaTo<float>(asInline().alpha); }
 
     WEBCORE_EXPORT float luminance() const;
     WEBCORE_EXPORT float lightness() const; // FIXME: Replace remaining uses with luminance.
@@ -331,11 +331,11 @@ template<typename T> SRGBA<T> Color::toSRGBALossy() const
             if constexpr (std::is_same_v<T, uint8_t>)
                 return color;
             if constexpr (std::is_same_v<T, float>)
-                return convertToComponentFloats(color);
+                return convertTo<SRGBA<float>>(color);
         },
         [] (const auto& color) {
             if constexpr (std::is_same_v<T, uint8_t>)
-                return convertToComponentBytes(toSRGBA(color));
+                return convertTo<SRGBA<uint8_t>>(toSRGBA(color));
             if constexpr (std::is_same_v<T, float>)
                 return toSRGBA(color);
         }
@@ -391,15 +391,15 @@ inline void Color::setExtendedColor(Ref<ExtendedColor>&& extendedColor)
 
 inline bool Color::isBlackColor(const Color& color)
 {
-    return color.callOnUnderlyingType([] (const auto& color) {
-        return WebCore::isBlack(color);
+    return color.callOnUnderlyingType([] (const auto& underlyingColor) {
+        return WebCore::isBlack(underlyingColor);
     });
 }
 
 inline bool Color::isWhiteColor(const Color& color)
 {
-    return color.callOnUnderlyingType([] (const auto& color) {
-        return WebCore::isWhite(color);
+    return color.callOnUnderlyingType([] (const auto& underlyingColor) {
+        return WebCore::isWhite(underlyingColor);
     });
 }
 

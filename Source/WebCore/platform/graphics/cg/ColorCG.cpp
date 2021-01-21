@@ -81,7 +81,7 @@ static Optional<SRGBA<uint8_t>> roundAndClampToSRGBALossy(CGColorRef color)
         ASSERT_NOT_REACHED();
     }
 
-    return convertToComponentBytes(SRGBA { r, g, b, a });
+    return convertTo<SRGBA<uint8_t>>(SRGBA { r, g, b, a });
 }
 
 Color::Color(CGColorRef color)

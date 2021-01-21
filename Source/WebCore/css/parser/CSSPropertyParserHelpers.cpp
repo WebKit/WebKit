@@ -671,7 +671,7 @@ static uint8_t clampRGBComponent(double value, bool isPercentage)
     if (isPercentage)
         value = value / 100.0 * 255.0;
 
-    return convertPrescaledToComponentByte(value);
+    return convertPrescaledSRGBAFloatToSRGBAByte(value);
 }
 
 static Color parseRGBParameters(CSSParserTokenRange& range)
@@ -739,7 +739,7 @@ static Color parseRGBParameters(CSSParserTokenRange& range)
             else
                 return Color();
         }
-        alphaComponent = convertToComponentByte(alpha);
+        alphaComponent = convertFloatAlphaTo<uint8_t>(alpha);
     };
 
     if (!args.atEnd())
@@ -794,7 +794,7 @@ static Color parseHSLParameters(CSSParserTokenRange& range, CSSParserMode cssPar
     if (!args.atEnd())
         return Color();
 
-    return convertToComponentBytes(toSRGBA(HSLA<float> { static_cast<float>(colorArray[0]), static_cast<float>(colorArray[1]), static_cast<float>(colorArray[2]), static_cast<float>(alpha) }));
+    return convertTo<SRGBA<uint8_t>>(toSRGBA(HSLA<float> { static_cast<float>(colorArray[0]), static_cast<float>(colorArray[1]), static_cast<float>(colorArray[2]), static_cast<float>(alpha) }));
 }
 
 static Optional<float> parseOptionalAlpha(CSSParserTokenRange& range)

@@ -1,3 +1,19 @@
+2021-01-21  Sam Weinig  <weinig@apple.com>
+
+        Rework color clamping logic to be more consistent and clear
+        https://bugs.webkit.org/show_bug.cgi?id=220716
+
+        Reviewed by Simon Fraser.
+
+        * fast/canvas/canvas-overloads-setFillColor-expected.txt:
+        * fast/canvas/canvas-overloads-setFillColor.html:
+        * fast/canvas/canvas-overloads-setShadow-expected.txt:
+        * fast/canvas/canvas-overloads-setShadow.html:
+        * fast/canvas/canvas-overloads-setStrokeColor-expected.txt:
+        * fast/canvas/canvas-overloads-setStrokeColor.html:
+        Extend tests to cover testing various values including NaN, including testing what
+        color actually gets set as the current style. 
+
 2021-01-21  Rob Buis  <rbuis@igalia.com>
 
         Null check in WebTextIndicatorView::initWithFrame

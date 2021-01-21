@@ -30,9 +30,8 @@
 namespace WebCore {
 
 // These are the standard sRGB <-> LinearRGB / DisplayP3 <-> LinearDisplayP3 conversion functions (https://en.wikipedia.org/wiki/SRGB).
-float linearToRGBColorComponent(float);
-float rgbToLinearColorComponent(float);
-
+float linearToRGBColorComponentClamping(float);
+float rgbToLinearColorComponentClamping(float);
 
 // All color types must at least implement the following conversions to and from the XYZA color space:
 //    XYZA<float> toXYZA(const ColorType<float>&);
@@ -56,13 +55,11 @@ WEBCORE_EXPORT LinearSRGBA<float> toLinearSRGBA(const XYZA<float>&);
 // Additions
 WEBCORE_EXPORT SRGBA<float> toSRGBA(const LinearSRGBA<float>&);
 
-
 // DisplayP3
 WEBCORE_EXPORT XYZA<float> toXYZA(const DisplayP3<float>&);
 WEBCORE_EXPORT DisplayP3<float> toDisplayP3(const XYZA<float>&);
 // Additions
 WEBCORE_EXPORT LinearDisplayP3<float> toLinearDisplayP3(const DisplayP3<float>&);
-
 
 // LinearDisplayP3
 WEBCORE_EXPORT XYZA<float> toXYZA(const LinearDisplayP3<float>&);
@@ -70,13 +67,11 @@ WEBCORE_EXPORT LinearDisplayP3<float> toLinearDisplayP3(const XYZA<float>&);
 // Additions
 WEBCORE_EXPORT DisplayP3<float> toDisplayP3(const LinearDisplayP3<float>&);
 
-
 // Lab
 WEBCORE_EXPORT XYZA<float> toXYZA(const Lab<float>&);
 WEBCORE_EXPORT Lab<float> toLab(const XYZA<float>&);
 // Additions
 WEBCORE_EXPORT LCHA<float> toLCHA(const Lab<float>&);
-
 
 // LCHA
 WEBCORE_EXPORT XYZA<float> toXYZA(const LCHA<float>&);
@@ -84,13 +79,11 @@ WEBCORE_EXPORT LCHA<float> toLCHA(const XYZA<float>&);
 // Additions
 WEBCORE_EXPORT Lab<float> toLab(const LCHA<float>&);
 
-
 // HSLA
 WEBCORE_EXPORT XYZA<float> toXYZA(const HSLA<float>&);
 WEBCORE_EXPORT HSLA<float> toHSLA(const XYZA<float>&);
 // Additions
 WEBCORE_EXPORT SRGBA<float> toSRGBA(const HSLA<float>&);
-
 
 // CMYKA
 WEBCORE_EXPORT XYZA<float> toXYZA(const CMYKA<float>&);

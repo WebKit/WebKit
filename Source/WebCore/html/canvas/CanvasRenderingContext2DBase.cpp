@@ -903,6 +903,9 @@ void CanvasRenderingContext2DBase::resetTransform()
 void CanvasRenderingContext2DBase::setStrokeColor(const String& color, Optional<float> alpha)
 {
     if (alpha) {
+        if (std::isnan(*alpha))
+            return;
+
         setStrokeStyle(CanvasStyle::createFromStringWithOverrideAlpha(color, alpha.value(), canvasBase()));
         return;
     }
@@ -917,7 +920,10 @@ void CanvasRenderingContext2DBase::setStrokeColor(const String& color, Optional<
 
 void CanvasRenderingContext2DBase::setStrokeColor(float grayLevel, float alpha)
 {
-    auto color = SRGBA { grayLevel, grayLevel, grayLevel, alpha };
+    if (std::isnan(grayLevel) || std::isnan(alpha))
+        return;
+
+    auto color = makeFromComponentsClamping<SRGBA<float>>(grayLevel, grayLevel, grayLevel, alpha);
     if (state().strokeStyle.isEquivalent(color))
         return;
     setStrokeStyle(CanvasStyle(color));
@@ -925,7 +931,10 @@ void CanvasRenderingContext2DBase::setStrokeColor(float grayLevel, float alpha)
 
 void CanvasRenderingContext2DBase::setStrokeColor(float r, float g, float b, float a)
 {
-    auto color = SRGBA { r, g, b, a };
+    if (std::isnan(r) || std::isnan(g) || std::isnan(b)  || std::isnan(a))
+        return;
+
+    auto color = makeFromComponentsClamping<SRGBA<float>>(r, g, b, a);
     if (state().strokeStyle.isEquivalent(color))
         return;
     setStrokeStyle(CanvasStyle(color));
@@ -934,6 +943,9 @@ void CanvasRenderingContext2DBase::setStrokeColor(float r, float g, float b, flo
 void CanvasRenderingContext2DBase::setFillColor(const String& color, Optional<float> alpha)
 {
     if (alpha) {
+        if (std::isnan(*alpha))
+            return;
+
         setFillStyle(CanvasStyle::createFromStringWithOverrideAlpha(color, alpha.value(), canvasBase()));
         return;
     }
@@ -948,7 +960,10 @@ void CanvasRenderingContext2DBase::setFillColor(const String& color, Optional<fl
 
 void CanvasRenderingContext2DBase::setFillColor(float grayLevel, float alpha)
 {
-    auto color = SRGBA { grayLevel, grayLevel, grayLevel, alpha };
+    if (std::isnan(grayLevel) || std::isnan(alpha))
+        return;
+
+    auto color = makeFromComponentsClamping<SRGBA<float>>(grayLevel, grayLevel, grayLevel, alpha);
     if (state().fillStyle.isEquivalent(color))
         return;
     setFillStyle(CanvasStyle(color));
@@ -956,7 +971,10 @@ void CanvasRenderingContext2DBase::setFillColor(float grayLevel, float alpha)
 
 void CanvasRenderingContext2DBase::setFillColor(float r, float g, float b, float a)
 {
-    auto color = SRGBA { r, g, b, a };
+    if (std::isnan(r) || std::isnan(g) || std::isnan(b)  || std::isnan(a))
+        return;
+
+    auto color = makeFromComponentsClamping<SRGBA<float>>(r, g, b, a);
     if (state().fillStyle.isEquivalent(color))
         return;
     setFillStyle(CanvasStyle(color));
@@ -1289,6 +1307,9 @@ void CanvasRenderingContext2DBase::strokeRect(float x, float y, float width, flo
 
 void CanvasRenderingContext2DBase::setShadow(float width, float height, float blur, const String& colorString, Optional<float> alpha)
 {
+    if (alpha && std::isnan(*alpha))
+        return;
+
     Color color = Color::transparentBlack;
     if (!colorString.isNull()) {
         color = parseColorOrCurrentColor(colorString, canvasBase());
@@ -1300,12 +1321,18 @@ void CanvasRenderingContext2DBase::setShadow(float width, float height, float bl
 
 void CanvasRenderingContext2DBase::setShadow(float width, float height, float blur, float grayLevel, float alpha)
 {
-    setShadow(FloatSize(width, height), blur, convertToComponentBytes(SRGBA { grayLevel, grayLevel, grayLevel, alpha }));
+    if (std::isnan(grayLevel) || std::isnan(alpha))
+        return;
+
+    setShadow(FloatSize(width, height), blur, convertTo<SRGBA<uint8_t>>(makeFromComponentsClamping<SRGBA<float>>(grayLevel, grayLevel, grayLevel, alpha)));
 }
 
 void CanvasRenderingContext2DBase::setShadow(float width, float height, float blur, float r, float g, float b, float a)
 {
-    setShadow(FloatSize(width, height), blur, convertToComponentBytes(SRGBA { r, g, b, a }));
+    if (std::isnan(r) || std::isnan(g) || std::isnan(b)  || std::isnan(a))
+        return;
+
+    setShadow(FloatSize(width, height), blur, convertTo<SRGBA<uint8_t>>(makeFromComponentsClamping<SRGBA<float>>(r, g, b, a)));
 }
 
 void CanvasRenderingContext2DBase::clearShadow()

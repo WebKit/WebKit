@@ -141,8 +141,8 @@ static Color parseColor(RefPtr<JSON::Object>&& colorObject)
 
     auto a = colorObject->getDouble(Protocol::DOM::RGBAColor::aKey);
     if (!a)
-        return clampToComponentBytes<SRGBA>(*r, *g, *b);
-    return clampToComponentBytes<SRGBA>(*r, *g, *b, convertToComponentByte(*a));
+        return makeFromComponentsClamping<SRGBA<uint8_t>>(*r, *g, *b);
+    return makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(*r, *g, *b, convertFloatAlphaTo<uint8_t>(*a));
 }
 
 static Color parseConfigColor(const String& fieldName, JSON::Object& configObject)

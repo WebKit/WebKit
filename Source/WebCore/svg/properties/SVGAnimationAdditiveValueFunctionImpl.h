@@ -91,7 +91,7 @@ public:
         float blue = Base::animate(progress, repeatCount, simpleFrom.blue, simpleTo.blue, simpleToAtEndOfDuration.blue, simpleAnimated.blue);
         float alpha = Base::animate(progress, repeatCount, simpleFrom.alpha, simpleTo.alpha, simpleToAtEndOfDuration.alpha, simpleAnimated.alpha);
         
-        animated = clampToComponentBytes<SRGBA>(std::lround(red), std::lround(green), std::lround(blue), std::lround(alpha));
+        animated = makeFromComponentsClamping<SRGBA<uint8_t>>(std::lround(red), std::lround(green), std::lround(blue), std::lround(alpha));
     }
 
     Optional<float> calculateDistance(SVGElement*, const String& from, const String& to) const override
@@ -120,7 +120,7 @@ private:
         auto simpleTo = m_to.toSRGBALossy<uint8_t>();
 
         // Ignores any alpha and sets alpha on result to 100% opaque.
-        m_to = clampToComponentBytes<SRGBA>(simpleTo.red + simpleFrom.red, simpleTo.green + simpleFrom.green, simpleTo.blue + simpleFrom.blue);
+        m_to = makeFromComponentsClamping<SRGBA<uint8_t>>(simpleTo.red + simpleFrom.red, simpleTo.green + simpleFrom.green, simpleTo.blue + simpleFrom.blue);
     }
 
     static Color colorFromString(SVGElement*, const String&);

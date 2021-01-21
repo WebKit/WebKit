@@ -32,28 +32,74 @@
 
 namespace WebCore {
 
-float linearToRGBColorComponent(float c)
+// https://en.wikipedia.org/wiki/SRGB
+// http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
+static constexpr ColorMatrix<3, 3> xyzToLinearSRGBMatrix {
+     3.2404542f, -1.5371385f, -0.4985314f,
+    -0.9692660f,  1.8760108f,  0.0415560f,
+     0.0556434f, -0.2040259f,  1.0572252f
+};
+
+// https://en.wikipedia.org/wiki/SRGB
+// http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
+static constexpr ColorMatrix<3, 3> linearSRGBToXYZMatrix {
+    0.4124564f,  0.3575761f,  0.1804375f,
+    0.2126729f,  0.7151522f,  0.0721750f,
+    0.0193339f,  0.1191920f,  0.9503041f
+};
+
+// https://drafts.csswg.org/css-color/#color-conversion-code
+static constexpr ColorMatrix<3, 3> xyzToLinearDisplayP3Matrix {
+     2.493496911941425f,  -0.9313836179191239f, -0.4027107844507168f,
+    -0.8294889695615747f,  1.7626640603183463f,  0.0236246858419436f,
+     0.0358458302437845f, -0.0761723892680418f,  0.9568845240076872f
+};
+
+// https://drafts.csswg.org/css-color/#color-conversion-code
+static constexpr ColorMatrix<3, 3> linearDisplayP3ToXYZMatrix {
+    0.4865709486482162f, 0.2656676931690931f, 0.198217285234363f,
+    0.2289745640697488f, 0.6917385218365064f, 0.079286914093745f,
+    0.0f,                0.0451133818589026f, 1.043944368900976f
+};
+
+// http://www.brucelindbloom.com/index.html?Eqn_ChromAdapt.html
+static constexpr ColorMatrix<3, 3> D50ToD65Matrix {
+     0.9555766f, -0.0230393f, 0.0631636f,
+    -0.0282895f,  1.0099416f, 0.0210077f,
+     0.0122982f, -0.0204830f, 1.3299098f
+};
+
+// http://www.brucelindbloom.com/index.html?Eqn_ChromAdapt.html
+static constexpr ColorMatrix<3, 3> D65ToD50Matrix {
+     1.0478112f, 0.0228866f, -0.0501270f,
+     0.0295424f, 0.9904844f, -0.0170491f,
+    -0.0092345f, 0.0150436f,  0.7521316f
+};
+
+float linearToRGBColorComponentClamping(float c)
 {
     if (c < 0.0031308f)
-        return 12.92f * c;
+        return std::max<float>(12.92f * c, 0);
 
     return clampTo<float>(1.055f * std::pow(c, 1.0f / 2.4f) - 0.055f, 0, 1);
 }
 
-float rgbToLinearColorComponent(float c)
+float rgbToLinearColorComponentClamping(float c)
 {
     if (c <= 0.04045f)
-        return c / 12.92f;
+        return std::max<float>(c / 12.92f, 0);
 
     return clampTo<float>(std::pow((c + 0.055f) / 1.055f, 2.4f), 0, 1);
 }
 
+// Gamma conversions.
+
 LinearSRGBA<float> toLinearSRGBA(const SRGBA<float>& color)
 {
     return {
-        rgbToLinearColorComponent(color.red),
-        rgbToLinearColorComponent(color.green),
-        rgbToLinearColorComponent(color.blue),
+        rgbToLinearColorComponentClamping(color.red),
+        rgbToLinearColorComponentClamping(color.green),
+        rgbToLinearColorComponentClamping(color.blue),
         color.alpha
     };
 }
@@ -61,9 +107,9 @@ LinearSRGBA<float> toLinearSRGBA(const SRGBA<float>& color)
 SRGBA<float> toSRGBA(const LinearSRGBA<float>& color)
 {
     return {
-        linearToRGBColorComponent(color.red),
-        linearToRGBColorComponent(color.green),
-        linearToRGBColorComponent(color.blue),
+        linearToRGBColorComponentClamping(color.red),
+        linearToRGBColorComponentClamping(color.green),
+        linearToRGBColorComponentClamping(color.blue),
         color.alpha
     };
 }
@@ -71,9 +117,9 @@ SRGBA<float> toSRGBA(const LinearSRGBA<float>& color)
 LinearDisplayP3<float> toLinearDisplayP3(const DisplayP3<float>& color)
 {
     return {
-        rgbToLinearColorComponent(color.red),
-        rgbToLinearColorComponent(color.green),
-        rgbToLinearColorComponent(color.blue),
+        rgbToLinearColorComponentClamping(color.red),
+        rgbToLinearColorComponentClamping(color.green),
+        rgbToLinearColorComponentClamping(color.blue),
         color.alpha
     };
 }
@@ -81,80 +127,48 @@ LinearDisplayP3<float> toLinearDisplayP3(const DisplayP3<float>& color)
 DisplayP3<float> toDisplayP3(const LinearDisplayP3<float>& color)
 {
     return {
-        linearToRGBColorComponent(color.red),
-        linearToRGBColorComponent(color.green),
-        linearToRGBColorComponent(color.blue),
+        linearToRGBColorComponentClamping(color.red),
+        linearToRGBColorComponentClamping(color.green),
+        linearToRGBColorComponentClamping(color.blue),
         color.alpha
     };
 }
 
+// Matrix conversions.
+
 LinearSRGBA<float> toLinearSRGBA(const XYZA<float>& color)
 {
-    // https://en.wikipedia.org/wiki/SRGB
-    // http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
-    constexpr ColorMatrix<3, 3> xyzToLinearSRGBMatrix {
-         3.2404542f, -1.5371385f, -0.4985314f,
-        -0.9692660f,  1.8760108f,  0.0415560f,
-         0.0556434f, -0.2040259f,  1.0572252f
-    };
-    return asLinearSRGBA(xyzToLinearSRGBMatrix.transformedColorComponents(asColorComponents(color)));
+    return makeFromComponentsClampingExceptAlpha<LinearSRGBA<float>>(xyzToLinearSRGBMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
 XYZA<float> toXYZA(const LinearSRGBA<float>& color)
 {
-    // https://en.wikipedia.org/wiki/SRGB
-    // http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
-    constexpr ColorMatrix<3, 3> linearSRGBToXYZMatrix {
-        0.4124564f,  0.3575761f,  0.1804375f,
-        0.2126729f,  0.7151522f,  0.0721750f,
-        0.0193339f,  0.1191920f,  0.9503041f
-    };
-    return asXYZA(linearSRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
+    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(linearSRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
 LinearDisplayP3<float> toLinearDisplayP3(const XYZA<float>& color)
 {
-    // https://drafts.csswg.org/css-color/#color-conversion-code
-    constexpr ColorMatrix<3, 3> xyzToLinearDisplayP3Matrix {
-         2.493496911941425f,  -0.9313836179191239f, -0.4027107844507168f,
-        -0.8294889695615747f,  1.7626640603183463f,  0.0236246858419436f,
-         0.0358458302437845f, -0.0761723892680418f,  0.9568845240076872f
-    };
-    return asLinearDisplayP3(xyzToLinearDisplayP3Matrix.transformedColorComponents(asColorComponents(color)));
+    return makeFromComponentsClampingExceptAlpha<LinearDisplayP3<float>>(xyzToLinearDisplayP3Matrix.transformedColorComponents(asColorComponents(color)));
 }
 
 XYZA<float> toXYZA(const LinearDisplayP3<float>& color)
 {
-    // https://drafts.csswg.org/css-color/#color-conversion-code
-    constexpr ColorMatrix<3, 3> linearDisplayP3ToXYZMatrix {
-        0.4865709486482162f, 0.2656676931690931f, 0.198217285234363f,
-        0.2289745640697488f, 0.6917385218365064f, 0.079286914093745f,
-        0.0f,                0.0451133818589026f, 1.043944368900976f
-    };
-    return asXYZA(linearDisplayP3ToXYZMatrix.transformedColorComponents(asColorComponents(color)));
+    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(linearDisplayP3ToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
+
+// Chromatic Adaptation conversions.
 
 static XYZA<float> convertFromD50WhitePointToD65WhitePoint(const XYZA<float>& color)
 {
-    // http://www.brucelindbloom.com/index.html?Eqn_ChromAdapt.html
-    constexpr ColorMatrix<3, 3> D50ToD65Matrix {
-         0.9555766f, -0.0230393f, 0.0631636f,
-        -0.0282895f,  1.0099416f, 0.0210077f,
-         0.0122982f, -0.0204830f, 1.3299098f
-    };
-    return asXYZA(D50ToD65Matrix.transformedColorComponents(asColorComponents(color)));
+    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(D50ToD65Matrix.transformedColorComponents(asColorComponents(color)));
 }
 
 static XYZA<float> convertFromD65WhitePointToD50WhitePoint(const XYZA<float>& color)
 {
-    // http://www.brucelindbloom.com/index.html?Eqn_ChromAdapt.html
-    constexpr ColorMatrix<3, 3> D65ToD50Matrix {
-         1.0478112f, 0.0228866f, -0.0501270f,
-         0.0295424f, 0.9904844f, -0.0170491f,
-        -0.0092345f, 0.0150436f,  0.7521316f
-    };
-    return asXYZA(D65ToD50Matrix.transformedColorComponents(asColorComponents(color)));
+    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(D65ToD50Matrix.transformedColorComponents(asColorComponents(color)));
 }
+
+// Lab conversions.
 
 static constexpr float LABe = 216.0f / 24389.0f;
 static constexpr float LABk = 24389.0f / 27.0f;
@@ -221,6 +235,9 @@ Lab<float> toLab(const XYZA<float>& color)
     return { lightness, a, b, colorWithD50WhitePoint.alpha };
 }
 
+
+// LCH conversions.
+
 LCHA<float> toLCHA(const Lab<float>& color)
 {
     // https://www.w3.org/TR/css-color-4/#lab-to-lch
@@ -246,6 +263,8 @@ Lab<float> toLab(const LCHA<float>& color)
         color.alpha
     };
 }
+
+// HSL conversions.
 
 HSLA<float> toHSLA(const SRGBA<float>& color)
 {
@@ -332,6 +351,8 @@ SRGBA<float> toSRGBA(const HSLA<float>& color)
     };
 }
 
+// CMYK conversions.
+
 SRGBA<float> toSRGBA(const CMYKA<float>& color)
 {
     auto [c, m, y, k, a] = color;
@@ -355,6 +376,9 @@ CMYKA<float> toCMYKA(const SRGBA<float>& color)
     auto y = (1.0f - b - k) / (1.0f - k);
     return { c, m, y, k, a };
 }
+
+
+// Combination conversions (constructed from more basic conversions above).
 
 XYZA<float> toXYZA(const SRGBA<float>& color)
 {

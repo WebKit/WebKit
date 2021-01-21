@@ -45,22 +45,14 @@ SRGBA<uint8_t> premultipliedFlooring(SRGBA<uint8_t>);
 SRGBA<uint8_t> premultipliedCeiling(SRGBA<uint8_t>);
 SRGBA<uint8_t> unpremultiplied(SRGBA<uint8_t>);
 
-uint8_t convertPrescaledToComponentByte(float);
+uint8_t convertPrescaledSRGBAFloatToSRGBAByte(float);
 
-uint8_t convertToComponentByte(float);
-constexpr float convertToComponentFloat(uint8_t);
+template<typename T> T convertByteAlphaTo(uint8_t);
+template<typename T> T convertFloatAlphaTo(float);
 
-template<typename ComponentType> constexpr uint8_t clampToComponentByte(ComponentType);
-template<typename ComponentType> constexpr float clampToComponentFloat(ComponentType);
-
-template<typename T> T convertComponentByteTo(uint8_t);
-template<typename T> T convertComponentFloatTo(float);
-
-template<template<typename> typename ColorType> ColorType<uint8_t> convertToComponentBytes(const ColorType<float>&);
-template<template<typename> typename ColorType> constexpr ColorType<float> convertToComponentFloats(const ColorType<uint8_t>&);
-
-template<template<typename> typename ColorType, typename... ComponentType> constexpr ColorType<uint8_t> clampToComponentBytes(ComponentType...);
-template<template<typename> typename ColorType, typename... ComponentType> constexpr ColorType<float> clampToComponentFloats(ComponentType...);
+template<typename T, typename U> T convertTo(const U&);
+template<> SRGBA<float> convertTo(const SRGBA<uint8_t>&);
+template<> SRGBA<uint8_t> convertTo(const SRGBA<float>&);
 
 template<typename ColorType, typename Functor> ColorType colorByModifingEachNonAlphaComponent(const ColorType&, Functor&&);
 
@@ -70,78 +62,61 @@ template<typename ColorType> ColorType colorWithOverridenAlpha(const ColorType&,
 template<typename ColorType> constexpr ColorType invertedColorWithOverridenAlpha(const ColorType&, uint8_t overrideAlpha);
 template<typename ColorType> ColorType invertedColorWithOverridenAlpha(const ColorType&, float overrideAlpha);
 
-template<typename ColorType> constexpr bool isBlack(const ColorType&);
-template<typename ColorType> constexpr bool isWhite(const ColorType&);
+constexpr bool isBlack(const Lab<float>&);
+template<typename ColorType, typename std::enable_if_t<std::is_same_v<typename ColorType::Model, RGBModel<typename ColorType::ComponentType>>>* = nullptr>
+constexpr bool isBlack(const ColorType&);
+
+constexpr bool isWhite(const Lab<float>&);
+template<typename ColorType, typename std::enable_if_t<std::is_same_v<typename ColorType::Model, RGBModel<typename ColorType::ComponentType>>>* = nullptr>
+constexpr bool isWhite(const ColorType&);
 
 constexpr uint16_t fastMultiplyBy255(uint16_t);
 constexpr uint16_t fastDivideBy255(uint16_t);
 
 
-inline uint8_t convertPrescaledToComponentByte(float f)
+inline uint8_t convertPrescaledSRGBAFloatToSRGBAByte(float value)
 {
-    return std::clamp(std::lround(f), 0l, 255l);
+    return std::clamp(std::lround(value), 0l, 255l);
 }
 
-inline uint8_t convertToComponentByte(float f)
-{
-    return std::clamp(std::lround(f * 255.0f), 0l, 255l);
-}
-
-constexpr float convertToComponentFloat(uint8_t byte)
-{
-    return byte / 255.0f;
-}
-
-template<typename ComponentType> constexpr uint8_t clampToComponentByte(ComponentType component)
-{
-    return std::clamp<ComponentType>(component, 0, 255);
-}
-
-template<typename ComponentType> constexpr float clampToComponentFloat(ComponentType component)
-{
-    return std::clamp<ComponentType>(component, 0, 1);
-}
-
-template<> constexpr uint8_t convertComponentByteTo<uint8_t>(uint8_t value)
+template<> constexpr uint8_t convertByteAlphaTo<uint8_t>(uint8_t value)
 {
     return value;
 }
 
-template<> constexpr float convertComponentByteTo<float>(uint8_t value)
+template<> constexpr float convertByteAlphaTo<float>(uint8_t value)
 {
-    return convertToComponentFloat(value);
+    return value / 255.0f;
 }
 
-template<> inline uint8_t convertComponentFloatTo<uint8_t>(float value)
+template<> inline uint8_t convertFloatAlphaTo<uint8_t>(float value)
 {
-    return convertToComponentByte(value);
+    return std::clamp(std::lround(value * 255.0f), 0l, 255l);
 }
 
-template<> inline float convertComponentFloatTo<float>(float value)
+template<> inline float convertFloatAlphaTo<float>(float value)
 {
-    return clampToComponentFloat(value);
+    return clampedAlpha(value);
 }
 
-template<template<typename> typename ColorType> inline ColorType<uint8_t> convertToComponentBytes(const ColorType<float>& color)
+template<> inline SRGBA<float> convertTo(const SRGBA<uint8_t>& color)
 {
+    auto convertToSRGBAFloat = [](uint8_t value) -> float {
+        return value / 255.0f;
+    };
+
     auto components = asColorComponents(color);
-    return { convertToComponentByte(components[0]), convertToComponentByte(components[1]), convertToComponentByte(components[2]), convertToComponentByte(components[3]) };
+    return { convertToSRGBAFloat(components[0]), convertToSRGBAFloat(components[1]), convertToSRGBAFloat(components[2]), convertToSRGBAFloat(components[3]) };
 }
 
-template<template<typename> typename ColorType> constexpr ColorType<float> convertToComponentFloats(const ColorType<uint8_t>& color)
+template<> inline SRGBA<uint8_t> convertTo(const SRGBA<float>& color)
 {
+    auto convertToSRGBAByte = [](float value) -> uint8_t {
+        return std::clamp(std::lround(value * 255.0f), 0l, 255l);
+    };
+
     auto components = asColorComponents(color);
-    return { convertToComponentFloat(components[0]), convertToComponentFloat(components[1]), convertToComponentFloat(components[2]), convertToComponentFloat(components[3]) };
-}
-
-template<template<typename> typename ColorType, typename... ComponentType> constexpr ColorType<uint8_t> clampToComponentBytes(ComponentType... components)
-{
-    return { clampToComponentByte(components)... };
-}
-
-template<template<typename> typename ColorType, typename... ComponentType> constexpr ColorType<float> clampToComponentFloats(ComponentType... components)
-{
-    return { clampToComponentFloat(components)... };
+    return { convertToSRGBAByte(components[0]), convertToSRGBAByte(components[1]), convertToSRGBAByte(components[2]), convertToSRGBAByte(components[3]) };
 }
 
 template<typename ColorType, typename Functor> ColorType colorByModifingEachNonAlphaComponent(const ColorType& color, Functor&& functor)
@@ -157,50 +132,69 @@ template<typename ColorType, typename Functor> ColorType colorByModifingEachNonA
 template<typename ColorType> constexpr ColorType colorWithOverridenAlpha(const ColorType& color, uint8_t overrideAlpha)
 {
     auto copy = color;
-    copy.alpha = convertComponentByteTo<decltype(copy.alpha)>(overrideAlpha);
+    copy.alpha = convertByteAlphaTo<typename ColorType::ComponentType>(overrideAlpha);
     return copy;
 }
 
 template<typename ColorType> ColorType colorWithOverridenAlpha(const ColorType& color, float overrideAlpha)
 {
     auto copy = color;
-    copy.alpha = convertComponentFloatTo<decltype(copy.alpha)>(overrideAlpha);
+    copy.alpha = convertFloatAlphaTo<typename ColorType::ComponentType>(overrideAlpha);
     return copy;
 }
 
 template<typename ColorType> constexpr ColorType invertedColorWithOverridenAlpha(const ColorType& color, uint8_t overrideAlpha)
 {
-    auto copy = colorByModifingEachNonAlphaComponent(color, [] (auto component) {
-        return ComponentTraits<decltype(component)>::maxValue - component;
-    });
-    copy.alpha = convertComponentByteTo<decltype(copy.alpha)>(overrideAlpha);
-    return copy;
+    static_assert(ColorType::Model::isInvertible);
+
+    auto components = asColorComponents(color);
+    auto copy = components;
+
+    for (unsigned i = 0; i < 3; ++i)
+        copy[i] = ColorType::Model::ranges[i].max - components[i];
+    copy[3] = convertByteAlphaTo<typename ColorType::ComponentType>(overrideAlpha);
+
+    return makeFromComponents<ColorType>(copy);
 }
 
 template<typename ColorType> ColorType invertedColorWithOverridenAlpha(const ColorType& color, float overrideAlpha)
 {
-    auto copy = colorByModifingEachNonAlphaComponent(color, [] (auto component) {
-        return ComponentTraits<decltype(component)>::maxValue - component;
-    });
-    copy.alpha = convertComponentFloatTo<decltype(copy.alpha)>(overrideAlpha);
-    return copy;
+    static_assert(ColorType::Model::isInvertible);
+
+    auto components = asColorComponents(color);
+    auto copy = components;
+
+    for (unsigned i = 0; i < 3; ++i)
+        copy[i] = ColorType::Model::ranges[i].max - components[i];
+    copy[3] = convertFloatAlphaTo<typename ColorType::ComponentType>(overrideAlpha);
+
+    return makeFromComponents<ColorType>(copy);
 }
 
-template<typename ColorType> constexpr bool isBlack(const ColorType& color)
+constexpr bool isBlack(const Lab<float>& color)
 {
-    constexpr auto min = ComponentTraits<typename ColorType::ComponentType>::minValue;
-    constexpr auto max = ComponentTraits<typename ColorType::ComponentType>::maxValue;
-
-    auto [c1, c2, c3, alpha] = color;
-    return c1 == min && c2 == min && c3 == min && alpha == max;
+    return color.lightness == 0 && color.alpha == AlphaTraits<float>::opaque;
 }
 
-template<typename ColorType> constexpr bool isWhite(const ColorType& color)
+template<typename ColorType, typename std::enable_if_t<std::is_same_v<typename ColorType::Model, RGBModel<typename ColorType::ComponentType>>>*>
+constexpr bool isBlack(const ColorType& color)
 {
-    constexpr auto max = ComponentTraits<typename ColorType::ComponentType>::maxValue;
-
     auto [c1, c2, c3, alpha] = color;
-    return c1 == max && c2 == max && c3 == max && alpha == max;
+    constexpr auto ranges = ColorType::Model::ranges;
+    return c1 == ranges[0].min && c2 == ranges[1].min && c3 == ranges[2].min && alpha == AlphaTraits<typename ColorType::ComponentType>::opaque;
+}
+
+constexpr bool isWhite(const Lab<float>& color)
+{
+    return color.lightness == 100 && color.alpha == AlphaTraits<float>::opaque;
+}
+
+template<typename ColorType, typename std::enable_if_t<std::is_same_v<typename ColorType::Model, RGBModel<typename ColorType::ComponentType>>>*>
+constexpr bool isWhite(const ColorType& color)
+{
+    auto [c1, c2, c3, alpha] = color;
+    constexpr auto ranges = ColorType::Model::ranges;
+    return c1 == ranges[0].max && c2 == ranges[1].max && c3 == ranges[2].max && alpha == AlphaTraits<typename ColorType::ComponentType>::opaque;
 }
 
 constexpr uint16_t fastMultiplyBy255(uint16_t value)

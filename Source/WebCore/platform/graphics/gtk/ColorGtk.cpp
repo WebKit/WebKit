@@ -26,7 +26,7 @@
 namespace WebCore {
 
 Color::Color(const GdkRGBA& color)
-    : Color(convertToComponentBytes(SRGBA { static_cast<float>(color.red), static_cast<float>(color.green), static_cast<float>(color.blue), static_cast<float>(color.alpha) }))
+    : Color(convertTo<SRGBA<uint8_t>>(SRGBA { static_cast<float>(color.red), static_cast<float>(color.green), static_cast<float>(color.blue), static_cast<float>(color.alpha) }))
 {
 }
 

@@ -487,7 +487,7 @@ template<typename CharacterType> static Optional<SRGBA<uint8_t>> parseNumericCol
             return WTF::nullopt;
         if (current != end)
             return WTF::nullopt;
-        return clampToComponentBytes<SRGBA>(red, green, blue, alpha); // FIXME: Already clamped, doesn't need to re-clamp. Update parseColorIntOrPercentage/parseAlphaValue to return uint8_t and replace call to clampToComponentBytes with direct construction of SRGBA<uint8_t>.
+        return makeFromComponentsClamping<SRGBA<uint8_t>>(red, green, blue, alpha); // FIXME: Already clamped, doesn't need to re-clamp. Update parseColorIntOrPercentage/parseAlphaValue to return uint8_t and replace call to makeFromComponentsClamping<SRGBA<uint8_t>> with direct construction of SRGBA<uint8_t>.
     }
 
     // Try rgb() syntax.
@@ -505,7 +505,7 @@ template<typename CharacterType> static Optional<SRGBA<uint8_t>> parseNumericCol
             return WTF::nullopt;
         if (current != end)
             return WTF::nullopt;
-        return clampToComponentBytes<SRGBA>(red, green, blue); // FIXME: Already clamped, doesn't need to re-clamp. Update parseColorIntOrPercentage/parseAlphaValue to return uint8_t and replace call to clampToComponentBytes with direct construction of SRGBA<uint8_t>.
+        return makeFromComponentsClamping<SRGBA<uint8_t>>(red, green, blue); // FIXME: Already clamped, doesn't need to re-clamp. Update parseColorIntOrPercentage/parseAlphaValue to return uint8_t and replace call to makeFromComponentsClamping<SRGBA<uint8_t>> with direct construction of SRGBA<uint8_t>.
     }
 
     return WTF::nullopt;

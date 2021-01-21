@@ -104,7 +104,7 @@ void ImageBufferCairoBackend::transformColorSpace(ColorSpace srcColorSpace, Colo
             std::array<uint8_t, 256> array;
             for (unsigned i = 0; i < 256; i++) {
                 float color = i / 255.0f;
-                color = rgbToLinearColorComponent(color);
+                color = rgbToLinearColorComponentClamping(color);
                 array[i] = static_cast<uint8_t>(round(color * 255));
             }
             return array;
@@ -115,7 +115,7 @@ void ImageBufferCairoBackend::transformColorSpace(ColorSpace srcColorSpace, Colo
             std::array<uint8_t, 256> array;
             for (unsigned i = 0; i < 256; i++) {
                 float color = i / 255.0f;
-                color = linearToRGBColorComponent(color);
+                color = linearToRGBColorComponentClamping(color);
                 array[i] = static_cast<uint8_t>(round(color * 255));
             }
             return array;

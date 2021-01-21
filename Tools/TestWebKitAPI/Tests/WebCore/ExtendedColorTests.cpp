@@ -109,7 +109,7 @@ TEST(ExtendedColor, Equality)
     }
 
     auto componentBytes = SRGBA<uint8_t> { 255, 128, 63, 127 };
-    Color rgb1 { convertToComponentFloats(componentBytes) };
+    Color rgb1 { convertTo<SRGBA<float>>(componentBytes) };
     Color rgb2 { componentBytes };
     EXPECT_NE(rgb1, rgb2);
     EXPECT_NE(rgb2, rgb1);
@@ -138,7 +138,7 @@ TEST(ExtendedColor, Hash)
     }
 
     auto componentBytes = SRGBA<uint8_t> { 255, 128, 63, 127 };
-    Color rgb1 { convertToComponentFloats(componentBytes) };
+    Color rgb1 { convertTo<SRGBA<float>>(componentBytes) };
     Color rgb2 { componentBytes };
     EXPECT_NE(rgb1.hash(), rgb2.hash());
 }
