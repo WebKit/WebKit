@@ -12,11 +12,17 @@ if (window.testRunner) {
 
 async function closeConnectionsThenAddFrame() {
     for (var i = 0; i < 6; i = i + 1) {
-        await fetch('resources/close-connection.php', {mode: 'no-cors'});
+        try {
+            await fetch('resources/close-connection.php', {mode: 'no-cors'});
+            alert("successfully closed one connection");
+        } catch (e) {
+            alert("exception while closing connection " + e);
+        }
     }
     var iframe = document.createElement('iframe');
     iframe.src = "resources/nph-load-plugin-fail.pl";
-    iframe.onload = function() { if (window.testRunner) { testRunner.notifyDone() } }
+    iframe.onload = function() { alert("iframe loaded successfully"); if (window.testRunner) { testRunner.notifyDone() } }
+    iframe.onerror = function() { alert("iframe load failed"); if (window.testRunner) { testRunner.notifyDone() } }
     document.body.appendChild(iframe);
 }
 

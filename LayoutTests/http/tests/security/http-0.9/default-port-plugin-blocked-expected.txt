@@ -1,4 +1,11 @@
+ALERT: successfully closed one connection
+ALERT: successfully closed one connection
+ALERT: successfully closed one connection
+ALERT: successfully closed one connection
+ALERT: successfully closed one connection
+ALERT: successfully closed one connection
 CONSOLE MESSAGE: Sandboxing 'http://127.0.0.1:8000/security/http-0.9/resources/nph-load-plugin-fail.pl' because it is using HTTP/0.9.
+ALERT: iframe loaded successfully
 This tests that loading of a plugin is blocked in a HTTP 0.9 response served over port 80. This test PASSED if you see content in the iframe below. Otherwise, it FAILED.
 
 
