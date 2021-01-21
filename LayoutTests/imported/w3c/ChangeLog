@@ -1,3 +1,119 @@
+2021-01-21  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Import css-variables WPTs
+        https://bugs.webkit.org/show_bug.cgi?id=220787
+
+        Reviewed by Darin Adler.
+
+        Import WPTs for CSS variables via `Tools/Scripts/import-w3c-tests` and add expectations.
+
+        https://wpt.fyi/results/css/css-variables?label=master&label=experimental&aligned
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-variables/META.yml: Added.
+        * web-platform-tests/css/css-variables/css-vars-custom-property-case-sensitive-001-expected.html: Added.
+        * web-platform-tests/css/css-variables/css-vars-custom-property-case-sensitive-001.html: Added.
+        * web-platform-tests/css/css-variables/css-vars-custom-property-inheritance-expected.html: Added.
+        * web-platform-tests/css/css-variables/css-vars-custom-property-inheritance.html: Added.
+        * web-platform-tests/css/css-variables/resources/variable-reference-refresh-iframe.css: Added.
+        (#testElement):
+        * web-platform-tests/css/css-variables/resources/w3c-import.log: Added.
+        * web-platform-tests/css/css-variables/test_variable_legal_values-expected.txt: Added.
+        * web-platform-tests/css/css-variables/test_variable_legal_values.html: Added.
+        * web-platform-tests/css/css-variables/variable-animation-from-to-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-animation-from-to.html: Added.
+        * web-platform-tests/css/css-variables/variable-animation-over-transition-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-animation-over-transition.html: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-into-keyframe-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-into-keyframe-shorthand-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-into-keyframe-shorthand.html: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-into-keyframe-transform-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-into-keyframe-transform.html: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-into-keyframe.html: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-within-keyframe-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-within-keyframe-fallback-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-within-keyframe-fallback.html: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-within-keyframe-multiple-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-within-keyframe-multiple.html: Added.
+        * web-platform-tests/css/css-variables/variable-animation-substitute-within-keyframe.html: Added.
+        * web-platform-tests/css/css-variables/variable-animation-to-only-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-animation-to-only.html: Added.
+        * web-platform-tests/css/css-variables/variable-created-document-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-created-document.html: Added.
+        * web-platform-tests/css/css-variables/variable-created-element-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-created-element.html: Added.
+        * web-platform-tests/css/css-variables/variable-cssText-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-cssText.html: Added.
+        * web-platform-tests/css/css-variables/variable-definition-border-shorthand-serialize-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-definition-border-shorthand-serialize.html: Added.
+        * web-platform-tests/css/css-variables/variable-definition-cascading-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-definition-cascading.html: Added.
+        * web-platform-tests/css/css-variables/variable-definition-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-definition-keywords-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-definition-keywords.html: Added.
+        * web-platform-tests/css/css-variables/variable-definition.html: Added.
+        * web-platform-tests/css/css-variables/variable-first-letter-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-first-letter.html: Added.
+        * web-platform-tests/css/css-variables/variable-first-line-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-first-line.html: Added.
+        * web-platform-tests/css/css-variables/variable-generated-content-dynamic-001-expected.html: Added.
+        * web-platform-tests/css/css-variables/variable-generated-content-dynamic-001.html: Added.
+        * web-platform-tests/css/css-variables/variable-invalidation-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-invalidation.html: Added.
+        * web-platform-tests/css/css-variables/variable-presentation-attribute-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-presentation-attribute.html: Added.
+        * web-platform-tests/css/css-variables/variable-pseudo-element-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-pseudo-element.html: Added.
+        * web-platform-tests/css/css-variables/variable-reference-cssom-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-reference-cssom.html: Added.
+        * web-platform-tests/css/css-variables/variable-reference-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-reference-refresh-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-reference-refresh.html: Added.
+        * web-platform-tests/css/css-variables/variable-reference-shorthands-cssom-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-reference-shorthands-cssom.html: Added.
+        * web-platform-tests/css/css-variables/variable-reference-shorthands-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-reference-shorthands.html: Added.
+        * web-platform-tests/css/css-variables/variable-reference-variable-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-reference-variable.html: Added.
+        * web-platform-tests/css/css-variables/variable-reference-without-whitespace-expected.html: Added.
+        * web-platform-tests/css/css-variables/variable-reference-without-whitespace.html: Added.
+        * web-platform-tests/css/css-variables/variable-reference.html: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-background-properties-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-background-properties.html: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-basic-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-basic.html: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-filters-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-filters.html: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-plus-box-shadow-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-plus-box-shadow.html: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-replaced-size-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-replaced-size.html: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-shadow-properties-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-shadow-properties.html: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-shorthands-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-shorthands.html: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-variable-declaration-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-substitution-variable-declaration.html: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-from-no-value-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-from-no-value.html: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-to-no-value-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-to-no-value.html: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-transition-property-all-before-value-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-transition-property-all-before-value.html: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-transition-property-variable-before-value-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-transition-property-variable-before-value.html: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-value-before-transition-property-all-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-value-before-transition-property-all.html: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-value-before-transition-property-variable-expected.txt: Added.
+        * web-platform-tests/css/css-variables/variable-transitions-value-before-transition-property-variable.html: Added.
+        * web-platform-tests/css/css-variables/vars-background-shorthand-001-expected.html: Added.
+        * web-platform-tests/css/css-variables/vars-background-shorthand-001.html: Added.
+        * web-platform-tests/css/css-variables/vars-border-shorthand-serialize-expected.txt: Added.
+        * web-platform-tests/css/css-variables/vars-border-shorthand-serialize.html: Added.
+        * web-platform-tests/css/css-variables/vars-font-shorthand-001-expected.html: Added.
+        * web-platform-tests/css/css-variables/vars-font-shorthand-001.html: Added.
+        * web-platform-tests/css/css-variables/w3c-import.log: Added.
+
 2021-01-19  Youenn Fablet  <youenn@apple.com>
 
         [ BigSur ] imported/w3c/web-platform-tests/fetch/nosniff/parsing-nosniff.window.html is flaky failing

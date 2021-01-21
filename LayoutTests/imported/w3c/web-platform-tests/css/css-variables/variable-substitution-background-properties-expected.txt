@@ -1,0 +1,12 @@
+
+PASS background-attachment
+PASS background-clip
+PASS background-color
+PASS background-origin
+PASS background-position
+PASS background-repeat
+PASS background-size
+PASS background-image-url
+PASS background-image-linear-gradient
+PASS background-image-radial-gradient
+

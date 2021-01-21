@@ -1,0 +1,72 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/css-vars-custom-property-case-sensitive-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/css-vars-custom-property-case-sensitive-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/css-vars-custom-property-inheritance-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/css-vars-custom-property-inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/test_variable_legal_values.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-from-to.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-over-transition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-substitute-into-keyframe-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-substitute-into-keyframe-transform.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-substitute-into-keyframe.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-substitute-within-keyframe-fallback.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-substitute-within-keyframe-multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-substitute-within-keyframe.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-to-only.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-created-document.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-created-element.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-cssText.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-definition-border-shorthand-serialize.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-definition-cascading.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-definition-keywords.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-definition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-first-letter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-first-line.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-generated-content-dynamic-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-generated-content-dynamic-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-invalidation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-presentation-attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-pseudo-element.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference-cssom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference-refresh.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference-shorthands-cssom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference-shorthands.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference-variable.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference-without-whitespace-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference-without-whitespace.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-substitution-background-properties.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-substitution-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-substitution-filters.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-substitution-plus-box-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-substitution-replaced-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-substitution-shadow-properties.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-substitution-shorthands.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-substitution-variable-declaration.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-transitions-from-no-value.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-transitions-to-no-value.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-transitions-transition-property-all-before-value.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-transitions-transition-property-variable-before-value.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-transitions-value-before-transition-property-all.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-transitions-value-before-transition-property-variable.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/vars-background-shorthand-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/vars-background-shorthand-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/vars-border-shorthand-serialize.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/vars-font-shorthand-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/vars-font-shorthand-001.html

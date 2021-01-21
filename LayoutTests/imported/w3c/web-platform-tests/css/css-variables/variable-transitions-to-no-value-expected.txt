@@ -1,0 +1,9 @@
+This text should transition from green to black over a period of 1 second.
+
+Harness Error (TIMEOUT), message = null
+
+PASS Verify CSS variable value before transition
+PASS Verify substituted color value before transition
+NOTRUN Verify CSS variable value after transition
+NOTRUN Verify substituted color value after transition
+
