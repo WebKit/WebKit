@@ -1,3 +1,11 @@
+2021-01-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, ANGLE should not be built in JSCOnly port
+
+        ANGLE is not a part of JSC. Do not build it.
+
+        * Source/cmake/OptionsJSCOnly.cmake:
+
 2021-01-19  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r271580) [GTK] LTS/Debian build failure due to unsupported g-ir-scanner parameter
