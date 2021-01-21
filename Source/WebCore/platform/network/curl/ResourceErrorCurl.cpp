@@ -53,7 +53,7 @@ bool ResourceError::isSSLConnectError() const
 
 bool ResourceError::isSSLCertVerificationError() const
 {
-    return errorCode() == CURLE_SSL_CACERT || errorCode() == CURLE_PEER_FAILED_VERIFICATION;
+    return errorCode() == CURLE_PEER_FAILED_VERIFICATION;
 }
 
 void ResourceError::doPlatformIsolatedCopy(const ResourceError& other)
