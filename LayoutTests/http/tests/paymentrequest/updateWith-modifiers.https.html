@@ -63,7 +63,7 @@ user_activation_test(async (test) => {
     request.addEventListener("merchantvalidation", (event) => {
         event.complete({ });
     });
-    request.addEventListener("paymentmethodchange", (event) => {
+    request.addEventListener("shippingaddresschange", (event) => {
         event.updateWith(detailsUpdate);
         internals.mockPaymentCoordinator.acceptPayment();
     });
