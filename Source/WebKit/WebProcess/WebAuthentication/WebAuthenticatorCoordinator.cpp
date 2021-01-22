@@ -72,13 +72,12 @@ void WebAuthenticatorCoordinator::makeCredential(const Frame& frame, const Secur
         m_webPage.addConsoleMessage(webFrame->frameID(), MessageSource::Other, MessageLevel::Warning, "User gesture is not detected. To use the platform authenticator, call 'navigator.credentials.create' within user activated events."_s);
 
     if (!RuntimeEnabledFeatures::sharedFeatures().webAuthenticationModernEnabled()) {
-        if (!isWebBrowser())
-            return;
-
         m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::MakeCredential(webFrame->frameID(), webFrame->info(), hash, options, processingUserGesture), WTFMove(handler));
         return;
     }
 
+    if (!isWebBrowser())
+        return;
     WebProcess::singleton().ensureWebAuthnProcessConnection().connection().sendWithAsyncReply(Messages::WebAuthnConnectionToWebProcess::MakeCredential(hash, options, processingUserGesture), WTFMove(handler));
 }
 
@@ -93,26 +92,24 @@ void WebAuthenticatorCoordinator::getAssertion(const Frame& frame, const Securit
         m_webPage.addConsoleMessage(webFrame->frameID(), MessageSource::Other, MessageLevel::Warning, "User gesture is not detected. To use the platform authenticator, call 'navigator.credentials.get' within user activated events."_s);
 
     if (!RuntimeEnabledFeatures::sharedFeatures().webAuthenticationModernEnabled()) {
-        if (!isWebBrowser())
-            return;
-
         m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::GetAssertion(webFrame->frameID(), webFrame->info(), hash, options, processingUserGesture), WTFMove(handler));
         return;
     }
 
+    if (!isWebBrowser())
+        return;
     WebProcess::singleton().ensureWebAuthnProcessConnection().connection().sendWithAsyncReply(Messages::WebAuthnConnectionToWebProcess::GetAssertion(hash, options, processingUserGesture), WTFMove(handler));
 }
 
 void WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&& handler)
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().webAuthenticationModernEnabled()) {
-        if (!isWebBrowser())
-            return;
-
         m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::IsUserVerifyingPlatformAuthenticatorAvailable(), WTFMove(handler));
         return;
     }
 
+    if (!isWebBrowser())
+        return;
     WebProcess::singleton().ensureWebAuthnProcessConnection().connection().sendWithAsyncReply(Messages::WebAuthnConnectionToWebProcess::IsUserVerifyingPlatformAuthenticatorAvailable(), WTFMove(handler));
 }
 
