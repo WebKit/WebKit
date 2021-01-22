@@ -172,7 +172,7 @@ double IIRFilter::tailTime(double sampleRate, bool isFilterStable)
     // If filter is not stable, just return max tail. Since the filter is not
     // stable, the impulse response won't converge to zero, so we don't need to
     // find the impulse response to find the actual tail time.
-    if (!isFilterStable)
+    if (!isFilterStable || !sampleRate)
         return maxTailTime;
 
     // How to compute the tail time? We're going to filter an impulse
@@ -188,6 +188,7 @@ double IIRFilter::tailTime(double sampleRate, bool isFilterStable)
 
     // Number of render quanta needed to reach the max tail time.
     int numberOfBlocks = std::ceil(sampleRate * maxTailTime / AudioUtilities::renderQuantumSize);
+    RELEASE_ASSERT(numberOfBlocks);
 
     // Input and output buffers for filtering.
     AudioFloatArray input(AudioUtilities::renderQuantumSize);
