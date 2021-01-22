@@ -1,5 +1,14 @@
 2021-01-21  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed attempt to fix WatchOS build after r271673.
+
+        This feature is not available in the simulator for any of the
+        IOS_FAMILY platforms.
+
+        * wtf/PlatformHave.h:
+
+2021-01-21  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, reverting r271727.
 
         Fix is wrong
