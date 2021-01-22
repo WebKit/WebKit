@@ -131,7 +131,7 @@ public:
 
     bool captureDidFail() const { return m_captureDidFailed; }
 
-    virtual bool interrupted() const { return m_interrupted; }
+    virtual bool interrupted() const { return false; }
 
     const String& name() const { return m_name; }
     void setName(String&& name) { m_name = WTFMove(name); }
@@ -298,7 +298,6 @@ private:
     bool m_pendingSettingsDidChangeNotification { false };
     bool m_echoCancellation { false };
     bool m_isProducingData { false };
-    bool m_interrupted { false };
     bool m_captureDidFailed { false };
     bool m_isEnded { false };
     bool m_hasStartedProducingData { false };
