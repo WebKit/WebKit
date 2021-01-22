@@ -117,7 +117,9 @@ public:
     virtual ~VideoFullscreenManager();
     
     void invalidate();
-    
+
+    bool hasVideoPlayingInPictureInPicture() const;
+
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Interface to WebChromeClient
@@ -169,6 +171,7 @@ protected:
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     PlaybackSessionContextIdentifier m_controlsManagerContextId;
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
+    WeakPtr<WebCore::HTMLVideoElement> m_videoElementInPictureInPicture;
 };
 
 } // namespace WebKit

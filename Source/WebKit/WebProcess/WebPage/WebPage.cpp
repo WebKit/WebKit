@@ -2643,6 +2643,16 @@ void WebPage::updateDrawingAreaLayerTreeFreezeState()
 {
     if (!m_drawingArea)
         return;
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    // When the browser is in the background, we should not freeze the layer tree
+    // if the page has a video playing in picture-in-picture.
+    if (m_videoFullscreenManager && m_videoFullscreenManager->hasVideoPlayingInPictureInPicture() && m_layerTreeFreezeReasons.hasExactlyOneBitSet() && m_layerTreeFreezeReasons.contains(LayerTreeFreezeReason::BackgroundApplication)) {
+        m_drawingArea->setLayerTreeStateIsFrozen(false);
+        return;
+    }
+#endif
+
     m_drawingArea->setLayerTreeStateIsFrozen(!!m_layerTreeFreezeReasons);
 }
 
