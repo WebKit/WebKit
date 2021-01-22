@@ -1,5 +1,16 @@
 2021-01-21  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, reverting r271727.
+
+        Fix is wrong
+
+        Reverted changeset:
+
+        "Unreviewed attempt to fix WatchOS build after r271673."
+        https://trac.webkit.org/changeset/271727
+
+2021-01-21  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed attempt to fix WatchOS build after r271673.
 
         * wtf/PlatformHave.h:
