@@ -34,5 +34,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-layout-properties.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-tracks-stretched-with-different-flex-factors-sum.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/relative-grandchild.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/table-grid-item-dynamic-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/table-grid-item-dynamic-001.html

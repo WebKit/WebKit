@@ -1138,8 +1138,12 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
         LayoutUnit stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, childBlockDirection).value(), child);
         LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight, -1_lu);
         child.setOverridingLogicalHeight(desiredLogicalHeight);
-        if (desiredLogicalHeight != child.logicalHeight()) {
-            // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
+
+        // Checking the logical-height of a child isn't enough. Setting an override logical-height
+        // changes the definiteness, resulting in percentages to resolve differently.
+        //
+        // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
+        if (desiredLogicalHeight != child.logicalHeight() || (is<RenderBlock>(child) && downcast<RenderBlock>(child).hasPercentHeightDescendants())) {
             child.setLogicalHeight(0_lu);
             child.setNeedsLayout(MarkOnlyThis);
         }

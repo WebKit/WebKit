@@ -276,6 +276,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/percentage-size-replaced-subitems-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/percentage-size-subitems-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/percentage-size-subitems-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/percentage-size-subitems-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/ref-filled-green-100px-square-image.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/remove-svg-grid-item-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/remove-svg-grid-item-001.html
