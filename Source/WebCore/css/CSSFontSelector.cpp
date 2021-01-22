@@ -277,19 +277,19 @@ static Optional<AtomString> resolveGenericFamily(Document* document, const FontD
 
     UScriptCode script = fontDescription.script();
     if (familyName == serifFamily)
-        return settings.serifFontFamily(script);
+        return AtomString(settings.serifFontFamily(script));
     if (familyName == sansSerifFamily)
-        return settings.sansSerifFontFamily(script);
+        return AtomString(settings.sansSerifFontFamily(script));
     if (familyName == cursiveFamily)
-        return settings.cursiveFontFamily(script);
+        return AtomString(settings.cursiveFontFamily(script));
     if (familyName == fantasyFamily)
-        return settings.fantasyFontFamily(script);
+        return AtomString(settings.fantasyFontFamily(script));
     if (familyName == monospaceFamily)
-        return settings.fixedFontFamily(script);
+        return AtomString(settings.fixedFontFamily(script));
     if (familyName == pictographFamily)
-        return settings.pictographFontFamily(script);
+        return AtomString(settings.pictographFontFamily(script));
     if (familyName == standardFamily)
-        return settings.standardFontFamily(script);
+        return AtomString(settings.standardFontFamily(script));
 
     return WTF::nullopt;
 }
@@ -429,8 +429,8 @@ RefPtr<Font> CSSFontSelector::fallbackFontAt(const FontDescription& fontDescript
     auto& pictographFontFamily = m_document->settings().pictographFontFamily();
     auto font = FontCache::singleton().fontForFamily(fontDescription, pictographFontFamily);
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logFontLoad(*m_document, pictographFontFamily.string(), !!font);
-    
+        ResourceLoadObserver::shared().logFontLoad(*m_document, pictographFontFamily, !!font);
+
     return font;
 }
 

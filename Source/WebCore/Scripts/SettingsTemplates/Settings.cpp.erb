@@ -68,6 +68,10 @@ Settings::Settings(Page* page)
     : SettingsBase(page)
 {
     m_values.initialize();
+
+    m_page = nullptr; // Page is not yet fully initialized when constructing Settings, so keeping m_page null over initializeDefaultFontFamilies() call.
+    initializeDefaultFontFamilies();
+    m_page = page;
 }
 
 void Settings::Values::initialize()
@@ -106,6 +110,7 @@ Settings::Values Settings::Values::isolatedCopy() const
 <%- for @setting in @allSettingsSet.inspectorOverrideSettings do -%>
         crossThreadCopy(<%= @setting.name %>InspectorOverride),
 <%- end -%>
+        crossThreadCopy(fontGenericFamilies),
 <%- for @condition in @allSettingsSet.conditions do -%>
 <%- if @condition.nonBoolSettingsNeedingImplementation.length != 0 -%>
 <%- if @condition.condition -%>

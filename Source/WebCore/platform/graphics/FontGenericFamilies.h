@@ -42,28 +42,30 @@ struct UScriptCodeHashTraits : WTF::GenericHashTraits<int> {
     static bool isDeletedValue(int value) { return value == -3; }
 };
 
-typedef HashMap<int, AtomString, DefaultHash<int>, UScriptCodeHashTraits> ScriptFontFamilyMap;
+typedef HashMap<int, String, DefaultHash<int>, UScriptCodeHashTraits> ScriptFontFamilyMap;
 
 class FontGenericFamilies {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FontGenericFamilies();
 
-    const AtomString& standardFontFamily(UScriptCode = USCRIPT_COMMON) const;
-    const AtomString& fixedFontFamily(UScriptCode = USCRIPT_COMMON) const;
-    const AtomString& serifFontFamily(UScriptCode = USCRIPT_COMMON) const;
-    const AtomString& sansSerifFontFamily(UScriptCode = USCRIPT_COMMON) const;
-    const AtomString& cursiveFontFamily(UScriptCode = USCRIPT_COMMON) const;
-    const AtomString& fantasyFontFamily(UScriptCode = USCRIPT_COMMON) const;
-    const AtomString& pictographFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    FontGenericFamilies isolatedCopy() const;
 
-    bool setStandardFontFamily(const AtomString&, UScriptCode);
-    bool setFixedFontFamily(const AtomString&, UScriptCode);
-    bool setSerifFontFamily(const AtomString&, UScriptCode);
-    bool setSansSerifFontFamily(const AtomString&, UScriptCode);
-    bool setCursiveFontFamily(const AtomString&, UScriptCode);
-    bool setFantasyFontFamily(const AtomString&, UScriptCode);
-    bool setPictographFontFamily(const AtomString&, UScriptCode);
+    const String& standardFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    const String& fixedFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    const String& serifFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    const String& sansSerifFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    const String& cursiveFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    const String& fantasyFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    const String& pictographFontFamily(UScriptCode = USCRIPT_COMMON) const;
+
+    bool setStandardFontFamily(const String&, UScriptCode);
+    bool setFixedFontFamily(const String&, UScriptCode);
+    bool setSerifFontFamily(const String&, UScriptCode);
+    bool setSansSerifFontFamily(const String&, UScriptCode);
+    bool setCursiveFontFamily(const String&, UScriptCode);
+    bool setFantasyFontFamily(const String&, UScriptCode);
+    bool setPictographFontFamily(const String&, UScriptCode);
 
 private:
     ScriptFontFamilyMap m_standardFontFamilyMap;

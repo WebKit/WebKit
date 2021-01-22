@@ -30,6 +30,7 @@
 #include "ContentType.h"
 #include "EditableLinkBehavior.h"
 #include "EditingBehaviorType.h"
+#include "FontGenericFamilies.h"
 #include "FontLoadTimingOverride.h"
 #include "FontRenderingMode.h"
 #include "ForcedAccessibilityValue.h"
@@ -49,7 +50,6 @@
 #include <wtf/Seconds.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
-#include <wtf/text/AtomString.h>
 
 #if ENABLE(DATA_DETECTION)
 #include "DataDetectorType.h"
@@ -57,14 +57,11 @@
 
 namespace WebCore {
 
-class FontGenericFamilies;
 class Page;
 
 class SettingsBase {
     WTF_MAKE_NONCOPYABLE(SettingsBase); WTF_MAKE_FAST_ALLOCATED;
 public:
-    ~SettingsBase();
-
     void pageDestroyed() { m_page = nullptr; }
 
 #if ENABLE(MEDIA_SOURCE)
@@ -74,26 +71,29 @@ public:
     static const unsigned defaultMaximumHTMLParserDOMTreeDepth = 512;
     static const unsigned defaultMaximumRenderTreeDepth = 512;
 
-    WEBCORE_EXPORT void setStandardFontFamily(const AtomString&, UScriptCode = USCRIPT_COMMON);
-    WEBCORE_EXPORT const AtomString& standardFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    virtual FontGenericFamilies& fontGenericFamilies() = 0;
+    virtual const FontGenericFamilies& fontGenericFamilies() const = 0;
 
-    WEBCORE_EXPORT void setFixedFontFamily(const AtomString&, UScriptCode = USCRIPT_COMMON);
-    WEBCORE_EXPORT const AtomString& fixedFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    WEBCORE_EXPORT void setStandardFontFamily(const String&, UScriptCode = USCRIPT_COMMON);
+    WEBCORE_EXPORT const String& standardFontFamily(UScriptCode = USCRIPT_COMMON) const;
 
-    WEBCORE_EXPORT void setSerifFontFamily(const AtomString&, UScriptCode = USCRIPT_COMMON);
-    WEBCORE_EXPORT const AtomString& serifFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    WEBCORE_EXPORT void setFixedFontFamily(const String&, UScriptCode = USCRIPT_COMMON);
+    WEBCORE_EXPORT const String& fixedFontFamily(UScriptCode = USCRIPT_COMMON) const;
 
-    WEBCORE_EXPORT void setSansSerifFontFamily(const AtomString&, UScriptCode = USCRIPT_COMMON);
-    WEBCORE_EXPORT const AtomString& sansSerifFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    WEBCORE_EXPORT void setSerifFontFamily(const String&, UScriptCode = USCRIPT_COMMON);
+    WEBCORE_EXPORT const String& serifFontFamily(UScriptCode = USCRIPT_COMMON) const;
 
-    WEBCORE_EXPORT void setCursiveFontFamily(const AtomString&, UScriptCode = USCRIPT_COMMON);
-    WEBCORE_EXPORT const AtomString& cursiveFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    WEBCORE_EXPORT void setSansSerifFontFamily(const String&, UScriptCode = USCRIPT_COMMON);
+    WEBCORE_EXPORT const String& sansSerifFontFamily(UScriptCode = USCRIPT_COMMON) const;
 
-    WEBCORE_EXPORT void setFantasyFontFamily(const AtomString&, UScriptCode = USCRIPT_COMMON);
-    WEBCORE_EXPORT const AtomString& fantasyFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    WEBCORE_EXPORT void setCursiveFontFamily(const String&, UScriptCode = USCRIPT_COMMON);
+    WEBCORE_EXPORT const String& cursiveFontFamily(UScriptCode = USCRIPT_COMMON) const;
 
-    WEBCORE_EXPORT void setPictographFontFamily(const AtomString&, UScriptCode = USCRIPT_COMMON);
-    WEBCORE_EXPORT const AtomString& pictographFontFamily(UScriptCode = USCRIPT_COMMON) const;
+    WEBCORE_EXPORT void setFantasyFontFamily(const String&, UScriptCode = USCRIPT_COMMON);
+    WEBCORE_EXPORT const String& fantasyFontFamily(UScriptCode = USCRIPT_COMMON) const;
+
+    WEBCORE_EXPORT void setPictographFontFamily(const String&, UScriptCode = USCRIPT_COMMON);
+    WEBCORE_EXPORT const String& pictographFontFamily(UScriptCode = USCRIPT_COMMON) const;
 
     WEBCORE_EXPORT void setMinimumDOMTimerInterval(Seconds); // Initialized to DOMTimer::defaultMinimumInterval().
     Seconds minimumDOMTimerInterval() const { return m_minimumDOMTimerInterval; }
@@ -110,6 +110,7 @@ public:
 
 protected:
     explicit SettingsBase(Page*);
+    virtual ~SettingsBase();
 
     void initializeDefaultFontFamilies();
 
@@ -140,7 +141,6 @@ protected:
 
     Page* m_page;
 
-    const std::unique_ptr<FontGenericFamilies> m_fontGenericFamilies;
     Seconds m_minimumDOMTimerInterval;
 
     Timer m_setImageLoadingSettingsTimer;
