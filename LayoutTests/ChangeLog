@@ -1,3 +1,16 @@
+2021-01-22  Jonathan Bedard  <jbedard@apple.com>
+
+        [LayoutTests] Move redirect.py in resources folder
+        https://bugs.webkit.org/show_bug.cgi?id=220876
+        <rdar://problem/73516627>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/wpt/html/dom/elements/images/bypass-cache-redirection-revalidation.html:
+        * http/wpt/html/dom/elements/images/redirect.py: Moved to images/resources /redirect.py
+        * http/wpt/html/dom/elements/images/resources: Added.
+        * http/wpt/html/dom/elements/images/resources/redirect.py: Moved from images/redirect.py.
+
 2021-01-22  Chris Fleizach  <cfleizach@apple.com>
 
         AX: AT-synthesized key events for common user actions (increment/decrement) are detectably different in many ways, potentially causing both web app breakage and AT identification
