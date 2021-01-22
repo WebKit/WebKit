@@ -46,6 +46,15 @@ namespace WebCore {
 constexpr unsigned kMinFFTPow2Size = 2;
 constexpr unsigned kMaxFFTPow2Size = 24;
 
+static Lock fftSetupsLock;
+
+static Vector<FFTSetup>& fftSetups()
+{
+    ASSERT(fftSetupsLock.isHeld());
+    static NeverDestroyed<Vector<FFTSetup>> fftSetups(kMaxFFTPow2Size, nullptr);
+    return fftSetups;
+}
+
 // Normal constructor: allocates for a given fftSize
 FFTFrame::FFTFrame(unsigned fftSize)
     : m_realData(fftSize)
@@ -122,29 +131,15 @@ void FFTFrame::doInverseFFT(float* data)
     VectorMath::multiplyByScalar(data, 1.0f / m_FFTSize, data, m_FFTSize);
 }
 
-static Vector<FFTSetup>& fftSetups()
-{
-    static LazyNeverDestroyed<Vector<FFTSetup>> fftSetups;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        fftSetups.construct(kMaxFFTPow2Size, nullptr);
-    });
-    return fftSetups;
-}
-
 FFTSetup FFTFrame::fftSetupForSize(unsigned fftSize)
 {
-    static Lock fftSetupsLock;
-
     auto pow2size = static_cast<size_t>(log2(fftSize));
     ASSERT(pow2size < kMaxFFTPow2Size);
 
+    auto locker = holdLock(fftSetupsLock);
     auto& fftSetup = fftSetups().at(pow2size);
-    if (!fftSetup) {
-        auto locker = holdLock(fftSetupsLock);
-        if (!fftSetup)
-            fftSetup = vDSP_create_fftsetup(pow2size, FFT_RADIX2);
-    }
+    if (!fftSetup)
+        fftSetup = vDSP_create_fftsetup(pow2size, FFT_RADIX2);
 
     return fftSetup;
 }
