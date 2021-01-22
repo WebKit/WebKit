@@ -1,5 +1,5 @@
 
-FAIL Don't crash if there is an abusive number of payment methods in the methodData sequence assert_equals: must be a TypeError expected "TypeError" but got "RangeError"
+PASS Don't crash if there is an abusive number of payment methods in the methodData sequence
 PASS Don't crash if PaymentMethodData.supportedMethods is an abusive length
 PASS Don't crash if the request id has an abusive length
 PASS Don't crash if PaymentDetailsInit.total.label is an abusive length

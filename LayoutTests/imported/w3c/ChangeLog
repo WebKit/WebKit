@@ -1,3 +1,29 @@
+2021-01-22  Devin Rousso  <drousso@apple.com>
+
+        [WPT] [Payment Request] slight adjustment to payment-request/payment-request-constructor-thcrash.https.html
+        https://bugs.webkit.org/show_bug.cgi?id=220872
+
+        Reviewed by Andy Estes.
+
+        The first test in `payment-request/payment-request-constructor-thcrash.https.html` is
+        incorrect because duplicate items in `methodData` provided to `PaymentRequest` should throw
+        a `RangeError` according to step 4.3.3 of <https://www.w3.org/TR/payment-request/#constructor>.
+
+        The spec does mention in <https://www.w3.org/TR/payment-request/#conformance>
+        > User agents _MAY_ impose implementation-specific limits on otherwise unconstrained inputs,
+        > e.g., to prevent denial of service attacks, to guard against running out of memory, or to
+        > work around platform-specific limitations. When an input exceeds implementation-specific
+        > limit, the user agent _MUST_ throw, or, in the context of a promise, reject with, a
+        > `TypeError` optionally informing the developer of how a particular input exceeded an
+        > implementation-specific limit.
+        but does not specify whether this should happen before or after the above.
+
+        In WebKit's case, there is no "implementation-specific limit", so a `TypeError` should not
+        be thrown in either case.
+
+        * web-platform-tests/payment-request/payment-request-constructor-thcrash.https.html:
+        * web-platform-tests/payment-request/payment-request-constructor-thcrash.https-expected.txt:
+
 2021-01-22  Youenn Fablet  <youenn@apple.com>
 
         Add more descriptive messages to setLocalDescription/setRemoteDescription error cases
