@@ -107,7 +107,7 @@
         function checkForScroll()
         {
             shouldBeTrue('innerOverflowScrollEventCount > 0');
-            shouldBe('outerOverflowScrollEventCount', '0');
+            shouldBeTrue('outerOverflowScrollEventCount > 0');
             shouldBe('windowScrollEventCount', '0');
             finishJSTest();
         }
