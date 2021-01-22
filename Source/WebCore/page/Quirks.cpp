@@ -150,8 +150,8 @@ bool Quirks::shouldAutoplayForArbitraryUserGesture() const
     if (!needsQuirks())
         return false;
 
-    auto host = m_document->url().host();
-    return equalLettersIgnoringASCIICase(host, "twitter.com") || host.endsWithIgnoringASCIICase(".twitter.com");
+    auto domain = RegistrableDomain { m_document->topDocument().url() };
+    return domain == "twitter.com"_s || domain == "facebook.com"_s;
 #endif
 }
 
