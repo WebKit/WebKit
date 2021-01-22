@@ -1,3 +1,9 @@
+2021-01-21  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed attempt to fix WatchOS build after r271673.
+
+        * wtf/PlatformHave.h:
+
 2021-01-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add experimental support for separated layers
