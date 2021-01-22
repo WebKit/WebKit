@@ -1,3 +1,39 @@
+2021-01-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JSPromise should not propagate TerminatedExecutionError
+        https://bugs.webkit.org/show_bug.cgi?id=220820
+        <rdar://problem/72929399>
+
+        Reviewed by Mark Lam.
+
+        TerminatedExecutionError is uncatcheable exception to finish JS execution as soon as possible.
+        We should not propagate TerminatedExecutionError in JSPromise's rejection.
+        In this patch, we do not reject promise if exception is TerminatedExecutionError.
+
+        * API/JSAPIGlobalObject.mm:
+        (JSC::JSAPIGlobalObject::moduleLoaderImportModule):
+        (JSC::JSAPIGlobalObject::moduleLoaderFetch):
+        * API/JSContext.mm:
+        (-[JSContext evaluateJSScript:]):
+        * jsc.cpp:
+        (GlobalObject::moduleLoaderImportModule):
+        (GlobalObject::moduleLoaderFetch):
+        (runWithOptions):
+        * runtime/Completion.cpp:
+        (JSC::rejectPromise):
+        (JSC::loadAndEvaluateModule):
+        (JSC::loadModule):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::reject):
+        (JSC::JSModuleLoader::importModule):
+        (JSC::JSModuleLoader::resolve):
+        (JSC::JSModuleLoader::fetch):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::reject):
+
 2021-01-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, fix GCC warnings

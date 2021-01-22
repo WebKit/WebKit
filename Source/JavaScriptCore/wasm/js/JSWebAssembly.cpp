@@ -121,11 +121,13 @@ JSWebAssembly::JSWebAssembly(VM& vm, Structure* structure)
 
 static void reject(JSGlobalObject* globalObject, CatchScope& catchScope, JSPromise* promise)
 {
+    VM& vm = globalObject->vm();
     Exception* exception = catchScope.exception();
     ASSERT(exception);
+    if (UNLIKELY(isTerminatedExecutionException(vm, exception)))
+        return;
     catchScope.clearException();
     promise->reject(globalObject, exception->value());
-    CLEAR_AND_RETURN_IF_EXCEPTION(catchScope, void());
 }
 
 static void webAssemblyModuleValidateAsyncInternal(JSGlobalObject* globalObject, JSPromise* promise, Vector<uint8_t>&& source)

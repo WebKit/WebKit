@@ -141,6 +141,8 @@
     if (scope.exception()) {
         JSValueRef exceptionValue = toRef(apiGlobalObject, scope.exception()->value());
         scope.clearException();
+        // FIXME: We should not clearException if it is TerminatedExecutionError.
+        // https://bugs.webkit.org/show_bug.cgi?id=220821
         return [JSValue valueWithNewPromiseRejectedWithReason:[JSValue valueWithJSValueRef:exceptionValue inContext:self] inContext:self];
     }
     return [JSValue valueWithJSValueRef:toRef(vm, result) inContext:self];

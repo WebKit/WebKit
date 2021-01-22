@@ -176,15 +176,15 @@ static Symbol* createSymbolForEntryPointModule(VM& vm)
     return Symbol::create(vm, privateName.uid());
 }
 
-static JSInternalPromise* rejectPromise(JSGlobalObject* globalObject)
+static JSInternalPromise* rejectPromise(CatchScope& scope, JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
-    scope.assertNoException();
-    JSValue exception = scope.exception()->value();
-    scope.clearException();
     JSInternalPromise* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
-    promise->reject(globalObject, exception);
+    if (UNLIKELY(isTerminatedExecutionException(vm, scope.exception())))
+        return promise;
+    JSValue error = scope.exception()->value();
+    scope.clearException();
+    promise->reject(globalObject, error);
     return promise;
 }
 
@@ -212,7 +212,7 @@ JSInternalPromise* loadAndEvaluateModule(JSGlobalObject* globalObject, const Sou
 {
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
-    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
     RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
     RELEASE_ASSERT(!vm.isCollectorBusyOnCurrentThread());
 
@@ -220,8 +220,7 @@ JSInternalPromise* loadAndEvaluateModule(JSGlobalObject* globalObject, const Sou
 
     // Insert the given source code to the ModuleLoader registry as the fetched registry entry.
     globalObject->moduleLoader()->provideFetch(globalObject, key, source);
-    RETURN_IF_EXCEPTION(scope, rejectPromise(globalObject));
-
+    RETURN_IF_EXCEPTION(scope, rejectPromise(scope, globalObject));
     return globalObject->moduleLoader()->loadAndEvaluateModule(globalObject, key, jsUndefined(), scriptFetcher);
 }
 
@@ -239,7 +238,7 @@ JSInternalPromise* loadModule(JSGlobalObject* globalObject, const SourceCode& so
 {
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
-    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
     RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
     RELEASE_ASSERT(!vm.isCollectorBusyOnCurrentThread());
 
@@ -248,8 +247,7 @@ JSInternalPromise* loadModule(JSGlobalObject* globalObject, const SourceCode& so
     // Insert the given source code to the ModuleLoader registry as the fetched registry entry.
     // FIXME: Introduce JSSourceCode object to wrap around this source.
     globalObject->moduleLoader()->provideFetch(globalObject, key, source);
-    RETURN_IF_EXCEPTION(scope, rejectPromise(globalObject));
-
+    RETURN_IF_EXCEPTION(scope, rejectPromise(scope, globalObject));
     return globalObject->moduleLoader()->loadModule(globalObject, key, jsUndefined(), scriptFetcher);
 }
 
