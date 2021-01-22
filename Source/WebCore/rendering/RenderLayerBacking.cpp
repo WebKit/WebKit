@@ -2015,12 +2015,17 @@ bool RenderLayerBacking::requiresLayerForScrollbar(Scrollbar* scrollbar) const
 
 bool RenderLayerBacking::requiresHorizontalScrollbarLayer() const
 {
-    return requiresLayerForScrollbar(m_owningLayer.horizontalScrollbar());
+    if (auto* scrollableLayer = m_owningLayer.scrollableArea())
+        return requiresLayerForScrollbar(scrollableLayer->horizontalScrollbar());
+    return false;
+
 }
 
 bool RenderLayerBacking::requiresVerticalScrollbarLayer() const
 {
-    return requiresLayerForScrollbar(m_owningLayer.verticalScrollbar());
+    if (auto* scrollableLayer = m_owningLayer.scrollableArea())
+        return requiresLayerForScrollbar(scrollableLayer->verticalScrollbar());
+    return false;
 }
 
 bool RenderLayerBacking::requiresScrollCornerLayer() const
@@ -2032,8 +2037,12 @@ bool RenderLayerBacking::requiresScrollCornerLayer() const
     if (cornerRect.isEmpty())
         return false;
 
-    auto verticalScrollbar = m_owningLayer.verticalScrollbar();
-    auto scrollbar = verticalScrollbar ? verticalScrollbar : m_owningLayer.horizontalScrollbar();
+    auto* scrollableLayer = m_owningLayer.scrollableArea();
+    if (!scrollableLayer)
+        return false;
+
+    auto verticalScrollbar = scrollableLayer->verticalScrollbar();
+    auto scrollbar = verticalScrollbar ? verticalScrollbar : scrollableLayer->horizontalScrollbar();
     return requiresLayerForScrollbar(scrollbar);
 }
 
@@ -2082,9 +2091,9 @@ bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScroll
 
 void RenderLayerBacking::positionOverflowControlsLayers()
 {
-    if (!m_owningLayer.hasScrollbars())
+    auto* scrollableLayer = m_owningLayer.scrollableArea();
+    if (!scrollableLayer || !scrollableLayer->hasScrollbars())
         return;
-
     // FIXME: Should do device-pixel snapping.
     auto box = renderBox();
     auto borderBox = snappedIntRect(box->borderBoxRect());
@@ -2108,12 +2117,12 @@ void RenderLayerBacking::positionOverflowControlsLayers()
 
     if (auto* layer = layerForHorizontalScrollbar()) {
         positionScrollbarLayer(*layer, rects.horizontalScrollbar, paddingBoxInset);
-        layer->setDrawsContent(m_owningLayer.horizontalScrollbar() && !layer->usesContentsLayer());
+        layer->setDrawsContent(scrollableLayer->horizontalScrollbar() && !layer->usesContentsLayer());
     }
 
     if (auto* layer = layerForVerticalScrollbar()) {
         positionScrollbarLayer(*layer, rects.verticalScrollbar, paddingBoxInset);
-        layer->setDrawsContent(m_owningLayer.verticalScrollbar() && !layer->usesContentsLayer());
+        layer->setDrawsContent(scrollableLayer->verticalScrollbar() && !layer->usesContentsLayer());
     }
 
     if (auto* layer = layerForScrollCorner()) {
@@ -3138,7 +3147,8 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
         if (&layer == &m_owningLayer) {
             layer.paintLayerContents(context, paintingInfo, paintFlags);
 
-            if (layer.containsDirtyOverlayScrollbars() && !eventRegionContext)
+            auto* scrollableLayer = layer.scrollableArea();
+            if (scrollableLayer && scrollableLayer->containsDirtyOverlayScrollbars() && !eventRegionContext)
                 layer.paintLayerContents(context, paintingInfo, paintFlags | RenderLayer::PaintLayerFlag::PaintingOverlayScrollbars);
         } else
             layer.paintLayerWithEffects(context, paintingInfo, paintFlags);
@@ -3424,17 +3434,26 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
             paintDebugOverlays(graphicsLayer, context);
 
     } else if (graphicsLayer == layerForHorizontalScrollbar()) {
-        paintScrollbar(m_owningLayer.horizontalScrollbar(), context, dirtyRect);
+        auto* scrollableLayer = m_owningLayer.scrollableArea();
+        ASSERT(scrollableLayer);
+
+        paintScrollbar(scrollableLayer->horizontalScrollbar(), context, dirtyRect);
     } else if (graphicsLayer == layerForVerticalScrollbar()) {
-        paintScrollbar(m_owningLayer.verticalScrollbar(), context, dirtyRect);
+        auto* scrollableLayer = m_owningLayer.scrollableArea();
+        ASSERT(scrollableLayer);
+
+        paintScrollbar(scrollableLayer->verticalScrollbar(), context, dirtyRect);
     } else if (graphicsLayer == layerForScrollCorner()) {
+        auto* scrollableLayer = m_owningLayer.scrollableArea();
+        ASSERT(scrollableLayer);
+
         auto cornerRect = m_owningLayer.overflowControlsRects().scrollCornerOrResizerRect();
         GraphicsContextStateSaver stateSaver(context);
         context.translate(-cornerRect.location());
         LayoutRect transformedClip = LayoutRect(clip);
         transformedClip.moveBy(cornerRect.location());
-        m_owningLayer.paintScrollCorner(context, IntPoint(), snappedIntRect(transformedClip));
-        m_owningLayer.paintResizer(context, IntPoint(), transformedClip);
+        scrollableLayer->paintScrollCorner(context, IntPoint(), snappedIntRect(transformedClip));
+        scrollableLayer->paintResizer(context, IntPoint(), transformedClip);
     }
 #ifndef NDEBUG
     renderer().page().setIsPainting(false);

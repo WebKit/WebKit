@@ -49,6 +49,7 @@
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
@@ -639,9 +640,9 @@ static void writeLayer(TextStream& ts, const RenderLayer& layer, const LayoutRec
             ts << " scrollHeight " << layer.scrollHeight();
 #if PLATFORM(MAC)
         ScrollbarTheme& scrollbarTheme = ScrollbarTheme::theme();
-        if (!scrollbarTheme.isMockTheme() && layer.hasVerticalScrollbar()) {
+        if (!scrollbarTheme.isMockTheme() && layer.scrollableArea() && layer.scrollableArea()->hasVerticalScrollbar()) {
             ScrollbarThemeMac& macTheme = *static_cast<ScrollbarThemeMac*>(&scrollbarTheme);
-            if (macTheme.isLayoutDirectionRTL(*layer.verticalScrollbar()))
+            if (macTheme.isLayoutDirectionRTL(*layer.scrollableArea()->verticalScrollbar()))
                 ts << " scrollbarHasRTLLayoutDirection";
         }
 #endif

@@ -162,27 +162,14 @@ public:
     // Start of temporary glue code to help landing webkit.org/b/60305 (split RenderLayer into RenderLayer/RenderLayerScrollableArea)
     WEBCORE_EXPORT ScrollOffset scrollOffset() const;
     bool shouldPlaceBlockDirectionScrollbarOnLeft() const;
-    bool containsDirtyOverlayScrollbars() const;
     RenderMarquee* marquee() const;
     void updateLayerPositionsAfterDocumentScroll();
-    bool hitTestOverflowControls(HitTestResult&, const IntPoint& localPoint);
-    void paintOverflowControls(GraphicsContext&, const IntPoint&, const IntRect& damageRect, bool paintingOverlayControls = false);
-    void paintScrollCorner(GraphicsContext&, const IntPoint&, const IntRect& damageRect);
-    void paintResizer(GraphicsContext&, const LayoutPoint&, const LayoutRect& damageRect);
-    void paintOverlayScrollbars(GraphicsContext&, const LayoutRect& damageRect, OptionSet<PaintBehavior>, RenderObject* subtreePaintRoot = nullptr);
     void setPostLayoutScrollPosition(Optional<ScrollPosition>);
     void panScrollFromPoint(const IntPoint&);
     ScrollPosition scrollPosition() const;
-    GraphicsLayer* layerForHorizontalScrollbar() const;
-    GraphicsLayer* layerForVerticalScrollbar() const;
-    Scrollbar* horizontalScrollbar() const;
-    Scrollbar* verticalScrollbar() const;
     bool scrollingMayRevealBackground() const;
     bool hasScrollableHorizontalOverflow() const;
     bool hasScrollableVerticalOverflow() const;
-    bool hasScrollbars() const { return horizontalScrollbar() || verticalScrollbar(); }
-    bool hasHorizontalScrollbar() const { return horizontalScrollbar(); }
-    bool hasVerticalScrollbar() const { return verticalScrollbar(); }
     int verticalScrollbarWidth(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
     int horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
     bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);

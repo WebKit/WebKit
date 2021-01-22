@@ -389,13 +389,6 @@ bool RenderLayer::shouldPlaceBlockDirectionScrollbarOnLeft() const
     return renderer().shouldPlaceBlockDirectionScrollbarOnLeft();
 }
 
-bool RenderLayer::containsDirtyOverlayScrollbars() const
-{
-    if (m_scrollableArea)
-        return m_scrollableArea->containsDirtyOverlayScrollbars();
-    return false;
-}
-
 RenderMarquee* RenderLayer::marquee() const
 {
     if (m_scrollableArea)
@@ -407,37 +400,6 @@ void RenderLayer::updateLayerPositionsAfterDocumentScroll()
 {
     if (m_scrollableArea)
         m_scrollableArea->updateLayerPositionsAfterDocumentScroll();
-}
-
-bool RenderLayer::hitTestOverflowControls(HitTestResult& result, const IntPoint& localPoint)
-{
-    if (m_scrollableArea)
-        return m_scrollableArea->hitTestOverflowControls(result, localPoint);
-    return false;
-}
-
-void RenderLayer::paintOverflowControls(GraphicsContext& context, const IntPoint& point, const IntRect& damageRect, bool paintingOverlayControls)
-{
-    if (m_scrollableArea)
-        m_scrollableArea->paintOverflowControls(context, point, damageRect, paintingOverlayControls);
-}
-
-void RenderLayer::paintResizer(GraphicsContext& context, const LayoutPoint& point, const LayoutRect& damageRect)
-{
-    if (m_scrollableArea)
-        m_scrollableArea->paintResizer(context, point, damageRect);
-}
-
-void RenderLayer::paintScrollCorner(GraphicsContext& context, const IntPoint& point, const IntRect& damageRect)
-{
-    if (m_scrollableArea)
-        m_scrollableArea->paintScrollCorner(context, point, damageRect);
-}
-
-void RenderLayer::paintOverlayScrollbars(GraphicsContext& context, const LayoutRect& damageRect, OptionSet<PaintBehavior> behavior, RenderObject* subtreePaintRoot)
-{
-    if (m_scrollableArea)
-        m_scrollableArea->paintOverlayScrollbars(context, damageRect, behavior, subtreePaintRoot);
 }
 
 void RenderLayer::setPostLayoutScrollPosition(Optional<ScrollPosition> position)
@@ -457,34 +419,6 @@ ScrollPosition RenderLayer::scrollPosition() const
     if (m_scrollableArea)
         return m_scrollableArea->scrollPosition();
     return ScrollPosition();
-}
-
-GraphicsLayer* RenderLayer::layerForHorizontalScrollbar() const
-{
-    if (m_scrollableArea)
-        return m_scrollableArea->layerForHorizontalScrollbar();
-    return nullptr;
-}
-
-GraphicsLayer* RenderLayer::layerForVerticalScrollbar() const
-{
-    if (m_scrollableArea)
-        return m_scrollableArea->layerForVerticalScrollbar();
-    return nullptr;
-}
-
-Scrollbar* RenderLayer::horizontalScrollbar() const
-{
-    if (m_scrollableArea)
-        return m_scrollableArea->horizontalScrollbar();
-    return nullptr;
-}
-
-Scrollbar* RenderLayer::verticalScrollbar() const
-{
-    if (m_scrollableArea)
-        return m_scrollableArea->verticalScrollbar();
-    return nullptr;
 }
 
 bool RenderLayer::scrollingMayRevealBackground() const

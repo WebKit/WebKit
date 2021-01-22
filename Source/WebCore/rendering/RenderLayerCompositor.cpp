@@ -4669,6 +4669,9 @@ LayoutRect RenderLayerCompositor::parentRelativeScrollableRect(const RenderLayer
 
 void RenderLayerCompositor::updateScrollingNodeLayers(ScrollingNodeID nodeID, RenderLayer& layer, ScrollingCoordinator& scrollingCoordinator)
 {
+    auto* scrollableLayer = layer.scrollableArea();
+    ASSERT(scrollableLayer);
+
     if (layer.isRenderViewLayer()) {
         FrameView& frameView = m_renderView.frameView();
         scrollingCoordinator.setNodeLayers(nodeID, { nullptr,
@@ -4680,7 +4683,7 @@ void RenderLayerCompositor::updateScrollingNodeLayers(ScrollingNodeID nodeID, Re
         scrollingCoordinator.setNodeLayers(nodeID, { backing.graphicsLayer(),
             backing.scrollContainerLayer(), backing.scrolledContentsLayer(),
             nullptr, nullptr, nullptr,
-            layer.layerForHorizontalScrollbar(), layer.layerForVerticalScrollbar() });
+            scrollableLayer->layerForHorizontalScrollbar(), scrollableLayer->layerForVerticalScrollbar() });
     }
 }
 
