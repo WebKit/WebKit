@@ -152,7 +152,13 @@ void AuthenticatorPresenterCoordinator::updatePresenter(WebAuthenticationStatus 
 void AuthenticatorPresenterCoordinator::requestPin(uint64_t, CompletionHandler<void(const String&)>&& completionHandler)
 {
 #if HAVE(ASC_AUTH_UI)
+    if (m_pinHandler)
+        m_pinHandler(String());
     m_pinHandler = WTFMove(completionHandler);
+
+    if (m_presentedPIN)
+        return;
+    m_presentedPIN = true;
     [m_presenter presentPINEntryInterface];
 #endif // HAVE(ASC_AUTH_UI)
 }
@@ -169,6 +175,9 @@ void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<Authe
 
         m_credentials.clear();
         for (auto& response : responses) {
+            if (!response->name())
+                continue;
+
             RetainPtr<NSData> userHandle;
             if (response->userHandle())
                 userHandle = adoptNS([[NSData alloc] initWithBytes:response->userHandle()->data() length:response->userHandle()->byteLength()]);

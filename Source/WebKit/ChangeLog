@@ -1,5 +1,24 @@
 2021-01-22  Jiewen Tan  <jiewen_tan@apple.com>
 
+        [WebAuthn] No error is visible after user enters the incorrect PIN
+        https://bugs.webkit.org/show_bug.cgi?id=220839
+        <rdar://problem/73378319>
+
+        Reviewed by Brent Fulgham.
+
+        To fix that, let's have a boolean to indicate the PIN entry UI has already been presented within this session.
+        And then rely on the error UI to let users retry the PIN.
+
+        Covered by manual tests.
+
+        * UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.h:
+        * UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.mm:
+        (WebKit::AuthenticatorPresenterCoordinator::requestPin):
+        (WebKit::AuthenticatorPresenterCoordinator::selectAssertionResponse):
+        Besides above, this patch also fixes some crashes.
+
+2021-01-22  Jiewen Tan  <jiewen_tan@apple.com>
+
         [WebAuthn] Should only check default browsers for the Modern WebAuthn
         https://bugs.webkit.org/show_bug.cgi?id=220840
         <rdar://problem/73375937>
