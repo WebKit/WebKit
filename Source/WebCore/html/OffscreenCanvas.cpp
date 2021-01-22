@@ -182,7 +182,7 @@ void OffscreenCanvas::createContextWebGL(RenderingContextType contextType, WebGL
     auto scriptExecutionContext = this->scriptExecutionContext();
     if (scriptExecutionContext->isWorkerGlobalScope()) {
         WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(*scriptExecutionContext);
-        if (!shouldEnableWebGL(workerGlobalScope.webGLEnabled(), workerGlobalScope.acceleratedCompositingEnabled()))
+        if (!shouldEnableWebGL(workerGlobalScope.settingsValues().webGLEnabled, workerGlobalScope.settingsValues().acceleratedCompositingEnabled))
             return;
     } else if (scriptExecutionContext->isDocument()) {
         auto& settings = downcast<Document>(*scriptExecutionContext).settings();

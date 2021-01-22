@@ -121,9 +121,7 @@ public:
 
     ReferrerPolicy referrerPolicy() const final;
 
-    bool requestAnimationFrameEnabled() const { return m_settingsValues.requestAnimationFrameEnabled; }
-    bool acceleratedCompositingEnabled() const { return m_settingsValues.acceleratedCompositingEnabled; }
-    bool webGLEnabled() const { return m_settingsValues.webGLEnabled; }
+    const Settings::Values& settingsValues() const final { return m_settingsValues; }
 
 protected:
     WorkerGlobalScope(WorkerThreadType, const WorkerParameters&, Ref<SecurityOrigin>&&, WorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
@@ -142,7 +140,6 @@ private:
 
     URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final;
     String userAgent(const URL&) const final;
-    const Settings::Values& settingsValues() const final { return m_settingsValues; }
 
     EventTarget* errorEventTarget() final;
     String resourceRequestIdentifier() const final { return m_identifier; }
