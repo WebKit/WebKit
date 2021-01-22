@@ -1,3 +1,29 @@
+2021-01-22  Lauro Moura  <lmoura@igalia.com>
+
+        [webkitpy][GTK] Xvfb driver fails to start with python3
+        https://bugs.webkit.org/show_bug.cgi?id=220870
+
+        Reviewed by Jonathan Bedard.
+
+        Python2 and Python3 differ in how they handle file descriptor inheritance
+        and Popen's close_fds default value.
+
+        In Python2, os.pipe creates the fds with the inheritable flag set, and
+        Popen's close_fds defaults to True.
+
+        In Python3, os.pipe creates the fds non-inheritable, requiring a call
+        to os.set_inheritable to enable it. Also, Popen's close_fds defaults
+        to False, closing all file descriptors except stdin, stdout and stderr.
+
+        With this commit, Python3 is able to launch the Xvfb driver for
+        run-webdriver-tests, but is still failing later with some pytest issue
+        to be tracked in another bug.
+
+        * Scripts/webkitpy/port/xvfbdriver.py:
+        (XvfbDriver._xvfb_pipe): Make the write_fd inheritable if in py3.
+        (XvfbDriver._xvfb_read_display_id): Encode for py3 bytes compatibility.
+        (XvfbDriver._xvfb_run): Tell popen to keep the file descriptors open.
+
 2021-01-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         DisplayList::Replayer should stop replay and inform clients after encountering an invalid item
