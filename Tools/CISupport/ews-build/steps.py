@@ -783,7 +783,7 @@ class ValidatePatch(buildstep.BuildStep, BugzillaMixin):
 class ValidateCommiterAndReviewer(buildstep.BuildStep):
     name = 'validate-commiter-and-reviewer'
     descriptionDone = ['Validated commiter and reviewer']
-    url = 'https://svn.webkit.org/repository/webkit/trunk/Tools/Scripts/webkitpy/common/config/contributors.json'
+    url = 'https://raw.githubusercontent.com/WebKit/WebKit/main/Tools/Scripts/webkitpy/common/config/contributors.json'
     contributors = {}
 
     def load_contributors_from_disk(self):
@@ -796,7 +796,7 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
             self._addToLog('stdio', 'Failed to load {}\n'.format(contributors_path))
             return {}
 
-    def load_contributors_from_trac(self):
+    def load_contributors_from_github(self):
         try:
             response = requests.get(self.url, timeout=60)
             if response.status_code != 200:
@@ -808,7 +808,7 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
             return {}
 
     def load_contributors(self):
-        contributors_json = self.load_contributors_from_trac()
+        contributors_json = self.load_contributors_from_github()
         if not contributors_json:
             contributors_json = self.load_contributors_from_disk()
 
