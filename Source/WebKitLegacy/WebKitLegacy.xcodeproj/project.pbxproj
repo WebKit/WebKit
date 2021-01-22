@@ -232,7 +232,6 @@
 		7C023A2F251C05FC00BA7BB6 /* WebPreferencesDefinitions.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C023A2E251C05D500BA7BB6 /* WebPreferencesDefinitions.h */; };
 		7C1FB3C21846E8E1001A03D8 /* WebAllowDenyPolicyListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C1FB3C11846E8E1001A03D8 /* WebAllowDenyPolicyListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C671126251FE40F004F4536 /* WebPreferencesInternalFeatures.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C671125251FE406004F4536 /* WebPreferencesInternalFeatures.mm */; };
-		7CCE766B25223BC8003C7BD2 /* generate-preferences.sh in Resources */ = {isa = PBXBuildFile; fileRef = 7CCE766A25223BC7003C7BD2 /* generate-preferences.sh */; };
 		7E6FEF0808985A7200C44C3F /* WebScriptDebugDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6FEF0508985A7200C44C3F /* WebScriptDebugDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		931633EB0AEDFF930062B92D /* WebFrameLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 931633EA0AEDFF930062B92D /* WebFrameLoaderClient.h */; };
 		9321D5921A391DC3008052BE /* WebImmediateActionController.h in Headers */ = {isa = PBXBuildFile; fileRef = 9321D5911A391DB8008052BE /* WebImmediateActionController.h */; };
@@ -3301,7 +3300,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7CCE766B25223BC8003C7BD2 /* generate-preferences.sh in Resources */,
 				A1382CDF24B15A51001645B0 /* LaBanquePostaleQuirks.js in Resources */,
 				29AEF960134C76FB00FE5096 /* OutlookQuirksUserScript.js in Resources */,
 				939810B70824BF01008DF038 /* url_icon.tiff in Resources */,
