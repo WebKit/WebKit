@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -495,7 +495,7 @@ JS_EXPORT_PRIVATE bool canUseJITCage();
     v(Bool, useWeakRefs, true, Normal, "Expose the WeakRef constructor.") \
     v(Bool, useIntlDateTimeFormatDayPeriod, true, Normal, "Expose the Intl.DateTimeFormat dayPeriod feature.") \
     v(Bool, useIntlDateTimeFormatRangeToParts, true, Normal, "Expose the Intl.DateTimeFormat#formatRangeToParts feature.") \
-    v(Bool, useAtMethod, true, Normal, "Expose the at() method on Array, %TypedArray%, and String.") \
+    v(Bool, useAtMethod, false, Normal, "Expose the at() method on Array, %TypedArray%, and String.") \
     v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
     v(Bool, useArrayAllocationProfiling, true, Normal, "If true, we will use our normal array allocation profiling. If false, the allocation profile will always claim to be undecided.") \
     v(Bool, forcePolyProto, false, Normal, "If true, create_this will always create an object with a poly proto structure.") \
