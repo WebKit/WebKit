@@ -1,3 +1,17 @@
+2021-01-21  Ebrahim Byagowi  <ebrahim@gnu.org>
+
+        Web Inspector: Fix bidi confusion when evaluation result has RTL text
+        https://bugs.webkit.org/show_bug.cgi?id=220639
+
+        Reviewed by BJ Burg.
+
+        Apply `unicode-bidi: isolate` to formatted string and regexp so that
+        when they contain RTL text the bidi algorithm won't mix
+        saved variable name ($1, $2, ...) with the content.
+
+        * UserInterface/Views/FormattedValue.css:
+        (.formatted-string, .formatted-regexp):
+
 2021-01-20  Kenneth Russell  <kbr@chromium.org>
 
         Support WEBGL_multi_draw extension

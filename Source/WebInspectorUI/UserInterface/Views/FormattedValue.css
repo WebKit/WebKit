@@ -44,6 +44,7 @@
 
 .formatted-string, .formatted-regexp {
     white-space: pre;
+    unicode-bidi: isolate;
 }
 
 .formatted-string {
