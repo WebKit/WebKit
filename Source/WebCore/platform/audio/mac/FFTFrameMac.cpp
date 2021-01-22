@@ -37,6 +37,7 @@
 #include "FFTFrame.h"
 
 #include "VectorMath.h"
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 
@@ -121,15 +122,29 @@ void FFTFrame::doInverseFFT(float* data)
     VectorMath::multiplyByScalar(data, 1.0f / m_FFTSize, data, m_FFTSize);
 }
 
+static Vector<FFTSetup>& fftSetups()
+{
+    static LazyNeverDestroyed<Vector<FFTSetup>> fftSetups;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        fftSetups.construct(kMaxFFTPow2Size, nullptr);
+    });
+    return fftSetups;
+}
+
 FFTSetup FFTFrame::fftSetupForSize(unsigned fftSize)
 {
-    static NeverDestroyed<Vector<FFTSetup>> fftSetups(kMaxFFTPow2Size, nullptr);
+    static Lock fftSetupsLock;
 
     auto pow2size = static_cast<size_t>(log2(fftSize));
     ASSERT(pow2size < kMaxFFTPow2Size);
-    auto& fftSetup = fftSetups->at(pow2size);
-    if (!fftSetup)
-        fftSetup = vDSP_create_fftsetup(pow2size, FFT_RADIX2);
+
+    auto& fftSetup = fftSetups().at(pow2size);
+    if (!fftSetup) {
+        auto locker = holdLock(fftSetupsLock);
+        if (!fftSetup)
+            fftSetup = vDSP_create_fftsetup(pow2size, FFT_RADIX2);
+    }
 
     return fftSetup;
 }
