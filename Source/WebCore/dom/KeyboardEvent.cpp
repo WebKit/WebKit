@@ -121,8 +121,8 @@ inline KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, RefPtr<Win
 {
 }
 
-inline KeyboardEvent::KeyboardEvent(const AtomString& eventType, const Init& initializer)
-    : UIEventWithKeyState(eventType, initializer)
+inline KeyboardEvent::KeyboardEvent(const AtomString& eventType, const Init& initializer, IsTrusted isTrusted)
+    : UIEventWithKeyState(eventType, initializer, isTrusted)
     , m_key(initializer.key)
     , m_code(initializer.code)
     , m_keyIdentifier(initializer.keyIdentifier)
@@ -147,9 +147,9 @@ Ref<KeyboardEvent> KeyboardEvent::createForBindings()
     return adoptRef(*new KeyboardEvent);
 }
 
-Ref<KeyboardEvent> KeyboardEvent::create(const AtomString& type, const Init& initializer)
+Ref<KeyboardEvent> KeyboardEvent::create(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
 {
-    return adoptRef(*new KeyboardEvent(type, initializer));
+    return adoptRef(*new KeyboardEvent(type, initializer, isTrusted));
 }
 
 void KeyboardEvent::initKeyboardEvent(const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view,
