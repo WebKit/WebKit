@@ -362,7 +362,10 @@ void DisplayList::iterator::updateCurrentItem()
         m_currentBufferForItem[0] = static_cast<uint8_t>(itemType);
         m_currentItemSizeInBuffer = 2 * sizeof(uint64_t) + roundUpToMultipleOf(alignof(uint64_t), dataLength);
     } else {
-        ItemHandle { m_cursor }.copyTo({ m_currentBufferForItem });
+        if (!ItemHandle { m_cursor }.safeCopy({ m_currentBufferForItem })) {
+            // FIXME: Instead of crashing, this needs to fail gracefully and inform the caller.
+            RELEASE_ASSERT_NOT_REACHED();
+        }
         m_currentItemSizeInBuffer = paddedSizeOfTypeAndItem;
     }
 }

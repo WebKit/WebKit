@@ -753,6 +753,7 @@ public:
     
     RenderingResourceIdentifier imageBufferIdentifier() const { return m_imageBufferIdentifier; }
     FloatRect destinationRect() const { return m_destinationRect; }
+    bool isValid() const { return !!m_imageBufferIdentifier; }
 
     void apply(GraphicsContext&, WebCore::ImageBuffer&) const;
 
@@ -1033,6 +1034,8 @@ public:
     FloatRect source() const { return m_srcRect; }
     FloatRect destinationRect() const { return m_destinationRect; }
     ImagePaintingOptions options() const { return m_options; }
+    // FIXME: We might want to validate ImagePaintingOptions.
+    bool isValid() const { return !!m_imageBufferIdentifier; }
 
     void apply(GraphicsContext&, WebCore::ImageBuffer&) const;
 
@@ -1066,6 +1069,8 @@ public:
     RenderingResourceIdentifier imageIdentifier() const { return m_imageIdentifier; }
     const FloatRect& source() const { return m_srcRect; }
     const FloatRect& destinationRect() const { return m_destinationRect; }
+    // FIXME: We might want to validate ImagePaintingOptions.
+    bool isValid() const { return !!m_imageIdentifier; }
 
     NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
     void apply(GraphicsContext&, NativeImage&) const;
@@ -1096,6 +1101,8 @@ public:
     const AffineTransform& patternTransform() const { return m_patternTransform; }
     FloatPoint phase() const { return m_phase; }
     FloatSize spacing() const { return m_spacing; }
+    // FIXME: We might want to validate ImagePaintingOptions.
+    bool isValid() const { return !!m_imageIdentifier; }
 
     NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
     void apply(GraphicsContext&, NativeImage&) const;
@@ -1999,6 +2006,8 @@ public:
     const FloatRect& destination() const { return m_destination; }
     MediaPlayerIdentifier identifier() const { return m_identifier; }
 
+    bool isValid() const { return !!m_identifier; }
+
     NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
 
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
@@ -2223,12 +2232,13 @@ public:
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = false;
 
-    FlushContext(FlushIdentifier identifier)
+    explicit FlushContext(FlushIdentifier identifier)
         : m_identifier(identifier)
     {
     }
 
     FlushIdentifier identifier() const { return m_identifier; }
+    bool isValid() const { return !!m_identifier; }
 
     void apply(GraphicsContext&) const;
 
@@ -2244,12 +2254,13 @@ public:
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = false;
 
-    MetaCommandChangeItemBuffer(ItemBufferIdentifier identifier)
+    explicit MetaCommandChangeItemBuffer(ItemBufferIdentifier identifier)
         : m_identifier(identifier)
     {
     }
 
     ItemBufferIdentifier identifier() const { return m_identifier; }
+    bool isValid() const { return !!m_identifier; }
 
 private:
     ItemBufferIdentifier m_identifier;
@@ -2261,12 +2272,13 @@ public:
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = false;
 
-    MetaCommandChangeDestinationImageBuffer(RenderingResourceIdentifier identifier)
+    explicit MetaCommandChangeDestinationImageBuffer(RenderingResourceIdentifier identifier)
         : m_identifier(identifier)
     {
     }
 
     RenderingResourceIdentifier identifier() const { return m_identifier; }
+    bool isValid() const { return !!m_identifier; }
 
 private:
     RenderingResourceIdentifier m_identifier;
