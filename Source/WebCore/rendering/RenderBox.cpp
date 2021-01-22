@@ -937,7 +937,7 @@ bool RenderBox::requiresLayerWithScrollableArea() const
         return true;
 
     // Overflow handling needs RenderLayerScrollableArea.
-    if (scrollsOverflow() || hasHorizontalOverflow() || hasVerticalOverflow())
+    if (scrollsOverflow() || hasOverflowClip() || hasHorizontalOverflow() || hasVerticalOverflow())
         return true;
 
     // Resize handling needs RenderLayerScrollableArea.

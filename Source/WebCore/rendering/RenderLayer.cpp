@@ -524,7 +524,9 @@ int RenderLayer::horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy relevan
 
 bool RenderLayer::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
 {
-    return ensureLayerScrollableArea()->scroll(direction, granularity, multiplier);
+    if (m_scrollableArea)
+        return m_scrollableArea->scroll(direction, granularity, multiplier);
+    return false;
 }
 // End of temporary glue code
 
