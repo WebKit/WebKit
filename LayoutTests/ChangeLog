@@ -1,3 +1,19 @@
+2021-01-21  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r271472): [ Mac WK2 ] intersection-observer/target-deleted.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=220637
+        <rdar://problem/73220571>
+
+        Reviewed by Simon Fraser.
+
+        * intersection-observer/target-deleted.html:
+        For some reason, on some configurations, this test recently stopped seeing its
+        intersection observer get garbage collected when it expects. The regression
+        point is likely irrelevant, though multiple bots agree.
+
+        Doing a full rendering update by using rAF instead of just a setInterval
+        seems to be enough to get the object to actually be collected promptly.
+
 2021-01-21  Devin Rousso  <drousso@apple.com>
 
         [Apple Pay] use the first item in `shippingOptions` even when it's not `selected`
