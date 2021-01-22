@@ -5,7 +5,7 @@ PASS If the same id is provided, then use it
 PASS Use ids even if they are strange
 PASS Use provided request ID
 PASS If the length of the methodData sequence is zero, then throw a TypeError
-FAIL If payment method is duplicate, then throw a RangeError assert_throws_js: function "() => new PaymentRequest(duplicateMethods, defaultDetails)" did not throw
+PASS If payment method is duplicate, then throw a RangeError
 PASS Modifier method data must be JSON-serializable object
 PASS Rethrow any exceptions of JSON-serializing paymentMethod.data into a string
 PASS If details.total.amount.value is not a valid decimal monetary value, then throw a TypeError

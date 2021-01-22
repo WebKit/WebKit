@@ -322,6 +322,14 @@ static ExceptionOr<JSC::JSValue> parse(ScriptExecutionContext& context, const St
     return data;
 }
 
+static String stringify(const PaymentRequest::MethodIdentifier& identifier)
+{
+    return WTF::switchOn(identifier,
+        [] (const String& string) { return string; },
+        [] (const URL& url) { return url.string(); }
+    );
+}
+
 // Implements the PaymentRequest Constructor
 // https://www.w3.org/TR/payment-request/#constructor
 ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vector<PaymentMethodData>&& methodData, PaymentDetailsInit&& details, PaymentOptions&& options)
@@ -338,10 +346,14 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
 
     Vector<Method> serializedMethodData;
     serializedMethodData.reserveInitialCapacity(methodData.size());
+    HashSet<String> seenMethodIDs;
     for (auto& paymentMethod : methodData) {
         auto identifier = convertAndValidatePaymentMethodIdentifier(paymentMethod.supportedMethods);
         if (!identifier)
             return Exception { RangeError, makeString('"', paymentMethod.supportedMethods, "\" is an invalid payment method identifier.") };
+
+        if (!seenMethodIDs.add(stringify(*identifier)))
+            return Exception { RangeError, "Payment method IDs must be unique."_s };
 
         String serializedData;
         if (paymentMethod.data) {
