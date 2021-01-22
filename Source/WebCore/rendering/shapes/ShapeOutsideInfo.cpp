@@ -170,7 +170,10 @@ const Shape& ShapeOutsideInfo::computedShape() const
     const RenderStyle& containingBlockStyle = m_renderer.containingBlock()->style();
 
     WritingMode writingMode = containingBlockStyle.writingMode();
-    float margin = floatValueForLength(m_renderer.style().shapeMargin(), m_renderer.containingBlock() ? m_renderer.containingBlock()->contentWidth() : 0_lu);
+    auto margin = [&] {
+        auto shapeMargin = floatValueForLength(m_renderer.style().shapeMargin(), m_renderer.containingBlock() ? m_renderer.containingBlock()->contentWidth() : 0_lu);
+        return isnan(shapeMargin) ? 0.0f : shapeMargin;
+    }();
     float shapeImageThreshold = style.shapeImageThreshold();
     const ShapeValue& shapeValue = *style.shapeOutside();
 
