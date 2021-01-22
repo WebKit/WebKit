@@ -245,7 +245,7 @@ enum class IsUpdate {
     Yes,
 };
 
-static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetails(JSC::JSGlobalObject& execState, PaymentDetailsBase& details, bool requestShipping, IsUpdate isUpdate)
+static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetails(ScriptExecutionContext& context, PaymentDetailsBase& details, bool requestShipping, IsUpdate isUpdate)
 {
     if (details.displayItems) {
         for (auto& item : *details.displayItems) {
@@ -259,6 +259,7 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
     if (requestShipping) {
         if (details.shippingOptions) {
             HashSet<String> seenShippingOptionIDs;
+            bool didLog = false;
             for (auto& shippingOption : *details.shippingOptions) {
                 auto exception = checkAndCanonicalizeAmount(shippingOption.amount);
                 if (exception.hasException())
@@ -268,8 +269,13 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
                 if (!addResult.isNewEntry)
                     return Exception { TypeError, "Shipping option IDs must be unique." };
 
-                if (shippingOption.selected)
+                // FIXME: <rdar://problem/73464404>
+                if (!selectedShippingOption)
                     selectedShippingOption = shippingOption.id;
+                else if (!didLog && shippingOption.selected) {
+                    context.addConsoleMessage(JSC::MessageSource::PaymentRequest, JSC::MessageLevel::Warning, "WebKit currently uses the first shipping option even if other shipping options are marked as selected."_s);
+                    didLog = true;
+                }
             }
         } else if (isUpdate == IsUpdate::No)
             details.shippingOptions = { { } };
@@ -299,8 +305,9 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
 
             String serializedData;
             if (modifier.data) {
-                auto scope = DECLARE_THROW_SCOPE(execState.vm());
-                serializedData = JSONStringify(&execState, modifier.data.get(), 0);
+                auto* globalObject = context.globalObject();
+                auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
+                serializedData = JSONStringify(globalObject, modifier.data.get(), 0);
                 if (scope.exception())
                     return Exception { ExistingExceptionError };
                 modifier.data.clear();
@@ -377,7 +384,7 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
     if (totalResult.hasException())
         return totalResult.releaseException();
 
-    auto detailsResult = checkAndCanonicalizeDetails(*document.globalObject(), details, options.requestShipping, IsUpdate::No);
+    auto detailsResult = checkAndCanonicalizeDetails(document, details, options.requestShipping, IsUpdate::No);
     if (detailsResult.hasException())
         return detailsResult.releaseException();
 
@@ -681,7 +688,7 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
         }
     }
 
-    auto detailsResult = checkAndCanonicalizeDetails(*context.globalObject(), detailsUpdate, m_options.requestShipping, IsUpdate::Yes);
+    auto detailsResult = checkAndCanonicalizeDetails(context, detailsUpdate, m_options.requestShipping, IsUpdate::Yes);
     if (detailsResult.hasException()) {
         abortWithException(detailsResult.releaseException());
         return;

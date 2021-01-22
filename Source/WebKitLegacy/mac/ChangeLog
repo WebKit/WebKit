@@ -1,3 +1,14 @@
+2021-01-21  Devin Rousso  <drousso@apple.com>
+
+        [Apple Pay] use the first item in `shippingOptions` even when it's not `selected`
+        https://bugs.webkit.org/show_bug.cgi?id=220810
+
+        Reviewed by Andy Estes.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (stringForMessageSource):
+        Add a new `PaymentRequest` value to the `ChannelSource` enum.
+
 2021-01-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Include an origin identifier when writing promised image data to the drag pasteboard

@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: WebKit currently uses the first shipping option even if other shipping options are marked as selected.
 
 PASS Test for PaymentRequest shippingOption attribute
 

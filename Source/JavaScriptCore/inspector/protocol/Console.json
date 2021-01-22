@@ -23,6 +23,7 @@
                 "webrtc",
                 "itp-debug",
                 "private-click-measurement",
+                "payment-request",
                 "other"
             ],
             "description": "Channels for different types of log messages."

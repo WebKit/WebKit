@@ -192,6 +192,7 @@ static Protocol::Console::ChannelSource messageSourceValue(MessageSource source)
     case MessageSource::WebRTC: return Protocol::Console::ChannelSource::WebRTC;
     case MessageSource::ITPDebug: return Protocol::Console::ChannelSource::ITPDebug;
     case MessageSource::PrivateClickMeasurement: return Protocol::Console::ChannelSource::PrivateClickMeasurement;
+    case MessageSource::PaymentRequest: return Protocol::Console::ChannelSource::PaymentRequest;
     case MessageSource::Other: return Protocol::Console::ChannelSource::Other;
     }
     return Protocol::Console::ChannelSource::Other;
