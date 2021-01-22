@@ -46,7 +46,7 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(0, 9, 4)
+version = Version(0, 9, 5)
 
 AutoInstall.register(Package('entrypoints', Version(0, 3, 0)))
 AutoInstall.register(Package('fasteners', Version(0, 15, 0)))

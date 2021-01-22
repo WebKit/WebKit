@@ -1,3 +1,29 @@
+2021-01-22  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Map alternative default branch names
+        https://bugs.webkit.org/show_bug.cgi?id=220865
+        <rdar://problem/73502370>
+
+        Reviewed by Aakash Jain.
+
+        As WebKit transitions from Subversion to Git, our default branch is changing from
+        trunk to main. This change allow identifiers with 'main' in them to work in Subversion checkouts.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.find): Map set of common default branches to this repository's default branch.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.find): Map set of common default branches to this repository's default branch.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/scm_base.py:
+        (ScmBase.find): Map set of common default branches to this repository's default branch.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGit.test_alternative_default_branch):
+        (TestGitHub.test_alternative_default_branch):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/svn_unittest.py:
+        (TestLocalSvn.test_alternative_default_branch):
+        (TestRemoteSvn.test_alternative_default_branch):
+
 2021-01-22  Lauro Moura  <lmoura@igalia.com>
 
         [WebDriver] Add info about importing tests

@@ -340,8 +340,14 @@ class GitHub(Scm):
         if not isinstance(argument, six.string_types):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
 
+        if argument in self.DEFAULT_BRANCHES:
+            argument = self.default_branch
+
         parsed_commit = Commit.parse(argument, do_assert=False)
         if parsed_commit:
+            if parsed_commit.branch in self.DEFAULT_BRANCHES:
+                parsed_commit.branch = self.default_branch
+
             return self.commit(
                 hash=parsed_commit.hash,
                 revision=parsed_commit.revision,
