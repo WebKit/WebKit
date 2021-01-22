@@ -53,7 +53,6 @@ template<typename> struct ExtendedRGBModel;
 template<typename> struct LabModel;
 template<typename> struct LCHModel;
 template<typename> struct HSLModel;
-template<typename> struct CMYKModel;
 template<typename> struct XYZModel;
 
 template<> struct RGBModel<uint8_t> {
@@ -106,16 +105,6 @@ template<> struct HSLModel<float> {
         { 0, 360 },
         { 0, 100 },
         { 0, 100 }
-    } };
-    static constexpr bool isInvertible = true;
-};
-
-template<> struct CMYKModel<float> {
-    static constexpr std::array<ColorComponentRange<float>, 4> ranges { {
-        { 0, 1 },
-        { 0, 1 },
-        { 0, 1 },
-        { 0, 1 }
     } };
     static constexpr bool isInvertible = true;
 };
@@ -639,43 +628,6 @@ template<typename T> constexpr bool operator==(const HSLA<T>& a, const HSLA<T>& 
 }
 
 template<typename T> constexpr bool operator!=(const HSLA<T>& a, const HSLA<T>& b)
-{
-    return !(a == b);
-}
-
-
-// FIXME: When ColorComponents supports more than length == 4, add conversion to/from ColorComponents<T> for CMYKA
-template<typename T> struct CMYKA : ColorWithAlphaHelper<CMYKA<T>> {
-    using ComponentType = T;
-    using Model = CMYKModel<T>;
-
-    constexpr CMYKA(T cyan, T magenta, T yellow, T black, T alpha = AlphaTraits<T>::opaque)
-        : cyan { cyan }
-        , magenta { magenta }
-        , yellow { yellow }
-        , black { black }
-        , alpha { alpha }
-    {
-    }
-
-    constexpr CMYKA()
-        : CMYKA { 0, 0, 0, 0, 0 }
-    {
-    }
-
-    T cyan;
-    T magenta;
-    T yellow;
-    T black;
-    T alpha;
-};
-
-template<typename T> constexpr bool operator==(const CMYKA<T>& a, const CMYKA<T>& b)
-{
-    return a.cyan == b.cyan && a.magenta == b.magenta && a.yellow == b.yellow && a.black == b.black && a.alpha == b.alpha;
-}
-
-template<typename T> constexpr bool operator!=(const CMYKA<T>& a, const CMYKA<T>& b)
 {
     return !(a == b);
 }

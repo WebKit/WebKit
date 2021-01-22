@@ -403,32 +403,6 @@ SRGBA<float> toSRGBA(const HSLA<float>& color)
     };
 }
 
-// CMYK conversions.
-
-SRGBA<float> toSRGBA(const CMYKA<float>& color)
-{
-    auto [c, m, y, k, a] = color;
-    float colors = 1 - k;
-    float r = colors * (1.0f - c);
-    float g = colors * (1.0f - m);
-    float b = colors * (1.0f - y);
-    return { r, g, b, a };
-}
-
-CMYKA<float> toCMYKA(const SRGBA<float>& color)
-{
-    auto [r, g, b, a] = color;
-
-    auto k = 1.0f - std::max({ r, g, b });
-    if (k == 1.0f)
-        return { 0, 0, 0, 1.0f, a };
-    
-    auto c = (1.0f - r - k) / (1.0f - k);
-    auto m = (1.0f - g - k) / (1.0f - k);
-    auto y = (1.0f - b - k) / (1.0f - k);
-    return { c, m, y, k, a };
-}
-
 
 // Combination conversions (constructed from more basic conversions above).
 
@@ -480,16 +454,6 @@ XYZA<float> toXYZA(const HSLA<float>& color)
 HSLA<float> toHSLA(const XYZA<float>& color)
 {
     return toHSLA(toSRGBA(color));
-}
-
-XYZA<float> toXYZA(const CMYKA<float>& color)
-{
-    return toXYZA(toSRGBA(color));
-}
-
-CMYKA<float> toCMYKA(const XYZA<float>& color)
-{
-    return toCMYKA(toSRGBA(color));
 }
 
 } // namespace WebCore

@@ -49,7 +49,6 @@ WEBCORE_EXPORT SRGBA<float> toSRGBA(const XYZA<float>&);
 // Additions
 WEBCORE_EXPORT LinearSRGBA<float> toLinearSRGBA(const SRGBA<float>&);
 WEBCORE_EXPORT HSLA<float> toHSLA(const SRGBA<float>&);
-WEBCORE_EXPORT CMYKA<float> toCMYKA(const SRGBA<float>&);
 
 // ExtendedSRGBA
 WEBCORE_EXPORT XYZA<float> toXYZA(const ExtendedSRGBA<float>&);
@@ -99,12 +98,6 @@ WEBCORE_EXPORT HSLA<float> toHSLA(const XYZA<float>&);
 // Additions
 WEBCORE_EXPORT SRGBA<float> toSRGBA(const HSLA<float>&);
 
-// CMYKA
-WEBCORE_EXPORT XYZA<float> toXYZA(const CMYKA<float>&);
-WEBCORE_EXPORT CMYKA<float> toCMYKA(const XYZA<float>&);
-// Additions
-WEBCORE_EXPORT SRGBA<float> toSRGBA(const CMYKA<float>&);
-
 
 // Identity conversions (useful for generic contexts).
 
@@ -117,7 +110,6 @@ constexpr LinearDisplayP3<float> toLinearDisplayP3(const LinearDisplayP3<float>&
 constexpr Lab<float> toLab(const Lab<float>& color) { return color; }
 constexpr LCHA<float> toLCHA(const LCHA<float>& color) { return color; }
 constexpr HSLA<float> toHSLA(const HSLA<float>& color) { return color; }
-constexpr CMYKA<float> toCMYKA(const CMYKA<float>& color) { return color; }
 constexpr XYZA<float> toXYZA(const XYZA<float>& color) { return color; }
 
 
@@ -169,11 +161,6 @@ template<typename T> LCHA<float> toLCHA(const T& color)
 template<typename T> HSLA<float> toHSLA(const T& color)
 {
     return toHSLA(toXYZA(color));
-}
-
-template<typename T> CMYKA<float> toCMYKA(const T& color)
-{
-    return toCMYKA(toXYZA(color));
 }
 
 } // namespace WebCore
