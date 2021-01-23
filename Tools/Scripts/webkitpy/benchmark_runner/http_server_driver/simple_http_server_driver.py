@@ -61,7 +61,7 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
         except ImportError:
             try:
                 output = subprocess.check_output(['/usr/sbin/lsof', '-a', '-P', '-iTCP', '-sTCP:LISTEN', '-p', str(self._server_process.pid)])
-                self._server_port = int(re.search(r'TCP .*:(\d+) \(LISTEN\)', output).group(1))
+                self._server_port = int(re.search(r'TCP .*:(\d+) \(LISTEN\)', str(output)).group(1))
             except Exception as error:
                 _log.info('Error: %s' % error)
 
