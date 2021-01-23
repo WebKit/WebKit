@@ -1028,7 +1028,6 @@
     (global-name "com.apple.coreservices.launchservicesd")
 #endif
     (global-name "com.apple.iconservices")
-    (global-name "com.apple.iconservices.store")
     (global-name "com.apple.tccd.system")
     (global-name "com.apple.trustd.agent")
 )

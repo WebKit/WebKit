@@ -1,5 +1,20 @@
 2021-01-23  Per Arne Vollan  <pvollan@apple.com>
 
+        [macOS] Deny mach lookup access to "com.apple.iconservices.store" in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=220014
+        <rdar://problem/68923110>
+
+        Reviewed by Brent Fulgham.
+
+        Deny mach lookup access to "com.apple.iconservices.store" in the WebContent process on macOS,
+        since there are no longer any reports of this being used.
+
+        Test: fast/sandbox/mac/sandbox-mach-lookup.html
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2021-01-23  Per Arne Vollan  <pvollan@apple.com>
+
         [macOS] Deny mach-lookup to the service 'com.apple.hiservices-xpcservice' in the WebContent process
         https://bugs.webkit.org/show_bug.cgi?id=220321
         <rdar://problem/68878470>
