@@ -1,0 +1,8 @@
+
+FAIL initialize externref table with default value assert_equals: expected object "[object Object]" but got null
+PASS initialize table with a wrong element value
+FAIL initialize anyfunc table with default value assert_equals: expected (function) function "function 0() {
+    [native code]
+}" but got (object) null
+FAIL initialize anyfunc table with a bad default value assert_throws_js: function "() => new WebAssembly.Table(argument, {})" did not throw
+

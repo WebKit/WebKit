@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/assertions.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/bad-imports.js
 /LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/error-interfaces-no-symbol-tostringtag.js

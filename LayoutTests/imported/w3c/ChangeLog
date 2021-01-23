@@ -1,3 +1,77 @@
+2021-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Should SharedArrayBuffer/WebAssembly.Memory really throw?
+        https://bugs.webkit.org/show_bug.cgi?id=220364
+
+        Reviewed by Mark Lam.
+
+        Update common/sab.js and wasm/.
+
+        * web-platform-tests/common/sab.js:
+        (const.createBuffer):
+        * web-platform-tests/wasm/jsapi/META.yml: Added.
+        * web-platform-tests/wasm/jsapi/constructor/instantiate.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/constructor/instantiate.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/global/type.tentative.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/global/type.tentative.any.html: Added.
+        * web-platform-tests/wasm/jsapi/global/type.tentative.any.js: Added.
+        (assert_type):
+        (test):
+        (string_appeared_here.test):
+        * web-platform-tests/wasm/jsapi/global/type.tentative.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/global/type.tentative.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/global/w3c-import.log:
+        * web-platform-tests/wasm/jsapi/instance/constructor.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/instance/constructor.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/instanceTestFactory.js:
+        (const.imports.string_appeared_here.string_appeared_here):
+        (return.verify):
+        * web-platform-tests/wasm/jsapi/memory/type.tentative.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/memory/type.tentative.any.html: Added.
+        * web-platform-tests/wasm/jsapi/memory/type.tentative.any.js: Added.
+        (assert_type):
+        (test):
+        * web-platform-tests/wasm/jsapi/memory/type.tentative.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/memory/type.tentative.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/memory/w3c-import.log:
+        * web-platform-tests/wasm/jsapi/module/exports.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/module/exports.any.js:
+        (test):
+        * web-platform-tests/wasm/jsapi/module/exports.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/module/imports.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/module/imports.any.js:
+        (test):
+        * web-platform-tests/wasm/jsapi/module/imports.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/table/constructor-reftypes.tentative.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/table/constructor-reftypes.tentative.any.html: Added.
+        * web-platform-tests/wasm/jsapi/table/constructor-reftypes.tentative.any.js: Added.
+        (test):
+        * web-platform-tests/wasm/jsapi/table/constructor-reftypes.tentative.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/table/constructor-reftypes.tentative.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/table/set-reftypes.tentative.any-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/table/set-reftypes.tentative.any.html: Added.
+        * web-platform-tests/wasm/jsapi/table/set-reftypes.tentative.any.js: Added.
+        (test):
+        * web-platform-tests/wasm/jsapi/table/set-reftypes.tentative.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/jsapi/table/set-reftypes.tentative.any.worker.html: Added.
+        * web-platform-tests/wasm/jsapi/table/w3c-import.log:
+        * web-platform-tests/wasm/jsapi/w3c-import.log:
+        * web-platform-tests/wasm/webapi/META.yml: Added.
+        * web-platform-tests/wasm/webapi/instantiateStreaming.any-expected.txt:
+        * web-platform-tests/wasm/webapi/instantiateStreaming.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/invalid-code.any-expected.txt:
+        * web-platform-tests/wasm/webapi/invalid-code.any.js:
+        (string_appeared_here.Invalid.code):
+        * web-platform-tests/wasm/webapi/invalid-code.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/modified-contenttype.any-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/modified-contenttype.any.html: Added.
+        * web-platform-tests/wasm/webapi/modified-contenttype.any.js: Added.
+        (string_appeared_here.forEach.method.promise_test.async t):
+        (string_appeared_here.forEach.method.with.Content.Type.set late):
+        * web-platform-tests/wasm/webapi/modified-contenttype.any.worker-expected.txt: Added.
+        * web-platform-tests/wasm/webapi/modified-contenttype.any.worker.html: Added.
+        * web-platform-tests/wasm/webapi/w3c-import.log:
+
 2021-01-22  Devin Rousso  <drousso@apple.com>
 
         [WPT] [Payment Request] slight adjustment to payment-request/payment-request-constructor-thcrash.https.html

@@ -1,0 +1,8 @@
+
+FAIL Zero initial, no maximum undefined is not an object (evaluating 'memory.type.minimum')
+FAIL Non-zero initial, no maximum undefined is not an object (evaluating 'memory.type.minimum')
+FAIL Zero maximum undefined is not an object (evaluating 'memory.type.minimum')
+FAIL None-zero maximum undefined is not an object (evaluating 'memory.type.minimum')
+FAIL non-shared memory undefined is not an object (evaluating 'memory.type.minimum')
+FAIL shared memory undefined is not an object (evaluating 'memory.type.minimum')
+
