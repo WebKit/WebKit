@@ -52,7 +52,7 @@ AutoInstall.register(Package('entrypoints', Version(0, 3, 0)))
 AutoInstall.register(Package('fasteners', Version(0, 15, 0)))
 AutoInstall.register(Package('keyring', Version(11, 1, 0)))
 AutoInstall.register(Package('monotonic', Version(1, 5)))
-AutoInstall.register(Package('xmltodict', Version(0, 12, 0)))
+AutoInstall.register(Package('xmltodict', Version(0, 11, 0)))
 
 # This is needed for python-keyring.
 if sys.platform == 'linux':
