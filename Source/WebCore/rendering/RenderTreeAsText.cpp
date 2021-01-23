@@ -35,6 +35,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HTMLSpanElement.h"
+#include "InlineIterator.h"
 #include "InlineTextBox.h"
 #include "LayoutIntegrationRunIterator.h"
 #include "Logging.h"
@@ -172,6 +173,43 @@ String quoteAndEscapeNonPrintables(StringView s)
     return result.toString();
 }
 
+static inline bool isRenderInlineEmpty(const RenderInline& inlineRenderer)
+{
+    if (isEmptyInline(inlineRenderer))
+        return true;
+
+    for (auto& child : childrenOfType<RenderObject>(inlineRenderer)) {
+        if (child.isFloatingOrOutOfFlowPositioned())
+            continue;
+        auto isChildEmpty = false;
+        if (is<RenderInline>(child))
+            isChildEmpty = isRenderInlineEmpty(downcast<RenderInline>(child));
+        else if (is<RenderText>(child))
+            isChildEmpty = !downcast<RenderText>(child).linesBoundingBox().height();
+        if (!isChildEmpty)
+            return false;
+    }
+    return true;
+}
+
+static inline bool hasNonEmptySibling(const RenderInline& inlineRenderer)
+{
+    auto* parent = inlineRenderer.parent();
+    if (!parent)
+        return false;
+
+    for (auto& sibling : childrenOfType<RenderObject>(*parent)) {
+        if (&sibling == &inlineRenderer || sibling.isFloatingOrOutOfFlowPositioned())
+            continue;
+        if (!is<RenderInline>(sibling))
+            return true;
+        auto& siblingRendererInline = downcast<RenderInline>(sibling);
+        if (siblingRendererInline.shouldCreateLineBoxes() || !isRenderInlineEmpty(siblingRendererInline))
+            return true;
+    }
+    return false;
+}
+
 void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> behavior)
 {
     ts << o.renderName();
@@ -228,21 +266,11 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
             if (inlineFlow.marginStart() || inlineFlow.marginEnd())
                 return height;
             // This is mostly pre/post continuation content. Also see webkit.org/b/220735
-            if (inlineFlow.previousSibling())
+            if (hasNonEmptySibling(inlineFlow))
                 return height;
-            if (inlineFlow.nextSibling() && !inlineFlow.document().inQuirksMode())
-                return height;
-            if (auto* firstChild = inlineFlow.firstChild()) {
-                if (firstChild != inlineFlow.lastChild())
-                    return height;
-                auto childIsEmpty = false;
-                if (is<RenderText>(*firstChild))
-                    childIsEmpty = !downcast<RenderText>(*firstChild).linesBoundingBox().height();
-                else if (is<RenderInline>(*firstChild))
-                    childIsEmpty = !downcast<RenderInline>(*firstChild).linesBoundingBox().height();
-                return childIsEmpty ? 0 : height;
-            }
-            return 0;
+            if (isRenderInlineEmpty(inlineFlow))
+                return 0;
+            return height;
         };
         r = IntRect(0, 0, width, inlineHeight());
         adjustForTableCells = false;

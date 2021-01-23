@@ -84,6 +84,7 @@ public:
 
     bool alwaysCreateLineBoxes() const { return renderInlineAlwaysCreatesLineBoxes(); }
     void setAlwaysCreateLineBoxes() { setRenderInlineAlwaysCreatesLineBoxes(true); }
+    bool shouldCreateLineBoxes() const;
     void updateAlwaysCreateLineBoxes(bool fullLayout);
 
     bool hitTestCulledInline(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset);
