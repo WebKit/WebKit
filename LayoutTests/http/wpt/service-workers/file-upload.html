@@ -95,14 +95,14 @@ promise_test(async (test) => {
 }, "Setup file form data");
 
 promise_test(async (test) => {
-    const response = await frame.contentWindow.fetch("/WebKit/service-workers/file-upload-check.py?do-not-handle", {method: "POST", body: formData});
+    const response = await frame.contentWindow.fetch("/WebKit/service-workers/resources/file-upload-check.py?do-not-handle", {method: "POST", body: formData});
     const text = await response.text();
     assert_true(text.includes(tempFileContent), "content");
     assert_true(text.includes(tempFileName), "name");
 }, "Upload not handled by service worker");
 
 promise_test(async (test) => {
-    const response = await frame.contentWindow.fetch("/WebKit/service-workers/file-upload-check.py", {method: "POST", body: formData});
+    const response = await frame.contentWindow.fetch("/WebKit/service-workers/resources/file-upload-check.py", {method: "POST", body: formData});
     const text = await response.text();
     assert_true(text.includes(tempFileContent), "content");
     assert_true(text.includes(tempFileName), "name");
