@@ -772,3 +772,54 @@ TEST(WKNavigation, FrameBackLoading)
     [webView removeObserver:observer forKeyPath:@"loading"];
 
 }
+
+TEST(WKNavigation, SimultaneousNavigationWithFontsFinishes)
+{
+    const char* mainHTML =
+    "<!DOCTYPE html>"
+    "<html>"
+    "<head>"
+    "<style>"
+    "@font-face {"
+    "    font-family: 'WebFont';"
+    "    src: url('Ahem.svg') format('svg');"
+    "}"
+    "</style>"
+    "<script src='scriptsrc.js'></script>"
+    "</head>"
+    "<body>"
+    "<span style=\"font: 100px 'WebFont';\">text</span>"
+    "<iframe src='iframesrc.html'></iframe>"
+    "<script>window.location='refresh-nav:///'</script>"
+    "</body>"
+    "</html>";
+
+    NSString *svg = [NSString stringWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"AllAhem" withExtension:@"svg" subdirectory:@"TestWebKitAPI.resources"] encoding:NSUTF8StringEncoding error:nil];
+
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "/", { mainHTML } },
+        { "Ahem.svg", { svg } },
+        { "/scriptsrc.js", { "/* js content */" } },
+        { "/iframesrc.html", { "frame content" } },
+    });
+
+    auto webView = [[WKWebView new] autorelease];
+    auto delegate = [[TestNavigationDelegate new] autorelease];
+    webView.navigationDelegate = delegate;
+
+    delegate.decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        if ([action.request.URL.scheme isEqualToString:@"refresh-nav"])
+            completionHandler(WKNavigationActionPolicyCancel);
+        else
+            completionHandler(WKNavigationActionPolicyAllow);
+    };
+
+    __block bool finishedNavigation = false;
+    delegate.didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finishedNavigation = true;
+    };
+
+    [webView loadRequest:server.request()];
+    Util::run(&finishedNavigation);
+}
