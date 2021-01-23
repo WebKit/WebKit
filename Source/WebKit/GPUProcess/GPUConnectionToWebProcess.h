@@ -112,6 +112,8 @@ public:
     RemoteAudioSessionProxyManager& audioSessionManager();
 #endif
 
+    void terminateWebProcess();
+
 private:
     GPUConnectionToWebProcess(GPUProcess&, WebCore::ProcessIdentifier, IPC::Connection::Identifier, PAL::SessionID);
 

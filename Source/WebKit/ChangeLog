@@ -1,3 +1,47 @@
+2021-01-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        The web process should be killed after failing to decode display list items in the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=219097
+        <rdar://problem/71546526>
+
+        Reviewed by Chris Dumez.
+
+        Handle `StopReplayReason::InvalidItem` by terminating the web process via MESSAGE_CHECK. See below for more
+        details.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::didReceiveInvalidMessage):
+        (WebKit::GPUConnectionToWebProcess::terminateWebProcess):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+
+        Pull logic for terminating the web process out into a separate helper method on `GPUConnectionToWebProcess`, and
+        use this helper in `GPUConnectionToWebProcess::didReceiveInvalidMessage`, as well as in `RemoteRenderingBackend`
+        below.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+
+        Add macro definitions for `MESSAGE_CHECK` and `MESSAGE_CHECK_WITH_RETURN_VALUE`. Since the methods on
+        `RemoteRenderingBackend` that trigger message checks all run on a background queue, the normal (main-thread) way
+        of defining these macros (`MESSAGE_CHECK_WITH_RETURN_VALUE_BASE` and `MESSAGE_CHECK_BASE`) don't work. We
+        instead call into the GPU to web process connection object directly to send a `TerminateWebProcess` message to
+        the parent (UI) process, and additionally log a given failure message.
+
+        (WebKit::RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists):
+
+        Replace a number FIXMEs throughout these IPC message handlers with `MESSAGE_CHECK`s. Additionally, add a new
+        `MESSAGE_CHECK` for the case where we stopped replay early due to a corrupted or invalid display list item.
+
+        (WebKit::RemoteRenderingBackend::wakeUpAndApplyDisplayList):
+        (WebKit::RemoteRenderingBackend::setNextItemBufferToRead):
+
+        Simply remove the FIXME and early return here; this can only happen in the case where a compromised web content
+        process attempts to append redundant item buffer change items. However, doing so will either be (1) harmless,
+        since the pending item buffer information will just be overwritten, or (2) result in hitting a MESSAGE_CHECK
+        when decoding items if we try to execute the contents of another item buffer that has not been written to.
+
+        (WebKit::RemoteRenderingBackend::didCreateSharedDisplayListHandle):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+
 2021-01-22  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Make the "in stable state" bit in visible content rect updates more fine-grained
