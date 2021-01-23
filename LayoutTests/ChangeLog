@@ -1,3 +1,15 @@
+2021-01-23  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Set background playback restriction for WebAudio
+        https://bugs.webkit.org/show_bug.cgi?id=220879
+        <rdar://72949281>
+
+        Reviewed by Jer Noble.
+
+        * media/media-session-restrictions-expected.txt: Update expectations.
+        * media/webaudio-background-playback-expected.txt: Added.
+        * media/webaudio-background-playback.html: Added.
+
 2021-01-23  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Deny mach-lookup to the service 'com.apple.iconservices.store' in the WebContent process
