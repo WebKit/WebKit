@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_B3JIT)
 
 #include "B3Common.h"
 #include "CCallHelpers.h"
@@ -54,4 +54,4 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationC
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_B3JIT)

@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "BytecodeDumper.h"
+#include "CCallHelpers.h"
 #include "CalleeBits.h"
 #include "JITCompilation.h"
 #include "JSToWasm.h"

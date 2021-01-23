@@ -86,18 +86,22 @@ public:
         RELEASE_ASSERT(callee);
         return *callee;
     }
+
     Callee& wasmEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
         ASSERT(runnable());
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
+#if ENABLE(WEBASSEMBLY_B3JIT)
         if (m_omgCallees[calleeIndex])
             return *m_omgCallees[calleeIndex].get();
         if (m_bbqCallees[calleeIndex])
             return *m_bbqCallees[calleeIndex].get();
+#endif
         return m_llintCallees->at(calleeIndex).get();
     }
 
+#if ENABLE(WEBASSEMBLY_B3JIT)
     BBQCallee& wasmBBQCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
         ASSERT(runnable());
@@ -105,6 +109,7 @@ public:
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
         return *m_bbqCallees[calleeIndex].get();
     }
+#endif
 
     MacroAssemblerCodePtr<WasmEntryPtrTag>* entrypointLoadLocationFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
@@ -125,16 +130,20 @@ public:
     ~CodeBlock();
 private:
     friend class Plan;
+#if ENABLE(WEBASSEMBLY_B3JIT)
     friend class BBQPlan;
     friend class OMGPlan;
     friend class OMGForOSREntryPlan;
+#endif
 
     CodeBlock(Context*, MemoryMode, ModuleInformation&, RefPtr<LLIntCallees>);
     void setCompilationFinished();
     unsigned m_calleeCount;
     MemoryMode m_mode;
+#if ENABLE(WEBASSEMBLY_B3JIT)
     Vector<RefPtr<OMGCallee>> m_omgCallees;
     Vector<RefPtr<BBQCallee>> m_bbqCallees;
+#endif
     RefPtr<LLIntCallees> m_llintCallees;
     HashMap<uint32_t, RefPtr<EmbedderEntrypointCallee>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_embedderCallees;
     Vector<MacroAssemblerCodePtr<WasmEntryPtrTag>> m_wasmIndirectCallEntryPoints;

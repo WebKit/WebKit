@@ -45,8 +45,10 @@ namespace Wasm {
 class Instance;
 class Signature;
 
+#if ENABLE(WEBASSEMBLY_B3JIT)
 JSC_DECLARE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&));
 JSC_DECLARE_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (Instance*, uint32_t functionIndex));
+#endif
 JSC_DECLARE_JIT_OPERATION(operationWasmUnwind, void, (CallFrame*));
 
 JSC_DECLARE_JIT_OPERATION(operationConvertToI64, int64_t, (CallFrame*, JSValue));

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmBBQPlan.h"
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_B3JIT)
 
 #include "JITCompilation.h"
 #include "JSToWasm.h"
@@ -284,4 +284,4 @@ bool BBQPlan::didReceiveFunctionData(unsigned, const FunctionData&)
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_B3JIT)

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmOMGPlan.h"
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_B3JIT)
 
 #include "JITCompilation.h"
 #include "LinkBuffer.h"
@@ -141,4 +141,4 @@ void OMGPlan::work(CompilationEffort)
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_B3JIT)

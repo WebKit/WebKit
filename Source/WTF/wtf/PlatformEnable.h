@@ -570,6 +570,12 @@
 #endif
 
 #if USE(JSVALUE32_64)
+/* Disable WebAssembly on all 32bit platforms. Its LLInt tier could
+ * work on them, but still needs some final touches. */
+#undef ENABLE_WEBASSEMBLY
+#define ENABLE_WEBASSEMBLY 0
+#undef ENABLE_WEBASSEMBLY_B3JIT
+#define ENABLE_WEBASSEMBLY_B3JIT 0
 #if (CPU(ARM_THUMB2) || CPU(MIPS)) && OS(LINUX)
 /* On ARMv7 and MIPS on Linux the JIT is enabled unless explicitly disabled. */
 #if !defined(ENABLE_JIT)
@@ -675,6 +681,7 @@
 
 #if !defined(ENABLE_WEBASSEMBLY) && (ENABLE(B3_JIT) && PLATFORM(COCOA) && CPU(ADDRESS64))
 #define ENABLE_WEBASSEMBLY 1
+#define ENABLE_WEBASSEMBLY_B3JIT 1
 #endif
 
 /* The SamplingProfiler is the probabilistic and low-overhead profiler used by

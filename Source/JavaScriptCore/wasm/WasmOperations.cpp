@@ -58,6 +58,7 @@ IGNORE_WARNINGS_BEGIN("frame-address")
 
 namespace JSC { namespace Wasm {
 
+#if ENABLE(WEBASSEMBLY_B3JIT)
 static bool shouldTriggerOMGCompile(TierUpCount& tierUp, OMGCallee* replacement, uint32_t functionIndex)
 {
     if (!replacement && !tierUp.checkIfOptimizationThresholdReached()) {
@@ -453,6 +454,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (Instance* instanc
         }
     }
 }
+#endif
 
 JSC_DEFINE_JIT_OPERATION(operationWasmUnwind, void, (CallFrame* callFrame))
 {

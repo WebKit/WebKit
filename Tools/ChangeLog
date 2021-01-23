@@ -1,3 +1,12 @@
+2021-01-23  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Allow to build WebAssembly without B3
+        https://bugs.webkit.org/show_bug.cgi?id=220365
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/webkitperl/FeatureList.pm: add WebAssembly B3 JIT option.
+
 2021-01-22  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r266148) Cancelling a navigation in decidePolicyForNavigationAction should not suspend the previous document's font loading timer

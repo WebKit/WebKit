@@ -173,6 +173,7 @@ my (
     $videoUsesElementFullscreenSupport,
     $webAPIStatisticsSupport,
     $webAssemblySupport,
+    $webAssemblyB3JITSupport,
     $webAudioSupport,
     $webAuthNSupport,
     $webCryptoSupport,
@@ -532,6 +533,9 @@ my @features = (
 
     { option => "webassembly", desc => "Toggle WebAssembly support",
       define => "ENABLE_WEBASSEMBLY", value => \$webAssemblySupport },
+
+    { option => "webassembly-b3jit", desc => "Toggle WebAssembly B3 JIT support",
+      define => "ENABLE_WEBASSEMBLY_B3JIT", value => \$webAssemblyB3JITSupport },
 
     { option => "webassembly-streaming-api", desc => "Toggle WebAssembly streaming api support.",
       define => "ENABLE_WEBASSEMBLY_STREAMING_API", value => \$webassemblyStreamingAPISupport },

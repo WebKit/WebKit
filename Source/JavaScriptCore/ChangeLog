@@ -1,3 +1,46 @@
+2021-01-23  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Allow to build WebAssembly without B3
+        https://bugs.webkit.org/show_bug.cgi?id=220365
+
+        Reviewed by Yusuke Suzuki.
+
+        Make all the B3 related code in WebAssembly a compile-time
+        option. When disabled WebAssembly will only use its LLInt tier.
+
+        * llint/LLIntOfflineAsmConfig.h: define WEBASSEMBLY_B3JIT for the
+        offline assembler.
+        * llint/WebAssembly.asm: guard B3 code inside WEBASSEMBLY_B3JTI ifdefs.
+        * wasm/WasmAirIRGenerator.cpp: ditto.
+        * wasm/WasmAirIRGenerator.h: ditto.
+        * wasm/WasmB3IRGenerator.cpp: ditto.
+        * wasm/WasmB3IRGenerator.h: ditto.
+        * wasm/WasmBBQPlan.cpp: ditto.
+        * wasm/WasmBBQPlan.h: ditto.
+        * wasm/WasmCallee.h: ditto.
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::CodeBlock): ditto.
+        * wasm/WasmCodeBlock.h:
+        (JSC::Wasm::CodeBlock::wasmEntrypointCalleeFromFunctionIndexSpace): ditto.
+        * wasm/WasmLLIntGenerator.h: ditto.
+        * wasm/WasmLLIntPlan.cpp: ditto.
+        * wasm/WasmOMGForOSREntryPlan.cpp: ditto.
+        * wasm/WasmOMGForOSREntryPlan.h: ditto.
+        * wasm/WasmOMGPlan.cpp: ditto.
+        * wasm/WasmOMGPlan.h: ditto.
+        * wasm/WasmOSREntryData.h: ditto.
+        * wasm/WasmOperations.cpp: ditto.
+        * wasm/WasmOperations.h: ditto.
+        * wasm/WasmPlan.cpp: ditto.
+        * wasm/WasmPlan.h: ditto.
+        * wasm/WasmSlowPaths.cpp: ditto.
+        * wasm/WasmSlowPaths.h: ditto.
+        * wasm/WasmThunks.cpp: ditto.
+        * wasm/WasmThunks.h: ditto.
+        * wasm/WasmTierUpCount.cpp: ditto.
+        * wasm/WasmTierUpCount.h: ditto.
+        * wasm/generateWasmOpsHeader.py: ditto.
+
 2021-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Should SharedArrayBuffer/WebAssembly.Memory really throw?

@@ -27,7 +27,6 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Type.h"
 #include "CodeLocation.h"
 #include "Identifier.h"
 #include "MacroAssemblerCodeRef.h"

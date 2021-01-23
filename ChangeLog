@@ -1,3 +1,16 @@
+2021-01-23  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Allow to build WebAssembly without B3
+        https://bugs.webkit.org/show_bug.cgi?id=220365
+
+        Reviewed by Yusuke Suzuki.
+
+        Make the WebAssembly feature depend on Baseline JIT, not B3
+        JIT. Also add a WEBASSEMBLY_B3JIT feature to enable or disable the
+        B3 tier in WebAssembly.
+
+        * Source/cmake/WebKitFeatures.cmake: disable on 32bit.
+
 2021-01-21  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Remove ENABLE_USERSELECT_ALL macro which is enabled for all ports

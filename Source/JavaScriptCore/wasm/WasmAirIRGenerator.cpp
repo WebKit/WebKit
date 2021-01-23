@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmAirIRGenerator.h"
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_B3JIT)
 
 #include "AirCode.h"
 #include "AirGenerate.h"
@@ -4851,4 +4851,4 @@ template<> auto AirIRGenerator::addOp<OpType::I64Add>(ExpressionType arg0, Expre
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_B3JIT)
