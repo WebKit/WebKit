@@ -1,3 +1,47 @@
+2021-01-22  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Make the "in stable state" bit in visible content rect updates more fine-grained
+        https://bugs.webkit.org/show_bug.cgi?id=220875
+
+        Reviewed by Tim Horton.
+
+        VisibleContentRectUpdateInfo contains a single "in stable state" bit, but in a future
+        patch the web process will need to know if the UI process is rubberbanding. In addition,
+        we can fold "isChangingObscuredInsetsInteractively" into the same state bits.
+
+        So give VisibleContentRectUpdateInfo a OptionSet<ViewStabilityFlag>.
+
+        To give the correct state for non-main UIScrollViews, have _scrollViewIsRubberBanding
+        take the UIScrollView in question, and only include isChangingObscuredInsetsInteractively
+        if the question is being asked of the main UIScrollView.
+
+        * Shared/VisibleContentRectUpdateInfo.cpp:
+        (WebKit::VisibleContentRectUpdateInfo::encode const):
+        (WebKit::VisibleContentRectUpdateInfo::decode):
+        (WebKit::operator<<):
+        * Shared/VisibleContentRectUpdateInfo.h:
+        (WebKit::VisibleContentRectUpdateInfo::VisibleContentRectUpdateInfo):
+        (WebKit::VisibleContentRectUpdateInfo::inStableState const):
+        (WebKit::VisibleContentRectUpdateInfo::viewStability const):
+        (WebKit::VisibleContentRectUpdateInfo::isFirstUpdateForNewViewSize const):
+        (WebKit::operator==):
+        (WebKit::VisibleContentRectUpdateInfo::isChangingObscuredInsetsInteractively const): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _didRelaunchProcess]):
+        (-[WKWebView _scrollViewIsRubberBanding:]):
+        (-[WKWebView _viewStabilityState:]):
+        (-[WKWebView _scheduleVisibleContentRectUpdateAfterScrollInView:]):
+        (-[WKWebView _updateVisibleContentRects]):
+        (-[WKWebView _scrollViewIsRubberBanding]): Deleted.
+        (-[WKWebView _scrollViewIsInStableState:]): Deleted.
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:contentInsets:unobscuredRectInScrollViewCoordinates:obscuredInsets:unobscuredSafeAreaInsets:inputViewBounds:scale:minimumScale:viewStability:enclosedInScrollableAncestorView:sendEvenIfUnchanged:]):
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:contentInsets:unobscuredRectInScrollViewCoordinates:obscuredInsets:unobscuredSafeAreaInsets:inputViewBounds:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:sendEvenIfUnchanged:]): Deleted.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2021-01-22  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] No error is visible after user enters the incorrect PIN
