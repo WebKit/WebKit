@@ -84,6 +84,8 @@ public:
     JS_EXPORT_PRIVATE void reject(JSGlobalObject*, Exception*);
     JS_EXPORT_PRIVATE void rejectAsHandled(JSGlobalObject*, Exception*);
 
+    JS_EXPORT_PRIVATE JSPromise* rejectWithCaughtException(JSGlobalObject*, ThrowScope&);
+
     struct DeferredData {
         WTF_FORBID_HEAP_ALLOCATION;
     public:

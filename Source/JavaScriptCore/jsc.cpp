@@ -826,44 +826,32 @@ static URL absolutePath(const String& fileName)
 JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* globalObject, JSModuleLoader*, JSString* moduleNameValue, JSValue parameters, const SourceOrigin& sourceOrigin)
 {
     VM& vm = globalObject->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
-
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
     auto rejectWithError = [&](JSValue error) {
         promise->reject(globalObject, error);
         return promise;
     };
 
-    auto reject = [&](Exception* exception) {
-        if (UNLIKELY(isTerminatedExecutionException(vm, exception)))
-            return promise;
-        JSValue error = exception->value();
-        catchScope.clearException();
-        return rejectWithError(error);
-    };
-
     auto referrer = sourceOrigin.url();
     auto specifier = moduleNameValue->value(globalObject);
-    RETURN_IF_EXCEPTION(throwScope, nullptr);
-    if (UNLIKELY(catchScope.exception()))
-        return reject(catchScope.exception());
+    RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
 
     if (!referrer.isLocalFile())
-        return rejectWithError(createError(globalObject, makeString("Could not resolve the referrer's path '", referrer.string(), "', while trying to resolve module '", specifier, "'.")));
+        RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Could not resolve the referrer's path '", referrer.string(), "', while trying to resolve module '", specifier, "'."))));
 
     if (!specifier.startsWith('/') && !specifier.startsWith("./") && !specifier.startsWith("../"))
-        return rejectWithError(createTypeError(globalObject, makeString("Module specifier, '"_s, specifier, "' does not start with \"/\", \"./\", or \"../\". Referenced from: "_s, referrer.fileSystemPath())));
+        RELEASE_AND_RETURN(scope, rejectWithError(createTypeError(globalObject, makeString("Module specifier, '"_s, specifier, "' does not start with \"/\", \"./\", or \"../\". Referenced from: "_s, referrer.fileSystemPath()))));
 
     URL moduleURL(referrer, specifier);
     if (!moduleURL.isLocalFile())
-        return rejectWithError(createError(globalObject, makeString("Module url, '", moduleURL.string(), "' does not map to a local file.")));
+        RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Module url, '", moduleURL.string(), "' does not map to a local file."))));
 
     auto result = JSC::importModule(globalObject, Identifier::fromString(vm, moduleURL.string()), parameters, jsUndefined());
-    if (UNLIKELY(catchScope.exception()))
-        return reject(catchScope.exception());
+    RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
+
     return result;
 }
 
@@ -1181,24 +1169,15 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
     VM& vm = globalObject->vm();
     JSInternalPromise* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
 
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto rejectWithError = [&](JSValue error) {
         promise->reject(globalObject, error);
         return promise;
     };
 
-    auto reject = [&](Exception* exception) {
-        if (UNLIKELY(isTerminatedExecutionException(vm, exception)))
-            return promise;
-        JSValue error = exception->value();
-        catchScope.clearException();
-        return rejectWithError(error);
-    };
-
     String moduleKey = key.toWTFString(globalObject);
-    if (UNLIKELY(catchScope.exception()))
-        return reject(catchScope.exception());
+    RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
 
     URL moduleURL({ }, moduleKey);
     ASSERT(moduleURL.isLocalFile());
@@ -1207,16 +1186,16 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
 
     Vector<uint8_t> buffer;
     if (!fetchModuleFromLocalFileSystem(moduleURL, buffer))
-        return rejectWithError(createError(globalObject, makeString("Could not open file '", moduleKey, "'.")));
+        RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Could not open file '", moduleKey, "'."))));
 
 #if ENABLE(WEBASSEMBLY)
     // FileSystem does not have mime-type header. The JSC shell recognizes WebAssembly's magic header.
     if (buffer.size() >= 4) {
         if (buffer[0] == '\0' && buffer[1] == 'a' && buffer[2] == 's' && buffer[3] == 'm') {
             auto source = SourceCode(WebAssemblySourceProvider::create(WTFMove(buffer), SourceOrigin { moduleURL }, WTFMove(moduleKey)));
-            catchScope.releaseAssertNoException();
+            scope.releaseAssertNoException();
             auto sourceCode = JSSourceCode::create(vm, WTFMove(source));
-            catchScope.releaseAssertNoException();
+            scope.release();
             promise->resolve(globalObject, sourceCode);
             return promise;
         }
@@ -1224,7 +1203,7 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
 #endif
 
     auto sourceCode = JSSourceCode::create(vm, jscSource(stringFromUTF(buffer), SourceOrigin { moduleURL }, WTFMove(moduleKey), TextPosition(), SourceProviderSourceType::Module));
-    catchScope.releaseAssertNoException();
+    scope.release();
     promise->resolve(globalObject, sourceCode);
     return promise;
 }

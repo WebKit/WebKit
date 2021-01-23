@@ -120,18 +120,6 @@ static String printableModuleKey(JSGlobalObject* globalObject, JSValue key)
     return vm.propertyNames->emptyIdentifier.impl();
 }
 
-static JSInternalPromise* reject(JSGlobalObject* globalObject, CatchScope& catchScope, JSInternalPromise* promise)
-{
-    VM& vm = globalObject->vm();
-    Exception* exception = catchScope.exception();
-    ASSERT(exception);
-    if (UNLIKELY(isTerminatedExecutionException(vm, exception)))
-        return promise;
-    catchScope.clearException();
-    promise->reject(globalObject, exception->value());
-    return promise;
-}
-
 JSArray* JSModuleLoader::dependencyKeysIfEvaluated(JSGlobalObject* globalObject, JSValue key)
 {
     VM& vm = globalObject->vm();
@@ -256,15 +244,16 @@ JSInternalPromise* JSModuleLoader::importModule(JSGlobalObject* globalObject, JS
     dataLogLnIf(Options::dumpModuleLoadingState(), "Loader [import] ", printableModuleKey(globalObject, moduleName));
 
     VM& vm = globalObject->vm();
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (globalObject->globalObjectMethodTable()->moduleLoaderImportModule)
-        return globalObject->globalObjectMethodTable()->moduleLoaderImportModule(globalObject, this, moduleName, parameters, referrer);
+        RELEASE_AND_RETURN(scope, globalObject->globalObjectMethodTable()->moduleLoaderImportModule(globalObject, this, moduleName, parameters, referrer));
 
     auto* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
     String moduleNameString = moduleName->value(globalObject);
-    if (UNLIKELY(catchScope.exception()))
-        return reject(globalObject, catchScope, promise);
+    RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
+
+    scope.release();
     promise->reject(globalObject, createError(globalObject, makeString("Could not import the module '", moduleNameString, "'.")));
     return promise;
 }
@@ -281,12 +270,13 @@ Identifier JSModuleLoader::resolveSync(JSGlobalObject* globalObject, JSValue nam
 JSInternalPromise* JSModuleLoader::resolve(JSGlobalObject* globalObject, JSValue name, JSValue referrer, JSValue scriptFetcher)
 {
     VM& vm = globalObject->vm();
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
     const Identifier moduleKey = resolveSync(globalObject, name, referrer, scriptFetcher);
-    if (UNLIKELY(catchScope.exception()))
-        return reject(globalObject, catchScope, promise);
+    RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
+
+    scope.release();
     promise->resolve(globalObject, identifierToJSValue(vm, moduleKey));
     return promise;
 }
@@ -296,15 +286,16 @@ JSInternalPromise* JSModuleLoader::fetch(JSGlobalObject* globalObject, JSValue k
     dataLogLnIf(Options::dumpModuleLoadingState(), "Loader [fetch] ", printableModuleKey(globalObject, key));
 
     VM& vm = globalObject->vm();
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (globalObject->globalObjectMethodTable()->moduleLoaderFetch)
-        return globalObject->globalObjectMethodTable()->moduleLoaderFetch(globalObject, this, key, parameters, scriptFetcher);
+        RELEASE_AND_RETURN(scope, globalObject->globalObjectMethodTable()->moduleLoaderFetch(globalObject, this, key, parameters, scriptFetcher));
 
     auto* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
     String moduleKey = key.toWTFString(globalObject);
-    if (UNLIKELY(catchScope.exception()))
-        return reject(globalObject, catchScope, promise);
+    RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
+
+    scope.release();
     promise->reject(globalObject, createError(globalObject, makeString("Could not open the module '", moduleKey, "'.")));
     return promise;
 }
@@ -355,7 +346,7 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderParseModule, (JSGlobalObject* globalObject,
 
     auto* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
 
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto rejectWithError = [&](JSValue error) {
         promise->reject(globalObject, error);
@@ -363,8 +354,7 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderParseModule, (JSGlobalObject* globalObject,
     };
 
     const Identifier moduleKey = callFrame->argument(0).toPropertyKey(globalObject);
-    if (UNLIKELY(catchScope.exception()))
-        return JSValue::encode(reject(globalObject, catchScope, promise));
+    RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(globalObject, scope)));
 
     JSValue source = callFrame->argument(1);
     auto* jsSourceCode = jsCast<JSSourceCode*>(source);
@@ -372,7 +362,7 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderParseModule, (JSGlobalObject* globalObject,
 
 #if ENABLE(WEBASSEMBLY)
     if (sourceCode.provider()->sourceType() == SourceProviderSourceType::WebAssembly)
-        return JSValue::encode(JSWebAssembly::instantiate(globalObject, promise, moduleKey, jsSourceCode));
+        RELEASE_AND_RETURN(scope, JSValue::encode(JSWebAssembly::instantiate(globalObject, promise, moduleKey, jsSourceCode)));
 #endif
 
     ParserError error;
@@ -380,15 +370,14 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderParseModule, (JSGlobalObject* globalObject,
         vm, sourceCode, Identifier(), JSParserBuiltinMode::NotBuiltin,
         JSParserStrictMode::Strict, JSParserScriptMode::Module, SourceParseMode::ModuleAnalyzeMode, SuperBinding::NotNeeded, error);
     if (error.isValid())
-        return JSValue::encode(rejectWithError(error.toErrorObject(globalObject, sourceCode)));
+        RELEASE_AND_RETURN(scope, JSValue::encode(rejectWithError(error.toErrorObject(globalObject, sourceCode))));
     ASSERT(moduleProgramNode);
 
     ModuleAnalyzer moduleAnalyzer(globalObject, moduleKey, sourceCode, moduleProgramNode->varDeclarations(), moduleProgramNode->lexicalVariables());
-    if (UNLIKELY(catchScope.exception()))
-        return JSValue::encode(reject(globalObject, catchScope, promise));
+    RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(globalObject, scope)));
 
+    scope.release();
     promise->resolve(globalObject, moduleAnalyzer.analyze(*moduleProgramNode));
-    catchScope.clearException();
     return JSValue::encode(promise);
 }
 

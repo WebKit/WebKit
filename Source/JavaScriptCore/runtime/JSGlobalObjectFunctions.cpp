@@ -26,7 +26,6 @@
 #include "JSGlobalObjectFunctions.h"
 
 #include "CallFrame.h"
-#include "CatchScope.h"
 #include "IndirectEvalExecutable.h"
 #include "Interpreter.h"
 #include "IntlDateTimeFormat.h"
@@ -798,30 +797,20 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncImportModule, (JSGlobalObject* globalObject, 
 
     auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
 
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
-
-    auto reject = [&](Exception* exception) {
-        if (UNLIKELY(isTerminatedExecutionException(vm, exception)))
-            return promise;
-        JSValue error = exception->value();
-        catchScope.clearException();
-        promise->reject(globalObject, error);
-        return promise;
-    };
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto sourceOrigin = callFrame->callerSourceOrigin(vm);
     RELEASE_ASSERT(callFrame->argumentCount() == 1);
     auto* specifier = callFrame->uncheckedArgument(0).toString(globalObject);
-    if (Exception* exception = catchScope.exception())
-        return JSValue::encode(reject(exception));
+    RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(globalObject, scope)));
 
     // We always specify parameters as undefined. Once dynamic import() starts accepting fetching parameters,
     // we should retrieve this from the arguments.
     JSValue parameters = jsUndefined();
     auto* internalPromise = globalObject->moduleLoader()->importModule(globalObject, specifier, parameters, sourceOrigin);
-    if (Exception* exception = catchScope.exception())
-        return JSValue::encode(reject(exception));
+    RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(globalObject, scope)));
 
+    scope.release();
     promise->resolve(globalObject, internalPromise);
     return JSValue::encode(promise);
 }

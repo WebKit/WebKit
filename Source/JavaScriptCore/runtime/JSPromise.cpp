@@ -206,4 +206,19 @@ void JSPromise::rejectAsHandled(JSGlobalObject* lexicalGlobalObject, Exception* 
     rejectAsHandled(lexicalGlobalObject, reason->value());
 }
 
+JSPromise* JSPromise::rejectWithCaughtException(JSGlobalObject* globalObject, ThrowScope& scope)
+{
+    VM& vm = globalObject->vm();
+    Exception* exception = scope.exception();
+    ASSERT(exception);
+    if (UNLIKELY(isTerminatedExecutionException(vm, exception))) {
+        scope.release();
+        return this;
+    }
+    scope.clearException();
+    scope.release();
+    reject(globalObject, exception->value());
+    return this;
+}
+
 } // namespace JSC

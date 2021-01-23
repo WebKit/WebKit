@@ -1,3 +1,51 @@
+2021-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        REGRESSION (r271731): Unchecked JS exception under GlobalObject::moduleLoaderFetch
+        https://bugs.webkit.org/show_bug.cgi?id=220868
+
+        Reviewed by Mark Lam.
+
+        Because TerminatedExecutionError needs to be uncaught, CatchScope's semantics does not work well.
+        So, we extend ThrowScope to implement CatchScope's feature, and use ThrowScope etc.
+        We also add JSPromise::rejectWithCaughtException since this pattern is common enough.
+
+        * API/JSAPIGlobalObject.mm:
+        (JSC::JSAPIGlobalObject::moduleLoaderImportModule):
+        (JSC::JSAPIGlobalObject::moduleLoaderFetch):
+        * jsc.cpp:
+        (GlobalObject::moduleLoaderImportModule):
+        (GlobalObject::moduleLoaderFetch):
+        * runtime/Completion.cpp:
+        (JSC::rejectPromise):
+        (JSC::loadAndEvaluateModule):
+        (JSC::loadModule):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSInternalPromise.cpp:
+        (JSC::JSInternalPromise::rejectWithCaughtException):
+        * runtime/JSInternalPromise.h:
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::importModule):
+        (JSC::JSModuleLoader::resolve):
+        (JSC::JSModuleLoader::fetch):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::reject): Deleted.
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::rejectWithCaughtException):
+        * runtime/JSPromise.h:
+        * runtime/ThrowScope.h:
+        (JSC::ThrowScope::clearException):
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::resolve):
+        (JSC::JSWebAssembly::webAssemblyModuleValidateAsync):
+        (JSC::instantiate):
+        (JSC::compileAndInstantiate):
+        (JSC::JSWebAssembly::webAssemblyModuleInstantinateAsync):
+        (JSC::reject): Deleted.
+        (JSC::webAssemblyModuleValidateAsyncInternal): Deleted.
+        (JSC::webAssemblyModuleInstantinateAsyncInternal): Deleted.
+
 2021-01-22  Mark Lam  <mark.lam@apple.com>
 
         Disable Options:useAtMethod because of compatibility issue.
