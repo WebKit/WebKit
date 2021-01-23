@@ -649,6 +649,9 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         if (renderInline.isRubyInline() || renderInline.isQuote() || renderInline.isSVGInline())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
 
+        if (renderInline.requiresLayer())
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons)
+
         auto& style = renderInline.style();
         if (!isSupportedStyle(style))
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons)
