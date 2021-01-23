@@ -1,3 +1,18 @@
+2021-01-23  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Deny mach-lookup to the service 'com.apple.hiservices-xpcservice' in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=220321
+        <rdar://problem/68878470>
+
+        Reviewed by Darin Adler.
+
+        Deny mach-lookup to the service 'com.apple.hiservices-xpcservice' in the WebContent process on macOS,
+        since there are no longer any reports of this service being used.
+
+        Test: fast/sandbox/mac/sandbox-mach-lookup.html
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-01-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         The web process should be killed after failing to decode display list items in the GPU process
