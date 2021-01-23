@@ -168,7 +168,6 @@ void JSPromise::resolve(JSGlobalObject* lexicalGlobalObject, JSValue value)
         callFunction(lexicalGlobalObject, globalObject->resolvePromiseFunction(), this, value);
         RETURN_IF_EXCEPTION(scope, void());
     }
-    vm.deferredWorkTimer->cancelPendingWork(this);
 }
 
 void JSPromise::reject(JSGlobalObject* lexicalGlobalObject, JSValue value)
@@ -183,7 +182,6 @@ void JSPromise::reject(JSGlobalObject* lexicalGlobalObject, JSValue value)
         callFunction(lexicalGlobalObject, globalObject->rejectPromiseFunction(), this, value);
         RETURN_IF_EXCEPTION(scope, void());
     }
-    vm.deferredWorkTimer->cancelPendingWork(this);
 }
 
 void JSPromise::rejectAsHandled(JSGlobalObject* lexicalGlobalObject, JSValue value)

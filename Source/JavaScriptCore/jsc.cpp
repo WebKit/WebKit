@@ -2342,13 +2342,10 @@ JSC_DEFINE_HOST_FUNCTION(functionSetTimeout, (JSGlobalObject* globalObject, Call
 
     // FIXME: We don't look at the timeout parameter because we don't have a schedule work later API.
     vm.deferredWorkTimer->addPendingWork(vm, callback, { });
-    vm.deferredWorkTimer->scheduleWorkSoon(callback, [callback] {
+    vm.deferredWorkTimer->scheduleWorkSoon(callback, [callback](DeferredWorkTimer::Ticket, DeferredWorkTimer::TicketData&&) {
         JSGlobalObject* globalObject = callback->globalObject();
-        VM& vm = globalObject->vm();
-
         MarkedArgumentBuffer args;
         call(globalObject, callback, jsUndefined(), args, "You shouldn't see this...");
-        vm.deferredWorkTimer->cancelPendingWork(callback);
     });
     return JSValue::encode(jsUndefined());
 }

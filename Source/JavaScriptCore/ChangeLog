@@ -1,3 +1,33 @@
+2021-01-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DeferredWorkTimer should clear pending task after running
+        https://bugs.webkit.org/show_bug.cgi?id=220888
+
+        Reviewed by Mark Lam.
+
+        Wasm code assumes that scheduleWorkSoon clears pending dependencies. But DeferredWorkTimer is not clearing it, and instead, FinalizationRegistry etc. is clearing
+        it explicitly. This semantics is problematic. We are putting cancelPendingWork in JSPromise::resolve / JSPromise::reject. But they do not work since this is C++
+        version of them, and JSPromise has JS version of them. And if JS version is called, cancelPendingWork is not called. And we do not want to complicate JSPromise's
+        reject / resolve path since this is super hot, and we should keep them in JS.
+        Instead, we should always clear pending task if it is called.
+
+        * jsc.cpp:
+        (JSC_DEFINE_HOST_FUNCTION):
+        * runtime/DeferredWorkTimer.cpp:
+        (JSC::DeferredWorkTimer::doWork):
+        * runtime/DeferredWorkTimer.h:
+        * runtime/JSFinalizationRegistry.cpp:
+        (JSC::JSFinalizationRegistry::finalizeUnconditionally):
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::resolve): Remove this work-around, and instead, we must call scheduleWorkSoon if addPendingWork is called.
+        (JSC::JSPromise::reject): Ditto.
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::JSWebAssembly::webAssemblyModuleValidateAsync):
+        (JSC::instantiate): Use instance for Ticket instead of promise to disambiguate the ticket scheduling from compileAndInstantiate's one easily.
+        (JSC::compileAndInstantiate): There are path that we do not call scheduleWorkSoon while we call addPendingWork, this is wrong, and JSPromise's workaround is added to
+        alleviate this situation. We should not do that: we must call scheduleWorkSoon at some point if addPendingWork is called.
+        (JSC::JSWebAssembly::webAssemblyModuleInstantinateAsync):
+
 2021-01-23  Xan Lopez  <xan@igalia.com>
 
         [JSC] Allow to build WebAssembly without B3
