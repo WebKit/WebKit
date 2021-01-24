@@ -525,7 +525,8 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             auto& boxGeometry = formattingState.boxGeometry(layoutBox);
             // Inline boxes may or may not be wrapped and have runs on multiple lines (e.g. <span>first line<br>second line<br>third line</span>)
             auto inlineBoxMarginRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox, boxGeometry);
-            auto logicalRect = Rect { LayoutPoint { inlineBoxMarginRect.topLeft() }, LayoutSize { inlineBoxMarginRect.size() } };
+            auto inlineBoxSize = LayoutSize { LayoutUnit::fromFloatCeil(inlineBoxMarginRect.width()), LayoutUnit::fromFloatCeil(inlineBoxMarginRect.height()) };
+            auto logicalRect = Rect { LayoutPoint { inlineBoxMarginRect.topLeft() }, inlineBoxSize };
             logicalRect.moveBy(LayoutPoint { lineBoxLogicalRect.topLeft() });
             if (inlineBoxStartSet.contains(&layoutBox)) {
                 // This inline box showed up first on this line.
