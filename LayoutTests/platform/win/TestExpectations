@@ -4612,3 +4612,8 @@ js/dom/webassembly-memory-shared-fail.html [ Skip ]
 storage/indexeddb/shared-memory-structured-clone.html [ Skip ]
 
 webkit.org/b/220536 fast/text/cjk-multi-codepoint-cluster-vertical.html [ ImageOnlyFailure ]
+
+# These tests time out on Windows
+webkit.org/b/220653 webanimations/combining-transform-animations-with-different-acceleration-capabilities-2.html [ Skip ]
+webkit.org/b/220653 webanimations/combining-transform-animations-with-different-acceleration-capabilities-3.html [ Skip ]
+webkit.org/b/220653 webanimations/combining-transform-animations-with-different-acceleration-capabilities.html [ Skip ]

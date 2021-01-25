@@ -148,4 +148,10 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
     return impact;
 }
 
+void KeyframeEffectStack::stopAcceleratingTransformRelatedProperties(UseAcceleratedAction useAcceleratedAction)
+{
+    for (auto& effect : m_effects)
+        effect->stopAcceleratingTransformRelatedProperties(useAcceleratedAction);
+}
+
 } // namespace WebCore

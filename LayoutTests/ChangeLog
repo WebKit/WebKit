@@ -1,5 +1,125 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271524. rdar://problem/73473371
+
+    Reversed transform animation not applied alongside other transform animations
+    https://bugs.webkit.org/show_bug.cgi?id=218655
+    <rdar://problem/71116284>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Tests: webanimations/combining-transform-animations-with-different-acceleration-capabilities-2.html
+           webanimations/combining-transform-animations-with-different-acceleration-capabilities-3.html
+           webanimations/combining-transform-animations-with-different-acceleration-capabilities.html
+    
+    While, in theory, animations for a transform-related CSS property (translate, rotate, scale and transform)
+    can be accelerated, there are various reasons why it might not, in fact, run accelerated.
+    
+    One example is that the timing function is not something we can translate in terms Core Animation can
+    understand, such as the steps() timing function. In this case, the KeyframeEffect itself is aware of
+    the limitation and the method KeyframeEffect::canBeAccelerated() returns false.
+    
+    Another example is that the playback rate of the animation is not 1, which we currently don't support for
+    Core Animation animations (see bug 211839). In this case, GraphicsLayerCA is where the impossibility to
+    run an animation accelerated is determined.
+    
+    While we support running transform-related animations with or without acceleration, one thing we cannot
+    support is, for the same element, running some transform-related animations with acceleration, and some
+    without.
+    
+    Thus, regardless of where we determine that a transform-related animation cannot be accelerated, we need
+    to send this information up to the KeyframeEffectStack in which this animation's effect belongs to make
+    sure that any other transform-related animation that may already be running accelerated no longer does
+    and continues running without acceleration.
+    
+    There are two locations where we determine that a transform-related animation cannot be accelerated:
+    
+        1. in DocumentTimeline::applyPendingAcceleratedAnimations() under which we start, update or stop
+           accelerated animations that have been invalidated since the last page rendering,
+        2. in KeyframeEffect::updateAcceleratedActions() which is called for each page rendering, including
+           animations that cannot be accelerated.
+    
+    In the first case, we catch situations where an animation that could have been accelerated but failed
+    to be started due to the internal logic of GraphicsLayerCA. We use the new KeyframeEffect method
+    applyPendingAcceleratedActions() return value to determine this, and for each effect where the result
+    indicates that a transform-related animation could not be accelerated, we add the KeyframeEffectStack
+    to which it belongs and, once we're done with updating all effects, call the new
+    stopAcceleratingTransformRelatedProperties() method on the keyframe effect stack.
+    
+    In the second case, we catch situations where an animation is known to not be able to run accelerated
+    even without involving GraphicsLayerCA. We check whether the animation targets a transform-related
+    property and if it is active, and if so call stopAcceleratingTransformRelatedProperties()
+    on the keyframe effect stack there as well.
+    
+    When KeyframeEffectStack::stopAcceleratingTransformRelatedProperties() is called, we go
+    through all the registered effects and call stopAcceleratingTransformRelatedProperties(). This new
+    KeyframeEffect method will either add a pending accelerated action to stop the accelerated animation,
+    or if we're currently apply accelerated actions (ie. during DocumentTimeline::applyPendingAcceleratedAnimations()),
+    we stop the accelerated animation right away.
+    
+    In both cases we know not to try running this animation again with acceleration by setting m_runningAccelerated
+    to RunningAccelerated::No.
+    
+    * animation/DocumentTimeline.cpp:
+    (WebCore::DocumentTimeline::applyPendingAcceleratedAnimations):
+    * animation/KeyframeEffect.cpp:
+    (WebCore::KeyframeEffect::isTargetingTransformRelatedProperty const):
+    (WebCore::KeyframeEffect::isRunningAcceleratedTransformRelatedAnimation const):
+    (WebCore::KeyframeEffect::updateAcceleratedActions):
+    (WebCore::KeyframeEffect::applyPendingAcceleratedActions):
+    (WebCore::KeyframeEffect::stopAcceleratingTransformRelatedProperties):
+    * animation/KeyframeEffect.h:
+    * animation/KeyframeEffectStack.cpp:
+    (WebCore::KeyframeEffectStack::stopAcceleratingTransformRelatedProperties):
+    * animation/KeyframeEffectStack.h:
+    * animation/WebAnimation.cpp:
+    (WebCore::WebAnimation::applyPendingAcceleratedActions): Deleted.
+    * animation/WebAnimation.h:
+    * animation/WebAnimationTypes.h:
+    
+    LayoutTests:
+    
+    Add new tests that start a transform-related animation that runs accelerated, then add another
+    transform-related animation that either initially or eventually is not accelerated. In all cases,
+    we check that once the second animation is no longer accelerated that the first animation is also
+    no longer accelerated.
+    
+    * platform/win/TestExpectations:
+    * webanimations/combining-transform-animations-with-different-acceleration-capabilities-2-expected.txt: Added.
+    * webanimations/combining-transform-animations-with-different-acceleration-capabilities-2.html: Added.
+    * webanimations/combining-transform-animations-with-different-acceleration-capabilities-3-expected.txt: Added.
+    * webanimations/combining-transform-animations-with-different-acceleration-capabilities-3.html: Added.
+    * webanimations/combining-transform-animations-with-different-acceleration-capabilities-expected.txt: Added.
+    * webanimations/combining-transform-animations-with-different-acceleration-capabilities.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271524 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-15  Antoine Quint  <graouts@webkit.org>
+
+            Reversed transform animation not applied alongside other transform animations
+            https://bugs.webkit.org/show_bug.cgi?id=218655
+            <rdar://problem/71116284>
+
+            Reviewed by Simon Fraser.
+
+            Add new tests that start a transform-related animation that runs accelerated, then add another
+            transform-related animation that either initially or eventually is not accelerated. In all cases,
+            we check that once the second animation is no longer accelerated that the first animation is also
+            no longer accelerated.
+
+            * platform/win/TestExpectations:
+            * webanimations/combining-transform-animations-with-different-acceleration-capabilities-2-expected.txt: Added.
+            * webanimations/combining-transform-animations-with-different-acceleration-capabilities-2.html: Added.
+            * webanimations/combining-transform-animations-with-different-acceleration-capabilities-3-expected.txt: Added.
+            * webanimations/combining-transform-animations-with-different-acceleration-capabilities-3.html: Added.
+            * webanimations/combining-transform-animations-with-different-acceleration-capabilities-expected.txt: Added.
+            * webanimations/combining-transform-animations-with-different-acceleration-capabilities.html: Added.
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271446. rdar://problem/73469344
 
     REGRESSION (r257839): Broken focus when 'display' changes in an attribute selector

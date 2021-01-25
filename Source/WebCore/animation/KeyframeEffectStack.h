@@ -53,6 +53,8 @@ public:
     OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, const RenderStyle& previousLastStyleChangeEventStyle);
     bool hasEffectWithImplicitKeyframes() const;
 
+    void stopAcceleratingTransformRelatedProperties(UseAcceleratedAction);
+
 private:
     void ensureEffectsAreSorted();
 
