@@ -80,6 +80,12 @@
     testComputed("background-color", "color(lab 0% 0 0 / -10%)", "lab(0% 0 0 / 0)");
     testComputed("background-color", "color(lab 0% 0 0 / 110%)", "lab(0% 0 0)");
     testComputed("background-color", "color(lab 0% 0 0 / 300%)", "lab(0% 0 0)");
+    testComputed("background-color", "color(lab 50% -200)", "lab(50% -200 0)");
+    testComputed("background-color", "color(lab 50%)", "lab(50% 0 0)");
+    testComputed("background-color", "color(lab)", "lab(0% 0 0)");
+    testComputed("background-color", "color(lab 50% -200 / 0.5)", "lab(50% -200 0 / 0.5)");
+    testComputed("background-color", "color(lab 50% / 0.5)", "lab(50% 0 0 / 0.5)");
+    testComputed("background-color", "color(lab / 0.5)", "lab(0% 0 0 / 0.5)");
 
     debug('');
     debug('Test invalid values');

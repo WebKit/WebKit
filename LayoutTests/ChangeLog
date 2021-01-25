@@ -1,3 +1,17 @@
+2021-01-25  Sam Weinig  <weinig@apple.com>
+
+        Support percentages when parsing color(srgb ...) and color(display-p3 ...) per-spec
+        https://bugs.webkit.org/show_bug.cgi?id=220940
+
+        Reviewed by Simon Fraser.
+
+        Add support for using percentages when using the color(srgb ) and color(display-p3 ) syntax. Also
+        fix color(lab ) to allow elliding parameters and defaulting them to 0 as per-spec.
+
+        * TestExpectations:
+        * fast/css/parsing-lab-colors-expected.txt:
+        * fast/css/parsing-lab-colors.html:
+
 2021-01-25  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Obscured elements should not be focusable using the accessory bar

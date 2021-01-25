@@ -880,11 +880,13 @@ static Color parseColorFunctionForSRGBOrDisplayP3Parameters(CSSParserTokenRange&
     ASSERT(args.peek().id() == CSSValueSRGB || args.peek().id() == CSSValueDisplayP3);
     consumeIdentRaw(args);
 
-    double colorChannels[3] = { 0, 0, 0 };
+    double channels[3] = { 0, 0, 0 };
     for (int i = 0; i < 3; ++i) {
         double value;
         if (consumeNumberRaw(args, value))
-            colorChannels[i] = value;
+            channels[i] = value;
+        else if (auto percent = consumePercentRaw(args))
+            channels[i] = *percent / 100.0;
         else
             break;
     }
@@ -893,7 +895,7 @@ static Color parseColorFunctionForSRGBOrDisplayP3Parameters(CSSParserTokenRange&
     if (!alpha)
         return { };
 
-    return ColorType { clampTo<float>(colorChannels[0], 0.0, 1.0), clampTo<float>(colorChannels[1], 0.0, 1.0), clampTo<float>(colorChannels[2], 0.0, 1.0), *alpha };
+    return ColorType { clampTo<float>(channels[0], 0.0, 1.0), clampTo<float>(channels[1], 0.0, 1.0), clampTo<float>(channels[2], 0.0, 1.0), *alpha };
 }
 
 static Color parseColorFunctionForLabParameters(CSSParserTokenRange& args)
@@ -901,23 +903,29 @@ static Color parseColorFunctionForLabParameters(CSSParserTokenRange& args)
     ASSERT(args.peek().id() == CSSValueLab);
     consumeIdentRaw(args);
 
-    auto lightness = consumePercentRaw(args, ValueRangeAll);
-    if (!lightness)
-        return { };
+    double channels[3] = { 0, 0, 0 };
+    [&] {
+        auto lightness = consumePercentRaw(args, ValueRangeAll);
+        if (!lightness)
+            return;
+        channels[0] = *lightness;
 
-    double aValue;
-    if (!consumeNumberRaw(args, aValue, ValueRangeAll))
-        return { };
+        double aValue;
+        if (!consumeNumberRaw(args, aValue, ValueRangeAll))
+            return;
+        channels[1] = aValue;
 
-    double bValue;
-    if (!consumeNumberRaw(args, bValue, ValueRangeAll))
-        return { };
+        double bValue;
+        if (!consumeNumberRaw(args, bValue, ValueRangeAll))
+            return;
+        channels[2] = bValue;
+    }();
 
     auto alpha = parseOptionalAlpha(args);
     if (!alpha)
         return { };
 
-    return Lab<float> { static_cast<float>(*lightness), static_cast<float>(aValue), static_cast<float>(bValue), *alpha };
+    return Lab<float> { static_cast<float>(channels[0]), static_cast<float>(channels[1]), static_cast<float>(channels[2]), *alpha };
 }
 
 static Color parseColorFunctionParameters(CSSParserTokenRange& range)

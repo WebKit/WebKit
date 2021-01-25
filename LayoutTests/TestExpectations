@@ -4576,17 +4576,15 @@ webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/t
 webkit.org/b/220325 http/wpt/css/css-highlight-api/highlight-text-cascade.html [ ImageOnlyFailure ]
 
 # Unsupported css color() variants
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-002.html [ ImageOnlyFailure ]
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-003.html [ ImageOnlyFailure ]
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-004.html [ ImageOnlyFailure ]
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-006.html [ ImageOnlyFailure ]
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-007.html [ ImageOnlyFailure ]
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-008.html [ ImageOnlyFailure ]
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-009.html [ ImageOnlyFailure ]
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-010.html [ ImageOnlyFailure ]
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-011.html [ ImageOnlyFailure ]
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-012.html [ ImageOnlyFailure ]
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-014.html [ ImageOnlyFailure ]
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-015.html [ ImageOnlyFailure ]
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-016.html [ ImageOnlyFailure ]
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-017.html [ ImageOnlyFailure ]
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-003.html [ ImageOnlyFailure ] # Invalid test, no colorspace specified
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-004.html [ ImageOnlyFailure ] # Invalid test, no colorspace specified
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-007.html [ ImageOnlyFailure ] # Requires a98-rgb support
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-008.html [ ImageOnlyFailure ] # Requires a98-rgb support
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-009.html [ ImageOnlyFailure ] # Requires prophoto-rgb support
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-010.html [ ImageOnlyFailure ] # Requires prophoto-rgb support
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-011.html [ ImageOnlyFailure ] # Requires rec2020 support
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-012.html [ ImageOnlyFailure ] # Requires rec2020 support
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-014.html [ ImageOnlyFailure ] # Requires fallback (at parse time) support
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-015.html [ ImageOnlyFailure ] # Requires fallback (at parse time) support (unclear if this makes sense)
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-016.html [ ImageOnlyFailure ] # Requires xyz support
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-017.html [ ImageOnlyFailure ] # Requires xyz support
