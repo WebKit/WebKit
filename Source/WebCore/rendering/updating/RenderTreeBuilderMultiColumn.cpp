@@ -221,7 +221,18 @@ void RenderTreeBuilder::MultiColumn::destroyFragmentedFlow(RenderBlockFlow& flow
         m_builder.destroy(*columnSet);
 
     flow.clearMultiColumnFlow();
-    flow.setChildrenInline(true);
+    auto hasInitialBlockChild = [&] {
+        if (!flow.isFieldset())
+            return false;
+        // We don't move the legend under the multicolumn flow (see MultiColumn::createFragmentedFlow), so when the multicolumn context is destroyed
+        // the fieldset already has a legend block level box.
+        for (auto& box : childrenOfType<RenderBox>(flow)) {
+            if (box.isLegend())
+                return true;
+        }
+        return false;
+    }();
+    flow.setChildrenInline(!hasInitialBlockChild);
     m_builder.moveAllChildren(multiColumnFlow, flow, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
     m_builder.destroy(multiColumnFlow);
     for (auto& parentAndSpanner : parentAndSpannerList)
