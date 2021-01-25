@@ -1,5 +1,43 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271536. rdar://problem/73477501
+
+    AX: increment/decrement synthetic arrow events don't work in ARIA slider examples
+    https://bugs.webkit.org/show_bug.cgi?id=220626
+    <rdar://problem/73228924>
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    keyCode is still expected to be filled in with standard codes for arrow keys.
+    
+    Updated test: accessibility/keyevents-posted-for-increment-actions.html
+    
+    * accessibility/AccessibilityNodeObject.cpp:
+    (WebCore::AccessibilityNodeObject::postKeyboardKeysForValueChange):
+    
+    LayoutTests:
+    
+    * accessibility/keyevents-posted-for-increment-actions-expected.txt:
+    * accessibility/keyevents-posted-for-increment-actions.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271536 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-15  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: increment/decrement synthetic arrow events don't work in ARIA slider examples
+            https://bugs.webkit.org/show_bug.cgi?id=220626
+            <rdar://problem/73228924>
+
+            Reviewed by Zalan Bujtas.
+
+            * accessibility/keyevents-posted-for-increment-actions-expected.txt:
+            * accessibility/keyevents-posted-for-increment-actions.html:
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271516. rdar://problem/73477422
 
     [LFC][Integration] REGRESSION (r270123) facebook.com birthday dropdown do not work when creating new account

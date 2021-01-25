@@ -1134,8 +1134,10 @@ bool AccessibilityNodeObject::postKeyboardKeysForValueChange(bool increase)
     bool vertical = orientation() == AccessibilityOrientation::Vertical;
     bool isLTR = page()->userInterfaceLayoutDirection() == UserInterfaceLayoutDirection::LTR;
     
-    keyInit.key = increase ? vertical ? "ArrowUp"_s : isLTR ? "ArrowRight"_s : "ArrowLeft"_s : vertical ? "ArrowDown"_s : isLTR ? "ArrowLeft"_s : "ArrowRight"_s;
-    keyInit.keyIdentifier = increase ? vertical ? "up"_s : isLTR ? "right"_s : "left"_s : vertical ? "down"_s : isLTR ? "left"_s : "right"_s;
+    typedef enum { left = 37, up = 38, right = 39, down = 40 } keyCode;
+    keyInit.key = increase ? (vertical ? "ArrowUp"_s : (isLTR ? "ArrowRight"_s : "ArrowLeft"_s)) : (vertical ? "ArrowDown"_s : (isLTR ? "ArrowLeft"_s : "ArrowRight"_s));
+    keyInit.keyCode = increase ? (vertical ? keyCode::up : (isLTR ? keyCode::right : keyCode::left)) : (vertical ? keyCode::down : (isLTR ? keyCode::left : keyCode::right));
+    keyInit.keyIdentifier = increase ? (vertical ? "up"_s : (isLTR ? "right"_s : "left"_s)) : (vertical ? "down"_s : (isLTR ? "left"_s : "right"_s));
 
     return dispatchSimulatedKeyboardUpDownEvent(this, keyInit);
 }
