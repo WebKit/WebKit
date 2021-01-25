@@ -1,3 +1,16 @@
+2021-01-25  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        DumpRenderTree behaves differently to WebKitTestRunner wrt integrated/discrete GPU behavior
+        https://bugs.webkit.org/show_bug.cgi?id=220852
+
+        Reviewed by Alexey Proskuryakov.
+
+        Mark DumpRenderTree as supporting graphics switching. This lets
+        --prefer-integrated-gpu work as intended and compatible with WebKitTestRunner.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/Info.plist: Added.
+
 2021-01-25  Chris Fleizach  <cfleizach@apple.com>
 
         AX: iOS: VO: Web: Column Names Not Announced
