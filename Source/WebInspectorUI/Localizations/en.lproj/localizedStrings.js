@@ -547,8 +547,6 @@ localizedStrings["Element overlaps other compositing element"] = "Element overla
 localizedStrings["Elements"] = "Elements";
 /* Name of Elements Tab */
 localizedStrings["Elements Tab Name"] = "Elements";
-/* Category label for experimental settings pertaining to the Elements tab */
-localizedStrings["Elements Tab: @ Experimental Settings"] = "Elements Tab:";
 localizedStrings["Emulate User Gesture"] = "Emulate User Gesture";
 localizedStrings["Enable Audit"] = "Enable Audit";
 localizedStrings["Enable Breakpoint"] = "Enable Breakpoint";
@@ -1291,7 +1289,6 @@ localizedStrings["Show All Nodes (%d More)"] = "Show All Nodes (%d More)";
 localizedStrings["Show Console"] = "Show Console";
 localizedStrings["Show Console tab"] = "Show Console tab";
 localizedStrings["Show Elements"] = "Show Elements";
-localizedStrings["Show Font details sidebar panel"] = "Show Font details sidebar panel";
 localizedStrings["Show Path"] = "Show Path";
 localizedStrings["Show Remaining (%d)"] = "Show Remaining (%d)";
 localizedStrings["Show Scope Chain on pause"] = "Show Scope Chain on pause";

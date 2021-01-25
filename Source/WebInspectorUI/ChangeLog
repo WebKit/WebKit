@@ -1,3 +1,35 @@
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r271410. rdar://problem/73478423
+
+    Web Inspector: Remove experimental setting and enable Font details sidebar
+    https://bugs.webkit.org/show_bug.cgi?id=220438
+    
+    Reviewed by Devin Rousso.
+    
+    * Localizations/en.lproj/localizedStrings.js:
+    * UserInterface/Base/Setting.js:
+    * UserInterface/Views/ElementsTabContentView.js:
+    (WI.ElementsTabContentView):
+    * UserInterface/Views/SettingsTabContentView.js:
+    (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271410 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-12  Patrick Angle  <pangle@apple.com>
+
+            Web Inspector: Remove experimental setting and enable Font details sidebar
+            https://bugs.webkit.org/show_bug.cgi?id=220438
+
+            Reviewed by Devin Rousso.
+
+            * Localizations/en.lproj/localizedStrings.js:
+            * UserInterface/Base/Setting.js:
+            * UserInterface/Views/ElementsTabContentView.js:
+            (WI.ElementsTabContentView):
+            * UserInterface/Views/SettingsTabContentView.js:
+            (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
 2021-01-08  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Font Details sidebar - Improve visibility of values by emphasizing them/de-emphasizing range information
