@@ -1,3 +1,49 @@
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r271367. rdar://problem/73469641
+
+    REGRESSION (r258321): CSS rules using :first-of-type are applied to any/all siblings in a group under certain circumstances
+    https://bugs.webkit.org/show_bug.cgi?id=218256
+    <rdar://problem/70749584>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    More accurate invalidation for :hover resulted in smaller style updates that revealed a bug in the way we
+    mark style non-shareable. We reset style relation bits when resolving the parent but may fail to set them again if we
+    don't re-resolve all children.
+    
+    Test case by Eben Packwood.
+    
+    Test: fast/css/positional-selector-style-sharing.html
+    
+    * style/StyleRelations.cpp:
+    (WebCore::Style::commitRelationsToRenderStyle):
+    
+    Just mark all styles affected by relations non-shareable. This is achieved via various bit tests but there
+    is no reason not to set the simplest no-sharing bit. Since this forces real style resolution the parent
+    bits will also get properly reset.
+    
+    LayoutTests:
+    
+    * fast/css/positional-selector-style-sharing-expected.html: Added.
+    * fast/css/positional-selector-style-sharing.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271367 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-11  Antti Koivisto  <antti@apple.com>
+
+            REGRESSION (r258321): CSS rules using :first-of-type are applied to any/all siblings in a group under certain circumstances
+            https://bugs.webkit.org/show_bug.cgi?id=218256
+            <rdar://problem/70749584>
+
+            Reviewed by Simon Fraser.
+
+            * fast/css/positional-selector-style-sharing-expected.html: Added.
+            * fast/css/positional-selector-style-sharing.html: Added.
+
 2021-01-10  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Factor marked text style collection code out of InlineTextBox
