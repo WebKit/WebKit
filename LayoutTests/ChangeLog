@@ -1,3 +1,13 @@
+2021-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Null Ptr Deref @ WebCore::ReplaceSelectionCommand::doApply
+        https://bugs.webkit.org/show_bug.cgi?id=218493
+
+        Reviewed by Youenn Fablet.
+
+        * editing/execCommand/insert-image-replace-selection-crash-expected.txt: Added.
+        * editing/execCommand/insert-image-replace-selection-crash.html: Added.
+
 2021-01-24  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] theverge.com - rubber band scrolling at the top of the page causes an abrupt jump

@@ -528,7 +528,6 @@ static bool fragmentNeedsColorTransformed(ReplacementFragment& fragment, const P
     // This applies to Mail and Notes when pasting from Xcode. <rdar://problem/40529867>
 
     RefPtr<Element> editableRoot = insertionPos.rootEditableElement();
-    ASSERT(editableRoot);
     if (!editableRoot)
         return false;
 
@@ -1205,9 +1204,11 @@ void ReplaceSelectionCommand::doApply()
     // our style spans and for positions inside list items
     // since insertAsListItems already does the right thing.
     if (!m_matchStyle && !enclosingList(insertionPos.containerNode())) {
-        if (insertionPos.containerNode()->isTextNode() && insertionPos.offsetInContainerNode() && !insertionPos.atLastEditingPositionForNode()) {
-            splitTextNode(*insertionPos.containerText(), insertionPos.offsetInContainerNode());
-            insertionPos = firstPositionInNode(insertionPos.containerNode());
+        if (auto* containerNode = insertionPos.containerNode()) {
+            if (containerNode->isTextNode() && insertionPos.offsetInContainerNode() && !insertionPos.atLastEditingPositionForNode()) {
+                splitTextNode(*insertionPos.containerText(), insertionPos.offsetInContainerNode());
+                insertionPos = firstPositionInNode(insertionPos.containerNode());
+            }
         }
 
         if (RefPtr<Node> nodeToSplitTo = nodeToSplitToAvoidPastingIntoInlineNodesWithStyle(insertionPos)) {
@@ -1247,7 +1248,7 @@ void ReplaceSelectionCommand::doApply()
     && blockStart && blockStart->renderer()->isListItem();
     if (isInsertingIntoList)
         refNode = insertAsListItems(downcast<HTMLElement>(*refNode), blockStart, insertionPos, insertedNodes);
-    else {
+    else if (isEditablePosition(insertionPos)) {
         insertNodeAt(*refNode, insertionPos);
         insertedNodes.respondToNodeInsertion(refNode.get());
     }
