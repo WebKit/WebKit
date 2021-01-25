@@ -102,6 +102,9 @@ const char* SpeechRecognition::activeDOMObjectName() const
 void SpeechRecognition::stop()
 {
     abortRecognition();
+
+    if (!m_connection)
+        return;
     m_connection->unregisterClient(*this);
 
     auto& document = downcast<Document>(*scriptExecutionContext());
