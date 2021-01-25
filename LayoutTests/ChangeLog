@@ -1,5 +1,60 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271419. rdar://problem/73469613
+
+    Make fast/text/international/complex-character-based-fallback.html more robust by migrating it to be a reftest instead of a DRT test
+    https://bugs.webkit.org/show_bug.cgi?id=220488
+    <rdar://problem/70556068>
+    
+    Reviewed by Darin Adler.
+    
+    Reference tests are more robust than render-tree dump tests.
+    
+    * fast/text/international/complex-character-based-fallback-expected.html: Added.
+    * fast/text/international/complex-character-based-fallback.html:
+    * platform/gtk/fast/text/international/complex-character-based-fallback-expected.png: Removed.
+    * platform/gtk/fast/text/international/complex-character-based-fallback-expected.txt: Removed.
+    * platform/ios/TestExpectations:
+    * platform/ios/fast/text/international/complex-character-based-fallback-expected.png: Removed.
+    * platform/ios/fast/text/international/complex-character-based-fallback-expected.txt: Removed.
+    * platform/mac/TestExpectations:
+    * platform/mac/fast/text/international/complex-character-based-fallback-expected.png: Removed.
+    * platform/mac/fast/text/international/complex-character-based-fallback-expected.txt: Removed.
+    * platform/win/fast/text/international/complex-character-based-fallback-expected.png: Removed.
+    * platform/win/fast/text/international/complex-character-based-fallback-expected.txt: Removed.
+    * platform/wincairo/fast/text/international/complex-character-based-fallback-expected.txt: Removed.
+    * platform/wpe/fast/text/international/complex-character-based-fallback-expected.txt: Removed.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271419 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Make fast/text/international/complex-character-based-fallback.html more robust by migrating it to be a reftest instead of a DRT test
+            https://bugs.webkit.org/show_bug.cgi?id=220488
+            <rdar://problem/70556068>
+
+            Reviewed by Darin Adler.
+
+            Reference tests are more robust than render-tree dump tests.
+
+            * fast/text/international/complex-character-based-fallback-expected.html: Added.
+            * fast/text/international/complex-character-based-fallback.html:
+            * platform/gtk/fast/text/international/complex-character-based-fallback-expected.png: Removed.
+            * platform/gtk/fast/text/international/complex-character-based-fallback-expected.txt: Removed.
+            * platform/ios/TestExpectations:
+            * platform/ios/fast/text/international/complex-character-based-fallback-expected.png: Removed.
+            * platform/ios/fast/text/international/complex-character-based-fallback-expected.txt: Removed.
+            * platform/mac/TestExpectations:
+            * platform/mac/fast/text/international/complex-character-based-fallback-expected.png: Removed.
+            * platform/mac/fast/text/international/complex-character-based-fallback-expected.txt: Removed.
+            * platform/win/fast/text/international/complex-character-based-fallback-expected.png: Removed.
+            * platform/win/fast/text/international/complex-character-based-fallback-expected.txt: Removed.
+            * platform/wincairo/fast/text/international/complex-character-based-fallback-expected.txt: Removed.
+            * platform/wpe/fast/text/international/complex-character-based-fallback-expected.txt: Removed.
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271386. rdar://problem/73426229
 
     Double tap to select does not work if the page clears selections on tap, like grammarly.com does
