@@ -1,5 +1,48 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271618. rdar://problem/73477509
+
+    REGRESSION(r266695) Range control with custom track width sized incorrectly
+    https://bugs.webkit.org/show_bug.cgi?id=220608
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    Test: fast/forms/range/input-range-sizing-fixed-size.html
+    
+    In r266695 we modified the way min-{width|height}: auto was computed for flexbox elements. That broke the sizing
+    of input range controls that were working under the assumption that min-{width|height} was 0. We have to force it
+    in the UA CSS in order to keep the same behaviour.
+    
+    * css/html.css:
+    (input[type="range"]::-webkit-slider-container, input[type="range"]::-webkit-media-slider-container): force
+    min-width: 0.
+    
+    LayoutTests:
+    
+    New test case to verify that input range controls are sized correctly with specified widths.
+    
+    * fast/forms/range/input-range-sizing-fixed-size-expected.html: Added.
+    * fast/forms/range/input-range-sizing-fixed-size.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271618 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-19  Sergio Villar Senin  <svillar@igalia.com>
+
+            REGRESSION(r266695) Range control with custom track width sized incorrectly
+            https://bugs.webkit.org/show_bug.cgi?id=220608
+
+            Reviewed by Zalan Bujtas.
+
+            New test case to verify that input range controls are sized correctly with specified widths.
+
+            * fast/forms/range/input-range-sizing-fixed-size-expected.html: Added.
+            * fast/forms/range/input-range-sizing-fixed-size.html: Added.
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271587. rdar://problem/73477379
 
     Fix for LayoutTests/accessibility/canvas-fallback-content.html in isolated tree mode.
