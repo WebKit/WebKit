@@ -1,3 +1,87 @@
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r271405. rdar://problem/73466993
+
+    [Cocoa] Support key rotation with HLS-backed encrypted media streams
+    https://bugs.webkit.org/show_bug.cgi?id=220493
+    <rdar://68227709>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Support key rotation through AVContentKeySession by explicitly handling unexpected key requests
+    submitted through the new -contentKeySession:didProvideContentKeyRequests:forInitializationData:.
+    Rotation was previously handled in the delegate method -contentKeySession:didProvideContentKeyRequest,
+    but that method is no longer called after the replacement delegate method was implemented, and
+    that method never handled "skd://" style initialization data.
+    
+    Update the helper method, initTypeForRequest(), to detect "skd://" identifiers and correctly identify
+    those sessions as "skd".
+    
+    Add a new helper method, initializationDataForRequest(), which will package the AVContentKeySession's
+    identifier as initialization data.
+    
+    Drive-by Fix: Fixing this bug causes the default key group to update it's identifier, which causes an assert
+    when the group in question isn't any of those associated with an existing MediaKeySession, so handle that case
+    explicitly.
+    
+    Drive-by Fix 2: Sometimes, when GPUP is enabled for media, we will get spurious mediaPlayerEngineUpdated()
+    calls which cause cdmInstanceAttached() to be called multiple times for the same player, triggering an ASSERT.
+    If called twice with the same CDM, just return early rather than ASSERTing.
+    
+    * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.h:
+    * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+    (WebCore::initTypeForRequest):
+    (WebCore::initializationDataForRequest):
+    (WebCore::CDMInstanceFairPlayStreamingAVFObjC::takeUnexpectedKeyRequestForInitializationData):
+    (WebCore::CDMInstanceFairPlayStreamingAVFObjC::didProvideRequest):
+    (WebCore::CDMInstanceFairPlayStreamingAVFObjC::didProvideRequests):
+    (WebCore::CDMInstanceFairPlayStreamingAVFObjC::handleUnexpectedRequests):
+    (WebCore::CDMInstanceFairPlayStreamingAVFObjC::groupSessionIdentifierChanged):
+    * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+    (WebCore::MediaSourcePrivateAVFObjC::cdmInstanceAttached):
+    
+    Source/WebCore/PAL:
+    
+    * pal/spi/cocoa/AVFoundationSPI.h:
+    
+    Source/WebKit:
+    
+    Support handling the "unexpectedInitializationDataReceived()" client callback from within the GPUP.
+    
+    * DerivedSources-input.xcfilelist:
+    * DerivedSources-output.xcfilelist:
+    * DerivedSources.make:
+    * GPUProcess/media/RemoteCDMInstanceProxy.cpp:
+    (WebKit::RemoteCDMInstanceProxy::create):
+    (WebKit::RemoteCDMInstanceProxy::RemoteCDMInstanceProxy):
+    (WebKit::RemoteCDMInstanceProxy::~RemoteCDMInstanceProxy):
+    (WebKit::RemoteCDMInstanceProxy::unrequestedInitializationDataReceived):
+    * GPUProcess/media/RemoteCDMInstanceProxy.h:
+    * GPUProcess/media/RemoteCDMProxy.cpp:
+    (WebKit::RemoteCDMProxy::createInstance):
+    * WebKit.xcodeproj/project.pbxproj:
+    * WebProcess/GPU/media/RemoteCDMInstance.cpp:
+    (WebKit::RemoteCDMInstance::RemoteCDMInstance):
+    (WebKit::RemoteCDMInstance::~RemoteCDMInstance):
+    (WebKit::RemoteCDMInstance::unrequestedInitializationDataReceived):
+    * WebProcess/GPU/media/RemoteCDMInstance.h:
+    * WebProcess/GPU/media/RemoteCDMInstance.messages.in: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271405 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-12  Jer Noble  <jer.noble@apple.com>
+
+            [Cocoa] Support key rotation with HLS-backed encrypted media streams
+            https://bugs.webkit.org/show_bug.cgi?id=220493
+            <rdar://68227709>
+
+            Reviewed by Eric Carlson.
+
+            * pal/spi/cocoa/AVFoundationSPI.h:
+
 2021-01-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r271331.

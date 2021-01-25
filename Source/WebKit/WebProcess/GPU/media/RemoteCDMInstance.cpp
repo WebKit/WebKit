@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 
 #include "GPUProcessConnection.h"
+#include "RemoteCDMInstanceMessages.h"
 #include "RemoteCDMInstanceProxyMessages.h"
 #include "RemoteCDMInstanceSession.h"
 #include "RemoteCDMInstanceSessionIdentifier.h"
@@ -51,6 +52,20 @@ RemoteCDMInstance::RemoteCDMInstance(WeakPtr<RemoteCDMFactory>&& factory, Remote
     , m_identifier(WTFMove(identifier))
     , m_configuration(WTFMove(configuration))
 {
+    if (m_factory)
+        m_factory->gpuProcessConnection().messageReceiverMap().addMessageReceiver(Messages::RemoteCDMInstance::messageReceiverName(), m_identifier.toUInt64(), *this);
+}
+
+RemoteCDMInstance::~RemoteCDMInstance()
+{
+    if (m_factory)
+        m_factory->gpuProcessConnection().messageReceiverMap().removeMessageReceiver(Messages::RemoteCDMInstance::messageReceiverName(), m_identifier.toUInt64());
+}
+
+void RemoteCDMInstance::unrequestedInitializationDataReceived(const String& type, IPC::SharedBufferCopy&& initData)
+{
+    if (m_client && initData.buffer())
+        m_client->unrequestedInitializationDataReceived(type, initData.buffer().releaseNonNull());
 }
 
 void RemoteCDMInstance::initializeWithConfiguration(const WebCore::CDMKeySystemConfiguration& configuration, AllowDistinctiveIdentifiers distinctiveIdentifiers, AllowPersistentState persistentState, SuccessCallback&& callback)

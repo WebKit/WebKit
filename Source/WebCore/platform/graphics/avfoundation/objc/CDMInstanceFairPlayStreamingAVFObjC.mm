@@ -196,6 +196,9 @@ static WTFLogChannel& logChannel() { return LogEME; }
 
 static AtomString initTypeForRequest(AVContentKeyRequest* request)
 {
+    if ([request.identifier isKindOfClass:NSString.class] && [request.identifier hasPrefix:@"skd://"])
+        return CDMPrivateFairPlayStreaming::skdName();
+
     if (![request respondsToSelector:@selector(options)]) {
         // AVContentKeyRequest.options was added in 10.14.4; if we are running on a previous version
         // we don't have support for 'cenc' anyway, so just assume 'sinf'.
@@ -213,6 +216,17 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     }
 
     return AtomString(nsInitType);
+}
+
+static Ref<SharedBuffer> initializationDataForRequest(AVContentKeyRequest* request)
+{
+    if (!request)
+        return SharedBuffer::create();
+
+    if (initTypeForRequest(request) == CDMPrivateFairPlayStreaming::skdName())
+        return SharedBuffer::create([request.identifier dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES]);
+
+    return SharedBuffer::create(request.initializationData);
 }
 
 CDMInstanceFairPlayStreamingAVFObjC::CDMInstanceFairPlayStreamingAVFObjC() = default;
@@ -257,8 +271,8 @@ RetainPtr<AVContentKeyRequest> CDMInstanceFairPlayStreamingAVFObjC::takeUnexpect
     for (auto requestIter = m_unexpectedKeyRequests.begin(); requestIter != m_unexpectedKeyRequests.end(); ++requestIter) {
         auto& request = *requestIter;
         auto requestType = initTypeForRequest(request.get());
-        auto* requestInitData  = request.get().initializationData;
-        if (initDataType != requestType || initData != SharedBuffer::create(requestInitData))
+        auto requestInitData = initializationDataForRequest(request.get());
+        if (initDataType != requestType || initData != requestInitData)
             continue;
 
         return m_unexpectedKeyRequests.take(requestIter);
@@ -444,10 +458,7 @@ void CDMInstanceFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyRequest 
 
     DEBUG_LOG_IF_POSSIBLE(LOGIDENTIFIER, "- Unexpected request");
 
-    m_unexpectedKeyRequests.add(request);
-
-    if (m_client)
-        m_client->unrequestedInitializationDataReceived(initTypeForRequest(request), SharedBuffer::create(request.initializationData));
+    handleUnexpectedRequests({{ request }});
 }
 
 void CDMInstanceFairPlayStreamingAVFObjC::didProvideRequests(Vector<RetainPtr<AVContentKeyRequest>>&& requests)
@@ -457,8 +468,18 @@ void CDMInstanceFairPlayStreamingAVFObjC::didProvideRequests(Vector<RetainPtr<AV
         return;
     }
 
-    ASSERT_NOT_REACHED();
-    ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "- no responsible session; dropping");
+    handleUnexpectedRequests(WTFMove(requests));
+}
+
+void CDMInstanceFairPlayStreamingAVFObjC::handleUnexpectedRequests(Vector<RetainPtr<AVContentKeyRequest>>&& requests)
+{
+    while (!requests.isEmpty()) {
+        auto request = requests.takeLast();
+        m_unexpectedKeyRequests.add(request);
+
+        if (m_client)
+            m_client->unrequestedInitializationDataReceived(initTypeForRequest(request.get()), initializationDataForRequest(request.get()));
+    }
 }
 
 void CDMInstanceFairPlayStreamingAVFObjC::didProvideRenewingRequest(AVContentKeyRequest *request)
@@ -524,6 +545,11 @@ void CDMInstanceFairPlayStreamingAVFObjC::sessionIdentifierChanged(NSData *sessi
 
 void CDMInstanceFairPlayStreamingAVFObjC::groupSessionIdentifierChanged(AVContentKeyReportGroup* group, NSData *sessionIdentifier)
 {
+    if (group == [m_session defaultContentKeyGroup]) {
+        INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "- default unused group identifier changed; dropping");
+        return;
+    }
+
     if (auto* session = sessionForGroup(group)) {
         session->groupSessionIdentifierChanged(group, sessionIdentifier);
         return;

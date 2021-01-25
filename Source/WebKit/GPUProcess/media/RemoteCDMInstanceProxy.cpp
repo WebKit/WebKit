@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 
 #include "RemoteCDMInstanceConfiguration.h"
+#include "RemoteCDMInstanceMessages.h"
 #include "RemoteCDMInstanceSessionProxy.h"
 #include "SharedBufferCopy.h"
 #include <WebCore/CDMInstance.h>
@@ -37,22 +38,36 @@ namespace WebKit {
 
 using namespace WebCore;
 
-std::unique_ptr<RemoteCDMInstanceProxy> RemoteCDMInstanceProxy::create(WeakPtr<RemoteCDMProxy>&& cdm, Ref<CDMInstance>&& priv)
+std::unique_ptr<RemoteCDMInstanceProxy> RemoteCDMInstanceProxy::create(WeakPtr<RemoteCDMProxy>&& cdm, Ref<CDMInstance>&& priv, RemoteCDMInstanceIdentifier identifier)
 {
     auto configuration = makeUniqueRefWithoutFastMallocCheck<RemoteCDMInstanceConfiguration, RemoteCDMInstanceConfiguration&&>({
         priv->keySystem(),
     });
-    return std::unique_ptr<RemoteCDMInstanceProxy>(new RemoteCDMInstanceProxy(WTFMove(cdm), WTFMove(priv), WTFMove(configuration)));
+    return std::unique_ptr<RemoteCDMInstanceProxy>(new RemoteCDMInstanceProxy(WTFMove(cdm), WTFMove(priv), WTFMove(configuration), identifier));
 }
 
-RemoteCDMInstanceProxy::RemoteCDMInstanceProxy(WeakPtr<RemoteCDMProxy>&& cdm, Ref<CDMInstance>&& priv, UniqueRef<RemoteCDMInstanceConfiguration>&& configuration)
+RemoteCDMInstanceProxy::RemoteCDMInstanceProxy(WeakPtr<RemoteCDMProxy>&& cdm, Ref<CDMInstance>&& priv, UniqueRef<RemoteCDMInstanceConfiguration>&& configuration, RemoteCDMInstanceIdentifier identifier)
     : m_cdm(WTFMove(cdm))
     , m_instance(WTFMove(priv))
     , m_configuration(WTFMove(configuration))
+    , m_identifier(identifier)
 {
+    m_instance->setClient(makeWeakPtr<CDMInstanceClient>(this));
 }
 
-RemoteCDMInstanceProxy::~RemoteCDMInstanceProxy() = default;
+RemoteCDMInstanceProxy::~RemoteCDMInstanceProxy()
+{
+    m_instance->clearClient();
+}
+
+void RemoteCDMInstanceProxy::unrequestedInitializationDataReceived(const String& type, Ref<SharedBuffer>&& initData)
+{
+    if (!m_cdm)
+        return;
+
+    if (auto* factory = m_cdm->factory())
+        factory->gpuConnectionToWebProcess().connection().send(Messages::RemoteCDMInstance::UnrequestedInitializationDataReceived(type, WTFMove(initData)), m_identifier);
+}
 
 void RemoteCDMInstanceProxy::initializeWithConfiguration(const WebCore::CDMKeySystemConfiguration& configuration, AllowDistinctiveIdentifiers allowDistinctiveIdentifiers, AllowPersistentState allowPersistentState, CompletionHandler<void(SuccessValue)>&& completion)
 {
