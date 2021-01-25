@@ -68,7 +68,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  @param forMainFrameOnly Whether the script should be injected into all frames or just the main frame.
  @param contentWorld The WKContentWorld in which to inject the script.
  */
-- (instancetype)initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly inContentWorld:(WKContentWorld *)contentWorld WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (instancetype)initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly inContentWorld:(WKContentWorld *)contentWorld WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 @end
 

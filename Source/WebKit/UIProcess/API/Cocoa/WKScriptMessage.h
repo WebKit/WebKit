@@ -56,7 +56,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @property (nonatomic, readonly, copy) NSString *name;
 
 /*! @abstract The content world from which the message was sent. */
-@property (nonatomic, readonly) WKContentWorld *world WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) WKContentWorld *world WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 @end
 

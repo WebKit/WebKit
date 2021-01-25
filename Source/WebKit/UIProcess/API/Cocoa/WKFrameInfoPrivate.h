@@ -30,6 +30,6 @@
 @interface WKFrameInfo (WKPrivate)
 
 @property (nonatomic, readonly, copy, nonnull) _WKFrameHandle *_handle WK_API_AVAILABLE(macos(10.12), ios(10.0));
-@property (nonatomic, readonly, copy, nullable) _WKFrameHandle *_parentFrameHandle WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly, copy, nullable) _WKFrameHandle *_parentFrameHandle WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 @end

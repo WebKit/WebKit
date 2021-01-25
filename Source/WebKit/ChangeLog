@@ -1,5 +1,62 @@
 2021-01-25  Chris Dumez  <cdumez@apple.com>
 
+        Update availability annotations to match the macOS 11.0 and iOS 14.0 GM SDKs
+        https://bugs.webkit.org/show_bug.cgi?id=220874
+        <rdar://73474368>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/Cocoa/WKContentWorld.h:
+        * UIProcess/API/Cocoa/WKError.h:
+        * UIProcess/API/Cocoa/WKFindConfiguration.h:
+        * UIProcess/API/Cocoa/WKFindResult.h:
+        * UIProcess/API/Cocoa/WKFrameInfoPrivate.h:
+        * UIProcess/API/Cocoa/WKHTTPCookieStorePrivate.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKOpenPanelParametersPrivate.h:
+        * UIProcess/API/Cocoa/WKPDFConfiguration.h:
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/WKScriptMessage.h:
+        * UIProcess/API/Cocoa/WKScriptMessageHandlerWithReply.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKURLSchemeTaskPrivate.h:
+        * UIProcess/API/Cocoa/WKUserContentController.h:
+        * UIProcess/API/Cocoa/WKUserContentControllerPrivate.h:
+        * UIProcess/API/Cocoa/WKUserScript.h:
+        * UIProcess/API/Cocoa/WKUserScriptPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebpagePreferences.h:
+        * UIProcess/API/Cocoa/WKWebpagePreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/API/Cocoa/_WKDownload.h:
+        * UIProcess/API/Cocoa/_WKFrameTreeNode.h:
+        * UIProcess/API/Cocoa/_WKInputDelegate.h:
+        * UIProcess/API/Cocoa/_WKInspectorDebuggableInfo.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadDelegate.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadInfo.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadStatisticsFirstParty.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadStatisticsThirdParty.h:
+        * UIProcess/API/Cocoa/_WKTextManipulationConfiguration.h:
+        * UIProcess/API/Cocoa/_WKTextManipulationExclusionRule.h:
+        * UIProcess/API/Cocoa/_WKTextManipulationItem.h:
+        * UIProcess/API/Cocoa/_WKTextManipulationToken.h:
+        * UIProcess/API/Cocoa/_WKUserContentWorld.h:
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+
+2021-01-25  Chris Dumez  <cdumez@apple.com>
+
         [iOS] Stop leaking an XPC boost message to XPC services
         https://bugs.webkit.org/show_bug.cgi?id=220883
         <rdar://47402853>

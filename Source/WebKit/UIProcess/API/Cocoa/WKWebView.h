@@ -250,7 +250,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  evaluateJavaScript: is a great way to set up global state for future JavaScript execution in a given world. (e.g. Importing libraries/utilities that future JavaScript execution will rely on)
  Once your global state is set up, consider using callAsyncJavaScript: for more flexible interaction with the JavaScript programming model.
 */
-- (void)evaluateJavaScript:(NSString *)javaScriptString inFrame:(nullable WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^ _Nullable)(_Nullable id, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)evaluateJavaScript:(NSString *)javaScriptString inFrame:(nullable WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^ _Nullable)(_Nullable id, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 /* @abstract Calls the given JavaScript string as an async JavaScript function, passing the given named arguments to that function.
  @param functionBody The JavaScript string to use as the function body.
@@ -322,7 +322,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
  The above function text will create a promise that will fulfull with the value 42 after a one second delay, wait for it to resolve, then return the fulfillment value of 42.
 */
-- (void)callAsyncJavaScript:(NSString *)functionBody arguments:(nullable NSDictionary<NSString *, id> *)arguments inFrame:(nullable WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^ _Nullable)(_Nullable id, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)callAsyncJavaScript:(NSString *)functionBody arguments:(nullable NSDictionary<NSString *, id> *)arguments inFrame:(nullable WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^ _Nullable)(_Nullable id, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 /*! @abstract Closes all out-of-window media presentations in a WKWebView.
  @discussion Includes picture-in-picture and fullscreen.
@@ -374,7 +374,7 @@ The completionHandler is passed the resulting PDF document data or an error.
 The data can be used to create a PDFDocument object.
 If the data is written to a file the resulting file is a valid PDF document.
 */
-- (void)createPDFWithConfiguration:(nullable WKPDFConfiguration *)pdfConfiguration completionHandler:(void (^)(NSData * _Nullable pdfDocumentData, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)createPDFWithConfiguration:(nullable WKPDFConfiguration *)pdfConfiguration completionHandler:(void (^)(NSData * _Nullable pdfDocumentData, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 /* @abstract Create WebKit web archive data representing the current web content of the WKWebView
 @param completionHandler A block to invoke when the web archive data is ready.
@@ -382,7 +382,7 @@ If the data is written to a file the resulting file is a valid PDF document.
 It can be used to represent web content on a pasteboard, loaded into a WKWebView directly, and saved to a file for later use.
 The uniform type identifier kUTTypeWebArchive can be used get the related pasteboard type and MIME type.
 */
-- (void)createWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)createWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 /*! @abstract A Boolean value indicating whether horizontal swipe gestures
  will trigger back-forward list navigations.
@@ -434,7 +434,7 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
  Changing this value is equivalent to web content setting the CSS "zoom"
  property on all page content.
 */
-@property (nonatomic) CGFloat pageZoom WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic) CGFloat pageZoom WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 /* @abstract Searches the page contents for the given string.
  @param string The string to search for.
@@ -444,7 +444,7 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
   A match found by the search is selected and the page is scrolled to reveal the selection.
   The completion handler is called after the search completes.
 */
-- (void)findString:(NSString *)string withConfiguration:(nullable WKFindConfiguration *)configuration completionHandler:(void (^)(WKFindResult *result))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)findString:(NSString *)string withConfiguration:(nullable WKFindConfiguration *)configuration completionHandler:(void (^)(WKFindResult *result))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 /* @abstract Checks whether or not WKWebViews handle the given URL scheme by default.
  @param scheme The URL scheme to check.
@@ -470,13 +470,13 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
  Setting the value to nil will restore the normal value.
  The default value is nil.
 */
-@property (nonatomic, nullable, copy) NSString *mediaType WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, nullable, copy) NSString *mediaType WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
 #if !TARGET_OS_IPHONE
 /* @abstract Returns an NSPrintOperation object configured to print the contents of this WKWebView
 @param printInfo The print info object used to configure the resulting print operation.
 */
-- (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo WK_API_AVAILABLE(macos(WK_MAC_TBA));
+- (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo WK_API_AVAILABLE(macos(11.0));
 #endif
 @end
 
@@ -515,7 +515,7 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
 
 @end
 
-WK_API_AVAILABLE(macos(WK_MAC_TBA))
+WK_API_AVAILABLE(macos(10.15.4))
 @interface WKWebView (WKNSTextFinderClient) <NSTextFinderClient>
 @end
 

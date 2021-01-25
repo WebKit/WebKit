@@ -1,3 +1,14 @@
+2021-01-25  Chris Dumez  <cdumez@apple.com>
+
+        Update availability annotations to match the macOS 11.0 and iOS 14.0 GM SDKs
+        https://bugs.webkit.org/show_bug.cgi?id=220874
+        <rdar://73474368>
+
+        Reviewed by Darin Adler.
+
+        * API/JSContextPrivate.h:
+        * API/JSContextRefPrivate.h:
+
 2021-01-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DeferredWorkTimer should clear pending task after running

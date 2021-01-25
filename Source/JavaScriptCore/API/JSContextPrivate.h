@@ -110,7 +110,7 @@
  @method
  @abstract Mark this JSContext as an ITMLKit context for the purposes of remote inspection capabilities.
  */
-- (void)_setITMLDebuggableType JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+- (void)_setITMLDebuggableType JSC_API_AVAILABLE(macos(11.0), ios(14.0));
 
 @end
 

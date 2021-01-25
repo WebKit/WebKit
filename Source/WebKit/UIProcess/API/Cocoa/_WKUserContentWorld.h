@@ -27,7 +27,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKContentWorld", macos(10.12, WK_MAC_TBA), ios(10.0, WK_IOS_TBA))
+WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKContentWorld", macos(10.12, 11.0), ios(10.0, 14.0))
 @interface _WKUserContentWorld : NSObject
 
 + (_WKUserContentWorld *)worldWithName:(NSString *)name;
