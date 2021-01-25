@@ -1,5 +1,58 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271531. rdar://problem/73586664
+
+    Playback fails at marketwatch.com
+    https://bugs.webkit.org/show_bug.cgi?id=220646
+    <rdar://72950166>
+    
+    Reviewed by Xabier Rodriguez-Calvar.
+    
+    Source/WebCore:
+    
+    Test: media/media-play-promise-reject-play-notallowed-audio.html
+    
+    When audio playback is blocked by settings, the HTMLMediaElement must load its source
+    media's metadata in order to determine whether the media should be allowed to play without a
+    user gesture. If a play promise is pending, the expectation is that those promises will
+    reject with a NotAllowedError to indicate that a user gesture is needed. However, by calling
+    pauseInternal() to block (possibly) existing playback, this causes those promises to be
+    rejected with an AbortError, as if the pause() method had been called. Call
+    scheduleRejectPendingPlayPromises() with NotAllowedError to ensure the correct error is used
+    to reject.
+    
+    Drive-by fix: no reason to dispatch and call rejectPendingPlayPromises() or
+    resolvePendingPlayPromises() if there are no promises to reject or resolve, and not calling
+    these methods makes the logs less noisy.
+    
+    * html/HTMLMediaElement.cpp:
+    (WebCore::HTMLMediaElement::scheduleResolvePendingPlayPromises):
+    (WebCore::HTMLMediaElement::scheduleRejectPendingPlayPromises):
+    (WebCore::HTMLMediaElement::setVolume):
+    (WebCore::HTMLMediaElement::mediaPlayerDidAddAudioTrack):
+    (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged):
+    (WebCore::HTMLMediaElement::updateShouldPlay):
+    
+    LayoutTests:
+    
+    * media/media-play-promise-reject-play-notallowed-audio-expected.txt: Added.
+    * media/media-play-promise-reject-play-notallowed-audio.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271531 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-15  Jer Noble  <jer.noble@apple.com>
+
+            Playback fails at marketwatch.com
+            https://bugs.webkit.org/show_bug.cgi?id=220646
+            <rdar://72950166>
+
+            Reviewed by Xabier Rodriguez-Calvar.
+
+            * media/media-play-promise-reject-play-notallowed-audio-expected.txt: Added.
+            * media/media-play-promise-reject-play-notallowed-audio.html: Added.
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271799. rdar://problem/73581832
 
     PCM: Use different well-known locations for triggering and reporting attribution

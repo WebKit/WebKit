@@ -1,0 +1,8 @@
+
+RUN(internals.setMediaElementRestrictions(mediaElement, "RequireUserGestureForAudioRateChange"))
+RUN(mediaElement.src = findMediaFile("video", "content/test-25fps"))
+RUN(promise = mediaElement.play())
+Promise rejected correctly OK
+EXPECTED (error.name == 'NotAllowedError') OK
+END OF TEST
+
