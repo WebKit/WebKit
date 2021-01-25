@@ -1,5 +1,79 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271435. rdar://problem/73477090
+
+    REGRESSION (r267571): black line appears upon navigating back from apple.com shopping bag
+    https://bugs.webkit.org/show_bug.cgi?id=220550
+    <rdar://problem/72459816>
+    
+    Reviewed by Antti Koivisto.
+    
+    LayoutTests/imported/w3c:
+    
+    Mark two additional PASS results for ::marker tests.
+    
+    * web-platform-tests/css/css-pseudo/parsing/marker-supported-properties-in-animation-expected.txt:
+    
+    Source/WebCore:
+    
+    Test: webanimations/no-transition-on-after-pseudo-element-upon-creation.html
+    
+    In r267571, we refactored the code to use Styleable instead of Element in pseudo-element resolution code. While there
+    should have been no behavior change, there was a change in Style::TreeResolver::createAnimatedElementUpdate() that
+    mistakenly introduced one.
+    
+    In order to get the "before" style to be used to consider CSS Transitions, we used to simply call Element::renderOrDisplayContentsStyle()
+    on the element provided to createAnimatedElementUpdate(), which would be either an Element or a PseudoElement in the
+    case of ::before and ::after. When we switched to using Styleable, we made a change where we'd call renderOrDisplayContentsStyle()
+    on the Styleable's element, if it didn't a pseudo-element, or try to get the matching PseudoElement in the case of
+    ::before and ::after. However, if we got a nullptr RenderStyle in the PseudoElement case, we'd fall back to using the
+    style from the host element.
+    
+    This yielded this regression on apple.com where a transition is started on an ::after pseudo-element which has an
+    "opacity: 0" style and a "transition" style set for "opacity". The host element is created first, and later the
+    ::after pseudo-element added. While it should not consider starting a transition in this case since upon creation
+    there is no existing style to work with, it did start a transition since it would use the host element's style
+    and see "opacity: 1" to start a transition.
+    
+    In this patch, we address the FIXME we'd left behind in TreeResolver::createAnimatedElementUpdate() and make
+    Element::renderOrDisplayContentsStyle() take in a PseudoId, defaulting to PseudoId::None. In case we have a
+    pseudo-element, we first try to call renderOrDisplayContentsStyle() on the matching PseudoElement if it exists,
+    or we return the existing computed style for this pseudo-element.
+    
+    If there is no existing computed style, we return nullptr, which means that in the apple.com scenario, no transition
+    is started because we correctly don't have a "before" style to work within upon creation of the ::after pseudo-element.
+    
+    * dom/Element.cpp:
+    (WebCore::beforeOrAfterPseudoElement):
+    (WebCore::Element::renderOrDisplayContentsStyle const):
+    * dom/Element.h:
+    * style/StyleTreeResolver.cpp:
+    (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+    
+    LayoutTests:
+    
+    Add a test that checks that adding a pseudo-element for an existing host element does not use
+    the host element's style to consider starting a transition.
+    
+    * webanimations/no-transition-on-after-pseudo-element-upon-creation-expected.html: Added.
+    * webanimations/no-transition-on-after-pseudo-element-upon-creation.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271435 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-12  Antoine Quint  <graouts@webkit.org>
+
+            REGRESSION (r267571): black line appears upon navigating back from apple.com shopping bag
+            https://bugs.webkit.org/show_bug.cgi?id=220550
+            <rdar://problem/72459816>
+
+            Reviewed by Antti Koivisto.
+
+            Mark two additional PASS results for ::marker tests.
+
+            * web-platform-tests/css/css-pseudo/parsing/marker-supported-properties-in-animation-expected.txt:
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271434. rdar://problem/73478450
 
     Use promise_test in WPT beacon/beacon-common.sub.js instead of async_test

@@ -3289,7 +3289,7 @@ void Element::willBecomeFullscreenElement()
         child.ancestorWillEnterFullscreen();
 }
 
-static PseudoElement* beforeOrAfterPseudoElement(Element& host, PseudoId pseudoElementSpecifier)
+static PseudoElement* beforeOrAfterPseudoElement(const Element& host, PseudoId pseudoElementSpecifier)
 {
     switch (pseudoElementSpecifier) {
     case PseudoId::Before:
@@ -3311,8 +3311,20 @@ const RenderStyle* Element::existingComputedStyle() const
     return renderStyle();
 }
 
-const RenderStyle* Element::renderOrDisplayContentsStyle() const
+const RenderStyle* Element::renderOrDisplayContentsStyle(PseudoId pseudoId) const
 {
+    if (pseudoId != PseudoId::None) {
+        if (auto* pseudoElement = beforeOrAfterPseudoElement(*this, pseudoId))
+            return pseudoElement->renderOrDisplayContentsStyle();
+
+        if (auto* computedStyle = existingComputedStyle()) {
+            if (auto* cachedPseudoStyle = computedStyle->getCachedPseudoStyle(pseudoId))
+                return cachedPseudoStyle;
+        }
+
+        return nullptr;
+    }
+
     if (auto* style = renderStyle())
         return style;
 
