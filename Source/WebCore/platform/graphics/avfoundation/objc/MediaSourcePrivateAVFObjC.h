@@ -59,7 +59,7 @@ class MediaSourcePrivateAVFObjC final
 #endif
 {
 public:
-    static Ref<MediaSourcePrivateAVFObjC> create(MediaPlayerPrivateMediaSourceAVFObjC*, MediaSourcePrivateClient*);
+    static Ref<MediaSourcePrivateAVFObjC> create(MediaPlayerPrivateMediaSourceAVFObjC&, MediaSourcePrivateClient*);
     virtual ~MediaSourcePrivateAVFObjC();
 
     MediaPlayerPrivateMediaSourceAVFObjC* player() const { return m_player.get(); }
@@ -116,7 +116,7 @@ public:
     void failedToCreateRenderer(RendererType);
 
 private:
-    MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC*, MediaSourcePrivateClient*);
+    MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC&, MediaSourcePrivateClient*);
 
     void sourceBufferPrivateDidChangeActiveState(SourceBufferPrivateAVFObjC*, bool active);
     void sourceBufferPrivateDidReceiveInitializationSegment(SourceBufferPrivateAVFObjC*);

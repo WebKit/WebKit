@@ -46,14 +46,14 @@ namespace WebCore {
 #pragma mark -
 #pragma mark MediaSourcePrivateAVFObjC
 
-Ref<MediaSourcePrivateAVFObjC> MediaSourcePrivateAVFObjC::create(MediaPlayerPrivateMediaSourceAVFObjC* parent, MediaSourcePrivateClient* client)
+Ref<MediaSourcePrivateAVFObjC> MediaSourcePrivateAVFObjC::create(MediaPlayerPrivateMediaSourceAVFObjC& parent, MediaSourcePrivateClient* client)
 {
     auto mediaSourcePrivate = adoptRef(*new MediaSourcePrivateAVFObjC(parent, client));
     client->setPrivateAndOpen(mediaSourcePrivate.copyRef());
     return mediaSourcePrivate;
 }
 
-MediaSourcePrivateAVFObjC::MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC* parent, MediaSourcePrivateClient* client)
+MediaSourcePrivateAVFObjC::MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC& parent, MediaSourcePrivateClient* client)
     : m_player(makeWeakPtr(parent))
     , m_client(client)
     , m_isEnded(false)
@@ -110,7 +110,8 @@ void MediaSourcePrivateAVFObjC::removeSourceBuffer(SourceBufferPrivate* buffer)
     size_t pos = m_activeSourceBuffers.find(buffer);
     if (pos != notFound) {
         m_activeSourceBuffers.remove(pos);
-        m_player->notifyActiveSourceBuffersChanged();
+        if (m_player)
+            m_player->notifyActiveSourceBuffersChanged();
     }
 
     pos = m_sourceBuffers.find(buffer);
@@ -130,12 +131,13 @@ std::unique_ptr<PlatformTimeRanges> MediaSourcePrivateAVFObjC::buffered()
 
 void MediaSourcePrivateAVFObjC::durationChanged(const MediaTime&)
 {
-    m_player->durationChanged();
+    if (m_player)
+        m_player->durationChanged();
 }
 
 void MediaSourcePrivateAVFObjC::markEndOfStream(EndOfStreamStatus status)
 {
-    if (status == EosNoError)
+    if (status == EosNoError && m_player)
         m_player->setNetworkState(MediaPlayer::NetworkState::Loaded);
     m_isEnded = true;
 }
@@ -148,41 +150,46 @@ void MediaSourcePrivateAVFObjC::unmarkEndOfStream()
 
 MediaPlayer::ReadyState MediaSourcePrivateAVFObjC::readyState() const
 {
-    return m_player->readyState();
+    return m_player ? m_player->readyState() : MediaPlayer::ReadyState::HaveNothing;
 }
 
 void MediaSourcePrivateAVFObjC::setReadyState(MediaPlayer::ReadyState readyState)
 {
-    m_player->setReadyState(readyState);
+    if (m_player)
+        m_player->setReadyState(readyState);
 }
 
 void MediaSourcePrivateAVFObjC::waitForSeekCompleted()
 {
-    m_player->waitForSeekCompleted();
+    if (m_player)
+        m_player->waitForSeekCompleted();
 }
 
 void MediaSourcePrivateAVFObjC::seekCompleted()
 {
-    m_player->seekCompleted();
+    if (m_player)
+        m_player->seekCompleted();
 }
 
 MediaTime MediaSourcePrivateAVFObjC::currentMediaTime() const
 {
-    return m_player->currentMediaTime();
+    return m_player ? m_player->currentMediaTime() : MediaTime::invalidTime();
 }
 
 void MediaSourcePrivateAVFObjC::sourceBufferPrivateDidChangeActiveState(SourceBufferPrivateAVFObjC* buffer, bool active)
 {
     if (active && !m_activeSourceBuffers.contains(buffer)) {
         m_activeSourceBuffers.append(buffer);
-        m_player->notifyActiveSourceBuffersChanged();
+        if (m_player)
+            m_player->notifyActiveSourceBuffersChanged();
     }
 
     if (!active) {
         size_t position = m_activeSourceBuffers.find(buffer);
         if (position != notFound) {
             m_activeSourceBuffers.remove(position);
-            m_player->notifyActiveSourceBuffersChanged();
+            if (m_player)
+                m_player->notifyActiveSourceBuffersChanged();
         }
     }
 }
@@ -191,7 +198,8 @@ void MediaSourcePrivateAVFObjC::sourceBufferPrivateDidChangeActiveState(SourceBu
 void MediaSourcePrivateAVFObjC::sourceBufferKeyNeeded(SourceBufferPrivateAVFObjC* buffer, Uint8Array* initData)
 {
     m_sourceBuffersNeedingSessions.append(buffer);
-    player()->keyNeeded(initData);
+    if (m_player)
+        m_player->keyNeeded(initData);
 }
 #endif
 
@@ -325,7 +333,7 @@ void MediaSourcePrivateAVFObjC::setSourceBufferWithSelectedVideo(SourceBufferPri
 
     m_sourceBufferWithSelectedVideo = sourceBuffer;
 
-    if (m_sourceBufferWithSelectedVideo) {
+    if (m_sourceBufferWithSelectedVideo && m_player) {
         m_sourceBufferWithSelectedVideo->setVideoLayer(m_player->sampleBufferDisplayLayer());
         m_sourceBufferWithSelectedVideo->setDecompressionSession(m_player->decompressionSession());
     }

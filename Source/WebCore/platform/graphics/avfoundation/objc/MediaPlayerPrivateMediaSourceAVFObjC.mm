@@ -270,7 +270,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::load(const URL&, const ContentType&, 
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_mediaSourcePrivate = MediaSourcePrivateAVFObjC::create(this, client);
+    m_mediaSourcePrivate = MediaSourcePrivateAVFObjC::create(*this, client);
     m_mediaSourcePrivate->setVideoLayer(m_sampleBufferDisplayLayer.get());
     m_mediaSourcePrivate->setDecompressionSession(m_decompressionSession.get());
 
