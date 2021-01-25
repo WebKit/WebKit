@@ -1,3 +1,36 @@
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r271434. rdar://problem/73478450
+
+    Use promise_test in WPT beacon/beacon-common.sub.js instead of async_test
+    https://bugs.webkit.org/show_bug.cgi?id=220541
+    <rdar://problem/72940308>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Use promise_test to limit the number of requests sent in parallel.
+    This helps the server responds properly.
+    
+    * web-platform-tests/beacon/beacon-common.sub.js:
+    (runTests):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271434 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-13  Youenn Fablet  <youenn@apple.com>
+
+            Use promise_test in WPT beacon/beacon-common.sub.js instead of async_test
+            https://bugs.webkit.org/show_bug.cgi?id=220541
+            <rdar://problem/72940308>
+
+            Reviewed by Geoffrey Garen.
+
+            Use promise_test to limit the number of requests sent in parallel.
+            This helps the server responds properly.
+
+            * web-platform-tests/beacon/beacon-common.sub.js:
+            (runTests):
+
 2021-01-08  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r267402): [ macOS iOS Release ] imported/w3c/web-platform-tests/user-timing/measure-l3.any.worker.html is a flaky failure
