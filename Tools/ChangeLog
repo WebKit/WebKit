@@ -1,3 +1,17 @@
+2021-01-25  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening API failures after r271794
+
+        Unreviewed test gardening.
+
+        Looks like these failures flew under the radar by not actually being
+        run by run-gtk/wpe-tests, and were uncovered by r271794.
+
+        Marking them as failure to allow the EWS to run normally while they're
+        fixed.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2021-01-25  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Download the build archive from master when download from S3 fails

@@ -1,4 +1,44 @@
 {
+    "TestAuthentication": {
+        "subtests": {
+            "/webkit/Authentication/authentication-empty-realm": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/220922"}}
+            },
+            "/webkit/Authentication/authentication-failure": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/220922"}}
+            },
+            "/webkit/Authentication/authentication-no-credential": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/220922"}}
+            },
+            "/webkit/Authentication/authentication-success": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/220922"}}
+            }
+        }
+    },
+    "TestBackForwardList": {
+        "subtests": {
+            "/webkit/BackForwardList/navigation": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/220922"}}
+            }
+        }
+    },
+    "TestSSL": {
+        "subtests": {
+            "/webkit/WebKitWebView/load-failed-with-tls-errors": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/220922"}}
+            }
+        }
+    },
+    "TestWebKitSettings": {
+        "subtests": {
+            "/webkit/WebKitSettings/webkit-settings": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/220922"}}
+            },
+            "/webkit/WebKitSettings/javascript-markup": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/220922"}}
+            }
+        }
+    },
     "TestUIClient": {
         "subtests": {
             "/webkit/WebKitWebView/mouse-target": {
@@ -96,6 +136,9 @@
             },
             "/webkit/WebKitWebView/fullscreen": {
                 "expected": {"wpe": {"status": ["TIMEOUT", "PASS"]}}
+            },
+            "/webkit/WebKitWebView/title-change": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/220992"}}
             }
         }
     },
@@ -110,7 +153,7 @@
     "TestWebKitFaviconDatabase": {
         "subtests": {
             "/webkit/WebKitFaviconDatabase/get-favicon": {
-                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/205381"}}
+                "expected": {"gtk": {"status": ["FAIL", "PASS", "TIMEOUT"], "bug": ["webkit.org/b/205381", "webkit.org/b/220992"]}}
             }
         }
     },
@@ -118,6 +161,9 @@
         "subtests": {
             "/webkit/WebKitWebPage/get-uri": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/206728"}}
+            },
+            "/webkit/WebKitWebView/title": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/220992"}}
             }
         }
     },
