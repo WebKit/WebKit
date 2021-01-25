@@ -36,7 +36,8 @@
 
 namespace WebCore {
 
-static const char privateClickMeasurementPathPrefix[] = "/.well-known/private-click-measurement/";
+static const char privateClickMeasurementTriggerAttributionPath[] = "/.well-known/private-click-measurement/trigger-attribution/";
+static const char privateClickMeasurementReportAttributionPath[] = "/.well-known/private-click-measurement/report-attribution/";
 const size_t privateClickMeasurementAttributionTriggerDataPathSegmentSize = 2;
 const size_t privateClickMeasurementPriorityPathSegmentSize = 2;
 
@@ -58,14 +59,14 @@ bool PrivateClickMeasurement::isValid() const
 Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMeasurement::parseAttributionRequest(const URL& redirectURL)
 {
     auto path = StringView(redirectURL.string()).substring(redirectURL.pathStart(), redirectURL.pathEnd() - redirectURL.pathStart());
-    if (path.isEmpty() || !path.startsWith(privateClickMeasurementPathPrefix))
+    if (path.isEmpty() || !path.startsWith(privateClickMeasurementTriggerAttributionPath))
         return makeUnexpected(nullString());
 
     if (!redirectURL.protocolIs("https") || redirectURL.hasCredentials() || redirectURL.hasQuery() || redirectURL.hasFragmentIdentifier())
         return makeUnexpected("[Private Click Measurement] Conversion was not accepted because the URL's protocol is not HTTPS or the URL contains one or more of username, password, query string, and fragment."_s);
 
 
-    auto prefixLength = sizeof(privateClickMeasurementPathPrefix) - 1;
+    auto prefixLength = sizeof(privateClickMeasurementTriggerAttributionPath) - 1;
     if (path.length() == prefixLength + privateClickMeasurementAttributionTriggerDataPathSegmentSize) {
         auto attributionTriggerDataUInt64 = path.substring(prefixLength, privateClickMeasurementAttributionTriggerDataPathSegmentSize).toUInt64Strict();
         if (!attributionTriggerDataUInt64 || *attributionTriggerDataUInt64 > AttributionTriggerData::MaxEntropy)
@@ -121,7 +122,7 @@ URL PrivateClickMeasurement::reportURL() const
     StringBuilder builder;
     builder.appendLiteral("https://");
     builder.append(m_sourceSite.registrableDomain.string());
-    builder.appendLiteral(privateClickMeasurementPathPrefix);
+    builder.appendLiteral(privateClickMeasurementReportAttributionPath);
 
     URL url { URL(), builder.toString() };
     if (url.isValid())

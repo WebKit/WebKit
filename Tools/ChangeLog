@@ -1,5 +1,69 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271799. rdar://problem/73581832
+
+    PCM: Use different well-known locations for triggering and reporting attribution
+    https://bugs.webkit.org/show_bug.cgi?id=220902
+    <rdar://problem/73550632>
+    
+    Reviewed by Brent Fulgham.
+    
+    The discussion in W3C Privacy CG concluded that we should use distinct
+    well-known URL paths for websites triggering attribution and for the
+    browser reporting attribution
+    (https://github.com/privacycg/private-click-measurement/issues/59).
+    
+    This patch changes the one location to these two:
+    /.well-known/private-click-measurement/trigger-attribution
+    /.well-known/private-click-measurement/report-attribution
+    
+    Source/WebCore:
+    
+    Existing tests updated.
+    
+    * loader/PrivateClickMeasurement.cpp:
+    (WebCore::PrivateClickMeasurement::parseAttributionRequest):
+    (WebCore::PrivateClickMeasurement::reportURL const):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+    (TestWebKitAPI::TEST):
+    * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+    (TestWebKitAPI::TEST):
+    
+    LayoutTests:
+    
+    * http/tests/privateClickMeasurement/resources/redirectToConversion.php:
+    * http/tests/privateClickMeasurement/resources/redirectToConversionOnIPAddress.php:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271799 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-25  John Wilander  <wilander@apple.com>
+
+            PCM: Use different well-known locations for triggering and reporting attribution
+            https://bugs.webkit.org/show_bug.cgi?id=220902
+            <rdar://problem/73550632>
+
+            Reviewed by Brent Fulgham.
+
+            The discussion in W3C Privacy CG concluded that we should use distinct
+            well-known URL paths for websites triggering attribution and for the
+            browser reporting attribution
+            (https://github.com/privacycg/private-click-measurement/issues/59).
+
+            This patch changes the one location to these two:
+            /.well-known/private-click-measurement/trigger-attribution
+            /.well-known/private-click-measurement/report-attribution
+
+            * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+            (TestWebKitAPI::TEST):
+            * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+            (TestWebKitAPI::TEST):
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271380. rdar://problem/73477386
 
     ASSERTION FAILED: !event || event.type == NSEventTypeLeftMouseDown || event.type == NSEventTypeRightMouseDown || event.type == NSEventTypeOtherMouseDown

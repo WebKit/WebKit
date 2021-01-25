@@ -48,7 +48,7 @@ TEST(PrivateClickMeasurement, ValidMinValues)
 
     auto attributionURL = attribution.reportURL();
     
-    ASSERT_EQ(attributionURL.string(), "https://webkit.org/.well-known/private-click-measurement/");
+    ASSERT_EQ(attributionURL.string(), "https://webkit.org/.well-known/private-click-measurement/report-attribution/");
 
     ASSERT_EQ(attribution.json()->toJSONString(), "{\"source_engagement_type\":\"click\",\"source_site\":\"webkit.org\",\"source_id\":0,\"attributed_on_site\":\"example.com\",\"trigger_data\":0,\"version\":1}");
 }
@@ -60,7 +60,7 @@ TEST(PrivateClickMeasurement, ValidMidValues)
 
     auto attributionURL = attribution.reportURL();
     
-    ASSERT_EQ(attributionURL.string(), "https://webkit.org/.well-known/private-click-measurement/");
+    ASSERT_EQ(attributionURL.string(), "https://webkit.org/.well-known/private-click-measurement/report-attribution/");
 
     ASSERT_EQ(attribution.json()->toJSONString(), "{\"source_engagement_type\":\"click\",\"source_site\":\"webkit.org\",\"source_id\":192,\"attributed_on_site\":\"example.com\",\"trigger_data\":9,\"version\":1}");
 }
@@ -72,7 +72,7 @@ TEST(PrivateClickMeasurement, ValidMaxValues)
 
     auto attributionURL = attribution.reportURL();
     
-    ASSERT_EQ(attributionURL.string(), "https://webkit.org/.well-known/private-click-measurement/");
+    ASSERT_EQ(attributionURL.string(), "https://webkit.org/.well-known/private-click-measurement/report-attribution/");
 
     ASSERT_EQ(attribution.json()->toJSONString(), "{\"source_engagement_type\":\"click\",\"source_site\":\"webkit.org\",\"source_id\":255,\"attributed_on_site\":\"example.com\",\"trigger_data\":15,\"version\":1}");
 }
@@ -89,34 +89,34 @@ TEST(PrivateClickMeasurement, EarliestTimeToSendAttributionMinimumDelay)
 
 TEST(PrivateClickMeasurement, ValidConversionURLs)
 {
-    const URL conversionURLWithoutPriority { { }, "https://webkit.org/.well-known/private-click-measurement/10"_s };
+    const URL conversionURLWithoutPriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10"_s };
     auto optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithoutPriority);
     ASSERT_TRUE(optionalConversion);
     ASSERT_EQ(optionalConversion->data, (uint32_t)10);
 
-    const URL conversionURLWithoutPriorityMaxEntropy { { }, "https://webkit.org/.well-known/private-click-measurement/15"_s };
+    const URL conversionURLWithoutPriorityMaxEntropy { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/15"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithoutPriorityMaxEntropy);
     ASSERT_TRUE(optionalConversion);
     ASSERT_EQ(optionalConversion->data, (uint32_t)15);
     
-    const URL conversionURLWithoutPriorityAndLeadingZero { { }, "https://webkit.org/.well-known/private-click-measurement/02"_s };
+    const URL conversionURLWithoutPriorityAndLeadingZero { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/02"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithoutPriorityAndLeadingZero);
     ASSERT_TRUE(optionalConversion);
     ASSERT_EQ(optionalConversion->data, (uint32_t)2);
 
-    const URL conversionURLWithPriority { { }, "https://webkit.org/.well-known/private-click-measurement/10/12"_s };
+    const URL conversionURLWithPriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithPriority);
     ASSERT_TRUE(optionalConversion);
     ASSERT_EQ(optionalConversion->data, (uint32_t)10);
     ASSERT_EQ(optionalConversion->priority, (uint32_t)12);
 
-    const URL conversionURLWithPriorityMaxEntropy { { }, "https://webkit.org/.well-known/private-click-measurement/15/63"_s };
+    const URL conversionURLWithPriorityMaxEntropy { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/15/63"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithPriorityMaxEntropy);
     ASSERT_TRUE(optionalConversion);
     ASSERT_EQ(optionalConversion->data, (uint32_t)15);
     ASSERT_EQ(optionalConversion->priority, (uint32_t)63);
     
-    const URL conversionURLWithPriorityAndLeadingZero { { }, "https://webkit.org/.well-known/private-click-measurement/10/02"_s };
+    const URL conversionURLWithPriorityAndLeadingZero { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/02"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithPriorityAndLeadingZero);
     ASSERT_TRUE(optionalConversion);
     ASSERT_EQ(optionalConversion->data, (uint32_t)10);
@@ -175,55 +175,55 @@ TEST(PrivateClickMeasurement, InvalidMissingConversion)
 
 TEST(PrivateClickMeasurement, InvalidConversionURLs)
 {
-    const URL conversionURLWithSingleDigitConversionData { { }, "https://webkit.org/.well-known/private-click-measurement/2"_s };
+    const URL conversionURLWithSingleDigitConversionData { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/2"_s };
     auto optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithSingleDigitConversionData);
     ASSERT_FALSE(optionalConversion);
     
-    const URL conversionURLWithNonNumeralConversionData { { }, "https://webkit.org/.well-known/private-click-measurement/2s"_s };
+    const URL conversionURLWithNonNumeralConversionData { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/2s"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithNonNumeralConversionData);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithNegativeConversionData { { }, "https://webkit.org/.well-known/private-click-measurement/-2"_s };
+    const URL conversionURLWithNegativeConversionData { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/-2"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithNegativeConversionData);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithTooLargeConversionData { { }, "https://webkit.org/.well-known/private-click-measurement/16"_s };
+    const URL conversionURLWithTooLargeConversionData { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/16"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithTooLargeConversionData);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithSingleDigitPriority { { }, "https://webkit.org/.well-known/private-click-measurement/10/2"_s };
+    const URL conversionURLWithSingleDigitPriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/2"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithSingleDigitPriority);
     ASSERT_FALSE(optionalConversion);
     
-    const URL conversionURLWithNonNumeralPriority { { }, "https://webkit.org/.well-known/private-click-measurement/10/2s"_s };
+    const URL conversionURLWithNonNumeralPriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/2s"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithNonNumeralPriority);
     ASSERT_FALSE(optionalConversion);
     
-    const URL conversionURLWithNegativePriority { { }, "https://webkit.org/.well-known/private-click-measurement/10/-2"_s };
+    const URL conversionURLWithNegativePriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/-2"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithNegativePriority);
     ASSERT_FALSE(optionalConversion);
     
-    const URL conversionURLWithTooLargePriority { { }, "https://webkit.org/.well-known/private-click-measurement/10/64"_s };
+    const URL conversionURLWithTooLargePriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/64"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithTooLargePriority);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithTooLargeConversionDataAndPriority { { }, "https://webkit.org/.well-known/private-click-measurement/16/22"_s };
+    const URL conversionURLWithTooLargeConversionDataAndPriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/16/22"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithTooLargeConversionDataAndPriority);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithTooLargeConversionDataAndTooLargePriority { { }, "https://webkit.org/.well-known/private-click-measurement/16/64"_s };
+    const URL conversionURLWithTooLargeConversionDataAndTooLargePriority { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/16/64"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithTooLargeConversionDataAndTooLargePriority);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithExtraLeadingSlash = { { }, "https://webkit.org/.well-known/private-click-measurement//10/12"_s };
+    const URL conversionURLWithExtraLeadingSlash = { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution//10/12"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithExtraLeadingSlash);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithExtraTrailingSlash = { { }, "https://webkit.org/.well-known/private-click-measurement/10/12/"_s };
+    const URL conversionURLWithExtraTrailingSlash = { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12/"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithExtraTrailingSlash);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithTrailingQuestionMark = { { }, "https://webkit.org/.well-known/private-click-measurement/10/12?"_s };
+    const URL conversionURLWithTrailingQuestionMark = { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12?"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithTrailingQuestionMark);
     ASSERT_FALSE(optionalConversion);
 }
@@ -231,46 +231,46 @@ TEST(PrivateClickMeasurement, InvalidConversionURLs)
 TEST(PrivateClickMeasurement, InvalidConversionWithDisallowedURLComponents)
 {
     // Protocol.
-    const URL conversionURLWithHttpProtocol { { }, "http://webkit.org/.well-known/private-click-measurement/2"_s };
+    const URL conversionURLWithHttpProtocol { { }, "http://webkit.org/.well-known/private-click-measurement/trigger-attribution/2"_s };
     auto optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithHttpProtocol);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithWssProtocol { { }, "wss://webkit.org/.well-known/private-click-measurement/2"_s };
+    const URL conversionURLWithWssProtocol { { }, "wss://webkit.org/.well-known/private-click-measurement/trigger-attribution/2"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithWssProtocol);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithFileProtocol { { }, "file:///.well-known/private-click-measurement/2"_s };
+    const URL conversionURLWithFileProtocol { { }, "file:///.well-known/private-click-measurement/trigger-attribution/2"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithFileProtocol);
     ASSERT_FALSE(optionalConversion);
 
     // Username and password.
-    const URL conversionURLWithUserName { { }, "https://user@webkit.org/.well-known/private-click-measurement/2"_s };
+    const URL conversionURLWithUserName { { }, "https://user@webkit.org/.well-known/private-click-measurement/trigger-attribution/2"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithUserName);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithPassword = { { }, "https://:pwd@webkit.org/.well-known/private-click-measurement/10/12"_s };
+    const URL conversionURLWithPassword = { { }, "https://:pwd@webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithPassword);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithUsernameAndPassword = { { }, "https://user:pwd@webkit.org/.well-known/private-click-measurement/10/12"_s };
+    const URL conversionURLWithUsernameAndPassword = { { }, "https://user:pwd@webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithUsernameAndPassword);
     ASSERT_FALSE(optionalConversion);
 
     // Query string.
-    const URL conversionURLWithTrailingQuestionMark = { { }, "https://webkit.org/.well-known/private-click-measurement/10/12?"_s };
+    const URL conversionURLWithTrailingQuestionMark = { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12?"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithTrailingQuestionMark);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithQueryString = { { }, "https://webkit.org/.well-known/private-click-measurement/10/12?extra=data"_s };
+    const URL conversionURLWithQueryString = { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12?extra=data"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithQueryString);
     ASSERT_FALSE(optionalConversion);
     
     // Fragment.
-    const URL conversionURLWithTrailingHash = { { }, "https://webkit.org/.well-known/private-click-measurement/10/12#"_s };
+    const URL conversionURLWithTrailingHash = { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12#"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithTrailingHash);
     ASSERT_FALSE(optionalConversion);
 
-    const URL conversionURLWithFragment = { { }, "https://webkit.org/.well-known/private-click-measurement/10/12#fragment"_s };
+    const URL conversionURLWithFragment = { { }, "https://webkit.org/.well-known/private-click-measurement/trigger-attribution/10/12#fragment"_s };
     optionalConversion = PrivateClickMeasurement::parseAttributionRequest(conversionURLWithFragment);
     ASSERT_FALSE(optionalConversion);
 }
