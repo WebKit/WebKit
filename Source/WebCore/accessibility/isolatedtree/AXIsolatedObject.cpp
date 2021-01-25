@@ -29,6 +29,7 @@
 #include "AXIsolatedObject.h"
 
 #include "AXIsolatedTree.h"
+#include "AXLogger.h"
 
 #if PLATFORM(COCOA)
 #include <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
@@ -415,8 +416,17 @@ AXCoreObject* AXIsolatedObject::associatedAXObject() const
 {
     ASSERT(isMainThread());
 
-    auto* axObjectCache = this->axObjectCache();
-    return axObjectCache && m_id != InvalidAXID ? axObjectCache->objectFromAXID(m_id) : nullptr;
+    if (m_id == InvalidAXID)
+        return nullptr;
+
+    if (auto* axObjectCache = this->axObjectCache()) {
+        if (auto* axObject = axObjectCache->objectFromAXID(m_id)) {
+            axObject->updateBackingStore();
+            return axObject;
+        }
+    }
+
+    return nullptr;
 }
 
 void AXIsolatedObject::setMathscripts(AXPropertyName propertyName, AXCoreObject& object)
