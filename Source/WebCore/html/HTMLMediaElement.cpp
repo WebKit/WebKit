@@ -5955,7 +5955,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
 
                 if (mode == VideoFullscreenModeStandard)
                     scheduleEvent(eventNames().webkitbeginfullscreenEvent);
-                else if (oldMode == VideoFullscreenModeStandard)
+                else if (oldMode == VideoFullscreenModeStandard && !document().quirks().shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk())
                     scheduleEvent(eventNames().webkitendfullscreenEvent);
 
                 return;
