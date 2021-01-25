@@ -799,7 +799,7 @@ TEST(WKNavigation, SimultaneousNavigationWithFontsFinishes)
     using namespace TestWebKitAPI;
     HTTPServer server({
         { "/", { mainHTML } },
-        { "Ahem.svg", { svg } },
+        { "/Ahem.svg", { svg } },
         { "/scriptsrc.js", { "/* js content */" } },
         { "/iframesrc.html", { "frame content" } },
     });
