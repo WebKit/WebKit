@@ -203,7 +203,7 @@ class TestRunner(object):
         except subprocess.CalledProcessError:
             sys.stderr.write("ERROR: could not list available tests for binary %s.\n" % (test_program))
             sys.stderr.flush()
-            return 1
+            sys.exit(1)
 
         tests = []
         prefix = None
@@ -282,7 +282,7 @@ class TestRunner(object):
         if not self._tests:
             sys.stderr.write("ERROR: tests not found in %s.\n" % (self._test_programs_base_dir()))
             sys.stderr.flush()
-            return 1
+            sys.exit(1)
 
         self._setup_testing_environment()
 
