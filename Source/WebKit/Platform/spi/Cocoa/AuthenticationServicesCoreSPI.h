@@ -172,14 +172,9 @@ typedef NS_ERROR_ENUM(ASCAuthorizationErrorDomain, ASCAuthorizationError) {
     ASCAuthorizationErrorNoCredentialsFound,
     ASCAuthorizationErrorLAError,
     ASCAuthorizationErrorLAExcludeCredentialsMatched,
-};
-
-extern NSString * const ASCPINValidationResultKey;
-
-typedef NS_ENUM(NSInteger, ASCPINValidationResult) {
-    ASCPINValidationResultPINBlocked,
-    ASCPINValidationResultPINAuthBlocked,
-    ASCPINValidationResultPINInvalid,
+    ASCAuthorizationErrorPINInvalid,
+    ASCAuthorizationErrorAuthenticatorTemporarilyLocked,
+    ASCAuthorizationErrorAuthenticatorPermanentlyLocked,
 };
 
 NS_ASSUME_NONNULL_END

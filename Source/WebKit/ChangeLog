@@ -1,5 +1,66 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271613. rdar://problem/73477407
+
+    [WebAuthn] Polish the new WebAuthn UI
+    https://bugs.webkit.org/show_bug.cgi?id=220617
+    <rdar://problem/73185470>
+    
+    Reviewed by Brent Fulgham.
+    
+    This patch does the following few things:
+    1. It updates the way how the PIN error for security keys is handled.
+    2. It uses the credential name to identify a credential that passed to the UI instead of the login choice object
+    as it turns out that the UI won't return the same object at all.
+    3. It delays to show the UI if the platform authenticator is involved given the platform authenticator might not contain
+    the requested credentials. If not, we should either show an error or just requesting the security key ones.
+    
+    Covered by manual tests.
+    
+    * Platform/spi/Cocoa/AuthenticationServicesCoreSPI.h:
+    (NS_ERROR_ENUM):
+    * UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.h:
+    * UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.mm:
+    (WebKit::AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator):
+    (WebKit::AuthenticatorPresenterCoordinator::updatePresenter):
+    (WebKit::AuthenticatorPresenterCoordinator::selectAssertionResponse):
+    (WebKit::AuthenticatorPresenterCoordinator::didSelectAssertionResponse):
+    * UIProcess/WebAuthentication/Cocoa/WKASCAuthorizationPresenterDelegate.mm:
+    (-[WKASCAuthorizationPresenterDelegate authorizationPresenter:credentialRequestedForLoginChoice:authenticatedContext:completionHandler:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271613 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-19  Jiewen Tan  <jiewen_tan@apple.com>
+
+            [WebAuthn] Polish the new WebAuthn UI
+            https://bugs.webkit.org/show_bug.cgi?id=220617
+            <rdar://problem/73185470>
+
+            Reviewed by Brent Fulgham.
+
+            This patch does the following few things:
+            1. It updates the way how the PIN error for security keys is handled.
+            2. It uses the credential name to identify a credential that passed to the UI instead of the login choice object
+            as it turns out that the UI won't return the same object at all.
+            3. It delays to show the UI if the platform authenticator is involved given the platform authenticator might not contain
+            the requested credentials. If not, we should either show an error or just requesting the security key ones.
+
+            Covered by manual tests.
+
+            * Platform/spi/Cocoa/AuthenticationServicesCoreSPI.h:
+            (NS_ERROR_ENUM):
+            * UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.h:
+            * UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.mm:
+            (WebKit::AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator):
+            (WebKit::AuthenticatorPresenterCoordinator::updatePresenter):
+            (WebKit::AuthenticatorPresenterCoordinator::selectAssertionResponse):
+            (WebKit::AuthenticatorPresenterCoordinator::didSelectAssertionResponse):
+            * UIProcess/WebAuthentication/Cocoa/WKASCAuthorizationPresenterDelegate.mm:
+            (-[WKASCAuthorizationPresenterDelegate authorizationPresenter:credentialRequestedForLoginChoice:authenticatedContext:completionHandler:]):
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271537. rdar://problem/73478698
 
     REGRESSION(r267763) Uploading zipped directories does not work on iOS

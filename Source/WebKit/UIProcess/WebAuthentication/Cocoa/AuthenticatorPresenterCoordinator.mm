@@ -53,7 +53,7 @@ AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const Authe
             [m_context addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initRegistrationChoice]).get()];
         break;
     case ClientDataType::Get:
-        if (transports.contains(AuthenticatorTransport::Usb) || transports.contains(AuthenticatorTransport::Nfc))
+        if ((transports.contains(AuthenticatorTransport::Usb) || transports.contains(AuthenticatorTransport::Nfc)) && !transports.contains(AuthenticatorTransport::Internal))
             [m_context addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initAssertionPlaceholderChoice]).get()];
         break;
     default:
@@ -65,7 +65,6 @@ AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const Authe
     [m_presenter setDelegate:m_presenterDelegate.get()];
 
     auto completionHandler = makeBlockPtr([manager = m_manager] (id<ASCCredentialProtocol> credential, NSError *error) mutable {
-        ASSERT(!RunLoop::isMain());
         if (credential || !error)
             return;
 
@@ -76,6 +75,15 @@ AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const Authe
                 manager->cancel();
         });
     });
+
+    if (type == ClientDataType::Get && transports.contains(AuthenticatorTransport::Internal)) {
+        m_delayedPresentationNeedsSecurityKey = (transports.contains(AuthenticatorTransport::Usb) || transports.contains(AuthenticatorTransport::Nfc));
+        m_delayedPresentation = [completionHandler = WTFMove(completionHandler), this] {
+            [m_presenter presentAuthorizationWithContext:m_context.get() completionHandler:completionHandler.get()];
+        };
+        return;
+    }
+
     [m_presenter presentAuthorizationWithContext:m_context.get() completionHandler:completionHandler.get()];
 #endif // HAVE(ASC_AUTH_UI)
 }
@@ -95,17 +103,17 @@ void AuthenticatorPresenterCoordinator::updatePresenter(WebAuthenticationStatus 
 #if HAVE(ASC_AUTH_UI)
     switch (status) {
     case WebAuthenticationStatus::PinBlocked: {
-        auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorPINRequired userInfo:@{ ASCPINValidationResultKey: @(ASCPINValidationResultPINBlocked) }]);
+        auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorAuthenticatorPermanentlyLocked userInfo:nil]);
         m_credentialRequestHandler(nil, error.get());
         break;
     }
     case WebAuthenticationStatus::PinAuthBlocked: {
-        auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorPINRequired userInfo:@{ ASCPINValidationResultKey: @(ASCPINValidationResultPINAuthBlocked) }]);
+        auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorAuthenticatorTemporarilyLocked userInfo:nil]);
         m_credentialRequestHandler(nil, error.get());
         break;
     }
     case WebAuthenticationStatus::PinInvalid: {
-        auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorPINRequired userInfo:@{ ASCPINValidationResultKey: @(ASCPINValidationResultPINInvalid) }]);
+        auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorPINInvalid userInfo:nil]);
         m_credentialRequestHandler(nil, error.get());
         break;
     }
@@ -114,8 +122,12 @@ void AuthenticatorPresenterCoordinator::updatePresenter(WebAuthenticationStatus 
         [m_presenter updateInterfaceForUserVisibleError:error.get()];
         break;
     }
-    case WebAuthenticationStatus::NoCredentialsFound:
-    case WebAuthenticationStatus::LANoCredential: {
+    case WebAuthenticationStatus::LANoCredential:
+        if (m_delayedPresentationNeedsSecurityKey)
+            [m_context addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initAssertionPlaceholderChoice]).get()];
+        m_delayedPresentation();
+        break;
+    case WebAuthenticationStatus::NoCredentialsFound: {
         auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorNoCredentialsFound userInfo:nil]);
         [m_presenter updateInterfaceForUserVisibleError:error.get()];
         break;
@@ -155,6 +167,7 @@ void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<Authe
     if (source == WebAuthenticationSource::External) {
         auto loginChoices = adoptNS([[NSMutableArray alloc] init]);
 
+        m_credentials.clear();
         for (auto& response : responses) {
             RetainPtr<NSData> userHandle;
             if (response->userHandle())
@@ -163,7 +176,7 @@ void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<Authe
             auto loginChoice = adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initWithName:response->name() displayName:response->displayName() userHandle:userHandle.get()]);
             [loginChoices addObject:loginChoice.get()];
 
-            m_credentials.add((ASCLoginChoiceProtocol *)loginChoice.get(), WTFMove(response));
+            m_credentials.add(response->name(), WTFMove(response));
         }
 
         [m_presenter updateInterfaceWithLoginChoices:loginChoices.get()];
@@ -171,21 +184,21 @@ void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<Authe
     }
 
     if (source == WebAuthenticationSource::Local) {
-        auto loginChoices = adoptNS([[NSMutableArray alloc] init]);
-
+        m_credentials.clear();
         for (auto& response : responses) {
             RetainPtr<NSData> userHandle;
             if (response->userHandle())
                 userHandle = adoptNS([[NSData alloc] initWithBytes:response->userHandle()->data() length:response->userHandle()->byteLength()]);
 
             auto loginChoice = adoptNS([allocASCPlatformPublicKeyCredentialLoginChoiceInstance() initWithName:response->name() displayName:response->displayName() userHandle:userHandle.get()]);
-            [loginChoices addObject:loginChoice.get()];
+            [m_context addLoginChoice:loginChoice.get()];
 
-            m_credentials.add((ASCLoginChoiceProtocol *)loginChoice.get(), WTFMove(response));
+            m_credentials.add(response->name(), WTFMove(response));
         }
 
-        [loginChoices addObjectsFromArray:[m_context loginChoices]]; // Adds the security key option if exists.
-        [m_presenter updateInterfaceWithLoginChoices:loginChoices.get()];
+        if (m_delayedPresentationNeedsSecurityKey)
+            [m_context addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initAssertionPlaceholderChoice]).get()];
+        m_delayedPresentation();
         return;
     }
 #endif // HAVE(ASC_AUTH_UI)
@@ -225,9 +238,9 @@ void AuthenticatorPresenterCoordinator::setLAContext(LAContext *context)
     m_laContext = context;
 }
 
-void AuthenticatorPresenterCoordinator::didSelectAssertionResponse(ASCLoginChoiceProtocol *loginChoice, LAContext *context)
+void AuthenticatorPresenterCoordinator::didSelectAssertionResponse(const String& credentialName, LAContext *context)
 {
-    auto response = m_credentials.take(loginChoice);
+    auto response = m_credentials.take(credentialName);
     if (!response)
         return;
 
