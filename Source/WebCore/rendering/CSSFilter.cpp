@@ -110,23 +110,28 @@ RefPtr<FilterEffect> CSSFilter::buildReferenceFilter(RenderElement& renderer, Fi
         return nullptr;
     }
 
-    RefPtr<FilterEffect> effect;
-
     auto builder = makeUnique<SVGFilterBuilder>(&previousEffect);
     m_sourceAlpha = builder->getEffectById(SourceAlpha::effectName());
 
+    RefPtr<FilterEffect> effect;
+    Vector<Ref<FilterEffect>> referenceEffects;
+
     for (auto& effectElement : childrenOfType<SVGFilterPrimitiveStandardAttributes>(*filter)) {
         effect = effectElement.build(builder.get(), *this);
-        if (!effect)
-            continue;
+        if (!effect) {
+            LOG_WITH_STREAM(Filters, stream << "CSSFilter " << this << " buildReferenceFilter: failed to build effect from " << effectElement);
+            return nullptr;
+        }
 
         effectElement.setStandardAttributes(effect.get());
         if (effectElement.renderer())
             effect->setOperatingColorSpace(effectElement.renderer()->style().svgStyle().colorInterpolationFilters() == ColorInterpolation::LinearRGB ? ColorSpace::LinearRGB : ColorSpace::SRGB);
 
         builder->add(effectElement.result(), effect);
-        m_effects.append(*effect);
+        referenceEffects.append(*effect);
     }
+    
+    m_effects.appendVector(WTFMove(referenceEffects));
     return effect;
 }
 
