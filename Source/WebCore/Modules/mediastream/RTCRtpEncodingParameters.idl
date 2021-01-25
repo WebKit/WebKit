@@ -32,7 +32,7 @@
     RTCRtpRtxParameters rtx;
     RTCRtpFecParameters fec;
     RTCDtxStatus dtx;
-    boolean active;
+    boolean active = true;
     RTCPriorityType priority;
     unsigned long maxBitrate;
     unsigned long maxFramerate;

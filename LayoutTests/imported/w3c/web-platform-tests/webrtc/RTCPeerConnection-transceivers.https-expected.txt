@@ -23,7 +23,7 @@ PASS setLocalDescription(answer): transceiver.currentDirection is sendonly
 PASS addTransceiver(track): creates a transceiver for the track
 PASS addTransceiver(track): "transceiver == {sender,receiver}"
 PASS addTransceiver(track, init): initialize direction to inactive
-FAIL addTransceiver(track, init): initialize sendEncodings[0].active to false assert_false: expected false got true
+PASS addTransceiver(track, init): initialize sendEncodings[0].active to false
 PASS addTransceiver(0 streams): ontrack fires with no stream
 PASS addTransceiver(1 stream): ontrack fires with corresponding stream
 PASS addTransceiver(2 streams): ontrack fires with corresponding two streams

@@ -1,3 +1,15 @@
+2021-01-25  Youenn Fablet  <youenn@apple.com>
+
+        Activate simulcast through addTransceiver
+        https://bugs.webkit.org/show_bug.cgi?id=173262
+        <rdar://problem/32713416>
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-addTransceiver.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-transceivers.https-expected.txt:
+        * web-platform-tests/webrtc/protocol/simulcast-offer-expected.txt:
+
 2021-01-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Should SharedArrayBuffer/WebAssembly.Memory really throw?
