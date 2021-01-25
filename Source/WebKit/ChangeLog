@@ -1,3 +1,22 @@
+2021-01-25  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Stop leaking an XPC boost message to XPC services
+        https://bugs.webkit.org/show_bug.cgi?id=220883
+        <rdar://47402853>
+
+        Reviewed by Geoffrey Garen.
+
+        Turn on RB_full_manage_WK_jetsam feature flag so that we stop leaking an XPC boost
+        message to XPC services on IOS_FAMILY. Instead, RunningBoard will now be setting
+        the priority of our XPC services based on the RunningBoard assertions we're holding
+        for them. The feature flag is checked both by RunningBoard and WebKit.
+
+        I have verified that our bots have upgraded to a build that supports this.
+
+        * FeatureFlags/WebKit-appletvos.plist:
+        * FeatureFlags/WebKit-ios.plist:
+        * FeatureFlags/WebKit-watchos.plist:
+
 2021-01-25  Per Arne  <pvollan@apple.com>
 
         [macOS] Restrict access to mds data
