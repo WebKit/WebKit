@@ -214,12 +214,7 @@ void requestAVCaptureAccessForType(MediaPermissionType type, CompletionHandler<v
 
     AVMediaType mediaType = type == MediaPermissionType::Audio ? AVMediaTypeAudio : AVMediaTypeVideo;
     auto decisionHandler = makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL authorized) mutable {
-        if (isMainThread()) {
-            completionHandler(authorized);
-            return;
-        }
-
-        callOnMainThread([completionHandler = WTFMove(completionHandler), authorized]() mutable {
+        callOnMainRunLoop([completionHandler = WTFMove(completionHandler), authorized]() mutable {
             completionHandler(authorized);
         });
     });
@@ -247,13 +242,9 @@ void requestSpeechRecognitionAccess(CompletionHandler<void(bool authorized)>&& c
 
     auto decisionHandler = makeBlockPtr([completionHandler = WTFMove(completionHandler)](SFSpeechRecognizerAuthorizationStatus status) mutable {
         bool authorized = status == SFSpeechRecognizerAuthorizationStatusAuthorized;
-        if (!isMainThread()) {
-            callOnMainThread([completionHandler = WTFMove(completionHandler), authorized]() mutable {
-                completionHandler(authorized);
-            });
-            return;
-        }
-        completionHandler(authorized);
+        callOnMainRunLoop([completionHandler = WTFMove(completionHandler), authorized]() mutable {
+            completionHandler(authorized);
+        });
     });
     [PAL::getSFSpeechRecognizerClass() requestAuthorization:decisionHandler.get()];
 }
