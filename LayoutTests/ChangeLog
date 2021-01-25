@@ -1,5 +1,53 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271386. rdar://problem/73426229
+
+    Double tap to select does not work if the page clears selections on tap, like grammarly.com does
+    https://bugs.webkit.org/show_bug.cgi?id=220454
+    Source/WebKit:
+    
+    rdar://67757411
+    
+    Reviewed by Wenson Hsieh.
+    
+    Double tap to select content did not work on grammerly.com on iPad because this is a desktop website run on a touch-based device,
+    and there was a script running that would clear the selection on a mouseDown event. When we would send synthetic click events to the page
+    we would first update the selection and then on completion of the tap, we would dispatch a mouseDown and mouseUp event on iOS. On Mac, we
+    update the selection between the mouseDown and the mouseUp, so in order to bring us more in line with mac/mouse behaviors, we are now saving
+    the information needed to update the selection when we believe we are in the middle of a potential tap, and then setting the selection between
+    these two events. This makes for a more expected change of events, and does not let grammerly.com clear a valid selection based off of synthetic
+    clicks.
+    
+    Test: fast/events/touch/ios/double-tap-on-editable-content-for-selection-with-clear-on-touch.html
+    
+    * WebProcess/WebPage/WebPage.h:
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::completeSyntheticClick):
+    (WebKit::WebPage::setSelectionRange):
+    (WebKit::WebPage::selectTextWithGranularityAtPoint):
+    
+    LayoutTests:
+    
+    Reviewed by Wenson Hsieh.
+    
+    * fast/events/touch/ios/double-tap-on-editable-content-for-selection-with-clear-on-touch-expected.txt: Added.
+    * fast/events/touch/ios/double-tap-on-editable-content-for-selection-with-clear-on-touch.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271386 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-11  Megan Gardner  <megan_gardner@apple.com>
+
+            Double tap to select does not work if the page clears selections on tap, like grammarly.com does
+            https://bugs.webkit.org/show_bug.cgi?id=220454
+
+            Reviewed by Wenson Hsieh.
+
+            * fast/events/touch/ios/double-tap-on-editable-content-for-selection-with-clear-on-touch-expected.txt: Added.
+            * fast/events/touch/ios/double-tap-on-editable-content-for-selection-with-clear-on-touch.html: Added.
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271367. rdar://problem/73469641
 
     REGRESSION (r258321): CSS rules using :first-of-type are applied to any/all siblings in a group under certain circumstances

@@ -853,6 +853,9 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     if (m_isClosed)
         return;
 
+    if (auto selectionChangedHandler = std::exchange(m_selectionChangedHandler, {}))
+        selectionChangedHandler();
+
     tapWasHandled |= mainframe.eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MouseReleased, 1, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), WebCore::ForceAtClick, syntheticClickType, pointerId));
     if (m_isClosed)
         return;
@@ -1166,6 +1169,9 @@ void WebPage::commitPotentialTap(OptionSet<WebEvent::Modifier> modifiers, Transa
 
 void WebPage::commitPotentialTapFailed()
 {
+    if (auto selectionChangedHandler = std::exchange(m_selectionChangedHandler, {}))
+        selectionChangedHandler();
+
     ContentChangeObserver::didCancelPotentialTap(m_page->mainFrame());
     if (!m_page->focusController().focusedOrMainFrame().selection().selection().isContentEditable())
         clearSelection();
@@ -1182,6 +1188,9 @@ void WebPage::cancelPotentialTap()
 
 void WebPage::cancelPotentialTapInFrame(WebFrame& frame)
 {
+    if (auto selectionChangedHandler = std::exchange(m_selectionChangedHandler, {}))
+        selectionChangedHandler();
+
     if (m_potentialTapNode) {
         auto* potentialTapFrame = m_potentialTapNode->document().frame();
         if (potentialTapFrame && !potentialTapFrame->tree().isDescendantOf(frame.coreFrame()))
@@ -2111,7 +2120,7 @@ void WebPage::setFocusedFrameBeforeSelectingTextAtLocation(const IntPoint& point
         m_page->focusController().setFocusedFrame(result.innerNodeFrame());
 }
 
-void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement, CompletionHandler<void()>&& completionHandler)
+void WebPage::setSelectionRange(const WebCore::IntPoint& point, WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement)
 {
     setFocusedFrameBeforeSelectingTextAtLocation(point);
 
@@ -2120,7 +2129,30 @@ void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, W
     if (range)
         frame.selection().setSelectedRange(*range, Affinity::Upstream, WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
     m_initialSelection = range;
-    completionHandler();
+}
+
+void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement, CompletionHandler<void()>&& completionHandler)
+{
+    if (!m_potentialTapNode) {
+        setSelectionRange(point, granularity, isInteractingWithFocusedElement);
+        completionHandler();
+        return;
+    }
+    
+    ASSERT(!m_selectionChangedHandler);
+    if (auto selectionChangedHandler = std::exchange(m_selectionChangedHandler, {}))
+        selectionChangedHandler();
+
+    m_selectionChangedHandler = [point, granularity, isInteractingWithFocusedElement, completionHandler = WTFMove(completionHandler), webPage = makeWeakPtr(*this), this]() mutable {
+        RefPtr<WebPage> strongPage = webPage.get();
+        if (!strongPage) {
+            completionHandler();
+            return;
+        }
+        setSelectionRange(point, granularity, isInteractingWithFocusedElement);
+        completionHandler();
+    };
+
 }
 
 void WebPage::beginSelectionInDirection(WebCore::SelectionDirection direction, CallbackID callbackID)
