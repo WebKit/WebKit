@@ -243,13 +243,24 @@ class CleanWorkingDirectory(shell.ShellCommand):
 class UpdateWorkingDirectory(shell.ShellCommand):
     name = 'update-working-directory'
     description = ['update-workring-directory running']
-    descriptionDone = ['Updated working directory']
     flunkOnFailure = True
     haltOnFailure = True
     command = ['perl', 'Tools/Scripts/update-webkit']
 
     def __init__(self, **kwargs):
         super(UpdateWorkingDirectory, self).__init__(logEnviron=False, **kwargs)
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {u'step': u'Failed to updated working directory'}
+        else:
+            return {u'step': u'Updated working directory'}
+
+    def evaluateCommand(self, cmd):
+        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+        if rc == FAILURE:
+            self.build.buildFinished(['Git issue, retrying build'], RETRY)
+        return rc
 
 
 class ApplyPatch(shell.ShellCommand, CompositeStepMixin):

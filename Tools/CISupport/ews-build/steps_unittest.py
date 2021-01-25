@@ -2268,7 +2268,7 @@ class TestUpdateWorkingDirectory(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='Unexpected failure.')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='Updated working directory (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Failed to updated working directory')
         return self.runStep()
 
 

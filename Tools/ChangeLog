@@ -1,3 +1,16 @@
+2021-01-25  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Commit Queue should retry the build when update-working-directory step fails
+        https://bugs.webkit.org/show_bug.cgi?id=220836
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py:
+        (UpdateWorkingDirectory):
+        (UpdateWorkingDirectory.getResultSummary): Provide better failure message.
+        (UpdateWorkingDirectory.evaluateCommand): Retry the build when this step fails.
+        * CISupport/ews-build/steps_unittest.py:
+
 2021-01-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         The generated commit message have a directory label at the first line rather than the bug's title if ChangeLogs have different bug titles
