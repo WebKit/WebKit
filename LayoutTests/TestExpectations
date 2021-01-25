@@ -1205,7 +1205,6 @@ webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-
 webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-8.html [ ImageOnlyFailure ]
 webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-9.html [ ImageOnlyFailure ]
 webkit.org/b/216145 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-10.html [ ImageOnlyFailure ]
-webkit.org/b/191461 imported/w3c/web-platform-tests/css/css-grid/grid-items/percentage-size-subitems-001.html [ ImageOnlyFailure ]
 webkit.org/b/191463 imported/w3c/web-platform-tests/css/css-grid/grid-items/explicitly-sized-grid-item-as-table.html [ ImageOnlyFailure ]
 webkit.org/b/191627 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001.html [ Failure ]
 webkit.org/b/149890 fast/css-grid-layout/grid-shorthands-style-format.html [ Failure ]

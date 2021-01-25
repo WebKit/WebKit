@@ -1,5 +1,45 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271436. rdar://problem/73477448
+
+    REGRESSION(r268666) Incorrect vertical position inside grid items with padding
+    https://bugs.webkit.org/show_bug.cgi?id=220524
+    
+    Reviewed by Manuel Rego Casasnovas.
+    
+    Source/WebCore:
+    
+    In r268666 we sanitized and renamed the old overrideLogicalXXX sizes so that they store what they say.
+    There was a mistake in one of those renames, in availableLogicalHeightForPercentageComputation() we were
+    returning the border box size for the case of grid items. That's clearly wrong as we should return the
+    content box size. That's why adding a padding to a grid item was causing their children to wrongly
+    evaluate the available logical height.
+    
+    This fixes a WPT that was marked as failure.
+    
+    * rendering/RenderBlock.cpp:
+    (WebCore::RenderBlock::availableLogicalHeightForPercentageComputation const): Return the
+    overridingContentLogicalHeight instead of the overridingLogicalHeight.
+    
+    LayoutTests:
+    
+    * TestExpectations: remove web-platform-tests/css/css-grid/grid-items/percentage-size-subitems-001.html
+    from the list of image failures.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271436 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-13  Sergio Villar Senin  <svillar@igalia.com>
+
+            REGRESSION(r268666) Incorrect vertical position inside grid items with padding
+            https://bugs.webkit.org/show_bug.cgi?id=220524
+
+            Reviewed by Manuel Rego Casasnovas.
+
+            * TestExpectations: remove web-platform-tests/css/css-grid/grid-items/percentage-size-subitems-001.html
+            from the list of image failures.
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271435. rdar://problem/73477090
 
     REGRESSION (r267571): black line appears upon navigating back from apple.com shopping bag

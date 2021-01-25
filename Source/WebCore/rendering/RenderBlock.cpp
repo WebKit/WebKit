@@ -3203,7 +3203,7 @@ Optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComputation
     if (stretchedFlexHeight)
         availableHeight = stretchedFlexHeight;
     else if (isGridItem() && hasOverridingLogicalHeight())
-        availableHeight = overridingLogicalHeight();
+        availableHeight = overridingContentLogicalHeight();
     else if (styleToUse.logicalHeight().isFixed()) {
         LayoutUnit contentBoxHeight = adjustContentBoxLogicalHeightForBoxSizing((LayoutUnit)styleToUse.logicalHeight().value());
         availableHeight = std::max(0_lu, constrainContentBoxLogicalHeightByMinMax(contentBoxHeight - scrollbarLogicalHeight(), WTF::nullopt));
