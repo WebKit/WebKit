@@ -1,5 +1,61 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271473. rdar://problem/73478401
+
+    PCM: Output logs by default, including to Web Inspector
+    https://bugs.webkit.org/show_bug.cgi?id=220596
+    <rdar://problem/73159180>
+    
+    Reviewed by Brent Fulgham.
+    
+    This change turns on PCM output to Web Inspector and logs
+    Source/WebCore:
+    
+    by default. In the case of WebCore::PrivateClickMeasurement,
+    this means we no longer need the debugModeEnabled()
+    convenience function.
+    
+    * loader/PrivateClickMeasurement.cpp:
+    (WebCore::PrivateClickMeasurement::parseAttributionRequest):
+    (WebCore::PrivateClickMeasurement::debugModeEnabled): Deleted.
+    * loader/PrivateClickMeasurement.h:
+    
+    Source/WebKit:
+    
+    by default. In some of the cases, the syslog output was
+    deleted since it doesn't make sense to log those messages
+    now that we have output in Web Inspector.
+    
+    * NetworkProcess/PrivateClickMeasurementManager.cpp:
+    (WebKit::PrivateClickMeasurementManager::storeUnattributed):
+    (WebKit::PrivateClickMeasurementManager::handleAttribution):
+    (WebKit::PrivateClickMeasurementManager::attribute):
+    (WebKit::PrivateClickMeasurementManager::fireConversionRequest):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271473 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-13  John Wilander  <wilander@apple.com>
+
+            PCM: Output logs by default, including to Web Inspector
+            https://bugs.webkit.org/show_bug.cgi?id=220596
+            <rdar://problem/73159180>
+
+            Reviewed by Brent Fulgham.
+
+            This change turns on PCM output to Web Inspector and logs
+            by default. In some of the cases, the syslog output was
+            deleted since it doesn't make sense to log those messages
+            now that we have output in Web Inspector.
+
+            * NetworkProcess/PrivateClickMeasurementManager.cpp:
+            (WebKit::PrivateClickMeasurementManager::storeUnattributed):
+            (WebKit::PrivateClickMeasurementManager::handleAttribution):
+            (WebKit::PrivateClickMeasurementManager::attribute):
+            (WebKit::PrivateClickMeasurementManager::fireConversionRequest):
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271471. rdar://problem/73477068
 
     Source/WebCore:
