@@ -7785,6 +7785,18 @@ static const Vector<ASCIILiteral>& gpuIOKitClasses()
     return services;
 }
 
+static const Vector<ASCIILiteral>& gpuMachServices()
+{
+    ASSERT(isMainThread());
+    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
+        "com.apple.MTLCompilerService"_s,
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+        "com.apple.cvmsServ"_s,
+#endif
+    });
+    return services;
+}
+
 // FIXME(207716): The following should be removed when the GPU process is complete.
 static const Vector<ASCIILiteral>& mediaRelatedMachServices()
 {
@@ -7935,8 +7947,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
         || (!preferences().captureVideoInGPUProcessEnabled() && !preferences().captureVideoInUIProcessEnabled())
         || (!preferences().captureAudioInGPUProcessEnabled() && !preferences().captureAudioInUIProcessEnabled())
         || !preferences().useGPUProcessForCanvasRenderingEnabled()
-        || !preferences().useGPUProcessForWebGLEnabled())
+        || !preferences().useGPUProcessForWebGLEnabled()) {
         parameters.gpuIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(gpuIOKitClasses(), WTF::nullopt);
+        parameters.gpuMachExtensionHandles = SandboxExtension::createHandlesForMachLookup(gpuMachServices(), WTF::nullopt);
+    }
 #endif
 #if HAVE(APP_ACCENT_COLORS)
     parameters.accentColor = pageClient().accentColor();

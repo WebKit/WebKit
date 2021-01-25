@@ -593,10 +593,11 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         SandboxExtension::consumePermanently(parameters.mediaIOKitExtensionHandles);
         hasConsumedMediaExtensionHandles = true;
     }
-    static bool hasConsumedGPUIOKitExtensionHandles = false;
-    if (!hasConsumedGPUIOKitExtensionHandles && parameters.gpuIOKitExtensionHandles.size()) {
+    static bool hasConsumedGPUExtensionHandles = false;
+    if (!hasConsumedGPUExtensionHandles) {
         SandboxExtension::consumePermanently(parameters.gpuIOKitExtensionHandles);
-        hasConsumedGPUIOKitExtensionHandles = true;
+        SandboxExtension::consumePermanently(parameters.gpuMachExtensionHandles);
+        hasConsumedGPUExtensionHandles = true;
     }
 #endif
 

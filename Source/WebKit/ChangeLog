@@ -1,3 +1,25 @@
+2021-01-25  Per Arne  <pvollan@apple.com>
+
+        [macOS] Create extension to Metal compiler service based on GPUP flags
+        https://bugs.webkit.org/show_bug.cgi?id=220931
+        <rdar://problem/73574476>
+
+        Reviewed by Brent Fulgham.
+
+        Depending on which GPUP settings are enabled, an extension to the Metal compiler service should be created.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::gpuMachServices):
+        (WebKit::WebPageProxy::creationParameters):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-01-25  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Restrict access to dtracehelper

@@ -265,10 +265,22 @@
     (allow sysctl-read
            (sysctl-name #"kern.bootsessionuuid"))
 
+    ;; <rdar://problem/47268166>
     (allow mach-lookup
-       ;; <rdar://problem/47268166>
-       (xpc-service-name "com.apple.MTLCompilerService"))
-    
+        (require-all
+            (extension "com.apple.webkit.extension.mach")
+            (xpc-service-name "com.apple.MTLCompilerService")
+        )
+    )
+    ;; This is just for logging. Remove when GPU process is enabled by default.
+    (allow mach-lookup
+        (with telemetry)
+        (require-all
+            (require-not (extension "com.apple.webkit.extension.mach"))
+            (xpc-service-name "com.apple.MTLCompilerService")
+        )
+    )
+
     (mobile-preferences-read
         "com.apple.Metal" ;; <rdar://problem/25535471>
         "com.apple.opengl" ;; <rdar://problem/23321675>

@@ -177,6 +177,7 @@ struct WebPageCreationParameters {
     SandboxExtension::HandleArray mediaExtensionHandles; // FIXME(207716): Remove when GPU process is complete.
     SandboxExtension::HandleArray mediaIOKitExtensionHandles;
     SandboxExtension::HandleArray gpuIOKitExtensionHandles;
+    SandboxExtension::HandleArray gpuMachExtensionHandles;
 #endif
 #if HAVE(APP_ACCENT_COLORS)
     WebCore::Color accentColor;

@@ -106,10 +106,21 @@
         (preference-domain "com.nvidia.OpenGL"))
     ;; CVMS
     (allow mach-lookup
+        (require-all
+            (extension "com.apple.webkit.extension.mach")
+            (global-name "com.apple.cvmsServ")
+        )
+    )
+    ;; This is just for logging. Remove when the GPU process is enabled by default.
+    (allow mach-lookup
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
         (with telemetry-backtrace)
 #endif
-        (global-name "com.apple.cvmsServ"))
+        (require-all
+            (require-not (extension "com.apple.webkit.extension.mach"))
+            (global-name "com.apple.cvmsServ")
+        )
+    )
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
     (allow file-read*
         (prefix "/private/var/db/CVMS/cvmsCodeSignObj"))
@@ -1145,10 +1156,21 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
 ;; <rdar://problem/47268166>
 (allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (xpc-service-name "com.apple.MTLCompilerService")
+    )
+)
+;; This is just for logging. Remove when GPU process is enabled by default.
+(allow mach-lookup
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
     (with telemetry-backtrace)
 #endif
-    (xpc-service-name "com.apple.MTLCompilerService"))
+    (require-all
+        (require-not (extension "com.apple.webkit.extension.mach"))
+        (xpc-service-name "com.apple.MTLCompilerService")
+    )
+)
 #endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
