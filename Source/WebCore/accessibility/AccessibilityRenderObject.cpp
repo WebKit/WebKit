@@ -1847,6 +1847,9 @@ bool AccessibilityRenderObject::isFocused() const
 
 void AccessibilityRenderObject::setFocused(bool on)
 {
+    // Call the base class setFocused to ensure the view is focused and active.
+    AccessibilityObject::setFocused(on);
+
     if (!canSetFocusAttribute())
         return;
 
@@ -1857,9 +1860,6 @@ void AccessibilityRenderObject::setFocused(bool on)
         document->setFocusedElement(nullptr);
         return;
     }
-
-    // Call the base class setFocused to ensure the view is focused and active.
-    AccessibilityObject::setFocused(on);
 
     // When a node is told to set focus, that can cause it to be deallocated, which means that doing
     // anything else inside this object will crash. To fix this, we added a RefPtr to protect this object
