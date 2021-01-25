@@ -9,6 +9,9 @@ window.jsTestIsAsync = true;
 
 description("Testing that entering fullscreen then going back into inline presents inline controls.");
 
+if (window.internals)
+    internals.setMockVideoPresentationModeEnabled(true);
+
 const media = document.querySelector("video");
 const shadowRoot = window.internals.shadowRoot(media);
 
@@ -18,12 +21,20 @@ media.addEventListener("play", () => {
     shouldBeTrue("shadowRoot.querySelector('.media-controls').classList.contains('inline')");
 
     media.pause();
-    window.requestAnimationFrame(() => toggleFullscreen());
+    window.requestAnimationFrame(() => clickFullscreenButton());
 });
 
 media.addEventListener("webkitfullscreenchange", () => {
     debug("");
 
+    if (window.internals)
+        shouldBecomeEqual("internals.isChangingPresentationMode(media)", "false", toggleFullscreen);
+    else
+        toggleFullscreen();
+});
+
+function toggleFullscreen()
+{
     if (media.webkitDisplayingFullscreen) {
         debug("Media entered fullscreen.");
         window.requestAnimationFrame(() => {
@@ -31,7 +42,7 @@ media.addEventListener("webkitfullscreenchange", () => {
 
             debug("");
             debug("We exit fullscreen by clicking on the matching button.");
-            toggleFullscreen();
+            clickFullscreenButton();
         });
     } else {
         debug("Media exited fullscreen.");
@@ -44,9 +55,9 @@ media.addEventListener("webkitfullscreenchange", () => {
             finishJSTest();
         });
     }
-});
+}
 
-function toggleFullscreen()
+function clickFullscreenButton()
 {
     const element = shadowRoot.querySelector("button.fullscreen");
     const bounds = element.getBoundingClientRect();
