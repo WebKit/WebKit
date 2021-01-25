@@ -1,5 +1,44 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271387. rdar://problem/73469606
+
+    Receiving two enter/exit fullscreen delegate callbacks on iPad when presenting fullscreen elements
+    https://bugs.webkit.org/show_bug.cgi?id=218688
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    On iPads, when a video enters/exits fullscreen standby, we should not call the
+    video fullscreen delegate callbacks.
+    
+    * platform/ios/VideoFullscreenInterfaceAVKit.h:
+    * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+    (VideoFullscreenInterfaceAVKit::setupFullscreen):
+    (VideoFullscreenInterfaceAVKit::exitFullscreen):
+    
+    Source/WebKit:
+    
+    * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+    (WebKit::VideoFullscreenManagerProxy::didExitFullscreen):
+    (WebKit::VideoFullscreenManagerProxy::didEnterFullscreen):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271387 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-11  Peng Liu  <peng.liu6@apple.com>
+
+            Receiving two enter/exit fullscreen delegate callbacks on iPad when presenting fullscreen elements
+            https://bugs.webkit.org/show_bug.cgi?id=218688
+
+            Reviewed by Darin Adler.
+
+            * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+            (WebKit::VideoFullscreenManagerProxy::didExitFullscreen):
+            (WebKit::VideoFullscreenManagerProxy::didEnterFullscreen):
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271386. rdar://problem/73426229
 
     Double tap to select does not work if the page clears selections on tap, like grammarly.com does
