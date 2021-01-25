@@ -79,7 +79,7 @@ private:
     void startRepeatingTimer();
     void stopRepeatingTimer();
     void repeatingTimerFired();
-    void setHovered(bool = true) override;
+    void setHovered(bool, IsUserActionStateChangeRoot) override;
     bool shouldRespondToMouseEvents();
     bool isMouseFocusable() const override { return false; }
 

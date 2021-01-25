@@ -7123,6 +7123,11 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
 {
     ASSERT(!request.readOnly());
 
+    Vector<RefPtr<Element>, 32> elementsToClearActive;
+    Vector<RefPtr<Element>, 32> elementsToSetActive;
+    Vector<RefPtr<Element>, 32> elementsToClearHover;
+    Vector<RefPtr<Element>, 32> elementsToSetHover;
+
     Element* innerElementInDocument = innerElement;
     while (innerElementInDocument && &innerElementInDocument->document() != this) {
         innerElementInDocument->document().updateHoverActiveState(request, innerElementInDocument);
@@ -7132,8 +7137,8 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     Element* oldActiveElement = m_activeElement.get();
     if (oldActiveElement && !request.active()) {
         // We are clearing the :active chain because the mouse has been released.
-        for (Element* currentElement = oldActiveElement; currentElement; currentElement = currentElement->parentElementInComposedTree()) {
-            currentElement->setActive(false);
+        for (auto* currentElement = oldActiveElement; currentElement; currentElement = currentElement->parentElementInComposedTree()) {
+            elementsToClearActive.append(currentElement);
             m_userActionElements.setInActiveChain(*currentElement, false);
         }
         m_activeElement = nullptr;
@@ -7178,15 +7183,13 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
 
     auto* commonAncestor = findNearestCommonComposedAncestor(oldHoveredElement.get(), newHoveredElement);
 
-    Vector<RefPtr<Element>, 32> elementsToRemoveFromChain;
-    Vector<RefPtr<Element>, 32> elementsToAddToChain;
-
     if (oldHoveredElement != newHoveredElement) {
         for (auto* element = oldHoveredElement.get(); element; element = element->parentElementInComposedTree()) {
             if (element == commonAncestor)
                 break;
-            if (!mustBeInActiveChain || element->isInActiveChain())
-                elementsToRemoveFromChain.append(element);
+            if (mustBeInActiveChain && !element->isInActiveChain())
+                continue;
+            elementsToClearHover.append(element);
         }
         // Unset hovered nodes in sub frame documents if the old hovered node was a frame owner.
         if (is<HTMLFrameOwnerElement>(oldHoveredElement)) {
@@ -7195,25 +7198,26 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
         }
     }
 
-    for (auto* element = newHoveredElement; element; element = element->parentElementInComposedTree()) {
-        if (!mustBeInActiveChain || element->isInActiveChain())
-            elementsToAddToChain.append(element);
-    }
-
-    for (auto& element : elementsToRemoveFromChain)
-        element->setHovered(false);
-
     bool sawCommonAncestor = false;
-    for (auto& element : elementsToAddToChain) {
+    for (auto* element = newHoveredElement; element; element = element->parentElementInComposedTree()) {
+        if (mustBeInActiveChain && !element->isInActiveChain())
+            continue;
         if (allowActiveChanges)
-            element->setActive(true);
+            elementsToSetActive.append(element);
         if (element == commonAncestor)
             sawCommonAncestor = true;
-        if (!sawCommonAncestor) {
-            // Elements after the common hover ancestor does not change hover state, but are iterated over because they may change active state.
-            element->setHovered(true);
-        }
+        if (!sawCommonAncestor)
+            elementsToSetHover.append(element);
     }
+
+    for (auto& element : elementsToClearActive)
+        element->setActive(false, false, element == elementsToClearActive.last() ? Element::IsUserActionStateChangeRoot::Yes : Element::IsUserActionStateChangeRoot::No);
+    for (auto& element : elementsToSetActive)
+        element->setActive(true, false, element == elementsToSetActive.last() ? Element::IsUserActionStateChangeRoot::Yes : Element::IsUserActionStateChangeRoot::No);
+    for (auto& element : elementsToClearHover)
+        element->setHovered(false, element == elementsToClearHover.last() ? Element::IsUserActionStateChangeRoot::Yes : Element::IsUserActionStateChangeRoot::No);
+    for (auto& element : elementsToSetHover)
+        element->setHovered(true, element == elementsToSetHover.last() ? Element::IsUserActionStateChangeRoot::Yes : Element::IsUserActionStateChangeRoot::No);
 }
 
 bool Document::haveStylesheetsLoaded() const
