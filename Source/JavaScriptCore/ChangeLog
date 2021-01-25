@@ -1,3 +1,31 @@
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r271544. rdar://problem/73471591
+
+    [JSC] Clean up DFGPreciseLocalClobberize to avoid duplicate code
+    https://bugs.webkit.org/show_bug.cgi?id=220670
+    
+    Reviewed by Filip Pizlo.
+    
+    This patch cleans up DFGPreciseLocalClobberize by extracting code to lambda to remove duplicate code.
+    
+    * dfg/DFGPreciseLocalClobberize.h:
+    (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271544 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Clean up DFGPreciseLocalClobberize to avoid duplicate code
+            https://bugs.webkit.org/show_bug.cgi?id=220670
+
+            Reviewed by Filip Pizlo.
+
+            This patch cleans up DFGPreciseLocalClobberize by extracting code to lambda to remove duplicate code.
+
+            * dfg/DFGPreciseLocalClobberize.h:
+            (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+
 2021-01-13  Russell Epstein  <repstein@apple.com>
 
         Revert r270664. rdar://problem/73165685
