@@ -1214,8 +1214,5 @@ fast/layoutformattingcontext/wbr-simple.html [ ImageOnlyFailure ]
 
 webkit.org/b/219498 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-003.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/220188 [ BigSur+ ] http/tests/security/http-0.9/default-port-script-blocked.html [ Pass Failure ]
-webkit.org/b/220188 [ BigSur+ ] http/tests/security/http-0.9/default-port-plugin-blocked.html [ Pass Failure ]
-
 webkit.org/b/217761 [ Debug ] webgl/conformance/extensions/s3tc-and-rgtc.html [ Skip ]
 webkit.org/b/217761 [ Debug ] webgl/2.0.0/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Skip ]
