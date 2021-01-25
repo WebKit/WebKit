@@ -314,8 +314,10 @@
            (literal "/dev/null")
            (literal "/dev/zero"))
 
-    (allow file-read* file-write-data file-ioctl
-           (literal "/dev/dtracehelper"))
+    (with-filter (system-attribute apple-internal)
+        (allow file-read* file-write-data file-ioctl
+            (literal "/dev/dtracehelper"))
+    )
 
     (allow file-read*
            (literal "/dev/random")

@@ -81,13 +81,12 @@
     (literal "/dev/null")
     (literal "/dev/zero"))
 
-(allow file-read*
-       file-write-data
-       file-ioctl
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-    (with telemetry-backtrace)
-#endif
-    (literal "/dev/dtracehelper"))
+(with-filter (system-attribute apple-internal)
+    (allow file-read*
+           file-write-data
+           file-ioctl
+        (literal "/dev/dtracehelper"))
+)
 
 ;;; Allow creation of core dumps.
 (allow file-write-create

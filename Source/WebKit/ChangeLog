@@ -1,3 +1,16 @@
+2021-01-25  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Restrict access to dtracehelper
+        https://bugs.webkit.org/show_bug.cgi?id=220927
+        <rdar://70350947>
+
+        Reviewed by Brent Fulgham.
+
+        Only allow access to dtracehelper for internal installs.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-01-25  Chris Dumez  <cdumez@apple.com>
 
         Update availability annotations to match the macOS 11.0 and iOS 14.0 GM SDKs
