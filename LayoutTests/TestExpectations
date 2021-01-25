@@ -4574,3 +4574,19 @@ webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/t
 webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/move-back-iframe-success-inline-classic.html [ Pass Failure ]
 
 webkit.org/b/220325 http/wpt/css/css-highlight-api/highlight-text-cascade.html [ ImageOnlyFailure ]
+
+# Unsupported css color() variants
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-002.html [ Failure ]
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-003.html [ Failure ]
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-004.html [ Failure ]
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-006.html [ Failure ]
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-007.html [ Failure ]
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-008.html [ Failure ]
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-009.html [ Failure ]
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-010.html [ Failure ]
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-011.html [ Failure ]
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-012.html [ Failure ]
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-014.html [ Failure ]
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-015.html [ Failure ]
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-016.html [ Failure ]
+webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-017.html [ Failure ]

@@ -1,3 +1,15 @@
+2021-01-25  Sam Weinig  <weinig@apple.com>
+
+        Import css/css-color tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=220247
+        <rdar://problem/73002231>
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+        Add failing expectations for newly imported reftests that fail. Fixing them is 
+        tracked in https://bugs.webkit.org/show_bug.cgi?id=220928.
+
 2021-01-25  Andres Gonzalez  <andresg_22@apple.com>
 
         AX: @alt and bounds ignored when using img[src] points to an inaccessible SVG

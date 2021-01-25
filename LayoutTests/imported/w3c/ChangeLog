@@ -1,3 +1,66 @@
+2021-01-25  Sam Weinig  <weinig@apple.com>
+
+        Import css/css-color tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=220247
+        <rdar://problem/73002231>
+
+        Reviewed by Simon Fraser.
+
+        Update WPT css/css-color tests. 
+
+        * web-platform-tests/css/css-color/lab-002-expected.html:
+        * web-platform-tests/css/css-color/lab-003-expected.html:
+        * web-platform-tests/css/css-color/lch-001-expected.html:
+        * web-platform-tests/css/css-color/lch-002-expected.html:
+        * web-platform-tests/css/css-color/lch-003-expected.html:
+        * web-platform-tests/css/css-color/predefined-001-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-001.html: Added.
+        * web-platform-tests/css/css-color/predefined-002-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-002.html: Added.
+        * web-platform-tests/css/css-color/predefined-003-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-003.html: Added.
+        * web-platform-tests/css/css-color/predefined-004-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-004.html: Added.
+        * web-platform-tests/css/css-color/predefined-005-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-005.html: Added.
+        * web-platform-tests/css/css-color/predefined-006-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-006.html: Added.
+        * web-platform-tests/css/css-color/predefined-007-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-007.html: Added.
+        * web-platform-tests/css/css-color/predefined-008-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-008.html: Added.
+        * web-platform-tests/css/css-color/predefined-009-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-009.html: Added.
+        * web-platform-tests/css/css-color/predefined-010-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-010.html: Added.
+        * web-platform-tests/css/css-color/predefined-011-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-011.html: Added.
+        * web-platform-tests/css/css-color/predefined-012-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-012.html: Added.
+        * web-platform-tests/css/css-color/predefined-013-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-013.html: Added.
+        * web-platform-tests/css/css-color/predefined-014-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-014.html: Added.
+        * web-platform-tests/css/css-color/predefined-015-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-015.html: Added.
+        * web-platform-tests/css/css-color/predefined-016-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-016.html: Added.
+        * web-platform-tests/css/css-color/predefined-017-expected.html: Added.
+        * web-platform-tests/css/css-color/predefined-017.html: Added.
+        * web-platform-tests/css/css-color/system-color-compute-expected.txt: Added.
+        * web-platform-tests/css/css-color/system-color-compute.html: Added.
+        * web-platform-tests/css/css-color/t32-opacity-basic-0.6-a-expected.html: Added.
+        * web-platform-tests/css/css-color/t32-opacity-basic-0.6-a.xht:
+        * web-platform-tests/css/css-color/t32-opacity-zorder-c-expected.html: Added.
+        * web-platform-tests/css/css-color/t32-opacity-zorder-c.xht:
+        * web-platform-tests/css/css-color/t421-rgb-hex3-expand-b-expected.html: Added.
+        * web-platform-tests/css/css-color/t421-rgb-hex3-expand-b.xht:
+        * web-platform-tests/css/css-color/t422-rgba-a0.6-a-expected.html: Added.
+        * web-platform-tests/css/css-color/t422-rgba-a0.6-a.xht:
+        * web-platform-tests/css/css-color/t425-hsla-basic-a-expected.html: Added.
+        * web-platform-tests/css/css-color/t425-hsla-basic-a.xht:
+        * web-platform-tests/css/css-color/w3c-import.log:
+
 2021-01-25  Youenn Fablet  <youenn@apple.com>
 
         Activate simulcast through addTransceiver
