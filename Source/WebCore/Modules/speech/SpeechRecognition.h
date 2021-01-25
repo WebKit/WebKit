@@ -41,6 +41,9 @@ class SpeechRecognition : public SpeechRecognitionConnectionClient, public Activ
 public:
     static Ref<SpeechRecognition> create(Document&);
 
+    using SpeechRecognitionConnectionClient::weakPtrFactory;
+    using WeakValueType = SpeechRecognitionConnectionClient::WeakValueType;
+
     const String& lang() const { return m_lang; }
     void setLang(String&& lang) { m_lang = WTFMove(lang); }
 

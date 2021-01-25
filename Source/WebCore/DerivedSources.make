@@ -659,6 +659,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/AbortController.idl \
     $(WebCore)/dom/AbortSignal.idl \
     $(WebCore)/dom/AbstractRange.idl \
+    $(WebCore)/dom/AddEventListenerOptions.idl \
     $(WebCore)/dom/AnimationEvent.idl \
     $(WebCore)/dom/Attr.idl \
     $(WebCore)/dom/BeforeLoadEvent.idl \
@@ -717,6 +718,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/Event.idl \
     $(WebCore)/dom/EventInit.idl \
     $(WebCore)/dom/EventListener.idl \
+    $(WebCore)/dom/EventListenerOptions.idl \
     $(WebCore)/dom/EventModifierInit.idl \
     $(WebCore)/dom/EventTarget.idl \
     $(WebCore)/dom/FocusEvent.idl \

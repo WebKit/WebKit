@@ -32,7 +32,7 @@ namespace WebCore {
 // retrieve the current value of the given media query and to add/remove listeners that
 // will be called whenever the value of the query changes.
 
-class MediaQueryList final : public RefCounted<MediaQueryList>, public EventTargetWithInlineData, public CanMakeWeakPtr<MediaQueryList>, public ActiveDOMObject {
+class MediaQueryList final : public RefCounted<MediaQueryList>, public EventTargetWithInlineData, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(MediaQueryList);
 public:
     static Ref<MediaQueryList> create(Document&, MediaQueryMatcher&, Ref<MediaQuerySet>&&, bool matches);

@@ -2128,7 +2128,7 @@ void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
         downcast<Element>(*this).didMoveToNewDocument(oldDocument, newDocument);
 }
 
-static inline bool tryAddEventListener(Node* targetNode, const AtomString& eventType, Ref<EventListener>&& listener, const EventTarget::AddEventListenerOptions& options)
+static inline bool tryAddEventListener(Node* targetNode, const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
     if (!targetNode->EventTarget::addEventListener(eventType, listener.copyRef(), options))
         return false;
@@ -2164,7 +2164,7 @@ bool Node::addEventListener(const AtomString& eventType, Ref<EventListener>&& li
     return tryAddEventListener(this, eventType, WTFMove(listener), options);
 }
 
-static inline bool tryRemoveEventListener(Node* targetNode, const AtomString& eventType, EventListener& listener, const EventTarget::ListenerOptions& options)
+static inline bool tryRemoveEventListener(Node* targetNode, const AtomString& eventType, EventListener& listener, const EventListenerOptions& options)
 {
     if (!targetNode->EventTarget::removeEventListener(eventType, listener, options))
         return false;
@@ -2196,7 +2196,7 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomString& ev
     return true;
 }
 
-bool Node::removeEventListener(const AtomString& eventType, EventListener& listener, const ListenerOptions& options)
+bool Node::removeEventListener(const AtomString& eventType, EventListener& listener, const EventListenerOptions& options)
 {
     return tryRemoveEventListener(this, eventType, listener, options);
 }

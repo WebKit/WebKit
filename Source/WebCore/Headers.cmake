@@ -396,9 +396,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     display/css/DisplayReplacedBox.h
     display/css/DisplayStyle.h
 
+    dom/AbortSignal.h
     dom/AbstractRange.h
     dom/ActiveDOMCallback.h
     dom/ActiveDOMObject.h
+    dom/AddEventListenerOptions.h
     dom/Attr.h
     dom/Attribute.h
     dom/BoundaryPoint.h
@@ -444,6 +446,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/EventInit.h
     dom/EventListener.h
     dom/EventListenerMap.h
+    dom/EventListenerOptions.h
     dom/EventModifierInit.h
     dom/EventNames.h
     dom/EventQueue.h

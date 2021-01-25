@@ -5795,7 +5795,7 @@ bool HTMLMediaElement::addEventListener(const AtomString& eventType, Ref<EventLi
     return true;
 }
 
-bool HTMLMediaElement::removeEventListener(const AtomString& eventType, EventListener& listener, const ListenerOptions& options)
+bool HTMLMediaElement::removeEventListener(const AtomString& eventType, EventListener& listener, const EventListenerOptions& options)
 {
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
     if (eventType == eventNames().webkitneedkeyEvent)

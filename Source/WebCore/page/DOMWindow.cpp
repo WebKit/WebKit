@@ -2145,7 +2145,7 @@ void DOMWindow::resetAllGeolocationPermission()
 #endif
 }
 
-bool DOMWindow::removeEventListener(const AtomString& eventType, EventListener& listener, const ListenerOptions& options)
+bool DOMWindow::removeEventListener(const AtomString& eventType, EventListener& listener, const EventListenerOptions& options)
 {
     if (!EventTarget::removeEventListener(eventType, listener, options.capture))
         return false;

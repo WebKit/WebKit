@@ -104,6 +104,9 @@ MessagePort::MessagePort(ScriptExecutionContext& scriptExecutionContext, const M
     Locker<Lock> locker(allMessagePortsLock);
     allMessagePorts().set(m_identifier, this);
 
+    // Make sure the WeakPtrFactory gets initialized eagerly on the thread the MessagePort gets constructed on for thread-safety reasons.
+    initializeWeakPtrFactory();
+
     m_scriptExecutionContext->createdMessagePort(*this);
     suspendIfNeeded();
 
@@ -419,7 +422,7 @@ bool MessagePort::addEventListener(const AtomString& eventType, Ref<EventListene
     return EventTargetWithInlineData::addEventListener(eventType, WTFMove(listener), options);
 }
 
-bool MessagePort::removeEventListener(const AtomString& eventType, EventListener& listener, const ListenerOptions& options)
+bool MessagePort::removeEventListener(const AtomString& eventType, EventListener& listener, const EventListenerOptions& options)
 {
     auto result = EventTargetWithInlineData::removeEventListener(eventType, listener, options);
 

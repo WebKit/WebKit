@@ -52,6 +52,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAbstractWorker.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAbstractWorker.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAccessibilityRole.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAccessibilityRole.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAddEventListenerOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAddEventListenerOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAddressErrors.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAddressErrors.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAesCbcCfbParams.cpp
@@ -743,6 +745,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEventInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEventInit.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEventListenerOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEventListenerOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEventModifierInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEventModifierInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEventSource.cpp

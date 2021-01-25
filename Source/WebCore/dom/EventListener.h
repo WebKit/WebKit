@@ -21,6 +21,7 @@
 #pragma once
 
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace JSC {
 class JSObject;
@@ -33,7 +34,7 @@ class ScriptExecutionContext;
 class Event;
 class EventTarget;
 
-class EventListener : public RefCounted<EventListener> {
+class EventListener : public RefCounted<EventListener>, public CanMakeWeakPtr<EventListener> {
 public:
     enum Type {
         JSEventListenerType, 

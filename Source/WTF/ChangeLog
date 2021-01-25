@@ -1,3 +1,20 @@
+2021-01-25  Chris Dumez  <cdumez@apple.com>
+
+        Support AbortSignal in addEventListenerOptions to unsubscribe from events
+        https://bugs.webkit.org/show_bug.cgi?id=218753
+        <rdar://problem/71258012>
+
+        Reviewed by Darin Adler.
+
+        Add initializeWeakPtrFactory() protection function to CanMakeWeakPtr so that a subclass
+        can eagerly initialize the WeakPtrFactory even if it does not subclass
+        WeakPtrFactory<T, WeakPtrFactoryInitialization::Eager>. MessagePort used to subclass
+        WeakPtrFactory<T, WeakPtrFactoryInitialization::Eager> for thread-safety reason but it
+        now subclasses WeakPtrFactory<T, WeakPtrFactoryInitialization::Lazy> via EventTarget.
+
+        * wtf/WeakPtr.h:
+        (WTF::CanMakeWeakPtr::initializeWeakPtrFactory):
+
 2021-01-25  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Fix OS version check for ENABLE_SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS

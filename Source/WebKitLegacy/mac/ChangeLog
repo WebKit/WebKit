@@ -1,3 +1,15 @@
+2021-01-25  Chris Dumez  <cdumez@apple.com>
+
+        Support AbortSignal in addEventListenerOptions to unsubscribe from events
+        https://bugs.webkit.org/show_bug.cgi?id=218753
+        <rdar://problem/71258012>
+
+        Reviewed by Darin Adler.
+
+        Minor build fixes.
+
+        * DOM/DOMNode.mm:
+
 2021-01-21  Devin Rousso  <drousso@apple.com>
 
         [Apple Pay] use the first item in `shippingOptions` even when it's not `selected`

@@ -1,3 +1,15 @@
+2021-01-25  Chris Dumez  <cdumez@apple.com>
+
+        Support AbortSignal in addEventListenerOptions to unsubscribe from events
+        https://bugs.webkit.org/show_bug.cgi?id=218753
+        <rdar://problem/71258012>
+
+        Reviewed by Darin Adler.
+
+        Minor build fixes.
+
+        * WebProcess/Plugins/PDF/PDFPluginAnnotation.mm:
+
 2021-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [GPU Process] Web process should be terminated if DisplayListReaderHandle advances past 0

@@ -33,6 +33,7 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityNodeObject.h"
+#include "AddEventListenerOptions.h"
 #include "Attr.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSParser.h"

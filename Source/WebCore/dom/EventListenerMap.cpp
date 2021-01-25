@@ -33,6 +33,7 @@
 #include "config.h"
 #include "EventListenerMap.h"
 
+#include "AddEventListenerOptions.h"
 #include "Event.h"
 #include "EventTarget.h"
 #include <wtf/MainThread.h>

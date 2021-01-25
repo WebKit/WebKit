@@ -45,7 +45,7 @@ namespace WebCore {
 
 class Frame;
 
-class MessagePort final : public ActiveDOMObject, public EventTargetWithInlineData, public CanMakeWeakPtr<MessagePort, WeakPtrFactoryInitialization::Eager> {
+class MessagePort final : public ActiveDOMObject, public EventTargetWithInlineData {
     WTF_MAKE_NONCOPYABLE(MessagePort);
     WTF_MAKE_ISO_ALLOCATED(MessagePort);
 public:
@@ -99,7 +99,7 @@ private:
     explicit MessagePort(ScriptExecutionContext&, const MessagePortIdentifier& local, const MessagePortIdentifier& remote);
 
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
-    bool removeEventListener(const AtomString& eventType, EventListener&, const ListenerOptions&) final;
+    bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) final;
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;

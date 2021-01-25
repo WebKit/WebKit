@@ -29,6 +29,7 @@
 
 #include "AXObjectCache.h"
 #include "ActivityState.h"
+#include "AddEventListenerOptions.h"
 #include "AnimationTimeline.h"
 #include "ApplicationCacheStorage.h"
 #include "AudioSession.h"

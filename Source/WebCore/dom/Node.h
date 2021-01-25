@@ -69,7 +69,7 @@ class TouchEvent;
 
 using NodeOrString = Variant<RefPtr<Node>, String>;
 
-class Node : public CanMakeWeakPtr<Node>, public EventTarget {
+class Node : public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(Node);
 
     friend class Document;
@@ -447,7 +447,7 @@ public:
     ScriptExecutionContext* scriptExecutionContext() const final; // Implemented in Document.h
 
     WEBCORE_EXPORT bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
-    bool removeEventListener(const AtomString& eventType, EventListener&, const ListenerOptions&) override;
+    bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) override;
 
     using EventTarget::dispatchEvent;
     void dispatchEvent(Event&) override;

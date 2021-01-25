@@ -32,12 +32,3 @@
     [ImplementedAs=removeEventListenerForBindings] undefined removeEventListener([AtomString] DOMString type, EventListener? callback, optional (EventListenerOptions or boolean) options = false);
     [ImplementedAs=dispatchEventForBindings, MayThrowException] boolean dispatchEvent(Event event);
 };
-
-dictionary EventListenerOptions {
-    boolean capture = false;
-};
-
-dictionary AddEventListenerOptions : EventListenerOptions {
-    boolean passive;
-    boolean once = false;
-};

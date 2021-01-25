@@ -40,7 +40,7 @@ class Navigator;
 class Pasteboard;
 class PasteboardCustomData;
 
-class Clipboard final : public RefCounted<Clipboard>, public EventTargetWithInlineData, public CanMakeWeakPtr<Clipboard> {
+class Clipboard final : public RefCounted<Clipboard>, public EventTargetWithInlineData {
     WTF_MAKE_ISO_ALLOCATED(Clipboard);
 public:
     static Ref<Clipboard> create(Navigator&);

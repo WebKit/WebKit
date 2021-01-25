@@ -2722,6 +2722,7 @@ JSAbortSignal.cpp
 JSAbstractRange.cpp
 JSAbstractWorker.cpp
 JSAddressErrors.cpp
+JSAddEventListenerOptions.cpp
 JSAesCbcCfbParams.cpp
 JSAesCtrParams.cpp
 JSAesGcmParams.cpp
@@ -2961,6 +2962,7 @@ JSErrorCallback.cpp
 JSErrorEvent.cpp
 JSEvent.cpp
 JSEventInit.cpp
+JSEventListenerOptions.cpp
 JSEventModifierInit.cpp
 JSEventSource.cpp
 JSEventTarget.cpp

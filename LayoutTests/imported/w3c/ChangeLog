@@ -1,3 +1,20 @@
+2021-01-25  Chris Dumez  <cdumez@apple.com>
+
+        Support AbortSignal in addEventListenerOptions to unsubscribe from events
+        https://bugs.webkit.org/show_bug.cgi?id=218753
+        <rdar://problem/71258012>
+
+        Reviewed by Darin Adler.
+
+        Import test coverage from WPT.
+
+        * web-platform-tests/dom/events/AddEventListenerOptions-signal.any-expected.txt: Added.
+        * web-platform-tests/dom/events/AddEventListenerOptions-signal.any.html: Added.
+        * web-platform-tests/dom/events/AddEventListenerOptions-signal.any.js: Added.
+        * web-platform-tests/dom/events/AddEventListenerOptions-signal.any.worker-expected.txt: Added.
+        * web-platform-tests/dom/events/AddEventListenerOptions-signal.any.worker.html: Added.
+        * web-platform-tests/dom/events/w3c-import.log:
+
 2021-01-25  Sam Weinig  <weinig@apple.com>
 
         Import css/css-color tests from WPT

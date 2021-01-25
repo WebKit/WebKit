@@ -49,7 +49,7 @@ class RenderStyle;
 
 template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 
-class WebAnimation : public RefCounted<WebAnimation>, public CanMakeWeakPtr<WebAnimation>, public EventTargetWithInlineData, public ActiveDOMObject {
+class WebAnimation : public RefCounted<WebAnimation>, public EventTargetWithInlineData, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(WebAnimation);
 public:
     static Ref<WebAnimation> create(Document&, AnimationEffect*);

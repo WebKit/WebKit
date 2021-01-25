@@ -95,7 +95,6 @@ class BaseAudioContext
     : public ActiveDOMObject
     , public ThreadSafeRefCounted<BaseAudioContext>
     , public EventTargetWithInlineData
-    , public CanMakeWeakPtr<BaseAudioContext>
 #if !RELEASE_LOG_DISABLED
     , public LoggerHelper
 #endif

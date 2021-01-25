@@ -402,7 +402,7 @@ public:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void webkitShowPlaybackTargetPicker();
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
-    bool removeEventListener(const AtomString& eventType, EventListener&, const ListenerOptions&) override;
+    bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) override;
 
     void wirelessRoutesAvailableDidChange() override;
     void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) override;

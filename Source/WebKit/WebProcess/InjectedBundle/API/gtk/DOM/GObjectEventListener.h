@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <WebCore/AddEventListenerOptions.h>
 #include <WebCore/EventListener.h>
 #include <WebCore/EventTarget.h>
 #include <wtf/RefPtr.h>

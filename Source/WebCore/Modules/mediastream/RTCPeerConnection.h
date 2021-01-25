@@ -79,7 +79,6 @@ class RTCPeerConnection final
     : public RefCounted<RTCPeerConnection>
     , public EventTargetWithInlineData
     , public ActiveDOMObject
-    , public CanMakeWeakPtr<RTCPeerConnection>
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif

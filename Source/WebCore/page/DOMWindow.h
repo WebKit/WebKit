@@ -111,7 +111,6 @@ struct WindowPostMessageOptions : public PostMessageOptions {
 // FIXME: Rename DOMWindow to LocalWindow and AbstractDOMWindow to DOMWindow.
 class DOMWindow final
     : public AbstractDOMWindow
-    , public CanMakeWeakPtr<DOMWindow>
     , public ContextDestructionObserver
     , public Base64Utilities
     , public Supplementable<DOMWindow> {
@@ -314,7 +313,7 @@ public:
     // Events
     // EventTarget API
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
-    bool removeEventListener(const AtomString& eventType, EventListener&, const ListenerOptions&) final;
+    bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) final;
     void removeAllEventListeners() final;
 
     using EventTarget::dispatchEvent;

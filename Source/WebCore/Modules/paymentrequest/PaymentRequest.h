@@ -51,7 +51,7 @@ struct PaymentDetailsUpdate;
 struct PaymentMethodData;
 template<typename IDLType> class DOMPromiseDeferred;
 
-class PaymentRequest final : public ActiveDOMObject, public CanMakeWeakPtr<PaymentRequest>, public EventTargetWithInlineData, public RefCounted<PaymentRequest> {
+class PaymentRequest final : public ActiveDOMObject, public EventTargetWithInlineData, public RefCounted<PaymentRequest> {
     WTF_MAKE_ISO_ALLOCATED(PaymentRequest);
 public:
     using AbortPromise = DOMPromiseDeferred<void>;

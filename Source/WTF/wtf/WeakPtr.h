@@ -200,7 +200,12 @@ protected:
     CanMakeWeakPtr()
     {
         if (initializationMode == WeakPtrFactoryInitialization::Eager)
-            m_weakPtrFactory.initializeIfNeeded(static_cast<T&>(*this));
+            initializeWeakPtrFactory();
+    }
+
+    void initializeWeakPtrFactory()
+    {
+        m_weakPtrFactory.initializeIfNeeded(static_cast<T&>(*this));
     }
 
 private:

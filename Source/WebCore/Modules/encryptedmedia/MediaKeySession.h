@@ -67,6 +67,8 @@ public:
     static Ref<MediaKeySession> create(Document&, WeakPtr<MediaKeys>&&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstanceSession>&&);
     virtual ~MediaKeySession();
 
+    using CDMInstanceSessionClient::weakPtrFactory;
+    using WeakValueType = CDMInstanceSessionClient::WeakValueType;
     using RefCounted<MediaKeySession>::ref;
     using RefCounted<MediaKeySession>::deref;
 

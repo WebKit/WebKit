@@ -785,6 +785,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/AbortController.idl
     dom/AbortSignal.idl
     dom/AbstractRange.idl
+    dom/AddEventListenerOptions.idl
     dom/AnimationEvent.idl
     dom/Attr.idl
     dom/BeforeLoadEvent.idl
@@ -843,6 +844,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/ErrorEvent.idl
     dom/Event.idl
     dom/EventInit.idl
+    dom/EventListenerOptions.idl
     dom/EventModifierInit.idl
     dom/EventTarget.idl
     dom/FocusEvent.idl
