@@ -1,5 +1,60 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271537. rdar://problem/73478698
+
+    REGRESSION(r267763) Uploading zipped directories does not work on iOS
+    https://bugs.webkit.org/show_bug.cgi?id=220666
+    <rdar://problem/72940505>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-01-15
+    Reviewed by Geoffrey Garen.
+    
+    r267763 removed indexedDatabaseTempBlobDirectoryExtensionHandle with no replacement, which used to give the network process
+    read/write access to /tmp inside the parent process's container.  This seems to have been unused for IndexedDB, but it was used
+    by createTemporaryZipArchive when uploading directories, such as Pages, Numbers, and Keynote documents.
+    
+    Unfortunately the unit test added by r248139 is macOS-only because WKOpenPanelParameters is only available on macOS and it would
+    require a large and risky amount of refactoring to add SPI on iOS to test this because iOS uses WKFileUploadPanel instead.
+    I did manually verify that the bug is fixed using my phone, though.
+    
+    * NetworkProcess/NetworkProcessCreationParameters.cpp:
+    (WebKit::NetworkProcessCreationParameters::encode const):
+    (WebKit::NetworkProcessCreationParameters::decode):
+    * NetworkProcess/NetworkProcessCreationParameters.h:
+    * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+    (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+    * UIProcess/Network/NetworkProcessProxy.cpp:
+    (WebKit::NetworkProcessProxy::sendCreationParametersToNewProcess):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271537 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-15  Alex Christensen  <achristensen@webkit.org>
+
+            REGRESSION(r267763) Uploading zipped directories does not work on iOS
+            https://bugs.webkit.org/show_bug.cgi?id=220666
+            <rdar://problem/72940505>
+
+            Reviewed by Geoffrey Garen.
+
+            r267763 removed indexedDatabaseTempBlobDirectoryExtensionHandle with no replacement, which used to give the network process
+            read/write access to /tmp inside the parent process's container.  This seems to have been unused for IndexedDB, but it was used
+            by createTemporaryZipArchive when uploading directories, such as Pages, Numbers, and Keynote documents.
+
+            Unfortunately the unit test added by r248139 is macOS-only because WKOpenPanelParameters is only available on macOS and it would
+            require a large and risky amount of refactoring to add SPI on iOS to test this because iOS uses WKFileUploadPanel instead.
+            I did manually verify that the bug is fixed using my phone, though.
+
+            * NetworkProcess/NetworkProcessCreationParameters.cpp:
+            (WebKit::NetworkProcessCreationParameters::encode const):
+            (WebKit::NetworkProcessCreationParameters::decode):
+            * NetworkProcess/NetworkProcessCreationParameters.h:
+            * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+            (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+            * UIProcess/Network/NetworkProcessProxy.cpp:
+            (WebKit::NetworkProcessProxy::sendCreationParametersToNewProcess):
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271486. rdar://problem/73478688
 
     Use callOnMainRunLoop in MediaPermissionUtilities

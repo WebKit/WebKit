@@ -58,6 +58,7 @@ struct NetworkProcessCreationParameters {
     SandboxExtension::Handle cookieStorageDirectoryExtensionHandle;
     SandboxExtension::Handle containerCachesDirectoryExtensionHandle;
     SandboxExtension::Handle parentBundleDirectoryExtensionHandle;
+    SandboxExtension::Handle tempDirectoryExtensionHandle;
 #endif
     bool shouldSuppressMemoryPressureHandler { false };
 

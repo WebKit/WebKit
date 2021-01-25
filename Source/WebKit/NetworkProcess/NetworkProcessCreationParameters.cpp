@@ -47,6 +47,7 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << cookieStorageDirectoryExtensionHandle;
     encoder << containerCachesDirectoryExtensionHandle;
     encoder << parentBundleDirectoryExtensionHandle;
+    encoder << tempDirectoryExtensionHandle;
 #endif
     encoder << shouldSuppressMemoryPressureHandler;
     encoder << urlSchemesRegisteredForCustomProtocols;
@@ -96,6 +97,12 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!parentBundleDirectoryExtensionHandle)
         return false;
     result.parentBundleDirectoryExtensionHandle = WTFMove(*parentBundleDirectoryExtensionHandle);
+
+    Optional<SandboxExtension::Handle> tempDirectoryExtensionHandle;
+    decoder >> tempDirectoryExtensionHandle;
+    if (!tempDirectoryExtensionHandle)
+        return false;
+    result.tempDirectoryExtensionHandle = WTFMove(*tempDirectoryExtensionHandle);
 #endif
     if (!decoder.decode(result.shouldSuppressMemoryPressureHandler))
         return false;
