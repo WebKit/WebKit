@@ -272,6 +272,8 @@ public:
 
     enum AXNotification {
         AXActiveDescendantChanged,
+        AXAriaAttributeChanged,
+        AXAriaRoleChanged,
         AXAutocorrectionOccured,
         AXCheckedStateChanged,
         AXChildrenChanged,
@@ -305,7 +307,6 @@ public:
         AXReadOnlyStatusChanged,
         AXRequiredStatusChanged,
         AXTextChanged,
-        AXAriaAttributeChanged,
         AXElementBusyChanged,
         AXDraggingStarted,
         AXDraggingEnded,

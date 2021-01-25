@@ -1684,8 +1684,13 @@ void AXObjectCache::handleAriaRoleChanged(Node* node)
     stopCachingComputedObjectAttributes();
 
     // Don't make an AX object unless it's needed
-    if (AccessibilityObject* obj = get(node)) {
+    if (auto* obj = get(node)) {
         obj->updateAccessibilityRole();
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+        updateIsolatedTree(obj, AXObjectCache::AXAriaRoleChanged);
+#endif
+
         obj->notifyIfIgnoredValueChanged();
     }
 }
@@ -3176,6 +3181,9 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification noti
     }
 
     switch (notification) {
+    case AXAriaRoleChanged:
+        tree->updateNode(object);
+        break;
     case AXCheckedStateChanged:
         tree->updateNodeProperty(object, AXPropertyName::IsChecked);
         break;
@@ -3242,6 +3250,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
             continue;
 
         switch (notification.second) {
+        case AXAriaRoleChanged:
+            tree->updateNode(*notification.first);
+            break;
         case AXCheckedStateChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsChecked);
             break;

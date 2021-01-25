@@ -1,13 +1,16 @@
 <!DOCTYPE HTML>
 <html>
-<body>
+<head>
 <script src="../resources/js-test-pre.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
+
 <style>
 myelement {
   display: block;
 }
 </style>
+</head>
+<body>
 
 <div>
   <a id="link1" href="#">Link</a>
@@ -36,64 +39,131 @@ myelement {
 </canvas>
 
 <div id="console"></div>
+
 <script>
-description("This test makes sure that focusable elements in canvas fallback content are accessible.");
+    description("This test makes sure that focusable elements in canvas fallback content are accessible.");
 
-if (window.testRunner && window.accessibilityController) {
-    window.jsTestIsAsync = true;
-    window.testRunner.dumpAsText();
+    if (window.testRunner && window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        window.testRunner.dumpAsText();
 
-    function check(id, expectedRole) {
-        debug(id);
-        window.element = document.getElementById(id);
-        element.focus();
-        shouldBe("document.activeElement == element", "true");
-        window.axElement = accessibilityController.focusedElement;
-        shouldBe("axElement.role", "\"" + expectedRole + "\"");
-        debug("");
+        var comboBoxRole = platformRoleForComboBox(accessibilityController.platformName);
+
+        function check(id, expectedRole) {
+            window.element = document.getElementById(id);
+            element.focus();
+
+            window.axElement = accessibilityController.focusedElement;
+            if (axElement.role == expectedRole) {
+                // Do all the logging here and return true.
+                debug(id);
+                shouldBe("document.activeElement == element", "true");
+                shouldBe("axElement.role", "\"" + expectedRole + "\"");
+                debug("");
+                return true;
+            }
+
+            return false;
+        }
+
+        setTimeout(async function() {
+            // Check rendered controls.
+            await waitFor(() => {
+                return check("link1", "AXRole: AXLink");
+            });
+
+            await waitFor(() => {
+                return check("button1", "AXRole: AXButton");
+            });
+
+            await waitFor(() => {
+                return check("text1", "AXRole: AXTextField");
+            });
+
+            await waitFor(() => {
+                return check("checkbox1", "AXRole: AXCheckBox");
+            });
+
+            await waitFor(() => {
+                return check("radio1", "AXRole: AXRadioButton");
+            });
+
+            await waitFor(() => {
+                return check("submit1", "AXRole: AXButton");
+            });
+
+            await waitFor(() => {
+                return check("combobox1", comboBoxRole);
+            });
+
+            await waitFor(() => {
+                return check("focusable1", "AXRole: AXGroup");
+            });
+
+            await waitFor(() => {
+                return check("aria-button1", "AXRole: AXButton");
+            });
+
+            await waitFor(() => {
+                return check("aria-link1", "AXRole: AXLink");
+            });
+
+            // Check unrendered controls inside a canvas.
+            await waitFor(() => {
+                return check("link2", "AXRole: AXLink");
+            });
+
+            await waitFor(() => {
+                return check("button2", "AXRole: AXButton");
+            });
+
+            await waitFor(() => {
+                return check("text2", "AXRole: AXTextField");
+            });
+
+            await waitFor(() => {
+                return check("checkbox2", "AXRole: AXCheckBox");
+            });
+
+            await waitFor(() => {
+                return check("radio2", "AXRole: AXRadioButton");
+            });
+
+            await waitFor(() => {
+                return check("submit2", "AXRole: AXButton");
+            });
+
+            await waitFor(() => {
+                return check("combobox2", comboBoxRole);
+            });
+
+            await waitFor(() => {
+                return check("focusable2", "AXRole: AXGroup");
+            });
+
+            await waitFor(() => {
+                return check("aria-button2", "AXRole: AXButton");
+            });
+
+            await waitFor(() => {
+                return check("aria-link2", "AXRole: AXLink");
+            });
+
+            // Check that the role is updated when the element changes.
+            document.getElementById('focusable1').setAttribute('role', 'button');
+            await waitFor(() => {
+                return check("focusable1", "AXRole: AXButton");
+            });
+
+            document.getElementById('focusable2').setAttribute('role', 'button');
+            await waitFor(() => {
+                return check("focusable2", "AXRole: AXButton");
+            });
+
+            finishJSTest();
+        }, 0);
     }
-
-    var comboBoxRole = platformRoleForComboBox(accessibilityController.platformName);
-
-    // Check rendered controls.
-    check("link1", "AXRole: AXLink");
-    check("button1", "AXRole: AXButton");
-    check("text1", "AXRole: AXTextField");
-    check("checkbox1", "AXRole: AXCheckBox");
-    check("radio1", "AXRole: AXRadioButton");
-    check("submit1", "AXRole: AXButton");
-    check("combobox1", comboBoxRole);
-    check("focusable1", "AXRole: AXGroup");
-    check("aria-button1", "AXRole: AXButton");
-    check("aria-link1", "AXRole: AXLink");
-
-    // Check unrendered controls inside a canvas.
-    check("link2", "AXRole: AXLink");
-    check("button2", "AXRole: AXButton");
-    check("text2", "AXRole: AXTextField");
-    check("checkbox2", "AXRole: AXCheckBox");
-    check("radio2", "AXRole: AXRadioButton");
-    check("submit2", "AXRole: AXButton");
-    check("combobox2", comboBoxRole);
-    check("focusable2", "AXRole: AXGroup");
-    check("aria-button2", "AXRole: AXButton");
-    check("aria-link2", "AXRole: AXLink");
-
-    // Check that the role is updated when the element changes.
-    document.getElementById('focusable1').setAttribute('role', 'button');
-    setTimeout(function() {
-        check("focusable1", "AXRole: AXButton");
-    }, 1);
-
-    document.getElementById('focusable2').setAttribute('role', 'button');
-    setTimeout(function() {
-        check("focusable2", "AXRole: AXButton");
-        finishJSTest();
-    }, 1);
-}
-
 </script>
-
 <script src="../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -1,5 +1,80 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271587. rdar://problem/73477379
+
+    Fix for LayoutTests/accessibility/canvas-fallback-content.html in isolated tree mode.
+    https://bugs.webkit.org/show_bug.cgi?id=220644
+    
+    Reviewed by Chris Fleizach.
+    
+    Source/WebCore:
+    
+    Tests:
+    accessibility/canvas-fallback-content.html
+    accessibility/canvas-fallback-content-2.html
+    
+    - Updates the accessibility isolated tree when the ARIA role attribute
+    changes for a DOM element.
+    - Modified tests to use Promises and retrieve accessible elements by IDs
+    so that they work in both isolated tree mode on and off.
+    
+    * accessibility/AXLogger.cpp:
+    (WebCore::operator<<): Added new value to the AXNotification enum.
+    * accessibility/AXObjectCache.cpp:
+    (WebCore::AXObjectCache::handleAriaRoleChanged):
+    Updates the isolated tree when an ARIA role attribute changes.
+    (WebCore::AXObjectCache::updateIsolatedTree):
+    Handles the AXAriaRoleChanged notification.
+    * accessibility/AXObjectCache.h:
+    
+    LayoutTests:
+    
+    * accessibility/canvas-fallback-content-2-expected.txt:
+    Removed the checks for the document.activeElement since the goal here is
+    not to test this method.
+    
+    * accessibility/canvas-fallback-content-2.html:
+    Retrieved the accessibility Objects by ID directly from the accessibilityController.
+    This simplifies the code since it is not necessary to set focus to the
+    object via the document, to then retrieve the focused accessibility element.
+    This works for isolated tree mode on and off.
+    
+    * accessibility/canvas-fallback-content.html:
+    Kept the focus manipulations but used Promises to make it work in both
+    isolated mode on and off.
+    
+    * platform/win/accessibility/canvas-fallback-content-expected.txt: Deleted.
+    * platform/win/TestExpectations: Skip since this test was already failing in win.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271587 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-18  Andres Gonzalez  <andresg_22@apple.com>
+
+            Fix for LayoutTests/accessibility/canvas-fallback-content.html in isolated tree mode.
+            https://bugs.webkit.org/show_bug.cgi?id=220644
+
+            Reviewed by Chris Fleizach.
+
+            * accessibility/canvas-fallback-content-2-expected.txt:
+            Removed the checks for the document.activeElement since the goal here is
+            not to test this method.
+
+            * accessibility/canvas-fallback-content-2.html:
+            Retrieved the accessibility Objects by ID directly from the accessibilityController.
+            This simplifies the code since it is not necessary to set focus to the
+            object via the document, to then retrieve the focused accessibility element.
+            This works for isolated tree mode on and off.
+
+            * accessibility/canvas-fallback-content.html:
+            Kept the focus manipulations but used Promises to make it work in both
+            isolated mode on and off.
+
+            * platform/win/accessibility/canvas-fallback-content-expected.txt: Deleted.
+            * platform/win/TestExpectations: Skip since this test was already failing in win.
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271536. rdar://problem/73477501
 
     AX: increment/decrement synthetic arrow events don't work in ARIA slider examples
