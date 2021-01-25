@@ -1,3 +1,42 @@
+2021-01-25  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Obscured elements should not be focusable using the accessory bar
+        https://bugs.webkit.org/show_bug.cgi?id=220929
+        <rdar://problem/73239409>
+
+        Reviewed by Tim Horton.
+
+        Currently, assistable elements hidden behind unassistable elements can
+        be focused using the next/previous buttons on the accessory bar. This
+        behavior is undesirable since users cannot see the focused element, but
+        are still presented UI to enter information into the element.
+
+        While the current behavior has been longstanding, its undesirability was
+        exposed after r269059, which made it possible to use the accessory bar
+        to focus elements across focusable scopes. As a result, it became possible
+        to focus a hidden input field on appleid.apple.com using the accessory bar.
+        Note that the hidden field is inside a subframe, which was previously
+        excluded from accessory bar next/previous operations. However, the same
+        bug would still exist even if the field was not inside a subframe, which
+        means that r269059 is not the root cause of the issue, but simply exposed
+        a larger underlying problem.
+
+        To prevent obscured elements from being focusable using the accessory bar,
+        we now use hit testing to determine whether or not an element is obscured,
+        before considering the element "assistable".
+
+        Test: fast/forms/ios/accessory-bar-navigation-obscured-input.html
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::isObscuredElement):
+
+        An element is considered obscured if a hit test at its center position
+        relative to the main document targets a different element.
+
+        (WebKit::nextAssistableElement):
+
+        Obscured elements should not be assistable.
+
 2021-01-25  Per Arne  <pvollan@apple.com>
 
         [macOS] Create extension to Metal compiler service based on GPUP flags
