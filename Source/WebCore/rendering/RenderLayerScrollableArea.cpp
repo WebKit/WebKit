@@ -1262,8 +1262,8 @@ void RenderLayerScrollableArea::paintOverflowControls(GraphicsContext& context, 
         if (!paintingRoot)
             paintingRoot = renderer.view().layer();
 
-        if (auto* scrollableLayer = paintingRoot->scrollableArea())
-            scrollableLayer->setContainsDirtyOverlayScrollbars(true);
+        if (auto* scrollableArea = paintingRoot->scrollableArea())
+            scrollableArea->setContainsDirtyOverlayScrollbars(true);
         return;
     }
 
@@ -1762,8 +1762,8 @@ void RenderLayerScrollableArea::scrollByRecursively(const IntSize& delta, Scroll
         if (!remainingScrollOffset.isZero() && renderer.parent()) {
             // FIXME: This skips scrollable frames.
             if (auto* enclosingScrollableLayer = m_layer.enclosingScrollableLayer(IncludeSelfOrNot::ExcludeSelf, CrossFrameBoundaries::Yes)) {
-                if (auto* scrollableLayer = enclosingScrollableLayer->scrollableArea())
-                    scrollableLayer->scrollByRecursively(remainingScrollOffset, scrolledArea);
+                if (auto* scrollableArea = enclosingScrollableLayer->scrollableArea())
+                    scrollableArea->scrollByRecursively(remainingScrollOffset, scrolledArea);
             }
 
             renderer.frame().eventHandler().updateAutoscrollRenderer();

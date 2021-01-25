@@ -1493,11 +1493,10 @@ Optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bool sh
         bool inResizer = false;
         if (renderer && renderer->hasLayer()) {
             // FIXME: With right-aligned text in a box, the renderer here is usually a RenderText, which prevents showing the resize cursor: webkit.org/b/210935.
-            if (auto* layer = downcast<RenderLayerModelObject>(*renderer).layer()) {
-                inResizer = layer->isPointInResizeControl(roundedIntPoint(result.localPoint()));
-                if (inResizer)
-                    return layer->shouldPlaceBlockDirectionScrollbarOnLeft() ? southWestResizeCursor() : southEastResizeCursor();
-            }
+            auto& layerRenderer = downcast<RenderLayerModelObject>(*renderer);
+            inResizer = layerRenderer.layer()->isPointInResizeControl(roundedIntPoint(result.localPoint()));
+            if (inResizer)
+                return layerRenderer.shouldPlaceBlockDirectionScrollbarOnLeft() ? southWestResizeCursor() : southEastResizeCursor();
         }
 
         if ((editable || (renderer && renderer->isText() && node->canStartSelection())) && !inResizer && !result.scrollbar())

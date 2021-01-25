@@ -2382,10 +2382,10 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
 #if PLATFORM(IOS_FAMILY)
         if (RenderLayer* layer = start.deprecatedNode()->renderer()->enclosingLayer()) {
             if (!m_scrollingSuppressCount) {
-                auto* scrollableLayer = layer->ensureLayerScrollableArea();
-                scrollableLayer->setAdjustForIOSCaretWhenScrolling(true);
+                auto* scrollableArea = layer->ensureLayerScrollableArea();
+                scrollableArea->setAdjustForIOSCaretWhenScrolling(true);
                 layer->scrollRectToVisible(rect, insideFixed, { revealMode, alignment, alignment, ShouldAllowCrossOriginScrolling::Yes });
-                scrollableLayer->setAdjustForIOSCaretWhenScrolling(false);
+                scrollableArea->setAdjustForIOSCaretWhenScrolling(false);
                 updateAppearance();
                 if (m_document->page())
                     m_document->page()->chrome().client().notifyRevealedSelectionByScrollingFrame(*m_document->frame());

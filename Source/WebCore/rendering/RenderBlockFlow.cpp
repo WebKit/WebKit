@@ -349,7 +349,8 @@ void RenderBlockFlow::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth,
 
     if (!style().autoWrap() && childrenInline()) {
         // A horizontal marquee with inline children has no minimum width.
-        if (layer() && layer()->marquee() && layer()->marquee()->isHorizontal())
+        auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr;
+        if (scrollableArea && scrollableArea->marquee() && scrollableArea->marquee()->isHorizontal())
             minLogicalWidth = 0;
     }
 

@@ -34,6 +34,7 @@
 #include "HitTestResult.h"
 #include "LocalizedStrings.h"
 #include "RenderLayer.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderScrollbar.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -397,19 +398,20 @@ void RenderTextControlSingleLine::setScrollTop(int newTop, const ScrollPositionC
 
 bool RenderTextControlSingleLine::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier, Element** stopElement, RenderBox* startBox, const IntPoint& wheelEventAbsolutePoint)
 {
-    RenderTextControlInnerBlock* renderer = innerTextElement()->renderer();
+    auto* renderer = innerTextElement()->renderer();
     if (!renderer)
         return false;
-    RenderLayer* layer = renderer->layer();
-    if (layer && layer->scroll(direction, granularity, multiplier))
+    auto* scrollableArea = renderer->layer() ? renderer->layer()->scrollableArea() : nullptr;
+    if (scrollableArea && scrollableArea->scroll(direction, granularity, multiplier))
         return true;
     return RenderBlockFlow::scroll(direction, granularity, multiplier, stopElement, startBox, wheelEventAbsolutePoint);
 }
 
 bool RenderTextControlSingleLine::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity, float multiplier, Element** stopElement)
 {
-    RenderLayer* layer = innerTextElement()->renderer()->layer();
-    if (layer && layer->scroll(logicalToPhysical(direction, style().isHorizontalWritingMode(), style().isFlippedBlocksWritingMode()), granularity, multiplier))
+    auto* layer = innerTextElement()->renderer()->layer();
+    auto* scrollableArea = layer ? layer->scrollableArea() : nullptr;
+    if (scrollableArea && scrollableArea->scroll(logicalToPhysical(direction, style().isHorizontalWritingMode(), style().isFlippedBlocksWritingMode()), granularity, multiplier))
         return true;
     return RenderBlockFlow::logicalScroll(direction, granularity, multiplier, stopElement);
 }

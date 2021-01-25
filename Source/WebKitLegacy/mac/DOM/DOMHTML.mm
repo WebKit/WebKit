@@ -78,7 +78,14 @@
     if (!is<WebCore::RenderBox>(*renderer) || !renderer->hasOverflowClip())
         return 0;
 
-    return downcast<WebCore::RenderBox>(*renderer).layer()->scrollOffset().x();
+    auto* layer = downcast<WebCore::RenderBox>(*renderer).layer();
+    if (!layer)
+        return 0;
+    auto* scrollableArea = layer->scrollableArea();
+    if (!scrollableArea)
+        return 0;
+
+    return scrollableArea->scrollOffset().x();
 }
 
 - (int)scrollYOffset
@@ -92,7 +99,14 @@
     if (!is<WebCore::RenderBox>(*renderer) || !renderer->hasOverflowClip())
         return 0;
 
-    return downcast<WebCore::RenderBox>(*renderer).layer()->scrollOffset().y();
+    auto* layer = downcast<WebCore::RenderBox>(*renderer).layer();
+    if (!layer)
+        return 0;
+    auto* scrollableArea = layer->scrollableArea();
+    if (!scrollableArea)
+        return 0;
+
+    return scrollableArea->scrollOffset().y();
 }
 
 - (void)setScrollXOffset:(int)x scrollYOffset:(int)y
@@ -112,18 +126,18 @@
         return;
 
     auto* layer = downcast<WebCore::RenderBox>(*renderer).layer();
-    ASSERT(layer);
-
-    auto* scrollableLayer = layer->ensureLayerScrollableArea();
+    if (!layer)
+        return;
+    auto* scrollableArea = layer->ensureLayerScrollableArea();
 
     if (adjustForIOSCaret)
-        scrollableLayer->setAdjustForIOSCaretWhenScrolling(true);
+        scrollableArea->setAdjustForIOSCaretWhenScrolling(true);
 
     auto scrollPositionChangeOptions = WebCore::ScrollPositionChangeOptions::createProgrammatic();
     scrollPositionChangeOptions.clamping = WebCore::ScrollClamping::Unclamped;
-    scrollableLayer->scrollToOffset(WebCore::ScrollOffset(x, y), scrollPositionChangeOptions);
+    scrollableArea->scrollToOffset(WebCore::ScrollOffset(x, y), scrollPositionChangeOptions);
     if (adjustForIOSCaret)
-        scrollableLayer->setAdjustForIOSCaretWhenScrolling(false);
+        scrollableArea->setAdjustForIOSCaretWhenScrolling(false);
 }
 
 - (void)absolutePosition:(int *)x :(int *)y :(int *)w :(int *)h

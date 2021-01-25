@@ -320,10 +320,12 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
     // If our zoom factor changes and we have a defined scrollLeft/Top, we need to adjust that value into the
     // new zoomed coordinate space.
     if (hasOverflowClip() && layer() && oldStyle && oldStyle->effectiveZoom() != newStyle.effectiveZoom()) {
-        ScrollPosition scrollPosition = layer()->scrollPosition();
-        float zoomScaleFactor = newStyle.effectiveZoom() / oldStyle->effectiveZoom();
-        scrollPosition.scale(zoomScaleFactor);
-        layer()->setPostLayoutScrollPosition(scrollPosition);
+        if (auto* scrollableArea = layer()->scrollableArea()) {
+            ScrollPosition scrollPosition = scrollableArea->scrollPosition();
+            float zoomScaleFactor = newStyle.effectiveZoom() / oldStyle->effectiveZoom();
+            scrollPosition.scale(zoomScaleFactor);
+            scrollableArea->setPostLayoutScrollPosition(scrollPosition);
+        }
     }
 
     // Our opaqueness might have changed without triggering layout.
@@ -572,12 +574,14 @@ int RenderBox::scrollHeight() const
 
 int RenderBox::scrollLeft() const
 {
-    return hasOverflowClip() && layer() ? layer()->scrollPosition().x() : 0;
+    auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr;
+    return (hasOverflowClip() && scrollableArea) ? scrollableArea->scrollPosition().x() : 0;
 }
 
 int RenderBox::scrollTop() const
 {
-    return hasOverflowClip() && layer() ? layer()->scrollPosition().y() : 0;
+    auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr;
+    return (hasOverflowClip() && scrollableArea) ? scrollableArea->scrollPosition().y() : 0;
 }
 
 void RenderBox::resetLogicalHeightBeforeLayoutIfNeeded()
@@ -586,38 +590,42 @@ void RenderBox::resetLogicalHeightBeforeLayoutIfNeeded()
         setLogicalHeight(0_lu);
 }
 
-static void setupWheelEventMonitor(RenderLayer& layer)
+static void setupWheelEventMonitor(RenderLayerScrollableArea& scrollableArea)
 {
-    Page& page = layer.renderer().page();
+    Page& page = scrollableArea.layer().renderer().page();
     if (!page.isMonitoringWheelEvents())
         return;
-    auto* scrollableLayer = layer.scrollableArea();
-    ASSERT(scrollableLayer);
-    scrollableLayer->scrollAnimator().setWheelEventTestMonitor(page.wheelEventTestMonitor());
+    scrollableArea.scrollAnimator().setWheelEventTestMonitor(page.wheelEventTestMonitor());
 }
 
 void RenderBox::setScrollLeft(int newLeft, const ScrollPositionChangeOptions& options)
 {
     if (!hasOverflowClip() || !layer())
         return;
-    setupWheelEventMonitor(*layer());
-    layer()->ensureLayerScrollableArea()->scrollToXPosition(newLeft, options);
+    auto* scrollableArea = layer()->scrollableArea();
+    ASSERT(scrollableArea);
+    setupWheelEventMonitor(*scrollableArea);
+    scrollableArea->scrollToXPosition(newLeft, options);
 }
 
 void RenderBox::setScrollTop(int newTop, const ScrollPositionChangeOptions& options)
 {
     if (!hasOverflowClip() || !layer())
         return;
-    setupWheelEventMonitor(*layer());
-    layer()->ensureLayerScrollableArea()->scrollToYPosition(newTop, options);
+    auto* scrollableArea = layer()->scrollableArea();
+    ASSERT(scrollableArea);
+    setupWheelEventMonitor(*scrollableArea);
+    scrollableArea->scrollToYPosition(newTop, options);
 }
 
 void RenderBox::setScrollPosition(const ScrollPosition& position, const ScrollPositionChangeOptions& options)
 {
     if (!hasOverflowClip() || !layer())
         return;
-    setupWheelEventMonitor(*layer());
-    layer()->ensureLayerScrollableArea()->setScrollPosition(position, options);
+    auto* scrollableArea = layer()->scrollableArea();
+    ASSERT(scrollableArea);
+    setupWheelEventMonitor(*scrollableArea);
+    scrollableArea->setScrollPosition(position, options);
 }
 
 void RenderBox::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
@@ -835,12 +843,18 @@ bool RenderBox::includeHorizontalScrollbarSize() const
 
 int RenderBox::verticalScrollbarWidth() const
 {
-    return includeVerticalScrollbarSize() ? layer()->verticalScrollbarWidth() : 0;
+    auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr;
+    if (!scrollableArea)
+        return 0;
+    return includeVerticalScrollbarSize() ? scrollableArea->verticalScrollbarWidth() : 0;
 }
 
 int RenderBox::horizontalScrollbarHeight() const
 {
-    return includeHorizontalScrollbarSize() ? layer()->horizontalScrollbarHeight() : 0;
+    auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr;
+    if (!scrollableArea)
+        return 0;
+    return includeHorizontalScrollbarSize() ? scrollableArea->horizontalScrollbarHeight() : 0;
 }
 
 int RenderBox::intrinsicScrollbarLogicalWidth() const
@@ -863,8 +877,8 @@ int RenderBox::intrinsicScrollbarLogicalWidth() const
 
 bool RenderBox::scrollLayer(ScrollDirection direction, ScrollGranularity granularity, float multiplier, Element** stopElement)
 {
-    RenderLayer* boxLayer = layer();
-    if (boxLayer && boxLayer->scroll(direction, granularity, multiplier)) {
+    auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr;
+    if (scrollableArea && scrollableArea->scroll(direction, granularity, multiplier)) {
         if (stopElement)
             *stopElement = element();
 
@@ -894,14 +908,13 @@ bool RenderBox::logicalScroll(ScrollLogicalDirection direction, ScrollGranularit
 {
     bool scrolled = false;
     
-    RenderLayer* l = layer();
-    if (l) {
+    if (auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr) {
 #if PLATFORM(COCOA)
         // On Mac only we reset the inline direction position when doing a document scroll (e.g., hitting Home/End).
         if (granularity == ScrollByDocument)
-            scrolled = l->scroll(logicalToPhysical(ScrollInlineDirectionBackward, isHorizontalWritingMode(), style().isFlippedBlocksWritingMode()), ScrollByDocument, multiplier);
+            scrolled = scrollableArea->scroll(logicalToPhysical(ScrollInlineDirectionBackward, isHorizontalWritingMode(), style().isFlippedBlocksWritingMode()), ScrollByDocument, multiplier);
 #endif
-        if (l->scroll(logicalToPhysical(direction, isHorizontalWritingMode(), style().isFlippedBlocksWritingMode()), granularity, multiplier))
+        if (scrollableArea->scroll(logicalToPhysical(direction, isHorizontalWritingMode(), style().isFlippedBlocksWritingMode()), granularity, multiplier))
             scrolled = true;
         
         if (scrolled) {
@@ -1027,8 +1040,8 @@ RenderBox* RenderBox::findAutoscrollable(RenderObject* renderer)
 
 void RenderBox::panScroll(const IntPoint& source)
 {
-    if (layer())
-        layer()->panScrollFromPoint(source);
+    if (auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr)
+        scrollableArea->panScrollFromPoint(source);
 }
 
 bool RenderBox::canUseOverlayScrollbars() const
@@ -1057,7 +1070,11 @@ ScrollPosition RenderBox::scrollPosition() const
         return { 0, 0 };
 
     ASSERT(hasLayer());
-    return layer()->scrollPosition();
+    auto* scrollableArea = layer()->scrollableArea();
+    if (!scrollableArea)
+        return { 0, 0 };
+
+    return scrollableArea->scrollPosition();
 }
 
 LayoutSize RenderBox::cachedSizeForOverflowClip() const
@@ -1621,9 +1638,10 @@ bool RenderBox::computeBackgroundIsKnownToBeObscured(const LayoutPoint& paintOff
     if (!getBackgroundPaintedExtent(paintOffset, backgroundRect))
         return false;
 
-    if (hasLayer() && layer()->scrollingMayRevealBackground())
-        return false;
-
+    if (auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr) {
+        if (scrollableArea->scrollingMayRevealBackground())
+            return false;
+    }
     return foregroundIsKnownToBeOpaqueInRect(backgroundRect, backgroundObscurationTestMaxDepth);
 }
 
@@ -1940,10 +1958,10 @@ LayoutRect RenderBox::overflowClipRect(const LayoutPoint& location, RenderFragme
     clipRect.setSize(clipRect.size() - LayoutSize(borderLeft() + borderRight(), borderTop() + borderBottom()));
 
     // Subtract out scrollbars if we have them.
-    if (layer()) {
+    if (auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr) {
         if (shouldPlaceBlockDirectionScrollbarOnLeft())
-            clipRect.move(layer()->verticalScrollbarWidth(relevancy), 0);
-        clipRect.contract(layer()->verticalScrollbarWidth(relevancy), layer()->horizontalScrollbarHeight(relevancy));
+            clipRect.move(scrollableArea->verticalScrollbarWidth(relevancy), 0);
+        clipRect.contract(scrollableArea->verticalScrollbarWidth(relevancy), scrollableArea->horizontalScrollbarHeight(relevancy));
     }
 
     return clipRect;

@@ -2006,8 +2006,8 @@ bool RenderBlock::isPointInOverflowControl(HitTestResult& result, const LayoutPo
 {
     if (!scrollsOverflow())
         return false;
-    if (auto* scrollableLayer = layer() ? layer()->scrollableArea() : nullptr)
-        return scrollableLayer->hitTestOverflowControls(result, roundedIntPoint(locationInContainer - toLayoutSize(accumulatedOffset)));
+    if (auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr)
+        return scrollableArea->hitTestOverflowControls(result, roundedIntPoint(locationInContainer - toLayoutSize(accumulatedOffset)));
     return false;
 }
 
@@ -2510,16 +2510,16 @@ int RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLine, Lin
             if (isWritingModeRoot() && !isRubyRun())
                 return true;
 
-            auto* scrollableLayer = layer() ? layer()->scrollableArea() : nullptr;
-            if (!scrollableLayer)
+            auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr;
+            if (!scrollableArea)
                 return false;
 
-            if (scrollableLayer->marquee())
+            if (scrollableArea->marquee())
                 return true;
 
             if (direction == HorizontalLine)
-                return scrollableLayer->verticalScrollbar() || scrollableLayer->scrollOffset().y();
-            return scrollableLayer->horizontalScrollbar() || scrollableLayer->scrollOffset().x();
+                return scrollableArea->verticalScrollbar() || scrollableArea->scrollOffset().y();
+            return scrollableArea->horizontalScrollbar() || scrollableArea->scrollOffset().x();
         };
 
         Optional<int> baselinePos = ignoreBaseline() ? Optional<int>() : inlineBlockBaseline(direction);

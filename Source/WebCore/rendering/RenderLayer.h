@@ -159,22 +159,6 @@ public:
     WEBCORE_EXPORT RenderLayerScrollableArea* scrollableArea() const;
     WEBCORE_EXPORT RenderLayerScrollableArea* ensureLayerScrollableArea();
 
-    // Start of temporary glue code to help landing webkit.org/b/60305 (split RenderLayer into RenderLayer/RenderLayerScrollableArea)
-    WEBCORE_EXPORT ScrollOffset scrollOffset() const;
-    bool shouldPlaceBlockDirectionScrollbarOnLeft() const;
-    RenderMarquee* marquee() const;
-    void updateLayerPositionsAfterDocumentScroll();
-    void setPostLayoutScrollPosition(Optional<ScrollPosition>);
-    void panScrollFromPoint(const IntPoint&);
-    ScrollPosition scrollPosition() const;
-    bool scrollingMayRevealBackground() const;
-    bool hasScrollableHorizontalOverflow() const;
-    bool hasScrollableVerticalOverflow() const;
-    int verticalScrollbarWidth(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
-    int horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
-    bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
-    // End of temporary glue code
-
 #if PLATFORM(IOS_FAMILY)
     // Called before the renderer's widget (if any) has been nulled out.
     void willBeDestroyed();

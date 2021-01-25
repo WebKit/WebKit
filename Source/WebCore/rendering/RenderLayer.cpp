@@ -376,94 +376,6 @@ RenderLayer::~RenderLayer()
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(renderer().renderTreeBeingDestroyed() || !firstChild());
 }
 
-// Start of temporary glue code to help landing webkit.org/b/60305 (split RenderLayer into RenderLayer/RenderLayerScrollableArea)
-ScrollOffset RenderLayer::scrollOffset() const
-{
-    if (m_scrollableArea)
-        return m_scrollableArea->scrollOffset();
-    return { 0, 0 };
-}
-
-bool RenderLayer::shouldPlaceBlockDirectionScrollbarOnLeft() const
-{
-    return renderer().shouldPlaceBlockDirectionScrollbarOnLeft();
-}
-
-RenderMarquee* RenderLayer::marquee() const
-{
-    if (m_scrollableArea)
-        return m_scrollableArea->marquee();
-    return nullptr;
-}
-
-void RenderLayer::updateLayerPositionsAfterDocumentScroll()
-{
-    if (m_scrollableArea)
-        m_scrollableArea->updateLayerPositionsAfterDocumentScroll();
-}
-
-void RenderLayer::setPostLayoutScrollPosition(Optional<ScrollPosition> position)
-{
-    if (m_scrollableArea)
-        m_scrollableArea->setPostLayoutScrollPosition(position);
-}
-
-void RenderLayer::panScrollFromPoint(const IntPoint& point)
-{
-    if (m_scrollableArea)
-        m_scrollableArea->panScrollFromPoint(point);
-}
-
-ScrollPosition RenderLayer::scrollPosition() const
-{
-    if (m_scrollableArea)
-        return m_scrollableArea->scrollPosition();
-    return ScrollPosition();
-}
-
-bool RenderLayer::scrollingMayRevealBackground() const
-{
-    if (m_scrollableArea)
-        return m_scrollableArea->scrollingMayRevealBackground();
-    return false;
-}
-
-bool RenderLayer::hasScrollableHorizontalOverflow() const
-{
-    if (m_scrollableArea)
-        return m_scrollableArea->hasScrollableHorizontalOverflow();
-    return false;
-}
-
-bool RenderLayer::hasScrollableVerticalOverflow() const
-{
-    if (m_scrollableArea)
-        return m_scrollableArea->hasScrollableVerticalOverflow();
-    return false;
-}
-
-int RenderLayer::verticalScrollbarWidth(OverlayScrollbarSizeRelevancy relevancy) const
-{
-    if (m_scrollableArea)
-        return m_scrollableArea->verticalScrollbarWidth(relevancy);
-    return 0;
-}
-
-int RenderLayer::horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy relevancy) const
-{
-    if (m_scrollableArea)
-        return m_scrollableArea->horizontalScrollbarHeight(relevancy);
-    return 0;
-}
-
-bool RenderLayer::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
-{
-    if (m_scrollableArea)
-        return m_scrollableArea->scroll(direction, granularity, multiplier);
-    return false;
-}
-// End of temporary glue code
-
 void RenderLayer::addChild(RenderLayer& child, RenderLayer* beforeChild)
 {
     RenderLayer* prevSibling = beforeChild ? beforeChild->previousSibling() : lastChild();
@@ -2480,7 +2392,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
     };
 
     if (allowsCurrentScroll()) {
-        auto* scrollableLayer = ensureLayerScrollableArea();
+        auto* scrollableArea = ensureLayerScrollableArea();
 
         // Don't scroll to reveal an overflow layer that is restricted by the -webkit-line-clamp property.
         // This will prevent us from revealing text hidden by the slider in Safari RSS.
@@ -2495,13 +2407,13 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
         if (box->shouldPlaceBlockDirectionScrollbarOnLeft()) {
             // For direction: rtl; writing-mode: horizontal-tb box, the scroll bar is on the left side. The visible rect
             // starts from the right side of scroll bar. So the x of localExposeRect should start from the same position too.
-            localExposeRect.moveBy(LayoutPoint(-scrollableLayer->verticalScrollbarWidth(), 0));
+            localExposeRect.moveBy(LayoutPoint(-scrollableArea->verticalScrollbarWidth(), 0));
         }
         LayoutRect layerBounds(0_lu, 0_lu, box->clientWidth(), box->clientHeight());
         expandScrollRectToVisibleTargetRectToIncludeScrollPadding(box, layerBounds, localExposeRect);
         LayoutRect revealRect = getRectToExpose(layerBounds, localExposeRect, insideFixed, options.alignX, options.alignY);
 
-        if (auto result = scrollableLayer->updateScrollPosition(scrollPositionChangeOptionsForElement(box->element()), revealRect, localExposeRect))
+        if (auto result = scrollableArea->updateScrollPosition(scrollPositionChangeOptionsForElement(box->element()), revealRect, localExposeRect))
             newRect = result.value();
     } else if (!parentLayer) {
         HTMLFrameOwnerElement* ownerElement = renderer().document().ownerElement();

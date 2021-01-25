@@ -742,10 +742,10 @@ static NSURL *createUniqueWebDataURL();
 #else
         auto* layer = startNode->renderer()->enclosingLayer();
         if (layer) {
-            auto* scrollableLayer = layer->ensureLayerScrollableArea();
-            scrollableLayer->setAdjustForIOSCaretWhenScrolling(true);
+            auto* scrollableArea = layer->ensureLayerScrollableArea();
+            scrollableArea->setAdjustForIOSCaretWhenScrolling(true);
             startNode->renderer()->scrollRectToVisible(WebCore::enclosingIntRect(rangeRect), insideFixed, { WebCore::SelectionRevealMode::Reveal, WebCore::ScrollAlignment::alignToEdgeIfNeeded, WebCore::ScrollAlignment::alignToEdgeIfNeeded, WebCore::ShouldAllowCrossOriginScrolling::Yes });
-            scrollableLayer->setAdjustForIOSCaretWhenScrolling(false);
+            scrollableArea->setAdjustForIOSCaretWhenScrolling(false);
             _private->coreFrame->selection().setCaretRectNeedsUpdate();
             _private->coreFrame->selection().updateAppearance();
         }
@@ -763,10 +763,10 @@ static NSURL *createUniqueWebDataURL();
     if (startNode && startNode->renderer()) {
         auto* layer = startNode->renderer()->enclosingLayer();
         if (layer) {
-            auto* scrollableLayer = layer->ensureLayerScrollableArea();
-            scrollableLayer->setAdjustForIOSCaretWhenScrolling(true);
+            auto* scrollableArea = layer->ensureLayerScrollableArea();
+            scrollableArea->setAdjustForIOSCaretWhenScrolling(true);
             startNode->renderer()->scrollRectToVisible(WebCore::enclosingIntRect(rangeRect), insideFixed, { WebCore::SelectionRevealMode::Reveal, WebCore::ScrollAlignment::alignToEdgeIfNeeded, WebCore::ScrollAlignment::alignToEdgeIfNeeded, WebCore::ShouldAllowCrossOriginScrolling::Yes});
-            scrollableLayer->setAdjustForIOSCaretWhenScrolling(false);
+            scrollableArea->setAdjustForIOSCaretWhenScrolling(false);
 
             auto coreFrame = core(self);
             if (coreFrame) {

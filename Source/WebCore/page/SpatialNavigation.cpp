@@ -395,8 +395,8 @@ bool scrollInDirection(Node* container, FocusDirection direction)
             return false;
         }
 
-        if (auto* scrollableLayer = container->renderBox()->enclosingLayer()->scrollableArea())
-            scrollableLayer->scrollByRecursively(IntSize(dx, dy));
+        if (auto* scrollableArea = container->renderBox()->enclosingLayer()->scrollableArea())
+            scrollableArea->scrollByRecursively(IntSize(dx, dy));
         return true;
     }
 

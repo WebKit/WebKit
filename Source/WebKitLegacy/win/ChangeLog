@@ -1,3 +1,23 @@
+2021-01-22  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        Finish introduction of RenderLayerScrollableArea: remove remaining glue code from RenderLayer
+        https://bugs.webkit.org/show_bug.cgi?id=220851
+
+        Reviewed by Simon Fraser.
+
+        Remove the last remaining glue code from RenderLayer, that was added
+        in r271559 to minimize the patch size. After this patch all call sites
+        use RenderLayerScrollableArea directly, removing the need for proxy
+        methods in RenderLayer that forward to RenderLayerScrollableArea.
+
+        The decade old bug 60305 (Separate scrolling code out of RenderLayer)
+        is finally closed.
+
+        Covered by existing tests.
+
+        * WebView.cpp:
+        (WebView::gesture):
+
 2021-01-18  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         Continue removing glue code from RenderLayer that was recently added in r271559

@@ -174,15 +174,15 @@ void RenderMarquee::start()
     if (m_timer.isActive() || m_layer->renderer().style().marqueeIncrement().isZero())
         return;
 
-    auto* scrollableLayer = m_layer->scrollableArea();
-    ASSERT(scrollableLayer);
+    auto* scrollableArea = m_layer->scrollableArea();
+    ASSERT(scrollableArea);
 
     auto details = ScrollPositionChangeOptions::createProgrammaticUnclamped();
     if (!m_suspended && !m_stopped) {
         if (isHorizontal())
-            scrollableLayer->scrollToOffset(ScrollOffset(m_start, 0), details);
+            scrollableArea->scrollToOffset(ScrollOffset(m_start, 0), details);
         else
-            scrollableLayer->scrollToOffset(ScrollOffset(0, m_start), details);
+            scrollableArea->scrollToOffset(ScrollOffset(0, m_start), details);
     } else {
         m_suspended = false;
         m_stopped = false;
@@ -251,15 +251,15 @@ void RenderMarquee::timerFired()
     if (m_layer->renderer().view().needsLayout())
         return;
 
-    auto* scrollableLayer = m_layer->scrollableArea();
-    ASSERT(scrollableLayer);
+    auto* scrollableArea = m_layer->scrollableArea();
+    ASSERT(scrollableArea);
 
     if (m_reset) {
         m_reset = false;
         if (isHorizontal())
-            scrollableLayer->scrollToXOffset(m_start);
+            scrollableArea->scrollToXOffset(m_start);
         else
-            scrollableLayer->scrollToYOffset(m_start);
+            scrollableArea->scrollToYOffset(m_start);
         return;
     }
     
@@ -282,7 +282,7 @@ void RenderMarquee::timerFired()
         bool positive = range > 0;
         int clientSize = (isHorizontal() ? roundToInt(m_layer->renderBox()->clientWidth()) : roundToInt(m_layer->renderBox()->clientHeight()));
         int increment = abs(intValueForLength(m_layer->renderer().style().marqueeIncrement(), clientSize));
-        int currentPos = (isHorizontal() ? m_layer->scrollOffset().x() : m_layer->scrollOffset().y());
+        int currentPos = (isHorizontal() ? scrollableArea->scrollOffset().x() : scrollableArea->scrollOffset().y());
         newPos =  currentPos + (addIncrement ? increment : -increment);
         if (positive)
             newPos = std::min(newPos, endPoint);
@@ -299,9 +299,9 @@ void RenderMarquee::timerFired()
     }
     
     if (isHorizontal())
-        scrollableLayer->scrollToXOffset(newPos);
+        scrollableArea->scrollToXOffset(newPos);
     else
-        scrollableLayer->scrollToYOffset(newPos);
+        scrollableArea->scrollToYOffset(newPos);
 }
 
 } // namespace WebCore

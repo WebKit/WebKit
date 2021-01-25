@@ -4669,8 +4669,8 @@ LayoutRect RenderLayerCompositor::parentRelativeScrollableRect(const RenderLayer
 
 void RenderLayerCompositor::updateScrollingNodeLayers(ScrollingNodeID nodeID, RenderLayer& layer, ScrollingCoordinator& scrollingCoordinator)
 {
-    auto* scrollableLayer = layer.scrollableArea();
-    ASSERT(scrollableLayer);
+    auto* scrollableArea = layer.scrollableArea();
+    ASSERT(scrollableArea);
 
     if (layer.isRenderViewLayer()) {
         FrameView& frameView = m_renderView.frameView();
@@ -4683,7 +4683,7 @@ void RenderLayerCompositor::updateScrollingNodeLayers(ScrollingNodeID nodeID, Re
         scrollingCoordinator.setNodeLayers(nodeID, { backing.graphicsLayer(),
             backing.scrollContainerLayer(), backing.scrolledContentsLayer(),
             nullptr, nullptr, nullptr,
-            scrollableLayer->layerForHorizontalScrollbar(), scrollableLayer->layerForVerticalScrollbar() });
+            scrollableArea->layerForHorizontalScrollbar(), scrollableArea->layerForVerticalScrollbar() });
     }
 }
 
@@ -4722,8 +4722,8 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingRole(Rende
             updateScrollingNodeLayers(newNodeID, layer, *scrollingCoordinator);
 
         if (changes & ScrollingNodeChangeFlags::LayerGeometry && treeState.parentNodeID) {
-            if (auto* scrollableLayer = layer.scrollableArea())
-                scrollingCoordinator->setScrollingNodeScrollableAreaGeometry(newNodeID, *scrollableLayer);
+            if (auto* scrollableArea = layer.scrollableArea())
+                scrollingCoordinator->setScrollingNodeScrollableAreaGeometry(newNodeID, *scrollableArea);
         }
     }
 
@@ -5038,14 +5038,14 @@ void LegacyWebKitScrollingLayerCoordinator::updateScrollingLayer(RenderLayer& la
     auto* backing = layer.backing();
     ASSERT(backing);
 
-    auto* scrollableLayer = layer.scrollableArea();
-    ASSERT(scrollableLayer);
+    auto* scrollableArea = layer.scrollableArea();
+    ASSERT(scrollableArea);
 
-    bool allowHorizontalScrollbar = !scrollableLayer->horizontalScrollbarHiddenByStyle();
-    bool allowVerticalScrollbar = !scrollableLayer->verticalScrollbarHiddenByStyle();
+    bool allowHorizontalScrollbar = !scrollableArea->horizontalScrollbarHiddenByStyle();
+    bool allowVerticalScrollbar = !scrollableArea->verticalScrollbarHiddenByStyle();
 
     m_chromeClient.addOrUpdateScrollingLayer(layer.renderer().element(), backing->scrollContainerLayer()->platformLayer(), backing->scrolledContentsLayer()->platformLayer(),
-        scrollableLayer->reachableTotalContentsSize(), allowHorizontalScrollbar, allowVerticalScrollbar);
+        scrollableArea->reachableTotalContentsSize(), allowHorizontalScrollbar, allowVerticalScrollbar);
 }
 
 void LegacyWebKitScrollingLayerCoordinator::registerAllScrollingLayers()

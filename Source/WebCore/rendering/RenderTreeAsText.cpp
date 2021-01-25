@@ -658,14 +658,16 @@ static void writeLayer(TextStream& ts, const RenderLayer& layer, const LayoutRec
     }
 
     if (layer.renderer().hasOverflowClip()) {
-        if (layer.scrollOffset().x())
-            ts << " scrollX " << layer.scrollOffset().x();
-        if (layer.scrollOffset().y())
-            ts << " scrollY " << layer.scrollOffset().y();
-        if (layer.renderBox() && roundToInt(layer.renderBox()->clientWidth()) != layer.scrollWidth())
-            ts << " scrollWidth " << layer.scrollWidth();
-        if (layer.renderBox() && roundToInt(layer.renderBox()->clientHeight()) != layer.scrollHeight())
-            ts << " scrollHeight " << layer.scrollHeight();
+        if (auto* scrollableArea = layer.scrollableArea()) {
+            if (scrollableArea->scrollOffset().x())
+                ts << " scrollX " << scrollableArea->scrollOffset().x();
+            if (scrollableArea->scrollOffset().y())
+                ts << " scrollY " << scrollableArea->scrollOffset().y();
+            if (layer.renderBox() && roundToInt(layer.renderBox()->clientWidth()) != scrollableArea->scrollWidth())
+                ts << " scrollWidth " << scrollableArea->scrollWidth();
+            if (layer.renderBox() && roundToInt(layer.renderBox()->clientHeight()) != scrollableArea->scrollHeight())
+                ts << " scrollHeight " << scrollableArea->scrollHeight();
+        }
 #if PLATFORM(MAC)
         ScrollbarTheme& scrollbarTheme = ScrollbarTheme::theme();
         if (!scrollbarTheme.isMockTheme() && layer.scrollableArea() && layer.scrollableArea()->hasVerticalScrollbar()) {
