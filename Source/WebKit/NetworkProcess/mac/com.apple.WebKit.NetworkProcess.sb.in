@@ -332,7 +332,11 @@
     (regex (string-append "/Library/Keychains/" (uuid-regex-string) "(/|$)"))
     (home-regex (string-append "/Library/Keychains/" (uuid-regex-string) "(/|$)")))
 
-(allow file-read* file-write* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
+(allow file-read* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
+(with-filter (uid 0)
+    (allow file-write*
+        (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
+)
 
 (allow user-preference-read
     (preference-domain

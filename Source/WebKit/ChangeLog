@@ -1,5 +1,20 @@
 2021-01-25  Per Arne  <pvollan@apple.com>
 
+        [macOS] Restrict access to mds data
+        https://bugs.webkit.org/show_bug.cgi?id=220920
+        <rdar://70355552>
+
+        Reviewed by Brent Fulgham.
+
+        Only root show have write access.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2021-01-25  Per Arne  <pvollan@apple.com>
+
         [Cocoa] Adjust logic for creating sandbox extensions based on GPUP flags
         https://bugs.webkit.org/show_bug.cgi?id=220917
 
