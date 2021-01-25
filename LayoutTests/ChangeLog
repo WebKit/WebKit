@@ -1,3 +1,20 @@
+2021-01-25  Andres Gonzalez  <andresg_22@apple.com>
+
+        AX: @alt and bounds ignored when using img[src] points to an inaccessible SVG
+        https://bugs.webkit.org/show_bug.cgi?id=160705
+        <rdar://problem/27771579>
+
+        Reviewed by Chris Fleizach and Darin Adler.
+
+        * accessibility/img-with-svg-source-expected.txt: Added.
+        * accessibility/img-with-svg-source.html: Added.
+        * accessibility/ios-simulator/img-with-svg-source-expected.txt: Added.
+        * accessibility/ios-simulator/img-with-svg-source.html: Added.
+        * accessibility/svg-shape-labelled-expected.txt:
+        * accessibility/svg-shape-labelled.html:
+        Removed the <img> test cases since they are covered correctly in the new
+        test img-with-svg-source.html.
+
 2021-01-25  Sihui Liu  <sihui_liu@appe.com>
 
         Nullptr dereference in SpeechRecognition::stop()
