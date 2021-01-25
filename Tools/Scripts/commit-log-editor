@@ -194,7 +194,7 @@ if (isGit() && @changeLogs == 0) {
             my $label = <$changeLogEntries>;
             chomp $label;
             $label =~ s/:$//;
-            $changeLogContents{sortKey($label)} = commitMessageFromChangeLogEntry($changeLogEntries);
+            ($changeLogContents{$label}) = commitMessageFromChangeLogEntry($changeLogEntries);
             $changeLogSort{sortKey($label)} = $label;
         }
         close $changeLogEntries;
@@ -205,12 +205,12 @@ if (isGit() && @changeLogs == 0) {
         push @result, normalizeLineEndings($commonPrefix, $endl);
         for my $sortKey (sort keys %changeLogSort) {
             my $label = $changeLogSort{$sortKey};
-            next unless $changeLogContents{$sortKey};
+            next if ($changeLogContents{$label} eq "\n");
             if (keys %changeLogSort > 1) {
                 push @result, normalizeLineEndings("\n", $endl);
                 push @result, normalizeLineEndings("$label: ", $endl);
             }
-            push @result, normalizeLineEndings($changeLogContents{$sortKey}, $endl);
+            push @result, normalizeLineEndings($changeLogContents{$label}, $endl);
         }
 
         print NEWLOG join '', @result;
@@ -340,7 +340,7 @@ sub createCommitMessage(@)
         $label = "top level" unless length $label;
 
         $changeLogSort{sortKey($label)} = $label;
-        $changeLogContents{sortKey($label)} = $contents;
+        $changeLogContents{$label} = $contents;
     }
 
     my $commonPrefix = removeLongestCommonPrefixEndingInNewline(%changeLogContents);
@@ -349,12 +349,12 @@ sub createCommitMessage(@)
     push @result, normalizeLineEndings($commonPrefix, $endl);
     for my $sortKey (sort keys %changeLogSort) {
         my $label = $changeLogSort{$sortKey};
-        next unless $changeLogContents{$sortKey};
+        next if ($changeLogContents{$label} eq "\n");
         if (keys %changeLogSort > 1) {
             push @result, normalizeLineEndings("\n", $endl);
             push @result, normalizeLineEndings("$label:\n", $endl);
         }
-        push @result, normalizeLineEndings($changeLogContents{$sortKey}, $endl);
+        push @result, normalizeLineEndings($changeLogContents{$label}, $endl);
     }
 
     return join '', @result;
@@ -385,31 +385,29 @@ sub removeLongestCommonPrefixEndingInNewline(\%)
 {
     my ($hashOfStrings) = @_;
 
-    return "" unless keys %$hashOfStrings > 1;
+    my @strings = values %{$hashOfStrings};
+    return "" unless @strings > 1;
 
-    my %strings;
-    foreach my $key (keys %$hashOfStrings) {
-        $strings{$key} = [ split(/^/, $hashOfStrings->{$key}) ];
-    }
-    my @prefix;
-    while (1) {
-        # Collect the first lines of all entries
-        my @heads = map { @$_ ? $_->[0] : "" } (values %strings);
-        my %hash_of_heads = map {$_, 1} @heads;
-        last if exists $hash_of_heads{""};
-        # Check the all first lines match
-        last unless keys %hash_of_heads == 1;
-        push @prefix, $heads[0];
-        # Remove the first lines
-        map { shift(@{$strings{$_}}) } keys %strings;
+    my $prefix = shift @strings;
+    my $prefixLength = length $prefix;
+    foreach my $string (@strings) {
+        while ($prefixLength) {
+            last if substr($string, 0, $prefixLength) eq $prefix;
+            --$prefixLength;
+            $prefix = substr($prefix, 0, -1);
+        }
+        last unless $prefixLength;
     }
 
-    map { $hashOfStrings->{$_} = join "", @{$strings{$_}} } keys %strings;
+    return "" unless $prefixLength;
 
-    # The first line should be the bug title. Use the first line of the first entry if no prefix found.
-    @prefix = $strings{(sort keys %strings)[0]}->[0] unless @prefix;
+    my $lastNewline = rindex($prefix, "\n");
+    return "" unless $lastNewline > 0;
 
-    return join "", @prefix;
+    foreach my $key (keys %{$hashOfStrings}) {
+        $hashOfStrings->{$key} = substr($hashOfStrings->{$key}, $lastNewline);
+    }
+    return substr($prefix, 0, $lastNewline);
 }
 
 sub isCommitLogEditor($)

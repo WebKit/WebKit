@@ -1,3 +1,18 @@
+2021-01-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r271805.
+
+        Appears to have broken generation of changed files/functions
+        in commit logs
+
+        Reverted changeset:
+
+        "The generated commit message have a directory label at the
+        first line rather than the bug's title if ChangeLogs have
+        different bug titles"
+        https://bugs.webkit.org/show_bug.cgi?id=220822
+        https://trac.webkit.org/changeset/271805
+
 2021-01-25  Alex Christensen  <achristensen@webkit.org>
 
         ASSERTION FAILED: This HTTPServer does not know how to respond to a request for /Ahem.svg
