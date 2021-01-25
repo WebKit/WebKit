@@ -1,3 +1,31 @@
+2021-01-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        The generated commit message have a directory label at the first line rather than the bug's title if ChangeLogs have different bug titles
+        https://bugs.webkit.org/show_bug.cgi?id=220822
+
+        Reviewed by Darin Adler.
+
+        commit-log-editor generates the default commit message by
+        collecting all ChangeLog entries and merging them with prepending
+        directory lables. If it finds out a common prefix for all entries,
+        it removes the prefix from entries and hoists the prefix as the
+        beginning of the commit message. This step removes duplicated
+        lines of the bug title, the bug URL, the reviewed-by line, and the
+        descriptions.
+
+        If such prefix is not found, i.e. ChangeLog entries has different
+        bug titles, it simply merges all entries with directory labels. As
+        the result, the generated commit message has the directory label
+        at the first line. This is not desirable. The first line of the
+        commit message should be the bug title.
+
+        This patch yanks the first line of the first entry as the common
+        prefix in the case.
+
+        * Scripts/commit-log-editor:
+        (createCommitMessage):
+        (removeLongestCommonPrefixEndingInNewline):
+
 2021-01-25  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening API failures after r271794
