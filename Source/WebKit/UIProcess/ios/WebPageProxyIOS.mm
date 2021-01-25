@@ -1146,6 +1146,25 @@ void WebPageProxy::updateSelectionWithDelta(int64_t locationDelta, int64_t lengt
     sendWithAsyncReply(Messages::WebPage::UpdateSelectionWithDelta(locationDelta, lengthDelta), WTFMove(completionHandler));
 }
 
+WebCore::FloatRect WebPageProxy::selectionBoundingRectInRootViewCoordinates() const
+{
+    if (m_editorState.selectionIsNone)
+        return { };
+
+    if (m_editorState.isMissingPostLayoutData)
+        return { };
+
+    WebCore::FloatRect bounds;
+    auto& postLayoutData = m_editorState.postLayoutData();
+    if (m_editorState.selectionIsRange) {
+        for (auto& rect : postLayoutData.selectionRects)
+            bounds.unite(rect.rect());
+    } else
+        bounds = postLayoutData.caretRectAtStart;
+
+    return bounds;
+}
+
 void WebPageProxy::requestDocumentEditingContext(WebKit::DocumentEditingContextRequest request, CompletionHandler<void(WebKit::DocumentEditingContext)>&& completionHandler)
 {
     if (!hasRunningProcess()) {

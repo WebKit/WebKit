@@ -2021,6 +2021,23 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     return YES;
 }
 
+- (WebCore::FloatRect)rectToRevealWhenZoomingToFocusedElement
+{
+    WebCore::IntRect elementInteractionRect;
+    if (_focusedElementInformation.interactionRect.contains(_focusedElementInformation.lastInteractionLocation))
+        elementInteractionRect = { _focusedElementInformation.lastInteractionLocation, { 1, 1 } };
+
+    if (!mayContainSelectableText(_focusedElementInformation.elementType))
+        return elementInteractionRect;
+
+    if (_page->editorState().isMissingPostLayoutData)
+        return elementInteractionRect;
+
+    auto boundingRect = _page->selectionBoundingRectInRootViewCoordinates();
+    boundingRect.intersect(_focusedElementInformation.interactionRect);
+    return boundingRect;
+}
+
 - (void)_zoomToRevealFocusedElement
 {
     if (_suppressSelectionAssistantReasons || _textInteractionIsHappening)
@@ -2029,8 +2046,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     // In case user scaling is force enabled, do not use that scaling when zooming in with an input field.
     // Zooming above the page's default scale factor should only happen when the user performs it.
     [self _zoomToFocusRect:_focusedElementInformation.interactionRect
-        selectionRect:_didAccessoryTabInitiateFocus ? WebCore::FloatRect() : rectToRevealWhenZoomingToFocusedElement(_focusedElementInformation, _page->editorState())
-        insideFixed:_focusedElementInformation.insideFixedPosition
+        selectionRect:_didAccessoryTabInitiateFocus ? WebCore::FloatRect() : self.rectToRevealWhenZoomingToFocusedElement
         fontSize:_focusedElementInformation.nodeFontSize
         minimumScale:_focusedElementInformation.minimumScaleFactor
         maximumScale:_focusedElementInformation.maximumScaleFactorIgnoringAlwaysScalable
@@ -5907,35 +5923,6 @@ static bool shouldShowKeyboardForElement(const WebKit::FocusedElementInformation
         return true;
 
     return elementTypeRequiresAccessoryView(information.elementType);
-}
-
-static WebCore::FloatRect rectToRevealWhenZoomingToFocusedElement(const WebKit::FocusedElementInformation& elementInfo, const WebKit::EditorState& editorState)
-{
-    WebCore::IntRect elementInteractionRect;
-    if (elementInfo.interactionRect.contains(elementInfo.lastInteractionLocation))
-        elementInteractionRect = { elementInfo.lastInteractionLocation, { 1, 1 } };
-
-    if (!mayContainSelectableText(elementInfo.elementType))
-        return elementInteractionRect;
-
-    if (editorState.isMissingPostLayoutData) {
-        ASSERT_NOT_REACHED();
-        return elementInteractionRect;
-    }
-
-    if (editorState.selectionIsNone)
-        return { };
-
-    WebCore::FloatRect selectionBoundingRect;
-    auto& postLayoutData = editorState.postLayoutData();
-    if (editorState.selectionIsRange) {
-        for (auto& rect : postLayoutData.selectionRects)
-            selectionBoundingRect.unite(rect.rect());
-    } else
-        selectionBoundingRect = postLayoutData.caretRectAtStart;
-
-    selectionBoundingRect.intersect(elementInfo.interactionRect);
-    return selectionBoundingRect;
 }
 
 static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebKit::InputType type, WKContentView *view)

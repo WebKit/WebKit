@@ -1,5 +1,136 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271543. rdar://problem/73469576
+
+    [iOS] Emoji keyboard covers text field on twitter.com/messages
+    https://bugs.webkit.org/show_bug.cgi?id=220664
+    <rdar://problem/68400471>
+    
+    Reviewed by Devin Rousso.
+    
+    Source/WebKit:
+    
+    After iOS 14, the emoji software keyboard layout now includes a search field that can be used to filter for
+    specific emojis. This slightly increases the overall height of the software keyboard when the emoji keyplane is
+    active; in turn, this means that if the selection or caret is positioned right above the top of the software
+    keyboard when the normal (alphabetic) keyplane is active, switching to the emoji keyplane will cause the
+    keyboard to overlap the selection, making it difficult to see inserted text.
+    
+    To address this, add a mechanism to detect when a change in the bounds of the software keyboard causes a visible
+    selection or caret rect to become overlapped, and react by scrolling to keep the selection visible. This has the
+    effect of fixing this bug by scrolling to reveal the text field after switching to the emoji keyboard, but it
+    also has the effect of scrolling to keep the selection visible after detaching a connected hardware keyboard,
+    in the case where it would've otherwise been overlapped by the (much taller) software keyboard that appears.
+    
+    Test: editing/selection/ios/scroll-to-reveal-selection-when-showing-software-keyboard.html
+    
+    * UIProcess/API/ios/WKWebViewIOS.h:
+    * UIProcess/API/ios/WKWebViewIOS.mm:
+    (-[WKWebView _selectionRectIsFullyVisibleAndNonEmpty]):
+    
+    Add an internal helper to check whether the selection bounds are fully visible.
+    
+    (-[WKWebView _scrollToRevealSelectionIfNeeded]):
+    (-[WKWebView _zoomToFocusRect:selectionRect:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]):
+    (-[WKWebView _keyboardChangedWithInfo:adjustScrollView:]):
+    
+    In the case where changing input view bounds causes a previously visible selection to become overlapped, call
+    `-_scrollToRevealSelectionIfNeeded` to make the selection visible again.
+    
+    (-[WKWebView _zoomToFocusRect:selectionRect:insideFixed:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]): Deleted.
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/ios/WKContentView.h:
+    * UIProcess/ios/WKContentView.mm:
+    (-[WKContentView _zoomToFocusRect:selectionRect:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]):
+    (-[WKContentView _zoomToFocusRect:selectionRect:insideFixed:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]): Deleted.
+    
+    Drive-by fix: remove the unused `insideFixed:` parameter from this adjacent method.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView rectToRevealWhenZoomingToFocusedElement]):
+    (-[WKContentView _zoomToRevealFocusedElement]):
+    (rectToRevealWhenZoomingToFocusedElement): Deleted.
+    
+    Pull this into the `-rectToRevealWhenZoomingToFocusedElement` internal helper method instead, and use the new
+    `selectionBoundingRectInRootViewCoordinates` method below.
+    
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::WebPageProxy::selectionBoundingRectInRootViewCoordinates const):
+    
+    Pull out code to compute the selection bounding rect (for both ranged and caret selections) into a method on
+    `WebPageProxy`, so that it can be used in `WKContentView` and `WKWebView`.
+    
+    LayoutTests:
+    
+    Add a test to verify that after disconnecting a hardware keyboard and showing the software keyboard, we scroll
+    up to reveal the caret in a focused text field.
+    
+    * editing/selection/ios/scroll-to-reveal-selection-when-showing-software-keyboard-expected.txt: Added.
+    * editing/selection/ios/scroll-to-reveal-selection-when-showing-software-keyboard.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271543 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS] Emoji keyboard covers text field on twitter.com/messages
+            https://bugs.webkit.org/show_bug.cgi?id=220664
+            <rdar://problem/68400471>
+
+            Reviewed by Devin Rousso.
+
+            After iOS 14, the emoji software keyboard layout now includes a search field that can be used to filter for
+            specific emojis. This slightly increases the overall height of the software keyboard when the emoji keyplane is
+            active; in turn, this means that if the selection or caret is positioned right above the top of the software
+            keyboard when the normal (alphabetic) keyplane is active, switching to the emoji keyplane will cause the
+            keyboard to overlap the selection, making it difficult to see inserted text.
+
+            To address this, add a mechanism to detect when a change in the bounds of the software keyboard causes a visible
+            selection or caret rect to become overlapped, and react by scrolling to keep the selection visible. This has the
+            effect of fixing this bug by scrolling to reveal the text field after switching to the emoji keyboard, but it
+            also has the effect of scrolling to keep the selection visible after detaching a connected hardware keyboard,
+            in the case where it would've otherwise been overlapped by the (much taller) software keyboard that appears.
+
+            Test: editing/selection/ios/scroll-to-reveal-selection-when-showing-software-keyboard.html
+
+            * UIProcess/API/ios/WKWebViewIOS.h:
+            * UIProcess/API/ios/WKWebViewIOS.mm:
+            (-[WKWebView _selectionRectIsFullyVisibleAndNonEmpty]):
+
+            Add an internal helper to check whether the selection bounds are fully visible.
+
+            (-[WKWebView _scrollToRevealSelectionIfNeeded]):
+            (-[WKWebView _zoomToFocusRect:selectionRect:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]):
+            (-[WKWebView _keyboardChangedWithInfo:adjustScrollView:]):
+
+            In the case where changing input view bounds causes a previously visible selection to become overlapped, call
+            `-_scrollToRevealSelectionIfNeeded` to make the selection visible again.
+
+            (-[WKWebView _zoomToFocusRect:selectionRect:insideFixed:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]): Deleted.
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/ios/WKContentView.h:
+            * UIProcess/ios/WKContentView.mm:
+            (-[WKContentView _zoomToFocusRect:selectionRect:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]):
+            (-[WKContentView _zoomToFocusRect:selectionRect:insideFixed:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]): Deleted.
+
+            Drive-by fix: remove the unused `insideFixed:` parameter from this adjacent method.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView rectToRevealWhenZoomingToFocusedElement]):
+            (-[WKContentView _zoomToRevealFocusedElement]):
+            (rectToRevealWhenZoomingToFocusedElement): Deleted.
+
+            Pull this into the `-rectToRevealWhenZoomingToFocusedElement` internal helper method instead, and use the new
+            `selectionBoundingRectInRootViewCoordinates` method below.
+
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::selectionBoundingRectInRootViewCoordinates const):
+
+            Pull out code to compute the selection bounding rect (for both ranged and caret selections) into a method on
+            `WebPageProxy`, so that it can be used in `WKContentView` and `WKWebView`.
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271497. rdar://problem/73469623
 
     Exceptions thrown when invoking a <select> on an iPhone-idiom app running on macOS
