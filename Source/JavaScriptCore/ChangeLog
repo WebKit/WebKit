@@ -1,5 +1,32 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271586. rdar://problem/73477459
+
+    [AppleWin 32bit] LLInt C Loop: LowLevelInterpreter.cpp(90,7): error C2653: 'WebConfig': is not a class or namespace name
+    https://bugs.webkit.org/show_bug.cgi?id=220405
+    
+    Reviewed by Fujii Hironori.
+    
+    Add a missing #if ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD).
+    
+    * llint/LowLevelInterpreter.cpp:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271586 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-18  Mark Lam  <mark.lam@apple.com>
+
+            [AppleWin 32bit] LLInt C Loop: LowLevelInterpreter.cpp(90,7): error C2653: 'WebConfig': is not a class or namespace name
+            https://bugs.webkit.org/show_bug.cgi?id=220405
+
+            Reviewed by Fujii Hironori.
+
+            Add a missing #if ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD).
+
+            * llint/LowLevelInterpreter.cpp:
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271422. rdar://problem/73477541
 
     [JSC] Bypass OperationPtrTagging for JITCage verification for CallDOMGetter
