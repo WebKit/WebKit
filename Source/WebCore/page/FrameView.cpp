@@ -5544,6 +5544,28 @@ float FrameView::pageScaleFactor() const
     return frame().frameScaleFactor();
 }
 
+void FrameView::updateScrollbarSteps()
+{
+    auto* documentElement = frame().document() ? frame().document()->documentElement() : nullptr;
+    auto* renderer = documentElement ? documentElement->renderBox() : nullptr;
+    if (!renderer) {
+        ScrollView::updateScrollbarSteps();
+        return;
+    }
+
+    LayoutRect paddedViewRect(LayoutPoint(), visibleSize());
+    paddedViewRect.contract(renderer->scrollPaddingForViewportRect(paddedViewRect));
+
+    if (horizontalScrollbar()) {
+        int pageStep = Scrollbar::pageStep(paddedViewRect.width());
+        horizontalScrollbar()->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
+
+    }
+    if (verticalScrollbar()) {
+        int pageStep = Scrollbar::pageStep(paddedViewRect.height());
+        verticalScrollbar()->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
+    }
+}
 } // namespace WebCore
 
 #undef PAGE_ID

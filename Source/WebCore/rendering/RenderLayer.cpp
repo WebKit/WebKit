@@ -650,11 +650,7 @@ static void expandScrollRectToVisibleTargetRectToIncludeScrollPadding(RenderBox*
     // scroll-padding applies to the scroll container, but expand the rectangle that we want to expose in order
     // simulate padding the scroll container. This rectangle is passed up the tree of scrolling elements to
     // ensure that the padding on this scroll container is maintained.
-    const auto& scrollPadding = renderBox->style().scrollPadding();
-    LayoutBoxExtent scrollPaddingExtents(
-        valueForLength(scrollPadding.top(), viewRect.height()), valueForLength(scrollPadding.right(), viewRect.width()),
-        valueForLength(scrollPadding.bottom(), viewRect.height()), valueForLength(scrollPadding.left(), viewRect.width()));
-    targetRect.expand(scrollPaddingExtents);
+    targetRect.expand(renderBox->scrollPaddingForViewportRect(viewRect));
 }
 
 bool RenderLayer::shouldBeNormalFlowOnly() const
@@ -2885,6 +2881,12 @@ void RenderLayer::updateScrollInfoAfterLayout()
     updateLayerScrollableArea();
     if (m_scrollableArea)
         m_scrollableArea->updateScrollInfoAfterLayout();
+}
+
+void RenderLayer::updateScrollbarSteps()
+{
+    if (m_scrollableArea)
+        m_scrollableArea->updateScrollbarSteps();
 }
 
 bool RenderLayer::canUseCompositedScrolling() const

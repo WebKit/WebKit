@@ -477,6 +477,7 @@ public:
     IntSize offsetFromResizeCorner(const IntPoint& localPoint) const;
 
     void updateScrollInfoAfterLayout();
+    void updateScrollbarSteps();
 
     void autoscroll(const IntPoint&);
 

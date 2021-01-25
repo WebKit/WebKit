@@ -680,6 +680,9 @@ public:
 
     String debugDescription() const final;
 
+    // ScrollView
+    void updateScrollbarSteps() override;
+
 private:
     explicit FrameView(Frame&);
 

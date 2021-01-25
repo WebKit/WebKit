@@ -1118,22 +1118,36 @@ void RenderLayerScrollableArea::updateScrollbarsAfterLayout()
             downcast<RenderFlexibleBox>(parent)->clearCachedMainSizeForChild(*m_layer.renderBox());
     }
 
-    // Set up the range (and page step/line step).
-    if (m_hBar) {
-        int clientWidth = roundToInt(box->clientWidth());
-        int pageStep = Scrollbar::pageStep(clientWidth);
-        m_hBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
-        m_hBar->setProportion(clientWidth, m_scrollWidth);
-    }
-    if (m_vBar) {
-        int clientHeight = roundToInt(box->clientHeight());
-        int pageStep = Scrollbar::pageStep(clientHeight);
-        m_vBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
-        m_vBar->setProportion(clientHeight, m_scrollHeight);
-    }
+    // Set up the range.
+    if (m_hBar)
+        m_hBar->setProportion(roundToInt(box->clientWidth()), m_scrollWidth);
+    if (m_vBar)
+        m_vBar->setProportion(roundToInt(box->clientHeight()), m_scrollHeight);
+
+    updateScrollbarSteps();
 
     updateScrollableAreaSet(hasScrollableHorizontalOverflow() || hasScrollableVerticalOverflow());
 }
+
+void RenderLayerScrollableArea::updateScrollbarSteps()
+{
+    RenderBox* box = m_layer.renderBox();
+    ASSERT(box);
+
+    LayoutRect paddedLayerBounds(0_lu, 0_lu, box->clientWidth(), box->clientHeight());
+    paddedLayerBounds.contract(box->scrollPaddingForViewportRect(paddedLayerBounds));
+
+    // Set up the  page step/line step.
+    if (m_hBar) {
+        int pageStep = Scrollbar::pageStep(roundToInt(paddedLayerBounds.width()));
+        m_hBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
+    }
+    if (m_vBar) {
+        int pageStep = Scrollbar::pageStep(roundToInt(paddedLayerBounds.height()));
+        m_vBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
+    }
+}
+
 
 // This is called from layout code (before updateLayerPositions).
 void RenderLayerScrollableArea::updateScrollInfoAfterLayout()

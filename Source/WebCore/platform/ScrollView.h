@@ -397,6 +397,7 @@ public:
     bool allowsUnclampedScrollPosition() const { return m_allowsUnclampedScrollPosition; }
 
     bool managesScrollbars() const;
+    virtual void updateScrollbarSteps();
 
 protected:
     ScrollView();

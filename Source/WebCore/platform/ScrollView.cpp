@@ -731,7 +731,6 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
 
     if (m_horizontalScrollbar) {
         int clientWidth = visibleWidth();
-        int pageStep = Scrollbar::pageStep(clientWidth);
         IntRect oldRect(m_horizontalScrollbar->frameRect());
         IntRect hBarRect(shouldPlaceBlockDirectionScrollbarOnLeft() && m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0,
             height() - m_horizontalScrollbar->height(),
@@ -744,7 +743,6 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
         if (m_scrollbarsSuppressed)
             m_horizontalScrollbar->setSuppressInvalidation(true);
         m_horizontalScrollbar->setEnabled(contentsWidth() > clientWidth);
-        m_horizontalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
         m_horizontalScrollbar->setProportion(clientWidth, contentsWidth());
         if (m_scrollbarsSuppressed)
             m_horizontalScrollbar->setSuppressInvalidation(false); 
@@ -752,7 +750,6 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
 
     if (m_verticalScrollbar) {
         int clientHeight = visibleHeight();
-        int pageStep = Scrollbar::pageStep(clientHeight);
         IntRect oldRect(m_verticalScrollbar->frameRect());
         IntRect vBarRect(shouldPlaceBlockDirectionScrollbarOnLeft() ? 0 : width() - m_verticalScrollbar->width(),
             topContentInset(),
@@ -765,11 +762,12 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
         if (m_scrollbarsSuppressed)
             m_verticalScrollbar->setSuppressInvalidation(true);
         m_verticalScrollbar->setEnabled(totalContentsSize().height() > clientHeight);
-        m_verticalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
         m_verticalScrollbar->setProportion(clientHeight, totalContentsSize().height());
         if (m_scrollbarsSuppressed)
             m_verticalScrollbar->setSuppressInvalidation(false);
     }
+
+    updateScrollbarSteps();
 
     if (hasHorizontalScrollbar != newHasHorizontalScrollbar || hasVerticalScrollbar != newHasVerticalScrollbar) {
         // FIXME: Is frameRectsChanged really necessary here? Have any frame rects changed?
@@ -789,6 +787,14 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
         m_verticalScrollbar->offsetDidChange();
 
     m_inUpdateScrollbars = false;
+}
+
+void ScrollView::updateScrollbarSteps()
+{
+    if (m_horizontalScrollbar)
+        m_horizontalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), Scrollbar::pageStep(visibleWidth()));
+    if (m_verticalScrollbar)
+        m_verticalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), Scrollbar::pageStep(visibleHeight()));
 }
 
 const int panIconSizeLength = 16;

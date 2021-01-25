@@ -495,6 +495,8 @@ override;
     bool hasScrollableOverflowX() const { return scrollsOverflowX() && hasHorizontalOverflow(); }
     bool hasScrollableOverflowY() const { return scrollsOverflowY() && hasVerticalOverflow(); }
 
+    LayoutBoxExtent scrollPaddingForViewportRect(const LayoutRect& viewportRect);
+
     bool usesCompositedScrolling() const;
     
     bool percentageLogicalHeightIsResolvable() const;

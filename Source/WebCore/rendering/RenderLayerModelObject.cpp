@@ -172,8 +172,16 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
             view().frameView().removeViewportConstrainedObject(*this);
     }
 
-#if ENABLE(CSS_SCROLL_SNAP)
     const RenderStyle& newStyle = style();
+    if (oldStyle && oldStyle->scrollPadding() != newStyle.scrollPadding()) {
+        if (isDocumentElementRenderer()) {
+            FrameView& frameView = view().frameView();
+            frameView.updateScrollbarSteps();
+        } else if (RenderLayer* renderLayer = layer())
+            renderLayer->updateScrollbarSteps();
+    }
+
+#if ENABLE(CSS_SCROLL_SNAP)
     if (oldStyle && scrollSnapContainerRequiresUpdateForStyleUpdate(*oldStyle, newStyle)) {
         if (RenderLayer* renderLayer = layer()) {
             auto* scrollableLayer = renderLayer->ensureLayerScrollableArea();

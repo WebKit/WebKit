@@ -5162,4 +5162,12 @@ LayoutRect RenderBox::absoluteAnchorRectWithScrollMargin(bool* insideFixed) cons
     return anchorRect;
 }
 
+LayoutBoxExtent RenderBox::scrollPaddingForViewportRect(const LayoutRect& viewportRect)
+{
+    const auto& padding = style().scrollPadding();
+    return LayoutBoxExtent(
+        valueForLength(padding.top(), viewportRect.height()), valueForLength(padding.right(), viewportRect.width()),
+        valueForLength(padding.bottom(), viewportRect.height()), valueForLength(padding.left(), viewportRect.width()));
+}
+
 } // namespace WebCore

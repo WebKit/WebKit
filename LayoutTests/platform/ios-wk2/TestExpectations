@@ -134,6 +134,8 @@ js/dom/dfg-inline-resolve.html
 scrollbars/corner-resizer-window-inactive.html [ ImageOnlyFailure ]
 scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Failure ]
 scrollbars/scrollbars-on-positioned-content.html [ Failure ]
+css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
+css3/scroll-snap/scroll-padding-overflow-paging.html [ Failure ]
 
 # SVG tests that time out (these require EventSender)
 svg/animations/animVal-basics.html
