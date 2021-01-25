@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2017-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -37,7 +37,8 @@ BUILD_WEBKIT_HOSTNAME = 'build.webkit.org'
 CURRENT_HOSTNAME = socket.gethostname().strip()
 RESULTS_WEBKIT_URL = 'https://results.webkit.org'
 RESULTS_SERVER_API_KEY = 'RESULTS_SERVER_API_KEY'
-S3URL = "https://s3-us-west-2.amazonaws.com/"
+S3URL = 'https://s3-us-west-2.amazonaws.com/'
+S3_RESULTS_URL = '{}build.webkit.org-results/'.format(S3URL)
 USE_BUILDBOT_VERSION2 = os.getenv('USE_BUILDBOT_VERSION2') is not None
 WithProperties = properties.WithProperties
 if USE_BUILDBOT_VERSION2:
@@ -1274,7 +1275,8 @@ class ExtractTestResults(master.MasterShellCommand):
 
     def resultDirectoryURL(self):
         if USE_BUILDBOT_VERSION2:
-            return self.resultDirectory.replace('public_html/', '/') + '/'
+            path = self.resultDirectory.replace('public_html/results/', '') + '/'
+            return '{}{}'.format(S3_RESULTS_URL, path)
         else:
             return self.build.getProperties().render(self.resultDirectory).replace('public_html/', '/') + '/'
 
