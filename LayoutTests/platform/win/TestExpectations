@@ -4610,3 +4610,5 @@ js/dom/webassembly-memory-shared-basic.html [ Skip ]
 js/dom/webassembly-memory-normal-fail.html [ Skip ]
 js/dom/webassembly-memory-shared-fail.html [ Skip ]
 storage/indexeddb/shared-memory-structured-clone.html [ Skip ]
+
+webkit.org/b/220536 fast/text/cjk-multi-codepoint-cluster-vertical.html [ ImageOnlyFailure ]

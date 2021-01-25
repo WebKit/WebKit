@@ -1,5 +1,46 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271425. rdar://problem/73469655
+
+    Multi-codepoint CJK grapheme clusters are not oriented correctly in vertical writing mode
+    https://bugs.webkit.org/show_bug.cgi?id=220536
+    <rdar://problem/70633887>
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    We have two codeblocks in this section that are meant to be used
+    for non-CJK text, but the compound "if" statement was causing us to hit
+    one of them even for CJK text.
+    
+    Test: fast/text/cjk-multi-codepoint-cluster-vertical.html
+    
+    * platform/graphics/coretext/FontCascadeCoreText.cpp:
+    (WebCore::FontCascade::fontForCombiningCharacterSequence const):
+    
+    LayoutTests:
+    
+    * fast/text/cjk-multi-codepoint-cluster-vertical-expected.html: Added.
+    * fast/text/cjk-multi-codepoint-cluster-vertical.html: Added.
+    * platform/win/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271425 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Multi-codepoint CJK grapheme clusters are not oriented correctly in vertical writing mode
+            https://bugs.webkit.org/show_bug.cgi?id=220536
+            <rdar://problem/70633887>
+
+            Reviewed by Zalan Bujtas.
+
+            * fast/text/cjk-multi-codepoint-cluster-vertical-expected.html: Added.
+            * fast/text/cjk-multi-codepoint-cluster-vertical.html: Added.
+            * platform/win/TestExpectations:
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271419. rdar://problem/73469613
 
     Make fast/text/international/complex-character-based-fallback.html more robust by migrating it to be a reftest instead of a DRT test

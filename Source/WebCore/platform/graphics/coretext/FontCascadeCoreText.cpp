@@ -322,9 +322,10 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characte
             continue;
 #endif
         if (font->platformData().orientation() == FontOrientation::Vertical) {
-            if (isCJKIdeographOrSymbol(baseCharacter) && !font->hasVerticalGlyphs())
-                font = &font->brokenIdeographFont();
-            else if (m_fontDescription.nonCJKGlyphOrientation() == NonCJKGlyphOrientation::Mixed) {
+            if (isCJKIdeographOrSymbol(baseCharacter)) {
+                if (!font->hasVerticalGlyphs())
+                    font = &font->brokenIdeographFont();
+            } else if (m_fontDescription.nonCJKGlyphOrientation() == NonCJKGlyphOrientation::Mixed) {
                 const Font& verticalRightFont = font->verticalRightOrientationFont();
                 Glyph verticalRightGlyph = verticalRightFont.glyphForCharacter(baseCharacter);
                 if (verticalRightGlyph == baseCharacterGlyphData.glyph)
