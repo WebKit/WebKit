@@ -81,14 +81,6 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 
     m_dataDetectionContext = parameters.dataDetectionContext;
 
-#if ENABLE(CONTENT_FILTERING)
-    if (parameters.neHelperExtensionHandle)
-        SandboxExtension::consumePermanently(*parameters.neHelperExtensionHandle);
-    if (parameters.neSessionManagerExtensionHandle)
-        SandboxExtension::consumePermanently(*parameters.neSessionManagerExtensionHandle);
-    NetworkExtensionContentFilter::setHasConsumedSandboxExtensions(parameters.neHelperExtensionHandle.hasValue() && parameters.neSessionManagerExtensionHandle.hasValue());
-#endif
-
 #if PLATFORM(IOS)
     if (parameters.contentFilterExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.contentFilterExtensionHandle);
@@ -412,6 +404,16 @@ void WebPage::getPlatformEditorStateCommon(const Frame& frame, EditorState& resu
     }
 
     postLayoutData.baseWritingDirection = frame.editor().baseWritingDirectionForSelectionStart();
+}
+
+void WebPage::consumeNetworkExtensionSandboxExtensions(const SandboxExtension::HandleArray& networkExtensionsHandles)
+{
+#if ENABLE(CONTENT_FILTERING)
+    SandboxExtension::consumePermanently(networkExtensionsHandles);
+    NetworkExtensionContentFilter::setHasConsumedSandboxExtensions(networkExtensionsHandles.size());
+#else
+    UNUSED_PARAM(networkExtensionsHandles);
+#endif
 }
 
 } // namespace WebKit

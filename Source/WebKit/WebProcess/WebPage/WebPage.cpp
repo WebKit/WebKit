@@ -3363,8 +3363,10 @@ void WebPage::setLayerHostingMode(LayerHostingMode layerHostingMode)
         pluginView->setLayerHostingMode(m_layerHostingMode);
 }
 
-void WebPage::didReceivePolicyDecision(FrameIdentifier frameID, uint64_t listenerID, PolicyDecision&& policyDecision)
+void WebPage::didReceivePolicyDecision(FrameIdentifier frameID, uint64_t listenerID, PolicyDecision&& policyDecision, const SandboxExtension::HandleArray& networkExtensionsHandles)
 {
+    consumeNetworkExtensionSandboxExtensions(networkExtensionsHandles);
+
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     RELEASE_LOG_IF_ALLOWED(Loading, "didReceivePolicyDecision: policyAction: %u - frameID: %llu - webFrame: %p - mainFrame: %d", (unsigned)policyDecision.policyAction, frameID.toUInt64(), frame, frame ? frame->isMainFrame() : 0);
 
@@ -7144,6 +7146,11 @@ bool WebPage::createAppHighlightInSelectedRange(CreateNewGroupForHighlight creat
 }
 #endif
 
+#if !PLATFORM(COCOA)
+void WebPage::consumeNetworkExtensionSandboxExtensions(const SandboxExtension::HandleArray&)
+{
+}
+#endif
 
 } // namespace WebKit
 
