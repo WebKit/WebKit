@@ -1,5 +1,49 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271417. rdar://problem/73376369
+
+    [macOS] Reset user directory suffix before getting sandbox directory
+    https://bugs.webkit.org/show_bug.cgi?id=220358
+    <rdar://problem/57616019>
+    
+    Reviewed by Alexey Proskuryakov.
+    
+    Source/WebCore/PAL:
+    
+    Declare functions to get and set user directory suffix.
+    
+    * pal/spi/cocoa/CoreServicesSPI.h:
+    
+    Source/WebKit:
+    
+    Reset the user directory suffix before getting the sandbox data vault directory with confstr. We do not want to include the user
+    directory suffix, since the sandbox data vault will then end up inside the host process' cache folder, which is undesirable.
+    Also, creating the data vault directory with confstr can fail under some circumstances if the user directory suffix is not empty.
+    This patch also changes how we next set the user directory suffix for the process. Instead of setting the environment variable
+    DIRHELPER_USER_DIR_SUFFIX, we can use the SPI _set_user_dir_suffix. The behavior should be identical, but I believe it is better
+    to use SPI for this.
+    
+    * Shared/mac/AuxiliaryProcessMac.mm:
+    (WebKit::initializeSandboxParameters):
+    (WebKit::AuxiliaryProcess::initializeSandbox):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271417 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-12  Per Arne Vollan  <pvollan@apple.com>
+
+            [macOS] Reset user directory suffix before getting sandbox directory
+            https://bugs.webkit.org/show_bug.cgi?id=220358
+            <rdar://problem/57616019>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Declare functions to get and set user directory suffix.
+
+            * pal/spi/cocoa/CoreServicesSPI.h:
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271497. rdar://problem/73469623
 
     Exceptions thrown when invoking a <select> on an iPhone-idiom app running on macOS
