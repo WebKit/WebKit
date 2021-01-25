@@ -1,5 +1,36 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271753. rdar://problem/73586655
+
+    [WebAuthn] Should only check default browsers for the Modern WebAuthn
+    https://bugs.webkit.org/show_bug.cgi?id=220840
+    <rdar://problem/73375937>
+    
+    Reviewed by Brent Fulgham.
+    
+    * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+    (WebKit::WebAuthenticatorCoordinator::makeCredential):
+    (WebKit::WebAuthenticatorCoordinator::getAssertion):
+    (WebKit::WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271753 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-22  Jiewen Tan  <jiewen_tan@apple.com>
+
+            [WebAuthn] Should only check default browsers for the Modern WebAuthn
+            https://bugs.webkit.org/show_bug.cgi?id=220840
+            <rdar://problem/73375937>
+
+            Reviewed by Brent Fulgham.
+
+            * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+            (WebKit::WebAuthenticatorCoordinator::makeCredential):
+            (WebKit::WebAuthenticatorCoordinator::getAssertion):
+            (WebKit::WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable):
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271613. rdar://problem/73477407
 
     [WebAuthn] Polish the new WebAuthn UI
