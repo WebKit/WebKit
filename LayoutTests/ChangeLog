@@ -1,5 +1,51 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271516. rdar://problem/73477422
+
+    [LFC][Integration] REGRESSION (r270123) facebook.com birthday dropdown do not work when creating new account
+    https://bugs.webkit.org/show_bug.cgi?id=220638
+    <rdar://problem/73175259>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    This patch fixes incorrect hittest results when the hittest target
+    1. participates in the modern line layout and
+    2. prior to the hittesting its style changes in a way that it does not trigger layout.
+    e.g.
+    <div><div id=inner style="display: inline-block; visibility: hidden"><div></div>
+    <script>inner.style.visibility = "visible"</script>
+    
+    Any subsequent hittest will miss the inner <div> as the loop in LineLayout::hitTest() early returns due to stale style information.
+    The reason why we end up with stale style is because we only update the layout box's style when the style diff >= StyleDifference::Layout () in RenderBox::styleDidChange.
+    
+    Test: fast/inline-block/hittest-fails-on-inline-block-with-visibility-change.html
+    
+    * rendering/RenderBox.cpp:
+    (WebCore::RenderBox::styleDidChange):
+    
+    LayoutTests:
+    
+    * fast/inline-block/hittest-fails-on-inline-block-with-visibility-change-expected.txt: Added.
+    * fast/inline-block/hittest-fails-on-inline-block-with-visibility-change.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271516 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-15  Zalan Bujtas  <zalan@apple.com>
+
+            [LFC][Integration] REGRESSION (r270123) facebook.com birthday dropdown do not work when creating new account
+            https://bugs.webkit.org/show_bug.cgi?id=220638
+            <rdar://problem/73175259>
+
+            Reviewed by Simon Fraser.
+
+            * fast/inline-block/hittest-fails-on-inline-block-with-visibility-change-expected.txt: Added.
+            * fast/inline-block/hittest-fails-on-inline-block-with-visibility-change.html: Added.
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271471. rdar://problem/73477068
 
     Source/WebCore:
