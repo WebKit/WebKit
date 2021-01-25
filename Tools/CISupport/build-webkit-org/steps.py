@@ -414,8 +414,8 @@ class DownloadBuiltProduct(shell.ShellCommand):
     name = "download-built-product"
     description = ["downloading built product"]
     descriptionDone = ["downloaded built product"]
-    haltOnFailure = True
-    flunkOnFailure = True
+    haltOnFailure = False
+    flunkOnFailure = False
 
     def start(self):
         if 'apple' in self.getProperty('buildername').lower():
@@ -424,6 +424,36 @@ class DownloadBuiltProduct(shell.ShellCommand):
             else:
                 self.slaveEnvironment['HTTPS_PROXY'] = APPLE_WEBKIT_AWS_PROXY  # curl env var to use a proxy
         return shell.ShellCommand.start(self)
+
+    def evaluateCommand(self, cmd):
+        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+        if rc == FAILURE and USE_BUILDBOT_VERSION2:
+            self.build.addStepsAfterCurrentStep([DownloadBuiltProductFromMaster()])
+        return rc
+
+
+class DownloadBuiltProductFromMaster(transfer.FileDownload):
+    mastersrc = WithProperties('archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(got_revision)s.zip')
+    workerdest = WithProperties('WebKitBuild/%(configuration)s.zip')
+    name = 'download-built-product-from-master'
+    description = ['downloading built product from buildbot master']
+    descriptionDone = ['Downloaded built product']
+    haltOnFailure = True
+    flunkOnFailure = True
+
+    def __init__(self, **kwargs):
+        # Allow the unit test to override mastersrc
+        if 'mastersrc' not in kwargs:
+            kwargs['mastersrc'] = self.mastersrc
+        kwargs['workerdest'] = self.workerdest
+        kwargs['mode'] = 0o0644
+        kwargs['blocksize'] = 1024 * 256
+        transfer.FileDownload.__init__(self, **kwargs)
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {u'step': u'Failed to download built product from build master'}
+        return super(DownloadBuiltProductFromMaster, self).getResultSummary()
 
 
 class RunJavaScriptCoreTests(TestWithFailureCount):
