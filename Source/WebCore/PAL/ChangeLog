@@ -1,5 +1,57 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271497. rdar://problem/73469623
+
+    Exceptions thrown when invoking a <select> on an iPhone-idiom app running on macOS
+    https://bugs.webkit.org/show_bug.cgi?id=220628
+    <rdar://problem/70546547>
+    
+    Reviewed by Wenson Hsieh.
+    Source/WebCore/PAL:
+    
+    * pal/spi/ios/MobileGestaltSPI.h:
+    
+    Source/WebKit:
+    
+    iPhone-idiom apps running on macOS need to behave exactly like iPhone apps,
+    even in ways that might not totally make sense on the platform (e.g.
+    using input accessory views for <select> instead of popover) for two reasons:
+    
+    - we want to maximize compatibility, so they should behave exactly as they do
+    on the only platform they're tested on
+    
+    - other frameworks (mostly UIKit) enforce the use of iPhone UI in iPhone-idiom
+    apps, even on macOS
+    
+    * Shared/UserInterfaceIdiom.mm:
+    (WebKit::currentUserInterfaceIdiomIsPadOrMac):
+    (WebKit::setCurrentUserInterfaceIdiomIsPadOrMac):
+    (WebKit::updateCurrentUserInterfaceIdiom):
+    (WebKit::userInterfaceIdiomIsPad): Deleted.
+    Simplify our UIUserInterfaceIdiom-caching code.
+    
+    currentUserInterfaceIdiomIsPadOrMac now does what it says on the tin, globally;
+    previously on macOS it said YES for iPhone-idiom apps, but now it says NO,
+    like you would expect.
+    
+    Use UIDevice everywhere instead of the soft-deprecated UICurrentUserInterfaceIdiomIsPad,
+    both because it is soft-deprecated, and because it lets us elide the static helper.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271497 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-14  Tim Horton  <timothy_horton@apple.com>
+
+            Exceptions thrown when invoking a <select> on an iPhone-idiom app running on macOS
+            https://bugs.webkit.org/show_bug.cgi?id=220628
+            <rdar://problem/70546547>
+
+            Reviewed by Wenson Hsieh.
+
+            * pal/spi/ios/MobileGestaltSPI.h:
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271405. rdar://problem/73466993
 
     [Cocoa] Support key rotation with HLS-backed encrypted media streams

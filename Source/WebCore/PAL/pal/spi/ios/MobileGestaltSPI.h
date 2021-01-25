@@ -57,13 +57,12 @@ static const CFStringRef kMGQMainDisplayRotation CFSTR("MainDisplayRotation");
 
 typedef enum {
     MGDeviceClassInvalid = -1,
-    /* 0 is intentionally not in this enum */
     MGDeviceClassiPhone  = 1,
     MGDeviceClassiPod    = 2,
     MGDeviceClassiPad    = 3,
     MGDeviceClassAppleTV = 4,
-    /* 5 is intentionally not in this enum */
     MGDeviceClassWatch   = 6,
+    MGDeviceClassMac     = 9,
 } MGDeviceClass;
 
 typedef enum {

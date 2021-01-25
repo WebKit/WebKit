@@ -34,58 +34,48 @@
 namespace WebKit {
 
 enum class UserInterfaceIdiomState : uint8_t {
-    IsPad,
-    IsNotPad,
+    IsPadOrMac,
+    IsNotPadOrMac,
     Unknown,
 };
 
 static UserInterfaceIdiomState userInterfaceIdiomIsPadState = UserInterfaceIdiomState::Unknown;
 
-static inline bool userInterfaceIdiomIsPad()
-{
-#if PLATFORM(MACCATALYST)
-    // UIKit varies the UIUserInterfaceIdiom between iPad and macOS in macCatalyst, depending on various settings,
-    // but for the purposes of WebKit we always want to use iPad behavior (vs. iPhone) in macCatalyst.
-    // FIXME: We should get rid of this function and have callers make explicit decisions for all of iPhone/iPad/macOS.
-    return true;
-#else
-    // If we are in a daemon, we cannot use UIDevice. Fall back to checking the hardware itself.
-    // Since daemons don't ever run in an iPhone-app-on-iPad jail, this will be accurate in the daemon case,
-    // but is not sufficient in the application case.
-    if (![UIApplication sharedApplication])
-        return WebCore::deviceClass() == MGDeviceClassiPad;
-
-    // This inline function exists to thwart unreachable code
-    // detection on platforms where UICurrentUserInterfaceIdiomIsPad
-    // is defined directly to false.
-#if USE(APPLE_INTERNAL_SDK)
-    return UICurrentUserInterfaceIdiomIsPad();
-#else
-    return [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad;
-#endif
-#endif
-}
-
 bool currentUserInterfaceIdiomIsPadOrMac()
 {
-    if (userInterfaceIdiomIsPadState == UserInterfaceIdiomState::Unknown)
-        setCurrentUserInterfaceIdiomIsPadOrMac(userInterfaceIdiomIsPad());
+    // FIXME: We should get rid of this function and have callers make explicit decisions for all of iPhone/iPad/macOS.
 
-    return userInterfaceIdiomIsPadState == UserInterfaceIdiomState::IsPad;
+    if (userInterfaceIdiomIsPadState == UserInterfaceIdiomState::Unknown)
+        updateCurrentUserInterfaceIdiom();
+
+    return userInterfaceIdiomIsPadState == UserInterfaceIdiomState::IsPadOrMac;
 }
 
-void setCurrentUserInterfaceIdiomIsPadOrMac(bool isPad)
+void setCurrentUserInterfaceIdiomIsPadOrMac(bool isPadOrMac)
 {
-    userInterfaceIdiomIsPadState = isPad ? UserInterfaceIdiomState::IsPad : UserInterfaceIdiomState::IsNotPad;
+    userInterfaceIdiomIsPadState = isPadOrMac ? UserInterfaceIdiomState::IsPadOrMac : UserInterfaceIdiomState::IsNotPadOrMac;
 }
 
 bool updateCurrentUserInterfaceIdiom()
 {
-    bool isPad = userInterfaceIdiomIsPad();
-    if (currentUserInterfaceIdiomIsPadOrMac() == isPad)
+    bool wasPadOrMac = userInterfaceIdiomIsPadState == UserInterfaceIdiomState::IsPadOrMac;
+    bool isPadOrMac = false;
+
+    // If we are in a daemon, we cannot use UIDevice. Fall back to checking the hardware itself.
+    // Since daemons don't ever run in an iPhone-app-on-iPad jail, this will be accurate in the daemon case,
+    // but is not sufficient in the application case.
+    if (![UIApplication sharedApplication]) {
+        auto deviceClass = WebCore::deviceClass();
+        isPadOrMac = deviceClass == MGDeviceClassiPad || deviceClass == MGDeviceClassMac;
+    } else {
+        auto idiom = [[UIDevice currentDevice] userInterfaceIdiom];
+        isPadOrMac = idiom == UIUserInterfaceIdiomPad || idiom == UIUserInterfaceIdiomMac;
+    }
+
+    if (wasPadOrMac == isPadOrMac)
         return false;
 
-    setCurrentUserInterfaceIdiomIsPadOrMac(isPad);
+    setCurrentUserInterfaceIdiomIsPadOrMac(isPadOrMac);
     return true;
 }
 
