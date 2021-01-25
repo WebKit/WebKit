@@ -1,3 +1,21 @@
+2021-01-25  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r270074 and r270170.
+        https://bugs.webkit.org/show_bug.cgi?id=220922
+
+        Broke all GLib unit tests using a SoupServer
+
+        Reverted changesets:
+
+        "[GTK] Migrate WebKitTestServer to libsoup 2.48 API"
+        https://bugs.webkit.org/show_bug.cgi?id=219160
+        https://trac.webkit.org/changeset/270074
+
+        "[GTK] Allow WebKitTestServer to run non-loopback addresses
+        for API tests"
+        https://bugs.webkit.org/show_bug.cgi?id=219257
+        https://trac.webkit.org/changeset/270170
+
 2021-01-25  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         DumpRenderTree behaves differently to WebKitTestRunner wrt integrated/discrete GPU behavior
