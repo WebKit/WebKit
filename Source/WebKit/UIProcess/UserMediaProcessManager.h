@@ -48,6 +48,8 @@ public:
     void beginMonitoringCaptureDevices();
 
 private:
+    enum class ShouldNotify { Yes, No };
+    void updateCaptureDevices(ShouldNotify);
     void captureDevicesChanged();
 
     Vector<WebCore::CaptureDevice> m_captureDevices;

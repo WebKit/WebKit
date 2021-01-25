@@ -25,6 +25,8 @@
                 return navigator.mediaDevices.enumerateDevices();
             }).then(devices => {
                 devices.forEach((device) => {
+                    if (device.kind == "audiooutput")
+                        return;
                     let kind = device.kind == "audioinput" ? "audio" : "video";
                     deviceIds.push({ type: kind, id : device.deviceId});
                 });

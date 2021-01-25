@@ -1,5 +1,89 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271471. rdar://problem/73477068
+
+    Source/WebCore:
+    [HANG] 496ms to 1360ms in WebCore::AVAudioSessionCaptureDeviceManager::refreshAudioCaptureDevices()
+    https://bugs.webkit.org/show_bug.cgi?id=220471
+    
+    Reviewed by Youenn Fablet.
+    
+    Refactor RealtimeMediaSourceCenter::getMediaStreamDevices() to take a completion handler, rather than
+    synchronously return a Vector of CaptureDevices. This also requires all CaptureDeviceManager subclasses
+    to support taking a completion handler themselves. By default, all CaptureDeviceManagers will support
+    the CompletionHandler path by just synchronously calling the completion handler with the existing
+    synchronous method. But for AVAudioSessionCaptureDeviceManager, override that default implementation by
+    activating the AVAudioSession on a background thread, and querying that session's inputs on a background
+    thread as well.
+    
+    * platform/mediastream/CaptureDeviceManager.h:
+    * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+    (WebCore::RealtimeMediaSourceCenter::getMediaStreamDevices):
+    * platform/mediastream/RealtimeMediaSourceCenter.h:
+    * platform/mediastream/RealtimeMediaSourceFactory.h:
+    (WebCore::AudioCaptureFactory::getSpeakerDevices const):
+    * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.h:
+    * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm:
+    (WebCore::AVAudioSessionCaptureDeviceManager::audioSessionDeviceWithUID):
+    (WebCore::AVAudioSessionCaptureDeviceManager::scheduleUpdateCaptureDevices):
+    (WebCore::AVAudioSessionCaptureDeviceManager::refreshAudioCaptureDevices):
+    (WebCore::AVAudioSessionCaptureDeviceManager::getCaptureDevices):
+    (WebCore::AVAudioSessionCaptureDeviceManager::activateAudioSession):
+    (WebCore::AVAudioSessionCaptureDeviceManager::retrieveAudioSessionCaptureDevices const):
+    (WebCore::AVAudioSessionCaptureDeviceManager::setAudioCaptureDevices):
+    (WebCore::AVAudioSessionCaptureDeviceManager::audioSessionCaptureDevices): Deleted.
+    
+    Source/WebKit:
+    [HANG] 496ms to 1360ms in WebCore::AVAudioSessionCaptureDeviceManager::refreshAudioCaptureDevices()
+    https://bugs.webkit.org/show_bug.cgi?id=220471
+    
+    Reviewed by Youenn Fablet.
+    
+    Use the completion-handler version of RealtimeMediaSourceCenter::getMediaStreamDevices().
+    
+    * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+    (WebKit::UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList):
+    (WebKit::UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame):
+    * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+    * UIProcess/UserMediaProcessManager.cpp:
+    (WebKit::UserMediaProcessManager::updateCaptureDevices):
+    (WebKit::UserMediaProcessManager::beginMonitoringCaptureDevices):
+    * UIProcess/UserMediaProcessManager.h:
+    
+    LayoutTests:
+    [Cocoa] Support key rotation with HLS-backed encrypted media streams
+    https://bugs.webkit.org/show_bug.cgi?id=220493
+    <rdar://68227709>
+    
+    Reviewed by Youenn Fablet.
+    
+    Fix a broken layout test; the test enumerates devices, then uses the deviceIds returned to generate
+    constraints for a call to getUserMedia(). However, it assumes all devices will either be of kind
+    'audioinput' or 'videoinput'. If an 'audiooutput' device is returned (as the MockRealtimeMediaSourceCenter
+    does), then the test turns that into a video capture constraint, which fails.
+    
+    * fast/mediastream/get-user-media-device-id.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271471 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-13  Jer Noble  <jer.noble@apple.com>
+
+            [Cocoa] Support key rotation with HLS-backed encrypted media streams
+            https://bugs.webkit.org/show_bug.cgi?id=220493
+            <rdar://68227709>
+
+            Reviewed by Youenn Fablet.
+
+            Fix a broken layout test; the test enumerates devices, then uses the deviceIds returned to generate
+            constraints for a call to getUserMedia(). However, it assumes all devices will either be of kind
+            'audioinput' or 'videoinput'. If an 'audiooutput' device is returned (as the MockRealtimeMediaSourceCenter
+            does), then the test turns that into a video capture constraint, which fails.
+
+            * fast/mediastream/get-user-media-device-id.html:
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271453. rdar://problem/73477471
 
     Fix for LayoutTests/accessibility/mac/details-summary.html in isolated tree mode.

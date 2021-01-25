@@ -112,27 +112,48 @@ void RealtimeMediaSourceCenter::createMediaStream(Ref<const Logger>&& logger, Ne
     audioSource->whenReady(WTFMove(whenAudioSourceReady));
 }
 
-Vector<CaptureDevice> RealtimeMediaSourceCenter::getMediaStreamDevices()
+void RealtimeMediaSourceCenter::getMediaStreamDevices(CompletionHandler<void(Vector<CaptureDevice>&&)>&& completion)
 {
-    Vector<CaptureDevice> result;
-    for (auto& device : audioCaptureFactory().audioCaptureDeviceManager().captureDevices()) {
-        if (device.enabled())
-            result.append(device);
-    }
-    for (auto& device : audioCaptureFactory().speakerDevices()) {
-        if (device.enabled())
-            result.append(device);
-    }
-    for (auto& device : videoCaptureFactory().videoCaptureDeviceManager().captureDevices()) {
-        if (device.enabled())
-            result.append(device);
-    }
-    for (auto& device : displayCaptureFactory().displayCaptureDeviceManager().captureDevices()) {
-        if (device.enabled())
-            result.append(device);
-    }
+    class CaptureDeviceAccumulator : public RefCounted<CaptureDeviceAccumulator> {
+    public:
+        static Ref<CaptureDeviceAccumulator> create(CompletionHandler<void(Vector<CaptureDevice>&&)>&& completion)
+        {
+            return adoptRef(*new CaptureDeviceAccumulator(WTFMove(completion)));
+        }
 
-    return result;
+        ~CaptureDeviceAccumulator()
+        {
+            m_completionHandler(WTFMove(m_results));
+        }
+
+        CompletionHandler<void(Vector<CaptureDevice>&&)> accumulate()
+        {
+            return [this, protectedThis = makeRef(*this)] (Vector<CaptureDevice>&& result) {
+                m_results.appendVector(WTFMove(result));
+            };
+        }
+
+    private:
+        explicit CaptureDeviceAccumulator(CompletionHandler<void(Vector<CaptureDevice>&&)>&& completion)
+            : m_completionHandler(WTFMove(completion))
+        {
+        }
+
+        CompletionHandler<void(Vector<CaptureDevice>&&)> m_completionHandler;
+        Vector<CaptureDevice> m_results;
+    };
+
+    auto accumulator = CaptureDeviceAccumulator::create([completion = WTFMove(completion)] (auto&& devices) mutable {
+        devices.removeAllMatching([] (auto& captureDevice) {
+            return !captureDevice.enabled();
+        });
+        completion(WTFMove(devices));
+    });
+
+    audioCaptureFactory().audioCaptureDeviceManager().getCaptureDevices(accumulator->accumulate());
+    videoCaptureFactory().videoCaptureDeviceManager().getCaptureDevices(accumulator->accumulate());
+    displayCaptureFactory().displayCaptureDeviceManager().getCaptureDevices(accumulator->accumulate());
+    audioCaptureFactory().getSpeakerDevices(accumulator->accumulate());
 }
 
 static void addStringToSHA1(SHA1& sha1, const String& string)

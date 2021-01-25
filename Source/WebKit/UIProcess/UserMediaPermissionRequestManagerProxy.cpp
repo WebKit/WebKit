@@ -654,40 +654,42 @@ static inline bool haveMicrophoneDevice(const Vector<WebCore::CaptureDevice>& de
     });
 }
 
-Vector<CaptureDevice> UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList(bool revealIdsAndLabels)
+void UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList(bool revealIdsAndLabels, CompletionHandler<void(Vector<CaptureDevice>&&)>&& completion)
 {
-    static const int defaultMaximumCameraCount = 1;
-    static const int defaultMaximumMicrophoneCount = 1;
+    static const unsigned defaultMaximumCameraCount = 1;
+    static const unsigned defaultMaximumMicrophoneCount = 1;
 
-    auto devices = RealtimeMediaSourceCenter::singleton().getMediaStreamDevices();
-    int cameraCount = 0;
-    int microphoneCount = 0;
+    RealtimeMediaSourceCenter::singleton().getMediaStreamDevices([this, weakThis = makeWeakPtr(this), revealIdsAndLabels, completion = WTFMove(completion)] (auto&& devices) mutable {
+        unsigned cameraCount = 0;
+        unsigned microphoneCount = 0;
 
-    Vector<CaptureDevice> filteredDevices;
-    for (const auto& device : devices) {
-        if (!device.enabled() || (device.type() != WebCore::CaptureDevice::DeviceType::Camera && device.type() != WebCore::CaptureDevice::DeviceType::Microphone && device.type() != WebCore::CaptureDevice::DeviceType::Speaker))
-            continue;
+        Vector<CaptureDevice> filteredDevices;
+        for (const auto& device : devices) {
+            if (!device.enabled() || (device.type() != WebCore::CaptureDevice::DeviceType::Camera && device.type() != WebCore::CaptureDevice::DeviceType::Microphone && device.type() != WebCore::CaptureDevice::DeviceType::Speaker))
+                continue;
 
-        if (!revealIdsAndLabels) {
-            if (device.type() == WebCore::CaptureDevice::DeviceType::Camera && ++cameraCount > defaultMaximumCameraCount)
-                continue;
-            if (device.type() == WebCore::CaptureDevice::DeviceType::Microphone && ++microphoneCount > defaultMaximumMicrophoneCount)
-                continue;
-            if (device.type() != WebCore::CaptureDevice::DeviceType::Camera && device.type() != WebCore::CaptureDevice::DeviceType::Microphone)
-                continue;
-        } else {
-            // We only expose speakers tied to a microphone for the moment.
-            if (device.type() == WebCore::CaptureDevice::DeviceType::Speaker && !haveMicrophoneDevice(devices, device.groupId()))
-                continue;
+            if (!revealIdsAndLabels) {
+                if (device.type() == WebCore::CaptureDevice::DeviceType::Camera && ++cameraCount > defaultMaximumCameraCount)
+                    continue;
+                if (device.type() == WebCore::CaptureDevice::DeviceType::Microphone && ++microphoneCount > defaultMaximumMicrophoneCount)
+                    continue;
+                if (device.type() != WebCore::CaptureDevice::DeviceType::Camera && device.type() != WebCore::CaptureDevice::DeviceType::Microphone)
+                    continue;
+            } else {
+                // We only expose speakers tied to a microphone for the moment.
+                if (device.type() == WebCore::CaptureDevice::DeviceType::Speaker && !haveMicrophoneDevice(devices, device.groupId()))
+                    continue;
+            }
+
+            filteredDevices.append(revealIdsAndLabels ? device : CaptureDevice({ }, device.type(), { }, { }));
         }
 
-        filteredDevices.append(revealIdsAndLabels ? device : CaptureDevice({ }, device.type(), { }, { }));
-    }
+        if (weakThis)
+            m_hasFilteredDeviceList = !revealIdsAndLabels;
 
-    m_hasFilteredDeviceList = !revealIdsAndLabels;
-
-    ALWAYS_LOG(LOGIDENTIFIER, filteredDevices.size(), " devices revealed");
-    return filteredDevices;
+        ALWAYS_LOG(LOGIDENTIFIER, filteredDevices.size(), " devices revealed");
+        completion(WTFMove(filteredDevices));
+    });
 }
 #endif
 
@@ -739,7 +741,9 @@ void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(Frame
             bool revealIdsAndLabels = originHasPersistentAccess || wasGrantedVideoOrAudioAccess(frameID, userMediaDocumentOrigin.get(), topLevelDocumentOrigin.get());
 
             callCompletionHandler.release();
-            completionHandler(computeFilteredDeviceList(revealIdsAndLabels), deviceIDHashSalt);
+            computeFilteredDeviceList(revealIdsAndLabels, [completionHandler = WTFMove(completionHandler), deviceIDHashSalt = WTFMove(deviceIDHashSalt)] (auto&& devices) mutable {
+                completionHandler(devices, deviceIDHashSalt);
+            });
         });
     };
 
