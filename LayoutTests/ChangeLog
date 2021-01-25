@@ -1,5 +1,42 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271453. rdar://problem/73477471
+
+    Fix for LayoutTests/accessibility/mac/details-summary.html in isolated tree mode.
+    https://bugs.webkit.org/show_bug.cgi?id=220597
+    
+    Reviewed by Chris Fleizach.
+    
+    - Use Promises to wait for the expanded state change.
+    - Added a comment to clarify why it is necessary to fetch a new
+    accessible object by ID every time after setting the AXExpanded
+    attribute for <details> elements.
+    
+    * accessibility/mac/details-summary-expected.txt:
+    The order in which the notifications come through changed.
+    * accessibility/mac/details-summary.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271453 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-13  Andres Gonzalez  <andresg_22@apple.com>
+
+            Fix for LayoutTests/accessibility/mac/details-summary.html in isolated tree mode.
+            https://bugs.webkit.org/show_bug.cgi?id=220597
+
+            Reviewed by Chris Fleizach.
+
+            - Use Promises to wait for the expanded state change.
+            - Added a comment to clarify why it is necessary to fetch a new
+            accessible object by ID every time after setting the AXExpanded
+            attribute for <details> elements.
+
+            * accessibility/mac/details-summary-expected.txt:
+            The order in which the notifications come through changed.
+            * accessibility/mac/details-summary.html:
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271436. rdar://problem/73477448
 
     REGRESSION(r268666) Incorrect vertical position inside grid items with padding
