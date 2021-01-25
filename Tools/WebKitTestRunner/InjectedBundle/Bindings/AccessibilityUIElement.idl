@@ -154,6 +154,9 @@
     AccessibilityUIElement disclosedRowAtIndex(unsigned long index);
     AccessibilityUIElement rowAtIndex(unsigned long index);
     boolean isInTableCell();
+    readonly attribute boolean isInTable;
+    readonly attribute boolean isInLandmark;
+    readonly attribute boolean isInList;
     long indexInTable();
     DOMString rowIndexRange();
     DOMString columnIndexRange();
