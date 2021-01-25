@@ -118,7 +118,10 @@
     ;; OpenCL
     (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
         (allow iokit-open
-            (iokit-connection "IOAccelerator")
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-connection "IOAccelerator")
+            )
             (with telemetry-backtrace)
             (apply-message-filter
                 (allow
@@ -132,12 +135,18 @@
         )
         ; else
         (allow iokit-open
-            (iokit-connection "IOAccelerator")
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-connection "IOAccelerator")
+            )
         )
     )
     (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
         (allow iokit-open
-            (iokit-registry-entry-class "IOAccelerationUserClient")
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-registry-entry-class "IOAccelerationUserClient")
+            )
             (with telemetry-backtrace)
             (apply-message-filter
                 (allow (with telemetry)
@@ -149,12 +158,18 @@
         )
         ; else
         (allow iokit-open
-            (iokit-registry-entry-class "IOAccelerationUserClient")
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-registry-entry-class "IOAccelerationUserClient")
+            )
         )
     )
     (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
         (allow iokit-open
-            (iokit-registry-entry-class "IOSurfaceRootUserClient")
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-registry-entry-class "IOSurfaceRootUserClient")
+            )
             (with telemetry-backtrace)
             (apply-message-filter
                 (allow
@@ -168,12 +183,18 @@
         )
         ; else
         (allow iokit-open
-            (iokit-registry-entry-class "IOSurfaceRootUserClient")
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-registry-entry-class "IOSurfaceRootUserClient")
+            )
         )
     )
     (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
         (allow iokit-open
-            (iokit-registry-entry-class "IOSurfaceSendRight")
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-registry-entry-class "IOSurfaceSendRight")
+            )
             (with telemetry-backtrace)
             (apply-message-filter
                 (allow (with telemetry)
@@ -185,7 +206,10 @@
         )
         ; else
         (allow iokit-open
-            (iokit-registry-entry-class "IOSurfaceSendRight")
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-registry-entry-class "IOSurfaceSendRight")
+            )
         )
     )
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
@@ -251,7 +275,10 @@
     ;; QuartzCore
     (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
         (allow iokit-open
-            (iokit-registry-entry-class "AGPMClient")
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-registry-entry-class "AGPMClient")
+            )
             (with telemetry-backtrace)
             (apply-message-filter
                 (allow (with telemetry)
@@ -263,12 +290,18 @@
         )
         ; else
         (allow iokit-open
-            (iokit-registry-entry-class "AGPMClient")
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-registry-entry-class "AGPMClient")
+            )
         )
     )
     (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
         (allow iokit-open
-            (iokit-registry-entry-class "AppleGraphicsControlClient")
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-registry-entry-class "AppleGraphicsControlClient")
+            )
             (with telemetry-backtrace)
             (apply-message-filter
                 (allow
@@ -282,12 +315,18 @@
         )
         ; else
         (allow iokit-open
-            (iokit-registry-entry-class "AppleGraphicsControlClient")
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-registry-entry-class "AppleGraphicsControlClient")
+            )
         )
     )
     (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
         (allow iokit-open
-            (iokit-registry-entry-class "AppleGraphicsPolicyClient")
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-registry-entry-class "AppleGraphicsPolicyClient")
+            )
             (with telemetry-backtrace)
             (apply-message-filter
                 (allow (with telemetry)
@@ -299,13 +338,19 @@
         )
         ; else
         (allow iokit-open
-            (iokit-registry-entry-class "AppleGraphicsPolicyClient")
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-registry-entry-class "AppleGraphicsPolicyClient")
+            )
         )
     )
     ;; OpenGL
     (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
         (allow iokit-open
-            (iokit-registry-entry-class "AppleMGPUPowerControlClient")
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-registry-entry-class "AppleMGPUPowerControlClient")
+            )
             (with telemetry-backtrace)
             (apply-message-filter
                 (allow (with telemetry)
@@ -317,7 +362,10 @@
         )
         ; else
         (allow iokit-open
-            (iokit-registry-entry-class "AppleMGPUPowerControlClient")
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-registry-entry-class "AppleMGPUPowerControlClient")
+            )
         )
     )
     ;; GPU bundles
@@ -895,7 +943,10 @@
 
 (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
     (allow iokit-open
-        (iokit-user-client-class "AppleUpstreamUserClient")
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-user-client-class "AppleUpstreamUserClient")
+        )
         (with telemetry-backtrace)
         (apply-message-filter
             (allow (with telemetry)
@@ -907,7 +958,10 @@
     )
     ; else
     (allow iokit-open
-        (iokit-user-client-class "AppleUpstreamUserClient")
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-user-client-class "AppleUpstreamUserClient")
+        )
     )
 )
 
@@ -938,7 +992,10 @@
 ;; <rdar://problem/10427451> && <rdar://problem/10808817>
 (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
     (allow iokit-open
-        (iokit-user-client-class "AudioAUUC")
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-user-client-class "AudioAUUC")
+        )
         (with telemetry-backtrace)
         (apply-message-filter
             (allow (with telemetry)
@@ -950,13 +1007,19 @@
     )
     ; else
     (allow iokit-open
-        (iokit-user-client-class "AudioAUUC")
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-user-client-class "AudioAUUC")
+        )
     )
 )
 
 (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
     (allow iokit-open
-        (iokit-user-client-class "IOAudioControlUserClient")
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-user-client-class "IOAudioControlUserClient")
+        )
         (with telemetry-backtrace)
         (apply-message-filter
             (allow (with telemetry)
@@ -968,13 +1031,19 @@
     )
     ; else
     (allow iokit-open
-        (iokit-user-client-class "IOAudioControlUserClient")
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-user-client-class "IOAudioControlUserClient")
+        )
     )
 )
 
 (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
     (allow iokit-open
-        (iokit-user-client-class "IOAudioEngineUserClient")
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-user-client-class "IOAudioEngineUserClient")
+        )
         (with telemetry-backtrace)
         (apply-message-filter
             (allow (with telemetry)
@@ -986,7 +1055,10 @@
     )
     ; else
     (allow iokit-open
-        (iokit-user-client-class "IOAudioEngineUserClient")
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-user-client-class "IOAudioEngineUserClient")
+        )
     )
 )
 
@@ -996,14 +1068,13 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
         (with telemetry-backtrace)
 #endif
-        (iokit-user-client-class "IOMobileFramebufferUserClient")
-        (iokit-user-client-class "IOSurfaceAcceleratorClient") ;; <rdar://problem/63696732>
-        (iokit-user-client-class "IOSurfaceRootUserClient") ;; <rdar://problem/63696732>
-    )
-    (allow iokit-open
         (require-all
             (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class "AppleAVDUserClient")
+            (iokit-user-client-class
+                "AppleAVDUserClient"
+                "IOMobileFramebufferUserClient"
+                "IOSurfaceAcceleratorClient" ;; <rdar://problem/63696732>
+            )
         )
     )
 )
@@ -1737,9 +1808,54 @@
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-registry-entry-class
-            "AppleAVDUserClient"
+            "AGPMClient"
+            "AppleGraphicsControlClient"
+            "AppleGraphicsPolicyClient"
             "AppleIntelMEUserClient"
+            "AppleMGPUPowerControlClient"
             "AppleSNBFBUserClient"
+            "IOAccelerationUserClient"
+            "IOSurfaceRootUserClient"
+            "IOSurfaceSendRight"
+        )
+    )
+)
+(allow iokit-open (with report)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+    (with telemetry-backtrace)
+#endif
+    (require-all
+        (require-not (extension "com.apple.webkit.extension.iokit"))
+        (iokit-user-client-class
+            "AudioAUUC"
+            "IOAudioControlUserClient"
+            "IOAudioEngineUserClient"
+        )
+    )
+)
+(when (equal? (param "CPU") "arm64")
+    (allow iokit-open (with report)
+    #if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+        (with telemetry-backtrace)
+    #endif
+        (require-all
+            (require-not (extension "com.apple.webkit.extension.iokit"))
+            (iokit-user-client-class
+                "AppleAVDUserClient"
+                "IOMobileFramebufferUserClient"
+                "IOSurfaceAcceleratorClient"
+            )
+        )
+    )
+)
+(allow iokit-open (with report)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+    (with telemetry-backtrace)
+#endif
+    (require-all
+        (require-not (extension "com.apple.webkit.extension.iokit"))
+        (iokit-connection
+            "IOAccelerator"
         )
     )
 )

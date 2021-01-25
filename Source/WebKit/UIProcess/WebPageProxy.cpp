@@ -7759,13 +7759,27 @@ static const Vector<ASCIILiteral>& gpuIOKitClasses()
         "AGXDeviceUserClient"_s,
         "AppleJPEGDriverUserClient"_s,
         "IOGPU"_s,
-        "IOMobileFramebufferUserClient"_s,
-        "IOSurfaceAcceleratorClient"_s,
         "IOSurfaceRootUserClient"_s,
 #endif
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+        "AGPMClient"_s,
+        "AppleGraphicsControlClient"_s,
+        "AppleGraphicsPolicyClient"_s,
         "AppleIntelMEUserClient"_s,
+        "AppleMGPUPowerControlClient"_s,
         "AppleSNBFBUserClient"_s,
+        "AppleUpstreamUserClient"_s,
+        "AudioAUUC"_s,
+        "IOAccelerationUserClient"_s,
+        "IOAccelerator"_s,
+        "IOAudioControlUserClient"_s,
+        "IOAudioEngineUserClient"_s,
+        "IOSurfaceRootUserClient"_s,
+        "IOSurfaceSendRight"_s,
+#endif
+#if (PLATFORM(MAC) && CPU(ARM64)) || PLATFORM(IOS_FAMILY)
+        "IOMobileFramebufferUserClient"_s,
+        "IOSurfaceAcceleratorClient"_s,
 #endif
     });
     return services;
@@ -7921,7 +7935,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
         || (!preferences().captureVideoInGPUProcessEnabled() && !preferences().captureVideoInUIProcessEnabled())
         || (!preferences().captureAudioInGPUProcessEnabled() && !preferences().captureAudioInUIProcessEnabled())
         || !preferences().useGPUProcessForCanvasRenderingEnabled()
-        || !preferences().useGPUProcessForDOMRenderingEnabled()
         || !preferences().useGPUProcessForWebGLEnabled())
         parameters.gpuIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(gpuIOKitClasses(), WTF::nullopt);
 #endif

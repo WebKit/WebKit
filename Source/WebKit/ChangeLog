@@ -1,3 +1,19 @@
+2021-01-25  Per Arne  <pvollan@apple.com>
+
+        [Cocoa] Adjust logic for creating sandbox extensions based on GPUP flags
+        https://bugs.webkit.org/show_bug.cgi?id=220917
+
+        Reviewed by Brent Fulgham.
+
+        Update which GPUP flag should be used in this logic. This patch also includes many IOKit classes on macOS in the set of
+        classes that should be extended when the appropriate GPU flags are set. In the case they are not being extended, logging
+        rules have been added in the sandbox, to determine if they are being used in that case.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::gpuIOKitClasses):
+        (WebKit::WebPageProxy::creationParameters):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-01-25  Chris Dumez  <cdumez@apple.com>
 
         Support AbortSignal in addEventListenerOptions to unsubscribe from events
