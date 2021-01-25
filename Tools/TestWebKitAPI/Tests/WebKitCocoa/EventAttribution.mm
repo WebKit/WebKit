@@ -75,11 +75,11 @@ TEST(EventAttribution, Basic)
             connection.receiveHTTPRequest([connection] (Vector<char>&& request1) {
                 EXPECT_TRUE(strnstr(request1.data(), "GET /conversionRequestBeforeRedirect HTTP/1.1\r\n", request1.size()));
                 const char* redirect = "HTTP/1.1 302 Found\r\n"
-                    "Location: /.well-known/private-click-measurement/12\r\n"
+                    "Location: /.well-known/private-click-measurement/trigger-attribution/12\r\n"
                     "Content-Length: 0\r\n\r\n";
                 connection.send(redirect, [connection] {
                     connection.receiveHTTPRequest([connection] (Vector<char>&& request2) {
-                        EXPECT_TRUE(strnstr(request2.data(), "GET /.well-known/private-click-measurement/12 HTTP/1.1\r\n", request2.size()));
+                        EXPECT_TRUE(strnstr(request2.data(), "GET /.well-known/private-click-measurement/trigger-attribution/12 HTTP/1.1\r\n", request2.size()));
                         const char* response = "HTTP/1.1 200 OK\r\n"
                             "Content-Length: 0\r\n\r\n";
                         connection.send(response);
