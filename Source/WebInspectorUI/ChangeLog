@@ -1,5 +1,42 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271528. rdar://problem/73477082
+
+    Web Inspector: Font Details sidebar - Improve line wrapping of table row titles when space is available
+    https://bugs.webkit.org/show_bug.cgi?id=219997
+    
+    Reviewed by Devin Rousso.
+    
+    Adjust the width of the title in each row to 105px, which provides space for both `Historical Figures` which is
+    an always-present row and `Optical Size (opsz)` which is a registed variation axis and is used in numerous
+    fonts including San Francisco. This overrides the normal fixed width of these titles of 85px, which causes these
+    and numerous other unregistered axis names and tags to wrap their title more aggresively than is stricly
+    necessary.
+    
+    * UserInterface/Views/FontDetailsPanel.css:
+    (.sidebar > .panel.details.style-font > .content .details-section > .content > .group > .row.simple > .label):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271528 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-15  Patrick Angle  <pangle@apple.com>
+
+            Web Inspector: Font Details sidebar - Improve line wrapping of table row titles when space is available
+            https://bugs.webkit.org/show_bug.cgi?id=219997
+
+            Reviewed by Devin Rousso.
+
+            Adjust the width of the title in each row to 105px, which provides space for both `Historical Figures` which is
+            an always-present row and `Optical Size (opsz)` which is a registed variation axis and is used in numerous
+            fonts including San Francisco. This overrides the normal fixed width of these titles of 85px, which causes these
+            and numerous other unregistered axis names and tags to wrap their title more aggresively than is stricly
+            necessary.
+
+            * UserInterface/Views/FontDetailsPanel.css:
+            (.sidebar > .panel.details.style-font > .content .details-section > .content > .group > .row.simple > .label):
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271410. rdar://problem/73478423
 
     Web Inspector: Remove experimental setting and enable Font details sidebar
