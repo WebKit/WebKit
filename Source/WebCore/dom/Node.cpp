@@ -890,6 +890,9 @@ void Node::invalidateStyle(Style::Validity validity, Style::InvalidationMode mod
     if (document().inRenderTreeUpdate())
         return;
 
+    // FIXME: This should be set on all descendants in case of a subtree invalidation.
+    setNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
+
     // FIXME: Why the second condition?
     bool markAncestors = styleValidity() == Style::Validity::Valid || validity == Style::Validity::SubtreeAndRenderersInvalid;
 

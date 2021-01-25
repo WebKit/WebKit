@@ -1,5 +1,55 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271446. rdar://problem/73469344
+
+    REGRESSION (r257839): Broken focus when 'display' changes in an attribute selector
+    https://bugs.webkit.org/show_bug.cgi?id=217240
+    <rdar://problem/69891684>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebCore:
+    
+    Focus optimization that avoids full style resolution when setting focus in unrendered subtrees
+    misbehaves when the style is invalidated via an attribute change.
+    
+    Test case by Ali Juma.
+    
+    Test: fast/dom/focus-style-resolution-attribute-change.html
+    
+    * dom/Element.cpp:
+    (WebCore::Element::invalidateStyle):
+    * dom/Node.cpp:
+    (WebCore::Node::invalidateStyle):
+    
+    We need to set the computed style invalidity bit on all style invalidation code paths.
+    
+    * html/InputType.cpp:
+    (WebCore::InputType::setValue):
+    
+    Don't invalidate style when nothing changes.
+    
+    LayoutTests:
+    
+    * fast/dom/focus-style-resolution-attribute-change-expected.html: Added.
+    * fast/dom/focus-style-resolution-attribute-change.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271446 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-13  Antti Koivisto  <antti@apple.com>
+
+            REGRESSION (r257839): Broken focus when 'display' changes in an attribute selector
+            https://bugs.webkit.org/show_bug.cgi?id=217240
+            <rdar://problem/69891684>
+
+            Reviewed by Wenson Hsieh.
+
+            * fast/dom/focus-style-resolution-attribute-change-expected.html: Added.
+            * fast/dom/focus-style-resolution-attribute-change.html: Added.
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271425. rdar://problem/73469655
 
     Multi-codepoint CJK grapheme clusters are not oriented correctly in vertical writing mode
