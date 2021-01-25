@@ -235,6 +235,8 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setObjectProperty(AXPropertyName::NextSibling, object.nextSibling());
     setObjectProperty(AXPropertyName::PreviousSibling, object.previousSibling());
     setProperty(AXPropertyName::SupportsCheckedState, object.supportsCheckedState());
+    setProperty(AXPropertyName::BrailleRoleDescription, object.brailleRoleDescription().isolatedCopy());
+    setProperty(AXPropertyName::BrailleLabel, object.brailleLabel().isolatedCopy());
 
     if (object.isTable()) {
         setProperty(AXPropertyName::IsTable, true);

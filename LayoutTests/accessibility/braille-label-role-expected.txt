@@ -1,0 +1,12 @@
+
+Validate aria-braillelabel and aria-brailleroledescription
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS label.stringAttributeValue('AXBrailleLabel') is 'braille'
+PASS label.stringAttributeValue('AXBrailleRoleDescription') is 'braille role'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

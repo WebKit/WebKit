@@ -1,5 +1,53 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271416. rdar://problem/73478416
+
+    AX: Implement aria-braillelabel and aria-brailleroledescription
+    https://bugs.webkit.org/show_bug.cgi?id=220516
+    <rdar://problem/73004715>
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    Add support for new ARIA attributes.
+    
+    Test: accessibility/mac/braille-label-role.html
+    
+    * accessibility/AccessibilityObject.h:
+    * accessibility/AccessibilityObjectInterface.h:
+    * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+    (-[WebAccessibilityObjectWrapper accessibilityBrailleLabel]):
+    (-[WebAccessibilityObjectWrapper accessibilityBrailleRoleDescription]):
+    * accessibility/isolatedtree/AXIsolatedObject.cpp:
+    (WebCore::AXIsolatedObject::initializeAttributeData):
+    * accessibility/isolatedtree/AXIsolatedObject.h:
+    * accessibility/isolatedtree/AXIsolatedTree.h:
+    * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+    (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+    * html/HTMLAttributeNames.in:
+    
+    LayoutTests:
+    
+    * accessibility/braille-label-role-expected.txt: Added.
+    * accessibility/braille-label-role.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271416 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-12  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: Implement aria-braillelabel and aria-brailleroledescription
+            https://bugs.webkit.org/show_bug.cgi?id=220516
+            <rdar://problem/73004715>
+
+            Reviewed by Zalan Bujtas.
+
+            * accessibility/braille-label-role-expected.txt: Added.
+            * accessibility/braille-label-role.html: Added.
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271407. rdar://problem/73477392
 
     REGRESSION (r271341): media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-inline.html is timing out

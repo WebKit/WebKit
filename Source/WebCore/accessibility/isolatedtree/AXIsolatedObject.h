@@ -270,6 +270,9 @@ private:
     LayoutRect elementRect() const override { return rectAttributeValue<LayoutRect>(AXPropertyName::ElementRect); }
     IntPoint clickPoint() override { return intPointAttributeValue(AXPropertyName::ClickPoint); }
     void accessibilityText(Vector<AccessibilityText>& texts) const override;
+    String brailleLabel() const override { return stringAttributeValue(AXPropertyName::BrailleLabel); }
+    String brailleRoleDescription() const override { return stringAttributeValue(AXPropertyName::BrailleRoleDescription); }
+
     String computedRoleString() const override { return stringAttributeValue(AXPropertyName::ComputedRoleString); }
     bool isValueAutofilled() const override { return boolAttributeValue(AXPropertyName::IsValueAutofilled); }
     bool isValueAutofillAvailable() const override { return boolAttributeValue(AXPropertyName::IsValueAutofillAvailable); }
