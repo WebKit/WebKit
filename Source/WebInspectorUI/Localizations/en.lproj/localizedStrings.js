@@ -152,6 +152,8 @@ localizedStrings["All items in \u0022%s\u0022 must be error objects"] = "All ite
 localizedStrings["All items in \u0022%s\u0022 must be non-empty strings"] = "All items in \u0022%s\u0022 must be non-empty strings";
 localizedStrings["All items in \u0022%s\u0022 must be valid DOM nodes"] = "All items in \u0022%s\u0022 must be valid DOM nodes";
 localizedStrings["Allow Media Capture on Insecure Sites"] = "Allow Media Capture on Insecure Sites";
+/* Property title for `font-variant-alternates`. */
+localizedStrings["Alternate Glyphs @ Font Details Sidebar Property"] = "Alternate Glyphs";
 localizedStrings["An error occurred trying to load the resource."] = "An error occurred trying to load the resource.";
 localizedStrings["An error occurred trying to read the \u201C%s\u201D table."] = "An error occurred trying to read the \u201C%s\u201D table.";
 localizedStrings["An unexpected error %s occurred."] = "An unexpected error %s occurred.";
@@ -732,8 +734,6 @@ localizedStrings["High @ Timeline Energy Impact"] = "High";
 localizedStrings["Highest: %s"] = "Highest: %s";
 /* Property value for `font-variant-ligatures: historical-ligatures`. */
 localizedStrings["Historical @ Font Details Sidebar Property Value"] = "Historical";
-/* Property title for `font-variant-alternates`. */
-localizedStrings["Historical Figures @ Font Details Sidebar Property"] = "Historical Figures";
 /* Property value for `font-variant-alternates: historical-forms`. */
 localizedStrings["Historical Forms @ Font Details Sidebar Property Value"] = "Historical Forms";
 localizedStrings["Host"] = "Host";

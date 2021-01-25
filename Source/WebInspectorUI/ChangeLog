@@ -1,5 +1,36 @@
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271612. rdar://problem/73478355
+
+    Web Inspector: `Historical Figures` string should be `Alternate Glyphs`
+    https://bugs.webkit.org/show_bug.cgi?id=220731
+    
+    Reviewed by BJ Burg.
+    
+    Changed title for CSS property `font-variant-alternates` to be `Alternate Glyphs`.
+    
+    * Localizations/en.lproj/localizedStrings.js:
+    * UserInterface/Views/FontDetailsPanel.js:
+    (WI.FontDetailsPanel.prototype.initialLayout):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271612 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-19  Patrick Angle  <pangle@apple.com>
+
+            Web Inspector: `Historical Figures` string should be `Alternate Glyphs`
+            https://bugs.webkit.org/show_bug.cgi?id=220731
+
+            Reviewed by BJ Burg.
+
+            Changed title for CSS property `font-variant-alternates` to be `Alternate Glyphs`.
+
+            * Localizations/en.lproj/localizedStrings.js:
+            * UserInterface/Views/FontDetailsPanel.js:
+            (WI.FontDetailsPanel.prototype.initialLayout):
+
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271528. rdar://problem/73477082
 
     Web Inspector: Font Details sidebar - Improve line wrapping of table row titles when space is available
