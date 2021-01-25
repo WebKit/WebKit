@@ -1,3 +1,51 @@
+2021-01-25  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r271422. rdar://problem/73477541
+
+    [JSC] Bypass OperationPtrTagging for JITCage verification for CallDOMGetter
+    https://bugs.webkit.org/show_bug.cgi?id=220564
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * stress/domjit-getter2.js: Added.
+    (shouldBe):
+    (access):
+    
+    Source/JavaScriptCore:
+    
+    CustomAccessorPtrTag functions are not registered ones for JITCage since we are using C++ trampoline to invoke them.
+    However, we do not want to use this trampoline in x64 due to performance issue. So we would like to call these
+    functions directly from JIT while they are not registered (And this is OK in JITCage since they are called from trampoline).
+    In this patch we bypass OperationPtrTagging by using WTF::tagNativeCodePtrImpl directly for non JITCage case.
+    
+    * dfg/DFGJITCompiler.h:
+    (JSC::DFG::JITCompiler::appendOperationCall):
+    * dfg/DFGSpeculativeJIT.cpp:
+    (JSC::DFG::SpeculativeJIT::compileCallDOMGetter):
+    * dfg/DFGSpeculativeJIT.h:
+    (JSC::DFG::SpeculativeJIT::appendOperationCall):
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compileCallDOMGetter):
+    (JSC::FTL::DFG::LowerDFGToB3::vmCall):
+    * ftl/FTLOutput.h:
+    (JSC::FTL::Output::operation):
+    * tools/JSDollarVM.cpp:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271422 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Bypass OperationPtrTagging for JITCage verification for CallDOMGetter
+            https://bugs.webkit.org/show_bug.cgi?id=220564
+
+            Reviewed by Saam Barati.
+
+            * stress/domjit-getter2.js: Added.
+            (shouldBe):
+            (access):
+
 2021-01-13  Russell Epstein  <repstein@apple.com>
 
         Revert r270664. rdar://problem/73165685

@@ -145,6 +145,13 @@ public:
         m_calls.append(CallLinkRecord(functionCall, function.retagged<OperationPtrTag>()));
         return functionCall;
     }
+
+    Call appendOperationCall(const FunctionPtr<OperationPtrTag> function)
+    {
+        Call functionCall = call(OperationPtrTag);
+        m_calls.append(CallLinkRecord(functionCall, function));
+        return functionCall;
+    }
     
     void exceptionCheck();
 
