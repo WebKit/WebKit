@@ -43,7 +43,7 @@ public:
 
     bool moveWritableOffsetToStartIfPossible();
 
-    size_t advance(size_t amount) override;
+    size_t advance(size_t amount);
     WebCore::DisplayList::ItemBufferHandle createHandle() const;
 
     bool tryToResume(SharedDisplayListHandle::ResumeReadingInformation&& info)

@@ -53,8 +53,6 @@ public:
         return header().unreadBytes.load();
     }
 
-    virtual size_t advance(size_t amount) = 0;
-
     enum class WaitingStatus : uint8_t {
         NotWaiting,
         Waiting,

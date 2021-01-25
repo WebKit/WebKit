@@ -27,6 +27,7 @@
 
 #include "SharedDisplayListHandle.h"
 #include <wtf/FastMalloc.h>
+#include <wtf/Optional.h>
 
 namespace WebKit {
 
@@ -38,7 +39,7 @@ public:
         return adoptRef(*new DisplayListReaderHandle(identifier, WTFMove(sharedMemory)));
     }
 
-    size_t advance(size_t amount) override;
+    Optional<size_t> advance(size_t amount);
     std::unique_ptr<WebCore::DisplayList::DisplayList> displayListForReading(size_t offset, size_t capacity, WebCore::DisplayList::ItemBufferReadingClient&) const;
 
     void startWaiting()

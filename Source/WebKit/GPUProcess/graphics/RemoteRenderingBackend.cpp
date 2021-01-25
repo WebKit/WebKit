@@ -194,8 +194,11 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
         MESSAGE_CHECK_WITH_RETURN_VALUE(displayList, nullptr, "Failed to map display list from shared memory");
 
         auto result = submit(*displayList, *destination);
-        sizeToRead = handle.advance(result.numberOfBytesRead);
         MESSAGE_CHECK_WITH_RETURN_VALUE(result.reasonForStopping != DisplayList::StopReplayReason::InvalidItem, nullptr, "Detected invalid display list item");
+
+        auto advanceResult = handle.advance(result.numberOfBytesRead);
+        MESSAGE_CHECK_WITH_RETURN_VALUE(advanceResult, nullptr, "Failed to advance display list reader handle");
+        sizeToRead = *advanceResult;
 
         CheckedSize checkedOffset = offset;
         checkedOffset += result.numberOfBytesRead;

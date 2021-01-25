@@ -29,14 +29,11 @@
 namespace WebKit {
 using namespace WebCore;
 
-size_t DisplayListReaderHandle::advance(size_t amount)
+Optional<size_t> DisplayListReaderHandle::advance(size_t amount)
 {
     auto previousUnreadBytes = header().unreadBytes.exchangeSub(amount);
-    if (UNLIKELY(previousUnreadBytes < amount)) {
-        // FIXME: This should result in terminating the web process.
-        RELEASE_ASSERT_NOT_REACHED();
-        return 0;
-    }
+    if (UNLIKELY(previousUnreadBytes < amount))
+        return WTF::nullopt;
     return previousUnreadBytes - amount;
 }
 
