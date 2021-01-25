@@ -1,3 +1,35 @@
+2021-01-24  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] theverge.com - rubber band scrolling at the top of the page causes an abrupt jump
+        https://bugs.webkit.org/show_bug.cgi?id=220886
+        <rdar://71177566>
+
+        Reviewed by Sam Weinig.
+
+        Add test infrastructure to allow UIScriptController::scrollToOffset() and
+        UIScriptController::immediateScrollToOffset() to take an options argument with
+        a 'unconstrained' property, which allows scrolling to unstable offset to simulate
+        rubberbanding.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.h:
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::contentOffsetBoundedIfNecessary):
+        (WTR::UIScriptControllerIOS::scrollToOffset):
+        (WTR::UIScriptControllerIOS::immediateScrollToOffset):
+        (WTR::contentOffsetBoundedInValidRange): Deleted.
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::scrollToOffset):
+        (WTR::UIScriptController::immediateScrollToOffset):
+        * TestRunnerShared/UIScriptContext/UIScriptControllerShared.cpp:
+        (WTR::toScrollToOptions):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::contentOffsetBoundedIfNecessary):
+        (WTR::UIScriptControllerIOS::scrollToOffset):
+        (WTR::UIScriptControllerIOS::immediateScrollToOffset):
+        (WTR::contentOffsetBoundedInValidRange): Deleted.
+
 2021-01-23  Xan Lopez  <xan@igalia.com>
 
         [JSC] Allow to build WebAssembly without B3

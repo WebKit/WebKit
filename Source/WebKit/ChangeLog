@@ -1,3 +1,37 @@
+2021-01-24  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] theverge.com - rubber band scrolling at the top of the page causes an abrupt jump
+        https://bugs.webkit.org/show_bug.cgi?id=220886
+        <rdar://71177566>
+
+        Reviewed by Sam Weinig.
+        
+        theverge.com on iOS is a page that has long main thread stalls with forced layouts on a timer
+        that alter the page height; this caused the post-layout updateScrollbars() called from
+        FrameView::adjustViewSize() to call scrollToPosition() after adjusting the scroll position
+        to the allowed range.
+
+        If the page laid out while rubberbanding was happening, the current scroll position would
+        be negative, then clamped to 0, then sent to the UI process as a requested scroll to 0,
+        triggering the jump to top in the UI process.
+
+        There's existing code to prevent this from happening if we know that rubberbanding is
+        happening; this patch makes isRubberBandInProgress() work for iOS WK2. It does so
+        by having updateVisibleContentRects() push information about rubberbanding nodes onto
+        RemoteScrollingCoordinator.
+
+        We remove an unnecessary shouldUpdateScrollLayerPositionSynchronously() check in
+        FrameView::isRubberBandInProgress() - if it's true, then the scrolling coordinator
+        won't see any rubberbanding nodes anyway.
+        
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::addNodeWithActiveRubberBanding):
+        (WebKit::RemoteScrollingCoordinator::removeNodeWithActiveRubberBanding):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2021-01-23  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Deny mach lookup access to "com.apple.iconservices" in the WebContent process

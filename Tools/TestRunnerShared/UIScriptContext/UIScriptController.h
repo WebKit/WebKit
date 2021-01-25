@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UIScriptController_h
-#define UIScriptController_h
+#pragma once
 
 #include "JSWrappable.h"
 #include <JavaScriptCore/JSRetainPtr.h>
@@ -51,6 +50,12 @@ enum class DeviceOrientation {
 };
 
 DeviceOrientation* toDeviceOrientation(JSContextRef, JSValueRef);
+
+struct ScrollToOptions {
+    bool unconstrained { false };
+};
+
+ScrollToOptions* toScrollToOptions(JSContextRef, JSValueRef);
 
 class UIScriptController : public JSWrappable {
 public:
@@ -133,9 +138,9 @@ public:
     virtual bool scrollUpdatesDisabled() const { notImplemented(); return false; }
     virtual void setScrollUpdatesDisabled(bool) { notImplemented(); }
 
-    virtual void scrollToOffset(long, long) { notImplemented(); }
+    virtual void scrollToOffset(long, long, ScrollToOptions*) { notImplemented(); }
 
-    virtual void immediateScrollToOffset(long, long) { notImplemented(); }
+    virtual void immediateScrollToOffset(long, long, ScrollToOptions*) { notImplemented(); }
     virtual void immediateScrollElementAtContentPointToOffset(long, long, long, long) { notImplemented(); }
 
     virtual double contentOffsetX() const { notImplemented(); return 0; }
@@ -360,5 +365,3 @@ protected:
 };
 
 }
-
-#endif // UIScriptController_h
