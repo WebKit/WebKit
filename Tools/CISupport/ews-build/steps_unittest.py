@@ -2420,18 +2420,14 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
     def test_relevant_webkitpy_patch(self):
-        CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: Tools/Scripts/webkitpy'
-        self.setupStep(CheckPatchRelevance())
-        self.setProperty('buildername', 'WebKitPy-Tests-EWS')
-        self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
-        return self.runStep()
-
-    def test_relevant_libraries_patch(self):
-        CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: Tools/Scripts/libraries'
-        self.setupStep(CheckPatchRelevance())
-        self.setProperty('buildername', 'WebKitPy-Tests-EWS')
-        self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
-        return self.runStep()
+        file_names = ['Tools/Scripts/webkitpy', 'Tools/Scripts/libraries', 'Tools/Scripts/commit-log-editor']
+        for file_name in file_names:
+            CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: {}'.format(file_name)
+            self.setupStep(CheckPatchRelevance())
+            self.setProperty('buildername', 'WebKitPy-Tests-EWS')
+            self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
+            rc = self.runStep()
+        return rc
 
     def test_queues_without_relevance_info(self):
         CheckPatchRelevance._get_patch = lambda x: 'Sample patch'

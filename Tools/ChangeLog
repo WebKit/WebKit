@@ -1,3 +1,14 @@
+2021-01-25  Aakash Jain  <aakash_jain@apple.com>
+
+        Changes to commit-log-editor should trigger webkitpy EWS tests
+        https://bugs.webkit.org/show_bug.cgi?id=220953
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py:
+        (CheckPatchRelevance): Added commit-log-editor to list of relevant files for webkitpy ews.
+        * CISupport/ews-build/steps_unittest.py: Improved unit-test to check for various file-names.
+
 2021-01-25  Jonathan Bedard  <jbedard@apple.com>
 
         [run-webkit-tests] Support python layout tests
