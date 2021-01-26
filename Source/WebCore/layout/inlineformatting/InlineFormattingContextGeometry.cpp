@@ -347,7 +347,8 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
             // Adjust the logical width when the inline level container closes on this line.
             auto& inlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox);
             ASSERT(inlineBox.isInlineBox());
-            inlineBox.setLogicalWidth(run.logicalRight() - inlineBox.logicalLeft());
+            auto inlineBoxLogicalRight = logicalLeft + run.logicalWidth(); 
+            inlineBox.setLogicalWidth(inlineBoxLogicalRight - inlineBox.logicalLeft());
             continue;
         }
         if (run.isText() || run.isSoftLineBreak()) {
