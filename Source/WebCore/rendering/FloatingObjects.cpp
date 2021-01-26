@@ -104,7 +104,7 @@ LayoutSize FloatingObject::translationOffsetToAncestor() const
 
 TextStream& operator<<(TextStream& stream, const FloatingObject& object)
 {
-    return stream << &object << " (" << object.frameRect().x().toInt() << 'x' << object.frameRect().y().toInt() << ' ' << object.frameRect().maxX().toInt() << 'x' << object.frameRect().maxY().toInt() << ')';
+    return stream << &object << " renderer " << &object.renderer() << " " << object.frameRect() << " shouldPaint " << object.shouldPaint();
 }
 
 #endif
@@ -257,9 +257,7 @@ LayoutUnit FloatingObjects::findNextFloatLogicalBottomBelowForBlock(LayoutUnit l
 }
 
 FloatingObjects::FloatingObjects(const RenderBlockFlow& renderer)
-    : m_leftObjectsCount(0)
-    , m_rightObjectsCount(0)
-    , m_horizontalWritingMode(renderer.isHorizontalWritingMode())
+    : m_horizontalWritingMode(renderer.isHorizontalWritingMode())
     , m_renderer(makeWeakPtr(renderer))
 {
 }

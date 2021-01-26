@@ -3761,6 +3761,22 @@ void RenderBlockFlow::ensureLineBoxes()
 }
 
 #if ENABLE(TREE_DEBUGGING)
+void RenderBlockFlow::outputFloatingObjects(WTF::TextStream& stream, int depth) const
+{
+    if (!floatingObjectSet())
+        return;
+
+    for (auto& floatingObject : *floatingObjectSet()) {
+        int printedCharacters = 0;
+        while (++printedCharacters <= depth * 2)
+            stream << " ";
+
+        stream << "             ";
+        stream << "floating object " << *floatingObject;
+        stream.nextLine();
+    }
+}
+
 void RenderBlockFlow::outputLineTreeAndMark(WTF::TextStream& stream, const InlineBox* markedBox, int depth) const
 {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
