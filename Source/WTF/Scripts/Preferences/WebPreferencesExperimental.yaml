@@ -981,9 +981,9 @@ WebGL2Enabled:
   condition: ENABLE(WEBGL2)
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      default: true
+      default: false
 
 WebGPUEnabled:
   type: bool
