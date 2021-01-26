@@ -40,7 +40,7 @@ _log = logging.getLogger(__name__)
 
 
 # When collecting test cases, we include any file with these extensions.
-_supported_test_extensions = set(['.html', '.shtml', '.xml', '.xhtml', '.pl', '.htm', '.php', '.svg', '.mht', '.xht'])
+_supported_test_extensions = set(['.html', '.shtml', '.xml', '.xhtml', '.pl', '.py', '.htm', '.php', '.svg', '.mht', '.xht'])
 
 
 # If any changes are made here be sure to update the isUsedInReftest method in old-run-webkit-tests as well.
@@ -107,7 +107,7 @@ class LayoutTestFinder(object):
 
     def _real_tests(self, paths):
         # When collecting test cases, skip these directories
-        skipped_directories = set(['.svn', '_svn', 'resources', 'support', 'script-tests', 'reference', 'reftest'])
+        skipped_directories = set(['.svn', '_svn', 'resources', 'support', 'script-tests', 'tools', 'reference', 'reftest'])
         files = find_files.find(self._port._filesystem, self._port.layout_tests_dir(), paths, skipped_directories, self._is_test_file, self._port.test_key)
         return [self._port.relative_test_filename(f) for f in files]
 
@@ -117,6 +117,9 @@ class LayoutTestFinder(object):
         if _is_reference_html_file(filesystem, dirname, filename):
             return False
         if self._is_w3c_resource_file(filesystem, dirname, filename):
+            return False
+        # Special case for websocket tooling
+        if filename.endswith('_wsh.py'):
             return False
         return True
 
@@ -130,6 +133,10 @@ class LayoutTestFinder(object):
             filepath = filesystem.join(w3c_path, "resources", "resource-files.json")
             json_data = filesystem.read_text_file(filepath)
             self._w3c_resource_files = json.loads(json_data)
+
+        _, extension = filesystem.splitext(filename)
+        if extension == '.py':
+            return True
 
         subpath = path[len(w3c_path) + 1:].replace('\\', '/')
         if subpath in self._w3c_resource_files["files"]:

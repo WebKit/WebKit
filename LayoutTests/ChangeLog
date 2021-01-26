@@ -1,3 +1,32 @@
+2021-01-25  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-webkit-tests] Support python layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=220749
+
+        Reviewed by Alexey Proskuryakov.
+
+        * html5lib/generate-test-wrappers: Copied from LayoutTests/html5lib/generate-test-wrappers.py.
+        * html5lib/generate-test-wrappers.py: Removed.
+        * http/conf/apache2.2-httpd.conf: Allow .py files to be run as CGI binaries.
+        * http/conf/apache2.4-httpd.conf: Ditto.
+        * http/conf/apache2.4-php7-httpd.conf: Ditto.
+        * http/conf/archlinux-httpd.conf: Ditto.
+        * http/conf/debian-httpd-2.4-php7.0.conf: Ditto.
+        * http/conf/debian-httpd-2.4-php7.1.conf: Ditto.
+        * http/conf/debian-httpd-2.4-php7.2.conf: Ditto.
+        * http/conf/debian-httpd-2.4-php7.3.conf: Ditto.
+        * http/conf/debian-httpd-2.4-php7.4.conf: Ditto.
+        * http/conf/fedora-httpd-2.2.conf: Ditto.
+        * http/conf/fedora-httpd-2.4-php7.conf: Ditto.
+        * http/conf/fedora-httpd-2.4.conf: Ditto.
+        * http/conf/flatpak-httpd.conf: Ditto.
+        * http/conf/win-httpd-2.4-php5.conf: Ditto.
+        * http/conf/win-httpd-2.4-php7.conf: Ditto.
+        * media/track/opera/track/webvtt/parsing-cue-data/buildtests: Copied from LayoutTests/media/track/opera/track/webvtt/parsing-cue-data/buildtests.py.
+        * media/track/opera/track/webvtt/parsing-cue-data/buildtests.py: Removed.
+        * webgl/generate-webgl-tests: Copied from LayoutTests/webgl/generate-webgl-tests.py.
+        * webgl/generate-webgl-tests.py: Removed.
+
 2021-01-25  Sam Weinig  <weinig@apple.com>
 
         Support percentages when parsing color(srgb ...) and color(display-p3 ...) per-spec
