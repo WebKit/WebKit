@@ -1,3 +1,12 @@
+2021-01-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Release assert in Document::updateStyleIfNeeded() via PrintContext::end() inside HTMLTitleElement::insertedIntoAncestor and removedFromAncestor
+        https://bugs.webkit.org/show_bug.cgi?id=218496
+
+        Unreviewed test gardening.
+
+        * TestExpectations: Skip the test to speed up EWS since it became flaky after r271549 was reverted.
+
 2021-01-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed, reverting r271514 and r271549

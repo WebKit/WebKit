@@ -4588,3 +4588,5 @@ webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-014
 webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-015.html [ ImageOnlyFailure ] # Requires fallback (at parse time) support (unclear if this makes sense)
 webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-016.html [ ImageOnlyFailure ] # Requires xyz support
 webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-017.html [ ImageOnlyFailure ] # Requires xyz support
+
+webkit.org/b/218496 http/tests/loading/redirect-with-no-location-crash.html [ Skip ]
