@@ -50,7 +50,10 @@
 
 - (void)_addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name userContentWorld:(_WKUserContentWorld *)userContentWorld WK_API_DEPRECATED_WITH_REPLACEMENT("_addScriptMessageHandler:name:contentWorld:", macos(10.11, 11.0), ios(9.0, 14.0));
 - (void)_addScriptMessageHandler:(id <WKScriptMessageHandler>)scriptMessageHandler name:(NSString *)name contentWorld:(WKContentWorld *)contentWorld;
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (void)_removeScriptMessageHandlerForName:(NSString *)name userContentWorld:(_WKUserContentWorld *)userContentWorld;
 - (void)_removeAllScriptMessageHandlersAssociatedWithUserContentWorld:(_WKUserContentWorld *)userContentWorld;
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 @end
