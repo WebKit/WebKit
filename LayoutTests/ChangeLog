@@ -1,3 +1,9 @@
+2021-01-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Expand scope of tests skipped due to rdar://65287528.
+
 2021-01-25  Zalan Bujtas  <zalan@apple.com>
 
         [Legacy Line Layout] Multiple inline boxes may stretch the line
