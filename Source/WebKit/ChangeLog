@@ -1,3 +1,17 @@
+2021-01-26  Brent Fulgham  <bfulgham@apple.com>
+
+        Harden NetworkProcess against integer overflow in CacheStorageEngine size calculation
+        https://bugs.webkit.org/show_bug.cgi?id=220997
+        <rdar://problem/66116827>
+
+        Reviewed by Youenn Fablet.
+
+        Since the CacheStorage allocation is based on data provided by the WebContent process, we should
+        check for integer overflow before making an allocation.
+
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::Cache::put): Use checked arithmetic and return a failure if we overflow.
+
 2021-01-26  Per Arne  <pvollan@apple.com>
 
         [macOS] Deny mach-lookup to the service 'com.apple.tccd.system' in the WebContent process

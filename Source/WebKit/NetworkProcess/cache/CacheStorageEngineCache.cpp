@@ -420,7 +420,7 @@ void Cache::put(Vector<Record>&& records, RecordIdentifiersCallback&& callback)
     ASSERT(m_state == State::Open);
 
     WebCore::CacheQueryOptions options;
-    uint64_t spaceRequired = 0;
+    CheckedUint64 spaceRequired = 0;
 
     for (auto& record : records) {
         auto* sameURLRecords = recordsFromURL(record.request.url());
@@ -436,7 +436,12 @@ void Cache::put(Vector<Record>&& records, RecordIdentifiersCallback&& callback)
         }
     }
 
-    m_caches.requestSpace(spaceRequired, [caches = makeRef(m_caches), identifier = m_identifier, records = WTFMove(records), callback = WTFMove(callback)](Optional<DOMCacheEngine::Error>&& error) mutable {
+    if (spaceRequired.hasOverflowed()) {
+        callback(makeUnexpected(DOMCacheEngine::Error::QuotaExceeded));
+        return;
+    }
+
+    m_caches.requestSpace(spaceRequired.unsafeGet(), [caches = makeRef(m_caches), identifier = m_identifier, records = WTFMove(records), callback = WTFMove(callback)](Optional<DOMCacheEngine::Error>&& error) mutable {
         if (error) {
             callback(makeUnexpected(error.value()));
             return;
