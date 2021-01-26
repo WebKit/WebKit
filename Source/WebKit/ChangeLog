@@ -1,5 +1,17 @@
 2021-01-26  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, reverting r271882.
+
+        Broke the build
+
+        Reverted changeset:
+
+        "Unreviewed, silence deprecation warning for our own API to
+        address build issues."
+        https://trac.webkit.org/changeset/271882
+
+2021-01-26  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, silence deprecation warning for our own API to address build issues.
 
         * UIProcess/API/Cocoa/WKUserContentControllerPrivate.h:
