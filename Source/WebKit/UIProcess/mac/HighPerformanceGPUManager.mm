@@ -29,7 +29,7 @@
 #if PLATFORM(MAC)
 
 #include "Logging.h"
-#include <WebCore/GraphicsContextGLOpenGLManager.h>
+#include <WebCore/GraphicsChecksMac.h>
 #include <WebCore/OpenGLSoftLinkCocoa.h>
 
 namespace WebKit {
@@ -43,6 +43,13 @@ HighPerformanceGPUManager& HighPerformanceGPUManager::singleton()
     static NeverDestroyed<HighPerformanceGPUManager> sharedManager;
     return sharedManager;
 }
+
+HighPerformanceGPUManager::HighPerformanceGPUManager()
+    : m_updateStateTimer(*this, &HighPerformanceGPUManager::updateState)
+{
+}
+
+HighPerformanceGPUManager::~HighPerformanceGPUManager() = default;
 
 void HighPerformanceGPUManager::addProcessRequiringHighPerformance(WebProcessProxy* process)
 {
@@ -65,7 +72,8 @@ void HighPerformanceGPUManager::removeProcessRequiringHighPerformance(WebProcess
 
     if (m_processesRequiringHighPerformance.remove(process)) {
         LOG(WebGL, "HighPerformanceGPUManager::removeProcessRequiringHighPerformance() - removing process %p", process);
-        updateState();
+        static const Seconds timeToKeepHighPerformanceGPUAlive { 10_s };
+        m_updateStateTimer.startOneShot(timeToKeepHighPerformanceGPUAlive);
         return;
     }
 
@@ -74,6 +82,8 @@ void HighPerformanceGPUManager::removeProcessRequiringHighPerformance(WebProcess
 
 void HighPerformanceGPUManager::updateState()
 {
+    if (m_updateStateTimer.isActive())
+        m_updateStateTimer.stop();
     if (m_processesRequiringHighPerformance.size()) {
         if (!m_pixelFormatObj) {
             LOG(WebGL, "HighPerformanceGPUManager - turning on high-performance GPU.");

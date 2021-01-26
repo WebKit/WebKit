@@ -31,90 +31,7 @@
 #include "GraphicsContextGLOpenGL.h"
 #include "Logging.h"
 
-#if HAVE(APPLE_GRAPHICS_CONTROL)
-#include <sys/sysctl.h>
-#endif
-
-#if PLATFORM(MAC)
-#include "SwitchingGPUClient.h"
-#endif
-
 namespace WebCore {
-
-#if HAVE(APPLE_GRAPHICS_CONTROL)
-
-enum {
-    kAGCOpen,
-    kAGCClose
-};
-
-static io_connect_t attachToAppleGraphicsControl()
-{
-    mach_port_t masterPort = MACH_PORT_NULL;
-    
-    if (IOMasterPort(MACH_PORT_NULL, &masterPort) != KERN_SUCCESS)
-        return MACH_PORT_NULL;
-    
-    CFDictionaryRef classToMatch = IOServiceMatching("AppleGraphicsControl");
-    if (!classToMatch)
-        return MACH_PORT_NULL;
-    
-    kern_return_t kernResult;
-    io_iterator_t iterator;
-    if ((kernResult = IOServiceGetMatchingServices(masterPort, classToMatch, &iterator)) != KERN_SUCCESS)
-        return MACH_PORT_NULL;
-    
-    io_service_t serviceObject = IOIteratorNext(iterator);
-    IOObjectRelease(iterator);
-    if (!serviceObject)
-        return MACH_PORT_NULL;
-    
-    io_connect_t dataPort;
-    IOObjectRetain(serviceObject);
-    kernResult = IOServiceOpen(serviceObject, mach_task_self(), 0, &dataPort);
-    IOObjectRelease(serviceObject);
-    
-    return (kernResult == KERN_SUCCESS) ? dataPort : MACH_PORT_NULL;
-}
-
-static bool hasMuxCapability()
-{
-    io_connect_t dataPort = attachToAppleGraphicsControl();
-    
-    if (dataPort == MACH_PORT_NULL)
-        return false;
-    
-    bool result;
-    if (IOConnectCallScalarMethod(dataPort, kAGCOpen, nullptr, 0, nullptr, nullptr) == KERN_SUCCESS) {
-        IOConnectCallScalarMethod(dataPort, kAGCClose, nullptr, 0, nullptr, nullptr);
-        result = true;
-    } else
-        result = false;
-    
-    IOServiceClose(dataPort);
-    
-    if (result) {
-        // This is detecting Mac hardware with an Intel g575 GPU, which
-        // we don't want to make available to muxing.
-        // Based on information from Apple's OpenGL team, such devices
-        // have four or fewer processors.
-        // <rdar://problem/30060378>
-        int names[2] = { CTL_HW, HW_NCPU };
-        int cpuCount;
-        size_t cpuCountLength = sizeof(cpuCount);
-        sysctl(names, 2, &cpuCount, &cpuCountLength, nullptr, 0);
-        result = cpuCount > 4;
-    }
-    
-    return result;
-}
-
-bool hasLowAndHighPowerGPUs()
-{
-    static bool canMux = hasMuxCapability();
-    return canMux;
-}
-#endif // HAVE(APPLE_GRAPHICS_CONTROL)
 
 GraphicsContextGLOpenGLManager& GraphicsContextGLOpenGLManager::sharedManager()
 {
@@ -127,33 +44,19 @@ void GraphicsContextGLOpenGLManager::displayWasReconfigured(CGDirectDisplayID, C
 {
     LOG(WebGL, "GraphicsContextGLOpenGLManager::displayWasReconfigured");
     if (flags & kCGDisplaySetModeFlag)
-        GraphicsContextGLOpenGLManager::sharedManager().updateAllContexts();
+        GraphicsContextGLOpenGLManager::sharedManager().displayWasReconfigured();
 }
 #endif
 
-void GraphicsContextGLOpenGLManager::updateAllContexts()
+#if PLATFORM(COCOA)
+void GraphicsContextGLOpenGLManager::displayWasReconfigured()
 {
-#if PLATFORM(MAC)
-    for (const auto& context : m_contexts) {
-        context->updateCGLContext();
-        context->dispatchContextChangedNotification();
-    }
-#endif
-}
-
-#if PLATFORM(MAC)
-void GraphicsContextGLOpenGLManager::screenDidChange(PlatformDisplayID displayID, const HostWindow* window)
-{
-    for (const auto& contextAndWindow : m_contextWindowMap) {
-        if (contextAndWindow.value == window) {
-            contextAndWindow.key->screenDidChange(displayID);
-            LOG(WebGL, "Changing context (%p) to display (%d).", contextAndWindow.key, displayID);
-        }
-    }
+    for (const auto& context : m_contexts)
+        context->displayWasReconfigured();
 }
 #endif
 
-void GraphicsContextGLOpenGLManager::addContext(GraphicsContextGLOpenGL* context, HostWindow* window)
+void GraphicsContextGLOpenGLManager::addContext(GraphicsContextGLOpenGL* context)
 {
     ASSERT(context);
     if (!context)
@@ -166,7 +69,6 @@ void GraphicsContextGLOpenGLManager::addContext(GraphicsContextGLOpenGL* context
 
     ASSERT(!m_contexts.contains(context));
     m_contexts.append(context);
-    m_contextWindowMap.set(context, window);
 }
 
 void GraphicsContextGLOpenGLManager::removeContext(GraphicsContextGLOpenGL* context)
@@ -174,94 +76,9 @@ void GraphicsContextGLOpenGLManager::removeContext(GraphicsContextGLOpenGL* cont
     if (!m_contexts.contains(context))
         return;
     m_contexts.removeFirst(context);
-    m_contextWindowMap.remove(context);
-    removeContextRequiringHighPerformance(context);
-    
 #if PLATFORM(MAC) && !ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     if (!m_contexts.size())
         CGDisplayRemoveReconfigurationCallback(displayWasReconfigured, nullptr);
-#endif
-}
-
-HostWindow* GraphicsContextGLOpenGLManager::hostWindowForContext(GraphicsContextGLOpenGL* context) const
-{
-    ASSERT(m_contextWindowMap.contains(context));
-    return m_contextWindowMap.get(context);
-}
-
-void GraphicsContextGLOpenGLManager::addContextRequiringHighPerformance(GraphicsContextGLOpenGL* context)
-{
-    ASSERT(context);
-    if (!context)
-        return;
-    
-    ASSERT(m_contexts.contains(context));
-    ASSERT(!m_contextsRequiringHighPerformance.contains(context));
-    
-    LOG(WebGL, "This context (%p) requires the high-performance GPU.", context);
-    m_contextsRequiringHighPerformance.add(context);
-    
-    updateHighPerformanceState();
-}
-
-void GraphicsContextGLOpenGLManager::removeContextRequiringHighPerformance(GraphicsContextGLOpenGL* context)
-{
-    if (!context)
-        return;
-
-    if (!m_contextsRequiringHighPerformance.contains(context))
-        return;
-    
-    LOG(WebGL, "This context (%p) no longer requires the high-performance GPU.", context);
-    m_contextsRequiringHighPerformance.remove(context);
-    
-    updateHighPerformanceState();
-}
-
-void GraphicsContextGLOpenGLManager::updateHighPerformanceState()
-{
-#if PLATFORM(MAC)
-    if (!hasLowAndHighPowerGPUs())
-        return;
-    
-    if (m_contextsRequiringHighPerformance.size()) {
-        
-        if (m_disableHighPerformanceGPUTimer.isActive()) {
-            LOG(WebGL, "Cancel pending timer for turning off high-performance GPU.");
-            m_disableHighPerformanceGPUTimer.stop();
-        }
-
-        if (!m_requestingHighPerformance) {
-            LOG(WebGL, "Request the high-performance GPU.");
-            m_requestingHighPerformance = true;
-            if (auto* singleton = SwitchingGPUClient::singletonIfExists())
-                singleton->requestHighPerformanceGPU();
-        }
-
-    } else {
-        // Don't immediately turn off the high-performance GPU. The user might be
-        // swapping back and forth between tabs or windows, and we don't want to cause
-        // churn if we can avoid it.
-        if (!m_disableHighPerformanceGPUTimer.isActive()) {
-            LOG(WebGL, "Set a timer to release the high-performance GPU.");
-            // FIXME: Expose this value as a Setting, which would require this class
-            // to reference a frame, page or document.
-            static const Seconds timeToKeepHighPerformanceGPUAlive { 10_s };
-            m_disableHighPerformanceGPUTimer.startOneShot(timeToKeepHighPerformanceGPUAlive);
-        }
-    }
-#endif
-}
-
-void GraphicsContextGLOpenGLManager::disableHighPerformanceGPUTimerFired()
-{
-    if (m_contextsRequiringHighPerformance.size())
-        return;
-
-    m_requestingHighPerformance = false;
-#if PLATFORM(MAC)
-    if (auto* singleton = SwitchingGPUClient::singletonIfExists())
-        singleton->releaseHighPerformanceGPU();
 #endif
 }
 

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include "Timer.h"
-#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 
 #if PLATFORM(MAC)
@@ -38,52 +36,29 @@ namespace WebCore {
 const unsigned MaxContexts = 16;
 
 class GraphicsContextGLOpenGL;
-class HostWindow;
-
-using PlatformDisplayID = uint32_t;
-
-#if HAVE(APPLE_GRAPHICS_CONTROL)
-WEBCORE_EXPORT bool hasLowAndHighPowerGPUs();
-#endif
 
 class GraphicsContextGLOpenGLManager {
     friend NeverDestroyed<GraphicsContextGLOpenGLManager>;
 public:
     static GraphicsContextGLOpenGLManager& sharedManager();
     
-    void addContext(GraphicsContextGLOpenGL*, HostWindow*);
+    void addContext(GraphicsContextGLOpenGL*);
     void removeContext(GraphicsContextGLOpenGL*);
-
-    HostWindow* hostWindowForContext(GraphicsContextGLOpenGL*) const;
-    
-    void addContextRequiringHighPerformance(GraphicsContextGLOpenGL*);
-    void removeContextRequiringHighPerformance(GraphicsContextGLOpenGL*);
     
     void recycleContextIfNecessary();
     bool hasTooManyContexts() const { return m_contexts.size() >= MaxContexts; }
     
-    void updateAllContexts();
-
 #if PLATFORM(MAC)
-    void screenDidChange(PlatformDisplayID, const HostWindow*);
     WEBCORE_EXPORT static void displayWasReconfigured(CGDirectDisplayID, CGDisplayChangeSummaryFlags, void*);
+#endif
+#if PLATFORM(COCOA)
+    void displayWasReconfigured();
 #endif
     
 private:
-    GraphicsContextGLOpenGLManager()
-        : m_disableHighPerformanceGPUTimer(*this, &GraphicsContextGLOpenGLManager::disableHighPerformanceGPUTimerFired)
-    {
-    }
-
-    void updateHighPerformanceState();
-    void disableHighPerformanceGPUTimerFired();
+    GraphicsContextGLOpenGLManager() = default;
 
     Vector<GraphicsContextGLOpenGL*> m_contexts;
-    HashMap<GraphicsContextGLOpenGL*, HostWindow*> m_contextWindowMap;
-    HashSet<GraphicsContextGLOpenGL*> m_contextsRequiringHighPerformance;
-    
-    Timer m_disableHighPerformanceGPUTimer;
-    bool m_requestingHighPerformance { false };
 };
 
 }

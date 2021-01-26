@@ -1,3 +1,23 @@
+2021-01-26  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL power preference and discrete/internal gpu selection implemented incorrectly with ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=220843
+
+        Reviewed by Dean Jackson.
+
+        Move the high-performance GPU shutdown timer from individual web processes to the main class
+        in the ui process. This simplifies the implementation and reduces the number of timers.
+
+        * UIProcess/mac/HighPerformanceGPUManager.h:
+        * UIProcess/mac/HighPerformanceGPUManager.mm:
+        (WebKit::HighPerformanceGPUManager::HighPerformanceGPUManager):
+        (WebKit::HighPerformanceGPUManager::removeProcessRequiringHighPerformance):
+        (WebKit::HighPerformanceGPUManager::updateState):
+        * WebProcess/WebCoreSupport/mac/WebSwitchingGPUClient.cpp:
+        (WebKit::WebSwitchingGPUClient::requestHighPerformanceGPU):
+        (WebKit::WebSwitchingGPUClient::releaseHighPerformanceGPU):
+        * WebProcess/WebCoreSupport/mac/WebSwitchingGPUClient.h:
+
 2021-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Stop using SoupRequest API to load files in preparation for libsoup3

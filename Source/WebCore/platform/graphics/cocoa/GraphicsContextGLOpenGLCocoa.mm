@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #import "config.h"
@@ -32,20 +32,13 @@
 #import "GraphicsContextGLANGLEUtilities.h"
 #import "GraphicsContextGLIOSurfaceSwapChain.h"
 #import "GraphicsContextGLOpenGLManager.h"
-#import "HostWindow.h"
 #import "Logging.h"
-#import "OpenGLSoftLinkCocoa.h"
 #import "RuntimeApplicationChecks.h"
 #import "WebCoreThread.h"
 #import "WebGLLayer.h"
 #import <CoreGraphics/CGBitmapContext.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/text/CString.h>
-
-#if PLATFORM(MAC)
-#import "ScreenProperties.h"
-#import <OpenGL/CGLRenderers.h>
-#endif
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 #include "GraphicsContextGLCV.h"
@@ -151,17 +144,17 @@ RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextG
     if (!context->m_contextObj)
         return nullptr;
 
-    GraphicsContextGLOpenGLManager::sharedManager().addContext(context.get(), hostWindow);
+    GraphicsContextGLOpenGLManager::sharedManager().addContext(context.get());
 
     return context;
 }
 
 Ref<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::createShared(GraphicsContextGLOpenGL& sharedContext)
 {
-    auto hostWindow = GraphicsContextGLOpenGLManager::sharedManager().hostWindowForContext(&sharedContext);
-    auto context = adoptRef(*new GraphicsContextGLOpenGL(sharedContext.contextAttributes(), hostWindow, &sharedContext, nullptr));
 
-    GraphicsContextGLOpenGLManager::sharedManager().addContext(context.ptr(), hostWindow);
+    auto context = adoptRef(*new GraphicsContextGLOpenGL(sharedContext.contextAttributes(), nullptr, &sharedContext, nullptr));
+
+    GraphicsContextGLOpenGLManager::sharedManager().addContext(context.ptr());
 
     return context;
 }
@@ -171,72 +164,25 @@ Ref<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::createForGPUProcess(const 
     return adoptRef(*new GraphicsContextGLOpenGL(attrs, nullptr, nullptr, swapChain));
 }
 
-#if PLATFORM(MAC) // FIXME: This probably should be just enabled - see <rdar://53062794>.
-
-static void setGPUByRegistryID(CGLContextObj contextObj, CGLPixelFormatObj pixelFormatObj, IORegistryGPUID preferredGPUID)
-{
-    // When the WebProcess does not have access to the WindowServer, there is no way for OpenGL to tell which GPU is connected to a display.
-    // On 10.13+, find the virtual screen that corresponds to the preferred GPU by its registryID.
-    // CGLSetVirtualScreen can then be used to tell OpenGL which GPU it should be using.
-
-    if (!contextObj || !preferredGPUID)
-        return;
-
-    GLint virtualScreenCount = 0;
-    CGLError error = CGLDescribePixelFormat(pixelFormatObj, 0, kCGLPFAVirtualScreenCount, &virtualScreenCount);
-    ASSERT(error == kCGLNoError);
-
-    GLint firstAcceleratedScreen = -1;
-
-    for (GLint virtualScreen = 0; virtualScreen < virtualScreenCount; ++virtualScreen) {
-        GLint displayMask = 0;
-        error = CGLDescribePixelFormat(pixelFormatObj, virtualScreen, kCGLPFADisplayMask, &displayMask);
-        ASSERT(error == kCGLNoError);
-
-        auto gpuID = gpuIDForDisplayMask(displayMask);
-
-        if (gpuID == preferredGPUID) {
-            error = CGLSetVirtualScreen(contextObj, virtualScreen);
-            ASSERT(error == kCGLNoError);
-            LOG(WebGL, "Context (%p) set to GPU with ID: (%lld).", contextObj, gpuID);
-            return;
-        }
-
-        if (firstAcceleratedScreen < 0) {
-            GLint isAccelerated = 0;
-            error = CGLDescribePixelFormat(pixelFormatObj, virtualScreen, kCGLPFAAccelerated, &isAccelerated);
-            ASSERT(error == kCGLNoError);
-            if (isAccelerated)
-                firstAcceleratedScreen = virtualScreen;
-        }
-    }
-
-    // No registryID match found; set to first hardware-accelerated virtual screen.
-    if (firstAcceleratedScreen >= 0) {
-        error = CGLSetVirtualScreen(contextObj, firstAcceleratedScreen);
-        ASSERT(error == kCGLNoError);
-        LOG(WebGL, "RegistryID (%lld) not matched; Context (%p) set to virtual screen (%d).", preferredGPUID, contextObj, firstAcceleratedScreen);
-    }
-}
-
-#endif // PLATFORM(MAC)
-
-GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attrs, HostWindow* hostWindow, GraphicsContextGLOpenGL* sharedContext, GraphicsContextGLIOSurfaceSwapChain* swapChain)
+GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attrs, HostWindow*, GraphicsContextGLOpenGL* sharedContext, GraphicsContextGLIOSurfaceSwapChain* swapChain)
     : GraphicsContextGL(attrs, Destination::Offscreen, sharedContext)
 {
     m_isForWebGL2 = attrs.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
 
-#if HAVE(APPLE_GRAPHICS_CONTROL)
-    m_powerPreferenceUsedForCreation = (hasLowAndHighPowerGPUs() && attrs.powerPreference == GraphicsContextGLPowerPreference::HighPerformance) ? GraphicsContextGLPowerPreference::HighPerformance : GraphicsContextGLPowerPreference::Default;
-#else
-    m_powerPreferenceUsedForCreation = GraphicsContextGLPowerPreference::Default;
-#endif
-
     m_displayObj = InitializeEGLDisplay(attrs);
     if (m_displayObj == EGL_NO_DISPLAY)
         return;
+
+    bool supportsPowerPreference = false;
+#if PLATFORM(MAC)
     const char *displayExtensions = EGL_QueryString(m_displayObj, EGL_EXTENSIONS);
-    LOG(WebGL, "Extensions: %s", displayExtensions);
+    m_supportsPowerPreference = strstr(displayExtensions, "EGL_ANGLE_power_preference");
+    supportsPowerPreference = m_supportsPowerPreference;
+#endif
+    if (!supportsPowerPreference && attrs.powerPreference == GraphicsContextGLPowerPreference::HighPerformance) {
+        attrs.powerPreference = GraphicsContextGLPowerPreference::Default;
+        setContextAttributes(attrs);
+    }
 
     EGLint configAttributes[] = {
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
@@ -290,12 +236,6 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     eglContextAttributes.append(EGL_CONTEXT_BIND_GENERATES_RESOURCE_CHROMIUM);
     eglContextAttributes.append(EGL_FALSE);
 
-    if (strstr(displayExtensions, "EGL_ANGLE_power_preference")) {
-        eglContextAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
-        // EGL_LOW_POWER_ANGLE is the default. Change to
-        // EGL_HIGH_POWER_ANGLE if desired.
-        eglContextAttributes.append(EGL_LOW_POWER_ANGLE);
-    }
     eglContextAttributes.append(EGL_NONE);
 
     m_contextObj = EGL_CreateContext(m_displayObj, m_configObj, sharedContext ? static_cast<EGLContext>(sharedContext->m_contextObj) : EGL_NO_CONTEXT, eglContextAttributes.data());
@@ -332,21 +272,6 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
         }
         extensions.ensureEnabled(extension);
     }
-#if PLATFORM(MAC)
-    // FIXME: It's unclear if MACCATALYST should take these steps as well, but that
-    // would require the PlatformScreenMac code to be exposed to Catalyst too.
-    EGLDeviceEXT device = nullptr;
-    EGL_QueryDisplayAttribEXT(m_displayObj, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&device));
-    CGLContextObj cglContext = nullptr;
-    CGLPixelFormatObj pixelFormat = nullptr;
-    EGL_QueryDeviceAttribEXT(device, EGL_CGL_CONTEXT_ANGLE, reinterpret_cast<EGLAttrib*>(&cglContext));
-    EGL_QueryDeviceAttribEXT(device, EGL_CGL_PIXEL_FORMAT_ANGLE, reinterpret_cast<EGLAttrib*>(&pixelFormat));
-    auto gpuID = (hostWindow && hostWindow->displayID()) ? gpuIDForDisplay(hostWindow->displayID()) : primaryGPUID();
-    setGPUByRegistryID(cglContext, pixelFormat, gpuID);
-#else
-    UNUSED_PARAM(hostWindow);
-#endif
-
     validateAttributes();
     attrs = contextAttributes(); // They may have changed during validation.
 
@@ -561,30 +486,26 @@ void GraphicsContextGLOpenGL::checkGPUStatus()
 
 void GraphicsContextGLOpenGL::setContextVisibility(bool isVisible)
 {
-    if (m_powerPreferenceUsedForCreation == GraphicsContextGLPowerPreference::HighPerformance) {
-        if (isVisible)
-            GraphicsContextGLOpenGLManager::sharedManager().addContextRequiringHighPerformance(this);
-        else
-            GraphicsContextGLOpenGLManager::sharedManager().removeContextRequiringHighPerformance(this);
-    }
-}
-
 #if PLATFORM(MAC)
-void GraphicsContextGLOpenGL::updateCGLContext()
-{
-    if (!makeContextCurrent())
+    if (contextAttributes().powerPreference != GraphicsContextGLPowerPreference::HighPerformance)
         return;
-    LOG(WebGL, "Detected a mux switch or display reconfiguration. Call CGLUpdateContext. (%p)", this);
-
-    EGLDeviceEXT device = nullptr;
-    EGL_QueryDisplayAttribEXT(m_displayObj, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&device));
-    CGLContextObj cglContext = nullptr;
-    EGL_QueryDeviceAttribEXT(device, EGL_CGL_CONTEXT_ANGLE, reinterpret_cast<EGLAttrib*>(&cglContext));
-
-    CGLUpdateContext(cglContext);
-    m_hasSwitchedToHighPerformanceGPU = true;
-}
+    if (isVisible)
+        m_highPerformanceGPURequest = ScopedHighPerformanceGPURequest::acquire();
+    else
+        m_highPerformanceGPURequest = { };
+#else
+    UNUSED_PARAM(isVisible);
 #endif
+}
+
+void GraphicsContextGLOpenGL::displayWasReconfigured()
+{
+#if PLATFORM(MAC)
+    if (m_supportsPowerPreference)
+        EGL_HandleGPUSwitchANGLE(m_displayObj);
+#endif
+    dispatchContextChangedNotification();
+}
 
 bool GraphicsContextGLOpenGL::reshapeDisplayBufferBacking()
 {
@@ -654,50 +575,8 @@ bool GraphicsContextGLOpenGL::isGLES2Compliant() const
 
 void GraphicsContextGLOpenGL::simulateContextChanged()
 {
-    GraphicsContextGLOpenGLManager::sharedManager().updateAllContexts();
+    GraphicsContextGLOpenGLManager::sharedManager().displayWasReconfigured();
 }
-
-bool GraphicsContextGLOpenGL::allowOfflineRenderers() const
-{
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    // When WindowServer access is blocked in the WebProcess, there is no way
-    // for OpenGL to decide which GPU is connected to a display (online/offline).
-    // OpenGL will then consider all GPUs, or renderers, as offline, which means
-    // all offline renderers need to be considered when finding a pixel format.
-    // In WebKit legacy, there will still be a WindwServer connection, and
-    // m_displayMask will not be set in this case.
-    if (primaryOpenGLDisplayMask())
-        return true;
-#elif PLATFORM(MACCATALYST)
-    // FIXME: <rdar://53062794> We're very inconsistent about WEBPROCESS_WINDOWSERVER_BLOCKING
-    // and MAC/MACCATALYST and OPENGL/OPENGLES.
-    return true;
-#endif
-        
-#if HAVE(APPLE_GRAPHICS_CONTROL)
-    if (hasLowAndHighPowerGPUs())
-        return true;
-#endif
-    
-    return false;
-}
-
-#if PLATFORM(MAC)
-void GraphicsContextGLOpenGL::screenDidChange(PlatformDisplayID displayID)
-{
-    if (!m_contextObj)
-        return;
-    if (!m_hasSwitchedToHighPerformanceGPU) {
-        EGLDeviceEXT device = nullptr;
-        EGL_QueryDisplayAttribEXT(m_displayObj, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&device));
-        CGLContextObj cglContext = nullptr;
-        CGLPixelFormatObj pixelFormat = nullptr;
-        EGL_QueryDeviceAttribEXT(device, EGL_CGL_CONTEXT_ANGLE, reinterpret_cast<EGLAttrib*>(&cglContext));
-        EGL_QueryDeviceAttribEXT(device, EGL_CGL_PIXEL_FORMAT_ANGLE, reinterpret_cast<EGLAttrib*>(&pixelFormat));
-        setGPUByRegistryID(cglContext, pixelFormat, gpuIDForDisplay(displayID));
-    }
-}
-#endif // !PLATFORM(MAC)
 
 void GraphicsContextGLOpenGL::prepareForDisplay()
 {

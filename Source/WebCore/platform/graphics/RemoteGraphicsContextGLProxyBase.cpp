@@ -49,12 +49,6 @@ void RemoteGraphicsContextGLProxyBase::setContextVisibility(bool)
     notImplemented();
 }
 
-GraphicsContextGLPowerPreference RemoteGraphicsContextGLProxyBase::powerPreferenceUsedForCreation() const
-{
-    notImplemented();
-    return { };
-}
-
 bool RemoteGraphicsContextGLProxyBase::isGLES2Compliant() const
 {
 #if ENABLE(WEBGL2)

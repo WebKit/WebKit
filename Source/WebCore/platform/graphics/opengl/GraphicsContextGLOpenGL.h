@@ -69,6 +69,10 @@ class GCGLLayer;
 }
 #endif
 
+#if PLATFORM(MAC)
+#include "ScopedHighPerformanceGPURequest.h"
+#endif
+
 namespace WebCore {
 class ExtensionsGL;
 #if USE(ANGLE)
@@ -256,7 +260,7 @@ public:
     void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLSpan<const GCGLvoid> pixels) final;
     void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset) final;
     void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLsizei imageSize, GCGLSpan<const GCGLvoid> data) final;
-    void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLsizei imageSize, GCGLintptr offset) final; 
+    void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLsizei imageSize, GCGLintptr offset) final;
     void compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, GCGLSpan<const GCGLvoid> data) final;
     void compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, GCGLintptr offset) final;
 
@@ -461,13 +465,11 @@ public:
     void primitiveRestartIndex(GCGLuint);
 #endif
 
-#if PLATFORM(COCOA) && PLATFORM(MAC)
-    void updateCGLContext();
+#if PLATFORM(COCOA)
+    void displayWasReconfigured();
 #endif
 
     void setContextVisibility(bool) final;
-
-    GraphicsContextGLPowerPreference powerPreferenceUsedForCreation() const final { return m_powerPreferenceUsedForCreation; }
 
     // Support for buffer creation and deletion
     PlatformGLObject createBuffer() final;
@@ -497,11 +499,6 @@ public:
 
     unsigned textureSeed(GCGLuint texture) { return m_state.textureSeedCount.count(texture); }
 
-#if PLATFORM(MAC)
-    using PlatformDisplayID = uint32_t;
-    void screenDidChange(PlatformDisplayID);
-#endif
-
     void prepareForDisplay() final;
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
@@ -529,7 +526,7 @@ private:
     // implementation.
     void validateDepthStencil(const char* packedDepthStencilExtension);
     void validateAttributes();
-    
+
     void readnPixelsImpl(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLsizei* length, GCGLsizei* columns, GCGLsizei* rows, GCGLvoid* data, bool readingToPixelBufferObject);
 
     // Did the most recent drawing operation leave the GPU in an acceptable state?
@@ -547,7 +544,6 @@ private:
     void attachDepthAndStencilBufferIfNeeded(GCGLuint internalDepthStencilFormat, int width, int height);
 
 #if PLATFORM(COCOA)
-    bool allowOfflineRenderers() const;
     bool reshapeDisplayBufferBacking();
     bool allocateAndBindDisplayBufferBacking();
     bool bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer);
@@ -583,7 +579,7 @@ private:
             , isValid(false)
         {
         }
-        
+
         ShaderSymbolMap& symbolMap(enum ANGLEShaderSymbolType symbolType)
         {
             ASSERT(symbolType == SHADER_SYMBOL_TYPE_ATTRIBUTE || symbolType == SHADER_SYMBOL_TYPE_UNIFORM || symbolType == SHADER_SYMBOL_TYPE_VARYING);
@@ -648,7 +644,6 @@ private:
     std::unique_ptr<ExtensionsGLOpenGL> m_extensions;
 #endif
 
-    GraphicsContextGLPowerPreference m_powerPreferenceUsedForCreation { GraphicsContextGLPowerPreference::Default };
     Vector<Vector<float>> m_vertexArray;
 
 #if !USE(ANGLE)
@@ -680,7 +675,7 @@ private:
 
         using BoundTextureMap = HashMap<GCGLenum,
             std::pair<GCGLuint, GCGLenum>,
-            WTF::IntHash<GCGLenum>, 
+            WTF::IntHash<GCGLenum>,
             WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>,
             WTF::PairHashTraits<WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>, WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>>
         >;
@@ -761,8 +756,10 @@ private:
     // When preserveDrawingBuffer == true, this is blitted to during display prepare.
     std::unique_ptr<IOSurface> m_displayBufferBacking;
     void* m_displayBufferPbuffer { nullptr };
-
-    bool m_hasSwitchedToHighPerformanceGPU { false };
+#endif
+#if PLATFORM(MAC)
+    bool m_supportsPowerPreference { false };
+    ScopedHighPerformanceGPURequest m_highPerformanceGPURequest;
 #endif
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     std::unique_ptr<GraphicsContextGLCV> m_cv;

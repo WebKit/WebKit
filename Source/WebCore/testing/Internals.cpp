@@ -321,7 +321,7 @@
 #endif
 
 #if PLATFORM(MAC)
-#include "GraphicsContextGLOpenGLManager.h"
+#include "GraphicsChecksMac.h"
 #include "NSScrollerImpDetails.h"
 #include "ScrollbarThemeMac.h"
 #endif

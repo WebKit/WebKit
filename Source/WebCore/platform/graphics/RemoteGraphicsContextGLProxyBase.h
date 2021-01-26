@@ -61,7 +61,6 @@ public:
     PlatformLayer* platformLayer() const final;
     ExtensionsGL& getExtensions() final;
     void setContextVisibility(bool) final;
-    GraphicsContextGLPowerPreference powerPreferenceUsedForCreation() const final;
     bool isGLES2Compliant() const final;
     void markContextChanged() final;
     bool layerComposited() const final;
