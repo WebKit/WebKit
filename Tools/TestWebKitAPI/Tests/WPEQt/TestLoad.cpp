@@ -49,7 +49,6 @@ void TestLoad::main()
     m_view->setUrl(url);
 
     waitForLoadSucceeded(m_view);
-    waitForSignal(m_view, SIGNAL(titleChanged()));
     QTRY_COMPARE(m_view->loadProgress(), 100);
     QTRY_VERIFY(!m_view->isLoading());
     QCOMPARE(m_view->title(), QStringLiteral("FooBar"));
