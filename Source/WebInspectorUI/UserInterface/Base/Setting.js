@@ -223,6 +223,7 @@ WI.settings = {
     experimentalEnablePreviewFeatures: new WI.Setting("experimental-enable-preview-features", true),
     experimentalEnableStylesJumpToEffective: new WI.Setting("experimental-styles-jump-to-effective", false),
     experimentalEnableStylesJumpToVariableDeclaration: new WI.Setting("experimental-styles-jump-to-variable-declaration", false),
+    experimentalEnableLayoutPanel: new WI.Setting("experimental-enable-layout-panel", false),
 
     // Protocol
     protocolLogAsText: new WI.Setting("protocol-log-as-text", false),

@@ -30,8 +30,11 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
         let detailsSidebarPanelConstructors = [
             WI.RulesStyleDetailsSidebarPanel,
             WI.ComputedStyleDetailsSidebarPanel,
-
         ];
+
+        if (WI.settings.experimentalEnableLayoutPanel.value)
+            detailsSidebarPanelConstructors.push(WI.LayoutDetailsSidebarPanel);
+
         // COMPATIBILITY (iOS 14.0): `CSS.getFontDataForNode` did not exist yet.
         if (InspectorBackend.hasCommand("CSS.getFontDataForNode"))
             detailsSidebarPanelConstructors.push(WI.FontDetailsSidebarPanel);

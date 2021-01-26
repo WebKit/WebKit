@@ -822,6 +822,8 @@ localizedStrings["Layers"] = "Layers";
 /* Name of Layers Tab */
 localizedStrings["Layers Tab Name"] = "Layers";
 localizedStrings["Layout & Rendering"] = "Layout & Rendering";
+/* Title of the CSS style panel. */
+localizedStrings["Layout @ Styles Sidebar"] = "Layout";
 /* Layout phase timeline records */
 localizedStrings["Layout @ Timeline record"] = "Layout";
 localizedStrings["Layout Invalidated"] = "Layout Invalidated";
@@ -1293,6 +1295,7 @@ localizedStrings["Show All Nodes (%d More)"] = "Show All Nodes (%d More)";
 localizedStrings["Show Console"] = "Show Console";
 localizedStrings["Show Console tab"] = "Show Console tab";
 localizedStrings["Show Elements"] = "Show Elements";
+localizedStrings["Show Layout panel"] = "Show Layout panel";
 localizedStrings["Show Path"] = "Show Path";
 localizedStrings["Show Remaining (%d)"] = "Show Remaining (%d)";
 localizedStrings["Show Scope Chain on pause"] = "Show Scope Chain on pause";
