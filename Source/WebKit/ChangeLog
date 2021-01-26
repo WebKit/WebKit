@@ -1,3 +1,16 @@
+2021-01-26  Alex Christensen  <achristensen@webkit.org>
+
+        Revert part of r271493
+        https://bugs.webkit.org/show_bug.cgi?id=220066
+        <rdar://problem/73615999>
+
+        We have an internal app that calls registerSchemeForCustomProtocol on a non-main thread before WebKit initializes.
+        While this is a problem, we have to not crash on launch until they fix this.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (+[WKBrowsingContextController registerSchemeForCustomProtocol:]):
+        (+[WKBrowsingContextController unregisterSchemeForCustomProtocol:]):
+
 2021-01-26  Per Arne  <pvollan@apple.com>
 
         [GPU process][macOS] Only allow access to diagnostic services for internal builds
