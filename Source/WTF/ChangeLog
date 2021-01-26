@@ -1,3 +1,11 @@
+2021-01-26  Dean Jackson  <dino@apple.com>
+
+        Disable WebGL 2 on safari-611-branch
+        rdar://73629533
+        rdar://73624686
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-01-11  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebKit::IPC::Encoder needs definitions of all custom enum values at the Encoder definition time
