@@ -59,6 +59,7 @@ static constexpr unsigned InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNot
 static constexpr unsigned StructureIsImmortal = 1 << 17;
 static constexpr unsigned HasPutPropertySecurityCheck = 1 << 18;
 static constexpr unsigned OverridesGetPrototype = 1 << 19;
+static constexpr unsigned GetOwnPropertySlotMayBeWrongAboutDontEnum = 1 << 20;
 
 static constexpr unsigned numberOfInlineBits = 8;
 static constexpr unsigned OverridesGetPrototypeOutOfLine = OverridesGetPrototype >> numberOfInlineBits;
@@ -105,6 +106,7 @@ public:
     bool prohibitsPropertyCaching() const { return isSetOnFlags2<ProhibitsPropertyCaching>(); }
     bool getOwnPropertySlotIsImpure() const { return isSetOnFlags2<GetOwnPropertySlotIsImpure>(); }
     bool getOwnPropertySlotIsImpureForPropertyAbsence() const { return isSetOnFlags2<GetOwnPropertySlotIsImpureForPropertyAbsence>(); }
+    bool getOwnPropertySlotMayBeWrongAboutDontEnum() const { return isSetOnFlags2<GetOwnPropertySlotMayBeWrongAboutDontEnum>(); }
     bool hasPutPropertySecurityCheck() const { return isSetOnFlags2<HasPutPropertySecurityCheck>(); }
     bool newImpurePropertyFiresWatchpoints() const { return isSetOnFlags2<NewImpurePropertyFiresWatchpoints>(); }
     bool isImmutablePrototypeExoticObject() const { return isSetOnFlags2<IsImmutablePrototypeExoticObject>(); }

@@ -1998,7 +1998,9 @@ bool JSObject::hasEnumerableProperty(JSGlobalObject* globalObject, PropertyName 
     PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
     bool hasProperty = const_cast<JSObject*>(this)->getPropertySlot(globalObject, propertyName, slot);
     RETURN_IF_EXCEPTION(scope, false);
-    return hasProperty && !(slot.attributes() & PropertyAttribute::DontEnum);
+    if (!hasProperty)
+        return false;
+    return !(slot.attributes() & PropertyAttribute::DontEnum) || (slot.slotBase() && slot.slotBase()->structure(vm)->typeInfo().getOwnPropertySlotMayBeWrongAboutDontEnum());
 }
 
 bool JSObject::hasEnumerableProperty(JSGlobalObject* globalObject, unsigned propertyName) const
@@ -2008,7 +2010,9 @@ bool JSObject::hasEnumerableProperty(JSGlobalObject* globalObject, unsigned prop
     PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
     bool hasProperty = const_cast<JSObject*>(this)->getPropertySlot(globalObject, propertyName, slot);
     RETURN_IF_EXCEPTION(scope, false);
-    return hasProperty && !(slot.attributes() & PropertyAttribute::DontEnum);
+    if (!hasProperty)
+        return false;
+    return !(slot.attributes() & PropertyAttribute::DontEnum) || (slot.slotBase() && slot.slotBase()->structure(vm)->typeInfo().getOwnPropertySlotMayBeWrongAboutDontEnum());
 }
 
 // ECMA 8.6.2.5

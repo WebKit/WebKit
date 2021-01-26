@@ -1,3 +1,31 @@
+2021-01-25  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        REGRESSION (r270874): Some React Native apps are reported broken on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=220809
+
+        Reviewed by Saam Barati.
+
+        r270874 fixed for/in shadowing issue by introducing an invariant: a property
+        returned by getOwn*PropertyNames() in DontEnumPropertiesMode::Exclude should be
+        reported as [[Enumerable]] by getOwnPropertySlot(). Otherwise, for/in skips the
+        property, which causes RN apps to break.
+
+        Since there is no way to enforce this invariant for opaque API objects like
+        JSCallbackObject, this change skips [[Enumerable]] check for them by introducing
+        GetOwnPropertySlotMayBeWrongAboutDontEnum out of line type info flag.
+
+        Also, this patch reverts JSCallbackObject::getOwnPropertySlot() changes of r270874
+        that are no longer necessary and observable (via Object.getOwnPropertyDescriptor).
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::getOwnPropertySlot):
+        * API/tests/testapiScripts/testapi.js:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::hasEnumerableProperty const):
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::getOwnPropertySlotMayBeWrongAboutDontEnum const):
+
 2021-01-25  Chris Dumez  <cdumez@apple.com>
 
         Update availability annotations to match the macOS 11.0 and iOS 14.0 GM SDKs
