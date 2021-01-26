@@ -1,3 +1,27 @@
+2021-01-26  Jonathan Bedard  <jbedard@apple.com>
+
+        [LayoutTests] Pass authentication to CGI scripts
+        https://bugs.webkit.org/show_bug.cgi?id=221007
+        <rdar://problem/73630042>
+
+        Reviewed by Stephanie Lewis.
+
+        * http/conf/apache2.2-httpd.conf: Pass authentication to CGI scripts.
+        * http/conf/apache2.4-httpd.conf: Ditto.
+        * http/conf/apache2.4-php7-httpd.conf: Ditto.
+        * http/conf/archlinux-httpd.conf: Ditto.
+        * http/conf/debian-httpd-2.4-php7.0.conf: Ditto.
+        * http/conf/debian-httpd-2.4-php7.1.conf: Ditto.
+        * http/conf/debian-httpd-2.4-php7.2.conf: Ditto.
+        * http/conf/debian-httpd-2.4-php7.3.conf: Ditto.
+        * http/conf/debian-httpd-2.4-php7.4.conf: Ditto.
+        * http/conf/fedora-httpd-2.2.conf: Ditto.
+        * http/conf/fedora-httpd-2.4-php7.conf: Ditto.
+        * http/conf/fedora-httpd-2.4.conf: Ditto.
+        * http/conf/flatpak-httpd.conf: Ditto.
+        * http/conf/win-httpd-2.4-php5.conf: Ditto.
+        * http/conf/win-httpd-2.4-php7.conf: Ditto.
+
 2021-01-26  Truitt Savell  <tsavell@apple.com>
 
         [ Mac wk1 ] fast/harness/render-tree-as-text-options.html is flaky failing in WK1
