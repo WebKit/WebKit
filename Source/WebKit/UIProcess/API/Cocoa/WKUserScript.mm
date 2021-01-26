@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WKUserScriptInternal.h"
 
+#import "WKContentWorldInternal.h"
 #import "_WKUserContentWorldInternal.h"
 #import <wtf/cocoa/VectorCocoa.h>
 

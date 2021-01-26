@@ -1,3 +1,12 @@
+2021-01-25  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, add missing header includes to address build issues.
+
+        * UIProcess/API/Cocoa/WKUserScript.mm:
+        * UIProcess/API/Cocoa/_WKInspectorExtension.mm:
+        * UIProcess/Cocoa/AutomationClient.mm:
+        * UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.h:
+
 2021-01-25  Devin Rousso  <drousso@apple.com>
 
         [iOS] improve support for sequential scribble interactions that involving different inputs
