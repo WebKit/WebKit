@@ -169,6 +169,9 @@ static WARN_UNUSED_RETURN bool decodeSharedBuffer(Decoder& decoder, RefPtr<Share
     if (!sharedMemoryBuffer)
         return false;
 
+    if (sharedMemoryBuffer->size() < bufferSize)
+        return false;
+
     buffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryBuffer->data()), bufferSize);
 #endif
 

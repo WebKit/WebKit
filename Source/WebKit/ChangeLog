@@ -1,3 +1,17 @@
+2021-01-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [CoreIPC] Add size check in decodeSharedBuffer to allow it to be validated against the SharedMemory received
+        https://bugs.webkit.org/show_bug.cgi?id=220962
+        <rdar://problem/68204552>
+
+        Reviewed by Darin Adler.
+
+        Add a new check during decoding so that we fail if the expected buffer size is larger than the block of
+        shared memory supplied in the IPC call.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::decodeSharedBuffer):
+
 2021-01-26  Alex Christensen  <achristensen@webkit.org>
 
         Revert part of r271493
