@@ -1216,3 +1216,5 @@ webkit.org/b/219498 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-t
 
 webkit.org/b/217761 [ Debug ] webgl/conformance/extensions/s3tc-and-rgtc.html [ Skip ]
 webkit.org/b/217761 [ Debug ] webgl/2.0.0/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Skip ]
+
+webkit.org/b/221009 fast/harness/render-tree-as-text-options.html [ Pass Failure ]
