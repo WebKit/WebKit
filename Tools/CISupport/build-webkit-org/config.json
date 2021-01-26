@@ -456,22 +456,22 @@
                       "workernames": ["playstation-release-build-01"]
                     },
                     {
-                      "name": "JSCOnly-Linux-AArch64-Release", "factory": "BuildAndRemoteJSCTestsFactory", "builddir": "jsconly-linux-aarch64-release",
+                      "name": "JSCOnly-Linux-AArch64-Release", "factory": "BuildAndJSCTestsFactory", "builddir": "jsconly-linux-aarch64-release",
                       "platform": "jsc-only", "configuration": "release", "architectures": ["aarch64"],
                       "workernames": ["jsconly-linux-igalia-bot-2"]
                     },
                     {
-                      "name": "JSCOnly-Linux-ARMv7-Thumb2-Release", "factory": "BuildAndRemoteJSCTestsFactory", "builddir": "jsconly-linux-armv7-thumb2-release",
+                      "name": "JSCOnly-Linux-ARMv7-Thumb2-Release", "factory": "BuildAndJSCTestsFactory", "builddir": "jsconly-linux-armv7-thumb2-release",
                       "platform": "jsc-only", "configuration": "release", "architectures": ["armv7"],
                       "workernames": ["jsconly-linux-igalia-bot-3"]
                     },
                     {
-                      "name": "JSCOnly-Linux-ARMv7-Thumb2-SoftFP-Release", "factory": "BuildAndRemoteJSCTestsFactory", "builddir": "jsconly-linux-armv7-thumb2-softfp-release",
+                      "name": "JSCOnly-Linux-ARMv7-Thumb2-SoftFP-Release", "factory": "BuildAndJSCTestsFactory", "builddir": "jsconly-linux-armv7-thumb2-softfp-release",
                       "platform": "jsc-only", "configuration": "release", "architectures": ["armv7"],
                       "workernames": ["jsconly-linux-igalia-bot-5"]
                     },
                     {
-                      "name": "JSCOnly-Linux-MIPS32el-Release", "factory": "BuildAndRemoteJSCTestsFactory", "builddir": "jsconly-linux-mips32el-release",
+                      "name": "JSCOnly-Linux-MIPS32el-Release", "factory": "BuildAndJSCTestsFactory", "builddir": "jsconly-linux-mips32el-release",
                       "platform": "jsc-only", "configuration": "release", "architectures": ["mips"],
                       "workernames": ["jsconly-linux-igalia-bot-1"]
                     },

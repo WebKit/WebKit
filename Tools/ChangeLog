@@ -1,3 +1,27 @@
+2021-01-26  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Do not specify remote file location to the JSConly bots
+        https://bugs.webkit.org/show_bug.cgi?id=220923
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        There is no need to treat JSC buildbots that use remotes any
+        different. The worker side needs to supply the remote
+        configuration file in any case and it can also specify
+        --remote-config-file in TEST_JSC_ARGS.
+
+        What's more, letting the worker be in control makes it easier to
+        implement changes without having to request upstream configuration
+        changes (or, worse, temporarily overriding the configuration
+        recorded in config.json).
+
+        * CISupport/build-webkit-org/config.json:
+        * CISupport/build-webkit-org/factories.py:
+        (BuildAndJSCTestsFactory):
+        (BuildAndJSCTestsFactory.__init__):
+        * CISupport/build-webkit-org/steps.py:
+        (RunJavaScriptCoreTests.countFailures):
+
 2021-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Stop using SoupRequest API to load files in preparation for libsoup3

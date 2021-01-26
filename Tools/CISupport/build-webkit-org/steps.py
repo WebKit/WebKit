@@ -519,12 +519,6 @@ class RunJavaScriptCoreTests(TestWithFailureCount):
         return count
 
 
-class RunRemoteJavaScriptCoreTests(RunJavaScriptCoreTests):
-    def start(self):
-        self.setCommand(self.command + ["--remote-config-file", "../../remote-jsc-tests-config.json"])
-        return RunJavaScriptCoreTests.start(self)
-
-
 class RunTest262Tests(TestWithFailureCount):
     name = "test262-test"
     description = ["test262-tests running"]
