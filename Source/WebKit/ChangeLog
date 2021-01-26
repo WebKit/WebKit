@@ -1,3 +1,17 @@
+2021-01-26  Per Arne  <pvollan@apple.com>
+
+        [macOS] Deny mach-lookup to the service 'com.apple.tccd.system' in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=220976
+        <rdar://problem/68935772>
+
+        Reviewed by Brent Fulgham.
+
+        Deny mach-lookup to the service 'com.apple.tccd.system' in the WebContent process, since there are no longer reports of this being used.
+
+        No new tests, since the result will depend on OS version.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-01-26  Chris Dumez  <cdumez@apple.com>
 
         Disable TBA availability macro post-processing on iOS 14 / macOS 11
