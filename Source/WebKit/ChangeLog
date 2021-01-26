@@ -1,3 +1,44 @@
+2021-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Stop using SoupRequest API to load files in preparation for libsoup3
+        https://bugs.webkit.org/show_bug.cgi?id=220509
+
+        Reviewed by Adrian Perez de Castro.
+
+        SoupRequest API is gone in libsoup3 and there's no replacement for file requests. GResource and data URI loads
+        already happen in the web process so we only need to care about file and directory loads.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::createRequest): Create a GFile for local files.
+        (WebKit::NetworkDataTaskSoup::clearRequest): Clear the m_file.
+        (WebKit::NetworkDataTaskSoup::resume): Check also if there's a file operation to resume.
+        (WebKit::NetworkDataTaskSoup::didSendRequest): We always have a soup message now here because SoupRequest is
+        only used for HTTP.
+        (WebKit::NetworkDataTaskSoup::readCallback): In case of failure check if this is an HTTP or file request to
+        create the error.
+        (WebKit::NetworkDataTaskSoup::fileQueryInfoCallback): Call didGetFileInfo() and continue reading the file or directory.
+        (WebKit::NetworkDataTaskSoup::didGetFileInfo): Set URL, content type and length of the response for the given GFileInfo.
+        (WebKit::NetworkDataTaskSoup::readFileCallback): Complete the g_file_read_async operation.
+        (WebKit::NetworkDataTaskSoup::enumerateFileChildrenCallback): Create a WebKitDirectoryInputStream.
+        (WebKit::NetworkDataTaskSoup::didReadFile): Set the input stream and notify the response is ready.
+        * NetworkProcess/soup/NetworkDataTaskSoup.h:
+        * NetworkProcess/soup/Resources/directory.css: Added.
+        * NetworkProcess/soup/Resources/directory.js: Added.
+        * NetworkProcess/soup/WebKitDirectoryInputStream.cpp: Added.
+        (webkitDirectoryInputStreamCreateHeader):
+        (webkitDirectoryInputStreamCreateFooter):
+        (webkitDirectoryInputStreamCreateRow):
+        (webkitDirectoryInputStreamReadNextFile):
+        (webkitDirectoryInputStreamRead):
+        (webkitDirectoryInputStreamClose):
+        (webkit_directory_input_stream_class_init):
+        (webkitDirectoryInputStreamNew):
+        * NetworkProcess/soup/WebKitDirectoryInputStream.h: Added.
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+
 2021-01-25  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         REGRESSION (r270874): Some React Native apps are reported broken on iOS
