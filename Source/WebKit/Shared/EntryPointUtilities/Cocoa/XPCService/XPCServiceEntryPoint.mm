@@ -43,6 +43,10 @@ bool XPCServiceInitializerDelegate::checkEntitlements()
 {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     if (isClientSandboxed()) {
+        // FIXME(<rdar://problem/54178641>): Remove this check once WebKit can work without network access.
+        if (hasEntitlement("com.apple.security.network.client"))
+            return true;
+
         audit_token_t auditToken = { };
         xpc_connection_get_audit_token(m_connection.get(), &auditToken);
         if (auto rc = sandbox_check_by_audit_token(auditToken, "mach-lookup", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_GLOBAL_NAME | SANDBOX_CHECK_NO_REPORT), "com.apple.nsurlsessiond")) {

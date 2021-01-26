@@ -1,3 +1,19 @@
+2021-01-26  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r261238): WKWebView crashes on launch inside a quicklook preview
+        https://bugs.webkit.org/show_bug.cgi?id=219632
+        <rdar://problem/72154830>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Partially revert r261238 to allow applications without access to 'nsurlsessiond' to still
+        be able to use WebKit for local file access. This workaround should be removed once we
+        complete the work needed to support true offline WebKit use.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::checkEntitlements): Add an early return if the application
+        possesses the 'com.apple.security.network.client' entitlement.
+
 2021-01-26  Per Arne  <pvollan@apple.com>
 
         [macOS] Restrict process-info in sandbox
