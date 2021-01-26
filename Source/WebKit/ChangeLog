@@ -1,5 +1,11 @@
 2021-01-26  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, silence deprecation warning for our own API to address build issues.
+
+        * UIProcess/API/Cocoa/WKUserContentControllerPrivate.h:
+
+2021-01-26  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, reverting r271882.
 
         Broke the build
