@@ -1,3 +1,22 @@
+2021-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        ASSERT NOT REACHED in WebCore::DisplayList::isDrawingItem
+        https://bugs.webkit.org/show_bug.cgi?id=220948
+        <rdar://problem/73588734>
+
+        Reviewed by Tim Horton.
+
+        The API test `DisplayListTests.OutOfLineItemDecodingFailure` was intended to read from the display list copy
+        rather than the original list, in order to exercise the (intentional) decoding failure.
+
+        Instead, this test erroneously attempts to read from the original display list (which, importantly, doesn't have
+        a reading client) and ends up exercising the decoding failure anyways, but additionally hits a debug assertion
+        in the process. Simply fix this by reading out of the correct display list (and rename the original display list
+        in the process to make the test more clear).
+
+        * TestWebKitAPI/Tests/WebCore/cg/DisplayListTestsCG.cpp:
+        (TestWebKitAPI::TEST)
+
 2021-01-25  Aakash Jain  <aakash_jain@apple.com>
 
         Changes to commit-log-editor should trigger webkitpy EWS tests

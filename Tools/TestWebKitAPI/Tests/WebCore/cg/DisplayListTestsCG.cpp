@@ -112,22 +112,22 @@ TEST(DisplayListTests, OutOfLineItemDecodingFailure)
     auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.get(), kCGImageAlphaPremultipliedLast));
     GraphicsContext context { cgContext.get() };
 
-    DisplayList list;
+    DisplayList originalList;
     WritingClient writer;
-    list.setItemBufferClient(&writer);
+    originalList.setItemBufferClient(&writer);
 
     Path path;
     path.moveTo({ 10., 10. });
     path.addLineTo({ 50., 50. });
     path.addLineTo({ 10., 10. });
-    list.append<SetInlineStrokeColor>(Color::blue);
-    list.append<FillPath>(WTFMove(path));
+    originalList.append<SetInlineStrokeColor>(Color::blue);
+    originalList.append<FillPath>(WTFMove(path));
 
-    DisplayList shallowCopy {{ ItemBufferHandle { globalBufferIdentifier, globalItemBuffer, list.sizeInBytes() } }};
+    DisplayList shallowCopy {{ ItemBufferHandle { globalBufferIdentifier, globalItemBuffer, originalList.sizeInBytes() } }};
     ReadingClient reader;
     shallowCopy.setItemBufferClient(&reader);
 
-    Replayer replayer { context, list };
+    Replayer replayer { context, shallowCopy };
     auto result = replayer.replay();
     EXPECT_GT(result.numberOfBytesRead, 0U);
     EXPECT_EQ(result.nextDestinationImageBuffer, WTF::nullopt);
