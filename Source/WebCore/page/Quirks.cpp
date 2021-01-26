@@ -1270,16 +1270,42 @@ bool Quirks::needsBlackFullscreenBackgroundQuirk() const
 
 bool Quirks::requiresUserGestureToPauseInPictureInPicture() const
 {
-    // Facebook will naively pause a <video> element that has scrolled out of the viewport, regardless of whether that element is currently in PiP mode.
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    // Facebook and Twitter will naively pause a <video> element that has scrolled out of the viewport,
+    // regardless of whether that element is currently in PiP mode.
+    // We should remove the quirk once <rdar://problem/67273166> and <rdar://problem/73369869> have been fixed.
     if (!needsQuirks())
         return false;
 
     if (!m_requiresUserGestureToPauseInPictureInPicture) {
-        auto domain = RegistrableDomain(m_document->topDocument().url());
-        m_requiresUserGestureToPauseInPictureInPicture = domain.string() == "facebook.com"_s;
+        auto domain = RegistrableDomain(m_document->topDocument().url()).string();
+        m_requiresUserGestureToPauseInPictureInPicture = domain == "facebook.com"_s || domain == "twitter.com"_s;
     }
 
     return *m_requiresUserGestureToPauseInPictureInPicture;
+#else
+    return false;
+#endif
+}
+
+bool Quirks::requiresUserGestureToLoadInPictureInPicture() const
+{
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    // Twitter will remove the "src" attribute of a <video> element that has scrolled out of the viewport and
+    // load the <video> element with an empty "src" regardless of whether that element is currently in PiP mode.
+    // We should remove the quirk once <rdar://problem/73369869> has been fixed.
+    if (!needsQuirks())
+        return false;
+
+    if (!m_requiresUserGestureToLoadInPictureInPicture) {
+        auto domain = RegistrableDomain(m_document->topDocument().url());
+        m_requiresUserGestureToLoadInPictureInPicture = domain.string() == "twitter.com"_s;
+    }
+
+    return *m_requiresUserGestureToLoadInPictureInPicture;
+#else
+    return false;
+#endif
 }
 
 bool Quirks::blocksReturnToFullscreenFromPictureInPictureQuirk() const

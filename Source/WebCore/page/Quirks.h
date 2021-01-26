@@ -128,6 +128,7 @@ public:
     bool needsBlackFullscreenBackgroundQuirk() const;
 
     bool requiresUserGestureToPauseInPictureInPicture() const;
+    bool requiresUserGestureToLoadInPictureInPicture() const;
 
     WEBCORE_EXPORT bool blocksReturnToFullscreenFromPictureInPictureQuirk() const;
     bool shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk() const;
@@ -173,6 +174,7 @@ private:
     mutable Optional<bool> m_needsHDRPixelDepthQuirk;
     mutable Optional<bool> m_needsBlackFullscreenBackgroundQuirk;
     mutable Optional<bool> m_requiresUserGestureToPauseInPictureInPicture;
+    mutable Optional<bool> m_requiresUserGestureToLoadInPictureInPicture;
 #if ENABLE(MEDIA_STREAM)
     mutable Optional<bool> m_shouldEnableLegacyGetUserMediaQuirk;
 #endif
