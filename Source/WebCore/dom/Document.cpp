@@ -1675,14 +1675,8 @@ void Document::updateTitle(const StringWithDirection& title)
     m_title.string = canonicalizedTitle(*this, title.string);
     m_title.direction = title.direction;
 
-    if (!m_updateTitleTaskScheduled) {
-        eventLoop().queueTask(TaskSource::DOMManipulation, [protectedThis = makeRef(*this), this]() mutable {
-            m_updateTitleTaskScheduled = false;
-            if (auto documentLoader = makeRefPtr(loader()))
-                documentLoader->setTitle(m_title);
-        });
-        m_updateTitleTaskScheduled = true;
-    }
+    if (auto* loader = this->loader())
+        loader->setTitle(m_title);
 }
 
 void Document::updateTitleFromTitleElement()
