@@ -1,3 +1,13 @@
+2021-01-26  Alex Christensen  <achristensen@webkit.org>
+
+        Forbid '|' in URL hosts
+        https://bugs.webkit.org/show_bug.cgi?id=220778
+
+        Reviewed by Youenn Fablet.
+
+        * fast/url/file-http-base-expected.txt:
+        * fast/url/file-http-base.html:
+
 2021-01-26  Rob Buis  <rbuis@igalia.com>
 
         Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream
