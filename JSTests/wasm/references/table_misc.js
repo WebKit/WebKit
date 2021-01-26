@@ -25,7 +25,7 @@ import Builder from '../Builder.js';
     assert.eq($1.exports.tbl.grow(5), 20)
     assert.eq($1.exports.tbl_size(), 25)
     assert.eq($1.exports.tbl.get(0), null)
-    assert.eq($1.exports.tbl.get(24), null)
+    assert.eq($1.exports.tbl.get(24), undefined)
 }
 
 assert.throws(() => new WebAssembly.Module((new Builder())

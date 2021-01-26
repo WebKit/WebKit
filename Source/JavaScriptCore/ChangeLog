@@ -1,3 +1,20 @@
+2021-01-26  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-References] Change default value for externref's tables from null to undefined
+        https://bugs.webkit.org/show_bug.cgi?id=220918
+
+        Reviewed by Yusuke Suzuki.
+
+        Update reference types tests to satisfy the spec:
+        Externref's tables default value should be undefined.
+
+        * wasm/js/JSWebAssemblyHelpers.h:
+        (JSC::defaultValueForTable):
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2021-01-25  Simon Fraser  <simon.fraser@apple.com>
 
         Crash when remote inspecting in debug builds

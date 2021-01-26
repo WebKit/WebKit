@@ -1,3 +1,22 @@
+2021-01-26  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-References] Change default value for externref's tables from null to undefined
+        https://bugs.webkit.org/show_bug.cgi?id=220918
+
+        Reviewed by Yusuke Suzuki.
+
+        According to the reference types spec
+        https://webassembly.github.io/reference-types/js-api/#defaultvaluey
+        we should use undefined as a default value in Table ctor, set and grow
+        methods, so this patch replaces previous null default value for
+        externref's table to undefined.
+
+        * wasm/references/externref_table_import.js:
+        (string_appeared_here.fullGC.assert.eq.1.exports.get_tbl):
+        * wasm/references/table_js_api.js:
+        (testTableGrowForExternrefTables):
+        * wasm/references/table_misc.js:
+
 2021-01-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] JSPromise should not propagate TerminatedExecutionError

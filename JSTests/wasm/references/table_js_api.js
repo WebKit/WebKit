@@ -14,6 +14,12 @@ function testTableGrowForExternrefTables() {
   assert.eq(table.get(1).calories, calories);
   assert.eq(table.get(2).calories, calories);
   assert.eq(table.get(3).calories, calories);
+
+  table.grow(3);
+  assert.eq(table.length, 7);
+  assert.eq(table.get(4), undefined);
+  assert.eq(table.get(5), undefined);
+  assert.eq(table.get(6), undefined);
 }
 
 async function testTableGrowForFuncrefTables() {
@@ -56,7 +62,10 @@ function testTableSetForExternrefTables() {
   assert.eq(table.get(0).calories, calories);
 
   table.set(0);
-  assert.eq(table.get(0), null);
+  assert.eq(table.get(0), undefined);
+
+  assert.throws(() => table.set(4), RangeError, "WebAssembly.Table.prototype.set expects an integer less than the length of the table");
+  assert.throws(() => table.set(100500), RangeError, "WebAssembly.Table.prototype.set expects an integer less than the length of the table");
 }
 
 async function testTableSetForFuncrefTables() {
