@@ -1,3 +1,104 @@
+2021-01-26  Rob Buis  <rbuis@igalia.com>
+
+        Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=220968
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream c882810b64.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-sizing/aspect-ratio/abspos-004.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/abspos-015-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/abspos-015.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/abspos-016-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/abspos-016.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-005.html.
+        * web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-004.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-005.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-006.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-007.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-029-crash.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-030-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-030.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-005.html.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-025-expected.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-025.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-026-expected.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-026.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-001-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-001.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-002-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-002.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-003-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-003.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-004-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-004.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-005-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-005.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-006-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-006.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-007-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-007.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-008-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-008.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-009-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-009.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-010-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-010.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-011-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-011.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-012-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-012.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-013-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-013.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-014-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-014.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-004.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-009-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-009.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-005.html.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-010-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-010.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-011-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-011.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/percentage-resolution-005-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/percentage-resolution-005.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-005.html.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-028-expected.txt: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-028.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-029-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-029.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-007.html.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-030-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-030.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-007.html.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-031-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-031.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-032-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-032.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/support/100x100-green.png: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/support/1x1-green.png: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/support/200x200-green.png: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/support/w3c-import.log:
+        * web-platform-tests/css/css-sizing/aspect-ratio/table-element-001-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/table-element-001.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/w3c-import.log:
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-001-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-001.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-002-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-002.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-003-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-003.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-004-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-004.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-005-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-005.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-006-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-006.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-007-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-007.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-008-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-008.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-009-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-009.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-010-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/zero-or-infinity-010.html: Added.
+
 2021-01-25  Chris Dumez  <cdumez@apple.com>
 
         Support AbortSignal in addEventListenerOptions to unsubscribe from events
