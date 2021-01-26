@@ -1,3 +1,15 @@
+2021-01-26  Chris Dumez  <cdumez@apple.com>
+
+        Disable TBA availability macro post-processing on iOS 14 / macOS 11
+        https://bugs.webkit.org/show_bug.cgi?id=221004
+
+        Reviewed by Tim Horton.
+
+        Disable TBA availability macro post-processing on iOS 14 / macOS 11, now that TBA headers have been updated in r271813.
+
+        * Configurations/WebKit.xcconfig:
+        * Configurations/WebKitTargetConditionals.xcconfig:
+
 2021-01-26  Per Arne  <pvollan@apple.com>
 
         [macOS] Close all XPC connections to Launch Services after checking in
