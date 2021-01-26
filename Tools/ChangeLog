@@ -1,3 +1,23 @@
+2021-01-26  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] API tests fail to report harness failures
+        https://bugs.webkit.org/show_bug.cgi?id=220938
+
+        Reviewed by Carlos Garcia Campos.
+
+        The GLibTestRunner class parses the stdout of the child test program to
+        detect failures and crashes using GLib's g_test_* protocol, but the
+        setup and teardown of each suite/program is done manually in the
+        beforeAll/afterAll functions. Their output/status need to be checked
+        separately by the runner scripts.
+
+        This commit checks if a failure happens before any test is run (a
+        beforeAll failure) and if there is still pending stderr output not
+        processed by g_test_run (an afterAll failure).
+
+        * glib/glib_test_runner.py:
+        (GLibTestRunner.run):
+
 2021-01-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r271578.
