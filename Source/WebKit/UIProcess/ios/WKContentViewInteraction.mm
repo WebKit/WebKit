@@ -942,7 +942,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 #endif
 
     _textInteractionDidChangeFocusedElement = NO;
-    _textInteractionIsHappening = NO;
+    _activeTextInteractionCount = 0;
 
     _treatAsContentEditableUntilNextEditorStateUpdate = NO;
 
@@ -1378,7 +1378,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
         _page->activityStateDidChange(WebCore::ActivityState::IsFocused, WebKit::WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
 
-        if ([self canShowNonEmptySelectionView] || (!_suppressSelectionAssistantReasons && _textInteractionIsHappening))
+        if ([self canShowNonEmptySelectionView] || (!_suppressSelectionAssistantReasons && _activeTextInteractionCount))
             [_textInteractionAssistant activateSelection];
 
         [self _scheduleResetInputViewDeferralAfterBecomingFirstResponder];
@@ -2079,7 +2079,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (void)_zoomToRevealFocusedElement
 {
-    if (_suppressSelectionAssistantReasons || _textInteractionIsHappening)
+    if (_suppressSelectionAssistantReasons || _activeTextInteractionCount)
         return;
 
     // In case user scaling is force enabled, do not use that scaling when zooming in with an input field.
@@ -4454,7 +4454,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [_webView _didCommitLoadForMainFrame];
 
     _textInteractionDidChangeFocusedElement = NO;
-    _textInteractionIsHappening = NO;
+    _activeTextInteractionCount = 0;
     _treatAsContentEditableUntilNextEditorStateUpdate = NO;
     _hasValidPositionInformation = NO;
     _positionInformation = { };
@@ -5387,19 +5387,31 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 - (void)_willBeginTextInteractionInTextInputContext:(_WKTextInputContext *)context
 {
     ASSERT(context);
+
+    _page->setCanShowPlaceholder(context._textInputContext, false);
+
+    ++_activeTextInteractionCount;
+    if (_activeTextInteractionCount > 1)
+        return;
+
     _textInteractionDidChangeFocusedElement = NO;
     _page->setShouldRevealCurrentSelectionAfterInsertion(false);
-    _page->setCanShowPlaceholder(context._textInputContext, false);
     _usingGestureForSelection = YES;
-    _textInteractionIsHappening = YES;
 }
 
 - (void)_didFinishTextInteractionInTextInputContext:(_WKTextInputContext *)context
 {
     ASSERT(context);
-    _textInteractionIsHappening = NO;
-    _usingGestureForSelection = NO;
+
     _page->setCanShowPlaceholder(context._textInputContext, true);
+
+    ASSERT(_activeTextInteractionCount > 0);
+    --_activeTextInteractionCount;
+    if (_activeTextInteractionCount)
+        return;
+
+    _usingGestureForSelection = NO;
+
     if (_textInteractionDidChangeFocusedElement) {
         // Mark to zoom to reveal the newly focused element on the next editor state update.
         // Then tell the web process to reveal the current selection, which will send us (the
@@ -5407,6 +5419,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         _page->setWaitingForPostLayoutEditorStateUpdateAfterFocusingElement(true);
         _textInteractionDidChangeFocusedElement = NO;
     }
+
     _page->setShouldRevealCurrentSelectionAfterInsertion(true);
 }
 
