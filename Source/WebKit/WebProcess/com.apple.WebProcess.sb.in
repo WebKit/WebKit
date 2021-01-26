@@ -921,12 +921,11 @@
 (allow mach-lookup (extension "com.apple.app-sandbox.mach")) ;; FIXME: Should be removed when <rdar://problem/13066206> is fixed.
 
 ;; Allow the OpenGL Profiler to attach.
-(if (defined? 'mach-register)
-    (allow mach-register
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-        (with telemetry-backtrace)
-#endif
-        (global-name-regex #"^_oglprof_attach_<[0-9]+>$")))
+(with-filter (system-attribute apple-internal)
+    (if (defined? 'mach-register)
+        (allow mach-register
+            (global-name-regex #"^_oglprof_attach_<[0-9]+>$")))
+)
 
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
     (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_CACHE_DIR")))
