@@ -398,8 +398,6 @@
 ;;; process-info* defaults to allow; deny it and then allow operations we actually need.
 (deny process-info*)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-(allow process-info-pidinfo
-    (with report) (with telemetry-backtrace))
 (allow process-info-pidinfo (target self))
 #else
 (allow process-info-pidinfo)
@@ -407,8 +405,6 @@
 (allow process-info-setcontrol (target self))
 (allow process-info-dirtycontrol (target self))
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-(allow process-codesigning-status*
-    (with report) (with telemetry-backtrace))
 (allow process-codesigning-status* (target self))
 #else
 (allow process-codesigning-status*)
