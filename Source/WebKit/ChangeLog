@@ -1,5 +1,22 @@
 2021-01-26  Per Arne  <pvollan@apple.com>
 
+        [macOS] Close all XPC connections to Launch Services after checking in
+        https://bugs.webkit.org/show_bug.cgi?id=220952
+        <rdar://13785139>
+
+        Reviewed by Brent Fulgham.
+
+        After checking in with Launch Services on macOS, close all open XPC connections to the service.
+        This patch also adds checks for a valid Network process connection when updating the WebContent
+        process' information.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::updateProcessName):
+        (WebKit::WebProcess::updateActivePages):
+
+2021-01-26  Per Arne  <pvollan@apple.com>
+
         [macOS] Add local sandbox reporting for access to Metal services in the WebContent process
         https://bugs.webkit.org/show_bug.cgi?id=220986
 
