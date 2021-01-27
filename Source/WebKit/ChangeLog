@@ -1,3 +1,28 @@
+2021-01-27  Martin Robinson  <mrobinson@igalia.com>
+
+        Use ScrollSnapOffsetsInfo in the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=220915
+
+        Reviewed by Simon Fraser.
+
+        Use ScrollSnapOffsets more often in the scrolling tree to continue to
+        abstract away the details of how snap offsets are implemented.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateScrollingNode>::decode):
+        (ArgumentCoder<ScrollSnapOffsetsInfo<float>>::encode):
+        (ArgumentCoder<ScrollSnapOffsetsInfo<float>>::decode):
+        (WebKit::dump):
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::shouldSnapForMainFrameScrolling const):
+        (WebKit::RemoteScrollingCoordinatorProxy::closestSnapOffsetForMainFrameScrolling const):
+        (WebKit::RemoteScrollingCoordinatorProxy::hasActiveSnapPoint const):
+        (WebKit::RemoteScrollingCoordinatorProxy::nearestActiveContentInsetAdjustedSnapOffset const):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (-[WKScrollingNodeScrollViewDelegate scrollViewWillEndDragging:withVelocity:targetContentOffset:]):
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren):
+
 2021-01-26  Sihui Liu  <sihui_liu@appe.com>
 
         Mute audio capture for speech recognition based on shouldInterruptAudioOnPageVisibilityChange when page is invisible

@@ -55,8 +55,6 @@ public:
     void currentScrollPositionChanged();
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    void updateScrollSnapPoints(ScrollEventAxis, const Vector<LayoutUnit>&, const Vector<ScrollOffsetRange<LayoutUnit>>&);
-    void setActiveScrollSnapIndexForAxis(ScrollEventAxis, unsigned);
     bool activeScrollSnapIndexDidChange() const;
     unsigned activeScrollSnapIndexForAxis(ScrollEventAxis) const;
     bool isScrollSnapInProgress() const;

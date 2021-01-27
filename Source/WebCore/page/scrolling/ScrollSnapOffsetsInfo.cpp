@@ -320,6 +320,57 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
         scrollableArea.clearVerticalSnapOffsets();
 }
 
+static float convertOffsetUnit(LayoutUnit input, float deviceScaleFactor)
+{
+    return roundToDevicePixel(input, deviceScaleFactor, false);
+}
+
+static LayoutUnit convertOffsetUnit(float input, float /* scaleFactor */)
+{
+    return LayoutUnit(input);
+}
+
+template <typename InputType, typename OutputType>
+static ScrollSnapOffsetsInfo<OutputType> convertOffsetInfo(const ScrollSnapOffsetsInfo<InputType>& input, float scaleFactor = 0.0)
+{
+    auto convertOffsets = [scaleFactor](const Vector<InputType>& input)
+    {
+        Vector<OutputType> output;
+        output.reserveInitialCapacity(input.size());
+        for (auto& offset : input)
+            output.uncheckedAppend(convertOffsetUnit(offset, scaleFactor));
+        return output;
+    };
+
+    auto convertOffsetRanges = [scaleFactor](const Vector<ScrollOffsetRange<InputType>>& input)
+    {
+        Vector<ScrollOffsetRange<OutputType>> output;
+        output.reserveInitialCapacity(input.size());
+        for (auto& range : input)
+            output.uncheckedAppend({ convertOffsetUnit(range.start, scaleFactor), convertOffsetUnit(range.end, scaleFactor) });
+        return output;
+    };
+
+    return {
+        convertOffsets(input.horizontalSnapOffsets),
+        convertOffsets(input.verticalSnapOffsets),
+        convertOffsetRanges(input.horizontalSnapOffsetRanges),
+        convertOffsetRanges(input.verticalSnapOffsetRanges)
+    };
+}
+
+template <> template <>
+ScrollSnapOffsetsInfo<LayoutUnit> ScrollSnapOffsetsInfo<float>::convertUnits(float /* unusedScaleFactor */) const
+{
+    return convertOffsetInfo<float, LayoutUnit>(*this);
+}
+
+template <> template <>
+ScrollSnapOffsetsInfo<float> ScrollSnapOffsetsInfo<LayoutUnit>::convertUnits(float deviceScaleFactor) const
+{
+    return convertOffsetInfo<LayoutUnit, float>(*this, deviceScaleFactor);
+}
+
 }
 
 #endif // ENABLE(CSS_SCROLL_SNAP)

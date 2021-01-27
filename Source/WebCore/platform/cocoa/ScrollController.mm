@@ -81,11 +81,6 @@ static float scrollWheelMultiplier()
 }
 #endif
 
-static ScrollEventAxis otherScrollEventAxis(ScrollEventAxis axis)
-{
-    return axis == ScrollEventAxis::Horizontal ? ScrollEventAxis::Vertical : ScrollEventAxis::Horizontal;
-}
-
 ScrollController::ScrollController(ScrollControllerClient& client)
     : m_client(client)
 {
@@ -831,7 +826,17 @@ void ScrollController::scrollSnapTimerFired()
 void ScrollController::updateScrollSnapState(const ScrollableArea& scrollableArea)
 {
     const auto* snapOffsetInfo = scrollableArea.snapOffsetInfo();
-    if (!snapOffsetInfo || snapOffsetInfo->isEmpty()) {
+    if (!snapOffsetInfo) {
+        m_scrollSnapState = nullptr;
+        return;
+    }
+
+    updateScrollSnapPoints(*snapOffsetInfo);
+}
+
+void ScrollController::updateScrollSnapPoints(const ScrollSnapOffsetsInfo<LayoutUnit>& snapOffsetInfo)
+{
+    if (snapOffsetInfo.isEmpty()) {
         m_scrollSnapState = nullptr;
         return;
     }
@@ -840,34 +845,12 @@ void ScrollController::updateScrollSnapState(const ScrollableArea& scrollableAre
     if (!m_scrollSnapState)
         m_scrollSnapState = makeUnique<ScrollSnapAnimatorState>();
 
-    m_scrollSnapState->setSnapOffsetInfo(*snapOffsetInfo);
+    m_scrollSnapState->setSnapOffsetInfo(snapOffsetInfo);
 
     if (shouldComputeCurrentSnapIndices)
         setActiveScrollSnapIndicesForOffset(roundedIntPoint(m_client.scrollOffset()));
 
-    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollController " << this << " updateScrollSnapState for " << scrollableArea << " new state " << ValueOrNull(m_scrollSnapState.get()));
-}
-
-void ScrollController::updateScrollSnapPoints(ScrollEventAxis axis, const Vector<LayoutUnit>& snapPoints, const Vector<ScrollOffsetRange<LayoutUnit>>& snapRanges)
-{
-    bool shouldComputeCurrentSnapIndices = false;
-    if (!m_scrollSnapState) {
-        if (snapPoints.isEmpty())
-            return;
-
-        m_scrollSnapState = makeUnique<ScrollSnapAnimatorState>();
-        shouldComputeCurrentSnapIndices = true;
-    }
-
-    if (snapPoints.isEmpty() && m_scrollSnapState->snapOffsetsForAxis(otherScrollEventAxis(axis)).isEmpty())
-        m_scrollSnapState = nullptr;
-    else {
-        m_scrollSnapState->setSnapOffsetsAndPositionRangesForAxis(axis, snapPoints, snapRanges);
-        if (shouldComputeCurrentSnapIndices) {
-            setActiveScrollSnapIndicesForOffset(roundedIntPoint(m_client.scrollOffset()));
-            LOG_WITH_STREAM(ScrollSnap, stream << "ScrollController::updateScrollSnapPoints - computed initial snap indices: x " << m_scrollSnapState->activeSnapIndexForAxis(ScrollEventAxis::Horizontal) << ", y " << m_scrollSnapState->activeSnapIndexForAxis(ScrollEventAxis::Vertical));
-        }
-    }
+    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollController " << this << " updateScrollSnapState new state: " << ValueOrNull(m_scrollSnapState.get()));
 }
 
 unsigned ScrollController::activeScrollSnapIndexForAxis(ScrollEventAxis axis) const

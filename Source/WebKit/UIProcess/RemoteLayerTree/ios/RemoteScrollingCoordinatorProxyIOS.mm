@@ -213,7 +213,7 @@ bool RemoteScrollingCoordinatorProxy::shouldSnapForMainFrameScrolling(ScrollEven
     ScrollingTreeNode* root = m_scrollingTree->rootNode();
     if (root && root->isFrameScrollingNode()) {
         ScrollingTreeFrameScrollingNode* rootScrollingNode = static_cast<ScrollingTreeFrameScrollingNode*>(root);
-        const Vector<float>& snapOffsets = axis == ScrollEventAxis::Horizontal ? rootScrollingNode->horizontalSnapOffsets() : rootScrollingNode->verticalSnapOffsets();
+        const Vector<float>& snapOffsets = rootScrollingNode->snapOffsetsInfo().offsetsForAxis(axis);
         unsigned currentIndex = axis == ScrollEventAxis::Horizontal ? m_currentHorizontalSnapPointIndex : m_currentVerticalSnapPointIndex;
         return snapOffsets.size() && (currentIndex < snapOffsets.size() || currentIndex == invalidSnapOffsetIndex);
     }
@@ -225,8 +225,8 @@ float RemoteScrollingCoordinatorProxy::closestSnapOffsetForMainFrameScrolling(Sc
     ScrollingTreeNode* root = m_scrollingTree->rootNode();
     ASSERT(root && root->isFrameScrollingNode());
     ScrollingTreeFrameScrollingNode* rootScrollingNode = static_cast<ScrollingTreeFrameScrollingNode*>(root);
-    const Vector<float>& snapOffsets = axis == ScrollEventAxis::Horizontal ? rootScrollingNode->horizontalSnapOffsets() : rootScrollingNode->verticalSnapOffsets();
-    const Vector<ScrollOffsetRange<float>>& snapOffsetRanges = axis == ScrollEventAxis::Horizontal ? rootScrollingNode->horizontalSnapOffsetRanges() : rootScrollingNode->verticalSnapOffsetRanges();
+    const Vector<float>& snapOffsets = rootScrollingNode->snapOffsetsInfo().offsetsForAxis(axis);
+    const Vector<ScrollOffsetRange<float>>& snapOffsetRanges = rootScrollingNode->snapOffsetsInfo().offsetRangesForAxis(axis);
 
     float scaledScrollDestination = scrollDestination / m_webPageProxy.displayedContentScale();
     float rawClosestSnapOffset = closestSnapOffset(snapOffsets, snapOffsetRanges, scaledScrollDestination, velocity, currentIndex);
@@ -243,8 +243,8 @@ bool RemoteScrollingCoordinatorProxy::hasActiveSnapPoint() const
         return false;
 
     ScrollingTreeFrameScrollingNode& rootScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(*root);
-    const Vector<float>& horizontal = rootScrollingNode.horizontalSnapOffsets();
-    const Vector<float>& vertical = rootScrollingNode.verticalSnapOffsets();
+    const Vector<float>& horizontal = rootScrollingNode.snapOffsetsInfo().horizontalSnapOffsets;
+    const Vector<float>& vertical = rootScrollingNode.snapOffsetsInfo().verticalSnapOffsets;
 
     if (horizontal.isEmpty() && vertical.isEmpty())
         return false;
@@ -264,8 +264,8 @@ CGPoint RemoteScrollingCoordinatorProxy::nearestActiveContentInsetAdjustedSnapOf
     ScrollingTreeNode* root = m_scrollingTree->rootNode();
     ASSERT(root && is<ScrollingTreeFrameScrollingNode>(root));
     ScrollingTreeFrameScrollingNode& rootScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(*root);
-    const Vector<float>& horizontal = rootScrollingNode.horizontalSnapOffsets();
-    const Vector<float>& vertical = rootScrollingNode.verticalSnapOffsets();
+    const Vector<float>& horizontal = rootScrollingNode.snapOffsetsInfo().horizontalSnapOffsets;
+    const Vector<float>& vertical = rootScrollingNode.snapOffsetsInfo().verticalSnapOffsets;
 
     // The bounds checking with maxScrollOffsets is to ensure that we won't interfere with rubber-banding when scrolling to the edge of the page.
     if (!horizontal.isEmpty() && m_currentHorizontalSnapPointIndex < horizontal.size())

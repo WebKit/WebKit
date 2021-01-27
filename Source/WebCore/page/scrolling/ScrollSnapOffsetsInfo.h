@@ -59,6 +59,11 @@ struct ScrollSnapOffsetsInfo {
     Vector<ScrollOffsetRange<T>> horizontalSnapOffsetRanges;
     Vector<ScrollOffsetRange<T>> verticalSnapOffsetRanges;
 
+    bool isEqual(const ScrollSnapOffsetsInfo<T>& other) const
+    {
+        return horizontalSnapOffsets == other.horizontalSnapOffsets && verticalSnapOffsets == other.verticalSnapOffsets && horizontalSnapOffsetRanges == other.horizontalSnapOffsetRanges && verticalSnapOffsetRanges == other.verticalSnapOffsetRanges;
+    }
+
     bool isEmpty() const
     {
         return horizontalSnapOffsets.isEmpty() && verticalSnapOffsets.isEmpty();
@@ -73,7 +78,15 @@ struct ScrollSnapOffsetsInfo {
     {
         return axis == ScrollEventAxis::Vertical ? verticalSnapOffsetRanges : horizontalSnapOffsetRanges;
     }
+
+    template<typename OutputType> ScrollSnapOffsetsInfo<OutputType> convertUnits(float deviceScaleFactor = 0.0) const;
 };
+
+template <> template <>
+ScrollSnapOffsetsInfo<LayoutUnit> ScrollSnapOffsetsInfo<float>::convertUnits(float /* unusedScaleFactor */) const;
+
+template <> template <>
+ScrollSnapOffsetsInfo<float> ScrollSnapOffsetsInfo<LayoutUnit>::convertUnits(float deviceScaleFactor) const;
 
 const unsigned invalidSnapOffsetIndex = UINT_MAX;
 
