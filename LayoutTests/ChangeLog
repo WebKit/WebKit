@@ -1,3 +1,14 @@
+2021-01-26  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r268947) Some table elements become blank when scroll-bar is toggled
+        https://bugs.webkit.org/show_bug.cgi?id=221016
+        <rdar://72881404>
+
+        Reviewed by Zalan Bujtas.
+
+        * compositing/scrolling/async-overflow-scrolling/self-painting-layer-float-expected.html: Added.
+        * compositing/scrolling/async-overflow-scrolling/self-painting-layer-float.html: Added.
+
 2021-01-26  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening soup crashes and other timeouts

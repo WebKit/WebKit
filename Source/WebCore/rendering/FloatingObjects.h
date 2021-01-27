@@ -79,8 +79,11 @@ public:
     void setIsInPlacedTree(bool value) { m_isInPlacedTree = value; }
 #endif
 
-    bool shouldPaint() const { return m_shouldPaint; }
-    void setShouldPaint(bool shouldPaint) { m_shouldPaint = shouldPaint; }
+    bool shouldPaint() const;
+
+    bool paintsFloat() const { return m_paintsFloat; }
+    void setPaintsFloat(bool paintsFloat) { m_paintsFloat = paintsFloat; }
+
     bool isDescendant() const { return m_isDescendant; }
     void setIsDescendant(bool isDescendant) { m_isDescendant = isDescendant; }
 
@@ -103,9 +106,8 @@ private:
     LayoutRect m_frameRect;
     LayoutUnit m_paginationStrut;
     LayoutSize m_marginOffset;
-
     unsigned m_type : 2; // Type (left or right aligned)
-    unsigned m_shouldPaint : 1;
+    unsigned m_paintsFloat : 1;
     unsigned m_isDescendant : 1;
     unsigned m_isPlaced : 1;
 #if ASSERT_ENABLED
