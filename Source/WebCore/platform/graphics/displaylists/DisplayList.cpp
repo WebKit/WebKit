@@ -383,7 +383,9 @@ void DisplayList::iterator::advance()
 void DisplayList::iterator::clearCurrentItem()
 {
     if (m_currentBufferForItem) {
-        ItemHandle { m_currentBufferForItem }.destroy();
+        if (LIKELY(m_isValid))
+            ItemHandle { m_currentBufferForItem }.destroy();
+
         if (UNLIKELY(m_currentBufferForItem != m_fixedBufferForCurrentItem))
             fastFree(m_currentBufferForItem);
     }
