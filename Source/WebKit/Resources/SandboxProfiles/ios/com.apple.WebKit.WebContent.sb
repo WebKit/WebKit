@@ -1387,6 +1387,7 @@
                 mach_exception_raise
                 (when (defined? 'mach_make_memory_entry) mach_make_memory_entry)
                 (when (defined? 'mach_make_memory_entry_64) mach_make_memory_entry_64)
+                mach_memory_entry_ownership
                 mach_port_get_context_from_user
                 mach_port_request_notification
                 mach_port_set_attributes

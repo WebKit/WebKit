@@ -56,6 +56,8 @@ class MachSendRight;
 
 namespace WebKit {
 
+enum class MemoryLedger { None, Default, Network, Media, Graphics, Neural };
+
 class SharedMemory : public ThreadSafeRefCounted<SharedMemory> {
 public:
     enum class Protection {
@@ -76,6 +78,9 @@ public:
 #if OS(DARWIN) || OS(WINDOWS)
         size_t size() const { return m_size; }
 #endif
+
+        // Take ownership of the memory for jetsam purposes.
+        void takeOwnershipOfMemory(MemoryLedger) const;
 
         void clear();
 

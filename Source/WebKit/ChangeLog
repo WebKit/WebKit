@@ -1,3 +1,43 @@
+2021-01-27  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] Move ownership of RingBuffer backing used by RemoteAudioSourceProviderManager::RemoteAudio to WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=221048
+
+        Reviewed by Geoffrey Garen.
+
+        Move ownership of RingBuffer backing used by RemoteAudioSourceProviderManager::RemoteAudio
+        from the GPUProcess to WebProcess, for jetsam purposes. This moves half a megabyte of memory
+        from the GPUProcess to the WebProcess on https://foobar404.github.io/Wave.js.
+
+        * Platform/SharedMemory.cpp:
+        (WebKit::SharedMemory::Handle::takeOwnershipOfMemory const):
+        * Platform/SharedMemory.h:
+        Add takeOwnershipOfMemory() API to SharedMemory::Handle to take ownership of memory and
+        assign it to a particular memory ledger, via mach_memory_entry_ownership().
+
+        * Platform/cocoa/SharedMemoryCocoa.cpp:
+        (WebKit::toVMMemoryLedger):
+        (WebKit::SharedMemory::Handle::takeOwnershipOfMemory const):
+        Add implementation to take ownership of memory when given a mach port.
+
+        (WebKit::SharedMemory::allocate):
+        Add VM_FLAGS_PURGABLE flag when calling mach_vm_allocate() so that memory ownership can
+        be transferred later on.
+
+        (WebKit::makeMemoryEntry):
+        First try to call mach_make_memory_entry_64() without the MAP_MEM_VM_SHARE flag since this
+        flag prevents transfer of the memory ownership via mach_memory_entry_ownership(). If this
+        fails, we try again with the MAP_MEM_VM_SHARE flag, to be safe. MAP_MEM_VM_SHARE allows
+        the memory entry to cover any virtual range, possibly backed by multiple VM objects.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+        Tweak the sandbox to allow the WebProcess to call mach_memory_entry_ownership().
+
+        * WebProcess/GPU/media/RemoteAudioSourceProviderManager.cpp:
+        (WebKit::RemoteAudioSourceProviderManager::RemoteAudio::setStorage):
+        Take ownership of RingBuffer backing memory.
+
 2021-01-27  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Conditionalize debugging support on internal builds

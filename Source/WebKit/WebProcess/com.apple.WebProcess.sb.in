@@ -1752,6 +1752,7 @@
                 io_service_get_matching_services_bin
                 io_service_open_extended
                 mach_exception_raise
+                mach_memory_entry_ownership
                 mach_port_get_context_from_user
                 mach_port_get_refs
                 mach_port_request_notification

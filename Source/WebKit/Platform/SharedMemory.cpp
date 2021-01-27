@@ -48,4 +48,10 @@ RefPtr<SharedMemory> SharedMemory::copyBuffer(const SharedBuffer& buffer)
     return sharedMemory;
 }
 
+#if !PLATFORM(COCOA)
+void SharedMemory::Handle::takeOwnershipOfMemory(MemoryLedger) const
+{
+}
+#endif
+
 } // namespace WebKit

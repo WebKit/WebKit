@@ -198,6 +198,10 @@
 #define HAVE_MACH_EXCEPTIONS 1
 #endif
 
+#if OS(DARWIN) && __has_include(<mach/memory_entry.h>)
+#define HAVE_MACH_MEMORY_ENTRY 1
+#endif
+
 #if PLATFORM(MAC)
 #define HAVE_HOSTED_CORE_ANIMATION 1
 #endif
