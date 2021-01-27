@@ -1,3 +1,19 @@
+2021-01-26  Razvan Caliman  <rcaliman@apple.com>
+
+        REGRESSION(r270637) Filtering does not work in Styles sidebar panel
+        https://bugs.webkit.org/show_bug.cgi?id=220993
+        <rdar://problem/73623818>
+
+        Reviewed by Devin Rousso.
+
+        Stop expecting StyleDetailsPanel to define an abstract filterDidChange() method.
+        Subclasses implement their own on a per-use case basis.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WI.ComputedStyleDetailsPanel.prototype.filterDidChange):
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.filterDidChange):
+
 2021-01-25  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Add experimental setting to show Layout panel in Elements tab

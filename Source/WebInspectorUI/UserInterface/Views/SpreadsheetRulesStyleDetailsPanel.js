@@ -320,8 +320,6 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
 
     filterDidChange(filterBar)
     {
-        super.filterDidChange(filterBar);
-
         this.applyFilter(filterBar.filters.text);
     }
 
