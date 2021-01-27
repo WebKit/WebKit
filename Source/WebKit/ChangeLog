@@ -1,3 +1,22 @@
+2021-01-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Conditionalize debugging support on internal builds
+        https://bugs.webkit.org/show_bug.cgi?id=221053
+        <rdar://problem/73520300>
+
+        Reviewed by Per Arne Vollan.
+
+        We should restrict use of the (debugging-support) rules in our iOS sandboxes to internal OS, since those
+        features are not accessible to production users.
+
+        Since these restrictions don't impact end user debugging use cases, we'll also rename the rules to
+        "internal-debugging-support".
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2021-01-27  Kate Cheney  <katherine_cheney@apple.com>
 
         WKWebView closeAllMediaPresentations API does not have a completion handler
