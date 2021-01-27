@@ -1387,7 +1387,10 @@
     ;; QuickTimeUSBVDCDigitizer
     (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
         (allow iokit-open
-            (iokit-user-client-class "IOUSBDeviceUserClientV2")
+            (require-all
+                (iokit-usb-interface-class kUSBVideoInterfaceClass)
+                (iokit-user-client-class "IOUSBDeviceUserClientV2")
+            )
             (with telemetry-backtrace)
             (apply-message-filter
                 (allow (with telemetry)
@@ -1401,13 +1404,19 @@
         )
         ; else
         (allow iokit-open
-            (iokit-user-client-class "IOUSBDeviceUserClientV2")
+            (require-all
+                (iokit-usb-interface-class kUSBVideoInterfaceClass)
+                (iokit-user-client-class "IOUSBDeviceUserClientV2")
+            )
         )
     )
 
     (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
         (allow iokit-open
-            (iokit-user-client-class "IOUSBInterfaceUserClientV2")
+            (require-all
+                (iokit-usb-interface-class kUSBVideoInterfaceClass)
+                (iokit-user-client-class "IOUSBInterfaceUserClientV2")
+            )
             (with telemetry-backtrace)
             (apply-message-filter
                 (allow (with telemetry)
@@ -1421,7 +1430,10 @@
         )
         ; else
         (allow iokit-open
-            (iokit-user-client-class "IOUSBInterfaceUserClientV2")
+            (require-all
+                (iokit-usb-interface-class kUSBVideoInterfaceClass)
+                (iokit-user-client-class "IOUSBInterfaceUserClientV2")
+            )
         )
     )
     
