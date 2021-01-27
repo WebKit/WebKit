@@ -54,6 +54,16 @@ void PageClientImplCocoa::themeColorDidChange()
     [m_webView didChangeValueForKey:@"_themeColor"];
 }
 
+void PageClientImplCocoa::pageExtendedBackgroundColorWillChange()
+{
+    [m_webView willChangeValueForKey:@"_pageExtendedBackgroundColor"];
+}
+
+void PageClientImplCocoa::pageExtendedBackgroundColorDidChange()
+{
+    [m_webView didChangeValueForKey:@"_pageExtendedBackgroundColor"];
+}
+
 void PageClientImplCocoa::isPlayingAudioWillChange()
 {
     [m_webView willChangeValueForKey:NSStringFromSelector(@selector(_isPlayingAudio))];

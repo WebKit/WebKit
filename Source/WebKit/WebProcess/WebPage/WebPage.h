@@ -1218,6 +1218,9 @@ public:
     void themeColorChanged() { m_pendingThemeColorChange = true; }
     void flushPendingThemeColorChange();
 
+    void pageExtendedBackgroundColorDidChange() { m_pendingPageExtendedBackgroundColorChange = true; }
+    void flushPendingPageExtendedBackgroundColorChange();
+
     void flushPendingEditorStateUpdate();
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -2035,6 +2038,7 @@ private:
     RefPtr<WebCore::Element> m_recentlyBlurredElement;
     bool m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement { false };
     bool m_pendingThemeColorChange { false };
+    bool m_pendingPageExtendedBackgroundColorChange { false };
     bool m_hasPendingEditorStateUpdate { false };
 
 #if ENABLE(IOS_TOUCH_EVENTS)

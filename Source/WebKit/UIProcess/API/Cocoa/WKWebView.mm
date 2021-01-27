@@ -2796,6 +2796,14 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
     return WebCore::platformColor(themeColor);
 }
 
+- (CocoaColor *)_pageExtendedBackgroundColor
+{
+    auto pageExtendedBackgroundColor = _page->pageExtendedBackgroundColor();
+    if (!pageExtendedBackgroundColor.isValid())
+        return nil;
+    return WebCore::platformColor(pageExtendedBackgroundColor);
+}
+
 - (id <_WKInputDelegate>)_inputDelegate
 {
     return _inputDelegate.getAutoreleased();

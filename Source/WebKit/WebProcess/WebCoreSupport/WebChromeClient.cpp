@@ -1144,13 +1144,9 @@ void WebChromeClient::themeColorChanged(Color /* themeColor */) const
     m_page.themeColorChanged();
 }
 
-void WebChromeClient::pageExtendedBackgroundColorDidChange(Color backgroundColor) const
+void WebChromeClient::pageExtendedBackgroundColorDidChange(Color /* backgroundColor */) const
 {
-#if PLATFORM(MAC)
-    m_page.send(Messages::WebPageProxy::PageExtendedBackgroundColorDidChange(backgroundColor));
-#else
-    UNUSED_PARAM(backgroundColor);
-#endif
+    m_page.pageExtendedBackgroundColorDidChange();
 }
 
 void WebChromeClient::wheelEventHandlersChanged(bool hasHandlers)

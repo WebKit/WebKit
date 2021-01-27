@@ -3937,6 +3937,7 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
     layerTransaction.setScrollPosition(frameView->scrollPosition());
 
     m_pendingThemeColorChange = false;
+    m_pendingPageExtendedBackgroundColorChange = false;
 
     if (m_hasPendingEditorStateUpdate) {
         layerTransaction.setEditorState(editorState());
@@ -6275,6 +6276,16 @@ void WebPage::flushPendingThemeColorChange()
     m_pendingThemeColorChange = false;
 
     send(Messages::WebPageProxy::ThemeColorChanged(m_page->themeColor()));
+}
+
+void WebPage::flushPendingPageExtendedBackgroundColorChange()
+{
+    if (!m_pendingPageExtendedBackgroundColorChange)
+        return;
+
+    m_pendingPageExtendedBackgroundColorChange = false;
+
+    send(Messages::WebPageProxy::PageExtendedBackgroundColorDidChange(m_page->pageExtendedBackgroundColor()));
 }
 
 void WebPage::flushPendingEditorStateUpdate()

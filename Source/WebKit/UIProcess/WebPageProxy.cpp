@@ -8427,9 +8427,14 @@ void WebPageProxy::themeColorChanged(const Color& themeColor)
     pageClient().themeColorDidChange();
 }
 
-void WebPageProxy::pageExtendedBackgroundColorDidChange(const Color& backgroundColor)
+void WebPageProxy::pageExtendedBackgroundColorDidChange(const Color& pageExtendedBackgroundColor)
 {
-    m_pageExtendedBackgroundColor = backgroundColor;
+    if (m_pageExtendedBackgroundColor == pageExtendedBackgroundColor)
+        return;
+
+    pageClient().pageExtendedBackgroundColorWillChange();
+    m_pageExtendedBackgroundColor = pageExtendedBackgroundColor;
+    pageClient().pageExtendedBackgroundColorDidChange();
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

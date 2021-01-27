@@ -377,6 +377,12 @@ for this property.
 @property (nonatomic, readonly) NSColor *_themeColor WK_API_AVAILABLE(macos(WK_MAC_TBA));
 #endif
 
+#if TARGET_OS_IPHONE
+@property (nonatomic, readonly) UIColor *_pageExtendedBackgroundColor WK_API_AVAILABLE(ios(WK_IOS_TBA));
+#else
+@property (nonatomic, readonly) NSColor *_pageExtendedBackgroundColor;
+#endif
+
 @end
 
 #if TARGET_OS_IPHONE
@@ -523,7 +529,6 @@ for this property.
 @property (nonatomic, readonly) _WKRectEdge _pinnedState WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, setter=_setRubberBandingEnabled:) _WKRectEdge _rubberBandingEnabled WK_API_AVAILABLE(macos(10.13.4));
 
-@property (readonly) NSColor *_pageExtendedBackgroundColor;
 @property (nonatomic, setter=_setBackgroundColor:) NSColor *_backgroundColor WK_API_AVAILABLE(macos(10.14));
 @property (nonatomic, copy, setter=_setUnderlayColor:) NSColor *_underlayColor WK_API_AVAILABLE(macos(10.13.4));
 

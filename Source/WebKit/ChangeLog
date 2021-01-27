@@ -1,3 +1,43 @@
+2021-01-27  Devin Rousso  <drousso@apple.com>
+
+        [iOS] expose existing macOS-only `-[WKWebView _pageExtendedBackgroundColor]` SPI
+        https://bugs.webkit.org/show_bug.cgi?id=221015
+        <rdar://problem/73636453>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didCommitLayerTree):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::pageExtendedBackgroundColorDidChange):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::pageExtendedBackgroundColorWillChange): Added.
+        (WebKit::PageClient::pageExtendedBackgroundColorDidChange): Added.
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::pageExtendedBackgroundColorWillChange): Added.
+        (WebKit::PageClientImplCocoa::pageExtendedBackgroundColorDidChange): Added.
+        Add support for ObjC KVO of `-[WKWebView _themeColor]`.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::pageExtendedBackgroundColorDidChange): Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::willCommitLayerTree):
+        (WebKit::WebPage::flushPendingPageExtendedBackgroundColorChange): Added.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::pageExtendedBackgroundColorDidChange const):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updateRendering):
+        On macOS, instead of messaging the UIProcess as soon as changes happen, keep a flag of
+        whether the `pageExtendedBackgroundColor` has changed and use it when updating rendering so
+        that change messages are kept in sync (e.g. modifying `<meta name="theme-color" content="...">`).
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _pageExtendedBackgroundColor]): Added.
+        * UIProcess/API/mac/WKWebViewMac.mm:
+        (-[WKWebView _pageExtendedBackgroundColor]): Deleted.
+
 2021-01-27  Per Arne  <pvollan@apple.com>
 
         [macOS] Remove CFPBS access in the WebContent process

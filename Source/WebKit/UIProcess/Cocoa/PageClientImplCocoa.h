@@ -51,6 +51,8 @@ public:
 
     void themeColorWillChange() final;
     void themeColorDidChange() final;
+    void pageExtendedBackgroundColorWillChange() final;
+    void pageExtendedBackgroundColorDidChange() final;
     void isPlayingAudioWillChange() final;
     void isPlayingAudioDidChange() final;
 
