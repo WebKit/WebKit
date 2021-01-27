@@ -28,33 +28,41 @@
 #if ENABLE(WEBXR)
 
 #include "ExceptionOr.h"
+#include "TransformationMatrix.h"
 #include <JavaScriptCore/Float32Array.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 struct DOMPointInit;
 class DOMPointReadOnly;
 
-class WebXRRigidTransform : public RefCounted<WebXRRigidTransform> {
+class WebXRRigidTransform : public RefCounted<WebXRRigidTransform>, public CanMakeWeakPtr<WebXRRigidTransform> {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(WebXRRigidTransform, WEBCORE_EXPORT);
 public:
     static Ref<WebXRRigidTransform> create();
+    static Ref<WebXRRigidTransform> create(const TransformationMatrix&);
     WEBCORE_EXPORT static ExceptionOr<Ref<WebXRRigidTransform>> create(const DOMPointInit&, const DOMPointInit&);
     WEBCORE_EXPORT ~WebXRRigidTransform();
 
     const DOMPointReadOnly& position() const;
     const DOMPointReadOnly& orientation() const;
-    Ref<Float32Array> matrix() const;
-    Ref<WebXRRigidTransform> inverse() const;
+    const Float32Array& matrix();
+    const WebXRRigidTransform& inverse();
+    const TransformationMatrix& rawTransform() const;
 
 private:
     WebXRRigidTransform(const DOMPointInit&, const DOMPointInit&);
+    WebXRRigidTransform(const TransformationMatrix&);
 
     Ref<DOMPointReadOnly> m_position;
     Ref<DOMPointReadOnly> m_orientation;
+    TransformationMatrix m_rawTransform;
     RefPtr<Float32Array> m_matrix;
+    RefPtr<WebXRRigidTransform> m_inverse;
+    WeakPtr<WebXRRigidTransform> m_parentInverse;
 };
 
 } // namespace WebCore

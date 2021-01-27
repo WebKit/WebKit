@@ -1,3 +1,15 @@
+2021-01-27  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Complete WebXRRigidTransform implementation
+        https://bugs.webkit.org/show_bug.cgi?id=220732
+        <rdar://problem/73617302>
+
+        Reviewed by Sergio Villar Senin.
+
+        Enable XRRigidTransform WebXR tests.
+
+        * platform/wpe/TestExpectations:
+
 2021-01-27  Youenn Fablet  <youenn@apple.com>
 
         [MacOS] Enable NSURLSession WebSocket code path in WebKitTestRunner

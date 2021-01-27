@@ -580,6 +580,26 @@ TransformationMatrix::TransformationMatrix(const AffineTransform& t)
     setMatrix(t.a(), t.b(), t.c(), t.d(), t.e(), t.f());
 }
 
+
+// FIXME: Once https://bugs.webkit.org/show_bug.cgi?id=220856 is addressed we can reuse this function in TransformationMatrix::recompose4().
+TransformationMatrix TransformationMatrix::fromQuaternion(double qx, double qy, double qz, double qw)
+{
+    const double xx = qx * qx;
+    const double yy = qy * qy;
+    const double zz = qz * qz;
+    const double xz = qx * qz;
+    const double xy = qx * qy; 
+    const double yz = qy * qz;
+    const double xw = qw * qx;
+    const double yw = qw * qy;
+    const double zw = qw * qz;
+
+    return TransformationMatrix(1 - 2 * (yy + zz), 2 * (xy + zw), 2 * (xz - yw), 0,
+        2 * (xy - zw), 1 - 2 * (xx + zz), 2 * (yz + xw), 0,
+        2 * (xz + yw), 2 * (yz - xw), 1 - 2 * (xx + yy), 0,
+        0, 0, 0, 1);
+}
+
 TransformationMatrix& TransformationMatrix::scale(double s)
 {
     return scaleNonUniform(s, s);
