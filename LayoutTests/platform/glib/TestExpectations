@@ -254,6 +254,9 @@ webkit.org/b/217801 accessibility/text-element-path.html [ Failure ]
 # aria-braille* attributes are not implemented:
 webkit.org/b/220719 accessibility/braille-label-role.html [ Failure ]
 
+# Key events for AX actions seems to not be not being emitted
+webkit.org/b/221022 accessibility/keyevents-for-actions-mimic-real-key-events.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -720,6 +723,16 @@ webkit.org/b/217267 http/wpt/service-workers/service-worker-spinning-fetch.https
 webkit.org/b/217267 http/wpt/service-workers/service-worker-spinning-install.https.html [ Pass Failure ]
 webkit.org/b/217267 http/wpt/service-workers/service-worker-spinning-message.https.html [ Pass Failure ]
 
+# Start of r271879 regressions (SoupeMessage changes for libsoup3)
+webkit.org/b/221023 fast/encoding/char-decoding-mac.html [ Crash ]
+webkit.org/b/221023 fast/encoding/char-decoding.html [ Crash ]
+webkit.org/b/221023 svg/load-event-detached.html [ Crash ]
+webkit.org/b/221023 fast/events/event-handler-detached-document.html [ Crash ]
+webkit.org/b/221023 imported/w3c/web-platform-tests/xhr/xmlhttprequest-sync-block-defer-scripts.html [ Crash ]
+webkit.org/b/221023 imported/w3c/web-platform-tests/xhr/xmlhttprequest-sync-block-scripts.html [ Crash ]
+webkit.org/b/221023 imported/w3c/web-platform-tests/xhr/xmlhttprequest-sync-default-feature-policy.sub.html [ Crash ]
+webkit.org/b/221023 imported/w3c/web-platform-tests/xhr/xmlhttprequest-sync-not-hang-scriptloader.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SOUP and Networking-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -843,6 +856,10 @@ webkit.org/b/215945 webanimations/accelerated-css-animation-with-easing.html [ I
 webkit.org/b/216539 webanimations/accelerated-animation-easing-and-direction-update.html [ ImageOnlyFailure ]
 
 webkit.org/b/218176 webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html [ ImageOnlyFailure ]
+
+webkit.org/b/221021 webanimations/combining-transform-animations-with-different-acceleration-capabilities-2.html [ Skip ]
+webkit.org/b/221021 webanimations/combining-transform-animations-with-different-acceleration-capabilities-3.html [ Skip ]
+webkit.org/b/221021 webanimations/combining-transform-animations-with-different-acceleration-capabilities.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebAnimations-related bugs
@@ -1010,7 +1027,7 @@ imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.http
 
 webkit.org/b/186638 imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/xhr/send-timeout-events.htm [ Failure Pass ]
-webkit.org/b/175586 imported/w3c/web-platform-tests/xhr/send-network-error-sync-events.sub.htm [ Failure ]
+webkit.org/b/175586 webkit.org/b/221023 imported/w3c/web-platform-tests/xhr/send-network-error-sync-events.sub.htm [ Failure Crash ]
 
 webkit.org/b/202736 http/tests/appcache/remove-cache.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/202736 [ Release ] http/wpt/cache-storage/quota-third-party.https.html [ Pass Timeout ]

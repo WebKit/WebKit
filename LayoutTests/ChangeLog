@@ -1,3 +1,11 @@
+2021-01-26  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening soup crashes and other timeouts
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2021-01-26  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r271584): Hovering slowly over and out of "Top 100" items on liberation.fr does not restore animated state
