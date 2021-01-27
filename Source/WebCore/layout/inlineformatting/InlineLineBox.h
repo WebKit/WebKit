@@ -139,6 +139,9 @@ public:
     InlineLayoutSize logicalSize() const { return logicalRect().size(); }
 
     Optional<InlineLayoutUnit> horizontalAlignmentOffset() const { return m_horizontalAlignmentOffset; }
+
+    // Note that the line can have many inline boxes and be "empty" the same time e.g. <div><span></span><span></span></div>
+    bool hasContent() const { return m_hasContent; }
     bool hasInlineBox() const { return m_boxTypes.contains(InlineLevelBox::Type::InlineBox); }
     bool hasNonInlineBox() const { return m_boxTypes.containsAny({ InlineLevelBox::Type::AtomicInlineLevelBox, InlineLevelBox::Type::LineBreakBox, InlineLevelBox::Type::GenericInlineLevelBox }); }
 
@@ -167,8 +170,11 @@ private:
 
     InlineLevelBox& inlineLevelBoxForLayoutBox(const Box& layoutBox) { return *m_inlineLevelBoxRectMap.get(&layoutBox); }
 
+    void setHasContent(bool hasContent) { m_hasContent = hasContent; }
+
 private:
     InlineRect m_logicalRect;
+    bool m_hasContent { false };
     Optional<InlineLayoutUnit> m_horizontalAlignmentOffset;
     OptionSet<InlineLevelBox::Type> m_boxTypes;
 

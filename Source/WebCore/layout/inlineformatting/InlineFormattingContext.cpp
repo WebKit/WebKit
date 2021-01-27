@@ -448,6 +448,28 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     const auto& lineBox = formattingState.lineBoxes().last();
     auto lineIndex = formattingState.lines().size();
     auto& lineBoxLogicalRect = lineBox.logicalRect();
+    if (!lineBox.hasContent()) {
+        // Fast path for lines with no content e.g. <div><span></span><span></span></div> or <span><div></div></span> where we construct empty pre and post blocks.
+        ASSERT(!lineContent.contentLogicalWidth);
+        ASSERT(!lineBoxLogicalRect.width() && !lineBoxLogicalRect.height());
+        if (lineBox.hasInlineBox()) {
+            for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
+                if (!inlineLevelBox->isInlineBox())
+                    continue;
+                auto& layoutBox = inlineLevelBox->layoutBox();
+                auto& boxGeometry = formattingState.boxGeometry(layoutBox);
+                auto inlineBoxMarginRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox, boxGeometry);
+                boxGeometry.setContentBoxHeight(LayoutUnit::fromFloatCeil(inlineBoxMarginRect.height()));
+                ASSERT(!inlineBoxMarginRect.width());
+                boxGeometry.setContentBoxWidth({ });
+
+                boxGeometry.setLogicalTopLeft({ });
+            }
+        }
+        formattingState.addLine({ lineBoxLogicalRect, { { }, { } }, { }, { }, { } });
+        return lineBoxLogicalRect;
+    }
+
     auto rootInlineBoxLogicalRect = lineBox.logicalRectForRootInlineBox();
     auto enclosingTopAndBottom = InlineLineGeometry::EnclosingTopAndBottom { lineBoxLogicalRect.top() + rootInlineBoxLogicalRect.top(), lineBoxLogicalRect.top() + rootInlineBoxLogicalRect.bottom() };
     HashSet<const Box*> inlineBoxStartSet;

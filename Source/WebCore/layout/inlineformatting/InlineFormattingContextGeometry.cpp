@@ -369,6 +369,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         ASSERT_NOT_REACHED();
     }
 
+    lineBox.setHasContent(lineHasContent);
     if (!m_inlineLevelBoxesNeedVerticalAlignment) {
         if (!lineHasContent) {
             simplifiedVerticalAlignment.rootInlineBoxTop = -rootInlineBox.baseline();
