@@ -1,3 +1,11 @@
+2021-01-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, rebaselining builtin generator test result files
+        https://bugs.webkit.org/show_bug.cgi?id=221028
+
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Separate.js-result:
+
 2021-01-27  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r271186.
