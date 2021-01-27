@@ -845,19 +845,19 @@ void WebPage::requestMediaPlaybackState(CompletionHandler<void(WebKit::MediaPlay
     completionHandler(MediaPlaybackState::MediaPlaybackPlaying);
 }
 
-void WebPage::pauseAllMediaPlayback(CompletionHandler<void(void)>&& completionHandler)
+void WebPage::pauseAllMediaPlayback(CompletionHandler<void()>&& completionHandler)
 {
     m_page->pauseAllMediaPlayback();
     completionHandler();
 }
 
-void WebPage::suspendAllMediaPlayback(CompletionHandler<void(void)>&& completionHandler)
+void WebPage::suspendAllMediaPlayback(CompletionHandler<void()>&& completionHandler)
 {
     m_page->suspendAllMediaPlayback();
     completionHandler();
 }
 
-void WebPage::resumeAllMediaPlayback(CompletionHandler<void(void)>&& completionHandler)
+void WebPage::resumeAllMediaPlayback(CompletionHandler<void()>&& completionHandler)
 {
     m_page->resumeAllMediaPlayback();
     completionHandler();

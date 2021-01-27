@@ -1,3 +1,66 @@
+2021-01-27  Kate Cheney  <katherine_cheney@apple.com>
+
+        WKWebView closeAllMediaPresentations API does not have a completion handler
+        https://bugs.webkit.org/show_bug.cgi?id=220741
+        <rdar://problem/73045904>
+
+        Reviewed by Youenn Fablet.
+
+        Adds a completion handler to WKWebView closeAllMediaPresentations.
+        This required handling the case for video fullscreen, picture-in-picture,
+        and element fullscreen. Closing fullscreen requires multiple async
+        operations, some of which go out of WebKit scope like PIPViewControllerDelegate
+        functions, so for simplicity, the callbacks are stored in
+        the respective *FullscreenManagerProxy object and called when
+        didExitFullscreen() is executed. Any additional calls to closeAllMediaPresentations
+        made before the previous has finished will have their callbacks
+        appended to a vector and called when all presentations have closed.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView closeAllMediaPresentations:]):
+        (-[WKWebView _closeAllMediaPresentations]):
+        (-[WKWebView _allMediaPresentationsClosed]):
+        New SPI for testing. Previously these tests used JavaScript to check
+        for inline video but updating the JS value is async and may not be completed
+        by the time didExitFullscreen() is called. So, this SPI will help avoid
+        flakiness.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenModelContext::requestFullscreenModeWithCallback):
+        (WebKit::VideoFullscreenManagerProxy::~VideoFullscreenManagerProxy):
+        (WebKit::VideoFullscreenManagerProxy::forEachSession):
+        (WebKit::VideoFullscreenManagerProxy::callCloseCompletionHandlers):
+        (WebKit::VideoFullscreenManagerProxy::requestFullscreenModeWithCallback):
+        (WebKit::VideoFullscreenManagerProxy::didExitFullscreen):
+        Add a new requestFullscreenModeWithCallback function
+        for VideoFullscreenModelContext which is used when closing fullscreen
+        video. This way we don't need to adjust an overridden function.
+
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::~WebFullScreenManagerProxy):
+        (WebKit::WebFullScreenManagerProxy::callCloseCompletionHandlers):
+        (WebKit::WebFullScreenManagerProxy::closeWithCallback):
+        (WebKit::WebFullScreenManagerProxy::didExitFullScreen):
+        * UIProcess/WebFullScreenManagerProxy.h:
+        Ditto, create a new function here to be used only for closing
+        media presentations so we don't have to pass empty completion handlers
+        unnecessarily.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::pauseAllMediaPlayback):
+        (WebKit::WebPageProxy::suspendAllMediaPlayback):
+        (WebKit::WebPageProxy::resumeAllMediaPlayback):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::pauseAllMediaPlayback):
+        (WebKit::WebPage::suspendAllMediaPlayback):
+        (WebKit::WebPage::resumeAllMediaPlayback):
+        * WebProcess/WebPage/WebPage.h:
+        Remove unnecessary voids.
+
 2021-01-27  Devin Rousso  <drousso@apple.com>
 
         [iOS] expose existing macOS-only `-[WKWebView _pageExtendedBackgroundColor]` SPI

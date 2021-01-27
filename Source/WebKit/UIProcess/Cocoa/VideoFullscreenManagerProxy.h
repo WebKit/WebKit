@@ -78,6 +78,7 @@ public:
 
     PlatformView *layerHostView() const { return m_layerHostView.get(); }
     void setLayerHostView(RetainPtr<PlatformView>&& layerHostView) { m_layerHostView = WTFMove(layerHostView); }
+    void requestFullscreenModeWithCallback(WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia, CompletionHandler<void()>&&);
 
 private:
     VideoFullscreenModelContext(VideoFullscreenManagerProxy&, PlaybackSessionModelContext&, PlaybackSessionContextIdentifier);
@@ -152,7 +153,7 @@ public:
     void setClient(VideoFullscreenManagerProxyClient* client) { m_client = makeWeakPtr(client); }
     VideoFullscreenManagerProxyClient* client() const { return m_client.get(); }
 
-    void forEachSession(Function<void(WebCore::VideoFullscreenModel&, PlatformVideoFullscreenInterface&)>&&);
+    void forEachSession(Function<void(VideoFullscreenModelContext&, PlatformVideoFullscreenInterface&)>&&);
 
 private:
     friend class VideoFullscreenModelContext;
@@ -200,6 +201,9 @@ private:
     void fullscreenModeChanged(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void fullscreenMayReturnToInline(PlaybackSessionContextIdentifier);
 
+    void requestFullscreenModeWithCallback(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia, CompletionHandler<void()>&&);
+    void callCloseCompletionHandlers();
+
     bool m_mockVideoPresentationModeEnabled { false };
     WebCore::FloatSize m_mockPictureInPictureWindowSize { DefaultMockPictureInPictureWindowWidth, DefaultMockPictureInPictureWindowHeight };
 
@@ -209,6 +213,7 @@ private:
     PlaybackSessionContextIdentifier m_controlsManagerContextId;
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
     WeakPtr<VideoFullscreenManagerProxyClient> m_client;
+    Vector<CompletionHandler<void()>> m_closeCompletionHandlers;
 };
 
 } // namespace WebKit

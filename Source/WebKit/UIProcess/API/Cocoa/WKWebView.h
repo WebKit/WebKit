@@ -327,7 +327,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 /*! @abstract Closes all out-of-window media presentations in a WKWebView.
  @discussion Includes picture-in-picture and fullscreen.
  */
-- (void)closeAllMediaPresentations WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)closeAllMediaPresentations:(void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! @abstract Pauses media playback in WKWebView.
  @discussion Pauses media playback. Media in the page can be restarted by calling play() on a media element or resume() on an AudioContext.

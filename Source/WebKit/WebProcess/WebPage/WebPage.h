@@ -1671,9 +1671,9 @@ private:
 
     void requestMediaPlaybackState(CompletionHandler<void(WebKit::MediaPlaybackState)>&&);
 
-    void pauseAllMediaPlayback(CompletionHandler<void(void)>&&);
-    void suspendAllMediaPlayback(CompletionHandler<void(void)>&&);
-    void resumeAllMediaPlayback(CompletionHandler<void(void)>&&);
+    void pauseAllMediaPlayback(CompletionHandler<void()>&&);
+    void suspendAllMediaPlayback(CompletionHandler<void()>&&);
+    void resumeAllMediaPlayback(CompletionHandler<void()>&&);
 
     void advanceToNextMisspelling(bool startBeforeSelection);
     void changeSpellingToWord(const String& word);

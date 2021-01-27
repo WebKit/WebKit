@@ -137,6 +137,7 @@
 #import <WebCore/WebViewVisualIdentificationOverlay.h>
 #import <WebCore/WritingMode.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/CallbackAggregator.h>
 #import <wtf/HashMap.h>
 #import <wtf/MathExtras.h>
 #import <wtf/NeverDestroyed.h>
@@ -907,17 +908,19 @@ static bool validateArgument(id argument)
     return false;
 }
 
-- (void)closeAllMediaPresentations
+- (void)closeAllMediaPresentations:(void (^)(void))completionHandler
 {
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+
 #if ENABLE(FULLSCREEN_API)
     if (auto videoFullscreenManager = _page->videoFullscreenManager()) {
-        videoFullscreenManager->forEachSession([] (auto& model, auto& interface) {
-            model.requestFullscreenMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeNone);
+        videoFullscreenManager->forEachSession([callbackAggregator] (auto& model, auto& interface) mutable {
+            model.requestFullscreenModeWithCallback(WebCore::HTMLMediaElementEnums::VideoFullscreenModeNone, false, [callbackAggregator] { });
         });
     }
 
     if (auto fullScreenManager = _page->fullScreenManager(); fullScreenManager && fullScreenManager->isFullScreen())
-        fullScreenManager->close();
+        fullScreenManager->closeWithCallback([callbackAggregator] { });
 #endif
 }
 
@@ -1991,7 +1994,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_closeAllMediaPresentations
 {
-    [self closeAllMediaPresentations];
+    [self closeAllMediaPresentations:nil];
 }
 
 - (void)_stopMediaCapture
@@ -2352,6 +2355,25 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 - (void)_callAsyncJavaScript:(NSString *)functionBody arguments:(NSDictionary<NSString *, id> *)arguments inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *error))completionHandler
 {
     [self _evaluateJavaScript:functionBody asAsyncFunction:YES withSourceURL:nil withArguments:arguments forceUserGesture:YES inFrame:frame inWorld:contentWorld completionHandler:completionHandler];
+}
+
+
+- (BOOL)_allMediaPresentationsClosed
+{
+#if ENABLE(FULLSCREEN_API)
+    bool hasOpenMediaPresentations = false;
+    if (auto videoFullscreenManager = _page->videoFullscreenManager()) {
+        hasOpenMediaPresentations = videoFullscreenManager->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)
+            || videoFullscreenManager->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard);
+    }
+
+    if (!hasOpenMediaPresentations && _page->fullScreenManager() && _page->fullScreenManager()->isFullScreen())
+        hasOpenMediaPresentations = true;
+
+    return !hasOpenMediaPresentations;
+#else
+    return true;
+#endif
 }
 
 - (void)_evaluateJavaScript:(NSString *)javaScriptString inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *error))completionHandler

@@ -5992,7 +5992,7 @@ void WebPageProxy::requestMediaPlaybackState(CompletionHandler<void(WebKit::Medi
     sendWithAsyncReply(Messages::WebPage::RequestMediaPlaybackState(), WTFMove(completionHandler));
 }
 
-void WebPageProxy::pauseAllMediaPlayback(CompletionHandler<void(void)>&& completionHandler)
+void WebPageProxy::pauseAllMediaPlayback(CompletionHandler<void()>&& completionHandler)
 {
     if (!hasRunningProcess()) {
         completionHandler();
@@ -6002,7 +6002,7 @@ void WebPageProxy::pauseAllMediaPlayback(CompletionHandler<void(void)>&& complet
     sendWithAsyncReply(Messages::WebPage::PauseAllMediaPlayback(), WTFMove(completionHandler));
 }
 
-void WebPageProxy::suspendAllMediaPlayback(CompletionHandler<void(void)>&& completionHandler)
+void WebPageProxy::suspendAllMediaPlayback(CompletionHandler<void()>&& completionHandler)
 {
     m_suspendMediaPlaybackCounter++;
     if (m_mediaPlaybackIsSuspended) {
@@ -6019,7 +6019,7 @@ void WebPageProxy::suspendAllMediaPlayback(CompletionHandler<void(void)>&& compl
     sendWithAsyncReply(Messages::WebPage::SuspendAllMediaPlayback(), WTFMove(completionHandler));
 }
 
-void WebPageProxy::resumeAllMediaPlayback(CompletionHandler<void(void)>&& completionHandler)
+void WebPageProxy::resumeAllMediaPlayback(CompletionHandler<void()>&& completionHandler)
 {
     if (m_suspendMediaPlaybackCounter > 0)
         m_suspendMediaPlaybackCounter--;

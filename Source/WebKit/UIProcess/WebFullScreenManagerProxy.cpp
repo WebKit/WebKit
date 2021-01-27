@@ -51,6 +51,7 @@ WebFullScreenManagerProxy::~WebFullScreenManagerProxy()
 {
     m_page.process().removeMessageReceiver(Messages::WebFullScreenManagerProxy::messageReceiverName(), m_page.webPageID());
     m_client.closeFullScreenManager();
+    callCloseCompletionHandlers();
 }
 
 void WebFullScreenManagerProxy::willEnterFullScreen()
@@ -76,6 +77,19 @@ void WebFullScreenManagerProxy::willExitFullScreen()
     m_page.send(Messages::WebFullScreenManager::WillExitFullScreen());
 }
 
+void WebFullScreenManagerProxy::callCloseCompletionHandlers()
+{
+    auto closeMediaCallbacks = WTFMove(m_closeCompletionHandlers);
+    for (auto& callback : closeMediaCallbacks)
+        callback();
+}
+
+void WebFullScreenManagerProxy::closeWithCallback(CompletionHandler<void()>&& completionHandler)
+{
+    m_closeCompletionHandlers.append(WTFMove(completionHandler));
+    close();
+}
+
 void WebFullScreenManagerProxy::didExitFullScreen()
 {
     m_page.fullscreenClient().didExitFullscreen(&m_page);
@@ -85,6 +99,7 @@ void WebFullScreenManagerProxy::didExitFullScreen()
         if (WebAutomationSession* automationSession = m_page.process().processPool().automationSession())
             automationSession->didExitFullScreenForPage(m_page);
     }
+    callCloseCompletionHandlers();
 }
 
 void WebFullScreenManagerProxy::setAnimatingFullScreen(bool animating)

@@ -1335,9 +1335,9 @@ public:
     bool mediaCaptureEnabled() const { return m_mediaCaptureEnabled; }
     void stopMediaCapture();
 
-    void pauseAllMediaPlayback(CompletionHandler<void(void)>&&);
-    void suspendAllMediaPlayback(CompletionHandler<void(void)>&&);
-    void resumeAllMediaPlayback(CompletionHandler<void(void)>&&);
+    void pauseAllMediaPlayback(CompletionHandler<void()>&&);
+    void suspendAllMediaPlayback(CompletionHandler<void()>&&);
+    void resumeAllMediaPlayback(CompletionHandler<void()>&&);
     void requestMediaPlaybackState(CompletionHandler<void(WebKit::MediaPlaybackState)>&&);
 
 #if ENABLE(POINTER_LOCK)
