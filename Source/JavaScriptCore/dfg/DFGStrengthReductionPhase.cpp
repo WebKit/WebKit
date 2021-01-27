@@ -917,8 +917,7 @@ private:
             ExecutableBase* executable = nullptr;
             Edge callee = m_graph.varArgChild(m_node, 0);
             CallVariant callVariant;
-            JSFunction* function = callee->dynamicCastConstant<JSFunction*>(vm());
-            if (function) {
+            if (JSFunction* function = callee->dynamicCastConstant<JSFunction*>(vm())) {
                 executable = function->executable();
                 callVariant = CallVariant(function);
             } else if (callee->isFunctionAllocation()) {
@@ -928,15 +927,6 @@ private:
             
             if (!executable)
                 break;
-
-            // If this is wasm function, and callee is not an constant,
-            // we should not use DirectCall since it will emit Wasm IC based on the assumption that the callee is constant.
-            // Currently, there is no way to reach to this condition (since no function-allocation node generates WebAssemblyFunction),
-            // but this is good guard for the future extension.
-            if (executable->intrinsic() == WasmFunctionIntrinsic) {
-                if (!function)
-                    break;
-            }
             
             if (FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(vm(), executable)) {
                 if (m_node->op() == Construct && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct)

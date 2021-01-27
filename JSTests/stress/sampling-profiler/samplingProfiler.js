@@ -43,13 +43,11 @@ function doesTreeHaveStackTrace(tree, stackTrace, isRunFromRunTest = true, verbo
         stackTrace = [...stackTrace];
     
     let node = tree;
-    let prev = null;
     for (let i = stackTrace.length; i--; ) {
-        prev = node;
         node = node.children[stackTrace[i]];
         if (!node) {
             if (verbose)
-                print("failing on " + i + " : " + stackTrace[i], " ", JSON.stringify(Object.getOwnPropertyNames(prev.children)));
+                print("failing on " + i + " : " + stackTrace[i]);
             return false;
         }
     }
