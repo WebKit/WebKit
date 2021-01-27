@@ -97,6 +97,8 @@ private:
 
     void platformGarbageCollectNow();
 
+    void discardAllSurfacesInternal();
+
     void showPoolStatistics(const char*);
 
     RunLoop::Timer<IOSurfacePool> m_collectionTimer;

@@ -241,7 +241,7 @@ void IOSurfacePool::evict(size_t additionalSize)
     DUMP_POOL_STATISTICS("before evict");
 
     if (additionalSize >= m_maximumBytesCached) {
-        discardAllSurfaces();
+        discardAllSurfacesInternal();
         DUMP_POOL_STATISTICS("after evict all");
         return;
     }
@@ -326,6 +326,11 @@ void IOSurfacePool::scheduleCollectionTimer()
 void IOSurfacePool::discardAllSurfaces()
 {
     auto locker = holdLock(m_lock);
+    discardAllSurfacesInternal();
+}
+
+void IOSurfacePool::discardAllSurfacesInternal()
+{
     m_bytesCached = 0;
     m_inUseBytesCached = 0;
     m_surfaceDetails.clear();
