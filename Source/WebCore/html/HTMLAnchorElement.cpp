@@ -211,7 +211,7 @@ void HTMLAnchorElement::defaultEventHandler(Event& event)
     HTMLElement::defaultEventHandler(event);
 }
 
-void HTMLAnchorElement::setActive(bool down, bool pause, IsUserActionStateChangeRoot isUserActionStateChangeRoot)
+void HTMLAnchorElement::setActive(bool down, bool pause, Style::InvalidationScope invalidationScope)
 {
     if (hasEditableStyle()) {
         switch (document().settings().editableLinkBehavior()) {
@@ -232,7 +232,7 @@ void HTMLAnchorElement::setActive(bool down, bool pause, IsUserActionStateChange
         }
     }
     
-    HTMLElement::setActive(down, pause, isUserActionStateChangeRoot);
+    HTMLElement::setActive(down, pause, invalidationScope);
 }
 
 void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomString& value)

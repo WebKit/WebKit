@@ -1,3 +1,14 @@
+2021-01-26  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r271584): Hovering slowly over and out of "Top 100" items on liberation.fr does not restore animated state
+        https://bugs.webkit.org/show_bug.cgi?id=220862
+        <rdar://problem/73501684>
+
+        Reviewed by Simon Fraser.
+
+        * fast/selectors/hover-invalidation-descendant-clear-expected.html: Added.
+        * fast/selectors/hover-invalidation-descendant-clear.html: Added.
+
 2021-01-26  Jonathan Bedard  <jbedard@apple.com>
 
         [LayoutTests] Pass authentication to CGI scripts

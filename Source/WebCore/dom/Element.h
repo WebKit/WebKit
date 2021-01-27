@@ -321,9 +321,8 @@ public:
     bool isBeingDragged() const { return isUserActionElement() && isUserActionElementDragged(); }
     bool hasFocusWithin() const { return hasNodeFlag(NodeFlag::HasFocusWithin); };
 
-    enum class IsUserActionStateChangeRoot { Yes, No };
-    virtual void setActive(bool = true, bool pause = false, IsUserActionStateChangeRoot = IsUserActionStateChangeRoot::Yes);
-    virtual void setHovered(bool = true, IsUserActionStateChangeRoot = IsUserActionStateChangeRoot::Yes);
+    virtual void setActive(bool = true, bool pause = false, Style::InvalidationScope = Style::InvalidationScope::All);
+    virtual void setHovered(bool = true, Style::InvalidationScope = Style::InvalidationScope::All);
     virtual void setFocus(bool);
     void setBeingDragged(bool);
     void setHasFocusWithin(bool);

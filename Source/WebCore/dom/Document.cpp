@@ -162,6 +162,7 @@
 #include "PolicyChecker.h"
 #include "PopStateEvent.h"
 #include "ProcessingInstruction.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "PublicSuffix.h"
 #include "Quirks.h"
 #include "Range.h"
@@ -7188,14 +7189,26 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
             elementsToSetHover.append(element);
     }
 
-    for (auto& element : elementsToClearActive)
-        element->setActive(false, false, element == elementsToClearActive.last() ? Element::IsUserActionStateChangeRoot::Yes : Element::IsUserActionStateChangeRoot::No);
-    for (auto& element : elementsToSetActive)
-        element->setActive(true, false, element == elementsToSetActive.last() ? Element::IsUserActionStateChangeRoot::Yes : Element::IsUserActionStateChangeRoot::No);
-    for (auto& element : elementsToClearHover)
-        element->setHovered(false, element == elementsToClearHover.last() ? Element::IsUserActionStateChangeRoot::Yes : Element::IsUserActionStateChangeRoot::No);
-    for (auto& element : elementsToSetHover)
-        element->setHovered(true, element == elementsToSetHover.last() ? Element::IsUserActionStateChangeRoot::Yes : Element::IsUserActionStateChangeRoot::No);
+    if (!elementsToClearActive.isEmpty()) {
+        Style::PseudoClassChangeInvalidation styleInvalidation(*elementsToClearActive.last(), CSSSelector::PseudoClassActive, Style::InvalidationScope::Descendants);
+        for (auto& element : elementsToClearActive)
+            element->setActive(false, false, Style::InvalidationScope::SelfChildrenAndSiblings);
+    }
+    if (!elementsToSetActive.isEmpty()) {
+        Style::PseudoClassChangeInvalidation styleInvalidation(*elementsToSetActive.last(), CSSSelector::PseudoClassActive, Style::InvalidationScope::Descendants);
+        for (auto& element : elementsToSetActive)
+            element->setActive(true, false, Style::InvalidationScope::SelfChildrenAndSiblings);
+    }
+    if (!elementsToClearHover.isEmpty()) {
+        Style::PseudoClassChangeInvalidation styleInvalidation(*elementsToClearHover.last(), CSSSelector::PseudoClassHover, Style::InvalidationScope::Descendants);
+        for (auto& element : elementsToClearHover)
+            element->setHovered(false, Style::InvalidationScope::SelfChildrenAndSiblings);
+    }
+    if (!elementsToSetHover.isEmpty()) {
+        Style::PseudoClassChangeInvalidation styleInvalidation(*elementsToSetHover.last(), CSSSelector::PseudoClassHover, Style::InvalidationScope::Descendants);
+        for (auto& element : elementsToSetHover)
+            element->setHovered(true, Style::InvalidationScope::SelfChildrenAndSiblings);
+    }
 }
 
 bool Document::haveStylesheetsLoaded() const

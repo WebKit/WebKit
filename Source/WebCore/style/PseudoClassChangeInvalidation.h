@@ -35,11 +35,11 @@ namespace Style {
 
 class PseudoClassChangeInvalidation {
 public:
-    PseudoClassChangeInvalidation(Element&, CSSSelector::PseudoClassType, Element::IsUserActionStateChangeRoot = Element::IsUserActionStateChangeRoot::Yes);
+    PseudoClassChangeInvalidation(Element&, CSSSelector::PseudoClassType, InvalidationScope = InvalidationScope::All);
     ~PseudoClassChangeInvalidation();
 
 private:
-    void computeInvalidation(CSSSelector::PseudoClassType, Element::IsUserActionStateChangeRoot);
+    void computeInvalidation(CSSSelector::PseudoClassType, Style::InvalidationScope);
     void invalidateStyleWithRuleSets();
 
     const bool m_isEnabled;
@@ -48,14 +48,14 @@ private:
     Invalidator::MatchElementRuleSets m_matchElementRuleSets;
 };
 
-inline PseudoClassChangeInvalidation::PseudoClassChangeInvalidation(Element& element, CSSSelector::PseudoClassType pseudoClassType, Element::IsUserActionStateChangeRoot isUserActionStateChangeRoot)
+inline PseudoClassChangeInvalidation::PseudoClassChangeInvalidation(Element& element, CSSSelector::PseudoClassType pseudoClassType, Style::InvalidationScope invalidationScope)
     : m_isEnabled(element.needsStyleInvalidation())
     , m_element(element)
 
 {
     if (!m_isEnabled)
         return;
-    computeInvalidation(pseudoClassType, isUserActionStateChangeRoot);
+    computeInvalidation(pseudoClassType, invalidationScope);
     invalidateStyleWithRuleSets();
 }
 
