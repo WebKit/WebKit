@@ -1230,11 +1230,6 @@
     (with report) (with telemetry-backtrace)
 #endif
     (ipc-posix-name-regex #"^CFPBS:")) ; <rdar://problem/13757475>
-(allow system-fsctl
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-    (with report) (with telemetry-backtrace)
-#endif
-    (fsctl-command (_IO "h" 47)))
 
 ;; Graphics
 (system-graphics)
