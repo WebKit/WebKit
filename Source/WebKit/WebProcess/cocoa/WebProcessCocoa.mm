@@ -686,8 +686,11 @@ void WebProcess::initializeSandbox(const AuxiliaryProcessInitializationParameter
 
     sandboxParameters.setOverrideSandboxProfilePath(makeString(String([webKitBundle resourcePath]), "/com.apple.WebProcess.sb"));
 
-    auto hasMessageFilterEntitlement = WTF::processHasEntitlement("com.apple.private.security.message-filter");
-    sandboxParameters.addParameter("ENABLE_SANDBOX_MESSAGE_FILTER", hasMessageFilterEntitlement ? "YES" : "NO");
+    bool enableMessageFilter = false;
+#if HAVE(SANDBOX_MESSAGE_FILTERING)
+    enableMessageFilter = WTF::processHasEntitlement("com.apple.private.security.message-filter");
+#endif
+    sandboxParameters.addParameter("ENABLE_SANDBOX_MESSAGE_FILTER", enableMessageFilter ? "YES" : "NO");
 
     AuxiliaryProcess::initializeSandbox(parameters, sandboxParameters);
 #endif

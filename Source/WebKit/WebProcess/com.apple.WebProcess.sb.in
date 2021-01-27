@@ -116,11 +116,10 @@
         (prefix "/private/var/db/CVMS/cvmsCodeSignObj"))
 #endif
     ;; OpenCL
-    (allow iokit-open
-        (iokit-connection "IOAccelerator")
-#if HAVE(SANDBOX_MESSAGE_FILTERING)
-        (with telemetry-backtrace)
-        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open
+            (iokit-connection "IOAccelerator")
+            (with telemetry-backtrace)
             (apply-message-filter
                 (allow
                     iokit-async-external-method
@@ -131,13 +130,15 @@
                 )
             )
         )
-#endif
+        ; else
+        (allow iokit-open
+            (iokit-connection "IOAccelerator")
+        )
     )
-    (allow iokit-open
-        (iokit-registry-entry-class "IOAccelerationUserClient")
-#if HAVE(SANDBOX_MESSAGE_FILTERING)
-        (with telemetry-backtrace)
-        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open
+            (iokit-registry-entry-class "IOAccelerationUserClient")
+            (with telemetry-backtrace)
             (apply-message-filter
                 (allow (with telemetry)
                     iokit-async-external-method
@@ -146,13 +147,15 @@
                 )
             )
         )
-#endif
+        ; else
+        (allow iokit-open
+            (iokit-registry-entry-class "IOAccelerationUserClient")
+        )
     )
-    (allow iokit-open
-        (iokit-registry-entry-class "IOSurfaceRootUserClient")
-#if HAVE(SANDBOX_MESSAGE_FILTERING)
-        (with telemetry-backtrace)
-        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open
+            (iokit-registry-entry-class "IOSurfaceRootUserClient")
+            (with telemetry-backtrace)
             (apply-message-filter
                 (allow
                     iokit-async-external-method
@@ -163,13 +166,15 @@
                 )
             )
         )
-#endif
+        ; else
+        (allow iokit-open
+            (iokit-registry-entry-class "IOSurfaceRootUserClient")
+        )
     )
-    (allow iokit-open
-        (iokit-registry-entry-class "IOSurfaceSendRight")
-#if HAVE(SANDBOX_MESSAGE_FILTERING)
-        (with telemetry-backtrace)
-        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open
+            (iokit-registry-entry-class "IOSurfaceSendRight")
+            (with telemetry-backtrace)
             (apply-message-filter
                 (allow (with telemetry)
                     iokit-async-external-method
@@ -178,7 +183,10 @@
                 )
             )
         )
-#endif
+        ; else
+        (allow iokit-open
+            (iokit-registry-entry-class "IOSurfaceSendRight")
+        )
     )
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
     ;; CoreVideo CVCGDisplayLink
@@ -187,14 +195,13 @@
 #endif
 
     ;; This is needed for Encrypted Media on some hardware (MacMini8,1 for example)
-    (allow iokit-open
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-registry-entry-class "AppleIntelMEUserClient")
-        )
-#if HAVE(SANDBOX_MESSAGE_FILTERING)
-        (with telemetry-backtrace)
-        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-registry-entry-class "AppleIntelMEUserClient")
+            )
+            (with telemetry-backtrace)
             (apply-message-filter
                 (allow
                     iokit-external-method
@@ -205,18 +212,23 @@
                 )
             )
         )
-#endif
+        ; else
+        (allow iokit-open
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-registry-entry-class "AppleIntelMEUserClient")
+            )
+        )
     )
 
     ;; This is needed for Encrypted Media on some hardware (MacMini8,1 for example)
-    (allow iokit-open
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-registry-entry-class "AppleSNBFBUserClient")
-        )
-#if HAVE(SANDBOX_MESSAGE_FILTERING)
-        (with telemetry-backtrace)
-        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-registry-entry-class "AppleSNBFBUserClient")
+            )
+            (with telemetry-backtrace)
             (apply-message-filter
                 (allow
                     iokit-external-method
@@ -227,15 +239,20 @@
                 )
             )
         )
-#endif
+        ; else
+        (allow iokit-open
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-registry-entry-class "AppleSNBFBUserClient")
+            )
+        )
     )
 
     ;; QuartzCore
-    (allow iokit-open
-        (iokit-registry-entry-class "AGPMClient")
-#if HAVE(SANDBOX_MESSAGE_FILTERING)
-        (with telemetry-backtrace)
-        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open
+            (iokit-registry-entry-class "AGPMClient")
+            (with telemetry-backtrace)
             (apply-message-filter
                 (allow (with telemetry)
                     iokit-async-external-method
@@ -244,13 +261,15 @@
                 )
             )
         )
-#endif
+        ; else
+        (allow iokit-open
+            (iokit-registry-entry-class "AGPMClient")
+        )
     )
-    (allow iokit-open
-        (iokit-registry-entry-class "AppleGraphicsControlClient")
-#if HAVE(SANDBOX_MESSAGE_FILTERING)
-        (with telemetry-backtrace)
-        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open
+            (iokit-registry-entry-class "AppleGraphicsControlClient")
+            (with telemetry-backtrace)
             (apply-message-filter
                 (allow
                     iokit-async-external-method
@@ -261,13 +280,15 @@
                 )
             )
         )
-#endif
+        ; else
+        (allow iokit-open
+            (iokit-registry-entry-class "AppleGraphicsControlClient")
+        )
     )
-    (allow iokit-open
-        (iokit-registry-entry-class "AppleGraphicsPolicyClient")
-#if HAVE(SANDBOX_MESSAGE_FILTERING)
-        (with telemetry-backtrace)
-        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open
+            (iokit-registry-entry-class "AppleGraphicsPolicyClient")
+            (with telemetry-backtrace)
             (apply-message-filter
                 (allow (with telemetry)
                     iokit-async-external-method
@@ -276,14 +297,16 @@
                 )
             )
         )
-#endif
+        ; else
+        (allow iokit-open
+            (iokit-registry-entry-class "AppleGraphicsPolicyClient")
+        )
     )
     ;; OpenGL
-    (allow iokit-open
-        (iokit-registry-entry-class "AppleMGPUPowerControlClient")
-#if HAVE(SANDBOX_MESSAGE_FILTERING)
-        (with telemetry-backtrace)
-        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open
+            (iokit-registry-entry-class "AppleMGPUPowerControlClient")
+            (with telemetry-backtrace)
             (apply-message-filter
                 (allow (with telemetry)
                     iokit-async-external-method
@@ -292,7 +315,10 @@
                 )
             )
         )
-#endif
+        ; else
+        (allow iokit-open
+            (iokit-registry-entry-class "AppleMGPUPowerControlClient")
+        )
     )
     ;; GPU bundles
     (allow file-read*
@@ -868,11 +894,10 @@
 )
 #endif
 
-(allow iokit-open
-    (iokit-user-client-class "AppleUpstreamUserClient")
-#if HAVE(SANDBOX_MESSAGE_FILTERING)
-    (with telemetry-backtrace)
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (allow iokit-open
+        (iokit-user-client-class "AppleUpstreamUserClient")
+        (with telemetry-backtrace)
         (apply-message-filter
             (allow (with telemetry)
                 iokit-async-external-method
@@ -881,17 +906,19 @@
             )
         )
     )
-#endif
+    ; else
+    (allow iokit-open
+        (iokit-user-client-class "AppleUpstreamUserClient")
+    )
 )
 
-(allow iokit-open
-    (require-all
-        (extension "com.apple.webkit.extension.iokit")
-        (iokit-user-client-class "RootDomainUserClient") ;; Needed by Media playback
-    )
-#if HAVE(SANDBOX_MESSAGE_FILTERING)
-    (with telemetry-backtrace)
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (allow iokit-open
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-user-client-class "RootDomainUserClient") ;; Needed by Media playback
+        )
+        (with telemetry-backtrace)
         (apply-message-filter
             (allow (with telemetry)
                 iokit-async-external-method
@@ -900,14 +927,20 @@
             )
         )
     )
-#endif
+    ; else
+    (allow iokit-open
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-user-client-class "RootDomainUserClient") ;; Needed by Media playback
+        )
+    )
 )
 
-(allow iokit-open
-    (iokit-user-client-class "AudioAUUC") ;; <rdar://problem/10427451> && <rdar://problem/10808817>
-#if HAVE(SANDBOX_MESSAGE_FILTERING)
-    (with telemetry-backtrace)
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+;; <rdar://problem/10427451> && <rdar://problem/10808817>
+(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (allow iokit-open
+        (iokit-user-client-class "AudioAUUC")
+        (with telemetry-backtrace)
         (apply-message-filter
             (allow (with telemetry)
                 iokit-async-external-method
@@ -916,14 +949,16 @@
             )
         )
     )
-#endif
+    ; else
+    (allow iokit-open
+        (iokit-user-client-class "AudioAUUC")
+    )
 )
 
-(allow iokit-open
-    (iokit-user-client-class "IOAudioControlUserClient")
-#if HAVE(SANDBOX_MESSAGE_FILTERING)
-    (with telemetry-backtrace)
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (allow iokit-open
+        (iokit-user-client-class "IOAudioControlUserClient")
+        (with telemetry-backtrace)
         (apply-message-filter
             (allow (with telemetry)
                 iokit-async-external-method
@@ -932,14 +967,16 @@
             )
         )
     )
-#endif
+    ; else
+    (allow iokit-open
+        (iokit-user-client-class "IOAudioControlUserClient")
+    )
 )
 
-(allow iokit-open
-    (iokit-user-client-class "IOAudioEngineUserClient")
-#if HAVE(SANDBOX_MESSAGE_FILTERING)
-    (with telemetry-backtrace)
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (allow iokit-open
+        (iokit-user-client-class "IOAudioEngineUserClient")
+        (with telemetry-backtrace)
         (apply-message-filter
             (allow (with telemetry)
                 iokit-async-external-method
@@ -948,7 +985,10 @@
             )
         )
     )
-#endif
+    ; else
+    (allow iokit-open
+        (iokit-user-client-class "IOAudioEngineUserClient")
+    )
 )
 
 ;; <rdar://problem/60088861>
@@ -1259,12 +1299,11 @@
             (extension "com.apple.webkit.extension.mach")
             (global-name "com.apple.applecamerad")
         ))
-    (allow iokit-open
-        ;; QuickTimeUSBVDCDigitizer
-        (iokit-user-client-class "IOUSBDeviceUserClientV2")
-#if HAVE(SANDBOX_MESSAGE_FILTERING)
-        (with telemetry-backtrace)
-        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    ;; QuickTimeUSBVDCDigitizer
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open
+            (iokit-user-client-class "IOUSBDeviceUserClientV2")
+            (with telemetry-backtrace)
             (apply-message-filter
                 (allow (with telemetry)
                     iokit-async-external-method
@@ -1273,13 +1312,16 @@
                 )
             )
         )
-#endif
+        ; else
+        (allow iokit-open
+            (iokit-user-client-class "IOUSBDeviceUserClientV2")
+        )
     )
-    (allow iokit-open
-        (iokit-user-client-class "IOUSBInterfaceUserClientV2")
-#if HAVE(SANDBOX_MESSAGE_FILTERING)
-        (with telemetry-backtrace)
-        (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open
+            (iokit-user-client-class "IOUSBInterfaceUserClientV2")
+            (with telemetry-backtrace)
             (apply-message-filter
                 (allow (with telemetry)
                     iokit-async-external-method
@@ -1288,8 +1330,12 @@
                 )
             )
         )
-#endif
+        ; else
+        (allow iokit-open
+            (iokit-user-client-class "IOUSBInterfaceUserClientV2")
+        )
     )
+    
     (allow device-camera))
 #endif // PLATFORM(MAC)
 
@@ -1638,7 +1684,7 @@
 (if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
     (deny syscall-mach (with telemetry))
 )
-    
+
 (if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
     (allow syscall-mach (machtrap-number
         MSC__kernelrpc_mach_port_allocate_trap

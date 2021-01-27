@@ -1,3 +1,40 @@
+2021-01-27  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r271710. rdar://problem/73678158
+
+    [macOS] The development WebContent XPC service crashes under WebKit::AuxiliaryProcess::initializeSandbox
+    https://bugs.webkit.org/show_bug.cgi?id=220777
+    <rdar://problem/73382584>
+    
+    Reviewed by Brent Fulgham.
+    
+    This happens because the development XPC service does not have the required private entitlement to enable message filtering in the sandbox,
+    and therefore fails to apply the sandbox. The existing runtime switching to enable message filtering based on the presence of the entitlement
+    is not working correctly. The 'if' clause checking the sandbox parameter in the sandbox cannot be nested inside an 'allow' clause, it appears.
+    
+    * WebProcess/cocoa/WebProcessCocoa.mm:
+    (WebKit::WebProcess::initializeSandbox):
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271710 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-21  Per Arne Vollan  <pvollan@apple.com>
+
+            [macOS] The development WebContent XPC service crashes under WebKit::AuxiliaryProcess::initializeSandbox
+            https://bugs.webkit.org/show_bug.cgi?id=220777
+            <rdar://problem/73382584>
+
+            Reviewed by Brent Fulgham.
+
+            This happens because the development XPC service does not have the required private entitlement to enable message filtering in the sandbox,
+            and therefore fails to apply the sandbox. The existing runtime switching to enable message filtering based on the presence of the entitlement
+            is not working correctly. The 'if' clause checking the sandbox parameter in the sandbox cannot be nested inside an 'allow' clause, it appears.
+
+            * WebProcess/cocoa/WebProcessCocoa.mm:
+            (WebKit::WebProcess::initializeSandbox):
+            * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-01-25  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r271753. rdar://problem/73586655
