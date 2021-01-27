@@ -84,7 +84,6 @@ namespace JSC {
     macro(repeatCharacter) \
     macro(starDefault) \
     macro(starNamespace) \
-    macro(InspectorInstrumentation) \
     macro(keys) \
     macro(values) \
     macro(get) \

@@ -75,7 +75,6 @@ class JSGlobalObject;
     v(concatMemcpy, nullptr) \
     v(appendMemcpy, nullptr) \
     v(hostPromiseRejectionTracker, nullptr) \
-    v(InspectorInstrumentation, nullptr) \
     v(Set, nullptr) \
     v(thisTimeValue, nullptr) \
     v(isConstructor, nullptr) \

@@ -131,8 +131,6 @@ const char* const s_builtinPromiseRejectPromiseCode =
     "    promise.@promiseRejectReactions = undefined;\n" \
     "    promise.@promiseState = @promiseRejected;\n" \
     "\n" \
-    "    @InspectorInstrumentation.promiseRejected(promise, reason, reactions);\n" \
-    "\n" \
     "    @triggerPromiseReactions(reactions, reason);\n" \
     "})\n" \
 ;
@@ -151,8 +149,6 @@ const char* const s_builtinPromiseFulfillPromiseCode =
     "    promise.@promiseFulfillReactions = undefined;\n" \
     "    promise.@promiseRejectReactions = undefined;\n" \
     "    promise.@promiseState = @promiseFulfilled;\n" \
-    "\n" \
-    "    @InspectorInstrumentation.promiseFulfilled(promise, value, reactions);\n" \
     "\n" \
     "    @triggerPromiseReactions(reactions, value);\n" \
     "})\n" \

@@ -1826,7 +1826,6 @@
 		E339700523210E0B00B0AE21 /* JSInternalFieldObjectImplInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E339700423210E0A00B0AE21 /* JSInternalFieldObjectImplInlines.h */; };
 		E33A94962255323000D42B06 /* RandomizingFuzzerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = E33A94942255322900D42B06 /* RandomizingFuzzerAgent.h */; };
 		E33A94972255323300D42B06 /* FuzzerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = E33A94922255322900D42B06 /* FuzzerAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E33B3E261B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E33B3E251B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h */; };
 		E33E8D1D1B9013C300346B52 /* JSNativeStdFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E8D1B1B9013C300346B52 /* JSNativeStdFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33F50751B8421C000413856 /* JSInternalPromisePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E33F50731B8421C000413856 /* JSInternalPromisePrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33F50791B84225700413856 /* JSInternalPromiseConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E33F50771B84225700413856 /* JSInternalPromiseConstructor.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1848,7 +1847,6 @@
 		E35A0B9D220AD87A00AC4474 /* ExecutableBaseInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E35A0B9C220AD87A00AC4474 /* ExecutableBaseInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E35CA1541DBC3A5C00F83516 /* DOMJITHeapRange.h in Headers */ = {isa = PBXBuildFile; fileRef = E35CA1521DBC3A5600F83516 /* DOMJITHeapRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E35CA1561DBC3A5F00F83516 /* DOMJITAbstractHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = E35CA1501DBC3A5600F83516 /* DOMJITAbstractHeap.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E35E03601B7AB43E0073AD2A /* InspectorInstrumentationObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E35E035E1B7AB43E0073AD2A /* InspectorInstrumentationObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3637EE9236E56B00096BD0A /* LinkTimeConstant.h in Headers */ = {isa = PBXBuildFile; fileRef = E3637EE7236E56B00096BD0A /* LinkTimeConstant.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E365F33A24AA623900C991B2 /* IntlDisplayNamesConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E365F33924AA621200C991B2 /* IntlDisplayNamesConstructor.lut.h */; };
 		E365F33B24AA623B00C991B2 /* IntlDisplayNamesPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E365F33824AA621100C991B2 /* IntlDisplayNamesPrototype.lut.h */; };
@@ -5023,7 +5021,6 @@
 		E33A94932255322900D42B06 /* RandomizingFuzzerAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RandomizingFuzzerAgent.cpp; sourceTree = "<group>"; };
 		E33A94942255322900D42B06 /* RandomizingFuzzerAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RandomizingFuzzerAgent.h; sourceTree = "<group>"; };
 		E33A94952255322A00D42B06 /* FuzzerAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FuzzerAgent.cpp; sourceTree = "<group>"; };
-		E33B3E251B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorInstrumentationObject.lut.h; sourceTree = "<group>"; };
 		E33E8D1A1B9013C300346B52 /* JSNativeStdFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNativeStdFunction.cpp; sourceTree = "<group>"; };
 		E33E8D1B1B9013C300346B52 /* JSNativeStdFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNativeStdFunction.h; sourceTree = "<group>"; };
 		E33F50721B8421C000413856 /* JSInternalPromisePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInternalPromisePrototype.cpp; sourceTree = "<group>"; };
@@ -5060,9 +5057,6 @@
 		E35CA1501DBC3A5600F83516 /* DOMJITAbstractHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITAbstractHeap.h; sourceTree = "<group>"; };
 		E35CA1511DBC3A5600F83516 /* DOMJITHeapRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMJITHeapRange.cpp; sourceTree = "<group>"; };
 		E35CA1521DBC3A5600F83516 /* DOMJITHeapRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITHeapRange.h; sourceTree = "<group>"; };
-		E35E035D1B7AB43E0073AD2A /* InspectorInstrumentationObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorInstrumentationObject.cpp; sourceTree = "<group>"; };
-		E35E035E1B7AB43E0073AD2A /* InspectorInstrumentationObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorInstrumentationObject.h; sourceTree = "<group>"; };
-		E35E03611B7AB4850073AD2A /* InspectorInstrumentationObject.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = InspectorInstrumentationObject.js; sourceTree = "<group>"; };
 		E3637EE7236E56B00096BD0A /* LinkTimeConstant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkTimeConstant.h; sourceTree = "<group>"; };
 		E3637EE8236E56B00096BD0A /* LinkTimeConstant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkTimeConstant.cpp; sourceTree = "<group>"; };
 		E365F33824AA621100C991B2 /* IntlDisplayNamesPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlDisplayNamesPrototype.lut.h; sourceTree = "<group>"; };
@@ -6125,11 +6119,6 @@
 		1429D92C0ED22D7000B89619 /* jit */ = {
 			isa = PBXGroup;
 			children = (
-				86D446E825B2124800ECAE75 /* JITCompilation.cpp */,
-				86D446E725B2124800ECAE75 /* JITCompilation.h */,
-				86D446E525B2124700ECAE75 /* JITOpaqueByproduct.h */,
-				86D446E925B2124800ECAE75 /* JITOpaqueByproducts.cpp */,
-				86D446E625B2124800ECAE75 /* JITOpaqueByproducts.h */,
 				0F24E53B17EA9F5900ABB217 /* AssemblyHelpers.cpp */,
 				0F24E53C17EA9F5900ABB217 /* AssemblyHelpers.h */,
 				0F64B26F1A784BAF006E4E66 /* BinarySwitch.cpp */,
@@ -6176,6 +6165,8 @@
 				86CCEFDD0F413F8900FD7F9E /* JITCode.h */,
 				0FFB80BB20A794700006AAF6 /* JITCodeInlines.h */,
 				FE476FF3207E85D40093CA2D /* JITCodeMap.h */,
+				86D446E825B2124800ECAE75 /* JITCompilation.cpp */,
+				86D446E725B2124800ECAE75 /* JITCompilation.h */,
 				0F0776BD14FF002800102332 /* JITCompilationEffort.h */,
 				0FAF7EFA165BA919000C8455 /* JITDisassembler.cpp */,
 				0FAF7EFB165BA919000C8455 /* JITDisassembler.h */,
@@ -6195,6 +6186,9 @@
 				FE187A001BFBC73C0038BBCA /* JITMulGenerator.h */,
 				FE99B2471C24B6D300C82159 /* JITNegGenerator.cpp */,
 				FE99B2481C24B6D300C82159 /* JITNegGenerator.h */,
+				86D446E525B2124700ECAE75 /* JITOpaqueByproduct.h */,
+				86D446E925B2124800ECAE75 /* JITOpaqueByproducts.cpp */,
+				86D446E625B2124800ECAE75 /* JITOpaqueByproducts.h */,
 				BCDD51E90FB8DF74004A8BDC /* JITOpcodes.cpp */,
 				A71236E41195F33C00BD2174 /* JITOpcodes32_64.cpp */,
 				0F24E54517EE274900ABB217 /* JITOperations.cpp */,
@@ -6837,7 +6831,6 @@
 				70B791901C0246CE002481E2 /* GeneratorPrototype.lut.h */,
 				6514F21818B3E1670098FF8B /* InitBytecodes.asm */,
 				A513E5C6185F9436007E95AD /* InjectedScriptSource.h */,
-				E33B3E251B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h */,
 				A18193E11B4E0CDB00FC1029 /* IntlCollatorConstructor.lut.h */,
 				A18193E21B4E0CDB00FC1029 /* IntlCollatorPrototype.lut.h */,
 				A1587D731B4DC1C600D69849 /* IntlDateTimeFormatConstructor.lut.h */,
@@ -6920,8 +6913,6 @@
 		7B98D1331B60CD1E0023B1A4 /* wasm */ = {
 			isa = PBXGroup;
 			children = (
-				863FBC5725B093B800F6C930 /* WasmValueLocation.cpp */,
-				863FBC5825B093B900F6C930 /* WasmValueLocation.h */,
 				AD2FCB8A1DB5840000B3E736 /* js */,
 				52847AD921FFB8630061A9DB /* WasmAirIRGenerator.cpp */,
 				52847ADA21FFB8630061A9DB /* WasmAirIRGenerator.h */,
@@ -7017,6 +7008,8 @@
 				5250D2D01E8DA05A0029A932 /* WasmThunks.h */,
 				E3C694B223026874006FBE42 /* WasmTierUpCount.cpp */,
 				53E9E0AE1EAEC45700FEE251 /* WasmTierUpCount.h */,
+				863FBC5725B093B800F6C930 /* WasmValueLocation.cpp */,
+				863FBC5825B093B900F6C930 /* WasmValueLocation.h */,
 				530FB3031E7A1146003C19DD /* WasmWorklist.cpp */,
 				530FB3011E7A0B6E003C19DD /* WasmWorklist.h */,
 			);
@@ -7331,8 +7324,6 @@
 				0F4AE0421FE0D25400E20839 /* InferredValueInlines.h */,
 				E178636C0D9BEEC300D74E75 /* InitializeThreading.cpp */,
 				E178633F0D9BEC0000D74E75 /* InitializeThreading.h */,
-				E35E035D1B7AB43E0073AD2A /* InspectorInstrumentationObject.cpp */,
-				E35E035E1B7AB43E0073AD2A /* InspectorInstrumentationObject.h */,
 				A7A8AF2C17ADB5F3005AB174 /* Int16Array.h */,
 				A7A8AF2D17ADB5F3005AB174 /* Int32Array.h */,
 				A7A8AF2B17ADB5F3005AB174 /* Int8Array.h */,
@@ -8810,7 +8801,6 @@
 				70B7918F1C0244EC002481E2 /* GeneratorPrototype.js */,
 				7CF9BC5A1B65D9A3009DB1EF /* GlobalObject.js */,
 				A52704851D027C8800354C37 /* GlobalOperations.js */,
-				E35E03611B7AB4850073AD2A /* InspectorInstrumentationObject.js */,
 				E33F50881B844A1A00413856 /* InternalPromiseConstructor.js */,
 				534D9BF92363C55D0054524D /* IteratorHelpers.js */,
 				7CF9BC5B1B65D9A3009DB1EF /* IteratorPrototype.js */,
@@ -9035,7 +9025,6 @@
 				0F55F0F514D1063C00AC7649 /* AbstractPC.h in Headers */,
 				534E034E1E4D4B1600213F64 /* AccessCase.h in Headers */,
 				E3BFD0BC1DAF808E0065DEA2 /* AccessCaseSnippetParams.h in Headers */,
-				86D446EB25B2125C00ECAE75 /* JITOpaqueByproduct.h in Headers */,
 				5370B4F61BF26205005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h in Headers */,
 				9168BD872447BA4E0080FFB4 /* AggregateError.h in Headers */,
 				918E15C32447B22700447A56 /* AggregateErrorConstructor.h in Headers */,
@@ -9680,7 +9669,6 @@
 				0FCEFAE0180738C000472CE4 /* FTLLocation.h in Headers */,
 				0FEA0A10170513DB00BB722C /* FTLLowerDFGToB3.h in Headers */,
 				A7D89D0217A0B90400773AD8 /* FTLLoweredNodeValue.h in Headers */,
-				863FBC5A25B093B900F6C930 /* WasmValueLocation.h in Headers */,
 				0F2B9CF919D0BAC100B1D1B5 /* FTLOperations.h in Headers */,
 				0FD8A31C17D51F2200CA2C40 /* FTLOSREntry.h in Headers */,
 				0F235BDD17178E1C00690C7F /* FTLOSRExit.h in Headers */,
@@ -9840,8 +9828,6 @@
 				A532438A18568335002ED692 /* InspectorFrontendDispatchers.h in Headers */,
 				99F1A7011B98FBEC00463B26 /* InspectorFrontendRouter.h in Headers */,
 				A5339EC61BB399A60054F005 /* InspectorHeapAgent.h in Headers */,
-				E35E03601B7AB43E0073AD2A /* InspectorInstrumentationObject.h in Headers */,
-				E33B3E261B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h in Headers */,
 				A532438C18568335002ED692 /* InspectorProtocolObjects.h in Headers */,
 				A55D93AC18514F7900400DED /* InspectorProtocolTypes.h in Headers */,
 				A50E4B6218809DD50068A46D /* InspectorRuntimeAgent.h in Headers */,
@@ -9935,6 +9921,7 @@
 				86CCEFDE0F413F8900FD7F9E /* JITCode.h in Headers */,
 				0FFB80BC20A794730006AAF6 /* JITCodeInlines.h in Headers */,
 				FE476FF4207E85D50093CA2D /* JITCodeMap.h in Headers */,
+				86D446EC25B2126000ECAE75 /* JITCompilation.h in Headers */,
 				0F0776BF14FF002B00102332 /* JITCompilationEffort.h in Headers */,
 				0FAF7EFE165BA91F000C8455 /* JITDisassembler.h in Headers */,
 				FE187A0D1C030D5C0038BBCA /* JITDivGenerator.h in Headers */,
@@ -9947,6 +9934,8 @@
 				79AF0BE41D3EFD4C00E95FA5 /* JITMathICInlineResult.h in Headers */,
 				FE187A021BFBE5610038BBCA /* JITMulGenerator.h in Headers */,
 				FE99B2491C24C3D300C82159 /* JITNegGenerator.h in Headers */,
+				86D446EB25B2125C00ECAE75 /* JITOpaqueByproduct.h in Headers */,
+				86D446EA25B2125300ECAE75 /* JITOpaqueByproducts.h in Headers */,
 				E3CA3A4E2527AB2F004802BF /* JITOperationList.h in Headers */,
 				0F24E54D17EE274900ABB217 /* JITOperations.h in Headers */,
 				FE3A06C01C11041A00390FDD /* JITRightShiftGenerator.h in Headers */,
@@ -10149,7 +10138,6 @@
 				960097A60EBABB58007A7297 /* LabelScope.h in Headers */,
 				DCF3D56A1CD29470003D5C65 /* LazyClassStructure.h in Headers */,
 				DCF3D56B1CD29472003D5C65 /* LazyClassStructureInlines.h in Headers */,
-				86D446EC25B2126000ECAE75 /* JITCompilation.h in Headers */,
 				0FB5467714F59B5C002C2989 /* LazyOperandValueProfile.h in Headers */,
 				DCF3D56C1CD29475003D5C65 /* LazyProperty.h in Headers */,
 				DCF3D56D1CD29476003D5C65 /* LazyPropertyInlines.h in Headers */,
@@ -10431,7 +10419,6 @@
 				BCDE3AB80E6C82F5001453A7 /* Structure.h in Headers */,
 				7986943B1F8C0ACC009232AE /* StructureCache.h in Headers */,
 				7E4EE7090EBB7963005934AA /* StructureChain.h in Headers */,
-				86D446EA25B2125300ECAE75 /* JITOpaqueByproducts.h in Headers */,
 				2AAAA31218BD49D100394CC8 /* StructureIDBlob.h in Headers */,
 				2AF7382D18BBBF92008A5A37 /* StructureIDTable.h in Headers */,
 				0FD2C92416D01EE900C7803F /* StructureInlines.h in Headers */,
@@ -10573,6 +10560,7 @@
 				5250D2D21E8DA05A0029A932 /* WasmThunks.h in Headers */,
 				53E9E0AF1EAEC45700FEE251 /* WasmTierUpCount.h in Headers */,
 				AD5C36EC1F75AD7C000BCAAF /* WasmToJS.h in Headers */,
+				863FBC5A25B093B900F6C930 /* WasmValueLocation.h in Headers */,
 				530FB3021E7A0B6E003C19DD /* WasmWorklist.h in Headers */,
 				FED94F2F171E3E2300BE77A4 /* Watchdog.h in Headers */,
 				0F919D2615853CE3004A4E7D /* Watchpoint.h in Headers */,

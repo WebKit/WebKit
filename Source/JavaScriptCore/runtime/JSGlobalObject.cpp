@@ -71,7 +71,6 @@
 #include "GeneratorPrototype.h"
 #include "GetterSetter.h"
 #include "HeapIterationScope.h"
-#include "InspectorInstrumentationObject.h"
 #include "IntlCollator.h"
 #include "IntlCollatorPrototype.h"
 #include "IntlDateTimeFormat.h"
@@ -1264,10 +1263,6 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::hostPromiseRejectionTracker)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, String(), globalFuncHostPromiseRejectionTracker));
-        });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::InspectorInstrumentation)].initLater([] (const Initializer<JSCell>& init) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
-            init.set(InspectorInstrumentationObject::create(init.vm, globalObject, InspectorInstrumentationObject::createStructure(init.vm, globalObject, globalObject->m_objectPrototype.get())));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::thisTimeValue)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, String(), dateProtoFuncGetTime, DatePrototypeGetTimeIntrinsic));

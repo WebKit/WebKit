@@ -199,8 +199,6 @@ function rejectPromise(promise, reason)
     @putPromiseInternalField(promise, @promiseFieldReactionsOrResult, reason);
     @putPromiseInternalField(promise, @promiseFieldFlags, flags | @promiseStateRejected);
 
-    @InspectorInstrumentation.promiseRejected(promise, reason, reactions);
-
     if (!(flags & @promiseFlagsIsHandled))
         @hostPromiseRejectionTracker(promise, @promiseRejectionReject);
 
@@ -219,8 +217,6 @@ function fulfillPromise(promise, value)
     var reactions = @getPromiseInternalField(promise, @promiseFieldReactionsOrResult);
     @putPromiseInternalField(promise, @promiseFieldReactionsOrResult, value);
     @putPromiseInternalField(promise, @promiseFieldFlags, flags | @promiseStateFulfilled);
-
-    @InspectorInstrumentation.promiseFulfilled(promise, value, reactions);
 
     @triggerPromiseReactions(@promiseStateFulfilled, reactions, value);
 }

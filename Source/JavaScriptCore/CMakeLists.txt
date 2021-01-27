@@ -65,7 +65,6 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/DatePrototype.cpp
     runtime/ErrorPrototype.cpp
     runtime/GeneratorPrototype.cpp
-    runtime/InspectorInstrumentationObject.cpp
     runtime/IntlCollatorConstructor.cpp
     runtime/IntlCollatorPrototype.cpp
     runtime/IntlDateTimeFormatConstructor.cpp
@@ -1287,7 +1286,6 @@ set(JavaScriptCore_BUILTINS_SOURCES
     ${JAVASCRIPTCORE_DIR}/builtins/GeneratorPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/GlobalObject.js
     ${JAVASCRIPTCORE_DIR}/builtins/GlobalOperations.js
-    ${JAVASCRIPTCORE_DIR}/builtins/InspectorInstrumentationObject.js
     ${JAVASCRIPTCORE_DIR}/builtins/InternalPromiseConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/IteratorHelpers.js
     ${JAVASCRIPTCORE_DIR}/builtins/IteratorPrototype.js

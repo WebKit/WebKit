@@ -1,3 +1,36 @@
+2021-01-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove InspectorInstrumentation object
+        https://bugs.webkit.org/show_bug.cgi?id=221028
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove InspectorInstrumentation since it is not used. We would like to clean up Promise's rejection path.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/tests/builtins/JavaScriptCore-Builtin.Promise-Combined.js:
+        (rejectPromise):
+        (fulfillPromise):
+        * Scripts/tests/builtins/JavaScriptCore-Builtin.Promise-Separate.js:
+        (rejectPromise):
+        (fulfillPromise):
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Separate.js-result:
+        * Sources.txt:
+        * builtins/BuiltinNames.h:
+        * builtins/InspectorInstrumentationObject.js: Removed.
+        * builtins/PromiseOperations.js:
+        (globalPrivate.rejectPromise):
+        (globalPrivate.fulfillPromise):
+        * bytecode/LinkTimeConstant.h:
+        * runtime/InspectorInstrumentationObject.cpp: Removed.
+        * runtime/InspectorInstrumentationObject.h: Removed.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+
 2021-01-26  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-References] Change default value for externref's tables from null to undefined
