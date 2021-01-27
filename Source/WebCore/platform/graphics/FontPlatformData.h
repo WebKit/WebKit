@@ -81,7 +81,7 @@ public:
     struct CreationData;
     
     struct FontVariationAxis {
-        FontVariationAxis(const String& name, const String& tag, int defaultValue, int minimumValue, int maximumValue)
+        FontVariationAxis(const String& name, const String& tag, float defaultValue, float minimumValue, float maximumValue)
             : m_name(name)
             , m_tag(tag)
             , m_defaultValue(defaultValue)
@@ -92,16 +92,16 @@ public:
         
         const String& name() const { return m_name; }
         const String& tag() const { return m_tag; }
-        int defaultValue() const { return m_defaultValue; }
-        int minimumValue() const { return m_minimumValue; }
-        int maximumValue() const { return m_maximumValue; }
+        float defaultValue() const { return m_defaultValue; }
+        float minimumValue() const { return m_minimumValue; }
+        float maximumValue() const { return m_maximumValue; }
 
     private:
         const String m_name;
         const String m_tag;
-        int m_defaultValue;
-        int m_minimumValue;
-        int m_maximumValue;
+        float m_defaultValue;
+        float m_minimumValue;
+        float m_maximumValue;
     };
 
     FontPlatformData(WTF::HashTableDeletedValueType);

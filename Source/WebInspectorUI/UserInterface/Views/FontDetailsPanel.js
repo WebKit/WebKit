@@ -57,8 +57,8 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
 
         this._fontSizeRow.value = this._formatSizeValue(this._fontPropertiesMap.get("font-size"));
         this._fontStyleRow.value = this._formatStyleValue(this._fontPropertiesMap.get("font-style"));
-        this._fontWeightRow.value = this._formatSimpleSingleValue(this._fontPropertiesMap.get("font-weight"), "wght", "%d");
-        this._fontStretchRow.value = this._formatSimpleSingleValue(this._fontPropertiesMap.get("font-stretch"), "wdth", WI.UIString("%d%%"));
+        this._fontWeightRow.value = this._formatSimpleSingleValue(this._fontPropertiesMap.get("font-weight"), "wght", "%s");
+        this._fontStretchRow.value = this._formatSimpleSingleValue(this._fontPropertiesMap.get("font-stretch"), "wdth", WI.UIString("%s%%", "%s%% @ Font Details Sidebar", "A single value expressed as a percentage where the value has already been converted from a number to a string."));
 
         this._fontVariantLigaturesRow.value = this._formatLigatureValue(this._fontPropertiesMap.get("font-variant-ligatures"));
         this._fontVariantPositionRow.value = this._formatPositionValue(this._fontPropertiesMap.get("font-variant-position"));
@@ -154,9 +154,9 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
     {
         let result;
         if (this._hasVariationValue(property, variationTag))
-            result = variationFormat.format(property.variations.get(variationTag).value);
+            result = variationFormat.format(this._formatAxisValueAsString(property.variations.get(variationTag).value));
         else
-            result = property.value;
+            result = this._formatAxisValueAsString(property.value);
 
         if (this._hasVariationValue(property, variationTag, {optional: true})) {
             let axis = property.variations.get(variationTag);
@@ -169,7 +169,7 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
     _formatVariationValue(variation)
     {
         let value = variation.value || variation.value === 0 ? variation.value : variation.defaultValue;
-        return this._createVariationValueElement(value, variation.minimumValue, variation.maximumValue, variation.defaultValue);
+        return this._createVariationValueElement(this._formatAxisValueAsString(value), variation.minimumValue, variation.maximumValue, variation.defaultValue);
     }
 
     _createVariationValueElement(value, minimumValue, maximumValue, defaultValue)
@@ -179,9 +179,19 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
 
         let secondaryElement = valueElement.appendChild(document.createElement("span"));
         secondaryElement.className = "secondary";
-        secondaryElement.textContent = WI.UIString(" (Range: %d-%d, Default: %d)", " (Range: %d-%d, Default: %d) @ Font Details Sidebar", "A range and default value for a single variation axis of a font.").format(minimumValue, maximumValue, defaultValue);
+        secondaryElement.textContent = WI.UIString(" (Range: %s-%s, Default: %s)", " (Range: %s-%s, Default: %s) @ Font Details Sidebar", "A range and default value for a single variation axis of a font.").format(this._formatAxisValueAsString(minimumValue), this._formatAxisValueAsString(maximumValue), this._formatAxisValueAsString(defaultValue));
         
         return valueElement;
+    }
+
+    _formatAxisValueAsString(value)
+    {
+        const options = {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2,
+            useGrouping: false,
+        }
+        return value.toLocaleString(undefined, options);
     }
 
     _formatSimpleFeatureValues(property, features, noMatchesResult)
