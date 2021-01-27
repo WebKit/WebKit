@@ -39,6 +39,18 @@ void FakeXRView::setFieldOfView(FakeXRViewInit::FieldOfViewInit fov)
     m_fov = fov;
 }
 
+void SimulatedXRDevice::simulateShutdownCompleted()
+{
+    if (m_trackingAndRenderingClient)
+        m_trackingAndRenderingClient->sessionDidEnd();
+}
+
+void SimulatedXRDevice::shutDownTrackingAndRendering()
+{
+    if (m_supportsShutdownNotification)
+        simulateShutdownCompleted();
+}
+
 WebFakeXRDevice::WebFakeXRDevice() = default;
 
 void WebFakeXRDevice::setViews(const Vector<FakeXRViewInit>& views)
@@ -154,6 +166,16 @@ ExceptionOr<Ref<FakeXRView>> WebFakeXRDevice::parseView(const FakeXRViewInit& in
     }
 
     return fakeView;
+}
+
+void WebFakeXRDevice::setSupportsShutdownNotification()
+{
+    m_device.setSupportsShutdownNotification(true);
+}
+
+void WebFakeXRDevice::simulateShutdown()
+{
+    m_device.simulateShutdownCompleted();
 }
 
 } // namespace WebCore

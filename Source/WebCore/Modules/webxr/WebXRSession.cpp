@@ -58,6 +58,7 @@ WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMod
     , m_animationTimer(*this, &WebXRSession::animationTimerFired)
 {
     m_device->initializeTrackingAndRendering(mode);
+    m_device->setTrackingAndRenderingClient(makeWeakPtr(*this));
 
     suspendIfNeeded();
 }
@@ -317,8 +318,20 @@ IntSize WebXRSession::recommendedWebGLFramebufferResolution() const
 }
 
 // https://immersive-web.github.io/webxr/#shut-down-the-session
-void WebXRSession::shutdown()
+void WebXRSession::shutdown(InitiatedBySystem initiatedBySystem)
 {
+    auto protectedThis = makeRef(*this);
+
+    if (m_ended) {
+        // This method was called earlier with initiatedBySystem=No when the
+        // session termination was requested manually via XRSession.end(). When
+        // the system has completed the shutdown, this method is now called again
+        // with initiatedBySystem=Yes to do the final cleanup.
+        if (initiatedBySystem == InitiatedBySystem::Yes)
+            didCompleteShutdown();
+        return;
+    }
+
     // 1. Let session be the target XRSession object.
     // 2. Set session's ended value to true.
     m_ended = true;
@@ -326,6 +339,14 @@ void WebXRSession::shutdown()
     // 3. If the active immersive session is equal to session, set the active immersive session to null.
     // 4. Remove session from the list of inline sessions.
     m_xrSystem.sessionEnded(*this);
+
+    if (initiatedBySystem == InitiatedBySystem::Yes) {
+        // If we get here, the session termination was triggered by the system rather than
+        // via XRSession.end(). Since the system has completed the session shutdown, we can
+        // immediately do the final cleanup.
+        didCompleteShutdown();
+        return;
+    }
 
     // TODO: complete the implementation
     // 5. Reject any outstanding promises returned by session with an InvalidStateError, except for any promises returned by end().
@@ -336,30 +357,51 @@ void WebXRSession::shutdown()
     if (m_device)
         m_device->shutDownTrackingAndRendering();
 
+    // If device will not report shutdown completion via the TrackingAndRenderingClient,
+    // complete the shutdown cleanup here.
+    if (!m_device || !m_device->supportsSessionShutdownNotification())
+        didCompleteShutdown();
+}
+
+void WebXRSession::didCompleteShutdown()
+{
+    if (m_device)
+        m_device->setTrackingAndRenderingClient(nullptr);
+
+    // Resolve end promise from XRSession::end()
+    if (m_endPromise) {
+        m_endPromise->resolve();
+        m_endPromise = WTF::nullopt;
+    }
+
+    // From https://immersive-web.github.io/webxr/#shut-down-the-session
     // 7. Queue a task that fires an XRSessionEvent named end on session.
     auto event = XRSessionEvent::create(eventNames().endEvent, { makeRefPtr(*this) });
     queueTaskToDispatchEvent(*this, TaskSource::WebXR, WTFMove(event));
 }
 
 // https://immersive-web.github.io/webxr/#dom-xrsession-end
-void WebXRSession::end(EndPromise&& promise)
+ExceptionOr<void> WebXRSession::end(EndPromise&& promise)
 {
-    // The shutdown() call bellow might remove the sole reference to session
+    // The shutdown() call below might remove the sole reference to session
     // that could exist (the XRSystem owns the sessions) so let's protect this.
-    Ref<WebXRSession> protectedThis(*this);
+    auto protectedThis = makeRef(*this);
+
+    if (m_ended)
+        return Exception { InvalidStateError, "Cannot end a session more than once"_s };
+
     // 1. Let promise be a new Promise.
     // 2. Shut down the target XRSession object.
-    if (!m_ended)
-        shutdown();
+    shutdown(InitiatedBySystem::No);
 
     // 3. Queue a task to perform the following steps:
-    queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [promise = WTFMove(promise)] () mutable {
-        // 3.1 Wait until any platform-specific steps related to shutting down the session have completed.
-        // 3.2 Resolve promise.
-        promise.resolve();
-    });
+    // 3.1 Wait until any platform-specific steps related to shutting down the session have completed.
+    // 3.2 Resolve promise.
+    ASSERT(!m_endPromise);
+    m_endPromise = WTFMove(promise);
 
     // 4. Return promise.
+    return { };
 }
 
 const char* WebXRSession::activeDOMObjectName() const
@@ -369,6 +411,13 @@ const char* WebXRSession::activeDOMObjectName() const
 
 void WebXRSession::stop()
 {
+}
+
+void WebXRSession::sessionDidEnd()
+{
+    // This can be called as a result of finishing the shutdown initiated
+    // from XRSession::end(), or session termination triggered by the system.
+    shutdown(InitiatedBySystem::Yes);
 }
 
 } // namespace WebCore

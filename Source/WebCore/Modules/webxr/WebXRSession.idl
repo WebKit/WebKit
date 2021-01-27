@@ -45,7 +45,7 @@
     unsigned long requestAnimationFrame(XRFrameRequestCallback callback);
     undefined cancelAnimationFrame(unsigned long handle);
 
-    Promise<undefined> end();
+    [MayThrowException] Promise<undefined> end();
 
     // Events
     attribute EventHandler onend;

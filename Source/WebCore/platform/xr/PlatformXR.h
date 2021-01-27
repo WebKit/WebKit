@@ -44,6 +44,15 @@ enum class ReferenceSpaceType {
 
 #if ENABLE(WEBXR)
 
+class TrackingAndRenderingClient : public CanMakeWeakPtr<TrackingAndRenderingClient> {
+public:
+    virtual ~TrackingAndRenderingClient() = default;
+
+    virtual void sessionDidEnd() = 0;
+    // FIXME: handle frame update
+    // FIXME: handle visibility changes
+};
+
 class Device : public CanMakeWeakPtr<Device> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(Device);
@@ -61,6 +70,11 @@ public:
 
     virtual void initializeTrackingAndRendering(SessionMode) = 0;
     virtual void shutDownTrackingAndRendering() = 0;
+    void setTrackingAndRenderingClient(WeakPtr<TrackingAndRenderingClient>&& client) { m_trackingAndRenderingClient = WTFMove(client); }
+
+    // If this method returns true, that means the device will notify TrackingAndRenderingClient
+    // when the platform has completed all steps to shut down the XR session.
+    virtual bool supportsSessionShutdownNotification() const { return false; }
 
 protected:
     Device() = default;
@@ -72,6 +86,7 @@ protected:
     EnabledFeaturesPerModeMap m_enabledFeaturesMap;
 
     bool m_supportsOrientationTracking { false };
+    WeakPtr<TrackingAndRenderingClient> m_trackingAndRenderingClient;
 };
 
 class Instance {

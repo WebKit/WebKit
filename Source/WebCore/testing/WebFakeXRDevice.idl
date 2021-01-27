@@ -60,4 +60,10 @@
 
   // Used to connect and send input events
   WebFakeXRInputController simulateInputSourceConnection(FakeXRInputSourceInit inputSource);
+
+  // Set up the device so it'll notify session when the system has completed all steps for session shutdown
+  undefined setSupportsShutdownNotification();
+
+  // Simulate session shutdown triggered by system
+  undefined simulateShutdown();
 };

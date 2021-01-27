@@ -2257,3 +2257,7 @@ webkit.org/b/220077 imported/w3c/web-platform-tests/webrtc/protocol/crypto-suite
 webkit.org/b/220332 [ BigSur+ ] imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window.html [ Pass Failure ]
 
 webkit.org/b/220552 [ BigSur+ ] media/media-source/media-source-webm-init-inside-segment.html [ Failure ]
+
+# WebXR tests
+[ BigSur+ ] imported/w3c/web-platform-tests/webxr/xrSession_end.https.html [ Pass ]
+[ BigSur+ ] http/wpt/webxr [ Pass ]

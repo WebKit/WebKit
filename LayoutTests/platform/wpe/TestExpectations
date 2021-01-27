@@ -646,6 +646,9 @@ imported/w3c/web-platform-tests/webxr/xrSession_prevent_multiple_exclusive.https
 imported/w3c/web-platform-tests/webxr/render_state_vertical_fov_immersive.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/render_state_update.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrSession_end.https.html [ Pass ]
+http/wpt/webxr/xrSession_end_device_reports_shutdown.https.html [ Pass ]
+http/wpt/webxr/xrSession_ended_by_system.https.html [ Pass ]
+http/wpt/webxr/xrSession_reject_multiple_end.https.html [ Pass ]
 
 # WebXR: Sometimes the test reports Syntax Error: Can't create duplicate variable isChromiumBased.
 imported/w3c/web-platform-tests/webxr/ar-module/xrDevice_requestSession_immersive-ar.https.html [ DumpJSConsoleLogInStdErr ]

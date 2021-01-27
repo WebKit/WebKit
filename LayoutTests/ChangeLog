@@ -1,3 +1,19 @@
+2021-01-27  Ada Chan  <ada.chan@apple.com>
+
+        Send the end XRSessionEvent after the platform-specific steps for session shutdown have completed
+        https://bugs.webkit.org/show_bug.cgi?id=220835
+
+        Reviewed by Chris Dumez.
+
+        * platform/mac/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * http/wpt/webxr/xrSession_end_device_reports_shutdown.https.html: Added.
+        * http/wpt/webxr/xrSession_end_device_reports_shutdown.https-expected.html: Added.
+        * http/wpt/webxr/xrSession_ended_by_system.https.html: Added.
+        * http/wpt/webxr/xrSession_ended_by_system.https-expected.html: Added.
+        * http/wpt/webxr/xrSession_reject_multiple_end.https.html: Added.
+        * http/wpt/webxr/xrSession_reject_multiple_end.https-expected.html: Added.
+
 2021-01-27  Rini Patel  <rini_patel@apple.com>
 
         [GPU Process] Remove blind skips from TestExpectations file
