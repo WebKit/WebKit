@@ -1,5 +1,17 @@
 2021-01-27  Per Arne  <pvollan@apple.com>
 
+        [macOS] WebContent sandbox regex incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=221045
+        <rdar://problem/73473985>
+
+        Reviewed by Brent Fulgham.
+
+        When the regex is intended to match the character '.', the pattern '\.' should be used.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2021-01-27  Per Arne  <pvollan@apple.com>
+
         [macOS] Tighten IOUSB access when camera is enabled
         https://bugs.webkit.org/show_bug.cgi?id=221042
         <rdar://problem/70504956>

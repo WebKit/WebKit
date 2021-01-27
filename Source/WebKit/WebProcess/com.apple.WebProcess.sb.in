@@ -442,13 +442,13 @@
         "kern.tcsm_enable"
         "kern.tcsm_available"
         "vm.footprint_suspend")
-    (sysctl-name-regex #"^hw.(active|avail)cpu")
-    (sysctl-name-regex #"^hw.(busfrequency|cachelinesize|cpufrequency(|_max)|pagesize|tbfrequency)(|_compat)")
-    (sysctl-name-regex #"^hw.l.+cachesize")
-    (sysctl-name-regex #"^hw.(logical|physical)cpu_max")
-    (sysctl-name-regex #"^hw.optional\.")
-    (sysctl-name-regex #"^kern.os(release|type|variant_status|version)")
-    (sysctl-name-regex #"^net.routetable")
+    (sysctl-name-regex #"^hw\.(active|avail)cpu")
+    (sysctl-name-regex #"^hw\.(busfrequency|cachelinesize|cpufrequency(|_max)|pagesize|tbfrequency)(|_compat)")
+    (sysctl-name-regex #"^hw\.l.+cachesize")
+    (sysctl-name-regex #"^hw\.(logical|physical)cpu_max")
+    (sysctl-name-regex #"^hw\.optional\.")
+    (sysctl-name-regex #"^kern\.os(release|type|variant_status|version)")
+    (sysctl-name-regex #"^net\.routetable")
 )
 
 (allow sysctl-write
