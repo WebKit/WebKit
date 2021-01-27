@@ -358,7 +358,7 @@ list(APPEND WebCore_SOURCES
     platform/mac/KeyEventMac.mm
     platform/mac/LocalCurrentGraphicsContextMac.mm
     platform/mac/LoggingMac.mm
-    platform/mac/MediaRemoteSoftLink.cpp
+    platform/mac/MediaRemoteSoftLink.mm
     platform/mac/NSScrollerImpDetails.mm
     platform/mac/PasteboardMac.mm
     platform/mac/PasteboardWriter.mm
