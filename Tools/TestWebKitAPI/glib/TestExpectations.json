@@ -31,9 +31,6 @@
     },
     "TestWebKitSettings": {
         "subtests": {
-            "/webkit/WebKitSettings/webkit-settings": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/220922"}}
-            },
             "/webkit/WebKitSettings/javascript-markup": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/220922"}}
             }
