@@ -1,3 +1,13 @@
+2021-01-27  Per Arne  <pvollan@apple.com>
+
+        [macOS] Re-enable ENABLE_SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS
+        https://bugs.webkit.org/show_bug.cgi?id=221039
+        <rdar://problem/73665061>
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/PlatformEnableCocoa.h:
+
 2021-01-27  Antti Koivisto  <antti@apple.com>
 
         Implement visibility based resource load scheduling for low priority resources
