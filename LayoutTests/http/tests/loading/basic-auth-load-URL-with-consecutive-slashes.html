@@ -12,11 +12,9 @@ if (window.testRunner) {
 
 function done()
 {
-    setTimeout(function() {
-        document.body.removeChild(document.getElementById("frame"));
-        if (window.testRunner)
-            testRunner.notifyDone();
-    }, 500);
+    document.body.removeChild(document.getElementById("frame"));
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function notifyFrameDidLoad(frame)
@@ -26,8 +24,8 @@ function notifyFrameDidLoad(frame)
 }
 </script>
 </head>
-<body onload="notifyFrameDidLoad(frame)">
-<iframe id="frame" src="resources/basic-auth-testing.php?username=webkit&password=rocks" onlad="notifyFrameDidLoad(this)"></iframe>
+<body>
+<iframe id="frame" src="resources/basic-auth-testing.php?username=webkit&password=rocks" onload="notifyFrameDidLoad(this)"></iframe>
 <p>PASS did not cause assertion failure.</p>
 </body>
 </html>
