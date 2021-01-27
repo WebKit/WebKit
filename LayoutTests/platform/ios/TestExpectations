@@ -808,6 +808,10 @@ webkit.org/b/164888 fast/shadow-dom/focus-navigation-out-of-slot.html [ Skip ]
 webkit.org/b/164888 fast/shadow-dom/focus-navigation-passes-shadow-host.html [ Skip ]
 webkit.org/b/164888 fast/shadow-dom/focus-navigation-passes-svg-use-element.html [ Skip ]
 webkit.org/b/202497 imported/w3c/web-platform-tests/shadow-dom/focus/ [ Skip ]
+imported/w3c/web-platform-tests/shadow-dom/focus/focus-pseudo-matches-on-shadow-host.html [ Pass ]
+imported/w3c/web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-1.html [ Pass ]
+imported/w3c/web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-2.html [ Pass ]
+imported/w3c/web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-3.html [ Pass ]
 
 # This test needs to be rewritten to use runUIScript to work on iOS
 webkit.org/b/152993 http/tests/contentdispositionattachmentsandbox/form-submission-disabled.html [ Skip ]

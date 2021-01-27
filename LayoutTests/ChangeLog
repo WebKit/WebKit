@@ -1,3 +1,15 @@
+2021-01-27  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Upstream to WPT Shadow DOM tests related to :focus pseudo-class
+        https://bugs.webkit.org/show_bug.cgi?id=220907
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/shadow-dom/focus-pseudo-on-shadow-host-1-expected.html: Removed.
+        * fast/shadow-dom/focus-pseudo-on-shadow-host-2-expected.html: Removed.
+        * fast/shadow-dom/focus-pseudo-on-shadow-host-3-expected.html: Removed.
+        * platform/ios/TestExpectations: Mark the new exported tests as passing.
+
 2021-01-27  Imanol Fernandez  <ifernandez@igalia.com>
 
         Complete WebXRRigidTransform implementation

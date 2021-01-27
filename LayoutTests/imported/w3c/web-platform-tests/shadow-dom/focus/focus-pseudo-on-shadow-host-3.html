@@ -4,9 +4,11 @@
 <meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
 <meta name="assert" content=":focus should not match a shadow host if the focused element is a slotted content">
 <link rel="help" href="https://html.spec.whatwg.org/#element-has-the-focus">
+<link rel="help=" href="https://bugs.webkit.org/show_bug.cgi?id=202432">
+<link rel="match" href="/css/reference/ref-filled-green-100px-square.xht">
 </head>
 <body>
-<p>Test passes if you see a single 100px by 100px green box below.</p>
+<p>Test passes if there is a filled green square and <strong>no red</strong>.</p>
 <div id="host"><div id="target" tabindex="0"></div></div>
 <style>
 #host { background: green; width: 100px; height: 100px; }

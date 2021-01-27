@@ -1,3 +1,22 @@
+2021-01-27  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Upstream to WPT Shadow DOM tests related to :focus pseudo-class
+        https://bugs.webkit.org/show_bug.cgi?id=220907
+
+        Reviewed by Ryosuke Niwa.
+
+        These tests landed originally in r250788 (bug #202432).
+
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-matches-on-shadow-host-expected.txt: Renamed from LayoutTests/fast/shadow-dom/focus-pseudo-matches-on-shadow-host-expected.txt.
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-matches-on-shadow-host.html: Renamed from LayoutTests/fast/shadow-dom/focus-pseudo-matches-on-shadow-host.html.
+          Removed workaround to wait until :focus matches on "focus" event, as that has been fixed in r271146 (bug #220243).
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-1-expected.xht: Added.
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-1.html: Renamed from LayoutTests/fast/shadow-dom/focus-pseudo-on-shadow-host-1.html.
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-2-expected.xht: Added.
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-2.html: Renamed from LayoutTests/fast/shadow-dom/focus-pseudo-on-shadow-host-2.html.
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-3-expected.xht: Added.
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-3.html: Renamed from LayoutTests/fast/shadow-dom/focus-pseudo-on-shadow-host-3.html.
+
 2021-01-27  Imanol Fernandez  <ifernandez@igalia.com>
 
         Complete WebXRRigidTransform implementation

@@ -4,8 +4,9 @@
 <meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
 <meta name="assert" content=":focus should match a shadow host which contains the focused element">
 <link rel="help" href="https://html.spec.whatwg.org/#element-has-the-focus">
-<script src="../../resources/testharness.js"></script>
-<script src="../../resources/testharnessreport.js"></script>
+<link rel="help=" href="https://bugs.webkit.org/show_bug.cgi?id=202432">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
 </head>
 <body>
 <input id="defaultFocus" autofocus>
@@ -16,11 +17,8 @@
 let focusedDefault = false;
 function didFocusDefault() { }
 function checkFocusMatch() {
-    if (defaultFocus.matches(':focus')) {
-        focusedDefault = true;
-        didFocusDefault();
-    } else
-        setTimeout(checkFocusMatch, 100);
+    focusedDefault = true;
+    didFocusDefault();
 }
 defaultFocus.addEventListener('focus', checkFocusMatch);
 
