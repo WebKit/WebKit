@@ -33,6 +33,8 @@
 namespace WebCore {
 namespace Display {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BoxDecorationData);
+
 BorderEdge::BorderEdge(float width, float innerWidth, float outerWidth, Color color, BorderStyle style, bool isTransparent, bool isPresent)
     : m_color(color)
     , m_width(width)

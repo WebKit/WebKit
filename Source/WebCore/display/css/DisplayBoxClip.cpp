@@ -33,6 +33,8 @@
 namespace WebCore {
 namespace Display {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BoxClip);
+
 BoxClip::BoxClip() = default;
 BoxClip::~BoxClip() = default;
 

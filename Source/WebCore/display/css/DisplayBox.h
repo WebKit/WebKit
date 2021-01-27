@@ -41,6 +41,7 @@ class Tree;
 // FIXME: Make this a strong type.
 using AbsoluteFloatRect = FloatRect;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Box);
 class Box {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Box);
 public:

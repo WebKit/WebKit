@@ -33,6 +33,8 @@
 namespace WebCore {
 namespace Display {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BoxRareGeometry);
+
 bool BoxRareGeometry::hasBorderRadius() const
 {
     return m_borderRadii && !m_borderRadii->isZero();

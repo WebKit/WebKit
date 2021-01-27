@@ -30,6 +30,7 @@
 #include <string.h>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WTF {
 
