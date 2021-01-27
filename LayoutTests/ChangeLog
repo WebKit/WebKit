@@ -1,3 +1,26 @@
+2021-01-27  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        REGRESSION (r243266): SVGStopElement does not react upon 'offset' attribute changes
+        https://bugs.webkit.org/show_bug.cgi?id=220971
+
+        Reviewed by Said Abou-Hallawa.
+
+        Fix regression from r243266. SVGAnimatedNumber::create() needs a
+        reference to the owner SVGElement, otherwise it cannot react to dynamic
+        changes of the attribute and invalidate the element.
+
+        This is covered by two pixel tests: svg/custom/deep-dynamic-updates.svg
+        and svg/custom/js-update-stop.svg, however since we no longer run pixel
+        tests by default nobody noticed this. Convert these tests to reftests
+        to avoid this in the future.
+
+        * svg/custom/deep-dynamic-updates-expected.svg: Copied from LayoutTests/svg/custom/deep-dynamic-updates.svg.
+        * svg/custom/deep-dynamic-updates-expected.txt: Removed.
+        * svg/custom/deep-dynamic-updates.svg:
+        * svg/custom/js-update-stop-expected.svg: Copied from LayoutTests/svg/custom/js-update-stop.svg.
+        * svg/custom/js-update-stop-expected.txt: Removed.
+        * svg/custom/js-update-stop.svg:
+
 2021-01-27  Sam Weinig  <weinig@apple.com>
 
         [iOS] imported/w3c/web-platform-tests/css/css-color/system-color-compute.html is failing
