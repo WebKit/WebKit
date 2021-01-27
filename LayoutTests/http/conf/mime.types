@@ -595,6 +595,7 @@ video/vnd.mpegurl		mxu m4u
 video/vnd.nokia.interleaved-multimedia
 video/vnd.objectvideo
 video/vnd.vivo
+video/webm			webm
 video/x-dv			dv dif
 video/x-msvideo			avi
 video/x-sgi-movie		movie

@@ -1,3 +1,78 @@
+2021-01-27  Andy Estes  <aestes@apple.com>
+
+        [Mac] MediaSampleCursor::stepInOrderedMap can hang when stepping to the end of a track that hasn't been fully parsed
+        https://bugs.webkit.org/show_bug.cgi?id=220555
+        <rdar://problem/72910000>
+
+        Reviewed by Eric Carlson.
+
+        When a container has multiple tracks, CoreMedia determines the overall duration by creating
+        a cursor at a presentation time of +infinity then asking for its timing info, the expectation
+        being that the cursor will clamp itself to the track duration and report that in
+        MediaSampleCursor::getSampleTiming.
+
+        Previously, this could result in a hang for tracks that had not yet finished parsing, as
+        MediaSampleCursor was designed to wait for samples outside the playable range. With this
+        change, MediaSampleCursor no longer waits for samples outside the playable range but
+        rather reports clamped timing info without waiting for a sample. If CoreMedia asks for
+        information that requires a sample (e.g., sample location), MediaSampleCursor will respond
+        with `kMTPluginSampleCursorError_LocationNotAvailable`. So that CoreMedia can determine
+        the range of playable samples, this patch implements MediaSampleCursor::getPlayableHorizon.
+
+        To simplify this implementation, MediaSampleCursor now assumes that decode time equals
+        presentation time (for video tracks) or is invalid (for audio tracks). While here, also
+        added media logging that helped debug this issue.
+
+        Test: http/tests/media/video-canplaythrough-webm.html
+
+        * Shared/mac/MediaFormatReader/MediaSampleByteRange.cpp:
+        (WebKit::MediaSampleByteRange::MediaSampleByteRange): Asserted our assmpution about the
+        relationship between presentation time and decode time.
+        * Shared/mac/MediaFormatReader/MediaSampleCursor.cpp:
+        (WebKit::assumedDecodeTime): Added to compute decode time from presentation time and a
+        nominal sample.
+        (WebKit::upperBound): Changed to compute the decode key based on assumed decode time.
+        (WebKit::stepIterator): Removed the MediaTime specialization.
+        (WebKit::stepTime): Added to step a MediaTime rather than an iterator.
+        (WebKit::MediaSampleCursor::MediaSampleCursor): Initialized logging.
+        (WebKit::MediaSampleCursor::locateIterator const): Changed to find an iterator based on
+        presentation time and assumed decode time.
+        (WebKit::MediaSampleCursor::locateMediaSample const): Ditto.
+        (WebKit::MediaSampleCursor::locateTiming const): Added to locate timing info even if no
+        sample is available.
+        (WebKit::MediaSampleCursor::stepInOrderedMap): Changed to call getSampleMap, and removed
+        the MediaTime specialization.
+        (WebKit::MediaSampleCursor::stepInPresentationTime): Added to replace the MediaTime
+        specialization of stepInOrderedMap.
+        (WebKit::MediaSampleCursor::getSampleMap const): Added to call
+        MediaTrackReader::waitForSample and return as soon as at least one sample is available.
+        Returns kMTPluginSampleCursorError_NoSamples if the track finishes parsing with no
+        samples.
+        (WebKit::MediaSampleCursor::getMediaSample const): Changed to call getSampleMap.
+        (WebKit::MediaSampleCursor::getTiming const): Added to get timing info.
+        (WebKit::MediaSampleCursor::copyProperty): Added logging.
+        (WebKit::MediaSampleCursor::stepInDecodeOrderAndReportStepsTaken): Changed to call the new
+        version of stepInOrderedMap.
+        (WebKit::MediaSampleCursor::stepInPresentationOrderAndReportStepsTaken): Ditto.
+        (WebKit::MediaSampleCursor::stepByDecodeTime): Changed to call stepInPresentationTime.
+        (WebKit::MediaSampleCursor::stepByPresentationTime): Ditto.
+        (WebKit::MediaSampleCursor::compareInDecodeOrder const): Changed to call getTiming.
+        (WebKit::MediaSampleCursor::getSampleTiming const): Ditto.
+        (WebKit::MediaSampleCursor::getPlayableHorizon const): Implemented by taking the
+        difference between the last sample's end time and the cursor's presentation time.
+        (WebKit::MediaSampleCursor::logChannel const): Added.
+        (WebKit::makeIterator): Deleted.
+        (WebKit::makeTime): Deleted.
+        (WebKit::MediaSampleCursor::createAtDecodedSample): Deleted.
+        * Shared/mac/MediaFormatReader/MediaSampleCursor.h:
+        (WebKit::MediaSampleCursor::logger const): Configured logging.
+        (WebKit::MediaSampleCursor::logClassName const): Ditto.
+        (WebKit::MediaSampleCursor::logIdentifier const): Ditto.
+        * Shared/mac/MediaFormatReader/MediaTrackReader.cpp:
+        (WebKit::MediaTrackReader::mediaTypeString const): Ditto.
+        (WebKit::MediaTrackReader::nextSampleCursorLogIdentifier const): Ditto.
+        * Shared/mac/MediaFormatReader/MediaTrackReader.h:
+
 2021-01-27  Martin Robinson  <mrobinson@igalia.com>
 
         Use ScrollSnapOffsetsInfo in the scrolling tree

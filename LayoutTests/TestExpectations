@@ -4546,6 +4546,7 @@ imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/wr
 
 # Cocoa-only
 http/tests/media/hls/hls-hdr-switch.html [ Skip ]
+http/tests/media/video-canplaythrough-webm.html [ Skip ]
 
 # These tests rely on webkit-test-runner flags that aren't implemented for DumpRenderTree, so they will fail under legacy WebKit.
 editing/selection/expando.html [ Failure ]
