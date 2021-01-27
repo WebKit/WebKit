@@ -227,6 +227,7 @@ $(PROJECT_DIR)/Modules/mediastream/RTCPeerConnectionIceEvent.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCPeerConnectionInternals.js
 $(PROJECT_DIR)/Modules/mediastream/RTCPeerConnectionState.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCPriorityType.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCRtcpParameters.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpCapabilities.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpCodecCapability.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpCodecParameters.idl

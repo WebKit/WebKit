@@ -28,7 +28,7 @@
     EnabledAtRuntime=PeerConnection,
     JSGenerateToJSObject,
 ] dictionary RTCRtpParameters {
-    sequence<RTCRtpHeaderExtensionParameters> headerExtensions;
-    // FIXME: Add RTCRtcpParameters rtcp;
-    sequence<RTCRtpCodecParameters> codecs;
+    required sequence<RTCRtpHeaderExtensionParameters> headerExtensions;
+    required RTCRtcpParameters rtcp;
+    required sequence<RTCRtpCodecParameters> codecs;
 };

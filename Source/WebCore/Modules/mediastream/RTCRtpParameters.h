@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "RTCRtcpParameters.h"
 #include "RTCRtpCodecParameters.h"
 #include "RTCRtpHeaderExtensionParameters.h"
 #include <wtf/Vector.h>
@@ -35,6 +36,7 @@ namespace WebCore {
 
 struct RTCRtpParameters {
     Vector<RTCRtpHeaderExtensionParameters> headerExtensions;
+    RTCRtcpParameters rtcp;
     Vector<RTCRtpCodecParameters> codecs;
 };
 

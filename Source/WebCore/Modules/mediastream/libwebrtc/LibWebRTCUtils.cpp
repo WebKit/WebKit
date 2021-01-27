@@ -139,6 +139,10 @@ RTCRtpParameters toRTCRtpParameters(const webrtc::RtpParameters& rtcParameters)
     for (auto& codec : rtcParameters.codecs)
         parameters.codecs.append(toRTCCodecParameters(codec));
 
+    parameters.rtcp.reducedSize = rtcParameters.rtcp.reduced_size;
+    if (rtcParameters.rtcp.cname.length())
+        parameters.rtcp.cname = fromStdString(rtcParameters.rtcp.cname);
+
     return parameters;
 }
 
@@ -205,6 +209,11 @@ void updateRTCRtpSendParameters(const RTCRtpSendParameters& parameters, webrtc::
         rtcParameters.degradation_preference = webrtc::DegradationPreference::BALANCED;
         break;
     }
+
+    if (parameters.rtcp.reducedSize)
+        rtcParameters.rtcp.reduced_size = *parameters.rtcp.reducedSize;
+    if (!parameters.rtcp.cname.isNull())
+        rtcParameters.rtcp.cname = parameters.rtcp.cname.utf8().data();
 }
 
 RTCRtpTransceiverDirection toRTCRtpTransceiverDirection(webrtc::RtpTransceiverDirection rtcDirection)

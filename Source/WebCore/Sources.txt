@@ -3347,6 +3347,7 @@ JSRTCPeerConnectionIceEvent.cpp
 JSRTCPeerConnectionIceErrorEvent.cpp
 JSRTCPeerConnectionState.cpp
 JSRTCPriorityType.cpp
+JSRTCRtcpParameters.cpp
 JSRTCRtpCapabilities.cpp
 JSRTCRtpCodecCapability.cpp
 JSRTCRtpCodecParameters.cpp
