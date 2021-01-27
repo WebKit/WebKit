@@ -1227,11 +1227,10 @@
 
 (allow file-read-data
     (literal "/dev/autofs_nowait")) ; Used by CF to circumvent automount triggers
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
 (allow ipc-posix-shm
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-    (with report) (with telemetry-backtrace)
-#endif
     (ipc-posix-name-regex #"^CFPBS:")) ; <rdar://problem/13757475>
+#endif
 
 ;; Graphics
 (system-graphics)
