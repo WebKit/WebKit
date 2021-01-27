@@ -713,6 +713,8 @@ protected:
         return ((inlineSize - borderPaddingInlineSum) / aspectRatio) + borderPaddingBlockSum;
     }
 
+    void computePreferredLogicalWidths(const Length& minWidth, const Length& maxWidth, LayoutUnit borderAndPadding);
+
 private:
     bool replacedMinMaxLogicalHeightComputesAsNone(SizeType) const;
 
