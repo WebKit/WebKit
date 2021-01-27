@@ -3472,12 +3472,13 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             switch (style.aspectRatioType()) {
             case AspectRatioType::Auto:
                 return cssValuePool.createIdentifierValue(CSSValueAuto);
+            case AspectRatioType::AutoZero:
             case AspectRatioType::AutoAndRatio:
             case AspectRatioType::Ratio: {
                 auto ratioList = CSSValueList::createSlashSeparated();
                 ratioList->append(cssValuePool.createValue(style.aspectRatioWidth(), CSSUnitType::CSS_NUMBER));
                 ratioList->append(cssValuePool.createValue(style.aspectRatioHeight(), CSSUnitType::CSS_NUMBER));
-                if (style.aspectRatioType() == AspectRatioType::Ratio)
+                if (style.aspectRatioType() != AspectRatioType::AutoAndRatio)
                     return ratioList;
                 auto list = CSSValueList::createSpaceSeparated();
                 list->append(cssValuePool.createIdentifierValue(CSSValueAuto));

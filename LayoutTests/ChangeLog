@@ -1,3 +1,14 @@
+2021-01-27  Rob Buis  <rbuis@igalia.com>
+
+        Handle zero aspect-ratio width/height
+        https://bugs.webkit.org/show_bug.cgi?id=220970
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Enable some tests that pass now.
+
+        * TestExpectations:
+
 2021-01-27  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Upstream to WPT Shadow DOM tests related to :focus pseudo-class

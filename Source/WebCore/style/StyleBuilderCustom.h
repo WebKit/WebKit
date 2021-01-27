@@ -1179,9 +1179,14 @@ inline void BuilderCustom::applyValueAspectRatio(BuilderState& builderState, CSS
         return;
     }
 
-    builderState.style().setAspectRatioType(AspectRatioType::Ratio);
     ASSERT(list.length() == 2);
-    builderState.style().setAspectRatio(downcast<CSSPrimitiveValue>(list.item(0))->doubleValue(), downcast<CSSPrimitiveValue>(list.item(1))->doubleValue());
+    auto width = downcast<CSSPrimitiveValue>(list.item(0))->doubleValue();
+    auto height = downcast<CSSPrimitiveValue>(list.item(1))->doubleValue();
+    if (!width || !height)
+        builderState.style().setAspectRatioType(AspectRatioType::AutoZero);
+    else
+        builderState.style().setAspectRatioType(AspectRatioType::Ratio);
+    builderState.style().setAspectRatio(width, height);
 }
 
 inline void BuilderCustom::applyValueWebkitTextEmphasisStyle(BuilderState& builderState, CSSValue& value)
