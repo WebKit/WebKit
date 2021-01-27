@@ -284,6 +284,12 @@ class GLibTestRunner(object):
             self._results['afterAll'] = 'CRASH'
             return self._results
 
+        if len(self._results) == 0:
+            # Normally stderr is checked after a subtest has been parsed. If no subtests have been parsed
+            # chances are something went wrong with the test executable itself and we should print stderr
+            # to the user.
+            sys.stderr.write(self._read_from_stderr(self._stderr_fd))
+
         self._stderr_fd = None
 
         if need_restart:

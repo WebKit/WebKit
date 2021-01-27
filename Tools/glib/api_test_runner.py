@@ -276,6 +276,7 @@ class TestRunner(object):
         if self.is_qt_test(test_program):
             return self._run_test_qt(test_program)
 
+        sys.stderr.write("WARNING: %s doesn't seem to be a supported test program.\n" % test_program)
         return {}
 
     def run_tests(self):
@@ -302,6 +303,11 @@ class TestRunner(object):
                 skipped_subtests = self._test_cases_to_skip(test)
                 number_of_total_tests += len(skipped_subtests)
                 results = self._run_test(test, subtests, skipped_subtests)
+                if len(results) == 0:
+                    # No subtests were emitted, either the test binary didn't exist, or we don't know how to run it, or it crashed.
+                    sys.stderr.write("ERROR: %s failed to run, as it didn't emit any subtests.\n" % test)
+                    crashed_tests[test] = ["(problem in test executable)"]
+                    continue
                 number_of_executed_subtests_for_test = len(results)
                 if number_of_executed_subtests_for_test > 1:
                     number_of_executed_tests += number_of_executed_subtests_for_test
