@@ -657,6 +657,14 @@
     (literal "/dev/random")
     (literal "/dev/urandom"))
 
+(if (system-attribute apple-internal)
+    (allow file-read* file-write-data file-ioctl
+        (literal "/dev/dtracehelper"))
+; else
+    (deny (with no-log) file-read* file-write-data file-ioctl
+        (literal "/dev/dtracehelper"))
+)
+
 ;; Access to MobileGestalt
 (allow mach-lookup
     (global-name "com.apple.mobilegestalt.xpc"))

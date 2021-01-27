@@ -1,5 +1,17 @@
 2021-01-27  Per Arne  <pvollan@apple.com>
 
+        [iOS] Fix sandbox violation file-read-data /dev/dtracehelper in the Networking process
+        https://bugs.webkit.org/show_bug.cgi?id=221046
+        <rdar://problem/73625718>
+
+        Reviewed by Brent Fulgham.
+
+        Reading this file should be allowed in the Networking process on internal installs on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
+2021-01-27  Per Arne  <pvollan@apple.com>
+
         [macOS] WebContent sandbox regex incorrect
         https://bugs.webkit.org/show_bug.cgi?id=221045
         <rdar://problem/73473985>
