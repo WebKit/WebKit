@@ -203,7 +203,7 @@ TEST(WebKit2, SpeechRecognitionErrorWhenStartingAudioCaptureOnDifferentPage)
     EXPECT_WK_STREQ(@"Audio Mute", [lastScriptMessage body]);
 }
 
-// FIXME: enable this test on iOS when https://webkit.org/b/175204 is fixed.
+// FIXME: test this on iOS when https://webkit.org/b/175204 is fixed.
 #if PLATFORM(MAC)
 
 TEST(WebKit2, SpeechRecognitionPageBecomesInvisible)
@@ -222,19 +222,19 @@ TEST(WebKit2, SpeechRecognitionPageBecomesInvisible)
     shouldGrantPermissionRequest = true;
     receivedScriptMessage = false;
     [webView synchronouslyLoadTestPageNamed:@"speechrecognition-basic"];
-    [webView stringByEvaluatingJavaScript:@"start()"];
+    [webView evaluateJavaScript:@"setShouldHandleEndEvent(true); start();" completionHandler:nil];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     EXPECT_WK_STREQ(@"Start", [lastScriptMessage body]);
 
     // Hide page.
     receivedScriptMessage = false;
-#if PLATFORM(MAC)
     [webView.get().window setIsVisible:NO];
-#else
-    webView.get().window.hidden = YES;
-#endif
+    Util::sleep(0.1);
+    // Ongoing recognition does not stop automatically.
+    EXPECT_FALSE(receivedScriptMessage);
+    [webView stringByEvaluatingJavaScript:@"stop()"];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
-    EXPECT_WK_STREQ(@"Error: aborted - Page is no longer visible", [lastScriptMessage body]);
+    EXPECT_WK_STREQ(@"End", [lastScriptMessage body]);
 
     // Page is invisible.
     receivedScriptMessage = false;

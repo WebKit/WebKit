@@ -1790,8 +1790,13 @@ void WebProcessProxy::pageMutedStateChanged(WebCore::PageIdentifier identifier, 
 
 void WebProcessProxy::pageIsBecomingInvisible(WebCore::PageIdentifier identifier)
 {
-    if (auto server = m_speechRecognitionServerMap.get(identifier))
-        server->abortForPageIsBecomingInvisible();
+#if ENABLE(MEDIA_STREAM)
+    if (!RealtimeMediaSourceCenter::shouldInterruptAudioOnPageVisibilityChange())
+        return;
+#endif
+
+    if (auto speechRecognitionServer = m_speechRecognitionServerMap.get(identifier))
+        speechRecognitionServer->mute();
 }
 
 #if PLATFORM(WATCHOS)

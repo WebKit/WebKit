@@ -73,6 +73,9 @@ private:
 
 #if HAVE(SPEECHRECOGNIZER)
     RetainPtr<WebSpeechRecognizerTask> m_task;
+#else
+    // For testing.
+    bool m_isRecognizing { false };
 #endif
 };
 

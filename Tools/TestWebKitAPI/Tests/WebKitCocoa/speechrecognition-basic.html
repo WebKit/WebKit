@@ -6,6 +6,12 @@
 
 var speechRecognition = null;
 var recorder = null;
+var shouldHandleEndEvent = false;
+
+function setShouldHandleEndEvent(shouldHandleEvent)
+{
+    shouldHandleEndEvent = shouldHandleEvent;
+}
 
 function start()
 {
@@ -14,6 +20,8 @@ function start()
     speechRecognition.continuous = true;
     speechRecognition.onstart = () => window.webkit.messageHandlers.testHandler.postMessage("Start");
     speechRecognition.onerror = (event) => window.webkit.messageHandlers.testHandler.postMessage("Error: " + event.error + " - " +  event.message);
+    if (shouldHandleEndEvent)
+        speechRecognition.onend = () => window.webkit.messageHandlers.testHandler.postMessage("End");
 
     speechRecognition.start();
 }

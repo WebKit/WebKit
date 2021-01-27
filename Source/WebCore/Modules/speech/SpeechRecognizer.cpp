@@ -118,21 +118,26 @@ void SpeechRecognizer::dataCaptured(const MediaTime&, const PlatformAudioData&, 
 
 bool SpeechRecognizer::startRecognition(bool, SpeechRecognitionConnectionClientIdentifier, const String&, bool, bool, uint64_t)
 {
+    m_isRecognizing = true;
     return true;
 }
 
 void SpeechRecognizer::abortRecognition()
 {
+    m_isRecognizing = false;
     m_delegateCallback(SpeechRecognitionUpdate::create(*m_clientIdentifier, SpeechRecognitionUpdateType::End));
 }
 
 void SpeechRecognizer::stopRecognition()
 {
+    m_isRecognizing = false;
     m_delegateCallback(SpeechRecognitionUpdate::create(*m_clientIdentifier, SpeechRecognitionUpdateType::End));
 }
 
 void SpeechRecognizer::resetRecognition()
 {
+    if (!m_isRecognizing)
+        return;
     abortRecognition();
 }
 
