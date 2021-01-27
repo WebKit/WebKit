@@ -1,5 +1,17 @@
 2021-01-27  Per Arne  <pvollan@apple.com>
 
+        [macOS] Enforce IOKit message filtering
+        https://bugs.webkit.org/show_bug.cgi?id=221038
+        <rdar://problem/71333134>
+
+        Reviewed by Brent Fulgham.
+
+        Update IOKit message filters based on telemetry, and deny messages not observed being used.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2021-01-27  Per Arne  <pvollan@apple.com>
+
         [macOS] Remove fsctl-command in the WebContent process
         https://bugs.webkit.org/show_bug.cgi?id=221002
         <rdar://problem/70504451>
