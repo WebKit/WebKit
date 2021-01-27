@@ -37,6 +37,7 @@ import platform
 
 from webkitpy.common.system.logutils import configure_logging
 import toml
+import json
 
 try:
     from urllib.parse import urlparse  # pylint: disable=E0611
@@ -48,11 +49,7 @@ try:
 except ImportError:
     from urllib2 import urlopen
 
-FLATPAK_REQ = [
-    ("flatpak", "1.4.4"),
-]
-
-FLATPAK_VERSION = {}
+FLATPAK_REQUIRED_VERSION = "1.4.4"
 
 scriptdir = os.path.abspath(os.path.dirname(__file__))
 _log = logging.getLogger(__name__)
@@ -146,33 +143,32 @@ def run_sanitized(command, gather_output=False, ignore_stderr=False):
 def check_flatpak(verbose=True):
     # Flatpak is only supported on Linux.
     if not sys.platform.startswith("linux"):
-        return False
+        return ()
 
-    for app, required_version in FLATPAK_REQ:
-        try:
-            output = run_sanitized([app, "--version"], gather_output=True)
-        except (subprocess.CalledProcessError, OSError):
-            if verbose:
-                Console.error_message("You need to install %s >= %s"
-                                      " to be able to use the '%s' script.\n\n"
-                                      "You can find some informations about"
-                                      " how to install it for your distribution at:\n"
-                                      "    * https://flatpak.org/\n", app, required_version,
-                                      sys.argv[0])
-            return False
+    required_version = FLATPAK_REQUIRED_VERSION
+    try:
+        output = run_sanitized(["flatpak", "--version"], gather_output=True)
+    except (subprocess.CalledProcessError, OSError):
+        if verbose:
+            Console.error_message("You need to install flatpak >= %s"
+                                  " to be able to use the '%s' script.\n\n"
+                                  "You can find some informations about"
+                                  " how to install it for your distribution at:\n"
+                                  "    * https://flatpak.org/\n", required_version,
+                                  sys.argv[0])
+            return ()
 
-        def comparable_version(version):
-            return tuple(map(int, (version.split("."))))
+    def comparable_version(version):
+        return tuple(map(int, (version.split("."))))
 
-        version = output.split(" ")[1].strip("\n")
-        current = comparable_version(version)
-        FLATPAK_VERSION[app] = current
-        if current < comparable_version(required_version):
-            Console.error_message("%s %s required but %s found. Please update and try again\n",
-                                  app, required_version, version)
-            return False
+    version = output.split(" ")[1].strip("\n")
+    current_version = comparable_version(version)
+    if current_version < comparable_version(required_version):
+        Console.error_message("flatpak %s required but %s found. Please update and try again\n",
+                              required_version, version)
+        return ()
 
-    return True
+    return current_version
 
 
 class FlatpakObject:
@@ -559,7 +555,8 @@ class WebkitFlatpak:
         self.sccache_config_file = os.path.join(self.flatpak_build_path, 'sccache.toml')
 
         Console.quiet = self.quiet
-        if not check_flatpak():
+        self.flatpak_version = check_flatpak()
+        if not self.flatpak_version:
             return False
 
         self._reset_repository()
@@ -852,19 +849,32 @@ class WebkitFlatpak:
         if not building_gst and args[0] != "sccache":
             extra_flatpak_args.extend(self.setup_gstbuild(building))
 
+        flatpak_env = os.environ
+        for envvar in flatpak_env.keys():
+            if envvar.startswith("LC_") or envvar.startswith("LANG"):
+                del flatpak_env[envvar]
+                if self.flatpak_version >= (1, 10, 0):
+                    flatpak_command.append("--unset-env=%s" % envvar)
+
         flatpak_command += extra_flatpak_args + ['--command=%s' % args[0], "org.webkit.Sdk"] + args[1:]
 
-        flatpak_env = os.environ
+
         flatpak_env.update({
             "FLATPAK_BWRAP": os.path.join(scriptdir, "webkit-bwrap"),
             "WEBKIT_BUILD_DIR_BIND_MOUNT": "%s:%s" % (sandbox_build_path, self.build_path),
             "WEBKIT_FLATPAK_USER_DIR": os.environ["FLATPAK_USER_DIR"],
         })
 
+        env_file = os.path.join(self.build_root, 'flatpak-env.json')
+        with open(env_file, 'w') as f:
+            json.dump(dict(flatpak_env), f, indent=2)
+
         try:
             return self.execute_command(flatpak_command, stdout=stdout, env=flatpak_env)
         except KeyboardInterrupt:
             return 0
+        finally:
+            os.remove(env_file)
 
         return 0
 

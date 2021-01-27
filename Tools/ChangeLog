@@ -1,3 +1,17 @@
+2021-01-27  Philippe Normand  <pnormand@igalia.com> and Lauro Moura  <lmoura@igalia.com>
+
+        [Flatpak SDK] Flatpak 1.10 environment variable issues
+        https://bugs.webkit.org/show_bug.cgi?id=220781
+
+        Reviewed by Adrian Perez de Castro.
+
+        Flatpak no longer passes its env variables to bwrap, so the workaround is now to serialize
+        it on-disk in a JSON file and load it from our webkit-bwrap script.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+        * flatpak/webkit-bwrap:
+
 2021-01-26  Sihui Liu  <sihui_liu@appe.com>
 
         Mute audio capture for speech recognition based on shouldInterruptAudioOnPageVisibilityChange when page is invisible

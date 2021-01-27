@@ -22,12 +22,14 @@ import itertools
 import shlex
 import sys
 import tempfile
+import json
 
 scriptdir = os.path.abspath(os.path.dirname(__file__))
 
 def main(args: list) -> int:
     tmpdir = tempfile.gettempdir()
     source_root = os.path.normpath(os.path.abspath(os.path.join(scriptdir, '../../')))
+    build_root = os.path.join(source_root, 'WebKitBuild')
     bind_mounts = {
         "/app/webkit":  source_root,
         # Access to /run/host is required by the crash log reporter.
@@ -35,7 +37,11 @@ def main(args: list) -> int:
         "/run/shm": "/dev/shm",
     }
 
-    flatpak_user_dir = os.environ.get("WEBKIT_FLATPAK_USER_DIR")
+    environ = {}
+    with open(os.path.join(build_root, 'flatpak-env.json')) as f:
+        environ = json.load(f)
+
+    flatpak_user_dir = environ.get("WEBKIT_FLATPAK_USER_DIR")
     if flatpak_user_dir:
         bind_mounts["/var/tmp"] = os.path.join(flatpak_user_dir, "var", "tmp")
 
@@ -43,16 +49,16 @@ def main(args: list) -> int:
         "/run/icecc": "/var/run/icecc"
     }
 
-    build_path = os.environ.get("WEBKIT_BUILD_DIR_BIND_MOUNT")
+    build_path = environ.get("WEBKIT_BUILD_DIR_BIND_MOUNT")
     if build_path:
         dest, src = build_path.split(":")
         try_bind_mounts[dest] = src
 
-    coredumps_dir = os.environ.get("WEBKIT_CORE_DUMPS_DIRECTORY")
+    coredumps_dir = environ.get("WEBKIT_CORE_DUMPS_DIRECTORY")
     if coredumps_dir:
         try_bind_mounts[coredumps_dir] = coredumps_dir
 
-    xdg_runtime_dir = os.environ.get("XDG_RUNTIME_DIR")
+    xdg_runtime_dir = environ.get("XDG_RUNTIME_DIR")
     if xdg_runtime_dir:
         pw_socket = os.path.join(xdg_runtime_dir, "pipewire-0")
         try_bind_mounts[pw_socket] = pw_socket
@@ -64,7 +70,7 @@ def main(args: list) -> int:
     for dst, src in try_bind_mounts.items():
         bwrap_args.extend(("--bind-try", src, dst))
 
-    for env in os.environ.keys():
+    for env in environ.keys():
         if env.startswith("LC_") or env == "LANGUAGE":
             bwrap_args.extend(("--unsetenv", env))
     bwrap_args.extend(("--setenv", "LANG", "en_US.UTF-8"))
