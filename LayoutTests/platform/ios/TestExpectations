@@ -3484,5 +3484,3 @@ webkit.org/b/219105 platform/ios/ios/fast/text/opticalFontWithTextStyle.html [ F
 
 webkit.org/b/219460 [ Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation.https.html [ Pass Failure ]
 
-webkit.org/b/220947 imported/w3c/web-platform-tests/css/css-color/system-color-compute.html [ Failure ]
-
