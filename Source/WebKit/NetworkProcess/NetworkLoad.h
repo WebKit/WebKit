@@ -39,6 +39,7 @@ class BlobRegistryImpl;
 
 namespace WebKit {
 
+class NetworkLoadScheduler;
 class NetworkProcess;
 
 class NetworkLoad final : private NetworkDataTaskClient {
@@ -48,6 +49,7 @@ public:
     ~NetworkLoad();
 
     void start();
+    void startWithScheduling();
     void cancel();
 
     bool isAllowedToAskUserForCredentials() const;
@@ -56,6 +58,7 @@ public:
     void updateRequestAfterRedirection(WebCore::ResourceRequest&) const;
 
     const NetworkLoadParameters& parameters() const { return m_parameters; }
+    const URL& url() const { return parameters().request.url(); }
 
     void continueWillSendRequest(WebCore::ResourceRequest&&);
 
@@ -90,6 +93,7 @@ private:
     const NetworkLoadParameters m_parameters;
     CompletionHandler<void(WebCore::ResourceRequest&&)> m_redirectCompletionHandler;
     RefPtr<NetworkDataTask> m_task;
+    WeakPtr<NetworkLoadScheduler> m_scheduler;
 
     WebCore::ResourceRequest m_currentRequest; // Updated on redirects.
 };

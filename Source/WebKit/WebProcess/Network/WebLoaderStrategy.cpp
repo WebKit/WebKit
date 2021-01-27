@@ -851,6 +851,22 @@ bool WebLoaderStrategy::havePerformedSecurityChecks(const ResourceResponse& resp
     return false;
 }
 
+void WebLoaderStrategy::setResourceLoadSchedulingMode(WebCore::Page& page, WebCore::LoadSchedulingMode mode)
+{
+    auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    connection.send(Messages::NetworkConnectionToWebProcess::SetResourceLoadSchedulingMode(WebPage::fromCorePage(page).identifier(), mode), 0);
+}
+
+void WebLoaderStrategy::prioritizeResourceLoads(const Vector<WebCore::SubresourceLoader*>& resources)
+{
+    auto identifiers = resources.map([](auto* loader) -> ResourceLoadIdentifier {
+        return loader->identifier();
+    });
+
+    auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    connection.send(Messages::NetworkConnectionToWebProcess::PrioritizeResourceLoads(identifiers), 0);
+}
+
 } // namespace WebKit
 
 #undef RELEASE_LOG_IF_ALLOWED

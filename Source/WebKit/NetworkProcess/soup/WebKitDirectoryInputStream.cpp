@@ -28,6 +28,7 @@
 
 #include "WebKitDirectoryInputStreamData.h"
 #include <glib/gi18n-lib.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 
 struct _WebKitDirectoryInputStreamPrivate {

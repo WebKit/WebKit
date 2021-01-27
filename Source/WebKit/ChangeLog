@@ -1,3 +1,70 @@
+2021-01-27  Antti Koivisto  <antti@apple.com>
+
+        Implement visibility based resource load scheduling for low priority resources
+        https://bugs.webkit.org/show_bug.cgi?id=220728
+
+        Reviewed by Geoff Garen.
+
+        Add a simple network process side resource load scheduler. When active it limits the number of low priority resource loads
+        (mostly images) that are passed to network layer. The current limit is 6 per host, reduced by any ongoing higher priority
+        loads. This reduces impact of low priority loads to higher priority ones, espcially on HTTP/2.
+
+        The scheduler also supports reprioritizing loads. This is used to let images currently in the viewport to skip the queue
+        and start their loads faster.
+
+        The feature is not enabled in this patch.
+
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::cancel):
+        (WebKit::Download::didReceiveData):
+        (WebKit::Download::didFinish):
+        (WebKit::Download::didFail):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::clearPageSpecificData):
+        (WebKit::NetworkConnectionToWebProcess::removeStorageAccessForFrame):
+        (WebKit::NetworkConnectionToWebProcess::setResourceLoadSchedulingMode):
+        (WebKit::NetworkConnectionToWebProcess::prioritizeResourceLoads):
+        (WebKit::NetworkConnectionToWebProcess::clearPageSpecificDataForResourceLoadStatistics): Deleted.
+
+        Rename to clearPageSpecificData and move out of #if.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::start):
+        (WebKit::NetworkLoad::startWithScheduling):
+        (WebKit::NetworkLoad::~NetworkLoad):
+        (WebKit::NetworkLoad::didCompleteWithError):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkLoadScheduler.cpp: Added.
+        (WebKit::NetworkLoadScheduler::HostContext::schedule):
+        (WebKit::NetworkLoadScheduler::HostContext::unschedule):
+        (WebKit::NetworkLoadScheduler::HostContext::prioritize):
+        (WebKit::NetworkLoadScheduler::HostContext::start):
+        (WebKit::NetworkLoadScheduler::HostContext::~HostContext):
+        (WebKit::NetworkLoadScheduler::schedule):
+        (WebKit::NetworkLoadScheduler::unschedule):
+        (WebKit::NetworkLoadScheduler::setResourceLoadSchedulingMode):
+        (WebKit::NetworkLoadScheduler::prioritizeLoads):
+        (WebKit::NetworkLoadScheduler::clearPageData):
+        (WebKit::NetworkLoadScheduler::contextForLoad):
+        * NetworkProcess/NetworkLoadScheduler.h: Copied from Source/WebCore/loader/LoaderStrategy.cpp.
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::networkLoadScheduler):
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::SpeculativeLoad):
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::setResourceLoadSchedulingMode):
+        (WebKit::WebLoaderStrategy::prioritizeResourceLoads):
+        * WebProcess/Network/WebLoaderStrategy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+
 2021-01-27  Youenn Fablet  <youenn@apple.com>
 
         [MacOS] Enable NSURLSession WebSocket code path in WebKitTestRunner

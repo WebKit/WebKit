@@ -775,6 +775,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/ImageLoader.h
     loader/LinkLoader.h
     loader/LinkLoaderClient.h
+    loader/LoadSchedulingMode.h
     loader/LoadTiming.h
     loader/LoaderStrategy.h
     loader/MediaResourceLoader.h

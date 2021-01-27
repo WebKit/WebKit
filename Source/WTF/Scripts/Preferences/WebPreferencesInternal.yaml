@@ -599,6 +599,18 @@ PrefixedWebAudioEnabled:
     WebCore:
       default: false
 
+ResourceLoadSchedulingEnabled:
+  type: bool
+  humanReadableName: "Resource Load Scheduling"
+  humanReadableDescription: "Network process side priority and visibility based resource load scheduling"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 RestrictedHTTPResponseAccess:
   type: bool

@@ -29,6 +29,7 @@
 #include "BackForwardClient.h"
 #include "BackForwardController.h"
 #include "CacheStorageProvider.h"
+#include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -1232,6 +1233,9 @@ void Page::didStartProvisionalLoad()
 {
     if (m_performanceMonitor)
         m_performanceMonitor->didStartProvisionalLoad();
+
+    if (m_settings->resourceLoadSchedulingEnabled())
+        setLoadSchedulingMode(LoadSchedulingMode::Prioritized);
 }
 
 void Page::didCommitLoad()
@@ -1249,6 +1253,8 @@ void Page::didFinishLoad()
 
     if (m_performanceMonitor)
         m_performanceMonitor->didFinishLoad();
+
+    setLoadSchedulingMode(LoadSchedulingMode::Direct);
 }
 
 bool Page::isOnlyNonUtilityPage() const
@@ -1607,6 +1613,8 @@ void Page::doAfterUpdateRendering()
     });
 #endif
 
+    prioritizeVisibleResources();
+
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::EventRegionUpdate);
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -1674,6 +1682,44 @@ void Page::renderingUpdateCompleted()
         scheduleRenderingUpdateInternal();
         m_unfulfilledRequestedSteps = { };
     }
+}
+
+void Page::prioritizeVisibleResources()
+{
+    if (loadSchedulingMode() == LoadSchedulingMode::Direct)
+        return;
+    if (!mainFrame().document())
+        return;
+
+    Vector<CachedResource*> toPrioritize;
+
+    forEachDocument([&] (Document& document) {
+        toPrioritize.appendVector(document.cachedResourceLoader().visibleResourcesToPrioritize());
+    });
+
+    if (toPrioritize.isEmpty()) {
+        if (!mainFrame().document()->parsing()) {
+            // All visible resources have been loaded and we are done with parsing. Stop scheduling.
+            setLoadSchedulingMode(LoadSchedulingMode::Direct);
+        }
+        return;
+    }
+
+    auto resourceLoaders = toPrioritize.map([](auto* resource) {
+        return resource->loader();
+    });
+
+    platformStrategies()->loaderStrategy()->prioritizeResourceLoads(resourceLoaders);
+}
+
+void Page::setLoadSchedulingMode(LoadSchedulingMode mode)
+{
+    if (m_loadSchedulingMode == mode)
+        return;
+
+    m_loadSchedulingMode = mode;
+
+    platformStrategies()->loaderStrategy()->setResourceLoadSchedulingMode(*this, m_loadSchedulingMode);
 }
 
 void Page::suspendScriptedAnimations()

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FetchOptions.h"
+#include "LoadSchedulingMode.h"
 #include "PageIdentifier.h"
 #include "ResourceLoadPriority.h"
 #include "ResourceLoaderOptions.h"
@@ -68,6 +69,9 @@ public:
     virtual void servePendingRequests(ResourceLoadPriority minimumPriority = ResourceLoadPriority::VeryLow) = 0;
     virtual void suspendPendingRequests() = 0;
     virtual void resumePendingRequests() = 0;
+
+    virtual void setResourceLoadSchedulingMode(Page&, LoadSchedulingMode);
+    virtual void prioritizeResourceLoads(const Vector<SubresourceLoader*>&);
 
     virtual bool usePingLoad() const { return true; }
     using PingLoadCompletionHandler = WTF::Function<void(const ResourceError&, const ResourceResponse&)>;

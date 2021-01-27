@@ -27,6 +27,7 @@
 #include "NetworkSession.h"
 
 #include "Logging.h"
+#include "NetworkLoadScheduler.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkResourceLoadParameters.h"
@@ -380,6 +381,13 @@ void NetworkSession::registerNetworkDataTask(NetworkDataTask& task)
 void NetworkSession::unregisterNetworkDataTask(NetworkDataTask& task)
 {
     m_dataTaskSet.remove(task);
+}
+
+NetworkLoadScheduler& NetworkSession::networkLoadScheduler()
+{
+    if (!m_networkLoadScheduler)
+        m_networkLoadScheduler = makeUnique<NetworkLoadScheduler>();
+    return *m_networkLoadScheduler;
 }
 
 } // namespace WebKit

@@ -40,6 +40,8 @@
 #include "WebResourceLoadObserver.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/LayoutMilestone.h>
+#include <WebCore/LoadSchedulingMode.h>
 #include <WebCore/MessagePortChannelProvider.h>
 #include <WebCore/MessagePortIdentifier.h>
 #include <WebCore/NetworkLoadInformation.h>
@@ -48,6 +50,7 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/WebSocketIdentifier.h>
+#include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 
 namespace PAL {
@@ -266,9 +269,10 @@ private:
 
     CacheStorageEngineConnection& cacheStorageConnection();
 
+    void clearPageSpecificData(WebCore::PageIdentifier);
+
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void removeStorageAccessForFrame(WebCore::FrameIdentifier, WebCore::PageIdentifier);
-    void clearPageSpecificDataForResourceLoadStatistics(WebCore::PageIdentifier);
 
     void logUserInteraction(const RegistrableDomain&);
     void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&&, CompletionHandler<void()>&&);
@@ -324,6 +328,9 @@ private:
     size_t findNetworkActivityTracker(ResourceLoadIdentifier resourceID);
 
     void hasUploadStateChanged(bool);
+
+    void setResourceLoadSchedulingMode(WebCore::PageIdentifier, WebCore::LoadSchedulingMode);
+    void prioritizeResourceLoads(Vector<ResourceLoadIdentifier>);
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     WebPaymentCoordinatorProxy& paymentCoordinator();

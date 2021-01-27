@@ -32,6 +32,15 @@ namespace WebCore {
 
 LoaderStrategy::~LoaderStrategy() = default;
 
+
+void LoaderStrategy::setResourceLoadSchedulingMode(Page&, LoadSchedulingMode)
+{
+}
+
+void LoaderStrategy::prioritizeResourceLoads(const Vector<SubresourceLoader*>&)
+{
+}
+
 ResourceResponse LoaderStrategy::responseFromResourceLoadIdentifier(uint64_t /* resourceLoadIdentifier */)
 {
     return { };

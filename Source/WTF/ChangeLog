@@ -1,3 +1,14 @@
+2021-01-27  Antti Koivisto  <antti@apple.com>
+
+        Implement visibility based resource load scheduling for low priority resources
+        https://bugs.webkit.org/show_bug.cgi?id=220728
+
+        Reviewed by Geoff Garen.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+        Add an internal setting, default to off for now.
+
 2021-01-26  BJ Burg  <bburg@apple.com>
 
         REGRESSION(r267641): WebKitDeveloperExtras preference has no effect for WebKitLegacy clients

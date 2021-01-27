@@ -114,6 +114,9 @@ private:
 
     void isResourceLoadFinished(WebCore::CachedResource&, CompletionHandler<void(bool)>&&) final;
 
+    void setResourceLoadSchedulingMode(WebCore::Page&, WebCore::LoadSchedulingMode) final;
+    void prioritizeResourceLoads(const Vector<WebCore::SubresourceLoader*>&) final;
+
     Vector<uint64_t> ongoingLoads() const final
     {
         return WTF::map(m_webResourceLoaders, [](auto&& keyValue) -> uint64_t {

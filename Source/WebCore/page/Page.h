@@ -29,6 +29,7 @@
 #include "LayoutMilestone.h"
 #include "LayoutRect.h"
 #include "LengthBox.h"
+#include "LoadSchedulingMode.h"
 #include "MediaProducer.h"
 #include "MediaSessionGroupIdentifier.h"
 #include "Pagination.h"
@@ -834,6 +835,9 @@ public:
     bool textInteractionEnabled() { return m_textInteractionEnabled; }
     void setTextInteractionEnabled(bool value) { m_textInteractionEnabled = value; }
 
+    LoadSchedulingMode loadSchedulingMode() const { return m_loadSchedulingMode; }
+    void setLoadSchedulingMode(LoadSchedulingMode);
+
 private:
     struct Navigation {
         RegistrableDomain domain;
@@ -873,6 +877,7 @@ private:
     void renderingUpdateCompleted();
     void computeUnfulfilledRenderingSteps(OptionSet<RenderingUpdateStep>);
     void scheduleRenderingUpdateInternal();
+    void prioritizeVisibleResources();
 
     RenderingUpdateScheduler& renderingUpdateScheduler();
 
@@ -1135,6 +1140,7 @@ private:
     bool m_loadsFromNetwork { true };
     bool m_canUseCredentialStorage { true };
     ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
+    LoadSchedulingMode m_loadSchedulingMode { LoadSchedulingMode::Direct };
     bool m_hasBeenNotifiedToInjectUserScripts { false };
 
     MonotonicTime m_lastRenderingUpdateTimestamp;

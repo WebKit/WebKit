@@ -29,6 +29,7 @@
 #include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationManager.h"
 #include "NetworkDataTaskBlob.h"
+#include "NetworkLoadScheduler.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkSession.h"
@@ -36,6 +37,8 @@
 #include "WebErrors.h"
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/ListHashSet.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Seconds.h>
 
 namespace WebKit {
@@ -60,9 +63,19 @@ void NetworkLoad::start()
         m_task->resume();
 }
 
+void NetworkLoad::startWithScheduling()
+{
+    if (!m_task || !m_task->networkSession())
+        return;
+    m_scheduler = makeWeakPtr(m_task->networkSession()->networkLoadScheduler());
+    m_scheduler->schedule(*this);
+}
+
 NetworkLoad::~NetworkLoad()
 {
     ASSERT(RunLoop::isMain());
+    if (m_scheduler)
+        m_scheduler->unschedule(*this);
     if (m_redirectCompletionHandler)
         m_redirectCompletionHandler({ });
     if (m_task)
@@ -225,6 +238,11 @@ void NetworkLoad::didReceiveData(Ref<SharedBuffer>&& buffer)
 
 void NetworkLoad::didCompleteWithError(const ResourceError& error, const WebCore::NetworkLoadMetrics& networkLoadMetrics)
 {
+    if (m_scheduler) {
+        m_scheduler->unschedule(*this);
+        m_scheduler = nullptr;
+    }
+
     if (error.isNull())
         m_client.get().didFinishLoading(networkLoadMetrics);
     else

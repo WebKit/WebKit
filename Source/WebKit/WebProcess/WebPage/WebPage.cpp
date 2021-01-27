@@ -1409,9 +1409,7 @@ void WebPage::close()
 
     RELEASE_LOG_IF_ALLOWED(Loading, "close:");
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ClearPageSpecificDataForResourceLoadStatistics(m_identifier), 0);
-#endif
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ClearPageSpecificData(m_identifier), 0);
 
     m_isClosed = true;
 

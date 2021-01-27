@@ -65,6 +65,7 @@ NetworkProcess/NetworkDataTaskBlob.cpp
 NetworkProcess/NetworkHTTPSUpgradeChecker.cpp
 NetworkProcess/NetworkLoad.cpp
 NetworkProcess/NetworkLoadChecker.cpp
+NetworkProcess/NetworkLoadScheduler.cpp
 NetworkProcess/NetworkProcess.cpp
 NetworkProcess/NetworkProcessCreationParameters.cpp
 NetworkProcess/NetworkProcessPlatformStrategies.cpp

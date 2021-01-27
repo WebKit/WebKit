@@ -1945,6 +1945,7 @@
 		E4436ECC1A0D040B00EAD204 /* NetworkCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E4436EBF1A0CFDB200EAD204 /* NetworkCache.h */; };
 		E4436ECE1A0D040B00EAD204 /* NetworkCacheKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E4436EC11A0CFDB200EAD204 /* NetworkCacheKey.h */; };
 		E4436ECF1A0D040B00EAD204 /* NetworkCacheStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = E4436EC21A0CFDB200EAD204 /* NetworkCacheStorage.h */; };
+		E47FC8A025B8331C005495FC /* NetworkLoadScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = E47FC89F25B8331C005495FC /* NetworkLoadScheduler.h */; };
 		E489D28C1A0A2DB80078C06A /* NetworkCacheCoders.h in Headers */ = {isa = PBXBuildFile; fileRef = E489D2851A0A2DB80078C06A /* NetworkCacheCoders.h */; };
 		E49D40D71AD3FB170066B7B9 /* NetworkCacheBlobStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = E49D40D61AD3FB170066B7B9 /* NetworkCacheBlobStorage.h */; };
 		E4D54D0421F1D72D007E3C36 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = E40C1F9321F0B96E00530718 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h */; };
@@ -5744,6 +5745,8 @@
 		E4436EC31A0CFDB200EAD204 /* NetworkCacheStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheStorage.cpp; sourceTree = "<group>"; };
 		E4697CCC1B25EB8F001B0A6C /* NetworkCacheFileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheFileSystem.cpp; sourceTree = "<group>"; };
 		E47D1E961B062B66002676A8 /* NetworkCacheData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheData.cpp; sourceTree = "<group>"; };
+		E47FC89D25B83313005495FC /* NetworkLoadScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkLoadScheduler.cpp; sourceTree = "<group>"; };
+		E47FC89F25B8331C005495FC /* NetworkLoadScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkLoadScheduler.h; sourceTree = "<group>"; };
 		E489D2841A0A2DB80078C06A /* NetworkCacheCoders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheCoders.cpp; sourceTree = "<group>"; };
 		E489D2851A0A2DB80078C06A /* NetworkCacheCoders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheCoders.h; sourceTree = "<group>"; };
 		E49D40D61AD3FB170066B7B9 /* NetworkCacheBlobStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheBlobStorage.h; sourceTree = "<group>"; };
@@ -8328,6 +8331,8 @@
 				4103FBA12061BDB700C2EAF8 /* NetworkLoadChecker.h */,
 				83D454D61BE9D3C4006C93BD /* NetworkLoadClient.h */,
 				839149631BEA838500D2D953 /* NetworkLoadParameters.h */,
+				E47FC89D25B83313005495FC /* NetworkLoadScheduler.cpp */,
+				E47FC89F25B8331C005495FC /* NetworkLoadScheduler.h */,
 				510CC7DF16138E2900D03ED3 /* NetworkProcess.cpp */,
 				510CC7E016138E2900D03ED3 /* NetworkProcess.h */,
 				51A8A6171627F5BB000D90E9 /* NetworkProcess.messages.in */,
@@ -12091,6 +12096,7 @@
 				93A88B331BC6E9CD00ABA5C2 /* WebHitTestResultData.h in Headers */,
 				F44DFEB21E9E752F0038D196 /* WebIconUtilities.h in Headers */,
 				93261161214054F4000806E7 /* WebIDBConnectionToClient.h in Headers */,
+				E47FC8A025B8331C005495FC /* NetworkLoadScheduler.h in Headers */,
 				514129941C6428BB0059E714 /* WebIDBConnectionToServer.h in Headers */,
 				510523741C73D38B007993CB /* WebIDBConnectionToServerMessages.h in Headers */,
 				933E835523A07C0600DEF289 /* WebIDBServer.h in Headers */,

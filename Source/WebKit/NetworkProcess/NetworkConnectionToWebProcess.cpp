@@ -32,6 +32,8 @@
 #include "Logging.h"
 #include "NetworkCache.h"
 #include "NetworkConnectionToWebProcessMessages.h"
+#include "NetworkLoad.h"
+#include "NetworkLoadScheduler.h"
 #include "NetworkMDNSRegisterMessages.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessConnectionMessages.h"
@@ -853,17 +855,22 @@ void NetworkConnectionToWebProcess::setCaptureExtraNetworkLoadMetricsEnabled(boo
         loader->disableExtraNetworkLoadMetricsCapture();
 }
 
+void NetworkConnectionToWebProcess::clearPageSpecificData(PageIdentifier pageID)
+{
+    if (auto* session = networkSession())
+        session->networkLoadScheduler().clearPageData(pageID);
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (auto* storageSession = networkProcess().storageSession(m_sessionID))
+        storageSession->clearPageSpecificDataForResourceLoadStatistics(pageID);
+#endif
+}
+
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 void NetworkConnectionToWebProcess::removeStorageAccessForFrame(FrameIdentifier frameID, PageIdentifier pageID)
 {
     if (auto* storageSession = networkProcess().storageSession(m_sessionID))
         storageSession->removeStorageAccessForFrame(frameID, pageID);
-}
-
-void NetworkConnectionToWebProcess::clearPageSpecificDataForResourceLoadStatistics(PageIdentifier pageID)
-{
-    if (auto* storageSession = networkProcess().storageSession(m_sessionID))
-        storageSession->clearPageSpecificDataForResourceLoadStatistics(pageID);
 }
 
 void NetworkConnectionToWebProcess::logUserInteraction(const RegistrableDomain& domain)
@@ -1169,6 +1176,33 @@ void NetworkConnectionToWebProcess::setCORSDisablingPatterns(WebCore::PageIdenti
 {
     networkProcess().setCORSDisablingPatterns(pageIdentifier, WTFMove(patterns));
 }
+
+void NetworkConnectionToWebProcess::setResourceLoadSchedulingMode(WebCore::PageIdentifier pageIdentifier, WebCore::LoadSchedulingMode mode)
+{
+    auto* session = networkSession();
+    if (!session)
+        return;
+
+    session->networkLoadScheduler().setResourceLoadSchedulingMode(pageIdentifier, mode);
+}
+
+void NetworkConnectionToWebProcess::prioritizeResourceLoads(Vector<ResourceLoadIdentifier> loadIdentifiers)
+{
+    auto* session = networkSession();
+    if (!session)
+        return;
+
+    Vector<NetworkLoad*> loads;
+    for (auto identifier : loadIdentifiers) {
+        auto* loader = m_networkResourceLoaders.get(identifier);
+        if (!loader || !loader->networkLoad())
+            continue;
+        loads.append(loader->networkLoad());
+    }
+
+    session->networkLoadScheduler().prioritizeLoads(loads);
+}
+
 
 } // namespace WebKit
 

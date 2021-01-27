@@ -53,6 +53,7 @@ namespace WebKit {
 
 class PrivateClickMeasurementManager;
 class NetworkDataTask;
+class NetworkLoadScheduler;
 class NetworkProcess;
 class NetworkResourceLoader;
 class NetworkSocketChannel;
@@ -150,6 +151,8 @@ public:
     void removeSoftUpdateLoader(ServiceWorkerSoftUpdateLoader* loader) { m_softUpdateLoaders.remove(loader); }
 #endif
 
+    NetworkLoadScheduler& networkLoadScheduler();
+
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
 
@@ -186,6 +189,7 @@ protected:
     bool m_isInvalidated { false };
 #endif
     RefPtr<NetworkCache::Cache> m_cache;
+    std::unique_ptr<NetworkLoadScheduler> m_networkLoadScheduler;
     WebCore::BlobRegistryImpl m_blobRegistry;
     unsigned m_testSpeedMultiplier { 1 };
     bool m_allowsServerPreconnect { true };
