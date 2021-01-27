@@ -679,12 +679,12 @@ bool Element::isUserActionElementDragged() const
     return document().userActionElements().isBeingDragged(*this);
 }
 
-void Element::setActive(bool flag, bool pause, IsUserActionStateChangeRoot isUserActionStateChangeRoot)
+void Element::setActive(bool flag, bool pause, Style::InvalidationScope invalidationScope)
 {
     if (flag == active())
         return;
     {
-        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassActive, isUserActionStateChangeRoot);
+        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassActive, invalidationScope);
         document().userActionElements().setActive(*this, flag);
     }
 
@@ -756,12 +756,12 @@ void Element::setHasFocusWithin(bool flag)
     }
 }
 
-void Element::setHovered(bool flag, IsUserActionStateChangeRoot isUserActionStateChangeRoot)
+void Element::setHovered(bool flag, Style::InvalidationScope invalidationScope)
 {
     if (flag == hovered())
         return;
     {
-        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassHover, isUserActionStateChangeRoot);
+        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassHover, invalidationScope);
         document().userActionElements().setHovered(*this, flag);
     }
 
