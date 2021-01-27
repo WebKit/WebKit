@@ -1211,12 +1211,6 @@
        (subpath "/private/var/db/mds")
        (literal "/private/var/db/DetachedSignatures"))
 
-(allow ipc-posix-shm-read* ipc-posix-shm-write-data ipc-posix-shm-write-create
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-       (with report) (with telemetry-backtrace)
-#endif
-       (ipc-posix-name "com.apple.AppleDatabaseChanged"))
-
 ;; CoreFoundation. We don't import com.apple.corefoundation.sb, because it allows unnecessary access to pasteboard.
 #if !HAVE(CSCHECKFIXDISABLE)
 (allow mach-lookup

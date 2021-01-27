@@ -1,5 +1,18 @@
 2021-01-27  Per Arne  <pvollan@apple.com>
 
+        [macOS] Remove shm-write access to com.apple.AppleDatabaseChanged
+        https://bugs.webkit.org/show_bug.cgi?id=221041
+        <rdar://problem/70501252>
+
+        Reviewed by Brent Fulgham.
+
+        Remove shm-write access to com.apple.AppleDatabaseChanged in the WebContent process on maOS, since there are no reports
+        of this being used.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2021-01-27  Per Arne  <pvollan@apple.com>
+
         [macOS] Enforce IOKit message filtering
         https://bugs.webkit.org/show_bug.cgi?id=221038
         <rdar://problem/71333134>
