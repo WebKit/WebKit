@@ -328,6 +328,7 @@ private:
 
     WebCore::Color underlayColor() const final;
 
+    void themeColorChanged(WebCore::Color) const final;
     void pageExtendedBackgroundColorDidChange(WebCore::Color) const final;
     
     void wheelEventHandlersChanged(bool) final;

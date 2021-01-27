@@ -739,6 +739,9 @@ public:
 #if !LOG_DISABLED
     Seconds timeSinceDocumentCreation() const { return MonotonicTime::now() - m_documentCreationTime; };
 #endif
+
+    const Color& themeColor() const { return m_themeColor; }
+
     void setTextColor(const Color& color) { m_textColor = color; }
     const Color& textColor() const { return m_textColor; }
 
@@ -908,6 +911,7 @@ public:
     void processDisabledAdaptations(const String& adaptations);
     void updateViewportArguments();
     void processReferrerPolicy(const String& policy, ReferrerPolicySource);
+    void processThemeColor(const String& themeColor);
 
 #if ENABLE(DARK_MODE_CSS)
     void processColorScheme(const String& colorScheme);
@@ -1776,6 +1780,7 @@ private:
 
     std::unique_ptr<FormController> m_formController;
 
+    Color m_themeColor;
     Color m_textColor { Color::black };
     Color m_linkColor;
     Color m_visitedLinkColor;

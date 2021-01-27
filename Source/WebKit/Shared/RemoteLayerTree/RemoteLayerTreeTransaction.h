@@ -226,7 +226,10 @@ public:
     
     WebCore::LayoutPoint maxStableLayoutViewportOrigin() const { return m_maxStableLayoutViewportOrigin; }
     void setMaxStableLayoutViewportOrigin(const WebCore::LayoutPoint& point) { m_maxStableLayoutViewportOrigin = point; };
-    
+
+    WebCore::Color themeColor() const { return m_themeColor; }
+    void setThemeColor(WebCore::Color color) { m_themeColor = color; }
+
     WebCore::Color pageExtendedBackgroundColor() const { return m_pageExtendedBackgroundColor; }
     void setPageExtendedBackgroundColor(WebCore::Color color) { m_pageExtendedBackgroundColor = color; }
 
@@ -307,6 +310,7 @@ private:
     WebCore::LayoutPoint m_minStableLayoutViewportOrigin;
     WebCore::LayoutPoint m_maxStableLayoutViewportOrigin;
     WebCore::IntPoint m_scrollPosition;
+    WebCore::Color m_themeColor;
     WebCore::Color m_pageExtendedBackgroundColor;
     double m_pageScaleFactor { 1 };
     double m_minimumScaleFactor { 1 };

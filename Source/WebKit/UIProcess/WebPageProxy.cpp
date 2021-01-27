@@ -8417,6 +8417,16 @@ void WebPageProxy::didChangePageCount(unsigned pageCount)
     m_pageCount = pageCount;
 }
 
+void WebPageProxy::themeColorChanged(const Color& themeColor)
+{
+    if (m_themeColor == themeColor)
+        return;
+
+    pageClient().themeColorWillChange();
+    m_themeColor = themeColor;
+    pageClient().themeColorDidChange();
+}
+
 void WebPageProxy::pageExtendedBackgroundColorDidChange(const Color& backgroundColor)
 {
     m_pageExtendedBackgroundColor = backgroundColor;

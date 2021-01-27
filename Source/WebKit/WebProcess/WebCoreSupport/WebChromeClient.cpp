@@ -1139,6 +1139,11 @@ Color WebChromeClient::underlayColor() const
     return m_page.underlayColor();
 }
 
+void WebChromeClient::themeColorChanged(Color /* themeColor */) const
+{
+    m_page.themeColorChanged();
+}
+
 void WebChromeClient::pageExtendedBackgroundColorDidChange(Color backgroundColor) const
 {
 #if PLATFORM(MAC)

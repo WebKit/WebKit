@@ -564,6 +564,7 @@ void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
 
     encoder << m_scrollPosition;
 
+    encoder << m_themeColor;
     encoder << m_pageExtendedBackgroundColor;
     encoder << m_pageScaleFactor;
     encoder << m_minimumScaleFactor;
@@ -658,7 +659,10 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
 
     if (!decoder.decode(result.m_scrollPosition))
         return false;
-    
+
+    if (!decoder.decode(result.m_themeColor))
+        return false;
+
     if (!decoder.decode(result.m_pageExtendedBackgroundColor))
         return false;
 

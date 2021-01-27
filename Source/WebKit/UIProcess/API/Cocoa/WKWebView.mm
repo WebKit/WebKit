@@ -30,6 +30,7 @@
 #import "APIFrameTreeNode.h"
 #import "APIPageConfiguration.h"
 #import "APISerializedScriptValue.h"
+#import "CocoaColor.h"
 #import "CocoaImage.h"
 #import "CompletionHandlerCallChecker.h"
 #import "ContentAsStringIncludesChildFrames.h"
@@ -117,6 +118,7 @@
 #import "_WKVisitedLinkStoreInternal.h"
 #import "_WKWebsitePoliciesInternal.h"
 #import <WebCore/AttributedString.h>
+#import <WebCore/ColorCocoa.h>
 #import <WebCore/ColorSerialization.h>
 #import <WebCore/ElementContext.h>
 #import <WebCore/JSDOMBinding.h>
@@ -2784,6 +2786,14 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 - (void)_setCanUseCredentialStorage:(BOOL)canUseCredentialStorage
 {
     _page->setCanUseCredentialStorage(canUseCredentialStorage);
+}
+
+- (CocoaColor *)_themeColor
+{
+    auto themeColor = _page->themeColor();
+    if (!themeColor.isValid())
+        return nil;
+    return WebCore::platformColor(themeColor);
 }
 
 - (id <_WKInputDelegate>)_inputDelegate

@@ -3908,6 +3908,7 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
     layerTransaction.setScrollOrigin(frameView->scrollOrigin());
     layerTransaction.setPageScaleFactor(corePage()->pageScaleFactor());
     layerTransaction.setRenderTreeSize(corePage()->renderTreeSize());
+    layerTransaction.setThemeColor(corePage()->themeColor());
     layerTransaction.setPageExtendedBackgroundColor(corePage()->pageExtendedBackgroundColor());
 
     layerTransaction.setBaseLayoutViewportSize(frameView->baseLayoutViewportSize());
@@ -3936,6 +3937,8 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
 #endif
 
     layerTransaction.setScrollPosition(frameView->scrollPosition());
+
+    m_pendingThemeColorChange = false;
 
     if (m_hasPendingEditorStateUpdate) {
         layerTransaction.setEditorState(editorState());
@@ -6127,6 +6130,8 @@ void WebPage::didCommitLoad(WebFrame* frame)
     m_loadCommitTime = WallTime::now();
 #endif
 
+    themeColorChanged();
+
     WebProcess::singleton().updateActivePages(m_processDisplayName);
 
     updateMainFrameScrollOffsetPinning();
@@ -6263,6 +6268,16 @@ void WebPage::sendTouchBarMenuItemDataRemovedUpdate(HTMLMenuItemElement& element
     send(Messages::WebPageProxy::TouchBarMenuItemDataRemoved(TouchBarMenuItemData {element}));
 }
 #endif
+
+void WebPage::flushPendingThemeColorChange()
+{
+    if (!m_pendingThemeColorChange)
+        return;
+
+    m_pendingThemeColorChange = false;
+
+    send(Messages::WebPageProxy::ThemeColorChanged(m_page->themeColor()));
+}
 
 void WebPage::flushPendingEditorStateUpdate()
 {

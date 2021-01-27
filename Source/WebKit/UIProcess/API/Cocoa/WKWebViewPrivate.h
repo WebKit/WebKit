@@ -362,6 +362,21 @@ for this property.
 - (void)_didEnableBrowserExtensions:(NSDictionary<NSString *, NSString *> *)extensionIDToNameMap WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_didDisableBrowserExtensions:(NSSet<NSString *> *)extensionIDs WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+/*! @abstract The theme color of the active page.
+ @discussion This is the value of the most recently created or modified
+ @textblock
+    <meta name="theme-color" contents="...">
+ @/textblock
+ in the current page.
+ @link WKWebView @/link is key-value observing (KVO) compliant for this
+ property.
+ */
+#if TARGET_OS_IPHONE
+@property (nonatomic, readonly) UIColor *_themeColor WK_API_AVAILABLE(ios(WK_IOS_TBA));
+#else
+@property (nonatomic, readonly) NSColor *_themeColor WK_API_AVAILABLE(macos(WK_MAC_TBA));
+#endif
+
 @end
 
 #if TARGET_OS_IPHONE

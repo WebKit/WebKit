@@ -335,6 +335,7 @@ static bool exceedsRenderTreeSizeSizeThreshold(uint64_t thresholdSize, uint64_t 
 
 void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& layerTreeTransaction)
 {
+    themeColorChanged(layerTreeTransaction.themeColor());
     m_pageExtendedBackgroundColor = layerTreeTransaction.pageExtendedBackgroundColor();
 
     if (!m_hasReceivedLayerTreeTransactionAfterDidCommitLoad) {

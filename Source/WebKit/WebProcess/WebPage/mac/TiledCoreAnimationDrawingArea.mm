@@ -446,6 +446,7 @@ void TiledCoreAnimationDrawingArea::updateRendering(UpdateRenderingType flushTyp
         scaleViewToFitDocumentIfNeeded();
 
         m_webPage.updateRendering();
+        m_webPage.flushPendingThemeColorChange();
         m_webPage.flushPendingEditorStateUpdate();
         m_webPage.flushPendingIntrinsicContentSizeUpdate();
 

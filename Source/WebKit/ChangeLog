@@ -1,3 +1,55 @@
+2021-01-26  Devin Rousso  <drousso@apple.com>
+
+        Expose the value of `<meta name="theme-color" content="...">` as SPI
+        https://bugs.webkit.org/show_bug.cgi?id=220944
+        <rdar://problem/72198083>
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::themeColorChanged): Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::willCommitLayerTree):
+        (WebKit::WebPage::didCommitLoad):
+        (WebKit::WebPage::flushPendingThemeColorChange): Added.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::themeColorChanged const):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updateRendering):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::themeColorChanged): Added.
+        On macOS, keep a flag indicating whether the `themeColor` has changed. Use this flag when
+        updating rendering to send the `Color` to the UIProcess so that it's kept in sync with other
+        changes (e.g. modifying the CSS `background-color`).
+
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::themeColor const): Added.
+        (WebKit::RemoteLayerTreeTransaction::setThemeColor): Added.
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode const):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didCommitLayerTree):
+        On iOS, include the `themeColor` in every `RemoteLayerTreeTransaction` so that it's kept in
+        sync with other changes (e.g. modifying the CSS `background-color`).
+
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::themeColorWillChange): Added.
+        (WebKit::PageClient::themeColorDidChange): Added.
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::themeColorWillChange): Added.
+        (WebKit::PageClientImplCocoa::themeColorDidChange): Added.
+        Add support for ObjC KVO of `-[WKWebView _themeColor]`.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::themeColor const): Added.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _themeColor]): Added.
+
 2021-01-26  Brent Fulgham  <bfulgham@apple.com>
 
         IPC::Decoder constructor should mark the Decoder as invalid if header decoding fails 

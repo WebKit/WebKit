@@ -44,6 +44,16 @@ PageClientImplCocoa::PageClientImplCocoa(WKWebView *webView)
 
 PageClientImplCocoa::~PageClientImplCocoa() = default;
 
+void PageClientImplCocoa::themeColorWillChange()
+{
+    [m_webView willChangeValueForKey:@"_themeColor"];
+}
+
+void PageClientImplCocoa::themeColorDidChange()
+{
+    [m_webView didChangeValueForKey:@"_themeColor"];
+}
+
 void PageClientImplCocoa::isPlayingAudioWillChange()
 {
     [m_webView willChangeValueForKey:NSStringFromSelector(@selector(_isPlayingAudio))];

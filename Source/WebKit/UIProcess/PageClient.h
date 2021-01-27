@@ -492,6 +492,8 @@ public:
     virtual void didFailNavigation(API::Navigation*) = 0;
     virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) = 0;
 
+    virtual void themeColorWillChange() { }
+    virtual void themeColorDidChange() { }
     virtual void didChangeBackgroundColor() = 0;
     virtual void isPlayingAudioWillChange() = 0;
     virtual void isPlayingAudioDidChange() = 0;

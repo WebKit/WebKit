@@ -1215,6 +1215,9 @@ public:
 
     static PluginView* pluginViewForFrame(WebCore::Frame*);
 
+    void themeColorChanged() { m_pendingThemeColorChange = true; }
+    void flushPendingThemeColorChange();
+
     void flushPendingEditorStateUpdate();
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -2031,6 +2034,7 @@ private:
     RefPtr<WebCore::Element> m_focusedElement;
     RefPtr<WebCore::Element> m_recentlyBlurredElement;
     bool m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement { false };
+    bool m_pendingThemeColorChange { false };
     bool m_hasPendingEditorStateUpdate { false };
 
 #if ENABLE(IOS_TOUCH_EVENTS)

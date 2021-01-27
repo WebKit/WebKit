@@ -52,15 +52,23 @@ Ref<HTMLMetaElement> HTMLMetaElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new HTMLMetaElement(tagName, document));
 }
 
+void HTMLMetaElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
+{
+    HTMLElement::attributeChanged(name, oldValue, newValue, reason);
+
+    if (name == nameAttr && equalLettersIgnoringASCIICase(oldValue, "theme-color") && !equalLettersIgnoringASCIICase(newValue, "theme-color"))
+        document().processThemeColor(emptyString());
+}
+
 void HTMLMetaElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == http_equivAttr)
         process();
     else if (name == contentAttr)
         process();
-    else if (name == nameAttr) {
-        // Do nothing
-    } else
+    else if (name == nameAttr)
+        process();
+    else
         HTMLElement::parseAttribute(name, value);
 }
 
@@ -75,6 +83,14 @@ Node::InsertedIntoAncestorResult HTMLMetaElement::insertedIntoAncestor(Insertion
 void HTMLMetaElement::didFinishInsertingNode()
 {
     process();
+}
+
+void HTMLMetaElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
+{
+    HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+
+    if (!isConnected() && equalLettersIgnoringASCIICase(name(), "theme-color"))
+        oldParentOfRemovedTree.document().processThemeColor(emptyString());
 }
 
 void HTMLMetaElement::process()
@@ -95,6 +111,8 @@ void HTMLMetaElement::process()
     else if (equalLettersIgnoringASCIICase(name(), "color-scheme") || equalLettersIgnoringASCIICase(name(), "supported-color-schemes"))
         document().processColorScheme(contentValue);
 #endif
+    else if (equalLettersIgnoringASCIICase(name(), "theme-color"))
+        document().processThemeColor(contentValue);
 #if PLATFORM(IOS_FAMILY)
     else if (equalLettersIgnoringASCIICase(name(), "format-detection"))
         document().processFormatDetection(contentValue);

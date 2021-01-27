@@ -49,6 +49,8 @@ public:
 
     void pageClosed() override;
 
+    void themeColorWillChange() final;
+    void themeColorDidChange() final;
     void isPlayingAudioWillChange() final;
     void isPlayingAudioDidChange() final;
 

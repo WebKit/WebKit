@@ -2430,6 +2430,15 @@ void Page::removeLayoutMilestones(OptionSet<LayoutMilestone> milestones)
     m_requestedLayoutMilestones.remove(milestones);
 }
 
+Color Page::themeColor() const
+{
+    auto* document = mainFrame().document();
+    if (!document)
+        return { };
+
+    return document->themeColor();
+}
+
 Color Page::pageExtendedBackgroundColor() const
 {
     FrameView* frameView = mainFrame().view();

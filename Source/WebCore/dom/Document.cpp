@@ -33,6 +33,7 @@
 #include "BeforeUnloadEvent.h"
 #include "CDATASection.h"
 #include "CSSFontSelector.h"
+#include "CSSParser.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
@@ -3795,6 +3796,20 @@ void Document::updateViewportArguments()
         page()->chrome().dispatchViewportPropertiesDidChange(viewportArguments());
         page()->chrome().didReceiveDocType(*frame());
     }
+}
+
+void Document::processThemeColor(const String& themeColorString)
+{
+    auto themeColor = CSSParser::parseColor(themeColorString);
+    if (themeColor == m_themeColor)
+        return;
+
+    m_themeColor = WTFMove(themeColor);
+
+    scheduleRenderingUpdate({ });
+
+    if (auto* page = this->page())
+        page->chrome().client().themeColorChanged(m_themeColor);
 }
 
 #if ENABLE(DARK_MODE_CSS)
