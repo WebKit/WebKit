@@ -1,3 +1,13 @@
+2021-01-27  Youenn Fablet  <youenn@apple.com>
+
+        Enable GPU WebRTC codecs in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=220936
+
+        Reviewed by Eric Carlson.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
 2021-01-27  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r271634): keyring still failing to retrieve secrets
