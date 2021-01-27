@@ -1,5 +1,17 @@
 2021-01-26  Brent Fulgham  <bfulgham@apple.com>
 
+        IPC::Decoder constructor should mark the Decoder as invalid if header decoding fails 
+        https://bugs.webkit.org/show_bug.cgi?id=220990
+        <rdar://problem/64984186>
+
+        Reviewed by Darin Adler.
+
+        Mark the decoder as invalid if any of the decode operations fail, not just the first one.
+
+        * Platform/IPC/Decoder.cpp:
+
+2021-01-26  Brent Fulgham  <bfulgham@apple.com>
+
         Harden NetworkProcess against integer overflow in CacheStorageEngine size calculation
         https://bugs.webkit.org/show_bug.cgi?id=220997
         <rdar://problem/66116827>
