@@ -21,7 +21,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from setuptools import setup
-
+from webkitscmpy import version
 
 def readme():
     with open('README.md') as f:
@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='webkitscmpy',
-    version='0.9.5',
+    version=repr(version),
     description='Library designed to interact with git and svn repositories.',
     long_description=readme(),
     classifiers=[
