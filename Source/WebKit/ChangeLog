@@ -1,3 +1,16 @@
+2021-01-27  Per Arne  <pvollan@apple.com>
+
+        Restrict access to syslog in sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=220983
+        <rdar://problem/73512626>
+
+        Reviewed by Brent Fulgham.
+
+        Only allow syslog access on internal builds on macOS and iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-01-27  Antti Koivisto  <antti@apple.com>
 
         Implement visibility based resource load scheduling for low priority resources

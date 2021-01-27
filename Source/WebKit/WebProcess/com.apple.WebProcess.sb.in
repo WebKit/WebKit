@@ -1240,18 +1240,21 @@
 (system-graphics)
 
 ;; Networking
-(allow network-outbound
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 101500
+(allow network-outbound
        ;; Local mDNSResponder for DNS, arbitrary outbound TCP
        ;; Note: This is needed for some media playback features. <rdar://problem/38191574>
        ;; Remove this permission when <rdar://problem/38240572> is fixed.
        (literal "/private/var/run/mDNSResponder")
-#endif
-       ;; ObjC map_images needs to send logging data to syslog. <rdar://problem/39778918>
-       (literal "/private/var/run/syslog")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 101500
        (remote tcp)
+)
 #endif
+
+;; ObjC map_images needs to send logging data to syslog. <rdar://problem/39778918>
+(with-filter (system-attribute apple-internal)
+    (allow network-outbound
+       (literal "/private/var/run/syslog")
+    )
 )
 
 ;; CFNetwork
