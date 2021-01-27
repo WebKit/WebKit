@@ -452,20 +452,26 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
         // Fast path for lines with no content e.g. <div><span></span><span></span></div> or <span><div></div></span> where we construct empty pre and post blocks.
         ASSERT(!lineContent.contentLogicalWidth);
         ASSERT(!lineBoxLogicalRect.width() && !lineBoxLogicalRect.height());
-        if (lineBox.hasInlineBox()) {
-            for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
-                if (!inlineLevelBox->isInlineBox())
-                    continue;
-                auto& layoutBox = inlineLevelBox->layoutBox();
-                auto& boxGeometry = formattingState.boxGeometry(layoutBox);
-                auto inlineBoxMarginRect = lineBox.logicalMarginRectForInlineLevelBox(layoutBox, boxGeometry);
-                boxGeometry.setContentBoxHeight(LayoutUnit::fromFloatCeil(inlineBoxMarginRect.height()));
-                ASSERT(!inlineBoxMarginRect.width());
-                boxGeometry.setContentBoxWidth({ });
-
-                boxGeometry.setLogicalTopLeft({ });
+        auto updateInlineBoxesGeometryIfApplicable = [&] {
+            if (!lineBox.hasInlineBox())
+                return;
+            Vector<const Box*> layoutBoxList;
+            // Collect the empty inline boxes that showed up first on this line.
+            // Note that an inline box end on an empty line does not make the inline box taller.
+            // (e.g. <div>text<span><br></span></div>) <- the <span> inline box is as tall as the line even though the </span> is after a <br> so technically is on the following (empty)line.
+            for (auto& lineRun : lineContent.runs) {
+                if (lineRun.isInlineBoxStart())
+                    layoutBoxList.append(&lineRun.layoutBox());
             }
-        }
+            for (auto* layoutBox : layoutBoxList) {
+                auto& boxGeometry = formattingState.boxGeometry(*layoutBox);
+                auto inlineBoxLogicalHeight = LayoutUnit::fromFloatCeil(lineBox.logicalMarginRectForInlineLevelBox(*layoutBox, boxGeometry).height());
+                boxGeometry.setContentBoxHeight(inlineBoxLogicalHeight);
+                boxGeometry.setContentBoxWidth({ });
+                boxGeometry.setLogicalTopLeft(toLayoutPoint(lineBoxLogicalRect.topLeft()));
+            }
+        };
+        updateInlineBoxesGeometryIfApplicable();
         formattingState.addLine({ lineBoxLogicalRect, { { }, { } }, { }, { }, { } });
         return lineBoxLogicalRect;
     }
