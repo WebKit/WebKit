@@ -1,0 +1,23 @@
+CONSOLE MESSAGE: WebSocket connection to 'ws://127.0.0.1:8880/websocket/tests/hybi/inspector/echo' failed: The operation couldn’t be completed. (kNWErrorDomainPOSIX error 57 - Socket is not connected)
+Tests sending and receiving WebSocket messages.
+
+
+== Running test suite: WebSocket.SendAndReceive
+-- Running test case: SendAndReceive
+PASS: Resource size should be 33 bytes.
+PASS: Frame data should be 'Hello World! Привет Мир!'
+PASS: Frame should be text.
+PASS: Frame should be outgoing.
+PASS: Message is walltime.
+PASS: Resource size should double.
+PASS: Frame data should be 'Hello World! Привет Мир!'
+PASS: Frame should be text.
+PASS: Frame should be incoming.
+PASS: Frame walltime should be greater than the previous one.
+PASS: Frame should close connection.
+PASS: Frame should be outgoing.
+PASS: Frame walltime should be greater than the previous one.
+PASS: Frame should close connection.
+PASS: Frame should be incoming.
+PASS: Frame walltime should be greater than the previous one.
+

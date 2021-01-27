@@ -1,0 +1,11 @@
+Test whether WebSocket rejects interleaved fragmented frames.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+onopen() was called.
+FAIL onmessage() was called. (message = "This message ")
+PASS closeEvent.wasClean is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

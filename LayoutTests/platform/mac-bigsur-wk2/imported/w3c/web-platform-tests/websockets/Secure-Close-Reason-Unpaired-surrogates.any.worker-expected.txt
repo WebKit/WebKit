@@ -1,0 +1,6 @@
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN Create Secure WebSocket - Close the Connection - close(reason with unpaired surrogates) - connection should get opened
+FAIL Create Secure WebSocket - Close the Connection - close(reason with unpaired surrogates) - connection should get closed assert_true: WebSocket connection should be opened expected true got false
+

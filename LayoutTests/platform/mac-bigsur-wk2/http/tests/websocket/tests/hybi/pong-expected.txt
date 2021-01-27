@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/pong' failed: The operation couldn’t be completed. (kNWErrorDomainPOSIX error 57 - Socket is not connected)
+Test whether WebSocket correctly responds to a ping message sent from the server.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+onopen() was called.
+onmessage() was called. (message = "PASS")
+PASS message is "PASS"
+FAIL closeEvent.wasClean should be true. Was false.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

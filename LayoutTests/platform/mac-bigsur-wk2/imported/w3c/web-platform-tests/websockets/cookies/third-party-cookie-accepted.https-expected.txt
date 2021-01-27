@@ -1,0 +1,3 @@
+
+FAIL Test that third-party cookies are accepted for WebSockets. promise_test: Unhandled rejection with value: "Unexpected error event"
+
