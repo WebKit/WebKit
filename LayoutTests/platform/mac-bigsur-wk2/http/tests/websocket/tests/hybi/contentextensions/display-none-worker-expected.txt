@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: worker onopen
-CONSOLE MESSAGE: worker onmessage reply sent
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/contentextensions/resources/echo' failed: The operation couldn’t be completed. (kNWErrorDomainPOSIX error 57 - Socket is not connected)
-CONSOLE MESSAGE: FAIL worker onerror
-This should not be hidden.

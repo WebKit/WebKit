@@ -1,3 +1,0 @@
-
-FAIL WebSockets: send() in onclose assert_unreached: Reached unreachable code
-
