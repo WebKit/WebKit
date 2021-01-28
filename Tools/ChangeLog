@@ -1,3 +1,21 @@
+2021-01-28  Lauro Moura  <lmoura@igalia.com>
+
+        [Flatpak SDK] Flatpak environment JSON is prematurely deleted with flatpak-spawn calls
+        https://bugs.webkit.org/show_bug.cgi?id=221070
+
+        Reviewed by Philippe Normand.
+
+        To avoid nested webkit-flatpak calls overwriting/deleting whe
+        environment file, only create if there is no such file and only delete
+        in the same process that created it.
+
+        This approach has the drawback of limiting nested calls changing the
+        variable values and a file undeleted after a crash might avoid the
+        next normal invocation creating it.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+
 2021-01-28  Alicia Boya García  <aboya@igalia.com>
 
         [GTK] run-gtk-tests: Ensure correct count when subtests are specified
