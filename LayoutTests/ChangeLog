@@ -1,3 +1,31 @@
+2021-01-27  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION(r268615): images flicker on apple.com/ios/ios-14
+        https://bugs.webkit.org/show_bug.cgi?id=221054
+        <rdar://problem/72880447>
+
+        Reviewed by Dean Jackson.
+
+        Add a series of tests ensuring that starting an animation for transform-related properties does not clobber the static
+        value for this property. We only run those tests on WK2 because running those in WK1 is flaky as there doesn't seem
+        to be a solid test utility to determine that Core Animation animations have been committed, even with long delays
+        that would make tests run slow.
+
+        * TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * webanimations/multiple-transform-properties-and-multiple-transform-properties-animation-with-delay-on-forced-layer-expected.html: Added.
+        * webanimations/multiple-transform-properties-and-multiple-transform-properties-animation-with-delay-on-forced-layer.html: Added.
+        * webanimations/resources/wait-until-animations-are-committed.js: Added.
+        * webanimations/rotate-property-and-rotate-animation-with-delay-on-forced-layer-expected.html: Added.
+        * webanimations/rotate-property-and-rotate-animation-with-delay-on-forced-layer.html: Added.
+        * webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer-expected.html: Added.
+        * webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer.html: Added.
+        * webanimations/transform-property-and-transform-animation-with-delay-on-forced-layer-expected.html: Added.
+        * webanimations/transform-property-and-transform-animation-with-delay-on-forced-layer.html: Added.
+        * webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer-expected.html: Added.
+        * webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html: Added.
+
 2021-01-27  Sam Weinig  <weinig@apple.com>
 
         Add support for color(a98-rgb ...) as part of CSS Color 4

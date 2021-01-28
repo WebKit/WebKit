@@ -4595,6 +4595,13 @@ webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/t
 
 webkit.org/b/220325 http/wpt/css/css-highlight-api/highlight-text-cascade.html [ ImageOnlyFailure ]
 
+# These are only enabled on Cocoa WK2 ports
+webanimations/multiple-transform-properties-and-multiple-transform-properties-animation-with-delay-on-forced-layer.html [ Skip ]
+webanimations/rotate-property-and-rotate-animation-with-delay-on-forced-layer.html [ Skip ]
+webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer.html [ Skip ]
+webanimations/transform-property-and-transform-animation-with-delay-on-forced-layer.html [ Skip ]
+webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Skip ]
+
 # Unsupported css color() variants
 webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-003.html [ ImageOnlyFailure ] # Invalid test, no colorspace specified
 webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-004.html [ ImageOnlyFailure ] # Invalid test, no colorspace specified

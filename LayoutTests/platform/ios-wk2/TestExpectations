@@ -1896,3 +1896,9 @@ fast/canvas/canvas-scale-shadowBlur.html [ Pass Failure ]
 webkit.org/b/219403 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-candidate-in-sdp.https.html [ Pass Failure ]
 
 webkit.org/b/219438 [ Release ] ast/canvas/canvas-overflow-hidden-animation.html [ Pass ImageOnlyFailure ]
+
+webanimations/multiple-transform-properties-and-multiple-transform-properties-animation-with-delay-on-forced-layer.html [ Pass ]
+webanimations/rotate-property-and-rotate-animation-with-delay-on-forced-layer.html [ Pass ]
+webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer.html [ Pass ]
+webanimations/transform-property-and-transform-animation-with-delay-on-forced-layer.html [ Pass ]
+webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Pass ]

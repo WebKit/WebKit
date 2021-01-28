@@ -2919,7 +2919,7 @@ void GraphicsLayerCA::updateAnimations()
     };
 
     enum class TransformationMatrixSource { UseIdentityMatrix, AskClient };
-    auto addBaseValueTransformAnimation = [&](AnimatedPropertyID property, TransformationMatrixSource matrixSource = TransformationMatrixSource::AskClient) {
+    auto addBaseValueTransformAnimation = [&](AnimatedPropertyID property, TransformationMatrixSource matrixSource = TransformationMatrixSource::AskClient, Seconds beginTimeOfEarliestPropertyAnimation = 0_s) {
         // A base value transform animation can either be set to the identity matrix or to read the underlying
         // value from the GraphicsLayerClient. If we didn't explicitly ask for an identity matrix, we can skip
         // the addition of this base value transform animation since it will be a no-op.
@@ -2927,16 +2927,21 @@ void GraphicsLayerCA::updateAnimations()
         if (matrixSource == TransformationMatrixSource::AskClient && matrix.isIdentity())
             return;
 
-        // A base value transform animation needs to last forever and use the same value for its from and to values.
+        auto delay = beginTimeOfEarliestPropertyAnimation > currentTime ? beginTimeOfEarliestPropertyAnimation - currentTime : 0_s;
+
+        // A base value transform animation needs to last forever and use the same value for its from and to values,
+        // unless we're just filling until an animation for this property starts, in which case it must last for duration
+        // of the delay until that animation.
         auto caAnimation = createPlatformCAAnimation(PlatformCAAnimation::Basic, propertyIdToString(property));
-        caAnimation->setDuration(Seconds::infinity().seconds());
+        caAnimation->setDuration((delay ? delay : Seconds::infinity()).seconds());
         caAnimation->setFromValue(matrix);
         caAnimation->setToValue(matrix);
 
         auto animation = LayerPropertyAnimation(WTFMove(caAnimation), "base-transform-" + createCanonicalUUIDString(), property, 0, 0, 0_s);
         // To ensure the base value transform is applied along with all the interpolating animations, we set it to have started
-        // as early as possible, which combined with the infinite duration ensures it's current for any given CA media time.
-        animation.m_beginTime = baseTransformAnimationBeginTime;
+        // as early as possible, which combined with the infinite duration ensures it's current for any given CA media time,
+        // unless we're just filling until an animation for this property starts, in which case it must start now.
+        animation.m_beginTime = delay ? currentTime : baseTransformAnimationBeginTime;
 
         // Additivity will depend on the source of the matrix, if it was explicitly provided as an identity matrix, it
         // is the initial base value transform animation and must override the current transform value for this layer.
@@ -2973,6 +2978,9 @@ void GraphicsLayerCA::updateAnimations()
     LayerPropertyAnimation* translateAnimation = nullptr;
     LayerPropertyAnimation* scaleAnimation = nullptr;
     LayerPropertyAnimation* rotateAnimation = nullptr;
+    Vector<LayerPropertyAnimation*> translateAnimations;
+    Vector<LayerPropertyAnimation*> scaleAnimations;
+    Vector<LayerPropertyAnimation*> rotateAnimations;
     Vector<LayerPropertyAnimation*> transformAnimations;
 
     for (auto& animation : m_animations) {
@@ -3010,55 +3018,72 @@ void GraphicsLayerCA::updateAnimations()
         }
     }
 
+    if (translateAnimation)
+        translateAnimations.append(translateAnimation);
+    if (scaleAnimation)
+        scaleAnimations.append(scaleAnimation);
+    if (rotateAnimation)
+        rotateAnimations.append(rotateAnimation);
+
     // Now we can apply the transform-related animations, taking care to add them in the right order
     // (translate/scale/rotate/transform) and generate non-interpolating base value transform animations
     // for each property that is not otherwise interpolated.
-    if (translateAnimation || scaleAnimation || rotateAnimation || !transformAnimations.isEmpty()) {
+    if (!translateAnimations.isEmpty() || !scaleAnimations.isEmpty() || !rotateAnimations.isEmpty() || !transformAnimations.isEmpty()) {
         // Start with a base identity transform to override the transform applied to the layer and have a
         // sound base to add animations on top of with additivity enabled.
         addBaseValueTransformAnimation(AnimatedPropertyTransform, TransformationMatrixSource::UseIdentityMatrix);
 
         // Core Animation might require additive animations to be applied in the reverse order.
 #if !PLATFORM(WIN) && !HAVE(CA_WHERE_ADDITIVE_TRANSFORMS_ARE_REVERSED)
-        if (translateAnimation)
-            addAnimation(*translateAnimation);
-        else
-            addBaseValueTransformAnimation(AnimatedPropertyTranslate);
+        auto addAnimationsForProperty = [&](const Vector<LayerPropertyAnimation*>& animations, AnimatedPropertyID property) {
+            if (animations.isEmpty()) {
+                addBaseValueTransformAnimation(property);
+                return;
+            }
 
-        if (rotateAnimation)
-            addAnimation(*rotateAnimation);
-        else
-            addBaseValueTransformAnimation(AnimatedPropertyRotate);
+            Seconds earliestBeginTime = 0_s;
+            for (auto* animation : animations) {
+                if (auto beginTime = animation->computedBeginTime()) {
+                    if (!earliestBeginTime || earliestBeginTime > *beginTime)
+                        earliestBeginTime = *beginTime;
+                }
+            }
 
-        if (scaleAnimation)
-            addAnimation(*scaleAnimation);
-        else
-            addBaseValueTransformAnimation(AnimatedPropertyScale);
+            if (earliestBeginTime > currentTime)
+                addBaseValueTransformAnimation(property, TransformationMatrixSource::AskClient, earliestBeginTime);
 
-        for (auto* animation : transformAnimations)
-            addAnimation(*animation);
-        if (transformAnimations.isEmpty())
-            addBaseValueTransformAnimation(AnimatedPropertyTransform);
+            for (auto* animation : animations)
+                addAnimation(*animation);
+        };
+
+        addAnimationsForProperty(translateAnimations, AnimatedPropertyTranslate);
+        addAnimationsForProperty(rotateAnimations, AnimatedPropertyRotate);
+        addAnimationsForProperty(scaleAnimations, AnimatedPropertyScale);
+        addAnimationsForProperty(transformAnimations, AnimatedPropertyTransform);
 #else
-        for (auto* animation : WTF::makeReversedRange(transformAnimations))
-            addAnimation(*animation);
-        if (transformAnimations.isEmpty())
-            addBaseValueTransformAnimation(AnimatedPropertyTransform);
+        auto addAnimationsForProperty = [&](const Vector<LayerPropertyAnimation*>& animations, AnimatedPropertyID property) {
+            if (animations.isEmpty()) {
+                addBaseValueTransformAnimation(property);
+                return;
+            }
 
-        if (scaleAnimation)
-            addAnimation(*scaleAnimation);
-        else
-            addBaseValueTransformAnimation(AnimatedPropertyScale);
+            Seconds earliestBeginTime = 0_s;
+            for (auto* animation : WTF::makeReversedRange(animations)) {
+                if (auto beginTime = animation->computedBeginTime()) {
+                    if (!earliestBeginTime || earliestBeginTime > *beginTime)
+                        earliestBeginTime = *beginTime;
+                }
+                addAnimation(*animation);
+            }
 
-        if (rotateAnimation)
-            addAnimation(*rotateAnimation);
-        else
-            addBaseValueTransformAnimation(AnimatedPropertyRotate);
+            if (earliestBeginTime > currentTime)
+                addBaseValueTransformAnimation(property, TransformationMatrixSource::AskClient, earliestBeginTime);
+        };
 
-        if (translateAnimation)
-            addAnimation(*translateAnimation);
-        else
-            addBaseValueTransformAnimation(AnimatedPropertyTranslate);
+        addAnimationsForProperty(transformAnimations, AnimatedPropertyTransform);
+        addAnimationsForProperty(scaleAnimations, AnimatedPropertyScale);
+        addAnimationsForProperty(rotateAnimations, AnimatedPropertyRotate);
+        addAnimationsForProperty(translateAnimations, AnimatedPropertyTranslate);
 #endif
     }
 }
