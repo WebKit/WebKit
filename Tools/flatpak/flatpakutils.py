@@ -36,6 +36,7 @@ import re
 import platform
 
 from webkitpy.common.system.logutils import configure_logging
+from webkitcorepy import string_utils
 import toml
 import json
 
@@ -517,13 +518,13 @@ class WebkitFlatpak:
         self.sccache_scheduler = DEFAULT_SCCACHE_SCHEDULER
 
     def execute_command(self, args, stdout=None, stderr=None, env=None):
-        _log.debug('Running: %s\n' % ' '.join(args))
+        _log.debug('Running: %s\n' % ' '.join(string_utils.decode(arg) for arg in args))
         result = 0
         try:
             result = subprocess.check_call(args, stdout=stdout, stderr=stderr, env=env)
         except subprocess.CalledProcessError as err:
             if self.verbose:
-                cmd = ' '.join(err.cmd)
+                cmd = ' '.join(string_utils.decode(arg) for arg in err.cmd)
                 message = "'%s' returned a non-zero exit code." % cmd
                 if stderr:
                     with open(stderr.name, 'r') as stderrf:
@@ -849,12 +850,16 @@ class WebkitFlatpak:
         if not building_gst and args[0] != "sccache":
             extra_flatpak_args.extend(self.setup_gstbuild(building))
 
-        flatpak_env = os.environ
-        for envvar in flatpak_env.keys():
-            if envvar.startswith("LC_") or envvar.startswith("LANG"):
+        flatpak_env = os.environ.copy()
+        for envvar in list(flatpak_env.keys()):
+            if envvar.startswith("LC_") or envvar == "LANGUAGE":
                 del flatpak_env[envvar]
                 if self.flatpak_version >= (1, 10, 0):
                     flatpak_command.append("--unset-env=%s" % envvar)
+
+        # Avoid 'error: Invalid byte sequence in conversion input' after removing
+        # all `LANG` vars.
+        flatpak_env["LANG"] = "en_US.UTF-8"
 
         flatpak_command += extra_flatpak_args + ['--command=%s' % args[0], "org.webkit.Sdk"] + args[1:]
 

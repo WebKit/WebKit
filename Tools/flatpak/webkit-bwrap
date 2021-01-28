@@ -73,7 +73,6 @@ def main(args: list) -> int:
     for env in environ.keys():
         if env.startswith("LC_") or env == "LANGUAGE":
             bwrap_args.extend(("--unsetenv", env))
-    bwrap_args.extend(("--setenv", "LANG", "en_US.UTF-8"))
 
     bwrap_args.extend(("--setenv", "PATH", "/usr/bin:/usr/lib/sdk/rust-stable/bin/"))
 
