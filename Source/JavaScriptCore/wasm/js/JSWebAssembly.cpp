@@ -296,11 +296,8 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyInstantiateFunc, (JSGlobalObject* globalObje
     auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
     JSValue importArgument = callFrame->argument(1);
     JSObject* importObject = importArgument.getObject();
-    if (UNLIKELY(!importArgument.isUndefined() && !importObject)) {
-        promise->reject(globalObject, createTypeError(globalObject,
-            "second argument to WebAssembly.instantiate must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(vm, importArgument)));
-        return JSValue::encode(promise);
-    }
+    if (UNLIKELY(!importArgument.isUndefined() && !importObject))
+        return JSValue::encode(JSPromise::rejectedPromise(globalObject, createTypeError(globalObject, "second argument to WebAssembly.instantiate must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(vm, importArgument))));
 
     JSValue firstArgument = callFrame->argument(0);
     if (firstArgument.inherits<JSWebAssemblyModule>(vm))
@@ -336,12 +333,8 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyInstantiateStreamingInternal, (JSGlobalObjec
 
     JSValue importArgument = callFrame->argument(1);
     JSObject* importObject = importArgument.getObject();
-    if (UNLIKELY(!importArgument.isUndefined() && !importObject)) {
-        auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
-        promise->reject(globalObject, createTypeError(globalObject,
-            "second argument to WebAssembly.instantiateStreaming must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(vm, importArgument)));
-        return JSValue::encode(promise);
-    }
+    if (UNLIKELY(!importArgument.isUndefined() && !importObject))
+        return JSValue::encode(JSPromise::rejectedPromise(globalObject, createTypeError(globalObject, "second argument to WebAssembly.instantiateStreaming must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(vm, importArgument))));
 
     ASSERT(globalObject->globalObjectMethodTable()->instantiateStreaming);
     // FIXME: <http://webkit.org/b/184888> if there's an importObject and it contains a Memory, then we can compile the module with the right memory type (fast or not) by looking at the memory's type.

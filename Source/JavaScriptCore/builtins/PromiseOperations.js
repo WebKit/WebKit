@@ -186,6 +186,7 @@ function resolvePromise(promise, resolution)
     @enqueueJob(@promiseResolveThenableJob, resolution, then, @createResolvingFunctions(promise));
 }
 
+// Keep in sync with JSPromise::rejectedPromise.
 @globalPrivate
 function rejectPromise(promise, reason)
 {

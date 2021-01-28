@@ -1,3 +1,21 @@
+2021-01-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add JSPromise::rejectedPromise
+        https://bugs.webkit.org/show_bug.cgi?id=221077
+
+        Reviewed by Mark Lam.
+
+        This patch adds JSPromise::rejectedPromise static function which can return newly created rejected promise.
+        The benefit of this function is that it avoids calling JS functions internally. It is efficient, fast, plus,
+        we can ensure that no JS related error happens (stack-overflow, terminated-execution errors).
+
+        * builtins/PromiseOperations.js:
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::rejectedPromise):
+        * runtime/JSPromise.h:
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2021-01-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         WebAssembly: add support for stream APIs
