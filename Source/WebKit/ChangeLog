@@ -1,3 +1,17 @@
+2021-01-28  Per Arne  <pvollan@apple.com>
+
+        [macOS] Remove access to com.apple.BluetoothServices
+        https://bugs.webkit.org/show_bug.cgi?id=221059
+        <rdar://problem/70509471>
+
+        Reviewed by Alex Christensen.
+
+        Remove access to com.apple.BluetoothServices in the WebContent sandbox on macOS, since there are no reports of this being used.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::mediaRelatedMachServices):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Stop using SoupRequest API in preparation for libsoup3

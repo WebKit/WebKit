@@ -1488,20 +1488,6 @@
     )
 )
 
-;; Confirm this is unused:
-(allow mach-lookup
-    (with report)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-    (with telemetry-backtrace)
-#endif
-    (require-all
-        (extension "com.apple.webkit.extension.mach")
-        (global-name
-            "com.apple.BluetoothServices"
-        )
-    )
-)
-
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
