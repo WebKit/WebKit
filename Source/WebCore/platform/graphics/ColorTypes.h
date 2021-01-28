@@ -31,6 +31,19 @@
 
 namespace WebCore {
 
+template<typename> struct SRGBA;
+template<typename> struct ExtendedSRGBA;
+template<typename> struct LinearSRGBA;
+template<typename> struct LinearExtendedSRGBA;
+template<typename> struct DisplayP3;
+template<typename> struct LinearDisplayP3;
+template<typename> struct A98RGB;
+template<typename> struct LinearA98RGB;
+template<typename> struct Lab;
+template<typename> struct LCHA;
+template<typename> struct HSLA;
+template<typename> struct XYZ;
+
 template<typename> struct AlphaTraits;
 
 template<> struct AlphaTraits<uint8_t> {
@@ -117,6 +130,7 @@ template<> struct XYZModel<float> {
     } };
     static constexpr bool isInvertible = false;
 };
+
 
 template<typename ColorType, typename T> constexpr ColorType makeFromComponents(const ColorComponents<T>& c)
 {
@@ -269,12 +283,27 @@ template<typename Parent> struct ColorWithAlphaHelper {
     }
 };
 
-template<typename T> struct SRGBA : ColorWithAlphaHelper<SRGBA<T>> {
+
+template<typename ColorType, typename std::enable_if_t<IsConvertibleToColorComponents<ColorType>>* = nullptr>
+constexpr bool operator==(const ColorType& a, const ColorType& b)
+{
+    return asColorComponents(a) == asColorComponents(b);
+}
+
+template<typename ColorType, typename std::enable_if_t<IsConvertibleToColorComponents<ColorType>>* = nullptr>
+constexpr bool operator!=(const ColorType& a, const ColorType& b)
+{
+    return !(a == b);
+}
+
+
+// MARK: - RGB Color Types.
+
+template<template<typename> class C, typename T, typename M> struct RGBAType : ColorWithAlphaHelper<C<T>> {
     using ComponentType = T;
-    using Model = RGBModel<T>;
-    static constexpr auto colorSpace { ColorSpace::SRGB };
+    using Model = M;
     
-    constexpr SRGBA(T red, T green, T blue, T alpha = AlphaTraits<T>::opaque)
+    constexpr RGBAType(T red, T green, T blue, T alpha = AlphaTraits<T>::opaque)
         : red { red }
         , green { green }
         , blue { blue }
@@ -283,8 +312,8 @@ template<typename T> struct SRGBA : ColorWithAlphaHelper<SRGBA<T>> {
         assertInRange(*this);
     }
 
-    constexpr SRGBA()
-        : SRGBA { 0, 0, 0, 0 }
+    constexpr RGBAType()
+        : RGBAType { 0, 0, 0, 0 }
     {
     }
 
@@ -294,221 +323,68 @@ template<typename T> struct SRGBA : ColorWithAlphaHelper<SRGBA<T>> {
     T alpha;
 };
 
-template<typename T> constexpr ColorComponents<T> asColorComponents(const SRGBA<T>& c)
+template<template<typename> class ColorType, typename T, typename M> constexpr ColorComponents<T> asColorComponents(const RGBAType<ColorType, T, M>& c)
 {
     return { c.red, c.green, c.blue, c.alpha };
 }
 
-template<typename T> constexpr bool operator==(const SRGBA<T>& a, const SRGBA<T>& b)
-{
-    return asColorComponents(a) == asColorComponents(b);
-}
-
-template<typename T> constexpr bool operator!=(const SRGBA<T>& a, const SRGBA<T>& b)
-{
-    return !(a == b);
-}
-
-
-template<typename T> struct ExtendedSRGBA : ColorWithAlphaHelper<ExtendedSRGBA<T>> {
-    using ComponentType = T;
-    using Model = ExtendedRGBModel<T>;
-
-    constexpr ExtendedSRGBA(T red, T green, T blue, T alpha = AlphaTraits<T>::opaque)
-        : red { red }
-        , green { green }
-        , blue { blue }
-        , alpha { alpha }
-    {
-    }
-
-    constexpr ExtendedSRGBA()
-        : ExtendedSRGBA { 0, 0, 0, 0 }
-    {
-    }
-
-    T red;
-    T green;
-    T blue;
-    T alpha;
+template<typename T> struct SRGBA : RGBAType<SRGBA, T, RGBModel<T>> {
+    using RGBAType<SRGBA, T, RGBModel<T>>::RGBAType;
+    using LinearCounterpart = LinearSRGBA<T>;
+    static constexpr auto colorSpace { ColorSpace::SRGB };
 };
+template<typename T> SRGBA(T, T, T, T) -> SRGBA<T>;
 
-template<typename T> constexpr ColorComponents<T> asColorComponents(const ExtendedSRGBA<T>& c)
-{
-    return { c.red, c.green, c.blue, c.alpha };
-}
-
-template<typename T> constexpr bool operator==(const ExtendedSRGBA<T>& a, const ExtendedSRGBA<T>& b)
-{
-    return asColorComponents(a) == asColorComponents(b);
-}
-
-template<typename T> constexpr bool operator!=(const ExtendedSRGBA<T>& a, const ExtendedSRGBA<T>& b)
-{
-    return !(a == b);
-}
-
-
-template<typename T> struct LinearSRGBA : ColorWithAlphaHelper<LinearSRGBA<T>> {
-    using ComponentType = T;
-    using Model = RGBModel<T>;
+template<typename T> struct LinearSRGBA : RGBAType<LinearSRGBA, T, RGBModel<T>> {
+    using RGBAType<LinearSRGBA, T, RGBModel<T>>::RGBAType;
+    using GammaEncodedCounterpart = SRGBA<T>;
     static constexpr auto colorSpace = ColorSpace::LinearRGB;
-
-    constexpr LinearSRGBA(T red, T green, T blue, T alpha = AlphaTraits<T>::opaque)
-        : red { red }
-        , green { green }
-        , blue { blue }
-        , alpha { alpha }
-    {
-        assertInRange(*this);
-    }
-
-    constexpr LinearSRGBA()
-        : LinearSRGBA { 0, 0, 0, 0 }
-    {
-    }
-
-    T red;
-    T green;
-    T blue;
-    T alpha;
 };
-
-template<typename T> constexpr ColorComponents<T> asColorComponents(const LinearSRGBA<T>& c)
-{
-    return { c.red, c.green, c.blue, c.alpha };
-}
-
-template<typename T> constexpr bool operator==(const LinearSRGBA<T>& a, const LinearSRGBA<T>& b)
-{
-    return asColorComponents(a) == asColorComponents(b);
-}
-
-template<typename T> constexpr bool operator!=(const LinearSRGBA<T>& a, const LinearSRGBA<T>& b)
-{
-    return !(a == b);
-}
+template<typename T> LinearSRGBA(T, T, T, T) -> LinearSRGBA<T>;
 
 
-template<typename T> struct LinearExtendedSRGBA : ColorWithAlphaHelper<LinearExtendedSRGBA<T>> {
-    using ComponentType = T;
-    using Model = ExtendedRGBModel<T>;
-
-    constexpr LinearExtendedSRGBA(T red, T green, T blue, T alpha = AlphaTraits<T>::opaque)
-        : red { red }
-        , green { green }
-        , blue { blue }
-        , alpha { alpha }
-    {
-    }
-
-    constexpr LinearExtendedSRGBA()
-        : LinearExtendedSRGBA { 0, 0, 0, 0 }
-    {
-    }
-
-    T red;
-    T green;
-    T blue;
-    T alpha;
+template<typename T> struct ExtendedSRGBA : RGBAType<ExtendedSRGBA, T, ExtendedRGBModel<T>> {
+    using RGBAType<ExtendedSRGBA, T, ExtendedRGBModel<T>>::RGBAType;
+    using LinearCounterpart = LinearExtendedSRGBA<T>;
 };
+template<typename T> ExtendedSRGBA(T, T, T, T) -> ExtendedSRGBA<T>;
 
-template<typename T> constexpr ColorComponents<T> asColorComponents(const LinearExtendedSRGBA<T>& c)
-{
-    return { c.red, c.green, c.blue, c.alpha };
-}
-
-template<typename T> constexpr bool operator==(const LinearExtendedSRGBA<T>& a, const LinearExtendedSRGBA<T>& b)
-{
-    return asColorComponents(a) == asColorComponents(b);
-}
-
-template<typename T> constexpr bool operator!=(const LinearExtendedSRGBA<T>& a, const LinearExtendedSRGBA<T>& b)
-{
-    return !(a == b);
-}
+template<typename T> struct LinearExtendedSRGBA : RGBAType<LinearExtendedSRGBA, T, ExtendedRGBModel<T>> {
+    using RGBAType<LinearExtendedSRGBA, T, ExtendedRGBModel<T>>::RGBAType;
+    using GammaEncodedCounterpart = ExtendedSRGBA<T>;
+};
+template<typename T> LinearExtendedSRGBA(T, T, T, T) -> LinearExtendedSRGBA<T>;
 
 
-template<typename T> struct DisplayP3 : ColorWithAlphaHelper<DisplayP3<T>> {
-    using ComponentType = T;
-    using Model = RGBModel<T>;
+template<typename T> struct DisplayP3 : RGBAType<DisplayP3, T, RGBModel<T>> {
+    using RGBAType<DisplayP3, T, RGBModel<T>>::RGBAType;
+    using LinearCounterpart = LinearDisplayP3<T>;
     static constexpr auto colorSpace = ColorSpace::DisplayP3;
-
-    constexpr DisplayP3(T red, T green, T blue, T alpha = AlphaTraits<T>::opaque)
-        : red { red }
-        , green { green }
-        , blue { blue }
-        , alpha { alpha }
-    {
-        assertInRange(*this);
-    }
-
-    constexpr DisplayP3()
-        : DisplayP3 { 0, 0, 0, 0 }
-    {
-    }
-
-    T red;
-    T green;
-    T blue;
-    T alpha;
 };
+template<typename T> DisplayP3(T, T, T, T) -> DisplayP3<T>;
 
-template<typename T> constexpr ColorComponents<T> asColorComponents(const DisplayP3<T>& c)
-{
-    return { c.red, c.green, c.blue, c.alpha };
-}
-
-template<typename T> constexpr bool operator==(const DisplayP3<T>& a, const DisplayP3<T>& b)
-{
-    return asColorComponents(a) == asColorComponents(b);
-}
-
-template<typename T> constexpr bool operator!=(const DisplayP3<T>& a, const DisplayP3<T>& b)
-{
-    return !(a == b);
-}
-
-
-template<typename T> struct LinearDisplayP3 : ColorWithAlphaHelper<LinearDisplayP3<T>> {
-    using ComponentType = T;
-    using Model = RGBModel<T>;
-
-    constexpr LinearDisplayP3(T red, T green, T blue, T alpha = AlphaTraits<T>::opaque)
-        : red { red }
-        , green { green }
-        , blue { blue }
-        , alpha { alpha }
-    {
-        assertInRange(*this);
-    }
-
-    constexpr LinearDisplayP3()
-        : LinearDisplayP3 { 0, 0, 0, 0 }
-    {
-    }
-
-    T red;
-    T green;
-    T blue;
-    T alpha;
+template<typename T> struct LinearDisplayP3 : RGBAType<LinearDisplayP3, T, RGBModel<T>> {
+    using RGBAType<LinearDisplayP3, T, RGBModel<T>>::RGBAType;
+    using GammaEncodedCounterpart = DisplayP3<T>;
 };
+template<typename T> LinearDisplayP3(T, T, T, T) -> LinearDisplayP3<T>;
 
-template<typename T> constexpr ColorComponents<T> asColorComponents(const LinearDisplayP3<T>& c)
-{
-    return { c.red, c.green, c.blue, c.alpha };
-}
 
-template<typename T> constexpr bool operator==(const LinearDisplayP3<T>& a, const LinearDisplayP3<T>& b)
-{
-    return asColorComponents(a) == asColorComponents(b);
-}
+template<typename T> struct A98RGB : RGBAType<A98RGB, T, RGBModel<T>> {
+    using RGBAType<A98RGB, T, RGBModel<T>>::RGBAType;
+    using LinearCounterpart = LinearA98RGB<T>;
+    static constexpr auto colorSpace = ColorSpace::A98RGB;
+};
+template<typename T> A98RGB(T, T, T, T) -> A98RGB<T>;
 
-template<typename T> constexpr bool operator!=(const LinearDisplayP3<T>& a, const LinearDisplayP3<T>& b)
-{
-    return !(a == b);
-}
+template<typename T> struct LinearA98RGB : RGBAType<LinearA98RGB, T, RGBModel<T>> {
+    using RGBAType<LinearA98RGB, T, RGBModel<T>>::RGBAType;
+    using GammaEncodedCounterpart = A98RGB<T>;
+};
+template<typename T> LinearA98RGB(T, T, T, T) -> LinearA98RGB<T>;
 
+
+// MARK: - Lab Color Type.
 
 template<typename T> struct Lab : ColorWithAlphaHelper<Lab<T>> {
     using ComponentType = T;
@@ -540,16 +416,7 @@ template<typename T> constexpr ColorComponents<T> asColorComponents(const Lab<T>
     return { c.lightness, c.a, c.b, c.alpha };
 }
 
-template<typename T> constexpr bool operator==(const Lab<T>& a, const Lab<T>& b)
-{
-    return asColorComponents(a) == asColorComponents(b);
-}
-
-template<typename T> constexpr bool operator!=(const Lab<T>& a, const Lab<T>& b)
-{
-    return !(a == b);
-}
-
+// MARK: - LCHA Color Type.
 
 template<typename T> struct LCHA : ColorWithAlphaHelper<LCHA<T>> {
     using ComponentType = T;
@@ -580,16 +447,8 @@ template<typename T> constexpr ColorComponents<T> asColorComponents(const LCHA<T
     return { c.lightness, c.chroma, c.hue, c.alpha };
 }
 
-template<typename T> constexpr bool operator==(const LCHA<T>& a, const LCHA<T>& b)
-{
-    return asColorComponents(a) == asColorComponents(b);
-}
 
-template<typename T> constexpr bool operator!=(const LCHA<T>& a, const LCHA<T>& b)
-{
-    return !(a == b);
-}
-
+// MARK: - HSLA Color Type.
 
 template<typename T> struct HSLA : ColorWithAlphaHelper<HSLA<T>> {
     using ComponentType = T;
@@ -615,23 +474,12 @@ template<typename T> struct HSLA : ColorWithAlphaHelper<HSLA<T>> {
     T alpha;
 };
 
-template<typename T> HSLA(T, T, T, T) -> HSLA<T>;
-
 template<typename T> constexpr ColorComponents<T> asColorComponents(const HSLA<T>& c)
 {
     return { c.hue, c.saturation, c.lightness, c.alpha };
 }
 
-template<typename T> constexpr bool operator==(const HSLA<T>& a, const HSLA<T>& b)
-{
-    return asColorComponents(a) == asColorComponents(b);
-}
-
-template<typename T> constexpr bool operator!=(const HSLA<T>& a, const HSLA<T>& b)
-{
-    return !(a == b);
-}
-
+// MARK: - XYZ Color Type.
 
 template<typename T> struct XYZA : ColorWithAlphaHelper<XYZA<T>> {
     using ComponentType = T;
@@ -662,33 +510,6 @@ template<typename T> constexpr ColorComponents<T> asColorComponents(const XYZA<T
     return { c.x, c.y, c.z, c.alpha };
 }
 
-template<typename T> constexpr bool operator==(const XYZA<T>& a, const XYZA<T>& b)
-{
-    return asColorComponents(a) == asColorComponents(b);
-}
-
-template<typename T> constexpr bool operator!=(const XYZA<T>& a, const XYZA<T>& b)
-{
-    return !(a == b);
-}
-
-
-template<typename T, typename Functor> constexpr decltype(auto) callWithColorType(const ColorComponents<T>& components, ColorSpace colorSpace, Functor&& functor)
-{
-    switch (colorSpace) {
-    case ColorSpace::SRGB:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<SRGBA<T>>(components));
-    case ColorSpace::LinearRGB:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<LinearSRGBA<T>>(components));
-    case ColorSpace::DisplayP3:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<DisplayP3<T>>(components));
-    case ColorSpace::Lab:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<Lab<T>>(components));
-    }
-
-    ASSERT_NOT_REACHED();
-    return std::invoke(std::forward<Functor>(functor), makeFromComponents<SRGBA<T>>(components));
-}
 
 // Packed Color Formats
 

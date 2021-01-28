@@ -96,6 +96,8 @@ static ASCIILiteral serialization(ColorSpace colorSpace)
         return "linear-srgb"_s;
     case ColorSpace::DisplayP3:
         return "display-p3"_s;
+    case ColorSpace::A98RGB:
+        return "a98-rgb"_s;
     case ColorSpace::Lab:
         return "lab"_s;
     }
@@ -159,6 +161,23 @@ String serializationForHTML(const DisplayP3<float>& color)
 }
 
 String serializationForRenderTreeAsText(const DisplayP3<float>& color)
+{
+    return serialization(color);
+}
+
+// A98RGB<float> overloads
+
+String serializationForCSS(const A98RGB<float>& color)
+{
+    return serialization(color);
+}
+
+String serializationForHTML(const A98RGB<float>& color)
+{
+    return serialization(color);
+}
+
+String serializationForRenderTreeAsText(const A98RGB<float>& color)
 {
     return serialization(color);
 }

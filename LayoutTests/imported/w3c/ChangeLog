@@ -1,3 +1,21 @@
+2021-01-27  Sam Weinig  <weinig@apple.com>
+
+        Add support for color(a98-rgb ...) as part of CSS Color 4
+        https://bugs.webkit.org/show_bug.cgi?id=221018
+
+        Reviewed by Darin Adler.
+
+        Add some new WPT tests for color(a98-rgb ) that will be upstreamed shortly.
+
+        * web-platform-tests/css/css-color/a98rgb-001-expected.html: Added.
+        * web-platform-tests/css/css-color/a98rgb-001.html: Added.
+        * web-platform-tests/css/css-color/a98rgb-002-expected.html: Added.
+        * web-platform-tests/css/css-color/a98rgb-002.html: Added.
+        * web-platform-tests/css/css-color/a98rgb-003-expected.html: Added.
+        * web-platform-tests/css/css-color/a98rgb-003.html: Added.
+        * web-platform-tests/css/css-color/a98rgb-004-expected.html: Added.
+        * web-platform-tests/css/css-color/a98rgb-004.html: Added.
+
 2021-01-27  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Upstream to WPT Shadow DOM tests related to :focus pseudo-class

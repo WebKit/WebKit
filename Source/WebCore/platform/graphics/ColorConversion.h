@@ -29,11 +29,21 @@
 
 namespace WebCore {
 
-// These are the standard sRGB <-> LinearRGB / DisplayP3 <-> LinearDisplayP3 conversion functions (https://en.wikipedia.org/wiki/SRGB).
-float linearToRGBColorComponentClamping(float);
-float rgbToLinearColorComponentClamping(float);
-float linearToRGBColorComponentNonClamping(float);
-float rgbToLinearColorComponentNonClamping(float);
+// Transfer functions for colors that can be gamma encoded.
+
+struct SRGBTransferFunction {
+    static float fromLinearClamping(float);
+    static float toLinearClamping(float);
+    static float fromLinearNonClamping(float);
+    static float toLinearNonClamping(float);
+};
+
+struct A98RGBTransferFunction {
+    static float fromLinearClamping(float);
+    static float toLinearClamping(float);
+    static float fromLinearNonClamping(float);
+    static float toLinearNonClamping(float);
+};
 
 // All color types must at least implement the following conversions to and from the XYZA color space:
 //    XYZA<float> toXYZA(const ColorType<float>&);
@@ -98,6 +108,18 @@ WEBCORE_EXPORT HSLA<float> toHSLA(const XYZA<float>&);
 // Additions
 WEBCORE_EXPORT SRGBA<float> toSRGBA(const HSLA<float>&);
 
+// A98RGB
+WEBCORE_EXPORT XYZA<float> toXYZA(const A98RGB<float>&);
+WEBCORE_EXPORT A98RGB<float> toA98RGB(const XYZA<float>&);
+// Additions
+WEBCORE_EXPORT LinearA98RGB<float> toLinearA98RGB(const A98RGB<float>&);
+
+// LinearA98RGB
+WEBCORE_EXPORT XYZA<float> toXYZA(const LinearA98RGB<float>&);
+WEBCORE_EXPORT LinearA98RGB<float> toLinearA98RGB(const XYZA<float>&);
+// Additions
+WEBCORE_EXPORT A98RGB<float> toA98RGB(const LinearA98RGB<float>& color);
+
 
 // Identity conversions (useful for generic contexts).
 
@@ -111,6 +133,7 @@ constexpr Lab<float> toLab(const Lab<float>& color) { return color; }
 constexpr LCHA<float> toLCHA(const LCHA<float>& color) { return color; }
 constexpr HSLA<float> toHSLA(const HSLA<float>& color) { return color; }
 constexpr XYZA<float> toXYZA(const XYZA<float>& color) { return color; }
+constexpr A98RGB<float> toA98RGB(const A98RGB<float>& color) { return color; }
 
 
 // Fallback conversions.
@@ -161,6 +184,36 @@ template<typename T> LCHA<float> toLCHA(const T& color)
 template<typename T> HSLA<float> toHSLA(const T& color)
 {
     return toHSLA(toXYZA(color));
+}
+
+template<typename T> A98RGB<float> toA98RGB(const T& color)
+{
+    return toA98RGB(toXYZA(color));
+}
+
+template<typename T> LinearA98RGB<float> toLinearA98RGB(const T& color)
+{
+    return toLinearA98RGB(toXYZA(color));
+}
+
+
+template<typename T, typename Functor> constexpr decltype(auto) callWithColorType(const ColorComponents<T>& components, ColorSpace colorSpace, Functor&& functor)
+{
+    switch (colorSpace) {
+    case ColorSpace::SRGB:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<SRGBA<T>>(components));
+    case ColorSpace::LinearRGB:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<LinearSRGBA<T>>(components));
+    case ColorSpace::DisplayP3:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<DisplayP3<T>>(components));
+    case ColorSpace::A98RGB:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<A98RGB<T>>(components));
+    case ColorSpace::Lab:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<Lab<T>>(components));
+    }
+
+    ASSERT_NOT_REACHED();
+    return std::invoke(std::forward<Functor>(functor), makeFromComponents<SRGBA<T>>(components));
 }
 
 } // namespace WebCore

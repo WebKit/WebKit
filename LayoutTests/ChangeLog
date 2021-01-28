@@ -1,3 +1,17 @@
+2021-01-27  Sam Weinig  <weinig@apple.com>
+
+        Add support for color(a98-rgb ...) as part of CSS Color 4
+        https://bugs.webkit.org/show_bug.cgi?id=221018
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations:
+        Un-fail some now passing tests.
+
+        * fast/css/parsing-a98rgb-colors-expected.txt: Added.
+        * fast/css/parsing-a98rgb-colors.html: Added.
+        Add new tests for parsing color(a98-rgb ) colors.
+
 2021-01-27  Ada Chan  <ada.chan@apple.com>
 
         Send the end XRSessionEvent after the platform-specific steps for session shutdown have completed

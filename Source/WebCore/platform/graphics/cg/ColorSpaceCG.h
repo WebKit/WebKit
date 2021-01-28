@@ -35,6 +35,7 @@ WEBCORE_EXPORT CGColorSpaceRef sRGBColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef linearRGBColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef displayP3ColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef labColorSpaceRef();
+WEBCORE_EXPORT CGColorSpaceRef a98RGBColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef extendedSRGBColorSpaceRef();
 
 static inline CGColorSpaceRef cachedCGColorSpace(ColorSpace colorSpace)
@@ -46,6 +47,8 @@ static inline CGColorSpaceRef cachedCGColorSpace(ColorSpace colorSpace)
         return linearRGBColorSpaceRef();
     case ColorSpace::DisplayP3:
         return displayP3ColorSpaceRef();
+    case ColorSpace::A98RGB:
+        return a98RGBColorSpaceRef();
     case ColorSpace::Lab:
         return labColorSpaceRef();
     }

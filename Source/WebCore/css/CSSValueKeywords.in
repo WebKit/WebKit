@@ -1407,6 +1407,8 @@ rec2020
 // color() function
 sRGB
 display-p3
+a98-rgb
+// lab
 
 // prefers-default-appearance
 prefers

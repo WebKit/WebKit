@@ -4598,8 +4598,6 @@ webkit.org/b/220325 http/wpt/css/css-highlight-api/highlight-text-cascade.html [
 # Unsupported css color() variants
 webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-003.html [ ImageOnlyFailure ] # Invalid test, no colorspace specified
 webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-004.html [ ImageOnlyFailure ] # Invalid test, no colorspace specified
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-007.html [ ImageOnlyFailure ] # Requires a98-rgb support
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-008.html [ ImageOnlyFailure ] # Requires a98-rgb support
 webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-009.html [ ImageOnlyFailure ] # Requires prophoto-rgb support
 webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-010.html [ ImageOnlyFailure ] # Requires prophoto-rgb support
 webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-011.html [ ImageOnlyFailure ] # Requires rec2020 support

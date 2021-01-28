@@ -82,6 +82,20 @@ CGColorSpaceRef displayP3ColorSpaceRef()
     return displayP3ColorSpace;
 }
 
+CGColorSpaceRef a98RGBColorSpaceRef()
+{
+    static CGColorSpaceRef a98RGBColorSpace;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+#if PLATFORM(COCOA)
+        a98RGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceAdobeRGB1998);
+#else
+        a98RGBColorSpace = sRGBColorSpaceRef();
+#endif
+    });
+    return a98RGBColorSpace;
+}
+
 CGColorSpaceRef labColorSpaceRef()
 {
     // FIXME: Add support for conversion to Lab on supported platforms.
