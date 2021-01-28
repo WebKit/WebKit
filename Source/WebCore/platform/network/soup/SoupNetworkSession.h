@@ -37,7 +37,6 @@
 typedef struct _SoupCache SoupCache;
 typedef struct _SoupCookieJar SoupCookieJar;
 typedef struct _SoupMessage SoupMessage;
-typedef struct _SoupRequest SoupRequest;
 typedef struct _SoupSession SoupSession;
 
 namespace WebCore {

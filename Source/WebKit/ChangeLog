@@ -1,5 +1,37 @@
 2021-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] Stop using SoupRequest API in preparation for libsoup3
+        https://bugs.webkit.org/show_bug.cgi?id=220764
+
+        Reviewed by Adrian Perez de Castro.
+
+        It's gone in libsoup3, we can just use soup_session_send_async() instead, which is what SoupRequest does
+        internally.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::createRequest): Manually create the SoupMessage. Also connect to content-sniffed
+        signal that it was handled by SoupRequest internally.
+        (WebKit::NetworkDataTaskSoup::clearRequest): Remove the SoupRequest reset and clear m_sniffedContentType.
+        (WebKit::NetworkDataTaskSoup::resume): Use soup_session_send_async(). We need to know the message for passed to
+        the function from the async ready callback, so we use a struct to pass both the task and the message. In case of
+        being suspended the struct was attached to the pending result.
+        (WebKit::NetworkDataTaskSoup::sendRequestCallback): Finish the soup_session_send_async() operation.
+        (WebKit::NetworkDataTaskSoup::didSendRequest): Set the sniffed content type from m_sniffedContentType.
+        (WebKit::NetworkDataTaskSoup::tlsConnectionAcceptCertificate): Use SoupMessage instead of SoupRequest to get the URI.
+        (WebKit::NetworkDataTaskSoup::didSniffContentCallback): Build the sniffed content type and call didSniffContent().
+        (WebKit::NetworkDataTaskSoup::didSniffContent): Save the passed content type.
+        (WebKit::NetworkDataTaskSoup::continueAuthenticate): Use m_currentRequest instead of the SoupRequest to build
+        the authentication error.
+        (WebKit::NetworkDataTaskSoup::skipInputStreamForRedirectionCallback): Pass the failing URL to the ResourceError constructor.
+        (WebKit::NetworkDataTaskSoup::continueHTTPRedirection): Ditto.
+        (WebKit::NetworkDataTaskSoup::readCallback): Ditto.
+        (WebKit::NetworkDataTaskSoup::requestNextPartCallback): Ditto.
+        * NetworkProcess/soup/NetworkDataTaskSoup.h:
+        * WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp: Stop setting the initiating page ID in the request because
+        it's unused.
+
+2021-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Load data URLs in the web process also for synchronous loads
         https://bugs.webkit.org/show_bug.cgi?id=220981
 
