@@ -525,8 +525,6 @@
     (subpath "/Library/Speech/Synthesizers")
     (regex #"^/private/etc/(hosts|group|passwd)$")
 
-    (literal "/Library/Application Support/CrashReporter/SubmitDiagInfo.domains")
-
     ;; System and user preferences
     (home-literal "/.CFUserTextEncoding")
 

@@ -1,3 +1,20 @@
+2021-01-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Remove reference to deprecated SubmitDiagInfo.domains path
+        https://bugs.webkit.org/show_bug.cgi?id=221056
+        <rdar://problem/73474697>
+        
+        Reviewed by Per Arne Vollan.
+
+        macOS does not use SubmitDiagInfo.domains anymore, and even when it did it failed safely.
+        There's no reason to have this access in any of our sandboxes, and we should remove it.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+        * WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-01-28  Per Arne  <pvollan@apple.com>
 
         [macOS] Remove access to com.apple.BluetoothServices
