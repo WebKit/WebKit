@@ -1,3 +1,12 @@
+2021-01-28  Ada Chan  <ada.chan@apple.com>
+
+        REGRESSION (r271988): WebXR test failures on Big Sur
+        https://bugs.webkit.org/show_bug.cgi?id=221092
+
+        Reviewed by Chris Dumez.
+
+        * platform/mac/TestExpectations: Skip failing tests
+
 2021-01-28  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Long narrow tables should not be made in data tables unnecessarily
