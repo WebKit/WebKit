@@ -1153,7 +1153,7 @@ class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase
         self.assertEqual(expected_output, output)
 
     def test_filter_logs_containing_error_with_no_error(self):
-        logs = 'CompileC /Volumes/Data/worker/macOS-Mojave-Release-Build-EWS'
+        logs = 'CompileC /Volumes/Data/worker/macOS-Catalina-Release-Build-EWS'
         expected_output = ''
         output = AnalyzeCompileWebKitResults().filter_logs_containing_error(logs)
         self.assertEqual(expected_output, output)
@@ -2401,7 +2401,7 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
     def test_relevant_wk1_patch(self):
         CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: Source/WebKitLegacy'
         self.setupStep(CheckPatchRelevance())
-        self.setProperty('buildername', 'macOS-Mojave-Release-WK1-Tests-EWS')
+        self.setProperty('buildername', 'macOS-Catalina-Release-WK1-Tests-EWS')
         self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
         return self.runStep()
 
@@ -2433,7 +2433,7 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
         CheckPatchRelevance._get_patch = lambda x: 'Sample patch'
         queues = ['Commit-Queue', 'Style-EWS', 'Apply-WatchList-EWS', 'GTK-Build-EWS', 'GTK-WK2-Tests-EWS',
                   'iOS-13-Build-EWS', 'iOS-13-Simulator-Build-EWS', 'iOS-13-Simulator-WK2-Tests-EWS',
-                  'macOS-Mojave-Release-Build-EWS', 'macOS-Mojave-Release-WK2-Tests-EWS', 'macOS-Mojave-Debug-Build-EWS',
+                  'macOS-Catalina-Release-Build-EWS', 'macOS-Catalina-Release-WK2-Tests-EWS', 'macOS-Catalina-Debug-Build-EWS',
                   'WinCairo-EWS', 'WPE-EWS', 'WebKitPerl-Tests-EWS']
         for queue in queues:
             self.setupStep(CheckPatchRelevance())
@@ -2445,7 +2445,7 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
     def test_non_relevant_patch_on_various_queues(self):
         CheckPatchRelevance._get_patch = lambda x: 'Sample patch'
         queues = ['Bindings-Tests-EWS', 'JSC-Tests-EWS', 'macOS-BigSur-Release-Build-EWS',
-                  'macOS-Mojave-Debug-WK1-Tests-EWS', 'Services-EWS', 'WebKitPy-Tests-EWS']
+                  'macOS-Catalina-Debug-WK1-Tests-EWS', 'Services-EWS', 'WebKitPy-Tests-EWS']
         for queue in queues:
             self.setupStep(CheckPatchRelevance())
             self.setProperty('buildername', queue)
@@ -2776,7 +2776,7 @@ class TestRunAPITests(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success_mac(self):
         self.setupStep(RunAPITests())
-        self.setProperty('fullPlatform', 'mac-mojave')
+        self.setProperty('fullPlatform', 'mac-catalina')
         self.setProperty('platform', 'mac')
         self.setProperty('configuration', 'release')
 
@@ -2865,7 +2865,7 @@ Ran 1316 tests of 1318 with 1316 successful
 
     def test_one_failure(self):
         self.setupStep(RunAPITests())
-        self.setProperty('fullPlatform', 'mac-mojave')
+        self.setProperty('fullPlatform', 'mac-catalina')
         self.setProperty('platform', 'mac')
         self.setProperty('configuration', 'debug')
 
@@ -2907,7 +2907,7 @@ Testing completed, Exit status: 3
 
     def test_multiple_failures_and_timeouts(self):
         self.setupStep(RunAPITests())
-        self.setProperty('fullPlatform', 'mac-mojave')
+        self.setProperty('fullPlatform', 'mac-catalina')
         self.setProperty('platform', 'mac')
         self.setProperty('configuration', 'debug')
 
@@ -2963,7 +2963,7 @@ Testing completed, Exit status: 3
 
     def test_unexpected_failure(self):
         self.setupStep(RunAPITests())
-        self.setProperty('fullPlatform', 'mac-mojave')
+        self.setProperty('fullPlatform', 'mac-catalina')
         self.setProperty('platform', 'mac')
         self.setProperty('configuration', 'debug')
 
@@ -2981,7 +2981,7 @@ Testing completed, Exit status: 3
 
     def test_no_failures_or_timeouts_with_disabled(self):
         self.setupStep(RunAPITests())
-        self.setProperty('fullPlatform', 'mac-mojave')
+        self.setProperty('fullPlatform', 'mac-catalina')
         self.setProperty('platform', 'mac')
         self.setProperty('configuration', 'debug')
 
@@ -3020,7 +3020,7 @@ class TestRunAPITestsWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success_mac(self):
         self.setupStep(RunAPITestsWithoutPatch())
-        self.setProperty('fullPlatform', 'mac-mojave')
+        self.setProperty('fullPlatform', 'mac-catalina')
         self.setProperty('platform', 'mac')
         self.setProperty('configuration', 'release')
         self.setProperty('buildername', 'API-Tests-macOS-EWS')
@@ -3056,7 +3056,7 @@ All tests successfully passed!
 
     def test_one_failure(self):
         self.setupStep(RunAPITestsWithoutPatch())
-        self.setProperty('fullPlatform', 'mac-mojave')
+        self.setProperty('fullPlatform', 'mac-catalina')
         self.setProperty('platform', 'ios-simulator')
         self.setProperty('configuration', 'debug')
         self.setProperty('buildername', 'API-Tests-iOS-EWS')
@@ -3174,7 +3174,7 @@ class TestArchiveTestResults(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure(self):
         self.setupStep(ArchiveTestResults())
-        self.setProperty('fullPlatform', 'mac-mojave')
+        self.setProperty('fullPlatform', 'mac-catalina')
         self.setProperty('platform', 'mac')
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
@@ -3376,27 +3376,27 @@ Build version 9F2000''')
             + ExpectShell.log('stdio', stdout='Tue Apr  9 15:30:52 PDT 2019'),
             ExpectShell(command=['sw_vers'], workdir='wkdir', timeout=60, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='''ProductName:	Mac OS X
-ProductVersion:	10.14.5
-BuildVersion:	18F132'''),
+ProductVersion:	10.15.6
+BuildVersion:	19H2'''),
             ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False)
-            + ExpectShell.log('stdio', stdout='''iPhoneSimulator12.2.sdk - Simulator - iOS 12.2 (iphonesimulator12.2)
-SDKVersion: 12.2
-Path: /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator12.2.sdk
-PlatformVersion: 12.2
+            + ExpectShell.log('stdio', stdout='''iPhoneSimulator13.4.sdk - Simulator - iOS 13.4 (iphonesimulator13.4)
+SDKVersion: 13.4
+Path: /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator13.4.sdk
+PlatformVersion: 13.4
 PlatformPath: /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform
-BuildID: 15C4BAF8-4632-11E9-86EB-BA47F1FFAC3C
-ProductBuildVersion: 16E226
-ProductCopyright: 1983-2019 Apple Inc.
+BuildID: BB4C82AE-5F8A-11EA-A1A5-838AD03DDE06
+ProductBuildVersion: 17E255
+ProductCopyright: 1983-2020 Apple Inc.
 ProductName: iPhone OS
-ProductVersion: 12.2
+ProductVersion: 13.4
 
-Xcode 10.2
+Xcode 11.7
 Build version 10E125''')
             + 0,
             ExpectShell(command=['uptime'], workdir='wkdir', timeout=60, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=' 6:31  up 1 day, 19:05, 24 users, load averages: 4.17 7.23 5.45'),
         )
-        self.expectOutcome(result=SUCCESS, state_string='OS: Mojave (10.14.5), Xcode: 10.2')
+        self.expectOutcome(result=SUCCESS, state_string='OS: Catalina (10.15.6), Xcode: 11.7')
         return self.runStep()
 
     def test_success_webkitpy(self):

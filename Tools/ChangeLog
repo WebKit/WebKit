@@ -1,3 +1,22 @@
+2021-01-28  Matt Lewis  <jlewis3@apple.com>
+
+        Move Mac EWS to macOS Catalina.
+        https://bugs.webkit.org/show_bug.cgi?id=220818
+        
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/config.json:
+        * CISupport/ews-build/factories_unittest.py:
+        (TestBuildFactory.test_generic_build_factory):
+        (TestBuildFactory.test_macos_build_factory):
+        (TestCommitQueueFactory.test_commit_queue_factory):
+        (TestLayoutTestsFactory.test_macos_wk1_release_factory):
+        (TestLayoutTestsFactory.test_macos_wk1_debug_factory):
+        (TestLayoutTestsFactory.test_macos_wk2_factory):
+        * CISupport/ews-build/steps_unittest.py:
+        (TestAnalyzeCompileWebKitResults.test_filter_logs_containing_error_with_no_error):
+
 2021-01-28  Lauro Moura  <lmoura@igalia.com>
 
         [Flatpak SDK] Flatpak environment JSON is prematurely deleted with flatpak-spawn calls

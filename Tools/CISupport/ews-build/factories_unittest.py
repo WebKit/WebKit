@@ -174,9 +174,9 @@ class TestTestsFactory(TestCase):
 
 class TestBuildFactory(TestCase):
     def test_generic_build_factory(self):
-        factory = factories.BuildFactory(platform='mac-mojave', configuration='release', architectures=["x86_64"])
+        factory = factories.BuildFactory(platform='mac-catalina', configuration='release', architectures=["x86_64"])
         self.assertBuildSteps(factory.steps, [
-            _BuildStepFactory(steps.ConfigureBuild, platform='mac-mojave', configuration='release', architectures=["x86_64"],
+            _BuildStepFactory(steps.ConfigureBuild, platform='mac-catalina', configuration='release', architectures=["x86_64"],
                               buildOnly=False, triggers=None, triggered_by=None, remotes=None, additionalArguments=None),
             _BuildStepFactory(steps.ValidatePatch),
             _BuildStepFactory(steps.PrintConfiguration),
@@ -189,9 +189,9 @@ class TestBuildFactory(TestCase):
         ])
 
     def test_macos_build_factory(self):
-        factory = factories.macOSBuildFactory(platform='mac-mojave', configuration='release', architectures=["x86_64"])
+        factory = factories.macOSBuildFactory(platform='mac-catalina', configuration='release', architectures=["x86_64"])
         self.assertBuildSteps(factory.steps, [
-            _BuildStepFactory(steps.ConfigureBuild, platform='mac-mojave', configuration='release', architectures=["x86_64"],
+            _BuildStepFactory(steps.ConfigureBuild, platform='mac-catalina', configuration='release', architectures=["x86_64"],
                               buildOnly=False, triggers=None, triggered_by=None, remotes=None, additionalArguments=None),
             _BuildStepFactory(steps.ValidatePatch),
             _BuildStepFactory(steps.PrintConfiguration),
@@ -382,9 +382,9 @@ class TestBuildAndTestsFactory(TestCase):
 
 class TestCommitQueueFactory(TestCase):
     def test_commit_queue_factory(self):
-        factory = factories.CommitQueueFactory(platform='mac-mojave', configuration='release', architectures=["x86_64"])
+        factory = factories.CommitQueueFactory(platform='mac-catalina', configuration='release', architectures=["x86_64"])
         self.assertBuildSteps(factory.steps, [
-            _BuildStepFactory(steps.ConfigureBuild, platform='mac-mojave', configuration='release', architectures=["x86_64"],
+            _BuildStepFactory(steps.ConfigureBuild, platform='mac-catalina', configuration='release', architectures=["x86_64"],
                               buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
             _BuildStepFactory(steps.ValidatePatch, verifycqplus=True),
             _BuildStepFactory(steps.ValidateCommiterAndReviewer),
@@ -413,9 +413,9 @@ class TestCommitQueueFactory(TestCase):
 
 class TestLayoutTestsFactory(TestCase):
     def test_macos_wk1_release_factory(self):
-        factory = factories.macOSWK1Factory(platform='mac-mojave', configuration='release', architectures=["x86_64"])
+        factory = factories.macOSWK1Factory(platform='mac-catalina', configuration='release', architectures=["x86_64"])
         self.assertBuildSteps(factory.steps, [
-            _BuildStepFactory(steps.ConfigureBuild, platform='mac-mojave', configuration='release', architectures=["x86_64"],
+            _BuildStepFactory(steps.ConfigureBuild, platform='mac-catalina', configuration='release', architectures=["x86_64"],
                               buildOnly=False, triggers=None, triggered_by=None, remotes=None, additionalArguments=None),
             _BuildStepFactory(steps.CheckPatchRelevance),
             _BuildStepFactory(steps.ValidatePatch),
@@ -434,9 +434,9 @@ class TestLayoutTestsFactory(TestCase):
         ])
 
     def test_macos_wk1_debug_factory(self):
-        factory = factories.macOSWK1Factory(platform='mac-mojave', configuration='debug', architectures=["x86_64"])
+        factory = factories.macOSWK1Factory(platform='mac-catalina', configuration='debug', architectures=["x86_64"])
         self.assertBuildSteps(factory.steps, [
-            _BuildStepFactory(steps.ConfigureBuild, platform='mac-mojave', configuration='debug', architectures=["x86_64"],
+            _BuildStepFactory(steps.ConfigureBuild, platform='mac-catalina', configuration='debug', architectures=["x86_64"],
                               buildOnly=False, triggers=None, triggered_by=None, remotes=None, additionalArguments=None),
             _BuildStepFactory(steps.CheckPatchRelevance),
             _BuildStepFactory(steps.ValidatePatch),
@@ -455,9 +455,9 @@ class TestLayoutTestsFactory(TestCase):
         ])
 
     def test_macos_wk2_factory(self):
-        factory = factories.macOSWK2Factory(platform='mac-mojave', configuration='release', architectures=["x86_64"])
+        factory = factories.macOSWK2Factory(platform='mac-catalina', configuration='release', architectures=["x86_64"])
         self.assertBuildSteps(factory.steps, [
-            _BuildStepFactory(steps.ConfigureBuild, platform='mac-mojave', configuration='release', architectures=["x86_64"],
+            _BuildStepFactory(steps.ConfigureBuild, platform='mac-catalina', configuration='release', architectures=["x86_64"],
                               buildOnly=False, triggers=None, triggered_by=None, remotes=None, additionalArguments=None),
             _BuildStepFactory(steps.ValidatePatch),
             _BuildStepFactory(steps.PrintConfiguration),
