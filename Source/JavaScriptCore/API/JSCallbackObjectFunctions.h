@@ -162,9 +162,7 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, JSGlobalObje
     RefPtr<OpaqueJSString> propertyNameRef;
     
     if (StringImpl* name = propertyName.uid()) {
-        // FIXME: Set ReadOnly conditionally, based on setProperty presence in class inheritance chain.
-        // https://bugs.webkit.org/show_bug.cgi?id=219924
-        unsigned attributes = static_cast<unsigned>(PropertyAttribute::ReadOnly);
+        unsigned attributes = PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum;
         for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
             // optional optimization to bypass getProperty in cases when we only need to know if the property exists
             if (JSObjectHasPropertyCallback hasProperty = jsClass->hasProperty) {
@@ -196,21 +194,19 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, JSGlobalObje
             }
             
             if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(globalObject)) {
-                if (StaticValueEntry* entry = staticValues->get(name)) {
-                    // FIXME: getStaticValue() performs the same loop & checks just to acquire `entry`.
-                    // https://bugs.webkit.org/show_bug.cgi?id=219925
+                if (staticValues->contains(name)) {
                     JSValue value = thisObject->getStaticValue(globalObject, propertyName);
                     RETURN_IF_EXCEPTION(scope, false);
                     if (value) {
-                        slot.setValue(thisObject, entry->attributes, value);
+                        slot.setValue(thisObject, attributes, value);
                         return true;
                     }
                 }
             }
             
             if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(globalObject)) {
-                if (StaticFunctionEntry* entry = staticFunctions->get(name)) {
-                    slot.setCustom(thisObject, entry->attributes, getStaticFunctionGetter());
+                if (staticFunctions->contains(name)) {
+                    slot.setCustom(thisObject, attributes, getStaticFunctionGetter());
                     return true;
                 }
             }
