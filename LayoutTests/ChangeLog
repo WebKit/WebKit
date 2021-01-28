@@ -1,3 +1,15 @@
+2021-01-28  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Update :focus-visible tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=221037
+
+        Reviewed by Javier Fernandez.
+
+        * TestExpectations: focus-visible-007.html has been fixed upstream
+          and doesn't need to be skipped now.
+        * platform/ios/TestExpectations: Skip focus-visible-013.html
+          as it timeouts in iOS.
+
 2021-01-27  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION(r268615): images flicker on apple.com/ios/ios-14
