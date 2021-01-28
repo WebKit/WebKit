@@ -1411,8 +1411,11 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
 
     // We upstream() the end and downstream() the start so that we don't include collapsed whitespace in the move.
     // When we paste a fragment, spaces after the end and before the start are treated as though they were rendered.
-    auto start = startOfParagraphToMove.deepEquivalent().downstream();
-    auto end = endOfParagraphToMove.deepEquivalent().upstream();
+    VisiblePosition start = startOfParagraphToMove.deepEquivalent().downstream();
+    VisiblePosition end = endOfParagraphToMove.deepEquivalent().upstream();
+
+    if (start.isNull() || end.isNull())
+        return;
 
     // FIXME: Serializing and re-parsing is an inefficient way to preserve style.
     RefPtr<DocumentFragment> fragment;

@@ -1,3 +1,17 @@
+2021-01-28  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Crash from CompositeEditCommand::moveParagraphs() using Position instead of VisiblePosition
+        https://bugs.webkit.org/show_bug.cgi?id=220955
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a test to verify that the crash here is resolved
+        using requestAnimationFrame(). Thanks to Ryosuke Niwa
+        for cleaning this up and making it reliable.
+
+        * editing/inserting/paragraph-outdent-animationframe-crash-expected.txt: Added.
+        * editing/inserting/paragraph-outdent-animationframe-crash.html: Added.
+
 2021-01-28  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors] Update :focus-visible tests from WPT
