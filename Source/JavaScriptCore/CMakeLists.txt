@@ -1103,7 +1103,10 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/WasmName.h
     wasm/WasmNameSection.h
     wasm/WasmPageCount.h
+    wasm/WasmSections.h
     wasm/WasmSignature.h
+    wasm/WasmStreamingCompiler.h
+    wasm/WasmStreamingParser.h
     wasm/WasmTierUpCount.h
 
     wasm/js/JSWebAssembly.h

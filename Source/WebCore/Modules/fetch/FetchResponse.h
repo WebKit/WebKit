@@ -108,6 +108,9 @@ public:
 
     const HTTPHeaderMap& internalResponseHeaders() const { return m_internalResponse.httpHeaderFields(); }
 
+    bool isCORSSameOrigin() const;
+    bool hasWasmMIMEType() const;
+
 private:
     FetchResponse(ScriptExecutionContext&, Optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceResponse&&);
 

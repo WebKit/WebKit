@@ -41,18 +41,25 @@
 
 namespace JSC { namespace Wasm {
 
-LLIntPlan::LLIntPlan(Context* context, Vector<uint8_t>&& source, AsyncWork work, CompletionTask&& task)
-    : Base(context, WTFMove(source), work, WTFMove(task))
+LLIntPlan::LLIntPlan(Context* context, Vector<uint8_t>&& source, CompilerMode compilerMode, CompletionTask&& task)
+    : Base(context, WTFMove(source), compilerMode, WTFMove(task))
 {
     if (parseAndValidateModule(m_source.data(), m_source.size()))
         prepare();
 }
 
 LLIntPlan::LLIntPlan(Context* context, Ref<ModuleInformation> info, const Ref<LLIntCallee>* callees, CompletionTask&& task)
-    : Base(context, WTFMove(info), AsyncWork::FullCompile, WTFMove(task))
+    : Base(context, WTFMove(info), CompilerMode::FullCompile, WTFMove(task))
     , m_callees(callees)
 {
     ASSERT(m_callees || !m_moduleInformation->functions.size());
+    prepare();
+    m_currentIndex = m_moduleInformation->functions.size();
+}
+
+LLIntPlan::LLIntPlan(Context* context, Ref<ModuleInformation> info, CompilerMode compilerMode, CompletionTask&& task)
+    : Base(context, WTFMove(info), compilerMode, WTFMove(task))
+{
     prepare();
     m_currentIndex = m_moduleInformation->functions.size();
 }
@@ -135,7 +142,7 @@ void LLIntPlan::didCompleteCompilation(const AbstractLocker& locker)
         m_callees = m_calleesVector.data();
     }
 
-    if (m_asyncWork == AsyncWork::Validation)
+    if (m_compilerMode == CompilerMode::Validation)
         return;
 
     for (uint32_t functionIndex = 0; functionIndex < m_moduleInformation->functions.size(); functionIndex++) {
@@ -180,6 +187,24 @@ void LLIntPlan::didCompleteCompilation(const AbstractLocker& locker)
             MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel<WasmEntryPtrTag>(executableAddress));
         }
     }
+}
+
+void LLIntPlan::completeInStreaming()
+{
+    complete(holdLock(m_lock));
+}
+
+void LLIntPlan::didCompileFunctionInStreaming()
+{
+    auto locker = holdLock(m_lock);
+    moveToState(EntryPlan::State::Compiled);
+}
+
+void LLIntPlan::didFailInStreaming(String&& message)
+{
+    auto locker = holdLock(m_lock);
+    if (!m_errorMessage)
+        fail(locker, WTFMove(message));
 }
 
 void LLIntPlan::work(CompilationEffort effort)

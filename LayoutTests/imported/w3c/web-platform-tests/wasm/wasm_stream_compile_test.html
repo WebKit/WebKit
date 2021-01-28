@@ -37,7 +37,7 @@
 
   promise_test(async function() {
     try {
-      var result = fetch('resources/incrementer.no_mime_type.wasm');
+      var result = fetch('resources/incrementer.no_mime_type.wasm?pipe=header(Content-Type,)');
       const module = await WebAssembly.compileStreaming(result);
       assert_true(false);
     } catch (e) {
@@ -48,7 +48,7 @@
 
   promise_test(async function() {
     try {
-      var result = fetch('resources/incrementer1.wasm');
+      var result = fetch('webapi/status.py?status=404');
       const module = await WebAssembly.compileStreaming(result);
       assert_true(false);
     } catch (e) {

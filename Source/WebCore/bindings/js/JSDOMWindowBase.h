@@ -105,11 +105,6 @@ private:
     static JSC::JSInternalPromise* moduleLoaderImportModule(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSString*, JSC::JSValue, const JSC::SourceOrigin&);
     static JSC::JSObject* moduleLoaderCreateImportMetaProperties(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSModuleRecord*, JSC::JSValue);
 
-#if ENABLE(WEBASSEMBLY)
-    static void compileStreaming(JSC::JSGlobalObject*, JSC::JSPromise*, JSC::JSValue);
-    static void instantiateStreaming(JSC::JSGlobalObject*, JSC::JSPromise*, JSC::JSValue, JSC::JSObject*);
-#endif
-
     RefPtr<DOMWindow> m_wrapped;
     RefPtr<Event> m_currentEvent;
 };

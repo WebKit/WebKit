@@ -23,15 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function compileStreaming(argument) {
+function compileStreaming(source) {
     "use strict";
 
-    return @Promise.@resolve(argument).@then(@webAssemblyCompileStreamingInternal);
+    return @Promise.@resolve(source).@then(@webAssemblyCompileStreamingInternal);
 }
 
-function instantiateStreaming(argument) {
+function instantiateStreaming(source) {
     "use strict";
 
-    return @Promise.@resolve(argument).@then(@webAssemblyInstantiateStreamingInternal);
+    var importObject = @argument(1);
+    return @Promise.@resolve(source).@then((source) => {
+        return @webAssemblyInstantiateStreamingInternal(source, importObject);
+    });
 }
 

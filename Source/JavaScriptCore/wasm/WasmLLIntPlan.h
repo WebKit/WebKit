@@ -38,6 +38,7 @@ namespace Wasm {
 
 class LLIntCallee;
 class EmbedderEntrypointCallee;
+class StreamingCompiler;
 
 using EmbedderEntrypointCalleeMap = HashMap<uint32_t, RefPtr<EmbedderEntrypointCallee>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
 
@@ -45,8 +46,9 @@ class LLIntPlan final : public EntryPlan {
     using Base = EntryPlan;
 
 public:
-    JS_EXPORT_PRIVATE LLIntPlan(Context*, Vector<uint8_t>&&, AsyncWork, CompletionTask&&);
+    JS_EXPORT_PRIVATE LLIntPlan(Context*, Vector<uint8_t>&&, CompilerMode, CompletionTask&&);
     LLIntPlan(Context*, Ref<ModuleInformation>, const Ref<LLIntCallee>*, CompletionTask&&);
+    LLIntPlan(Context*, Ref<ModuleInformation>, CompilerMode, CompletionTask&&); // For StreamingCompiler.
 
     MacroAssemblerCodeRef<JITCompilationPtrTag>&& takeEntryThunks()
     {
@@ -75,9 +77,14 @@ public:
 
     bool didReceiveFunctionData(unsigned, const FunctionData&) final;
 
+    void compileFunction(uint32_t functionIndex) final;
+
+    void completeInStreaming();
+    void didCompileFunctionInStreaming();
+    void didFailInStreaming(String&&);
+
 private:
     bool prepareImpl() final;
-    void compileFunction(uint32_t functionIndex) final;
     void didCompleteCompilation(const AbstractLocker&) final;
 
     Vector<std::unique_ptr<FunctionCodeBlock>> m_wasmInternalFunctions;

@@ -1,6 +1,6 @@
 
-FAIL compileStreaming with Content-Type set late promise_test: Unhandled rejection with value: object "TypeError: WebAssembly[method] is not a function. (In 'WebAssembly[method](argument)', 'WebAssembly[method]' is undefined)"
-FAIL compileStreaming with Content-Type removed late promise_test: Unhandled rejection with value: object "TypeError: WebAssembly[method] is not a function. (In 'WebAssembly[method](argument)', 'WebAssembly[method]' is undefined)"
-FAIL instantiateStreaming with Content-Type set late promise_test: Unhandled rejection with value: object "TypeError: WebAssembly[method] is not a function. (In 'WebAssembly[method](argument)', 'WebAssembly[method]' is undefined)"
-FAIL instantiateStreaming with Content-Type removed late promise_test: Unhandled rejection with value: object "TypeError: WebAssembly[method] is not a function. (In 'WebAssembly[method](argument)', 'WebAssembly[method]' is undefined)"
+PASS compileStreaming with Content-Type set late
+PASS compileStreaming with Content-Type removed late
+PASS instantiateStreaming with Content-Type set late
+PASS instantiateStreaming with Content-Type removed late
 

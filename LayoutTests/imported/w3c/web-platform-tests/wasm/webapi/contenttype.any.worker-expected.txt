@@ -1,22 +1,22 @@
 
-FAIL Response with Content-Type "": compileStreaming WebAssembly.compileStreaming is not a function. (In 'WebAssembly.compileStreaming(response)', 'WebAssembly.compileStreaming' is undefined)
-FAIL Response with Content-Type "": instantiateStreaming WebAssembly.instantiateStreaming is not a function. (In 'WebAssembly.instantiateStreaming(response)', 'WebAssembly.instantiateStreaming' is undefined)
-FAIL Response with Content-Type "application/javascript": compileStreaming WebAssembly.compileStreaming is not a function. (In 'WebAssembly.compileStreaming(response)', 'WebAssembly.compileStreaming' is undefined)
-FAIL Response with Content-Type "application/javascript": instantiateStreaming WebAssembly.instantiateStreaming is not a function. (In 'WebAssembly.instantiateStreaming(response)', 'WebAssembly.instantiateStreaming' is undefined)
-FAIL Response with Content-Type "application/octet-stream": compileStreaming WebAssembly.compileStreaming is not a function. (In 'WebAssembly.compileStreaming(response)', 'WebAssembly.compileStreaming' is undefined)
-FAIL Response with Content-Type "application/octet-stream": instantiateStreaming WebAssembly.instantiateStreaming is not a function. (In 'WebAssembly.instantiateStreaming(response)', 'WebAssembly.instantiateStreaming' is undefined)
-FAIL Response with Content-Type "text/wasm": compileStreaming WebAssembly.compileStreaming is not a function. (In 'WebAssembly.compileStreaming(response)', 'WebAssembly.compileStreaming' is undefined)
-FAIL Response with Content-Type "text/wasm": instantiateStreaming WebAssembly.instantiateStreaming is not a function. (In 'WebAssembly.instantiateStreaming(response)', 'WebAssembly.instantiateStreaming' is undefined)
-FAIL Response with Content-Type "application/wasm;": compileStreaming WebAssembly.compileStreaming is not a function. (In 'WebAssembly.compileStreaming(response)', 'WebAssembly.compileStreaming' is undefined)
-FAIL Response with Content-Type "application/wasm;": instantiateStreaming WebAssembly.instantiateStreaming is not a function. (In 'WebAssembly.instantiateStreaming(response)', 'WebAssembly.instantiateStreaming' is undefined)
-FAIL Response with Content-Type "application/wasm;x": compileStreaming WebAssembly.compileStreaming is not a function. (In 'WebAssembly.compileStreaming(response)', 'WebAssembly.compileStreaming' is undefined)
-FAIL Response with Content-Type "application/wasm;x": instantiateStreaming WebAssembly.instantiateStreaming is not a function. (In 'WebAssembly.instantiateStreaming(response)', 'WebAssembly.instantiateStreaming' is undefined)
-FAIL Response with Content-Type "application/wasm;charset=UTF-8": compileStreaming WebAssembly.compileStreaming is not a function. (In 'WebAssembly.compileStreaming(response)', 'WebAssembly.compileStreaming' is undefined)
-FAIL Response with Content-Type "application/wasm;charset=UTF-8": instantiateStreaming WebAssembly.instantiateStreaming is not a function. (In 'WebAssembly.instantiateStreaming(response)', 'WebAssembly.instantiateStreaming' is undefined)
-FAIL Response with Content-Type "application/wasm": compileStreaming promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.compileStreaming is not a function. (In 'WebAssembly.compileStreaming(response)', 'WebAssembly.compileStreaming' is undefined)"
-FAIL Response with Content-Type "application/wasm": instantiateStreaming promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.instantiateStreaming is not a function. (In 'WebAssembly.instantiateStreaming(response)', 'WebAssembly.instantiateStreaming' is undefined)"
-FAIL Response with Content-Type "APPLICATION/wasm": compileStreaming promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.compileStreaming is not a function. (In 'WebAssembly.compileStreaming(response)', 'WebAssembly.compileStreaming' is undefined)"
-FAIL Response with Content-Type "APPLICATION/wasm": instantiateStreaming promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.instantiateStreaming is not a function. (In 'WebAssembly.instantiateStreaming(response)', 'WebAssembly.instantiateStreaming' is undefined)"
-FAIL Response with Content-Type "APPLICATION/WASM": compileStreaming promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.compileStreaming is not a function. (In 'WebAssembly.compileStreaming(response)', 'WebAssembly.compileStreaming' is undefined)"
-FAIL Response with Content-Type "APPLICATION/WASM": instantiateStreaming promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.instantiateStreaming is not a function. (In 'WebAssembly.instantiateStreaming(response)', 'WebAssembly.instantiateStreaming' is undefined)"
+PASS Response with Content-Type "": compileStreaming
+PASS Response with Content-Type "": instantiateStreaming
+PASS Response with Content-Type "application/javascript": compileStreaming
+PASS Response with Content-Type "application/javascript": instantiateStreaming
+PASS Response with Content-Type "application/octet-stream": compileStreaming
+PASS Response with Content-Type "application/octet-stream": instantiateStreaming
+PASS Response with Content-Type "text/wasm": compileStreaming
+PASS Response with Content-Type "text/wasm": instantiateStreaming
+PASS Response with Content-Type "application/wasm;": compileStreaming
+PASS Response with Content-Type "application/wasm;": instantiateStreaming
+PASS Response with Content-Type "application/wasm;x": compileStreaming
+PASS Response with Content-Type "application/wasm;x": instantiateStreaming
+PASS Response with Content-Type "application/wasm;charset=UTF-8": compileStreaming
+PASS Response with Content-Type "application/wasm;charset=UTF-8": instantiateStreaming
+PASS Response with Content-Type "application/wasm": compileStreaming
+PASS Response with Content-Type "application/wasm": instantiateStreaming
+PASS Response with Content-Type "APPLICATION/wasm": compileStreaming
+PASS Response with Content-Type "APPLICATION/wasm": instantiateStreaming
+PASS Response with Content-Type "APPLICATION/WASM": compileStreaming
+PASS Response with Content-Type "APPLICATION/WASM": instantiateStreaming
 

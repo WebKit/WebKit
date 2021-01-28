@@ -66,7 +66,7 @@ static Plan::CompletionTask makeValidationCallback(Module::AsyncValidationCallba
 
 Module::ValidationResult Module::validateSync(Context* context, Vector<uint8_t>&& source)
 {
-    Ref<LLIntPlan> plan = adoptRef(*new LLIntPlan(context, WTFMove(source), EntryPlan::Validation, Plan::dontFinalize()));
+    Ref<LLIntPlan> plan = adoptRef(*new LLIntPlan(context, WTFMove(source), CompilerMode::Validation, Plan::dontFinalize()));
     Wasm::ensureWorklist().enqueue(plan.get());
     plan->waitForCompletion();
     return makeValidationResult(plan.get());
@@ -74,7 +74,7 @@ Module::ValidationResult Module::validateSync(Context* context, Vector<uint8_t>&
 
 void Module::validateAsync(Context* context, Vector<uint8_t>&& source, Module::AsyncValidationCallback&& callback)
 {
-    Ref<Plan> plan = adoptRef(*new LLIntPlan(context, WTFMove(source), EntryPlan::Validation, makeValidationCallback(WTFMove(callback))));
+    Ref<Plan> plan = adoptRef(*new LLIntPlan(context, WTFMove(source), CompilerMode::Validation, makeValidationCallback(WTFMove(callback))));
     Wasm::ensureWorklist().enqueue(WTFMove(plan));
 }
 

@@ -1,3 +1,43 @@
+2021-01-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        WebAssembly: add support for stream APIs
+        https://bugs.webkit.org/show_bug.cgi?id=173105
+
+        Reviewed by Keith Miller.
+
+        * web-platform-tests/wasm/wasm_stream_compile_test-expected.txt:
+        * web-platform-tests/wasm/wasm_stream_compile_test.html:
+        * web-platform-tests/wasm/wasm_stream_instantiate_test-expected.txt:
+        * web-platform-tests/wasm/wasm_stream_instantiate_test.html:
+        * web-platform-tests/wasm/webapi/abort.any-expected.txt:
+        * web-platform-tests/wasm/webapi/abort.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/body.any-expected.txt:
+        * web-platform-tests/wasm/webapi/body.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/contenttype.any-expected.txt:
+        * web-platform-tests/wasm/webapi/contenttype.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/empty-body.any-expected.txt:
+        * web-platform-tests/wasm/webapi/empty-body.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/historical.any-expected.txt:
+        * web-platform-tests/wasm/webapi/historical.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/idlharness.any-expected.txt:
+        * web-platform-tests/wasm/webapi/idlharness.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/instantiateStreaming-bad-imports.any-expected.txt:
+        * web-platform-tests/wasm/webapi/instantiateStreaming-bad-imports.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/instantiateStreaming.any-expected.txt:
+        * web-platform-tests/wasm/webapi/instantiateStreaming.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/invalid-args.any-expected.txt:
+        * web-platform-tests/wasm/webapi/invalid-args.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/invalid-code.any-expected.txt:
+        * web-platform-tests/wasm/webapi/invalid-code.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/modified-contenttype.any-expected.txt:
+        * web-platform-tests/wasm/webapi/modified-contenttype.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/origin.sub.any-expected.txt:
+        * web-platform-tests/wasm/webapi/origin.sub.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/rejected-arg.any-expected.txt:
+        * web-platform-tests/wasm/webapi/rejected-arg.any.worker-expected.txt:
+        * web-platform-tests/wasm/webapi/status.any-expected.txt:
+        * web-platform-tests/wasm/webapi/status.any.worker-expected.txt:
+
 2021-01-27  Sam Weinig  <weinig@apple.com>
 
         Add support for color(a98-rgb ...) as part of CSS Color 4

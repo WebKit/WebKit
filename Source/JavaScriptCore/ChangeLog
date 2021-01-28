@@ -1,5 +1,84 @@
 2021-01-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        WebAssembly: add support for stream APIs
+        https://bugs.webkit.org/show_bug.cgi?id=173105
+
+        Reviewed by Keith Miller.
+
+        This patch implements WebAssembly.{compileStreaming,instantiateStreaming}. JavaScriptCore offers Wasm::StreamingCompiler interface to WebCore,
+        so that WebCore can feed FetchResponse and compile wasm code in a streaming fashion.
+
+        Wasm::StreamingCompiler drives Wasm::LLIntPlan while it does not use Wasm::Worklist since currently Wasm::Worklist is not suitable abstraction for
+        streaming compilation which generates compilation tasks incrementally. Instead, Wasm::StreamingCompiler generates Wasm::StreamingPlan and enqueues
+        them to Wasm::Worklist, and each StreamingPlan compiles one function at a time. And we gather these compiled functions into the one LLIntPlan and
+        finally Wasm::StreamingCompiler completes Wasm::LLIntPlan.
+
+        We already have Wasm::StreamingParser, which is designed for streaming compilation. We can pass bytes to this parser, and this parser invokes a callback
+        when a new wasm function is found. Then, Wasm::StreamingCompiler generates Wasm::StreamingPlan for that.
+
+        We add WasmStreamingCompiler JS objects to JSC shell to test streaming compilation easily.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * builtins/WebAssembly.js:
+        (compileStreaming):
+        (instantiateStreaming):
+        * runtime/DeferredWorkTimer.cpp:
+        (JSC::DeferredWorkTimer::cancelPendingWork):
+        * runtime/DeferredWorkTimer.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h:
+        * runtime/OptionsList.h:
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSDollarVM::finishCreation):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::BBQPlan):
+        * wasm/WasmBBQPlan.h:
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::CodeBlock):
+        * wasm/WasmEntryPlan.cpp:
+        (JSC::Wasm::EntryPlan::EntryPlan):
+        * wasm/WasmEntryPlan.h:
+        * wasm/WasmLLIntPlan.cpp:
+        (JSC::Wasm::LLIntPlan::LLIntPlan):
+        (JSC::Wasm::LLIntPlan::didCompleteCompilation):
+        (JSC::Wasm::LLIntPlan::completeInStreaming):
+        (JSC::Wasm::LLIntPlan::didCompileFunctionInStreaming):
+        (JSC::Wasm::LLIntPlan::didFailInStreaming):
+        * wasm/WasmLLIntPlan.h:
+        * wasm/WasmModule.cpp:
+        (JSC::Wasm::Module::validateSync):
+        (JSC::Wasm::Module::validateAsync):
+        * wasm/WasmStreamingCompiler.cpp: Added.
+        (JSC::Wasm::StreamingCompiler::StreamingCompiler):
+        (JSC::Wasm::StreamingCompiler::~StreamingCompiler):
+        (JSC::Wasm::StreamingCompiler::create):
+        (JSC::Wasm::StreamingCompiler::didReceiveFunctionData):
+        (JSC::Wasm::StreamingCompiler::didCompileFunction):
+        (JSC::Wasm::StreamingCompiler::didFinishParsing):
+        (JSC::Wasm::StreamingCompiler::completeIfNecessary):
+        (JSC::Wasm::StreamingCompiler::didComplete):
+        (JSC::Wasm::StreamingCompiler::finalize):
+        (JSC::Wasm::StreamingCompiler::fail):
+        (JSC::Wasm::StreamingCompiler::cancel):
+        * wasm/WasmStreamingCompiler.h: Added.
+        * wasm/WasmStreamingParser.cpp:
+        * wasm/WasmStreamingParser.h:
+        * wasm/WasmStreamingPlan.cpp: Copied from Source/JavaScriptCore/builtins/WebAssembly.js.
+        (JSC::Wasm::StreamingPlan::StreamingPlan):
+        (JSC::Wasm::StreamingPlan::work):
+        * wasm/WasmStreamingPlan.h: Copied from Source/JavaScriptCore/wasm/js/JSWebAssembly.h.
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::JSWebAssembly::finishCreation):
+        (JSC::JSWebAssembly::instantiateForStreaming):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/JSWebAssembly.h:
+
+2021-01-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Avoid using DirectCall when executable is wasm function
         https://bugs.webkit.org/show_bug.cgi?id=221055
 

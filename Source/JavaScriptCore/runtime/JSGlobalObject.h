@@ -247,10 +247,10 @@ struct GlobalObjectMethodTable {
     typedef String (*DefaultLanguageFunctionPtr)();
     DefaultLanguageFunctionPtr defaultLanguage;
 
-    typedef void (*CompileStreamingPtr)(JSGlobalObject*, JSPromise*, JSValue);
+    typedef JSPromise* (*CompileStreamingPtr)(JSGlobalObject*, JSValue);
     CompileStreamingPtr compileStreaming;
 
-    typedef void (*InstantiateStreamingPtr)(JSGlobalObject*, JSPromise*, JSValue, JSObject*);
+    typedef JSPromise* (*InstantiateStreamingPtr)(JSGlobalObject*, JSValue, JSObject*);
     InstantiateStreamingPtr instantiateStreaming;
 };
 

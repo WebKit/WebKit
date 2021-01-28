@@ -29,11 +29,13 @@
 
 #include "DOMWindow.h"
 #include "Document.h"
+#include "FetchResponse.h"
 #include "JSAbortAlgorithm.h"
 #include "JSAbortSignal.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDOMWindow.h"
 #include "JSEventListener.h"
+#include "JSFetchResponse.h"
 #include "JSIDBSerializationGlobalObject.h"
 #include "JSMediaStream.h"
 #include "JSMediaStreamTrack.h"
@@ -53,6 +55,7 @@
 #include <JavaScriptCore/CodeBlock.h>
 #include <JavaScriptCore/JSInternalPromise.h>
 #include <JavaScriptCore/StructureInlines.h>
+#include <JavaScriptCore/WasmStreamingCompiler.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -290,6 +293,124 @@ void JSDOMGlobalObject::clearDOMGuardedObjects()
     for (auto& guarded : guardedObjectsCopy)
         guarded->clear();
 }
+
+#if ENABLE(WEBASSEMBLY)
+// https://webassembly.github.io/spec/web-api/index.html#compile-a-potential-webassembly-response
+static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* globalObject, JSC::JSValue source, JSC::Wasm::CompilerMode compilerMode, JSC::JSObject* importObject)
+{
+    VM& vm = globalObject->vm();
+    JSLockHolder lock(vm);
+
+    auto deferred = DeferredPromise::create(*jsCast<JSDOMGlobalObject*>(globalObject), DeferredPromise::Mode::RetainPromiseOnResolve);
+
+    auto inputResponse = JSFetchResponse::toWrapped(vm, source);
+    if (!inputResponse) {
+        deferred->reject(TypeError, "first argument must be an Response or Promise for Response"_s);
+        return jsCast<JSC::JSPromise*>(deferred->promise());
+    }
+
+    if (auto exception = inputResponse->loadingException()) {
+        deferred->reject(*exception);
+        return jsCast<JSC::JSPromise*>(deferred->promise());
+    }
+
+    // 4. If response is not CORS-same-origin, reject returnValue with a TypeError and abort these substeps.
+    // If response is opaque, content-type becomes "".
+    if (!inputResponse->isCORSSameOrigin()) {
+        deferred->reject(TypeError, "Response is not CORS-same-origin"_s);
+        return jsCast<JSC::JSPromise*>(deferred->promise());
+    }
+
+    // 3. If mimeType is not `application/wasm`, reject returnValue with a TypeError and abort these substeps.
+    if (!inputResponse->hasWasmMIMEType()) {
+        deferred->reject(TypeError, "Unexpected response MIME type. Expected 'application/wasm'"_s);
+        return jsCast<JSC::JSPromise*>(deferred->promise());
+    }
+
+    // 5. If response’s status is not an ok status, reject returnValue with a TypeError and abort these substeps.
+    if (!inputResponse->ok()) {
+        deferred->reject(TypeError, "Response has not returned OK status"_s);
+        return jsCast<JSC::JSPromise*>(deferred->promise());
+    }
+
+    // https://fetch.spec.whatwg.org/#concept-body-consume-body
+    if (inputResponse->isDisturbedOrLocked()) {
+        deferred->reject(TypeError, "Response is disturbed or locked"_s);
+        return jsCast<JSC::JSPromise*>(deferred->promise());
+    }
+
+    auto compiler = JSC::Wasm::StreamingCompiler::create(vm, compilerMode, globalObject, jsCast<JSC::JSPromise*>(deferred->promise()), importObject);
+
+    if (inputResponse->isBodyReceivedByChunk()) {
+        inputResponse->consumeBodyReceivedByChunk([globalObject, compiler = WTFMove(compiler)](auto&& result) mutable {
+            VM& vm = globalObject->vm();
+            JSLockHolder lock(vm);
+
+            if (result.hasException()) {
+                auto exception = result.exception();
+                if (exception.code() == ExistingExceptionError) {
+                    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+                    EXCEPTION_ASSERT(scope.exception());
+
+                    auto error = scope.exception()->value();
+                    scope.clearException();
+
+                    compiler->fail(globalObject, error);
+                    return;
+                }
+
+                auto scope = DECLARE_THROW_SCOPE(vm);
+                auto error = createDOMException(*globalObject, WTFMove(exception));
+                if (UNLIKELY(scope.exception())) {
+                    ASSERT(isTerminatedExecutionException(vm, scope.exception()));
+                    compiler->cancel();
+                    return;
+                }
+
+                compiler->fail(globalObject, error);
+                return;
+            }
+
+            if (auto chunk = result.returnValue())
+                compiler->addBytes(chunk->data, chunk->size);
+            else
+                compiler->finalize(globalObject);
+        });
+        return jsCast<JSC::JSPromise*>(deferred->promise());
+    }
+
+    auto body = inputResponse->consumeBody();
+    WTF::switchOn(body, [&](Ref<FormData>& formData) {
+        if (auto buffer = formData->asSharedBuffer()) {
+            compiler->addBytes(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
+            compiler->finalize(globalObject);
+            return;
+        }
+        // FIXME: http://webkit.org/b/184886> Implement loading for the Blob type
+        compiler->fail(globalObject, createTypeError(globalObject, "Blob is not supported"_s));
+    }, [&](Ref<SharedBuffer>& buffer) {
+        compiler->addBytes(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
+        compiler->finalize(globalObject);
+    }, [&](std::nullptr_t&) {
+        compiler->finalize(globalObject);
+    });
+
+    return jsCast<JSC::JSPromise*>(deferred->promise());
+}
+
+JSC::JSPromise* JSDOMGlobalObject::compileStreaming(JSC::JSGlobalObject* globalObject, JSC::JSValue source)
+{
+    ASSERT(source);
+    return handleResponseOnStreamingAction(globalObject, source, JSC::Wasm::CompilerMode::Validation, nullptr);
+}
+
+JSC::JSPromise* JSDOMGlobalObject::instantiateStreaming(JSC::JSGlobalObject* globalObject, JSC::JSValue source, JSC::JSObject* importObject)
+{
+    ASSERT(source);
+    return handleResponseOnStreamingAction(globalObject, source, JSC::Wasm::CompilerMode::FullCompile, importObject);
+}
+#endif
 
 JSDOMGlobalObject& callerGlobalObject(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
 {

@@ -160,6 +160,17 @@ void DeferredWorkTimer::scheduleWorkSoon(Ticket ticket, Task&& task)
         setTimeUntilFire(0_s);
 }
 
+bool DeferredWorkTimer::cancelPendingWork(Ticket ticket)
+{
+    ASSERT(ticket->vm().currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && ticket->vm().heap.worldIsStopped()));
+    bool result = m_pendingTickets.remove(ticket);
+
+    if (result)
+        dataLogLnIf(DeferredWorkTimerInternal::verbose, "Canceling ticket: ", RawPointer(ticket));
+
+    return result;
+}
+
 void DeferredWorkTimer::didResumeScriptExecutionOwner()
 {
     ASSERT(!m_currentlyRunningTask);

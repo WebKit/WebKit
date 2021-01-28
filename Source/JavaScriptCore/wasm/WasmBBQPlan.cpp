@@ -48,7 +48,7 @@ static constexpr bool verbose = false;
 }
 
 BBQPlan::BBQPlan(Context* context, Ref<ModuleInformation> moduleInformation, uint32_t functionIndex, CodeBlock* codeBlock, CompletionTask&& completionTask)
-    : EntryPlan(context, WTFMove(moduleInformation), AsyncWork::FullCompile, WTFMove(completionTask))
+    : EntryPlan(context, WTFMove(moduleInformation), CompilerMode::FullCompile, WTFMove(completionTask))
     , m_codeBlock(codeBlock)
     , m_functionIndex(functionIndex)
 {

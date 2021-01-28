@@ -58,7 +58,7 @@ public:
 
     bool hasWork() const final
     {
-        if (m_asyncWork == AsyncWork::Validation)
+        if (m_compilerMode == CompilerMode::Validation)
             return m_state < State::Validated;
         return m_state < State::Compiled;
     }

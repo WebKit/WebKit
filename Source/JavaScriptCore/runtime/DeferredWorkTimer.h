@@ -54,6 +54,7 @@ public:
     void addPendingWork(VM&, Ticket, Vector<Strong<JSCell>>&& dependencies);
     bool hasPendingWork(Ticket);
     bool hasDependancyInPendingWork(Ticket, JSCell* dependency);
+    bool cancelPendingWork(Ticket);
 
     // If the script execution owner your ticket is associated with gets canceled
     // the Task will not be called and will be deallocated. So it's important

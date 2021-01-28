@@ -1,3 +1,12 @@
+2021-01-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        WebAssembly: add support for stream APIs
+        https://bugs.webkit.org/show_bug.cgi?id=173105
+
+        Reviewed by Keith Miller.
+
+        * wtf/PlatformEnable.h:
+
 2021-01-27  Per Arne  <pvollan@apple.com>
 
         [macOS] Re-enable ENABLE_SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS

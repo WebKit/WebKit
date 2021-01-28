@@ -108,9 +108,11 @@ void JSWebAssembly::finishCreation(VM& vm, JSGlobalObject* globalObject)
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
-    if (Options::useWebAssemblyStreamingApi()) {
-        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("compileStreaming", webAssemblyCompileStreamingCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("instantiateStreaming", webAssemblyInstantiateStreamingCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    if (Options::useWebAssemblyStreaming()) {
+        if (globalObject->globalObjectMethodTable()->compileStreaming)
+            JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("compileStreaming", webAssemblyCompileStreamingCodeGenerator, static_cast<unsigned>(0));
+        if (globalObject->globalObjectMethodTable()->instantiateStreaming)
+            JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("instantiateStreaming", webAssemblyInstantiateStreamingCodeGenerator, static_cast<unsigned>(0));
     }
 }
 
@@ -256,6 +258,11 @@ JSValue JSWebAssembly::instantiate(JSGlobalObject* globalObject, JSPromise* prom
     return promise;
 }
 
+void JSWebAssembly::instantiateForStreaming(VM& vm, JSGlobalObject* globalObject, JSPromise* promise, JSWebAssemblyModule* module, JSObject* importObject)
+{
+    JSC::instantiate(vm, globalObject, promise, module, importObject, JSWebAssemblyInstance::createPrivateModuleKey(), Resolve::WithModuleAndInstance, Wasm::CreationMode::FromJS);
+}
+
 void JSWebAssembly::webAssemblyModuleInstantinateAsync(JSGlobalObject* globalObject, JSPromise* promise, Vector<uint8_t>&& source, JSObject* importObject)
 {
     VM& vm = globalObject->vm();
@@ -296,8 +303,8 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyInstantiateFunc, (JSGlobalObject* globalObje
     }
 
     JSValue firstArgument = callFrame->argument(0);
-    if (auto* module = jsDynamicCast<JSWebAssemblyModule*>(vm, firstArgument))
-        instantiate(vm, globalObject, promise, module, importObject, JSWebAssemblyInstance::createPrivateModuleKey(), Resolve::WithInstance, Wasm::CreationMode::FromJS);
+    if (firstArgument.inherits<JSWebAssemblyModule>(vm))
+        instantiate(vm, globalObject, promise, jsCast<JSWebAssemblyModule*>(firstArgument), importObject, JSWebAssemblyInstance::createPrivateModuleKey(), Resolve::WithInstance, Wasm::CreationMode::FromJS);
     else
         compileAndInstantiate(vm, globalObject, promise, JSWebAssemblyInstance::createPrivateModuleKey(), firstArgument, importObject, Resolve::WithModuleAndInstance, Wasm::CreationMode::FromJS);
 
@@ -319,49 +326,26 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyValidateFunc, (JSGlobalObject* globalObject,
 
 JSC_DEFINE_HOST_FUNCTION(webAssemblyCompileStreamingInternal, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    VM& vm = globalObject->vm();
-
-    auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
-
-    Vector<Strong<JSCell>> dependencies;
-    dependencies.append(Strong<JSCell>(vm, globalObject));
-    vm.deferredWorkTimer->addPendingWork(vm, promise, WTFMove(dependencies));
-
-    if (!globalObject->globalObjectMethodTable()->compileStreaming) {
-        // CompileStreaming is not supported in jsc, only in browser environment
-        ASSERT_NOT_REACHED();
-    }
-
-    globalObject->globalObjectMethodTable()->compileStreaming(globalObject, promise, callFrame->argument(0));
-    return JSValue::encode(promise);
+    ASSERT(globalObject->globalObjectMethodTable()->compileStreaming);
+    return JSValue::encode(globalObject->globalObjectMethodTable()->compileStreaming(globalObject, callFrame->argument(0)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(webAssemblyInstantiateStreamingInternal, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
 
-    auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
     JSValue importArgument = callFrame->argument(1);
     JSObject* importObject = importArgument.getObject();
     if (UNLIKELY(!importArgument.isUndefined() && !importObject)) {
+        auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
         promise->reject(globalObject, createTypeError(globalObject,
             "second argument to WebAssembly.instantiateStreaming must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(vm, importArgument)));
         return JSValue::encode(promise);
     }
 
-    if (!globalObject->globalObjectMethodTable()->instantiateStreaming) {
-        // InstantiateStreaming is not supported in jsc, only in browser environment.
-        ASSERT_NOT_REACHED();
-    }
-
-    Vector<Strong<JSCell>> dependencies;
-    dependencies.append(Strong<JSCell>(vm, globalObject));
-    dependencies.append(Strong<JSCell>(vm, importObject));
-    vm.deferredWorkTimer->addPendingWork(vm, promise, WTFMove(dependencies));
-
+    ASSERT(globalObject->globalObjectMethodTable()->instantiateStreaming);
     // FIXME: <http://webkit.org/b/184888> if there's an importObject and it contains a Memory, then we can compile the module with the right memory type (fast or not) by looking at the memory's type.
-    globalObject->globalObjectMethodTable()->instantiateStreaming(globalObject, promise, callFrame->argument(0), importObject);
-    return JSValue::encode(promise);
+    return JSValue::encode(globalObject->globalObjectMethodTable()->instantiateStreaming(globalObject, callFrame->argument(0), importObject));
 }
 
 } // namespace JSC

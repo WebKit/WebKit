@@ -76,7 +76,7 @@ CodeBlock::CodeBlock(Context* context, MemoryMode mode, ModuleInformation& modul
     }
 #if ENABLE(WEBASSEMBLY_B3JIT)
     else {
-        m_plan = adoptRef(*new BBQPlan(context, makeRef(moduleInformation), EntryPlan::FullCompile, createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
+        m_plan = adoptRef(*new BBQPlan(context, makeRef(moduleInformation), CompilerMode::FullCompile, createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
             auto locker = holdLock(m_lock);
             if (m_plan->failed()) {
                 m_errorMessage = m_plan->errorMessage();

@@ -1072,7 +1072,9 @@ wasm/WasmPlan.cpp
 wasm/WasmSectionParser.cpp
 wasm/WasmSignature.cpp
 wasm/WasmSlowPaths.cpp
+wasm/WasmStreamingCompiler.cpp
 wasm/WasmStreamingParser.cpp
+wasm/WasmStreamingPlan.cpp
 wasm/WasmTable.cpp
 wasm/WasmThunks.cpp
 wasm/WasmTierUpCount.cpp
