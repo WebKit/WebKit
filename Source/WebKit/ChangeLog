@@ -1,3 +1,20 @@
+2021-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Load data URLs in the web process also for synchronous loads
+        https://bugs.webkit.org/show_bug.cgi?id=220981
+
+        Reviewed by Adrian Perez de Castro.
+
+        In r271879 I removed the support for data URLs in the network process for soup, assuming data URLs were always
+        loaded from the web process, but that's not the case for synchronous loads.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::createRequest): Schedule an error if URL is not file or HTTP family.
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::loadDataURLSynchronously): Helper to load a Data URL synchronously.
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously): Call loadDataURLSynchronously for data URLs.
+        * WebProcess/Network/WebLoaderStrategy.h:
+
 2021-01-27  Devin Rousso  <drousso@apple.com>
 
         [iOS] add accessibility image extraction contextmenu item for revealing images

@@ -723,16 +723,6 @@ webkit.org/b/217267 http/wpt/service-workers/service-worker-spinning-fetch.https
 webkit.org/b/217267 http/wpt/service-workers/service-worker-spinning-install.https.html [ Pass Failure ]
 webkit.org/b/217267 http/wpt/service-workers/service-worker-spinning-message.https.html [ Pass Failure ]
 
-# Start of r271879 regressions (SoupeMessage changes for libsoup3)
-webkit.org/b/221023 fast/encoding/char-decoding-mac.html [ Crash ]
-webkit.org/b/221023 fast/encoding/char-decoding.html [ Crash ]
-webkit.org/b/221023 svg/load-event-detached.html [ Crash ]
-webkit.org/b/221023 fast/events/event-handler-detached-document.html [ Crash ]
-webkit.org/b/221023 imported/w3c/web-platform-tests/xhr/xmlhttprequest-sync-block-defer-scripts.html [ Crash ]
-webkit.org/b/221023 imported/w3c/web-platform-tests/xhr/xmlhttprequest-sync-block-scripts.html [ Crash ]
-webkit.org/b/221023 imported/w3c/web-platform-tests/xhr/xmlhttprequest-sync-default-feature-policy.sub.html [ Crash ]
-webkit.org/b/221023 imported/w3c/web-platform-tests/xhr/xmlhttprequest-sync-not-hang-scriptloader.html [ Crash ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SOUP and Networking-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1391,6 +1391,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/CredentialStorage.h
     platform/network/DNS.h
     platform/network/DNSResolveQueue.h
+    platform/network/DataURLDecoder.h
     platform/network/FormData.h
     platform/network/HTTPCookieAcceptPolicy.h
     platform/network/HTTPHeaderMap.h

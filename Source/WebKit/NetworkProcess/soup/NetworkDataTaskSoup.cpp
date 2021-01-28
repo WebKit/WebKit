@@ -113,6 +113,11 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCo
         return;
     }
 
+    if (!m_currentRequest.url().protocolIsInHTTPFamily()) {
+        scheduleFailure(InvalidURLFailure);
+        return;
+    }
+
     GUniquePtr<SoupURI> soupURI = m_currentRequest.createSoupURI();
     if (!soupURI) {
         scheduleFailure(InvalidURLFailure);
