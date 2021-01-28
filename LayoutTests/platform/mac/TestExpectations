@@ -2260,4 +2260,5 @@ webkit.org/b/220552 [ BigSur+ ] media/media-source/media-source-webm-init-inside
 
 # WebXR tests
 [ BigSur+ ] imported/w3c/web-platform-tests/webxr/xrSession_end.https.html [ Pass ]
+[ BigSur+ ] imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_callback_calls.https.html [ Pass ]
 [ BigSur+ ] http/wpt/webxr [ Pass ]

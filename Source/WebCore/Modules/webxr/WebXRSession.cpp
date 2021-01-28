@@ -390,6 +390,9 @@ ExceptionOr<void> WebXRSession::end(EndPromise&& promise)
     if (m_ended)
         return Exception { InvalidStateError, "Cannot end a session more than once"_s };
 
+    ASSERT(!m_endPromise);
+    m_endPromise = WTFMove(promise);
+
     // 1. Let promise be a new Promise.
     // 2. Shut down the target XRSession object.
     shutdown(InitiatedBySystem::No);
@@ -397,9 +400,6 @@ ExceptionOr<void> WebXRSession::end(EndPromise&& promise)
     // 3. Queue a task to perform the following steps:
     // 3.1 Wait until any platform-specific steps related to shutting down the session have completed.
     // 3.2 Resolve promise.
-    ASSERT(!m_endPromise);
-    m_endPromise = WTFMove(promise);
-
     // 4. Return promise.
     return { };
 }

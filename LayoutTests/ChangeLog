@@ -1,3 +1,14 @@
+2021-01-28  Ada Chan  <ada.chan@apple.com>
+
+        REGRESSION (r271988): XRSession.end() promise is not resolved if PlatformXR::Device::supportsSessionShutdownNotification() returns false
+        https://bugs.webkit.org/show_bug.cgi?id=221080
+
+        Reviewed by Chris Dumez.
+
+        Enable a test that was timing out, but now passes with the bug fix.
+
+        * platform/mac/TestExpectations:
+
 2021-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Load data URLs in the web process also for synchronous loads
