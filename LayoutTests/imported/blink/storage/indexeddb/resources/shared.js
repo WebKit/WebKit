@@ -130,7 +130,8 @@ function preamble(evt)
     if (evt)
         event = evt;
     debug("");
-    debug(preamble.caller.name + "():");
+    var name = preamble.caller?.name ?? '';
+    debug(name + "():");
 }
 
 // For Workers

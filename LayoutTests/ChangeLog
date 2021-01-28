@@ -1,3 +1,27 @@
+2021-01-28  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r271119) Check for nullness of preamble.caller
+        https://bugs.webkit.org/show_bug.cgi?id=220610
+
+        Reviewed by Yusuke Suzuki.
+
+        r271119 changed some kinds of functions to return null when trying to
+        access its caller property.
+
+        This made the preamble helper from indexeddb tests to fail when used
+        in places like arrow functions, like in
+        storage/indexeddb/result-request-cycle.html.
+
+        This commit makes preamble default to an empty name if the caller is
+        null.
+
+        * http/tests/IndexedDB/resources/shared.js:
+        (preamble):
+        * imported/blink/storage/indexeddb/resources/shared.js:
+        (preamble):
+        * storage/indexeddb/resources/shared.js:
+        (preamble):
+
 2021-01-28  Ada Chan  <ada.chan@apple.com>
 
         REGRESSION (r271988): WebXR test failures on Big Sur
