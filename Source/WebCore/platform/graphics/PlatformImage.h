@@ -30,8 +30,6 @@
 typedef struct CGImage* CGImageRef;
 #elif USE(CAIRO)
 #include "RefPtrCairo.h"
-#elif USE(WINGDI)
-#include "SharedBitmap.h"
 #endif
 
 namespace WebCore {
@@ -42,8 +40,6 @@ using PlatformImagePtr = RetainPtr<CGImageRef>;
 using PlatformImagePtr = COMPtr<ID2D1Bitmap>;
 #elif USE(CAIRO)
 using PlatformImagePtr = RefPtr<cairo_surface_t>;
-#elif USE(WINGDI)
-using PlatformImagePtr = RefPtr<SharedBitmap>;
 #endif
 
 }

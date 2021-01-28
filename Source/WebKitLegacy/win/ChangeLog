@@ -1,3 +1,15 @@
+2021-01-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove the dead code of USE(WINGDI)
+        https://bugs.webkit.org/show_bug.cgi?id=221079
+
+        Reviewed by Don Olmstead.
+
+        * Plugins/PluginViewWin.cpp:
+        (WebCore::PluginView::paintWindowedPluginIntoContext):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::snapshot):
+
 2021-01-22  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         Finish introduction of RenderLayerScrollableArea: remove remaining glue code from RenderLayer

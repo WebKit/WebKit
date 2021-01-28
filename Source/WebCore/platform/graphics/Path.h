@@ -58,13 +58,6 @@ class PlatformContextDirect2D;
 #elif USE(CAIRO)
 #include "RefPtrCairo.h"
 
-#elif USE(WINGDI)
-
-namespace WebCore {
-class PlatformPath;
-}
-typedef WebCore::PlatformPath PlatformPath;
-
 #else
 
 typedef void PlatformPath;

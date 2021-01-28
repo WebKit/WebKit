@@ -46,11 +46,6 @@ using GlyphBufferGlyph = CGGlyph;
 using GlyphBufferAdvance = CGSize;
 using GlyphBufferOrigin = CGPoint;
 using GlyphBufferStringOffset = CFIndex;
-#elif USE(WINGDI)
-using GlyphBufferGlyph = wchar_t;
-using GlyphBufferAdvance = FloatSize;
-using GlyphBufferOrigin = FloatPoint;
-using GlyphBufferStringOffset = unsigned;
 #else
 using GlyphBufferGlyph = Glyph;
 using GlyphBufferAdvance = FloatSize;

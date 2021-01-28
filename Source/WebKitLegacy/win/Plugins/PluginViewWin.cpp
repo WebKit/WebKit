@@ -497,7 +497,6 @@ void PluginView::paintIntoTransformedContext(HDC hdc)
 
 void PluginView::paintWindowedPluginIntoContext(GraphicsContext& context, const IntRect& rect)
 {
-#if !USE(WINGDI)
     ASSERT(m_isWindowed);
     ASSERT(context.shouldIncludeChildWindows());
 
@@ -527,7 +526,6 @@ void PluginView::paintWindowedPluginIntoContext(GraphicsContext& context, const 
     paintIntoTransformedContext(hdc);
 
     SetWorldTransform(hdc, &originalTransform);
-#endif
 }
 
 void PluginView::paint(GraphicsContext& context, const IntRect& rect, Widget::SecurityOriginPaintPolicy, EventRegionContext*)
@@ -546,10 +544,8 @@ void PluginView::paint(GraphicsContext& context, const IntRect& rect, Widget::Se
         setNPWindowRect(frameRect());
 
     if (m_isWindowed) {
-#if !USE(WINGDI)
         if (context.shouldIncludeChildWindows())
             paintWindowedPluginIntoContext(context, rect);
-#endif
         return;
     }
 
@@ -916,7 +912,6 @@ void PluginView::platformDestroy()
 
 RefPtr<Image> PluginView::snapshot()
 {
-#if !USE(WINGDI)
     auto hdc = adoptGDIObject(::CreateCompatibleDC(0));
 
     if (!m_isWindowed) {
@@ -945,9 +940,6 @@ RefPtr<Image> PluginView::snapshot()
     SelectObject(hdc.get(), hbmpOld);
 
     return BitmapImage::create(hbmp.get());
-#else
-    return 0;
-#endif
 }
 
 float PluginView::deviceScaleFactor() const
