@@ -1,3 +1,16 @@
+2021-01-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add JSC_SIGNAL_FOR_GC environment variable for Linux / FreeBSD
+        https://bugs.webkit.org/show_bug.cgi?id=221081
+
+        Reviewed by Mark Lam.
+
+        This patch adds JSC_SIGNAL_FOR_GC environment variable,
+        which changes signal number used for GC suspension.
+
+        * wtf/posix/ThreadingPOSIX.cpp:
+        (WTF::Thread::initializePlatformThreading):
+
 2021-01-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         WebAssembly: add support for stream APIs
