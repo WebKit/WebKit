@@ -1320,10 +1320,3 @@ class ExtractTestResults(master.MasterShellCommand):
     def finished(self, result):
         self.addCustomURLs()
         return master.MasterShellCommand.finished(self, result)
-
-
-class ExtractTestResultsAndLeaks(ExtractTestResults):
-    def addCustomURLs(self):
-        ExtractTestResults.addCustomURLs(self)
-        url = "/LeaksViewer/?url=" + urllib.quote(self.resultDirectoryURL(), safe="")
-        self.addURL("view leaks", url)

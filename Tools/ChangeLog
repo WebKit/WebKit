@@ -1,3 +1,19 @@
+2021-01-28  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Remove dead code for TestWebKit1LeaksFactory
+        https://bugs.webkit.org/show_bug.cgi?id=221090
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/factories.py:
+        (BuildAndJSCTestsFactory.__init__):
+        (TestWebKit1LeaksFactory): Deleted.
+        (TestWebKit1LeaksFactory.__init__): Deleted.
+        * CISupport/build-webkit-org/steps.py:
+        (ExtractTestResults.finished):
+        (ExtractTestResultsAndLeaks): Deleted.
+        (ExtractTestResultsAndLeaks.addCustomURLs): Deleted.
+
 2021-01-28  Matt Lewis  <jlewis3@apple.com>
 
         Move Mac EWS to macOS Catalina.

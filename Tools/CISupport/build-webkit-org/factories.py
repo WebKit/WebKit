@@ -159,17 +159,6 @@ class BuildAndJSCTestsFactory(Factory):
         self.addStep(RunJavaScriptCoreTests(timeout=60 * 60))
 
 
-class TestWebKit1LeaksFactory(Factory):
-    def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
-        self.addStep(DownloadBuiltProduct())
-        self.addStep(ExtractBuiltProduct())
-        self.addStep(RunWebKit1LeakTests())
-        self.addStep(ArchiveTestResults())
-        self.addStep(UploadTestResults())
-        self.addStep(ExtractTestResultsAndLeaks())
-
-
 class TestAllButJSCFactory(TestFactory):
     JSCTestClass = None
 
