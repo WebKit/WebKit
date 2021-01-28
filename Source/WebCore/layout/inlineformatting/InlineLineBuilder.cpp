@@ -520,7 +520,7 @@ size_t LineBuilder::nextWrapOpportunity(size_t startIndex, const LineBuilder::In
             return ++index;
         }
         if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd()) {
-            // There's no wrapping opportunity between <span>text, <span></span> or </span>text. 
+            // Need to see what comes next to decide.
             continue;
         }
         ASSERT(inlineItem.isText() || inlineItem.isBox() || inlineItem.isFloat());
@@ -528,11 +528,14 @@ size_t LineBuilder::nextWrapOpportunity(size_t startIndex, const LineBuilder::In
             previousInlineItemIndex = index;
             continue;
         }
+        // At this point previous and current items are not necessarily adjacent items e.g "previous<span>current</span>"
         auto& previousItem = m_inlineItems[*previousInlineItemIndex];
         auto& currentItem = m_inlineItems[index];
         if (isAtSoftWrapOpportunity(m_inlineFormattingContext, previousItem, currentItem)) {
-            if (!previousItem.isText() || !currentItem.isText())
+            if (*previousInlineItemIndex + 1 == index && (!previousItem.isText() || !currentItem.isText())) {
+                // We only know the exact soft wrap opportunity index when the previous and current items are next to each other.
                 return index;
+            }
             // There's a soft wrap opportunity between 'previousInlineItemIndex' and 'index'.
             // Now forward-find from the start position to see where we can actually wrap.
             // [ex-][ample] vs. [ex-][container start][container end][ample]
