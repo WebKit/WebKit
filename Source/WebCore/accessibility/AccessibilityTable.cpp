@@ -173,7 +173,7 @@ bool AccessibilityTable::isDataTable() const
     int numRows = firstBody->numRows();
     
     // If there are at least 20 rows, we'll call it a data table.
-    if (numRows >= 20)
+    if ((numRows >= 20 && numCols >= 2) || (numRows >= 2 && numCols >= 20))
         return true;
     
     // Store the background color of the table to check against cell's background colors.

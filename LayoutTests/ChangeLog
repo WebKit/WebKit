@@ -1,3 +1,14 @@
+2021-01-28  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Long narrow tables should not be made in data tables unnecessarily
+        https://bugs.webkit.org/show_bug.cgi?id=221061
+        <rdar://problem/73681149>
+
+        Reviewed by Zalan Bujtas.
+
+        * accessibility/narrow-tables-ignored-expected.txt: Added.
+        * accessibility/narrow-tables-ignored.html: Added.
+
 2021-01-28  Ada Chan  <ada.chan@apple.com>
 
         REGRESSION (r271988): XRSession.end() promise is not resolved if PlatformXR::Device::supportsSessionShutdownNotification() returns false
