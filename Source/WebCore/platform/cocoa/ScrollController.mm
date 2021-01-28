@@ -883,9 +883,7 @@ void ScrollController::setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis
 
     LayoutUnit clampedOffset = std::min(std::max(LayoutUnit(offset / scaleFactor), snapOffsets.first()), snapOffsets.last());
 
-    unsigned activeIndex = 0;
-    closestSnapOffset(snapState.snapOffsetsForAxis(axis), snapState.snapOffsetRangesForAxis(axis), clampedOffset, 0, activeIndex);
-
+    unsigned activeIndex = snapState.snapOffsetInfo().closestSnapOffset(axis, clampedOffset, 0).second;
     if (activeIndex == activeScrollSnapIndexForAxis(axis))
         return;
 
@@ -903,11 +901,10 @@ float ScrollController::adjustScrollDestination(ScrollEventAxis axis, float dest
     if (!snapOffsets.size())
         return destinationOffset;
 
-    unsigned snapIndex;
     Optional<LayoutUnit> originalOffsetInLayoutUnits;
     if (originalOffset.hasValue())
         originalOffsetInLayoutUnits = LayoutUnit(*originalOffset / m_client.pageScaleFactor());
-    LayoutUnit offset = closestSnapOffset(snapState.snapOffsetsForAxis(axis), snapState.snapOffsetRangesForAxis(axis), LayoutUnit(destinationOffset / m_client.pageScaleFactor()), velocity, snapIndex, originalOffsetInLayoutUnits);
+    LayoutUnit offset = snapState.snapOffsetInfo().closestSnapOffset(axis, LayoutUnit(destinationOffset / m_client.pageScaleFactor()), velocity, originalOffsetInLayoutUnits).first;
     return offset * m_client.pageScaleFactor();
 }
 

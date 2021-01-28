@@ -47,6 +47,7 @@
 #import <WebCore/ScrollingTreeOverflowScrollProxyNode.h>
 #import <WebCore/ScrollingTreeOverflowScrollingNode.h>
 #import <WebCore/ScrollingTreePositionedNode.h>
+#import <tuple>
 #endif
 
 namespace WebKit {
@@ -225,11 +226,11 @@ float RemoteScrollingCoordinatorProxy::closestSnapOffsetForMainFrameScrolling(Sc
     ScrollingTreeNode* root = m_scrollingTree->rootNode();
     ASSERT(root && root->isFrameScrollingNode());
     ScrollingTreeFrameScrollingNode* rootScrollingNode = static_cast<ScrollingTreeFrameScrollingNode*>(root);
-    const Vector<float>& snapOffsets = rootScrollingNode->snapOffsetsInfo().offsetsForAxis(axis);
-    const Vector<ScrollOffsetRange<float>>& snapOffsetRanges = rootScrollingNode->snapOffsetsInfo().offsetRangesForAxis(axis);
+    const auto& snapOffsetsInfo = rootScrollingNode->snapOffsetsInfo();
 
     float scaledScrollDestination = scrollDestination / m_webPageProxy.displayedContentScale();
-    float rawClosestSnapOffset = closestSnapOffset(snapOffsets, snapOffsetRanges, scaledScrollDestination, velocity, currentIndex);
+    float rawClosestSnapOffset;
+    std::tie(rawClosestSnapOffset, currentIndex) = snapOffsetsInfo.closestSnapOffset(axis, scaledScrollDestination, velocity);
     return rawClosestSnapOffset * m_webPageProxy.displayedContentScale();
 }
 

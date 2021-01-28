@@ -30,7 +30,8 @@
 #include "LayoutUnit.h"
 #include "ScrollTypes.h"
 #include "StyleScrollSnapPoints.h"
-#include <wtf/Optional.h>
+#include <utility>
+#include <wtf/Vector.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -80,13 +81,18 @@ struct ScrollSnapOffsetsInfo {
     }
 
     template<typename OutputType> ScrollSnapOffsetsInfo<OutputType> convertUnits(float deviceScaleFactor = 0.0) const;
+    WEBCORE_EXPORT std::pair<T, unsigned> closestSnapOffset(ScrollEventAxis, T scrollDestinationOffset, float velocity, Optional<T> originalPositionForDirectionalSnapping = WTF::nullopt) const;
 };
 
 template <> template <>
 ScrollSnapOffsetsInfo<LayoutUnit> ScrollSnapOffsetsInfo<float>::convertUnits(float /* unusedScaleFactor */) const;
+template <>
+WEBCORE_EXPORT std::pair<float, unsigned> ScrollSnapOffsetsInfo<float>::closestSnapOffset(ScrollEventAxis, float scrollDestinationOffset, float velocity, Optional<float> originalPositionForDirectionalSnapping) const;
 
 template <> template <>
 ScrollSnapOffsetsInfo<float> ScrollSnapOffsetsInfo<LayoutUnit>::convertUnits(float deviceScaleFactor) const;
+template <>
+WEBCORE_EXPORT std::pair<LayoutUnit, unsigned> ScrollSnapOffsetsInfo<LayoutUnit>::closestSnapOffset(ScrollEventAxis, LayoutUnit scrollDestinationOffset, float velocity, Optional<LayoutUnit> originalPositionForDirectionalSnapping) const;
 
 const unsigned invalidSnapOffsetIndex = UINT_MAX;
 
@@ -94,9 +100,6 @@ const unsigned invalidSnapOffsetIndex = UINT_MAX;
 // which defines the scroll-snap properties, and the viewport rectangle with the origin at the top left of
 // the scrolling container's border box.
 void updateSnapOffsetsForScrollableArea(ScrollableArea&, const RenderBox& scrollingElementBox, const RenderStyle& scrollingElementStyle, LayoutRect viewportRectInBorderBoxCoordinates);
-
-WEBCORE_EXPORT LayoutUnit closestSnapOffset(const Vector<LayoutUnit>& snapOffsets, const Vector<ScrollOffsetRange<LayoutUnit>>& snapOffsetRanges, LayoutUnit scrollDestinationOffset, float velocity, unsigned& activeSnapIndex, Optional<LayoutUnit> originalPositionForDirectionalSnapping = WTF::nullopt);
-WEBCORE_EXPORT float closestSnapOffset(const Vector<float>& snapOffsets, const Vector<ScrollOffsetRange<float>>& snapOffsetRanges, float scrollDestinationOffset, float velocity, unsigned& activeSnapIndex, Optional<float> originalPositionForDirectionalSnapping = WTF::nullopt);
 
 }; // namespace WebCore
 
