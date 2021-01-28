@@ -321,6 +321,9 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
             }
             if (inlineContent.trailingLineBreak()) {
                 // Fully committed (or empty) content followed by a line break means "end of line".
+                // FIXME: This will put the line break box at the end of the line while in case of some inline boxes, the line break
+                // could very well be at an earlier position. This has no visual implications at this point though (only geometry correctness on the line break box).
+                // e.g. <span style="border-right: 10px solid green">text<br></span> where the <br>'s horizontal position is before the right border and not after.
                 m_line.append(*inlineContent.trailingLineBreak(), { });
                 ++committedInlineItemCount;
                 isEndOfLine = true;
@@ -486,16 +489,14 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
             currentLogicalRight += logicalWidth;
             continue;
         }
-        if (inlineItem.isWordBreakOpportunity()) {
-            // Since <wbr> is an explicit word break opportunity it has to be a trailing item in this candidate run list.
-            ASSERT(index == softWrapOpportunityIndex - 1);
-            lineCandidate.inlineContent.appendtrailingWordBreakOpportunity(inlineItem);
-            continue;
-        }
-        if (inlineItem.isLineBreak()) {
-            // Since <br> is an forced break opportunity it has to be a trailing item in this candidate run list.
-            ASSERT(index == softWrapOpportunityIndex - 1);
-            lineCandidate.inlineContent.appendTrailingLineBreak(inlineItem);
+        if (inlineItem.isLineBreak() || inlineItem.isWordBreakOpportunity()) {
+            // Since both <br> and <wbr> are explicit word break opportunities they have to be trailing items in this candidate run list unless they are embedded in inline boxes.
+            // e.g. <span><wbr></span>
+#if ASSERT_ENABLED
+            for (auto i = index + 1; i < softWrapOpportunityIndex; ++i)
+                ASSERT(m_inlineItems[i].isInlineBoxEnd());
+#endif
+            inlineItem.isLineBreak() ? lineCandidate.inlineContent.appendTrailingLineBreak(inlineItem) : lineCandidate.inlineContent.appendtrailingWordBreakOpportunity(inlineItem);
             continue;
         }
         ASSERT_NOT_REACHED();
@@ -516,8 +517,11 @@ size_t LineBuilder::nextWrapOpportunity(size_t startIndex, const LineBuilder::In
     for (auto index = startIndex; index < layoutRange.end; ++index) {
         auto& inlineItem = m_inlineItems[index];
         if (inlineItem.isLineBreak() || inlineItem.isWordBreakOpportunity()) {
-            // We always stop at explicit wrapping opportunities e.g. <br>. The wrap position is after the opportunity position.
-            return ++index;
+            // We always stop at explicit wrapping opportunities e.g. <br>. However the wrap position may be at later position.
+            // e.g. <span><span><br></span></span> <- wrap position is after the second </span>
+            // but in case of <span><br><span></span></span> <- wrap position is right after <br>.
+            for (++index; index < layoutRange.end && m_inlineItems[index].isInlineBoxEnd(); ++index) { }
+            return index;
         }
         if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd()) {
             // Need to see what comes next to decide.
