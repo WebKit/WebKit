@@ -475,7 +475,7 @@ void WebProcess::updateProcessName()
         return;
     }
     String displayName = applicationName.get();
-    ensureNetworkProcessConnection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(displayName, Vector<String>(), auditToken), 0);
+    ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(displayName, Vector<String>(), auditToken), 0);
 #else
     RunLoop::main().dispatch([this, applicationName = WTFMove(applicationName)] {
         // Note that it is important for _RegisterApplication() to have been called before setting the display name.
@@ -760,7 +760,7 @@ void WebProcess::updateActivePages(const String& overrideDisplayName)
         return;
     }
 
-    ensureNetworkProcessConnection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(overrideDisplayName, activePagesOrigins(m_pageMap), auditToken), 0);
+    ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(overrideDisplayName, activePagesOrigins(m_pageMap), auditToken), 0);
 #else
     if (!overrideDisplayName) {
         RunLoop::main().dispatch([activeOrigins = activePagesOrigins(m_pageMap)] {
