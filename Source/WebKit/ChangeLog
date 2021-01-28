@@ -1,3 +1,27 @@
+2021-01-27  Devin Rousso  <drousso@apple.com>
+
+        [iOS] add accessibility image extraction contextmenu item for revealing images
+        https://bugs.webkit.org/show_bug.cgi?id=221058
+        <rdar://problem/73382220>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/Cocoa/_WKElementAction.h:
+        * UIProcess/API/Cocoa/_WKElementAction.mm:
+        (+[_WKElementAction _elementActionWithType:customTitle:assistant:]):
+        (+[_WKElementAction imageForElementActionType:]):
+        (elementActionTypeToUIActionIdentifier):
+        (uiActionIdentifierToElementActionType):
+
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant defaultActionsForLinkSheet:]):
+        (-[WKActionSheetAssistant defaultActionsForImageSheet:]):
+        (-[WKActionSheetAssistant handleElementActionWithType:element:needsInteraction:]):
+
+        * Configurations/WebKit.xcconfig:
+        Link UniformTypeIdentifiers.framework for use in WebKitAdditions.
+
 2021-01-27  Chris Dumez  <cdumez@apple.com>
 
         [GPUProcess] Move ownership of RingBuffer backing used by RemoteAudioSourceProviderManager::RemoteAudio to WebProcess

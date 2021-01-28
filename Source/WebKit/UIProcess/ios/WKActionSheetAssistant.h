@@ -73,7 +73,9 @@ typedef NS_ENUM(NSInteger, _WKElementActionType);
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant shareElementWithImage:(UIImage *)image rect:(CGRect)boundingRect;
 #if ENABLE(IMAGE_EXTRACTION)
 - (BOOL)actionSheetAssistant:(WKActionSheetAssistant *)assistant shouldIncludeImageExtractionActionForElement:(_WKActivatedElementInfo *)element;
-- (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant handleImageExtraction:(UIImage *)image;
+- (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant handleImageExtraction:(UIImage *)image title:(NSString *)title;
+- (BOOL)actionSheetAssistant:(WKActionSheetAssistant *)assistant shouldIncludeRevealImageActionForElement:(_WKActivatedElementInfo *)element;
+- (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant handleRevealImage:(UIImage *)image title:(NSString *)title;
 #endif
 
 @end
