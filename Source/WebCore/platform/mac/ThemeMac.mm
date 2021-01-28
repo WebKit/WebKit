@@ -66,10 +66,6 @@ static BOOL themeWindowHasKeyAppearance;
 {
     return themeWindowHasKeyAppearance;
 }
-
-- (void)invalidateRestorableState
-{
-}
 @end
 
 @implementation WebCoreThemeView

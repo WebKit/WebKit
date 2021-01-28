@@ -183,6 +183,14 @@ static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
 
     return [page->accessibilityRemoteObject() accessibilityFocusedUIElement];
 }
+
+#if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
+static void preventAppKitFromContactingLaunchServices(NSApplication*, SEL)
+{
+    // WebKit prohibits communication with Launch Services after entering the sandbox. This method override
+    // prevents AppKit from attempting to update application information with Launch Services from the WebContent process.
+}
+#endif
 #endif
 
 
@@ -320,6 +328,9 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     updateProcessName();
 
 #if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
+    auto method = class_getInstanceMethod([NSApplication class], @selector(_updateCanQuitQuietlyAndSafely));
+    method_setImplementation(method, (IMP)preventAppKitFromContactingLaunchServices);
+
     // FIXME: Replace the constant 4 with kLSServerConnectionStatusReleaseNotificationsMask when available in the SDK, see <https://bugs.webkit.org/show_bug.cgi?id=220988>.
     _LSSetApplicationLaunchServicesServerConnectionStatus(kLSServerConnectionStatusDoNotConnectToServerMask | /*kLSServerConnectionStatusReleaseNotificationsMask*/ 4, nullptr);
 #endif

@@ -1,3 +1,15 @@
+2021-01-28  Per Arne  <pvollan@apple.com>
+
+        [macOS] Crash when updating color preferences
+        https://bugs.webkit.org/show_bug.cgi?id=221088
+        <rdar://problem/73709142>
+
+        Reviewed by Brent Fulgham.
+
+        Declare NSApplication SPI for updating application information with Launch Services.
+
+        * pal/spi/mac/NSApplicationSPI.h:
+
 2021-01-21  Alex Christensen  <achristensen@webkit.org>
 
         Add experimental feature to use network loader

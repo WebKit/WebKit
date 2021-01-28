@@ -1,3 +1,21 @@
+2021-01-28  Per Arne  <pvollan@apple.com>
+
+        [macOS] Crash when updating color preferences
+        https://bugs.webkit.org/show_bug.cgi?id=221088
+        <rdar://problem/73709142>
+
+        Reviewed by Brent Fulgham.
+
+        After r271965, the WebContent process is no longer allowed to connect to the Launch Services daemon. This introduced a crash
+        in the WebContent process when color preferences were changed in System Preferences, since AppKit will then attempt to set
+        application information with Launch Services, which causes a crash when that fails. This patch addresses this issue by
+        overriding the AppKit method that updates the specific application information with Launch Services, since updating this
+        information should be required in the WebContent process.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::updateCanQuitQuietlyAndSafely):
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2021-01-28  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Remove reference to deprecated SubmitDiagInfo.domains path
