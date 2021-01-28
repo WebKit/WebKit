@@ -31,26 +31,27 @@ typedef struct CGColorSpace *CGColorSpaceRef;
 
 namespace WebCore {
 
-WEBCORE_EXPORT CGColorSpaceRef sRGBColorSpaceRef();
-WEBCORE_EXPORT CGColorSpaceRef linearRGBColorSpaceRef();
-WEBCORE_EXPORT CGColorSpaceRef displayP3ColorSpaceRef();
-WEBCORE_EXPORT CGColorSpaceRef labColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef a98RGBColorSpaceRef();
+WEBCORE_EXPORT CGColorSpaceRef displayP3ColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef extendedSRGBColorSpaceRef();
+WEBCORE_EXPORT CGColorSpaceRef labColorSpaceRef();
+WEBCORE_EXPORT CGColorSpaceRef linearRGBColorSpaceRef();
+WEBCORE_EXPORT CGColorSpaceRef rec2020ColorSpaceRef();
+WEBCORE_EXPORT CGColorSpaceRef sRGBColorSpaceRef();
 
 static inline CGColorSpaceRef cachedCGColorSpace(ColorSpace colorSpace)
 {
     switch (colorSpace) {
-    case ColorSpace::SRGB:
-        return sRGBColorSpaceRef();
-    case ColorSpace::LinearRGB:
-        return linearRGBColorSpaceRef();
-    case ColorSpace::DisplayP3:
-        return displayP3ColorSpaceRef();
     case ColorSpace::A98RGB:
         return a98RGBColorSpaceRef();
+    case ColorSpace::DisplayP3:
+        return displayP3ColorSpaceRef();
     case ColorSpace::Lab:
         return labColorSpaceRef();
+    case ColorSpace::LinearRGB:
+        return linearRGBColorSpaceRef();
+    case ColorSpace::SRGB:
+        return sRGBColorSpaceRef();
     }
     ASSERT_NOT_REACHED();
     return sRGBColorSpaceRef();

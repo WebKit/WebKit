@@ -877,7 +877,7 @@ static Color parseLCHParameters(CSSParserTokenRange& range, CSSParserMode cssPar
 template<typename ColorType>
 static Color parseColorFunctionForRGBTypes(CSSParserTokenRange& args)
 {
-    ASSERT(args.peek().id() == CSSValueSRGB || args.peek().id() == CSSValueDisplayP3 || args.peek().id() == CSSValueA98Rgb);
+    ASSERT(args.peek().id() == CSSValueA98Rgb || args.peek().id() == CSSValueDisplayP3 || args.peek().id() == CSSValueSRGB);
     consumeIdentRaw(args);
 
     double channels[3] = { 0, 0, 0 };
@@ -935,17 +935,17 @@ static Color parseColorFunctionParameters(CSSParserTokenRange& range)
 
     Color color;
     switch (args.peek().id()) {
-    case CSSValueSRGB:
-        color = parseColorFunctionForRGBTypes<SRGBA<float>>(args);
+    case CSSValueA98Rgb:
+        color = parseColorFunctionForRGBTypes<A98RGB<float>>(args);
         break;
     case CSSValueDisplayP3:
         color = parseColorFunctionForRGBTypes<DisplayP3<float>>(args);
         break;
-    case CSSValueA98Rgb:
-        color = parseColorFunctionForRGBTypes<A98RGB<float>>(args);
-        break;
     case CSSValueLab:
         color = parseColorFunctionForLabParameters(args);
+        break;
+    case CSSValueSRGB:
+        color = parseColorFunctionForRGBTypes<SRGBA<float>>(args);
         break;
     default:
         return { };

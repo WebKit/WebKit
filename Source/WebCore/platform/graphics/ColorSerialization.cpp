@@ -36,7 +36,145 @@
 
 namespace WebCore {
 
-// SRGBA<uint8_t> overloads
+String serializationForCSS(const Color& color)
+{
+    return color.callOnUnderlyingType([] (auto underlyingColor) {
+        return serializationForCSS(underlyingColor);
+    });
+}
+
+String serializationForHTML(const Color& color)
+{
+    return color.callOnUnderlyingType([] (auto underlyingColor) {
+        return serializationForHTML(underlyingColor);
+    });
+}
+
+String serializationForRenderTreeAsText(const Color& color)
+{
+    return color.callOnUnderlyingType([] (auto underlyingColor) {
+        return serializationForRenderTreeAsText(underlyingColor);
+    });
+}
+
+static ASCIILiteral serialization(ColorSpace colorSpace)
+{
+    switch (colorSpace) {
+    case ColorSpace::A98RGB:
+        return "a98-rgb"_s;
+    case ColorSpace::DisplayP3:
+        return "display-p3"_s;
+    case ColorSpace::Lab:
+        return "lab"_s;
+    case ColorSpace::LinearRGB:
+        return "linear-srgb"_s;
+    case ColorSpace::SRGB:
+        return "srgb"_s;
+    }
+
+    ASSERT_NOT_REACHED();
+    return ""_s;
+}
+
+template<typename ColorType> static String serialization(const ColorType& color)
+{
+    auto [c1, c2, c3, alpha] = color;
+    if (WTF::areEssentiallyEqual(alpha, 1.0f))
+        return makeString("color(", serialization(color.colorSpace), ' ', c1, ' ', c2, ' ', c3, ')');
+    return makeString("color(", serialization(color.colorSpace), ' ', c1, ' ', c2, ' ', c3, " / ", alpha, ')');
+}
+
+// MARK: A98RGB<float> overloads
+
+String serializationForCSS(const A98RGB<float>& color)
+{
+    return serialization(color);
+}
+
+String serializationForHTML(const A98RGB<float>& color)
+{
+    return serialization(color);
+}
+
+String serializationForRenderTreeAsText(const A98RGB<float>& color)
+{
+    return serialization(color);
+}
+
+// MARK: DisplayP3<float> overloads
+
+String serializationForCSS(const DisplayP3<float>& color)
+{
+    return serialization(color);
+}
+
+String serializationForHTML(const DisplayP3<float>& color)
+{
+    return serialization(color);
+}
+
+String serializationForRenderTreeAsText(const DisplayP3<float>& color)
+{
+    return serialization(color);
+}
+
+// MARK: Lab<float> overloads
+
+String serializationForCSS(const Lab<float>& color)
+{
+    // https://www.w3.org/TR/css-color-4/#serializing-lab-lch
+
+    auto [c1, c2, c3, alpha] = color;
+    if (WTF::areEssentiallyEqual(alpha, 1.0f))
+        return makeString("lab(", c1, "% ", c2, ' ', c3, ')');
+    return makeString("lab(", c1, "% ", c2, ' ', c3, " / ", alpha, ')');
+}
+
+String serializationForHTML(const Lab<float>& color)
+{
+    return serializationForCSS(color);
+}
+
+String serializationForRenderTreeAsText(const Lab<float>& color)
+{
+    return serializationForCSS(color);
+}
+
+// MARK: LinearSRGBA<float> overloads
+
+String serializationForCSS(const LinearSRGBA<float>& color)
+{
+    return serialization(color);
+}
+
+String serializationForHTML(const LinearSRGBA<float>& color)
+{
+    return serialization(color);
+}
+
+String serializationForRenderTreeAsText(const LinearSRGBA<float>& color)
+{
+    return serialization(color);
+}
+
+// MARK: SRGBA<float> overloads
+
+String serializationForCSS(const SRGBA<float>& color)
+{
+    return serialization(color);
+}
+
+String serializationForHTML(const SRGBA<float>& color)
+{
+    return serialization(color);
+}
+
+String serializationForRenderTreeAsText(const SRGBA<float>& color)
+{
+    return serialization(color);
+}
+
+// MARK: SRGBA<uint8_t> overloads
 
 static char decimalDigit(unsigned number)
 {
@@ -82,149 +220,6 @@ String serializationForRenderTreeAsText(SRGBA<uint8_t> color)
     if (alpha < 0xFF)
         return makeString('#', hex(red, 2), hex(green, 2), hex(blue, 2), hex(alpha, 2));
     return makeString('#', hex(red, 2), hex(green, 2), hex(blue, 2));
-}
-
-
-// ExtendedColor overloads
-
-static ASCIILiteral serialization(ColorSpace colorSpace)
-{
-    switch (colorSpace) {
-    case ColorSpace::SRGB:
-        return "srgb"_s;
-    case ColorSpace::LinearRGB:
-        return "linear-srgb"_s;
-    case ColorSpace::DisplayP3:
-        return "display-p3"_s;
-    case ColorSpace::A98RGB:
-        return "a98-rgb"_s;
-    case ColorSpace::Lab:
-        return "lab"_s;
-    }
-
-    ASSERT_NOT_REACHED();
-    return ""_s;
-}
-
-template<typename ColorType> static String serialization(const ColorType& color)
-{
-    auto [c1, c2, c3, alpha] = color;
-    if (WTF::areEssentiallyEqual(alpha, 1.0f))
-        return makeString("color(", serialization(color.colorSpace), ' ', c1, ' ', c2, ' ', c3, ')');
-    return makeString("color(", serialization(color.colorSpace), ' ', c1, ' ', c2, ' ', c3, " / ", alpha, ')');
-}
-
-// SRGBA<float> overloads
-
-String serializationForCSS(const SRGBA<float>& color)
-{
-    return serialization(color);
-}
-
-String serializationForHTML(const SRGBA<float>& color)
-{
-    return serialization(color);
-}
-
-String serializationForRenderTreeAsText(const SRGBA<float>& color)
-{
-    return serialization(color);
-}
-
-// LinearSRGBA<float> overloads
-
-String serializationForCSS(const LinearSRGBA<float>& color)
-{
-    return serialization(color);
-}
-
-String serializationForHTML(const LinearSRGBA<float>& color)
-{
-    return serialization(color);
-}
-
-String serializationForRenderTreeAsText(const LinearSRGBA<float>& color)
-{
-    return serialization(color);
-}
-
-// DisplayP3<float> overloads
-
-String serializationForCSS(const DisplayP3<float>& color)
-{
-    return serialization(color);
-}
-
-String serializationForHTML(const DisplayP3<float>& color)
-{
-    return serialization(color);
-}
-
-String serializationForRenderTreeAsText(const DisplayP3<float>& color)
-{
-    return serialization(color);
-}
-
-// A98RGB<float> overloads
-
-String serializationForCSS(const A98RGB<float>& color)
-{
-    return serialization(color);
-}
-
-String serializationForHTML(const A98RGB<float>& color)
-{
-    return serialization(color);
-}
-
-String serializationForRenderTreeAsText(const A98RGB<float>& color)
-{
-    return serialization(color);
-}
-
-// Lab<float> overloads
-
-String serializationForCSS(const Lab<float>& color)
-{
-    // https://www.w3.org/TR/css-color-4/#serializing-lab-lch
-
-    auto [c1, c2, c3, alpha] = color;
-    if (WTF::areEssentiallyEqual(alpha, 1.0f))
-        return makeString("lab(", c1, "% ", c2, ' ', c3, ')');
-    return makeString("lab(", c1, "% ", c2, ' ', c3, " / ", alpha, ')');
-}
-
-String serializationForHTML(const Lab<float>& color)
-{
-    return serializationForCSS(color);
-}
-
-String serializationForRenderTreeAsText(const Lab<float>& color)
-{
-    return serializationForCSS(color);
-}
-
-// Color overloads
-
-String serializationForCSS(const Color& color)
-{
-    return color.callOnUnderlyingType([] (auto underlyingColor) {
-        return serializationForCSS(underlyingColor);
-    });
-}
-
-String serializationForHTML(const Color& color)
-{
-    return color.callOnUnderlyingType([] (auto underlyingColor) {
-        return serializationForHTML(underlyingColor);
-    });
-}
-
-String serializationForRenderTreeAsText(const Color& color)
-{
-    return color.callOnUnderlyingType([] (auto underlyingColor) {
-        return serializationForRenderTreeAsText(underlyingColor);
-    });
 }
 
 }

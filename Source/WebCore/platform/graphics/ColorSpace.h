@@ -32,11 +32,11 @@ class TextStream;
 namespace WebCore {
 
 enum class ColorSpace : uint8_t {
-    SRGB,
-    LinearRGB,
-    DisplayP3,
     A98RGB,
-    Lab
+    DisplayP3,
+    Lab,
+    LinearRGB,
+    SRGB,
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ColorSpace);

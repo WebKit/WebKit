@@ -33,20 +33,20 @@ namespace WebCore {
 TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
 {
     switch (colorSpace) {
-    case ColorSpace::SRGB:
-        ts << "sRGB";
-        break;
-    case ColorSpace::LinearRGB:
-        ts << "LinearRGB";
+    case ColorSpace::A98RGB:
+        ts << "a98-rgb";
         break;
     case ColorSpace::DisplayP3:
         ts << "DisplayP3";
         break;
-    case ColorSpace::A98RGB:
-        ts << "a98-rgb";
-        break;
     case ColorSpace::Lab:
         ts << "L*a*b";
+        break;
+    case ColorSpace::LinearRGB:
+        ts << "LinearRGB";
+        break;
+    case ColorSpace::SRGB:
+        ts << "sRGB";
         break;
     }
     return ts;

@@ -1403,12 +1403,13 @@ last
 // color-gamut
 p3
 rec2020
+sRGB
 
 // color() function
-sRGB
-display-p3
 a98-rgb
+display-p3
 // lab
+// sRGB
 
 // prefers-default-appearance
 prefers

@@ -32,6 +32,40 @@
 
 namespace WebCore {
 
+// A98RGB Matrices.
+
+// https://drafts.csswg.org/css-color/#color-conversion-code
+static constexpr ColorMatrix<3, 3> xyzToLinearA98RGBMatrix {
+     2.493496911941425f,  -0.9313836179191239f, -0.4027107844507168f,
+    -0.8294889695615747f,  1.7626640603183463f,  0.0236246858419436f,
+     0.0358458302437845f, -0.0761723892680418f,  0.9568845240076872f
+};
+
+// https://drafts.csswg.org/css-color/#color-conversion-code
+static constexpr ColorMatrix<3, 3> linearA98RGBToXYZMatrix {
+    0.5766690429101305f,   0.1855582379065463f,   0.1882286462349947f,
+    0.29734497525053605f,  0.6273635662554661f,   0.07529145849399788f,
+    0.02703136138641234f,  0.07068885253582723f,  0.9913375368376388f
+};
+
+// DisplayP3 Matrices.
+
+// https://drafts.csswg.org/css-color/#color-conversion-code
+static constexpr ColorMatrix<3, 3> xyzToLinearDisplayP3Matrix {
+     2.493496911941425f,  -0.9313836179191239f, -0.4027107844507168f,
+    -0.8294889695615747f,  1.7626640603183463f,  0.0236246858419436f,
+     0.0358458302437845f, -0.0761723892680418f,  0.9568845240076872f
+};
+
+// https://drafts.csswg.org/css-color/#color-conversion-code
+static constexpr ColorMatrix<3, 3> linearDisplayP3ToXYZMatrix {
+    0.4865709486482162f, 0.2656676931690931f, 0.198217285234363f,
+    0.2289745640697488f, 0.6917385218365064f, 0.079286914093745f,
+    0.0f,                0.0451133818589026f, 1.043944368900976f
+};
+
+// sRGB Matrices.
+
 // https://en.wikipedia.org/wiki/SRGB
 // http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
 static constexpr ColorMatrix<3, 3> xyzToLinearSRGBMatrix {
@@ -48,33 +82,7 @@ static constexpr ColorMatrix<3, 3> linearSRGBToXYZMatrix {
     0.0193339f,  0.1191920f,  0.9503041f
 };
 
-// https://drafts.csswg.org/css-color/#color-conversion-code
-static constexpr ColorMatrix<3, 3> xyzToLinearDisplayP3Matrix {
-     2.493496911941425f,  -0.9313836179191239f, -0.4027107844507168f,
-    -0.8294889695615747f,  1.7626640603183463f,  0.0236246858419436f,
-     0.0358458302437845f, -0.0761723892680418f,  0.9568845240076872f
-};
-
-// https://drafts.csswg.org/css-color/#color-conversion-code
-static constexpr ColorMatrix<3, 3> linearDisplayP3ToXYZMatrix {
-    0.4865709486482162f, 0.2656676931690931f, 0.198217285234363f,
-    0.2289745640697488f, 0.6917385218365064f, 0.079286914093745f,
-    0.0f,                0.0451133818589026f, 1.043944368900976f
-};
-
-// https://drafts.csswg.org/css-color/#color-conversion-code
-static constexpr ColorMatrix<3, 3> xyzToLinearA98RGBMatrix {
-     2.493496911941425f,  -0.9313836179191239f, -0.4027107844507168f,
-    -0.8294889695615747f,  1.7626640603183463f,  0.0236246858419436f,
-     0.0358458302437845f, -0.0761723892680418f,  0.9568845240076872f
-};
-
-// https://drafts.csswg.org/css-color/#color-conversion-code
-static constexpr ColorMatrix<3, 3> linearA98RGBToXYZMatrix {
-    0.5766690429101305f,   0.1855582379065463f,   0.1882286462349947f,
-    0.29734497525053605f,  0.6273635662554661f,   0.07529145849399788f,
-    0.02703136138641234f,  0.07068885253582723f,  0.9913375368376388f
-};
+// Chromatic Adaptation Matrices.
 
 // http://www.brucelindbloom.com/index.html?Eqn_ChromAdapt.html
 static constexpr ColorMatrix<3, 3> D50ToD65Matrix {
@@ -90,7 +98,29 @@ static constexpr ColorMatrix<3, 3> D65ToD50Matrix {
     -0.0092345f, 0.0150436f,  0.7521316f
 };
 
-// Gamma conversions.
+// MARK: Gamma conversions.
+
+float A98RGBTransferFunction::fromLinearClamping(float c)
+{
+    return clampTo<float>(fromLinearNonClamping(c), 0, 1);
+}
+
+float A98RGBTransferFunction::toLinearClamping(float c)
+{
+    return clampTo<float>(toLinearNonClamping(c), 0, 1);
+}
+
+float A98RGBTransferFunction::fromLinearNonClamping(float c)
+{
+    float sign = std::signbit(c) ? -1.0f : 1.0f;
+    return std::pow(std::abs(c), 256.0f / 563.0f) * sign;
+}
+
+float A98RGBTransferFunction::toLinearNonClamping(float c)
+{
+    float sign = std::signbit(c) ? -1.0f : 1.0f;
+    return std::pow(std::abs(c), 563.0f / 256.0f) * sign;
+}
 
 float SRGBTransferFunction::fromLinearClamping(float c)
 {
@@ -130,28 +160,6 @@ float SRGBTransferFunction::toLinearNonClamping(float c)
     return std::pow((c + 0.055f) / 1.055f, 2.4f) * sign;
 }
 
-float A98RGBTransferFunction::fromLinearClamping(float c)
-{
-    return clampTo<float>(fromLinearNonClamping(c), 0, 1);
-}
-
-float A98RGBTransferFunction::toLinearClamping(float c)
-{
-    return clampTo<float>(toLinearNonClamping(c), 0, 1);
-}
-
-float A98RGBTransferFunction::fromLinearNonClamping(float c)
-{
-    float sign = std::signbit(c) ? -1.0f : 1.0f;
-    return std::pow(std::abs(c), 256.0f / 563.0f) * sign;
-}
-
-float A98RGBTransferFunction::toLinearNonClamping(float c)
-{
-    float sign = std::signbit(c) ? -1.0f : 1.0f;
-    return std::pow(std::abs(c), 563.0f / 256.0f) * sign;
-}
-
 template<typename TransferFunction, typename T> static auto toLinearClamping(const T& color) -> typename T::LinearCounterpart
 {
     auto [c1, c2, c3, alpha] = color;
@@ -176,35 +184,7 @@ template<typename TransferFunction, typename T> static auto fromLinearNonClampin
     return { TransferFunction::fromLinearNonClamping(c1), TransferFunction::fromLinearNonClamping(c2), TransferFunction::fromLinearNonClamping(c3), alpha };
 }
 
-LinearSRGBA<float> toLinearSRGBA(const SRGBA<float>& color)
-{
-    return toLinearClamping<SRGBTransferFunction>(color);
-}
-
-LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const ExtendedSRGBA<float>& color)
-{
-    return toLinearNonClamping<SRGBTransferFunction>(color);
-}
-
-SRGBA<float> toSRGBA(const LinearSRGBA<float>& color)
-{
-    return fromLinearClamping<SRGBTransferFunction>(color);
-}
-
-ExtendedSRGBA<float> toExtendedSRGBA(const LinearExtendedSRGBA<float>& color)
-{
-    return fromLinearNonClamping<SRGBTransferFunction>(color);
-}
-
-LinearDisplayP3<float> toLinearDisplayP3(const DisplayP3<float>& color)
-{
-    return toLinearClamping<SRGBTransferFunction>(color);
-}
-
-DisplayP3<float> toDisplayP3(const LinearDisplayP3<float>& color)
-{
-    return fromLinearClamping<SRGBTransferFunction>(color);
-}
+// A98RGB <-> LinearA98RGB conversions.
 
 LinearA98RGB<float> toLinearA98RGB(const A98RGB<float>& color)
 {
@@ -216,30 +196,54 @@ A98RGB<float> toA98RGB(const LinearA98RGB<float>& color)
     return fromLinearClamping<A98RGBTransferFunction>(color);
 }
 
-// Matrix conversions (to and from XYZ for all linear color types).
+// DisplayP3 <-> LinearDisplayP3 conversions.
 
-// - LinearSRGBA matrix conversions.
-
-LinearSRGBA<float> toLinearSRGBA(const XYZA<float>& color)
+LinearDisplayP3<float> toLinearDisplayP3(const DisplayP3<float>& color)
 {
-    return makeFromComponentsClampingExceptAlpha<LinearSRGBA<float>>(xyzToLinearSRGBMatrix.transformedColorComponents(asColorComponents(color)));
+    return toLinearClamping<SRGBTransferFunction>(color);
 }
 
-XYZA<float> toXYZA(const LinearSRGBA<float>& color)
+DisplayP3<float> toDisplayP3(const LinearDisplayP3<float>& color)
 {
-    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(linearSRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
+    return fromLinearClamping<SRGBTransferFunction>(color);
 }
 
-// - LinearExtendedSRGBA matrix conversions.
+// ExtendedSRGBA <-> LinearExtendedSRGBA conversions.
 
-LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const XYZA<float>& color)
+LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const ExtendedSRGBA<float>& color)
 {
-    return makeFromComponentsClampingExceptAlpha<LinearExtendedSRGBA<float>>(xyzToLinearSRGBMatrix.transformedColorComponents(asColorComponents(color)));
+    return toLinearNonClamping<SRGBTransferFunction>(color);
 }
 
-XYZA<float> toXYZA(const LinearExtendedSRGBA<float>& color)
+ExtendedSRGBA<float> toExtendedSRGBA(const LinearExtendedSRGBA<float>& color)
 {
-    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(linearSRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
+    return fromLinearNonClamping<SRGBTransferFunction>(color);
+}
+
+// SRGBA <-> LinearSRGBA conversions.
+
+LinearSRGBA<float> toLinearSRGBA(const SRGBA<float>& color)
+{
+    return toLinearClamping<SRGBTransferFunction>(color);
+}
+
+SRGBA<float> toSRGBA(const LinearSRGBA<float>& color)
+{
+    return fromLinearClamping<SRGBTransferFunction>(color);
+}
+
+// MARK: Matrix conversions (to and from XYZ for all linear color types).
+
+// - LinearA98RGB matrix conversions.
+
+LinearA98RGB<float> toLinearA98RGB(const XYZA<float>& color)
+{
+    return makeFromComponentsClampingExceptAlpha<LinearA98RGB<float>>(xyzToLinearA98RGBMatrix.transformedColorComponents(asColorComponents(color)));
+}
+
+XYZA<float> toXYZA(const LinearA98RGB<float>& color)
+{
+    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(linearA98RGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
 // - LinearDisplayP3 matrix conversions.
@@ -254,19 +258,31 @@ XYZA<float> toXYZA(const LinearDisplayP3<float>& color)
     return makeFromComponentsClampingExceptAlpha<XYZA<float>>(linearDisplayP3ToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
-// - LinearA98RGB matrix conversions.
+// - LinearExtendedSRGBA matrix conversions.
 
-LinearA98RGB<float> toLinearA98RGB(const XYZA<float>& color)
+LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const XYZA<float>& color)
 {
-    return makeFromComponentsClampingExceptAlpha<LinearA98RGB<float>>(xyzToLinearA98RGBMatrix.transformedColorComponents(asColorComponents(color)));
+    return makeFromComponentsClampingExceptAlpha<LinearExtendedSRGBA<float>>(xyzToLinearSRGBMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
-XYZA<float> toXYZA(const LinearA98RGB<float>& color)
+XYZA<float> toXYZA(const LinearExtendedSRGBA<float>& color)
 {
-    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(linearA98RGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
+    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(linearSRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
-// Chromatic Adaptation conversions.
+// - LinearSRGBA matrix conversions.
+
+LinearSRGBA<float> toLinearSRGBA(const XYZA<float>& color)
+{
+    return makeFromComponentsClampingExceptAlpha<LinearSRGBA<float>>(xyzToLinearSRGBMatrix.transformedColorComponents(asColorComponents(color)));
+}
+
+XYZA<float> toXYZA(const LinearSRGBA<float>& color)
+{
+    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(linearSRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
+}
+
+// MARK: Chromatic Adaptation conversions.
 
 static XYZA<float> convertFromD50WhitePointToD65WhitePoint(const XYZA<float>& color)
 {
@@ -278,103 +294,7 @@ static XYZA<float> convertFromD65WhitePointToD50WhitePoint(const XYZA<float>& co
     return makeFromComponentsClampingExceptAlpha<XYZA<float>>(D65ToD50Matrix.transformedColorComponents(asColorComponents(color)));
 }
 
-// Lab conversions.
-
-static constexpr float LABe = 216.0f / 24389.0f;
-static constexpr float LABk = 24389.0f / 27.0f;
-static constexpr float D50WhiteValues[] = { 0.96422f, 1.0f, 0.82521f };
-
-XYZA<float> toXYZA(const Lab<float>& color)
-{
-    float f1 = (color.lightness + 16.0f) / 116.0f;
-    float f0 = f1 + (color.a / 500.0f);
-    float f2 = f1 - (color.b / 200.0f);
-
-    auto computeXAndZ = [](float t) {
-        float tCubed = t * t * t;
-        if (tCubed > LABe)
-            return tCubed;
-
-        return (116.0f * t - 16.0f) / LABk;
-    };
-
-    auto computeY = [](float t) {
-        if (t > (LABk * LABe)) {
-            float value = (t + 16.0) / 116.0;
-            return value * value * value;
-        }
-
-        return t / LABk;
-    };
-
-    float x = D50WhiteValues[0] * computeXAndZ(f0);
-    float y = D50WhiteValues[1] * computeY(color.lightness);
-    float z = D50WhiteValues[2] * computeXAndZ(f2);
-
-    XYZA<float> result { x, y, z, color.alpha };
-
-    // We expect XYZA colors to be using the D65 white point, unlike Lab, which uses a
-    // D50 white point, so as a final step, use the Bradford transform to convert the
-    // resulting XYZA color to a D65 white point.
-    return convertFromD50WhitePointToD65WhitePoint(result);
-}
-
-Lab<float> toLab(const XYZA<float>& color)
-{
-    // We expect XYZA colors to be using the D65 white point, unlike Lab, which uses a
-    // D50 white point, so as a first step, use the Bradford transform to convert the
-    // incoming XYZA color to D50 white point.
-    auto colorWithD50WhitePoint = convertFromD65WhitePointToD50WhitePoint(color);
-
-    float x = colorWithD50WhitePoint.x / D50WhiteValues[0];
-    float y = colorWithD50WhitePoint.y / D50WhiteValues[1];
-    float z = colorWithD50WhitePoint.z / D50WhiteValues[2];
-
-    auto fTransform = [](float value) {
-        return value > LABe ? std::cbrt(value) : (LABk * value + 16.0f) / 116.0f;
-    };
-
-    float f0 = fTransform(x);
-    float f1 = fTransform(y);
-    float f2 = fTransform(z);
-
-    float lightness = (116.0f * f1) - 16.0f;
-    float a = 500.0f * (f0 - f1);
-    float b = 200.0f * (f1 - f2);
-
-    return { lightness, a, b, colorWithD50WhitePoint.alpha };
-}
-
-
-// LCH conversions.
-
-LCHA<float> toLCHA(const Lab<float>& color)
-{
-    // https://www.w3.org/TR/css-color-4/#lab-to-lch
-    float hue = rad2deg(atan2(color.b, color.a));
-
-    return {
-        color.lightness,
-        std::hypot(color.a, color.b),
-        hue >= 0 ? hue : hue + 360,
-        color.alpha
-    };
-}
-
-Lab<float> toLab(const LCHA<float>& color)
-{
-    // https://www.w3.org/TR/css-color-4/#lch-to-lab
-    float hueAngleRadians = deg2rad(color.hue);
-
-    return {
-        color.lightness,
-        color.chroma * std::cos(hueAngleRadians),
-        color.chroma * std::sin(hueAngleRadians),
-        color.alpha
-    };
-}
-
-// HSL conversions.
+// MARK: HSL conversions.
 
 HSLA<float> toHSLA(const SRGBA<float>& color)
 {
@@ -461,31 +381,114 @@ SRGBA<float> toSRGBA(const HSLA<float>& color)
     };
 }
 
+// MARK: Lab conversions.
 
-// Combination conversions (constructed from more basic conversions above).
+static constexpr float LABe = 216.0f / 24389.0f;
+static constexpr float LABk = 24389.0f / 27.0f;
+static constexpr float D50WhiteValues[] = { 0.96422f, 1.0f, 0.82521f };
 
-// - SRGB combination functions.
-
-XYZA<float> toXYZA(const SRGBA<float>& color)
+XYZA<float> toXYZA(const Lab<float>& color)
 {
-    return toXYZA(toLinearSRGBA(color));
+    float f1 = (color.lightness + 16.0f) / 116.0f;
+    float f0 = f1 + (color.a / 500.0f);
+    float f2 = f1 - (color.b / 200.0f);
+
+    auto computeXAndZ = [](float t) {
+        float tCubed = t * t * t;
+        if (tCubed > LABe)
+            return tCubed;
+
+        return (116.0f * t - 16.0f) / LABk;
+    };
+
+    auto computeY = [](float t) {
+        if (t > (LABk * LABe)) {
+            float value = (t + 16.0) / 116.0;
+            return value * value * value;
+        }
+
+        return t / LABk;
+    };
+
+    float x = D50WhiteValues[0] * computeXAndZ(f0);
+    float y = D50WhiteValues[1] * computeY(color.lightness);
+    float z = D50WhiteValues[2] * computeXAndZ(f2);
+
+    XYZA<float> result { x, y, z, color.alpha };
+
+    // We expect XYZA colors to be using the D65 white point, unlike Lab, which uses a
+    // D50 white point, so as a final step, use the Bradford transform to convert the
+    // resulting XYZA color to a D65 white point.
+    return convertFromD50WhitePointToD65WhitePoint(result);
 }
 
-SRGBA<float> toSRGBA(const XYZA<float>& color)
+Lab<float> toLab(const XYZA<float>& color)
 {
-    return toSRGBA(toLinearSRGBA(color));
+    // We expect XYZA colors to be using the D65 white point, unlike Lab, which uses a
+    // D50 white point, so as a first step, use the Bradford transform to convert the
+    // incoming XYZA color to D50 white point.
+    auto colorWithD50WhitePoint = convertFromD65WhitePointToD50WhitePoint(color);
+
+    float x = colorWithD50WhitePoint.x / D50WhiteValues[0];
+    float y = colorWithD50WhitePoint.y / D50WhiteValues[1];
+    float z = colorWithD50WhitePoint.z / D50WhiteValues[2];
+
+    auto fTransform = [](float value) {
+        return value > LABe ? std::cbrt(value) : (LABk * value + 16.0f) / 116.0f;
+    };
+
+    float f0 = fTransform(x);
+    float f1 = fTransform(y);
+    float f2 = fTransform(z);
+
+    float lightness = (116.0f * f1) - 16.0f;
+    float a = 500.0f * (f0 - f1);
+    float b = 200.0f * (f1 - f2);
+
+    return { lightness, a, b, colorWithD50WhitePoint.alpha };
 }
 
-// - ExtendedSRGB combination functions.
 
-XYZA<float> toXYZA(const ExtendedSRGBA<float>& color)
+// MARK: LCH conversions.
+
+LCHA<float> toLCHA(const Lab<float>& color)
 {
-    return toXYZA(toLinearExtendedSRGBA(color));
+    // https://www.w3.org/TR/css-color-4/#lab-to-lch
+    float hue = rad2deg(atan2(color.b, color.a));
+
+    return {
+        color.lightness,
+        std::hypot(color.a, color.b),
+        hue >= 0 ? hue : hue + 360,
+        color.alpha
+    };
 }
 
-ExtendedSRGBA<float> toExtendedSRGBA(const XYZA<float>& color)
+Lab<float> toLab(const LCHA<float>& color)
 {
-    return toExtendedSRGBA(toLinearExtendedSRGBA(color));
+    // https://www.w3.org/TR/css-color-4/#lch-to-lab
+    float hueAngleRadians = deg2rad(color.hue);
+
+    return {
+        color.lightness,
+        color.chroma * std::cos(hueAngleRadians),
+        color.chroma * std::sin(hueAngleRadians),
+        color.alpha
+    };
+}
+
+// MARK: Combination conversions (constructed from more basic conversions above).
+
+// - A98RGB combination functions.
+
+XYZA<float> toXYZA(const A98RGB<float>& color)
+{
+    return toXYZA(toLinearA98RGB(color));
+}
+
+A98RGB<float> toA98RGB(const XYZA<float>& color)
+{
+    return toA98RGB(toLinearA98RGB(color));
 }
 
 // - DisplayP3 combination functions.
@@ -500,16 +503,28 @@ DisplayP3<float> toDisplayP3(const XYZA<float>& color)
     return toDisplayP3(toLinearDisplayP3(color));
 }
 
-// - A98RGB combination functions.
+// - ExtendedSRGB combination functions.
 
-XYZA<float> toXYZA(const A98RGB<float>& color)
+XYZA<float> toXYZA(const ExtendedSRGBA<float>& color)
 {
-    return toXYZA(toLinearA98RGB(color));
+    return toXYZA(toLinearExtendedSRGBA(color));
 }
 
-A98RGB<float> toA98RGB(const XYZA<float>& color)
+ExtendedSRGBA<float> toExtendedSRGBA(const XYZA<float>& color)
 {
-    return toA98RGB(toLinearA98RGB(color));
+    return toExtendedSRGBA(toLinearExtendedSRGBA(color));
+}
+
+// - HSLA combination functions.
+
+XYZA<float> toXYZA(const HSLA<float>& color)
+{
+    return toXYZA(toSRGBA(color));
+}
+
+HSLA<float> toHSLA(const XYZA<float>& color)
+{
+    return toHSLA(toSRGBA(color));
 }
 
 // - LCHA combination functions.
@@ -524,16 +539,16 @@ LCHA<float> toLCHA(const XYZA<float>& color)
     return toLCHA(toLab(color));
 }
 
-// - HSLA combination functions.
+// - SRGB combination functions.
 
-XYZA<float> toXYZA(const HSLA<float>& color)
+XYZA<float> toXYZA(const SRGBA<float>& color)
 {
-    return toXYZA(toSRGBA(color));
+    return toXYZA(toLinearSRGBA(color));
 }
 
-HSLA<float> toHSLA(const XYZA<float>& color)
+SRGBA<float> toSRGBA(const XYZA<float>& color)
 {
-    return toHSLA(toSRGBA(color));
+    return toSRGBA(toLinearSRGBA(color));
 }
 
 } // namespace WebCore

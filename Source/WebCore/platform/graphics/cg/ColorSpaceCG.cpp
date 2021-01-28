@@ -33,55 +33,6 @@
 
 namespace WebCore {
 
-CGColorSpaceRef sRGBColorSpaceRef()
-{
-    static CGColorSpaceRef sRGBColorSpace;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-#if PLATFORM(WIN)
-        // Out-of-date CG installations will not honor kCGColorSpaceSRGB. This logic avoids
-        // causing a crash under those conditions. Since the default color space in Windows
-        // is sRGB, this all works out nicely.
-        // FIXME: Is this still needed? rdar://problem/15213515 was fixed.
-        sRGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-        if (!sRGBColorSpace)
-            sRGBColorSpace = CGColorSpaceCreateDeviceRGB();
-#else
-        sRGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-#endif // PLATFORM(WIN)
-    });
-    return sRGBColorSpace;
-}
-
-CGColorSpaceRef linearRGBColorSpaceRef()
-{
-    static CGColorSpaceRef linearRGBColorSpace;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-#if PLATFORM(WIN)
-        // FIXME: Windows should be able to use linear sRGB, this is tracked by http://webkit.org/b/80000.
-        linearRGBColorSpace = sRGBColorSpaceRef();
-#else
-        linearRGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceLinearSRGB);
-#endif
-    });
-    return linearRGBColorSpace;
-}
-
-CGColorSpaceRef displayP3ColorSpaceRef()
-{
-    static CGColorSpaceRef displayP3ColorSpace;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-#if PLATFORM(COCOA)
-        displayP3ColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceDisplayP3);
-#else
-        displayP3ColorSpace = sRGBColorSpaceRef();
-#endif
-    });
-    return displayP3ColorSpace;
-}
-
 CGColorSpaceRef a98RGBColorSpaceRef()
 {
     static CGColorSpaceRef a98RGBColorSpace;
@@ -96,10 +47,18 @@ CGColorSpaceRef a98RGBColorSpaceRef()
     return a98RGBColorSpace;
 }
 
-CGColorSpaceRef labColorSpaceRef()
+CGColorSpaceRef displayP3ColorSpaceRef()
 {
-    // FIXME: Add support for conversion to Lab on supported platforms.
-    return sRGBColorSpaceRef();
+    static CGColorSpaceRef displayP3ColorSpace;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+#if PLATFORM(COCOA)
+        displayP3ColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceDisplayP3);
+#else
+        displayP3ColorSpace = sRGBColorSpaceRef();
+#endif
+    });
+    return displayP3ColorSpace;
 }
 
 CGColorSpaceRef extendedSRGBColorSpaceRef()
@@ -118,6 +77,47 @@ CGColorSpaceRef extendedSRGBColorSpaceRef()
         extendedSRGBColorSpace = colorSpace;
     });
     return extendedSRGBColorSpace;
+}
+
+CGColorSpaceRef labColorSpaceRef()
+{
+    // FIXME: Add support for conversion to Lab on supported platforms.
+    return sRGBColorSpaceRef();
+}
+
+CGColorSpaceRef linearRGBColorSpaceRef()
+{
+    static CGColorSpaceRef linearRGBColorSpace;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+#if PLATFORM(WIN)
+        // FIXME: Windows should be able to use linear sRGB, this is tracked by http://webkit.org/b/80000.
+        linearRGBColorSpace = sRGBColorSpaceRef();
+#else
+        linearRGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceLinearSRGB);
+#endif
+    });
+    return linearRGBColorSpace;
+}
+
+CGColorSpaceRef sRGBColorSpaceRef()
+{
+    static CGColorSpaceRef sRGBColorSpace;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+#if PLATFORM(WIN)
+        // Out-of-date CG installations will not honor kCGColorSpaceSRGB. This logic avoids
+        // causing a crash under those conditions. Since the default color space in Windows
+        // is sRGB, this all works out nicely.
+        // FIXME: Is this still needed? rdar://problem/15213515 was fixed.
+        sRGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+        if (!sRGBColorSpace)
+            sRGBColorSpace = CGColorSpaceCreateDeviceRGB();
+#else
+        sRGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+#endif // PLATFORM(WIN)
+    });
+    return sRGBColorSpace;
 }
 
 }

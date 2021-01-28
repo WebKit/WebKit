@@ -31,14 +31,14 @@ namespace WebCore {
 
 // Transfer functions for colors that can be gamma encoded.
 
-struct SRGBTransferFunction {
+struct A98RGBTransferFunction {
     static float fromLinearClamping(float);
     static float toLinearClamping(float);
     static float fromLinearNonClamping(float);
     static float toLinearNonClamping(float);
 };
 
-struct A98RGBTransferFunction {
+struct SRGBTransferFunction {
     static float fromLinearClamping(float);
     static float toLinearClamping(float);
     static float fromLinearNonClamping(float);
@@ -53,30 +53,11 @@ struct A98RGBTransferFunction {
 // some may be integral to the base conversion.
 
 
-// SRGBA
-WEBCORE_EXPORT XYZA<float> toXYZA(const SRGBA<float>&);
-WEBCORE_EXPORT SRGBA<float> toSRGBA(const XYZA<float>&);
+// A98RGB
+WEBCORE_EXPORT XYZA<float> toXYZA(const A98RGB<float>&);
+WEBCORE_EXPORT A98RGB<float> toA98RGB(const XYZA<float>&);
 // Additions
-WEBCORE_EXPORT LinearSRGBA<float> toLinearSRGBA(const SRGBA<float>&);
-WEBCORE_EXPORT HSLA<float> toHSLA(const SRGBA<float>&);
-
-// ExtendedSRGBA
-WEBCORE_EXPORT XYZA<float> toXYZA(const ExtendedSRGBA<float>&);
-WEBCORE_EXPORT ExtendedSRGBA<float> toExtendedSRGBA(const XYZA<float>&);
-// Additions
-WEBCORE_EXPORT LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const ExtendedSRGBA<float>&);
-
-// LinearSRGBA
-WEBCORE_EXPORT XYZA<float> toXYZA(const LinearSRGBA<float>&);
-WEBCORE_EXPORT LinearSRGBA<float> toLinearSRGBA(const XYZA<float>&);
-// Additions
-WEBCORE_EXPORT SRGBA<float> toSRGBA(const LinearSRGBA<float>&);
-
-// LinearExtendedSRGBA
-WEBCORE_EXPORT XYZA<float> toXYZA(const LinearExtendedSRGBA<float>&);
-WEBCORE_EXPORT LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const XYZA<float>&);
-// Additions
-WEBCORE_EXPORT ExtendedSRGBA<float> toExtendedSRGBA(const LinearExtendedSRGBA<float>&);
+WEBCORE_EXPORT LinearA98RGB<float> toLinearA98RGB(const A98RGB<float>&);
 
 // DisplayP3
 WEBCORE_EXPORT XYZA<float> toXYZA(const DisplayP3<float>&);
@@ -84,23 +65,11 @@ WEBCORE_EXPORT DisplayP3<float> toDisplayP3(const XYZA<float>&);
 // Additions
 WEBCORE_EXPORT LinearDisplayP3<float> toLinearDisplayP3(const DisplayP3<float>&);
 
-// LinearDisplayP3
-WEBCORE_EXPORT XYZA<float> toXYZA(const LinearDisplayP3<float>&);
-WEBCORE_EXPORT LinearDisplayP3<float> toLinearDisplayP3(const XYZA<float>&);
+// ExtendedSRGBA
+WEBCORE_EXPORT XYZA<float> toXYZA(const ExtendedSRGBA<float>&);
+WEBCORE_EXPORT ExtendedSRGBA<float> toExtendedSRGBA(const XYZA<float>&);
 // Additions
-WEBCORE_EXPORT DisplayP3<float> toDisplayP3(const LinearDisplayP3<float>&);
-
-// Lab
-WEBCORE_EXPORT XYZA<float> toXYZA(const Lab<float>&);
-WEBCORE_EXPORT Lab<float> toLab(const XYZA<float>&);
-// Additions
-WEBCORE_EXPORT LCHA<float> toLCHA(const Lab<float>&);
-
-// LCHA
-WEBCORE_EXPORT XYZA<float> toXYZA(const LCHA<float>&);
-WEBCORE_EXPORT LCHA<float> toLCHA(const XYZA<float>&);
-// Additions
-WEBCORE_EXPORT Lab<float> toLab(const LCHA<float>&);
+WEBCORE_EXPORT LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const ExtendedSRGBA<float>&);
 
 // HSLA
 WEBCORE_EXPORT XYZA<float> toXYZA(const HSLA<float>&);
@@ -108,11 +77,17 @@ WEBCORE_EXPORT HSLA<float> toHSLA(const XYZA<float>&);
 // Additions
 WEBCORE_EXPORT SRGBA<float> toSRGBA(const HSLA<float>&);
 
-// A98RGB
-WEBCORE_EXPORT XYZA<float> toXYZA(const A98RGB<float>&);
-WEBCORE_EXPORT A98RGB<float> toA98RGB(const XYZA<float>&);
+// LCHA
+WEBCORE_EXPORT XYZA<float> toXYZA(const LCHA<float>&);
+WEBCORE_EXPORT LCHA<float> toLCHA(const XYZA<float>&);
 // Additions
-WEBCORE_EXPORT LinearA98RGB<float> toLinearA98RGB(const A98RGB<float>&);
+WEBCORE_EXPORT Lab<float> toLab(const LCHA<float>&);
+
+// Lab
+WEBCORE_EXPORT XYZA<float> toXYZA(const Lab<float>&);
+WEBCORE_EXPORT Lab<float> toLab(const XYZA<float>&);
+// Additions
+WEBCORE_EXPORT LCHA<float> toLCHA(const Lab<float>&);
 
 // LinearA98RGB
 WEBCORE_EXPORT XYZA<float> toXYZA(const LinearA98RGB<float>&);
@@ -120,20 +95,46 @@ WEBCORE_EXPORT LinearA98RGB<float> toLinearA98RGB(const XYZA<float>&);
 // Additions
 WEBCORE_EXPORT A98RGB<float> toA98RGB(const LinearA98RGB<float>& color);
 
+// LinearDisplayP3
+WEBCORE_EXPORT XYZA<float> toXYZA(const LinearDisplayP3<float>&);
+WEBCORE_EXPORT LinearDisplayP3<float> toLinearDisplayP3(const XYZA<float>&);
+// Additions
+WEBCORE_EXPORT DisplayP3<float> toDisplayP3(const LinearDisplayP3<float>&);
+
+// LinearExtendedSRGBA
+WEBCORE_EXPORT XYZA<float> toXYZA(const LinearExtendedSRGBA<float>&);
+WEBCORE_EXPORT LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const XYZA<float>&);
+// Additions
+WEBCORE_EXPORT ExtendedSRGBA<float> toExtendedSRGBA(const LinearExtendedSRGBA<float>&);
+
+// LinearSRGBA
+WEBCORE_EXPORT XYZA<float> toXYZA(const LinearSRGBA<float>&);
+WEBCORE_EXPORT LinearSRGBA<float> toLinearSRGBA(const XYZA<float>&);
+// Additions
+WEBCORE_EXPORT SRGBA<float> toSRGBA(const LinearSRGBA<float>&);
+
+// SRGBA
+WEBCORE_EXPORT XYZA<float> toXYZA(const SRGBA<float>&);
+WEBCORE_EXPORT SRGBA<float> toSRGBA(const XYZA<float>&);
+// Additions
+WEBCORE_EXPORT LinearSRGBA<float> toLinearSRGBA(const SRGBA<float>&);
+WEBCORE_EXPORT HSLA<float> toHSLA(const SRGBA<float>&);
+
 
 // Identity conversions (useful for generic contexts).
 
-constexpr SRGBA<float> toSRGBA(const SRGBA<float>& color) { return color; }
-constexpr ExtendedSRGBA<float> toExtendedSRGBA(const ExtendedSRGBA<float>& color) { return color; }
-constexpr LinearSRGBA<float> toLinearSRGBA(const LinearSRGBA<float>& color) { return color; }
-constexpr LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const LinearExtendedSRGBA<float>& color) { return color; }
-constexpr DisplayP3<float> toDisplayP3(const DisplayP3<float>& color) { return color; }
-constexpr LinearDisplayP3<float> toLinearDisplayP3(const LinearDisplayP3<float>& color) { return color; }
-constexpr Lab<float> toLab(const Lab<float>& color) { return color; }
-constexpr LCHA<float> toLCHA(const LCHA<float>& color) { return color; }
-constexpr HSLA<float> toHSLA(const HSLA<float>& color) { return color; }
-constexpr XYZA<float> toXYZA(const XYZA<float>& color) { return color; }
 constexpr A98RGB<float> toA98RGB(const A98RGB<float>& color) { return color; }
+constexpr DisplayP3<float> toDisplayP3(const DisplayP3<float>& color) { return color; }
+constexpr ExtendedSRGBA<float> toExtendedSRGBA(const ExtendedSRGBA<float>& color) { return color; }
+constexpr HSLA<float> toHSLA(const HSLA<float>& color) { return color; }
+constexpr LCHA<float> toLCHA(const LCHA<float>& color) { return color; }
+constexpr Lab<float> toLab(const Lab<float>& color) { return color; }
+constexpr LinearA98RGB<float> toLinearA98RGB(const LinearA98RGB<float>& color) { return color; }
+constexpr LinearDisplayP3<float> toLinearDisplayP3(const LinearDisplayP3<float>& color) { return color; }
+constexpr LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const LinearExtendedSRGBA<float>& color) { return color; }
+constexpr LinearSRGBA<float> toLinearSRGBA(const LinearSRGBA<float>& color) { return color; }
+constexpr SRGBA<float> toSRGBA(const SRGBA<float>& color) { return color; }
+constexpr XYZA<float> toXYZA(const XYZA<float>& color) { return color; }
 
 
 // Fallback conversions.
@@ -141,24 +142,9 @@ constexpr A98RGB<float> toA98RGB(const A98RGB<float>& color) { return color; }
 // All types are required to have a conversion to XYZA, so these are guaranteed to work if
 // another overload is not already provided.
 
-template<typename T> SRGBA<float> toSRGBA(const T& color)
+template<typename T> A98RGB<float> toA98RGB(const T& color)
 {
-    return toSRGBA(toXYZA(color));
-}
-
-template<typename T> ExtendedSRGBA<float> toExtendedSRGBA(const T& color)
-{
-    return toExtendedSRGBA(toXYZA(color));
-}
-
-template<typename T> LinearSRGBA<float> toLinearSRGBA(const T& color)
-{
-    return toLinearSRGBA(toXYZA(color));
-}
-
-template<typename T> LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const T& color)
-{
-    return toLinearExtendedSRGBA(toXYZA(color));
+    return toA98RGB(toXYZA(color));
 }
 
 template<typename T> DisplayP3<float> toDisplayP3(const T& color)
@@ -166,19 +152,9 @@ template<typename T> DisplayP3<float> toDisplayP3(const T& color)
     return toDisplayP3(toXYZA(color));
 }
 
-template<typename T> LinearDisplayP3<float> toLinearDisplayP3(const T& color)
+template<typename T> ExtendedSRGBA<float> toExtendedSRGBA(const T& color)
 {
-    return toLinearDisplayP3(toXYZA(color));
-}
-
-template<typename T> Lab<float> toLab(const T& color)
-{
-    return toLab(toXYZA(color));
-}
-
-template<typename T> LCHA<float> toLCHA(const T& color)
-{
-    return toLCHA(toXYZA(color));
+    return toExtendedSRGBA(toXYZA(color));
 }
 
 template<typename T> HSLA<float> toHSLA(const T& color)
@@ -186,9 +162,14 @@ template<typename T> HSLA<float> toHSLA(const T& color)
     return toHSLA(toXYZA(color));
 }
 
-template<typename T> A98RGB<float> toA98RGB(const T& color)
+template<typename T> LCHA<float> toLCHA(const T& color)
 {
-    return toA98RGB(toXYZA(color));
+    return toLCHA(toXYZA(color));
+}
+
+template<typename T> Lab<float> toLab(const T& color)
+{
+    return toLab(toXYZA(color));
 }
 
 template<typename T> LinearA98RGB<float> toLinearA98RGB(const T& color)
@@ -196,20 +177,40 @@ template<typename T> LinearA98RGB<float> toLinearA98RGB(const T& color)
     return toLinearA98RGB(toXYZA(color));
 }
 
+template<typename T> LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const T& color)
+{
+    return toLinearExtendedSRGBA(toXYZA(color));
+}
+
+template<typename T> LinearDisplayP3<float> toLinearDisplayP3(const T& color)
+{
+    return toLinearDisplayP3(toXYZA(color));
+}
+
+template<typename T> LinearSRGBA<float> toLinearSRGBA(const T& color)
+{
+    return toLinearSRGBA(toXYZA(color));
+}
+
+template<typename T> SRGBA<float> toSRGBA(const T& color)
+{
+    return toSRGBA(toXYZA(color));
+}
+
 
 template<typename T, typename Functor> constexpr decltype(auto) callWithColorType(const ColorComponents<T>& components, ColorSpace colorSpace, Functor&& functor)
 {
     switch (colorSpace) {
-    case ColorSpace::SRGB:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<SRGBA<T>>(components));
-    case ColorSpace::LinearRGB:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<LinearSRGBA<T>>(components));
-    case ColorSpace::DisplayP3:
-        return std::invoke(std::forward<Functor>(functor), makeFromComponents<DisplayP3<T>>(components));
     case ColorSpace::A98RGB:
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<A98RGB<T>>(components));
+    case ColorSpace::DisplayP3:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<DisplayP3<T>>(components));
     case ColorSpace::Lab:
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<Lab<T>>(components));
+    case ColorSpace::LinearRGB:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<LinearSRGBA<T>>(components));
+    case ColorSpace::SRGB:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<SRGBA<T>>(components));
     }
 
     ASSERT_NOT_REACHED();
