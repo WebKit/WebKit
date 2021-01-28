@@ -1,3 +1,22 @@
+2021-01-28  Alicia Boya García  <aboya@igalia.com>
+
+        [GTK] run-gtk-tests: Ensure correct count when subtests are specified
+        https://bugs.webkit.org/show_bug.cgi?id=221049
+
+        Reviewed by Adrian Perez de Castro.
+
+        Currently the code of run-gtk-tests adds the number of skipped tests
+        to the count of total tests. That computation failed to take into
+        account the case where specific subtests are run (by means of passing
+        the -p argument), instead of the full test suite.
+
+        This patch fixes that, only adding to "total tests" those skipped
+        subtests that were also specified with the -p argument when using that
+        mode.
+
+        * glib/api_test_runner.py:
+        (TestRunner.run_tests):
+
 2021-01-28  Lauro Moura  <lmoura@igalia.com>
 
         [Flatpak SDK] Avoid "Invalid byte sequence in conversion input" errors and other encoding issues

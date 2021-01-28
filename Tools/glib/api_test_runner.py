@@ -301,7 +301,7 @@ class TestRunner(object):
             subtests = self._options.subtests
             for test in self._tests:
                 skipped_subtests = self._test_cases_to_skip(test)
-                number_of_total_tests += len(skipped_subtests)
+                number_of_total_tests += len(skipped_subtests if not subtests else set(skipped_subtests).intersection(subtests))
                 results = self._run_test(test, subtests, skipped_subtests)
                 if len(results) == 0:
                     # No subtests were emitted, either the test binary didn't exist, or we don't know how to run it, or it crashed.
