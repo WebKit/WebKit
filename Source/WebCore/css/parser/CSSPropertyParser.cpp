@@ -1235,6 +1235,13 @@ static RefPtr<CSSValue> consumeTextIndent(CSSParserTokenRange& range, CSSParserM
     return list;
 }
 
+static RefPtr<CSSValue> consumeScrollPadding(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+{
+    if (range.peek().id() == CSSValueAuto)
+        return consumeIdent(range);
+    return consumeLengthOrPercent(range, cssParserMode, ValueRangeNonNegative);
+}
+
 static bool validWidthOrHeightKeyword(CSSValueID id, const CSSParserContext& /*context*/)
 {
     if (id == CSSValueIntrinsic || id == CSSValueMinIntrinsic || id == CSSValueMinContent || id == CSSValueWebkitMinContent || id == CSSValueMaxContent || id == CSSValueWebkitMaxContent || id == CSSValueWebkitFillAvailable || id == CSSValueFitContent || id == CSSValueWebkitFitContent) {
@@ -4141,12 +4148,20 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyScrollMarginLeft:
     case CSSPropertyScrollMarginRight:
     case CSSPropertyScrollMarginTop:
+    case CSSPropertyScrollMarginInlineStart:
+    case CSSPropertyScrollMarginInlineEnd:
+    case CSSPropertyScrollMarginBlockStart:
+    case CSSPropertyScrollMarginBlockEnd:
         return consumeLength(m_range, m_context.mode, ValueRangeAll);
     case CSSPropertyScrollPaddingBottom:
     case CSSPropertyScrollPaddingLeft:
     case CSSPropertyScrollPaddingRight:
     case CSSPropertyScrollPaddingTop:
-        return consumeLengthOrPercent(m_range, m_context.mode, ValueRangeAll);
+    case CSSPropertyScrollPaddingInlineStart:
+    case CSSPropertyScrollPaddingInlineEnd:
+    case CSSPropertyScrollPaddingBlockStart:
+    case CSSPropertyScrollPaddingBlockEnd:
+        return consumeScrollPadding(m_range, m_context.mode);
 #if ENABLE(CSS_SCROLL_SNAP)
     case CSSPropertyScrollSnapAlign:
         return consumeScrollSnapAlign(m_range);
@@ -5864,8 +5879,16 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consume2ValueShorthand(paddingInlineShorthand(), important);
     case CSSPropertyScrollMargin:
         return consume4ValueShorthand(scrollMarginShorthand(), important);
+    case CSSPropertyScrollMarginBlock:
+        return consume2ValueShorthand(scrollMarginBlockShorthand(), important);
+    case CSSPropertyScrollMarginInline:
+        return consume2ValueShorthand(scrollMarginInlineShorthand(), important);
     case CSSPropertyScrollPadding:
         return consume4ValueShorthand(scrollPaddingShorthand(), important);
+    case CSSPropertyScrollPaddingBlock:
+        return consume2ValueShorthand(scrollPaddingBlockShorthand(), important);
+    case CSSPropertyScrollPaddingInline:
+        return consume2ValueShorthand(scrollPaddingInlineShorthand(), important);
     case CSSPropertyWebkitTextEmphasis:
         return consumeShorthandGreedily(webkitTextEmphasisShorthand(), important);
     case CSSPropertyOutline:

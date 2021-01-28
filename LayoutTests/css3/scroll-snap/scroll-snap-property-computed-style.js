@@ -50,10 +50,10 @@ testComputedScrollSnapRule("two values", "scroll-snap-align", "start end", "star
 
 // Test the scroll-padding property
 // Invalid declarations
-testComputedScrollSnapRule("invalid scroll padding", "scroll-padding", "potato", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
-testComputedScrollSnapRule("empty string", "scroll-padding", "", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
-testComputedScrollSnapRule("too many values", "scroll-padding", "1px 2px 3px 4px 5px", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
-testComputedScrollSnapRule("attempt to use auto", "scroll-padding", "auto auto", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
+testComputedScrollSnapRule("invalid scroll padding", "scroll-padding", "potato", "auto", { top: "auto", left: "auto", right: "auto", bottom: "auto" });
+testComputedScrollSnapRule("empty string", "scroll-padding", "", "auto", { top: "auto", left: "auto", right: "auto", bottom: "auto" });
+testComputedScrollSnapRule("too many values", "scroll-padding", "1px 2px 3px 4px 5px", "auto", { top: "auto", left: "auto", right: "auto", bottom: "auto" });
+testComputedScrollSnapRule("attempt to use auto", "scroll-padding", "auto auto", "auto", { top: "auto", left: "auto", right: "auto", bottom: "auto" });
 // Valid declarations
 testComputedScrollSnapRule("single length", "scroll-padding", "10px", "10px", { top: "10px", left: "10px", right: "10px", bottom: "10px" });
 testComputedScrollSnapRule("two percentages", "scroll-padding", "10% 20%", "10% 20%", { top: "10%", left: "20%", right: "20%", bottom: "10%" });
@@ -65,7 +65,7 @@ testComputedScrollSnapRule("subpixel values", "scroll-padding", "10.4375px 6.5px
 
 // Test the scroll-snap-margin property
 // Invalid declarations
-testComputedScrollSnapRule("invalid scroll padding", "scroll-snap-margin", "potato", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
+testComputedScrollSnapRule("invalid scroll margin", "scroll-snap-margin", "potato", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
 testComputedScrollSnapRule("empty string", "scroll-snap-margin", "", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
 testComputedScrollSnapRule("too many values", "scroll-snap-margin", "1px 2px 3px 4px 5px", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
 testComputedScrollSnapRule("attempt to use auto", "scroll-snap-margin", "auto auto", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });

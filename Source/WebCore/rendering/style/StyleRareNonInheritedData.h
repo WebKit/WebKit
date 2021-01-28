@@ -132,7 +132,7 @@ public:
     DataRef<StyleGridItemData> gridItem;
 
     LengthBox scrollMargin { 0, 0, 0, 0 };
-    LengthBox scrollPadding { 0, 0, 0, 0 };
+    LengthBox scrollPadding { Length(Auto), Length(Auto), Length(Auto), Length(Auto) };
 #if ENABLE(CSS_SCROLL_SNAP)
     ScrollSnapType scrollSnapType;
     ScrollSnapAlign scrollSnapAlign;

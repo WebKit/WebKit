@@ -171,6 +171,22 @@ CSSPropertyID CSSProperty::resolveDirectionAwareProperty(CSSPropertyID propertyI
         return resolveToPhysicalProperty(direction, writingMode, LogicalBoxCorner::EndStart, borderRadiusShorthand());
     case CSSPropertyBorderEndEndRadius:
         return resolveToPhysicalProperty(direction, writingMode, LogicalBoxCorner::EndEnd, borderRadiusShorthand());
+    case CSSPropertyScrollMarginInlineStart:
+        return resolveToPhysicalProperty(direction, writingMode, LogicalBoxSide::Start, scrollMarginShorthand());
+    case CSSPropertyScrollMarginInlineEnd:
+        return resolveToPhysicalProperty(direction, writingMode, LogicalBoxSide::End, scrollMarginShorthand());
+    case CSSPropertyScrollMarginBlockStart:
+        return resolveToPhysicalProperty(direction, writingMode, LogicalBoxSide::Before, scrollMarginShorthand());
+    case CSSPropertyScrollMarginBlockEnd:
+        return resolveToPhysicalProperty(direction, writingMode, LogicalBoxSide::After, scrollMarginShorthand());
+    case CSSPropertyScrollPaddingInlineStart:
+        return resolveToPhysicalProperty(direction, writingMode, LogicalBoxSide::Start, scrollPaddingShorthand());
+    case CSSPropertyScrollPaddingInlineEnd:
+        return resolveToPhysicalProperty(direction, writingMode, LogicalBoxSide::End, scrollPaddingShorthand());
+    case CSSPropertyScrollPaddingBlockStart:
+        return resolveToPhysicalProperty(direction, writingMode, LogicalBoxSide::Before, scrollPaddingShorthand());
+    case CSSPropertyScrollPaddingBlockEnd:
+        return resolveToPhysicalProperty(direction, writingMode, LogicalBoxSide::After, scrollPaddingShorthand());
     default:
         return propertyID;
     }
@@ -229,6 +245,14 @@ bool CSSProperty::isDirectionAwareProperty(CSSPropertyID propertyID)
     case CSSPropertyBorderStartEndRadius:
     case CSSPropertyBorderEndStartRadius:
     case CSSPropertyBorderEndEndRadius:
+    case CSSPropertyScrollMarginInlineStart:
+    case CSSPropertyScrollMarginInlineEnd:
+    case CSSPropertyScrollMarginBlockStart:
+    case CSSPropertyScrollMarginBlockEnd:
+    case CSSPropertyScrollPaddingInlineStart:
+    case CSSPropertyScrollPaddingInlineEnd:
+    case CSSPropertyScrollPaddingBlockStart:
+    case CSSPropertyScrollPaddingBlockEnd:
         return true;
     default:
         return false;

@@ -228,11 +228,15 @@ PASS rx
 PASS ry
 PASS scale
 PASS scroll-behavior
+PASS scroll-margin-block
 PASS scroll-margin-bottom
+PASS scroll-margin-inline
 PASS scroll-margin-left
 PASS scroll-margin-right
 PASS scroll-margin-top
+PASS scroll-padding-block
 PASS scroll-padding-bottom
+PASS scroll-padding-inline
 PASS scroll-padding-left
 PASS scroll-padding-right
 PASS scroll-padding-top

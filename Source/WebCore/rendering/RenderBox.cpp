@@ -5200,10 +5200,12 @@ LayoutRect RenderBox::absoluteAnchorRectWithScrollMargin(bool* insideFixed) cons
 
 LayoutBoxExtent RenderBox::scrollPaddingForViewportRect(const LayoutRect& viewportRect)
 {
+    // We are using minimumValueForLength here, because scroll-padding values might be "auto". WebKit currently
+    // interprets "auto" as 0. See: https://drafts.csswg.org/css-scroll-snap-1/#propdef-scroll-padding
     const auto& padding = style().scrollPadding();
     return LayoutBoxExtent(
-        valueForLength(padding.top(), viewportRect.height()), valueForLength(padding.right(), viewportRect.width()),
-        valueForLength(padding.bottom(), viewportRect.height()), valueForLength(padding.left(), viewportRect.width()));
+        minimumValueForLength(padding.top(), viewportRect.height()), minimumValueForLength(padding.right(), viewportRect.width()),
+        minimumValueForLength(padding.bottom(), viewportRect.height()), minimumValueForLength(padding.left(), viewportRect.width()));
 }
 
 } // namespace WebCore

@@ -6710,6 +6710,66 @@
                 "url": "https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-margin"
             }
         },
+        "scroll-margin-inline-start": {
+            "codegen-properties": {
+                "skip-builder": true
+            },
+            "specification": {
+                "category": "css-scroll-snap",
+                "url": "https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-margin-inline-start"
+            }
+        },
+        "scroll-margin-block-start": {
+            "codegen-properties": {
+                "skip-builder": true
+            },
+            "specification": {
+                "category": "css-scroll-snap",
+                "url": "https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-margin-block-start"
+            }
+        },
+        "scroll-margin-inline-end": {
+            "codegen-properties": {
+                "skip-builder": true
+            },
+            "specification": {
+                "category": "css-scroll-snap",
+                "url": "https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-margin-inline-end"
+            }
+        },
+        "scroll-margin-block-end": {
+            "codegen-properties": {
+                "skip-builder": true
+            },
+            "specification": {
+                "category": "css-scroll-snap",
+                "url": "https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-margin-block-end"
+            }
+        },
+        "scroll-margin-block": {
+            "codegen-properties": {
+                "longhands": [
+                    "scroll-margin-block-start",
+                    "scroll-margin-block-end"
+                ]
+            },
+            "specification": {
+                "category": "css-scroll-snap",
+                "url": "https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-margin-block"
+            }
+        },
+        "scroll-margin-inline": {
+            "codegen-properties": {
+                "longhands": [
+                    "scroll-margin-inline-start",
+                    "scroll-margin-inline-end"
+                ]
+            },
+            "specification": {
+                "category": "css-scroll-snap",
+                "url": "https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-margin-inline"
+            }
+        },
         "scroll-padding": {
             "codegen-properties": {
                 "longhands": [
@@ -6727,7 +6787,7 @@
         "scroll-padding-bottom": {
             "codegen-properties": {
                 "initial": "initialScrollPadding",
-                "converter": "Length"
+                "converter": "LengthOrAuto"
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -6737,7 +6797,7 @@
         "scroll-padding-left": {
             "codegen-properties": {
                 "initial": "initialScrollPadding",
-                "converter": "Length"
+                "converter": "LengthOrAuto"
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -6747,7 +6807,7 @@
         "scroll-padding-right": {
             "codegen-properties": {
                 "initial": "initialScrollPadding",
-                "converter": "Length"
+                "converter": "LengthOrAuto"
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -6757,7 +6817,7 @@
         "scroll-padding-top": {
             "codegen-properties": {
                 "initial": "initialScrollPadding",
-                "converter": "Length"
+                "converter": "LengthOrAuto"
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -6766,10 +6826,7 @@
         },
         "scroll-padding-inline-start": {
             "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": {
-                "status": "not implemented"
+                "skip-builder": true
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -6778,10 +6835,7 @@
         },
         "scroll-padding-block-start": {
             "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": {
-                "status": "not implemented"
+                "skip-builder": true
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -6790,10 +6844,7 @@
         },
         "scroll-padding-inline-end": {
             "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": {
-                "status": "not implemented"
+                "skip-builder": true
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -6802,10 +6853,7 @@
         },
         "scroll-padding-block-end": {
             "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": {
-                "status": "not implemented"
+                "skip-builder": true
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -6817,11 +6865,7 @@
                 "longhands": [
                     "scroll-padding-block-start",
                     "scroll-padding-block-end"
-                ],
-                "skip-codegen": true
-            },
-            "status": {
-                "status": "not implemented"
+                ]
             },
             "specification": {
                 "category": "css-scroll-snap",
@@ -6833,11 +6877,7 @@
                 "longhands": [
                     "scroll-padding-inline-start",
                     "scroll-padding-inline-end"
-                ],
-                "skip-codegen": true
-            },
-            "status": {
-                "status": "not implemented"
+                ]
             },
             "specification": {
                 "category": "css-scroll-snap",
