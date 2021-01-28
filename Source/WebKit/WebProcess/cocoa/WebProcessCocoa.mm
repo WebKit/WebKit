@@ -467,19 +467,15 @@ void WebProcess::updateProcessName()
     }
 
 #if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
-    if (!m_networkProcessConnection) {
-        WTFLogAlways("Unable to update process name since there is no Network process connection.");
-        return;
-    }
     audit_token_t auditToken = { 0 };
     mach_msg_type_number_t info_size = TASK_AUDIT_TOKEN_COUNT;
-    kern_return_t err = task_info(mach_task_self(), TASK_AUDIT_TOKEN, reinterpret_cast<integer_t *>(&auditToken), &info_size);
-    if (err != KERN_SUCCESS) {
-        WTFLogAlways("Unable to get audit token for self: 0x%x", err);
+    kern_return_t kr = task_info(mach_task_self(), TASK_AUDIT_TOKEN, reinterpret_cast<integer_t *>(&auditToken), &info_size);
+    if (kr != KERN_SUCCESS) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(Process, "updateProcessName: Unable to get audit token for self. Error: %{public}s (%x)", mach_error_string(kr), kr);
         return;
     }
     String displayName = applicationName.get();
-    m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(displayName, Vector<String>(), auditToken), 0);
+    ensureNetworkProcessConnection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(displayName, Vector<String>(), auditToken), 0);
 #else
     RunLoop::main().dispatch([this, applicationName = WTFMove(applicationName)] {
         // Note that it is important for _RegisterApplication() to have been called before setting the display name.
@@ -756,19 +752,15 @@ void WebProcess::updateActivePages(const String& overrideDisplayName)
 {
 #if PLATFORM(MAC)
 #if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
-    if (!m_networkProcessConnection) {
-        WTFLogAlways("Unable to update active pages since there is no Network process connection.");
-        return;
-    }
     audit_token_t auditToken = { 0 };
     mach_msg_type_number_t info_size = TASK_AUDIT_TOKEN_COUNT;
-    kern_return_t err = task_info(mach_task_self(), TASK_AUDIT_TOKEN, reinterpret_cast<integer_t *>(&auditToken), &info_size);
-    if (err != KERN_SUCCESS) {
-        WTFLogAlways("Unable to get audit token for self: 0x%x", err);
+    kern_return_t kr = task_info(mach_task_self(), TASK_AUDIT_TOKEN, reinterpret_cast<integer_t *>(&auditToken), &info_size);
+    if (kr != KERN_SUCCESS) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(Process, "updateActivePages: Unable to get audit token for self. Error: %{public}s (%x)", mach_error_string(kr), kr);
         return;
     }
 
-    m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(overrideDisplayName, activePagesOrigins(m_pageMap), auditToken), 0);
+    ensureNetworkProcessConnection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(overrideDisplayName, activePagesOrigins(m_pageMap), auditToken), 0);
 #else
     if (!overrideDisplayName) {
         RunLoop::main().dispatch([activeOrigins = activePagesOrigins(m_pageMap)] {
