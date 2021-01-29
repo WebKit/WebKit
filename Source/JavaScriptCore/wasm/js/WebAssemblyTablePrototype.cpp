@@ -94,7 +94,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncGrow, (JSGlobalObject* globalO
     JSValue defaultValue = jsNull();
     if (Options::useWebAssemblyReferences()) {
         if (callFrame->argumentCount() < 2)
-            defaultValue = defaultValueForTable(table->table()->type());
+            defaultValue = defaultValueForReferenceType(table->table()->wasmType());
         else
             defaultValue = callFrame->uncheckedArgument(1);
     }
@@ -140,7 +140,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncSet, (JSGlobalObject* globalOb
 
     JSValue value = callFrame->argument(1);
     if (Options::useWebAssemblyReferences() && callFrame->argumentCount() < 2)
-        value = defaultValueForTable(table->table()->type());
+        value = defaultValueForReferenceType(table->table()->wasmType());
 
     if (table->table()->asFuncrefTable()) {
         WebAssemblyFunction* wasmFunction = nullptr;

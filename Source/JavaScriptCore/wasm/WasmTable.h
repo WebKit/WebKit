@@ -68,6 +68,7 @@ public:
     TableElementType type() const { return m_type; }
     bool isExternrefTable() const { return m_type == TableElementType::Externref; }
     bool isFuncrefTable() const { return m_type == TableElementType::Funcref; }
+    Type wasmType() const;
     FuncRefTable* asFuncrefTable();
 
     static bool isValidLength(uint32_t length) { return length < maxTableEntries; }

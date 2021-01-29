@@ -30,6 +30,7 @@
 
 #include "JSCInlines.h"
 #include "JSWebAssemblyGlobal.h"
+#include "WasmFormat.h"
 #include "WebAssemblyGlobalPrototype.h"
 
 #include "WebAssemblyGlobalConstructor.lut.h"
@@ -93,6 +94,10 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
             type = Wasm::Type::F32;
         else if (valueString == "f64")
             type = Wasm::Type::F64;
+        else if (Options::useWebAssemblyReferences() && valueString == "anyfunc")
+            type = Wasm::Type::Funcref;
+        else if (Options::useWebAssemblyReferences() && valueString == "externref")
+            type = Wasm::Type::Externref;
         else
             return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Global expects its 'value' field to be the string 'i32', 'i64', 'f32', or 'f64'"_s)));
     }
@@ -125,13 +130,29 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
             initialValue = bitwise_cast<uint64_t>(value);
             break;
         }
+        case Wasm::Type::Funcref:
+        case Wasm::Type::Externref: {
+            // We check default value for these types later in set method.
+            ASSERT(Options::useWebAssemblyReferences());
+            break;
+        }
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
 
     Ref<Wasm::Global> wasmGlobal = Wasm::Global::create(type, mutability, initialValue);
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(JSWebAssemblyGlobal::tryCreate(globalObject, vm, webAssemblyGlobalStructure, WTFMove(wasmGlobal))));
+    JSWebAssemblyGlobal* jsWebAssemblyGlobal = JSWebAssemblyGlobal::tryCreate(globalObject, vm, webAssemblyGlobalStructure, WTFMove(wasmGlobal));
+    RETURN_IF_EXCEPTION(throwScope, { });
+
+    if (Wasm::isRefType(type)) {
+        ASSERT(Options::useWebAssemblyReferences());
+        if (argument.isUndefined())
+            argument = defaultValueForReferenceType(type);
+        jsWebAssemblyGlobal->global()->set(globalObject, argument);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
+    return JSValue::encode(jsWebAssemblyGlobal);
 }
 
 JSC_DEFINE_HOST_FUNCTION(callJSWebAssemblyGlobal, (JSGlobalObject* globalObject, CallFrame*))

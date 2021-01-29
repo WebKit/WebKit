@@ -135,11 +135,12 @@ ALWAYS_INLINE bool isWebAssemblyHostFunction(VM& vm, JSValue object)
     return isWebAssemblyHostFunction(vm, object, unused, unused2);
 }
 
-ALWAYS_INLINE JSValue defaultValueForTable(const Wasm::TableElementType tableType)
+ALWAYS_INLINE JSValue defaultValueForReferenceType(const Wasm::Type type)
 {
-    if (tableType == Wasm::TableElementType::Externref)
+    ASSERT(Wasm::isRefType(type));
+    if (type == Wasm::Type::Externref)
         return jsUndefined();
-    ASSERT(tableType == Wasm::TableElementType::Funcref);
+    ASSERT(type == Wasm::Type::Funcref);
     return jsNull();
 }
 

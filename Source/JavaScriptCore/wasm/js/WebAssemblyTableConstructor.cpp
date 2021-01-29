@@ -122,7 +122,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
 
     if (Options::useWebAssemblyReferences()) {
         JSValue defaultValue = callFrame->argumentCount() < 2
-            ? defaultValueForTable(jsWebAssemblyTable->table()->type())
+            ? defaultValueForReferenceType(jsWebAssemblyTable->table()->wasmType())
             : callFrame->uncheckedArgument(1);
         WebAssemblyFunction* wasmFunction = nullptr;
         WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
