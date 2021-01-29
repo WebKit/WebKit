@@ -615,7 +615,6 @@ public:
     uint64_t sframeKeyId(const RTCRtpSFrameTransform&);
     void setEnableWebRTCEncryption(bool);
     void setUseDTLS10(bool);
-    void setUseGPUProcessForWebRTC(bool);
 #endif
 
     String getImageSourceURL(Element&);
