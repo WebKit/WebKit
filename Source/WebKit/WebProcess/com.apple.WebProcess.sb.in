@@ -199,29 +199,6 @@
             )
         )
     )
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (allow iokit-open
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-registry-entry-class "IOSurfaceSendRight")
-            )
-            (with telemetry-backtrace)
-            (apply-message-filter
-                (deny (with telemetry)
-                    iokit-async-external-method
-                    iokit-external-trap
-                    iokit-external-method
-                )
-            )
-        )
-        ; else
-        (allow iokit-open
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-registry-entry-class "IOSurfaceSendRight")
-            )
-        )
-    )
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
     ;; CoreVideo CVCGDisplayLink
     (allow iokit-open
@@ -1839,7 +1816,6 @@
             "AppleSNBFBUserClient"
             "IOAccelerationUserClient"
             "IOSurfaceRootUserClient"
-            "IOSurfaceSendRight"
         )
     )
 )
