@@ -1,3 +1,13 @@
+2021-01-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-stretch is not applied to system-ui
+        https://bugs.webkit.org/show_bug.cgi?id=221103
+        <rdar://problem/73719139>
+
+        Reviewed by Darin Adler.
+
+        * pal/spi/cocoa/CoreTextSPI.h:
+
 2021-01-28  Per Arne  <pvollan@apple.com>
 
         [macOS] Crash when updating color preferences

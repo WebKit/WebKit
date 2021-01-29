@@ -1,3 +1,13 @@
+2021-01-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-stretch is not applied to system-ui
+        https://bugs.webkit.org/show_bug.cgi?id=221103
+        <rdar://problem/73719139>
+
+        Reviewed by Darin Adler.
+
+        * wtf/PlatformHave.h:
+
 2021-01-28  Chris Dumez  <cdumez@apple.com>
 
         [macOS] Policy for warning about or killing processes using too much memory triggers too easily
