@@ -1,3 +1,14 @@
+2021-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Use a GInputStream to set the request body in preparation for libsoup3
+        https://bugs.webkit.org/show_bug.cgi?id=221034
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add WebKitFormDataInputStream as an exception for some style checker rules.
+
+        * Scripts/webkitpy/style/checker.py:
+
 2021-01-28  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening API release passes and some debug crashes

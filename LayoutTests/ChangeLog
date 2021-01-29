@@ -1,3 +1,14 @@
+2021-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Use a GInputStream to set the request body in preparation for libsoup3
+        https://bugs.webkit.org/show_bug.cgi?id=221034
+
+        Reviewed by Adrian Perez de Castro.
+
+        Remove expectations of http/tests/local/blob/send-hybrid-blob-using-open-panel.html that is now passing.
+
+        * platform/gtk/TestExpectations:
+
 2021-01-29  Rob Buis  <rbuis@igalia.com>
 
         Fix logic error in shouldComputeLogicalHeightFromAspectRatio

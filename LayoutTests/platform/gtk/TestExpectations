@@ -2564,8 +2564,6 @@ webkit.org/b/193638 media/video-webkit-playsinline.html [ Failure ]
 webkit.org/b/194384 compositing/clipping/border-radius-async-overflow-clipping-layer.html [ Failure ]
 webkit.org/b/206000 compositing/clipping/border-radius-async-overflow-non-stacking.html [ ImageOnlyFailure ]
 
-webkit.org/b/194609 http/tests/local/blob/send-hybrid-blob-using-open-panel.html [ Failure ]
-
 webkit.org/b/195259 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
 
 webkit.org/b/195712 inspector/canvas/recording-html-2d.html [ Failure ]
