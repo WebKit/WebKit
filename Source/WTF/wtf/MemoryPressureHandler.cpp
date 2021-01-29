@@ -96,17 +96,14 @@ static const char* toString(MemoryUsagePolicy policy)
 }
 #endif
 
-static size_t thresholdForMemoryKillWithProcessState(WebsamProcessState processState, unsigned tabCount)
+static size_t thresholdForMemoryKillOfInactiveProcess(unsigned tabCount)
 {
-    size_t baseThreshold = 2 * GB;
 #if CPU(X86_64) || CPU(ARM64)
-    if (processState == WebsamProcessState::Active)
-        baseThreshold = 4 * GB;
+    size_t baseThreshold = 4 * GB;
     if (tabCount > 1)
         baseThreshold += std::min(tabCount - 1, 4u) * 1 * GB;
 #else
-    if ((tabCount > 1) || (processState == WebsamProcessState::Active))
-        baseThreshold = 3 * GB;
+    size_t baseThreshold = tabCount > 1 ? 3 * GB : 2 * GB;
 #endif
     return std::min(baseThreshold, static_cast<size_t>(ramSize() * 0.9));
 }
@@ -118,9 +115,15 @@ void MemoryPressureHandler::setPageCount(unsigned pageCount)
     singleton().m_pageCount = pageCount;
 }
 
-size_t MemoryPressureHandler::thresholdForMemoryKill()
+Optional<size_t> MemoryPressureHandler::thresholdForMemoryKill()
 {
-    return thresholdForMemoryKillWithProcessState(m_processState, m_pageCount);
+    switch (m_processState) {
+    case WebsamProcessState::Inactive:
+        return thresholdForMemoryKillOfInactiveProcess(m_pageCount);
+    case WebsamProcessState::Active:
+        break;
+    }
+    return WTF::nullopt;
 }
 
 static size_t thresholdForPolicy(MemoryUsagePolicy policy)
@@ -162,7 +165,7 @@ MemoryUsagePolicy MemoryPressureHandler::currentMemoryUsagePolicy()
     return policyForFootprint(memoryFootprint());
 }
 
-void MemoryPressureHandler::shrinkOrDie()
+void MemoryPressureHandler::shrinkOrDie(size_t killThreshold)
 {
     RELEASE_LOG(MemoryPressure, "Process is above the memory kill threshold. Trying to shrink down.");
     releaseMemory(Critical::Yes, Synchronous::Yes);
@@ -170,13 +173,13 @@ void MemoryPressureHandler::shrinkOrDie()
     size_t footprint = memoryFootprint();
     RELEASE_LOG(MemoryPressure, "New memory footprint: %zu MB", footprint / MB);
 
-    if (footprint < thresholdForMemoryKill()) {
+    if (footprint < killThreshold) {
         RELEASE_LOG(MemoryPressure, "Shrank below memory kill threshold. Process gets to live.");
         setMemoryUsagePolicyBasedOnFootprint(footprint);
         return;
     }
 
-    WTFLogAlways("Unable to shrink memory footprint of process (%zu MB) below the kill thresold (%zu MB). Killed\n", footprint / MB, thresholdForMemoryKill() / MB);
+    WTFLogAlways("Unable to shrink memory footprint of process (%zu MB) below the kill thresold (%zu MB). Killed\n", footprint / MB, killThreshold / MB);
     RELEASE_ASSERT(m_memoryKillCallback);
     m_memoryKillCallback();
 }
@@ -198,8 +201,9 @@ void MemoryPressureHandler::measurementTimerFired()
 #if PLATFORM(COCOA)
     RELEASE_LOG(MemoryPressure, "Current memory footprint: %zu MB", footprint / MB);
 #endif
-    if (footprint >= thresholdForMemoryKill()) {
-        shrinkOrDie();
+    auto killThreshold = thresholdForMemoryKill();
+    if (killThreshold && footprint >= *killThreshold) {
+        shrinkOrDie(*killThreshold);
         return;
     }
 
@@ -216,7 +220,7 @@ void MemoryPressureHandler::measurementTimerFired()
         break;
     }
 
-    if (processState() == WebsamProcessState::Active && footprint > thresholdForMemoryKillWithProcessState(WebsamProcessState::Inactive, m_pageCount))
+    if (processState() == WebsamProcessState::Active && footprint > thresholdForMemoryKillOfInactiveProcess(m_pageCount))
         doesExceedInactiveLimitWhileActive();
     else
         doesNotExceedInactiveLimitWhileActive();

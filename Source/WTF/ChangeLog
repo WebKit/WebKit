@@ -1,3 +1,29 @@
+2021-01-28  Chris Dumez  <cdumez@apple.com>
+
+        [macOS] Policy for warning about or killing processes using too much memory triggers too easily
+        https://bugs.webkit.org/show_bug.cgi?id=221104
+        <rdar://73625621>
+
+        Reviewed by Geoff Garen.
+
+        The policy for warning about or killing processes using too much memory was triggering too
+        easily. I made the following changes to the policy to address this:
+        1. We no longer kill WebProcesses associated with a visible (parented) view under any
+           circumstances. We used to kill active WebProcesses when they reached 4GB. We would
+           also kill visible WebProcesses when they reached 2GB if there were visible but not
+           active / focused.
+        2. For background WebProcesses (associated with non visible / parented views), I have
+           raised the kill limit from 2GB to 4GB.
+        3. For foreground WebProcesses (associated with visible / parent views), I have also
+           raised the limit to show the excessive memory usage banner from 2GB to 4GB.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::thresholdForMemoryKillOfInactiveProcess):
+        (WTF::MemoryPressureHandler::thresholdForMemoryKill):
+        (WTF::MemoryPressureHandler::shrinkOrDie):
+        (WTF::MemoryPressureHandler::measurementTimerFired):
+        * wtf/MemoryPressureHandler.h:
+
 2021-01-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add JSC_SIGNAL_FOR_GC environment variable for Linux / FreeBSD
