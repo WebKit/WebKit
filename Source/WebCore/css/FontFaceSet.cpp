@@ -60,7 +60,7 @@ FontFaceSet::FontFaceSet(Document& document, const Vector<RefPtr<FontFace>>& ini
     , m_backing(CSSFontFaceSet::create())
     , m_readyPromise(makeUniqueRef<ReadyPromise>(*this, &FontFaceSet::readyPromiseResolve))
 {
-    m_backing->addClient(*this);
+    m_backing->addFontEventClient(*this);
     for (auto& face : initialFaces)
         add(*face);
 }
@@ -76,12 +76,11 @@ FontFaceSet::FontFaceSet(Document& document, CSSFontFaceSet& backing)
     if (m_isDocumentLoaded && !backing.hasActiveFontFaces())
         m_readyPromise->resolve(*this);
 
-    m_backing->addClient(*this);
+    m_backing->addFontEventClient(*this);
 }
 
 FontFaceSet::~FontFaceSet()
 {
-    m_backing->removeClient(*this);
 }
 
 FontFaceSet::Iterator::Iterator(FontFaceSet& set)
@@ -191,24 +190,6 @@ auto FontFaceSet::status() const -> LoadStatus
     return LoadStatus::Loaded;
 }
 
-void FontFaceSet::startedLoading()
-{
-    // FIXME: Fire a "loading" event asynchronously.
-}
-
-void FontFaceSet::documentDidFinishLoading()
-{
-    m_isDocumentLoaded = true;
-    if (!m_backing->hasActiveFontFaces() && !m_readyPromise->isFulfilled())
-        m_readyPromise->resolve(*this);
-}
-
-void FontFaceSet::completedLoading()
-{
-    if (m_isDocumentLoaded && !m_readyPromise->isFulfilled())
-        m_readyPromise->resolve(*this);
-}
-
 void FontFaceSet::faceFinished(CSSFontFace& face, CSSFontFace::Status newStatus)
 {
     if (!face.existingWrapper())
@@ -232,6 +213,24 @@ void FontFaceSet::faceFinished(CSSFontFace& face, CSSFontFace::Status newStatus)
             pendingPromise->hasReachedTerminalState = true;
         }
     }
+}
+
+void FontFaceSet::startedLoading()
+{
+    // FIXME: Fire a "loading" event asynchronously.
+}
+
+void FontFaceSet::documentDidFinishLoading()
+{
+    m_isDocumentLoaded = true;
+    if (!m_backing->hasActiveFontFaces() && !m_readyPromise->isFulfilled())
+        m_readyPromise->resolve(*this);
+}
+
+void FontFaceSet::completedLoading()
+{
+    if (m_isDocumentLoaded && !m_readyPromise->isFulfilled())
+        m_readyPromise->resolve(*this);
 }
 
 FontFaceSet& FontFaceSet::readyPromiseResolve()

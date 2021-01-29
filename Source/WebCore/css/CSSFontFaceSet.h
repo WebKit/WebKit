@@ -27,22 +27,16 @@
 
 #include "CSSFontFace.h"
 #include <wtf/HashMap.h>
+#include <wtf/Observer.h>
+#include <wtf/Variant.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
 class CSSPrimitiveValue;
 class FontFaceSet;
-
-class CSSFontFaceSetClient {
-public:
-    virtual ~CSSFontFaceSetClient() = default;
-    virtual void faceFinished(CSSFontFace&, CSSFontFace::Status) { };
-    virtual void fontModified() { };
-    virtual void startedLoading() { };
-    virtual void completedLoading() { };
-};
 
 class CSSFontFaceSet final : public RefCounted<CSSFontFaceSet>, public CSSFontFace::Client {
 public:
@@ -52,8 +46,16 @@ public:
     }
     ~CSSFontFaceSet();
 
-    void addClient(CSSFontFaceSetClient&);
-    void removeClient(CSSFontFaceSetClient&);
+    using FontModifiedObserver = Observer<void()>;
+    void addFontModifiedObserver(const FontModifiedObserver&);
+
+    struct FontEventClient : public CanMakeWeakPtr<FontEventClient> {
+        virtual ~FontEventClient() = default;
+        virtual void faceFinished(CSSFontFace&, CSSFontFace::Status) = 0;
+        virtual void startedLoading() = 0;
+        virtual void completedLoading() = 0;
+    };
+    void addFontEventClient(const FontEventClient&);
 
     bool hasFace(const CSSFontFace&) const;
     size_t faceCount() const { return m_faces.size(); }
@@ -119,7 +121,8 @@ private:
     HashMap<StyleRuleFontFace*, CSSFontFace*> m_constituentCSSConnections;
     size_t m_facesPartitionIndex { 0 }; // All entries in m_faces before this index are CSS-connected.
     Status m_status { Status::Loaded };
-    HashSet<CSSFontFaceSetClient*> m_clients;
+    WeakHashSet<FontModifiedObserver> m_fontModifiedObservers;
+    WeakHashSet<FontEventClient> m_fontEventClients;
     WeakPtr<CSSFontSelector> m_owningFontSelector;
     unsigned m_activeCount { 0 };
 };

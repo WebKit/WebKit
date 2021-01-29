@@ -57,15 +57,16 @@ CSSFontFaceSet::~CSSFontFaceSet()
     }
 }
 
-void CSSFontFaceSet::addClient(CSSFontFaceSetClient& client)
+void CSSFontFaceSet::addFontModifiedObserver(const FontModifiedObserver& fontModifiedObserver)
 {
-    m_clients.add(&client);
+    auto result = m_fontModifiedObservers.add(fontModifiedObserver);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-void CSSFontFaceSet::removeClient(CSSFontFaceSetClient& client)
+void CSSFontFaceSet::addFontEventClient(const FontEventClient& fontEventClient)
 {
-    ASSERT(m_clients.contains(&client));
-    m_clients.remove(&client);
+    auto result = m_fontEventClients.add(fontEventClient);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void CSSFontFaceSet::incrementActiveCount()
@@ -73,8 +74,9 @@ void CSSFontFaceSet::incrementActiveCount()
     ++m_activeCount;
     if (m_activeCount == 1) {
         m_status = Status::Loading;
-        for (auto* client : m_clients)
-            client->startedLoading();
+        m_fontEventClients.forEach([] (auto& client) {
+            client.startedLoading();
+        });
     }
 }
 
@@ -83,8 +85,9 @@ void CSSFontFaceSet::decrementActiveCount()
     --m_activeCount;
     if (!m_activeCount) {
         m_status = Status::Loaded;
-        for (auto* client : m_clients)
-            client->completedLoading();
+        m_fontEventClients.forEach([] (auto& client) {
+            client.completedLoading();
+        });
     }
 }
 
@@ -184,8 +187,9 @@ void CSSFontFaceSet::add(CSSFontFace& face)
 {
     ASSERT(!hasFace(face));
 
-    for (auto* client : m_clients)
-        client->fontModified();
+    m_fontModifiedObservers.forEach([] (auto& observer) {
+        observer();
+    });
 
     face.addClient(*this);
     m_cache.clear();
@@ -235,8 +239,9 @@ void CSSFontFaceSet::remove(const CSSFontFace& face)
 
     m_cache.clear();
 
-    for (auto* client : m_clients)
-        client->fontModified();
+    m_fontModifiedObservers.forEach([] (auto& observer) {
+        observer();
+    });
     
     if (face.families() && face.families().hasValue())
         removeFromFacesLookupTable(face, *face.families().value());
@@ -502,8 +507,9 @@ void CSSFontFaceSet::fontStateChanged(CSSFontFace& face, CSSFontFace::Status old
     }
     if (newState == CSSFontFace::Status::Success || newState == CSSFontFace::Status::Failure) {
         ASSERT(oldState == CSSFontFace::Status::Loading || oldState == CSSFontFace::Status::TimedOut);
-        for (auto* client : m_clients)
-            client->faceFinished(face, newState);
+        m_fontEventClients.forEach([&] (auto& client) {
+            client.faceFinished(face, newState);
+        });
         decrementActiveCount();
     }
 }
@@ -517,8 +523,9 @@ void CSSFontFaceSet::fontPropertyChanged(CSSFontFace& face, CSSValueList* oldFam
         addToFacesLookupTable(face);
     }
 
-    for (auto* client : m_clients)
-        client->fontModified();
+    m_fontModifiedObservers.forEach([] (auto& observer) {
+        observer();
+    });
 }
 
 }

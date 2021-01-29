@@ -65,13 +65,14 @@ CSSFontSelector::CSSFontSelector(Document& document)
     : ActiveDOMObject(document)
     , m_document(makeWeakPtr(document))
     , m_cssFontFaceSet(CSSFontFaceSet::create(this))
+    , m_fontModifiedObserver([this] { fontModified(); })
     , m_fontLoadingTimer(*this, &CSSFontSelector::fontLoadingTimerFired)
     , m_uniqueId(++fontSelectorId)
     , m_version(0)
 {
     ASSERT(m_document);
     FontCache::singleton().addClient(*this);
-    m_cssFontFaceSet->addClient(*this);
+    m_cssFontFaceSet->addFontModifiedObserver(m_fontModifiedObserver);
     LOG(Fonts, "CSSFontSelector %p ctor", this);
 
     suspendIfNeeded();
@@ -82,7 +83,6 @@ CSSFontSelector::~CSSFontSelector()
     LOG(Fonts, "CSSFontSelector %p dtor", this);
 
     clearDocument();
-    m_cssFontFaceSet->removeClient(*this);
     FontCache::singleton().removeClient(*this);
 }
 

@@ -1,3 +1,15 @@
+2021-01-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Minor cleanup in CSSFontFaceSetClient
+        https://bugs.webkit.org/show_bug.cgi?id=221019
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp:
+        (TestWebKitAPI::MultipleInheritanceDerived::meowCalled const):
+        (TestWebKitAPI::MultipleInheritanceDerived::woofCalled const):
+        (TestWebKitAPI::TEST):
+
 2021-01-28  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcrepy] Handle case where pypi serves invalid html
