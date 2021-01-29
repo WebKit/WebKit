@@ -1,3 +1,16 @@
+2021-01-29  Youenn Fablet  <youenn@apple.com>
+
+        [MacOS] Enable WebKitTestRunner audio and video capture in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=221035
+
+        Reviewed by Eric Carlson.
+
+        Remove the default TestOptions values and instead on MacOS rely on capture in GPUProcess.
+        On iOS, capture ill still happen inprocess for the time being.
+
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+
 2021-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Use a GInputStream to set the request body in preparation for libsoup3
