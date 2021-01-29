@@ -361,6 +361,10 @@ private:
 
 void RenderInline::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(const_cast<RenderInline&>(*this)))
+        lineLayout->flow().ensureLineBoxes();
+#endif
     Vector<LayoutRect> lineboxRects;
     AbsoluteRectsGeneratorContext context(lineboxRects, accumulatedOffset);
     generateLineBoxRects(context);
@@ -401,6 +405,10 @@ private:
 
 void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(const_cast<RenderInline&>(*this)))
+        lineLayout->flow().ensureLineBoxes();
+#endif
     absoluteQuadsIgnoringContinuation({ }, quads, wasFixed);
     if (continuation())
         collectAbsoluteQuadsForContinuation(quads, wasFixed);
@@ -408,6 +416,10 @@ void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 
 void RenderInline::absoluteQuadsIgnoringContinuation(const FloatRect&, Vector<FloatQuad>& quads, bool*) const
 {
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(const_cast<RenderInline&>(*this)))
+        lineLayout->flow().ensureLineBoxes();
+#endif
     AbsoluteQuadsGeneratorContext context(this, quads);
     generateLineBoxRects(context);
 }
@@ -1169,6 +1181,10 @@ void RenderInline::imageChanged(WrappedImagePtr, const IntRect*)
 
 void RenderInline::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer)
 {
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(const_cast<RenderInline&>(*this)))
+        lineLayout->flow().ensureLineBoxes();
+#endif
     AbsoluteRectsGeneratorContext context(rects, additionalOffset);
     generateLineBoxRects(context);
 
