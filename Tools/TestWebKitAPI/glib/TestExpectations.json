@@ -2,37 +2,20 @@
     "TestAuthentication": {
         "subtests": {
             "/webkit/Authentication/authentication-empty-realm": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/220922"}}
-            },
-            "/webkit/Authentication/authentication-failure": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/220922"}}
+                "expected": {"all@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/221119"}}
             },
             "/webkit/Authentication/authentication-no-credential": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/220922"}}
+                "expected": {"all@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/221119"}}
             },
             "/webkit/Authentication/authentication-success": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/220922"}}
-            }
-        }
-    },
-    "TestBackForwardList": {
-        "subtests": {
-            "/webkit/BackForwardList/navigation": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/220922"}}
-            }
-        }
-    },
-    "TestSSL": {
-        "subtests": {
-            "/webkit/WebKitWebView/load-failed-with-tls-errors": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/220922"}}
+                "expected": {"all@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/221119"}}
             }
         }
     },
     "TestWebKitSettings": {
         "subtests": {
             "/webkit/WebKitSettings/javascript-markup": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/220922"}}
+                "expected": {"all@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/221119"}}
             }
         }
     },
@@ -133,9 +116,6 @@
             },
             "/webkit/WebKitWebView/fullscreen": {
                 "expected": {"wpe": {"status": ["TIMEOUT", "PASS"]}}
-            },
-            "/webkit/WebKitWebView/title-change": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/220992"}}
             }
         }
     },
@@ -160,7 +140,7 @@
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/206728"}}
             },
             "/webkit/WebKitWebView/title": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/220992"}}
+                "expected": {"all@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/221119"}}
             }
         }
     },

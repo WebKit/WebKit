@@ -1,3 +1,13 @@
+2021-01-28  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening API release passes and some debug crashes
+
+        Unreviewed test gardening.
+
+        Many debug crashes still to be listed.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2021-01-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Minor cleanup in CSSFontFaceSetClient
