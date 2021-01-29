@@ -1,3 +1,14 @@
+2021-01-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Upgrade motionmark1.1.plan to r272044
+        https://bugs.webkit.org/show_bug.cgi?id=221148
+
+        Reviewed by Said Abou-Hallawa.
+
+        r272044 is attempting to address extreme variance in the test.
+
+        * Scripts/webkitpy/benchmark_runner/data/plans/motionmark1.1.plan:
+
 2021-01-29  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-References] Enable reference types by default
