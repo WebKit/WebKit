@@ -511,6 +511,13 @@ void Chrome::dispatchViewportPropertiesDidChange(const ViewportArguments& argume
     m_client.dispatchViewportPropertiesDidChange(arguments);
 }
 
+#if ENABLE(APP_HIGHLIGHTS)
+void Chrome::updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&& data) const
+{
+    m_client.updateAppHighlightsStorage(WTFMove(data));
+}
+#endif
+
 void Chrome::setCursor(const Cursor& cursor)
 {
     m_client.setCursor(cursor);

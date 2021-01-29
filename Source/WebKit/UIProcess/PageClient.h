@@ -558,6 +558,10 @@ public:
 #endif
 #endif
 
+#if ENABLE(APP_HIGHLIGHTS)
+    virtual void updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&& data) = 0;
+#endif
+
 #if PLATFORM(COCOA)
     virtual void cancelPointersForGestureRecognizer(UIGestureRecognizer*) { }
     virtual WTF::Optional<unsigned> activeTouchIdentifierForGestureRecognizer(UIGestureRecognizer*) { return WTF::nullopt; }

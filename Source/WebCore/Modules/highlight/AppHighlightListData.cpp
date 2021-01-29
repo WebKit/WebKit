@@ -49,7 +49,7 @@ AppHighlightListData AppHighlightListData::create(const SharedBuffer& buffer)
     return data ? *data : AppHighlightListData {{ }};
 }
 
-Ref<SharedBuffer> AppHighlightListData::toData() const
+Ref<SharedBuffer> AppHighlightListData::toSharedBuffer() const
 {
     WTF::Persistence::Encoder encoder;
     encoder << *this;

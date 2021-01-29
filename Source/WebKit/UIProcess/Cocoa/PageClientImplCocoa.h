@@ -71,6 +71,10 @@ public:
     Vector<String> dictationAlternatives(WebCore::DictationContext) final;
     NSTextAlternatives *platformDictationAlternatives(WebCore::DictationContext) final;
 
+#if ENABLE(APP_HIGHLIGHTS)
+    void updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&& data) final;
+#endif
+
 protected:
     WeakObjCPtr<WKWebView> m_webView;
     std::unique_ptr<WebCore::AlternativeTextUIController> m_alternativeTextUIController;

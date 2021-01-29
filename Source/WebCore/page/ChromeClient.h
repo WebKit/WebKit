@@ -303,6 +303,10 @@ public:
     virtual std::unique_ptr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&) = 0;
 #endif
 
+#if ENABLE(APP_HIGHLIGHTS)
+    virtual void updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&&) const = 0;
+#endif
+
     virtual void runOpenPanel(Frame&, FileChooser&) = 0;
     virtual void showShareSheet(ShareDataWithParsedURL&, WTF::CompletionHandler<void(bool)>&& callback) { callback(false); }
     virtual void showContactPicker(const ContactsRequestData&, WTF::CompletionHandler<void(Optional<Vector<ContactInfo>>&&)>&& callback) { callback(WTF::nullopt); }

@@ -46,7 +46,7 @@ class AppHighlightStorage : RefCounted<AppHighlightStorage> {
 public:
     AppHighlightStorage(Document&);
 
-    AppHighlightListData createAppHighlightListData();
+    WEBCORE_EXPORT void updateAppHighlightsStorage();
     Vector<AppHighlightRangeData> restoreAppHighlights(Ref<SharedBuffer>&&);
 
 private:

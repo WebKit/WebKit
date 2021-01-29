@@ -501,6 +501,12 @@ std::unique_ptr<DateTimeChooser> EmptyChromeClient::createDateTimeChooser(DateTi
 
 #endif
 
+#if ENABLE(APP_HIGHLIGHTS)
+void EmptyChromeClient::updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&&) const
+{
+}
+#endif
+
 void EmptyChromeClient::runOpenPanel(Frame&, FileChooser&)
 {
 }

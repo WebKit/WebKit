@@ -536,6 +536,10 @@ messages -> WebPageProxy {
     WritePromisedAttachmentToPasteboard(struct WebCore::PromisedAttachmentInfo info)
 #endif
 
+#if ENABLE(APP_HIGHLIGHTS)
+    UpdateAppHighlightsStorage(IPC::SharedBufferCopy data)
+#endif
+
     SignedPublicKeyAndChallengeString(unsigned keySizeIndex, String challengeString, URL url) -> (String result) Synchronous
 
 #if ENABLE(SPEECH_SYNTHESIS)

@@ -744,6 +744,12 @@ std::unique_ptr<DateTimeChooser> WebChromeClient::createDateTimeChooser(DateTime
 }
 #endif
 
+#if ENABLE(APP_HIGHLIGHTS)
+void WebChromeClient::updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&&) const
+{
+}
+#endif
+
 #if ENABLE(POINTER_LOCK)
 bool WebChromeClient::requestPointerLock()
 {

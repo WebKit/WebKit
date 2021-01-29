@@ -40,6 +40,7 @@
 #include "NetworkProcessConnection.h"
 #include "PageBanner.h"
 #include "RemoteRenderingBackendProxy.h"
+#include "SharedBufferCopy.h"
 #include "UserData.h"
 #include "WebColorChooser.h"
 #include "WebCoreArgumentCoders.h"
@@ -1237,6 +1238,14 @@ bool WebChromeClient::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<
     return succeeded;
 }
 
+#endif
+
+#if ENABLE(APP_HIGHLIGHTS)
+void WebChromeClient::updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&& data) const
+{
+    auto buffer = IPC::SharedBufferCopy(data);
+    m_page.send(Messages::WebPageProxy::UpdateAppHighlightsStorage(buffer));
+}
 #endif
 
 String WebChromeClient::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL& url) const

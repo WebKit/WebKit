@@ -113,6 +113,14 @@ NSSet *PageClientImplCocoa::serializableFileWrapperClasses() const
 
 #endif
 
+#if ENABLE(APP_HIGHLIGHTS)
+void PageClientImplCocoa::updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&& data)
+{
+    auto nsData = data->createNSData();
+    [m_webView _updateAppHighlightsStorage:nsData.get()];
+}
+#endif // ENABLE(APP_HIGHLIGHTS)
+
 void PageClientImplCocoa::pageClosed()
 {
     m_alternativeTextUIController->clear();

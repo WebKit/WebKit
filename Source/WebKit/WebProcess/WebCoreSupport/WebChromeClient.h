@@ -346,6 +346,10 @@ private:
     void isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags, uint64_t) final;
     void handleAutoplayEvent(WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
 
+#if ENABLE(APP_HIGHLIGHTS)
+    void updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&&) const final;
+#endif
+
 #if ENABLE(WEB_CRYPTO)
     bool wrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const final;
     bool unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const final;

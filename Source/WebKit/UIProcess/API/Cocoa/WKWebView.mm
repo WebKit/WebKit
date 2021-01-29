@@ -99,6 +99,7 @@
 #import "WebURLSchemeHandlerCocoa.h"
 #import "WebViewImpl.h"
 #import "_WKActivatedElementInfoInternal.h"
+#import "_WKAppHighlightDelegate.h"
 #import "_WKDiagnosticLoggingDelegate.h"
 #import "_WKFindDelegate.h"
 #import "_WKFrameHandleInternal.h"
@@ -1407,6 +1408,28 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
+
+#if ENABLE(APP_HIGHLIGHTS)
+- (id <_WKAppHighlightDelegate>)_appHighlightsDelegate
+{
+    return _appHighlightsDelegate.getAutoreleased();
+}
+
+- (void)_setAppHighlightsDelegate:(id <_WKAppHighlightDelegate>)delegate
+{
+    _appHighlightsDelegate = delegate;
+}
+
+- (void)_updateAppHighlightsStorage:(NSData *)data
+{
+    auto delegate = self._appHighlightsDelegate;
+    if (!delegate)
+        return;
+
+    if ([delegate respondsToSelector:@selector(_webView:updateAppHighlightsStorage:)])
+        [delegate _webView:self updateAppHighlightsStorage:data];
+}
+#endif
 
 - (WKPageRef)_pageForTesting
 {

@@ -264,7 +264,6 @@
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(APP_HIGHLIGHTS)
-#include "AppHighlightListData.h"
 #include "AppHighlightStorage.h"
 #endif
 

@@ -1581,7 +1581,7 @@ public:
     HighlightRegister* appHighlightRegisterIfExists() { return m_appHighlightRegister.get(); }
     WEBCORE_EXPORT HighlightRegister& appHighlightRegister();
 
-    AppHighlightStorage& appHighlightStorage();
+    WEBCORE_EXPORT AppHighlightStorage& appHighlightStorage();
     AppHighlightStorage* appHighlightStorageIfExists() const { return m_appHighlightStorage.get(); };
 #endif
 

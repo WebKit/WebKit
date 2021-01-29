@@ -9933,6 +9933,15 @@ void WebPageProxy::getApplicationManifest(Function<void(const Optional<WebCore::
 }
 #endif
 
+#if ENABLE(APP_HIGHLIGHTS)
+void WebPageProxy::updateAppHighlightsStorage(const IPC::SharedBufferCopy& data)
+{
+    MESSAGE_CHECK(m_process, data.buffer());
+
+    pageClient().updateAppHighlightsStorage(*data.buffer());
+}
+#endif
+
 namespace {
 enum class CompletionCondition {
     Cancellation,

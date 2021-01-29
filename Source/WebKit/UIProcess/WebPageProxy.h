@@ -1823,6 +1823,7 @@ public:
 
 #if ENABLE(APP_HIGHLIGHTS)
     void createAppHighlightInSelectedRange(CreateNewGroupForHighlight);
+    void updateAppHighlightsStorage(const IPC::SharedBufferCopy&);
 #endif
 
 #if ENABLE(MEDIA_STREAM)

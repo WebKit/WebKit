@@ -254,6 +254,10 @@
 #include <wtf/SetForScope.h>
 #include <wtf/text/TextStream.h>
 
+#if ENABLE(APP_HIGHLIGHTS)
+#include <WebCore/AppHighlightStorage.h>
+#endif
+
 #if ENABLE(DATA_DETECTION)
 #include "DataDetectionResult.h"
 #endif
@@ -7180,6 +7184,7 @@ bool WebPage::createAppHighlightInSelectedRange(CreateNewGroupForHighlight creat
         return false;
 
     document->appHighlightRegister().addAppHighlight(StaticRange::create(selectionRange.value()));
+    document->appHighlightStorage().updateAppHighlightsStorage();
 
     return true;
 }

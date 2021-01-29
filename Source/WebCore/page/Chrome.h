@@ -164,6 +164,10 @@ public:
     std::unique_ptr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&);
 #endif
 
+#if ENABLE(APP_HIGHLIGHTS)
+    void updateAppHighlightsStorage(Ref<WebCore::SharedBuffer>&&) const;
+#endif
+
     void runOpenPanel(Frame&, FileChooser&);
     void showShareSheet(ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&);
     void showContactPicker(const ContactsRequestData&, CompletionHandler<void(Optional<Vector<ContactInfo>>&&)>&&);

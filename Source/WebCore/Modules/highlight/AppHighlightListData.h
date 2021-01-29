@@ -129,7 +129,7 @@ public:
     void setRanges(Vector<AppHighlightRangeData>&& ranges) { m_annotationRanges = WTFMove(ranges); }
     void addRanges(Vector<AppHighlightRangeData>&& ranges) { m_annotationRanges.appendVector(WTFMove(ranges)); }
 
-    WEBCORE_EXPORT Ref<SharedBuffer> toData() const;
+    Ref<SharedBuffer> toSharedBuffer() const;
 
     size_t size() const { return m_annotationRanges.size(); }
     bool isEmpty() const { return m_annotationRanges.isEmpty(); }
