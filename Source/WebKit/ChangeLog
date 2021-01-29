@@ -1,5 +1,17 @@
 2021-01-29  Per Arne  <pvollan@apple.com>
 
+        [macOS] Add audio related shm write reporting
+        https://bugs.webkit.org/show_bug.cgi?id=221136
+        <rdar://problem/73510094>
+
+        Reviewed by Brent Fulgham.
+
+        Add audio related shm write reporting in the WebContent process' sandbox.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2021-01-29  Per Arne  <pvollan@apple.com>
+
         [macOS] Remove access to IOSurfaceSendRight
         https://bugs.webkit.org/show_bug.cgi?id=221131
         <rdar://problem/70496356>
