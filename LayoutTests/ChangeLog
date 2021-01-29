@@ -1,3 +1,13 @@
+2021-01-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] REGRESSION(r266695): content inside a `<button>` inside a flex container has a height of `0` without a declared `min-height`
+        https://bugs.webkit.org/show_bug.cgi?id=220946
+
+        Reviewed by Zalan Bujtas.
+
+        * css3/flexbox/percentage-descendants-of-skipped-flex-item-expected.html: Added.
+        * css3/flexbox/percentage-descendants-of-skipped-flex-item.html: Added.
+
 2021-01-29  Youenn Fablet  <youenn@apple.com>
 
         [MacOS] Enable WebKitTestRunner audio and video capture in GPUProcess
