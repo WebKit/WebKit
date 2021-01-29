@@ -30,7 +30,6 @@
 
 #include "MediaRecorderPrivate.h"
 #include <WebCore/MediaRecorderPrivate.h>
-#include <WebCore/RuntimeEnabledFeatures.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -38,7 +37,7 @@ using namespace WebCore;
 std::unique_ptr<WebCore::MediaRecorderPrivate> MediaRecorderProvider::createMediaRecorderPrivate(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
 {
 #if ENABLE(GPU_PROCESS) && HAVE(AVASSETWRITERDELEGATE)
-    if (RuntimeEnabledFeatures::sharedFeatures().webRTCPlatformCodecsInGPUProcessEnabled())
+    if (m_useGPUProcess)
         return makeUnique<MediaRecorderPrivate>(stream, options);
 #endif
     return WebCore::MediaRecorderProvider::createMediaRecorderPrivate(stream, options);

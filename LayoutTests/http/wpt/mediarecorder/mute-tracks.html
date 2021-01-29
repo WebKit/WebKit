@@ -1,4 +1,3 @@
-<!-- webkit-test-runner [ WebRTCPlatformCodecsInGPUProcessEnabled=false ] -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,6 +12,9 @@
     <video id="video3" controls></video>
     <canvas id="canvas3" width="320" height="240"></canvas>
     <script>
+if (window.internals)
+    window.internals.setUseGPUProcessForWebRTC(false);
+
 function analyseAudio(streamOrVideo, duration, context)
 {
     return new Promise((resolve, reject) => {
