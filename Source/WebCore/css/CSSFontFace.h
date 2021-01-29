@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FontLoadTimingOverride.h"
 #include "FontSelectionValueInlines.h"
 #include "FontTaggedSettings.h"
 #include "StyleRule.h"
@@ -152,11 +153,11 @@ public:
         Seconds swapPeriod;
     };
     FontLoadTiming fontLoadTiming() const;
-    bool shouldIgnoreFontLoadCompletions() const;
+    bool shouldIgnoreFontLoadCompletions() const { return m_shouldIgnoreFontLoadCompletions; }
 
     bool purgeable() const;
 
-    AllowUserInstalledFonts allowUserInstalledFonts() const;
+    AllowUserInstalledFonts allowUserInstalledFonts() const { return m_allowUserInstalledFonts; }
 
     void updateStyleIfNeeded();
 
@@ -167,6 +168,7 @@ public:
 
 private:
     CSSFontFace(CSSFontSelector*, StyleRuleFontFace*, FontFace*, bool isLocalFallback);
+    CSSFontFace(const Settings*, StyleRuleFontFace*, FontFace*, bool isLocalFallback);
 
     size_t pump(ExternalResourceDownloadPolicy);
     void setStatus(Status);
@@ -194,6 +196,9 @@ private:
     bool m_isLocalFallback { false };
     bool m_sourcesPopulated { false };
     bool m_mayBePurged { true };
+    bool m_shouldIgnoreFontLoadCompletions { false };
+    FontLoadTimingOverride m_fontLoadTimingOverride { FontLoadTimingOverride::None };
+    AllowUserInstalledFonts m_allowUserInstalledFonts { AllowUserInstalledFonts::Yes };
 
     Timer m_timeoutTimer;
 };
