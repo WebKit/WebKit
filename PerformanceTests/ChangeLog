@@ -1,3 +1,27 @@
+2021-01-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        MotionMark focus test can cause extreme variance in whichever test runs directly after it
+        https://bugs.webkit.org/show_bug.cgi?id=221075
+        <rdar://problem/72143661>
+
+        Reviewed by Said Abou-Hallawa.
+
+        The focus test loads up the window server with work, which runs asynchronously from WebKit's run loop.
+        This means that the window server can still be busy when the next test starts.
+
+        In r270959 we already tried to combat this, and it was mostly successful, but not as successful as we'd
+        like. This patch goes further by:
+        1. Bumping up the warmup timeout to 2000ms from 1000ms
+        2. Making the warmup render at least 30 frames. This means that a single extremely long frame can't
+           fill up the entire warmup period.
+
+        * MotionMark/developer.html:
+        * MotionMark/resources/runner/motionmark.js:
+        (this.clear):
+        * MotionMark/tests/resources/main.js:
+        (Benchmark.Utilities.createClass):
+        (_animateLoop):
+
 2021-01-03  Beth Dakin  <bdakin@apple.com>
 
         Remove non-inclusive language from JetStream 2.0
