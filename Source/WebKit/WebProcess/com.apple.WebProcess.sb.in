@@ -1634,8 +1634,6 @@
         (syscall-number SYS_csrctl)
         (syscall-number SYS_guarded_pwrite_np)
         (syscall-number SYS_getentropy)
-        (syscall-number SYS_necp_open)
-        (syscall-number SYS_necp_client_action)
         (syscall-number SYS_ulock_wait)
         (syscall-number SYS_ulock_wake)
         (syscall-number SYS_work_interval_ctl)
@@ -1659,6 +1657,14 @@
 #endif
         (syscall-number SYS_fstat64_extended) ;; <rdar://problem/61310019>
         (syscall-number SYS_gethostuuid)
+    )
+
+    (allow syscall-unix
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+        (with telemetry)
+#endif
+        (syscall-number SYS_necp_open)
+        (syscall-number SYS_necp_client_action)
     )
 
     (if (equal? (param "CPU") "arm64")

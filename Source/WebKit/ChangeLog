@@ -1,3 +1,15 @@
+2021-01-29  Per Arne  <pvollan@apple.com>
+
+        [macOS] Add reporting for some syscalls
+        https://bugs.webkit.org/show_bug.cgi?id=221135
+        <rdar://problem/73513138>
+
+        Reviewed by Brent Fulgham.
+
+        Add reporting for some syscalls in the WebContent process on macOS in order to determine if they are being used.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-01-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r272052.
