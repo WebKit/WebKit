@@ -1,3 +1,21 @@
+2021-01-29  Andres Gonzalez  <andresg_22@apple.com>
+
+        Support for aria-current state changed notifications.
+        https://bugs.webkit.org/show_bug.cgi?id=221074
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-current-state-changed-notification-expected.txt: Added.
+        * accessibility/aria-current-state-changed-notification.html: Added.
+        * accessibility/aria-current.html:
+        Use AccessibilityUIElement::currentStateValue for consistency and to
+        match closely how actual clients will invoke this functionality.
+        * platform/gtk/TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2021-01-29  Amir Mark Jr  <amir_mark@apple.com>
 
         REGRESSION: [BigSur wk1] media/mediacapabilities/vp9.html is consistently failing

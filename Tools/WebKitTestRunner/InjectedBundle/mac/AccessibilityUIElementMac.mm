@@ -42,6 +42,8 @@
 #import <wtf/Vector.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+#define NSAccessibilityDOMIdentifierAttribute @"AXDOMIdentifier"
+
 #ifndef NSAccessibilityOwnsAttribute
 #define NSAccessibilityOwnsAttribute @"AXOwns"
 #endif
@@ -56,6 +58,10 @@
 
 #ifndef NSAccessibilityPathAttribute
 #define NSAccessibilityPathAttribute @"AXPath"
+#endif
+
+#ifndef NSAccessibilityARIACurrentAttribute
+#define NSAccessibilityARIACurrentAttribute @"AXARIACurrent"
 #endif
 
 // Text
@@ -325,6 +331,14 @@ static NSDictionary *misspellingSearchParameterizedAttributeForCriteria(Accessib
     [parameters setObject:[NSNumber numberWithBool:forward] forKey:@"AXSearchTextDirection"];
 
     return parameters;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::domIdentifier() const
+{
+    id value = attributeValue(m_element.get(), NSAccessibilityDOMIdentifierAttribute);
+    if ([value isKindOfClass:[NSString class]])
+        return [value createJSStringRef];
+    return nullptr;
 }
 
 void AccessibilityUIElement::getLinkedUIElements(Vector<RefPtr<AccessibilityUIElement>>& elementVector)
@@ -974,6 +988,14 @@ bool AccessibilityUIElement::isChecked() const
 {
     // On the Mac, intValue()==1 if a a checkable control is checked.
     return intValue() == 1;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::currentStateValue() const
+{
+    id value = attributeValue(m_element.get(), NSAccessibilityARIACurrentAttribute);
+    if ([value isKindOfClass:[NSString class]])
+        return [value createJSStringRef];
+    return nullptr;
 }
 
 int AccessibilityUIElement::hierarchicalLevel() const

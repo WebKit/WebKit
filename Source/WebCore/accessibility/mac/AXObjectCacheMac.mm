@@ -40,6 +40,10 @@
 #import <ApplicationServices/ApplicationServicesPriv.h>
 #endif
 
+#ifndef NSAccessibilityCurrentStateChangedNotification
+#define NSAccessibilityCurrentStateChangedNotification @"AXCurrentStateChanged"
+#endif
+
 #ifndef NSAccessibilityLiveRegionChangedNotification
 #define NSAccessibilityLiveRegionChangedNotification @"AXLiveRegionChanged"
 #endif
@@ -293,109 +297,112 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* obj, AXNotification n
     // Some notifications are unique to Safari and do not have NSAccessibility equivalents.
     NSString *macNotification;
     switch (notification) {
-        case AXActiveDescendantChanged:
-            // An active descendant change for trees means a selected rows change.
-            if (obj->isTree() || obj->isTable())
-                macNotification = NSAccessibilitySelectedRowsChangedNotification;
-            
-            // When a combobox uses active descendant, it means the selected item in its associated
-            // list has changed. In these cases we should use selected children changed, because
-            // we don't want the focus to change away from the combobox where the user is typing.
-            else if (obj->isComboBox() || obj->isList() || obj->isListBox())
-                macNotification = NSAccessibilitySelectedChildrenChangedNotification;
-            else
-                macNotification = NSAccessibilityFocusedUIElementChangedNotification;                
-            break;
-        case AXAutocorrectionOccured:
-            macNotification = @"AXAutocorrectionOccurred";
-            break;
-        case AXFocusedUIElementChanged:
+    case AXActiveDescendantChanged:
+        // An active descendant change for trees means a selected rows change.
+        if (obj->isTree() || obj->isTable())
+            macNotification = NSAccessibilitySelectedRowsChangedNotification;
+
+        // When a combobox uses active descendant, it means the selected item in its associated
+        // list has changed. In these cases we should use selected children changed, because
+        // we don't want the focus to change away from the combobox where the user is typing.
+        else if (obj->isComboBox() || obj->isList() || obj->isListBox())
+            macNotification = NSAccessibilitySelectedChildrenChangedNotification;
+        else
             macNotification = NSAccessibilityFocusedUIElementChangedNotification;
-            break;
-        case AXLayoutComplete:
-            macNotification = @"AXLayoutComplete";
-            break;
-        case AXLoadComplete:
-        case AXFrameLoadComplete:
-            macNotification = @"AXLoadComplete";
-            // Frame loading events are handled by the UIProcess on macOS to improve reliability.
-            // On macOS, before notifications are allowed by AppKit to be sent to clients, you need to have a client (e.g. VoiceOver)
-            // register for that notification. Because these new processes appear before VO has a chance to register, it will often
-            // miss AXLoadComplete notifications. By moving them to the UIProcess, we can eliminate that issue.
-            skipSystemNotification = true;
-            break;
-        case AXInvalidStatusChanged:
-            macNotification = @"AXInvalidStatusChanged";
-            break;
-        case AXSelectedChildrenChanged:
-            if (obj->isTable() && obj->isExposable())
-                macNotification = NSAccessibilitySelectedRowsChangedNotification;
-            else
-                macNotification = NSAccessibilitySelectedChildrenChangedNotification;
-            break;
-        case AXSelectedTextChanged:
-            macNotification = NSAccessibilitySelectedTextChangedNotification;
-            break;
-        case AXCheckedStateChanged:
-        case AXValueChanged:
-            macNotification = NSAccessibilityValueChangedNotification;
-            break;
-        case AXLiveRegionCreated:
-            macNotification = NSAccessibilityLiveRegionCreatedNotification;
-            break;
-        case AXLiveRegionChanged:
-            macNotification = NSAccessibilityLiveRegionChangedNotification;
-            break;
-        case AXRowCountChanged:
-            macNotification = NSAccessibilityRowCountChangedNotification;
-            break;
-        case AXRowExpanded:
-            macNotification = NSAccessibilityRowExpandedNotification;
-            break;
-        case AXRowCollapsed:
-            macNotification = NSAccessibilityRowCollapsedNotification;
-            break;
-        case AXElementBusyChanged:
-            macNotification = @"AXElementBusyChanged";
-            break;
-        case AXExpandedChanged:
-            macNotification = @"AXExpandedChanged";
-            break;
-        case AXMenuClosed:
-            macNotification = (id)kAXMenuClosedNotification;
-            break;
-        case AXMenuListItemSelected:
-        case AXMenuListValueChanged:
-            macNotification = (id)kAXMenuItemSelectedNotification;
-            break;
-        case AXPressDidSucceed:
-            macNotification = @"AXPressDidSucceed";
-            break;
-        case AXPressDidFail:
-            macNotification = @"AXPressDidFail";
-            break;
-        case AXMenuOpened:
-            macNotification = (id)kAXMenuOpenedNotification;
-            break;
-        case AXDraggingStarted:
-            macNotification = (id)kAXDraggingSourceDragBeganNotification;
-            break;
-        case AXDraggingEnded:
-            macNotification = (id)kAXDraggingSourceDragEndedNotification;
-            break;
-        case AXDraggingEnteredDropZone:
-            macNotification = (id)kAXDraggingDestinationDropAllowedNotification;
-            break;
-        case AXDraggingDropped:
-            macNotification = (id)kAXDraggingDestinationDragAcceptedNotification;
-            break;
-        case AXDraggingExitedDropZone:
-            macNotification = (id)kAXDraggingDestinationDragNotAcceptedNotification;
-            break;
-        default:
-            return;
+        break;
+    case AXAutocorrectionOccured:
+        macNotification = @"AXAutocorrectionOccurred";
+        break;
+    case AXCurrentStateChanged:
+        macNotification = NSAccessibilityCurrentStateChangedNotification;
+        break;
+    case AXFocusedUIElementChanged:
+        macNotification = NSAccessibilityFocusedUIElementChangedNotification;
+        break;
+    case AXLayoutComplete:
+        macNotification = @"AXLayoutComplete";
+        break;
+    case AXLoadComplete:
+    case AXFrameLoadComplete:
+        macNotification = @"AXLoadComplete";
+        // Frame loading events are handled by the UIProcess on macOS to improve reliability.
+        // On macOS, before notifications are allowed by AppKit to be sent to clients, you need to have a client (e.g. VoiceOver)
+        // register for that notification. Because these new processes appear before VO has a chance to register, it will often
+        // miss AXLoadComplete notifications. By moving them to the UIProcess, we can eliminate that issue.
+        skipSystemNotification = true;
+        break;
+    case AXInvalidStatusChanged:
+        macNotification = @"AXInvalidStatusChanged";
+        break;
+    case AXSelectedChildrenChanged:
+        if (obj->isTable() && obj->isExposable())
+            macNotification = NSAccessibilitySelectedRowsChangedNotification;
+        else
+            macNotification = NSAccessibilitySelectedChildrenChangedNotification;
+        break;
+    case AXSelectedTextChanged:
+        macNotification = NSAccessibilitySelectedTextChangedNotification;
+        break;
+    case AXCheckedStateChanged:
+    case AXValueChanged:
+        macNotification = NSAccessibilityValueChangedNotification;
+        break;
+    case AXLiveRegionCreated:
+        macNotification = NSAccessibilityLiveRegionCreatedNotification;
+        break;
+    case AXLiveRegionChanged:
+        macNotification = NSAccessibilityLiveRegionChangedNotification;
+        break;
+    case AXRowCountChanged:
+        macNotification = NSAccessibilityRowCountChangedNotification;
+        break;
+    case AXRowExpanded:
+        macNotification = NSAccessibilityRowExpandedNotification;
+        break;
+    case AXRowCollapsed:
+        macNotification = NSAccessibilityRowCollapsedNotification;
+        break;
+    case AXElementBusyChanged:
+        macNotification = @"AXElementBusyChanged";
+        break;
+    case AXExpandedChanged:
+        macNotification = @"AXExpandedChanged";
+        break;
+    case AXMenuClosed:
+        macNotification = (id)kAXMenuClosedNotification;
+        break;
+    case AXMenuListItemSelected:
+    case AXMenuListValueChanged:
+        macNotification = (id)kAXMenuItemSelectedNotification;
+        break;
+    case AXPressDidSucceed:
+        macNotification = @"AXPressDidSucceed";
+        break;
+    case AXPressDidFail:
+        macNotification = @"AXPressDidFail";
+        break;
+    case AXMenuOpened:
+        macNotification = (id)kAXMenuOpenedNotification;
+        break;
+    case AXDraggingStarted:
+        macNotification = (id)kAXDraggingSourceDragBeganNotification;
+        break;
+    case AXDraggingEnded:
+        macNotification = (id)kAXDraggingSourceDragEndedNotification;
+        break;
+    case AXDraggingEnteredDropZone:
+        macNotification = (id)kAXDraggingDestinationDropAllowedNotification;
+        break;
+    case AXDraggingDropped:
+        macNotification = (id)kAXDraggingDestinationDragAcceptedNotification;
+        break;
+    case AXDraggingExitedDropZone:
+        macNotification = (id)kAXDraggingDestinationDragNotAcceptedNotification;
+        break;
+    default:
+        return;
     }
-    
+
     // NSAccessibilityPostNotification will call this method, (but not when running DRT), so ASSERT here to make sure it does not crash.
     // https://bugs.webkit.org/show_bug.cgi?id=46662
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN

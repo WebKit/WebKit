@@ -66,6 +66,7 @@
 - (void)postScrollStatusChangeNotification;
 - (void)postValueChangedNotification;
 - (void)postExpandedChangedNotification;
+- (void)postCurrentStateChangedNotification;
 
 @end
 

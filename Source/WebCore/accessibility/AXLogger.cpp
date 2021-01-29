@@ -357,8 +357,8 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXChildrenChanged:
         stream << "AXChildrenChanged";
         break;
-    case AXObjectCache::AXNotification::AXCurrentChanged:
-        stream << "AXCurrentChanged";
+    case AXObjectCache::AXNotification::AXCurrentStateChanged:
+        stream << "AXCurrentStateChanged";
         break;
     case AXObjectCache::AXNotification::AXDisabledStateChanged:
         stream << "AXDisabledStateChanged";

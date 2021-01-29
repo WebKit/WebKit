@@ -27,6 +27,7 @@
     Conditional=ACCESSIBILITY,
 ] interface AccessibilityUIElement {
     boolean isEqual(AccessibilityUIElement otherElement);
+    readonly attribute DOMString domIdentifier;
     readonly attribute boolean isIsolatedObject;
 
     // Document information
@@ -91,6 +92,7 @@
     readonly attribute boolean isMultiSelectable;
     readonly attribute boolean isExpanded;
     readonly attribute boolean isChecked;
+    readonly attribute DOMString currentStateValue;
     readonly attribute boolean isIndeterminate;
     readonly attribute boolean isVisible;
     readonly attribute boolean isCollapsed;
