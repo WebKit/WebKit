@@ -29,16 +29,9 @@
 
 namespace WebCore {
 
-GraphicsContextGLOpenGLPrivate::GraphicsContextGLOpenGLPrivate(GraphicsContextGLOpenGL*, GraphicsContextGLOpenGL::Destination destination)
+GraphicsContextGLOpenGLPrivate::GraphicsContextGLOpenGLPrivate(GraphicsContextGLOpenGL*)
 {
-    switch (destination) {
-    case GraphicsContextGLOpenGL::Destination::Offscreen:
-        m_glContext = GLContext::createOffscreenContext(&PlatformDisplay::sharedDisplayForCompositing());
-        break;
-    case GraphicsContextGLOpenGL::Destination::DirectlyToHostWindow:
-        ASSERT_NOT_REACHED();
-        break;
-    }
+    m_glContext = GLContext::createOffscreenContext(&PlatformDisplay::sharedDisplayForCompositing());
 }
 
 GraphicsContextGLOpenGLPrivate::~GraphicsContextGLOpenGLPrivate() = default;

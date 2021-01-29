@@ -128,12 +128,8 @@ static bool needsEAGLOnMac()
 #endif
 
 
-RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextGLAttributes attrs, HostWindow* hostWindow, GraphicsContextGL::Destination destination)
+RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextGLAttributes attrs, HostWindow* hostWindow)
 {
-    // This implementation doesn't currently support rendering directly to the HostWindow.
-    if (destination == Destination::DirectlyToHostWindow)
-        return nullptr;
-
     // Make space for the incoming context if we're full.
     GraphicsContextGLOpenGLManager::sharedManager().recycleContextIfNecessary();
     if (GraphicsContextGLOpenGLManager::sharedManager().hasTooManyContexts())
@@ -165,7 +161,7 @@ Ref<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::createForGPUProcess(const 
 }
 
 GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attrs, HostWindow*, GraphicsContextGLOpenGL* sharedContext, GraphicsContextGLIOSurfaceSwapChain* swapChain)
-    : GraphicsContextGL(attrs, Destination::Offscreen, sharedContext)
+    : GraphicsContextGL(attrs, sharedContext)
 {
     m_isForWebGL2 = attrs.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
 

@@ -33,23 +33,15 @@
 
 namespace WebCore {
 
-TextureMapperGCGLPlatformLayer::TextureMapperGCGLPlatformLayer(GraphicsContextGLOpenGL& context, GraphicsContextGLOpenGL::Destination destination)
+TextureMapperGCGLPlatformLayer::TextureMapperGCGLPlatformLayer(GraphicsContextGLOpenGL& context)
     : m_context(context)
 {
-    switch (destination) {
-    case GraphicsContextGLOpenGL::Destination::Offscreen: {
-        auto sharingContext = PlatformDisplay::sharedDisplayForCompositing().sharingGLContext()->platformContext();
+    auto sharingContext = PlatformDisplay::sharedDisplayForCompositing().sharingGLContext()->platformContext();
 #if ENABLE(WEBGL2)
-        m_glContext = ANGLEContext::createContext(sharingContext, context.contextAttributes().webGLVersion == GraphicsContextGLWebGLVersion::WebGL2);
+    m_glContext = ANGLEContext::createContext(sharingContext, context.contextAttributes().webGLVersion == GraphicsContextGLWebGLVersion::WebGL2);
 #else
-        m_glContext = ANGLEContext::createContext(sharingContext, false);
+    m_glContext = ANGLEContext::createContext(sharingContext, false);
 #endif
-        break;
-    }
-    case GraphicsContextGLOpenGL::Destination::DirectlyToHostWindow:
-        ASSERT_NOT_REACHED();
-        break;
-    }
 
 #if USE(COORDINATED_GRAPHICS)
     m_platformLayerProxy = adoptRef(new TextureMapperPlatformLayerProxy());

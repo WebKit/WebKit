@@ -96,7 +96,7 @@ class GraphicsContextGLOpenGLPrivate;
 class WEBCORE_EXPORT GraphicsContextGLOpenGL final : public GraphicsContextGL
 {
 public:
-    static RefPtr<GraphicsContextGLOpenGL> create(GraphicsContextGLAttributes, HostWindow*, Destination = Destination::Offscreen);
+    static RefPtr<GraphicsContextGLOpenGL> create(GraphicsContextGLAttributes, HostWindow*);
     virtual ~GraphicsContextGLOpenGL();
 
 #if PLATFORM(COCOA)
@@ -513,7 +513,7 @@ private:
 #if PLATFORM(COCOA)
     GraphicsContextGLOpenGL(GraphicsContextGLAttributes, HostWindow*, GraphicsContextGLOpenGL* sharedContext = nullptr, GraphicsContextGLIOSurfaceSwapChain* = nullptr);
 #else
-    GraphicsContextGLOpenGL(GraphicsContextGLAttributes, HostWindow*, Destination = Destination::Offscreen, GraphicsContextGLOpenGL* sharedContext = nullptr);
+    GraphicsContextGLOpenGL(GraphicsContextGLAttributes, HostWindow*, GraphicsContextGLOpenGL* sharedContext = nullptr);
 #endif
 
     // Called once by all the public entry points that eventually call OpenGL.

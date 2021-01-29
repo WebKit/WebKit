@@ -51,20 +51,7 @@ GCGLLayer::GCGLLayer(GraphicsContextGLOpenGL& context)
     : m_context(context)
     , m_contentLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this)))
 {
-}
-
-GCGLLayer::GCGLLayer(GraphicsContextGLOpenGL& context, GraphicsContextGLOpenGL::Destination destination)
-    : m_context(context)
-    , m_contentLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this)))
-{
-    switch (destination) {
-    case GraphicsContextGLOpenGL::Destination::Offscreen:
-        m_glContext = GLContext::createOffscreenContext(&PlatformDisplay::sharedDisplayForCompositing());
-        break;
-    case GraphicsContextGLOpenGL::Destination::DirectlyToHostWindow:
-        ASSERT_NOT_REACHED();
-        break;
-    }
+    m_glContext = GLContext::createOffscreenContext(&PlatformDisplay::sharedDisplayForCompositing());
 }
 
 GCGLLayer::~GCGLLayer()
