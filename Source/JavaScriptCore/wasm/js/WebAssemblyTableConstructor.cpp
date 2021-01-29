@@ -76,9 +76,9 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         String elementString = elementValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-        if (elementString == "funcref" || elementString == "anyfunc")
+        if (elementString == "funcref"_s || elementString == "anyfunc"_s)
             type = Wasm::TableElementType::Funcref;
-        else if (elementString == "externref")
+        else if (elementString == "externref"_s)
             type = Wasm::TableElementType::Externref;
         else
             return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table expects its 'element' field to be the string 'funcref' or 'externref'"_s);

@@ -1,3 +1,18 @@
+2021-01-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Fix WebAssembly.Global's error message and support "funcref"
+        https://bugs.webkit.org/show_bug.cgi?id=221157
+
+        Reviewed by Keith Miller.
+
+        Since it accepts "anyfunc" and "externref", we should update the error message.
+        And we should support "funcref" too.
+
+        * wasm/js/WebAssemblyGlobalConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2021-01-29  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-References] Enable reference types by default

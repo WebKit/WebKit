@@ -1,3 +1,15 @@
+2021-01-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Fix WebAssembly.Global's error message and support "funcref"
+        https://bugs.webkit.org/show_bug.cgi?id=221157
+
+        Reviewed by Keith Miller.
+
+        We also update test expect files failing after r272074.
+
+        * web-platform-tests/wasm/jsapi/global/type.tentative.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/global/type.tentative.any.worker-expected.txt:
+
 2021-01-28  Martin Robinson  <mrobinson@webkit.org>
 
         Add support for logical variants of 'scroll-padding' and 'scroll-margin'

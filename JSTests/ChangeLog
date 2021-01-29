@@ -1,3 +1,13 @@
+2021-01-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Fix WebAssembly.Global's error message and support "funcref"
+        https://bugs.webkit.org/show_bug.cgi?id=221157
+
+        Reviewed by Keith Miller.
+
+        * wasm/stress/global-wrong-type.js: Added.
+        (assert.throws):
+
 2021-01-29  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [JSC] WebAssembly.Global should support Funcref and Externref

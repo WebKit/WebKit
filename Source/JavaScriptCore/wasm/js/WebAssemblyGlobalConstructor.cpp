@@ -86,20 +86,20 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         String valueString = valueValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-        if (valueString == "i32")
+        if (valueString == "i32"_s)
             type = Wasm::Type::I32;
-        else if (valueString == "i64")
+        else if (valueString == "i64"_s)
             type = Wasm::Type::I64;
-        else if (valueString == "f32")
+        else if (valueString == "f32"_s)
             type = Wasm::Type::F32;
-        else if (valueString == "f64")
+        else if (valueString == "f64"_s)
             type = Wasm::Type::F64;
-        else if (Options::useWebAssemblyReferences() && valueString == "anyfunc")
+        else if (Options::useWebAssemblyReferences() && (valueString == "anyfunc"_s || valueString == "funcref"_s))
             type = Wasm::Type::Funcref;
-        else if (Options::useWebAssemblyReferences() && valueString == "externref")
+        else if (Options::useWebAssemblyReferences() && valueString == "externref"_s)
             type = Wasm::Type::Externref;
         else
-            return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Global expects its 'value' field to be the string 'i32', 'i64', 'f32', or 'f64'"_s)));
+            return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Global expects its 'value' field to be the string 'i32', 'i64', 'f32', 'f64', 'anyfunc', 'funcref', or 'externref'"_s)));
     }
 
     uint64_t initialValue = 0;
