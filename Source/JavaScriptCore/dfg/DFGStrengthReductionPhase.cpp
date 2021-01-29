@@ -927,6 +927,12 @@ private:
             
             if (!executable)
                 break;
+
+            // FIXME: Support wasm IC.
+            // DirectCall to wasm function has suboptimal implementation. We avoid using DirectCall if we know that function is a wasm function.
+            // https://bugs.webkit.org/show_bug.cgi?id=220339
+            if (executable->intrinsic() == WasmFunctionIntrinsic)
+                break;
             
             if (FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(vm(), executable)) {
                 if (m_node->op() == Construct && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct)
