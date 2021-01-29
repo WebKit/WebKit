@@ -1,3 +1,14 @@
+2021-01-29  Rob Buis  <rbuis@igalia.com>
+
+        Fix logic error in shouldComputeLogicalHeightFromAspectRatio
+        https://bugs.webkit.org/show_bug.cgi?id=220965
+
+        Reviewed by Darin Adler.
+
+        percentage-resolution-005.html now passes.
+
+        * TestExpectations:
+
 2021-01-28  Jean-Yves Avenard  <jya@apple.com>
 
         [ Big Sur ] media/media-source/media-source-webm-init-inside-segment.html is failing

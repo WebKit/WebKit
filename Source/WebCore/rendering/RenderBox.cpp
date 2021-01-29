@@ -5078,7 +5078,7 @@ bool RenderBox::shouldComputeLogicalHeightFromAspectRatio() const
         return false;
 
     auto h = style().logicalHeight();
-    return h.isAuto() || (!isOutOfFlowPositioned() && h.isPercentOrCalculated() && percentageLogicalHeightIsResolvable());
+    return h.isAuto() || (!isOutOfFlowPositioned() && h.isPercentOrCalculated() && !percentageLogicalHeightIsResolvable());
 }
 
 bool RenderBox::shouldComputeLogicalWidthFromAspectRatio() const
