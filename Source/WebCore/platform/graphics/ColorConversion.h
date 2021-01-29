@@ -29,22 +29,6 @@
 
 namespace WebCore {
 
-// Transfer functions for colors that can be gamma encoded.
-
-struct A98RGBTransferFunction {
-    static float fromLinearClamping(float);
-    static float toLinearClamping(float);
-    static float fromLinearNonClamping(float);
-    static float toLinearNonClamping(float);
-};
-
-struct SRGBTransferFunction {
-    static float fromLinearClamping(float);
-    static float toLinearClamping(float);
-    static float fromLinearNonClamping(float);
-    static float toLinearNonClamping(float);
-};
-
 // All color types must at least implement the following conversions to and from the XYZA color space:
 //    XYZA<float> toXYZA(const ColorType<float>&);
 //    ColorType<float> toColorType(const XYZA<float>&);

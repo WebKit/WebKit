@@ -26,32 +26,23 @@
 #pragma once
 
 #include "ColorComponents.h"
+#include "ColorModels.h"
 #include "ColorSpace.h"
-#include <functional>
 
 namespace WebCore {
 
 template<typename> struct A98RGB;
-template<typename> struct AlphaTraits;
-template<typename> struct ColorComponentRange;
 template<typename> struct DisplayP3;
-template<typename> struct ExtendedRGBModel;
 template<typename> struct ExtendedSRGBA;
 template<typename> struct HSLA;
-template<typename> struct HSLModel;
 template<typename> struct LCHA;
-template<typename> struct LCHModel;
 template<typename> struct Lab;
-template<typename> struct LabModel;
 template<typename> struct LinearA98RGB;
 template<typename> struct LinearDisplayP3;
 template<typename> struct LinearExtendedSRGBA;
 template<typename> struct LinearSRGBA;
-template<typename> struct RGBModel;
 template<typename> struct SRGBA;
 template<typename> struct XYZ;
-template<typename> struct XYZModel;
-
 
 // MARK: Make functions.
 
@@ -128,86 +119,6 @@ template<typename ColorType, typename T, typename Alpha> constexpr ColorType mak
 {
     return makeFromComponents<ColorType>(ColorComponents { clampedComponent<ColorType, 0>(c1), clampedComponent<ColorType, 1>(c2), clampedComponent<ColorType, 2>(c3), alpha });
 }
-
-// MARK: - Models
-
-template<> struct AlphaTraits<float> {
-    static constexpr float transparent = 0.0f;
-    static constexpr float opaque = 1.0f;
-};
-
-template<> struct AlphaTraits<uint8_t> {
-    static constexpr uint8_t transparent = 0;
-    static constexpr uint8_t opaque = 255;
-};
-
-template<typename T> struct ColorComponentRange {
-    T min;
-    T max;
-};
-
-template<> struct ExtendedRGBModel<float> {
-    static constexpr std::array<ColorComponentRange<float>, 3> ranges { {
-        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() },
-        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() },
-        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() }
-    } };
-    static constexpr bool isInvertible = false;
-};
-
-template<> struct HSLModel<float> {
-    static constexpr std::array<ColorComponentRange<float>, 3> ranges { {
-        { 0, 360 },
-        { 0, 100 },
-        { 0, 100 }
-    } };
-    static constexpr bool isInvertible = true;
-};
-
-template<> struct LabModel<float> {
-    static constexpr std::array<ColorComponentRange<float>, 3> ranges { {
-        { 0, std::numeric_limits<float>::infinity() },
-        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() },
-        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() }
-    } };
-    static constexpr bool isInvertible = false;
-};
-
-template<> struct LCHModel<float> {
-    static constexpr std::array<ColorComponentRange<float>, 3> ranges { {
-        { 0, std::numeric_limits<float>::infinity() },
-        { 0, std::numeric_limits<float>::infinity() },
-        { 0, 360 }
-    } };
-    static constexpr bool isInvertible = false;
-};
-
-template<> struct RGBModel<float> {
-    static constexpr std::array<ColorComponentRange<float>, 3> ranges { {
-        { 0, 1 },
-        { 0, 1 },
-        { 0, 1 }
-    } };
-    static constexpr bool isInvertible = true;
-};
-
-template<> struct RGBModel<uint8_t> {
-    static constexpr std::array<ColorComponentRange<uint8_t>, 3> ranges { {
-        { 0, 255 },
-        { 0, 255 },
-        { 0, 255 }
-    } };
-    static constexpr bool isInvertible = true;
-};
-
-template<> struct XYZModel<float> {
-    static constexpr std::array<ColorComponentRange<float>, 3> ranges { {
-        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() },
-        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() },
-        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() }
-    } };
-    static constexpr bool isInvertible = false;
-};
 
 #if ASSERT_ENABLED
 
@@ -314,6 +225,13 @@ template<typename T> struct A98RGB : RGBAType<A98RGB, T, RGBModel<T>> {
 };
 template<typename T> A98RGB(T, T, T, T) -> A98RGB<T>;
 
+template<typename T> struct DisplayP3 : RGBAType<DisplayP3, T, RGBModel<T>> {
+    using RGBAType<DisplayP3, T, RGBModel<T>>::RGBAType;
+    using LinearCounterpart = LinearDisplayP3<T>;
+    static constexpr auto colorSpace = ColorSpace::DisplayP3;
+};
+template<typename T> DisplayP3(T, T, T, T) -> DisplayP3<T>;
+
 template<typename T> struct ExtendedSRGBA : RGBAType<ExtendedSRGBA, T, ExtendedRGBModel<T>> {
     using RGBAType<ExtendedSRGBA, T, ExtendedRGBModel<T>>::RGBAType;
     using LinearCounterpart = LinearExtendedSRGBA<T>;
@@ -351,13 +269,6 @@ template<typename T> struct SRGBA : RGBAType<SRGBA, T, RGBModel<T>> {
     static constexpr auto colorSpace { ColorSpace::SRGB };
 };
 template<typename T> SRGBA(T, T, T, T) -> SRGBA<T>;
-
-template<typename T> struct DisplayP3 : RGBAType<DisplayP3, T, RGBModel<T>> {
-    using RGBAType<DisplayP3, T, RGBModel<T>>::RGBAType;
-    using LinearCounterpart = LinearDisplayP3<T>;
-    static constexpr auto colorSpace = ColorSpace::DisplayP3;
-};
-template<typename T> DisplayP3(T, T, T, T) -> DisplayP3<T>;
 
 // MARK: - Lab Color Type.
 

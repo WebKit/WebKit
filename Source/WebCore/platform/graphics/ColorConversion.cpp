@@ -28,6 +28,7 @@
 
 #include "ColorComponents.h"
 #include "ColorMatrix.h"
+#include "ColorTransferFunctions.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -100,136 +101,64 @@ static constexpr ColorMatrix<3, 3> D65ToD50Matrix {
 
 // MARK: Gamma conversions.
 
-float A98RGBTransferFunction::fromLinearClamping(float c)
-{
-    return clampTo<float>(fromLinearNonClamping(c), 0, 1);
-}
-
-float A98RGBTransferFunction::toLinearClamping(float c)
-{
-    return clampTo<float>(toLinearNonClamping(c), 0, 1);
-}
-
-float A98RGBTransferFunction::fromLinearNonClamping(float c)
-{
-    float sign = std::signbit(c) ? -1.0f : 1.0f;
-    return std::pow(std::abs(c), 256.0f / 563.0f) * sign;
-}
-
-float A98RGBTransferFunction::toLinearNonClamping(float c)
-{
-    float sign = std::signbit(c) ? -1.0f : 1.0f;
-    return std::pow(std::abs(c), 563.0f / 256.0f) * sign;
-}
-
-float SRGBTransferFunction::fromLinearClamping(float c)
-{
-    if (c < 0.0031308f)
-        return std::max<float>(12.92f * c, 0);
-
-    return clampTo<float>(1.055f * std::pow(c, 1.0f / 2.4f) - 0.055f, 0, 1);
-}
-
-float SRGBTransferFunction::toLinearClamping(float c)
-{
-    if (c <= 0.04045f)
-        return std::max<float>(c / 12.92f, 0);
-
-    return clampTo<float>(std::pow((c + 0.055f) / 1.055f, 2.4f), 0, 1);
-}
-
-float SRGBTransferFunction::fromLinearNonClamping(float c)
-{
-    float sign = std::signbit(c) ? -1.0f : 1.0f;
-    c = std::abs(c);
-
-    if (c < 0.0031308f)
-        return 12.92f * c * sign;
-
-    return (1.055f * std::pow(c, 1.0f / 2.4f) - 0.055f) * sign;
-}
-
-float SRGBTransferFunction::toLinearNonClamping(float c)
-{
-    float sign = std::signbit(c) ? -1.0f : 1.0f;
-    c = std::abs(c);
-
-    if (c <= 0.04045f)
-        return c / 12.92f * sign;
-
-    return std::pow((c + 0.055f) / 1.055f, 2.4f) * sign;
-}
-
-template<typename TransferFunction, typename T> static auto toLinearClamping(const T& color) -> typename T::LinearCounterpart
+template<typename TransferFunction, typename ColorType> static auto toLinear(const ColorType& color) -> typename ColorType::LinearCounterpart
 {
     auto [c1, c2, c3, alpha] = color;
-    return { TransferFunction::toLinearClamping(c1), TransferFunction::toLinearClamping(c2), TransferFunction::toLinearClamping(c3), alpha };
+    return { TransferFunction::toLinear(c1), TransferFunction::toLinear(c2), TransferFunction::toLinear(c3), alpha };
 }
 
-template<typename TransferFunction, typename T> static auto fromLinearClamping(const T& color) -> typename T::GammaEncodedCounterpart
+template<typename TransferFunction, typename ColorType> static auto toGammaEncoded(const ColorType& color) -> typename ColorType::GammaEncodedCounterpart
 {
     auto [c1, c2, c3, alpha] = color;
-    return { TransferFunction::fromLinearClamping(c1), TransferFunction::fromLinearClamping(c2), TransferFunction::fromLinearClamping(c3), alpha };
-}
-
-template<typename TransferFunction, typename T> static auto toLinearNonClamping(const T& color) -> typename T::LinearCounterpart
-{
-    auto [c1, c2, c3, alpha] = color;
-    return { TransferFunction::toLinearNonClamping(c1), TransferFunction::toLinearNonClamping(c2), TransferFunction::toLinearNonClamping(c3), alpha };
-}
-
-template<typename TransferFunction, typename T> static auto fromLinearNonClamping(const T& color) -> typename T::GammaEncodedCounterpart
-{
-    auto [c1, c2, c3, alpha] = color;
-    return { TransferFunction::fromLinearNonClamping(c1), TransferFunction::fromLinearNonClamping(c2), TransferFunction::fromLinearNonClamping(c3), alpha };
+    return { TransferFunction::toGammaEncoded(c1), TransferFunction::toGammaEncoded(c2), TransferFunction::toGammaEncoded(c3), alpha };
 }
 
 // A98RGB <-> LinearA98RGB conversions.
 
 LinearA98RGB<float> toLinearA98RGB(const A98RGB<float>& color)
 {
-    return toLinearClamping<A98RGBTransferFunction>(color);
+    return toLinear<A98RGBTransferFunction<float, TransferFunctionMode::Clamped>>(color);
 }
 
 A98RGB<float> toA98RGB(const LinearA98RGB<float>& color)
 {
-    return fromLinearClamping<A98RGBTransferFunction>(color);
+    return toGammaEncoded<A98RGBTransferFunction<float, TransferFunctionMode::Clamped>>(color);
 }
 
 // DisplayP3 <-> LinearDisplayP3 conversions.
 
 LinearDisplayP3<float> toLinearDisplayP3(const DisplayP3<float>& color)
 {
-    return toLinearClamping<SRGBTransferFunction>(color);
+    return toLinear<SRGBTransferFunction<float, TransferFunctionMode::Clamped>>(color);
 }
 
 DisplayP3<float> toDisplayP3(const LinearDisplayP3<float>& color)
 {
-    return fromLinearClamping<SRGBTransferFunction>(color);
+    return toGammaEncoded<SRGBTransferFunction<float, TransferFunctionMode::Clamped>>(color);
 }
 
 // ExtendedSRGBA <-> LinearExtendedSRGBA conversions.
 
 LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const ExtendedSRGBA<float>& color)
 {
-    return toLinearNonClamping<SRGBTransferFunction>(color);
+    return toLinear<SRGBTransferFunction<float, TransferFunctionMode::Unclamped>>(color);
 }
 
 ExtendedSRGBA<float> toExtendedSRGBA(const LinearExtendedSRGBA<float>& color)
 {
-    return fromLinearNonClamping<SRGBTransferFunction>(color);
+    return toGammaEncoded<SRGBTransferFunction<float, TransferFunctionMode::Unclamped>>(color);
 }
 
 // SRGBA <-> LinearSRGBA conversions.
 
 LinearSRGBA<float> toLinearSRGBA(const SRGBA<float>& color)
 {
-    return toLinearClamping<SRGBTransferFunction>(color);
+    return toLinear<SRGBTransferFunction<float, TransferFunctionMode::Clamped>>(color);
 }
 
 SRGBA<float> toSRGBA(const LinearSRGBA<float>& color)
 {
-    return fromLinearClamping<SRGBTransferFunction>(color);
+    return toGammaEncoded<SRGBTransferFunction<float, TransferFunctionMode::Clamped>>(color);
 }
 
 // MARK: Matrix conversions (to and from XYZ for all linear color types).
