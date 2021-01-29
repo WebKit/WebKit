@@ -32,7 +32,6 @@
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 OBJC_CLASS AVAsset;
 OBJC_CLASS AVStreamDataParser;
@@ -54,7 +53,7 @@ public:
     AVStreamDataParser* parser() const { return m_parser.get(); }
 
     Type type() const { return Type::AVFObjC; }
-    void appendData(Segment&&, AppendFlags = AppendFlags::None) final;
+    void appendData(Segment&&, CompletionHandler<void()>&&, AppendFlags = AppendFlags::None) final;
     void flushPendingMediaData() final;
     void setShouldProvideMediaDataForTrackID(bool, uint64_t) final;
     bool shouldProvideMediadataForTrackID(uint64_t) final;
@@ -80,8 +79,6 @@ private:
     RetainPtr<WebAVStreamDataParserListener> m_delegate;
     bool m_discardSamplesUntilNextInitializationSegment { false };
     bool m_parserStateWasReset { false };
-
-    Box<BinarySemaphore> m_initializationSegmentIsHandledSemaphore;
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<const WTF::Logger> m_logger;

@@ -598,7 +598,6 @@ static SourceBufferParserWebM::CallOnClientThreadCallback callOnMainThreadCallba
 
 SourceBufferParserWebM::SourceBufferParserWebM()
     : m_reader(WTF::makeUniqueRef<StreamingVectorReader>())
-    , m_initializationSegmentIsHandledSemaphore(Box<BinarySemaphore>::create())
     , m_callOnClientThreadCallback(callOnMainThreadCallback())
 {
     if (isWebmParserAvailable())
@@ -607,13 +606,14 @@ SourceBufferParserWebM::SourceBufferParserWebM()
 
 SourceBufferParserWebM::~SourceBufferParserWebM()
 {
-    m_initializationSegmentIsHandledSemaphore->signal();
 }
 
-void SourceBufferParserWebM::appendData(Segment&& segment, AppendFlags appendFlags)
+void SourceBufferParserWebM::appendData(Segment&& segment, CompletionHandler<void()>&& completionHandler, AppendFlags appendFlags)
 {
-    if (!m_parser)
+    if (!m_parser) {
+        completionHandler();
         return;
+    }
 
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "flags(", appendFlags == AppendFlags::Discontinuity ? "Discontinuity" : "", "), size(", segment.size(), ")");
 
@@ -627,6 +627,7 @@ void SourceBufferParserWebM::appendData(Segment&& segment, AppendFlags appendFla
         m_status = m_parser->Feed(this, &m_reader);
         if (m_status.ok() || m_status.code == Status::kEndOfFile || m_status.code == Status::kWouldBlock) {
             m_reader->reclaimSegments();
+            completionHandler();
             return;
         }
 
@@ -657,11 +658,12 @@ void SourceBufferParserWebM::appendData(Segment&& segment, AppendFlags appendFla
         if (m_didEncounterErrorDuringParsingCallback)
             m_didEncounterErrorDuringParsingCallback(code);
     });
+
+    completionHandler();
 }
 
 void SourceBufferParserWebM::flushPendingMediaData()
 {
-    m_initializationSegmentIsHandledSemaphore->signal();
 }
 
 void SourceBufferParserWebM::setShouldProvideMediaDataForTrackID(bool, uint64_t)
@@ -686,15 +688,11 @@ void SourceBufferParserWebM::resetParserState()
     m_initializationSegment = nullptr;
     m_initializationSegmentEncountered = false;
     m_currentBlock.reset();
-
-    m_initializationSegmentIsHandledSemaphore->signal();
 }
 
 void SourceBufferParserWebM::invalidate()
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-
-    m_initializationSegmentIsHandledSemaphore->signal();
 
     m_parser = nullptr;
     m_tracks.clear();
@@ -716,7 +714,6 @@ auto SourceBufferParserWebM::trackDataForTrackNumber(uint64_t trackNumber) -> Tr
     }
     return nullptr;
 }
-
 
 Status SourceBufferParserWebM::OnElementBegin(const ElementMetadata& metadata, Action* action)
 {
@@ -837,13 +834,8 @@ Status SourceBufferParserWebM::OnClusterBegin(const ElementMetadata& metadata, c
 
     if (m_initializationSegmentEncountered && m_didParseInitializationDataCallback) {
         m_callOnClientThreadCallback([this, protectedThis = makeRef(*this), initializationSegment = WTFMove(*m_initializationSegment)]() mutable {
-            m_didParseInitializationDataCallback(WTFMove(initializationSegment), [this, protectedThis = makeRef(*this)] {
-                m_initializationSegmentIsHandledSemaphore->signal();
-            });
+            m_didParseInitializationDataCallback(WTFMove(initializationSegment));
         });
-
-        // Wait until the initialization segment is handled
-        m_initializationSegmentIsHandledSemaphore->wait();
     }
     m_initializationSegmentEncountered = false;
     m_initializationSegment = nullptr;

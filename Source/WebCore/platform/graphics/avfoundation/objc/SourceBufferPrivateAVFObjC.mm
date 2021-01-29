@@ -308,14 +308,10 @@ SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC
 
     sourceBufferMap().add(m_mapID, makeWeakPtr(*this));
 
-    m_parser->setDidParseInitializationDataCallback([this, weakThis = makeWeakPtr(this)] (InitializationSegment&& segment, CompletionHandler<void()>&& completionHandler) mutable {
+    m_parser->setDidParseInitializationDataCallback([weakThis = makeWeakPtr(this)] (InitializationSegment&& segment) mutable {
         ASSERT(isMainThread());
-        if (!weakThis) {
-            completionHandler();
-            return;
-        }
-
-        didParseInitializationData(WTFMove(segment), WTFMove(completionHandler));
+        if (weakThis)
+            weakThis->didParseInitializationData(WTFMove(segment));
     });
 
     m_parser->setDidEncounterErrorDuringParsingCallback([weakThis = makeWeakPtr(this)] (int32_t errorCode) mutable {
@@ -324,10 +320,10 @@ SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC
             weakThis->didEncounterErrorDuringParsing(errorCode);
     });
 
-    m_parser->setDidProvideMediaDataCallback([weakThis = makeWeakPtr(this)] (Ref<MediaSample>&& sample, uint64_t trackID, const String& mediaType) mutable {
+    m_parser->setDidProvideMediaDataCallback([weakThis = makeWeakPtr(this)] (Ref<MediaSample>&& sample, uint64_t trackId, const String& mediaType) mutable {
         ASSERT(isMainThread());
         if (weakThis)
-            weakThis->didProvideMediaDataForTrackID(WTFMove(sample), trackID, mediaType);
+            weakThis->didProvideMediaDataForTrackId(WTFMove(sample), trackId, mediaType);
     });
 }
 
@@ -346,14 +342,15 @@ SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
 
     if (m_hasSessionSemaphore)
         m_hasSessionSemaphore->signal();
+
+    m_mediaSampleTaskQueue.close();
 }
 
-void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegment&& segment, CompletionHandler<void()>&& completionHandler)
+void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegment&& segment)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
     if (!m_mediaSource) {
-        completionHandler();
         return;
     }
 
@@ -364,7 +361,6 @@ void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegmen
                 continue;
             if (!codecsMeetHardwareDecodeRequirements({{ *codec }}, m_mediaSource->player()->mediaContentTypesRequiringHardwareSupport())) {
                 m_parsingSucceeded = false;
-                completionHandler();
                 return;
             }
         }
@@ -391,7 +387,41 @@ void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegmen
     if (m_mediaSource)
         m_mediaSource->player()->characteristicsChanged();
 
-    didReceiveInitializationSegment(WTFMove(segment), WTFMove(completionHandler));
+    m_initializationSegmentIsHandled = false;
+    didReceiveInitializationSegment(WTFMove(segment), [this, weakThis = makeWeakPtr(*this)]() mutable {
+        ASSERT(isMainThread());
+        if (!weakThis)
+            return;
+
+        if  (m_mediaSamples.isEmpty()) {
+            m_initializationSegmentIsHandled = true;
+            ALWAYS_LOG(LOGIDENTIFIER, "initialization segment is handled");
+            return;
+        }
+
+        m_mediaSampleTaskQueue.enqueueTask([this, weakThis = WTFMove(weakThis)] {
+            if (!weakThis)
+                return;
+
+            auto mediaSamples = std::exchange(m_mediaSamples, { });
+            for (auto& trackIdMediaSamplePair : mediaSamples) {
+                auto trackId = trackIdMediaSamplePair.first;
+                auto& mediaSample = trackIdMediaSamplePair.second;
+                if (trackId == m_enabledVideoTrackID || m_audioRenderers.contains(trackId)) {
+                    DEBUG_LOG(LOGIDENTIFIER, mediaSample.get());
+                    didReceiveSample(mediaSample);
+                }
+            }
+
+            m_initializationSegmentIsHandled = true;
+            ALWAYS_LOG(LOGIDENTIFIER, "initialization segment is handled");
+
+            if (m_hasPendingAppendCompletedCallback) {
+                m_hasPendingAppendCompletedCallback = false;
+                appendCompleted();
+            }
+        });
+    });
 }
 
 void SourceBufferPrivateAVFObjC::didEncounterErrorDuringParsing(int32_t code)
@@ -404,11 +434,16 @@ void SourceBufferPrivateAVFObjC::didEncounterErrorDuringParsing(int32_t code)
     m_parsingSucceeded = false;
 }
 
-void SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackID(Ref<MediaSample>&& mediaSample, uint64_t trackID, const String& mediaType)
+void SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackId(Ref<MediaSample>&& mediaSample, uint64_t trackId, const String& mediaType)
 {
     UNUSED_PARAM(mediaType);
+    if (!m_initializationSegmentIsHandled) {
+        DEBUG_LOG(LOGIDENTIFIER, mediaSample.get());
+        m_mediaSamples.append(std::make_pair(trackId, WTFMove(mediaSample)));
+        return;
+    }
 
-    if (trackID != m_enabledVideoTrackID && !m_audioRenderers.contains(trackID)) {
+    if (trackId != m_enabledVideoTrackID && !m_audioRenderers.contains(trackId)) {
         // FIXME(125161): We don't handle text tracks, and passing this sample up to SourceBuffer
         // will just confuse its state. Drop this sample until we can handle text tracks properly.
         return;
@@ -510,7 +545,7 @@ static dispatch_queue_t globalDataParserQueue()
 
 void SourceBufferPrivateAVFObjC::append(Vector<unsigned char>&& data)
 {
-    DEBUG_LOG(LOGIDENTIFIER, "data length = ", data.size());
+    ALWAYS_LOG(LOGIDENTIFIER, "data length = ", data.size());
 
     ASSERT(!m_hasSessionSemaphore);
     ASSERT(!m_abortSemaphore);
@@ -561,12 +596,19 @@ void SourceBufferPrivateAVFObjC::append(Vector<unsigned char>&& data)
     m_parsingSucceeded = true;
     dispatch_group_enter(m_isAppendingGroup.get());
 
-    dispatch_async(globalDataParserQueue(), [data = WTFMove(data), weakThis = m_appendWeakFactory.createWeakPtr(*this), parser = m_parser, isAppendingGroup = m_isAppendingGroup] () mutable {
-        parser->appendData(WTFMove(data));
+    dispatch_async(globalDataParserQueue(), [data = WTFMove(data), weakThis = m_appendWeakFactory.createWeakPtr(*this), parser = m_parser, isAppendingGroup = m_isAppendingGroup]() mutable {
+        parser->appendData(WTFMove(data), [weakThis = WTFMove(weakThis)]() mutable {
+            callOnMainThread([weakThis = WTFMove(weakThis)] {
+                if (!weakThis)
+                    return;
 
-        callOnMainThread([weakThis] {
-            if (weakThis)
+                if (!weakThis->m_mediaSamples.isEmpty()) {
+                    weakThis->m_hasPendingAppendCompletedCallback = true;
+                    return;
+                }
+
                 weakThis->appendCompleted();
+            });
         });
         dispatch_group_leave(isAppendingGroup.get());
     });
@@ -574,6 +616,7 @@ void SourceBufferPrivateAVFObjC::append(Vector<unsigned char>&& data)
 
 void SourceBufferPrivateAVFObjC::appendCompleted()
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     if (m_abortSemaphore) {
         m_abortSemaphore->signal();
         m_abortSemaphore = nil;
@@ -607,6 +650,9 @@ void SourceBufferPrivateAVFObjC::abort()
     }
 
     m_parser->resetParserState();
+    m_mediaSamples.clear();
+    m_initializationSegmentIsHandled = false;
+    m_mediaSampleTaskQueue.cancelAllTasks();
 
     dispatch_group_wait(m_isAppendingGroup.get(), DISPATCH_TIME_FOREVER);
 }
@@ -1228,6 +1274,7 @@ void SourceBufferPrivateAVFObjC::setVideoLayer(AVSampleBufferDisplayLayer* layer
     if (layer == m_displayLayer)
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER, "!!layer = ", !!layer);
     ASSERT(!layer || !m_decompressionSession || hasSelectedVideo());
 
     if (m_displayLayer) {

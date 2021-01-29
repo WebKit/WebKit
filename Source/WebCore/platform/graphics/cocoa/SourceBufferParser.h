@@ -82,7 +82,7 @@ public:
         > m_segment;
     };
 
-    virtual void appendData(Segment&&, AppendFlags = AppendFlags::None) = 0;
+    virtual void appendData(Segment&&, CompletionHandler<void()>&& = [] { }, AppendFlags = AppendFlags::None) = 0;
     virtual void flushPendingMediaData() = 0;
     virtual void setShouldProvideMediaDataForTrackID(bool, uint64_t) = 0;
     virtual bool shouldProvideMediadataForTrackID(uint64_t) = 0;
@@ -95,7 +95,7 @@ public:
 
     // Will be called on the main thread.
     using InitializationSegment = SourceBufferPrivateClient::InitializationSegment;
-    using DidParseInitializationDataCallback = WTF::Function<void(InitializationSegment&&, CompletionHandler<void()>&&)>;
+    using DidParseInitializationDataCallback = WTF::Function<void(InitializationSegment&&)>;
     void setDidParseInitializationDataCallback(DidParseInitializationDataCallback&& callback)
     {
         m_didParseInitializationDataCallback = WTFMove(callback);

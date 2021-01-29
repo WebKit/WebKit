@@ -42,7 +42,6 @@
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
 typedef struct OpaqueCMBlockBuffer *CMBlockBufferRef;
@@ -73,7 +72,7 @@ public:
     const webm::Status& status() const { return m_status; }
 
     Type type() const { return Type::WebM; }
-    void appendData(Segment&&, AppendFlags = AppendFlags::None) final;
+    void appendData(Segment&&, CompletionHandler<void()>&& = [] { }, AppendFlags = AppendFlags::None) final;
     void flushPendingMediaData() final;
     void setShouldProvideMediaDataForTrackID(bool, uint64_t) final;
     bool shouldProvideMediadataForTrackID(uint64_t) final;
@@ -265,7 +264,6 @@ private:
     Optional<uint64_t> m_rewindToPosition;
     float m_minimumAudioSampleDuration { 2 };
 
-    Box<BinarySemaphore> m_initializationSegmentIsHandledSemaphore;
     CallOnClientThreadCallback m_callOnClientThreadCallback;
 
     RefPtr<const WTF::Logger> m_logger;

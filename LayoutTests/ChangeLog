@@ -1,3 +1,15 @@
+2021-01-28  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP][MSE] A video element does not fire “canplaythrough” event if SourceBuffer.abort() is called
+        https://bugs.webkit.org/show_bug.cgi?id=220964
+
+        Reviewed by Jer Noble.
+
+        * gpu-process/TestExpectations:
+        * media/media-source/media-source-webm-append-buffer-after-abort-expected.txt: Added.
+        * media/media-source/media-source-webm-append-buffer-after-abort.html: Added.
+        * platform/mac/TestExpectations:
+
 2021-01-28  Amir Mark Jr  <amir_mark@apple.com>
 
         [BigSur Wk1] media/video-ended-event-negative-playback.html is flaky text failure.
