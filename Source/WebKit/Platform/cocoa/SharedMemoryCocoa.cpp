@@ -26,8 +26,7 @@
 #include "config.h"
 #include "SharedMemory.h"
 
-#include "Decoder.h"
-#include "Encoder.h"
+#include "ArgumentCoders.h"
 #include "Logging.h"
 #include "MachPort.h"
 #include <WebCore/SharedBuffer.h>

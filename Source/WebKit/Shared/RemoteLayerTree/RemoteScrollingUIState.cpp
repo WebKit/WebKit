@@ -33,7 +33,7 @@ namespace WebKit {
 
 void RemoteScrollingUIState::encode(IPC::Encoder& encoder) const
 {
-    encoder.encode(m_changes);
+    encoder << m_changes;
 
     if (m_changes.contains(Changes::ScrollSnapNodes))
         encoder << m_nodesWithActiveScrollSnap;

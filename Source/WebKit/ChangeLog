@@ -1,3 +1,58 @@
+2021-01-29  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Some type serialization encoders are implemented in Encoder class
+        https://bugs.webkit.org/show_bug.cgi?id=220519
+
+        Reviewed by Chris Dumez.
+
+        Move arithmetic type and enum type serialization from Encoder to
+        ArgumentCoder. This makes it a bit simpler to implement multiple
+        Encoder types, as the serialization code is consistently separate
+        from the Encoder. WebGL SHM IPC stream extensions would eventually
+        need a similar but slightly different Encoder.
+
+        Since Encoder is intentionally coupled with the Decoder, do the
+        corresponding modification to Decoder class for consistency.
+
+        Reimplement Has{Legacy,Modern}Decoder for ease of forward declaration
+        and (perhaps?) in a bit simpler terms.
+
+        Encoder::operator<<() and Encoder::encode() were the same function.
+        Remove Encoder::encode().
+
+        No new tests, a refactor.
+
+        * NetworkProcess/NetworkSocketChannel.h:
+        * Platform/IPC/ArgumentCoder.h:
+        (IPC::Detail::TestLegacyDecoder):
+        (IPC::Detail::TestModernDecoder):
+        (IPC::ArgumentCoder::encode):
+        (IPC::ArgumentCoder::decode):
+        * Platform/IPC/ArgumentCoders.h:
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::send):
+        (IPC::Connection::sendWithAsyncReply):
+        (IPC::Connection::sendSync):
+        * Platform/IPC/Decoder.h:
+        (IPC::Decoder::decode):
+        (IPC::Decoder::operator>>):
+        * Platform/IPC/Encoder.h:
+        * Platform/IPC/MessageSender.h:
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::Connection::open):
+        * Platform/cocoa/SharedMemoryCocoa.cpp:
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode const):
+        * Shared/RemoteLayerTree/RemoteScrollingUIState.cpp:
+        (WebKit::RemoteScrollingUIState::encode const):
+        * UIProcess/AuxiliaryProcessProxy.h:
+        (WebKit::AuxiliaryProcessProxy::send):
+        (WebKit::AuxiliaryProcessProxy::sendWithAsyncReply):
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::JSIPC::sendMessage):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::updateRendering):
+
 2021-01-29  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] return-type-c-linkage warnings

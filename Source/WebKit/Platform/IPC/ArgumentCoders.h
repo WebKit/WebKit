@@ -25,9 +25,8 @@
 
 #pragma once
 
+#include "ArgumentCoder.h"
 #include "ArrayReference.h"
-#include "Decoder.h"
-#include "Encoder.h"
 #include <utility>
 #include <wtf/Box.h>
 #include <wtf/CheckedArithmetic.h>
@@ -77,7 +76,7 @@ template<typename T> struct ArgumentCoder<ArrayReference<T, arrayReferenceDynami
     using ArrayReferenceType = ArrayReference<T, arrayReferenceDynamicExtent>;
     static void encode(Encoder& encoder, const ArrayReferenceType& arrayReference)
     {
-        encoder.encode(static_cast<uint64_t>(arrayReference.size()));
+        encoder << static_cast<uint64_t>(arrayReference.size());
         if (!arrayReference.size())
             return;
         encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.data()), arrayReference.size() * sizeof(T), alignof(T));

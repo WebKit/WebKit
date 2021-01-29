@@ -164,7 +164,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
 
 void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) const
 {
-    encoder.encode(changedProperties);
+    encoder << changedProperties;
 
     if (changedProperties & NameChanged)
         encoder << name;

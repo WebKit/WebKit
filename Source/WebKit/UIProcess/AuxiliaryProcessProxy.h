@@ -163,7 +163,7 @@ bool AuxiliaryProcessProxy::send(T&& message, uint64_t destinationID, OptionSet<
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
     auto encoder = makeUnique<IPC::Encoder>(T::name(), destinationID);
-    encoder->encode(message.arguments());
+    *encoder << message.arguments();
 
     return sendMessage(WTFMove(encoder), sendOptions);
 }
@@ -188,8 +188,8 @@ void AuxiliaryProcessProxy::sendWithAsyncReply(T&& message, C&& completionHandle
 
     auto encoder = makeUnique<IPC::Encoder>(T::name(), destinationID);
     uint64_t listenerID = IPC::nextAsyncReplyHandlerID();
-    encoder->encode(listenerID);
-    encoder->encode(message.arguments());
+    *encoder << listenerID;
+    *encoder << message.arguments();
     sendMessage(WTFMove(encoder), sendOptions, {{ [completionHandler = WTFMove(completionHandler)] (IPC::Decoder* decoder) mutable {
         if (decoder && decoder->isValid())
             T::callReply(*decoder, WTFMove(completionHandler));

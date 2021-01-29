@@ -25,11 +25,9 @@
 
 #pragma once
 
-#include "ArgumentCoder.h"
 #include "Attachment.h"
 #include "MessageNames.h"
 #include "StringReference.h"
-#include <WebCore/ContextMenuItem.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
@@ -37,8 +35,9 @@
 namespace IPC {
 
 enum class MessageFlags : uint8_t;
-enum class MessageName : uint16_t;
 enum class ShouldDispatchWhenWaitingForSyncReply : uint8_t;
+
+template<typename, typename> struct ArgumentCoder;
 
 class Encoder final {
     WTF_MAKE_FAST_ALLOCATED;
@@ -61,31 +60,11 @@ public:
 
     void encodeFixedLengthData(const uint8_t* data, size_t, size_t alignment);
 
-    template<typename T, std::enable_if_t<!std::is_enum<typename std::remove_const_t<std::remove_reference_t<T>>>::value && !std::is_arithmetic<typename std::remove_const_t<std::remove_reference_t<T>>>::value>* = nullptr>
-    void encode(T&& t)
-    {
-        ArgumentCoder<typename std::remove_const<typename std::remove_reference<T>::type>::type>::encode(*this, std::forward<T>(t));
-    }
-
-    template<typename E, std::enable_if_t<std::is_enum<E>::value>* = nullptr>
-    Encoder& operator<<(E&& enumValue)
-    {
-        ASSERT(WTF::isValidEnum<E>(WTF::enumToUnderlyingType<E>(enumValue)));
-        encode(WTF::enumToUnderlyingType<E>(enumValue));
-        return *this;
-    }
-
-    template<typename T, std::enable_if_t<!std::is_enum<T>::value>* = nullptr>
+    template<typename T>
     Encoder& operator<<(T&& t)
     {
-        encode(std::forward<T>(t));
+        ArgumentCoder<std::remove_const_t<std::remove_reference_t<T>>, void>::encode(*this, std::forward<T>(t));
         return *this;
-    }
-
-    template<typename T, std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
-    void encode(T value)
-    {
-        encodeFixedLengthData(reinterpret_cast<const uint8_t*>(&value), sizeof(T), alignof(T));
     }
 
     uint8_t* buffer() const { return m_buffer; }
@@ -116,13 +95,6 @@ private:
     Encoder(ConstructWithoutHeaderTag);
 
     uint8_t* grow(size_t alignment, size_t);
-
-    template<typename E, std::enable_if_t<std::is_enum<E>::value>* = nullptr>
-    void encode(E enumValue)
-    {
-        ASSERT(WTF::isValidEnum<E>(WTF::enumToUnderlyingType<E>(enumValue)));
-        encode(WTF::enumToUnderlyingType<E>(enumValue));
-    }
 
     bool hasAttachments() const;
 

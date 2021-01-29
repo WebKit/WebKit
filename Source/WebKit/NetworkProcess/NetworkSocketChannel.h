@@ -36,6 +36,7 @@
 
 namespace WebCore {
 class ResourceRequest;
+class ResourceResponse;
 }
 
 namespace IPC {

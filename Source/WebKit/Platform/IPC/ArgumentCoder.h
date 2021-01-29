@@ -25,90 +25,85 @@
 
 #pragma once
 
+#include "Decoder.h"
+#include "Encoder.h"
 #include <wtf/Optional.h>
 
-namespace WebCore {
-class IntConstraint;
-class DoubleConstraint;
-class ResourceResponse;
-struct ViewportArguments;
-}
-
 namespace IPC {
+namespace Detail {
+template<typename T, typename I> auto TestLegacyDecoder(int) -> decltype(I::decode(std::declval<Decoder&>(), std::declval<T&>()), std::true_type { });
+template<typename T, typename I> auto TestLegacyDecoder(long) -> std::false_type;
+template<typename T, typename I> auto TestModernDecoder(int) -> decltype(I::decode(std::declval<Decoder&>()), std::true_type { });
+template<typename T, typename I> auto TestModernDecoder(long) -> std::false_type;
+}
+template<typename T, typename I = T> struct HasLegacyDecoder : decltype(Detail::TestLegacyDecoder<T, I>(0)) { };
+template<typename T, typename I = T> inline constexpr bool HasLegacyDecoderV = HasLegacyDecoder<T, I>::value;
+template<typename T, typename I = T> struct HasModernDecoder : decltype(Detail::TestModernDecoder<T, I>(0)) { };
+template<typename T, typename I = T> inline constexpr bool HasModernDecoderV = HasModernDecoder<T, I>::value;
 
-class Decoder;
-class Encoder;
-
-template<typename> struct ArgumentCoder;
-
-template<typename> class UsesModernDecoder;
-
-template<typename U>
-class UsesModernDecoder {
-private:
-    template<typename T, T> struct Helper;
-    template<typename T> static uint8_t check(Helper<Optional<U> (*)(Decoder&), &T::decode>*);
-    template<typename T> static uint16_t check(...);
-    template<typename T> static uint8_t checkArgumentCoder(Helper<Optional<U> (*)(Decoder&), &ArgumentCoder<T>::decode>*);
-    template<typename T> static uint16_t checkArgumentCoder(...);
-public:
-    static constexpr bool argumentCoderValue = sizeof(check<U>(nullptr)) == sizeof(uint8_t);
-    static constexpr bool value = argumentCoderValue || sizeof(checkArgumentCoder<U>(nullptr)) == sizeof(uint8_t);
-};
-    
-template<typename... Types>
-class UsesModernDecoder<std::tuple<Types...>> {
-public:
-    static constexpr bool value = true;
-    static constexpr bool argumentCoderValue = true;
-};
-
-template<typename U>
-class UsesLegacyDecoder {
-private:
-    template<typename T, T> struct Helper;
-    template<typename T> static uint8_t check(Helper<bool (*)(Decoder&, U&), &T::decode>*);
-    template<typename T> static uint16_t check(...);
-    template<typename T> static uint8_t checkArgumentCoder(Helper<bool (*)(Decoder&, U&), &ArgumentCoder<T>::decode>*);
-    template<typename T> static uint16_t checkArgumentCoder(...);
-public:
-    static constexpr bool argumentCoderValue = sizeof(check<U>(nullptr)) == sizeof(uint8_t);
-    static constexpr bool value = argumentCoderValue || sizeof(checkArgumentCoder<U>(nullptr)) == sizeof(uint8_t);
-};
-
-template<typename BoolType>
-class DefaultDecoderValues {
-public:
-    static constexpr bool argumentCoderValue = BoolType::value;
-    static constexpr bool value = BoolType::value;
-};
-
-// ResourceResponseBase has the legacy decode template, not ResourceResponse.
-template<> class UsesModernDecoder<WebCore::ResourceResponse> : public DefaultDecoderValues<std::false_type> { };
-template<> class UsesLegacyDecoder<WebCore::ResourceResponse> : public DefaultDecoderValues<std::true_type> { };
-
-// IntConstraint and DoubleConstraint have their legacy decoder templates in NumericConstraint.
-template<> class UsesModernDecoder<WebCore::IntConstraint> : public DefaultDecoderValues<std::false_type> { };
-template<> class UsesLegacyDecoder<WebCore::IntConstraint> : public DefaultDecoderValues<std::true_type> { };
-template<> class UsesModernDecoder<WebCore::DoubleConstraint> : public DefaultDecoderValues<std::false_type> { };
-template<> class UsesLegacyDecoder<WebCore::DoubleConstraint> : public DefaultDecoderValues<std::true_type> { };
-
-template<typename T> struct ArgumentCoder {
+template<typename T, typename = void> struct ArgumentCoder {
     static void encode(Encoder& encoder, const T& t)
     {
         t.encode(encoder);
     }
 
-    template<typename U = T, std::enable_if_t<UsesLegacyDecoder<U>::argumentCoderValue>* = nullptr> WARN_UNUSED_RETURN
-    static bool decode(Decoder& decoder, U& u)
+    static Optional<T> decode(Decoder& decoder)
     {
-        return U::decode(decoder, u);
+        if constexpr(HasModernDecoderV<T>)
+            return T::decode(decoder);
+        else {
+            T t;
+            if (T::decode(decoder, t))
+                return t;
+            return WTF::nullopt;
+        }
     }
 
-    template<typename U = T, std::enable_if_t<UsesModernDecoder<U>::argumentCoderValue>* = nullptr>
-    static Optional<U> decode(Decoder& decoder)
+    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, T& t)
     {
-        return U::decode(decoder);
+        if constexpr(HasLegacyDecoderV<T>)
+            return T::decode(decoder, t);
+        else {
+            Optional<T> optional = T::decode(decoder);
+            if (!optional)
+                return false;
+            t = WTFMove(*optional);
+            return true;
+        }
+    }
+};
+
+template<typename T>
+struct ArgumentCoder<T, typename std::enable_if_t<std::is_arithmetic_v<T>>> {
+    static void encode(Encoder& encoder, T value)
+    {
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(&value), sizeof(T), alignof(T));
+    }
+
+    static Optional<T> decode(Decoder& decoder)
+    {
+        T result;
+        if (decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(&result), sizeof(T), alignof(T)))
+            return result;
+        return WTF::nullopt;
+    }
+};
+
+template<typename T>
+struct ArgumentCoder<T, typename std::enable_if_t<std::is_enum_v<T>>> {
+    static void encode(Encoder& encoder, T value)
+    {
+        ASSERT(WTF::isValidEnum<T>(WTF::enumToUnderlyingType<T>(value)));
+        encoder << WTF::enumToUnderlyingType<T>(value);
+    }
+
+    static Optional<T> decode(Decoder& decoder)
+    {
+        Optional<std::underlying_type_t<T>> value;
+        decoder >> value;
+        if (value && WTF::isValidEnum<T>(*value))
+            return static_cast<T>(*value);
+        return WTF::nullopt;
     }
 };
 

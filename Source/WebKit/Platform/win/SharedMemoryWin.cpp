@@ -27,8 +27,7 @@
 #include "config.h"
 #include "SharedMemory.h"
 
-#include "Decoder.h"
-#include "Encoder.h"
+#include "ArgumentCoder.h"
 #include <wtf/RefPtr.h>
 
 namespace WebKit {
