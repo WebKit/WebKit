@@ -1,5 +1,18 @@
 2021-01-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Add com.apple.private.securejit entitlement for JITCage
+        https://bugs.webkit.org/show_bug.cgi?id=221147
+
+        Reviewed by Keith Miller.
+
+        Add com.apple.private.securejit only for iOS, used for JITCage.
+
+        * entitlements.plist:
+        * runtime/Options.cpp:
+        (JSC::canUseJITCage):
+
+2021-01-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Fix WebAssembly.Global's error message and support "funcref"
         https://bugs.webkit.org/show_bug.cgi?id=221157
 
