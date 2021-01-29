@@ -1,3 +1,12 @@
+2021-01-29  Amir Mark Jr  <amir_mark@apple.com>
+
+        REGRESSION: [BigSur wk1] media/mediacapabilities/vp9.html is consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=221095
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-01-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Two 'tests' are running with out expectation files that are not real tests.

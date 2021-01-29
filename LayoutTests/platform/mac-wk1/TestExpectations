@@ -1224,3 +1224,4 @@ webkit.org/b/221106 [ BigSur ] media/video-ended-event-negative-playback.html [ 
 webkit.org/b/208477 [ Catalina ] accessibility/mac/test.mp3/boot.xml [ Skip ]
 webkit.org/b/208479 [ Catalina ] accessibility/mac/test.mp3/root.xml [ Skip ]
 
+webkit.org/b/221095 [ BigSur ] media/mediacapabilities/vp9.html [ Failure ]
