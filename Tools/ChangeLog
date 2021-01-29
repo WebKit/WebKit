@@ -1,3 +1,30 @@
+2021-01-29  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style: warn about WTF::BlockPtr use in JavaScriptCore until ARC is enabled
+        <https://webkit.org/b/221108>
+        <rdar://problem/73726640>
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_is_javascriptcore_file): Add.
+        - Extract code to reuse from
+          check_identifier_name_in_declaration().
+        (check_include_line):
+        (check_language):
+        - Add check for use of WTF::BlockPtr.
+        (check_identifier_name_in_declaration):
+        - Use _is_javascriptcore_file().
+        (CppChecker):
+        - Add 'security/javascriptcore_wtf_blockptr' to list of
+          checkers.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTestBase.perform_language_rules_check):
+        - Add 'security/javascriptcore_wtf_blockptr' to list of
+          checkers for testing header includes.
+        (OrderOfIncludesTest.test_check_wtf_blockptr_usage_in_javascriptcore):
+        - Add test to detect use of WTF::BlockPtr in JavaScriptCore.
+
 2021-01-29  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Implement --artifact-exec-wrapper

@@ -33,7 +33,7 @@
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if PLATFORM(COCOA)
-#include <wtf/BlockPtr.h>
+#include <wtf/Function.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSString;

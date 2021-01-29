@@ -1,3 +1,15 @@
+2021-01-29  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style: warn about WTF::BlockPtr use in JavaScriptCore until ARC is enabled
+        <https://webkit.org/b/221108>
+        <rdar://problem/73726640>
+
+        Reviewed by Joseph Pecoraro.
+
+        * API/JSVirtualMachine.mm:
+        * inspector/remote/RemoteConnectionToTarget.h:
+        - Remove or replace unused <wtf/BlockPtr.h> headers.
+
 2021-01-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add JSPromise::rejectedPromise

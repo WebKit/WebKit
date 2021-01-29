@@ -287,7 +287,8 @@ class CppStyleTestBase(unittest.TestCase):
                              '+build/include',
                              '+build/include_order',
                              '+build/namespaces',
-                             '+runtime/rtti')
+                             '+runtime/rtti',
+                             '+security/javascriptcore_wtf_blockptr')
         return self.perform_lint(code, filename, basic_error_rules, lines_to_check=lines_to_check)
 
     # Only keep function length errors.
@@ -3232,6 +3233,59 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          '#include "c.h"\n'
                                          '#include "b.h"\n',
                                          'Alphabetical sorting problem.  [build/include_order] [4]')
+
+    def test_check_wtf_blockptr_usage_in_javascriptcore(self):
+        # FIXME: Remove once JavaScriptCore builds with ARC enabled (Bug 221117).
+        self.assert_language_rules_check(
+            'Source/JavaScriptCore/foo.h',
+            '#include <wtf/BlockPtr.h>\n',
+            'Replace WTF::BlockPtr with WTF::Function.'
+            ' WTF::BlockPtr is not safe to use until JavaScriptCore builds with ARC enabled.'
+            '  [security/javascriptcore_wtf_blockptr] [5]')
+
+        self.assert_language_rules_check(
+            'Source/JavaScriptCore/foo.mm',
+            '#include <wtf/BlockPtr.h>\n',
+            'Replace WTF::BlockPtr with WTF::Function.'
+            ' WTF::BlockPtr is not safe to use until JavaScriptCore builds with ARC enabled.'
+            '  [security/javascriptcore_wtf_blockptr] [5]')
+
+        self.assert_language_rules_check('Source/JavaScriptCore/foo.h',
+                                         '#include <wtf/Function.h>\n',
+                                         '')
+
+        self.assert_language_rules_check('Source/WebCore/foo.h',
+                                         '#include <wtf/BlockPtr.h>\n',
+                                         '')
+
+        self.assert_lint(
+            'typedef Vector<BlockPtr<void ()>> RemoteTargetQueue;\n',
+            'Replace WTF::BlockPtr with WTF::Function.'
+            ' WTF::BlockPtr is not safe to use until JavaScriptCore builds with ARC enabled.'
+            '  [security/javascriptcore_wtf_blockptr] [5]',
+            file_name='Source/JavaScriptCore/foo.h')
+
+        self.assert_lint(
+            'BlockPtr<void(WebItemProviderFileCallback)> _callback;\n',
+            'Replace WTF::BlockPtr with WTF::Function.'
+            ' WTF::BlockPtr is not safe to use until JavaScriptCore builds with ARC enabled.'
+            '  [security/javascriptcore_wtf_blockptr] [5]',
+            file_name='Source/JavaScriptCore/foo.mm')
+
+        self.assert_lint(
+            'typedef Vector<Function<void ()>> RemoteTargetQueue;\n',
+            '',
+            file_name='Source/JavaScriptCore/foo.h')
+
+        self.assert_lint(
+            'typedef Vector<BlockPtr<void ()>> RemoteTargetQueue;\n',
+            '',
+            file_name='Source/WebCore/foo.h')
+
+        self.assert_lint(
+            'BlockPtr<void(WebItemProviderFileCallback)> _callback;\n',
+            '',
+            file_name='Source/WebCore/foo.mm')
 
     def test_check_line_break_after_own_header(self):
         self.assert_language_rules_check('foo.cpp',
