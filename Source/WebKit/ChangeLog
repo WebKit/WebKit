@@ -1,3 +1,14 @@
+2021-01-29  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] return-type-c-linkage warnings
+        https://bugs.webkit.org/show_bug.cgi?id=221047
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove extern "C" braces, un-needed for private C++ objects.
+
+        * NetworkProcess/soup/WebKitDirectoryInputStream.h:
+
 2021-01-29  Youenn Fablet  <youenn@apple.com>
 
         Use WebRTC GPU process flag for MediaRecorder

@@ -30,8 +30,6 @@
 #include <wtf/Forward.h>
 #include <wtf/glib/GRefPtr.h>
 
-G_BEGIN_DECLS
-
 #define WEBKIT_TYPE_FORM_DATA_INPUT_STREAM            (webkit_form_data_input_stream_get_type ())
 #define WEBKIT_FORM_DATA_INPUT_STREAM(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), WEBKIT_TYPE_FORM_DATA_INPUT_STREAM, WebKitFormDataInputStream))
 #define WEBKIT_IS_FORM_DATA_INPUT_STREAM(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), WEBKIT_TYPE_FORM_DATA_INPUT_STREAM))
@@ -57,6 +55,3 @@ GType webkit_form_data_input_stream_get_type(void);
 
 GRefPtr<GInputStream> webkitFormDataInputStreamNew(Ref<WebCore::FormData>&&);
 GBytes* webkitFormDataInputStreamReadAll(WebKitFormDataInputStream*);
-
-G_END_DECLS
-

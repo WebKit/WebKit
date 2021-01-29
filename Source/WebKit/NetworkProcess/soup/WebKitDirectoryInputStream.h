@@ -29,8 +29,6 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 
-G_BEGIN_DECLS
-
 #define WEBKIT_TYPE_DIRECTORY_INPUT_STREAM            (webkit_directory_input_stream_get_type ())
 #define WEBKIT_DIRECTORY_INPUT_STREAM(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), WEBKIT_TYPE_DIRECTORY_INPUT_STREAM, WebKitDirectoryInputStream))
 #define WEBKIT_IS_DIRECTORY_INPUT_STREAM(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), WEBKIT_TYPE_DIRECTORY_INPUT_STREAM))
@@ -55,6 +53,3 @@ struct _WebKitDirectoryInputStreamClass {
 GType webkit_directory_input_stream_get_type(void);
 
 GRefPtr<GInputStream> webkitDirectoryInputStreamNew(GRefPtr<GFileEnumerator>&&, CString&& uri);
-
-G_END_DECLS
-
