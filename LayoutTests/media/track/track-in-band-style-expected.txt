@@ -13,7 +13,7 @@ RUN(video.play())
 EVENT(cuechange)
 
 ** Test current cue colors
-EXPECTED (cueNode.style.color == 'rgb(255, 255, 255)') OK
-EXPECTED (cueNode.style.backgroundColor == 'rgb(0, 0, 0)') OK
+EXPECTED (getComputedStyle(cueNode).color == 'rgb(255, 255, 255)') OK
+EXPECTED (getComputedStyle(cueNode).backgroundColor == 'rgba(0, 0, 0, 0.8)') OK
 END OF TEST
 

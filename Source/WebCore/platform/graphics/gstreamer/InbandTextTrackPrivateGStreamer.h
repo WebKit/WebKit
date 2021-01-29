@@ -51,6 +51,8 @@ public:
 
     void disconnect() override;
 
+    Kind kind() const override { return m_kind; }
+
     AtomString label() const override { return m_label; }
     AtomString language() const override { return m_language; }
 
@@ -71,6 +73,7 @@ private:
     gulong m_eventProbe;
     Vector<GRefPtr<GstSample>> m_pendingSamples;
     String m_streamId;
+    Kind m_kind;
     Lock m_sampleMutex;
 };
 

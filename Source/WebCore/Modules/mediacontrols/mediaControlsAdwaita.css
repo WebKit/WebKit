@@ -469,3 +469,38 @@ audio::-webkit-media-controls-panel button[disabled],
 video::-webkit-media-controls-panel button[disabled] {
     filter: brightness(50%);
 }
+
+video::-webkit-media-text-track-container,
+audio::-webkit-media-text-track-container {
+    position: relative;
+    -webkit-flex: 1 1 auto;
+}
+
+video::-webkit-media-text-track-container {
+    overflow: hidden;
+    padding-bottom: 5px;
+    z-index: 0;
+
+    text-align: center;
+    color: rgba(255, 255, 255, 1);
+
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0;
+    text-decoration: none;
+    pointer-events: none;
+    -webkit-user-select: none;
+
+    flex: 1 1 auto;
+
+    -webkit-line-box-contain: block inline-box replaced;
+}
+
+video::cue {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+video::cue(:future) {
+    color: gray;
+}
