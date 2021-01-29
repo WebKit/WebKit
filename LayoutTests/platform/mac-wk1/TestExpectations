@@ -1218,3 +1218,5 @@ webkit.org/b/217761 [ Debug ] webgl/conformance/extensions/s3tc-and-rgtc.html [ 
 webkit.org/b/217761 [ Debug ] webgl/2.0.0/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Skip ]
 
 webkit.org/b/221009 fast/harness/render-tree-as-text-options.html [ Pass Failure ]
+
+webkit.org/b/221106 [ BigSur ] media/video-ended-event-negative-playback.html [ Pass Failure ]
