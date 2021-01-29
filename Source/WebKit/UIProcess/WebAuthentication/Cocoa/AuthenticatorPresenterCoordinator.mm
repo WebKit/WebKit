@@ -122,11 +122,23 @@ void AuthenticatorPresenterCoordinator::updatePresenter(WebAuthenticationStatus 
         [m_presenter updateInterfaceForUserVisibleError:error.get()];
         break;
     }
-    case WebAuthenticationStatus::LANoCredential:
-        if (m_delayedPresentationNeedsSecurityKey)
+    case WebAuthenticationStatus::LANoCredential: {
+        if (m_delayedPresentationNeedsSecurityKey) {
             [m_context addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initAssertionPlaceholderChoice]).get()];
-        m_delayedPresentation();
+            m_delayedPresentation();
+
+            break;
+        }
+
+        auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorNoCredentialsFound userInfo:nil]);
+        [m_presenter presentError:error.get() forService:[m_context serviceName] completionHandler:makeBlockPtr([manager = m_manager] {
+            RunLoop::main().dispatch([manager] () mutable {
+                if (manager)
+                    manager->cancel();
+            });
+        }).get()];
         break;
+    }
     case WebAuthenticationStatus::NoCredentialsFound: {
         auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorNoCredentialsFound userInfo:nil]);
         [m_presenter updateInterfaceForUserVisibleError:error.get()];

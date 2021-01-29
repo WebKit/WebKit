@@ -70,6 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ASCAuthorizationPresenter : NSObject <ASCAuthorizationPresenterHostProtocol>
 
 - (void)presentAuthorizationWithContext:(ASCAuthorizationPresentationContext *)context completionHandler:(void (^)(id<ASCCredentialProtocol> _Nullable, NSError * _Nullable))completionHandler;
+- (void)presentError:(NSError *)error forService:(NSString *)service completionHandler:(void (^)(void))completionHandler;
 - (void)updateInterfaceWithLoginChoices:(NSArray<id <ASCLoginChoiceProtocol>> *)loginChoices;
 - (void)presentPINEntryInterface;
 - (void)updateInterfaceForUserVisibleError:(NSError *)userVisibleError;
