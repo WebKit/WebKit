@@ -1,6 +1,4 @@
 
-FAIL Arguments for anyfunc table set assert_equals: expected (function) function "function 0() {
-    [native code]
-}" but got (object) null
-FAIL Arguments for externref table set assert_equals: expected object "[object Object]" but got null
+PASS Arguments for anyfunc table set
+PASS Arguments for externref table set
 

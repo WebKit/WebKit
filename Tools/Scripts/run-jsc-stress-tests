@@ -1297,7 +1297,7 @@ def runWebAssemblySpecTestBase(mode, specHarnessPath, *optionalTestSpecificOptio
 end
 
 def runWebAssemblySpecTest(mode)
-    runWebAssemblySpecTestBase(mode, "spec-harness")
+    runWebAssemblySpecTestBase(mode, "spec-harness", "--useWebAssemblyReferences=false")
 end
 
 def runWebAssemblyReferenceSpecTest(mode)

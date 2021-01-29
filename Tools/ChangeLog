@@ -1,3 +1,14 @@
+2021-01-29  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-References] Enable reference types by default
+        https://bugs.webkit.org/show_bug.cgi?id=220890
+
+        Reviewed by Yusuke Suzuki.
+
+        Enable wasm reference types by default.
+
+        * Scripts/run-jsc-stress-tests:
+
 2021-01-29  Andres Gonzalez  <andresg_22@apple.com>
 
         Support for aria-current state changed notifications.
