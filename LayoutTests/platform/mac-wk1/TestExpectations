@@ -1220,3 +1220,7 @@ webkit.org/b/217761 [ Debug ] webgl/2.0.0/conformance/extensions/webgl-compresse
 webkit.org/b/221009 fast/harness/render-tree-as-text-options.html [ Pass Failure ]
 
 webkit.org/b/221106 [ BigSur ] media/video-ended-event-negative-playback.html [ Pass Failure ]
+
+webkit.org/b/208477 [ Catalina ] accessibility/mac/test.mp3/boot.xml [ Skip ]
+webkit.org/b/208479 [ Catalina ] accessibility/mac/test.mp3/root.xml [ Skip ]
+

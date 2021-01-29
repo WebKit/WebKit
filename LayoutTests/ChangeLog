@@ -1,3 +1,12 @@
+2021-01-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Two 'tests' are running with out expectation files that are not real tests.
+        https://bugs.webkit.org/show_bug.cgi?id=208477
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-01-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r272052.
