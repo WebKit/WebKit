@@ -158,7 +158,7 @@ CaptureSourceOrError UserMediaCaptureManager::AudioFactory::createAudioCaptureSo
         DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
 #endif
 
-    return RemoteRealtimeMediaSource::create(device, *constraints, { }, WTFMove(hashSalt), m_manager);
+    return RemoteRealtimeMediaSource::create(device, *constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess);
 }
 
 void UserMediaCaptureManager::AudioFactory::setShouldCaptureInGPUProcess(bool value)
@@ -176,7 +176,7 @@ CaptureSourceOrError UserMediaCaptureManager::VideoFactory::createVideoCaptureSo
         return CaptureSourceOrError { "Video capture in GPUProcess is not implemented"_s };
 #endif
 
-    return RemoteRealtimeMediaSource::create(device, *constraints, { }, WTFMove(hashSalt), m_manager);
+    return RemoteRealtimeMediaSource::create(device, *constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess);
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -191,7 +191,12 @@ CaptureSourceOrError UserMediaCaptureManager::DisplayFactory::createDisplayCaptu
     if (!constraints)
         return { };
 
-    return RemoteRealtimeMediaSource::create(device, *constraints, { }, { }, m_manager);
+    return RemoteRealtimeMediaSource::create(device, *constraints, { }, { }, m_manager, false);
+}
+
+void UserMediaCaptureManager::didUpdateSourceConnection(RemoteRealtimeMediaSource& source)
+{
+    m_remoteCaptureSampleManager.didUpdateSourceConnection(source);
 }
 
 }

@@ -27,6 +27,7 @@
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
+#include "GPUProcessConnection.h"
 #include <WebCore/CaptureDevice.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
@@ -47,9 +48,13 @@ namespace WebKit {
 
 class UserMediaCaptureManager;
 
-class RemoteRealtimeMediaSource : public WebCore::RealtimeMediaSource {
+class RemoteRealtimeMediaSource : public WebCore::RealtimeMediaSource
+#if ENABLE(GPU_PROCESS)
+    , public GPUProcessConnection::Client
+#endif
+{
 public:
-    static Ref<WebCore::RealtimeMediaSource> create(const WebCore::CaptureDevice&, const WebCore::MediaConstraints&, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess = false);
+    static Ref<WebCore::RealtimeMediaSource> create(const WebCore::CaptureDevice&, const WebCore::MediaConstraints&, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
     ~RemoteRealtimeMediaSource();
 
     WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_identifier; }
@@ -86,6 +91,12 @@ private:
     WebCore::CaptureDevice::DeviceType deviceType() const final { return m_deviceType; }
     Ref<RealtimeMediaSource> clone() final;
 
+#if ENABLE(GPU_PROCESS)
+    // GPUProcessConnection::Client
+    void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
+#endif
+
+    void createRemoteMediaSource(const WebCore::CaptureDevice&, const WebCore::MediaConstraints&);
     void didFail(String&& errorMessage);
     void setAsReady();
     void setCapabilities(WebCore::RealtimeMediaSourceCapabilities&&);
@@ -104,6 +115,8 @@ private:
     bool m_isReady { false };
     String m_errorMessage;
     CompletionHandler<void(String)> m_callback;
+    WebCore::CaptureDevice m_device;
+    WebCore::MediaConstraints m_constraints;
 };
 
 } // namespace WebKit

@@ -10362,6 +10362,16 @@ void WebPageProxy::clearLoadedSubresourceDomains()
 void WebPageProxy::gpuProcessCrashed()
 {
     pageClient().gpuProcessCrashed();
+
+#if ENABLE(MEDIA_STREAM)
+    bool shouldAllowAudioCapture = isCapturingAudio() && preferences().captureAudioInGPUProcessEnabled();
+    bool shouldAllowVideoCapture = isCapturingVideo() && preferences().captureVideoInGPUProcessEnabled();
+    bool shouldAllowDisplayCapture = false;
+    if (shouldAllowAudioCapture || shouldAllowVideoCapture) {
+        auto& gpuProcess = process().processPool().ensureGPUProcess();
+        gpuProcess.updateCaptureAccess(shouldAllowAudioCapture, shouldAllowVideoCapture, shouldAllowDisplayCapture, m_process->coreProcessIdentifier(), [] { });
+    }
+#endif
 }
 #endif
 

@@ -48,6 +48,8 @@ public:
     void addSource(Ref<RemoteRealtimeMediaSource>&&);
     void removeSource(WebCore::RealtimeMediaSourceIdentifier);
 
+    void didUpdateSourceConnection(RemoteRealtimeMediaSource&);
+
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:

@@ -59,6 +59,7 @@ public:
 
     void addSource(Ref<RemoteRealtimeMediaSource>&&);
     void removeSource(WebCore::RealtimeMediaSourceIdentifier);
+    void didUpdateSourceConnection(RemoteRealtimeMediaSource&);
 
 private:
     // WebCore::RealtimeMediaSource factories

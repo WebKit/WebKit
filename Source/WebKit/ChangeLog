@@ -1,3 +1,35 @@
+2021-01-29  Youenn Fablet  <youenn@apple.com>
+
+        Recover audio and video capture from GPUProcess crash
+        https://bugs.webkit.org/show_bug.cgi?id=221086
+
+        Reviewed by Eric Carlson.
+
+        Make RemoteRealtimeMediaSource observe GPU process crash.
+        If RemoteRealtimeMediaSource is live and capturing in GPUProcess, restart capture from WebProcess.
+        If GPU process crashes, make sure to send back the necessary entitlements and information to GPUProcess
+        of which processes are allowed to capture.
+
+        Covered by API test.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::gpuProcessCrashed):
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+        (WebKit::RemoteCaptureSampleManager::didUpdateSourceConnection):
+        * WebProcess/cocoa/RemoteCaptureSampleManager.h:
+        * WebProcess/cocoa/RemoteRealtimeMediaSource.cpp:
+        (WebKit::RemoteRealtimeMediaSource::create):
+        (WebKit::RemoteRealtimeMediaSource::createRemoteMediaSource):
+        (WebKit::RemoteRealtimeMediaSource::~RemoteRealtimeMediaSource):
+        (WebKit::RemoteRealtimeMediaSource::gpuProcessConnectionDidClose):
+        * WebProcess/cocoa/RemoteRealtimeMediaSource.h:
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::AudioFactory::createAudioCaptureSource):
+        (WebKit::UserMediaCaptureManager::VideoFactory::createVideoCaptureSource):
+        (WebKit::UserMediaCaptureManager::DisplayFactory::createDisplayCaptureSource):
+        (WebKit::UserMediaCaptureManager::didUpdateSourceConnection):
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+
 2021-01-28  Megan Gardner  <megan_gardner@apple.com>
 
         Add plumbing to allow AppHighlights to be stored.

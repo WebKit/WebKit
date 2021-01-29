@@ -46,20 +46,11 @@ namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
 
-Ref<RealtimeMediaSource> RemoteRealtimeMediaSource::create(const WebCore::CaptureDevice& device, const WebCore::MediaConstraints& constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
+Ref<RealtimeMediaSource> RemoteRealtimeMediaSource::create(const CaptureDevice& device, const MediaConstraints& constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
 {
     auto source = adoptRef(*new RemoteRealtimeMediaSource(RealtimeMediaSourceIdentifier::generate(), device.type(), WTFMove(name), WTFMove(hashSalt), manager, shouldCaptureInGPUProcess));
     manager.addSource(source.copyRef());
-    source->connection()->sendWithAsyncReply(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(source->identifier(), device, source->deviceIDHashSalt(), constraints), [source = source.copyRef()](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities) {
-        if (!succeeded) {
-            source->didFail(WTFMove(errorMessage));
-            return;
-        }
-        source->setName(String { settings.label().string() });
-        source->setSettings(WTFMove(settings));
-        source->setCapabilities(WTFMove(capabilities));
-        source->setAsReady();
-    });
+    source->createRemoteMediaSource(device, constraints);
     return source;
 }
 
@@ -106,8 +97,32 @@ RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RealtimeMediaSourceIdentifi
     }
 }
 
+void RemoteRealtimeMediaSource::createRemoteMediaSource(const CaptureDevice& device, const MediaConstraints& constraints)
+{
+    if (m_shouldCaptureInGPUProcess) {
+        m_device = device;
+        m_constraints = constraints;
+    }
+
+    connection()->sendWithAsyncReply(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(identifier(), device, deviceIDHashSalt(), constraints), [this, protectedThis = makeRef(*this)](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities) {
+        if (!succeeded) {
+            didFail(WTFMove(errorMessage));
+            return;
+        }
+        setName(String { settings.label().string() });
+        setSettings(WTFMove(settings));
+        setCapabilities(WTFMove(capabilities));
+        setAsReady();
+        if (m_shouldCaptureInGPUProcess)
+            WebProcess::singleton().ensureGPUProcessConnection().addClient(*this);
+    });
+}
+
 RemoteRealtimeMediaSource::~RemoteRealtimeMediaSource()
 {
+    if (m_shouldCaptureInGPUProcess)
+        WebProcess::singleton().ensureGPUProcessConnection().removeClient(*this);
+
     switch (m_deviceType) {
     case CaptureDevice::DeviceType::Microphone:
 #if PLATFORM(IOS_FAMILY)
@@ -304,6 +319,21 @@ void RemoteRealtimeMediaSource::requestToEnd(Observer& observer)
         ASSERT_NOT_REACHED();
     }
 }
+
+#if ENABLE(GPU_PROCESS)
+void RemoteRealtimeMediaSource::gpuProcessConnectionDidClose(GPUProcessConnection&)
+{
+    ASSERT(m_shouldCaptureInGPUProcess);
+    if (isEnded())
+        return;
+
+    m_manager.didUpdateSourceConnection(*this);
+    createRemoteMediaSource(m_device, m_constraints);
+    // FIXME: We should update the track according current settings.
+    if (isProducingData())
+        startProducingData();
+}
+#endif
 
 }
 

@@ -82,6 +82,12 @@ void RemoteCaptureSampleManager::removeSource(WebCore::RealtimeMediaSourceIdenti
     });
 }
 
+void RemoteCaptureSampleManager::didUpdateSourceConnection(RemoteRealtimeMediaSource& source)
+{
+    ASSERT(WTF::isMainRunLoop());
+    setConnection(source.connection());
+}
+
 void RemoteCaptureSampleManager::dispatchToThread(Function<void()>&& callback)
 {
     m_queue->dispatch(WTFMove(callback));
