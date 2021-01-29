@@ -436,7 +436,8 @@ static void copyUnpremultiplyingAlpha(const Uint8ClampedArray& source, Uint8Clam
 RefPtr<ImageData> FilterEffect::convertImageDataToColorSpace(ColorSpace targetColorSpace, ImageData& inputData, AlphaPremultiplication outputFormat)
 {
     IntRect destinationRect(IntPoint(), inputData.size());
-    FloatSize clampedSize = ImageBuffer::clampedSize(inputData.size());
+    destinationRect.scale(1 / m_filter.filterScale());
+    FloatSize clampedSize = ImageBuffer::clampedSize(destinationRect.size());
     // Create an ImageBuffer to store incoming ImageData
     auto buffer = ImageBuffer::create(clampedSize, m_filter.renderingMode(), m_filter.filterScale(), operatingColorSpace());
     if (!buffer)
@@ -535,8 +536,7 @@ void FilterEffect::copyPremultipliedResult(Uint8ClampedArray& destination, const
             copyPremultiplyingAlpha(*m_unmultipliedImageResult->data(), *m_premultipliedImageResult->data(), inputSize);
         }
     }
-    
-    RefPtr<ImageData> convertedImageData;
+
     if (requiresImageDataColorSpaceConversion(colorSpace)) {
         copyConvertedImageDataToDestination(destination, *m_premultipliedImageResult, *colorSpace, AlphaPremultiplication::Premultiplied, rect);
         return;
