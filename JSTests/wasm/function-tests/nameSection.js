@@ -69,4 +69,4 @@ assert.eq(stacktrace[2], "<?>.wasm-function[_eggs]@[wasm code]");
 assert.eq(stacktrace[3], "<?>.wasm-function[_bacon]@[wasm code]");
 assert.eq(stacktrace[4], "<?>.wasm-function[_spam]@[wasm code]");
 assert.eq(stacktrace[5], "<?>.wasm-function[_parrot]@[wasm code]");
-assert.eq(stacktrace[6], "wasm-stub@[native code]"); // wasm entry
+assert.eq(stacktrace[6], "wasm-stub@[wasm code]"); // wasm entry

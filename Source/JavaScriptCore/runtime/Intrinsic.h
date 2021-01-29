@@ -192,8 +192,6 @@ enum Intrinsic : uint8_t {
     DataViewSetUint32,
     DataViewSetFloat32,
     DataViewSetFloat64,
-
-    WasmFunctionIntrinsic,
 };
 
 Optional<IterationKind> interationKindForIntrinsic(Intrinsic);

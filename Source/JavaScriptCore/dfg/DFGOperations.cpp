@@ -3550,13 +3550,9 @@ JSC_DEFINE_JIT_OPERATION(operationLinkDirectCall, void, (CallLinkInfo* callLinkI
 
     MacroAssemblerCodePtr<JSEntryPtrTag> codePtr;
     CodeBlock* codeBlock = nullptr;
-    if (executable->isHostFunction()) {
-        // jsToWasmICCodePtr assumes that callee is always the same since DirectCall does not check callee.
-        // But for wasm functions, we already ensured that callee is constant when emitting DirectCall.
-        codePtr = jsToWasmICCodePtr(vm, kind, callee);
-        if (!codePtr)
-            codePtr = executable->entrypointFor(kind, MustCheckArity);
-    } else {
+    if (executable->isHostFunction())
+        codePtr = executable->entrypointFor(kind, MustCheckArity);
+    else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
         RELEASE_ASSERT(isCall(kind) || functionExecutable->constructAbility() != ConstructAbility::CannotConstruct);

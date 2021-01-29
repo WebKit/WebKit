@@ -337,8 +337,6 @@ const char* intrinsicName(Intrinsic intrinsic)
         return "DataViewSetFloat32";
     case DataViewSetFloat64:
         return "DataViewSetFloat64";
-    case WasmFunctionIntrinsic:
-        return "WasmFunctionIntrinsic";
     }
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;

@@ -60,7 +60,6 @@
 #include "ObjectPropertyConditionSet.h"
 #include "ProtoCallFrameInlines.h"
 #include "RegExpObject.h"
-#include "Repatch.h"
 #include "ShadowChicken.h"
 #include "SuperSampler.h"
 #include "VMInlines.h"
@@ -1737,13 +1736,9 @@ inline SlowPathReturnType setUpCall(CallFrame* calleeFrame, CodeSpecializationKi
 
     MacroAssemblerCodePtr<JSEntryPtrTag> codePtr;
     CodeBlock* codeBlock = nullptr;
-    if (executable->isHostFunction()) {
-#if ENABLE(JIT)
-        codePtr = jsToWasmICCodePtr(vm, kind, callee);
-#endif
-        if (!codePtr)
-            codePtr = executable->entrypointFor(kind, MustCheckArity);
-    } else {
+    if (executable->isHostFunction())
+        codePtr = executable->entrypointFor(kind, MustCheckArity);
+    else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
         if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct)
