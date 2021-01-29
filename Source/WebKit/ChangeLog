@@ -1,5 +1,18 @@
 2021-01-29  Per Arne  <pvollan@apple.com>
 
+        [iOS] Stop observing changes in one preference domain
+        https://bugs.webkit.org/show_bug.cgi?id=221130
+        <rdar://problem/70729182>
+
+        Reviewed by Brent Fulgham.
+
+        It has been determined that there is no need to observe preference changes in the domain 'com.apple.Preferences'.
+
+        * UIProcess/Cocoa/PreferenceObserver.mm:
+        (-[WKPreferenceObserver init]):
+
+2021-01-29  Per Arne  <pvollan@apple.com>
+
         [macOS] Add audio related shm write reporting
         https://bugs.webkit.org/show_bug.cgi?id=221136
         <rdar://problem/73510094>
