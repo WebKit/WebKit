@@ -1,3 +1,16 @@
+2021-01-28  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcrepy] Handle case where pypi serves invalid html
+        https://bugs.webkit.org/show_bug.cgi?id=221111
+        <rdar://problem/73728580>
+
+        Reviewed by David Kilzer.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version number.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (Package.archives): Remove possibly invalid <meta> tag from html.
+
 2021-01-28  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Remove dead code for TestWebKit1LeaksFactory
