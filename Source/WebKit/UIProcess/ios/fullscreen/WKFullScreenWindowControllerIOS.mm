@@ -471,6 +471,7 @@ private:
     BOOL _shouldReturnToFullscreenFromPictureInPicture;
     BOOL _enterFullscreenNeedsExitPictureInPicture;
     BOOL _returnToFullscreenFromPictureInPicture;
+    BOOL _blocksReturnToFullscreenFromPictureInPicture;
 
     CGRect _initialFrame;
     CGRect _finalFrame;
@@ -540,6 +541,7 @@ private:
     [self _invalidateEVOrganizationName];
 
     _fullScreenState = WebKit::WaitingToEnterFullScreen;
+    _blocksReturnToFullscreenFromPictureInPicture = manager->blocksReturnToFullscreenFromPictureInPicture();
 
     _window = adoptNS([[UIWindow alloc] initWithWindowScene:[[webView window] windowScene]]);
     [_window setBackgroundColor:[UIColor clearColor]];
@@ -887,7 +889,8 @@ private:
 
 - (void)didEnterPictureInPicture
 {
-    _shouldReturnToFullscreenFromPictureInPicture = YES;
+    _shouldReturnToFullscreenFromPictureInPicture = !_blocksReturnToFullscreenFromPictureInPicture;
+
     if (_fullScreenState == WebKit::InFullScreen)
         [self requestExitFullScreen];
 }

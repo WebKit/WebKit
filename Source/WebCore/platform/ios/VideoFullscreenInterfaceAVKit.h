@@ -79,7 +79,7 @@ public:
     // PlaybackSessionModelClient
     WEBCORE_EXPORT void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) final;
 
-    WEBCORE_EXPORT void setupFullscreen(UIView& videoView, const IntRect& initialRect, const FloatSize& videoDimensions, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback, bool standby);
+    WEBCORE_EXPORT void setupFullscreen(UIView& videoView, const IntRect& initialRect, const FloatSize& videoDimensions, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture);
     WEBCORE_EXPORT void enterFullscreen();
     WEBCORE_EXPORT bool exitFullscreen(const IntRect& finalRect);
     WEBCORE_EXPORT void cleanupFullscreen();
@@ -192,6 +192,7 @@ protected:
     bool m_allowsPictureInPicturePlayback { false };
     bool m_wirelessVideoPlaybackDisabled { true };
     bool m_shouldReturnToFullscreenWhenStoppingPictureInPicture { false };
+    bool m_blocksReturnToFullscreenFromPictureInPicture { false };
     bool m_restoringFullscreenForPictureInPictureStop { false };
     bool m_returningToStandby { false };
 

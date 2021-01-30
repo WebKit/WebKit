@@ -926,7 +926,7 @@ void VideoFullscreenInterfaceAVKit::applicationDidBecomeActive()
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::applicationDidBecomeActive(%p)", this);
 }
 
-void VideoFullscreenInterfaceAVKit::setupFullscreen(UIView& videoView, const IntRect& initialRect, const FloatSize& videoDimensions, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback, bool standby)
+void VideoFullscreenInterfaceAVKit::setupFullscreen(UIView& videoView, const IntRect& initialRect, const FloatSize& videoDimensions, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
 {
     ASSERT(standby || mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::setupFullscreen(%p)", this);
@@ -944,6 +944,7 @@ void VideoFullscreenInterfaceAVKit::setupFullscreen(UIView& videoView, const Int
 
     m_targetStandby = standby;
     m_targetMode = mode;
+    m_blocksReturnToFullscreenFromPictureInPicture = blocksReturnToFullscreenFromPictureInPicture;
     setInlineRect(initialRect, true);
     doSetup();
 }
@@ -1132,7 +1133,7 @@ void VideoFullscreenInterfaceAVKit::didStartPictureInPicture()
             exitFullscreenHandler(success, error);
         }];
     } else {
-        if (m_standby)
+        if (m_standby && !m_blocksReturnToFullscreenFromPictureInPicture)
             m_shouldReturnToFullscreenWhenStoppingPictureInPicture = true;
 
         [m_window setHidden:YES];
