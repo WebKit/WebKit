@@ -185,12 +185,12 @@ void LineBoxBuilder::setVerticalGeometryForInlineBox(LineBox::InlineLevelBox& in
     if (lineHeight.isNegative()) {
         // If line-height computes to normal and either text-edge is leading or this is the root inline box,
         // the font’s line gap metric may also be incorporated into A and D by adding half to each side as half-leading.
-        auto shouldLineGapStretchInlineLevelBox = inlineLevelBox.isRootInlineBox() || inlineLevelBox.isLineBreakBox();
-        if (shouldLineGapStretchInlineLevelBox) {
-            auto halfLineGap = (fontMetrics.lineSpacing() - logicalHeight) / 2;
-            ascent += halfLineGap;
-            descent += halfLineGap;
-        }
+        // https://www.w3.org/TR/css-inline-3/#inline-height
+        // Since text-edge is not supported yet and the initial value is leading, we should just apply it to
+        // all inline boxes.
+        auto halfLineGap = (fontMetrics.lineSpacing() - logicalHeight) / 2;
+        ascent += halfLineGap;
+        descent += halfLineGap;
     } else {
         InlineLayoutUnit lineHeight = style.computedLineHeight();
         InlineLayoutUnit halfLeading = (lineHeight - (ascent + descent)) / 2;
