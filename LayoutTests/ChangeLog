@@ -1,3 +1,15 @@
+2021-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        StaticRange should keep its start and end containers alive
+        https://bugs.webkit.org/show_bug.cgi?id=221175
+
+        Reviewed by Wenson Hsieh.
+
+        Added a regression test.
+
+        * fast/dom/static-range-gc-expected.txt: Added.
+        * fast/dom/static-range-gc.html: Added.
+
 2021-01-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][RenderTreeAsText] Apply the "adjustForTableCells" quirk to line break runs
