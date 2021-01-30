@@ -1399,8 +1399,7 @@ void PluginView::cancelManualStreamLoad()
 
     DocumentLoader* documentLoader = frame()->loader().activeDocumentLoader();
     ASSERT(documentLoader);
-    
-    if (documentLoader->isLoadingMainResource())
+    if (documentLoader && documentLoader->isLoadingMainResource())
         documentLoader->cancelMainResourceLoad(frame()->loader().cancelledError(m_parameters.url));
 }
 

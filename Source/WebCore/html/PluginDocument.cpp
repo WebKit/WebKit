@@ -130,13 +130,15 @@ void PluginDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)
     // can synchronously redirect data to the plugin.
     frame->view()->flushAnyPendingPostLayoutTasks();
 
-    if (RenderWidget* renderer = m_embedElement->renderWidget()) {
-        if (RefPtr<Widget> widget = renderer->widget()) {
+    if (auto renderer = m_embedElement->renderWidget()) {
+        if (auto widget = makeRefPtr(renderer->widget())) {
             frame->loader().client().redirectDataToPlugin(*widget);
+
             // In a plugin document, the main resource is the plugin. If we have a null widget, that means
             // the loading of the plugin was cancelled, which gives us a null mainResourceLoader(), so we
             // need to have this call in a null check of the widget or of mainResourceLoader().
-            frame->loader().activeDocumentLoader()->setMainResourceDataBufferingPolicy(DataBufferingPolicy::DoNotBufferData);
+            if (auto loader = frame->loader().activeDocumentLoader())
+                loader->setMainResourceDataBufferingPolicy(DataBufferingPolicy::DoNotBufferData);
         }
     }
 }
@@ -182,8 +184,8 @@ void PluginDocument::cancelManualPluginLoad()
         return;
 
     auto& frameLoader = frame()->loader();
-    auto& documentLoader = *frameLoader.activeDocumentLoader();
-    documentLoader.cancelMainResourceLoad(frameLoader.cancelledError(documentLoader.request()));
+    if (auto documentLoader = frameLoader.activeDocumentLoader())
+        documentLoader->cancelMainResourceLoad(frameLoader.cancelledError(documentLoader->request()));
     m_shouldLoadPluginManually = false;
 }
 

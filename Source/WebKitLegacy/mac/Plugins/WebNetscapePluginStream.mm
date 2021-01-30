@@ -479,15 +479,11 @@ void WebNetscapePluginStream::cancelLoadWithError(NSError *error)
 {
     if (m_frameLoader) {
         ASSERT(!m_loader);
-        
-        DocumentLoader* documentLoader = m_frameLoader->activeDocumentLoader();
-        ASSERT(documentLoader);
-        
-        if (documentLoader->isLoadingMainResource())
+        auto documentLoader = m_frameLoader->activeDocumentLoader();
+        if (documentLoader && documentLoader->isLoadingMainResource())
             documentLoader->cancelMainResourceLoad(error);
         return;
     }
-    
     if (!m_loader->isDone())
         m_loader->cancel(error);
 }

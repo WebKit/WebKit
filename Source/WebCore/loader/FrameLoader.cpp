@@ -1639,11 +1639,6 @@ void FrameLoader::reportLocalLoadFailed(Frame* frame, const String& url)
     frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not allowed to load local resource: " + url);
 }
 
-const ResourceRequest& FrameLoader::initialRequest() const
-{
-    return activeDocumentLoader()->originalRequest();
-}
-
 bool FrameLoader::willLoadMediaElementURL(URL& url, Node& initiatorNode)
 {
 #if PLATFORM(IOS_FAMILY)
@@ -3116,11 +3111,6 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
     }
     notifier().sendRemainingDelegateMessages(m_documentLoader.get(), identifier, request, response, data ? data->data() : nullptr, data ? data->size() : 0, -1, error);
     return identifier;
-}
-
-const ResourceRequest& FrameLoader::originalRequest() const
-{
-    return activeDocumentLoader()->originalRequestCopy();
 }
 
 void FrameLoader::receivedMainResourceError(const ResourceError& error)

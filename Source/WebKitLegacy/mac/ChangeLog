@@ -1,3 +1,14 @@
+2021-01-29  Darin Adler  <darin@apple.com>
+
+        Check activeDocumentLoader() for null consistently everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=221167
+
+        Reviewed by Anders Carlsson.
+
+        * Plugins/WebNetscapePluginStream.mm:
+        (WebNetscapePluginStream::cancelLoadWithError): Added null check before calling
+        isLoadingMainResource.
+
 2021-01-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Remove support for image controls

@@ -199,11 +199,11 @@ void ResourceLoader::start()
     ASSERT(frameLoader());
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
-    if (m_documentLoader->scheduleArchiveLoad(*this, m_request))
+    if (m_documentLoader && m_documentLoader->scheduleArchiveLoad(*this, m_request))
         return;
 #endif
 
-    if (m_documentLoader->applicationCacheHost().maybeLoadResource(*this, m_request, m_request.url()))
+    if (m_documentLoader && m_documentLoader->applicationCacheHost().maybeLoadResource(*this, m_request, m_request.url()))
         return;
 
     if (m_defersLoading) {
@@ -297,7 +297,7 @@ void ResourceLoader::setDataBufferingPolicy(DataBufferingPolicy dataBufferingPol
 
 void ResourceLoader::willSwitchToSubstituteResource()
 {
-    ASSERT(!m_documentLoader->isSubstituteLoadPending(this));
+    ASSERT(m_documentLoader && !m_documentLoader->isSubstituteLoadPending(this));
     platformStrategies()->loaderStrategy()->remove(this);
     if (m_handle)
         m_handle->cancel();
@@ -394,8 +394,10 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
         InspectorInstrumentation::willSendRequest(m_frame.get(), m_identifier, m_frame->loader().documentLoader(), request, redirectResponse);
 
 #if USE(QUICK_LOOK)
-    if (auto previewConverter = m_documentLoader->previewConverter())
-        request = previewConverter->safeRequest(request);
+    if (m_documentLoader) {
+        if (auto previewConverter = m_documentLoader->previewConverter())
+            request = previewConverter->safeRequest(request);
+    }
 #endif
 
     bool isRedirect = !redirectResponse.isNull();
@@ -409,7 +411,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
 
     if (isRedirect) {
         auto& redirectURL = request.url();
-        if (!m_documentLoader->isCommitted())
+        if (m_documentLoader && !m_documentLoader->isCommitted())
             frameLoader()->client().dispatchDidReceiveServerRedirectForProvisionalLoad();
 
         if (redirectURL.protocolIsData()) {
