@@ -1,3 +1,18 @@
+2021-01-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Adjust property order of host JSFunction
+        https://bugs.webkit.org/show_bug.cgi?id=221168
+
+        Reviewed by Darin Adler.
+
+        We should first define "length" before "name".
+        This will be included in upcoming test262 update[1].
+
+        [1]: https://github.com/tc39/test262/pull/2921
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::finishCreation):
+
 2021-01-29  Keith Miller  <keith_miller@apple.com>
 
         SourceParseMode should be a member of the JSC::Parser

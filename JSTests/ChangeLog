@@ -1,5 +1,15 @@
 2021-01-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Adjust property order of host JSFunction
+        https://bugs.webkit.org/show_bug.cgi?id=221168
+
+        Reviewed by Darin Adler.
+
+        * stress/host-function-property-order.js: Added.
+        (shouldBe):
+
+2021-01-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Fix WebAssembly.Global's error message and support "funcref"
         https://bugs.webkit.org/show_bug.cgi?id=221157
 
