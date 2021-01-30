@@ -53,8 +53,7 @@ private:
     const Box& rootBox() const { return formattingContext().root(); }
     LayoutState& layoutState() const { return formattingContext().layoutState(); }
 
-    bool isRootInlineBox(const LineBox::InlineLevelBox& inlineLevelBox) const { return &inlineLevelBox.layoutBox() == &rootBox(); }
-    bool isRootBox(const ContainerBox& containerBox) const { return &containerBox == &rootBox(); }
+    bool isRootLayoutBox(const ContainerBox& containerBox) const { return &containerBox == &rootBox(); }
 
 private:
     const InlineFormattingContext& m_inlineFormattingContext;
@@ -186,7 +185,7 @@ void LineBoxBuilder::setVerticalGeometryForInlineBox(LineBox::InlineLevelBox& in
     if (lineHeight.isNegative()) {
         // If line-height computes to normal and either text-edge is leading or this is the root inline box,
         // the font’s line gap metric may also be incorporated into A and D by adding half to each side as half-leading.
-        auto shouldLineGapStretchInlineLevelBox = isRootInlineBox(inlineLevelBox) || inlineLevelBox.isLineBreakBox();
+        auto shouldLineGapStretchInlineLevelBox = inlineLevelBox.isRootInlineBox() || inlineLevelBox.isLineBreakBox();
         if (shouldLineGapStretchInlineLevelBox) {
             auto halfLineGap = (fontMetrics.lineSpacing() - logicalHeight) / 2;
             ascent += halfLineGap;
@@ -237,13 +236,13 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const Line::Run
         // <span>normally the inline box closing forms a continuous content</span>
         // <span>unless it's forced to the next line<br></span>
         auto firstRunNeedsInlineBox = firstRun.isInlineBoxEnd();
-        if (!firstRunNeedsInlineBox && isRootBox(firstRunParentLayoutBox))
+        if (!firstRunNeedsInlineBox && isRootLayoutBox(firstRunParentLayoutBox))
             return;
         Vector<const Box*> layoutBoxesWithoutInlineBoxes;
         if (firstRunNeedsInlineBox)
             layoutBoxesWithoutInlineBoxes.append(&firstRun.layoutBox());
         auto* ancestor = &firstRunParentLayoutBox;
-        while (!isRootBox(*ancestor)) {
+        while (!isRootLayoutBox(*ancestor)) {
             layoutBoxesWithoutInlineBoxes.append(ancestor);
             ancestor = &ancestor->parent();
         }
