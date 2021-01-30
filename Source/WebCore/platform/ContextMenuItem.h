@@ -118,10 +118,6 @@ enum ContextMenuAction {
     ContextMenuItemTagTextDirectionDefault,
     ContextMenuItemTagTextDirectionLeftToRight,
     ContextMenuItemTagTextDirectionRightToLeft,
-#if ENABLE(APP_HIGHLIGHTS)
-    ContextMenuItemTagAddHighlightToCurrentGroup,
-    ContextMenuItemTagAddHighlightToNewGroup,
-#endif
 #if PLATFORM(COCOA)
     ContextMenuItemTagCorrectSpellingAutomatically,
     ContextMenuItemTagSubstitutionsMenu,
@@ -149,6 +145,10 @@ enum ContextMenuAction {
     ContextMenuItemTagToggleVideoFullscreen,
     ContextMenuItemTagShareMenu,
     ContextMenuItemTagToggleVideoEnhancedFullscreen,
+#if ENABLE(APP_HIGHLIGHTS)
+    ContextMenuItemTagAddHighlightToCurrentGroup,
+    ContextMenuItemTagAddHighlightToNewGroup,
+#endif
     ContextMenuItemBaseCustomTag = 5000,
     ContextMenuItemLastCustomTag = 5999,
     ContextMenuItemBaseApplicationTag = 10000

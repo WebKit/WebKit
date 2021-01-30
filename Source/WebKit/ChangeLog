@@ -1,3 +1,40 @@
+2021-01-29  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r271619. rdar://problem/73461349
+
+    REGRESSION(r269865) Mail's context menu when right clicking on a link does not contain correct entries
+    https://bugs.webkit.org/show_bug.cgi?id=220745
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-01-19
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    r269865 broke binary compatibility by changing the values of many WebCore::ContextMenuAction values and many WKContextMenuItemTag values,
+    and not in the same way.  In WebContextMenuProxyMac::getContextMenuItem we call NSMenuItem setTag: with the value from WebCore::ContextMenuAction
+    and mail compares those values with values from WKContextMenuItemTag in our C API.  This isn't ideal, but we need to retain binary compatibility.
+    
+    * platform/ContextMenuItem.h:
+    
+    Source/WebKit:
+    
+    * Shared/API/c/WKContextMenuItem.cpp:
+    Add a bunch of static_asserts to verify that our binary values correspond to each other and don't change.
+    * Shared/API/c/WKContextMenuItemTypes.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271619 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-19  Alex Christensen  <achristensen@webkit.org>
+
+            REGRESSION(r269865) Mail's context menu when right clicking on a link does not contain correct entries
+            https://bugs.webkit.org/show_bug.cgi?id=220745
+
+            Reviewed by Tim Horton.
+
+            * Shared/API/c/WKContextMenuItem.cpp:
+            Add a bunch of static_asserts to verify that our binary values correspond to each other and don't change.
+            * Shared/API/c/WKContextMenuItemTypes.h:
+
 2021-01-28  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r271873. rdar://problem/73722521
