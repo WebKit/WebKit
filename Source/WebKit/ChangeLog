@@ -1,3 +1,21 @@
+2021-01-29  Megan Gardner  <megan_gardner@apple.com>
+
+        Add plumbing to allow AppHighlights to be restored.
+        https://bugs.webkit.org/show_bug.cgi?id=221123
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _restoreAppHighlights:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::restoreAppHighlights):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::restoreAppHighlights):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-01-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add com.apple.private.securejit entitlement for JITCage

@@ -47,7 +47,7 @@ public:
     AppHighlightStorage(Document&);
 
     WEBCORE_EXPORT void updateAppHighlightsStorage();
-    Vector<AppHighlightRangeData> restoreAppHighlights(Ref<SharedBuffer>&&);
+    WEBCORE_EXPORT void restoreAppHighlights(Ref<SharedBuffer>&&);
 
 private:
     WeakPtr<Document> m_document;

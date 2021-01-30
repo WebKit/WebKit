@@ -1824,6 +1824,7 @@ public:
 #if ENABLE(APP_HIGHLIGHTS)
     void createAppHighlightInSelectedRange(CreateNewGroupForHighlight);
     void updateAppHighlightsStorage(const IPC::SharedBufferCopy&);
+    void restoreAppHighlights(Ref<WebCore::SharedBuffer>&& data);
 #endif
 
 #if ENABLE(MEDIA_STREAM)

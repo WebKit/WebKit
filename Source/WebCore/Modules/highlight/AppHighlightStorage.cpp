@@ -231,14 +231,14 @@ void AppHighlightStorage::updateAppHighlightsStorage()
     m_document->page()->chrome().updateAppHighlightsStorage(listData.toSharedBuffer());
 }
 
-Vector<AppHighlightRangeData> AppHighlightStorage::restoreAppHighlights(Ref<SharedBuffer>&& buffer)
+void AppHighlightStorage::restoreAppHighlights(Ref<SharedBuffer>&& buffer)
 {
     auto appHighlightListData = AppHighlightListData::create(buffer);
     Vector<AppHighlightRangeData> unrestoredRanges;
     Vector<AppHighlightRangeData> restoredRanges;
 
     if (!m_document)
-        return unrestoredRanges;
+        return;
 
     auto strongDocument = m_document.get();
 
@@ -252,7 +252,6 @@ Vector<AppHighlightRangeData> AppHighlightStorage::restoreAppHighlights(Ref<Shar
         restoredRanges.append(appHighlightListData);
         strongDocument->appHighlightRegister().addAppHighlight(StaticRange::create(*range));
     }
-    return unrestoredRanges;
 }
 
 #endif

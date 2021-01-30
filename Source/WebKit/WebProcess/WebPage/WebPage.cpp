@@ -7188,6 +7188,13 @@ bool WebPage::createAppHighlightInSelectedRange(CreateNewGroupForHighlight creat
 
     return true;
 }
+
+void WebPage::restoreAppHighlights(const IPC::DataReference& data)
+{
+    auto document = makeRefPtr(m_page->focusController().focusedOrMainFrame().document());
+
+    document->appHighlightStorage().restoreAppHighlights(SharedBuffer::create(data.data(), data.size()));
+}
 #endif
 
 #if !PLATFORM(COCOA)

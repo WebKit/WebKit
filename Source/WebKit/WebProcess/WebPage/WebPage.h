@@ -1380,6 +1380,7 @@ public:
 
 #if ENABLE(APP_HIGHLIGHTS)
     bool createAppHighlightInSelectedRange(CreateNewGroupForHighlight);
+    void restoreAppHighlights(const IPC::DataReference&);
 #endif
 
     void dispatchWheelEventWithoutScrolling(const WebWheelEvent&, CompletionHandler<void(bool)>&&);

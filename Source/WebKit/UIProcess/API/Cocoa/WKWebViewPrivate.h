@@ -364,6 +364,8 @@ for this property.
 - (void)_didEnableBrowserExtensions:(NSDictionary<NSString *, NSString *> *)extensionIDToNameMap WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_didDisableBrowserExtensions:(NSSet<NSString *> *)extensionIDs WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+- (void)_restoreAppHighlights:(NSData *)data WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 /*! @abstract The theme color of the active page.
  @discussion This is the value of the most recently created or modified
  @textblock

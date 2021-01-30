@@ -52,6 +52,7 @@
 #import "RemoteObjectRegistryMessages.h"
 #import "ResourceLoadDelegate.h"
 #import "SafeBrowsingWarning.h"
+#import "SharedBufferCopy.h"
 #import "UIDelegate.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "ViewGestureController.h"
@@ -2038,6 +2039,15 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 - (void)_resumeAllMediaPlayback
 {
     [self resumeAllMediaPlayback:nil];
+}
+
+- (void)_restoreAppHighlights:(NSData *)data
+{
+#if ENABLE(APP_HIGHLIGHTS)
+    _page->restoreAppHighlights(WebCore::SharedBuffer::create(data));
+#else
+    UNUSED_PARAM(data);
+#endif
 }
 
 - (NSURL *)_unreachableURL

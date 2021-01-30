@@ -38,6 +38,7 @@
 #import "SafeBrowsingSPI.h"
 #import "SafeBrowsingWarning.h"
 #import "SharedBufferCopy.h"
+#import "SharedBufferDataReference.h"
 #import "WebPage.h"
 #import "WebPageMessages.h"
 #import "WebPasteboardProxy.h"
@@ -539,6 +540,16 @@ void WebPageProxy::createAppHighlightInSelectedRange(CreateNewGroupForHighlight 
         return;
 
     send(Messages::WebPage::CreateAppHighlightInSelectedRange(createNewGroup));
+}
+
+void WebPageProxy::restoreAppHighlights(Ref<SharedBuffer>&& data)
+{
+    if (!hasRunningProcess())
+        return;
+
+    IPC::SharedBufferDataReference dataReference { data };
+
+    send(Messages::WebPage::RestoreAppHighlights(dataReference));
 }
 #endif
 

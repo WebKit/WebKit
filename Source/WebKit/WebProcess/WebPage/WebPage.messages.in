@@ -619,6 +619,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
 #if ENABLE(APP_HIGHLIGHTS)
     CreateAppHighlightInSelectedRange(enum:bool WebKit::CreateNewGroupForHighlight createNewGroup)
+    RestoreAppHighlights(IPC::SharedBufferDataReference data)
 #endif
 
     DispatchWheelEventWithoutScrolling(WebKit::WebWheelEvent event) -> (bool handled) Async
