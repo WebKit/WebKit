@@ -1,3 +1,28 @@
+2021-01-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][RenderTreeAsText] Apply the "adjustForTableCells" quirk to line break runs
+        https://bugs.webkit.org/show_bug.cgi?id=221142
+
+        Reviewed by Antti Koivisto.
+
+        * platform/ios/fast/table/005-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug106795-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug1224-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug16252-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug20579-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug32205-3-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug82946-2-expected.txt:
+        * platform/ios/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+        * platform/mac-catalina/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+        * platform/mac/fast/table/005-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug106795-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug1224-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug16252-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug20579-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug32205-3-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug82946-2-expected.txt:
+        * platform/mac/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+
 2021-01-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         WebKit doesn't automatically right-align Adlam

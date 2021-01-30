@@ -249,7 +249,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         const RenderLineBreak& br = downcast<RenderLineBreak>(o);
         IntRect linesBox = br.linesBoundingBox();
         r = IntRect(linesBox.x(), linesBox.y(), linesBox.width(), linesBox.height());
-        if (!br.inlineBoxWrapper())
+        if (!br.inlineBoxWrapper() && !LayoutIntegration::runFor(br))
             adjustForTableCells = false;
     } else if (is<RenderInline>(o)) {
         const RenderInline& inlineFlow = downcast<RenderInline>(o);
