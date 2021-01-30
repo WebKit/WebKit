@@ -1,3 +1,34 @@
+2021-01-29  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r271458. rdar://problem/73477098
+
+    Web Inspector: RTL content inside elements is reversed and unreadable
+    https://bugs.webkit.org/show_bug.cgi?id=220241
+    
+    Patch by Ebrahim Byagowi <ebrahim@gnu.org> on 2021-01-13
+    Reviewed by BJ Burg.
+    
+    Use appropiate unicode-bidi value so that it won't reverse RTL text
+    inside elements.
+    
+    * UserInterface/Views/DOMTreeOutline.css:
+    (.tree-outline.dom li > span > .html-text-node):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271458 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-13  Ebrahim Byagowi  <ebrahim@gnu.org>
+
+            Web Inspector: RTL content inside elements is reversed and unreadable
+            https://bugs.webkit.org/show_bug.cgi?id=220241
+
+            Reviewed by BJ Burg.
+
+            Use appropiate unicode-bidi value so that it won't reverse RTL text
+            inside elements.
+
+            * UserInterface/Views/DOMTreeOutline.css:
+            (.tree-outline.dom li > span > .html-text-node):
+
 2021-01-27  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r271620. rdar://problem/73678115
