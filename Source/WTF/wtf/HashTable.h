@@ -717,7 +717,8 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             if (k == 0)
                 k = 1 | doubleHash(h);
             i = (i + k) & sizeMask;
-            HASH_TABLE_RELEASE_ASSERT(i != initialIndex);
+            if constexpr (KeyTraits::assertNotFull)
+                HASH_TABLE_RELEASE_ASSERT(i != initialIndex);
         }
     }
 
@@ -780,7 +781,8 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             if (k == 0)
                 k = 1 | doubleHash(h);
             i = (i + k) & sizeMask;
-            HASH_TABLE_RELEASE_ASSERT(i != initialIndex);
+            if constexpr (KeyTraits::assertNotFull)
+                HASH_TABLE_RELEASE_ASSERT(i != initialIndex);
         }
     }
 
@@ -843,7 +845,8 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             if (k == 0)
                 k = 1 | doubleHash(h);
             i = (i + k) & sizeMask;
-            HASH_TABLE_RELEASE_ASSERT(i != initialIndex);
+            if constexpr (KeyTraits::assertNotFull)
+                HASH_TABLE_RELEASE_ASSERT(i != initialIndex);
         }
     }
 
@@ -894,7 +897,8 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             if (k == 0)
                 k = 1 | doubleHash(h);
             i = (i + k) & sizeMask;
-            HASH_TABLE_RELEASE_ASSERT(i != initialIndex);
+            if constexpr (KeyTraits::assertNotFull)
+                HASH_TABLE_RELEASE_ASSERT(i != initialIndex);
         }
 
         HashTranslator::translate(*entry, std::forward<T>(key), std::forward<Extra>(extra));
@@ -994,7 +998,8 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             if (k == 0)
                 k = 1 | doubleHash(h);
             i = (i + k) & sizeMask;
-            HASH_TABLE_RELEASE_ASSERT(i != initialIndex);
+            if constexpr (KeyTraits::assertNotFull)
+                HASH_TABLE_RELEASE_ASSERT(i != initialIndex);
         }
 
         if (deletedEntry) {

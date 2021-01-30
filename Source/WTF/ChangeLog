@@ -1,3 +1,25 @@
+2021-01-29  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Make check for full HashTables opt-in
+        https://bugs.webkit.org/show_bug.cgi?id=221166
+        <rdar://problem/70902458>
+
+        Reviewed by Saam Barati and Yusuke Suzuki.
+
+        Having the check always on was a regression on Speedometer2, so we only keep it for
+        the HashMaps in the MetaAllocator.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::inlineLookup):
+        (WTF::KeyTraits>::lookupForWriting):
+        (WTF::KeyTraits>::fullLookupForWriting):
+        (WTF::KeyTraits>::addUniqueForInitialization):
+        (WTF::KeyTraits>::add):
+        * wtf/HashTraits.h:
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::addFreeSpace):
+        * wtf/MetaAllocator.h:
+
 2021-01-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         WebKit doesn't automatically right-align Adlam
