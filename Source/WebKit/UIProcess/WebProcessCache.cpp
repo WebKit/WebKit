@@ -85,6 +85,7 @@ bool WebProcessCache::addProcessIfPossible(Ref<WebProcessProxy>&& process)
     ASSERT(!process->pageCount());
     ASSERT(!process->provisionalPageCount());
     ASSERT(!process->suspendedPageCount());
+    ASSERT(!process->isRunningServiceWorkers());
 
     if (!canCacheProcess(process))
         return false;
@@ -114,6 +115,7 @@ bool WebProcessCache::addProcess(std::unique_ptr<CachedProcess>&& cachedProcess)
     ASSERT(!cachedProcess->process().pageCount());
     ASSERT(!cachedProcess->process().provisionalPageCount());
     ASSERT(!cachedProcess->process().suspendedPageCount());
+    ASSERT(!cachedProcess->process().isRunningServiceWorkers());
 
     if (!canCacheProcess(cachedProcess->process()))
         return false;

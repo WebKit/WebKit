@@ -43,6 +43,7 @@
 #import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKExperimentalFeature.h>
+#import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/Deque.h>
 #import <wtf/HashMap.h>
@@ -2352,4 +2353,80 @@ TEST(ServiceWorkers, ClearDOMCacheAlsoIncludesServiceWorkerRegistrations)
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
     readyToContinue = false;
+}
+
+TEST(ServiceWorkers, WebProcessCache)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    processPoolConfiguration.get().usesWebProcessCache = YES;
+    processPoolConfiguration.get().prewarmsProcessesAutomatically = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setProcessPool:processPool.get()];
+
+    auto messageHandler = adoptNS([[SWMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    static const char* main =
+    "<script>"
+    "function registerServiceWorker()"
+    "{"
+    "   try {"
+    "       navigator.serviceWorker.register('/sw.js').then(function(reg) {"
+    "           if (reg.active) {"
+    "               alert('worker unexpectedly already active');"
+    "               return;"
+    "           }"
+    "           worker = reg.installing;"
+    "           worker.addEventListener('statechange', function() {"
+    "               if (worker.state == 'activated')"
+    "                   alert('successfully registered');"
+    "               });"
+    "           }).catch(function(error) {"
+    "               alert('Registration failed with: ' + error);"
+    "           });"
+    "   } catch(e) {"
+    "       alert('Exception: ' + e);"
+    "   }"
+    "}"
+    "alert('loaded');"
+    "</script>";
+
+    TestWebKitAPI::HTTPServer server({
+        { "/", { main } },
+        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, "" } }
+    });
+
+    // Create a first web view and load a page
+    auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView1 loadRequest:server.request()];
+    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "loaded");
+
+    // Create a second web view and load a page
+    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView2 loadRequest:server.request()];
+    EXPECT_WK_STREQ([webView2 _test_waitForAlert], "loaded");
+
+    // Close the first page to put it in the cache
+    [webView1 _close];
+
+    // Register a service worker, it should go in webView1 process.
+    [webView2 stringByEvaluatingJavaScript:@"registerServiceWorker()"];
+    EXPECT_WK_STREQ([webView2 _test_waitForAlert], "successfully registered");
+
+    // Clearing web process cache should not kill the service worker process
+    [configuration.get().processPool _clearWebProcessCache];
+
+    EXPECT_EQ(1U, configuration.get().processPool._serviceWorkerProcessCount);
 }
