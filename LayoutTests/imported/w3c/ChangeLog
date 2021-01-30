@@ -1,3 +1,14 @@
+2021-01-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Remove support for image controls
+        https://bugs.webkit.org/show_bug.cgi?id=221156
+
+        Reviewed by Tim Horton.
+
+        Rebaseline an imported layout test.
+
+        * web-platform-tests/css/css-ui/appearance-cssom-001-expected.txt:
+
 2021-01-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Fix WebAssembly.Global's error message and support "funcref"

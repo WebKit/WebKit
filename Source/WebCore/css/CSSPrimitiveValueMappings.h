@@ -605,11 +605,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
         m_value.valueID = CSSValueBorderlessAttachment;
         break;
 #endif
-#if ENABLE(SERVICE_CONTROLS)
-    case ImageControlsButtonPart:
-        m_value.valueID = CSSValueImageControlsButton;
-        break;
-#endif
 #if ENABLE(APPLE_PAY)
     case ApplePayButtonPart:
         m_value.valueID = CSSValueApplePayButton;

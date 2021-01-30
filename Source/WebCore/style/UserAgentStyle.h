@@ -46,7 +46,6 @@ public:
     static StyleSheetContents* mediaControlsStyleSheet;
     static StyleSheetContents* fullscreenStyleSheet;
     static StyleSheetContents* plugInsStyleSheet;
-    static StyleSheetContents* imageControlsStyleSheet;
 #if ENABLE(DATALIST_ELEMENT)
     static StyleSheetContents* dataListStyleSheet;
 #endif

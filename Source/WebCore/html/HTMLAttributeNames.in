@@ -428,7 +428,6 @@ autocapitalize
 onwebkitcurrentplaybacktargetiswirelesschanged
 onwebkitplaybacktargetavailabilitychanged
 onwebkitpresentationmodechanged
-x-webkit-imagemenu
 webkit-playsinline
 x-webkit-airplay
 x-webkit-wirelessvideoplaybackdisabled

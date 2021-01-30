@@ -36,7 +36,7 @@ FAIL -webkit-appearance: default-button (invalid) assert_equals: style.WebkitApp
 FAIL -webkit-appearance: discrete-capacity-level-indicator (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "discrete-capacity-level-indicator"
 PASS -webkit-appearance: dualbutton (invalid)
 PASS -webkit-appearance: groupbox (invalid)
-FAIL -webkit-appearance: image-controls-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "image-controls-button"
+PASS -webkit-appearance: image-controls-button (invalid)
 FAIL -webkit-appearance: inner-spin-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "inner-spin-button"
 FAIL -webkit-appearance: list-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "list-button"
 FAIL -webkit-appearance: listitem (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "listitem"

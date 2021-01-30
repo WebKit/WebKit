@@ -89,18 +89,9 @@
 // FIXME: This should go into an SPI.h file in the spi directory.
 #if USE(APPLE_INTERNAL_SDK)
 #import <AppKit/AppKitDefines_Private.h>
-#import <AppKit/NSServicesRolloverButtonCell.h>
 #else
 #define APPKIT_PRIVATE_CLASS
-@interface NSServicesRolloverButtonCell : NSButtonCell
-@end
 #endif
-
-// FIXME: This should go into an SPI.h file in the spi directory.
-@interface NSServicesRolloverButtonCell ()
-+ (NSServicesRolloverButtonCell *)serviceRolloverButtonCellForStyle:(NSSharingServicePickerStyle)style;
-- (NSRect)rectForBounds:(NSRect)bounds preferredEdge:(NSRectEdge)preferredEdge;
-@end
 
 #endif // ENABLE(SERVICE_CONTROLS)
 
@@ -359,15 +350,6 @@ String RenderThemeMac::mediaControlsBase64StringForIconNameAndType(const String&
     NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
     return [[NSData dataWithContentsOfFile:[bundle pathForResource:iconName ofType:iconType inDirectory:directory]] base64EncodedStringWithOptions:0];
 }
-
-#if ENABLE(SERVICE_CONTROLS)
-
-String RenderThemeMac::imageControlsStyleSheet() const
-{
-    return String(imageControlsMacUserAgentStyleSheet, sizeof(imageControlsMacUserAgentStyleSheet));
-}
-
-#endif
 
 Color RenderThemeMac::platformActiveSelectionBackgroundColor(OptionSet<StyleColor::Options> options) const
 {
@@ -2274,56 +2256,6 @@ String RenderThemeMac::fileListNameForWidth(const FileList* fileList, const Font
 
     return StringTruncator::centerTruncate(strToTruncate, width, font);
 }
-
-#if ENABLE(SERVICE_CONTROLS)
-NSServicesRolloverButtonCell* RenderThemeMac::servicesRolloverButtonCell() const
-{
-    if (!m_servicesRolloverButton) {
-        m_servicesRolloverButton = [NSServicesRolloverButtonCell serviceRolloverButtonCellForStyle:NSSharingServicePickerStyleRollover];
-        [m_servicesRolloverButton setBezelStyle:NSBezelStyleRoundedDisclosure];
-        [m_servicesRolloverButton setButtonType:NSButtonTypePushOnPushOff];
-        [m_servicesRolloverButton setImagePosition:NSImageOnly];
-        [m_servicesRolloverButton setState:NO];
-    }
-
-    return m_servicesRolloverButton.get();
-}
-
-bool RenderThemeMac::paintImageControlsButton(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
-{
-    if (paintInfo.phase != PaintPhase::BlockBackground)
-        return true;
-
-    NSServicesRolloverButtonCell *cell = servicesRolloverButtonCell();
-
-    LocalCurrentGraphicsContext localContext(paintInfo.context());
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-
-    paintInfo.context().translate(rect.location());
-
-    IntRect innerFrame(IntPoint(), rect.size());
-    [cell drawWithFrame:innerFrame inView:documentViewFor(renderer)];
-    [cell setControlView:nil];
-
-    return true;
-}
-
-IntSize RenderThemeMac::imageControlsButtonSize(const RenderObject&) const
-{
-    return IntSize(servicesRolloverButtonCell().cellSize);
-}
-
-IntSize RenderThemeMac::imageControlsButtonPositionOffset() const
-{
-    // FIXME: Currently the offsets will always be the same no matter what image rect you try with.
-    // This may not always be true in the future.
-    static const int dummyDimension = 100;
-    IntRect dummyImageRect(0, 0, dummyDimension, dummyDimension);
-    NSRect bounds = [servicesRolloverButtonCell() rectForBounds:dummyImageRect preferredEdge:NSMinYEdge];
-
-    return IntSize(dummyDimension - bounds.origin.x, bounds.origin.y);
-}
-#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 const CGFloat attachmentIconSize = 48;

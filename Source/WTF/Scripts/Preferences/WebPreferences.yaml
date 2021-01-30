@@ -902,17 +902,6 @@ HyperlinkAuditingEnabled:
     WebCore:
       default: false
 
-ImageControlsEnabled:
-  type: bool
-  condition: ENABLE(SERVICE_CONTROLS)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 InactiveMediaCaptureSteamRepromptIntervalInMinutes:
   type: double
   webcoreBinding: none

@@ -2809,7 +2809,6 @@ fast/history/history-subframe-with-name.html [ Skip ]
 fast/history/location-replace-hash.html [ Skip ]
 fast/history/saves-state-after-fragment-nav.html [ Skip ]
 
-fast/images/image-controls-basic.html [ Failure ]
 webkit.org/b/140516 [ Debug ] fast/images/large-size-image-crash.html [ Skip ]  # Crashing
 fast/images/pdf-as-image-with-annotations.html [ ImageOnlyFailure ]
 fast/images/support-broken-image-delegate.html [ Failure ]

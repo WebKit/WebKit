@@ -75,7 +75,6 @@ StyleSheetContents* UserAgentStyle::mathMLStyleSheet;
 StyleSheetContents* UserAgentStyle::mediaControlsStyleSheet;
 StyleSheetContents* UserAgentStyle::fullscreenStyleSheet;
 StyleSheetContents* UserAgentStyle::plugInsStyleSheet;
-StyleSheetContents* UserAgentStyle::imageControlsStyleSheet;
 StyleSheetContents* UserAgentStyle::mediaQueryStyleSheet;
 #if ENABLE(DATALIST_ELEMENT)
 StyleSheetContents* UserAgentStyle::dataListStyleSheet;
@@ -186,15 +185,6 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
             }
         }
 #endif // ENABLE(VIDEO)
-#if ENABLE(SERVICE_CONTROLS)
-        else if (is<HTMLDivElement>(element) && element.isImageControlsRootElement()) {
-            if (!imageControlsStyleSheet) {
-                String imageControlsRules = RenderTheme::singleton().imageControlsStyleSheet();
-                imageControlsStyleSheet = parseUASheet(imageControlsRules);
-                addToDefaultStyle(*imageControlsStyleSheet);
-            }
-        }
-#endif // ENABLE(SERVICE_CONTROLS)
 #if ENABLE(DATALIST_ELEMENT)
         else if (!dataListStyleSheet && is<HTMLDataListElement>(element)) {
             dataListStyleSheet = parseUASheet(RenderTheme::singleton().dataListStyleSheet());

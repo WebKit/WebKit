@@ -858,9 +858,6 @@ relevancy-level-indicator
 continuous-capacity-level-indicator
 discrete-capacity-level-indicator
 rating-level-indicator
-#if defined(ENABLE_SERVICE_CONTROLS) && ENABLE_SERVICE_CONTROLS
-image-controls-button
-#endif
 #if defined(ENABLE_APPLE_PAY) && ENABLE_APPLE_PAY
 -apple-pay-button
 #endif

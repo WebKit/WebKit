@@ -206,10 +206,6 @@ public:
     bool isCharacterDataNode() const { return hasNodeFlag(NodeFlag::IsCharacterData); }
     virtual bool isFrameOwnerElement() const { return false; }
     virtual bool isPluginElement() const { return false; }
-#if ENABLE(SERVICE_CONTROLS)
-    virtual bool isImageControlsRootElement() const { return false; }
-    virtual bool isImageControlsButtonElement() const { return false; }
-#endif
 
     bool isDocumentNode() const { return hasNodeFlag(NodeFlag::IsDocumentNode); }
     bool isTreeScope() const { return hasNodeFlag(NodeFlag::IsDocumentNode) || hasNodeFlag(NodeFlag::IsShadowRoot); }

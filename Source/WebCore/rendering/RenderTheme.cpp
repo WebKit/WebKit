@@ -255,10 +255,6 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     case DiscreteCapacityLevelIndicatorPart:
     case RatingLevelIndicatorPart:
         return adjustMeterStyle(style, element);
-#if ENABLE(SERVICE_CONTROLS)
-    case ImageControlsButtonPart:
-        break;
-#endif
     case CapsLockIndicatorPart:
         return adjustCapsLockIndicatorStyle(style, element);
 #if ENABLE(APPLE_PAY)
@@ -415,10 +411,6 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
         return paintSearchFieldResultsDecorationPart(box, paintInfo, integralSnappedRect);
     case SearchFieldResultsButtonPart:
         return paintSearchFieldResultsButton(box, paintInfo, integralSnappedRect);
-#if ENABLE(SERVICE_CONTROLS)
-    case ImageControlsButtonPart:
-        return paintImageControlsButton(box, paintInfo, integralSnappedRect);
-#endif
     case CapsLockIndicatorPart:
         return paintCapsLockIndicator(box, paintInfo, integralSnappedRect);
 #if ENABLE(APPLE_PAY)
@@ -481,9 +473,6 @@ bool RenderTheme::paintBorderOnly(const RenderBox& box, const PaintInfo& paintIn
     case SearchFieldDecorationPart:
     case SearchFieldResultsDecorationPart:
     case SearchFieldResultsButtonPart:
-#if ENABLE(SERVICE_CONTROLS)
-    case ImageControlsButtonPart:
-#endif
     default:
         break;
     }
@@ -555,9 +544,6 @@ void RenderTheme::paintDecorations(const RenderBox& box, const PaintInfo& paintI
     case SearchFieldDecorationPart:
     case SearchFieldResultsDecorationPart:
     case SearchFieldResultsButtonPart:
-#if ENABLE(SERVICE_CONTROLS)
-    case ImageControlsButtonPart:
-#endif
     default:
         break;
     }

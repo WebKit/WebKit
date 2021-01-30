@@ -1,3 +1,14 @@
+2021-01-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Remove support for image controls
+        https://bugs.webkit.org/show_bug.cgi?id=221156
+
+        Reviewed by Tim Horton.
+
+        Remove this unused WebKit setting.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+
 2021-01-29  Tadeu Zagallo  <tzagallo@apple.com>
 
         Make check for full HashTables opt-in

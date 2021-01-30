@@ -141,8 +141,6 @@ RenderImage::RenderImage(Element& element, RenderStyle&& style, StyleImage* styl
     , m_imageDevicePixelRatio(imageDevicePixelRatio)
 {
     updateAltText();
-    if (is<HTMLImageElement>(element))
-        m_hasShadowControls = downcast<HTMLImageElement>(element).hasShadowControls();
 }
 
 RenderImage::RenderImage(Document& document, RenderStyle&& style, StyleImage* styleImage)

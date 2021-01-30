@@ -112,10 +112,6 @@ private:
     String mediaControlsBase64StringForIconNameAndType(const String&, const String&) final;
 #endif
 
-#if ENABLE(SERVICE_CONTROLS)
-    String imageControlsStyleSheet() const final;
-#endif
-
     bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) final;
     void adjustTextFieldStyle(RenderStyle&, const Element*) const final;
 
@@ -221,14 +217,6 @@ private:
     int minimumProgressBarHeight(const RenderStyle&) const;
     const IntSize* progressBarSizes() const;
     const int* progressBarMargins(NSControlSize) const;
-
-#if ENABLE(SERVICE_CONTROLS)
-    bool paintImageControlsButton(const RenderObject&, const PaintInfo&, const IntRect&) final;
-    IntSize imageControlsButtonSize(const RenderObject&) const final;
-    IntSize imageControlsButtonPositionOffset() const final;
-
-    NSServicesRolloverButtonCell *servicesRolloverButtonCell() const;
-#endif
 
     mutable RetainPtr<NSPopUpButtonCell> m_popupButton;
     mutable RetainPtr<NSSearchFieldCell> m_search;
