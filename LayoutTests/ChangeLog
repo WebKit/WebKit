@@ -1,5 +1,100 @@
 2021-01-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271507. rdar://problem/73473467
+
+    [Cocoa] Strip DataDetectors links when copying content to the pasteboard
+    https://bugs.webkit.org/show_bug.cgi?id=220526
+    <rdar://problem/71045590>
+    
+    Reviewed by Ryosuke Niwa.
+    
+    Source/WebCore:
+    
+    Currently, when DataDetectors links are written to the pasteboard when
+    copied. This is problematic, since clicking on a DataDetector link
+    outside of a valid context results in an attempt to open an invalid
+    URL. Instead, DataDetectors links should be stripped when copied.
+    
+    To remove the link, while preserving any custom styles, the <a> element
+    created by Data Detection is replaced with a <span> element. Any
+    attributes and styles added by WebKit are removed as a part of this
+    transformation.
+    
+    Tests: editing/pasteboard/copy-paste-data-detected-links.html
+           CopyRTF.StripsDataDetectedLinks
+           PasteWebArchive.StripsDataDetectedLinks
+    
+    * editing/cocoa/DataDetection.h:
+    * editing/cocoa/DataDetection.mm:
+    (WebCore::DataDetection::isDataDetectorElement):
+    
+    Add a helper to check if an element was created through Data Detection.
+    
+    * editing/cocoa/HTMLConverter.mm:
+    (HTMLConverter::_addLinkForElement):
+    
+    Do not add NSLinkAttributeName for DataDetectors links.
+    
+    (HTMLConverter::_exitElement):
+    
+    Factor out link creation logic.
+    
+    * editing/markup.cpp:
+    (WebCore::StyledMarkupAccumulator::spanReplacementForElement):
+    
+    Centralize the logic that determines whether or not an element should
+    be replaced by a <span>. Previously, this only applied to <slot>
+    elements. Now, it applies to <slot> and DataDetectors links.
+    
+    (WebCore::StyledMarkupAccumulator::appendStartTag):
+    
+    If the element was created through DataDetection, append a <span>
+    rather than an <a>, to drop the link. The DataDetectors and href
+    attributes are also dropped from the markup string. Finally, remove
+    the text decoration style that was added by WebKit to style the
+    DataDetectors link.
+    
+    (WebCore::StyledMarkupAccumulator::appendEndTag):
+    
+    Consult shouldReplaceElementWithSpan when appending the end tag.
+    
+    Tools:
+    
+    Added API tests to verify DataDetectors links are not preserved when
+    copying/pasting WebArchives and rich text.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/CopyRTF.mm:
+    (StripsDataDetectorsLinks):
+    * TestWebKitAPI/Tests/WebKitCocoa/PasteWebArchive.mm:
+    (StripsDataDetectorsLinks):
+    
+    LayoutTests:
+    
+    Added a test which copies content containing two data detected links
+    and verifies that the links are removed.
+    
+    * editing/pasteboard/copy-paste-data-detected-links-expected.txt: Added.
+    * editing/pasteboard/copy-paste-data-detected-links.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271507 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-14  Aditya Keerthi  <akeerthi@apple.com>
+
+            [Cocoa] Strip DataDetectors links when copying content to the pasteboard
+            https://bugs.webkit.org/show_bug.cgi?id=220526
+            <rdar://problem/71045590>
+
+            Reviewed by Ryosuke Niwa.
+
+            Added a test which copies content containing two data detected links
+            and verifies that the links are removed.
+
+            * editing/pasteboard/copy-paste-data-detected-links-expected.txt: Added.
+            * editing/pasteboard/copy-paste-data-detected-links.html: Added.
+
+2021-01-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271459. rdar://problem/73473665
 
     [macOS] "Correct Spelling Automatically" menu items are inconsistent when autocorrect="off"

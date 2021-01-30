@@ -40,6 +40,7 @@ OBJC_CLASS NSDictionary;
 namespace WebCore {
 
 class HitTestResult;
+class QualifiedName;
 
 struct DetectedItem {
     RetainPtr<DDActionContext> actionContext;
@@ -64,6 +65,8 @@ public:
 
     static const String& dataDetectorURLProtocol();
     static bool isDataDetectorURL(const URL&);
+    static bool isDataDetectorAttribute(const QualifiedName&);
+    static bool isDataDetectorElement(const Element&);
 };
 
 } // namespace WebCore

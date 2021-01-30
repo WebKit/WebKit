@@ -262,6 +262,27 @@ TEST(PasteWebArchive, WebArchiveTypeIdentifier)
     EXPECT_WK_STREQ("rgb(255, 0, 0)", [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('strong')).color"]);
 }
 
+#if ENABLE(DATA_DETECTION)
+
+TEST(PasteWebArchive, StripsDataDetectorsLinks)
+{
+    auto* url = [NSURL URLWithString:@"file:///some-file.html"];
+    auto* markup = [@"<!DOCTYPE html><html><body><span>Meeting <a href=\"x-apple-data-detectors://0\" dir=\"ltr\" x-apple-data-detectors=\"true\" x-apple-data-detectors-type=\"calendar-event\" x-apple-data-detectors-result=\"0\" style=\"color: currentcolor; text-decoration-color: rgba(128, 128, 128, 0.38); font-weight: bold;\">on Friday 11/6 at 4pm</a> at <a href=\"x-apple-data-detectors://1\" dir=\"ltr\" x-apple-data-detectors=\"true\" x-apple-data-detectors-type=\"address\" x-apple-data-detectors-result=\"1\" style=\"color: currentcolor; text-decoration-color: rgba(128, 128, 128, 0.38);\">1 Apple Park Way, Cupertino CA</a></span></body></html>" dataUsingEncoding:NSUTF8StringEncoding];
+    auto mainResource = adoptNS([[WebResource alloc] initWithData:markup URL:url MIMEType:@"text/html" textEncodingName:@"utf-8" frameName:nil]);
+    auto archive = adoptNS([[WebArchive alloc] initWithMainResource:mainResource.get() subresources:nil subframeArchives:nil]);
+
+    [[NSPasteboard generalPasteboard] declareTypes:@[WebArchivePboardType] owner:nil];
+    [[NSPasteboard generalPasteboard] setData:[archive data] forType:WebArchivePboardType];
+
+    auto webView = createWebViewWithCustomPasteboardDataEnabled();
+    [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
+    [webView paste:nil];
+
+    EXPECT_WK_STREQ("Meeting&nbsp;<span dir=\"ltr\" style=\"font-weight: bold;\">on Friday 11/6 at 4pm</span>&nbsp;at&nbsp;<span dir=\"ltr\">1 Apple Park Way, Cupertino CA</span>", [webView stringByEvaluatingJavaScript:@"editor.innerHTML"]);
+}
+
+#endif // ENABLE(DATA_DETECTION)
+
 #endif // PLATFORM(MAC)
 
 

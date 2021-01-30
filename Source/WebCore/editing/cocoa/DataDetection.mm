@@ -42,6 +42,7 @@
 #import "HitTestResult.h"
 #import "NodeList.h"
 #import "NodeTraversal.h"
+#import "QualifiedName.h"
 #import "Range.h"
 #import "RenderObject.h"
 #import "StyleProperties.h"
@@ -652,6 +653,28 @@ const String& DataDetection::dataDetectorURLProtocol()
 bool DataDetection::isDataDetectorURL(const URL& url)
 {
     return url.protocolIs(dataDetectorURLProtocol());
+}
+
+bool DataDetection::isDataDetectorAttribute(const QualifiedName& name)
+{
+    if (name == x_apple_data_detectorsAttr)
+        return true;
+
+    if (name == x_apple_data_detectors_resultAttr)
+        return true;
+
+    if (name == x_apple_data_detectors_typeAttr)
+        return true;
+
+    if (name == hrefAttr)
+        return true;
+
+    return false;
+}
+
+bool DataDetection::isDataDetectorElement(const Element& element)
+{
+    return is<HTMLAnchorElement>(element) && equalIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true");
 }
 
 } // namespace WebCore
