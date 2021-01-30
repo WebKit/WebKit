@@ -1,5 +1,46 @@
 2021-01-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271388. rdar://problem/73473676
+
+    Safari 14 on 2x display renders NYS DMV page as blurry
+    https://bugs.webkit.org/show_bug.cgi?id=220528
+    <rdar://problem/71440246>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    Certain combinations of nested perspective and transform cause Core Animation to
+    rasterize at unit scale, which makes layers blurry on Retina displays.
+    
+    Enable code that was already used on iOS to set layer rasterization scale.
+    
+    Test: compositing/contents-scale/hidpi-tests/rasterization-scale.html
+    
+    * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+    (WebCore::PlatformCALayerCocoa::setContentsScale):
+    
+    LayoutTests:
+    
+    * compositing/contents-scale/hidpi-tests/rasterization-scale-expected.html: Added.
+    * compositing/contents-scale/hidpi-tests/rasterization-scale.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271388 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-11  Simon Fraser  <simon.fraser@apple.com>
+
+            Safari 14 on 2x display renders NYS DMV page as blurry
+            https://bugs.webkit.org/show_bug.cgi?id=220528
+            <rdar://problem/71440246>
+
+            Reviewed by Tim Horton.
+
+            * compositing/contents-scale/hidpi-tests/rasterization-scale-expected.html: Added.
+            * compositing/contents-scale/hidpi-tests/rasterization-scale.html: Added.
+
+2021-01-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271379. rdar://problem/73473604
 
     Keep newly created IDBObjectStores in deleted map when IDBTransaction is aborted

@@ -915,9 +915,7 @@ void PlatformCALayerCocoa::setContentsScale(float value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setContentsScale:value];
-#if PLATFORM(IOS_FAMILY)
     [m_layer setRasterizationScale:value];
-#endif
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
