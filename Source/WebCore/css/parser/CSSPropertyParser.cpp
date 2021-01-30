@@ -520,12 +520,11 @@ static RefPtr<CSSValue> consumeFontVariationTag(CSSParserTokenRange& range)
     if (range.atEnd())
         return nullptr;
 
-    double tagValue = 0;
-    auto success = consumeNumberRaw(range, tagValue);
-    if (!success)
+    auto tagValue = consumeNumberRaw(range);
+    if (!tagValue)
         return nullptr;
     
-    return CSSFontVariationValue::create(tag, tagValue);
+    return CSSFontVariationValue::create(tag, *tagValue);
 }
     
 static RefPtr<CSSValue> consumeFontVariationSettings(CSSParserTokenRange& range)
@@ -1508,22 +1507,36 @@ static RefPtr<CSSValue> consumeCubicBezier(CSSParserTokenRange& range)
     CSSParserTokenRange rangeCopy = range;
     CSSParserTokenRange args = consumeFunction(rangeCopy);
 
-    double x1, y1, x2, y2;
-    if (consumeNumberRaw(args, x1)
-        && x1 >= 0 && x1 <= 1
-        && consumeCommaIncludingWhitespace(args)
-        && consumeNumberRaw(args, y1)
-        && consumeCommaIncludingWhitespace(args)
-        && consumeNumberRaw(args, x2)
-        && x2 >= 0 && x2 <= 1
-        && consumeCommaIncludingWhitespace(args)
-        && consumeNumberRaw(args, y2)
-        && args.atEnd()) {
-        range = rangeCopy;
-        return CSSCubicBezierTimingFunctionValue::create(x1, y1, x2, y2);
-    }
+    auto x1 = consumeNumberRaw(args);
+    if (!x1 || *x1 < 0 || *x1 > 1)
+        return nullptr;
+    
+    if (!consumeCommaIncludingWhitespace(args))
+        return nullptr;
 
-    return nullptr;
+    auto y1 = consumeNumberRaw(args);
+    if (!y1)
+        return nullptr;
+
+    if (!consumeCommaIncludingWhitespace(args))
+        return nullptr;
+
+    auto x2 = consumeNumberRaw(args);
+    if (!x2 || *x2 < 0 || *x2 > 1)
+        return nullptr;
+
+    if (!consumeCommaIncludingWhitespace(args))
+        return nullptr;
+
+    auto y2 = consumeNumberRaw(args);
+    if (!y2)
+        return nullptr;
+
+    if (!args.atEnd())
+        return nullptr;
+
+    range = rangeCopy;
+    return CSSCubicBezierTimingFunctionValue::create(*x1, *y1, *x2, *y2);
 }
 
 static RefPtr<CSSValue> consumeSpringFunction(CSSParserTokenRange& range)
@@ -1533,23 +1546,23 @@ static RefPtr<CSSValue> consumeSpringFunction(CSSParserTokenRange& range)
     CSSParserTokenRange args = consumeFunction(rangeCopy);
 
     // Mass must be greater than 0.
-    double mass;
-    if (!consumeNumberRaw(args, mass) || mass <= 0)
+    auto mass = consumeNumberRaw(args);
+    if (!mass || *mass <= 0)
         return nullptr;
     
     // Stiffness must be greater than 0.
-    double stiffness;
-    if (!consumeNumberRaw(args, stiffness) || stiffness <= 0)
+    auto stiffness = consumeNumberRaw(args);
+    if (!stiffness || *stiffness <= 0)
         return nullptr;
     
     // Damping coefficient must be greater than or equal to 0.
-    double damping;
-    if (!consumeNumberRaw(args, damping) || damping < 0)
+    auto damping = consumeNumberRaw(args);
+    if (!damping || *damping < 0)
         return nullptr;
     
     // Initial velocity may have any value.
-    double initialVelocity;
-    if (!consumeNumberRaw(args, initialVelocity))
+    auto initialVelocity = consumeNumberRaw(args);
+    if (!initialVelocity)
         return nullptr;
 
     if (!args.atEnd())
@@ -1557,7 +1570,7 @@ static RefPtr<CSSValue> consumeSpringFunction(CSSParserTokenRange& range)
 
     range = rangeCopy;
 
-    return CSSSpringTimingFunctionValue::create(mass, stiffness, damping, initialVelocity);
+    return CSSSpringTimingFunctionValue::create(*mass, *stiffness, *damping, *initialVelocity);
 }
 
 static RefPtr<CSSValue> consumeAnimationTimingFunction(CSSParserTokenRange& range, const CSSParserContext& context)
@@ -1878,16 +1891,15 @@ static bool consumeNumbers(CSSParserTokenRange& args, RefPtr<CSSFunctionValue>& 
 
 static bool consumePerspective(CSSParserTokenRange& args, CSSParserMode cssParserMode, RefPtr<CSSFunctionValue>& transformValue)
 {
-    RefPtr<CSSPrimitiveValue> parsedValue = consumeLength(args, cssParserMode, ValueRangeNonNegative);
-    if (!parsedValue) {
-        double perspective;
-        if (!consumeNumberRaw(args, perspective) || perspective < 0)
-            return false;
-        parsedValue = CSSPrimitiveValue::create(perspective, CSSUnitType::CSS_PX);
+    if (auto parsedValue = consumeLength(args, cssParserMode, ValueRangeNonNegative)) {
+        transformValue->append(parsedValue.releaseNonNull());
+        return true;
     }
-    if (!parsedValue)
+
+    auto perspective = consumeNumberRaw(args);
+    if (!perspective || *perspective < 0)
         return false;
-    transformValue->append(parsedValue.releaseNonNull());
+    transformValue->append(CSSPrimitiveValue::create(*perspective, CSSUnitType::CSS_PX));
     return true;
 }
 
@@ -2363,14 +2375,14 @@ static RefPtr<CSSValue> consumeCursor(CSSParserTokenRange& range, const CSSParse
 {
     RefPtr<CSSValueList> list;
     while (RefPtr<CSSValue> image = consumeImage(range, context, { AllowedImageType::URLFunction, AllowedImageType::ImageSet })) {
-        double num;
         IntPoint hotSpot(-1, -1);
         bool hotSpotSpecified = false;
-        if (consumeNumberRaw(range, num)) {
-            hotSpot.setX(int(num));
-            if (!consumeNumberRaw(range, num))
+        if (auto x = consumeNumberRaw(range)) {
+            hotSpot.setX(static_cast<int>(*x));
+            auto y = consumeNumberRaw(range);
+            if (!y)
                 return nullptr;
-            hotSpot.setY(int(num));
+            hotSpot.setY(static_cast<int>(*y));
             hotSpotSpecified = true;
         }
 
@@ -2484,22 +2496,18 @@ static RefPtr<CSSPrimitiveValue> consumePerspective(CSSParserTokenRange& range, 
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
-    RefPtr<CSSPrimitiveValue> parsedValue = consumeLength(range, cssParserMode, ValueRangeAll);
-    if (!parsedValue) {
-        // FIXME: Make this quirk only apply to the webkit prefixed version of the property.
-        double perspective;
-        if (!consumeNumberRaw(range, perspective))
-            return nullptr;
-        parsedValue = CSSPrimitiveValue::create(perspective, CSSUnitType::CSS_PX);
+
+    if (auto parsedValue = consumeLength(range, cssParserMode, ValueRangeAll)) {
+        if (parsedValue->isPositive().valueOr(true))
+            return parsedValue;
+        return nullptr;
     }
 
-    if (!parsedValue)
+    // FIXME: Make this quirk only apply to the webkit prefixed version of the property.
+    auto perspective = consumeNumberRaw(range);
+    if (!perspective || *perspective < 0)
         return nullptr;
-
-    if (parsedValue->isPositive().valueOr(true))
-        return parsedValue;
-
-    return nullptr;
+    return CSSPrimitiveValue::create(*perspective, CSSUnitType::CSS_PX);
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
@@ -5027,15 +5035,14 @@ bool CSSPropertyParser::consumeFlex(bool important)
     } else {
         unsigned index = 0;
         while (!m_range.atEnd() && index++ < 3) {
-            double num;
-            if (consumeNumberRaw(m_range, num)) {
-                if (num < 0)
+            if (auto num = consumeNumberRaw(m_range)) {
+                if (*num < 0)
                     return false;
                 if (flexGrow == unsetValue)
-                    flexGrow = num;
+                    flexGrow = *num;
                 else if (flexShrink == unsetValue)
-                    flexShrink = num;
-                else if (!num) // flex only allows a basis of 0 (sans units) if flex-grow and flex-shrink values have already been set.
+                    flexShrink = *num;
+                else if (!*num) // flex only allows a basis of 0 (sans units) if flex-grow and flex-shrink values have already been set.
                     flexBasis = CSSPrimitiveValue::create(0, CSSUnitType::CSS_PX);
                 else
                     return false;

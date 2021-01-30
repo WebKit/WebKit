@@ -1,5 +1,5 @@
 // Copyright 2016 The Chromium Authors. All rights reserved.
-// Copyright (C) 2016 Apple Inc. All rights reserved.
+// Copyright (C) 2016-2021 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -124,13 +124,12 @@ public:
         return CSSValuePool::singleton().createValue(m_calcValue->doubleValue(), CSSUnitType::CSS_NUMBER);
     }
 
-    bool consumeNumberRaw(double& result)
+    Optional<double> consumeNumberRaw()
     {
         if (!m_calcValue || m_calcValue->category() != CalculationCategory::Number)
-            return false;
+            return WTF::nullopt;
         m_sourceRange = m_range;
-        result = m_calcValue->doubleValue();
-        return true;
+        return m_calcValue->doubleValue();
     }
 
     Optional<double> consumePercentRaw()
@@ -212,21 +211,20 @@ RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange& range)
     return consumeInteger(range, 1);
 }
 
-bool consumeNumberRaw(CSSParserTokenRange& range, double& result, ValueRange valueRange)
+Optional<double> consumeNumberRaw(CSSParserTokenRange& range, ValueRange valueRange)
 {
     const CSSParserToken& token = range.peek();
     if (token.type() == NumberToken) {
         if (valueRange == ValueRangeNonNegative && token.numericValue() < 0)
-            return false;
-        result = range.consumeIncludingWhitespace().numericValue();
-        return true;
+            return WTF::nullopt;
+        return range.consumeIncludingWhitespace().numericValue();
     }
 
     if (token.type() != FunctionToken)
-        return false;
+        return WTF::nullopt;
 
     CalcParser calcParser(range, CalculationCategory::Number, valueRange);
-    return calcParser.consumeNumberRaw(result);
+    return calcParser.consumeNumberRaw();
 }
 
 // FIXME: Work out if this can just call consumeNumberRaw
@@ -242,9 +240,8 @@ RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange& range, ValueRange v
         return nullptr;
     }
 
-    double number;
-    if (consumeNumberRaw(range, number, valueRange))
-        return CSSValuePool::singleton().createValue(number, token.unitType());
+    if (auto number = consumeNumberRaw(range, valueRange))
+        return CSSValuePool::singleton().createValue(*number, token.unitType());
 
     return nullptr;
 }
@@ -264,27 +261,20 @@ Optional<double> consumeFontWeightNumberRaw(CSSParserTokenRange& range)
 #if !ENABLE(VARIATION_FONTS)
         && token.numericValueType() == IntegerValueType && divisibleBy100(token.numericValue())
 #endif
-    ) {
-        double result;
-        if (consumeNumberRaw(range, result))
-            return result;
-        return WTF::nullopt;
-    }
+    )
+        return consumeNumberRaw(range);
 
     if (token.type() != FunctionToken)
         return WTF::nullopt;
 
     // "[For calc()], the used value resulting from an expression must be clamped to the range allowed in the target context."
     CalcParser calcParser(range, CalculationCategory::Number, ValueRangeAll);
-    double result;
-    if (calcParser.consumeNumberRaw(result)
+    if (auto result = calcParser.consumeNumberRaw(); result
 #if !ENABLE(VARIATION_FONTS)
-        && result > 0 && result < 1000 && divisibleBy100(result)
+        && *result > 0 && *result < 1000 && divisibleBy100(*result)
 #endif
-    ) {
-        result = std::min(std::max(result, std::nextafter(0., 1.)), std::nextafter(1000., 0.));
-        return result;
-    }
+    )
+        return std::min(std::max(*result, std::nextafter(0., 1.)), std::nextafter(1000., 0.));
 
     return WTF::nullopt;
 }
@@ -681,13 +671,13 @@ static Color parseRGBParameters(CSSParserTokenRange& range)
 
     bool isPercentage = false;
     double colorParameter;
-    if (!consumeNumberRaw(args, colorParameter)) {
-        if (auto percent = consumePercentRaw(args)) {
-            colorParameter = *percent;
-            isPercentage = true;
-        } else
-            return Color();
-    }
+    if (auto number = consumeNumberRaw(args))
+        colorParameter = *number;
+    else if (auto percent = consumePercentRaw(args)) {
+        colorParameter = *percent;
+        isPercentage = true;
+    } else
+        return { };
 
     enum class ColorSyntax {
         Commas,
@@ -708,18 +698,19 @@ static Color parseRGBParameters(CSSParserTokenRange& range)
         if (i == 1)
             syntax = consumeCommaIncludingWhitespace(args) ? ColorSyntax::Commas : ColorSyntax::WhitespaceSlash;
         else if (!consumeSeparator())
-            return Color();
+            return { };
 
         if (isPercentage) {
-            if (auto percent = consumePercentRaw(args))
-                colorParameter = *percent;
-            else
-                return Color();
+            auto percent = consumePercentRaw(args);
+            if (!percent)
+                return { };
+            colorArray[i] = clampRGBComponent(*percent, true);
         } else {
-            if (!consumeNumberRaw(args, colorParameter))
-                return Color();
+            auto number = consumeNumberRaw(args);
+            if (!number)
+                return { };
+            colorArray[i] = clampRGBComponent(*number, false);
         }
-        colorArray[i] = clampRGBComponent(colorParameter, isPercentage);
     }
 
     // Historically, alpha was only parsed for rgba(), but css-color-4 specifies that rgba() is a simple alias for rgb().
@@ -732,18 +723,16 @@ static Color parseRGBParameters(CSSParserTokenRange& range)
 
     uint8_t alphaComponent = 255;
     if (consumeAlphaSeparator()) {
-        double alpha;
-        if (!consumeNumberRaw(args, alpha)) {
-            if (auto percent = consumePercentRaw(args))
-                alpha = *percent / 100.0;
-            else
-                return Color();
-        }
-        alphaComponent = convertFloatAlphaTo<uint8_t>(alpha);
+        if (auto number = consumeNumberRaw(args))
+            alphaComponent = convertFloatAlphaTo<uint8_t>(*number);
+        else if (auto percent = consumePercentRaw(args))
+            alphaComponent = convertFloatAlphaTo<uint8_t>(*percent / 100.0);
+        else
+            return { };
     };
 
     if (!args.atEnd())
-        return Color();
+        return { };
 
     return SRGBA<uint8_t> { colorArray[0], colorArray[1], colorArray[2], alphaComponent };
 }
@@ -752,47 +741,49 @@ static Color parseHSLParameters(CSSParserTokenRange& range, CSSParserMode cssPar
 {
     ASSERT(range.peek().functionId() == CSSValueHsl || range.peek().functionId() == CSSValueHsla);
     CSSParserTokenRange args = consumeFunction(range);
-    double angleInDegrees;
+
+    double hueAngleInDegrees;
     if (auto angle = consumeAngleRaw(args, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid))
-        angleInDegrees = CSSPrimitiveValue::computeDegrees(angle->type, angle->value);
-    else {
-        if (!consumeNumberRaw(args, angleInDegrees))
-            return Color();
-    }
+        hueAngleInDegrees = CSSPrimitiveValue::computeDegrees(angle->type, angle->value);
+    else if (auto number = consumeNumberRaw(args))
+        hueAngleInDegrees = *number;
+    else
+        return { };
 
     double colorArray[3];
-    colorArray[0] = fmod(fmod(angleInDegrees, 360.0) + 360.0, 360.0) / 360.0;
+    colorArray[0] = fmod(fmod(hueAngleInDegrees, 360.0) + 360.0, 360.0) / 360.0;
+
     bool requiresCommas = false;
     for (int i = 1; i < 3; i++) {
         if (consumeCommaIncludingWhitespace(args)) {
             if (i != 1 && !requiresCommas)
-                return Color();
+                return { };
             requiresCommas = true;
         } else if (requiresCommas || args.atEnd() || (&args.peek() - 1)->type() != WhitespaceToken)
-            return Color();
+            return { };
         auto percent = consumePercentRaw(args);
         if (!percent)
-            return Color();
+            return { };
         colorArray[i] = clampTo<double>(*percent, 0.0, 100.0) / 100.0; // Needs to be value between 0 and 1.0.
     }
 
-    double alpha = 1.0;
     bool commaConsumed = consumeCommaIncludingWhitespace(args);
     bool slashConsumed = consumeSlashIncludingWhitespace(args);
     if ((commaConsumed && !requiresCommas) || (slashConsumed && requiresCommas))
-        return Color();
+        return { };
+
+    double alpha = 1.0;
     if (commaConsumed || slashConsumed) {
-        if (!consumeNumberRaw(args, alpha)) {
-            if (auto percent = consumePercentRaw(args))
-                alpha = *percent / 100.0f;
-            else
-                return Color();
-        }
-        alpha = clampTo<double>(alpha, 0.0, 1.0);
+        if (auto number = consumeNumberRaw(args))
+            alpha = clampTo<double>(*number, 0.0, 1.0);
+        else if (auto percent = consumePercentRaw(args))
+            alpha = clampTo<double>(*percent / 100.0f, 0.0, 1.0);
+        else
+            return { };
     }
 
     if (!args.atEnd())
-        return Color();
+        return { };
 
     return convertTo<SRGBA<uint8_t>>(toSRGBA(HSLA<float> { static_cast<float>(colorArray[0]), static_cast<float>(colorArray[1]), static_cast<float>(colorArray[2]), static_cast<float>(alpha) }));
 }
@@ -805,11 +796,10 @@ static Optional<float> parseOptionalAlpha(CSSParserTokenRange& range)
     if (auto alphaParameter = consumePercentRaw(range, ValueRangeAll))
         return clampTo<float>(*alphaParameter / 100.0, 0.0, 1.0);
 
-    double alphaParameter;
-    if (!consumeNumberRaw(range, alphaParameter, ValueRangeAll))
-        return WTF::nullopt;
+    if (auto alphaParameter = consumeNumberRaw(range, ValueRangeAll))
+        return clampTo<float>(*alphaParameter, 0.0, 1.0);
 
-    return clampTo<float>(alphaParameter, 0.0, 1.0);
+    return WTF::nullopt;
 }
 
 static Color parseLabParameters(CSSParserTokenRange& range)
@@ -821,12 +811,12 @@ static Color parseLabParameters(CSSParserTokenRange& range)
     if (!lightness)
         return { };
 
-    double aValue;
-    if (!consumeNumberRaw(args, aValue, ValueRangeAll))
+    auto aValue = consumeNumberRaw(args, ValueRangeAll);
+    if (!aValue)
         return { };
 
-    double bValue;
-    if (!consumeNumberRaw(args, bValue, ValueRangeAll))
+    auto bValue = consumeNumberRaw(args, ValueRangeAll);
+    if (!bValue)
         return { };
 
     auto alpha = parseOptionalAlpha(args);
@@ -836,7 +826,7 @@ static Color parseLabParameters(CSSParserTokenRange& range)
     if (!args.atEnd())
         return { };
 
-    return Lab<float> { static_cast<float>(*lightness), static_cast<float>(aValue), static_cast<float>(bValue), *alpha };
+    return Lab<float> { static_cast<float>(*lightness), static_cast<float>(*aValue), static_cast<float>(*bValue), *alpha };
 }
 
 static Color parseLCHParameters(CSSParserTokenRange& range, CSSParserMode cssParserMode)
@@ -846,23 +836,23 @@ static Color parseLCHParameters(CSSParserTokenRange& range, CSSParserMode cssPar
 
     auto lightness = consumePercentRaw(args, ValueRangeAll);
     if (!lightness)
-        return Color();
-
-    double chromaValue;
-    if (!consumeNumberRaw(args, chromaValue, ValueRangeAll))
         return { };
 
-    double angleInDegrees;
-    if (auto hueValue = consumeAngleRaw(args, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid))
-        angleInDegrees = CSSPrimitiveValue::computeDegrees(hueValue->type, hueValue->value);
-    else {
-        if (!consumeNumberRaw(args, angleInDegrees, ValueRangeAll))
-            return { };
-    }
+    auto chromaValue = consumeNumberRaw(args, ValueRangeAll);
+    if (!chromaValue)
+        return { };
 
-    angleInDegrees = fmod(angleInDegrees, 360.0);
-    if (angleInDegrees < 0.0)
-        angleInDegrees += 360.0;
+    double hueAngleInDegrees;
+    if (auto angle = consumeAngleRaw(args, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid))
+        hueAngleInDegrees = CSSPrimitiveValue::computeDegrees(angle->type, angle->value);
+    else if (auto number = consumeNumberRaw(args, ValueRangeAll))
+        hueAngleInDegrees = *number;
+    else
+        return { };
+
+    hueAngleInDegrees = fmod(hueAngleInDegrees, 360.0);
+    if (hueAngleInDegrees < 0.0)
+        hueAngleInDegrees += 360.0;
 
     auto alpha = parseOptionalAlpha(args);
     if (!alpha)
@@ -871,7 +861,7 @@ static Color parseLCHParameters(CSSParserTokenRange& range, CSSParserMode cssPar
     if (!args.atEnd())
         return { };
 
-    return toLab(LCHA<float> { static_cast<float>(*lightness), static_cast<float>(chromaValue), static_cast<float>(angleInDegrees), *alpha });
+    return toLab(LCHA<float> { static_cast<float>(*lightness), static_cast<float>(*chromaValue), static_cast<float>(hueAngleInDegrees), *alpha });
 }
 
 template<typename ColorType>
@@ -882,9 +872,8 @@ static Color parseColorFunctionForRGBTypes(CSSParserTokenRange& args)
 
     double channels[3] = { 0, 0, 0 };
     for (int i = 0; i < 3; ++i) {
-        double value;
-        if (consumeNumberRaw(args, value))
-            channels[i] = value;
+        if (auto number = consumeNumberRaw(args))
+            channels[i] = *number;
         else if (auto percent = consumePercentRaw(args))
             channels[i] = *percent / 100.0;
         else
@@ -910,15 +899,15 @@ static Color parseColorFunctionForLabParameters(CSSParserTokenRange& args)
             return;
         channels[0] = *lightness;
 
-        double aValue;
-        if (!consumeNumberRaw(args, aValue, ValueRangeAll))
+        auto aValue = consumeNumberRaw(args, ValueRangeAll);
+        if (!aValue)
             return;
-        channels[1] = aValue;
+        channels[1] = *aValue;
 
-        double bValue;
-        if (!consumeNumberRaw(args, bValue, ValueRangeAll))
+        auto bValue = consumeNumberRaw(args, ValueRangeAll);
+        if (!bValue)
             return;
-        channels[2] = bValue;
+        channels[2] = *bValue;
     }();
 
     auto alpha = parseOptionalAlpha(args);
@@ -1023,7 +1012,7 @@ static Color parseColorFunction(CSSParserTokenRange& range, CSSParserMode cssPar
         color = parseColorFunctionParameters(colorRange);
         break;
     default:
-        return Color();
+        return { };
     }
     if (color.isValid())
         range = colorRange;
@@ -1038,9 +1027,9 @@ Color consumeColorWorkerSafe(CSSParserTokenRange& range, CSSParserMode cssParser
         // FIXME: Need a worker-safe way to compute the system colors.
         //        For now, we detect the system color, but then intentionally fail parsing.
         if (StyleColor::isSystemColor(keyword))
-            return Color();
+            return { };
         if (!isValueAllowedInMode(keyword, cssParserMode))
-            return Color();
+            return { };
         result = StyleColor::colorFromKeyword(keyword, { });
         range.consumeIncludingWhitespace();
     }
@@ -1051,7 +1040,7 @@ Color consumeColorWorkerSafe(CSSParserTokenRange& range, CSSParserMode cssParser
         result = parseColorFunction(range, cssParserMode);
 
     if (!range.atEnd())
-        return Color();
+        return { };
 
     return result;
 }
@@ -1321,9 +1310,11 @@ static bool consumeDeprecatedGradientColorStop(CSSParserTokenRange& range, CSSGr
         position = (id == CSSValueFrom) ? 0 : 1;
     } else {
         ASSERT(id == CSSValueColorStop);
-        if (auto percentValue = consumePercent(args, ValueRangeAll))
-            position = percentValue->doubleValue() / 100.0;
-        else if (!consumeNumberRaw(args, position))
+        if (auto percent = consumePercentRaw(args, ValueRangeAll))
+            position = *percent / 100.0;
+        else if (auto number = consumeNumberRaw(args))
+            position = *number;
+        else
             return false;
 
         if (!consumeCommaIncludingWhitespace(args))
@@ -2171,9 +2162,8 @@ Optional<LineHeightRaw> consumeLineHeightRaw(CSSParserTokenRange& range, CSSPars
         return WTF::nullopt;
     }
 
-    double number;
-    if (consumeNumberRaw(range, number, ValueRangeNonNegative))
-        return { number };
+    if (auto number = consumeNumberRaw(range, ValueRangeNonNegative))
+        return { *number };
 
     if (auto lengthOrPercent = consumeLengthOrPercentRaw(range, cssParserMode, ValueRangeNonNegative))
         return { *lengthOrPercent };

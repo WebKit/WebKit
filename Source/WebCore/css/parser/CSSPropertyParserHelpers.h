@@ -72,7 +72,7 @@ using LengthOrPercentRaw = Variant<LengthRaw, double>;
 
 RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&, double minimumValue = -std::numeric_limits<double>::max());
 RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange&);
-bool consumeNumberRaw(CSSParserTokenRange&, double& result, ValueRange = ValueRangeAll);
+Optional<double> consumeNumberRaw(CSSParserTokenRange&, ValueRange = ValueRangeAll);
 RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange&, ValueRange);
 Optional<double> consumeFontWeightNumberRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange&);
