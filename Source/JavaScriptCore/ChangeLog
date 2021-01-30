@@ -1,3 +1,39 @@
+2021-01-29  Keith Miller  <keith_miller@apple.com>
+
+        SourceParseMode should be a member of the JSC::Parser
+        https://bugs.webkit.org/show_bug.cgi?id=221149
+
+        Reviewed by Ross Kirsling.
+
+        Right now we pass the SourceParseMode as a argument to many of the
+        functions in the parser. This patch move it into a member on the
+        class. This will make it available deeper in the parser, which is
+        important for implementing top level await.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseModuleSourceElements):
+        (JSC::Parser<LexerType>::parseAsyncFunctionSourceElements):
+        (JSC::Parser<LexerType>::parseAsyncGeneratorFunctionSourceElements):
+        (JSC::Parser<LexerType>::parseFunctionBody):
+        (JSC::Parser<LexerType>::parseFunctionParameters):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseAsyncFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parsePropertyMethod):
+        (JSC::Parser<LexerType>::parseGetterSetter):
+        (JSC::Parser<LexerType>::parseFunctionExpression):
+        (JSC::Parser<LexerType>::parseAsyncFunctionExpression):
+        (JSC::Parser<LexerType>::parseArrowFunctionExpression):
+        * parser/Parser.h:
+        (JSC::Parser::sourceParseMode const):
+        (JSC::Parser<LexerType>::parse):
+        (JSC::parse):
+        (JSC::parseFunctionForFunctionConstructor):
+
 2021-01-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, internal build fix after r272082
