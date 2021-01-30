@@ -77,7 +77,6 @@ private:
 #endif
 
     Icon* icon() const final;
-    bool isFileUpload() const final;
     void createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source, bool) final;
     void disabledStateChanged() final;
     void attributeChanged(const QualifiedName&) final;

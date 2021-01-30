@@ -50,7 +50,6 @@ private:
     void attributeChanged(const QualifiedName&) final;
     RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) final;
     const AtomString& formControlType() const final;
-    bool isSearchField() const final;
     bool needsContainer() const final;
     void createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source, bool) final;
     void destroyShadowSubtree() final;

@@ -167,11 +167,6 @@ Decimal BaseDateAndTimeInputType::defaultValueForStepUp() const
     return Decimal::fromDouble(ms + (offset * msPerMinute));
 }
 
-bool BaseDateAndTimeInputType::isSteppableSlow() const
-{
-    return true;
-}
-
 Decimal BaseDateAndTimeInputType::parseToNumber(const String& source, const Decimal& defaultValue) const
 {
     auto date = parseToDateComponents(source);

@@ -84,11 +84,6 @@ Optional<DateComponents> DateInputType::setMillisecondToDateComponents(double va
     return DateComponents::fromMillisecondsSinceEpochForDate(value);
 }
 
-bool DateInputType::isDateField() const
-{
-    return true;
-}
-
 bool DateInputType::isValidFormat(OptionSet<DateTimeFormatValidationResults> results) const
 {
     return results.containsAll({ DateTimeFormatValidationResults::HasYear, DateTimeFormatValidationResults::HasMonth, DateTimeFormatValidationResults::HasDay });

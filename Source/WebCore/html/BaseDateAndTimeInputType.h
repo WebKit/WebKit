@@ -100,7 +100,6 @@ private:
     double valueAsDouble() const final;
     ExceptionOr<void> setValueAsDecimal(const Decimal&, TextFieldEventBehavior) const final;
     Decimal defaultValueForStepUp() const override;
-    bool isSteppableSlow() const final;
     String localizeValue(const String&) const final;
     bool supportsReadOnly() const final;
     bool shouldRespectListAttribute() final;

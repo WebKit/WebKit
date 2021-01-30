@@ -53,8 +53,6 @@ private:
     void attach() final;
     bool shouldRespectAlignAttribute() final;
     bool canBeSuccessfulSubmitButton() final;
-    bool isImageButton() const final;
-    bool isEnumeratable() final;
     bool shouldRespectHeightAndWidthAttributes() final;
     unsigned height() const final;
     unsigned width() const final;

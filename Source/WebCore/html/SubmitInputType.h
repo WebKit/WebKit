@@ -46,8 +46,6 @@ private:
     void handleDOMActivateEvent(Event&) override;
     bool canBeSuccessfulSubmitButton() override;
     String defaultValue() const override;
-    bool isSubmitButton() const override;
-    bool isTextButton() const override;
 };
 
 } // namespace WebCore

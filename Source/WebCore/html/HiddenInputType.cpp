@@ -94,11 +94,6 @@ void HiddenInputType::setValue(const String& sanitizedValue, bool, TextFieldEven
     element()->setAttributeWithoutSynchronization(valueAttr, sanitizedValue);
 }
 
-bool HiddenInputType::isHiddenType() const
-{
-    return true;
-}
-
 bool HiddenInputType::appendFormData(DOMFormData& formData, bool isMultipartForm) const
 {
     ASSERT(element());

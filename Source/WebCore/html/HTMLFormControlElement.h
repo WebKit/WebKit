@@ -99,6 +99,7 @@ public:
     WEBCORE_EXPORT AutocapitalizeType autocapitalizeType() const final;
 #endif
 
+    // "willValidate" means "is a candidate for constraint validation".
     WEBCORE_EXPORT bool willValidate() const final;
     void updateVisibleValidationMessage();
     void hideVisibleValidationMessage();

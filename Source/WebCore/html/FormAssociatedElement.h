@@ -110,6 +110,7 @@ protected:
     String customValidationMessage() const;
 
 private:
+    // "willValidate" means "is a candidate for constraint validation".
     virtual bool willValidate() const = 0;
     virtual void refFormAssociatedElement() = 0;
     virtual void derefFormAssociatedElement() = 0;

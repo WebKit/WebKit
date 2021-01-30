@@ -101,11 +101,6 @@ bool TextFieldInputType::isMouseFocusable() const
     return element()->isTextFormControlFocusable();
 }
 
-bool TextFieldInputType::isTextField() const
-{
-    return true;
-}
-
 bool TextFieldInputType::isEmptyValue() const
 {
     auto innerText = innerTextElement();

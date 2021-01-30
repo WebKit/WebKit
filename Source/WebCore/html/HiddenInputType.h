@@ -48,9 +48,6 @@ private:
     bool accessKeyAction(bool sendMouseEvents) override;
     bool rendererIsNeeded() override;
     bool storesValueSeparateFromAttribute() override;
-    bool isHiddenType() const override;
-    bool supportLabels() const override { return false; }
-    bool isInteractiveContent() const final { return false; }
     bool shouldRespectHeightAndWidthAttributes() override;
     void setValue(const String&, bool, TextFieldEventBehavior) override;
     bool appendFormData(DOMFormData&, bool) const override;

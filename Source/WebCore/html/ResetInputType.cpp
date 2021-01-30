@@ -64,9 +64,4 @@ String ResetInputType::defaultValue() const
     return resetButtonDefaultLabel();
 }
 
-bool ResetInputType::isTextButton() const
-{
-    return true;
-}
-
 } // namespace WebCore

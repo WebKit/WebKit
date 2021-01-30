@@ -100,11 +100,6 @@ bool ColorInputType::isKeyboardFocusable(KeyboardEvent*) const
 #endif
 }
 
-bool ColorInputType::isColorControl() const
-{
-    return true;
-}
-
 bool ColorInputType::isPresentingAttachedView() const
 {
     return !!m_chooser;
