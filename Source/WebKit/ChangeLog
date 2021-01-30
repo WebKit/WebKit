@@ -1,5 +1,105 @@
 2021-01-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271459. rdar://problem/73473665
+
+    [macOS] "Correct Spelling Automatically" menu items are inconsistent when autocorrect="off"
+    https://bugs.webkit.org/show_bug.cgi?id=220598
+    <rdar://problem/71713611>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    Disable the context menu item to toggle automatic spelling correction, as well as the menu bar item to toggle
+    automatic spelling correction, in the case where the autocorrect attribute is set to "off". See below for more
+    details.
+    
+    Tests:  editing/mac/spelling/disable-automatic-spelling-correction-context-menu-item.html
+            DisableAutomaticSpellingCorrection.AutocorrectAttribute
+    
+    * editing/AlternativeTextController.cpp:
+    (WebCore::AlternativeTextController::canEnableAutomaticSpellingCorrection const):
+    
+    Factor out logic for checking the `autocorrect` attribute into a separate helper function; this is used to
+    determine whether or not we should enable both the context menu item and menu item in the menu bar.
+    
+    (WebCore::AlternativeTextController::isAutomaticSpellingCorrectionEnabled):
+    * editing/AlternativeTextController.h:
+    (WebCore::AlternativeTextController::UNLESS_ENABLED):
+    * editing/Editor.cpp:
+    (WebCore::Editor::canEnableAutomaticSpellingCorrection const):
+    * editing/Editor.h:
+    * page/ContextMenuController.cpp:
+    (WebCore::ContextMenuController::checkOrEnableIfNeeded const):
+    
+    Source/WebKit:
+    
+    Plumb the new `canEnableAutomaticSpellingCorrection` flag through `EditorState` to the UI process, where we can
+    consult it when validating user interface items (namely, the "Correct Spelling Automatically" menu item, which
+    corresponds to the `-toggleAutomaticSpellingCorrection:` selector).
+    
+    * Shared/EditorState.cpp:
+    (WebKit::EditorState::PostLayoutData::encode const):
+    (WebKit::EditorState::PostLayoutData::decode):
+    (WebKit::operator<<):
+    * Shared/EditorState.h:
+    * UIProcess/Cocoa/WebViewImpl.mm:
+    (WebKit::WebViewImpl::validateUserInterfaceItem):
+    * WebProcess/WebPage/mac/WebPageMac.mm:
+    (WebKit::WebPage::getPlatformEditorState const):
+    
+    Tools:
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/mac/DisableAutomaticSpellingCorrection.mm: Added.
+    
+    Add a new API test to verify that the `NSMenuItem` for toggling automatic spelling correction is invalid when
+    editing inside a form control with autocorrect="off".
+    
+    * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+    (WTR::getMenuItemEnabledCallback):
+    
+    Add the readonly `enabled` JS property on context menu items. See the new layout test,
+    editing/mac/spelling/disable-automatic-spelling-correction-context-menu-item.html, for more information.
+    
+    LayoutTests:
+    
+    Add a new API test to verify that the context menu item to toggle "Correct Spelling Automatically" is disabled
+    when autocorrect="off".
+    
+    * editing/mac/spelling/disable-automatic-spelling-correction-context-menu-item-expected.txt: Added.
+    * editing/mac/spelling/disable-automatic-spelling-correction-context-menu-item.html: Added.
+    * platform/mac-wk1/TestExpectations:
+    
+    Disable the test in DumpRenderTree, due to lack of support for context menu testing in WebKit1.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271459 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [macOS] "Correct Spelling Automatically" menu items are inconsistent when autocorrect="off"
+            https://bugs.webkit.org/show_bug.cgi?id=220598
+            <rdar://problem/71713611>
+
+            Reviewed by Tim Horton.
+
+            Plumb the new `canEnableAutomaticSpellingCorrection` flag through `EditorState` to the UI process, where we can
+            consult it when validating user interface items (namely, the "Correct Spelling Automatically" menu item, which
+            corresponds to the `-toggleAutomaticSpellingCorrection:` selector).
+
+            * Shared/EditorState.cpp:
+            (WebKit::EditorState::PostLayoutData::encode const):
+            (WebKit::EditorState::PostLayoutData::decode):
+            (WebKit::operator<<):
+            * Shared/EditorState.h:
+            * UIProcess/Cocoa/WebViewImpl.mm:
+            (WebKit::WebViewImpl::validateUserInterfaceItem):
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::WebPage::getPlatformEditorState const):
+
+2021-01-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271414. rdar://problem/73473727
 
     REGRESSION (r265044): [macOS] Safari autocorrects text when typing in login field on amazon.com

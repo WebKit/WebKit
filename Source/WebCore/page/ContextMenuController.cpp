@@ -1324,6 +1324,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             break;
         case ContextMenuItemTagCorrectSpellingAutomatically:
             shouldCheck = frame->editor().isAutomaticSpellingCorrectionEnabled();
+            shouldEnable = frame->editor().canEnableAutomaticSpellingCorrection();
             break;
         case ContextMenuItemTagSmartCopyPaste:
             shouldCheck = frame->editor().smartInsertDeleteEnabled();

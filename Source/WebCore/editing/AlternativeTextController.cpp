@@ -335,11 +335,8 @@ void AlternativeTextController::handleAlternativeTextUIResult(const String& resu
     m_rangeWithAlternative = WTF::nullopt;
 }
 
-bool AlternativeTextController::isAutomaticSpellingCorrectionEnabled()
+bool AlternativeTextController::canEnableAutomaticSpellingCorrection() const
 {
-    if (!editorClient() || !editorClient()->isAutomaticSpellingCorrectionEnabled())
-        return false;
-
 #if ENABLE(AUTOCORRECT)
     auto position = m_document.selection().selection().start();
     if (auto editableRoot = position.rootEditableElement()) {
@@ -354,6 +351,14 @@ bool AlternativeTextController::isAutomaticSpellingCorrectionEnabled()
 #endif
 
     return true;
+}
+
+bool AlternativeTextController::isAutomaticSpellingCorrectionEnabled()
+{
+    if (!editorClient() || !editorClient()->isAutomaticSpellingCorrectionEnabled())
+        return false;
+
+    return canEnableAutomaticSpellingCorrection();
 }
 
 FloatRect AlternativeTextController::rootViewRectForRange(const SimpleRange& range) const

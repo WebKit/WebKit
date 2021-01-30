@@ -3063,9 +3063,10 @@ bool WebViewImpl::validateUserInterfaceItem(id <NSValidatedUserInterfaceItem> it
     }
 
     if (action == @selector(toggleAutomaticSpellingCorrection:)) {
-        bool checked = TextChecker::state().isAutomaticSpellingCorrectionEnabled;
-        [menuItem(item) setState:checked ? NSControlStateValueOn : NSControlStateValueOff];
-        return m_page->editorState().isContentEditable;
+        auto& editorState = m_page->editorState();
+        bool enable = editorState.isContentEditable && (editorState.isMissingPostLayoutData || editorState.postLayoutData().canEnableAutomaticSpellingCorrection);
+        menuItem(item).state = TextChecker::state().isAutomaticSpellingCorrectionEnabled && enable ? NSControlStateValueOn : NSControlStateValueOff;
+        return enable;
     }
 
     if (action == @selector(orderFrontSubstitutionsPanel:)) {

@@ -1765,6 +1765,11 @@ void Editor::toggleAutomaticTextReplacement()
         client()->toggleAutomaticTextReplacement();
 }
 
+bool Editor::canEnableAutomaticSpellingCorrection() const
+{
+    return m_alternativeTextController->canEnableAutomaticSpellingCorrection();
+}
+
 bool Editor::isAutomaticSpellingCorrectionEnabled()
 {
     return m_alternativeTextController->isAutomaticSpellingCorrectionEnabled();
