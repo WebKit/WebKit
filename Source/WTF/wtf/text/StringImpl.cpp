@@ -1671,8 +1671,8 @@ bool equalIgnoringASCIICaseNonNull(const StringImpl* a, const StringImpl* b)
 
 UCharDirection StringImpl::defaultWritingDirection(bool* hasStrongDirectionality)
 {
-    for (unsigned i = 0; i < m_length; ++i) {
-        auto charDirection = u_charDirection(is8Bit() ? m_data8[i] : m_data16[i]);
+    for (auto codePoint : StringView(this).codePoints()) {
+        auto charDirection = u_charDirection(codePoint);
         if (charDirection == U_LEFT_TO_RIGHT) {
             if (hasStrongDirectionality)
                 *hasStrongDirectionality = true;
@@ -1684,6 +1684,7 @@ UCharDirection StringImpl::defaultWritingDirection(bool* hasStrongDirectionality
             return U_RIGHT_TO_LEFT;
         }
     }
+
     if (hasStrongDirectionality)
         *hasStrongDirectionality = false;
     return U_LEFT_TO_RIGHT;
