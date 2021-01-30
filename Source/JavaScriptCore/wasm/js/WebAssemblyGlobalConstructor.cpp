@@ -104,54 +104,65 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
 
     uint64_t initialValue = 0;
     JSValue argument = callFrame->argument(1);
-    if (!argument.isUndefined()) {
-        switch (type) {
-        case Wasm::Type::I32: {
+    switch (type) {
+    case Wasm::Type::I32: {
+        if (!argument.isUndefined()) {
             int32_t value = argument.toInt32(globalObject);
             RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
             initialValue = static_cast<uint64_t>(bitwise_cast<uint32_t>(value));
-            break;
         }
-        case Wasm::Type::I64: {
+        break;
+    }
+    case Wasm::Type::I64: {
+        if (!argument.isUndefined()) {
             int64_t value = argument.toBigInt64(globalObject);
             RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
             initialValue = static_cast<uint64_t>(value);
-            break;
         }
-        case Wasm::Type::F32: {
+        break;
+    }
+    case Wasm::Type::F32: {
+        if (!argument.isUndefined()) {
             float value = argument.toFloat(globalObject);
             RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
             initialValue = static_cast<uint64_t>(bitwise_cast<uint32_t>(value));
-            break;
         }
-        case Wasm::Type::F64: {
+        break;
+    }
+    case Wasm::Type::F64: {
+        if (!argument.isUndefined()) {
             double value = argument.toNumber(globalObject);
             RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
             initialValue = bitwise_cast<uint64_t>(value);
-            break;
         }
-        case Wasm::Type::Funcref:
-        case Wasm::Type::Externref: {
-            // We check default value for these types later in set method.
-            ASSERT(Options::useWebAssemblyReferences());
-            break;
+        break;
+    }
+    case Wasm::Type::Funcref: {
+        ASSERT(Options::useWebAssemblyReferences());
+        if (argument.isUndefined())
+            argument = defaultValueForReferenceType(type);
+        if (!isWebAssemblyHostFunction(vm, argument) && !argument.isNull()) {
+            throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"));
+            return { };
         }
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
+        initialValue = JSValue::encode(argument);
+        break;
+    }
+    case Wasm::Type::Externref: {
+        ASSERT(Options::useWebAssemblyReferences());
+        if (argument.isUndefined())
+            argument = defaultValueForReferenceType(type);
+        initialValue = JSValue::encode(argument);
+        break;
+    }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     Ref<Wasm::Global> wasmGlobal = Wasm::Global::create(type, mutability, initialValue);
     JSWebAssemblyGlobal* jsWebAssemblyGlobal = JSWebAssemblyGlobal::tryCreate(globalObject, vm, webAssemblyGlobalStructure, WTFMove(wasmGlobal));
     RETURN_IF_EXCEPTION(throwScope, { });
-
-    if (Wasm::isRefType(type)) {
-        ASSERT(Options::useWebAssemblyReferences());
-        if (argument.isUndefined())
-            argument = defaultValueForReferenceType(type);
-        jsWebAssemblyGlobal->global()->set(globalObject, argument);
-        RETURN_IF_EXCEPTION(throwScope, { });
-    }
+    ensureStillAliveHere(bitwise_cast<void*>(initialValue)); // Ensure this is kept alive while creating JSWebAssemblyGlobal.
     return JSValue::encode(jsWebAssemblyGlobal);
 }
 
