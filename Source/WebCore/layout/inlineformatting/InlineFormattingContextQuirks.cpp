@@ -47,14 +47,25 @@ bool InlineFormattingContext::Quirks::inlineLevelBoxAffectsLineBox(const LineBox
     if (inlineLevelBox.isLineBreakBox()) {
         if (layoutState().inStandardsMode())
             return true;
-        // In quirks mode linebreak boxes (<br>) affect the line box when they are inside a non-root inline box (<span></span>) or when
-        // the line has no other inline level box.
-        // e.g <div><img><br></div> should produce a line with no descent.
-        auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent());
-        if (!parentInlineBox.isRootInlineBox())
+        // In quirks mode linebreak boxes (<br>) stop affecting the line box when (assume <br> is nested e.g. <span style="font-size: 100px"><br></span>)
+        // 1. the root inline box has content <div>content<br>/div>
+        // 2. there's at least one atomic inline level box on the line e.g <div><img><br></div> or <div><span><img></span><br></div>
+        // 3. there's at least one inline box with content e.g. <div><span>content</span><br></div>
+        if (lineBox.rootInlineBox().hasContent())
+            return false;
+        if (lineBox.hasAtomicInlineLevelBox())
+            return false;
+        // At this point we either have only the <br> on the line or inline boxes with or without content.
+        auto& inlineLevelBoxes = lineBox.nonRootInlineLevelBoxes();
+        ASSERT(!inlineLevelBoxes.isEmpty());
+        if (inlineLevelBoxes.size() == 1)
             return true;
-        // is <br> the only inline level box on the line?
-        return lineBox.nonRootInlineLevelBoxes().size() == 1;
+        for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
+            // Filter out empty inline boxes e.g. <div><span></span><span></span><br></div>
+            if (inlineLevelBox->isInlineBox() && inlineLevelBox->hasContent())
+                return false;
+        }
+        return true;
     }
     if (inlineLevelBox.isInlineBox()) {
         // Inline boxes (e.g. root inline box or <span>) affects line boxes either through the strut or actual content.
