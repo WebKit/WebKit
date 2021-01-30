@@ -1129,7 +1129,7 @@ bool OptionReader::Option::operator==(const Option& other) const
 #if ENABLE(JIT_CAGE)
 bool canUseJITCage()
 {
-    return JSC_JIT_CAGE_VERSION() && processHasEntitlement("com.apple.private.securejit");
+    return JSC_JIT_CAGE_VERSION() && WTF::processHasEntitlement("com.apple.private.securejit");
 }
 #else
 bool canUseJITCage() { return false; }
