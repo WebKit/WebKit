@@ -379,6 +379,7 @@ enum TreeType {
     [MayThrowException] unsigned long countFindMatches(DOMString text, sequence<DOMString> findOptions);
 
     [MayThrowException] DOMString autofillFieldName(Element formControlElement);
+    boolean isSpellcheckDisabledExceptTextReplacement(HTMLInputElement inputElement);
 
     [MayThrowException] undefined invalidateControlTints();
 

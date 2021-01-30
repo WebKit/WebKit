@@ -1,5 +1,69 @@
 2021-01-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271414. rdar://problem/73473727
+
+    REGRESSION (r265044): [macOS] Safari autocorrects text when typing in login field on amazon.com
+    https://bugs.webkit.org/show_bug.cgi?id=220556
+    <rdar://problem/71602937>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    Add an internal testing hook to ask an input element whether it has disabled spellchecking (except for text
+    replacement).
+    
+    * testing/Internals.cpp:
+    (WebCore::Internals::isSpellcheckDisabledExceptTextReplacement const):
+    * testing/Internals.h:
+    * testing/Internals.idl:
+    
+    Source/WebKit:
+    
+    Restores the implementation of `WKBundleNodeHandleSetHTMLInputElementSpellcheckEnabled`, which was removed in
+    r265044, with the reasoning that the code was unused. However, Safari still uses this SPI on macOS to prevent
+    automatic spelling correction from triggering when editing form fields that are AutoFillable.
+    
+    Test: WebKit.DisableSpellcheck
+    
+    * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+    (WKBundleNodeHandleSetHTMLInputElementSpellcheckEnabled):
+    
+    Tools:
+    
+    Add an API test that uses WebKit C API (`WKBundleNodeHandleSetHTMLInputElementSpellcheckEnabled`) to disable or
+    enable spellchecking on input elements.
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKitCocoa/DisableSpellcheck.mm: Added.
+    * TestWebKitAPI/Tests/WebKitCocoa/DisableSpellcheckPlugIn.mm: Added.
+    (-[DisableSpellcheckPlugIn webProcessPlugIn:didCreateBrowserContextController:]):
+    (-[DisableSpellcheckPlugIn webProcessPlugInBrowserContextController:didClearWindowObjectForFrame:inScriptWorld:]):
+    (-[DisableSpellcheckPlugIn webProcessPlugInBrowserContextController:didFinishLoadForFrame:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271414 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            REGRESSION (r265044): [macOS] Safari autocorrects text when typing in login field on amazon.com
+            https://bugs.webkit.org/show_bug.cgi?id=220556
+            <rdar://problem/71602937>
+
+            Reviewed by Darin Adler.
+
+            Add an API test that uses WebKit C API (`WKBundleNodeHandleSetHTMLInputElementSpellcheckEnabled`) to disable or
+            enable spellchecking on input elements.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKitCocoa/DisableSpellcheck.mm: Added.
+            * TestWebKitAPI/Tests/WebKitCocoa/DisableSpellcheckPlugIn.mm: Added.
+            (-[DisableSpellcheckPlugIn webProcessPlugIn:didCreateBrowserContextController:]):
+            (-[DisableSpellcheckPlugIn webProcessPlugInBrowserContextController:didClearWindowObjectForFrame:inScriptWorld:]):
+            (-[DisableSpellcheckPlugIn webProcessPlugInBrowserContextController:didFinishLoadForFrame:]):
+
+2021-01-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271369. rdar://problem/73473654
 
     WebProcessPool::establishWorkerContextConnectionToNetworkProcess should make sure to remove the selected process from the cache
