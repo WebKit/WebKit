@@ -1,5 +1,56 @@
 2021-01-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r271379. rdar://problem/73473604
+
+    Keep newly created IDBObjectStores in deleted map when IDBTransaction is aborted
+    https://bugs.webkit.org/show_bug.cgi?id=220483
+    <rdar://problem/71934293>
+    
+    Patch by Sihui Liu <sihui_liu@appe.com> on 2021-01-11
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    When an upgrade transaction is aborted, we move objects from m_deletedObjectStores to m_referencedObjectStores
+    to revert the deletion operation. When updating m_referencedObjectStores, we did not check whether key already
+    exists (this can happen when an object store gets deleted and a new object store with the same name is
+    created; see updated layout test). Therefore, some object store in m_referencedObjectStores would be replaced
+    and destroyed (since m_referencedObjectStores holds unique pointers) when the object store is referenced by JS
+    object.
+    
+    Test: storage/indexeddb/modern/abort-objectstore-info.html
+    
+    * Modules/indexeddb/IDBTransaction.cpp:
+    (WebCore::IDBTransaction::internalAbort):
+    
+    LayoutTests:
+    
+    * storage/indexeddb/modern/abort-objectstore-info-expected.txt:
+    * storage/indexeddb/modern/abort-objectstore-info-private-expected.txt:
+    * storage/indexeddb/modern/resources/abort-objectstore-info.js:
+    (prepareDatabase):
+    (secondUpgradeNeeded):
+    (checkState):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271379 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-11  Sihui Liu  <sihui_liu@appe.com>
+
+            Keep newly created IDBObjectStores in deleted map when IDBTransaction is aborted
+            https://bugs.webkit.org/show_bug.cgi?id=220483
+            <rdar://problem/71934293>
+
+            Reviewed by Darin Adler.
+
+            * storage/indexeddb/modern/abort-objectstore-info-expected.txt:
+            * storage/indexeddb/modern/abort-objectstore-info-private-expected.txt:
+            * storage/indexeddb/modern/resources/abort-objectstore-info.js:
+            (prepareDatabase):
+            (secondUpgradeNeeded):
+            (checkState):
+
+2021-01-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r271368. rdar://problem/73473690
 
     Keep newly created IDBIndex objects in deleted map when IDBTransaction is aborted
