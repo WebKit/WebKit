@@ -398,6 +398,7 @@ inline void Color::setExtendedColor(Ref<ExtendedColor>&& extendedColor)
     ASSERT(isExtended());
 }
 
+#ifndef __HAIKU__
 inline bool Color::isBlackColor(const Color& color)
 {
     return color.callOnUnderlyingType([] (const auto& color) {
@@ -411,6 +412,7 @@ inline bool Color::isWhiteColor(const Color& color)
         return WebCore::isWhite(color);
     });
 }
+#endif
 
 template<class Encoder> void Color::encode(Encoder& encoder) const
 {
