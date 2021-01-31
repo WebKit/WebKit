@@ -160,8 +160,8 @@ InlineContentBreaker::Result InlineContentBreaker::processInlineContent(const Co
 }
 
 struct TrailingTextContent {
-    size_t runIndex { 0 };
-    bool hasOverflow { false }; // Trailing content still overflows the line.
+    Optional<size_t> runIndex; // In some cases when the first run is breakable but it does not fit, there's not trailing run index.
+    bool hasOverflow { false }; // Trailing content overflows the available space.
     Optional<InlineContentBreaker::PartialRun> partialRun;
 };
 
@@ -195,23 +195,27 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
 
     if (isTextContent(continuousContent)) {
         if (auto trailingContent = processOverflowingTextContent(continuousContent, lineStatus)) {
-            if (!trailingContent->runIndex && trailingContent->hasOverflow) {
-                // We tried to break the content but the available space can't even accommodate the first character.
-                // 1. Wrap the content over to the next line when we've got content on the line already.
-                // 2. Keep the first character on the empty line (or keep the whole run if it has only one character/completely empty).
+            if (trailingContent->hasOverflow) {
+                if (!trailingContent->runIndex.hasValue()) {
+                    // We tried to break the content but the available space can't even accommodate the first character.
+                    // 1. Wrap the content over to the next line when we've got content on the line already.
+                    // 2. Keep the first character on the empty line (or keep the whole run if it has only one character/completely empty).
+                    if (lineStatus.hasContent)
+                        return { Result::Action::Wrap, IsEndOfLine::Yes };
+                    auto leadingTextRunIndex = *firstTextRunIndex(continuousContent);
+                    auto& inlineTextItem = downcast<InlineTextItem>(continuousContent.runs()[leadingTextRunIndex].inlineItem);
+                    if (inlineTextItem.length() <= 1)
+                        return Result { Result::Action::Keep, IsEndOfLine::Yes };
+                    auto firstCharacterWidth = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + 1, lineStatus.contentLogicalRight);
+                    auto firstCharacterRun = PartialRun { 1, firstCharacterWidth };
+                    return { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { leadingTextRunIndex, firstCharacterRun } };
+                }
+                // We managed to break a run with overflow. Should not keep this on the line unless it's the only content.
                 if (lineStatus.hasContent)
                     return { Result::Action::Wrap, IsEndOfLine::Yes };
-                auto leadingTextRunIndex = *firstTextRunIndex(continuousContent);
-                auto& inlineTextItem = downcast<InlineTextItem>(continuousContent.runs()[leadingTextRunIndex].inlineItem);
-                if (inlineTextItem.length() <= 1)
-                    return Result { Result::Action::Keep, IsEndOfLine::Yes };
-                auto firstCharacterWidth = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + 1, lineStatus.contentLogicalRight);
-                auto firstCharacterRun = PartialRun { 1, firstCharacterWidth };
-                return { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { leadingTextRunIndex, firstCharacterRun } };
             }
-            auto trailingPartialContent = Result::PartialTrailingContent { trailingContent->runIndex, trailingContent->partialRun };
-            return { Result::Action::Break, IsEndOfLine::Yes, trailingPartialContent };
-        }
+            auto trailingPartialContent = Result::PartialTrailingContent { *trailingContent->runIndex, trailingContent->partialRun };
+            return { Result::Action::Break, IsEndOfLine::Yes, trailingPartialContent };        }
     }
     // If we are not allowed to break this overflowing content, we still need to decide whether keep it or wrap it to the next line.
     if (!lineStatus.hasContent) {
@@ -281,28 +285,27 @@ Optional<TrailingTextContent> InlineContentBreaker::processOverflowingTextConten
             if (auto partialRun = tryBreakingTextRun(run, lineStatus.contentLogicalRight + accumulatedRunWidth, adjustedAvailableWidth)) {
                 if (partialRun->length)
                     return TrailingTextContent { index, false, partialRun };
-                if (index) {
-                    // When the content is wrapped at the run boundary, the trailing run is the previous run.
-                    auto trailingCandidateIndex = index - 1;
-                    // Try not break content at inline box boundary
-                    // e.g. <span>fits</span><span>overflows</span>
-                    // when the text "overflows" completely overflows, let's not wrap the content at '<span>'.
-                    auto isAtInlineBox = runs[trailingCandidateIndex].inlineItem.isInlineBoxStart();
-                    if (isAtInlineBox) {
-                        if (!trailingCandidateIndex) {
-                            // This content starts at an inline box and clearly does not fit.
-                            // Let's wrap this content over to the next line
-                            // e.g <span>this_content_does_not_fit</span>
-                            return TrailingTextContent { 0, true, { } };
-                        }
-                        --trailingCandidateIndex;
-                    }
-                    return TrailingTextContent { trailingCandidateIndex, false, { } };
+                // When the breaking position is at the beginning of the run, the trailing run is the previous one.
+                if (!index) {
+                    // Sometimes we can't accommodate even the very first character.
+                    // Note that this is different from when there's no breakable run in this set.
+                    return TrailingTextContent { { }, true, { } };
                 }
-                // Sometimes we can't accommodate even the very first character.
-                return TrailingTextContent { 0, true, { } };
+                auto trailingCandidateIndex = index - 1;
+                // Try not break content at inline box boundary
+                // e.g. <span>fits</span><span>overflows</span>
+                // when the text "overflows" completely overflows, let's break the content right before the '<span>'.
+                auto isAtInlineBox = runs[trailingCandidateIndex].inlineItem.isInlineBoxStart();
+                if (!isAtInlineBox)
+                    return TrailingTextContent { trailingCandidateIndex, false, { } };
+                // Let's return the run right before the inline box start, or return nothing if we are at the beginning of the set.
+                // e.g. <span>this_is_breakable</span> vs. some_breakable_content<span>and_more</span>
+                if (trailingCandidateIndex)
+                    return TrailingTextContent { trailingCandidateIndex - 1, false, { } };
+                // This content starts with an inline box and clearly does not fit.
+                return TrailingTextContent { { }, true, { } };
             }
-            // If this run is not breakable, we need to check if any previous run is breakable.
+            // If this run is not breakable, we need to check if any previous or next runs are breakable.
             break;
         }
         accumulatedRunWidth += run.logicalWidth;
