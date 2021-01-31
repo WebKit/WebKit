@@ -29,16 +29,14 @@
 #include "config.h"
 #include "DumpRenderTree.h"
 
-// ScriptController must be before NotImplemented...
-#include "ScriptController.h"
-
 #include "AccessibilityController.h"
 #include "DumpRenderTreeClient.h"
 #include "EditingCallbacks.h"
 #include "EventSender.h"
-#include "Frame.h"
+#include "WebCore/Frame.h"
 #include <GCController.h>
 #include "PixelDumpSupport.h"
+#include "WebCore/ScriptController.h"
 #include "TestCommand.h"
 #include "TestRunner.h"
 #include "WebCoreTestSupport.h"

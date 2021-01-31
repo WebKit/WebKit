@@ -33,7 +33,7 @@
 
 #include <Bitmap.h>
 #include "WebCore/DocumentLoader.h"
-#include "Document.h"
+#include "WebCore/Document.h"
 #include "DOMWindow.h"
 #include "FocusController.h"
 #include "Frame.h"
@@ -43,7 +43,7 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include <WebCore/ScriptController.h>
-#include <Settings.h>
+#include "WebCore/Settings.h"
 #include "UserContentTypes.h"
 
 #include "WebCore/Editor.h"

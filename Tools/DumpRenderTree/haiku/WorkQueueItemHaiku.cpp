@@ -30,7 +30,7 @@
 #include "WorkQueueItem.h"
 
 #include "DumpRenderTree.h"
-#include "NotImplemented.h"
+#include "WebCore/NotImplemented.h"
 
 bool LoadItem::invoke() const
 {

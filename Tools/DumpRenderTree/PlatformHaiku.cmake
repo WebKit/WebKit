@@ -28,10 +28,6 @@ list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
     ${TOOLS_DIR}/DumpRenderTree/haiku
 )
 
-list(APPEND DumpRenderTree_LOCAL_INCLUDE_DIRECTORIES
-	${FORWARDING_HEADERS_DIR}/WebCore
-)
-
 foreach(inc ${DumpRenderTree_LOCAL_INCLUDE_DIRECTORIES})
     ADD_DEFINITIONS(-iquote ${inc})
 endforeach(inc)

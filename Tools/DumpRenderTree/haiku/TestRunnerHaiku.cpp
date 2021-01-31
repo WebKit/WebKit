@@ -28,7 +28,7 @@
 
 #include "DumpRenderTree.h"
 #include "JSStringUtils.h"
-#include "NotImplemented.h"
+#include "WebCore/NotImplemented.h"
 #include "wtf/URL.h"
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"
@@ -36,7 +36,7 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/OpaqueJSString.h>
-#include "FindOptions.h"
+#include "WebCore/FindOptions.h"
 #include <stdio.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>

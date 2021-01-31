@@ -1,7 +1,14 @@
+add_custom_command(
+	OUTPUT ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitVersion.h
+	MAIN_DEPENDENCY ${WEBKITLEGACY_DIR}/scripts/generate-webkitversion.pl
+	DEPENDS ${WEBKITLEGACY_DIR}/mac/Configurations/Version.xcconfig
+	COMMAND ${PERL_EXECUTABLE} ${WEBKITLEGACY_DIR}/scripts/generate-webkitversion.pl --config ${WEBKITLEGACY_DIR}/mac/Configurations/Version.xcconfig --outputDir ${WebKitLegacy_DERIVED_SOURCES_DIR}
+    VERBATIM)
+list(APPEND WebKitLegacy_SOURCES ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitVersion.h)
+
 LIST(APPEND WebKitLegacy_INCLUDE_DIRECTORIES
     "${CMAKE_SOURCE_DIR}/Source"
     "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
-    "${DERIVED_SOURCES_WEBCORE_DIR}"
 	"${WEBKITLEGACY_DIR}/Storage"
 	"${WEBKITLEGACY_DIR}/haiku"
 	"${WEBKITLEGACY_DIR}/haiku/API"
@@ -47,7 +54,7 @@ LIST(APPEND WebKitLegacy_INCLUDE_DIRECTORIES
 # add them with -iquote only, as a way to reach the Haiku includes with
 # #include <>
 SET(WebKitLegacy_LOCAL_INCLUDE_DIRECTORIES
-	"${FORWARDING_HEADERS_DIR}/WebCore"
+    "${FORWARDING_HEADERS_DIR}/WebCore"
     "${WEBCORE_DIR}/Modules/notifications" # Notification.h
     "${WEBCORE_DIR}/platform/text" # DateTimeFormat.h
 )
@@ -117,7 +124,7 @@ LIST(APPEND WebKitLegacy_LIBRARIES
     ${JPEG_LIBRARY}
     ${CMAKE_DL_LIBS}
     be bnetapi GL shared translation tracker
-    WebCore
+    WebCore WTF
 )
 
 INSTALL(FILES

@@ -483,7 +483,7 @@ void FrameLoaderClientHaiku::dispatchWillSubmitForm(FormState&, WTF::CompletionH
     function();
 }
 
-Frame* FrameLoaderClientHaiku::dispatchCreatePage(const NavigationAction& /*action*/)
+Frame* FrameLoaderClientHaiku::dispatchCreatePage(const NavigationAction& /*action*/, NewFrameOpenerPolicy)
 {
     CALLED();
     WebCore::Page* page = m_webPage->createNewPage();

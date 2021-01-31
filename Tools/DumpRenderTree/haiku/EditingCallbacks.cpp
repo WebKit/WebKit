@@ -32,12 +32,12 @@
 
 #include "DumpRenderTree.h"
 #include "EditorClientHaiku.h"
-#include "EditorInsertAction.h"
+#include "WebCore/EditorInsertAction.h"
 #include <WebCore/Node.h>
 #include <WebCore/SimpleRange.h>
 #include <WebCore/StyleProperties.h>
 #include "TestRunner.h"
-#include "TextAffinity.h"
+#include "WebCore/TextAffinity.h"
 #include "WebViewConstants.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>

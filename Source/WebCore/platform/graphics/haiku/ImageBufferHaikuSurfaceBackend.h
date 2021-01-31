@@ -42,8 +42,8 @@ class ImageBufferHaikuSurfaceBackend : public ImageBufferBackend {
     WTF_MAKE_ISO_ALLOCATED(ImageBufferHaikuSurfaceBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferHaikuSurfaceBackend);
 public:
-    static std::unique_ptr<ImageBufferHaikuSurfaceBackend> create(const FloatSize&, float resolutionScale, ColorSpace, PixelFormat, const HostWindow*);
-    static std::unique_ptr<ImageBufferHaikuSurfaceBackend> create(const FloatSize&, const GraphicsContext&);
+    static std::unique_ptr<ImageBufferHaikuSurfaceBackend> create(const ImageBufferBackend::Parameters&, const WebCore::HostWindow*);
+    static std::unique_ptr<ImageBufferHaikuSurfaceBackend> create(const ImageBufferBackend::Parameters&, const GraphicsContext&);
     ~ImageBufferHaikuSurfaceBackend();
 
     GraphicsContext& context() const override;
@@ -59,7 +59,7 @@ public:
 
 
 private:
-    ImageBufferHaikuSurfaceBackend(const FloatSize& logicalSize, const IntSize& backendSize, float resolutionScale, ColorSpace, const HostWindow*);
+    ImageBufferHaikuSurfaceBackend(const Parameters& parameters, const IntSize& backendSize);
 
     ImageBufferData m_data;
 };

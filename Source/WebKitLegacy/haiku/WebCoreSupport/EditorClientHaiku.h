@@ -32,9 +32,9 @@
 #ifndef EditorClientHaiku_h
 #define EditorClientHaiku_h
 
-#include "EditorClient.h"
-#include "Page.h"
-#include "TextCheckerClient.h"
+#include "WebCore/EditorClient.h"
+#include "WebCore/Page.h"
+#include "WebCore/TextCheckerClient.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>

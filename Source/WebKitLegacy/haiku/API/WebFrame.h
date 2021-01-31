@@ -32,7 +32,7 @@
 #include <Point.h>
 #include <String.h>
 
-#include "FindOptions.h"
+#include "WebCore/FindOptions.h"
 #include <JavaScriptCore/APICast.h>
 
 class BMessenger;

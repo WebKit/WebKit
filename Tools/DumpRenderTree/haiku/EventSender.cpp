@@ -35,10 +35,10 @@
 #include "EventSender.h"
 
 #include "DumpRenderTree.h"
-#include "IntPoint.h"
+#include "WebCore/IntPoint.h"
 #include "JSStringUtils.h"
-#include "NotImplemented.h"
-#include "PlatformEvent.h"
+#include "WebCore/NotImplemented.h"
+#include "WebCore/PlatformEvent.h"
 
 #include <WebView.h>
 #include <DumpRenderTreeClient.h>

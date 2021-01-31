@@ -27,8 +27,8 @@
 #include "PixelDumpSupportHaiku.h"
 
 #include "DumpRenderTree.h"
-#include "IntRect.h"
-#include "NotImplemented.h"
+#include "WebCore/IntRect.h"
+#include "WebCore/NotImplemented.h"
 #include "PixelDumpSupport.h"
 #include "WebView.h"
 

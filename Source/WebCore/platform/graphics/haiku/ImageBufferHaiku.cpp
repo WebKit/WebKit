@@ -49,9 +49,9 @@ namespace WebCore {
 
 
 ImageBufferData::ImageBufferData(const IntSize& size)
-    : m_image(NativeImage::create(new BitmapRef(BRect(0, 0, size.width() - 1, size.height() - 1), B_RGBA32, true)))
-    , m_view(NULL)
+    : m_view(NULL)
     , m_context(NULL)
+    , m_image(NativeImage::create(new BitmapRef(BRect(0, 0, size.width() - 1, size.height() - 1), B_RGBA32, true)))
 {
     // Always keep the bitmap locked, we are the only client.
     PlatformImagePtr bitmap = m_image->platformImage();
@@ -100,31 +100,28 @@ WTF::RefPtr<WebCore::NativeImage> ImageBufferHaikuSurfaceBackend::copyNativeImag
 
 
 std::unique_ptr<ImageBufferHaikuSurfaceBackend>
-ImageBufferHaikuSurfaceBackend::create(const FloatSize& size, float resolutionScale,
-    ColorSpace colorSpace, PixelFormat, const HostWindow* window)
+ImageBufferHaikuSurfaceBackend::create(const ImageBufferBackend::Parameters& parameters, const WebCore::HostWindow*)
 {
-    IntSize backendSize = calculateBackendSize(size, resolutionScale);
+    IntSize backendSize = calculateBackendSize(parameters.logicalSize, parameters.resolutionScale);
     if (backendSize.isEmpty())
         return nullptr;
 
     return std::unique_ptr<ImageBufferHaikuSurfaceBackend>(
-        new ImageBufferHaikuSurfaceBackend(size, backendSize, resolutionScale,
-            colorSpace, window));
+        new ImageBufferHaikuSurfaceBackend(parameters, backendSize));
 }
 
 
 std::unique_ptr<ImageBufferHaikuSurfaceBackend>
-ImageBufferHaikuSurfaceBackend::create(const FloatSize& size,
+ImageBufferHaikuSurfaceBackend::create(const ImageBufferBackend::Parameters& parameters,
     const GraphicsContext&)
 {
-    return create(size, 1, ColorSpace::SRGB, PixelFormat::BGRA8, NULL);
+    return create(parameters, NULL);
 }
 
 
 ImageBufferHaikuSurfaceBackend::ImageBufferHaikuSurfaceBackend(
-    const FloatSize& logicalSize, const IntSize& backendSize,
-    float resolutionScale, ColorSpace colorSpace, const HostWindow*)
-    : ImageBufferBackend(logicalSize, backendSize, resolutionScale, colorSpace, PixelFormat::BGRA8)
+    const Parameters& parameters, const IntSize& backendSize)
+    : ImageBufferBackend(parameters)
     , m_data(backendSize)
 {
 }

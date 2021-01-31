@@ -115,7 +115,7 @@ class FrameLoaderClientHaiku : public FrameLoaderClient {
     void dispatchDidFinishDocumentLoad() override;
     void dispatchDidFinishLoad() override;
 
-    Frame* dispatchCreatePage(const NavigationAction&) override;
+    Frame* dispatchCreatePage(const NavigationAction&, NewFrameOpenerPolicy) override;
     void dispatchShow() override;
 
     void dispatchDecidePolicyForResponse(const ResourceResponse&,
