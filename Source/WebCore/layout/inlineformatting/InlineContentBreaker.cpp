@@ -318,7 +318,7 @@ Optional<TrailingTextContent> InlineContentBreaker::processOverflowingTextConten
         accumulatedRunWidth -= run.logicalWidth;
         if (isBreakableRun(run)) {
             ASSERT(run.inlineItem.isText());
-            if (auto partialRun = tryBreakingTextRun(run, lineStatus.contentLogicalRight + accumulatedRunWidth, maxInlineLayoutUnit())) {
+            if (auto partialRun = tryBreakingTextRun(run, lineStatus.contentLogicalRight + accumulatedRunWidth, { })) {
                 // We know this run fits, so if wrapping is allowed on the run, it should return a non-empty left-side.
                 ASSERT(partialRun->length);
                 return TrailingTextContent { index, false, partialRun };
@@ -355,12 +355,12 @@ InlineContentBreaker::WordBreakRule InlineContentBreaker::wordBreakBehavior(cons
     return WordBreakRule::NoBreak;
 }
 
-Optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakingTextRun(const ContinuousContent::Run& overflowingRun, InlineLayoutUnit logicalLeft, InlineLayoutUnit availableWidth) const
+Optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakingTextRun(const ContinuousContent::Run& overflowingRun, InlineLayoutUnit logicalLeft, Optional<InlineLayoutUnit> availableWidth) const
 {
     ASSERT(overflowingRun.inlineItem.isText());
     auto& inlineTextItem = downcast<InlineTextItem>(overflowingRun.inlineItem);
     auto& style = inlineTextItem.style();
-    auto findLastBreakablePosition = availableWidth == maxInlineLayoutUnit();
+    auto availableSpaceIsInfinite = !availableWidth.hasValue();
 
     auto breakRule = wordBreakBehavior(style);
     if (breakRule == WordBreakRule::AtArbitraryPosition) {
@@ -368,14 +368,17 @@ Optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakingText
             // Empty text runs may be breakable based on style, but in practice we can't really split them any further.
             return PartialRun { };
         }
-        if (findLastBreakablePosition) {
-            // When the run can be split at arbitrary position,
-            // let's just return the entire run when it is intended to fit on the line.
+        if (availableSpaceIsInfinite) {
+            // When the run can be split at arbitrary position let's just return the entire run when it is intended to fit on the line.
             ASSERT(inlineTextItem.length());
             auto trailingPartialRunWidth = TextUtil::width(inlineTextItem, logicalLeft);
-            return PartialRun { inlineTextItem.length() - 1, trailingPartialRunWidth };
+            return PartialRun { inlineTextItem.length(), trailingPartialRunWidth };
         }
-        auto splitData = TextUtil::split(inlineTextItem, overflowingRun.logicalWidth, availableWidth, logicalLeft);
+        if (!*availableWidth) {
+            // Fast path for cases when there's no room at all. The content is breakable but we don't have space for it.
+            return PartialRun { };
+        }
+        auto splitData = TextUtil::split(inlineTextItem, overflowingRun.logicalWidth, *availableWidth, logicalLeft);
         return PartialRun { splitData.length, splitData.logicalWidth };
     }
 
@@ -383,6 +386,10 @@ Optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakingText
         // Find the hyphen position as follows:
         // 1. Split the text by taking the hyphen width into account
         // 2. Find the last hyphen position before the split position
+        if (!availableSpaceIsInfinite && !*availableWidth) {
+            // We won't be able to find hyphen location when there's no available space.
+            return { };
+        }
         auto runLength = inlineTextItem.length();
         unsigned limitBefore = style.hyphenationLimitBefore() == RenderStyle::initialHyphenationLimitBefore() ? 0 : style.hyphenationLimitBefore();
         unsigned limitAfter = style.hyphenationLimitAfter() == RenderStyle::initialHyphenationLimitAfter() ? 0 : style.hyphenationLimitAfter();
@@ -393,8 +400,8 @@ Optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakingText
         unsigned leftSideLength = runLength;
         auto& fontCascade = style.fontCascade();
         auto hyphenWidth = InlineLayoutUnit { fontCascade.width(TextRun { StringView { style.hyphenString() } }) };
-        if (!findLastBreakablePosition) {
-            auto availableWidthExcludingHyphen = availableWidth - hyphenWidth;
+        if (!availableSpaceIsInfinite) {
+            auto availableWidthExcludingHyphen = *availableWidth - hyphenWidth;
             if (availableWidthExcludingHyphen <= 0 || !enoughWidthForHyphenation(availableWidthExcludingHyphen, fontCascade.pixelSize()))
                 return { };
             leftSideLength = TextUtil::split(inlineTextItem, overflowingRun.logicalWidth, availableWidthExcludingHyphen, logicalLeft).length;

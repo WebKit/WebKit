@@ -119,7 +119,7 @@ public:
 private:
     Result processOverflowingContent(const ContinuousContent&, const LineStatus&) const;
     Optional<TrailingTextContent> processOverflowingTextContent(const ContinuousContent&, const LineStatus&) const;
-    Optional<PartialRun> tryBreakingTextRun(const ContinuousContent::Run& overflowRun, InlineLayoutUnit logicalLeft, InlineLayoutUnit availableWidth) const;
+    Optional<PartialRun> tryBreakingTextRun(const ContinuousContent::Run& overflowRun, InlineLayoutUnit logicalLeft, Optional<InlineLayoutUnit> availableWidth) const;
 
     enum class WordBreakRule {
         NoBreak,
