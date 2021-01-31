@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017, 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,9 +29,18 @@
 
 namespace WebCore {
 
-// All color types must at least implement the following conversions to and from the XYZA color space:
-//    XYZA<float> toXYZA(const ColorType<float>&);
-//    ColorType<float> toColorType(const XYZA<float>&);
+// All color types must at least implement the following conversions to and from the XYZA color space
+//
+//    XYZA<float> toXYZA(const `ColorType`<float>&);
+//    `ColorType`<float> to`ColorType`(const XYZA<float>&);
+//
+// as well as an identity conversion
+//
+//    constexpr `ColorType`<float> to`ColorType`(const `ColorType`<float>& color) { return color; }
+//
+// and a generic conversion utilizing a conversion the XYZ color space
+//
+//    template<typename T> `ColorType`<float> to`ColorType`(const T& color)
 //
 // Any additional conversions can be thought of as optimizations, shortcutting unnecessary steps, though
 // some may be integral to the base conversion.
@@ -91,6 +100,12 @@ WEBCORE_EXPORT LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const XYZA<float
 // Additions
 WEBCORE_EXPORT ExtendedSRGBA<float> toExtendedSRGBA(const LinearExtendedSRGBA<float>&);
 
+// LinearProPhotoRGB
+WEBCORE_EXPORT XYZA<float> toXYZA(const LinearProPhotoRGB<float>&);
+WEBCORE_EXPORT LinearProPhotoRGB<float> toLinearProPhotoRGB(const XYZA<float>&);
+// Additions
+WEBCORE_EXPORT ProPhotoRGB<float> toProPhotoRGB(const LinearProPhotoRGB<float>&);
+
 // LinearRec2020
 WEBCORE_EXPORT XYZA<float> toXYZA(const LinearRec2020<float>&);
 WEBCORE_EXPORT LinearRec2020<float> toLinearRec2020(const XYZA<float>&);
@@ -102,6 +117,12 @@ WEBCORE_EXPORT XYZA<float> toXYZA(const LinearSRGBA<float>&);
 WEBCORE_EXPORT LinearSRGBA<float> toLinearSRGBA(const XYZA<float>&);
 // Additions
 WEBCORE_EXPORT SRGBA<float> toSRGBA(const LinearSRGBA<float>&);
+
+// ProPhotoRGB
+WEBCORE_EXPORT XYZA<float> toXYZA(const ProPhotoRGB<float>&);
+WEBCORE_EXPORT ProPhotoRGB<float> toProPhotoRGB(const XYZA<float>&);
+// Additions
+WEBCORE_EXPORT LinearProPhotoRGB<float> toLinearProPhotoRGB(const ProPhotoRGB<float>&);
 
 // Rec2020
 WEBCORE_EXPORT XYZA<float> toXYZA(const Rec2020<float>&);
@@ -128,8 +149,10 @@ constexpr Lab<float> toLab(const Lab<float>& color) { return color; }
 constexpr LinearA98RGB<float> toLinearA98RGB(const LinearA98RGB<float>& color) { return color; }
 constexpr LinearDisplayP3<float> toLinearDisplayP3(const LinearDisplayP3<float>& color) { return color; }
 constexpr LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const LinearExtendedSRGBA<float>& color) { return color; }
+constexpr LinearProPhotoRGB<float> toLinearRec2020(const LinearProPhotoRGB<float>& color) { return color; }
 constexpr LinearRec2020<float> toLinearRec2020(const LinearRec2020<float>& color) { return color; }
 constexpr LinearSRGBA<float> toLinearSRGBA(const LinearSRGBA<float>& color) { return color; }
+constexpr ProPhotoRGB<float> toProPhotoRGB(const ProPhotoRGB<float>& color) { return color; }
 constexpr Rec2020<float> toRec2020(const Rec2020<float>& color) { return color; }
 constexpr SRGBA<float> toSRGBA(const SRGBA<float>& color) { return color; }
 constexpr XYZA<float> toXYZA(const XYZA<float>& color) { return color; }
@@ -185,6 +208,11 @@ template<typename T> LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const T& c
     return toLinearExtendedSRGBA(toXYZA(color));
 }
 
+template<typename T> LinearProPhotoRGB<float> toLinearProPhotoRGB(const T& color)
+{
+    return toLinearProPhotoRGB(toXYZA(color));
+}
+
 template<typename T> LinearRec2020<float> toLinearRec2020(const T& color)
 {
     return toLinearRec2020(toXYZA(color));
@@ -193,6 +221,11 @@ template<typename T> LinearRec2020<float> toLinearRec2020(const T& color)
 template<typename T> LinearSRGBA<float> toLinearSRGBA(const T& color)
 {
     return toLinearSRGBA(toXYZA(color));
+}
+
+template<typename T> ProPhotoRGB<float> toProPhotoRGB(const T& color)
+{
+    return toProPhotoRGB(toXYZA(color));
 }
 
 template<typename T> Rec2020<float> toRec2020(const T& color)
@@ -217,6 +250,8 @@ template<typename T, typename Functor> constexpr decltype(auto) callWithColorTyp
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<Lab<T>>(components));
     case ColorSpace::LinearRGB:
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<LinearSRGBA<T>>(components));
+    case ColorSpace::ProPhotoRGB:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<ProPhotoRGB<T>>(components));
     case ColorSpace::Rec2020:
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<Rec2020<T>>(components));
     case ColorSpace::SRGB:

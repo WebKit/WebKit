@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017, 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,6 +65,22 @@ static constexpr ColorMatrix<3, 3> linearDisplayP3ToXYZMatrix {
     0.0f,                0.0451133818589026f, 1.043944368900976f
 };
 
+// ProPhotoRGB Matrices.
+
+// https://drafts.csswg.org/css-color/#color-conversion-code
+static constexpr ColorMatrix<3, 3> xyzToLinearProPhotoRGBMatrix {
+     1.3457989731028281f,  -0.25558010007997534f,  -0.05110628506753401f,
+    -0.5446224939028347f,   1.5082327413132781f,    0.02053603239147973f,
+     0.0f,                  0.0f,                   1.2119675456389454f
+};
+
+// https://drafts.csswg.org/css-color/#color-conversion-code
+static constexpr ColorMatrix<3, 3> linearProPhotoRGBToXYZMatrix {
+    0.7977604896723027f,  0.13518583717574031f,  0.0313493495815248f,
+    0.2880711282292934f,  0.7118432178101014f,   0.00008565396060525902f,
+    0.0f,                 0.0f,                  0.8251046025104601f
+};
+
 // Rec2020 Matrices.
 
 // https://drafts.csswg.org/css-color/#color-conversion-code
@@ -115,6 +131,18 @@ static constexpr ColorMatrix<3, 3> D65ToD50Matrix {
     -0.0092345f, 0.0150436f,  0.7521316f
 };
 
+// MARK: Chromatic Adaptation conversions.
+
+static XYZA<float> convertFromD50WhitePointToD65WhitePoint(const XYZA<float>& color)
+{
+    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(D50ToD65Matrix.transformedColorComponents(asColorComponents(color)));
+}
+
+static XYZA<float> convertFromD65WhitePointToD50WhitePoint(const XYZA<float>& color)
+{
+    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(D65ToD50Matrix.transformedColorComponents(asColorComponents(color)));
+}
+
 // MARK: Gamma conversions.
 
 template<typename TransferFunction, typename ColorType> static auto toLinear(const ColorType& color) -> typename ColorType::LinearCounterpart
@@ -163,6 +191,18 @@ LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const ExtendedSRGBA<float>& col
 ExtendedSRGBA<float> toExtendedSRGBA(const LinearExtendedSRGBA<float>& color)
 {
     return toGammaEncoded<SRGBTransferFunction<float, TransferFunctionMode::Unclamped>>(color);
+}
+
+// ProPhotoRGB <-> LinearProPhotoRGB conversions.
+
+LinearProPhotoRGB<float> toLinearProPhotoRGB(const ProPhotoRGB<float>& color)
+{
+    return toLinear<ProPhotoRGBTransferFunction<float, TransferFunctionMode::Clamped>>(color);
+}
+
+ProPhotoRGB<float> toProPhotoRGB(const LinearProPhotoRGB<float>& color)
+{
+    return toGammaEncoded<ProPhotoRGBTransferFunction<float, TransferFunctionMode::Clamped>>(color);
 }
 
 // Rec2020 <-> LinearRec2020 conversions.
@@ -227,6 +267,27 @@ XYZA<float> toXYZA(const LinearExtendedSRGBA<float>& color)
     return makeFromComponentsClampingExceptAlpha<XYZA<float>>(linearSRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
+// - LinearProPhotoRGB matrix conversions.
+
+LinearProPhotoRGB<float> toLinearProPhotoRGB(const XYZA<float>& color)
+{
+    // We expect XYZA colors to be using the D65 white point, unlike ProPhotoRGB, which
+    // uses a D50 white point, so as a first step, use the Bradford transform to convert
+    // the incoming XYZA color to D50 white point.
+    auto xyzWithD50WhitePoint = convertFromD65WhitePointToD50WhitePoint(color);
+    return makeFromComponentsClampingExceptAlpha<LinearProPhotoRGB<float>>(xyzToLinearProPhotoRGBMatrix.transformedColorComponents(asColorComponents(xyzWithD50WhitePoint)));
+}
+
+XYZA<float> toXYZA(const LinearProPhotoRGB<float>& color)
+{
+    auto xyzWithD50WhitePoint = makeFromComponentsClampingExceptAlpha<XYZA<float>>(linearProPhotoRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
+
+    // We expect XYZA colors to be using the D65 white point, unlike ProPhotoRGB, which
+    // uses a D50 white point, so as a final step, use the Bradford transform to convert
+    // the resulting XYZA color to a D65 white point.
+    return convertFromD50WhitePointToD65WhitePoint(xyzWithD50WhitePoint);
+}
+
 // - LinearRec2020 matrix conversions.
 
 LinearRec2020<float> toLinearRec2020(const XYZA<float>& color)
@@ -249,18 +310,6 @@ LinearSRGBA<float> toLinearSRGBA(const XYZA<float>& color)
 XYZA<float> toXYZA(const LinearSRGBA<float>& color)
 {
     return makeFromComponentsClampingExceptAlpha<XYZA<float>>(linearSRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
-}
-
-// MARK: Chromatic Adaptation conversions.
-
-static XYZA<float> convertFromD50WhitePointToD65WhitePoint(const XYZA<float>& color)
-{
-    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(D50ToD65Matrix.transformedColorComponents(asColorComponents(color)));
-}
-
-static XYZA<float> convertFromD65WhitePointToD50WhitePoint(const XYZA<float>& color)
-{
-    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(D65ToD50Matrix.transformedColorComponents(asColorComponents(color)));
 }
 
 // MARK: HSL conversions.
@@ -506,6 +555,18 @@ XYZA<float> toXYZA(const LCHA<float>& color)
 LCHA<float> toLCHA(const XYZA<float>& color)
 {
     return toLCHA(toLab(color));
+}
+
+// - ProPhotoRGB combination functions.
+
+XYZA<float> toXYZA(const ProPhotoRGB<float>& color)
+{
+    return toXYZA(toLinearProPhotoRGB(color));
+}
+
+ProPhotoRGB<float> toProPhotoRGB(const XYZA<float>& color)
+{
+    return toProPhotoRGB(toLinearProPhotoRGB(color));
 }
 
 // - Rec2020 combination functions.

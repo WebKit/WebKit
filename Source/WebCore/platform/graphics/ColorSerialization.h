@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@ template<typename> struct A98RGB;
 template<typename> struct DisplayP3;
 template<typename> struct Lab;
 template<typename> struct LinearSRGBA;
+template<typename> struct ProPhotoRGB;
 template<typename> struct Rec2020;
 template<typename> struct SRGBA;
 
@@ -63,6 +64,10 @@ WEBCORE_EXPORT String serializationForRenderTreeAsText(const Lab<float>&);
 WEBCORE_EXPORT String serializationForCSS(const LinearSRGBA<float>&);
 WEBCORE_EXPORT String serializationForHTML(const LinearSRGBA<float>&);
 WEBCORE_EXPORT String serializationForRenderTreeAsText(const LinearSRGBA<float>&);
+
+WEBCORE_EXPORT String serializationForCSS(const ProPhotoRGB<float>&);
+WEBCORE_EXPORT String serializationForHTML(const ProPhotoRGB<float>&);
+WEBCORE_EXPORT String serializationForRenderTreeAsText(const ProPhotoRGB<float>&);
 
 WEBCORE_EXPORT String serializationForCSS(const Rec2020<float>&);
 WEBCORE_EXPORT String serializationForHTML(const Rec2020<float>&);

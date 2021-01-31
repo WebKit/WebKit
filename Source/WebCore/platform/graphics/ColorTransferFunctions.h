@@ -43,6 +43,14 @@ struct A98RGBTransferFunction {
 };
 
 template<typename T, TransferFunctionMode mode>
+struct ProPhotoRGBTransferFunction {
+    static constexpr T gamma = 1.8;
+
+    static T toGammaEncoded(T);
+    static T toLinear(T);
+};
+
+template<typename T, TransferFunctionMode mode>
 struct Rec2020TransferFunction {
     static constexpr T alpha = 1.09929682680944;
     static constexpr T beta = 0.018053968510807;
@@ -78,6 +86,40 @@ template<typename T, TransferFunctionMode mode> T A98RGBTransferFunction<T, mode
     return result;
 }
 
+// MARK: ProPhotoRGBTransferFunction.
+
+template<typename T, TransferFunctionMode mode> T ProPhotoRGBTransferFunction<T, mode>::toGammaEncoded(T c)
+{
+    if constexpr (mode == TransferFunctionMode::Clamped) {
+        if (c < 1.0 / 512.0)
+            return 16.0 * c;
+
+        return clampTo<T>(std::pow(c, 1.0 / gamma), 0, 1);
+    } else {
+        if (std::abs(c) < 1.0 / 512.0)
+            return 16.0 * c;
+
+        float sign = std::signbit(c) ? -1.0 : 1.0;
+        return std::pow(c, 1.0 / gamma) * sign;
+    }
+}
+
+template<typename T, TransferFunctionMode mode> T ProPhotoRGBTransferFunction<T, mode>::toLinear(T c)
+{
+    if constexpr (mode == TransferFunctionMode::Clamped) {
+        if (c <= 16.0 / 512.0)
+            return c / 16.0;
+
+        return clampTo<T>(std::pow(c, gamma), 0, 1);
+    } else {
+        if (std::abs(c) <= 16.0 / 512.0)
+            return c / 16.0;
+
+        float sign = std::signbit(c) ? -1.0 : 1.0;
+        return std::pow(c, gamma) * sign;
+    }
+}
+
 // MARK: Rec2020TransferFunction.
 
 template<typename T, TransferFunctionMode mode> T Rec2020TransferFunction<T, mode>::toGammaEncoded(T c)
@@ -92,7 +134,7 @@ template<typename T, TransferFunctionMode mode> T Rec2020TransferFunction<T, mod
             return 4.5f * c;
 
         float sign = std::signbit(c) ? -1.0 : 1.0;
-        return sign * alpha * std::pow(c, gamma) - (alpha - 1.0);
+        return (alpha * std::pow(c, gamma) - (alpha - 1.0)) * sign;
     }
 }
 

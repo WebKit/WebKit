@@ -93,6 +93,36 @@ PASS computedStyle("background-color", "color(rec2020 0% 0 0 10%)") is "rgba(0, 
 PASS computedStyle("background-color", "color(rec2020 0% 0 0deg)") is "rgba(0, 0, 0, 0)"
 PASS computedStyle("background-color", "color(rec2020 0% 0% 0deg)") is "rgba(0, 0, 0, 0)"
 PASS computedStyle("background-color", "color(rec2020 40% 0 0deg)") is "rgba(0, 0, 0, 0)"
+
+Testing color(prophoto-rgb ...)
+PASS computedStyle("background-color", "color(prophoto-rgb 0% 0% 0%)") is "color(prophoto-rgb 0 0 0)"
+PASS computedStyle("background-color", "color(prophoto-rgb 10% 10% 10%)") is "color(prophoto-rgb 0.1 0.1 0.1)"
+PASS computedStyle("background-color", "color(prophoto-rgb .2 .2 25%)") is "color(prophoto-rgb 0.2 0.2 0.25)"
+PASS computedStyle("background-color", "color(prophoto-rgb 0 0 0 / 1)") is "color(prophoto-rgb 0 0 0)"
+PASS computedStyle("background-color", "color(prophoto-rgb 0% 0 0 / 0.5)") is "color(prophoto-rgb 0 0 0 / 0.5)"
+PASS computedStyle("background-color", "color(prophoto-rgb 20% 0 10/0.5)") is "color(prophoto-rgb 0.2 0 1 / 0.5)"
+PASS computedStyle("background-color", "color(prophoto-rgb 20% 0 10/50%)") is "color(prophoto-rgb 0.2 0 1 / 0.5)"
+PASS computedStyle("background-color", "color(prophoto-rgb 400% 0 10/50%)") is "color(prophoto-rgb 1 0 1 / 0.5)"
+PASS computedStyle("background-color", "color(prophoto-rgb 50% -160 160)") is "color(prophoto-rgb 0.5 0 1)"
+PASS computedStyle("background-color", "color(prophoto-rgb 50% -200 200)") is "color(prophoto-rgb 0.5 0 1)"
+PASS computedStyle("background-color", "color(prophoto-rgb 0 0 0 / -10%)") is "color(prophoto-rgb 0 0 0 / 0)"
+PASS computedStyle("background-color", "color(prophoto-rgb 0 0 0 / 110%)") is "color(prophoto-rgb 0 0 0)"
+PASS computedStyle("background-color", "color(prophoto-rgb 0 0 0 / 300%)") is "color(prophoto-rgb 0 0 0)"
+PASS computedStyle("background-color", "color(prophoto-rgb 50% -200)") is "color(prophoto-rgb 0.5 0 0)"
+PASS computedStyle("background-color", "color(prophoto-rgb 50%)") is "color(prophoto-rgb 0.5 0 0)"
+PASS computedStyle("background-color", "color(prophoto-rgb)") is "color(prophoto-rgb 0 0 0)"
+PASS computedStyle("background-color", "color(prophoto-rgb 50% -200 / 0.5)") is "color(prophoto-rgb 0.5 0 0 / 0.5)"
+PASS computedStyle("background-color", "color(prophoto-rgb 50% / 0.5)") is "color(prophoto-rgb 0.5 0 0 / 0.5)"
+PASS computedStyle("background-color", "color(prophoto-rgb / 0.5)") is "color(prophoto-rgb 0 0 0 / 0.5)"
+
+Test invalid values
+PASS computedStyle("background-color", "color(prophoto-rgb 0 0 0 0)") is "rgba(0, 0, 0, 0)"
+PASS computedStyle("background-color", "color(prophoto-rgb 0deg 0% 0)") is "rgba(0, 0, 0, 0)"
+PASS computedStyle("background-color", "color(prophoto-rgb 0% 0 0 1)") is "rgba(0, 0, 0, 0)"
+PASS computedStyle("background-color", "color(prophoto-rgb 0% 0 0 10%)") is "rgba(0, 0, 0, 0)"
+PASS computedStyle("background-color", "color(prophoto-rgb 0% 0 0deg)") is "rgba(0, 0, 0, 0)"
+PASS computedStyle("background-color", "color(prophoto-rgb 0% 0% 0deg)") is "rgba(0, 0, 0, 0)"
+PASS computedStyle("background-color", "color(prophoto-rgb 40% 0 0deg)") is "rgba(0, 0, 0, 0)"
 PASS successfullyParsed is true
 
 TEST COMPLETE

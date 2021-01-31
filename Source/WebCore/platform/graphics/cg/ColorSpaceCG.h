@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@ WEBCORE_EXPORT CGColorSpaceRef displayP3ColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef extendedSRGBColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef labColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef linearRGBColorSpaceRef();
+WEBCORE_EXPORT CGColorSpaceRef proPhotoRGBColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef rec2020ColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef sRGBColorSpaceRef();
 
@@ -50,6 +51,8 @@ static inline CGColorSpaceRef cachedCGColorSpace(ColorSpace colorSpace)
         return labColorSpaceRef();
     case ColorSpace::LinearRGB:
         return linearRGBColorSpaceRef();
+    case ColorSpace::ProPhotoRGB:
+        return proPhotoRGBColorSpaceRef();
     case ColorSpace::Rec2020:
         return rec2020ColorSpaceRef();
     case ColorSpace::SRGB:

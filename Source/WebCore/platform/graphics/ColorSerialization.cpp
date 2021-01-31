@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,6 +68,8 @@ static ASCIILiteral serialization(ColorSpace colorSpace)
         return "lab"_s;
     case ColorSpace::LinearRGB:
         return "linear-srgb"_s;
+    case ColorSpace::ProPhotoRGB:
+        return "prophoto-rgb"_s;
     case ColorSpace::Rec2020:
         return "rec2020"_s;
     case ColorSpace::SRGB:
@@ -155,6 +157,23 @@ String serializationForHTML(const LinearSRGBA<float>& color)
 }
 
 String serializationForRenderTreeAsText(const LinearSRGBA<float>& color)
+{
+    return serialization(color);
+}
+
+// MARK: ProPhotoRGB<float> overloads
+
+String serializationForCSS(const ProPhotoRGB<float>& color)
+{
+    return serialization(color);
+}
+
+String serializationForHTML(const ProPhotoRGB<float>& color)
+{
+    return serialization(color);
+}
+
+String serializationForRenderTreeAsText(const ProPhotoRGB<float>& color)
 {
     return serialization(color);
 }

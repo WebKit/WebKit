@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,11 +40,13 @@ template<typename> struct Lab;
 template<typename> struct LinearA98RGB;
 template<typename> struct LinearDisplayP3;
 template<typename> struct LinearExtendedSRGBA;
+template<typename> struct LinearProPhotoRGB;
 template<typename> struct LinearRec2020;
 template<typename> struct LinearSRGBA;
+template<typename> struct ProPhotoRGB;
 template<typename> struct Rec2020;
 template<typename> struct SRGBA;
-template<typename> struct XYZ;
+template<typename> struct XYZA;
 
 // MARK: Make functions.
 
@@ -258,6 +260,12 @@ template<typename T> struct LinearExtendedSRGBA : RGBAType<LinearExtendedSRGBA, 
 };
 template<typename T> LinearExtendedSRGBA(T, T, T, T) -> LinearExtendedSRGBA<T>;
 
+template<typename T> struct LinearProPhotoRGB : RGBAType<LinearProPhotoRGB, T, RGBModel<T>> {
+    using RGBAType<LinearProPhotoRGB, T, RGBModel<T>>::RGBAType;
+    using GammaEncodedCounterpart = ProPhotoRGB<T>;
+};
+template<typename T> LinearProPhotoRGB(T, T, T, T) -> LinearProPhotoRGB<T>;
+
 template<typename T> struct LinearRec2020 : RGBAType<LinearRec2020, T, RGBModel<T>> {
     using RGBAType<LinearRec2020, T, RGBModel<T>>::RGBAType;
     using GammaEncodedCounterpart = Rec2020<T>;
@@ -270,6 +278,13 @@ template<typename T> struct LinearSRGBA : RGBAType<LinearSRGBA, T, RGBModel<T>> 
     static constexpr auto colorSpace = ColorSpace::LinearRGB;
 };
 template<typename T> LinearSRGBA(T, T, T, T) -> LinearSRGBA<T>;
+
+template<typename T> struct ProPhotoRGB : RGBAType<ProPhotoRGB, T, RGBModel<T>> {
+    using RGBAType<ProPhotoRGB, T, RGBModel<T>>::RGBAType;
+    using LinearCounterpart = LinearProPhotoRGB<T>;
+    static constexpr auto colorSpace = ColorSpace::ProPhotoRGB;
+};
+template<typename T> ProPhotoRGB(T, T, T, T) -> ProPhotoRGB<T>;
 
 template<typename T> struct Rec2020 : RGBAType<Rec2020, T, RGBModel<T>> {
     using RGBAType<Rec2020, T, RGBModel<T>>::RGBAType;

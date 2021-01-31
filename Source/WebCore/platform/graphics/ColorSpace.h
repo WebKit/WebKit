@@ -36,6 +36,7 @@ enum class ColorSpace : uint8_t {
     DisplayP3,
     Lab,
     LinearRGB,
+    ProPhotoRGB,
     Rec2020,
     SRGB,
 };
