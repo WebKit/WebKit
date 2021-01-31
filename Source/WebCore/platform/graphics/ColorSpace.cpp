@@ -45,6 +45,9 @@ TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
     case ColorSpace::LinearRGB:
         ts << "LinearRGB";
         break;
+    case ColorSpace::Rec2020:
+        ts << "Rec2020";
+        break;
     case ColorSpace::SRGB:
         ts << "sRGB";
         break;

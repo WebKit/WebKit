@@ -4606,8 +4606,6 @@ webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-003
 webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-004.html [ ImageOnlyFailure ] # Invalid test, no colorspace specified
 webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-009.html [ ImageOnlyFailure ] # Requires prophoto-rgb support
 webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-010.html [ ImageOnlyFailure ] # Requires prophoto-rgb support
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-011.html [ ImageOnlyFailure ] # Requires rec2020 support
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-012.html [ ImageOnlyFailure ] # Requires rec2020 support
 webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-014.html [ ImageOnlyFailure ] # Requires fallback (at parse time) support
 webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-015.html [ ImageOnlyFailure ] # Requires fallback (at parse time) support (unclear if this makes sense)
 webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-016.html [ ImageOnlyFailure ] # Requires xyz support

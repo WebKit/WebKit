@@ -40,7 +40,9 @@ template<typename> struct Lab;
 template<typename> struct LinearA98RGB;
 template<typename> struct LinearDisplayP3;
 template<typename> struct LinearExtendedSRGBA;
+template<typename> struct LinearRec2020;
 template<typename> struct LinearSRGBA;
+template<typename> struct Rec2020;
 template<typename> struct SRGBA;
 template<typename> struct XYZ;
 
@@ -256,12 +258,25 @@ template<typename T> struct LinearExtendedSRGBA : RGBAType<LinearExtendedSRGBA, 
 };
 template<typename T> LinearExtendedSRGBA(T, T, T, T) -> LinearExtendedSRGBA<T>;
 
+template<typename T> struct LinearRec2020 : RGBAType<LinearRec2020, T, RGBModel<T>> {
+    using RGBAType<LinearRec2020, T, RGBModel<T>>::RGBAType;
+    using GammaEncodedCounterpart = Rec2020<T>;
+};
+template<typename T> LinearRec2020(T, T, T, T) -> LinearRec2020<T>;
+
 template<typename T> struct LinearSRGBA : RGBAType<LinearSRGBA, T, RGBModel<T>> {
     using RGBAType<LinearSRGBA, T, RGBModel<T>>::RGBAType;
     using GammaEncodedCounterpart = SRGBA<T>;
     static constexpr auto colorSpace = ColorSpace::LinearRGB;
 };
 template<typename T> LinearSRGBA(T, T, T, T) -> LinearSRGBA<T>;
+
+template<typename T> struct Rec2020 : RGBAType<Rec2020, T, RGBModel<T>> {
+    using RGBAType<Rec2020, T, RGBModel<T>>::RGBAType;
+    using LinearCounterpart = LinearRec2020<T>;
+    static constexpr auto colorSpace { ColorSpace::Rec2020 };
+};
+template<typename T> Rec2020(T, T, T, T) -> Rec2020<T>;
 
 template<typename T> struct SRGBA : RGBAType<SRGBA, T, RGBModel<T>> {
     using RGBAType<SRGBA, T, RGBModel<T>>::RGBAType;

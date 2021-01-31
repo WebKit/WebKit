@@ -100,6 +100,20 @@ CGColorSpaceRef linearRGBColorSpaceRef()
     return linearRGBColorSpace;
 }
 
+CGColorSpaceRef rec2020ColorSpaceRef()
+{
+    static CGColorSpaceRef rec2020ColorSpace;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+#if PLATFORM(COCOA)
+        rec2020ColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceITUR_2020);
+#else
+        rec2020ColorSpace = sRGBColorSpaceRef();
+#endif
+    });
+    return rec2020ColorSpace;
+}
+
 CGColorSpaceRef sRGBColorSpaceRef()
 {
     static CGColorSpaceRef sRGBColorSpace;

@@ -50,6 +50,8 @@ static inline CGColorSpaceRef cachedCGColorSpace(ColorSpace colorSpace)
         return labColorSpaceRef();
     case ColorSpace::LinearRGB:
         return linearRGBColorSpaceRef();
+    case ColorSpace::Rec2020:
+        return rec2020ColorSpaceRef();
     case ColorSpace::SRGB:
         return sRGBColorSpaceRef();
     }

@@ -68,6 +68,8 @@ static ASCIILiteral serialization(ColorSpace colorSpace)
         return "lab"_s;
     case ColorSpace::LinearRGB:
         return "linear-srgb"_s;
+    case ColorSpace::Rec2020:
+        return "rec2020"_s;
     case ColorSpace::SRGB:
         return "srgb"_s;
     }
@@ -153,6 +155,23 @@ String serializationForHTML(const LinearSRGBA<float>& color)
 }
 
 String serializationForRenderTreeAsText(const LinearSRGBA<float>& color)
+{
+    return serialization(color);
+}
+
+// MARK: Rec2020<float> overloads
+
+String serializationForCSS(const Rec2020<float>& color)
+{
+    return serialization(color);
+}
+
+String serializationForHTML(const Rec2020<float>& color)
+{
+    return serialization(color);
+}
+
+String serializationForRenderTreeAsText(const Rec2020<float>& color)
 {
     return serialization(color);
 }

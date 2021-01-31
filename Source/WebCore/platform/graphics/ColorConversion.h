@@ -91,11 +91,23 @@ WEBCORE_EXPORT LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const XYZA<float
 // Additions
 WEBCORE_EXPORT ExtendedSRGBA<float> toExtendedSRGBA(const LinearExtendedSRGBA<float>&);
 
+// LinearRec2020
+WEBCORE_EXPORT XYZA<float> toXYZA(const LinearRec2020<float>&);
+WEBCORE_EXPORT LinearRec2020<float> toLinearRec2020(const XYZA<float>&);
+// Additions
+WEBCORE_EXPORT Rec2020<float> toRec2020(const LinearRec2020<float>&);
+
 // LinearSRGBA
 WEBCORE_EXPORT XYZA<float> toXYZA(const LinearSRGBA<float>&);
 WEBCORE_EXPORT LinearSRGBA<float> toLinearSRGBA(const XYZA<float>&);
 // Additions
 WEBCORE_EXPORT SRGBA<float> toSRGBA(const LinearSRGBA<float>&);
+
+// Rec2020
+WEBCORE_EXPORT XYZA<float> toXYZA(const Rec2020<float>&);
+WEBCORE_EXPORT Rec2020<float> toRec2020(const XYZA<float>&);
+// Additions
+WEBCORE_EXPORT LinearRec2020<float> toLinearRec2020(const Rec2020<float>&);
 
 // SRGBA
 WEBCORE_EXPORT XYZA<float> toXYZA(const SRGBA<float>&);
@@ -116,7 +128,9 @@ constexpr Lab<float> toLab(const Lab<float>& color) { return color; }
 constexpr LinearA98RGB<float> toLinearA98RGB(const LinearA98RGB<float>& color) { return color; }
 constexpr LinearDisplayP3<float> toLinearDisplayP3(const LinearDisplayP3<float>& color) { return color; }
 constexpr LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const LinearExtendedSRGBA<float>& color) { return color; }
+constexpr LinearRec2020<float> toLinearRec2020(const LinearRec2020<float>& color) { return color; }
 constexpr LinearSRGBA<float> toLinearSRGBA(const LinearSRGBA<float>& color) { return color; }
+constexpr Rec2020<float> toRec2020(const Rec2020<float>& color) { return color; }
 constexpr SRGBA<float> toSRGBA(const SRGBA<float>& color) { return color; }
 constexpr XYZA<float> toXYZA(const XYZA<float>& color) { return color; }
 
@@ -161,19 +175,29 @@ template<typename T> LinearA98RGB<float> toLinearA98RGB(const T& color)
     return toLinearA98RGB(toXYZA(color));
 }
 
-template<typename T> LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const T& color)
-{
-    return toLinearExtendedSRGBA(toXYZA(color));
-}
-
 template<typename T> LinearDisplayP3<float> toLinearDisplayP3(const T& color)
 {
     return toLinearDisplayP3(toXYZA(color));
 }
 
+template<typename T> LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const T& color)
+{
+    return toLinearExtendedSRGBA(toXYZA(color));
+}
+
+template<typename T> LinearRec2020<float> toLinearRec2020(const T& color)
+{
+    return toLinearRec2020(toXYZA(color));
+}
+
 template<typename T> LinearSRGBA<float> toLinearSRGBA(const T& color)
 {
     return toLinearSRGBA(toXYZA(color));
+}
+
+template<typename T> Rec2020<float> toRec2020(const T& color)
+{
+    return toRec2020(toXYZA(color));
 }
 
 template<typename T> SRGBA<float> toSRGBA(const T& color)
@@ -193,6 +217,8 @@ template<typename T, typename Functor> constexpr decltype(auto) callWithColorTyp
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<Lab<T>>(components));
     case ColorSpace::LinearRGB:
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<LinearSRGBA<T>>(components));
+    case ColorSpace::Rec2020:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<Rec2020<T>>(components));
     case ColorSpace::SRGB:
         return std::invoke(std::forward<Functor>(functor), makeFromComponents<SRGBA<T>>(components));
     }

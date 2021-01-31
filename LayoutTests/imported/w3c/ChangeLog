@@ -1,3 +1,21 @@
+2021-01-30  Sam Weinig  <weinig@apple.com>
+
+        Add support for color(rec2020 ...) as part of CSS Color 4
+        https://bugs.webkit.org/show_bug.cgi?id=221114
+
+        Reviewed by Antti Koivisto.
+
+        Add some new WPT tests for color(rec2020 ) that will be upstreamed shortly.
+
+        * web-platform-tests/css/css-color/rec2020-001-expected.html: Added.
+        * web-platform-tests/css/css-color/rec2020-001.html: Added.
+        * web-platform-tests/css/css-color/rec2020-002-expected.html: Added.
+        * web-platform-tests/css/css-color/rec2020-002.html: Added.
+        * web-platform-tests/css/css-color/rec2020-003-expected.html: Added.
+        * web-platform-tests/css/css-color/rec2020-003.html: Added.
+        * web-platform-tests/css/css-color/rec2020-004-expected.html: Added.
+        * web-platform-tests/css/css-color/rec2020-004.html: Added.
+
 2021-01-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Remove support for image controls

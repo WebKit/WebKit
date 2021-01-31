@@ -1406,6 +1406,7 @@ sRGB
 a98-rgb
 display-p3
 // lab
+// rec2020
 // sRGB
 
 // prefers-default-appearance

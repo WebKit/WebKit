@@ -55,10 +55,7 @@ namespace WebCore {
 // Able to represent:
 //    - Special "invalid color" state, treated as transparent black but distinguishable
 //    - 4x 8-bit (0-255) sRGBA, stored inline, no allocation
-//    - 4x float (0-1) sRGBA, stored in a reference counted sub-object
-//    - 4x float (0-1) Linear sRGBA, stored in a reference counted sub-object
-//    - 4x float (0-1) DisplayP3, stored in a reference counted sub-object
-//    - 4x float (0-1) Lab, stored in a reference counted sub-object
+//    - 4x float color components + color space, stored in a reference counted sub-object
 //
 // Additionally, the inline 8-bit sRGBA can have an optional "semantic" bit set on it,
 // which indicates the color originated from a CSS semantic color name.

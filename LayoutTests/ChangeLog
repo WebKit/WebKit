@@ -1,3 +1,21 @@
+2021-01-30  Sam Weinig  <weinig@apple.com>
+
+        Add support for color(rec2020 ...) as part of CSS Color 4
+        https://bugs.webkit.org/show_bug.cgi?id=221114
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations:
+        Remove now passing rec2020 tests.
+
+        * fast/css/parsing-a98rgb-colors-expected.txt: Removed.
+        * fast/css/parsing-a98rgb-colors.html: Removed.
+        * fast/css/parsing-color-function-expected.txt: Added.
+        * fast/css/parsing-color-function.html: Added.
+        Re-write parsing-a98rgb-colors.html to test all rgb types in the color() function as
+        they all have the same parsing requirements. Color(lab ) must still be parsed separately 
+        as it has a different grammar.
+
 2021-01-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Remove support for image controls

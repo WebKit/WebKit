@@ -35,6 +35,7 @@ template<typename> struct A98RGB;
 template<typename> struct DisplayP3;
 template<typename> struct Lab;
 template<typename> struct LinearSRGBA;
+template<typename> struct Rec2020;
 template<typename> struct SRGBA;
 
 // serializationForHTML returns the color serialized according to HTML5 <https://html.spec.whatwg.org/multipage/scripting.html#fill-and-stroke-styles> (10 September 2015)
@@ -62,6 +63,10 @@ WEBCORE_EXPORT String serializationForRenderTreeAsText(const Lab<float>&);
 WEBCORE_EXPORT String serializationForCSS(const LinearSRGBA<float>&);
 WEBCORE_EXPORT String serializationForHTML(const LinearSRGBA<float>&);
 WEBCORE_EXPORT String serializationForRenderTreeAsText(const LinearSRGBA<float>&);
+
+WEBCORE_EXPORT String serializationForCSS(const Rec2020<float>&);
+WEBCORE_EXPORT String serializationForHTML(const Rec2020<float>&);
+WEBCORE_EXPORT String serializationForRenderTreeAsText(const Rec2020<float>&);
 
 WEBCORE_EXPORT String serializationForCSS(const SRGBA<float>&);
 WEBCORE_EXPORT String serializationForHTML(const SRGBA<float>&);

@@ -65,6 +65,22 @@ static constexpr ColorMatrix<3, 3> linearDisplayP3ToXYZMatrix {
     0.0f,                0.0451133818589026f, 1.043944368900976f
 };
 
+// Rec2020 Matrices.
+
+// https://drafts.csswg.org/css-color/#color-conversion-code
+static constexpr ColorMatrix<3, 3> xyzToLinearRec2020Matrix {
+     1.7166511879712674f,   -0.35567078377639233f, -0.25336628137365974f,
+    -0.6666843518324892f,    1.6164812366349395f,   0.01576854581391113f,
+     0.017639857445310783f, -0.042770613257808524f, 0.9421031212354738f
+};
+
+// https://drafts.csswg.org/css-color/#color-conversion-code
+static constexpr ColorMatrix<3, 3> linearRec2020ToXYZMatrix {
+    0.6369580483012914f, 0.14461690358620832f,  0.1688809751641721f,
+    0.2627002120112671f, 0.6779980715188708f,   0.05930171646986196f,
+    0.000000000000000f,  0.028072693049087428f, 1.060985057710791f
+};
+
 // sRGB Matrices.
 
 // https://en.wikipedia.org/wiki/SRGB
@@ -149,6 +165,18 @@ ExtendedSRGBA<float> toExtendedSRGBA(const LinearExtendedSRGBA<float>& color)
     return toGammaEncoded<SRGBTransferFunction<float, TransferFunctionMode::Unclamped>>(color);
 }
 
+// Rec2020 <-> LinearRec2020 conversions.
+
+LinearRec2020<float> toLinearRec2020(const Rec2020<float>& color)
+{
+    return toLinear<Rec2020TransferFunction<float, TransferFunctionMode::Clamped>>(color);
+}
+
+Rec2020<float> toRec2020(const LinearRec2020<float>& color)
+{
+    return toGammaEncoded<Rec2020TransferFunction<float, TransferFunctionMode::Clamped>>(color);
+}
+
 // SRGBA <-> LinearSRGBA conversions.
 
 LinearSRGBA<float> toLinearSRGBA(const SRGBA<float>& color)
@@ -197,6 +225,18 @@ LinearExtendedSRGBA<float> toLinearExtendedSRGBA(const XYZA<float>& color)
 XYZA<float> toXYZA(const LinearExtendedSRGBA<float>& color)
 {
     return makeFromComponentsClampingExceptAlpha<XYZA<float>>(linearSRGBToXYZMatrix.transformedColorComponents(asColorComponents(color)));
+}
+
+// - LinearRec2020 matrix conversions.
+
+LinearRec2020<float> toLinearRec2020(const XYZA<float>& color)
+{
+    return makeFromComponentsClampingExceptAlpha<LinearRec2020<float>>(xyzToLinearRec2020Matrix.transformedColorComponents(asColorComponents(color)));
+}
+
+XYZA<float> toXYZA(const LinearRec2020<float>& color)
+{
+    return makeFromComponentsClampingExceptAlpha<XYZA<float>>(linearRec2020ToXYZMatrix.transformedColorComponents(asColorComponents(color)));
 }
 
 // - LinearSRGBA matrix conversions.
@@ -466,6 +506,18 @@ XYZA<float> toXYZA(const LCHA<float>& color)
 LCHA<float> toLCHA(const XYZA<float>& color)
 {
     return toLCHA(toLab(color));
+}
+
+// - Rec2020 combination functions.
+
+XYZA<float> toXYZA(const Rec2020<float>& color)
+{
+    return toXYZA(toLinearRec2020(color));
+}
+
+Rec2020<float> toRec2020(const XYZA<float>& color)
+{
+    return toRec2020(toLinearRec2020(color));
 }
 
 // - SRGB combination functions.
