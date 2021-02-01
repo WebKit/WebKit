@@ -1,3 +1,29 @@
+2021-02-01  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Support machines without Unix signal handling
+        https://bugs.webkit.org/show_bug.cgi?id=221150
+        <rdar://problem/73769605>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/popen.py:
+        (PopenBase):
+        (PopenBase.send_signal): Handle undefined signal variables.
+        (PopenBase.terminate):
+        (PopenBase.kill):
+        * Scripts/libraries/webkitcorepy/webkitcorepy/task_pool.py:
+        (Process.handler): Handle undefined signal variable.
+        (Process.main): Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/timeout.py:
+        (Timeout): Timeout class should own SIGALRM.
+        (Timeout.DisableAlarm.__enter__): Do not disable alarm if alarm is not available.
+        (Timeout.check): Pass SIGALRM owned by Timeout object.
+        (Timeout.bind): Do not disable alarm if alarm is not available, use SIGALRM owned by the Timeout object.
+        (Timeout.bind.handler): Ditto.
+        (Timeout.sleep): Use SIGALRM owned by the Timeout object.
+
 2021-02-01  Alicia Boya García  <aboya@igalia.com>
 
         autoinstall.py: Don't use an XML parser to parse HTML

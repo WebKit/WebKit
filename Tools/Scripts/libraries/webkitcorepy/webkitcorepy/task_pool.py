@@ -227,7 +227,7 @@ class Process(object):
 
     @classmethod
     def handler(cls, value, _):
-        if value == signal.SIGTERM:
+        if value == getattr(signal, 'SIGTERM'):
             cls.working = False
 
     @classmethod
@@ -237,7 +237,8 @@ class Process(object):
         cls.name = name
         cls.working = True
 
-        signal.signal(signal.SIGTERM, cls.handler)
+        if getattr(signal, 'SIGTERM'):
+            signal.signal(signal.SIGTERM, cls.handler)
 
         logger = logging.getLogger()
         for handler in logger.handlers:
